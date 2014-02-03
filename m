@@ -1,54 +1,38 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v1] ARM: tegra: add nvidia,wdt-timer-id optional
- property
-Date: Mon, 3 Feb 2014 17:10:53 +0000
-Message-ID: <20140203171053.GA28338@e106331-lin.cambridge.arm.com>
-References: <1391204811-6293-1-git-send-email-achew@nvidia.com>
+From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Subject: Re: [RFC 00/16] drm/nouveau: initial support for GK20A (Tegra K1)
+Date: Mon, 3 Feb 2014 18:33:51 +0100
+Message-ID: <CAKMK7uHr7D_VqnkbLPpRpvq9-BimBaEoUtmdxQg5ePZg12ZC3g@mail.gmail.com>
+References: <1391224618-3794-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1391204811-6293-1-git-send-email-achew@nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Andrew Chew <achew@nvidia.com>
-Cc: "robh+dt@kernel.org" <robh+dt@kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, "galak@codeaurora.org" <galak@codeaurora.org>, "rob@landley.net" <rob@landley.net>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "abrestic@chromium.org" <abrestic@chromium.org>, "dgreid@chromium.org" <dgreid@chromium.org>, "katierh@chromium.org" <katierh@chromium.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1391224618-3794-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Nouveau Dev <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ken Adams <KAdams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jan 31, 2014 at 09:46:51PM +0000, Andrew Chew wrote:
-> This optional property can be used to specify which timers are to be used
-> for hardware watchdog timeouts (via a tegra wdt driver).
+On Sat, Feb 1, 2014 at 4:16 AM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> Finally, support for probing GK20A is added in the last 2 patches. It should be
+> noted that contrary to what Nouveau currently expects, GK20A does not embed any
+> display hardware (that part being handled by tegradrm). So this driver should
+> really be only used through DRM render-nodes and collaborate with the display
+> driver using PRIME. I have not yet figured out how to turn GK20A's instantiation
+> of Nouveau into a render-node only driver without breaking support for existing
+> desktop GPUs, and consequently the driver spawns a /dev/dri/cardX node which we
+> should try to get rid of.
 
-Is there any reason that a particular timer should be used?
+tbh I wouldn't care about the lagecy dev nodes - we have hw platforms
+on intel with similar setup (i.e. just rendering and no outputs) and
+we don't bother to hide the legacy node. kms ioctl will still be
+there, but as long as no encoder/connector/crtc/... gets set up by the
+driver the only thing userspace can do is create framebuffers. Which
+is rather harmless ;-)
 
-This shouldn't even mention the driver, as the binding should describe
-the HW, not how it's used by Linux at the moment.
-
-> 
-> Signed-off-by: Andrew Chew <achew@nvidia.com>
-> ---
->  Documentation/devicetree/bindings/timer/nvidia,tegra30-timer.txt | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra30-timer.txt b/Documentation/devicetree/bindings/timer/nvidia,tegra30-timer.txt
-> index b5082a1..e87fa70 100644
-> --- a/Documentation/devicetree/bindings/timer/nvidia,tegra30-timer.txt
-> +++ b/Documentation/devicetree/bindings/timer/nvidia,tegra30-timer.txt
-> @@ -13,6 +13,13 @@ Required properties:
->  - clocks : Must contain one entry, for the module clock.
->    See ../clocks/clock-bindings.txt for details.
->  
-> +Optional properties:
-> +
-> +- nvidia,wdt-timer-id: A list of timer IDs to be used for watchdogs.
-> +    Watchdog 0 will be assigned to the first timer listed, watchdog 1 will
-> +    be assigned to the second timer listed, etc. up to the number of watchdogs
-> +    available.
-
-This sounds like a description of what software should do. Is there any
-reason this order is important?
-
-Also, it feels odd for the proerty name to be singular given it's a
-list...
-
-Thanks,
-Mark.
+And having legacy dev nodes around helps on older userspace (e.g.
+X/Prime with dri2 which uses flink).
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
