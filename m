@@ -1,38 +1,41 @@
-From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
-Subject: Re: [RFC 00/16] drm/nouveau: initial support for GK20A (Tegra K1)
-Date: Mon, 3 Feb 2014 18:33:51 +0100
-Message-ID: <CAKMK7uHr7D_VqnkbLPpRpvq9-BimBaEoUtmdxQg5ePZg12ZC3g@mail.gmail.com>
-References: <1391224618-3794-1-git-send-email-acourbot@nvidia.com>
+From: Andrew Chew <AChew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH v1] clocksource: tegra: Add nvidia,tegra30-timer compat
+Date: Mon, 3 Feb 2014 10:54:58 -0800
+Message-ID: <643E69AA4436674C8F39DCC2C05F763863199852C7@HQMAIL03.nvidia.com>
+References: <1391203779-5676-1-git-send-email-achew@nvidia.com>
+ <52EFC652.9000209@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1391224618-3794-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <52EFC652.9000209-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Nouveau Dev <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ken Adams <KAdams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org" <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org" <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org" <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "katierh-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org" <katierh-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, Feb 1, 2014 at 4:16 AM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> Finally, support for probing GK20A is added in the last 2 patches. It should be
-> noted that contrary to what Nouveau currently expects, GK20A does not embed any
-> display hardware (that part being handled by tegradrm). So this driver should
-> really be only used through DRM render-nodes and collaborate with the display
-> driver using PRIME. I have not yet figured out how to turn GK20A's instantiation
-> of Nouveau into a render-node only driver without breaking support for existing
-> desktop GPUs, and consequently the driver spawns a /dev/dri/cardX node which we
-> should try to get rid of.
-
-tbh I wouldn't care about the lagecy dev nodes - we have hw platforms
-on intel with similar setup (i.e. just rendering and no outputs) and
-we don't bother to hide the legacy node. kms ioctl will still be
-there, but as long as no encoder/connector/crtc/... gets set up by the
-driver the only thing userspace can do is create framebuffers. Which
-is rather harmless ;-)
-
-And having legacy dev nodes around helps on older userspace (e.g.
-X/Prime with dri2 which uses flink).
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+PiBGcm9tOiBEYW5pZWwgTGV6Y2FubyBbbWFpbHRvOmRhbmllbC5sZXpjYW5vQGxpbmFyby5vcmdd
+DQo+IFNlbnQ6IE1vbmRheSwgRmVicnVhcnkgMDMsIDIwMTQgODo0MCBBTQ0KPiBUbzogQW5kcmV3
+IENoZXc7IHRnbHhAbGludXRyb25peC5kZTsgc3dhcnJlbkB3d3dkb3Rvcmcub3JnOw0KPiB0aGll
+cnJ5LnJlZGluZ0BnbWFpbC5jb207IGFicmVzdGljQGNocm9taXVtLm9yZzsgZGdyZWlkQGNocm9t
+aXVtLm9yZzsNCj4ga2F0aWVyaEBjaHJvbWl1bS5vcmcNCj4gQ2M6IGxpbnV4LWtlcm5lbEB2Z2Vy
+Lmtlcm5lbC5vcmc7IGxpbnV4LXRlZ3JhQHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBSZTog
+W1BBVENIIHYxXSBjbG9ja3NvdXJjZTogdGVncmE6IEFkZCBudmlkaWEsdGVncmEzMC10aW1lciBj
+b21wYXQNCj4gDQo+IE9uIDAxLzMxLzIwMTQgMTA6MjkgUE0sIEFuZHJldyBDaGV3IHdyb3RlOg0K
+PiA+IFRoZXJlIGFyZSBzb21lIGRpZmZlcmVuY2VzIGJldHdlZW4gdGVncmEyMCdzIHRpbWVyIHJl
+Z2lzdGVycyBhbmQNCj4gPiB0ZWdyYTMwJ3MgKGFuZCBsYXRlcikuICBGb3Igb25lIHRoaW5nLCB0
+aGUgd2F0Y2hkb2dzIGRvbid0IHNlZW0gdG8gYmUNCj4gPiBwcmVzZW50IGluIHRlZ3JhMjAuDQo+
+IA0KPiAiZG9uJ3Qgc2VlbSIsIHNvIGl0IGlzIGFuIGFzc3VtcHRpb24gPw0KDQpObywgdGhpcyBp
+cyBub3QgYW4gYXNzdW1wdGlvbi4gIEl0IGhhcyBiZWVuIHZlcmlmaWVkIGJ5IG90aGVyIE5WSURJ
+QSBlbmdpbmVlcnMNCnNpbmNlIEkgcHJvcG9zZWQgdGhpcyBjaGFuZ2UuDQoNCj4gPiBBZGQgdGhp
+cyBjb21wYXRpYmlsaXR5IHN0cmluZyBpbiBvcmRlciB0byBiZSBhYmxlIHRvIGRpc3Rpbmd1aXNo
+DQo+ID4gd2hldGhlciB0aGUgd2F0Y2hkb2dzIGFyZSB0aGVyZSBvciBub3QuDQo+IA0KPiBTb3Jy
+eSBidXQgSSBkb24ndCBnZXQgdGhlIGNvbm5lY3Rpb24gYmV0d2VlbiBkZWNsYXJpbmcgdGhlIHRl
+Z3JhMzBfdGltZXINCj4gYW5kIHRoZSBsb2cuIENhbiB5b3UgZWxhYm9yYXRlIHBsZWFzZSA/DQoN
+CkkgZG9uJ3Qga25vdyB3aGF0IHlvdSBtZWFuIGJ5ICJ0aGUgbG9nIi4gIFdhcyB0aGF0IGEgdHlw
+bz8gIEFueXdheSwgSQ0KaGF2ZSBhIHdhdGNoZG9nIGRyaXZlciB0aGF0IEkgaW50ZW5kIHRvIGZv
+bGxvdyB1cCB3aXRoLCB0aGF0IGJpbmRzDQp3aXRoIHRlZ3JhMzAtdGltZXIuICBJIGRvbid0IHdh
+bnQgdGhpcyBkcml2ZXIgdG8gYmUgYWJsZSB0byBiaW5kIHdpdGgNCnRlZ3JhMjAtdGltZXIsIGJl
+Y2F1c2UgdGhlIGRyaXZlciB3b24ndCBhY3R1YWxseSB3b3JrIG9uIHRlZ3JhMjAuDQoNCkRvZXMg
+dGhhdCBhbnN3ZXIgeW91ciBxdWVzdGlvbj8NCg==
