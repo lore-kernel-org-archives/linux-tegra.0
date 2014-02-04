@@ -1,65 +1,154 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [RFC 00/16] drm/nouveau: initial support for GK20A (Tegra K1)
-Date: Tue, 4 Feb 2014 11:47:13 +0900
-Message-ID: <52F054B1.3030305@nvidia.com>
-References: <1391224618-3794-1-git-send-email-acourbot@nvidia.com> <CANq1E4R=DWp2WBWWBbLHE2FG9HWWP=bM4wvE8etoEr1PAp0+JA@mail.gmail.com>
+Date: Tue, 4 Feb 2014 13:53:21 +1000
+Message-ID: <CACAvsv4QFSL8u8hQFr-T_28n3icN_CwDsvLtrcPXx5nErD89wQ@mail.gmail.com>
+References: <1391224618-3794-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1256"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CANq1E4R=DWp2WBWWBbLHE2FG9HWWP=bM4wvE8etoEr1PAp0+JA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <1391224618-3794-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: David Herrmann <dh.herrmann-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ken Adams <KAdams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ken Adams <KAdams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/03/2014 08:25 PM, David Herrmann wrote:
-> Hi
+On Sat, Feb 1, 2014 at 1:16 PM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> Hello everyone,
+Hey Alex,
+
+The series looks pretty good to me.  I'll reply to the relevant
+patches with any minor nit-picks on top of what's already been said by
+others.
+
+Thank you, and welcome to Nouveau :)
+
+Ben.
+
 >
-> [..snip..]
->> Finally, support for probing GK20A is added in the last 2 patches. It should be
->> noted that contrary to what Nouveau currently expects, GK20A does not embed any
->> display hardware (that part being handled by tegradrm). So this driver should
->> really be only used through DRM render-nodes and collaborate with the display
->> driver using PRIME. I have not yet figured out how to turn GK20A's instantiation
->> of Nouveau into a render-node only driver without breaking support for existing
->> desktop GPUs, and consequently the driver spawns a /dev/dri/cardX node which we
->> should try to get rid of.
+> GK20A is the Kepler-based GPU used in the upcoming Tegra K1 chips. The following
+> patches perform architectural changes to Nouveau that are necessary to support
+> non-PCI GPUs and add initial support for GK20A. Although the support is still
+> very basic and more user-space changes will be needed to make the full graphics
+> stack run on top of it, we were able to successfully open channels and run
+> simple pushbuffers with libdrm (more testing including rendering is in progress
+> as we get more familiar with Nouveau's user-space interface).
 >
-> You cannot get rid of cardX currently. It is implied by DRIVER_MODESET
-> and that flag should actually be called NOT_A_LEGACY_DRIVER. So you
-> cannot remove it. I did try to replace DRIVER_MODESET by an inverted
-> DRIVER_LEGACY flag some time ago, but I thought it's not worth it.
+> This work should be considered as a RFC and a proof-of-concept for driving
+> future Tegra GPUs with Nouveau. Some design choices need to be discussed and
+> quite a few inelegant shortcuts were purposely taken to minimize the size of
+> this first set. Or said otherwise, apart from the changes that add support for
+> non-PCI GPUs, remarkably little code needs to be added to get GK20A to a point
+> where it is actually running. This is very encouraging, and it will be
+> interesting to keep improving this support and see where this gets us.
 >
-> Anyhow, you can easily add a new flag to make
-> drm_dev_register()/drm_dev_alloc() not create the drm_minor for
-> DRM_MINOR_LEGACY, which would prevent the card0 node from showing up.
-> But people started using the cardX interface as base interface so mesa
-> might not be able to open render-nodes if the related card-node is not
-> available (which is a bug in their code, so no reason to support that
-> by not adding stand-alone render-nodes).
-
-Actually my mention of /dev/dri/cardX was misleading. I was rather 
-thinking about getting rid of the DRIVER_MODESET flag to correctly 
-expose what the card provides, not only to user-space, but to DRM 
-itself. The legacy node is ok as long as DRM itself correctly knows what 
-the driver can and cannot do and fails gracefully if the user tries to 
-set a mode.
-
-DRIVER_MODESET is statically set in nouveau_drm.c, and the reason why I 
-cannot get rid of it is because the driver (and its features) is 
-registered with drm_pci_init() before the card is probed and its actual 
-features known.
-
-For platform devices, you could check the card features before 
-registering it with drm_platform_init(), but then you have the issue 
-that the driver instance is referenced by every probed card, and thus 
-you cannot have cards with different capabilities.
-
-So it seems like handling this would require the driver_features to move 
-from drm_driver to drm_device, but that's quite a core change. As 
-pointed out by you and Daniel, we can certainly live with the control 
-and legacy nodes. Nonetheless I'd be curious to know how (and if) this 
-case can be correctly handled.
-
-Alex.
+> The first part of this series (patches 01/09) adds support for platform devices
+> to Nouveau. Nouveau currently only supports PCI devices, and GK20A uses the
+> platform bus and Device Tree. So the first step towards GK20A support is to
+> abstract the PCI functions used by Nouveau (mainly resources range querying and
+> page mapping functions) and add platform device probing functions. For most of
+> the existing chips, platform device support does not make any sense, so only the
+> subdev and engine drivers actually used by GK20A were updated to use these
+> abstractions. If, for consistency reasons, it is deemed preferable to use them
+> everywhere in the driver, we will do it in the next revision of this series.
+>
+> This part can be considered independently from the actual GK20A support, and I
+> believe it would make sense to discuss what needs to be improved and drive it to
+> merge separately, as the remainder of the series will likely require more work.
+>
+> The second part (10/14) updates existing subdev/engine drivers to support GK20A,
+> and adds a very simple memory driver that simulates dedicated video memory by
+> allocating a large system memory chunk at boot time. This is clearly sub-optimal
+> and should not be merged, but allowed us to quickly bring GK20A up with Nouveau.
+> Other drivers changes are fairly small, and are here to handle the difference in
+> number of engines and units compared to desktop Kepler as well as to perform a
+> few things usually done by the video BIOS (which Tegra does not feature).
+>
+> Finally, support for probing GK20A is added in the last 2 patches. It should be
+> noted that contrary to what Nouveau currently expects, GK20A does not embed any
+> display hardware (that part being handled by tegradrm). So this driver should
+> really be only used through DRM render-nodes and collaborate with the display
+> driver using PRIME. I have not yet figured out how to turn GK20A's instantiation
+> of Nouveau into a render-node only driver without breaking support for existing
+> desktop GPUs, and consequently the driver spawns a /dev/dri/cardX node which we
+> should try to get rid of.
+>
+> I guess my email address might surprise some of you, so let me anticipate some
+> questions you might have. :P Yes, this work is endorsed by NVIDIA. Several other
+> NVIDIAns (CC'd), including core GPU experts, have provided significant technical
+> guidance and will continue their involvement. Special thanks go to Terje
+> Bergstrom and Ken Adams for their invaluable GPU expertise, and Thierry Reding
+> (at FOSDEM this weekend) for help with debugging and user-space testing.
+>
+> Let me also stress that although very exciting, this effort is still
+> experimental, so I would like to make sure that nobody makes excessive
+> expectations based on these few patches. The scope of this work is strictly
+> limited to Tegra (although given the similarities desktop GPU support will
+> certainly benefit from it indirectly), and we do not have any plan to work on
+> user-space support. So do not uninstall that proprietary driver just yet. ;)
+>
+> With this being clarified, we are looking forward to getting your feedback and
+> working with you guys to bring and improve Tegra K1 support into Nouveau! :)
+>
+> Alexandre Courbot (16):
+>   drm/nouveau: handle -EACCES runtime PM return code
+>   drm/nouveau: basic support for platform devices
+>   drm/nouveau: add platform device probing function
+>   drm/nouveau/fifo: support platform devices
+>   drm/nouveau/bar: support platform devices
+>   drm/nouveau/bar: only ioremap BAR3 if it exists
+>   drm/nouveau/bar/nvc0: support chips without BAR3
+>   drm/nouveau/mc: support platform devices
+>   drm/nouveau/fb: support platform devices
+>   drm/nouveau/timer: skip calibration on GK20A
+>   drm/nouveau/fifo: allocate usermem as needed
+>   drm/nouveau/fifo: add GK20A support
+>   drm/nouveau/ibus: add GK20A support
+>   drm/nouveau/fb: add GK20A support
+>   drm/nouveau: support GK20A in nouveau_accel_init()
+>   drm/nouveau: support for probing GK20A
+>
+>  drivers/gpu/drm/nouveau/Makefile                   |   4 +
+>  drivers/gpu/drm/nouveau/core/engine/device/base.c  |  92 +++++++++++++++-
+>  drivers/gpu/drm/nouveau/core/engine/device/nve0.c  |  20 ++++
+>  drivers/gpu/drm/nouveau/core/engine/fifo/base.c    |   2 +-
+>  drivers/gpu/drm/nouveau/core/engine/fifo/nve0.c    |   4 +-
+>  drivers/gpu/drm/nouveau/core/engine/fifo/nve0.h    |   1 +
+>  drivers/gpu/drm/nouveau/core/engine/fifo/nvea.c    |  27 +++++
+>  drivers/gpu/drm/nouveau/core/include/core/device.h |  27 +++++
+>  .../gpu/drm/nouveau/core/include/engine/device.h   |  10 ++
+>  drivers/gpu/drm/nouveau/core/include/engine/fifo.h |   1 +
+>  drivers/gpu/drm/nouveau/core/include/subdev/fb.h   |   1 +
+>  drivers/gpu/drm/nouveau/core/include/subdev/ibus.h |   1 +
+>  drivers/gpu/drm/nouveau/core/include/subdev/mc.h   |   1 +
+>  drivers/gpu/drm/nouveau/core/os.h                  |   1 +
+>  drivers/gpu/drm/nouveau/core/subdev/bar/base.c     |   7 +-
+>  drivers/gpu/drm/nouveau/core/subdev/bar/nv50.c     |   4 +-
+>  drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c     | 116 +++++++++++----------
+>  drivers/gpu/drm/nouveau/core/subdev/fb/nvc0.c      |   9 +-
+>  drivers/gpu/drm/nouveau/core/subdev/fb/nvea.c      |  28 +++++
+>  drivers/gpu/drm/nouveau/core/subdev/fb/priv.h      |   1 +
+>  drivers/gpu/drm/nouveau/core/subdev/fb/ramnvea.c   |  67 ++++++++++++
+>  drivers/gpu/drm/nouveau/core/subdev/ibus/nvea.c    | 108 +++++++++++++++++++
+>  drivers/gpu/drm/nouveau/core/subdev/mc/base.c      |  43 +++++---
+>  drivers/gpu/drm/nouveau/core/subdev/timer/nv04.c   |  19 ++--
+>  drivers/gpu/drm/nouveau/dispnv04/crtc.c            |   2 +-
+>  drivers/gpu/drm/nouveau/nouveau_abi16.c            |  13 ++-
+>  drivers/gpu/drm/nouveau/nouveau_bo.c               |  22 ++--
+>  drivers/gpu/drm/nouveau/nouveau_connector.c        |   2 +-
+>  drivers/gpu/drm/nouveau/nouveau_display.c          |   3 +-
+>  drivers/gpu/drm/nouveau/nouveau_drm.c              |  86 ++++++++++++---
+>  drivers/gpu/drm/nouveau/nouveau_sysfs.c            |   8 +-
+>  drivers/gpu/drm/nouveau/nouveau_ttm.c              |  31 +++---
+>  32 files changed, 622 insertions(+), 139 deletions(-)
+>  create mode 100644 drivers/gpu/drm/nouveau/core/engine/fifo/nvea.c
+>  create mode 100644 drivers/gpu/drm/nouveau/core/subdev/fb/nvea.c
+>  create mode 100644 drivers/gpu/drm/nouveau/core/subdev/fb/ramnvea.c
+>  create mode 100644 drivers/gpu/drm/nouveau/core/subdev/ibus/nvea.c
+>
+> --
+> 1.8.5.3
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
