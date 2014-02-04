@@ -1,251 +1,294 @@
-From: Jani Nikula <jani.nikula-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: Re: [PATCH v4 1/5] drm/dp: Add AUX channel infrastructure
-Date: Tue, 04 Feb 2014 11:33:28 +0200
-Message-ID: <87ha8f2pef.fsf@intel.com>
-References: <1390332263-11974-1-git-send-email-treding@nvidia.com> <1390332263-11974-2-git-send-email-treding@nvidia.com>
+From: Jani Nikula <jani.nikula@linux.intel.com>
+Subject: Re: [PATCH v4 4/5] drm/dp: Allow registering AUX
+	channels as I2C busses
+Date: Tue, 04 Feb 2014 11:29:43 +0200
+Message-ID: <87k3db2pko.fsf@intel.com>
+References: <1390332263-11974-1-git-send-email-treding@nvidia.com>
+	<1390332263-11974-5-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1390332263-11974-2-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <1390332263-11974-5-git-send-email-treding@nvidia.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+	<mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+	<mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Sender: intel-gfx-bounces@lists.freedesktop.org
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+To: Thierry Reding <thierry.reding@gmail.com>, dri-devel@lists.freedesktop.org
+Cc: Alex Deucher <alexander.deucher@amd.com>, linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 21 Jan 2014, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> This is a superset of the current i2c_dp_aux bus functionality and can
-> be used to transfer native AUX in addition to I2C-over-AUX messages.
+On Tue, 21 Jan 2014, Thierry Reding <thierry.reding@gmail.com> wrote:
+> Implements an I2C-over-AUX I2C adapter on top of the generic drm_dp_aux
+> infrastructure. It extracts the retry logic from existing drivers, which
+> should help in porting those drivers to this new helper.
 >
-> Helpers are provided to read and write the DPCD, either blockwise or
-> byte-wise. Many of the existing helpers for DisplayPort take a copy of a
-> portion of the DPCD and operate on that, without a way to write data
-> back to the DPCD (e.g. for configuration of the link).
->
-> Subsequent patches will build upon this infrastructure to provide common
-> functionality in a generic way.
->
-> Reviewed-by: Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>
-> Reviewed-by: Jani Nikula <jani.nikula-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+> Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+
+I know I reviewed this already, but here are some more comments based on
+converting i915 on top of this...
+
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
 > Changes in v4:
-> - fix a typo in a comment
+> - fix typo "bitrate" -> "bit rate"
 >
 > Changes in v3:
-> - reorder drm_dp_dpcd_writeb() arguments to be more intuitive
-> - return number of bytes transferred in drm_dp_dpcd_write()
-> - factor out drm_dp_dpcd_access()
-> - describe error codes
+> - add back DRM_DEBUG_KMS and DRM_ERROR messages
+> - embed i2c_adapter within struct drm_dp_aux
+> - fix typo in comment
 >
->  drivers/gpu/drm/drm_dp_helper.c | 110 ++++++++++++++++++++++++++++++++++++++++
->  include/drm/drm_dp_helper.h     |  67 ++++++++++++++++++++++++
->  2 files changed, 177 insertions(+)
+>  drivers/gpu/drm/drm_dp_helper.c | 183 ++++++++++++++++++++++++++++++++++++++++
+>  include/drm/drm_dp_helper.h     |   5 ++
+>  2 files changed, 188 insertions(+)
 >
 > diff --git a/drivers/gpu/drm/drm_dp_helper.c b/drivers/gpu/drm/drm_dp_helper.c
-> index 9e978aae8972..3e74ed93b19f 100644
+> index eea15b1414ed..dba4205de274 100644
 > --- a/drivers/gpu/drm/drm_dp_helper.c
 > +++ b/drivers/gpu/drm/drm_dp_helper.c
-> @@ -346,3 +346,113 @@ int drm_dp_bw_code_to_link_rate(u8 link_bw)
->  	}
+> @@ -364,6 +364,13 @@ EXPORT_SYMBOL(drm_dp_bw_code_to_link_rate);
+>   *
+>   * The .dev field should be set to a pointer to the device that implements
+>   * the AUX channel.
+> + *
+> + * An AUX channel can also be used to transport I2C messages to a sink. A
+> + * typical application of that is to access an EDID that's present in the
+> + * sink device. The .transfer() function can also be used to execute such
+> + * transactions. The drm_dp_aux_register_i2c_bus() function registers an
+> + * I2C adapter that can be passed to drm_probe_ddc(). Upon removal, drivers
+> + * should call drm_dp_aux_unregister_i2c_bus() to remove the I2C adapter.
+>   */
+>  
+>  static int drm_dp_dpcd_access(struct drm_dp_aux *aux, u8 request,
+> @@ -566,3 +573,179 @@ int drm_dp_link_configure(struct drm_dp_aux *aux, struct drm_dp_link *link)
+>  
+>  	return 0;
 >  }
->  EXPORT_SYMBOL(drm_dp_bw_code_to_link_rate);
 > +
-> +/**
-> + * DOC: dp helpers
-> + *
-> + * The DisplayPort AUX channel is an abstraction to allow generic, driver-
-> + * independent access to AUX functionality. Drivers can take advantage of
-> + * this by filling in the fields of the drm_dp_aux structure.
-> + *
-> + * The .transfer() function is the hardware-specific implementation of how
-> + * a transaction is executed on the AUX channel. A pointer to a struct
-> + * drm_dp_aux_msg describing the transaction is passed into this function.
-> + * Upon success, the implementation should return the number of bytes that
-> + * were transferred, or a negative error-code on failure. Helpers propagate
-> + * errors from the .transfer() function, with the exception of the -EBUSY
-> + * error, which causes a transaction to be retried.
-
-A little more bikeshedding... ;)
-
-Might be useful to clarify that the .transfer() function must return the
-number of *payload* bytes that were transferred.
-
-The documentation of the .transfer() function might be better suited
-within struct drm_dp_aux where it's actually defined.
-
-BR,
-Jani.
-
-
-> + *
-> + * The .dev field should be set to a pointer to the device that implements
-> + * the AUX channel.
+> +/*
+> + * I2C-over-AUX implementation
 > + */
 > +
-> +static int drm_dp_dpcd_access(struct drm_dp_aux *aux, u8 request,
-> +			      unsigned int offset, void *buffer, size_t size)
+> +static u32 drm_dp_i2c_functionality(struct i2c_adapter *adapter)
 > +{
-> +	struct drm_dp_aux_msg msg;
+> +	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL |
+> +	       I2C_FUNC_SMBUS_READ_BLOCK_DATA |
+> +	       I2C_FUNC_SMBUS_BLOCK_PROC_CALL |
+> +	       I2C_FUNC_10BIT_ADDR;
+> +}
+> +
+> +/*
+> + * Transfer a single I2C-over-AUX message and handle various error conditions,
+> + * retrying the transaction as appropriate.
+> + */
+> +static int drm_dp_i2c_do_msg(struct drm_dp_aux *aux, struct drm_dp_aux_msg *msg)
+> +{
 > +	unsigned int retry;
 > +	int err;
 > +
-> +	memset(&msg, 0, sizeof(msg));
-> +	msg.address = offset;
-> +	msg.request = request;
-> +	msg.buffer = buffer;
-> +	msg.size = size;
-> +
 > +	/*
-> +	 * The specification doesn't give any recommendation on how often to
-> +	 * retry native transactions, so retry 7 times like for I2C-over-AUX
-> +	 * transactions.
+> +	 * DP1.2 sections 2.7.7.1.5.6.1 and 2.7.7.1.6.6.1: A DP Source device
+> +	 * is required to retry at least seven times upon receiving AUX_DEFER
+> +	 * before giving up the AUX transaction.
 > +	 */
 > +	for (retry = 0; retry < 7; retry++) {
-> +		err = aux->transfer(aux, &msg);
+> +		err = aux->transfer(aux, msg);
 > +		if (err < 0) {
 > +			if (err == -EBUSY)
 > +				continue;
 > +
+> +			DRM_DEBUG_KMS("transaction failed: %d\n", err);
 > +			return err;
 > +		}
 > +
-> +		if (err == 0)
-> +			return -EPROTO;
-> +
-> +		switch (msg.reply & DP_AUX_NATIVE_REPLY_MASK) {
+> +		switch (msg->reply & DP_AUX_NATIVE_REPLY_MASK) {
 > +		case DP_AUX_NATIVE_REPLY_ACK:
-> +			return err;
+> +			/*
+> +			 * For I2C-over-AUX transactions this isn't enough, we
+> +			 * need to check for the I2C ACK reply.
+> +			 */
+> +			break;
 > +
 > +		case DP_AUX_NATIVE_REPLY_NACK:
-> +			return -EIO;
+> +			DRM_DEBUG_KMS("native nack\n");
+> +			return -EREMOTEIO;
 > +
 > +		case DP_AUX_NATIVE_REPLY_DEFER:
+> +			DRM_DEBUG_KMS("native defer");
+> +			/*
+> +			 * We could check for I2C bit rate capabilities and if
+> +			 * available adjust this interval. We could also be
+> +			 * more careful with DP-to-legacy adapters where a
+> +			 * long legacy cable may force very low I2C bit rates.
+> +			 *
+> +			 * For now just defer for long enough to hopefully be
+> +			 * safe for all use-cases.
+> +			 */
+> +			usleep_range(500, 600);
+> +			continue;
+> +
+> +		default:
+> +			DRM_ERROR("invalid native reply %#04x\n", msg->reply);
+> +			return -EREMOTEIO;
+> +		}
+> +
+> +		switch (msg->reply & DP_AUX_I2C_REPLY_MASK) {
+> +		case DP_AUX_I2C_REPLY_ACK:
+> +			/*
+> +			 * Both native ACK and I2C ACK replies received. We
+> +			 * can assume the transfer was successful.
+> +			 */
+> +			return 0;
+> +
+> +		case DP_AUX_I2C_REPLY_NACK:
+> +			DRM_DEBUG_KMS("I2C nack\n");
+> +			return -EREMOTEIO;
+> +
+> +		case DP_AUX_I2C_REPLY_DEFER:
+> +			DRM_DEBUG_KMS("I2C defer\n");
 > +			usleep_range(400, 500);
-> +			break;
+> +			continue;
+> +
+> +		default:
+> +			DRM_ERROR("invalid I2C reply %#04x\n", msg->reply);
+> +			return -EREMOTEIO;
 > +		}
 > +	}
 > +
 > +	DRM_ERROR("too many retries, giving up\n");
-> +	return -EIO;
+> +	return -EREMOTEIO;
 > +}
 > +
-> +/**
-> + * drm_dp_dpcd_read() - read a series of bytes from the DPCD
-> + * @aux: DisplayPort AUX channel
-> + * @offset: address of the (first) register to read
-> + * @buffer: buffer to store the register values
-> + * @size: number of bytes in @buffer
-> + *
-> + * Returns the number of bytes transferred on success, or a negative error
-> + * code on failure. -EIO is returned if the request was NAKed by the sink or
-> + * if the retry count was exceeded. If no bytes were transferred, -EPROTO is
-> + * returned. Errors from the underlying AUX channel transfer function, with
-> + * the exception of -EBUSY (upon which the transaction will be retried), are
-> + * propagated to the caller.
-> + */
-> +ssize_t drm_dp_dpcd_read(struct drm_dp_aux *aux, unsigned int offset,
-> +			 void *buffer, size_t size)
+> +static int drm_dp_i2c_xfer(struct i2c_adapter *adapter, struct i2c_msg *msgs,
+> +			   int num)
 > +{
-> +	return drm_dp_dpcd_access(aux, DP_AUX_NATIVE_READ, offset, buffer,
-> +				  size);
+> +	struct drm_dp_aux *aux = adapter->algo_data;
+> +	unsigned int i, j;
+> +
+> +	for (i = 0; i < num; i++) {
+> +		struct drm_dp_aux_msg msg;
+> +		int err;
+> +
+
+Should there be a start message similar to the i2c_algo_dp_aux_address()
+call in i2c_algo_dp_aux_xfer() here? How would that map out to the
+->transfer() function? msg.size = 0?
+
+> +		/*
+> +		 * Many hardware implementations support FIFOs larger than a
+> +		 * single byte, but it has been empirically determined that
+> +		 * transferring data in larger chunks can actually lead to
+> +		 * decreased performance. Therefore each message is simply
+> +		 * transferred byte-by-byte.
+> +		 */
+
+Ville suggested this should be up to the drivers to decide. Maybe we
+could have an aux->max_i2c_message_size (or similar), set by the
+drivers, defaulting to 1, and this would chop up the message as
+necessary? This could be a follow-up patch.
+
+> +		for (j = 0; j < msgs[i].len; j++) {
+> +			memset(&msg, 0, sizeof(msg));
+> +			msg.address = msgs[i].addr;
+> +
+> +			msg.request = (msgs[i].flags & I2C_M_RD) ?
+> +					DP_AUX_I2C_READ :
+> +					DP_AUX_I2C_WRITE;
+> +
+> +			/*
+> +			 * All messages except the last one are middle-of-
+> +			 * transfer messages.
+> +			 */
+> +			if (j < msgs[i].len - 1)
+> +				msg.request |= DP_AUX_I2C_MOT;
+> +
+> +			msg.buffer = msgs[i].buf + j;
+> +			msg.size = 1;
+> +
+> +			err = drm_dp_i2c_do_msg(aux, &msg);
+> +			if (err < 0)
+> +				return err;
+> +		}
+> +	}
+
+Should there be a stop message similar to the i2c_algo_dp_aux_stop()
+call in i2c_algo_dp_aux_xfer() here? Does not seem as crucial as the
+start message because DP_AUX_I2C_MOT is handled above.
+
+> +
+> +	return num;
 > +}
-> +EXPORT_SYMBOL(drm_dp_dpcd_read);
+> +
+> +static const struct i2c_algorithm drm_dp_i2c_algo = {
+> +	.functionality = drm_dp_i2c_functionality,
+> +	.master_xfer = drm_dp_i2c_xfer,
+> +};
 > +
 > +/**
-> + * drm_dp_dpcd_write() - write a series of bytes to the DPCD
+> + * drm_dp_aux_register_i2c_bus() - register an I2C adapter for I2C-over-AUX
 > + * @aux: DisplayPort AUX channel
-> + * @offset: address of the (first) register to write
-> + * @buffer: buffer containing the values to write
-> + * @size: number of bytes in @buffer
 > + *
-> + * Returns the number of bytes transferred on success, or a negative error
-> + * code on failure. -EIO is returned if the request was NAKed by the sink or
-> + * if the retry count was exceeded. If no bytes were transferred, -EPROTO is
-> + * returned. Errors from the underlying AUX channel transfer function, with
-> + * the exception of -EBUSY (upon which the transaction will be retried), are
-> + * propagated to the caller.
+> + * Returns 0 on success or a negative error code on failure.
 > + */
-> +ssize_t drm_dp_dpcd_write(struct drm_dp_aux *aux, unsigned int offset,
-> +			  void *buffer, size_t size)
+> +int drm_dp_aux_register_i2c_bus(struct drm_dp_aux *aux)
 > +{
-> +	return drm_dp_dpcd_access(aux, DP_AUX_NATIVE_WRITE, offset, buffer,
-> +				  size);
+> +	aux->ddc.algo = &drm_dp_i2c_algo;
+> +	aux->ddc.algo_data = aux;
+> +	aux->ddc.retries = 3;
+> +
+> +	aux->ddc.class = I2C_CLASS_DDC;
+> +	aux->ddc.owner = THIS_MODULE;
+> +	aux->ddc.dev.parent = aux->dev;
+> +	aux->ddc.dev.of_node = aux->dev->of_node;
+> +
+> +	strncpy(aux->ddc.name, dev_name(aux->dev), sizeof(aux->ddc.name));
+> +
+
+Should there be something similar to i2c_dp_aux_reset_bus() here like in
+i2c_dp_aux_add_bus()?
+
+> +	return i2c_add_adapter(&aux->ddc);
 > +}
-> +EXPORT_SYMBOL(drm_dp_dpcd_write);
+> +EXPORT_SYMBOL(drm_dp_aux_register_i2c_bus);
+> +
+> +/**
+> + * drm_dp_aux_unregister_i2c_bus() - unregister an I2C-over-AUX adapter
+> + * @aux: DisplayPort AUX channel
+> + */
+> +void drm_dp_aux_unregister_i2c_bus(struct drm_dp_aux *aux)
+> +{
+> +	i2c_del_adapter(&aux->ddc);
+> +}
+> +EXPORT_SYMBOL(drm_dp_aux_unregister_i2c_bus);
 > diff --git a/include/drm/drm_dp_helper.h b/include/drm/drm_dp_helper.h
-> index 1d09050a8c00..c69c1dc1b741 100644
+> index c7b3c736c40a..4d67bd12089b 100644
 > --- a/include/drm/drm_dp_helper.h
 > +++ b/include/drm/drm_dp_helper.h
-> @@ -398,4 +398,71 @@ drm_dp_enhanced_frame_cap(const u8 dpcd[DP_RECEIVER_CAP_SIZE])
->  		(dpcd[DP_MAX_LANE_COUNT] & DP_ENHANCED_FRAME_CAP);
->  }
+> @@ -421,10 +421,12 @@ struct drm_dp_aux_msg {
 >  
-> +/*
-> + * DisplayPort AUX channel
-> + */
-> +
-> +/**
-> + * struct drm_dp_aux_msg - DisplayPort AUX channel transaction
-> + * @address: address of the (first) register to access
-> + * @request: contains the type of transaction (see DP_AUX_* macros)
-> + * @reply: upon completion, contains the reply type of the transaction
-> + * @buffer: pointer to a transmission or reception buffer
-> + * @size: size of @buffer
-> + */
-> +struct drm_dp_aux_msg {
-> +	unsigned int address;
-> +	u8 request;
-> +	u8 reply;
-> +	void *buffer;
-> +	size_t size;
-> +};
-> +
-> +/**
-> + * struct drm_dp_aux - DisplayPort AUX channel
-> + * @dev: pointer to struct device that is the parent for this AUX channel
-> + * @transfer: transfers a message representing a single AUX transaction
-> + */
-> +struct drm_dp_aux {
-> +	struct device *dev;
-> +
-> +	ssize_t (*transfer)(struct drm_dp_aux *aux,
-> +			    struct drm_dp_aux_msg *msg);
-> +};
-> +
-> +ssize_t drm_dp_dpcd_read(struct drm_dp_aux *aux, unsigned int offset,
-> +			 void *buffer, size_t size);
-> +ssize_t drm_dp_dpcd_write(struct drm_dp_aux *aux, unsigned int offset,
-> +			  void *buffer, size_t size);
-> +
-> +/**
-> + * drm_dp_dpcd_readb() - read a single byte from the DPCD
-> + * @aux: DisplayPort AUX channel
-> + * @offset: address of the register to read
-> + * @valuep: location where the value of the register will be stored
-> + *
-> + * Returns the number of bytes transferred (1) on success, or a negative
-> + * error code on failure.
-> + */
-> +static inline ssize_t drm_dp_dpcd_readb(struct drm_dp_aux *aux,
-> +					unsigned int offset, u8 *valuep)
-> +{
-> +	return drm_dp_dpcd_read(aux, offset, valuep, 1);
-> +}
-> +
-> +/**
-> + * drm_dp_dpcd_writeb() - write a single byte to the DPCD
-> + * @aux: DisplayPort AUX channel
-> + * @offset: address of the register to write
-> + * @value: value to write to the register
-> + *
-> + * Returns the number of bytes transferred (1) on success, or a negative
-> + * error code on failure.
-> + */
-> +static inline ssize_t drm_dp_dpcd_writeb(struct drm_dp_aux *aux,
-> +					 unsigned int offset, u8 value)
-> +{
-> +	return drm_dp_dpcd_write(aux, offset, &value, 1);
-> +}
+>  /**
+>   * struct drm_dp_aux - DisplayPort AUX channel
+> + * @ddc: I2C adapter that can be used for I2C-over-AUX communication
+>   * @dev: pointer to struct device that is the parent for this AUX channel
+>   * @transfer: transfers a message representing a single AUX transaction
+>   */
+>  struct drm_dp_aux {
+> +	struct i2c_adapter ddc;
+>  	struct device *dev;
+>  
+>  	ssize_t (*transfer)(struct drm_dp_aux *aux,
+> @@ -485,4 +487,7 @@ int drm_dp_link_probe(struct drm_dp_aux *aux, struct drm_dp_link *link);
+>  int drm_dp_link_power_up(struct drm_dp_aux *aux, struct drm_dp_link *link);
+>  int drm_dp_link_configure(struct drm_dp_aux *aux, struct drm_dp_link *link);
+>  
+> +int drm_dp_aux_register_i2c_bus(struct drm_dp_aux *aux);
+> +void drm_dp_aux_unregister_i2c_bus(struct drm_dp_aux *aux);
 > +
 >  #endif /* _DRM_DP_HELPER_H_ */
 > -- 
