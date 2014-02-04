@@ -1,79 +1,169 @@
-From: Ben Skeggs <skeggsb@gmail.com>
-Subject: Re: [RFC 10/16] drm/nouveau/timer: skip calibration on GK20A
-Date: Tue, 4 Feb 2014 13:55:57 +1000
-Message-ID: <CACAvsv4T=TRb05OtkxG=t1+Ou9=Of9c-ALWkHJjKYpNi2aGs5Q@mail.gmail.com>
-References: <1391224618-3794-1-git-send-email-acourbot@nvidia.com>
-	<1391224618-3794-11-git-send-email-acourbot@nvidia.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH v2 2/3] clocksource: tegra: Define timer bases in header
+ file
+Date: Tue, 04 Feb 2014 08:54:48 +0100
+Message-ID: <52F09CC8.80601@linaro.org>
+References: <1391473055-3158-1-git-send-email-achew@nvidia.com> <1391473055-3158-3-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1391224618-3794-11-git-send-email-acourbot@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Ben Skeggs <bskeggs@redhat.com>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Alexandre Courbot <gnurou@gmail.com>, Eric Brower <ebrower@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Terje Bergstrom <tbergstrom@nvidia.com>, Ken Adams <KAdams@nvidia.com>
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1391473055-3158-3-git-send-email-achew@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Andrew Chew <achew@nvidia.com>, tglx@linutronix.de, swarren@wwwdotorg.org, thierry.reding@gmail.com, rob@landley.net, grant.likely@linaro.org, robh+dt@kernel.org, abrestic@chromium.org, dgreid@chromium.org, katierh@chromium.org
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, Feb 1, 2014 at 1:16 PM, Alexandre Courbot <acourbot@nvidia.com> wrote:
-> GK20A's timer is directly attached to the system timer and cannot be
-> calibrated. Skip the calibration phase on that chip since the
-> corresponding registers do not exist.
-Just a curiosity:  What timer resolution does the HW initialise at?
+On 02/04/2014 01:17 AM, Andrew Chew wrote:
+> Added timers that are present in tegra30 and later, that are NOT in t=
+egra20.
+>
+> Also, some of these timer bases are needed in the tegra watchdog driv=
+er, so
+> separate them out into a header file that both the clocksource driver=
+ and
+> the watchdog driver can share them.
+>
+> Signed-off-by: Andrew Chew <achew@nvidia.com>
 
->
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+When reading the patch 3/3, I don't see any define reused from this=20
+header except TEGRA30_TIMER_WDT_BASE which is only used for the=20
+watchdog. May be I missed something but I don't see any definition=20
+shared and thus I don't see the point of creating this header file.
+
 > ---
->  drivers/gpu/drm/nouveau/core/subdev/timer/nv04.c | 19 +++++++++++++------
->  1 file changed, 13 insertions(+), 6 deletions(-)
+>   drivers/clocksource/tegra20_timer.c | 15 ++++++-------
+>   include/clocksource/tegra_timer.h   | 43 ++++++++++++++++++++++++++=
++++++++++++
+>   2 files changed, 49 insertions(+), 9 deletions(-)
+>   create mode 100644 include/clocksource/tegra_timer.h
 >
-> diff --git a/drivers/gpu/drm/nouveau/core/subdev/timer/nv04.c b/drivers/gpu/drm/nouveau/core/subdev/timer/nv04.c
-> index c0bdd10..822fe0d 100644
-> --- a/drivers/gpu/drm/nouveau/core/subdev/timer/nv04.c
-> +++ b/drivers/gpu/drm/nouveau/core/subdev/timer/nv04.c
-> @@ -185,6 +185,10 @@ nv04_timer_init(struct nouveau_object *object)
->         if (ret)
->                 return ret;
+> diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksourc=
+e/tegra20_timer.c
+> index 73cfa56..2c49643 100644
+> --- a/drivers/clocksource/tegra20_timer.c
+> +++ b/drivers/clocksource/tegra20_timer.c
+> @@ -28,6 +28,8 @@
+>   #include <linux/of_irq.h>
+>   #include <linux/sched_clock.h>
 >
-> +       /* gk20a does not have the calibration registers */
-> +       if (device->chipset == 0xea)
-> +               goto skip_clk_init;
+> +#include <clocksource/tegra_timer.h>
 > +
->         /* aim for 31.25MHz, which gives us nanosecond timestamps */
->         d = 1000000 / 32;
+>   #include <asm/mach/time.h>
+>   #include <asm/smp_twd.h>
 >
-> @@ -235,20 +239,23 @@ nv04_timer_init(struct nouveau_object *object)
->                 d >>= 1;
->         }
+> @@ -39,11 +41,6 @@
+>   #define TIMERUS_USEC_CFG 0x14
+>   #define TIMERUS_CNTR_FREEZE 0x4c
 >
-> -       /* restore the time before suspend */
-> -       lo = priv->suspend_time;
-> -       hi = (priv->suspend_time >> 32);
+> -#define TIMER1_BASE 0x0
+> -#define TIMER2_BASE 0x8
+> -#define TIMER3_BASE 0x50
+> -#define TIMER4_BASE 0x58
 > -
->         nv_debug(priv, "input frequency : %dHz\n", f);
->         nv_debug(priv, "input multiplier: %d\n", m);
->         nv_debug(priv, "numerator       : 0x%08x\n", n);
->         nv_debug(priv, "denominator     : 0x%08x\n", d);
->         nv_debug(priv, "timer frequency : %dHz\n", (f * m) * d / n);
-> -       nv_debug(priv, "time low        : 0x%08x\n", lo);
-> -       nv_debug(priv, "time high       : 0x%08x\n", hi);
+>   #define TIMER_PTV 0x0
+>   #define TIMER_PCR 0x4
 >
->         nv_wr32(priv, NV04_PTIMER_NUMERATOR, n);
->         nv_wr32(priv, NV04_PTIMER_DENOMINATOR, d);
-> +
-> +skip_clk_init:
-> +       /* restore the time before suspend */
-> +       lo = priv->suspend_time;
-> +       hi = (priv->suspend_time >> 32);
-> +
-> +       nv_debug(priv, "time low        : 0x%08x\n", lo);
-> +       nv_debug(priv, "time high       : 0x%08x\n", hi);
-> +
->         nv_wr32(priv, NV04_PTIMER_INTR_0, 0xffffffff);
->         nv_wr32(priv, NV04_PTIMER_INTR_EN_0, 0x00000000);
->         nv_wr32(priv, NV04_PTIMER_TIME_1, hi);
-> --
-> 1.8.5.3
+> @@ -64,7 +61,7 @@ static int tegra_timer_set_next_event(unsigned long=
+ cycles,
+>   	u32 reg;
 >
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+>   	reg =3D 0x80000000 | ((cycles > 1) ? (cycles-1) : 0);
+> -	timer_writel(reg, TIMER3_BASE + TIMER_PTV);
+> +	timer_writel(reg, TEGRA20_TIMER3_BASE + TIMER_PTV);
+>
+>   	return 0;
+>   }
+> @@ -74,12 +71,12 @@ static void tegra_timer_set_mode(enum clock_event=
+_mode mode,
+>   {
+>   	u32 reg;
+>
+> -	timer_writel(0, TIMER3_BASE + TIMER_PTV);
+> +	timer_writel(0, TEGRA20_TIMER3_BASE + TIMER_PTV);
+>
+>   	switch (mode) {
+>   	case CLOCK_EVT_MODE_PERIODIC:
+>   		reg =3D 0xC0000000 | ((1000000/HZ)-1);
+> -		timer_writel(reg, TIMER3_BASE + TIMER_PTV);
+> +		timer_writel(reg, TEGRA20_TIMER3_BASE + TIMER_PTV);
+>   		break;
+>   	case CLOCK_EVT_MODE_ONESHOT:
+>   		break;
+> @@ -142,7 +139,7 @@ static void tegra_read_persistent_clock(struct ti=
+mespec *ts)
+>   static irqreturn_t tegra_timer_interrupt(int irq, void *dev_id)
+>   {
+>   	struct clock_event_device *evt =3D (struct clock_event_device *)de=
+v_id;
+> -	timer_writel(1<<30, TIMER3_BASE + TIMER_PCR);
+> +	timer_writel(1<<30, TEGRA20_TIMER3_BASE + TIMER_PCR);
+>   	evt->event_handler(evt);
+>   	return IRQ_HANDLED;
+>   }
+> diff --git a/include/clocksource/tegra_timer.h b/include/clocksource/=
+tegra_timer.h
+> new file mode 100644
+> index 0000000..ea0bc8b
+> --- /dev/null
+> +++ b/include/clocksource/tegra_timer.h
+> @@ -0,0 +1,43 @@
+> +/*
+> + * Copyright (C) 2010 Google, Inc.
+> + *
+> + * Author:
+> + *	Colin Cross <ccross@google.com>
+
+          ^^^^^^^^^^^^^^^^^^
+> + *
+> + * This software is licensed under the terms of the GNU General Publ=
+ic
+> + * License version 2, as published by the Free Software Foundation, =
+and
+> + * may be copied, distributed, and modified under those terms.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + *
+> + */
+> +
+> +#ifndef __CLOCKSOURCE_TEGRA_TIMER_H
+> +#define __CLOCKSOURCE_TEGRA_TIMER_H
+> +
+> +/* Tegra 20 timers */
+> +#define TEGRA20_TIMER1_BASE	0x0
+> +#define TEGRA20_TIMER2_BASE	0x8
+> +#define TEGRA20_TIMER3_BASE	0x50
+> +#define TEGRA20_TIMER4_BASE	0x58
+> +
+> +/* Tegra 30 timers */
+> +#define TEGRA30_TIMER1_BASE	TEGRA20_TIMER1_BASE
+> +#define TEGRA30_TIMER2_BASE	TEGRA20_TIMER2_BASE
+> +#define TEGRA30_TIMER3_BASE	TEGRA20_TIMER3_BASE
+> +#define TEGRA30_TIMER4_BASE	TEGRA20_TIMER4_BASE
+> +#define TEGRA30_TIMER5_BASE	0x60
+> +#define TEGRA30_TIMER6_BASE	0x68
+> +#define TEGRA30_TIMER7_BASE	0x70
+> +#define TEGRA30_TIMER8_BASE	0x78
+> +#define TEGRA30_TIMER9_BASE	0x80
+> +#define TEGRA30_TIMER0_BASE	0x88
+> +
+> +/* Used by the tegra watchdog timer */
+> +#define TEGRA30_TIMER_WDT_BASE	TEGRA30_TIMER5_BASE
+> +#define TEGRA30_TIMER_WDT_ID	5
+> +
+> +#endif /* __CLOCKSOURCE_TEGRA_TIMER_H */
+>
+
+
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
