@@ -1,58 +1,41 @@
 From: Andrew Chew <achew@nvidia.com>
-Subject: [PATCH v2 0/3] tegra30 watchdog support
-Date: Mon, 3 Feb 2014 16:17:32 -0800
-Message-ID: <1391473055-3158-1-git-send-email-achew@nvidia.com>
+Subject: [PATCH v2 1/3] clocksource: tegra: Add nvidia,tegra30-timer compat
+Date: Mon, 3 Feb 2014 16:17:33 -0800
+Message-ID: <1391473055-3158-2-git-send-email-achew@nvidia.com>
+References: <1391473055-3158-1-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-doc-owner@vger.kernel.org>
-Sender: linux-doc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1391473055-3158-1-git-send-email-achew@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: daniel.lezcano@linaro.org, tglx@linutronix.de, swarren@wwwdotorg.org, thierry.reding@gmail.com, rob@landley.net, grant.likely@linaro.org, robh+dt@kernel.org, abrestic@chromium.org, dgreid@chromium.org, katierh@chromium.org
 Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org, Andrew Chew <achew@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch series ultimately adds watchdog support for tegra30 and later
-chips.
+There are some differences between tegra20's timer registers and tegra30's
+(and later).  For example, tegra30 has more timers.  In addition, watchdogs
+are not present in tegra20.
 
-The existing tegra clocksource driver (drivers/clocksource/tegra20_timer.c)
-sadly does not distinguish between tegra20 and tegra30 (and later), which
-it should have done since the contents of the timer register base have
-changed significantly.  In particular, tegra30 (and later) has more timers,
-and also hardware watchdog registers.
+Add this compatibility string in order to be able to distinguish
+whether the additional timers and watchdogs are there or not.
 
-The first patch adds nvidia,tegra30-timer to the list of compatibilty
-strings for the tegra timer device tree node, so that we can distinguish
-between tegra20 and tegra30 (and later).
+Signed-off-by: Andrew Chew <achew@nvidia.com>
+Acked-by: Stephen Warren <swarren@nvidia.com>
+---
+ drivers/clocksource/tegra20_timer.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-The second patch separates out some macros that are interesting to other
-drivers (in particular, the tegra watchdog driver), and also adds the
-the missing timers that are present in tegra30 and later.
-
-The third patch adds the actual watchdog driver.  This driver configures
-a single watchdog (watchdog 0), pairs it with timer 5
-(defined as TEGRA30_TIMER_WDT_* in the shared header file from the previous
-patch), and sets it up so that upon timer expiration, will cause the target
-system to reset.
-
-I've decided to encapsulate all related changes into one patch series, since
-I did not modify any device tree bindings and therefore don't need to review
-dt changes separately.  This way, everything can be seen within its complete
-context.
-
-Andrew Chew (3):
-  clocksource: tegra: Add nvidia,tegra30-timer compat
-  clocksource: tegra: Define timer bases in header file
-  watchdog: Add tegra watchdog
-
- Documentation/watchdog/watchdog-parameters.txt |   5 +
- drivers/clocksource/tegra20_timer.c            |  16 +-
- drivers/watchdog/Kconfig                       |  11 +
- drivers/watchdog/Makefile                      |   1 +
- drivers/watchdog/tegra_wdt.c                   | 372 +++++++++++++++++++++++++
- include/clocksource/tegra_timer.h              |  43 +++
- 6 files changed, 439 insertions(+), 9 deletions(-)
- create mode 100644 drivers/watchdog/tegra_wdt.c
- create mode 100644 include/clocksource/tegra_timer.h
-
+diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
+index d1869f0..73cfa56 100644
+--- a/drivers/clocksource/tegra20_timer.c
++++ b/drivers/clocksource/tegra20_timer.c
+@@ -218,6 +218,7 @@ static void __init tegra20_init_timer(struct device_node *np)
+ 					0x1, 0x1fffffff);
+ }
+ CLOCKSOURCE_OF_DECLARE(tegra20_timer, "nvidia,tegra20-timer", tegra20_init_timer);
++CLOCKSOURCE_OF_DECLARE(tegra30_timer, "nvidia,tegra30-timer", tegra20_init_timer);
+ 
+ static void __init tegra20_init_rtc(struct device_node *np)
+ {
 -- 
 1.8.1.5
-
