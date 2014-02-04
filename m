@@ -1,169 +1,191 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH v2 2/3] clocksource: tegra: Define timer bases in header
- file
-Date: Tue, 04 Feb 2014 08:54:48 +0100
-Message-ID: <52F09CC8.80601@linaro.org>
-References: <1391473055-3158-1-git-send-email-achew@nvidia.com> <1391473055-3158-3-git-send-email-achew@nvidia.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC 07/16] drm/nouveau/bar/nvc0: support chips without BAR3
+Date: Tue, 4 Feb 2014 17:31:48 +0900
+Message-ID: <52F0A574.1070601@nvidia.com>
+References: <1391224618-3794-1-git-send-email-acourbot@nvidia.com>	<1391224618-3794-8-git-send-email-acourbot@nvidia.com> <CACAvsv7BDDEOJ-C88PRWy7z21c1LMorb5r=f6atDJAWtTN=Luw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1391473055-3158-3-git-send-email-achew@nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Andrew Chew <achew@nvidia.com>, tglx@linutronix.de, swarren@wwwdotorg.org, thierry.reding@gmail.com, rob@landley.net, grant.likely@linaro.org, robh+dt@kernel.org, abrestic@chromium.org, dgreid@chromium.org, katierh@chromium.org
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACAvsv7BDDEOJ-C88PRWy7z21c1LMorb5r=f6atDJAWtTN=Luw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ken Adams <KAdams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/04/2014 01:17 AM, Andrew Chew wrote:
-> Added timers that are present in tegra30 and later, that are NOT in t=
-egra20.
->
-> Also, some of these timer bases are needed in the tegra watchdog driv=
-er, so
-> separate them out into a header file that both the clocksource driver=
- and
-> the watchdog driver can share them.
->
-> Signed-off-by: Andrew Chew <achew@nvidia.com>
+On 02/04/2014 12:54 PM, Ben Skeggs wrote:
+> On Sat, Feb 1, 2014 at 1:16 PM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> Adapt the NVC0 BAR driver to make it able to support chips that do not
+>> expose a BAR3. When this happens, BAR1 is then used for USERD mapping
+>> and the BAR alloc() functions is disabled, making GPU objects unable
+>> to rely on BAR for data access and falling back to PRAMIN.
+>>
+>> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>   drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c | 115 +++++++++++++------------
+>>   1 file changed, 61 insertions(+), 54 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c b/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c
+>> index 3f30db6..c2bb0e5 100644
+>> --- a/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c
+>> +++ b/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c
+>> @@ -79,87 +79,88 @@ nvc0_bar_unmap(struct nouveau_bar *bar, struct nouveau_vma *vma)
+>>   }
+>>
+>>   static int
+>> -nvc0_bar_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
+>> -             struct nouveau_oclass *oclass, void *data, u32 size,
+>> -             struct nouveau_object **pobject)
+>> +nvc0_bar_init_vm(struct nvc0_bar_priv *priv, int nr, int bar)
+>>   {
+>> -       struct nouveau_device *device = nv_device(parent);
+>> -       struct nvc0_bar_priv *priv;
+>> +       struct nouveau_device *device = nv_device(&priv->base);
+>>          struct nouveau_gpuobj *mem;
+>>          struct nouveau_vm *vm;
+>> +       resource_size_t bar_len;
+>>          int ret;
+>>
+>> -       ret = nouveau_bar_create(parent, engine, oclass, &priv);
+>> -       *pobject = nv_object(priv);
+>> -       if (ret)
+>> -               return ret;
+>> -
+>> -       /* BAR3 */
+>>          ret = nouveau_gpuobj_new(nv_object(priv), NULL, 0x1000, 0, 0,
+>> -                               &priv->bar[0].mem);
+>> -       mem = priv->bar[0].mem;
+>> +                               &priv->bar[nr].mem);
+>> +       mem = priv->bar[nr].mem;
+>>          if (ret)
+>>                  return ret;
+>>
+>>          ret = nouveau_gpuobj_new(nv_object(priv), NULL, 0x8000, 0, 0,
+>> -                               &priv->bar[0].pgd);
+>> +                               &priv->bar[nr].pgd);
+>>          if (ret)
+>>                  return ret;
+>>
+>> -       ret = nouveau_vm_new(device, 0, nv_device_resource_len(device, 3), 0, &vm);
+>> +       bar_len = nv_device_resource_len(device, bar);
+>> +
+>> +       ret = nouveau_vm_new(device, 0, bar_len, 0, &vm);
+>>          if (ret)
+>>                  return ret;
+>>
+>>          atomic_inc(&vm->engref[NVDEV_SUBDEV_BAR]);
+>>
+>> -       ret = nouveau_gpuobj_new(nv_object(priv), NULL,
+>> -                                (nv_device_resource_len(device, 3) >> 12) * 8,
+>> -                                0x1000, NVOBJ_FLAG_ZERO_ALLOC,
+>> -                                &vm->pgt[0].obj[0]);
+>> -       vm->pgt[0].refcount[0] = 1;
+>> -       if (ret)
+>> -               return ret;
+>> +       /*
+>> +        * Bootstrap page table lookup.
+>> +        */
+>> +       if (bar == 3) {
+>> +               ret = nouveau_gpuobj_new(nv_object(priv), NULL,
+>> +                                        (bar_len >> 12) * 8, 0x1000,
+>> +                                        NVOBJ_FLAG_ZERO_ALLOC,
+>> +                                       &vm->pgt[0].obj[0]);
+>> +               vm->pgt[0].refcount[0] = 1;
+>> +               if (ret)
+>> +                       return ret;
+>> +       }
+>>
+>> -       ret = nouveau_vm_ref(vm, &priv->bar[0].vm, priv->bar[0].pgd);
+>> +       ret = nouveau_vm_ref(vm, &priv->bar[nr].vm, priv->bar[nr].pgd);
+>>          nouveau_vm_ref(NULL, &vm, NULL);
+>>          if (ret)
+>>                  return ret;
+>>
+>> -       nv_wo32(mem, 0x0200, lower_32_bits(priv->bar[0].pgd->addr));
+>> -       nv_wo32(mem, 0x0204, upper_32_bits(priv->bar[0].pgd->addr));
+>> -       nv_wo32(mem, 0x0208, lower_32_bits(nv_device_resource_len(device, 3) - 1));
+>> -       nv_wo32(mem, 0x020c, upper_32_bits(nv_device_resource_len(device, 3) - 1));
+>> +       nv_wo32(mem, 0x0200, lower_32_bits(priv->bar[nr].pgd->addr));
+>> +       nv_wo32(mem, 0x0204, upper_32_bits(priv->bar[nr].pgd->addr));
+>> +       nv_wo32(mem, 0x0208, lower_32_bits(bar_len - 1));
+>> +       nv_wo32(mem, 0x020c, upper_32_bits(bar_len - 1));
+>>
+>> -       /* BAR1 */
+>> -       ret = nouveau_gpuobj_new(nv_object(priv), NULL, 0x1000, 0, 0,
+>> -                               &priv->bar[1].mem);
+>> -       mem = priv->bar[1].mem;
+>> -       if (ret)
+>> -               return ret;
+>> +       return 0;
+>> +}
+>>
+>> -       ret = nouveau_gpuobj_new(nv_object(priv), NULL, 0x8000, 0, 0,
+>> -                               &priv->bar[1].pgd);
+>> -       if (ret)
+>> -               return ret;
+>> +static int
+>> +nvc0_bar_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
+>> +             struct nouveau_oclass *oclass, void *data, u32 size,
+>> +             struct nouveau_object **pobject)
+>> +{
+>> +       struct nouveau_device *device = nv_device(parent);
+>> +       struct nvc0_bar_priv *priv;
+>> +       bool has_bar3 = nv_device_resource_len(device, 3) != 0;
+>> +       int ret;
+>>
+>> -       ret = nouveau_vm_new(device, 0, nv_device_resource_len(device, 1), 0, &vm);
+>> +       ret = nouveau_bar_create(parent, engine, oclass, &priv);
+>> +       *pobject = nv_object(priv);
+>>          if (ret)
+>>                  return ret;
+>>
+>> -       atomic_inc(&vm->engref[NVDEV_SUBDEV_BAR]);
+>> +       /* BAR3 */
+>> +       if (has_bar3) {
+>> +               ret = nvc0_bar_init_vm(priv, 0, 3);
+>> +               if (ret)
+>> +                       return ret;
+>> +               priv->base.alloc = nouveau_bar_alloc;
+>> +               priv->base.kmap = nvc0_bar_kmap;
+>> +       }
+>>
+>> -       ret = nouveau_vm_ref(vm, &priv->bar[1].vm, priv->bar[1].pgd);
+>> -       nouveau_vm_ref(NULL, &vm, NULL);
+>> +       /* BAR1 */
+>> +       ret = nvc0_bar_init_vm(priv, 1, 1);
+>>          if (ret)
+>>                  return ret;
+>>
+>> -       nv_wo32(mem, 0x0200, lower_32_bits(priv->bar[1].pgd->addr));
+>> -       nv_wo32(mem, 0x0204, upper_32_bits(priv->bar[1].pgd->addr));
+>> -       nv_wo32(mem, 0x0208, lower_32_bits(nv_device_resource_len(device, 1) - 1));
+>> -       nv_wo32(mem, 0x020c, upper_32_bits(nv_device_resource_len(device, 1) - 1));
+>> -
+>> -       priv->base.alloc = nouveau_bar_alloc;
+>> -       priv->base.kmap = nvc0_bar_kmap;
+>>          priv->base.umap = nvc0_bar_umap;
+>>          priv->base.unmap = nvc0_bar_unmap;
+>>          priv->base.flush = nv84_bar_flush;
+>> @@ -176,12 +177,16 @@ nvc0_bar_dtor(struct nouveau_object *object)
+>>          nouveau_gpuobj_ref(NULL, &priv->bar[1].pgd);
+>>          nouveau_gpuobj_ref(NULL, &priv->bar[1].mem);
+>>
+>> -       if (priv->bar[0].vm) {
+>> -               nouveau_gpuobj_ref(NULL, &priv->bar[0].vm->pgt[0].obj[0]);
+>> -               nouveau_vm_ref(NULL, &priv->bar[0].vm, priv->bar[0].pgd);
+>> +       if (priv->bar[0].mem) {
+>> +               if (priv->bar[0].vm) {
+>> +                       nouveau_gpuobj_ref(NULL,
+>> +                                          &priv->bar[0].vm->pgt[0].obj[0]);
+>> +                       nouveau_vm_ref(NULL, &priv->bar[0].vm,
+>> +                                      priv->bar[0].pgd);
+>> +               }
+>> +               nouveau_gpuobj_ref(NULL, &priv->bar[0].pgd);
+>> +               nouveau_gpuobj_ref(NULL, &priv->bar[0].mem);
+>>          }
+>> -       nouveau_gpuobj_ref(NULL, &priv->bar[0].pgd);
+>> -       nouveau_gpuobj_ref(NULL, &priv->bar[0].mem);
+> Did the conditional on priv->bar[0].mem fix anything here?  The ref()
+> functions called are designed to handle the NULL pointers already.
 
-When reading the patch 3/3, I don't see any define reused from this=20
-header except TEGRA30_TIMER_WDT_BASE which is only used for the=20
-watchdog. May be I missed something but I don't see any definition=20
-shared and thus I don't see the point of creating this header file.
-
-> ---
->   drivers/clocksource/tegra20_timer.c | 15 ++++++-------
->   include/clocksource/tegra_timer.h   | 43 ++++++++++++++++++++++++++=
-+++++++++++
->   2 files changed, 49 insertions(+), 9 deletions(-)
->   create mode 100644 include/clocksource/tegra_timer.h
->
-> diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksourc=
-e/tegra20_timer.c
-> index 73cfa56..2c49643 100644
-> --- a/drivers/clocksource/tegra20_timer.c
-> +++ b/drivers/clocksource/tegra20_timer.c
-> @@ -28,6 +28,8 @@
->   #include <linux/of_irq.h>
->   #include <linux/sched_clock.h>
->
-> +#include <clocksource/tegra_timer.h>
-> +
->   #include <asm/mach/time.h>
->   #include <asm/smp_twd.h>
->
-> @@ -39,11 +41,6 @@
->   #define TIMERUS_USEC_CFG 0x14
->   #define TIMERUS_CNTR_FREEZE 0x4c
->
-> -#define TIMER1_BASE 0x0
-> -#define TIMER2_BASE 0x8
-> -#define TIMER3_BASE 0x50
-> -#define TIMER4_BASE 0x58
-> -
->   #define TIMER_PTV 0x0
->   #define TIMER_PCR 0x4
->
-> @@ -64,7 +61,7 @@ static int tegra_timer_set_next_event(unsigned long=
- cycles,
->   	u32 reg;
->
->   	reg =3D 0x80000000 | ((cycles > 1) ? (cycles-1) : 0);
-> -	timer_writel(reg, TIMER3_BASE + TIMER_PTV);
-> +	timer_writel(reg, TEGRA20_TIMER3_BASE + TIMER_PTV);
->
->   	return 0;
->   }
-> @@ -74,12 +71,12 @@ static void tegra_timer_set_mode(enum clock_event=
-_mode mode,
->   {
->   	u32 reg;
->
-> -	timer_writel(0, TIMER3_BASE + TIMER_PTV);
-> +	timer_writel(0, TEGRA20_TIMER3_BASE + TIMER_PTV);
->
->   	switch (mode) {
->   	case CLOCK_EVT_MODE_PERIODIC:
->   		reg =3D 0xC0000000 | ((1000000/HZ)-1);
-> -		timer_writel(reg, TIMER3_BASE + TIMER_PTV);
-> +		timer_writel(reg, TEGRA20_TIMER3_BASE + TIMER_PTV);
->   		break;
->   	case CLOCK_EVT_MODE_ONESHOT:
->   		break;
-> @@ -142,7 +139,7 @@ static void tegra_read_persistent_clock(struct ti=
-mespec *ts)
->   static irqreturn_t tegra_timer_interrupt(int irq, void *dev_id)
->   {
->   	struct clock_event_device *evt =3D (struct clock_event_device *)de=
-v_id;
-> -	timer_writel(1<<30, TIMER3_BASE + TIMER_PCR);
-> +	timer_writel(1<<30, TEGRA20_TIMER3_BASE + TIMER_PCR);
->   	evt->event_handler(evt);
->   	return IRQ_HANDLED;
->   }
-> diff --git a/include/clocksource/tegra_timer.h b/include/clocksource/=
-tegra_timer.h
-> new file mode 100644
-> index 0000000..ea0bc8b
-> --- /dev/null
-> +++ b/include/clocksource/tegra_timer.h
-> @@ -0,0 +1,43 @@
-> +/*
-> + * Copyright (C) 2010 Google, Inc.
-> + *
-> + * Author:
-> + *	Colin Cross <ccross@google.com>
-
-          ^^^^^^^^^^^^^^^^^^
-> + *
-> + * This software is licensed under the terms of the GNU General Publ=
-ic
-> + * License version 2, as published by the Free Software Foundation, =
-and
-> + * may be copied, distributed, and modified under those terms.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + */
-> +
-> +#ifndef __CLOCKSOURCE_TEGRA_TIMER_H
-> +#define __CLOCKSOURCE_TEGRA_TIMER_H
-> +
-> +/* Tegra 20 timers */
-> +#define TEGRA20_TIMER1_BASE	0x0
-> +#define TEGRA20_TIMER2_BASE	0x8
-> +#define TEGRA20_TIMER3_BASE	0x50
-> +#define TEGRA20_TIMER4_BASE	0x58
-> +
-> +/* Tegra 30 timers */
-> +#define TEGRA30_TIMER1_BASE	TEGRA20_TIMER1_BASE
-> +#define TEGRA30_TIMER2_BASE	TEGRA20_TIMER2_BASE
-> +#define TEGRA30_TIMER3_BASE	TEGRA20_TIMER3_BASE
-> +#define TEGRA30_TIMER4_BASE	TEGRA20_TIMER4_BASE
-> +#define TEGRA30_TIMER5_BASE	0x60
-> +#define TEGRA30_TIMER6_BASE	0x68
-> +#define TEGRA30_TIMER7_BASE	0x70
-> +#define TEGRA30_TIMER8_BASE	0x78
-> +#define TEGRA30_TIMER9_BASE	0x80
-> +#define TEGRA30_TIMER0_BASE	0x88
-> +
-> +/* Used by the tegra watchdog timer */
-> +#define TEGRA30_TIMER_WDT_BASE	TEGRA30_TIMER5_BASE
-> +#define TEGRA30_TIMER_WDT_ID	5
-> +
-> +#endif /* __CLOCKSOURCE_TEGRA_TIMER_H */
->
-
-
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+You're right, this test is not needed at all. Thanks.
