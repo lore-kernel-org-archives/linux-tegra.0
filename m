@@ -1,62 +1,62 @@
-From: Andrew Chew <AChew@nvidia.com>
-Subject: RE: [PATCH v2 2/3] clocksource: tegra: Define timer bases in header
- file
-Date: Tue, 4 Feb 2014 10:55:22 -0800
-Message-ID: <643E69AA4436674C8F39DCC2C05F763863199855EA@HQMAIL03.nvidia.com>
-References: <1391473055-3158-1-git-send-email-achew@nvidia.com>
- <1391473055-3158-3-git-send-email-achew@nvidia.com>
- <52F09CC8.80601@linaro.org>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: RE: [PATCH v1] clocksource: tegra: Add nvidia,tegra30-timer compat
+Date: Tue, 4 Feb 2014 20:10:05 +0100 (CET)
+Message-ID: <alpine.DEB.2.02.1402042004000.24986@ionos.tec.linutronix.de>
+References: <1391203779-5676-1-git-send-email-achew@nvidia.com> <52EFC652.9000209@linaro.org> <643E69AA4436674C8F39DCC2C05F763863199852C7@HQMAIL03.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <52F09CC8.80601@linaro.org>
-Content-Language: en-US
-Sender: linux-doc-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, "tglx@linutronix.de" <tglx@linutronix.de>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "rob@landley.net" <rob@landley.net>, "grant.likely@linaro.org" <grant.likely@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "abrestic@chromium.org" <abrestic@chromium.org>, "dgreid@chromium.org" <dgreid@chromium.org>, "katierh@chromium.org" <katierh@chromium.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <643E69AA4436674C8F39DCC2C05F763863199852C7@HQMAIL03.nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Chew <AChew@nvidia.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "abrestic@chromium.org" <abrestic@chromium.org>, "dgreid@chromium.org" <dgreid@chromium.org>, "katierh@chromium.org" <katierh@chromium.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-PiBGcm9tOiBEYW5pZWwgTGV6Y2FubyBbbWFpbHRvOmRhbmllbC5sZXpjYW5vQGxpbmFyby5vcmdd
-DQo+IFNlbnQ6IE1vbmRheSwgRmVicnVhcnkgMDMsIDIwMTQgMTE6NTUgUE0NCj4gVG86IEFuZHJl
-dyBDaGV3OyB0Z2x4QGxpbnV0cm9uaXguZGU7IHN3YXJyZW5Ad3d3ZG90b3JnLm9yZzsNCj4gdGhp
-ZXJyeS5yZWRpbmdAZ21haWwuY29tOyByb2JAbGFuZGxleS5uZXQ7IGdyYW50Lmxpa2VseUBsaW5h
-cm8ub3JnOw0KPiByb2JoK2R0QGtlcm5lbC5vcmc7IGFicmVzdGljQGNocm9taXVtLm9yZzsgZGdy
-ZWlkQGNocm9taXVtLm9yZzsNCj4ga2F0aWVyaEBjaHJvbWl1bS5vcmcNCj4gQ2M6IGxpbnV4LWtl
-cm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LXRlZ3JhQHZnZXIua2VybmVsLm9yZzsgbGludXgt
-DQo+IHdhdGNoZG9nQHZnZXIua2VybmVsLm9yZzsgbGludXgtZG9jQHZnZXIua2VybmVsLm9yZw0K
-PiBTdWJqZWN0OiBSZTogW1BBVENIIHYyIDIvM10gY2xvY2tzb3VyY2U6IHRlZ3JhOiBEZWZpbmUg
-dGltZXIgYmFzZXMgaW4gaGVhZGVyDQo+IGZpbGUNCj4gDQo+IE9uIDAyLzA0LzIwMTQgMDE6MTcg
-QU0sIEFuZHJldyBDaGV3IHdyb3RlOg0KPiA+IEFkZGVkIHRpbWVycyB0aGF0IGFyZSBwcmVzZW50
-IGluIHRlZ3JhMzAgYW5kIGxhdGVyLCB0aGF0IGFyZSBOT1QgaW4gdGVncmEyMC4NCj4gPg0KPiA+
-IEFsc28sIHNvbWUgb2YgdGhlc2UgdGltZXIgYmFzZXMgYXJlIG5lZWRlZCBpbiB0aGUgdGVncmEg
-d2F0Y2hkb2cNCj4gPiBkcml2ZXIsIHNvIHNlcGFyYXRlIHRoZW0gb3V0IGludG8gYSBoZWFkZXIg
-ZmlsZSB0aGF0IGJvdGggdGhlDQo+ID4gY2xvY2tzb3VyY2UgZHJpdmVyIGFuZCB0aGUgd2F0Y2hk
-b2cgZHJpdmVyIGNhbiBzaGFyZSB0aGVtLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogQW5kcmV3
-IENoZXcgPGFjaGV3QG52aWRpYS5jb20+DQo+IA0KPiBXaGVuIHJlYWRpbmcgdGhlIHBhdGNoIDMv
-MywgSSBkb24ndCBzZWUgYW55IGRlZmluZSByZXVzZWQgZnJvbSB0aGlzIGhlYWRlcg0KPiBleGNl
-cHQgVEVHUkEzMF9USU1FUl9XRFRfQkFTRSB3aGljaCBpcyBvbmx5IHVzZWQgZm9yIHRoZSB3YXRj
-aGRvZy4NCj4gTWF5IGJlIEkgbWlzc2VkIHNvbWV0aGluZyBidXQgSSBkb24ndCBzZWUgYW55IGRl
-ZmluaXRpb24gc2hhcmVkIGFuZCB0aHVzIEkNCj4gZG9uJ3Qgc2VlIHRoZSBwb2ludCBvZiBjcmVh
-dGluZyB0aGlzIGhlYWRlciBmaWxlLg0KDQpJIGd1ZXNzIHRoZSBwb2ludCBpcyB0byBtYWtlIG90
-aGVyIHBvdGVudGlhbCBkcml2ZXJzIHRoYXQgbWFrZSB1c2Ugb2YgdGhlIHRpbWVyDQpyZWdpc3Rl
-cnMgYXdhcmUgdGhhdCB0aGlzIHBhcnRpY3VsYXIgdGltZXIgKHRpbWVyIDUpIGlzIHByb3Zpc2lv
-bmVkIGZvciB0aGUgd2F0Y2hkb2cNCmRyaXZlci4gIFJpZ2h0IG5vdywgeW91J3JlIHJpZ2h0LCB0
-aGVyZSByZWFsbHkgaXNuJ3QgbXVjaCB0aGF0J3Mgc2hhcmVkLi4udGhlIG9ubHkNCnRoaW5nIHJl
-YWxseSBpcyB0aGUgYmFzZSBhZGRyZXNzIG9mIHRpbWVyIDUgKGFuZCBpdHMgYXNzb2NpYXRlZCBJ
-RCkuLi50aGUgdGltZXIgYmFzZXMNCmFyZSBraW5kIG9mIGFsbCBvdmVyIHRoZSBwbGFjZSwgc28g
-aXQncyBub3Qgc3RyYWlnaHRmb3J3YXJkIHRvIGNhbGN1bGF0ZSB0aGUgSUQgZnJvbSB0aGUNCmJh
-c2UgYWRkcmVzcy4NCg0KQnV0IEkgYmVsaWV2ZSB0aGUgdGhvdWdodCBhdCB0aGUgdGltZSAoZnJv
-bSBTdGVwaGVuIFdhcnJlbidzIHN1Z2dlc3Rpb24pIGlzIHRvIGhhdmUNCmEgY2VudHJhbCBwbGFj
-ZSB3aGVyZSB0aGlzIHN0dWZmIGlzIGRlZmluZWQgc28gdGhhdCBpdCdzIG1vcmUgY2xlYXIgd2hh
-dCB0aW1lcnMgYXJlDQpwcm92aXNpb25lZCBmb3Igd2hhdCBwdXJwb3Nlcy4gIEl0IGp1c3QgaGFw
-cGVucyB0aGF0IHRvZGF5LCB0aGUgb25seSB1c2VycyBvZg0KdGhlIHRpbWVycywgb3RoZXIgdGhh
-biBjbG9ja3NvdXJjZSwgaXMgd2F0Y2hkb2csIGFzIGZhciBhcyBJIGNhbiB0ZWxsLg0KDQo+ID4g
-KysrIGIvaW5jbHVkZS9jbG9ja3NvdXJjZS90ZWdyYV90aW1lci5oDQo+ID4gQEAgLTAsMCArMSw0
-MyBAQA0KPiA+ICsvKg0KPiA+ICsgKiBDb3B5cmlnaHQgKEMpIDIwMTAgR29vZ2xlLCBJbmMuDQo+
-ID4gKyAqDQo+ID4gKyAqIEF1dGhvcjoNCj4gPiArICoJQ29saW4gQ3Jvc3MgPGNjcm9zc0Bnb29n
-bGUuY29tPg0KDQpUaGUgY29udGVudHMgb2YgdGhpcyBuZXcgaGVhZGVyIGZpbGUgYXJlIGxhcmdl
-bHkganVzdCBhIGN1dCBhbmQgcGFzdGUgb2YgdGhlIGNvcnJlc3BvbmRpbmcNCnNuaXBwZXQgaW4g
-dGVncmEyMC10aW1lci5jLCBzbyBJIHRob3VnaHQgSSdkIGNhcnJ5IG92ZXIgdGhlIGxpY2Vuc2Ug
-dmVyYmF0aW0uICBJIGRpZG4ndCBhdXRob3INCnRoaXMgcmVhbGx5Li4uSSBqdXN0IG1vdmVkIGl0
-IGFyb3VuZC4gIFdoYXQgc2hvdWxkIEkgZG8gaW5zdGVhZD8NCg==
+On Mon, 3 Feb 2014, Andrew Chew wrote:
+
+> > From: Daniel Lezcano [mailto:daniel.lezcano@linaro.org]
+> > Sent: Monday, February 03, 2014 8:40 AM
+> > To: Andrew Chew; tglx@linutronix.de; swarren@wwwdotorg.org;
+> > thierry.reding@gmail.com; abrestic@chromium.org; dgreid@chromium.org;
+> > katierh@chromium.org
+> > Cc: linux-kernel@vger.kernel.org; linux-tegra@vger.kernel.org
+> > Subject: Re: [PATCH v1] clocksource: tegra: Add nvidia,tegra30-timer compat
+> > 
+> > On 01/31/2014 10:29 PM, Andrew Chew wrote:
+> > > There are some differences between tegra20's timer registers and
+> > > tegra30's (and later).  For one thing, the watchdogs don't seem to be
+> > > present in tegra20.
+> > 
+> > "don't seem", so it is an assumption ?
+> 
+> No, this is not an assumption.  It has been verified by other NVIDIA engineers
+> since I proposed this change.
+
+So why is your changelog saying "don't seem to be" ?
+  
+> > > Add this compatibility string in order to be able to distinguish
+> > > whether the watchdogs are there or not.
+> > 
+> > Sorry but I don't get the connection between declaring the tegra30_timer
+> > and the log. Can you elaborate please ?
+> 
+> I don't know what you mean by "the log".  Was that a typo?  Anyway, I
+
+Daniel refers to the changelog.
+
+> have a watchdog driver that I intend to follow up with, that binds
+> with tegra30-timer.  I don't want this driver to be able to bind with
+> tegra20-timer, because the driver won't actually work on tegra20.
+
+So the changelog should say:
+
+  Tegra30 and later have more timer functionality than Tegra20, but
+  share the clocksource core code.
+
+  Add a separate devicetree entry which defaults to the tegra20 code
+  for now. This is preparatory work for adding new tegra30 specific
+  functionality.
+
+Thanks,
+
+	tglx
