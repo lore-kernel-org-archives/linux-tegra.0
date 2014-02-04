@@ -1,55 +1,58 @@
-From: Andrew Chew <AChew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH v1] ARM: tegra: add nvidia,wdt-timer-id optional property
-Date: Mon, 3 Feb 2014 13:29:33 -0800
-Message-ID: <643E69AA4436674C8F39DCC2C05F7638631998539D@HQMAIL03.nvidia.com>
-References: <1391204811-6293-1-git-send-email-achew@nvidia.com>
- <20140203171053.GA28338@e106331-lin.cambridge.arm.com>
- <643E69AA4436674C8F39DCC2C05F763863199852CA@HQMAIL03.nvidia.com>
- <52F005A0.4080807@wwwdotorg.org>
- <643E69AA4436674C8F39DCC2C05F7638631998538B@HQMAIL03.nvidia.com>
- <52F00994.7080701@wwwdotorg.org>
+From: Andrew Chew <achew@nvidia.com>
+Subject: [PATCH v2 0/3] tegra30 watchdog support
+Date: Mon, 3 Feb 2014 16:17:32 -0800
+Message-ID: <1391473055-3158-1-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52F00994.7080701-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: "robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, "ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org" <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, "galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org" <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org" <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org" <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org" <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "katierh-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org" <katierh-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-doc-owner@vger.kernel.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: daniel.lezcano@linaro.org, tglx@linutronix.de, swarren@wwwdotorg.org, thierry.reding@gmail.com, rob@landley.net, grant.likely@linaro.org, robh+dt@kernel.org, abrestic@chromium.org, dgreid@chromium.org, katierh@chromium.org
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org, Andrew Chew <achew@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-> On 02/03/2014 02:16 PM, Andrew Chew wrote:
-> >> On 02/03/2014 11:59 AM, Andrew Chew wrote:
-> >>>> On Fri, Jan 31, 2014 at 09:46:51PM +0000, Andrew Chew wrote:
-> >>>>> This optional property can be used to specify which timers are to
-> >>>>> be used for hardware watchdog timeouts (via a tegra wdt driver).
-> >>>>
-> >>>> Is there any reason that a particular timer should be used?
-> >>>
-> >>> I worry about colliding with other timer allocations, and wanted to
-> >>> be flexible in this regard.
-> >>
-> >> Are the other timer allocations represented in DT, or simply made by
-> >> or hard- coded in the driver? If the former, this property seems like
-> >> a good equivalent of any existing allocations. If the latter, can't
-> >> the driver just allocate or hard- code the allocation in the same way as any
-> existing allocations?
-> >
-> > From what I've seen, timer allocations are just hard-coded into whatever
-> driver.
-> > I didn't think this was a particularly good idea, since when writing
-> > other drivers that for some reason need a timer, the author has to be
-> > aware of allocations made in other, barely related drivers.
-> 
-> I'm not sure that they would; why wouldn't the timer driver register the
-> various timers with standard Linux APIs which the clients talk to, thus
-> avoiding the clients having any knowledge at all of which channels are used
-> for what.
-> 
-> If you're talking about the watchdog driver, then can't we just create a
-> shared header file that the clocksource and watchdog drivers both include,
-> which defines the timer ID allocations?
+This patch series ultimately adds watchdog support for tegra30 and later
+chips.
 
-Sure, let's go with that.  In that case, this patch isn't needed, and should be
-dropped.
+The existing tegra clocksource driver (drivers/clocksource/tegra20_timer.c)
+sadly does not distinguish between tegra20 and tegra30 (and later), which
+it should have done since the contents of the timer register base have
+changed significantly.  In particular, tegra30 (and later) has more timers,
+and also hardware watchdog registers.
+
+The first patch adds nvidia,tegra30-timer to the list of compatibilty
+strings for the tegra timer device tree node, so that we can distinguish
+between tegra20 and tegra30 (and later).
+
+The second patch separates out some macros that are interesting to other
+drivers (in particular, the tegra watchdog driver), and also adds the
+the missing timers that are present in tegra30 and later.
+
+The third patch adds the actual watchdog driver.  This driver configures
+a single watchdog (watchdog 0), pairs it with timer 5
+(defined as TEGRA30_TIMER_WDT_* in the shared header file from the previous
+patch), and sets it up so that upon timer expiration, will cause the target
+system to reset.
+
+I've decided to encapsulate all related changes into one patch series, since
+I did not modify any device tree bindings and therefore don't need to review
+dt changes separately.  This way, everything can be seen within its complete
+context.
+
+Andrew Chew (3):
+  clocksource: tegra: Add nvidia,tegra30-timer compat
+  clocksource: tegra: Define timer bases in header file
+  watchdog: Add tegra watchdog
+
+ Documentation/watchdog/watchdog-parameters.txt |   5 +
+ drivers/clocksource/tegra20_timer.c            |  16 +-
+ drivers/watchdog/Kconfig                       |  11 +
+ drivers/watchdog/Makefile                      |   1 +
+ drivers/watchdog/tegra_wdt.c                   | 372 +++++++++++++++++++++++++
+ include/clocksource/tegra_timer.h              |  43 +++
+ 6 files changed, 439 insertions(+), 9 deletions(-)
+ create mode 100644 drivers/watchdog/tegra_wdt.c
+ create mode 100644 include/clocksource/tegra_timer.h
+
+-- 
+1.8.1.5
+
