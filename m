@@ -1,206 +1,75 @@
 From: Ben Skeggs <skeggsb@gmail.com>
-Subject: Re: [RFC 07/16] drm/nouveau/bar/nvc0: support chips without BAR3
-Date: Tue, 4 Feb 2014 13:54:48 +1000
-Message-ID: <CACAvsv7BDDEOJ-C88PRWy7z21c1LMorb5r=f6atDJAWtTN=Luw@mail.gmail.com>
+Subject: Re: [RFC 10/16] drm/nouveau/timer: skip calibration on GK20A
+Date: Tue, 4 Feb 2014 13:55:57 +1000
+Message-ID: <CACAvsv4T=TRb05OtkxG=t1+Ou9=Of9c-ALWkHJjKYpNi2aGs5Q@mail.gmail.com>
 References: <1391224618-3794-1-git-send-email-acourbot@nvidia.com>
-	<1391224618-3794-8-git-send-email-acourbot@nvidia.com>
+	<1391224618-3794-11-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1391224618-3794-8-git-send-email-acourbot@nvidia.com>
+In-Reply-To: <1391224618-3794-11-git-send-email-acourbot@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Alexandre Courbot <acourbot@nvidia.com>
 Cc: Ben Skeggs <bskeggs@redhat.com>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Alexandre Courbot <gnurou@gmail.com>, Eric Brower <ebrower@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Terje Bergstrom <tbergstrom@nvidia.com>, Ken Adams <KAdams@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 On Sat, Feb 1, 2014 at 1:16 PM, Alexandre Courbot <acourbot@nvidia.com> wrote:
-> Adapt the NVC0 BAR driver to make it able to support chips that do not
-> expose a BAR3. When this happens, BAR1 is then used for USERD mapping
-> and the BAR alloc() functions is disabled, making GPU objects unable
-> to rely on BAR for data access and falling back to PRAMIN.
+> GK20A's timer is directly attached to the system timer and cannot be
+> calibrated. Skip the calibration phase on that chip since the
+> corresponding registers do not exist.
+Just a curiosity:  What timer resolution does the HW initialise at?
+
 >
 > Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 > ---
->  drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c | 115 +++++++++++++------------
->  1 file changed, 61 insertions(+), 54 deletions(-)
+>  drivers/gpu/drm/nouveau/core/subdev/timer/nv04.c | 19 +++++++++++++------
+>  1 file changed, 13 insertions(+), 6 deletions(-)
 >
-> diff --git a/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c b/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c
-> index 3f30db6..c2bb0e5 100644
-> --- a/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c
-> +++ b/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c
-> @@ -79,87 +79,88 @@ nvc0_bar_unmap(struct nouveau_bar *bar, struct nouveau_vma *vma)
->  }
->
->  static int
-> -nvc0_bar_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
-> -             struct nouveau_oclass *oclass, void *data, u32 size,
-> -             struct nouveau_object **pobject)
-> +nvc0_bar_init_vm(struct nvc0_bar_priv *priv, int nr, int bar)
->  {
-> -       struct nouveau_device *device = nv_device(parent);
-> -       struct nvc0_bar_priv *priv;
-> +       struct nouveau_device *device = nv_device(&priv->base);
->         struct nouveau_gpuobj *mem;
->         struct nouveau_vm *vm;
-> +       resource_size_t bar_len;
->         int ret;
->
-> -       ret = nouveau_bar_create(parent, engine, oclass, &priv);
-> -       *pobject = nv_object(priv);
-> -       if (ret)
-> -               return ret;
-> -
-> -       /* BAR3 */
->         ret = nouveau_gpuobj_new(nv_object(priv), NULL, 0x1000, 0, 0,
-> -                               &priv->bar[0].mem);
-> -       mem = priv->bar[0].mem;
-> +                               &priv->bar[nr].mem);
-> +       mem = priv->bar[nr].mem;
+> diff --git a/drivers/gpu/drm/nouveau/core/subdev/timer/nv04.c b/drivers/gpu/drm/nouveau/core/subdev/timer/nv04.c
+> index c0bdd10..822fe0d 100644
+> --- a/drivers/gpu/drm/nouveau/core/subdev/timer/nv04.c
+> +++ b/drivers/gpu/drm/nouveau/core/subdev/timer/nv04.c
+> @@ -185,6 +185,10 @@ nv04_timer_init(struct nouveau_object *object)
 >         if (ret)
 >                 return ret;
 >
->         ret = nouveau_gpuobj_new(nv_object(priv), NULL, 0x8000, 0, 0,
-> -                               &priv->bar[0].pgd);
-> +                               &priv->bar[nr].pgd);
->         if (ret)
->                 return ret;
->
-> -       ret = nouveau_vm_new(device, 0, nv_device_resource_len(device, 3), 0, &vm);
-> +       bar_len = nv_device_resource_len(device, bar);
+> +       /* gk20a does not have the calibration registers */
+> +       if (device->chipset == 0xea)
+> +               goto skip_clk_init;
 > +
-> +       ret = nouveau_vm_new(device, 0, bar_len, 0, &vm);
->         if (ret)
->                 return ret;
+>         /* aim for 31.25MHz, which gives us nanosecond timestamps */
+>         d = 1000000 / 32;
 >
->         atomic_inc(&vm->engref[NVDEV_SUBDEV_BAR]);
->
-> -       ret = nouveau_gpuobj_new(nv_object(priv), NULL,
-> -                                (nv_device_resource_len(device, 3) >> 12) * 8,
-> -                                0x1000, NVOBJ_FLAG_ZERO_ALLOC,
-> -                                &vm->pgt[0].obj[0]);
-> -       vm->pgt[0].refcount[0] = 1;
-> -       if (ret)
-> -               return ret;
-> +       /*
-> +        * Bootstrap page table lookup.
-> +        */
-> +       if (bar == 3) {
-> +               ret = nouveau_gpuobj_new(nv_object(priv), NULL,
-> +                                        (bar_len >> 12) * 8, 0x1000,
-> +                                        NVOBJ_FLAG_ZERO_ALLOC,
-> +                                       &vm->pgt[0].obj[0]);
-> +               vm->pgt[0].refcount[0] = 1;
-> +               if (ret)
-> +                       return ret;
-> +       }
->
-> -       ret = nouveau_vm_ref(vm, &priv->bar[0].vm, priv->bar[0].pgd);
-> +       ret = nouveau_vm_ref(vm, &priv->bar[nr].vm, priv->bar[nr].pgd);
->         nouveau_vm_ref(NULL, &vm, NULL);
->         if (ret)
->                 return ret;
->
-> -       nv_wo32(mem, 0x0200, lower_32_bits(priv->bar[0].pgd->addr));
-> -       nv_wo32(mem, 0x0204, upper_32_bits(priv->bar[0].pgd->addr));
-> -       nv_wo32(mem, 0x0208, lower_32_bits(nv_device_resource_len(device, 3) - 1));
-> -       nv_wo32(mem, 0x020c, upper_32_bits(nv_device_resource_len(device, 3) - 1));
-> +       nv_wo32(mem, 0x0200, lower_32_bits(priv->bar[nr].pgd->addr));
-> +       nv_wo32(mem, 0x0204, upper_32_bits(priv->bar[nr].pgd->addr));
-> +       nv_wo32(mem, 0x0208, lower_32_bits(bar_len - 1));
-> +       nv_wo32(mem, 0x020c, upper_32_bits(bar_len - 1));
->
-> -       /* BAR1 */
-> -       ret = nouveau_gpuobj_new(nv_object(priv), NULL, 0x1000, 0, 0,
-> -                               &priv->bar[1].mem);
-> -       mem = priv->bar[1].mem;
-> -       if (ret)
-> -               return ret;
-> +       return 0;
-> +}
->
-> -       ret = nouveau_gpuobj_new(nv_object(priv), NULL, 0x8000, 0, 0,
-> -                               &priv->bar[1].pgd);
-> -       if (ret)
-> -               return ret;
-> +static int
-> +nvc0_bar_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
-> +             struct nouveau_oclass *oclass, void *data, u32 size,
-> +             struct nouveau_object **pobject)
-> +{
-> +       struct nouveau_device *device = nv_device(parent);
-> +       struct nvc0_bar_priv *priv;
-> +       bool has_bar3 = nv_device_resource_len(device, 3) != 0;
-> +       int ret;
->
-> -       ret = nouveau_vm_new(device, 0, nv_device_resource_len(device, 1), 0, &vm);
-> +       ret = nouveau_bar_create(parent, engine, oclass, &priv);
-> +       *pobject = nv_object(priv);
->         if (ret)
->                 return ret;
->
-> -       atomic_inc(&vm->engref[NVDEV_SUBDEV_BAR]);
-> +       /* BAR3 */
-> +       if (has_bar3) {
-> +               ret = nvc0_bar_init_vm(priv, 0, 3);
-> +               if (ret)
-> +                       return ret;
-> +               priv->base.alloc = nouveau_bar_alloc;
-> +               priv->base.kmap = nvc0_bar_kmap;
-> +       }
->
-> -       ret = nouveau_vm_ref(vm, &priv->bar[1].vm, priv->bar[1].pgd);
-> -       nouveau_vm_ref(NULL, &vm, NULL);
-> +       /* BAR1 */
-> +       ret = nvc0_bar_init_vm(priv, 1, 1);
->         if (ret)
->                 return ret;
->
-> -       nv_wo32(mem, 0x0200, lower_32_bits(priv->bar[1].pgd->addr));
-> -       nv_wo32(mem, 0x0204, upper_32_bits(priv->bar[1].pgd->addr));
-> -       nv_wo32(mem, 0x0208, lower_32_bits(nv_device_resource_len(device, 1) - 1));
-> -       nv_wo32(mem, 0x020c, upper_32_bits(nv_device_resource_len(device, 1) - 1));
-> -
-> -       priv->base.alloc = nouveau_bar_alloc;
-> -       priv->base.kmap = nvc0_bar_kmap;
->         priv->base.umap = nvc0_bar_umap;
->         priv->base.unmap = nvc0_bar_unmap;
->         priv->base.flush = nv84_bar_flush;
-> @@ -176,12 +177,16 @@ nvc0_bar_dtor(struct nouveau_object *object)
->         nouveau_gpuobj_ref(NULL, &priv->bar[1].pgd);
->         nouveau_gpuobj_ref(NULL, &priv->bar[1].mem);
->
-> -       if (priv->bar[0].vm) {
-> -               nouveau_gpuobj_ref(NULL, &priv->bar[0].vm->pgt[0].obj[0]);
-> -               nouveau_vm_ref(NULL, &priv->bar[0].vm, priv->bar[0].pgd);
-> +       if (priv->bar[0].mem) {
-> +               if (priv->bar[0].vm) {
-> +                       nouveau_gpuobj_ref(NULL,
-> +                                          &priv->bar[0].vm->pgt[0].obj[0]);
-> +                       nouveau_vm_ref(NULL, &priv->bar[0].vm,
-> +                                      priv->bar[0].pgd);
-> +               }
-> +               nouveau_gpuobj_ref(NULL, &priv->bar[0].pgd);
-> +               nouveau_gpuobj_ref(NULL, &priv->bar[0].mem);
+> @@ -235,20 +239,23 @@ nv04_timer_init(struct nouveau_object *object)
+>                 d >>= 1;
 >         }
-> -       nouveau_gpuobj_ref(NULL, &priv->bar[0].pgd);
-> -       nouveau_gpuobj_ref(NULL, &priv->bar[0].mem);
-Did the conditional on priv->bar[0].mem fix anything here?  The ref()
-functions called are designed to handle the NULL pointers already.
-
 >
->         nouveau_bar_destroy(&priv->base);
->  }
-> @@ -201,7 +206,9 @@ nvc0_bar_init(struct nouveau_object *object)
->         nv_mask(priv, 0x100c80, 0x00000001, 0x00000000);
+> -       /* restore the time before suspend */
+> -       lo = priv->suspend_time;
+> -       hi = (priv->suspend_time >> 32);
+> -
+>         nv_debug(priv, "input frequency : %dHz\n", f);
+>         nv_debug(priv, "input multiplier: %d\n", m);
+>         nv_debug(priv, "numerator       : 0x%08x\n", n);
+>         nv_debug(priv, "denominator     : 0x%08x\n", d);
+>         nv_debug(priv, "timer frequency : %dHz\n", (f * m) * d / n);
+> -       nv_debug(priv, "time low        : 0x%08x\n", lo);
+> -       nv_debug(priv, "time high       : 0x%08x\n", hi);
 >
->         nv_wr32(priv, 0x001704, 0x80000000 | priv->bar[1].mem->addr >> 12);
-> -       nv_wr32(priv, 0x001714, 0xc0000000 | priv->bar[0].mem->addr >> 12);
-> +       if (priv->bar[0].mem)
-> +               nv_wr32(priv, 0x001714,
-> +                       0xc0000000 | priv->bar[0].mem->addr >> 12);
->         return 0;
->  }
->
+>         nv_wr32(priv, NV04_PTIMER_NUMERATOR, n);
+>         nv_wr32(priv, NV04_PTIMER_DENOMINATOR, d);
+> +
+> +skip_clk_init:
+> +       /* restore the time before suspend */
+> +       lo = priv->suspend_time;
+> +       hi = (priv->suspend_time >> 32);
+> +
+> +       nv_debug(priv, "time low        : 0x%08x\n", lo);
+> +       nv_debug(priv, "time high       : 0x%08x\n", hi);
+> +
+>         nv_wr32(priv, NV04_PTIMER_INTR_0, 0xffffffff);
+>         nv_wr32(priv, NV04_PTIMER_INTR_EN_0, 0x00000000);
+>         nv_wr32(priv, NV04_PTIMER_TIME_1, hi);
 > --
 > 1.8.5.3
 >
