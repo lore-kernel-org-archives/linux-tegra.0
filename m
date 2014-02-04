@@ -1,460 +1,65 @@
-From: Andrew Chew <achew@nvidia.com>
-Subject: [PATCH v2 3/3] watchdog: Add tegra watchdog
-Date: Mon, 3 Feb 2014 16:17:35 -0800
-Message-ID: <1391473055-3158-4-git-send-email-achew@nvidia.com>
-References: <1391473055-3158-1-git-send-email-achew@nvidia.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC 00/16] drm/nouveau: initial support for GK20A (Tegra K1)
+Date: Tue, 4 Feb 2014 11:47:13 +0900
+Message-ID: <52F054B1.3030305@nvidia.com>
+References: <1391224618-3794-1-git-send-email-acourbot@nvidia.com> <CANq1E4R=DWp2WBWWBbLHE2FG9HWWP=bM4wvE8etoEr1PAp0+JA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1391473055-3158-1-git-send-email-achew@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: daniel.lezcano@linaro.org, tglx@linutronix.de, swarren@wwwdotorg.org, thierry.reding@gmail.com, rob@landley.net, grant.likely@linaro.org, robh+dt@kernel.org, abrestic@chromium.org, dgreid@chromium.org, katierh@chromium.org
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org, Andrew Chew <achew@nvidia.com>
+Content-Type: text/plain; charset="windows-1256"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CANq1E4R=DWp2WBWWBbLHE2FG9HWWP=bM4wvE8etoEr1PAp0+JA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: David Herrmann <dh.herrmann-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ken Adams <KAdams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add a driver for the hardware watchdogs in NVIDIA Tegra SoCs (tegra30 and
-later).  This driver will configure one watchdog timer that will reset the
-system in the case of a watchdog timeout.
+On 02/03/2014 08:25 PM, David Herrmann wrote:
+> Hi
+>
+> [..snip..]
+>> Finally, support for probing GK20A is added in the last 2 patches. It should be
+>> noted that contrary to what Nouveau currently expects, GK20A does not embed any
+>> display hardware (that part being handled by tegradrm). So this driver should
+>> really be only used through DRM render-nodes and collaborate with the display
+>> driver using PRIME. I have not yet figured out how to turn GK20A's instantiation
+>> of Nouveau into a render-node only driver without breaking support for existing
+>> desktop GPUs, and consequently the driver spawns a /dev/dri/cardX node which we
+>> should try to get rid of.
+>
+> You cannot get rid of cardX currently. It is implied by DRIVER_MODESET
+> and that flag should actually be called NOT_A_LEGACY_DRIVER. So you
+> cannot remove it. I did try to replace DRIVER_MODESET by an inverted
+> DRIVER_LEGACY flag some time ago, but I thought it's not worth it.
+>
+> Anyhow, you can easily add a new flag to make
+> drm_dev_register()/drm_dev_alloc() not create the drm_minor for
+> DRM_MINOR_LEGACY, which would prevent the card0 node from showing up.
+> But people started using the cardX interface as base interface so mesa
+> might not be able to open render-nodes if the related card-node is not
+> available (which is a bug in their code, so no reason to support that
+> by not adding stand-alone render-nodes).
 
-This driver binds to the nvidia,tegra30-timer device node and gets its
-register base from there.
+Actually my mention of /dev/dri/cardX was misleading. I was rather 
+thinking about getting rid of the DRIVER_MODESET flag to correctly 
+expose what the card provides, not only to user-space, but to DRM 
+itself. The legacy node is ok as long as DRM itself correctly knows what 
+the driver can and cannot do and fails gracefully if the user tries to 
+set a mode.
 
-Signed-off-by: Andrew Chew <achew@nvidia.com>
----
- Documentation/watchdog/watchdog-parameters.txt |   5 +
- drivers/watchdog/Kconfig                       |  11 +
- drivers/watchdog/Makefile                      |   1 +
- drivers/watchdog/tegra_wdt.c                   | 372 +++++++++++++++++++++++++
- 4 files changed, 389 insertions(+)
- create mode 100644 drivers/watchdog/tegra_wdt.c
+DRIVER_MODESET is statically set in nouveau_drm.c, and the reason why I 
+cannot get rid of it is because the driver (and its features) is 
+registered with drm_pci_init() before the card is probed and its actual 
+features known.
 
-diff --git a/Documentation/watchdog/watchdog-parameters.txt b/Documentation/watchdog/watchdog-parameters.txt
-index f9492fe..b39f355 100644
---- a/Documentation/watchdog/watchdog-parameters.txt
-+++ b/Documentation/watchdog/watchdog-parameters.txt
-@@ -325,6 +325,11 @@ soft_noboot: Softdog action, set to 1 to ignore reboots, 0 to reboot
- stmp3xxx_wdt:
- heartbeat: Watchdog heartbeat period in seconds from 1 to 4194304, default 19
- -------------------------------------------------
-+tegra_wdt:
-+heartbeat: Watchdog heartbeats in seconds. (default = 120)
-+nowayout: Watchdog cannot be stopped once started
-+	(default=kernel config parameter)
-+-------------------------------------------------
- ts72xx_wdt:
- timeout: Watchdog timeout in seconds. (1 <= timeout <= 8, default=8)
- nowayout: Disable watchdog shutdown on close
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index 4c4c566..2852447 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -420,6 +420,17 @@ config SIRFSOC_WATCHDOG
- 	  Support for CSR SiRFprimaII and SiRFatlasVI watchdog. When
- 	  the watchdog triggers the system will be reset.
- 
-+config TEGRA_WATCHDOG
-+	tristate "Tegra watchdog"
-+	depends on ARCH_TEGRA
-+	select WATCHDOG_CORE
-+	help
-+	  Say Y here to include support for the watchdog timer
-+	  embedded in NVIDIA Tegra SoCs.
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called tegra_wdt.
-+
- # AVR32 Architecture
- 
- config AT32AP700X_WDT
-diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
-index 985a66c..1b5f3d5 100644
---- a/drivers/watchdog/Makefile
-+++ b/drivers/watchdog/Makefile
-@@ -58,6 +58,7 @@ obj-$(CONFIG_BCM2835_WDT) += bcm2835_wdt.o
- obj-$(CONFIG_MOXART_WDT) += moxart_wdt.o
- obj-$(CONFIG_SIRFSOC_WATCHDOG) += sirfsoc_wdt.o
- obj-$(CONFIG_BCM_KONA_WDT) += bcm_kona_wdt.o
-+obj-$(CONFIG_TEGRA_WATCHDOG) += tegra_wdt.o
- 
- # AVR32 Architecture
- obj-$(CONFIG_AT32AP700X_WDT) += at32ap700x_wdt.o
-diff --git a/drivers/watchdog/tegra_wdt.c b/drivers/watchdog/tegra_wdt.c
-new file mode 100644
-index 0000000..eebe7fc
---- /dev/null
-+++ b/drivers/watchdog/tegra_wdt.c
-@@ -0,0 +1,372 @@
-+/*
-+ * Copyright (c) 2013, NVIDIA CORPORATION.  All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/miscdevice.h>
-+#include <linux/watchdog.h>
-+
-+#include <clocksource/tegra_timer.h>
-+
-+/* minimum and maximum watchdog trigger timeout, in seconds */
-+#define MIN_WDT_TIMEOUT			1
-+#define MAX_WDT_TIMEOUT			255
-+
-+/*
-+ * Base of the WDT registers, from the timer base address.  There are
-+ * actually 5 watchdogs that can be configured (by pairing with an available
-+ * timer), at bases 0x100 + (WDT ID) * 0x20, where WDT ID is 0 through 4.
-+ * This driver only configures the first watchdog (WDT ID 0).
-+ */
-+#define WDT_BASE			0x100
-+#define WDT_ID				0
-+#define WDT_TIMER_BASE			TEGRA30_TIMER_WDT_BASE
-+#define WDT_TIMER_ID			TEGRA30_TIMER_WDT_ID
-+
-+/* WDT registers */
-+#define WDT_CFG				0x0
-+#define WDT_CFG_PERIOD_SHIFT		4
-+#define WDT_CFG_PERIOD_MASK		0xff
-+#define WDT_CFG_INT_EN			(1 << 12)
-+#define WDT_CFG_PMC2CAR_RST_EN		(1 << 15)
-+#define WDT_STS				0x4
-+#define WDT_STS_COUNT_SHIFT		4
-+#define WDT_STS_COUNT_MASK		0xff
-+#define WDT_STS_EXP_SHIFT		12
-+#define WDT_STS_EXP_MASK		0x3
-+#define WDT_CMD				0x8
-+#define WDT_CMD_START_COUNTER		(1 << 0)
-+#define WDT_CMD_DISABLE_COUNTER		(1 << 1)
-+#define WDT_UNLOCK			(0xc)
-+#define WDT_UNLOCK_PATTERN		(0xc45a << 0)
-+
-+/* Timer registers */
-+#define TIMER_PTV			0x0
-+#define TIMER_EN			(1 << 31)
-+#define TIMER_PERIODIC			(1 << 30)
-+
-+struct tegra_wdt {
-+	struct watchdog_device	wdd;
-+	struct kref		kref;
-+	void __iomem		*wdt_regs;
-+	void __iomem		*tmr_regs;
-+};
-+
-+#define WDT_HEARTBEAT 120
-+static int heartbeat = WDT_HEARTBEAT;
-+module_param(heartbeat, int, 0);
-+MODULE_PARM_DESC(heartbeat, "Watchdog heartbeats in seconds. "
-+	"(default = " __MODULE_STRING(WDT_HEARTBEAT) ")");
-+
-+static bool nowayout = WATCHDOG_NOWAYOUT;
-+module_param(nowayout, bool, 0);
-+MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started "
-+	"(default=" __MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
-+
-+static void tegra_wdt_release_resources(struct kref *r)
-+{
-+}
-+
-+static int tegra_wdt_start(struct watchdog_device *wdd)
-+{
-+	struct tegra_wdt *wdt = watchdog_get_drvdata(wdd);
-+	u32 val;
-+
-+	/* This thing has a fixed 1MHz clock.  Normally, we would set the
-+	 * period to 1 second by writing 1000000ul, but the watchdog system
-+	 * reset actually occurs on the 4th expiration of this counter,
-+	 * so we set the period to 1/4 of this amount.
-+	 */
-+	val = 1000000ul / 4;
-+	val |= (TIMER_EN | TIMER_PERIODIC);
-+	writel(val, wdt->tmr_regs + TIMER_PTV);
-+
-+	/*
-+	 * Set number of periods and start counter.
-+	 *
-+	 * Interrupt handler is not required for user space
-+	 * WDT accesses, since the caller is responsible to ping the
-+	 * WDT to reset the counter before expiration, through ioctls.
-+	 */
-+	val = WDT_TIMER_ID |
-+	      (wdd->timeout << WDT_CFG_PERIOD_SHIFT) |
-+	      WDT_CFG_PMC2CAR_RST_EN;
-+	writel(val, wdt->wdt_regs + WDT_CFG);
-+
-+	writel(WDT_CMD_START_COUNTER, wdt->wdt_regs + WDT_CMD);
-+
-+	return 0;
-+}
-+
-+static int tegra_wdt_stop(struct watchdog_device *wdd)
-+{
-+	struct tegra_wdt *wdt = watchdog_get_drvdata(wdd);
-+
-+	writel(WDT_UNLOCK_PATTERN, wdt->wdt_regs + WDT_UNLOCK);
-+	writel(WDT_CMD_DISABLE_COUNTER, wdt->wdt_regs + WDT_CMD);
-+	writel(0, wdt->tmr_regs + TIMER_PTV);
-+
-+	return 0;
-+}
-+
-+static int tegra_wdt_ping(struct watchdog_device *wdd)
-+{
-+	struct tegra_wdt *wdt = watchdog_get_drvdata(wdd);
-+
-+	writel(WDT_CMD_START_COUNTER, wdt->wdt_regs + WDT_CMD);
-+
-+	return 0;
-+}
-+
-+static int tegra_wdt_set_timeout(struct watchdog_device *wdd,
-+				 unsigned int timeout)
-+{
-+	int ret;
-+
-+	ret = tegra_wdt_stop(wdd);
-+	if (ret)
-+		return ret;
-+
-+	wdd->timeout = clamp_t(int, timeout, MIN_WDT_TIMEOUT, MAX_WDT_TIMEOUT);
-+
-+	if (watchdog_active(wdd))
-+		return tegra_wdt_start(wdd);
-+
-+	return 0;
-+}
-+
-+static unsigned int tegra_wdt_get_timeleft(struct watchdog_device *wdd)
-+{
-+	struct tegra_wdt *wdt = watchdog_get_drvdata(wdd);
-+	u32 val;
-+	int count;
-+	int exp;
-+
-+	val = readl(wdt->wdt_regs + WDT_STS);
-+
-+	/* Current countdown (from timeout) */
-+	count = (val >> WDT_STS_COUNT_SHIFT) & WDT_STS_COUNT_MASK;
-+
-+	/* Number of expirations (we are waiting for the 4th expiration) */
-+	exp = (val >> WDT_STS_EXP_SHIFT) & WDT_STS_EXP_MASK;
-+
-+	/*
-+	 * The entire thing is divided by 4 because we are ticking down 4 times
-+	 * faster due to needing to wait for the 4th expiration.
-+	 */
-+	return (((3 - exp) * wdd->timeout) + count) / 4;
-+}
-+
-+static void tegra_wdt_ref(struct watchdog_device *wdd)
-+{
-+	struct tegra_wdt *wdt = watchdog_get_drvdata(wdd);
-+
-+	kref_get(&wdt->kref);
-+}
-+
-+static void tegra_wdt_unref(struct watchdog_device *wdd)
-+{
-+	struct tegra_wdt *wdt = watchdog_get_drvdata(wdd);
-+
-+	kref_put(&wdt->kref, tegra_wdt_release_resources);
-+}
-+
-+static const struct watchdog_info tegra_wdt_info = {
-+	.options	= WDIOF_SETTIMEOUT |
-+			  WDIOF_MAGICCLOSE |
-+			  WDIOF_KEEPALIVEPING,
-+	.firmware_version = 0,
-+	.identity	= "Tegra Watchdog",
-+};
-+
-+static struct watchdog_ops tegra_wdt_ops = {
-+	.owner = THIS_MODULE,
-+	.start = tegra_wdt_start,
-+	.stop = tegra_wdt_stop,
-+	.ping = tegra_wdt_ping,
-+	.set_timeout = tegra_wdt_set_timeout,
-+	.get_timeleft = tegra_wdt_get_timeleft,
-+	.ref = tegra_wdt_ref,
-+	.ref = tegra_wdt_unref,
-+};
-+
-+static int tegra_wdt_probe(struct platform_device *pdev)
-+{
-+	struct watchdog_device *wdd;
-+	struct tegra_wdt *wdt;
-+	struct resource *res;
-+	struct resource *mem;
-+	void __iomem *regs;
-+	int ret;
-+
-+	/* This is the timer base. */
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!res) {
-+		dev_err(&pdev->dev, "incorrect resources\n");
-+		return -ENOENT;
-+	}
-+
-+	mem = devm_request_mem_region(&pdev->dev, res->start,
-+				      resource_size(res),
-+				      pdev->name);
-+	if (!mem) {
-+		dev_err(&pdev->dev, "unable to request memory resources\n");
-+		return -EBUSY;
-+	}
-+
-+	regs = devm_ioremap(&pdev->dev, mem->start,
-+			    resource_size(mem));
-+	if (!regs) {
-+		dev_err(&pdev->dev, "unable to map registers\n");
-+		return -ENOMEM;
-+	}
-+
-+	/*
-+	 * Allocate our watchdog driver data, which has the
-+	 * struct watchdog_device nested within it.
-+	 */
-+	wdt = devm_kzalloc(&pdev->dev, sizeof(*wdt), GFP_KERNEL);
-+	if (!wdt) {
-+		dev_err(&pdev->dev, "out of memory\n");
-+		return -ENOMEM;
-+	}
-+
-+	/* Initialize struct tegra_wdt. */
-+	wdt->wdt_regs = regs + WDT_BASE;
-+	wdt->tmr_regs = regs + WDT_TIMER_BASE;
-+
-+	/* Initialize struct watchdog_device. */
-+	wdd = &wdt->wdd;
-+	wdd->timeout = heartbeat;
-+	wdd->info = &tegra_wdt_info;
-+	wdd->ops = &tegra_wdt_ops;
-+	wdd->min_timeout = MIN_WDT_TIMEOUT;
-+	wdd->max_timeout = MAX_WDT_TIMEOUT;
-+
-+	watchdog_set_drvdata(wdd, wdt);
-+
-+	kref_init(&wdt->kref);
-+
-+	ret = tegra_wdt_stop(wdd);
-+	if (ret) {
-+		dev_err(&pdev->dev,
-+			"failed to stop watchdog device\n");
-+		return ret;
-+	}
-+
-+	watchdog_set_nowayout(wdd, nowayout);
-+
-+	ret = watchdog_register_device(wdd);
-+	if (ret) {
-+		dev_err(&pdev->dev,
-+			"failed to register watchdog device\n");
-+		return ret;
-+	}
-+
-+	platform_set_drvdata(pdev, wdt);
-+
-+	dev_info(&pdev->dev,
-+		 "initialized wdt %d, using timer %d\n", WDT_ID, WDT_TIMER_ID);
-+	dev_info(&pdev->dev,
-+		 "enabled wdt %d (heartbeat = %d sec, nowayout = %d)\n",
-+		 WDT_ID, heartbeat, nowayout);
-+
-+	return 0;
-+}
-+
-+static int tegra_wdt_remove(struct platform_device *pdev)
-+{
-+	struct tegra_wdt *wdt = platform_get_drvdata(pdev);
-+	int ret;
-+
-+	ret = tegra_wdt_stop(&wdt->wdd);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to stop watchdog %d\n", WDT_ID);
-+		return ret;
-+	}
-+
-+	watchdog_unregister_device(&wdt->wdd);
-+
-+	kref_put(&wdt->kref, tegra_wdt_release_resources);
-+
-+	platform_set_drvdata(pdev, NULL);
-+
-+	dev_info(&pdev->dev, "removed wdt %d\n", WDT_ID);
-+
-+	return 0;
-+}
-+
-+#ifdef CONFIG_PM
-+static int tegra_wdt_suspend(struct platform_device *pdev, pm_message_t state)
-+{
-+	struct tegra_wdt *wdt = platform_get_drvdata(pdev);
-+	int ret;
-+
-+	ret = tegra_wdt_stop(&wdt->wdd);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to stop watchdog %d\n", WDT_ID);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int tegra_wdt_resume(struct platform_device *pdev)
-+{
-+	struct tegra_wdt *wdt = platform_get_drvdata(pdev);
-+	int ret;
-+
-+	if (watchdog_active(&wdt->wdd)) {
-+		ret = tegra_wdt_start(&wdt->wdd);
-+		if (ret) {
-+			dev_err(&pdev->dev,
-+				"failed to stop watchdog %d\n", WDT_ID);
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+#endif
-+
-+static const struct of_device_id tegra_wdt_of_match[] = {
-+	{ .compatible = "nvidia,tegra30-timer", },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, tegra_wdt_of_match);
-+
-+static struct platform_driver tegra_wdt_driver = {
-+	.probe		= tegra_wdt_probe,
-+	.remove		= tegra_wdt_remove,
-+#ifdef CONFIG_PM
-+	.suspend	= tegra_wdt_suspend,
-+	.resume		= tegra_wdt_resume,
-+#endif
-+	.driver		= {
-+		.owner	= THIS_MODULE,
-+		.name	= "tegra-wdt",
-+		.of_match_table = tegra_wdt_of_match,
-+	},
-+};
-+
-+module_platform_driver(tegra_wdt_driver);
-+
-+MODULE_AUTHOR("NVIDIA Corporation");
-+MODULE_DESCRIPTION("Tegra Watchdog Driver");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS_MISCDEV(WATCHDOG_MINOR);
-+MODULE_ALIAS("platform:tegra-wdt");
--- 
-1.8.1.5
+For platform devices, you could check the card features before 
+registering it with drm_platform_init(), but then you have the issue 
+that the driver instance is referenced by every probed card, and thus 
+you cannot have cards with different capabilities.
+
+So it seems like handling this would require the driver_features to move 
+from drm_driver to drm_device, but that's quite a core change. As 
+pointed out by you and Daniel, we can certainly live with the control 
+and legacy nodes. Nonetheless I'd be curious to know how (and if) this 
+case can be correctly handled.
+
+Alex.
