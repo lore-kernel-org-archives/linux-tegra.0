@@ -1,51 +1,40 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v2 1/3] clocksource: tegra: Add nvidia,tegra30-timer compat
-Date: Wed, 05 Feb 2014 13:17:09 -0700
-Message-ID: <52F29C45.9020206@wwwdotorg.org>
-References: <1391473055-3158-1-git-send-email-achew@nvidia.com> <1391473055-3158-2-git-send-email-achew@nvidia.com> <52F2996B.4080005@wwwdotorg.org> <643E69AA4436674C8F39DCC2C05F763863199859AC@HQMAIL03.nvidia.com>
+Subject: Re: [RFC 10/16] drm/nouveau/timer: skip calibration on GK20A
+Date: Wed, 05 Feb 2014 13:27:36 -0700
+Message-ID: <52F29EB8.5040906@wwwdotorg.org>
+References: <1391224618-3794-1-git-send-email-acourbot@nvidia.com>	<1391224618-3794-11-git-send-email-acourbot@nvidia.com>
+	<CACAvsv4T=TRb05OtkxG=t1+Ou9=Of9c-ALWkHJjKYpNi2aGs5Q@mail.gmail.com>
+	<52F0A72B.8030900@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <643E69AA4436674C8F39DCC2C05F763863199859AC@HQMAIL03.nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Chew <AChew@nvidia.com>, "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>, "tglx@linutronix.de" <tglx@linutronix.de>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "rob@landley.net" <rob@landley.net>, "grant.likely@linaro.org" <grant.likely@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "abrestic@chromium.org" <abrestic@chromium.org>, "dgreid@chromium.org" <dgreid@chromium.org>, "katierh@chromium.org" <katierh@chromium.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <52F0A72B.8030900@nvidia.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces@lists.freedesktop.org
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+To: Alexandre Courbot <acourbot@nvidia.com>, Ben Skeggs <skeggsb@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Eric Brower <ebrower@nvidia.com>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ben Skeggs <bskeggs@redhat.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Terje Bergstrom <tbergstrom@nvidia.com>, Ken Adams <KAdams@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/05/2014 01:06 PM, Andrew Chew wrote:
->> On 02/03/2014 05:17 PM, Andrew Chew wrote:
->>> There are some differences between tegra20's timer registers and
->>> tegra30's (and later).  For example, tegra30 has more timers.  In
->>> addition, watchdogs are not present in tegra20.
->>>
->>> Add this compatibility string in order to be able to distinguish
->>> whether the additional timers and watchdogs are there or not.
->>
->>> diff --git a/drivers/clocksource/tegra20_timer.c
->>> b/drivers/clocksource/tegra20_timer.c
->>
->>>  CLOCKSOURCE_OF_DECLARE(tegra20_timer, "nvidia,tegra20-timer",
->>> tegra20_init_timer);
->>> +CLOCKSOURCE_OF_DECLARE(tegra30_timer, "nvidia,tegra30-timer",
->>> +tegra20_init_timer);
->>
->> Thinking about this more, nothing in this driver actually cares about
->> Tegra20 vs. Tegra30+, since the timer that's used is present in all chips.
->> Hence, this patch isn't needed.
+On 02/04/2014 01:39 AM, Alexandre Courbot wrote:
+> On 02/04/2014 12:55 PM, Ben Skeggs wrote:
+>> On Sat, Feb 1, 2014 at 1:16 PM, Alexandre Courbot
+>> <acourbot@nvidia.com> wrote:
+>>> GK20A's timer is directly attached to the system timer and cannot be
+>>> calibrated. Skip the calibration phase on that chip since the
+>>> corresponding registers do not exist.
+>> Just a curiosity:  What timer resolution does the HW initialise at?
 > 
-> Don't I need to add nvidia,tegra30-timer so that the tegra WDT driver
-> can match against it?  It would be weird to have the tegra WDT driver
-> bind against nvidia,tegra20-timer when the tegra WDT driver as it is won't
-> work at all on tegra20.
+> On T124 the timer input is the oscillator clock, which depending on the
+> device can run between 12 and 48Mhz (IIUC).
 
-The DT files need to contain all of:
-
-* The specific SoC (this is already present)
-* nvidia,tegra30-timer for SoCs >= Tegra30 (this is missing)
-* nvidia,tegra20-timer for all SoCs (this is already present)
-
-However, since all DTs will contain nvidia,tegra20-timer, since all HW
-is backwards-compatible IIUC, any code that only cares about the parts
-that have existed since Tegra20 only need match against the Tegra20
-compatible value.
+On the one Tegra124 board we support upstream, the crystal is 12MHz. I
+believe this is a typical/common value; almost all the Tegra boards we
+support upstream run at this rate.
