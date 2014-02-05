@@ -1,8 +1,10 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH V2 1/2] ARM: tegra: enable LCD panel on Seaboard
-Date: Wed,  5 Feb 2014 11:20:09 -0700
-Message-ID: <1391624410-28632-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH V2 2/2] ARM: tegra: enable LCD panel on Ventana
+Date: Wed,  5 Feb 2014 11:20:10 -0700
+Message-ID: <1391624410-28632-2-git-send-email-swarren@wwwdotorg.org>
+References: <1391624410-28632-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1391624410-28632-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -10,7 +12,7 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Seaboard uses a CLAA101WA01A LCD panel. Enable the relevant display
+Ventana uses a CLAA101WA01A LCD panel. Enable the relevant display
 controller, backlight, and regulators.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -19,16 +21,14 @@ Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 v2:
 * s/chungwa/chunghwa/
 * Use the correct PWM instance
-
-(I intend to apply these immediately)
 ---
- arch/arm/boot/dts/tegra20-seaboard.dts | 55 +++++++++++++++++++++++++++++++++-
- 1 file changed, 54 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/tegra20-ventana.dts | 39 ++++++++++++++++++++++++++++++++---
+ 1 file changed, 36 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
-index a11b6e7b4759..a1d4bf9895d7 100644
---- a/arch/arm/boot/dts/tegra20-seaboard.dts
-+++ b/arch/arm/boot/dts/tegra20-seaboard.dts
+diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
+index 571d12e6ac2d..ca8484cccddc 100644
+--- a/arch/arm/boot/dts/tegra20-ventana.dts
++++ b/arch/arm/boot/dts/tegra20-ventana.dts
 @@ -17,6 +17,14 @@
  	};
  
@@ -44,7 +44,7 @@ index a11b6e7b4759..a1d4bf9895d7 100644
  		hdmi@54280000 {
  			status = "okay";
  
-@@ -312,6 +320,10 @@
+@@ -309,6 +317,10 @@
  		status = "okay";
  	};
  
@@ -55,7 +55,7 @@ index a11b6e7b4759..a1d4bf9895d7 100644
  	i2c@7000c000 {
  		status = "okay";
  		clock-frequency = <400000>;
-@@ -369,7 +381,7 @@
+@@ -359,7 +371,7 @@
  			#size-cells = <0>;
  		};
  
@@ -64,7 +64,7 @@ index a11b6e7b4759..a1d4bf9895d7 100644
  			reg = <1>;
  			#address-cells = <1>;
  			#size-cells = <0>;
-@@ -762,6 +774,17 @@
+@@ -557,6 +569,17 @@
  		non-removable;
  	};
  
@@ -82,7 +82,7 @@ index a11b6e7b4759..a1d4bf9895d7 100644
  	clocks {
  		compatible = "simple-bus";
  		#address-cells = <1>;
-@@ -795,6 +818,16 @@
+@@ -581,6 +604,16 @@
  		};
  	};
  
@@ -99,32 +99,23 @@ index a11b6e7b4759..a1d4bf9895d7 100644
  	regulators {
  		compatible = "simple-bus";
  		#address-cells = <1>;
-@@ -839,6 +872,26 @@
- 			regulator-always-on;
- 			regulator-boot-on;
+@@ -614,7 +647,7 @@
+ 			enable-active-high;
  		};
-+
-+		vdd_pnl_reg: regulator@4 {
-+			compatible = "regulator-fixed";
-+			reg = <4>;
-+			regulator-name = "vdd_pnl";
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <2800000>;
-+			gpio = <&gpio TEGRA_GPIO(C, 6) GPIO_ACTIVE_HIGH>;
-+			enable-active-high;
-+		};
-+
-+		vdd_bl_reg: regulator@5 {
-+			compatible = "regulator-fixed";
-+			reg = <5>;
-+			regulator-name = "vdd_bl";
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <2800000>;
-+			gpio = <&gpio TEGRA_GPIO(W, 0) GPIO_ACTIVE_HIGH>;
-+			enable-active-high;
-+		};
- 	};
  
- 	sound {
+-		regulator@3 {
++		vdd_pnl_reg: regulator@3 {
+ 			compatible = "regulator-fixed";
+ 			reg = <3>;
+ 			regulator-name = "vdd_pnl";
+@@ -624,7 +657,7 @@
+ 			enable-active-high;
+ 		};
+ 
+-		regulator@4 {
++		vdd_bl_reg: regulator@4 {
+ 			compatible = "regulator-fixed";
+ 			reg = <4>;
+ 			regulator-name = "vdd_bl";
 -- 
 1.8.1.5
