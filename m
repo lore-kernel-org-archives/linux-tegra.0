@@ -1,57 +1,31 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v2 2/3] clocksource: tegra: Define timer bases in header
- file
-Date: Wed, 05 Feb 2014 13:03:47 -0700
-Message-ID: <52F29923.6020708@wwwdotorg.org>
-References: <1391473055-3158-1-git-send-email-achew@nvidia.com> <1391473055-3158-3-git-send-email-achew@nvidia.com>
+Subject: Re: [PATCH v2 1/3] clocksource: tegra: Add nvidia,tegra30-timer compat
+Date: Wed, 05 Feb 2014 13:04:59 -0700
+Message-ID: <52F2996B.4080005@wwwdotorg.org>
+References: <1391473055-3158-1-git-send-email-achew@nvidia.com> <1391473055-3158-2-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1391473055-3158-3-git-send-email-achew@nvidia.com>
+In-Reply-To: <1391473055-3158-2-git-send-email-achew@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Andrew Chew <achew@nvidia.com>, daniel.lezcano@linaro.org, tglx@linutronix.de, thierry.reding@gmail.com, rob@landley.net, grant.likely@linaro.org, robh+dt@kernel.org, abrestic@chromium.org, dgreid@chromium.org, katierh@chromium.org
 Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 On 02/03/2014 05:17 PM, Andrew Chew wrote:
-> Added timers that are present in tegra30 and later, that are NOT in tegra20.
+> There are some differences between tegra20's timer registers and tegra30's
+> (and later).  For example, tegra30 has more timers.  In addition, watchdogs
+> are not present in tegra20.
 > 
-> Also, some of these timer bases are needed in the tegra watchdog driver, so
-> separate them out into a header file that both the clocksource driver and
-> the watchdog driver can share them.
+> Add this compatibility string in order to be able to distinguish
+> whether the additional timers and watchdogs are there or not.
 
-> diff --git a/include/clocksource/tegra_timer.h b/include/clocksource/tegra_timer.h
+> diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
 
-> +/* Tegra 20 timers */
-> +#define TEGRA20_TIMER1_BASE	0x0
-> +#define TEGRA20_TIMER2_BASE	0x8
-> +#define TEGRA20_TIMER3_BASE	0x50
-> +#define TEGRA20_TIMER4_BASE	0x58
-> +
-> +/* Tegra 30 timers */
-> +#define TEGRA30_TIMER1_BASE	TEGRA20_TIMER1_BASE
-> +#define TEGRA30_TIMER2_BASE	TEGRA20_TIMER2_BASE
-> +#define TEGRA30_TIMER3_BASE	TEGRA20_TIMER3_BASE
-> +#define TEGRA30_TIMER4_BASE	TEGRA20_TIMER4_BASE
-> +#define TEGRA30_TIMER5_BASE	0x60
-> +#define TEGRA30_TIMER6_BASE	0x68
-> +#define TEGRA30_TIMER7_BASE	0x70
-> +#define TEGRA30_TIMER8_BASE	0x78
-> +#define TEGRA30_TIMER9_BASE	0x80
-> +#define TEGRA30_TIMER0_BASE	0x88
+>  CLOCKSOURCE_OF_DECLARE(tegra20_timer, "nvidia,tegra20-timer", tegra20_init_timer);
+> +CLOCKSOURCE_OF_DECLARE(tegra30_timer, "nvidia,tegra30-timer", tegra20_init_timer);
 
-Why put the SoC name in the define names? Why not just have
-TIMER1_BASE..TIMER10_BASE (that should be 10 not 0 as in your patch,
-right?) and have the driver know that 1..4 are valid on Tegra20, and
-1..10 are valid on later chips.
-
-I guess if the defines are moved into a header file, adding a TEGRA_
-prefix does make sense.
-
-But I wonder if it wouldn't be simpler for the Tegra WDT driver to just
-call a function on the Tegra clocksource driver to find out which timer
-ID(s) to avoid using? Even simpler would be to just put a comment in the
-WDT driver saying that timer 5 was chosen arbitrarily, but if it's
-changed make sure not to conflict with the clocksource driver (and an
-equivalent change to the clocksource driver).
+Thinking about this more, nothing in this driver actually cares about
+Tegra20 vs. Tegra30+, since the timer that's used is present in all
+chips. Hence, this patch isn't needed.
