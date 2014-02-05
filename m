@@ -1,116 +1,57 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v3 3/6] misc: fuse: Add efuse driver for Tegra
-Date: Wed, 05 Feb 2014 12:15:46 -0700
-Message-ID: <52F28DE2.1040207@wwwdotorg.org>
-References: <1390952176-30402-1-git-send-email-pdeschrijver@nvidia.com> <1390952176-30402-4-git-send-email-pdeschrijver@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v2 2/3] clocksource: tegra: Define timer bases in header
+ file
+Date: Wed, 05 Feb 2014 13:03:47 -0700
+Message-ID: <52F29923.6020708@wwwdotorg.org>
+References: <1391473055-3158-1-git-send-email-achew@nvidia.com> <1391473055-3158-3-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1390952176-30402-4-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Danny Huang <dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1391473055-3158-3-git-send-email-achew@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Chew <achew@nvidia.com>, daniel.lezcano@linaro.org, tglx@linutronix.de, thierry.reding@gmail.com, rob@landley.net, grant.likely@linaro.org, robh+dt@kernel.org, abrestic@chromium.org, dgreid@chromium.org, katierh@chromium.org
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/28/2014 04:36 PM, Peter De Schrijver wrote:
-> Implement fuse driver for Tegra20, Tegra30, Tegra114 and Tegra124.
+On 02/03/2014 05:17 PM, Andrew Chew wrote:
+> Added timers that are present in tegra30 and later, that are NOT in tegra20.
+> 
+> Also, some of these timer bases are needed in the tegra watchdog driver, so
+> separate them out into a header file that both the clocksource driver and
+> the watchdog driver can share them.
 
-I assume most of this code is simply cut/paste from the existing code in
-arch/arm/mach-tegra/? If so, "git format-patch -C" would have been
-useful to highlight what changed when duplicating the files.
+> diff --git a/include/clocksource/tegra_timer.h b/include/clocksource/tegra_timer.h
 
-> diff --git a/Documentation/ABI/testing/sysfs-driver-tegra-fuse b/Documentation/ABI/testing/sysfs-driver-tegra-fuse
-> +What:		/sys/devices/*/<our-device>/fuse
-> +Date:		December 2013
-> +Contact:	Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> +Description:	read-only access to the efuses on Tegra20, Tegra30, Tegra114
-> +		and Tegra124 SoC's from NVIDIA. The efuses contain write once
-> +		data programmed at the factory.
-> +Users:		any user space application which wants to read the efuses on
-> +		Tegra SoC's
-
-Surely this file should describe the format of the file, since that's
-part of the ABI too, right?
-
-> diff --git a/drivers/misc/fuse/tegra/fuse-tegra20.c b/drivers/misc/fuse/tegra/fuse-tegra20.c
-
-> +static int tegra20_fuse_probe(struct platform_device *pdev)
-...
-> +	sku_info.revision = tegra_revision;
-> +	tegra20_init_speedo_data(&sku_info, &pdev->dev);
-...
-> +}
+> +/* Tegra 20 timers */
+> +#define TEGRA20_TIMER1_BASE	0x0
+> +#define TEGRA20_TIMER2_BASE	0x8
+> +#define TEGRA20_TIMER3_BASE	0x50
+> +#define TEGRA20_TIMER4_BASE	0x58
 > +
-> +static struct platform_driver tegra20_fuse_driver = {
-> +	.probe = tegra20_fuse_probe,
-> +	.driver = {
-> +		.name = "tegra20_fuse",
-> +		.owner = THIS_MODULE,
-> +		.of_match_table = tegra20_fuse_of_match,
-> +	}
-> +};
-> +
-> +static int __init tegra20_fuse_init(void)
-> +{
-> +	return platform_driver_register(&tegra20_fuse_driver);
-> +}
-> +postcore_initcall(tegra20_fuse_init);
+> +/* Tegra 30 timers */
+> +#define TEGRA30_TIMER1_BASE	TEGRA20_TIMER1_BASE
+> +#define TEGRA30_TIMER2_BASE	TEGRA20_TIMER2_BASE
+> +#define TEGRA30_TIMER3_BASE	TEGRA20_TIMER3_BASE
+> +#define TEGRA30_TIMER4_BASE	TEGRA20_TIMER4_BASE
+> +#define TEGRA30_TIMER5_BASE	0x60
+> +#define TEGRA30_TIMER6_BASE	0x68
+> +#define TEGRA30_TIMER7_BASE	0x70
+> +#define TEGRA30_TIMER8_BASE	0x78
+> +#define TEGRA30_TIMER9_BASE	0x80
+> +#define TEGRA30_TIMER0_BASE	0x88
 
-That call to tegra20_init_speedo_data() now happens much later in boot.
-Are you sure there's nothing that relies on data it sets up between when
-tegra_fuse_init() is called (which is where it happens before this
-series), and the somewhat arbitrary later time when this driver probes?
+Why put the SoC name in the define names? Why not just have
+TIMER1_BASE..TIMER10_BASE (that should be 10 not 0 as in your patch,
+right?) and have the driver know that 1..4 are valid on Tegra20, and
+1..10 are valid on later chips.
 
-> diff --git a/drivers/misc/fuse/tegra/fuse-tegra30.c b/drivers/misc/fuse/tegra/fuse-tegra30.c
+I guess if the defines are moved into a header file, adding a TEGRA_
+prefix does make sense.
 
-> +postcore_initcall(tegra30_fuse_init);
-> +
-
-There's a blank line at the end of the file. I thought checkpatch warned
-about this? But actually it doesn't seem to at least in -f mode.
-
-> diff --git a/drivers/misc/fuse/tegra/fuse.h b/drivers/misc/fuse/tegra/fuse.h
-
-> +struct tegra_sku_info {
-> +	int sku_id;
-> +	int cpu_process_id;
-> +	int cpu_speedo_id;
-> +	int cpu_speedo_value;
-> +	int cpu_iddq_value;
-> +	int core_process_id;
-> +	int soc_speedo_id;
-> +	int gpu_speedo_id;
-> +	int gpu_process_id;
-> +	int gpu_speedo_value;
-> +	enum tegra_revision revision;
-> +};
-
-The only use of this appears to be to pass to tegra_fuse_create_sysfs()
-which prints out the fields. Will there be more users in the future?
-Otherwise, I'd be tempted to just print it out outside/before-calling
-tegra_fuse_create_sysfs().
-
-That said, I wonder if these values could/should be exposed in the sysfs
-file to make it easier to interpret the fuses?
-
-> diff --git a/drivers/misc/fuse/tegra/tegra114_speedo.c b/drivers/misc/fuse/tegra/tegra114_speedo.c
-
-It might be nice to make these filenames consistent with the others,
-e.g. fuse-speedo-tegraNNN.c/speedo-tegraNNN.c, or wrap them into
-fuse-tegraNNN.c?
-
-> diff --git a/drivers/misc/fuse/tegra/tegra30_speedo.c b/drivers/misc/fuse/tegra/tegra30_speedo.c
-
-> +#define FUSE_SPEEDO_CALIB_0	0x14
-> +#define FUSE_PACKAGE_INFO	0XFC
-> +#define FUSE_TEST_PROG_VER	0X28
-
-In arch/arm/mach-tegra/tegra30_speedo.c, those values are different:
-
-#define FUSE_SPEEDO_CALIB_0	0x114
-#define FUSE_PACKAGE_INFO	0X1FC
-#define FUSE_TEST_PROG_VER	0X128
-
-Was this change intentional? Perhaps it should be in a separate patch to
-highlight the change, if it's an intentional bug-fix?
+But I wonder if it wouldn't be simpler for the Tegra WDT driver to just
+call a function on the Tegra clocksource driver to find out which timer
+ID(s) to avoid using? Even simpler would be to just put a comment in the
+WDT driver saying that timer 5 was chosen arbitrarily, but if it's
+changed make sure not to conflict with the clocksource driver (and an
+equivalent change to the clocksource driver).
