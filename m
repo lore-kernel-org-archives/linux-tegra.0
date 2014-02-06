@@ -1,54 +1,51 @@
-From: Andrew Chew <AChew@nvidia.com>
-Subject: RE: [PATCH v2 2/3] clocksource: tegra: Define timer bases in header
- file
-Date: Wed, 5 Feb 2014 13:41:28 -0800
-Message-ID: <643E69AA4436674C8F39DCC2C05F76386319985A02@HQMAIL03.nvidia.com>
-References: <1391473055-3158-1-git-send-email-achew@nvidia.com>
- <1391473055-3158-3-git-send-email-achew@nvidia.com>
- <52F29923.6020708@wwwdotorg.org>
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: Re: [PATCH 5/5] ARM: tegra: cpuidle: use firmware call for power
+ down
+Date: Thu, 6 Feb 2014 11:28:24 +0900
+Message-ID: <52F2F348.3000502@nvidia.com>
+References: <1390299016-14105-1-git-send-email-acourbot@nvidia.com> <1390299016-14105-6-git-send-email-acourbot@nvidia.com> <52E02DCC.1000404@wwwdotorg.org> <CAAVeFuKLtC62+bujY4724hMV_6M8Ow0s=6zRn_M87VX4PHQgxA@mail.gmail.com> <52F266A2.1030503@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <52F29923.6020708@wwwdotorg.org>
-Content-Language: en-US
+In-Reply-To: <52F266A2.1030503@wwwdotorg.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>, "tglx@linutronix.de" <tglx@linutronix.de>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "rob@landley.net" <rob@landley.net>, "grant.likely@linaro.org" <grant.likely@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "abrestic@chromium.org" <abrestic@chromium.org>, "dgreid@chromium.org" <dgreid@chromium.org>, "katierh@chromium.org" <katierh@chromium.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+To: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Russell King <linux@arm.linux.org.uk>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-> > +/* Tegra 20 timers */
-> > +#define TEGRA20_TIMER1_BASE	0x0
-> > +#define TEGRA20_TIMER2_BASE	0x8
-> > +#define TEGRA20_TIMER3_BASE	0x50
-> > +#define TEGRA20_TIMER4_BASE	0x58
-> > +
-> > +/* Tegra 30 timers */
-> > +#define TEGRA30_TIMER1_BASE	TEGRA20_TIMER1_BASE
-> > +#define TEGRA30_TIMER2_BASE	TEGRA20_TIMER2_BASE
-> > +#define TEGRA30_TIMER3_BASE	TEGRA20_TIMER3_BASE
-> > +#define TEGRA30_TIMER4_BASE	TEGRA20_TIMER4_BASE
-> > +#define TEGRA30_TIMER5_BASE	0x60
-> > +#define TEGRA30_TIMER6_BASE	0x68
-> > +#define TEGRA30_TIMER7_BASE	0x70
-> > +#define TEGRA30_TIMER8_BASE	0x78
-> > +#define TEGRA30_TIMER9_BASE	0x80
-> > +#define TEGRA30_TIMER0_BASE	0x88
-> 
-> Why put the SoC name in the define names? Why not just have
-> TIMER1_BASE..TIMER10_BASE (that should be 10 not 0 as in your patch,
-> right?) and have the driver know that 1..4 are valid on Tegra20, and
-> 1..10 are valid on later chips.
-> 
-> I guess if the defines are moved into a header file, adding a TEGRA_ prefix
-> does make sense.
-> 
-> But I wonder if it wouldn't be simpler for the Tegra WDT driver to just call a
-> function on the Tegra clocksource driver to find out which timer
-> ID(s) to avoid using? Even simpler would be to just put a comment in the
-> WDT driver saying that timer 5 was chosen arbitrarily, but if it's changed make
-> sure not to conflict with the clocksource driver (and an equivalent change to
-> the clocksource driver).
+On 02/06/2014 01:28 AM, Stephen Warren wrote:
+> On 01/23/2014 12:39 AM, Alexandre Courbot wrote:
+>> On Thu, Jan 23, 2014 at 5:45 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+>>> On 01/21/2014 03:10 AM, Alexandre Courbot wrote:
+>>>> Invoke the do_idle() firmware call before suspending a CPU so that the
+>>>> underlying firmware (if any) can take necessary action.
+>>>
+>>>> diff --git a/arch/arm/mach-tegra/cpuidle-tegra114.c b/arch/arm/mach-tegra/cpuidle-tegra114.c
+>>>
+>>>> @@ -45,6 +46,8 @@ static int tegra114_idle_power_down(struct cpuidle_device *dev,
+>>>>
+>>>>        clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_ENTER, &dev->cpu);
+>>>>
+>>>> +     call_firmware_op(do_idle);
+>>>> +
+>>>>        cpu_suspend(0, tegra30_sleep_cpu_secondary_finish);
+>>>>
+>>>>        clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_EXIT, &dev->cpu);
+>>>
+>>> Don't you need to have the kernel also *not* do something when entering
+>>> idle; doesn't the FW op replace some of the register writes that the
+>>> kernel would otherwise be doing?
+>>
+>> It seems like the operation is actually to inform the firmware that we
+>> are going to suspend the CPU. Downstream kernel also uses it that way.
+>> But you are right in that we should expect do_idle() to actually
+>> perform the suspend operation. Maybe a prepare_idle() operation should
+>> be added to the firmware interface for this purpose?
+>
+> That sounds like a reasonable change. Is it easy to plumb in?
 
-Alright, I think I'll just go with putting a comment in the WDT driver then, so that
-We don't need to add this new header file.
+I think so. Will post a v2 of this soon.
+
+Thanks,
+Alex.
