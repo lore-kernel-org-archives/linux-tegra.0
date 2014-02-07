@@ -1,56 +1,47 @@
-From: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: How to use host1x syncpt?
-Date: Thu, 6 Feb 2014 18:11:15 -0800
-Message-ID: <CAK5ve-+sWLtaCQwPOm99pzPmtJioAKUjba-_6eV5bqf3KxXwFg@mail.gmail.com>
-References: <CAK5ve-+ARW3cx+671vNYQCWYPe=CVa5n81q2-BrKyGzF8Nv4fw@mail.gmail.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2 0/6] ARM: firmware: improvements to Trusted Foundations support
+Date: Fri, 7 Feb 2014 13:35:00 +0900
+Message-ID: <1391747706-1847-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAK5ve-+ARW3cx+671vNYQCWYPe=CVa5n81q2-BrKyGzF8Nv4fw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Terje,
+These (mostly minor) patches fix a few typos, improve points that
+were agreed upon when the Trusted Foundation series was initially
+submitted, and more importantly add support for a prepare_idle()
+firmware operation that informs the firmware a CPU is doing idle.
+Tegra's cpuidle driver is then also updated accordingly.
 
-Forget to add you to this email, could you please help to take a look
-at my questions?
+These patches should be the last step before device trees for NVIDIA
+SHIELD and Tegra Note 7 can be submitted.
 
-Thanks,
--Bryan
+Changes since v1:
+- Do not remove TF support from tegra_defconfig (will automatically be taken
+  care of during next configuration update)
+- Add a new prepare_idle() operation to firmware_ops that informs the firmware
+  a CPU is going idle (vs. asking the firmware to do it itself as do_idle()
+  does)
+- Fix idle states names in TF implementation of prepare_idle to sound less
+  Tegra-specific
 
-On Tue, Feb 4, 2014 at 3:51 PM, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> Hi Stephen and Thierry,
->
-> Recently I'm working on upstreaming my V4L2 driver for Tegra video
-> input module, which is using host1x syncpt to wait for frame
-> capturing.
->
-> So here is my basic steps for handling host1x syncpt,
->
-> 1. Call host1x_syncpt_request(cam->client.dev, flags); to allocate
-> syncpts for my driver.
->
-> 2. Program host1x_syncpt_id(sp) into Tegra VI syncpt event register.
-> So when VI captures one frame, syncpt will be increased one.
->
-> 3. Call thresh = host1x_syncpt_incr_max(sp, 1) to incr max_val of the
-> syncpt, which is the threshold for waiting.
->
-> 4. Start capture and wait for host1x syncpt event like this
-> host1x_syncpt_wait(sp, thresh, WAIT_TIMEOUT, &value);
->
-> Is that the right sequence?
->
-> host1x_syncpt_incr_max() is not exported and without calling it I
-> always got error message like this:
-> "tegra-host1x 50000000.host1x: syncpt_load failed: id=1, min=46, max=0, live=46"
-> So I have to increase the max_val manually like step 3. And
-> host1x_syncpt_incr() won't increase the max_val which will still
-> generate this error message.
->
-> Actually with the steps I listed, I can capture data from real sensor now.
->
-> Thanks,
-> -Bryan
+Alexandre Courbot (6):
+  ARM: trusted_foundations: fix vendor prefix typos
+  ARM: trusted_foundations: fallback when TF support is missing
+  ARM: firmware: enable Trusted Foundations by default
+  ARM: firmware: add prepare_idle() operation
+  ARM: trusted_foundations: implement prepare_idle()
+  ARM: tegra: cpuidle: use firmware for power down
+
+ arch/arm/firmware/Kconfig                  |  3 ++-
+ arch/arm/firmware/trusted_foundations.c    | 20 +++++++++++++++++++-
+ arch/arm/include/asm/firmware.h            |  4 ++++
+ arch/arm/include/asm/trusted_foundations.h | 13 +++++++++----
+ arch/arm/mach-tegra/cpuidle-tegra114.c     | 11 ++++++++++-
+ 5 files changed, 44 insertions(+), 7 deletions(-)
+
+-- 
+1.8.5.3
