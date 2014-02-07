@@ -1,47 +1,51 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 0/6] ARM: firmware: improvements to Trusted Foundations support
-Date: Fri, 7 Feb 2014 13:35:00 +0900
-Message-ID: <1391747706-1847-1-git-send-email-acourbot@nvidia.com>
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH v2 1/6] ARM: trusted_foundations: fix vendor prefix typos
+Date: Fri, 7 Feb 2014 13:35:01 +0900
+Message-ID: <1391747706-1847-2-git-send-email-acourbot@nvidia.com>
+References: <1391747706-1847-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1391747706-1847-1-git-send-email-acourbot@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Russell King <linux@arm.linux.org.uk>, Tomasz Figa <t.figa@samsung.com>
+Cc: Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-These (mostly minor) patches fix a few typos, improve points that
-were agreed upon when the Trusted Foundation series was initially
-submitted, and more importantly add support for a prepare_idle()
-firmware operation that informs the firmware a CPU is doing idle.
-Tegra's cpuidle driver is then also updated accordingly.
+of_register_trusted_foundations() and the firmware Kconfig used
+the wrong vendor prefix for Trusted Logic Mobility.
 
-These patches should be the last step before device trees for NVIDIA
-SHIELD and Tegra Note 7 can be submitted.
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+---
+ arch/arm/firmware/Kconfig                  | 2 +-
+ arch/arm/include/asm/trusted_foundations.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Changes since v1:
-- Do not remove TF support from tegra_defconfig (will automatically be taken
-  care of during next configuration update)
-- Add a new prepare_idle() operation to firmware_ops that informs the firmware
-  a CPU is going idle (vs. asking the firmware to do it itself as do_idle()
-  does)
-- Fix idle states names in TF implementation of prepare_idle to sound less
-  Tegra-specific
-
-Alexandre Courbot (6):
-  ARM: trusted_foundations: fix vendor prefix typos
-  ARM: trusted_foundations: fallback when TF support is missing
-  ARM: firmware: enable Trusted Foundations by default
-  ARM: firmware: add prepare_idle() operation
-  ARM: trusted_foundations: implement prepare_idle()
-  ARM: tegra: cpuidle: use firmware for power down
-
- arch/arm/firmware/Kconfig                  |  3 ++-
- arch/arm/firmware/trusted_foundations.c    | 20 +++++++++++++++++++-
- arch/arm/include/asm/firmware.h            |  4 ++++
- arch/arm/include/asm/trusted_foundations.h | 13 +++++++++----
- arch/arm/mach-tegra/cpuidle-tegra114.c     | 11 ++++++++++-
- 5 files changed, 44 insertions(+), 7 deletions(-)
-
+diff --git a/arch/arm/firmware/Kconfig b/arch/arm/firmware/Kconfig
+index bb00ccf00d66..bb126594995e 100644
+--- a/arch/arm/firmware/Kconfig
++++ b/arch/arm/firmware/Kconfig
+@@ -20,7 +20,7 @@ config TRUSTED_FOUNDATIONS
+ 	  This option allows the kernel to invoke the secure monitor whenever
+ 	  required on devices using Trusted Foundations. See
+ 	  arch/arm/include/asm/trusted_foundations.h or the
+-	  tl,trusted-foundations device tree binding documentation for details
++	  tlm,trusted-foundations device tree binding documentation for details
+ 	  on how to use it.
+ 
+ 	  Say n if you don't know what this is about.
+diff --git a/arch/arm/include/asm/trusted_foundations.h b/arch/arm/include/asm/trusted_foundations.h
+index 3bd36e2c5f2e..997862fd5d77 100644
+--- a/arch/arm/include/asm/trusted_foundations.h
++++ b/arch/arm/include/asm/trusted_foundations.h
+@@ -59,7 +59,7 @@ static inline void of_register_trusted_foundations(void)
+ 	 * If we find the target should enable TF but does not support it,
+ 	 * fail as the system won't be able to do much anyway
+ 	 */
+-	if (of_find_compatible_node(NULL, NULL, "tl,trusted-foundations"))
++	if (of_find_compatible_node(NULL, NULL, "tlm,trusted-foundations"))
+ 		register_trusted_foundations(NULL);
+ }
+ #endif /* CONFIG_TRUSTED_FOUNDATIONS */
 -- 
 1.8.5.3
