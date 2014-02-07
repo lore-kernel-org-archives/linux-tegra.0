@@ -1,26 +1,56 @@
-From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Subject: Re: [PATCH v5 1/1] watchdog: Add tegra watchdog
-Date: Thu, 06 Feb 2014 17:57:28 -0800
-Message-ID: <52F43D88.2050304@roeck-us.net>
-References: <1391738086-29142-1-git-send-email-achew@nvidia.com>
+From: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: How to use host1x syncpt?
+Date: Thu, 6 Feb 2014 18:11:15 -0800
+Message-ID: <CAK5ve-+sWLtaCQwPOm99pzPmtJioAKUjba-_6eV5bqf3KxXwFg@mail.gmail.com>
+References: <CAK5ve-+ARW3cx+671vNYQCWYPe=CVa5n81q2-BrKyGzF8Nv4fw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1391738086-29142-1-git-send-email-achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <CAK5ve-+ARW3cx+671vNYQCWYPe=CVa5n81q2-BrKyGzF8Nv4fw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org, rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, katierh-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/06/2014 05:54 PM, Andrew Chew wrote:
-> Add a driver for the hardware watchdogs in NVIDIA Tegra SoCs (Tegra30 and
-> later).  This driver will configure one watchdog timer that will reset the
-> system in the case of a watchdog timeout.
->
-> This driver binds to the nvidia,tegra30-timer device node and gets its
-> register base from there.
->
-> Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Hi Terje,
 
-Reviewed-by: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Forget to add you to this email, could you please help to take a look
+at my questions?
+
+Thanks,
+-Bryan
+
+On Tue, Feb 4, 2014 at 3:51 PM, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> Hi Stephen and Thierry,
+>
+> Recently I'm working on upstreaming my V4L2 driver for Tegra video
+> input module, which is using host1x syncpt to wait for frame
+> capturing.
+>
+> So here is my basic steps for handling host1x syncpt,
+>
+> 1. Call host1x_syncpt_request(cam->client.dev, flags); to allocate
+> syncpts for my driver.
+>
+> 2. Program host1x_syncpt_id(sp) into Tegra VI syncpt event register.
+> So when VI captures one frame, syncpt will be increased one.
+>
+> 3. Call thresh = host1x_syncpt_incr_max(sp, 1) to incr max_val of the
+> syncpt, which is the threshold for waiting.
+>
+> 4. Start capture and wait for host1x syncpt event like this
+> host1x_syncpt_wait(sp, thresh, WAIT_TIMEOUT, &value);
+>
+> Is that the right sequence?
+>
+> host1x_syncpt_incr_max() is not exported and without calling it I
+> always got error message like this:
+> "tegra-host1x 50000000.host1x: syncpt_load failed: id=1, min=46, max=0, live=46"
+> So I have to increase the max_val manually like step 3. And
+> host1x_syncpt_incr() won't increase the max_val which will still
+> generate this error message.
+>
+> Actually with the steps I listed, I can capture data from real sensor now.
+>
+> Thanks,
+> -Bryan
