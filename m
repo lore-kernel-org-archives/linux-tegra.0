@@ -1,54 +1,71 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 6/6] ARM: tegra: cpuidle: use firmware for power down
-Date: Fri, 7 Feb 2014 13:35:06 +0900
-Message-ID: <1391747706-1847-7-git-send-email-acourbot@nvidia.com>
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH v2 2/6] ARM: trusted_foundations: fallback when TF support is
+ missing
+Date: Fri, 7 Feb 2014 13:35:02 +0900
+Message-ID: <1391747706-1847-3-git-send-email-acourbot@nvidia.com>
 References: <1391747706-1847-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1391747706-1847-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1391747706-1847-1-git-send-email-acourbot@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Russell King <linux@arm.linux.org.uk>, Tomasz Figa <t.figa@samsung.com>
+Cc: gnurou@gmail.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Attempt to invoke the prepare_idle() and do_idle() firmware calls
-to power down a CPU so an underlying firmware gets informed of
-the idle operation and performs it by itself if designed in such a way.
+When Trusted Foundations is detected as present on the system, but
+Trusted Foundations support is not built into the kernel, the kernel
+used to issue a panic very early during boot, leaving little clue to the
+user as to what is going wrong.
 
-Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+It turns out that even without TF support built-in, the kernel can boot
+on a TF-enabled system provided that SMP and cpuidle are disabled. This
+patch does this and continue booting on one CPU, leaving the user with a
+usable (however degraded) system.
+
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
- arch/arm/mach-tegra/cpuidle-tegra114.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ arch/arm/include/asm/trusted_foundations.h | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/cpuidle-tegra114.c b/arch/arm/mach-tegra/cpuidle-tegra114.c
-index e0b87300243d..558067ddc186 100644
---- a/arch/arm/mach-tegra/cpuidle-tegra114.c
-+++ b/arch/arm/mach-tegra/cpuidle-tegra114.c
-@@ -19,6 +19,7 @@
- #include <linux/cpuidle.h>
- #include <linux/cpu_pm.h>
- #include <linux/clockchips.h>
-+#include <asm/firmware.h>
+diff --git a/arch/arm/include/asm/trusted_foundations.h b/arch/arm/include/asm/trusted_foundations.h
+index 997862fd5d77..b5f7705abcb0 100644
+--- a/arch/arm/include/asm/trusted_foundations.h
++++ b/arch/arm/include/asm/trusted_foundations.h
+@@ -30,6 +30,8 @@
+ #include <linux/printk.h>
+ #include <linux/bug.h>
+ #include <linux/of.h>
++#include <linux/cpu.h>
++#include <linux/smp.h>
  
- #include <asm/cpuidle.h>
- #include <asm/suspend.h>
-@@ -45,7 +46,15 @@ static int tegra114_idle_power_down(struct cpuidle_device *dev,
+ struct trusted_foundations_platform_data {
+ 	unsigned int version_major;
+@@ -47,10 +49,13 @@ static inline void register_trusted_foundations(
+ 				   struct trusted_foundations_platform_data *pd)
+ {
+ 	/*
+-	 * If we try to register TF, this means the system needs it to continue.
+-	 * Its absence if thus a fatal error.
++	 * If the system requires TF and we cannot provide it, continue booting
++	 * but disable features that cannot be provided.
+ 	 */
+-	panic("No support for Trusted Foundations, stopping...\n");
++	pr_err("No support for Trusted Foundations, continuing in degraded mode.\n");
++	pr_err("Secondary processors as well as CPU PM will be disabled.\n");
++	setup_max_cpus = 0;
++	cpu_idle_poll_ctrl(true);
+ }
  
- 	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_ENTER, &dev->cpu);
- 
--	cpu_suspend(0, tegra30_sleep_cpu_secondary_finish);
-+	call_firmware_op(prepare_idle);
-+
-+	switch (call_firmware_op(do_idle)) {
-+	case -ENOSYS:
-+		cpu_suspend(0, tegra30_sleep_cpu_secondary_finish);
-+		break;
-+	default:
-+		break;
-+	}
- 
- 	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_EXIT, &dev->cpu);
- 
+ static inline void of_register_trusted_foundations(void)
 -- 
 1.8.5.3
