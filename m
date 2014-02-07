@@ -1,71 +1,96 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH v2 2/6] ARM: trusted_foundations: fallback when TF support is
- missing
-Date: Fri, 7 Feb 2014 13:35:02 +0900
-Message-ID: <1391747706-1847-3-git-send-email-acourbot@nvidia.com>
-References: <1391747706-1847-1-git-send-email-acourbot@nvidia.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC 14/16] drm/nouveau/fb: add GK20A support
+Date: Fri, 7 Feb 2014 23:19:52 +0900
+Message-ID: <CAAVeFuL+yf8mu5LfSBdWXbcei3FpgKP4yg0GuJ6huTb8q_S5GA@mail.gmail.com>
+References: <1391224618-3794-1-git-send-email-acourbot@nvidia.com>
+ <1391224618-3794-15-git-send-email-acourbot@nvidia.com> <1391262057.2035.7.camel@antimon.intern.lynxeye.de>
+ <CAKb7UvhJWOtxzYMViuoV6fHU4UR_+j1QTKHw1PoQT_+ykenfYw@mail.gmail.com>
+ <1391299106.2985.3.camel@antimon.intern.lynxeye.de> <CAAVeFuLdwoKXsFtcMQ07ozFQXckki86zuB3xNMNk+QbEOtoG0A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1391747706-1847-1-git-send-email-acourbot@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Russell King <linux@arm.linux.org.uk>, Tomasz Figa <t.figa@samsung.com>
-Cc: gnurou@gmail.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAAVeFuLdwoKXsFtcMQ07ozFQXckki86zuB3xNMNk+QbEOtoG0A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Cc: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ken Adams <KAdams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-When Trusted Foundations is detected as present on the system, but
-Trusted Foundations support is not built into the kernel, the kernel
-used to issue a panic very early during boot, leaving little clue to the
-user as to what is going wrong.
+On Sun, Feb 2, 2014 at 10:43 PM, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Sun, Feb 2, 2014 at 8:58 AM, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org> wrote:
+>> Am Samstag, den 01.02.2014, 18:28 -0500 schrieb Ilia Mirkin:
+>>> On Sat, Feb 1, 2014 at 8:40 AM, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org> wrote:
+>>> > Am Samstag, den 01.02.2014, 12:16 +0900 schrieb Alexandre Courbot:
+>>> >> Add a clumsy-but-working FB support for GK20A. This chip only uses system
+>>> >> memory, so we allocate a big chunk using CMA and let the existing memory
+>>> >> managers work on it.
+>>> >>
+>>> >> A better future design would be to allocate objects directly from system
+>>> >> memory without having to suffer from the limitations of a large,
+>>> >> contiguous pool.
+>>> >>
+>>> > I don't know if Tegra124 is similar to 114 in this regard [hint: get the
+>>> > TRM out :)], but if you go for a dedicated VRAM allocator, wouldn't it
+>>> > make sense to take a chunk of the MMIO overlaid memory for this when
+>>> > possible, rather than carving this out of CPU accessible mem?
+>>>
+>>> This is probably a stupid question... what do you need VRAM for
+>>> anyways? In _theory_ it's an abstraction to talk about memory that's
+>>> not accessible by the CPU. This is obviously not the case here, and
+>>> presumably the GPU can access all the memory in the system, so it can
+>>> be all treated as "GART" memory... AFAIK all accesses are behind the
+>>> in-GPU MMU, so contiguous physical memory isn't an issue either. In
+>>> practice, I suspect nouveau automatically sticks certain things into
+>>> vram (gpuobj's), but it should be feasible to make them optionally use
+>>> GART memory when VRAM is not available. I haven't really looked at the
+>>> details though, perhaps that's a major undertaking.
+>>>
+>>>   -ilia
+>>>
+>> If it's similar to the Tegar114 there actually is memory that isn't
+>> accessible from the CPU. About 2GB of the address space is overlaid with
+>> MMIO for the devices, so in a 4GB system you potentially have 2GB of RAM
+>> that's only visible for the devices.
+>>
+>> But yes in general nouveau should just fall back to a GART placement if
+>> VRAM isn't available.
+>
+> With the limited time I spent studying it, it seems to me that Nouveau
+> has a strong dependency on VRAM. For gpuobjects indeed (that one could
+> be workarounded with a new instmem driver I suppose), and also for
+> TTM: objects placed in TTM_PL_VRAM are handled by the VRAM manager,
+> which requires a nouveau_ram instance in the FB. Actually the FB also
+> seems to assume the presence of a dedicated video RAM.
+>
+> So while I agree that getting rid of VRAM altogether would be the most
+> logical solution, I have not found a way to do so for the moment.
+>
+> T124's GPU actually sees the same physical address space as the CPU,
+> so memory management should be simplified thanks to that (you could
+> enable the SMMU and make things more interesting/complex, but for now
+> it seems untimely to even consider doing so). Actually even the
+> concept of a GART is not needed here: all your memory management needs
+> could be fulfilled by getting pages with alloc_page() and arranging
+> them using the GMMU. No GART, no BAR (at least for the purpose of
+> mapping objects for CPU access), no PRAMIN.
 
-It turns out that even without TF support built-in, the kernel can boot
-on a TF-enabled system provided that SMP and cpuidle are disabled. This
-patch does this and continue booting on one CPU, leaving the user with a
-usable (however degraded) system.
+So, looking at the code more closely I noticed the nouveau_ram::get()
+operation was only used by instmem (to allocate GPU objects) and TTM
+(for BOs in VRAM).
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
- arch/arm/include/asm/trusted_foundations.h | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+I quickly wrote a custom instmem that allocates objects individually
+with dma_alloc_coherent() (and manually builds a nouveau_mem instance
+so they can be mapped into the BAR) and disabled nouveau_vram_manager
+for TTM, making TTM_PL_VRAM BOs use the GART manager. And oooh, it
+seems to work! :) I can remove that horrible CMA allocation and only
+keep the nouveau_ram instance as a dummy object providing 0MB of
+memory.
 
-diff --git a/arch/arm/include/asm/trusted_foundations.h b/arch/arm/include/asm/trusted_foundations.h
-index 997862fd5d77..b5f7705abcb0 100644
---- a/arch/arm/include/asm/trusted_foundations.h
-+++ b/arch/arm/include/asm/trusted_foundations.h
-@@ -30,6 +30,8 @@
- #include <linux/printk.h>
- #include <linux/bug.h>
- #include <linux/of.h>
-+#include <linux/cpu.h>
-+#include <linux/smp.h>
- 
- struct trusted_foundations_platform_data {
- 	unsigned int version_major;
-@@ -47,10 +49,13 @@ static inline void register_trusted_foundations(
- 				   struct trusted_foundations_platform_data *pd)
- {
- 	/*
--	 * If we try to register TF, this means the system needs it to continue.
--	 * Its absence if thus a fatal error.
-+	 * If the system requires TF and we cannot provide it, continue booting
-+	 * but disable features that cannot be provided.
- 	 */
--	panic("No support for Trusted Foundations, stopping...\n");
-+	pr_err("No support for Trusted Foundations, continuing in degraded mode.\n");
-+	pr_err("Secondary processors as well as CPU PM will be disabled.\n");
-+	setup_max_cpus = 0;
-+	cpu_idle_poll_ctrl(true);
- }
- 
- static inline void of_register_trusted_foundations(void)
--- 
-1.8.5.3
+I think this should be a viable solution, BOs never need to be
+contiguous thanks to the gMMU, and dma_alloc_coherent() returns
+contiguous memory for instobjs (not sure if *all* instobjs need to be
+contiguous in physical memory - page tables sure do - , but AFAICT we
+never allocate crazy-big instobjs).
+
+Any flaw/possible improvement with this design?
+
+Alex.
