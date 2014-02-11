@@ -1,61 +1,32 @@
-From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: dalmore: fix irq trigger type
-Date: Tue, 11 Feb 2014 22:21:15 +0100
-Message-ID: <30f0db808e7543d9ab6b077aa5e239f2@agner.ch>
-References: <4fcfcfdbc86c37c6d47ec32cdbd987f3b406e9b5.1392147256.git.stefan@agner.ch>
- <20140211204737.GA1895@mithrandir>
+From: Andrew Chew <AChew@nvidia.com>
+Subject: RE: [PATCH v5 1/1] watchdog: Add tegra watchdog
+Date: Tue, 11 Feb 2014 14:11:20 -0800
+Message-ID: <643E69AA4436674C8F39DCC2C05F76386319AB352D@HQMAIL03.nvidia.com>
+References: <1391738086-29142-1-git-send-email-achew@nvidia.com>
+ <52F43D88.2050304@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140211204737.GA1895@mithrandir>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <52F43D88.2050304@roeck-us.net>
+Content-Language: en-US
+Sender: linux-doc-owner@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>, "wim@iguana.be" <wim@iguana.be>, "rob@landley.net" <rob@landley.net>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "grant.likely@linaro.org" <grant.likely@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "abrestic@chromium.org" <abrestic@chromium.org>, "dgreid@chromium.org" <dgreid@chromium.org>, "katierh@chromium.org" <katierh@chromium.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Am 2014-02-11 21:47, schrieb Thierry Reding:
-> On Tue, Feb 11, 2014 at 09:11:32PM +0100, Stefan Agner wrote:
->> Trigger type needs to be IRQ_TYPE_LEVEL_HIGH since the interrupt
->> signal gets inverted by the PMC (configured by the invert-interrupt
->> property).
+> On 02/06/2014 05:54 PM, Andrew Chew wrote:
+> > Add a driver for the hardware watchdogs in NVIDIA Tegra SoCs (Tegra30
+> > and later).  This driver will configure one watchdog timer that will
+> > reset the system in the case of a watchdog timeout.
+> >
+> > This driver binds to the nvidia,tegra30-timer device node and gets its
+> > register base from there.
+> >
+> > Signed-off-by: Andrew Chew <achew@nvidia.com>
 > 
-> Isn't the reason the other way around? The PMIC generates a low-level
-> interrupt, but the GIC can only be configured to accept high-level (or
-> rising edge) and therefore the nvidia,invert-interrupt property needs to
-> be set in the PMC node?
-Hm yes agreed. I should also write the whole story here, maybe this:
+> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-The GIC only support high-active interrupts. When using a PMIC with
-low-active interrupt, the PMC has to be configured by using the
-nvidia,invert-interrupt property in its node.
+Thanks, Guenter.
 
-This fix sets the GIC back to high-active and reverts commit
-eca8f98e404934027f84f72882c5e92ffbd9e5f5.
-
-> One nitpick below.
-> 
->> diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
-> [...]
->> @@ -888,8 +888,9 @@
->>  		palmas: tps65913@58 {
->>  			compatible = "ti,palmas";
->>  			reg = <0x58>;
->> -			interrupts = <0 86 IRQ_TYPE_LEVEL_LOW>;
->>
->> +			/* active-low configured by PMC invert-interrupt */
->> +			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
-> 
-> I'd prefer to keep the properties grouped as before. interrupts is a
-> "client" property, whereas #interrupt-cells and interrupt-controller
-> are "provider" properties.
-> 
-> And I think the comment would be more appropriate in the pmc node, for
-> the same reason that I think the commit description isn't entirely
-> accurate.
-Well, its kind a question where you are coming from. I read the data
-sheet/schemata, and saw that its low-active. Then I went to the PMIC
-node and checked how that interrupt is configured, and what you see is
-HIGH_ACTIVE. You then think you've found the bug and fix it by setting
-it to IRQ_TYPE_LEVEL_LOW. What you don't know is that PMC is in between
-and alters the polarity...
+Pinging other potential reviewers.  Any other comments for me, guys?
