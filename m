@@ -1,158 +1,92 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 1/1] drm/tegra: Add guard to avoid double disable/enable
-	of RGB outputs
-Date: Tue, 11 Feb 2014 21:54:45 +0100
-Message-ID: <20140211205443.GB1895@mithrandir>
-References: <1392138747-18198-1-git-send-email-digetx@gmail.com>
-	<CABPQNSYNpwf_EQqUc2zpQ1cVQE++2ma-bR-rfQPdNoaJc07W4w@mail.gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: don't timeout if CPU is powergated
+Date: Tue, 11 Feb 2014 22:18:28 +0100
+Message-ID: <20140211211827.GC1895@mithrandir>
+References: <1d5ea6b7df4573d866779857922ac650fe59af60.1392078805.git.stefan@agner.ch>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1034397968=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CABPQNSYNpwf_EQqUc2zpQ1cVQE++2ma-bR-rfQPdNoaJc07W4w@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces@lists.freedesktop.org
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-To: Erik Faye-Lund <kusmabite@gmail.com>
-Cc: tbergstrom@nvidia.com, swarren@wwwdotorg.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="7gGkHNMELEOhSGF6"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1d5ea6b7df4573d866779857922ac650fe59af60.1392078805.git.stefan-XLVq0VzYD2Y@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============1034397968==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="DBIVS5p969aUjpLe"
-Content-Disposition: inline
-
-
---DBIVS5p969aUjpLe
+--7gGkHNMELEOhSGF6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 11, 2014 at 08:13:14PM +0100, Erik Faye-Lund wrote:
-> On Tue, Feb 11, 2014 at 6:12 PM, Dmitry Osipenko <digetx@gmail.com> wrote:
-> > Add guard to check whether RGB output is already enabled in the way it's
-> > done for HDMI output. Fixes possible hang on trying to disable output t=
-wice
-> > (first time during driver probe and second on fb registering).
-> >
-> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> > ---
-> >  drivers/gpu/drm/tegra/rgb.c | 11 +++++++++++
-> >  1 file changed, 11 insertions(+)
-> >
-> > diff --git a/drivers/gpu/drm/tegra/rgb.c b/drivers/gpu/drm/tegra/rgb.c
-> > index 338f7f6..0266fb4 100644
-> > --- a/drivers/gpu/drm/tegra/rgb.c
-> > +++ b/drivers/gpu/drm/tegra/rgb.c
-> > @@ -15,6 +15,7 @@
-> >  struct tegra_rgb {
-> >         struct tegra_output output;
-> >         struct tegra_dc *dc;
-> > +       bool enabled;
-> >
-> >         struct clk *clk_parent;
-> >         struct clk *clk;
-> > @@ -89,6 +90,9 @@ static int tegra_output_rgb_enable(struct tegra_outpu=
-t *output)
-> >         struct tegra_rgb *rgb =3D to_rgb(output);
-> >         unsigned long value;
-> >
-> > +       if (rgb->enabled)
-> > +               return 0;
-> > +
-> >         tegra_dc_write_regs(rgb->dc, rgb_enable, ARRAY_SIZE(rgb_enable)=
-);
-> >
-> >         value =3D DE_SELECT_ACTIVE | DE_CONTROL_NORMAL;
-> > @@ -122,6 +126,8 @@ static int tegra_output_rgb_enable(struct tegra_out=
-put *output)
-> >         tegra_dc_writel(rgb->dc, GENERAL_ACT_REQ << 8, DC_CMD_STATE_CON=
-TROL);
-> >         tegra_dc_writel(rgb->dc, GENERAL_ACT_REQ, DC_CMD_STATE_CONTROL);
-> >
-> > +       rgb->enabled =3D true;
-> > +
-> >         return 0;
-> >  }
-> >
-> > @@ -130,6 +136,9 @@ static int tegra_output_rgb_disable(struct tegra_ou=
-tput *output)
-> >         struct tegra_rgb *rgb =3D to_rgb(output);
-> >         unsigned long value;
-> >
-> > +       if (!rgb->enabled)
-> > +               return 0;
-> > +
-> >         value =3D tegra_dc_readl(rgb->dc, DC_CMD_DISPLAY_POWER_CONTROL);
-> >         value &=3D ~(PW0_ENABLE | PW1_ENABLE | PW2_ENABLE | PW3_ENABLE |
-> >                    PW4_ENABLE | PM0_ENABLE | PM1_ENABLE);
-> > @@ -144,6 +153,8 @@ static int tegra_output_rgb_disable(struct tegra_ou=
-tput *output)
-> >
-> >         tegra_dc_write_regs(rgb->dc, rgb_disable, ARRAY_SIZE(rgb_disabl=
-e));
-> >
-> > +       rgb->enabled =3D false;
-> > +
-> >         return 0;
-> >  }
-> >
+On Tue, Feb 11, 2014 at 01:44:13AM +0100, Stefan Agner wrote:
+> When booting secondary CPU(s) which are not yet powergated, a wrong
+> check lead to a timeout after 100 jiffies. With this patch, we only
+> delay powergating if CPUs are still not powered yet.
 >=20
-> Wouldn't it make more sense to make "enabled" and int that counts how
-> many times tegra_output_rgb_enable has been called? That way you can
-> have tegra_output_rgb_disable only really disable the display once the
-> same amount of disables have been performed...
+> Signed-off-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+> ---
+> I happend to come accross this while working on Colibri T30 support.
+> Obviously, the downstream U-Boot doesn't powergate all CPUs, so
+> the Linux kernel always timed out when booting CPU 1 through 3...
+>=20
+>  arch/arm/mach-tegra/platsmp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
+> index eb72ae7..929d104 100644
+> --- a/arch/arm/mach-tegra/platsmp.c
+> +++ b/arch/arm/mach-tegra/platsmp.c
+> @@ -114,7 +114,7 @@ static int tegra30_boot_secondary(unsigned int cpu, s=
+truct task_struct *idle)
+> =20
+>  		/* Wait for the power to come up. */
+>  		timeout =3D jiffies + msecs_to_jiffies(100);
+> -		while (tegra_pmc_cpu_is_powered(cpu)) {
+> +		while (!tegra_pmc_cpu_is_powered(cpu)) {
+>  			if (time_after(jiffies, timeout))
+>  				return -ETIMEDOUT;
+>  			udelay(10);
 
-I don't think that will work. Calls to tegra_output_rgb_enable/disable()
-and the .enable/disable for any other outputs aren't guaranteed to be
-balanced. Therefore reference counting the enables and disables will
-break things.
+This is indeed what I'd expect the code to look like. Since the code
+enables power to the CPU, the logical thing to do would be to then wait
+for it to be powered up.
 
-Thinking about it, maybe the current interface to outputs isn't the best
-solution. It's simple and with the guards in place it works pretty well.
-Perhaps if I can find some spare time I'll investigate whether something
-a little cleaner can be done.
+I don't quite understand when exactly this will fail, since the whole
+block above is conditional on !tegra_pmc_cpu_is_powered() condition, so
+the only way that this can happen is when the first check fails, then
+the CPU is powered on and the PMC recognizes the CPU as powered before
+the while (...) is executed.
 
-Thierry
+Thinking about it I've seen an issue on Cardhu where occasionally only
+three of the four CPUs actually came up (I've only noticed this since
+the DRM panel patches because three penguins looks kind of weird =3D).
+This bug would explain that issue.
 
---DBIVS5p969aUjpLe
+Any way, the new code makes much more sense than the old one, so:
+
+Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+--7gGkHNMELEOhSGF6
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJS+o4TAAoJEN0jrNd/PrOhwlIQAKL6uGBGYncMSCB6adKyu9ND
-d+QBGZnlD65GZDWRbYEuvGDthtdFmVFr7iHFKdSqqocOTt4A6Ycyatc3R+h8LT99
-CKaAqlDJALQQoZ1J1JogL7rAnQvLDxj48Y/H728vg7Rsp73IqGJNfjtBzqYZ864q
-lGOlhYQFtxIXOPL5nBIuJNNxdHwzP4nsIM8uX8wvy0eZpfZKgVw1c5IcbH8/1Xmu
-H38S+59MYzTl4OlCLDSonUk5t6v49U+xyRHh7JdMcRJk/dCtPMUczjj3d71nizwV
-ax04UXj5Gyrk/FQmu0DmqCown0yRCqRq/2uAZZBfa199JcNzSonAT3FMvEUj1Hfs
-5KOwDBOmrsFfvwL0AC+WzBplfkstZs1HM4GbJg376OcopvQCvXvcovW14063V3+W
-DHjsQvIuHjBd6bIW/cervX+Fjn/Lgc9zKFk5ifCW5VWz16uKzmyrW0xfwh93o5Es
-PAZd4LZjT05WxLtKcx5MQiENDl2LiTGwg7ySgCtlXAmZLvlrRMOpXERBJCrUzApZ
-K7giNFGkWpgmrqVjEr19KSCLaNjav0bP7NF+b2chkw3hXs59ewqKEVZsd4zJq5As
-3Kt16cU0oQ+pbpvMB87ygD1zZRvi+GSBG0DYrwHMQzzgBN984wmDe0xZaHBlpWzP
-1JnyzoAWsQ7WxypcpkCp
-=SSZP
+iQIcBAEBAgAGBQJS+pOjAAoJEN0jrNd/PrOh0s0QAJ8q37hTMF07XcU1eaIuuYg2
+K3xAOw+4bDsrr4QvTxG6GD8BOjmRQodx/fNPIseF6TQdhftrVjb3gnhrb18pWrTa
+w6fpnd0Tg75HoeKibh+0jxwBP0QV5yhbmgQbc31hVzZ0tNoVb7VtV4vZPuGfT7Va
+TosTMebq15uNSwoEewZ9IfSegbIuO4KFD7ZTfj0Mxkmrq0wtyrL8W0/KGA/bD5q0
+Iia5DevwEKtxx26m8fGS5KtTCcoWRjUrSuJ90l978Z4hmnmp3W4q9EsNxih/OGFs
+PZLZWo179+QrDzN+bE8m5Z/U3x7AvfQJF+RmPI8jJfbRzXQr+cjQ7DUhyajBgFHr
+Xh3J3lNRbxHZ48ACz0XNnbhY2K8oar1aVzeN91/POUuayxRLPVKnzCRKwpp9yx4Q
+0lJji6fcQE8xWn0QI0G0rzNvRVyCDqFgQTXLeNo9eRxMAmg+29KctZ4W2FOXZjW2
+T27Odf1FtJkzzsKHrzALOSstt91YdliMWXy1+cZVlzaUODVlpVFdwGmL25NZUl6I
+AHsQfuFDPOR/P224WkRTTl/yWFgj1IjpHq7veHwHE5JbkkBsW5nn0TVKg06JPHN8
+t9HNZZAS4MBsKrFeqNrguIK2Sq5naN9/vHYdk4xgf/Wf9VrQZvvHeByKizDANVnY
+pDSMfE4LpHPW5M4/HjXn
+=a3CK
 -----END PGP SIGNATURE-----
 
---DBIVS5p969aUjpLe--
-
---===============1034397968==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============1034397968==--
+--7gGkHNMELEOhSGF6--
