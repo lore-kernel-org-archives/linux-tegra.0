@@ -1,62 +1,38 @@
-From: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: How to use host1x syncpt?
-Date: Mon, 10 Feb 2014 16:08:03 -0800
-Message-ID: <CAK5ve-+A1-V8rrDo4HAHoBgdD+U-Dp6XY_GAzEmxfv49w9qVOQ@mail.gmail.com>
-References: <CAK5ve-+ARW3cx+671vNYQCWYPe=CVa5n81q2-BrKyGzF8Nv4fw@mail.gmail.com>
- <CAK5ve-+sWLtaCQwPOm99pzPmtJioAKUjba-_6eV5bqf3KxXwFg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAK5ve-+sWLtaCQwPOm99pzPmtJioAKUjba-_6eV5bqf3KxXwFg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stefan Agner <stefan@agner.ch>
+Subject: [PATCH] ARM: tegra: don't timeout if CPU is powergated
+Date: Tue, 11 Feb 2014 01:44:13 +0100
+Message-ID: <1d5ea6b7df4573d866779857922ac650fe59af60.1392078805.git.stefan@agner.ch>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: swarren@wwwdotorg.org, thierry.reding@gmail.com, josephl@nvidia.com
+Cc: dev@lynxeye.de, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
 List-Id: linux-tegra@vger.kernel.org
 
-Ping,
+When booting secondary CPU(s) which are not yet powergated, a wrong
+check lead to a timeout after 100 jiffies. With this patch, we only
+delay powergating if CPUs are still not powered yet.
 
--Bryan
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+I happend to come accross this while working on Colibri T30 support.
+Obviously, the downstream U-Boot doesn't powergate all CPUs, so
+the Linux kernel always timed out when booting CPU 1 through 3...
 
-On Thu, Feb 6, 2014 at 6:11 PM, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> Hi Terje,
->
-> Forget to add you to this email, could you please help to take a look
-> at my questions?
->
-> Thanks,
-> -Bryan
->
-> On Tue, Feb 4, 2014 at 3:51 PM, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->> Hi Stephen and Thierry,
->>
->> Recently I'm working on upstreaming my V4L2 driver for Tegra video
->> input module, which is using host1x syncpt to wait for frame
->> capturing.
->>
->> So here is my basic steps for handling host1x syncpt,
->>
->> 1. Call host1x_syncpt_request(cam->client.dev, flags); to allocate
->> syncpts for my driver.
->>
->> 2. Program host1x_syncpt_id(sp) into Tegra VI syncpt event register.
->> So when VI captures one frame, syncpt will be increased one.
->>
->> 3. Call thresh = host1x_syncpt_incr_max(sp, 1) to incr max_val of the
->> syncpt, which is the threshold for waiting.
->>
->> 4. Start capture and wait for host1x syncpt event like this
->> host1x_syncpt_wait(sp, thresh, WAIT_TIMEOUT, &value);
->>
->> Is that the right sequence?
->>
->> host1x_syncpt_incr_max() is not exported and without calling it I
->> always got error message like this:
->> "tegra-host1x 50000000.host1x: syncpt_load failed: id=1, min=46, max=0, live=46"
->> So I have to increase the max_val manually like step 3. And
->> host1x_syncpt_incr() won't increase the max_val which will still
->> generate this error message.
->>
->> Actually with the steps I listed, I can capture data from real sensor now.
->>
->> Thanks,
->> -Bryan
+ arch/arm/mach-tegra/platsmp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
+index eb72ae7..929d104 100644
+--- a/arch/arm/mach-tegra/platsmp.c
++++ b/arch/arm/mach-tegra/platsmp.c
+@@ -114,7 +114,7 @@ static int tegra30_boot_secondary(unsigned int cpu, struct task_struct *idle)
+ 
+ 		/* Wait for the power to come up. */
+ 		timeout = jiffies + msecs_to_jiffies(100);
+-		while (tegra_pmc_cpu_is_powered(cpu)) {
++		while (!tegra_pmc_cpu_is_powered(cpu)) {
+ 			if (time_after(jiffies, timeout))
+ 				return -ETIMEDOUT;
+ 			udelay(10);
+-- 
+1.8.5.4
