@@ -1,138 +1,158 @@
-From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Subject: Re: [PATCH] media: soc-camera: support deferred probing of clients
- and OF cameras
-Date: Tue, 11 Feb 2014 21:53:54 +0100 (CET)
-Message-ID: <Pine.LNX.4.64.1402112151370.521@axis700.grange>
-References: <1391807504-8946-1-git-send-email-pengw@nvidia.com>
- <Pine.LNX.4.64.1402092122250.7755@axis700.grange>
- <CAK5ve-L5y+X+hLBrP_XTuv_fEU46mXB1P_Xoin+upboutT-8gQ@mail.gmail.com>
- <Pine.LNX.4.64.1402110732070.24582@axis700.grange>
- <CAK5ve-Kct71b4jZ_c9Jq3-tLozSBBH7FxgZUy2VSV1VUUefsZA@mail.gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 1/1] drm/tegra: Add guard to avoid double disable/enable
+	of RGB outputs
+Date: Tue, 11 Feb 2014 21:54:45 +0100
+Message-ID: <20140211205443.GB1895@mithrandir>
+References: <1392138747-18198-1-git-send-email-digetx@gmail.com>
+	<CABPQNSYNpwf_EQqUc2zpQ1cVQE++2ma-bR-rfQPdNoaJc07W4w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <CAK5ve-Kct71b4jZ_c9Jq3-tLozSBBH7FxgZUy2VSV1VUUefsZA@mail.gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>
-Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="===============1034397968=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CABPQNSYNpwf_EQqUc2zpQ1cVQE++2ma-bR-rfQPdNoaJc07W4w@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces@lists.freedesktop.org
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+To: Erik Faye-Lund <kusmabite@gmail.com>
+Cc: tbergstrom@nvidia.com, swarren@wwwdotorg.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 11 Feb 2014, Bryan Wu wrote:
 
-> On Mon, Feb 10, 2014 at 10:37 PM, Guennadi Liakhovetski
-> <g.liakhovetski@gmx.de> wrote:
-> > Hi Bryan,
+--===============1034397968==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="DBIVS5p969aUjpLe"
+Content-Disposition: inline
+
+
+--DBIVS5p969aUjpLe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Feb 11, 2014 at 08:13:14PM +0100, Erik Faye-Lund wrote:
+> On Tue, Feb 11, 2014 at 6:12 PM, Dmitry Osipenko <digetx@gmail.com> wrote:
+> > Add guard to check whether RGB output is already enabled in the way it's
+> > done for HDMI output. Fixes possible hang on trying to disable output t=
+wice
+> > (first time during driver probe and second on fb registering).
 > >
-> > On Mon, 10 Feb 2014, Bryan Wu wrote:
+> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> > ---
+> >  drivers/gpu/drm/tegra/rgb.c | 11 +++++++++++
+> >  1 file changed, 11 insertions(+)
 > >
-> >> On Sun, Feb 9, 2014 at 2:20 PM, Guennadi Liakhovetski
-> >> <g.liakhovetski@gmx.de> wrote:
-> >> > Hi Bryan,
-> >> >
-> >> > Thanks for reiterating this patch!
-> >> >
-> >>
-> >> Sure, my pleasure. I basically assembled your patches together and
-> >> change them to use latest V4L2 soc_camera API.
-> >>
-> >> > On Fri, 7 Feb 2014, Bryan Wu wrote:
+> > diff --git a/drivers/gpu/drm/tegra/rgb.c b/drivers/gpu/drm/tegra/rgb.c
+> > index 338f7f6..0266fb4 100644
+> > --- a/drivers/gpu/drm/tegra/rgb.c
+> > +++ b/drivers/gpu/drm/tegra/rgb.c
+> > @@ -15,6 +15,7 @@
+> >  struct tegra_rgb {
+> >         struct tegra_output output;
+> >         struct tegra_dc *dc;
+> > +       bool enabled;
 > >
-> > [snip]
+> >         struct clk *clk_parent;
+> >         struct clk *clk;
+> > @@ -89,6 +90,9 @@ static int tegra_output_rgb_enable(struct tegra_outpu=
+t *output)
+> >         struct tegra_rgb *rgb =3D to_rgb(output);
+> >         unsigned long value;
 > >
-> >> >> @@ -67,6 +81,8 @@ struct soc_camera_async_client {
-> >> >>
-> >> >>  static int soc_camera_video_start(struct soc_camera_device *ic=
-d);
-> >> >>  static int video_dev_create(struct soc_camera_device *icd);
-> >> >> +static void soc_camera_of_i2c_info(struct device_node *node,
-> >> >> +                               struct soc_camera_of_client *so=
-fc);
-> >> >
-> >> > If you have to resubmit this patch, plase, make sure the second =
-line of
-> >> > the above declaration is aligned af usual - under the first char=
-acter
-> >> > _after_ the opening bracket.
-> >> >
-> >>
-> >> No problem, I will update this.
-> >> Hmmm, something weird on my side. I did put the second line starti=
-ng
-> >> under the first character after the opening bracket. But in git sh=
-ow
-> >> and git format-patch I got this
-> >> ---
-> >> static int soc_camera_video_start(struct soc_camera_device *icd);
-> >>  static int video_dev_create(struct soc_camera_device *icd);
-> >> +static void soc_camera_of_i2c_info(struct device_node *node,
-> >> +                                  struct soc_camera_of_client *so=
-fc);
-> >> ---
-> >>
-> >> But I think that's what you want, right?
+> > +       if (rgb->enabled)
+> > +               return 0;
+> > +
+> >         tegra_dc_write_regs(rgb->dc, rgb_enable, ARRAY_SIZE(rgb_enable)=
+);
 > >
-> > Don't know - now a=F6=F6 TABs above are replaced with spaces, so, c=
-annot say.
+> >         value =3D DE_SELECT_ACTIVE | DE_CONTROL_NORMAL;
+> > @@ -122,6 +126,8 @@ static int tegra_output_rgb_enable(struct tegra_out=
+put *output)
+> >         tegra_dc_writel(rgb->dc, GENERAL_ACT_REQ << 8, DC_CMD_STATE_CON=
+TROL);
+> >         tegra_dc_writel(rgb->dc, GENERAL_ACT_REQ, DC_CMD_STATE_CONTROL);
 > >
-> > [snip]
+> > +       rgb->enabled =3D true;
+> > +
+> >         return 0;
+> >  }
 > >
-> >> >> +{
-> >> >> +     struct soc_camera_of_client *sofc;
-> >> >> +     struct soc_camera_desc *sdesc;
-> >> >
-> >> > I'm really grateful, that you decided to use my original patch a=
-nd
-> >> > preserve my authorship! But then, I think, it'd be also better t=
-o avoid
-> >> > unnecessary changes to it. What was wrong with allocation of *so=
-fc in the
-> >> > definition line?
-> >> >
-> >>
-> >> Oh, this is really I want to bring up. It's a very subtle bug here=
-=2E
-> >>
-> >> If we use local variable sofc instead of zalloc, fields of sofc ha=
-ve
-> >> undetermined None NULL value.
+> > @@ -130,6 +136,9 @@ static int tegra_output_rgb_disable(struct tegra_ou=
+tput *output)
+> >         struct tegra_rgb *rgb =3D to_rgb(output);
+> >         unsigned long value;
 > >
-> > No. If you initialise some members of a struct in its definition li=
-ne, the
-> > rest will be initialised to 0 / NULL. I.e. in
+> > +       if (!rgb->enabled)
+> > +               return 0;
+> > +
+> >         value =3D tegra_dc_readl(rgb->dc, DC_CMD_DISPLAY_POWER_CONTROL);
+> >         value &=3D ~(PW0_ENABLE | PW1_ENABLE | PW2_ENABLE | PW3_ENABLE |
+> >                    PW4_ENABLE | PM0_ENABLE | PM1_ENABLE);
+> > @@ -144,6 +153,8 @@ static int tegra_output_rgb_disable(struct tegra_ou=
+tput *output)
 > >
-> >         struct foo y =3D {.x =3D 1,};
+> >         tegra_dc_write_regs(rgb->dc, rgb_disable, ARRAY_SIZE(rgb_disabl=
+e));
 > >
-> > all other fields of y will be initialised to 0.
+> > +       rgb->enabled =3D false;
+> > +
+> >         return 0;
+> >  }
+> >
 >=20
-> I see, but original one is soc_camera_link which is simple in this
-> case. right now we move to soc_camera_desc. I think following line is
-> not very straight forward in a local function.
->=20
-> struct soc_camera_desc sdesc =3D { .host_desc =3D { .host_wait =3D tr=
-ue,},};
+> Wouldn't it make more sense to make "enabled" and int that counts how
+> many times tegra_output_rgb_enable has been called? That way you can
+> have tegra_output_rgb_disable only really disable the display once the
+> same amount of disables have been performed...
 
-I usually do
+I don't think that will work. Calls to tegra_output_rgb_enable/disable()
+and the .enable/disable for any other outputs aren't guaranteed to be
+balanced. Therefore reference counting the enables and disables will
+break things.
 
-struct soc_camera_desc sdesc =3D {.host_desc.host_wait =3D true,};
+Thinking about it, maybe the current interface to outputs isn't the best
+solution. It's simple and with the guards in place it works pretty well.
+Perhaps if I can find some spare time I'll investigate whether something
+a little cleaner can be done.
 
-> What about a) struct soc_camera_desc sdesc and use memset to all 0. b=
-)=20
-> use kzalloc() and kfree() in this function.
->=20
-> I think b) is more straight forward and easy to understand.
+Thierry
 
-With error handling for a failed kzalloc() - don't think so.
+--DBIVS5p969aUjpLe
+Content-Type: application/pgp-signature
 
-Thanks
-Guennadi
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
->=20
-> Thanks,
-> -Bryan
->=20
+iQIcBAEBAgAGBQJS+o4TAAoJEN0jrNd/PrOhwlIQAKL6uGBGYncMSCB6adKyu9ND
+d+QBGZnlD65GZDWRbYEuvGDthtdFmVFr7iHFKdSqqocOTt4A6Ycyatc3R+h8LT99
+CKaAqlDJALQQoZ1J1JogL7rAnQvLDxj48Y/H728vg7Rsp73IqGJNfjtBzqYZ864q
+lGOlhYQFtxIXOPL5nBIuJNNxdHwzP4nsIM8uX8wvy0eZpfZKgVw1c5IcbH8/1Xmu
+H38S+59MYzTl4OlCLDSonUk5t6v49U+xyRHh7JdMcRJk/dCtPMUczjj3d71nizwV
+ax04UXj5Gyrk/FQmu0DmqCown0yRCqRq/2uAZZBfa199JcNzSonAT3FMvEUj1Hfs
+5KOwDBOmrsFfvwL0AC+WzBplfkstZs1HM4GbJg376OcopvQCvXvcovW14063V3+W
+DHjsQvIuHjBd6bIW/cervX+Fjn/Lgc9zKFk5ifCW5VWz16uKzmyrW0xfwh93o5Es
+PAZd4LZjT05WxLtKcx5MQiENDl2LiTGwg7ySgCtlXAmZLvlrRMOpXERBJCrUzApZ
+K7giNFGkWpgmrqVjEr19KSCLaNjav0bP7NF+b2chkw3hXs59ewqKEVZsd4zJq5As
+3Kt16cU0oQ+pbpvMB87ygD1zZRvi+GSBG0DYrwHMQzzgBN984wmDe0xZaHBlpWzP
+1JnyzoAWsQ7WxypcpkCp
+=SSZP
+-----END PGP SIGNATURE-----
 
----
-Guennadi Liakhovetski, Ph.D.
-=46reelance Open-Source Software Developer
-http://www.open-technology.de/
+--DBIVS5p969aUjpLe--
+
+--===============1034397968==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============1034397968==--
