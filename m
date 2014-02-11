@@ -1,78 +1,138 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] ARM: tegra: dalmore: fix irq trigger type
-Date: Tue, 11 Feb 2014 21:47:39 +0100
-Message-ID: <20140211204737.GA1895@mithrandir>
-References: <4fcfcfdbc86c37c6d47ec32cdbd987f3b406e9b5.1392147256.git.stefan@agner.ch>
+From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Subject: Re: [PATCH] media: soc-camera: support deferred probing of clients
+ and OF cameras
+Date: Tue, 11 Feb 2014 21:53:54 +0100 (CET)
+Message-ID: <Pine.LNX.4.64.1402112151370.521@axis700.grange>
+References: <1391807504-8946-1-git-send-email-pengw@nvidia.com>
+ <Pine.LNX.4.64.1402092122250.7755@axis700.grange>
+ <CAK5ve-L5y+X+hLBrP_XTuv_fEU46mXB1P_Xoin+upboutT-8gQ@mail.gmail.com>
+ <Pine.LNX.4.64.1402110732070.24582@axis700.grange>
+ <CAK5ve-Kct71b4jZ_c9Jq3-tLozSBBH7FxgZUy2VSV1VUUefsZA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="uAKRQypu60I7Lcqm"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <4fcfcfdbc86c37c6d47ec32cdbd987f3b406e9b5.1392147256.git.stefan@agner.ch>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: swarren@wwwdotorg.org, josephl@nvidia.com, linux@arm.linux.org.uk, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <CAK5ve-Kct71b4jZ_c9Jq3-tLozSBBH7FxgZUy2VSV1VUUefsZA@mail.gmail.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>
+Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, 11 Feb 2014, Bryan Wu wrote:
 
---uAKRQypu60I7Lcqm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On Mon, Feb 10, 2014 at 10:37 PM, Guennadi Liakhovetski
+> <g.liakhovetski@gmx.de> wrote:
+> > Hi Bryan,
+> >
+> > On Mon, 10 Feb 2014, Bryan Wu wrote:
+> >
+> >> On Sun, Feb 9, 2014 at 2:20 PM, Guennadi Liakhovetski
+> >> <g.liakhovetski@gmx.de> wrote:
+> >> > Hi Bryan,
+> >> >
+> >> > Thanks for reiterating this patch!
+> >> >
+> >>
+> >> Sure, my pleasure. I basically assembled your patches together and
+> >> change them to use latest V4L2 soc_camera API.
+> >>
+> >> > On Fri, 7 Feb 2014, Bryan Wu wrote:
+> >
+> > [snip]
+> >
+> >> >> @@ -67,6 +81,8 @@ struct soc_camera_async_client {
+> >> >>
+> >> >>  static int soc_camera_video_start(struct soc_camera_device *ic=
+d);
+> >> >>  static int video_dev_create(struct soc_camera_device *icd);
+> >> >> +static void soc_camera_of_i2c_info(struct device_node *node,
+> >> >> +                               struct soc_camera_of_client *so=
+fc);
+> >> >
+> >> > If you have to resubmit this patch, plase, make sure the second =
+line of
+> >> > the above declaration is aligned af usual - under the first char=
+acter
+> >> > _after_ the opening bracket.
+> >> >
+> >>
+> >> No problem, I will update this.
+> >> Hmmm, something weird on my side. I did put the second line starti=
+ng
+> >> under the first character after the opening bracket. But in git sh=
+ow
+> >> and git format-patch I got this
+> >> ---
+> >> static int soc_camera_video_start(struct soc_camera_device *icd);
+> >>  static int video_dev_create(struct soc_camera_device *icd);
+> >> +static void soc_camera_of_i2c_info(struct device_node *node,
+> >> +                                  struct soc_camera_of_client *so=
+fc);
+> >> ---
+> >>
+> >> But I think that's what you want, right?
+> >
+> > Don't know - now a=F6=F6 TABs above are replaced with spaces, so, c=
+annot say.
+> >
+> > [snip]
+> >
+> >> >> +{
+> >> >> +     struct soc_camera_of_client *sofc;
+> >> >> +     struct soc_camera_desc *sdesc;
+> >> >
+> >> > I'm really grateful, that you decided to use my original patch a=
+nd
+> >> > preserve my authorship! But then, I think, it'd be also better t=
+o avoid
+> >> > unnecessary changes to it. What was wrong with allocation of *so=
+fc in the
+> >> > definition line?
+> >> >
+> >>
+> >> Oh, this is really I want to bring up. It's a very subtle bug here=
+=2E
+> >>
+> >> If we use local variable sofc instead of zalloc, fields of sofc ha=
+ve
+> >> undetermined None NULL value.
+> >
+> > No. If you initialise some members of a struct in its definition li=
+ne, the
+> > rest will be initialised to 0 / NULL. I.e. in
+> >
+> >         struct foo y =3D {.x =3D 1,};
+> >
+> > all other fields of y will be initialised to 0.
+>=20
+> I see, but original one is soc_camera_link which is simple in this
+> case. right now we move to soc_camera_desc. I think following line is
+> not very straight forward in a local function.
+>=20
+> struct soc_camera_desc sdesc =3D { .host_desc =3D { .host_wait =3D tr=
+ue,},};
 
-On Tue, Feb 11, 2014 at 09:11:32PM +0100, Stefan Agner wrote:
-> Trigger type needs to be IRQ_TYPE_LEVEL_HIGH since the interrupt
-> signal gets inverted by the PMC (configured by the invert-interrupt
-> property).
+I usually do
 
-Isn't the reason the other way around? The PMIC generates a low-level
-interrupt, but the GIC can only be configured to accept high-level (or
-rising edge) and therefore the nvidia,invert-interrupt property needs to
-be set in the PMC node?
+struct soc_camera_desc sdesc =3D {.host_desc.host_wait =3D true,};
 
-One nitpick below.
+> What about a) struct soc_camera_desc sdesc and use memset to all 0. b=
+)=20
+> use kzalloc() and kfree() in this function.
+>=20
+> I think b) is more straight forward and easy to understand.
 
-> diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/t=
-egra114-dalmore.dts
-[...]
-> @@ -888,8 +888,9 @@
->  		palmas: tps65913@58 {
->  			compatible =3D "ti,palmas";
->  			reg =3D <0x58>;
-> -			interrupts =3D <0 86 IRQ_TYPE_LEVEL_LOW>;
-> =20
-> +			/* active-low configured by PMC invert-interrupt */
-> +			interrupts =3D <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
+With error handling for a failed kzalloc() - don't think so.
 
-I'd prefer to keep the properties grouped as before. interrupts is a
-"client" property, whereas #interrupt-cells and interrupt-controller
-are "provider" properties.
+Thanks
+Guennadi
 
-And I think the comment would be more appropriate in the pmc node, for
-the same reason that I think the commit description isn't entirely
-accurate.
+>=20
+> Thanks,
+> -Bryan
+>=20
 
-Thierry
-
---uAKRQypu60I7Lcqm
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJS+oxpAAoJEN0jrNd/PrOhdU8P/03MrFNVoZ5aaZmL5j3PaeRg
-WuF5umaGFo9/LJ5fouFq4RtLEPlTIApQPZnn53r+OmlcTy+iVOQHbrs4/RHXocVz
-7+2D67jE5/J/lURtvrB/6GnMGeoTEqT+EhdTboIBZ9xHtAScU3BXXtvQs1NVmAEX
-XYPU2TVKkusajqtBjSeD97I+Zy+v+j2kVUV+Cv7L5ynrat93HEGsbV940bztcSUT
-Y1N+IPoankMa1qV0a4yNfM13LF0mR09JZ/eWearqjPa+4nmggUPp/7yVE+Nksgnn
-6tZydw3keR2FqYzkxda3tknCtdoQ9mfKEJWHkJxmHEUYTh/D9eF5HgeBomWrAHZC
-XRPuA40H7VuO8buSi7XeU+v0a4UXbNiaJEZUkGvQZVa/cseZS6vZBhuBBIPdIGiF
-X6CjF/F1r4hhtlazUmcGKCSljuxxISOagmdiMux83MFrfGiEvEvtqEfEw66sD65n
-d2sZSK7UBd93re3QYgHhCD4dYJ8uqtSQkAxf13YsPW99li6zBDy4fvOGQWuc/k6L
-GMpWCu3Y10pI6dpwJQpu4oS+v7WLdjeDNj7XnrSMCTkEWSX2olBmxnWyNUdgAXvA
-qnSLEQYxgldmFFt3G8YXpH1r31dL41Lh8m/gENoQq5033f85g+/sqB9H/DGrobSC
-/wejX6EFUwDBqVaUo1y7
-=hSq5
------END PGP SIGNATURE-----
-
---uAKRQypu60I7Lcqm--
+---
+Guennadi Liakhovetski, Ph.D.
+=46reelance Open-Source Software Developer
+http://www.open-technology.de/
