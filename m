@@ -1,40 +1,78 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: [PATCH] ARM: tegra: dalmore: fix irq trigger type
-Date: Tue, 11 Feb 2014 21:11:32 +0100
-Message-ID: <4fcfcfdbc86c37c6d47ec32cdbd987f3b406e9b5.1392147256.git.stefan@agner.ch>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] ARM: tegra: dalmore: fix irq trigger type
+Date: Tue, 11 Feb 2014 21:47:39 +0100
+Message-ID: <20140211204737.GA1895@mithrandir>
+References: <4fcfcfdbc86c37c6d47ec32cdbd987f3b406e9b5.1392147256.git.stefan@agner.ch>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="uAKRQypu60I7Lcqm"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4fcfcfdbc86c37c6d47ec32cdbd987f3b406e9b5.1392147256.git.stefan@agner.ch>
 Sender: linux-kernel-owner@vger.kernel.org
-To: swarren@wwwdotorg.org, thierry.reding@gmail.com, josephl@nvidia.com
-Cc: linux@arm.linux.org.uk, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
+To: Stefan Agner <stefan@agner.ch>
+Cc: swarren@wwwdotorg.org, josephl@nvidia.com, linux@arm.linux.org.uk, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Trigger type needs to be IRQ_TYPE_LEVEL_HIGH since the interrupt
-signal gets inverted by the PMC (configured by the invert-interrupt
-property).
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
-I could not test that patch since I don't have such hardware.
-However, I stumbled on that error while tracing a similar error
-on Colibri T30.
+--uAKRQypu60I7Lcqm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- arch/arm/boot/dts/tegra114-dalmore.dts | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On Tue, Feb 11, 2014 at 09:11:32PM +0100, Stefan Agner wrote:
+> Trigger type needs to be IRQ_TYPE_LEVEL_HIGH since the interrupt
+> signal gets inverted by the PMC (configured by the invert-interrupt
+> property).
 
-diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
-index 73aecfb..f5025fc 100644
---- a/arch/arm/boot/dts/tegra114-dalmore.dts
-+++ b/arch/arm/boot/dts/tegra114-dalmore.dts
-@@ -888,8 +888,9 @@
- 		palmas: tps65913@58 {
- 			compatible = "ti,palmas";
- 			reg = <0x58>;
--			interrupts = <0 86 IRQ_TYPE_LEVEL_LOW>;
- 
-+			/* active-low configured by PMC invert-interrupt */
-+			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
- 
--- 
-1.8.5.4
+Isn't the reason the other way around? The PMIC generates a low-level
+interrupt, but the GIC can only be configured to accept high-level (or
+rising edge) and therefore the nvidia,invert-interrupt property needs to
+be set in the PMC node?
+
+One nitpick below.
+
+> diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/t=
+egra114-dalmore.dts
+[...]
+> @@ -888,8 +888,9 @@
+>  		palmas: tps65913@58 {
+>  			compatible =3D "ti,palmas";
+>  			reg =3D <0x58>;
+> -			interrupts =3D <0 86 IRQ_TYPE_LEVEL_LOW>;
+> =20
+> +			/* active-low configured by PMC invert-interrupt */
+> +			interrupts =3D <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
+
+I'd prefer to keep the properties grouped as before. interrupts is a
+"client" property, whereas #interrupt-cells and interrupt-controller
+are "provider" properties.
+
+And I think the comment would be more appropriate in the pmc node, for
+the same reason that I think the commit description isn't entirely
+accurate.
+
+Thierry
+
+--uAKRQypu60I7Lcqm
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJS+oxpAAoJEN0jrNd/PrOhdU8P/03MrFNVoZ5aaZmL5j3PaeRg
+WuF5umaGFo9/LJ5fouFq4RtLEPlTIApQPZnn53r+OmlcTy+iVOQHbrs4/RHXocVz
+7+2D67jE5/J/lURtvrB/6GnMGeoTEqT+EhdTboIBZ9xHtAScU3BXXtvQs1NVmAEX
+XYPU2TVKkusajqtBjSeD97I+Zy+v+j2kVUV+Cv7L5ynrat93HEGsbV940bztcSUT
+Y1N+IPoankMa1qV0a4yNfM13LF0mR09JZ/eWearqjPa+4nmggUPp/7yVE+Nksgnn
+6tZydw3keR2FqYzkxda3tknCtdoQ9mfKEJWHkJxmHEUYTh/D9eF5HgeBomWrAHZC
+XRPuA40H7VuO8buSi7XeU+v0a4UXbNiaJEZUkGvQZVa/cseZS6vZBhuBBIPdIGiF
+X6CjF/F1r4hhtlazUmcGKCSljuxxISOagmdiMux83MFrfGiEvEvtqEfEw66sD65n
+d2sZSK7UBd93re3QYgHhCD4dYJ8uqtSQkAxf13YsPW99li6zBDy4fvOGQWuc/k6L
+GMpWCu3Y10pI6dpwJQpu4oS+v7WLdjeDNj7XnrSMCTkEWSX2olBmxnWyNUdgAXvA
+qnSLEQYxgldmFFt3G8YXpH1r31dL41Lh8m/gENoQq5033f85g+/sqB9H/DGrobSC
+/wejX6EFUwDBqVaUo1y7
+=hSq5
+-----END PGP SIGNATURE-----
+
+--uAKRQypu60I7Lcqm--
