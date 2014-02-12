@@ -1,69 +1,60 @@
-From: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: How to use host1x syncpt?
-Date: Wed, 12 Feb 2014 11:39:23 -0800
-Message-ID: <CAK5ve-KGdpd0fw=f=TeR2zR1oEbqz9HdmYmhM5fsHg7q2n3uMA@mail.gmail.com>
-References: <CAK5ve-+ARW3cx+671vNYQCWYPe=CVa5n81q2-BrKyGzF8Nv4fw@mail.gmail.com>
- <CAK5ve-+sWLtaCQwPOm99pzPmtJioAKUjba-_6eV5bqf3KxXwFg@mail.gmail.com> <CAK5ve-+A1-V8rrDo4HAHoBgdD+U-Dp6XY_GAzEmxfv49w9qVOQ@mail.gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: dalmore: fix irq trigger type
+Date: Wed, 12 Feb 2014 12:39:41 -0700
+Message-ID: <52FBCDFD.1040902@wwwdotorg.org>
+References: <4fcfcfdbc86c37c6d47ec32cdbd987f3b406e9b5.1392147256.git.stefan@agner.ch> <20140211204737.GA1895@mithrandir> <30f0db808e7543d9ab6b077aa5e239f2@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAK5ve-+A1-V8rrDo4HAHoBgdD+U-Dp6XY_GAzEmxfv49w9qVOQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <30f0db808e7543d9ab6b077aa5e239f2-XLVq0VzYD2Y@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Sorry for bothering, Thierry and Terje, do you guys have time to take
-a look at my questions?
+On 02/11/2014 02:21 PM, Stefan Agner wrote:
+> Am 2014-02-11 21:47, schrieb Thierry Reding:
+>> On Tue, Feb 11, 2014 at 09:11:32PM +0100, Stefan Agner wrote:
+>>> Trigger type needs to be IRQ_TYPE_LEVEL_HIGH since the interrupt
+>>> signal gets inverted by the PMC (configured by the invert-interrupt
+>>> property).
+>>
+>> Isn't the reason the other way around? The PMIC generates a low-level
+>> interrupt, but the GIC can only be configured to accept high-level (or
+>> rising edge) and therefore the nvidia,invert-interrupt property needs to
+>> be set in the PMC node?
+> Hm yes agreed. I should also write the whole story here, maybe this:
+> 
+> The GIC only support high-active interrupts. When using a PMIC with
+> low-active interrupt, the PMC has to be configured by using the
+> nvidia,invert-interrupt property in its node.
+> 
+> This fix sets the GIC back to high-active and reverts commit
+> eca8f98e404934027f84f72882c5e92ffbd9e5f5.
 
-Thanks,
--Bryan
+(Trimming CC lists)
 
-On Mon, Feb 10, 2014 at 4:08 PM, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> Ping,
->
-> -Bryan
->
-> On Thu, Feb 6, 2014 at 6:11 PM, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->> Hi Terje,
->>
->> Forget to add you to this email, could you please help to take a look
->> at my questions?
->>
->> Thanks,
->> -Bryan
->>
->> On Tue, Feb 4, 2014 at 3:51 PM, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->>> Hi Stephen and Thierry,
->>>
->>> Recently I'm working on upstreaming my V4L2 driver for Tegra video
->>> input module, which is using host1x syncpt to wait for frame
->>> capturing.
->>>
->>> So here is my basic steps for handling host1x syncpt,
->>>
->>> 1. Call host1x_syncpt_request(cam->client.dev, flags); to allocate
->>> syncpts for my driver.
->>>
->>> 2. Program host1x_syncpt_id(sp) into Tegra VI syncpt event register.
->>> So when VI captures one frame, syncpt will be increased one.
->>>
->>> 3. Call thresh = host1x_syncpt_incr_max(sp, 1) to incr max_val of the
->>> syncpt, which is the threshold for waiting.
->>>
->>> 4. Start capture and wait for host1x syncpt event like this
->>> host1x_syncpt_wait(sp, thresh, WAIT_TIMEOUT, &value);
->>>
->>> Is that the right sequence?
->>>
->>> host1x_syncpt_incr_max() is not exported and without calling it I
->>> always got error message like this:
->>> "tegra-host1x 50000000.host1x: syncpt_load failed: id=1, min=46, max=0, live=46"
->>> So I have to increase the max_val manually like step 3. And
->>> host1x_syncpt_incr() won't increase the max_val which will still
->>> generate this error message.
->>>
->>> Actually with the steps I listed, I can capture data from real sensor now.
->>>
->>> Thanks,
->>> -Bryan
+Stefan,
+
+It'd be best to include the commit subject rather than just the commit
+hash, i.e.:
+
+... and reverts commit eca8f98e4049 "ARM: tegra: dalmore: fix the irq
+trigger type of Palmas MFD device".
+
+It may also be helpful for the commit description to quote the kernel
+boot message which this patch solves:
+
+> [    0.215178] genirq: Setting trigger mode 8 for irq 118 failed (gic_set_type+0x0/0xf4)
+
+For me, applying this patch actually *causes* an interrupt storm, rather
+than preventing one. Yet without it, no interrupts occur at all. I
+wonder if the driver has a bug where it's not correctly clearing all
+interrupt status (e.g. something pre-existing before boot), so once the
+polarity is set up correctly, the interrupt is stuck?
+
+Joseph,
+
+As the author of the patch that's being reverted, can you please comment
+here?
