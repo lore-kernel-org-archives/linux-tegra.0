@@ -1,46 +1,69 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 0/3] drm/tegra: Restore licensing consistency
-Date: Wed, 12 Feb 2014 12:22:00 -0700
-Message-ID: <52FBC9D8.3090505@wwwdotorg.org>
-References: <1392190238-1717-1-git-send-email-treding@nvidia.com> <52FBA581.3000707@wwwdotorg.org> <20140212191340.GB2424@ulmo.nvidia.com>
+From: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: How to use host1x syncpt?
+Date: Wed, 12 Feb 2014 11:39:23 -0800
+Message-ID: <CAK5ve-KGdpd0fw=f=TeR2zR1oEbqz9HdmYmhM5fsHg7q2n3uMA@mail.gmail.com>
+References: <CAK5ve-+ARW3cx+671vNYQCWYPe=CVa5n81q2-BrKyGzF8Nv4fw@mail.gmail.com>
+ <CAK5ve-+sWLtaCQwPOm99pzPmtJioAKUjba-_6eV5bqf3KxXwFg@mail.gmail.com> <CAK5ve-+A1-V8rrDo4HAHoBgdD+U-Dp6XY_GAzEmxfv49w9qVOQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140212191340.GB2424-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+In-Reply-To: <CAK5ve-+A1-V8rrDo4HAHoBgdD+U-Dp6XY_GAzEmxfv49w9qVOQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/12/2014 12:13 PM, Thierry Reding wrote:
-> On Wed, Feb 12, 2014 at 09:46:57AM -0700, Stephen Warren wrote:
->> On 02/12/2014 12:30 AM, Thierry Reding wrote:
->>> The bulk of the Tegra DRM driver is GPL v2 licensed, but some of the new
->>> subdrivers were licensed under an MIT license. This was simply oversight
->>> on my part.
+Sorry for bothering, Thierry and Terje, do you guys have time to take
+a look at my questions?
+
+Thanks,
+-Bryan
+
+On Mon, Feb 10, 2014 at 4:08 PM, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> Ping,
+>
+> -Bryan
+>
+> On Thu, Feb 6, 2014 at 6:11 PM, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>> Hi Terje,
+>>
+>> Forget to add you to this email, could you please help to take a look
+>> at my questions?
+>>
+>> Thanks,
+>> -Bryan
+>>
+>> On Tue, Feb 4, 2014 at 3:51 PM, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>>> Hi Stephen and Thierry,
 >>>
->>> One exception to this is the public header file that will eventually be
->>> used within libdrm. Since all the other headers in libdrm use the MIT
->>> license, do the same for Tegra.
->>
->> The series,
->> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> I guess this needs explicit acks from the following people outside
->> NVIDIA who touched these files:?
->>
->> Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org> (dsi.c)
->> Emil Goode <emilgoode-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> (tegra_drm.h)
-> 
-> Does it? Those changes were mostly mechanical in nature, so I'm not sure
-> if that qualifies them for having any bearing of the license of the
-> file.
-> 
-> But if you insist I can resend with Wei and Emil on Cc.
-
-Well, it seems simpler if you get an ack; that way it documents the
-fact, and avoids any issues in the future, irrespective of whether those
-changes convey (c) owderhsip or not.
-
-I'd imagine you don't need a whole resend; just forward the email?
+>>> Recently I'm working on upstreaming my V4L2 driver for Tegra video
+>>> input module, which is using host1x syncpt to wait for frame
+>>> capturing.
+>>>
+>>> So here is my basic steps for handling host1x syncpt,
+>>>
+>>> 1. Call host1x_syncpt_request(cam->client.dev, flags); to allocate
+>>> syncpts for my driver.
+>>>
+>>> 2. Program host1x_syncpt_id(sp) into Tegra VI syncpt event register.
+>>> So when VI captures one frame, syncpt will be increased one.
+>>>
+>>> 3. Call thresh = host1x_syncpt_incr_max(sp, 1) to incr max_val of the
+>>> syncpt, which is the threshold for waiting.
+>>>
+>>> 4. Start capture and wait for host1x syncpt event like this
+>>> host1x_syncpt_wait(sp, thresh, WAIT_TIMEOUT, &value);
+>>>
+>>> Is that the right sequence?
+>>>
+>>> host1x_syncpt_incr_max() is not exported and without calling it I
+>>> always got error message like this:
+>>> "tegra-host1x 50000000.host1x: syncpt_load failed: id=1, min=46, max=0, live=46"
+>>> So I have to increase the max_val manually like step 3. And
+>>> host1x_syncpt_incr() won't increase the max_val which will still
+>>> generate this error message.
+>>>
+>>> Actually with the steps I listed, I can capture data from real sensor now.
+>>>
+>>> Thanks,
+>>> -Bryan
