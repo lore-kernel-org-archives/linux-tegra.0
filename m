@@ -1,106 +1,37 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PULL] drm/tegra: Fixes for v3.14-rc3
-Date: Wed, 12 Feb 2014 08:06:58 +0100
-Message-ID: <20140212070656.GA26778@ulmo.nvidia.com>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0016796742=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces@lists.freedesktop.org
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-To: Dave Airlie <airlied@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 0/3] drm/tegra: Restore licensing consistency
+Date: Wed, 12 Feb 2014 08:30:35 +0100
+Message-ID: <1392190238-1717-1-git-send-email-treding@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+The bulk of the Tegra DRM driver is GPL v2 licensed, but some of the new
+subdrivers were licensed under an MIT license. This was simply oversight
+on my part.
 
---===============0016796742==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="G4iJoqBmSsgzjUCe"
-Content-Disposition: inline
+One exception to this is the public header file that will eventually be
+used within libdrm. Since all the other headers in libdrm use the MIT
+license, do the same for Tegra.
 
-
---G4iJoqBmSsgzjUCe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi Dave,
-
-The following changes since commit 38dbfb59d1175ef458d006556061adeaa8751b72:
-
-  Linus 3.14-rc1 (2014-02-02 16:42:13 -0800)
-
-are available in the git repository at:
-
-  git://anongit.freedesktop.org/tegra/linux tags/drm/for-3.14-rc3
-
-for you to fetch changes up to b18915379071b31ea819a36ca67761620decba06:
-
-  drm/tegra: Add guard to avoid double disable/enable of RGB outputs (2014-02-12 07:50:38 +0100)
-
-Thanks,
 Thierry
 
-----------------------------------------------------------------
-drm/tegra: Fixes for v3.14-rc3
+Thierry Reding (3):
+  drm/tegra: Relicense public header under MIT
+  drm/tegra: Relicense under GPL v2
+  drm/tegra: Use standard GPL v2 license text
 
-These patches contain a fix for a potential hang when the RGB output is
-disabled twice, a typofix that prevents the framebuffer console from
-being restored on ->lastclose() and an optimization to do as little work
-as possible during host1x job submission.
+ drivers/gpu/drm/tegra/dsi.c      | 20 +++-----------------
+ drivers/gpu/drm/tegra/dsi.h      | 20 +++-----------------
+ drivers/gpu/drm/tegra/gem.c      | 11 +++--------
+ drivers/gpu/drm/tegra/gem.h      | 14 +++-----------
+ drivers/gpu/drm/tegra/gr2d.c     | 14 +++-----------
+ drivers/gpu/drm/tegra/mipi-phy.c | 20 +++-----------------
+ drivers/gpu/drm/tegra/mipi-phy.h | 20 +++-----------------
+ include/uapi/drm/tegra_drm.h     | 26 +++++++++++++++++---------
+ 8 files changed, 38 insertions(+), 107 deletions(-)
 
-----------------------------------------------------------------
-Dmitry Osipenko (1):
-      drm/tegra: Add guard to avoid double disable/enable of RGB outputs
-
-Erik Faye-Lund (1):
-      gpu: host1x: do not check previously handled gathers
-
-Paul Bolle (1):
-      drm/tegra: fix typo 'CONFIG_TEGRA_DRM_FBDEV'
-
- drivers/gpu/drm/tegra/drm.c |  2 +-
- drivers/gpu/drm/tegra/rgb.c | 11 +++++++++++
- drivers/gpu/host1x/job.c    |  2 +-
- 3 files changed, 13 insertions(+), 2 deletions(-)
-
---G4iJoqBmSsgzjUCe
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJS+x2QAAoJEN0jrNd/PrOhrsEP/jqXfZd+4u8u272qDyQBHIQj
-+pf4F2XGykoX4DyaiBmxozsP4Nyec/X0jddPH+GeEJh/qIumx8syDShxzA6Didqt
-eN8aJBiuK17tZan72XmS+qepM55kzY388C6/jQhSnpg5cV/GCpNbLB6r/uMlOjwP
-N2Y4QqtLCsv1GkrXr1UG42srydy5HrIt30Q5mOEkExuEbw6N+KStWmTun7Q4T9W5
-n6vR7jzODTvjfECsjNSmecGwi6gU1a3aLBTJiqQbC9YjPbjb/VrYjd6OPyWNSX8X
-JsM5vc6bQHuEFPOfTn7c7KtWQ0ds1Bf3FEPcZobVNJnj8tE0/LHTdDp9AHrErfsI
-cOXx1ENbiGR99p2tVsYifbLlakT/WIufcpD2KzorNhx9L/w0IAiXLmkFOS8zpEVi
-mhhHLOQ0wywaQhzm1z/A5K1Q0nOITbCcOh873PeNoEoKodEkKVPVwWYiiHmjbdFl
-xQsxMnHx5M7a61yOlWLKyHhO4mwAmW1mfoZYw1uNX7M/L038c6r+rjrFaN18Wgtd
-1leGN5ePKep8NKh6Kv4P14qRQguhmnbXwYOpHbdVZffBz6chzPES3bGtYrpLGq+E
-ao1lmT7sAu1LlnOTwGb4gP+nM669FtbZajXi143nuJPxkSv9sO9lKITKX13zSZ4r
-cqkuk6Pt5qOIecfn4kdX
-=lsiB
------END PGP SIGNATURE-----
-
---G4iJoqBmSsgzjUCe--
-
---===============0016796742==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============0016796742==--
+-- 
+1.8.4.2
