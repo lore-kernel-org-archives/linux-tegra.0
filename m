@@ -1,46 +1,52 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 3/3] drm/tegra: Use standard GPL v2 license text
-Date: Wed, 12 Feb 2014 08:30:38 +0100
-Message-ID: <1392190238-1717-4-git-send-email-treding@nvidia.com>
-References: <1392190238-1717-1-git-send-email-treding@nvidia.com>
+Subject: [PATCH] drm/tegra: prime: Add vmap support
+Date: Wed, 12 Feb 2014 08:35:05 +0100
+Message-ID: <1392190505-2575-1-git-send-email-treding@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1392190238-1717-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Use the more canonical and concise variant of the GPL v2 license text.
+This is trivial to support since all GEM objects are mapped into kernel
+space anyway.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/gr2d.c | 14 +++-----------
- 1 file changed, 3 insertions(+), 11 deletions(-)
+ drivers/gpu/drm/tegra/gem.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/gpu/drm/tegra/gr2d.c b/drivers/gpu/drm/tegra/gr2d.c
-index 7ec4259ffded..2c7ca748edf5 100644
---- a/drivers/gpu/drm/tegra/gr2d.c
-+++ b/drivers/gpu/drm/tegra/gr2d.c
-@@ -1,17 +1,9 @@
- /*
-  * Copyright (c) 2012-2013, NVIDIA Corporation.
-  *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-  */
+diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
+index ef853e558036..29913eb9b25d 100644
+--- a/drivers/gpu/drm/tegra/gem.c
++++ b/drivers/gpu/drm/tegra/gem.c
+@@ -394,6 +394,18 @@ static int tegra_gem_prime_mmap(struct dma_buf *buf, struct vm_area_struct *vma)
+ 	return -EINVAL;
+ }
  
- #include <linux/clk.h>
++static void *tegra_gem_prime_vmap(struct dma_buf *buf)
++{
++	struct drm_gem_object *gem = buf->priv;
++	struct tegra_bo *bo = to_tegra_bo(gem);
++
++	return bo->vaddr;
++}
++
++static void tegra_gem_prime_vunmap(struct dma_buf *buf, void *vaddr)
++{
++}
++
+ static const struct dma_buf_ops tegra_gem_prime_dmabuf_ops = {
+ 	.map_dma_buf = tegra_gem_prime_map_dma_buf,
+ 	.unmap_dma_buf = tegra_gem_prime_unmap_dma_buf,
+@@ -403,6 +415,8 @@ static const struct dma_buf_ops tegra_gem_prime_dmabuf_ops = {
+ 	.kmap = tegra_gem_prime_kmap,
+ 	.kunmap = tegra_gem_prime_kunmap,
+ 	.mmap = tegra_gem_prime_mmap,
++	.vmap = tegra_gem_prime_vmap,
++	.vunmap = tegra_gem_prime_vunmap,
+ };
+ 
+ struct dma_buf *tegra_gem_prime_export(struct drm_device *drm,
 -- 
 1.8.4.2
