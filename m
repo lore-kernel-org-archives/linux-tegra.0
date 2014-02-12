@@ -1,60 +1,35 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: dalmore: fix irq trigger type
-Date: Wed, 12 Feb 2014 12:39:41 -0700
-Message-ID: <52FBCDFD.1040902@wwwdotorg.org>
-References: <4fcfcfdbc86c37c6d47ec32cdbd987f3b406e9b5.1392147256.git.stefan@agner.ch> <20140211204737.GA1895@mithrandir> <30f0db808e7543d9ab6b077aa5e239f2@agner.ch>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v3] ARM: tegra: cpuidle: use firmware for power down
+Date: Wed, 12 Feb 2014 12:04:58 -0800
+Message-ID: <CAOesGMhk_chCYJ0Qpj0Sju6k7OQJ+c1_VnfZNTOfw2WPHPyQ4A@mail.gmail.com>
+References: <52FAD4C2.80803@nvidia.com>
+ <1392173024-11567-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <30f0db808e7543d9ab6b077aa5e239f2-XLVq0VzYD2Y@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1392173024-11567-1-git-send-email-acourbot@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <t.figa@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/11/2014 02:21 PM, Stefan Agner wrote:
-> Am 2014-02-11 21:47, schrieb Thierry Reding:
->> On Tue, Feb 11, 2014 at 09:11:32PM +0100, Stefan Agner wrote:
->>> Trigger type needs to be IRQ_TYPE_LEVEL_HIGH since the interrupt
->>> signal gets inverted by the PMC (configured by the invert-interrupt
->>> property).
->>
->> Isn't the reason the other way around? The PMIC generates a low-level
->> interrupt, but the GIC can only be configured to accept high-level (or
->> rising edge) and therefore the nvidia,invert-interrupt property needs to
->> be set in the PMC node?
-> Hm yes agreed. I should also write the whole story here, maybe this:
-> 
-> The GIC only support high-active interrupts. When using a PMIC with
-> low-active interrupt, the PMC has to be configured by using the
-> nvidia,invert-interrupt property in its node.
-> 
-> This fix sets the GIC back to high-active and reverts commit
-> eca8f98e404934027f84f72882c5e92ffbd9e5f5.
+On Tue, Feb 11, 2014 at 6:43 PM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+> Attempt to invoke the prepare_idle() and do_idle() firmware calls
+> to power down a CPU so an underlying firmware gets informed of
+> the idle operation and performs it by itself if designed in such a way.
+>
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 
-(Trimming CC lists)
+Acked-by: Olof Johansson <olof@lixom.net>
 
-Stefan,
 
-It'd be best to include the commit subject rather than just the commit
-hash, i.e.:
-
-... and reverts commit eca8f98e4049 "ARM: tegra: dalmore: fix the irq
-trigger type of Palmas MFD device".
-
-It may also be helpful for the commit description to quote the kernel
-boot message which this patch solves:
-
-> [    0.215178] genirq: Setting trigger mode 8 for irq 118 failed (gic_set_type+0x0/0xf4)
-
-For me, applying this patch actually *causes* an interrupt storm, rather
-than preventing one. Yet without it, no interrupts occur at all. I
-wonder if the driver has a bug where it's not correctly clearing all
-interrupt status (e.g. something pre-existing before boot), so once the
-polarity is set up correctly, the interrupt is stuck?
-
-Joseph,
-
-As the author of the patch that's being reverted, can you please comment
-here?
+-Olof
