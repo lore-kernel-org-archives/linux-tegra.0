@@ -1,32 +1,51 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 0/3] drm/tegra: Restore licensing consistency
-Date: Wed, 12 Feb 2014 09:46:57 -0700
-Message-ID: <52FBA581.3000707@wwwdotorg.org>
-References: <1392190238-1717-1-git-send-email-treding@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v5 1/1] watchdog: Add tegra watchdog
+Date: Wed, 12 Feb 2014 11:52:31 -0700
+Message-ID: <52FBC2EF.4020000@wwwdotorg.org>
+References: <1391738086-29142-1-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1392190238-1717-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1391738086-29142-1-git-send-email-achew@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Andrew Chew <achew@nvidia.com>, linux@roeck-us.net, wim@iguana.be, rob@landley.net, thierry.reding@gmail.com, grant.likely@linaro.org, robh+dt@kernel.org, abrestic@chromium.org, dgreid@chromium.org, katierh@chromium.org
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/12/2014 12:30 AM, Thierry Reding wrote:
-> The bulk of the Tegra DRM driver is GPL v2 licensed, but some of the new
-> subdrivers were licensed under an MIT license. This was simply oversight
-> on my part.
+On 02/06/2014 06:54 PM, Andrew Chew wrote:
+> Add a driver for the hardware watchdogs in NVIDIA Tegra SoCs (Tegra30 and
+> later).  This driver will configure one watchdog timer that will reset the
+> system in the case of a watchdog timeout.
 > 
-> One exception to this is the public header file that will eventually be
-> used within libdrm. Since all the other headers in libdrm use the MIT
-> license, do the same for Tegra.
+> This driver binds to the nvidia,tegra30-timer device node and gets its
+> register base from there.
 
-The series,
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Tested-by: Stephen Warren <swarren@nvidia.com>
 
-I guess this needs explicit acks from the following people outside
-NVIDIA who touched these files:?
+Briefly,
+Reviewed-by: Stephen Warren <swarren@nvidia.com>
 
-Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org> (dsi.c)
-Emil Goode <emilgoode-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> (tegra_drm.h)
+Just a couple small comments though.
+
+> diff --git a/drivers/watchdog/tegra_wdt.c b/drivers/watchdog/tegra_wdt.c
+
+> +static void tegra_wdt_ref(struct watchdog_device *wdd)
+> +{
+> +	struct tegra_wdt *wdt = watchdog_get_drvdata(wdd);
+> +
+> +	kref_get(&wdt->kref);
+> +}
+> +
+> +static void tegra_wdt_unref(struct watchdog_device *wdd)
+> +{
+> +	struct tegra_wdt *wdt = watchdog_get_drvdata(wdd);
+> +
+> +	kref_put(&wdt->kref, tegra_wdt_release_resources);
+> +}
+
+I forget why these were needed; they seem to do nothing.
+
+> +MODULE_LICENSE("GPL");
+
+That should be "GPL v2" according to the license header in the file.
