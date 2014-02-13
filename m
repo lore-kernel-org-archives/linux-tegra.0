@@ -1,46 +1,41 @@
-From: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: How to use host1x syncpt?
-Date: Thu, 13 Feb 2014 13:36:08 +0200
-Message-ID: <52FCAE28.5080508@nvidia.com>
-References: <CAK5ve-+ARW3cx+671vNYQCWYPe=CVa5n81q2-BrKyGzF8Nv4fw@mail.gmail.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH] ARM: tegra: don't timeout if CPU is powergated
+Date: Thu, 13 Feb 2014 09:36:06 -0700
+Message-ID: <52FCF476.4010908@wwwdotorg.org>
+References: <1d5ea6b7df4573d866779857922ac650fe59af60.1392078805.git.stefan@agner.ch> <52FBC97D.8040809@wwwdotorg.org> <4050206.sG2EzXyfMN@fb07-iapwap2> <20140213084907.GA11795@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAK5ve-+ARW3cx+671vNYQCWYPe=CVa5n81q2-BrKyGzF8Nv4fw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140213084907.GA11795@ulmo.nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Marc Dietrich <marvin24@gmx.de>
+Cc: Stefan Agner <stefan@agner.ch>, josephl@nvidia.com, dev@lynxeye.de, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05.02.2014 01:51, Bryan Wu wrote:
-> Hi Stephen and Thierry,
+On 02/13/2014 01:49 AM, Thierry Reding wrote:
+> On Thu, Feb 13, 2014 at 09:28:52AM +0100, Marc Dietrich wrote:
+>> Am Mittwoch, 12. Februar 2014, 12:20:29 schrieb Stephen Warren:
+>>> On 02/10/2014 05:44 PM, Stefan Agner wrote:
+>>>> When booting secondary CPU(s) which are not yet powergated, a wrong
+>>>> check lead to a timeout after 100 jiffies. With this patch, we only
+>>>> delay powergating if CPUs are still not powered yet.
+>>>
+>>> I've applied this to Tegra's for-3.15/soc branch.
+>>
+>> also for 3.14 and maybe lower versioned kernels? Since this seems to fix a bug 
+>> where some core doesn't come up.
 > 
-> Recently I'm working on upstreaming my V4L2 driver for Tegra video
-> input module, which is using host1x syncpt to wait for frame
-> capturing.
+> Yeah, this bug has been there for pretty much forever it seems. Commit
+> 86e51a2ee471 "ARM: tegra: support for secondary cores on Tegra30" added
+> tegra30_boot_secondary() (named tegra30_power_up_cpu() back then, which
+> was renamed to tegra30_boot_secondary() in commit 0d1f79b033bb "ARM:
+> tegra: refactor tegra{20,30}_boot_secondary". The latter was introduced
+> in v3.10, so I guess backporting it to stable releases all the way back
+> to v3.10 would be good.
 > 
-> So here is my basic steps for handling host1x syncpt,
-> 
-> 1. Call host1x_syncpt_request(cam->client.dev, flags); to allocate
-> syncpts for my driver.
-> 
-> 2. Program host1x_syncpt_id(sp) into Tegra VI syncpt event register.
-> So when VI captures one frame, syncpt will be increased one.
-> 
-> 3. Call thresh = host1x_syncpt_incr_max(sp, 1) to incr max_val of the
-> syncpt, which is the threshold for waiting.
-> 
-> 4. Start capture and wait for host1x syncpt event like this
-> host1x_syncpt_wait(sp, thresh, WAIT_TIMEOUT, &value);
-> 
-> Is that the right sequence?
+> Backporting to earlier versions (86e51a2ee471 went into v3.4) will be a
+> lot more difficult since some of the APIs were renamed since then.
 
-You should get the correct syncpt fence value by calling
-host1x_syncpt_incr_max(). It seems we've just forgotten to export it,
-but you can add a trivial patch to export that function.
-
-If you don't do this, host1x will treat your sync point value as "out of
-valid range", consider it an outdated one, and treat any waits as NOP.
-
-Terje
+I'm actually uninclined to backport this; I've never once seen an issue
+because of this problem, and nobody has reported it in older kernels.
