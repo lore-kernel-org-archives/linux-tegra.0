@@ -1,81 +1,163 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: dalmore: fix irq trigger type
-Date: Thu, 13 Feb 2014 09:12:18 +0800
-Message-ID: <52FC1BF2.8020003@nvidia.com>
-References: <4fcfcfdbc86c37c6d47ec32cdbd987f3b406e9b5.1392147256.git.stefan@agner.ch>
- <20140211204737.GA1895@mithrandir>
- <30f0db808e7543d9ab6b077aa5e239f2@agner.ch> <52FBCDFD.1040902@wwwdotorg.org>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [Nouveau] [PATCH v2] drm/nouveau: support for platform devices
+Date: Thu, 13 Feb 2014 11:02:00 +0900
+Message-ID: <52FC2798.8030901@nvidia.com>
+References: <CAAVeFuJaD1C7yPRGm3+hByLDuSiBhftehcbwFfrbLaYsAwRcZQ@mail.gmail.com> <1392183495-11481-1-git-send-email-acourbot@nvidia.com> <52FB82AC.1010405@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52FBCDFD.1040902-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <52FB82AC.1010405-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Emil Velikov <emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/13/2014 03:39 AM, Stephen Warren wrote:
-> On 02/11/2014 02:21 PM, Stefan Agner wrote:
->> Am 2014-02-11 21:47, schrieb Thierry Reding:
->>> On Tue, Feb 11, 2014 at 09:11:32PM +0100, Stefan Agner wrote:
->>>> Trigger type needs to be IRQ_TYPE_LEVEL_HIGH since the interrupt
->>>> signal gets inverted by the PMC (configured by the invert-interrupt
->>>> property).
->>>
->>> Isn't the reason the other way around? The PMIC generates a low-level
->>> interrupt, but the GIC can only be configured to accept high-level (or
->>> rising edge) and therefore the nvidia,invert-interrupt property needs to
->>> be set in the PMC node?
->> Hm yes agreed. I should also write the whole story here, maybe this:
+Hi Emil,
+
+On 02/12/2014 11:18 PM, Emil Velikov wrote:
+> On 12/02/14 05:38, Alexandre Courbot wrote:
+>> Upcoming mobile Kepler GPUs (such as GK20A) use the platform bus instead
+>> of PCI to which Nouveau is tightly dependent. This patch allows Nouveau
+>> to handle platform devices by:
 >>
->> The GIC only support high-active interrupts. When using a PMIC with
->> low-active interrupt, the PMC has to be configured by using the
->> nvidia,invert-interrupt property in its node.
+>> - abstracting PCI-dependent functions that were typically used for
+>>    resource querying and page mapping,
+>> - introducing a nv_device_is_pci() function that allows to make
+>>    PCI-dependent code conditional,
+>> - providing a nouveau_drm_platform_probe() function that takes a GPU
+>>    platform device to be probed.
 >>
->> This fix sets the GIC back to high-active and reverts commit
->> eca8f98e404934027f84f72882c5e92ffbd9e5f5.
+>> Core code as well as engine/subdev drivers are updated wherever possible
+>> to make use of these functions. Some older drivers are too dependent on
+>> PCI to be properly updated, but all newer code on which future chips may
+>> depend should at least be runnable with platform devices.
+>>
+> Hi Alexandre
 >
-> (Trimming CC lists)
->
-> Stefan,
->
-> It'd be best to include the commit subject rather than just the commit
-> hash, i.e.:
->
-> ... and reverts commit eca8f98e4049 "ARM: tegra: dalmore: fix the irq
-> trigger type of Palmas MFD device".
->
-> It may also be helpful for the commit description to quote the kernel
-> boot message which this patch solves:
->
->> [    0.215178] genirq: Setting trigger mode 8 for irq 118 failed (gic_set_type+0x0/0xf4)
->
-> For me, applying this patch actually *causes* an interrupt storm, rather
-> than preventing one. Yet without it, no interrupts occur at all. I
-> wonder if the driver has a bug where it's not correctly clearing all
-> interrupt status (e.g. something pre-existing before boot), so once the
-> polarity is set up correctly, the interrupt is stuck?
->
-> Joseph,
->
-> As the author of the patch that's being reverted, can you please comment
-> here?
->
+> I've tried really hard to find something wrong with this patch but it
+> seems that you have it polished very nicely.
 
-I had explained why I fixed this here.
-https://patchwork.kernel.org/patch/2832646/
+Great!
 
-By checking the PMU_INT signal in the schematic of Dalmore, it only
-supports active low. It was connected to !PWR_INT of Tegra114 that will
-cause the system wake up automatically when syspended to LP0 if active
-high.
+> There is one quite minor nit in-line, but I'm not fussed either way.
+>
+>> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>> Changes since v1:
+>> - Refactored nouveau_device_create_() to take an additional bus type
+>>    argument instead of having two versions of it that duplicate code.
+>> - Fixed a typo when substituting pci_resource_* with nv_device_resource_*
+>> - Check whether devices are PCI in relevant functions instead of
+>>    nouveau_drm_load().
+>>
+>>   drivers/gpu/drm/nouveau/core/engine/device/base.c  | 83 ++++++++++++++++++++--
+>>   drivers/gpu/drm/nouveau/core/engine/falcon.c       |  6 +-
+>>   drivers/gpu/drm/nouveau/core/engine/fifo/base.c    |  2 +-
+>>   drivers/gpu/drm/nouveau/core/engine/graph/nv20.c   |  2 +-
+>>   drivers/gpu/drm/nouveau/core/engine/graph/nv40.c   |  2 +-
+>>   drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c   |  4 +-
+>>   drivers/gpu/drm/nouveau/core/engine/xtensa.c       |  2 +-
+>>   drivers/gpu/drm/nouveau/core/include/core/device.h | 30 ++++++++
+>>   .../gpu/drm/nouveau/core/include/engine/device.h   | 17 +++--
+>>   drivers/gpu/drm/nouveau/core/include/subdev/mc.h   |  1 +
+>>   drivers/gpu/drm/nouveau/core/os.h                  |  1 +
+>>   drivers/gpu/drm/nouveau/core/subdev/bar/base.c     |  4 +-
+>>   drivers/gpu/drm/nouveau/core/subdev/bar/nv50.c     |  4 +-
+>>   drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c     | 15 ++--
+>>   .../gpu/drm/nouveau/core/subdev/devinit/fbmem.h    |  8 ++-
+>>   drivers/gpu/drm/nouveau/core/subdev/devinit/nv04.c |  2 +-
+>>   drivers/gpu/drm/nouveau/core/subdev/devinit/nv05.c |  2 +-
+>>   drivers/gpu/drm/nouveau/core/subdev/devinit/nv10.c |  2 +-
+>>   drivers/gpu/drm/nouveau/core/subdev/devinit/nv20.c |  2 +-
+>>   drivers/gpu/drm/nouveau/core/subdev/fb/nv50.c      |  9 +--
+>>   drivers/gpu/drm/nouveau/core/subdev/fb/nvc0.c      |  9 +--
+>>   drivers/gpu/drm/nouveau/core/subdev/i2c/base.c     |  2 +-
+>>   drivers/gpu/drm/nouveau/core/subdev/instmem/nv40.c |  7 +-
+>>   drivers/gpu/drm/nouveau/core/subdev/mc/base.c      | 39 ++++++----
+>>   drivers/gpu/drm/nouveau/core/subdev/mxm/base.c     |  2 +-
+>>   drivers/gpu/drm/nouveau/nouveau_abi16.c            | 13 +++-
+>>   drivers/gpu/drm/nouveau/nouveau_agp.c              |  2 +-
+>>   drivers/gpu/drm/nouveau/nouveau_bios.c             |  4 ++
+>>   drivers/gpu/drm/nouveau/nouveau_bo.c               | 22 +++---
+>>   drivers/gpu/drm/nouveau/nouveau_chan.c             |  2 +-
+>>   drivers/gpu/drm/nouveau/nouveau_display.c          |  3 +-
+>>   drivers/gpu/drm/nouveau/nouveau_drm.c              | 59 ++++++++++++---
+>>   drivers/gpu/drm/nouveau/nouveau_sysfs.c            |  8 ++-
+>>   drivers/gpu/drm/nouveau/nouveau_ttm.c              | 31 ++++----
+>>   drivers/gpu/drm/nouveau/nouveau_vga.c              |  5 ++
+>>   35 files changed, 297 insertions(+), 109 deletions(-)
+>>
+> [snip]
+>> diff --git a/drivers/gpu/drm/nouveau/core/subdev/mc/base.c b/drivers/gpu/drm/nouveau/core/subdev/mc/base.c
+>> index b4b9943773bc..572190c8363b 100644
+>> --- a/drivers/gpu/drm/nouveau/core/subdev/mc/base.c
+>> +++ b/drivers/gpu/drm/nouveau/core/subdev/mc/base.c
+>> @@ -93,8 +93,8 @@ _nouveau_mc_dtor(struct nouveau_object *object)
+>>   {
+>>   	struct nouveau_device *device = nv_device(object);
+>>   	struct nouveau_mc *pmc = (void *)object;
+>> -	free_irq(device->pdev->irq, pmc);
+>> -	if (pmc->use_msi)
+>> +	free_irq(pmc->irq, pmc);
+>> +	if (nv_device_is_pci(device) && pmc->use_msi)
+> You should be able to keep the conditional as is.
+>
+>>   		pci_disable_msi(device->pdev);
+>>   	nouveau_subdev_destroy(&pmc->base);
+>>   }
+>> @@ -114,22 +114,25 @@ nouveau_mc_create_(struct nouveau_object *parent, struct nouveau_object *engine,
+>>   	if (ret)
+>>   		return ret;
+>>
+>> -	switch (device->pdev->device & 0x0ff0) {
+>> -	case 0x00f0:
+>> -	case 0x02e0:
+>> -		/* BR02? NFI how these would be handled yet exactly */
+>> -		break;
+>> -	default:
+>> -		switch (device->chipset) {
+>> -		case 0xaa: break; /* reported broken, nv also disable it */
+>> -		default:
+>> -			pmc->use_msi = true;
+>> +	if (nv_device_is_pci(device))
+>> +		switch (device->pdev->device & 0x0ff0) {
+>> +		case 0x00f0:
+>> +		case 0x02e0:
+>> +			/* BR02? NFI how these would be handled yet exactly */
+>>   			break;
+>> +		default:
+>> +			switch (device->chipset) {
+>> +			case 0xaa:
+>> +				/* reported broken, nv also disable it */
+>> +				break;
+>> +			default:
+>> +				pmc->use_msi = true;
+>> +				break;
+>>   		}
+>>   	}
+>>
+>>   	pmc->use_msi = nouveau_boolopt(device->cfgopt, "NvMSI", pmc->use_msi);
+> As you explicitly disable msi on platform devices you can move the
+> option parsing within the if (nv_device_is_pci()) block.
 
-That's why my change is setting the IRQ type of PMIC to active low and
-keep the "nvidia,invert-interrupt". And it can make the LP0/1/2 work
-proper.
+Yes, that's correct. Actually I think it would also make sense to move 
+the next paragraph under the "if (nv_device_is_pci())" block as well, 
+since it also deals with MSI.
 
-So this patch will make the PMIC not working on Dalmore and break the 
-suspend function.
+>
+> This way you can drop the change in the following conditional and the
+> similar one in _nouveau_mc_dtor.
+>
+>> -	if (pmc->use_msi && oclass->msi_rearm) {
+>> +	if (nv_device_is_pci(device) && pmc->use_msi && oclass->msi_rearm) {
 
--Joseph
+Will do that, rebase and post a v3.
+
+>
+>
+> Many thanks, and again, welcome to nouveau :-)
+
+Thanks for the review and the welcome! :)
+
+Alex.
