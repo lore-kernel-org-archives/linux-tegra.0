@@ -1,67 +1,81 @@
-From: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: tegra: enable I2C Mux driver for PCA9546 in defconfig
-Date: Wed, 12 Feb 2014 15:23:33 -0800
-Message-ID: <CAK5ve-LHktOUNUYRZccvmmYwcAhvQiPQYoxEWkVU6kUHr4aTUQ@mail.gmail.com>
-References: <1391817298-10600-1-git-send-email-pengw@nvidia.com>
- <52FBC6A9.7010401@wwwdotorg.org> <CAK5ve-+bzLkdwmab9sZGPk7p67ktVcK3mHQ2aUgMueH061ty6w@mail.gmail.com>
- <52FBD6C9.2010905@wwwdotorg.org> <CAK5ve-+2AGO0UCf4UOMLoqGmQLp7QN08OJbZxUc-oYZzjPdFcQ@mail.gmail.com>
- <52FBF739.1060605@wwwdotorg.org>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: dalmore: fix irq trigger type
+Date: Thu, 13 Feb 2014 09:12:18 +0800
+Message-ID: <52FC1BF2.8020003@nvidia.com>
+References: <4fcfcfdbc86c37c6d47ec32cdbd987f3b406e9b5.1392147256.git.stefan@agner.ch>
+ <20140211204737.GA1895@mithrandir>
+ <30f0db808e7543d9ab6b077aa5e239f2@agner.ch> <52FBCDFD.1040902@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52FBF739.1060605-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <52FBCDFD.1040902-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Feb 12, 2014 at 2:35 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 02/12/2014 02:55 PM, Bryan Wu wrote:
->> On Wed, Feb 12, 2014 at 12:17 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->>> On 02/12/2014 01:09 PM, Bryan Wu wrote:
->>>> On Wed, Feb 12, 2014 at 11:08 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->>>>> On 02/07/2014 04:54 PM, Bryan Wu wrote:
->>>>>> PCA9546 is used in Cardhu Tegra30 board to connect to 3 cameras.
->>>>>> Enabling this driver for Tegra V4L2 soc camera driver and camera
->>>>>> sensor drivers.
-> ...
->>>>> Note that your patches were sent with an email "From" address that
->>>>> didn't match your signed-off-by tag, yet "git send-email" didn't insert
->>>>> a "From" header in the email body. Can you please check your git user ID
->>>>> and/or email settings. Consequently, I had to adjust the git author
->>>>> field in git to match your s-o-b line.
-> ...
->>> Why not just put the correct values in ~/.gitconfig?
+On 02/13/2014 03:39 AM, Stephen Warren wrote:
+> On 02/11/2014 02:21 PM, Stefan Agner wrote:
+>> Am 2014-02-11 21:47, schrieb Thierry Reding:
+>>> On Tue, Feb 11, 2014 at 09:11:32PM +0100, Stefan Agner wrote:
+>>>> Trigger type needs to be IRQ_TYPE_LEVEL_HIGH since the interrupt
+>>>> signal gets inverted by the PMC (configured by the invert-interrupt
+>>>> property).
 >>>
->>> Perhaps this is because you switch between NVIDIA and non-NVIDIA email
->>> addresses and/or mail servers, so you can't make ~/.gitconfig static and
->>> universally correct? If you have a recent enough git, what I do is:
-> ...
->> Awesome, I will firstly update my .gitconfig. Actually I basically
->> just have one outbound server which is gmail server. Although I put
->> From: @nvidia.com, I still use gmail server to send out patch emails.
->> Still don't wanna touch our internal email server.
+>>> Isn't the reason the other way around? The PMIC generates a low-level
+>>> interrupt, but the GIC can only be configured to accept high-level (or
+>>> rising edge) and therefore the nvidia,invert-interrupt property needs to
+>>> be set in the PMC node?
+>> Hm yes agreed. I should also write the whole story here, maybe this:
+>>
+>> The GIC only support high-active interrupts. When using a PMIC with
+>> low-active interrupt, the PMC has to be configured by using the
+>> nvidia,invert-interrupt property in its node.
+>>
+>> This fix sets the GIC back to high-active and reverts commit
+>> eca8f98e404934027f84f72882c5e92ffbd9e5f5.
 >
-> You shouldn't send email with a from address @nvidia.com from a server
-> other than NVIDIA's servers. If you do, plenty of people will drop the
-> email as SPAM, since NVIDIA publishes SPF[1] records (and perhaps other
-> email configuration) for nvidia.com. Since there are good reasons not to
-> use NVIDIA's email servers, that means: tell git the actual email
-> address you're sending from (for the email settings; you should set the
-> author/commit ID to your @nvidia.com address still).
+> (Trimming CC lists)
 >
-> [1] http://www.openspf.org/
+> Stefan,
 >
-> $ dig -t spf nvidia.com
-> ...
-> nvidia.com.             180     IN      SPF     \
->         "v=spf1 mx/24 mx:nvidia.com/24 -all"
+> It'd be best to include the commit subject rather than just the commit
+> hash, i.e.:
+>
+> ... and reverts commit eca8f98e4049 "ARM: tegra: dalmore: fix the irq
+> trigger type of Palmas MFD device".
+>
+> It may also be helpful for the commit description to quote the kernel
+> boot message which this patch solves:
+>
+>> [    0.215178] genirq: Setting trigger mode 8 for irq 118 failed (gic_set_type+0x0/0xf4)
+>
+> For me, applying this patch actually *causes* an interrupt storm, rather
+> than preventing one. Yet without it, no interrupts occur at all. I
+> wonder if the driver has a bug where it's not correctly clearing all
+> interrupt status (e.g. something pre-existing before boot), so once the
+> polarity is set up correctly, the interrupt is stuck?
+>
+> Joseph,
+>
+> As the author of the patch that's being reverted, can you please comment
+> here?
 >
 
-Sure, I think I just missed to set the author as @nvidia.com but SOB
-is @nvidia.com in this patchset. And I still should use --from "Bryan
-Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>" for sending out email from gmail server.
-Right?
+I had explained why I fixed this here.
+https://patchwork.kernel.org/patch/2832646/
 
-Thanks,
--Bryan
+By checking the PMU_INT signal in the schematic of Dalmore, it only
+supports active low. It was connected to !PWR_INT of Tegra114 that will
+cause the system wake up automatically when syspended to LP0 if active
+high.
+
+That's why my change is setting the IRQ type of PMIC to active low and
+keep the "nvidia,invert-interrupt". And it can make the LP0/1/2 work
+proper.
+
+So this patch will make the PMIC not working on Dalmore and break the 
+suspend function.
+
+-Joseph
