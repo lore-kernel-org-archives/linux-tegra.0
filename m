@@ -1,38 +1,41 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: fix RTC0 alias for Cardhu
-Date: Thu, 13 Feb 2014 17:18:26 -0700
-Message-ID: <1392337106-20584-1-git-send-email-swarren@wwwdotorg.org>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 4/6] ARM: firmware: add prepare_idle() operation
+Date: Fri, 14 Feb 2014 14:16:36 +0900
+Message-ID: <52FDA6B4.6070404@nvidia.com>
+References: <1391747706-1847-1-git-send-email-acourbot@nvidia.com> <1391747706-1847-5-git-send-email-acourbot@nvidia.com> <52FCA5FC.80504@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <52FCA5FC.80504-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 02/13/2014 08:01 PM, Tomasz Figa wrote:
+> Hi Alexandre,
+>
+> On 07.02.2014 05:35, Alexandre Courbot wrote:
+>> Some firmwares do not put the CPU into idle mode themselves, but still
+>> need to be informed that the CPU is about to enter idle mode before this
+>> happens. Add a prepare_idle() operation to the firmware_ops structure to
+>> handle such cases.
+>>
+>> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>    arch/arm/include/asm/firmware.h | 4 ++++
+>>    1 file changed, 4 insertions(+)
+>
+> I wonder if .do_idle() couldn't simply return an appropriate error code
+> to let the upper layer know that it should proceed with normal CPU idle
+> activation, while still letting the firmware know that the CPU is going
+> to idle.
 
-This alias entry was evidently cut/paste from a different board, and
-not correctly updated to match Cardhu. Fix this.
-
-Fixes: 553c0a200e20 ("ARM: tegra: set up /aliases entries for RTCs")
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-This is a fix for v3.14-rc*
-
- arch/arm/boot/dts/tegra30-cardhu.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-index 004002c8c8a5..0cf0848a82d8 100644
---- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
-+++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-@@ -28,7 +28,7 @@
- 	compatible = "nvidia,cardhu", "nvidia,tegra30";
- 
- 	aliases {
--		rtc0 = "/i2c@7000d000/tps6586x@34";
-+		rtc0 = "/i2c@7000d000/tps65911@2d";
- 		rtc1 = "/rtc@7000e000";
- 	};
- 
--- 
-1.8.1.5
+In our particular case I agree it would be enough to use do_idle() to 
+let the firmware know about the operation and have it return -ENOSYS so 
+the kernel actually performs it. I'm afraid this might not fulfill all 
+needs though (e.g. one can imagine a firmware where the OS needs to take 
+action between the notification and the actual shutdown), and as Stephen 
+pointed out that would make the name of the function ambiguous at best. 
+I'd rather keep it the current way for clarity.
