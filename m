@@ -1,70 +1,56 @@
-From: Russell King <rmk+kernel@arm.linux.org.uk>
-Subject: [PATCH RFC 31/31] mmc: sdhci-tegra: get rid of special PRESENT_STATE
- register handling
-Date: Tue, 18 Feb 2014 15:11:41 +0000
-Message-ID: <E1WFmKj-0006nv-Py@rmk-PC.arm.linux.org.uk>
-References: <20140218150801.GD21483@n2100.arm.linux.org.uk>
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <20140218150801.GD21483@n2100.arm.linux.org.uk>
-Sender: linux-mmc-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org
-Cc: Chris Ball <chris@printf.net>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/2] mfd: palmas: support IRQ inversion at the board level
+Date: Tue, 18 Feb 2014 10:42:05 -0700
+Message-ID: <53039B6D.8080004@wwwdotorg.org>
+References: <1392415108-4365-1-git-send-email-swarren@wwwdotorg.org> <20140217092658.GC17875@lee--X1>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140217092658.GC17875@lee--X1>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, J Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>, Ian Lartey <ian-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-sdhci-tegra provides a get_ro method, which overrides the checking
-of the write protect bit in the PRESENT_STATE register in sdhci.c:
+On 02/17/2014 02:26 AM, Lee Jones wrote:
+>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>
+>> Some boards or SoCs have an inverter between the PMIC IRQ output pin and
+>> the IRQ controller input signal.
+>>
+>> The IRQ specifier in DT is meant to represent the IRQ flags at the input
+>> to the IRQ controller.
+>>
+>> The Palmas HW's IRQ output has configurable polarity. The driver
+>> currently selects the output polarity by querying the input polarity at
+>> the IRQ controller. This works fine if the IRQ signal is routed directly
+>> from the PMIC to the IRQ controller with no intervening logic. However,
+>> if the signal is inverted between the two, this automatic polarity
+>> selection gets the wrong answer.
+>>
+>> Add an additional optional DT and platform data parameter which indicates
+>> that such an inversion occurs. If this option is enabled, the Palmas
+>> driver will configure its IRQ output to the opposite polarity of the IRQ
+>> controller's input.
+>>
+>> An alternative would have been to add a new non-optional DT parameter to
+>> indicate the exact desired output polarity. However, this would have been
+>> an incompatible change to the DT binding.
+>>
+>> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>> If this patch could be applied to its own branch (w/ signed tag) in the
+>> MFD tree, that would great; then I can pull patch 1/2 into the Tegra tree
+>> so that I can apply patch 2/2 to the Tegra tree. Thanks.
+>> ---
+>>  Documentation/devicetree/bindings/mfd/palmas.txt | 6 ++++++
+>>  drivers/mfd/palmas.c                             | 4 ++++
+>>  include/linux/mfd/palmas.h                       | 1 +
+>>  3 files changed, 11 insertions(+)
+> 
+> For the core changes:
+>   Acked-by: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
-        if (host->flags & SDHCI_DEVICE_DEAD)
-                is_readonly = 0;
-        else if (host->ops->get_ro)
-                is_readonly = host->ops->get_ro(host);
-        else
-                is_readonly = !(sdhci_readl(host, SDHCI_PRESENT_STATE)
-                                & SDHCI_WRITE_PROTECT);
-
-This means it's pointless detecting accesses to this register and
-manually setting the SDHCI_WRITE_PROTECT as it has no effect.
-
-This means that the whole of tegra_sdhci_readl() can be removed and
-we can use the builtin sdhci readl functionality here.
-
-Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-=-DO NOT APPLY-=
- drivers/mmc/host/sdhci-tegra.c | 14 --------------
- 1 file changed, 14 deletions(-)
-
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index d06b6ff60432..985247649f46 100644
-=-DO NOT APPLY-= a/drivers/mmc/host/sdhci-tegra.c
-=+DO NOT APPLY+= b/drivers/mmc/host/sdhci-tegra.c
-@@ -48,19 +48,6 @@ struct sdhci_tegra {
- 	int power_gpio;
- };
- 
--static u32 tegra_sdhci_readl(struct sdhci_host *host, int reg)
--{
--	u32 val;
--
--	if (unlikely(reg == SDHCI_PRESENT_STATE)) {
--		/* Use wp_gpio here instead? */
--		val = readl(host->ioaddr + reg);
--		return val | SDHCI_WRITE_PROTECT;
--	}
--
--	return readl(host->ioaddr + reg);
--}
--
- static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
- {
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-@@ -150,7 +137,6 @@ static void tegra_sdhci_set_bus_width(struct sdhci_host *host, int bus_width)
- 
- static const struct sdhci_ops tegra_sdhci_ops = {
- 	.get_ro     = tegra_sdhci_get_ro,
--	.read_l     = tegra_sdhci_readl,
- 	.read_w     = tegra_sdhci_readw,
- 	.write_l    = tegra_sdhci_writel,
- 	.set_clock  = sdhci_set_clock,
--- 
-1.8.3.1
-
+Thanks. Since you ack'd this and are an MFD maintainer, was that an
+indication that I should take this patch through the Tegra tree?
