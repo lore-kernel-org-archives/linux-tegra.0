@@ -1,41 +1,33 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH RFC 31/31] mmc: sdhci-tegra: get rid of special PRESENT_STATE
- register handling
-Date: Wed, 19 Feb 2014 13:04:19 -0700
-Message-ID: <53050E43.3030602@wwwdotorg.org>
-References: <20140218150801.GD21483@n2100.arm.linux.org.uk> <E1WFmKj-0006nv-Py@rmk-PC.arm.linux.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <E1WFmKj-0006nv-Py@rmk-PC.arm.linux.org.uk>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Russell King <rmk+kernel@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org
-Cc: Chris Ball <chris@printf.net>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org
+From: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] host1x: export host1x_syncpt_incr_max function
+Date: Wed, 19 Feb 2014 14:23:28 -0800
+Message-ID: <1392848608-15056-1-git-send-email-cooloney@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/18/2014 08:11 AM, Russell King wrote:
-> sdhci-tegra provides a get_ro method, which overrides the checking
-> of the write protect bit in the PRESENT_STATE register in sdhci.c:
-> 
->         if (host->flags & SDHCI_DEVICE_DEAD)
->                 is_readonly = 0;
->         else if (host->ops->get_ro)
->                 is_readonly = host->ops->get_ro(host);
->         else
->                 is_readonly = !(sdhci_readl(host, SDHCI_PRESENT_STATE)
->                                 & SDHCI_WRITE_PROTECT);
-> 
-> This means it's pointless detecting accesses to this register and
-> manually setting the SDHCI_WRITE_PROTECT as it has no effect.
-> 
-> This means that the whole of tegra_sdhci_readl() can be removed and
-> we can use the builtin sdhci readl functionality here.
+From: Bryan Wu <pengw-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Acked-by: Stephen Warren <swarren@nvidia.com>
+Tegra V4L2 camera driver needs this function to do frame capture.
 
-> =-DO NOT APPLY-=
+Signed-off-by: Bryan Wu <pengw-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ include/linux/host1x.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-Is that just because it's an RFC and you want to make sure it doesn't
-get accepted early, or are you explicitly trying to stop people applying
-this, testing it, and giving Tested-by?
+diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+index 3af8472..d2b5299 100644
+--- a/include/linux/host1x.h
++++ b/include/linux/host1x.h
+@@ -136,6 +136,7 @@ u32 host1x_syncpt_id(struct host1x_syncpt *sp);
+ u32 host1x_syncpt_read_min(struct host1x_syncpt *sp);
+ u32 host1x_syncpt_read_max(struct host1x_syncpt *sp);
+ int host1x_syncpt_incr(struct host1x_syncpt *sp);
++u32 host1x_syncpt_incr_max(struct host1x_syncpt *sp, u32 incrs);
+ int host1x_syncpt_wait(struct host1x_syncpt *sp, u32 thresh, long timeout,
+ 		       u32 *value);
+ struct host1x_syncpt *host1x_syncpt_request(struct device *dev,
+-- 
+1.8.3.2
