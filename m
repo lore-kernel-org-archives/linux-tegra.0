@@ -1,24 +1,46 @@
 From: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] host1x: export host1x_syncpt_incr_max function
-Date: Wed, 19 Feb 2014 14:27:33 -0800
-Message-ID: <CAK5ve-LEnjWwWJnGva9WwtLaWrjgEh3P9PZa36N1OaagH_eosQ@mail.gmail.com>
-References: <1392848608-15056-1-git-send-email-cooloney@gmail.com> <53052F34.4000009@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Subject: [PATCH v2] host1x: export host1x_syncpt_incr_max function
+Date: Wed, 19 Feb 2014 14:48:36 -0800
+Message-ID: <1392850116-2086-1-git-send-email-cooloney@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53052F34.4000009-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Feb 19, 2014 at 2:24 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 02/19/2014 03:23 PM, Bryan Wu wrote:
->> Tegra V4L2 camera driver needs this function to do frame capture.
->
-> Does it need to be EXPORT_SYMBOL()d too, in case things are modules?
->
+From: Bryan Wu <pengw-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Sure, I will update this patch to export symbol of it.
-Thanks,
--Bryan
+Tegra V4L2 camera driver needs this function to do frame capture.
+
+Signed-off-by: Bryan Wu <pengw-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/gpu/host1x/syncpt.c | 1 +
+ include/linux/host1x.h      | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
+index bfb09d8..b10550e 100644
+--- a/drivers/gpu/host1x/syncpt.c
++++ b/drivers/gpu/host1x/syncpt.c
+@@ -102,6 +102,7 @@ u32 host1x_syncpt_incr_max(struct host1x_syncpt *sp, u32 incrs)
+ {
+ 	return (u32)atomic_add_return(incrs, &sp->max_val);
+ }
++EXPORT_SYMBOL(host1x_syncpt_incr_max);
+ 
+  /*
+  * Write cached syncpoint and waitbase values to hardware.
+diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+index 3af8472..d2b5299 100644
+--- a/include/linux/host1x.h
++++ b/include/linux/host1x.h
+@@ -136,6 +136,7 @@ u32 host1x_syncpt_id(struct host1x_syncpt *sp);
+ u32 host1x_syncpt_read_min(struct host1x_syncpt *sp);
+ u32 host1x_syncpt_read_max(struct host1x_syncpt *sp);
+ int host1x_syncpt_incr(struct host1x_syncpt *sp);
++u32 host1x_syncpt_incr_max(struct host1x_syncpt *sp, u32 incrs);
+ int host1x_syncpt_wait(struct host1x_syncpt *sp, u32 thresh, long timeout,
+ 		       u32 *value);
+ struct host1x_syncpt *host1x_syncpt_request(struct device *dev,
+-- 
+1.8.3.2
