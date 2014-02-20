@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v5 2/5] drm/dp: Add drm_dp_dpcd_read_link_status()
-Date: Thu, 20 Feb 2014 16:55:31 +0100
-Message-ID: <1392911734-6689-3-git-send-email-thierry.reding@gmail.com>
+Subject: [PATCH v5 3/5] drm/dp: Add DisplayPort link helpers
+Date: Thu, 20 Feb 2014 16:55:32 +0100
+Message-ID: <1392911734-6689-4-git-send-email-thierry.reding@gmail.com>
 References: <1392911734-6689-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1392911734-6689-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,52 +12,168 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The function reads the link status (6 bytes starting at offset 0x202)
-from the DPCD so that it can be conveniently passed to other DPCD
-helpers.
+Add a helper to probe a DP link (read out the supported DPCD revision,
+maximum rate, link count and capabilities) as well as power up the DP
+link and configure it accordingly.
 
 Reviewed-by: Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>
 Reviewed-by: Jani Nikula <jani.nikula-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/drm_dp_helper.c | 16 ++++++++++++++++
- include/drm/drm_dp_helper.h     |  3 +++
- 2 files changed, 19 insertions(+)
+Changes in v5:
+- export helpers
+
+Changes in v4:
+- fix a couple of typos in comments as pointed out by Alex Deucher
+
+Changes in v3:
+- split into drm_dp_link_power_up() and drm_dp_link_configure()
+- do not change sink state for DPCD versions earlier than 1.1
+- sleep for 1-2 ms after setting local sink to D0 state
+- read and write consecutive registers where possible
+- read DPCD revision when link is probed
+- remove duplicate kerneldoc
+
+ drivers/gpu/drm/drm_dp_helper.c | 97 +++++++++++++++++++++++++++++++++++++++++
+ include/drm/drm_dp_helper.h     | 17 ++++++++
+ 2 files changed, 114 insertions(+)
 
 diff --git a/drivers/gpu/drm/drm_dp_helper.c b/drivers/gpu/drm/drm_dp_helper.c
-index da6bcfe178a6..84262ed64ce7 100644
+index 84262ed64ce7..177ac7bd1851 100644
 --- a/drivers/gpu/drm/drm_dp_helper.c
 +++ b/drivers/gpu/drm/drm_dp_helper.c
-@@ -456,3 +456,19 @@ ssize_t drm_dp_dpcd_write(struct drm_dp_aux *aux, unsigned int offset,
- 				  size);
+@@ -472,3 +472,100 @@ int drm_dp_dpcd_read_link_status(struct drm_dp_aux *aux,
+ 				DP_LINK_STATUS_SIZE);
  }
- EXPORT_SYMBOL(drm_dp_dpcd_write);
+ EXPORT_SYMBOL(drm_dp_dpcd_read_link_status);
 +
 +/**
-+ * drm_dp_dpcd_read_link_status() - read DPCD link status (bytes 0x202-0x207)
++ * drm_dp_link_probe() - probe a DisplayPort link for capabilities
 + * @aux: DisplayPort AUX channel
-+ * @status: buffer to store the link status in (must be at least 6 bytes)
++ * @link: pointer to structure in which to return link capabilities
 + *
-+ * Returns the number of bytes transferred on success or a negative error
-+ * code on failure.
++ * The structure filled in by this function can usually be passed directly
++ * into drm_dp_link_power_up() and drm_dp_link_configure() to power up and
++ * configure the link based on the link's capabilities.
++ *
++ * Returns 0 on success or a negative error code on failure.
 + */
-+int drm_dp_dpcd_read_link_status(struct drm_dp_aux *aux,
-+				 u8 status[DP_LINK_STATUS_SIZE])
++int drm_dp_link_probe(struct drm_dp_aux *aux, struct drm_dp_link *link)
 +{
-+	return drm_dp_dpcd_read(aux, DP_LANE0_1_STATUS, status,
-+				DP_LINK_STATUS_SIZE);
++	u8 values[3];
++	int err;
++
++	memset(link, 0, sizeof(*link));
++
++	err = drm_dp_dpcd_read(aux, DP_DPCD_REV, values, sizeof(values));
++	if (err < 0)
++		return err;
++
++	link->revision = values[0];
++	link->rate = drm_dp_bw_code_to_link_rate(values[1]);
++	link->num_lanes = values[2] & DP_MAX_LANE_COUNT_MASK;
++
++	if (values[2] & DP_ENHANCED_FRAME_CAP)
++		link->capabilities |= DP_LINK_CAP_ENHANCED_FRAMING;
++
++	return 0;
 +}
-+EXPORT_SYMBOL(drm_dp_dpcd_read_link_status);
++EXPORT_SYMBOL(drm_dp_link_probe);
++
++/**
++ * drm_dp_link_power_up() - power up a DisplayPort link
++ * @aux: DisplayPort AUX channel
++ * @link: pointer to a structure containing the link configuration
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int drm_dp_link_power_up(struct drm_dp_aux *aux, struct drm_dp_link *link)
++{
++	u8 value;
++	int err;
++
++	/* DP_SET_POWER register is only available on DPCD v1.1 and later */
++	if (link->revision < 0x11)
++		return 0;
++
++	err = drm_dp_dpcd_readb(aux, DP_SET_POWER, &value);
++	if (err < 0)
++		return err;
++
++	value &= ~DP_SET_POWER_MASK;
++	value |= DP_SET_POWER_D0;
++
++	err = drm_dp_dpcd_writeb(aux, DP_SET_POWER, value);
++	if (err < 0)
++		return err;
++
++	/*
++	 * According to the DP 1.1 specification, a "Sink Device must exit the
++	 * power saving state within 1 ms" (Section 2.5.3.1, Table 5-52, "Sink
++	 * Control Field" (register 0x600).
++	 */
++	usleep_range(1000, 2000);
++
++	return 0;
++}
++EXPORT_SYMBOL(drm_dp_link_power_up);
++
++/**
++ * drm_dp_link_configure() - configure a DisplayPort link
++ * @aux: DisplayPort AUX channel
++ * @link: pointer to a structure containing the link configuration
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int drm_dp_link_configure(struct drm_dp_aux *aux, struct drm_dp_link *link)
++{
++	u8 values[2];
++	int err;
++
++	values[0] = drm_dp_link_rate_to_bw_code(link->rate);
++	values[1] = link->num_lanes;
++
++	if (link->capabilities & DP_LINK_CAP_ENHANCED_FRAMING)
++		values[1] |= DP_LANE_COUNT_ENHANCED_FRAME_EN;
++
++	err = drm_dp_dpcd_write(aux, DP_LINK_BW_SET, values, sizeof(values));
++	if (err < 0)
++		return err;
++
++	return 0;
++}
++EXPORT_SYMBOL(drm_dp_link_configure);
 diff --git a/include/drm/drm_dp_helper.h b/include/drm/drm_dp_helper.h
-index 0eb29f089e61..8759ce6ce97f 100644
+index 8759ce6ce97f..17b3a8a5ff38 100644
 --- a/include/drm/drm_dp_helper.h
 +++ b/include/drm/drm_dp_helper.h
-@@ -487,4 +487,7 @@ static inline ssize_t drm_dp_dpcd_writeb(struct drm_dp_aux *aux,
- 	return drm_dp_dpcd_write(aux, offset, &value, 1);
- }
+@@ -301,6 +301,7 @@
+ #define DP_SET_POWER                        0x600
+ # define DP_SET_POWER_D0                    0x1
+ # define DP_SET_POWER_D3                    0x2
++# define DP_SET_POWER_MASK                  0x3
  
-+int drm_dp_dpcd_read_link_status(struct drm_dp_aux *aux,
-+				 u8 status[DP_LINK_STATUS_SIZE]);
+ #define DP_PSR_ERROR_STATUS                 0x2006  /* XXX 1.2? */
+ # define DP_PSR_LINK_CRC_ERROR              (1 << 0)
+@@ -490,4 +491,20 @@ static inline ssize_t drm_dp_dpcd_writeb(struct drm_dp_aux *aux,
+ int drm_dp_dpcd_read_link_status(struct drm_dp_aux *aux,
+ 				 u8 status[DP_LINK_STATUS_SIZE]);
+ 
++/*
++ * DisplayPort link
++ */
++#define DP_LINK_CAP_ENHANCED_FRAMING (1 << 0)
++
++struct drm_dp_link {
++	unsigned char revision;
++	unsigned int rate;
++	unsigned int num_lanes;
++	unsigned long capabilities;
++};
++
++int drm_dp_link_probe(struct drm_dp_aux *aux, struct drm_dp_link *link);
++int drm_dp_link_power_up(struct drm_dp_aux *aux, struct drm_dp_link *link);
++int drm_dp_link_configure(struct drm_dp_aux *aux, struct drm_dp_link *link);
 +
  #endif /* _DRM_DP_HELPER_H_ */
 -- 
