@@ -1,36 +1,60 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] clk: tegra: Fix vic03 mux index
-Date: Thu, 20 Feb 2014 15:54:52 +0200
-Message-ID: <1392904492-11979-1-git-send-email-pdeschrijver@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v2 0/3] drm/tegra: Restore licensing consistency
+Date: Thu, 20 Feb 2014 16:48:09 +0100
+Message-ID: <1392911292-6438-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces@lists.freedesktop.org
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+To: dri-devel@lists.freedesktop.org
+Cc: linux-tegra@vger.kernel.org, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, Emil Goode <emilgoode@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-The vic03 mux uses a linear mapping.
+From: Thierry Reding <treding@nvidia.com>
 
-Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/clk/tegra/clk-tegra-periph.c |    4 +---
- 1 files changed, 1 insertions(+), 3 deletions(-)
+The bulk of the Tegra DRM driver is GPL v2 licensed, but some of the new
+subdrivers were licensed under an MIT license. This was simply oversight
+on my part.
 
-diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-index f5376a3..1fa5c3f 100644
---- a/drivers/clk/tegra/clk-tegra-periph.c
-+++ b/drivers/clk/tegra/clk-tegra-periph.c
-@@ -371,9 +371,7 @@ static const char *mux_pllp3_pllc_clkm[] = {
- static const char *mux_pllm_pllc_pllp_plla_pllc2_c3_clkm[] = {
- 	"pll_m", "pll_c", "pll_p", "pll_a", "pll_c2", "pll_c3", "clk_m"
- };
--static u32 mux_pllm_pllc_pllp_plla_pllc2_c3_clkm_idx[] = {
--	[0] = 0, [1] = 1, [2] = 2, [3] = 3, [4] = 4, [5] = 6,
--};
-+#define mux_pllm_pllc_pllp_plla_pllc2_c3_clkm_idx NULL
- 
- static const char *mux_pllm_pllc2_c_c3_pllp_plla_pllc4[] = {
- 	"pll_m", "pll_c2", "pll_c", "pll_c3", "pll_p", "pll_a_out0", "pll_c4",
+One exception to this is the public header file that will eventually be
+used within libdrm. Since all the other headers in libdrm use the MIT
+license, do the same for Tegra.
+
+Since I need to respin this series anyway, I'm adding Wei Yongjun and
+Emil Goode on Cc as requested by Stephen.
+
+Wei, Emil, I'd like to have your Acked-by on this licensing change since
+you modified some of the files (Wei: dsi.c, Emil: tegra_drm.h).
+
+Changes in v2:
+- use the generic MIT license header rather than one modified to include
+  Tungsten Graphics
+
+Thierry
+
+Thierry Reding (3):
+  drm/tegra: Relicense public header under MIT
+  drm/tegra: Relicense under GPL v2
+  drm/tegra: Use standard GPL v2 license text
+
+ drivers/gpu/drm/tegra/dsi.c      | 20 +++-----------------
+ drivers/gpu/drm/tegra/dsi.h      | 20 +++-----------------
+ drivers/gpu/drm/tegra/gem.c      | 11 +++--------
+ drivers/gpu/drm/tegra/gem.h      | 14 +++-----------
+ drivers/gpu/drm/tegra/gr2d.c     | 14 +++-----------
+ drivers/gpu/drm/tegra/mipi-phy.c | 20 +++-----------------
+ drivers/gpu/drm/tegra/mipi-phy.h | 20 +++-----------------
+ include/uapi/drm/tegra_drm.h     | 24 +++++++++++++++---------
+ 8 files changed, 36 insertions(+), 107 deletions(-)
+
 -- 
-1.7.7.rc0.72.g4b5ea.dirty
+1.8.4.2
