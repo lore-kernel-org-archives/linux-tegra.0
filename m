@@ -1,56 +1,37 @@
-From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Subject: Re: [PATCH RFC 31/31] mmc: sdhci-tegra: get rid of special
-	PRESENT_STATE register handling
-Date: Wed, 19 Feb 2014 23:28:37 +0000
-Message-ID: <20140219232837.GX21483@n2100.arm.linux.org.uk>
-References: <20140218150801.GD21483@n2100.arm.linux.org.uk> <E1WFmKj-0006nv-Py@rmk-PC.arm.linux.org.uk> <53050E43.3030602@wwwdotorg.org> <20140219232253.GW21483@n2100.arm.linux.org.uk>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] clk: tegra124: remove gr2d and gr3d clocks
+Date: Thu, 20 Feb 2014 15:54:07 +0200
+Message-ID: <1392904448-11939-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20140219232253.GW21483-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chris Ball <chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Feb 19, 2014 at 11:22:53PM +0000, Russell King - ARM Linux wrote:
-> The script was a little too over-zealous.  It was just supposed to do
-> the following transformation:
-> 
-> --- => =-DO NOT APPLY-=
-> +++ => =+DO NOT APPLY+=
-> 
-> which would've made it reversible with a trivial sed expression - but I
-> cocked up because of the utterly random nature of regexp flavours, and
-> instead gave sed this:
-> 
-> 	sed -i 's/^---/=-DO NOT APPLY-=/;s/^\+\+\+/=+DO NOT APPLY+=/'
-> 
-> The escaped '+' ends up causing sed to match a single + at the beginning
-> of a line.  (Other regexp flavours require you to escape the '+' otherwise
-> it's interpreted as "one or more".)
-> 
-> I had added that mode to my script a few months ago, and I just assumed
-> I'd fully tested it when I used it yesterday... clearly not so.
-> 
-> So... yes it was designed to stop it being _accepted_ but it should have
-> also been completely reversible for those who wished to apply it via
-> the obvious reversed sed expression.
+Tegra124 does not have gr2d and gr3d clocks. They have been replaced by the
+vic03 and gpu clocks respectively.
 
-Oh, and before you ask why I'm now doing it, it's through necessity.  I've
-had too many instances where some maintainers will take patches sent out
-as part of a RFC without being asked to do so - and I've then had to email
-the maintainers asking them to drop such patches from their trees.
+Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/clk/tegra/clk-tegra124.c |    2 --
+ 1 files changed, 0 insertions(+), 2 deletions(-)
 
-I wish this kind of buggeration of patches wasn't necessary, but
-unfortunately - as seems to always be the case - people just can't be
-trusted to pay due care and attention, and do the right thing.
-
-That's why the intention is to (a) prevent the patch being applied without
-thought while (b) allowing it to be applied with a trivial transformation.
-
+diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+index b4cf650..166e02f 100644
+--- a/drivers/clk/tegra/clk-tegra124.c
++++ b/drivers/clk/tegra/clk-tegra124.c
+@@ -769,10 +769,8 @@ static struct tegra_clk tegra124_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_sdmmc4_8] = { .dt_id = TEGRA124_CLK_SDMMC4, .present = true },
+ 	[tegra_clk_pwm] = { .dt_id = TEGRA124_CLK_PWM, .present = true },
+ 	[tegra_clk_i2s2] = { .dt_id = TEGRA124_CLK_I2S2, .present = true },
+-	[tegra_clk_gr2d] = { .dt_id = TEGRA124_CLK_GR_2D, .present = true },
+ 	[tegra_clk_usbd] = { .dt_id = TEGRA124_CLK_USBD, .present = true },
+ 	[tegra_clk_isp_8] = { .dt_id = TEGRA124_CLK_ISP, .present = true },
+-	[tegra_clk_gr3d] = { .dt_id = TEGRA124_CLK_GR_3D, .present = true },
+ 	[tegra_clk_disp2] = { .dt_id = TEGRA124_CLK_DISP2, .present = true },
+ 	[tegra_clk_disp1] = { .dt_id = TEGRA124_CLK_DISP1, .present = true },
+ 	[tegra_clk_host1x_8] = { .dt_id = TEGRA124_CLK_HOST1X, .present = true },
 -- 
-FTTC broadband for 0.8mile line: 5.8Mbps down 500kbps up.  Estimation
-in database were 13.1 to 19Mbit for a good line, about 7.5+ for a bad.
-Estimate before purchase was "up to 13.2Mbit".
+1.7.7.rc0.72.g4b5ea.dirty
