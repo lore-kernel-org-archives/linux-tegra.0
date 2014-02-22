@@ -1,44 +1,46 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: add LED options back into tegra_defconfig
-Date: Thu, 20 Feb 2014 14:37:20 -0700
-Message-ID: <1392932240-14480-1-git-send-email-swarren@wwwdotorg.org>
+From: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [lm-sensors] [PATCH v5] hwmon: (lm90) split set&show temp as
+ common codes
+Date: Sat, 22 Feb 2014 11:47:35 +0100
+Message-ID: <20140222114735.38d36f4a@endymion.delvare>
+References: <1381215866-20608-1-git-send-email-wni@nvidia.com>
+	<20131011091741.59cdaf31@endymion.delvare>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20131011091741.59cdaf31-R0o5gVi9kd7kN2dkZ6Wm7A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Fri, 11 Oct 2013 09:17:41 +0200, Jean Delvare wrote:
+> On Tue, 8 Oct 2013 15:04:26 +0800, Wei Ni wrote:
+> > Split set&show temp codes as common functions, so we can use it
+> > directly when implement linux thermal framework.
+> > And handle error return value for the lm90_select_remote_channel
+> > and write_tempx, then set_temp8 and set_temp11 could return it
+> > to user-space.
+> > 
+> > Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> >  drivers/hwmon/lm90.c |  166 ++++++++++++++++++++++++++++++++++----------------
+> >  1 file changed, 113 insertions(+), 53 deletions(-)
+> > (...)
+> 
+> Applied with minor edits, thanks.
 
-The last time tegra_defconfig was rebuilt, various LEDs options were
-somehow selected by other options, and hence their entries in
-tegra_defconfig were removed by "make savedefconfig". However, for some
-reason this is no longer happening, so we need to add the entries back
-into tegra_defconfig so the they are enabled in .config.
+Wei, what's the status? With Guenter's recent cleanup of the lm90
+driver, this patch no longer applies. I never sent it upstream as it
+makes no sense without users of the new functions defined by the patch.
+Will this ever happen?
 
-Fixes: db079b1811d1 ("ARM: tegra: rebuild tegra_defconfig to add DEBUG_FS)"
-Reported-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Another fix for 3.14.
+For now I am discarding this patch. If it still needed, please rebase
+on top of the current lm90 patch set:
+http://jdelvare.nerim.net/devel/linux-3/jdelvare-hwmon/
+and resend.
 
- arch/arm/configs/tegra_defconfig | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index 00fe9e9710fd..27d69b558c5d 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -204,7 +204,10 @@ CONFIG_MMC_BLOCK_MINORS=16
- CONFIG_MMC_SDHCI=y
- CONFIG_MMC_SDHCI_PLTFM=y
- CONFIG_MMC_SDHCI_TEGRA=y
-+CONFIG_NEW_LEDS=y
-+CONFIG_LEDS_CLASS=y
- CONFIG_LEDS_GPIO=y
-+CONFIG_LEDS_TRIGGERS=y
- CONFIG_LEDS_TRIGGER_TIMER=y
- CONFIG_LEDS_TRIGGER_ONESHOT=y
- CONFIG_LEDS_TRIGGER_HEARTBEAT=y
+Thanks,
 -- 
-1.8.1.5
+Jean Delvare
