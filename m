@@ -1,82 +1,57 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: Tegra clockframework fixes for 3.14
-Date: Sun, 23 Feb 2014 17:02:11 -0800
-Message-ID: <20140224010211.22529.99924@quantum>
-References: <20140220172744.GA4378@tbergstrom-lnx.Nvidia.com>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [lm-sensors] [PATCH v5] hwmon: (lm90) split set&show temp as
+ common codes
+Date: Mon, 24 Feb 2014 16:07:55 +0800
+Message-ID: <530AFDDB.3080300@nvidia.com>
+References: <1381215866-20608-1-git-send-email-wni@nvidia.com>
+	<20131011091741.59cdaf31@endymion.delvare>
+ <20140222114735.38d36f4a@endymion.delvare>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20140220172744.GA4378@tbergstrom-lnx.Nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: "mark.rutland@arm.com" <mark.rutland@arm.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140222114735.38d36f4a-R0o5gVi9kd7kN2dkZ6Wm7A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Peter De Schrijver (2014-02-20 09:27:44)
-> Hi Mike,
+On 02/22/2014 06:47 PM, Jean Delvare wrote:
+> On Fri, 11 Oct 2013 09:17:41 +0200, Jean Delvare wrote:
+>> On Tue, 8 Oct 2013 15:04:26 +0800, Wei Ni wrote:
+>>> Split set&show temp codes as common functions, so we can use it
+>>> directly when implement linux thermal framework.
+>>> And handle error return value for the lm90_select_remote_channel
+>>> and write_tempx, then set_temp8 and set_temp11 could return it
+>>> to user-space.
+>>>
+>>> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>> ---
+>>>  drivers/hwmon/lm90.c |  166 ++++++++++++++++++++++++++++++++++----------------
+>>>  1 file changed, 113 insertions(+), 53 deletions(-)
+>>> (...)
+>>
+>> Applied with minor edits, thanks.
 > 
-> Could you merge these fixes still for 3.14?
+> Wei, what's the status? With Guenter's recent cleanup of the lm90
+> driver, this patch no longer applies. I never sent it upstream as it
+> makes no sense without users of the new functions defined by the patch.
+> Will this ever happen?
+> 
+> For now I am discarding this patch. If it still needed, please rebase
+> on top of the current lm90 patch set:
+> http://jdelvare.nerim.net/devel/linux-3/jdelvare-hwmon/
+> and resend.
 
-No problem, but can you provide a list of the regressions fixed? I'll
-add those to my merge commit message. No need for you to respin
-anything. Next time if you could submit a signed tag with the
-regressions listed in the message it would be a great help.
+Hi, Jean
+Sorry for no updates on this patch.
 
-Thanks!
-Mike
+I noticed that in lm75.c, it expose itself as thermal zone device and
+register on the thermal framework, so I will also implement it for
+lm90.c, base on this patch.
+
+Thanks.
 
 > 
 > Thanks,
 > 
-> Peter.
-> 
-> The following changes since commit 6d0abeca3242a88cab8232e4acd7e2bf088f3bc2:
-> 
->   Linux 3.14-rc3 (2014-02-16 13:30:25 -0800)
-> 
-> are available in the git repository at:
->   git://nv-tegra.nvidia.com/user/pdeschrijver/linux.git clk-tegra-more-fixes-3.14
-> 
-> Andrew Bresticker (3):
->       clk: tegra: fix sdmmc clks on Tegra1x4
->       clk: tegra: cclk_lp has a pllx/2 divider
->       clk: tegra: use max divider if divider overflows
-> 
-> David Ung (1):
->       clk: tegra: PLLD2 fixes for hdmi
-> 
-> Gabe Black (1):
->       clk: tegra: Fix PLLP rate table
-> 
-> Mark Zhang (1):
->       clk: tegra: fix host1x clock on Tegra124
-> 
-> Peter De Schrijver (3):
->       clk: tegra: Add missing Tegra20 fuse clks
->       clk: tegra: Fix vic03 mux index
->       clk: tegra124: remove gr2d and gr3d clocks
-> 
-> Rhyland Klein (1):
->       clk: tegra: Fix PLLD mnp table
-> 
-> Thierry Reding (1):
->       clk: tegra: Correct clock number for UARTE
-> 
->  drivers/clk/tegra/clk-divider.c          |    2 +-
->  drivers/clk/tegra/clk-id.h               |    4 ++
->  drivers/clk/tegra/clk-tegra-periph.c     |   10 ++++--
->  drivers/clk/tegra/clk-tegra-super-gen4.c |    2 +-
->  drivers/clk/tegra/clk-tegra114.c         |    8 ++--
->  drivers/clk/tegra/clk-tegra124.c         |   48 +++++++++++++++++-------------
->  drivers/clk/tegra/clk-tegra20.c          |    2 +
->  include/dt-bindings/clock/tegra124-car.h |    4 +-
->  8 files changed, 47 insertions(+), 33 deletions(-)
