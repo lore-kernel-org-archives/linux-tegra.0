@@ -1,34 +1,90 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [RFC 0/2] Enable USB support for Venice2
-Date: Tue, 25 Feb 2014 15:23:34 -0700
-Message-ID: <530D17E6.2000905@wwwdotorg.org>
-References: <1393364160-28253-1-git-send-email-thierry.reding@gmail.com>
+Subject: Re: [PATCH] ARM: tegra: add device tree for SHIELD
+Date: Tue, 25 Feb 2014 15:38:50 -0700
+Message-ID: <530D1B7A.9070209@wwwdotorg.org>
+References: <1393237593-28121-1-git-send-email-acourbot@nvidia.com> <530B952D.2000006@wwwdotorg.org> <530BFC58.6020003@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1393364160-28253-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <530BFC58.6020003-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/25/2014 02:35 PM, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Hi,
-> 
-> These two patches add the USB controllers to Tegra124 and enable them on
-> Venice2, wiring them up with the corresponding regulators.
-> 
-> Unfortunately the USB1 VBUS regulator seems to be causing problems once
-> enabled, causing none of the USB ports to work properly. Commenting out
-> the gpio property for that regulator fixes things for me and I can use
-> the webcam connected to USB2 as well as any of the peripherals on USB3.
-> 
-> Since GPIO N.04 isn't connected to anything else, I don't understand how
-> it could possibly influence any of the other USB busses. I wonder if
-> perhaps this is caused by defect hardware, so it would be good if
-> somebody could test this on a different Venice2.
+On 02/24/2014 07:13 PM, Alexandre Courbot wrote:
+> On 02/25/2014 03:53 AM, Stephen Warren wrote:
+>> On 02/24/2014 03:26 AM, Alexandre Courbot wrote:
+>>> Add a device tree for NVIDIA SHIELD. The set of enabled features is
+>>> still minimal with no display option (although HDMI should be easy
+>>> to get to work) and USB requiring external power.
 
-I see the same behaviour as you.
+>>> diff --git a/arch/arm/boot/dts/tegra114-roth.dts
+>>> b/arch/arm/boot/dts/tegra114-roth.dts
+>>
+>>> +    memory {
+>>> +        reg = <0x80000000 0x79600000>;
+>>
+>> It might be worth a comment here pointing out that the rest of RAM is
+>> reserved for some carveouts/..., or at least that these values are set
+>> this way in order to match what the bootloader usually passes to
+>> downstream kernels in the command-line?
+> 
+> Yes, absolutely right. On a more general note I feel like DTs could gain
+> clarity if they had more comments (e.g. for pinmuxing which are a quite
+> heavy block otherwise), do you have any objection to this? (I guess not,
+> but so far the rule seems to be "no comment in DT" :P )
+
+I have no objection in particular. Specifically for pinmux, the values
+seem pretty obvious, so I'm not sure what extra the comment could
+convey, but I'll take a look at any proposed patch:-)
+
+>>> +    /* Wifi */
+>>> +    sdhci@78000000 {
+>>> +        status = "okay";
+>>> +        bus-width = <4>;
+>>> +        broken-cd;
+>>> +        keep-power-in-suspend;
+>>> +        cap-sdio-irq;
+>>
+>> Is non-removable better than broken-cd, or are they entirely unrelated?
+> 
+> They are unrelated actually. With non-removable the driver expects the
+> device to always be there since boot, and does not check for the card to
+> be removed/added after boot. broken-cd indicates there is no CD line and
+> the device should be polled regularly.
+
+It doesn't sound like that's what we want either; we should know exactly
+when the device is added/removed, based on when the relevant
+clocks/supplies/... are turned on/off.
+
+> For the Wifi chip, non-removable would be the correct setting
+> hardware-wise, but there is a trap: the chip has its reset line asserted
+> at boot-time, and you need to set GPIO 229 to de-assert it. Only after
+> that will the device be detected on the SDIO bus. Since it lacks a CD
+> line, it must be polled, hence the broken-cd property.
+
+How does that GPIO get manipulated right now? I assume you must be
+manually configuring it via sysfs after boot or something? If so,
+perhaps it's best to just leave out the WiFi node until it works
+automatically.
+
+> This also raises another, redundant problem with DT bindings: AFAIK we
+> currently have no way to let the system know the device will only appear
+> after a given GPIO is set. It would also be nice to be able to give some
+> parameters to the Wifi driver through the DT (like the OOB interrupt).
+> Right now the Wifi chip is brought up by exporting the GPIO and writing
+> to it from user-space, and the OOB interrupt is not used.
+
+There was a thread on this topic on LAKML recently. I didn't really
+follow it, so I don't know if there was a useful resolution. I think it
+was "mmc: add support for power-on sequencing through DT", although
+there may have been other related threads. It was possibly tangentially
+related to power-sequences-in-DT...
+
+...
+> I'm not sure about cap-sdio-irq, it doesn't seem to make a difference
+> for SHIELD Wifi.
+
+I'd tend to leave it out then.
