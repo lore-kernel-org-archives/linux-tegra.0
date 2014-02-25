@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [flasher PATCH 2/3] Use O= rather than BUILD_DIR= when building U-Boot
-Date: Tue, 25 Feb 2014 11:28:46 -0700
-Message-ID: <1393352927-27595-2-git-send-email-swarren@wwwdotorg.org>
+Subject: [flasher PATCH 3/3] Support U-Boot's temporary output DTB path
+Date: Tue, 25 Feb 2014 11:28:47 -0700
+Message-ID: <1393352927-27595-3-git-send-email-swarren@wwwdotorg.org>
 References: <1393352927-27595-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1393352927-27595-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
@@ -12,28 +12,29 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-"make O=" works both before and after U-Boot's conversion to Kbuild,
-whereas "make BUILD_DIR=" only works before.
+Historically, U-Boot has generated $(obj)/u-boot.dtb. During the Kbuild
+conversion, this file was moved to $(obj)/dts/dt.dtb. While this change
+will be imminentely reverted in the U-Boot makefiles, it's quite easy to
+support in the flasher build scripts, so we may as well. This prevents
+user confusion and/or "git bisect" issues.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- build | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ build | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/build b/build
-index 6142f31e5d5a..f1df6ce9536b 100755
+index f1df6ce9536b..7bfc2d9d0aa8 100755
 --- a/build
 +++ b/build
-@@ -159,8 +159,8 @@ def build_uboot_one_board(boardname):
-     out_board_dir = gen_out_board_dir(boardname)
-     mkdir(out_board_dir)
+@@ -136,6 +136,8 @@ def import_uboot_one_board(boardname, build_uboot_dir):
+     cp(src, dst)
  
--    run(uboot_dir, 'make BUILD_DIR=' + build_uboot_dir + ' ' + boardname + '_config')
--    run(uboot_dir, 'make BUILD_DIR=' + build_uboot_dir + ' -s ' + makejobs)
-+    run(uboot_dir, 'make O=' + build_uboot_dir + ' ' + boardname + '_config')
-+    run(uboot_dir, 'make O=' + build_uboot_dir + ' -s ' + makejobs)
- 
-     import_uboot_one_board(boardname, build_uboot_dir)
+     src = os.path.join(build_uboot_dir, 'u-boot.dtb')
++    if not os.path.exists(src):
++        src = os.path.join(build_uboot_dir, 'dts/dt.dtb')
+     dst = os.path.join(out_board_dir, 'u-boot.dtb')
+     cp(src, dst)
  
 -- 
 1.8.1.5
