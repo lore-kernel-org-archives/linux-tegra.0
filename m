@@ -1,8 +1,10 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [RFC 0/2] Enable USB support for Venice2
-Date: Tue, 25 Feb 2014 22:35:58 +0100
-Message-ID: <1393364160-28253-1-git-send-email-thierry.reding@gmail.com>
+Subject: [RFC 1/2] ARM: tegra: Add Tegra124 USB support
+Date: Tue, 25 Feb 2014 22:35:59 +0100
+Message-ID: <1393364160-28253-2-git-send-email-thierry.reding@gmail.com>
+References: <1393364160-28253-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1393364160-28253-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
@@ -10,30 +12,123 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Hi,
+The USB controllers on Tegra124 are backwards-compatible with those
+found on Tegra30.
 
-These two patches add the USB controllers to Tegra124 and enable them on
-Venice2, wiring them up with the corresponding regulators.
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra124.dtsi | 99 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 99 insertions(+)
 
-Unfortunately the USB1 VBUS regulator seems to be causing problems once
-enabled, causing none of the USB ports to work properly. Commenting out
-the gpio property for that regulator fixes things for me and I can use
-the webcam connected to USB2 as well as any of the peripherals on USB3.
-
-Since GPIO N.04 isn't connected to anything else, I don't understand how
-it could possibly influence any of the other USB busses. I wonder if
-perhaps this is caused by defect hardware, so it would be good if
-somebody could test this on a different Venice2.
-
-Thierry
-
-Thierry Reding (2):
-  ARM: tegra: Add Tegra124 USB support
-  ARM: tegra: Enable USB on Venice2
-
- arch/arm/boot/dts/tegra124-venice2.dts | 29 +++++++++-
- arch/arm/boot/dts/tegra124.dtsi        | 99 ++++++++++++++++++++++++++++++++++
- 2 files changed, 127 insertions(+), 1 deletion(-)
-
+diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+index 30a7377d5600..d81a05a07d0b 100644
+--- a/arch/arm/boot/dts/tegra124.dtsi
++++ b/arch/arm/boot/dts/tegra124.dtsi
+@@ -524,6 +524,105 @@
+ 		};
+ 	};
+ 
++	usb@7d000000 {
++		compatible = "nvidia,tegra30-ehci", "usb-ehci";
++		reg = <0x7d000000 0x4000>;
++		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
++		phy_type = "utmi";
++		clocks = <&tegra_car TEGRA124_CLK_USBD>;
++		resets = <&tegra_car 22>;
++		reset-names = "usb";
++		nvidia,phy = <&phy1>;
++		status = "disabled";
++	};
++
++	phy1: usb-phy@7d000000 {
++		compatible = "nvidia,tegra30-usb-phy";
++		reg = <0x7d000000 0x4000 0x7d000000 0x4000>;
++		phy_type = "utmi";
++		clocks = <&tegra_car TEGRA124_CLK_USBD>,
++			 <&tegra_car TEGRA124_CLK_PLL_U>,
++			 <&tegra_car TEGRA124_CLK_USBD>;
++		clock-names = "reg", "pll_u", "utmi-pads";
++		nvidia,hssync-start-delay = <0>;
++		nvidia,idle-wait-delay = <17>;
++		nvidia,elastic-limit = <16>;
++		nvidia,term-range-adj = <6>;
++		nvidia,xcvr-setup = <9>;
++		nvidia,xcvr-lsfslew = <0>;
++		nvidia,xcvr-lsrslew = <3>;
++		nvidia,hssquelch-level = <2>;
++		nvidia,hsdiscon-level = <5>;
++		nvidia,xcvr-hsslew = <12>;
++		status = "disabled";
++	};
++
++	usb@7d004000 {
++		compatible = "nvidia,tegra30-ehci", "usb-ehci";
++		reg = <0x7d004000 0x4000>;
++		interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
++		phy_type = "utmi";
++		clocks = <&tegra_car TEGRA124_CLK_USB2>;
++		resets = <&tegra_car 58>;
++		reset-names = "usb";
++		nvidia,phy = <&phy2>;
++		status = "disabled";
++	};
++
++	phy2: usb-phy@7d004000 {
++		compatible = "nvidia,tegra30-usb-phy";
++		reg = <0x7d004000 0x4000 0x7d000000 0x4000>;
++		phy_type = "utmi";
++		clocks = <&tegra_car TEGRA124_CLK_USB2>,
++			 <&tegra_car TEGRA124_CLK_PLL_U>,
++			 <&tegra_car TEGRA124_CLK_USBD>;
++		clock-names = "reg", "pll_u", "utmi-pads";
++		nvidia,hssync-start-delay = <0>;
++		nvidia,idle-wait-delay = <17>;
++		nvidia,elastic-limit = <16>;
++		nvidia,term-range-adj = <6>;
++		nvidia,xcvr-setup = <9>;
++		nvidia,xcvr-lsfslew = <0>;
++		nvidia,xcvr-lsrslew = <3>;
++		nvidia,hssquelch-level = <2>;
++		nvidia,hsdiscon-level = <5>;
++		nvidia,xcvr-hsslew = <12>;
++		status = "disabled";
++	};
++
++	usb@7d008000 {
++		compatible = "nvidia,tegra30-ehci", "usb-ehci";
++		reg = <0x7d008000 0x4000>;
++		interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
++		phy_type = "utmi";
++		clocks = <&tegra_car TEGRA124_CLK_USB3>;
++		resets = <&tegra_car 59>;
++		reset-names = "usb";
++		nvidia,phy = <&phy3>;
++		status = "disabled";
++	};
++
++	phy3: usb-phy@7d008000 {
++		compatible = "nvidia,tegra30-usb-phy";
++		reg = <0x7d008000 0x4000 0x7d000000 0x4000>;
++		phy_type = "utmi";
++		clocks = <&tegra_car TEGRA124_CLK_USB3>,
++			 <&tegra_car TEGRA124_CLK_PLL_U>,
++			 <&tegra_car TEGRA124_CLK_USBD>;
++		clock-names = "reg", "pll_u", "utmi-pads";
++		nvidia,hssync-start-delay = <0>;
++		nvidia,idle-wait-delay = <17>;
++		nvidia,elastic-limit = <16>;
++		nvidia,term-range-adj = <6>;
++		nvidia,xcvr-setup = <9>;
++		nvidia,xcvr-lsfslew = <0>;
++		nvidia,xcvr-lsrslew = <3>;
++		nvidia,hssquelch-level = <2>;
++		nvidia,hsdiscon-level = <5>;
++		nvidia,xcvr-hsslew = <12>;
++		status = "disabled";
++	};
++
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
 -- 
 1.8.4.2
