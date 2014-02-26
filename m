@@ -1,68 +1,49 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: Tegra clockframework fixes for 3.14
-Date: Wed, 26 Feb 2014 07:39:42 -0800
-Message-ID: <20140226153942.22529.95697@quantum>
-References: <20140220172744.GA4378@tbergstrom-lnx.Nvidia.com>
- <20140224010211.22529.99924@quantum>
- <20140224134319.GG19389@tbergstrom-lnx.Nvidia.com>
- <20140226101640.GM19389@tbergstrom-lnx.Nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20140226101640.GM19389@tbergstrom-lnx.Nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: "mark.rutland@arm.com" <mark.rutland@arm.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 2/7] ARM: tegra: Hook up SDMMC3 power-supply on Venice2
+Date: Wed, 26 Feb 2014 17:20:24 +0100
+Message-ID: <1393431629-7040-2-git-send-email-thierry.reding@gmail.com>
+References: <1393431629-7040-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1393431629-7040-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Peter De Schrijver (2014-02-26 02:16:40)
-> Mike,
-> 
-> > On Mon, Feb 24, 2014 at 02:02:11AM +0100, Mike Turquette wrote:
-> > > Quoting Peter De Schrijver (2014-02-20 09:27:44)
-> > > > Hi Mike,
-> > > > 
-> > > > Could you merge these fixes still for 3.14?
-> > > 
-> > > No problem, but can you provide a list of the regressions fixed? I'll
-> > > add those to my merge commit message. No need for you to respin
-> > > anything. Next time if you could submit a signed tag with the
-> > > regressions listed in the message it would be a great help.
-> > > 
-> > 
-> > This fixes the following issues:
-> > 
-> > clk: tegra124: remove gr2d and gr3d clocks - accesses to undefined registers
-> > clk: tegra: Fix vic03 mux index - wrong parent when PLLC3 is selected (because clk_m is actually selected)
-> > clk: tegra: use max divider if divider overflows - make tegra fractional divider match the clk-div.c behaviour
-> > clk: tegra: cclk_lp has a pllx/2 divider - pllx runs at half the programmed rate
-> > clk: tegra: fix sdmmc clks on Tegra1x4 - wrong parent selection
-> > clk: tegra: fix host1x clock on Tegra124 - wrong parent selection
-> > clk: tegra: PLLD2 fixes for hdmi - PLL runs at wrong rate
-> > clk: tegra: Fix PLLD mnp table - PLL runs at wrong rate
-> > clk: tegra: Fix PLLP rate table - kernel panic when using coreboot
-> > clk: tegra: Correct clock number for UARTE - wrong clock when using UARTE
-> > clk: tegra: Add missing Tegra20 fuse clks - fuse driver broken
-> > 
-> 
-> Is this ok for you?
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Yes, it's great. The tegra fixes are already part of the next batch
-towards -rc5.
+The SDMMC3 interface is supplied with 1.8V by the PMICs LDO6.
 
-Thanks!
-Mike
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra124-venice2.dts | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-> 
-> Thanks,
-> 
-> Peter.
+diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
+index 50993ef84e67..dfe44807058a 100644
+--- a/arch/arm/boot/dts/tegra124-venice2.dts
++++ b/arch/arm/boot/dts/tegra124-venice2.dts
+@@ -763,12 +763,10 @@
+ 					regulator-max-microvolt = <1200000>;
+ 				};
+ 
+-				ldo6 {
++				vddio_sdmmc3: ldo6 {
+ 					regulator-name = "+VDDIO_SDMMC3";
+ 					regulator-min-microvolt = <1800000>;
+ 					regulator-max-microvolt = <3300000>;
+-					regulator-boot-on;
+-					regulator-always-on;
+ 				};
+ 
+ 				ldo7 {
+@@ -930,6 +928,7 @@
+ 		power-gpios = <&gpio TEGRA_GPIO(R, 0) GPIO_ACTIVE_HIGH>;
+ 		status = "okay";
+ 		bus-width = <4>;
++		vmmc-supply = <&vddio_sdmmc3>;
+ 	};
+ 
+ 	sdhci@700b0600 {
+-- 
+1.8.4.2
