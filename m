@@ -1,21 +1,50 @@
 From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH] ARM: tegra: add device tree for SHIELD
-Date: Wed, 26 Feb 2014 13:52:43 +0900
-Message-ID: <530D731B.5050305@nvidia.com>
-References: <1393237593-28121-1-git-send-email-acourbot@nvidia.com> <530B952D.2000006@wwwdotorg.org> <530BFC58.6020003@nvidia.com> <530C67F4.7010208@broadcom.com>
+Date: Wed, 26 Feb 2014 13:58:53 +0900
+Message-ID: <530D748D.6010802@nvidia.com>
+References: <1393237593-28121-1-git-send-email-acourbot@nvidia.com> <530B952D.2000006@wwwdotorg.org> <530BFC58.6020003@nvidia.com> <530D1B7A.9070209@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <530C67F4.7010208-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+In-Reply-To: <530D1B7A.9070209-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arend van Spriel <arend-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
 Cc: "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/25/2014 06:52 PM, Arend van Spriel wrote:
-> On 02/25/2014 03:13 AM, Alexandre Courbot wrote:
+On 02/26/2014 07:38 AM, Stephen Warren wrote:
+> On 02/24/2014 07:13 PM, Alexandre Courbot wrote:
+>> On 02/25/2014 03:53 AM, Stephen Warren wrote:
+>>> On 02/24/2014 03:26 AM, Alexandre Courbot wrote:
+>>>> Add a device tree for NVIDIA SHIELD. The set of enabled features is
+>>>> still minimal with no display option (although HDMI should be easy
+>>>> to get to work) and USB requiring external power.
+>
+>>>> diff --git a/arch/arm/boot/dts/tegra114-roth.dts
+>>>> b/arch/arm/boot/dts/tegra114-roth.dts
 >>>
+>>>> +    memory {
+>>>> +        reg = <0x80000000 0x79600000>;
+>>>
+>>> It might be worth a comment here pointing out that the rest of RAM is
+>>> reserved for some carveouts/..., or at least that these values are set
+>>> this way in order to match what the bootloader usually passes to
+>>> downstream kernels in the command-line?
+>>
+>> Yes, absolutely right. On a more general note I feel like DTs could gain
+>> clarity if they had more comments (e.g. for pinmuxing which are a quite
+>> heavy block otherwise), do you have any objection to this? (I guess not,
+>> but so far the rule seems to be "no comment in DT" :P )
+>
+> I have no objection in particular. Specifically for pinmux, the values
+> seem pretty obvious, so I'm not sure what extra the comment could
+> convey, but I'll take a look at any proposed patch:-)
+
+It would just make grouping of related pins according more visible than 
+having to look at the "nvidia,function" property currently does - just a 
+little added comfort.
+
 >>>> +    /* Wifi */
 >>>> +    sdhci@78000000 {
 >>>> +        status = "okay";
@@ -30,13 +59,28 @@ On 02/25/2014 06:52 PM, Arend van Spriel wrote:
 >> device to always be there since boot, and does not check for the card to
 >> be removed/added after boot. broken-cd indicates there is no CD line and
 >> the device should be polled regularly.
->>
+>
+> It doesn't sound like that's what we want either; we should know exactly
+> when the device is added/removed, based on when the relevant
+> clocks/supplies/... are turned on/off.
+
+Yes, I guess this will require a proper DT binding like what Arend proposed.
+
 >> For the Wifi chip, non-removable would be the correct setting
 >> hardware-wise, but there is a trap: the chip has its reset line asserted
 >> at boot-time, and you need to set GPIO 229 to de-assert it. Only after
 >> that will the device be detected on the SDIO bus. Since it lacks a CD
 >> line, it must be polled, hence the broken-cd property.
->>
+>
+> How does that GPIO get manipulated right now? I assume you must be
+> manually configuring it via sysfs after boot or something? If so,
+> perhaps it's best to just leave out the WiFi node until it works
+> automatically.
+
+The GPIO needs to be set from user-space, yes. But if we leave the Wifi 
+node out, I'm concerned that wireless will not be usable at all, 
+wouldn't it?
+
 >> This also raises another, redundant problem with DT bindings: AFAIK we
 >> currently have no way to let the system know the device will only appear
 >> after a given GPIO is set. It would also be nice to be able to give some
@@ -44,28 +88,20 @@ On 02/25/2014 06:52 PM, Arend van Spriel wrote:
 >> Right now the Wifi chip is brought up by exporting the GPIO and writing
 >> to it from user-space, and the OOB interrupt is not used.
 >
-> Hi Alexandre,
+> There was a thread on this topic on LAKML recently. I didn't really
+> follow it, so I don't know if there was a useful resolution. I think it
+> was "mmc: add support for power-on sequencing through DT", although
+> there may have been other related threads. It was possibly tangentially
+> related to power-sequences-in-DT...
 >
-> I recently posted a proposal for brcmfmac DT binding [1]. I did receive
-> some comments, but it would be great if you (and/or others involved) had
-> a look at it as well and give me some feedback. DT work still needs to
-> grow on me.
+> ...
+>> I'm not sure about cap-sdio-irq, it doesn't seem to make a difference
+>> for SHIELD Wifi.
+>
+> I'd tend to leave it out then.
 
-Hi Arend, (and thanks again for all the help with getting the chip to work!)
+I will check whether it helps with the latency issues I have noticed and 
+remove it if it doesn't.
 
-Great, I'm not subscribed to the devicetree list and so have missed this 
-thread, but I'm glad to see it.
-
-I don't think I have much to add to the comments you already received 
-there. I'd need it to reference the 32K clock (which I currently 
-force-enable manually), the OOB interrupt, and the reset pin as a GPIO 
-(as for SHIELD the device needs to be put out of reset using an 
-active-low GPIO before anything can happen). That last property could be 
-optional as I suspect most designs won't use it.
-
-Getting the device out of reset should be done before the bus probes the 
-non-removable device, so I wonder how this would fit wrt. the DT 
-power-on sequencing series by Olof. Something tells me this could rather 
-be a property of the bus, but physically speaking the pin is connected 
-to the wifi chip, so... Maybe we could get the platform driver to ask 
-the bus to probe again after enabling power/getting the device out of reset?
+Thanks,
+Alex.
