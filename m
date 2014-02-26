@@ -1,71 +1,20 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 7/7] ARM: tegra: Enable USB on Venice2
-Date: Wed, 26 Feb 2014 17:20:29 +0100
-Message-ID: <1393431629-7040-7-git-send-email-thierry.reding@gmail.com>
-References: <1393431629-7040-1-git-send-email-thierry.reding@gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [flasher PATCH 1/3] Add libtool to dependency list in README
+Date: Wed, 26 Feb 2014 10:04:11 -0700
+Message-ID: <530E1E8B.7060004@wwwdotorg.org>
+References: <1393352927-27595-1-git-send-email-swarren@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1393431629-7040-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1393352927-27595-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 02/25/2014 11:28 AM, Stephen Warren wrote:
+> libtools is required by some of the tools that tegra-uboot-flasher can
+> build. Add it to the list of dependencies.
 
-USB1 and USB3 are routed to two external connectors, while USB2 is used
-for the integrated webcam.
-
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra124-venice2.dts | 29 ++++++++++++++++++++++++++++-
- 1 file changed, 28 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
-index c639f2243a9a..4817bea8ebfb 100644
---- a/arch/arm/boot/dts/tegra124-venice2.dts
-+++ b/arch/arm/boot/dts/tegra124-venice2.dts
-@@ -765,7 +765,7 @@
- 					ams,enable-tracking;
- 				};
- 
--				ldo4 {
-+				vdd_run_cam: ldo4 {
- 					regulator-name = "+3.3V_RUN_CAM";
- 					regulator-min-microvolt = <2800000>;
- 					regulator-max-microvolt = <2800000>;
-@@ -956,6 +956,33 @@
- 		};
- 	};
- 
-+	usb@7d000000 {
-+		status = "okay";
-+	};
-+
-+	usb-phy@7d000000 {
-+		status = "okay";
-+		vbus-supply = <&vdd_usb1_vbus>;
-+	};
-+
-+	usb@7d004000 {
-+		status = "okay";
-+	};
-+
-+	usb-phy@7d004000 {
-+		status = "okay";
-+		vbus-supply = <&vdd_run_cam>;
-+	};
-+
-+	usb@7d008000 {
-+		status = "okay";
-+	};
-+
-+	usb-phy@7d008000 {
-+		status = "okay";
-+		vbus-supply = <&vdd_usb3_vbus>;
-+	};
-+
- 	backlight: backlight {
- 		compatible = "pwm-backlight";
- 
--- 
-1.8.4.2
+I've applied all 3 patches.
