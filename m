@@ -1,48 +1,51 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: Re: [PATCH] ARM: tegra: add device tree for SHIELD
-Date: Wed, 26 Feb 2014 14:12:16 +0900
-Message-ID: <530D77B0.8080807@nvidia.com>
-References: <1393237593-28121-1-git-send-email-acourbot@nvidia.com> <530B952D.2000006@wwwdotorg.org> <530BFC58.6020003@nvidia.com> <530D1B7A.9070209@wwwdotorg.org> <530D748D.6010802@nvidia.com> <530D754A.60700@wwwdotorg.org>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: Tegra clockframework fixes for 3.14
+Date: Wed, 26 Feb 2014 12:16:40 +0200
+Message-ID: <20140226101640.GM19389@tbergstrom-lnx.Nvidia.com>
+References: <20140220172744.GA4378@tbergstrom-lnx.Nvidia.com>
+ <20140224010211.22529.99924@quantum>
+ <20140224134319.GG19389@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <530D754A.60700@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20140224134319.GG19389-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "pawel.moll-5wv7dgnIgG8@public.gmane.org" <pawel.moll-5wv7dgnIgG8@public.gmane.org>, "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/26/2014 02:02 PM, Stephen Warren wrote:
-> On 02/25/2014 09:58 PM, Alexandre Courbot wrote:
->> On 02/26/2014 07:38 AM, Stephen Warren wrote:
->>> On 02/24/2014 07:13 PM, Alexandre Courbot wrote:
->>>> On 02/25/2014 03:53 AM, Stephen Warren wrote:
->>>>> On 02/24/2014 03:26 AM, Alexandre Courbot wrote:
->>>>>> Add a device tree for NVIDIA SHIELD. The set of enabled features is
->>>>>> still minimal with no display option (although HDMI should be easy
->>>>>> to get to work) and USB requiring external power.
-> ...
->>>> For the Wifi chip, non-removable would be the correct setting
->>>> hardware-wise, but there is a trap: the chip has its reset line asserted
->>>> at boot-time, and you need to set GPIO 229 to de-assert it. Only after
->>>> that will the device be detected on the SDIO bus. Since it lacks a CD
->>>> line, it must be polled, hence the broken-cd property.
->>>
->>> How does that GPIO get manipulated right now? I assume you must be
->>> manually configuring it via sysfs after boot or something? If so,
->>> perhaps it's best to just leave out the WiFi node until it works
->>> automatically.
->>
->> The GPIO needs to be set from user-space, yes. But if we leave the Wifi
->> node out, I'm concerned that wireless will not be usable at all,
->> wouldn't it?
->
-> True, but if we have no representation of the device in DT that works
-> without manually enabling clocks and/or GPIOs, it's not a
-> complete/accurate representation of the HW, so it doesn't make sense to
-> add it to DT. Yes, I admit that sucks.
+Mike,
 
-Well, I can always enable it in my out-of-tree branch until we can push 
-the complete binding in mainline, so I'm ok with taking it out of this 
-patch for now.
+> On Mon, Feb 24, 2014 at 02:02:11AM +0100, Mike Turquette wrote:
+> > Quoting Peter De Schrijver (2014-02-20 09:27:44)
+> > > Hi Mike,
+> > > 
+> > > Could you merge these fixes still for 3.14?
+> > 
+> > No problem, but can you provide a list of the regressions fixed? I'll
+> > add those to my merge commit message. No need for you to respin
+> > anything. Next time if you could submit a signed tag with the
+> > regressions listed in the message it would be a great help.
+> > 
+> 
+> This fixes the following issues:
+> 
+> clk: tegra124: remove gr2d and gr3d clocks - accesses to undefined registers
+> clk: tegra: Fix vic03 mux index - wrong parent when PLLC3 is selected (because clk_m is actually selected)
+> clk: tegra: use max divider if divider overflows - make tegra fractional divider match the clk-div.c behaviour
+> clk: tegra: cclk_lp has a pllx/2 divider - pllx runs at half the programmed rate
+> clk: tegra: fix sdmmc clks on Tegra1x4 - wrong parent selection
+> clk: tegra: fix host1x clock on Tegra124 - wrong parent selection
+> clk: tegra: PLLD2 fixes for hdmi - PLL runs at wrong rate
+> clk: tegra: Fix PLLD mnp table - PLL runs at wrong rate
+> clk: tegra: Fix PLLP rate table - kernel panic when using coreboot
+> clk: tegra: Correct clock number for UARTE - wrong clock when using UARTE
+> clk: tegra: Add missing Tegra20 fuse clks - fuse driver broken
+> 
+
+Is this ok for you?
+
+Thanks,
+
+Peter.
