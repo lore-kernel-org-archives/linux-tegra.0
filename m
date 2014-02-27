@@ -1,89 +1,63 @@
-From: =?iso-8859-1?Q?Lu=EDs?= Henriques <luis.henriques@canonical.com>
-Subject: Re: [PATCH] ARM: tegra: only run PL310 init on systems with one
-Date: Thu, 27 Feb 2014 12:55:26 +0000
-Message-ID: <20140227125526.GB3607@hercules>
-References: <1393437746-11287-1-git-send-email-swarren@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1393437746-11287-1-git-send-email-swarren@wwwdotorg.org>
-Sender: stable-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: stable@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH V2 1/3] dt: palmas: support IRQ inversion at the board level
+Date: Thu, 27 Feb 2014 13:51:19 -0700
+Message-ID: <1393534281-30759-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, J Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>, Ian Lartey <ian-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Feb 26, 2014 at 11:02:26AM -0700, Stephen Warren wrote:
-> From: Stephen Warren <swarren@nvidia.com>
->=20
-> (This is commit 8859685785bfafadf9bc922dd3a2278e59886947 upstream)
->=20
-> Fix tegra_init_cache() to check whether the system has a PL310 cache
-> before touching the PL310 registers. This prevents access to non-exis=
-tent
-> registers on Tegra114 and later.
->=20
-> (When applying this to 3.10, there will be a trivial conflict, just d=
-ue to
-> context differences, at the added include of (linux/of.h>)
->=20
-> (I applied and tested this backport on each of v3.10.*, v3.11.*, v3.1=
-2.*)
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Thanks a lot for backporting and testing this patch.  I will queue it f=
-or
-the 3.11 kernel.
+Some boards or SoCs have an inverter between the PMIC IRQ output pin and
+the IRQ controller input signal.
 
-Cheers,
---
-Lu=EDs
+The IRQ specifier in DT is meant to represent the IRQ flags at the input
+to the IRQ controller.
 
-> Cc: <stable@vger.kernel.org> # v3.10..v3.12 inclusive
-> Signed-off-by: Stephen Warren <swarren@nvidia.com>
-> ---
->  arch/arm/mach-tegra/common.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->=20
-> diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/commo=
-n.c
-> index 94a119a35af8..3c405f43ca39 100644
-> --- a/arch/arm/mach-tegra/common.c
-> +++ b/arch/arm/mach-tegra/common.c
-> @@ -22,6 +22,7 @@
->  #include <linux/io.h>
->  #include <linux/clk.h>
->  #include <linux/delay.h>
-> +#include <linux/of.h>
->  #include <linux/reboot.h>
->  #include <linux/irqchip.h>
->  #include <linux/clk-provider.h>
-> @@ -82,10 +83,20 @@ void tegra_assert_system_reset(enum reboot_mode m=
-ode, const char *cmd)
->  static void __init tegra_init_cache(void)
->  {
->  #ifdef CONFIG_CACHE_L2X0
-> +	static const struct of_device_id pl310_ids[] __initconst =3D {
-> +		{ .compatible =3D "arm,pl310-cache",  },
-> +		{}
-> +	};
-> +
-> +	struct device_node *np;
->  	int ret;
->  	void __iomem *p =3D IO_ADDRESS(TEGRA_ARM_PERIF_BASE) + 0x3000;
->  	u32 aux_ctrl, cache_type;
-> =20
-> +	np =3D of_find_matching_node(NULL, pl310_ids);
-> +	if (!np)
-> +		return;
-> +
->  	cache_type =3D readl(p + L2X0_CACHE_TYPE);
->  	aux_ctrl =3D (cache_type & 0x700) << (17-8);
->  	aux_ctrl |=3D 0x7C400001;
-> --=20
-> 1.8.1.5
->=20
-> --
-> To unsubscribe from this list: send the line "unsubscribe stable" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+The Palmas HW's IRQ output has configurable polarity. Software needs to
+know which polarity to choose for the IRQ output. Software may be tempted
+to extract the IRQ polarity from the IRQ specifier in order to make this
+choice.
+
+That approach works fine if the IRQ signal is routed directly from the
+PMIC to the IRQ controller with no intervening logic. However, if the
+signal is inverted between the two, this approach gets the wrong answer.
+
+Add an additional optional DT property which indicates that such an
+inversion occurs. This allows DT to give complete information about the
+desired IRQ output polarity to software.
+
+An alternative would have been to add a new non-optional DT parameter to
+indicate the exact desired output polarity. However, this would have been
+an incompatible change to the DT binding.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+---
+v2: Split V1's patch 1/2 into separate patches 1/3 and 2/3.
+---
+ Documentation/devicetree/bindings/mfd/palmas.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/mfd/palmas.txt b/Documentation/devicetree/bindings/mfd/palmas.txt
+index e5f0f8303461..76ec509d5f87 100644
+--- a/Documentation/devicetree/bindings/mfd/palmas.txt
++++ b/Documentation/devicetree/bindings/mfd/palmas.txt
+@@ -18,6 +18,12 @@ Required properties:
+   ti,tps659038
+ and also the generic series names
+   ti,palmas
++- interrupts : Should contain a single entry for the IRQ output.
++- ti,irq-externally-inverted : If missing, the polarity of the Palmas IRQ
++  output should be set to the opposite of the polarity indicated by the IRQ
++  specifier in the interrupts property. If absent, the polarity should be
++  configured to match. This allows the representation of an inverter between
++  the Palmas IRQ output and the interrupt parent's IRQ input.
+ - interrupt-controller : palmas has its own internal IRQs
+ - #interrupt-cells : should be set to 2 for IRQ number and flags
+   The first cell is the IRQ number.
+-- 
+1.8.1.5
