@@ -1,61 +1,59 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: Tegra clockframework fixes for 3.14
-Date: Thu, 27 Feb 2014 11:22:13 +0200
-Message-ID: <20140227092213.GP19389@tbergstrom-lnx.Nvidia.com>
-References: <20140220172744.GA4378@tbergstrom-lnx.Nvidia.com>
- <20140224010211.22529.99924@quantum>
- <20140224134319.GG19389@tbergstrom-lnx.Nvidia.com>
- <20140226101640.GM19389@tbergstrom-lnx.Nvidia.com>
- <20140226153942.22529.95697@quantum>
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v3.14-rc1
+Date: Thu, 27 Feb 2014 02:37:40 -0800
+Message-ID: <530F1574.3020006@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20140226153942.22529.95697@quantum>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "pawel.moll-5wv7dgnIgG8@public.gmane.org" <pawel.moll-5wv7dgnIgG8@public.gmane.org>, "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Feb 26, 2014 at 04:39:42PM +0100, Mike Turquette wrote:
-> Quoting Peter De Schrijver (2014-02-26 02:16:40)
-> > Mike,
-> > 
-> > > On Mon, Feb 24, 2014 at 02:02:11AM +0100, Mike Turquette wrote:
-> > > > Quoting Peter De Schrijver (2014-02-20 09:27:44)
-> > > > > Hi Mike,
-> > > > > 
-> > > > > Could you merge these fixes still for 3.14?
-> > > > 
-> > > > No problem, but can you provide a list of the regressions fixed? I'll
-> > > > add those to my merge commit message. No need for you to respin
-> > > > anything. Next time if you could submit a signed tag with the
-> > > > regressions listed in the message it would be a great help.
-> > > > 
-> > > 
-> > > This fixes the following issues:
-> > > 
-> > > clk: tegra124: remove gr2d and gr3d clocks - accesses to undefined registers
-> > > clk: tegra: Fix vic03 mux index - wrong parent when PLLC3 is selected (because clk_m is actually selected)
-> > > clk: tegra: use max divider if divider overflows - make tegra fractional divider match the clk-div.c behaviour
-> > > clk: tegra: cclk_lp has a pllx/2 divider - pllx runs at half the programmed rate
-> > > clk: tegra: fix sdmmc clks on Tegra1x4 - wrong parent selection
-> > > clk: tegra: fix host1x clock on Tegra124 - wrong parent selection
-> > > clk: tegra: PLLD2 fixes for hdmi - PLL runs at wrong rate
-> > > clk: tegra: Fix PLLD mnp table - PLL runs at wrong rate
-> > > clk: tegra: Fix PLLP rate table - kernel panic when using coreboot
-> > > clk: tegra: Correct clock number for UARTE - wrong clock when using UARTE
-> > > clk: tegra: Add missing Tegra20 fuse clks - fuse driver broken
-> > > 
-> > 
-> > Is this ok for you?
-> 
-> Yes, it's great. The tegra fixes are already part of the next batch
-> towards -rc5.
-> 
+Here are some basic Tegra test results for Linux v3.14-rc1.
+Logs and other details at:
 
-Ok. Thanks!
+     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.14-rc1/20140227022109/
 
-Cheers,
 
-Peter.
+Test summary
+------------
+
+Build: zImage:
+     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Boot to userspace: multi_v7_defconfig:
+     Pass: ( 2/ 2): tegra114-dalmore-a04, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+     Pass: ( 2/ 2): tegra114-dalmore-a04, tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v3.13 (d8ec26d7f8287f5788a494f56e8814210f0e64be)):
+    text     data      bss    total  kernel
++1833734  +109664     -460  +1942938  multi_v7_defconfig
++170871   +23512    -6616  +187767  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v3.13 (d8ec26d7f8287f5788a494f56e8814210f0e64be))
+     avail    rsrvd     high    freed                board              kconfig                  dtb
+         .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+         .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+  -2070932k  -25196k -1317888k    -472k tegra114-dalmore-hea   multi_v7_defconfig     tegra114-dalmore
+  -2053808k  -42320k -1317888k    -244k tegra114-dalmore-hea      tegra_defconfig     tegra114-dalmore
+   -18320k   18320k        .      36k       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+     -168k     168k        .       4k       tegra30-beaver      tegra_defconfig       tegra30-beaver
+
+
+
+The tegra114-dalmore-headless board, an A03 Dalmore, was dropped out of the testbed
+since apparently NVIDIA folks don't maintain upstream support for any Dalmore revision
+other than A04.  That's the cause of the large boot-time memory deltas above.
+It's been replaced by an A04 Dalmore.  There should have been large boot-time memory
+deltas on the A04 lines too, but the current set of scripts don't handle that condition well.
+
+I double-checked the +1.9MB size increase for the multi_v7_defconfig kernel, and it appears
+to be accurate :-(
