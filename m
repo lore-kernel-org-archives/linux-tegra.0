@@ -1,49 +1,266 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 0/7] PCI irq mapping fixes and cleanups
-Date: Fri, 28 Feb 2014 21:04:14 +0100
-Message-ID: <201402282104.14295.arnd@arndb.de>
+From: Tim Harvey <tharvey-UMMOYl/HMS+akBO8gow8eQ@public.gmane.org>
+Subject: Re: [PATCH 7/7] PCI: designware: split samsung and fsl bindings
+Date: Fri, 28 Feb 2014 12:23:15 -0800
+Message-ID: <CAJ+vNU1=OzB7qrJAQt6mY+W145CE+-7BrvWxbXMypP11HHOAsg@mail.gmail.com>
 References: <1393608523-17509-1-git-send-email-l.stach@pengutronix.de>
+	<1393608523-17509-8-git-send-email-l.stach@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1393608523-17509-1-git-send-email-l.stach@pengutronix.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, linux-samsung-soc@vger.kernel.org, Richard Zhu <r65037@freescale.com>, kernel@pengutronix.de, linux-sh@vger.kernel.org, Tim Harvey <tharvey@gateworks.com>, Stephen Warren <swarren@wwwdotorg.org>, Bjorn Helgaas <bhelgaas@google.com>, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben-linux@fluff.org>, linux-tegra@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1393608523-17509-8-git-send-email-l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Richard Zhu <r65037-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 28 February 2014, Lucas Stach wrote:
-> This series cleans up the PCI irq mapping for all
-> the ARM PCI host drivers, so they handle it in the
-> way defined in the common PCI bindings.
-> 
-> Testing appreciated.
-> 
-> Lucas Stach (7):
->   ARM: dts: tegra: add PCIe interrupt mapping properties
->   PCI: tegra: use new OF interrupt mapping when possible
->   PCI: rcar: use new OF interrupt mapping when possible
->   ARM: dts: exynos5440: fix PCIe interrupt mapping
->   ARM: dts: imx6: add PCIe interrupt mapping properties
->   PCI: designware: use new OF interrupt mapping when possible
->   PCI: designware: split samsung and fsl bindings
+On Fri, Feb 28, 2014 at 9:28 AM, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
+> The glue around the core designware IP is
+> significantly different between the Exynos and
+> i.MX, which is reflected in the DT bindings.
+>
+> Note that this patch doesn't change any bindings,
+> but just alters the documentation to match reality
+> of deployed DTs and kernels.
+>
+> Signed-off-by: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+> ---
+>  .../devicetree/bindings/pci/designware-pcie.txt    | 69 +--------------------
+>  .../devicetree/bindings/pci/fsl,imx6q-pcie.txt     | 48 +++++++++++++++
+>  .../bindings/pci/samsung,exynos5440-pcie.txt       | 70 ++++++++++++++++++++++
+>  3 files changed, 119 insertions(+), 68 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
+>  create mode 100644 Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
+>
+> diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+> index d6fae13ff062..8274c80fe874 100644
+> --- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
+> +++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+> @@ -1,15 +1,7 @@
+>  * Synopsys Designware PCIe interface
+>
+>  Required properties:
+> -- compatible: should contain "snps,dw-pcie" to identify the
+> -       core, plus an identifier for the specific instance, such
+> -       as "samsung,exynos5440-pcie" or "fsl,imx6q-pcie".
+> -- reg: base addresses and lengths of the pcie controller,
+> -       the phy controller, additional register for the phy controller.
+> -- interrupts: interrupt values for level interrupt,
+> -       pulse interrupt, special interrupt.
+> -- clocks: from common clock binding: handle to pci clock.
+> -- clock-names: from common clock binding: should be "pcie" and "pcie_bus".
+> +- compatible: should contain "snps,dw-pcie" to identify the core.
+>  - #address-cells: set to <3>
+>  - #size-cells: set to <2>
+>  - device_type: set to "pci"
+> @@ -22,62 +14,3 @@ Required properties:
+>
+>  Optional properties:
+>  - reset-gpio: gpio pin number of power good signal
+> -
+> -Optional properties for fsl,imx6q-pcie
+> -- power-on-gpio: gpio pin number of power-enable signal
+> -- wake-up-gpio: gpio pin number of incoming wakeup signal
+> -- disable-gpio: gpio pin number of outgoing rfkill/endpoint disable signal
+> -
+> -Example:
+> -
+> -SoC specific DT Entry:
+> -
+> -       pcie@290000 {
+> -               compatible = "samsung,exynos5440-pcie", "snps,dw-pcie";
+> -               reg = <0x290000 0x1000
+> -                       0x270000 0x1000
+> -                       0x271000 0x40>;
+> -               interrupts = <0 20 0>, <0 21 0>, <0 22 0>;
+> -               clocks = <&clock 28>, <&clock 27>;
+> -               clock-names = "pcie", "pcie_bus";
+> -               #address-cells = <3>;
+> -               #size-cells = <2>;
+> -               device_type = "pci";
+> -               ranges = <0x00000800 0 0x40000000 0x40000000 0 0x00001000   /* configuration space */
+> -                         0x81000000 0 0          0x40001000 0 0x00010000   /* downstream I/O */
+> -                         0x82000000 0 0x40011000 0x40011000 0 0x1ffef000>; /* non-prefetchable memory */
+> -               #interrupt-cells = <1>;
+> -               interrupt-map-mask = <0 0 0 0>;
+> -               interrupt-map = <0x0 0 &gic 53>;
+> -               num-lanes = <4>;
+> -       };
+> -
+> -       pcie@2a0000 {
+> -               compatible = "samsung,exynos5440-pcie", "snps,dw-pcie";
+> -               reg = <0x2a0000 0x1000
+> -                       0x272000 0x1000
+> -                       0x271040 0x40>;
+> -               interrupts = <0 23 0>, <0 24 0>, <0 25 0>;
+> -               clocks = <&clock 29>, <&clock 27>;
+> -               clock-names = "pcie", "pcie_bus";
+> -               #address-cells = <3>;
+> -               #size-cells = <2>;
+> -               device_type = "pci";
+> -               ranges = <0x00000800 0 0x60000000 0x60000000 0 0x00001000   /* configuration space */
+> -                         0x81000000 0 0          0x60001000 0 0x00010000   /* downstream I/O */
+> -                         0x82000000 0 0x60011000 0x60011000 0 0x1ffef000>; /* non-prefetchable memory */
+> -               #interrupt-cells = <1>;
+> -               interrupt-map-mask = <0 0 0 0>;
+> -               interrupt-map = <0x0 0 &gic 56>;
+> -               num-lanes = <4>;
+> -       };
+> -
+> -Board specific DT Entry:
+> -
+> -       pcie@290000 {
+> -               reset-gpio = <&pin_ctrl 5 0>;
+> -       };
+> -
+> -       pcie@2a0000 {
+> -               reset-gpio = <&pin_ctrl 22 0>;
+> -       };
+> diff --git a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
+> new file mode 100644
+> index 000000000000..93fbfd62f13c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
+> @@ -0,0 +1,48 @@
+> +* Freescale i.MX6 PCIe interface
+> +
+> +This PCIe host controller is based on the Synopsis Designware PCIe IP
+> +and thus inherits all the common properties defined in designware-pcie.txt.
+> +
+> +Required properties:
+> +- compatible: "fsl,imx6q-pcie"
+> +- reg: base addresse and length of the pcie controller
+> +- interrupts: First entry must contain interrupt handle for controller
+> +  INTA output.
+> +- clocks: Must contain an entry for each entry in clock-names.
+> +       See ../clocks/clock-bindings.txt for details.
+> +- clock-names: Must include the following entries:
+> +       - "pcie_ref_125m"
+> +       - "sata_ref_100m"
+> +       - "lvds_gate"
+> +       - "pcie_axi"
+> +
+> +Optional properties:
+> +- power-on-gpio: gpio pin number of power-enable signal
+> +- wake-up-gpio:  gpio pin number of incoming wakeup signal
+> +- disable-gpio:  gpio pin number of outgoing rfkill/endpoint disable signal
+> +
+> +Example:
+> +
+> +       pcie@0x01000000 {
+> +               compatible = "fsl,imx6q-pcie", "snps,dw-pcie";
+> +               reg = <0x01ffc000 0x4000>;
+> +               #address-cells = <3>;
+> +               #size-cells = <2>;
+> +               device_type = "pci";
+> +               ranges = <0x00000800 0 0x01f00000 0x01f00000 0 0x00080000
+> +                         0x81000000 0 0          0x01f80000 0 0x00010000
+> +                         0x82000000 0 0x01000000 0x01000000 0 0x00f00000>;
+> +               num-lanes = <1>;
+> +
+> +               interrupts = <0 123 0x04>;
 
-Patches 1-6
+Lucas,
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+I'm still trying to understand DT interrupt specification and mapping.
+ Should this be:
 
-For the last patch, the clock information looks like it needs to
-be fixed. I realize that you are just documenting what the driver
-is using at the moment, but that is not a proper way of establishing
-a binding.
+interrupts = <0 123 IRQ_TYPE_LEVEL_HIGH>
 
-	Arnd
+It seems there is a lot of mixed use of numbers vs defines from
+linux/include/dt-bindings in dts files for both gpio and interrupt
+levels.
+
+Thanks,
+
+Tim
+
+> +
+> +               #interrupt-cells = <1>;
+> +               interrupt-map-mask = <0 0 0 0x7>;
+> +               interrupt-map = <0 0 0 1 &intc GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
+> +                               <0 0 0 2 &intc GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
+> +                               <0 0 0 3 &intc GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
+> +                               <0 0 0 4 &intc GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +               clocks = <&clks 189>, <&clks 187>, <&clks 206>, <&clks 144>;
+> +               clock-names = "pcie_ref_125m", "sata_ref_100m", "lvds_gate", "pcie_axi";
+> +       };
+> diff --git a/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt b/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
+> new file mode 100644
+> index 000000000000..0b4de1014876
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
+> @@ -0,0 +1,70 @@
+> +* Samsung Exynos 5440 PCIe interface
+> +
+> +This PCIe host controller is based on the Synopsis Designware PCIe IP
+> +and thus inherits all the common properties defined in designware-pcie.txt.
+> +
+> +Required properties:
+> +- compatible: "samsung,exynos5440-pcie"
+> +- reg: base addresses and lengths of the pcie controller,
+> +       the phy controller, additional register for the phy controller.
+> +- interrupts: A list of interrupt outputs for level interrupt,
+> +       pulse interrupt, special interrupt.
+> +- clocks: Must contain an entry for each entry in clock-names.
+> +       See ../clocks/clock-bindings.txt for details.
+> +- clock-names: Must include the following entries:
+> +       - "pcie"
+> +       - "pcie_bus"
+> +
+> +Example:
+> +
+> +SoC specific DT Entry:
+> +
+> +       pcie@290000 {
+> +               compatible = "samsung,exynos5440-pcie", "snps,dw-pcie";
+> +               reg = <0x290000 0x1000
+> +                       0x270000 0x1000
+> +                       0x271000 0x40>;
+> +               interrupts = <0 20 0>, <0 21 0>, <0 22 0>;
+> +               clocks = <&clock 28>, <&clock 27>;
+> +               clock-names = "pcie", "pcie_bus";
+> +               #address-cells = <3>;
+> +               #size-cells = <2>;
+> +               device_type = "pci";
+> +               ranges = <0x00000800 0 0x40000000 0x40000000 0 0x00001000   /* configuration space */
+> +                         0x81000000 0 0          0x40001000 0 0x00010000   /* downstream I/O */
+> +                         0x82000000 0 0x40011000 0x40011000 0 0x1ffef000>; /* non-prefetchable memory */
+> +               #interrupt-cells = <1>;
+> +               interrupt-map-mask = <0 0 0 0>;
+> +               interrupt-map = <0 0 0 0 &gic GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+> +               num-lanes = <4>;
+> +       };
+> +
+> +       pcie@2a0000 {
+> +               compatible = "samsung,exynos5440-pcie", "snps,dw-pcie";
+> +               reg = <0x2a0000 0x1000
+> +                       0x272000 0x1000
+> +                       0x271040 0x40>;
+> +               interrupts = <0 23 0>, <0 24 0>, <0 25 0>;
+> +               clocks = <&clock 29>, <&clock 27>;
+> +               clock-names = "pcie", "pcie_bus";
+> +               #address-cells = <3>;
+> +               #size-cells = <2>;
+> +               device_type = "pci";
+> +               ranges = <0x00000800 0 0x60000000 0x60000000 0 0x00001000   /* configuration space */
+> +                         0x81000000 0 0          0x60001000 0 0x00010000   /* downstream I/O */
+> +                         0x82000000 0 0x60011000 0x60011000 0 0x1ffef000>; /* non-prefetchable memory */
+> +               #interrupt-cells = <1>;
+> +               interrupt-map-mask = <0 0 0 0>;
+> +               interrupt-map = <0 0 0 0 &gic GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
+> +               num-lanes = <4>;
+> +       };
+> +
+> +Board specific DT Entry:
+> +
+> +       pcie@290000 {
+> +               reset-gpio = <&pin_ctrl 5 0>;
+> +       };
+> +
+> +       pcie@2a0000 {
+> +               reset-gpio = <&pin_ctrl 22 0>;
+> +       };
+> --
+> 1.8.5.3
+>
