@@ -1,52 +1,30 @@
-From: Lucas Stach <l.stach@pengutronix.de>
-Subject: [PATCH 5/7] ARM: dts: imx6: add PCIe interrupt mapping properties
-Date: Fri, 28 Feb 2014 18:28:41 +0100
-Message-ID: <1393608523-17509-6-git-send-email-l.stach@pengutronix.de>
-References: <1393608523-17509-1-git-send-email-l.stach@pengutronix.de>
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1393608523-17509-1-git-send-email-l.stach@pengutronix.de>
-Sender: linux-sh-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, Simon Horman <horms@verge.net.au>, Shawn Guo <shawn.guo@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Jingoo Han <jg1.han@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Tim Harvey <tharvey@gateworks.com>, Richard Zhu <r65037@freescale.com>, Arnd Bergmann <arnd@arndb.de>, kernel@pengutronix.de
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v3 01/10] ARM: tegra: Overhaul Venice2 regulators
+Date: Fri, 28 Feb 2014 10:42:44 -0700
+Message-ID: <5310CA94.4030703@wwwdotorg.org>
+References: <1393605629-30514-1-git-send-email-thierry.reding@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1393605629-30514-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-As defined by the common PCI bindings.
+On 02/28/2014 09:40 AM, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Some of the regulators and the relationships to other regulators are
+> wrong. This commit attempts to rectify this by making them more similar
+> to what the schematics contain. This starts by adding a +VDD_MUX supply
+> that represents the 12V input and derives the main +3.3V_SYS and +5V_SYS
+> supplies from that. The majority of the other regulators derive from one
+> of those three.
+> 
+> While at it, rename the regulators to match the names in the schematics
+> to make them easier to match up.
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
----
- arch/arm/boot/dts/imx6qdl.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/arch/arm/boot/dts/imx6qdl.dtsi b/arch/arm/boot/dts/imx6qdl.dtsi
-index fb28b2ecb1db..db3339e7d3a2 100644
---- a/arch/arm/boot/dts/imx6qdl.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl.dtsi
-@@ -10,6 +10,8 @@
-  * http://www.gnu.org/copyleft/gpl.html
-  */
- 
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
- #include "skeleton.dtsi"
- 
- / {
-@@ -126,7 +128,16 @@
- 				  0x81000000 0 0          0x01f80000 0 0x00010000 /* downstream I/O */
- 				  0x82000000 0 0x01000000 0x01000000 0 0x00f00000>; /* non-prefetchable memory */
- 			num-lanes = <1>;
-+
- 			interrupts = <0 123 0x04>;
-+
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 0x7>;
-+			interrupt-map = <0 0 0 1 &intc GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
-+			                <0 0 0 2 &intc GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
-+			                <0 0 0 3 &intc GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
-+			                <0 0 0 4 &intc GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>;
-+
- 			clocks = <&clks 189>, <&clks 187>, <&clks 206>, <&clks 144>;
- 			clock-names = "pcie_ref_125m", "sata_ref_100m", "lvds_gate", "pcie_axi";
- 			status = "disabled";
--- 
-1.8.5.3
-
+I've applied patches 1-9 to Tegra's for-3.15/dt branch, and squashed
+patch 10 into Tegra's for-3.15/defconfig branch.
