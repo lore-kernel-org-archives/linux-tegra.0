@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v3 05/10] ARM: tegra: Enable eDP for Venice2
-Date: Fri, 28 Feb 2014 17:40:24 +0100
-Message-ID: <1393605629-30514-5-git-send-email-thierry.reding@gmail.com>
+Subject: [PATCH v3 04/10] ARM: tegra: Add Tegra124 eDP support
+Date: Fri, 28 Feb 2014 17:40:23 +0100
+Message-ID: <1393605629-30514-4-git-send-email-thierry.reding@gmail.com>
 References: <1393605629-30514-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1393605629-30514-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,71 +12,50 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Venice2 has a 12.9" (2560x1700) panel connected to the eDP output of the
-Tegra124. The panel has an EDID to describe the video timings but needs
-a few extra nodes to get the backlight to come up.
+The SOR block on Tegra124 can be used standalone to drive LVDS panels or
+used in conjunction with the DPAUX block to support eDP.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra124-venice2.dts | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ arch/arm/boot/dts/tegra124.dtsi | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
-index b0db6348827f..7ffef561d667 100644
---- a/arch/arm/boot/dts/tegra124-venice2.dts
-+++ b/arch/arm/boot/dts/tegra124-venice2.dts
-@@ -16,6 +16,20 @@
- 		reg = <0x80000000 0x80000000>;
- 	};
+diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+index 26dfe09e8410..dd5330f01e13 100644
+--- a/arch/arm/boot/dts/tegra124.dtsi
++++ b/arch/arm/boot/dts/tegra124.dtsi
+@@ -48,6 +48,32 @@
  
-+	host1x@50000000 {
+ 			nvidia,head = <1>;
+ 		};
++
 +		sor@54540000 {
-+			status = "okay";
-+
-+			nvidia,dpaux = <&dpaux>;
-+			nvidia,panel = <&panel>;
++			compatible = "nvidia,tegra124-sor";
++			reg = <0x54540000 0x00040000>;
++			interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&tegra_car TEGRA124_CLK_SOR0>,
++				 <&tegra_car TEGRA124_CLK_PLL_D_OUT0>,
++				 <&tegra_car TEGRA124_CLK_PLL_DP>,
++				 <&tegra_car TEGRA124_CLK_CLK_M>;
++			clock-names = "sor", "parent", "dp", "safe";
++			resets = <&tegra_car 182>;
++			reset-names = "sor";
++			status = "disabled";
 +		};
 +
-+		dpaux: dpaux@545c0000 {
-+			vdd-supply = <&vdd_3v3_panel>;
-+			status = "okay";
++		dpaux@545c0000 {
++			compatible = "nvidia,tegra124-dpaux";
++			reg = <0x545c0000 0x00040000>;
++			interrupts = <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&tegra_car TEGRA124_CLK_DPAUX>,
++				 <&tegra_car TEGRA124_CLK_PLL_DP>;
++			clock-names = "dpaux", "parent";
++			resets = <&tegra_car 181>;
++			reset-names = "dpaux";
++			status = "disabled";
 +		};
-+	};
-+
- 	pinmux: pinmux@70000868 {
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&pinmux_default>;
-@@ -940,6 +954,17 @@
- 		};
  	};
  
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+
-+		enable-gpios = <&gpio TEGRA_GPIO(H, 2) GPIO_ACTIVE_HIGH>;
-+		power-supply = <&vdd_led>;
-+		pwms = <&pwm 1 1000000>;
-+
-+		brightness-levels = <0 4 8 16 32 64 128 255>;
-+		default-brightness-level = <6>;
-+	};
-+
- 	clocks {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
-@@ -965,6 +990,13 @@
- 		};
- 	};
- 
-+	panel: panel {
-+		compatible = "lg,lp129qe", "simple-panel";
-+
-+		backlight = <&backlight>;
-+		ddc-i2c-bus = <&dpaux>;
-+	};
-+
- 	regulators {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
+ 	gic: interrupt-controller@50041000 {
 -- 
 1.8.4.2
