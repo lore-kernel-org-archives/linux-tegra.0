@@ -1,30 +1,49 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v3 01/10] ARM: tegra: Overhaul Venice2 regulators
-Date: Fri, 28 Feb 2014 10:42:44 -0700
-Message-ID: <5310CA94.4030703@wwwdotorg.org>
-References: <1393605629-30514-1-git-send-email-thierry.reding@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 7/7] PCI: designware: split samsung and fsl bindings
+Date: Fri, 28 Feb 2014 21:03:01 +0100
+Message-ID: <201402282103.01897.arnd@arndb.de>
+References: <1393608523-17509-1-git-send-email-l.stach@pengutronix.de>
+ <1393608523-17509-8-git-send-email-l.stach@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1393605629-30514-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1393608523-17509-8-git-send-email-l.stach@pengutronix.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, linux-samsung-soc@vger.kernel.org, Richard Zhu <r65037@freescale.com>, kernel@pengutronix.de, linux-sh@vger.kernel.org, Tim Harvey <tharvey@gateworks.com>, Stephen Warren <swarren@wwwdotorg.org>, Bjorn Helgaas <bhelgaas@google.com>, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben-linux@fluff.org>, linux-tegra@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/28/2014 09:40 AM, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Some of the regulators and the relationships to other regulators are
-> wrong. This commit attempts to rectify this by making them more similar
-> to what the schematics contain. This starts by adding a +VDD_MUX supply
-> that represents the 12V input and derives the main +3.3V_SYS and +5V_SYS
-> supplies from that. The majority of the other regulators derive from one
-> of those three.
-> 
-> While at it, rename the regulators to match the names in the schematics
-> to make them easier to match up.
+On Friday 28 February 2014, Lucas Stach wrote:
+> +Required properties:
+> +- compatible: "fsl,imx6q-pcie"
+> +- reg: base addresse and length of the pcie controller
+> +- interrupts: First entry must contain interrupt handle for controller
+> +  INTA output.
 
-I've applied patches 1-9 to Tegra's for-3.15/dt branch, and squashed
-patch 10 into Tegra's for-3.15/defconfig branch.
+I think this should be documented as "optional" and only for
+backwards compatibility with old kernels.
+
+> +- clocks: Must contain an entry for each entry in clock-names.
+> +       See ../clocks/clock-bindings.txt for details.
+> +- clock-names: Must include the following entries: 
+> +       - "pcie_ref_125m"
+> +       - "sata_ref_100m"
+> +       - "lvds_gate"
+> +       - "pcie_axi"
+
+I don't understand why you have completely different clocks here
+from the exynos documentation. The clock names should really be
+the same. Also, why do you have a "sata_ref_100m" clock?
+Is this just driving a device that happens to be on-board
+for a specific machine? Same for the "lvds_gate".
+
+	Arnd
