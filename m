@@ -1,41 +1,73 @@
-From: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
-Subject: Re: [PATCH 0/7] PCI irq mapping fixes and cleanups
-Date: Sat, 1 Mar 2014 11:30:59 -0700
-Message-ID: <20140301183059.GA6315@obsidianresearch.com>
-References: <1393608523-17509-1-git-send-email-l.stach@pengutronix.de>
- <CAJ+vNU2VN5haOU2GN5o7UUg9vgYh06pAhvDaoGw6EzTBEbD0mg@mail.gmail.com>
+From: Wim Van Sebroeck <wim@iguana.be>
+Subject: Re: [PATCH v7 1/1] watchdog: Add tegra watchdog
+Date: Sun, 2 Mar 2014 12:51:58 +0100
+Message-ID: <20140302115158.GT1484@spo001.leaseweb.com>
+References: <1392408185-15387-1-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-sh-owner@vger.kernel.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAJ+vNU2VN5haOU2GN5o7UUg9vgYh06pAhvDaoGw6EzTBEbD0mg@mail.gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Tim Harvey <tharvey@gateworks.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Jingoo Han <jg1.han@samsung.com>, linux-samsung-soc@vger.kernel.org, Richard Zhu <r65037@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>, linux-sh@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Bjorn Helgaas <bhelgaas@google.com>, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben-linux@fluff.org>, linux-tegra@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <1392408185-15387-1-git-send-email-achew@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Andrew Chew <achew@nvidia.com>
+Cc: linux@roeck-us.net, rob@landley.net, swarren@wwwdotorg.org, thierry.reding@gmail.com, grant.likely@linaro.org, robh+dt@kernel.org, abrestic@chromium.org, dgreid@chromium.org, katierh@chromium.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Feb 28, 2014 at 04:53:33PM -0800, Tim Harvey wrote:
+Hi Andrew,
 
-> In testing this on IMX6 I'm finding that 'of_irq_parse_and_map_pci()'
-> always returns -EINVAL because it can't find a dt node for the host
-> bridge: http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/drivers/of/of_pci_irq.c#n60.
+> Add a driver for the hardware watchdogs in NVIDIA Tegra SoCs (Tegra30 and
+> later).  This driver will configure one watchdog timer that will reset the
+> system in the case of a watchdog timeout.
+> 
+> This driver binds to the nvidia,tegra30-timer device node and gets its
+> register base from there.
+> 
+> Signed-off-by: Andrew Chew <achew@nvidia.com>
+> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+> Tested-by: Stephen Warren <swarren@nvidia.com>
+> Reviewed-by: Stephen Warren <swarren@nvidia.com>
+> ---
+> Changes from v6:
+> 
+> Removed kref stuff.  We can't think of why it's needed here.
+> 
+> Changes from v5:
+> 
+> Changed license to GPL v2 per Stephen Warren's guidance.
+> 
+> Changes from v4:
+> 
+> Skip the error check from the platform_get_resources() call, because
+> devm_ioremap_resource() correctly handles the case when res is NULL.
+> 
+> Changes from v3:
+> 
+> Applied Cuenter Roeck <linux@roeck-us.net>'s comments.  In particular,
+> since tegra_wdt_start() and tegra_wdt_stop() always return success, skip
+> error checking for these calls.  Also, removed some unnecessarily verbose
+> logging around which watchdog and timer ID is being used.  Fixed typo
+> regarding the ref and unref callback setup.  Removed miscdev stuff.
+> 
+> Cuenter was right in that the watchdog doesn't need to be stopped prior
+> to changing the timeout.  It is sufficient to just reprogram the watchdog
+> with the new timeout.
+> 
+> Tested on T124.
+> 
+> To do a simple test, "echo 0 > /dev/watchdog0".  The target will reset when
+> two minutes (the default heartbeat interval) have expired since the last
+> write to /dev/watchdog0.
+> 
+>  Documentation/watchdog/watchdog-parameters.txt |   5 +
+>  drivers/watchdog/Kconfig                       |  11 +
+>  drivers/watchdog/Makefile                      |   1 +
+>  drivers/watchdog/tegra_wdt.c                   | 302 +++++++++++++++++++++++++
+>  4 files changed, 319 insertions(+)
+>  create mode 100644 drivers/watchdog/tegra_wdt.c
+> 
 
-There may be some kind of issue in the pcie-designware.c:
+Patch added to linux-watchdog-next.
 
-static struct pci_bus *dw_pcie_scan_bus(int nr, struct pci_sys_data *sys)
-{
-        struct pci_bus *bus;
-        struct pcie_port *pp = sys_to_pcie(sys);
+Kind regards,
+Wim.
 
-        if (pp) {
-                pp->root_bus_nr = sys->busnr;
-                bus = pci_scan_root_bus(NULL, sys->busnr, &dw_pcie_ops,
-                                     ^^^^^^^^^^^
-                                     Shouldn't be null for DT cases.
-
-Perhaps since the driver doesn't pass in a parent pointer, no parent
-device is associated with the struct pci_bus that gets created, so
-pci_bus_to_OF_node will always fail and the DT PCI mechanisms become
-broken.
-
-Jason
