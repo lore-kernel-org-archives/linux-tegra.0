@@ -1,82 +1,46 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH V3 2/5] dt: define IRQ flags bit 4 as src/dst inversion
-Date: Mon,  3 Mar 2014 12:51:37 -0700
-Message-ID: <1393876300-3061-2-git-send-email-swarren@wwwdotorg.org>
-References: <1393876300-3061-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1393876300-3061-1-git-send-email-swarren@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v3.14-rc5
+Date: Mon, 3 Mar 2014 14:27:23 -0800
+Message-ID: <531501CB.4010101@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren@nvidia.com>
+Here are some basic Tegra test results for Linux v3.14-rc5.
+Logs and other details at:
 
-Some devices have configurable IRQ output polarities. Software might
-use IRQ specifier flag bits[3:0] to determine how to configure such a
-device's IRQ output polarity in order to match how the IRQ controller
-input is configured. If the board or SoC inverts the signal between the
-device's IRQ output and controller's IRQ output, software must be
-aware of this fact, in order to program the IRQ output to the correct
-(i.e. opposite) polarity. This flag provides that information.
+     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.14-rc5/20140302193106/
 
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
----
-v3: New patch.
----
- Documentation/devicetree/bindings/arm/gic.txt                     | 8 ++++++++
- .../devicetree/bindings/interrupt-controller/interrupts.txt       | 8 ++++++++
- include/dt-bindings/interrupt-controller/irq.h                    | 1 +
- 3 files changed, 17 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/gic.txt b/Documentation/devicetree/bindings/arm/gic.txt
-index bae0d87a38b2..b0b65a440239 100644
---- a/Documentation/devicetree/bindings/arm/gic.txt
-+++ b/Documentation/devicetree/bindings/arm/gic.txt
-@@ -33,6 +33,14 @@ Main node required properties:
- 		2 = high-to-low edge triggered
- 		4 = active high level-sensitive
- 		8 = active low level-sensitive
-+	bit[4] IRQ is inverted between source and sink.
-+	Some devices have configurable IRQ output polarities. Software might
-+	use flag bits[3:0] to determine how to configure such a device's IRQ
-+	output polarity in order to match how the IRQ controller input is
-+	configured. If the board or SoC inverts the signal between the
-+	device's IRQ output and controller's IRQ output, software must be
-+	aware of this fact, in order to program the IRQ output to the correct
-+	(i.e. opposite) polarity. This flag provides that information.
- 	bits[15:8] PPI interrupt cpu mask.  Each bit corresponds to each of
- 	the 8 possible cpus attached to the GIC.  A bit set to '1' indicated
- 	the interrupt is wired to that CPU.  Only valid for PPI interrupts.
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/interrupts.txt b/Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
-index 1486497a24c1..636eb0f478bf 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
-+++ b/Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
-@@ -76,6 +76,14 @@ commonly used:
-         2 = high-to-low edge triggered
-         4 = active high level-sensitive
-         8 = active low level-sensitive
-+    - bit[4] IRQ is inverted between source and sink
-+        Some devices have configurable IRQ output polarities. Software might
-+        use flag bits[3:0] to determine how to configure such a device's IRQ
-+        output polarity in order to match how the IRQ controller input is
-+        configured. If the board or SoC inverts the signal between the
-+        device's IRQ output and controller's IRQ output, software must be
-+        aware of this fact, in order to program the IRQ output to the correct
-+        (i.e. opposite) polarity. This flag provides that information.
- 
-   Example:
- 
-diff --git a/include/dt-bindings/interrupt-controller/irq.h b/include/dt-bindings/interrupt-controller/irq.h
-index 33a1003c55aa..5b04918c5c72 100644
---- a/include/dt-bindings/interrupt-controller/irq.h
-+++ b/include/dt-bindings/interrupt-controller/irq.h
-@@ -15,5 +15,6 @@
- #define IRQ_TYPE_EDGE_BOTH	(IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING)
- #define IRQ_TYPE_LEVEL_HIGH	4
- #define IRQ_TYPE_LEVEL_LOW	8
-+#define IRQ_SRC_DST_INVERTED	16
- 
- #endif
--- 
-1.8.1.5
+Test summary
+------------
+
+Build: zImage:
+     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Boot to userspace: multi_v7_defconfig:
+     Pass: ( 2/ 2): tegra114-dalmore-a04, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+     Pass: ( 2/ 2): tegra114-dalmore-a04, tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v3.14-rc4 (cfbf8d4857c26a8a307fb7cd258074c9dcd8c691)):
+    text     data      bss    total  kernel
+    +379      -16        0     +363  multi_v7_defconfig
+    +387        0        0     +387  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v3.14-rc4 (cfbf8d4857c26a8a307fb7cd258074c9dcd8c691))
+     avail    rsrvd     high    freed                board              kconfig                  dtb
+         .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+         .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+         .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+         .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
