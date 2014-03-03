@@ -1,52 +1,55 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH V3 3/5] irqchip: gic: parse IRQ specifier flag src/dst
- inversion
-Date: Mon,  3 Mar 2014 12:51:38 -0700
-Message-ID: <1393876300-3061-3-git-send-email-swarren@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH V3 4/5] mfd: palmas: support IRQ inversion at the board level
+Date: Mon,  3 Mar 2014 12:51:39 -0700
+Message-ID: <1393876300-3061-4-git-send-email-swarren@wwwdotorg.org>
 References: <1393876300-3061-1-git-send-email-swarren@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1393876300-3061-1-git-send-email-swarren@wwwdotorg.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thomas Gleixner <tglx@linutronix.de>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1393876300-3061-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren@nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Modify the GIC driver to parse IRQ specifier flag bit 4 (src/dst
-inverted) in the xlate function.
+Implement the new DT property ti,irq-externally-inverted, and add an
+equivalent platform data field to match. This allows the driver to
+correctly automatically configure the IRQ output polarity when the board
+or SoC contains an inverter between the Palmas IRQ output and IRQ
+controller input.
 
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-v3: New patch.
+v3:
+* Use an IRQD flag to represent the data, rather than a custom DT property.
+v2:
+* Split V1's patch 1/2 into separate patches 1/3 and 2/3.
 ---
- drivers/irqchip/irq-gic.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/mfd/palmas.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
-index 500e533b9648..97800b349f54 100644
---- a/drivers/irqchip/irq-gic.c
-+++ b/drivers/irqchip/irq-gic.c
-@@ -847,6 +847,9 @@ static int gic_irq_domain_xlate(struct irq_domain *d,
- 		*out_hwirq += 16;
+diff --git a/drivers/mfd/palmas.c b/drivers/mfd/palmas.c
+index d280d789e55a..3281d4103e9d 100644
+--- a/drivers/mfd/palmas.c
++++ b/drivers/mfd/palmas.c
+@@ -292,7 +292,8 @@ static int palmas_set_pdata_irq_flag(struct i2c_client *i2c,
+ 		return -EINVAL;
+ 	}
  
- 	*out_type = intspec[2] & IRQ_TYPE_SENSE_MASK;
-+	if (intspec[2] & BIT(4))
-+		*out_type |= IRQ_SRC_DST_INVERTED;
-+
+-	pdata->irq_flags = irqd_get_trigger_type(irq_data);
++	pdata->irq_flags = irqd_get_trigger_type(irq_data) |
++			   irqd_get_src_dst_inverted(irq_data);
+ 	dev_info(&i2c->dev, "Irq flag is 0x%08x\n", pdata->irq_flags);
  	return 0;
  }
- 
+@@ -447,6 +448,8 @@ static int palmas_i2c_probe(struct i2c_client *i2c,
+ 		reg = PALMAS_POLARITY_CTRL_INT_POLARITY;
+ 	else
+ 		reg = 0;
++	if (pdata->irq_flags & IRQ_SRC_DST_INVERTED)
++		reg ^= PALMAS_POLARITY_CTRL_INT_POLARITY;
+ 	ret = palmas_update_bits(palmas, PALMAS_PU_PD_OD_BASE,
+ 			PALMAS_POLARITY_CTRL, PALMAS_POLARITY_CTRL_INT_POLARITY,
+ 			reg);
 -- 
 1.8.1.5
