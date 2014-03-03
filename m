@@ -1,73 +1,87 @@
-From: Wim Van Sebroeck <wim@iguana.be>
-Subject: Re: [PATCH v7 1/1] watchdog: Add tegra watchdog
-Date: Sun, 2 Mar 2014 12:51:58 +0100
-Message-ID: <20140302115158.GT1484@spo001.leaseweb.com>
-References: <1392408185-15387-1-git-send-email-achew@nvidia.com>
+From: Graeme Gregory <graeme-/SyDAi3Rz4f10XsdtD+oqA@public.gmane.org>
+Subject: Re: [PATCH V2 1/3] dt: palmas: support IRQ inversion at the board
+ level
+Date: Mon, 3 Mar 2014 08:52:46 +0800
+Message-ID: <20140303005246.GA22047@xora-yoga13>
+References: <1393534281-30759-1-git-send-email-swarren@wwwdotorg.org>
+ <20140227210227.GE2931@xora-haswell>
+ <530FAFAE.5050800@wwwdotorg.org>
+ <20140228055818.GA29849@sirena.org.uk>
+ <5310BA99.4050203@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-doc-owner@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1392408185-15387-1-git-send-email-achew@nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Andrew Chew <achew@nvidia.com>
-Cc: linux@roeck-us.net, rob@landley.net, swarren@wwwdotorg.org, thierry.reding@gmail.com, grant.likely@linaro.org, robh+dt@kernel.org, abrestic@chromium.org, dgreid@chromium.org, katierh@chromium.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org
+In-Reply-To: <5310BA99.4050203-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, J Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>, Ian Lartey <ian-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Andrew,
+On Fri, Feb 28, 2014 at 09:34:33AM -0700, Stephen Warren wrote:
+> On 02/27/2014 10:58 PM, Mark Brown wrote:
+> > On Thu, Feb 27, 2014 at 02:35:42PM -0700, Stephen Warren wrote:
+> >> On 02/27/2014 02:02 PM, Graeme Gregory wrote:
+> > 
+> >>>> +- ti,irq-externally-inverted : If missing, the polarity of the Palmas IRQ
+> >>>> +  output should be set to the opposite of the polarity indicated by the IRQ
+> >>>> +  specifier in the interrupts property. If absent, the polarity should be
+> >>>> +  configured to match. This allows the representation of an inverter between
+> >>>> +  the Palmas IRQ output and the interrupt parent's IRQ input.
+> > 
+> >>> This has got to be the wrong way to do things, all this leads to is every
+> >>> device doing this property in its own way and having totally inconsistent
+> >>> properties all meaning the same thing.
+> > 
+> >>> If there is some other hardware inverting lines then there should be
+> >>> a generic binding for this in DT. This is not describing the palmas hardware
+> >>> but some external object to the palmas.
+> > 
+> >> I'd be fine with removing the "ti," vendor prefix from the property
+> >> name, and promoting it to be a cross-device standard.
+> > 
+> >> I'm not sure that many devices will need this though; most don't have
+> >> configurable output polarity. Still, I guess that shouldn't stop us from
+> >> creating standards for the cases where it is needed.
+> > 
+> > It's really common for PMICs and CODECs to be able to set any interrupt
+> > polarity at least.
+> > 
+> >> If the DT reviewers can ack the concept, I'm happy to respin the patch
+> >> with the more generic property name.
+> > 
+> > I'm not sure that renaming the property really deals with the concerns
+> > though since drivers still all need to manually add support for this,
+> > shouldn't there be an interrupt controller described in the DT which
+> > just chains on to the parent with the polarity inverted to do the
+> > impedence match?
+> 
+> I had thought of that when first dealing with this a couple years ago,
+> but Olof suggested that was too complicated.
+> 
+> Certainly, adding an "inverting" interrupt controller into the path
+> would solve the problem without inventing any new concept in DT.
+> However, the inverter really isn't an interrupt controller in any
+> meaningful fashion. It has no status/mask/enable/... registers at all;
+> it's nothing more than an inverter gate, at least in my case. Hence, I'm
+> actually not convinced that adding an extra interrupt controller into
+> the path is correct here.
+> 
+A interupt controller inline that does the inversion was my first thought
+but I think that is probably overkill unless there is a whole range
+of different interupt filtering operations.
 
-> Add a driver for the hardware watchdogs in NVIDIA Tegra SoCs (Tegra30 and
-> later).  This driver will configure one watchdog timer that will reset the
-> system in the case of a watchdog timeout.
+> Another alternative might be to add an extra IRQ bit in the IRQ
+> specifier (and something similar would be needed for GPIO specifiers)
+> that indicates "inversion between source and destination". This could be
+> queried by drivers in exactly the same way as the existing polarity/type
+> IRQ flags. We'd need to update each individual IRQ controller binding to
+> enable that flag, since each binding defines its own definition of such
+> flags. (although in practice since most use the same centrally suggested
+> flags, this wouldn't be any more than just saying yes, this binding
+> allows that new flag to be used).
 > 
-> This driver binds to the nvidia,tegra30-timer device node and gets its
-> register base from there.
-> 
-> Signed-off-by: Andrew Chew <achew@nvidia.com>
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-> Tested-by: Stephen Warren <swarren@nvidia.com>
-> Reviewed-by: Stephen Warren <swarren@nvidia.com>
-> ---
-> Changes from v6:
-> 
-> Removed kref stuff.  We can't think of why it's needed here.
-> 
-> Changes from v5:
-> 
-> Changed license to GPL v2 per Stephen Warren's guidance.
-> 
-> Changes from v4:
-> 
-> Skip the error check from the platform_get_resources() call, because
-> devm_ioremap_resource() correctly handles the case when res is NULL.
-> 
-> Changes from v3:
-> 
-> Applied Cuenter Roeck <linux@roeck-us.net>'s comments.  In particular,
-> since tegra_wdt_start() and tegra_wdt_stop() always return success, skip
-> error checking for these calls.  Also, removed some unnecessarily verbose
-> logging around which watchdog and timer ID is being used.  Fixed typo
-> regarding the ref and unref callback setup.  Removed miscdev stuff.
-> 
-> Cuenter was right in that the watchdog doesn't need to be stopped prior
-> to changing the timeout.  It is sufficient to just reprogram the watchdog
-> with the new timeout.
-> 
-> Tested on T124.
-> 
-> To do a simple test, "echo 0 > /dev/watchdog0".  The target will reset when
-> two minutes (the default heartbeat interval) have expired since the last
-> write to /dev/watchdog0.
-> 
->  Documentation/watchdog/watchdog-parameters.txt |   5 +
->  drivers/watchdog/Kconfig                       |  11 +
->  drivers/watchdog/Makefile                      |   1 +
->  drivers/watchdog/tegra_wdt.c                   | 302 +++++++++++++++++++++++++
->  4 files changed, 319 insertions(+)
->  create mode 100644 drivers/watchdog/tegra_wdt.c
-> 
+A new flag would meet my concerns of every chip doing basic inversion
+in different ways.
 
-Patch added to linux-watchdog-next.
-
-Kind regards,
-Wim.
-
+Graeme
