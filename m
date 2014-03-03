@@ -1,68 +1,75 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH 0/7] PCI irq mapping fixes and cleanups
-Date: Mon, 03 Mar 2014 17:11:37 +0900
-Message-ID: <000601cf36b8$330b3a90$9921afb0$%han@samsung.com>
+From: Lucas Stach <l.stach@pengutronix.de>
+Subject: Re: [PATCH 4/7] ARM: dts: exynos5440: fix PCIe interrupt mapping
+Date: Mon, 03 Mar 2014 10:26:23 +0100
+Message-ID: <1393838783.4714.0.camel@weser.hi.pengutronix.de>
 References: <1393608523-17509-1-git-send-email-l.stach@pengutronix.de>
- <CAJ+vNU2VN5haOU2GN5o7UUg9vgYh06pAhvDaoGw6EzTBEbD0mg@mail.gmail.com>
- <20140301183059.GA6315@obsidianresearch.com>
+	 <1393608523-17509-5-git-send-email-l.stach@pengutronix.de>
+	 <000401cf36b3$e4aa0fb0$adfe2f10$%han@samsung.com>
+	 <000501cf36b5$b0a27110$11e75330$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-reply-to: <20140301183059.GA6315@obsidianresearch.com>
-Content-language: ko
-Sender: linux-sh-owner@vger.kernel.org
-To: 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, 'Tim Harvey' <tharvey@gateworks.com>
-Cc: 'Lucas Stach' <l.stach@pengutronix.de>, 'Mark Rutland' <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Richard Zhu' <r65037@freescale.com>, 'Sascha Hauer' <kernel@pengutronix.de>, 'Arnd Bergmann' <arnd@arndb.de>, linux-sh@vger.kernel.org, 'Stephen Warren' <swarren@wwwdotorg.org>, 'Bjorn Helgaas' <bhelgaas@google.com>, 'Simon Horman' <horms@verge.net.au>, 'Thierry Reding' <thierry.reding@gmail.com>, 'Ben Dooks' <ben-linux@fluff.org>, linux-tegra@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Shawn Guo' <shawn.guo@linaro.org>, linux-arm-kernel@lists.infradead.org, 'Jingoo Han' <jg1.han@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <000501cf36b5$b0a27110$11e75330$%han@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, 'Bjorn Helgaas' <bhelgaas@google.com>, 'Simon Horman' <horms@verge.net.au>, 'Shawn Guo' <shawn.guo@linaro.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Stephen Warren' <swarren@wwwdotorg.org>, 'Thierry Reding' <thierry.reding@gmail.com>, 'Mark Rutland' <mark.rutland@arm.com>, 'Ben Dooks' <ben-linux@fluff.org>, 'Tim Harvey' <tharvey@gateworks.com>, 'Richard Zhu' <r65037@freescale.com>, 'Arnd Bergmann' <arnd@arndb.de>, kernel@pengutronix.de
 List-Id: linux-tegra@vger.kernel.org
 
-On Sunday, March 02, 2014 3:31 AM, Jason Gunthorpe wrote:
-> On Fri, Feb 28, 2014 at 04:53:33PM -0800, Tim Harvey wrote:
+Am Montag, den 03.03.2014, 16:53 +0900 schrieb Jingoo Han:
+> On Monday, March 03, 2014 4:41 PM, Jingoo Han wrote:
+> > On Saturday, March 01, 2014 2:29 AM, Lucas Stach wrote:
+> > >
+> > > So it actually works.
+> > >
+> > > Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> > > ---
+> > >  arch/arm/boot/dts/exynos5440.dtsi | 4 ++--
+> > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
+> > > index 02a0a1226cef..65d425d9ec27 100644
+> > > --- a/arch/arm/boot/dts/exynos5440.dtsi
+> > > +++ b/arch/arm/boot/dts/exynos5440.dtsi
+> > > @@ -274,7 +274,7 @@
+> > >  			  0x82000000 0 0x40011000 0x40011000 0 0x1ffef000>; /* non-prefetchable memory */
+> > >  		#interrupt-cells = <1>;
+> > >  		interrupt-map-mask = <0 0 0 0>;
+> > > -		interrupt-map = <0x0 0 &gic 53>;
+> > > +		interrupt-map = <0 0 0 0 &gic GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+> > 
+> > It makes build errors as below:
+> > 
+> > DTC     arch/arm/boot/dts/exynos5440-ssdk5440.dtb
+> > Error: arch/arm/boot/dts/exynos5440.dtsi:289.33-34 syntax error
+> > FATAL ERROR: Unable to parse input tree
+> > make[1]: *** [arch/arm/boot/dts/exynos5440-ssdk5440.dtb] Error 1
+> > make: *** [exynos5440-ssdk5440.dtb] Error 2
+> > 
+> > Would you fix it?
 > 
-> > In testing this on IMX6 I'm finding that 'of_irq_parse_and_map_pci()'
-> > always returns -EINVAL because it can't find a dt node for the host
-> > bridge:
-> http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/drivers/of/of_pci_irq.c#n60.
+> I fixed build errors after including 'arm-gic.h' as below:
 > 
-> There may be some kind of issue in the pcie-designware.c:
+> --- a/arch/arm/boot/dts/exynos5440.dtsi
+> +++ b/arch/arm/boot/dts/exynos5440.dtsi
+> @@ -9,6 +9,8 @@
+>   * published by the Free Software Foundation.
+>  */
 > 
-> static struct pci_bus *dw_pcie_scan_bus(int nr, struct pci_sys_data *sys)
-> {
->         struct pci_bus *bus;
->         struct pcie_port *pp = sys_to_pcie(sys);
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+>  #include "skeleton.dtsi"
 > 
->         if (pp) {
->                 pp->root_bus_nr = sys->busnr;
->                 bus = pci_scan_root_bus(NULL, sys->busnr, &dw_pcie_ops,
->                                      ^^^^^^^^^^^
->                                      Shouldn't be null for DT cases.
-> 
-> Perhaps since the driver doesn't pass in a parent pointer, no parent
-> device is associated with the struct pci_bus that gets created, so
-> pci_bus_to_OF_node will always fail and the DT PCI mechanisms become
-> broken.
+> Would you confirm this?
 
-Jason,
-Thank you for your advice. :-)
+That's the right fix, I'll include this (together with the other
+feedback I received) in v2 of the series.
 
-Tim,
-I tested the following as Jason guided.
-You can test i.MX PCIe with this.
+Regards,
+Lucas
 
-./drivers/pci/host/pcie-designware.c
-@@ -726,7 +727,7 @@ static struct pci_bus *dw_pcie_scan_bus(int nr, struct pci_sys_data *sys)
-
-        if (pp) {
-                pp->root_bus_nr = sys->busnr;
--               bus = pci_scan_root_bus(NULL, sys->busnr, &dw_pcie_ops,
-+               bus = pci_scan_root_bus(pp->dev, sys->busnr, &dw_pcie_ops,
-                                        sys, &sys->resources);
-        } else {
-                bus = NULL;
-
-However, I think that we may need to replace 'pci_common_init()'
-with 'pci_common_init_dev()'.
-
-Best regards,
-Jingoo Han
-
+-- 
+Pengutronix e.K.                           | Lucas Stach                 |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-5076 |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
