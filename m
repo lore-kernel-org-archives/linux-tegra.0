@@ -1,75 +1,38 @@
-From: Lucas Stach <l.stach@pengutronix.de>
-Subject: Re: [PATCH 4/7] ARM: dts: exynos5440: fix PCIe interrupt mapping
-Date: Mon, 03 Mar 2014 10:26:23 +0100
-Message-ID: <1393838783.4714.0.camel@weser.hi.pengutronix.de>
-References: <1393608523-17509-1-git-send-email-l.stach@pengutronix.de>
-	 <1393608523-17509-5-git-send-email-l.stach@pengutronix.de>
-	 <000401cf36b3$e4aa0fb0$adfe2f10$%han@samsung.com>
-	 <000501cf36b5$b0a27110$11e75330$%han@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <000501cf36b5$b0a27110$11e75330$%han@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, 'Bjorn Helgaas' <bhelgaas@google.com>, 'Simon Horman' <horms@verge.net.au>, 'Shawn Guo' <shawn.guo@linaro.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Stephen Warren' <swarren@wwwdotorg.org>, 'Thierry Reding' <thierry.reding@gmail.com>, 'Mark Rutland' <mark.rutland@arm.com>, 'Ben Dooks' <ben-linux@fluff.org>, 'Tim Harvey' <tharvey@gateworks.com>, 'Richard Zhu' <r65037@freescale.com>, 'Arnd Bergmann' <arnd@arndb.de>, kernel@pengutronix.de
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] ARM: tegra: Allocate 64 MiB for CMA by default
+Date: Mon,  3 Mar 2014 16:31:08 +0100
+Message-ID: <1393860668-31996-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Am Montag, den 03.03.2014, 16:53 +0900 schrieb Jingoo Han:
-> On Monday, March 03, 2014 4:41 PM, Jingoo Han wrote:
-> > On Saturday, March 01, 2014 2:29 AM, Lucas Stach wrote:
-> > >
-> > > So it actually works.
-> > >
-> > > Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> > > ---
-> > >  arch/arm/boot/dts/exynos5440.dtsi | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
-> > > index 02a0a1226cef..65d425d9ec27 100644
-> > > --- a/arch/arm/boot/dts/exynos5440.dtsi
-> > > +++ b/arch/arm/boot/dts/exynos5440.dtsi
-> > > @@ -274,7 +274,7 @@
-> > >  			  0x82000000 0 0x40011000 0x40011000 0 0x1ffef000>; /* non-prefetchable memory */
-> > >  		#interrupt-cells = <1>;
-> > >  		interrupt-map-mask = <0 0 0 0>;
-> > > -		interrupt-map = <0x0 0 &gic 53>;
-> > > +		interrupt-map = <0 0 0 0 &gic GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
-> > 
-> > It makes build errors as below:
-> > 
-> > DTC     arch/arm/boot/dts/exynos5440-ssdk5440.dtb
-> > Error: arch/arm/boot/dts/exynos5440.dtsi:289.33-34 syntax error
-> > FATAL ERROR: Unable to parse input tree
-> > make[1]: *** [arch/arm/boot/dts/exynos5440-ssdk5440.dtb] Error 1
-> > make: *** [exynos5440-ssdk5440.dtb] Error 2
-> > 
-> > Would you fix it?
-> 
-> I fixed build errors after including 'arm-gic.h' as below:
-> 
-> --- a/arch/arm/boot/dts/exynos5440.dtsi
-> +++ b/arch/arm/boot/dts/exynos5440.dtsi
-> @@ -9,6 +9,8 @@
->   * published by the Free Software Foundation.
->  */
-> 
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
->  #include "skeleton.dtsi"
-> 
-> Would you confirm this?
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-That's the right fix, I'll include this (together with the other
-feedback I received) in v2 of the series.
+The default size of 16 MiB reserved for CMA is not enough for the
+majority of use-cases, so set it to something more sensible.
 
-Regards,
-Lucas
+Note that users can still override this via the cma kernel command-line
+argument, which takes precendence over the default specified in the
+kernel configuration file.
 
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/configs/tegra_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index 81a325eda7b7..5bc752c6d732 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -88,6 +88,7 @@ CONFIG_DEVTMPFS_MOUNT=y
+ CONFIG_EXTRA_FIRMWARE="nouveau/nvea_fuc409c nouveau/nvea_fuc409d nouveau/nvea_fuc41ac nouveau/nvea_fuc41ad vic03_ucode.bin gk20a.bin"
+ CONFIG_DMA_BUF_TEST=y
+ CONFIG_DMA_CMA=y
++CONFIG_CMA_SIZE_MBYTES=64
+ CONFIG_MTD=y
+ CONFIG_MTD_M25P80=y
+ CONFIG_PROC_DEVICETREE=y
 -- 
-Pengutronix e.K.                           | Lucas Stach                 |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-5076 |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+1.8.4.2
