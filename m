@@ -1,69 +1,66 @@
-From: Lucas Stach <l.stach@pengutronix.de>
-Subject: Re: [PATCH 7/7] PCI: designware: split samsung and fsl bindings
-Date: Tue, 04 Mar 2014 16:34:19 +0100
-Message-ID: <1393947259.9405.18.camel@weser.hi.pengutronix.de>
-References: <1393608523-17509-1-git-send-email-l.stach@pengutronix.de>
-	 <201402282103.01897.arnd@arndb.de>
-	 <1393942383.9405.8.camel@weser.hi.pengutronix.de>
-	 <201403041553.40202.arnd@arndb.de>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V3 1/5] genirq: define flag IRQ_SRC_DST_INVERTED, and
+ accessors
+Date: Tue, 04 Mar 2014 08:57:15 -0700
+Message-ID: <5315F7DB.6000700@wwwdotorg.org>
+References: <1393876300-3061-1-git-send-email-swarren@wwwdotorg.org> <alpine.DEB.2.02.1403041018370.18573@ionos.tec.linutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <201403041553.40202.arnd@arndb.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, linux-samsung-soc@vger.kernel.org, Richard Zhu <r65037@freescale.com>, kernel@pengutronix.de, linux-sh@vger.kernel.org, Tim Harvey <tharvey@gateworks.com>, Stephen Warren <swarren@wwwdotorg.org>, Bjorn Helgaas <bhelgaas@google.com>, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben-linux@fluff.org>, linux-tegra@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, linux-arm-kernel@lists.infradead.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <alpine.DEB.2.02.1403041018370.18573-3cz04HxQygjZikZi3RtOZ1XZhhPuCNm+@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+Cc: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Am Dienstag, den 04.03.2014, 15:53 +0100 schrieb Arnd Bergmann:
-> On Tuesday 04 March 2014, Lucas Stach wrote:
-> > Right, we should be able to reuse the clock names. Though I'm not really
-> > sure how the Samsung clocks maps to those used on i.MX, as the names are
-> > a bit generic. Maybe someone from Samsung could shed a bit of light on
-> > this.
-> > 
-> > On i.MX6 the clock names (which I have to agree are pretty bad) map as
-> > follows:
-> > pcie_axi: host controller main register/bus access clock
-> > pcie_ref_125m: pcie phy reference clock
-> > 
-> > sata_ref_100m: pcie bus 100MHz reference clock
+On 03/04/2014 03:04 AM, Thomas Gleixner wrote:
+> On Mon, 3 Mar 2014, Stephen Warren wrote:
 > 
-> That doesn't explain why it's called "sata_ref_100m".
+>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>
+>> Some devices have configurable IRQ output polarities. Software might
+>> use IRQ_TYPE_* to determine how to configure such a device's IRQ
+>> output polarity in order to match how the IRQ controller input is
+>> configured. If the board or SoC inverts the signal between the
+>> device's IRQ output and controller's IRQ output, software must be
+>> aware of this fact, in order to program the IRQ output to the correct
+>> (i.e. opposite) polarity. This flag provides that information.
 > 
-I agree this is bad naming. It's called this way because someone decided
-to name it like the internal clock it is sourced from on most boards.
-This really should be pcie_ref, or something. I suspect this corresponds
-to the pcie_bus clock in the Exynos binding in which case we should just
-name it this way.
+> So what you're saying is:
+> 
+> Device IRQ output --> [Optional Inverter Logic] --> IRQ controller input.
+> 
+> And you're storing the information about the presence of the inverter
+> logic in the irq itself, but the core does not make any use of it and
+> you let the device driver deal with the outcome.
+> 
+> This sucks as all affected drivers have to implement the same sanity
+> logic for this.
+> 
+> Why don't you implement a core function which tells the driver which
+> polarity to select? That requires a few more changes, but I think it's
+> worth it for other reasons.
+> 
+> Right now the set_type logic requires the irq chip drivers to
+> implement sanity checking and default selections for TYPE_NONE. We can
+> be more clever about that and add this information to the irq chip
+> flags.
 
-> > lvds_gate: bad abstraction. Decides if the reference clock is sourced
-> > internal (i.e. the 100MHz ref clock above) or from an SoC external
-> > source. We should really find a better way of representing this in the
-> > clock tree.
-> 
-> I don't understand this description at all. Can you try to explain that
-> with different words?
-> 
-On i.MX6 the PCIe reference clock is routed through a generic clock pad,
-which can be configured either as input or output. When the i.MX is the
-PCI master we source the clock from sata_ref_100m and configure this pad
-as clock output.
-Somebody decided to abstract the input/output switch as a gate, which is
-arguably wrong, this should be a mux deciding between internal or
-external clock source.
+I don't see any such checking in drivers/irqchip/irq-gic.c; it rejects
+any type other than IRQ_TYPE_LEVEL_HIGH or IRQ_TYPE_EDGE_RISING, and I
+don't see any mention of TYPE_NONE in that file. Is the driver incomplete?
 
-The PCIe host driver should really only need the clk pad clock,
-activation of the sata_ref_100m clock should be handled through
-parent<->child relationship of those clocks in the clock tree, which
-isn't properly handled right now. I'll try to fix this up, but it won't
-be backward compatible in any way.
+Instead of adding all this extra logic to the core, what do you think of
+simply telling each driver that has a configurable interrupt output
+polarity exactly which polarity to use. This information would come from
+device tree or platform data. This is what I implemented in V1/V2 of
+this series:
 
-Regards,
-Lucas
--- 
-Pengutronix e.K.                           | Lucas Stach                 |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-5076 |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+http://www.spinics.net/lists/devicetree/msg23648.html
+
+Is that any better, or do you definitely want the IRQ core to manage this?
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
