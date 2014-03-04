@@ -1,63 +1,289 @@
-From: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
-Subject: Re: [PATCH V3 1/5] genirq: define flag IRQ_SRC_DST_INVERTED, and
- accessors
-Date: Tue, 4 Mar 2014 11:34:13 +0100 (CET)
-Message-ID: <alpine.DEB.2.02.1403041130280.18573@ionos.tec.linutronix.de>
-References: <1393876300-3061-1-git-send-email-swarren@wwwdotorg.org> <alpine.DEB.2.02.1403041018370.18573@ionos.tec.linutronix.de>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2 1/3] hwmon: (lm90) split set&show temp as common codes
+Date: Tue, 4 Mar 2014 19:31:02 +0800
+Message-ID: <1393932664-13319-2-git-send-email-wni@nvidia.com>
+References: <1393932664-13319-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <alpine.DEB.2.02.1403041018370.18573-3cz04HxQygjZikZi3RtOZ1XZhhPuCNm+@public.gmane.org>
+In-Reply-To: <1393932664-13319-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 4 Mar 2014, Thomas Gleixner wrote:
+Split set&show temp codes as common functions, so we can use it
+directly when implement linux thermal framework.
+And handle error return value for the lm90_select_remote_channel
+and write_tempx, then set_temp8 and set_temp11 could return it
+to user-space.
 
-> On Mon, 3 Mar 2014, Stephen Warren wrote:
-> 
-> > From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > 
-> > Some devices have configurable IRQ output polarities. Software might
-> > use IRQ_TYPE_* to determine how to configure such a device's IRQ
-> > output polarity in order to match how the IRQ controller input is
-> > configured. If the board or SoC inverts the signal between the
-> > device's IRQ output and controller's IRQ output, software must be
-> > aware of this fact, in order to program the IRQ output to the correct
-> > (i.e. opposite) polarity. This flag provides that information.
-> 
-> So what you're saying is:
-> 
-> Device IRQ output --> [Optional Inverter Logic] --> IRQ controller input.
-> 
-> And you're storing the information about the presence of the inverter
-> logic in the irq itself, but the core does not make any use of it and
-> you let the device driver deal with the outcome.
-> 
-> This sucks as all affected drivers have to implement the same sanity
-> logic for this.
-> 
-> Why don't you implement a core function which tells the driver which
-> polarity to select? That requires a few more changes, but I think it's
-> worth it for other reasons.
-> 
-> Right now the set_type logic requires the irq chip drivers to
-> implement sanity checking and default selections for TYPE_NONE. We can
-> be more clever about that and add this information to the irq chip
-> flags.
-> 
-> enum {
->      IRQ_CHIP_TYPES_MASK	= 0x0f,
->      IRQ_CHIP_DEFAULT_MASK	= 0xf0,
->      IRQ_CHIP_EXISTING_FLAGS	....
-> }
+Change-Id: Id7178f680718fd54b9ba953118d91052b59b692e
+Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
+---
+ drivers/hwmon/lm90.c |  164 +++++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 109 insertions(+), 55 deletions(-)
 
-We need to extend the mask to indicate whether the chip supports
-BOTH_EDGES. A chip can support FALLING and RISING, but not both at the
-same time. For the set_type side the current BOTH = FALLING | RISING
-is fine, but for checking the supported type it's not sufficient.
-
-Thanks,
-
-	tglx
+diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
+index c9ff08d..cb33dcf 100644
+--- a/drivers/hwmon/lm90.c
++++ b/drivers/hwmon/lm90.c
+@@ -473,20 +473,23 @@ static int lm90_read16(struct i2c_client *client, u8 regh, u8 regl, u16 *value)
+  * various registers have different meanings as a result of selecting a
+  * non-default remote channel.
+  */
+-static inline void lm90_select_remote_channel(struct i2c_client *client,
+-					      struct lm90_data *data,
+-					      int channel)
++static inline int lm90_select_remote_channel(struct i2c_client *client,
++					     struct lm90_data *data,
++					     int channel)
+ {
+ 	u8 config;
++	int err = 0;
+ 
+ 	if (data->kind == max6696) {
+ 		lm90_read_reg(client, LM90_REG_R_CONFIG1, &config);
+ 		config &= ~0x08;
+ 		if (channel)
+ 			config |= 0x08;
+-		i2c_smbus_write_byte_data(client, LM90_REG_W_CONFIG1,
+-					  config);
++		err = i2c_smbus_write_byte_data(client, LM90_REG_W_CONFIG1,
++						config);
+ 	}
++
++	return err;
+ }
+ 
+ /*
+@@ -759,29 +762,34 @@ static u16 temp_to_u16_adt7461(struct lm90_data *data, long val)
+  * Sysfs stuff
+  */
+ 
+-static ssize_t show_temp8(struct device *dev, struct device_attribute *devattr,
+-			  char *buf)
++static int read_temp8(struct device *dev, int index)
+ {
+-	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
+ 	struct lm90_data *data = lm90_update_device(dev);
+ 	int temp;
+ 
+ 	if (data->kind == adt7461 || data->kind == tmp451)
+-		temp = temp_from_u8_adt7461(data, data->temp8[attr->index]);
++		temp = temp_from_u8_adt7461(data, data->temp8[index]);
+ 	else if (data->kind == max6646)
+-		temp = temp_from_u8(data->temp8[attr->index]);
++		temp = temp_from_u8(data->temp8[index]);
+ 	else
+-		temp = temp_from_s8(data->temp8[attr->index]);
++		temp = temp_from_s8(data->temp8[index]);
+ 
+ 	/* +16 degrees offset for temp2 for the LM99 */
+-	if (data->kind == lm99 && attr->index == 3)
++	if (data->kind == lm99 && index == 3)
+ 		temp += 16000;
+ 
+-	return sprintf(buf, "%d\n", temp);
++	return temp;
+ }
+ 
+-static ssize_t set_temp8(struct device *dev, struct device_attribute *devattr,
+-			 const char *buf, size_t count)
++static ssize_t show_temp8(struct device *dev, struct device_attribute *devattr,
++			  char *buf)
++{
++	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
++
++	return sprintf(buf, "%d\n", read_temp8(dev, attr->index));
++}
++
++static int write_temp8(struct device *dev, int index, long val)
+ {
+ 	static const u8 reg[TEMP8_REG_NUM] = {
+ 		LM90_REG_W_LOCAL_LOW,
+@@ -794,60 +802,79 @@ static ssize_t set_temp8(struct device *dev, struct device_attribute *devattr,
+ 		MAX6659_REG_W_REMOTE_EMERG,
+ 	};
+ 
+-	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
+ 	struct lm90_data *data = dev_get_drvdata(dev);
+ 	struct i2c_client *client = data->client;
+-	int nr = attr->index;
+-	long val;
+ 	int err;
+ 
+-	err = kstrtol(buf, 10, &val);
+-	if (err < 0)
+-		return err;
+-
+ 	/* +16 degrees offset for temp2 for the LM99 */
+-	if (data->kind == lm99 && attr->index == 3)
++	if (data->kind == lm99 && index == 3)
+ 		val -= 16000;
+ 
+ 	mutex_lock(&data->update_lock);
+ 	if (data->kind == adt7461 || data->kind == tmp451)
+-		data->temp8[nr] = temp_to_u8_adt7461(data, val);
++		data->temp8[index] = temp_to_u8_adt7461(data, val);
+ 	else if (data->kind == max6646)
+-		data->temp8[nr] = temp_to_u8(val);
++		data->temp8[index] = temp_to_u8(val);
+ 	else
+-		data->temp8[nr] = temp_to_s8(val);
+-
+-	lm90_select_remote_channel(client, data, nr >= 6);
+-	i2c_smbus_write_byte_data(client, reg[nr], data->temp8[nr]);
+-	lm90_select_remote_channel(client, data, 0);
++		data->temp8[index] = temp_to_s8(val);
+ 
++	if ((err = lm90_select_remote_channel(client, data, index >= 6)) ||
++	    (err = i2c_smbus_write_byte_data(client, reg[index],
++					     data->temp8[index])) ||
++	    (err = lm90_select_remote_channel(client, data, 0)))
++		dev_err(dev, "write_temp8 failed, err %d\n", err);
+ 	mutex_unlock(&data->update_lock);
++
++	return err;
++}
++
++static ssize_t set_temp8(struct device *dev, struct device_attribute *devattr,
++			 const char *buf, size_t count)
++{
++	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
++	int index = attr->index;
++	long val;
++	int err;
++
++	err = kstrtol(buf, 10, &val);
++	if (err < 0)
++		return err;
++
++	err = write_temp8(dev, index, val);
++	if (err < 0)
++		return err;
++
+ 	return count;
+ }
+ 
+-static ssize_t show_temp11(struct device *dev, struct device_attribute *devattr,
+-			   char *buf)
++static int read_temp11(struct device *dev, int index)
+ {
+-	struct sensor_device_attribute_2 *attr = to_sensor_dev_attr_2(devattr);
+ 	struct lm90_data *data = lm90_update_device(dev);
+ 	int temp;
+ 
+ 	if (data->kind == adt7461 || data->kind == tmp451)
+-		temp = temp_from_u16_adt7461(data, data->temp11[attr->index]);
++		temp = temp_from_u16_adt7461(data, data->temp11[index]);
+ 	else if (data->kind == max6646)
+-		temp = temp_from_u16(data->temp11[attr->index]);
++		temp = temp_from_u16(data->temp11[index]);
+ 	else
+-		temp = temp_from_s16(data->temp11[attr->index]);
++		temp = temp_from_s16(data->temp11[index]);
+ 
+ 	/* +16 degrees offset for temp2 for the LM99 */
+-	if (data->kind == lm99 &&  attr->index <= 2)
++	if (data->kind == lm99 && index <= 2)
+ 		temp += 16000;
+ 
+-	return sprintf(buf, "%d\n", temp);
++	return temp;
+ }
+ 
+-static ssize_t set_temp11(struct device *dev, struct device_attribute *devattr,
+-			  const char *buf, size_t count)
++static ssize_t show_temp11(struct device *dev, struct device_attribute *devattr,
++			   char *buf)
++{
++	struct sensor_device_attribute_2 *attr = to_sensor_dev_attr_2(devattr);
++
++	return sprintf(buf, "%d\n", read_temp11(dev, attr->index));
++}
++
++static int write_temp11(struct device *dev, int nr, int index, long val)
+ {
+ 	struct {
+ 		u8 high;
+@@ -861,18 +888,10 @@ static ssize_t set_temp11(struct device *dev, struct device_attribute *devattr,
+ 		{ LM90_REG_W_REMOTE_HIGHH, LM90_REG_W_REMOTE_HIGHL, 1 }
+ 	};
+ 
+-	struct sensor_device_attribute_2 *attr = to_sensor_dev_attr_2(devattr);
+ 	struct lm90_data *data = dev_get_drvdata(dev);
+ 	struct i2c_client *client = data->client;
+-	int nr = attr->nr;
+-	int index = attr->index;
+-	long val;
+ 	int err;
+ 
+-	err = kstrtol(buf, 10, &val);
+-	if (err < 0)
+-		return err;
+-
+ 	/* +16 degrees offset for temp2 for the LM99 */
+ 	if (data->kind == lm99 && index <= 2)
+ 		val -= 16000;
+@@ -887,15 +906,50 @@ static ssize_t set_temp11(struct device *dev, struct device_attribute *devattr,
+ 	else
+ 		data->temp11[index] = temp_to_s8(val) << 8;
+ 
+-	lm90_select_remote_channel(client, data, reg[nr].channel);
+-	i2c_smbus_write_byte_data(client, reg[nr].high,
+-				  data->temp11[index] >> 8);
+-	if (data->flags & LM90_HAVE_REM_LIMIT_EXT)
+-		i2c_smbus_write_byte_data(client, reg[nr].low,
+-					  data->temp11[index] & 0xff);
+-	lm90_select_remote_channel(client, data, 0);
++	err = lm90_select_remote_channel(client, data, reg[nr].channel);
++	if (err)
++		goto error;
++
++	err = i2c_smbus_write_byte_data(client, reg[nr].high,
++					data->temp11[index] >> 8);
++	if (err)
++		goto error;
++
++	if (data->flags & LM90_HAVE_REM_LIMIT_EXT) {
++		err = i2c_smbus_write_byte_data(client, reg[nr].low,
++						data->temp11[index] & 0xff);
++		if (err)
++			goto error;
++	}
++
++	err = lm90_select_remote_channel(client, data, 0);
++
++error:
++	if (err)
++		dev_err(dev, "write_temp11 failed, err %d\n", err);
+ 
+ 	mutex_unlock(&data->update_lock);
++
++	return err;
++}
++
++static ssize_t set_temp11(struct device *dev, struct device_attribute *devattr,
++			  const char *buf, size_t count)
++{
++	struct sensor_device_attribute_2 *attr = to_sensor_dev_attr_2(devattr);
++	int nr = attr->nr;
++	int index = attr->index;
++	long val;
++	int err;
++
++	err = kstrtol(buf, 10, &val);
++	if (err < 0)
++		return err;
++
++	err = write_temp11(dev, nr, index, val);
++	if (err < 0)
++		return err;
++
+ 	return count;
+ }
+ 
+-- 
+1.7.9.5
