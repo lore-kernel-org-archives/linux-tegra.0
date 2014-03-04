@@ -1,101 +1,48 @@
-From: Tim Harvey <tharvey@gateworks.com>
-Subject: Re: [PATCH 0/7] PCI irq mapping fixes and cleanups
-Date: Mon, 3 Mar 2014 22:04:04 -0800
-Message-ID: <CAJ+vNU2rR0+-tW9Z6M_1NNOagDNCGYE71ifPj_WryYjvnFY=Pg@mail.gmail.com>
-References: <1393608523-17509-1-git-send-email-l.stach@pengutronix.de>
-	<CAJ+vNU2VN5haOU2GN5o7UUg9vgYh06pAhvDaoGw6EzTBEbD0mg@mail.gmail.com>
-	<20140301183059.GA6315@obsidianresearch.com>
-	<000601cf36b8$330b3a90$9921afb0$%han@samsung.com>
-	<CAJ+vNU3UL+LTWnoxW7scAig19=z2xoYCA-HZ6a7GUyGEXtKK9Q@mail.gmail.com>
-	<CAJ+vNU2ojt_o9=AOGfpbx6NCOE_kE6tsV8FvjoGYk9BBwP_OFQ@mail.gmail.com>
-	<20140304000102.GC5603@obsidianresearch.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH V3 4/5] mfd: palmas: support IRQ inversion at the board
+ level
+Date: Tue, 4 Mar 2014 16:25:12 +0800
+Message-ID: <20140304082512.GF10579@lee--X1>
+References: <1393876300-3061-1-git-send-email-swarren@wwwdotorg.org>
+ <1393876300-3061-4-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <20140304000102.GC5603@obsidianresearch.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
-Cc: Jingoo Han <jg1.han@samsung.com>, Lucas Stach <l.stach@pengutronix.de>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Richard Zhu <r65037@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>, linux-sh <linux-sh@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Bjorn Helgaas <bhelgaas@google.com>, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben-linux@fluff.org>, linux-tegra <linux-tegra@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Grant Likely <grant.likely@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1393876300-3061-4-git-send-email-swarren@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Samuel Ortiz <sameo@linux.intel.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Mar 3, 2014 at 4:01 PM, Jason Gunthorpe
-<jgunthorpe@obsidianresearch.com> wrote:
-> On Mon, Mar 03, 2014 at 03:40:43PM -0800, Tim Harvey wrote:
->
->> of_irq_parse_and_map_pci().  The GIC function that translates the
->> interrupt per domain is given irq_data: 0x123 0x04 0x00
->
-> This has been shifted by 1 byte..
->
->> IRQ 123, which should get 32 added to it for irq155).  Instead, the
->> implementation of gic_irq_domain_xlate()
->> (http://lxr.missinglinkelectronics.com/linux/drivers/irqchip/irq-gic.c#L832)
->> adds 32 to the 0x04 returning 20:
->> [    1.841781] of_irq_parse_raw:  /soc/pcie@0x01000000:00000001
->> [    1.841813] of_irq_parse_raw: ipar=/soc/pcie@0x01000000, size=1
->> [    1.841838]  -> addrsize=3
->> [    1.841870]  -> match=1 (imaplen=28)
->                               ^^^^^^^^^^^^^
->
-> That looks odd, it should be the number of dwords in the
-> interrupt-map, you have 4 lines of 8 dwords each, so it should be
-> 32.
+> From: Stephen Warren <swarren@nvidia.com>
+>=20
+> Implement the new DT property ti,irq-externally-inverted, and add an
+> equivalent platform data field to match. This allows the driver to
+> correctly automatically configure the IRQ output polarity when the bo=
+ard
+> or SoC contains an inverter between the Palmas IRQ output and IRQ
+> controller input.
+>=20
+> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+> ---
+> v3:
+> * Use an IRQD flag to represent the data, rather than a custom DT pro=
+perty.
+> v2:
+> * Split V1's patch 1/2 into separate patches 1/3 and 2/3.
+> ---
+>  drivers/mfd/palmas.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 
-(+cc Grant Likely)
+Looks good to me. Let me know how you want to deal with this. I'm
+happy to create an immutable branch for everyone to pull from.
 
-imaplen does indeed get initialized to 32 (size of interrupt-map /
-sizeof(u32)) but its printed above after its been decremented in the
-loop which is misleading
-(http://lxr.missinglinkelectronics.com/linux/drivers/of/irq.c#L201)
+Acked-by: Lee Jones <lee.jones@linaro.org>
 
-The issue appears to me to be a bug in of_irq_parse_raw() which has
-been around since Graht's original commit:
-http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/drivers/of/irq.c?id=7dc2e1134a22dc242175d5321c0c9e97d16eb87b
-
-diff --git a/drivers/of/irq.c b/drivers/of/irq.c
-index 9bcf2cf..8829197 100644
---- a/drivers/of/irq.c
-+++ b/drivers/of/irq.c
-@@ -237,11 +237,11 @@ int of_irq_parse_raw(const __be32 *addr, struct of_phandle
-                        /* Check for malformed properties */
-                        if (WARN_ON(newaddrsize + newintsize > MAX_PHANDLE_ARGS)
-                                goto fail;
--                       if (imaplen < (newaddrsize + newintsize))
-+                       if (imaplen < newintsize)
-                                goto fail;
-
--                       imap += newaddrsize + newintsize;
--                       imaplen -= newaddrsize + newintsize;
-+                       imap += newintsize;
-+                       imaplen -= newintsize;
-
-                        pr_debug(" -> imaplen=%d\n", imaplen);
-                }
-
-The issue is that the interrupt-map table point (imap) needs to be
-incremented over the parent unit interrupt specifier which is
-newintsize cells, not newaddrsize + newintsize cells.  The invalid
-calculation would cause the pointer to get mis-aligned and thus only
-the first interrupt entry would ever get properly checked for a match.
-
-It looks like of_irq_parse_raw() is only called from
-of_irq_parse_pci() which prior to Lucas' patch was only called from
-pci_read_irq_line() called from pcibios_setup_device() used in
-arch/arm/powerpc, so perhaps this function isn't widely used
-explaining why the bug was never caught.
-
-I'll post a patch shortly with the above fix.
-
-<snip>
-
->> [    1.841972] irq_create_of_mapping: calling xlate for 123/4/0 3
->
-> And it is the wrong data.. 123/4/0 is
-
-right - this is shifted because of the issue above.
-
-With the above patch Lucas' original patch now operates correctly to
-resolve the 4 legacy PCI interrupts required when using a P2P bridge
-on the IMX6.
-
-Tim
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
