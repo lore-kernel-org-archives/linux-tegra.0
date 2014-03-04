@@ -1,66 +1,101 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V2 1/3] dt: palmas: support IRQ inversion at the board
- level
-Date: Tue, 4 Mar 2014 11:50:19 +0800
-Message-ID: <20140304035019.GZ2411@sirena.org.uk>
-References: <1393534281-30759-1-git-send-email-swarren@wwwdotorg.org>
- <20140227210227.GE2931@xora-haswell>
- <530FAFAE.5050800@wwwdotorg.org>
- <20140228055818.GA29849@sirena.org.uk>
- <5310BA99.4050203@wwwdotorg.org>
- <20140303005246.GA22047@xora-yoga13>
- <5314B0C0.4040008@wwwdotorg.org>
+From: Tim Harvey <tharvey@gateworks.com>
+Subject: Re: [PATCH 0/7] PCI irq mapping fixes and cleanups
+Date: Mon, 3 Mar 2014 22:04:04 -0800
+Message-ID: <CAJ+vNU2rR0+-tW9Z6M_1NNOagDNCGYE71ifPj_WryYjvnFY=Pg@mail.gmail.com>
+References: <1393608523-17509-1-git-send-email-l.stach@pengutronix.de>
+	<CAJ+vNU2VN5haOU2GN5o7UUg9vgYh06pAhvDaoGw6EzTBEbD0mg@mail.gmail.com>
+	<20140301183059.GA6315@obsidianresearch.com>
+	<000601cf36b8$330b3a90$9921afb0$%han@samsung.com>
+	<CAJ+vNU3UL+LTWnoxW7scAig19=z2xoYCA-HZ6a7GUyGEXtKK9Q@mail.gmail.com>
+	<CAJ+vNU2ojt_o9=AOGfpbx6NCOE_kE6tsV8FvjoGYk9BBwP_OFQ@mail.gmail.com>
+	<20140304000102.GC5603@obsidianresearch.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="anW2uJ7hcMI/vMa8"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <5314B0C0.4040008-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Graeme Gregory <graeme-/SyDAi3Rz4f10XsdtD+oqA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, J Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>, Ian Lartey <ian-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <20140304000102.GC5603@obsidianresearch.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
+Cc: Jingoo Han <jg1.han@samsung.com>, Lucas Stach <l.stach@pengutronix.de>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Richard Zhu <r65037@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>, linux-sh <linux-sh@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Bjorn Helgaas <bhelgaas@google.com>, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben-linux@fluff.org>, linux-tegra <linux-tegra@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Grant Likely <grant.likely@linaro.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Mon, Mar 3, 2014 at 4:01 PM, Jason Gunthorpe
+<jgunthorpe@obsidianresearch.com> wrote:
+> On Mon, Mar 03, 2014 at 03:40:43PM -0800, Tim Harvey wrote:
+>
+>> of_irq_parse_and_map_pci().  The GIC function that translates the
+>> interrupt per domain is given irq_data: 0x123 0x04 0x00
+>
+> This has been shifted by 1 byte..
+>
+>> IRQ 123, which should get 32 added to it for irq155).  Instead, the
+>> implementation of gic_irq_domain_xlate()
+>> (http://lxr.missinglinkelectronics.com/linux/drivers/irqchip/irq-gic.c#L832)
+>> adds 32 to the 0x04 returning 20:
+>> [    1.841781] of_irq_parse_raw:  /soc/pcie@0x01000000:00000001
+>> [    1.841813] of_irq_parse_raw: ipar=/soc/pcie@0x01000000, size=1
+>> [    1.841838]  -> addrsize=3
+>> [    1.841870]  -> match=1 (imaplen=28)
+>                               ^^^^^^^^^^^^^
+>
+> That looks odd, it should be the number of dwords in the
+> interrupt-map, you have 4 lines of 8 dwords each, so it should be
+> 32.
 
---anW2uJ7hcMI/vMa8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+(+cc Grant Likely)
 
-On Mon, Mar 03, 2014 at 09:41:36AM -0700, Stephen Warren wrote:
+imaplen does indeed get initialized to 32 (size of interrupt-map /
+sizeof(u32)) but its printed above after its been decremented in the
+loop which is misleading
+(http://lxr.missinglinkelectronics.com/linux/drivers/of/irq.c#L201)
 
-> 2) We can go through every single interrupt controller's DT binding and
-> driver, and implement (document and parse) the new IRQ specifier flag
-> there, and pass it throgh the Linux IRQ stack, yet we still need code in
-> every IC driver to actually read the flag, so we haven't removed any
-> code. It seems /much/ simpler, and no more of a maintenance or
-> consistency burden, to just have the IC driver read the flag directly
-> from their own DT.
+The issue appears to me to be a bug in of_irq_parse_raw() which has
+been around since Graht's original commit:
+http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/drivers/of/irq.c?id=7dc2e1134a22dc242175d5321c0c9e97d16eb87b
 
-Why does this have to be handled by the chip drivers?  Can't the
-interrupt controller configured in a way that the chip drivers never
-need to see it at all, for example by adding a "override the mode for
-this input" flag inside the device?
+diff --git a/drivers/of/irq.c b/drivers/of/irq.c
+index 9bcf2cf..8829197 100644
+--- a/drivers/of/irq.c
++++ b/drivers/of/irq.c
+@@ -237,11 +237,11 @@ int of_irq_parse_raw(const __be32 *addr, struct of_phandle
+                        /* Check for malformed properties */
+                        if (WARN_ON(newaddrsize + newintsize > MAX_PHANDLE_ARGS)
+                                goto fail;
+-                       if (imaplen < (newaddrsize + newintsize))
++                       if (imaplen < newintsize)
+                                goto fail;
 
---anW2uJ7hcMI/vMa8
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+-                       imap += newaddrsize + newintsize;
+-                       imaplen -= newaddrsize + newintsize;
++                       imap += newintsize;
++                       imaplen -= newintsize;
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+                        pr_debug(" -> imaplen=%d\n", imaplen);
+                }
 
-iQIcBAEBAgAGBQJTFU14AAoJELSic+t+oim9PrYP/0GNcCPpJN0eW/tM1aKoh54G
-Fx2s5Ppc0GCWq4L92G5qNYCgWYJV5ZV30IM9rRorhJKjJaEZNuxdz+K4idYXvSo9
-4T/qEpkrsrCwgybvkFaMRFarUPL54gv1pMQ3wJUY1ywUSKjOvSNVq01dzFakbUb1
-EE09XR92InZ9ty04/uYaiB9ZQag9j7knLwS7Ys5WaNQbc/z6x/CWaiqhX/lXrYWP
-X3g1gl6cBT3EL3jhg6Oj+LDQTo85t5fPG8Xq7i3mBg2PG1MCJSiYGBH0Q00Bc1p8
-uaQPZ5/fGFn3nzkgdJvpU7haC7x89BsuBjTBVB4orEng34iINZ48jx35U2V6Qf9x
-fQkgtVo2lRHEDWE63ZQMpV39xSm/Hs9k/AsLUCvBVQ0PvrierMfdADAfsVKSDksb
-/QlBQalTmYy/+kHavEFJPGm+ywRzmjXxA8teABtg+lZEsrPtJV5VOmgHWOjD4nNR
-5DPU5hGKz6VZ2NTXruos+MScPGIth+OQQ1Y/5ggsZb/+kjNzbzSZb0So8tlHi+KS
-2ysCAfbJNbrptnacKlSBnpJhKBa/mW0i5dbnOveRhj/cQMbzkgERcyua3VIShdrB
-71wxIA+7TPQxbFpg/RnRzgbDPiJ68PEfKB1NaS+gB8fUlABHgHduXnnuejNkBqML
-gvdimylX8TlmfXaCkHlG
-=nc+8
------END PGP SIGNATURE-----
+The issue is that the interrupt-map table point (imap) needs to be
+incremented over the parent unit interrupt specifier which is
+newintsize cells, not newaddrsize + newintsize cells.  The invalid
+calculation would cause the pointer to get mis-aligned and thus only
+the first interrupt entry would ever get properly checked for a match.
 
---anW2uJ7hcMI/vMa8--
+It looks like of_irq_parse_raw() is only called from
+of_irq_parse_pci() which prior to Lucas' patch was only called from
+pci_read_irq_line() called from pcibios_setup_device() used in
+arch/arm/powerpc, so perhaps this function isn't widely used
+explaining why the bug was never caught.
+
+I'll post a patch shortly with the above fix.
+
+<snip>
+
+>> [    1.841972] irq_create_of_mapping: calling xlate for 123/4/0 3
+>
+> And it is the wrong data.. 123/4/0 is
+
+right - this is shifted because of the issue above.
+
+With the above patch Lucas' original patch now operates correctly to
+resolve the 4 legacy PCI interrupts required when using a P2P bridge
+on the IMX6.
+
+Tim
