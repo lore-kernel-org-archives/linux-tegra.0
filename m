@@ -1,137 +1,67 @@
-From: Wei Ni <wni@nvidia.com>
-Subject: [PATCH v2 2/3] hwmon: lm90: expose to thermal fw via DT nodes
-Date: Tue, 4 Mar 2014 19:31:03 +0800
-Message-ID: <1393932664-13319-3-git-send-email-wni@nvidia.com>
-References: <1393932664-13319-1-git-send-email-wni@nvidia.com>
+From: Lucas Stach <l.stach@pengutronix.de>
+Subject: Re: [PATCH 7/7] PCI: designware: split samsung and fsl bindings
+Date: Tue, 04 Mar 2014 15:13:03 +0100
+Message-ID: <1393942383.9405.8.camel@weser.hi.pengutronix.de>
+References: <1393608523-17509-1-git-send-email-l.stach@pengutronix.de>
+	 <1393608523-17509-8-git-send-email-l.stach@pengutronix.de>
+	 <201402282103.01897.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1393932664-13319-1-git-send-email-wni@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: khali@linux-fr.org, linux@roeck-us.net, swarren@wwwdotorg.org
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, lm-sensors@lm-sensors.org, Wei Ni <wni@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <201402282103.01897.arnd@arndb.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, Simon Horman <horms@verge.net.au>, Shawn Guo <shawn.guo@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Jingoo Han <jg1.han@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Tim Harvey <tharvey@gateworks.com>, Richard Zhu <r65037@freescale.com>, kernel@pengutronix.de
 List-Id: linux-tegra@vger.kernel.org
 
-This patch adds to lm90 temperature sensor the possibility
-to expose itself as thermal zone device, registered on the
-thermal framework.
+Am Freitag, den 28.02.2014, 21:03 +0100 schrieb Arnd Bergmann:
+> On Friday 28 February 2014, Lucas Stach wrote:
+> > +Required properties:
+> > +- compatible: "fsl,imx6q-pcie"
+> > +- reg: base addresse and length of the pcie controller
+> > +- interrupts: First entry must contain interrupt handle for controller
+> > +  INTA output.
+> 
+> I think this should be documented as "optional" and only for
+> backwards compatibility with old kernels.
+> 
+> > +- clocks: Must contain an entry for each entry in clock-names.
+> > +       See ../clocks/clock-bindings.txt for details.
+> > +- clock-names: Must include the following entries: 
+> > +       - "pcie_ref_125m"
+> > +       - "sata_ref_100m"
+> > +       - "lvds_gate"
+> > +       - "pcie_axi"
+> 
+> I don't understand why you have completely different clocks here
+> from the exynos documentation. The clock names should really be
+> the same. Also, why do you have a "sata_ref_100m" clock?
+> Is this just driving a device that happens to be on-board
+> for a specific machine? Same for the "lvds_gate".
+> 
 
-The thermal zone is built only if a device tree node
-describing a thermal zone for this sensor is present
-inside the lm90 DT node. Otherwise, the driver behavior
-will be the same.
+Right, we should be able to reuse the clock names. Though I'm not really
+sure how the Samsung clocks maps to those used on i.MX, as the names are
+a bit generic. Maybe someone from Samsung could shed a bit of light on
+this.
 
-Change-Id: Ie263e8973ec45d057fddadd3042c7d3fefdf4acc
-Signed-off-by: Wei Ni <wni@nvidia.com>
----
- drivers/hwmon/lm90.c |   58 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
+On i.MX6 the clock names (which I have to agree are pretty bad) map as
+follows:
+pcie_axi: host controller main register/bus access clock
+pcie_ref_125m: pcie phy reference clock
 
-diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
-index cb33dcf..2a385c5 100644
---- a/drivers/hwmon/lm90.c
-+++ b/drivers/hwmon/lm90.c
-@@ -96,6 +96,8 @@
- #include <linux/sysfs.h>
- #include <linux/interrupt.h>
- #include <linux/regulator/consumer.h>
-+#include <linux/of.h>
-+#include <linux/thermal.h>
- 
- /*
-  * Addresses to scan
-@@ -119,6 +121,13 @@ static const unsigned short normal_i2c[] = {
- enum chips { lm90, adm1032, lm99, lm86, max6657, max6659, adt7461, max6680,
- 	max6646, w83l771, max6696, sa56004, g781, tmp451 };
- 
-+enum sensor_id {
-+	LOCAL = 0,
-+	REMOTE,
-+	REMOTE2,
-+	SENSOR_ID_END,
-+};
-+
- /*
-  * The LM90 registers
-  */
-@@ -368,6 +377,7 @@ struct lm90_data {
- 	struct i2c_client *client;
- 	struct device *hwmon_dev;
- 	const struct attribute_group *groups[6];
-+	struct thermal_zone_device *tz[SENSOR_ID_END];
- 	struct mutex update_lock;
- 	struct regulator *regulator;
- 	char valid; /* zero until following fields are valid */
-@@ -874,6 +884,24 @@ static ssize_t show_temp11(struct device *dev, struct device_attribute *devattr,
- 	return sprintf(buf, "%d\n", read_temp11(dev, attr->index));
- }
- 
-+static int lm90_read_local_temp(void *dev, long *temp)
-+{
-+	*temp = read_temp11(dev, LOCAL_TEMP);
-+	return 0;
-+}
-+
-+static int lm90_read_remote_temp(void *dev, long *temp)
-+{
-+	*temp = read_temp11(dev, REMOTE_TEMP);
-+	return 0;
-+}
-+
-+static int lm90_read_remote2_temp(void *dev, long *temp)
-+{
-+	*temp = read_temp11(dev, REMOTE2_TEMP);
-+	return 0;
-+}
-+
- static int write_temp11(struct device *dev, int nr, int index, long val)
- {
- 	struct {
-@@ -1653,6 +1681,33 @@ static int lm90_probe(struct i2c_client *client,
- 		}
- 	}
- 
-+	data->tz[LOCAL] = thermal_zone_of_sensor_register(&client->dev,
-+							LOCAL,
-+							&client->dev,
-+							lm90_read_local_temp,
-+							NULL);
-+	if (IS_ERR(data->tz[LOCAL]))
-+		data->tz[LOCAL] = NULL;
-+
-+	data->tz[REMOTE] = thermal_zone_of_sensor_register(&client->dev,
-+							REMOTE,
-+							&client->dev,
-+							lm90_read_remote_temp,
-+							NULL);
-+	if (IS_ERR(data->tz[REMOTE]))
-+		data->tz[REMOTE] = NULL;
-+
-+	if (data->flags & LM90_HAVE_TEMP3) {
-+		data->tz[REMOTE2] = thermal_zone_of_sensor_register(
-+							&client->dev,
-+							REMOTE2,
-+							&client->dev,
-+							lm90_read_remote2_temp,
-+							NULL);
-+		if (IS_ERR(data->tz[REMOTE2]))
-+			data->tz[REMOTE2] = NULL;
-+	}
-+
- 	return 0;
- 
- exit_unregister:
-@@ -1668,8 +1723,11 @@ exit_restore:
- 
- static int lm90_remove(struct i2c_client *client)
- {
-+	int i;
- 	struct lm90_data *data = i2c_get_clientdata(client);
- 
-+	for (i = 0; i < SENSOR_ID_END; i++)
-+		thermal_zone_of_sensor_unregister(&client->dev, data->tz[i]);
- 	hwmon_device_unregister(data->hwmon_dev);
- 	device_remove_file(&client->dev, &dev_attr_pec);
- 	lm90_restore_conf(client, data);
+sata_ref_100m: pcie bus 100MHz reference clock
+lvds_gate: bad abstraction. Decides if the reference clock is sourced
+internal (i.e. the 100MHz ref clock above) or from an SoC external
+source. We should really find a better way of representing this in the
+clock tree.
+
+Regards,
+Lucas
+
 -- 
-1.7.9.5
+Pengutronix e.K.                           | Lucas Stach                 |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-5076 |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
