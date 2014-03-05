@@ -1,41 +1,46 @@
-From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Subject: Re: [PATCH v2 3/3] ARM: tegra: dalmore: add thermal zones for nct1008
-Date: Tue, 4 Mar 2014 14:23:57 -0800
-Message-ID: <20140304222357.GA6125@roeck-us.net>
-References: <1393932664-13319-1-git-send-email-wni@nvidia.com>
- <1393932664-13319-4-git-send-email-wni@nvidia.com>
- <53164E78.5010708@wwwdotorg.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCHv2 3/5] net: rfkill: gpio: remove gpio names
+Date: Wed, 5 Mar 2014 09:43:16 +0800
+Message-ID: <CACRpkdZF4-rWs1WkOp3t0x77fgSCE71E=wdrxiDuGZ8eBu_p_Q@mail.gmail.com>
+References: <1393330950-7283-1-git-send-email-heikki.krogerus@linux.intel.com>
+	<1393330950-7283-4-git-send-email-heikki.krogerus@linux.intel.com>
+	<530D218E.9010007@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <53164E78.5010708-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <530D218E.9010007@wwwdotorg.org>
+Sender: netdev-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Johannes Berg <johannes@sipsolutions.net>, "David S. Miller" <davem@davemloft.net>, Chen-Yu Tsai <wens@csie.org>, Rhyland Klein <rklein@nvidia.com>, Marc Dietrich <marvin24@gmx.de>, Arnd Bergmann <arnd@arndb.de>, Alexandre Courbot <gnurou@gmail.com>, linux-wireless <linux-wireless@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Mar 04, 2014 at 03:06:48PM -0700, Stephen Warren wrote:
-> On 03/04/2014 04:31 AM, Wei Ni wrote:
-> > Add dt node to describe the thermal zone for the nct1008.
-> > 
-> > Change-Id: I0256836e52d73ec282574e4fd91df52958936e35
-> 
-> ???????
-> 
-I think this is for one of those open-source sites out there
-which count open source contributions. Not Ohloh, but similar.
-You have to specify that Change-Id to have it associate your
-name with the patch.
+On Wed, Feb 26, 2014 at 7:04 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
 
-Guenter
+>> -     gpio = devm_gpiod_get_index(&pdev->dev, rfkill->reset_name, 0);
+>> +     gpio = devm_gpiod_get_index(&pdev->dev, NULL, 0);
+>
+> I think the correct fix here is to look up the GPIO by name rather than
+> by index, but simply hard-code the name rather than generating it with
+> sprintf(). Index lookups are hard to expand compatibly, but named-based
+> lookups scale much better.
+>
+> In other words, I rather specifically disagree with using a plain
+> "gpios" property in any future DT binding, but would strongly prefer
+> e.g. reset-gpios/shutdown-gpios or gpios/gpio-names.
 
-> > diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
-> 
-> > +	thermal-zones {
-> > +		nct1008-local {
-> > +			polling-delay-passive = <2000>; /* milliseconds */
-> 
-> Nothing can possible make use of this node, since there's no compatible
-> value or anything else like that to bind a driver to it.
-> 
+If I understand the situation correctly it's like ACPI does not have named
+GPIOs so keeping specifying this in DT GPIO bindings is counter-productive
+to the work of abstracting the access to GPIO handlers so that drivers
+need not know whether ACPI or DT is used for describing the hardware.
+
+We could do worse. Like putting the GPIOs in a differently indexed order
+in DT vs ACPI.
+
+I have no strong opinion really, I just see that people doing DT and ACPI
+HW descriptions need to cooperate if they want to share infrastructure
+or we have to give up that pipe dream and let each HW description
+method have its own unique probe()-runpath. Which would be the result
+in this driver if we persist on using named GPIOs.
+
+Yours,
+Linus Walleij
