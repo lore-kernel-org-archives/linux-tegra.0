@@ -1,30 +1,26 @@
-From: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
-Subject: Re: [PATCH v2 6/6] PCI: designware: use new OF interrupt mapping
- when possible
-Date: Wed, 5 Mar 2014 11:42:19 -0700
-Message-ID: <20140305184219.GA29903@obsidianresearch.com>
-References: <1394025951-32438-1-git-send-email-l.stach@pengutronix.de>
- <1394025951-32438-7-git-send-email-l.stach@pengutronix.de>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: use 2 address cells for Tegra124 DT
+Date: Wed, 05 Mar 2014 13:37:15 -0700
+Message-ID: <53178AFB.5010000@wwwdotorg.org>
+References: <1393953357-32673-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1394025951-32438-7-git-send-email-l.stach@pengutronix.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, linux-sh@vger.kernel.org, linux-pci@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Bjorn Helgaas <bhelgaas@google.com>, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben-linux@fluff.org>, linux-tegra@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, kernel@pengutronix.de
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1393953357-32673-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Mar 05, 2014 at 02:25:51PM +0100, Lucas Stach wrote:
-> -	return pp->irq;
-> +	irq = of_irq_parse_and_map_pci(dev, slot, pin);
-> +	if (!irq)
-> +		irq = pp->irq;
+On 03/04/2014 10:15 AM, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Tegra124 can support 4GB of RAM. With that much RAM (plus some memory-
+> mapped IO peripherals), more than 32-bits of physical address space is
+> required. Hence, convert all Tegra124 DTs to use 2 DT cells for address
+> space.
+> 
+> (I think this was suggested by Olof Johansson, but I'm not 100% sure)
 
-In light of the two bugs that Tim found, it might be wise to throw a
-'dev_warn(FW_BUG "Missing DT interrupt mapping")' in the fall back
-path, so it doesn't continue to silently cover up errors on the OF/DT
-side..
-
-Regards,
-Jason
+I've applied this to Tegra's for-3.15/dt branch.
