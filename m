@@ -1,45 +1,53 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCHv2 3/5] net: rfkill: gpio: remove gpio names
-Date: Tue, 04 Mar 2014 19:18:30 -0700
-Message-ID: <53168976.7000008@wwwdotorg.org>
-References: <1393330950-7283-1-git-send-email-heikki.krogerus@linux.intel.com>	<1393330950-7283-4-git-send-email-heikki.krogerus@linux.intel.com>	<530D218E.9010007@wwwdotorg.org> <CACRpkdZF4-rWs1WkOp3t0x77fgSCE71E=wdrxiDuGZ8eBu_p_Q@mail.gmail.com>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 3/3] ARM: tegra: dalmore: add thermal zones for nct1008
+Date: Wed, 5 Mar 2014 10:30:51 +0800
+Message-ID: <53168C5B.6070003@nvidia.com>
+References: <1393932664-13319-1-git-send-email-wni@nvidia.com>
+ <1393932664-13319-4-git-send-email-wni@nvidia.com>
+ <53164E78.5010708@wwwdotorg.org> <20140304222357.GA6125@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZF4-rWs1WkOp3t0x77fgSCE71E=wdrxiDuGZ8eBu_p_Q@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Johannes Berg <johannes@sipsolutions.net>, "David S. Miller" <davem@davemloft.net>, Chen-Yu Tsai <wens@csie.org>, Rhyland Klein <rklein@nvidia.com>, Marc Dietrich <marvin24@gmx.de>, Arnd Bergmann <arnd@arndb.de>, Alexandre Courbot <gnurou@gmail.com>, linux-wireless <linux-wireless@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140304222357.GA6125-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/04/2014 06:43 PM, Linus Walleij wrote:
-> On Wed, Feb 26, 2014 at 7:04 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
-> 
->>> -     gpio = devm_gpiod_get_index(&pdev->dev, rfkill->reset_name, 0);
->>> +     gpio = devm_gpiod_get_index(&pdev->dev, NULL, 0);
+On 03/05/2014 06:23 AM, Guenter Roeck wrote:
+> On Tue, Mar 04, 2014 at 03:06:48PM -0700, Stephen Warren wrote:
+>> On 03/04/2014 04:31 AM, Wei Ni wrote:
+>>> Add dt node to describe the thermal zone for the nct1008.
+>>>
+>>> Change-Id: I0256836e52d73ec282574e4fd91df52958936e35
 >>
->> I think the correct fix here is to look up the GPIO by name rather than
->> by index, but simply hard-code the name rather than generating it with
->> sprintf(). Index lookups are hard to expand compatibly, but named-based
->> lookups scale much better.
+>> ???????
 >>
->> In other words, I rather specifically disagree with using a plain
->> "gpios" property in any future DT binding, but would strongly prefer
->> e.g. reset-gpios/shutdown-gpios or gpios/gpio-names.
+> I think this is for one of those open-source sites out there
+> which count open source contributions. Not Ohloh, but similar.
+> You have to specify that Change-Id to have it associate your
+> name with the patch.
+
+It's so sorry, I'm working for chromiumos, this change-id is generated
+by gerrit, I should remove it.
+
 > 
-> If I understand the situation correctly it's like ACPI does not have named
-> GPIOs so keeping specifying this in DT GPIO bindings is counter-productive
-> to the work of abstracting the access to GPIO handlers so that drivers
-> need not know whether ACPI or DT is used for describing the hardware.
+> Guenter
+> 
+>>> diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+>>
+>>> +	thermal-zones {
+>>> +		nct1008-local {
+>>> +			polling-delay-passive = <2000>; /* milliseconds */
+>>
+>> Nothing can possible make use of this node, since there's no compatible
+>> value or anything else like that to bind a driver to it.
 
-For devices that already have both ACPI and DT bindings, we can't
-pretend they can be the same; they are already potentially different. We
-simply need to parse DT and ACPI differently, since that's the sway
-their bindings are defined.
+We have special Tskin driver that estimator skin temperature based on
+nct1008 local and remote sensors.
 
-For any devices that don't have both ACPI and DT bindings, I agree we
-should certainly strive to make any new bindings aligned so we don't
-have to deal with this for them.
+Thanks.
+Wei.
 
-However, we can't change the past.
+>>
