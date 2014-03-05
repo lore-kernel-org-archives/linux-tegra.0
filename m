@@ -1,78 +1,63 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 3/3] ARM: tegra: dalmore: add thermal zones for nct1008
-Date: Wed, 5 Mar 2014 12:30:32 +0800
-Message-ID: <5316A868.7000908@nvidia.com>
-References: <1393932664-13319-1-git-send-email-wni@nvidia.com> <1393932664-13319-4-git-send-email-wni@nvidia.com> <53164E78.5010708@wwwdotorg.org> <20140304222357.GA6125@roeck-us.net> <53168C5B.6070003@nvidia.com> <531692D2.6040204@wwwdotorg.org> <531694EB.50906@nvidia.com> <531696A9.6060906@wwwdotorg.org> <5316A785.8030504@nvidia.com>
+From: Shawn Guo <shawn.guo@linaro.org>
+Subject: Re: [PATCH 5/7] ARM: dts: imx6: add PCIe interrupt mapping properties
+Date: Wed, 5 Mar 2014 13:43:35 +0800
+Message-ID: <20140305054333.GF8784@S2101-09.ap.freescale.net>
+References: <1393608523-17509-1-git-send-email-l.stach@pengutronix.de>
+ <1393608523-17509-6-git-send-email-l.stach@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5316A785.8030504-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-sh-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1393608523-17509-6-git-send-email-l.stach@pengutronix.de>
+Sender: linux-sh-owner@vger.kernel.org
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, Simon Horman <horms@verge.net.au>, Kukjin Kim <kgene.kim@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Jingoo Han <jg1.han@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Tim Harvey <tharvey@gateworks.com>, Richard Zhu <r65037@freescale.com>, Arnd Bergmann <arnd@arndb.de>, kernel@pengutronix.de
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/05/2014 12:26 PM, Wei Ni wrote:
-> On 03/05/2014 11:14 AM, Stephen Warren wrote:
->> On 03/04/2014 08:07 PM, Wei Ni wrote:
->>> On 03/05/2014 10:58 AM, Stephen Warren wrote:
->>>> On 03/04/2014 07:30 PM, Wei Ni wrote:
->>>>> On 03/05/2014 06:23 AM, Guenter Roeck wrote:
->>>>>> On Tue, Mar 04, 2014 at 03:06:48PM -0700, Stephen Warren wrote:
->>>>>>> On 03/04/2014 04:31 AM, Wei Ni wrote:
->>>>>>>> Add dt node to describe the thermal zone for the nct1008.
->>>>>>>>
->>>>>>>> Change-Id: I0256836e52d73ec282574e4fd91df52958936e35
->>>>>>>
->>>>>>> ???????
->>>>>>>
->>>>>> I think this is for one of those open-source sites out there
->>>>>> which count open source contributions. Not Ohloh, but similar.
->>>>>> You have to specify that Change-Id to have it associate your
->>>>>> name with the patch.
->>>>>
->>>>> It's so sorry, I'm working for chromiumos, this change-id is generated
->>>>> by gerrit, I should remove it.
->>>>>
->>>>>>
->>>>>> Guenter
->>>>>>
->>>>>>>> diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
->>>>>>>
->>>>>>>> +	thermal-zones {
->>>>>>>> +		nct1008-local {
->>>>>>>> +			polling-delay-passive = <2000>; /* milliseconds */
->>>>>>>
->>>>>>> Nothing can possible make use of this node, since there's no compatible
->>>>>>> value or anything else like that to bind a driver to it.
->>>>>
->>>>> We have special Tskin driver that estimator skin temperature based on
->>>>> nct1008 local and remote sensors.
->>>>
->>>> Where? Anything that gets added to the upstream kernel DT files must be
->>>> supported by a driver and binding in the upstream kernel.
->>>
->>> I didn't submit the Tskin driver yet, but the of-thermal framework can
->>> parse this node, and create thermal zone devices.
->>
->> How is that possible? There's no compatible value for the of-thermal
->> framework to know that it should process this node. It's not correct for
->> the of-thermal framework to do anything like look for a node with a
->> particular name... has the DT binding for this been reviewed by any DT
->> maintainer?
+On Fri, Feb 28, 2014 at 06:28:41PM +0100, Lucas Stach wrote:
+> As defined by the common PCI bindings.
 > 
-> Eduardo developed the of-thermal framework, and have merged in
-> linux-next, it can parse the node thermal-zones, and properties, such as
-> polling-delay-passive. Please check the omap.dtsi, it also has this node.
+> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> ---
+>  arch/arm/boot/dts/imx6qdl.dtsi | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/imx6qdl.dtsi b/arch/arm/boot/dts/imx6qdl.dtsi
+> index fb28b2ecb1db..db3339e7d3a2 100644
+> --- a/arch/arm/boot/dts/imx6qdl.dtsi
+> +++ b/arch/arm/boot/dts/imx6qdl.dtsi
+> @@ -10,6 +10,8 @@
+>   * http://www.gnu.org/copyleft/gpl.html
+>   */
+>  
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+>  #include "skeleton.dtsi"
+>  
+>  / {
+> @@ -126,7 +128,16 @@
+>  				  0x81000000 0 0          0x01f80000 0 0x00010000 /* downstream I/O */
+>  				  0x82000000 0 0x01000000 0x01000000 0 0x00f00000>; /* non-prefetchable memory */
+>  			num-lanes = <1>;
+> +
 
-Please check Documentation/devicetree/bindings/thermal/thermal.txt
+Please drop these blank lines between properties.
 
+Shawn
+
+>  			interrupts = <0 123 0x04>;
+> +
+> +			#interrupt-cells = <1>;
+> +			interrupt-map-mask = <0 0 0 0x7>;
+> +			interrupt-map = <0 0 0 1 &intc GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
+> +			                <0 0 0 2 &intc GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
+> +			                <0 0 0 3 &intc GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
+> +			                <0 0 0 4 &intc GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>;
+> +
+>  			clocks = <&clks 189>, <&clks 187>, <&clks 206>, <&clks 144>;
+>  			clock-names = "pcie_ref_125m", "sata_ref_100m", "lvds_gate", "pcie_axi";
+>  			status = "disabled";
+> -- 
+> 1.8.5.3
 > 
->>
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+
