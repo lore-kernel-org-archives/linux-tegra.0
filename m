@@ -1,40 +1,30 @@
-From: Lucas Stach <l.stach@pengutronix.de>
-Subject: [PATCH v2 0/6] PCI irq mapping fixes and cleanups
-Date: Wed,  5 Mar 2014 14:25:45 +0100
-Message-ID: <1394025951-32438-1-git-send-email-l.stach@pengutronix.de>
+From: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
+Subject: Re: [PATCH v2 6/6] PCI: designware: use new OF interrupt mapping
+ when possible
+Date: Wed, 5 Mar 2014 11:42:19 -0700
+Message-ID: <20140305184219.GA29903@obsidianresearch.com>
+References: <1394025951-32438-1-git-send-email-l.stach@pengutronix.de>
+ <1394025951-32438-7-git-send-email-l.stach@pengutronix.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1394025951-32438-7-git-send-email-l.stach@pengutronix.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-sh@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Bjorn Helgaas <bhelgaas@google.com>, Simon Horman <horms@verge.net.au>, Shawn Guo <shawn.guo@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Arnd Bergmann <arnd@arndb.de>, kernel@pengutronix.de
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, linux-sh@vger.kernel.org, linux-pci@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Bjorn Helgaas <bhelgaas@google.com>, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben-linux@fluff.org>, linux-tegra@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, kernel@pengutronix.de
 List-Id: linux-tegra@vger.kernel.org
 
-This series cleans up the PCI irq mapping for all
-the ARM PCI host drivers, so they handle it in the
-way defined in the common PCI bindings.
+On Wed, Mar 05, 2014 at 02:25:51PM +0100, Lucas Stach wrote:
+> -	return pp->irq;
+> +	irq = of_irq_parse_and_map_pci(dev, slot, pin);
+> +	if (!irq)
+> +		irq = pp->irq;
 
-I've worked in all the feedback I received on the first
-round of this series and left out the i.MX pcie driver
-changes, as these need more work includig breaking
-of the existing binding, which I'll send as a separate
-series.
+In light of the two bugs that Tim found, it might be wise to throw a
+'dev_warn(FW_BUG "Missing DT interrupt mapping")' in the fall back
+path, so it doesn't continue to silently cover up errors on the OF/DT
+side..
 
-Lucas Stach (6):
-  ARM: dts: tegra: add PCIe interrupt mapping properties
-  PCI: tegra: use new OF interrupt mapping when possible
-  PCI: rcar: use new OF interrupt mapping when possible
-  ARM: dts: exynos5440: fix PCIe interrupt mapping
-  ARM: dts: imx6: add PCIe interrupt mapping properties
-  PCI: designware: use new OF interrupt mapping when possible
-
- .../devicetree/bindings/pci/nvidia,tegra20-pcie.txt          |  8 ++++++++
- arch/arm/boot/dts/exynos5440.dtsi                            |  6 ++++--
- arch/arm/boot/dts/imx6qdl.dtsi                               |  8 ++++++++
- arch/arm/boot/dts/tegra20.dtsi                               |  4 ++++
- arch/arm/boot/dts/tegra30.dtsi                               |  4 ++++
- drivers/pci/host/pci-rcar-gen2.c                             | 12 +++++++++---
- drivers/pci/host/pci-tegra.c                                 |  7 ++++++-
- drivers/pci/host/pcie-designware.c                           | 12 +++++++++---
- 8 files changed, 52 insertions(+), 9 deletions(-)
-
--- 
-1.9.0
+Regards,
+Jason
