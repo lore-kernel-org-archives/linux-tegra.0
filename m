@@ -1,41 +1,31 @@
-From: Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>
-Subject: Re: [PATCH v2 6/6] PCI: designware: use new OF interrupt mapping when possible
-Date: Thu, 6 Mar 2014 16:33:31 +0100
-Message-ID: <201403061633.31260.marex@denx.de>
-References: <1394025951-32438-1-git-send-email-l.stach@pengutronix.de> <1394025951-32438-7-git-send-email-l.stach@pengutronix.de> <000201cf38e6$5b02d6e0$110884a0$%han@samsung.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v2 2/6] PCI: tegra: use new OF interrupt mapping when
+ possible
+Date: Thu, 06 Mar 2014 10:36:50 -0700
+Message-ID: <5318B232.2020507@wwwdotorg.org>
+References: <1394025951-32438-1-git-send-email-l.stach@pengutronix.de> <1394025951-32438-3-git-send-email-l.stach@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <000201cf38e6$5b02d6e0$110884a0$%han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Troy Kisky <troy.kisky-Q5RJGjKts06CY9SHAMCTRUEOCMrvLtNR@public.gmane.org>
-Cc: 'Lucas Stach' <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Bjorn Helgaas' <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, 'Simon Horman' <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, 'Shawn Guo' <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Stephen Warren' <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, 'Ben Dooks' <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Thierry Reding' <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, 'Arnd Bergmann' <arnd-r2nGTMty4D4@public.gmane.org>, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, 'Mohit KUMAR DCG' <Mohit.KUMAR-qxv4g6HH51o@public.gmane.org>, 'Pratyush Anand' <pratyush.anand-qxv4g6HH51o@public.gmane.org>, 'Richard Zhu' <r65037-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, 'Kishon Vijay Abraham I' <kishon-l0cyMroinI0@public.gmane.org>
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <1394025951-32438-3-git-send-email-l.stach@pengutronix.de>
+Sender: linux-pci-owner@vger.kernel.org
+To: Lucas Stach <l.stach@pengutronix.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-sh@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Bjorn Helgaas <bhelgaas@google.com>, Simon Horman <horms@verge.net.au>, Shawn Guo <shawn.guo@linaro.org>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Arnd Bergmann <arnd@arndb.de>, kernel@pengutronix.de
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday, March 06, 2014 at 03:47:03 AM, Jingoo Han wrote:
-> On Wednesday, March 05, 2014 10:26 PM, Lucas Stach wrote:
-> > This is the recommended method of doing the IRQ
-> > mapping. For old devicetrees we fall back to the
-> > previous practice.
-> > 
-> > Signed-off-by: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-> > Acked-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-> 
-> (+cc Mohit KUMAR, Richard Zhu, Pratyush Anand, Marek Vasut,
->        Kishon Vijay Abraham I)
-> 
-> Acked-by: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> 
-> It works properly on Exynos platform.
-> Thank you.
+On 03/05/2014 06:25 AM, Lucas Stach wrote:
+> This is the recommended method of doing the IRQ
+> mapping. For old devicetrees we fall back to the
+> previous practice.
 
-Looks reasonable,
+Tested-by: Stephen Warren <swarren@nvidia.com>
 
-Reviewed-by: Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>
+I tested both with and without patch 1/6, and the PCIe-based NIC on
+Beaver worked fine either way. Without patch 1/6, I do see:
 
-+CC Troy if he wants to test it on SL/N6X .
+pci 0000:00:01.0: of_irq_parse_pci() failed with rc=-22
 
-Best regards,
-Marek Vasut
+... but that seems reasonable given that the DT that of_irq_parse_pci()
+parses is missing, and did correctly trigger the fallback path, so
+everything still worked.
