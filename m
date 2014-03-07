@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [GIT PULL 4/5] ARM: tegra: device tree changes for 3.15
-Date: Fri,  7 Mar 2014 13:28:07 -0700
-Message-ID: <1394224088-28910-4-git-send-email-swarren@wwwdotorg.org>
+Subject: [GIT PULL 5/5] ARM: tegra: defconfig updates for 3.15
+Date: Fri,  7 Mar 2014 13:28:08 -0700
+Message-ID: <1394224088-28910-5-git-send-email-swarren@wwwdotorg.org>
 References: <1394224088-28910-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1394224088-28910-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
@@ -10,16 +10,13 @@ To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This enables:
-* host1x and eDP support on Tegra124.
-* LCD panel support for a few Tegra20 devices and Venice2.
-* Enables power down, SPI flash, and USB on Venice2.
-* Documents which Dalmore revision is supported.
-* Adds an I2C bus mux to Cardhu.
-
-Additionally, Tegra124 is converted to use #address-cells=<2> since the
-HW suports more than 32-bits of address space, and various cleanups are
-included.
+The following options are enabled:
+- ams AS3722 is used as system PMIC for Tegra124 based Venice2.
+- NXP PCA9546 is used in Cardhu Tegra30 board to connect to 3 cameras.
+- GSPCA to support the webcam on Venice2.
+- Allocate 64 MiB for CMA by default; the default 16MiB is not enough
+  for the majority of use-cases. This can still be overridden by the cma
+  command-line option.
 
 ----------------------------------------------------------------
 
@@ -29,56 +26,16 @@ The following changes since commit 38dbfb59d1175ef458d006556061adeaa8751b72:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tegra-for-3.15-dt
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tegra-for-3.15-defconfig
 
-for you to fetch changes up to 97070bd44bab603fc47063952250f479e9e7321e:
+for you to fetch changes up to d1c912c1001fb97c1233d0ce3379d0c3f25b8312:
 
-  ARM: dts: tegra: add PCIe interrupt mapping properties
+  ARM: tegra: defconfig updates
 
 ----------------------------------------------------------------
 
-Bryan Wu (1):
-      ARM: tegra: enable PCA9546 on Cardhu
-
 Laxman Dewangan (1):
-      ARM: tegra: add system-power-controller property for PMIC node
+      ARM: tegra: defconfig updates
 
-Lucas Stach (1):
-      ARM: dts: tegra: add PCIe interrupt mapping properties
-
-Marc Dietrich (1):
-      ARM: tegra: paz00: Add LVDS support to device tree
-
-Stephen Warren (5):
-      ARM: tegra: document which Dalmore revisions are supported
-      ARM: tegra: enable LCD panel on Seaboard
-      ARM: tegra: enable LCD panel on Ventana
-      ARM: tegra: add SPI flash to Venice2 DT
-      ARM: tegra: use 2 address cells for Tegra124 DT
-
-Thierry Reding (12):
-      ARM: tegra: Properly sort clocks property
-      ARM: tegra: Use "disabled" for status property
-      ARM: tegra: Combine VBUS enable pins into one node
-      ARM: tegra: Overhaul Venice2 regulators
-      ARM: tegra: Hook up SDMMC3 power-supply on Venice2
-      ARM: tegra: Add Tegra124 host1x support
-      ARM: tegra: Add Tegra124 eDP support
-      ARM: tegra: Enable eDP for Venice2
-      ARM: tegra: Add Tegra124 USB support
-      ARM: tegra: Enable USB on Venice2
-      ARM: tegra: Fix whitespace around '='
-      ARM: tegra: Rename as3722 node to pmic
-
- .../bindings/pci/nvidia,tegra20-pcie.txt        |   8 +
- arch/arm/boot/dts/tegra114-dalmore.dts          |   5 +
- arch/arm/boot/dts/tegra114.dtsi                 |   8 +-
- arch/arm/boot/dts/tegra124-venice2.dts          | 301 ++++++++++------
- arch/arm/boot/dts/tegra124.dtsi                 | 339 ++++++++++++++-----
- arch/arm/boot/dts/tegra20-paz00.dts             |  46 ++-
- arch/arm/boot/dts/tegra20-seaboard.dts          |  55 ++-
- arch/arm/boot/dts/tegra20-ventana.dts           |  39 ++-
- arch/arm/boot/dts/tegra20.dtsi                  |   4 +
- arch/arm/boot/dts/tegra30-cardhu.dtsi           |   7 +
- arch/arm/boot/dts/tegra30.dtsi                  |   6 +-
- 11 files changed, 617 insertions(+), 201 deletions(-)
+ arch/arm/configs/tegra_defconfig | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
