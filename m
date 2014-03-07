@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [GIT PULL 3/5] ARM: tegra: core SoC changes for 3.15
-Date: Fri,  7 Mar 2014 13:28:06 -0700
-Message-ID: <1394224088-28910-3-git-send-email-swarren@wwwdotorg.org>
+Subject: [GIT PULL 2/5] ARM: tegra: driver changes for 3.15
+Date: Fri,  7 Mar 2014 13:28:05 -0700
+Message-ID: <1394224088-28910-2-git-send-email-swarren@wwwdotorg.org>
 References: <1394224088-28910-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1394224088-28910-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
@@ -10,8 +10,7 @@ To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-A couple of minor fixes, plus the removal of the EMC scaling driver,
-which hasn't been active since we converted clocks to device tree.
+A single cleanup for the Tegra AHB driver.
 
 ----------------------------------------------------------------
 
@@ -21,28 +20,16 @@ The following changes since commit 38dbfb59d1175ef458d006556061adeaa8751b72:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tegra-for-3.15-soc
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tegra-for-3.15-drivers
 
-for you to fetch changes up to 357281ed092ac5713137fa42b447cdd68a4aa56e:
+for you to fetch changes up to 3cb3316cf7e817c39289c9ce17dcce2fabebb086:
 
-  ARM: tegra: Export I/O rail functions
+  drivers/amba: don't check resource with devm_ioremap_resource
 
 ----------------------------------------------------------------
 
-Stefan Agner (1):
-      ARM: tegra: don't timeout if CPU is powergated
+Wolfram Sang (1):
+      drivers/amba: don't check resource with devm_ioremap_resource
 
-Stephen Warren (1):
-      ARM: tegra: remove tegra EMC scaling driver
-
-Thierry Reding (1):
-      ARM: tegra: Export I/O rail functions
-
- arch/arm/mach-tegra/Makefile     |   1 -
- arch/arm/mach-tegra/platsmp.c    |   2 +-
- arch/arm/mach-tegra/powergate.c  |   2 +
- arch/arm/mach-tegra/tegra2_emc.c | 347 ----------------------------------
- arch/arm/mach-tegra/tegra2_emc.h |  24 ---
- 5 files changed, 3 insertions(+), 373 deletions(-)
- delete mode 100644 arch/arm/mach-tegra/tegra2_emc.c
- delete mode 100644 arch/arm/mach-tegra/tegra2_emc.h
+ drivers/amba/tegra-ahb.c | 2 --
+ 1 file changed, 2 deletions(-)
