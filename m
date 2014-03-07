@@ -1,342 +1,170 @@
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: Re: [PATCH v2] media: soc-camera: OF cameras
-Date: Fri, 07 Mar 2014 11:10:06 +0000
-Message-ID: <5319A90E.2020704@codethink.co.uk>
-References: <1392235552-28134-1-git-send-email-pengw@nvidia.com> <CAK5ve-LGkvxyPJK1YXMXc-4DV6TOM6RcpHthjmt3RLaCEnWVhg@mail.gmail.com> <CAK5ve-+UE1R-SYk0XDgg0kz+in8nyVseem=Rbe0VAiKc23b_aQ@mail.gmail.com> <Pine.LNX.4.64.1402250718590.30082@axis700.grange> <CAK5ve-JZmh4M6rCb4Mp0d_UOb_fzE04CBZ_c1GCOEyJCQvKWfg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <CAK5ve-JZmh4M6rCb4Mp0d_UOb_fzE04CBZ_c1GCOEyJCQvKWfg@mail.gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>
-Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH 1/4] pinctrl: tegra: fix some typos and inconsistencies
+Date: Fri,  7 Mar 2014 12:22:14 -0700
+Message-ID: <1394220137-16351-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/03/14 23:12, Bryan Wu wrote:
-> On Mon, Feb 24, 2014 at 10:19 PM, Guennadi Liakhovetski
-> <g.liakhovetski@gmx.de> wrote:
->> Hi Bryan,
->>
->> On Mon, 24 Feb 2014, Bryan Wu wrote:
->>
->>> On Tue, Feb 18, 2014 at 10:40 AM, Bryan Wu <cooloney@gmail.com> wrote:
->>>> On Wed, Feb 12, 2014 at 12:05 PM, Bryan Wu <cooloney@gmail.com> wrote:
->>>>> From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
->>>>>
->>>>> With OF we aren't getting platform data any more. To minimise changes we
->>>>> create all the missing data ourselves, including compulsory struct
->>>>> soc_camera_link objects. Host-client linking is now done, based on the OF
->>>>> data. Media bus numbers also have to be assigned dynamically.
->>>>>
->>>>> OF probing reuses the V4L2 Async API which is used by async non-OF probing.
->>>>>
->>>>> Signed-off-by: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
->>>>
->>>> Hi Guennadi,
->>>>
->>>> Do you have chance to review my v2 patch?
->>
->> I looked at it briefly, the direction looks good now, but I'll have to
->> find time to properly review it.
->>
->
-> Hi Guennadi,
->
-> Do you have chance to review this patch?
->
-> Thanks,
-> -Bryan
->
->
->>
->>>>> Signed-off-by: Bryan Wu <pengw@nvidia.com>
->>>>> ---
->>>>> v2:
->>>>>   - move to use V4L2 Async API
->>>>>   - cleanup some coding style issue
->>>>>   - allocate struct soc_camera_desc sdesc on stack
->>>>>   - cleanup unbalanced mutex operation
->>>>>
->>>>>   drivers/media/platform/soc_camera/soc_camera.c | 232 ++++++++++++++++++++++++-
->>>>>   include/media/soc_camera.h                     |   5 +
->>>>>   2 files changed, 233 insertions(+), 4 deletions(-)
->>>>>
->>>>> diff --git a/drivers/media/platform/soc_camera/soc_camera.c b/drivers/media/platform/soc_camera/soc_camera.c
->>>>> index 4b8c024..ffe1254 100644
->>>>> --- a/drivers/media/platform/soc_camera/soc_camera.c
->>>>> +++ b/drivers/media/platform/soc_camera/soc_camera.c
->>>>> @@ -23,6 +23,7 @@
->>>>>   #include <linux/list.h>
->>>>>   #include <linux/module.h>
->>>>>   #include <linux/mutex.h>
->>>>> +#include <linux/of.h>
->>>>>   #include <linux/platform_device.h>
->>>>>   #include <linux/pm_runtime.h>
->>>>>   #include <linux/regulator/consumer.h>
->>>>> @@ -36,6 +37,7 @@
->>>>>   #include <media/v4l2-common.h>
->>>>>   #include <media/v4l2-ioctl.h>
->>>>>   #include <media/v4l2-dev.h>
->>>>> +#include <media/v4l2-of.h>
->>>>>   #include <media/videobuf-core.h>
->>>>>   #include <media/videobuf2-core.h>
->>>>>
->>>>> @@ -49,6 +51,7 @@
->>>>>           vb2_is_streaming(&(icd)->vb2_vidq))
->>>>>
->>>>>   #define MAP_MAX_NUM 32
->>>>> +static DECLARE_BITMAP(host_map, MAP_MAX_NUM);
->>>>>   static DECLARE_BITMAP(device_map, MAP_MAX_NUM);
->>>>>   static LIST_HEAD(hosts);
->>>>>   static LIST_HEAD(devices);
->>>>> @@ -65,6 +68,17 @@ struct soc_camera_async_client {
->>>>>          struct list_head list;          /* needed for clean up */
->>>>>   };
->>>>>
->>>>> +struct soc_camera_of_client {
->>>>> +       struct soc_camera_desc *sdesc;
->>>>> +       struct soc_camera_async_client sasc;
->>>>> +       struct v4l2_of_endpoint node;
->>>>> +       struct dev_archdata archdata;
->>>>> +       struct device_node *link_node;
->>>>> +       union {
->>>>> +               struct i2c_board_info i2c_info;
->>>>> +       };
->>>>> +};
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I don't understand why you need this for the async api case, since you
-do not need to create any new i2c info. The i2c device should be probed
-using OF and linked via the async probe api.
+drive_dev3_pins in pinctrl-tegra114.c wasn't used; delete it.
 
-I did a much simpler version of this that I was going to post today that
-works with the renesas vin driver.
+pinctrl-tegra124.c had quite a few typos. Fix those.
 
->>>>> +
->>>>>   static int soc_camera_video_start(struct soc_camera_device *icd);
->>>>>   static int video_dev_create(struct soc_camera_device *icd);
->>>>>
->>>>> @@ -1336,6 +1350,10 @@ static int soc_camera_i2c_init(struct soc_camera_device *icd,
->>>>>                  return -EPROBE_DEFER;
->>>>>          }
->>>>>
->>>>> +       /* OF probing skips following I2C init */
->>>>> +       if (shd->host_wait)
->>>>> +               return 0;
->>>>> +
->>>>>          ici = to_soc_camera_host(icd->parent);
->>>>>          adap = i2c_get_adapter(shd->i2c_adapter_id);
->>>>>          if (!adap) {
->>>>> @@ -1573,10 +1591,180 @@ static void scan_async_host(struct soc_camera_host *ici)
->>>>>                  asd += ici->asd_sizes[j];
->>>>>          }
->>>>>   }
->>>>> +
->>>>> +static void soc_camera_of_i2c_ifill(struct soc_camera_of_client *sofc,
->>>>> +                                   struct i2c_client *client)
->>>>> +{
->>>>> +       struct i2c_board_info *info = &sofc->i2c_info;
->>>>> +       struct soc_camera_desc *sdesc = sofc->sdesc;
->>>>> +
->>>>> +       /* on OF I2C devices platform_data == NULL */
->>>>> +       info->flags = client->flags;
->>>>> +       info->addr = client->addr;
->>>>> +       info->irq = client->irq;
->>>>> +       info->archdata = &sofc->archdata;
->>>>> +
->>>>> +       /* archdata is always empty on OF I2C devices */
->>>>> +       strlcpy(info->type, client->name, sizeof(info->type));
->>>>> +
->>>>> +       sdesc->host_desc.i2c_adapter_id = client->adapter->nr;
->>>>> +}
->>>>> +
->>>>> +static void soc_camera_of_i2c_info(struct device_node *node,
->>>>> +                                  struct soc_camera_of_client *sofc)
->>>>> +{
->>>>> +       struct i2c_client *client;
->>>>> +       struct soc_camera_desc *sdesc = sofc->sdesc;
->>>>> +       struct i2c_board_info *info = &sofc->i2c_info;
->>>>> +       struct device_node *port, *sensor, *bus;
->>>>> +
->>>>> +       port = v4l2_of_get_remote_port(node);
->>>>> +       if (!port)
->>>>> +               return;
->>>>> +
->>>>> +       /* Check the bus */
->>>>> +       sensor = of_get_parent(port);
->>>>> +       bus = of_get_parent(sensor);
->>>>> +
->>>>> +       if (of_node_cmp(bus->name, "i2c")) {
->>>>> +               of_node_put(port);
->>>>> +               of_node_put(sensor);
->>>>> +               of_node_put(bus);
->>>>> +               return;
->>>>> +       }
->>>>> +
->>>>> +       info->of_node = sensor;
->>>>> +       sdesc->host_desc.board_info = info;
->>>>> +
->>>>> +       client = of_find_i2c_device_by_node(sensor);
->>>>> +       /*
->>>>> +        * of_i2c_register_devices() took a reference to the OF node, it is not
->>>>> +        * dropped, when the I2C device is removed, so, we don't need an
->>>>> +        * additional reference.
->>>>> +        */
->>>>> +       of_node_put(sensor);
->>>>> +       if (client) {
->>>>> +               soc_camera_of_i2c_ifill(sofc, client);
->>>>> +               sofc->link_node = sensor;
->>>>> +               put_device(&client->dev);
->>>>> +       }
->>>>> +
->>>>> +       /* client hasn't attached to I2C yet */
->>>>> +}
->>>>> +
->>>>> +static struct soc_camera_of_client *soc_camera_of_alloc_client(const struct soc_camera_host *ici,
->>>>> +                                                              struct device_node *node)
->>>>> +{
->>>>> +       struct soc_camera_of_client *sofc;
->>>>> +       struct v4l2_async_subdev *sensor;
->>>>> +       struct soc_camera_desc sdesc = { .host_desc.host_wait = true,};
->>>>> +       int i, ret;
->>>>> +
->>>>> +       sofc = devm_kzalloc(ici->v4l2_dev.dev, sizeof(*sofc), GFP_KERNEL);
->>>>> +       if (!sofc)
->>>>> +               return NULL;
->>>>> +
->>>>> +       /* Allocate v4l2_async_subdev by ourselves */
->>>>> +       sensor = devm_kzalloc(ici->v4l2_dev.dev, sizeof(*sensor), GFP_KERNEL);
->>>>> +       if (!sensor)
->>>>> +               return NULL;
->>>>> +       sofc->sasc.sensor = sensor;
->>>>> +
->>>>> +       mutex_lock(&list_lock);
->>>>> +       i = find_first_zero_bit(device_map, MAP_MAX_NUM);
->>>>> +       if (i < MAP_MAX_NUM)
->>>>> +               set_bit(i, device_map);
->>>>> +       mutex_unlock(&list_lock);
->>>>> +       if (i >= MAP_MAX_NUM)
->>>>> +               return NULL;
->>>>> +       sofc->sasc.pdev = platform_device_alloc("soc-camera-pdrv", i);
->>>>> +       if (!sofc->sasc.pdev)
->>>>> +               return NULL;
->>>>> +
->>>>> +       sdesc.host_desc.node = &sofc->node;
->>>>> +       sdesc.host_desc.bus_id = ici->nr;
->>>>> +
->>>>> +       ret = platform_device_add_data(sofc->sasc.pdev, &sdesc, sizeof(sdesc));
->>>>> +       if (ret < 0)
->>>>> +               return NULL;
->>>>> +       sofc->sdesc = sofc->sasc.pdev->dev.platform_data;
->>>>> +
->>>>> +       soc_camera_of_i2c_info(node, sofc);
->>>>> +
->>>>> +       return sofc;
->>>>> +}
->>>>> +
->>>>> +static void scan_of_host(struct soc_camera_host *ici)
->>>>> +{
->>>>> +       struct soc_camera_of_client *sofc;
->>>>> +       struct soc_camera_async_client *sasc;
->>>>> +       struct v4l2_async_subdev *asd;
->>>>> +       struct soc_camera_device *icd;
->>>>> +       struct device_node *node = NULL;
->>>>> +
->>>>> +       for (;;) {
->>>>> +               int ret;
->>>>> +
->>>>> +               node = v4l2_of_get_next_endpoint(ici->v4l2_dev.dev->of_node,
->>>>> +                                              node);
->>>>> +               if (!node)
->>>>> +                       break;
->>>>> +
->>>>> +               sofc = soc_camera_of_alloc_client(ici, node);
->>>>> +               if (!sofc) {
->>>>> +                       dev_err(ici->v4l2_dev.dev,
->>>>> +                               "%s(): failed to create a client device\n",
->>>>> +                               __func__);
->>>>> +                       of_node_put(node);
->>>>> +                       break;
->>>>> +               }
->>>>> +               v4l2_of_parse_endpoint(node, &sofc->node);
->>>>> +
->>>>> +               sasc = &sofc->sasc;
->>>>> +               ret = platform_device_add(sasc->pdev);
->>>>> +               if (ret < 0) {
->>>>> +                       /* Useless thing, but keep trying */
->>>>> +                       platform_device_put(sasc->pdev);
->>>>> +                       of_node_put(node);
->>>>> +                       continue;
->>>>> +               }
->>>>> +
->>>>> +               /* soc_camera_pdrv_probe() probed successfully */
->>>>> +               icd = platform_get_drvdata(sasc->pdev);
->>>>> +               if (!icd) {
->>>>> +                       /* Cannot be... */
->>>>> +                       platform_device_put(sasc->pdev);
->>>>> +                       of_node_put(node);
->>>>> +                       continue;
->>>>> +               }
->>>>> +
->>>>> +               asd = sasc->sensor;
->>>>> +               asd->match_type = V4L2_ASYNC_MATCH_OF;
->>>>> +               asd->match.of.node = sofc->link_node;
->>>>> +
->>>>> +               sasc->notifier.subdevs = &asd;
->>>>> +               sasc->notifier.num_subdevs = 1;
->>>>> +               sasc->notifier.bound = soc_camera_async_bound;
->>>>> +               sasc->notifier.unbind = soc_camera_async_unbind;
->>>>> +               sasc->notifier.complete = soc_camera_async_complete;
->>>>> +
->>>>> +               icd->parent = ici->v4l2_dev.dev;
->>>>> +
->>>>> +               ret = v4l2_async_notifier_register(&ici->v4l2_dev, &sasc->notifier);
->>>>> +               if (!ret)
->>>>> +                       sjUmBMDe3fq35HMObreak;
->>>>> +
->>>>> +               /*
->>>>> +                * We could destroy the icd in there error case here, but the
->>>>> +                * non-OF version doesn't do that, so, we can keep it around too
->>>>> +                */
->>>>> +       }
->>>>> +}
->>>>>   #else
->>>>>   #define soc_camera_i2c_init(icd, sdesc)        (-ENODEV)
->>>>>   #define soc_camera_i2c_free(icd)       do {} while (0)
->>>>>   #define scan_async_host(ici)           do {} while (0)
->>>>> +#define scan_of_host(ici)              do {} while (0)
->>>>>   #endif
->>>>>
->>>>>   /* Called during host-driver probe */
->>>>> @@ -1689,6 +1877,7 @@ static int soc_camera_remove(struct soc_camera_device *icd)
->>>>>   {
->>>>>          struct soc_camera_desc *sdesc = to_soc_camera_desc(icd);
->>>>>          struct video_device *vdev = icd->vdev;
->>>>> +       struct v4l2_of_endpoint *node = sdesc->host_desc.node;
->>>>>
->>>>>          v4l2_ctrl_handler_free(&icd->ctrl_handler);
->>>>>          if (vdev) {
->>>>> @@ -1719,6 +1908,17 @@ static int soc_camera_remove(struct soc_camera_device *icd)
->>>>>          if (icd->sasc)
->>>>>                  platform_device_unregister(icd->sasc->pdev);
->>>>>
->>>>> +       if (node) {
->>>>> +               struct soc_camera_of_client *sofc = container_of(node,
->>>>> +                                       struct soc_camera_of_client, node);
->>>>> +               /* Don't dead-lock: remove the device here under the lock */
->>>>> +               clear_bit(sofc->sasc.pdev->id, device_map);
->>>>> +               list_del(&icd->list);
->>>>> +               if (sofc->link_node)
->>>>> +                       of_node_put(sofc->link_node);
->>>>> +               platform_device_unregister(sofc->sasc.pdev);
->>>>> +       }
->>>>> +
+pinctrl-tegra124.c had a few mismatches between the *_groups[] ararys
+and the function lists in tegra124_groups[]. Fix those.
 
-Going back to the previous, in the use-case we have the device that
-we link to the soc_camera is /not/ an soc-camera, it is a standard
-v4l2 subdev device (adv7180).
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/pinctrl/pinctrl-tegra114.c |  5 -----
+ drivers/pinctrl/pinctrl-tegra124.c | 41 ++++++++++++++++----------------------
+ 2 files changed, 17 insertions(+), 29 deletions(-)
 
-
+diff --git a/drivers/pinctrl/pinctrl-tegra114.c b/drivers/pinctrl/pinctrl-tegra114.c
+index 93c9e3899d5e..46da27ff2d64 100644
+--- a/drivers/pinctrl/pinctrl-tegra114.c
++++ b/drivers/pinctrl/pinctrl-tegra114.c
+@@ -1341,11 +1341,6 @@ static const unsigned drive_uda_pins[] = {
+ 	TEGRA_PIN_ULPI_STP_PY3,
+ };
+ 
+-static const unsigned drive_dev3_pins[] = {
+-	TEGRA_PIN_CLK3_OUT_PEE0,
+-	TEGRA_PIN_CLK3_REQ_PEE1,
+-};
+-
+ enum tegra_mux {
+ 	TEGRA_MUX_BLINK,
+ 	TEGRA_MUX_CEC,
+diff --git a/drivers/pinctrl/pinctrl-tegra124.c b/drivers/pinctrl/pinctrl-tegra124.c
+index c20e0e1dda83..7c6b7b63320f 100644
+--- a/drivers/pinctrl/pinctrl-tegra124.c
++++ b/drivers/pinctrl/pinctrl-tegra124.c
+@@ -325,13 +325,13 @@ static const struct pinctrl_pin_desc tegra124_pins[] = {
+ 	PINCTRL_PIN(TEGRA_PIN_KB_ROW8_PS0, "KB_ROW8 PS0"),
+ 	PINCTRL_PIN(TEGRA_PIN_KB_ROW9_PS1, "KB_ROW9 PS1"),
+ 	PINCTRL_PIN(TEGRA_PIN_KB_ROW10_PS2, "KB_ROW10 PS2"),
+-	PINCTRL_PIN(TEGRA_PIN_KB_ROW11_PS3, "KB_ROW10 PS3"),
+-	PINCTRL_PIN(TEGRA_PIN_KB_ROW12_PS4, "KB_ROW10 PS4"),
+-	PINCTRL_PIN(TEGRA_PIN_KB_ROW13_PS5, "KB_ROW10 PS5"),
+-	PINCTRL_PIN(TEGRA_PIN_KB_ROW14_PS6, "KB_ROW10 PS6"),
+-	PINCTRL_PIN(TEGRA_PIN_KB_ROW15_PS7, "KB_ROW10 PS7"),
+-	PINCTRL_PIN(TEGRA_PIN_KB_ROW16_PT0, "KB_ROW10 PT0"),
+-	PINCTRL_PIN(TEGRA_PIN_KB_ROW17_PT1, "KB_ROW10 PT1"),
++	PINCTRL_PIN(TEGRA_PIN_KB_ROW11_PS3, "KB_ROW11 PS3"),
++	PINCTRL_PIN(TEGRA_PIN_KB_ROW12_PS4, "KB_ROW12 PS4"),
++	PINCTRL_PIN(TEGRA_PIN_KB_ROW13_PS5, "KB_ROW13 PS5"),
++	PINCTRL_PIN(TEGRA_PIN_KB_ROW14_PS6, "KB_ROW14 PS6"),
++	PINCTRL_PIN(TEGRA_PIN_KB_ROW15_PS7, "KB_ROW15 PS7"),
++	PINCTRL_PIN(TEGRA_PIN_KB_ROW16_PT0, "KB_ROW16 PT0"),
++	PINCTRL_PIN(TEGRA_PIN_KB_ROW17_PT1, "KB_ROW17 PT1"),
+ 	PINCTRL_PIN(TEGRA_PIN_GEN2_I2C_SCL_PT5, "GEN2_I2C_SCL PT5"),
+ 	PINCTRL_PIN(TEGRA_PIN_GEN2_I2C_SDA_PT6, "GEN2_I2C_SDA PT6"),
+ 	PINCTRL_PIN(TEGRA_PIN_SDMMC4_CMD_PT7, "SDMMC4_CMD PT7"),
+@@ -1608,12 +1608,12 @@ static const char * const cpu_groups[] = {
+ };
+ 
+ static const char * const dap_groups[] = {
+-	"dap_mclk1_pee2",
++	"dap_mclk1_req_pee2",
+ 	"clk2_req_pcc5",
+ };
+ 
+ static const char * const dap1_groups[] = {
+-	"dap_mclk1_pee2",
++	"dap_mclk1_req_pee2",
+ };
+ 
+ static const char * const dap2_groups[] = {
+@@ -2013,8 +2013,8 @@ static const char * const rsvd2_groups[] = {
+ 	"gen1_i2c_scl_pc4",
+ 	"gen1_i2c_sda_pc5",
+ 
+-	"clk2_out_pee0",
+-	"clk2_req_pee1",
++	"clk3_out_pee0",
++	"clk3_req_pee1",
+ 	"pc7",
+ 	"pi5",
+ 	"pj0",
+@@ -2130,7 +2130,7 @@ static const char * const rsvd3_groups[] = {
+ 	"clk3_req_pee1",
+ 
+ 	"sdmmc4_dat5_paa5",
+-	"gpio_pcc1",
++	"pcc1",
+ 	"cam_i2c_scl_pbb1",
+ 	"cam_i2c_sda_pbb2",
+ 	"pbb5",
+@@ -2195,11 +2195,6 @@ static const char * const rsvd4_groups[] = {
+ 	"ddc_scl_pv4",
+ 	"ddc_sda_pv5",
+ 
+-	"uart2_rts_n_pj6",
+-	"uart2_cts_n_pj5",
+-	"uart3_txd_pw6",
+-	"uart3_rxd_pw7",
+-
+ 	"pu0",
+ 	"pu1",
+ 	"pu2",
+@@ -2234,6 +2229,7 @@ static const char * const rsvd4_groups[] = {
+ 	"gen2_i2c_scl_pt5",
+ 	"gen2_i2c_sda_pt6",
+ 
++	"sdmmc4_clk_pcc4",
+ 	"sdmmc4_cmd_pt7",
+ 	"sdmmc4_dat0_paa0",
+ 	"sdmmc4_dat1_paa1",
+@@ -2271,7 +2267,7 @@ static const char * const rsvd4_groups[] = {
+ 	"dap1_din_pn1",
+ 	"dap1_sclk_pn3",
+ 	"dap_mclk1_req_pee2",
+-	"dap_mclk1_pw5",
++	"dap_mclk1_pw4",
+ 
+ 	"dap2_fs_pa2",
+ 	"dap2_din_pa4",
+@@ -2312,8 +2308,6 @@ static const char * const sdmmc1_groups[] = {
+ 	"sdmmc1_dat2_py5",
+ 	"sdmmc1_dat1_py6",
+ 	"sdmmc1_dat0_py7",
+-	"clk2_out_pw5",
+-	"clk2_req_pcc",
+ 	"uart3_cts_n_pa1",
+ 	"sdmmc1_wp_n_pv3",
+ };
+@@ -2412,7 +2406,6 @@ static const char * const spi2_groups[] = {
+ 
+ 	"kb_row13_ps5",
+ 	"kb_row14_ps6",
+-	"kb_row15_ps7",
+ 	"kb_col0_pq0",
+ 	"kb_col1_pq1",
+ 	"kb_col2_pq2",
+@@ -2558,7 +2551,7 @@ static const char * const uartc_groups[] = {
+ 	"uart3_cts_n_pa1",
+ 	"uart3_rts_n_pc0",
+ 	"kb_row16_pt0",
+-	"kn_row17_pt1",
++	"kb_row17_pt1",
+ };
+ 
+ static const char * const uartd_groups[] = {
+@@ -2964,9 +2957,9 @@ static const struct tegra_pingroup tegra124_groups[] = {
+        PINGROUP(sdmmc4_dat4_paa4,       SDMMC4,     SPI3,       GMI,          RSVD4,       SDMMC4,     0x3270,  N,  Y,  N),
+        PINGROUP(sdmmc4_dat5_paa5,       SDMMC4,     SPI3,       RSVD3,        RSVD4,       SDMMC4,     0x3274,  N,  Y,  N),
+        PINGROUP(sdmmc4_dat6_paa6,       SDMMC4,     SPI3,       GMI,          RSVD4,       SDMMC4,     0x3278,  N,  Y,  N),
+-       PINGROUP(sdmmc4_dat7_paa7,       SDMMC4,     RSVD1,      GMI,          RSVD4,       SDMMC4,     0x327c,  N,  Y,  N),
++       PINGROUP(sdmmc4_dat7_paa7,       SDMMC4,     RSVD2,      GMI,          RSVD4,       SDMMC4,     0x327c,  N,  Y,  N),
+        PINGROUP(cam_mclk_pcc0,          VI,         VI_ALT1,    VI_ALT3,      SDMMC2,      VI,         0x3284,  N,  N,  N),
+-       PINGROUP(pcc1,                   I2S4,       RSVD1,      RSVD3,        SDMMC2,      I2S4,       0x3288,  N,  N,  N),
++       PINGROUP(pcc1,                   I2S4,       RSVD2,      RSVD3,        SDMMC2,      I2S4,       0x3288,  N,  N,  N),
+        PINGROUP(pbb0,                   VGP6,       VIMCLK2,    SDMMC2,       VIMCLK2_ALT, VGP6,       0x328c,  N,  N,  N),
+        PINGROUP(cam_i2c_scl_pbb1,       VGP1,       I2C3,       RSVD3,        SDMMC2,      VGP1,       0x3290,  Y,  N,  N),
+        PINGROUP(cam_i2c_sda_pbb2,       VGP2,       I2C3,       RSVD3,        SDMMC2,      VGP2,       0x3294,  Y,  N,  N),
 -- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
+1.8.1.5
