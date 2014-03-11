@@ -1,65 +1,31 @@
-From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v3.14-rc6
-Date: Mon, 10 Mar 2014 15:26:07 -0700
-Message-ID: <531E3BFF.2020801@nvidia.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] pinctrl: tegra: fix some typos and inconsistencies
+Date: Tue, 11 Mar 2014 11:16:53 +0100
+Message-ID: <CACRpkdY9VqKBHs+mOr5MD3fE5tzBghCU82dHfoSG_kNZvW8jVw@mail.gmail.com>
+References: <1394056412-12879-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1394056412-12879-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v3.14-rc6.
-Logs and other details at:
+On Wed, Mar 5, 2014 at 10:53 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
 
-     http://nvt.pwsan.com/experimental/linux/testlogs/test_v3.14-rc6/20140309213233/
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> drive_dev3_pins in pinctrl-tegra114.c wasn't used; delete it.
+>
+> pinctrl-tegra124.c had quite a few typos. Fix those.
+>
+> pinctrl-tegra124.c had a few mismatches between the *_groups[] ararys
+> and the function lists in tegra124_groups[]. Fix those.
+>
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
+Patch applied.
 
-Test summary
-------------
-
-Build: zImage:
-     Pass: ( 9/ 9): tegra_defconfig%tegra20,114_mergeconfig,
-		   tegra_defconfig%tegra30,114_mergeconfig,
-		   tegra_defconfig%tegra30_mergeconfig,
-		   tegra_defconfig%tegra20,30_mergeconfig,
-		   tegra_defconfig%tegra124_mergeconfig,
-		   tegra_defconfig%tegra114_mergeconfig,
-		   multi_v7_defconfig,
-		   tegra_defconfig%tegra20_mergeconfig, tegra_defconfig
-
-Boot to userspace: multi_v7_defconfig:
-     Pass: ( 2/ 2): tegra114-dalmore-a04, tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-     Pass: ( 2/ 2): tegra114-dalmore-a04, tegra30-beaver
-
-Boot to userspace: tegra_defconfig%tegra114_mergeconfig:
-     Pass: ( 1/ 1): tegra114-dalmore-a04
-
-Boot to userspace: tegra_defconfig%tegra20,114_mergeconfig:
-     Pass: ( 1/ 1): tegra114-dalmore-a04
-
-Boot to userspace: tegra_defconfig%tegra20,30_mergeconfig:
-     Pass: ( 1/ 1): tegra30-beaver
-
-Boot to userspace: tegra_defconfig%tegra30,114_mergeconfig:
-     Pass: ( 2/ 2): tegra114-dalmore-a04, tegra30-beaver
-
-Boot to userspace: tegra_defconfig%tegra30_mergeconfig:
-     Pass: ( 1/ 1): tegra30-beaver
-
-
-vmlinux object size
-(delta in bytes from test_v3.14-rc5 (0414855fdc4a40da05221fc6062cccbc0c30f169)):
-    text     data      bss    total  kernel
-   +1684     +280      -64    +1900  multi_v7_defconfig
-  +21635    +1536      +64   +23235  tegra_defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v3.14-rc5 (0414855fdc4a40da05221fc6062cccbc0c30f169))
-   avail  rsrvd   high  freed  board          kconfig
-(no differences)
+Yours,
+Linus Walleij
