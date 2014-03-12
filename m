@@ -1,81 +1,33 @@
-From: Tim Harvey <tharvey@gateworks.com>
-Subject: Re: [PATCH 1/2] of/irq: Fix irq-mapping in of_irq_parse_raw()
-Date: Tue, 11 Mar 2014 20:37:35 -0700
-Message-ID: <CAJ+vNU1-evvZuLEeKvdRnbt_kXm3-zsNEk9ACQ21UhYxJtWwFg@mail.gmail.com>
-References: <1393944864-28113-1-git-send-email-tharvey@gateworks.com>
-	<20140311201533.GF31835@obsidianresearch.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/4] pinctrl: tegra: fix some typos and inconsistencies
+Date: Wed, 12 Mar 2014 15:21:53 +0100
+Message-ID: <CACRpkda2+hqCF5mojk6qJGj27LGWE2BG55GFo482=GNi0gRGiQ@mail.gmail.com>
+References: <1394220137-16351-1-git-send-email-swarren@wwwdotorg.org>
+	<531F3C4E.6040708@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <20140311201533.GF31835@obsidianresearch.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Jingoo Han <jg1.han@samsung.com>, Lucas Stach <l.stach@pengutronix.de>, Mark Rutland <mark.rutland@arm.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Richard Zhu <r65037@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, Bjorn Helgaas <bhelgaas@google.com>, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben-linux@fluff.org>, linux-tegra <linux-tegra@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, Grant Likely <grant.likely@linaro.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <531F3C4E.6040708-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Mar 11, 2014 at 1:15 PM, Jason Gunthorpe
-<jgunthorpe@obsidianresearch.com> wrote:
-> On Tue, Mar 04, 2014 at 06:54:24AM -0800, Tim Harvey wrote:
->> When an interrupt-map contains multiple entries an imap pointer arithmetic
->> bug can cause only the first entry to be properly evaluated and causes
->> the out_irq parameters to be incorrect depending on the #interrupt-cells
->> and #address-cells of the parent interrupt controller.
+On Tue, Mar 11, 2014 at 5:39 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> On 03/07/2014 12:22 PM, Stephen Warren wrote:
+>> drive_dev3_pins in pinctrl-tegra114.c wasn't used; delete it.
+>>
+>> pinctrl-tegra124.c had quite a few typos. Fix those.
+>>
+>> pinctrl-tegra124.c had a few mismatches between the *_groups[] ararys
+>> and the function lists in tegra124_groups[]. Fix those.
 >
-> Tim,
->
-> I took a bit closer look at this for you, and I suspect the root fix
-> is this:
->
-> --- a/Documentation/devicetree/bindings/arm/gic.txt
-> +++ b/Documentation/devicetree/bindings/arm/gic.txt
-> @@ -55,7 +55,6 @@ Example:
->         intc: interrupt-controller@fff11000 {
->                 compatible = "arm,cortex-a9-gic";
->                 #interrupt-cells = <3>;
-> -               #address-cells = <1>;
->                 interrupt-controller;
->                 reg = <0xfff11000 0x1000>,
->                       <0xfff10100 0x100>;
-> (plus the corresponding purge from the .dt files)
->
-> It looks like the implementation does follow the OF specification:
->
->  Each mapping entry consists of a 3-tuple of (child-interrupt,
->  interrupt-parent, parent-interrupt). The number of cells for the
->  child-interrupt specifier is determined by the "#address-cells" and
->  "#interrupt-cells"property of this node. The number of cells for the
->  parent-interrupt value is determined by the "#address-cells"and
->  "#interrupt-cells"property values of this node's
->  interrupt-parent.
+> Oops. I appear to have sent this first patch separately a couple days
+> earlier and accidentally included another identical copy of it in this
+> series. This series should have only included patches 2..4.
 
-Ok - I see I misunderstood the spec with regards to what the
-address-cells related to.
+Hehe no problem, I'll check patches 2 thru 4 and
+apply as I go along.
 
->
-> So by specifying interrupt-cells = 3, address-cells = 1, the GIC is
-> requiring 4 DWs for its interrupt specifier.
-
-Agreed, and the interrupt mapping for the imx6 pcie host controller:
-
-interrupt-map = <0 0 0 1 &intc GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
-                <0 0 0 2 &intc GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
-                <0 0 0 3 &intc GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
-                <0 0 0 4 &intc GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>;
-
-has only 3 cells for the parent interrupt, and only 3 are needed so I
-suppose there is no 'address' necessary.
-
->
-> I see no reason why it doesn't have an address-cells = 0 like other
-> interrupt controllers..
-
-I agree, and I see that as well for other cortex-a9 gic interrupt controllers.
-
->
-> Setting #address-cells to 0 in the GIC node should be functionally
-> equivalent to your patch below, since newaddrsize will == 0.
-
-yes, it does.  I'll verify and post a followup patch tomorrow for the
-invalid dtsi's.  Thanks for digging into this!
-
-Tim
+Yours,
+Linus Walleij
