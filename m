@@ -1,56 +1,47 @@
-From: Tim Harvey <tharvey@gateworks.com>
-Subject: [PATCH 2/2] ARM: dts: imx: fix invalid #address-cells value
-Date: Thu, 13 Mar 2014 10:40:05 -0700
-Message-ID: <1394732405-2260-3-git-send-email-tharvey@gateworks.com>
-References: <1394732405-2260-1-git-send-email-tharvey@gateworks.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <1394732405-2260-1-git-send-email-tharvey@gateworks.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: linux-pci@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Jingoo Han <jg1.han@samsung.com>, Lucas Stach <l.stach@pengutronix.de>, Mark Rutland <mark.rutland@arm.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Richard Zhu <r65037@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, Bjorn Helgaas <bhelgaas@google.com>, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben-linux@fluff.org>, linux-tegra <linux-tegra@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, Grant Likely <grant.likely@linaro.org>
+From: Tim Harvey <tharvey-UMMOYl/HMS+akBO8gow8eQ@public.gmane.org>
+Subject: Re: [PATCH v2 6/6] PCI: designware: use new OF interrupt mapping when possible
+Date: Thu, 13 Mar 2014 10:41:45 -0700
+Message-ID: <CAJ+vNU2XrAL+BTTB8i4hQhkZ_NfcS0VrWuHUjeFfU9hhGjNXbg@mail.gmail.com>
+References: <1394025951-32438-1-git-send-email-l.stach@pengutronix.de>
+	<1394025951-32438-7-git-send-email-l.stach@pengutronix.de>
+	<000201cf38e6$5b02d6e0$110884a0$%han@samsung.com>
+	<201403061633.31260.marex@denx.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <201403061633.31260.marex-ynQEQJNshbs@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>
+Cc: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Troy Kisky <troy.kisky-Q5RJGjKts06CY9SHAMCTRUEOCMrvLtNR@public.gmane.org>, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-sh <linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Mohit KUMAR DCG <Mohit.KUMAR-qxv4g6HH51o@public.gmane.org>, Pratyush Anand <pratyush.anand-qxv4g6HH51o@public.gmane.org>, Richard Zhu <r65037@fr>
 List-Id: linux-tegra@vger.kernel.org
 
-The invalid value of #address-cells in the imx6 pcie host controller node
-causes of_irq_parse_raw() to incorrectly advance through an interrupt-map
-table of more than one interrupt.
+On Thu, Mar 6, 2014 at 7:33 AM, Marek Vasut <marex-ynQEQJNshbs@public.gmane.org> wrote:
+> On Thursday, March 06, 2014 at 03:47:03 AM, Jingoo Han wrote:
+>> On Wednesday, March 05, 2014 10:26 PM, Lucas Stach wrote:
+>> > This is the recommended method of doing the IRQ
+>> > mapping. For old devicetrees we fall back to the
+>> > previous practice.
+>> >
+>> > Signed-off-by: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+>> > Acked-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+>>
+>> (+cc Mohit KUMAR, Richard Zhu, Pratyush Anand, Marek Vasut,
+>>        Kishon Vijay Abraham I)
+>>
+>> Acked-by: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>
+>> It works properly on Exynos platform.
+>> Thank you.
+>
+> Looks reasonable,
+>
+> Reviewed-by: Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>
+>
 
-This patch resolves this issue and allows proper interrupt mapping for an
-imx6 pcie host connected to a P2P bridge when using legacy interrupts.
+I've tested this on the Gateworks Ventana products with P2P bridges
+and with the patch I just submitted here:
+http://thread.gmane.org/gmane.linux.kernel.pci/30017
 
-Signed-off-by: Tim Harvey <tharvey@gateworks.com>
-Cc: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
-Cc: Jingoo Han <jg1.han@samsung.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Cc: Richard Zhu <r65037@freescale.com>
-Cc: Sascha Hauer <kernel@pengutronix.de>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Simon Horman <horms@verge.net.au>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Ben Dooks <ben-linux@fluff.org>
-Cc: linux-tegra <linux-tegra@vger.kernel.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Shawn Guo <shawn.guo@linaro.org>
-Cc: Grant Likely <grant.likely@linaro.org>
----
- arch/arm/boot/dts/imx6qdl.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Tested-by: Tim Harvey <tharvey-UMMOYl/HMS+akBO8gow8eQ@public.gmane.org>
 
-diff --git a/arch/arm/boot/dts/imx6qdl.dtsi b/arch/arm/boot/dts/imx6qdl.dtsi
-index af8d28d..2285299 100644
---- a/arch/arm/boot/dts/imx6qdl.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl.dtsi
-@@ -49,7 +49,7 @@
- 	intc: interrupt-controller@00a01000 {
- 		compatible = "arm,cortex-a9-gic";
- 		#interrupt-cells = <3>;
--		#address-cells = <1>;
-+		#address-cells = <0>;
- 		#size-cells = <1>;
- 		interrupt-controller;
- 		reg = <0x00a01000 0x1000>,
--- 
-1.8.3.2
+Tim
