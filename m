@@ -1,39 +1,75 @@
-From: Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: DT: fix gic interrupt controller documentation
-Date: Fri, 14 Mar 2014 13:05:52 +0000
-Message-ID: <CACxGe6sEjW+J1ZHq-qb=7yPWLEnfWkSxZvwHUVO3L9vL5rsm1g@mail.gmail.com>
+From: Shawn Guo <shawn.guo@freescale.com>
+Subject: Re: [PATCH 2/2] ARM: dts: imx: fix invalid #address-cells value
+Date: Fri, 14 Mar 2014 21:31:46 +0800
+Message-ID: <20140314133144.GE813@S2101-09.ap.freescale.net>
 References: <1394732405-2260-1-git-send-email-tharvey@gateworks.com>
- <1394732405-2260-2-git-send-email-tharvey@gateworks.com> <5321EE81.1030207@wwwdotorg.org>
- <20140313182554.GA15990@obsidianresearch.com>
+ <1394732405-2260-3-git-send-email-tharvey@gateworks.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140313182554.GA15990-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Richard Zhu <r65037-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Tim Harvey <tharvey-UMMOYl/HMS+akBO8gow8eQ@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1394732405-2260-3-git-send-email-tharvey@gateworks.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Tim Harvey <tharvey@gateworks.com>
+Cc: linux-pci@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Richard Zhu <r65037@freescale.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Ben Dooks <ben-linux@fluff.org>, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, Jingoo Han <jg1.han@samsung.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, linux-tegra <linux-tegra@vger.kernel.org>, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Sascha Hauer <kernel@pengutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, Kukjin Kim <kgene.kim@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, linux-arm-kernel@lists.infradead.org, Lucas Stach <l.stach@pengutronix.de>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Mar 13, 2014 at 6:25 PM, Jason Gunthorpe
-<jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org> wrote:
-> On Thu, Mar 13, 2014 at 11:44:33AM -0600, Stephen Warren wrote:
->> On 03/13/2014 11:40 AM, Tim Harvey wrote:
->> > When using interrupt-maps, the size of a map entry is #address-cells +
->> >  #interrupt-cells for the parent interrupt controller.  For the ARM GIC
->> > address-cells should be 0 as this is not used.
->> >
->> > This patch fixes the example by correctly specifying #address-cells = 0.
->>
->> If the #address-cells property is required (well, or even optional...)
->> in the node, shouldn't it be included in the list of required/optional
->> properties above, and not solely included in the example?
->
-> AFAIK, #address-cells = 0 is the same as not including a
-> #address-cells at all.
->
-> Omitting entirely is what other interrupt-controller bindings are
-> doing, so I'd just drop mention of #address-cells completely.
+On Thu, Mar 13, 2014 at 10:40:05AM -0700, Tim Harvey wrote:
+> The invalid value of #address-cells in the imx6 pcie host controller node
+> causes of_irq_parse_raw() to incorrectly advance through an interrupt-map
+> table of more than one interrupt.
+> 
+> This patch resolves this issue and allows proper interrupt mapping for an
+> imx6 pcie host connected to a P2P bridge when using legacy interrupts.
+> 
+> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+> Cc: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
+> Cc: Jingoo Han <jg1.han@samsung.com>
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+> Cc: Richard Zhu <r65037@freescale.com>
+> Cc: Sascha Hauer <kernel@pengutronix.de>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Stephen Warren <swarren@wwwdotorg.org>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Simon Horman <horms@verge.net.au>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Ben Dooks <ben-linux@fluff.org>
+> Cc: linux-tegra <linux-tegra@vger.kernel.org>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: Shawn Guo <shawn.guo@linaro.org>
+> Cc: Grant Likely <grant.likely@linaro.org>
+> ---
+>  arch/arm/boot/dts/imx6qdl.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/imx6qdl.dtsi b/arch/arm/boot/dts/imx6qdl.dtsi
+> index af8d28d..2285299 100644
+> --- a/arch/arm/boot/dts/imx6qdl.dtsi
+> +++ b/arch/arm/boot/dts/imx6qdl.dtsi
+> @@ -49,7 +49,7 @@
+>  	intc: interrupt-controller@00a01000 {
+>  		compatible = "arm,cortex-a9-gic";
+>  		#interrupt-cells = <3>;
+> -		#address-cells = <1>;
+> +		#address-cells = <0>;
+>  		#size-cells = <1>;
 
-Correct. Just drop it.
+So we should probably just drop both #address-cells and #size-cells?  If
+so, please help patch imx6sl.dtsi as well.
 
-g.
+Shawn
+
+>  		interrupt-controller;
+>  		reg = <0x00a01000 0x1000>,
+> -- 
+> 1.8.3.2
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
+> 
