@@ -1,29 +1,102 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: tegra: fix some mistakes in Tegra124
-Date: Fri, 14 Mar 2014 11:22:18 +0100
-Message-ID: <CACRpkdYD1rec_CEnyRK0hLTbGFue_s6SB9KvmpOs3v_DKbNF7Q@mail.gmail.com>
-References: <1394660147-9927-1-git-send-email-swarren@wwwdotorg.org>
+From: Josh Wu <josh.wu-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>
+Subject: re: [v2] media: soc-camera: OF cameras
+Date: Fri, 14 Mar 2014 18:48:50 +0800
+Message-ID: <1394794130-13660-1-git-send-email-josh.wu@atmel.com>
+References: <1392235552-28134-1-git-send-email-pengw@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1394660147-9927-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1392235552-28134-1-git-send-email-pengw-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: g.liakhovetski-Mmb7MZpHnFY@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Mar 12, 2014 at 10:35 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+Hi, Brayn
 
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> A couple of pairs of pin group names were swapped in the table. This
-> caused the wrong register to be programmed. Luckily, this had little
-> effect, if any, since the swapped pins were likely to be programmed
-> identically.
->
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sorry for the format of my email. I subscribe the linux-media maillist but
+I didn't find your email in my mailbox even. I don't know why some emails are
+missed.
 
-Patch applied.
+anyway, Some comments for your patch.
 
-Yours,
-Linus Walleij
+> [snip]
+
+> ... ...
+
+> +static void scan_of_host(struct soc_camera_host *ici)
+> +{
+> +       struct soc_camera_of_client *sofc;
+> +       struct soc_camera_async_client *sasc;
+> +       struct v4l2_async_subdev *asd;
+> +       struct soc_camera_device *icd;
+> +       struct device_node *node = NULL;
+> +
+> +       for (;;) {
+> +               int ret;
+> +
+> +               node = v4l2_of_get_next_endpoint(ici->v4l2_dev.dev->of_node,
+> +                                              node);
+> +               if (!node)
+> +                       break;
+> +
+> +               sofc = soc_camera_of_alloc_client(ici, node);
+> +               if (!sofc) {
+> +                       dev_err(ici->v4l2_dev.dev,
+> +                               "%s(): failed to create a client device\n",
+> +                               __func__);
+> +                       of_node_put(node);
+> +                       break;
+> +               }
+> +               v4l2_of_parse_endpoint(node, &sofc->node);
+> +
+> +               sasc = &sofc->sasc;
+> +               ret = platform_device_add(sasc->pdev);
+> +               if (ret < 0) {
+> +                       /* Useless thing, but keep trying */
+> +                       platform_device_put(sasc->pdev);
+> +                       of_node_put(node);
+> +                       continue;
+> +               }
+> +
+> +               /* soc_camera_pdrv_probe() probed successfully */
+> +               icd = platform_get_drvdata(sasc->pdev);
+> +               if (!icd) {
+> +                       /* Cannot be... */
+> +                       platform_device_put(sasc->pdev);
+> +                       of_node_put(node);
+> +                       continue;
+> +               }
+> +
+> +               asd = sasc->sensor;
+> +               asd->match_type = V4L2_ASYNC_MATCH_OF;
+> +               asd->match.of.node = sofc->link_node;
+> +
+> +               sasc->notifier.subdevs = &asd;
+> +               sasc->notifier.num_subdevs = 1;
+> +               sasc->notifier.bound = soc_camera_async_bound;
+> +               sasc->notifier.unbind = soc_camera_async_unbind;
+> +               sasc->notifier.complete = soc_camera_async_complete;
+> +
+> +               icd->parent = ici->v4l2_dev.dev;
+
+Before register the notifier, you need also register a "mclk" v4l2 clock.
+This clock is needed when the soc-camera i2c sensor driver is probed. Otherwise the
+sensor will always defer the probe and can not probe.
+
+Best Regards,
+Josh Wu
+
+> +
+> +               ret = v4l2_async_notifier_register(&ici->v4l2_dev, &sasc->notifier);
+> +               if (!ret)
+> +                       break;
+> +
+> +               /*
+> +                * We could destroy the icd in there error case here, but the
+> +                * non-OF version doesn't do that, so, we can keep it around too
+> +                */
+> +       }
+> +}
+
+> [snip]
