@@ -1,66 +1,160 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 1/2] remgap: Fix possible sleep-in-atomic in
- regmap_bulk_write()
-Date: Tue, 18 Mar 2014 20:21:54 +0000
-Message-ID: <20140318202154.GS11706@sirena.org.uk>
-References: <1395143914-26929-1-git-send-email-tiwai@suse.de>
- <20140318122218.GQ11706@sirena.org.uk>
- <s5hr45zr7f1.wl%tiwai@suse.de>
- <20140318130426.GA11706@sirena.org.uk>
- <s5hob13r5l6.wl%tiwai@suse.de>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="/XX0ATCDKajGjg99"
+From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Subject: [PATCH v3] ASOC: tegra: move AC97 clock handling to the machine driver
+Date: Tue, 18 Mar 2014 21:30:49 +0100
+Message-ID: <1395174649-1493-1-git-send-email-dev@lynxeye.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <s5hob13r5l6.wl%tiwai-l3A5Bk7waGM@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>
-Cc: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Tegra the convention is to have a single machine driver
+that's controlling the whole audio subsystem. This was
+introduced after the AC97 driver was merged and ever since
+AC97 has been broken.
 
---/XX0ATCDKajGjg99
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Move the clock handling to the machine driver, to be in line
+with the other Tegra drivers and give the machine driver
+full control over the single Tegra audio PLL.
 
-On Tue, Mar 18, 2014 at 02:36:53PM +0100, Takashi Iwai wrote:
-> Mark Brown wrote:
+Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+--
+v2:
+- remove redundant clock rate setting
+- defer removal of err_clk_put label to avoid conflict with Stephens
+  dma channel cleanup
+v3:
+- rebased to 3.14-rc1
+- no functional change
+- reword commit message
 
-> > > I thought of that, too, but didn't take it because covering the lock
-> > > there doesn't change the fact that it's still fundamentally racy.
+CC: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+CC: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+CC: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+CC: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+CC: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+CC: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+---
+ sound/soc/tegra/tegra20_ac97.c | 15 +--------------
+ sound/soc/tegra/tegra20_ac97.h |  1 -
+ sound/soc/tegra/tegra_wm9712.c | 17 ++++++++++++++++-
+ 3 files changed, 17 insertions(+), 16 deletions(-)
 
-> > I'm not sure what you mean here - what do you mean yb "covering the
-> > lock"?
-
-> I meant covering memcpy() and parse_inplace() & co in the lock.
-
-Oh, right.  A fix is definitely needed and your fix is certainly good
-=66rom a correctness point of view but since we're narrowing the locked
-region we may as well make it as small as possible while we're at it
-both for comprehensibility ("why is that locked?") and performance.
-
---/XX0ATCDKajGjg99
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTKKreAAoJELSic+t+oim9T/UP/3o9N7KX/+6qR1bC3ReIXeoP
-1RXvqKiQbVgNiSEP9EKCqSSTi3unSmY+2SVvuZ4C1SbYdDVU+dmQDG4H5tTHkvB/
-glpjZlHjVXu70U8Z7re8EElNt3aaRJrLNm1cDS6FXFmvweWJLJX35W9NwY3Pgjxg
-YKbJm3bVuA4vErPqR3k/IUimx/4ASEFa6eMp48+UIt2IPEUd6HtIedbcp9m/p0Xe
-PGzci7WGkoD1xgutF61oMfd3Ao1FoNw08xFUMKRZJg3uwsqkxHgcGsSjRFahufFz
-Asz5R9sxQUwQHcOovqrZfLIK0L53fyp4j4NlMSaweS+XoHmdENMPeNnQWjPxSsm5
-DLPffHkKTIRRTUCNWsFSt4EVbvThGr+lFTjrnGpMvyfFeV+mUClhEZrwLkwhJb3V
-qMhz2nZc3aGZyXVMB0mFObf71PCytvZZw2EqxEr1cLNTPN2OLzXGHIM72thr7iD+
-aMiIUgZb6LZXAn7pKJHNCJ1UU9/bfB7fY/94TjoxlYgPYtFIyUWdB/SholR5ThyA
-RaDLe4/B3ADrS72EIs5yhykg0Eu8MMPPlWZXTL5dKlTKTmN+9OOGHPDPOidiudfz
-dv/YHGlqhqmoWTvJr2qWHepIa/HE1cM07uLbQrnqX2kGQ7O4WeG0/UQw3NFopnqy
-Ua7IFhJX90LaRLSESqzU
-=rTcH
------END PGP SIGNATURE-----
-
---/XX0ATCDKajGjg99--
+diff --git a/sound/soc/tegra/tegra20_ac97.c b/sound/soc/tegra/tegra20_ac97.c
+index cf5e1cf..29f8832 100644
+--- a/sound/soc/tegra/tegra20_ac97.c
++++ b/sound/soc/tegra/tegra20_ac97.c
+@@ -37,7 +37,6 @@
+ #include <sound/soc.h>
+ #include <sound/dmaengine_pcm.h>
+ 
+-#include "tegra_asoc_utils.h"
+ #include "tegra20_ac97.h"
+ 
+ #define DRV_NAME "tegra20-ac97"
+@@ -376,18 +375,10 @@ static int tegra20_ac97_platform_probe(struct platform_device *pdev)
+ 	ac97->playback_dma_data.addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+ 	ac97->playback_dma_data.maxburst = 4;
+ 
+-	ret = tegra_asoc_utils_init(&ac97->util_data, &pdev->dev);
+-	if (ret)
+-		goto err_clk_put;
+-
+-	ret = tegra_asoc_utils_set_ac97_rate(&ac97->util_data);
+-	if (ret)
+-		goto err_asoc_utils_fini;
+-
+ 	ret = clk_prepare_enable(ac97->clk_ac97);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "clk_enable failed: %d\n", ret);
+-		goto err_asoc_utils_fini;
++		goto err;
+ 	}
+ 
+ 	ret = snd_soc_set_ac97_ops(&tegra20_ac97_ops);
+@@ -419,8 +410,6 @@ err_unregister_component:
+ 	snd_soc_unregister_component(&pdev->dev);
+ err_clk_disable_unprepare:
+ 	clk_disable_unprepare(ac97->clk_ac97);
+-err_asoc_utils_fini:
+-	tegra_asoc_utils_fini(&ac97->util_data);
+ err_clk_put:
+ err:
+ 	snd_soc_set_ac97_ops(NULL);
+@@ -434,8 +423,6 @@ static int tegra20_ac97_platform_remove(struct platform_device *pdev)
+ 	tegra_pcm_platform_unregister(&pdev->dev);
+ 	snd_soc_unregister_component(&pdev->dev);
+ 
+-	tegra_asoc_utils_fini(&ac97->util_data);
+-
+ 	clk_disable_unprepare(ac97->clk_ac97);
+ 
+ 	snd_soc_set_ac97_ops(NULL);
+diff --git a/sound/soc/tegra/tegra20_ac97.h b/sound/soc/tegra/tegra20_ac97.h
+index 4acb3aa..0a39d82 100644
+--- a/sound/soc/tegra/tegra20_ac97.h
++++ b/sound/soc/tegra/tegra20_ac97.h
+@@ -90,6 +90,5 @@ struct tegra20_ac97 {
+ 	struct regmap *regmap;
+ 	int reset_gpio;
+ 	int sync_gpio;
+-	struct tegra_asoc_utils_data util_data;
+ };
+ #endif /* __TEGRA20_AC97_H__ */
+diff --git a/sound/soc/tegra/tegra_wm9712.c b/sound/soc/tegra/tegra_wm9712.c
+index 45b5789..25a7f82 100644
+--- a/sound/soc/tegra/tegra_wm9712.c
++++ b/sound/soc/tegra/tegra_wm9712.c
+@@ -29,10 +29,13 @@
+ #include <sound/pcm_params.h>
+ #include <sound/soc.h>
+ 
++#include "tegra_asoc_utils.h"
++
+ #define DRV_NAME "tegra-snd-wm9712"
+ 
+ struct tegra_wm9712 {
+ 	struct platform_device *codec;
++	struct tegra_asoc_utils_data util_data;
+ };
+ 
+ static const struct snd_soc_dapm_widget tegra_wm9712_dapm_widgets[] = {
+@@ -118,15 +121,25 @@ static int tegra_wm9712_driver_probe(struct platform_device *pdev)
+ 
+ 	tegra_wm9712_dai.platform_of_node = tegra_wm9712_dai.cpu_of_node;
+ 
++	ret = tegra_asoc_utils_init(&machine->util_data, &pdev->dev);
++	if (ret)
++		goto codec_unregister;
++
++	ret = tegra_asoc_utils_set_ac97_rate(&machine->util_data);
++	if (ret)
++		goto asoc_utils_fini;
++
+ 	ret = snd_soc_register_card(card);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
+ 			ret);
+-		goto codec_unregister;
++		goto asoc_utils_fini;
+ 	}
+ 
+ 	return 0;
+ 
++asoc_utils_fini:
++	tegra_asoc_utils_fini(&machine->util_data);
+ codec_unregister:
+ 	platform_device_del(machine->codec);
+ codec_put:
+@@ -141,6 +154,8 @@ static int tegra_wm9712_driver_remove(struct platform_device *pdev)
+ 
+ 	snd_soc_unregister_card(card);
+ 
++	tegra_asoc_utils_fini(&machine->util_data);
++
+ 	platform_device_unregister(machine->codec);
+ 
+ 	return 0;
+-- 
+1.8.5.3
