@@ -1,53 +1,70 @@
 From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 2/2] remgap: Fix possible sleep-in-atomic in
- regmap_register_patch()
-Date: Tue, 18 Mar 2014 12:03:12 +0000
-Message-ID: <20140318120312.GP11706@sirena.org.uk>
+Subject: Re: [PATCH v2 1/2] remgap: Fix possible sleep-in-atomic in
+ regmap_bulk_write()
+Date: Tue, 18 Mar 2014 12:22:18 +0000
+Message-ID: <20140318122218.GQ11706@sirena.org.uk>
 References: <1395143914-26929-1-git-send-email-tiwai@suse.de>
- <1395143914-26929-2-git-send-email-tiwai@suse.de>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="qdlkwHn4NkwSqFTO"
+	protocol="application/pgp-signature"; boundary="7//HIyYuZny8+TsE"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1395143914-26929-2-git-send-email-tiwai-l3A5Bk7waGM@public.gmane.org>
+In-Reply-To: <1395143914-26929-1-git-send-email-tiwai-l3A5Bk7waGM@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>
 Cc: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---qdlkwHn4NkwSqFTO
+--7//HIyYuZny8+TsE
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 18, 2014 at 12:58:34PM +0100, Takashi Iwai wrote:
-> Just like the previous, fix the possible sleep-in-atomic in
-> regmap_register_patch() by moving the allocation out of the lock.
+On Tue, Mar 18, 2014 at 12:58:33PM +0100, Takashi Iwai wrote:
 
-Sorry, I guess I wasn't clear - I already have essentially the same
-patch locally.
+>  		wval =3D kmemdup(val, val_count * val_bytes, GFP_KERNEL);
+>  		if (!wval) {
+> -			ret =3D -ENOMEM;
+>  			dev_err(map->dev, "Error in memory allocation\n");
+> -			goto out;
+> +			return -ENOMEM;
+>  		}
+> +		map->lock(map->lock_arg);
+>  		for (i =3D 0; i < val_count * val_bytes; i +=3D val_bytes)
+>  			map->format.parse_inplace(wval + i);
+> =20
+>  		ret =3D _regmap_raw_write(map, reg, wval, val_bytes * val_count);
+> +		map->unlock(map->lock_arg);
 
---qdlkwHn4NkwSqFTO
+If we're reducing the locking region here then we should take the lock
+after doing the parse_inplace() to reduce the locked region.  Nothing
+else can be referring to the data since we only just allocated it.  I'll
+fix that by hand and apply.
+
+Please also send things to the list for the subsystem (linux-kernel if
+there's not a specific one).
+
+--7//HIyYuZny8+TsE
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTKDX9AAoJELSic+t+oim9eusP/3V0qv4z8u3tR3SMS/a3jzEE
-+N50YkkkH+eFO1hNQtd/kM6wGSNsV3KYTT3bLT6Qvs/gSih3MEuD0NZUW44X1jWc
-06GTW6QsTtGS4IK4TnB43huy9q7/ER8gQ/U4kdtxQEgUaVzJcNmBG6CRIBSYgKF8
-YkJ9byu3mWafor/z8IYhPaz8JcTr0SPuiZAWBxZI9yG/nVAuF1SvMHlqUf6gQbI8
-kSnmFuRNMBfhFta7Q4cbCr82xT+R7G0lYxGjBPDysHWzzLnvncpI1RjwKT0QAR62
-ouVVuw00anuuHvq0i67r1O3CUUdFYLNt1OK6q030tJru/b16GzwGtYk/OWgiUoUx
-00QydEMqGTo9FrZvZmimez60dCwiULy30l2lLzW4sSiSxLiVSSrsIW2Cm4M/tqgP
-EcDUycc8+E2VoWe5GHIahcDvqStkwJdLRUYVr82zcXINb0/pyJcBvEB4DVxpyMLv
-XzwBI4Hd5vMjz9AsBtczzF0Ht0n+Xt11MDDRjkmjzt34ZZKevj+AyyGbvHVTaF47
-YyncrTvpfG/44chxb/j0x36MiCh9ItxTRJkRsD17PYQWHzJzUtDUYDGKDVyQ8CK6
-bfUBb470vTjTsQjjBEbpGH6Ft1jWiiVbySvJsebCzuvunMbASV+G56YIud0WVpvj
-IT2yKJjn+/eTlNBVBkqC
-=+PZp
+iQIcBAEBAgAGBQJTKDp3AAoJELSic+t+oim9Y3cP/irMS4WnHiwDD0cG50Wg38ZD
+MINxVu8ThekEFCzZ5SaWwCcYKW2XM58NG0bqXEZsrfT2bpnQWn+F1ju0wKW+uMGe
+R/nHCxX240K23da+AbjtvfbLenBZjhXMaxFjrN5SVp3vbD/zX8EmNDN8Kfia9Cd2
+NDUBllYThayXHvO6BjzbhGCE1kSilYGCiYuhI7CRBthLE9KG7RSxo3kwvbZd1TOu
+u/5rvM9JTFMpNsO+hl2Pa20Y+8Iz0N6bArAdEenGOgyKAbuAiLUdUGeELoulOFy7
+54Nl9hd5DZxKW42wPMN8HsSEJMVAit00xgLBsX5P6kUemS5qD00dGw/OEobProBf
+AXD1heQsscTToa5Mo8hsZC9vdz9FVZeZTnJs7SBWqCTafpAZ3zt2qvBpT8zyqiU/
+Bd6pS6N9vUvS1S6UDjS/g/LVA70RDkGuLRq/BCPlPoXsEteq8bCfjL8bSDOEPS0I
+egldycVBKu1SzA0kX/xgVGtFEifyohlXz7ltR0nTnn7DcKfQlP/1Oa+I5I8yKWuT
+HDSeunFvPmytPnyjjsAYORL0nyJno7TEnzbmpNP1ZJWVLechQ6sFR//yuOnu1T3+
+yL3UM+kyEFUCx7soTBsFlZZBicnc/mKwSfK5XFIUqIA/uCGZf3RVHyjdRi+77LRO
+ZMx/sezMsamXPTTQvxyw
+=kL8K
 -----END PGP SIGNATURE-----
 
---qdlkwHn4NkwSqFTO--
+--7//HIyYuZny8+TsE--
