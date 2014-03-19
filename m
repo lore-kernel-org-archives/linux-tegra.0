@@ -1,42 +1,28 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: fix Dalmore pinctrl configuration
-Date: Wed, 19 Mar 2014 10:36:35 -0600
-Message-ID: <1395246995-13972-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH v2] ASoC: tegra: Use flat regcache.
+Date: Wed, 19 Mar 2014 13:24:37 -0600
+Message-ID: <5329EEF5.9090201@wwwdotorg.org>
+References: <1395119329-30721-1-git-send-email-dgreid@chromium.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1395119329-30721-1-git-send-email-dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 03/17/2014 11:08 PM, Dylan Reid wrote:
+> When using an rbtree cache, there can be allocations the first time a
+> register is accessed.  This can cause an attempt to schedule while
+> atomic in the case that the regmap is using a spinlock.  This could be
+> fixed by either initializing all the registers or using a flat cache.
+> The register maps for tegra30_ahub and tegra30_i2s are dense and don't
+> save much from using a tree so convert them to flat.
+> 
+> Tegra30 changes tested on Norrin, Tegra20 changes compile.
 
-Remove some entries from Dalmore's device tree that attempt to set some
-options which aren't supported for the drive_gma pin group.
+Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-This should be applied on top of wherever Tegra's for-3.15/dt branch
-was merged into arm-soc.
-
- arch/arm/boot/dts/tegra114-dalmore.dts | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
-index 8de543777882..5eb11a3bba55 100644
---- a/arch/arm/boot/dts/tegra114-dalmore.dts
-+++ b/arch/arm/boot/dts/tegra114-dalmore.dts
-@@ -740,12 +740,10 @@
- 				nvidia,pins = "drive_gma";
- 				nvidia,high-speed-mode = <TEGRA_PIN_ENABLE>;
- 				nvidia,schmitt = <TEGRA_PIN_DISABLE>;
--				nvidia,low-power-mode = <TEGRA_PIN_LP_DRIVE_DIV_1>;
- 				nvidia,pull-down-strength = <2>;
- 				nvidia,pull-up-strength = <1>;
- 				nvidia,slew-rate-rising = <TEGRA_PIN_SLEW_RATE_FASTEST>;
- 				nvidia,slew-rate-falling = <TEGRA_PIN_SLEW_RATE_FASTEST>;
--				nvidia,drive-type = <1>;
- 			};
- 		};
- 	};
--- 
-1.8.1.5
+(On Tegra124 Venice2 and Tegra20 Seaboard/Springbank)
