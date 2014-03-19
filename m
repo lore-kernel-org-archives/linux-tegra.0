@@ -1,28 +1,29 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2] ASoC: tegra: Use flat regcache.
-Date: Wed, 19 Mar 2014 13:24:37 -0600
-Message-ID: <5329EEF5.9090201@wwwdotorg.org>
-References: <1395119329-30721-1-git-send-email-dgreid@chromium.org>
+Subject: Re: [PATCH v3] ASOC: tegra: move AC97 clock handling to the machine
+ driver
+Date: Wed, 19 Mar 2014 13:34:57 -0600
+Message-ID: <5329F161.5080801@wwwdotorg.org>
+References: <1395174649-1493-1-git-send-email-dev@lynxeye.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1395119329-30721-1-git-send-email-dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+In-Reply-To: <1395174649-1493-1-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
+To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/17/2014 11:08 PM, Dylan Reid wrote:
-> When using an rbtree cache, there can be allocations the first time a
-> register is accessed.  This can cause an attempt to schedule while
-> atomic in the case that the regmap is using a spinlock.  This could be
-> fixed by either initializing all the registers or using a flat cache.
-> The register maps for tegra30_ahub and tegra30_i2s are dense and don't
-> save much from using a tree so convert them to flat.
-> 
-> Tegra30 changes tested on Norrin, Tegra20 changes compile.
+On 03/18/2014 02:30 PM, Lucas Stach wrote:
+> On Tegra the convention is to have a single machine driver
+> that's controlling the whole audio subsystem. This was
+> introduced after the AC97 driver was merged and ever since
+> AC97 has been broken.
 
-Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+FWIW, that last sentence isn't actually true at all. This structure has
+been in place since the very first addition of sound/soc/tegra/harmony.c
+(now sound/soc/tegra/tegra_wm8903.c).
 
-(On Tegra124 Venice2 and Tegra20 Seaboard/Springbank)
+> Move the clock handling to the machine driver, to be in line
+> with the other Tegra drivers and give the machine driver
+> full control over the single Tegra audio PLL.
