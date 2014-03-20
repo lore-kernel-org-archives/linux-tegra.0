@@ -1,50 +1,54 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2] ASoC: tegra: Use flat regcache.
-Date: Wed, 19 Mar 2014 23:10:20 +0000
-Message-ID: <20140319231020.GA11706@sirena.org.uk>
-References: <1395119329-30721-1-git-send-email-dgreid@chromium.org>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH 62/62] ARM: tegra: make debug_ll code build for ARMv6
+Date: Thu, 20 Mar 2014 11:50:16 +0100
+Message-ID: <201403201150.16963.arnd@arndb.de>
+References: <1395257399-359545-1-git-send-email-arnd@arndb.de> <6268308.cWSbPODKo9@wuerfel> <5329FA18.6090208@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="LWrJum1q/OvHB6h/"
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1395119329-30721-1-git-send-email-dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+In-Reply-To: <5329FA18.6090208-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Wednesday 19 March 2014, Stephen Warren wrote:
+> On 03/19/2014 01:51 PM, Arnd Bergmann wrote:
+> > On Wednesday 19 March 2014 13:40:06 Stephen Warren wrote:
+> >> Hmmm. This code is guaranteed to only execute on Tegra (well, perhaps
+> >> someone can turn on the wrong debug option and run it on non-Tegra, but
+> >> then it's guaranteed not to work since the HW it touches doesn't exist).
+> >> As such, the code ought to be able to use ARMv7 instructions.
+> >>
+> >> As a fix for similar issues in assembly code in arch/arm/mach-tegra/*.S,
+> >> Makefile there does:
+> >>
+> >> asflags-y                               += -march=armv7-a
+> >>
+> >> (I think you added that? Yes, in 408e713545ca "ARM: tegra: build
+> >> assembly files with -march=armv7-a")
+> >>
+> >> Shouldn't we use the same fix in this case too?
+> > 
+> > That was my first idea, but I couldn't come up with a nice way to do this
+> > for arch/arm/kernel/debug.S, which #includes the specific implementation.
+> > 
+> > I'd rather not put lots of per-platform hacks into arch/arm/kernel/Makefile.
+> 
+> Oh, I guess the fact it's include makes it a bit more painful.
+> 
+> You could deal with it in Kconfig reasonably easily by having each of
+> DEBUG_*_UART select a config option indicating how to compile code that
+> includes DEBUG_LL_INCLUDE, and then have the Makefiles set up asflags
+> based on those. Still, that would be a lot of work and this patch is
+> simpler.
+> 
+> Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
---LWrJum1q/OvHB6h/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Ok, thanks for testing! I'm always cautious aobut my own assembly skills,
+so I'm glad this worked.
 
-On Mon, Mar 17, 2014 at 10:08:49PM -0700, Dylan Reid wrote:
-> When using an rbtree cache, there can be allocations the first time a
-> register is accessed.  This can cause an attempt to schedule while
-
-Applied, thanks.
-
---LWrJum1q/OvHB6h/
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTKiPZAAoJELSic+t+oim99kcP/j0n4Dcush9QAAjsmyWt/GC3
-Mr7b/mGUAgUYTLfUkNCKZ7gkMJpWY5d25LJpKzueJfmfUfigQww19uwCfGhObfRs
-Tn5s+SU8qWMilTr/avJ9rpBzt5AT5tbQOvDwndDTr/bEVfkeoV0fr9tpPNJO9sMV
-fq9Dt+/9l0uLWS+kVmPMWWo+yNlR71XEvPxFMQaru+cx6kB0AfI9Rk/s5wqLz4/K
-3L9RaUGFkh6kjKlCSbSuq9s3QQHC9NmmbshLjXFMxbR+ps7/nmahBWokjawd66qj
-6jctl01t98p+pg7RUBJeUBmpgdJbSK7461npwLNORmdAyWJV6pr4DGH9VXT8RKU9
-lgJNoWFKJOb1kQJoHT9aRT+1vZMq7itAMYky4kKcPTYOrtV975YP2vmawWUQgkwE
-PL9U2imWYfw1fttUJPGKIgO0nvyy7Jn1F5JIiHwyZZ+5Uca85PS1+iSNuEEb0d9I
-J3lNh7yoDnSdbnfXwGuh85/vXSxUoH6WnwyfTWeE2MVTmwA6SQtjkTqS54IJRCJv
-k+4++STRaDxmuukvlXQFp2Q1fkeDA+r7Z050xU3dJL3cA4TYQCaCK9M9067WcKPs
-qmaDbaF1qNbCFNXIMUiPmQobERvu1dljzqzuggtY/VnM/4RthWNMMHhAtuVELFts
-qzk0cXBpkQiqI69XjYG/
-=wuX1
------END PGP SIGNATURE-----
-
---LWrJum1q/OvHB6h/--
+	Arnd
