@@ -1,23 +1,21 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [GIT PULL 1/5] ARM: tegra: Trusted Foundations work for 3.15
-Date: Thu, 20 Mar 2014 14:36:04 -0700
-Message-ID: <20140320213604.GA6649@quad.lixom.net>
+Subject: Re: [GIT PULL 2/5] ARM: tegra: driver changes for 3.15
+Date: Thu, 20 Mar 2014 14:37:46 -0700
+Message-ID: <20140320213746.GB6649@quad.lixom.net>
 References: <1394224088-28910-1-git-send-email-swarren@wwwdotorg.org>
+ <1394224088-28910-2-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1394224088-28910-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1394224088-28910-2-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Mar 07, 2014 at 01:28:04PM -0700, Stephen Warren wrote:
-> This pull request contains a number of cleanups and enhancements for the
-> Trusted Foundations firmware used on production Tegra SoCs. The changes
-> allow kernels without TF support to run on HW that uses TF, albeit with
-> reduced functionality, and also fix the cpuidle feature.
+On Fri, Mar 07, 2014 at 01:28:05PM -0700, Stephen Warren wrote:
+> A single cleanup for the Tegra AHB driver.
 > 
 > ----------------------------------------------------------------
 > 
@@ -27,11 +25,9 @@ On Fri, Mar 07, 2014 at 01:28:04PM -0700, Stephen Warren wrote:
 > 
 > are available in the git repository at:
 > 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tegra-for-3.15-tf
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tegra-for-3.15-drivers
 
-Not finding a perfect category for this, I ended up merging it into next/soc.
-
-So; merged; thanks. Again, apologies for the delay.
+Merged into next/drivers. Thanks!
 
 
 -Olof
