@@ -1,13 +1,13 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 05/12] drm/nouveau/fifo: add GK20A support
-Date: Mon, 24 Mar 2014 23:14:59 +0100
-Message-ID: <20140324221457.GE17218@mithrandir>
+Subject: Re: [PATCH 06/12] drm/nouveau/ibus: add GK20A support
+Date: Mon, 24 Mar 2014 23:34:45 +0100
+Message-ID: <20140324223444.GF17218@mithrandir>
 References: <1395650554-31925-1-git-send-email-acourbot@nvidia.com>
- <1395650554-31925-6-git-send-email-acourbot@nvidia.com>
+ <1395650554-31925-7-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2140389291=="
+Content-Type: multipart/mixed; boundary="===============2048779847=="
 Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <1395650554-31925-6-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1395650554-31925-7-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
  <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/nouveau>
@@ -22,59 +22,112 @@ Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79u
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============2140389291==
+--===============2048779847==
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="3O1VwFp74L81IIeR"
+	protocol="application/pgp-signature"; boundary="bGR76rFJjkSxVeRa"
 Content-Disposition: inline
 
 
---3O1VwFp74L81IIeR
+--bGR76rFJjkSxVeRa
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 24, 2014 at 05:42:27PM +0900, Alexandre Courbot wrote:
-> GK20A's FIFO is compatible with NVE0, but only features 128 channels and
-> 1 runlist.
->=20
-> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/gpu/drm/nouveau/Makefile                   |  1 +
->  drivers/gpu/drm/nouveau/core/engine/fifo/nve0.h    |  1 +
->  drivers/gpu/drm/nouveau/core/engine/fifo/nvea.c    | 35 ++++++++++++++++=
-++++++
->  drivers/gpu/drm/nouveau/core/include/engine/fifo.h |  1 +
->  4 files changed, 38 insertions(+)
->  create mode 100644 drivers/gpu/drm/nouveau/core/engine/fifo/nvea.c
+On Mon, Mar 24, 2014 at 05:42:28PM +0900, Alexandre Courbot wrote:
+[...]
+> diff --git a/drivers/gpu/drm/nouveau/core/subdev/ibus/nvea.c b/drivers/gpu/drm/nouveau/core/subdev/ibus/nvea.c
+[...]
+> +#include <subdev/ibus.h>
+> +
+> +struct nvea_ibus_priv {
+> +	struct nouveau_ibus base;
+> +};
+> +
+> +static void
+> +nvea_ibus_init_priv_ring(struct nvea_ibus_priv *priv)
+> +{
+> +	nv_mask(priv, 0x137250, 0x3f, 0);
+> +
+> +	nv_mask(priv, 0x000200, 0x20, 0);
+> +	udelay(20);
 
-Looks good to me:
+usleep_range()?
 
-Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> +static void
+> +nvea_ibus_intr(struct nouveau_subdev *subdev)
+> +{
+[...]
+> +	/* Acknowledge interrupt */
+> +	nv_mask(priv, 0x12004c, 0x2, 0x2);
+> +
+> +	while (--retry >= 0) {
+> +		command = nv_rd32(priv, 0x12004c) & 0x3f;
+> +		if (command == 0)
+> +			break;
+> +	}
+> +
+> +	if (retry < 0)
+> +		nv_warn(priv, "timeout waiting for ringmaster ack\n");
+> +}
 
---3O1VwFp74L81IIeR
+Perhaps I'm being paranoid, but this loop now depends on the frequency
+of the various clocks involved and therefore might break at some point
+if the frequencies get sufficiently high.
+
+So a slightly safer implementation would use a proper timeout using a
+combination of msecs_to_jiffies(), time_before() and usleep_range(),
+like so:
+
+	timeout = jiffies + msecs_to_jiffies(...);
+
+	while (time_before(jiffies, timeout)) {
+		command = nv_rd32(...) & 0x3f;
+		if (command == 0)
+			break;
+
+		usleep_range(...);
+	}
+
+	if (time_after(jiffies, timeout))
+		nv_warn(...);
+
+This assumes that there's some known timeout after which the ringmaster
+is expected to have acked the interrupt. On that note, I wonder if the
+warning is accurate here: it's my understanding that writing 0x2 to the
+register does acknowledge the interrupt, so the ringmaster does in fact
+"clear" it rather than "acknowledge" it, doesn't it?
+
+Although now that I mention it I seem to remember that this write is
+actually sending a command to the ring master and perhaps waiting for
+the register to return to 0 is indeed waiting for an ACK of sorts. Maybe
+adding a comment or so describing what this sequence does would be
+appropriate here?
+
+Thierry
+
+--bGR76rFJjkSxVeRa
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTMK5hAAoJEN0jrNd/PrOhGDoP/0pgl3HDKM0+XYJVa8Eum5Jf
-hPoM7RHtn7CGjaTKF9lhlngWiovM0tEPKH8sb1NoNoPWE+T+4hBuGHrFr07x2zdQ
-v9R1YIddeEefc6sL7JWpC1MSNNUqySEA0MgO1S/iT4WMUmvB0AoJHZ5XGo2j2lV/
-Cr89JvkrXsmu/h9tTXB1EHaAAbGAPidDoY2a1t/kFt8J9fHXft0ucN7UIBqyEXgY
-VYIG3GHSEgjoneictNnAcCRn7pL7MhiimkuuZjkHpaoyfEYAdddhsBjHdwNiAkp4
-CvsvIgE739IVopLONXFR8c694TA/PxMPTXR+OnHIGOlJ/MvxDtRvF6O4A+VyNY2p
-IjPzrFQQ8rlcpnBIs6fCj80W5zxsNZdSOAesyQByQss3EVZ+/CIduKVMh19Daikn
-n/Q0L8liB4fxGP2pG6+hlavnqRVmyOp9ogG4t6pOeDWaPQZej16V2l0drXhi7jP+
-fw77+M6fhaTcxMW1/xHApQloXUOqZGaejaOGO5RKHomkR5dlMkoM63klf+kIfBAr
-+ICD0WxmeM3n90nbwW/2pRzum+MhfBCwYNmuUu4shz2+FyXu2hpmcU87hyXojlj+
-60v/cqQw7VBpuI4nD0hm731u5wuHLrol6TyvUeZnnLB40tHihQmX08/RoiIhf4bZ
-oE2iLTpAisDEkdpfE6wK
-=SOCw
+iQIcBAEBAgAGBQJTMLMEAAoJEN0jrNd/PrOhTnYQALxMAyx6C5uktVz+P1nQTFPv
+zzyZBe3LycCcoQsy2Yy+3ND+8OgA56zCsGYCEdhbjRScADzUjq4QpX0eMxCVFEkH
+2DuyFyJgRuwZwgJLXQEY+xlJQlSCA07E4caM7BRPchYBSuOmeDgSritSZQVq2D+z
+r8mIegwsto90nfjN20M8BPBReatvVNYh25hZEvdysX90MlEonq1P+cEUPa+QSe7D
+foH1sQqt7kfpPOMsOcYhq+ZAXGyxDNuuokxV1Ie+bsSYvcJr1HQ6gdPFPCjvHAbr
+ek9M2EVDdK072oX+sFKe8lCpKJQSUfm8WHMjRR5qpyfKHiFl5aGSULe6Ihs8MA1n
+mGYVzcUF/4XruASL02TbqQ81rqMRWv6vrjfri7oWUBhl4go7L1bB1PKKZEpvowNP
+RHrCD2QnjXvvLaFHTwxsLGouwqiCSS4eILK9vijLkKTKguiwFv5ypBM01ch+U1cq
+QwEMh0+YySSl5R3muiPalK2De1SBuA/UTkKxj7EydyigTpeOtzgW4oxqTI2Z56vj
+hrHh9++5PDZ4DKLtAPhaUoFT922BACbG81lNqIouN8IpnOv+s786ETwdd2/9nVbr
+/YxsiSXzS+ipdeLcFRkil+mf+slu8Gn+vsS8KwZNow5sWlpRT9s8x5hcOn6Id7rE
+jRzpsKlbBh6NdJCfQupv
+=6rRj
 -----END PGP SIGNATURE-----
 
---3O1VwFp74L81IIeR--
+--bGR76rFJjkSxVeRa--
 
---===============2140389291==
+--===============2048779847==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -85,4 +138,4 @@ Nouveau mailing list
 Nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 http://lists.freedesktop.org/mailman/listinfo/nouveau
 
---===============2140389291==--
+--===============2048779847==--
