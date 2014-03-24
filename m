@@ -1,7 +1,7 @@
 From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH 04/12] drm/nouveau/bar/nvc0: support chips without BAR3
-Date: Mon, 24 Mar 2014 17:42:26 +0900
-Message-ID: <1395650554-31925-5-git-send-email-acourbot@nvidia.com>
+Subject: [PATCH 05/12] drm/nouveau/fifo: add GK20A support
+Date: Mon, 24 Mar 2014 17:42:27 +0900
+Message-ID: <1395650554-31925-6-git-send-email-acourbot@nvidia.com>
 References: <1395650554-31925-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,167 +21,94 @@ To: Ben Skeggs <bskeggs@redhat.com>
 Cc: gnurou@gmail.com, nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Adapt the NVC0 BAR driver to make it able to support chips that do not
-expose a BAR3. When this happens, BAR1 is then used for USERD mapping
-and the BAR alloc() functions is disabled, making GPU objects unable
-to rely on BAR for data access and falling back to PRAMIN.
+GK20A's FIFO is compatible with NVE0, but only features 128 channels and
+1 runlist.
 
 Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
- drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c | 101 +++++++++++++------------
- 1 file changed, 52 insertions(+), 49 deletions(-)
+ drivers/gpu/drm/nouveau/Makefile                   |  1 +
+ drivers/gpu/drm/nouveau/core/engine/fifo/nve0.h    |  1 +
+ drivers/gpu/drm/nouveau/core/engine/fifo/nvea.c    | 35 ++++++++++++++++++++++
+ drivers/gpu/drm/nouveau/core/include/engine/fifo.h |  1 +
+ 4 files changed, 38 insertions(+)
+ create mode 100644 drivers/gpu/drm/nouveau/core/engine/fifo/nvea.c
 
-diff --git a/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c b/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c
-index 3f30db62e656..5da1b9447af0 100644
---- a/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c
-+++ b/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c
-@@ -79,87 +79,88 @@ nvc0_bar_unmap(struct nouveau_bar *bar, struct nouveau_vma *vma)
- }
+diff --git a/drivers/gpu/drm/nouveau/Makefile b/drivers/gpu/drm/nouveau/Makefile
+index d310c195bdfe..a90087bbdf88 100644
+--- a/drivers/gpu/drm/nouveau/Makefile
++++ b/drivers/gpu/drm/nouveau/Makefile
+@@ -237,6 +237,7 @@ nouveau-y += core/engine/fifo/nv50.o
+ nouveau-y += core/engine/fifo/nv84.o
+ nouveau-y += core/engine/fifo/nvc0.o
+ nouveau-y += core/engine/fifo/nve0.o
++nouveau-y += core/engine/fifo/nvea.o
+ nouveau-y += core/engine/fifo/nv108.o
+ nouveau-y += core/engine/graph/ctxnv40.o
+ nouveau-y += core/engine/graph/ctxnv50.o
+diff --git a/drivers/gpu/drm/nouveau/core/engine/fifo/nve0.h b/drivers/gpu/drm/nouveau/core/engine/fifo/nve0.h
+index 014344ebee66..e96b32bb1bbc 100644
+--- a/drivers/gpu/drm/nouveau/core/engine/fifo/nve0.h
++++ b/drivers/gpu/drm/nouveau/core/engine/fifo/nve0.h
+@@ -8,6 +8,7 @@ int  nve0_fifo_ctor(struct nouveau_object *, struct nouveau_object *,
+ 		    struct nouveau_object **);
+ void nve0_fifo_dtor(struct nouveau_object *);
+ int  nve0_fifo_init(struct nouveau_object *);
++int  nve0_fifo_fini(struct nouveau_object *, bool);
  
- static int
--nvc0_bar_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
--	      struct nouveau_oclass *oclass, void *data, u32 size,
--	      struct nouveau_object **pobject)
-+nvc0_bar_init_vm(struct nvc0_bar_priv *priv, int nr, int bar)
- {
--	struct nouveau_device *device = nv_device(parent);
--	struct nvc0_bar_priv *priv;
-+	struct nouveau_device *device = nv_device(&priv->base);
- 	struct nouveau_gpuobj *mem;
- 	struct nouveau_vm *vm;
-+	resource_size_t bar_len;
- 	int ret;
- 
--	ret = nouveau_bar_create(parent, engine, oclass, &priv);
--	*pobject = nv_object(priv);
--	if (ret)
--		return ret;
--
--	/* BAR3 */
- 	ret = nouveau_gpuobj_new(nv_object(priv), NULL, 0x1000, 0, 0,
--				&priv->bar[0].mem);
--	mem = priv->bar[0].mem;
-+				&priv->bar[nr].mem);
-+	mem = priv->bar[nr].mem;
- 	if (ret)
- 		return ret;
- 
- 	ret = nouveau_gpuobj_new(nv_object(priv), NULL, 0x8000, 0, 0,
--				&priv->bar[0].pgd);
-+				&priv->bar[nr].pgd);
- 	if (ret)
- 		return ret;
- 
--	ret = nouveau_vm_new(device, 0, nv_device_resource_len(device, 3), 0, &vm);
-+	bar_len = nv_device_resource_len(device, bar);
+ struct nve0_fifo_impl {
+ 	struct nouveau_oclass base;
+diff --git a/drivers/gpu/drm/nouveau/core/engine/fifo/nvea.c b/drivers/gpu/drm/nouveau/core/engine/fifo/nvea.c
+new file mode 100644
+index 000000000000..5e3a9514df5d
+--- /dev/null
++++ b/drivers/gpu/drm/nouveau/core/engine/fifo/nvea.c
+@@ -0,0 +1,35 @@
++/*
++ * Copyright (c) 2014, NVIDIA CORPORATION. All rights reserved.
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a
++ * copy of this software and associated documentation files (the "Software"),
++ * to deal in the Software without restriction, including without limitation
++ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
++ * and/or sell copies of the Software, and to permit persons to whom the
++ * Software is furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
++ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
++ * DEALINGS IN THE SOFTWARE.
++ */
 +
-+	ret = nouveau_vm_new(device, 0, bar_len, 0, &vm);
- 	if (ret)
- 		return ret;
++#include "nve0.h"
++
++struct nouveau_oclass *
++nvea_fifo_oclass = &(struct nve0_fifo_impl) {
++	.base.handle = NV_ENGINE(FIFO, 0xea),
++	.base.ofuncs = &(struct nouveau_ofuncs) {
++		.ctor = nve0_fifo_ctor,
++		.dtor = nve0_fifo_dtor,
++		.init = nve0_fifo_init,
++		.fini = nve0_fifo_fini,
++	},
++	.channels = 128,
++}.base;
+diff --git a/drivers/gpu/drm/nouveau/core/include/engine/fifo.h b/drivers/gpu/drm/nouveau/core/include/engine/fifo.h
+index 26b6b2bb1112..823356f45137 100644
+--- a/drivers/gpu/drm/nouveau/core/include/engine/fifo.h
++++ b/drivers/gpu/drm/nouveau/core/include/engine/fifo.h
+@@ -109,6 +109,7 @@ extern struct nouveau_oclass *nv50_fifo_oclass;
+ extern struct nouveau_oclass *nv84_fifo_oclass;
+ extern struct nouveau_oclass *nvc0_fifo_oclass;
+ extern struct nouveau_oclass *nve0_fifo_oclass;
++extern struct nouveau_oclass *nvea_fifo_oclass;
+ extern struct nouveau_oclass *nv108_fifo_oclass;
  
- 	atomic_inc(&vm->engref[NVDEV_SUBDEV_BAR]);
- 
--	ret = nouveau_gpuobj_new(nv_object(priv), NULL,
--				 (nv_device_resource_len(device, 3) >> 12) * 8,
--				 0x1000, NVOBJ_FLAG_ZERO_ALLOC,
--				 &vm->pgt[0].obj[0]);
--	vm->pgt[0].refcount[0] = 1;
--	if (ret)
--		return ret;
-+	/*
-+	 * Bootstrap page table lookup.
-+	 */
-+	if (bar == 3) {
-+		ret = nouveau_gpuobj_new(nv_object(priv), NULL,
-+					 (bar_len >> 12) * 8, 0x1000,
-+					 NVOBJ_FLAG_ZERO_ALLOC,
-+					&vm->pgt[0].obj[0]);
-+		vm->pgt[0].refcount[0] = 1;
-+		if (ret)
-+			return ret;
-+	}
- 
--	ret = nouveau_vm_ref(vm, &priv->bar[0].vm, priv->bar[0].pgd);
-+	ret = nouveau_vm_ref(vm, &priv->bar[nr].vm, priv->bar[nr].pgd);
- 	nouveau_vm_ref(NULL, &vm, NULL);
- 	if (ret)
- 		return ret;
- 
--	nv_wo32(mem, 0x0200, lower_32_bits(priv->bar[0].pgd->addr));
--	nv_wo32(mem, 0x0204, upper_32_bits(priv->bar[0].pgd->addr));
--	nv_wo32(mem, 0x0208, lower_32_bits(nv_device_resource_len(device, 3) - 1));
--	nv_wo32(mem, 0x020c, upper_32_bits(nv_device_resource_len(device, 3) - 1));
-+	nv_wo32(mem, 0x0200, lower_32_bits(priv->bar[nr].pgd->addr));
-+	nv_wo32(mem, 0x0204, upper_32_bits(priv->bar[nr].pgd->addr));
-+	nv_wo32(mem, 0x0208, lower_32_bits(bar_len - 1));
-+	nv_wo32(mem, 0x020c, upper_32_bits(bar_len - 1));
- 
--	/* BAR1 */
--	ret = nouveau_gpuobj_new(nv_object(priv), NULL, 0x1000, 0, 0,
--				&priv->bar[1].mem);
--	mem = priv->bar[1].mem;
--	if (ret)
--		return ret;
-+	return 0;
-+}
- 
--	ret = nouveau_gpuobj_new(nv_object(priv), NULL, 0x8000, 0, 0,
--				&priv->bar[1].pgd);
--	if (ret)
--		return ret;
-+static int
-+nvc0_bar_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
-+	      struct nouveau_oclass *oclass, void *data, u32 size,
-+	      struct nouveau_object **pobject)
-+{
-+	struct nouveau_device *device = nv_device(parent);
-+	struct nvc0_bar_priv *priv;
-+	bool has_bar3 = nv_device_resource_len(device, 3) != 0;
-+	int ret;
- 
--	ret = nouveau_vm_new(device, 0, nv_device_resource_len(device, 1), 0, &vm);
-+	ret = nouveau_bar_create(parent, engine, oclass, &priv);
-+	*pobject = nv_object(priv);
- 	if (ret)
- 		return ret;
- 
--	atomic_inc(&vm->engref[NVDEV_SUBDEV_BAR]);
-+	/* BAR3 */
-+	if (has_bar3) {
-+		ret = nvc0_bar_init_vm(priv, 0, 3);
-+		if (ret)
-+			return ret;
-+		priv->base.alloc = nouveau_bar_alloc;
-+		priv->base.kmap = nvc0_bar_kmap;
-+	}
- 
--	ret = nouveau_vm_ref(vm, &priv->bar[1].vm, priv->bar[1].pgd);
--	nouveau_vm_ref(NULL, &vm, NULL);
-+	/* BAR1 */
-+	ret = nvc0_bar_init_vm(priv, 1, 1);
- 	if (ret)
- 		return ret;
- 
--	nv_wo32(mem, 0x0200, lower_32_bits(priv->bar[1].pgd->addr));
--	nv_wo32(mem, 0x0204, upper_32_bits(priv->bar[1].pgd->addr));
--	nv_wo32(mem, 0x0208, lower_32_bits(nv_device_resource_len(device, 1) - 1));
--	nv_wo32(mem, 0x020c, upper_32_bits(nv_device_resource_len(device, 1) - 1));
--
--	priv->base.alloc = nouveau_bar_alloc;
--	priv->base.kmap = nvc0_bar_kmap;
- 	priv->base.umap = nvc0_bar_umap;
- 	priv->base.unmap = nvc0_bar_unmap;
- 	priv->base.flush = nv84_bar_flush;
-@@ -201,7 +202,9 @@ nvc0_bar_init(struct nouveau_object *object)
- 	nv_mask(priv, 0x100c80, 0x00000001, 0x00000000);
- 
- 	nv_wr32(priv, 0x001704, 0x80000000 | priv->bar[1].mem->addr >> 12);
--	nv_wr32(priv, 0x001714, 0xc0000000 | priv->bar[0].mem->addr >> 12);
-+	if (priv->bar[0].mem)
-+		nv_wr32(priv, 0x001714,
-+			0xc0000000 | priv->bar[0].mem->addr >> 12);
- 	return 0;
- }
- 
+ void nv04_fifo_intr(struct nouveau_subdev *);
 -- 
 1.9.1
