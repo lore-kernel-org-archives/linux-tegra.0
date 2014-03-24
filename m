@@ -1,13 +1,14 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 06/12] drm/nouveau/ibus: add GK20A support
-Date: Mon, 24 Mar 2014 23:34:45 +0100
-Message-ID: <20140324223444.GF17218@mithrandir>
+Subject: Re: [PATCH 08/12] drm/nouveau/graph: enable when using
+ external firmware
+Date: Mon, 24 Mar 2014 23:58:03 +0100
+Message-ID: <20140324225802.GG17218@mithrandir>
 References: <1395650554-31925-1-git-send-email-acourbot@nvidia.com>
- <1395650554-31925-7-git-send-email-acourbot@nvidia.com>
+ <1395650554-31925-9-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2048779847=="
+Content-Type: multipart/mixed; boundary="===============0716296477=="
 Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <1395650554-31925-7-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1395650554-31925-9-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
  <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/nouveau>
@@ -22,112 +23,79 @@ Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79u
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============2048779847==
+--===============0716296477==
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="bGR76rFJjkSxVeRa"
+	protocol="application/pgp-signature"; boundary="7uYPyRQQ5N0D02nI"
 Content-Disposition: inline
 
 
---bGR76rFJjkSxVeRa
+--7uYPyRQQ5N0D02nI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 24, 2014 at 05:42:28PM +0900, Alexandre Courbot wrote:
+On Mon, Mar 24, 2014 at 05:42:30PM +0900, Alexandre Courbot wrote:
 [...]
-> diff --git a/drivers/gpu/drm/nouveau/core/subdev/ibus/nvea.c b/drivers/gpu/drm/nouveau/core/subdev/ibus/nvea.c
-[...]
-> +#include <subdev/ibus.h>
+> diff --git a/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c b/drivers/g=
+pu/drm/nouveau/core/engine/graph/nvc0.c
+> index 6ef8bf181b2d..f997a18f5760 100644
+> --- a/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c
+> +++ b/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c
+> @@ -1133,10 +1133,14 @@ nvc0_graph_ctor(struct nouveau_object *parent, st=
+ruct nouveau_object *engine,
+>  	struct nvc0_graph_oclass *oclass =3D (void *)bclass;
+>  	struct nouveau_device *device =3D nv_device(parent);
+>  	struct nvc0_graph_priv *priv;
+> +	bool use_fw;
+
+Perhaps "ext_fw" or "use_ext_fw" would be more accurate.
+
+>  	int ret, i;
+> =20
+> +	use_fw =3D nouveau_boolopt(device->cfgopt, "NvGrUseFW", false);
 > +
-> +struct nvea_ibus_priv {
-> +	struct nouveau_ibus base;
-> +};
-> +
-> +static void
-> +nvea_ibus_init_priv_ring(struct nvea_ibus_priv *priv)
-> +{
-> +	nv_mask(priv, 0x137250, 0x3f, 0);
-> +
-> +	nv_mask(priv, 0x000200, 0x20, 0);
-> +	udelay(20);
+>  	ret =3D nouveau_graph_create(parent, engine, bclass,
+> -				   (oclass->fecs.ucode !=3D NULL), &priv);
+> +				   (oclass->fecs.ucode !=3D NULL) || use_fw,
+> +				   &priv);
 
-usleep_range()?
+Or perhaps a more intuitive way would be to name the variable "enable"
+and have something like:
 
-> +static void
-> +nvea_ibus_intr(struct nouveau_subdev *subdev)
-> +{
-[...]
-> +	/* Acknowledge interrupt */
-> +	nv_mask(priv, 0x12004c, 0x2, 0x2);
-> +
-> +	while (--retry >= 0) {
-> +		command = nv_rd32(priv, 0x12004c) & 0x3f;
-> +		if (command == 0)
-> +			break;
-> +	}
-> +
-> +	if (retry < 0)
-> +		nv_warn(priv, "timeout waiting for ringmaster ack\n");
-> +}
+	if (!nouveau_boolopt(device->cfgopt, "NvGrUseFW", false))
+		enable =3D oclass->fecs.ucode !=3D NULL;
+	else
+		enable =3D true;
 
-Perhaps I'm being paranoid, but this loop now depends on the frequency
-of the various clocks involved and therefore might break at some point
-if the frequencies get sufficiently high.
-
-So a slightly safer implementation would use a proper timeout using a
-combination of msecs_to_jiffies(), time_before() and usleep_range(),
-like so:
-
-	timeout = jiffies + msecs_to_jiffies(...);
-
-	while (time_before(jiffies, timeout)) {
-		command = nv_rd32(...) & 0x3f;
-		if (command == 0)
-			break;
-
-		usleep_range(...);
-	}
-
-	if (time_after(jiffies, timeout))
-		nv_warn(...);
-
-This assumes that there's some known timeout after which the ringmaster
-is expected to have acked the interrupt. On that note, I wonder if the
-warning is accurate here: it's my understanding that writing 0x2 to the
-register does acknowledge the interrupt, so the ringmaster does in fact
-"clear" it rather than "acknowledge" it, doesn't it?
-
-Although now that I mention it I seem to remember that this write is
-actually sending a command to the ring master and perhaps waiting for
-the register to return to 0 is indeed waiting for an ACK of sorts. Maybe
-adding a comment or so describing what this sequence does would be
-appropriate here?
+	ret =3D nouveau_graph_create(parent, engine, bclass, enable, &priv);
+	...
 
 Thierry
 
---bGR76rFJjkSxVeRa
+--7uYPyRQQ5N0D02nI
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTMLMEAAoJEN0jrNd/PrOhTnYQALxMAyx6C5uktVz+P1nQTFPv
-zzyZBe3LycCcoQsy2Yy+3ND+8OgA56zCsGYCEdhbjRScADzUjq4QpX0eMxCVFEkH
-2DuyFyJgRuwZwgJLXQEY+xlJQlSCA07E4caM7BRPchYBSuOmeDgSritSZQVq2D+z
-r8mIegwsto90nfjN20M8BPBReatvVNYh25hZEvdysX90MlEonq1P+cEUPa+QSe7D
-foH1sQqt7kfpPOMsOcYhq+ZAXGyxDNuuokxV1Ie+bsSYvcJr1HQ6gdPFPCjvHAbr
-ek9M2EVDdK072oX+sFKe8lCpKJQSUfm8WHMjRR5qpyfKHiFl5aGSULe6Ihs8MA1n
-mGYVzcUF/4XruASL02TbqQ81rqMRWv6vrjfri7oWUBhl4go7L1bB1PKKZEpvowNP
-RHrCD2QnjXvvLaFHTwxsLGouwqiCSS4eILK9vijLkKTKguiwFv5ypBM01ch+U1cq
-QwEMh0+YySSl5R3muiPalK2De1SBuA/UTkKxj7EydyigTpeOtzgW4oxqTI2Z56vj
-hrHh9++5PDZ4DKLtAPhaUoFT922BACbG81lNqIouN8IpnOv+s786ETwdd2/9nVbr
-/YxsiSXzS+ipdeLcFRkil+mf+slu8Gn+vsS8KwZNow5sWlpRT9s8x5hcOn6Id7rE
-jRzpsKlbBh6NdJCfQupv
-=6rRj
+iQIcBAEBAgAGBQJTMLh6AAoJEN0jrNd/PrOh4P0QAIXhJPYt+gjAo+ncR+2zvSnS
+0RBpqsNooVqrsxVAVDZJLSqLAcVIJqw6zJvO7tpLq6O4EG1b+gPu7EBeJEqb+EwK
+4kLCeGtx3IAIsi7qKDzwfF/2aUoMxKIHynWzvHv0M+GwA6WY0DogtuSn2XHJG5v8
+eB0sV/R18TwYjL7yMLFMl3ZYYBSSzeRNHBb4pSIt0FDSwKuPdwGmKMYBYWCb0LId
+BpJQIZnqwsnP5dDNuxxGiW7iN41F9KmdGX8pdIH5fdZ1V8vQMTUW2lXsEMxtht/y
+eiVF2v8aiQ5sd6sGlblcOI0LoLukMfnorD8+td3VaidXEquJJ1S0lkR/RGe87wsJ
+eqeDa1aqtUa4oY+FQYlRtXKAgfudBfUKI+qE1dlWMQlgDk+Jg+vsNRaZM0lwZ4HY
+HCXpzORYvXbckNr2ClDtI53gqorTG/RMTzwxKm1vZR51ZrriyyBs59/TRADkqQ0o
+8jtDsFHMbszrq0DOfVsVHDNBPfWDOpiixTTaMpUMhZLrBbWsny91hlyDx+roeVUd
+DEqwKDPWBfax3H2H+j9fvlU6E+s6jBz8IQ/PDWOxo/lyt3q808Ct+ZPS1YE12kQs
+WRtTnbxPYjRb7MjTApGCw3Ltg2YD+zGvdAiiRVp5CpjfzCJhYzosv+47ZSQLQxHW
+lQqJopsX03nlPPK6AiE0
+=L8DW
 -----END PGP SIGNATURE-----
 
---bGR76rFJjkSxVeRa--
+--7uYPyRQQ5N0D02nI--
 
---===============2048779847==
+--===============0716296477==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -138,4 +106,4 @@ Nouveau mailing list
 Nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 http://lists.freedesktop.org/mailman/listinfo/nouveau
 
---===============2048779847==--
+--===============0716296477==--
