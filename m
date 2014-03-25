@@ -1,55 +1,48 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [flasher PATCH] Add support for Jetson TK1 board
-Date: Tue, 25 Mar 2014 11:37:29 -0600
-Message-ID: <1395769049-7996-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: [PATCH 2/2] ARM: tegra: enable AT24C EEPROM driver
+Date: Tue, 25 Mar 2014 11:43:19 -0600
+Message-ID: <1395769399-8357-2-git-send-email-swarren@wwwdotorg.org>
+References: <1395769399-8357-1-git-send-email-swarren@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1395769399-8357-1-git-send-email-swarren@wwwdotorg.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-tegra@vger.kernel.org
+Cc: Stephen Warren <swarren@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren@nvidia.com>
 
-This board is currently disabled by default due to lack of U-Boot support
-in the mainline repository. If you wish to test this, do as follows:
+This is used for the board ID EEPROM on Jetson TK1, as well as likely
+a whole slew of other NVIDIA reference boards; we simply haven't added
+enabled the EEPROM in the DT files until now.
 
-cd ../u-boot
-git checkout some-branch-with-jetson-tk1-support
-cd ../scripts
-./build --boards venice2 build
-
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
 ---
- configs/jetson-tk1.board  | 5 +++++
- configs/jetson-tk1.config | 8 ++++++++
- 2 files changed, 13 insertions(+)
- create mode 100644 configs/jetson-tk1.board
- create mode 100644 configs/jetson-tk1.config
+ arch/arm/configs/tegra_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/configs/jetson-tk1.board b/configs/jetson-tk1.board
-new file mode 100644
-index 000000000000..1dfb14c5ec9e
---- /dev/null
-+++ b/configs/jetson-tk1.board
-@@ -0,0 +1,5 @@
-+board = {
-+    'vendor': 'nvidia',
-+    'soc': 'tegra124',
-+    'disabled': True,
-+}
-diff --git a/configs/jetson-tk1.config b/configs/jetson-tk1.config
-new file mode 100644
-index 000000000000..b72444f3a9d1
---- /dev/null
-+++ b/configs/jetson-tk1.config
-@@ -0,0 +1,8 @@
-+config = {
-+    'bct': 'PM375_Hynix_2GB_H5TC4G63AFR_RDA_924MHz.bct',
-+    'board': 'jetson-tk1',
-+    'dtbfn-extra': '',
-+    'flash-id-uboot': 0,
-+    'flash-image': 'jetson-tk1-emmc.img',
-+    'flash-type': 'emmc',
-+}
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index 131b8d6ff9d3..f0fb8fa79481 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -96,6 +96,7 @@ CONFIG_AD525X_DPOT_I2C=y
+ CONFIG_ICS932S401=y
+ CONFIG_APDS9802ALS=y
+ CONFIG_ISL29003=y
++CONFIG_EEPROM_AT24=y
+ CONFIG_SCSI=y
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_BLK_DEV_SR=y
 -- 
 1.8.1.5
