@@ -1,227 +1,76 @@
-From: Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 10/12] drm/nouveau/graph: add GK20A support
-Date: Wed, 26 Mar 2014 14:24:52 +1000
-Message-ID: <CACAvsv4yQuPeoGMW6+k7ChsCZWCjpyBYhEMUomQH2QRrxkW=-w@mail.gmail.com>
+From: Ben Skeggs <skeggsb@gmail.com>
+Subject: Re: [PATCH 11/12] drm/nouveau: support GK20A in nouveau_accel_init()
+Date: Wed, 26 Mar 2014 14:27:20 +1000
+Message-ID: <CACAvsv4FHqwAF6FOaMF1sQLwAfBOd6uFgsZ+VdwCHoR4qsVbVw@mail.gmail.com>
 References: <1395650554-31925-1-git-send-email-acourbot@nvidia.com>
-	<1395650554-31925-11-git-send-email-acourbot@nvidia.com>
+ <1395650554-31925-12-git-send-email-acourbot@nvidia.com>
+ <20140324231014.GI17218@mithrandir>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1395650554-31925-11-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20140324231014.GI17218@mithrandir>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ben Skeggs <bskeggs@redhat.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Mar 24, 2014 at 6:42 PM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> Add a GR device for GK20A based on NVE4, with the correct classes
-> definitions (GK20A's 3D class is 0xa297).
+On Tue, Mar 25, 2014 at 9:10 AM, Thierry Reding
+<thierry.reding@gmail.com> wrote:
+> On Mon, Mar 24, 2014 at 05:42:33PM +0900, Alexandre Courbot wrote:
+>> GK20A does not embed a dedicated COPY engine and thus cannot allocate
+>> the copy channel that nouveau_accel_init() attempts to create. It also
+>> lacks any display hardware, so the creation of a software channel does
+>> not apply neither.
 >
-> Most of the NVE4 code can be used on GK20A, so make relevant bits of
-> NVE4 available to other chips as well.
-This will need a bit of a rebase on top of the tree I mentioned
-earlier (also queued for drm-next now), where I've further split out
-and named the various chunks of state.
+> Perhaps this should be two separate patches?
+>
+>> diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
+> [...]
+>> +     if (device->chipset == 0xea) {
+>> +             /* gk20a does not have CE0/CE1 */
+>
+> This would be another good candidate for a feature flag.
+There are ways to query this in a chipset-independent way.  However,
+despite reporting it as an error if no copy engines are available, the
+code should continue on without the channel happily.  Perhaps we can
+just punt the relevent error messages to a debug loglevel for now?
 
-Does GK104 match entirely correctly, or just happen to work?  I could
-probably hunt down the GK20A netlist images and check that actually :)
+>
+>> +             arg0 = NVE0_CHANNEL_IND_ENGINE_GR;
+>> +             arg1 = 1;
+>> +     } else
+>>       if (device->card_type >= NV_E0) {
+>
+> The formatting here is somewhat weird. From a brief look I couldn't find
+> any indication that nouveau deviates from the standard coding style, so
+> this should be:
+>
+>         } else if (...) {
+I use the former in a few places, despite it not entirely being
+"correct".. It looks nicer though :)  I don't mind either way though.
 
 >
-> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/gpu/drm/nouveau/Makefile                   |  1 +
->  .../gpu/drm/nouveau/core/engine/graph/ctxnve4.c    |  4 +-
->  drivers/gpu/drm/nouveau/core/engine/graph/nvc0.h   |  9 +++
->  drivers/gpu/drm/nouveau/core/engine/graph/nve4.c   |  2 +-
->  drivers/gpu/drm/nouveau/core/engine/graph/nvea.c   | 75 ++++++++++++++++++++++
->  .../gpu/drm/nouveau/core/include/engine/graph.h    |  1 +
->  6 files changed, 89 insertions(+), 3 deletions(-)
->  create mode 100644 drivers/gpu/drm/nouveau/core/engine/graph/nvea.c
+>> +     /* Need to figure out how to handle sw for gk20a */
+>> +     if (device->chipset == 0xea)
+>> +             goto skip_sw_init;
 >
-> diff --git a/drivers/gpu/drm/nouveau/Makefile b/drivers/gpu/drm/nouveau/Makefile
-> index 708d2e33835f..032a4744f843 100644
-> --- a/drivers/gpu/drm/nouveau/Makefile
-> +++ b/drivers/gpu/drm/nouveau/Makefile
-> @@ -270,6 +270,7 @@ nouveau-y += core/engine/graph/nvc8.o
->  nouveau-y += core/engine/graph/nvd7.o
->  nouveau-y += core/engine/graph/nvd9.o
->  nouveau-y += core/engine/graph/nve4.o
-> +nouveau-y += core/engine/graph/nvea.o
->  nouveau-y += core/engine/graph/nvf0.o
->  nouveau-y += core/engine/graph/nv108.o
->  nouveau-y += core/engine/mpeg/nv31.o
-> diff --git a/drivers/gpu/drm/nouveau/core/engine/graph/ctxnve4.c b/drivers/gpu/drm/nouveau/core/engine/graph/ctxnve4.c
-> index e2de73ee5eee..3904073f860d 100644
-> --- a/drivers/gpu/drm/nouveau/core/engine/graph/ctxnve4.c
-> +++ b/drivers/gpu/drm/nouveau/core/engine/graph/ctxnve4.c
-> @@ -804,7 +804,7 @@ nve4_grctx_init_unk[] = {
->         {}
->  };
+> The commit message makes it sound like SW isn't needed since gk20a
+> "lacks any display hardware". In that case the comment here doesn't make
+> much sense.
 >
-> -static void
-> +void
->  nve4_grctx_generate_mods(struct nvc0_graph_priv *priv, struct nvc0_grctx *info)
->  {
->         u32 magic[GPC_MAX][2];
-> @@ -962,7 +962,7 @@ nve4_grctx_generate_main(struct nvc0_graph_priv *priv, struct nvc0_grctx *info)
->         nv_mask(priv, 0x41be10, 0x00800000, 0x00800000);
->  }
->
-> -static struct nvc0_graph_init *
-> +struct nvc0_graph_init *
->  nve4_grctx_init_hub[] = {
->         nvc0_grctx_init_base,
->         nve4_grctx_init_unk40xx,
-> diff --git a/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.h b/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.h
-> index b0ab6de270b2..904f09b540c5 100644
-> --- a/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.h
-> +++ b/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.h
-> @@ -221,6 +221,8 @@ void nvc0_grctx_generate_r418bb8(struct nvc0_graph_priv *);
->  void nve4_grctx_generate_r418bb8(struct nvc0_graph_priv *);
->  void nvc0_grctx_generate_r406800(struct nvc0_graph_priv *);
->
-> +void nve4_grctx_generate_mods(struct nvc0_graph_priv *, struct nvc0_grctx *);
-> +
->  extern struct nouveau_oclass *nvc0_grctx_oclass;
->  extern struct nvc0_graph_init *nvc0_grctx_init_hub[];
->  extern struct nvc0_graph_init nvc0_grctx_init_base[];
-> @@ -237,12 +239,17 @@ extern struct nvc0_graph_init nvc0_grctx_init_gpc_1[];
->  extern struct nvc0_graph_init nvc0_grctx_init_tpc[];
->  extern struct nvc0_graph_init nvc0_grctx_init_icmd[];
->  extern struct nvc0_graph_init nvd9_grctx_init_icmd[]; //
-> +extern struct nvc0_graph_init nve4_grctx_init_icmd[];
-> +
-> +extern struct nvc0_graph_init *nve4_grctx_init_hub[];
-> +extern struct nvc0_graph_init *nve4_grctx_init_gpc[];
->
->  extern struct nvc0_graph_mthd nvc0_grctx_init_mthd[];
->  extern struct nvc0_graph_init nvc0_grctx_init_902d[];
->  extern struct nvc0_graph_init nvc0_grctx_init_9039[];
->  extern struct nvc0_graph_init nvc0_grctx_init_90c0[];
->  extern struct nvc0_graph_init nvc0_grctx_init_mthd_magic[];
-> +extern struct nvc0_graph_init nve4_grctx_init_a097[];
->
->  void nvc1_grctx_generate_mods(struct nvc0_graph_priv *, struct nvc0_grctx *);
->  void nvc1_grctx_generate_unkn(struct nvc0_graph_priv *);
-> @@ -277,6 +284,8 @@ extern struct nvc0_graph_init nvf0_grctx_init_unk60xx[];
->
->  extern struct nouveau_oclass *nv108_grctx_oclass;
->
-> +extern struct nvc0_graph_init *nve4_graph_init_mmio[];
-> +
->  #define mmio_data(s,a,p) do {                                                  \
->         info->buffer[info->buffer_nr] = round_up(info->addr, (a));             \
->         info->addr = info->buffer[info->buffer_nr++] + (s);                    \
-> diff --git a/drivers/gpu/drm/nouveau/core/engine/graph/nve4.c b/drivers/gpu/drm/nouveau/core/engine/graph/nve4.c
-> index 05ec09c88517..442857c5c120 100644
-> --- a/drivers/gpu/drm/nouveau/core/engine/graph/nve4.c
-> +++ b/drivers/gpu/drm/nouveau/core/engine/graph/nve4.c
-> @@ -298,7 +298,7 @@ nve4_graph_init(struct nouveau_object *object)
->         return nvc0_graph_init_ctxctl(priv);
->  }
->
-> -static struct nvc0_graph_init *
-> +struct nvc0_graph_init *
->  nve4_graph_init_mmio[] = {
->         nve4_graph_init_regs,
->         nvc0_graph_init_unk40xx,
-> diff --git a/drivers/gpu/drm/nouveau/core/engine/graph/nvea.c b/drivers/gpu/drm/nouveau/core/engine/graph/nvea.c
-> new file mode 100644
-> index 000000000000..d5e6a1adcacb
-> --- /dev/null
-> +++ b/drivers/gpu/drm/nouveau/core/engine/graph/nvea.c
-> @@ -0,0 +1,75 @@
-> +/*
-> + * Copyright (c) 2014, NVIDIA CORPORATION. All rights reserved.
-> + *
-> + * Permission is hereby granted, free of charge, to any person obtaining a
-> + * copy of this software and associated documentation files (the "Software"),
-> + * to deal in the Software without restriction, including without limitation
-> + * the rights to use, copy, modify, merge, publish, distribute, sublicense,
-> + * and/or sell copies of the Software, and to permit persons to whom the
-> + * Software is furnished to do so, subject to the following conditions:
-> + *
-> + * The above copyright notice and this permission notice shall be included in
-> + * all copies or substantial portions of the Software.
-> + *
-> + * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-> + * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-> + * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-> + * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-> + * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-> + * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-> + * DEALINGS IN THE SOFTWARE.
-> + */
-> +
-> +#include "nvc0.h"
-> +
-> +static struct nouveau_oclass
-> +nvea_graph_sclass[] = {
-> +       { 0x902d, &nouveau_object_ofuncs },
-> +       { 0xa040, &nouveau_object_ofuncs },
-> +       { 0xa297, &nouveau_object_ofuncs },
-> +       { 0xa0c0, &nouveau_object_ofuncs },
-> +       {}
-> +};
-> +
-> +static struct nvc0_graph_mthd
-> +nvea_grctx_init_mthd[] = {
-> +       { 0xa297, nve4_grctx_init_a097, },
-> +       { 0x902d, nvc0_grctx_init_902d, },
-> +       { 0x902d, nvc0_grctx_init_mthd_magic, },
-> +       {}
-> +};
-> +
-> +struct nouveau_oclass *
-> +nvea_grctx_oclass = &(struct nvc0_grctx_oclass) {
-> +       .base.handle = NV_ENGCTX(GR, 0xea),
-> +       .base.ofuncs = &(struct nouveau_ofuncs) {
-> +               .ctor = nvc0_graph_context_ctor,
-> +               .dtor = nvc0_graph_context_dtor,
-> +               .init = _nouveau_graph_context_init,
-> +               .fini = _nouveau_graph_context_fini,
-> +               .rd32 = _nouveau_graph_context_rd32,
-> +               .wr32 = _nouveau_graph_context_wr32,
-> +       },
-> +       .main = nve4_grctx_generate_main,
-> +       .mods = nve4_grctx_generate_mods,
-> +       .unkn = nve4_grctx_generate_unkn,
-> +       .hub  = nve4_grctx_init_hub,
-> +       .gpc  = nve4_grctx_init_gpc,
-> +       .icmd = nve4_grctx_init_icmd,
-> +       .mthd = nvea_grctx_init_mthd,
-> +}.base;
-> +
-> +
-> +struct nouveau_oclass *
-> +nvea_graph_oclass = &(struct nvc0_graph_oclass) {
-> +       .base.handle = NV_ENGINE(GR, 0xea),
-> +       .base.ofuncs = &(struct nouveau_ofuncs) {
-> +               .ctor = nvc0_graph_ctor,
-> +               .dtor = nvc0_graph_dtor,
-> +               .init = nve4_graph_init,
-> +               .fini = _nouveau_graph_fini,
-> +       },
-> +       .cclass = &nvea_grctx_oclass,
-> +       .sclass = nvea_graph_sclass,
-> +       .mmio = nve4_graph_init_mmio,
-> +}.base;
-> diff --git a/drivers/gpu/drm/nouveau/core/include/engine/graph.h b/drivers/gpu/drm/nouveau/core/include/engine/graph.h
-> index 97705618de97..632d7e172172 100644
-> --- a/drivers/gpu/drm/nouveau/core/include/engine/graph.h
-> +++ b/drivers/gpu/drm/nouveau/core/include/engine/graph.h
-> @@ -68,6 +68,7 @@ extern struct nouveau_oclass *nvc8_graph_oclass;
->  extern struct nouveau_oclass *nvd7_graph_oclass;
->  extern struct nouveau_oclass *nvd9_graph_oclass;
->  extern struct nouveau_oclass *nve4_graph_oclass;
-> +extern struct nouveau_oclass *nvea_graph_oclass;
->  extern struct nouveau_oclass *nvf0_graph_oclass;
->  extern struct nouveau_oclass *nv108_graph_oclass;
->
-> --
-> 1.9.1
+> Thierry
 >
 > _______________________________________________
 > dri-devel mailing list
-> dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+> dri-devel@lists.freedesktop.org
 > http://lists.freedesktop.org/mailman/listinfo/dri-devel
+>
