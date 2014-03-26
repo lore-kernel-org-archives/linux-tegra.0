@@ -1,124 +1,33 @@
-From: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: Re: [PATCH 00/12] drm/nouveau: support for GK20A, cont'd
-Date: Wed, 26 Mar 2014 11:33:51 +0100
-Message-ID: <1395830031.7930.8.camel@weser.hi.pengutronix.de>
-References: <1395650554-31925-1-git-send-email-acourbot@nvidia.com>
- <1395667191.5062.18.camel@weser.hi.pengutronix.de>
- <CAAVeFu+s+hrKdiHqxvxAOSnq-Jm_g3PY1wT3TgwpX1OGP-Niog@mail.gmail.com>
+From: Alexander Oh <oh_alexander-/E1597aS9LQAvxtiuMwx3w@public.gmane.org>
+Subject: JTAG debugging the linux kernel on tegra3 platforms
+Date: Wed, 26 Mar 2014 15:16:29 +0100
+Message-ID: <5332E13D.3070907@yahoo.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <CAAVeFu+s+hrKdiHqxvxAOSnq-Jm_g3PY1wT3TgwpX1OGP-Niog-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Alexandre,
+Hi!
 
-Am Mittwoch, den 26.03.2014, 15:33 +0900 schrieb Alexandre Courbot:
-> Hi Lucas,
-> 
-> On Mon, Mar 24, 2014 at 10:19 PM, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
-> > Hi Alexandre,
-> >
-> > Am Montag, den 24.03.2014, 17:42 +0900 schrieb Alexandre Courbot:
-> >> Hi everyone,
-> > [...]
-> >>
-> >> A few lines of hacks (not included here) are still needed to deal with cached
-> >> mappings triggering external aborts and CPU/GPU memory coherency issues, but I
-> >> hope to understand and address these issues next.
-> >
-> > For the coherency issue part you may want to look at my Nouveau on ARM
-> > series. Most of it never made it upstream, as I lacked the time to work
-> > further on this, but it solves the coherency issue from the kernel.
-> 
-> Oh, thanks for pointing this out, it will probably be most useful.
-> Shall I assume the patches at
-> https://www.mail-archive.com/nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org/msg13557.html
-> are up-to-date? Would you mind if I include the relevant patches of
-> yours in the next iteration of this series?
-> 
-> >
-> > It does so by doing the necessary manual cache flushes/invalidates on
-> > buffer access, so costs some performance. To avoid this you really want
-> > to get writecombined mappings into the kernel<->userspace interface.
-> > Simply mapping the pushbuf as WC/US has brought a 7% performance
-> > increase in OpenArena when I last tested this. This test was done with
-> > only one PCIe lane, so the perf increase may be even better with a more
-> > adequate interconnect.
-> 
-> Interestingly if I allow writecombined mappings in the kernel I get
-> faults when attempting the read the mapped area:
-> 
-This is most likely because your handling of those buffers produces
-conflicting mappings (if my understanding of what you are doing is
-right).
+I'm currently trying to debug a QuadMo747-X T30. I'm trying to update 
+the versions of u-boot and linux kernel. I run into problems while 
+booting the kernel (similar to [2], but I'm not sure whats going on yet) 
+and was hoping to get some help here about JTAG debuggers.
 
-At first you allocate memory from CMA without changing the pgprot flags.
-This yields pages which are mapped uncached or cached (when moveable
-pages are purged from CMA to make space for your buffer) into the
-kernels linear space.
+I've seen that people are already running the flyswatter2 JTAG debuggers 
+with the nvidia tegra2 [1]. Is this debugger also working with the 
+nvidia tegra3? I found out that James Zhao has been working on OpenOCD 
+to get the Tegra3 running. But I could not find any references or 
+manuals to get it working. I'm not entirely sure that the debugger is 
+compatible with tegra3 processors.
 
-Later you regard this memory as iomem (it isn't!) and let TTM remap
-those pages into the vmalloc area with pgprot set to writecombined.
+Is anybody here actually using a flyswatter2 debugger with a tegra3 
+processor?
 
-I don't know exactly why this is causing havoc, but having two
-conflicting virtual mappings of the same physical memory is documented
-to at least produce undefined behavior on ARMv7.
+Alex
 
-Regards,
-Lucas
-
-> [   78.074854] Unhandled fault: external abort on non-linefetch
-> (0x1008) at 0xf003e010
-> ...
-> [   78.337862] [<c03491a8>] (nouveau_bo_rd32) from [<c0346374>]
-> (nouveau_fence_update+0x5c/0x80)
-> [   78.352536] [<c0346374>] (nouveau_fence_update) from [<c03463b0>]
-> (nouveau_fence_done+0x18/0x28)
-> [   78.367531] [<c03463b0>] (nouveau_fence_done) from [<c02b852c>]
-> (ttm_bo_wait+0x104/0x184)
-> [   78.381915] [<c02b852c>] (ttm_bo_wait) from [<c034c718>]
-> (nouveau_gem_ioctl_cpu_prep+0x40/0xe8)
-> [   78.396849] [<c034c718>] (nouveau_gem_ioctl_cpu_prep) from
-> [<c029fd5c>] (drm_ioctl+0x404/0x4b8)
-> [   78.411790] [<c029fd5c>] (drm_ioctl) from [<c0343960>]
-> (nouveau_drm_ioctl+0x54/0x80)
-> [   78.425805] [<c0343960>] (nouveau_drm_ioctl) from [<c00ea5ec>]
-> (do_vfs_ioctl+0x3f0/0x5bc)
-> [   78.440277] [<c00ea5ec>] (do_vfs_ioctl) from [<c00ea7ec>]
-> (SyS_ioctl+0x34/0x5c)
-> [   78.453918] [<c00ea7ec>] (SyS_ioctl) from [<c000e5a0>]
-> (ret_fast_syscall+0x0/0x30)
-> 
-> To avoid these I need to set the VRAM default_caching to
-> TTM_PL_FLAG_UNCACHED. It is not clear to me why this is needed. The BO
-> being accessed through the BAR, they are correctly considered as IO
-> memory and mapped using ttm_bo_ioremap(), so it really seems to be
-> unhappy with the WC mapping itself.
-> 
-> Note that if I go ahead and force the use of pgprot_writecombine() in
-> ttm_io_prot() to get writecombined user-space mappings, pure DRM
-> programs that map a buffer and try to read it fail similarly, while
-> Mesa's glReadPixels() seems to be happy. I'm not sure what it does
-> differently here.
-> 
-> Cheers,
-> Alex.
-
--- 
-Pengutronix e.K.                           | Lucas Stach                 |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-5076 |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+[1]: http://comments.gmane.org/gmane.linux.ports.tegra/6019
+[2]: http://www.spinics.net/lists/linux-tegra/msg11085.html
