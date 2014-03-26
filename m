@@ -1,73 +1,95 @@
-From: Ben Skeggs <skeggsb@gmail.com>
-Subject: Re: [Nouveau] [PATCH 12/12] drm/nouveau: support for probing GK20A
-Date: Wed, 26 Mar 2014 14:28:04 +1000
-Message-ID: <CACAvsv561r73CmL0rf_bvM9JVMV+E7J_VT3ZDuwyCxviJBa8Cw@mail.gmail.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 00/12] drm/nouveau: support for GK20A, cont'd
+Date: Wed, 26 Mar 2014 15:33:42 +0900
+Message-ID: <CAAVeFu+s+hrKdiHqxvxAOSnq-Jm_g3PY1wT3TgwpX1OGP-Niog@mail.gmail.com>
 References: <1395650554-31925-1-git-send-email-acourbot@nvidia.com>
- <1395650554-31925-13-git-send-email-acourbot@nvidia.com>
+ <1395667191.5062.18.camel@weser.hi.pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1395650554-31925-13-git-send-email-acourbot@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, Ben Skeggs <bskeggs@redhat.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <1395667191.5062.18.camel-WzVe3FnzCwFR6QfukMTsflXZhhPuCNm+@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Mar 24, 2014 at 6:42 PM, Alexandre Courbot <acourbot@nvidia.com> wrote:
-> Set the correct subdev/engine classes when GK20A (0xea) is probed.
->
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> ---
->  drivers/gpu/drm/nouveau/core/engine/device/nve0.c | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
->
-> diff --git a/drivers/gpu/drm/nouveau/core/engine/device/nve0.c b/drivers/gpu/drm/nouveau/core/engine/device/nve0.c
-> index 987edbc30a09..8509dd57de1f 100644
-> --- a/drivers/gpu/drm/nouveau/core/engine/device/nve0.c
-> +++ b/drivers/gpu/drm/nouveau/core/engine/device/nve0.c
-> @@ -156,6 +156,26 @@ nve0_identify(struct nouveau_device *device)
->                 device->oclass[NVDEV_ENGINE_PPP    ] = &nvc0_ppp_oclass;
->                 device->oclass[NVDEV_ENGINE_PERFMON] = &nve0_perfmon_oclass;
->                 break;
-> +       case 0xea:
-> +               device->cname = "GK20A";
-> +               device->oclass[NVDEV_SUBDEV_MC     ] =  nvc3_mc_oclass;
-> +               device->oclass[NVDEV_SUBDEV_BUS    ] =  nvc0_bus_oclass;
-> +               device->oclass[NVDEV_SUBDEV_TIMER  ] = &nv04_timer_oclass;
-As per note on the PTIMER patch, can just switch this to
-"gk20a_timer_oclass" on the latest code.
+Hi Lucas,
 
-> +               device->oclass[NVDEV_SUBDEV_FB     ] =  nvea_fb_oclass;
-> +               device->oclass[NVDEV_SUBDEV_IBUS   ] = &nvea_ibus_oclass;
-> +               device->oclass[NVDEV_SUBDEV_INSTMEM] = nv50_instmem_oclass;
-> +               device->oclass[NVDEV_SUBDEV_VM     ] = &nvc0_vmmgr_oclass;
-> +               device->oclass[NVDEV_SUBDEV_BAR    ] = &nvc0_bar_oclass;
-> +               device->oclass[NVDEV_ENGINE_DMAOBJ ] = &nvd0_dmaeng_oclass;
-> +               device->oclass[NVDEV_ENGINE_FIFO   ] =  nvea_fifo_oclass;
-> +               /* TODO will need an implementation for this at some point... */
-> +#if 0
-> +               device->oclass[NVDEV_ENGINE_SW     ] =  nvc0_software_oclass;
-> +#endif
-> +               device->oclass[NVDEV_ENGINE_GR     ] =  nvea_graph_oclass;
-> +               device->oclass[NVDEV_ENGINE_COPY2  ] = &nve0_copy2_oclass;
-> +               device->oclass[NVDEV_ENGINE_PERFMON] = &nve0_perfmon_oclass;
-> +               break;
->         case 0xf0:
->                 device->cname = "GK110";
->                 device->oclass[NVDEV_SUBDEV_VBIOS  ] = &nouveau_bios_oclass;
-> --
-> 1.9.1
+On Mon, Mar 24, 2014 at 10:19 PM, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
+> Hi Alexandre,
 >
-> _______________________________________________
-> Nouveau mailing list
-> Nouveau@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/nouveau
+> Am Montag, den 24.03.2014, 17:42 +0900 schrieb Alexandre Courbot:
+>> Hi everyone,
+> [...]
+>>
+>> A few lines of hacks (not included here) are still needed to deal with cached
+>> mappings triggering external aborts and CPU/GPU memory coherency issues, but I
+>> hope to understand and address these issues next.
+>
+> For the coherency issue part you may want to look at my Nouveau on ARM
+> series. Most of it never made it upstream, as I lacked the time to work
+> further on this, but it solves the coherency issue from the kernel.
+
+Oh, thanks for pointing this out, it will probably be most useful.
+Shall I assume the patches at
+https://www.mail-archive.com/nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org/msg13557.html
+are up-to-date? Would you mind if I include the relevant patches of
+yours in the next iteration of this series?
+
+>
+> It does so by doing the necessary manual cache flushes/invalidates on
+> buffer access, so costs some performance. To avoid this you really want
+> to get writecombined mappings into the kernel<->userspace interface.
+> Simply mapping the pushbuf as WC/US has brought a 7% performance
+> increase in OpenArena when I last tested this. This test was done with
+> only one PCIe lane, so the perf increase may be even better with a more
+> adequate interconnect.
+
+Interestingly if I allow writecombined mappings in the kernel I get
+faults when attempting the read the mapped area:
+
+[   78.074854] Unhandled fault: external abort on non-linefetch
+(0x1008) at 0xf003e010
+...
+[   78.337862] [<c03491a8>] (nouveau_bo_rd32) from [<c0346374>]
+(nouveau_fence_update+0x5c/0x80)
+[   78.352536] [<c0346374>] (nouveau_fence_update) from [<c03463b0>]
+(nouveau_fence_done+0x18/0x28)
+[   78.367531] [<c03463b0>] (nouveau_fence_done) from [<c02b852c>]
+(ttm_bo_wait+0x104/0x184)
+[   78.381915] [<c02b852c>] (ttm_bo_wait) from [<c034c718>]
+(nouveau_gem_ioctl_cpu_prep+0x40/0xe8)
+[   78.396849] [<c034c718>] (nouveau_gem_ioctl_cpu_prep) from
+[<c029fd5c>] (drm_ioctl+0x404/0x4b8)
+[   78.411790] [<c029fd5c>] (drm_ioctl) from [<c0343960>]
+(nouveau_drm_ioctl+0x54/0x80)
+[   78.425805] [<c0343960>] (nouveau_drm_ioctl) from [<c00ea5ec>]
+(do_vfs_ioctl+0x3f0/0x5bc)
+[   78.440277] [<c00ea5ec>] (do_vfs_ioctl) from [<c00ea7ec>]
+(SyS_ioctl+0x34/0x5c)
+[   78.453918] [<c00ea7ec>] (SyS_ioctl) from [<c000e5a0>]
+(ret_fast_syscall+0x0/0x30)
+
+To avoid these I need to set the VRAM default_caching to
+TTM_PL_FLAG_UNCACHED. It is not clear to me why this is needed. The BO
+being accessed through the BAR, they are correctly considered as IO
+memory and mapped using ttm_bo_ioremap(), so it really seems to be
+unhappy with the WC mapping itself.
+
+Note that if I go ahead and force the use of pgprot_writecombine() in
+ttm_io_prot() to get writecombined user-space mappings, pure DRM
+programs that map a buffer and try to read it fail similarly, while
+Mesa's glReadPixels() seems to be happy. I'm not sure what it does
+differently here.
+
+Cheers,
+Alex.
