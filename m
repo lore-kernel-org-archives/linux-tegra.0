@@ -1,63 +1,61 @@
 From: Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 03/12] drm/nouveau/bar: only ioremap BAR3 if
-	it exists
-Date: Wed, 26 Mar 2014 14:20:42 +1000
-Message-ID: <CACAvsv6USpTOe4H3fhabHbPOmjSV8VeQWakVCkQS6doqPed6fQ@mail.gmail.com>
+Subject: Re: [PATCH 08/12] drm/nouveau/graph: enable when using external firmware
+Date: Wed, 26 Mar 2014 14:21:43 +1000
+Message-ID: <CACAvsv5yEbMWZnxgyhmY1r3Kp9PU8vXg2BcT4ZMJe7Ti9cHBUw@mail.gmail.com>
 References: <1395650554-31925-1-git-send-email-acourbot@nvidia.com>
- <1395650554-31925-4-git-send-email-acourbot@nvidia.com>
- <20140324221314.GD17218@mithrandir>
+	<1395650554-31925-9-git-send-email-acourbot@nvidia.com>
+	<20140324225802.GG17218@mithrandir>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <20140324221314.GD17218@mithrandir>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140324225802.GG17218@mithrandir>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Mar 25, 2014 at 8:13 AM, Thierry Reding
+On Tue, Mar 25, 2014 at 8:58 AM, Thierry Reding
 <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Mon, Mar 24, 2014 at 05:42:25PM +0900, Alexandre Courbot wrote:
->> Some chips that use system memory exclusively (e.g. GK20A) do not
->> expose 2 BAR regions. For them only BAR1 exists, and it should be used
->> for USERD mapping. Do not map BAR3 if its resource does not exist.
->>
->> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  drivers/gpu/drm/nouveau/core/subdev/bar/base.c | 7 +++++--
->>  1 file changed, 5 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/nouveau/core/subdev/bar/base.c b/drivers/gpu/drm/nouveau/core/subdev/bar/base.c
->> index bdf594116f3f..d713eeb75b13 100644
->> --- a/drivers/gpu/drm/nouveau/core/subdev/bar/base.c
->> +++ b/drivers/gpu/drm/nouveau/core/subdev/bar/base.c
->> @@ -110,6 +110,7 @@ nouveau_bar_create_(struct nouveau_object *parent,
->>  {
+> On Mon, Mar 24, 2014 at 05:42:30PM +0900, Alexandre Courbot wrote:
+> [...]
+>> diff --git a/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c b/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c
+>> index 6ef8bf181b2d..f997a18f5760 100644
+>> --- a/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c
+>> +++ b/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c
+>> @@ -1133,10 +1133,14 @@ nvc0_graph_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
+>>       struct nvc0_graph_oclass *oclass = (void *)bclass;
 >>       struct nouveau_device *device = nv_device(parent);
->>       struct nouveau_bar *bar;
->> +     bool has_bar3 = nv_device_resource_len(device, 3) != 0;
+>>       struct nvc0_graph_priv *priv;
+>> +     bool use_fw;
 >
-> I don't think this variable is really necessary since you only use the
-> expression once anyway, but I don't feel very strongly about it, so
-> either way:
-I'd also prefer it folded in, but it's not a big deal.  A couple of
-other upcoming comments will require a re-spin anyway, so we may as
-well :)
+> Perhaps "ext_fw" or "use_ext_fw" would be more accurate.
+>
+>>       int ret, i;
+>>
+>> +     use_fw = nouveau_boolopt(device->cfgopt, "NvGrUseFW", false);
+>> +
+>>       ret = nouveau_graph_create(parent, engine, bclass,
+>> -                                (oclass->fecs.ucode != NULL), &priv);
+>> +                                (oclass->fecs.ucode != NULL) || use_fw,
+>> +                                &priv);
+>
+> Or perhaps a more intuitive way would be to name the variable "enable"
+> and have something like:
+>
+>         if (!nouveau_boolopt(device->cfgopt, "NvGrUseFW", false))
+>                 enable = oclass->fecs.ucode != NULL;
+>         else
+>                 enable = true;
+>
+>         ret = nouveau_graph_create(parent, engine, bclass, enable, &priv);
+>         ...
+Agreed, this looks a lot nicer.
 
 >
-> Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Thierry
 >
 > _______________________________________________
-> Nouveau mailing list
-> Nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-> http://lists.freedesktop.org/mailman/listinfo/nouveau
+> dri-devel mailing list
+> dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
 >
