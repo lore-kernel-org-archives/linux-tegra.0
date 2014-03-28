@@ -1,60 +1,57 @@
-From: Lucas Stach <l.stach@pengutronix.de>
-Subject: Re: [PATCH v2 0/6] PCI irq mapping fixes and cleanups
-Date: Fri, 28 Mar 2014 16:47:36 +0100
-Message-ID: <1396021656.4563.3.camel@weser.hi.pengutronix.de>
-References: <1394025951-32438-1-git-send-email-l.stach@pengutronix.de>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH 49/75] ARM: l2c: fix register naming
+Date: Fri, 28 Mar 2014 09:00:48 -0700
+Message-ID: <20140328160047.GD24308@atomide.com>
+References: <20140328151249.GJ7528@n2100.arm.linux.org.uk>
+ <E1WTYYH-0007GB-3M@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1394025951-32438-1-git-send-email-l.stach@pengutronix.de>
-Sender: linux-sh-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-sh@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Bjorn Helgaas <bhelgaas@google.com>, Simon Horman <horms@verge.net.au>, Shawn Guo <shawn.guo@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Arnd Bergmann <arnd@arndb.de>, kernel@pengutronix.de
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <E1WTYYH-0007GB-3M@rmk-PC.arm.linux.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, Anton Vorontsov <anton@enomsg.org>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, Barry Song <baohua@kernel.org>, Viresh Kumar <viresh.linux@gmail.com>, Shiraz Hashim <shiraz.hashim@st.com>, Srinivas Kandagatla <srinivas.kandagatla@st.com>, Stuart Menefy <stuart.menefy@st.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-omap@vger.kernel.org, spear-devel@list.st.com, kernel@stlinux.com, linux-tegra@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Friendly ping.
+* Russell King <rmk+kernel@arm.linux.org.uk> [140328 08:22]:
+> We have a mixture of different devices with different register layouts,
+> but we group all the bits together in an opaque mess.  Split them out
+> into those which are L2C-310 specific and ones which refer to earlier
+> devices.  Provide full auxiliary control register definitions.
+> 
+> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
 
-Bjorn could you please pick the patches labeled "PCI: ..." up? Both the
-Tegra and i.MX dts changes are already queued up for 3.15 and I think
-all patches gathered enough acks and tested-bys for this to be low risk.
+Acked-by: Tony Lindgren <tony@atomide.com>
+
+> --- a/arch/arm/mach-omap2/omap4-common.c
+> +++ b/arch/arm/mach-omap2/omap4-common.c
+> @@ -212,15 +212,15 @@ static int __init omap_l2_cache_init(void)
+>  		return -ENOMEM;
+>  
+>  	/* 16-way associativity, parity disabled, way size - 64KB (es2.0 +) */
+> -	aux_ctrl = (1 << L2X0_AUX_CTRL_ASSOCIATIVITY_SHIFT) |
+> -			(0x1 << 25) |
+> -			(0x1 << L2X0_AUX_CTRL_NS_LOCKDOWN_SHIFT) |
+> -			(0x1 << L2X0_AUX_CTRL_NS_INT_CTRL_SHIFT)) |
+> -			(0x3 << L2X0_AUX_CTRL_WAY_SIZE_SHIFT) |
+> -			(1 << L2X0_AUX_CTRL_SHARE_OVERRIDE_SHIFT) |
+> -			(1 << L2X0_AUX_CTRL_DATA_PREFETCH_SHIFT) |
+> -			(1 << L2X0_AUX_CTRL_INSTR_PREFETCH_SHIFT) |
+> -			(1 << L2X0_AUX_CTRL_EARLY_BRESP_SHIFT);
+> +	aux_ctrl = L310_AUX_CTRL_ASSOCIATIVITY_16 |
+> +		   L310_AUX_CTRL_CACHE_REPLACE_RR |
+> +		   L310_AUX_CTRL_NS_LOCKDOWN |
+> +		   L310_AUX_CTRL_NS_INT_CTRL |
+> +		   L2C_AUX_CTRL_WAY_SIZE(3) |
+> +		   L2C_AUX_CTRL_SHARED_OVERRIDE |
+> +		   L310_AUX_CTRL_DATA_PREFETCH |
+> +		   L310_AUX_CTRL_INSTR_PREFETCH |
+> +		   L310_AUX_CTRL_EARLY_BRESP;
+
+I guess eventually we can set up some common configuration mask
+define for these kind of things?
 
 Regards,
-Lucas
 
-Am Mittwoch, den 05.03.2014, 14:25 +0100 schrieb Lucas Stach:
-> This series cleans up the PCI irq mapping for all
-> the ARM PCI host drivers, so they handle it in the
-> way defined in the common PCI bindings.
-> 
-> I've worked in all the feedback I received on the first
-> round of this series and left out the i.MX pcie driver
-> changes, as these need more work includig breaking
-> of the existing binding, which I'll send as a separate
-> series.
-> 
-> Lucas Stach (6):
->   ARM: dts: tegra: add PCIe interrupt mapping properties
->   PCI: tegra: use new OF interrupt mapping when possible
->   PCI: rcar: use new OF interrupt mapping when possible
->   ARM: dts: exynos5440: fix PCIe interrupt mapping
->   ARM: dts: imx6: add PCIe interrupt mapping properties
->   PCI: designware: use new OF interrupt mapping when possible
-> 
->  .../devicetree/bindings/pci/nvidia,tegra20-pcie.txt          |  8 ++++++++
->  arch/arm/boot/dts/exynos5440.dtsi                            |  6 ++++--
->  arch/arm/boot/dts/imx6qdl.dtsi                               |  8 ++++++++
->  arch/arm/boot/dts/tegra20.dtsi                               |  4 ++++
->  arch/arm/boot/dts/tegra30.dtsi                               |  4 ++++
->  drivers/pci/host/pci-rcar-gen2.c                             | 12 +++++++++---
->  drivers/pci/host/pci-tegra.c                                 |  7 ++++++-
->  drivers/pci/host/pcie-designware.c                           | 12 +++++++++---
->  8 files changed, 52 insertions(+), 9 deletions(-)
-> 
-
--- 
-Pengutronix e.K.                           | Lucas Stach                 |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-5076 |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-
+Tony
