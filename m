@@ -1,74 +1,112 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 00/12] drm/nouveau: support for GK20A, cont'd
-Date: Thu, 27 Mar 2014 12:50:16 +0900
-Message-ID: <CAAVeFu+2u-x-jw3DQtY1uztFbF_sqkGeRociAD0zELrdNectkQ@mail.gmail.com>
-References: <1395650554-31925-1-git-send-email-acourbot@nvidia.com>
- <1395667191.5062.18.camel@weser.hi.pengutronix.de> <CAAVeFu+s+hrKdiHqxvxAOSnq-Jm_g3PY1wT3TgwpX1OGP-Niog@mail.gmail.com>
- <1395830031.7930.8.camel@weser.hi.pengutronix.de>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH 00/17] i2c: deprecate class based instantiation for
+ embedded I2C drivers
+Date: Fri, 28 Mar 2014 08:55:49 +0100
+Message-ID: <20140328075548.GD2708@katana>
+References: <1392026654-5343-1-git-send-email-wsa@the-dreams.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1395830031.7930.8.camel-WzVe3FnzCwFR6QfukMTsflXZhhPuCNm+@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="+B+y8wtTXqdUj1xM"
+Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1392026654-5343-1-git-send-email-wsa@the-dreams.de>
+Sender: linux-doc-owner@vger.kernel.org
+To: linux-i2c@vger.kernel.org
+Cc: adi-buildroot-devel@lists.sourceforge.net, davinci-linux-open-source@linux.davincidsp.com, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Mar 26, 2014 at 7:33 PM, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
->> > It does so by doing the necessary manual cache flushes/invalidates on
->> > buffer access, so costs some performance. To avoid this you really want
->> > to get writecombined mappings into the kernel<->userspace interface.
->> > Simply mapping the pushbuf as WC/US has brought a 7% performance
->> > increase in OpenArena when I last tested this. This test was done with
->> > only one PCIe lane, so the perf increase may be even better with a more
->> > adequate interconnect.
->>
->> Interestingly if I allow writecombined mappings in the kernel I get
->> faults when attempting the read the mapped area:
->>
-> This is most likely because your handling of those buffers produces
-> conflicting mappings (if my understanding of what you are doing is
-> right).
->
-> At first you allocate memory from CMA without changing the pgprot flags.
-> This yields pages which are mapped uncached or cached (when moveable
-> pages are purged from CMA to make space for your buffer) into the
-> kernels linear space.
->
-> Later you regard this memory as iomem (it isn't!) and let TTM remap
-> those pages into the vmalloc area with pgprot set to writecombined.
->
-> I don't know exactly why this is causing havoc, but having two
-> conflicting virtual mappings of the same physical memory is documented
-> to at least produce undefined behavior on ARMv7.
 
-IIUC this is not exactly what happens with GK20A, so let me explain
-how VRAM is currently accessed to make sure we are in sync.
+--+B+y8wtTXqdUj1xM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-VRAM pages are allocated by nvea_ram_get(), which allocates chunks of
-contiguous memory using dma_alloc_from_contiguous(). At that time I
-don't think the pages are mapped anywhere for the CPU to see (contrary
-to dma_alloc_coherent() for instance). Nouveau will then map the
-memory into the GPU context's address space, but it is only when
-nouveau_ttm_io_mem_reserve() is called that a BAR mapping is created,
-making the memory accessible to the CPU through the BAR window (which
-I consider as I/O memory).
+On Mon, Feb 10, 2014 at 11:03:54AM +0100, Wolfram Sang wrote:
+> With I2C, class based instantiation means if a master driver has e.g.
+> I2C_CLASS_HWMON set, all slave drivers with this class will try to probe a
+> device using an array of possible addresses and some heuristics. That cre=
+ates
+> traffic and needs time, even when nothing is connected. This mechanism is
+> needed when you do not have another method to describe the slaves. Embedd=
+ed I2C
+> drivers do not need class based instantiation, since there is i2c_board_i=
+nfo or
+> devicetree description. Some drivers have the class flags set, though, an=
+d it
+> has spread further over the years. We can't remove the flags directly, be=
+cause
+> there might be users out there relying on this feature. So, we add a
+> deprecation warning if a device is instantiated via class attributes. Aft=
+er
+> giving some time to switch over, we can then finally remove the class fla=
+gs and
+> gain boot time.
+>=20
+> Patch 1 adds some missing documentation. Patch 2 adds the deprecation fea=
+ture.
+> Patches 3+4 are tested on hardware I need. Patches 5-17 are suggestions f=
+or
+> drivers I think could benefit from that. For those, acks are needed befor=
+e I
+> will apply them to my tree. If you use a different driver which can also
+> benefit from this, just send a patch adding the new DEPRECATED flag.
+>=20
+> The series can also be found here:
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/deprecate=
+d_class
+>=20
+> Thanks,
+>=20
+>    Wolfram
+>=20
+>=20
+> Wolfram Sang (17):
+>   Documentation: i2c: describe devicetree method for instantiating
+>     devices
+>   i2c: add deprecation warning for class based instantiation
+>   i2c: i2c-omap: deprecate class based instantiation
+>   i2c: i2c-at91: deprecate class based instantiation
+>   i2c: i2c-bcm2835: deprecate class based instantiation
+>   i2c: i2c-bfin-twi: deprecate class based instantiation
+>   i2c: i2c-davinci: deprecate class based instantiation
+>   i2c: i2c-designware-platdrv: deprecate class based instantiation
+>   i2c: i2c-mv64xxx: deprecate class based instantiation
+>   i2c: i2c-nomadik: deprecate class based instantiation
+>   i2c: i2c-ocores: deprecate class based instantiation
+>   i2c: i2c-rcar: deprecate class based instantiation
+>   i2c: i2c-s3c2410: deprecate class based instantiation
+>   i2c: i2c-sirf: deprecate class based instantiation
+>   i2c: i2c-stu300: deprecate class based instantiation
+>   i2c: i2c-tegra: deprecate class based instantiation
+>   i2c: i2c-xiic: deprecate class based instantiation
 
-The area of the BAR window pointing to the VRAM is then mapped to the
-kernel (using ioremap_wc() or ioremap_nocache()) or user-space (where
-ttm_io_prot() is called to get the pgprot_t to use). It is when this
-mapping is writecombined that I get the faults.
+I reconsidered and have now applied all patches. That way, all these
+drivers can be converted to no class based instantiation in one go after
+some grace period. If it turns out, one driver actually needs it, there
+is still the grace period left to remove the DEPRECATED flag again.
 
-So as far as I can tell, only at most one CPU mapping exists at any
-time for VRAM memory, which goes through the BAR to access the actual
-physical memory. It would probably be faster and more logical to map
-the RAM directly so the CPU can address it, but going through the BAR
-reduces CPU/GPU synchronization issues and there are a few cases where
-we would need to map through the BAR anyway (e.g. tiled memory to be
-made linear for the CPU).
 
-I don't know if that help understanding what the issue might be - I
-just wanted to make sure we are talking about the same thing. :)
+--+B+y8wtTXqdUj1xM
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Thanks,
-Alex.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.15 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTNSsEAAoJEBQN5MwUoCm2aPUP/0fNAS8+v21TjZp/oZc/OYXJ
+uPl3yGMTuEjEF6vMpjRZAgLdEEBzp3kY65odh5LzyfcVGw+MxGFsSgyaHlDEvLVI
+8VCGE+09XzaCRqOOq98QFrVZCnvEhxyYAM2paB1E8s0W6Sl4Cx6mhTT4xKt5EShg
+l44GTiG+ce5hqsvzdf4GgKRGOt+jdNL6drojM26HA3osAj3O7FUHbB2kFXB/cR+2
+Bkx5D2vPfMFWdaoy6OWoBLw/Mu8bdTEpKSeAJHSHJfb8MDJbwj3OAnE727c5N9AC
+QyrYNv/ENAizaJXtTpPjGDwWltZf4dGuGqCIp1rGIa+Qb3cu/yM9LvhU9gUvGWxq
+0RgrlfRyNp51Jzc6kLpOrkCirejm6T4m2zg8mwvVE+aCMi4MIY3+GFtlxkvTMqvo
+5fuo3+wHKpE8ThQWhxBq+5g2LU7LIPq8LbfWXSwAH9axLhpSrBrPDS6QuLcsR/3Y
+DZ50lOjdXGkRq+Ts1+yv0nMaoWonjBJZfJ0CzWcz7caJ7/vLQmaP+Ps0FenpgRYQ
+PmDkVkobDhwD35ca2JJpoZd2osqT9W5z1pzrVip0loEvI7fNyfRdHTic22YS4NgK
+hY8qwdWL3wywbGpEaHAajXv2wI8dT4QcF5B1KCmRD3FBbWAPSWWeZidD2rc915My
+kAHhWUihcNGI5n8hFyt9
+=Xl2M
+-----END PGP SIGNATURE-----
+
+--+B+y8wtTXqdUj1xM--
