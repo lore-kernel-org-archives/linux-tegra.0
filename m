@@ -1,74 +1,102 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH 49/75] ARM: l2c: fix register naming
-Date: Fri, 28 Mar 2014 15:15:32 -0700
-Message-ID: <20140328221532.GA30388@atomide.com>
-References: <20140328151249.GJ7528@n2100.arm.linux.org.uk>
- <E1WTYYH-0007GB-3M@rmk-PC.arm.linux.org.uk>
- <20140328160047.GD24308@atomide.com>
- <20140328210243.GT7528@n2100.arm.linux.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20140328210243.GT7528@n2100.arm.linux.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Barry Song <baohua@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-omap@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Stephen Warren <swarren@wwwdotorg.org>, Srinivas Kandagatla <srinivas.kandagatla@st.com>, Linus Walleij <linus.walleij@linaro.org>, Anton Vorontsov <anton@enomsg.org>, spear-devel@list.st.com, Shiraz Hashim <shiraz.hashim@st.com>, Stuart Menefy <stuart.menefy@st.com>, Thierry Reding <thierry.reding@gmail.com>, Viresh Kumar <viresh.linux@gmail.com>, linux-samsung-soc@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>, linux-tegra@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>, linux-arm-kernel@lists.infradead.org, kernel@stlinux.com
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] clk: tegra: Fix PLLE programming
+Date: Mon, 31 Mar 2014 16:45:42 +0200
+Message-ID: <1396277142-18292-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-* Russell King - ARM Linux <linux@arm.linux.org.uk> [140328 14:06]:
-> On Fri, Mar 28, 2014 at 09:00:48AM -0700, Tony Lindgren wrote:
-> > * Russell King <rmk+kernel@arm.linux.org.uk> [140328 08:22]:
-> > > We have a mixture of different devices with different register layouts,
-> > > but we group all the bits together in an opaque mess.  Split them out
-> > > into those which are L2C-310 specific and ones which refer to earlier
-> > > devices.  Provide full auxiliary control register definitions.
-> > > 
-> > > Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> > 
-> > Acked-by: Tony Lindgren <tony@atomide.com>
-> > 
-> > > --- a/arch/arm/mach-omap2/omap4-common.c
-> > > +++ b/arch/arm/mach-omap2/omap4-common.c
-> > > @@ -212,15 +212,15 @@ static int __init omap_l2_cache_init(void)
-> > >  		return -ENOMEM;
-> > >  
-> > >  	/* 16-way associativity, parity disabled, way size - 64KB (es2.0 +) */
-> > > -	aux_ctrl = (1 << L2X0_AUX_CTRL_ASSOCIATIVITY_SHIFT) |
-> > > -			(0x1 << 25) |
-> > > -			(0x1 << L2X0_AUX_CTRL_NS_LOCKDOWN_SHIFT) |
-> > > -			(0x1 << L2X0_AUX_CTRL_NS_INT_CTRL_SHIFT)) |
-> > > -			(0x3 << L2X0_AUX_CTRL_WAY_SIZE_SHIFT) |
-> > > -			(1 << L2X0_AUX_CTRL_SHARE_OVERRIDE_SHIFT) |
-> > > -			(1 << L2X0_AUX_CTRL_DATA_PREFETCH_SHIFT) |
-> > > -			(1 << L2X0_AUX_CTRL_INSTR_PREFETCH_SHIFT) |
-> > > -			(1 << L2X0_AUX_CTRL_EARLY_BRESP_SHIFT);
-> > > +	aux_ctrl = L310_AUX_CTRL_ASSOCIATIVITY_16 |
-> > > +		   L310_AUX_CTRL_CACHE_REPLACE_RR |
-> > > +		   L310_AUX_CTRL_NS_LOCKDOWN |
-> > > +		   L310_AUX_CTRL_NS_INT_CTRL |
-> > > +		   L2C_AUX_CTRL_WAY_SIZE(3) |
-> > > +		   L2C_AUX_CTRL_SHARED_OVERRIDE |
-> > > +		   L310_AUX_CTRL_DATA_PREFETCH |
-> > > +		   L310_AUX_CTRL_INSTR_PREFETCH |
-> > > +		   L310_AUX_CTRL_EARLY_BRESP;
-> > 
-> > I guess eventually we can set up some common configuration mask
-> > define for these kind of things?
-> 
-> The idea is that eventually platforms should just specify no changes to
-> the auxctl configuration.  You will notice later patches remove a number
-> of the above flags.
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-OK thanks great!
+PLLE has M, N and P divider shift and width parameters that differ from
+the defaults. Furthermore, when clearing the M, N and P divider fields
+the corresponding masks were never shifted, thereby clearing only the
+lowest bits of the register. This lead to a situation where the PLLE
+programming would only work if the register hadn't been touched before.
 
-Tony
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/clk/tegra/clk-pll.c | 30 ++++++++++++++++++++++++------
+ 1 file changed, 24 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 0d20241e0770..357911303315 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -58,9 +58,9 @@
+ #define PLLDU_LFCON_SET_DIVN 600
+ 
+ #define PLLE_BASE_DIVCML_SHIFT 24
+-#define PLLE_BASE_DIVCML_WIDTH 4
++#define PLLE_BASE_DIVCML_MASK 0xf
+ #define PLLE_BASE_DIVP_SHIFT 16
+-#define PLLE_BASE_DIVP_WIDTH 7
++#define PLLE_BASE_DIVP_WIDTH 6
+ #define PLLE_BASE_DIVN_SHIFT 8
+ #define PLLE_BASE_DIVN_WIDTH 8
+ #define PLLE_BASE_DIVM_SHIFT 0
+@@ -730,8 +730,10 @@ static int clk_plle_enable(struct clk_hw *hw)
+ 	if (pll->params->flags & TEGRA_PLLE_CONFIGURE) {
+ 		/* configure dividers */
+ 		val = pll_readl_base(pll);
+-		val &= ~(divm_mask(pll) | divn_mask(pll) | divp_mask(pll));
+-		val &= ~(PLLE_BASE_DIVCML_WIDTH << PLLE_BASE_DIVCML_SHIFT);
++		val &= ~(divp_mask(pll) << PLLE_BASE_DIVP_SHIFT |
++			 divn_mask(pll) << PLLE_BASE_DIVN_SHIFT |
++			 divm_mask(pll) << PLLE_BASE_DIVM_SHIFT);
++		val &= ~(PLLE_BASE_DIVCML_MASK << PLLE_BASE_DIVCML_SHIFT);
+ 		val |= sel.m << pll->params->div_nmp->divm_shift;
+ 		val |= sel.n << pll->params->div_nmp->divn_shift;
+ 		val |= sel.p << pll->params->div_nmp->divp_shift;
+@@ -745,6 +747,7 @@ static int clk_plle_enable(struct clk_hw *hw)
+ 	pll_writel_misc(val, pll);
+ 
+ 	val = readl(pll->clk_base + PLLE_SS_CTRL);
++	val &= ~PLLE_SS_COEFFICIENTS_MASK;
+ 	val |= PLLE_SS_DISABLE;
+ 	writel(val, pll->clk_base + PLLE_SS_CTRL);
+ 
+@@ -1292,8 +1295,10 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
+ 	pll_writel(val, PLLE_SS_CTRL, pll);
+ 
+ 	val = pll_readl_base(pll);
+-	val &= ~(divm_mask(pll) | divn_mask(pll) | divp_mask(pll));
+-	val &= ~(PLLE_BASE_DIVCML_WIDTH << PLLE_BASE_DIVCML_SHIFT);
++	val &= ~(divp_mask(pll) << PLLE_BASE_DIVP_SHIFT |
++		 divn_mask(pll) << PLLE_BASE_DIVN_SHIFT |
++		 divm_mask(pll) << PLLE_BASE_DIVM_SHIFT);
++	val &= ~(PLLE_BASE_DIVCML_MASK << PLLE_BASE_DIVCML_SHIFT);
+ 	val |= sel.m << pll->params->div_nmp->divm_shift;
+ 	val |= sel.n << pll->params->div_nmp->divn_shift;
+ 	val |= sel.cpcon << PLLE_BASE_DIVCML_SHIFT;
+@@ -1410,6 +1415,15 @@ struct clk *tegra_clk_register_pll(const char *name, const char *parent_name,
+ 	return clk;
+ }
+ 
++static struct div_nmp pll_e_nmp = {
++	.divn_shift = PLLE_BASE_DIVN_SHIFT,
++	.divn_width = PLLE_BASE_DIVN_WIDTH,
++	.divm_shift = PLLE_BASE_DIVM_SHIFT,
++	.divm_width = PLLE_BASE_DIVM_WIDTH,
++	.divp_shift = PLLE_BASE_DIVP_SHIFT,
++	.divp_width = PLLE_BASE_DIVP_WIDTH,
++};
++
+ struct clk *tegra_clk_register_plle(const char *name, const char *parent_name,
+ 		void __iomem *clk_base, void __iomem *pmc,
+ 		unsigned long flags, struct tegra_clk_pll_params *pll_params,
+@@ -1420,6 +1434,10 @@ struct clk *tegra_clk_register_plle(const char *name, const char *parent_name,
+ 
+ 	pll_params->flags |= TEGRA_PLL_LOCK_MISC | TEGRA_PLL_BYPASS;
+ 	pll_params->flags |= TEGRA_PLL_HAS_LOCK_ENABLE;
++
++	if (!pll_params->div_nmp)
++		pll_params->div_nmp = &pll_e_nmp;
++
+ 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
+ 	if (IS_ERR(pll))
+ 		return ERR_CAST(pll);
+-- 
+1.9.1
