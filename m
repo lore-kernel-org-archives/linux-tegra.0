@@ -1,50 +1,92 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH] clk: tegra: Fix PLLE programming
-Date: Mon, 31 Mar 2014 10:51:38 -0600
-Message-ID: <53399D1A.4070301@wwwdotorg.org>
+Date: Mon, 31 Mar 2014 21:46:22 +0200
+Message-ID: <20140331194612.GC3431@mithrandir>
 References: <1396277142-18292-1-git-send-email-thierry.reding@gmail.com>
+ <53399D1A.4070301@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="0vzXIDBeUiKkjNJl"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1396277142-18292-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <53399D1A.4070301-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/31/2014 08:45 AM, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> PLLE has M, N and P divider shift and width parameters that differ from
-> the defaults. Furthermore, when clearing the M, N and P divider fields
-> the corresponding masks were never shifted, thereby clearing only the
-> lowest bits of the register. This lead to a situation where the PLLE
-> programming would only work if the register hadn't been touched before.
 
-> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+--0vzXIDBeUiKkjNJl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> @@ -730,8 +730,10 @@ static int clk_plle_enable(struct clk_hw *hw)
->  	if (pll->params->flags & TEGRA_PLLE_CONFIGURE) {
->  		/* configure dividers */
->  		val = pll_readl_base(pll);
-> -		val &= ~(divm_mask(pll) | divn_mask(pll) | divp_mask(pll));
-> -		val &= ~(PLLE_BASE_DIVCML_WIDTH << PLLE_BASE_DIVCML_SHIFT);
-> +		val &= ~(divp_mask(pll) << PLLE_BASE_DIVP_SHIFT |
-> +			 divn_mask(pll) << PLLE_BASE_DIVN_SHIFT |
-> +			 divm_mask(pll) << PLLE_BASE_DIVM_SHIFT);
+On Mon, Mar 31, 2014 at 10:51:38AM -0600, Stephen Warren wrote:
+> On 03/31/2014 08:45 AM, Thierry Reding wrote:
+> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >=20
+> > PLLE has M, N and P divider shift and width parameters that differ from
+> > the defaults. Furthermore, when clearing the M, N and P divider fields
+> > the corresponding masks were never shifted, thereby clearing only the
+> > lowest bits of the register. This lead to a situation where the PLLE
+> > programming would only work if the register hadn't been touched before.
+>=20
+> > diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+>=20
+> > @@ -730,8 +730,10 @@ static int clk_plle_enable(struct clk_hw *hw)
+> >  	if (pll->params->flags & TEGRA_PLLE_CONFIGURE) {
+> >  		/* configure dividers */
+> >  		val =3D pll_readl_base(pll);
+> > -		val &=3D ~(divm_mask(pll) | divn_mask(pll) | divp_mask(pll));
+> > -		val &=3D ~(PLLE_BASE_DIVCML_WIDTH << PLLE_BASE_DIVCML_SHIFT);
+> > +		val &=3D ~(divp_mask(pll) << PLLE_BASE_DIVP_SHIFT |
+> > +			 divn_mask(pll) << PLLE_BASE_DIVN_SHIFT |
+> > +			 divm_mask(pll) << PLLE_BASE_DIVM_SHIFT);
+>=20
+> Shouldn't those shift values also be a macro/inline like
+> divm_shift(pll), since ...
+>=20
+> > +static struct div_nmp pll_e_nmp =3D {
+> > +	.divn_shift =3D PLLE_BASE_DIVN_SHIFT,
+> > +	.divn_width =3D PLLE_BASE_DIVN_WIDTH,
+> > +	.divm_shift =3D PLLE_BASE_DIVM_SHIFT,
+> > +	.divm_width =3D PLLE_BASE_DIVM_WIDTH,
+> > +	.divp_shift =3D PLLE_BASE_DIVP_SHIFT,
+> > +	.divp_width =3D PLLE_BASE_DIVP_WIDTH,
+> > +};
+>=20
+> ... that table contains parameters for both width and shift values, not
+> just width values?
 
-Shouldn't those shift values also be a macro/inline like
-divm_shift(pll), since ...
+Yes, that could be done. At some point I was also thinking about simply
+converting the masks to be shifted masks, but then realized that the
+patche would become rather intrusive.
 
-> +static struct div_nmp pll_e_nmp = {
-> +	.divn_shift = PLLE_BASE_DIVN_SHIFT,
-> +	.divn_width = PLLE_BASE_DIVN_WIDTH,
-> +	.divm_shift = PLLE_BASE_DIVM_SHIFT,
-> +	.divm_width = PLLE_BASE_DIVM_WIDTH,
-> +	.divp_shift = PLLE_BASE_DIVP_SHIFT,
-> +	.divp_width = PLLE_BASE_DIVP_WIDTH,
-> +};
+Perhaps, though, to make the code slightly more terse, in addition to
+div{n,m,p}_shift() macros I could add div{n,m,p}_mask_shifted() macros
+as well to combine both.
 
-... that table contains parameters for both width and shift values, not
-just width values?
+Thierry
+
+--0vzXIDBeUiKkjNJl
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTOcYEAAoJEN0jrNd/PrOhL/8P/1UD+HYO9kAAmD5y5JjU03kG
+r89yde9Uae0Dg8k2CRRXdIVpt3IpHuVF3dAS1izokuSpDd029ieK9Sxa6iP1YUDH
+788Y6GDdco2j9+Jq1Xn36qLn1QnHdkGpkxdUesSaABKyQxDdrWzHNbtk41GK+A2n
+/axZW+5hdSX0ZLveB8dax1PvXXfIU9z+iEHgerjYGLB74yuVHRHIu7zVAnj3cXNu
+qWjJKvL/24I8AluAmGBZBAC/YC8RwanYK5b5TMchu1kuydv1mPMZkCo4dkwVb8FP
+ngHLsfUDq2yESwHuBF/ZBfELuewgefQqFeBN7Qf0hsQOkkLrfmKvgw0ZYmGf+d+q
+tACxUO5xGVtcjfOGPb1dhQpZ6LxHHel7KaUEZg1AKtFyIodi+IsERDLhfUD6db+O
+SDyoLEvhvmFYnPn4YSTC43U+JVye9OnWun94A6d8PCciCEWRP7Pr+/R5EuetDCXX
+d0kQ0p+Z62jWeU/t+OagURj6Q/fLlh1YU3RT4p74fcTuF6SaX64osYXz9Jg7LoxK
+xyWPfqrMPQ6Nqv7EC3aCfeUAGd3CYH7Od9AyoK+c0oSdon5BYF6Pd+hQInyXam60
+jcSpLkjMRUw6CLJCxoCDHMTm6oE0X2j2VYpFHcoG+2rpAHWdzRNK4/nXeMPEFKPh
+ckI+eK8ARYVrhUUEBRPY
+=k7hh
+-----END PGP SIGNATURE-----
+
+--0vzXIDBeUiKkjNJl--
