@@ -1,10 +1,8 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH 3/3] dt: tegra: remove non-existent clock IDs
-Date: Tue,  1 Apr 2014 14:13:17 -0600
-Message-ID: <1396383197-5979-3-git-send-email-swarren@wwwdotorg.org>
-References: <1396383197-5979-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH 1/3] ARM: tegra: remove UART5/UARTE from tegra124.dtsi
+Date: Tue,  1 Apr 2014 14:13:15 -0600
+Message-ID: <1396383197-5979-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <1396383197-5979-1-git-send-email-swarren@wwwdotorg.org>
 Sender: stable-owner@vger.kernel.org
 To: arm@kernel.org, Mike Turquette <mturquette@linaro.org>
 Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, stable@vger.kernel.org
@@ -12,51 +10,39 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren@nvidia.com>
 
-The Tegra124 clock DT binding currently provides 3 clocks that don't
-actually exist; 2 for NAND and one for UART5/UARTE. Delete these. While
-this is technically an incompatible DT ABI change, nothing could have
-used these clock IDs for anything practical, since the HW doesn't exist.
+Tegra124 only has 4 UARTs. Parts of the documentation hint at a fifth
+UART, but this appears to be left-over from earlier SoC documentation.
+Remove the non-existent DT node for UART5.
 
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Stephen Warren <swarren@nvidia.com>
 ---
-This depends on the previous 2 patches. Either all the patches can be
-taken through the same tree with acks, or we can hold of applying this
-patch until the other two make it into Linus' tree.
----
- include/dt-bindings/clock/tegra124-car.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/tegra124.dtsi | 13 -------------
+ 1 file changed, 13 deletions(-)
 
-diff --git a/include/dt-bindings/clock/tegra124-car.h b/include/dt-bindings/clock/tegra124-car.h
-index 8c1603b10665..433528ab5161 100644
---- a/include/dt-bindings/clock/tegra124-car.h
-+++ b/include/dt-bindings/clock/tegra124-car.h
-@@ -29,7 +29,7 @@
- /* 10 (register bit affects spdif_in and spdif_out) */
- #define TEGRA124_CLK_I2S1 11
- #define TEGRA124_CLK_I2C1 12
--#define TEGRA124_CLK_NDFLASH 13
-+/* 13 */
- #define TEGRA124_CLK_SDMMC1 14
- #define TEGRA124_CLK_SDMMC4 15
- /* 16 */
-@@ -83,7 +83,7 @@
+diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+index cf45a1a39483..6d540a025148 100644
+--- a/arch/arm/boot/dts/tegra124.dtsi
++++ b/arch/arm/boot/dts/tegra124.dtsi
+@@ -233,19 +233,6 @@
+ 		status = "disabled";
+ 	};
  
- /* 64 */
- #define TEGRA124_CLK_UARTD 65
--#define TEGRA124_CLK_UARTE 66
-+/* 66 */
- #define TEGRA124_CLK_I2C3 67
- #define TEGRA124_CLK_SBC4 68
- #define TEGRA124_CLK_SDMMC3 69
-@@ -97,7 +97,7 @@
- #define TEGRA124_CLK_TRACE 77
- #define TEGRA124_CLK_SOC_THERM 78
- #define TEGRA124_CLK_DTV 79
--#define TEGRA124_CLK_NDSPEED 80
-+/* 80 */
- #define TEGRA124_CLK_I2CSLOW 81
- #define TEGRA124_CLK_DSIB 82
- #define TEGRA124_CLK_TSEC 83
+-	serial@0,70006400 {
+-		compatible = "nvidia,tegra124-uart", "nvidia,tegra20-uart";
+-		reg = <0x0 0x70006400 0x0 0x40>;
+-		reg-shift = <2>;
+-		interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&tegra_car TEGRA124_CLK_UARTE>;
+-		resets = <&tegra_car 66>;
+-		reset-names = "serial";
+-		dmas = <&apbdma 20>, <&apbdma 20>;
+-		dma-names = "rx", "tx";
+-		status = "disabled";
+-	};
+-
+ 	pwm@0,7000a000 {
+ 		compatible = "nvidia,tegra124-pwm", "nvidia,tegra20-pwm";
+ 		reg = <0x0 0x7000a000 0x0 0x100>;
 -- 
 1.8.1.5
