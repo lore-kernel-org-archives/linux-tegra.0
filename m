@@ -1,48 +1,51 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH 1/3] ARM: tegra: remove UART5/UARTE from tegra124.dtsi
-Date: Tue,  1 Apr 2014 14:13:15 -0600
-Message-ID: <1396383197-5979-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: arm@kernel.org, Mike Turquette <mturquette@linaro.org>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, stable@vger.kernel.org
+From: stefan-XLVq0VzYD2Y@public.gmane.org
+Subject: [RFC 0/2] fixed order for mmc devices/mmc block devices
+Date: Tue,  1 Apr 2014 22:35:50 +0200
+Message-ID: <cover.1396384101.git.stefan@agner.ch>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stefan-XLVq0VzYD2Y@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren@nvidia.com>
+From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
 
-Tegra124 only has 4 UARTs. Parts of the documentation hint at a fifth
-UART, but this appears to be left-over from earlier SoC documentation.
-Remove the non-existent DT node for UART5.
+Nowadays SoCs usually have multiple SD/MMC host adapters. Often
+the first is connected to an internal eMMC, however sometimes it
+is the second controller that is connected to the eMMC.
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
----
- arch/arm/boot/dts/tegra124.dtsi | 13 -------------
- 1 file changed, 13 deletions(-)
+If the second controller is connected to the eMMC, the number
+assigned to the eMMC block device varies depending on whether the
+external SD-Card is present or not.
+The boot device could be specified using partition UUIDs, but
+those can change when recreating the partition table. Especially
+for embedded devices it would be preferable to have a reliable
+assigned block device number.
 
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index cf45a1a39483..6d540a025148 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -233,19 +233,6 @@
- 		status = "disabled";
- 	};
- 
--	serial@0,70006400 {
--		compatible = "nvidia,tegra124-uart", "nvidia,tegra20-uart";
--		reg = <0x0 0x70006400 0x0 0x40>;
--		reg-shift = <2>;
--		interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&tegra_car TEGRA124_CLK_UARTE>;
--		resets = <&tegra_car 66>;
--		reset-names = "serial";
--		dmas = <&apbdma 20>, <&apbdma 20>;
--		dma-names = "rx", "tx";
--		status = "disabled";
--	};
--
- 	pwm@0,7000a000 {
- 		compatible = "nvidia,tegra124-pwm", "nvidia,tegra20-pwm";
- 		reg = <0x0 0x7000a000 0x0 0x100>;
+The first patch aims to give a way to specify the logical SD/MMC
+host order. This is achieved by extending the device tree using
+aliases:
+
+aliases {
+        mmc0 = "/sdhci@78000600";
+        mmc1 = "/sdhci@78000200";
+};
+
+The second patch then uses the SD/MMC host index as preferred id
+for the block device.
+
+In theory, one SD/MMC host could control multiple cards. For this
+case, this patch is somewhat ugly. It would only assign the first
+host/card combination with a predictable block number. However,
+for the case at hand this would be sufficient. 
+
+Stefan Agner (2):
+  mmc: read mmc alias from device tree
+  mmc: use SD/MMC host ID for block device name ID
+
+ drivers/mmc/card/block.c |  3 ++-
+ drivers/mmc/core/host.c  | 24 +++++++++++++++++++-----
+ 2 files changed, 21 insertions(+), 6 deletions(-)
+
 -- 
-1.8.1.5
+1.9.1
