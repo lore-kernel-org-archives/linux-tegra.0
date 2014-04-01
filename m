@@ -1,52 +1,53 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] gpu: host1x: handle the correct # of syncpt regs
-Date: Tue,  1 Apr 2014 14:10:37 -0600
-Message-ID: <1396383037-5891-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH 2/3] clk: tegra: remove non-existent clocks
+Date: Tue,  1 Apr 2014 14:13:16 -0600
+Message-ID: <1396383197-5979-2-git-send-email-swarren@wwwdotorg.org>
+References: <1396383197-5979-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1396383197-5979-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-BIT_WORD() truncates rather than rounds, so the loops in
-syncpt_thresh_isr() and _host1x_intr_disable_all_syncpt_intrs() use <=
-rather than < in an attempt to process the correct number of registers
-when rounding of the conversion of count of bits to count of words is
-necessary. However, when rounding isn't necessary (as is the case for
-all values of nb_pts the code actually sees), this causes one too many
-registers to be processed.
+The Tegra124 clock driver currently provides 3 clocks that don't actually
+exist; 2 for NAND and one for UART5/UARTE. Delete these.
 
-Solve this by using BITS_TO_LONGS() (which rounds internally), rather
-than BIT_WORD(), and comparing with < rather than <=.
-
+Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/host1x/hw/intr_hw.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/tegra/clk-tegra124.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/gpu/host1x/hw/intr_hw.c b/drivers/gpu/host1x/hw/intr_hw.c
-index db9017adfe2b..17407b2de2bf 100644
---- a/drivers/gpu/host1x/hw/intr_hw.c
-+++ b/drivers/gpu/host1x/hw/intr_hw.c
-@@ -47,7 +47,7 @@ static irqreturn_t syncpt_thresh_isr(int irq, void *dev_id)
- 	unsigned long reg;
- 	int i, id;
+diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+index 166e02f16c8a..cc37c342c4cb 100644
+--- a/drivers/clk/tegra/clk-tegra124.c
++++ b/drivers/clk/tegra/clk-tegra124.c
+@@ -764,7 +764,6 @@ static struct tegra_clk tegra124_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_sdmmc2_8] = { .dt_id = TEGRA124_CLK_SDMMC2, .present = true },
+ 	[tegra_clk_i2s1] = { .dt_id = TEGRA124_CLK_I2S1, .present = true },
+ 	[tegra_clk_i2c1] = { .dt_id = TEGRA124_CLK_I2C1, .present = true },
+-	[tegra_clk_ndflash] = { .dt_id = TEGRA124_CLK_NDFLASH, .present = true },
+ 	[tegra_clk_sdmmc1_8] = { .dt_id = TEGRA124_CLK_SDMMC1, .present = true },
+ 	[tegra_clk_sdmmc4_8] = { .dt_id = TEGRA124_CLK_SDMMC4, .present = true },
+ 	[tegra_clk_pwm] = { .dt_id = TEGRA124_CLK_PWM, .present = true },
+@@ -809,7 +808,6 @@ static struct tegra_clk tegra124_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_trace] = { .dt_id = TEGRA124_CLK_TRACE, .present = true },
+ 	[tegra_clk_soc_therm] = { .dt_id = TEGRA124_CLK_SOC_THERM, .present = true },
+ 	[tegra_clk_dtv] = { .dt_id = TEGRA124_CLK_DTV, .present = true },
+-	[tegra_clk_ndspeed] = { .dt_id = TEGRA124_CLK_NDSPEED, .present = true },
+ 	[tegra_clk_i2cslow] = { .dt_id = TEGRA124_CLK_I2CSLOW, .present = true },
+ 	[tegra_clk_dsib] = { .dt_id = TEGRA124_CLK_DSIB, .present = true },
+ 	[tegra_clk_tsec] = { .dt_id = TEGRA124_CLK_TSEC, .present = true },
+@@ -952,7 +950,6 @@ static struct tegra_clk tegra124_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_clk_out_3_mux] = { .dt_id = TEGRA124_CLK_CLK_OUT_3_MUX, .present = true },
+ 	[tegra_clk_dsia_mux] = { .dt_id = TEGRA124_CLK_DSIA_MUX, .present = true },
+ 	[tegra_clk_dsib_mux] = { .dt_id = TEGRA124_CLK_DSIB_MUX, .present = true },
+-	[tegra_clk_uarte] = { .dt_id = TEGRA124_CLK_UARTE, .present = true },
+ };
  
--	for (i = 0; i <= BIT_WORD(host->info->nb_pts); i++) {
-+	for (i = 0; i < BITS_TO_LONGS(host->info->nb_pts); i++) {
- 		reg = host1x_sync_readl(host,
- 			HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS(i));
- 		for_each_set_bit(id, &reg, BITS_PER_LONG) {
-@@ -64,7 +64,7 @@ static void _host1x_intr_disable_all_syncpt_intrs(struct host1x *host)
- {
- 	u32 i;
- 
--	for (i = 0; i <= BIT_WORD(host->info->nb_pts); ++i) {
-+	for (i = 0; i < BITS_TO_LONGS(host->info->nb_pts); ++i) {
- 		host1x_sync_writel(host, 0xffffffffu,
- 			HOST1X_SYNC_SYNCPT_THRESH_INT_DISABLE(i));
- 		host1x_sync_writel(host, 0xffffffffu,
+ static struct tegra_devclk devclks[] __initdata = {
 -- 
 1.8.1.5
