@@ -1,58 +1,69 @@
-From: Penny Chiu <pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [tegrarcm PATCH 1/1] tegrarcm: Add odm production secure mode support
-Date: Wed, 2 Apr 2014 09:57:48 +0800
-Message-ID: <1396403868-14479-1-git-send-email-pchiu@nvidia.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH 11/12] drm/nouveau: support GK20A in nouveau_accel_init()
+Date: Wed, 2 Apr 2014 23:14:10 +0900
+Message-ID: <CAAVeFuL-v2dntm5kgXUaC1-0dw2PgPnmpffPpa_dpwYZqmhvpA@mail.gmail.com>
+References: <1395650554-31925-1-git-send-email-acourbot@nvidia.com>
+ <1395650554-31925-12-git-send-email-acourbot@nvidia.com> <20140324231014.GI17218@mithrandir>
+ <CACAvsv4FHqwAF6FOaMF1sQLwAfBOd6uFgsZ+VdwCHoR4qsVbVw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: AMartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Penny Chiu <pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACAvsv4FHqwAF6FOaMF1sQLwAfBOd6uFgsZ+VdwCHoR4qsVbVw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ben Skeggs <skeggsb@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ben Skeggs <bskeggs@redhat.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-tegrarcm should work if the operating mode is ODM production
-secure mode. Add the operating mode definition and description.
+On Wed, Mar 26, 2014 at 1:27 PM, Ben Skeggs <skeggsb@gmail.com> wrote:
+> On Tue, Mar 25, 2014 at 9:10 AM, Thierry Reding
+> <thierry.reding@gmail.com> wrote:
+>> On Mon, Mar 24, 2014 at 05:42:33PM +0900, Alexandre Courbot wrote:
+>>> GK20A does not embed a dedicated COPY engine and thus cannot allocate
+>>> the copy channel that nouveau_accel_init() attempts to create. It also
+>>> lacks any display hardware, so the creation of a software channel does
+>>> not apply neither.
+>>
+>> Perhaps this should be two separate patches?
+>>
+>>> diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
+>> [...]
+>>> +     if (device->chipset == 0xea) {
+>>> +             /* gk20a does not have CE0/CE1 */
+>>
+>> This would be another good candidate for a feature flag.
+> There are ways to query this in a chipset-independent way.  However,
+> despite reporting it as an error if no copy engines are available, the
+> code should continue on without the channel happily.  Perhaps we can
+> just punt the relevent error messages to a debug loglevel for now?
 
-Signed-off-by: Penny Chiu <pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- src/main.c | 4 +++-
- src/rcm.h  | 1 +
- 2 files changed, 4 insertions(+), 1 deletion(-)
+Sure, that would be more future-proof as well.
 
-diff --git a/src/main.c b/src/main.c
-index fe29df0..50adc14 100644
---- a/src/main.c
-+++ b/src/main.c
-@@ -290,8 +290,9 @@ int main(int argc, char **argv)
- 
- 	if (info.op_mode != RCM_OP_MODE_DEVEL &&
- 	    info.op_mode != RCM_OP_MODE_ODM_OPEN &&
-+	    info.op_mode != RCM_OP_MODE_ODM_SECURE &&
- 	    info.op_mode != RCM_OP_MODE_PRE_PRODUCTION)
--		error(1, ENODEV, "device is not in developer, open, "
-+		error(1, ENODEV, "device is not in developer, open, secure, "
- 		      "or pre-production mode, cannot flash");
- 
- 	// download the BCT
-@@ -654,6 +655,7 @@ static void dump_platform_info(nv3p_platform_info_t *info)
- 	case RCM_OP_MODE_PRE_PRODUCTION:    op_mode = "pre-production mode"; break;
- 	case RCM_OP_MODE_DEVEL:             op_mode = "developer mode"; break;
- 	case RCM_OP_MODE_ODM_OPEN:          op_mode = "odm open mode"; break;
-+	case RCM_OP_MODE_ODM_SECURE:        op_mode = "odm secure mode"; break;
- 	default:                            op_mode = "unknown"; break;
- 	}
- 	printf(" (%s)\n", op_mode);
-diff --git a/src/rcm.h b/src/rcm.h
-index 505547c..ab4bea2 100644
---- a/src/rcm.h
-+++ b/src/rcm.h
-@@ -107,6 +107,7 @@ typedef struct {
- // security operating modes
- #define RCM_OP_MODE_PRE_PRODUCTION  0x1
- #define RCM_OP_MODE_DEVEL           0x3
-+#define RCM_OP_MODE_ODM_SECURE      0x4
- #define RCM_OP_MODE_ODM_OPEN        0x5
- 
- int rcm_init(uint32_t version);
--- 
-1.9.1
+>
+>>
+>>> +             arg0 = NVE0_CHANNEL_IND_ENGINE_GR;
+>>> +             arg1 = 1;
+>>> +     } else
+>>>       if (device->card_type >= NV_E0) {
+>>
+>> The formatting here is somewhat weird. From a brief look I couldn't find
+>> any indication that nouveau deviates from the standard coding style, so
+>> this should be:
+>>
+>>         } else if (...) {
+> I use the former in a few places, despite it not entirely being
+> "correct".. It looks nicer though :)  I don't mind either way though.
+
+Yeah, I just followed the style of the file here. Whether it needs to
+change or not is not my call. :P
+
+>>> +     /* Need to figure out how to handle sw for gk20a */
+>>> +     if (device->chipset == 0xea)
+>>> +             goto skip_sw_init;
+>>
+>> The commit message makes it sound like SW isn't needed since gk20a
+>> "lacks any display hardware". In that case the comment here doesn't make
+>> much sense.
+
+Correct. As far as I have looked (that is, not very far), SW methods
+are used for display-related functions, but there might be other
+use-cases too. Maybe someone who knows better can confirm?
