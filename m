@@ -1,48 +1,83 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCHv3 0/5] net: rfkill: gpio: cleanup and a few new acpi ids
-Date: Wed, 2 Apr 2014 18:36:06 +0900
-Message-ID: <CAAVeFuLXQ99gMW6Kmr4fj2FhccsKUEajBWLn8v33LB_LbGjgqw@mail.gmail.com>
-References: <1396360976-28657-1-git-send-email-heikki.krogerus@linux.intel.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 04/12] drm/nouveau/bar/nvc0: support chips without BAR3
+Date: Wed, 2 Apr 2014 22:47:28 +0900
+Message-ID: <CAAVeFuKUu-oN-sMEcvcZVTuhcz9dZVauvca7T1_iN5=qkU7Zcg@mail.gmail.com>
+References: <1395650554-31925-1-git-send-email-acourbot@nvidia.com>
+ <1395650554-31925-5-git-send-email-acourbot@nvidia.com> <20140324221051.GC17218@mithrandir>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <1396360976-28657-1-git-send-email-heikki.krogerus@linux.intel.com>
-Sender: netdev-owner@vger.kernel.org
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>, Chen-Yu Tsai <wens@csie.org>, Rhyland Klein <rklein@nvidia.com>, Marc Dietrich <marvin24@gmx.de>, Stephen Warren <swarren@wwwdotorg.org>, Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, linux-wireless <linux-wireless@vger.kernel.org>, netdev <netdev@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140324221051.GC17218@mithrandir>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Negative number of added lines, temporary string buffers removal, and
-use of the gpiod interface: lots of stuff to like here!
+On Tue, Mar 25, 2014 at 7:10 AM, Thierry Reding
+<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Mon, Mar 24, 2014 at 05:42:26PM +0900, Alexandre Courbot wrote:
+> [...]
+>> diff --git a/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c b/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c
+> [...]
+>>  static int
+>> -nvc0_bar_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
+>> -           struct nouveau_oclass *oclass, void *data, u32 size,
+>> -           struct nouveau_object **pobject)
+>> +nvc0_bar_init_vm(struct nvc0_bar_priv *priv, int nr, int bar)
+>>  {
+> [...]
+>> -     /* BAR3 */
+>>       ret = nouveau_gpuobj_new(nv_object(priv), NULL, 0x1000, 0, 0,
+>> -                             &priv->bar[0].mem);
+>> -     mem = priv->bar[0].mem;
+>> +                             &priv->bar[nr].mem);
+>> +     mem = priv->bar[nr].mem;
+>>       if (ret)
+>>               return ret;
+>>
+>>       ret = nouveau_gpuobj_new(nv_object(priv), NULL, 0x8000, 0, 0,
+>> -                             &priv->bar[0].pgd);
+>> +                             &priv->bar[nr].pgd);
+>>       if (ret)
+>>               return ret;
+> [...]
+>> +static int
+>> +nvc0_bar_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
+>> +           struct nouveau_oclass *oclass, void *data, u32 size,
+>> +           struct nouveau_object **pobject)
+>> +{
+> [...]
+>> +     /* BAR3 */
+>> +     if (has_bar3) {
+>> +             ret = nvc0_bar_init_vm(priv, 0, 3);
+> [...]
+>> +     /* BAR1 */
+>> +     ret = nvc0_bar_init_vm(priv, 1, 1);
+>>       if (ret)
+>>               return ret;
+>
+> The calls to nvc0_bar_init_vm() are somewhat confusing in my opinion. It
+> is hard to see from the invocation what these numbers mean and therefore
+> distinguish which parameter is which.
+>
+> Perhaps a slightly more readable way would be to pass in a pointer to a
+> structure as second parameter instead of the index into an array. So
+> it'd look somewhat like this:
+>
+>         if (has_bar3) {
+>                 ret = nvc0_bar_init_vm(priv, &priv->bar[0], 3);
+>                 ...
+>         }
+>         ...
+>         ret = nvc0_bar_init_vm(priv, &priv->bar[1], 1);
+>         ...
+>
+> Unfortunately that would require a new type to be created for the bar[]
+> structures, so it'd be slightly more intrusive.
 
-Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+These types are local to nvc0.c anyway, so I don't think it would
+hurt. And you are right that the code would become more readable as a
+result, passing array indexes as arguments is not a common practice
+(and should not be).
 
-On Tue, Apr 1, 2014 at 11:02 PM, Heikki Krogerus
-<heikki.krogerus@linux.intel.com> wrote:
-> Hi,
->
-> I hope this one is OK with everyone.
->
-> Changes since v2:
-> - Instead of changing the driver to use only indexed gpios, just
->   hard-coding the names.
->
-> Changes since v1:
-> - Removed the gpio entries from arch/arm/mach-tegra/board-paz00.c
->
->
-> Heikki Krogerus (5):
->   ARM: tegra: remove obsolete gpio entries
->   net: rfkill: gpio: remove unused and obsolete platform parameters
->   net: rfkill: gpio: add ACPI ID for GPS module on Lenovo Miix2
->   net: rfkill: gpio: add ACPI IDs for a Broadcom bluetooth chip
->   net: rfkill: gpio: hard-code the gpio names
->
->  arch/arm/mach-tegra/board-paz00.c |  4 +---
->  include/linux/rfkill-gpio.h       | 10 ----------
->  net/rfkill/rfkill-gpio.c          | 40 +++++++++------------------------------
->  3 files changed, 10 insertions(+), 44 deletions(-)
->
-> --
-> 1.9.1
->
+Alex.
