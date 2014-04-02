@@ -1,39 +1,46 @@
-From: Ilia Mirkin <imirkin@alum.mit.edu>
-Subject: Re: [Nouveau] [PATCH 11/12] drm/nouveau: support GK20A in nouveau_accel_init()
-Date: Wed, 2 Apr 2014 10:23:39 -0400
-Message-ID: <CAKb7UvjAATgH3hqs4Vx4RkRsph9uAQdxyjCYmxZ8mq6ZgRh8gA@mail.gmail.com>
-References: <1395650554-31925-1-git-send-email-acourbot@nvidia.com>
-	<1395650554-31925-12-git-send-email-acourbot@nvidia.com>
-	<20140324231014.GI17218@mithrandir>
-	<CACAvsv4FHqwAF6FOaMF1sQLwAfBOd6uFgsZ+VdwCHoR4qsVbVw@mail.gmail.com>
-	<CAAVeFuL-v2dntm5kgXUaC1-0dw2PgPnmpffPpa_dpwYZqmhvpA@mail.gmail.com>
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v3.14
+Date: Wed, 2 Apr 2014 13:27:01 -0700
+Message-ID: <533C7295.9050806@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAAVeFuL-v2dntm5kgXUaC1-0dw2PgPnmpffPpa_dpwYZqmhvpA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Ben Skeggs <skeggsb@gmail.com>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ben Skeggs <bskeggs@redhat.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Apr 2, 2014 at 10:14 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
->>>> +     /* Need to figure out how to handle sw for gk20a */
->>>> +     if (device->chipset == 0xea)
->>>> +             goto skip_sw_init;
->>>
->>> The commit message makes it sound like SW isn't needed since gk20a
->>> "lacks any display hardware". In that case the comment here doesn't make
->>> much sense.
->
-> Correct. As far as I have looked (that is, not very far), SW methods
-> are used for display-related functions, but there might be other
-> use-cases too. Maybe someone who knows better can confirm?
+Here are some basic Tegra test results for Linux v3.14.
+Logs and other details at:
 
-http://cgit.freedesktop.org/~darktama/nouveau/tree/nvkm/engine/software/nvc0.c
+     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.14/20140331183045/
 
-Take a look at nvc0_software_mthd_mp_control -- that's used in the
-mesa driver to... well, control those things :) They're related to
-PGRAPH, which should be available on the GK20A. [Not sure what they do
-though. One of them is about turning off error reporting.]
 
-  -ilia
+Test summary
+------------
+
+Build: zImage:
+     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Boot to userspace: multi_v7_defconfig:
+     Pass: ( 2/ 2): tegra114-dalmore-a04, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+     Pass: ( 2/ 2): tegra114-dalmore-a04, tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v3.14-rc8 (b098d6726bbfb94c06d6e1097466187afddae61f)):
+    text     data      bss    total  kernel
+    +596     +136        0     +732  multi_v7_defconfig
+   +1560      +64        0    +1624  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v3.14-rc8 (b098d6726bbfb94c06d6e1097466187afddae61f))
+     avail    rsrvd     high    freed                board              kconfig                  dtb
+         .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+         .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+         .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+         .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
