@@ -1,36 +1,60 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [tegrarcm PATCH 1/1] tegrarcm: Add odm production secure mode
- support
-Date: Wed, 02 Apr 2014 11:06:54 -0600
-Message-ID: <533C43AE.1090502@wwwdotorg.org>
-References: <1396403868-14479-1-git-send-email-pchiu@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [cbootimage-configs PATCH] Image dependency generator cleanups
+Date: Wed,  2 Apr 2014 11:43:05 -0600
+Message-ID: <1396460585-9178-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1396403868-14479-1-git-send-email-pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Penny Chiu <pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, AMartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/01/2014 07:57 PM, Penny Chiu wrote:
-> tegrarcm should work if the operating mode is ODM production
-> secure mode. Add the operating mode definition and description.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-> diff --git a/src/main.c b/src/main.c
+1) Remove whitespace from parsed filenames.
+2) Make image file depend on dependency generator script.
+3) Provide dummy rules for all dependencies. Without this change, if any
+   dependency is renamed, make will try to build it but won't know how.
+   With the dummy rules in place, make will execute an empty command to
+   build any missing dependencies, which is fine if they've simply been
+   renamed. Any real errors due to incorrect filenames in the current
+   config files will be caught by the cbootimage invocation itself.
 
->  	if (info.op_mode != RCM_OP_MODE_DEVEL &&
->  	    info.op_mode != RCM_OP_MODE_ODM_OPEN &&
-> +	    info.op_mode != RCM_OP_MODE_ODM_SECURE &&
->  	    info.op_mode != RCM_OP_MODE_PRE_PRODUCTION)
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ build/gen-image-deps.sh | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-Are there even more modes beyond those? I wonder if that check is even
-necessary any more, or whether tegrarcm should just try to communicate
-no matter what.
-
-Still, any changes here can be addressed in a separate patch.
-
-Acked-by:
-Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Allen, will you apply this or do you want me to?
+diff --git a/build/gen-image-deps.sh b/build/gen-image-deps.sh
+index 10c4001e0050..fcbb64cdbf5e 100755
+--- a/build/gen-image-deps.sh
++++ b/build/gen-image-deps.sh
+@@ -18,17 +18,25 @@
+ #    misrepresented as being the original software.
+ # 3. This notice may not be removed or altered from any source distribution.
+ 
++deps_script=$0
+ img_cfg_file=$1
+ img_file=$2
+ dep_file=$3
+ 
+ rm -f ${dep_file}
+-bct=`grep -i bctfile ${img_cfg_file} | sed -e 's/^.*=//' -e s'/[,;].*$//'`
+-bootloader=`grep -i bootloader ${img_cfg_file} | sed -e 's/^.*=//' -e s'/[,;].*$//'`
++bct=`grep -i bctfile ${img_cfg_file} | sed -e 's/^.*=\s*//' -e s'/[,;].*$//'`
++bootloader=`grep -i bootloader ${img_cfg_file} | sed -e 's/^.*=\s*//' -e s'/[,;].*$//'`
+ 
+ cat > ${dep_file} <<ENDOFHERE
+ ${img_file}: \\
++	${deps_script} \\
+ 	${img_cfg_file} \\
+ 	${bct} \\
+ 	${bootloader}
++
++${img_cfg_file}:
++
++${bct}:
++
++${bootloader}:
+ ENDOFHERE
+-- 
+1.8.1.5
