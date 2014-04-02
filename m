@@ -1,43 +1,59 @@
-From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-Subject: Re: [RFC 2/2] mmc: use SD/MMC host ID for block device name ID
-Date: Tue, 01 Apr 2014 23:46:33 +0200
-Message-ID: <837c304930e6ea74db848c14c6fa6313@agner.ch>
-References: <cover.1396384101.git.stefan@agner.ch>
- <2f6ac51155f9d34791b274b5102d15a997ff8b99.1396384101.git.stefan@agner.ch>
- <533B25E8.8040201@wwwdotorg.org>
+From: Ben Skeggs <skeggsb@gmail.com>
+Subject: Re: [PATCH 10/12] drm/nouveau/graph: add GK20A support
+Date: Thu, 3 Apr 2014 09:11:03 +1000
+Message-ID: <CACAvsv5Cy0BWXMTTeDtFSrX2jg51YAzgF9AjOdyhA-XMALLYjw@mail.gmail.com>
+References: <1395650554-31925-1-git-send-email-acourbot@nvidia.com>
+ <1395650554-31925-11-git-send-email-acourbot@nvidia.com>
+ <CACAvsv4yQuPeoGMW6+k7ChsCZWCjpyBYhEMUomQH2QRrxkW=-w@mail.gmail.com>
+ <CAAVeFuLimi8Mzmqs0Y1OQv6ZJxgQd6Y2bfyF7hmP5_wcPya-gA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <533B25E8.8040201-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAAVeFuLimi8Mzmqs0Y1OQv6ZJxgQd6Y2bfyF7hmP5_wcPya-gA@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ben Skeggs <bskeggs@redhat.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Am 2014-04-01 22:47, Stephen Warren wrote:
-> That's not true. There's no guarantee that a device name/ID gets
-> released as soon as the SD card is removed; something might still have
-> it mounted for example.
-Yes. Also when booted there are other solutions to get static block
-device name (e.g. /dev/disk/by-path), but the problem at hand aims for a
-solution for the root file system.
+On Thu, Apr 3, 2014 at 12:03 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
+> On Wed, Mar 26, 2014 at 1:24 PM, Ben Skeggs <skeggsb@gmail.com> wrote:
+>> On Mon, Mar 24, 2014 at 6:42 PM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+>>> Add a GR device for GK20A based on NVE4, with the correct classes
+>>> definitions (GK20A's 3D class is 0xa297).
+>>>
+>>> Most of the NVE4 code can be used on GK20A, so make relevant bits of
+>>> NVE4 available to other chips as well.
+>> This will need a bit of a rebase on top of the tree I mentioned
+>> earlier (also queued for drm-next now), where I've further split out
+>> and named the various chunks of state.
+>
+> Will do that.
+>
+>>
+>> Does GK104 match entirely correctly, or just happen to work?  I could
+>> probably hunt down the GK20A netlist images and check that actually :)
+>
+> Do you mean, the init sequence? I haven't checked in detail (we are
+> certainly doing things differently in the non-DRM driver), but the
+> registers seem to match and the GPU is able to render after that. I
+> admit I have not looked much further for now.
+I meant the arrays of register data, there's generally been some
+differences for most major chipset bumps.  Where can I find the
+netlist firmware packages that go with the android driver?  I can pull
+all the required info out of there to check :)
 
-Also, eMMC don't get removed, and those internal eMMC devices are the
-reason of this thread... (see cover letter)
-
- 
-> The correct solution here is to use filesystem or partition UUIDs to
-> identify the device/partition, not to attempt to assign static device IDs.
-Yes, I'm aware of that solution. However, when recreating the partition
-table, those UUIDs do change, which in turn needs a change of the kernel
-arguments. Of course, one can use scripts to work around this, but its
-easier to just boot from the block device at a given location (say eMMC,
-first partition). Then, using UUID is also not as fast as using a device
-name directly, since all block devices get scanned. This is not optimal
-when trying to optimize boot speed, but might be negligible. I actually
-never measured that. 
-
-There are the /dev/disk/by-path/ which aim at a similar goal, but those
-names are generated by udev. I'm open to suggestions solve this issue in
-a more fashionable way...
+>
+> The only register that does not exist on GK20A is 0x260, but when
+> accessing it Nouveau will be able to continue unharmed after a memory
+> fault.
+I have it in my queue to fix that too, the register doesn't exist on a
+couple of the other chips we support too.
