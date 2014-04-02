@@ -1,19 +1,17 @@
-From: Ben Skeggs <skeggsb@gmail.com>
-Subject: Re: [Nouveau] [PATCH 11/12] drm/nouveau: support GK20A in
- nouveau_accel_init()
-Date: Thu, 3 Apr 2014 09:14:48 +1000
-Message-ID: <CACAvsv4uUoeb9KrVS-6PGjtruWXSOakgCMBspSn6EmAVUO=YrA@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH 08/12] drm/nouveau/graph: enable when using external
+ firmware
+Date: Wed, 2 Apr 2014 22:53:55 +0900
+Message-ID: <CAAVeFuKtjmF_ayM5PEnee1DkC7HBxbUFASs2ArSOso-wfW=VHg@mail.gmail.com>
 References: <1395650554-31925-1-git-send-email-acourbot@nvidia.com>
- <1395650554-31925-12-git-send-email-acourbot@nvidia.com>
- <20140324231014.GI17218@mithrandir>
- <CACAvsv4FHqwAF6FOaMF1sQLwAfBOd6uFgsZ+VdwCHoR4qsVbVw@mail.gmail.com>
- <CAAVeFuL-v2dntm5kgXUaC1-0dw2PgPnmpffPpa_dpwYZqmhvpA@mail.gmail.com>
- <CAKb7UvjAATgH3hqs4Vx4RkRsph9uAQdxyjCYmxZ8mq6ZgRh8gA@mail.gmail.com>
+ <1395650554-31925-9-git-send-email-acourbot@nvidia.com>
+ <20140324225802.GG17218@mithrandir>
+ <CACAvsv5yEbMWZnxgyhmY1r3Kp9PU8vXg2BcT4ZMJe7Ti9cHBUw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAKb7UvjAATgH3hqs4Vx4RkRsph9uAQdxyjCYmxZ8mq6ZgRh8gA@mail.gmail.com>
+In-Reply-To: <CACAvsv5yEbMWZnxgyhmY1r3Kp9PU8vXg2BcT4ZMJe7Ti9cHBUw@mail.gmail.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -23,34 +21,46 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ilia Mirkin <imirkin@alum.mit.edu>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ben Skeggs <bskeggs@redhat.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+To: Ben Skeggs <skeggsb@gmail.com>
+Cc: "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ben Skeggs <bskeggs@redhat.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Apr 3, 2014 at 12:23 AM, Ilia Mirkin <imirkin@alum.mit.edu> wrote:
-> On Wed, Apr 2, 2014 at 10:14 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
->>>>> +     /* Need to figure out how to handle sw for gk20a */
->>>>> +     if (device->chipset == 0xea)
->>>>> +             goto skip_sw_init;
->>>>
->>>> The commit message makes it sound like SW isn't needed since gk20a
->>>> "lacks any display hardware". In that case the comment here doesn't make
->>>> much sense.
+On Wed, Mar 26, 2014 at 1:21 PM, Ben Skeggs <skeggsb@gmail.com> wrote:
+> On Tue, Mar 25, 2014 at 8:58 AM, Thierry Reding
+> <thierry.reding@gmail.com> wrote:
+>> On Mon, Mar 24, 2014 at 05:42:30PM +0900, Alexandre Courbot wrote:
+>> [...]
+>>> diff --git a/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c b/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c
+>>> index 6ef8bf181b2d..f997a18f5760 100644
+>>> --- a/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c
+>>> +++ b/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c
+>>> @@ -1133,10 +1133,14 @@ nvc0_graph_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
+>>>       struct nvc0_graph_oclass *oclass = (void *)bclass;
+>>>       struct nouveau_device *device = nv_device(parent);
+>>>       struct nvc0_graph_priv *priv;
+>>> +     bool use_fw;
 >>
->> Correct. As far as I have looked (that is, not very far), SW methods
->> are used for display-related functions, but there might be other
->> use-cases too. Maybe someone who knows better can confirm?
->
-> http://cgit.freedesktop.org/~darktama/nouveau/tree/nvkm/engine/software/nvc0.c
->
-> Take a look at nvc0_software_mthd_mp_control -- that's used in the
-> mesa driver to... well, control those things :) They're related to
-> PGRAPH, which should be available on the GK20A. [Not sure what they do
-> though. One of them is about turning off error reporting.]
-Hm, I don't know why I didn't notice that was there for now.. I
-wouldn't be entirely surprised if nvidia had reserved method ids in
-the 3d object class that were supposed to be used for this, rather
-than from a sw object class..
+>> Perhaps "ext_fw" or "use_ext_fw" would be more accurate.
+>>
+>>>       int ret, i;
+>>>
+>>> +     use_fw = nouveau_boolopt(device->cfgopt, "NvGrUseFW", false);
+>>> +
+>>>       ret = nouveau_graph_create(parent, engine, bclass,
+>>> -                                (oclass->fecs.ucode != NULL), &priv);
+>>> +                                (oclass->fecs.ucode != NULL) || use_fw,
+>>> +                                &priv);
+>>
+>> Or perhaps a more intuitive way would be to name the variable "enable"
+>> and have something like:
+>>
+>>         if (!nouveau_boolopt(device->cfgopt, "NvGrUseFW", false))
+>>                 enable = oclass->fecs.ucode != NULL;
+>>         else
+>>                 enable = true;
+>>
+>>         ret = nouveau_graph_create(parent, engine, bclass, enable, &priv);
+>>         ...
+> Agreed, this looks a lot nicer.
 
->
->   -ilia
+Will fix that, thanks!
