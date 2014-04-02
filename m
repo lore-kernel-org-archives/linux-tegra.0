@@ -1,114 +1,50 @@
-From: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>
-Subject: Re: [Nouveau] [PATCH 06/12] drm/nouveau/ibus: add GK20A support
-Date: Wed, 2 Apr 2014 10:18:28 -0400
-Message-ID: <CAKb7Uvj_+s+PTbziGD_jb=ryk372vgxSTOrmxOZVGUghHnveAw@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH 10/12] drm/nouveau/graph: add GK20A support
+Date: Wed, 2 Apr 2014 23:03:19 +0900
+Message-ID: <CAAVeFuLimi8Mzmqs0Y1OQv6ZJxgQd6Y2bfyF7hmP5_wcPya-gA@mail.gmail.com>
 References: <1395650554-31925-1-git-send-email-acourbot@nvidia.com>
-	<1395650554-31925-7-git-send-email-acourbot@nvidia.com>
-	<20140324223444.GF17218@mithrandir>
-	<CAAVeFuKezGqPnmi=XJW1FrL-3e8hyqdjuY83VEh496SLm+0mFQ@mail.gmail.com>
+ <1395650554-31925-11-git-send-email-acourbot@nvidia.com>
+ <CACAvsv4yQuPeoGMW6+k7ChsCZWCjpyBYhEMUomQH2QRrxkW=-w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAVeFuKezGqPnmi=XJW1FrL-3e8hyqdjuY83VEh496SLm+0mFQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CACAvsv4yQuPeoGMW6+k7ChsCZWCjpyBYhEMUomQH2QRrxkW=-w@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Ben Skeggs <skeggsb@gmail.com>
+Cc: "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ben Skeggs <bskeggs@redhat.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Apr 2, 2014 at 9:52 AM, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Tue, Mar 25, 2014 at 7:34 AM, Thierry Reding
-> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->> On Mon, Mar 24, 2014 at 05:42:28PM +0900, Alexandre Courbot wrote:
->> [...]
->>> diff --git a/drivers/gpu/drm/nouveau/core/subdev/ibus/nvea.c b/drivers/gpu/drm/nouveau/core/subdev/ibus/nvea.c
->> [...]
->>> +#include <subdev/ibus.h>
->>> +
->>> +struct nvea_ibus_priv {
->>> +     struct nouveau_ibus base;
->>> +};
->>> +
->>> +static void
->>> +nvea_ibus_init_priv_ring(struct nvea_ibus_priv *priv)
->>> +{
->>> +     nv_mask(priv, 0x137250, 0x3f, 0);
->>> +
->>> +     nv_mask(priv, 0x000200, 0x20, 0);
->>> +     udelay(20);
+On Wed, Mar 26, 2014 at 1:24 PM, Ben Skeggs <skeggsb@gmail.com> wrote:
+> On Mon, Mar 24, 2014 at 6:42 PM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+>> Add a GR device for GK20A based on NVE4, with the correct classes
+>> definitions (GK20A's 3D class is 0xa297).
 >>
->> usleep_range()?
->
-> Sure.
->
->>
->>> +static void
->>> +nvea_ibus_intr(struct nouveau_subdev *subdev)
->>> +{
->> [...]
->>> +     /* Acknowledge interrupt */
->>> +     nv_mask(priv, 0x12004c, 0x2, 0x2);
->>> +
->>> +     while (--retry >= 0) {
->>> +             command = nv_rd32(priv, 0x12004c) & 0x3f;
->>> +             if (command == 0)
->>> +                     break;
->>> +     }
->>> +
->>> +     if (retry < 0)
->>> +             nv_warn(priv, "timeout waiting for ringmaster ack\n");
->>> +}
->>
->> Perhaps I'm being paranoid, but this loop now depends on the frequency
->> of the various clocks involved and therefore might break at some point
->> if the frequencies get sufficiently high.
->>
->> So a slightly safer implementation would use a proper timeout using a
->> combination of msecs_to_jiffies(), time_before() and usleep_range(),
->> like so:
->>
->>         timeout = jiffies + msecs_to_jiffies(...);
->>
->>         while (time_before(jiffies, timeout)) {
->>                 command = nv_rd32(...) & 0x3f;
->>                 if (command == 0)
->>                         break;
->>
->>                 usleep_range(...);
->>         }
->>
->>         if (time_after(jiffies, timeout))
->>                 nv_warn(...);
->
-> Right, now that I look at this code again I don't even understand why
-> I left it this way. Maybe I left some early test code slip into the
-> final patch, sorry about that.
+>> Most of the NVE4 code can be used on GK20A, so make relevant bits of
+>> NVE4 available to other chips as well.
+> This will need a bit of a rebase on top of the tree I mentioned
+> earlier (also queued for drm-next now), where I've further split out
+> and named the various chunks of state.
 
-I just remembered about this, but there's also the nv_wait() macro,
-which you could use, e.g.
-
-if (!nv_wait(subdev, 0x12004c, 0x3f, 0x00))
-  nv_warn(...)
-
-It has built-in timeout logic/etc (although no sleeps in the middle).
-It does use the timer subdev, so if that's not operational at this
-point, you can't use it.
+Will do that.
 
 >
->> This assumes that there's some known timeout after which the ringmaster
->> is expected to have acked the interrupt. On that note, I wonder if the
->> warning is accurate here: it's my understanding that writing 0x2 to the
->> register does acknowledge the interrupt, so the ringmaster does in fact
->> "clear" it rather than "acknowledge" it, doesn't it?
->>
->> Although now that I mention it I seem to remember that this write is
->> actually sending a command to the ring master and perhaps waiting for
->> the register to return to 0 is indeed waiting for an ACK of sorts. Maybe
->> adding a comment or so describing what this sequence does would be
->> appropriate here?
->
-> Can we from an IP point of view? AFAIK this sequence has never been
-> publicly documented.
-> _______________________________________________
-> Nouveau mailing list
-> Nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-> http://lists.freedesktop.org/mailman/listinfo/nouveau
+> Does GK104 match entirely correctly, or just happen to work?  I could
+> probably hunt down the GK20A netlist images and check that actually :)
+
+Do you mean, the init sequence? I haven't checked in detail (we are
+certainly doing things differently in the non-DRM driver), but the
+registers seem to match and the GPU is able to render after that. I
+admit I have not looked much further for now.
+
+The only register that does not exist on GK20A is 0x260, but when
+accessing it Nouveau will be able to continue unharmed after a memory
+fault.
