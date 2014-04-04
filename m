@@ -1,114 +1,114 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] gpu: host1x: handle the correct # of syncpt regs
-Date: Fri, 4 Apr 2014 11:03:25 +0200
-Message-ID: <20140404090324.GC474@ulmo>
-References: <1396383037-5891-1-git-send-email-swarren@wwwdotorg.org>
- <533D1732.9040704@nvidia.com>
+From: Thierry Reding <treding@nvidia.com>
+Subject: [PATCH v2 2/3] clk: tegra: Introduce divider mask and shift helpers
+Date: Fri, 4 Apr 2014 15:55:14 +0200
+Message-ID: <1396619715-15524-2-git-send-email-treding@nvidia.com>
+References: <1396619715-15524-1-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0072253039=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <533D1732.9040704@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom@nvidia.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Stephen Warren <swarren@wwwdotorg.org>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1396619715-15524-1-git-send-email-treding@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Add div{m,n,p}_shift() and div{m,n,p}_mask_shifted() helpers to make the
+code that modifies the m-, n- and p-divider fields of PLLs shorter and
+easier to read.
 
---===============0072253039==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="WplhKdTI2c8ulnbP"
-Content-Disposition: inline
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+Changes in v2:
+- new patch to address comment by Stephen
 
+ drivers/clk/tegra/clk-pll.c | 44 ++++++++++++++++++++++++--------------------
+ 1 file changed, 24 insertions(+), 20 deletions(-)
 
---WplhKdTI2c8ulnbP
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Apr 03, 2014 at 11:09:22AM +0300, Terje Bergstr=C3=B6m wrote:
-> On 01.04.2014 23:10, Stephen Warren wrote:
-> > diff --git a/drivers/gpu/host1x/hw/intr_hw.c b/drivers/gpu/host1x/hw/in=
-tr_hw.c
-> > index db9017adfe2b..17407b2de2bf 100644
-> > --- a/drivers/gpu/host1x/hw/intr_hw.c
-> > +++ b/drivers/gpu/host1x/hw/intr_hw.c
-> > @@ -47,7 +47,7 @@ static irqreturn_t syncpt_thresh_isr(int irq, void *d=
-ev_id)
-> >  	unsigned long reg;
-> >  	int i, id;
-> > =20
-> > -	for (i =3D 0; i <=3D BIT_WORD(host->info->nb_pts); i++) {
-> > +	for (i =3D 0; i < BITS_TO_LONGS(host->info->nb_pts); i++) {
-> >  		reg =3D host1x_sync_readl(host,
-> >  			HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS(i));
-> >  		for_each_set_bit(id, &reg, BITS_PER_LONG) {
-> > @@ -64,7 +64,7 @@ static void _host1x_intr_disable_all_syncpt_intrs(str=
-uct host1x *host)
-> >  {
-> >  	u32 i;
-> > =20
-> > -	for (i =3D 0; i <=3D BIT_WORD(host->info->nb_pts); ++i) {
-> > +	for (i =3D 0; i < BITS_TO_LONGS(host->info->nb_pts); ++i) {
-> >  		host1x_sync_writel(host, 0xffffffffu,
-> >  			HOST1X_SYNC_SYNCPT_THRESH_INT_DISABLE(i));
-> >  		host1x_sync_writel(host, 0xffffffffu,
-> >=20
->=20
-> Wouldn't this break in architectures with 64-bit longs?
-
-Well, BIT_WORD() relies on BITS_PER_LONG too, so the current code is
-broken for 64-bit architectures too.
-
-> Probably the safest way would be to use DIV_ROUND_UP(host->info->nb_pts, =
-32),
-> because we know there are 32 bits in each host1x register.
-
-I agree. I hope there aren't any plans on making the registers 64 bits
-wide in the future. Although they'd probably still be accessible as 32
-bit values even then.
-
-Thierry
-
---WplhKdTI2c8ulnbP
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTPnVbAAoJEN0jrNd/PrOhA3gP/1sN/JhXbVK7dtnzvojhh0Ul
-bnTejOMz20lkzHxeSuF2a/o77BWvPSyz0RyYlu2PLbYO1HkzlZmXe+PAoVeXQRvg
-9OyGtQw1Z8bwHh+xhd3+vX/eWq2TyNNvmM+MnG/0Kx7y/0RSUlVViBEKji4V7GK7
-c2TUTlc/pA/huxpUbXoxaFx7SAXttQ3Pd0KNjDW9bJfXC2kTb6i6TE30Zdlt9gD9
-DsxOvwu9Y/byBrKF/2pBDMPHAFXpQJQJeKMSt6zn55XRQWT04ZdzLWTXYLmCr+Og
-ive3riezdK0dgrOf2Djd4QMz/WQxkESvniStTAf8hH3CkW4bvdLv83I3VO6bz77q
-Mnt3PgWIGnZclEa6ww9ML1k0qAxdoQKl1OG8S/97xtp06IYqcsgSH0GB7m6QB5R7
-tt5SCX5uxImfNufoYUX2iDT5m1cXMctqgKA6Ed/cM1X8bGHTl7N2XtRZf2GRxoD+
-3fBNgaZi5ZgIZFBnHEUgdBgLwkV/nblVXC8r7oQcTiTEzfKJLUjhhsnRWtLSn54u
-43uURmNXUdGMeaFq193vFK84nXptBfZEy9Kd/Cnq7QI+N0YJyaI3P1lIvI3ZpRwT
-c4ak9GUn5XLPeGuUrCpI7tZCIYNX+ptz52odVMyyt6oa4+PO/LErTdee65n/k501
-e1uXf4cWDucMvspGRZv8
-=xLDd
------END PGP SIGNATURE-----
-
---WplhKdTI2c8ulnbP--
-
---===============0072253039==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============0072253039==--
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 357911303315..1187187a1cf2 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -183,6 +183,14 @@
+ #define divp_mask(p) (p->params->flags & TEGRA_PLLU ? PLLU_POST_DIVP_MASK :\
+ 		      mask(p->params->div_nmp->divp_width))
+ 
++#define divm_shift(p) (p)->params->div_nmp->divm_shift
++#define divn_shift(p) (p)->params->div_nmp->divn_shift
++#define divp_shift(p) (p)->params->div_nmp->divp_shift
++
++#define divm_mask_shifted(p) (divm_mask(p) << divm_shift(p))
++#define divn_mask_shifted(p) (divn_mask(p) << divn_shift(p))
++#define divp_mask_shifted(p) (divp_mask(p) << divp_shift(p))
++
+ #define divm_max(p) (divm_mask(p))
+ #define divn_max(p) (divn_mask(p))
+ #define divp_max(p) (1 << (divp_mask(p)))
+@@ -476,13 +484,12 @@ static void _update_pll_mnp(struct tegra_clk_pll *pll,
+ 	} else {
+ 		val = pll_readl_base(pll);
+ 
+-		val &= ~((divm_mask(pll) << div_nmp->divm_shift) |
+-		 (divn_mask(pll) << div_nmp->divn_shift) |
+-		 (divp_mask(pll) << div_nmp->divp_shift));
++		val &= ~(divm_mask_shifted(pll) | divn_mask_shifted(pll) |
++			 divp_mask_shifted(pll));
+ 
+-		val |= ((cfg->m << div_nmp->divm_shift) |
+-			(cfg->n << div_nmp->divn_shift) |
+-			(cfg->p << div_nmp->divp_shift));
++		val |= (cfg->m << divm_shift(pll)) |
++		       (cfg->n << divn_shift(pll)) |
++		       (cfg->p << divp_shift(pll));
+ 
+ 		pll_writel_base(val, pll);
+ 	}
+@@ -730,13 +737,12 @@ static int clk_plle_enable(struct clk_hw *hw)
+ 	if (pll->params->flags & TEGRA_PLLE_CONFIGURE) {
+ 		/* configure dividers */
+ 		val = pll_readl_base(pll);
+-		val &= ~(divp_mask(pll) << PLLE_BASE_DIVP_SHIFT |
+-			 divn_mask(pll) << PLLE_BASE_DIVN_SHIFT |
+-			 divm_mask(pll) << PLLE_BASE_DIVM_SHIFT);
++		val &= ~(divp_mask_shifted(pll) | divn_mask_shifted(pll) |
++			 divm_mask_shifted(pll));
+ 		val &= ~(PLLE_BASE_DIVCML_MASK << PLLE_BASE_DIVCML_SHIFT);
+-		val |= sel.m << pll->params->div_nmp->divm_shift;
+-		val |= sel.n << pll->params->div_nmp->divn_shift;
+-		val |= sel.p << pll->params->div_nmp->divp_shift;
++		val |= sel.m << divm_shift(pll);
++		val |= sel.n << divn_shift(pll);
++		val |= sel.p << divp_shift(pll);
+ 		val |= sel.cpcon << PLLE_BASE_DIVCML_SHIFT;
+ 		pll_writel_base(val, pll);
+ 	}
+@@ -1295,12 +1301,11 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
+ 	pll_writel(val, PLLE_SS_CTRL, pll);
+ 
+ 	val = pll_readl_base(pll);
+-	val &= ~(divp_mask(pll) << PLLE_BASE_DIVP_SHIFT |
+-		 divn_mask(pll) << PLLE_BASE_DIVN_SHIFT |
+-		 divm_mask(pll) << PLLE_BASE_DIVM_SHIFT);
++	val &= ~(divp_mask_shifted(pll) | divn_mask_shifted(pll) |
++		 divm_mask_shifted(pll));
+ 	val &= ~(PLLE_BASE_DIVCML_MASK << PLLE_BASE_DIVCML_SHIFT);
+-	val |= sel.m << pll->params->div_nmp->divm_shift;
+-	val |= sel.n << pll->params->div_nmp->divn_shift;
++	val |= sel.m << divm_shift(pll);
++	val |= sel.n << divn_shift(pll);
+ 	val |= sel.cpcon << PLLE_BASE_DIVCML_SHIFT;
+ 	pll_writel_base(val, pll);
+ 	udelay(1);
+@@ -1575,9 +1580,8 @@ struct clk *tegra_clk_register_pllre(const char *name, const char *parent_name,
+ 		int m;
+ 
+ 		m = _pll_fixed_mdiv(pll_params, parent_rate);
+-		val = m << PLL_BASE_DIVM_SHIFT;
+-		val |= (pll_params->vco_min / parent_rate)
+-				<< PLL_BASE_DIVN_SHIFT;
++		val = m << divm_shift(pll);
++		val |= (pll_params->vco_min / parent_rate) << divn_shift(pll);
+ 		pll_writel_base(val, pll);
+ 	}
+ 
+-- 
+1.9.1
