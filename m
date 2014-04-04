@@ -1,37 +1,55 @@
-From: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 6/6] PCI: designware: use new OF interrupt mapping
- when possible
-Date: Fri, 4 Apr 2014 11:05:17 -0600
-Message-ID: <20140404170517.GH9007@google.com>
-References: <1394025951-32438-1-git-send-email-l.stach@pengutronix.de>
- <1394025951-32438-7-git-send-email-l.stach@pengutronix.de>
- <20140305184219.GA29903@obsidianresearch.com>
- <20140404170341.GG9007@google.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH V2] gpu: host1x: handle the correct # of syncpt regs
+Date: Fri,  4 Apr 2014 16:31:05 -0600
+Message-ID: <1396650665-6992-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20140404170341.GG9007-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>
-Cc: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Apr 04, 2014 at 11:03:41AM -0600, Bjorn Helgaas wrote:
-> On Wed, Mar 05, 2014 at 11:42:19AM -0700, Jason Gunthorpe wrote:
-> > On Wed, Mar 05, 2014 at 02:25:51PM +0100, Lucas Stach wrote:
-> > > -	return pp->irq;
-> > > +	irq = of_irq_parse_and_map_pci(dev, slot, pin);
-> > > +	if (!irq)
-> > > +		irq = pp->irq;
-> > 
-> > In light of the two bugs that Tim found, it might be wise to throw a
-> > 'dev_warn(FW_BUG "Missing DT interrupt mapping")' in the fall back
-> > path, so it doesn't continue to silently cover up errors on the OF/DT
-> > side..
-> 
-> This sounds like a reasonable thing to do, but I didn't see a response to
-> this comment.  Should I merge it as-is, or do you want to add the message?
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Oh, and I suppose the same question applies to the other host drivers in
-this series (tegra, rcar)?
+BIT_WORD() truncates rather than rounds, so the loops in
+syncpt_thresh_isr() and _host1x_intr_disable_all_syncpt_intrs() use <=
+rather than < in an attempt to process the correct number of registers
+when rounding of the conversion of count of bits to count of words is
+necessary. However, when rounding isn't necessary because the value is
+already a multiple of the divisor (as is the case for all values of
+nb_pts the code actually sees), this causes one too many registers to
+be processed.
+
+Solve this by using and explicit DIV_ROUND_UP() call, rather than
+BIT_WORD(), and comparing with < rather than <=.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+v2: Use DIV_ROUND_UP rather than BITS_TO_LONGS to avoid problems on 64-bit.
+---
+ drivers/gpu/host1x/hw/intr_hw.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/host1x/hw/intr_hw.c b/drivers/gpu/host1x/hw/intr_hw.c
+index db9017adfe2b..498b37e39058 100644
+--- a/drivers/gpu/host1x/hw/intr_hw.c
++++ b/drivers/gpu/host1x/hw/intr_hw.c
+@@ -47,7 +47,7 @@ static irqreturn_t syncpt_thresh_isr(int irq, void *dev_id)
+ 	unsigned long reg;
+ 	int i, id;
+ 
+-	for (i = 0; i <= BIT_WORD(host->info->nb_pts); i++) {
++	for (i = 0; i < DIV_ROUND_UP(host->info->nb_pts, 32); i++) {
+ 		reg = host1x_sync_readl(host,
+ 			HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS(i));
+ 		for_each_set_bit(id, &reg, BITS_PER_LONG) {
+@@ -64,7 +64,7 @@ static void _host1x_intr_disable_all_syncpt_intrs(struct host1x *host)
+ {
+ 	u32 i;
+ 
+-	for (i = 0; i <= BIT_WORD(host->info->nb_pts); ++i) {
++	for (i = 0; i < DIV_ROUND_UP(host->info->nb_pts, 32); ++i) {
+ 		host1x_sync_writel(host, 0xffffffffu,
+ 			HOST1X_SYNC_SYNCPT_THRESH_INT_DISABLE(i));
+ 		host1x_sync_writel(host, 0xffffffffu,
+-- 
+1.8.1.5
