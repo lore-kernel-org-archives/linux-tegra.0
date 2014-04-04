@@ -1,41 +1,80 @@
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 3/3] clk: tegra: Fix enabling of PLLE
-Date: Fri, 4 Apr 2014 15:55:15 +0200
-Message-ID: <1396619715-15524-3-git-send-email-treding@nvidia.com>
-References: <1396619715-15524-1-git-send-email-treding@nvidia.com>
+Subject: [RFC 1/5] PCI: tegra: Overhaul regulator usage
+Date: Fri, 4 Apr 2014 16:49:25 +0200
+Message-ID: <1396622969-17837-2-git-send-email-treding@nvidia.com>
+References: <1396622969-17837-1-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1396619715-15524-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1396622969-17837-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-When enabling the PLLE as its final step, clk_plle_enable() would
-accidentally OR in the value previously written to the PLLE_SS_CTRL
-register.
+The current usage of regulators for the Tegra PCIe block is wrong. It
+doesn't accurately reflect the actual supply inputs of the IP block and
+therefore isn't as flexible as it should be. Rectify this by describing
+all possible supply inputs in the device tree binding documentation and
+deprecate the old supply properties.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-Changes in v2:
-- new patch
+ .../bindings/pci/nvidia,tegra20-pcie.txt           | 35 ++++++++++++++++++++--
+ 1 file changed, 32 insertions(+), 3 deletions(-)
 
- drivers/clk/tegra/clk-pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 1187187a1cf2..7a1b70dac824 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -757,7 +757,7 @@ static int clk_plle_enable(struct clk_hw *hw)
- 	val |= PLLE_SS_DISABLE;
- 	writel(val, pll->clk_base + PLLE_SS_CTRL);
+diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+index c300391e8d3e..66e8aca4aef0 100644
+--- a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
++++ b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+@@ -14,9 +14,6 @@ Required properties:
+ - interrupt-names: Must include the following entries:
+   "intr": The Tegra interrupt that is asserted for controller interrupts
+   "msi": The Tegra interrupt that is asserted when an MSI is received
+-- pex-clk-supply: Supply voltage for internal reference clock
+-- vdd-supply: Power supply for controller (1.05V)
+-- avdd-supply: Power supply for controller (1.05V) (not required for Tegra20)
+ - bus-range: Range of bus numbers associated with this controller
+ - #address-cells: Address representation for root ports (must be 3)
+   - cell 0 specifies the bus and device numbers of the root port:
+@@ -60,6 +57,38 @@ Required properties:
+   - afi
+   - pcie_x
  
--	val |= pll_readl_base(pll);
-+	val = pll_readl_base(pll);
- 	val |= (PLL_BASE_BYPASS | PLL_BASE_ENABLE);
- 	pll_writel_base(val, pll);
++Power supplies for Tegra20:
++- avdd-pex-supply: Power supply for analog PCIe logic. Must supply 1.05 V.
++- vdd-pex-supply: Power supply for digital PCIe I/O. Must supply 1.05 V.
++- avdd-pex-pll-supply: Power supply for dedicated (internal) PCIe PLL. Must
++  supply 1.05 V.
++- avdd-plle-supply: Power supply for PLLE, which is shared with SATA. Must
++  supply 1.05 V.
++- vddio-pex-clk-supply: Power supply for PCIe clock. Must supply 3.3 V.
++
++Power supplies for Tegra30:
++- Required:
++  - avdd-pex-pll-supply: Power supply for dedicated (internal) PCIe PLL. Must
++    supply 1.05 V.
++  - avdd-plle-supply: Power supply for PLLE, which is shared with SATA. Must
++    supply 1.05 V.
++  - vddio-pex-ctl-supply: Power supply for PCIe control I/O partition. Must
++    supply 1.8 V.
++  - hvdd-pex-supply: High-voltage supply for PCIe I/O and PCIe output clocks.
++    Must supply 3.3 V.
++- Optional:
++  - If port 0 is enabled:
++    - avdd-pexa-supply: Power supply for analog PCIe logic. Must supply 1.05 V.
++    - vdd-pexa-supply: Power supply for digital PCIe I/O. Must supply 1.05 V.
++  - If at least one of ports 1 and 2 is enabled:
++    - avdd-pexb-supply: Power supply for analog PCIe logic. Must supply 1.05 V.
++    - vdd-pexb-supply: Power supply for digital PCIe I/O. Must supply 1.05 V.
++
++Deprecated supplies:
++- pex-clk-supply: Supply voltage for internal reference clock
++- vdd-supply: Power supply for controller (1.05V)
++- avdd-supply: Power supply for controller (1.05V) (not required for Tegra20)
++
+ Root ports are defined as subnodes of the PCIe controller node.
  
+ Required properties:
 -- 
 1.9.1
