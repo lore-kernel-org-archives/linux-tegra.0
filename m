@@ -1,131 +1,28 @@
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [RFC 2/5] ARM: tegra: Add new PCIe regulator properties
-Date: Fri, 4 Apr 2014 16:49:26 +0200
-Message-ID: <1396622969-17837-3-git-send-email-treding@nvidia.com>
-References: <1396622969-17837-1-git-send-email-treding@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v2 1/3] clk: tegra: Fix PLLE programming
+Date: Fri, 04 Apr 2014 09:55:51 -0600
+Message-ID: <533ED607.1080700@wwwdotorg.org>
+References: <1396619715-15524-1-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1396622969-17837-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1396619715-15524-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-These new properties more accurately reflect the real connections of the
-boards and therefore make it easier to match them up with schematics.
+On 04/04/2014 07:55 AM, Thierry Reding wrote:
+> PLLE has M, N and P divider shift and width parameters that differ from
+> the defaults. Furthermore, when clearing the M, N and P divider fields
+> the corresponding masks were never shifted, thereby clearing only the
+> lowest bits of the register. This lead to a situation where the PLLE
+> programming would only work if the register hadn't been touched before.
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra20-harmony.dts   | 10 +++++++++-
- arch/arm/boot/dts/tegra20-tamonten.dtsi |  7 +++++++
- arch/arm/boot/dts/tegra20-trimslice.dts |  8 ++++++++
- arch/arm/boot/dts/tegra30-beaver.dts    | 11 +++++++++++
- arch/arm/boot/dts/tegra30-cardhu.dtsi   | 10 ++++++++++
- 5 files changed, 45 insertions(+), 1 deletion(-)
+The series,
+Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
-index 3fb1f50f6d46..7d5d0aa1778a 100644
---- a/arch/arm/boot/dts/tegra20-harmony.dts
-+++ b/arch/arm/boot/dts/tegra20-harmony.dts
-@@ -561,9 +561,17 @@
- 	};
- 
- 	pcie-controller@80003000 {
-+		status = "okay";
-+
-+		avdd-pex-supply = <&pci_vdd_reg>;
-+		vdd-pex-supply = <&pci_vdd_reg>;
-+		avdd-pex-pll-supply = <&pci_vdd_reg>;
-+		avdd-plle-supply = <&pci_vdd_reg>;
-+		vddio-pex-clk-supply = <&pci_clk_reg>;
-+
-+		/* deprecated */
- 		pex-clk-supply = <&pci_clk_reg>;
- 		vdd-supply = <&pci_vdd_reg>;
--		status = "okay";
- 
- 		pci@1,0 {
- 			status = "okay";
-diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-index a1b0d965757f..0e33577750ae 100644
---- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
-+++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-@@ -473,6 +473,13 @@
- 	};
- 
- 	pcie-controller@80003000 {
-+		avdd-pex-supply = <&pci_vdd_reg>;
-+		vdd-pex-supply = <&pci_vdd_reg>;
-+		avdd-pex-pll-supply = <&pci_vdd_reg>;
-+		avdd-plle-supply = <&pci_vdd_reg>;
-+		vddio-pex-clk-supply = <&pci_clk_reg>;
-+
-+		/* deprecated */
- 		pex-clk-supply = <&pci_clk_reg>;
- 		vdd-supply = <&pci_vdd_reg>;
- 	};
-diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
-index 216fa6d50c65..401b32e44369 100644
---- a/arch/arm/boot/dts/tegra20-trimslice.dts
-+++ b/arch/arm/boot/dts/tegra20-trimslice.dts
-@@ -318,6 +318,14 @@
- 
- 	pcie-controller@80003000 {
- 		status = "okay";
-+
-+		avdd-pex-supply = <&pci_vdd_reg>;
-+		vdd-pex-supply = <&pci_vdd_reg>;
-+		avdd-pex-pll-supply = <&pci_vdd_reg>;
-+		avdd-plle-supply = <&pci_vdd_reg>;
-+		vddio-pex-clk-supply = <&pci_clk_reg>;
-+
-+		/* deprecated */
- 		pex-clk-supply = <&pci_clk_reg>;
- 		vdd-supply = <&pci_vdd_reg>;
- 
-diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
-index e93fe45b7803..b434ec1f278a 100644
---- a/arch/arm/boot/dts/tegra30-beaver.dts
-+++ b/arch/arm/boot/dts/tegra30-beaver.dts
-@@ -17,6 +17,17 @@
- 
- 	pcie-controller@00003000 {
- 		status = "okay";
-+
-+		avdd-pexa-supply = <&ldo1_reg>;
-+		vdd-pexa-supply = <&ldo1_reg>;
-+		avdd-pexb-supply = <&ldo1_reg>;
-+		vdd-pexb-supply = <&ldo1_reg>;
-+		avdd-pex-pll-supply = <&ldo1_reg>;
-+		avdd-plle-supply = <&ldo1_reg>;
-+		vddio-pex-ctl-supply = <&sys_3v3_reg>;
-+		hvdd-pex-supply = <&sys_3v3_pexs_reg>;
-+
-+		/* deprecated */
- 		pex-clk-supply = <&sys_3v3_pexs_reg>;
- 		vdd-supply = <&ldo1_reg>;
- 		avdd-supply = <&ldo2_reg>;
-diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-index 0cf0848a82d8..55051a808ced 100644
---- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
-+++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-@@ -38,6 +38,16 @@
- 
- 	pcie-controller@00003000 {
- 		status = "okay";
-+
-+		/* AVDD_PEXA and VDD_PEXA are grounded on Cardhu. */
-+		avdd-pexb-supply = <&ldo1_reg>;
-+		vdd-pexb-supply = <&ldo1_reg>;
-+		avdd-pex-pll-supply = <&ldo1_reg>;
-+		hvdd-pex-supply = <&pex_hvdd_3v3_reg>;
-+		vddio-pex-ctl-supply = <&sys_3v3_reg>;
-+		avdd-plle-supply = <&ldo2_reg>;
-+
-+		/* deprecated */
- 		pex-clk-supply = <&pex_hvdd_3v3_reg>;
- 		vdd-supply = <&ldo1_reg>;
- 		avdd-supply = <&ldo2_reg>;
--- 
-1.9.1
+(I might have squashed patches 1 and 2 together, but no matter)
+
+I expect these patches should be CC: stable when applied?
