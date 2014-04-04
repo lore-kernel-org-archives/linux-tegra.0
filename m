@@ -1,7 +1,7 @@
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [RFC 5/5] ARM: tegra: Remove legacy PCIe power supply properties
-Date: Fri, 4 Apr 2014 16:49:29 +0200
-Message-ID: <1396622969-17837-6-git-send-email-treding@nvidia.com>
+Subject: [RFC 4/5] PCI: tegra: Remove deprecated power supply properties
+Date: Fri, 4 Apr 2014 16:49:28 +0200
+Message-ID: <1396622969-17837-5-git-send-email-treding@nvidia.com>
 References: <1396622969-17837-1-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,93 +12,30 @@ To: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Stephen Wa
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-These properties are deprecated and no longer of any use.
+These power supply properties are no longer needed since the binding now
+contains the full set properties to accurately describe the power supply
+inputs of the Tegra PCIe block.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra20-harmony.dts   | 4 ----
- arch/arm/boot/dts/tegra20-tamonten.dtsi | 4 ----
- arch/arm/boot/dts/tegra20-trimslice.dts | 4 ----
- arch/arm/boot/dts/tegra30-beaver.dts    | 5 -----
- arch/arm/boot/dts/tegra30-cardhu.dtsi   | 5 -----
- 5 files changed, 22 deletions(-)
+ Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
-index 7d5d0aa1778a..e9f8710c45ce 100644
---- a/arch/arm/boot/dts/tegra20-harmony.dts
-+++ b/arch/arm/boot/dts/tegra20-harmony.dts
-@@ -569,10 +569,6 @@
- 		avdd-plle-supply = <&pci_vdd_reg>;
- 		vddio-pex-clk-supply = <&pci_clk_reg>;
+diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+index 66e8aca4aef0..5207d4cd1fa2 100644
+--- a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
++++ b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+@@ -84,11 +84,6 @@ Power supplies for Tegra30:
+     - avdd-pexb-supply: Power supply for analog PCIe logic. Must supply 1.05 V.
+     - vdd-pexb-supply: Power supply for digital PCIe I/O. Must supply 1.05 V.
  
--		/* deprecated */
--		pex-clk-supply = <&pci_clk_reg>;
--		vdd-supply = <&pci_vdd_reg>;
+-Deprecated supplies:
+-- pex-clk-supply: Supply voltage for internal reference clock
+-- vdd-supply: Power supply for controller (1.05V)
+-- avdd-supply: Power supply for controller (1.05V) (not required for Tegra20)
 -
- 		pci@1,0 {
- 			status = "okay";
- 		};
-diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-index 0e33577750ae..a4914bba1a39 100644
---- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
-+++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-@@ -478,10 +478,6 @@
- 		avdd-pex-pll-supply = <&pci_vdd_reg>;
- 		avdd-plle-supply = <&pci_vdd_reg>;
- 		vddio-pex-clk-supply = <&pci_clk_reg>;
--
--		/* deprecated */
--		pex-clk-supply = <&pci_clk_reg>;
--		vdd-supply = <&pci_vdd_reg>;
- 	};
+ Root ports are defined as subnodes of the PCIe controller node.
  
- 	usb@c5008000 {
-diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
-index 401b32e44369..5ad87979ab13 100644
---- a/arch/arm/boot/dts/tegra20-trimslice.dts
-+++ b/arch/arm/boot/dts/tegra20-trimslice.dts
-@@ -325,10 +325,6 @@
- 		avdd-plle-supply = <&pci_vdd_reg>;
- 		vddio-pex-clk-supply = <&pci_clk_reg>;
- 
--		/* deprecated */
--		pex-clk-supply = <&pci_clk_reg>;
--		vdd-supply = <&pci_vdd_reg>;
--
- 		pci@1,0 {
- 			status = "okay";
- 		};
-diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
-index b434ec1f278a..101139d75d1d 100644
---- a/arch/arm/boot/dts/tegra30-beaver.dts
-+++ b/arch/arm/boot/dts/tegra30-beaver.dts
-@@ -27,11 +27,6 @@
- 		vddio-pex-ctl-supply = <&sys_3v3_reg>;
- 		hvdd-pex-supply = <&sys_3v3_pexs_reg>;
- 
--		/* deprecated */
--		pex-clk-supply = <&sys_3v3_pexs_reg>;
--		vdd-supply = <&ldo1_reg>;
--		avdd-supply = <&ldo2_reg>;
--
- 		pci@1,0 {
- 			status = "okay";
- 			nvidia,num-lanes = <2>;
-diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-index 55051a808ced..2f0b1d37be39 100644
---- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
-+++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-@@ -47,11 +47,6 @@
- 		vddio-pex-ctl-supply = <&sys_3v3_reg>;
- 		avdd-plle-supply = <&ldo2_reg>;
- 
--		/* deprecated */
--		pex-clk-supply = <&pex_hvdd_3v3_reg>;
--		vdd-supply = <&ldo1_reg>;
--		avdd-supply = <&ldo2_reg>;
--
- 		pci@1,0 {
- 			nvidia,num-lanes = <4>;
- 		};
+ Required properties:
 -- 
 1.9.1
