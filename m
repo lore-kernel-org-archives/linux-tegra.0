@@ -1,61 +1,31 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH v2 6/6] PCI: designware: use new OF interrupt mapping when
- possible
-Date: Mon, 07 Apr 2014 18:13:20 +0900
-Message-ID: <002601cf5241$9e819cc0$db84d640$%han@samsung.com>
-References: <1394025951-32438-1-git-send-email-l.stach@pengutronix.de>
- <1394025951-32438-7-git-send-email-l.stach@pengutronix.de>
- <20140305184219.GA29903@obsidianresearch.com>
- <20140404170341.GG9007@google.com> <20140404170517.GH9007@google.com>
- <1396859929.4553.2.camel@weser.hi.pengutronix.de>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 1/3] clk: tegra: Fix PLLE programming
+Date: Mon, 7 Apr 2014 17:26:20 +0300
+Message-ID: <20140407142620.GA30476@tbergstrom-lnx.Nvidia.com>
+References: <1396619715-15524-1-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-reply-to: <1396859929.4553.2.camel@weser.hi.pengutronix.de>
-Content-language: ko
-Sender: linux-sh-owner@vger.kernel.org
-To: 'Lucas Stach' <l.stach@pengutronix.de>, 'Bjorn Helgaas' <bhelgaas@google.com>
-Cc: 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de, 'Arnd Bergmann' <arnd@arndb.de>, 'Stephen Warren' <swarren@wwwdotorg.org>, linux-pci@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, 'Simon Horman' <horms@verge.net.au>, 'Thierry Reding' <thierry.reding@gmail.com>, 'Ben Dooks' <ben-linux@fluff.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Shawn Guo' <shawn.guo@linaro.org>, linux-arm-kernel@lists.infradead.org, 'Jingoo Han' <jg1.han@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1396619715-15524-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Monday, April 07, 2014 5:39 PM, Lucas Stach wrote:
-> Am Freitag, den 04.04.2014, 11:05 -0600 schrieb Bjorn Helgaas:
-> > On Fri, Apr 04, 2014 at 11:03:41AM -0600, Bjorn Helgaas wrote:
-> > > On Wed, Mar 05, 2014 at 11:42:19AM -0700, Jason Gunthorpe wrote:
-> > > > On Wed, Mar 05, 2014 at 02:25:51PM +0100, Lucas Stach wrote:
-> > > > > -	return pp->irq;
-> > > > > +	irq = of_irq_parse_and_map_pci(dev, slot, pin);
-> > > > > +	if (!irq)
-> > > > > +		irq = pp->irq;
-> > > >
-> > > > In light of the two bugs that Tim found, it might be wise to throw a
-> > > > 'dev_warn(FW_BUG "Missing DT interrupt mapping")' in the fall back
-> > > > path, so it doesn't continue to silently cover up errors on the OF/DT
-> > > > side..
-> > >
-> > > This sounds like a reasonable thing to do, but I didn't see a response to
-> > > this comment.  Should I merge it as-is, or do you want to add the message?
-> >
-> > Oh, and I suppose the same question applies to the other host drivers in
-> > this series (tegra, rcar)?
+On Fri, Apr 04, 2014 at 03:55:13PM +0200, Thierry Reding wrote:
+> PLLE has M, N and P divider shift and width parameters that differ from
+> the defaults. Furthermore, when clearing the M, N and P divider fields
+> the corresponding masks were never shifted, thereby clearing only the
+> lowest bits of the register. This lead to a situation where the PLLE
+> programming would only work if the register hadn't been touched before.
 > 
-> Please apply as-is. of_irq_parse_and_map_pci() already prints an error
-> message if it isn't able to establish the mapping, thus right before we
-> fall into the fallback path. So any the warning would be redundant.
 
-+1
+Will take this into tegra-clk-next. Mike, given that this is bug fix for
+a feature which is supposed to work, I think it's appropriate to try to get
+this into 3.15 still. I will make a pull-request on 3.15-rc1 as soon as it
+appears.
 
-I agree with Lucas Stach's opinion. of_irq_parse_and_map_pci() already
-prints an error as below. So, additional warning message of host controller
-looks superfluous.
+Cheers,
 
-	ret = of_irq_parse_pci(dev, &oirq);
-	if (ret) {
-		dev_err(&dev->dev, "of_irq_parse_pci() failed with rc=%d\n", ret);
-		return 0; /* Proper return code 0 == NO_IRQ */
-
-
-Best regards,
-Jingoo Han
-
+Peter.
