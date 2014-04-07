@@ -1,13 +1,14 @@
 From: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom@nvidia.com>
 Subject: Re: [PATCH V2] gpu: host1x: handle the correct # of syncpt regs
-Date: Mon, 7 Apr 2014 11:32:45 +0300
-Message-ID: <534262AD.2020601@nvidia.com>
+Date: Mon, 7 Apr 2014 11:34:22 +0300
+Message-ID: <5342630E.90908@nvidia.com>
 References: <1396650665-6992-1-git-send-email-swarren@wwwdotorg.org>
+ <20140407081838.GB25718@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1396650665-6992-1-git-send-email-swarren@wwwdotorg.org>
+In-Reply-To: <20140407081838.GB25718@ulmo>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -17,37 +18,18 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>
 Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05.04.2014 01:31, Stephen Warren wrote:
-> From: Stephen Warren <swarren@nvidia.com>
+On 07.04.2014 11:18, Thierry Reding wrote:
+> If I understand correctly there's no immediate need for this to go to
+> stable kernels, nor for it to be queued for 3.15, right? That is the
+> potential extra write isn't causing any harm on actual hardware, is it?
 > 
-> diff --git a/drivers/gpu/host1x/hw/intr_hw.c b/drivers/gpu/host1x/hw/intr_hw.c
-> index db9017adfe2b..498b37e39058 100644
-> --- a/drivers/gpu/host1x/hw/intr_hw.c
-> +++ b/drivers/gpu/host1x/hw/intr_hw.c
-> @@ -47,7 +47,7 @@ static irqreturn_t syncpt_thresh_isr(int irq, void *dev_id)
->  	unsigned long reg;
->  	int i, id;
->  
-> -	for (i = 0; i <= BIT_WORD(host->info->nb_pts); i++) {
-> +	for (i = 0; i < DIV_ROUND_UP(host->info->nb_pts, 32); i++) {
->  		reg = host1x_sync_readl(host,
->  			HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS(i));
->  		for_each_set_bit(id, &reg, BITS_PER_LONG) {
-> @@ -64,7 +64,7 @@ static void _host1x_intr_disable_all_syncpt_intrs(struct host1x *host)
->  {
->  	u32 i;
->  
-> -	for (i = 0; i <= BIT_WORD(host->info->nb_pts); ++i) {
-> +	for (i = 0; i < DIV_ROUND_UP(host->info->nb_pts, 32); ++i) {
->  		host1x_sync_writel(host, 0xffffffffu,
->  			HOST1X_SYNC_SYNCPT_THRESH_INT_DISABLE(i));
->  		host1x_sync_writel(host, 0xffffffffu,
-> 
+> In that case I'll queue this up for 3.16.
 
-Acked-By: Terje Bergstrom <tbergstrom@nvidia.com>
+The reads and writes would get ignored on 32-bit kernel. The change does
+fix sync point behavior in 64-bit kernel, so it is fixing a real issue.
 
 Terje
