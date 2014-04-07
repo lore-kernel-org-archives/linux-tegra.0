@@ -1,39 +1,61 @@
-From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2] gpu: host1x: handle the correct # of syncpt regs
-Date: Mon, 7 Apr 2014 11:47:08 +0300
-Message-ID: <5342660C.3050703@nvidia.com>
-References: <1396650665-6992-1-git-send-email-swarren@wwwdotorg.org> <20140407081838.GB25718@ulmo> <5342630E.90908@nvidia.com> <20140407084124.GC25718@ulmo>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH v2 6/6] PCI: designware: use new OF interrupt mapping when
+ possible
+Date: Mon, 07 Apr 2014 18:13:20 +0900
+Message-ID: <002601cf5241$9e819cc0$db84d640$%han@samsung.com>
+References: <1394025951-32438-1-git-send-email-l.stach@pengutronix.de>
+ <1394025951-32438-7-git-send-email-l.stach@pengutronix.de>
+ <20140305184219.GA29903@obsidianresearch.com>
+ <20140404170341.GG9007@google.com> <20140404170517.GH9007@google.com>
+ <1396859929.4553.2.camel@weser.hi.pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140407084124.GC25718@ulmo>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-reply-to: <1396859929.4553.2.camel@weser.hi.pengutronix.de>
+Content-language: ko
+Sender: linux-sh-owner@vger.kernel.org
+To: 'Lucas Stach' <l.stach@pengutronix.de>, 'Bjorn Helgaas' <bhelgaas@google.com>
+Cc: 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de, 'Arnd Bergmann' <arnd@arndb.de>, 'Stephen Warren' <swarren@wwwdotorg.org>, linux-pci@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, 'Simon Horman' <horms@verge.net.au>, 'Thierry Reding' <thierry.reding@gmail.com>, 'Ben Dooks' <ben-linux@fluff.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Shawn Guo' <shawn.guo@linaro.org>, linux-arm-kernel@lists.infradead.org, 'Jingoo Han' <jg1.han@samsung.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07.04.2014 11:41, Thierry Reding wrote:
-> On Mon, Apr 07, 2014 at 11:34:22AM +0300, Terje Bergstr=C3=B6m wrote:
->> On 07.04.2014 11:18, Thierry Reding wrote:
->>> If I understand correctly there's no immediate need for this to go =
-to
->>> stable kernels, nor for it to be queued for 3.15, right? That is th=
-e
->>> potential extra write isn't causing any harm on actual hardware, is=
- it?
->>>
->>> In that case I'll queue this up for 3.16.
->>
->> The reads and writes would get ignored on 32-bit kernel. The change =
-does
->> fix sync point behavior in 64-bit kernel, so it is fixing a real iss=
-ue.
->=20
-> Okay, but given that we don't support any 64 bit Tegra hardware upstr=
-eam
-> yet, 3.16 would still be enough, wouldn't it?
+On Monday, April 07, 2014 5:39 PM, Lucas Stach wrote:
+> Am Freitag, den 04.04.2014, 11:05 -0600 schrieb Bjorn Helgaas:
+> > On Fri, Apr 04, 2014 at 11:03:41AM -0600, Bjorn Helgaas wrote:
+> > > On Wed, Mar 05, 2014 at 11:42:19AM -0700, Jason Gunthorpe wrote:
+> > > > On Wed, Mar 05, 2014 at 02:25:51PM +0100, Lucas Stach wrote:
+> > > > > -	return pp->irq;
+> > > > > +	irq = of_irq_parse_and_map_pci(dev, slot, pin);
+> > > > > +	if (!irq)
+> > > > > +		irq = pp->irq;
+> > > >
+> > > > In light of the two bugs that Tim found, it might be wise to throw a
+> > > > 'dev_warn(FW_BUG "Missing DT interrupt mapping")' in the fall back
+> > > > path, so it doesn't continue to silently cover up errors on the OF/DT
+> > > > side..
+> > >
+> > > This sounds like a reasonable thing to do, but I didn't see a response to
+> > > this comment.  Should I merge it as-is, or do you want to add the message?
+> >
+> > Oh, and I suppose the same question applies to the other host drivers in
+> > this series (tegra, rcar)?
+> 
+> Please apply as-is. of_irq_parse_and_map_pci() already prints an error
+> message if it isn't able to establish the mapping, thus right before we
+> fall into the fallback path. So any the warning would be redundant.
 
-Sure, sounds good.
++1
 
-Terje
+I agree with Lucas Stach's opinion. of_irq_parse_and_map_pci() already
+prints an error as below. So, additional warning message of host controller
+looks superfluous.
+
+	ret = of_irq_parse_pci(dev, &oirq);
+	if (ret) {
+		dev_err(&dev->dev, "of_irq_parse_pci() failed with rc=%d\n", ret);
+		return 0; /* Proper return code 0 == NO_IRQ */
+
+
+Best regards,
+Jingoo Han
+
