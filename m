@@ -1,31 +1,51 @@
-From: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
-Subject: Tegra30: Unknown SKU 177
-Date: Tue, 08 Apr 2014 16:12:29 +0200
-Message-ID: <534403CD.8010303@ziswiler.com>
+From: Penny Chiu <pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [cbootimage PATCH V2 0/5] Re-enable jtag function for Tegra124
+Date: Tue, 8 Apr 2014 22:30:17 +0800
+Message-ID: <1396967422-6018-1-git-send-email-pchiu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Penny Chiu <pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi there
+This patch series is used to update BCT configs to re-enable jtag function
+for Tegra124.
 
-Looks like the latest T30MQS-P-A3 embedded SKUs that can e.g. be found 
-on Toradex Colibri T30 V1.1D modules are not yet recognised by the 
-mainline speedo driver:
+Since the secure jtag is disabled by default once SECURITY_MODE fuse is
+blown. BOOTROM will re-enable secure jtag function if BCT has
+SecureJTAGControl=1 and a matching chip UID included.
 
-[    0.000000] Tegra30: Unknown SKU 177
-[    0.000000] fuse_speedo_calib: ATE prog ver 4.0
-[    0.000000] Tegra30: CPU Speedo ID 0, Soc Speedo ID 0
-[    0.000000] Tegra Revision: A03 SKU: 177 CPU Process: 2 Core Process: 0
+After applying these changes, cbootimage can access jtag control and chip uid
+fields. It can also read the BCT data from pre-built image, update the BCT
+configs based on config file, and generate a new image file.
 
-Does this have any adverse effects?
+Changes from V1:
+ - Improvement based on reviewed comments.
 
-If any further information is required just let me know.
+Penny Chiu (5):
+  Add format functions to express BCT and bootloader data value
+  Accept void pointer as input data type for get/set_value functions
+  Add token_supported function
+  Add Tegra124 bct data access for jtag control and chip uid
+  Add update BCT configs feature
 
-Cheers
+ src/bct_dump.c           | 103 ++++++++++++++++++++++++++++++++++-------------
+ src/cbootimage.c         |  91 ++++++++++++++++++++++++++++++++++-------
+ src/cbootimage.h         |  12 +++++-
+ src/context.c            |  10 +++--
+ src/data_layout.c        |  94 ++++++++++++++++++++++++++++++++++--------
+ src/data_layout.h        |   9 +++++
+ src/parse.c              |  72 +++++++++++++++++++++++++++++++++
+ src/parse.h              |  16 ++++++--
+ src/set.c                |  72 ++++++++++++++++++++++-----------
+ src/set.h                |   4 +-
+ src/t114/nvbctlib_t114.c |  47 ++++++++++++++++-----
+ src/t124/nvbctlib_t124.c |  60 ++++++++++++++++++++++-----
+ src/t20/nvbctlib_t20.c   |  47 ++++++++++++++++-----
+ src/t30/nvbctlib_t30.c   |  47 ++++++++++++++++-----
+ 14 files changed, 552 insertions(+), 132 deletions(-)
 
-Marcel
+-- 
+1.9.1
