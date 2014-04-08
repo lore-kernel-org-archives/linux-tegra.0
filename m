@@ -1,110 +1,97 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [cbootimage PATCH V2 4/5] Add Tegra124 bct data access for jtag
- control and chip uid
-Date: Tue, 08 Apr 2014 14:09:17 -0600
-Message-ID: <5344576D.3070703@wwwdotorg.org>
-References: <1396967422-6018-1-git-send-email-pchiu@nvidia.com> <1396967422-6018-5-git-send-email-pchiu@nvidia.com>
+Subject: Re: [cbootimage PATCH V2 5/5] Add update BCT configs feature
+Date: Tue, 08 Apr 2014 15:27:20 -0600
+Message-ID: <534469B8.9010606@wwwdotorg.org>
+References: <1396967422-6018-1-git-send-email-pchiu@nvidia.com> <1396967422-6018-6-git-send-email-pchiu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1396967422-6018-5-git-send-email-pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1396967422-6018-6-git-send-email-pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Penny Chiu <pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 On 04/08/2014 08:30 AM, Penny Chiu wrote:
-> Add support for read secure_jtag_control and unique_chip_id from
-> cfg file and write them into BCT structure, and bct_dump can also
-> parse the two fields and show the data.
+> This feature reads the BCT data from BCT or BCT with bootloader
+> appended binary, updates the BCT data based on config file, then
+> writes to new image file.
 
-> diff --git a/src/bct_dump.c b/src/bct_dump.c
+> diff --git a/src/cbootimage.h b/src/cbootimage.h
 
-> @@ -174,17 +190,30 @@ int main(int argc, char *argv[])
->  		if (!g_soc_config->token_supported(values[i].id))
->  			continue;
->  
-> +		if (values[i].id == token_unique_chip_id) {
-> +			u_int8_t uid[16];
-> +
-> +			e = g_soc_config->get_value(values[i].id,
-> +						uid,
-> +						context.bct);
-> +			if (e != 0)
-> +				for (j = 0; j < 16; j++)
-> +					uid[j] = -1;
-> +
-> +			values[i].format(values[i].message, uid);
-> +		} else {
-> +			e = g_soc_config->get_value(values[i].id,
->  						&data,
->  						context.bct);
->  
-> +			if (e != 0)
-> +				data = -1;
-> +			else if (values[i].id == token_block_size_log2 ||
-> +				 values[i].id == token_page_size_log2)
-> +				data = 1 << data;
->  
-> +			values[i].format(values[i].message, &data);
+> +#define NVBOOT_CONFIG_TABLE_SIZE_MAX 8192
+> +#define NVBOOT_CONFIG_TABLE_SIZE_T20 4080
+> +#define NVBOOT_CONFIG_TABLE_SIZE_T30 6128
+> +#define NVBOOT_CONFIG_TABLE_SIZE_T114 8192
+> +#define NVBOOT_CONFIG_TABLE_SIZE_T124 8192
+
+It might at least be nice in this series to add a compile-time-assert to
+nvboot_bct_tNN.h to validate that those sizes are OK
+
+> diff --git a/src/cbootimage.c b/src/cbootimage.c
+
+> @@ -190,18 +203,66 @@ main(int argc, char *argv[])
+
+> +		while (stats.st_size > offset) {
+> +			/* Read a block of data into memory */
+> +			if (read_from_image(context.input_image_filename, offset, bct_size,
+> +					&data_block, &actual_size, file_type_bct)) {
+...
+> +			offset += bct_size;
 > +		}
 
-I was hoping to avoid that outer if condition completely. Wouldn't the
-following work:
+I don't think that handles multiple bootloaders in the image correctly.
+bct_size isn't always aligned to the block size of the memory device,
+whereas copies of the BCT are. This probably won't be an issue for
+Tegra114/124, but for Tegra20/30, the code needs to read the memory
+block by block, rather than in BCT-sized chunks.
 
-u_int8_t data[MAX_PARAM_SIZE];
-e = g_soc_config->get_value(values[i].id, data, context.bct);
-if (e)
-    memset data[] to zero
-values[i].format(values[i].message, data);
+I'd be fine for now with doing one of the following if determining the
+real memory block size is too complicated:
 
-0 seems just as valid in the error case as -1.
+a) Disallow -u on Tegra20/30 (or even anything other than Tegra124).
 
-I would prefer the special case for token_block_size_log2 adn
-token_page_size_log2 to go away too. Why aren't those tokens set to
-their actual values?
+b) Always read 8KB chunks, since that is the nearest power of 2 above
+the BCT size on all platforms.
 
-In order to calculate MAX_PARAM_SIZE, perhaps something like:
+Related, what happens in the memory block size is less than the size of
+a BCT; the code really should read a BCT's worth of data (e.g. 8KB)
+starting at each block-sized offset into the file (e.g. 2KB). That's why
+I originally suggested reading the entire image into memory (or mmap'ing
+it) and updating it in one pass, since that decouples the file IO from
+locating the BCTs within the image. Still, we can fix this up later.
 
-union param_types;
-    u32 val;
-    u_int8_t uuid[16];
-};
-#define MAX_PARAM_SIZE sizeof(param_types)
+> diff --git a/src/data_layout.c b/src/data_layout.c
 
-> diff --git a/src/parse.c b/src/parse.c
+>  read_bct_file(struct build_image_context_rec *context)
+>  {
+>  	u_int8_t  *bct_storage; /* Holds the Bl after reading */
+> -	u_int32_t  bct_actual_size; /* In bytes */
+> +	u_int32_t bct_actual_size; /* In bytes */
 
-> +parse_chipuid(char *str, u_int8_t *chipuid)
+That seems like an unrelated change.
 
-> +	paddings = strlen(str) % 2;
-> +	byte_index = strlen(str) / 2 + paddings;
-
-There needs to be error-checking to make sure that byte_index < sizeof
-*chipuid.
-
-If byte_index is less than sizeof *chipuid, should the value be left- or
-right-aligned within *chipuid? Right now it's left-justified. That may
-be fine, but I just wanted to check. Is it an error if the length of the
-string doesn't exactly match sizeof *chipuid?
-
-> +	while (*str != '\0' && byte_index > 0) {
-> +		char *endptr;
-> +
-> +		strncpy(byte_str, str, 2 - paddings);
-> +		byte_str[2-paddings] = '\0';
-
-Need spaces around the - operator.
-
-> +static int parse_value_chipuid(build_image_context *context,
-> +			parse_token token,
-> +			char *rest)
+> +int write_data_block(FILE *fp, u_int32_t offset, u_int32_t size, u_int8_t *buffer)
 > +{
-> +	u_int8_t value[16];
+> +	if (fseek(fp, offset, 0))
+> +		return -1;
 > +
-> +	assert(context != NULL);
-> +	assert(rest != NULL);
-> +
-> +	memset(value, 0, sizeof(value));
+> +	fwrite(buffer, 1, size, fp);
+> +	return 0;
+> +}
 
-Shouldn't this memset() be inside parse_chipuid(), so that
-parse_chipuid() either fails, or succeeds and fills in the entire UID value?
+It'd be nice to validate that fwrite() was successful. return fwrite(...);?
+
+> +int get_bct_size_from_image(build_image_context *context)
+> +{
+> +	u_int8_t buffer[NVBOOT_CONFIG_TABLE_SIZE_MAX];
+> +	u_int32_t bct_size = 0;
+> +	FILE *fp;
+> +
+> +	fp = fopen(context->input_image_filename, "r");
+> +	if (!fp)
+> +		return ENODATA;
+> +
+> +	if (fread(buffer, 1, NVBOOT_CONFIG_TABLE_SIZE_MAX, fp)) {
+
+Error-handling for read() would be nice here too.
