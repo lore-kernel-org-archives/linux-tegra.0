@@ -1,7 +1,7 @@
 From: Penny Chiu <pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [cbootimage PATCH V2 4/5] Add Tegra124 bct data access for jtag control and chip uid
-Date: Tue, 8 Apr 2014 22:30:21 +0800
-Message-ID: <1396967422-6018-5-git-send-email-pchiu@nvidia.com>
+Subject: [cbootimage PATCH V2 5/5] Add update BCT configs feature
+Date: Tue, 8 Apr 2014 22:30:22 +0800
+Message-ID: <1396967422-6018-6-git-send-email-pchiu@nvidia.com>
 References: <1396967422-6018-1-git-send-email-pchiu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,303 +12,447 @@ To: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2
 Cc: Penny Chiu <pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add support for read secure_jtag_control and unique_chip_id from
-cfg file and write them into BCT structure, and bct_dump can also
-parse the two fields and show the data.
+This feature reads the BCT data from BCT or BCT with bootloader
+appended binary, updates the BCT data based on config file, then
+writes to new image file.
 
 Signed-off-by: Penny Chiu <pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- src/bct_dump.c           | 43 ++++++++++++++++++++++++-----
- src/cbootimage.h         |  2 ++
- src/parse.c              | 72 ++++++++++++++++++++++++++++++++++++++++++++++++
- src/parse.h              |  2 ++
- src/set.c                | 12 ++++++++
- src/t124/nvbctlib_t124.c | 13 ++++++++-
- 6 files changed, 136 insertions(+), 8 deletions(-)
+ src/cbootimage.c  | 91 ++++++++++++++++++++++++++++++++++++++++++++++---------
+ src/cbootimage.h  | 10 +++++-
+ src/data_layout.c | 86 +++++++++++++++++++++++++++++++++++++++++++---------
+ src/data_layout.h |  9 ++++++
+ src/set.c         | 28 ++++++++++++-----
+ src/set.h         |  2 ++
+ 6 files changed, 188 insertions(+), 38 deletions(-)
 
-diff --git a/src/bct_dump.c b/src/bct_dump.c
-index a8e3479..1af2c07 100644
---- a/src/bct_dump.c
-+++ b/src/bct_dump.c
-@@ -29,6 +29,7 @@ cbootimage_soc_config * g_soc_config;
+diff --git a/src/cbootimage.c b/src/cbootimage.c
+index 1332c5f..7477414 100644
+--- a/src/cbootimage.c
++++ b/src/cbootimage.c
+@@ -49,6 +49,7 @@ struct option cbootcmd[] = {
+ 	{"tegra", 1, NULL, 't'},
+ 	{"odmdata", 1, NULL, 'o'},
+ 	{"soc", 1, NULL, 's'},
++	{"update", 0, NULL, 'u'},
+ 	{0, 0, 0, 0},
+ };
  
- static void format_u32_hex8(char const * message, void * data);
- static void format_u32(char const * message, void * data);
-+static void format_chipuid(char const * message, void * data);
- 
- typedef void (*format_function)(char const * message, void * data);
- 
-@@ -44,6 +45,8 @@ static value_data const values[] = {
- 	{ token_page_size_log2,      "PageSize      = ", format_u32_hex8 },
- 	{ token_partition_size,      "PartitionSize = ", format_u32_hex8 },
- 	{ token_odm_data,            "OdmData       = ", format_u32_hex8 },
-+	{ token_secure_jtag_control, "JtagCtrl      = ", format_u32_hex8 },
-+	{ token_unique_chip_id,      "ChipUid       = ", format_chipuid },
- 	{ token_bootloader_used,     "# Bootloader used       = ", format_u32 },
- 	{ token_bootloaders_max,     "# Bootloaders max       = ", format_u32 },
- 	{ token_bct_size,            "# BCT size              = ", format_u32 },
-@@ -74,6 +77,19 @@ static void format_u32(char const * message, void * data)
- 	printf("%s%d;\n", message, *((u_int32_t *) data));
+@@ -63,7 +64,7 @@ write_image_file(build_image_context *context)
+ static void
+ usage(void)
+ {
+-	printf("Usage: cbootimage [options] configfile imagename\n");
++	printf("Usage: cbootimage [options] configfile [inputimage] outputimage\n");
+ 	printf("    options:\n");
+ 	printf("    -h, --help, -?        Display this message.\n");
+ 	printf("    -d, --debug           Output debugging information.\n");
+@@ -75,18 +76,22 @@ usage(void)
+ 	printf("    -s|--soc tegraNN      Select target device. Must be one of:\n");
+ 	printf("                          tegra20, tegra30, tegra114, tegra124.\n");
+ 	printf("                          Default: tegra20.\n");
++	printf("    -u|--update           Copy input image data and update bct\n");
++	printf("                          configs into new image file.\n");
+ 	printf("    configfile            File with configuration information\n");
+-	printf("    imagename             Output image name\n");
++	printf("    inputimage            Input image name. This is required\n");
++	printf("                          if -u|--update option is used.\n");
++	printf("    outputimage           Output image name\n");
  }
  
-+static void format_chipuid(char const * message, void * data)
-+{
-+	u_int8_t *uid = (u_int8_t *)data;
-+	int byte_index;
-+	char uid_str[35] = "0x";
-+	char *s = &uid_str[2];
-+
-+	for (byte_index = 15; byte_index >= 0; byte_index--, s += 2)
-+		sprintf(s, "%02x", uid[byte_index]);
-+
-+	printf("%s%s;\n", message, uid_str);
-+}
-+
- /*****************************************************************************/
- static void usage(void)
+ static int
+ process_command_line(int argc, char *argv[], build_image_context *context)
  {
-@@ -174,17 +190,30 @@ int main(int argc, char *argv[])
- 		if (!g_soc_config->token_supported(values[i].id))
- 			continue;
+-	int c;
++	int c, num_filenames = 2;
  
--		e = g_soc_config->get_value(values[i].id,
-+		if (values[i].id == token_unique_chip_id) {
-+			u_int8_t uid[16];
-+
-+			e = g_soc_config->get_value(values[i].id,
-+						uid,
-+						context.bct);
-+			if (e != 0)
-+				for (j = 0; j < 16; j++)
-+					uid[j] = -1;
-+
-+			values[i].format(values[i].message, uid);
-+		} else {
-+			e = g_soc_config->get_value(values[i].id,
- 						&data,
- 						context.bct);
+ 	context->generate_bct = 0;
  
--		if (e != 0)
--			data = -1;
--		else if (values[i].id == token_block_size_log2 ||
--			 values[i].id == token_page_size_log2)
--			data = 1 << data;
-+			if (e != 0)
-+				data = -1;
-+			else if (values[i].id == token_block_size_log2 ||
-+				 values[i].id == token_page_size_log2)
-+				data = 1 << data;
- 
--		values[i].format(values[i].message, &data);
-+			values[i].format(values[i].message, &data);
-+		}
+-	while ((c = getopt_long(argc, argv, "hdg:t:o:s:", cbootcmd, NULL)) != -1) {
++	while ((c = getopt_long(argc, argv, "hdg:t:o:s:u", cbootcmd, NULL)) != -1) {
+ 		switch (c) {
+ 		case 'h':
+ 			help_only = 1;
+@@ -131,10 +136,14 @@ process_command_line(int argc, char *argv[], build_image_context *context)
+ 		case 'o':
+ 			context->odm_data = strtoul(optarg, NULL, 16);
+ 			break;
++		case 'u':
++			context->update_image = 1;
++			num_filenames = 3;
++			break;
+ 		}
  	}
  
- 	/* Display bootloader values */
+-	if (argc - optind != 2) {
++	if (argc - optind != num_filenames) {
+ 		printf("Missing configuration and/or image file name.\n");
+ 		usage();
+ 		return -EINVAL;
+@@ -145,14 +154,18 @@ process_command_line(int argc, char *argv[], build_image_context *context)
+ 		t20_get_soc_config(context, &g_soc_config);
+ 
+ 	/* Open the configuration file. */
+-	context->config_file = fopen(argv[optind], "r");
++	context->config_file = fopen(argv[optind++], "r");
+ 	if (context->config_file == NULL) {
+ 		printf("Error opening config file.\n");
+ 		return -ENODATA;
+ 	}
+ 
++	/* Record the input image filename if update_image is necessary */
++	if (context->update_image)
++		context->input_image_filename = argv[optind++];
++
+ 	/* Record the output filename */
+-	context->image_filename = argv[optind + 1];
++	context->output_image_filename = argv[optind++];
+ 
+ 	return 0;
+ }
+@@ -190,18 +203,66 @@ main(int argc, char *argv[])
+ 	}
+ 
+ 	/* Open the raw output file. */
+-	context.raw_file = fopen(context.image_filename,
+-		                 "w+");
++	context.raw_file = fopen(context.output_image_filename, "w+");
+ 	if (context.raw_file == NULL) {
+ 		printf("Error opening raw file %s.\n",
+-			context.image_filename);
++			context.output_image_filename);
+ 		goto fail;
+ 	}
+ 
+-	/* first, if we aren't generating the bct, read in config file */
+-	if (context.generate_bct == 0) {
+-		process_config_file(&context, 1);
++	/* Read the bct data from image if bct configs needs to be updated */
++	if (context.update_image) {
++		u_int32_t offset = 0, bct_size, actual_size;
++		u_int8_t *data_block;
++		struct stat stats;
++
++		if (stat(context.input_image_filename, &stats) != 0) {
++			printf("Error: Unable to query info on input file path %s\n",
++			context.input_image_filename);
++			goto fail;
++		}
++
++		/* Get BCT_SIZE from input image file  */
++		bct_size = get_bct_size_from_image(&context);
++		if (!bct_size) {
++			printf("Error: Invalid input image file %s\n",
++			context.input_image_filename);
++			goto fail;
++		}
++
++		while (stats.st_size > offset) {
++			/* Read a block of data into memory */
++			if (read_from_image(context.input_image_filename, offset, bct_size,
++					&data_block, &actual_size, file_type_bct)) {
++				printf("Error reading image file %s.\n", context.input_image_filename);
++				goto fail;
++			}
++
++			/* Check if memory data is valid BCT */
++			context.bct = data_block;
++			if (data_is_valid_bct(&context)) {
++				fseek(context.config_file, 0, SEEK_SET);
++				process_config_file(&context, 0);
++				e = sign_bct(&context, context.bct);
++				if (e != 0) {
++					printf("Signing BCT failed, error: %d.\n", e);
++					goto fail;
++				}
++			}
++
++			/* Write the block of data to file */
++			write_data_block(context.raw_file, offset, actual_size, data_block);
++
++			offset += bct_size;
++		}
++
++		printf("Image file %s has been successfully generated!\n",
++			context.output_image_filename);
++		goto fail;
+ 	}
++	/* If we aren't generating the bct, read in config file */
++	else if (context.generate_bct == 0)
++		process_config_file(&context, 1);
+ 	/* Generate the new bct file */
+ 	else {
+ 		/* Initialize the bct memory */
+@@ -218,7 +279,7 @@ main(int argc, char *argv[])
+ 		fwrite(context.bct, 1, context.bct_size,
+ 			context.raw_file);
+ 		printf("New BCT file %s has been successfully generated!\n",
+-			context.image_filename);
++			context.output_image_filename);
+ 		goto fail;
+ 	}
+ 
+@@ -234,7 +295,7 @@ main(int argc, char *argv[])
+ 		printf("Error writing image file.\n");
+ 	else
+ 		printf("Image file %s has been successfully generated!\n",
+-				context.image_filename);
++				context.output_image_filename);
+ 
+  fail:
+ 	/* Close the file(s). */
 diff --git a/src/cbootimage.h b/src/cbootimage.h
-index 46e3b8b..252c41e 100644
+index 252c41e..121bc95 100644
 --- a/src/cbootimage.h
 +++ b/src/cbootimage.h
-@@ -96,6 +96,8 @@ typedef struct build_image_context_rec
- 	u_int32_t boot_data_version; /* The boot data version of BCT */
- 	u_int8_t bct_init; /* The flag for the memory allocation of bct */
+@@ -44,6 +44,12 @@
+ #define BOOTDATA_VERSION_T114		NVBOOT_BOOTDATA_VERSION(0x35, 0x1)
+ #define BOOTDATA_VERSION_T124		NVBOOT_BOOTDATA_VERSION(0x40, 0x1)
+ 
++#define NVBOOT_CONFIG_TABLE_SIZE_MAX 8192
++#define NVBOOT_CONFIG_TABLE_SIZE_T20 4080
++#define NVBOOT_CONFIG_TABLE_SIZE_T30 6128
++#define NVBOOT_CONFIG_TABLE_SIZE_T114 8192
++#define NVBOOT_CONFIG_TABLE_SIZE_T124 8192
++
+ /*
+  * Enumerations
+  */
+@@ -60,7 +66,8 @@ typedef enum
+ typedef struct build_image_context_rec
+ {
+ 	FILE *config_file;
+-	char *image_filename;
++	char *output_image_filename;
++	char *input_image_filename;
+ 	FILE *raw_file;
+ 	u_int32_t block_size;
+ 	u_int32_t block_size_log2;
+@@ -98,6 +105,7 @@ typedef struct build_image_context_rec
  	u_int32_t odm_data; /* The odm data value */
-+	u_int8_t unique_chip_id[16]; /* The unique chip uid */
-+	u_int8_t secure_jtag_control; /* The flag for enabling jtag control */
+ 	u_int8_t unique_chip_id[16]; /* The unique chip uid */
+ 	u_int8_t secure_jtag_control; /* The flag for enabling jtag control */
++	u_int8_t update_image; /* The flag for updating image */
  } build_image_context;
  
  /* Function prototypes */
-diff --git a/src/parse.c b/src/parse.c
-index f82c008..8e5daed 100644
---- a/src/parse.c
-+++ b/src/parse.c
-@@ -45,6 +45,7 @@ set_array(build_image_context *context,
- 			u_int32_t value);
- static char *parse_u32(char *str, u_int32_t *val);
- static char *parse_u8(char *str, u_int32_t *val);
-+static char *parse_chipuid(char *str, u_int8_t *val);
- static char *parse_filename(char *str, char *name, int chars_remaining);
- static char *parse_enum(build_image_context *context,
- 			char *str,
-@@ -64,6 +65,10 @@ parse_bootloader(build_image_context *context, parse_token token, char *rest);
- static int
- parse_value_u32(build_image_context *context, parse_token token, char *rest);
- static int
-+parse_value_chipuid(build_image_context *context,
-+			parse_token token,
-+			char *rest);
-+static int
- parse_bct_file(build_image_context *context, parse_token token, char *rest);
- static char
- *parse_end_state(char *str, char *uname, int chars_remaining);
-@@ -102,6 +107,8 @@ static parse_item s_top_level_items[] = {
- 	{ "Bctcopy=",       token_bct_copy,		parse_value_u32 },
- 	{ "Version=",       token_version,		parse_value_u32 },
- 	{ "OdmData=",       token_odm_data,		parse_value_u32 },
-+	{ "ChipUid=",       token_unique_chip_id,	parse_value_chipuid },
-+	{ "JtagCtrl=",	    token_secure_jtag_control,	parse_value_u32 },
- 	{ NULL, 0, NULL } /* Must be last */
- };
+diff --git a/src/data_layout.c b/src/data_layout.c
+index 0a64ec2..a7a89fc 100644
+--- a/src/data_layout.c
++++ b/src/data_layout.c
+@@ -451,6 +451,8 @@ write_bootloaders(build_image_context *context)
  
-@@ -165,6 +172,46 @@ parse_u8(char *str, u_int32_t *val)
- 	return retval;
+ 	/* Read the BL into memory. */
+ 	if (read_from_image(context->newbl_filename,
++		0,
++		MAX_BOOTLOADER_SIZE,
+ 		&bl_storage,
+ 		&bl_actual_size,
+ 		bl_filetype) == 1) {
+@@ -665,17 +667,20 @@ int
+ read_bct_file(struct build_image_context_rec *context)
+ {
+ 	u_int8_t  *bct_storage; /* Holds the Bl after reading */
+-	u_int32_t  bct_actual_size; /* In bytes */
++	u_int32_t bct_actual_size; /* In bytes */
+ 	file_type bct_filetype = file_type_bct;
+ 	int err = 0;
+ 
+ 	if (read_from_image(context->bct_filename,
+-		&bct_storage,
+-		&bct_actual_size,
+-		bct_filetype) == 1) {
++			0,
++			NVBOOT_CONFIG_TABLE_SIZE_MAX,
++			&bct_storage,
++			&bct_actual_size,
++			bct_filetype) == 1) {
+ 		printf("Error reading bct file %s.\n", context->bct_filename);
+ 		exit(1);
+ 	}
++
+ 	context->bct_size = bct_actual_size;
+ 	if (context->bct_init != 1)
+ 		err = init_bct(context);
+@@ -686,18 +691,12 @@ read_bct_file(struct build_image_context_rec *context)
+ 	memcpy(context->bct, bct_storage, context->bct_size);
+ 	free(bct_storage);
+ 
+-	/* get proper soc_config pointer by polling each supported chip */
+-	if (if_bct_is_t20_get_soc_config(context, &g_soc_config))
+-		return 0;
+-	if (if_bct_is_t30_get_soc_config(context, &g_soc_config))
+-		return 0;
+-	if (if_bct_is_t114_get_soc_config(context, &g_soc_config))
+-		return 0;
+-	if (if_bct_is_t124_get_soc_config(context, &g_soc_config))
+-		return 0;
++	if (!data_is_valid_bct(context))
++		return ENODATA;
+ 
+-	return ENODATA;
++	return err;
  }
- 
-+/*
-+ * Parse the given string and transfer to chip uid.
-+ *
-+ * @param str		String to parse
-+ * @param chipuid	Returns chip uid that was parsed
-+ * @return the remainder of the string after the number was parsed
-+ */
-+static char *
-+parse_chipuid(char *str, u_int8_t *chipuid)
++
+ /*
+  * Update the next_bct_blk and make it point to the next
+  * new blank block according to bct_copy given.
+@@ -898,3 +897,62 @@ write_block_raw(build_image_context *context)
+ 	free(empty_blk);
+ 	return 0;
+ }
++
++int write_data_block(FILE *fp, u_int32_t offset, u_int32_t size, u_int8_t *buffer)
 +{
-+	int byte_index = 0;
-+	int paddings = 0;
-+	char byte_str[3];
++	if (fseek(fp, offset, 0))
++		return -1;
 +
-+	if (*str++ != '0')
-+		return NULL;
-+
-+	if (*str++ != 'x')
-+		return NULL;
-+
-+	paddings = strlen(str) % 2;
-+	byte_index = strlen(str) / 2 + paddings;
-+
-+	while (*str != '\0' && byte_index > 0) {
-+		char *endptr;
-+
-+		strncpy(byte_str, str, 2 - paddings);
-+		byte_str[2-paddings] = '\0';
-+		str += 2 - paddings;
-+
-+		chipuid[byte_index - 1] = strtoul(byte_str, &endptr, 16);
-+		if (*endptr)
-+			return NULL;
-+
-+		byte_index--;
-+		paddings = 0;
-+	}
-+
-+	return str;
++	fwrite(buffer, 1, size, fp);
++	return 0;
 +}
- 
- /*
-  * Parse the given string and find the file name then
-@@ -486,6 +533,31 @@ static int parse_value_u32(build_image_context *context,
- }
- 
- /*
-+ * General handler for setting chip uid in config files.
-+ *
-+ * @param context	The main context pointer
-+ * @param token		The parse token value
-+ * @param rest		String to parse
-+ * @return 0 and 1 for success and failure
-+ */
-+static int parse_value_chipuid(build_image_context *context,
-+			parse_token token,
-+			char *rest)
++
++int data_is_valid_bct(build_image_context *context)
 +{
-+	u_int8_t value[16];
-+
-+	assert(context != NULL);
-+	assert(rest != NULL);
-+
-+	memset(value, 0, sizeof(value));
-+	rest = parse_chipuid(rest, value);
-+	if (rest == NULL)
++	/* get proper soc_config pointer by polling each supported chip */
++	if (if_bct_is_t20_get_soc_config(context, &g_soc_config))
++		return 1;
++	if (if_bct_is_t30_get_soc_config(context, &g_soc_config))
++		return 1;
++	if (if_bct_is_t114_get_soc_config(context, &g_soc_config))
++		return 1;
++	if (if_bct_is_t124_get_soc_config(context, &g_soc_config))
 +		return 1;
 +
-+	return context_set_value(context, token, value);
++	return 0;
 +}
 +
-+/*
-  * Parse the given string and find the bct file name.
-  *
-  * @param context	The main context pointer
-diff --git a/src/parse.h b/src/parse.h
-index d9d873f..114168c 100644
---- a/src/parse.h
-+++ b/src/parse.h
-@@ -108,6 +108,8 @@ typedef enum
- 	token_dev_type_spi,
- 	token_num_sdram_sets,
- 	token_pre_bct_pad_blocks,
-+	token_unique_chip_id,
-+	token_secure_jtag_control,
- 
- 	token_nand_clock_divider,
- 	token_nand_nand_timing,
-diff --git a/src/set.c b/src/set.c
-index 3d62254..4a78b71 100644
---- a/src/set.c
-+++ b/src/set.c
-@@ -199,6 +199,18 @@ int context_set_value(build_image_context *context,
- 		context->pre_bct_pad_blocks = *((u_int32_t *)value);
- 		break;
- 
-+	case token_secure_jtag_control:
-+		context->secure_jtag_control = *((u_int32_t *)value);
-+		g_soc_config->set_value(token_secure_jtag_control,
-+			value, context->bct);
-+		break;
++int get_bct_size_from_image(build_image_context *context)
++{
++	u_int8_t buffer[NVBOOT_CONFIG_TABLE_SIZE_MAX];
++	u_int32_t bct_size = 0;
++	FILE *fp;
 +
-+	case token_unique_chip_id:
-+		memcpy(context->unique_chip_id, value, 16);
-+		g_soc_config->set_value(token_unique_chip_id,
-+			value, context->bct);
-+		break;
++	fp = fopen(context->input_image_filename, "r");
++	if (!fp)
++		return ENODATA;
 +
- 	DEFAULT();
- 	}
- 
-diff --git a/src/t124/nvbctlib_t124.c b/src/t124/nvbctlib_t124.c
-index b1ec445..b103ea7 100644
---- a/src/t124/nvbctlib_t124.c
-+++ b/src/t124/nvbctlib_t124.c
-@@ -111,7 +111,9 @@ parse_token t124_root_token_list[] = {
- 	token_hash_size,
- 	token_crypto_offset,
- 	token_crypto_length,
--	token_max_bct_search_blks
-+	token_max_bct_search_blks,
-+	token_unique_chip_id,
-+	token_secure_jtag_control
- };
++	if (fread(buffer, 1, NVBOOT_CONFIG_TABLE_SIZE_MAX, fp)) {
++		context->bct = buffer;
++		if (data_is_valid_bct(context)) {
++			switch (context->boot_data_version) {
++			case BOOTDATA_VERSION_T20:
++				bct_size = NVBOOT_CONFIG_TABLE_SIZE_T20;
++				break;
++			case BOOTDATA_VERSION_T30:
++				bct_size = NVBOOT_CONFIG_TABLE_SIZE_T30;
++				break;
++			case BOOTDATA_VERSION_T114:
++				bct_size = NVBOOT_CONFIG_TABLE_SIZE_T114;
++				break;
++			case BOOTDATA_VERSION_T124:
++				bct_size = NVBOOT_CONFIG_TABLE_SIZE_T124;
++				break;
++			}
++		}
++	}
++	fclose(fp);
++
++	context->bct = 0;
++	return bct_size;
++}
+diff --git a/src/data_layout.h b/src/data_layout.h
+index 9ee8267..12da165 100644
+--- a/src/data_layout.h
++++ b/src/data_layout.h
+@@ -50,6 +50,15 @@ int
+ write_block_raw(struct build_image_context_rec *context);
  
  int
-@@ -941,6 +943,7 @@ t124_bct_get_value(parse_token id, void *data, u_int8_t *bct)
- 	CASE_GET_NVU32(num_sdram_sets);
- 	CASE_GET_NVU32(bootloader_used);
- 	CASE_GET_NVU32(odm_data);
-+	CASE_GET_NVU32(secure_jtag_control);
- 
- 	/*
- 	 * Constants.
-@@ -955,6 +958,10 @@ t124_bct_get_value(parse_token id, void *data, u_int8_t *bct)
- 		sizeof(nvboot_hash));
- 		break;
- 
-+	case token_unique_chip_id:
-+		memcpy(data, &(bct_ptr->unique_chip_id), sizeof(nvboot_ecid));
-+		break;
++write_data_block(FILE *fp, u_int32_t offset, u_int32_t size, u_int8_t *buffer);
 +
- 	case token_reserved_offset:
- 		*((u_int32_t *)data) = (u_int8_t *)&(samplebct.reserved)
- 				- (u_int8_t *)&samplebct;
-@@ -1020,6 +1027,10 @@ t124_bct_set_value(parse_token id, void *data, u_int8_t *bct)
- 	CASE_SET_NVU32(num_sdram_sets);
- 	CASE_SET_NVU32(bootloader_used);
- 	CASE_SET_NVU32(odm_data);
-+	CASE_SET_NVU32(secure_jtag_control);
-+	case token_unique_chip_id:
-+		memcpy(&bct_ptr->unique_chip_id, data, sizeof(nvboot_ecid));
-+		break;
++int
++data_is_valid_bct(build_image_context *context);
++
++int
++get_bct_size_from_image(build_image_context *context);
++
++int
+ begin_update(build_image_context *context);
  
- 	default:
- 		return -ENODATA;
+ #endif /* #ifndef INCLUDED_DATA_LAYOUT_H */
+diff --git a/src/set.c b/src/set.c
+index 4a78b71..46dcfdc 100644
+--- a/src/set.c
++++ b/src/set.c
+@@ -43,6 +43,8 @@
+ 
+ int
+ read_from_image(char	*filename,
++		u_int32_t	offset,
++		u_int32_t	max_size,
+ 		u_int8_t	**image,
+ 		u_int32_t	*actual_size,
+ 		file_type	f_type)
+@@ -57,6 +59,8 @@ read_from_image(char	*filename,
+ 		return result;
+ 	}
+ 
++	fseek(fp, offset, SEEK_SET);
++
+ 	if (stat(filename, &stats) != 0) {
+ 		printf("Error: Unable to query info on bootloader path %s\n",
+ 			filename);
+@@ -64,14 +68,21 @@ read_from_image(char	*filename,
+ 		goto cleanup;
+ 	}
+ 
+-	*actual_size  = (u_int32_t)stats.st_size;
+-
+-	if (f_type == file_type_bl && *actual_size > MAX_BOOTLOADER_SIZE) {
+-		printf("Error: Bootloader file %s is too large.\n",
+-			filename);
+-		result = 1;
+-		goto cleanup;
++	if (f_type == file_type_bl) {
++		if ((stats.st_size - offset) > max_size) {
++			printf("Error: Bootloader file %s is too large.\n",
++				filename);
++			result = 1;
++			goto cleanup;
++		}
++		*actual_size = (u_int32_t)stats.st_size;
++	} else {
++		if ((stats.st_size - offset) < max_size)
++			*actual_size = stats.st_size - offset;
++		else
++			*actual_size = max_size;
+ 	}
++
+ 	*image = malloc(*actual_size);
+ 	if (*image == NULL) {
+ 		result = 1;
+@@ -80,7 +91,8 @@ read_from_image(char	*filename,
+ 
+ 	memset(*image, 0, *actual_size);
+ 
+-	if (fread(*image, 1, (size_t)stats.st_size, fp) != stats.st_size) {
++	if (fread(*image, 1, (size_t)(*actual_size), fp) !=
++		(size_t)(*actual_size)) {
+ 		result = 1;
+ 		goto cleanup;
+ 	}
+diff --git a/src/set.h b/src/set.h
+index 754ed7a..97ecc76 100644
+--- a/src/set.h
++++ b/src/set.h
+@@ -42,6 +42,8 @@ context_set_value(build_image_context	*context,
+ 
+ int
+ read_from_image(char *filename,
++		u_int32_t	offset,
++		u_int32_t	max_size,
+ 		u_int8_t	**Image,
+ 		u_int32_t	*actual_size,
+ 		file_type	f_type);
 -- 
 1.9.1
