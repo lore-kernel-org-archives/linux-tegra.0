@@ -1,79 +1,110 @@
-From: Thierry Reding <treding@nvidia.com>
-Subject: Re: [RFC 3/5] PCI: tegra: Implement accurate power supply scheme
-Date: Tue, 8 Apr 2014 21:55:37 +0200
-Message-ID: <20140408195537.GC21978@ulmo.nvidia.com>
-References: <1396622969-17837-1-git-send-email-treding@nvidia.com>
- <1396622969-17837-4-git-send-email-treding@nvidia.com>
- <53444C19.2080904@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [cbootimage PATCH V2 4/5] Add Tegra124 bct data access for jtag
+ control and chip uid
+Date: Tue, 08 Apr 2014 14:09:17 -0600
+Message-ID: <5344576D.3070703@wwwdotorg.org>
+References: <1396967422-6018-1-git-send-email-pchiu@nvidia.com> <1396967422-6018-5-git-send-email-pchiu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="32u276st3Jlj2kUU"
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <53444C19.2080904@wwwdotorg.org>
-Content-Disposition: inline
-Sender: linux-pci-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1396967422-6018-5-git-send-email-pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Penny Chiu <pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
---32u276st3Jlj2kUU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 04/08/2014 08:30 AM, Penny Chiu wrote:
+> Add support for read secure_jtag_control and unique_chip_id from
+> cfg file and write them into BCT structure, and bct_dump can also
+> parse the two fields and show the data.
 
-On Tue, Apr 08, 2014 at 09:20:57PM +0200, Stephen Warren wrote:
-> On 04/04/2014 08:49 AM, Thierry Reding wrote:
-> > The current description of power supplies doesn't match the hardware.
-> > Instead it's designed to support the needs of current designs, which
-> > will break as soon as a new design appears that cannot be described
-> > using the current assumptions.
-> >=20
-> > In order to fully support all possible future designs, all power supply
-> > inputs to the PCIe block need to be accurately described and separately
-> > configurable.
->=20
-> > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
->=20
-> > @@ -930,23 +927,9 @@ static void tegra_pcie_power_off(struct tegra_pcie=
- *pcie)
->=20
-> > -	err =3D regulator_disable(pcie->pex_clk_supply);
-> > +	err =3D regulator_bulk_disable(pcie->num_supplies, pcie->supplies);
-> >  	if (err < 0)
-> > -		dev_warn(pcie->dev, "failed to disable pex-clk regulator: %d\n",
-> > -			 err);
-> > -
-> > -	err =3D regulator_disable(pcie->vdd_supply);
-> > -	if (err < 0)
-> > -		dev_warn(pcie->dev, "failed to disable VDD regulator: %d\n",
-> > -			 err);
-> > +		dev_warn(pcie->dev, "failed to enable regulators: %d\n", err);
->=20
-> s/enable/disable/
+> diff --git a/src/bct_dump.c b/src/bct_dump.c
 
-Good catch. Fixed, thanks,
+> @@ -174,17 +190,30 @@ int main(int argc, char *argv[])
+>  		if (!g_soc_config->token_supported(values[i].id))
+>  			continue;
+>  
+> +		if (values[i].id == token_unique_chip_id) {
+> +			u_int8_t uid[16];
+> +
+> +			e = g_soc_config->get_value(values[i].id,
+> +						uid,
+> +						context.bct);
+> +			if (e != 0)
+> +				for (j = 0; j < 16; j++)
+> +					uid[j] = -1;
+> +
+> +			values[i].format(values[i].message, uid);
+> +		} else {
+> +			e = g_soc_config->get_value(values[i].id,
+>  						&data,
+>  						context.bct);
+>  
+> +			if (e != 0)
+> +				data = -1;
+> +			else if (values[i].id == token_block_size_log2 ||
+> +				 values[i].id == token_page_size_log2)
+> +				data = 1 << data;
+>  
+> +			values[i].format(values[i].message, &data);
+> +		}
 
-Thierry
+I was hoping to avoid that outer if condition completely. Wouldn't the
+following work:
 
---32u276st3Jlj2kUU
-Content-Type: application/pgp-signature
+u_int8_t data[MAX_PARAM_SIZE];
+e = g_soc_config->get_value(values[i].id, data, context.bct);
+if (e)
+    memset data[] to zero
+values[i].format(values[i].message, data);
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+0 seems just as valid in the error case as -1.
 
-iQIcBAEBAgAGBQJTRFQ5AAoJEN0jrNd/PrOhq4YP+gOJ1njoXiHxeRfcapNvy8zz
-NafqHrO3jPZbCSQ6H54LsYl7hDxZ6AnoGaBA4XL+MvqOC22pPJVE2THZ9NJpEg3c
-sNkT3QK4qTygtG6jZ0HkusVkbplV1X9sPo6HkMNpX+XVH+gC3JIC0NcZk8IqWXrV
-FPcvzPJYEWmulVirTdpBO7DOZQ6fhOmARzX4p7Ssj7xP2BZ7pNnRFyraOCOtyNQR
-/hK58lekkviXGf00bk+1WNYWH5Sz8IpvwBVWmFUaP780dm2s5T0VOPyeHJPGnJfd
-zZeQ7rz3hdZruJxzHW/HmKfvwP1XEh3QkTnks1tPb6TukJyAMI2AUMj2KXBAJzgQ
-ZzTnu2hJ7qL32GgaHGTT28+YJVpUrCwnIRSSGAMg4tZBOAmmGf7Y3xmd3hh4Er52
-QzNPez384+kTGarGqGpr+7tXlOH+oKF25+l5ahPcTXlzSn9WcbxmX3x8QS5Q4h/e
-694yrVxXf+hdWAJ8Kr4uE+GJ4xVBNE6xODoj8yRlRrcB924GBM2YiMTpRmeOk2YE
-izh3ihpmgiH5XdZllAjZhnDLwCAmCCAwSGclCXdPyXr6B1gEo4f+uIwgAp6RjXIx
-TGWvrNYAbFGCjaG8OqAG12XqE8KfS5wbQTi7uun2zDqim9yxJAOBMr8BfSrMRbCp
-/oaeIGZSkoiHRabzJIxZ
-=FcyA
------END PGP SIGNATURE-----
+I would prefer the special case for token_block_size_log2 adn
+token_page_size_log2 to go away too. Why aren't those tokens set to
+their actual values?
 
---32u276st3Jlj2kUU--
+In order to calculate MAX_PARAM_SIZE, perhaps something like:
+
+union param_types;
+    u32 val;
+    u_int8_t uuid[16];
+};
+#define MAX_PARAM_SIZE sizeof(param_types)
+
+> diff --git a/src/parse.c b/src/parse.c
+
+> +parse_chipuid(char *str, u_int8_t *chipuid)
+
+> +	paddings = strlen(str) % 2;
+> +	byte_index = strlen(str) / 2 + paddings;
+
+There needs to be error-checking to make sure that byte_index < sizeof
+*chipuid.
+
+If byte_index is less than sizeof *chipuid, should the value be left- or
+right-aligned within *chipuid? Right now it's left-justified. That may
+be fine, but I just wanted to check. Is it an error if the length of the
+string doesn't exactly match sizeof *chipuid?
+
+> +	while (*str != '\0' && byte_index > 0) {
+> +		char *endptr;
+> +
+> +		strncpy(byte_str, str, 2 - paddings);
+> +		byte_str[2-paddings] = '\0';
+
+Need spaces around the - operator.
+
+> +static int parse_value_chipuid(build_image_context *context,
+> +			parse_token token,
+> +			char *rest)
+> +{
+> +	u_int8_t value[16];
+> +
+> +	assert(context != NULL);
+> +	assert(rest != NULL);
+> +
+> +	memset(value, 0, sizeof(value));
+
+Shouldn't this memset() be inside parse_chipuid(), so that
+parse_chipuid() either fails, or succeeds and fills in the entire UID value?
