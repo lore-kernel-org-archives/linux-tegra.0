@@ -1,42 +1,37 @@
-From: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH 1/2] ALSA: hda/hdmi - Add Nvidia Tegra124 HDMI support
-Date: Tue,  8 Apr 2014 12:12:32 -0700
-Message-ID: <1396984352-13533-1-git-send-email-dgreid@chromium.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: tiwai-l3A5Bk7waGM@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, Sumit Bhattacharya <sumitb-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [RFC 1/5] PCI: tegra: Overhaul regulator usage
+Date: Tue, 08 Apr 2014 13:15:47 -0600
+Message-ID: <53444AE3.6030603@wwwdotorg.org>
+References: <1396622969-17837-1-git-send-email-treding@nvidia.com> <1396622969-17837-2-git-send-email-treding@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <1396622969-17837-2-git-send-email-treding@nvidia.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Thierry Reding <treding@nvidia.com>, Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
+Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Sumit Bhattacharya <sumitb-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 04/04/2014 08:49 AM, Thierry Reding wrote:
+> The current usage of regulators for the Tegra PCIe block is wrong. It
+> doesn't accurately reflect the actual supply inputs of the IP block and
+> therefore isn't as flexible as it should be. Rectify this by describing
+> all possible supply inputs in the device tree binding documentation and
+> deprecate the old supply properties.
 
-Add the Tegra 12x HDMI controller id to patch_hdmi.
+> diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
 
-Signed-off-by: Sumit Bhattacharya <sumitb-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
----
- sound/pci/hda/patch_hdmi.c | 2 ++
- 1 file changed, 2 insertions(+)
+> +Power supplies for Tegra30:
+...
+> +- Optional:
+> +  - If port 0 is enabled:
+> +    - avdd-pexa-supply: Power supply for analog PCIe logic. Must supply 1.05 V.
+> +    - vdd-pexa-supply: Power supply for digital PCIe I/O. Must supply 1.05 V.
+> +  - If at least one of ports 1 and 2 is enabled:
+> +    - avdd-pexb-supply: Power supply for analog PCIe logic. Must supply 1.05 V.
+> +    - vdd-pexb-supply: Power supply for digital PCIe I/O. Must supply 1.05 V.
 
-diff --git a/sound/pci/hda/patch_hdmi.c b/sound/pci/hda/patch_hdmi.c
-index 0cb5b89..b5d1371 100644
---- a/sound/pci/hda/patch_hdmi.c
-+++ b/sound/pci/hda/patch_hdmi.c
-@@ -3322,6 +3322,7 @@ static const struct hda_codec_preset snd_hda_preset_hdmi[] = {
- { .id = 0x10de001a, .name = "GPU 1a HDMI/DP",	.patch = patch_nvhdmi },
- { .id = 0x10de001b, .name = "GPU 1b HDMI/DP",	.patch = patch_nvhdmi },
- { .id = 0x10de001c, .name = "GPU 1c HDMI/DP",	.patch = patch_nvhdmi },
-+{ .id = 0x10de0028, .name = "Tegra12x HDMI",	.patch = patch_nvhdmi },
- { .id = 0x10de0040, .name = "GPU 40 HDMI/DP",	.patch = patch_nvhdmi },
- { .id = 0x10de0041, .name = "GPU 41 HDMI/DP",	.patch = patch_nvhdmi },
- { .id = 0x10de0042, .name = "GPU 42 HDMI/DP",	.patch = patch_nvhdmi },
-@@ -3377,6 +3378,7 @@ MODULE_ALIAS("snd-hda-codec-id:10de0019");
- MODULE_ALIAS("snd-hda-codec-id:10de001a");
- MODULE_ALIAS("snd-hda-codec-id:10de001b");
- MODULE_ALIAS("snd-hda-codec-id:10de001c");
-+MODULE_ALIAS("snd-hda-codec-id:10de0028");
- MODULE_ALIAS("snd-hda-codec-id:10de0040");
- MODULE_ALIAS("snd-hda-codec-id:10de0041");
- MODULE_ALIAS("snd-hda-codec-id:10de0042");
--- 
-1.8.1.3.605.g02339dd
+Did you get confirmation from HW/... that the mapping from pexa/b to
+PCIe ports you document above is correct? IIRC the two supplies might be
+related to lanes rather than ports?
