@@ -1,27 +1,44 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [RFC 2/5] ARM: tegra: Add new PCIe regulator properties
-Date: Tue, 08 Apr 2014 13:17:01 -0600
-Message-ID: <53444B2D.8050209@wwwdotorg.org>
-References: <1396622969-17837-1-git-send-email-treding@nvidia.com> <1396622969-17837-3-git-send-email-treding@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: [PATCH] clk: tegra124: Enable hda to hdmi clocks
+Date: Tue,  8 Apr 2014 12:17:09 -0700
+Message-ID: <1396984629-14101-1-git-send-email-dgreid@chromium.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1396622969-17837-3-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, tiwai-l3A5Bk7waGM@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/04/2014 08:49 AM, Thierry Reding wrote:
-> These new properties more accurately reflect the real connections of the
-> boards and therefore make it easier to match them up with schematics.
+Add the clocks used for HDMI audio played through the HDA controller.
+Initialize the codec clock to 48Mhz and the HDA clock to 102MHz per
+the TRM.
 
-> diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+Signed-off-by: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+---
+ drivers/clk/tegra/clk-tegra124.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
->  	pcie-controller@00003000 {
->  		status = "okay";
-> +
-> +		/* AVDD_PEXA and VDD_PEXA are grounded on Cardhu. */
-
-Perhaps add the word "inputs" before "are"?
+diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+index 166e02f..ab15d98 100644
+--- a/drivers/clk/tegra/clk-tegra124.c
++++ b/drivers/clk/tegra/clk-tegra124.c
+@@ -1018,6 +1018,9 @@ static struct tegra_devclk devclks[] __initdata = {
+ 	{ .con_id = "fuse", .dt_id = TEGRA124_CLK_FUSE },
+ 	{ .dev_id = "rtc-tegra", .dt_id = TEGRA124_CLK_RTC },
+ 	{ .dev_id = "timer", .dt_id = TEGRA124_CLK_TIMER },
++	{ .con_id = "hda", .dt_id = TEGRA124_CLK_HDA },
++	{ .con_id = "hda2codec_2x", .dt_id = TEGRA124_CLK_HDA2CODEC_2X },
++	{ .con_id = "hda2hdmi", .dt_id = TEGRA124_CLK_HDA2HDMI },
+ };
+ 
+ static struct clk **clks;
+@@ -1371,6 +1374,8 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{TEGRA124_CLK_SBC4, TEGRA124_CLK_PLL_P, 12000000, 1},
+ 	{TEGRA124_CLK_TSEC, TEGRA124_CLK_PLL_C3, 0, 0},
+ 	{TEGRA124_CLK_MSENC, TEGRA124_CLK_PLL_C3, 0, 0},
++	{TEGRA124_CLK_HDA, TEGRA124_CLK_PLL_P, 102000000, 0},
++	{TEGRA124_CLK_HDA2CODEC_2X, TEGRA124_CLK_PLL_P, 48000000, 0},
+ 	/* This MUST be the last entry. */
+ 	{TEGRA124_CLK_CLK_MAX, TEGRA124_CLK_CLK_MAX, 0, 0},
+ };
+-- 
+1.8.1.3.605.g02339dd
