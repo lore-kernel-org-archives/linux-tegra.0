@@ -1,7 +1,7 @@
 From: Penny Chiu <pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [cbootimage PATCH V2 1/5] Add format functions to express BCT and bootloader data value
-Date: Tue, 8 Apr 2014 22:30:18 +0800
-Message-ID: <1396967422-6018-2-git-send-email-pchiu@nvidia.com>
+Subject: [cbootimage PATCH V2 3/5] Add token_supported function
+Date: Tue, 8 Apr 2014 22:30:20 +0800
+Message-ID: <1396967422-6018-4-git-send-email-pchiu@nvidia.com>
 References: <1396967422-6018-1-git-send-email-pchiu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,109 +12,260 @@ To: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2
 Cc: Penny Chiu <pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add a new field to the value_data table, which is the function to
-use to format the data value.
+Add a function called token_supported in cbootimage_soc_config.
+It is used to check if the input token is supported in specific
+tegra soc.
 
 Signed-off-by: Penny Chiu <pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- src/bct_dump.c | 59 +++++++++++++++++++++++++++++++++++++---------------------
- 1 file changed, 38 insertions(+), 21 deletions(-)
+ src/bct_dump.c           |  3 +++
+ src/parse.h              |  8 ++++++++
+ src/t114/nvbctlib_t114.c | 27 +++++++++++++++++++++++++++
+ src/t124/nvbctlib_t124.c | 27 +++++++++++++++++++++++++++
+ src/t20/nvbctlib_t20.c   | 27 +++++++++++++++++++++++++++
+ src/t30/nvbctlib_t30.c   | 27 +++++++++++++++++++++++++++
+ 6 files changed, 119 insertions(+)
 
 diff --git a/src/bct_dump.c b/src/bct_dump.c
-index dbef913..6d99214 100644
+index 6d99214..a8e3479 100644
 --- a/src/bct_dump.c
 +++ b/src/bct_dump.c
-@@ -27,37 +27,54 @@
- int enable_debug;
- cbootimage_soc_config * g_soc_config;
+@@ -171,6 +171,9 @@ int main(int argc, char *argv[])
  
-+static void format_u32_hex8(char const * message, void * data);
-+static void format_u32(char const * message, void * data);
+ 	/* Display root values */
+ 	for (i = 0; i < sizeof(values) / sizeof(values[0]); ++i) {
++		if (!g_soc_config->token_supported(values[i].id))
++			continue;
 +
-+typedef void (*format_function)(char const * message, void * data);
+ 		e = g_soc_config->get_value(values[i].id,
+ 						&data,
+ 						context.bct);
+diff --git a/src/parse.h b/src/parse.h
+index 18c2a87..d9d873f 100644
+--- a/src/parse.h
++++ b/src/parse.h
+@@ -750,6 +750,14 @@ typedef struct cbootimage_soc_config_rec {
+ 			u_int32_t  length,
+ 			u_int8_t *bct);
+ 
++	/*
++	 * Check if the token is supported to dump
++	 *
++	 * @param id  	The parse token value
++	 * @return 0 and 1 for unsupported and supported
++	 */
++	int (*token_supported)(parse_token id);
 +
- typedef struct {
- 	parse_token id;
- 	char const * message;
-+	format_function format;
- } value_data;
+ 	void (*init_bad_block_table)(build_image_context *context);
  
- static value_data const values[] = {
--	{ token_boot_data_version,   "Version       = 0x%08x;\n" },
--	{ token_block_size_log2,     "BlockSize     = 0x%08x;\n" },
--	{ token_page_size_log2,      "PageSize      = 0x%08x;\n" },
--	{ token_partition_size,      "PartitionSize = 0x%08x;\n" },
--	{ token_odm_data,            "OdmData       = 0x%08x;\n\n" },
--	{ token_bootloader_used,     "# Bootloader used       = %d;\n" },
--	{ token_bootloaders_max,     "# Bootloaders max       = %d;\n" },
--	{ token_bct_size,            "# BCT size              = %d;\n" },
--	{ token_hash_size,           "# Hash size             = %d;\n" },
--	{ token_crypto_offset,       "# Crypto offset         = %d;\n" },
--	{ token_crypto_length,       "# Crypto length         = %d;\n" },
--	{ token_max_bct_search_blks, "# Max BCT search blocks = %d;\n" },
-+	{ token_boot_data_version,   "Version       = ", format_u32_hex8 },
-+	{ token_block_size_log2,     "BlockSize     = ", format_u32_hex8 },
-+	{ token_page_size_log2,      "PageSize      = ", format_u32_hex8 },
-+	{ token_partition_size,      "PartitionSize = ", format_u32_hex8 },
-+	{ token_odm_data,            "OdmData       = ", format_u32_hex8 },
-+	{ token_bootloader_used,     "# Bootloader used       = ", format_u32 },
-+	{ token_bootloaders_max,     "# Bootloaders max       = ", format_u32 },
-+	{ token_bct_size,            "# BCT size              = ", format_u32 },
-+	{ token_hash_size,           "# Hash size             = ", format_u32 },
-+	{ token_crypto_offset,       "# Crypto offset         = ", format_u32 },
-+	{ token_crypto_length,       "# Crypto length         = ", format_u32 },
-+	{ token_max_bct_search_blks, "# Max BCT search blocks = ", format_u32 },
- };
+ 	enum_item *devtype_table;
+diff --git a/src/t114/nvbctlib_t114.c b/src/t114/nvbctlib_t114.c
+index 29878c1..56051d2 100644
+--- a/src/t114/nvbctlib_t114.c
++++ b/src/t114/nvbctlib_t114.c
+@@ -96,6 +96,21 @@ default :                                           \
+ 		token, __LINE__);                   \
+ 	return 1
  
- static value_data const bl_values[] = {
--	{ token_bl_version,     "Version      = 0x%08x;\n" },
--	{ token_bl_start_blk,   "Start block  = %d;\n" },
--	{ token_bl_start_page,  "Start page   = %d;\n" },
--	{ token_bl_length,      "Length       = %d;\n" },
--	{ token_bl_load_addr,   "Load address = 0x%08x;\n" },
--	{ token_bl_entry_point, "Entry point  = 0x%08x;\n" },
--	{ token_bl_attribute,   "Attributes   = 0x%08x;\n" },
-+	{ token_bl_version,     "Version      = ", format_u32_hex8 },
-+	{ token_bl_start_blk,   "Start block  = ", format_u32 },
-+	{ token_bl_start_page,  "Start page   = ", format_u32 },
-+	{ token_bl_length,      "Length       = ", format_u32 },
-+	{ token_bl_load_addr,   "Load address = ", format_u32_hex8 },
-+	{ token_bl_entry_point, "Entry point  = ", format_u32_hex8 },
-+	{ token_bl_attribute,   "Attributes   = ", format_u32_hex8 },
- };
++parse_token t114_root_token_list[] = {
++	token_boot_data_version,
++	token_block_size_log2,
++	token_page_size_log2,
++	token_partition_size,
++	token_odm_data,
++	token_bootloader_used,
++	token_bootloaders_max,
++	token_bct_size,
++	token_hash_size,
++	token_crypto_offset,
++	token_crypto_length,
++	token_max_bct_search_blks
++};
++
+ int
+ t114_set_dev_param(build_image_context *context,
+ 	u_int32_t index,
+@@ -1037,6 +1052,17 @@ t114_bct_set_data(parse_token id,
+ 	return 0;
+ }
  
- /*****************************************************************************/
-+static void format_u32_hex8(char const * message, void * data)
++int t114_bct_token_supported(parse_token token)
 +{
-+	printf("%s0x%08x;\n", message, *((u_int32_t *) data));
++	int index;
++
++	for (index = 0; index < sizeof(t114_root_token_list)/sizeof(t114_root_token_list[0]); index++)
++		if (t114_root_token_list[index] == token)
++			return 1;
++
++	return 0;
 +}
 +
-+static void format_u32(char const * message, void * data)
-+{
-+	printf("%s%d;\n", message, *((u_int32_t *) data));
-+}
-+
-+/*****************************************************************************/
- static void usage(void)
+ void t114_init_bad_block_table(build_image_context *context)
  {
- 	printf("Usage: bct_dump bctfile\n");
-@@ -164,7 +181,7 @@ int main(int argc, char *argv[])
- 			 values[i].id == token_page_size_log2)
- 			data = 1 << data;
+ 	u_int32_t bytes_per_entry;
+@@ -1070,6 +1096,7 @@ cbootimage_soc_config tegra114_config = {
+ 	.set_value					= t114_bct_set_value,
+ 	.get_value					= t114_bct_get_value,
+ 	.set_data					= t114_bct_set_data,
++	.token_supported			= t114_bct_token_supported,
  
--		printf(values[i].message, data);
-+		values[i].format(values[i].message, &data);
- 	}
+ 	.devtype_table				= s_devtype_table_t114,
+ 	.sdmmc_data_width_table		= s_sdmmc_data_width_table_t114,
+diff --git a/src/t124/nvbctlib_t124.c b/src/t124/nvbctlib_t124.c
+index ec5c3a2..b1ec445 100644
+--- a/src/t124/nvbctlib_t124.c
++++ b/src/t124/nvbctlib_t124.c
+@@ -99,6 +99,21 @@ default :                                           \
+ 		token, __LINE__);                   \
+ 	return 1
  
- 	/* Display bootloader values */
-@@ -192,7 +209,7 @@ int main(int argc, char *argv[])
- 				if (e != 0)
- 					data = -1;
++parse_token t124_root_token_list[] = {
++	token_boot_data_version,
++	token_block_size_log2,
++	token_page_size_log2,
++	token_partition_size,
++	token_odm_data,
++	token_bootloader_used,
++	token_bootloaders_max,
++	token_bct_size,
++	token_hash_size,
++	token_crypto_offset,
++	token_crypto_length,
++	token_max_bct_search_blks
++};
++
+ int
+ t124_set_dev_param(build_image_context *context,
+ 	u_int32_t index,
+@@ -1039,6 +1054,17 @@ t124_bct_set_data(parse_token id,
+ 	return 0;
+ }
  
--				printf(bl_values[j].message, data);
-+				bl_values[j].format(bl_values[j].message, &data);
- 			}
- 		}
- 	}
++int t124_bct_token_supported(parse_token token)
++{
++	int index;
++
++	for (index = 0; index < sizeof(t124_root_token_list)/sizeof(t124_root_token_list[0]); index++)
++		if (t124_root_token_list[index] == token)
++			return 1;
++
++	return 0;
++}
++
+ void t124_init_bad_block_table(build_image_context *context)
+ {
+ 	u_int32_t bytes_per_entry;
+@@ -1072,6 +1098,7 @@ cbootimage_soc_config tegra124_config = {
+ 	.set_value					= t124_bct_set_value,
+ 	.get_value					= t124_bct_get_value,
+ 	.set_data					= t124_bct_set_data,
++	.token_supported			= t124_bct_token_supported,
+ 
+ 	.devtype_table				= s_devtype_table_t124,
+ 	.sdmmc_data_width_table		= s_sdmmc_data_width_table_t124,
+diff --git a/src/t20/nvbctlib_t20.c b/src/t20/nvbctlib_t20.c
+index 91fe9e6..2f54173 100644
+--- a/src/t20/nvbctlib_t20.c
++++ b/src/t20/nvbctlib_t20.c
+@@ -96,6 +96,21 @@ default :                                                 \
+ 		token, __LINE__);                         \
+ 	return 1
+ 
++parse_token t20_root_token_list[] = {
++	token_boot_data_version,
++	token_block_size_log2,
++	token_page_size_log2,
++	token_partition_size,
++	token_odm_data,
++	token_bootloader_used,
++	token_bootloaders_max,
++	token_bct_size,
++	token_hash_size,
++	token_crypto_offset,
++	token_crypto_length,
++	token_max_bct_search_blks
++};
++
+ int
+ t20_set_dev_param(build_image_context *context,
+ 	u_int32_t index,
+@@ -618,6 +633,17 @@ t20_bct_set_data(parse_token id,
+ 	return 0;
+ }
+ 
++int t20_bct_token_supported(parse_token token)
++{
++	int index;
++
++	for (index = 0; index < sizeof(t20_root_token_list)/sizeof(t20_root_token_list[0]); index++)
++		if (t20_root_token_list[index] == token)
++			return 1;
++
++	return 0;
++}
++
+ void t20_init_bad_block_table(build_image_context *context)
+ {
+ 	u_int32_t bytes_per_entry;
+@@ -651,6 +677,7 @@ cbootimage_soc_config tegra20_config = {
+ 	.set_value					= t20_bct_set_value,
+ 	.get_value					= t20_bct_get_value,
+ 	.set_data					= t20_bct_set_data,
++	.token_supported			= t20_bct_token_supported,
+ 
+ 	.devtype_table				= s_devtype_table_t20,
+ 	.sdmmc_data_width_table		= s_sdmmc_data_width_table_t20,
+diff --git a/src/t30/nvbctlib_t30.c b/src/t30/nvbctlib_t30.c
+index a84b7c7..e0a7d0d 100644
+--- a/src/t30/nvbctlib_t30.c
++++ b/src/t30/nvbctlib_t30.c
+@@ -96,6 +96,21 @@ default :                                           \
+ 		token, __LINE__);                   \
+ 	return 1
+ 
++parse_token t30_root_token_list[] = {
++	token_boot_data_version,
++	token_block_size_log2,
++	token_page_size_log2,
++	token_partition_size,
++	token_odm_data,
++	token_bootloader_used,
++	token_bootloaders_max,
++	token_bct_size,
++	token_hash_size,
++	token_crypto_offset,
++	token_crypto_length,
++	token_max_bct_search_blks
++};
++
+ int
+ t30_set_dev_param(build_image_context *context,
+ 	u_int32_t index,
+@@ -825,6 +840,17 @@ t30_bct_set_data(parse_token id,
+ 	return 0;
+ }
+ 
++int t30_bct_token_supported(parse_token token)
++{
++	int index;
++
++	for (index = 0; index < sizeof(t30_root_token_list)/sizeof(t30_root_token_list[0]); index++)
++		if (t30_root_token_list[index] == token)
++			return 1;
++
++	return 0;
++}
++
+ void t30_init_bad_block_table(build_image_context *context)
+ {
+ 	u_int32_t bytes_per_entry;
+@@ -858,6 +884,7 @@ cbootimage_soc_config tegra30_config = {
+ 	.set_value					= t30_bct_set_value,
+ 	.get_value					= t30_bct_get_value,
+ 	.set_data					= t30_bct_set_data,
++	.token_supported			= t30_bct_token_supported,
+ 
+ 	.devtype_table				= s_devtype_table_t30,
+ 	.sdmmc_data_width_table		= s_sdmmc_data_width_table_t30,
 -- 
 1.9.1
