@@ -1,30 +1,64 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [cbootimage PATCH V2 3/5] Add token_supported function
-Date: Tue, 08 Apr 2014 13:55:16 -0600
-Message-ID: <53445424.5090103@wwwdotorg.org>
-References: <1396967422-6018-1-git-send-email-pchiu@nvidia.com> <1396967422-6018-4-git-send-email-pchiu@nvidia.com>
+From: Thierry Reding <treding@nvidia.com>
+Subject: Re: [RFC 2/5] ARM: tegra: Add new PCIe regulator properties
+Date: Tue, 8 Apr 2014 21:54:42 +0200
+Message-ID: <20140408195442.GB21978@ulmo.nvidia.com>
+References: <1396622969-17837-1-git-send-email-treding@nvidia.com>
+ <1396622969-17837-3-git-send-email-treding@nvidia.com>
+ <53444B2D.8050209@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1396967422-6018-4-git-send-email-pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Penny Chiu <pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="f2QGlHpHGjS2mn6Y"
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <53444B2D.8050209@wwwdotorg.org>
+Content-Disposition: inline
+Sender: linux-pci-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/08/2014 08:30 AM, Penny Chiu wrote:
-> Add a function called token_supported in cbootimage_soc_config.
-> It is used to check if the input token is supported in specific
-> tegra soc.
+--f2QGlHpHGjS2mn6Y
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> diff --git a/src/t114/nvbctlib_t114.c b/src/t114/nvbctlib_t114.c
+On Tue, Apr 08, 2014 at 09:17:01PM +0200, Stephen Warren wrote:
+> On 04/04/2014 08:49 AM, Thierry Reding wrote:
+> > These new properties more accurately reflect the real connections of the
+> > boards and therefore make it easier to match them up with schematics.
+>=20
+> > diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/=
+tegra30-cardhu.dtsi
+>=20
+> >  	pcie-controller@00003000 {
+> >  		status =3D "okay";
+> > +
+> > +		/* AVDD_PEXA and VDD_PEXA are grounded on Cardhu. */
+>=20
+> Perhaps add the word "inputs" before "are"?
 
-> +int t114_bct_token_supported(parse_token token)
-> +{
-> +	int index;
-> +
-> +	for (index = 0; index < sizeof(t114_root_token_list)/sizeof(t114_root_token_list[0]); index++)
+Done. Thanks,
 
-It'd be nice if we had an ARRAY_SIZE() macro we could use here...
+Thierry
 
-That would also make the line-length a bit more typical.
+--f2QGlHpHGjS2mn6Y
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTRFQCAAoJEN0jrNd/PrOhqFwP+QGKyQg9Dp/eqINyGpUKlEqs
+XzCf7Bs5ZlYqlLpEmFtKRv1xsTC3k7nlb9a4lrj1CNMnVZBIXerDvF0Dzt0DE89g
+sqccl86mR4lpprYZV2doHjA1+ASv2qbwfd9BXwUvFoo9F3re4bHlFZ/bwVAoswnA
+tzDigrGmysF9cyxBxaHrpZdlK3GxQm4RW7riIeeY3Fv4LJa7RGcrFOkJ29bujSLD
+gbgMOCzOgfGmSAxhhDa2KDV2xTu03HoNteI90OYONWsWbuNnSLLeQx/2fob+9r/c
+tmwIlruvhNb89xXStlwHu8DvwuFFt2uIyA5oG9fPLLRfz9Xyvc7ar5ofeW4J5qRO
+dzDoWjuGKsiaXc0dAfLBVHmJI2WsXHKqJA95l2oJTVFKivBiqegOXyTiQbFXMFBs
+40TDMgA1alHheRSyzfgUSNVjaMMudUaEjQdjnnDFm26HCfb8Pz4JVl0OGdG361l5
+Fq6gsIFC3N9dc6ytXMYaiDecTjmo3utJvpCMrc/UFedmf3ALyXLuGweZnq1ftM53
+L7pW1TMm2FsgB67egthNw/J9141GGZBEZH6Owe94fVBZQgeIAIUdek9skvVDnE25
+bqcXTgLLNrFqATKbFWOeKC0Q7PslyPU34rZWiJHuczgJIjUp2rNSHGddxDAzs3lk
+1cjHK0GuXyKZjNEO3hyV
+=w+ep
+-----END PGP SIGNATURE-----
+
+--f2QGlHpHGjS2mn6Y--
