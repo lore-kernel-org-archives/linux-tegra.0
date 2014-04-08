@@ -1,38 +1,26 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: remove TEGRA_EMC_SCALING_ENABLE
-Date: Mon,  7 Apr 2014 10:52:23 -0600
-Message-ID: <1396889543-11896-1-git-send-email-swarren@wwwdotorg.org>
+From: Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>
+Subject: Re: [PATCHv3 0/5] net: rfkill: gpio: cleanup and a few new acpi ids
+Date: Tue, 08 Apr 2014 10:37:55 +0200
+Message-ID: <1396946275.5936.2.camel@jlt4.sipsolutions.net>
+References: <1396360976-28657-1-git-send-email-heikki.krogerus@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1396360976-28657-1-git-send-email-heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>
+On Tue, 2014-04-01 at 17:02 +0300, Heikki Krogerus wrote:
+> Hi,
+> 
+> I hope this one is OK with everyone.
 
-Commit a7cbe92cef27 ("ARM: tegra: remove tegra EMC scaling driver")
-removed the only user of TEGRA_EMC_SCALING_ENABLE. Remove its Kconfig
-entry too.
+It's fine with me. Are you expecting me to pick up any of these patches,
+or do you want them to go through some other tree? Either way is fine
+with me, but the first patch looks like something I probably shouldn't
+be taking.
 
-Signed-off-by: Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-arm-soc, this is another fix patch for 3.15.
-
- arch/arm/mach-tegra/Kconfig | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index 92d660f9610f..55b305d51669 100644
---- a/arch/arm/mach-tegra/Kconfig
-+++ b/arch/arm/mach-tegra/Kconfig
-@@ -70,7 +70,4 @@ config TEGRA_AHB
- 	  which controls AHB bus master arbitration and some
- 	  performance parameters(priority, prefech size).
- 
--config TEGRA_EMC_SCALING_ENABLE
--	bool "Enable scaling the memory frequency"
--
- endmenu
--- 
-1.8.1.5
+johannes
