@@ -1,97 +1,109 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [cbootimage PATCH V2 5/5] Add update BCT configs feature
-Date: Tue, 08 Apr 2014 15:27:20 -0600
-Message-ID: <534469B8.9010606@wwwdotorg.org>
-References: <1396967422-6018-1-git-send-email-pchiu@nvidia.com> <1396967422-6018-6-git-send-email-pchiu@nvidia.com>
+From: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [v2] media: soc-camera: OF cameras
+Date: Tue, 8 Apr 2014 19:00:47 -0700
+Message-ID: <CAK5ve-KuPJa6rBdYGvkuPyQU5TCiEe1t=PzEKN4NgsKgVWogqA@mail.gmail.com>
+References: <1392235552-28134-1-git-send-email-pengw@nvidia.com> <1394794130-13660-1-git-send-email-josh.wu@atmel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1396967422-6018-6-git-send-email-pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1394794130-13660-1-git-send-email-josh.wu-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Penny Chiu <pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Josh Wu <josh.wu-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>
+Cc: Guennadi Liakhovetski <g.liakhovetski-Mmb7MZpHnFY@public.gmane.org>, "linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/08/2014 08:30 AM, Penny Chiu wrote:
-> This feature reads the BCT data from BCT or BCT with bootloader
-> appended binary, updates the BCT data based on config file, then
-> writes to new image file.
+Thanks Josh, I think I will take you point and rework my patch again.
+But I need Guennadi's review firstly, Guennadi, could you please help
+to review it?
 
-> diff --git a/src/cbootimage.h b/src/cbootimage.h
+-Bryan
 
-> +#define NVBOOT_CONFIG_TABLE_SIZE_MAX 8192
-> +#define NVBOOT_CONFIG_TABLE_SIZE_T20 4080
-> +#define NVBOOT_CONFIG_TABLE_SIZE_T30 6128
-> +#define NVBOOT_CONFIG_TABLE_SIZE_T114 8192
-> +#define NVBOOT_CONFIG_TABLE_SIZE_T124 8192
-
-It might at least be nice in this series to add a compile-time-assert to
-nvboot_bct_tNN.h to validate that those sizes are OK
-
-> diff --git a/src/cbootimage.c b/src/cbootimage.c
-
-> @@ -190,18 +203,66 @@ main(int argc, char *argv[])
-
-> +		while (stats.st_size > offset) {
-> +			/* Read a block of data into memory */
-> +			if (read_from_image(context.input_image_filename, offset, bct_size,
-> +					&data_block, &actual_size, file_type_bct)) {
-...
-> +			offset += bct_size;
-> +		}
-
-I don't think that handles multiple bootloaders in the image correctly.
-bct_size isn't always aligned to the block size of the memory device,
-whereas copies of the BCT are. This probably won't be an issue for
-Tegra114/124, but for Tegra20/30, the code needs to read the memory
-block by block, rather than in BCT-sized chunks.
-
-I'd be fine for now with doing one of the following if determining the
-real memory block size is too complicated:
-
-a) Disallow -u on Tegra20/30 (or even anything other than Tegra124).
-
-b) Always read 8KB chunks, since that is the nearest power of 2 above
-the BCT size on all platforms.
-
-Related, what happens in the memory block size is less than the size of
-a BCT; the code really should read a BCT's worth of data (e.g. 8KB)
-starting at each block-sized offset into the file (e.g. 2KB). That's why
-I originally suggested reading the entire image into memory (or mmap'ing
-it) and updating it in one pass, since that decouples the file IO from
-locating the BCTs within the image. Still, we can fix this up later.
-
-> diff --git a/src/data_layout.c b/src/data_layout.c
-
->  read_bct_file(struct build_image_context_rec *context)
->  {
->  	u_int8_t  *bct_storage; /* Holds the Bl after reading */
-> -	u_int32_t  bct_actual_size; /* In bytes */
-> +	u_int32_t bct_actual_size; /* In bytes */
-
-That seems like an unrelated change.
-
-> +int write_data_block(FILE *fp, u_int32_t offset, u_int32_t size, u_int8_t *buffer)
-> +{
-> +	if (fseek(fp, offset, 0))
-> +		return -1;
-> +
-> +	fwrite(buffer, 1, size, fp);
-> +	return 0;
-> +}
-
-It'd be nice to validate that fwrite() was successful. return fwrite(...);?
-
-> +int get_bct_size_from_image(build_image_context *context)
-> +{
-> +	u_int8_t buffer[NVBOOT_CONFIG_TABLE_SIZE_MAX];
-> +	u_int32_t bct_size = 0;
-> +	FILE *fp;
-> +
-> +	fp = fopen(context->input_image_filename, "r");
-> +	if (!fp)
-> +		return ENODATA;
-> +
-> +	if (fread(buffer, 1, NVBOOT_CONFIG_TABLE_SIZE_MAX, fp)) {
-
-Error-handling for read() would be nice here too.
+On Fri, Mar 14, 2014 at 3:48 AM, Josh Wu <josh.wu-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org> wrote:
+> Hi, Brayn
+>
+> Sorry for the format of my email. I subscribe the linux-media maillist but
+> I didn't find your email in my mailbox even. I don't know why some emails are
+> missed.
+>
+> anyway, Some comments for your patch.
+>
+>> [snip]
+>
+>> ... ...
+>
+>> +static void scan_of_host(struct soc_camera_host *ici)
+>> +{
+>> +       struct soc_camera_of_client *sofc;
+>> +       struct soc_camera_async_client *sasc;
+>> +       struct v4l2_async_subdev *asd;
+>> +       struct soc_camera_device *icd;
+>> +       struct device_node *node = NULL;
+>> +
+>> +       for (;;) {
+>> +               int ret;
+>> +
+>> +               node = v4l2_of_get_next_endpoint(ici->v4l2_dev.dev->of_node,
+>> +                                              node);
+>> +               if (!node)
+>> +                       break;
+>> +
+>> +               sofc = soc_camera_of_alloc_client(ici, node);
+>> +               if (!sofc) {
+>> +                       dev_err(ici->v4l2_dev.dev,
+>> +                               "%s(): failed to create a client device\n",
+>> +                               __func__);
+>> +                       of_node_put(node);
+>> +                       break;
+>> +               }
+>> +               v4l2_of_parse_endpoint(node, &sofc->node);
+>> +
+>> +               sasc = &sofc->sasc;
+>> +               ret = platform_device_add(sasc->pdev);
+>> +               if (ret < 0) {
+>> +                       /* Useless thing, but keep trying */
+>> +                       platform_device_put(sasc->pdev);
+>> +                       of_node_put(node);
+>> +                       continue;
+>> +               }
+>> +
+>> +               /* soc_camera_pdrv_probe() probed successfully */
+>> +               icd = platform_get_drvdata(sasc->pdev);
+>> +               if (!icd) {
+>> +                       /* Cannot be... */
+>> +                       platform_device_put(sasc->pdev);
+>> +                       of_node_put(node);
+>> +                       continue;
+>> +               }
+>> +
+>> +               asd = sasc->sensor;
+>> +               asd->match_type = V4L2_ASYNC_MATCH_OF;
+>> +               asd->match.of.node = sofc->link_node;
+>> +
+>> +               sasc->notifier.subdevs = &asd;
+>> +               sasc->notifier.num_subdevs = 1;
+>> +               sasc->notifier.bound = soc_camera_async_bound;
+>> +               sasc->notifier.unbind = soc_camera_async_unbind;
+>> +               sasc->notifier.complete = soc_camera_async_complete;
+>> +
+>> +               icd->parent = ici->v4l2_dev.dev;
+>
+> Before register the notifier, you need also register a "mclk" v4l2 clock.
+> This clock is needed when the soc-camera i2c sensor driver is probed. Otherwise the
+> sensor will always defer the probe and can not probe.
+>
+> Best Regards,
+> Josh Wu
+>
+>> +
+>> +               ret = v4l2_async_notifier_register(&ici->v4l2_dev, &sasc->notifier);
+>> +               if (!ret)
+>> +                       break;
+>> +
+>> +               /*
+>> +                * We could destroy the icd in there error case here, but the
+>> +                * non-OF version doesn't do that, so, we can keep it around too
+>> +                */
+>> +       }
+>> +}
+>
+>> [snip]
