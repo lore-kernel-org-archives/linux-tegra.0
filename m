@@ -1,71 +1,79 @@
-From: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH 1/2] usb: rename 'phy' field of 'struct usb_hcd' to 'transceiver'
-Date: Thu, 10 Apr 2014 16:40:39 +0400
-Message-ID: <53469147.50802@cogentembedded.com>
-References: <Pine.LNX.4.44L0.1404091354560.28384-100000@netrider.rowland.org> <53458E95.4080505@cogentembedded.com> <534598EF.3010102@wwwdotorg.org> <53459A48.1010003@cogentembedded.com> <063D6719AE5E284EB5DD2968C1650D6D0F6F43C3@AcuExch.aculab.com> <53467720.8000400@cogentembedded.com> <534679F1.3050607@codethink.co.uk> <063D6719AE5E284EB5DD2968C1650D6D0F6F44A4@AcuExch.aculab.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V3 4/5] mfd: palmas: support IRQ inversion at the board
+ level
+Date: Thu, 10 Apr 2014 09:42:23 -0600
+Message-ID: <5346BBDF.4050901@wwwdotorg.org>
+References: <1393876300-3061-1-git-send-email-swarren@wwwdotorg.org> <1393876300-3061-4-git-send-email-swarren@wwwdotorg.org> <CAAVeFuJY67zdoHiZufxDbkaw=xt8YwxyDAwHW_T7UZeSOt35NA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <063D6719AE5E284EB5DD2968C1650D6D0F6F44A4-VkEWCZq2GCInGFn1LkZF6NBPR1lH4CV8@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: David Laight <David.Laight-ZS65k/vG3HxXrIkS9f7CXA@public.gmane.org>, 'Ben Dooks' <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Cc: "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Peter.Chen-KZfg59tc24xl57MIdRCFDg@public.gmane.org" <Peter.Chen-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAAVeFuJY67zdoHiZufxDbkaw=xt8YwxyDAwHW_T7UZeSOt35NA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10-04-2014 15:14, David Laight wrote:
+On 04/10/2014 01:04 AM, Alexandre Courbot wrote:
+> Stephen, any news about this patch? I'm waiting for it to be merged in
+> order to resend some Tegra DTs, but still cannot see it in -next.
 
->>>>>       It doesn't do any pin muxing. It switches SoC internal USB
->>>>> signals between
->>>>> USB controllers. The pins remain the same.
+To be honest, this became too painful to work on just to fix a warning
+at boot which has no practical side-effect in our case. The best thing
+to do is just merge your DTs for 3.16, and keep ignoring the warning
+just like we always have on Dalmore. Hopefully at some point I (or
+someone) will run out of higher priority work items and get back to this.
 
->>>> Doesn't something like that already happen for the companion USB1
->>>> controllers for USB2 ports?
-
->>>      Did you mean USB 1.1 and USB 2.0 controllers by USB1 and USB2?
-
-> Yes.
-
-> Why do you care which USB controller is driving the pins?
-
-    Because the controllers the driver switches between are not companions.
-The multiplexing is between PCI EHCI/OHCI and Renesas USBHS (high speed device 
-controller in this case) controllers on port 0 and between PCI EHCI/OHCI and 
-non-PCI xHCI controller on port 2.
-
->>>> That also doesn't sound like you are changing the PHY.
-
->>>      I am changing one of the PHY registers that controls USB port
->>> (Renesas calls it channel) multiplexing.
-
->>>> I'd have thought that would happen if you had a single controller
->>>> that select between multiply PHY.
-
->>>      No, it's not the case.
-
-> I realised that wasn't what you were doing, but at first it did seem
-> to be what you were doing.
-
-    The PHY really does belong to the USBHS controller but that multiplexing 
-register inside it controls routing of the ports 0 and 2; USBHS itself is on 
-port 0.
-
->> There is an interesting case, the USB3 shares a PHY with a SATA
->> and the PCIE and SATA also share a PHY on the R8A7790.
-
-> Some of those look like pcb design decisions - so there is no dynamic
-> changing, just config time plumbing.
-
-    No, there are also host/device mode DIP switches on the boards which 
-control port 0 signals (and the port 0 connector is micro-AB, so both a host 
-and device can be connected). The second board also has OTG chip on port 0 
-thru which USB ID pin can be read from the micro-AB connector.
-
-> 	David
-
-WBR, Sergei
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Thanks,
+> Alex.
+> 
+> On Tue, Mar 4, 2014 at 4:51 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>
+>> Implement the new DT property ti,irq-externally-inverted, and add an
+>> equivalent platform data field to match. This allows the driver to
+>> correctly automatically configure the IRQ output polarity when the board
+>> or SoC contains an inverter between the Palmas IRQ output and IRQ
+>> controller input.
+>>
+>> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>> v3:
+>> * Use an IRQD flag to represent the data, rather than a custom DT property.
+>> v2:
+>> * Split V1's patch 1/2 into separate patches 1/3 and 2/3.
+>> ---
+>>  drivers/mfd/palmas.c | 5 ++++-
+>>  1 file changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/mfd/palmas.c b/drivers/mfd/palmas.c
+>> index d280d789e55a..3281d4103e9d 100644
+>> --- a/drivers/mfd/palmas.c
+>> +++ b/drivers/mfd/palmas.c
+>> @@ -292,7 +292,8 @@ static int palmas_set_pdata_irq_flag(struct i2c_client *i2c,
+>>                 return -EINVAL;
+>>         }
+>>
+>> -       pdata->irq_flags = irqd_get_trigger_type(irq_data);
+>> +       pdata->irq_flags = irqd_get_trigger_type(irq_data) |
+>> +                          irqd_get_src_dst_inverted(irq_data);
+>>         dev_info(&i2c->dev, "Irq flag is 0x%08x\n", pdata->irq_flags);
+>>         return 0;
+>>  }
+>> @@ -447,6 +448,8 @@ static int palmas_i2c_probe(struct i2c_client *i2c,
+>>                 reg = PALMAS_POLARITY_CTRL_INT_POLARITY;
+>>         else
+>>                 reg = 0;
+>> +       if (pdata->irq_flags & IRQ_SRC_DST_INVERTED)
+>> +               reg ^= PALMAS_POLARITY_CTRL_INT_POLARITY;
+>>         ret = palmas_update_bits(palmas, PALMAS_PU_PD_OD_BASE,
+>>                         PALMAS_POLARITY_CTRL, PALMAS_POLARITY_CTRL_INT_POLARITY,
+>>                         reg);
+>> --
+>> 1.8.1.5
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+>> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
