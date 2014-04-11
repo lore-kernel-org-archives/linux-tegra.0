@@ -1,49 +1,86 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: Oops on Tegra30 with CPU Process: 1
-Date: Fri, 11 Apr 2014 10:14:58 -0600
-Message-ID: <53481502.60004@wwwdotorg.org>
-References: <53440884.7010304@ziswiler.com>
+From: Srikanth Thokala <sriku.linux@gmail.com>
+Subject: Re: [PATCH v2 2/6] PCI: tegra: use new OF interrupt mapping when possible
+Date: Fri, 11 Apr 2014 23:10:59 +0530
+Message-ID: <CA+mB=1JCjDMzTuctvSQgjNhBnkyUPC2ooAzJOX_PC5L1gAau8w@mail.gmail.com>
+References: <1394025951-32438-1-git-send-email-l.stach@pengutronix.de>
+	<1394025951-32438-3-git-send-email-l.stach@pengutronix.de>
+	<5318B232.2020507@wwwdotorg.org>
+	<1394127555.4582.1.camel@weser.hi.pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53440884.7010304-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <1394127555.4582.1.camel@weser.hi.pengutronix.de>
+Sender: linux-pci-owner@vger.kernel.org
+To: Lucas Stach <l.stach@pengutronix.de>, Tanmay Inamdar <tinamdar@apm.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-sh@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, devicetree@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Bjorn Helgaas <bhelgaas@google.com>, Simon Horman <horms@verge.net.au>, Shawn Guo <shawn.guo@linaro.org>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Arnd Bergmann <arnd@arndb.de>, kernel@pengutronix.de
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/08/2014 08:32 AM, Marcel Ziswiler wrote:
-> Hi there
-> 
-> I have the following Toradex Colibri T30 modules with different ATE prog
-> versions, Tegra30 SKUs as well as CPU process numbers:
-> 
-> Colibri T30 V1.1B (working)
-> 
-> [    0.000000] fuse_speedo_calib: ATE prog ver 3.6
-> [    0.000000] Tegra30: CPU Speedo ID 2, Soc Speedo ID 2
-> [    0.000000] Tegra Revision: A03 SKU: 129 CPU Process: 2 Core Process: 0
-> 
-> Colibri T30 V1.1C (below crash)
-> 
-> [    0.000000] fuse_speedo_calib: ATE prog ver 3.7
-> [    0.000000] Tegra30: CPU Speedo ID 2, Soc Speedo ID 2
-> [    0.000000] Tegra Revision: A03 SKU: 129 CPU Process: 1 Core Process: 0
+Hi Lucas/Tanmay,
 
-That's unfortunate. Just so you know the reason for the delay in
-responding, I'm trying to do some research to find out the issue.
+On Thu, Mar 6, 2014 at 11:09 PM, Lucas Stach <l.stach@pengutronix.de> wrote:
+> Am Donnerstag, den 06.03.2014, 10:36 -0700 schrieb Stephen Warren:
+>> On 03/05/2014 06:25 AM, Lucas Stach wrote:
+>> > This is the recommended method of doing the IRQ
+>> > mapping. For old devicetrees we fall back to the
+>> > previous practice.
+>>
+>> Tested-by: Stephen Warren <swarren@nvidia.com>
+>>
+>> I tested both with and without patch 1/6, and the PCIe-based NIC on
+>> Beaver worked fine either way. Without patch 1/6, I do see:
+>>
+>> pci 0000:00:01.0: of_irq_parse_pci() failed with rc=-22
+>>
+>> ... but that seems reasonable given that the DT that of_irq_parse_pci()
+>> parses is missing, and did correctly trigger the fallback path, so
+>> everything still worked.
+>
+> Yes, this should be normal. It spits this error for old DTs, but keeps
+> doing the right thing. I'm not sure if we should downgrade this to info
+> or dbg.
 
-...
-> What exactly do those SoC speedo, CPU process and core process numbers
-> indicate?
+I see this error too on my setup (Xilinx PCIe Root Complex Driver),
+https://lkml.org/lkml/2014/3/3/183
 
-The SKU, speedo and process information all together allows us to
-determine min/max limits for the various CPU/SoC voltage rails, and
-frequencies at which those domains can operate. It's possible that the
-voltages/frequencies set up/used by mainline U-Boot and/or kernel work
-fine for some chips but not others. At present, we don't do anything
-different for different SKUs or process IDs, and hence hopefully in
-mainline, we chose lowest-common-denominator values that should work
-across all chips. I'm trying to research what the limits are, and find
-out if this is actually the case. This may take some time.
+After digging into it, I see I need to override the API
+pcibios_get_phb_of_node()
+to pass my device node.  Is this the only possible way?
+
+From the discussion in this thread, I feel am missing something in the dt node.
+Below is my dt node, please let me know if you see any issues.
+
++++++++++++++++++++++++
+pcie{
+   reg = <XXXX>;
+   ranges = <YYYY>;
+   interrupts = <0 52 4>;
+
+   pcie_intc: interrupt-controller {
+       interrupt-controller;
+       #address-cells = <0>;
+       #interrupt-cells = <1>;
+   }
+
+   interrupt-map-mask = <0 0 0 7>;
+   interrupt-map = <0 0 0 1 &pcie_intc 1>,
+                          <0 0 0 2 &pcie_intc 2>,
+                          <0 0 0 3 &pcie_intc 3>,
+                          <0 0 0 4 &pcie_intc 4>;
+};
+
+Thanks in advance,
+Srikanth.
+
+>
+> Regards,
+> Lucas
+> --
+> Pengutronix e.K.                           | Lucas Stach                 |
+> Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+> Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-5076 |
+> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-pci" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
