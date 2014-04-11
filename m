@@ -1,39 +1,23 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH] ARM: tegra: replace IS_ERR and PTR_ERR with PTR_ERR_OR_ZERO
-Date: Fri, 11 Apr 2014 09:46:37 -0600
-Message-ID: <53480E5D.1060809@wwwdotorg.org>
-References: <1397203000-16586-1-git-send-email-duanj.fnst@cn.fujitsu.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] drm/tegra: replace IS_ERR and PTR_ERR with PTR_ERR_OR_ZERO
+Date: Fri, 11 Apr 2014 09:48:00 -0600
+Message-ID: <53480EB0.6050606@wwwdotorg.org>
+References: <1397205401-24148-1-git-send-email-duanj.fnst@cn.fujitsu.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <1397203000-16586-1-git-send-email-duanj.fnst@cn.fujitsu.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Duan Jiong <duanj.fnst@cn.fujitsu.com>, thierry.reding@gmail.com, bhelgaas@google.com
-Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1397205401-24148-1-git-send-email-duanj.fnst-BthXqXjhjHXQFUHtdCDX3A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Duan Jiong <duanj.fnst-BthXqXjhjHXQFUHtdCDX3A@public.gmane.org>, airlied-cv59FeDIM0c@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/11/2014 01:56 AM, Duan Jiong wrote:
+On 04/11/2014 02:36 AM, Duan Jiong wrote:
 > This patch fixes coccinelle error regarding usage of IS_ERR and
 > PTR_ERR instead of PTR_ERR_OR_ZERO.
 
-> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+Same comment as the other patch; I prefer the existing code (although
+I'll defer to Thierry as maintainer of both these pieces of code).
 
-> @@ -1024,10 +1024,7 @@ static int tegra_pcie_resets_get(struct tegra_pcie *pcie)
->  		return PTR_ERR(pcie->afi_rst);
->  
->  	pcie->pcie_xrst = devm_reset_control_get(pcie->dev, "pcie_x");
-> -	if (IS_ERR(pcie->pcie_xrst))
-> -		return PTR_ERR(pcie->pcie_xrst);
-> -
-> -	return 0;
-> +	return PTR_ERR_OR_ZERO(pcie->pcie_xrst);
->  }
-
-To be honest, I prefer the existing code. If we needed to add some more
-code between the call to devm_reset_control_get() and the return
-statement, the diff would be much cleaner if the error-handling path and
-the regular return path were kept separate, as they are today.
-
-Why is coccinelle throwing an error? The compiler likely makes identical
-code for both source representations.
+It would help if the commit description quoted the coccinelle error.
