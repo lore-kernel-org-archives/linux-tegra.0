@@ -1,47 +1,100 @@
-From: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
-Subject: Re: [PATCH v2 2/6] PCI: tegra: use new OF interrupt mapping when
- possible
-Date: Fri, 11 Apr 2014 14:41:41 -0600
-Message-ID: <20140411204140.GA8967@obsidianresearch.com>
-References: <1394025951-32438-1-git-send-email-l.stach@pengutronix.de>
- <1394025951-32438-3-git-send-email-l.stach@pengutronix.de>
- <5318B232.2020507@wwwdotorg.org>
- <1394127555.4582.1.camel@weser.hi.pengutronix.de>
- <CA+mB=1JCjDMzTuctvSQgjNhBnkyUPC2ooAzJOX_PC5L1gAau8w@mail.gmail.com>
+From: Ben Skeggs <skeggsb@gmail.com>
+Subject: Re: [PATCH 02/12] drm/nouveau/timer: skip calibration on GK20A
+Date: Mon, 14 Apr 2014 18:35:35 +1000
+Message-ID: <CACAvsv7gsRrXAk-=M08hjvhrRWvi80wrgRAp1M5T66zMa5ydtA@mail.gmail.com>
+References: <1395650554-31925-1-git-send-email-acourbot@nvidia.com>
+ <1395650554-31925-3-git-send-email-acourbot@nvidia.com>
+ <20140324215408.GB17218@mithrandir>
+ <CACAvsv54BF3cD6y59=kQ=1j-S9tGixTz_J3gx2mbOEkB2eQ4cA@mail.gmail.com>
+ <CAAVeFuK-6RAfmZ8Zi3+bX_ibmPxPKEy7oT9YiLJWXpLMx3PsFw@mail.gmail.com>
+ <CACAvsv7Z7OfEx89FYm1F_+Lpb2q33Ay3zph3nRdNCj3PO=vR8w@mail.gmail.com>
+ <53479B08.80104@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CA+mB=1JCjDMzTuctvSQgjNhBnkyUPC2ooAzJOX_PC5L1gAau8w@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Srikanth Thokala <sriku.linux@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>, Tanmay Inamdar <tinamdar@apm.com>, devicetree@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de, Arnd Bergmann <arnd@arndb.de>, linux-sh@vger.kernel.org, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Bjorn Helgaas <bhelgaas@google.com>, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Ben Dooks <ben-linux@fluff.org>, linux-tegra@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <53479B08.80104@nvidia.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ben Skeggs <bskeggs@redhat.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Apr 11, 2014 at 11:10:59PM +0530, Srikanth Thokala wrote:
+On Fri, Apr 11, 2014 at 5:34 PM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+> On 04/11/2014 04:31 PM, Ben Skeggs wrote:
+>>
+>> On Fri, Apr 11, 2014 at 12:46 PM, Alexandre Courbot <gnurou@gmail.com>
+>> wrote:
+>>>
+>>> On Wed, Mar 26, 2014 at 1:19 PM, Ben Skeggs <skeggsb@gmail.com> wrote:
+>>>>
+>>>> On Tue, Mar 25, 2014 at 7:54 AM, Thierry Reding
+>>>> <thierry.reding@gmail.com> wrote:
+>>>>>
+>>>>> On Mon, Mar 24, 2014 at 05:42:24PM +0900, Alexandre Courbot wrote:
+>>>>>>
+>>>>>> GK20A's timer is directly attached to the system timer and cannot be
+>>>>>> calibrated. Skip the calibration phase on that chip since the
+>>>>>> corresponding registers do not exist.
+>>>>>>
+>>>>>> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+>>>>>> ---
+>>>>>>   drivers/gpu/drm/nouveau/core/subdev/timer/nv04.c | 19
+>>>>>> +++++++++++++------
+>>>>>>   1 file changed, 13 insertions(+), 6 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/gpu/drm/nouveau/core/subdev/timer/nv04.c
+>>>>>> b/drivers/gpu/drm/nouveau/core/subdev/timer/nv04.c
+>>>>>> index c0bdd10358d7..822fe0d8a871 100644
+>>>>>> --- a/drivers/gpu/drm/nouveau/core/subdev/timer/nv04.c
+>>>>>> +++ b/drivers/gpu/drm/nouveau/core/subdev/timer/nv04.c
+>>>>>> @@ -185,6 +185,10 @@ nv04_timer_init(struct nouveau_object *object)
+>>>>>>        if (ret)
+>>>>>>                return ret;
+>>>>>>
+>>>>>> +     /* gk20a does not have the calibration registers */
+>>>>>> +     if (device->chipset == 0xea)
+>>>>>> +             goto skip_clk_init;
+>>>>>
+>>>>>
+>>>>> I'm concerned that this won't scale in the future. Perhaps a better
+>>>>> solution would be to add a "flags" or "features" field to struct
+>>>>> nouveau_device along with feature bits such as HAS_CALIBRATION or
+>>>>> similar.
+>>>>>
+>>>>> That way we don't have to touch this code for every new future Tegra
+>>>>> chip. Unless perhaps if there's a reason to expect things to change in
+>>>>> newer generations.
+>>>>
+>>>> I've already handled this in a slightly different way in the tree I'd
+>>>> previously pointed Alex at (I think!), as I needed to do the same for
+>>>> GM107.
+>>>>
+>>>> Should just be able to use that implementation (so, just change the
+>>>> probe patch) here too.
+>>>
+>>>
+>>> I will skip this patch and use your implementation then. Btw,
+>>> shouldn't the source file for the GK20A implementation be named nvea.c
+>>> instead of gk20a.c?
+>>
+>> For the Maxwell stuff I've been using "gm107" now too.  Since we're
+>> working with you guys these days it seems better to use the same names
+>> for things ;)
+>
+>
+> So would you like us to use the same naming scheme as well? So far all my
+> patches use "nvea.c" whenever I need to add code.
+If it's not too much of a problem at this point, then that'd be good.
+Right before I send -next for the next merge window I'll likely do a
+mass rename anyway, so if we can get your patches merged before then
+(which would be really good!), it doesn't matter much.
 
-> I see this error too on my setup (Xilinx PCIe Root Complex Driver),
-> https://lkml.org/lkml/2014/3/3/183
-
-> After digging into it, I see I need to override the API
-> pcibios_get_phb_of_node()
-
-No, as I pointed out before, the DT node comes in through
-pci_scan_root_bus:
-
-+static struct pci_bus __init *xilinx_pcie_scan_bus(int nr,
-+				struct pci_sys_data *sys)
-+{
-+	struct xilinx_pcie_port *port = sys_to_pcie(sys);
-+	struct pci_bus *bus;
-+
-+	if (port) {
-+		port->root_busno = sys->busnr;
-+		bus = pci_scan_root_bus(NULL, sys->busnr, &xilinx_pcie_ops,
-                                       ^^^^^^
-
-You can't pass NULL here and have DT work properly. 
-
-See http://www.spinics.net/lists/arm-kernel/msg312392.html
-
-Jason
+Ben.
