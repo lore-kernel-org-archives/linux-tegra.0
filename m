@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Subject: Re: [cbootimage PATCH V3 0/7] Re-enable jtag function for Tegra124
-Date: Tue, 15 Apr 2014 11:48:01 -0600
-Message-ID: <534D70D1.3060308@wwwdotorg.org>
+Date: Tue, 15 Apr 2014 12:16:15 -0600
+Message-ID: <534D776F.2000601@wwwdotorg.org>
 References: <1397209843-31275-1-git-send-email-pchiu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
@@ -23,13 +23,8 @@ On 04/11/2014 03:50 AM, Penny Chiu wrote:
 > After applying these changes, cbootimage can access jtag control and chip uid
 > fields. It can also read the BCT data from pre-built image, update the BCT
 > configs based on config file, and generate a new image file.
-> 
-> Changes from V2:
->  - Improvement based on V2 reviewed comments.
->  - Disallow the update image feature for T20/T30.
 
-The changelog would be a bit more useful if it enumerated the changes
-that were made; that first bullet point basically says "something
-changed". Also, putting changelogs into the individual patches would be
-useful; reviewers can skim patches where nothing changed, if they
-reviewed the previous version.
+Thanks for the revisions. I have applied the whole series, and pushed it
+to github.
+
+Do you need a tagged release created?
