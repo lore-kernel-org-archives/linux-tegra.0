@@ -1,37 +1,35 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: tegra: add Jetson TK1 device tree
-Date: Tue, 15 Apr 2014 14:47:29 -0600
-Message-ID: <534D9AE1.1010602@wwwdotorg.org>
-References: <1395769399-8357-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH] ARM: tegra: define Jetson TK1 regulators
+Date: Tue, 15 Apr 2014 14:47:51 -0600
+Message-ID: <534D9AF7.6030903@wwwdotorg.org>
+References: <1397516120-18220-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1395769399-8357-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1397516120-18220-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/25/2014 11:43 AM, Stephen Warren wrote:
+On 04/14/2014 04:55 PM, Stephen Warren wrote:
 > From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> Jetson TK1 is an NVIDIA Tegra124 development board, containing Tegra124,
-> 2GB RAM, eMMC, SD card, SPI flash, serial port, PCIe Ethernet, HDMI,
-> audio, mini PCIe, JTAG, SATA, and an expansion IO connector containing
-> GPIOs, I2C, SPI, CSI, eDP, etc.
+> These are mostly identical to the Venice2 regulator definitions, since
+> the board designs are very similar. Differences are:
 > 
-> The following features work with this device tree: UART, SD card, eMMC,
-> SPI flash, USB (full-size jack, and mini-PCIe), audio, AS3722 RTC, system
-> power-off, suspend/resume (LP1) with wake via RTC alarm.
-> 
-> The following features should work with this device tree, but are not
-> validated: Expansion I2C, expansion SPI, expansion GPIO, gpio-key for the
-> power button.
-> 
-> The following features are not yet implemented in this device tree: Most
-> voltage regulators, expansion UART, HDMI, eDP, PCIe (Ethernet, and mini-
-> PCIe connector), CSI, SATA.
+> - Jetson TK1 doesn't have a built-in LCD panel, so on-board regulators
+>   are not present for the backlight, touchscreen, or panel.
+> - +3.3V_RUN needs to be boot-on/always-on, since it's widely used. This
+>   change should likely be propagated to Venice2 for completeness,
+>   although it will have no practical effect there since various other
+>   regulators use +3.3V_RUN as their supply and are always-on.
+> - +3.3V_LP0 needs to be boot-on as well as always-on. One reason
+>   is because it's used to driver the UART level-shifter; without this, I
+>   see a brief period of UART corruption during cold boots.I suspect this
+>   change needs to be propagated to Venice2, and we simply haven't noticed
+>   the need since there's no UART level-shifter on Venice2.
+> - A few rails have different names in the schematics.
 
-I have applied these, patch 1/2 to Tegra's for-3.16/dt branch, and patch
-2/2 to Tegra's for-3.16/defconfig branch.
+I have applied this to Tegra's for-3.16/dt branch.
