@@ -1,38 +1,37 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: multi_v7: enable AT24C EEPROM driver
-Date: Tue, 15 Apr 2014 15:10:27 -0600
-Message-ID: <1397596227-23174-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH] ARM: tegra: make Venice's +3.3V_RUN regulator always on
+Date: Tue, 15 Apr 2014 16:29:44 -0600
+Message-ID: <1397600984-25198-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-This is used for the board ID EEPROM on Jetson TK1, as well as likely
-a whole slew of other NVIDIA reference boards; we simply haven't added
-enabled the EEPROM in the DT files until now.
+This regulator supplies power to pretty much everything on the board, so
+it doesn't make sense to allow it to turn off. Mark it boot-on and
+always-on so it doesn't get turned off. Without this, I see issues with
+the eMMC device; it can't be correctly detected during boot.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-I assume that updates to this file should go through arm-soc to minimize
-conflicts.
+ arch/arm/boot/dts/tegra124-venice2.dts | 2 ++
+ 1 file changed, 2 insertions(+)
 
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index d4e8a47a2f7c..a692b7ae3bd1 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -112,6 +112,7 @@ CONFIG_BLK_DEV_LOOP=y
- CONFIG_ICS932S401=y
- CONFIG_APDS9802ALS=y
- CONFIG_ISL29003=y
-+CONFIG_EEPROM_AT24=y
- CONFIG_BLK_DEV_SD=y
- CONFIG_BLK_DEV_SR=y
- CONFIG_SCSI_MULTI_LUN=y
+diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
+index c17283c04598..87537f499875 100644
+--- a/arch/arm/boot/dts/tegra124-venice2.dts
++++ b/arch/arm/boot/dts/tegra124-venice2.dts
+@@ -1060,6 +1060,8 @@
+ 			regulator-name = "+3.3V_RUN";
+ 			regulator-min-microvolt = <3300000>;
+ 			regulator-max-microvolt = <3300000>;
++			regulator-always-on;
++			regulator-boot-on;
+ 			gpio = <&pmic 1 GPIO_ACTIVE_HIGH>;
+ 			enable-active-high;
+ 			vin-supply = <&vdd_3v3_sys>;
 -- 
 1.8.1.5
