@@ -1,32 +1,37 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 3/4] mmc: sdhci: defer probing on
-	regulator_get_optional() failures
-Date: Tue, 15 Apr 2014 21:42:01 +0100
-Message-ID: <20140415204201.GW24070@n2100.arm.linux.org.uk>
-References: <1397526163-20126-1-git-send-email-abrestic@chromium.org> <1397526163-20126-4-git-send-email-abrestic@chromium.org> <534D7A5D.9090707@wwwdotorg.org> <CAL1qeaEGpz-9rOtp4fAHFz8KG2fCscFsqu1tbi2d9mxTM8yHQQ@mail.gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: tegra: add Jetson TK1 device tree
+Date: Tue, 15 Apr 2014 14:47:29 -0600
+Message-ID: <534D9AE1.1010602@wwwdotorg.org>
+References: <1395769399-8357-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAL1qeaEGpz-9rOtp4fAHFz8KG2fCscFsqu1tbi2d9mxTM8yHQQ@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Andrew Bresticker <abrestic@chromium.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Ulf Hansson <ulf.hansson@linaro.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1395769399-8357-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Apr 15, 2014 at 12:59:37PM -0700, Andrew Bresticker wrote:
-> I believe the crash Alex is seeing is due to a race between tearing
-> down the sdhci driver on probe deferral and the card-detect IRQ.
-> Looking at it now.
+On 03/25/2014 11:43 AM, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Jetson TK1 is an NVIDIA Tegra124 development board, containing Tegra124,
+> 2GB RAM, eMMC, SD card, SPI flash, serial port, PCIe Ethernet, HDMI,
+> audio, mini PCIe, JTAG, SATA, and an expansion IO connector containing
+> GPIOs, I2C, SPI, CSI, eDP, etc.
+> 
+> The following features work with this device tree: UART, SD card, eMMC,
+> SPI flash, USB (full-size jack, and mini-PCIe), audio, AS3722 RTC, system
+> power-off, suspend/resume (LP1) with wake via RTC alarm.
+> 
+> The following features should work with this device tree, but are not
+> validated: Expansion I2C, expansion SPI, expansion GPIO, gpio-key for the
+> power button.
+> 
+> The following features are not yet implemented in this device tree: Most
+> voltage regulators, expansion UART, HDMI, eDP, PCIe (Ethernet, and mini-
+> PCIe connector), CSI, SATA.
 
-You probably want to check out my massive sdhci patch set posted a
-while back.
-
-http://www.spinics.net/lists/linux-mmc/msg25031.html
-
-I'll re-post it again soon (probably next week as I'm rather busy),
-updated to v3.15-rc1.
-
--- 
-FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
-improving, and getting towards what was expected from it.
+I have applied these, patch 1/2 to Tegra's for-3.16/dt branch, and patch
+2/2 to Tegra's for-3.16/defconfig branch.
