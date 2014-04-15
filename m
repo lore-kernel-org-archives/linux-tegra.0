@@ -1,24 +1,36 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra124: Enable hda to hdmi clocks
-Date: Tue, 15 Apr 2014 12:19:06 -0600
-Message-ID: <534D781A.90508@wwwdotorg.org>
-References: <1396984629-14101-1-git-send-email-dgreid@chromium.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 2/4] mmc: tegra: fix reporting of base clock frequency
+Date: Tue, 15 Apr 2014 12:25:01 -0600
+Message-ID: <534D797D.7030201@wwwdotorg.org>
+References: <1397526163-20126-1-git-send-email-abrestic@chromium.org> <1397526163-20126-3-git-send-email-abrestic@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1396984629-14101-1-git-send-email-dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, tiwai-l3A5Bk7waGM@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1397526163-20126-3-git-send-email-abrestic@chromium.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Andrew Bresticker <abrestic@chromium.org>, Thierry Reding <thierry.reding@gmail.com>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/08/2014 01:17 PM, Dylan Reid wrote:
-> Add the clocks used for HDMI audio played through the HDA controller.
-> Initialize the codec clock to 48Mhz and the HDA clock to 102MHz per
-> the TRM.
+On 04/14/2014 07:42 PM, Andrew Bresticker wrote:
+> Tegra SDHCI controllers, by default, report a base clock frequency
+> of 208Mhz in SDHCI_CAPABILTIES which may or may not be equal to the
+> actual base clock frequency.
 
-This patch seems fine to me. Peter, I assume you'll apply this and
-eventually sent a pull request to Mike.
+Some explanation of why this "may or may not be equal to the actual base
+clock frequency" would be nice.
 
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Presumably, it's because the clock frequency is supplied by the clock
+controller module, and configuring that happens externally to the SD
+controller, so the SD HW has no knowledge of the actual frequency, and
+hence simply reports a hard-coded maximum possible clock frequency?
+
+> While this can be overridden by setting
+> BASE_CLK_FREQ in VENDOR_CLOCK_CTRL on Tegra30 and later SoCs, just
+> set SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN and supply a get_max_clock()
+> callback to get the actual rate of the base clock.
+
+It's not clear to me from the function name that
+sdhci_pltfm_clk_get_max_clock() simply calls clk_get() on the actual
+clock. It might be nice to mention that in the commit description.
