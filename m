@@ -1,36 +1,34 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: make Venice's +3.3V_RUN regulator always
- on
-Date: Wed, 16 Apr 2014 10:20:09 -0600
-Message-ID: <534EADB9.1010605@wwwdotorg.org>
-References: <1397600984-25198-1-git-send-email-swarren@wwwdotorg.org> <CAL1qeaGek9H74s00T-O7P7F6Uraa9juW=3LCMjTUjCuQCZ0pBw@mail.gmail.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH] pinctrl: as3722: fix handling of GPIO invert bit
+Date: Wed, 16 Apr 2014 10:21:04 -0600
+Message-ID: <534EADF0.1020907@wwwdotorg.org>
+References: <1397611505-17917-1-git-send-email-abrestic@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAL1qeaGek9H74s00T-O7P7F6Uraa9juW=3LCMjTUjCuQCZ0pBw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1397611505-17917-1-git-send-email-abrestic@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Bresticker <abrestic@chromium.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/15/2014 06:54 PM, Andrew Bresticker wrote:
-> On Tue, Apr 15, 2014 at 3:29 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> This regulator supplies power to pretty much everything on the board, so
->> it doesn't make sense to allow it to turn off. Mark it boot-on and
->> always-on so it doesn't get turned off. Without this, I see issues with
->> the eMMC device; it can't be correctly detected during boot.
+On 04/15/2014 07:25 PM, Andrew Bresticker wrote:
+> The AS3722_GPIO_INV bit will always be blindly overwritten by
+> as3722_pinctrl_gpio_set_direction() and will be ignored when
+> setting the value of the GPIO in as3722_gpio_set() since the
+> enable_gpio_invert flag is never set.  This will cause an
+> initially inverted GPIO to toggle when requested as an output,
+> which could be problematic if, for example, the GPIO controls
+> a critical regulator.
 > 
-> This actually isn't a complete fix.  +3V3_RUN will still toggle on a
-> cold boot because the GPIO1_INVERT bit is initialized by the PMIC to
-> 1, but when the regulator core requests the GPIO as an output,
-> as3722_gpio_direction_output() first sets the output value to 1
-> (without considering the INVERT bit!) and then clears the invert bit
-> when setting the mode in as3722_pinctrl_gpio_set_direction().  The
-> as3722 driver should probably not touch the INVERT bit and instead
-> just take it into account when setting the GPIO value.
+> Instead of setting up the enable_gpio_invert flag, uust leave
+> the invert bit alone and check it before setting the GPIO value.
 
-I'll take that as a heads-up on the existence of the AS3722 GPIO patch,
-rather than an objection to this patch.
+Reviewed-by: Stephen Warren <swarren@nvidia.com>
+Tested-by: Stephen Warren <swarren@nvidia.com>
+
+(not with a 'scope or anything, but an affected system boots in a stable
+fashion with this applied)
+
+Should this be CC: stable?
