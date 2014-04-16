@@ -1,81 +1,100 @@
-From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH v2] pinctrl: as3722: fix handling of GPIO invert bit
-Date: Wed, 16 Apr 2014 13:40:17 -0700
-Message-ID: <1397680817-28470-1-git-send-email-abrestic@chromium.org>
-References: <1397611505-17917-1-git-send-email-abrestic@chromium.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1397611505-17917-1-git-send-email-abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+From: Andrew Bresticker <abrestic@chromium.org>
+Subject: [PATCH v2 1/3] mmc: tegra: disable UHS modes
+Date: Wed, 16 Apr 2014 16:08:37 -0700
+Message-ID: <1397689719-28882-2-git-send-email-abrestic@chromium.org>
+References: <1397526163-20126-1-git-send-email-abrestic@chromium.org>
+ <1397689719-28882-1-git-send-email-abrestic@chromium.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1397689719-28882-1-git-send-email-abrestic@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The AS3722_GPIO_INV bit will always be blindly overwritten by
-as3722_pinctrl_gpio_set_direction() and will be ignored when
-setting the value of the GPIO in as3722_gpio_set() since the
-enable_gpio_invert flag is never set.  This will cause an
-initially inverted GPIO to toggle when requested as an output,
-which could be problematic if, for example, the GPIO controls
-a critical regulator.
+Program TEGRA_SDHCI_VENDOR_MISC_CTRL so that UHS modes aren't advertised
+in SDHCI_CAPABILITIES_1.  While the Tegra SDHCI controller does support
+these modes, they require Tegra-specific tuning and calibration routines
+which the driver does not support yet.
 
-Instead of setting up the enable_gpio_invert flag, just leave
-the invert bit alone and check it before setting the GPIO value.
-
-Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org> # v3.14+
-Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
 ---
-Changes from v1:
- - fixed typo
+No changes from v1
 ---
- drivers/pinctrl/pinctrl-as3722.c | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+ drivers/mmc/host/sdhci-tegra.c | 30 +++++++++++++++++++++++-------
+ 1 file changed, 23 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-as3722.c b/drivers/pinctrl/pinctrl-as3722.c
-index 92ed4b2..c862f9c0 100644
---- a/drivers/pinctrl/pinctrl-as3722.c
-+++ b/drivers/pinctrl/pinctrl-as3722.c
-@@ -64,7 +64,6 @@ struct as3722_pin_function {
- };
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index a835898..3cadd9c 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -32,11 +32,17 @@
  
- struct as3722_gpio_pin_control {
--	bool enable_gpio_invert;
- 	unsigned mode_prop;
- 	int io_function;
- };
-@@ -320,10 +319,8 @@ static int as3722_pinctrl_gpio_set_direction(struct pinctrl_dev *pctldev,
- 		return mode;
- 	}
+ /* Tegra SDHOST controller vendor register definitions */
+ #define SDHCI_TEGRA_VENDOR_MISC_CTRL		0x120
++#define SDHCI_MISC_CTRL_ENABLE_SDR104		0x8
++#define SDHCI_MISC_CTRL_ENABLE_SDR50		0x10
+ #define SDHCI_MISC_CTRL_ENABLE_SDHCI_SPEC_300	0x20
++#define SDHCI_MISC_CTRL_ENABLE_DDR50		0x200
  
--	if (as_pci->gpio_control[offset].enable_gpio_invert)
--		mode |= AS3722_GPIO_INV;
+ #define NVQUIRK_FORCE_SDHCI_SPEC_200	BIT(0)
+ #define NVQUIRK_ENABLE_BLOCK_GAP_DET	BIT(1)
+ #define NVQUIRK_ENABLE_SDHCI_SPEC_300	BIT(2)
++#define NVQUIRK_DISABLE_SDR50		BIT(3)
++#define NVQUIRK_DISABLE_SDR104		BIT(4)
++#define NVQUIRK_DISABLE_DDR50		BIT(5)
+ 
+ struct sdhci_tegra_soc_data {
+ 	const struct sdhci_pltfm_data *pdata;
+@@ -113,18 +119,23 @@ static void tegra_sdhci_reset_exit(struct sdhci_host *host, u8 mask)
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+ 	struct sdhci_tegra *tegra_host = pltfm_host->priv;
+ 	const struct sdhci_tegra_soc_data *soc_data = tegra_host->soc_data;
++	u32 misc_ctrl;
+ 
+ 	if (!(mask & SDHCI_RESET_ALL))
+ 		return;
+ 
++	misc_ctrl = sdhci_readw(host, SDHCI_TEGRA_VENDOR_MISC_CTRL);
+ 	/* Erratum: Enable SDHCI spec v3.00 support */
+-	if (soc_data->nvquirks & NVQUIRK_ENABLE_SDHCI_SPEC_300) {
+-		u32 misc_ctrl;
 -
--	return as3722_write(as3722, AS3722_GPIOn_CONTROL_REG(offset), mode);
-+	return as3722_update_bits(as3722, AS3722_GPIOn_CONTROL_REG(offset),
-+				AS3722_GPIO_MODE_MASK, mode);
+-		misc_ctrl = sdhci_readb(host, SDHCI_TEGRA_VENDOR_MISC_CTRL);
++	if (soc_data->nvquirks & NVQUIRK_ENABLE_SDHCI_SPEC_300)
+ 		misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDHCI_SPEC_300;
+-		sdhci_writeb(host, misc_ctrl, SDHCI_TEGRA_VENDOR_MISC_CTRL);
+-	}
++	/* Don't advertise UHS modes which aren't supported yet */
++	if (soc_data->nvquirks & NVQUIRK_DISABLE_SDR50)
++		misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_SDR50;
++	if (soc_data->nvquirks & NVQUIRK_DISABLE_DDR50)
++		misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_DDR50;
++	if (soc_data->nvquirks & NVQUIRK_DISABLE_SDR104)
++		misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_SDR104;
++	sdhci_writew(host, misc_ctrl, SDHCI_TEGRA_VENDOR_MISC_CTRL);
  }
  
- static const struct pinmux_ops as3722_pinmux_ops = {
-@@ -496,10 +493,18 @@ static void as3722_gpio_set(struct gpio_chip *chip, unsigned offset,
- {
- 	struct as3722_pctrl_info *as_pci = to_as_pci(chip);
- 	struct as3722 *as3722 = as_pci->as3722;
--	int en_invert = as_pci->gpio_control[offset].enable_gpio_invert;
-+	int en_invert;
- 	u32 val;
- 	int ret;
+ static int tegra_sdhci_buswidth(struct sdhci_host *host, int bus_width)
+@@ -181,7 +192,9 @@ static const struct sdhci_pltfm_data sdhci_tegra30_pdata = {
  
-+	ret = as3722_read(as3722, AS3722_GPIOn_CONTROL_REG(offset), &val);
-+	if (ret < 0) {
-+		dev_err(as_pci->dev,
-+			"GPIO_CONTROL%d_REG read failed: %d\n", offset, ret);
-+		return;
-+	}
-+	en_invert = !!(val & AS3722_GPIO_INV);
-+
- 	if (value)
- 		val = (en_invert) ? 0 : AS3722_GPIOn_SIGNAL(offset);
- 	else
+ static struct sdhci_tegra_soc_data soc_data_tegra30 = {
+ 	.pdata = &sdhci_tegra30_pdata,
+-	.nvquirks = NVQUIRK_ENABLE_SDHCI_SPEC_300,
++	.nvquirks = NVQUIRK_ENABLE_SDHCI_SPEC_300 |
++		    NVQUIRK_DISABLE_SDR50 |
++		    NVQUIRK_DISABLE_SDR104,
+ };
+ 
+ static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
+@@ -195,6 +208,9 @@ static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
+ 
+ static struct sdhci_tegra_soc_data soc_data_tegra114 = {
+ 	.pdata = &sdhci_tegra114_pdata,
++	.nvquirks = NVQUIRK_DISABLE_SDR50 |
++		    NVQUIRK_DISABLE_DDR50 |
++		    NVQUIRK_DISABLE_SDR104,
+ };
+ 
+ static const struct of_device_id sdhci_tegra_dt_match[] = {
 -- 
 1.9.1.423.g4596e3a
