@@ -1,465 +1,114 @@
-From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [RESEND PATCH 6/7] i2c: ChromeOS EC tunnel driver
-Date: Thu, 17 Apr 2014 11:36:53 -0700
-Message-ID: <1397759814-3588-7-git-send-email-dianders@chromium.org>
-References: <1397759814-3588-1-git-send-email-dianders@chromium.org>
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1397759814-3588-1-git-send-email-dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org
-Cc: abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, jdelvare-l3A5Bk7waGM@public.gmane.org, shane.huang-5C7GfCeVMHo@public.gmane.org, maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, laurent.pinchart+renesas-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org, kevin.strasser-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, linux-ci5G2KO2hbZ+pU9mqzGVBQ@public.gmane.org, andrew-g2DYL2Zd6BY@public.gmane.org, andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, schwidefsky-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org, matt.porter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 0/3] drm/tegra: Use standard suffix for hotplug detect
+ GPIO property
+Date: Thu, 17 Apr 2014 23:28:43 +0200
+Message-ID: <20140417212841.GA11630@mithrandir>
+References: <1397736181-1593-1-git-send-email-thierry.reding@gmail.com>
+ <1397755554.2148.3.camel@tellur>
+Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============1186038369=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1397755554.2148.3.camel@tellur>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Lucas Stach <dev@lynxeye.de>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, Stephen Warren <swarren@wwwdotorg.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On ARM Chromebooks we have a few devices that are accessed by both the
-AP (the main "Application Processor") and the EC (the Embedded
-Controller).  These are:
-* The battery (sbs-battery).
-* The power management unit tps65090.
 
-On the original Samsung ARM Chromebook these devices were on an I2C
-bus that was shared between the AP and the EC and arbitrated using
-some extranal GPIOs (see i2c-arb-gpio-challenge).
+--===============1186038369==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Kj7319i9nmIyA2yE"
+Content-Disposition: inline
 
-The original arbitration scheme worked well enough but had some
-downsides:
-* It was nonstandard (not using standard I2C multimaster)
-* It only worked if the EC-AP communication was I2C
-* It was relatively hard to debug problems (hard to tell if i2c issues
-  were caused by the EC, the AP, or some device on the bus).
 
-On the HP Chromebook 11 the design was changed to:
-* The AP/EC comms were still i2c, but the battery/tps65090 were no
-  longer on the bus used for AP/EC communication.  The battery was
-  exposed to the AP through a limited i2c tunnel and tps65090 was
-  exposed to the AP through a custom Linux driver.
+--Kj7319i9nmIyA2yE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On the Samsung ARM Chromebook 2 the scheme is changed yet again, now:
-* The AP/EC comms are now using SPI for faster speeds.
-* The EC's i2c bus is exposed to the AP through a full i2c tunnel.
+On Thu, Apr 17, 2014 at 07:25:54PM +0200, Lucas Stach wrote:
+> Am Donnerstag, den 17.04.2014, 14:02 +0200 schrieb Thierry Reding:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> > The hotplug detect GPIO in the current bindings use "-gpio" as suffix,
+> > whereas the standard suffix is the plural: "-gpios". This small series
+> > replaces this in three steps to preserve bisectability:
+> >=20
+> >   - Patch 1 adds new nvidia,hpd-gpios properties to existing device tree
+> >     files while marking existing nvidia,hpd-gpio ones as deprecated.
+> >   - Patch 2 makes use of the new property name in the driver and updates
+> >     the device tree bindings.
+> >   - Patch 3 removes the deprecated properties from device tree files.
+> >=20
+> > Since this touches both DRM and Tegra trees, I've prepared a stable
+> > branch[0] that can be pulled into both trees to make the transition
+> > easier.
+> >=20
+> What's the real benefit to this series? After all you are breaking
+> existing devicetrees here, as the driver doesn't continue to recognize
+> the old name. IMHO adding a missed 's' to the property name isn't enough
+> reason to do this.
 
-The upstream "tegra124-venice2" uses the same scheme as the Samsung
-ARM Chromebook 2, though it has a different set of components on the
-other side of the bus.
+The series is explicitly done in a way to ensure that at least in-tree
+device trees will keep working across the whole series. Obviously if
+anybody were to use a DTB written according to the deprecated binding
+that would no longer work.
 
-This driver supports the scheme used by the Samsung ARM Chromebook 2.
-Future patches to this driver could add support for the battery tunnel
-on the HP Chromebook 11 (and perhaps could even be used to access
-tps65090 on the HP Chromebook 11 instead of using a special driver,
-but I haven't researched that enough).
+However I'd like to eventually convert the driver to use the new GPIO
+descriptor helpers because they make it a lot easier to deal with the
+GPIOs. And with the new gpiod_get() function you loose the ability to
+specify an exact property name as it appends the -gpios suffix
+automatically.
 
-Signed-off-by: Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Signed-off-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Tested-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
----
- .../devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt |  36 +++
- drivers/i2c/busses/Kconfig                         |   9 +
- drivers/i2c/busses/Makefile                        |   1 +
- drivers/i2c/busses/i2c-cros-ec-tunnel.c            | 304 +++++++++++++++++++++
- drivers/mfd/cros_ec.c                              |   5 +
- 5 files changed, 355 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt
- create mode 100644 drivers/i2c/busses/i2c-cros-ec-tunnel.c
+The idea is to rectify this mistake now that there's still a manageable
+number of boards in the tree and we have never really supported stable
+devicetree bindings on Tegra anyway. Or to put it differently, there is
+not enough functionality on Tegra generally to make it practicable to
+use it in production. Therefore I think it makes sense to fix these
+issues while it's still a viable option.
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt b/Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt
-new file mode 100644
-index 0000000..30776bf
---- /dev/null
-+++ b/Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt
-@@ -0,0 +1,36 @@
-+I2C bus that tunnels through the ChromeOS EC (cros-ec)
-+======================================================
-+On some ChromeOS board designs we've got a connection to the EC (embedded
-+controller) but no direct connection to some devices on the other side of
-+the EC (like a battery and PMIC).  To get access to those devices we need
-+to tunnel our i2c commands through the EC.
-+
-+The node for this device should be under a cros-ec node like google,cros-ec-spi
-+or google,cros-ec-i2c.
-+
-+
-+Required properties:
-+- compatible: google,cros-ec-i2c-tunnel
-+- google,remote-bus: The EC bus we'd like to talk to.
-+
-+
-+Example:
-+	cros-ec@0 {
-+		compatible = "google,cros-ec-spi";
-+
-+		...
-+
-+		i2c-tunnel {
-+			compatible = "google,cros-ec-i2c-tunnel";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			google,remote-bus = <0>;
-+
-+			battery: sbs-battery@b {
-+				compatible = "sbs,sbs-battery";
-+				reg = <0xb>;
-+				sbs,poll-retry-count = <1>;
-+			};
-+		};
-+	}
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index c94db1c..9a0a6cc 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -993,6 +993,15 @@ config I2C_SIBYTE
- 	help
- 	  Supports the SiByte SOC on-chip I2C interfaces (2 channels).
- 
-+config I2C_CROS_EC_TUNNEL
-+	tristate "ChromeOS EC tunnel I2C bus"
-+	depends on MFD_CROS_EC
-+	help
-+	  If you say yes here you get an I2C bus that will tunnel i2c commands
-+	  through to the other side of the ChromeOS EC to the i2c bus
-+	  connected there. This will work whatever the interface used to
-+	  talk to the EC (SPI, I2C or LPC).
-+
- config SCx200_I2C
- 	tristate "NatSemi SCx200 I2C using GPIO pins (DEPRECATED)"
- 	depends on SCx200_GPIO
-diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
-index 18d18ff..e110ca9 100644
---- a/drivers/i2c/busses/Makefile
-+++ b/drivers/i2c/busses/Makefile
-@@ -95,6 +95,7 @@ obj-$(CONFIG_I2C_VIPERBOARD)	+= i2c-viperboard.o
- # Other I2C/SMBus bus drivers
- obj-$(CONFIG_I2C_ACORN)		+= i2c-acorn.o
- obj-$(CONFIG_I2C_BCM_KONA)	+= i2c-bcm-kona.o
-+obj-$(CONFIG_I2C_CROS_EC_TUNNEL)	+= i2c-cros-ec-tunnel.o
- obj-$(CONFIG_I2C_ELEKTOR)	+= i2c-elektor.o
- obj-$(CONFIG_I2C_PCA_ISA)	+= i2c-pca-isa.o
- obj-$(CONFIG_I2C_SIBYTE)	+= i2c-sibyte.o
-diff --git a/drivers/i2c/busses/i2c-cros-ec-tunnel.c b/drivers/i2c/busses/i2c-cros-ec-tunnel.c
-new file mode 100644
-index 0000000..7e53fcb
---- /dev/null
-+++ b/drivers/i2c/busses/i2c-cros-ec-tunnel.c
-@@ -0,0 +1,304 @@
-+/*
-+ *  Copyright (C) 2013 Google, Inc
-+ *
-+ *  This program is free software; you can redistribute it and/or modify
-+ *  it under the terms of the GNU General Public License as published by
-+ *  the Free Software Foundation; either version 2 of the License, or
-+ *  (at your option) any later version.
-+ *
-+ * Expose an I2C passthrough to the ChromeOS EC.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/i2c.h>
-+#include <linux/mfd/cros_ec.h>
-+#include <linux/mfd/cros_ec_commands.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+
-+/**
-+ * struct ec_i2c_device - Driver data for I2C tunnel
-+ *
-+ * @dev: Device node
-+ * @adap: I2C adapter
-+ * @ec: Pointer to EC device
-+ * @remote_bus: The EC bus number we tunnel to on the other side.
-+ * @request_buf: Buffer for transmitting data; we expect most transfers to fit.
-+ * @response_buf: Buffer for receiving data; we expect most transfers to fit.
-+ */
-+
-+struct ec_i2c_device {
-+	struct device *dev;
-+	struct i2c_adapter adap;
-+	struct cros_ec_device *ec;
-+
-+	u16 remote_bus;
-+
-+	u8 request_buf[256];
-+	u8 response_buf[256];
-+};
-+
-+/**
-+ * ec_i2c_construct_message - construct a message to go to the EC
-+ *
-+ * This function effectively stuffs the standard i2c_msg format of Linux into
-+ * a format that the EC understands.
-+ *
-+ * @buf: The buffer to fill.  Can pass NULL to count how many bytes the message
-+ *       would be.
-+ * @i2c_msgs: The i2c messages to read.
-+ * @num: The number of i2c messages.
-+ * @bus_num: The remote bus number we want to talk to.
-+ *
-+ * Returns the number of bytes that the message would take up or a negative
-+ * error number.
-+ */
-+static int ec_i2c_construct_message(u8 *buf, const struct i2c_msg i2c_msgs[],
-+				    int num, u16 bus_num)
-+{
-+	struct ec_params_i2c_passthru *params;
-+	u8 *out_data;
-+	int i;
-+	int size;
-+
-+	size = sizeof(struct ec_params_i2c_passthru);
-+	size += num * sizeof(struct ec_params_i2c_passthru_msg);
-+	out_data = buf + size;
-+	for (i = 0; i < num; i++)
-+		if (!(i2c_msgs[i].flags & I2C_M_RD))
-+			size += i2c_msgs[i].len;
-+
-+	/* If there is no buffer, we can't build the message */
-+	if (!buf)
-+		return size;
-+
-+	params = (struct ec_params_i2c_passthru *)buf;
-+	params->port = bus_num;
-+	params->num_msgs = num;
-+	for (i = 0; i < num; i++) {
-+		const struct i2c_msg *i2c_msg = &i2c_msgs[i];
-+		struct ec_params_i2c_passthru_msg *msg = &params->msg[i];
-+
-+		msg->len = i2c_msg->len;
-+		msg->addr_flags = i2c_msg->addr;
-+
-+		if (i2c_msg->flags & I2C_M_TEN)
-+			msg->addr_flags |= EC_I2C_FLAG_10BIT;
-+
-+		if (i2c_msg->flags & I2C_M_RD) {
-+			msg->addr_flags |= EC_I2C_FLAG_READ;
-+		} else {
-+			memcpy(out_data, i2c_msg->buf, msg->len);
-+			out_data += msg->len;
-+		}
-+	}
-+
-+	return size;
-+}
-+
-+/**
-+ * ec_i2c_parse_response - Parse a response from the EC
-+ *
-+ * We'll take the EC's response and copy it back into msgs.
-+ *
-+ * @buf: The buffer to parse.  Can pass NULL to count how many bytes we expect
-+ *	 the response to be. Otherwise we assume that the right number of
-+ *	 bytes are available.
-+ * @i2c_msgs: The i2c messages to to fill up.
-+ * @num: The number of i2c messages; will be modified to include the actual
-+ *	 number received.
-+ *
-+ * Returns the number of response bytes or a negative error number.
-+ */
-+static int ec_i2c_parse_response(const u8 *buf, struct i2c_msg i2c_msgs[],
-+				 int *num)
-+{
-+	const struct ec_response_i2c_passthru *resp;
-+	const u8 *in_data;
-+	int size;
-+	int i;
-+
-+	size = sizeof(struct ec_response_i2c_passthru);
-+	in_data = buf + size;
-+	for (i = 0; i < *num; i++)
-+		if (i2c_msgs[i].flags & I2C_M_RD)
-+			size += i2c_msgs[i].len;
-+
-+	if (buf == NULL)
-+		return size;
-+
-+	resp = (const struct ec_response_i2c_passthru *)buf;
-+	if (resp->i2c_status & EC_I2C_STATUS_TIMEOUT)
-+		return -ETIMEDOUT;
-+	else if (resp->i2c_status & EC_I2C_STATUS_ERROR)
-+		return -EREMOTEIO;
-+
-+	/* Other side could send us back fewer messages, but not more */
-+	if (resp->num_msgs > *num)
-+		return -EPROTO;
-+	*num = resp->num_msgs;
-+
-+	for (i = 0; i < *num; i++) {
-+		struct i2c_msg *i2c_msg = &i2c_msgs[i];
-+
-+		if (i2c_msgs[i].flags & I2C_M_RD) {
-+			memcpy(i2c_msg->buf, in_data, i2c_msg->len);
-+			in_data += i2c_msg->len;
-+		}
-+	}
-+
-+	return size;
-+}
-+
-+static int ec_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg i2c_msgs[],
-+		       int num)
-+{
-+	struct ec_i2c_device *bus = adap->algo_data;
-+	struct device *dev = bus->dev;
-+	const u16 bus_num = bus->remote_bus;
-+	int request_len;
-+	int response_len;
-+	u8 *request = NULL;
-+	u8 *response = NULL;
-+	int result;
-+
-+	request_len = ec_i2c_construct_message(NULL, i2c_msgs, num, bus_num);
-+	if (request_len < 0) {
-+		dev_warn(dev, "Error constructing message %d\n", request_len);
-+		result = request_len;
-+		goto exit;
-+	}
-+	response_len = ec_i2c_parse_response(NULL, i2c_msgs, &num);
-+	if (response_len < 0) {
-+		/* Unexpected; no errors should come when NULL response */
-+		dev_warn(dev, "Error preparing response %d\n", response_len);
-+		result = response_len;
-+		goto exit;
-+	}
-+
-+	if (request_len <= ARRAY_SIZE(bus->request_buf)) {
-+		request = bus->request_buf;
-+	} else {
-+		request = kzalloc(request_len, GFP_KERNEL);
-+		if (request == NULL) {
-+			result = -ENOMEM;
-+			goto exit;
-+		}
-+	}
-+	if (response_len <= ARRAY_SIZE(bus->response_buf)) {
-+		response = bus->response_buf;
-+	} else {
-+		response = kzalloc(response_len, GFP_KERNEL);
-+		if (response == NULL) {
-+			result = -ENOMEM;
-+			goto exit;
-+		}
-+	}
-+
-+	ec_i2c_construct_message(request, i2c_msgs, num, bus_num);
-+	result = bus->ec->command_sendrecv(bus->ec, EC_CMD_I2C_PASSTHRU,
-+					   request, request_len,
-+					   response, response_len);
-+	if (result)
-+		goto exit;
-+
-+	result = ec_i2c_parse_response(response, i2c_msgs, &num);
-+	if (result < 0)
-+		goto exit;
-+
-+	/* Indicate success by saying how many messages were sent */
-+	result = num;
-+exit:
-+	if (request != bus->request_buf)
-+		kfree(request);
-+	if (response != bus->response_buf)
-+		kfree(response);
-+
-+	return result;
-+}
-+
-+static u32 ec_i2c_functionality(struct i2c_adapter *adap)
-+{
-+	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
-+}
-+
-+static const struct i2c_algorithm ec_i2c_algorithm = {
-+	.master_xfer	= ec_i2c_xfer,
-+	.functionality	= ec_i2c_functionality,
-+};
-+
-+static int ec_i2c_probe(struct platform_device *pdev)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	struct cros_ec_device *ec = dev_get_drvdata(pdev->dev.parent);
-+	struct device *dev = &pdev->dev;
-+	struct ec_i2c_device *bus = NULL;
-+	u32 remote_bus;
-+	int err;
-+
-+	dev_dbg(dev, "Probing\n");
-+
-+	if (!np) {
-+		dev_err(dev, "no device node\n");
-+		return -ENOENT;
-+	}
-+
-+	bus = devm_kzalloc(dev, sizeof(*bus), GFP_KERNEL);
-+	if (bus == NULL) {
-+		dev_err(dev, "cannot allocate bus device\n");
-+		return -ENOMEM;
-+	}
-+
-+	err = of_property_read_u32(np, "google,remote-bus", &remote_bus);
-+	if (err) {
-+		dev_err(dev, "Couldn't read remote-bus property\n");
-+		return err;
-+	}
-+	bus->remote_bus = remote_bus;
-+
-+	bus->ec = ec;
-+	bus->dev = dev;
-+
-+	bus->adap.owner = THIS_MODULE;
-+	strlcpy(bus->adap.name, "cros-ec-i2c-tunnel", sizeof(bus->adap.name));
-+	bus->adap.algo = &ec_i2c_algorithm;
-+	bus->adap.algo_data = bus;
-+	bus->adap.dev.parent = &pdev->dev;
-+	bus->adap.dev.of_node = np;
-+
-+	err = i2c_add_adapter(&bus->adap);
-+	if (err) {
-+		dev_err(dev, "cannot register i2c adapter\n");
-+		return err;
-+	}
-+	platform_set_drvdata(pdev, bus);
-+
-+	dev_dbg(dev, "ChromeOS EC I2C tunnel adapter\n");
-+
-+	return err;
-+}
-+
-+static int ec_i2c_remove(struct platform_device *dev)
-+{
-+	struct ec_i2c_device *bus = platform_get_drvdata(dev);
-+
-+	platform_set_drvdata(dev, NULL);
-+
-+	i2c_del_adapter(&bus->adap);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver ec_i2c_tunnel_driver = {
-+	.probe = ec_i2c_probe,
-+	.remove = ec_i2c_remove,
-+	.driver = {
-+		.name = "cros-ec-i2c-tunnel",
-+	},
-+};
-+
-+module_platform_driver(ec_i2c_tunnel_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("EC I2C tunnel driver");
-+MODULE_ALIAS("platform:cros-ec-i2c-tunnel");
-diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
-index c58ab96..61bc909 100644
---- a/drivers/mfd/cros_ec.c
-+++ b/drivers/mfd/cros_ec.c
-@@ -90,6 +90,11 @@ static const struct mfd_cell cros_devs[] = {
- 		.id = 1,
- 		.of_compatible = "google,cros-ec-keyb",
- 	},
-+	{
-+		.name = "cros-ec-i2c-tunnel",
-+		.id = 2,
-+		.of_compatible = "google,cros-ec-i2c-tunnel",
-+	},
- };
- 
- int cros_ec_register(struct cros_ec_device *ec_dev)
--- 
-1.9.1.423.g4596e3a
+Thierry
+
+--Kj7319i9nmIyA2yE
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTUEeJAAoJEN0jrNd/PrOhT1sQAKGwGWqBDUpGPYOnj27gotSe
+RByyixdIAa1ubiXpdf48D6MiqPtg2PoV4qizzWJfbDYSetdekRaKR3wkC/3D+RM4
+IsnSF4ok6OaK71hRxifvjAZgmvAtRVyLuoNPtzTjOz0sqrjPS2DpALcRQX1mP8e7
+T/rtXNZgjISVHQOIjciE81Xh2WJou8Ly384GJaofIOBnmS9kAr0swT3CbjeEp1Rc
+IaFVVu85AvAss5epBZQ5UPHm+9wcaD/gVAt8cFom3HpoBTrHnnJ5zxdL0di/O/2a
+ZKilzl0FmRVBvqmx2o8dD/gj8kEnSrygbi8KiAxO0bLKrz1GRmEndjix98Azd1gD
+ZJt3n1f8o0mKVudW3E4xBN0KPbdXJYgSW80/gyBCVJH3FTvXx9z72DwW7NB3rgMP
+ZLFEZLg6I1xa3aQH9iiUmFdeKT/dvS45ZQw1Efs86wAh45IDfp2hCZ0qhEtlA6m0
+j3s7zUHdH7TiBJc2saVognlntXKgCy7ovgvWUTCwK0EW7zdUlNDAg4BqTHG51B9I
+QRB5w/T5hdwU/D7VlcTGb6BXgtHv8TxTZfB8PdClFWoiGaCl3VPI9hGm0/JMEXJW
+ykt2Eq25/DDNHW76uXgeBL7jwHwZB5/x6DrELPuyrbv+zjh468FogqecO78UO/p8
+xvkQhEdDHru7I0cpMN/B
+=neOq
+-----END PGP SIGNATURE-----
+
+--Kj7319i9nmIyA2yE--
+
+--===============1186038369==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============1186038369==--
