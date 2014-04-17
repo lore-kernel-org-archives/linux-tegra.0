@@ -1,47 +1,43 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: as3722: fix handling of GPIO invert bit
-Date: Thu, 17 Apr 2014 22:54:13 +0530
-Message-ID: <53500E3D.4040709@nvidia.com>
-References: <1397611505-17917-1-git-send-email-abrestic@chromium.org>	<534FA35B.6060005@nvidia.com> <CAL1qeaG+MBmBZ3dD6LZwV5mh5A=u+0N7Obt43UwhViaBYpXxpw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAL1qeaG+MBmBZ3dD6LZwV5mh5A=u+0N7Obt43UwhViaBYpXxpw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Doug Anderson <dianders@chromium.org>
+Subject: [PATCH 1/7] mfd: cros_ec: spi: calculate delay between transfers correctly
+Date: Thu, 17 Apr 2014 10:59:24 -0700
+Message-ID: <1397757570-19750-2-git-send-email-dianders@chromium.org>
+References: <1397757570-19750-1-git-send-email-dianders@chromium.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <1397757570-19750-1-git-send-email-dianders@chromium.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>, Stephen Warren <swarren@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>
+Cc: abrestic@chromium.org, dgreid@chromium.org, Olof Johansson <olof@lixom.net>, Simon Glass <sjg@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, David Hendricks <dhendrix@chromium.org>, Doug Anderson <dianders@chromium.org>, Samuel Ortiz <sameo@linux.intel.com>, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday 17 April 2014 10:13 PM, Andrew Bresticker wrote:
-> On Thu, Apr 17, 2014 at 2:48 AM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->> Hi Andrew,
->>
->>
->> On Wednesday 16 April 2014 06:55 AM, Andrew Bresticker wrote:
->>> diff --git a/drivers/pinctrl/pinctrl-as3722.c
->>> b/drivers/pinctrl/pinctrl-as3722.c
->>> index 92ed4b2..c862f9c0 100644
->>> --- a/drivers/pinctrl/pinctrl-as3722.c
->>> +++ b/drivers/pinctrl/pinctrl-as3722.c
->>> @@ -64,7 +64,6 @@ struct as3722_pin_function {
->>>    };
->>>      struct as3722_gpio_pin_control {
->>> -       bool enable_gpio_invert;
->>>          unsigned mode_prop;
->>>          int io_function;
->>>    };
->>
->> Instead of removing this flag and  calling read of register on every gpio
->> set, better if we update this flag on probe once and use this for entire
->> life.
-> Because of regcache, the reads won't result in any additional I2C
-> transfers.  I can respin though if you want.
+From: David Hendricks <dhendrix@chromium.org>
 
-Yaah, if regcache is enabled on this then it will reduce i2c calls.
+To avoid spamming the EC we calculate the time between the previous
+transfer and the current transfer and force a delay if the time delta
+is too small.
 
-Just wanted to keep this invert bit so in future, if we need it, we can 
-make it configurable. But not much issue here.
+However, a small miscalculation causes the delay period to be
+far too short. Most noticably this impacts commands with a long
+turnaround time such as EC firmware reads and writes.
 
-I am acking it
-Acked-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: David Hendricks <dhendrix@chromium.org>
+Signed-off-by: Doug Anderson <dianders@chromium.org>
+---
+ drivers/mfd/cros_ec_spi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
+index 84af8d7..c185eb6 100644
+--- a/drivers/mfd/cros_ec_spi.c
++++ b/drivers/mfd/cros_ec_spi.c
+@@ -219,7 +219,7 @@ static int cros_ec_command_spi_xfer(struct cros_ec_device *ec_dev,
+ 		ktime_get_ts(&ts);
+ 		delay = timespec_to_ns(&ts) - ec_spi->last_transfer_ns;
+ 		if (delay < EC_SPI_RECOVERY_TIME_NS)
+-			ndelay(delay);
++			ndelay(EC_SPI_RECOVERY_TIME_NS - delay);
+ 	}
+ 
+ 	/* Transmit phase - send our message */
+-- 
+1.9.1.423.g4596e3a
