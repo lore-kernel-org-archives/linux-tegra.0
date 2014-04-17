@@ -1,37 +1,51 @@
-From: Marek Vasut <marex@denx.de>
-Subject: Re: [PATCH 0/5] defconfigs: add MTD_SPI_NOR (dependency for M25P80)
-Date: Thu, 17 Apr 2014 13:07:44 +0200
-Message-ID: <201404171307.44214.marex@denx.de>
-References: <1397719309-2022-1-git-send-email-computersforpeace@gmail.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1397719309-2022-1-git-send-email-computersforpeace@gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Brian Norris <computersforpeace@gmail.com>
-Cc: Linux Kernel <linux-kernel@vger.kernel.org>, linux-mtd@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Shawn Guo <shawn.guo@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Steven Miao <realmz6@gmail.com>, adi-buildroot-devel@lists.sourceforge.net, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 0/3] drm/tegra: Use standard suffix for hotplug detect GPIO property
+Date: Thu, 17 Apr 2014 14:02:58 +0200
+Message-ID: <1397736181-1593-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday, April 17, 2014 at 09:21:44 AM, Brian Norris wrote:
-> Hi all,
-> 
-> We are introducing a new SPI-NOR library/framework for MTD, to support
-> various types of SPI-NOR flash controllers which require (or benefit from)
-> intimate knowledge of the flash interface, rather than just the relatively
-> dumb SPI interface. This library borrows much of the m25p80 driver for its
-> abstraction and moves this code into a spi-nor module.
-> 
-> This means CONFIG_M25P80 now has a dependency on CONFIG_MTD_SPI_NOR, which
-> should be added to the defconfigs. I'm not sure what is the best process
-> for doing this. Should each $ARCH maintainer just take their respective
-> patch, even if the MTD_SPI_NOR Kconfig symbol is not defined for them yet?
-> Or should maintainers plan on merging the relevant SPI-NOR code into their
-> trees during the development cycle? Or some third option?
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Shouldn't the M25P80 driver just "select" the SPI NOR framework? Then you won't 
-need the adjustment to defconfigs at all I think.
+The hotplug detect GPIO in the current bindings use "-gpio" as suffix,
+whereas the standard suffix is the plural: "-gpios". This small series
+replaces this in three steps to preserve bisectability:
 
-Best regards,
-Marek Vasut
+  - Patch 1 adds new nvidia,hpd-gpios properties to existing device tree
+    files while marking existing nvidia,hpd-gpio ones as deprecated.
+  - Patch 2 makes use of the new property name in the driver and updates
+    the device tree bindings.
+  - Patch 3 removes the deprecated properties from device tree files.
+
+Since this touches both DRM and Tegra trees, I've prepared a stable
+branch[0] that can be pulled into both trees to make the transition
+easier.
+
+Thierry
+
+[0]: git://anongit.freedesktop.org/tegra/linux#drm/tegra/hpd-gpios-property
+
+Thierry Reding (3):
+  ARM: tegra: Deprecate nvidia,hpd-gpio property
+  drm/tegra: Use nvidia,hpd-gpios property
+  ARM: tegra: Remove deprecated nvidia,hpd-gpio properties
+
+ Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt | 8 ++++----
+ arch/arm/boot/dts/tegra114-dalmore.dts                          | 2 +-
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi                      | 4 ++--
+ arch/arm/boot/dts/tegra20-harmony.dts                           | 4 ++--
+ arch/arm/boot/dts/tegra20-paz00.dts                             | 4 ++--
+ arch/arm/boot/dts/tegra20-seaboard.dts                          | 4 ++--
+ arch/arm/boot/dts/tegra20-tamonten.dtsi                         | 4 ++--
+ arch/arm/boot/dts/tegra20-trimslice.dts                         | 4 ++--
+ arch/arm/boot/dts/tegra20-ventana.dts                           | 4 ++--
+ arch/arm/boot/dts/tegra20-whistler.dts                          | 4 ++--
+ arch/arm/boot/dts/tegra30-beaver.dts                            | 2 +-
+ drivers/gpu/drm/tegra/output.c                                  | 2 +-
+ 12 files changed, 23 insertions(+), 23 deletions(-)
+
+-- 
+1.9.2
