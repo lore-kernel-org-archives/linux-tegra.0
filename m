@@ -1,43 +1,109 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH 1/7] mfd: cros_ec: spi: calculate delay between transfers correctly
-Date: Thu, 17 Apr 2014 10:59:24 -0700
-Message-ID: <1397757570-19750-2-git-send-email-dianders@chromium.org>
+Subject: [PATCH 2/7] mfd: cros_ec: spi: Add mutex to cros_ec_spi
+Date: Thu, 17 Apr 2014 10:59:25 -0700
+Message-ID: <1397757570-19750-3-git-send-email-dianders@chromium.org>
 References: <1397757570-19750-1-git-send-email-dianders@chromium.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 In-Reply-To: <1397757570-19750-1-git-send-email-dianders@chromium.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 To: Lee Jones <lee.jones@linaro.org>, Stephen Warren <swarren@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>
-Cc: abrestic@chromium.org, dgreid@chromium.org, Olof Johansson <olof@lixom.net>, Simon Glass <sjg@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, David Hendricks <dhendrix@chromium.org>, Doug Anderson <dianders@chromium.org>, Samuel Ortiz <sameo@linux.intel.com>, linux-kernel@vger.kernel.org
+Cc: abrestic@chromium.org, dgreid@chromium.org, Olof Johansson <olof@lixom.net>, Simon Glass <sjg@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Samuel Ortiz <sameo@linux.intel.com>, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: David Hendricks <dhendrix@chromium.org>
+The main transfer function for cros_ec_spi can be called by more than
+one client at a time.  Make sure that those clients don't stomp on
+each other by locking the bus for the duration of the transfer
+function.
 
-To avoid spamming the EC we calculate the time between the previous
-transfer and the current transfer and force a delay if the time delta
-is too small.
-
-However, a small miscalculation causes the delay period to be
-far too short. Most noticably this impacts commands with a long
-turnaround time such as EC firmware reads and writes.
-
-Signed-off-by: David Hendricks <dhendrix@chromium.org>
 Signed-off-by: Doug Anderson <dianders@chromium.org>
 ---
- drivers/mfd/cros_ec_spi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mfd/cros_ec_spi.c | 26 +++++++++++++++++++++-----
+ 1 file changed, 21 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
-index 84af8d7..c185eb6 100644
+index c185eb6..a2a605d 100644
 --- a/drivers/mfd/cros_ec_spi.c
 +++ b/drivers/mfd/cros_ec_spi.c
-@@ -219,7 +219,7 @@ static int cros_ec_command_spi_xfer(struct cros_ec_device *ec_dev,
- 		ktime_get_ts(&ts);
- 		delay = timespec_to_ns(&ts) - ec_spi->last_transfer_ns;
- 		if (delay < EC_SPI_RECOVERY_TIME_NS)
--			ndelay(delay);
-+			ndelay(EC_SPI_RECOVERY_TIME_NS - delay);
+@@ -65,11 +65,13 @@
+  *	if no record
+  * @end_of_msg_delay: used to set the delay_usecs on the spi_transfer that
+  *      is sent when we want to turn off CS at the end of a transaction.
++ * @lock: mutex to ensure only one user of cros_ec_command_spi_xfer at a time
+  */
+ struct cros_ec_spi {
+ 	struct spi_device *spi;
+ 	s64 last_transfer_ns;
+ 	unsigned int end_of_msg_delay;
++	struct mutex lock;
+ };
+ 
+ static void debug_packet(struct device *dev, const char *name, u8 *ptr,
+@@ -208,6 +210,13 @@ static int cros_ec_command_spi_xfer(struct cros_ec_device *ec_dev,
+ 	int ret = 0, final_ret;
+ 	struct timespec ts;
+ 
++	/*
++	 * We have the shared ec_dev buffer plus we do lots of separate spi_sync
++	 * calls, so we need to make sure only one person is using this at a
++	 * time.
++	 */
++	mutex_lock(&ec_spi->lock);
++
+ 	len = cros_ec_prepare_tx(ec_dev, ec_msg);
+ 	dev_dbg(ec_dev->dev, "prepared, len=%d\n", len);
+ 
+@@ -260,7 +269,7 @@ static int cros_ec_command_spi_xfer(struct cros_ec_device *ec_dev,
+ 		ret = final_ret;
+ 	if (ret < 0) {
+ 		dev_err(ec_dev->dev, "spi transfer failed: %d\n", ret);
+-		return ret;
++		goto exit;
  	}
  
- 	/* Transmit phase - send our message */
+ 	/* check response error code */
+@@ -269,14 +278,16 @@ static int cros_ec_command_spi_xfer(struct cros_ec_device *ec_dev,
+ 		dev_warn(ec_dev->dev, "command 0x%02x returned an error %d\n",
+ 			 ec_msg->cmd, ptr[0]);
+ 		debug_packet(ec_dev->dev, "in_err", ptr, len);
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto exit;
+ 	}
+ 	len = ptr[1];
+ 	sum = ptr[0] + ptr[1];
+ 	if (len > ec_msg->in_len) {
+ 		dev_err(ec_dev->dev, "packet too long (%d bytes, expected %d)",
+ 			len, ec_msg->in_len);
+-		return -ENOSPC;
++		ret = -ENOSPC;
++		goto exit;
+ 	}
+ 
+ 	/* copy response packet payload and compute checksum */
+@@ -293,10 +304,14 @@ static int cros_ec_command_spi_xfer(struct cros_ec_device *ec_dev,
+ 		dev_err(ec_dev->dev,
+ 			"bad packet checksum, expected %02x, got %02x\n",
+ 			sum, ptr[len + 2]);
+-		return -EBADMSG;
++		ret = -EBADMSG;
++		goto exit;
+ 	}
+ 
+-	return 0;
++	ret = 0;
++exit:
++	mutex_unlock(&ec_spi->lock);
++	return ret;
+ }
+ 
+ static void cros_ec_spi_dt_probe(struct cros_ec_spi *ec_spi, struct device *dev)
+@@ -327,6 +342,7 @@ static int cros_ec_spi_probe(struct spi_device *spi)
+ 	if (ec_spi == NULL)
+ 		return -ENOMEM;
+ 	ec_spi->spi = spi;
++	mutex_init(&ec_spi->lock);
+ 	ec_dev = devm_kzalloc(dev, sizeof(*ec_dev), GFP_KERNEL);
+ 	if (!ec_dev)
+ 		return -ENOMEM;
 -- 
 1.9.1.423.g4596e3a
