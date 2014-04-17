@@ -1,40 +1,47 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: Re: [PATCH 0/3] drm/tegra: Use standard suffix for hotplug detect
- GPIO property
-Date: Thu, 17 Apr 2014 19:25:54 +0200
-Message-ID: <1397755554.2148.3.camel@tellur>
-References: <1397736181-1593-1-git-send-email-thierry.reding@gmail.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] pinctrl: as3722: fix handling of GPIO invert bit
+Date: Thu, 17 Apr 2014 22:54:13 +0530
+Message-ID: <53500E3D.4040709@nvidia.com>
+References: <1397611505-17917-1-git-send-email-abrestic@chromium.org>	<534FA35B.6060005@nvidia.com> <CAL1qeaG+MBmBZ3dD6LZwV5mh5A=u+0N7Obt43UwhViaBYpXxpw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1397736181-1593-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <CAL1qeaG+MBmBZ3dD6LZwV5mh5A=u+0N7Obt43UwhViaBYpXxpw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Am Donnerstag, den 17.04.2014, 14:02 +0200 schrieb Thierry Reding:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> The hotplug detect GPIO in the current bindings use "-gpio" as suffix,
-> whereas the standard suffix is the plural: "-gpios". This small series
-> replaces this in three steps to preserve bisectability:
-> 
->   - Patch 1 adds new nvidia,hpd-gpios properties to existing device tree
->     files while marking existing nvidia,hpd-gpio ones as deprecated.
->   - Patch 2 makes use of the new property name in the driver and updates
->     the device tree bindings.
->   - Patch 3 removes the deprecated properties from device tree files.
-> 
-> Since this touches both DRM and Tegra trees, I've prepared a stable
-> branch[0] that can be pulled into both trees to make the transition
-> easier.
-> 
-What's the real benefit to this series? After all you are breaking
-existing devicetrees here, as the driver doesn't continue to recognize
-the old name. IMHO adding a missed 's' to the property name isn't enough
-reason to do this.
+On Thursday 17 April 2014 10:13 PM, Andrew Bresticker wrote:
+> On Thu, Apr 17, 2014 at 2:48 AM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> Hi Andrew,
+>>
+>>
+>> On Wednesday 16 April 2014 06:55 AM, Andrew Bresticker wrote:
+>>> diff --git a/drivers/pinctrl/pinctrl-as3722.c
+>>> b/drivers/pinctrl/pinctrl-as3722.c
+>>> index 92ed4b2..c862f9c0 100644
+>>> --- a/drivers/pinctrl/pinctrl-as3722.c
+>>> +++ b/drivers/pinctrl/pinctrl-as3722.c
+>>> @@ -64,7 +64,6 @@ struct as3722_pin_function {
+>>>    };
+>>>      struct as3722_gpio_pin_control {
+>>> -       bool enable_gpio_invert;
+>>>          unsigned mode_prop;
+>>>          int io_function;
+>>>    };
+>>
+>> Instead of removing this flag and  calling read of register on every gpio
+>> set, better if we update this flag on probe once and use this for entire
+>> life.
+> Because of regcache, the reads won't result in any additional I2C
+> transfers.  I can respin though if you want.
 
-Regards,
-Lucas
+Yaah, if regcache is enabled on this then it will reduce i2c calls.
+
+Just wanted to keep this invert bit so in future, if we need it, we can 
+make it configurable. But not much issue here.
+
+I am acking it
+Acked-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
