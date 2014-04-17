@@ -1,50 +1,63 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: as3722: fix handling of GPIO invert bit
-Date: Thu, 17 Apr 2014 15:18:11 +0530
-Message-ID: <534FA35B.6060005@nvidia.com>
-References: <1397611505-17917-1-git-send-email-abrestic@chromium.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 0/5] defconfigs: add MTD_SPI_NOR (dependency for M25P80)
+Date: Thu, 17 Apr 2014 12:53:03 +0200
+Message-ID: <20140417105302.GA32603@ulmo>
+References: <1397719309-2022-1-git-send-email-computersforpeace@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1397611505-17917-1-git-send-email-abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="azLHFNyN32YCQGCU"
+Return-path: <linux-sh-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1397719309-2022-1-git-send-email-computersforpeace@gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Brian Norris <computersforpeace@gmail.com>
+Cc: Linux Kernel <linux-kernel@vger.kernel.org>, Marek Vasut <marex@denx.de>, linux-mtd@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Shawn Guo <shawn.guo@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Steven Miao <realmz6@gmail.com>, adi-buildroot-devel@lists.sourceforge.net, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Andrew,
 
-On Wednesday 16 April 2014 06:55 AM, Andrew Bresticker wrote:
-> diff --git a/drivers/pinctrl/pinctrl-as3722.c b/drivers/pinctrl/pinctrl-as3722.c
-> index 92ed4b2..c862f9c0 100644
-> --- a/drivers/pinctrl/pinctrl-as3722.c
-> +++ b/drivers/pinctrl/pinctrl-as3722.c
-> @@ -64,7 +64,6 @@ struct as3722_pin_function {
->   };
->   
->   struct as3722_gpio_pin_control {
-> -	bool enable_gpio_invert;
->   	unsigned mode_prop;
->   	int io_function;
->   };
+--azLHFNyN32YCQGCU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Instead of removing this flag and  calling read of register on every 
-gpio set, better if we update this flag on probe once and use this for 
-entire life.
+On Thu, Apr 17, 2014 at 12:21:44AM -0700, Brian Norris wrote:
+> Hi all,
+>=20
+> We are introducing a new SPI-NOR library/framework for MTD, to support va=
+rious
+> types of SPI-NOR flash controllers which require (or benefit from) intima=
+te
+> knowledge of the flash interface, rather than just the relatively dumb SPI
+> interface. This library borrows much of the m25p80 driver for its abstrac=
+tion
+> and moves this code into a spi-nor module.
 
-So adding the code in probe() as
+If this is a common library, then the more common approach to solve this
+would be to have each driver that uses it to select MTD_SPI_NOR rather
+than depend on it. That way you can drop this whole series to update the
+default configurations.
 
-         for (i = 0; i < ARRAY_SIZE(as3722_pingroups); ++i) {
-                 int gpio_cntr_reg = AS3722_GPIOn_CONTROL_REG(i);
-                 u32 val;
+Thierry
 
-                 ret = as3722_read(as3722, gpio_cntr_reg, &val);
-                 if (!ret)
-as_pci->gpio_control[i].enable_gpio_invert =
-                                         !!(val & AS3722_GPIO_INV);
-         }
+--azLHFNyN32YCQGCU
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-Thanks,
-Laxman
+iQIcBAEBAgAGBQJTT7KNAAoJEN0jrNd/PrOhzhQP/3ocjlUpPSUcBT7myTaYn8dC
+zbZ0Zp5MO34d42OXHqfYC0q6LiCYp4I6xQDn8usqKBxpHd1dBAirD0z7Ofp3nAo5
+JwH+vr8zDZNTZcQd5W/LRI90fa/9qVNytVFNSEbmeNUop74+yhnQb//rq3YCskEZ
+v8rHJpH7uaJUPeVTsvrbmtW/9ZW5+ofFWj2JffogOyC4NY/oOldXl4gsOcP+PuF7
+gFdIn+D+hyEa2ZLjdeYD9lIvmLHczXhda0KPDZO31gDQyHvgMt+goUUgtWlqfHv+
+8cuKJjhHeMhMYtdZByrYRRVuhlafZlLJ2PqmunFCgsd/1P9Ww+k+nZJASw8jFqbd
+nGxDcgXG/4vfiFj0HMZoR/cWh845wYrWXdzaZdmY0bjiHEsz1ip+OVNq5ACq+d+L
+9posY8HH1btDrrcJEsce4DTHTJsAYdeX0oik8DK+gHi5no7sd8Twd2ZjJaZxtwXk
+pH+RZqVa3Wrj68vCXuyTZSFZb/QC/ZttUgW5YhfVcQJcsOC02+LRKOIbu0Em8hMq
+3sdsgTImKHFAEdWm4oNOHlOPN4nk/tMRo3nrCUV4Pb+yaCelIBlKo/9JLK0JfDQJ
+/qPtjG0OAPJYmHmwPcSB57kA/MZlF6RnNI1V8CHWOCQm94NwGirKBropQ/9yLxs7
+lrnTat974tXvX/gLJ7Do
+=Xz6I
+-----END PGP SIGNATURE-----
+
+--azLHFNyN32YCQGCU--
