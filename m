@@ -1,63 +1,37 @@
-From: Thierry Reding <thierry.reding@gmail.com>
+From: Marek Vasut <marex@denx.de>
 Subject: Re: [PATCH 0/5] defconfigs: add MTD_SPI_NOR (dependency for M25P80)
-Date: Thu, 17 Apr 2014 12:53:03 +0200
-Message-ID: <20140417105302.GA32603@ulmo>
+Date: Thu, 17 Apr 2014 13:07:44 +0200
+Message-ID: <201404171307.44214.marex@denx.de>
 References: <1397719309-2022-1-git-send-email-computersforpeace@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="azLHFNyN32YCQGCU"
+Content-Type: Text/Plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-sh-owner@vger.kernel.org>
-Content-Disposition: inline
 In-Reply-To: <1397719309-2022-1-git-send-email-computersforpeace@gmail.com>
 Sender: linux-sh-owner@vger.kernel.org
 To: Brian Norris <computersforpeace@gmail.com>
-Cc: Linux Kernel <linux-kernel@vger.kernel.org>, Marek Vasut <marex@denx.de>, linux-mtd@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Shawn Guo <shawn.guo@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Steven Miao <realmz6@gmail.com>, adi-buildroot-devel@lists.sourceforge.net, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org
+Cc: Linux Kernel <linux-kernel@vger.kernel.org>, linux-mtd@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Shawn Guo <shawn.guo@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Steven Miao <realmz6@gmail.com>, adi-buildroot-devel@lists.sourceforge.net, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-
---azLHFNyN32YCQGCU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Apr 17, 2014 at 12:21:44AM -0700, Brian Norris wrote:
+On Thursday, April 17, 2014 at 09:21:44 AM, Brian Norris wrote:
 > Hi all,
->=20
-> We are introducing a new SPI-NOR library/framework for MTD, to support va=
-rious
-> types of SPI-NOR flash controllers which require (or benefit from) intima=
-te
-> knowledge of the flash interface, rather than just the relatively dumb SPI
-> interface. This library borrows much of the m25p80 driver for its abstrac=
-tion
-> and moves this code into a spi-nor module.
+> 
+> We are introducing a new SPI-NOR library/framework for MTD, to support
+> various types of SPI-NOR flash controllers which require (or benefit from)
+> intimate knowledge of the flash interface, rather than just the relatively
+> dumb SPI interface. This library borrows much of the m25p80 driver for its
+> abstraction and moves this code into a spi-nor module.
+> 
+> This means CONFIG_M25P80 now has a dependency on CONFIG_MTD_SPI_NOR, which
+> should be added to the defconfigs. I'm not sure what is the best process
+> for doing this. Should each $ARCH maintainer just take their respective
+> patch, even if the MTD_SPI_NOR Kconfig symbol is not defined for them yet?
+> Or should maintainers plan on merging the relevant SPI-NOR code into their
+> trees during the development cycle? Or some third option?
 
-If this is a common library, then the more common approach to solve this
-would be to have each driver that uses it to select MTD_SPI_NOR rather
-than depend on it. That way you can drop this whole series to update the
-default configurations.
+Shouldn't the M25P80 driver just "select" the SPI NOR framework? Then you won't 
+need the adjustment to defconfigs at all I think.
 
-Thierry
-
---azLHFNyN32YCQGCU
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTT7KNAAoJEN0jrNd/PrOhzhQP/3ocjlUpPSUcBT7myTaYn8dC
-zbZ0Zp5MO34d42OXHqfYC0q6LiCYp4I6xQDn8usqKBxpHd1dBAirD0z7Ofp3nAo5
-JwH+vr8zDZNTZcQd5W/LRI90fa/9qVNytVFNSEbmeNUop74+yhnQb//rq3YCskEZ
-v8rHJpH7uaJUPeVTsvrbmtW/9ZW5+ofFWj2JffogOyC4NY/oOldXl4gsOcP+PuF7
-gFdIn+D+hyEa2ZLjdeYD9lIvmLHczXhda0KPDZO31gDQyHvgMt+goUUgtWlqfHv+
-8cuKJjhHeMhMYtdZByrYRRVuhlafZlLJ2PqmunFCgsd/1P9Ww+k+nZJASw8jFqbd
-nGxDcgXG/4vfiFj0HMZoR/cWh845wYrWXdzaZdmY0bjiHEsz1ip+OVNq5ACq+d+L
-9posY8HH1btDrrcJEsce4DTHTJsAYdeX0oik8DK+gHi5no7sd8Twd2ZjJaZxtwXk
-pH+RZqVa3Wrj68vCXuyTZSFZb/QC/ZttUgW5YhfVcQJcsOC02+LRKOIbu0Em8hMq
-3sdsgTImKHFAEdWm4oNOHlOPN4nk/tMRo3nrCUV4Pb+yaCelIBlKo/9JLK0JfDQJ
-/qPtjG0OAPJYmHmwPcSB57kA/MZlF6RnNI1V8CHWOCQm94NwGirKBropQ/9yLxs7
-lrnTat974tXvX/gLJ7Do
-=Xz6I
------END PGP SIGNATURE-----
-
---azLHFNyN32YCQGCU--
+Best regards,
+Marek Vasut
