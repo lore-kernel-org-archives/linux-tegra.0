@@ -1,89 +1,183 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 2/3] drm/tegra: Use nvidia,hpd-gpios property
-Date: Thu, 17 Apr 2014 14:03:00 +0200
-Message-ID: <1397736181-1593-3-git-send-email-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 3/3] ARM: tegra: Remove deprecated nvidia,hpd-gpio properties
+Date: Thu, 17 Apr 2014 14:03:01 +0200
+Message-ID: <1397736181-1593-4-git-send-email-thierry.reding@gmail.com>
 References: <1397736181-1593-1-git-send-email-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1397736181-1593-1-git-send-email-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1397736181-1593-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Make use of the new nvidia,hpd-gpios property and remove support for the
-deprecated nvidia,hpd-gpio property.
+This property has been replaced by one with a more standard name
+(nvidia,hpd-gpios) and is now obsolete.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt | 8 ++++----
- drivers/gpu/drm/tegra/output.c                                  | 2 +-
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ arch/arm/boot/dts/tegra114-dalmore.dts     | 4 ----
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi | 4 ----
+ arch/arm/boot/dts/tegra20-harmony.dts      | 4 ----
+ arch/arm/boot/dts/tegra20-paz00.dts        | 4 ----
+ arch/arm/boot/dts/tegra20-seaboard.dts     | 4 ----
+ arch/arm/boot/dts/tegra20-tamonten.dtsi    | 4 ----
+ arch/arm/boot/dts/tegra20-trimslice.dts    | 4 ----
+ arch/arm/boot/dts/tegra20-ventana.dts      | 4 ----
+ arch/arm/boot/dts/tegra20-whistler.dts     | 4 ----
+ arch/arm/boot/dts/tegra30-beaver.dts       | 4 ----
+ 10 files changed, 40 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt b/Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt
-index efa8b8451f93..81cdc7f4f5b1 100644
---- a/Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt
-+++ b/Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt
-@@ -126,7 +126,7 @@ of the following host1x client modules:
-   the RGB output associated with the controller. It can take the following
-   optional properties:
-   - nvidia,ddc-i2c-bus: phandle of an I2C controller used for DDC EDID probing
--  - nvidia,hpd-gpio: specifies a GPIO used for hotplug detection
-+  - nvidia,hpd-gpios: specifies a GPIO used for hotplug detection
-   - nvidia,edid: supplies a binary EDID blob
-   - nvidia,panel: phandle of a display panel
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+index c1e5eb33847a..df22dfad7db7 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -31,10 +31,6 @@
+ 			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
+ 			nvidia,hpd-gpios =
+ 				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
+-
+-			/* deprecated */
+-			nvidia,hpd-gpio =
+-				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
+ 		};
  
-@@ -151,7 +151,7 @@ of the following host1x client modules:
+ 		dsi@54300000 {
+diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+index 57b9b0d08123..7ab61aef11e0 100644
+--- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
++++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+@@ -21,10 +21,6 @@
+ 			nvidia,ddc-i2c-bus = <&i2c_ddc>;
+ 			nvidia,hpd-gpios =
+ 				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
+-
+-			/* deprecated */
+-			nvidia,hpd-gpio = <&gpio TEGRA_GPIO(N, 7)
+-				GPIO_ACTIVE_HIGH>;
+ 		};
+ 	};
  
-   Optional properties:
-   - nvidia,ddc-i2c-bus: phandle of an I2C controller used for DDC EDID probing
--  - nvidia,hpd-gpio: specifies a GPIO used for hotplug detection
-+  - nvidia,hpd-gpios: specifies a GPIO used for hotplug detection
-   - nvidia,edid: supplies a binary EDID blob
-   - nvidia,panel: phandle of a display panel
+diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
+index f62fe7059bca..650daf16c37b 100644
+--- a/arch/arm/boot/dts/tegra20-harmony.dts
++++ b/arch/arm/boot/dts/tegra20-harmony.dts
+@@ -34,10 +34,6 @@
+ 			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
+ 			nvidia,hpd-gpios =
+ 				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
+-
+-			/* deprecated */
+-			nvidia,hpd-gpio = <&gpio TEGRA_GPIO(N, 7)
+-				GPIO_ACTIVE_HIGH>;
+ 		};
+ 	};
  
-@@ -186,7 +186,7 @@ of the following host1x client modules:
+diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+index 196578fd007a..80f1827b219c 100644
+--- a/arch/arm/boot/dts/tegra20-paz00.dts
++++ b/arch/arm/boot/dts/tegra20-paz00.dts
+@@ -34,10 +34,6 @@
+ 			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
+ 			nvidia,hpd-gpios =
+ 				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
+-
+-			/* deprecated */
+-			nvidia,hpd-gpio = <&gpio TEGRA_GPIO(N, 7)
+-				GPIO_ACTIVE_HIGH>;
+ 		};
+ 	};
  
-   Optional properties:
-   - nvidia,ddc-i2c-bus: phandle of an I2C controller used for DDC EDID probing
--  - nvidia,hpd-gpio: specifies a GPIO used for hotplug detection
-+  - nvidia,hpd-gpios: specifies a GPIO used for hotplug detection
-   - nvidia,edid: supplies a binary EDID blob
-   - nvidia,panel: phandle of a display panel
+diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
+index 7a69d5f4f55d..aa97216a2683 100644
+--- a/arch/arm/boot/dts/tegra20-seaboard.dts
++++ b/arch/arm/boot/dts/tegra20-seaboard.dts
+@@ -34,10 +34,6 @@
+ 			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
+ 			nvidia,hpd-gpios =
+ 				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
+-
+-			/* deprecated */
+-			nvidia,hpd-gpio = <&gpio TEGRA_GPIO(N, 7)
+-				GPIO_ACTIVE_HIGH>;
+ 		};
+ 	};
  
-@@ -210,7 +210,7 @@ of the following host1x client modules:
+diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dts/tegra20-tamonten.dtsi
+index af582f8fd636..72f07a20aec3 100644
+--- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
++++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
+@@ -21,10 +21,6 @@
+ 			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
+ 			nvidia,hpd-gpios =
+ 				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
+-
+-			/* deprecated */
+-			nvidia,hpd-gpio = <&gpio TEGRA_GPIO(N, 7)
+-				GPIO_ACTIVE_HIGH>;
+ 		};
+ 	};
  
-   Optional properties:
-   - nvidia,ddc-i2c-bus: phandle of an I2C controller used for DDC EDID probing
--  - nvidia,hpd-gpio: specifies a GPIO used for hotplug detection
-+  - nvidia,hpd-gpios: specifies a GPIO used for hotplug detection
-   - nvidia,edid: supplies a binary EDID blob
-   - nvidia,panel: phandle of a display panel
+diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
+index 4ab1eea59efe..2affa75c0803 100644
+--- a/arch/arm/boot/dts/tegra20-trimslice.dts
++++ b/arch/arm/boot/dts/tegra20-trimslice.dts
+@@ -26,10 +26,6 @@
+ 			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
+ 			nvidia,hpd-gpios =
+ 				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
+-
+-			/* deprecated */
+-			nvidia,hpd-gpio = <&gpio TEGRA_GPIO(N, 7)
+-				GPIO_ACTIVE_HIGH>;
+ 		};
+ 	};
  
-diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
-index a3e4f1eca6f7..e8f50d57c95d 100644
---- a/drivers/gpu/drm/tegra/output.c
-+++ b/drivers/gpu/drm/tegra/output.c
-@@ -223,7 +223,7 @@ int tegra_output_probe(struct tegra_output *output)
- 	}
+diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
+index 663fbf4f8b63..b66045b53357 100644
+--- a/arch/arm/boot/dts/tegra20-ventana.dts
++++ b/arch/arm/boot/dts/tegra20-ventana.dts
+@@ -34,10 +34,6 @@
+ 			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
+ 			nvidia,hpd-gpios =
+ 				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
+-
+-			/* deprecated */
+-			nvidia,hpd-gpio = <&gpio TEGRA_GPIO(N, 7)
+-				GPIO_ACTIVE_HIGH>;
+ 		};
+ 	};
  
- 	output->hpd_gpio = of_get_named_gpio_flags(output->of_node,
--						   "nvidia,hpd-gpio", 0,
-+						   "nvidia,hpd-gpios", 0,
- 						   &flags);
- 	if (gpio_is_valid(output->hpd_gpio)) {
- 		unsigned long flags;
+diff --git a/arch/arm/boot/dts/tegra20-whistler.dts b/arch/arm/boot/dts/tegra20-whistler.dts
+index 9b5948f0cbc6..b0ecff2f71cc 100644
+--- a/arch/arm/boot/dts/tegra20-whistler.dts
++++ b/arch/arm/boot/dts/tegra20-whistler.dts
+@@ -26,10 +26,6 @@
+ 			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
+ 			nvidia,hpd-gpios =
+ 				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
+-
+-			/* deprecated */
+-			nvidia,hpd-gpio = <&gpio TEGRA_GPIO(N, 7)
+-				GPIO_ACTIVE_HIGH>;
+ 		};
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
+index e99b9967b2ca..e7a9da968f3b 100644
+--- a/arch/arm/boot/dts/tegra30-beaver.dts
++++ b/arch/arm/boot/dts/tegra30-beaver.dts
+@@ -46,10 +46,6 @@
+ 			nvidia,hpd-gpios =
+ 				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
+ 			nvidia,ddc-i2c-bus = <&hdmiddc>;
+-
+-			/* deprecated */
+-			nvidia,hpd-gpio =
+-				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
+ 		};
+ 	};
+ 
 -- 
 1.9.2
