@@ -1,73 +1,45 @@
-From: Bryan Wu <cooloney@gmail.com>
-Subject: Re: [v2] media: soc-camera: OF cameras
-Date: Thu, 17 Apr 2014 18:18:00 -0700
-Message-ID: <CAK5ve-KwypfcwEqC8mQeSjfWFYa8OgvuF6DDpspZ_trj21TOyA@mail.gmail.com>
-References: <1392235552-28134-1-git-send-email-pengw@nvidia.com>
- <1394794130-13660-1-git-send-email-josh.wu@atmel.com> <CAK5ve-KuPJa6rBdYGvkuPyQU5TCiEe1t=PzEKN4NgsKgVWogqA@mail.gmail.com>
- <Pine.LNX.4.64.1404102308500.25569@axis700.grange> <CAK5ve-KNivKYvyDAfp1nw6VgHG3AFuZzwC6gWV36pa3dpgkz1w@mail.gmail.com>
- <534C1D18.1030006@codethink.co.uk>
+From: Brian Norris <computersforpeace@gmail.com>
+Subject: Re: [PATCH 0/5] defconfigs: add MTD_SPI_NOR (dependency for M25P80)
+Date: Thu, 17 Apr 2014 23:30:54 -0700
+Message-ID: <20140418063054.GK5512@norris-Latitude-E6410>
+References: <1397719309-2022-1-git-send-email-computersforpeace@gmail.com>
+ <20140417105302.GA32603@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <534C1D18.1030006@codethink.co.uk>
-Sender: linux-media-owner@vger.kernel.org
-To: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Josh Wu <josh.wu@atmel.com>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-sh-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20140417105302.GA32603@ulmo>
+Sender: linux-sh-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Linux Kernel <linux-kernel@vger.kernel.org>, Marek Vasut <marex@denx.de>, linux-mtd@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Shawn Guo <shawn.guo@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Steven Miao <realmz6@gmail.com>, adi-buildroot-devel@lists.sourceforge.net, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Apr 14, 2014 at 10:38 AM, Ben Dooks <ben.dooks@codethink.co.uk> wrote:
-> On 14/04/14 18:14, Bryan Wu wrote:
->>
->> On Thu, Apr 10, 2014 at 2:18 PM, Guennadi Liakhovetski
->> <g.liakhovetski@gmx.de> wrote:
->>>
->>> Hi Bryan,
->>>
->>> On Tue, 8 Apr 2014, Bryan Wu wrote:
->>>
->>>> Thanks Josh, I think I will take you point and rework my patch again.
->>>> But I need Guennadi's review firstly, Guennadi, could you please help
->>>> to review it?
->>>
->>>
->>> Ok, let me double check the situation:
->>>
->>> 1. We've got this patch from you, aiming at adding OF probing support to
->>> soc-camra
->>>
->>> 2. We've got an alternative patch from Ben to do the same, his last reply
->>> to a comment to his patch was "Thanks, I will look into this."
->>>
->>> 3. We've got Ben's patches for rcar-vin, that presumably work with his
->>> patch from (2) above
->>>
->>> 4. We've got Josh's patches to add OF / async probing to atmel-isi and
->>> ov2640, that are not known to work with either (1) or (2) above, so, they
->>> don't work at all, right?
->>>
->>> So, to summarise, there is a core patch from Ben, that he possibly wants
->>> to adjust, and that works with his rcar-vin OF, there is a patch from you
->>> that isn't known to work with any driver, and there are patches from
->>> Josh,
->>> that don't work, because there isn't a suitable patch available for them.
->>> I will have a look at your and Ben's soc-camera OF patches to compare
->>> them
->>> and compare them with my early code (hopefully this coming weekend), but
->>> so far it looks like only Ben's solution has a complete working stack. Am
->>> I missing something?
->>>
->>
->> My bad. I missed the conversation and patches from Ben Dooks and you guys.
->> I have no problem for merging Ben's patch and I will align my Tegra
->> Camera patch with that, probably posted later.
->
->
-> If possible, could you test the latest one? I've not had much time
-> to actually use this and would welcome some feedback.
->
+Hi,
 
-I'm busy about other stuff, but after I finish that, I definitely try
-to port my driver on top of you patchset.
+On Thu, Apr 17, 2014 at 12:53:03PM +0200, Thierry Reding wrote:
+> On Thu, Apr 17, 2014 at 12:21:44AM -0700, Brian Norris wrote:
+> > We are introducing a new SPI-NOR library/framework for MTD, to support various
+> > types of SPI-NOR flash controllers which require (or benefit from) intimate
+> > knowledge of the flash interface, rather than just the relatively dumb SPI
+> > interface. This library borrows much of the m25p80 driver for its abstraction
+> > and moves this code into a spi-nor module.
+> 
+> If this is a common library, then the more common approach to solve this
+> would be to have each driver that uses it to select MTD_SPI_NOR rather
+> than depend on it. That way you can drop this whole series to update the
+> default configurations.
 
-Thanks a lot,
--Bryan
+But does MTD_SPI_NOR (and drivers/mtd/spi-nor/) qualify as a "library"
+or as a "subsystem"? I thought the latter were typically expected to be
+user-selectable options, not automatically-"select"ed.
+
+I would say that, except for its age, MTD_SPI_NOR is very similar in to
+MTD_NAND (driver/mtd/nand/), which I'd consider a kind of subsystem, and
+which users must select before they are asked about drivers which fall
+under its category.
+
+Perhaps my usage of the word "library" in the description was a mistake,
+as I don't exactly consider it like a library in the sense of many other
+"select"ed libraries.
+
+Brian
