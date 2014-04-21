@@ -1,60 +1,63 @@
-From: Ilia Mirkin <imirkin@alum.mit.edu>
-Subject: Re: [PATCH v2 07/10] drm/nouveau/graph: pad firmware code at load time
-Date: Mon, 21 Apr 2014 14:03:02 -0400
-Message-ID: <CAKb7UviQ6s8wRqwLVnE_A0NOw=WcVdFXG_wWmnZypwuaW_hnuw@mail.gmail.com>
+From: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>
+Subject: Re: [Nouveau] [PATCH v2 09/10] drm/nouveau: support GK20A in nouveau_accel_init()
+Date: Mon, 21 Apr 2014 14:07:56 -0400
+Message-ID: <CAKb7Uvg4kOfsE0gd4zLcwjShc4eVgVKA7zQM2r1aeatOybm8NQ@mail.gmail.com>
 References: <1398060142-7937-1-git-send-email-acourbot@nvidia.com>
- <1398060142-7937-8-git-send-email-acourbot@nvidia.com>
+	<1398060142-7937-10-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1398060142-7937-8-git-send-email-acourbot@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ben Skeggs <bskeggs@redhat.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1398060142-7937-10-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Apr 21, 2014 at 2:02 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
-> Pad the microcode to a multiple of 0x40 bytes, otherwise firmware will
+On Mon, Apr 21, 2014 at 2:02 AM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> Skip the creation of a software channel for GK20A as software methods
+> are not yet supported.
 
-bytes or u32's? From the code, I'm guessing the latter. (Similar
-concern about comment in the code.)
+How is GK20A different from a nvc0+ card that lacks PDISPLAY (like all
+the 3D Controller ones, and I guess even some that come up as VGA
+controller in PCI but don't have any outputs in their VBIOS)? i.e.
+what's wrong with just doing the same thing that GK1xx does? Note that
+there are sw methods that don't deal with display as well.
 
-> fail to run from non-prepadded firmware files.
+  -ilia
+
 >
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> Reviewed-by: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c | 4 ++++
->  1 file changed, 4 insertions(+)
+>  drivers/gpu/drm/nouveau/nouveau_drm.c | 5 +++++
+>  1 file changed, 5 insertions(+)
 >
-> diff --git a/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c b/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c
-> index e5b75f189988..013475c62986 100644
-> --- a/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c
-> +++ b/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c
-> @@ -894,6 +894,10 @@ nvc0_graph_init_fw(struct nvc0_graph_priv *priv, u32 fuc_base,
->                         nv_wr32(priv, fuc_base + 0x0188, i >> 6);
->                 nv_wr32(priv, fuc_base + 0x0184, code->data[i]);
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
+> index ddd83756b9a2..5b46148ffd32 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_drm.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
+> @@ -208,6 +208,10 @@ nouveau_accel_init(struct nouveau_drm *drm)
+>                 return;
 >         }
-> +
-> +       /* code must be padded to 0x40 bytes */
-> +       for (; i & 0x3f; i++)
-> +               nv_wr32(priv, fuc_base + 0x0184, 0);
->  }
 >
->  static void
+> +       /* Need to figure out how to handle sw for gk20a */
+> +       if (device->chipset == 0xea)
+> +               goto skip_sw_init;
+> +
+>         ret = nouveau_object_new(nv_object(drm), NVDRM_CHAN, NVDRM_NVSW,
+>                                  nouveau_abi16_swclass(drm), NULL, 0, &object);
+>         if (ret == 0) {
+> @@ -234,6 +238,7 @@ nouveau_accel_init(struct nouveau_drm *drm)
+>                 return;
+>         }
+>
+> +skip_sw_init:
+>         if (device->card_type < NV_C0) {
+>                 ret = nouveau_gpuobj_new(drm->device, NULL, 32, 0, 0,
+>                                         &drm->notify);
 > --
 > 1.9.2
 >
 > _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+> Nouveau mailing list
+> Nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+> http://lists.freedesktop.org/mailman/listinfo/nouveau
