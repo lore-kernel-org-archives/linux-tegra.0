@@ -1,63 +1,37 @@
-From: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>
-Subject: Re: [Nouveau] [PATCH v2 09/10] drm/nouveau: support GK20A in nouveau_accel_init()
-Date: Mon, 21 Apr 2014 14:07:56 -0400
-Message-ID: <CAKb7Uvg4kOfsE0gd4zLcwjShc4eVgVKA7zQM2r1aeatOybm8NQ@mail.gmail.com>
-References: <1398060142-7937-1-git-send-email-acourbot@nvidia.com>
-	<1398060142-7937-10-git-send-email-acourbot@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 7/7] ARM: tegra: Add the EC i2c tunnel to tegra124-venice2
+Date: Mon, 21 Apr 2014 12:18:17 -0600
+Message-ID: <535560E9.5040108@wwwdotorg.org>
+References: <1397757570-19750-1-git-send-email-dianders@chromium.org> <1397757570-19750-8-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1398060142-7937-10-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <1397757570-19750-8-git-send-email-dianders@chromium.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>, Lee Jones <lee.jones@linaro.org>, Stephen Warren <swarren@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>
+Cc: abrestic@chromium.org, dgreid@chromium.org, Olof Johansson <olof@lixom.net>, Simon Glass <sjg@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Apr 21, 2014 at 2:02 AM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> Skip the creation of a software channel for GK20A as software methods
-> are not yet supported.
+On 04/17/2014 11:59 AM, Doug Anderson wrote:
+> This adds the EC i2c tunnel (and devices under it) to the
+> tegra124-venice2 device tree.
 
-How is GK20A different from a nvc0+ card that lacks PDISPLAY (like all
-the 3D Controller ones, and I guess even some that come up as VGA
-controller in PCI but don't have any outputs in their VBIOS)? i.e.
-what's wrong with just doing the same thing that GK1xx does? Note that
-there are sw methods that don't deal with display as well.
+The series,
+Tested-by: Stephen Warren <swarren@nvidia.com>
 
-  -ilia
+I can apply this one patch once the other patches in the series are
+acked or applied (in order to make sure the DT binding is acceptable to
+others).
 
->
-> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/gpu/drm/nouveau/nouveau_drm.c | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
-> index ddd83756b9a2..5b46148ffd32 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-> @@ -208,6 +208,10 @@ nouveau_accel_init(struct nouveau_drm *drm)
->                 return;
->         }
->
-> +       /* Need to figure out how to handle sw for gk20a */
-> +       if (device->chipset == 0xea)
-> +               goto skip_sw_init;
-> +
->         ret = nouveau_object_new(nv_object(drm), NVDRM_CHAN, NVDRM_NVSW,
->                                  nouveau_abi16_swclass(drm), NULL, 0, &object);
->         if (ret == 0) {
-> @@ -234,6 +238,7 @@ nouveau_accel_init(struct nouveau_drm *drm)
->                 return;
->         }
->
-> +skip_sw_init:
->         if (device->card_type < NV_C0) {
->                 ret = nouveau_gpuobj_new(drm->device, NULL, 32, 0, 0,
->                                         &drm->notify);
-> --
-> 1.9.2
->
-> _______________________________________________
-> Nouveau mailing list
-> Nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-> http://lists.freedesktop.org/mailman/listinfo/nouveau
+I guess I'll send separate patches for tegra_defconfig and
+multi_v7_defconfig to add the required options once I've applied this,
+unless you beat me to it.
+
+> diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
+
+>  	aliases {
+> +		i2c20 = "/spi@0,7000d400/cros-ec@0/i2c-tunnel";
+
+Is that needed? I'd prefer not to add it unless there's a specific
+reason. I don't think I2C buses need specific names, do they?
