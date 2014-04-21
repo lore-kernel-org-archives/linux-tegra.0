@@ -1,14 +1,11 @@
 From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 01/10] drm/nouveau/bar: only ioremap BAR3 if it
-	exists
-Date: Mon, 21 Apr 2014 15:02:13 +0900
-Message-ID: <1398060142-7937-2-git-send-email-acourbot@nvidia.com>
-References: <1398060142-7937-1-git-send-email-acourbot@nvidia.com>
+Subject: [PATCH v2 00/10] drm/nouveau: support for GK20A, cont'd
+Date: Mon, 21 Apr 2014 15:02:12 +0900
+Message-ID: <1398060142-7937-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <1398060142-7937-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
  <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/nouveau>
@@ -22,32 +19,59 @@ To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Some chips that use system memory exclusively (e.g. GK20A) do not
-expose 2 BAR regions. For them only BAR1 exists, and it should be used
-for USERD mapping. Do not map BAR3 if its resource does not exist.
+Hi everyone,
 
-Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/gpu/drm/nouveau/core/subdev/bar/base.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Way overdue v2 of the final patches that enable basic GK20A support. Hopefully
+all the issues raised with v1 have been addressed.
 
-diff --git a/drivers/gpu/drm/nouveau/core/subdev/bar/base.c b/drivers/gpu/drm/nouveau/core/subdev/bar/base.c
-index bdf594116f3f..73b1ed20c8d5 100644
---- a/drivers/gpu/drm/nouveau/core/subdev/bar/base.c
-+++ b/drivers/gpu/drm/nouveau/core/subdev/bar/base.c
-@@ -118,8 +118,10 @@ nouveau_bar_create_(struct nouveau_object *parent,
- 	if (ret)
- 		return ret;
- 
--	bar->iomem = ioremap(nv_device_resource_start(device, 3),
--			     nv_device_resource_len(device, 3));
-+	if (nv_device_resource_len(device, 3) != 0)
-+		bar->iomem = ioremap(nv_device_resource_start(device, 3),
-+				     nv_device_resource_len(device, 3));
-+
- 	return 0;
- }
- 
+Changes since v1:
+- Use gk20a clock driver by Ben instead of twiddling nv04's
+- Name new classes after gk20a instead of nvea
+- Addressed comments about BAR initialization code factorization
+- Removed non-essential code which only purpose was to avoid warnings
+- Use nv_wait in ibus driver
+
+Alexandre Courbot (10):
+  drm/nouveau/bar: only ioremap BAR3 if it exists
+  drm/nouveau/bar/nvc0: support chips without BAR3
+  drm/nouveau/ibus: add GK20A support
+  drm/nouveau/fb: add GK20A support
+  drm/nouveau/fifo: add GK20A support
+  drm/nouveau/graph: enable when using external firmware
+  drm/nouveau/graph: pad firmware code at load time
+  drm/nouveau/graph: add GK20A support
+  drm/nouveau: support GK20A in nouveau_accel_init()
+  drm/nouveau: support for probing GK20A
+
+ drivers/gpu/drm/nouveau/Makefile                   |   6 +
+ drivers/gpu/drm/nouveau/core/engine/device/nve0.c  |  20 +++
+ drivers/gpu/drm/nouveau/core/engine/fifo/gk20a.c   |  35 +++++
+ drivers/gpu/drm/nouveau/core/engine/fifo/nve0.h    |   1 +
+ .../gpu/drm/nouveau/core/engine/graph/ctxgk20a.c   |  53 +++++++
+ .../gpu/drm/nouveau/core/engine/graph/ctxnvc0.h    |   9 ++
+ .../gpu/drm/nouveau/core/engine/graph/ctxnve4.c    |  14 +-
+ drivers/gpu/drm/nouveau/core/engine/graph/gk20a.c  |  47 ++++++
+ drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c   |  13 +-
+ drivers/gpu/drm/nouveau/core/engine/graph/nvc0.h   |   2 +
+ drivers/gpu/drm/nouveau/core/engine/graph/nve4.c   |   4 +-
+ drivers/gpu/drm/nouveau/core/include/engine/fifo.h |   1 +
+ .../gpu/drm/nouveau/core/include/engine/graph.h    |   1 +
+ drivers/gpu/drm/nouveau/core/include/subdev/fb.h   |   1 +
+ drivers/gpu/drm/nouveau/core/include/subdev/ibus.h |   1 +
+ drivers/gpu/drm/nouveau/core/subdev/bar/base.c     |   6 +-
+ drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c     | 114 +++++++-------
+ drivers/gpu/drm/nouveau/core/subdev/fb/gk20a.c     |  56 +++++++
+ drivers/gpu/drm/nouveau/core/subdev/fb/priv.h      |   1 +
+ drivers/gpu/drm/nouveau/core/subdev/fb/ramgk20a.c  | 168 +++++++++++++++++++++
+ drivers/gpu/drm/nouveau/core/subdev/ibus/gk20a.c   | 103 +++++++++++++
+ drivers/gpu/drm/nouveau/nouveau_drm.c              |   5 +
+ 22 files changed, 592 insertions(+), 69 deletions(-)
+ create mode 100644 drivers/gpu/drm/nouveau/core/engine/fifo/gk20a.c
+ create mode 100644 drivers/gpu/drm/nouveau/core/engine/graph/ctxgk20a.c
+ create mode 100644 drivers/gpu/drm/nouveau/core/engine/graph/gk20a.c
+ create mode 100644 drivers/gpu/drm/nouveau/core/subdev/fb/gk20a.c
+ create mode 100644 drivers/gpu/drm/nouveau/core/subdev/fb/ramgk20a.c
+ create mode 100644 drivers/gpu/drm/nouveau/core/subdev/ibus/gk20a.c
+
 -- 
 1.9.2
