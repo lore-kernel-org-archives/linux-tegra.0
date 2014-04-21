@@ -1,50 +1,56 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 7/7] ARM: tegra: Add the EC i2c tunnel to tegra124-venice2
-Date: Mon, 21 Apr 2014 14:03:49 -0600
-Message-ID: <535579A5.2060603@wwwdotorg.org>
-References: <1397757570-19750-1-git-send-email-dianders@chromium.org>	<1397757570-19750-8-git-send-email-dianders@chromium.org>	<535560E9.5040108@wwwdotorg.org> <CAD=FV=W8=SLxF=goYm9p3Dr0ZQYy9FzN0hbE+MwWFYGarZB9tw@mail.gmail.com>
+From: Marek Vasut <marex@denx.de>
+Subject: Re: [PATCH 0/5] defconfigs: add MTD_SPI_NOR (dependency for M25P80)
+Date: Mon, 21 Apr 2014 16:52:39 +0200
+Message-ID: <201404211652.39704.marex@denx.de>
+References: <1397719309-2022-1-git-send-email-computersforpeace@gmail.com> <20140417105302.GA32603@ulmo> <20140418063054.GK5512@norris-Latitude-E6410>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: Text/Plain;
+  charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <CAD=FV=W8=SLxF=goYm9p3Dr0ZQYy9FzN0hbE+MwWFYGarZB9tw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Stephen Warren <swarren@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>, Andrew Bresticker <abrestic@chromium.org>, Dylan Reid <dgreid@chromium.org>, Olof Johansson <olof@lixom.net>, Simon Glass <sjg@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <20140418063054.GK5512@norris-Latitude-E6410>
+Sender: linux-sh-owner@vger.kernel.org
+To: Brian Norris <computersforpeace@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Linux Kernel <linux-kernel@vger.kernel.org>, linux-mtd@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Shawn Guo <shawn.guo@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Steven Miao <realmz6@gmail.com>, adi-buildroot-devel@lists.sourceforge.net, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/21/2014 01:35 PM, Doug Anderson wrote:
-> Stephen,
+On Friday, April 18, 2014 at 08:30:54 AM, Brian Norris wrote:
+> Hi,
 > 
-> On Mon, Apr 21, 2014 at 11:18 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
->> On 04/17/2014 11:59 AM, Doug Anderson wrote:
->>> This adds the EC i2c tunnel (and devices under it) to the
->>> tegra124-venice2 device tree.
+> On Thu, Apr 17, 2014 at 12:53:03PM +0200, Thierry Reding wrote:
+> > On Thu, Apr 17, 2014 at 12:21:44AM -0700, Brian Norris wrote:
+> > > We are introducing a new SPI-NOR library/framework for MTD, to support
+> > > various types of SPI-NOR flash controllers which require (or benefit
+> > > from) intimate knowledge of the flash interface, rather than just the
+> > > relatively dumb SPI interface. This library borrows much of the m25p80
+> > > driver for its abstraction and moves this code into a spi-nor module.
+> > 
+> > If this is a common library, then the more common approach to solve this
+> > would be to have each driver that uses it to select MTD_SPI_NOR rather
+> > than depend on it. That way you can drop this whole series to update the
+> > default configurations.
+> 
+> But does MTD_SPI_NOR (and drivers/mtd/spi-nor/) qualify as a "library"
+> or as a "subsystem"? I thought the latter were typically expected to be
+> user-selectable options, not automatically-"select"ed.
 
->>> diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
->>
->>>       aliases {
->>> +             i2c20 = "/spi@0,7000d400/cros-ec@0/i2c-tunnel";
->>
->> Is that needed? I'd prefer not to add it unless there's a specific
->> reason. I don't think I2C buses need specific names, do they?
-> 
-> It is not strictly needed, but from a usability standpoint it is
-> terribly helpful.  It serves to make it obvious to someone looking at
-> the device that it's _not_ an i2c bus associated with the main SoC.
-> If you don't include a number I believe that the i2c core will pick
-> the first available number.
-> 
-> It seems worth it to save a few people a few hours of head scratching.
-> 
-> ...but this is your dts and if you think it's a terrible idea then
-> I'll remove it.  It looks to be less critical on tegra than it is on
-> exynos (which has ~9 i2c busses, they are numbered in the user manual,
-> and if you have one set to "disable" in the dts then the tunnel will
-> end up getting a very confusing number).
+I agree the "subsystem" is user-selectable while the "library" is to be 
+'select'ed .
 
-My opinion is that the in-kernel I2C bus numbering is an entirely
-unrelated numbering space to the HW controller numbering space precisely
-because of issues like that. DT aliases are more useful for user-visible
-port numbering (e.g. HDMI 0, 1 connectors on a case) than purely
-internal details like this. So, I would leave it out.
+> I would say that, except for its age, MTD_SPI_NOR is very similar in to
+> MTD_NAND (driver/mtd/nand/), which I'd consider a kind of subsystem, and
+> which users must select before they are asked about drivers which fall
+> under its category.
+> 
+> Perhaps my usage of the word "library" in the description was a mistake,
+> as I don't exactly consider it like a library in the sense of many other
+> "select"ed libraries.
+
+It did look like a library to me at first, but it's rather a subsystem that 
+contains a small library in it. Thus, I retract my previous comment about using 
+'select' and add :
+
+Acked-by: Marek Vasut <marex@denx.de>
+
+Best regards,
+Marek Vasut
