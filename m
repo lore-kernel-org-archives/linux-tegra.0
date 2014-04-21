@@ -1,56 +1,69 @@
-From: Marek Vasut <marex@denx.de>
-Subject: Re: [PATCH 0/5] defconfigs: add MTD_SPI_NOR (dependency for M25P80)
-Date: Mon, 21 Apr 2014 16:52:39 +0200
-Message-ID: <201404211652.39704.marex@denx.de>
-References: <1397719309-2022-1-git-send-email-computersforpeace@gmail.com> <20140417105302.GA32603@ulmo> <20140418063054.GK5512@norris-Latitude-E6410>
+From: Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 07/10] drm/nouveau/graph: pad firmware code
+	at load time
+Date: Tue, 22 Apr 2014 09:48:03 +1000
+Message-ID: <CACAvsv7J7yUaug=CoUfsPg5PXf=ZmwUD9XvCt4CqAvnamQNN9A@mail.gmail.com>
+References: <1398060142-7937-1-git-send-email-acourbot@nvidia.com>
+ <1398060142-7937-8-git-send-email-acourbot@nvidia.com>
+ <CAKb7UviQ6s8wRqwLVnE_A0NOw=WcVdFXG_wWmnZypwuaW_hnuw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <20140418063054.GK5512@norris-Latitude-E6410>
-Sender: linux-sh-owner@vger.kernel.org
-To: Brian Norris <computersforpeace@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Linux Kernel <linux-kernel@vger.kernel.org>, linux-mtd@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Shawn Guo <shawn.guo@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Steven Miao <realmz6@gmail.com>, adi-buildroot-devel@lists.sourceforge.net, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <CAKb7UviQ6s8wRqwLVnE_A0NOw=WcVdFXG_wWmnZypwuaW_hnuw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>
+Cc: "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday, April 18, 2014 at 08:30:54 AM, Brian Norris wrote:
-> Hi,
-> 
-> On Thu, Apr 17, 2014 at 12:53:03PM +0200, Thierry Reding wrote:
-> > On Thu, Apr 17, 2014 at 12:21:44AM -0700, Brian Norris wrote:
-> > > We are introducing a new SPI-NOR library/framework for MTD, to support
-> > > various types of SPI-NOR flash controllers which require (or benefit
-> > > from) intimate knowledge of the flash interface, rather than just the
-> > > relatively dumb SPI interface. This library borrows much of the m25p80
-> > > driver for its abstraction and moves this code into a spi-nor module.
-> > 
-> > If this is a common library, then the more common approach to solve this
-> > would be to have each driver that uses it to select MTD_SPI_NOR rather
-> > than depend on it. That way you can drop this whole series to update the
-> > default configurations.
-> 
-> But does MTD_SPI_NOR (and drivers/mtd/spi-nor/) qualify as a "library"
-> or as a "subsystem"? I thought the latter were typically expected to be
-> user-selectable options, not automatically-"select"ed.
+On Tue, Apr 22, 2014 at 4:03 AM, Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org> wrote:
+> On Mon, Apr 21, 2014 at 2:02 AM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> Pad the microcode to a multiple of 0x40 bytes, otherwise firmware will
+>
+> bytes or u32's? From the code, I'm guessing the latter. (Similar
+> concern about comment in the code.)
+>
+>> fail to run from non-prepadded firmware files.
+>>
+>> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>  drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c | 4 ++++
+>>  1 file changed, 4 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c b/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c
+>> index e5b75f189988..013475c62986 100644
+>> --- a/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c
+>> +++ b/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c
+>> @@ -894,6 +894,10 @@ nvc0_graph_init_fw(struct nvc0_graph_priv *priv, u32 fuc_base,
+>>                         nv_wr32(priv, fuc_base + 0x0188, i >> 6);
+>>                 nv_wr32(priv, fuc_base + 0x0184, code->data[i]);
+>>         }
+>> +
+>> +       /* code must be padded to 0x40 bytes */
+>> +       for (; i & 0x3f; i++)
+>> +               nv_wr32(priv, fuc_base + 0x0184, 0);
+It's 256 bytes indeed.
 
-I agree the "subsystem" is user-selectable while the "library" is to be 
-'select'ed .
-
-> I would say that, except for its age, MTD_SPI_NOR is very similar in to
-> MTD_NAND (driver/mtd/nand/), which I'd consider a kind of subsystem, and
-> which users must select before they are asked about drivers which fall
-> under its category.
-> 
-> Perhaps my usage of the word "library" in the description was a mistake,
-> as I don't exactly consider it like a library in the sense of many other
-> "select"ed libraries.
-
-It did look like a library to me at first, but it's rather a subsystem that 
-contains a small library in it. Thus, I retract my previous comment about using 
-'select' and add :
-
-Acked-by: Marek Vasut <marex@denx.de>
-
-Best regards,
-Marek Vasut
+>>  }
+>>
+>>  static void
+>> --
+>> 1.9.2
+>>
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+>> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
