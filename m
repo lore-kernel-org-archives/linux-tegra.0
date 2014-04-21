@@ -1,56 +1,60 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [RESEND PATCH 6/7] i2c: ChromeOS EC tunnel driver
-Date: Mon, 21 Apr 2014 11:53:00 -0600
-Message-ID: <53555AFC.5020203@wwwdotorg.org>
-References: <1397759814-3588-1-git-send-email-dianders@chromium.org> <1397759814-3588-7-git-send-email-dianders@chromium.org>
+From: Ilia Mirkin <imirkin@alum.mit.edu>
+Subject: Re: [PATCH v2 07/10] drm/nouveau/graph: pad firmware code at load time
+Date: Mon, 21 Apr 2014 14:03:02 -0400
+Message-ID: <CAKb7UviQ6s8wRqwLVnE_A0NOw=WcVdFXG_wWmnZypwuaW_hnuw@mail.gmail.com>
+References: <1398060142-7937-1-git-send-email-acourbot@nvidia.com>
+ <1398060142-7937-8-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1397759814-3588-7-git-send-email-dianders@chromium.org>
-Sender: linux-doc-owner@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>, lee.jones@linaro.org, swarren@nvidia.com, wsa@the-dreams.de
-Cc: abrestic@chromium.org, dgreid@chromium.org, olof@lixom.net, sjg@chromium.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rdunlap@infradead.org, sameo@linux.intel.com, jdelvare@suse.de, shane.huang@amd.com, maxime.ripard@free-electrons.com, laurent.pinchart+renesas@ideasonboard.com, u.kleine-koenig@pengutronix.de, bjorn.andersson@sonymobile.com, kevin.strasser@linux.intel.com, linux@prisktech.co.nz, andrew@lunn.ch, andriy.shevchenko@linux.intel.com, schwidefsky@de.ibm.com, matt.porter@linaro.org, ch.naveen@samsung.com, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1398060142-7937-8-git-send-email-acourbot@nvidia.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ben Skeggs <bskeggs@redhat.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/17/2014 12:36 PM, Doug Anderson wrote:
-> On ARM Chromebooks we have a few devices that are accessed by both the
-> AP (the main "Application Processor") and the EC (the Embedded
-> Controller).  These are:
-> * The battery (sbs-battery).
-> * The power management unit tps65090.
-...
-> On the Samsung ARM Chromebook 2 the scheme is changed yet again, now:
-> * The AP/EC comms are now using SPI for faster speeds.
-> * The EC's i2c bus is exposed to the AP through a full i2c tunnel.
-...
-> This driver supports the scheme used by the Samsung ARM Chromebook 2.
-> Future patches to this driver could add support for the battery tunnel
-> on the HP Chromebook 11 (and perhaps could even be used to access
-> tps65090 on the HP Chromebook 11 instead of using a special driver,
-> but I haven't researched that enough).
+On Mon, Apr 21, 2014 at 2:02 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+> Pad the microcode to a multiple of 0x40 bytes, otherwise firmware will
 
-> diff --git a/Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt b/Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt
+bytes or u32's? From the code, I'm guessing the latter. (Similar
+concern about comment in the code.)
 
-> +I2C bus that tunnels through the ChromeOS EC (cros-ec)
-> +======================================================
-> +On some ChromeOS board designs we've got a connection to the EC (embedded
-> +controller) but no direct connection to some devices on the other side of
-> +the EC (like a battery and PMIC).  To get access to those devices we need
-> +to tunnel our i2c commands through the EC.
+> fail to run from non-prepadded firmware files.
+>
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> Reviewed-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c b/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c
+> index e5b75f189988..013475c62986 100644
+> --- a/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c
+> +++ b/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c
+> @@ -894,6 +894,10 @@ nvc0_graph_init_fw(struct nvc0_graph_priv *priv, u32 fuc_base,
+>                         nv_wr32(priv, fuc_base + 0x0188, i >> 6);
+>                 nv_wr32(priv, fuc_base + 0x0184, code->data[i]);
+>         }
 > +
-> +The node for this device should be under a cros-ec node like google,cros-ec-spi
-> +or google,cros-ec-i2c.
-> +
-> +
-> +Required properties:
-> +- compatible: google,cros-ec-i2c-tunnel
-> +- google,remote-bus: The EC bus we'd like to talk to.
-
-It's probably worth mentioning here that the node represents a single
-I2C bus, and hence is expected to contain child nodes representing I2C
-devices. Perhaps:
-
-Optional child nodes:
-- One node per I2C device connected to the tunnelled I2C bus.
-
+> +       /* code must be padded to 0x40 bytes */
+> +       for (; i & 0x3f; i++)
+> +               nv_wr32(priv, fuc_base + 0x0184, 0);
+>  }
+>
+>  static void
+> --
+> 1.9.2
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
