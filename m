@@ -1,63 +1,86 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH v2 10/10] drm/nouveau: support for probing GK20A
-Date: Mon, 21 Apr 2014 15:02:22 +0900
-Message-ID: <1398060142-7937-11-git-send-email-acourbot@nvidia.com>
-References: <1398060142-7937-1-git-send-email-acourbot@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: Oops on Tegra30 with CPU Process: 1
+Date: Mon, 21 Apr 2014 11:13:33 -0600
+Message-ID: <535551BD.5000207@wwwdotorg.org>
+References: <53440884.7010304@ziswiler.com> <534C3422.1050004@wwwdotorg.org> <534C427E.5030404@wwwdotorg.org> <53545792.30709@ziswiler.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1398060142-7937-1-git-send-email-acourbot@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ben Skeggs <bskeggs@redhat.com>
-Cc: gnurou@gmail.com, nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <53545792.30709-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Set the correct subdev/engine classes when GK20A (0xea) is probed.
+On 04/20/2014 05:26 PM, Marcel Ziswiler wrote:
+> On 04/14/2014 10:18 PM, Stephen Warren wrote:
+>> On 04/14/2014 01:16 PM, Stephen Warren wrote:
+>>> On 04/08/2014 08:32 AM, Marcel Ziswiler wrote:
+>>>> Hi there
+>>>>
+>>>> I have the following Toradex Colibri T30 modules with different ATE prog
+>>>> versions, Tegra30 SKUs as well as CPU process numbers:
+>>>>
+>>>> Colibri T30 V1.1B (working)
+>>>>
+>>>> [    0.000000] fuse_speedo_calib: ATE prog ver 3.6
+>>>> [    0.000000] Tegra30: CPU Speedo ID 2, Soc Speedo ID 2
+>>>> [    0.000000] Tegra Revision: A03 SKU: 129 CPU Process: 2 Core
+>>>> Process: 0
+>>>>
+>>>> Colibri T30 V1.1C (below crash)
+>>>>
+>>>> [    0.000000] fuse_speedo_calib: ATE prog ver 3.7
+>>>> [    0.000000] Tegra30: CPU Speedo ID 2, Soc Speedo ID 2
+>>>> [    0.000000] Tegra Revision: A03 SKU: 129 CPU Process: 1 Core
+>>>> Process: 0
+...
+>> Uggh. I just realized that 1.0V on VDD_CPU (which is what mainline
+>> U-Boot and the kernel set up) is enough to run the CPU at 1.0GHz. I
+>> thought U-Boot programmed the CPU clock to that rate, but according to
+>> U-Boot's arch/arm/cpu/arm720t/tegra-common/cpu.c tegra_pll_x_table[], it
+>> actually runs the CPUs at 1.4GHz. In order to solve that problem, you'll
+>> want to try either:
+...
+>> 2) Adjusting the code that programs VDD_CPU, both in:
+>>
+>> 2a) U-Boot's TPS65911_VDDCTRL_OP_DATA value in
+>> arch/arm/cpu/arm720t/tegra30/cpu.c.
+>>
+>> That value should be:
+>>
+>> # CPU Process 2:
+>> (0x2a00 | TPS65911_VDDCTRL_OP_REG)
+>>
+>> # CPU Process 1:
+>> (0x2c00 | TPS65911_VDDCTRL_OP_REG)
+>>
+>> 2b) The kernel's regulator configuration in DT; whatever the Colibri
+>> equivalent of the following from arch/arm/boot/dts/tegra30-cardhu.dtsi:
+>>
+>> vddctrl_reg: vddctrl {
+>>     regulator-name = "vdd_cpu,vdd_sys";
+>>     regulator-min-microvolt = <1000000>;
+>>     regulator-max-microvolt = <1000000>;
+>>     regulator-always-on;
+>> };
+>>
+>> Both regulator-min/max-microvolt should be 1.125V (1125000) for CPU
+>> process 2, and 1.15V (1150000) for CPU process 1.
+> 
+> At least approach 2b) indeed makes em fly again. Rock solid without any
+> more crashes (;-p).
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
- drivers/gpu/drm/nouveau/core/engine/device/nve0.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+Great. Thanks for the confirmation.
 
-diff --git a/drivers/gpu/drm/nouveau/core/engine/device/nve0.c b/drivers/gpu/drm/nouveau/core/engine/device/nve0.c
-index 9784cbf8a9d2..b014928286d6 100644
---- a/drivers/gpu/drm/nouveau/core/engine/device/nve0.c
-+++ b/drivers/gpu/drm/nouveau/core/engine/device/nve0.c
-@@ -156,6 +156,26 @@ nve0_identify(struct nouveau_device *device)
- 		device->oclass[NVDEV_ENGINE_PPP    ] = &nvc0_ppp_oclass;
- 		device->oclass[NVDEV_ENGINE_PERFMON] = &nve0_perfmon_oclass;
- 		break;
-+	case 0xea:
-+		device->cname = "GK20A";
-+		device->oclass[NVDEV_SUBDEV_MC     ] =  nvc3_mc_oclass;
-+		device->oclass[NVDEV_SUBDEV_BUS    ] =  nvc0_bus_oclass;
-+		device->oclass[NVDEV_SUBDEV_TIMER  ] = &gk20a_timer_oclass;
-+		device->oclass[NVDEV_SUBDEV_FB     ] =  gk20a_fb_oclass;
-+		device->oclass[NVDEV_SUBDEV_IBUS   ] = &gk20a_ibus_oclass;
-+		device->oclass[NVDEV_SUBDEV_INSTMEM] = nv50_instmem_oclass;
-+		device->oclass[NVDEV_SUBDEV_VM     ] = &nvc0_vmmgr_oclass;
-+		device->oclass[NVDEV_SUBDEV_BAR    ] = &nvc0_bar_oclass;
-+		device->oclass[NVDEV_ENGINE_DMAOBJ ] = &nvd0_dmaeng_oclass;
-+		device->oclass[NVDEV_ENGINE_FIFO   ] =  gk20a_fifo_oclass;
-+		/* TODO will need an implementation for this at some point... */
-+#if 0
-+		device->oclass[NVDEV_ENGINE_SW     ] =  nvc0_software_oclass;
-+#endif
-+		device->oclass[NVDEV_ENGINE_GR     ] =  gk20a_graph_oclass;
-+		device->oclass[NVDEV_ENGINE_COPY2  ] = &nve0_copy2_oclass;
-+		device->oclass[NVDEV_ENGINE_PERFMON] = &nve0_perfmon_oclass;
-+		break;
- 	case 0xf0:
- 		device->cname = "GK110";
- 		device->oclass[NVDEV_SUBDEV_VBIOS  ] = &nouveau_bios_oclass;
--- 
-1.9.2
+It might be slightly better to apply the fix to U-Boot in addition to
+the kernel DT, since that way the correct voltage will be applied for
+the entire run-time of the main CPUs, rather than only starting at some
+point during the kernel boot.
+
+Evidently from your practical test results, the correct voltage only
+appears to matter once user-space boots up and the CPU load gets higher
+(and likely when multiple CPUs are doing real work). However, it seems
+at least theoretically possible that even U-Boot might trigger the
+problem, and hence should probably set up the regulators correctly.
