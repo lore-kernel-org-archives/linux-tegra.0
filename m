@@ -1,58 +1,68 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH v2 0/7] Add cros_ec changes for newer boards
-Date: Tue, 22 Apr 2014 09:45:47 -0700
-Message-ID: <1398185154-19404-1-git-send-email-dianders@chromium.org>
-Return-path: <linux-doc-owner@vger.kernel.org>
-Sender: linux-doc-owner@vger.kernel.org
+Subject: [PATCH v2 3/7] mfd: cros_ec: spi: Make the cros_ec_spi timeout more reliable
+Date: Tue, 22 Apr 2014 09:45:50 -0700
+Message-ID: <1398185154-19404-4-git-send-email-dianders@chromium.org>
+References: <1398185154-19404-1-git-send-email-dianders@chromium.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <1398185154-19404-1-git-send-email-dianders@chromium.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 To: lee.jones@linaro.org, swarren@nvidia.com, wsa@the-dreams.de
-Cc: abrestic@chromium.org, dgreid@chromium.org, olof@lixom.net, sjg@chromium.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Doug Anderson <dianders@chromium.org>, mark.rutland@arm.com, andrew@lunn.ch, swarren@wwwdotorg.org, thierry.reding@gmail.com, linux-i2c@vger.kernel.org, matt.porter@linaro.org, jdelvare@suse.de, laurent.pinchart+renesas@ideasonboard.com, vpalatin@chromium.org, sameo@linux.intel.com, linux-doc@vger.kernel.org, bjorn.andersson@sonymobile.com, u.kleine-koenig@pengutronix.de, kevin.strasser@linux.intel.com, devicetree@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, robh+dt@kernel.org, linux@arm.linux.org.uk, andriy.shevchenko@linux.intel.com, ch.naveen@samsung.com, linux-arm-kernel@lists.infradead.org, shane.huang@amd.com, rdunlap@infradead.org, linux-kernel@vger.kernel.org, linux@prisktech.co.nz, galak@codeaurora
+Cc: abrestic@chromium.org, dgreid@chromium.org, olof@lixom.net, sjg@chromium.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Doug Anderson <dianders@chromium.org>, sameo@linux.intel.com, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This series adds the most critical cros_ec changes for newer boards
-using cros_ec.  Specifically:
-* Fixes timing/locking issues with the previously upstreamed (but
-  never used upstream) cros_ec_spi driver.
-* Updates the cros_ec header file to the latest version which allows
-  us to use newer EC features like i2c tunneling.
-* Adds an i2c tunnel driver to allow communication to the EC's i2c
-  devices.
+The cros_ec_spi transfer had two problems with its timeout code:
 
-This _doesn't_ get the EC driver fully up to speed with what's in the
-current Chromium OS trees.  There are a whole slew of cleanup patches
-there, an addition of an LPC transport mode, and exports of functions
-to userspace.  Once these patches land and we have functionality we
-can continue to pick more cleanup patches.
+1. It looked at the timeout even in the case that it found valid data.
+2. If the cros_ec_spi code got switched out for a while, it's possible
+   it could get a timeout after a single loop.  Let's be paranoid and
+   make sure we do one last transfer after the timeout expires.
 
-Changes in v2:
-- Update tunnel binding as per swarren
-- Removed i2c20 alias for i2c tunnel
+Signed-off-by: Doug Anderson <dianders@chromium.org>
+Reviewed-by: Simon Glass <sjg@chromium.org>
+Tested-by: Andrew Bresticker <abrestic@chromium.org>
+Tested-by: Stephen Warren <swarren@nvidia.com>
+---
+Changes in v2: None
 
-Bill Richardson (1):
-  mfd: cros_ec: Sync to the latest cros_ec_commands.h from EC sources
+ drivers/mfd/cros_ec_spi.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-David Hendricks (1):
-  mfd: cros_ec: spi: calculate delay between transfers correctly
-
-Doug Anderson (5):
-  mfd: cros_ec: spi: Add mutex to cros_ec_spi
-  mfd: cros_ec: spi: Make the cros_ec_spi timeout more reliable
-  mfd: cros_ec: spi: Increase cros_ec_spi deadline from 5ms to 100ms
-  i2c: ChromeOS EC tunnel driver
-  ARM: tegra: Add the EC i2c tunnel to tegra124-venice2
-
- .../devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt |   39 +
- arch/arm/boot/dts/tegra124-venice2.dts             |   26 +
- drivers/i2c/busses/Kconfig                         |    9 +
- drivers/i2c/busses/Makefile                        |    1 +
- drivers/i2c/busses/i2c-cros-ec-tunnel.c            |  304 ++++++
- drivers/mfd/cros_ec.c                              |    7 +-
- drivers/mfd/cros_ec_spi.c                          |   67 +-
- include/linux/mfd/cros_ec.h                        |    4 +-
- include/linux/mfd/cros_ec_commands.h               | 1128 ++++++++++++++++++--
- 9 files changed, 1493 insertions(+), 92 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt
- create mode 100644 drivers/i2c/busses/i2c-cros-ec-tunnel.c
-
+diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
+index a2a605d..4f863c3 100644
+--- a/drivers/mfd/cros_ec_spi.c
++++ b/drivers/mfd/cros_ec_spi.c
+@@ -113,7 +113,9 @@ static int cros_ec_spi_receive_response(struct cros_ec_device *ec_dev,
+ 
+ 	/* Receive data until we see the header byte */
+ 	deadline = jiffies + msecs_to_jiffies(EC_MSG_DEADLINE_MS);
+-	do {
++	while (true) {
++		unsigned long start_jiffies = jiffies;
++
+ 		memset(&trans, 0, sizeof(trans));
+ 		trans.cs_change = 1;
+ 		trans.rx_buf = ptr = ec_dev->din;
+@@ -134,12 +136,19 @@ static int cros_ec_spi_receive_response(struct cros_ec_device *ec_dev,
+ 				break;
+ 			}
+ 		}
++		if (ptr != end)
++			break;
+ 
+-		if (time_after(jiffies, deadline)) {
++		/*
++		 * Use the time at the start of the loop as a timeout.  This
++		 * gives us one last shot at getting the transfer and is useful
++		 * in case we got context switched out for a while.
++		 */
++		if (time_after(start_jiffies, deadline)) {
+ 			dev_warn(ec_dev->dev, "EC failed to respond in time\n");
+ 			return -ETIMEDOUT;
+ 		}
+-	} while (ptr == end);
++	}
+ 
+ 	/*
+ 	 * ptr now points to the header byte. Copy any valid data to the
 -- 
 1.9.1.423.g4596e3a
-
