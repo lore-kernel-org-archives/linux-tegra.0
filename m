@@ -1,94 +1,79 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V2] gpu: host1x: handle the correct # of syncpt regs
-Date: Tue, 22 Apr 2014 09:15:27 +0200
-Message-ID: <20140422071526.GA11766@ulmo>
-References: <1396650665-6992-1-git-send-email-swarren@wwwdotorg.org>
- <534C4ADF.7010607@wwwdotorg.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/3] ARM: tegra: Deprecate nvidia,hpd-gpio property
+Date: Tue, 22 Apr 2014 09:23:15 +0200
+Message-ID: <20140422072314.GB11766@ulmo>
+References: <1397736181-1593-1-git-send-email-thierry.reding@gmail.com>
+ <1397736181-1593-2-git-send-email-thierry.reding@gmail.com>
+ <535574D6.3010002@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0464651804=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <534C4ADF.7010607@wwwdotorg.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, dri-devel@lists.freedesktop.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="3lcZGd9BuhuYXNfi"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <535574D6.3010002-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============0464651804==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ikeVEW9yuYc//A+q"
-Content-Disposition: inline
-
-
---ikeVEW9yuYc//A+q
+--3lcZGd9BuhuYXNfi
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 14, 2014 at 02:53:51PM -0600, Stephen Warren wrote:
-> On 04/04/2014 04:31 PM, Stephen Warren wrote:
-> > From: Stephen Warren <swarren@nvidia.com>
+On Mon, Apr 21, 2014 at 01:43:18PM -0600, Stephen Warren wrote:
+> On 04/17/2014 06:02 AM, Thierry Reding wrote:
+> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > >=20
-> > BIT_WORD() truncates rather than rounds, so the loops in
-> > syncpt_thresh_isr() and _host1x_intr_disable_all_syncpt_intrs() use <=3D
-> > rather than < in an attempt to process the correct number of registers
-> > when rounding of the conversion of count of bits to count of words is
-> > necessary. However, when rounding isn't necessary because the value is
-> > already a multiple of the divisor (as is the case for all values of
-> > nb_pts the code actually sees), this causes one too many registers to
-> > be processed.
-> >=20
-> > Solve this by using and explicit DIV_ROUND_UP() call, rather than
-> > BIT_WORD(), and comparing with < rather than <=3D.
+> > Properties referencing GPIOs should use the plural suffix -gpios. This
+> > convention is encoded in the device tree backend of gpiod_get(), which
+> > we'll eventually want to migrate to.
 >=20
-> I don't see this in linux-next yet.
+> Wouldn't it be simpler to fix the GPIO binding documentation and
+> gpiod_get() code to allow the -gpio suffix in addition to -gpios? It
+> always struck me as silly that the binding required a plural property
+> name when only a single entry made sense.
+>=20
+> (For something like "clocks", since the property name applies to any
+> clock, and there certainly can be many clocks, a plural property name
+> makes sense. However, since each type of GPIO is "foo-gpios" rather than
+> an "foo" entry in "gpios", that same argument doesn't apply, and a
+> singular property name seems much more correct).
 
-Just in case you haven't noticed, this this was merged in v3.15-rc2.
-I've also Cc'ed stable so that it can be applied as far back as 3.10
-when the code it fixes was introduced.
+Yeah, it's somewhat unfortunate that this is done inconsistently across
+different subsystems. GPIO isn't the only exception here. Regulators use
+a similar pattern.
+
+For consistency it'd be nice if we could get everyone to agree to one
+scheme, but I suspect that by now we're far beyond that being a viable
+option.
+
+I don't have a strong feeling either way, so if allowing both *-gpios
+and *-gpio properties is what we want, then I can certainly come up with
+a patch.
 
 Thierry
 
---ikeVEW9yuYc//A+q
+--3lcZGd9BuhuYXNfi
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTVhcOAAoJEN0jrNd/PrOhxzcP/0+bjHYwBpGuH15k6MEHcZZh
-/tc1ArpzQ2gUZhVnFK+PhZrf3GWGs73s279a4T1+7S/6hCSIdrduNDr8PxnETsR8
-XWG+5EA5dJo++YDXTNP32nmMoPskEsXs7gsfSFsqZaUG4dzTrYnJx87FdxcKsrG7
-8x3v+SsS8qqTwr6oYZ+YI38r96BLO7UtN56chKQVUUJ17njJ60jUP4D5HC2LbZWF
-AK75vFsjh6JIQokbrRipiFIw5p8wRQZPugSlhD/bjlmNTD2m41qsXLH6JjV/rwVB
-uhP7XyZO5wZuRjxcK+ZvyYvLCnDlzjQCZzvzcwGavMfXZypnatiCV8c77NdONfwq
-h0T3iU1LUFmnNRwuls4XKNO6T861l9meLgch7hWdcsuiKhCXb7c6Rj4IURGnCeGc
-lBodEFFonpHcaZUz0NqouwWOACdqxS6jjOfKZhvkMMfdCGoZV/UlSLYavQ/6Bkpi
-Yq1sMDKmaJvpoYvIrP9CwKAc2O48hrLAuOQifHQ7Jgi+57hO8DVIPhJ18FIEacCc
-OJ1IhkDc/Ci7IMWlc+X8G3hR6DdI7WW1QnOE6kF4uVb5C9eWbS8PYvuNo2afjcpb
-xelTYASX7aMlQC5ez/3bZir5H27FL8xKTv8BqJqdCJdxOcINUlKL83w7VWMxDgcV
-Bk9fcw8lZ8UgUBA2WwVr
-=232Y
+iQIcBAEBAgAGBQJTVhjiAAoJEN0jrNd/PrOhDbQP/3DCY/Kj3BwMOHsJ6GZSbBv4
+z+RFkz8CA/Cbncs8/h7YYer2WZyzwqaHzyrcy74s74x6FNucNfAB/lIG5N18a/MG
+FKL81DVezZ1J+AAAWXeF5mc9ext5BXVVkyjxHbg0bPH5jGMXclnafRz8sRnLSCx1
+yTAAL3xwQUZQaXqaYHo48cSDcrvaRhA0l37MM1GVg/eYM5f+ZRA5aWUHWCkzk9cz
++gWRMaygup0Hkl9NzbRSo2htr8+iwDfjjbSxpt06k+gEVVW8AYzHxFOUTT4XgW2X
+OyadSf4WS3zKlc7FFayBk+QQrr/9RCBP+Iq07tyWwKLAYMdWQmhNOlqxmbpCf7S8
+4STFmnlOrI7xnRPaV7cxT3cpqnAIIYQt09zU2KcnkRmMoptF6/zyRalPpbBtUBUi
+LvY2TkXF/FfTVz+vGntSN9n7+53tZedSggXzikY/ODFGtZAJxcm6Yh3VwOpMiJZM
+VifYaFkft3VJ1MrabUx8+mg5cLDeXwX3FhOvkuWBnuVuqZrRUXvXZjFLDveKUWQ9
+JoovF4IRYYknxpNEfR5WhfgQ3m013zFNNozaUigxQLbivd3WET6zQMe5KhHtiIYg
+ca52SKa4ieRaGhHJzSGfKNXs7l9UoXM0g1SG6ONtBi0A0nesmEikgp6r8udYQBUZ
+B7/FyBeIO7gSqfKdeMXo
+=G3Ur
 -----END PGP SIGNATURE-----
 
---ikeVEW9yuYc//A+q--
-
---===============0464651804==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============0464651804==--
+--3lcZGd9BuhuYXNfi--
