@@ -1,114 +1,77 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH v2 2/7] mfd: cros_ec: spi: Add mutex to cros_ec_spi
-Date: Tue, 22 Apr 2014 09:45:49 -0700
-Message-ID: <1398185154-19404-3-git-send-email-dianders@chromium.org>
-References: <1398185154-19404-1-git-send-email-dianders@chromium.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1398185154-19404-1-git-send-email-dianders@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: lee.jones@linaro.org, swarren@nvidia.com, wsa@the-dreams.de
-Cc: abrestic@chromium.org, dgreid@chromium.org, olof@lixom.net, sjg@chromium.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Doug Anderson <dianders@chromium.org>, sameo@linux.intel.com, linux-kernel@vger.kernel.org
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Pinmux driver/board table generator script
+Date: Tue, 22 Apr 2014 17:09:19 -0600
+Message-ID: <5356F69F.6060403@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The main transfer function for cros_ec_spi can be called by more than
-one client at a time.  Make sure that those clients don't stomp on
-each other by locking the bus for the duration of the transfer
-function.
+I've published some scripts I wrote to auto-generate pinmux drivers and
+board data tables at:
 
-Signed-off-by: Doug Anderson <dianders@chromium.org>
-Reviewed-by: Simon Glass <sjg@chromium.org>
-Tested-by: Andrew Bresticker <abrestic@chromium.org>
-Tested-by: Stephen Warren <swarren@nvidia.com>
----
-Changes in v2: None
+https://github.com/NVIDIA/tegra-pinmux-scripts
+git:github.com/NVIDIA/tegra-pinmux-scripts.git
 
- drivers/mfd/cros_ec_spi.c | 26 +++++++++++++++++++++-----
- 1 file changed, 21 insertions(+), 5 deletions(-)
+Going forward, I hope we can add all new SoC and board definitions to
+this tool, at least for any NVIDIA reference boards, if not third-party
+boards too.
 
-diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
-index c185eb6..a2a605d 100644
---- a/drivers/mfd/cros_ec_spi.c
-+++ b/drivers/mfd/cros_ec_spi.c
-@@ -65,11 +65,13 @@
-  *	if no record
-  * @end_of_msg_delay: used to set the delay_usecs on the spi_transfer that
-  *      is sent when we want to turn off CS at the end of a transaction.
-+ * @lock: mutex to ensure only one user of cros_ec_command_spi_xfer at a time
-  */
- struct cros_ec_spi {
- 	struct spi_device *spi;
- 	s64 last_transfer_ns;
- 	unsigned int end_of_msg_delay;
-+	struct mutex lock;
- };
- 
- static void debug_packet(struct device *dev, const char *name, u8 *ptr,
-@@ -208,6 +210,13 @@ static int cros_ec_command_spi_xfer(struct cros_ec_device *ec_dev,
- 	int ret = 0, final_ret;
- 	struct timespec ts;
- 
-+	/*
-+	 * We have the shared ec_dev buffer plus we do lots of separate spi_sync
-+	 * calls, so we need to make sure only one person is using this at a
-+	 * time.
-+	 */
-+	mutex_lock(&ec_spi->lock);
-+
- 	len = cros_ec_prepare_tx(ec_dev, ec_msg);
- 	dev_dbg(ec_dev->dev, "prepared, len=%d\n", len);
- 
-@@ -260,7 +269,7 @@ static int cros_ec_command_spi_xfer(struct cros_ec_device *ec_dev,
- 		ret = final_ret;
- 	if (ret < 0) {
- 		dev_err(ec_dev->dev, "spi transfer failed: %d\n", ret);
--		return ret;
-+		goto exit;
- 	}
- 
- 	/* check response error code */
-@@ -269,14 +278,16 @@ static int cros_ec_command_spi_xfer(struct cros_ec_device *ec_dev,
- 		dev_warn(ec_dev->dev, "command 0x%02x returned an error %d\n",
- 			 ec_msg->cmd, ptr[0]);
- 		debug_packet(ec_dev->dev, "in_err", ptr, len);
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto exit;
- 	}
- 	len = ptr[1];
- 	sum = ptr[0] + ptr[1];
- 	if (len > ec_msg->in_len) {
- 		dev_err(ec_dev->dev, "packet too long (%d bytes, expected %d)",
- 			len, ec_msg->in_len);
--		return -ENOSPC;
-+		ret = -ENOSPC;
-+		goto exit;
- 	}
- 
- 	/* copy response packet payload and compute checksum */
-@@ -293,10 +304,14 @@ static int cros_ec_command_spi_xfer(struct cros_ec_device *ec_dev,
- 		dev_err(ec_dev->dev,
- 			"bad packet checksum, expected %02x, got %02x\n",
- 			sum, ptr[len + 2]);
--		return -EBADMSG;
-+		ret = -EBADMSG;
-+		goto exit;
- 	}
- 
--	return 0;
-+	ret = 0;
-+exit:
-+	mutex_unlock(&ec_spi->lock);
-+	return ret;
- }
- 
- static void cros_ec_spi_dt_probe(struct cros_ec_spi *ec_spi, struct device *dev)
-@@ -327,6 +342,7 @@ static int cros_ec_spi_probe(struct spi_device *spi)
- 	if (ec_spi == NULL)
- 		return -ENOMEM;
- 	ec_spi->spi = spi;
-+	mutex_init(&ec_spi->lock);
- 	ec_dev = devm_kzalloc(dev, sizeof(*ec_dev), GFP_KERNEL);
- 	if (!ec_dev)
- 		return -ENOMEM;
--- 
-1.9.1.423.g4596e3a
+The complete description from the first commit is:
+
+Initial set of scripts
+
+A set of scripts to generate Linux kernel and U-Boot pinmux drivers and
+board pinmux configuration tables. Also included are scripts to convert
+existing Linux kernel pinmux drivers and NV-internal spreadsheets to the
+internal data representation.
+
+SoC configuration files are included for Tegra30, Tegra114, and Tegra124.
+
+Board configuration files are included for Jetson TK1 and Venice2.
+
+configs/tegra30.soc
+configs/tegra114.soc
+configs/tegra124.soc
+
+    SoC pin definitions
+
+configs/jetson-tk1.board
+configs/venice2.board
+
+    Board configurations
+
+soc-to-kernel-pinctrl-driver.py
+soc-to-uboot-driver.py
+
+    Generate Linux kernel and U-Boot pinmux drivers
+
+board-to-kernel-dt.py
+board-to-uboot.py
+
+    Generate board configuration tables for the Linux kernel (DT) and
+    U-Boot.
+
+kernel-pinctrl-driver-to-soc.py
+
+    Convert an existing Linux kernel pinmux driver to the internal
+    representation of an SoC used by this project.
+
+csv-to-board-tegra124-xlsx.py
+
+    Convert an NV-internal board configuration spreadsheet to the
+    internal representation of a board configuration used by this
+    project.
+
+tegra_pmx_board_parser.py
+tegra_pmx_parser_utils.py
+tegra_pmx_soc_parser.py
+tegra_pmx_utils.py
+
+    Internal Python modules used to parse the internal data
+    representations, and various other utilities.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
