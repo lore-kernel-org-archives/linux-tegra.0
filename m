@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [RFC 1/5] drivers/base: Allow multiple masters per device
-Date: Tue, 22 Apr 2014 17:09:29 +0200
-Message-ID: <1398179373-29966-2-git-send-email-thierry.reding@gmail.com>
+Subject: [RFC 2/5] drivers/base: Allow driver-data to be attached to a master
+Date: Tue, 22 Apr 2014 17:09:30 +0200
+Message-ID: <1398179373-29966-3-git-send-email-thierry.reding@gmail.com>
 References: <1398179373-29966-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,139 +23,61 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Currently the component/master framework allows only a single master to
-be registered against a struct device. A master is uniquely identified
-by the device and the master operations table, but the current API does
-not pass enough information along to allow a master to be uniquely
-identified when calling component_unbind_all().
-
-To make it possible to register multiple masters on one device, instead
-of passing around the device associated with a master, pass around the
-master directly. That way it can always be uniquely identified.
+Similarly to what can be done for device drivers, allow driver-specific
+data to be attached to a master. This is necessary for masters whose
+device is already bound to by a different driver and therefore cannot be
+used to store the driver-specific data.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/base/component.c  | 18 +++++++-----------
- include/linux/component.h | 17 ++++++++---------
- 2 files changed, 15 insertions(+), 20 deletions(-)
+ drivers/base/component.c  | 13 +++++++++++++
+ include/linux/component.h |  3 +++
+ 2 files changed, 16 insertions(+)
 
 diff --git a/drivers/base/component.c b/drivers/base/component.c
-index c4778995cd72..14fe81bf5ed2 100644
+index 14fe81bf5ed2..e3693c6d552f 100644
 --- a/drivers/base/component.c
 +++ b/drivers/base/component.c
-@@ -120,7 +120,7 @@ static int try_to_bring_up_master(struct master *master,
- 		 * Search the list of components, looking for components that
- 		 * belong to this master, and attach them to the master.
- 		 */
--		if (master->ops->add_components(master->dev, master)) {
-+		if (master->ops->add_components(master, master->dev)) {
- 			/* Failed to find all components */
- 			master_remove_components(master);
- 			ret = 0;
-@@ -139,7 +139,7 @@ static int try_to_bring_up_master(struct master *master,
- 		}
+@@ -25,6 +25,8 @@ struct master {
  
- 		/* Found all components */
--		ret = master->ops->bind(master->dev);
-+		ret = master->ops->bind(master, master->dev);
- 		if (ret < 0) {
- 			devres_release_group(master->dev, NULL);
- 			dev_info(master->dev, "master bind failed: %d\n", ret);
-@@ -172,7 +172,7 @@ static int try_to_bring_up_masters(struct component *component)
- static void take_down_master(struct master *master)
- {
- 	if (master->bound) {
--		master->ops->unbind(master->dev);
-+		master->ops->unbind(master, master->dev);
- 		devres_release_group(master->dev, NULL);
- 		master->bound = false;
- 	}
-@@ -233,21 +233,19 @@ static void component_unbind(struct component *component,
- {
- 	WARN_ON(!component->bound);
+ 	const struct component_master_ops *ops;
+ 	struct device *dev;
++
++	void *drvdata;
+ };
  
--	component->ops->unbind(component->dev, master->dev, data);
-+	component->ops->unbind(component->dev, master, data);
- 	component->bound = false;
- 
- 	/* Release all resources claimed in the binding of this component */
- 	devres_release_group(component->dev, component);
+ struct component {
+@@ -53,6 +55,17 @@ static struct master *__master_find(struct device *dev,
+ 	return NULL;
  }
  
--void component_unbind_all(struct device *master_dev, void *data)
-+void component_unbind_all(struct master *master, void *data)
++void master_set_drvdata(struct master *master, void *data)
++{
++	if (master)
++		master->drvdata = data;
++}
++
++void *master_get_drvdata(struct master *master)
++{
++	return master ? master->drvdata : NULL;
++}
++
+ /* Attach an unattached component to a master. */
+ static void component_attach_master(struct master *master, struct component *c)
  {
--	struct master *master;
- 	struct component *c;
- 
- 	WARN_ON(!mutex_is_locked(&component_mutex));
- 
--	master = __master_find(master_dev, NULL);
- 	if (!master)
- 		return;
- 
-@@ -282,7 +280,7 @@ static int component_bind(struct component *component, struct master *master,
- 	dev_dbg(master->dev, "binding %s (ops %ps)\n",
- 		dev_name(component->dev), component->ops);
- 
--	ret = component->ops->bind(component->dev, master->dev, data);
-+	ret = component->ops->bind(component->dev, master, data);
- 	if (!ret) {
- 		component->bound = true;
- 
-@@ -308,15 +306,13 @@ static int component_bind(struct component *component, struct master *master,
- 	return ret;
- }
- 
--int component_bind_all(struct device *master_dev, void *data)
-+int component_bind_all(struct master *master, void *data)
- {
--	struct master *master;
- 	struct component *c;
- 	int ret = 0;
- 
- 	WARN_ON(!mutex_is_locked(&component_mutex));
- 
--	master = __master_find(master_dev, NULL);
- 	if (!master)
- 		return -EINVAL;
- 
 diff --git a/include/linux/component.h b/include/linux/component.h
-index 68870182ca1e..89fe8bb35053 100644
+index 89fe8bb35053..9c2ec9fe48d6 100644
 --- a/include/linux/component.h
 +++ b/include/linux/component.h
-@@ -2,24 +2,23 @@
- #define COMPONENT_H
+@@ -25,6 +25,9 @@ int component_master_add(struct device *, const struct component_master_ops *);
+ void component_master_del(struct device *,
+ 	const struct component_master_ops *);
  
- struct device;
-+struct master;
++void master_set_drvdata(struct master *, void *);
++void *master_get_drvdata(struct master *);
++
+ int component_master_add_child(struct master *master,
+ 	int (*compare)(struct device *, void *), void *compare_data);
  
- struct component_ops {
--	int (*bind)(struct device *, struct device *, void *);
--	void (*unbind)(struct device *, struct device *, void *);
-+	int (*bind)(struct device *, struct master *, void *);
-+	void (*unbind)(struct device *, struct master *, void *);
- };
- 
- int component_add(struct device *, const struct component_ops *);
- void component_del(struct device *, const struct component_ops *);
- 
--int component_bind_all(struct device *, void *);
--void component_unbind_all(struct device *, void *);
--
--struct master;
-+int component_bind_all(struct master *, void *);
-+void component_unbind_all(struct master *, void *);
- 
- struct component_master_ops {
--	int (*add_components)(struct device *, struct master *);
--	int (*bind)(struct device *);
--	void (*unbind)(struct device *);
-+	int (*add_components)(struct master *, struct device *);
-+	int (*bind)(struct master *, struct device *);
-+	void (*unbind)(struct master *, struct device *);
- };
- 
- int component_master_add(struct device *, const struct component_master_ops *);
 -- 
 1.9.2
