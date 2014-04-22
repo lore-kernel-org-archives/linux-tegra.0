@@ -1,90 +1,158 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 09/10] drm/nouveau: support GK20A in
-	nouveau_accel_init()
-Date: Tue, 22 Apr 2014 11:31:33 +0900
-Message-ID: <5355D485.6030301@nvidia.com>
-References: <1398060142-7937-1-git-send-email-acourbot@nvidia.com>	<1398060142-7937-10-git-send-email-acourbot@nvidia.com>
- <CAKb7Uvg4kOfsE0gd4zLcwjShc4eVgVKA7zQM2r1aeatOybm8NQ@mail.gmail.com>
+From: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCHv4 2/2] ALSA: hda - Add driver for Tegra SoC HDA
+Date: Mon, 21 Apr 2014 20:49:59 -0700
+Message-ID: <CAEUnVG4m2MxeVrhAg4fXn7GxHJk1a3kKR9V8zmOJ6UPpNg0PEQ@mail.gmail.com>
+References: <1397857578-9340-1-git-send-email-dgreid@chromium.org> <5355793B.9040607@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <CAKb7Uvg4kOfsE0gd4zLcwjShc4eVgVKA7zQM2r1aeatOybm8NQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5355793B.9040607-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, perex-/Fr2/VpizcU@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/22/2014 03:07 AM, Ilia Mirkin wrote:
-> On Mon, Apr 21, 2014 at 2:02 AM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->> Skip the creation of a software channel for GK20A as software methods
->> are not yet supported.
+On Mon, Apr 21, 2014 at 1:02 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> On 04/18/2014 03:46 PM, Dylan Reid wrote:
+>> This adds a driver for the HDA block in Tegra SoCs.  The HDA bus is
+>> used to communicate with the HDMI codec on Tegra124.
+>>
+>> Most of the code is re-used from the Intel/PCI HDA driver.  It brings
+>> over only two of the module params, power_save and probe_mask.
 >
-> How is GK20A different from a nvc0+ card that lacks PDISPLAY (like all
-> the 3D Controller ones, and I guess even some that come up as VGA
-> controller in PCI but don't have any outputs in their VBIOS)? i.e.
-> what's wrong with just doing the same thing that GK1xx does? Note that
-> there are sw methods that don't deal with display as well.
+> (I'm curious how this was tested using an upstream kernel considering we
+> don't have HDMI support on Tegra124 enabled yet. If you added 1 or 2
+> more CODEC IDs to patch 1/2, you could probably test on an earlier SoC
+> generation)
 
-Well, as it turns out... I have tried reverting this patch and enabling 
-nvc0_software_oclass for GK20A and things worked like a charm. 0_o
+Luckily this applies to our downstream tree with hdmi enabled.  The
+only change needed is switching back from snd_card_new to
+snd_card_create. So that's where I've been doing my testing.
 
-This is definitely different from when I first drafted this patch 
-series, where a software class could not be used on GK20A due to hard 
-dependencies on display. But it seems like today's code can accommodate 
-much better with that situation.
-
-That's great - this will allow us to get rid of this ungraceful patch. 
-Thanks for making me check it again.
-
-Probably a v3 will be necessary to enable the software class in patch 10 
-(and fix the byte/word typo in patch 7). I will just wait a bit to see 
-if this v2 gets more comments before sending it.
+I think we've got a tegra30 eval board.  I'll dig it up tomorrow and
+give it a try on linux-next.
 
 >
->    -ilia
+> Sorry for the slow review...
 >
->>
->> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>   drivers/gpu/drm/nouveau/nouveau_drm.c | 5 +++++
->>   1 file changed, 5 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
->> index ddd83756b9a2..5b46148ffd32 100644
->> --- a/drivers/gpu/drm/nouveau/nouveau_drm.c
->> +++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
->> @@ -208,6 +208,10 @@ nouveau_accel_init(struct nouveau_drm *drm)
->>                  return;
->>          }
->>
->> +       /* Need to figure out how to handle sw for gk20a */
->> +       if (device->chipset == 0xea)
->> +               goto skip_sw_init;
+>> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.txt
+>
+>> +- compatible : "nvidia,tegra30-hda"
+>> +- reg : Should contain the HDA registers location and length.
+>> +- interrupts : The interrupt from the hda controller.
+>
+> hda should be capitalized.
+>
+>> +- clocks : Must contain an entry for each required entry in clock-names.
+>
+> Can you add the following line after that for consistency with other
+> Tegra bindings:
+>
+> See ../clocks/clock-bindings.txt for details.
+>
+>> +- clock-names : Must include the following entries: hda, hdacodec_2x, hda2hdmi
+>> +- resets : Must contain an entry for each entry in reset-names.
+>> +  See ../reset/reset.txt for details.
+>> +- reset-names : Must include the following entries: hda, hdacodec_2x, hda2hdmi
 >> +
->>          ret = nouveau_object_new(nv_object(drm), NVDRM_CHAN, NVDRM_NVSW,
->>                                   nouveau_abi16_swclass(drm), NULL, 0, &object);
->>          if (ret == 0) {
->> @@ -234,6 +238,7 @@ nouveau_accel_init(struct nouveau_drm *drm)
->>                  return;
->>          }
->>
->> +skip_sw_init:
->>          if (device->card_type < NV_C0) {
->>                  ret = nouveau_gpuobj_new(drm->device, NULL, 32, 0, 0,
->>                                          &drm->notify);
->> --
->> 1.9.2
->>
->> _______________________________________________
->> Nouveau mailing list
->> Nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
->> http://lists.freedesktop.org/mailman/listinfo/nouveau
+>> +Example:
+>> +
+>> +hda@70030000 {
+>
+> that should be named hda@0,70030000, since the reg property's value
+> below assumes the parent has #address-cells=<2>.
+>
+>> +     compatible = "nvidia,tegra124-hda", "nvidia,tegra30-hda";
+>> +     reg = <0x0 0x70030000 0x10000>;
+>
+> ... and here, since #address-cells=<2>, then #size-cells should be 2
+> too, so that should be:
+>
+>         reg = <0x0 0x70030000 0 0x10000>;
+>
+>> diff --git a/sound/pci/hda/Kconfig b/sound/pci/hda/Kconfig
+>
+>> +config SND_HDA_TEGRA
+>> +     tristate "NVIDIA Tegra HD Audio"
+>> +     depends on OF && ARCH_TEGRA
+>
+> OF is selected by ARCH_TEGRA, so this only needs to depend on ARCH_TEGRA.
+>
+> (Of course, you could make this depend on ARCH_TEGRA || (COMPILE_TEST &&
+> OF && ...)
+>
+>> diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
+>> +/*
+>> + *
+>> + * Implementation of primary alsa driver code base for NVIDIA Tegra HDA.
+>
+> ALSA should be capitalized.
+>
+>> +static void hda_tegra_init(struct hda_tegra *hda)
+>> +{
+>> +     u32 v;
+>> +
+>> +     /*Enable the PCI access */
+>
+> There should be a space after /*.
+>
+>> +static int hda_tegra_init_chip(struct azx *chip, struct platform_device *pdev)
+>
+>> +     err = hda_tegra_enable_clocks(hda);
+>> +     if (err)
+>> +             return err;
+>
+> I'm not sure where the matching disable() occurs? Is the card assumed to
+> be started in a powered state, so the next PM transition would be
+> hda_tegra_suspend()? IIRC, other Tegra devices with PM start in a
+> power-saved state, and hence would leave clocks stopped after probe().
+> It's fine if that's the reason; it just looks different so I'm making
+> sure that's what is going on.
+
+Yes, this starts in a powered state.  The first chance to power down
+is after the call to "power_down_all_codecs" that might arm a
+power_save timeout and then power down the controller.  However the
+HDMI codec here doesn't report that it supports D3 stop clock so the
+controller will stay powered until it is suspended.
+
+>
+>> +static int hda_tegra_first_init(struct azx *chip, struct platform_device *pdev)
+>
+>> +     /* read number of streams from GCAP register instead of using
+>> +      * hardcoded value
+>> +      */
+>> +     chip->capture_streams = (gcap >> 8) & 0x0f;
+>> +     chip->playback_streams = (gcap >> 12) & 0x0f;
+>> +     if (!chip->playback_streams && !chip->capture_streams) {
+>> +             /* gcap didn't give any info, switching to old method */
+>> +             chip->playback_streams = ICH6_NUM_PLAYBACK;
+>> +             chip->capture_streams = ICH6_NUM_CAPTURE;
+>
+> Are ICH6_* defines appropriate for Tegra?
+>
+>> +static int hda_tegra_probe(struct platform_device *pdev)
+>
+>> +     of_id = of_match_device(hda_tegra_match, &pdev->dev);
+>> +     if (!of_id)
+>> +             return -ENODEV;
+>
+> Since of_id isn't used anywhere, there's no point calling
+> of_match_device() to look it up. The driver core won't call
+> hda_tegra_probe() unless there is a matching entry in the table.
+>
+>> +MODULE_DEVICE_TABLE(of, tegra_platform_hda_match);
+>
+> I think it's typical to put that line immediately after the table it
+> applies to. Not a big deal though.
+>
+> With those minor issues fixed,
+> Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Thanks for reviewing this Stephen, I'll run a test on the Tegra30
+tomorrow and post a new version.
+
+-Dylan
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
