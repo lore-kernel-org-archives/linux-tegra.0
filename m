@@ -1,48 +1,28 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/4] pinctrl: tegra: remove fsafe from data tables
-Date: Tue, 22 Apr 2014 16:52:10 +0200
-Message-ID: <CACRpkdYw+YBnqAzSu0yZZhi_id6PGJVPdk1yjJZzgxbFC2wsqw@mail.gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 3/4] pinctrl: tegra: reduce size of data table fields
+Date: Tue, 22 Apr 2014 16:53:13 +0200
+Message-ID: <CACRpkda=_tAp6SQWTe33CcxU26=gD7cVwdw_CKPPt+ejA5T5qQ@mail.gmail.com>
 References: <1397511222-28533-1-git-send-email-swarren@wwwdotorg.org>
- <1397511222-28533-2-git-send-email-swarren@wwwdotorg.org>
+	<1397511222-28533-3-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1397511222-28533-2-git-send-email-swarren@wwwdotorg.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1397511222-28533-3-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Apr 14, 2014 at 11:33 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+On Mon, Apr 14, 2014 at 11:33 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
 
-> From: Stephen Warren <swarren@nvidia.com>
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >
-> The fsafe value in the pingroup data tables is only used to implement
-> tegra_pinctrl_disable(). The only reason this function is called is when
-> dynamically switching between pinmux states, i.e. when disabling the old
-> state before programming the new state. It's simpler to have the new
-> target state define the expected value of each pin (and all current DTs
-> do that). This also gives more flexibility, since it allows individual
-> boards explicit control over the "inactive" mux function for each pin,
-> rather than requiring it to be an SoC-specific value. Assuming this, we
-> can get rid of the fsafe value from the driver completely, thus saving
-> some more space in the driver tables.
+> The range of npins and function ID values is small enough to fit into a
+> u8. Use this type rather than unsigned to shrink the pinmux data tables.
 >
-> While re-writing the content of tegra124_pingroups[], fix the indentation
-> to use a TAB instead of spaces.
->
-> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Patch applied with Laxman's ACK.
+Applied with Laxman's ACK.
 
 Yours,
 Linus Walleij
