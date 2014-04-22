@@ -1,86 +1,161 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [RFC 0/5] drm/tegra: Convert to master/component framework
-Date: Tue, 22 Apr 2014 17:09:28 +0200
-Message-ID: <1398179373-29966-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [RFC 1/5] drivers/base: Allow multiple masters per device
+Date: Tue, 22 Apr 2014 17:09:29 +0200
+Message-ID: <1398179373-29966-2-git-send-email-thierry.reding@gmail.com>
+References: <1398179373-29966-1-git-send-email-thierry.reding@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1398179373-29966-1-git-send-email-thierry.reding@gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-tegra@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Thierry Reding <treding@nvidia.com>
 
-Hi,
+Currently the component/master framework allows only a single master to
+be registered against a struct device. A master is uniquely identified
+by the device and the master operations table, but the current API does
+not pass enough information along to allow a master to be uniquely
+identified when calling component_unbind_all().
 
-This series converts the Tegra DRM driver to the master/component
-framework. The length of the series and the list of people in Cc is
-mostly due to the fact that Tegra has some special requirements as
-opposed to other drivers and therefore requires some changes outside
-of DRM.
+To make it possible to register multiple masters on one device, instead
+of passing around the device associated with a master, pass around the
+master directly. That way it can always be uniquely identified.
 
-Patches 1 and 2 make some changes to the master/component framework
-which are necessary to convert Tegra DRM to use it. Note that since I'm
-looking for early review I haven't converted any of the existing users
-since I'm not sure if these are acceptable changes.
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/base/component.c  | 18 +++++++-----------
+ include/linux/component.h | 17 ++++++++---------
+ 2 files changed, 15 insertions(+), 20 deletions(-)
 
-Patch 3 adds a new interface framework that supplements the master/
-component framework and can be used in situations where there is no
-struct device * that a driver can bind to.
-
-A new function is introduced in patch 4 which can be used to get rid of
-the DRM bus infrastructure in individual drivers. It should be able to
-replace the requirement of having a drm_bus for all USB and platform
-DRM drivers. For backwards-compatibility with legacy PCI drivers some-
-thing different will probably be needed.
-
-Finally, patch 5 converts the Tegra DRM driver over to using the master/
-component framework using the above four patches.
-
-Each patch has a somewhat more elaborate description of why it is needed
-or what problem it solves. The patchset applies on top of linux-next
-with Daniel's DRM cleanup series applied.
-
-I welcome any questions or comments you might have.
-
-Thierry
-
-Thierry Reding (5):
-  drivers/base: Allow multiple masters per device
-  drivers/base: Allow driver-data to be attached to a master
-  drivers/base: Add interface framework
-  drm: Introduce drm_set_unique()
-  drm/tegra: Convert to master/component framework
-
- drivers/base/Makefile          |   2 +-
- drivers/base/component.c       |  31 ++-
- drivers/base/interface.c       | 186 ++++++++++++++
- drivers/gpu/drm/drm_ioctl.c    |  37 ++-
- drivers/gpu/drm/drm_stub.c     |   1 +
- drivers/gpu/drm/tegra/Makefile |   1 -
- drivers/gpu/drm/tegra/bus.c    |  64 -----
- drivers/gpu/drm/tegra/dc.c     |  58 ++---
- drivers/gpu/drm/tegra/drm.c    | 171 +++++++++----
- drivers/gpu/drm/tegra/drm.h    |  27 +-
- drivers/gpu/drm/tegra/dsi.c    | 144 +++++------
- drivers/gpu/drm/tegra/gr2d.c   |  78 +++---
- drivers/gpu/drm/tegra/gr3d.c   |  77 +++---
- drivers/gpu/drm/tegra/hdmi.c   |  69 ++---
- drivers/gpu/drm/tegra/sor.c    |  71 ++----
- drivers/gpu/host1x/Makefile    |   1 -
- drivers/gpu/host1x/bus.c       | 553 -----------------------------------------
- drivers/gpu/host1x/bus.h       |  29 ---
- drivers/gpu/host1x/dev.c       |  21 +-
- drivers/gpu/host1x/dev.h       |   7 +-
- include/drm/drmP.h             |   3 +
- include/linux/component.h      |  20 +-
- include/linux/host1x.h         |  64 +----
- include/linux/interface.h      |  40 +++
- 24 files changed, 625 insertions(+), 1130 deletions(-)
- create mode 100644 drivers/base/interface.c
- delete mode 100644 drivers/gpu/drm/tegra/bus.c
- delete mode 100644 drivers/gpu/host1x/bus.c
- delete mode 100644 drivers/gpu/host1x/bus.h
- create mode 100644 include/linux/interface.h
-
+diff --git a/drivers/base/component.c b/drivers/base/component.c
+index c4778995cd72..14fe81bf5ed2 100644
+--- a/drivers/base/component.c
++++ b/drivers/base/component.c
+@@ -120,7 +120,7 @@ static int try_to_bring_up_master(struct master *master,
+ 		 * Search the list of components, looking for components that
+ 		 * belong to this master, and attach them to the master.
+ 		 */
+-		if (master->ops->add_components(master->dev, master)) {
++		if (master->ops->add_components(master, master->dev)) {
+ 			/* Failed to find all components */
+ 			master_remove_components(master);
+ 			ret = 0;
+@@ -139,7 +139,7 @@ static int try_to_bring_up_master(struct master *master,
+ 		}
+ 
+ 		/* Found all components */
+-		ret = master->ops->bind(master->dev);
++		ret = master->ops->bind(master, master->dev);
+ 		if (ret < 0) {
+ 			devres_release_group(master->dev, NULL);
+ 			dev_info(master->dev, "master bind failed: %d\n", ret);
+@@ -172,7 +172,7 @@ static int try_to_bring_up_masters(struct component *component)
+ static void take_down_master(struct master *master)
+ {
+ 	if (master->bound) {
+-		master->ops->unbind(master->dev);
++		master->ops->unbind(master, master->dev);
+ 		devres_release_group(master->dev, NULL);
+ 		master->bound = false;
+ 	}
+@@ -233,21 +233,19 @@ static void component_unbind(struct component *component,
+ {
+ 	WARN_ON(!component->bound);
+ 
+-	component->ops->unbind(component->dev, master->dev, data);
++	component->ops->unbind(component->dev, master, data);
+ 	component->bound = false;
+ 
+ 	/* Release all resources claimed in the binding of this component */
+ 	devres_release_group(component->dev, component);
+ }
+ 
+-void component_unbind_all(struct device *master_dev, void *data)
++void component_unbind_all(struct master *master, void *data)
+ {
+-	struct master *master;
+ 	struct component *c;
+ 
+ 	WARN_ON(!mutex_is_locked(&component_mutex));
+ 
+-	master = __master_find(master_dev, NULL);
+ 	if (!master)
+ 		return;
+ 
+@@ -282,7 +280,7 @@ static int component_bind(struct component *component, struct master *master,
+ 	dev_dbg(master->dev, "binding %s (ops %ps)\n",
+ 		dev_name(component->dev), component->ops);
+ 
+-	ret = component->ops->bind(component->dev, master->dev, data);
++	ret = component->ops->bind(component->dev, master, data);
+ 	if (!ret) {
+ 		component->bound = true;
+ 
+@@ -308,15 +306,13 @@ static int component_bind(struct component *component, struct master *master,
+ 	return ret;
+ }
+ 
+-int component_bind_all(struct device *master_dev, void *data)
++int component_bind_all(struct master *master, void *data)
+ {
+-	struct master *master;
+ 	struct component *c;
+ 	int ret = 0;
+ 
+ 	WARN_ON(!mutex_is_locked(&component_mutex));
+ 
+-	master = __master_find(master_dev, NULL);
+ 	if (!master)
+ 		return -EINVAL;
+ 
+diff --git a/include/linux/component.h b/include/linux/component.h
+index 68870182ca1e..89fe8bb35053 100644
+--- a/include/linux/component.h
++++ b/include/linux/component.h
+@@ -2,24 +2,23 @@
+ #define COMPONENT_H
+ 
+ struct device;
++struct master;
+ 
+ struct component_ops {
+-	int (*bind)(struct device *, struct device *, void *);
+-	void (*unbind)(struct device *, struct device *, void *);
++	int (*bind)(struct device *, struct master *, void *);
++	void (*unbind)(struct device *, struct master *, void *);
+ };
+ 
+ int component_add(struct device *, const struct component_ops *);
+ void component_del(struct device *, const struct component_ops *);
+ 
+-int component_bind_all(struct device *, void *);
+-void component_unbind_all(struct device *, void *);
+-
+-struct master;
++int component_bind_all(struct master *, void *);
++void component_unbind_all(struct master *, void *);
+ 
+ struct component_master_ops {
+-	int (*add_components)(struct device *, struct master *);
+-	int (*bind)(struct device *);
+-	void (*unbind)(struct device *);
++	int (*add_components)(struct master *, struct device *);
++	int (*bind)(struct master *, struct device *);
++	void (*unbind)(struct master *, struct device *);
+ };
+ 
+ int component_master_add(struct device *, const struct component_master_ops *);
 -- 
 1.9.2
