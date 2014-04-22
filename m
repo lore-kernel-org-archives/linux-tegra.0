@@ -1,191 +1,66 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 4/4] drm/tegra: Implement race-free hotplug detection
-Date: Tue, 22 Apr 2014 16:42:21 +0200
-Message-ID: <1398177741-28482-4-git-send-email-thierry.reding@gmail.com>
-References: <1398177741-28482-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <1398177741-28482-1-git-send-email-thierry.reding@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: dri-devel@lists.freedesktop.org
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Imre Deak <imre.deak@intel.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH V2 1/4] pinctrl: tegra: remove redundant data table fields
+Date: Tue, 22 Apr 2014 16:49:35 +0200
+Message-ID: <CACRpkdYx6aBNTSHAjJVpJ=H=2Bkf5QrzZEUcBhqY9T9u2eHvjA@mail.gmail.com>
+References: <1397581250-1506-1-git-send-email-swarren@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1397581250-1506-1-git-send-email-swarren@wwwdotorg.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On Tue, Apr 15, 2014 at 7:00 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
 
-A race condition currently exists on Tegra, where it can happen that a
-monitor attached via HDMI isn't detected during the initial FB helper
-setup, but the hotplug event happens too early to be processed by the
-poll helpers because they haven't been initialized yet. This happens
-because on some boards the HDMI driver can control the regulator that
-supplies the +5V pin on the HDMI connector. Therefore depending on the
-timing between the initialization of the HDMI driver and the rest of
-DRM, it's possible that the monitor returns the hotplug signal right
-within the window where we would miss it.
+> From: Stephen Warren <swarren@nvidia.com>
+>
+> Any SoC which supports the einput, odrain, lock, ioreset, or rcv_sel
+> options has the relevant HW register fields in the same register as the
+> mux function selection. Similarly, the drvtype option is always in the
+> drive register, if it is supported at all. Hence, we don't need to have
+> struct *_reg fields in the pin group table to define which register and
+> bank to use for those options. Delete this to save space in the driver's
+> data tables.
+>
+> However, many of those options are not supported on all SoCs, or not
+> supported on some pingroups. We need a way to detect when they are
+> supported. Previously, this was indicated by setting the struct *_reg
+> field to -1. With the struct *_reg fields removed, we use the struct
+> *_bit fields for this purpose instead. The struct *_bit fields need to
+> be expanded from 5 to 6 bits in order to store a value outside the valid
+> HW bit range of 0..31.
+>
+> Even without removing the struct *_reg fields, we still need to add code
+> to validate the struct *_bit fields, since some struct *_bit fields were
+> already being set to -1, without an option-specific struct *_reg field to
+> "guard" them. In other words, before this change, the pinmux driver might
+> allow some unsupported options to be written to HW.
+>
+> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+> ---
+> (Note: For V2, I'm only reposting patch 1/4, since patch 2/4 is large, and
+> I don't want to spam the list again with the whole series)
+>
+> v2:
+> * Modify width of struct tegra_pingroup's drvtype_bit in the same way as
+>   other *_bit fields.
+> * Fix struct tegra_pingroup's documentation to match the changes made
+>   to the struct.
+> * Fix pinctrl-tegra20.c's DRV_PG_EXT() macro to initialize the drvtype_bit
+>   field.
 
-Unfortunately, drm_kms_helper_poll_init() will wreak havoc when called
-before at least some parts of the FB helpers have been set up.
+This v2 version applied.
 
-This commit fixes this by splitting out the minimum of initialization
-required to make drm_kms_helper_poll_init() work into a separate
-function that can be called early. It is then safe to move all of the
-poll helper initialization to an earlier point in time (before the
-HDMI output driver has a chance to enable the +5V supply). That way if
-the hotplug signal is returned before the initial FB helper setup, the
-monitor will be forcefully detected at that point, and if the hotplug
-signal is returned after that it will be properly handled by the poll
-helpers.
-
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/gpu/drm/tegra/drm.c |  8 ++++++--
- drivers/gpu/drm/tegra/drm.h |  1 +
- drivers/gpu/drm/tegra/fb.c  | 47 ++++++++++++++++++++++++++++++---------------
- 3 files changed, 39 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index 6f5b6e2f552e..4d36debe3de6 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -41,6 +41,12 @@ static int tegra_drm_load(struct drm_device *drm, unsigned long flags)
- 
- 	drm_mode_config_init(drm);
- 
-+	err = tegra_drm_fb_prepare(drm);
-+	if (err < 0)
-+		return err;
-+
-+	drm_kms_helper_poll_init(drm);
-+
- 	err = host1x_device_init(device);
- 	if (err < 0)
- 		return err;
-@@ -60,8 +66,6 @@ static int tegra_drm_load(struct drm_device *drm, unsigned long flags)
- 	if (err < 0)
- 		return err;
- 
--	drm_kms_helper_poll_init(drm);
--
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
-index 126332c3ecbb..c2d9705de1f9 100644
---- a/drivers/gpu/drm/tegra/drm.h
-+++ b/drivers/gpu/drm/tegra/drm.h
-@@ -288,6 +288,7 @@ struct tegra_bo *tegra_fb_get_plane(struct drm_framebuffer *framebuffer,
- 				    unsigned int index);
- bool tegra_fb_is_bottom_up(struct drm_framebuffer *framebuffer);
- bool tegra_fb_is_tiled(struct drm_framebuffer *framebuffer);
-+int tegra_drm_fb_prepare(struct drm_device *drm);
- extern int tegra_drm_fb_init(struct drm_device *drm);
- extern void tegra_drm_fb_exit(struct drm_device *drm);
- #ifdef CONFIG_DRM_TEGRA_FBDEV
-diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
-index 2e3758542c89..70d0e07d353c 100644
---- a/drivers/gpu/drm/tegra/fb.c
-+++ b/drivers/gpu/drm/tegra/fb.c
-@@ -271,13 +271,9 @@ static const struct drm_fb_helper_funcs tegra_fb_helper_funcs = {
- 	.fb_probe = tegra_fbdev_probe,
- };
- 
--static struct tegra_fbdev *tegra_fbdev_create(struct drm_device *drm,
--					      unsigned int preferred_bpp,
--					      unsigned int num_crtc,
--					      unsigned int max_connectors)
-+static struct tegra_fbdev *tegra_fbdev_create(struct drm_device *drm)
- {
- 	struct tegra_fbdev *fbdev;
--	int err;
- 
- 	fbdev = kzalloc(sizeof(*fbdev), GFP_KERNEL);
- 	if (!fbdev) {
-@@ -287,10 +283,21 @@ static struct tegra_fbdev *tegra_fbdev_create(struct drm_device *drm,
- 
- 	drm_fb_helper_prepare(drm, &fbdev->base, &tegra_fb_helper_funcs);
- 
-+	return fbdev;
-+}
-+
-+static int tegra_fbdev_init(struct tegra_fbdev *fbdev,
-+			    unsigned int preferred_bpp,
-+			    unsigned int num_crtc,
-+			    unsigned int max_connectors)
-+{
-+	struct drm_device *drm = fbdev->base.dev;
-+	int err;
-+
- 	err = drm_fb_helper_init(drm, &fbdev->base, num_crtc, max_connectors);
- 	if (err < 0) {
- 		dev_err(drm->dev, "failed to initialize DRM FB helper\n");
--		goto free;
-+		return err;
- 	}
- 
- 	err = drm_fb_helper_single_add_all_connectors(&fbdev->base);
-@@ -299,21 +306,17 @@ static struct tegra_fbdev *tegra_fbdev_create(struct drm_device *drm,
- 		goto fini;
- 	}
- 
--	drm_helper_disable_unused_functions(drm);
--
- 	err = drm_fb_helper_initial_config(&fbdev->base, preferred_bpp);
- 	if (err < 0) {
- 		dev_err(drm->dev, "failed to set initial configuration\n");
- 		goto fini;
- 	}
- 
--	return fbdev;
-+	return 0;
- 
- fini:
- 	drm_fb_helper_fini(&fbdev->base);
--free:
--	kfree(fbdev);
--	return ERR_PTR(err);
-+	return err;
- }
- 
- static void tegra_fbdev_free(struct tegra_fbdev *fbdev)
-@@ -367,7 +370,7 @@ static const struct drm_mode_config_funcs tegra_drm_mode_funcs = {
- #endif
- };
- 
--int tegra_drm_fb_init(struct drm_device *drm)
-+int tegra_drm_fb_prepare(struct drm_device *drm)
- {
- #ifdef CONFIG_DRM_TEGRA_FBDEV
- 	struct tegra_drm *tegra = drm->dev_private;
-@@ -382,8 +385,7 @@ int tegra_drm_fb_init(struct drm_device *drm)
- 	drm->mode_config.funcs = &tegra_drm_mode_funcs;
- 
- #ifdef CONFIG_DRM_TEGRA_FBDEV
--	tegra->fbdev = tegra_fbdev_create(drm, 32, drm->mode_config.num_crtc,
--					  drm->mode_config.num_connector);
-+	tegra->fbdev = tegra_fbdev_create(drm);
- 	if (IS_ERR(tegra->fbdev))
- 		return PTR_ERR(tegra->fbdev);
- #endif
-@@ -391,6 +393,21 @@ int tegra_drm_fb_init(struct drm_device *drm)
- 	return 0;
- }
- 
-+int tegra_drm_fb_init(struct drm_device *drm)
-+{
-+#ifdef CONFIG_DRM_TEGRA_FBDEV
-+	struct tegra_drm *tegra = drm->dev_private;
-+	int err;
-+
-+	err = tegra_fbdev_init(tegra->fbdev, 32, drm->mode_config.num_crtc,
-+			       drm->mode_config.num_connector);
-+	if (err < 0)
-+		return err;
-+#endif
-+
-+	return 0;
-+}
-+
- void tegra_drm_fb_exit(struct drm_device *drm)
- {
- #ifdef CONFIG_DRM_TEGRA_FBDEV
--- 
-1.9.2
+Yours,
+Linus Walleij
