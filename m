@@ -1,88 +1,160 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 04/10] drm/nouveau/fb: add GK20A support
-Date: Tue, 22 Apr 2014 12:40:53 +0200
-Message-ID: <20140422104052.GB22426@ulmo>
-References: <1398060142-7937-1-git-send-email-acourbot@nvidia.com>
- <1398060142-7937-5-git-send-email-acourbot@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH 1/4] drm/fb-helper: Fix hpd vs. initial config races
+Date: Tue, 22 Apr 2014 16:42:18 +0200
+Message-ID: <1398177741-28482-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1796363716=="
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <1398060142-7937-5-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
 
---===============1796363716==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="qcHopEYAB45HaUaB"
-Content-Disposition: inline
+Some drivers need to be able to have a perfect race-free fbcon setup.
+Current drivers only enable hotplug processing after the call to
+drm_fb_helper_initial_config which leaves a tiny but important race.
 
+This race is especially noticable on embedded platforms where the
+driver itself enables the voltage for the hdmi output, since only then
+will monitors (after a bit of delay, as usual) respond by asserting
+the hpd pin.
 
---qcHopEYAB45HaUaB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Most of the infrastructure is already there with the split-out
+drm_fb_helper_init. And drm_fb_helper_initial_config already has all
+the required locking to handle concurrent hpd events since
 
-On Mon, Apr 21, 2014 at 03:02:16PM +0900, Alexandre Courbot wrote:
-[...]
-> diff --git a/drivers/gpu/drm/nouveau/core/subdev/fb/ramgk20a.c b/drivers/gpu/drm/nouveau/core/subdev/fb/ramgk20a.c
-[...]
-> +		pages = dma_alloc_from_contiguous(dev, ncmin, order);
-> +		if (!pages) {
-> +			gk20a_ram_put(pfb, &mem);
-> +			return -ENOMEM;
-> +		}
-> +
-> +		dma_addr = pfn_to_dma(nv_device_base(nv_device(pfb)),
-> +				      page_to_pfn(pages));
+commit 53f1904bced78d7c00f5d874c662ec3ac85d0f9f
+Author: Daniel Vetter <daniel.vetter@ffwll.ch>
+Date:   Thu Mar 20 14:26:35 2014 +0100
 
-This breaks compilation on x86 because neither pfn_to_dma() nor
-dma_to_pfn() are available. Is there some other way this can be
-allocated so that these functions don't need to be called?
+    drm/fb-helper: improve drm_fb_helper_initial_config locking
 
-Thierry
+The only missing bit is making drm_fb_helper_hotplug_event save
+against concurrent calls of drm_fb_helper_initial_config. The only
+unprotected bit is the check for fb_helper->fb.
 
---qcHopEYAB45HaUaB
-Content-Type: application/pgp-signature
+With that drivers can first initialize the fb helper, then enabel
+hotplug processing and then set up the initial config all in a
+completely race-free manner. Update kerneldoc and convert i915 as a
+proof of concept.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+Feature requested by Thierry since his tegra driver atm reliably boots
+slowly enough to misses the hotplug event for an external hdmi screen,
+but also reliably boots to quickly for the hpd pin to be asserted when
+the fb helper calls into the hdmi ->detect function.
 
-iQIcBAEBAgAGBQJTVkc0AAoJEN0jrNd/PrOh7HkP/iCMWEHuOBSMvawVbmp9nVLI
-CC1prTVr9Q6oT/eyCNGY47Hb23XuZO7AiDouF3hE3okswxsyRDqY1GBwI5xW6zsK
-sP7/b79Lwzr+kpZrnRpx2ZWazKA0/vdvlH0jY6VYAJUwVdyEpR9ndqLe7yw7Ff3G
-fHWGzSsWXA0obbqjp8j3T8ECY9YQg5GWH/PufNpGwMb5f/rKB0M01Ay/0gavoa3X
-+5x5kQZZk3idOLt45LJ1HhnAw9sOEuBDmUn3mU/8GvwXkCTggl9dgDPHIMqIR4/4
-FZpeSJ8wgWGVKC2UjO/mbpDAB70+ntgOji/RsOdEGB3y7rY+xVDJ4JOnd8mRLKJb
-ooukR+8D0WgxZrrNlwOOUcID5h/2CUSrIJce+MdtidoTM7FnQPp7CvNTrBhq92VU
-VwYku2KCyCppd5N9N7x2gcDs1uE1KOWckHyhZsf8rOQ1exGPzZbciZJV+BLLg7xR
-cDFoY3bNMY/jUKUXfyNlpjaQ+/TA2HrcDSEjxgYfth90xhxoq7kpgUPYvh2lj+2X
-YJB+GeWdku+tuR+cHZIBbS5SX740Q1omR677q74j6l9dQsv7LL0CXVwSnge/fDVb
-lpkWuTP7nUVaOgqZ2RNCpXMA5CKwptr4a+FvkIqnTcKvqBT75H2KUuA1yzgZvaoh
-040PDibi26IjzlTOsRSG
-=Yvc9
------END PGP SIGNATURE-----
+Cc: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/gpu/drm/drm_fb_helper.c | 11 +++++------
+ drivers/gpu/drm/i915/i915_dma.c |  3 ---
+ drivers/gpu/drm/i915/i915_drv.c |  2 --
+ drivers/gpu/drm/i915/i915_drv.h |  1 -
+ drivers/gpu/drm/i915/i915_irq.c |  4 ----
+ 5 files changed, 5 insertions(+), 16 deletions(-)
 
---qcHopEYAB45HaUaB--
-
---===============1796363716==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-Nouveau mailing list
-Nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-http://lists.freedesktop.org/mailman/listinfo/nouveau
-
---===============1796363716==--
+diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+index e95ed5805f07..80ce92ab91f9 100644
+--- a/drivers/gpu/drm/drm_fb_helper.c
++++ b/drivers/gpu/drm/drm_fb_helper.c
+@@ -1587,8 +1587,10 @@ EXPORT_SYMBOL(drm_fb_helper_initial_config);
+  * either the output polling work or a work item launched from the driver's
+  * hotplug interrupt).
+  *
+- * Note that the driver must ensure that this is only called _after_ the fb has
+- * been fully set up, i.e. after the call to drm_fb_helper_initial_config.
++ * Note that drivers may call this even before calling
++ * drm_fb_helper_initial_config but only aftert drm_fb_helper_init. This allows
++ * for a race-free fbcon setup and will make sure that the fbdev emulation will
++ * not miss any hotplug events.
+  *
+  * RETURNS:
+  * 0 on success and a non-zero error code otherwise.
+@@ -1598,11 +1600,8 @@ int drm_fb_helper_hotplug_event(struct drm_fb_helper *fb_helper)
+ 	struct drm_device *dev = fb_helper->dev;
+ 	u32 max_width, max_height;
+ 
+-	if (!fb_helper->fb)
+-		return 0;
+-
+ 	mutex_lock(&fb_helper->dev->mode_config.mutex);
+-	if (!drm_fb_helper_is_bound(fb_helper)) {
++	if (!fb_helper->fb || !drm_fb_helper_is_bound(fb_helper)) {
+ 		fb_helper->delayed_hotplug = true;
+ 		mutex_unlock(&fb_helper->dev->mode_config.mutex);
+ 		return 0;
+diff --git a/drivers/gpu/drm/i915/i915_dma.c b/drivers/gpu/drm/i915/i915_dma.c
+index cc0c6eded51c..89ba88d37ae1 100644
+--- a/drivers/gpu/drm/i915/i915_dma.c
++++ b/drivers/gpu/drm/i915/i915_dma.c
+@@ -1375,9 +1375,6 @@ static int i915_load_modeset_init(struct drm_device *dev)
+ 	 */
+ 	intel_fbdev_initial_config(dev);
+ 
+-	/* Only enable hotplug handling once the fbdev is fully set up. */
+-	dev_priv->enable_hotplug_processing = true;
+-
+ 	drm_kms_helper_poll_init(dev);
+ 
+ 	return 0;
+diff --git a/drivers/gpu/drm/i915/i915_drv.c b/drivers/gpu/drm/i915/i915_drv.c
+index 254b3236200b..dee36a5b7fae 100644
+--- a/drivers/gpu/drm/i915/i915_drv.c
++++ b/drivers/gpu/drm/i915/i915_drv.c
+@@ -448,7 +448,6 @@ static int i915_drm_freeze(struct drm_device *dev)
+ 		cancel_delayed_work_sync(&dev_priv->rps.delayed_resume_work);
+ 
+ 		drm_irq_uninstall(dev);
+-		dev_priv->enable_hotplug_processing = false;
+ 		/*
+ 		 * Disable CRTCs directly since we want to preserve sw state
+ 		 * for _thaw.
+@@ -589,7 +588,6 @@ static int __i915_drm_thaw(struct drm_device *dev, bool restore_gtt_mappings)
+ 		 * notifications.
+ 		 * */
+ 		intel_hpd_init(dev);
+-		dev_priv->enable_hotplug_processing = true;
+ 		/* Config may have changed between suspend and resume */
+ 		intel_resume_hotplug(dev);
+ 	}
+diff --git a/drivers/gpu/drm/i915/i915_drv.h b/drivers/gpu/drm/i915/i915_drv.h
+index 7d6acb401fd9..41094d6357b1 100644
+--- a/drivers/gpu/drm/i915/i915_drv.h
++++ b/drivers/gpu/drm/i915/i915_drv.h
+@@ -1321,7 +1321,6 @@ struct drm_i915_private {
+ 	u32 pipestat_irq_mask[I915_MAX_PIPES];
+ 
+ 	struct work_struct hotplug_work;
+-	bool enable_hotplug_processing;
+ 	struct {
+ 		unsigned long hpd_last_jiffies;
+ 		int hpd_cnt;
+diff --git a/drivers/gpu/drm/i915/i915_irq.c b/drivers/gpu/drm/i915/i915_irq.c
+index c828f5b78250..179588b2368f 100644
+--- a/drivers/gpu/drm/i915/i915_irq.c
++++ b/drivers/gpu/drm/i915/i915_irq.c
+@@ -1003,10 +1003,6 @@ static void i915_hotplug_work_func(struct work_struct *work)
+ 	bool changed = false;
+ 	u32 hpd_event_bits;
+ 
+-	/* HPD irq before everything is fully set up. */
+-	if (!dev_priv->enable_hotplug_processing)
+-		return;
+-
+ 	mutex_lock(&mode_config->mutex);
+ 	DRM_DEBUG_KMS("running encoder hotplug functions\n");
+ 
+-- 
+1.9.2
