@@ -1,13 +1,14 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V2 1/4] pinctrl: tegra: remove redundant data table fields
-Date: Tue, 22 Apr 2014 16:49:35 +0200
-Message-ID: <CACRpkdYx6aBNTSHAjJVpJ=H=2Bkf5QrzZEUcBhqY9T9u2eHvjA@mail.gmail.com>
-References: <1397581250-1506-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH 2/4] pinctrl: tegra: remove fsafe from data tables
+Date: Tue, 22 Apr 2014 16:52:10 +0200
+Message-ID: <CACRpkdYw+YBnqAzSu0yZZhi_id6PGJVPdk1yjJZzgxbFC2wsqw@mail.gmail.com>
+References: <1397511222-28533-1-git-send-email-swarren@wwwdotorg.org>
+ <1397511222-28533-2-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1397581250-1506-1-git-send-email-swarren@wwwdotorg.org>
+In-Reply-To: <1397511222-28533-2-git-send-email-swarren@wwwdotorg.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -21,46 +22,27 @@ To: Stephen Warren <swarren@wwwdotorg.org>
 Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Apr 15, 2014 at 7:00 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+On Mon, Apr 14, 2014 at 11:33 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
 
 > From: Stephen Warren <swarren@nvidia.com>
 >
-> Any SoC which supports the einput, odrain, lock, ioreset, or rcv_sel
-> options has the relevant HW register fields in the same register as the
-> mux function selection. Similarly, the drvtype option is always in the
-> drive register, if it is supported at all. Hence, we don't need to have
-> struct *_reg fields in the pin group table to define which register and
-> bank to use for those options. Delete this to save space in the driver's
-> data tables.
+> The fsafe value in the pingroup data tables is only used to implement
+> tegra_pinctrl_disable(). The only reason this function is called is when
+> dynamically switching between pinmux states, i.e. when disabling the old
+> state before programming the new state. It's simpler to have the new
+> target state define the expected value of each pin (and all current DTs
+> do that). This also gives more flexibility, since it allows individual
+> boards explicit control over the "inactive" mux function for each pin,
+> rather than requiring it to be an SoC-specific value. Assuming this, we
+> can get rid of the fsafe value from the driver completely, thus saving
+> some more space in the driver tables.
 >
-> However, many of those options are not supported on all SoCs, or not
-> supported on some pingroups. We need a way to detect when they are
-> supported. Previously, this was indicated by setting the struct *_reg
-> field to -1. With the struct *_reg fields removed, we use the struct
-> *_bit fields for this purpose instead. The struct *_bit fields need to
-> be expanded from 5 to 6 bits in order to store a value outside the valid
-> HW bit range of 0..31.
->
-> Even without removing the struct *_reg fields, we still need to add code
-> to validate the struct *_bit fields, since some struct *_bit fields were
-> already being set to -1, without an option-specific struct *_reg field to
-> "guard" them. In other words, before this change, the pinmux driver might
-> allow some unsupported options to be written to HW.
+> While re-writing the content of tegra124_pingroups[], fix the indentation
+> to use a TAB instead of spaces.
 >
 > Signed-off-by: Stephen Warren <swarren@nvidia.com>
-> ---
-> (Note: For V2, I'm only reposting patch 1/4, since patch 2/4 is large, and
-> I don't want to spam the list again with the whole series)
->
-> v2:
-> * Modify width of struct tegra_pingroup's drvtype_bit in the same way as
->   other *_bit fields.
-> * Fix struct tegra_pingroup's documentation to match the changes made
->   to the struct.
-> * Fix pinctrl-tegra20.c's DRV_PG_EXT() macro to initialize the drvtype_bit
->   field.
 
-This v2 version applied.
+Patch applied with Laxman's ACK.
 
 Yours,
 Linus Walleij
