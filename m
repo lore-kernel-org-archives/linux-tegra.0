@@ -1,83 +1,64 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v2 0/7] Add cros_ec changes for newer boards
-Date: Wed, 23 Apr 2014 09:32:55 -0700
-Message-ID: <CAD=FV=XbjeOR+A-ZVYgOT69gsdp-YrjbkGrjL2Vf4F31ZkGXTA@mail.gmail.com>
-References: <1398185154-19404-1-git-send-email-dianders@chromium.org>
- <20140423123240.GA640@lee--X1> <5357E832.1000806@wwwdotorg.org>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: [PATCH 00/38] MMC updates, plus CuBox-i WiFi support
+Date: Wed, 23 Apr 2014 19:55:34 +0100
+Message-ID: <20140423185534.GA26756@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <5357E832.1000806@wwwdotorg.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, andrew@lunn.ch, Wolfram Sang <wsa@the-dreams.de>, Andrew Bresticker <abrestic@chromium.org>, Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Matt Porter <matt.porter@linaro.org>, Lee Jones <lee.jones@linaro.org>, jdelvare@suse.de, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-doc@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>, u.kleine-koenig@pengutronix.de, kevin.strasser@linux.intel.com, Dylan Reid <dgreid@chromium.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, schwidefsky@de.ibm.com, laurent.pinchart+renesas@ideasonboard.com, linux-tegra@
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-doc-owner@vger.kernel.org
+To: Anton Vorontsov <anton@enomsg.org>, Barry Song <baohua@kernel.org>, Ben Dooks <ben-linux@fluff.org>, Chris Ball <chris@printf.net>, devicetree@vger.kernel.org, Ian Campbell <ijc+devicetree@hellion.org.uk>, Jaehoon Chung <jh80.chung@samsung.com>, Kumar Gala <galak@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, linux-mmc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-tegra@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Michal Simek <michal.simek@xilinx.com>, Pawel Moll <pawel.moll@arm.com>, Randy Dunlap <rdunlap@infradead.org>, Rob Herring <robh+dt@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Seungwon Jeon <tgih.jun@samsung.com>, Shawn Guo <shawn.guo@freescale.com>, spear-devel@list.st.com, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Vir
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+All,
 
-On Wed, Apr 23, 2014 at 9:20 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
-> On 04/23/2014 06:32 AM, Lee Jones wrote:
->> On Tue, 22 Apr 2014, Doug Anderson wrote:
->>
->>> This series adds the most critical cros_ec changes for newer boards
->>> using cros_ec.  Specifically:
->>> * Fixes timing/locking issues with the previously upstreamed (but
->>>   never used upstream) cros_ec_spi driver.
->>> * Updates the cros_ec header file to the latest version which allows
->>>   us to use newer EC features like i2c tunneling.
->>> * Adds an i2c tunnel driver to allow communication to the EC's i2c
->>>   devices.
->>>
->>> This _doesn't_ get the EC driver fully up to speed with what's in the
->>> current Chromium OS trees.  There are a whole slew of cleanup patches
->>> there, an addition of an LPC transport mode, and exports of functions
->>> to userspace.  Once these patches land and we have functionality we
->>> can continue to pick more cleanup patches.
-> ...
->> Need to wait for the ARM, DT and I2C guys to review, at which point
->> I'll be happy to take in and supply a branch for them to pull from if
->> required. If there are no _true_ dependencies and the MFD changes can
->> be added independently without fear of build breakages, let me know
->> and I'll apply them separately.
->
-> I believe there aren't direct dependencies between the patches. So, the
-> MFD patches can be applied to the MFD tree and the DT patch applied to
-> the Tegra tree. I'm simply waiting for the MFD patches to be applied
-> before applying the DT patch so that I know the DT binding definition is
-> fully accepted before applying a patch that uses it.
+This is where I'm at with trying to clean up the SDHCI mess, and sort out
+issues I've noticed when trying to get UHS support working on CuBoxes.
+This is my full patch set, but I recommend not applying patch 37 as there
+appears to be a hardware issue preventing it working reliably.
 
-All of the MFD patches are safe to apply and in pretty much arbitrary
-order.  The strong dependencies in the chain are:
+In any case, patches 0-33 inclusive are the SDHCI clean up, based against
+v3.15-rc1.  Patches 34 and 35 are Olof's Wifi support, 36 is my fix against
+those, and 38 adds the Broadcom Wifi and BT support for CuBox.
 
-* We need patch #5 (mfd: cros_ec: Sync to the latest
-cros_ec_commands.h from EC sources) before the i2c tunnel can compile.
+The questions over how to handle these devices were never properly settled,
+so I recommend against merging patch 34 onwards.  As for the rest, I'm not
+planning on any further work, so it may be a good idea for people to
+consider testing them with a view to getting them merged.
 
-* As Stephen says, he shouldn't apply the device tree until we're
-confident that the bindings are right.  However there's no strong
-dependency otherwise.
+ Documentation/devicetree/bindings/mmc/mmc.txt |  11 +
+ arch/arm/boot/dts/imx6qdl-cubox-i.dtsi        |  34 +-
+ arch/arm/boot/dts/imx6qdl-microsom.dtsi       |  98 ++++
+ drivers/mmc/core/core.c                       |  42 ++
+ drivers/mmc/core/host.c                       |  68 +++
+ drivers/mmc/core/sdio_irq.c                   |  41 +-
+ drivers/mmc/host/Kconfig                      |  63 +--
+ drivers/mmc/host/dw_mmc.c                     |   2 +
+ drivers/mmc/host/sdhci-acpi.c                 |   8 +
+ drivers/mmc/host/sdhci-bcm-kona.c             |   4 +
+ drivers/mmc/host/sdhci-bcm2835.c              |   4 +
+ drivers/mmc/host/sdhci-cns3xxx.c              |  13 +-
+ drivers/mmc/host/sdhci-dove.c                 |   4 +
+ drivers/mmc/host/sdhci-esdhc-imx.c            |  82 +--
+ drivers/mmc/host/sdhci-esdhc.h                |   4 +-
+ drivers/mmc/host/sdhci-of-arasan.c            |   4 +
+ drivers/mmc/host/sdhci-of-esdhc.c             |  70 ++-
+ drivers/mmc/host/sdhci-of-hlwd.c              |   4 +
+ drivers/mmc/host/sdhci-pci.c                  |   9 +-
+ drivers/mmc/host/sdhci-pltfm.c                |   4 +
+ drivers/mmc/host/sdhci-pxav2.c                |  14 +-
+ drivers/mmc/host/sdhci-pxav3.c                |  13 +-
+ drivers/mmc/host/sdhci-s3c.c                  |  36 +-
+ drivers/mmc/host/sdhci-sirf.c                 |   4 +
+ drivers/mmc/host/sdhci-spear.c                |   5 +-
+ drivers/mmc/host/sdhci-tegra.c                |  27 +-
+ drivers/mmc/host/sdhci.c                      | 728 +++++++++++++-------------
+ drivers/mmc/host/sdhci.h                      |  20 +-
+ include/linux/mmc/host.h                      |   8 +
+ include/linux/mmc/sdhci.h                     |  15 +-
+ 30 files changed, 885 insertions(+), 554 deletions(-)
 
-* Patches #1 #2 and #3 are simply reliability fixes.  Those could land
-at any point in time and will improve other users of cros_ec_spi (like
-the keyboard on tegra124-venice2).
 
-* Patch #4 can apply any time with no issues.  Without it large i2c
-tunnel transfers won't work, but that's not a terrible problem (all
-normal transfers are small).
-
----
-
-All that being said, I'd request that you merge patches #1-#4 as soon
-as you can and make sure you can provide a way that Wolfram can pull
-them (or at least patch #4) into his i2c tree to keep them applying
-when he is ready to land #5.
-
--Doug
+-- 
+FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
+improving, and getting towards what was expected from it.
