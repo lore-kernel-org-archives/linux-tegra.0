@@ -1,39 +1,79 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 4/7] mfd: cros_ec: spi: Increase cros_ec_spi deadline
- from 5ms to 100ms
-Date: Wed, 23 Apr 2014 13:36:01 +0100
-Message-ID: <20140423123601.GE640@lee--X1>
+Subject: Re: [PATCH v2 6/7] i2c: ChromeOS EC tunnel driver
+Date: Wed, 23 Apr 2014 13:37:46 +0100
+Message-ID: <20140423123746.GG640@lee--X1>
 References: <1398185154-19404-1-git-send-email-dianders@chromium.org>
- <1398185154-19404-5-git-send-email-dianders@chromium.org>
+ <1398185154-19404-7-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1398185154-19404-5-git-send-email-dianders@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <1398185154-19404-7-git-send-email-dianders@chromium.org>
+Sender: linux-doc-owner@vger.kernel.org
 To: Doug Anderson <dianders@chromium.org>
-Cc: swarren@nvidia.com, wsa@the-dreams.de, abrestic@chromium.org, dgreid@chromium.org, olof@lixom.net, sjg@chromium.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, sameo@linux.intel.com, linux-kernel@vger.kernel.org
+Cc: swarren@nvidia.com, wsa@the-dreams.de, abrestic@chromium.org, dgreid@chromium.org, olof@lixom.net, sjg@chromium.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rdunlap@infradead.org, sameo@linux.intel.com, jdelvare@suse.de, shane.huang@amd.com, maxime.ripard@free-electrons.com, laurent.pinchart+renesas@ideasonboard.com, u.kleine-koenig@pengutronix.de, bjorn.andersson@sonymobile.com, kevin.strasser@linux.intel.com, linux@prisktech.co.nz, andrew@lunn.ch, andriy.shevchenko@linux.intel.com, schwidefsky@de.ibm.com, matt.porter@linaro.org, ch.naveen@samsung.com, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 On Tue, 22 Apr 2014, Doug Anderson wrote:
 
-> We're adding i2c tunneling to the list of things that goes over
-> cros_ec.  i2c tunneling can be slooooooow, so increase our deadline t=
-o
-> 100ms to account for that.
+> On ARM Chromebooks we have a few devices that are accessed by both th=
+e
+> AP (the main "Application Processor") and the EC (the Embedded
+> Controller).  These are:
+> * The battery (sbs-battery).
+> * The power management unit tps65090.
 >=20
+> On the original Samsung ARM Chromebook these devices were on an I2C
+> bus that was shared between the AP and the EC and arbitrated using
+> some extranal GPIOs (see i2c-arb-gpio-challenge).
+>=20
+> The original arbitration scheme worked well enough but had some
+> downsides:
+> * It was nonstandard (not using standard I2C multimaster)
+> * It only worked if the EC-AP communication was I2C
+> * It was relatively hard to debug problems (hard to tell if i2c issue=
+s
+>   were caused by the EC, the AP, or some device on the bus).
+>=20
+> On the HP Chromebook 11 the design was changed to:
+> * The AP/EC comms were still i2c, but the battery/tps65090 were no
+>   longer on the bus used for AP/EC communication.  The battery was
+>   exposed to the AP through a limited i2c tunnel and tps65090 was
+>   exposed to the AP through a custom Linux driver.
+>=20
+> On the Samsung ARM Chromebook 2 the scheme is changed yet again, now:
+> * The AP/EC comms are now using SPI for faster speeds.
+> * The EC's i2c bus is exposed to the AP through a full i2c tunnel.
+>=20
+> The upstream "tegra124-venice2" uses the same scheme as the Samsung
+> ARM Chromebook 2, though it has a different set of components on the
+> other side of the bus.
+>=20
+> This driver supports the scheme used by the Samsung ARM Chromebook 2.
+> Future patches to this driver could add support for the battery tunne=
+l
+> on the HP Chromebook 11 (and perhaps could even be used to access
+> tps65090 on the HP Chromebook 11 instead of using a special driver,
+> but I haven't researched that enough).
+>=20
+> Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
+> Signed-off-by: Simon Glass <sjg@chromium.org>
 > Signed-off-by: Doug Anderson <dianders@chromium.org>
-> Reviewed-by: Simon Glass <sjg@chromium.org>
 > Tested-by: Andrew Bresticker <abrestic@chromium.org>
 > Tested-by: Stephen Warren <swarren@nvidia.com>
 > ---
-> Changes in v2: None
+> Changes in v2:
+> - Update tunnel binding as per swarren
 >=20
->  drivers/mfd/cros_ec_spi.c | 24 ++++++++++++++++--------
->  1 file changed, 16 insertions(+), 8 deletions(-)
+>  .../devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt |  39 +++
+>  drivers/i2c/busses/Kconfig                         |   9 +
+>  drivers/i2c/busses/Makefile                        |   1 +
+>  drivers/i2c/busses/i2c-cros-ec-tunnel.c            | 304 +++++++++++=
+++++++++++
+>  drivers/mfd/cros_ec.c                              |   5 +
 
-Waiting for other subsystems to Ack, so for now:
+=46or the MFD changes:
   Acked-by: Lee Jones <lee.jones@linaro.org>
 
 --=20
