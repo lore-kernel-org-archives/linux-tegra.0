@@ -1,52 +1,76 @@
-From: David Herrmann <dh.herrmann@gmail.com>
-Subject: Re: [RFC 4/5] drm: Introduce drm_set_unique()
-Date: Wed, 23 Apr 2014 12:48:00 +0200
-Message-ID: <CANq1E4R3S4HdV8OcKw4jk2iLiMJgCPe1m=iNxaA_KfnaM0RFyQ@mail.gmail.com>
-References: <1398179373-29966-1-git-send-email-thierry.reding@gmail.com>
- <1398179373-29966-5-git-send-email-thierry.reding@gmail.com>
- <20140422154807.GT10722@phenom.ffwll.local>
- <20140423071714.GB31226@ulmo>
- <20140423084057.GY10722@phenom.ffwll.local>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v2 0/7] Add cros_ec changes for newer boards
+Date: Wed, 23 Apr 2014 13:32:40 +0100
+Message-ID: <20140423123240.GA640@lee--X1>
+References: <1398185154-19404-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20140423084057.GY10722@phenom.ffwll.local>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linux-tegra@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel <linux-kernel@vger.kernel.org>, Russell King <rmk+kernel@arm.linux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1398185154-19404-1-git-send-email-dianders@chromium.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: swarren@nvidia.com, wsa@the-dreams.de, abrestic@chromium.org, dgreid@chromium.org, olof@lixom.net, sjg@chromium.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, mark.rutland@arm.com, andrew@lunn.ch, swarren@wwwdotorg.org, thierry.reding@gmail.com, linux-i2c@vger.kernel.org, matt.porter@linaro.org, jdelvare@suse.de, laurent.pinchart+renesas@ideasonboard.com, vpalatin@chromium.org, sameo@linux.intel.com, linux-doc@vger.kernel.org, bjorn.andersson@sonymobile.com, u.kleine-koenig@pengutronix.de, kevin.strasser@linux.intel.com, devicetree@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, robh+dt@kernel.org, linux@arm.linux.org.uk, andriy.shevchenko@linux.intel.com, ch.naveen@samsung.com, linux-arm-kernel@lists.infradead.org, shane.huang@amd.com, rdunlap@infradead.org, linux-kernel@vger.kernel.org, linux@prisktech.co.nz, galak@codeaurora
 List-Id: linux-tegra@vger.kernel.org
 
-Hi
+On Tue, 22 Apr 2014, Doug Anderson wrote:
 
-On Wed, Apr 23, 2014 at 10:40 AM, Daniel Vetter <daniel@ffwll.ch> wrote:
-> On Wed, Apr 23, 2014 at 09:17:16AM +0200, Thierry Reding wrote:
->> On second thought, wouldn't this be better located in drm_stub.c? It
->> isn't really related to the IOCTL code except that one of the IOCTLs now
->> uses the information set by this function. Logically I think it belongs
->> with the likes of drm_dev_alloc() and drm_dev_register().
->
-> Yeah makes sense. Tbh the entire split-up of these core drm functions is
-> still a bit messy, so I don't mind if it's a bit inconsistent really. We
-> can do the suffling when someone bothers with the kerneldoc for all of
-> them and pulls it into the drm docbook.
+> This series adds the most critical cros_ec changes for newer boards
+> using cros_ec.  Specifically:
+> * Fixes timing/locking issues with the previously upstreamed (but
+>   never used upstream) cros_ec_spi driver.
+> * Updates the cros_ec header file to the latest version which allows
+>   us to use newer EC features like i2c tunneling.
+> * Adds an i2c tunnel driver to allow communication to the EC's i2c
+>   devices.
+>=20
+> This _doesn't_ get the EC driver fully up to speed with what's in the
+> current Chromium OS trees.  There are a whole slew of cleanup patches
+> there, an addition of an LPC transport mode, and exports of functions
+> to userspace.  Once these patches land and we have functionality we
+> can continue to pick more cleanup patches.
+>=20
+> Changes in v2:
+> - Update tunnel binding as per swarren
+> - Removed i2c20 alias for i2c tunnel
+>=20
+> Bill Richardson (1):
+>   mfd: cros_ec: Sync to the latest cros_ec_commands.h from EC sources
+>=20
+> David Hendricks (1):
+>   mfd: cros_ec: spi: calculate delay between transfers correctly
+>=20
+> Doug Anderson (5):
+>   mfd: cros_ec: spi: Add mutex to cros_ec_spi
+>   mfd: cros_ec: spi: Make the cros_ec_spi timeout more reliable
+>   mfd: cros_ec: spi: Increase cros_ec_spi deadline from 5ms to 100ms
+>   i2c: ChromeOS EC tunnel driver
+>   ARM: tegra: Add the EC i2c tunnel to tegra124-venice2
+>=20
+>  .../devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt |   39 +
+>  arch/arm/boot/dts/tegra124-venice2.dts             |   26 +
+>  drivers/i2c/busses/Kconfig                         |    9 +
+>  drivers/i2c/busses/Makefile                        |    1 +
+>  drivers/i2c/busses/i2c-cros-ec-tunnel.c            |  304 ++++++
+>  drivers/mfd/cros_ec.c                              |    7 +-
+>  drivers/mfd/cros_ec_spi.c                          |   67 +-
+>  include/linux/mfd/cros_ec.h                        |    4 +-
+>  include/linux/mfd/cros_ec_commands.h               | 1128 ++++++++++=
+++++++++--
+>  9 files changed, 1493 insertions(+), 92 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/i2c/i2c-cros-ec=
+-tunnel.txt
+>  create mode 100644 drivers/i2c/busses/i2c-cros-ec-tunnel.c
 
-During drm_dev_*() cleanup, I tried to keep the following structure:
-  drm_drv.c: global drm-module setup
-  drm_stub.c: drm_device allocation, registration and lifetime management
-  drm_fops.c: reference-implementation of the drm file_operations
+Need to wait for the ARM, DT and I2C guys to review, at which point
+I'll be happy to take in and supply a branch for them to pull from if
+required. If there are no _true_ dependencies and the MFD changes can
+be added independently without fear of build breakages, let me know
+and I'll apply them separately.
 
-The only thing that's wrongly placed is ioctl handling (which somehow
-ended up in drm_drv.c instead of drm_fops.c). drm_stub.c is where all
-the generic and mandatory DRM device handling is placed so yeah, I'd
-put the set_unique() there.
-
-Thanks
-David
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
