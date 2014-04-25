@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 3/7] ARM: tegra: jetson-tk1 - Enable HDMI support
-Date: Fri, 25 Apr 2014 17:44:47 +0200
-Message-ID: <1398440691-23366-4-git-send-email-thierry.reding@gmail.com>
+Subject: [PATCH 6/7] ARM: tegra: dalmore - Add +5V HDMI supply
+Date: Fri, 25 Apr 2014 17:44:50 +0200
+Message-ID: <1398440691-23366-7-git-send-email-thierry.reding@gmail.com>
 References: <1398440691-23366-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1398440691-23366-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,82 +12,55 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Add HDMI +5V, VDD and PLL regulators and enable the DDC I2C controller.
-Enable the HDMI device, provide the power supplies as well as the DDC
-adapter and use pin the standard pin (PN7) for hotplug detection.
+This supply controls the +5V pin on the HDMI connector, which in turn is
+used by attached sinks to return the hotplug detect signal.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra124-jetson-tk1.dts | 39 +++++++++++++++++++++++++++++--
- 1 file changed, 37 insertions(+), 2 deletions(-)
+Note: Unfortunately I do have an A05 Dalmore, and from what I can tell
+HDMI is actually one of the areas where there have been changes between
+A04 and A05. It'd be great if somebody could check that this actually
+works. Also note that it requires Tegra DRM patches that are currently
+in linux-next to enable the +5V regulator.
 
-diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-index dd3076d94727..e30a5778f675 100644
---- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-+++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-@@ -16,6 +16,20 @@
- 		reg = <0x0 0x80000000 0x0 0x80000000>;
- 	};
+ arch/arm/boot/dts/tegra114-dalmore.dts | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+index df22dfad7db7..1309c75c821c 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -25,6 +25,7 @@
+ 		hdmi@54280000 {
+ 			status = "okay";
  
-+	host1x@0,50000000 {
-+		hdmi@0,54280000 {
-+			status = "okay";
-+
 +			hdmi-supply = <&vdd_5v0_hdmi>;
-+			pll-supply = <&vdd_hdmi_pll>;
-+			vdd-supply = <&vdd_3v3_hdmi>;
-+
-+			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
-+			nvidia,hpd-gpio =
-+				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
-+		};
-+	};
-+
- 	pinmux: pinmux@0,70000868 {
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&state_default>;
-@@ -1382,7 +1396,7 @@
- 	};
+ 			vdd-supply = <&vdd_hdmi_reg>;
+ 			pll-supply = <&palmas_smps3_reg>;
  
- 	/* HDMI DDC */
--	i2c@0,7000c700 {
-+	hdmi_ddc: i2c@0,7000c700 {
- 		status = "okay";
- 		clock-frequency = <100000>;
- 	};
-@@ -1477,7 +1491,7 @@
- 					regulator-boot-on;
- 				};
+@@ -1231,8 +1232,6 @@
+ 			regulator-name = "vdd_hdmi_5v0";
+ 			regulator-min-microvolt = <5000000>;
+ 			regulator-max-microvolt = <5000000>;
+-			enable-active-high;
+-			gpio = <&gpio TEGRA_GPIO(K, 1) GPIO_ACTIVE_HIGH>;
+ 			vin-supply = <&tps65090_dcdc1_reg>;
+ 		};
  
--				sd4 {
-+				vdd_1v05_run: sd4 {
- 					regulator-name = "+1.05V_RUN";
- 					regulator-min-microvolt = <1050000>;
- 					regulator-max-microvolt = <1050000>;
-@@ -1765,6 +1779,27 @@
+@@ -1245,6 +1244,17 @@
  			enable-active-high;
- 			vin-supply = <&vdd_3v3_sys>;
+ 			gpio = <&palmas_gpio 6 0>;
  		};
 +
-+		vdd_hdmi_pll: regulator@11 {
++		vdd_5v0_hdmi: regulator@7 {
 +			compatible = "regulator-fixed";
-+			reg = <11>;
-+			regulator-name = "+1.05V_RUN_AVDD_HDMI_PLL";
-+			regulator-min-microvolt = <1050000>;
-+			regulator-max-microvolt = <1050000>;
-+			gpio = <&gpio TEGRA_GPIO(H, 7) GPIO_ACTIVE_LOW>;
-+			vin-supply = <&vdd_1v05_run>;
-+		};
-+
-+		vdd_5v0_hdmi: regulator@12 {
-+			compatible = "regulator-fixed";
-+			reg = <12>;
-+			regulator-name = "+5V_HDMI_CON";
++			reg = <7>;
++			regulator-name = "VDD_5V0_HDMI_CON";
 +			regulator-min-microvolt = <5000000>;
 +			regulator-max-microvolt = <5000000>;
-+			gpio = <&gpio TEGRA_GPIO(K, 6) GPIO_ACTIVE_HIGH>;
++			gpio = <&gpio TEGRA_GPIO(K, 1) GPIO_ACTIVE_HIGH>;
 +			enable-active-high;
-+			vin-supply = <&vdd_5v0_sys>;
++			vin-supply = <&tps65090_dcdc1_reg>;
 +		};
  	};
  
