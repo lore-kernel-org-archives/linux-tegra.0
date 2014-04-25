@@ -1,48 +1,49 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: use correct audio CODEC on Jetson TK1
-Date: Fri, 25 Apr 2014 10:23:32 -0600
-Message-ID: <1398443012-17212-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [RFC 0/5] PCI: tegra: Overhaul regulator usage
+Date: Fri, 25 Apr 2014 10:57:48 -0600
+Message-ID: <20140425165748.GA32246@google.com>
+References: <1396622969-17837-1-git-send-email-treding@nvidia.com>
+ <53444C4D.2080800@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <53444C4D.2080800@wwwdotorg.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Thierry Reding <treding@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Tue, Apr 08, 2014 at 01:21:49PM -0600, Stephen Warren wrote:
+> On 04/04/2014 08:49 AM, Thierry Reding wrote:
+> > The current device tree binding for the regulator setup on Tegra PCIe is
+> > not accurate. While it does work for current use-cases, that's likely by
+> > accident rather than design. This series replaces the existing set of
+> > power-supply properties with a new set that accurately describes the
+> > inputs of the IP block (depending on SoC generation).
+> > 
+> > As a heads-up, this breaks backwards compatibility with prior versions
+> > of the device tree bindings, but I don't see a reason why that should
+> > keep us from fixing this properly. Not many people are currently using
+> > these bindings and those who are are most likely tracking upstream
+> > development closely enough not to be impacted by this.
+> > 
+> > I've aimed to keep the series bisectible, which has the downside of
+> > interleaving patches to unrelated trees (ARM and PCI). I'm hoping that
+> > perhaps we can find a way to merge this as a whole to keep it possible
+> > to bisect across the series. Although again, I guess it wouldn't be all
+> > that bad if that wasn't the case, given how little PCIe is actually
+> > being used.
+> 
+> I'd be happy to put this series into a branch in the Tegra tree, given
+> suitable acks from Bjorn on the PCI changes.
 
-Jetson TK1 contains an RT5639 not an RT5640. While the two are extremely
-similar and mostly compatible, we should still use the correct device
-name in the device tree. I had meant to fix this before applying the
-initial DT, but this issue slipped my mind.
+For 3/5 ("PCI: tegra: Implement accurate power supply scheme"),
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra124-jetson-tk1.dts | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 
-diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-index dd3076d94727..b8931f0ee026 100644
---- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-+++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-@@ -1346,8 +1346,8 @@
- 		status = "okay";
- 		clock-frequency = <100000>;
- 
--		rt5640: audio-codec@1c {
--			compatible = "realtek,rt5640";
-+		rt5639: audio-codec@1c {
-+			compatible = "realtek,rt5639";
- 			reg = <0x1c>;
- 			interrupt-parent = <&gpio>;
- 			interrupts = <TEGRA_GPIO(H, 4) GPIO_ACTIVE_HIGH>;
-@@ -1779,7 +1779,7 @@
- 			"IN2P", "Mic Jack";
- 
- 		nvidia,i2s-controller = <&tegra_i2s1>;
--		nvidia,audio-codec = <&rt5640>;
-+		nvidia,audio-codec = <&rt5639>;
- 
- 		nvidia,hp-det-gpios = <&gpio TEGRA_GPIO(R, 7) GPIO_ACTIVE_LOW>;
- 
--- 
-1.8.1.5
+I do have the "PCI: tegra: Use new OF interrupt mapping when possible"
+change from Lucas on my pci/host-tegra branch, but it shouldn't conflict
+with this.
+
+Bjorn
