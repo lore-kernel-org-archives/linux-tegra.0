@@ -1,60 +1,42 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH v3 9/9] drm/nouveau: support for probing GK20A
-Date: Fri, 25 Apr 2014 16:19:56 +0900
-Message-ID: <1398410396-23338-10-git-send-email-acourbot@nvidia.com>
-References: <1398410396-23338-1-git-send-email-acourbot@nvidia.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH 00/38] MMC updates, plus CuBox-i WiFi support
+Date: Fri, 25 Apr 2014 10:03:43 +0100
+Message-ID: <20140425090343.GH26756@n2100.arm.linux.org.uk>
+References: <20140423185534.GA26756@n2100.arm.linux.org.uk> <CAPDyKFozP69yngKAkdwHYyyvi+pdLEm05udOmBiVshQFi4hnLQ@mail.gmail.com> <20140424101726.GH26756@n2100.arm.linux.org.uk> <CAPDyKFrGReKF0ucer7D195boEoQW26=4vDXT+=Wn6BO-p_B1gQ@mail.gmail.com> <20140424105745.GM26756@n2100.arm.linux.org.uk> <CAPDyKFr=2=dg1NTYb1_EAgxXZq2Rd+o2Q2B5TE+GZwr8MUU1_Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1398410396-23338-1-git-send-email-acourbot@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ben Skeggs <bskeggs@redhat.com>
-Cc: gnurou@gmail.com, nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFr=2=dg1NTYb1_EAgxXZq2Rd+o2Q2B5TE+GZwr8MUU1_Q@mail.gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Chris Ball <chris@printf.net>, Anton Vorontsov <anton@enomsg.org>, Barry Song <baohua@kernel.org>, Ben Dooks <ben-linux@fluff.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Jaehoon Chung <jh80.chung@samsung.com>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-doc@vger.kernel.org, linux-mmc <linux-mmc@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michal Simek <michal.simek@xilinx.com>, Pawel Moll <pawel.moll@arm.com>, Randy Dunlap <rdunlap@infradead.org>, Rob Herring <robh+dt@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Seungwon Jeon <tgih.jun@samsung.com>, Shawn Guo <shawn.guo@freescale.com>, spear-devel@list.st.com, Stephe
 List-Id: linux-tegra@vger.kernel.org
 
-Set the correct subdev/engine classes when GK20A (0xea) is probed.
+On Thu, Apr 24, 2014 at 01:13:05PM +0200, Ulf Hansson wrote:
+> On 24 April 2014 12:57, Russell King - ARM Linux <linux@arm.linux.org.uk> wrote:
+> > This is nothing new or unexpected - it was last posted back in February,
+> > and I elected that it should be held off until after the last merge
+> > window.
+> >
+> > Unfortunately, I didn't have time to post it immediately after the merge
+> > window closed, partly because it needed to be rebased on top of tglx's
+> > IRQ changes on which it depends.  I was carrying those as separate commits
+> > to the ones Thomas was carrying in his tree - and in the event, Thomas had
+> > modified his patches slightly between sending me copies of them and the
+> > versions he sent during the merge window.
+> 
+> Okay, so let's keep up the frequency here then. I only had some minor
+> comments, please fix them and send a v2.
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
- drivers/gpu/drm/nouveau/core/engine/device/nve0.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+Right, so I've updated the patches, and added one ack to one patch.
+That seems insufficient to me - the only platform these have been
+tested on is iMX6, which is sdhci-esdhc-imx.c.
 
-diff --git a/drivers/gpu/drm/nouveau/core/engine/device/nve0.c b/drivers/gpu/drm/nouveau/core/engine/device/nve0.c
-index 9784cbf8a9d2..964c183322a2 100644
---- a/drivers/gpu/drm/nouveau/core/engine/device/nve0.c
-+++ b/drivers/gpu/drm/nouveau/core/engine/device/nve0.c
-@@ -156,6 +156,23 @@ nve0_identify(struct nouveau_device *device)
- 		device->oclass[NVDEV_ENGINE_PPP    ] = &nvc0_ppp_oclass;
- 		device->oclass[NVDEV_ENGINE_PERFMON] = &nve0_perfmon_oclass;
- 		break;
-+	case 0xea:
-+		device->cname = "GK20A";
-+		device->oclass[NVDEV_SUBDEV_MC     ] =  nvc3_mc_oclass;
-+		device->oclass[NVDEV_SUBDEV_BUS    ] =  nvc0_bus_oclass;
-+		device->oclass[NVDEV_SUBDEV_TIMER  ] = &gk20a_timer_oclass;
-+		device->oclass[NVDEV_SUBDEV_FB     ] =  gk20a_fb_oclass;
-+		device->oclass[NVDEV_SUBDEV_IBUS   ] = &gk20a_ibus_oclass;
-+		device->oclass[NVDEV_SUBDEV_INSTMEM] = nv50_instmem_oclass;
-+		device->oclass[NVDEV_SUBDEV_VM     ] = &nvc0_vmmgr_oclass;
-+		device->oclass[NVDEV_SUBDEV_BAR    ] = &nvc0_bar_oclass;
-+		device->oclass[NVDEV_ENGINE_DMAOBJ ] = &nvd0_dmaeng_oclass;
-+		device->oclass[NVDEV_ENGINE_FIFO   ] =  gk20a_fifo_oclass;
-+		device->oclass[NVDEV_ENGINE_SW     ] =  nvc0_software_oclass;
-+		device->oclass[NVDEV_ENGINE_GR     ] =  gk20a_graph_oclass;
-+		device->oclass[NVDEV_ENGINE_COPY2  ] = &nve0_copy2_oclass;
-+		device->oclass[NVDEV_ENGINE_PERFMON] = &nve0_perfmon_oclass;
-+		break;
- 	case 0xf0:
- 		device->cname = "GK110";
- 		device->oclass[NVDEV_SUBDEV_VBIOS  ] = &nouveau_bios_oclass;
+They _really_ need testing elsewhere too.  Or is the plan to merge
+them and then see about getting people to test them and fix them up
+afterwards?
+
 -- 
-1.9.2
+FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
+improving, and getting towards what was expected from it.
