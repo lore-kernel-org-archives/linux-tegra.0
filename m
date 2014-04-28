@@ -1,15 +1,12 @@
-From: Chris Ball <chris@printf.net>
-Subject: Re: [PATCH 00/38] MMC updates, plus CuBox-i WiFi support
-Date: Mon, 28 Apr 2014 17:52:00 +0100
-Message-ID: <86mwf5tn0v.fsf@void.printf.net>
-References: <20140423185534.GA26756@n2100.arm.linux.org.uk>
- <535E84FB.4080305@wwwdotorg.org>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: [PATCH 00/16] Another 16 L2C patches
+Date: Mon, 28 Apr 2014 17:56:31 +0100
+Message-ID: <20140428165631.GM26756@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <535E84FB.4080305@wwwdotorg.org> (Stephen Warren's message of
- "Mon, 28 Apr 2014 10:42:35 -0600")
+Content-Disposition: inline
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -19,26 +16,44 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-doc@vger.kernel.org, Seungwon Jeon <tgih.jun@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Anton Vorontsov <anton@enomsg.org>, Michal Simek <michal.simek@xilinx.com>, Jaehoon Chung <jh80.chung@samsung.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, spear-devel@list.st.com, Rob Herring <robh+dt@kernel.org>, Ben Dooks <ben-linux@fluff.org>, linux-tegra@vger.kernel.org, Shawn Guo <shawn.guo@freescale.com>, Barry Song <baohua@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, linux-mmc@vger.kernel.org, Viresh Kumar <viresh.linux@gmail.com>, Sascha Hauer <kernel@pengutronix.de>, Kumar Gala <galak@codeaurora.org>, linuxppc-dev@lists.oz
+To: linux-arm-kernel@lists.infradead.org
+Cc: Andrew Lunn <andrew@lunn.ch>, kernel@stlinux.com, Linus Walleij <linus.walleij@linaro.org>, Gregory Clement <gregory.clement@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>, linux-samsung-soc@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, bcm-kernel-feedback-list@broadcom.com, Dinh Nguyen <dinguyen@altera.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Stephen Warren <swarren@wwwdotorg.org>, Hauke Mehrtens <hauke@hauke-m.de>, Matt Porter <mporter@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-tegra@vger.kernel.org, Shawn Guo <shawn.guo@freescale.com>, Maxime Coquelin <maxime.coquelin@st.com>, Barry Song <baohua@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>, Christian Daudt <bcm@fixthebug.org>, Patrice
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+So, in response to Matt Porter's complaint about breaking prima2, here's
+another 16 patches which changes the way the L2 cache is initialised on
+many platforms.  This series moves towards a situation where the generic
+code initialises the L2 cache itself, with as little help as possible
+from board specific code.
 
-On Mon, Apr 28 2014, Stephen Warren wrote:
-> The series,
-> Tested-by: Stephen Warren <swarren@nvidia.com>
->
-> (On an NVIDIA Tegra "Jetson TK1" board, with the patches applied on top
-> of next-20140428, also with Andrew Bresticker's Tegra SDHCI patches
-> "mmc: tegra: disable UHS modes" and "mmc: tegra: fix reporting of base
-> clock frequency" applied)
+A number of platforms are left alone because they're more complex -
+these should still eventually be converted.
 
-Thanks very much Stephen, Russell for the series, and Ulf.
+At some point in the near future, I will see about sorting out their
+ordering wrt the previous patch set.  For the time being, they apply
+on top of the existing l2c changes.
 
-This seems like a good time to merge to mmc-next and call for testing
-in linux-next -- I'm happy to merge a v2 PR when ready.
+ arch/arm/include/asm/mach/arch.h  |  3 +++
+ arch/arm/kernel/irq.c             | 12 ++++++++++++
+ arch/arm/mach-bcm/bcm_5301x.c     |  9 ++-------
+ arch/arm/mach-berlin/berlin.c     | 17 ++++++-----------
+ arch/arm/mach-exynos/exynos.c     |  8 ++------
+ arch/arm/mach-highbank/highbank.c |  9 +++------
+ arch/arm/mach-imx/mach-vf610.c    |  9 ++-------
+ arch/arm/mach-mvebu/board-v7.c    |  9 ++++++---
+ arch/arm/mach-nomadik/cpu-8815.c  | 13 +++----------
+ arch/arm/mach-prima2/Makefile     |  1 -
+ arch/arm/mach-prima2/common.c     |  6 ++++++
+ arch/arm/mach-prima2/l2x0.c       | 17 -----------------
+ arch/arm/mach-rockchip/rockchip.c |  9 ++-------
+ arch/arm/mach-socfpga/socfpga.c   |  9 ++-------
+ arch/arm/mach-sti/board-dt.c      | 20 +++++---------------
+ arch/arm/mach-tegra/tegra.c       | 12 +++---------
+ arch/arm/mach-vexpress/v2m.c      |  3 ++-
+ arch/arm/mach-zynq/common.c       |  8 +++-----
+ 18 files changed, 62 insertions(+), 112 deletions(-)
 
-- Chris.
+
 -- 
-Chris Ball   <http://printf.net/>
+FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
+improving, and getting towards what was expected from it.
