@@ -1,16 +1,15 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 07/16] ARM: l2c: convert tegra to generic l2c
- initialisation
-Date: Mon, 28 Apr 2014 18:41:33 +0100
-Message-ID: <20140428174133.GO26756@n2100.arm.linux.org.uk>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 00/16] Another 16 L2C patches
+Date: Mon, 28 Apr 2014 12:08:11 -0600
+Message-ID: <535E990B.2020405@wwwdotorg.org>
 References: <20140428165631.GM26756@n2100.arm.linux.org.uk>
- <E1Weoso-0002Pj-LE@rmk-PC.arm.linux.org.uk> <535E8FA0.6040205@wwwdotorg.org>
+ <535E8BEE.1000100@wwwdotorg.org> <535E8F6D.9000803@wwwdotorg.org>
+ <20140428173943.GN26756@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <535E8FA0.6040205@wwwdotorg.org>
+In-Reply-To: <20140428173943.GN26756@n2100.arm.linux.org.uk>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -20,44 +19,40 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Peter De Schrijver <pdeschrijver@nvidia.com>
 Cc: linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Apr 28, 2014 at 11:28:00AM -0600, Stephen Warren wrote:
-> On 04/28/2014 10:58 AM, Russell King wrote:
+(Dropping most people from CC since this sub-thread is a Tegra-specific
+discussion)
+
+On 04/28/2014 11:39 AM, Russell King - ARM Linux wrote:
+> On Mon, Apr 28, 2014 at 11:27:09AM -0600, Stephen Warren wrote:
+...
+>> I do see one error in dmesg during boot, but it doesn't appear to
+>> negatively affect operation in brief testing, and is present in
+>> linux-next without this series anyway. Is this message a problem?
+>>
+>>> [    0.000000] L2C: platform modifies aux control register: 0x02080000 -> 0x3e480001
+>>> [    0.000000] L2C: DT/platform modifies aux control register: 0x02080000 -> 0x3e480001
+>>> [    0.000000] L2C-310 errata 727915 769419 enabled
+>>> [    0.000000] L2C-310 enabling early BRESP for Cortex-A9
+>>> [    0.000000] L2C-310: enabling full line of zeros but not enabled in Cortex-A9
+>>                           ^^^^^^ this is logged at error level
 > 
-> > diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
-> 
-> >  DT_MACHINE_START(TEGRA_DT, "NVIDIA Tegra SoC (Flattened Device Tree)")
-> > -	.map_io		= tegra_map_common_io,
-> >  	.smp		= smp_ops(tegra_smp_ops),
-> > +	.l2c_aux_val	= 0x3c400001,
-> > +	.l2c_aux_mask	= 0xc20fc3fe,
-> > +	.map_io		= tegra_map_common_io,
-> 
-> I'm not sure why .map_io was moved. Was it to sort the entries in order
-> of execution? If so, I assume that .smp should be moved too?
+> Correct, it's an error because on Tegra you explicitly set bit 0 in the
+> auxiliary control register, which is pointless unless the feature is
+> also enabled in the Cortex-A9 control register as well.
 
-I moved it quite simply because I keep entries in order:
+Please forgive my almost complete lack of knowledge re: cache
+controllers. Is the correct fix for this:
 
-        unsigned                l2c_aux_val;    /* L2 cache aux value   */
-        unsigned                l2c_aux_mask;   /* L2 cache aux mask    */
-        void                    (*l2c_write_sec)(unsigned long, unsigned);
-        struct smp_operations   *smp;           /* SMP operations       */
-        bool                    (*smp_init)(void);
-        void                    (*fixup)(struct tag *, char **,
-                                         struct meminfo *);
-        void                    (*init_meminfo)(void);
-        void                    (*reserve)(void);/* reserve mem blocks  */
-        void                    (*map_io)(void);/* IO mapping function  */
-        void                    (*init_early)(void);
+a) To remove bit 0 from the aux_val passed to l2x0_of_init()
 
-And the order of declaration in there (for the functions after "smp")
-is the order in which they are called during kernel initialisation.
-Platforms randomising their declarations is... silly.  And yes, I'll
-move those l2c ones before .smp.
+b) To set some BIT(3) in the Cortex-A9 auxcr, so this feature is enabled
+there too.
 
--- 
-FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
-improving, and getting towards what was expected from it.
+And if (b), I assume that's something that the bootloader should be
+doing, not the kernel?
+
+Thanks.
