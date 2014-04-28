@@ -1,69 +1,118 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 0/7] Add cros_ec changes for newer boards
-Date: Mon, 28 Apr 2014 10:19:14 +0100
-Message-ID: <20140428091914.GK6264@lee--X1>
-References: <1398185154-19404-1-git-send-email-dianders@chromium.org>
- <20140423123240.GA640@lee--X1> <5357E832.1000806@wwwdotorg.org>
- <CAD=FV=XbjeOR+A-ZVYgOT69gsdp-YrjbkGrjL2Vf4F31ZkGXTA@mail.gmail.com>
- <CAD=FV=UWnLLzqzmrt0z=38iDOBSRJJLNAG8PL0GSHt1758ACcg@mail.gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 04/10] drm/nouveau/fb: add GK20A support
+Date: Mon, 28 Apr 2014 13:44:38 +0200
+Message-ID: <20140428114437.GK19455@ulmo>
+References: <1398060142-7937-1-git-send-email-acourbot@nvidia.com>
+ <1398060142-7937-5-git-send-email-acourbot@nvidia.com>
+ <20140422104052.GB22426@ulmo> <53572077.6090305@nvidia.com>
+ <CAAVeFuKscuN-=HJOarbzFkG1ARq6-Nfc2pf1ibam9b61Cjbs6Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=UWnLLzqzmrt0z=38iDOBSRJJLNAG8PL0GSHt1758ACcg@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, andrew@lunn.ch, Wolfram Sang <wsa@the-dreams.de>, Andrew Bresticker <abrestic@chromium.org>, Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Matt Porter <matt.porter@linaro.org>, jdelvare@suse.de, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-doc@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>, u.kleine-koenig@pengutronix.de, kevin.strasser@linux.intel.com, Dylan Reid <dgreid@chromium.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, schwidefsky@de.ibm.com, laurent.pinchart+renesas@ideasonboard.com, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kerne>
+Content-Type: multipart/mixed; boundary="===============1854744908=="
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <CAAVeFuKscuN-=HJOarbzFkG1ARq6-Nfc2pf1ibam9b61Cjbs6Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Wy4uLl0KCj4gPj4+IE5lZWQgdG8gd2FpdCBmb3IgdGhlIEFSTSwgRFQgYW5kIEkyQyBndXlzIHRv
-IHJldmlldywgYXQgd2hpY2ggcG9pbnQKPiA+Pj4gSSdsbCBiZSBoYXBweSB0byB0YWtlIGluIGFu
-ZCBzdXBwbHkgYSBicmFuY2ggZm9yIHRoZW0gdG8gcHVsbCBmcm9tIGlmCj4gPj4+IHJlcXVpcmVk
-LiBJZiB0aGVyZSBhcmUgbm8gX3RydWVfIGRlcGVuZGVuY2llcyBhbmQgdGhlIE1GRCBjaGFuZ2Vz
-IGNhbgo+ID4+PiBiZSBhZGRlZCBpbmRlcGVuZGVudGx5IHdpdGhvdXQgZmVhciBvZiBidWlsZCBi
-cmVha2FnZXMsIGxldCBtZSBrbm93Cj4gPj4+IGFuZCBJJ2xsIGFwcGx5IHRoZW0gc2VwYXJhdGVs
-eS4KPiA+Pgo+ID4+IEkgYmVsaWV2ZSB0aGVyZSBhcmVuJ3QgZGlyZWN0IGRlcGVuZGVuY2llcyBi
-ZXR3ZWVuIHRoZSBwYXRjaGVzLiBTbywgdGhlCj4gPj4gTUZEIHBhdGNoZXMgY2FuIGJlIGFwcGxp
-ZWQgdG8gdGhlIE1GRCB0cmVlIGFuZCB0aGUgRFQgcGF0Y2ggYXBwbGllZCB0bwo+ID4+IHRoZSBU
-ZWdyYSB0cmVlLiBJJ20gc2ltcGx5IHdhaXRpbmcgZm9yIHRoZSBNRkQgcGF0Y2hlcyB0byBiZSBh
-cHBsaWVkCj4gPj4gYmVmb3JlIGFwcGx5aW5nIHRoZSBEVCBwYXRjaCBzbyB0aGF0IEkga25vdyB0
-aGUgRFQgYmluZGluZyBkZWZpbml0aW9uIGlzCj4gPj4gZnVsbHkgYWNjZXB0ZWQgYmVmb3JlIGFw
-cGx5aW5nIGEgcGF0Y2ggdGhhdCB1c2VzIGl0Lgo+ID4KPiA+IEFsbCBvZiB0aGUgTUZEIHBhdGNo
-ZXMgYXJlIHNhZmUgdG8gYXBwbHkgYW5kIGluIHByZXR0eSBtdWNoIGFyYml0cmFyeQo+ID4gb3Jk
-ZXIuICBUaGUgc3Ryb25nIGRlcGVuZGVuY2llcyBpbiB0aGUgY2hhaW4gYXJlOgo+ID4KPiA+ICog
-V2UgbmVlZCBwYXRjaCAjNSAobWZkOiBjcm9zX2VjOiBTeW5jIHRvIHRoZSBsYXRlc3QKPiA+IGNy
-b3NfZWNfY29tbWFuZHMuaCBmcm9tIEVDIHNvdXJjZXMpIGJlZm9yZSB0aGUgaTJjIHR1bm5lbCBj
-YW4gY29tcGlsZS4KPiA+Cj4gPiAqIEFzIFN0ZXBoZW4gc2F5cywgaGUgc2hvdWxkbid0IGFwcGx5
-IHRoZSBkZXZpY2UgdHJlZSB1bnRpbCB3ZSdyZQo+ID4gY29uZmlkZW50IHRoYXQgdGhlIGJpbmRp
-bmdzIGFyZSByaWdodC4gIEhvd2V2ZXIgdGhlcmUncyBubyBzdHJvbmcKPiA+IGRlcGVuZGVuY3kg
-b3RoZXJ3aXNlLgo+ID4KPiA+ICogUGF0Y2hlcyAjMSAjMiBhbmQgIzMgYXJlIHNpbXBseSByZWxp
-YWJpbGl0eSBmaXhlcy4gIFRob3NlIGNvdWxkIGxhbmQKPiA+IGF0IGFueSBwb2ludCBpbiB0aW1l
-IGFuZCB3aWxsIGltcHJvdmUgb3RoZXIgdXNlcnMgb2YgY3Jvc19lY19zcGkgKGxpa2UKPiA+IHRo
-ZSBrZXlib2FyZCBvbiB0ZWdyYTEyNC12ZW5pY2UyKS4KPiA+Cj4gPiAqIFBhdGNoICM0IGNhbiBh
-cHBseSBhbnkgdGltZSB3aXRoIG5vIGlzc3Vlcy4gIFdpdGhvdXQgaXQgbGFyZ2UgaTJjCj4gPiB0
-dW5uZWwgdHJhbnNmZXJzIHdvbid0IHdvcmssIGJ1dCB0aGF0J3Mgbm90IGEgdGVycmlibGUgcHJv
-YmxlbSAoYWxsCj4gPiBub3JtYWwgdHJhbnNmZXJzIGFyZSBzbWFsbCkuCj4gCj4gUGF0Y2ggIzUg
-KGxhdGVzdCBlYyBjb21tYW5kcykgY2FuIGFsc28gYXBwbHkgYXQgYW55IHRpbWUgd2l0aCBubwo+
-IGlzc3VlcywgYnV0IGl0J3MgbmVlZGVkIGZvciBwYXRjaCAjNiAodGhlIHR1bm5lbCkgdG8gY29t
-cGlsZS4KPiAKPiBBbGwgdGhhdCBiZWluZyBzYWlkLCBJJ2QgcmVxdWVzdCB0aGF0IHlvdSBtZXJn
-ZSBwYXRjaGVzICMxLSM1IGFzIHNvb24KPiBhcyB5b3UgY2FuIGFuZCBtYWtlIHN1cmUgeW91IGNh
-biBwcm92aWRlIGEgd2F5IHRoYXQgV29sZnJhbSBjYW4gcHVsbAo+IHRoZW0gKG9yIGF0IGxlYXN0
-IHBhdGNoICM1KSBpbnRvIGhpcyBpMmMgdHJlZSB0byBrZWVwIHRoZW0gYXBwbHlpbmcKPiB3aGVu
-IGhlIGlzIHJlYWR5IHRvIGxhbmQgIzYuCgpWZXJ5IHdlbGwuIFNvIGlmIEkgY2FuIG9idGFpbiBX
-b2xmcmFtJ3MgQWNrLCBJIGNhbiBhcHBseSB0aGUgTUZECmNoYW5nZXMgYWxvbmcgd2l0aCBwYXRj
-aCAjNiBhbmQgc3VwcGx5IGhpbSB3aXRoIGEgYnJhbmNoLgoKLS0gCkxlZSBKb25lcwpMaW5hcm8g
-U1RNaWNyb2VsZWN0cm9uaWNzIExhbmRpbmcgVGVhbSBMZWFkCkxpbmFyby5vcmcg4pSCIE9wZW4g
-c291cmNlIHNvZnR3YXJlIGZvciBBUk0gU29DcwpGb2xsb3cgTGluYXJvOiBGYWNlYm9vayB8IFR3
-aXR0ZXIgfCBCbG9nCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3Rz
-LmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9saW51eC1hcm0ta2VybmVsCg==
+
+--===============1854744908==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="FCF9ydJxlAJsfRTu"
+Content-Disposition: inline
+
+
+--FCF9ydJxlAJsfRTu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Apr 23, 2014 at 03:11:01PM +0900, Alexandre Courbot wrote:
+> On Wed, Apr 23, 2014 at 11:07 AM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>=
+ wrote:
+> > On 04/22/2014 07:40 PM, Thierry Reding wrote:
+> >>
+> >> * PGP Signed by an unknown key
+> >>
+> >>
+> >> On Mon, Apr 21, 2014 at 03:02:16PM +0900, Alexandre Courbot wrote:
+> >> [...]
+> >>>
+> >>> diff --git a/drivers/gpu/drm/nouveau/core/subdev/fb/ramgk20a.c
+> >>> b/drivers/gpu/drm/nouveau/core/subdev/fb/ramgk20a.c
+> >>
+> >> [...]
+> >>>
+> >>> +               pages =3D dma_alloc_from_contiguous(dev, ncmin, order=
+);
+> >>> +               if (!pages) {
+> >>> +                       gk20a_ram_put(pfb, &mem);
+> >>> +                       return -ENOMEM;
+> >>> +               }
+> >>> +
+> >>> +               dma_addr =3D pfn_to_dma(nv_device_base(nv_device(pfb)=
+),
+> >>> +                                     page_to_pfn(pages));
+> >>
+> >>
+> >> This breaks compilation on x86 because neither pfn_to_dma() nor
+> >> dma_to_pfn() are available. Is there some other way this can be
+> >> allocated so that these functions don't need to be called?
+> >
+> >
+> > Mmm, this is bad. There is probably another more portable way to do thi=
+s.
+> > Let me look for it.
+>=20
+> page_to_phys()/phys_to_page() can be used by drivers and will work
+> just fine here since the CPU and GPU use the same physical addresses
+> to access memory.
+
+I'm wondering how this is going to pan out when we try adding IOMMU
+support. But I guess we can cross that bridge when we come to it.
+
+Thierry
+
+--FCF9ydJxlAJsfRTu
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTXj8lAAoJEN0jrNd/PrOhvQkQAJDpYwiR9+o4Ee5VgXDSMPOn
+5YQJOiSu6X7msoUjxPo7ioExDlhD3x/Yuz2bXs2HwTaEbrs766vTQFJrpjh6JPCI
+LtTXKBS+EXHcvoVZlghUDDY6Q4MxJFGipxTTkpvcbQ6KsBNGHrSXur0hdwAqzcas
+c20BUPl18GtWQdp2Kv/c6TBQJKLsDLPC1odFCwEBpza0wosOOeMPF9UnbBxtg0oo
+Mp9RUmsm/NgmYZJHrG94QmNrECdO0NH7HSUB2QzsTGIsetJv528Zdp+dRSKEvK6T
+FRYhJ1UezqU7m0NeaKAuLWG9M7MIC3pMs4GFJCAcPoGOsbPKG/fT3R7Hj5/kYmd2
+7cgkTzxq/DIudCW9m4tPmwDRSzOhgG7EKAQyUwLkzPnWBKtfln8aDpGRBJC7od0n
+zBvlwiqqx3GZC1A69zwvVn2h1si2a4GdCL41L53lzrY5L68DC+bnBp9/2ua18Ir+
+ei6S7FiMLtN7eTE2lJ92TLV6R3ANRgN74ykbUka4HsHnlc7tZdKqslIDHGlibzyx
+DWZrzqShCWk/G5r8bUtJf5pKv9HO0YlBgf/2yMZYWR5nfXHjbYT9tJTV9x15T4zH
+3qDg8Xww/5yWnnD5jBzjKMqWnCy0ztnWQEdbRF6pVP0dZORk5huGR+fbW/99scCZ
+2bA1j4EjCfIFEcOW12gH
+=BD+k
+-----END PGP SIGNATURE-----
+
+--FCF9ydJxlAJsfRTu--
+
+--===============1854744908==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Nouveau mailing list
+Nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+http://lists.freedesktop.org/mailman/listinfo/nouveau
+
+--===============1854744908==--
