@@ -1,98 +1,69 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [Nouveau] [PATCH v3 6/9] drm/nouveau/graph: enable when using
- external firmware
-Date: Mon, 28 Apr 2014 08:57:02 +0200
-Message-ID: <20140428065700.GB19455@ulmo>
-References: <1398410396-23338-1-git-send-email-acourbot@nvidia.com>
- <1398410396-23338-7-git-send-email-acourbot@nvidia.com>
- <CACAvsv51Ju_ZqJfNU5GzzEmDzf2Fr6Xr_5yGRtfqOQRVTgvDPg@mail.gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v2 0/7] Add cros_ec changes for newer boards
+Date: Mon, 28 Apr 2014 10:19:14 +0100
+Message-ID: <20140428091914.GK6264@lee--X1>
+References: <1398185154-19404-1-git-send-email-dianders@chromium.org>
+ <20140423123240.GA640@lee--X1> <5357E832.1000806@wwwdotorg.org>
+ <CAD=FV=XbjeOR+A-ZVYgOT69gsdp-YrjbkGrjL2Vf4F31ZkGXTA@mail.gmail.com>
+ <CAD=FV=UWnLLzqzmrt0z=38iDOBSRJJLNAG8PL0GSHt1758ACcg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0723528416=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CACAvsv51Ju_ZqJfNU5GzzEmDzf2Fr6Xr_5yGRtfqOQRVTgvDPg@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ben Skeggs <skeggsb@gmail.com>
-Cc: "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ben Skeggs <bskeggs@redhat.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=UWnLLzqzmrt0z=38iDOBSRJJLNAG8PL0GSHt1758ACcg@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, andrew@lunn.ch, Wolfram Sang <wsa@the-dreams.de>, Andrew Bresticker <abrestic@chromium.org>, Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Matt Porter <matt.porter@linaro.org>, jdelvare@suse.de, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-doc@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>, u.kleine-koenig@pengutronix.de, kevin.strasser@linux.intel.com, Dylan Reid <dgreid@chromium.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, schwidefsky@de.ibm.com, laurent.pinchart+renesas@ideasonboard.com, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kerne>
 List-Id: linux-tegra@vger.kernel.org
 
-
---===============0723528416==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="EuxKj2iCbKjpUGkD"
-Content-Disposition: inline
-
-
---EuxKj2iCbKjpUGkD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Apr 28, 2014 at 12:10:27PM +1000, Ben Skeggs wrote:
-> On Fri, Apr 25, 2014 at 5:19 PM, Alexandre Courbot <acourbot@nvidia.com> =
-wrote:
-> > nvc0_graph_ctor() would only let the graphics engine be enabled if its
-> > oclass has a proper microcode linked to it. This prevents GR from being
-> > enabled at all on chips that rely exclusively on external firmware, even
-> > though such a use-case is valid.
-> >
-> > Relax the conditions enabling the GR engine to also include the case
-> > where an external firmware has also been loaded.
-> I'm happy to take this patch as-is.  I do wonder if we should do
-> something like this though:
->=20
-> if (nouveau_boolopt(device->cfgopt, "NvGrUseFW", oclass->fecs.ucode =3D=
-=3D NULL))
->=20
-> Which will automatically switch to external firmware if there's no
-> internal implementation available.
-
-I think that makes a lot of sense. Perhaps outputting a warning or so at
-runtime when this happens would be helpful in reminding people that the
-goal is to make the GPU run with nouveau firmware rather than external
-firmware, and hence that there's some work left to do.
-
-Thierry
-
---EuxKj2iCbKjpUGkD
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTXfu8AAoJEN0jrNd/PrOhMH0QALxy7ms7OtX9b38FgUKMuWRm
-YiCiTLo/GiDc/+QW1tKA4hjnosV3EToj8FAr929QPHRhyXaWDVcjnfNo5+1ksP6u
-qp/siG0jkXUi6jU6Bgz/pHr8a3JzhaH0Fcp1imLADgVdjOXRp+z75Q9J8AX4joDa
-L2UP4iuqC3BtrLdI2IyIabNkcpzYajmjygHDkA03gTpcD4kPeJpFf04x7HV/m3RQ
-x3giIgf5ll1270qQny3Ghy4if/79hx6OVzEhqf2mpfmTxemtJX6DoOFIkNJqzuhZ
-j/7EgodWRXzaaTszibkpjJUST1ZQ4sBPKdbQcGy5G4jn/gZAgeCFbImqykmfxnqw
-bP3fBP/bPhVwHm9NQuO3/9hXPNVTob+mCa4zdvIGp4eGNJd9c6pdLYclpkOQvOU1
-CAsCxb2jMIKUVSUxIUpyha1+vn28NFrXAoN95c6r5cg7Fq9fhgMAosn9xfKYd0kz
-bZSOgVIoeRjcbZHsj6HL9qxls9QVCVW3AnS7l2v+femNTl05SCp19xdloo5F9Ejv
-bZyTFyxZILtl44hS6eRBY3rBtkVHKLRAs3+8LBDBIBALV8zgvPGeibRQg7tdFmpB
-3veefRPdBpc1M1aUG9Sku4IpfdVR7NfdITmPaKCIi1gr+CIrJyyguTHbJb+WsgPO
-FrhnCvSZbLtrI3jDrFiA
-=GsRW
------END PGP SIGNATURE-----
-
---EuxKj2iCbKjpUGkD--
-
---===============0723528416==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============0723528416==--
+Wy4uLl0KCj4gPj4+IE5lZWQgdG8gd2FpdCBmb3IgdGhlIEFSTSwgRFQgYW5kIEkyQyBndXlzIHRv
+IHJldmlldywgYXQgd2hpY2ggcG9pbnQKPiA+Pj4gSSdsbCBiZSBoYXBweSB0byB0YWtlIGluIGFu
+ZCBzdXBwbHkgYSBicmFuY2ggZm9yIHRoZW0gdG8gcHVsbCBmcm9tIGlmCj4gPj4+IHJlcXVpcmVk
+LiBJZiB0aGVyZSBhcmUgbm8gX3RydWVfIGRlcGVuZGVuY2llcyBhbmQgdGhlIE1GRCBjaGFuZ2Vz
+IGNhbgo+ID4+PiBiZSBhZGRlZCBpbmRlcGVuZGVudGx5IHdpdGhvdXQgZmVhciBvZiBidWlsZCBi
+cmVha2FnZXMsIGxldCBtZSBrbm93Cj4gPj4+IGFuZCBJJ2xsIGFwcGx5IHRoZW0gc2VwYXJhdGVs
+eS4KPiA+Pgo+ID4+IEkgYmVsaWV2ZSB0aGVyZSBhcmVuJ3QgZGlyZWN0IGRlcGVuZGVuY2llcyBi
+ZXR3ZWVuIHRoZSBwYXRjaGVzLiBTbywgdGhlCj4gPj4gTUZEIHBhdGNoZXMgY2FuIGJlIGFwcGxp
+ZWQgdG8gdGhlIE1GRCB0cmVlIGFuZCB0aGUgRFQgcGF0Y2ggYXBwbGllZCB0bwo+ID4+IHRoZSBU
+ZWdyYSB0cmVlLiBJJ20gc2ltcGx5IHdhaXRpbmcgZm9yIHRoZSBNRkQgcGF0Y2hlcyB0byBiZSBh
+cHBsaWVkCj4gPj4gYmVmb3JlIGFwcGx5aW5nIHRoZSBEVCBwYXRjaCBzbyB0aGF0IEkga25vdyB0
+aGUgRFQgYmluZGluZyBkZWZpbml0aW9uIGlzCj4gPj4gZnVsbHkgYWNjZXB0ZWQgYmVmb3JlIGFw
+cGx5aW5nIGEgcGF0Y2ggdGhhdCB1c2VzIGl0Lgo+ID4KPiA+IEFsbCBvZiB0aGUgTUZEIHBhdGNo
+ZXMgYXJlIHNhZmUgdG8gYXBwbHkgYW5kIGluIHByZXR0eSBtdWNoIGFyYml0cmFyeQo+ID4gb3Jk
+ZXIuICBUaGUgc3Ryb25nIGRlcGVuZGVuY2llcyBpbiB0aGUgY2hhaW4gYXJlOgo+ID4KPiA+ICog
+V2UgbmVlZCBwYXRjaCAjNSAobWZkOiBjcm9zX2VjOiBTeW5jIHRvIHRoZSBsYXRlc3QKPiA+IGNy
+b3NfZWNfY29tbWFuZHMuaCBmcm9tIEVDIHNvdXJjZXMpIGJlZm9yZSB0aGUgaTJjIHR1bm5lbCBj
+YW4gY29tcGlsZS4KPiA+Cj4gPiAqIEFzIFN0ZXBoZW4gc2F5cywgaGUgc2hvdWxkbid0IGFwcGx5
+IHRoZSBkZXZpY2UgdHJlZSB1bnRpbCB3ZSdyZQo+ID4gY29uZmlkZW50IHRoYXQgdGhlIGJpbmRp
+bmdzIGFyZSByaWdodC4gIEhvd2V2ZXIgdGhlcmUncyBubyBzdHJvbmcKPiA+IGRlcGVuZGVuY3kg
+b3RoZXJ3aXNlLgo+ID4KPiA+ICogUGF0Y2hlcyAjMSAjMiBhbmQgIzMgYXJlIHNpbXBseSByZWxp
+YWJpbGl0eSBmaXhlcy4gIFRob3NlIGNvdWxkIGxhbmQKPiA+IGF0IGFueSBwb2ludCBpbiB0aW1l
+IGFuZCB3aWxsIGltcHJvdmUgb3RoZXIgdXNlcnMgb2YgY3Jvc19lY19zcGkgKGxpa2UKPiA+IHRo
+ZSBrZXlib2FyZCBvbiB0ZWdyYTEyNC12ZW5pY2UyKS4KPiA+Cj4gPiAqIFBhdGNoICM0IGNhbiBh
+cHBseSBhbnkgdGltZSB3aXRoIG5vIGlzc3Vlcy4gIFdpdGhvdXQgaXQgbGFyZ2UgaTJjCj4gPiB0
+dW5uZWwgdHJhbnNmZXJzIHdvbid0IHdvcmssIGJ1dCB0aGF0J3Mgbm90IGEgdGVycmlibGUgcHJv
+YmxlbSAoYWxsCj4gPiBub3JtYWwgdHJhbnNmZXJzIGFyZSBzbWFsbCkuCj4gCj4gUGF0Y2ggIzUg
+KGxhdGVzdCBlYyBjb21tYW5kcykgY2FuIGFsc28gYXBwbHkgYXQgYW55IHRpbWUgd2l0aCBubwo+
+IGlzc3VlcywgYnV0IGl0J3MgbmVlZGVkIGZvciBwYXRjaCAjNiAodGhlIHR1bm5lbCkgdG8gY29t
+cGlsZS4KPiAKPiBBbGwgdGhhdCBiZWluZyBzYWlkLCBJJ2QgcmVxdWVzdCB0aGF0IHlvdSBtZXJn
+ZSBwYXRjaGVzICMxLSM1IGFzIHNvb24KPiBhcyB5b3UgY2FuIGFuZCBtYWtlIHN1cmUgeW91IGNh
+biBwcm92aWRlIGEgd2F5IHRoYXQgV29sZnJhbSBjYW4gcHVsbAo+IHRoZW0gKG9yIGF0IGxlYXN0
+IHBhdGNoICM1KSBpbnRvIGhpcyBpMmMgdHJlZSB0byBrZWVwIHRoZW0gYXBwbHlpbmcKPiB3aGVu
+IGhlIGlzIHJlYWR5IHRvIGxhbmQgIzYuCgpWZXJ5IHdlbGwuIFNvIGlmIEkgY2FuIG9idGFpbiBX
+b2xmcmFtJ3MgQWNrLCBJIGNhbiBhcHBseSB0aGUgTUZECmNoYW5nZXMgYWxvbmcgd2l0aCBwYXRj
+aCAjNiBhbmQgc3VwcGx5IGhpbSB3aXRoIGEgYnJhbmNoLgoKLS0gCkxlZSBKb25lcwpMaW5hcm8g
+U1RNaWNyb2VsZWN0cm9uaWNzIExhbmRpbmcgVGVhbSBMZWFkCkxpbmFyby5vcmcg4pSCIE9wZW4g
+c291cmNlIHNvZnR3YXJlIGZvciBBUk0gU29DcwpGb2xsb3cgTGluYXJvOiBGYWNlYm9vayB8IFR3
+aXR0ZXIgfCBCbG9nCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3Rz
+LmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9saW51eC1hcm0ta2VybmVsCg==
