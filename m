@@ -1,48 +1,54 @@
-From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v3.15-rc3
-Date: Mon, 28 Apr 2014 15:23:22 -0700
-Message-ID: <535ED4DA.4080602@nvidia.com>
+From: Ben Skeggs <skeggsb@gmail.com>
+Subject: Re: [Nouveau] [PATCH v3 6/9] drm/nouveau/graph: enable when using
+ external firmware
+Date: Tue, 29 Apr 2014 09:52:36 +1000
+Message-ID: <CACAvsv7gp=gWQTRezdSyt4qOBXZR71+dyt0qBKQknOsJ02f6ug@mail.gmail.com>
+References: <1398410396-23338-1-git-send-email-acourbot@nvidia.com>
+ <1398410396-23338-7-git-send-email-acourbot@nvidia.com>
+ <CACAvsv51Ju_ZqJfNU5GzzEmDzf2Fr6Xr_5yGRtfqOQRVTgvDPg@mail.gmail.com>
+ <20140428065700.GB19455@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20140428065700.GB19455@ulmo>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ben Skeggs <bskeggs@redhat.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v3.15-rc3.
-Logs and other details at:
+On Mon, Apr 28, 2014 at 4:57 PM, Thierry Reding
+<thierry.reding@gmail.com> wrote:
+> On Mon, Apr 28, 2014 at 12:10:27PM +1000, Ben Skeggs wrote:
+>> On Fri, Apr 25, 2014 at 5:19 PM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+>> > nvc0_graph_ctor() would only let the graphics engine be enabled if its
+>> > oclass has a proper microcode linked to it. This prevents GR from being
+>> > enabled at all on chips that rely exclusively on external firmware, even
+>> > though such a use-case is valid.
+>> >
+>> > Relax the conditions enabling the GR engine to also include the case
+>> > where an external firmware has also been loaded.
+>> I'm happy to take this patch as-is.  I do wonder if we should do
+>> something like this though:
+>>
+>> if (nouveau_boolopt(device->cfgopt, "NvGrUseFW", oclass->fecs.ucode == NULL))
+>>
+>> Which will automatically switch to external firmware if there's no
+>> internal implementation available.
+>
+> I think that makes a lot of sense. Perhaps outputting a warning or so at
+> runtime when this happens would be helpful in reminding people that the
+> goal is to make the GPU run with nouveau firmware rather than external
+> firmware, and hence that there's some work left to do.
+That already happens with a "using external firmware" notice.
 
-     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.15-rc3/20140427210106/
-
-
-Test summary
-------------
-
-Build: zImage:
-     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
-
-Boot to userspace: multi_v7_defconfig:
-     Pass: ( 2/ 2): tegra114-dalmore-a04, tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-     Pass: ( 2/ 2): tegra114-dalmore-a04, tegra30-beaver
-
-
-
-vmlinux object size
-(delta in bytes from test_v3.15-rc2 (a798c10faf62a505d24e5f6213fbaf904a39623f)):
-    text     data      bss    total  kernel
-   +1184       -8        0    +1176  multi_v7_defconfig
-    +752        0        0     +752  tegra_defconfig
-
-
-
-Boot-time memory difference
-(delta in bytes from test_v3.15-rc2 (a798c10faf62a505d24e5f6213fbaf904a39623f))
-     avail    rsrvd     high    freed                board              kconfig                  dtb
-         .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-       -8k       8k        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-         .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-       -8k       8k        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+>
+> Thierry
