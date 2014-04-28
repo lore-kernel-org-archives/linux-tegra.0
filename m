@@ -1,13 +1,11 @@
-From: Russell King <rmk+kernel@arm.linux.org.uk>
-Subject: [PATCH 07/16] ARM: l2c: convert tegra to generic l2c initialisation
-Date: Mon, 28 Apr 2014 17:58:22 +0100
-Message-ID: <E1Weoso-0002Pj-LE@rmk-PC.arm.linux.org.uk>
-References: <20140428165631.GM26756@n2100.arm.linux.org.uk>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: [PATCH] ARM: tegra: add SD wp-gpios to Jetson TK1 DT
+Date: Mon, 28 Apr 2014 11:07:26 -0600
+Message-ID: <1398704846-18262-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20140428165631.GM26756@n2100.arm.linux.org.uk>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -17,51 +15,31 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>
+To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
----
- arch/arm/mach-tegra/tegra.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+From: Stephen Warren <swarren@nvidia.com>
 
-diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
-index 1bc49f9db015..d90065e2552a 100644
---- a/arch/arm/mach-tegra/tegra.c
-+++ b/arch/arm/mach-tegra/tegra.c
-@@ -70,20 +70,12 @@ u32 tegra_uart_config[3] = {
- 	0,
- };
- 
--static void __init tegra_init_cache(void)
--{
--#ifdef CONFIG_CACHE_L2X0
--	l2x0_of_init(0x3c400001, 0xc20fc3fe);
--#endif
--}
--
- static void __init tegra_init_early(void)
- {
- 	of_register_trusted_foundations();
- 	tegra_apb_io_init();
- 	tegra_init_fuse();
- 	tegra_cpu_reset_handler_init();
--	tegra_init_cache();
- 	tegra_powergate_init();
- 	tegra_hotplug_init();
- }
-@@ -171,8 +163,10 @@ static const char * const tegra_dt_board_compat[] = {
- };
- 
- DT_MACHINE_START(TEGRA_DT, "NVIDIA Tegra SoC (Flattened Device Tree)")
--	.map_io		= tegra_map_common_io,
- 	.smp		= smp_ops(tegra_smp_ops),
-+	.l2c_aux_val	= 0x3c400001,
-+	.l2c_aux_mask	= 0xc20fc3fe,
-+	.map_io		= tegra_map_common_io,
- 	.init_early	= tegra_init_early,
- 	.init_irq	= tegra_dt_init_irq,
- 	.init_machine	= tegra_dt_init,
+Jetson TK1 can detect write-protect on the SD card. Add the required
+DT entries to allow this.
+
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
+---
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+index fbc34933cf69..e31fb61a81d3 100644
+--- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
++++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+@@ -1624,6 +1624,7 @@
+ 		status = "okay";
+ 		cd-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_LOW>;
+ 		power-gpios = <&gpio TEGRA_GPIO(R, 0) GPIO_ACTIVE_HIGH>;
++		wp-gpios = <&gpio TEGRA_GPIO(Q, 4) GPIO_ACTIVE_HIGH>;
+ 		bus-width = <4>;
+ 		vqmmc-supply = <&vddio_sdmmc3>;
+ 	};
 -- 
-1.8.3.1
+1.8.1.5
