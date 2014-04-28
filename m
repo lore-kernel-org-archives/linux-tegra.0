@@ -1,15 +1,16 @@
 From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 00/16] Another 16 L2C patches
-Date: Mon, 28 Apr 2014 18:39:43 +0100
-Message-ID: <20140428173943.GN26756@n2100.arm.linux.org.uk>
+Subject: Re: [PATCH 07/16] ARM: l2c: convert tegra to generic l2c
+ initialisation
+Date: Mon, 28 Apr 2014 18:41:33 +0100
+Message-ID: <20140428174133.GO26756@n2100.arm.linux.org.uk>
 References: <20140428165631.GM26756@n2100.arm.linux.org.uk>
- <535E8BEE.1000100@wwwdotorg.org> <535E8F6D.9000803@wwwdotorg.org>
+ <E1Weoso-0002Pj-LE@rmk-PC.arm.linux.org.uk> <535E8FA0.6040205@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <535E8F6D.9000803@wwwdotorg.org>
+In-Reply-To: <535E8FA0.6040205@wwwdotorg.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -20,60 +21,42 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, kernel@stlinux.com, Linus Walleij <linus.walleij@linaro.org>, Gregory Clement <gregory.clement@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>, linux-samsung-soc@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, bcm-kernel-feedback-list@broadcom.com, Shawn Guo <shawn.guo@freescale.com>, Dinh Nguyen <dinguyen@altera.com>, Alessandro Rubini <rubini@unipv.it>, Jason Cooper <jason@lakedaemon.net>, Hauke Mehrtens <hauke@hauke-m.de>, Matt Porter <mporter@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Maxime Coquelin <maxime.coquelin@st.com>, Barry Song <baohua@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>, Christian Daudt <bcm@fixthebug.org>, Patrice Chotard <patrice.chotard@>
+Cc: linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Apr 28, 2014 at 11:27:09AM -0600, Stephen Warren wrote:
-> On 04/28/2014 11:12 AM, Stephen Warren wrote:
-> > On 04/28/2014 10:56 AM, Russell King - ARM Linux wrote:
-> >> So, in response to Matt Porter's complaint about breaking prima2, here's
-> >> another 16 patches which changes the way the L2 cache is initialised on
-> >> many platforms.  This series moves towards a situation where the generic
-> >> code initialises the L2 cache itself, with as little help as possible
-> >> from board specific code.
-> >>
-> >> A number of platforms are left alone because they're more complex -
-> >> these should still eventually be converted.
-> >>
-> >> At some point in the near future, I will see about sorting out their
-> >> ordering wrt the previous patch set.  For the time being, they apply
-> >> on top of the existing l2c changes.
-> > 
-> > Are "the existing l2c changes" in next-20140428? If not, is there a git
-> > branch I can pull to test the whole thing, rather than tracking down and
-> > applying "the existing l2c changes" first?
+On Mon, Apr 28, 2014 at 11:28:00AM -0600, Stephen Warren wrote:
+> On 04/28/2014 10:58 AM, Russell King wrote:
 > 
-> I guess they must be in linux-next, since this series applies cleanly on
-> top of it.
+> > diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
 > 
-> So, patches 2/16 ("ARM: l2c: add platform independent core L2 cache
-> initialisation") and 7/16 ("ARM: l2c: convert tegra to generic l2c
-> initialisation"),
+> >  DT_MACHINE_START(TEGRA_DT, "NVIDIA Tegra SoC (Flattened Device Tree)")
+> > -	.map_io		= tegra_map_common_io,
+> >  	.smp		= smp_ops(tegra_smp_ops),
+> > +	.l2c_aux_val	= 0x3c400001,
+> > +	.l2c_aux_mask	= 0xc20fc3fe,
+> > +	.map_io		= tegra_map_common_io,
 > 
-> Tested-by: Stephen Warren <swarren@nvidia.com>
-> 
-> (On an NVIDIA Tegra20 Seaboard/Springbank board, on top of next-20140428)
-> 
-> I do see one error in dmesg during boot, but it doesn't appear to
-> negatively affect operation in brief testing, and is present in
-> linux-next without this series anyway. Is this message a problem?
-> 
-> > [    0.000000] L2C: platform modifies aux control register: 0x02080000 -> 0x3e480001
-> > [    0.000000] L2C: DT/platform modifies aux control register: 0x02080000 -> 0x3e480001
-> > [    0.000000] L2C-310 errata 727915 769419 enabled
-> > [    0.000000] L2C-310 enabling early BRESP for Cortex-A9
-> > [    0.000000] L2C-310: enabling full line of zeros but not enabled in Cortex-A9
->                           ^^^^^^ this is logged at error level
+> I'm not sure why .map_io was moved. Was it to sort the entries in order
+> of execution? If so, I assume that .smp should be moved too?
 
-Correct, it's an error because on Tegra you explicitly set bit 0 in the
-auxiliary control register, which is pointless unless the feature is
-also enabled in the Cortex-A9 control register as well.
+I moved it quite simply because I keep entries in order:
 
-Rather than trying to track down everyone who does this, and then end
-up in a long discussion about it, I'm just going to make the kernel
-print an error message as a result, it's just wrong to set random bits
-in device control registers without first properly understanding what
-they're doing.
+        unsigned                l2c_aux_val;    /* L2 cache aux value   */
+        unsigned                l2c_aux_mask;   /* L2 cache aux mask    */
+        void                    (*l2c_write_sec)(unsigned long, unsigned);
+        struct smp_operations   *smp;           /* SMP operations       */
+        bool                    (*smp_init)(void);
+        void                    (*fixup)(struct tag *, char **,
+                                         struct meminfo *);
+        void                    (*init_meminfo)(void);
+        void                    (*reserve)(void);/* reserve mem blocks  */
+        void                    (*map_io)(void);/* IO mapping function  */
+        void                    (*init_early)(void);
+
+And the order of declaration in there (for the functions after "smp")
+is the order in which they are called during kernel initialisation.
+Platforms randomising their declarations is... silly.  And yes, I'll
+move those l2c ones before .smp.
 
 -- 
 FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
