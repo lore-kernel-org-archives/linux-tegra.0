@@ -1,97 +1,83 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 0/7] Add cros_ec changes for newer boards
-Date: Tue, 29 Apr 2014 09:21:46 +0100
-Message-ID: <20140429082146.GE29462@lee--X1>
-References: <1398185154-19404-1-git-send-email-dianders@chromium.org>
- <20140423123240.GA640@lee--X1> <5357E832.1000806@wwwdotorg.org>
- <CAD=FV=XbjeOR+A-ZVYgOT69gsdp-YrjbkGrjL2Vf4F31ZkGXTA@mail.gmail.com>
- <CAD=FV=UWnLLzqzmrt0z=38iDOBSRJJLNAG8PL0GSHt1758ACcg@mail.gmail.com>
- <20140428091914.GK6264@lee--X1>
- <CAD=FV=UEwfNX+uf70OV4LB39s=mJyxTkC63g4iYrE7hcvyEdgw@mail.gmail.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 54/97] ARM: l2c: tegra: remove associativity and way size
+ from aux_ctrl
+Date: Tue, 29 Apr 2014 11:52:59 +0300
+Message-ID: <20140429085259.GB30476@tbergstrom-lnx.Nvidia.com>
+References: <20140428192419.GV26756@n2100.arm.linux.org.uk>
+ <E1WerGJ-0001XP-TI@rmk-PC.arm.linux.org.uk> <535EB88F.9000202@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <CAD=FV=UEwfNX+uf70OV4LB39s=mJyxTkC63g4iYrE7hcvyEdgw@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, andrew@lunn.ch, Wolfram Sang <wsa@the-dreams.de>, Andrew Bresticker <abrestic@chromium.org>, Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Matt Porter <matt.porter@linaro.org>, jdelvare@suse.de, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-doc@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>, u.kleine-koenig@pengutronix.de, kevin.strasser@linux.intel.com, Dylan Reid <dgreid@chromium.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, schwidefsky@de.ibm.com, laurent.pinchart+renesas@ideasonboard.com, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kerne>
+In-Reply-To: <535EB88F.9000202-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-PiA+PiA+Pj4gTmVlZCB0byB3YWl0IGZvciB0aGUgQVJNLCBEVCBhbmQgSTJDIGd1eXMgdG8gcmV2
-aWV3LCBhdCB3aGljaCBwb2ludAo+ID4+ID4+PiBJJ2xsIGJlIGhhcHB5IHRvIHRha2UgaW4gYW5k
-IHN1cHBseSBhIGJyYW5jaCBmb3IgdGhlbSB0byBwdWxsIGZyb20gaWYKPiA+PiA+Pj4gcmVxdWly
-ZWQuIElmIHRoZXJlIGFyZSBubyBfdHJ1ZV8gZGVwZW5kZW5jaWVzIGFuZCB0aGUgTUZEIGNoYW5n
-ZXMgY2FuCj4gPj4gPj4+IGJlIGFkZGVkIGluZGVwZW5kZW50bHkgd2l0aG91dCBmZWFyIG9mIGJ1
-aWxkIGJyZWFrYWdlcywgbGV0IG1lIGtub3cKPiA+PiA+Pj4gYW5kIEknbGwgYXBwbHkgdGhlbSBz
-ZXBhcmF0ZWx5Lgo+ID4+ID4+Cj4gPj4gPj4gSSBiZWxpZXZlIHRoZXJlIGFyZW4ndCBkaXJlY3Qg
-ZGVwZW5kZW5jaWVzIGJldHdlZW4gdGhlIHBhdGNoZXMuIFNvLCB0aGUKPiA+PiA+PiBNRkQgcGF0
-Y2hlcyBjYW4gYmUgYXBwbGllZCB0byB0aGUgTUZEIHRyZWUgYW5kIHRoZSBEVCBwYXRjaCBhcHBs
-aWVkIHRvCj4gPj4gPj4gdGhlIFRlZ3JhIHRyZWUuIEknbSBzaW1wbHkgd2FpdGluZyBmb3IgdGhl
-IE1GRCBwYXRjaGVzIHRvIGJlIGFwcGxpZWQKPiA+PiA+PiBiZWZvcmUgYXBwbHlpbmcgdGhlIERU
-IHBhdGNoIHNvIHRoYXQgSSBrbm93IHRoZSBEVCBiaW5kaW5nIGRlZmluaXRpb24gaXMKPiA+PiA+
-PiBmdWxseSBhY2NlcHRlZCBiZWZvcmUgYXBwbHlpbmcgYSBwYXRjaCB0aGF0IHVzZXMgaXQuCj4g
-Pj4gPgo+ID4+ID4gQWxsIG9mIHRoZSBNRkQgcGF0Y2hlcyBhcmUgc2FmZSB0byBhcHBseSBhbmQg
-aW4gcHJldHR5IG11Y2ggYXJiaXRyYXJ5Cj4gPj4gPiBvcmRlci4gIFRoZSBzdHJvbmcgZGVwZW5k
-ZW5jaWVzIGluIHRoZSBjaGFpbiBhcmU6Cj4gPj4gPgo+ID4+ID4gKiBXZSBuZWVkIHBhdGNoICM1
-IChtZmQ6IGNyb3NfZWM6IFN5bmMgdG8gdGhlIGxhdGVzdAo+ID4+ID4gY3Jvc19lY19jb21tYW5k
-cy5oIGZyb20gRUMgc291cmNlcykgYmVmb3JlIHRoZSBpMmMgdHVubmVsIGNhbiBjb21waWxlLgo+
-ID4+ID4KPiA+PiA+ICogQXMgU3RlcGhlbiBzYXlzLCBoZSBzaG91bGRuJ3QgYXBwbHkgdGhlIGRl
-dmljZSB0cmVlIHVudGlsIHdlJ3JlCj4gPj4gPiBjb25maWRlbnQgdGhhdCB0aGUgYmluZGluZ3Mg
-YXJlIHJpZ2h0LiAgSG93ZXZlciB0aGVyZSdzIG5vIHN0cm9uZwo+ID4+ID4gZGVwZW5kZW5jeSBv
-dGhlcndpc2UuCj4gPj4gPgo+ID4+ID4gKiBQYXRjaGVzICMxICMyIGFuZCAjMyBhcmUgc2ltcGx5
-IHJlbGlhYmlsaXR5IGZpeGVzLiAgVGhvc2UgY291bGQgbGFuZAo+ID4+ID4gYXQgYW55IHBvaW50
-IGluIHRpbWUgYW5kIHdpbGwgaW1wcm92ZSBvdGhlciB1c2VycyBvZiBjcm9zX2VjX3NwaSAobGlr
-ZQo+ID4+ID4gdGhlIGtleWJvYXJkIG9uIHRlZ3JhMTI0LXZlbmljZTIpLgo+ID4+ID4KPiA+PiA+
-ICogUGF0Y2ggIzQgY2FuIGFwcGx5IGFueSB0aW1lIHdpdGggbm8gaXNzdWVzLiAgV2l0aG91dCBp
-dCBsYXJnZSBpMmMKPiA+PiA+IHR1bm5lbCB0cmFuc2ZlcnMgd29uJ3Qgd29yaywgYnV0IHRoYXQn
-cyBub3QgYSB0ZXJyaWJsZSBwcm9ibGVtIChhbGwKPiA+PiA+IG5vcm1hbCB0cmFuc2ZlcnMgYXJl
-IHNtYWxsKS4KPiA+Pgo+ID4+IFBhdGNoICM1IChsYXRlc3QgZWMgY29tbWFuZHMpIGNhbiBhbHNv
-IGFwcGx5IGF0IGFueSB0aW1lIHdpdGggbm8KPiA+PiBpc3N1ZXMsIGJ1dCBpdCdzIG5lZWRlZCBm
-b3IgcGF0Y2ggIzYgKHRoZSB0dW5uZWwpIHRvIGNvbXBpbGUuCj4gPj4KPiA+PiBBbGwgdGhhdCBi
-ZWluZyBzYWlkLCBJJ2QgcmVxdWVzdCB0aGF0IHlvdSBtZXJnZSBwYXRjaGVzICMxLSM1IGFzIHNv
-b24KPiA+PiBhcyB5b3UgY2FuIGFuZCBtYWtlIHN1cmUgeW91IGNhbiBwcm92aWRlIGEgd2F5IHRo
-YXQgV29sZnJhbSBjYW4gcHVsbAo+ID4+IHRoZW0gKG9yIGF0IGxlYXN0IHBhdGNoICM1KSBpbnRv
-IGhpcyBpMmMgdHJlZSB0byBrZWVwIHRoZW0gYXBwbHlpbmcKPiA+PiB3aGVuIGhlIGlzIHJlYWR5
-IHRvIGxhbmQgIzYuCj4gPgo+ID4gVmVyeSB3ZWxsLiBTbyBpZiBJIGNhbiBvYnRhaW4gV29sZnJh
-bSdzIEFjaywgSSBjYW4gYXBwbHkgdGhlIE1GRAo+ID4gY2hhbmdlcyBhbG9uZyB3aXRoIHBhdGNo
-ICM2IGFuZCBzdXBwbHkgaGltIHdpdGggYSBicmFuY2guCj4gCj4gQ2FuIHlvdSBleHBsYWluIHRo
-ZSByZWFzb24gdG8gd2FpdCBmb3IgV29sZnJhbSdzIEFjayBiZWZvcmUgYXBwbHlpbmcKPiAjMSAt
-ICM1PyAgSSB3b3VsZCB0aGluazoKPiAKPiAxLiBDcmVhdGUgYSB0b3BpYyBicmFuY2guCj4gMi4g
-QXBwbHkgcGF0Y2hlcyAxLTUgdG8gdGhlIHRvcGljIGJyYW5jaAo+IDMuIE1lcmdlIHRoZSB0b3Bp
-YyBicmFuY2ggdG8geW91ciBmb3ItbmV4dCBicmFuY2gKPiAKPiBXaGVuIFdvbGZyYW0gd2FudHMg
-dG8gdGFrZSBwYXRjaCAjNiwgaGUgY2FuIGVpdGhlcjoKPiBBLiBQdWxsIHlvdXIgdG9waWMgYnJh
-bmNoCj4gQi4gSWYgaXQncyBiZWVuIGxvbmcgZW5vdWdoLCBwYXRjaGVzIHdpbGwgYWxyZWFkeSBi
-ZSBpbiBUb1QgYW5kIG5vIGV4dHJhIHdvcmsuCj4gCj4gSWYgSSB1bmRlcnN0YW5kIGNvcnJlY3Rs
-eSwgdXNpbmcgYSB0b3BpYyBicmFuY2ggYW5kIGRvaW5nIG1lcmdlcyAvCj4gcHVsbHMgbWVhbnMg
-dGhhdCB5b3UgY2FuIHByb3ZpZGUgV29sZnJhbSB3aXRoIHN0YWJsZSBnaXQgaGFzaGVzIHdoZW4K
-PiBoZSBuZWVkcyB0aGVtIGFuZCB0aGVyZSB3aWxsIGJlIG5vIG1lcmdlIGNvbmZsaWN0cy4KCkkg
-ZG9uJ3QgdXNlIFRCcyBmb3IgTUZEIHlldCwgYXMgSSd2ZSBuZXZlciBzZWVuIHRoZSBuZWVkLiAg
-VGhlIGN1cnJlbnQKV29XIGlzIHRvIG9ubHkgY3JlYXRlIGV4dHJhIGJyYW5jaGVzIHdoZW4gSSBo
-YXZlIHBhdGNoe2VzLCBzZXRzfSB0bwpzaGFyZS4gIElmIEkgc3RhcnQgdXNpbmcgYSBtb3JlIFRC
-IGZvY3VzZWQgbWV0aG9kb2xvZ3kgaXQgd2lsbCBiZQppbnNpbnVhdGVkIHRoYXQgdGhlIGJyYW5j
-aGVzIGFyZSBzdGFibGUgLSBJIGxpa2UgdGhlIGZhY3QgdGhhdCB0aGlzIGlzCl9ub3RfIHRoZSBj
-YXNlLiAgQ3VycmVudGx5IEkgYW0gYWJsZSB0byByZWJhc2UsIHJld29yayBhbmQgcmVvcmRlciB0
-aGUKcmVwbyBhcyBhbmQgd2hlbiBJIHNlZSBmaXQsIGFuZCBkbyByZWd1bGFybHkuIEV4Y2VwdCB0
-aGUgSUJzIG9mIGNvdXJzZS4KCj4gUGF0Y2hlcyAjMSAtICM1IGFyZSBib25hZmlkZSBidWdmaXhl
-cyBpcnJlc3BlY3RpdmUgb2YgdGhlIGkyYyB0dW5uZWwuCgpJIG9ubHkgd2FudCB0byBjcmVhdGUg
-YW4gSUIgaWYgSSBrbm93IGl0J3MgZ29pbmcgdG8gYmUgdXNlZCwgZWxzZSBJJ2QKcHJlZmVyIHRo
-ZSBwYXRjaGVzIHJlbWFpbiB0cmFuc2llbnQuICBXaHkgYXJlIHlvdSBzbyBrZWVuIHRvIHJ1c2gg
-aW50bwpoYXZpbmcgdGhlc2UgcGF0Y2hlcyBhcHBsaWVkPyAgVGhleSBfd2lsbF8gbWFrZSBpdCBp
-bnRvIHYzLjE1LCB3aGV0aGVyCnRoZXkgYXJlIGFwcGxpZWQgaW1tZWRpYXRlbHkgb3IgYWZ0ZXIg
-YSBsZW5ndGggb2YgdGltZSAoaW4gdGhlIGNhc2UKdGhhdCBXb2xmcmFtIGRvZXMgbm90IHJlc3Bv
-bmQpLgoKLS0gCkxlZSBKb25lcwpMaW5hcm8gU1RNaWNyb2VsZWN0cm9uaWNzIExhbmRpbmcgVGVh
-bSBMZWFkCkxpbmFyby5vcmcg4pSCIE9wZW4gc291cmNlIHNvZnR3YXJlIGZvciBBUk0gU29DcwpG
-b2xsb3cgTGluYXJvOiBGYWNlYm9vayB8IFR3aXR0ZXIgfCBCbG9nCgpfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcg
-bGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmlu
-ZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+On Mon, Apr 28, 2014 at 10:22:39PM +0200, Stephen Warren wrote:
+> On 04/28/2014 01:30 PM, Russell King wrote:
+> > Signed-off-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+> 
+> Peter, can you please ack this patch if you see no issue. Discussion
+> below...
+> 
+> > diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
+> 
+> >  static void __init tegra_init_cache(void)
+> >  {
+> >  #ifdef CONFIG_CACHE_L2X0
+> > -	static const struct of_device_id pl310_ids[] __initconst = {
+> > -		{ .compatible = "arm,pl310-cache",  },
+> > -		{}
+> > -	};
+> > -
+> > -	struct device_node *np;
+> >  	int ret;
+> > -	void __iomem *p = IO_ADDRESS(TEGRA_ARM_PERIF_BASE) + 0x3000;
+> > -	u32 aux_ctrl, cache_type;
+> > -
+> > -	np = of_find_matching_node(NULL, pl310_ids);
+> > -	if (!np)
+> > -		return;
+> > -
+> > -	cache_type = readl(p + L2X0_CACHE_TYPE);
+> > -	aux_ctrl = (cache_type & 0x700) << (17-8);
+> > -	aux_ctrl |= 0x3c400001;
+> >  
+> > -	ret = l2x0_of_init(aux_ctrl, 0xc200c3fe);
+> > +	ret = l2x0_of_init(0x3c400001, 0xc20fc3fe);
+> >  	if (!ret)
+> >  		l2x0_saved_regs_addr = virt_to_phys(&l2x0_saved_regs);
+> >  #endif
+> 
+> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> I tested on both Tegra20 and Tegra30, and see bits 19:16 are 8 on both,
+> with or without this patch.
+> 
+> I know that the code above was introduced in:
+> 
+> 01548673fa15 arm/tegra: generalize L2 cache initialization
+> 
+> ... by Peter, as part of the port to Tegra30. However, there was no
+> explanation in that patch why it was needed. The existence of the patch
+> implies that Tegra20/30 use different way sizes or associativity for
+> their cache, and hence if we're going to forcibly over-write that part
+> of the aux register, we need to dynamically calculate the correct value
+> to put there. However in practice, both chips seem to use the same value
+> for that field anyway (unless perhaps U-Boot is trashing the field
+> before the kernel boots).
+
+This code was written anticipating A9 based designs which have a different
+number of ways per cluster. However up to now, we haven't done
+any upstreaming work for those, so this code is indeed not required for
+the currently upstreamed Tegra SoCs. I don't think that will change in the
+forseeable future. Therefore:
+
+Acked-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Cheers,
+
+Peter.
