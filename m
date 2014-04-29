@@ -1,220 +1,81 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [PATCH v2 6/7] i2c: ChromeOS EC tunnel driver
-Date: Tue, 29 Apr 2014 14:33:28 +0200
-Message-ID: <20140429123328.GB3640@katana>
-References: <1398185154-19404-1-git-send-email-dianders@chromium.org>
- <1398185154-19404-7-git-send-email-dianders@chromium.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: add SD wp-gpios to Venice2 DT
+Date: Tue, 29 Apr 2014 15:34:50 +0200
+Message-ID: <20140429133449.GA23699@ulmo>
+References: <1398711219-23029-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="tsOsTdHNUZQcU9Ye"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="mP3DRpeJDSE+ciuQ"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1398185154-19404-7-git-send-email-dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, jdelvare-l3A5Bk7waGM@public.gmane.org, shane.huang-5C7GfCeVMHo@public.gmane.org, maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, laurent.pinchart+renesas-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org, kevin.strasser-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, linux-ci5G2KO2hbZ+pU9mqzGVBQ@public.gmane.org, andrew-g2DYL2Zd6BY@public.gmane.org, andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, schwidefsky-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org, matt.porter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1398711219-23029-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---tsOsTdHNUZQcU9Ye
+--mP3DRpeJDSE+ciuQ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-just a basic review to keep things rolling...
-
-> On the original Samsung ARM Chromebook these devices were on an I2C
-> bus that was shared between the AP and the EC and arbitrated using
-> some extranal GPIOs (see i2c-arb-gpio-challenge).
+On Mon, Apr 28, 2014 at 12:53:39PM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >=20
-> The original arbitration scheme worked well enough but had some
-> downsides:
-> * It was nonstandard (not using standard I2C multimaster)
-> * It only worked if the EC-AP communication was I2C
-> * It was relatively hard to debug problems (hard to tell if i2c issues
->   were caused by the EC, the AP, or some device on the bus).
+> Venice2 can detect write-protect on the SD card. Add the required
+> DT entries to allow this.
 >=20
-> On the HP Chromebook 11 the design was changed to:
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> Thierry, could you test this for me; my Venice2 has been sent away for
+> a few days for some rework. You should find that if you write-protect
+> your SD card, the kernel fails/panics trying to mount it as a r/w root
+> fs, whereas if the card is not write-protected, everything still works
+> fine. Thanks.
+> ---
+>  arch/arm/boot/dts/tegra124-venice2.dts | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/t=
+egra124-venice2.dts
+> index 84a6ec039e1d..00e741ba6927 100644
+> --- a/arch/arm/boot/dts/tegra124-venice2.dts
+> +++ b/arch/arm/boot/dts/tegra124-venice2.dts
+> @@ -943,6 +943,7 @@
+>  	sdhci@0,700b0400 {
+>  		cd-gpios =3D <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_HIGH>;
+>  		power-gpios =3D <&gpio TEGRA_GPIO(R, 0) GPIO_ACTIVE_HIGH>;
+> +		wp-gpios =3D <&gpio TEGRA_GPIO(Q, 4) GPIO_ACTIVE_HIGH>;
 
-This paragraph would be a nice update for the gpio-arbitration docs.
+I need to make this GPIO_ACTIVE_LOW for this to work properly on my
+Venice2. With that I can see the initrd reporting:
 
-> diff --git a/Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt=
- b/Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt
+	mount: /dev/mmcblk0p1 is write-protected, mounting read-only
 
-The bindings should independently be sent to the devicetree list.
+So with that changed:
 
-> new file mode 100644
-> index 0000000..898f030
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt
-> @@ -0,0 +1,39 @@
-> +I2C bus that tunnels through the ChromeOS EC (cros-ec)
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-> +On some ChromeOS board designs we've got a connection to the EC (embedded
-> +controller) but no direct connection to some devices on the other side of
-> +the EC (like a battery and PMIC).  To get access to those devices we need
-> +to tunnel our i2c commands through the EC.
-> +
-> +The node for this device should be under a cros-ec node like google,cros=
--ec-spi
-> +or google,cros-ec-i2c.
-> +
-> +
-> +Required properties:
-> +- compatible: google,cros-ec-i2c-tunnel
-> +- google,remote-bus: The EC bus we'd like to talk to.
-> +
-> +Optional child nodes:
-> +- One node per I2C device connected to the tunnelled I2C bus.
-> +
-> +
-> +Example:
-> +	cros-ec@0 {
-> +		compatible =3D "google,cros-ec-spi";
-> +
-> +		...
-> +
-> +		i2c-tunnel {
-> +			compatible =3D "google,cros-ec-i2c-tunnel";
-> +			#address-cells =3D <1>;
-> +			#size-cells =3D <0>;
-> +
-> +			google,remote-bus =3D <0>;
-> +
-> +			battery: sbs-battery@b {
-> +				compatible =3D "sbs,sbs-battery";
-> +				reg =3D <0xb>;
-> +				sbs,poll-retry-count =3D <1>;
-> +			};
-> +		};
-> +	}
+Tested-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Can the tunnel have n busses? How to represent them then? I think the
-remote-bus property should go in favor of proper sub-nodes? Wouldn't it
-also be more generic to have the tunnel node seperate and reference the
-tunnel-mechanism (spi here) as a phandle?
-
-> +/**
-> + * ec_i2c_construct_message - construct a message to go to the EC
-> + *
-> + * This function effectively stuffs the standard i2c_msg format of Linux=
- into
-> + * a format that the EC understands.
-> + *
-> + * @buf: The buffer to fill.  Can pass NULL to count how many bytes the =
-message
-> + *       would be.
-
-I wonder about this NULL thing. That means the size is calculated twice.
-Why not make two functions instead, one fir size calc, one for setting
-up?
-
-> +/**
-> + * ec_i2c_parse_response - Parse a response from the EC
-> + *
-> + * We'll take the EC's response and copy it back into msgs.
-> + *
-> + * @buf: The buffer to parse.  Can pass NULL to count how many bytes we =
-expect
-> + *	 the response to be. Otherwise we assume that the right number of
-> + *	 bytes are available.
-
-Ditto.
-
-> +	result =3D bus->ec->command_sendrecv(bus->ec, EC_CMD_I2C_PASSTHRU,
-> +					   request, request_len,
-> +					   response, response_len);
-
-This function pointer should be checked against NULL in probe, I
-think.
-
-> +static int ec_i2c_probe(struct platform_device *pdev)
-> +{
-> +	struct device_node *np =3D pdev->dev.of_node;
-> +	struct cros_ec_device *ec =3D dev_get_drvdata(pdev->dev.parent);
-> +	struct device *dev =3D &pdev->dev;
-> +	struct ec_i2c_device *bus =3D NULL;
-> +	u32 remote_bus;
-> +	int err;
-> +
-> +	dev_dbg(dev, "Probing\n");
-
-Drop. Device core has it already.
-
-> +
-> +	if (!np) {
-> +		dev_err(dev, "no device node\n");
-> +		return -ENOENT;
-> +	}
-
-Can this happen?
-
-> +
-> +	bus =3D devm_kzalloc(dev, sizeof(*bus), GFP_KERNEL);
-> +	if (bus =3D=3D NULL) {
-> +		dev_err(dev, "cannot allocate bus device\n");
-
-No need for error strings when allocating.
-
-> +		return -ENOMEM;
-> +	}
-> +
-> +	dev_dbg(dev, "ChromeOS EC I2C tunnel adapter\n");
-
-Drop. Device core debug has it, too.
-
-> +
-> +	return err;
-> +}
-> +
-> +static int ec_i2c_remove(struct platform_device *dev)
-> +{
-> +	struct ec_i2c_device *bus =3D platform_get_drvdata(dev);
-> +
-> +	platform_set_drvdata(dev, NULL);
-
-Not needed.
-
-> +
-> +	i2c_del_adapter(&bus->adap);
-> +
-> +	return 0;
-> +}
-> +
-
-Regards,
-
-   Wolfram
-
-
---tsOsTdHNUZQcU9Ye
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--mP3DRpeJDSE+ciuQ
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.15 (GNU/Linux)
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTX5wXAAoJEBQN5MwUoCm2RfsP/R9ah2QOChdnLktr/oRSSeSa
-Gi0EZcMddutgVONwu57pR6O7LUIBS5B/7WscOgB6G+d8kmd1G+Fm6xDfMd0inP7x
-rVbiZ/m21q0keYwSo57hdMTKl0r1b+/WzZKpw3zhQR/eCkOJNFTjbUfUx/MGnZkm
-O23LHXphyW+4BXzsoto/n7WtYpKhnL1ZwhkdKzt9mybMdbTu1zh9o65JHizZjDjU
-I0Px9TMYAZNi2N+Y70f2G4OZmru5qja69tr2D6PmlfqzdPJ4MU9p/7HfWNHfTn8z
-Cv3CAJRL5iQKj8sDeaULeCWEmgJAu8j0uEScFu7KeTi00/7yaV8lQOFYUPkmJoS7
-EYFlA5E8AV8ia95OabvgzRmCvrTJZiaAgdmNigOGcQ6STBXS7ld3TC2SeRa+LayX
-62bdANvgX0RwUzAEeaNdL6hntthOsHlNHX7C2UXj4A9/Q9Uh34ZZbkYV/COeLPW3
-PmGQKygcnFlIlQSrdYS8J79L2qMQ/QqcSL3Ua/S8gcaI1nmgQIW8P4nT4767Z3R8
-YHQICvnyg7VRx1zMKq7TMXGkBX9iyle43syCtAHKPdqn0wiyS4uGPqxf0Epqcqus
-cySdmqzA9LfcH2wPo/gq6g68k0nVxaeGQ9OzEINIxYwtisW1gIB6cCJF7e/x4SDY
-4ixewa4etoHguvXgzZSO
-=EJ+A
+iQIcBAEBAgAGBQJTX6p5AAoJEN0jrNd/PrOhTLIP/0O/NT8tRqPDQLOrVaW8Ubcq
+nza+gOCj+o5dNZ2pr5DFXgZZWGPAVtEm2GLJud6rROSlS7GMjrItjaRgTvB8uMBD
+vOK9OcBAaKUCClPItTg52iNSap9GJY1OVH51aTwvH14IddrgUhV2/F7hNXV3CuM+
+154fZdsHiMZDFr26TeTU7GilrEHahG1FGWBv144FQwV0uc/NEF0+LaT075XjVKUf
+IoyiazJkF8/Hpv4cSWn5i1KWEsqSFhztkYPtZcIdwICKN3VYI/DlnTaTi4pwNB25
+NXLsMEIRKSZZ9wh20Z2Upo7OwQhQTR5WhaLsAlTS9PHaxjH4KerwhBcXPVU2Nvst
+i19uGqM032gjNl5e5qS7LViFKrz7pjRqsVjd1RGBOGieGgtp+/AZCOtYvPjPaHPe
+7UaGXzLwIUSlPD8fvvWi6c3PdLtYmgnzLAqsOs/zRE0UFgaLyfVFXgGnF9SlOsp+
+Vl9c/QKVyi+CkB8DdevnO+LUhhtQG14NHyBrPt/WUOc3gvs5vHqISE05A/UCZSua
+A1LWJaMb4Tq+cE18Xqk4sg6PHTHyDMBQQb6gMCLDBMETf1SbXLpxm9jb4aAoviP3
+SLsz4Ytxp1HV1VbXumBnl/pTGTCo02HdvpW16zqUrFDXBW+a8D71HkxVfnZnM+hF
+WoHd3It2HTGGiTg4urnT
+=4sG1
 -----END PGP SIGNATURE-----
 
---tsOsTdHNUZQcU9Ye--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--mP3DRpeJDSE+ciuQ--
