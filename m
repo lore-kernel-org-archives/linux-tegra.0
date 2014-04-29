@@ -1,68 +1,74 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v2 0/7] Add cros_ec changes for newer boards
-Date: Tue, 29 Apr 2014 09:51:20 -0700
-Message-ID: <CAD=FV=VXPDdSx8Dxng8miu=wcdnDJPAheSD8BMXq0WdjJeJEUw@mail.gmail.com>
-References: <1398185154-19404-1-git-send-email-dianders@chromium.org>
- <20140423123240.GA640@lee--X1> <5357E832.1000806@wwwdotorg.org>
- <CAD=FV=XbjeOR+A-ZVYgOT69gsdp-YrjbkGrjL2Vf4F31ZkGXTA@mail.gmail.com>
- <CAD=FV=UWnLLzqzmrt0z=38iDOBSRJJLNAG8PL0GSHt1758ACcg@mail.gmail.com>
- <20140428091914.GK6264@lee--X1>
- <CAD=FV=UEwfNX+uf70OV4LB39s=mJyxTkC63g4iYrE7hcvyEdgw@mail.gmail.com>
- <20140429082146.GE29462@lee--X1>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: Intel NIC testing on ARM
+Date: Tue, 29 Apr 2014 10:59:45 -0600
+Message-ID: <535FDA81.3020508@wwwdotorg.org>
+References: <CAHH3p5+9VCYwS6JdB8aFJ0i4JLcFTMgSgiKOaE2GMnhfWM1bWA@mail.gmail.com> <CAErSpo7cDPa0vujMmppWV2RM3vn6=WJ7MCcP8CvwhT4Zn==MwA@mail.gmail.com> <CAHH3p5+qEeYaNKm-L4_RmnkmXeA2030u4t3D+J2wUwBEWiPBPQ@mail.gmail.com> <CAErSpo6+_Tnh9+r50_qK-v0ubpv_pqTcnS7DhMiNi8GbWmsgJA@mail.gmail.com> <CAHH3p5+xTwMaDW-k-0UUZ+21EhCCt2voWXP2jZf_PbRqOdukiA@mail.gmail.com> <CAErSpo7jd2smdoju31r7SWVp4KjNmN+qDAxSUxmVCnUSUOfKTw@mail.gmail.com> <CAHH3p5LKay-1gcgCn1fatM0hOL1Tc+a81Za+ePVjJ6oPo8+6rg@mail.gmail.com> <CAErSpo5VWnAG3xnhn0zgpyC22Eum=ZVR=BM8j2Rvt+=i7LZgjA@mail.gmail.com> <CAHH3p5+aRDq3j_au2Kou6Ef9L+iLaCUVV7hwZPhmD_HU6TxzqQ@mail.gmail.com> <CAHH3p5KYoPdRO-SEBGMwEPC5dhRd0j_nq_jDz+Z2WMuzOPKREA@mail.gmail.com> <CAErSpo7gtOoh_swzOtSyzkjRXUuZvLWwWpBeqHgy-9J4oB6b7g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20140429082146.GE29462@lee--X1>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, andrew@lunn.ch, Wolfram Sang <wsa@the-dreams.de>, Andrew Bresticker <abrestic@chromium.org>, Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Matt Porter <matt.porter@linaro.org>, jdelvare@suse.de, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-doc@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>, u.kleine-koenig@pengutronix.de, kevin.strasser@linux.intel.com, Dylan Reid <dgreid@chromium.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, schwidefsky@de.ibm.com, laurent.pinchart+renesas@ideasonboard.com, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kerne>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAErSpo7gtOoh_swzOtSyzkjRXUuZvLWwWpBeqHgy-9J4oB6b7g-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, shiv prakash Agarwal <chhotu.shiv-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux NICS <linux.nics-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "e1000-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <e1000-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Lee,
+On 04/29/2014 10:21 AM, Bjorn Helgaas wrote:
+> [+cc igb, tegra folks]
+> 
+> On Tue, Apr 29, 2014 at 9:25 AM, shiv prakash Agarwal
+> <chhotu.shiv-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>> Also if I disable enabling bus master from igb driver, then ethernet
+>> functionality does not work due to below issue:
+> 
+> This looks like an igb or (more likely) a tegra host bridge driver
+> issue, so hopefully somebody there can help you.
+> 
+>> root@tegra-ubuntu:~# dhclient eth0
 
-On Tue, Apr 29, 2014 at 1:21 AM, Lee Jones <lee.jones@linaro.org> wrote:
-> I don't use TBs for MFD yet, as I've never seen the need.  The current
-> WoW is to only create extra branches when I have patch{es, sets} to
-> share.  If I start using a more TB focused methodology it will be
-> insinuated that the branches are stable - I like the fact that this is
-> _not_ the case.  Currently I am able to rebase, rework and reorder the
-> repo as and when I see fit, and do regularly. Except the IBs of course.
+Are you running mainline Linux, or NVIDIA's "Linux4Tegra"? IIRC, that
+shell prompt is the L4T default, and I think kernel version 3.10
+(mentioned in some of your logs) is the current L4T kernel version.
 
-OK.
+If you're running L4T, you should contact the NVIDIA L4T team for
+support (linux-tegra-bugs-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org).
 
->> Patches #1 - #5 are bonafide bugfixes irrespective of the i2c tunnel.
->
-> I only want to create an IB if I know it's going to be used, else I'd
-> prefer the patches remain transient.  Why are you so keen to rush into
-> having these patches applied?  They _will_ make it into v3.15, whether
-> they are applied immediately or after a length of time (in the case
-> that Wolfram does not respond).
+If you can reproduce this issue on a recent mainline Linux (say 3.14,
+3.15-rc* or or linux-next), we can continue this conversation here. In
+this case, I'd like to see:
 
-No strong reason, and it's actually not even a huge deal if they make
-it to 3.15 or in 3.16.  Having outstanding patches simply increases
-the number of things that I need to keep track of / check up on.  If
-patches are good to go and reviewed I like to get them landed.
+* Details re: which HW/board you're running on, how you're plugging in
+the PCIe device, etc.
 
-Another reason I'd love to see patches landed sooner is that it will
-unblock me sending the next set of patches up.  I collected all of the
-most important patches in this series, but there are a bunch of other
-patches in our tree that would be nice to eventually send up.  At the
-moment I'm in a position where I can dedicate a reasonable amount of
-time to upstreaming.  It's likely that before long I will get sucked
-into tight deadlines and will have to squeeze upstreaming in among
-other priorities.
+* U-Boot version/commit ID, so we can check any setup it's doing.
 
-I see a response from Wolfram now, so I'll spin a V2 in the next day
-or two with changes to the tunnel driver.  I'm at ELC so my hacking
-time may be limited.
+* Link to source tree, so we can double-check the driver code you're
+running. It would be best to try a more recent source tree.
 
--Doug
+Then perhaps we'll be able to try and repro this problem, although I
+don't have that NIC so that might be hard...
+
+>> [   82.642468] IPv6: ADDRCONF(NETDEV_UP): eth0: link is not ready
+>> [   86.741124] igb: eth0 NIC Link is Up 1000 Mbps Full Duplex, Flow Control:
+>> RX
+>> [   86.763938] IPv6: ADDRCONF(NETDEV_CHANGE): eth0: link becomes ready
+>> [   96.748110] ------------[ cut here ]------------
+>> [   96.756653] WARNING: at
+>> /home/shiv/kernel_builds/linux/kernel/net/sched/sch_generic.c:255
+>> dev_watchdog+0x264/0
+>> x284()
+>> [   96.775062] NETDEV WATCHDOG: eth0 (igb): transmit queue 0 timed out
+...
+>> [  259.740507] igb 0000:01:00.0 eth0: Reset adapter
+>> [  263.738512] igb: eth0 NIC Link is Up 1000 Mbps Full Duplex, Flow Control:
+>> RX
+>> [  278.749107] igb 0000:01:00.0 eth0: Reset adapter
+>> [  282.739504] igb: eth0 NIC Link is Up 1000 Mbps Full Duplex, Flow Control:
+>> RX
+>> ------------------------CONTINUES for
+>> EVER---------------------------------------------------
+
+Hmmm. This is a completely different problem than the first one or two
+in this thread, which were about an external abort while enabling the
+device's bus-master access... I assume there's no longer a problem with
+enabling bus-master?
