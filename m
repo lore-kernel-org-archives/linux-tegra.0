@@ -1,50 +1,55 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH v3 1/7] mfd: cros_ec: spi: calculate delay between transfers correctly
-Date: Wed, 30 Apr 2014 10:44:04 -0700
-Message-ID: <1398879850-9111-2-git-send-email-dianders@chromium.org>
-References: <1398879850-9111-1-git-send-email-dianders@chromium.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1398879850-9111-1-git-send-email-dianders@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: lee.jones@linaro.org, swarren@nvidia.com, wsa@the-dreams.de
-Cc: abrestic@chromium.org, dgreid@chromium.org, olof@lixom.net, sjg@chromium.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, David Hendricks <dhendrix@chromium.org>, Doug Anderson <dianders@chromium.org>, sameo@linux.intel.com, linux-kernel@vger.kernel.org
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [flasher PATCH] Allow --boards to add to not replace the set of enabled boards
+Date: Wed, 30 Apr 2014 13:45:14 -0600
+Message-ID: <1398887114-9774-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: David Hendricks <dhendrix@chromium.org>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-To avoid spamming the EC we calculate the time between the previous
-transfer and the current transfer and force a delay if the time delta
-is too small.
+The following already work:
 
-However, a small miscalculation causes the delay period to be
-far too short. Most noticably this impacts commands with a long
-turnaround time such as EC firmware reads and writes.
+Build all boards that are enabled by default:
+./build build
 
-Signed-off-by: David Hendricks <dhendrix@chromium.org>
-Signed-off-by: Doug Anderson <dianders@chromium.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
-Reviewed-by: Simon Glass <sjg@chromium.org>
-Tested-by: Andrew Bresticker <abrestic@chromium.org>
-Tested-by: Stephen Warren <swarren@nvidia.com>
+Build a specific set of boards:
+./build --boards beaver,jetson-tk1 build
+
+Sometimes it's nice to build all boards that are enabled by default,
+plus a few others which aren't. This patch enables the following syntax
+for that:
+./build --boards +jetson-tk1 build
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-Changes in v3: None
-Changes in v2: None
+ build | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
- drivers/mfd/cros_ec_spi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
-index 84af8d7..c185eb6 100644
---- a/drivers/mfd/cros_ec_spi.c
-+++ b/drivers/mfd/cros_ec_spi.c
-@@ -219,7 +219,7 @@ static int cros_ec_command_spi_xfer(struct cros_ec_device *ec_dev,
- 		ktime_get_ts(&ts);
- 		delay = timespec_to_ns(&ts) - ec_spi->last_transfer_ns;
- 		if (delay < EC_SPI_RECOVERY_TIME_NS)
--			ndelay(delay);
-+			ndelay(EC_SPI_RECOVERY_TIME_NS - delay);
- 	}
+diff --git a/build b/build
+index 7bfc2d9d0aa8..5e94474de70b 100755
+--- a/build
++++ b/build
+@@ -108,9 +108,17 @@ def user_restrict_socs(enabled_socs):
+         socs[socname]['disabled'] = not socname in enabled_socs
  
- 	/* Transmit phase - send our message */
+ def user_restrict_boards(enabled_boards):
++    if enabled_boards[0] == '+':
++        disable_others = False
++        enabled_boards = enabled_boards[1:]
++    else:
++        disable_others = True
+     enabled_boards = enabled_boards.split(',')
+     for boardname in boards.keys():
+-        boards[boardname]['disabled'] = not boardname in enabled_boards
++        if boardname in enabled_boards:
++            boards[boardname]['disabled'] = False
++        elif disable_others:
++            boards[boardname]['disabled'] = True
+ 
+ def restrict_boards():
+     for board in boards.values():
 -- 
-1.9.1.423.g4596e3a
+1.8.1.5
