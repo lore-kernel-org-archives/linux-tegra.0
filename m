@@ -1,55 +1,128 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [flasher PATCH] Allow --boards to add to not replace the set of enabled boards
-Date: Wed, 30 Apr 2014 13:45:14 -0600
-Message-ID: <1398887114-9774-1-git-send-email-swarren@wwwdotorg.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC 0/5] drm/tegra: Convert to master/component framework
+Date: Thu, 1 May 2014 00:01:55 +0200
+Message-ID: <20140430220154.GA23950@ulmo>
+References: <1398179373-29966-1-git-send-email-thierry.reding@gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="lrZ03NoBR/3+SXJZ"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1398179373-29966-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The following already work:
+--lrZ03NoBR/3+SXJZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Build all boards that are enabled by default:
-./build build
+On Tue, Apr 22, 2014 at 05:09:28PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>=20
+> Hi,
+>=20
+> This series converts the Tegra DRM driver to the master/component
+> framework. The length of the series and the list of people in Cc is
+> mostly due to the fact that Tegra has some special requirements as
+> opposed to other drivers and therefore requires some changes outside
+> of DRM.
+>=20
+> Patches 1 and 2 make some changes to the master/component framework
+> which are necessary to convert Tegra DRM to use it. Note that since I'm
+> looking for early review I haven't converted any of the existing users
+> since I'm not sure if these are acceptable changes.
+>=20
+> Patch 3 adds a new interface framework that supplements the master/
+> component framework and can be used in situations where there is no
+> struct device * that a driver can bind to.
+>=20
+> A new function is introduced in patch 4 which can be used to get rid of
+> the DRM bus infrastructure in individual drivers. It should be able to
+> replace the requirement of having a drm_bus for all USB and platform
+> DRM drivers. For backwards-compatibility with legacy PCI drivers some-
+> thing different will probably be needed.
+>=20
+> Finally, patch 5 converts the Tegra DRM driver over to using the master/
+> component framework using the above four patches.
+>=20
+> Each patch has a somewhat more elaborate description of why it is needed
+> or what problem it solves. The patchset applies on top of linux-next
+> with Daniel's DRM cleanup series applied.
+>=20
+> I welcome any questions or comments you might have.
+>=20
+> Thierry
+>=20
+> Thierry Reding (5):
+>   drivers/base: Allow multiple masters per device
+>   drivers/base: Allow driver-data to be attached to a master
+>   drivers/base: Add interface framework
+>   drm: Introduce drm_set_unique()
+>   drm/tegra: Convert to master/component framework
 
-Build a specific set of boards:
-./build --boards beaver,jetson-tk1 build
+Ping. Anyone?
 
-Sometimes it's nice to build all boards that are enabled by default,
-plus a few others which aren't. This patch enables the following syntax
-for that:
-./build --boards +jetson-tk1 build
+Thierry
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- build | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+>  drivers/base/Makefile          |   2 +-
+>  drivers/base/component.c       |  31 ++-
+>  drivers/base/interface.c       | 186 ++++++++++++++
+>  drivers/gpu/drm/drm_ioctl.c    |  37 ++-
+>  drivers/gpu/drm/drm_stub.c     |   1 +
+>  drivers/gpu/drm/tegra/Makefile |   1 -
+>  drivers/gpu/drm/tegra/bus.c    |  64 -----
+>  drivers/gpu/drm/tegra/dc.c     |  58 ++---
+>  drivers/gpu/drm/tegra/drm.c    | 171 +++++++++----
+>  drivers/gpu/drm/tegra/drm.h    |  27 +-
+>  drivers/gpu/drm/tegra/dsi.c    | 144 +++++------
+>  drivers/gpu/drm/tegra/gr2d.c   |  78 +++---
+>  drivers/gpu/drm/tegra/gr3d.c   |  77 +++---
+>  drivers/gpu/drm/tegra/hdmi.c   |  69 ++---
+>  drivers/gpu/drm/tegra/sor.c    |  71 ++----
+>  drivers/gpu/host1x/Makefile    |   1 -
+>  drivers/gpu/host1x/bus.c       | 553 -----------------------------------=
+------
+>  drivers/gpu/host1x/bus.h       |  29 ---
+>  drivers/gpu/host1x/dev.c       |  21 +-
+>  drivers/gpu/host1x/dev.h       |   7 +-
+>  include/drm/drmP.h             |   3 +
+>  include/linux/component.h      |  20 +-
+>  include/linux/host1x.h         |  64 +----
+>  include/linux/interface.h      |  40 +++
+>  24 files changed, 625 insertions(+), 1130 deletions(-)
+>  create mode 100644 drivers/base/interface.c
+>  delete mode 100644 drivers/gpu/drm/tegra/bus.c
+>  delete mode 100644 drivers/gpu/host1x/bus.c
+>  delete mode 100644 drivers/gpu/host1x/bus.h
+>  create mode 100644 include/linux/interface.h
+>=20
+> --=20
+> 1.9.2
+>=20
 
-diff --git a/build b/build
-index 7bfc2d9d0aa8..5e94474de70b 100755
---- a/build
-+++ b/build
-@@ -108,9 +108,17 @@ def user_restrict_socs(enabled_socs):
-         socs[socname]['disabled'] = not socname in enabled_socs
- 
- def user_restrict_boards(enabled_boards):
-+    if enabled_boards[0] == '+':
-+        disable_others = False
-+        enabled_boards = enabled_boards[1:]
-+    else:
-+        disable_others = True
-     enabled_boards = enabled_boards.split(',')
-     for boardname in boards.keys():
--        boards[boardname]['disabled'] = not boardname in enabled_boards
-+        if boardname in enabled_boards:
-+            boards[boardname]['disabled'] = False
-+        elif disable_others:
-+            boards[boardname]['disabled'] = True
- 
- def restrict_boards():
-     for board in boards.values():
--- 
-1.8.1.5
+--lrZ03NoBR/3+SXJZ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTYXLSAAoJEN0jrNd/PrOh/j0P/RahdlSEhKqyWD8xUbB3uaNJ
+jZSDKBgNJsN7WMDcBv9BjTJAwYj3KY9UQrUxJdGvlQ8ShtU8cB4fPH2oDIFmPHJr
+T7PHrwne4P3uIfJI5CJWlvP/PUI5y2MX1rnHNa7Flw1POB5JIyLjoDCjO+XG0tfR
+8zReC47nbGWgpdPtglFzS9ymctbBJuxddTBh5+9r8kf7zxag99r7l+NwLjSPXq+x
+figasL7pv1TYyoZEQj/tewVin4dk1zLcLw42sPW8Nj8QdLn/cXn28+02C3+2mEiI
+qp1G7XUgKZ7F/91vatkpijY0JcZfym1620pD+m514y1aIMUWKcy4dTFjRVE1i8l1
+8nko5VKnR5d39qt/9mv2D/G9p8yrlQXYlR2AlIForT8Sy9Dx2/wKJgPxMZHkZbAi
+oiKgDMJD8rY3nF7MWgcMnztzVRsOuJYy0FvQX07dRjzKEMICTDrfPg2sdrCU8U0j
+ZyUCTVqULVOq9hyLWkrorb49OEp5G/ggslH8roHMfBy9V1/B8r3EbW1ENFBbW3hb
+vqAnlk81ZJXfsadGvZVLVZu2oPRF8bE8zVNfiqfA2Ijz3mV0G5eyzhjUfDxdPdnw
+YtU5GUUJpwe5Oc8Lkd1LGHpAE8pTtBJ7WvvMPoAUsL00uP+whnoU8/GHcd0JLvcP
+/Nx6NhD5B+ON8fG20QEt
+=0KGe
+-----END PGP SIGNATURE-----
+
+--lrZ03NoBR/3+SXJZ--
