@@ -1,49 +1,91 @@
-From: Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [Nouveau] [PATCH v3 6/9] drm/nouveau/graph: enable when using
- external firmware
-Date: Thu, 1 May 2014 14:59:26 +1000
-Message-ID: <CACAvsv4hAzq7HhBZNbcbnE7eKADT_unWuNR2+bJ2swa_S+LnMg@mail.gmail.com>
-References: <1398410396-23338-1-git-send-email-acourbot@nvidia.com>
-	<1398410396-23338-7-git-send-email-acourbot@nvidia.com>
-	<CACAvsv51Ju_ZqJfNU5GzzEmDzf2Fr6Xr_5yGRtfqOQRVTgvDPg@mail.gmail.com>
-	<CAAVeFuK7H3zK3CaxYT4MP4pY=r2dF0oojjYHG1DGRf7Sq0TExg@mail.gmail.com>
+From: Brian Norris <computersforpeace@gmail.com>
+Subject: [PATCH v2 00/12] defconfigs: add MTD_SPI_NOR (new subsystem
+ dependency for M25P80)
+Date: Wed, 30 Apr 2014 23:26:35 -0700
+Message-ID: <1398925607-7482-1-git-send-email-computersforpeace@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAVeFuK7H3zK3CaxYT4MP4pY=r2dF0oojjYHG1DGRf7Sq0TExg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+To: Linux Kernel <linux-kernel@vger.kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Steven Miao <realmz6@gmail.com>, linux-mips@linux-mips.org, Nicolas Ferre <nicolas.ferre@atmel.com>, Thierry Reding <thierry.reding@gmail.com>, linux-mtd@lists.infradead.org, Marek Vasut <marex@denx.de>, Russell King <linux@arm.linux.org.uk>, linux-sh@vger.kernel.org, Shawn Guo <shawn.guo@freescale.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Roland Stigge <stigge@antcom.de>, Jason Cooper <jason@lakedaemon.net>, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, adi-buildroot-devel@lists.sourceforge.net, Simon Horman <horms@verge.net.au>, linux-tegra@vger.kernel.org, Andrew Victor <linux@maxim.org.za>, linux-arm-kernel@lists.infradead.org, Ralf Baechle <ralf@linux-mips.org>, Huang Shijie <b32955@freescale.com>, Santosh Shilimkar <santosh.shilimkar>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, May 1, 2014 at 2:53 PM, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Mon, Apr 28, 2014 at 11:10 AM, Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->> On Fri, Apr 25, 2014 at 5:19 PM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->>> nvc0_graph_ctor() would only let the graphics engine be enabled if its
->>> oclass has a proper microcode linked to it. This prevents GR from being
->>> enabled at all on chips that rely exclusively on external firmware, even
->>> though such a use-case is valid.
->>>
->>> Relax the conditions enabling the GR engine to also include the case
->>> where an external firmware has also been loaded.
->> I'm happy to take this patch as-is.  I do wonder if we should do
->> something like this though:
->>
->> if (nouveau_boolopt(device->cfgopt, "NvGrUseFW", oclass->fecs.ucode == NULL))
->>
->> Which will automatically switch to external firmware if there's no
->> internal implementation available.
->>
->> Thoughts?  This could be a separate patch even, if preferred.
->
-> Sure, that should work. Do you mind if I come with a follow-up patch
-> for this so I don't have to re-sent the current patch series? Since
-> this is the only comment it received so far.
-Yeah that's fine.  I suspect I'll merge this tomorrow, assuming no
-further objections are raised.
-
-Ben.
-
->
-> Thanks,
-> Alex.
+djEgLS0+IHYyOiBzcGxpdCBBUk0gZGVmY29uZmlnIGNoYW5nZXMgaW50byB0aGVpciBzdWItYXJj
+aGl0ZWN0dXJlcy4gTm8gY2hhbmdlCiAgICAgICAgICAgaW4gdGhlIG92ZXJhbGwgZGlmZi4KCkhp
+IGFsbCwKCldlIGFyZSBpbnRyb2R1Y2luZyBhIG5ldyBTUEktTk9SIHN1YnN5c3RlbS9mcmFtZXdv
+cmsgZm9yIE1URCwgdG8gc3VwcG9ydAp2YXJpb3VzIHR5cGVzIG9mIFNQSS1OT1IgZmxhc2ggY29u
+dHJvbGxlcnMgd2hpY2ggcmVxdWlyZSAob3IgYmVuZWZpdCBmcm9tKQppbnRpbWF0ZSBrbm93bGVk
+Z2Ugb2YgdGhlIGZsYXNoIGludGVyZmFjZSwgcmF0aGVyIHRoYW4ganVzdCB0aGUgcmVsYXRpdmVs
+eSBkdW1iClNQSSBpbnRlcmZhY2UuIFRoaXMgZnJhbWV3b3JrIGJvcnJvd3MgbXVjaCBvZiB0aGUg
+bTI1cDgwIGRyaXZlciBmb3IgaXRzCmFic3RyYWN0aW9uIGFuZCBtb3ZlcyB0aGlzIGNvZGUgaW50
+byBhIHNwaS1ub3IgbW9kdWxlLgoKVGhpcyBtZWFucyBDT05GSUdfTTI1UDgwIG5vdyBoYXMgYSBk
+ZXBlbmRlbmN5IG9uIENPTkZJR19NVERfU1BJX05PUiwgd2hpY2gKc2hvdWxkIGJlIGFkZGVkIHRv
+IHRoZSBkZWZjb25maWdzLiBJIGV4cGVjdCB0aGF0IGVhY2ggKHN1YilhcmNoaXRlY3R1cmUKbWFp
+bnRhaW5lciBjYW4gbWVyZ2UgdGhlc2UgcGF0Y2hlcyB0byB0aGVpciBvd24gdHJlZS4KCk5vdGUg
+dGhhdCB3aXRob3V0IHRoZSBuZXcgQ09ORklHX01URF9TUElfTk9SIHN5bWJvbCBpbiB5b3VyIGRl
+ZmNvbmZpZywgS2NvbmZpZwp3aWxsIGF1dG9tYXRpY2FsbHkgZHJvcCBNMjVQODAgZm9yIHlvdS4K
+ClBsZWFzZSBrZWVwIGdlbmVyYWwgY29tbWVudHMgdG8gdGhlIGNvdmVyIGxldHRlciwgc28gYWxs
+IHBhcnRpZXMgY2FuIHNlZS4KClRoaXMgc2VyaWVzIGlzIGJhc2VkIG9uIDMuMTUtcmMxLgoKVGhl
+IFNQSS1OT1IgZGV2ZWxvcG1lbnQgY29kZSAoaW4gLW5leHQsIHF1ZXVlZCBmb3IgMy4xNikgaXMg
+aGVyZToKCiAgZ2l0Oi8vZ2l0LmluZnJhZGVhZC5vcmcvbDItbXRkLmdpdCArc3Bpbm9yCgpUaGlz
+IGRlZmNvbmZpZyBzZXJpZXMgaXMgYXZhaWxhYmxlIGluIHRoZSBzYW1lIHJlcG8gYXQ6CgogIGdp
+dDovL2dpdC5pbmZyYWRlYWQub3JnL2wyLW10ZC5naXQgK2RlZmNvbmZpZ3MKClRoYW5rcywKQnJp
+YW4KCkJyaWFuIE5vcnJpcyAoMTIpOgogIEFSTTogaW14L214cyBkZWZjb25maWdzOiBhZGQgTVRE
+X1NQSV9OT1IgKG5ldyBkZXBlbmRlbmN5IGZvciBNMjVQODApCiAgQVJNOiBkZWZjb25maWdzOiBh
+ZGQgTVREX1NQSV9OT1IgKG5ldyBkZXBlbmRlbmN5IGZvciBNMjVQODApCiAgQVJNOiBrZXlzdG9u
+ZTogYWRkIE1URF9TUElfTk9SIChuZXcgZGVwZW5kZW5jeSBmb3IgTTI1UDgwKQogIEFSTTogdGVn
+cmE6IGFkZCBNVERfU1BJX05PUiAobmV3IGRlcGVuZGVuY3kgZm9yIE0yNVA4MCkKICBBUk06IGxw
+YzMyeHg6IGFkZCBNVERfU1BJX05PUiAobmV3IGRlcGVuZGVuY3kgZm9yIE0yNVA4MCkKICBBUk06
+IGF0OTE6IGFkZCBNVERfU1BJX05PUiAobmV3IGRlcGVuZGVuY3kgZm9yIE0yNVA4MCkKICBBUk06
+IHNobW9iaWxlOiBhZGQgTVREX1NQSV9OT1IgKG5ldyBkZXBlbmRlbmN5IGZvciBNMjVQODApCiAg
+QVJNOiBtYXJ2ZWxsOiBhZGQgTVREX1NQSV9OT1IgKG5ldyBkZXBlbmRlbmN5IGZvciBNMjVQODAp
+CiAgYmxhY2tmaW46IGRlZmNvbmZpZ3M6IGFkZCBNVERfU1BJX05PUiAobmV3IGRlcGVuZGVuY3kg
+Zm9yIE0yNVA4MCkKICBtaXBzOiBkZWZjb25maWdzOiBhZGQgTVREX1NQSV9OT1IgKG5ldyBkZXBl
+bmRlbmN5IGZvciBNMjVQODApCiAgcG93ZXJwYzogZGVmY29uZmlnczogYWRkIE1URF9TUElfTk9S
+IChuZXcgZGVwZW5kZW5jeSBmb3IgTTI1UDgwKQogIHNoOiBkZWZjb25maWc6IGFkZCBNVERfU1BJ
+X05PUiAobmV3IGRlcGVuZGVuY3kgZm9yIE0yNVA4MCkKCiBhcmNoL2FybS9jb25maWdzL2JvY2t3
+X2RlZmNvbmZpZyAgICAgICAgICAgICAgIHwgMiArLQogYXJjaC9hcm0vY29uZmlncy9kb3ZlX2Rl
+ZmNvbmZpZyAgICAgICAgICAgICAgICB8IDIgKy0KIGFyY2gvYXJtL2NvbmZpZ3MvaW14X3Y2X3Y3
+X2RlZmNvbmZpZyAgICAgICAgICAgfCAxICsKIGFyY2gvYXJtL2NvbmZpZ3Mva2V5c3RvbmVfZGVm
+Y29uZmlnICAgICAgICAgICAgfCAxICsKIGFyY2gvYXJtL2NvbmZpZ3Mva2lya3dvb2RfZGVmY29u
+ZmlnICAgICAgICAgICAgfCAxICsKIGFyY2gvYXJtL2NvbmZpZ3Mva29lbHNjaF9kZWZjb25maWcg
+ICAgICAgICAgICAgfCAxICsKIGFyY2gvYXJtL2NvbmZpZ3MvbGFnZXJfZGVmY29uZmlnICAgICAg
+ICAgICAgICAgfCAxICsKIGFyY2gvYXJtL2NvbmZpZ3MvbHBjMzJ4eF9kZWZjb25maWcgICAgICAg
+ICAgICAgfCAyICstCiBhcmNoL2FybS9jb25maWdzL211bHRpX3Y1X2RlZmNvbmZpZyAgICAgICAg
+ICAgIHwgMSArCiBhcmNoL2FybS9jb25maWdzL211bHRpX3Y3X2RlZmNvbmZpZyAgICAgICAgICAg
+IHwgMSArCiBhcmNoL2FybS9jb25maWdzL212ZWJ1X3Y1X2RlZmNvbmZpZyAgICAgICAgICAgIHwg
+MSArCiBhcmNoL2FybS9jb25maWdzL212ZWJ1X3Y3X2RlZmNvbmZpZyAgICAgICAgICAgIHwgMSAr
+CiBhcmNoL2FybS9jb25maWdzL214c19kZWZjb25maWcgICAgICAgICAgICAgICAgIHwgMSArCiBh
+cmNoL2FybS9jb25maWdzL3NhbWE1X2RlZmNvbmZpZyAgICAgICAgICAgICAgIHwgMiArLQogYXJj
+aC9hcm0vY29uZmlncy9zaG1vYmlsZV9kZWZjb25maWcgICAgICAgICAgICB8IDEgKwogYXJjaC9h
+cm0vY29uZmlncy90ZWdyYV9kZWZjb25maWcgICAgICAgICAgICAgICB8IDEgKwogYXJjaC9ibGFj
+a2Zpbi9jb25maWdzL0JGNTI2LUVaQlJEX2RlZmNvbmZpZyAgICB8IDIgKy0KIGFyY2gvYmxhY2tm
+aW4vY29uZmlncy9CRjUyNy1FWktJVC1WMl9kZWZjb25maWcgfCAyICstCiBhcmNoL2JsYWNrZmlu
+L2NvbmZpZ3MvQkY1MjctRVpLSVRfZGVmY29uZmlnICAgIHwgMiArLQogYXJjaC9ibGFja2Zpbi9j
+b25maWdzL0JGNTQ4LUVaS0lUX2RlZmNvbmZpZyAgICB8IDIgKy0KIGFyY2gvYmxhY2tmaW4vY29u
+Zmlncy9CRjYwOS1FWktJVF9kZWZjb25maWcgICAgfCAyICstCiBhcmNoL2JsYWNrZmluL2NvbmZp
+Z3MvQmxhY2tTdGFtcF9kZWZjb25maWcgICAgIHwgMyArLS0KIGFyY2gvYmxhY2tmaW4vY29uZmln
+cy9IODYwNl9kZWZjb25maWcgICAgICAgICAgfCAzICstLQogYXJjaC9taXBzL2NvbmZpZ3MvYXRo
+NzlfZGVmY29uZmlnICAgICAgICAgICAgICB8IDMgKy0tCiBhcmNoL21pcHMvY29uZmlncy9kYjF4
+eHhfZGVmY29uZmlnICAgICAgICAgICAgIHwgMSArCiBhcmNoL21pcHMvY29uZmlncy9ydDMwNXhf
+ZGVmY29uZmlnICAgICAgICAgICAgIHwgMiArLQogYXJjaC9wb3dlcnBjL2NvbmZpZ3MvY29yZW5l
+dDMyX3NtcF9kZWZjb25maWcgICB8IDIgKy0KIGFyY2gvcG93ZXJwYy9jb25maWdzL2NvcmVuZXQ2
+NF9zbXBfZGVmY29uZmlnICAgfCAyICstCiBhcmNoL3Bvd2VycGMvY29uZmlncy9tcGM4NXh4X2Rl
+ZmNvbmZpZyAgICAgICAgIHwgMiArLQogYXJjaC9wb3dlcnBjL2NvbmZpZ3MvbXBjODV4eF9zbXBf
+ZGVmY29uZmlnICAgICB8IDIgKy0KIGFyY2gvc2gvY29uZmlncy9zaDc3NTdsY3JfZGVmY29uZmln
+ICAgICAgICAgICAgfCAyICstCiAzMSBmaWxlcyBjaGFuZ2VkLCAzMSBpbnNlcnRpb25zKCspLCAy
+MSBkZWxldGlvbnMoLSkKCi0tIAoxLjguMy4yCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fXwpMaW51eHBwYy1kZXYgbWFpbGluZyBsaXN0CkxpbnV4cHBjLWRl
+dkBsaXN0cy5vemxhYnMub3JnCmh0dHBzOi8vbGlzdHMub3psYWJzLm9yZy9saXN0aW5mby9saW51
+eHBwYy1kZXY=
