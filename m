@@ -1,74 +1,57 @@
-From: Jon Loeliger <loeliger-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 51/97] ARM: l2c: remove platforms/SoCs setting early BRESP
-Date: Thu, 1 May 2014 11:18:45 -0500
-Message-ID: <CAJgR-BiGjp9G=E7SzgidyVLTjpQ3ETFTFwxDapVc28PyokGa=g@mail.gmail.com>
-References: <20140428192419.GV26756@n2100.arm.linux.org.uk>
-	<E1WerG4-0001X4-Ic@rmk-PC.arm.linux.org.uk>
-	<20140429000224.GA31083@verge.net.au>
-	<20140429002140.GP27282@n2100.arm.linux.org.uk>
-	<20140501151236.078E3C409DA@trevor.secretlab.ca>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH] ARM: tegra: remove UART5/UARTE from tegra124.dtsi
+Date: Thu,  1 May 2014 10:43:28 -0600
+Message-ID: <1398962608-11867-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140501151236.078E3C409DA-WNowdnHR2B42iJbIjFUEsiwD8/FfD2ys@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Cc: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, spear-devel-nkJGhpqTU55BDgjK7y7TUQ@public.gmane.org, Shiraz Hashim <shiraz.hashim-qxv4g6HH51o@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Viresh Kumar <viresh.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Russell,
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I emphatically second Grant's opinion here:
-This is a good patch series and is a much-needed improvement.
+(This is commit 862f0eea38409ff0d7f226c1245b787e3f0e2607 upstream)
 
-I am in the middle of a board-port for an A9 system, and this
-series will greatly simplify things for me *despite* the fact that
-I will need to convert to the new write_sec() form of L2C control
-on PSCI-enabled non-secure platforms.
+Tegra124 only has 4 UARTs. Parts of the documentation hint at a fifth
+UART, but this appears to be left-over from earlier SoC documentation.
+Remove the non-existent DT node for UART5.
 
-To reiterate Grant's request, please re-consider applying
-this L2C patch series!
+Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org> # v3.14
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+---
+This is a backport of the upstream commit specifically for 3.13.
+The following commits in mainline follow on from this:
+9ef1af9ea28c dt: tegra: remove non-existent clock IDs
+9ba71705706a clk: tegra: remove non-existent clocks
+... and can be directly cherry-picked without conflict, after this.
+---
+ arch/arm/boot/dts/tegra124.dtsi | 13 -------------
+ 1 file changed, 13 deletions(-)
 
-Thank you,
-jdl
-
-
-On Thu, May 1, 2014 at 10:12 AM, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org> wrote:
-> On Tue, 29 Apr 2014 01:21:41 +0100, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote:
->> On Tue, Apr 29, 2014 at 09:02:27AM +0900, Simon Horman wrote:
->> > On Mon, Apr 28, 2014 at 08:30:32PM +0100, Russell King wrote:
->> > > Since we now automatically enable early BRESP in core L2C-310 code when
->> > > we detect a Cortex-A9, we don't need platforms/SoCs to set this bit
->> > > explicitly.  Instead, they should seek to preserve the value of bit 30
->> > > in the auxiliary control register.
->> > >
->> > > Acked-by: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
->> > > Signed-off-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
->> >
->> > I would prefer if this patch was broken out into individual patches
->> > for each board or SoC file and that they were then picked up
->> > by their respective platform maintainers.
->> >
->> > Likewise for patch 66/97. Although it is only for shmobile
->> > I would prefer it broken out.
->>
->> Oh fuck that.
->>
->> Okay, I'm dropping the whole patch set right now and forgetting the whole
->> damned thing.  The L2 cache code can damned well stay as it is and remain
->> an unmaintainable mess.
->
-> FWIW, there are an awful lot of people, myself included, who do care
-> that you've done this work. It is 100% okay for you to say "no" to
-> requests to split things up because of the complexity of the series.
->
-> I really hope you're reconsider and not give up on this series.
->
-> g.
->
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+index ec0698a8354a..9c2ba74a8b60 100644
+--- a/arch/arm/boot/dts/tegra124.dtsi
++++ b/arch/arm/boot/dts/tegra124.dtsi
+@@ -164,19 +164,6 @@
+ 		status = "disabled";
+ 	};
+ 
+-	serial@70006400 {
+-		compatible = "nvidia,tegra124-uart", "nvidia,tegra20-uart";
+-		reg = <0x70006400 0x40>;
+-		reg-shift = <2>;
+-		interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&tegra_car TEGRA124_CLK_UARTE>;
+-		resets = <&tegra_car 66>;
+-		reset-names = "serial";
+-		dmas = <&apbdma 20>, <&apbdma 20>;
+-		dma-names = "rx", "tx";
+-		status = "disabled";
+-	};
+-
+ 	pwm@7000a000 {
+ 		compatible = "nvidia,tegra124-pwm", "nvidia,tegra20-pwm";
+ 		reg = <0x7000a000 0x100>;
+-- 
+1.8.1.5
