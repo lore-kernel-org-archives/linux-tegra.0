@@ -1,97 +1,47 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3 0/9] drm/nouveau: support for GK20A, cont'd
-Date: Thu, 1 May 2014 16:14:56 +0900
-Message-ID: <5361F470.5050306@nvidia.com>
-References: <1398410396-23338-1-git-send-email-acourbot@nvidia.com>
- <CACAvsv5x6uZcTGUTa3-wBRo0sJ-557sJ_d8r0kscODhr18yzBA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <CACAvsv5x6uZcTGUTa3-wBRo0sJ-557sJ_d8r0kscODhr18yzBA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [PATCH 51/97] ARM: l2c: remove platforms/SoCs setting early
+ BRESP
+Date: Thu, 01 May 2014 16:12:35 +0100
+Message-ID: <20140501151236.078E3C409DA@trevor.secretlab.ca>
+References: <20140428192419.GV26756@n2100.arm.linux.org.uk>
+	<E1WerG4-0001X4-Ic@rmk-PC.arm.linux.org.uk>
+	<20140429000224.GA31083@verge.net.au>
+	<20140429002140.GP27282@n2100.arm.linux.org.uk>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <20140429002140.GP27282@n2100.arm.linux.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Simon Horman <horms@verge.net.au>
+Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Tony Lindgren <tony@atomide.com>, linux-sh@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>, spear-devel@list.st.com, Shiraz Hashim <shiraz.hashim@st.com>, Thierry Reding <thierry.reding@gmail.com>, Viresh Kumar <viresh.linux@gmail.com>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/01/2014 04:11 PM, Ben Skeggs wrote:
-> On Fri, Apr 25, 2014 at 5:19 PM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->> Changes since v2:
->> - Enabled software class
->> - Removed unneeded changes to nouveau_accel_init()
->> - Replaced use of architecture-private pfn_to_dma() and dma_to_pfn() with
->>    the portable page_to_phys()/phys_to_page()
-> page_to_phys() looks well defined and used everywhere, phys_to_page()
-> not so much (including on amd64) :(
+On Tue, 29 Apr 2014 01:21:41 +0100, Russell King - ARM Linux <linux@arm.linux.org.uk> wrote:
+> On Tue, Apr 29, 2014 at 09:02:27AM +0900, Simon Horman wrote:
+> > On Mon, Apr 28, 2014 at 08:30:32PM +0100, Russell King wrote:
+> > > Since we now automatically enable early BRESP in core L2C-310 code when
+> > > we detect a Cortex-A9, we don't need platforms/SoCs to set this bit
+> > > explicitly.  Instead, they should seek to preserve the value of bit 30
+> > > in the auxiliary control register.
+> > > 
+> > > Acked-by: Tony Lindgren <tony@atomide.com>
+> > > Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> > 
+> > I would prefer if this patch was broken out into individual patches
+> > for each board or SoC file and that they were then picked up
+> > by their respective platform maintainers.
+> > 
+> > Likewise for patch 66/97. Although it is only for shmobile
+> > I would prefer it broken out.
+> 
+> Oh fuck that.
+> 
+> Okay, I'm dropping the whole patch set right now and forgetting the whole
+> damned thing.  The L2 cache code can damned well stay as it is and remain
+> an unmaintainable mess.
 
-Argh, dammit. Now I *really* wonder what one is supposed to use in such 
-cases...
+FWIW, there are an awful lot of people, myself included, who do care
+that you've done this work. It is 100% okay for you to say "no" to
+requests to split things up because of the complexity of the series.
 
-Let me come with a v4 then. I will address the other issue with external 
-firmware at the same time.
+I really hope you're reconsider and not give up on this series.
 
-Sorry for the inconvenience.
-
->
->> - Fixed incorrect comment/commit log talking about bytes instead of words
->>
->> Hope this looks good! Once this gets merged the next set will be to use this
->> driver on Jetson and Venice2 boards.
->>
->> Cheers,
->>
->> Alexandre Courbot (9):
->>    drm/nouveau/bar: only ioremap BAR3 if it exists
->>    drm/nouveau/bar/nvc0: support chips without BAR3
->>    drm/nouveau/ibus: add GK20A support
->>    drm/nouveau/fb: add GK20A support
->>    drm/nouveau/fifo: add GK20A support
->>    drm/nouveau/graph: enable when using external firmware
->>    drm/nouveau/graph: pad firmware code at load time
->>    drm/nouveau/graph: add GK20A support
->>    drm/nouveau: support for probing GK20A
->>
->>   drivers/gpu/drm/nouveau/Makefile                   |   6 +
->>   drivers/gpu/drm/nouveau/core/engine/device/nve0.c  |  17 +++
->>   drivers/gpu/drm/nouveau/core/engine/fifo/gk20a.c   |  35 +++++
->>   drivers/gpu/drm/nouveau/core/engine/fifo/nve0.h    |   1 +
->>   .../gpu/drm/nouveau/core/engine/graph/ctxgk20a.c   |  53 +++++++
->>   .../gpu/drm/nouveau/core/engine/graph/ctxnvc0.h    |   9 ++
->>   .../gpu/drm/nouveau/core/engine/graph/ctxnve4.c    |  14 +-
->>   drivers/gpu/drm/nouveau/core/engine/graph/gk20a.c  |  47 ++++++
->>   drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c   |  13 +-
->>   drivers/gpu/drm/nouveau/core/engine/graph/nvc0.h   |   2 +
->>   drivers/gpu/drm/nouveau/core/engine/graph/nve4.c   |   4 +-
->>   drivers/gpu/drm/nouveau/core/include/engine/fifo.h |   1 +
->>   .../gpu/drm/nouveau/core/include/engine/graph.h    |   1 +
->>   drivers/gpu/drm/nouveau/core/include/subdev/fb.h   |   1 +
->>   drivers/gpu/drm/nouveau/core/include/subdev/ibus.h |   1 +
->>   drivers/gpu/drm/nouveau/core/subdev/bar/base.c     |   6 +-
->>   drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c     | 114 +++++++-------
->>   drivers/gpu/drm/nouveau/core/subdev/fb/gk20a.c     |  56 +++++++
->>   drivers/gpu/drm/nouveau/core/subdev/fb/priv.h      |   1 +
->>   drivers/gpu/drm/nouveau/core/subdev/fb/ramgk20a.c  | 167 +++++++++++++++++++++
->>   drivers/gpu/drm/nouveau/core/subdev/ibus/gk20a.c   | 103 +++++++++++++
->>   21 files changed, 583 insertions(+), 69 deletions(-)
->>   create mode 100644 drivers/gpu/drm/nouveau/core/engine/fifo/gk20a.c
->>   create mode 100644 drivers/gpu/drm/nouveau/core/engine/graph/ctxgk20a.c
->>   create mode 100644 drivers/gpu/drm/nouveau/core/engine/graph/gk20a.c
->>   create mode 100644 drivers/gpu/drm/nouveau/core/subdev/fb/gk20a.c
->>   create mode 100644 drivers/gpu/drm/nouveau/core/subdev/fb/ramgk20a.c
->>   create mode 100644 drivers/gpu/drm/nouveau/core/subdev/ibus/gk20a.c
->>
->> --
->> 1.9.2
->>
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
->> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+g.
