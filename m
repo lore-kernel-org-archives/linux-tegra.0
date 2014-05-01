@@ -1,91 +1,459 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Subject: [PATCH v2 00/12] defconfigs: add MTD_SPI_NOR (new subsystem
- dependency for M25P80)
-Date: Wed, 30 Apr 2014 23:26:35 -0700
-Message-ID: <1398925607-7482-1-git-send-email-computersforpeace@gmail.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] ARM: tegra: add Tegra Note 7 device tree
+Date: Thu, 1 May 2014 16:10:17 +0900
+Message-ID: <1398928217-32629-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Linux Kernel <linux-kernel@vger.kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Steven Miao <realmz6@gmail.com>, linux-mips@linux-mips.org, Nicolas Ferre <nicolas.ferre@atmel.com>, Thierry Reding <thierry.reding@gmail.com>, linux-mtd@lists.infradead.org, Marek Vasut <marex@denx.de>, Russell King <linux@arm.linux.org.uk>, linux-sh@vger.kernel.org, Shawn Guo <shawn.guo@freescale.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Roland Stigge <stigge@antcom.de>, Jason Cooper <jason@lakedaemon.net>, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, adi-buildroot-devel@lists.sourceforge.net, Simon Horman <horms@verge.net.au>, linux-tegra@vger.kernel.org, Andrew Victor <linux@maxim.org.za>, linux-arm-kernel@lists.infradead.org, Ralf Baechle <ralf@linux-mips.org>, Huang Shijie <b32955@freescale.com>, Santosh Shilimkar <santosh.shilimkar>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-djEgLS0+IHYyOiBzcGxpdCBBUk0gZGVmY29uZmlnIGNoYW5nZXMgaW50byB0aGVpciBzdWItYXJj
-aGl0ZWN0dXJlcy4gTm8gY2hhbmdlCiAgICAgICAgICAgaW4gdGhlIG92ZXJhbGwgZGlmZi4KCkhp
-IGFsbCwKCldlIGFyZSBpbnRyb2R1Y2luZyBhIG5ldyBTUEktTk9SIHN1YnN5c3RlbS9mcmFtZXdv
-cmsgZm9yIE1URCwgdG8gc3VwcG9ydAp2YXJpb3VzIHR5cGVzIG9mIFNQSS1OT1IgZmxhc2ggY29u
-dHJvbGxlcnMgd2hpY2ggcmVxdWlyZSAob3IgYmVuZWZpdCBmcm9tKQppbnRpbWF0ZSBrbm93bGVk
-Z2Ugb2YgdGhlIGZsYXNoIGludGVyZmFjZSwgcmF0aGVyIHRoYW4ganVzdCB0aGUgcmVsYXRpdmVs
-eSBkdW1iClNQSSBpbnRlcmZhY2UuIFRoaXMgZnJhbWV3b3JrIGJvcnJvd3MgbXVjaCBvZiB0aGUg
-bTI1cDgwIGRyaXZlciBmb3IgaXRzCmFic3RyYWN0aW9uIGFuZCBtb3ZlcyB0aGlzIGNvZGUgaW50
-byBhIHNwaS1ub3IgbW9kdWxlLgoKVGhpcyBtZWFucyBDT05GSUdfTTI1UDgwIG5vdyBoYXMgYSBk
-ZXBlbmRlbmN5IG9uIENPTkZJR19NVERfU1BJX05PUiwgd2hpY2gKc2hvdWxkIGJlIGFkZGVkIHRv
-IHRoZSBkZWZjb25maWdzLiBJIGV4cGVjdCB0aGF0IGVhY2ggKHN1YilhcmNoaXRlY3R1cmUKbWFp
-bnRhaW5lciBjYW4gbWVyZ2UgdGhlc2UgcGF0Y2hlcyB0byB0aGVpciBvd24gdHJlZS4KCk5vdGUg
-dGhhdCB3aXRob3V0IHRoZSBuZXcgQ09ORklHX01URF9TUElfTk9SIHN5bWJvbCBpbiB5b3VyIGRl
-ZmNvbmZpZywgS2NvbmZpZwp3aWxsIGF1dG9tYXRpY2FsbHkgZHJvcCBNMjVQODAgZm9yIHlvdS4K
-ClBsZWFzZSBrZWVwIGdlbmVyYWwgY29tbWVudHMgdG8gdGhlIGNvdmVyIGxldHRlciwgc28gYWxs
-IHBhcnRpZXMgY2FuIHNlZS4KClRoaXMgc2VyaWVzIGlzIGJhc2VkIG9uIDMuMTUtcmMxLgoKVGhl
-IFNQSS1OT1IgZGV2ZWxvcG1lbnQgY29kZSAoaW4gLW5leHQsIHF1ZXVlZCBmb3IgMy4xNikgaXMg
-aGVyZToKCiAgZ2l0Oi8vZ2l0LmluZnJhZGVhZC5vcmcvbDItbXRkLmdpdCArc3Bpbm9yCgpUaGlz
-IGRlZmNvbmZpZyBzZXJpZXMgaXMgYXZhaWxhYmxlIGluIHRoZSBzYW1lIHJlcG8gYXQ6CgogIGdp
-dDovL2dpdC5pbmZyYWRlYWQub3JnL2wyLW10ZC5naXQgK2RlZmNvbmZpZ3MKClRoYW5rcywKQnJp
-YW4KCkJyaWFuIE5vcnJpcyAoMTIpOgogIEFSTTogaW14L214cyBkZWZjb25maWdzOiBhZGQgTVRE
-X1NQSV9OT1IgKG5ldyBkZXBlbmRlbmN5IGZvciBNMjVQODApCiAgQVJNOiBkZWZjb25maWdzOiBh
-ZGQgTVREX1NQSV9OT1IgKG5ldyBkZXBlbmRlbmN5IGZvciBNMjVQODApCiAgQVJNOiBrZXlzdG9u
-ZTogYWRkIE1URF9TUElfTk9SIChuZXcgZGVwZW5kZW5jeSBmb3IgTTI1UDgwKQogIEFSTTogdGVn
-cmE6IGFkZCBNVERfU1BJX05PUiAobmV3IGRlcGVuZGVuY3kgZm9yIE0yNVA4MCkKICBBUk06IGxw
-YzMyeHg6IGFkZCBNVERfU1BJX05PUiAobmV3IGRlcGVuZGVuY3kgZm9yIE0yNVA4MCkKICBBUk06
-IGF0OTE6IGFkZCBNVERfU1BJX05PUiAobmV3IGRlcGVuZGVuY3kgZm9yIE0yNVA4MCkKICBBUk06
-IHNobW9iaWxlOiBhZGQgTVREX1NQSV9OT1IgKG5ldyBkZXBlbmRlbmN5IGZvciBNMjVQODApCiAg
-QVJNOiBtYXJ2ZWxsOiBhZGQgTVREX1NQSV9OT1IgKG5ldyBkZXBlbmRlbmN5IGZvciBNMjVQODAp
-CiAgYmxhY2tmaW46IGRlZmNvbmZpZ3M6IGFkZCBNVERfU1BJX05PUiAobmV3IGRlcGVuZGVuY3kg
-Zm9yIE0yNVA4MCkKICBtaXBzOiBkZWZjb25maWdzOiBhZGQgTVREX1NQSV9OT1IgKG5ldyBkZXBl
-bmRlbmN5IGZvciBNMjVQODApCiAgcG93ZXJwYzogZGVmY29uZmlnczogYWRkIE1URF9TUElfTk9S
-IChuZXcgZGVwZW5kZW5jeSBmb3IgTTI1UDgwKQogIHNoOiBkZWZjb25maWc6IGFkZCBNVERfU1BJ
-X05PUiAobmV3IGRlcGVuZGVuY3kgZm9yIE0yNVA4MCkKCiBhcmNoL2FybS9jb25maWdzL2JvY2t3
-X2RlZmNvbmZpZyAgICAgICAgICAgICAgIHwgMiArLQogYXJjaC9hcm0vY29uZmlncy9kb3ZlX2Rl
-ZmNvbmZpZyAgICAgICAgICAgICAgICB8IDIgKy0KIGFyY2gvYXJtL2NvbmZpZ3MvaW14X3Y2X3Y3
-X2RlZmNvbmZpZyAgICAgICAgICAgfCAxICsKIGFyY2gvYXJtL2NvbmZpZ3Mva2V5c3RvbmVfZGVm
-Y29uZmlnICAgICAgICAgICAgfCAxICsKIGFyY2gvYXJtL2NvbmZpZ3Mva2lya3dvb2RfZGVmY29u
-ZmlnICAgICAgICAgICAgfCAxICsKIGFyY2gvYXJtL2NvbmZpZ3Mva29lbHNjaF9kZWZjb25maWcg
-ICAgICAgICAgICAgfCAxICsKIGFyY2gvYXJtL2NvbmZpZ3MvbGFnZXJfZGVmY29uZmlnICAgICAg
-ICAgICAgICAgfCAxICsKIGFyY2gvYXJtL2NvbmZpZ3MvbHBjMzJ4eF9kZWZjb25maWcgICAgICAg
-ICAgICAgfCAyICstCiBhcmNoL2FybS9jb25maWdzL211bHRpX3Y1X2RlZmNvbmZpZyAgICAgICAg
-ICAgIHwgMSArCiBhcmNoL2FybS9jb25maWdzL211bHRpX3Y3X2RlZmNvbmZpZyAgICAgICAgICAg
-IHwgMSArCiBhcmNoL2FybS9jb25maWdzL212ZWJ1X3Y1X2RlZmNvbmZpZyAgICAgICAgICAgIHwg
-MSArCiBhcmNoL2FybS9jb25maWdzL212ZWJ1X3Y3X2RlZmNvbmZpZyAgICAgICAgICAgIHwgMSAr
-CiBhcmNoL2FybS9jb25maWdzL214c19kZWZjb25maWcgICAgICAgICAgICAgICAgIHwgMSArCiBh
-cmNoL2FybS9jb25maWdzL3NhbWE1X2RlZmNvbmZpZyAgICAgICAgICAgICAgIHwgMiArLQogYXJj
-aC9hcm0vY29uZmlncy9zaG1vYmlsZV9kZWZjb25maWcgICAgICAgICAgICB8IDEgKwogYXJjaC9h
-cm0vY29uZmlncy90ZWdyYV9kZWZjb25maWcgICAgICAgICAgICAgICB8IDEgKwogYXJjaC9ibGFj
-a2Zpbi9jb25maWdzL0JGNTI2LUVaQlJEX2RlZmNvbmZpZyAgICB8IDIgKy0KIGFyY2gvYmxhY2tm
-aW4vY29uZmlncy9CRjUyNy1FWktJVC1WMl9kZWZjb25maWcgfCAyICstCiBhcmNoL2JsYWNrZmlu
-L2NvbmZpZ3MvQkY1MjctRVpLSVRfZGVmY29uZmlnICAgIHwgMiArLQogYXJjaC9ibGFja2Zpbi9j
-b25maWdzL0JGNTQ4LUVaS0lUX2RlZmNvbmZpZyAgICB8IDIgKy0KIGFyY2gvYmxhY2tmaW4vY29u
-Zmlncy9CRjYwOS1FWktJVF9kZWZjb25maWcgICAgfCAyICstCiBhcmNoL2JsYWNrZmluL2NvbmZp
-Z3MvQmxhY2tTdGFtcF9kZWZjb25maWcgICAgIHwgMyArLS0KIGFyY2gvYmxhY2tmaW4vY29uZmln
-cy9IODYwNl9kZWZjb25maWcgICAgICAgICAgfCAzICstLQogYXJjaC9taXBzL2NvbmZpZ3MvYXRo
-NzlfZGVmY29uZmlnICAgICAgICAgICAgICB8IDMgKy0tCiBhcmNoL21pcHMvY29uZmlncy9kYjF4
-eHhfZGVmY29uZmlnICAgICAgICAgICAgIHwgMSArCiBhcmNoL21pcHMvY29uZmlncy9ydDMwNXhf
-ZGVmY29uZmlnICAgICAgICAgICAgIHwgMiArLQogYXJjaC9wb3dlcnBjL2NvbmZpZ3MvY29yZW5l
-dDMyX3NtcF9kZWZjb25maWcgICB8IDIgKy0KIGFyY2gvcG93ZXJwYy9jb25maWdzL2NvcmVuZXQ2
-NF9zbXBfZGVmY29uZmlnICAgfCAyICstCiBhcmNoL3Bvd2VycGMvY29uZmlncy9tcGM4NXh4X2Rl
-ZmNvbmZpZyAgICAgICAgIHwgMiArLQogYXJjaC9wb3dlcnBjL2NvbmZpZ3MvbXBjODV4eF9zbXBf
-ZGVmY29uZmlnICAgICB8IDIgKy0KIGFyY2gvc2gvY29uZmlncy9zaDc3NTdsY3JfZGVmY29uZmln
-ICAgICAgICAgICAgfCAyICstCiAzMSBmaWxlcyBjaGFuZ2VkLCAzMSBpbnNlcnRpb25zKCspLCAy
-MSBkZWxldGlvbnMoLSkKCi0tIAoxLjguMy4yCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXwpMaW51eHBwYy1kZXYgbWFpbGluZyBsaXN0CkxpbnV4cHBjLWRl
-dkBsaXN0cy5vemxhYnMub3JnCmh0dHBzOi8vbGlzdHMub3psYWJzLm9yZy9saXN0aW5mby9saW51
-eHBwYy1kZXY=
+Tegra Note 7 is a consumer tablet embedding a Tegra 4 SoC with 1GB RAM
+and a 720p panel.
+
+The following features are enabled by this device tree: UART, eMMC, USB
+(needs external power), PMIC, backlight, DSI panel, keys.
+
+SD card, HDMI, charger, self-powered USB, audio, wifi, bluetooth are not
+yet supported but might be by future patches (likely in that order).
+
+Touch panel, sensors & cameras will probably never be supported.
+
+Pinctrl is not set yet, as the bootloader-provided values allow us to
+use the currently supported hardware.
+
+A default kernel command-line as well as initrd addresses are hardcoded
+to match the static values the bootloader is known to use. This allows
+booting from an appended DTB without having to alter it at boot time,
+since the bootloader has no Device Tree support.
+
+Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+[treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org: DT fixes, DSI panel support]
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+DT for SHIELD (roth) is to follow, but I would like to get all reviews on
+this one first and apply them to SHIELD for a (hopefully) smooth submission.
+
+SD card not working yet is quite weird. I am investigating this as well as
+HDMI, but would like to get this DT secured for 3.16 first and send the
+rest as incremental follow-up patches.
+
+Thanks!
+
+ arch/arm/boot/dts/Makefile         |   1 +
+ arch/arm/boot/dts/tegra114-tn7.dts | 390 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 391 insertions(+)
+ create mode 100644 arch/arm/boot/dts/tegra114-tn7.dts
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 49717b2db19a..fb662207a504 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -369,6 +369,7 @@ dtb-$(CONFIG_ARCH_TEGRA) += tegra20-harmony.dtb \
+ 	tegra30-cardhu-a02.dtb \
+ 	tegra30-cardhu-a04.dtb \
+ 	tegra114-dalmore.dtb \
++	tegra114-tn7.dtb \
+ 	tegra124-jetson-tk1.dtb \
+ 	tegra124-venice2.dtb
+ dtb-$(CONFIG_ARCH_U300) += ste-u300.dtb
+diff --git a/arch/arm/boot/dts/tegra114-tn7.dts b/arch/arm/boot/dts/tegra114-tn7.dts
+new file mode 100644
+index 000000000000..065d88759291
+--- /dev/null
++++ b/arch/arm/boot/dts/tegra114-tn7.dts
+@@ -0,0 +1,390 @@
++/dts-v1/;
++
++#include <dt-bindings/input/input.h>
++#include "tegra114.dtsi"
++
++/ {
++	model = "Tegra Note 7";
++	compatible = "nvidia,tn7", "nvidia,tegra114";
++
++	chosen {
++		/* TN7's bootloader's arguments need to be overridden */
++		bootargs = "console=ttyS0,115200n8 console=tty1 gpt cma=128M fbcon=rotate:2";
++		/* TN7's bootloader will place initrd at this address */
++		linux,initrd-start = <0x82000000>;
++		linux,initrd-end = <0x82800000>;
++	};
++
++	firmware {
++		trusted-foundations {
++			compatible = "tlm,trusted-foundations";
++			tlm,version-major = <2>;
++			tlm,version-minor = <8>;
++		};
++	};
++
++	memory {
++		/* memory >= 0x37e00000 is reserved for firmware usage */
++		reg = <0x80000000 0x37e00000>;
++	};
++
++	host1x@50000000 {
++		hdmi@54280000 {
++			status = "okay";
++
++			hdmi-supply = <&vdd_5v0_hdmi>;
++			vdd-supply = <&vdd_3v3_hdmi>;
++			pll-supply = <&vdd_1v05_pll>;
++
++			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
++			nvidia,hpd-gpio =
++				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
++		};
++
++		dsi@54300000 {
++			status = "okay";
++
++			vdd-supply = <&vdd_1v2_ap>;
++
++			panel@0 {
++				compatible = "lg,ld070wx3-sl01";
++				reg = <0>;
++
++				power-supply = <&vdd_lcd>;
++				backlight = <&backlight>;
++			};
++		};
++	};
++
++	serial@70006300 {
++		status = "okay";
++	};
++
++	pwm@7000a000 {
++		status = "okay";
++	};
++
++	hdmi_ddc: i2c@7000c700 {
++		status = "okay";
++		clock-frequency = <100000>;
++	};
++
++	i2c@7000d000 {
++		status = "okay";
++		clock-frequency = <400000>;
++
++		palmas: pmic@58 {
++			compatible = "ti,palmas";
++			reg = <0x58>;
++			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_LOW>;
++
++			#interrupt-cells = <2>;
++			interrupt-controller;
++
++			ti,system-power-controller;
++
++			palmas_gpio: gpio {
++				compatible = "ti,palmas-gpio";
++				gpio-controller;
++				#gpio-cells = <2>;
++			};
++
++			pmic {
++				compatible = "ti,tps65913-pmic", "ti,palmas-pmic";
++
++				ldoln-in-supply = <&vdd_smps10_out2>;
++
++				regulators {
++					smps123 {
++						regulator-name = "vd-cpu";
++						regulator-min-microvolt = <1000000>;
++						regulator-max-microvolt = <1000000>;
++						regulator-always-on;
++						regulator-boot-on;
++					};
++
++					smps45 {
++						regulator-name = "vd-soc";
++						regulator-min-microvolt = <1100000>;
++						regulator-max-microvolt = <1100000>;
++						regulator-always-on;
++					};
++
++					smps6 {
++						regulator-name = "va-lcd-hv";
++						regulator-min-microvolt = <3000000>;
++						regulator-max-microvolt = <3000000>;
++						regulator-always-on;
++						regulator-boot-on;
++					};
++
++					smps7 {
++						regulator-name = "vd-ddr";
++						regulator-min-microvolt = <1350000>;
++						regulator-max-microvolt = <1350000>;
++						regulator-always-on;
++						regulator-boot-on;
++					};
++
++					vdd_1v8: smps8 {
++						regulator-name = "vs-pmu-1v8";
++						regulator-min-microvolt = <1800000>;
++						regulator-max-microvolt = <1800000>;
++						regulator-always-on;
++						regulator-boot-on;
++					};
++
++					vdd_2v9_sys: smps9 {
++						regulator-name = "vs-sys-2v9";
++						regulator-min-microvolt = <2900000>;
++						regulator-max-microvolt = <2900000>;
++						regulator-always-on;
++						regulator-boot-on;
++					};
++
++					vdd_smps10_out1: smps10_out1 {
++						regulator-name = "vd-smps10-out1";
++						regulator-min-microvolt = <5000000>;
++						regulator-max-microvolt = <5000000>;
++						regulator-always-on;
++						regulator-boot-on;
++					};
++
++					vdd_smps10_out2: smps10_out2 {
++						regulator-name = "vd-smps10-out2";
++						regulator-min-microvolt = <5000000>;
++						regulator-max-microvolt = <5000000>;
++						regulator-always-on;
++						regulator-boot-on;
++					};
++
++					vdd_1v05_pll: ldo1 {
++						regulator-name = "va-pllx";
++						regulator-min-microvolt = <1050000>;
++						regulator-max-microvolt = <1050000>;
++						regulator-always-on;
++						regulator-boot-on;
++					};
++
++					vdd_1v2_ap: ldo2 {
++						regulator-name = "va-ap-1v2";
++						regulator-min-microvolt = <1200000>;
++						regulator-max-microvolt = <1200000>;
++						regulator-always-on;
++						regulator-boot-on;
++					};
++
++					ldo3 {
++						regulator-name = "vd-fuse";
++						regulator-min-microvolt = <1800000>;
++						regulator-max-microvolt = <1800000>;
++						regulator-always-on;
++						regulator-boot-on;
++					};
++
++					ldo4 {
++						regulator-name = "vd-ts-hv";
++						regulator-min-microvolt = <3200000>;
++						regulator-max-microvolt = <3200000>;
++						regulator-always-on;
++						regulator-boot-on;
++					};
++
++					ldo5 {
++						regulator-name = "va-cam2-hv";
++						regulator-min-microvolt = <2700000>;
++						regulator-max-microvolt = <2700000>;
++						regulator-always-on;
++						regulator-boot-on;
++					};
++
++					ldo6 {
++						regulator-name = "va-sns-hv";
++						regulator-min-microvolt = <2850000>;
++						regulator-max-microvolt = <2850000>;
++						regulator-always-on;
++						regulator-boot-on;
++					};
++
++					ldo7 {
++						regulator-name = "va-cam1-hv";
++						regulator-min-microvolt = <2700000>;
++						regulator-max-microvolt = <2700000>;
++						regulator-always-on;
++						regulator-boot-on;
++					};
++
++					ldo8 {
++						regulator-name = "va-ap-rtc";
++						regulator-min-microvolt = <1100000>;
++						regulator-max-microvolt = <1100000>;
++						ti,enable-ldo8-tracking;
++						regulator-always-on;
++						regulator-boot-on;
++					};
++
++					ldo9 {
++						regulator-name = "vi-sdcard";
++						regulator-min-microvolt = <1800000>;
++						regulator-max-microvolt = <2900000>;
++						regulator-always-on;
++						regulator-boot-on;
++					};
++
++					ldousb {
++						regulator-name = "avdd-usb";
++						regulator-min-microvolt = <3300000>;
++						regulator-max-microvolt = <3300000>;
++						regulator-always-on;
++						regulator-boot-on;
++					};
++
++					vdd_3v3_hdmi: ldoln {
++						regulator-name = "va-hdmi";
++						regulator-min-microvolt = <3300000>;
++						regulator-max-microvolt = <3300000>;
++						regulator-always-on;
++						regulator-boot-on;
++					};
++				};
++			};
++
++			rtc {
++				compatible = "ti,palmas-rtc";
++				interrupt-parent = <&palmas>;
++				interrupts = <8 0>;
++			};
++
++		};
++	};
++
++	pmc@7000e400 {
++		nvidia,invert-interrupt;
++	};
++
++	/* eMMC */
++	sdhci@78000600 {
++		status = "okay";
++		bus-width = <8>;
++		vmmc-supply = <&vdd_1v8>;
++		non-removable;
++	};
++
++	usb@7d000000 {
++		status = "okay";
++	};
++
++	usb-phy@7d000000 {
++		status = "okay";
++		nvidia,xcvr-setup = <7>;
++		nvidia,xcvr-lsfslew = <2>;
++		nvidia,xcvr-lsrslew = <2>;
++		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
++		/* Should be changed to "otg" once we have vbus_supply */
++		/* As of now, USB devices need to be powered externally */
++		dr_mode = "host";
++	};
++
++	backlight: backlight {
++		compatible = "pwm-backlight";
++		pwms = <&pwm 1 40000>;
++
++		brightness-levels = <0 4 8 16 32 64 128 255>;
++		default-brightness-level = <6>;
++
++		power-supply = <&lcd_bl_en>;
++	};
++
++	clocks {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		clk32k_in: clock {
++			compatible = "fixed-clock";
++			reg = <0>;
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++		};
++	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++
++		power {
++			label = "Power";
++			gpios = <&gpio TEGRA_GPIO(Q, 0) GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_POWER>;
++			gpio-key,wakeup;
++		};
++
++		volume_down {
++			label = "Volume Down";
++			gpios = <&gpio TEGRA_GPIO(Q, 2) GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_VOLUMEDOWN>;
++		};
++
++		volume_up {
++			label = "Volume Up";
++			gpios = <&gpio TEGRA_GPIO(R, 2) GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_VOLUMEUP>;
++		};
++	};
++
++	regulators {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		/* FIXME: output of BQ24192 */
++		vs_sys: regulator@0 {
++			compatible = "regulator-fixed";
++			reg = <0>;
++			regulator-name = "VS_SYS";
++			regulator-min-microvolt = <4200000>;
++			regulator-max-microvolt = <4200000>;
++			regulator-always-on;
++			regulator-boot-on;
++		};
++
++		lcd_bl_en: regulator@1 {
++			compatible = "regulator-fixed";
++			reg = <1>;
++			regulator-name = "VDD_LCD_BL";
++			regulator-min-microvolt = <16500000>;
++			regulator-max-microvolt = <16500000>;
++			gpio = <&gpio TEGRA_GPIO(H, 2) GPIO_ACTIVE_HIGH>;
++			enable-active-high;
++			vin-supply = <&vs_sys>;
++			regulator-always-on;
++			regulator-boot-on;
++		};
++
++		vdd_lcd: regulator@2 {
++			compatible = "regulator-fixed";
++			reg = <2>;
++			regulator-name = "VD_LCD_1V8";
++			regulator-min-microvolt = <1800000>;
++			regulator-max-microvolt = <1800000>;
++			gpio = <&palmas_gpio 4 GPIO_ACTIVE_HIGH>;
++			enable-active-high;
++			vin-supply = <&vdd_1v8>;
++			regulator-always-on;
++			regulator-boot-on;
++		};
++
++		vdd_5v0_hdmi: regulator@3 {
++			compatible = "regulator-fixed";
++			reg = <3>;
++			regulator-name = "VDD_5V_HDMI_CONN";
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++			gpio = <&gpio TEGRA_GPIO(K, 6) GPIO_ACTIVE_HIGH>;
++			enable-active-high;
++			gpio-open-drain;
++			vin-supply = <&vdd_smps10_out1>;
++			regulator-always-on;
++			regulator-boot-on;
++		};
++	};
++};
+-- 
+1.9.2
