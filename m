@@ -1,61 +1,51 @@
 From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 04/10] drm/nouveau/fb: add GK20A support
-Date: Thu, 1 May 2014 13:49:28 +0900
-Message-ID: <CAAVeFuJrs8Sv9UZg=Tj6gJeHOXj9YSX4gT1TNdrfXvVfrBHerQ@mail.gmail.com>
-References: <1398060142-7937-1-git-send-email-acourbot@nvidia.com>
- <1398060142-7937-5-git-send-email-acourbot@nvidia.com> <20140422104052.GB22426@ulmo>
- <53572077.6090305@nvidia.com> <CAAVeFuKscuN-=HJOarbzFkG1ARq6-Nfc2pf1ibam9b61Cjbs6Q@mail.gmail.com>
- <20140428114437.GK19455@ulmo>
+Subject: Re: [PATCH v3 6/9] drm/nouveau/graph: enable when using
+ external firmware
+Date: Thu, 1 May 2014 13:53:58 +0900
+Message-ID: <CAAVeFuK7H3zK3CaxYT4MP4pY=r2dF0oojjYHG1DGRf7Sq0TExg@mail.gmail.com>
+References: <1398410396-23338-1-git-send-email-acourbot@nvidia.com>
+ <1398410396-23338-7-git-send-email-acourbot@nvidia.com>
+ <CACAvsv51Ju_ZqJfNU5GzzEmDzf2Fr6Xr_5yGRtfqOQRVTgvDPg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140428114437.GK19455@ulmo>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <CACAvsv51Ju_ZqJfNU5GzzEmDzf2Fr6Xr_5yGRtfqOQRVTgvDPg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Apr 28, 2014 at 8:44 PM, Thierry Reding
-<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Wed, Apr 23, 2014 at 03:11:01PM +0900, Alexandre Courbot wrote:
->> On Wed, Apr 23, 2014 at 11:07 AM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->> > On 04/22/2014 07:40 PM, Thierry Reding wrote:
->> >>
->> >> * PGP Signed by an unknown key
->> >>
->> >>
->> >> On Mon, Apr 21, 2014 at 03:02:16PM +0900, Alexandre Courbot wrote:
->> >> [...]
->> >>>
->> >>> diff --git a/drivers/gpu/drm/nouveau/core/subdev/fb/ramgk20a.c
->> >>> b/drivers/gpu/drm/nouveau/core/subdev/fb/ramgk20a.c
->> >>
->> >> [...]
->> >>>
->> >>> +               pages = dma_alloc_from_contiguous(dev, ncmin, order);
->> >>> +               if (!pages) {
->> >>> +                       gk20a_ram_put(pfb, &mem);
->> >>> +                       return -ENOMEM;
->> >>> +               }
->> >>> +
->> >>> +               dma_addr = pfn_to_dma(nv_device_base(nv_device(pfb)),
->> >>> +                                     page_to_pfn(pages));
->> >>
->> >>
->> >> This breaks compilation on x86 because neither pfn_to_dma() nor
->> >> dma_to_pfn() are available. Is there some other way this can be
->> >> allocated so that these functions don't need to be called?
->> >
->> >
->> > Mmm, this is bad. There is probably another more portable way to do this.
->> > Let me look for it.
+On Mon, Apr 28, 2014 at 11:10 AM, Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Fri, Apr 25, 2014 at 5:19 PM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> nvc0_graph_ctor() would only let the graphics engine be enabled if its
+>> oclass has a proper microcode linked to it. This prevents GR from being
+>> enabled at all on chips that rely exclusively on external firmware, even
+>> though such a use-case is valid.
 >>
->> page_to_phys()/phys_to_page() can be used by drivers and will work
->> just fine here since the CPU and GPU use the same physical addresses
->> to access memory.
+>> Relax the conditions enabling the GR engine to also include the case
+>> where an external firmware has also been loaded.
+> I'm happy to take this patch as-is.  I do wonder if we should do
+> something like this though:
 >
-> I'm wondering how this is going to pan out when we try adding IOMMU
-> support. But I guess we can cross that bridge when we come to it.
+> if (nouveau_boolopt(device->cfgopt, "NvGrUseFW", oclass->fecs.ucode == NULL))
+>
+> Which will automatically switch to external firmware if there's no
+> internal implementation available.
+>
+> Thoughts?  This could be a separate patch even, if preferred.
 
-Agreed. Besides I hope the day won't come where we have to go through
-2 layers of memory translation for the GPU...
+Sure, that should work. Do you mind if I come with a follow-up patch
+for this so I don't have to re-sent the current patch series? Since
+this is the only comment it received so far.
+
+Thanks,
+Alex.
