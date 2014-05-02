@@ -1,50 +1,324 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v4 7/9] drm/nouveau/graph: pad firmware code at
-	load time
-Date: Fri, 2 May 2014 18:32:40 +0900
-Message-ID: <1399023162-13159-8-git-send-email-acourbot@nvidia.com>
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH v4 8/9] drm/nouveau/graph: add GK20A support
+Date: Fri, 2 May 2014 18:32:41 +0900
+Message-ID: <1399023162-13159-9-git-send-email-acourbot@nvidia.com>
 References: <1399023162-13159-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <1399023162-13159-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1399023162-13159-1-git-send-email-acourbot@nvidia.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Ben Skeggs <bskeggs@redhat.com>
+Cc: gnurou@gmail.com, nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Pad the microcode to a multiple of 0x40 words, otherwise firmware will
-fail to run from non-prepadded firmware files.
+Add a GR device for GK20A based on NVE4, with the correct classes
+definitions (GK20A's 3D class is 0xa297).
 
-Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Most of the NVE4 code can be used on GK20A, so make relevant bits of
+NVE4 available to other chips as well.
+
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
- drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/gpu/drm/nouveau/Makefile                   |  2 +
+ .../gpu/drm/nouveau/core/engine/graph/ctxgk20a.c   | 53 ++++++++++++++++++++++
+ .../gpu/drm/nouveau/core/engine/graph/ctxnvc0.h    |  9 ++++
+ .../gpu/drm/nouveau/core/engine/graph/ctxnve4.c    | 14 +++---
+ drivers/gpu/drm/nouveau/core/engine/graph/gk20a.c  | 47 +++++++++++++++++++
+ drivers/gpu/drm/nouveau/core/engine/graph/nvc0.h   |  2 +
+ drivers/gpu/drm/nouveau/core/engine/graph/nve4.c   |  4 +-
+ .../gpu/drm/nouveau/core/include/engine/graph.h    |  1 +
+ 8 files changed, 123 insertions(+), 9 deletions(-)
+ create mode 100644 drivers/gpu/drm/nouveau/core/engine/graph/ctxgk20a.c
+ create mode 100644 drivers/gpu/drm/nouveau/core/engine/graph/gk20a.c
 
-diff --git a/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c b/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c
-index 83dca0700ae5..bf7bdb1f291e 100644
---- a/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c
-+++ b/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c
-@@ -894,6 +894,10 @@ nvc0_graph_init_fw(struct nvc0_graph_priv *priv, u32 fuc_base,
- 			nv_wr32(priv, fuc_base + 0x0188, i >> 6);
- 		nv_wr32(priv, fuc_base + 0x0184, code->data[i]);
- 	}
+diff --git a/drivers/gpu/drm/nouveau/Makefile b/drivers/gpu/drm/nouveau/Makefile
+index e6fe53bab593..1aaa2ef577d9 100644
+--- a/drivers/gpu/drm/nouveau/Makefile
++++ b/drivers/gpu/drm/nouveau/Makefile
+@@ -259,6 +259,7 @@ nouveau-y += core/engine/graph/ctxnvc8.o
+ nouveau-y += core/engine/graph/ctxnvd7.o
+ nouveau-y += core/engine/graph/ctxnvd9.o
+ nouveau-y += core/engine/graph/ctxnve4.o
++nouveau-y += core/engine/graph/ctxgk20a.o
+ nouveau-y += core/engine/graph/ctxnvf0.o
+ nouveau-y += core/engine/graph/ctxnv108.o
+ nouveau-y += core/engine/graph/ctxgm107.o
+@@ -279,6 +280,7 @@ nouveau-y += core/engine/graph/nvc8.o
+ nouveau-y += core/engine/graph/nvd7.o
+ nouveau-y += core/engine/graph/nvd9.o
+ nouveau-y += core/engine/graph/nve4.o
++nouveau-y += core/engine/graph/gk20a.o
+ nouveau-y += core/engine/graph/nvf0.o
+ nouveau-y += core/engine/graph/nv108.o
+ nouveau-y += core/engine/graph/gm107.o
+diff --git a/drivers/gpu/drm/nouveau/core/engine/graph/ctxgk20a.c b/drivers/gpu/drm/nouveau/core/engine/graph/ctxgk20a.c
+new file mode 100644
+index 000000000000..224ee0287ab7
+--- /dev/null
++++ b/drivers/gpu/drm/nouveau/core/engine/graph/ctxgk20a.c
+@@ -0,0 +1,53 @@
++/*
++ * Copyright (c) 2014, NVIDIA CORPORATION. All rights reserved.
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a
++ * copy of this software and associated documentation files (the "Software"),
++ * to deal in the Software without restriction, including without limitation
++ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
++ * and/or sell copies of the Software, and to permit persons to whom the
++ * Software is furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
++ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
++ * DEALINGS IN THE SOFTWARE.
++ */
 +
-+	/* code must be padded to 0x40 words */
-+	for (; i & 0x3f; i++)
-+		nv_wr32(priv, fuc_base + 0x0184, 0);
- }
++#include "ctxnvc0.h"
++
++static const struct nvc0_graph_pack
++gk20a_grctx_pack_mthd[] = {
++	{ nve4_grctx_init_a097_0, 0xa297 },
++	{ nvc0_grctx_init_902d_0, 0x902d },
++	{}
++};
++
++struct nouveau_oclass *
++gk20a_grctx_oclass = &(struct nvc0_grctx_oclass) {
++	.base.handle = NV_ENGCTX(GR, 0xea),
++	.base.ofuncs = &(struct nouveau_ofuncs) {
++		.ctor = nvc0_graph_context_ctor,
++		.dtor = nvc0_graph_context_dtor,
++		.init = _nouveau_graph_context_init,
++		.fini = _nouveau_graph_context_fini,
++		.rd32 = _nouveau_graph_context_rd32,
++		.wr32 = _nouveau_graph_context_wr32,
++	},
++	.main  = nve4_grctx_generate_main,
++	.mods  = nve4_grctx_generate_mods,
++	.unkn  = nve4_grctx_generate_unkn,
++	.hub   = nve4_grctx_pack_hub,
++	.gpc   = nve4_grctx_pack_gpc,
++	.zcull = nvc0_grctx_pack_zcull,
++	.tpc   = nve4_grctx_pack_tpc,
++	.ppc   = nve4_grctx_pack_ppc,
++	.icmd  = nve4_grctx_pack_icmd,
++	.mthd  = gk20a_grctx_pack_mthd,
++}.base;
+diff --git a/drivers/gpu/drm/nouveau/core/engine/graph/ctxnvc0.h b/drivers/gpu/drm/nouveau/core/engine/graph/ctxnvc0.h
+index 9c815d1f99ef..8da8b627b9d0 100644
+--- a/drivers/gpu/drm/nouveau/core/engine/graph/ctxnvc0.h
++++ b/drivers/gpu/drm/nouveau/core/engine/graph/ctxnvc0.h
+@@ -69,7 +69,9 @@ extern struct nouveau_oclass *nvd7_grctx_oclass;
+ extern struct nouveau_oclass *nvd9_grctx_oclass;
  
- static void
+ extern struct nouveau_oclass *nve4_grctx_oclass;
++extern struct nouveau_oclass *gk20a_grctx_oclass;
+ void nve4_grctx_generate_main(struct nvc0_graph_priv *, struct nvc0_grctx *);
++void nve4_grctx_generate_mods(struct nvc0_graph_priv *, struct nvc0_grctx *);
+ void nve4_grctx_generate_unkn(struct nvc0_graph_priv *);
+ void nve4_grctx_generate_r418bb8(struct nvc0_graph_priv *);
+ 
+@@ -151,6 +153,13 @@ extern const struct nvc0_graph_init nve4_grctx_init_gpm_0[];
+ 
+ extern const struct nvc0_graph_init nve4_grctx_init_pes_0[];
+ 
++extern const struct nvc0_graph_pack nve4_grctx_pack_hub[];
++extern const struct nvc0_graph_pack nve4_grctx_pack_gpc[];
++extern const struct nvc0_graph_pack nve4_grctx_pack_tpc[];
++extern const struct nvc0_graph_pack nve4_grctx_pack_ppc[];
++extern const struct nvc0_graph_pack nve4_grctx_pack_icmd[];
++extern const struct nvc0_graph_init nve4_grctx_init_a097_0[];
++
+ extern const struct nvc0_graph_pack nvf0_grctx_pack_mthd[];
+ 
+ extern const struct nvc0_graph_init nvf0_grctx_init_pri_0[];
+diff --git a/drivers/gpu/drm/nouveau/core/engine/graph/ctxnve4.c b/drivers/gpu/drm/nouveau/core/engine/graph/ctxnve4.c
+index 49a14b116a5f..c5b249238587 100644
+--- a/drivers/gpu/drm/nouveau/core/engine/graph/ctxnve4.c
++++ b/drivers/gpu/drm/nouveau/core/engine/graph/ctxnve4.c
+@@ -272,13 +272,13 @@ nve4_grctx_init_icmd_0[] = {
+ 	{}
+ };
+ 
+-static const struct nvc0_graph_pack
++const struct nvc0_graph_pack
+ nve4_grctx_pack_icmd[] = {
+ 	{ nve4_grctx_init_icmd_0 },
+ 	{}
+ };
+ 
+-static const struct nvc0_graph_init
++const struct nvc0_graph_init
+ nve4_grctx_init_a097_0[] = {
+ 	{ 0x000800,   8, 0x40, 0x00000000 },
+ 	{ 0x000804,   8, 0x40, 0x00000000 },
+@@ -697,7 +697,7 @@ nve4_grctx_init_be_0[] = {
+ 	{}
+ };
+ 
+-static const struct nvc0_graph_pack
++const struct nvc0_graph_pack
+ nve4_grctx_pack_hub[] = {
+ 	{ nvc0_grctx_init_main_0 },
+ 	{ nve4_grctx_init_fe_0 },
+@@ -737,7 +737,7 @@ nve4_grctx_init_gpm_0[] = {
+ 	{}
+ };
+ 
+-static const struct nvc0_graph_pack
++const struct nvc0_graph_pack
+ nve4_grctx_pack_gpc[] = {
+ 	{ nvc0_grctx_init_gpc_unk_0 },
+ 	{ nvd9_grctx_init_prop_0 },
+@@ -802,7 +802,7 @@ nve4_grctx_init_sm_0[] = {
+ 	{}
+ };
+ 
+-static const struct nvc0_graph_pack
++const struct nvc0_graph_pack
+ nve4_grctx_pack_tpc[] = {
+ 	{ nvd7_grctx_init_pe_0 },
+ 	{ nve4_grctx_init_tex_0 },
+@@ -826,7 +826,7 @@ nve4_grctx_init_cbm_0[] = {
+ 	{}
+ };
+ 
+-static const struct nvc0_graph_pack
++const struct nvc0_graph_pack
+ nve4_grctx_pack_ppc[] = {
+ 	{ nve4_grctx_init_pes_0 },
+ 	{ nve4_grctx_init_cbm_0 },
+@@ -838,7 +838,7 @@ nve4_grctx_pack_ppc[] = {
+  * PGRAPH context implementation
+  ******************************************************************************/
+ 
+-static void
++void
+ nve4_grctx_generate_mods(struct nvc0_graph_priv *priv, struct nvc0_grctx *info)
+ {
+ 	u32 magic[GPC_MAX][2];
+diff --git a/drivers/gpu/drm/nouveau/core/engine/graph/gk20a.c b/drivers/gpu/drm/nouveau/core/engine/graph/gk20a.c
+new file mode 100644
+index 000000000000..83048a56430d
+--- /dev/null
++++ b/drivers/gpu/drm/nouveau/core/engine/graph/gk20a.c
+@@ -0,0 +1,47 @@
++/*
++ * Copyright (c) 2014, NVIDIA CORPORATION. All rights reserved.
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a
++ * copy of this software and associated documentation files (the "Software"),
++ * to deal in the Software without restriction, including without limitation
++ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
++ * and/or sell copies of the Software, and to permit persons to whom the
++ * Software is furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
++ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
++ * DEALINGS IN THE SOFTWARE.
++ */
++
++#include "nvc0.h"
++#include "ctxnvc0.h"
++
++static struct nouveau_oclass
++gk20a_graph_sclass[] = {
++	{ 0x902d, &nouveau_object_ofuncs },
++	{ 0xa040, &nouveau_object_ofuncs },
++	{ 0xa297, &nouveau_object_ofuncs },
++	{ 0xa0c0, &nouveau_object_ofuncs },
++	{}
++};
++
++struct nouveau_oclass *
++gk20a_graph_oclass = &(struct nvc0_graph_oclass) {
++	.base.handle = NV_ENGINE(GR, 0xea),
++	.base.ofuncs = &(struct nouveau_ofuncs) {
++		.ctor = nvc0_graph_ctor,
++		.dtor = nvc0_graph_dtor,
++		.init = nve4_graph_init,
++		.fini = nve4_graph_fini,
++	},
++	.cclass = &gk20a_grctx_oclass,
++	.sclass = gk20a_graph_sclass,
++	.mmio = nve4_graph_pack_mmio,
++}.base;
+diff --git a/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.h b/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.h
+index 90d44616c876..75203a99d902 100644
+--- a/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.h
++++ b/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.h
+@@ -116,6 +116,7 @@ int  nvc0_graph_ctor(struct nouveau_object *, struct nouveau_object *,
+ 		     struct nouveau_object **);
+ void nvc0_graph_dtor(struct nouveau_object *);
+ int  nvc0_graph_init(struct nouveau_object *);
++int  nve4_graph_fini(struct nouveau_object *, bool);
+ int  nve4_graph_init(struct nouveau_object *);
+ 
+ extern struct nouveau_oclass nvc0_graph_sclass[];
+@@ -217,6 +218,7 @@ extern const struct nvc0_graph_init nve4_graph_init_main_0[];
+ extern const struct nvc0_graph_init nve4_graph_init_tpccs_0[];
+ extern const struct nvc0_graph_init nve4_graph_init_pe_0[];
+ extern const struct nvc0_graph_init nve4_graph_init_be_0[];
++extern const struct nvc0_graph_pack nve4_graph_pack_mmio[];
+ 
+ extern const struct nvc0_graph_init nvf0_graph_init_fe_0[];
+ extern const struct nvc0_graph_init nvf0_graph_init_sked_0[];
+diff --git a/drivers/gpu/drm/nouveau/core/engine/graph/nve4.c b/drivers/gpu/drm/nouveau/core/engine/graph/nve4.c
+index f7c011217175..51e0c075ad34 100644
+--- a/drivers/gpu/drm/nouveau/core/engine/graph/nve4.c
++++ b/drivers/gpu/drm/nouveau/core/engine/graph/nve4.c
+@@ -151,7 +151,7 @@ nve4_graph_init_be_0[] = {
+ 	{}
+ };
+ 
+-static const struct nvc0_graph_pack
++const struct nvc0_graph_pack
+ nve4_graph_pack_mmio[] = {
+ 	{ nve4_graph_init_main_0 },
+ 	{ nvc0_graph_init_fe_0 },
+@@ -189,7 +189,7 @@ nve4_graph_pack_mmio[] = {
+  * PGRAPH engine/subdev functions
+  ******************************************************************************/
+ 
+-static int
++int
+ nve4_graph_fini(struct nouveau_object *object, bool suspend)
+ {
+ 	struct nvc0_graph_priv *priv = (void *)object;
+diff --git a/drivers/gpu/drm/nouveau/core/include/engine/graph.h b/drivers/gpu/drm/nouveau/core/include/engine/graph.h
+index 871edfdf3d5b..8c1d4772da0c 100644
+--- a/drivers/gpu/drm/nouveau/core/include/engine/graph.h
++++ b/drivers/gpu/drm/nouveau/core/include/engine/graph.h
+@@ -68,6 +68,7 @@ extern struct nouveau_oclass *nvc8_graph_oclass;
+ extern struct nouveau_oclass *nvd7_graph_oclass;
+ extern struct nouveau_oclass *nvd9_graph_oclass;
+ extern struct nouveau_oclass *nve4_graph_oclass;
++extern struct nouveau_oclass *gk20a_graph_oclass;
+ extern struct nouveau_oclass *nvf0_graph_oclass;
+ extern struct nouveau_oclass *nv108_graph_oclass;
+ extern struct nouveau_oclass *gm107_graph_oclass;
 -- 
 1.9.2
