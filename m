@@ -1,8 +1,8 @@
 From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v4 6/9] drm/nouveau/graph: enable when using
-	external fw
-Date: Fri, 2 May 2014 18:32:39 +0900
-Message-ID: <1399023162-13159-7-git-send-email-acourbot@nvidia.com>
+Subject: [PATCH v4 7/9] drm/nouveau/graph: pad firmware code at
+	load time
+Date: Fri, 2 May 2014 18:32:40 +0900
+Message-ID: <1399023162-13159-8-git-send-email-acourbot@nvidia.com>
 References: <1399023162-13159-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,51 +22,29 @@ To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-nvc0_graph_ctor() would only let the graphics engine be enabled if its
-oclass has a proper microcode linked to it. This prevents GR from being
-enabled at all on chips that rely exclusively on external firmware, even
-though such a use-case is valid.
-
-Relax the conditions enabling the GR engine to also include the case
-where an external firmware has also been loaded.
-
-Also switch to external firmware if the graph class has no microcode
-linked to it.
+Pad the microcode to a multiple of 0x40 words, otherwise firmware will
+fail to run from non-prepadded firmware files.
 
 Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c b/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c
-index f3c7329da0a0..83dca0700ae5 100644
+index 83dca0700ae5..bf7bdb1f291e 100644
 --- a/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c
 +++ b/drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c
-@@ -1259,10 +1259,14 @@ nvc0_graph_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
- 	struct nvc0_graph_oclass *oclass = (void *)bclass;
- 	struct nouveau_device *device = nv_device(parent);
- 	struct nvc0_graph_priv *priv;
-+	bool use_ext_fw, enable;
- 	int ret, i;
- 
--	ret = nouveau_graph_create(parent, engine, bclass,
--				   (oclass->fecs.ucode != NULL), &priv);
-+	use_ext_fw = nouveau_boolopt(device->cfgopt, "NvGrUseFW",
-+				     oclass->fecs.ucode == NULL);
-+	enable = use_ext_fw || oclass->fecs.ucode != NULL;
+@@ -894,6 +894,10 @@ nvc0_graph_init_fw(struct nvc0_graph_priv *priv, u32 fuc_base,
+ 			nv_wr32(priv, fuc_base + 0x0188, i >> 6);
+ 		nv_wr32(priv, fuc_base + 0x0184, code->data[i]);
+ 	}
 +
-+	ret = nouveau_graph_create(parent, engine, bclass, enable, &priv);
- 	*pobject = nv_object(priv);
- 	if (ret)
- 		return ret;
-@@ -1272,7 +1276,7 @@ nvc0_graph_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
++	/* code must be padded to 0x40 words */
++	for (; i & 0x3f; i++)
++		nv_wr32(priv, fuc_base + 0x0184, 0);
+ }
  
- 	priv->base.units = nvc0_graph_units;
- 
--	if (nouveau_boolopt(device->cfgopt, "NvGrUseFW", false)) {
-+	if (use_ext_fw) {
- 		nv_info(priv, "using external firmware\n");
- 		if (nvc0_graph_ctor_fw(priv, "fuc409c", &priv->fuc409c) ||
- 		    nvc0_graph_ctor_fw(priv, "fuc409d", &priv->fuc409d) ||
+ static void
 -- 
 1.9.2
