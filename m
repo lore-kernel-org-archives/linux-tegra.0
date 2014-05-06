@@ -1,7 +1,7 @@
 From: Christopher Freeman <cfreeman@nvidia.com>
-Subject: [PATCH v1 1/3] dma: tegra: finer granularity residual for tx_status
-Date: Tue, 6 May 2014 14:22:21 -0700
-Message-ID: <1399411343-12222-2-git-send-email-cfreeman@nvidia.com>
+Subject: [PATCH v1 2/3] dma: tegra: change interrupt-related log levels
+Date: Tue, 6 May 2014 14:22:22 -0700
+Message-ID: <1399411343-12222-3-git-send-email-cfreeman@nvidia.com>
 References: <1399411343-12222-1-git-send-email-cfreeman@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,95 +12,37 @@ To: ldewangan@nvidia.com, swarren@nvidia.com, vinod.koul@intel.com, dan.j.willia
 Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Christopher Freeman <cfreeman@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Get word-level granularity from hardware for calculating
-the transfer count remaining.
+Log levels from info -> debug for a couple of interrupt
+related prints.  Interrupts may be handled outside of the ISR
+when tx_status is called because they need to be handled before
+calculating the residual.
 
 Signed-off-by: Christopher Freeman <cfreeman@nvidia.com>
 ---
- drivers/dma/tegra20-apb-dma.c |   52 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
+ drivers/dma/tegra20-apb-dma.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 03ad64e..cc6b2fd 100644
+index cc6b2fd..094e97d 100644
 --- a/drivers/dma/tegra20-apb-dma.c
 +++ b/drivers/dma/tegra20-apb-dma.c
-@@ -779,15 +779,54 @@ skip_dma_stop:
+@@ -675,7 +675,7 @@ static irqreturn_t tegra_dma_isr(int irq, void *dev_id)
+ 	}
+ 
  	spin_unlock_irqrestore(&tdc->lock, flags);
+-	dev_info(tdc2dev(tdc),
++	dev_dbg(tdc2dev(tdc),
+ 		"Interrupt already served status 0x%08lx\n", status);
+ 	return IRQ_NONE;
  }
- 
-+static int tegra_dma_wcount_in_bytes(struct dma_chan *dc)
-+{
-+	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
-+	struct tegra_dma_sg_req *sgreq;
-+	unsigned long wcount = 0;
-+	unsigned long status = 0;
-+	int bytes = 0;
-+
-+	if (list_empty(&tdc->pending_sg_req) || !tdc->busy)
-+		return 0;
-+
-+	tegra_dma_pause(tdc, true);
-+
-+	/* in case of interrupt, handle it and don't read wcount reg */
-+	status = tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
-+	if (status & TEGRA_APBDMA_STATUS_ISE_EOC) {
-+		tdc_write(tdc, TEGRA_APBDMA_CHAN_STATUS, status);
-+		dev_info(tdc2dev(tdc), "%s():handling isr\n", __func__);
-+		tdc->isr_handler(tdc, false);
-+		tegra_dma_resume(tdc);
-+		return 0;
-+	}
-+
-+	if (tdc->tdma->chip_data->support_separate_wcount_reg)
-+		wcount = tdc_read(tdc, TEGRA_APBDMA_CHAN_WORD_TRANSFER);
-+	else
-+		wcount = tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
-+
-+	sgreq = list_first_entry(&tdc->pending_sg_req,
-+				typeof(*sgreq), node);
-+	bytes = get_current_xferred_count(tdc, sgreq, wcount);
-+
-+	tegra_dma_resume(tdc);
-+
-+	return bytes;
-+}
-+
- static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
- 	dma_cookie_t cookie, struct dma_tx_state *txstate)
- {
- 	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
- 	struct tegra_dma_desc *dma_desc;
- 	struct tegra_dma_sg_req *sg_req;
-+	struct tegra_dma_sg_req *first_entry = NULL;
- 	enum dma_status ret;
- 	unsigned long flags;
- 	unsigned int residual;
-+	unsigned int hw_byte_count = 0;
- 
- 	ret = dma_cookie_status(dc, cookie, txstate);
- 	if (ret == DMA_COMPLETE)
-@@ -812,9 +851,22 @@ static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
- 	list_for_each_entry(sg_req, &tdc->pending_sg_req, node) {
- 		dma_desc = sg_req->dma_desc;
- 		if (dma_desc->txd.cookie == cookie) {
-+			hw_byte_count = tegra_dma_wcount_in_bytes(dc);
-+
-+			if (!list_empty(&tdc->pending_sg_req))
-+				first_entry =
-+					list_first_entry(&tdc->pending_sg_req,
-+						typeof(*first_entry), node);
-+
- 			residual =  dma_desc->bytes_requested -
- 					(dma_desc->bytes_transferred %
- 						dma_desc->bytes_requested);
-+
-+			/* hw byte count only applies to current transaction */
-+			if (first_entry &&
-+				first_entry->dma_desc->txd.cookie == cookie)
-+				residual -= hw_byte_count;
-+
- 			dma_set_residue(txstate, residual);
- 			ret = dma_desc->dma_status;
- 			spin_unlock_irqrestore(&tdc->lock, flags);
+@@ -796,7 +796,7 @@ static int tegra_dma_wcount_in_bytes(struct dma_chan *dc)
+ 	status = tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
+ 	if (status & TEGRA_APBDMA_STATUS_ISE_EOC) {
+ 		tdc_write(tdc, TEGRA_APBDMA_CHAN_STATUS, status);
+-		dev_info(tdc2dev(tdc), "%s():handling isr\n", __func__);
++		dev_dbg(tdc2dev(tdc), "%s():handling isr\n", __func__);
+ 		tdc->isr_handler(tdc, false);
+ 		tegra_dma_resume(tdc);
+ 		return 0;
 -- 
 1.7.9.5
