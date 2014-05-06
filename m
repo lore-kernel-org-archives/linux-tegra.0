@@ -1,81 +1,71 @@
-From: Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [Nouveau] [PATCH v4 0/9] drm/nouveau: support for GK20A, cont'd
-Date: Tue, 6 May 2014 10:11:27 +1000
-Message-ID: <CACAvsv4k8W_vcG3ygk_NCWttKM_A51BA8aGvK_Nqz_CmRMFjiw@mail.gmail.com>
-References: <1399023162-13159-1-git-send-email-acourbot@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] ARM: tegra: Support reboot modes
+Date: Tue,  6 May 2014 17:04:11 +0200
+Message-ID: <1399388651-12819-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1399023162-13159-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, May 2, 2014 at 7:32 PM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> Latest patches for GK20A, taking comments received for v3 into account.
->
-> Changes since v3:
-> - use only pfn_to_page() and page_to_pfn() in GK20A's FB. These functions
->   are present on every arch and the physical address to page frame number
->   conversion is also consistently a shift of PAGE_SHIFT. This part will
->   probably be replaced by something nicer in the future anyway.
-> - fixed a warning on 64-bit architectures when printing a dma_addr_t
-> - tested compilation on x86_64 and ensured there was no error! ;)
-> - in graph, always use external firmware if no microcode is linked for the
->   graph class (instead of only relying on the NvGrUseFW parameter).
-Hey Alex,
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I've merged all the patches and they'll make it into the merge window for 3.16.
+The boot ROM on Tegra SoCs supports booting into forced recovery mode
+(RCM) by setting a bit in the PMC scratch register 0. Similarily, the
+Android bootloader examines some of the bits in this register to disable
+autoboot or enter recovery mode.
 
-Thanks again,
-Ben.
+Support these modes by setting the corresponding bits depending on the
+specified reboot command (forced-recovery, bootloader, recovery). Recent
+systemd-based distributions allow this to be specified using an optional
+argument to the reboot command.
 
->
-> Alexandre Courbot (9):
->   drm/nouveau/bar: only ioremap BAR3 if it exists
->   drm/nouveau/bar/nvc0: support chips without BAR3
->   drm/nouveau/ibus: add GK20A support
->   drm/nouveau/fb: add GK20A support
->   drm/nouveau/fifo: add GK20A support
->   drm/nouveau/graph: enable when using external fw
->   drm/nouveau/graph: pad firmware code at load time
->   drm/nouveau/graph: add GK20A support
->   drm/nouveau: support for probing GK20A
->
->  drivers/gpu/drm/nouveau/Makefile                   |   6 +
->  drivers/gpu/drm/nouveau/core/engine/device/nve0.c  |  17 +++
->  drivers/gpu/drm/nouveau/core/engine/fifo/gk20a.c   |  35 +++++
->  drivers/gpu/drm/nouveau/core/engine/fifo/nve0.h    |   1 +
->  .../gpu/drm/nouveau/core/engine/graph/ctxgk20a.c   |  53 +++++++
->  .../gpu/drm/nouveau/core/engine/graph/ctxnvc0.h    |   9 ++
->  .../gpu/drm/nouveau/core/engine/graph/ctxnve4.c    |  14 +-
->  drivers/gpu/drm/nouveau/core/engine/graph/gk20a.c  |  47 ++++++
->  drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c   |  14 +-
->  drivers/gpu/drm/nouveau/core/engine/graph/nvc0.h   |   2 +
->  drivers/gpu/drm/nouveau/core/engine/graph/nve4.c   |   4 +-
->  drivers/gpu/drm/nouveau/core/include/engine/fifo.h |   1 +
->  .../gpu/drm/nouveau/core/include/engine/graph.h    |   1 +
->  drivers/gpu/drm/nouveau/core/include/subdev/fb.h   |   1 +
->  drivers/gpu/drm/nouveau/core/include/subdev/ibus.h |   1 +
->  drivers/gpu/drm/nouveau/core/subdev/bar/base.c     |   6 +-
->  drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c     | 114 +++++++-------
->  drivers/gpu/drm/nouveau/core/subdev/fb/gk20a.c     |  56 +++++++
->  drivers/gpu/drm/nouveau/core/subdev/fb/priv.h      |   1 +
->  drivers/gpu/drm/nouveau/core/subdev/fb/ramgk20a.c  | 167 +++++++++++++++++++++
->  drivers/gpu/drm/nouveau/core/subdev/ibus/gk20a.c   | 103 +++++++++++++
->  21 files changed, 584 insertions(+), 69 deletions(-)
->  create mode 100644 drivers/gpu/drm/nouveau/core/engine/fifo/gk20a.c
->  create mode 100644 drivers/gpu/drm/nouveau/core/engine/graph/ctxgk20a.c
->  create mode 100644 drivers/gpu/drm/nouveau/core/engine/graph/gk20a.c
->  create mode 100644 drivers/gpu/drm/nouveau/core/subdev/fb/gk20a.c
->  create mode 100644 drivers/gpu/drm/nouveau/core/subdev/fb/ramgk20a.c
->  create mode 100644 drivers/gpu/drm/nouveau/core/subdev/ibus/gk20a.c
->
-> --
-> 1.9.2
->
-> _______________________________________________
-> Nouveau mailing list
-> Nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-> http://lists.freedesktop.org/mailman/listinfo/nouveau
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/pmc.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
+index fb7920201ab4..7c7123e7557b 100644
+--- a/arch/arm/mach-tegra/pmc.c
++++ b/arch/arm/mach-tegra/pmc.c
+@@ -41,6 +41,14 @@
+ #define PMC_REMOVE_CLAMPING		0x34
+ #define PMC_PWRGATE_STATUS		0x38
+ 
++#define PMC_SCRATCH0			0x50
++#define PMC_SCRATCH0_MODE_RECOVERY	(1 << 31)
++#define PMC_SCRATCH0_MODE_BOOTLOADER	(1 << 30)
++#define PMC_SCRATCH0_MODE_RCM		(1 << 1)
++#define PMC_SCRATCH0_MODE_MASK		(PMC_SCRATCH0_MODE_RECOVERY | \
++					 PMC_SCRATCH0_MODE_BOOTLOADER | \
++					 PMC_SCRATCH0_MODE_RCM)
++
+ #define PMC_CPUPWRGOOD_TIMER	0xc8
+ #define PMC_CPUPWROFF_TIMER	0xcc
+ 
+@@ -165,6 +173,22 @@ void tegra_pmc_restart(enum reboot_mode mode, const char *cmd)
+ {
+ 	u32 val;
+ 
++	val = tegra_pmc_readl(PMC_SCRATCH0);
++	val &= ~PMC_SCRATCH0_MODE_MASK;
++
++	if (cmd) {
++		if (strcmp(cmd, "recovery") == 0)
++			val |= PMC_SCRATCH0_MODE_RECOVERY;
++
++		if (strcmp(cmd, "bootloader") == 0)
++			val |= PMC_SCRATCH0_MODE_BOOTLOADER;
++
++		if (strcmp(cmd, "forced-recovery") == 0)
++			val |= PMC_SCRATCH0_MODE_RCM;
++	}
++
++	tegra_pmc_writel(val, PMC_SCRATCH0);
++
+ 	val = tegra_pmc_readl(0);
+ 	val |= 0x10;
+ 	tegra_pmc_writel(val, 0);
+-- 
+1.9.2
