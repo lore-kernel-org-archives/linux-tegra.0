@@ -1,52 +1,28 @@
-From: Tim Kryger <tim.kryger@linaro.org>
-Subject: Re: [PATCH 00/38] MMC updates, plus CuBox-i WiFi support
-Date: Wed, 7 May 2014 13:49:06 -0700
-Message-ID: <CAAYSxhr15dMLT8kuBd6gaFX+WrRgAqxKoWPBgkfVhzHMx299=A@mail.gmail.com>
-References: <20140423185534.GA26756@n2100.arm.linux.org.uk>
- <535E84FB.4080305@wwwdotorg.org> <86mwf5tn0v.fsf@void.printf.net>
+From: Christopher Freeman <cfreeman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v1 0/3] Tegra DMA residue improvements
+Date: Wed, 7 May 2014 14:27:46 -0700
+Message-ID: <20140507212746.GA20137@nvidia.com>
+References: <1399411343-12222-1-git-send-email-cfreeman@nvidia.com>
+ <5369D4FF.1070004@metafoo.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <86mwf5tn0v.fsf@void.printf.net>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Chris Ball <chris@printf.net>
-Cc: Mark Rutland <mark.rutland@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, Linux Doc List <linux-doc@vger.kernel.org>, Seungwon Jeon <tgih.jun@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Anton Vorontsov <anton@enomsg.org>, Michal Simek <michal.simek@xilinx.com>, Jaehoon Chung <jh80.chung@samsung.com>, ARM Kernel List <linux-arm-kernel@lists.infradead.org>, Device Tree List <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, spear-devel@list.st.com, Rob Herring <robh+dt@kernel.org>, Ben Dooks <ben-linux@fluff.org>, linux-tegra@vger.kernel.org, Ian Campbell <ijc+devicetree@hellion.org.uk>, Shawn Guo <shawn.guo@freescale.com>, Barry Song <baohua@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Viresh
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <5369D4FF.1070004-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Apr 28, 2014 at 9:52 AM, Chris Ball <chris@printf.net> wrote:
-> Hi,
->
-> On Mon, Apr 28 2014, Stephen Warren wrote:
->> The series,
->> Tested-by: Stephen Warren <swarren@nvidia.com>
->>
->> (On an NVIDIA Tegra "Jetson TK1" board, with the patches applied on top
->> of next-20140428, also with Andrew Bresticker's Tegra SDHCI patches
->> "mmc: tegra: disable UHS modes" and "mmc: tegra: fix reporting of base
->> clock frequency" applied)
->
-> Thanks very much Stephen, Russell for the series, and Ulf.
->
-> This seems like a good time to merge to mmc-next and call for testing
-> in linux-next -- I'm happy to merge a v2 PR when ready.
->
-> - Chris.
+On Tue, May 06, 2014 at 11:38:55PM -0700, Lars-Peter Clausen wrote:
+> On 05/06/2014 11:22 PM, Christopher Freeman wrote:
+> > A collection of patches to improve Tegra's DMA residual reporting
+> >
+> 
+> It would be nice if you could, while you are at it, also implement the 
+> device_salve_caps callback. This will allow clients to automatically pick up 
+> things like the supported granularity and other things.
+Next patch set will include that.  Thanks.
 
-Hi Russell,
-
-Do you have a rough idea about when you will post your v2 pull request?
-
-I have a pending sdhci patch that I would like to rebase on top of
-your latest work once it is available.
-
-Thanks,
-Tim Kryger
+> 
+> - Lars
