@@ -1,23 +1,29 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: enable console framebuffer rotation
-Date: Wed, 07 May 2014 09:57:46 -0600
-Message-ID: <536A57FA.2090608@wwwdotorg.org>
-References: <1399432682-677-1-git-send-email-acourbot@nvidia.com>
+Subject: Re: [PATCH] ARM: tegra: Support reboot modes
+Date: Wed, 07 May 2014 09:58:33 -0600
+Message-ID: <536A5829.5030702@wwwdotorg.org>
+References: <1399388651-12819-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1399432682-677-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1399388651-12819-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/06/2014 09:18 PM, Alexandre Courbot wrote:
-> Console rotation is needed for devices like Tegra Note 7 and NVIDIA
-> SHIELD to get the boot console in the expected orientation.
+On 05/06/2014 09:04 AM, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> The boot ROM on Tegra SoCs supports booting into forced recovery mode
+> (RCM) by setting a bit in the PMC scratch register 0. Similarily, the
+> Android bootloader examines some of the bits in this register to disable
+> autoboot or enter recovery mode.
+> 
+> Support these modes by setting the corresponding bits depending on the
+> specified reboot command (forced-recovery, bootloader, recovery). Recent
+> systemd-based distributions allow this to be specified using an optional
+> argument to the reboot command.
 
-I've squashed this into Tegra's for-3.16/defconfig branch.
-
-Can you please also update multi_v7_defconfig, and send that change to
-arm-soc (arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org) to be applied. Thanks.
+Applied to Tegra's for-3.16/soc branch.
