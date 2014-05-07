@@ -1,34 +1,52 @@
-From: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
-Subject: Re: [PATCH v1 3/3] dma: tegra: avoid int overflow for transferred
- count
-Date: Wed, 07 May 2014 21:15:39 +0200
-Message-ID: <536A865B.1060007@metafoo.de>
-References: <1399411343-12222-1-git-send-email-cfreeman@nvidia.com> <1399411343-12222-4-git-send-email-cfreeman@nvidia.com> <536A61A3.3050601@wwwdotorg.org>
+From: Tim Kryger <tim.kryger@linaro.org>
+Subject: Re: [PATCH 00/38] MMC updates, plus CuBox-i WiFi support
+Date: Wed, 7 May 2014 13:49:06 -0700
+Message-ID: <CAAYSxhr15dMLT8kuBd6gaFX+WrRgAqxKoWPBgkfVhzHMx299=A@mail.gmail.com>
+References: <20140423185534.GA26756@n2100.arm.linux.org.uk>
+ <535E84FB.4080305@wwwdotorg.org> <86mwf5tn0v.fsf@void.printf.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <536A61A3.3050601-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Christopher Freeman <cfreeman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <86mwf5tn0v.fsf@void.printf.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Chris Ball <chris@printf.net>
+Cc: Mark Rutland <mark.rutland@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, Linux Doc List <linux-doc@vger.kernel.org>, Seungwon Jeon <tgih.jun@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Anton Vorontsov <anton@enomsg.org>, Michal Simek <michal.simek@xilinx.com>, Jaehoon Chung <jh80.chung@samsung.com>, ARM Kernel List <linux-arm-kernel@lists.infradead.org>, Device Tree List <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, spear-devel@list.st.com, Rob Herring <robh+dt@kernel.org>, Ben Dooks <ben-linux@fluff.org>, linux-tegra@vger.kernel.org, Ian Campbell <ijc+devicetree@hellion.org.uk>, Shawn Guo <shawn.guo@freescale.com>, Barry Song <baohua@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Viresh
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/07/2014 06:38 PM, Stephen Warren wrote:
-> On 05/06/2014 03:22 PM, Christopher Freeman wrote:
->> bytes_transferred will overflow during long audio playbacks.  Since
->> the driver only ever consults this value modulo bytes_requested, store the
->> value modulo bytes_requested.
+On Mon, Apr 28, 2014 at 9:52 AM, Chris Ball <chris@printf.net> wrote:
+> Hi,
 >
-> The audio driver may only interpret the value modulo bytes_requested,
-> but what about other drivers such as the high-speed UART (and SPI?) drivers?
+> On Mon, Apr 28 2014, Stephen Warren wrote:
+>> The series,
+>> Tested-by: Stephen Warren <swarren@nvidia.com>
+>>
+>> (On an NVIDIA Tegra "Jetson TK1" board, with the patches applied on top
+>> of next-20140428, also with Andrew Bresticker's Tegra SDHCI patches
+>> "mmc: tegra: disable UHS modes" and "mmc: tegra: fix reporting of base
+>> clock frequency" applied)
 >
-> What is the dmaengine API's design requirement here, and what do other
-> dmaengine drivers do. If it's to store the modulo, then I'm fine with
-> this change.
+> Thanks very much Stephen, Russell for the series, and Ulf.
+>
+> This seems like a good time to merge to mmc-next and call for testing
+> in linux-next -- I'm happy to merge a v2 PR when ready.
+>
+> - Chris.
 
-Yep, this part of the API. The residue should be between transfer length and 
-0. While 0 is special and should only be returned if the transfer has 
-finished. For cyclic transfers this means it should never be zero. So if 
-transferred_bytes is incremented modulo length and residue is length - 
-transferred_bytes you get the correct result.
+Hi Russell,
+
+Do you have a rough idea about when you will post your v2 pull request?
+
+I have a pending sdhci patch that I would like to rebase on top of
+your latest work once it is available.
+
+Thanks,
+Tim Kryger
