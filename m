@@ -1,41 +1,33 @@
-From: Christopher Freeman <cfreeman@nvidia.com>
-Subject: Re: [PATCH v1 3/3] dma: tegra: avoid int overflow for transferred
- count
-Date: Wed, 7 May 2014 15:50:16 -0700
-Message-ID: <20140507225016.GC20137@nvidia.com>
-References: <1399411343-12222-1-git-send-email-cfreeman@nvidia.com>
- <1399411343-12222-4-git-send-email-cfreeman@nvidia.com>
- <536A61A3.3050601@wwwdotorg.org>
- <536A865B.1060007@metafoo.de>
+From: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: enable console framebuffer rotation
+Date: Thu, 8 May 2014 08:40:15 +0900
+Message-ID: <536AC45F.6080608@nvidia.com>
+References: <1399432682-677-1-git-send-email-acourbot@nvidia.com> <536A57FA.2090608@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <536A865B.1060007@metafoo.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lars-Peter Clausen <lars@metafoo.de>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@nvidia.com>, "vinod.koul@intel.com" <vinod.koul@intel.com>, "dan.j.williams@intel.com" <dan.j.williams@intel.com>, "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <536A57FA.2090608-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, May 07, 2014 at 12:15:39PM -0700, Lars-Peter Clausen wrote:
-> On 05/07/2014 06:38 PM, Stephen Warren wrote:
-> > On 05/06/2014 03:22 PM, Christopher Freeman wrote:
-> >> bytes_transferred will overflow during long audio playbacks.  Since
-> >> the driver only ever consults this value modulo bytes_requested, store the
-> >> value modulo bytes_requested.
-> >
-> > The audio driver may only interpret the value modulo bytes_requested,
-> > but what about other drivers such as the high-speed UART (and SPI?) drivers?
-> >
-> > What is the dmaengine API's design requirement here, and what do other
-> > dmaengine drivers do. If it's to store the modulo, then I'm fine with
-> > this change.
+On 05/08/2014 12:57 AM, Stephen Warren wrote:
+> On 05/06/2014 09:18 PM, Alexandre Courbot wrote:
+>> Console rotation is needed for devices like Tegra Note 7 and NVIDIA
+>> SHIELD to get the boot console in the expected orientation.
 >
-> Yep, this part of the API. The residue should be between transfer length and 
-> 0. While 0 is special and should only be returned if the transfer has 
-> finished. For cyclic transfers this means it should never be zero. So if 
-> transferred_bytes is incremented modulo length and residue is length - 
-> transferred_bytes you get the correct result.
+> I've squashed this into Tegra's for-3.16/defconfig branch.
 >
-What each driver receives remains unchanged here.  bytes_transferred is only ever read modulo bytes_requested in all cases (audio, spi, uart)  This shifts that part of the calculation to the assignment.  I guess this is a roundabout way of saying it's not any more wrong than it could have possibly been before.  We can rename "bytes_transferred" to something like "residue" or "segment_residue" though.
- 
+> Can you please also update multi_v7_defconfig, and send that change to
+> arm-soc (arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org) to be applied. Thanks.
+
+I omitted doing this for now because the devices that require this 
+option (TN7/SHIELD) need a custom build with appended DTB and/or 
+command-line anyway. Therefore they cannot use a multi-mach kernel and 
+might as well be built against Tegra's defconfig. Does your remark above 
+still apply in spite of this?
+
+Thanks,
+Alex.
