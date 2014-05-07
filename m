@@ -1,24 +1,34 @@
-From: Christopher Freeman <cfreeman@nvidia.com>
-Subject: [PATCH v1 0/3] Tegra DMA residue improvements
-Date: Tue, 6 May 2014 14:22:20 -0700
-Message-ID: <1399411343-12222-1-git-send-email-cfreeman@nvidia.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] ARM: tegra: enable console framebuffer rotation
+Date: Wed, 7 May 2014 12:18:02 +0900
+Message-ID: <1399432682-677-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: ldewangan@nvidia.com, swarren@nvidia.com, vinod.koul@intel.com, dan.j.williams@intel.com
-Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Christopher Freeman <cfreeman@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-A collection of patches to improve Tegra's DMA residual reporting
+Console rotation is needed for devices like Tegra Note 7 and NVIDIA
+SHIELD to get the boot console in the expected orientation.
 
-Christopher Freeman (3):
-  dma: tegra: finer granularity residual for tx_status
-  dma: tegra: change interrupt-related log levels
-  dma: tegra: avoid int overflow for transferred count
+Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/configs/tegra_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
- drivers/dma/tegra20-apb-dma.c |   74 ++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 65 insertions(+), 9 deletions(-)
-
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index c706d399557b..e2441e286822 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -183,6 +183,7 @@ CONFIG_BACKLIGHT_CLASS_DEVICE=y
+ # CONFIG_BACKLIGHT_GENERIC is not set
+ CONFIG_BACKLIGHT_PWM=y
+ CONFIG_FRAMEBUFFER_CONSOLE=y
++CONFIG_FRAMEBUFFER_CONSOLE_ROTATION=y
+ CONFIG_LOGO=y
+ CONFIG_SOUND=y
+ CONFIG_SND=y
 -- 
-1.7.9.5
+1.9.2
