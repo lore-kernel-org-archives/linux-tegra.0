@@ -1,33 +1,35 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: enable console framebuffer rotation
-Date: Wed, 07 May 2014 17:35:54 -0600
-Message-ID: <536AC35A.3000103@wwwdotorg.org>
-References: <1399432682-677-1-git-send-email-acourbot@nvidia.com> <536A57FA.2090608@wwwdotorg.org> <536AC45F.6080608@nvidia.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] drm/gk20a/fb: fix NULL dereference
+Date: Fri, 9 May 2014 16:57:48 +0900
+Message-ID: <1399622268-16940-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <536AC45F.6080608-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/07/2014 05:40 PM, Alex Courbot wrote:
-> On 05/08/2014 12:57 AM, Stephen Warren wrote:
->> On 05/06/2014 09:18 PM, Alexandre Courbot wrote:
->>> Console rotation is needed for devices like Tegra Note 7 and NVIDIA
->>> SHIELD to get the boot console in the expected orientation.
->>
->> I've squashed this into Tegra's for-3.16/defconfig branch.
->>
->> Can you please also update multi_v7_defconfig, and send that change to
->> arm-soc (arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org) to be applied. Thanks.
-> 
-> I omitted doing this for now because the devices that require this
-> option (TN7/SHIELD) need a custom build with appended DTB and/or
-> command-line anyway. Therefore they cannot use a multi-mach kernel and
-> might as well be built against Tegra's defconfig. Does your remark above
-> still apply in spite of this?
+gk20a_ram_put() can be called with a NULL nouveau_mem in case of error.
+Handle that case the way is it done in other RAM drivers.
 
-Ah right, I guess we don't need it there then.
+Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/gpu/drm/nouveau/core/subdev/fb/ramgk20a.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/gpu/drm/nouveau/core/subdev/fb/ramgk20a.c b/drivers/gpu/drm/nouveau/core/subdev/fb/ramgk20a.c
+index 403c88f07b99..7effd1a63458 100644
+--- a/drivers/gpu/drm/nouveau/core/subdev/fb/ramgk20a.c
++++ b/drivers/gpu/drm/nouveau/core/subdev/fb/ramgk20a.c
+@@ -36,6 +36,8 @@ gk20a_ram_put(struct nouveau_fb *pfb, struct nouveau_mem **pmem)
+ 	int i;
+ 
+ 	*pmem = NULL;
++	if (unlikely(mem == NULL))
++		return;
+ 
+ 	for (i = 0; i < mem->size; i++) {
+ 		struct page *page;
+-- 
+1.9.2
