@@ -1,13 +1,13 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH 3/6] usb: host: ehci-mv: Use devm_ioremap_resource instead of devm_ioremap
-Date: Sat, 10 May 2014 15:27:00 +0530
-Message-ID: <1399715823-19839-4-git-send-email-gautam.vivek@samsung.com>
+From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 5/6] usb: host: ehci-tegra: Use devm_ioremap_resource instead of devm_ioremap
+Date: Sat, 10 May 2014 15:27:02 +0530
+Message-ID: <1399715823-19839-6-git-send-email-gautam.vivek@samsung.com>
 References: <1399715823-19839-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <1399715823-19839-1-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: linux-usb@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, swarren@wwwdotorg.org, kgene.kim@samsung.com, thierry.reding@gmail.com, Vivek Gautam <gautam.vivek@samsung.com>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1399715823-19839-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 Using devm_ioremap_resource() API should actually be preferred over
@@ -16,38 +16,30 @@ gives back the ioremap'ed memory pointer.
 devm_ioremap_resource() calls request_mem_region(), therby preventing
 other drivers to make any overlapping call to the same region.
 
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- drivers/usb/host/ehci-mv.c |    8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/usb/host/ehci-tegra.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/usb/host/ehci-mv.c b/drivers/usb/host/ehci-mv.c
-index bd61612..5d03787 100644
---- a/drivers/usb/host/ehci-mv.c
-+++ b/drivers/usb/host/ehci-mv.c
-@@ -176,10 +176,8 @@ static int mv_ehci_probe(struct platform_device *pdev)
- 		goto err_put_hcd;
+diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
+index 572634c..ccc6433 100644
+--- a/drivers/usb/host/ehci-tegra.c
++++ b/drivers/usb/host/ehci-tegra.c
+@@ -411,9 +411,8 @@ static int tegra_ehci_probe(struct platform_device *pdev)
  	}
- 
--	ehci_mv->phy_regs = devm_ioremap(&pdev->dev, r->start,
--					 resource_size(r));
-+	ehci_mv->phy_regs = devm_ioremap_resource(&pdev->dev, r);
- 	if (!ehci_mv->phy_regs) {
--		dev_err(&pdev->dev, "failed to map phy I/O memory\n");
- 		retval = -EFAULT;
- 		goto err_put_hcd;
- 	}
-@@ -191,10 +189,8 @@ static int mv_ehci_probe(struct platform_device *pdev)
- 		goto err_put_hcd;
- 	}
- 
--	ehci_mv->cap_regs = devm_ioremap(&pdev->dev, r->start,
--					 resource_size(r));
-+	ehci_mv->cap_regs = devm_ioremap_resource(&pdev->dev, r);
- 	if (ehci_mv->cap_regs == NULL) {
--		dev_err(&pdev->dev, "failed to map I/O memory\n");
- 		retval = -EFAULT;
- 		goto err_put_hcd;
+ 	hcd->rsrc_start = res->start;
+ 	hcd->rsrc_len = resource_size(res);
+-	hcd->regs = devm_ioremap(&pdev->dev, res->start, resource_size(res));
++	hcd->regs = devm_ioremap_resource(&pdev->dev, res);
+ 	if (!hcd->regs) {
+-		dev_err(&pdev->dev, "Failed to remap I/O memory\n");
+ 		err = -ENOMEM;
+ 		goto cleanup_clk_en;
  	}
 -- 
 1.7.10.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
