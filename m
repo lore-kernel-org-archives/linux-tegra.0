@@ -1,61 +1,29 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH v2 4/6] usb: host: ehci-spear: Use devm_ioremap_resource
- instead of devm_ioremap
-Date: Sat, 10 May 2014 17:30:08 +0530
-Message-ID: <1399723210-21569-5-git-send-email-gautam.vivek@samsung.com>
+From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2MiAwLzZdIHVzYjogaG9zdDogQ2xlYW51cCBmb3IgaW9y?=
+ =?UTF-8?B?ZW1hcCdpbmcgaGNkIG1lbW9yeQ==?=
+Date: Sat, 10 May 2014 18:25:56 +0400
+Message-ID: <1399731956.962771892@f256.i.mail.ru>
 References: <1399723210-21569-1-git-send-email-gautam.vivek@samsung.com>
+Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 In-Reply-To: <1399723210-21569-1-git-send-email-gautam.vivek@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-usb@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, shc_work@mail.ru, swarren@wwwdotorg.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, stern@rowland.harvard.edu, Vivek Gautam <gautam.vivek@samsung.com>, linux-tegra@vger.kernel.org, thierry.reding@gmail.com, linux-arm-kernel@lists.infradead.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: =?UTF-8?B?Vml2ZWsgR2F1dGFt?= <gautam.vivek@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, swarren@wwwdotorg.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, stern@rowland.harvard.edu, linux-tegra@vger.kernel.org, thierry.reding@gmail.com, linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Using devm_ioremap_resource() API should actually be preferred over
-devm_ioremap(), since the former request the mem region first and then
-gives back the ioremap'ed memory pointer.
-devm_ioremap_resource() calls request_mem_region(), therby preventing
-other drivers to make any overlapping call to the same region.
-
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
----
- drivers/usb/host/ehci-spear.c |   13 +++----------
- 1 file changed, 3 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/usb/host/ehci-spear.c b/drivers/usb/host/ehci-spear.c
-index 8bd915b..1d59958 100644
---- a/drivers/usb/host/ehci-spear.c
-+++ b/drivers/usb/host/ehci-spear.c
-@@ -106,16 +106,9 @@ static int spear_ehci_hcd_drv_probe(struct platform_device *pdev)
- 
- 	hcd->rsrc_start = res->start;
- 	hcd->rsrc_len = resource_size(res);
--	if (!devm_request_mem_region(&pdev->dev, hcd->rsrc_start, hcd->rsrc_len,
--				driver->description)) {
--		retval = -EBUSY;
--		goto err_put_hcd;
--	}
--
--	hcd->regs = devm_ioremap(&pdev->dev, hcd->rsrc_start, hcd->rsrc_len);
--	if (hcd->regs == NULL) {
--		dev_dbg(&pdev->dev, "error mapping memory\n");
--		retval = -ENOMEM;
-+	hcd->regs = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(hcd->regs)) {
-+		retval = PTR_ERR(hcd->regs);
- 		goto err_put_hcd;
- 	}
- 
--- 
-1.7.10.4
+U2F0LCAxMCBNYXkgMjAxNCAxNzozMDowNCArMDUzMCDQvtGCIFZpdmVrIEdhdXRhbSA8Z2F1dGFt
+LnZpdmVrQHNhbXN1bmcuY29tPjoKPiBCYXNlZCBvbiAndXNiLW5leHQnIGJyYW5jaCBvZiBHcmVn
+J3MgdXNiIHRyZWUuCj4gCj4gZGV2bV9pb3JlbWFwX3Jlc291cmNlKCkgQVBJIGlzIGFkdmFudGFn
+ZW91cyBvdmVyIGRldm1faW9yZW1hcCgpCj4gYW5kIHNob3VsZCB0aGVyZWZvcmUgYmUgcHJlZmVy
+cmVkIHRvIHJlcXVlc3QgYW55IGlvcmVtYXAnZWQgYWRkcmVzcwo+IGZvciBoY2QuCj4gCj4gQ2hh
+bmdlcyBmcm9tIHYxOgo+ICAtIENoYW5nZWQgdGhlIHdheSByZXR1cm5lZCBwb2ludGVyIGlzIGNo
+ZWNrZWQgZm9yIGVycm9yIHZhbHVlCj4gICAgYXMgcG9pbnRlZCBvdXQgaW4gdGhlIHJldmlldyBj
+b21tZW50IGluIHRoZSBtYWlsaW5nIGxpc3QuCgpoY2QtPnJzcmNfbGVuIGZpZWxkIGNhbiBiZSBy
+ZW1vdmVkIGVudGlyZWx5LCBzaW5jZSBJIGNhbm5vdCBmaW5kIGFueSByZWFzb24KaG93IHRoaXMg
+ZmlsZWQgY2FuIGJlIHVzZWQgaW4gdGhlIGRyaXZlcnMgbm93LgpUaGlzIGlzIG9mIGNvdXJzZSBz
+aG91bGQgYmUgaW4gYW4gYW5vdGhlciBzZXJpZXMuIFRoaXMgb25lIGxvb2tzIGdvb2QuCgotLS0K
+Cg==
