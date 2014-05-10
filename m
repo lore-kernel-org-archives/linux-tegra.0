@@ -1,46 +1,40 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH 4/6] usb: host: ehci-spear: Use devm_ioremap_resource instead of devm_ioremap
-Date: Sat, 10 May 2014 15:27:01 +0530
-Message-ID: <1399715823-19839-5-git-send-email-gautam.vivek@samsung.com>
+From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCAxLzZdIHVzYjogaG9zdDogZWhjaS1leHlub3M6IFVzZSBk?=
+ =?UTF-8?B?ZXZtX2lvcmVtYXBfcmVzb3VyY2UgaW5zdGVhZCBvZiBkZXZtX2lvcmVtYXA=?=
+Date: Sat, 10 May 2014 14:06:36 +0400
+Message-ID: <1399716396.580639659@f244.i.mail.ru>
 References: <1399715823-19839-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1399715823-19839-1-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-usb@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, swarren@wwwdotorg.org, kgene.kim@samsung.com, thierry.reding@gmail.com, Vivek Gautam <gautam.vivek@samsung.com>
+ <1399715823-19839-2-git-send-email-gautam.vivek@samsung.com>
+Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <1399715823-19839-2-git-send-email-gautam.vivek@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: =?UTF-8?B?Vml2ZWsgR2F1dGFt?= <gautam.vivek@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, swarren@wwwdotorg.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, stern@rowland.harvard.edu, linux-tegra@vger.kernel.org, thierry.reding@gmail.com, linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Using devm_ioremap_resource() API should actually be preferred over
-devm_ioremap(), since the former request the mem region first and then
-gives back the ioremap'ed memory pointer.
-devm_ioremap_resource() calls request_mem_region(), therby preventing
-other drivers to make any overlapping call to the same region.
-
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
----
- drivers/usb/host/ehci-spear.c |    9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
-
-diff --git a/drivers/usb/host/ehci-spear.c b/drivers/usb/host/ehci-spear.c
-index 8bd915b..6d84cf2 100644
---- a/drivers/usb/host/ehci-spear.c
-+++ b/drivers/usb/host/ehci-spear.c
-@@ -106,15 +106,8 @@ static int spear_ehci_hcd_drv_probe(struct platform_device *pdev)
- 
- 	hcd->rsrc_start = res->start;
- 	hcd->rsrc_len = resource_size(res);
--	if (!devm_request_mem_region(&pdev->dev, hcd->rsrc_start, hcd->rsrc_len,
--				driver->description)) {
--		retval = -EBUSY;
--		goto err_put_hcd;
--	}
--
--	hcd->regs = devm_ioremap(&pdev->dev, hcd->rsrc_start, hcd->rsrc_len);
-+	hcd->regs = devm_ioremap_resource(&pdev->dev, res);
- 	if (hcd->regs == NULL) {
--		dev_dbg(&pdev->dev, "error mapping memory\n");
- 		retval = -ENOMEM;
- 		goto err_put_hcd;
- 	}
--- 
-1.7.10.4
+U2F0LCAxMCBNYXkgMjAxNCAxNToyNjo1OCArMDUzMCDQvtGCIFZpdmVrIEdhdXRhbSA8Z2F1dGFt
+LnZpdmVrQHNhbXN1bmcuY29tPjoKPiBVc2luZyBkZXZtX2lvcmVtYXBfcmVzb3VyY2UoKSBBUEkg
+c2hvdWxkIGFjdHVhbGx5IGJlIHByZWZlcnJlZCBvdmVyCj4gZGV2bV9pb3JlbWFwKCksIHNpbmNl
+IHRoZSBmb3JtZXIgcmVxdWVzdCB0aGUgbWVtIHJlZ2lvbiBmaXJzdCBhbmQgdGhlbgo+IGdpdmVz
+IGJhY2sgdGhlIGlvcmVtYXAnZWQgbWVtb3J5IHBvaW50ZXIuCj4gZGV2bV9pb3JlbWFwX3Jlc291
+cmNlKCkgY2FsbHMgcmVxdWVzdF9tZW1fcmVnaW9uKCksIHRoZXJieSBwcmV2ZW50aW5nCj4gb3Ro
+ZXIgZHJpdmVycyB0byBtYWtlIGFueSBvdmVybGFwcGluZyBjYWxsIHRvIHRoZSBzYW1lIHJlZ2lv
+bi4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBWaXZlayBHYXV0YW0gPGdhdXRhbS52aXZla0BzYW1zdW5n
+LmNvbT4KPiAtLS0KPiAgZHJpdmVycy91c2IvaG9zdC9laGNpLWV4eW5vcy5jIHwgICAgMyArLS0K
+PiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAyIGRlbGV0aW9ucygtKQo+IAo+IGRp
+ZmYgLS1naXQgYS9kcml2ZXJzL3VzYi9ob3N0L2VoY2ktZXh5bm9zLmMgYi9kcml2ZXJzL3VzYi9o
+b3N0L2VoY2ktZXh5bm9zLmMKPiBpbmRleCA3ZjQyNWFjLi5iY2NiNmYxIDEwMDY0NAo+IC0tLSBh
+L2RyaXZlcnMvdXNiL2hvc3QvZWhjaS1leHlub3MuYwo+ICsrKyBiL2RyaXZlcnMvdXNiL2hvc3Qv
+ZWhjaS1leHlub3MuYwo+IEBAIC0xMzUsOSArMTM1LDggQEAgc2tpcF9waHk6Cj4gIAo+ICAJaGNk
+LT5yc3JjX3N0YXJ0ID0gcmVzLT5zdGFydDsKPiAgCWhjZC0+cnNyY19sZW4gPSByZXNvdXJjZV9z
+aXplKHJlcyk7Cj4gLQloY2QtPnJlZ3MgPSBkZXZtX2lvcmVtYXAoJnBkZXYtPmRldiwgcmVzLT5z
+dGFydCwgaGNkLT5yc3JjX2xlbik7Cj4gKwloY2QtPnJlZ3MgPSBkZXZtX2lvcmVtYXBfcmVzb3Vy
+Y2UoJnBkZXYtPmRldiwgcmVzKTsKPiAgCWlmICghaGNkLT5yZWdzKSB7Cj4gLQkJZGV2X2Vycigm
+cGRldi0+ZGV2LCAiRmFpbGVkIHRvIHJlbWFwIEkvTyBtZW1vcnlcbiIpOwo+ICAJCWVyciA9IC1F
+Tk9NRU07Cj4gIAkJZ290byBmYWlsX2lvOwo+ICAJfQoKWW91IHNob3VsZCBjaGVjayB0aGlzIGFz
+OgoKaWYgKElTX0VSUihoY2QtPnJlZ3MpKSB7CmVyciA9IFBUUl9FUlIoaGNkLT5yZWdzKTsKLi4u
+CgpTYW1lIGluIG90aGVyIHBhdGNoZXMgaW4gdGhpcyBzZXJpZXMuCgotLS0KCg==
