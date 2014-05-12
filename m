@@ -1,37 +1,36 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 0/2] ARM: tegra: basic support for NVIDIA SHIELD
-Date: Mon, 12 May 2014 17:26:47 +0900
-Message-ID: <1399883209-31169-1-git-send-email-acourbot@nvidia.com>
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH 1/2] ARM: tegra: joystick input in tegra_defconfig
+Date: Mon, 12 May 2014 17:26:48 +0900
+Message-ID: <1399883209-31169-2-git-send-email-acourbot@nvidia.com>
+References: <1399883209-31169-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1399883209-31169-1-git-send-email-acourbot@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-DT for SHIELD, hopefully in time for 3.16.
+NVIDIA SHIELD embeds a USB controller. Compile the corresponding support
+as a module in tegra_defconfig.
 
-Almost everything we could enable at this stage is here. Only the DSI
-panel is still missing, I could not get it to work without workarounds
-for some reason. Will try to fix that and submit a fixup patch.
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+---
+ arch/arm/configs/tegra_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Without the panel working this DT is not so useful currently, but it
-would be great if we could at least validate it and secure it for 3.16,
-so panel support could make it during the -rc cycle.
-
-Thanks,
-Alex.
-
-Alexandre Courbot (2):
-  ARM: tegra: joystick input in tegra_defconfig
-  ARM: tegra: add device tree for SHIELD
-
- arch/arm/boot/dts/Makefile          |    1 +
- arch/arm/boot/dts/tegra114-roth.dts | 1113 +++++++++++++++++++++++++++++++++++
- arch/arm/configs/tegra_defconfig    |    1 +
- 3 files changed, 1115 insertions(+)
- create mode 100644 arch/arm/boot/dts/tegra114-roth.dts
-
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index 8c1625b78034..f99121b78968 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -114,6 +114,7 @@ CONFIG_USB_NET_SMSC95XX=y
+ CONFIG_BRCMFMAC=m
+ CONFIG_RT2X00=y
+ CONFIG_RT2800USB=m
++CONFIG_INPUT_JOYDEV=m
+ CONFIG_INPUT_EVDEV=y
+ CONFIG_KEYBOARD_GPIO=y
+ CONFIG_KEYBOARD_TEGRA=y
 -- 
 1.9.2
