@@ -1,42 +1,50 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: pull request for Tegra PLLE fixes
-Date: Mon, 12 May 2014 11:35:14 +0300
-Message-ID: <20140512083514.GW30476@tbergstrom-lnx.Nvidia.com>
-References: <20140423145939.GA11307@tbergstrom-lnx.Nvidia.com>
+From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Subject: Re: [PATCH v2 0/6] usb: host: Cleanup for ioremap'ing hcd memory
+Date: Mon, 12 May 2014 10:08:13 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1405121007410.1202-100000@iolanthe.rowland.org>
+References: <1399723210-21569-1-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140423145939.GA11307@tbergstrom-lnx.Nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "mturquette@linaro.org" <mturquette@linaro.org>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1399723210-21569-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, shc_work-JGs/UdohzUI@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Apr 23, 2014 at 04:59:39PM +0200, Peter De Schrijver wrote:
-> Hi Mike,
-> 
-> This fixes a number of stability problems with PCIe on Tegra30.
-> 
-> The following changes since commit c9eaa447e77efe77b7fa4c953bd62de8297fd6c5:
-> 
->   Linux 3.15-rc1 (2014-04-13 14:18:35 -0700)
-> 
-> are available in the git repository at:
->   git://nv-tegra.nvidia.com/user/pdeschrijver/linux.git  clk-tegra-fixes-3.15
-> 
-> Thierry Reding (3):
->       clk: tegra: Fix PLLE programming
->       clk: tegra: Introduce divider mask and shift helpers
->       clk: tegra: Fix enabling of PLLE
-> 
->  drivers/clk/tegra/clk-pll.c |   64 +++++++++++++++++++++++++++++--------------
->  1 files changed, 43 insertions(+), 21 deletions(-)
+On Sat, 10 May 2014, Vivek Gautam wrote:
 
-Mike,
+> Based on 'usb-next' branch of Greg's usb tree.
+> 
+> devm_ioremap_resource() API is advantageous over devm_ioremap()
+> and should therefore be preferred to request any ioremap'ed address
+> for hcd.
+> 
+> Changes from v1:
+>  - Changed the way returned pointer is checked for error value
+>    as pointed out in the review comment in the mailing list.
+> 
+> Vivek Gautam (6):
+>   usb: host: ehci-exynos: Use devm_ioremap_resource instead of
+>     devm_ioremap
+>   usb: host: ehci-msm: Use devm_ioremap_resource instead of
+>     devm_ioremap
+>   usb: host: ehci-mv: Use devm_ioremap_resource instead of devm_ioremap
+>   usb: host: ehci-spear: Use devm_ioremap_resource instead of
+>     devm_ioremap
+>   usb: host: ehci-tegra: Use devm_ioremap_resource instead of
+>     devm_ioremap
+>   usb: host: ohci-exynos: Use devm_ioremap_resource instead of
+>     devm_ioremap
+> 
+>  drivers/usb/host/ehci-exynos.c |    7 +++----
+>  drivers/usb/host/ehci-msm.c    |    7 +++----
+>  drivers/usb/host/ehci-mv.c     |   16 ++++++----------
+>  drivers/usb/host/ehci-spear.c  |   13 +++----------
+>  drivers/usb/host/ehci-tegra.c  |    7 +++----
+>  drivers/usb/host/ohci-exynos.c |    7 +++----
+>  6 files changed, 21 insertions(+), 36 deletions(-)
 
-Did you take this in?
+For all six patches,
 
-Thanks,
-
-Peter.
+Acked-by: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
