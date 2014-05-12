@@ -1,51 +1,37 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: Re: [PATCH v2 0/6] usb: host: Cleanup for ioremap'ing hcd memory
-Date: Sun, 11 May 2014 20:15:50 +0530
-Message-ID: <CAFp+6iFoc5bx5EEJMXZT1021JyN_fx9AouNCuETS127rFkbb2w@mail.gmail.com>
-References: <1399723210-21569-1-git-send-email-gautam.vivek@samsung.com>
-	<1399731956.962771892@f256.i.mail.ru>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 0/2] ARM: tegra: basic support for NVIDIA SHIELD
+Date: Mon, 12 May 2014 17:26:47 +0900
+Message-ID: <1399883209-31169-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <1399731956.962771892@f256.i.mail.ru>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Alexander Shiyan <shc_work@mail.ru>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Greg KH <gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, linux-tegra <linux-tegra@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+DT for SHIELD, hopefully in time for 3.16.
 
+Almost everything we could enable at this stage is here. Only the DSI
+panel is still missing, I could not get it to work without workarounds
+for some reason. Will try to fix that and submit a fixup patch.
 
-On Sat, May 10, 2014 at 7:55 PM, Alexander Shiyan <shc_work@mail.ru> wr=
-ote:
-> Sat, 10 May 2014 17:30:04 +0530 =D0=BE=D1=82 Vivek Gautam <gautam.viv=
-ek@samsung.com>:
->> Based on 'usb-next' branch of Greg's usb tree.
->>
->> devm_ioremap_resource() API is advantageous over devm_ioremap()
->> and should therefore be preferred to request any ioremap'ed address
->> for hcd.
->>
->> Changes from v1:
->>  - Changed the way returned pointer is checked for error value
->>    as pointed out in the review comment in the mailing list.
->
-> hcd->rsrc_len field can be removed entirely, since I cannot find any =
-reason
-> how this filed can be used in the drivers now.
-> This is of course should be in an another series. This one looks good=
-=2E
+Without the panel working this DT is not so useful currently, but it
+would be great if we could at least validate it and secure it for 3.16,
+so panel support could make it during the -rc cycle.
 
-True, even i noticed the same, since after grep'ing for rsrc_len. i
-could not find any mention in the
-USB layer.
-Will send that as a separate patch-series.
+Thanks,
+Alex.
 
+Alexandre Courbot (2):
+  ARM: tegra: joystick input in tegra_defconfig
+  ARM: tegra: add device tree for SHIELD
 
+ arch/arm/boot/dts/Makefile          |    1 +
+ arch/arm/boot/dts/tegra114-roth.dts | 1113 +++++++++++++++++++++++++++++++++++
+ arch/arm/configs/tegra_defconfig    |    1 +
+ 3 files changed, 1115 insertions(+)
+ create mode 100644 arch/arm/boot/dts/tegra114-roth.dts
 
---=20
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+-- 
+1.9.2
