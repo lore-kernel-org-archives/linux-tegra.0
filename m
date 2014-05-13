@@ -1,650 +1,376 @@
-From: stefan@agner.ch
-Subject: [PATCH 2/2] ARM: tegra: initial add of Colibri T30
-Date: Tue, 13 May 2014 19:27:39 +0200
-Message-ID: <d45ec5351ce8ef03256061bdc4b0ba673bd40c66.1400001937.git.stefan@agner.ch>
-References: <cover.1400001937.git.stefan@agner.ch>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v2 4/7] drivers/base: Add interface framework
+Date: Tue, 13 May 2014 19:57:13 +0200
+Message-ID: <20140513175713.GS3908@phenom.ffwll.local>
+References: <1399995050-28435-1-git-send-email-thierry.reding@gmail.com>
+ <1399995050-28435-5-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <cover.1400001937.git.stefan@agner.ch>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: swarren@wwwdotorg.org, thierry.reding@gmail.com
-Cc: devicetree@vger.kernel.org, linux@arm.linux.org.uk, linux-kernel@vger.kernel.org, stefan@agner.ch, marcel@ziswiler.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <1399995050-28435-5-git-send-email-thierry.reding@gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stefan Agner <stefan@agner.ch>
+On Tue, May 13, 2014 at 05:30:47PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Some drivers, such as graphics drivers in the DRM subsystem, do not have
+> a real device that they can bind to. They are often composed of several
+> devices, each having their own driver. The master/component framework
+> can be used in these situations to collect the devices pertaining to one
+> logical device, wait until all of them have registered and then bind
+> them all at once.
+> 
+> For some situations this is only a partial solution. An implementation
+> of a master still needs to be registered with the system somehow. Many
+> drivers currently resort to creating a dummy device that a driver can
+> bind to and register the master against. This is problematic since it
+> requires (and presumes) knowledge about the system within drivers.
+> 
+> Furthermore there are setups where a suitable device already exists, but
+> is already bound to a driver. For example, on Tegra the following device
+> tree extract (simplified) represents the host1x device along with child
+> devices:
+> 
+> 	host1x {
+> 		display-controller {
+> 			...
+> 		};
+> 
+> 		display-controller {
+> 			...
+> 		};
+> 
+> 		hdmi {
+> 			...
+> 		};
+> 
+> 		dsi {
+> 			...
+> 		};
+> 
+> 		csi {
+> 			...
+> 		};
+> 
+> 		video-input {
+> 			...
+> 		};
+> 	};
+> 
+> Each of the child devices is in turn a client of host1x, in that it can
+> request resources (command stream DMA channels and syncpoints) from it.
+> To implement the DMA channel and syncpoint infrastructure, host1x comes
+> with its own driver. Children are implemented in separate drivers. In
+> Linux this set of devices would be exposed by DRM and V4L2 drivers.
+> 
+> However, neither the DRM nor the V4L2 drivers have a single device that
+> they can bind to. The DRM device is composed of the display controllers
+> and the various output devices, whereas the V4L2 device is composed of
+> one or more video input devices.
+> 
+> This patch introduces the concept of an interface and drivers that can
+> bind to a given interface. An interface can be exposed by any device,
+> and interface drivers can bind to these interfaces. Multiple drivers can
+> bind against a single interface. When a device is removed, interfaces
+> exposed by it will be removed as well, thereby removing the drivers that
+> were bound to those interfaces.
+> 
+> In the example above, the host1x device would expose the "tegra-host1x"
+> interface. DRM and V4L2 drivers can then bind to that interface and
+> instantiate the respective subsystem objects from there.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+> Note that I'd like to merge this through the Tegra DRM tree so that the
+> changes to the Tegra DRM driver later in this series can be merged at
+> the same time and are not delayed for another release cycle.
+> 
+> In particular that means that I'm looking for an Acked-by from Greg.
+> 
+>  drivers/base/Makefile     |   2 +-
+>  drivers/base/interface.c  | 186 ++++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/interface.h |  40 ++++++++++
+>  3 files changed, 227 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/base/interface.c
+>  create mode 100644 include/linux/interface.h
 
-This patch adds the device tree to support Toradex Colibri T30, a
-computer on module which can be used on different carrier boards.
+Hm, this interface stuff smells like bus drivers light. Should we instead
+have a pile of helpers to make creating new buses with match methods more
+trivial? There's a fairly big pile of small use-cases where this might be
+useful. In your case here all the host1x children would sit on a host1x
+bus. Admittedly I didn't look into the details.
+-Daniel
 
-The module consists of a Tegra 30 SoC, two PMIC, DDR3L RAM, eMMC,
-a LM95245 temperature sensor and an AX88772B USB Ethernet
-Controller. Furthermore, there is a STMPE811 and SGTL5000 audio
-codec which are not yet supported. Anything that is not self
-contained on the module is disabled by default.
+> 
+> diff --git a/drivers/base/Makefile b/drivers/base/Makefile
+> index 04b314e0fa51..b5278904e443 100644
+> --- a/drivers/base/Makefile
+> +++ b/drivers/base/Makefile
+> @@ -4,7 +4,7 @@ obj-y			:= component.o core.o bus.o dd.o syscore.o \
+>  			   driver.o class.o platform.o \
+>  			   cpu.o firmware.o init.o map.o devres.o \
+>  			   attribute_container.o transport_class.o \
+> -			   topology.o container.o
+> +			   topology.o container.o interface.o
+>  obj-$(CONFIG_DEVTMPFS)	+= devtmpfs.o
+>  obj-$(CONFIG_DMA_CMA) += dma-contiguous.o
+>  obj-y			+= power/
+> diff --git a/drivers/base/interface.c b/drivers/base/interface.c
+> new file mode 100644
+> index 000000000000..411f6cdf90e7
+> --- /dev/null
+> +++ b/drivers/base/interface.c
+> @@ -0,0 +1,186 @@
+> +/*
+> + * Copyright (C) 2014 NVIDIA Corporation. All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#define pr_fmt(fmt) "interface: " fmt
+> +
+> +#include <linux/device.h>
+> +#include <linux/interface.h>
+> +#include <linux/mutex.h>
+> +#include <linux/slab.h>
+> +
+> +static DEFINE_MUTEX(interfaces_lock);
+> +static LIST_HEAD(interfaces);
+> +static LIST_HEAD(drivers);
+> +
+> +struct interface_attachment {
+> +	struct interface_driver *driver;
+> +	struct list_head list;
+> +};
+> +
+> +static bool interface_match(struct interface *intf,
+> +			    struct interface_driver *driver)
+> +{
+> +	return strcmp(intf->name, driver->name) == 0;
+> +}
+> +
+> +static bool interface_attached(struct interface *intf,
+> +			       struct interface_driver *driver)
+> +{
+> +	struct interface_attachment *attach;
+> +
+> +	list_for_each_entry(attach, &intf->drivers, list)
+> +		if (attach->driver == driver)
+> +			return true;
+> +
+> +	return false;
+> +}
+> +
+> +static int interface_attach(struct interface *intf,
+> +			    struct interface_driver *driver)
+> +{
+> +	struct interface_attachment *attach;
+> +
+> +	attach = kzalloc(sizeof(*attach), GFP_KERNEL);
+> +	if (!attach)
+> +		return -ENOMEM;
+> +
+> +	INIT_LIST_HEAD(&attach->list);
+> +	attach->driver = driver;
+> +
+> +	list_add_tail(&attach->list, &intf->drivers);
+> +
+> +	return 0;
+> +}
+> +
+> +static void interface_detach(struct interface *intf,
+> +			     struct interface_driver *driver)
+> +{
+> +	struct interface_attachment *attach;
+> +
+> +	list_for_each_entry(attach, &intf->drivers, list) {
+> +		if (attach->driver == driver) {
+> +			list_del(&attach->list);
+> +			kfree(attach);
+> +			return;
+> +		}
+> +	}
+> +}
+> +
+> +static void interface_bind(struct interface *intf,
+> +			   struct interface_driver *driver)
+> +{
+> +	int err;
+> +
+> +	if (interface_attached(intf, driver))
+> +		return;
+> +
+> +	if (!interface_match(intf, driver))
+> +		return;
+> +
+> +	err = interface_attach(intf, driver);
+> +	if (err < 0) {
+> +		pr_err("failed to attach driver %ps to interface %s: %d\n",
+> +		       driver, intf->name, err);
+> +		return;
+> +	}
+> +
+> +	err = driver->bind(intf);
+> +	if (err < 0) {
+> +		pr_err("failed to bind driver %ps to interface %s: %d\n",
+> +		       driver, intf->name, err);
+> +		interface_detach(intf, driver);
+> +		return;
+> +	}
+> +
+> +	pr_debug("driver %ps bound to interface %s\n", driver, intf->name);
+> +}
+> +
+> +static void interface_unbind(struct interface *intf,
+> +			     struct interface_driver *driver)
+> +{
+> +	if (!interface_attached(intf, driver))
+> +		return;
+> +
+> +	interface_detach(intf, driver);
+> +	driver->unbind(intf);
+> +
+> +	pr_debug("driver %ps unbound from interface %s\n", driver, intf->name);
+> +}
+> +
+> +int interface_add(struct interface *intf)
+> +{
+> +	struct interface_driver *driver;
+> +
+> +	INIT_LIST_HEAD(&intf->drivers);
+> +	INIT_LIST_HEAD(&intf->list);
+> +
+> +	mutex_lock(&interfaces_lock);
+> +
+> +	list_add_tail(&intf->list, &interfaces);
+> +
+> +	pr_debug("interface %s added for device %s\n", intf->name,
+> +		 dev_name(intf->dev));
+> +
+> +	list_for_each_entry(driver, &drivers, list)
+> +		interface_bind(intf, driver);
+> +
+> +	mutex_unlock(&interfaces_lock);
+> +
+> +	return 0;
+> +}
+> +
+> +void interface_remove(struct interface *intf)
+> +{
+> +	struct interface_driver *driver;
+> +
+> +	mutex_lock(&interfaces_lock);
+> +
+> +	list_for_each_entry(driver, &drivers, list)
+> +		interface_unbind(intf, driver);
+> +
+> +	list_del_init(&intf->list);
+> +
+> +	pr_debug("interface %s removed for device %s\n", intf->name,
+> +		 dev_name(intf->dev));
+> +
+> +	mutex_unlock(&interfaces_lock);
+> +}
+> +
+> +int interface_register_driver(struct interface_driver *driver)
+> +{
+> +	struct interface *intf;
+> +
+> +	mutex_lock(&interfaces_lock);
+> +
+> +	list_add_tail(&driver->list, &drivers);
+> +
+> +	pr_debug("driver %ps added\n", driver);
+> +
+> +	list_for_each_entry(intf, &interfaces, list)
+> +		interface_bind(intf, driver);
+> +
+> +	mutex_unlock(&interfaces_lock);
+> +
+> +	return 0;
+> +}
+> +
+> +void interface_unregister_driver(struct interface_driver *driver)
+> +{
+> +	struct interface *intf;
+> +
+> +	mutex_lock(&interfaces_lock);
+> +
+> +	list_for_each_entry(intf, &interfaces, list)
+> +		interface_unbind(intf, driver);
+> +
+> +	list_del_init(&driver->list);
+> +
+> +	pr_debug("driver %ps removed\n", driver);
+> +
+> +	mutex_unlock(&interfaces_lock);
+> +}
+> diff --git a/include/linux/interface.h b/include/linux/interface.h
+> new file mode 100644
+> index 000000000000..2c49ad3912fe
+> --- /dev/null
+> +++ b/include/linux/interface.h
+> @@ -0,0 +1,40 @@
+> +/*
+> + * Copyright (C) 2014 NVIDIA Corporation. All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#ifndef INTERFACE_H
+> +#define INTERFACE_H
+> +
+> +#include <linux/list.h>
+> +
+> +struct device;
+> +struct interface;
+> +
+> +struct interface_driver {
+> +	const char *name;
+> +
+> +	int (*bind)(struct interface *intf);
+> +	void (*unbind)(struct interface *intf);
+> +
+> +	struct list_head list;
+> +};
+> +
+> +int interface_register_driver(struct interface_driver *driver);
+> +void interface_unregister_driver(struct interface_driver *driver);
+> +
+> +struct interface {
+> +	const char *name;
+> +	struct device *dev;
+> +
+> +	struct list_head drivers;
+> +	struct list_head list;
+> +};
+> +
+> +int interface_add(struct interface *intf);
+> +void interface_remove(struct interface *intf);
+> +
+> +#endif
+> -- 
+> 1.9.2
+> 
 
-The device tree for the Evaluation Board includes the modules
-device tree and enables the supported pheripherials of the carrier
-board (the Evaluation Board supports almost all of them).
-
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- arch/arm/boot/dts/Makefile                    |   1 +
- arch/arm/boot/dts/tegra30-colibri-eval-v3.dts | 202 ++++++++++++++
- arch/arm/boot/dts/tegra30-colibri.dtsi        | 375 ++++++++++++++++++++++++++
- 3 files changed, 578 insertions(+)
- create mode 100644 arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
- create mode 100644 arch/arm/boot/dts/tegra30-colibri.dtsi
-
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 35c146f..9e9669c 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -367,6 +367,7 @@ dtb-$(CONFIG_ARCH_TEGRA) += tegra20-harmony.dtb \
- 	tegra30-beaver.dtb \
- 	tegra30-cardhu-a02.dtb \
- 	tegra30-cardhu-a04.dtb \
-+	tegra30-colibri-eval-v3.dtb \
- 	tegra114-dalmore.dtb \
- 	tegra124-venice2.dtb
- dtb-$(CONFIG_ARCH_VERSATILE) += versatile-ab.dtb \
-diff --git a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-new file mode 100644
-index 0000000..f1fb0de
---- /dev/null
-+++ b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-@@ -0,0 +1,202 @@
-+/dts-v1/;
-+
-+#include "tegra30-colibri.dtsi"
-+
-+/ {
-+	model = "Toradex Colibri T30 on Colibri Evaluation Board";
-+	compatible = "toradex,colibri_t30-eval-v3", "nvidia,tegra30";
-+
-+	aliases {
-+		rtc0 = "/i2c@7000c000/rtc@68";
-+		rtc1 = "/i2c@7000d000/tps65911@2d";
-+		rtc2 = "/rtc@7000e000";
-+	};
-+
-+	host1x@50000000 {
-+		dc@54200000 {
-+			rgb {
-+				status = "okay";
-+				nvidia,panel = <&panel>;
-+			};
-+		};
-+		hdmi@54280000 {
-+			status = "okay";
-+		};
-+	};
-+
-+	serial@70006000 {
-+		status = "okay";
-+	};
-+
-+	serial@70006040 {
-+		compatible = "nvidia,tegra30-hsuart";
-+		status = "okay";
-+	};
-+
-+	serial@70006300 {
-+		compatible = "nvidia,tegra30-hsuart";
-+		status = "okay";
-+	};
-+
-+	pwm@7000a000 {
-+		status = "okay";
-+	};
-+
-+	/*
-+	 * GEN1_I2C: I2C_SDA/SCL on SODIMM pin 194/196 (e.g. RTC on carrier
-+	 * board)
-+	 */
-+	i2c@7000c000 {
-+		status = "okay";
-+		clock-frequency = <100000>;
-+
-+		/* M41T0M6 real time clock on carrier board */
-+		rtc@68 {
-+			compatible = "stm,m41t00";
-+			reg = <0x68>;
-+		};
-+	};
-+
-+	/* DDC_CLOCK/DATA on X3 pin 15/16 (e.g. display EDID) */
-+	hdmiddc: i2c@7000c700 {
-+		status = "okay";
-+	};
-+
-+	/* SPI1: Colibri SSP */
-+	spi@7000d400 {
-+		status = "okay";
-+		spi-max-frequency = <25000000>;
-+		can0: can@0 {
-+			compatible = "microchip,mcp2515";
-+			reg = <0>;
-+			clocks = <&clk16m>;
-+			interrupt-parent = <&gpio>;
-+			interrupts = <TEGRA_GPIO(S, 0) GPIO_ACTIVE_LOW>;
-+			spi-max-frequency = <10000000>;
-+		};
-+		spidev0: spi@1 {
-+			compatible = "spidev";
-+			reg = <1>;
-+			spi-max-frequency = <25000000>;
-+		};
-+	};
-+
-+	sdhci@78000200 {
-+		status = "okay";
-+		bus-width = <4>;
-+		cd-gpios = <&gpio TEGRA_GPIO(C, 7) GPIO_ACTIVE_LOW>;
-+		no-1-8-v;
-+	};
-+
-+	/* EHCI instance 0: USB1_DP/N -> USBC_P/N */
-+	usb@7d000000 {
-+		status = "okay";
-+		dr_mode = "otg";
-+	};
-+
-+	usb-phy@7d000000 {
-+		status = "okay";
-+		dr_mode = "otg";
-+		vbus-supply = <&usbc_vbus_reg>;
-+	};
-+
-+	/* EHCI instance 2: USB3_DP/N -> USBH_P/N */
-+	usb@7d008000 {
-+		status = "okay";
-+	};
-+
-+	usb-phy@7d008000 {
-+		status = "okay";
-+		vbus-supply = <&usbh_vbus_reg>;
-+	};
-+
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+
-+		/* PWM<A> */
-+		pwms = <&pwm 0 5000000>;
-+		brightness-levels = <255 128 64 32 16 8 4 0>;
-+		default-brightness-level = <6>;
-+		/* BL_ON */
-+		enable-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	clocks {
-+		clk16m: clk@1 {
-+			compatible = "fixed-clock";
-+			reg=<1>;
-+			#clock-cells = <0>;
-+			clock-frequency = <16000000>;
-+			clock-output-names = "clk16m";
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		power {
-+			label = "Power";
-+			gpios = <&gpio TEGRA_GPIO(V, 1) GPIO_ACTIVE_HIGH>;
-+			linux,code = <KEY_POWER>;
-+			debounce-interval = <10>;
-+			gpio-key,wakeup;
-+		};
-+	};
-+
-+	panel: panel {
-+		compatible = "edt,et057090dhu", "simple-panel";
-+
-+		backlight = <&backlight>;
-+	};
-+
-+	pwmleds {
-+		compatible = "pwm-leds";
-+
-+		pwmb {
-+			label = "PWM<B>";
-+			pwms = <&pwm 1 19600>;
-+			max-brightness = <255>;
-+		};
-+		pwmc {
-+			label = "PWM<C>";
-+			pwms = <&pwm 2 19600>;
-+			max-brightness = <255>;
-+		};
-+		pwmd {
-+			label = "PWM<D>";
-+			pwms = <&pwm 3 19600>;
-+			max-brightness = <255>;
-+		};
-+	};
-+
-+	regulators {
-+		sys_5v0_reg: regulator@1 {
-+			compatible = "regulator-fixed";
-+			reg = <1>;
-+			regulator-name = "5v0";
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+			regulator-always-on;
-+		};
-+
-+		usbc_vbus_reg: regulator@2 {
-+			compatible = "regulator-fixed";
-+			reg = <2>;
-+			regulator-name = "usbc_vbus";
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+			vin-supply = <&sys_5v0_reg>;
-+		};
-+
-+		/* USBH_PEN */
-+		usbh_vbus_reg: regulator@3 {
-+			compatible = "regulator-fixed";
-+			reg = <3>;
-+			regulator-name = "usbh_vbus";
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+			gpio = <&gpio TEGRA_GPIO(W, 2) GPIO_ACTIVE_LOW>;
-+			vin-supply = <&sys_5v0_reg>;
-+		};
-+	};
-+};
-diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
-new file mode 100644
-index 0000000..a496335
---- /dev/null
-+++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-@@ -0,0 +1,375 @@
-+#include <dt-bindings/input/input.h>
-+#include "tegra30.dtsi"
-+
-+/*
-+ * Toradex Colibri T30 Device Tree
-+ * Compatible for Revisions 1.1B/1.1C/1.1D
-+ */
-+/ {
-+	model = "Toradex Colibri T30";
-+	compatible = "toradex,colibri_t30-v11b",
-+		     "toradex,colibri_t30-v11c",
-+		     "toradex,colibri_t30-v11d",
-+		     "toradex,colibri_t30", "nvidia,tegra30";
-+
-+	aliases {
-+		serial0 = &uarta;
-+		serial1 = &uartd;
-+		serial2 = &uartb;
-+	};
-+
-+	memory {
-+		reg = <0x80000000 0x40000000>;
-+	};
-+
-+	host1x@50000000 {
-+		hdmi@54280000 {
-+			vdd-supply = <&sys_3v3_reg>;
-+			pll-supply = <&vio_reg>;
-+
-+			nvidia,hpd-gpio =
-+				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
-+			nvidia,ddc-i2c-bus = <&hdmiddc>;
-+		};
-+	};
-+
-+	pinmux@70000868 {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&state_default>;
-+
-+		state_default: pinmux {
-+			/* Colibri BL_ON */
-+			pv2 {
-+				nvidia,pins = "pv2";
-+				nvidia,function = "rsvd4";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+			};
-+
-+			/* Colibri Backlight PWM<A> */
-+			sdmmc3_dat3_pb4 {
-+				nvidia,pins =	"sdmmc3_dat3_pb4";
-+				nvidia,function = "pwm0";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+			};
-+
-+			/* Colibri CAN_INT */
-+			kb_row8_ps0 {
-+				nvidia,pins = "kb_row8_ps0";
-+				nvidia,function = "kbc";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+
-+			/* Thermal alert, need to be tristated */
-+			lcd_dc1_pd2 {
-+				nvidia,pins = "lcd_dc1_pd2";
-+				nvidia,function = "rsvd3";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+
-+			/* Colibri MMC */
-+			kb_row10_ps2 {
-+				nvidia,pins = "kb_row10_ps2";
-+				nvidia,function = "sdmmc2";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+			};
-+			kb_row11_ps3 {
-+				nvidia,pins =	"kb_row11_ps3",
-+						"kb_row12_ps4",
-+						"kb_row13_ps5",
-+						"kb_row14_ps6",
-+						"kb_row15_ps7";
-+				nvidia,function = "sdmmc2";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+			};
-+
-+			/* Colibri SSP */
-+			ulpi_clk_py0 {
-+				nvidia,pins =   "ulpi_clk_py0",
-+						"ulpi_dir_py1",
-+						"ulpi_nxt_py2",
-+						"ulpi_stp_py3";
-+				nvidia,function = "spi1";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+			};
-+			sdmmc3_dat6_pd3 {
-+				nvidia,pins =	"sdmmc3_dat6_pd3",
-+						"sdmmc3_dat7_pd4";
-+				nvidia,function = "spdif";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+			};
-+
-+			/* Colibri UART_A */
-+			ulpi_data0 {
-+				nvidia,pins =   "ulpi_data0_po1",
-+						"ulpi_data1_po2",
-+						"ulpi_data2_po3",
-+						"ulpi_data3_po4",
-+						"ulpi_data4_po5",
-+						"ulpi_data5_po6",
-+						"ulpi_data6_po7",
-+						"ulpi_data7_po0";
-+				nvidia,function = "uarta";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+			};
-+
-+			/* Colibri UART_B */
-+			gmi_a16_pj7 {
-+				nvidia,pins =   "gmi_a16_pj7",
-+						"gmi_a17_pb0",
-+						"gmi_a18_pb1",
-+						"gmi_a19_pk7";
-+				nvidia,function = "uartd";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+			};
-+
-+			/* Colibri UART_C */
-+			uart2_rxd {
-+				nvidia,pins =   "uart2_rxd_pc3",
-+						"uart2_txd_pc2";
-+				nvidia,function = "uartb";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+			};
-+
-+			/* eMMC */
-+			sdmmc4_clk_pcc4 {
-+				nvidia,pins =	"sdmmc4_clk_pcc4",
-+						"sdmmc4_rst_n_pcc3";
-+				nvidia,function = "sdmmc4";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+			};
-+			sdmmc4_dat0_paa0 {
-+				nvidia,pins =	"sdmmc4_dat0_paa0",
-+						"sdmmc4_dat1_paa1",
-+						"sdmmc4_dat2_paa2",
-+						"sdmmc4_dat3_paa3",
-+						"sdmmc4_dat4_paa4",
-+						"sdmmc4_dat5_paa5",
-+						"sdmmc4_dat6_paa6",
-+						"sdmmc4_dat7_paa7";
-+				nvidia,function = "sdmmc4";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+			};
-+		};
-+	};
-+
-+	hdmiddc: i2c@7000c700 {
-+		clock-frequency = <100000>;
-+	};
-+
-+	/*
-+	 * PWR_I2C: power I2C to audio codec, PMIC, temperature sensor and
-+	 * touch screen controller
-+	 */
-+	i2c@7000d000 {
-+		status = "okay";
-+		clock-frequency = <100000>;
-+
-+		pmic: tps65911@2d {
-+			compatible = "ti,tps65911";
-+			reg = <0x2d>;
-+
-+			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+
-+			ti,system-power-controller;
-+
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+
-+			vcc1-supply = <&sys_3v3_reg>;
-+			vcc2-supply = <&sys_3v3_reg>;
-+			vcc3-supply = <&vio_reg>;
-+			vcc4-supply = <&sys_3v3_reg>;
-+			vcc5-supply = <&sys_3v3_reg>;
-+			vcc6-supply = <&vio_reg>;
-+			vcc7-supply = <&sys_5v0_reg>;
-+			vccio-supply = <&sys_3v3_reg>;
-+
-+			regulators {
-+				/* SW1: +V1.35_VDDIO_DDR */
-+				vdd1_reg: vdd1 {
-+					regulator-name = "vddio_ddr_1v35";
-+					regulator-min-microvolt = <1350000>;
-+					regulator-max-microvolt = <1350000>;
-+					regulator-always-on;
-+				};
-+
-+				/* SW2: unused */
-+
-+				/* SW CTRL: +V1.2_VDD_CPU */
-+				vddctrl_reg: vddctrl {
-+					regulator-name = "vdd_cpu,vdd_sys";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+					regulator-always-on;
-+				};
-+
-+				/* SWIO: +V1.8 */
-+				vio_reg: vio {
-+					regulator-name = "vdd_1v8_gen";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				/* LDO1: unused */
-+
-+				/*
-+				 * EN_+V3.3 switching via FET:
-+				 * +V3.3_AUDIO_AVDD_S, +V3.3 and +V1.8_VDD_LAN
-+				 * see also v3_3 fixed supply
-+				 */
-+				ldo2_reg: ldo2 {
-+					regulator-name = "en_3v3";
-+					regulator-min-microvolt = <3300000>;
-+					regulator-max-microvolt = <3300000>;
-+					regulator-always-on;
-+				};
-+
-+				/* LDO3: unused */
-+
-+				/* +V1.2_VDD_RTC */
-+				ldo4_reg: ldo4 {
-+					regulator-name = "vdd_rtc";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+					regulator-always-on;
-+				};
-+
-+				/*
-+				 * +V2.8_AVDD_VDAC:
-+				 * only required for analog RGB
-+				 */
-+				ldo5_reg: ldo5 {
-+					regulator-name = "avdd_vdac";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+					regulator-always-on;
-+				};
-+
-+				/*
-+				 * +V1.05_AVDD_PLLE: avdd_plle should be 1.05V
-+				 * but LDO6 can't set voltage in 50mV
-+				 * granularity
-+				 */
-+				ldo6_reg: ldo6 {
-+					regulator-name = "avdd_plle";
-+					regulator-min-microvolt = <1100000>;
-+					regulator-max-microvolt = <1100000>;
-+				};
-+
-+				/* +V1.2_AVDD_PLL */
-+				ldo7_reg: ldo7 {
-+					regulator-name = "avdd_pll";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+					regulator-always-on;
-+				};
-+
-+				/* +V1.0_VDD_DDR_HS */
-+				ldo8_reg: ldo8 {
-+					regulator-name = "vdd_ddr_hs";
-+					regulator-min-microvolt = <1000000>;
-+					regulator-max-microvolt = <1000000>;
-+					regulator-always-on;
-+				};
-+			};
-+		};
-+
-+		/*
-+		 * LM95245 temperature sensor
-+		 * Note: OVERT_N directly connected to PMIC PWRDN
-+		 */
-+		temp-sensor@4c {
-+			compatible = "national,lm95245";
-+			reg = <0x4c>;
-+		};
-+
-+		/* SW: +V1.2_VDD_CORE */
-+		tps62362@60 {
-+			compatible = "ti,tps62362";
-+			reg = <0x60>;
-+
-+			regulator-name = "tps62362-vout";
-+			regulator-min-microvolt = <900000>;
-+			regulator-max-microvolt = <1400000>;
-+			regulator-boot-on;
-+			regulator-always-on;
-+			ti,vsel0-state-low;
-+			/* VSEL1: EN_CORE_DVFS_N low for DVFS */
-+			ti,vsel1-state-low;
-+		};
-+	};
-+
-+	pmc@7000e400 {
-+		status = "okay";
-+		nvidia,invert-interrupt;
-+		nvidia,suspend-mode = <1>;
-+		nvidia,cpu-pwr-good-time = <5000>;
-+		nvidia,cpu-pwr-off-time = <5000>;
-+		nvidia,core-pwr-good-time = <3845 3845>;
-+		nvidia,core-pwr-off-time = <0>;
-+		nvidia,core-power-req-active-high;
-+		nvidia,sys-clock-req-active-high;
-+	};
-+
-+	emmc: sdhci@78000600 {
-+		status = "okay";
-+		bus-width = <8>;
-+		non-removable;
-+	};
-+
-+	/* EHCI instance 1: USB2_DP/N -> AX88772B */
-+	usb@7d004000 {
-+		status = "okay";
-+	};
-+
-+	usb-phy@7d004000 {
-+		status = "okay";
-+		nvidia,is-wired = <1>;
-+	};
-+
-+	clocks {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		clk32k_in: clk@0 {
-+			compatible = "fixed-clock";
-+			reg=<0>;
-+			#clock-cells = <0>;
-+			clock-frequency = <32768>;
-+		};
-+	};
-+
-+	regulators {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		sys_3v3_reg: regulator@100 {
-+			compatible = "regulator-fixed";
-+			reg = <100>;
-+			regulator-name = "3v3";
-+			regulator-min-microvolt = <3300000>;
-+			regulator-max-microvolt = <3300000>;
-+			regulator-always-on;
-+		};
-+	};
-+};
 -- 
-1.9.2
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
