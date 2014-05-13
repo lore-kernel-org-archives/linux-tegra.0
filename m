@@ -1,13 +1,11 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v2 1/7] drm: Introduce drm_set_unique()
-Date: Tue, 13 May 2014 17:30:44 +0200
-Message-ID: <1399995050-28435-2-git-send-email-thierry.reding@gmail.com>
-References: <1399995050-28435-1-git-send-email-thierry.reding@gmail.com>
+Subject: [PATCH v2 0/7] drm/tegra: Convert to master/component framework
+Date: Tue, 13 May 2014 17:30:43 +0200
+Message-ID: <1399995050-28435-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1399995050-28435-1-git-send-email-thierry.reding@gmail.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -23,120 +21,98 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Add a helper function that allows drivers to statically set the unique
-name of the device. This will allow platform and USB drivers to get rid
-of their DRM bus implementations and directly use drm_dev_alloc() and
-drm_dev_register().
+Hi,
 
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
-Changes in v2:
-- move drm_set_unique() to drivers/gpu/drm/drm_stub.c
-- add kernel-doc
+This series converts the Tegra DRM driver to the master/component
+framework. The length of the series and the list of people in Cc is
+mostly due to the fact that Tegra has some special requirements as
+opposed to other drivers and therefore requires some changes outside
+of DRM.
 
- drivers/gpu/drm/drm_ioctl.c | 23 +++++++++++++++++------
- drivers/gpu/drm/drm_stub.c  | 24 ++++++++++++++++++++++++
- include/drm/drmP.h          |  3 +++
- 3 files changed, 44 insertions(+), 6 deletions(-)
+Patch 1 introduces a helper function that can be used by new DRM drivers
+that don't rely on legacy userspace ABIs. It allows them to register DRM
+devices much more easily and without much of the midlayer that currently
+exists in the DRM subsystem.
 
-diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
-index 38269d5aa333..a59f6c2d7586 100644
---- a/drivers/gpu/drm/drm_ioctl.c
-+++ b/drivers/gpu/drm/drm_ioctl.c
-@@ -131,13 +131,24 @@ static int drm_set_busid(struct drm_device *dev, struct drm_file *file_priv)
- 	if (master->unique != NULL)
- 		drm_unset_busid(dev, master);
- 
--	ret = dev->driver->bus->set_busid(dev, master);
--	if (ret)
--		goto err;
-+	if (dev->driver->bus && dev->driver->bus->set_busid) {
-+		ret = dev->driver->bus->set_busid(dev, master);
-+		if (ret) {
-+			drm_unset_busid(dev, master);
-+			return ret;
-+		}
-+	} else {
-+		WARN(dev->unique == NULL,
-+		     "No drm_bus.set_busid() implementation provided by %ps. "
-+		     "Set the unique name explicitly using drm_set_unique().",
-+		     dev->driver);
-+
-+		master->unique = kstrdup(dev->unique, GFP_KERNEL);
-+		if (master->unique)
-+			master->unique_len = strlen(dev->unique);
-+	}
-+
- 	return 0;
--err:
--	drm_unset_busid(dev, master);
--	return ret;
- }
- 
- /**
-diff --git a/drivers/gpu/drm/drm_stub.c b/drivers/gpu/drm/drm_stub.c
-index 1447b0ee3676..64cf97dc4ce4 100644
---- a/drivers/gpu/drm/drm_stub.c
-+++ b/drivers/gpu/drm/drm_stub.c
-@@ -535,6 +535,29 @@ static void drm_fs_inode_free(struct inode *inode)
- }
- 
- /**
-+ * drm_set_unique - Set the unique name of a DRM device
-+ * @dev: device of which to set the unique name
-+ * @fmt: format string for unique name
-+ *
-+ * Sets the unique name of a DRM device using the specified format string and
-+ * a variable list of arguments. Drivers can use this at driver probe time if
-+ * the unique name of the devices they drive is static.
-+ */
-+int drm_set_unique(struct drm_device *dev, const char *fmt, ...)
-+{
-+	va_list ap;
-+
-+	kfree(dev->unique);
-+
-+	va_start(ap, fmt);
-+	dev->unique = kvasprintf(GFP_KERNEL, fmt, ap);
-+	va_end(ap);
-+
-+	return dev->unique ? 0 : -ENOMEM;
-+}
-+EXPORT_SYMBOL(drm_set_unique);
-+
-+/**
-  * drm_dev_alloc - Allocate new drm device
-  * @driver: DRM driver to allocate device for
-  * @parent: Parent device object
-@@ -649,6 +672,7 @@ static void drm_dev_release(struct kref *ref)
- 	drm_minor_free(dev, DRM_MINOR_CONTROL);
- 
- 	mutex_destroy(&dev->master_mutex);
-+	kfree(dev->unique);
- 	kfree(dev);
- }
- 
-diff --git a/include/drm/drmP.h b/include/drm/drmP.h
-index 6b4ed9e84e6f..dcec96b1154c 100644
---- a/include/drm/drmP.h
-+++ b/include/drm/drmP.h
-@@ -1235,6 +1235,8 @@ struct drm_device {
- 	struct drm_vma_offset_manager *vma_offset_manager;
- 	/*@} */
- 	int switch_power_state;
-+
-+	char *unique;
- };
- 
- #define DRM_SWITCH_POWER_ON 0
-@@ -1680,6 +1682,7 @@ static __inline__ void drm_core_dropmap(struct drm_local_map *map)
- 
- #include <drm/drm_mem_util.h>
- 
-+int drm_set_unique(struct drm_device *dev, const char *fmt, ...);
- struct drm_device *drm_dev_alloc(struct drm_driver *driver,
- 				 struct device *parent);
- void drm_dev_ref(struct drm_device *dev);
+Patches 2 and 3 make some changes to the master/component framework
+which are necessary to convert Tegra DRM to use it. All current users of
+the API have been converted as part of this patch. Note that at the same
+time the drivers are converted to no longer use drm_platform_init() in
+favour of the drm_set_unique() from patch 1 in conjunction with
+drm_dev_alloc() and drm_dev_register(). I would've liked to avoid such
+invasive changes in a single patch, but unfortunately I couldn't think
+of a way how to do that. I'm open to suggestions.
+
+Patch 4 adds a new interface framework that supplements the master/
+component framework and can be used in situations where there is no
+struct device * that a driver can bind to.
+
+The Tegra DRM driver is converted to using the master/component
+framework in patch 5 using the above four patches.
+
+Finally patches 6 and 7 add some documentation about the new way of
+registering DRM devices that don't need legacy support.
+
+Each patch has a somewhat more elaborate description of why it is needed
+or what problem it solves. The patchset applies on top of linux-next.
+
+I welcome any questions or comments you might have.
+
+Thierry
+
+Thierry Reding (7):
+  drm: Introduce drm_set_unique()
+  drivers/base: Allow driver-data to be attached to a master
+  drivers/base: Allow multiple masters per device
+  drivers/base: Add interface framework
+  drm/tegra: Convert to master/component framework
+  drm: Add device registration documentation
+  drm: Document how to register devices without struct drm_bus
+
+ Documentation/DocBook/drm.tmpl             |  38 ++
+ drivers/base/Makefile                      |   2 +-
+ drivers/base/component.c                   |  31 +-
+ drivers/base/interface.c                   | 186 ++++++++++
+ drivers/gpu/drm/drm_ioctl.c                |  23 +-
+ drivers/gpu/drm/drm_pci.c                  |  80 ++---
+ drivers/gpu/drm/drm_platform.c             |  15 +-
+ drivers/gpu/drm/drm_stub.c                 |  43 ++-
+ drivers/gpu/drm/drm_usb.c                  |  20 +-
+ drivers/gpu/drm/msm/adreno/a3xx_gpu.c      |   8 +-
+ drivers/gpu/drm/msm/hdmi/hdmi.c            |   8 +-
+ drivers/gpu/drm/msm/msm_drv.c              |  75 ++--
+ drivers/gpu/drm/msm/msm_drv.h              |   1 +
+ drivers/gpu/drm/tegra/Makefile             |   1 -
+ drivers/gpu/drm/tegra/bus.c                |  64 ----
+ drivers/gpu/drm/tegra/dc.c                 |  58 ++-
+ drivers/gpu/drm/tegra/drm.c                | 171 ++++++---
+ drivers/gpu/drm/tegra/drm.h                |  27 +-
+ drivers/gpu/drm/tegra/dsi.c                | 144 ++++----
+ drivers/gpu/drm/tegra/gr2d.c               |  78 ++--
+ drivers/gpu/drm/tegra/gr3d.c               |  77 ++--
+ drivers/gpu/drm/tegra/hdmi.c               |  69 ++--
+ drivers/gpu/drm/tegra/sor.c                |  71 ++--
+ drivers/gpu/host1x/Makefile                |   1 -
+ drivers/gpu/host1x/bus.c                   | 553 -----------------------------
+ drivers/gpu/host1x/bus.h                   |  29 --
+ drivers/gpu/host1x/dev.c                   |  21 +-
+ drivers/gpu/host1x/dev.h                   |   7 +-
+ drivers/staging/imx-drm/imx-drm-core.c     |  58 +--
+ drivers/staging/imx-drm/imx-hdmi.c         |   4 +-
+ drivers/staging/imx-drm/imx-ldb.c          |   4 +-
+ drivers/staging/imx-drm/imx-tve.c          |   4 +-
+ drivers/staging/imx-drm/ipuv3-crtc.c       |   4 +-
+ drivers/staging/imx-drm/parallel-display.c |   4 +-
+ include/drm/drmP.h                         |   3 +
+ include/linux/component.h                  |  20 +-
+ include/linux/host1x.h                     |  64 +---
+ include/linux/interface.h                  |  40 +++
+ 38 files changed, 849 insertions(+), 1257 deletions(-)
+ create mode 100644 drivers/base/interface.c
+ delete mode 100644 drivers/gpu/drm/tegra/bus.c
+ delete mode 100644 drivers/gpu/host1x/bus.c
+ delete mode 100644 drivers/gpu/host1x/bus.h
+ create mode 100644 include/linux/interface.h
+
 -- 
 1.9.2
