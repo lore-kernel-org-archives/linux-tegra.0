@@ -1,179 +1,142 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [RFC PATCH 3/3] clk: tegra: Implement Tegra124 shared/cbus clks
-Date: Tue, 13 May 2014 17:06:56 +0300
-Message-ID: <1399990023-30318-4-git-send-email-pdeschrijver@nvidia.com>
-References: <1399990023-30318-1-git-send-email-pdeschrijver@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v2 1/7] drm: Introduce drm_set_unique()
+Date: Tue, 13 May 2014 17:30:44 +0200
+Message-ID: <1399995050-28435-2-git-send-email-thierry.reding@gmail.com>
+References: <1399995050-28435-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1399990023-30318-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1399995050-28435-1-git-send-email-thierry.reding@gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King <rmk+kernel@arm.linux.org.uk>, dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add shared and cbus clocks to the Tegra124 clock implementation.
+From: Thierry Reding <treding@nvidia.com>
 
-Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Add a helper function that allows drivers to statically set the unique
+name of the device. This will allow platform and USB drivers to get rid
+of their DRM bus implementations and directly use drm_dev_alloc() and
+drm_dev_register().
+
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/clk/tegra/clk-tegra124.c         |   50 +++++++++++++++++++++
- include/dt-bindings/clock/tegra124-car.h |   70 +++++++++++++++++++++++++++++-
- 2 files changed, 119 insertions(+), 1 deletions(-)
+Changes in v2:
+- move drm_set_unique() to drivers/gpu/drm/drm_stub.c
+- add kernel-doc
 
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index cc37c34..4a160e5 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -950,6 +950,16 @@ static struct tegra_clk tegra124_clks[tegra_clk_max] __initdata = {
- 	[tegra_clk_clk_out_3_mux] = { .dt_id = TEGRA124_CLK_CLK_OUT_3_MUX, .present = true },
- 	[tegra_clk_dsia_mux] = { .dt_id = TEGRA124_CLK_DSIA_MUX, .present = true },
- 	[tegra_clk_dsib_mux] = { .dt_id = TEGRA124_CLK_DSIB_MUX, .present = true },
-+	[tegra_clk_cap_c2bus] = { .dt_id = TEGRA124_CLK_CAP_C2BUS, .present = true },
-+	[tegra_clk_cap_throttle_c2bus] = { .dt_id = TEGRA124_CLK_CAP_THROTTLE_C2BUS, .present = true },
-+	[tegra_clk_floor_c2bus] = { .dt_id = TEGRA124_CLK_FLOOR_C2BUS, .present = true },
-+	[tegra_clk_override_c2bus] = { .dt_id = TEGRA124_CLK_OVERRIDE_C2BUS, .present = true },
-+	[tegra_clk_edp_c2bus] = { .dt_id = TEGRA124_CLK_EDP_C2BUS, .present = true },
-+	[tegra_clk_battery_c2bus] = { .dt_id = TEGRA124_CLK_BATTERY_C2BUS, .present = true },
-+	[tegra_clk_cap_profile_c2bus] = { .dt_id = TEGRA124_CLK_CAP_PROFILE_C2BUS, .present = true },
-+	[tegra_clk_cap_c3bus] = { .dt_id = TEGRA124_CLK_CAP_C3BUS, .present = true },
-+	[tegra_clk_cap_throttle_c3bus] = { .dt_id = TEGRA124_CLK_CAP_THROTTLE_C3BUS, .present = true },
-+	[tegra_clk_override_c3bus] = { .dt_id = TEGRA124_CLK_OVERRIDE_C3BUS, .present = true },
- };
+ drivers/gpu/drm/drm_ioctl.c | 23 +++++++++++++++++------
+ drivers/gpu/drm/drm_stub.c  | 24 ++++++++++++++++++++++++
+ include/drm/drmP.h          |  3 +++
+ 3 files changed, 44 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
+index 38269d5aa333..a59f6c2d7586 100644
+--- a/drivers/gpu/drm/drm_ioctl.c
++++ b/drivers/gpu/drm/drm_ioctl.c
+@@ -131,13 +131,24 @@ static int drm_set_busid(struct drm_device *dev, struct drm_file *file_priv)
+ 	if (master->unique != NULL)
+ 		drm_unset_busid(dev, master);
  
- static struct tegra_devclk devclks[] __initdata = {
-@@ -1297,6 +1307,45 @@ static void __init tegra124_pll_init(void __iomem *clk_base,
- 
+-	ret = dev->driver->bus->set_busid(dev, master);
+-	if (ret)
+-		goto err;
++	if (dev->driver->bus && dev->driver->bus->set_busid) {
++		ret = dev->driver->bus->set_busid(dev, master);
++		if (ret) {
++			drm_unset_busid(dev, master);
++			return ret;
++		}
++	} else {
++		WARN(dev->unique == NULL,
++		     "No drm_bus.set_busid() implementation provided by %ps. "
++		     "Set the unique name explicitly using drm_set_unique().",
++		     dev->driver);
++
++		master->unique = kstrdup(dev->unique, GFP_KERNEL);
++		if (master->unique)
++			master->unique_len = strlen(dev->unique);
++	}
++
+ 	return 0;
+-err:
+-	drm_unset_busid(dev, master);
+-	return ret;
  }
  
-+static const char *cbus_parents[] = { "c2bus", "c3bus" };
-+
-+static __init void tegra124_shared_clk_init(void)
+ /**
+diff --git a/drivers/gpu/drm/drm_stub.c b/drivers/gpu/drm/drm_stub.c
+index 1447b0ee3676..64cf97dc4ce4 100644
+--- a/drivers/gpu/drm/drm_stub.c
++++ b/drivers/gpu/drm/drm_stub.c
+@@ -535,6 +535,29 @@ static void drm_fs_inode_free(struct inode *inode)
+ }
+ 
+ /**
++ * drm_set_unique - Set the unique name of a DRM device
++ * @dev: device of which to set the unique name
++ * @fmt: format string for unique name
++ *
++ * Sets the unique name of a DRM device using the specified format string and
++ * a variable list of arguments. Drivers can use this at driver probe time if
++ * the unique name of the devices they drive is static.
++ */
++int drm_set_unique(struct drm_device *dev, const char *fmt, ...)
 +{
-+	struct clk *clk;
++	va_list ap;
 +
-+	clk = clk_register_cbus("c2bus", "pll_c2", 0, "pll_p", 0,
-+					700000000);
-+	clk_register_clkdev(clk, "c2bus", NULL);
-+	clks[TEGRA124_CLK_C2BUS] = clk;
++	kfree(dev->unique);
 +
-+	clk = clk_register_cbus("c3bus", "pll_c3", 0, "pll_p", 0,
-+					700000000);
-+	clk_register_clkdev(clk, "c3bus", NULL);
-+	clks[TEGRA124_CLK_C3BUS] = clk;
++	va_start(ap, fmt);
++	dev->unique = kvasprintf(GFP_KERNEL, fmt, ap);
++	va_end(ap);
 +
-+	clk = clk_register_shared("msenc.cbus", &cbus_parents[0], 1, 0, 0,
-+					"msenc");
-+	clks[TEGRA124_CLK_MSENC_CBUS] = clk;
-+
-+	clk = clk_register_shared("vde.cbus", &cbus_parents[0], 1, 0, 0,
-+					"vde");
-+	clks[TEGRA124_CLK_VDE_CBUS] = clk;
-+
-+	clk = clk_register_shared("se.cbus", &cbus_parents[0], 1, 0, 0,
-+					"se");
-+	clks[TEGRA124_CLK_SE_CBUS] = clk;
-+
-+	clk = clk_register_shared("tsec.cbus", &cbus_parents[1], 1, 0, 0,
-+					"tsec");
-+	clks[TEGRA124_CLK_TSEC_CBUS] = clk;
-+
-+	clk = clk_register_shared("vic03.cbus", &cbus_parents[1], 1, 0, 0,
-+					"vic03");
-+	clks[TEGRA124_CLK_VIC03_CBUS] = clk;
-+
-+	tegra_shared_clk_init(tegra124_clks);
++	return dev->unique ? 0 : -ENOMEM;
 +}
++EXPORT_SYMBOL(drm_set_unique);
 +
- /* Tegra124 CPU clock and reset control functions */
- static void tegra124_wait_cpu_in_reset(u32 cpu)
- {
-@@ -1414,6 +1463,7 @@ static void __init tegra124_clock_init(struct device_node *np)
- 	tegra124_periph_clk_init(clk_base, pmc_base);
- 	tegra_audio_clk_init(clk_base, pmc_base, tegra124_clks, &pll_a_params);
- 	tegra_pmc_clk_init(pmc_base, tegra124_clks);
-+	tegra124_shared_clk_init();
++/**
+  * drm_dev_alloc - Allocate new drm device
+  * @driver: DRM driver to allocate device for
+  * @parent: Parent device object
+@@ -649,6 +672,7 @@ static void drm_dev_release(struct kref *ref)
+ 	drm_minor_free(dev, DRM_MINOR_CONTROL);
  
- 	tegra_super_clk_gen4_init(clk_base, pmc_base, tegra124_clks,
- 					&pll_x_params);
-diff --git a/include/dt-bindings/clock/tegra124-car.h b/include/dt-bindings/clock/tegra124-car.h
-index 433528a..943d485 100644
---- a/include/dt-bindings/clock/tegra124-car.h
-+++ b/include/dt-bindings/clock/tegra124-car.h
-@@ -336,6 +336,74 @@
- #define TEGRA124_CLK_DSIA_MUX 309
- #define TEGRA124_CLK_DSIB_MUX 310
- #define TEGRA124_CLK_SOR0_LVDS 311
--#define TEGRA124_CLK_CLK_MAX 312
-+#define TEGRA124_CLK_C2BUS 401
-+#define TEGRA124_CLK_C3BUS 402
-+#define TEGRA124_CLK_GR3D_CBUS 403
-+#define TEGRA124_CLK_GR2D_CBUS 404
-+#define TEGRA124_CLK_EPP_CBUS 405
-+#define TEGRA124_CLK_CAP_C2BUS 406
-+#define TEGRA124_CLK_CAP_THROTTLE_C2BUS 407
-+#define TEGRA124_CLK_FLOOR_C2BUS 408
-+#define TEGRA124_CLK_OVERRIDE_C2BUS 409
-+#define TEGRA124_CLK_EDP_C2BUS 410
-+#define TEGRA124_CLK_BATTERY_C2BUS 411
-+#define TEGRA124_CLK_CAP_PROFILE_C2BUS 412
-+#define TEGRA124_CLK_MSENC_CBUS 413
-+#define TEGRA124_CLK_TSEC_CBUS 414
-+#define TEGRA124_CLK_VDE_CBUS 415
-+#define TEGRA124_CLK_SE_CBUS 416
-+#define TEGRA124_CLK_CAP_C3BUS 417
-+#define TEGRA124_CLK_CAP_THROTTLE_C3BUS 418
-+#define TEGRA124_CLK_OVERRIDE_C3BUS 419
-+#define TEGRA124_CLK_AVP_SCLK 420
-+#define TEGRA124_CLK_BSEA_SCLK 421
-+#define TEGRA124_CLK_USBD_SCLK 422
-+#define TEGRA124_CLK_USB1_SCLK 423
-+#define TEGRA124_CLK_USB2_SCLK 424
-+#define TEGRA124_CLK_USB3_SCLK 425
-+#define TEGRA124_CLK_WAKE_SCLK 426
-+#define TEGRA124_CLK_MON_AVP 427
-+#define TEGRA124_CLK_CAP_SCLK 428
-+#define TEGRA124_CLK_CAP_THROTTLE_SCLK 429
-+#define TEGRA124_CLK_FLOOR_SCLK 430
-+#define TEGRA124_CLK_OVERRIDE_SCLK 431
-+#define TEGRA124_CLK_SBC1_SCLK 432
-+#define TEGRA124_CLK_SBC2_SCLK 433
-+#define TEGRA124_CLK_SBC3_SCLK 434
-+#define TEGRA124_CLK_SBC4_SCLK 435
-+#define TEGRA124_CLK_SBC5_SCLK 436
-+#define TEGRA124_CLK_SBC6_SCLK 437
-+#define TEGRA124_CLK_SBUS 438
-+#define TEGRA124_CLK_EMC_MASTER 439
-+#define TEGRA124_CLK_AVP_EMC 440
-+#define TEGRA124_CLK_CPU_EMC 441
-+#define TEGRA124_CLK_DISP1_EMC 442
-+#define TEGRA124_CLK_DISP2_EMC 443
-+#define TEGRA124_CLK_HDMI_EMC 444
-+#define TEGRA124_CLK_USBD_EMC 445
-+#define TEGRA124_CLK_USB1_EMC 446
-+#define TEGRA124_CLK_USB2_EMC 447
-+#define TEGRA124_CLK_USB3_EMC 448
-+#define TEGRA124_CLK_MON_EMC 449
-+#define TEGRA124_CLK_GR3D_EMC 450
-+#define TEGRA124_CLK_GR2D_EMC 451
-+#define TEGRA124_CLK_MSENC_EMC 452
-+#define TEGRA124_CLK_TSEC_EMC 453
-+#define TEGRA124_CLK_SDMMC4_EMC 454
-+#define TEGRA124_CLK_CAMERA_EMC 455
-+#define TEGRA124_CLK_ISO_EMC 456
-+#define TEGRA124_CLK_FLOOR_EMC 457
-+#define TEGRA124_CLK_CAP_EMC 458
-+#define TEGRA124_CLK_CAP_THROTTLE_EMC 459
-+#define TEGRA124_CLK_EDP_EMC 460
-+#define TEGRA124_CLK_BATTERY_EMC 461
-+#define TEGRA124_CLK_OVERRIDE_EMC 462
-+#define TEGRA124_CLK_GK20A_EMC 463
-+#define TEGRA124_CLK_VIC03_EMC 464
-+#define TEGRA124_CLK_VIC03_CBUS 465
-+#define TEGRA124_CLK_ISPA_EMC 466
-+#define TEGRA124_CLK_ISPB_EMC 467
-+#define TEGRA124_CLK_XUSB_EMC 468
-+#define TEGRA124_CLK_CLK_MAX 469
+ 	mutex_destroy(&dev->master_mutex);
++	kfree(dev->unique);
+ 	kfree(dev);
+ }
  
- #endif	/* _DT_BINDINGS_CLOCK_TEGRA124_CAR_H */
+diff --git a/include/drm/drmP.h b/include/drm/drmP.h
+index 6b4ed9e84e6f..dcec96b1154c 100644
+--- a/include/drm/drmP.h
++++ b/include/drm/drmP.h
+@@ -1235,6 +1235,8 @@ struct drm_device {
+ 	struct drm_vma_offset_manager *vma_offset_manager;
+ 	/*@} */
+ 	int switch_power_state;
++
++	char *unique;
+ };
+ 
+ #define DRM_SWITCH_POWER_ON 0
+@@ -1680,6 +1682,7 @@ static __inline__ void drm_core_dropmap(struct drm_local_map *map)
+ 
+ #include <drm/drm_mem_util.h>
+ 
++int drm_set_unique(struct drm_device *dev, const char *fmt, ...);
+ struct drm_device *drm_dev_alloc(struct drm_driver *driver,
+ 				 struct device *parent);
+ void drm_dev_ref(struct drm_device *dev);
 -- 
-1.7.7.rc0.72.g4b5ea.dirty
+1.9.2
