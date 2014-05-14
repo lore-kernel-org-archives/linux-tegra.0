@@ -1,35 +1,139 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: enable console framebuffer rotation
-Date: Tue, 13 May 2014 21:45:52 -0600
-Message-ID: <5372E6F0.1050604@wwwdotorg.org>
-References: <1399432682-677-1-git-send-email-acourbot@nvidia.com> <536A57FA.2090608@wwwdotorg.org> <536AC45F.6080608@nvidia.com> <536CE414.5030406@suse.de> <536CF33A.3020906@wwwdotorg.org> <53727D9E.9050800@suse.de> <5372CE37.1080601@nvidia.com>
+From: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH 2/2] ARM: tegra: initial add of Colibri T30
+Date: Wed, 14 May 2014 09:22:54 +0200
+Message-ID: <537319CE.7020101@ziswiler.com>
+References: <cover.1400001937.git.stefan@agner.ch> <d45ec5351ce8ef03256061bdc4b0ba673bd40c66.1400001937.git.stefan@agner.ch> <53727738.4080901@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5372CE37.1080601-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <53727738.4080901-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?ISO-8859-1?Q?Andreas_F=E4?= =?ISO-8859-1?Q?rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, stefan-XLVq0VzYD2Y@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/13/2014 08:00 PM, Alexandre Courbot wrote:
-...
-> Both SHIELD and TN7 come with a locked bootloader and cannot use U-boot.
-> The bootloader can only boot a kernel from a dedicated, raw boot
-> partition (Android style), can only pass a device tree from another raw
-> "dtb" partition, and will fill it with plenty of dirty command-line
-> options that make mainline unusable. That seems to be a lot for distros
-> to handle, so at this stage we'd rather advise users to use a root FS
-> image of their favorite distro along with a self-compiled kernel.
+On 05/13/2014 09:49 PM, Stephen Warren wrote:
+> On 05/13/2014 11:27 AM, stefan-XLVq0VzYD2Y@public.gmane.org wrote:
+>> This patch adds the device tree to support Toradex Colibri T30, a
+>> computer on module which can be used on different carrier boards.
+>>
+>> The module consists of a Tegra 30 SoC, two PMIC, DDR3L RAM, eMMC,
+>> a LM95245 temperature sensor and an AX88772B USB Ethernet
+>> Controller. Furthermore, there is a STMPE811 and SGTL5000 audio
+>> codec which are not yet supported. Anything that is not self
+>> contained on the module is disabled by default.
+>>
+>> The device tree for the Evaluation Board includes the modules
+>> device tree and enables the supported pheripherials of the carrier
+>> board (the Evaluation Board supports almost all of them).
+>
+>> diff --git a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
+>
+>> +#include "tegra30-colibri.dtsi"
+>> +
+>> +/ {
+>> +	model = "Toradex Colibri T30 on Colibri Evaluation Board";
+>> +	compatible = "toradex,colibri_t30-eval-v3", "nvidia,tegra30";
+>
+> That should include all the compatible values "inherited" from the
+> Colibri T30 module .dtsi file too.
+>
+>> +	aliases {
+>> +		rtc0 = "/i2c@7000c000/rtc@68";
+>> +		rtc1 = "/i2c@7000d000/tps65911@2d";
+>> +		rtc2 = "/rtc@7000e000";
+>> +	};
+>
+> Wow, no shortage of RTCs!
 
-I don't know how much effort it's worth putting into this, but it
-/might/ be possible to port U-Boot to the devices, and use that as the
-"kernel" image that the binary bootloader boots, and then have U-Boot
-boot a kernel from a filesystem in the "normal" way. That's kind what I
-did by porting U-Boot to the Raspberry Pi. It would certainly increase
-the possibility of a distro supporting these devices in a generic way,
-as well as avoiding the need for hard-coded command-lines, memory
-layout, etc. in the DT files. We'd have to make sure that any installer
-didn't change the GPT layout, since then it'd get out of sync with the
-tegrapt partitions, which could cause the bootloader to fail.
+Yes (;-p). Please understand however that there are certain limitation 
+if it comes to real-time clocks: The first one is the ultra low-power 
+RTC available on the carrier board. The second one is PMIC integrated 
+usually drawing much more current that the first dedicated one. The 
+third one is Tegra SoC internal and won't keep the time across 
+power-cycles in our design.
+
+>> +	/* SPI1: Colibri SSP */
+>> +	spi@7000d400 {
+>> +		status = "okay";
+>> +		spi-max-frequency = <25000000>;
+>> +		can0: can@0 {
+>> +			compatible = "microchip,mcp2515";
+>> +			reg = <0>;
+>> +			clocks = <&clk16m>;
+>> +			interrupt-parent = <&gpio>;
+>> +			interrupts = <TEGRA_GPIO(S, 0) GPIO_ACTIVE_LOW>;
+>> +			spi-max-frequency = <10000000>;
+>
+> So this chip doesn't get confused by a faster clock frequency when its
+> chip-select line isn't asserted? I would have expected spi-max-frequency
+> for the bus to be the minimum value that any device on the bus would
+> tolerate.
+
+No SPI chip should ever get confused like that as long as they are chip 
+select gated. At least by the traditional chip select meaning as opposed 
+to NVIDIA's designers taking the term chip select a little too personal: 
+they indeed only select a chip otherwise all the chip select pins are 
+just left floating!
+
+>> +	/* EHCI instance 0: USB1_DP/N -> USBC_P/N */
+>> +	usb@7d000000 {
+>> +		status = "okay";
+>> +		dr_mode = "otg";
+>
+> The dr_mode property is only for the PHY node.
+>
+>> +	panel: panel {
+>> +		compatible = "edt,et057090dhu", "simple-panel";
+>
+> The panel-simple driver doesn't seem to know about that EDT panel. How
+> will it work out the display timings?
+
+Good question and me and Stefan actually even talked about that 
+yesterday. I am actually using KMS right now as follows:
+
+video=HDMI-A-1:1280x720-16@60 video=LVDS-1:640x480-16@60'
+
+So the panel node is purely used to hook up the back light part right now.
+
+ From our point of view for our completely generic module approach where 
+each customer potentially hooks up his own display make/model it would 
+be desirable to have some way of defining such timings directly through 
+the device tree.
+
+>> diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
+>
+>> +/ {
+>> +	model = "Toradex Colibri T30";
+>> +	compatible = "toradex,colibri_t30-v11b",
+>> +		     "toradex,colibri_t30-v11c",
+>> +		     "toradex,colibri_t30-v11d",
+>> +		     "toradex,colibri_t30", "nvidia,tegra30";
+>
+> Do we really need all those compatible values? If those board revisions
+> are all SW-compatible, then you may as well write just:
+
+You are right. It indeed does not make much sense as only V1.0a which 
+never actually went on sale would be software incompatible.
+
+> 	compatible = "toradex,colibri_t30", "nvidia,tegra30";
+>
+>> +	aliases {
+>> +		serial0 = &uarta;
+>> +		serial1 = &uartd;
+>> +		serial2 = &uartb;
+>> +	};
+>
+> tegra20.dtsi already sets the alias names for the serial ports. Previous
+> discussions settled on giving each on-chip UART a static name, rather
+> than renaming them per board.
+
+Understood, however our Colibri standard defines a completely different 
+order of the UARTs which is what we attempted to indicate by this aliases.
+
+>> +	pmc@7000e400 {
+>> +		status = "okay";
+>
+> The PMC node isn't disabled in tegra20.dtsi, so you don't need the
+> status property here.
