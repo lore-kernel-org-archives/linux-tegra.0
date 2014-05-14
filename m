@@ -1,17 +1,16 @@
-From: Daniel Vetter <daniel@ffwll.ch>
+From: Thierry Reding <thierry.reding@gmail.com>
 Subject: Re: [PATCH v2 4/7] drivers/base: Add interface framework
-Date: Wed, 14 May 2014 16:37:19 +0200
-Message-ID: <20140514143719.GH8790@phenom.ffwll.local>
+Date: Wed, 14 May 2014 17:13:57 +0200
+Message-ID: <20140514151356.GD8612@ulmo>
 References: <1399995050-28435-1-git-send-email-thierry.reding@gmail.com>
  <1399995050-28435-5-git-send-email-thierry.reding@gmail.com>
  <20140513175713.GS3908@phenom.ffwll.local>
- <20140514003215.GA21520@kroah.com>
+ <20140513213057.GA7239@mithrandir>
+ <20140514143421.GG8790@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============2012140566=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20140514003215.GA21520@kroah.com>
+In-Reply-To: <20140514143421.GG8790@phenom.ffwll.local>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -21,117 +20,112 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King <rmk+kernel@arm.linux.org.uk>, dri-devel@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>, David Herrmann <dh.herrmann@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, May 13, 2014 at 05:32:15PM -0700, Greg Kroah-Hartman wrote:
-> On Tue, May 13, 2014 at 07:57:13PM +0200, Daniel Vetter wrote:
-> > On Tue, May 13, 2014 at 05:30:47PM +0200, Thierry Reding wrote:
-> > > From: Thierry Reding <treding@nvidia.com>
-> > > 
-> > > Some drivers, such as graphics drivers in the DRM subsystem, do not have
-> > > a real device that they can bind to. They are often composed of several
-> > > devices, each having their own driver. The master/component framework
-> > > can be used in these situations to collect the devices pertaining to one
-> > > logical device, wait until all of them have registered and then bind
-> > > them all at once.
-> > > 
-> > > For some situations this is only a partial solution. An implementation
-> > > of a master still needs to be registered with the system somehow. Many
-> > > drivers currently resort to creating a dummy device that a driver can
-> > > bind to and register the master against. This is problematic since it
-> > > requires (and presumes) knowledge about the system within drivers.
-> > > 
-> > > Furthermore there are setups where a suitable device already exists, but
-> > > is already bound to a driver. For example, on Tegra the following device
-> > > tree extract (simplified) represents the host1x device along with child
-> > > devices:
-> > > 
-> > > 	host1x {
-> > > 		display-controller {
-> > > 			...
-> > > 		};
-> > > 
-> > > 		display-controller {
-> > > 			...
-> > > 		};
-> > > 
-> > > 		hdmi {
-> > > 			...
-> > > 		};
-> > > 
-> > > 		dsi {
-> > > 			...
-> > > 		};
-> > > 
-> > > 		csi {
-> > > 			...
-> > > 		};
-> > > 
-> > > 		video-input {
-> > > 			...
-> > > 		};
-> > > 	};
-> > > 
-> > > Each of the child devices is in turn a client of host1x, in that it can
-> > > request resources (command stream DMA channels and syncpoints) from it.
-> > > To implement the DMA channel and syncpoint infrastructure, host1x comes
-> > > with its own driver. Children are implemented in separate drivers. In
-> > > Linux this set of devices would be exposed by DRM and V4L2 drivers.
-> > > 
-> > > However, neither the DRM nor the V4L2 drivers have a single device that
-> > > they can bind to. The DRM device is composed of the display controllers
-> > > and the various output devices, whereas the V4L2 device is composed of
-> > > one or more video input devices.
-> > > 
-> > > This patch introduces the concept of an interface and drivers that can
-> > > bind to a given interface. An interface can be exposed by any device,
-> > > and interface drivers can bind to these interfaces. Multiple drivers can
-> > > bind against a single interface. When a device is removed, interfaces
-> > > exposed by it will be removed as well, thereby removing the drivers that
-> > > were bound to those interfaces.
-> > > 
-> > > In the example above, the host1x device would expose the "tegra-host1x"
-> > > interface. DRM and V4L2 drivers can then bind to that interface and
-> > > instantiate the respective subsystem objects from there.
-> > > 
-> > > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > > ---
-> > > Note that I'd like to merge this through the Tegra DRM tree so that the
-> > > changes to the Tegra DRM driver later in this series can be merged at
-> > > the same time and are not delayed for another release cycle.
-> > > 
-> > > In particular that means that I'm looking for an Acked-by from Greg.
-> > > 
-> > >  drivers/base/Makefile     |   2 +-
-> > >  drivers/base/interface.c  | 186 ++++++++++++++++++++++++++++++++++++++++++++++
-> > >  include/linux/interface.h |  40 ++++++++++
-> > >  3 files changed, 227 insertions(+), 1 deletion(-)
-> > >  create mode 100644 drivers/base/interface.c
-> > >  create mode 100644 include/linux/interface.h
-> > 
-> > Hm, this interface stuff smells like bus drivers light. Should we instead
-> > have a pile of helpers to make creating new buses with match methods more
-> > trivial? There's a fairly big pile of small use-cases where this might be
-> > useful. In your case here all the host1x children would sit on a host1x
-> > bus. Admittedly I didn't look into the details.
-> 
-> I have no problem adding such "bus-light" functions, to make it easier
-> to create and implement a bus in the driver core, as I know it's really
-> heavy.  That's been on my "todo" list for over a decade now...
 
-Hm, I've victimized^Wvolunteered a few internal people to look into a
-hdmi/dp sink bus type of thing so that we can move away from all those
-ad-hoc hacks currently used to coordinate between drm display drivers and
-the audio side of things. So I'm interested.
+--===============2012140566==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="kvUQC+jR9YzypDnK"
+Content-Disposition: inline
 
-Do you have some ideas somewhere already about how you think this should
-look like? Or is this more a "hey, this would be really cool, eventually"
-kind of thing?
 
-Thanks, Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+--kvUQC+jR9YzypDnK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, May 14, 2014 at 04:34:21PM +0200, Daniel Vetter wrote:
+> On Tue, May 13, 2014 at 11:31:07PM +0200, Thierry Reding wrote:
+> > A different solution, which seems to be fairly common for DRM drivers
+> > for SoCs, is to instantiate a dummy device so that the DRM driver can
+> > bind to it. This can happen in two forms: add the dummy device directly
+> > in device tree (which goes against pretty much everything that's been
+> > preached about device tree in the past) or the dummy device can be
+> > instantiated in code, which is what the current Tegra DRM/host1x driver
+> > does.
+>=20
+> Actually the dummy device seems to be an acceptable solution and iirc was
+> even acked by DT maintainers in the last KS. I'm not on top of things, but
+> iirc the thinking was that a dummy device which just pulls in all the
+> relevant real bits with phandles is justified in the board file since it
+> tells you how the board is intended to be used. The justification was that
+> on SoCs where assigning stuff between v4l and drm is really flexible (e.g.
+> on omap or so where you can assign the display pipes essentially freely)
+> the use-case of the board is what matters, and that's a somewhat physical
+> property of it (i.e. in what kind of device it's sitting.)
+
+I disagree. If there's a way to derive all that information within the
+driver (like we do for Tegra) then there should be no need to add
+redundant content to the device tree. Also note that Tegra DRM and its
+device tree binding predate the last KS, and prior to that the gospel
+was to *not* add this kind of data to the device tree. Hence I was
+forced to spend a *lot* of time working out a solution in the driver.
+Therefore I hope it's understandable that I don't take well to being
+told to just go use a bloody dummy device.
+
+> So in your case you'd have a fake display and a fake video device which
+> pulls everything the drm/v4l driver need together. So if the issue is how
+> to get at a master device I think that's simple to solve.
+
+But that's completely redundant. The driver is perfectly capable of
+determining what devices belong to a DRM device and which should be part
+of a V4L2 device.
+
+Fake devices are only workarounds for a problem that we currently have
+no better solution for in the kernel. And as a matter of fact we already
+do create a dummy device (albeit in the kernel rather than in device
+tree) on Tegra. But I consider that suboptimal, hence why I want to find
+a better way to do this. This interface framework is the result.
+
+If people don't see a need to fix this then I'll just stick with what I
+currently have, since it isn't any worse than what everybody else is
+doing.
+
+> If the issue otoh is how the various drivers can get at the bus-like
+> services host1x exposes, then I think a real bus driver makes a lot more
+> sense. And Greg seems to have ideas about that already.
+
+There aren't really any bus-like services exposed by host1x. It really
+just exposes resources such as DMA channels or syncpoints. But that's
+not even a problem because we know that host1x children are always,
+well, children of host1x and therefore we can simply get access to
+host1x via the parent device.
+
+Thierry
+
+--kvUQC+jR9YzypDnK
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTc4g0AAoJEN0jrNd/PrOhE/EQAI2/8inih/FldRWfKiKJHhlo
+99X/I8nwf7QfUp84u020n8QXTKBueJMkk2bAFyWI4HPdBvKIPQhWyRh8Uc/AA9Al
+dDuiExaiX7h6Zo8Pvlv+KRlNDOWwo3m++50udcH2DFipiPXosnakGFfFPz/KisLX
+GVNpUsg5nnpHbCPet3V2niRzfDRfjXEq0ZTzoHXcFSjYOb3gMiMksBsLw6dOBjoO
+VYpJM/xa0TST6jCDXkX4C9IlACVlYmoq60/8PjOh2VZe+fr3xiwY/d/G2U/MECCG
+qODIarhByywsrNg+BW4/ZB58bEuq4A8nb/nWvgpZJ1J7kpfoKKJiCx0BYm1SS5HK
+z4NF85kvmmfpp9c/5DNnR3UMtg/Bmz3i/aorCf7tWwroLn0Xb/6oPFRG30c7Xo+J
+Ka0N1QMq6PjWKf+Y/7AIYWsGI0nhvBgIIclnyOnHAX2MgKD/JUltcWfjf5NvVEaj
+16eE8dogX89ZT0OdXmBomBQqW8ZdAAo+oSbehVkzGW3fGNiTHMdf8QzEL+ZtSMUU
+whKLV6tRqwX3mgBXWSfpamScunoPeB9ai1w3s0iLq++5uZTZxkoTmdkq5ef9ZmUJ
+9aPDdXbWlLdoav3oX1kIfgj4aaO/e3GEz9YXPE8se9220B8W1XXcjho/KcZGN9H/
+ykiXNwB+/s/SQfOR0y5i
+=T1ep
+-----END PGP SIGNATURE-----
+
+--kvUQC+jR9YzypDnK--
+
+--===============2012140566==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============2012140566==--
