@@ -1,137 +1,43 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v2 4/7] drivers/base: Add interface framework
-Date: Wed, 14 May 2014 10:22:55 -0700
-Message-ID: <20140514172255.GA8122@kroah.com>
-References: <1399995050-28435-1-git-send-email-thierry.reding@gmail.com>
- <1399995050-28435-5-git-send-email-thierry.reding@gmail.com>
- <20140513175713.GS3908@phenom.ffwll.local>
- <20140514003215.GA21520@kroah.com>
- <20140514143719.GH8790@phenom.ffwll.local>
+From: Andrew Bresticker <abrestic@google.com>
+Subject: Re: [RFC PATCH 3/3] clk: tegra: Implement Tegra124 shared/cbus clks
+Date: Wed, 14 May 2014 10:58:26 -0700
+Message-ID: <CAL1qeaGS-78QaiMN-3zXYYXu+K1s7u2rFXQkt7-MRJQS1-sW5A@mail.gmail.com>
+References: <1399990023-30318-1-git-send-email-pdeschrijver@nvidia.com>
+	<1399990023-30318-4-git-send-email-pdeschrijver@nvidia.com>
+	<53725FED.7050303@wwwdotorg.org>
+	<20140514142739.GA8612@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20140514143719.GH8790@phenom.ffwll.local>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>, Russell King <rmk+kernel@arm.linux.org.uk>, dri-devel@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>, David Herrmann <dh.herrmann@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140514142739.GA8612@ulmo>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Arnd Bergmann <arnd@arndb.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, May 14, 2014 at 04:37:19PM +0200, Daniel Vetter wrote:
-> On Tue, May 13, 2014 at 05:32:15PM -0700, Greg Kroah-Hartman wrote:
-> > On Tue, May 13, 2014 at 07:57:13PM +0200, Daniel Vetter wrote:
-> > > On Tue, May 13, 2014 at 05:30:47PM +0200, Thierry Reding wrote:
-> > > > From: Thierry Reding <treding@nvidia.com>
-> > > > 
-> > > > Some drivers, such as graphics drivers in the DRM subsystem, do not have
-> > > > a real device that they can bind to. They are often composed of several
-> > > > devices, each having their own driver. The master/component framework
-> > > > can be used in these situations to collect the devices pertaining to one
-> > > > logical device, wait until all of them have registered and then bind
-> > > > them all at once.
-> > > > 
-> > > > For some situations this is only a partial solution. An implementation
-> > > > of a master still needs to be registered with the system somehow. Many
-> > > > drivers currently resort to creating a dummy device that a driver can
-> > > > bind to and register the master against. This is problematic since it
-> > > > requires (and presumes) knowledge about the system within drivers.
-> > > > 
-> > > > Furthermore there are setups where a suitable device already exists, but
-> > > > is already bound to a driver. For example, on Tegra the following device
-> > > > tree extract (simplified) represents the host1x device along with child
-> > > > devices:
-> > > > 
-> > > > 	host1x {
-> > > > 		display-controller {
-> > > > 			...
-> > > > 		};
-> > > > 
-> > > > 		display-controller {
-> > > > 			...
-> > > > 		};
-> > > > 
-> > > > 		hdmi {
-> > > > 			...
-> > > > 		};
-> > > > 
-> > > > 		dsi {
-> > > > 			...
-> > > > 		};
-> > > > 
-> > > > 		csi {
-> > > > 			...
-> > > > 		};
-> > > > 
-> > > > 		video-input {
-> > > > 			...
-> > > > 		};
-> > > > 	};
-> > > > 
-> > > > Each of the child devices is in turn a client of host1x, in that it can
-> > > > request resources (command stream DMA channels and syncpoints) from it.
-> > > > To implement the DMA channel and syncpoint infrastructure, host1x comes
-> > > > with its own driver. Children are implemented in separate drivers. In
-> > > > Linux this set of devices would be exposed by DRM and V4L2 drivers.
-> > > > 
-> > > > However, neither the DRM nor the V4L2 drivers have a single device that
-> > > > they can bind to. The DRM device is composed of the display controllers
-> > > > and the various output devices, whereas the V4L2 device is composed of
-> > > > one or more video input devices.
-> > > > 
-> > > > This patch introduces the concept of an interface and drivers that can
-> > > > bind to a given interface. An interface can be exposed by any device,
-> > > > and interface drivers can bind to these interfaces. Multiple drivers can
-> > > > bind against a single interface. When a device is removed, interfaces
-> > > > exposed by it will be removed as well, thereby removing the drivers that
-> > > > were bound to those interfaces.
-> > > > 
-> > > > In the example above, the host1x device would expose the "tegra-host1x"
-> > > > interface. DRM and V4L2 drivers can then bind to that interface and
-> > > > instantiate the respective subsystem objects from there.
-> > > > 
-> > > > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > > > ---
-> > > > Note that I'd like to merge this through the Tegra DRM tree so that the
-> > > > changes to the Tegra DRM driver later in this series can be merged at
-> > > > the same time and are not delayed for another release cycle.
-> > > > 
-> > > > In particular that means that I'm looking for an Acked-by from Greg.
-> > > > 
-> > > >  drivers/base/Makefile     |   2 +-
-> > > >  drivers/base/interface.c  | 186 ++++++++++++++++++++++++++++++++++++++++++++++
-> > > >  include/linux/interface.h |  40 ++++++++++
-> > > >  3 files changed, 227 insertions(+), 1 deletion(-)
-> > > >  create mode 100644 drivers/base/interface.c
-> > > >  create mode 100644 include/linux/interface.h
-> > > 
-> > > Hm, this interface stuff smells like bus drivers light. Should we instead
-> > > have a pile of helpers to make creating new buses with match methods more
-> > > trivial? There's a fairly big pile of small use-cases where this might be
-> > > useful. In your case here all the host1x children would sit on a host1x
-> > > bus. Admittedly I didn't look into the details.
-> > 
-> > I have no problem adding such "bus-light" functions, to make it easier
-> > to create and implement a bus in the driver core, as I know it's really
-> > heavy.  That's been on my "todo" list for over a decade now...
-> 
-> Hm, I've victimized^Wvolunteered a few internal people to look into a
-> hdmi/dp sink bus type of thing so that we can move away from all those
-> ad-hoc hacks currently used to coordinate between drm display drivers and
-> the audio side of things. So I'm interested.
-> 
-> Do you have some ideas somewhere already about how you think this should
-> look like? Or is this more a "hey, this would be really cool, eventually"
-> kind of thing?
+On Wed, May 14, 2014 at 7:27 AM, Thierry Reding
+<thierry.reding@gmail.com> wrote:
+> As for shared clocks I'm only aware of one use-case, namely EMC scaling.
+> Using clocks for that doesn't seem like the best option to me. While it
+> can probably fix the immediate issue of choosing an appropriate
+> frequency for the EMC clock it isn't a complete solution for the problem
+> that we're trying to solve. From what I understand EMC scaling is one
+> part of ensuring quality of service. The current implementations of that
+> seems to abuse clocks (essentially one X.emc clock per X clock) to
+> signal the amount of memory bandwidth required by any given device. But
+> there are other parts to the puzzle. Latency allowance is one. The value
+> programmed to the latency allowance registers for example depends on the
+> EMC frequency.
+>
+> Has anyone ever looked into using a different framework to model all of
+> these requirements? PM QoS looks like it might fit, but if none of the
+> existing frameworks have what we need, perhaps something new can be
+> created.
 
-It was very much a "hey, this would be really cool" type of thing,
-nothing specific at all, sorry.
+On Exynos we use devfreq, though in that case we monitor performance
+counters to determine how internal buses should be scaled - not sure
+if Tegra SoCs have similar counters that could be used for this
+purpose.  It seems like EMC scaling would fit nicely within the PM QoS
+framework, perhaps with a new PM_QOS_MEMORY_THROUGHPUT class.
 
-greg k-h
+-Andrew
