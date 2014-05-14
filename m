@@ -1,78 +1,137 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 2/2] ARM: tegra: initial add of Colibri T30
-Date: Wed, 14 May 2014 16:32:11 +0200
-Message-ID: <20140514143209.GB8612@ulmo>
-References: <cover.1400001937.git.stefan@agner.ch>
- <d45ec5351ce8ef03256061bdc4b0ba673bd40c66.1400001937.git.stefan@agner.ch>
- <53727738.4080901@wwwdotorg.org>
- <537319CE.7020101@ziswiler.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v2 4/7] drivers/base: Add interface framework
+Date: Wed, 14 May 2014 16:37:19 +0200
+Message-ID: <20140514143719.GH8790@phenom.ffwll.local>
+References: <1399995050-28435-1-git-send-email-thierry.reding@gmail.com>
+ <1399995050-28435-5-git-send-email-thierry.reding@gmail.com>
+ <20140513175713.GS3908@phenom.ffwll.local>
+ <20140514003215.GA21520@kroah.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="NMuMz9nt05w80d4+"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <537319CE.7020101@ziswiler.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marcel Ziswiler <marcel@ziswiler.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, stefan@agner.ch, linux@arm.linux.org.uk, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+In-Reply-To: <20140514003215.GA21520@kroah.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, May 13, 2014 at 05:32:15PM -0700, Greg Kroah-Hartman wrote:
+> On Tue, May 13, 2014 at 07:57:13PM +0200, Daniel Vetter wrote:
+> > On Tue, May 13, 2014 at 05:30:47PM +0200, Thierry Reding wrote:
+> > > From: Thierry Reding <treding@nvidia.com>
+> > > 
+> > > Some drivers, such as graphics drivers in the DRM subsystem, do not have
+> > > a real device that they can bind to. They are often composed of several
+> > > devices, each having their own driver. The master/component framework
+> > > can be used in these situations to collect the devices pertaining to one
+> > > logical device, wait until all of them have registered and then bind
+> > > them all at once.
+> > > 
+> > > For some situations this is only a partial solution. An implementation
+> > > of a master still needs to be registered with the system somehow. Many
+> > > drivers currently resort to creating a dummy device that a driver can
+> > > bind to and register the master against. This is problematic since it
+> > > requires (and presumes) knowledge about the system within drivers.
+> > > 
+> > > Furthermore there are setups where a suitable device already exists, but
+> > > is already bound to a driver. For example, on Tegra the following device
+> > > tree extract (simplified) represents the host1x device along with child
+> > > devices:
+> > > 
+> > > 	host1x {
+> > > 		display-controller {
+> > > 			...
+> > > 		};
+> > > 
+> > > 		display-controller {
+> > > 			...
+> > > 		};
+> > > 
+> > > 		hdmi {
+> > > 			...
+> > > 		};
+> > > 
+> > > 		dsi {
+> > > 			...
+> > > 		};
+> > > 
+> > > 		csi {
+> > > 			...
+> > > 		};
+> > > 
+> > > 		video-input {
+> > > 			...
+> > > 		};
+> > > 	};
+> > > 
+> > > Each of the child devices is in turn a client of host1x, in that it can
+> > > request resources (command stream DMA channels and syncpoints) from it.
+> > > To implement the DMA channel and syncpoint infrastructure, host1x comes
+> > > with its own driver. Children are implemented in separate drivers. In
+> > > Linux this set of devices would be exposed by DRM and V4L2 drivers.
+> > > 
+> > > However, neither the DRM nor the V4L2 drivers have a single device that
+> > > they can bind to. The DRM device is composed of the display controllers
+> > > and the various output devices, whereas the V4L2 device is composed of
+> > > one or more video input devices.
+> > > 
+> > > This patch introduces the concept of an interface and drivers that can
+> > > bind to a given interface. An interface can be exposed by any device,
+> > > and interface drivers can bind to these interfaces. Multiple drivers can
+> > > bind against a single interface. When a device is removed, interfaces
+> > > exposed by it will be removed as well, thereby removing the drivers that
+> > > were bound to those interfaces.
+> > > 
+> > > In the example above, the host1x device would expose the "tegra-host1x"
+> > > interface. DRM and V4L2 drivers can then bind to that interface and
+> > > instantiate the respective subsystem objects from there.
+> > > 
+> > > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > > ---
+> > > Note that I'd like to merge this through the Tegra DRM tree so that the
+> > > changes to the Tegra DRM driver later in this series can be merged at
+> > > the same time and are not delayed for another release cycle.
+> > > 
+> > > In particular that means that I'm looking for an Acked-by from Greg.
+> > > 
+> > >  drivers/base/Makefile     |   2 +-
+> > >  drivers/base/interface.c  | 186 ++++++++++++++++++++++++++++++++++++++++++++++
+> > >  include/linux/interface.h |  40 ++++++++++
+> > >  3 files changed, 227 insertions(+), 1 deletion(-)
+> > >  create mode 100644 drivers/base/interface.c
+> > >  create mode 100644 include/linux/interface.h
+> > 
+> > Hm, this interface stuff smells like bus drivers light. Should we instead
+> > have a pile of helpers to make creating new buses with match methods more
+> > trivial? There's a fairly big pile of small use-cases where this might be
+> > useful. In your case here all the host1x children would sit on a host1x
+> > bus. Admittedly I didn't look into the details.
+> 
+> I have no problem adding such "bus-light" functions, to make it easier
+> to create and implement a bus in the driver core, as I know it's really
+> heavy.  That's been on my "todo" list for over a decade now...
 
---NMuMz9nt05w80d4+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hm, I've victimized^Wvolunteered a few internal people to look into a
+hdmi/dp sink bus type of thing so that we can move away from all those
+ad-hoc hacks currently used to coordinate between drm display drivers and
+the audio side of things. So I'm interested.
 
-On Wed, May 14, 2014 at 09:22:54AM +0200, Marcel Ziswiler wrote:
-> On 05/13/2014 09:49 PM, Stephen Warren wrote:
-> >On 05/13/2014 11:27 AM, stefan@agner.ch wrote:
-[...]
-> >>+	panel: panel {
-> >>+		compatible =3D "edt,et057090dhu", "simple-panel";
-> >
-> >The panel-simple driver doesn't seem to know about that EDT panel. How
-> >will it work out the display timings?
->=20
-> Good question and me and Stefan actually even talked about that yesterday=
-=2E I
-> am actually using KMS right now as follows:
->=20
-> video=3DHDMI-A-1:1280x720-16@60 video=3DLVDS-1:640x480-16@60'
->=20
-> So the panel node is purely used to hook up the back light part right now.
->=20
-> From our point of view for our completely generic module approach where e=
-ach
-> customer potentially hooks up his own display make/model it would be
-> desirable to have some way of defining such timings directly through the
-> device tree.
+Do you have some ideas somewhere already about how you think this should
+look like? Or is this more a "hey, this would be really cool, eventually"
+kind of thing?
 
-Every customer design would presumably get its own device tree file, so
-they could easily follow the current conventions and update the
-panel-simple driver with the proper compatible value and display timings
-and then simply make the panel device node compatible with that.
-
-Thierry
-
---NMuMz9nt05w80d4+
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTc35pAAoJEN0jrNd/PrOhVC4P/0szEjvrRSwwtRVnMyX5ccJe
-zHTS9fTBhAOZlHxafqVIaUPpUGkhmTfm1lf58YIxEvSpTsHEdP7EVbDGZgxxGd0k
-HVY1QMWZtNUCbxvpCMYNVOUivLYYnBv/vkLIhtf+SyyO590YhndC6L4GvskyY0Ov
-K+tUhPyMtICCEnRd9XYNy9hqTHbO1JQJHiNTx1SkER0ykt7ZuEN3xlrQwXaahCda
-2NA+fLBdZlCrHsqyQcq+Gx3ogn6o4C11H0Od6oza+KnKtzuExTEim4OL2c7n0efN
-X2y3GDQ06Xoe4zgJZcSG8CzjkHnQxmiNHqnVIdoCHBQq8CfPGoS+teWM9Xnc866h
-cXcsPgbTRrpbm7EJgv3zWKJAASV2zWmG7eFEQb5X059XCiBbgcD2HIaVLjIW/4Lm
-VUX8wFnUdK61MlB85gYODKCu27tO2ePeIe08r4Os9lf6N0THYX87kTYdJKN0HLoR
-5Bj32sDItpt7vJZHfeHnOnC8y8h9TuhiI9l+uDoJJk+rUA10OtOqa+gDllOzf+X5
-eYl6WsRKoiWxOhqEU8YP7ffoKefsqbhC1TDmLD0Fek+yD2sWmXS4ZBYoU6bndiPg
-L+Q0kXbL5UnarYQOczUEAzNlqBA049d4vLYszUYZAiZjWgqdTCxmSw2t94qwG0v8
-mogdXBfkRflWWVmRcV8Z
-=+bbS
------END PGP SIGNATURE-----
-
---NMuMz9nt05w80d4+--
+Thanks, Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
