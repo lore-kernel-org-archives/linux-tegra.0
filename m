@@ -1,123 +1,111 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v2 4/7] drivers/base: Add interface framework
-Date: Tue, 13 May 2014 17:32:15 -0700
-Message-ID: <20140514003215.GA21520@kroah.com>
-References: <1399995050-28435-1-git-send-email-thierry.reding@gmail.com>
- <1399995050-28435-5-git-send-email-thierry.reding@gmail.com>
- <20140513175713.GS3908@phenom.ffwll.local>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: enable console framebuffer rotation
+Date: Wed, 14 May 2014 11:00:23 +0900
+Message-ID: <5372CE37.1080601@nvidia.com>
+References: <1399432682-677-1-git-send-email-acourbot@nvidia.com> <536A57FA.2090608@wwwdotorg.org> <536AC45F.6080608@nvidia.com> <536CE414.5030406@suse.de> <536CF33A.3020906@wwwdotorg.org> <53727D9E.9050800@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20140513175713.GS3908@phenom.ffwll.local>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>, Russell King <rmk+kernel@arm.linux.org.uk>, dri-devel@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>, David Herrmann <dh.herrmann@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <53727D9E.9050800-l3A5Bk7waGM@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?ISO-8859-1?Q?Andreas_F=E4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, May 13, 2014 at 07:57:13PM +0200, Daniel Vetter wrote:
-> On Tue, May 13, 2014 at 05:30:47PM +0200, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> > 
-> > Some drivers, such as graphics drivers in the DRM subsystem, do not have
-> > a real device that they can bind to. They are often composed of several
-> > devices, each having their own driver. The master/component framework
-> > can be used in these situations to collect the devices pertaining to one
-> > logical device, wait until all of them have registered and then bind
-> > them all at once.
-> > 
-> > For some situations this is only a partial solution. An implementation
-> > of a master still needs to be registered with the system somehow. Many
-> > drivers currently resort to creating a dummy device that a driver can
-> > bind to and register the master against. This is problematic since it
-> > requires (and presumes) knowledge about the system within drivers.
-> > 
-> > Furthermore there are setups where a suitable device already exists, but
-> > is already bound to a driver. For example, on Tegra the following device
-> > tree extract (simplified) represents the host1x device along with child
-> > devices:
-> > 
-> > 	host1x {
-> > 		display-controller {
-> > 			...
-> > 		};
-> > 
-> > 		display-controller {
-> > 			...
-> > 		};
-> > 
-> > 		hdmi {
-> > 			...
-> > 		};
-> > 
-> > 		dsi {
-> > 			...
-> > 		};
-> > 
-> > 		csi {
-> > 			...
-> > 		};
-> > 
-> > 		video-input {
-> > 			...
-> > 		};
-> > 	};
-> > 
-> > Each of the child devices is in turn a client of host1x, in that it can
-> > request resources (command stream DMA channels and syncpoints) from it.
-> > To implement the DMA channel and syncpoint infrastructure, host1x comes
-> > with its own driver. Children are implemented in separate drivers. In
-> > Linux this set of devices would be exposed by DRM and V4L2 drivers.
-> > 
-> > However, neither the DRM nor the V4L2 drivers have a single device that
-> > they can bind to. The DRM device is composed of the display controllers
-> > and the various output devices, whereas the V4L2 device is composed of
-> > one or more video input devices.
-> > 
-> > This patch introduces the concept of an interface and drivers that can
-> > bind to a given interface. An interface can be exposed by any device,
-> > and interface drivers can bind to these interfaces. Multiple drivers can
-> > bind against a single interface. When a device is removed, interfaces
-> > exposed by it will be removed as well, thereby removing the drivers that
-> > were bound to those interfaces.
-> > 
-> > In the example above, the host1x device would expose the "tegra-host1x"
-> > interface. DRM and V4L2 drivers can then bind to that interface and
-> > instantiate the respective subsystem objects from there.
-> > 
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> > Note that I'd like to merge this through the Tegra DRM tree so that the
-> > changes to the Tegra DRM driver later in this series can be merged at
-> > the same time and are not delayed for another release cycle.
-> > 
-> > In particular that means that I'm looking for an Acked-by from Greg.
-> > 
-> >  drivers/base/Makefile     |   2 +-
-> >  drivers/base/interface.c  | 186 ++++++++++++++++++++++++++++++++++++++++++++++
-> >  include/linux/interface.h |  40 ++++++++++
-> >  3 files changed, 227 insertions(+), 1 deletion(-)
-> >  create mode 100644 drivers/base/interface.c
-> >  create mode 100644 include/linux/interface.h
-> 
-> Hm, this interface stuff smells like bus drivers light. Should we instead
-> have a pile of helpers to make creating new buses with match methods more
-> trivial? There's a fairly big pile of small use-cases where this might be
-> useful. In your case here all the host1x children would sit on a host1x
-> bus. Admittedly I didn't look into the details.
+On 05/14/2014 05:16 AM, Andreas F=E4rber wrote:
+> Am 09.05.2014 17:24, schrieb Stephen Warren:
+>> On 05/09/2014 08:20 AM, Andreas F=E4rber wrote:
+>>> Am 08.05.2014 01:40, schrieb Alex Courbot:
+>>>> On 05/08/2014 12:57 AM, Stephen Warren wrote:
+>>>>> On 05/06/2014 09:18 PM, Alexandre Courbot wrote:
+>>>>>> Console rotation is needed for devices like Tegra Note 7 and NVI=
+DIA
+>>>>>> SHIELD to get the boot console in the expected orientation.
+>>>>>
+>>>>> I've squashed this into Tegra's for-3.16/defconfig branch.
+>>>>>
+>>>>> Can you please also update multi_v7_defconfig, and send that chan=
+ge to
+>>>>> arm-soc (arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org) to be applied. Thanks.
+>>>>
+>>>> I omitted doing this for now because the devices that require this
+>>>> option (TN7/SHIELD) need a custom build with appended DTB and/or
+>>>> command-line anyway. Therefore they cannot use a multi-mach kernel
+>>>
+>>> What does appending a .dtb have to do with whether or not to use a
+>>> multi-mach kernel? We package zImage/uImage and .dtbs separately, s=
+o
+>>> surely the multi_v7_defconfig should be kept working with Tegra dev=
+ices.
+>>> Appending a .dtb only comes into play for preparing installation im=
+ages.
+>>
+>> That would be a reasonable argument if generic distro installers or
+>> kernel packages were likely to support the TN7 and SHIELD. However,
+>> given the bootloader situation there and the need for a custom kerne=
+l
+>> anyway for APPENDED_DTB, I assume that's not the case on this partic=
+ular
+>> device?
+>
+> The Shield we probably don't, the TN7 I don't know. I was more concer=
+ned
+> about the shortened justification.
+>
+>> If you do intend to support this device with SuSe installer and kern=
+el
+>> packages, could you give an outline of how you do so?
+>
+> I gave a presentation at embedded world Conference 2014 on how standa=
+rd
+> distributions work on ARM/AArch64, but I fear the slides are not onli=
+ne.
+>
+> As far as possible, we use a single kernel source and a "default" or
+> "lpae" v7 multi-platform config with lots of modules enabled.
+>
+> http://kernel.opensuse.org/cgit/kernel-source/tree/config/armv7hl [*]
+>
+> I just double-checked, and we do have CONFIG_ARM_APPENDED_DTB=3Dy ena=
+bled.
+> It does not restrict supplying the .dtb the "normal" way AIUI.
+>
+> Our Open Build Service instance then builds a kernel-default .rpm
+> package containing zImage and modules. The .dts files are separately
+> compiled and packaged as, e.g., dtb-tegra2 for /boot/dtb/tegra20-*.dt=
+b.
+>
+> For building initrd, U-Boot boot.scr (including kernel command line) =
+and
+> installation image, we use Kiwi.
+>
+> Anyway, we don't rely on the defconfigs for our distro, so do as you =
+see
+> fit; just gently reminding that it's not feasible for everyone to bui=
+ld
+> kernels per device, as the above comment seemed to suggest.
 
-I have no problem adding such "bus-light" functions, to make it easier
-to create and implement a bus in the driver core, as I know it's really
-heavy.  That's been on my "todo" list for over a decade now...
+To be completely clear, we didn't expect these devices to be of interes=
+t=20
+to distros, due to the limitation of their bootloaders.
 
-thanks,
+Both SHIELD and TN7 come with a locked bootloader and cannot use U-boot=
+=2E=20
+The bootloader can only boot a kernel from a dedicated, raw boot=20
+partition (Android style), can only pass a device tree from another raw=
+=20
+"dtb" partition, and will fill it with plenty of dirty command-line=20
+options that make mainline unusable. That seems to be a lot for distros=
+=20
+to handle, so at this stage we'd rather advise users to use a root FS=20
+image of their favorite distro along with a self-compiled kernel.
 
-greg k-h
+That being said I only have a short-range view of the issue, so if you=20
+know of a way a distro installer could handle this and think it is wort=
+h=20
+doing, I'll be happy to cooperate here.
+
+Thanks,
+Alex.
