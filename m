@@ -1,139 +1,101 @@
-From: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH 2/2] ARM: tegra: initial add of Colibri T30
-Date: Wed, 14 May 2014 09:22:54 +0200
-Message-ID: <537319CE.7020101@ziswiler.com>
-References: <cover.1400001937.git.stefan@agner.ch> <d45ec5351ce8ef03256061bdc4b0ba673bd40c66.1400001937.git.stefan@agner.ch> <53727738.4080901@wwwdotorg.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC PATCH 3/3] clk: tegra: Implement Tegra124 shared/cbus clks
+Date: Wed, 14 May 2014 16:27:40 +0200
+Message-ID: <20140514142739.GA8612@ulmo>
+References: <1399990023-30318-1-git-send-email-pdeschrijver@nvidia.com>
+ <1399990023-30318-4-git-send-email-pdeschrijver@nvidia.com>
+ <53725FED.7050303@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53727738.4080901-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <53725FED.7050303-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, stefan-XLVq0VzYD2Y@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/13/2014 09:49 PM, Stephen Warren wrote:
-> On 05/13/2014 11:27 AM, stefan-XLVq0VzYD2Y@public.gmane.org wrote:
->> This patch adds the device tree to support Toradex Colibri T30, a
->> computer on module which can be used on different carrier boards.
->>
->> The module consists of a Tegra 30 SoC, two PMIC, DDR3L RAM, eMMC,
->> a LM95245 temperature sensor and an AX88772B USB Ethernet
->> Controller. Furthermore, there is a STMPE811 and SGTL5000 audio
->> codec which are not yet supported. Anything that is not self
->> contained on the module is disabled by default.
->>
->> The device tree for the Evaluation Board includes the modules
->> device tree and enables the supported pheripherials of the carrier
->> board (the Evaluation Board supports almost all of them).
->
->> diff --git a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
->
->> +#include "tegra30-colibri.dtsi"
->> +
->> +/ {
->> +	model = "Toradex Colibri T30 on Colibri Evaluation Board";
->> +	compatible = "toradex,colibri_t30-eval-v3", "nvidia,tegra30";
->
-> That should include all the compatible values "inherited" from the
-> Colibri T30 module .dtsi file too.
->
->> +	aliases {
->> +		rtc0 = "/i2c@7000c000/rtc@68";
->> +		rtc1 = "/i2c@7000d000/tps65911@2d";
->> +		rtc2 = "/rtc@7000e000";
->> +	};
->
-> Wow, no shortage of RTCs!
 
-Yes (;-p). Please understand however that there are certain limitation 
-if it comes to real-time clocks: The first one is the ultra low-power 
-RTC available on the carrier board. The second one is PMIC integrated 
-usually drawing much more current that the first dedicated one. The 
-third one is Tegra SoC internal and won't keep the time across 
-power-cycles in our design.
+--XsQoSWH+UP9D9v3l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->> +	/* SPI1: Colibri SSP */
->> +	spi@7000d400 {
->> +		status = "okay";
->> +		spi-max-frequency = <25000000>;
->> +		can0: can@0 {
->> +			compatible = "microchip,mcp2515";
->> +			reg = <0>;
->> +			clocks = <&clk16m>;
->> +			interrupt-parent = <&gpio>;
->> +			interrupts = <TEGRA_GPIO(S, 0) GPIO_ACTIVE_LOW>;
->> +			spi-max-frequency = <10000000>;
->
-> So this chip doesn't get confused by a faster clock frequency when its
-> chip-select line isn't asserted? I would have expected spi-max-frequency
-> for the bus to be the minimum value that any device on the bus would
-> tolerate.
+On Tue, May 13, 2014 at 12:09:49PM -0600, Stephen Warren wrote:
+> On 05/13/2014 08:06 AM, Peter De Schrijver wrote:
+> > Add shared and cbus clocks to the Tegra124 clock implementation.
+>=20
+> > diff --git a/include/dt-bindings/clock/tegra124-car.h b/include/dt-bind=
+ings/clock/tegra124-car.h
+>=20
+> > +#define TEGRA124_CLK_C2BUS 401
+> > +#define TEGRA124_CLK_C3BUS 402
+> > +#define TEGRA124_CLK_GR3D_CBUS 403
+> > +#define TEGRA124_CLK_GR2D_CBUS 404
+> ...
+>=20
+> I worry about this a bit. IIUC, these clocks don't actually exist in HW,
+> but are more a way of SW applying policy to the clock that do exist in
+> HW. As such, I'm not convinced it's a good idea to expose these clock
+> IDS to DT, since DT is supposed to represent the HW, and not be
+> influenced by internal SW implementation details.
+>=20
+> Do any DTs actually need to used these new clock IDs? I don't think we
+> could actually use these value in e.g. tegra124.dtsi's clocks
+> properties, since these clocks don't exist in HW. Was it your intent to
+> do that? If not, can't we just define these SW-internal clock IDs in the
+> header inside the Tegra clock driver, so the values are invisible to DT?
 
-No SPI chip should ever get confused like that as long as they are chip 
-select gated. At least by the traditional chip select meaning as opposed 
-to NVIDIA's designers taking the term chip select a little too personal: 
-they indeed only select a chip otherwise all the chip select pins are 
-just left floating!
+I'm beginning to wonder if abusing clocks in this way is really the best
+solution. From what I understand there are two problems here that are
+mostly orthogonal though they're implemented using similar techniques.
 
->> +	/* EHCI instance 0: USB1_DP/N -> USBC_P/N */
->> +	usb@7d000000 {
->> +		status = "okay";
->> +		dr_mode = "otg";
->
-> The dr_mode property is only for the PHY node.
->
->> +	panel: panel {
->> +		compatible = "edt,et057090dhu", "simple-panel";
->
-> The panel-simple driver doesn't seem to know about that EDT panel. How
-> will it work out the display timings?
+The reason for introducing cbus clocks are still unclear to me. From the
+cover letter of this patch series it seems like these should be
+completely hidden from drivers and as such they don't belong in device
+tree. Also if they are an implementation detail, why are they even
+implemented as clocks? Perhaps an example use-case would help illustrate
+the need for this.
 
-Good question and me and Stefan actually even talked about that 
-yesterday. I am actually using KMS right now as follows:
+As for shared clocks I'm only aware of one use-case, namely EMC scaling.
+Using clocks for that doesn't seem like the best option to me. While it
+can probably fix the immediate issue of choosing an appropriate
+frequency for the EMC clock it isn't a complete solution for the problem
+that we're trying to solve. From what I understand EMC scaling is one
+part of ensuring quality of service. The current implementations of that
+seems to abuse clocks (essentially one X.emc clock per X clock) to
+signal the amount of memory bandwidth required by any given device. But
+there are other parts to the puzzle. Latency allowance is one. The value
+programmed to the latency allowance registers for example depends on the
+EMC frequency.
 
-video=HDMI-A-1:1280x720-16@60 video=LVDS-1:640x480-16@60'
+Has anyone ever looked into using a different framework to model all of
+these requirements? PM QoS looks like it might fit, but if none of the
+existing frameworks have what we need, perhaps something new can be
+created.
 
-So the panel node is purely used to hook up the back light part right now.
+Thierry
 
- From our point of view for our completely generic module approach where 
-each customer potentially hooks up his own display make/model it would 
-be desirable to have some way of defining such timings directly through 
-the device tree.
+--XsQoSWH+UP9D9v3l
+Content-Type: application/pgp-signature
 
->> diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
->
->> +/ {
->> +	model = "Toradex Colibri T30";
->> +	compatible = "toradex,colibri_t30-v11b",
->> +		     "toradex,colibri_t30-v11c",
->> +		     "toradex,colibri_t30-v11d",
->> +		     "toradex,colibri_t30", "nvidia,tegra30";
->
-> Do we really need all those compatible values? If those board revisions
-> are all SW-compatible, then you may as well write just:
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-You are right. It indeed does not make much sense as only V1.0a which 
-never actually went on sale would be software incompatible.
+iQIcBAEBAgAGBQJTc31bAAoJEN0jrNd/PrOha6kP/RJ4vFFsAKj1HstgOGDr+9kR
+X7NtK+rBdBxQ1LW52MRA8n/H+UmXrGvfrLhgDERgSQ+AcVisKiQ2FVnLVyVDsM/y
+S8q0n7o/ySYGjz8vPZaJ+uqr7yl5Qi6mHtSiRD2lkB/EuqqK7YT519/pQ/2/Ozc5
+G3U4HvSLBeQ3FztVZMiZlndQSMMPcKhDyy8AVAn7igX1kvrd4MW978uDEO5qg6mo
+lyc2pYuCbG6nKpilNV7wFckflPTK3M8YMftdX8Ycws0NDWLCLbVLn+nou3ENDRoc
++NT2S3wFZbXs7LXHhaP1ZJMdwPpSaEvWS4i7l07lE3uz9DxzUW/Wv/UhLgUMRnw3
+Qdwr0TVMRTRbFEGzwnR9fauXKdFsxnYJQVCBZq3oNDNmBNMRuPwSjeOMlXP6pt8C
+vfcTmxGf1Djajaq6XpAuuabUSvLuZGruhlqp2iI8ym9J1XLR17kaNbcA5bXmEUup
+nR8c6RbZVFaZDc/4Ud3EhihHtLnpb3lnlhuc8jcotAdh0llwzDQMVsnjD3p0V0+K
+QpuFllxNEFsFGKguNMBV27iooXZ/M6jYp9J/jceXEZOHKMjuW8qv4LXA3s5x2Lsk
+ILtVIidfGdj/VvKByeMUvU6e3hkceFV7xMjqutrsM2aLi/KhwVJmLM97w9k2Qzdx
+P8XUo+l1OFQjVAr5iqh9
+=KFi/
+-----END PGP SIGNATURE-----
 
-> 	compatible = "toradex,colibri_t30", "nvidia,tegra30";
->
->> +	aliases {
->> +		serial0 = &uarta;
->> +		serial1 = &uartd;
->> +		serial2 = &uartb;
->> +	};
->
-> tegra20.dtsi already sets the alias names for the serial ports. Previous
-> discussions settled on giving each on-chip UART a static name, rather
-> than renaming them per board.
-
-Understood, however our Colibri standard defines a completely different 
-order of the UARTs which is what we attempted to indicate by this aliases.
-
->> +	pmc@7000e400 {
->> +		status = "okay";
->
-> The PMC node isn't disabled in tegra20.dtsi, so you don't need the
-> status property here.
+--XsQoSWH+UP9D9v3l--
