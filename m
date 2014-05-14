@@ -1,65 +1,137 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH 2/2] ARM: tegra: initial add of Colibri T30
-Date: Wed, 14 May 2014 18:16:16 +0200
-Message-ID: <107aeb48982529858267cb85c792b35e@agner.ch>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v2 4/7] drivers/base: Add interface framework
+Date: Wed, 14 May 2014 10:22:55 -0700
+Message-ID: <20140514172255.GA8122@kroah.com>
+References: <1399995050-28435-1-git-send-email-thierry.reding@gmail.com>
+ <1399995050-28435-5-git-send-email-thierry.reding@gmail.com>
+ <20140513175713.GS3908@phenom.ffwll.local>
+ <20140514003215.GA21520@kroah.com>
+ <20140514143719.GH8790@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: thierry.reding@gmail.com, linux@arm.linux.org.uk, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, marcel@ziswiler.com
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20140514143719.GH8790@phenom.ffwll.local>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>, Russell King <rmk+kernel@arm.linux.org.uk>, dri-devel@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>, David Herrmann <dh.herrmann@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Am 2014-05-13 21:49, schrieb Stephen Warren:
-> On 05/13/2014 11:27 AM, stefan@agner.ch wrote:
->> +	/* SPI1: Colibri SSP */
->> +	spi@7000d400 {
->> +		status = "okay";
->> +		spi-max-frequency = <25000000>;
->> +		can0: can@0 {
->> +			compatible = "microchip,mcp2515";
->> +			reg = <0>;
->> +			clocks = <&clk16m>;
->> +			interrupt-parent = <&gpio>;
->> +			interrupts = <TEGRA_GPIO(S, 0) GPIO_ACTIVE_LOW>;
->> +			spi-max-frequency = <10000000>;
+On Wed, May 14, 2014 at 04:37:19PM +0200, Daniel Vetter wrote:
+> On Tue, May 13, 2014 at 05:32:15PM -0700, Greg Kroah-Hartman wrote:
+> > On Tue, May 13, 2014 at 07:57:13PM +0200, Daniel Vetter wrote:
+> > > On Tue, May 13, 2014 at 05:30:47PM +0200, Thierry Reding wrote:
+> > > > From: Thierry Reding <treding@nvidia.com>
+> > > > 
+> > > > Some drivers, such as graphics drivers in the DRM subsystem, do not have
+> > > > a real device that they can bind to. They are often composed of several
+> > > > devices, each having their own driver. The master/component framework
+> > > > can be used in these situations to collect the devices pertaining to one
+> > > > logical device, wait until all of them have registered and then bind
+> > > > them all at once.
+> > > > 
+> > > > For some situations this is only a partial solution. An implementation
+> > > > of a master still needs to be registered with the system somehow. Many
+> > > > drivers currently resort to creating a dummy device that a driver can
+> > > > bind to and register the master against. This is problematic since it
+> > > > requires (and presumes) knowledge about the system within drivers.
+> > > > 
+> > > > Furthermore there are setups where a suitable device already exists, but
+> > > > is already bound to a driver. For example, on Tegra the following device
+> > > > tree extract (simplified) represents the host1x device along with child
+> > > > devices:
+> > > > 
+> > > > 	host1x {
+> > > > 		display-controller {
+> > > > 			...
+> > > > 		};
+> > > > 
+> > > > 		display-controller {
+> > > > 			...
+> > > > 		};
+> > > > 
+> > > > 		hdmi {
+> > > > 			...
+> > > > 		};
+> > > > 
+> > > > 		dsi {
+> > > > 			...
+> > > > 		};
+> > > > 
+> > > > 		csi {
+> > > > 			...
+> > > > 		};
+> > > > 
+> > > > 		video-input {
+> > > > 			...
+> > > > 		};
+> > > > 	};
+> > > > 
+> > > > Each of the child devices is in turn a client of host1x, in that it can
+> > > > request resources (command stream DMA channels and syncpoints) from it.
+> > > > To implement the DMA channel and syncpoint infrastructure, host1x comes
+> > > > with its own driver. Children are implemented in separate drivers. In
+> > > > Linux this set of devices would be exposed by DRM and V4L2 drivers.
+> > > > 
+> > > > However, neither the DRM nor the V4L2 drivers have a single device that
+> > > > they can bind to. The DRM device is composed of the display controllers
+> > > > and the various output devices, whereas the V4L2 device is composed of
+> > > > one or more video input devices.
+> > > > 
+> > > > This patch introduces the concept of an interface and drivers that can
+> > > > bind to a given interface. An interface can be exposed by any device,
+> > > > and interface drivers can bind to these interfaces. Multiple drivers can
+> > > > bind against a single interface. When a device is removed, interfaces
+> > > > exposed by it will be removed as well, thereby removing the drivers that
+> > > > were bound to those interfaces.
+> > > > 
+> > > > In the example above, the host1x device would expose the "tegra-host1x"
+> > > > interface. DRM and V4L2 drivers can then bind to that interface and
+> > > > instantiate the respective subsystem objects from there.
+> > > > 
+> > > > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > > > ---
+> > > > Note that I'd like to merge this through the Tegra DRM tree so that the
+> > > > changes to the Tegra DRM driver later in this series can be merged at
+> > > > the same time and are not delayed for another release cycle.
+> > > > 
+> > > > In particular that means that I'm looking for an Acked-by from Greg.
+> > > > 
+> > > >  drivers/base/Makefile     |   2 +-
+> > > >  drivers/base/interface.c  | 186 ++++++++++++++++++++++++++++++++++++++++++++++
+> > > >  include/linux/interface.h |  40 ++++++++++
+> > > >  3 files changed, 227 insertions(+), 1 deletion(-)
+> > > >  create mode 100644 drivers/base/interface.c
+> > > >  create mode 100644 include/linux/interface.h
+> > > 
+> > > Hm, this interface stuff smells like bus drivers light. Should we instead
+> > > have a pile of helpers to make creating new buses with match methods more
+> > > trivial? There's a fairly big pile of small use-cases where this might be
+> > > useful. In your case here all the host1x children would sit on a host1x
+> > > bus. Admittedly I didn't look into the details.
+> > 
+> > I have no problem adding such "bus-light" functions, to make it easier
+> > to create and implement a bus in the driver core, as I know it's really
+> > heavy.  That's been on my "todo" list for over a decade now...
 > 
-> So this chip doesn't get confused by a faster clock frequency when its
-> chip-select line isn't asserted? I would have expected spi-max-frequency
-> for the bus to be the minimum value that any device on the bus would
-> tolerate.
-
-And from the other mail:
-> I'm not convinced about this. The clock signal still reaches all the
-> chips, and hence still reaches some logic inside those chips. If the
-> setup/hold timings aren't met (for internal parts of the chip's SPI
-> state machine), then presumably all bets are off re: performance of the
-> chip, irrespective of whether the CS line happens to gate how much of
-> the chip actually does anything.
-
-SPI is by default not a multi-master Bus, hence the slaves only have to
-listen when the CS is asserted. I talked with our hardware expert, and
-he told me that he would expect that the whole input stage (input
-driver) is in reset/off logic when the CS line is not asserted. IMHO,
-this makes sense, this would also save power. At least he would expect
-that the communication state machine is resetted on CS assertion, so
-that it doesn't matter what happend before. 
-
-Wikipedia also states something similar. 
-
-But, since SPI is no real standard, devices which work differently and
-claim to communicate through SPI could exist :-)
-
-I have had not seen issues with this device when using faster clocks for
-other devices on the same bus.
-
->> +	panel: panel {
->> +		compatible = "edt,et057090dhu", "simple-panel";
+> Hm, I've victimized^Wvolunteered a few internal people to look into a
+> hdmi/dp sink bus type of thing so that we can move away from all those
+> ad-hoc hacks currently used to coordinate between drm display drivers and
+> the audio side of things. So I'm interested.
 > 
-> The panel-simple driver doesn't seem to know about that EDT panel. How
-> will it work out the display timings?
+> Do you have some ideas somewhere already about how you think this should
+> look like? Or is this more a "hey, this would be really cool, eventually"
+> kind of thing?
 
-I will send a patch adding our two default panels.
+It was very much a "hey, this would be really cool" type of thing,
+nothing specific at all, sorry.
 
-Will send a second revision soon.
+greg k-h
