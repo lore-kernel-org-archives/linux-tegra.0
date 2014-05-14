@@ -1,38 +1,35 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH v2] ARM: tegra: enable joystick in tegra_defconfig
-Date: Wed, 14 May 2014 11:09:13 +0900
-Message-ID: <1400033353-25673-1-git-send-email-acourbot@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: enable console framebuffer rotation
+Date: Tue, 13 May 2014 21:45:52 -0600
+Message-ID: <5372E6F0.1050604@wwwdotorg.org>
+References: <1399432682-677-1-git-send-email-acourbot@nvidia.com> <536A57FA.2090608@wwwdotorg.org> <536AC45F.6080608@nvidia.com> <536CE414.5030406@suse.de> <536CF33A.3020906@wwwdotorg.org> <53727D9E.9050800@suse.de> <5372CE37.1080601@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5372CE37.1080601-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?ISO-8859-1?Q?Andreas_F=E4?= =?ISO-8859-1?Q?rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-NVIDIA SHIELD embeds a USB joystick device. Enable the corresponding
-support in tegra_defconfig.
+On 05/13/2014 08:00 PM, Alexandre Courbot wrote:
+...
+> Both SHIELD and TN7 come with a locked bootloader and cannot use U-boot.
+> The bootloader can only boot a kernel from a dedicated, raw boot
+> partition (Android style), can only pass a device tree from another raw
+> "dtb" partition, and will fill it with plenty of dirty command-line
+> options that make mainline unusable. That seems to be a lot for distros
+> to handle, so at this stage we'd rather advise users to use a root FS
+> image of their favorite distro along with a self-compiled kernel.
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
-Changes since v1:
-- Have support built-in instead of as a module
-- Fixed wording in commit message
-
- arch/arm/configs/tegra_defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index 8c1625b78034..1faa68f8988b 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -114,6 +114,7 @@ CONFIG_USB_NET_SMSC95XX=y
- CONFIG_BRCMFMAC=m
- CONFIG_RT2X00=y
- CONFIG_RT2800USB=m
-+CONFIG_INPUT_JOYDEV=y
- CONFIG_INPUT_EVDEV=y
- CONFIG_KEYBOARD_GPIO=y
- CONFIG_KEYBOARD_TEGRA=y
--- 
-1.9.2
+I don't know how much effort it's worth putting into this, but it
+/might/ be possible to port U-Boot to the devices, and use that as the
+"kernel" image that the binary bootloader boots, and then have U-Boot
+boot a kernel from a filesystem in the "normal" way. That's kind what I
+did by porting U-Boot to the Raspberry Pi. It would certainly increase
+the possibility of a distro supporting these devices in a generic way,
+as well as avoiding the need for hard-coded command-lines, memory
+layout, etc. in the DT files. We'd have to make sure that any installer
+didn't change the GPT layout, since then it'd get out of sync with the
+tegrapt partitions, which could cause the bootloader to fail.
