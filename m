@@ -1,33 +1,59 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [RFC PATCH 05/10] ARM: tegra: Export function to read USB calibration
- data
-Date: Thu, 15 May 2014 14:39:07 -0600
-Message-ID: <537525EB.9090704@wwwdotorg.org>
-References: <1400113986-339-1-git-send-email-abrestic@chromium.org> <1400113986-339-6-git-send-email-abrestic@chromium.org>
+From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [RFC PATCH 00/10] Tegra XHCI support
+Date: Thu, 15 May 2014 13:44:30 -0700
+Message-ID: <CAL1qeaHb7GK+zb9E2yWZ3aWH6yaMKWouRFScxmK_XpOvASSRgw@mail.gmail.com>
+References: <1400113986-339-1-git-send-email-abrestic@chromium.org>
+	<5375169F.3060809@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1400113986-339-6-git-send-email-abrestic@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Bresticker <abrestic@chromium.org>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Russell King <linux@arm.linux.org.uk>, Mathias Nyman <mathias.nyman@intel.com>, Pawel Moll <pawel.moll@arm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kishon Vijay Abraham I <kishon@ti.com>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Randy Dunlap <rdunlap@infradead.org>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Mike Turquette <mturquette@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5375169F.3060809-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/14/2014 06:33 PM, Andrew Bresticker wrote:
-> Board-specific USB configuration data is stored in FUSE_SKU_CALIB_0.
-> Export a function to read it so the PHY can be properly configured.
+On Thu, May 15, 2014 at 12:33 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> On 05/14/2014 06:32 PM, Andrew Bresticker wrote:
+>> This is a first pass at the host and PHY drivers necessary for USB3.0
+>> support on Tegra114 and Tegra124.  The Tegra XHCI host controller requires
+>> external firmware [1] which must be loaded before using any USB ports owned
+>> by the controller.  The XUSB PHY driver handles mapping and enabling of
+>> the UTMI, HSIC, and SuperSpeed pads to the XHCI controller.
+>>
+>> Tested on a Venice2 with a variety of USB2.0 and USB3.0 memory sticks
+>> and ethernet dongles.
+>>
+>> Notes:
+>>  - I've included support for Tegra114, but since I don't have Tegra114-based
+>>    hardware, it is completely untested.
+>>  - The PCIe and SATA PHYs also are programmed using the XUSB_PADCTL space
+>>    as well.  At least some of the code can be re-used, specifically with
+>>    respect to lane programming.  I believe Thierry is working on the PCIe
+>>    parts of this.
+>
+> If I understand the HW correctly, there's a separate "pad control" HW
+> block that provides routing/sharing of signals from USB2(?), USB3, SATA,
+> and PCIe to the pads.
+>
+> I believe Thierry is working on exposing this block as a pinctrl driver,
+> or at least something that the other drivers can call into in order to
+> configure that block. It'd be good if you can co-ordinate with him to
+> rebase this driver on top of that, rather than (I assume; haven't read
+> the code yet...) directly manipulating the padctrl registers inside each
+> of the different drivers.
 
-This patch seems conceptually fine to me. Presumably once Peter's fuse
-driver is fleshed out, it can expose the exact same semantic interface
-to drivers.
-
-I suppose one could argue that we should create/use an explicit fuse
-subsystem with a standard API that drivers can call into, rather than a
-custom API. We can get the appropriate handle to use for that API from a
-phandle (plus fuse IDs?) in a DT property (in the XHCI device node,
-pointing at the fuse device node) much like any other cross-device
-resource reference. I'm not too bothered whether the code actually does
-that in the first instance, although we should make sure we add that DT
-property (containing all required fuse ID information) so that the code
-/can/ work that way if we want it to in the future.
+Yes, ideally i'd like to rebase this on top of Theirry's series once
+it's ready.  It sounds like there will be a pinctrl driver which
+handles the lane muxing between XUSB, PCIe, and SATA and a generic PHY
+driver will deal wit the actual PHY programming.  I'm not sure what
+the PCIe and SATA PHY drivers will look like, but the XUSB one
+requires quite a bit of USB-specific programming of the padctl
+registers, so I'm not sure we'll be able to fit all three PHY types
+into a single PHY provider driver.  Either way, there's probably a
+good deal of PHY code that could be broken out and shared among the
+three.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
