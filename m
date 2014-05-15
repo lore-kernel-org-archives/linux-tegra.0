@@ -1,30 +1,28 @@
-From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+From: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 Subject: Re: [PATCH v2 2/3] drm/panel: add support for EDT panels
-Date: Thu, 15 May 2014 10:24:39 +0200
-Message-ID: <4de1d09b7873e012e43525c1f8ab9c66@agner.ch>
+Date: Thu, 15 May 2014 10:27:29 +0200
+Message-ID: <1400142449.4102.16.camel@paszta.hi.pengutronix.de>
 References: <cover.1400103181.git.stefan@agner.ch>
- <35c081171a3d9a9401767601c02a12e266b37dd0.1400103181.git.stefan@agner.ch>
- <20140515075102.GE5952@ulmo>
+	 <35c081171a3d9a9401767601c02a12e266b37dd0.1400103181.git.stefan@agner.ch>
+	 <20140515075102.GE5952@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20140515075102.GE5952@ulmo>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: stefan-XLVq0VzYD2Y@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry, hi Philipp,
-
-Am 2014-05-15 09:51, schrieb Thierry Reding:
+Am Donnerstag, den 15.05.2014, 09:51 +0200 schrieb Thierry Reding:
 > On Wed, May 14, 2014 at 11:45:57PM +0200, stefan-XLVq0VzYD2Y@public.gmane.org wrote:
->> From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
->>
->> This panels are sold by Toradex for Colibri T20/T30 and Apalis T30
->> evaluation kits.
->>
->> Signed-off-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+> > From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+> > 
+> > This panels are sold by Toradex for Colibri T20/T30 and Apalis T30
+> > evaluation kits.
+> > 
+> > Signed-off-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
 > 
 > Panel patches should go to the dri-devel mailing list as well.
 > 
@@ -38,28 +36,21 @@ Am 2014-05-15 09:51, schrieb Thierry Reding:
 > front and back porches, but I suspect that either settings will work on
 > both Tegra and i.MX.
 
-Its etm0700g0dh6 vs. et070080dh6, Philipp's panel is with captive multi
-touch, (hence the M I guess). The panel itself really looks the same.
+The ETM0700G0DH6 Datasheet lists 2 lines as the typical vsync pulse
+width, 525 lines as the vertical period, and 35 lines as the vsync -de
+time, which is vsync len + back porch.
+So vertical timings 480 + 10 + 2 + 33 = 525 should be valid for the
+ET0700G0DH6 panel:
 
-I found this overview of EDT displays:
-http://www.dmbtechnics.com/scripts/passthru.php?id=7
+https://www.glynshop.com/erp/owweb/Daten/DSS/EDT/Products/Specifications/Active%20Displays/ET0700G0DH6.pdf
+et070080dh6
 
-There seem to be quite a lot variants with the same panel...
+I have not seen the data sheet for ET070080DH6.
 
-Regarding timings, I just checked the documentation, Philipp's timing
-really matches the documented ones, I miscalculated the vertical back
-porch.
-
-How do we resolve that?
-
-I would suggest that I split out that patch and remove the et070080dh6
-panel and send the other as a single patch to the dri-devel mailing list
-as well.
-
-Philipp, could you add my display type (et070080dh6) to the compatible
-list of your mode/panel entry?
-
-Does this sound reasonable?
+regards
+Philipp
 
 --
-Stefan
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
