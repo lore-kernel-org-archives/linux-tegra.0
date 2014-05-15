@@ -1,66 +1,81 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH v2 2/3] drm/panel: add support for EDT panels
-Date: Thu, 15 May 2014 11:36:33 +0200
-Message-ID: <90bb509e9aa9c705790e2e0574d77b9f@agner.ch>
-References: <cover.1400103181.git.stefan@agner.ch>
- <35c081171a3d9a9401767601c02a12e266b37dd0.1400103181.git.stefan@agner.ch>
- <20140515075102.GE5952@ulmo>
- <1400142449.4102.16.camel@paszta.hi.pengutronix.de>
- <20140515090814.GB6434@ulmo>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20140515090814.GB6434@ulmo>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree@vger.kernel.org, linux@arm.linux.org.uk, swarren@wwwdotorg.org, linux-kernel@vger.kernel.org, marcel@ziswiler.com, Philipp Zabel <p.zabel@pengutronix.de>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: stefan@agner.ch
+Subject: [PATCH v2] drm/panel: add support for EDT ET057090DHU panel
+Date: Thu, 15 May 2014 11:38:45 +0200
+Message-ID: <1400146725-5788-1-git-send-email-stefan@agner.ch>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: swarren@wwwdotorg.org, thierry.reding@gmail.com
+Cc: linux@arm.linux.org.uk, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, marcel@ziswiler.com, dri-devel@lists.freedesktop.org, stefan@agner.ch
 List-Id: linux-tegra@vger.kernel.org
 
-Am 2014-05-15 11:08, schrieb Thierry Reding:
-> On Thu, May 15, 2014 at 10:27:29AM +0200, Philipp Zabel wrote:
->> The ETM0700G0DH6 Datasheet lists 2 lines as the typical vsync pulse
->> width, 525 lines as the vertical period, and 35 lines as the vsync -de
->> time, which is vsync len + back porch.
->> So vertical timings 480 + 10 + 2 + 33 = 525 should be valid for the
->> ET0700G0DH6 panel:
-> 
-> Shouldn't that work with 480 + 8 + 2 + 35 too? It seems to me that it
-> should still be safe for that panel. Similarily I'd expect your timings
-> to work on the ET070080DH6.
+From: Stefan Agner <stefan@agner.ch>
 
-Am 2014-05-15 11:12, schrieb Thierry Reding:
-> Okay, so that means that the panel works for you with the same timings
-> that Philipp has in the ETM0700G0DH6 patch? If so then I definitely
-> think we should be sharing the timings in the driver by making the two
-> compatible entries point to the same driver data.
+This panel is sold by Toradex for Colibri T20/T30 and Apalis T30
+evaluation kits.
 
-FWIW, I checked and it works with both timings. And I bet it is really
-the same panel its just a different touch on top.
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ .../devicetree/bindings/panel/edt,et057090dhu.txt  |  7 ++++++
+ drivers/gpu/drm/panel/panel-simple.c               | 26 ++++++++++++++++++++++
+ 2 files changed, 33 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/panel/edt,et057090dhu.txt
 
-> Irrespective of that they both seem to have different capabilities so
-> two compatible values should be fine. However for the purpose of the
-> simple panel driver they could be made to share the same timings if it
-> works for both panels and devices.
-> 
-> As for the touch panel on the ETM0700G0DH6, do you happen to know how
-> that's usually connected? I suspect it needs external hardware to
-> capture the YU, XL, YD and XR pins and turn that into raw coordinates
-> and pen down interrupts.
-
-For Colibri Evaluation Board, those pins are routed to the generic
-4-wire pins of the Colibri SO-DIMM. On the Colibri T30 module, those
-pins are connected to a STMPE811. I also added that to the device tree
-once, however it does not work properly atm, I need to debug this and
-will send a patch at a later time.
-
---
-Stefan
+diff --git a/Documentation/devicetree/bindings/panel/edt,et057090dhu.txt b/Documentation/devicetree/bindings/panel/edt,et057090dhu.txt
+new file mode 100644
+index 0000000..4903d7b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/panel/edt,et057090dhu.txt
+@@ -0,0 +1,7 @@
++Emerging Display Technology Corp. 5.7" VGA TFT LCD panel
++
++Required properties:
++- compatible: should be "edt,et057090dhu"
++
++This binding is compatible with the simple-panel binding, which is specified
++in simple-panel.txt in this directory.
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index 309f29e..91b4f73 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -306,6 +306,29 @@ static const struct panel_desc chunghwa_claa101wa01a = {
+ 	},
+ };
+ 
++static const struct drm_display_mode edt_et057090dhu_mode = {
++	.clock = 25175,
++	.hdisplay = 640,
++	.hsync_start = 640 + 16,
++	.hsync_end = 640 + 16 + 30,
++	.htotal = 640 + 16 + 30 + 114,
++	.vdisplay = 480,
++	.vsync_start = 480 + 10,
++	.vsync_end = 480 + 10 + 3,
++	.vtotal = 480 + 10 + 3 + 32,
++	.vrefresh = 60,
++	.flags = DRM_MODE_FLAG_NVSYNC | DRM_MODE_FLAG_NHSYNC,
++};
++
++static const struct panel_desc edt_et057090dhu = {
++	.modes = &edt_et057090dhu_mode,
++	.num_modes = 1,
++	.size = {
++		.width = 115,
++		.height = 86,
++	},
++};
++
+ static const struct drm_display_mode chunghwa_claa101wb01_mode = {
+ 	.clock = 69300,
+ 	.hdisplay = 1366,
+@@ -383,6 +406,9 @@ static const struct of_device_id platform_of_match[] = {
+ 		.compatible = "chunghwa,claa101wb01",
+ 		.data = &chunghwa_claa101wb01
+ 	}, {
++		.compatible = "edt,et057090dhu",
++		.data = &edt_et057090dhu,
++	}, {
+ 		.compatible = "lg,lp129qe",
+ 		.data = &lg_lp129qe,
+ 	}, {
+-- 
+1.9.2
