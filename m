@@ -1,71 +1,78 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 2/3] drm/panel: add support for EDT panels
-Date: Thu, 15 May 2014 09:51:03 +0200
-Message-ID: <20140515075102.GE5952@ulmo>
-References: <cover.1400103181.git.stefan@agner.ch>
- <35c081171a3d9a9401767601c02a12e266b37dd0.1400103181.git.stefan@agner.ch>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [RFC PATCH 06/10] usb: xhci: Add Tegra XHCI host-controller driver
+Date: Thu, 15 May 2014 10:17:10 +0200
+Message-ID: <15599140.PsD4j7x3tZ@wuerfel>
+References: <1400113986-339-1-git-send-email-abrestic@chromium.org> <1400113986-339-7-git-send-email-abrestic@chromium.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="cYtjc4pxslFTELvY"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <35c081171a3d9a9401767601c02a12e266b37dd0.1400103181.git.stefan-XLVq0VzYD2Y@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: stefan-XLVq0VzYD2Y@public.gmane.org
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1400113986-339-7-git-send-email-abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Wednesday 14 May 2014 17:33:02 Andrew Bresticker wrote:
+> +
+> +int tegra_xhci_register_mbox_notifier(struct notifier_block *nb)
+> +{
+> +	int ret;
+> +
+> +	mutex_lock(&tegra_xhci_mbox_lock);
+> +	ret = raw_notifier_chain_register(&tegra_xhci_mbox_notifiers, nb);
+> +	mutex_unlock(&tegra_xhci_mbox_lock);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL(tegra_xhci_register_mbox_notifier);
+> +
+> +void tegra_xhci_unregister_mbox_notifier(struct notifier_block *nb)
+> +{
+> +	mutex_lock(&tegra_xhci_mbox_lock);
+> +	raw_notifier_chain_unregister(&tegra_xhci_mbox_notifiers, nb);
+> +	mutex_unlock(&tegra_xhci_mbox_lock);
+> +}
+> +EXPORT_SYMBOL(tegra_xhci_unregister_mbox_notifier);
 
---cYtjc4pxslFTELvY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+What driver would use these?
 
-On Wed, May 14, 2014 at 11:45:57PM +0200, stefan-XLVq0VzYD2Y@public.gmane.org wrote:
-> From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
->=20
-> This panels are sold by Toradex for Colibri T20/T30 and Apalis T30
-> evaluation kits.
->=20
-> Signed-off-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+My feeling is that if you have a mailbox that is used by multiple
+drivers, you should use a proper mailbox driver to operate them,
+and have the drivers register with that API instead of a custom one.
 
-Panel patches should go to the dri-devel mailing list as well.
+> +	/* Create child xhci-plat device */
+> +	memset(xhci_resources, 0, sizeof(xhci_resources));
+> +	res = platform_get_resource(to_platform_device(dev), IORESOURCE_IRQ, 0);
+> +	if (!res) {
+> +		dev_err(dev, "Missing XHCI IRQ\n");
+> +		ret = -ENODEV;
+> +		goto out;
+> +	}
+> +	xhci_resources[0].start = res->start;
+> +	xhci_resources[0].end = res->end;
+> +	xhci_resources[0].flags = res->flags;
+> +	xhci_resources[0].name = res->name;
+> +	res = platform_get_resource(to_platform_device(dev), IORESOURCE_MEM, 0);
+> +	if (!res) {
+> +		dev_err(dev, "Missing XHCI registers\n");
+> +		ret = -ENODEV;
+> +		goto out;
+> +	}
+> +	xhci_resources[1].start = res->start;
+> +	xhci_resources[1].end = res->end;
+> +	xhci_resources[1].flags = res->flags;
+> +	xhci_resources[1].name = res->name;
+> +
+> +	xhci = platform_device_alloc("xhci-hcd", PLATFORM_DEVID_AUTO);
+> +	if (!xhci) {
+> +		dev_err(dev, "Failed to allocate XHCI host\n");
+> +		ret = -ENOMEM;
+> +		goto out;
+> +	}
 
-Also a patch was posted only yesterday for a panel that seems to be the
-exact same one as this, even though the name differs minimally, see:
+This does not feel appropriate at all: Rather than creating a child device,
+you should have a specific driver that hooks into functions exported
+by the xhci core. See Documentation/driver-model/design-patterns.txt
 
-	https://patchwork.kernel.org/patch/4175251/
-
-Adding Philipp on Cc so you guys can work together whether this is
-indeed the same panel. The only differences seem to be in the vertical
-front and back porches, but I suspect that either settings will work on
-both Tegra and i.MX.
-
-Thierry
-
---cYtjc4pxslFTELvY
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTdHHmAAoJEN0jrNd/PrOhGCAP/R2vqQQBK9P95sdbUrYUKbV/
-7zG0BK4uqAZQNbVbtjPdlSOsDfHFoD0aEMZ0QzdiN2D2N4Pcgs+p0RwJgylu9Iqd
-5HzwmVpvyBl4bj/XVnZQqRGUqB2x7TKhQSGdLfSC9OpD3htl+Cqp+fsw13nXq8Uz
-YP/9ZzoJx1kCRTviShgVT0UvjPIsxwcr7CPaCaSzwB1iCgMtAEY/BmMp65J1yxZ7
-BJC8i70zksUS+lQzs8fHeDuVcUkzDK3aeh9zImyepeARG7YaNGiDA8OLg6ZorS8i
-SOsG3OmLH9j8WJTsfUML1vI1GtdS8gnJhvkO+kNhslCSwnTUdgOJB494JfsOz1In
-k/PsZCSx3Lt2XRTpzOY8F80yK3VwHisw6FnTJuyZzSSymGODOax6Dg5t9+x/TN3i
-Gp7MsLv9DQyBDLljxZAlvzQlrAIkZkD2maTRN0MRFdSOuOZ7GpeRY6cDpFqeRSwi
-f3PuSjNXk4UK0wTXnK1UzYgNvRdMhmvn47SFsQdXAFX1C+XcjEPxmsqR4FGzeD7o
-d5zDT8RcIuS7DX4kFp0+vDbtUFBygXmTgRlyvqtdrUJ0iyDu+sHS/2tQo3StcnwM
-rK7q1eAXyiZnId8NQtX8JHeBHEHpwSei3O2trZ2L722i/gO7nsTDa9MFTMSrs7+U
-xtxQr5Pp0Ja/81PFA3EI
-=6lzO
------END PGP SIGNATURE-----
-
---cYtjc4pxslFTELvY--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+	Arnd
