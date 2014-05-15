@@ -1,35 +1,51 @@
-From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-Subject: Re: [PATCH v2 2/3] drm/panel: add support for EDT panels
-Date: Thu, 15 May 2014 11:39:41 +0200
-Message-ID: <cc51075ad7c00d6b08d28834d651b198@agner.ch>
-References: <cover.1400103181.git.stefan@agner.ch>
- <35c081171a3d9a9401767601c02a12e266b37dd0.1400103181.git.stefan@agner.ch>
- <20140515075102.GE5952@ulmo> <4de1d09b7873e012e43525c1f8ab9c66@agner.ch>
- <20140515091220.GC6434@ulmo>
- <1400146519.4102.30.camel@paszta.hi.pengutronix.de>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC PATCH 3/3] clk: tegra: Implement Tegra124 shared/cbus clks
+Date: Thu, 15 May 2014 13:17:00 +0300
+Message-ID: <20140515101700.GH15168@tbergstrom-lnx.Nvidia.com>
+References: <1399990023-30318-1-git-send-email-pdeschrijver@nvidia.com>
+ <1399990023-30318-4-git-send-email-pdeschrijver@nvidia.com>
+ <53725FED.7050303@wwwdotorg.org> <20140514142739.GA8612@ulmo>
+ <CAL1qeaGS-78QaiMN-3zXYYXu+K1s7u2rFXQkt7-MRJQS1-sW5A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1400146519.4102.30.camel-+qGW7pzALmz7o/J7KWpOmN53zsg1cpMQ@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CAL1qeaGS-78QaiMN-3zXYYXu+K1s7u2rFXQkt7-MRJQS1-sW5A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org
+To: Andrew Bresticker <abrestic-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Am 2014-05-15 11:35, schrieb Philipp Zabel:
-> Am Donnerstag, den 15.05.2014, 11:12 +0200 schrieb Thierry Reding:
-<snip>
->> I also noticed that Philipp's patch doesn't actually introduce the
->> device tree bindings, so that will have to be added as well.
+On Wed, May 14, 2014 at 07:58:26PM +0200, Andrew Bresticker wrote:
+> On Wed, May 14, 2014 at 7:27 AM, Thierry Reding
+> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> > As for shared clocks I'm only aware of one use-case, namely EMC scaling.
+> > Using clocks for that doesn't seem like the best option to me. While it
+> > can probably fix the immediate issue of choosing an appropriate
+> > frequency for the EMC clock it isn't a complete solution for the problem
+> > that we're trying to solve. From what I understand EMC scaling is one
+> > part of ensuring quality of service. The current implementations of that
+> > seems to abuse clocks (essentially one X.emc clock per X clock) to
+> > signal the amount of memory bandwidth required by any given device. But
+> > there are other parts to the puzzle. Latency allowance is one. The value
+> > programmed to the latency allowance registers for example depends on the
+> > EMC frequency.
+> >
+> > Has anyone ever looked into using a different framework to model all of
+> > these requirements? PM QoS looks like it might fit, but if none of the
+> > existing frameworks have what we need, perhaps something new can be
+> > created.
 > 
-> Hmm, yes. Should I take over the edt,et070080dh6.txt from Stefan's
-> series and repost all, or can I just hand in the missing
-> edt,etm0700g0dh6.txt separately?
+> On Exynos we use devfreq, though in that case we monitor performance
+> counters to determine how internal buses should be scaled - not sure
+> if Tegra SoCs have similar counters that could be used for this
+> purpose.  It seems like EMC scaling would fit nicely within the PM QoS
+> framework, perhaps with a new PM_QOS_MEMORY_THROUGHPUT class.
 
-Just sent a revision of my patch which doesn't contain that text file
-anymore, hence for me it would be preferable if you can add both
-files...
+We do have counters, however, counters are reactive which is a problem
+for some isochronous clients (eg. display). Counters also don't solve
+the latency problem.
 
---
-Stefan
+Cheers,
+
+Peter.
