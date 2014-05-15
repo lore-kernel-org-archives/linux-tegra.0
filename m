@@ -1,47 +1,77 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [RFC PATCH 06/10] usb: xhci: Add Tegra XHCI host-controller driver
-Date: Thu, 15 May 2014 15:30:06 +0200
-Message-ID: <11038777.juA2AddEko@wuerfel>
-References: <1400113986-339-1-git-send-email-abrestic@chromium.org> <15599140.PsD4j7x3tZ@wuerfel> <20140515091938.GD6434@ulmo>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 2/2] ARM: tegra: initial add of Colibri T30
+Date: Thu, 15 May 2014 12:13:55 -0600
+Message-ID: <537503E3.6050108@wwwdotorg.org>
+References: <107aeb48982529858267cb85c792b35e@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140515091938.GD6434@ulmo>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <107aeb48982529858267cb85c792b35e-XLVq0VzYD2Y@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday 15 May 2014 11:19:40 Thierry Reding wrote:
-> > > +
-> > > +   xhci = platform_device_alloc("xhci-hcd", PLATFORM_DEVID_AUTO);
-> > > +   if (!xhci) {
-> > > +           dev_err(dev, "Failed to allocate XHCI host\n");
-> > > +           ret = -ENOMEM;
-> > > +           goto out;
-> > > +   }
-> > 
-> > This does not feel appropriate at all: Rather than creating a child device,
-> > you should have a specific driver that hooks into functions exported
-> > by the xhci core. See Documentation/driver-model/design-patterns.txt
+On 05/14/2014 10:16 AM, Stefan Agner wrote:
+> Am 2014-05-13 21:49, schrieb Stephen Warren:
+>> On 05/13/2014 11:27 AM, stefan-XLVq0VzYD2Y@public.gmane.org wrote:
+>>> +	/* SPI1: Colibri SSP */
+>>> +	spi@7000d400 {
+>>> +		status = "okay";
+>>> +		spi-max-frequency = <25000000>;
+>>> +		can0: can@0 {
+>>> +			compatible = "microchip,mcp2515";
+>>> +			reg = <0>;
+>>> +			clocks = <&clk16m>;
+>>> +			interrupt-parent = <&gpio>;
+>>> +			interrupts = <TEGRA_GPIO(S, 0) GPIO_ACTIVE_LOW>;
+>>> +			spi-max-frequency = <10000000>;
+>>
+>> So this chip doesn't get confused by a faster clock frequency when its
+>> chip-select line isn't asserted? I would have expected spi-max-frequency
+>> for the bus to be the minimum value that any device on the bus would
+>> tolerate.
 > 
-> I don't think Documentation/driver-model/design-patterns.txt documents
-> this. Perhaps this is what you had in mind?
+> And from the other mail:
+>> I'm not convinced about this. The clock signal still reaches all the
+>> chips, and hence still reaches some logic inside those chips. If the
+>> setup/hold timings aren't met (for internal parts of the chip's SPI
+>> state machine), then presumably all bets are off re: performance of the
+>> chip, irrespective of whether the CS line happens to gate how much of
+>> the chip actually does anything.
 > 
->         http://lwn.net/Articles/336262/
+> SPI is by default not a multi-master Bus, hence the slaves only have to
+> listen when the CS is asserted. 
 
-No, I did mean Documentation/driver-model/design-patterns.txt.
+That's got nothing to do with multi-master; it's got to do with the fact
+that an out-of-band /CS signal is what selects devices rather than
+in-band data on the bus.
 
-The pattern used in the proposed driver is to create the generic platform_device
-as the child of the more specific platform_device.
+> I talked with our hardware expert, and
+> he told me that he would expect that the whole input stage (input
+> driver) is in reset/off logic when the CS line is not asserted. IMHO,
+> this makes sense, this would also save power. At least he would expect
+> that the communication state machine is resetted on CS assertion, so
+> that it doesn't matter what happend before. 
+> 
+> Wikipedia also states something similar. 
 
-The normal pattern is to have only one device and embed the generic structure
-inside of the more specific structure and use container_of to cast between
-the two as needed.
+I find it much more likely that /CS would be a synchronous input to the
+SPI state machine in the HW. That way, the chip designers don't have to
+worry about issues with asynchronous resets.
 
-	Arnd
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Anyway, both our arguments are pure conjecture. The only way to tell for
+sure is for you to go read the datasheets for the individual devices and
+find out if they document any requirements for the clock signal when /CS
+isn't active. It'd be good if you could check that.
+
+> But, since SPI is no real standard, devices which work differently and
+> claim to communicate through SPI could exist :-)
+> 
+> I have had not seen issues with this device when using faster clocks for
+> other devices on the same bus.
+
+... but I suppose that since in practice you're not seeing any issues,
+the DT is fine for now. It's not like this can't be changed later if we
+find out there is an issue.
