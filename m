@@ -1,78 +1,65 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [RFC PATCH 06/10] usb: xhci: Add Tegra XHCI host-controller driver
-Date: Thu, 15 May 2014 10:17:10 +0200
-Message-ID: <15599140.PsD4j7x3tZ@wuerfel>
-References: <1400113986-339-1-git-send-email-abrestic@chromium.org> <1400113986-339-7-git-send-email-abrestic@chromium.org>
+From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+Subject: Re: [PATCH v2 2/3] drm/panel: add support for EDT panels
+Date: Thu, 15 May 2014 10:24:39 +0200
+Message-ID: <4de1d09b7873e012e43525c1f8ab9c66@agner.ch>
+References: <cover.1400103181.git.stefan@agner.ch>
+ <35c081171a3d9a9401767601c02a12e266b37dd0.1400103181.git.stefan@agner.ch>
+ <20140515075102.GE5952@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1400113986-339-7-git-send-email-abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+In-Reply-To: <20140515075102.GE5952@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 14 May 2014 17:33:02 Andrew Bresticker wrote:
-> +
-> +int tegra_xhci_register_mbox_notifier(struct notifier_block *nb)
-> +{
-> +	int ret;
-> +
-> +	mutex_lock(&tegra_xhci_mbox_lock);
-> +	ret = raw_notifier_chain_register(&tegra_xhci_mbox_notifiers, nb);
-> +	mutex_unlock(&tegra_xhci_mbox_lock);
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL(tegra_xhci_register_mbox_notifier);
-> +
-> +void tegra_xhci_unregister_mbox_notifier(struct notifier_block *nb)
-> +{
-> +	mutex_lock(&tegra_xhci_mbox_lock);
-> +	raw_notifier_chain_unregister(&tegra_xhci_mbox_notifiers, nb);
-> +	mutex_unlock(&tegra_xhci_mbox_lock);
-> +}
-> +EXPORT_SYMBOL(tegra_xhci_unregister_mbox_notifier);
+Hi Thierry, hi Philipp,
 
-What driver would use these?
+Am 2014-05-15 09:51, schrieb Thierry Reding:
+> On Wed, May 14, 2014 at 11:45:57PM +0200, stefan-XLVq0VzYD2Y@public.gmane.org wrote:
+>> From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+>>
+>> This panels are sold by Toradex for Colibri T20/T30 and Apalis T30
+>> evaluation kits.
+>>
+>> Signed-off-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+> 
+> Panel patches should go to the dri-devel mailing list as well.
+> 
+> Also a patch was posted only yesterday for a panel that seems to be the
+> exact same one as this, even though the name differs minimally, see:
+> 
+> 	https://patchwork.kernel.org/patch/4175251/
+> 
+> Adding Philipp on Cc so you guys can work together whether this is
+> indeed the same panel. The only differences seem to be in the vertical
+> front and back porches, but I suspect that either settings will work on
+> both Tegra and i.MX.
 
-My feeling is that if you have a mailbox that is used by multiple
-drivers, you should use a proper mailbox driver to operate them,
-and have the drivers register with that API instead of a custom one.
+Its etm0700g0dh6 vs. et070080dh6, Philipp's panel is with captive multi
+touch, (hence the M I guess). The panel itself really looks the same.
 
-> +	/* Create child xhci-plat device */
-> +	memset(xhci_resources, 0, sizeof(xhci_resources));
-> +	res = platform_get_resource(to_platform_device(dev), IORESOURCE_IRQ, 0);
-> +	if (!res) {
-> +		dev_err(dev, "Missing XHCI IRQ\n");
-> +		ret = -ENODEV;
-> +		goto out;
-> +	}
-> +	xhci_resources[0].start = res->start;
-> +	xhci_resources[0].end = res->end;
-> +	xhci_resources[0].flags = res->flags;
-> +	xhci_resources[0].name = res->name;
-> +	res = platform_get_resource(to_platform_device(dev), IORESOURCE_MEM, 0);
-> +	if (!res) {
-> +		dev_err(dev, "Missing XHCI registers\n");
-> +		ret = -ENODEV;
-> +		goto out;
-> +	}
-> +	xhci_resources[1].start = res->start;
-> +	xhci_resources[1].end = res->end;
-> +	xhci_resources[1].flags = res->flags;
-> +	xhci_resources[1].name = res->name;
-> +
-> +	xhci = platform_device_alloc("xhci-hcd", PLATFORM_DEVID_AUTO);
-> +	if (!xhci) {
-> +		dev_err(dev, "Failed to allocate XHCI host\n");
-> +		ret = -ENOMEM;
-> +		goto out;
-> +	}
+I found this overview of EDT displays:
+http://www.dmbtechnics.com/scripts/passthru.php?id=7
 
-This does not feel appropriate at all: Rather than creating a child device,
-you should have a specific driver that hooks into functions exported
-by the xhci core. See Documentation/driver-model/design-patterns.txt
+There seem to be quite a lot variants with the same panel...
 
-	Arnd
+Regarding timings, I just checked the documentation, Philipp's timing
+really matches the documented ones, I miscalculated the vertical back
+porch.
+
+How do we resolve that?
+
+I would suggest that I split out that patch and remove the et070080dh6
+panel and send the other as a single patch to the dri-devel mailing list
+as well.
+
+Philipp, could you add my display type (et070080dh6) to the compatible
+list of your mode/panel entry?
+
+Does this sound reasonable?
+
+--
+Stefan
