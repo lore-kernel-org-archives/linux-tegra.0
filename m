@@ -1,48 +1,71 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: pull request for Tegra PLLE fixes
-Date: Wed, 14 May 2014 22:31:05 -0700
-Message-ID: <20140515053105.3084.44161@quantum>
-References: <20140423145939.GA11307@tbergstrom-lnx.Nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 2/3] drm/panel: add support for EDT panels
+Date: Thu, 15 May 2014 09:51:03 +0200
+Message-ID: <20140515075102.GE5952@ulmo>
+References: <cover.1400103181.git.stefan@agner.ch>
+ <35c081171a3d9a9401767601c02a12e266b37dd0.1400103181.git.stefan@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20140423145939.GA11307@tbergstrom-lnx.Nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: "mark.rutland@arm.com" <mark.rutland@arm.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="cYtjc4pxslFTELvY"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <35c081171a3d9a9401767601c02a12e266b37dd0.1400103181.git.stefan-XLVq0VzYD2Y@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: stefan-XLVq0VzYD2Y@public.gmane.org
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Peter De Schrijver (2014-04-23 07:59:39)
-> Hi Mike,
-> 
-> This fixes a number of stability problems with PCIe on Tegra30.
-> 
-> The following changes since commit c9eaa447e77efe77b7fa4c953bd62de8297fd6c5:
 
-Pulled for -rc6.
+--cYtjc4pxslFTELvY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Mike
+On Wed, May 14, 2014 at 11:45:57PM +0200, stefan-XLVq0VzYD2Y@public.gmane.org wrote:
+> From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+>=20
+> This panels are sold by Toradex for Colibri T20/T30 and Apalis T30
+> evaluation kits.
+>=20
+> Signed-off-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
 
-> 
->   Linux 3.15-rc1 (2014-04-13 14:18:35 -0700)
-> 
-> are available in the git repository at:
->   git://nv-tegra.nvidia.com/user/pdeschrijver/linux.git  clk-tegra-fixes-3.15
-> 
-> Thierry Reding (3):
->       clk: tegra: Fix PLLE programming
->       clk: tegra: Introduce divider mask and shift helpers
->       clk: tegra: Fix enabling of PLLE
-> 
->  drivers/clk/tegra/clk-pll.c |   64 +++++++++++++++++++++++++++++--------------
->  1 files changed, 43 insertions(+), 21 deletions(-)
+Panel patches should go to the dri-devel mailing list as well.
+
+Also a patch was posted only yesterday for a panel that seems to be the
+exact same one as this, even though the name differs minimally, see:
+
+	https://patchwork.kernel.org/patch/4175251/
+
+Adding Philipp on Cc so you guys can work together whether this is
+indeed the same panel. The only differences seem to be in the vertical
+front and back porches, but I suspect that either settings will work on
+both Tegra and i.MX.
+
+Thierry
+
+--cYtjc4pxslFTELvY
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTdHHmAAoJEN0jrNd/PrOhGCAP/R2vqQQBK9P95sdbUrYUKbV/
+7zG0BK4uqAZQNbVbtjPdlSOsDfHFoD0aEMZ0QzdiN2D2N4Pcgs+p0RwJgylu9Iqd
+5HzwmVpvyBl4bj/XVnZQqRGUqB2x7TKhQSGdLfSC9OpD3htl+Cqp+fsw13nXq8Uz
+YP/9ZzoJx1kCRTviShgVT0UvjPIsxwcr7CPaCaSzwB1iCgMtAEY/BmMp65J1yxZ7
+BJC8i70zksUS+lQzs8fHeDuVcUkzDK3aeh9zImyepeARG7YaNGiDA8OLg6ZorS8i
+SOsG3OmLH9j8WJTsfUML1vI1GtdS8gnJhvkO+kNhslCSwnTUdgOJB494JfsOz1In
+k/PsZCSx3Lt2XRTpzOY8F80yK3VwHisw6FnTJuyZzSSymGODOax6Dg5t9+x/TN3i
+Gp7MsLv9DQyBDLljxZAlvzQlrAIkZkD2maTRN0MRFdSOuOZ7GpeRY6cDpFqeRSwi
+f3PuSjNXk4UK0wTXnK1UzYgNvRdMhmvn47SFsQdXAFX1C+XcjEPxmsqR4FGzeD7o
+d5zDT8RcIuS7DX4kFp0+vDbtUFBygXmTgRlyvqtdrUJ0iyDu+sHS/2tQo3StcnwM
+rK7q1eAXyiZnId8NQtX8JHeBHEHpwSei3O2trZ2L722i/gO7nsTDa9MFTMSrs7+U
+xtxQr5Pp0Ja/81PFA3EI
+=6lzO
+-----END PGP SIGNATURE-----
+
+--cYtjc4pxslFTELvY--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
