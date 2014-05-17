@@ -1,84 +1,94 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: Cleanup string initializations (char[] instead
- of char *)
-Date: Sat, 17 May 2014 23:24:22 +0200
-Message-ID: <20140517212421.GD1046@mithrandir>
-References: <1400337445-25750-1-git-send-email-manuel.schoelling@gmx.de>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 1/2] ARM: tegra: Mark Tegra124 HDMI compatible with
+ Tegra114
+Date: Sat, 17 May 2014 23:33:00 +0200
+Message-ID: <20140517213258.GE1046@mithrandir>
+References: <1400350881-22008-1-git-send-email-dgreid@chromium.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="HWvPVVuAAfuRc6SZ"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1400337445-25750-1-git-send-email-manuel.schoelling-Mmb7MZpHnFY@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Manuel =?utf-8?Q?Sch=C3=B6lling?= <manuel.schoelling-Mmb7MZpHnFY@public.gmane.org>
-Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/mixed; boundary="===============1809039536=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1400350881-22008-1-git-send-email-dgreid@chromium.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dylan Reid <dgreid@chromium.org>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, swarren@wwwdotorg.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---HWvPVVuAAfuRc6SZ
-Content-Type: text/plain; charset=utf-8
+--===============1809039536==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="WBsA/oQW3eTA3LlM"
+Content-Disposition: inline
+
+
+--WBsA/oQW3eTA3LlM
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, May 17, 2014 at 04:37:25PM +0200, Manuel Sch=C3=B6lling wrote:
-[...]
-> diff --git a/drivers/pinctrl/pinctrl-tegra.c b/drivers/pinctrl/pinctrl-te=
-gra.c
-> index 6545809..43eeb1b 100644
-> --- a/drivers/pinctrl/pinctrl-tegra.c
-> +++ b/drivers/pinctrl/pinctrl-tegra.c
-> @@ -576,7 +576,7 @@ static void tegra_pinconf_config_dbg_show(struct pinc=
-trl_dev *pctldev,
->  {
->  	enum tegra_pinconf_param param =3D TEGRA_PINCONF_UNPACK_PARAM(config);
->  	u16 arg =3D TEGRA_PINCONF_UNPACK_ARG(config);
-> -	const char *pname =3D "unknown";
-> +	const char pname[] =3D "unknown";
->  	int i;
-> =20
->  	for (i =3D 0; i < ARRAY_SIZE(cfg_params); i++) {
+On Sat, May 17, 2014 at 11:21:20AM -0700, Dylan Reid wrote:
+> The HDMI driver that handles Tegra114 can handle Tegra124 as well,
+> mark Tegra124 as compatible.  This makes HDMI output work on Venice2.
+>=20
+> Signed-off-by: Dylan Reid <dgreid@chromium.org>
+> ---
+>  arch/arm/boot/dts/tegra124.dtsi | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
-When this hunk is applied, the build fails as follows:
+These patches don't seem to be based on linux-next. There are a couple
+of patches in linux-next (queued for 3.16) that should fix these, in
+particular:
 
-  CC      drivers/pinctrl/pinctrl-tegra.o
-drivers/pinctrl/pinctrl-tegra.c: In function 'tegra_pinconf_config_dbg_show=
-':
-drivers/pinctrl/pinctrl-tegra.c:589:4: warning: assignment of read-only loc=
-ation 'pname' [enabled by default]
-    pname =3D cfg_params[i].property;
-    ^
-drivers/pinctrl/pinctrl-tegra.c:589:10: error: incompatible types when assi=
-gning to type 'const char[8]' from type 'const char * const'
-    pname =3D cfg_params[i].property;
-          ^
+	4b9701e02b3b drm/tegra: hdmi - Add Tegra124 support
+	0d6696438d2c drm/tegra: hdmi - Add connector supply support
 
-As you can see, pname is used to store a property name and the default
-value is set to the static string "unknown" for cases where no matching
-parameter is found in cfg_params. However, if a match is found the
-default value will be overwritten, so you can't use const char [].
+Could you try a recent linux-next to see if that fixes the issues you
+are seeing? Note that Tegra doesn't boot on linux-next from the last few
+days because of some cgroup regressions, but a fix was merged and should
+be in Monday's linux-next, so unless new regressions are introduced that
+would be a good candidate to test.
 
 Thierry
 
---HWvPVVuAAfuRc6SZ
+--WBsA/oQW3eTA3LlM
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTd9OFAAoJEN0jrNd/PrOhbVwP/Ra3RGk32WfUMOA17XaUKCMM
-a4pjeE4SMSBjtoftO71aT+w5QOrcMXYLAOHx0cJCvdmwzZccfVm/zRsd3/D1Qigb
-Z+G87c4toTcczV9S/19uwb0Iy021CiAqFbGW/dV9/9sQoKqRolf9JK45gi12WyOI
-kL0q9lx5XqgfBMt8AujH/gf5HwdBAh/dMRaXBOOapgHKgCBWEoprxv2dghttPAXy
-fGOjDCSK5F5ObvhtyrJwIMRWDA5Tly/I3ddfeY6JKtpjHjP6UgTrN0RpNANAi3lx
-MUqSJhtGyhNilvfNOTE+qbpzN2THwTHM57a3WUiFIm/aMO4d4ZSSy+JIIh1Se774
-3R4YxstkSI7fWGe//QfcpUBdL7Wz9q2gxj9ZbIEGosYLipBTiS7esYKYEFvKbpaN
-uLEZ+eTJdjKYg5KG1QaQJ9UDqq9buOTohr2b4oA1KEx6BbGyTgw22wy9UahDPUTZ
-2WJlOuZlC9vY5JIRNBkNq1RfCX3SWLrwIxI9MRlZz7moKNtT+z+b5ymiggWL7ros
-VrkqafInq+UR/noK9lCXs4J6hkC9saWPgmumPQlHIDzWv0MF5XA0lO7k5UyabBf+
-jyZWSSYrgnp+fpOaLes3U190x6UO+ugyisYWUzIZ8WaD3hXMbUSOd4J4xeo+e2lY
-8adhmpi7K7Dhkf4vqbkh
-=tfQb
+iQIcBAEBAgAGBQJTd9WKAAoJEN0jrNd/PrOhlrQQAJCZ2WUr4RdhywcuInO/MBud
+T5prZAay1JZD6FJ7iq6EPJVeSsuDlSgJs3xTAdR12MkU1Cqvbd+DKWK1YrVAvJKu
+mf7GnI/NGtPpxPOfkZOIdw2gWLcCNMqUI84WXE5uNm4esTq7VKsfZ3KzqbnPOwjF
+KUH24Z+e6wkIA2ldME8ZObqdR4QE7nm4oaEY3RJ0UrXxeGV4gEBFovT4uUChhPn6
+NyCrIyCX/gHFXAZ+4sdyOFUyeBG9ODT4qWgYbeLVbB8PeAOXYTNtLs8EswfQQo25
+7iQyB6JuT1l06kx3wcQOy3/cFciYZoxrjmiSs7oHb3FHykpghr0WTKuRuFpxNHB8
+6X+JCsNaHqZXgGckwo+VRFrqb3ehXiqGp45T9oSwAFNhaCWbf+86DCoAJPVfziK2
+O5E/C913tAZ1NfDZSTzzNPWDIfo6RbzxFjkdlbqr4r0jh41g+whHrLjGSQ7XFZBZ
+obmzMwFjQPKSvAPAwNbSBOJgot+4TUGndxcDHcudeVaM3vFPa5cSDCKRqNDSZlzQ
+ytCeY4rVqTBcSJKBQOzcybxgmkO3bjxYUxndpSqVCbzlTMU++0hLPFyQKpr+HEwu
+t/64AO1OjAdxkD2yB6F6XVyXzSA/Q+SR5oh5IMP6Y8rbIx9XpilkZ4o76SDzc7E/
+5IU/i/3LpaRku2EfzIHV
+=ywTN
 -----END PGP SIGNATURE-----
 
---HWvPVVuAAfuRc6SZ--
+--WBsA/oQW3eTA3LlM--
+
+--===============1809039536==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============1809039536==--
