@@ -1,77 +1,84 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra: Fix wrong value written to PLLE_AUX
-Date: Sat, 17 May 2014 23:06:59 +0200
-Message-ID: <20140517210657.GB1046@mithrandir>
-References: <1400248220-16025-1-git-send-email-ttynkkynen@nvidia.com>
- <20140516143110.GA28338@ulmo>
- <5376373E.1080401@wwwdotorg.org>
+Subject: Re: [PATCH] pinctrl: Cleanup string initializations (char[] instead
+ of char *)
+Date: Sat, 17 May 2014 23:24:22 +0200
+Message-ID: <20140517212421.GD1046@mithrandir>
+References: <1400337445-25750-1-git-send-email-manuel.schoelling@gmx.de>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="wzJLGUyc3ArbnUjN"
+	protocol="application/pgp-signature"; boundary="HWvPVVuAAfuRc6SZ"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <5376373E.1080401-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1400337445-25750-1-git-send-email-manuel.schoelling-Mmb7MZpHnFY@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Manuel =?utf-8?Q?Sch=C3=B6lling?= <manuel.schoelling-Mmb7MZpHnFY@public.gmane.org>
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---wzJLGUyc3ArbnUjN
-Content-Type: text/plain; charset=us-ascii
+--HWvPVVuAAfuRc6SZ
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 16, 2014 at 10:05:18AM -0600, Stephen Warren wrote:
-> On 05/16/2014 08:31 AM, Thierry Reding wrote:
-> > On Fri, May 16, 2014 at 04:50:20PM +0300, Tuomas Tynkkynen wrote:
-> >> The value written to PLLE_AUX was incorrect due to a wrong variable
-> >> being used.
-> >>
-> >> Signed-off-by: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >> Tested-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >> ---
-> >>   This fix is required for the (upcoming) SATA support.
-> >>  drivers/clk/tegra/clk-pll.c |    2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > Tested-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >=20
-> > Mike, Peter, it might be good to have this go into 3.16 as a
-> > prerequisite for the upcoming SATA driver (which presumably won't be
-> > ready until 3.17, but in that case it would be good to have this
-> > prerequisite merged already).
->=20
-> Probably even Cc: stable since it's a fix for a bug that I assume has
-> been in a kernel release or two?
+On Sat, May 17, 2014 at 04:37:25PM +0200, Manuel Sch=C3=B6lling wrote:
+[...]
+> diff --git a/drivers/pinctrl/pinctrl-tegra.c b/drivers/pinctrl/pinctrl-te=
+gra.c
+> index 6545809..43eeb1b 100644
+> --- a/drivers/pinctrl/pinctrl-tegra.c
+> +++ b/drivers/pinctrl/pinctrl-tegra.c
+> @@ -576,7 +576,7 @@ static void tegra_pinconf_config_dbg_show(struct pinc=
+trl_dev *pctldev,
+>  {
+>  	enum tegra_pinconf_param param =3D TEGRA_PINCONF_UNPACK_PARAM(config);
+>  	u16 arg =3D TEGRA_PINCONF_UNPACK_ARG(config);
+> -	const char *pname =3D "unknown";
+> +	const char pname[] =3D "unknown";
+>  	int i;
+> =20
+>  	for (i =3D 0; i < ARRAY_SIZE(cfg_params); i++) {
 
-Yeah, I guess that makes sense. The bug isn't visible yet, but back-
-porting to stable might save somebody else from chasing this if they
-ever decide to backport PCIe, SATA or XUSB.
+When this hunk is applied, the build fails as follows:
+
+  CC      drivers/pinctrl/pinctrl-tegra.o
+drivers/pinctrl/pinctrl-tegra.c: In function 'tegra_pinconf_config_dbg_show=
+':
+drivers/pinctrl/pinctrl-tegra.c:589:4: warning: assignment of read-only loc=
+ation 'pname' [enabled by default]
+    pname =3D cfg_params[i].property;
+    ^
+drivers/pinctrl/pinctrl-tegra.c:589:10: error: incompatible types when assi=
+gning to type 'const char[8]' from type 'const char * const'
+    pname =3D cfg_params[i].property;
+          ^
+
+As you can see, pname is used to store a property name and the default
+value is set to the static string "unknown" for cases where no matching
+parameter is found in cfg_params. However, if a match is found the
+default value will be overwritten, so you can't use const char [].
 
 Thierry
 
---wzJLGUyc3ArbnUjN
+--HWvPVVuAAfuRc6SZ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTd89vAAoJEN0jrNd/PrOhghsP/0cLORjtzZ/FziFv1QJnRHY7
-bcaCcu7Z2YSvjyRWR988jRESdj7QAz20tzCXunav8GheXVinHu+ZOCky83onm9HQ
-oZ+D5bxhXSXOC6ebFetb/lPlANCem8bYAWaASEGMYY84tuoz0AilaKjUe/DIg8hN
-pbEUwTuzgJZKPpCD1lty9ZA5nJPHQXVczulyyiaHWcF7WIDZ5exF8SrAV6edYFpo
-2c6Mpl8QGzcLsdPlHlS3GAAV+MrsZVthGJbj+QQgU6K0oc5lAL7QHlNVNcy34k0R
-bsfz+w8oL7b0ySBltq8tDiW5RJ6WqnHQ8WkrHAb6eZa9bxmamrQlk24r5QFYddp0
-lFYkqbdqxjOk02Zm1V0SAxa6YxZGv4oGAphn8YVVb982ROsNDJO1Ufrs9lP36fiK
-7JZT7ib5B2sIJl0yiW3SiXlPsn0NDNdTLi9tY/0SlCddRwOUpOCFbxxAdqhPj2cY
-CsZ/04xqrD+kkthnEAmtN6uXgqfi6U8smQpR99gvKxYmoSoV7yXINAGfPg3E02oM
-pwmjVdZVpWo32kUD9h/b5MIdiuX2MTfiLCqK96Qy2jJO0g7tQxtaKLx4KX8usMAy
-HNZkBy8BHmFa/jDzWf2EyWM3PXUH+uL62IeEfajQO5UPkHYyVlNexJF0m2JADOzW
-fms2PTVrc1jjshWHSoOt
-=iaRZ
+iQIcBAEBAgAGBQJTd9OFAAoJEN0jrNd/PrOhbVwP/Ra3RGk32WfUMOA17XaUKCMM
+a4pjeE4SMSBjtoftO71aT+w5QOrcMXYLAOHx0cJCvdmwzZccfVm/zRsd3/D1Qigb
+Z+G87c4toTcczV9S/19uwb0Iy021CiAqFbGW/dV9/9sQoKqRolf9JK45gi12WyOI
+kL0q9lx5XqgfBMt8AujH/gf5HwdBAh/dMRaXBOOapgHKgCBWEoprxv2dghttPAXy
+fGOjDCSK5F5ObvhtyrJwIMRWDA5Tly/I3ddfeY6JKtpjHjP6UgTrN0RpNANAi3lx
+MUqSJhtGyhNilvfNOTE+qbpzN2THwTHM57a3WUiFIm/aMO4d4ZSSy+JIIh1Se774
+3R4YxstkSI7fWGe//QfcpUBdL7Wz9q2gxj9ZbIEGosYLipBTiS7esYKYEFvKbpaN
+uLEZ+eTJdjKYg5KG1QaQJ9UDqq9buOTohr2b4oA1KEx6BbGyTgw22wy9UahDPUTZ
+2WJlOuZlC9vY5JIRNBkNq1RfCX3SWLrwIxI9MRlZz7moKNtT+z+b5ymiggWL7ros
+VrkqafInq+UR/noK9lCXs4J6hkC9saWPgmumPQlHIDzWv0MF5XA0lO7k5UyabBf+
+jyZWSSYrgnp+fpOaLes3U190x6UO+ugyisYWUzIZ8WaD3hXMbUSOd4J4xeo+e2lY
+8adhmpi7K7Dhkf4vqbkh
+=tfQb
 -----END PGP SIGNATURE-----
 
---wzJLGUyc3ArbnUjN--
+--HWvPVVuAAfuRc6SZ--
