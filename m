@@ -1,13 +1,13 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 1/2] ARM: tegra: Mark Tegra124 HDMI compatible with
- Tegra114
-Date: Sat, 17 May 2014 23:33:00 +0200
-Message-ID: <20140517213258.GE1046@mithrandir>
+Subject: Re: [PATCH 2/2] drm/tegra: Enable HDMI_5V_CON regulator
+Date: Sat, 17 May 2014 23:34:57 +0200
+Message-ID: <20140517213456.GF1046@mithrandir>
 References: <1400350881-22008-1-git-send-email-dgreid@chromium.org>
+ <1400350881-22008-2-git-send-email-dgreid@chromium.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1809039536=="
+Content-Type: multipart/mixed; boundary="===============1632924324=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1400350881-22008-1-git-send-email-dgreid@chromium.org>
+In-Reply-To: <1400350881-22008-2-git-send-email-dgreid@chromium.org>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -22,65 +22,57 @@ Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kern
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============1809039536==
+--===============1632924324==
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="WBsA/oQW3eTA3LlM"
+	protocol="application/pgp-signature"; boundary="65ImJOski3p8EhYV"
 Content-Disposition: inline
 
 
---WBsA/oQW3eTA3LlM
+--65ImJOski3p8EhYV
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, May 17, 2014 at 11:21:20AM -0700, Dylan Reid wrote:
-> The HDMI driver that handles Tegra114 can handle Tegra124 as well,
-> mark Tegra124 as compatible.  This makes HDMI output work on Venice2.
+On Sat, May 17, 2014 at 11:21:21AM -0700, Dylan Reid wrote:
+> The DDC bus uses this for it's supply, enable it so EDID can be read.
+> This eliminates I2C read timeouts on Venice2 and EDID can be verified
+> with i2cdump.
 >=20
 > Signed-off-by: Dylan Reid <dgreid@chromium.org>
 > ---
->  arch/arm/boot/dts/tegra124.dtsi | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  drivers/gpu/drm/tegra/hdmi.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
 
-These patches don't seem to be based on linux-next. There are a couple
-of patches in linux-next (queued for 3.16) that should fix these, in
-particular:
+Like I said in reply to 1/2, this should be fixed by:
 
-	4b9701e02b3b drm/tegra: hdmi - Add Tegra124 support
 	0d6696438d2c drm/tegra: hdmi - Add connector supply support
-
-Could you try a recent linux-next to see if that fixes the issues you
-are seeing? Note that Tegra doesn't boot on linux-next from the last few
-days because of some cgroup regressions, but a fix was merged and should
-be in Monday's linux-next, so unless new regressions are introduced that
-would be a good candidate to test.
 
 Thierry
 
---WBsA/oQW3eTA3LlM
+--65ImJOski3p8EhYV
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTd9WKAAoJEN0jrNd/PrOhlrQQAJCZ2WUr4RdhywcuInO/MBud
-T5prZAay1JZD6FJ7iq6EPJVeSsuDlSgJs3xTAdR12MkU1Cqvbd+DKWK1YrVAvJKu
-mf7GnI/NGtPpxPOfkZOIdw2gWLcCNMqUI84WXE5uNm4esTq7VKsfZ3KzqbnPOwjF
-KUH24Z+e6wkIA2ldME8ZObqdR4QE7nm4oaEY3RJ0UrXxeGV4gEBFovT4uUChhPn6
-NyCrIyCX/gHFXAZ+4sdyOFUyeBG9ODT4qWgYbeLVbB8PeAOXYTNtLs8EswfQQo25
-7iQyB6JuT1l06kx3wcQOy3/cFciYZoxrjmiSs7oHb3FHykpghr0WTKuRuFpxNHB8
-6X+JCsNaHqZXgGckwo+VRFrqb3ehXiqGp45T9oSwAFNhaCWbf+86DCoAJPVfziK2
-O5E/C913tAZ1NfDZSTzzNPWDIfo6RbzxFjkdlbqr4r0jh41g+whHrLjGSQ7XFZBZ
-obmzMwFjQPKSvAPAwNbSBOJgot+4TUGndxcDHcudeVaM3vFPa5cSDCKRqNDSZlzQ
-ytCeY4rVqTBcSJKBQOzcybxgmkO3bjxYUxndpSqVCbzlTMU++0hLPFyQKpr+HEwu
-t/64AO1OjAdxkD2yB6F6XVyXzSA/Q+SR5oh5IMP6Y8rbIx9XpilkZ4o76SDzc7E/
-5IU/i/3LpaRku2EfzIHV
-=ywTN
+iQIcBAEBAgAGBQJTd9YAAAoJEN0jrNd/PrOhnIwP/3/bVF6nL74+9G89PiBZG+nQ
+9NRnn+9wm7ZgeeKc5HweLMYcSRZNzb2dnFm6AFW2aVETvt5764I+Tst6TGrgfLQL
+iTbIo1map55cJ4BfoIdMa67o3m+BFRZjAUWAAPiySFjxC45A/UUwc7dl+OoTxdL7
+Q77PkzKvpJt/0QvXz/ta4/ry11bZ7U5IXCy9c2YsYmEWb6s0puh7G8h7UgfdQcy/
+UXGqu1//mkTWqS0URGwXeUMmorwbz6xLUFC8mm7bpeEaqVHEEf+dBVfuHltji0wE
+57slgqLEfzH38lNz/umdENO/6ocxXBDogfQ0wJrGU81ZE1oqUai9ZX7kLuKp7azW
+dpPvaKZc7l4ohv0Yx4emPXeTAFtfa1pkY+hBI0ZBCPFecqiZrNbmIup9qLOCWLkF
+EZ0ZSkGf4kXddcpnKfQwaubzLeEPO77NTiuQbkcrXnD9qMQHBwpfhbz2db4ixMHF
+yAA0TauiJKv4UZyW9E1JSPA2XwSyEcQNdDmUVdQHcWmkF4KDBuE4x6PcwXR1IWqh
+rpb8bJIQAz+VvirObs31bmlJ0z6laNy1tDsZeA2s54ovRDqm/yJrwbUrE/CkuK3U
+Hl10eJBTwPDzh8mXMdw1+6sZZJGDDzo1GFNkiXlSdl7bFrpnIFmabWGuAVbYTGY4
+I0w+focEF+QIbaUi142X
+=IeAE
 -----END PGP SIGNATURE-----
 
---WBsA/oQW3eTA3LlM--
+--65ImJOski3p8EhYV--
 
---===============1809039536==
+--===============1632924324==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -91,4 +83,4 @@ dri-devel mailing list
 dri-devel@lists.freedesktop.org
 http://lists.freedesktop.org/mailman/listinfo/dri-devel
 
---===============1809039536==--
+--===============1632924324==--
