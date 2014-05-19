@@ -1,152 +1,61 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 4/4] drm/nouveau: introduce CPU cache flushing
-	macro
-Date: Mon, 19 May 2014 11:02:03 +0200
-Message-ID: <20140519090202.GC7138@ulmo>
-References: <1400483458-9648-1-git-send-email-acourbot@nvidia.com>
- <1400483458-9648-5-git-send-email-acourbot@nvidia.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 7/7] ARM: tegra: Add the EC i2c tunnel to tegra124-venice2
+Date: Mon, 19 May 2014 10:18:36 +0100
+Message-ID: <20140519091836.GD4978@lee--X1>
+References: <1397757570-19750-1-git-send-email-dianders@chromium.org>
+ <1397757570-19750-8-git-send-email-dianders@chromium.org>
+ <53750A9A.8000808@wwwdotorg.org>
+ <CAD=FV=Vj5M_yiYZOkjzB-QjYJa9WE2fcGcwwzAF1h8gcjc9jeA@mail.gmail.com>
+ <CAOesGMhe-STC3GUwAyC6qeEPWWmxdsWbXqdevy8b4MHDgM2v=A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1744221333=="
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <1400483458-9648-5-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAOesGMhe-STC3GUwAyC6qeEPWWmxdsWbXqdevy8b4MHDgM2v=A@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Doug Anderson <dianders@chromium.org>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Stephen Warren <swarren@nvidia.com>, Andrew Bresticker <abrestic@chromium.org>, Dylan Reid <dgreid@chromium.org>, Simon Glass <sjg@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Thu, 15 May 2014, Olof Johansson wrote:
 
---===============1744221333==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="da4uJneut+ArUgXk"
-Content-Disposition: inline
+> On Thu, May 15, 2014 at 11:55 AM, Doug Anderson <dianders@chromium.or=
+g> wrote:
+> > Stephen,
+> >
+> > On Thu, May 15, 2014 at 11:42 AM, Stephen Warren <swarren@wwwdotorg=
+=2Eorg> wrote:
+> >> On 04/17/2014 11:59 AM, Doug Anderson wrote:
+> >>> This adds the EC i2c tunnel (and devices under it) to the
+> >>> tegra124-venice2 device tree.
+> >>
+> >> Did the MFD patches at the start of this series get applied yet? I=
+ was
+> >> hoping to apply this one patch to the Tegra tree for 3.16, and tha=
+t
+> >> needs to happen by tomorrow morning at the latest since -rc6 is lo=
+oming
+> >> fast. However, I'm holding off until the rest of the series is app=
+lied
+> >> to the MFD tree so I can be sure the DT binding is accepted first.=
+=2E.
+> >
+> > As far as I know, they didn't.  Lee was waiting on Wolfram's ack to
+> > the i2c tunnel before landing them.  ...and I'm still eagerly await=
+ing
+> > Wolfram's next i2c tunnel review.
+>=20
+> The i2c portion can be revisited if needed, the MFD piece should be
+> possible to land sooner than that... Lee?
 
+The set 'will' make it in during this cycle.  The trouble is, once
+it's applied, the I2C portion will have to wait until the next cycle.
+By applying late, I'm giving this set every chance to go in as a
+whole.
 
---da4uJneut+ArUgXk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, May 19, 2014 at 04:10:58PM +0900, Alexandre Courbot wrote:
-> Some architectures (e.g. ARM) need the CPU buffers to be explicitely
-> flushed for a memory write to take effect. Not doing so results in
-> synchronization issues, especially after writing to BOs.
-
-It seems to me that the above is generally true for all architectures,
-not just ARM.
-
-Also: s/explicitely/explicitly/
-
-> This patch introduces a macro that flushes the caches on ARM and
-> translates to a no-op on other architectures, and uses it when
-> writing to in-memory BOs. It will also be useful for implementations of
-> instmem that access shared memory directly instead of going through
-> PRAMIN.
-
-Presumably instmem can access shared memory on all architectures, so
-this doesn't seem like a property of the architecture but rather of the
-memory pool backing the instmem.
-
-In that case I wonder if this shouldn't be moved into an operation that
-is implemented by the backing memory pool and be a noop where the cache
-doesn't need explicit flushing.
-
-> diff --git a/drivers/gpu/drm/nouveau/core/os.h b/drivers/gpu/drm/nouveau/=
-core/os.h
-> index d0ced94ca54c..274b4460bb03 100644
-> --- a/drivers/gpu/drm/nouveau/core/os.h
-> +++ b/drivers/gpu/drm/nouveau/core/os.h
-> @@ -38,4 +38,21 @@
->  #endif /* def __BIG_ENDIAN else */
->  #endif /* !ioread32_native */
-> =20
-> +#if defined(__arm__)
-> +
-> +#define nv_cpu_cache_flush_area(va, size)	\
-> +do {						\
-> +	phys_addr_t pa =3D virt_to_phys(va);	\
-> +	__cpuc_flush_dcache_area(va, size);	\
-> +	outer_flush_range(pa, pa + size);	\
-> +} while (0)
-
-Couldn't this be a static inline function?
-
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_bo.c b/drivers/gpu/drm/nouve=
-au/nouveau_bo.c
-[...]
-> index 0886f47e5244..b9c9729c5733 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_bo.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_bo.c
-> @@ -437,8 +437,10 @@ nouveau_bo_wr16(struct nouveau_bo *nvbo, unsigned in=
-dex, u16 val)
->  	mem =3D &mem[index];
->  	if (is_iomem)
->  		iowrite16_native(val, (void __force __iomem *)mem);
-> -	else
-> +	else {
->  		*mem =3D val;
-> +		nv_cpu_cache_flush_area(mem, 2);
-> +	}
->  }
-> =20
->  u32
-> @@ -461,8 +463,10 @@ nouveau_bo_wr32(struct nouveau_bo *nvbo, unsigned in=
-dex, u32 val)
->  	mem =3D &mem[index];
->  	if (is_iomem)
->  		iowrite32_native(val, (void __force __iomem *)mem);
-> -	else
-> +	else {
->  		*mem =3D val;
-> +		nv_cpu_cache_flush_area(mem, 4);
-> +	}
-
-This looks rather like a sledgehammer to me. Effectively this turns nvbo
-into an uncached buffer. With additional overhead of constantly flushing
-caches. Wouldn't it make more sense to locate the places where these are
-called and flush the cache after all the writes have completed?
-
-Thierry
-
---da4uJneut+ArUgXk
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTeciKAAoJEN0jrNd/PrOh0PoP/iqDXcR5waoDFQHQ1VnngF6c
-DRB0hnT6E13C5mFNyvyn49ot18fnTCRUImAXuFzPdYAQolp/n2Ij+Eejq9t16aUK
-XrsppQNfRgvvPlExg41AQvwKHmmboLwA0/Qc5Rgai76jE3M6QI2vdEzL6g7lxTpb
-9IFt82clDs0HgGAMAl/NN2gANDTlfLYa2OyxCmPE/JhHaX5gf4D1/Jte4IdtjMYS
-1zT9/Fay9CyrokKaH33hE6w6d7W6jsCUXnaPj3RmkpUbAzXc/A+ifLBXSh9a6ixz
-FKdMy2wV3iZw232KUutE2YlXs1ECdjZBUBJWF4bVqYMH93R24b99s0nUuPXd3OBk
-vnPsunOOjc4t/nakcMOjXjCC3HSdel4yp5dl/2mhpuC7Ju1aneh0sPrcrHNgqwpN
-+ayPpEDufF+32alpnxfe07ARKtXDX/FUR2bVoa2TGpX5b5ONNqd8CW/aQB15cU0E
-PC3yQQmX0z5OajbgTQS9+kSx/FDXtBhUvI5GY4yFn5YVw/96F/CVOeo/8hlNxbCY
-EmlSTDCQPWoW6Uh3nlgFsHs/vKEequKTxRecyUQP6GAC8ZbjT/VZoougHgK2VSzr
-6E2PMEoai9uAqkq44iJbWsss5G5EQqWYS/WxmjJdVDsP4gvIcsA2wqgNReKjflXS
-f7ULQ7JvqvQJnJ1lZtna
-=W3I6
------END PGP SIGNATURE-----
-
---da4uJneut+ArUgXk--
-
---===============1744221333==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-Nouveau mailing list
-Nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-http://lists.freedesktop.org/mailman/listinfo/nouveau
-
---===============1744221333==--
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
