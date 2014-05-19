@@ -1,57 +1,64 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH] devicetree: Add generic IOMMU device tree bindings
-Date: Mon, 19 May 2014 12:26:35 +0200
-Message-ID: <4391809.OTRCiJQXS4@wuerfel>
-References: <1400242998-437-1-git-send-email-thierry.reding@gmail.com>
+From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Subject: Re: [PATCH 4/4] drm/nouveau: introduce CPU cache flushing
+ macro
+Date: Mon, 19 May 2014 12:27:50 +0200
+Message-ID: <20140519102750.GI8790@phenom.ffwll.local>
+References: <1400483458-9648-1-git-send-email-acourbot@nvidia.com>
+ <1400483458-9648-5-git-send-email-acourbot@nvidia.com>
+ <20140519090202.GC7138@ulmo>
+ <1400491331.8467.8.camel@weser.hi.pengutronix.de>
+ <20140519100316.GE7138@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1400242998-437-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20140519100316.GE7138@ulmo>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 16 May 2014 14:23:18 Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Mon, May 19, 2014 at 12:03:17PM +0200, Thierry Reding wrote:
+> On Mon, May 19, 2014 at 11:22:11AM +0200, Lucas Stach wrote:
+> > Am Montag, den 19.05.2014, 11:02 +0200 schrieb Thierry Reding:
+> > > On Mon, May 19, 2014 at 04:10:58PM +0900, Alexandre Courbot wrote:
+> > > > Some architectures (e.g. ARM) need the CPU buffers to be explicitely
+> > > > flushed for a memory write to take effect. Not doing so results in
+> > > > synchronization issues, especially after writing to BOs.
+> > > 
+> > > It seems to me that the above is generally true for all architectures,
+> > > not just ARM.
+> > > 
+> > No, on PCI coherent arches, like x86 and some PowerPCs, the GPU will
+> > snoop the CPU caches and therefore an explicit cache flush is not
+> > required.
 > 
-> This commit introduces a generic device tree binding for IOMMU devices.
-> Only a very minimal subset is described here, but it is enough to cover
-> the requirements of both the Exynos System MMU and Tegra SMMU as
-> discussed here:
-> 
->     https://lkml.org/lkml/2014/4/27/346
-> 
-> More advanced functionality such as the dma-ranges property can easily
-> be added in a backwards-compatible way. In the absence of a dma-ranges
-> property it should be safe to default to the whole address space.
-> 
+> I was criticizing the wording in the commit message. Perhaps it could be
+> enhanced with what you just said.
 
-The basic binding looks fine, but I'd like it to be more explicit
-about dma-ranges. Most importantly, what does "the whole address space"
-mean? A lot of IOMMUs have only 32-bit bus addresses when targetted
-by a bus master, it would also be normal for some to be smaller and
-some might even support 64-bit.
+Shouldn't this be done in the dma mapping layer? I know that i915 does all
+the cpu cache flushing itself, but that's because the x86 dma layer
+refuses to believe that there are non-coherent platforms on x86. But on
+arm it can cope.
 
-For the upstream side, I'd hope we always have access to the full
-physical memory, but since this is a brand-new binding, it should
-be straightforward to just ask for upstream dma-ranges properties
-to be set all the way up to the root to confirm that.
+This is somewhat important for dma-buf buffer sharing since if the cpu
+cache control is done in drivers you must do double-flushing on shared
+buffers. Atm you have to do that anyway, but at least this would make it
+easier. The other problem is that ttm reinvents half of the dma mapping
+functions.
 
-For downstream, we don't actually have a good place to put the
-dma-ranges property. We can't put it into the iommu node, because
-that would imply translating to the iommu's parent bus, not the
-iommu's own bus space. We also can't put it into the master, because
-dma-ranges is supposed to be in the parent bus. Finally, it makes
-no sense to use the dma-ranges property of the master's parent bus,
-because that bus isn't actually involved in the translation.
-
-My preferred option would be to always put the address range into
-the iommu descriptor, using the iommu's #address-cells.
-
-	Arnd
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Just my 2 cents.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
