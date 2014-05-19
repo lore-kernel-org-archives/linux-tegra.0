@@ -1,111 +1,76 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 4/4] drm/nouveau: introduce CPU cache flushing macro
-Date: Mon, 19 May 2014 12:03:17 +0200
-Message-ID: <20140519100316.GE7138@ulmo>
-References: <1400483458-9648-1-git-send-email-acourbot@nvidia.com>
- <1400483458-9648-5-git-send-email-acourbot@nvidia.com>
- <20140519090202.GC7138@ulmo>
- <1400491331.8467.8.camel@weser.hi.pengutronix.de>
+From: Lucas Stach <l.stach@pengutronix.de>
+Subject: Re: [PATCH 0/5] drm/nouveau: platform devices and GK20A probing
+Date: Mon, 19 May 2014 12:04:28 +0200
+Message-ID: <1400493868.8467.26.camel@weser.hi.pengutronix.de>
+References: <1400491450-19223-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="so9zsI5B81VjUb/o"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1400491331.8467.8.camel-WzVe3FnzCwFR6QfukMTsflXZhhPuCNm+@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1400491450-19223-1-git-send-email-acourbot@nvidia.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: gnurou@gmail.com, Stephen Warren <swarren@wwwdotorg.org>, nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Am Montag, den 19.05.2014, 18:24 +0900 schrieb Alexandre Courbot:
+> This patch series is the final (?) step towards the initial support of GK20A,
+> allowing it to be probed and used (currently at a very slow speed, and for
+> offscreen rendering only) on the Jetson TK1 and Venice 2 boards.
+> 
+This seem to still need external firmware. Any chance to get this into
+linux-firmware?
 
---so9zsI5B81VjUb/o
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Regards,
+Lucas
+> The main piece if the first patch which adds platform devices probing support
+> to Nouveau. There are probably lots of things that need to be discussed about
+> it, e.g.:
+> 
+> * The way the DRM device is created, especially with respect to the ongoing
+>   changes to the DRM framework,
+> * The fact that the same drm_driver instance is used for the PCI and platform
+>   drivers,
+> * Whether we should have only one platform driver capable of probing all
+>   platform devices, or one driver per GPU (in this case, where should all these
+>   drivers reside?)
+> 
+> So there are still some rough edges, but we are getting there. :)
+> 
+> The first patch should go through the Nouveau tree, while the 4 others are
+> rather intended for Tegra.
+> 
+> Alexandre Courbot (3):
+>   drm/nouveau: support for probing platform devices
+>   ARM: tegra: of: add GK20A device tree binding
+>   ARM: tegra: jetson-tk1: enable GK20A GPU
+> 
+> Thierry Reding (2):
+>   ARM: tegra: add GK20A GPU to Tegra124 DT
+>   ARM: tegra: venice2: enable GK20A GPU
+> 
+>  .../devicetree/bindings/gpu/nvidia,gk20a.txt       |  45 +++++
+>  arch/arm/boot/dts/tegra124-jetson-tk1.dts          |   8 +-
+>  arch/arm/boot/dts/tegra124-venice2.dts             |   8 +-
+>  arch/arm/boot/dts/tegra124.dtsi                    |  15 ++
+>  drivers/gpu/drm/nouveau/Kconfig                    |   8 +
+>  drivers/gpu/drm/nouveau/Makefile                   |   3 +
+>  drivers/gpu/drm/nouveau/nouveau_drm.c              |  33 ++--
+>  drivers/gpu/drm/nouveau/nouveau_drm.h              |  21 +++
+>  drivers/gpu/drm/nouveau/nouveau_platform.c         | 191 +++++++++++++++++++++
+>  9 files changed, 315 insertions(+), 17 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt
+>  create mode 100644 drivers/gpu/drm/nouveau/nouveau_platform.c
+> 
 
-On Mon, May 19, 2014 at 11:22:11AM +0200, Lucas Stach wrote:
-> Am Montag, den 19.05.2014, 11:02 +0200 schrieb Thierry Reding:
-> > On Mon, May 19, 2014 at 04:10:58PM +0900, Alexandre Courbot wrote:
-> > > Some architectures (e.g. ARM) need the CPU buffers to be explicitely
-> > > flushed for a memory write to take effect. Not doing so results in
-> > > synchronization issues, especially after writing to BOs.
-> >=20
-> > It seems to me that the above is generally true for all architectures,
-> > not just ARM.
-> >=20
-> No, on PCI coherent arches, like x86 and some PowerPCs, the GPU will
-> snoop the CPU caches and therefore an explicit cache flush is not
-> required.
-
-I was criticizing the wording in the commit message. Perhaps it could be
-enhanced with what you just said.
-
-> > > diff --git a/drivers/gpu/drm/nouveau/nouveau_bo.c b/drivers/gpu/drm/n=
-ouveau/nouveau_bo.c
-> > [...]
-> > > index 0886f47e5244..b9c9729c5733 100644
-> > > --- a/drivers/gpu/drm/nouveau/nouveau_bo.c
-> > > +++ b/drivers/gpu/drm/nouveau/nouveau_bo.c
-> > > @@ -437,8 +437,10 @@ nouveau_bo_wr16(struct nouveau_bo *nvbo, unsigne=
-d index, u16 val)
-> > >  	mem =3D &mem[index];
-> > >  	if (is_iomem)
-> > >  		iowrite16_native(val, (void __force __iomem *)mem);
-> > > -	else
-> > > +	else {
-> > >  		*mem =3D val;
-> > > +		nv_cpu_cache_flush_area(mem, 2);
-> > > +	}
-> > >  }
-> > > =20
-> > >  u32
-> > > @@ -461,8 +463,10 @@ nouveau_bo_wr32(struct nouveau_bo *nvbo, unsigne=
-d index, u32 val)
-> > >  	mem =3D &mem[index];
-> > >  	if (is_iomem)
-> > >  		iowrite32_native(val, (void __force __iomem *)mem);
-> > > -	else
-> > > +	else {
-> > >  		*mem =3D val;
-> > > +		nv_cpu_cache_flush_area(mem, 4);
-> > > +	}
-> >=20
-> > This looks rather like a sledgehammer to me. Effectively this turns nvbo
-> > into an uncached buffer. With additional overhead of constantly flushing
-> > caches. Wouldn't it make more sense to locate the places where these are
-> > called and flush the cache after all the writes have completed?
-> >=20
-> I don't think the explicit flushing for those things makes sense. I
-> think it is a lot more effective to just map the BOs write-combined on
-> PCI non-coherent arches. This way any writes will be buffered. Reads
-> will be slow, but I don't think nouveau is reading back a lot from those
-> buffers.
-> Using the write-combining buffer doesn't need any additional
-> synchronization as it will get flushed on pushbuf kickoff anyways.
-
-Sounds good to me.
-
-Thierry
-
---so9zsI5B81VjUb/o
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTedbkAAoJEN0jrNd/PrOhvYUP/A4m7Wk8Sh4MMqV1dPnmCXA+
-Isff4gDoCTQOI7MtUxzMWJde5HKoV+hJIxMhduG66qIhtPqnzyFk15BUqlIv4WxN
-nyGDFX26GJaJAQf9hUBQ/mLcTHwVTDmXP4S9AAaFPIrHKqEAFupi2V0LQ/XCPqbF
-kbiDWkbZwOmHbV8b1xYkdOU7A+UgcPIMidTExig1qagg5mLT7RRrq8s4H85KttoH
-KTwqm7fz77Mr/E8dqOHn57CiJlx9kCUFjSeusXk5mbJD7TYKWUKJLYSJcyHC5YEi
-fiwiamZrEIB/xSuaFQHLaHD+ziZnMfWmYsqDRcDGTUR5QalyM0iw49JhqAv05Oxs
-tBSJ+Jo7fz3JPVZLMhF+pV+YEbe+IpuPrUrBhYkOto+pZ3cXoQk0zY7ANUJDCEjl
-7yHL9rnYiVns5/j7rmxOfC+10IJM2WMg9dZjEU7Fmf/Kq0miA0oGv9ZaafLM9Das
-VVFt98eyfnp2EaQUHAh9jXpYiKkLe+IobEMEjiaYPaXA4IPatNd7OlA00MYlkisF
-ru2V0JWt9IAFD+jPusSsaGU97dDSxOlUTL4wzuqSPYHjsl8aCht95887TSdPSdlO
-oazK4GCnKS8gYP6ZTjN1okRS4DLB8c3zujXK9mZZTH6qCc/oqHpDoI4GCskKoRL6
-T2k6kke5TjXxDCtbOgS6
-=9GWG
------END PGP SIGNATURE-----
-
---so9zsI5B81VjUb/o--
+-- 
+Pengutronix e.K.             | Lucas Stach                 |
+Industrial Linux Solutions   | http://www.pengutronix.de/  |
