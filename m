@@ -1,91 +1,163 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH v3 6/7] i2c: ChromeOS EC tunnel driver
-Date: Mon, 19 May 2014 12:50:56 +0200
-Message-ID: <20140519105055.GA2612@katana>
-References: <1398879850-9111-1-git-send-email-dianders@chromium.org>
- <1398879850-9111-7-git-send-email-dianders@chromium.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] devicetree: Add generic IOMMU device tree bindings
+Date: Mon, 19 May 2014 14:53:37 +0200
+Message-ID: <20140519125336.GA9466@ulmo>
+References: <1400242998-437-1-git-send-email-thierry.reding@gmail.com>
+ <4391809.OTRCiJQXS4@wuerfel>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="pf9I7BMVVzbSWLtt"
-Return-path: <linux-doc-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1398879850-9111-7-git-send-email-dianders@chromium.org>
-Sender: linux-doc-owner@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: lee.jones@linaro.org, swarren@nvidia.com, abrestic@chromium.org, dgreid@chromium.org, olof@lixom.net, sjg@chromium.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rdunlap@infradead.org, sameo@linux.intel.com, jdelvare@suse.de, shane.huang@amd.com, maxime.ripard@free-electrons.com, laurent.pinchart+renesas@ideasonboard.com, u.kleine-koenig@pengutronix.de, bjorn.andersson@sonymobile.com, kevin.strasser@linux.intel.com, linux@prisktech.co.nz, andrew@lunn.ch, andriy.shevchenko@linux.intel.com, schwidefsky@de.ibm.com, matt.porter@linaro.org, ch.naveen@samsung.com, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+In-Reply-To: <4391809.OTRCiJQXS4@wuerfel>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Grant Grundler <grundler@chromium.org>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>, iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org, Cho KyongHo <pullip.cho@samsung.com>, Dave Martin <Dave.Martin@arm.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
---pf9I7BMVVzbSWLtt
+--XsQoSWH+UP9D9v3l
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, May 19, 2014 at 12:26:35PM +0200, Arnd Bergmann wrote:
+> On Friday 16 May 2014 14:23:18 Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> > This commit introduces a generic device tree binding for IOMMU devices.
+> > Only a very minimal subset is described here, but it is enough to cover
+> > the requirements of both the Exynos System MMU and Tegra SMMU as
+> > discussed here:
+> >=20
+> >     https://lkml.org/lkml/2014/4/27/346
+> >=20
+> > More advanced functionality such as the dma-ranges property can easily
+> > be added in a backwards-compatible way. In the absence of a dma-ranges
+> > property it should be safe to default to the whole address space.
+> >=20
+>=20
+> The basic binding looks fine, but I'd like it to be more explicit
+> about dma-ranges. Most importantly, what does "the whole address space"
+> mean?
 
-> +I2C bus that tunnels through the ChromeOS EC (cros-ec)
-> +======================================================
-> +On some ChromeOS board designs we've got a connection to the EC (embedded
-> +controller) but no direct connection to some devices on the other side of
-> +the EC (like a battery and PMIC).  To get access to those devices we need
-> +to tunnel our i2c commands through the EC.
-> +
-> +The node for this device should be under a cros-ec node like google,cros-ec-spi
-> +or google,cros-ec-i2c.
-> +
-> +
-> +Required properties:
-> +- compatible: google,cros-ec-i2c-tunnel
-> +- google,remote-bus: The EC bus we'd like to talk to.
-> +
-> +Optional child nodes:
-> +- One node per I2C device connected to the tunnelled I2C bus.
-> +
-> +
-> +Example:
-> +	cros-ec@0 {
-> +		compatible = "google,cros-ec-spi";
+The whole point was to leave out any mention of dma-ranges from the
+binding until we've figured out more of the puzzle.
 
-Ooookay, now I get it. From the compatible name of this snipplet, I
-assumed this node describes only an SPI IP core inside the EC. This is
-why I complained about the location of the I2C busses, since placing it
-as subnodes of the EC based SPI didn't make sense to me, even though the
-connection of the tunnel was SPI. Now I understand that this is the core
-driver for the EC, talking to it via SPI. Since this driver is an SPI
-child node I would not have expected the "-spi" suffix. Sorry, for this
-confusion :/ Now, the bindings make much more sense to me.
+So what I was trying to avoid was another lengthy discussion on the
+topic of dma-ranges. Oh well... =3D)
 
-> +			google,remote-bus = <0>;
+> A lot of IOMMUs have only 32-bit bus addresses when targetted
+> by a bus master, it would also be normal for some to be smaller and
+> some might even support 64-bit.
+>=20
+> For the upstream side, I'd hope we always have access to the full
+> physical memory, but since this is a brand-new binding, it should
+> be straightforward to just ask for upstream dma-ranges properties
+> to be set all the way up to the root to confirm that.
+>=20
+> For downstream, we don't actually have a good place to put the
+> dma-ranges property.
 
-I am still not too happy about this one, but it is good enough for now,
-I suppose.
+I'm not sure I understand what you mean by upstream and downstream in
+this context.
 
-Code looks good, so
+> We can't put it into the iommu node, because  that would imply translating
+> to the iommu's parent bus, not the iommu's own bus space.
 
-Reviewed-by: Wolfram Sang <wsa@the-dreams.de>
+My understanding was that the purpose of dma-ranges was to define a
+mapping from one bus to another. So the general form of
 
-I don't mind how it gets upstream. I can take it, but you can also keep
-it in this series.
+	child-address  parent-address  child-size
 
+Would be used to translate a region of size <child-size> from the
+<child-address> (the I/O address space created by the IOMMU) to the
+<parent-address> (physical address space).
 
---pf9I7BMVVzbSWLtt
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+> We also can't put it into the master, because dma-ranges is supposed to be
+> in the parent bus.
+
+I don't understand. From the above I would think that the master's node
+is precisely where it belongs.
+
+> Finally, it makes no sense to use the dma-ranges property of the master's
+> parent bus, because that bus isn't actually involved in the translation.
+
+My understanding here is mostly based on the OpenFirmware working group
+proposal for the dma-ranges property[0]. I'll give another example to
+try and clarify how I had imagined this to work:
+
+	/ {
+		#address-cells =3D <2>;
+		#size-cells =3D <2>;
+
+		iommu {
+			/*
+			 * This is somewhat unusual (or maybe not) in that we
+			 * need 2 cells to represent the size of an address
+			 * space that is 32 bits long.
+			 */
+			#address-cells =3D <1>;
+			#size-cells =3D <2>;
+
+			#iommu-cells =3D <1>;
+		};
+
+		master {
+			iommus =3D <&/iommu 42>;
+			/*
+			 * Map I/O addresses 0 - 4 GiB to physical addresses
+			 * 2 GiB - 6 GiB.
+			 */
+			dma-ranges =3D <0x00000000 0 0x80000000 1 0>;
+		};
+	};
+
+This is somewhat incompatible with [0] in that #address-cells used to
+parse the child address must be taken from the iommu node rather than
+the child node. But that seems to me to be the only reasonable thing
+to do, because after all the IOMMU creates a completely new address
+space for the master.
+
+[0]: http://www.openfirmware.org/ofwg/proposals/Closed/Accepted/410-it.txt
+
+> My preferred option would be to always put the address range into
+> the iommu descriptor, using the iommu's #address-cells.
+
+That could become impossible to parse. I'm not sure if such hardware
+actually exists, but if for some reason we have to split the address
+range into two, then there's no longer any way to determine the size
+needed for the specifier.
+
+On the other hand what you propose makes it easy to represent multiple
+master interfaces on a device. With a separate dma-ranges property how
+can you define which ranges apply to which of the master interfaces?
+
+Then again if address ranges can't be broken up in the first place, then
+dma-ranges could be considered to be one entry per IOMMU in the iommus
+property.
+
+Thierry
+
+--XsQoSWH+UP9D9v3l
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.15 (GNU/Linux)
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTeeIPAAoJEBQN5MwUoCm2oW0P/j8JB1WuVh1unAN3oJOQVJlN
-1gd6qurO+IlAf77yBAVfJa1cMZGxo5+KGmHo6TQmqv1BgNygntU+TlUeO8acwFdj
-RDQ2j7qGx/ZwcN8GELw4fVpFNcNAJ/nQmOi4nPHYC8sUNjrHYVG4ybjC9ogJbM+Z
-Y+gyc1b/t7crdLhg92c63nZxy7n6R2Kez1ZPhXj1djeu30klh8LLqshZA04muL+t
-n7Kac/sISeKv0pkv70V0qX06WPCwwbgbticIkMf1Z3kOmfFUeCi83QQOjYJXDltB
-ohnebK/6rfF+vG6Lsrsorl5pKc/fQlv6dIKO2seRFUbmpQXJ4d2roFhozd1eh1Qw
-R0bc02a1aLjExluyjLX1/bYfgu+NsFk0Cx/O+EoTF/kocpDaznBR/DmJ6IeQBCDP
-MjsH3ppXSnJYx+iqvTtiIbL1g4BTriBtgDC/bKVecdi9WypbEqFYWIRvIGmHt7x5
-W4i1Dr2fv08EOO7BWeN9580+fFIi+Y8Z8+17fuEeSelkZvCVDsyXemCEoiea7nQl
-RKqsKYGTXJqhc/hgJ4rjqRknSc14Byta64uYFCRnbw9tDe+EppiNwzGP4eIz2jE0
-r8W4+1IQU1TSsW8lPTBSDghuzi3SZrfibw2wFpZSoieRW7x8jg1ByuDU2DLFegbr
-NYJrAKmVyWcucMSBGWhn
-=W4a9
+iQIcBAEBAgAGBQJTef7QAAoJEN0jrNd/PrOhEhcP/RnunYI1MsoTF5WgGp40ph4R
+LRO8Izry3NaFy/0XHjDeeZw/nuQ8KOQMRX3E8QartFceZokiYXEJuJ/k3xhgA+jI
+tpPWunoUkcOKkWJwLFDIh6zuF5T4V+2TxaK4xOv8sxDbnhO984+OcZWpYgrNn4Ho
+E8xB0TBVfBomWb5VOvWliPV1s6/KYFKMEGbfRm8HiCg2myAAwgGZcKZ3uE7VgjDY
+w3ZMJ7c+XtqyljWAWSFJh6BpH9Xelt6GwP/Qpdw6du/lvn+qfS08WydhbJvWzYpF
+gv/RKBzWBPbSrdDOAakX/1xYAtuuM7sxobWvCFUhWBmbRyCLeQLPzb8PEGRyB3x/
+1uS0d3ol64yXao94gQycRy3dx1YDQFF6wIrFMnZT9MT0iop8HHrc6f49VCpvEJsz
+rwlf4nZAc+C+Duyj1n8Niqbcj122Pa0698aHqJTJK62UNQW5iCFBpluzp9/MerNQ
+7QaU7G6nGo8mJIlVDPVrQ16XtA4OiJTtvtpqVDwz/7DIb5sewXwbXXq+GGWzD/Mh
+5lTq3bfIeMpvEKnKXp+WJvagAXjvtBix+PuBHivP9hFD0F4cxYooViZk9DksoMPy
+Nlrh+Ob0dc8Ya57WVMIhlWHVakB/1fVKRXzoEfZ4nHY62pTAEdFeDfGcQ1jypsMB
++clp4pRKrtHCLLamnU1v
+=Aulo
 -----END PGP SIGNATURE-----
 
---pf9I7BMVVzbSWLtt--
+--XsQoSWH+UP9D9v3l--
