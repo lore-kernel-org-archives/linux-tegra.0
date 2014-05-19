@@ -1,105 +1,44 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 2/4] drm/ttm: introduce dma cache sync helpers
-Date: Mon, 19 May 2014 10:33:56 +0200
-Message-ID: <20140519083355.GA7138@ulmo>
-References: <1400483458-9648-1-git-send-email-acourbot@nvidia.com>
- <1400483458-9648-3-git-send-email-acourbot@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] clk: tegra: Fix wrong value written to PLLE_AUX
+Date: Mon, 19 May 2014 11:45:18 +0300
+Message-ID: <20140519084518.GP15168@tbergstrom-lnx.Nvidia.com>
+References: <1400248220-16025-1-git-send-email-ttynkkynen@nvidia.com>
+ <20140516143110.GA28338@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1404529621=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1400483458-9648-3-git-send-email-acourbot@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: gnurou@gmail.com, nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20140516143110.GA28338@ulmo>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Fri, May 16, 2014 at 04:31:11PM +0200, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Fri, May 16, 2014 at 04:50:20PM +0300, Tuomas Tynkkynen wrote:
+> > The value written to PLLE_AUX was incorrect due to a wrong variable
+> > being used.
+> > 
+> > Signed-off-by: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > Tested-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> >   This fix is required for the (upcoming) SATA support.
+> >  drivers/clk/tegra/clk-pll.c |    2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Tested-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Mike, Peter, it might be good to have this go into 3.16 as a
+> prerequisite for the upcoming SATA driver (which presumably won't be
+> ready until 3.17, but in that case it would be good to have this
+> prerequisite merged already).
 
---===============1404529621==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Q68bSM7Ycu6FN28Q"
-Content-Disposition: inline
+Yes... We should also take Andrew's fixes. I will prepare a pull request for 3.16.
 
+Cheers,
 
---Q68bSM7Ycu6FN28Q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, May 19, 2014 at 04:10:56PM +0900, Alexandre Courbot wrote:
-> From: Lucas Stach <dev@lynxeye.de>
->=20
-> On arches with non-coherent PCI,
-
-I guess since this applies to gk20a
-
-> we need to flush caches ourselfes at
-
-"ourselves". Or perhaps even reword to something like: "..., caches need
-to be flushed and invalidated explicitly", since dma_sync_for_cpu() does
-invalidate rather than flush.
-
-> the appropriate places. Introduce two small helpers to make things easy
-> for TTM based drivers.
->=20
-> Signed-off-by: Lucas Stach <dev@lynxeye.de>
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> ---
->  drivers/gpu/drm/ttm/ttm_tt.c    | 25 +++++++++++++++++++++++++
->  include/drm/ttm/ttm_bo_driver.h | 28 ++++++++++++++++++++++++++++
->  2 files changed, 53 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/ttm/ttm_tt.c b/drivers/gpu/drm/ttm/ttm_tt.c
-[...]
-> +void ttm_dma_tt_cache_sync_for_device(struct ttm_dma_tt *ttm_dma,
-> +				      struct device *dev)
-> +{
-> +	int i;
-
-This should probably be unsigned long to match the type of
-ttm_dma->ttm.num_pages.
-
-Thierry
-
---Q68bSM7Ycu6FN28Q
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTecHzAAoJEN0jrNd/PrOhs64QAJmQ2CT6oDeq4Ig7cALmuUxj
-75XqOdye052fXH1fNIZlxGVugxW5bRoroIw+yn22YfTADHQU4OxBPt2MTd7nmpYx
-mGFdVs6Agg7WtrHHHNboHah/7fd0yacz/fcEtLVWbFqkWXKjY2f0FtUbpuTeLUrm
-axaLgPIQlb4Kp38Pf69Uu+brklnQfkFZxoe03Tcc4PnsHfuwWTaI7fEWc80Bmu+p
-900DkmisIXUmzpgF3rJKt3NgYaeJTr/jCdH587vDkGlT2z95dwGsVP06BUnPpLK/
-Gg6x92ihh3CI0A+lBD7YtmL5JzhwlUKIhSCZRw21dvNSj8dOuJxRmPa5oCFMMYeU
-9PD/0LpKw+QEN1IOpYNT0GPuKM4DspGkcfQoTFBL3j+U1OVMFk71WZRmj8caVd4Z
-oDgQAt7/xTbIr7IPOSuVOUM+Ol1FltA5c5xlYAoLqeaQK17/UQCzis6t1XEVYv2R
-GUwCT6WPygoeUIhX8/K4iIrYQWXCynoRw+9Q4H8AziTvlPzU/DUBddcQab5a2/Lt
-VUfKjRKZzzllDLuy66MvnIFxk7eNRZvJB9L9R3R/OTXUH582Y4c64TOYIcA30ayn
-u4P+CWvrA4wL/WphfS3dfKlVLofqbXTNo0WaRW7+qnOxs9iil4YMnKoD+Btg/zix
-Zr1zwluXSNdWioEaJTas
-=l6bB
------END PGP SIGNATURE-----
-
---Q68bSM7Ycu6FN28Q--
-
---===============1404529621==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============1404529621==--
+Peter.
