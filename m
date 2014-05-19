@@ -1,46 +1,127 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH 1/4] drm/ttm: recognize ARM arch in ioprot handler
-Date: Mon, 19 May 2014 16:10:55 +0900
-Message-ID: <1400483458-9648-2-git-send-email-acourbot@nvidia.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 2/4] drm/ttm: introduce dma cache sync helpers
+Date: Mon, 19 May 2014 16:10:56 +0900
+Message-ID: <1400483458-9648-3-git-send-email-acourbot@nvidia.com>
 References: <1400483458-9648-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1400483458-9648-1-git-send-email-acourbot@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: David Airlie <airlied@linux.ie>, Ben Skeggs <bskeggs@redhat.com>, Lucas Stach <dev@lynxeye.de>, Thierry Reding <thierry.reding@gmail.com>
-Cc: gnurou@gmail.com, nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <1400483458-9648-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Lucas Stach <dev@lynxeye.de>
+From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
 
-Signed-off-by: Lucas Stach <dev@lynxeye.de>
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+On arches with non-coherent PCI, we need to flush caches ourselfes at
+the appropriate places. Introduce two small helpers to make things easy
+for TTM based drivers.
+
+Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/ttm/ttm_bo_util.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/ttm/ttm_tt.c    | 25 +++++++++++++++++++++++++
+ include/drm/ttm/ttm_bo_driver.h | 28 ++++++++++++++++++++++++++++
+ 2 files changed, 53 insertions(+)
 
-diff --git a/drivers/gpu/drm/ttm/ttm_bo_util.c b/drivers/gpu/drm/ttm/ttm_bo_util.c
-index 1df856f78568..30e5d90cb7bc 100644
---- a/drivers/gpu/drm/ttm/ttm_bo_util.c
-+++ b/drivers/gpu/drm/ttm/ttm_bo_util.c
-@@ -500,7 +500,7 @@ pgprot_t ttm_io_prot(uint32_t caching_flags, pgprot_t tmp)
- 			pgprot_val(tmp) |= _PAGE_GUARDED;
- 	}
- #endif
--#if defined(__ia64__)
-+#if defined(__ia64__) || defined(__arm__)
- 	if (caching_flags & TTM_PL_FLAG_WC)
- 		tmp = pgprot_writecombine(tmp);
- 	else
+diff --git a/drivers/gpu/drm/ttm/ttm_tt.c b/drivers/gpu/drm/ttm/ttm_tt.c
+index 75f319090043..05a316b71ad1 100644
+--- a/drivers/gpu/drm/ttm/ttm_tt.c
++++ b/drivers/gpu/drm/ttm/ttm_tt.c
+@@ -38,6 +38,7 @@
+ #include <linux/swap.h>
+ #include <linux/slab.h>
+ #include <linux/export.h>
++#include <linux/dma-mapping.h>
+ #include <drm/drm_cache.h>
+ #include <drm/drm_mem_util.h>
+ #include <drm/ttm/ttm_module.h>
+@@ -248,6 +249,30 @@ void ttm_dma_tt_fini(struct ttm_dma_tt *ttm_dma)
+ }
+ EXPORT_SYMBOL(ttm_dma_tt_fini);
+ 
++void ttm_dma_tt_cache_sync_for_device(struct ttm_dma_tt *ttm_dma,
++				      struct device *dev)
++{
++	int i;
++
++	for (i = 0; i < ttm_dma->ttm.num_pages; i++) {
++		dma_sync_single_for_device(dev, ttm_dma->dma_address[i],
++					   PAGE_SIZE, DMA_TO_DEVICE);
++	}
++}
++EXPORT_SYMBOL(ttm_dma_tt_cache_sync_for_device);
++
++void ttm_dma_tt_cache_sync_for_cpu(struct ttm_dma_tt *ttm_dma,
++				   struct device *dev)
++{
++	int i;
++
++	for (i = 0; i < ttm_dma->ttm.num_pages; i++) {
++		dma_sync_single_for_cpu(dev, ttm_dma->dma_address[i],
++					PAGE_SIZE, DMA_FROM_DEVICE);
++	}
++}
++EXPORT_SYMBOL(ttm_dma_tt_cache_sync_for_cpu);
++
+ void ttm_tt_unbind(struct ttm_tt *ttm)
+ {
+ 	int ret;
+diff --git a/include/drm/ttm/ttm_bo_driver.h b/include/drm/ttm/ttm_bo_driver.h
+index a5183da3ef92..52fb709568fc 100644
+--- a/include/drm/ttm/ttm_bo_driver.h
++++ b/include/drm/ttm/ttm_bo_driver.h
+@@ -41,6 +41,7 @@
+ #include <linux/fs.h>
+ #include <linux/spinlock.h>
+ #include <linux/reservation.h>
++#include <linux/device.h>
+ 
+ struct ttm_backend_func {
+ 	/**
+@@ -690,6 +691,33 @@ extern int ttm_tt_swapout(struct ttm_tt *ttm,
+  */
+ extern void ttm_tt_unpopulate(struct ttm_tt *ttm);
+ 
++/**
++ * ttm_dma_tt_cache_sync_for_device:
++ *
++ * @ttm A struct ttm_tt of the type returned by ttm_dma_tt_init.
++ * @dev A struct device representing the device to which to sync.
++ *
++ * This function will flush the CPU caches on arches where snooping in the
++ * TT is not available. On fully coherent arches this will turn into an (almost)
++ * noop. This makes sure that data written by the CPU is visible to the device.
++ */
++extern void ttm_dma_tt_cache_sync_for_device(struct ttm_dma_tt *ttm_dma,
++					     struct device *dev);
++
++/**
++ * ttm_dma_tt_cache_sync_for_cpu:
++ *
++ * @ttm A struct ttm_tt of the type returned by ttm_dma_tt_init.
++ * @dev A struct device representing the device from which to sync.
++ *
++ * This function will invalidate the CPU caches on arches where snooping in the
++ * TT is not available. On fully coherent arches this will turn into an (almost)
++ * noop. This makes sure that the CPU does not read any stale cached or
++ * prefetched data.
++ */
++extern void ttm_dma_tt_cache_sync_for_cpu(struct ttm_dma_tt *ttm_dma,
++					  struct device *dev);
++
+ /*
+  * ttm_bo.c
+  */
 -- 
 1.9.2
