@@ -1,377 +1,85 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/5] drm/nouveau: support for probing platform
-	devices
-Date: Mon, 19 May 2014 18:24:06 +0900
-Message-ID: <1400491450-19223-2-git-send-email-acourbot@nvidia.com>
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH 2/5] ARM: tegra: of: add GK20A device tree binding
+Date: Mon, 19 May 2014 18:24:07 +0900
+Message-ID: <1400491450-19223-3-git-send-email-acourbot@nvidia.com>
 References: <1400491450-19223-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <1400491450-19223-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1400491450-19223-1-git-send-email-acourbot@nvidia.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Ben Skeggs <bskeggs@redhat.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: gnurou@gmail.com, nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add a platform driver for Nouveau devices declared using the device tree
-or platform data. This driver currently supports GK20A on Tegra
-platforms and is only compiled for these platforms if Nouveau is
-enabled.
+Add the device tree binding documentation for the GK20A GPU used in
+Tegra K1 SoCs.
 
-Nouveau will probe the chip type itself using the BOOT0 register, so all
-this driver really needs to do is to make sure the module is powered and
-its clocks active before calling nouveau_drm_platform_probe().
-
-Heavily based on work done by Thierry Reding.
-
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
- drivers/gpu/drm/nouveau/Kconfig            |   8 ++
- drivers/gpu/drm/nouveau/Makefile           |   3 +
- drivers/gpu/drm/nouveau/nouveau_drm.c      |  33 ++---
- drivers/gpu/drm/nouveau/nouveau_drm.h      |  21 ++++
- drivers/gpu/drm/nouveau/nouveau_platform.c | 191 +++++++++++++++++++++++++++++
- 5 files changed, 241 insertions(+), 15 deletions(-)
- create mode 100644 drivers/gpu/drm/nouveau/nouveau_platform.c
+ .../devicetree/bindings/gpu/nvidia,gk20a.txt       | 45 ++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt
 
-diff --git a/drivers/gpu/drm/nouveau/Kconfig b/drivers/gpu/drm/nouveau/Kconfig
-index 637c29a33127..b8834ad55eb8 100644
---- a/drivers/gpu/drm/nouveau/Kconfig
-+++ b/drivers/gpu/drm/nouveau/Kconfig
-@@ -25,6 +25,14 @@ config DRM_NOUVEAU
- 	help
- 	  Choose this option for open-source nVidia support.
- 
-+config NOUVEAU_PLATFORM_DRIVER
-+	bool
-+	depends on DRM_NOUVEAU
-+	default y if ARCH_TEGRA
-+	help
-+	 Support for Nouveau platform driver, used for integrated GPUs as found
-+	 on NVIDIA Tegra K1.
-+
- config NOUVEAU_DEBUG
- 	int "Maximum debug level"
- 	depends on DRM_NOUVEAU
-diff --git a/drivers/gpu/drm/nouveau/Makefile b/drivers/gpu/drm/nouveau/Makefile
-index 1aaa2ef577d9..45b17b6b1b59 100644
---- a/drivers/gpu/drm/nouveau/Makefile
-+++ b/drivers/gpu/drm/nouveau/Makefile
-@@ -331,6 +331,9 @@ nouveau-y += nv50_display.o
- # drm/pm
- nouveau-y += nouveau_hwmon.o nouveau_sysfs.o
- 
-+# platform driver
-+nouveau-$(CONFIG_NOUVEAU_PLATFORM_DRIVER) += nouveau_platform.o
-+
- # other random bits
- nouveau-$(CONFIG_COMPAT) += nouveau_ioc32.o
- ifdef CONFIG_X86
-diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
-index ddd83756b9a2..1538d0004e6e 100644
---- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-@@ -359,6 +359,9 @@ nouveau_drm_load(struct drm_device *dev, unsigned long flags)
- 
- 	dev->dev_private = drm;
- 	drm->dev = dev;
-+	if (dev->platformdev)
-+		platform_set_drvdata(dev->platformdev, dev);
-+
- 	nouveau_client(drm)->debug = nouveau_dbgopt(nouveau_debug, "DRM");
- 
- 	INIT_LIST_HEAD(&drm->clients);
-@@ -1003,23 +1006,19 @@ nouveau_drm_pci_driver = {
- 	.driver.pm = &nouveau_pm_ops,
- };
- 
--int nouveau_drm_platform_probe(struct platform_device *pdev)
-+int nouveau_drm_platform_device_create(struct platform_device *pdev, int length,
-+				       void **pobject)
- {
--	struct nouveau_device *device;
--	int ret;
--
--	ret = nouveau_device_create(pdev, NOUVEAU_BUS_PLATFORM,
--				    nouveau_platform_name(pdev),
--				    dev_name(&pdev->dev), nouveau_config,
--				    nouveau_debug, &device);
--
--	ret = drm_platform_init(&driver, pdev);
--	if (ret) {
--		nouveau_object_ref(NULL, (struct nouveau_object **)&device);
--		return ret;
--	}
-+	return nouveau_device_create_(pdev, NOUVEAU_BUS_PLATFORM,
-+				      nouveau_platform_name(pdev),
-+				      dev_name(&pdev->dev),
-+				      nouveau_config, nouveau_debug, length,
-+				      pobject);
-+}
- 
--	return ret;
-+int nouveau_drm_platform_device_init(struct platform_device *pdev)
-+{
-+	return drm_platform_init(&driver, pdev);
- }
- 
- static int __init
-@@ -1035,6 +1034,8 @@ nouveau_drm_init(void)
- 	if (!nouveau_modeset)
- 		return 0;
- 
-+	nouveau_platform_driver_init();
-+
- 	nouveau_register_dsm_handler();
- 	return drm_pci_init(&driver, &nouveau_drm_pci_driver);
- }
-@@ -1047,6 +1048,8 @@ nouveau_drm_exit(void)
- 
- 	drm_pci_exit(&driver, &nouveau_drm_pci_driver);
- 	nouveau_unregister_dsm_handler();
-+
-+	nouveau_platform_driver_exit();
- }
- 
- module_init(nouveau_drm_init);
-diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.h b/drivers/gpu/drm/nouveau/nouveau_drm.h
-index 7efbafaf7c1d..178f8cfb148c 100644
---- a/drivers/gpu/drm/nouveau/nouveau_drm.h
-+++ b/drivers/gpu/drm/nouveau/nouveau_drm.h
-@@ -157,6 +157,27 @@ nouveau_dev(struct drm_device *dev)
- int nouveau_pmops_suspend(struct device *);
- int nouveau_pmops_resume(struct device *);
- 
-+int nouveau_drm_platform_device_create(struct platform_device *, int, void **);
-+int nouveau_drm_platform_device_init(struct platform_device *);
-+
-+#if IS_ENABLED(CONFIG_NOUVEAU_PLATFORM_DRIVER)
-+
-+int nouveau_platform_driver_init(void);
-+void nouveau_platform_driver_exit(void);
-+
-+#else
-+
-+static inline int nouveau_platform_driver_init(void)
-+{
-+	return 0;
-+}
-+
-+static inline void nouveau_platform_driver_exit(void)
-+{
-+}
-+
-+#endif
-+
- #define NV_FATAL(cli, fmt, args...) nv_fatal((cli), fmt, ##args)
- #define NV_ERROR(cli, fmt, args...) nv_error((cli), fmt, ##args)
- #define NV_WARN(cli, fmt, args...) nv_warn((cli), fmt, ##args)
-diff --git a/drivers/gpu/drm/nouveau/nouveau_platform.c b/drivers/gpu/drm/nouveau/nouveau_platform.c
+diff --git a/Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt b/Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt
 new file mode 100644
-index 000000000000..0d55e04c816a
+index 000000000000..eda04c963af0
 --- /dev/null
-+++ b/drivers/gpu/drm/nouveau/nouveau_platform.c
-@@ -0,0 +1,191 @@
-+/*
-+ * Copyright (c) 2014, NVIDIA CORPORATION. All rights reserved.
-+ *
-+ * Permission is hereby granted, free of charge, to any person obtaining a
-+ * copy of this software and associated documentation files (the "Software"),
-+ * to deal in the Software without restriction, including without limitation
-+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
-+ * and/or sell copies of the Software, and to permit persons to whom the
-+ * Software is furnished to do so, subject to the following conditions:
-+ *
-+ * The above copyright notice and this permission notice shall be included in
-+ * all copies or substantial portions of the Software.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-+ * DEALINGS IN THE SOFTWARE.
-+ */
++++ b/Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt
+@@ -0,0 +1,45 @@
++NVIDIA GK20A Graphics Processing Unit
 +
-+#include <linux/clk.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/of.h>
-+#include <linux/reset.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/tegra-powergate.h>
++Required properties:
++- compatible: "nvidia,<chip>-<gpu>"
++  Currently recognized values:
++  - nvidia,tegra124-gk20a
++- reg: Physical base address and length of the controller's registers.
++  Must contain two entries:
++  - first entry for bar0
++  - second entry for bar1
++- interrupts: The interrupt outputs from the controller.
++- interrupt-names: Must include the following entries:
++  - stall
++  - nonstall
++- vdd-supply: regulator for supply voltage.
++- clocks: Must contain an entry for each entry in clock-names.
++  See ../clocks/clock-bindings.txt for details.
++- clock-names: Must include the following entries:
++  - gpu
++  - pll
++- resets: Must contain an entry for each entry in reset-names.
++  See ../reset/reset.txt for details.
++- reset-names: Must include the following entries:
++  - gpu
 +
-+#include "engine/device.h"
-+#include "nouveau_drm.h"
++Example:
 +
-+struct nouveau_platform_gpu {
-+	struct nouveau_device device;
++/ {
++	gpu@0,57000000 {
++		compatible = "nvidia,gk20a";
++		reg = <0x0 0x57000000 0x0 0x01000000>,
++		      <0x0 0x58000000 0x0 0x01000000>;
++		interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-names = "stall", "nonstall";
++		vdd-supply = <&vdd_gpu>;
++		clocks = <&tegra_car TEGRA124_CLK_GPU>,
++			 <&tegra_car TEGRA124_CLK_PLL_P_OUT5>;
++		clock-names = "gpu", "pll";
++		resets = <&tegra_car 184>;
++		reset-names = "gpu";
++		status = "disabled";
++	};
 +
-+	struct reset_control *rst;
-+	struct clk *clk;
-+	struct clk *clk_pll;
-+
-+	struct regulator *vdd;
 +};
-+
-+#define nv_device_to_gpu(d) container_of(d, struct nouveau_platform_gpu, device)
-+
-+static int nouveau_platform_power_up(struct nouveau_platform_gpu *gpu)
-+{
-+	int err;
-+
-+	reset_control_assert(gpu->rst);
-+
-+	err = regulator_enable(gpu->vdd);
-+	if (err)
-+		goto err_power;
-+
-+	err = clk_prepare_enable(gpu->clk);
-+	if (err)
-+		goto err_clk;
-+
-+	udelay(10);
-+	err = tegra_powergate_remove_clamping(TEGRA_POWERGATE_3D);
-+	if (err)
-+		goto err_clamp;
-+
-+	udelay(10);
-+	reset_control_deassert(gpu->rst);
-+
-+	return 0;
-+
-+err_clamp:
-+	clk_disable_unprepare(gpu->clk);
-+err_clk:
-+	regulator_disable(gpu->vdd);
-+err_power:
-+	return err;
-+}
-+
-+static int nouveau_platform_power_down(struct nouveau_platform_gpu *gpu)
-+{
-+	int err;
-+
-+	clk_disable_unprepare(gpu->clk);
-+
-+	err = regulator_disable(gpu->vdd);
-+	if (err)
-+		return err;
-+
-+	return 0;
-+}
-+
-+static int nouveau_platform_probe(struct platform_device *pdev)
-+{
-+	struct nouveau_platform_gpu *gpu;
-+	struct regulator *vdd;
-+	struct reset_control *rst;
-+	struct clk *clk, *pll;
-+	int err;
-+
-+	/*
-+	 * get the resources we need before we allocate the device' memory
-+	 * in case we need to return -EPROBE_DEFER
-+	 */
-+	vdd = devm_regulator_get(&pdev->dev, "vdd");
-+	if (IS_ERR(vdd))
-+		return PTR_ERR(vdd);
-+
-+	rst = devm_reset_control_get(&pdev->dev, "gpu");
-+	if (IS_ERR(rst))
-+		return PTR_ERR(rst);
-+
-+	clk = devm_clk_get(&pdev->dev, "gpu");
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	pll = devm_clk_get(&pdev->dev, "pll");
-+	if (IS_ERR(pll))
-+		return PTR_ERR(pll);
-+
-+	err = nouveau_drm_platform_device_create(pdev, sizeof(*gpu),
-+						 (void **)&gpu);
-+	if (err)
-+		return err;
-+
-+	gpu->vdd = vdd;
-+	gpu->rst = rst;
-+	gpu->clk = clk;
-+	gpu->clk_pll = pll;
-+
-+	err = nouveau_platform_power_up(gpu);
-+	if (err)
-+		goto err_probe;
-+
-+	err = nouveau_drm_platform_device_init(pdev);
-+	if (err)
-+		goto err_probe;
-+
-+	return 0;
-+
-+err_probe:
-+	nouveau_object_ref(NULL, (struct nouveau_object **)&gpu->device);
-+	return err;
-+}
-+
-+static int nouveau_platform_remove(struct platform_device *pdev)
-+{
-+	struct drm_device *drm_dev = platform_get_drvdata(pdev);
-+	struct nouveau_device *device = nouveau_dev(drm_dev);
-+	struct nouveau_platform_gpu *gpu = nv_device_to_gpu(device);
-+	int err;
-+
-+	drm_dev->irq_enabled = false;
-+	drm_put_dev(drm_dev);
-+
-+	err = nouveau_platform_power_down(gpu);
-+	if (err)
-+		return err;
-+
-+	nouveau_object_ref(NULL, (struct nouveau_object **)&device);
-+	nouveau_object_debug();
-+
-+	return 0;
-+}
-+
-+#if IS_ENABLED(CONFIG_OF)
-+static const struct of_device_id nouveau_platform_match[] = {
-+	{ .compatible = "nvidia,gk20a" },
-+	{ }
-+};
-+
-+MODULE_DEVICE_TABLE(of, nouveau_platform_match);
-+#endif
-+
-+struct platform_driver nouveau_platform_driver = {
-+	.driver = {
-+		.name = "nouveau",
-+		.of_match_table = of_match_ptr(nouveau_platform_match),
-+	},
-+	.probe = nouveau_platform_probe,
-+	.remove = nouveau_platform_remove,
-+};
-+
-+int __init nouveau_platform_driver_init(void)
-+{
-+	return platform_driver_register(&nouveau_platform_driver);
-+}
-+
-+void __exit nouveau_platform_driver_exit(void)
-+{
-+	platform_driver_unregister(&nouveau_platform_driver);
-+}
 -- 
 1.9.2
