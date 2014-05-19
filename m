@@ -1,51 +1,46 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 0/4] drm/ttm: nouveau: memory coherency fixes for
-	ARM
-Date: Mon, 19 May 2014 16:10:54 +0900
-Message-ID: <1400483458-9648-1-git-send-email-acourbot@nvidia.com>
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH 1/4] drm/ttm: recognize ARM arch in ioprot handler
+Date: Mon, 19 May 2014 16:10:55 +0900
+Message-ID: <1400483458-9648-2-git-send-email-acourbot@nvidia.com>
+References: <1400483458-9648-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1400483458-9648-1-git-send-email-acourbot@nvidia.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: David Airlie <airlied@linux.ie>, Ben Skeggs <bskeggs@redhat.com>, Lucas Stach <dev@lynxeye.de>, Thierry Reding <thierry.reding@gmail.com>
+Cc: gnurou@gmail.com, nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This small series introduces TTM helper functions as well as Nouveau hooks that
-are needed to ensure buffer coherency on ARM. Most of this series is a
-forward-port of some patches Lucas Stach sent last year and that are also
-needed for Nouveau GK20A support:
+From: Lucas Stach <dev@lynxeye.de>
 
-http://lists.freedesktop.org/archives/nouveau/2013-August/014026.html
+Signed-off-by: Lucas Stach <dev@lynxeye.de>
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+---
+ drivers/gpu/drm/ttm/ttm_bo_util.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Another patch takes care of flushing the CPU write-buffer when writing BOs
-through a non-BAR path.
-
-Alexandre Courbot (1):
-  drm/nouveau: introduce CPU cache flushing macro
-
-Lucas Stach (3):
-  drm/ttm: recognize ARM arch in ioprot handler
-  drm/ttm: introduce dma cache sync helpers
-  drm/nouveau: hook up cache sync functions
-
- drivers/gpu/drm/nouveau/core/os.h     | 17 +++++++++++++++
- drivers/gpu/drm/nouveau/nouveau_bo.c  | 40 +++++++++++++++++++++++++++++++++--
- drivers/gpu/drm/nouveau/nouveau_bo.h  | 20 ++++++++++++++++++
- drivers/gpu/drm/nouveau/nouveau_gem.c |  8 ++++++-
- drivers/gpu/drm/ttm/ttm_bo_util.c     |  2 +-
- drivers/gpu/drm/ttm/ttm_tt.c          | 25 ++++++++++++++++++++++
- include/drm/ttm/ttm_bo_driver.h       | 28 ++++++++++++++++++++++++
- 7 files changed, 136 insertions(+), 4 deletions(-)
-
+diff --git a/drivers/gpu/drm/ttm/ttm_bo_util.c b/drivers/gpu/drm/ttm/ttm_bo_util.c
+index 1df856f78568..30e5d90cb7bc 100644
+--- a/drivers/gpu/drm/ttm/ttm_bo_util.c
++++ b/drivers/gpu/drm/ttm/ttm_bo_util.c
+@@ -500,7 +500,7 @@ pgprot_t ttm_io_prot(uint32_t caching_flags, pgprot_t tmp)
+ 			pgprot_val(tmp) |= _PAGE_GUARDED;
+ 	}
+ #endif
+-#if defined(__ia64__)
++#if defined(__ia64__) || defined(__arm__)
+ 	if (caching_flags & TTM_PL_FLAG_WC)
+ 		tmp = pgprot_writecombine(tmp);
+ 	else
 -- 
 1.9.2
