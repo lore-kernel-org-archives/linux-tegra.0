@@ -1,44 +1,101 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: pull request for Tegra clock fixes for 3.16
-Date: Mon, 19 May 2014 16:40:49 +0300
-Message-ID: <20140519134049.GA20109@tbergstrom-lnx.Nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v2 5/7] drm/tegra: Convert to master/component framework
+Date: Mon, 19 May 2014 17:25:40 +0200
+Message-ID: <20140519152539.GA30978@ulmo>
+References: <1399995050-28435-1-git-send-email-thierry.reding@gmail.com>
+ <1399995050-28435-6-git-send-email-thierry.reding@gmail.com>
+ <CAH9NwWfF_rMWqPRzr7sPFkwwME1ZXG8=Np3NHDEib1MDm1tgWA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "pawel.moll-5wv7dgnIgG8@public.gmane.org" <pawel.moll-5wv7dgnIgG8@public.gmane.org>, "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============0039351027=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAH9NwWfF_rMWqPRzr7sPFkwwME1ZXG8=Np3NHDEib1MDm1tgWA@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Christian Gmeiner <christian.gmeiner@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, Russell King <rmk+kernel@arm.linux.org.uk>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Mike,
 
-A number of fixes which are needed by the upcoming XHCI and SATA drivers.
+--===============0039351027==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="mP3DRpeJDSE+ciuQ"
+Content-Disposition: inline
 
-Thanks,
 
-Peter.
+--mP3DRpeJDSE+ciuQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The following changes since commit d6d211db37e75de2ddc3a4f979038c40df7cc79c:
+On Mon, May 19, 2014 at 10:56:08AM +0200, Christian Gmeiner wrote:
+> 2014-05-13 17:30 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
+> > From: Thierry Reding <treding@nvidia.com>
+> >
+> > Instead of the current implementation, reuse the recently introduced
+> > master/component framework, which is equivalent in most regards. One
+> > issue is that there is no device to bind the DRM driver to. In order
+> > to still allow the driver to be probed, expose an interface from the
+> > host1x device and provide an interface driver to bind to that.
+> >
+> > The interface driver then registers (or removes) the master that will be
+> > used to instantiate and bind the DRM driver. Since the drm_host1x bus
+> > implementation is now gone the dummy device instantiated by it can no
+> > longer be used as the parent for the DRM device. However since the
+> > parent device doesn't need to be modified, the host1x parent device that
+> > exposes the interface can be used instead.
+> >
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+>=20
+> Is there a git tree somewhere to have a look at? I am interested in the u=
+sage
+> of the master/component framework.
 
-  Linux 3.15-rc5 (2014-05-09 13:10:52 -0700)
+I've pushed my latest working branches to gitorious[0]. staging/work is
+the branch that has everything.
 
-are available in the git repository at:
-  git://nv-tegra.nvidia.com/user/pdeschrijver/linux.git tegra-clk-v3.16
+Thierry
 
-Andrew Bresticker (2):
-      clk: tegra: Fix xusb_hs_src clock hierarchy
-      clk: tegra: Initialize xusb clocks
+[0]: https://gitorious.org/thierryreding/linux
 
-Jim Lin (2):
-      clk: tegra: Enable hardware control of PLLE
-      clk: tegra: Fix xusb_fs_src mux
+--mP3DRpeJDSE+ciuQ
+Content-Type: application/pgp-signature
 
- drivers/clk/tegra/clk-id.h               |    1 +
- drivers/clk/tegra/clk-pll.c              |   33 +++++++++++++++++++++++++++++-
- drivers/clk/tegra/clk-tegra-periph.c     |   10 ++++++++-
- drivers/clk/tegra/clk-tegra114.c         |   22 ++++++++++----------
- drivers/clk/tegra/clk-tegra124.c         |   21 ++++++++++---------
- include/dt-bindings/clock/tegra114-car.h |    3 +-
- include/dt-bindings/clock/tegra124-car.h |    3 +-
- 7 files changed, 68 insertions(+), 25 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTeiJzAAoJEN0jrNd/PrOhsTsP/0E6ll2MhSOn+aggmPYaS7EO
+DYZgGrYEq3ME+WPN0MgOLRv3H237YHMvBNV/mnZOCliVVMB5hTrwMzcdiN8GUYCh
+wei3JQi0wCjwvAAQyaB2LfGJIVaNkEb66VwcgTVN0ryBJvQD5eMQmDhdoGupqtuN
+EIPAGqS1EibP9RArhH8xAB4eLAHJ+q2AqUkEkBNb9Me4ASiRsr22GlSmR4IFDbUD
+7eCHTyFVYVvukG5TjOz1qxlOqs69cHSFuiZyhW/EIYt0iqc2nRA/8f84+T0h83Yf
+Wk9qJQZr1/DIh0jYtfG8ryvgQn+RDd+a1X7WORusjYOG0AcWs4ZHOMADMLKYFqaE
+7Kw7kCKomq9qZfrkTDUeciBjijlnUKbSGIgu3xrn1UjFFqU/AXpgdKlU/aJ2Smnb
+iJw2QjK0xc42dIGxzQkKj2ypRTdqpA4tGVnpzT5PVI2E31M4NgPnzjQlO00AzWkf
+m9ylnl+rtrDw/v4VW2S58WQfhMwYhXjpESpNXhyRjsJP+D4BZ6zs2y/FY6WqDZGX
+7fnpQDgpPA/B8ivs2rVJQB/P0mHnAjTehUnjIjKq99+RLOB5AH5W1FaifZsRbgE6
+itQpOt9SWtibVHJWztD/t4eFSG6DuEZi241kfPRkeV0YEwWNFukWFJ91Y+WWBXmg
+EPbw+0704BcMaQozdjN8
+=qUBH
+-----END PGP SIGNATURE-----
+
+--mP3DRpeJDSE+ciuQ--
+
+--===============0039351027==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============0039351027==--
