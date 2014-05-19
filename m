@@ -1,64 +1,91 @@
-From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
-Subject: Re: [PATCH 4/4] drm/nouveau: introduce CPU cache flushing
- macro
-Date: Mon, 19 May 2014 12:27:50 +0200
-Message-ID: <20140519102750.GI8790@phenom.ffwll.local>
-References: <1400483458-9648-1-git-send-email-acourbot@nvidia.com>
- <1400483458-9648-5-git-send-email-acourbot@nvidia.com>
- <20140519090202.GC7138@ulmo>
- <1400491331.8467.8.camel@weser.hi.pengutronix.de>
- <20140519100316.GE7138@ulmo>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH v3 6/7] i2c: ChromeOS EC tunnel driver
+Date: Mon, 19 May 2014 12:50:56 +0200
+Message-ID: <20140519105055.GA2612@katana>
+References: <1398879850-9111-1-git-send-email-dianders@chromium.org>
+ <1398879850-9111-7-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="pf9I7BMVVzbSWLtt"
+Return-path: <linux-doc-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20140519100316.GE7138@ulmo>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+In-Reply-To: <1398879850-9111-7-git-send-email-dianders@chromium.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: lee.jones@linaro.org, swarren@nvidia.com, abrestic@chromium.org, dgreid@chromium.org, olof@lixom.net, sjg@chromium.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rdunlap@infradead.org, sameo@linux.intel.com, jdelvare@suse.de, shane.huang@amd.com, maxime.ripard@free-electrons.com, laurent.pinchart+renesas@ideasonboard.com, u.kleine-koenig@pengutronix.de, bjorn.andersson@sonymobile.com, kevin.strasser@linux.intel.com, linux@prisktech.co.nz, andrew@lunn.ch, andriy.shevchenko@linux.intel.com, schwidefsky@de.ibm.com, matt.porter@linaro.org, ch.naveen@samsung.com, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, May 19, 2014 at 12:03:17PM +0200, Thierry Reding wrote:
-> On Mon, May 19, 2014 at 11:22:11AM +0200, Lucas Stach wrote:
-> > Am Montag, den 19.05.2014, 11:02 +0200 schrieb Thierry Reding:
-> > > On Mon, May 19, 2014 at 04:10:58PM +0900, Alexandre Courbot wrote:
-> > > > Some architectures (e.g. ARM) need the CPU buffers to be explicitely
-> > > > flushed for a memory write to take effect. Not doing so results in
-> > > > synchronization issues, especially after writing to BOs.
-> > > 
-> > > It seems to me that the above is generally true for all architectures,
-> > > not just ARM.
-> > > 
-> > No, on PCI coherent arches, like x86 and some PowerPCs, the GPU will
-> > snoop the CPU caches and therefore an explicit cache flush is not
-> > required.
-> 
-> I was criticizing the wording in the commit message. Perhaps it could be
-> enhanced with what you just said.
 
-Shouldn't this be done in the dma mapping layer? I know that i915 does all
-the cpu cache flushing itself, but that's because the x86 dma layer
-refuses to believe that there are non-coherent platforms on x86. But on
-arm it can cope.
+--pf9I7BMVVzbSWLtt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This is somewhat important for dma-buf buffer sharing since if the cpu
-cache control is done in drivers you must do double-flushing on shared
-buffers. Atm you have to do that anyway, but at least this would make it
-easier. The other problem is that ttm reinvents half of the dma mapping
-functions.
 
-Just my 2 cents.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+> +I2C bus that tunnels through the ChromeOS EC (cros-ec)
+> +======================================================
+> +On some ChromeOS board designs we've got a connection to the EC (embedded
+> +controller) but no direct connection to some devices on the other side of
+> +the EC (like a battery and PMIC).  To get access to those devices we need
+> +to tunnel our i2c commands through the EC.
+> +
+> +The node for this device should be under a cros-ec node like google,cros-ec-spi
+> +or google,cros-ec-i2c.
+> +
+> +
+> +Required properties:
+> +- compatible: google,cros-ec-i2c-tunnel
+> +- google,remote-bus: The EC bus we'd like to talk to.
+> +
+> +Optional child nodes:
+> +- One node per I2C device connected to the tunnelled I2C bus.
+> +
+> +
+> +Example:
+> +	cros-ec@0 {
+> +		compatible = "google,cros-ec-spi";
+
+Ooookay, now I get it. From the compatible name of this snipplet, I
+assumed this node describes only an SPI IP core inside the EC. This is
+why I complained about the location of the I2C busses, since placing it
+as subnodes of the EC based SPI didn't make sense to me, even though the
+connection of the tunnel was SPI. Now I understand that this is the core
+driver for the EC, talking to it via SPI. Since this driver is an SPI
+child node I would not have expected the "-spi" suffix. Sorry, for this
+confusion :/ Now, the bindings make much more sense to me.
+
+> +			google,remote-bus = <0>;
+
+I am still not too happy about this one, but it is good enough for now,
+I suppose.
+
+Code looks good, so
+
+Reviewed-by: Wolfram Sang <wsa@the-dreams.de>
+
+I don't mind how it gets upstream. I can take it, but you can also keep
+it in this series.
+
+
+--pf9I7BMVVzbSWLtt
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.15 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTeeIPAAoJEBQN5MwUoCm2oW0P/j8JB1WuVh1unAN3oJOQVJlN
+1gd6qurO+IlAf77yBAVfJa1cMZGxo5+KGmHo6TQmqv1BgNygntU+TlUeO8acwFdj
+RDQ2j7qGx/ZwcN8GELw4fVpFNcNAJ/nQmOi4nPHYC8sUNjrHYVG4ybjC9ogJbM+Z
+Y+gyc1b/t7crdLhg92c63nZxy7n6R2Kez1ZPhXj1djeu30klh8LLqshZA04muL+t
+n7Kac/sISeKv0pkv70V0qX06WPCwwbgbticIkMf1Z3kOmfFUeCi83QQOjYJXDltB
+ohnebK/6rfF+vG6Lsrsorl5pKc/fQlv6dIKO2seRFUbmpQXJ4d2roFhozd1eh1Qw
+R0bc02a1aLjExluyjLX1/bYfgu+NsFk0Cx/O+EoTF/kocpDaznBR/DmJ6IeQBCDP
+MjsH3ppXSnJYx+iqvTtiIbL1g4BTriBtgDC/bKVecdi9WypbEqFYWIRvIGmHt7x5
+W4i1Dr2fv08EOO7BWeN9580+fFIi+Y8Z8+17fuEeSelkZvCVDsyXemCEoiea7nQl
+RKqsKYGTXJqhc/hgJ4rjqRknSc14Byta64uYFCRnbw9tDe+EppiNwzGP4eIz2jE0
+r8W4+1IQU1TSsW8lPTBSDghuzi3SZrfibw2wFpZSoieRW7x8jg1ByuDU2DLFegbr
+NYJrAKmVyWcucMSBGWhn
+=W4a9
+-----END PGP SIGNATURE-----
+
+--pf9I7BMVVzbSWLtt--
