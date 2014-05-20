@@ -1,34 +1,89 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [flasher PATCH] Use actual U-Boot BSS size for padding when flashing
-Date: Tue, 20 May 2014 10:35:58 -0600
-Message-ID: <537B846E.1010501@wwwdotorg.org>
-References: <1400532140-19224-1-git-send-email-swarren@wwwdotorg.org>
+From: Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH] devicetree: Add generic IOMMU device tree bindings
+Date: Tue, 20 May 2014 17:39:12 +0100
+Message-ID: <20140520163912.GC5041@e103592.cambridge.arm.com>
+References: <1400242998-437-1-git-send-email-thierry.reding@gmail.com>
+	<5080348.QmhgfQRxZW@wuerfel>
+	<20140520130659.GA5041@e103592.cambridge.arm.com>
+	<6382280.3uMvoxaUSK@wuerfel> <20140520152659.GA30404@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1400532140-19224-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20140520152659.GA30404-5wv7dgnIgG8@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/19/2014 02:42 PM, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Tue, May 20, 2014 at 04:26:59PM +0100, Will Deacon wrote:
+> On Tue, May 20, 2014 at 02:23:47PM +0100, Arnd Bergmann wrote:
+> > 	Bit#   33222222 22221111 11111100 00000000
+> > 	       10987654 32109876 54321098 76543210
+> > phys.hi cell:  npt000ss bbbbbbbb dddddfff rrrrrrrr
+> > phys.mid cell: hhhhhhhh hhhhhhhh hhhhhhhh hhhhhhhh
+> > phys.lo cell:  llllllll llllllll llllllll llllllll
+> > 
+> > where:
+> > n is 0 if the address is relocatable, 1 otherwise
+> > p is 1 if the addressable region is "prefetchable", 0 otherwise
+> > t is 1 if the address is aliased (for non-relocatable I/O),
+> >  below 1 MB (for Memory), or below 64 KB (for relocatable I/O).
+> > ss is the space code, denoting the address space
+> > bbbbbbbb is the 8-bit Bus Number
+> > ddddd is the 5-bit Device Number
+> > fff is the 3-bit Function Number
+> > rrrrrrrr is the 8-bit Register Number
+> > hh...hh is a 32-bit unsigned number
+> > ll...ll is a 32-bit unsigned number
+> > 
+> > We can ignore n, p, t and r here, and use the same format for a DMA
+> > address, then define an empty "dma-ranges" property. That would
+> > imply that using b/d/f is sufficient to identify each master at the
+> > iommu. Any device outside of the PCI host but connected to the same
+> > iommu can use the same notation to list the logical b/d/f that gets
+> > sent to the IOMMU in bus master transactions.
+> > 
+> > Do you think this is sufficient for the ARM SMMU, or do we need
+> > something beyond that?
 > 
-> In flashing mode, tegra-uboot-flasher downloads an image into RAM which
-> consists of the U-Boot binary, board DTB, some padding, and the image to
-> write into flash. The padding needs to be large enough so that the flash
-> image doesn't overlap with U-Boot's BSS at run-time, since the BSS is
-> zero'd out at boot, and stores variables that are written to at run-time.
-> Any overlap would cause the flash image to be corrupted.
+> I think it can define the common-cases for the existing implementations,
+> yes. I anticipate Stream-IDs becoming > 16-bit in the near future though,
+> so we'd need extra bits if we're describing other devices coming into the
+> SMMU.
 > 
-> tegra-uboot-flasher currently uses a guess of 1MB for the required
-> padding size. However, when enabling DFU support in U-Boot, the BSS size
-> balloons to well over 1MB, thus causing corruption to the flash image.
-> Solve this by recording the actual BSS size at build time, and using the
-> exact value at flashing time to calculate the padding. Add in an extra
-> 4KB of padding just in case the DTB gets larger when adding in the
-> flashing commands. Previously, this was also assumed to fit into the
-> hard-coded 1MB of pad.
+> Note that we already have a binding for the current SMMU driver, so I'm not
+> really in a position to shift over to a new binding until the next version of
+> the SMMU architecture comes along...
 
-Applied.
+How much code relies on the meaning of the nptsbdf bits?
+
+Following the general model of concatenating the master ID with the
+address bits and trasting that as a single input to the IOMMU seems
+reasonable -- maybe we either don't care about the attribute bits and
+can replace them with master ID bits, or instead we could extend with
+more master ID bits at bit 96 and up.
+
+npts looks like memory type information.  What memory type information
+we need to describe for coherent masters on ARM is a bit of an open
+question.  Perhaps we can come up with a good ARM-specific interpretation
+of these bits, but I wonder whether they are enough.
+
+If there is a real PCI bus in the system of course, then we are fine
+once we reach it.  The only problem is for the stuff on AMBA buses etc.
+
+In theory, we could have to describe memory types, cacheability
+attributes and coherency domains, but we may be able to squeeze the
+possibilities down to a smaller set of sane memory types.
+
+Cheers
+---Dave
