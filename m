@@ -1,50 +1,45 @@
 From: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH 1/2] ARM: tegra: Add Tegra124 HDA support
-Date: Mon, 19 May 2014 19:35:45 -0700
-Message-ID: <1400553346-23238-1-git-send-email-dgreid@chromium.org>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: [PATCHv5 1/2] ALSA: hda/hdmi - Add Nvidia Tegra124 HDMI support
+Date: Mon, 19 May 2014 19:17:39 -0700
+Message-ID: <1400552259-20052-1-git-send-email-dgreid@chromium.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tiwai-l3A5Bk7waGM@public.gmane.org, Sumit Bhattacharya <sumitb-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add a device node for the HDA controller found on Tegra124.
+From: Sumit Bhattacharya <sumitb-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
+Add the Tegra12x HDA codec id to patch_hdmi.
+
+Signed-off-by: Sumit Bhattacharya <sumitb-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Signed-off-by: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra124.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Changes since v4: Commit message only.
+---
+ sound/pci/hda/patch_hdmi.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index 6e6bc4e..7890641 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -449,6 +449,21 @@
- 		clock-names = "pclk", "clk32k_in";
- 	};
- 
-+	hda@0,70030000 {
-+		compatible = "nvidia,tegra124-hda", "nvidia,tegra30-hda";
-+		reg = <0x0 0x70030000 0x0 0x10000>;
-+		interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA124_CLK_HDA>,
-+		         <&tegra_car TEGRA124_CLK_HDA2HDMI>,
-+			 <&tegra_car TEGRA124_CLK_HDA2CODEC_2X>;
-+		clock-names = "hda", "hda2hdmi", "hdacodec_2x";
-+		resets = <&tegra_car 125>, /* hda */
-+			 <&tegra_car 128>, /* hda2hdmi */
-+			 <&tegra_car 111>; /* hda2codec_2x */
-+		reset-names = "hda", "hda2hdmi", "hdacodec_2x";
-+		status = "disabled";
-+	};
-+
- 	sdhci@0,700b0000 {
- 		compatible = "nvidia,tegra124-sdhci";
- 		reg = <0x0 0x700b0000 0x0 0x200>;
+diff --git a/sound/pci/hda/patch_hdmi.c b/sound/pci/hda/patch_hdmi.c
+index 2a3050d..be0a9ee 100644
+--- a/sound/pci/hda/patch_hdmi.c
++++ b/sound/pci/hda/patch_hdmi.c
+@@ -3320,6 +3320,7 @@ static const struct hda_codec_preset snd_hda_preset_hdmi[] = {
+ { .id = 0x10de001a, .name = "GPU 1a HDMI/DP",	.patch = patch_nvhdmi },
+ { .id = 0x10de001b, .name = "GPU 1b HDMI/DP",	.patch = patch_nvhdmi },
+ { .id = 0x10de001c, .name = "GPU 1c HDMI/DP",	.patch = patch_nvhdmi },
++{ .id = 0x10de0028, .name = "Tegra12x HDMI",	.patch = patch_nvhdmi },
+ { .id = 0x10de0040, .name = "GPU 40 HDMI/DP",	.patch = patch_nvhdmi },
+ { .id = 0x10de0041, .name = "GPU 41 HDMI/DP",	.patch = patch_nvhdmi },
+ { .id = 0x10de0042, .name = "GPU 42 HDMI/DP",	.patch = patch_nvhdmi },
+@@ -3376,6 +3377,7 @@ MODULE_ALIAS("snd-hda-codec-id:10de0019");
+ MODULE_ALIAS("snd-hda-codec-id:10de001a");
+ MODULE_ALIAS("snd-hda-codec-id:10de001b");
+ MODULE_ALIAS("snd-hda-codec-id:10de001c");
++MODULE_ALIAS("snd-hda-codec-id:10de0028");
+ MODULE_ALIAS("snd-hda-codec-id:10de0040");
+ MODULE_ALIAS("snd-hda-codec-id:10de0041");
+ MODULE_ALIAS("snd-hda-codec-id:10de0042");
 -- 
 1.8.1.3.605.g02339dd
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
