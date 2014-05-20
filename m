@@ -1,40 +1,60 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v3 6/7] i2c: ChromeOS EC tunnel driver
-Date: Tue, 20 May 2014 09:43:30 +0100
-Message-ID: <20140520084330.GA24991@lee--X1>
+Subject: Re: [PATCH v3 1/7] mfd: cros_ec: spi: calculate delay between
+ transfers correctly
+Date: Tue, 20 May 2014 09:43:58 +0100
+Message-ID: <20140520084358.GB24991@lee--X1>
 References: <1398879850-9111-1-git-send-email-dianders@chromium.org>
- <1398879850-9111-7-git-send-email-dianders@chromium.org>
- <20140519105055.GA2612@katana>
- <20140519172258.GD20435@lee--X1>
- <20140519221902.GA2871@katana>
+ <1398879850-9111-2-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20140519221902.GA2871@katana>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Doug Anderson <dianders@chromium.org>, swarren@nvidia.com, abrestic@chromium.org, dgreid@chromium.org, olof@lixom.net, sjg@chromium.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rdunlap@infradead.org, sameo@linux.intel.com, jdelvare@suse.de, shane.huang@amd.com, maxime.ripard@free-electrons.com, laurent.pinchart+renesas@ideasonboard.com, u.kleine-koenig@pengutronix.de, bjorn.andersson@sonymobile.com, kevin.strasser@linux.intel.com, linux@prisktech.co.nz, andrew@lunn.ch, andriy.shevchenko@linux.intel.com, schwidefsky@de.ibm.com, matt.porter@linaro.org, ch.naveen@samsung.com, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+In-Reply-To: <1398879850-9111-2-git-send-email-dianders@chromium.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: swarren@nvidia.com, wsa@the-dreams.de, abrestic@chromium.org, dgreid@chromium.org, olof@lixom.net, sjg@chromium.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, David Hendricks <dhendrix@chromium.org>, sameo@linux.intel.com, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-> > > Code looks good, so
-> > >=20
-> > > Reviewed-by: Wolfram Sang <wsa@the-dreams.de>
-> > >=20
-> > > I don't mind how it gets upstream. I can take it, but you can als=
-o keep
-> > > it in this series.
-> >=20
-> > Let's keep the series together.  Are you happy with me just merging=
- it
-> > through MFD, or would you like a pull-request, so you can take it i=
-n
-> > too?
+> From: David Hendricks <dhendrix@chromium.org>
 >=20
-> Just merge it...
+> To avoid spamming the EC we calculate the time between the previous
+> transfer and the current transfer and force a delay if the time delta
+> is too small.
+>=20
+> However, a small miscalculation causes the delay period to be
+> far too short. Most noticably this impacts commands with a long
+> turnaround time such as EC firmware reads and writes.
+>=20
+> Signed-off-by: David Hendricks <dhendrix@chromium.org>
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> Acked-by: Lee Jones <lee.jones@linaro.org>
+> Reviewed-by: Simon Glass <sjg@chromium.org>
+> Tested-by: Andrew Bresticker <abrestic@chromium.org>
+> Tested-by: Stephen Warren <swarren@nvidia.com>
+> ---
+> Changes in v3: None
+> Changes in v2: None
+>=20
+>  drivers/mfd/cros_ec_spi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks dude.
+Applied, thanks.
+
+> diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
+> index 84af8d7..c185eb6 100644
+> --- a/drivers/mfd/cros_ec_spi.c
+> +++ b/drivers/mfd/cros_ec_spi.c
+> @@ -219,7 +219,7 @@ static int cros_ec_command_spi_xfer(struct cros_e=
+c_device *ec_dev,
+>  		ktime_get_ts(&ts);
+>  		delay =3D timespec_to_ns(&ts) - ec_spi->last_transfer_ns;
+>  		if (delay < EC_SPI_RECOVERY_TIME_NS)
+> -			ndelay(delay);
+> +			ndelay(EC_SPI_RECOVERY_TIME_NS - delay);
+>  	}
+> =20
+>  	/* Transmit phase - send our message */
 
 --=20
 Lee Jones
