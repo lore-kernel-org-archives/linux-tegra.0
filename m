@@ -1,69 +1,38 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH 3/3] clocksource: tegra: Use uS counter as delay timer
-Date: Tue, 20 May 2014 18:36:11 +0300
-Message-ID: <1400600176-435-4-git-send-email-pdeschrijver@nvidia.com>
-References: <1400600176-435-1-git-send-email-pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC PATCH 04/10] clk: tegra: Initialize xusb clocks
+Date: Tue, 20 May 2014 18:41:45 +0300
+Message-ID: <20140520154145.GY15168@tbergstrom-lnx.Nvidia.com>
+References: <1400113986-339-1-git-send-email-abrestic@chromium.org>
+ <1400113986-339-5-git-send-email-abrestic@chromium.org>
+ <537513D8.7060203@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1400600176-435-1-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <537513D8.7060203-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Jim Lin <jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-All Tegra SoCs have a freerunning microsecond counter which can be used as a
-delay timer.
+On Thu, May 15, 2014 at 09:22:00PM +0200, Stephen Warren wrote:
+> On 05/14/2014 06:33 PM, Andrew Bresticker wrote:
+> > Initialize the XUSB-related clocks with appropriate parents and rates
+> > for both Tegra114 and Tegra124.
+> 
+> These first 4 clock driver patches look plausible to me, although I
+> didn't look that hard!
+> 
+> Peter or Mike, if they look OK to you, can you please pick them up for
+> 3.16 so that by the time we apply the rest of the patches in this series
+> for 3.17, the clock dependencies are already there? Thanks.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clocksource/tegra20_timer.c |   13 +++++++++++++
- 1 files changed, 13 insertions(+), 0 deletions(-)
+Looks fine to me. Applied for 3.16, hopefully it will still make it.
 
-diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
-index d1869f0..ed49a0b 100644
---- a/drivers/clocksource/tegra20_timer.c
-+++ b/drivers/clocksource/tegra20_timer.c
-@@ -28,6 +28,7 @@
- #include <linux/of_irq.h>
- #include <linux/sched_clock.h>
- 
-+#include <asm/delay.h>
- #include <asm/mach/time.h>
- #include <asm/smp_twd.h>
- 
-@@ -53,6 +54,8 @@ static void __iomem *rtc_base;
- static struct timespec persistent_ts;
- static u64 persistent_ms, last_persistent_ms;
- 
-+static struct delay_timer tegra_delay_timer;
-+
- #define timer_writel(value, reg) \
- 	__raw_writel(value, timer_reg_base + (reg))
- #define timer_readl(reg) \
-@@ -139,6 +142,11 @@ static void tegra_read_persistent_clock(struct timespec *ts)
- 	*ts = *tsp;
- }
- 
-+static unsigned long tegra_delay_timer_read_counter_long(void)
-+{
-+	return readl(timer_reg_base + TIMERUS_CNTR_1US);
-+}
-+
- static irqreturn_t tegra_timer_interrupt(int irq, void *dev_id)
- {
- 	struct clock_event_device *evt = (struct clock_event_device *)dev_id;
-@@ -206,6 +214,11 @@ static void __init tegra20_init_timer(struct device_node *np)
- 		BUG();
- 	}
- 
-+	tegra_delay_timer.read_current_timer =
-+			tegra_delay_timer_read_counter_long;
-+	tegra_delay_timer.freq = 1000000;
-+	register_current_timer_delay(&tegra_delay_timer);
-+
- 	ret = setup_irq(tegra_timer_irq.irq, &tegra_timer_irq);
- 	if (ret) {
- 		pr_err("Failed to register timer IRQ: %d\n", ret);
--- 
-1.7.7.rc0.72.g4b5ea.dirty
+Cheers,
+
+Peter.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
