@@ -1,52 +1,32 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH 1/3] kernel: add calibration_delay_done()
-Date: Tue, 20 May 2014 21:41:31 +0400
-Message-ID: <537B93CB.3040109@cogentembedded.com>
-References: <1400600176-435-1-git-send-email-pdeschrijver@nvidia.com> <1400600176-435-2-git-send-email-pdeschrijver@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: tegra: Add Tegra124 HDA support
+Date: Tue, 20 May 2014 12:24:35 -0600
+Message-ID: <537B9DE3.5020807@wwwdotorg.org>
+References: <1400553346-23238-1-git-send-email-dgreid@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1400600176-435-2-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-kernel@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1400553346-23238-1-git-send-email-dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/20/2014 07:36 PM, Peter De Schrijver wrote:
+On 05/19/2014 08:35 PM, Dylan Reid wrote:
+> Add a device node for the HDA controller found on Tegra124.
 
-> Add calibration_delay_done() call and dummy implementation. This allows
-> architectures to stop accepting registrations for new timer based delay
-> functions.
+> diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
 
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->   init/calibrate.c |   12 ++++++++++++
->   1 files changed, 12 insertions(+), 0 deletions(-)
+> +	hda@0,70030000 {
+> +		compatible = "nvidia,tegra124-hda", "nvidia,tegra30-hda";
+> +		reg = <0x0 0x70030000 0x0 0x10000>;
+> +		interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&tegra_car TEGRA124_CLK_HDA>,
+> +		         <&tegra_car TEGRA124_CLK_HDA2HDMI>,
+> +			 <&tegra_car TEGRA124_CLK_HDA2CODEC_2X>;
+> +		clock-names = "hda", "hda2hdmi", "hdacodec_2x";
 
-> diff --git a/init/calibrate.c b/init/calibrate.c
-> index 520702d..31cae76 100644
-> --- a/init/calibrate.c
-> +++ b/init/calibrate.c
-> @@ -262,6 +262,16 @@ unsigned long __attribute__((weak)) calibrate_delay_is_known(void)
->   	return 0;
->   }
->
-> +/*
-> + * Indicate the cpu delay calibration is done. This can be used by
-> + * architectures to stop accepting delay timer registrations after this point.
-> + */
-> +
-> +void __attribute__((weak)) calibration_delay_done(void)
-> +{
-> +	return;
-
-    Not really needed.
-
-> +}
-> +
->   void calibrate_delay(void)
->   {
->   	unsigned long lpj;
-
-WBR, Sergei
+I think that should be "hda2codec_2x". Same for the reset-names property
+below. This fix also needs to be propagated into the DT binding
+documentation.
