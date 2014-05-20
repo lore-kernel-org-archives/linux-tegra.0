@@ -1,89 +1,81 @@
-From: Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH] devicetree: Add generic IOMMU device tree bindings
-Date: Tue, 20 May 2014 17:39:12 +0100
-Message-ID: <20140520163912.GC5041@e103592.cambridge.arm.com>
-References: <1400242998-437-1-git-send-email-thierry.reding@gmail.com>
-	<5080348.QmhgfQRxZW@wuerfel>
-	<20140520130659.GA5041@e103592.cambridge.arm.com>
-	<6382280.3uMvoxaUSK@wuerfel> <20140520152659.GA30404@arm.com>
+From: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCHv5 2/2] ALSA: hda - Add driver for Tegra SoC HDA
+Date: Tue, 20 May 2014 09:49:01 -0700
+Message-ID: <CAEUnVG6ztyOR9DO0_wP=dbGwL4JRdLtu-rk8Nfjkws0Hg3pQTA@mail.gmail.com>
+References: <1400552307-20192-1-git-send-email-dgreid@chromium.org> <20140520085925.GA10210@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20140520152659.GA30404-5wv7dgnIgG8@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140520085925.GA10210@ulmo>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, May 20, 2014 at 04:26:59PM +0100, Will Deacon wrote:
-> On Tue, May 20, 2014 at 02:23:47PM +0100, Arnd Bergmann wrote:
-> > 	Bit#   33222222 22221111 11111100 00000000
-> > 	       10987654 32109876 54321098 76543210
-> > phys.hi cell:  npt000ss bbbbbbbb dddddfff rrrrrrrr
-> > phys.mid cell: hhhhhhhh hhhhhhhh hhhhhhhh hhhhhhhh
-> > phys.lo cell:  llllllll llllllll llllllll llllllll
-> > 
-> > where:
-> > n is 0 if the address is relocatable, 1 otherwise
-> > p is 1 if the addressable region is "prefetchable", 0 otherwise
-> > t is 1 if the address is aliased (for non-relocatable I/O),
-> >  below 1 MB (for Memory), or below 64 KB (for relocatable I/O).
-> > ss is the space code, denoting the address space
-> > bbbbbbbb is the 8-bit Bus Number
-> > ddddd is the 5-bit Device Number
-> > fff is the 3-bit Function Number
-> > rrrrrrrr is the 8-bit Register Number
-> > hh...hh is a 32-bit unsigned number
-> > ll...ll is a 32-bit unsigned number
-> > 
-> > We can ignore n, p, t and r here, and use the same format for a DMA
-> > address, then define an empty "dma-ranges" property. That would
-> > imply that using b/d/f is sufficient to identify each master at the
-> > iommu. Any device outside of the PCI host but connected to the same
-> > iommu can use the same notation to list the logical b/d/f that gets
-> > sent to the IOMMU in bus master transactions.
-> > 
-> > Do you think this is sufficient for the ARM SMMU, or do we need
-> > something beyond that?
-> 
-> I think it can define the common-cases for the existing implementations,
-> yes. I anticipate Stream-IDs becoming > 16-bit in the near future though,
-> so we'd need extra bits if we're describing other devices coming into the
-> SMMU.
-> 
-> Note that we already have a binding for the current SMMU driver, so I'm not
-> really in a position to shift over to a new binding until the next version of
-> the SMMU architecture comes along...
+On Tue, May 20, 2014 at 1:59 AM, Thierry Reding
+<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Mon, May 19, 2014 at 07:18:27PM -0700, Dylan Reid wrote:
+>> This adds a driver for the HDA block in Tegra SoCs.  The HDA bus is
+>> used to communicate with the HDMI codec on Tegra124.
+>>
+>> Most of the code is re-used from the Intel/PCI HDA driver.  It brings
+>> over only two of the module params, power_save and probe_mask.
+>>
+>> Signed-off-by: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>> Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> When I run this on Jetson TK1 I get the following:
 
-How much code relies on the meaning of the nptsbdf bits?
+I haven't tried on a Jetson TK1 yet, but we should have one by EOD.
+All my testing has been on Venice2.
 
-Following the general model of concatenating the master ID with the
-address bits and trasting that as a single input to the IOMMU seems
-reasonable -- maybe we either don't care about the attribute bits and
-can replace them with master ID bits, or instead we could extend with
-more master ID bits at bit 96 and up.
+>
+>         [    1.571912] tegra-hda 70030000.hda: CORB reset timeout#1, CORBRP = 0
+>
+> Is that expected?
 
-npts looks like memory type information.  What memory type information
-we need to describe for coherent masters on ARM is a bit of an open
-question.  Perhaps we can come up with a good ARM-specific interpretation
-of these bits, but I wonder whether they are enough.
+No, but now that you mention it I see it too.  I'll take a look.
 
-If there is a real PCI bus in the system of course, then we are fine
-once we reach it.  The only problem is for the stuff on AMBA buses etc.
+>
+> The device seems to register properly:
+>
+>         $ aplay -l
+>         **** List of PLAYBACK Hardware Devices ****
+>         card 0: tegrahda [tegra-hda], device 3: HDMI 0 [HDMI 0]
+>           Subdevices: 1/1
+>           Subdevice #0: subdevice #0
+>         card 1: TK1 [NVIDIA Tegra Jetson TK1], device 0: RT5640 PCM rt5640-aif1-0 []
+>           Subdevices: 1/1
+>           Subdevice #0: subdevice #0
+>
+> Would you mind sharing the procedure how you test this? I tried various
+> incantations of this sort:
+>
+>         $ aplay -D hw:0,3 /usr/share/sounds/alsa/Noise.wav
+>
+> or
+>
+>         $ aplay -D plughw:0,3 /usr/share/sounds/alsa/Noise.wav
+>
+> to no avail.
 
-In theory, we could have to describe memory types, cacheability
-attributes and coherency domains, but we may be able to squeeze the
-possibilities down to a smaller set of sane memory types.
+Those sounds are mono so hw:0,3 wouldn't work, but plughw works for me.
 
-Cheers
----Dave
+Are you getting an error message or is it playing silence?  Never
+hurts to double check that the output didn't end up in DVI mode, and
+that the Playback switch is unmuted in amixer.
+
+I used:
+
+speaker-test -Dhw:0,3 -c 2
+
+or
+
+aplay -Dhw:0,3 stereo_file.wav
+
+Thanks,
+
+Dylan
+
+>
+> Thierry
