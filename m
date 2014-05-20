@@ -1,33 +1,52 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v3 6/7] i2c: ChromeOS EC tunnel driver
-Date: Tue, 20 May 2014 11:35:59 -0600
-Message-ID: <537B927F.4070504@wwwdotorg.org>
-References: <1398879850-9111-1-git-send-email-dianders@chromium.org> <1398879850-9111-7-git-send-email-dianders@chromium.org> <20140520084702.GG24991@lee--X1>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH 1/3] kernel: add calibration_delay_done()
+Date: Tue, 20 May 2014 21:41:31 +0400
+Message-ID: <537B93CB.3040109@cogentembedded.com>
+References: <1400600176-435-1-git-send-email-pdeschrijver@nvidia.com> <1400600176-435-2-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140520084702.GG24991@lee--X1>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1400600176-435-2-git-send-email-pdeschrijver@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-kernel@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/20/2014 02:47 AM, Lee Jones wrote:
-> On Wed, 30 Apr 2014, Doug Anderson wrote:
-> 
->> On ARM Chromebooks we have a few devices that are accessed by both the
->> AP (the main "Application Processor") and the EC (the Embedded
->> Controller).  These are:
->> * The battery (sbs-battery).
->> * The power management unit tps65090.
->>
->> On the original Samsung ARM Chromebook these devices were on an I2C
->> bus that was shared between the AP and the EC and arbitrated using
->> some extranal GPIOs (see i2c-arb-gpio-challenge).
-...
-> Applied, thanks.
+On 05/20/2014 07:36 PM, Peter De Schrijver wrote:
 
-Was the branch pushed too? I can't see these patches at
-git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git for-mfd-next
-(or master or for-mfd-fixes)
+> Add calibration_delay_done() call and dummy implementation. This allows
+> architectures to stop accepting registrations for new timer based delay
+> functions.
+
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>   init/calibrate.c |   12 ++++++++++++
+>   1 files changed, 12 insertions(+), 0 deletions(-)
+
+> diff --git a/init/calibrate.c b/init/calibrate.c
+> index 520702d..31cae76 100644
+> --- a/init/calibrate.c
+> +++ b/init/calibrate.c
+> @@ -262,6 +262,16 @@ unsigned long __attribute__((weak)) calibrate_delay_is_known(void)
+>   	return 0;
+>   }
+>
+> +/*
+> + * Indicate the cpu delay calibration is done. This can be used by
+> + * architectures to stop accepting delay timer registrations after this point.
+> + */
+> +
+> +void __attribute__((weak)) calibration_delay_done(void)
+> +{
+> +	return;
+
+    Not really needed.
+
+> +}
+> +
+>   void calibrate_delay(void)
+>   {
+>   	unsigned long lpj;
+
+WBR, Sergei
