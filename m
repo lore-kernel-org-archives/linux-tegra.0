@@ -1,30 +1,49 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [GIT PULL 2/3] ARM: tegra: device tree changes for 3.16
-Date: Wed, 21 May 2014 15:06:43 -0700
-Message-ID: <20140521220643.GK24972@quad.lixom.net>
+Subject: Re: [GIT PULL 3/3] ARM: tegra: defconfig updates for 3.16
+Date: Wed, 21 May 2014 15:07:59 -0700
+Message-ID: <20140521220759.GL24972@quad.lixom.net>
 References: <1400264746-13106-1-git-send-email-swarren@wwwdotorg.org>
- <1400264746-13106-2-git-send-email-swarren@wwwdotorg.org>
+ <1400264746-13106-3-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1400264746-13106-2-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1400264746-13106-3-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, May 16, 2014 at 12:25:45PM -0600, Stephen Warren wrote:
-> The bulk of Tegra changes for 3.16 are to device trees. Highlights are:
+On Fri, May 16, 2014 at 12:25:46PM -0600, Stephen Warren wrote:
+> AT24C EEPROM:
 > 
-> - New board support for:
->   - Jetson TK1.
->   - SHIELD.
->   - Tegra Note 7.
->   - Colibri T30 module.
-> - HDMI support on Venice2.
-> - SD card write-protect GPIOs added to some boards.
-> - Numerous regulator cleanups.
+> This is used for the board ID EEPROM on Jetson TK1, as well as likely
+> a whole slew of other NVIDIA reference boards; we simply haven't added
+> enabled the EEPROM in the DT files until now.
+> 
+> MTD_SPI_NOR:
+> 
+> This defconfig contains the CONFIG_M25P80 symbol, which is now
+> dependent on the MTD_SPI_NOR symbol. Add CONFIG_MTD_SPI_NOR to satisfy
+> the new dependency.
+> 
+> FRAMEBUFFER_CONSOLE_ROTATION:
+> 
+> Needed for devices like Tegra Note 7 and NVIDIA SHIELD to get the boot
+> console in the expected orientation.
+> 
+> CAN*, RTC_DRV_DS1307:
+> 
+> Toradex Colibri Evaluation Board uses the DS1307 RTC and the MCP251x CAN
+> controller. The NVIDIA Tegra 3 based Colibri T30 module can be used on
+> this carrier board.
+> 
+> Furthermore the NVIDIA Tegra 3 based Apalis T30 module too contains two
+> MCP251x CAN controllers.
+> 
+> INPUT_JOYDEV:
+> 
+> NVIDIA SHIELD embeds a USB joystick device.
 > 
 > ----------------------------------------------------------------
 > 
@@ -34,9 +53,13 @@ On Fri, May 16, 2014 at 12:25:45PM -0600, Stephen Warren wrote:
 > 
 > are available in the git repository at:
 > 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tegra-for-3.16-dt
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tegra-for-3.16-defconfig
+> 
+> for you to fetch changes up to 9956dcc5d136248a415234381311543c8cdf869a:
+> 
+>   ARM: tegra: tegra_defconfig updates
 
-Merged into next/dt.
+Merged, thanks!
 
 
 -Olof
