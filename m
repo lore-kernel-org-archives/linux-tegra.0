@@ -1,27 +1,64 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: pull request for Tegra clock fixes for 3.16
-Date: Wed, 21 May 2014 13:53:57 +0300
-Message-ID: <20140521105357.GB15168@tbergstrom-lnx.Nvidia.com>
-References: <20140519134049.GA20109@tbergstrom-lnx.Nvidia.com>
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: Re: [PATCH v1 0/3] Tegra DMA residue improvements
+Date: Wed, 21 May 2014 16:36:37 +0530
+Message-ID: <20140521110637.GQ21128@intel.com>
+References: <1399411343-12222-1-git-send-email-cfreeman@nvidia.com>
+ <20140521055213.GK21128@intel.com>
+ <537C4EAB.1040802@metafoo.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20140519134049.GA20109-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "pawel.moll-5wv7dgnIgG8@public.gmane.org" <pawel.moll-5wv7dgnIgG8@public.gmane.org>, "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <537C4EAB.1040802@metafoo.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Christopher Freeman <cfreeman@nvidia.com>, ldewangan@nvidia.com, swarren@nvidia.com, dan.j.williams@intel.com, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, May 19, 2014 at 03:40:49PM +0200, Peter De Schrijver wrote:
-> Hi Mike,
+On Wed, May 21, 2014 at 08:58:51AM +0200, Lars-Peter Clausen wrote:
+> On 05/21/2014 07:52 AM, Vinod Koul wrote:
+> >On Tue, May 06, 2014 at 02:22:20PM -0700, Christopher Freeman wrote:
+> >>A collection of patches to improve Tegra's DMA residual reporting
+> >>
+> >>Christopher Freeman (3):
+> >>   dma: tegra: finer granularity residual for tx_status
+> >>   dma: tegra: change interrupt-related log levels
+> >>   dma: tegra: avoid int overflow for transferred count
+> >Can you pls use the *right* subsystem name...
+> >
 > 
-> A number of fixes which are needed by the upcoming XHCI and SATA drivers.
+> Without you saying what the right subsystem name is, I think it is
+> not that obvious what it is:
+ah... the subsystem name and ML name is dmaengine
+
 > 
+> git log --format="%s" --no-merges drivers/dma/ | grep '^[a-zA-Z]\+'
+> -o | sort | uniq -c | sort -n
+> 
+> 381 dma
+> 509 dmaengine
+> 
+> So there is a bias towards 'dmaengine', but if you only look at
+> recent commits there is a bias towards 'dma'.
+And thats what i am getting annoyed at :) Yes ppl please use dmaengine only
+I think I will stop accepting patches with "dma" now and improve the stats
+here...
 
-Did you take this one already? If not, please ignore it. I will make a new one
-which includes the HDA clocks...
+-- 
+~Vinod
 
-Cheers,
+> 
+> git log v3.6..HEAD --format="%s" --no-merges drivers/dma/ | grep
+> '^[a-zA-Z]\+' -o | sort | uniq -c | sort -n
+> 
+> 181 dmaengine
+> 248 dma
+> 
+> - Lars
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe dmaengine" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-Peter.
+-- 
