@@ -1,65 +1,37 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [GIT PULL 3/3] ARM: tegra: defconfig updates for 3.16
-Date: Wed, 21 May 2014 15:07:59 -0700
-Message-ID: <20140521220759.GL24972@quad.lixom.net>
-References: <1400264746-13106-1-git-send-email-swarren@wwwdotorg.org>
- <1400264746-13106-3-git-send-email-swarren@wwwdotorg.org>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: pull request for Tegra clock fixes for 3.16 with HDA clocks
+Date: Thu, 22 May 2014 11:36:32 +0300
+Message-ID: <20140522083632.GG15168@tbergstrom-lnx.Nvidia.com>
+References: <20140521112516.GA22484@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1400264746-13106-3-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20140521112516.GA22484-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "pawel.moll-5wv7dgnIgG8@public.gmane.org" <pawel.moll-5wv7dgnIgG8@public.gmane.org>, "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, May 16, 2014 at 12:25:46PM -0600, Stephen Warren wrote:
-> AT24C EEPROM:
+On Wed, May 21, 2014 at 01:25:16PM +0200, Peter De Schrijver wrote:
+> Hi Mike,
 > 
-> This is used for the board ID EEPROM on Jetson TK1, as well as likely
-> a whole slew of other NVIDIA reference boards; we simply haven't added
-> enabled the EEPROM in the DT files until now.
+> A number of fixes which are needed by the upcoming XHCI and SATA drivers and
+> the HDA audio driver.
 > 
-> MTD_SPI_NOR:
+> Thanks,
 > 
-> This defconfig contains the CONFIG_M25P80 symbol, which is now
-> dependent on the MTD_SPI_NOR symbol. Add CONFIG_MTD_SPI_NOR to satisfy
-> the new dependency.
+> Peter.
 > 
-> FRAMEBUFFER_CONSOLE_ROTATION:
+> The following changes since commit d6d211db37e75de2ddc3a4f979038c40df7cc79c:
 > 
-> Needed for devices like Tegra Note 7 and NVIDIA SHIELD to get the boot
-> console in the expected orientation.
-> 
-> CAN*, RTC_DRV_DS1307:
-> 
-> Toradex Colibri Evaluation Board uses the DS1307 RTC and the MCP251x CAN
-> controller. The NVIDIA Tegra 3 based Colibri T30 module can be used on
-> this carrier board.
-> 
-> Furthermore the NVIDIA Tegra 3 based Apalis T30 module too contains two
-> MCP251x CAN controllers.
-> 
-> INPUT_JOYDEV:
-> 
-> NVIDIA SHIELD embeds a USB joystick device.
-> 
-> ----------------------------------------------------------------
-> 
-> The following changes since commit c9eaa447e77efe77b7fa4c953bd62de8297fd6c5:
-> 
->   Linux 3.15-rc1
+>   Linux 3.15-rc5 (2014-05-09 13:10:52 -0700)
 > 
 > are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tegra-for-3.16-defconfig
-> 
-> for you to fetch changes up to 9956dcc5d136248a415234381311543c8cdf869a:
-> 
->   ARM: tegra: tegra_defconfig updates
+>   git://nv-tegra.nvidia.com/user/pdeschrijver/linux.git tegra-clk-v3.16-1
 
-Merged, thanks!
+This is the correct pull request if I confused you :)
 
+Thanks,
 
--Olof
+Peter.
