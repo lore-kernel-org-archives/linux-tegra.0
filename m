@@ -1,60 +1,48 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v2 1/3] mmc: tegra: disable UHS modes
-Date: Thu, 22 May 2014 13:00:50 +0200
-Message-ID: <CAPDyKFqq-kjQoMiyKApDuTR+Fc-8WOuqXHFcgwgZNkg4Mm4Z=Q@mail.gmail.com>
-References: <1397526163-20126-1-git-send-email-abrestic@chromium.org>
-	<1397689719-28882-1-git-send-email-abrestic@chromium.org>
-	<1397689719-28882-2-git-send-email-abrestic@chromium.org>
-	<537B9022.20709@wwwdotorg.org>
-	<86egzormf5.fsf@void.printf.net>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 3/3] clocksource: tegra: Use uS counter as delay timer
+Date: Thu, 22 May 2014 15:56:51 +0200
+Message-ID: <20140522135650.GA11583@ulmo>
+References: <1400600176-435-1-git-send-email-pdeschrijver@nvidia.com>
+ <1400600176-435-4-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <86egzormf5.fsf@void.printf.net>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Andrew Bresticker <abrestic@chromium.org>, Stephen Warren <swarren@wwwdotorg.org>
-Cc: Chris Ball <chris@printf.net>, Thierry Reding <thierry.reding@gmail.com>, linux-mmc <linux-mmc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="liOOAslEiF7prFVr"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1400600176-435-4-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 21 May 2014 02:43, Chris Ball <chris@printf.net> wrote:
-> Hi Stephen,
->
-> On Tue, May 20 2014, Stephen Warren wrote:
->> On 04/16/2014 05:08 PM, Andrew Bresticker wrote:
->>> Program TEGRA_SDHCI_VENDOR_MISC_CTRL so that UHS modes aren't advertised
->>> in SDHCI_CAPABILITIES_1.  While the Tegra SDHCI controller does support
->>> these modes, they require Tegra-specific tuning and calibration routines
->>> which the driver does not support yet.
->>
->> What's the status of patches 1 and 2 in this series? I assumed they'd be
->> applied to the MMC tree. I've had them applied to my local development
->> tree for a while now, so in case this helps:
->>
->> Tested-by: Stephen Warren <swarren@nvidia.com>
->> Acked-by: Stephen Warren <swarren@nvidia.com>
->>
->> (I thought I wrote that before, but I can't find it, so I must have
->> forgotten to)
->
-> We've been waiting for a very large sdhci patchset from Russell to
-> land before merging other sdhci patches, but I think we're running
-> out of time for that -- so we'll merge this one way or another within
-> a few days.
->
-> Thanks,
->
-> - Chris.
-> --
-> Chris Ball   <http://printf.net/>
 
+--liOOAslEiF7prFVr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Stephen/Andrew,
+In the subject: s/uS/us/; S == Siemens, s == second
 
-I tried to include the v2 of patch1 and patch2 in PR I just sent to
-Chris - but needed to omit them due to conflicts.
+Thierry
 
-Could you please re-base them on top of my PR and resend them? I
-suppose Chris can take them separately once he pulled my PR.
+--liOOAslEiF7prFVr
+Content-Type: application/pgp-signature
 
-Kind regards
-Ulf Hansson
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTfgIiAAoJEN0jrNd/PrOh6FYP/1uuxFSHWhSpKhs63UylZzEJ
+tXP39rAW315oGREG+XwxrDJh0i7s9+Gs9s4TbJfBPAv2N+eSQmT9sk4PnNy+LKYa
+UBWRIQAACD0VaDyttqPaImF2hRDMYAeDoFUqPavVmUz694sCTG7sOuEYxVuFV3Sj
+kcUmNpF7WztqZVFlDy57TnKN0Aj5fozEp3FX1Xj/r8/J3/6Evc+R85VVWOBPj75Q
+AAuCjqiEp6gSNZLCJyxzNyPBBRp5lRB/+DD0jCUtGWBRoWPCGUQHR/4zev5X/b89
+bic37FDJK636gNabybAKXk+dnL2NE7CwvApeQzNbcYBFHnjobiarsA1eFZ5qntpJ
+8fl7wpu7YOTh+4z50h+9BYB6xUuXRY2P6qTQCJQVQuXW96Oqc+lCdC1NMAv0Nhkn
+tVNh5Q4LSqqRFlFsi02omeRq7tuwcCQyJ8wnq80UWng4orOY/qRQg7evVravAYSj
+8RZCgonOx9LmEM97+4FkkMOMC31qocLxKbYiaC1k1c6/3N3O/kOGkl09ISpK3ymU
+vgAnFg+iWnoBxZUfEgdYyxpRxVfFmMQ2xygtHA48SvKG1/iom1UHPtuaSWZmmViR
+gRqH3k2C+dcm1dQJYNzO0E9tqESpFT8iF3KVOaGul6Zn0/P4fc1Q0hPU63U1RF71
+ywCWpVHY71elsFj02AIe
+=Vbz5
+-----END PGP SIGNATURE-----
+
+--liOOAslEiF7prFVr--
