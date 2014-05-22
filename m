@@ -1,130 +1,60 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2 0/7] drm/tegra: Convert to master/component framework
-Date: Thu, 22 May 2014 11:56:23 +0200
-Message-ID: <20140522095621.GA11613@ulmo>
-References: <1399995050-28435-1-git-send-email-thierry.reding@gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2 1/3] mmc: tegra: disable UHS modes
+Date: Thu, 22 May 2014 13:00:50 +0200
+Message-ID: <CAPDyKFqq-kjQoMiyKApDuTR+Fc-8WOuqXHFcgwgZNkg4Mm4Z=Q@mail.gmail.com>
+References: <1397526163-20126-1-git-send-email-abrestic@chromium.org>
+	<1397689719-28882-1-git-send-email-abrestic@chromium.org>
+	<1397689719-28882-2-git-send-email-abrestic@chromium.org>
+	<537B9022.20709@wwwdotorg.org>
+	<86egzormf5.fsf@void.printf.net>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1577866794=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1399995050-28435-1-git-send-email-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King <rmk+kernel@arm.linux.org.uk>, dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <86egzormf5.fsf@void.printf.net>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Andrew Bresticker <abrestic@chromium.org>, Stephen Warren <swarren@wwwdotorg.org>
+Cc: Chris Ball <chris@printf.net>, Thierry Reding <thierry.reding@gmail.com>, linux-mmc <linux-mmc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 21 May 2014 02:43, Chris Ball <chris@printf.net> wrote:
+> Hi Stephen,
+>
+> On Tue, May 20 2014, Stephen Warren wrote:
+>> On 04/16/2014 05:08 PM, Andrew Bresticker wrote:
+>>> Program TEGRA_SDHCI_VENDOR_MISC_CTRL so that UHS modes aren't advertised
+>>> in SDHCI_CAPABILITIES_1.  While the Tegra SDHCI controller does support
+>>> these modes, they require Tegra-specific tuning and calibration routines
+>>> which the driver does not support yet.
+>>
+>> What's the status of patches 1 and 2 in this series? I assumed they'd be
+>> applied to the MMC tree. I've had them applied to my local development
+>> tree for a while now, so in case this helps:
+>>
+>> Tested-by: Stephen Warren <swarren@nvidia.com>
+>> Acked-by: Stephen Warren <swarren@nvidia.com>
+>>
+>> (I thought I wrote that before, but I can't find it, so I must have
+>> forgotten to)
+>
+> We've been waiting for a very large sdhci patchset from Russell to
+> land before merging other sdhci patches, but I think we're running
+> out of time for that -- so we'll merge this one way or another within
+> a few days.
+>
+> Thanks,
+>
+> - Chris.
+> --
+> Chris Ball   <http://printf.net/>
 
---===============1577866794==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="SUOF0GtieIMvvwua"
-Content-Disposition: inline
 
+Hi Stephen/Andrew,
 
---SUOF0GtieIMvvwua
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I tried to include the v2 of patch1 and patch2 in PR I just sent to
+Chris - but needed to omit them due to conflicts.
 
-On Tue, May 13, 2014 at 05:30:43PM +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
->=20
-> Hi,
->=20
-> This series converts the Tegra DRM driver to the master/component
-> framework. The length of the series and the list of people in Cc is
-> mostly due to the fact that Tegra has some special requirements as
-> opposed to other drivers and therefore requires some changes outside
-> of DRM.
->=20
-> Patch 1 introduces a helper function that can be used by new DRM drivers
-> that don't rely on legacy userspace ABIs. It allows them to register DRM
-> devices much more easily and without much of the midlayer that currently
-> exists in the DRM subsystem.
->=20
-> Patches 2 and 3 make some changes to the master/component framework
-> which are necessary to convert Tegra DRM to use it. All current users of
-> the API have been converted as part of this patch. Note that at the same
-> time the drivers are converted to no longer use drm_platform_init() in
-> favour of the drm_set_unique() from patch 1 in conjunction with
-> drm_dev_alloc() and drm_dev_register(). I would've liked to avoid such
-> invasive changes in a single patch, but unfortunately I couldn't think
-> of a way how to do that. I'm open to suggestions.
->=20
-> Patch 4 adds a new interface framework that supplements the master/
-> component framework and can be used in situations where there is no
-> struct device * that a driver can bind to.
->=20
-> The Tegra DRM driver is converted to using the master/component
-> framework in patch 5 using the above four patches.
->=20
-> Finally patches 6 and 7 add some documentation about the new way of
-> registering DRM devices that don't need legacy support.
->=20
-> Each patch has a somewhat more elaborate description of why it is needed
-> or what problem it solves. The patchset applies on top of linux-next.
->=20
-> I welcome any questions or comments you might have.
->=20
-> Thierry
->=20
-> Thierry Reding (7):
->   drm: Introduce drm_set_unique()
->   drivers/base: Allow driver-data to be attached to a master
->   drivers/base: Allow multiple masters per device
->   drivers/base: Add interface framework
->   drm/tegra: Convert to master/component framework
->   drm: Add device registration documentation
->   drm: Document how to register devices without struct drm_bus
+Could you please re-base them on top of my PR and resend them? I
+suppose Chris can take them separately once he pulled my PR.
 
-Greg, Russell,
-
-Any comments on this? I've been blocking a bunch of patches in the hopes
-of getting this merged since it allows the Tegra DRM driver to be
-cleaned up a great deal, but if nobody's going to look at or comment on
-this I'll abandon this series and keep using the custom solution we've
-had for a while now.
-
-Thierry
-
---SUOF0GtieIMvvwua
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTfcnFAAoJEN0jrNd/PrOhcpsP/jJFHMbffrXN2ZjLgQVMlX80
-8HMVNcrD0pMUp/QdUHQGtT1ZRnnVNaGFWrHWx1MJUQY5xS3RJShPqpwJSj1rB6Z1
-FIda1NLNcHaKqzijW1OWW1eRb2M5xIrY9/rf7D9Y20iHK316RG9IyfCR02WB8Vz6
-Cd8v8qcjXsKFmzaJeXs4K/dl4M7N70Njz2SaCkt3dIWeqm1sZhh4gF8wr6cdoknL
-gM9lCENSf4fbZBU+0bkD7FsnZP5pbxmXKEqHIdeFRJ5QZAopwOCzzhdN3ld8sIxJ
-RAYTaG/NXDs1mmTSXyVq1qFRPEwxi+NxKWvaifYNiaW/5+1mVD6xr7B2Ng05Wgcx
-jg4v3b/xMxQ/xODjtNUi4y/toUpYRn6Wm293haxucGu8QHfvk2Dh53Ah1WMjOyKa
-QIa+hWxFh/YX5+D3vi32ZMOYg+U9rScDQBtAtedvPp5Vz1mSdl0W/2ij4d3ScCD5
-rtFsrahN0TUq31Kf2VFIZbmX/MO3ilM8kZFovxjZxP1WPa7N6L4yWfBCr0HcQYwy
-ZMFqwU0Q9hr9DMJCk6RtUWClJgaS4pTW3MyWaW+fv4qbmipKUilNiqdBagjRl8YV
-zsXa2e6l7eZurZFYY3/P6mtiRTU+h7rVOvaVw/B/zUQZB37kMlzyQJYG0lxMb6Z2
-r+Lahcd60sYCTHigWysK
-=5/ob
------END PGP SIGNATURE-----
-
---SUOF0GtieIMvvwua--
-
---===============1577866794==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============1577866794==--
+Kind regards
+Ulf Hansson
