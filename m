@@ -1,31 +1,79 @@
-From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v2 1/3] mmc: tegra: disable UHS modes
-Date: Thu, 22 May 2014 08:25:10 -0700
-Message-ID: <CAL1qeaH94cb+zYzUoCcM4+cNaFsPDEtK-xomE0QVw3gRP1jy6A@mail.gmail.com>
-References: <1397526163-20126-1-git-send-email-abrestic@chromium.org>
-	<1397689719-28882-1-git-send-email-abrestic@chromium.org>
-	<1397689719-28882-2-git-send-email-abrestic@chromium.org>
-	<537B9022.20709@wwwdotorg.org>
-	<86egzormf5.fsf@void.printf.net>
-	<CAPDyKFqq-kjQoMiyKApDuTR+Fc-8WOuqXHFcgwgZNkg4Mm4Z=Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAPDyKFqq-kjQoMiyKApDuTR+Fc-8WOuqXHFcgwgZNkg4Mm4Z=Q@mail.gmail.com>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Chris Ball <chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mmc <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Andrew Bresticker <abrestic@chromium.org>
+Subject: [PATCH v3 2/2] mmc: tegra: fix reporting of base clock frequency
+Date: Thu, 22 May 2014 08:55:36 -0700
+Message-ID: <1400774136-12396-2-git-send-email-abrestic@chromium.org>
+References: <1400774136-12396-1-git-send-email-abrestic@chromium.org>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1400774136-12396-1-git-send-email-abrestic@chromium.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Andrew Bresticker <abrestic@chromium.org>
 List-Id: linux-tegra@vger.kernel.org
 
-> Hi Stephen/Andrew,
->
-> I tried to include the v2 of patch1 and patch2 in PR I just sent to
-> Chris - but needed to omit them due to conflicts.
->
-> Could you please re-base them on top of my PR and resend them? I
-> suppose Chris can take them separately once he pulled my PR.
+Tegra SDHCI controllers, by default, report a base clock frequency
+of 208Mhz in SDHCI_CAPABILTIES which may or may not be equal to the
+actual base clock frequency.  This is because the clock rate is
+configured by the clock controller, which is external to the SD/MMC
+controller.  Since the SD/MMC controller has no knowledge of how this
+clock is configured, it will simply report the maximum frequency.
+While the reported value can be overridden by setting BASE_CLK_FREQ in
+VENDOR_CLOCK_CTRL on Tegra30 and later SoCs, just set CAP_CLOCK_BASE_BROKEN
+and supply sdhci_pltfm_clk_get_max_clock(), which simply does a
+clk_get_rate(), as the get_max_clock() callback.
 
-Will do.
+Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+Tested-by: Stephen Warren <swarren@nvidia.com>
+Acked-by: Stephen Warren <swarren@nvidia.com>
+---
+Changes from v2:
+ - rebased on mmc-next
+Changes from v1:
+ - fixed up commit message per Stephen's suggestions
+---
+ drivers/mmc/host/sdhci-tegra.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-Thanks,
-Andrew
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 4375cd4..d93a063 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -154,13 +154,15 @@ static const struct sdhci_ops tegra_sdhci_ops = {
+ 	.set_bus_width = tegra_sdhci_set_bus_width,
+ 	.reset      = tegra_sdhci_reset,
+ 	.set_uhs_signaling = sdhci_set_uhs_signaling,
++	.get_max_clock = sdhci_pltfm_clk_get_max_clock,
+ };
+ 
+ static const struct sdhci_pltfm_data sdhci_tegra20_pdata = {
+ 	.quirks = SDHCI_QUIRK_BROKEN_TIMEOUT_VAL |
+ 		  SDHCI_QUIRK_SINGLE_POWER_WRITE |
+ 		  SDHCI_QUIRK_NO_HISPD_BIT |
+-		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC,
++		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
++		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
+ 	.ops  = &tegra_sdhci_ops,
+ };
+ 
+@@ -175,7 +177,8 @@ static const struct sdhci_pltfm_data sdhci_tegra30_pdata = {
+ 		  SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
+ 		  SDHCI_QUIRK_SINGLE_POWER_WRITE |
+ 		  SDHCI_QUIRK_NO_HISPD_BIT |
+-		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC,
++		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
++		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
+ 	.ops  = &tegra_sdhci_ops,
+ };
+ 
+@@ -191,7 +194,8 @@ static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
+ 		  SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
+ 		  SDHCI_QUIRK_SINGLE_POWER_WRITE |
+ 		  SDHCI_QUIRK_NO_HISPD_BIT |
+-		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC,
++		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
++		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
+ 	.ops  = &tegra_sdhci_ops,
+ };
+ 
+-- 
+1.9.1.423.g4596e3a
+
