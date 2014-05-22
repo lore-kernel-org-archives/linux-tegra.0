@@ -1,136 +1,130 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: tegra: Add Tegra124 HDA support
-Date: Thu, 22 May 2014 11:50:00 +0200
-Message-ID: <20140522094958.GA11585@ulmo>
-References: <CAEUnVG7+=1ko8NL1Z3ovSpGveUADUidy4sBhU_dTUe1zbe-bMA@mail.gmail.com>
- <537BCF39.6050909@wwwdotorg.org>
- <CAEUnVG7CRWx5Y3RsgPzrHgYRGAx=bS4WY=w1xBUw0Ukt0DTdUQ@mail.gmail.com>
- <20140521205538.GA6237@mithrandir>
- <CAEUnVG7tDjw_6wHc=FN0KsOKsSS1u8H8SzYdxt9VCwUsARRTeQ@mail.gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v2 0/7] drm/tegra: Convert to master/component framework
+Date: Thu, 22 May 2014 11:56:23 +0200
+Message-ID: <20140522095621.GA11613@ulmo>
+References: <1399995050-28435-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Kj7319i9nmIyA2yE"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAEUnVG7tDjw_6wHc=FN0KsOKsSS1u8H8SzYdxt9VCwUsARRTeQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/mixed; boundary="===============1577866794=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1399995050-28435-1-git-send-email-thierry.reding@gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King <rmk+kernel@arm.linux.org.uk>, dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---Kj7319i9nmIyA2yE
+--===============1577866794==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="SUOF0GtieIMvvwua"
+Content-Disposition: inline
+
+
+--SUOF0GtieIMvvwua
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 21, 2014 at 02:10:09PM -0700, Dylan Reid wrote:
-> On Wed, May 21, 2014 at 1:55 PM, Thierry Reding
-> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> > On Tue, May 20, 2014 at 04:28:45PM -0700, Dylan Reid wrote:
-> >> On Tue, May 20, 2014 at 2:55 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org=
-> wrote:
-> >> > On 05/20/2014 02:37 PM, Dylan Reid wrote:
-> >> >> On Tue, May 20, 2014 at 11:31 AM, Stephen Warren <swarren@wwwdotorg=
-=2Eorg> wrote:
-> >> >>> On 05/20/2014 12:24 PM, Stephen Warren wrote:
-> >> >>>> On 05/19/2014 08:35 PM, Dylan Reid wrote:
-> >> >>>>> Add a device node for the HDA controller found on Tegra124.
-> >> > ...
-> >> >>> Even after fixing that, I can't play audio on Venice2:
-> >> >>>
-> >> >>> root@localhost:~# speaker-test -Dhw:0,3 -c 2
-> >> >>>
-> >> >>> speaker-test 1.0.27.1
-> >> >>>
-> >> >>> Playback device is hw:0,3
-> >> >>> Stream parameters are 48000Hz, S16_LE, 2 channels
-> >> >>> Using 16 octaves of pink noise
-> >> >>> Rate set to 48000Hz (requested 48000Hz)
-> >> >>> Buffer size range from 64 to 16384
-> >> >>> Period size range from 32 to 8192
-> >> >>> Using max buffer size 16384
-> >> >>> Periods =3D 4
-> >> >>> was set period_size =3D 4096
-> >> >>> was set buffer_size =3D 16384
-> >> >>>  0 - Front Left
-> >> >>> Write error: -32,Broken pipe
-> >> >>> Write error: -32,Broken pipe
-> >> >>> Write error: -32,Broken pipe
-> >> >>> ^C 1 - Front Right
-> >> >>> Time per period =3D 1.799791
-> >> >>>
-> >> >>
-> >> >> Thanks for checking Stephen.  I'll fix the reset name.
-> >> >>
-> >> >> This is the state of the tree I used when I tested on Venice2 just =
-now:
-> >> >> * ae57dbf - (HEAD) ARM: tegra: venice2 - Enable HDA (2 minutes ago)
-> >> >> * 6224524 - ARM: tegra: Add Tegra124 HDA support (2 minutes ago)
-> >> >> * 468ca57 - ALSA: hda - Add driver for Tegra SoC HDA (2 minutes ago)
-> >> >> * 928099e - ALSA: hda/hdmi - Add Nvidia Tegra124 HDMI support (2 mi=
-nutes ago)
-> >> >> * 701eac4 - clk: tegra124: Enable hda to hdmi clocks (3 minutes ago)
-> >> >
-> >> > Ah, I was missing that clock patch. Hopefully Peter will pick it up =
-for
-> >> > the Tegra clock tree soon.
-> >> >
-> >> > Now I have the same results as Thierry; speaker-test looks like it
-> >> > should be working, yet I don't hear any audio from the monitor. I kn=
-ow
-> >> > the monitor works, since I've used it extensively for testing GeForce
-> >> > GPU HDMI audio.
-> >>
-> >> Probably a silly question: Is it un-muted?
-> >> amixer -c0 cset name=3D'IEC958 Playback Switch' on
-> >
-> > Dylan, can you provide more detail about the setup that you're running?
-> > There have been similar issues in the past where a driver would work if
-> > it was run on an identical upstream kernel but with a different version
-> > of the bootloader (or a different bootloader altogether). Can you give
-> > further details about your setup? Also perhaps providing a dmesg log or
-> > the clock tree from /sys/kernel/debug/clk/clk_summary could help
-> > determine the diff between a working and a non-working setup.
+On Tue, May 13, 2014 at 05:30:43PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 >=20
-> Sure.  I'm running this u-boot:
-> https://chromium.googlesource.com/chromiumos/third_party/u-boot
-> on commit ddde3e9 of the chromeos-v2013.06 branch.
+> Hi,
 >=20
-> I haven't had a chance to flash swarren's u-boot yet it's been one of
-> those days...
+> This series converts the Tegra DRM driver to the master/component
+> framework. The length of the series and the list of people in Cc is
+> mostly due to the fact that Tegra has some special requirements as
+> opposed to other drivers and therefore requires some changes outside
+> of DRM.
 >=20
-> I attached dmesg and clk_summary.
+> Patch 1 introduces a helper function that can be used by new DRM drivers
+> that don't rely on legacy userspace ABIs. It allows them to register DRM
+> devices much more easily and without much of the midlayer that currently
+> exists in the DRM subsystem.
 >=20
-> I don't have many modifications to the ubuntu-core rootfs.
+> Patches 2 and 3 make some changes to the master/component framework
+> which are necessary to convert Tegra DRM to use it. All current users of
+> the API have been converted as part of this patch. Note that at the same
+> time the drivers are converted to no longer use drm_platform_init() in
+> favour of the drm_set_unique() from patch 1 in conjunction with
+> drm_dev_alloc() and drm_dev_register(). I would've liked to avoid such
+> invasive changes in a single patch, but unfortunately I couldn't think
+> of a way how to do that. I'm open to suggestions.
 >=20
-> Thanks for looking at this,
+> Patch 4 adds a new interface framework that supplements the master/
+> component framework and can be used in situations where there is no
+> struct device * that a driver can bind to.
+>=20
+> The Tegra DRM driver is converted to using the master/component
+> framework in patch 5 using the above four patches.
+>=20
+> Finally patches 6 and 7 add some documentation about the new way of
+> registering DRM devices that don't need legacy support.
+>=20
+> Each patch has a somewhat more elaborate description of why it is needed
+> or what problem it solves. The patchset applies on top of linux-next.
+>=20
+> I welcome any questions or comments you might have.
+>=20
+> Thierry
+>=20
+> Thierry Reding (7):
+>   drm: Introduce drm_set_unique()
+>   drivers/base: Allow driver-data to be attached to a master
+>   drivers/base: Allow multiple masters per device
+>   drivers/base: Add interface framework
+>   drm/tegra: Convert to master/component framework
+>   drm: Add device registration documentation
+>   drm: Document how to register devices without struct drm_bus
 
-Also perhaps you can share any change to tegra_defconfig that you have
-for this. Perhaps Stephen and I are simply missing some required option
-to make it work.
+Greg, Russell,
+
+Any comments on this? I've been blocking a bunch of patches in the hopes
+of getting this merged since it allows the Tegra DRM driver to be
+cleaned up a great deal, but if nobody's going to look at or comment on
+this I'll abandon this series and keep using the custom solution we've
+had for a while now.
 
 Thierry
 
---Kj7319i9nmIyA2yE
+--SUOF0GtieIMvvwua
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTfchGAAoJEN0jrNd/PrOhI6EP/381txkOGAGwx1wksTg3t3YS
-/avCyVyjnL51Qes3xs5OnvH9uQhEVS5dHrwiSJrDUafOYFtdS+E0bUAjuGtBFlBj
-ipJ2M+z+sXw+fpTDMvVmAT26q4ZD+WAyr2wBv5WPuFEallV0CzQc7vjmiwS3enLL
-bMGJaETU5kBSSPugUMqpns8AkY5JLQ4p7VjP6bGdTvbj0jc4n8QwQzgAXgKTVXXc
-E8mXsJrPCAD/819ZLBJvCeCflFj417dFyAgkAQErjz7Z9lNdrbqwKcOuFWNPK4HT
-/N3kS4HqkjQzyCbZ5n/+HJtyWhOHjLym6Bq8ircKEf5uoVhE4UvoQkkASIzrLS++
-zGCxF6ATF4aS67jAXD0gsCc6sEvBrWIKW2mafN2MDFjr23YnjZ4upBzw1cuXox3p
-IqgGabeUIAszCbNnKonlf5QGVMfvcSk+gg6tNNuC70gTNIA96f+7cjyxwT1NCABp
-o6I6zL+iI9J+VAwzJ0vQGTtJTtRKEZ5n+BYqWLC+ycdA1QaVLgaoLng4G/a6Md5b
-FqxKZr5IyYzxKqTRl3QGpog0WF/LWPv8+6mn0eTnNb6eZJMIYze+O6BrZQ5nWyJA
-jTADuLM6oMccsBWFzOvYhvb9wsG30xLtfq6odnOnVKJWqrpDqWnzZqsX9jtIfrGL
-HXhNxBQPn5sIRJGmFFtQ
-=6C3T
+iQIcBAEBAgAGBQJTfcnFAAoJEN0jrNd/PrOhcpsP/jJFHMbffrXN2ZjLgQVMlX80
+8HMVNcrD0pMUp/QdUHQGtT1ZRnnVNaGFWrHWx1MJUQY5xS3RJShPqpwJSj1rB6Z1
+FIda1NLNcHaKqzijW1OWW1eRb2M5xIrY9/rf7D9Y20iHK316RG9IyfCR02WB8Vz6
+Cd8v8qcjXsKFmzaJeXs4K/dl4M7N70Njz2SaCkt3dIWeqm1sZhh4gF8wr6cdoknL
+gM9lCENSf4fbZBU+0bkD7FsnZP5pbxmXKEqHIdeFRJ5QZAopwOCzzhdN3ld8sIxJ
+RAYTaG/NXDs1mmTSXyVq1qFRPEwxi+NxKWvaifYNiaW/5+1mVD6xr7B2Ng05Wgcx
+jg4v3b/xMxQ/xODjtNUi4y/toUpYRn6Wm293haxucGu8QHfvk2Dh53Ah1WMjOyKa
+QIa+hWxFh/YX5+D3vi32ZMOYg+U9rScDQBtAtedvPp5Vz1mSdl0W/2ij4d3ScCD5
+rtFsrahN0TUq31Kf2VFIZbmX/MO3ilM8kZFovxjZxP1WPa7N6L4yWfBCr0HcQYwy
+ZMFqwU0Q9hr9DMJCk6RtUWClJgaS4pTW3MyWaW+fv4qbmipKUilNiqdBagjRl8YV
+zsXa2e6l7eZurZFYY3/P6mtiRTU+h7rVOvaVw/B/zUQZB37kMlzyQJYG0lxMb6Z2
+r+Lahcd60sYCTHigWysK
+=5/ob
 -----END PGP SIGNATURE-----
 
---Kj7319i9nmIyA2yE--
+--SUOF0GtieIMvvwua--
+
+--===============1577866794==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============1577866794==--
