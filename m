@@ -1,93 +1,77 @@
-From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 2/2] mmc: tegra: fix reporting of base clock frequency
-Date: Fri, 23 May 2014 09:04:12 +0200
-Message-ID: <CAPDyKFqBcp7PZQ-04s02Jrqscna0UVex2DEbVPYghmRR8g9HnA@mail.gmail.com>
-References: <1400774136-12396-1-git-send-email-abrestic@chromium.org>
-	<1400774136-12396-2-git-send-email-abrestic@chromium.org>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC] drm/nouveau: disable caching for VRAM BOs on ARM
+Date: Fri, 23 May 2014 16:10:00 +0900
+Message-ID: <CAAVeFuLKTjaZPSxNSK3nEG+XK+mMmPDDq85qMF-EHp3bGwVJYA@mail.gmail.com>
+References: <1400492771-9746-1-git-send-email-acourbot@nvidia.com>
+ <1400493433.8467.24.camel@weser.hi.pengutronix.de>
+ <5379D7A0.3050509@nvidia.com>
+ <1400494582.8467.28.camel@weser.hi.pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1400774136-12396-2-git-send-email-abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Chris Ball <chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mmc <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <1400494582.8467.28.camel-WzVe3FnzCwFR6QfukMTsflXZhhPuCNm+@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 22 May 2014 17:55, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
-> Tegra SDHCI controllers, by default, report a base clock frequency
-> of 208Mhz in SDHCI_CAPABILTIES which may or may not be equal to the
-> actual base clock frequency.  This is because the clock rate is
-> configured by the clock controller, which is external to the SD/MMC
-> controller.  Since the SD/MMC controller has no knowledge of how this
-> clock is configured, it will simply report the maximum frequency.
-> While the reported value can be overridden by setting BASE_CLK_FREQ in
-> VENDOR_CLOCK_CTRL on Tegra30 and later SoCs, just set CAP_CLOCK_BASE_BROKEN
-> and supply sdhci_pltfm_clk_get_max_clock(), which simply does a
-> clk_get_rate(), as the get_max_clock() callback.
+On Mon, May 19, 2014 at 7:16 PM, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
+> Am Montag, den 19.05.2014, 19:06 +0900 schrieb Alexandre Courbot:
+>> On 05/19/2014 06:57 PM, Lucas Stach wrote:
+>> > Am Montag, den 19.05.2014, 18:46 +0900 schrieb Alexandre Courbot:
+>> >> This patch is not meant to be merged, but rather to try and understand
+>> >> why this is needed and what a more suitable solution could be.
+>> >>
+>> >> Allowing BOs to be write-cached results in the following happening when
+>> >> trying to run any program on Tegra/GK20A:
+>> >>
+>> >> Unhandled fault: external abort on non-linefetch (0x1008) at 0xf0036010
+>> >> ...
+>> >> (nouveau_bo_rd32) from [<c0357d00>] (nouveau_fence_update+0x5c/0x80)
+>> >> (nouveau_fence_update) from [<c0357d40>] (nouveau_fence_done+0x1c/0x38)
+>> >> (nouveau_fence_done) from [<c02c3d00>] (ttm_bo_wait+0xec/0x168)
+>> >> (ttm_bo_wait) from [<c035e334>] (nouveau_gem_ioctl_cpu_prep+0x44/0x100)
+>> >> (nouveau_gem_ioctl_cpu_prep) from [<c02aaa84>] (drm_ioctl+0x1d8/0x4f4)
+>> >> (drm_ioctl) from [<c0355394>] (nouveau_drm_ioctl+0x54/0x80)
+>> >> (nouveau_drm_ioctl) from [<c00ee7b0>] (do_vfs_ioctl+0x3dc/0x5a0)
+>> >> (do_vfs_ioctl) from [<c00ee9a8>] (SyS_ioctl+0x34/0x5c)
+>> >> (SyS_ioctl) from [<c000e6e0>] (ret_fast_syscall+0x0/0x30
+>> >>
+>> >> The offending nouveau_bo_rd32 is done over an IO-mapped BO, e.g. a BO
+>> >> mapped through the BAR.
+>> >>
+>> > Um wait, this memory is behind an already mapped bar? I think ioremap on
+>> > ARM defaults to uncached mappings, so if you want to access the memory
+>> > behind this bar as WC you need to map the BAR as a whole as WC by using
+>> > ioremap_wc.
+>>
+>> Tried mapping the BAR using ioremap_wc(), but to no avail. On the other
+>> hand, could it be that VRAM BOs end up creating a mapping over an
+>> already-mapped region? I seem to remember that ARM might not like it...
 >
-> Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-> Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Multiple mapping are generally allowed, as long as they have the same
+> caching state. It's conflicting mappings (uncached vs cached, or cached
+> vs wc), that are documented to yield undefined results.
 
-Thanks Andrew!
+Sorry about the confusion. The BAR is *not* mapped to the kernel yet
+(it is BAR1, there is no BAR3 on GK20A) and an ioremap_*() is
+performed in ttm_bo_ioremap() to make the part of the BAR where the
+buffer is mapped visible. It seems that doing an ioremap_wc() on the
+BAR area on Tegra is what leads to these errors. ioremap() or
+ioremap_nocache() (which are in effect the same on ARM) do not cause
+this issue.
 
-Signed-off-by: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-
-Chris, can you pick this up?
-
-Kind regards
-Ulf Hansson
-
-> ---
-> Changes from v2:
->  - rebased on mmc-next
-> Changes from v1:
->  - fixed up commit message per Stephen's suggestions
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index 4375cd4..d93a063 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -154,13 +154,15 @@ static const struct sdhci_ops tegra_sdhci_ops = {
->         .set_bus_width = tegra_sdhci_set_bus_width,
->         .reset      = tegra_sdhci_reset,
->         .set_uhs_signaling = sdhci_set_uhs_signaling,
-> +       .get_max_clock = sdhci_pltfm_clk_get_max_clock,
->  };
->
->  static const struct sdhci_pltfm_data sdhci_tegra20_pdata = {
->         .quirks = SDHCI_QUIRK_BROKEN_TIMEOUT_VAL |
->                   SDHCI_QUIRK_SINGLE_POWER_WRITE |
->                   SDHCI_QUIRK_NO_HISPD_BIT |
-> -                 SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC,
-> +                 SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
-> +                 SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
->         .ops  = &tegra_sdhci_ops,
->  };
->
-> @@ -175,7 +177,8 @@ static const struct sdhci_pltfm_data sdhci_tegra30_pdata = {
->                   SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
->                   SDHCI_QUIRK_SINGLE_POWER_WRITE |
->                   SDHCI_QUIRK_NO_HISPD_BIT |
-> -                 SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC,
-> +                 SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
-> +                 SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
->         .ops  = &tegra_sdhci_ops,
->  };
->
-> @@ -191,7 +194,8 @@ static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
->                   SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
->                   SDHCI_QUIRK_SINGLE_POWER_WRITE |
->                   SDHCI_QUIRK_NO_HISPD_BIT |
-> -                 SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC,
-> +                 SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
-> +                 SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
->         .ops  = &tegra_sdhci_ops,
->  };
->
-> --
-> 1.9.1.423.g4596e3a
->
+The best way to solve this issue would be to not use the BAR at all
+since the memory behind these objects can be directly accessed by the
+CPU. As such it would better be mapped using ttm_bo_kmap_ttm()
+instead. But right now this is clearly not how nouveau_bo.c is written
+and it does not look like this can easily be done. :/
