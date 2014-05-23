@@ -1,81 +1,119 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 4/4] drm/nouveau: introduce CPU cache flushing macro
-Date: Fri, 23 May 2014 15:58:30 +0900
-Message-ID: <CAAVeFu+TaRahuv+7e90W5ZOH86jT4Nt3k0O24dZKX-DgQQqp5w@mail.gmail.com>
-References: <1400483458-9648-1-git-send-email-acourbot@nvidia.com>
- <1400483458-9648-5-git-send-email-acourbot@nvidia.com> <20140519090202.GC7138@ulmo>
- <1400491331.8467.8.camel@weser.hi.pengutronix.de> <20140519100316.GE7138@ulmo>
+From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v3 1/2] mmc: tegra: disable UHS modes
+Date: Fri, 23 May 2014 09:03:33 +0200
+Message-ID: <CAPDyKFpt98rbFpvu1uzbOuhCTrO96hzQU2VwNRgJGfoi_7F-OA@mail.gmail.com>
+References: <1400774136-12396-1-git-send-email-abrestic@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140519100316.GE7138@ulmo>
+In-Reply-To: <1400774136-12396-1-git-send-email-abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Chris Ball <chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mmc <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, May 19, 2014 at 7:03 PM, Thierry Reding
-<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Mon, May 19, 2014 at 11:22:11AM +0200, Lucas Stach wrote:
->> Am Montag, den 19.05.2014, 11:02 +0200 schrieb Thierry Reding:
->> > On Mon, May 19, 2014 at 04:10:58PM +0900, Alexandre Courbot wrote:
->> > > Some architectures (e.g. ARM) need the CPU buffers to be explicitely
->> > > flushed for a memory write to take effect. Not doing so results in
->> > > synchronization issues, especially after writing to BOs.
->> >
->> > It seems to me that the above is generally true for all architectures,
->> > not just ARM.
->> >
->> No, on PCI coherent arches, like x86 and some PowerPCs, the GPU will
->> snoop the CPU caches and therefore an explicit cache flush is not
->> required.
+On 22 May 2014 17:55, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+> Program TEGRA_SDHCI_VENDOR_MISC_CTRL so that UHS modes aren't advertised
+> in SDHCI_CAPABILITIES_1.  While the Tegra SDHCI controller does support
+> these modes, they require Tegra-specific tuning and calibration routines
+> which the driver does not support yet.
 >
-> I was criticizing the wording in the commit message. Perhaps it could be
-> enhanced with what you just said.
->
->> > > diff --git a/drivers/gpu/drm/nouveau/nouveau_bo.c b/drivers/gpu/drm/nouveau/nouveau_bo.c
->> > [...]
->> > > index 0886f47e5244..b9c9729c5733 100644
->> > > --- a/drivers/gpu/drm/nouveau/nouveau_bo.c
->> > > +++ b/drivers/gpu/drm/nouveau/nouveau_bo.c
->> > > @@ -437,8 +437,10 @@ nouveau_bo_wr16(struct nouveau_bo *nvbo, unsigned index, u16 val)
->> > >   mem = &mem[index];
->> > >   if (is_iomem)
->> > >           iowrite16_native(val, (void __force __iomem *)mem);
->> > > - else
->> > > + else {
->> > >           *mem = val;
->> > > +         nv_cpu_cache_flush_area(mem, 2);
->> > > + }
->> > >  }
->> > >
->> > >  u32
->> > > @@ -461,8 +463,10 @@ nouveau_bo_wr32(struct nouveau_bo *nvbo, unsigned index, u32 val)
->> > >   mem = &mem[index];
->> > >   if (is_iomem)
->> > >           iowrite32_native(val, (void __force __iomem *)mem);
->> > > - else
->> > > + else {
->> > >           *mem = val;
->> > > +         nv_cpu_cache_flush_area(mem, 4);
->> > > + }
->> >
->> > This looks rather like a sledgehammer to me. Effectively this turns nvbo
->> > into an uncached buffer. With additional overhead of constantly flushing
->> > caches. Wouldn't it make more sense to locate the places where these are
->> > called and flush the cache after all the writes have completed?
->> >
->> I don't think the explicit flushing for those things makes sense. I
->> think it is a lot more effective to just map the BOs write-combined on
->> PCI non-coherent arches. This way any writes will be buffered. Reads
->> will be slow, but I don't think nouveau is reading back a lot from those
->> buffers.
->> Using the write-combining buffer doesn't need any additional
->> synchronization as it will get flushed on pushbuf kickoff anyways.
->
-> Sounds good to me.
+> Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I will need to wrap my head around TTM some more to understand how to
-do this the right way, but it is true that brute-forcing in-memory BO
-mappings to be WC make the addition of nv_cpu_cache_flush_area()
-unneeded. Is that the direction we want to take with this?
+Thanks Andrew!
+
+Signed-off-by: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+
+Chris, can you pick this up?
+
+Kind regards
+Ulf Hansson
+
+> ---
+> Changes from v2:
+>  - rebased on mmc-next
+> No changes from v1
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 30 +++++++++++++++++++++++-------
+>  1 file changed, 23 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index 9852476..4375cd4 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -32,11 +32,17 @@
+>
+>  /* Tegra SDHOST controller vendor register definitions */
+>  #define SDHCI_TEGRA_VENDOR_MISC_CTRL           0x120
+> +#define SDHCI_MISC_CTRL_ENABLE_SDR104          0x8
+> +#define SDHCI_MISC_CTRL_ENABLE_SDR50           0x10
+>  #define SDHCI_MISC_CTRL_ENABLE_SDHCI_SPEC_300  0x20
+> +#define SDHCI_MISC_CTRL_ENABLE_DDR50           0x200
+>
+>  #define NVQUIRK_FORCE_SDHCI_SPEC_200   BIT(0)
+>  #define NVQUIRK_ENABLE_BLOCK_GAP_DET   BIT(1)
+>  #define NVQUIRK_ENABLE_SDHCI_SPEC_300  BIT(2)
+> +#define NVQUIRK_DISABLE_SDR50          BIT(3)
+> +#define NVQUIRK_DISABLE_SDR104         BIT(4)
+> +#define NVQUIRK_DISABLE_DDR50          BIT(5)
+>
+>  struct sdhci_tegra_soc_data {
+>         const struct sdhci_pltfm_data *pdata;
+> @@ -100,20 +106,25 @@ static void tegra_sdhci_reset(struct sdhci_host *host, u8 mask)
+>         struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>         struct sdhci_tegra *tegra_host = pltfm_host->priv;
+>         const struct sdhci_tegra_soc_data *soc_data = tegra_host->soc_data;
+> +       u32 misc_ctrl;
+>
+>         sdhci_reset(host, mask);
+>
+>         if (!(mask & SDHCI_RESET_ALL))
+>                 return;
+>
+> +       misc_ctrl = sdhci_readw(host, SDHCI_TEGRA_VENDOR_MISC_CTRL);
+>         /* Erratum: Enable SDHCI spec v3.00 support */
+> -       if (soc_data->nvquirks & NVQUIRK_ENABLE_SDHCI_SPEC_300) {
+> -               u32 misc_ctrl;
+> -
+> -               misc_ctrl = sdhci_readb(host, SDHCI_TEGRA_VENDOR_MISC_CTRL);
+> +       if (soc_data->nvquirks & NVQUIRK_ENABLE_SDHCI_SPEC_300)
+>                 misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDHCI_SPEC_300;
+> -               sdhci_writeb(host, misc_ctrl, SDHCI_TEGRA_VENDOR_MISC_CTRL);
+> -       }
+> +       /* Don't advertise UHS modes which aren't supported yet */
+> +       if (soc_data->nvquirks & NVQUIRK_DISABLE_SDR50)
+> +               misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_SDR50;
+> +       if (soc_data->nvquirks & NVQUIRK_DISABLE_DDR50)
+> +               misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_DDR50;
+> +       if (soc_data->nvquirks & NVQUIRK_DISABLE_SDR104)
+> +               misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_SDR104;
+> +       sdhci_writew(host, misc_ctrl, SDHCI_TEGRA_VENDOR_MISC_CTRL);
+>  }
+>
+>  static void tegra_sdhci_set_bus_width(struct sdhci_host *host, int bus_width)
+> @@ -170,7 +181,9 @@ static const struct sdhci_pltfm_data sdhci_tegra30_pdata = {
+>
+>  static struct sdhci_tegra_soc_data soc_data_tegra30 = {
+>         .pdata = &sdhci_tegra30_pdata,
+> -       .nvquirks = NVQUIRK_ENABLE_SDHCI_SPEC_300,
+> +       .nvquirks = NVQUIRK_ENABLE_SDHCI_SPEC_300 |
+> +                   NVQUIRK_DISABLE_SDR50 |
+> +                   NVQUIRK_DISABLE_SDR104,
+>  };
+>
+>  static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
+> @@ -184,6 +197,9 @@ static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
+>
+>  static struct sdhci_tegra_soc_data soc_data_tegra114 = {
+>         .pdata = &sdhci_tegra114_pdata,
+> +       .nvquirks = NVQUIRK_DISABLE_SDR50 |
+> +                   NVQUIRK_DISABLE_DDR50 |
+> +                   NVQUIRK_DISABLE_SDR104,
+>  };
+>
+>  static const struct of_device_id sdhci_tegra_dt_match[] = {
+> --
+> 1.9.1.423.g4596e3a
+>
