@@ -1,212 +1,121 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ASoC: tegra: free jack GPIOs before the sound card is freed
-Date: Thu, 22 May 2014 16:14:53 -0600
-Message-ID: <1400796893-29540-1-git-send-email-swarren@wwwdotorg.org>
+From: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: tegra: Add Tegra124 HDA support
+Date: Thu, 22 May 2014 20:55:54 -0700
+Message-ID: <CAEUnVG42Fmn4QOu-jObpoyViscmfKn35oDmb=WR8t=X7YVSB=Q@mail.gmail.com>
+References: <CAEUnVG7+=1ko8NL1Z3ovSpGveUADUidy4sBhU_dTUe1zbe-bMA@mail.gmail.com>
+ <537BCF39.6050909@wwwdotorg.org> <CAEUnVG7CRWx5Y3RsgPzrHgYRGAx=bS4WY=w1xBUw0Ukt0DTdUQ@mail.gmail.com>
+ <20140521205538.GA6237@mithrandir> <CAEUnVG7tDjw_6wHc=FN0KsOKsSS1u8H8SzYdxt9VCwUsARRTeQ@mail.gmail.com>
+ <20140522094958.GA11585@ulmo> <CAEUnVG5pNMzDoXGso+UiAWPpD0hNPhBPyGr8KfV587AuU70QPQ@mail.gmail.com>
+ <537E39D9.2000304@wwwdotorg.org> <CAEUnVG4UettOj0xDy+f6qEhUbhNs=u-wgyCf_Prsd2JpnmFfLw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAEUnVG4UettOj0xDy+f6qEhUbhNs=u-wgyCf_Prsd2JpnmFfLw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Thu, May 22, 2014 at 11:05 AM, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+> On Thu, May 22, 2014 at 10:54 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>> On 05/22/2014 11:48 AM, Dylan Reid wrote:
+>>> On Thu, May 22, 2014 at 2:50 AM, Thierry Reding
+>>> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>>>> On Wed, May 21, 2014 at 02:10:09PM -0700, Dylan Reid wrote:
+>>>>> On Wed, May 21, 2014 at 1:55 PM, Thierry Reding
+>>>>> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>>>>>> On Tue, May 20, 2014 at 04:28:45PM -0700, Dylan Reid wrote:
+>>>>>>> On Tue, May 20, 2014 at 2:55 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>>>>>>>> On 05/20/2014 02:37 PM, Dylan Reid wrote:
+>>>>>>>>> On Tue, May 20, 2014 at 11:31 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>>>>>>>>>> On 05/20/2014 12:24 PM, Stephen Warren wrote:
+>>>>>>>>>>> On 05/19/2014 08:35 PM, Dylan Reid wrote:
+>>>>>>>>>>>> Add a device node for the HDA controller found on Tegra124.
+>>>>>>>> ...
+>>>>>>>>>> Even after fixing that, I can't play audio on Venice2:
+>>>>>>>>>>
+>>>>>>>>>> root@localhost:~# speaker-test -Dhw:0,3 -c 2
+>>>>>>>>>>
+>>>>>>>>>> speaker-test 1.0.27.1
+>>>>>>>>>>
+>>>>>>>>>> Playback device is hw:0,3
+>>>>>>>>>> Stream parameters are 48000Hz, S16_LE, 2 channels
+>>>>>>>>>> Using 16 octaves of pink noise
+>>>>>>>>>> Rate set to 48000Hz (requested 48000Hz)
+>>>>>>>>>> Buffer size range from 64 to 16384
+>>>>>>>>>> Period size range from 32 to 8192
+>>>>>>>>>> Using max buffer size 16384
+>>>>>>>>>> Periods = 4
+>>>>>>>>>> was set period_size = 4096
+>>>>>>>>>> was set buffer_size = 16384
+>>>>>>>>>>  0 - Front Left
+>>>>>>>>>> Write error: -32,Broken pipe
+>>>>>>>>>> Write error: -32,Broken pipe
+>>>>>>>>>> Write error: -32,Broken pipe
+>>>>>>>>>> ^C 1 - Front Right
+>>>>>>>>>> Time per period = 1.799791
+>>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> Thanks for checking Stephen.  I'll fix the reset name.
+>>>>>>>>>
+>>>>>>>>> This is the state of the tree I used when I tested on Venice2 just now:
+>>>>>>>>> * ae57dbf - (HEAD) ARM: tegra: venice2 - Enable HDA (2 minutes ago)
+>>>>>>>>> * 6224524 - ARM: tegra: Add Tegra124 HDA support (2 minutes ago)
+>>>>>>>>> * 468ca57 - ALSA: hda - Add driver for Tegra SoC HDA (2 minutes ago)
+>>>>>>>>> * 928099e - ALSA: hda/hdmi - Add Nvidia Tegra124 HDMI support (2 minutes ago)
+>>>>>>>>> * 701eac4 - clk: tegra124: Enable hda to hdmi clocks (3 minutes ago)
+>>>>>>>>
+>>>>>>>> Ah, I was missing that clock patch. Hopefully Peter will pick it up for
+>>>>>>>> the Tegra clock tree soon.
+>>>>>>>>
+>>>>>>>> Now I have the same results as Thierry; speaker-test looks like it
+>>>>>>>> should be working, yet I don't hear any audio from the monitor. I know
+>>>>>>>> the monitor works, since I've used it extensively for testing GeForce
+>>>>>>>> GPU HDMI audio.
+>>>>>>>
+>>>>>>> Probably a silly question: Is it un-muted?
+>>>>>>> amixer -c0 cset name='IEC958 Playback Switch' on
+>>>>>>
+>>>>>> Dylan, can you provide more detail about the setup that you're running?
+>>>>>> There have been similar issues in the past where a driver would work if
+>>>>>> it was run on an identical upstream kernel but with a different version
+>>>>>> of the bootloader (or a different bootloader altogether). Can you give
+>>>>>> further details about your setup? Also perhaps providing a dmesg log or
+>>>>>> the clock tree from /sys/kernel/debug/clk/clk_summary could help
+>>>>>> determine the diff between a working and a non-working setup.
+>>>>>
+>>>>> Sure.  I'm running this u-boot:
+>>>>> https://chromium.googlesource.com/chromiumos/third_party/u-boot
+>>>>> on commit ddde3e9 of the chromeos-v2013.06 branch.
+>>>>>
+>>>>> I haven't had a chance to flash swarren's u-boot yet it's been one of
+>>>>> those days...
+>>>>>
+>>>>> I attached dmesg and clk_summary.
+>>>>>
+>>>>> I don't have many modifications to the ubuntu-core rootfs.
+>>>>>
+>>>>> Thanks for looking at this,
+>>>>
+>>>> Also perhaps you can share any change to tegra_defconfig that you have
+>>>> for this. Perhaps Stephen and I are simply missing some required option
+>>>> to make it work.
+>>>
+>>> Sure, here is the diff from linux-next's tegra defconfig.  Still on
+>>> the tree mentioned above.
+>>
+>> My .config does include all the options that your defconfig diff adds.
+>
+> OK.  I'll try to dig myself out from these other bugs and give this a
+> try on the Jetson this afternoon.
 
-snd_soc_jack_add_gpios() schedules a work queue item to poll the GPIO to
-generate an initial jack status report. If sound card initialization
-fails, that work item needs to be cancelled, so it doesn't run after the
-card has been freed. Specifically, freeing the card calls
-snd_jack_dev_free() which calls snd_jack_dev_disconnect() which sets
-jack->input_dev = NULL, and input_dev is used by snd_jack_report(), which
-is called from the work queue item.
+Took all day, but I did get to try this.
 
-snd_soc_jack_free_gpios() cancels the work item. The Tegra ASoC machine
-drivers do call this function in the platform driver remove() callback.
-However, this happens after the sound card is freed, at least when the
-card is freed due to errors late during snd_soc_instantiate_card(). This
-leaves a window where the work item can execute after the card is freed.
-In next-20140522, sound card initialization does fail for unrelated
-reasons, and hits the problem described above.
+on U-Boot commit d7782d0, flashed with Stephen's u-boot flasher from github.
 
-To solve this, fix the Tegra ASoC machine drivers to clean up the Jack
-GPIOs during the snd_soc_card's .remove() callback, which is executed
-before the overall card object is freed. also, gGuard the cleanup call
-based on whether we actually setup up the GPIOs in the first place.
-Ideally, we'd do the cleanup in a struct snd_soc_dai_link .fini/remove
-function to match where the GPIOs get set up. However, there is no such
-callback.
+And kernel at 81d0207 - ARM: tegra: enable HD-Audio controller in defconfig
+plus the addition of the hda node "okay"  to the jetson-tk1 DT.
 
-This change fixes all Tegra machine drivers. By code inspection, I
-believe some non-Tegra machine drivers have the same issue. I'll send a
-patch for that separately, once this is reviewed.
-
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Should this be Cc: stable?
----
- sound/soc/tegra/tegra_alc5632.c  | 16 +++++++++++++---
- sound/soc/tegra/tegra_max98090.c | 16 +++++++++++++---
- sound/soc/tegra/tegra_rt5640.c   | 16 +++++++++++++---
- sound/soc/tegra/tegra_wm8903.c   | 11 ++++++-----
- 4 files changed, 45 insertions(+), 14 deletions(-)
-
-diff --git a/sound/soc/tegra/tegra_alc5632.c b/sound/soc/tegra/tegra_alc5632.c
-index c61ea3a1030f..02734bd4f09b 100644
---- a/sound/soc/tegra/tegra_alc5632.c
-+++ b/sound/soc/tegra/tegra_alc5632.c
-@@ -125,6 +125,18 @@ static int tegra_alc5632_asoc_init(struct snd_soc_pcm_runtime *rtd)
- 	return 0;
- }
- 
-+static int tegra_alc5632_card_remove(struct snd_soc_card *card)
-+{
-+	struct tegra_alc5632 *machine = snd_soc_card_get_drvdata(card);
-+
-+	if (gpio_is_valid(machine->gpio_hp_det)) {
-+		snd_soc_jack_free_gpios(&tegra_alc5632_hs_jack, 1,
-+					&tegra_alc5632_hp_jack_gpio);
-+	}
-+
-+	return 0;
-+}
-+
- static struct snd_soc_dai_link tegra_alc5632_dai = {
- 	.name = "ALC5632",
- 	.stream_name = "ALC5632 PCM",
-@@ -139,6 +151,7 @@ static struct snd_soc_dai_link tegra_alc5632_dai = {
- static struct snd_soc_card snd_soc_tegra_alc5632 = {
- 	.name = "tegra-alc5632",
- 	.owner = THIS_MODULE,
-+	.remove = tegra_alc5632_card_remove,
- 	.dai_link = &tegra_alc5632_dai,
- 	.num_links = 1,
- 	.controls = tegra_alc5632_controls,
-@@ -223,9 +236,6 @@ static int tegra_alc5632_remove(struct platform_device *pdev)
- 	struct snd_soc_card *card = platform_get_drvdata(pdev);
- 	struct tegra_alc5632 *machine = snd_soc_card_get_drvdata(card);
- 
--	snd_soc_jack_free_gpios(&tegra_alc5632_hs_jack, 1,
--				&tegra_alc5632_hp_jack_gpio);
--
- 	snd_soc_unregister_card(card);
- 
- 	tegra_asoc_utils_fini(&machine->util_data);
-diff --git a/sound/soc/tegra/tegra_max98090.c b/sound/soc/tegra/tegra_max98090.c
-index 0283cfb7c031..ce73e1f62c4b 100644
---- a/sound/soc/tegra/tegra_max98090.c
-+++ b/sound/soc/tegra/tegra_max98090.c
-@@ -145,6 +145,18 @@ static int tegra_max98090_asoc_init(struct snd_soc_pcm_runtime *rtd)
- 	return 0;
- }
- 
-+static int tegra_max98090_card_remove(struct snd_soc_card *card)
-+{
-+	struct tegra_max98090 *machine = snd_soc_card_get_drvdata(card);
-+
-+	if (gpio_is_valid(machine->gpio_hp_det)) {
-+		snd_soc_jack_free_gpios(&tegra_max98090_hp_jack, 1,
-+					&tegra_max98090_hp_jack_gpio);
-+	}
-+
-+	return 0;
-+}
-+
- static struct snd_soc_dai_link tegra_max98090_dai = {
- 	.name = "max98090",
- 	.stream_name = "max98090 PCM",
-@@ -158,6 +170,7 @@ static struct snd_soc_dai_link tegra_max98090_dai = {
- static struct snd_soc_card snd_soc_tegra_max98090 = {
- 	.name = "tegra-max98090",
- 	.owner = THIS_MODULE,
-+	.remove = tegra_max98090_card_remove,
- 	.dai_link = &tegra_max98090_dai,
- 	.num_links = 1,
- 	.controls = tegra_max98090_controls,
-@@ -241,9 +254,6 @@ static int tegra_max98090_remove(struct platform_device *pdev)
- 	struct snd_soc_card *card = platform_get_drvdata(pdev);
- 	struct tegra_max98090 *machine = snd_soc_card_get_drvdata(card);
- 
--	snd_soc_jack_free_gpios(&tegra_max98090_hp_jack, 1,
--				&tegra_max98090_hp_jack_gpio);
--
- 	snd_soc_unregister_card(card);
- 
- 	tegra_asoc_utils_fini(&machine->util_data);
-diff --git a/sound/soc/tegra/tegra_rt5640.c b/sound/soc/tegra/tegra_rt5640.c
-index 4511c5a875ec..4feb16a99e02 100644
---- a/sound/soc/tegra/tegra_rt5640.c
-+++ b/sound/soc/tegra/tegra_rt5640.c
-@@ -128,6 +128,18 @@ static int tegra_rt5640_asoc_init(struct snd_soc_pcm_runtime *rtd)
- 	return 0;
- }
- 
-+static int tegra_rt5640_card_remove(struct snd_soc_card *card)
-+{
-+	struct tegra_rt5640 *machine = snd_soc_card_get_drvdata(card);
-+
-+	if (gpio_is_valid(machine->gpio_hp_det)) {
-+		snd_soc_jack_free_gpios(&tegra_rt5640_hp_jack, 1,
-+					&tegra_rt5640_hp_jack_gpio);
-+	}
-+
-+	return 0;
-+}
-+
- static struct snd_soc_dai_link tegra_rt5640_dai = {
- 	.name = "RT5640",
- 	.stream_name = "RT5640 PCM",
-@@ -141,6 +153,7 @@ static struct snd_soc_dai_link tegra_rt5640_dai = {
- static struct snd_soc_card snd_soc_tegra_rt5640 = {
- 	.name = "tegra-rt5640",
- 	.owner = THIS_MODULE,
-+	.remove = tegra_rt5640_card_remove,
- 	.dai_link = &tegra_rt5640_dai,
- 	.num_links = 1,
- 	.controls = tegra_rt5640_controls,
-@@ -224,9 +237,6 @@ static int tegra_rt5640_remove(struct platform_device *pdev)
- 	struct snd_soc_card *card = platform_get_drvdata(pdev);
- 	struct tegra_rt5640 *machine = snd_soc_card_get_drvdata(card);
- 
--	snd_soc_jack_free_gpios(&tegra_rt5640_hp_jack, 1,
--				&tegra_rt5640_hp_jack_gpio);
--
- 	snd_soc_unregister_card(card);
- 
- 	tegra_asoc_utils_fini(&machine->util_data);
-diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
-index 4ac73730d79a..0939661df60b 100644
---- a/sound/soc/tegra/tegra_wm8903.c
-+++ b/sound/soc/tegra/tegra_wm8903.c
-@@ -206,6 +206,12 @@ static int tegra_wm8903_remove(struct snd_soc_card *card)
- 	struct snd_soc_pcm_runtime *rtd = &(card->rtd[0]);
- 	struct snd_soc_dai *codec_dai = rtd->codec_dai;
- 	struct snd_soc_codec *codec = codec_dai->codec;
-+	struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(card);
-+
-+	if (gpio_is_valid(machine->gpio_hp_det)) {
-+		snd_soc_jack_free_gpios(&tegra_wm8903_hp_jack, 1,
-+					&tegra_wm8903_hp_jack_gpio);
-+	}
- 
- 	wm8903_mic_detect(codec, NULL, 0, 0);
- 
-@@ -228,9 +234,7 @@ static struct snd_soc_card snd_soc_tegra_wm8903 = {
- 	.owner = THIS_MODULE,
- 	.dai_link = &tegra_wm8903_dai,
- 	.num_links = 1,
--
- 	.remove = tegra_wm8903_remove,
--
- 	.controls = tegra_wm8903_controls,
- 	.num_controls = ARRAY_SIZE(tegra_wm8903_controls),
- 	.dapm_widgets = tegra_wm8903_dapm_widgets,
-@@ -368,9 +372,6 @@ static int tegra_wm8903_driver_remove(struct platform_device *pdev)
- 	struct snd_soc_card *card = platform_get_drvdata(pdev);
- 	struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(card);
- 
--	snd_soc_jack_free_gpios(&tegra_wm8903_hp_jack, 1,
--				&tegra_wm8903_hp_jack_gpio);
--
- 	snd_soc_unregister_card(card);
- 
- 	tegra_asoc_utils_fini(&machine->util_data);
--- 
-1.8.1.5
+I can hear the jetson's audio on the TV.  This is currently a sample
+size of one TV, I'll set up the Quantum Data tomorrow and check that
+it works there as well.
