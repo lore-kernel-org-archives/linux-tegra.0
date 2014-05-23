@@ -1,96 +1,51 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v2 0/7] drm/tegra: Convert to master/component framework
-Date: Fri, 23 May 2014 20:03:00 +0900
-Message-ID: <20140523110300.GA24374@kroah.com>
-References: <1399995050-28435-1-git-send-email-thierry.reding@gmail.com>
- <20140522095621.GA11613@ulmo>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: tegra: Add Tegra124 HDA support
+Date: Fri, 23 May 2014 13:05:15 -0600
+Message-ID: <537F9BEB.5020102@wwwdotorg.org>
+References: <CAEUnVG7+=1ko8NL1Z3ovSpGveUADUidy4sBhU_dTUe1zbe-bMA@mail.gmail.com> <537BCF39.6050909@wwwdotorg.org> <CAEUnVG7CRWx5Y3RsgPzrHgYRGAx=bS4WY=w1xBUw0Ukt0DTdUQ@mail.gmail.com> <20140521205538.GA6237@mithrandir> <CAEUnVG7tDjw_6wHc=FN0KsOKsSS1u8H8SzYdxt9VCwUsARRTeQ@mail.gmail.com> <20140522094958.GA11585@ulmo> <CAEUnVG5pNMzDoXGso+UiAWPpD0hNPhBPyGr8KfV587AuU70QPQ@mail.gmail.com> <537E39D9.2000304@wwwdotorg.org> <CAEUnVG4UettOj0xDy+f6qEhUbhNs=u-wgyCf_Prsd2JpnmFfLw@mail.gmail.com> <CAEUnVG42Fmn4QOu-jObpoyViscmfKn35oDmb=WR8t=X7YVSB=Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20140522095621.GA11613@ulmo>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAEUnVG42Fmn4QOu-jObpoyViscmfKn35oDmb=WR8t=X7YVSB=Q@mail.gmail.com>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, May 22, 2014 at 11:56:23AM +0200, Thierry Reding wrote:
-> On Tue, May 13, 2014 at 05:30:43PM +0200, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> > 
-> > Hi,
-> > 
-> > This series converts the Tegra DRM driver to the master/component
-> > framework. The length of the series and the list of people in Cc is
-> > mostly due to the fact that Tegra has some special requirements as
-> > opposed to other drivers and therefore requires some changes outside
-> > of DRM.
-> > 
-> > Patch 1 introduces a helper function that can be used by new DRM drivers
-> > that don't rely on legacy userspace ABIs. It allows them to register DRM
-> > devices much more easily and without much of the midlayer that currently
-> > exists in the DRM subsystem.
-> > 
-> > Patches 2 and 3 make some changes to the master/component framework
-> > which are necessary to convert Tegra DRM to use it. All current users of
-> > the API have been converted as part of this patch. Note that at the same
-> > time the drivers are converted to no longer use drm_platform_init() in
-> > favour of the drm_set_unique() from patch 1 in conjunction with
-> > drm_dev_alloc() and drm_dev_register(). I would've liked to avoid such
-> > invasive changes in a single patch, but unfortunately I couldn't think
-> > of a way how to do that. I'm open to suggestions.
-> > 
-> > Patch 4 adds a new interface framework that supplements the master/
-> > component framework and can be used in situations where there is no
-> > struct device * that a driver can bind to.
-> > 
-> > The Tegra DRM driver is converted to using the master/component
-> > framework in patch 5 using the above four patches.
-> > 
-> > Finally patches 6 and 7 add some documentation about the new way of
-> > registering DRM devices that don't need legacy support.
-> > 
-> > Each patch has a somewhat more elaborate description of why it is needed
-> > or what problem it solves. The patchset applies on top of linux-next.
-> > 
-> > I welcome any questions or comments you might have.
-> > 
-> > Thierry
-> > 
-> > Thierry Reding (7):
-> >   drm: Introduce drm_set_unique()
-> >   drivers/base: Allow driver-data to be attached to a master
-> >   drivers/base: Allow multiple masters per device
-> >   drivers/base: Add interface framework
-> >   drm/tegra: Convert to master/component framework
-> >   drm: Add device registration documentation
-> >   drm: Document how to register devices without struct drm_bus
+On 05/22/2014 09:55 PM, Dylan Reid wrote:
+...
+>>>>>>>> On Tue, May 20, 2014 at 2:55 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+...
+>>>>>>>>> Now I have the same results as Thierry; speaker-test looks like it
+>>>>>>>>> should be working, yet I don't hear any audio from the monitor. I know
+>>>>>>>>> the monitor works, since I've used it extensively for testing GeForce
+>>>>>>>>> GPU HDMI audio.
+...
+> Took all day, but I did get to try this.
 > 
-> Greg, Russell,
+> on U-Boot commit d7782d0, flashed with Stephen's u-boot flasher from github.
 > 
-> Any comments on this? I've been blocking a bunch of patches in the hopes
-> of getting this merged since it allows the Tegra DRM driver to be
-> cleaned up a great deal, but if nobody's going to look at or comment on
-> this I'll abandon this series and keep using the custom solution we've
-> had for a while now.
+> And kernel at 81d0207 - ARM: tegra: enable HD-Audio controller in defconfig
+> plus the addition of the hda node "okay"  to the jetson-tk1 DT.
+> 
+> I can hear the jetson's audio on the TV.  This is currently a sample
+> size of one TV, I'll set up the Quantum Data tomorrow and check that
+> it works there as well.
 
-I'd like Russell to comment on this, as he just added some driver core
-work to do drm device work that seems to me to be much the same here.
+I tried that same U-Boot commit (with a few device-mode USB patches on
+top that shouldn't affect anything since I didn't use USB device mode)
+and have the same results.
 
-There's also the work that the media developers are working on to handle
-power management issues that seem to also be hitting the same area.  Due
-to all of that, I really don't want to add yet-another-driver-core
-addition for just one drm driver, all of them should be able to use it.
+My monitor is a Dell U2410 with sound bar.
 
-thanks,
+I did notice one strange thing: /proc/asound/card0/eld#3.0 said:
 
-greg k-h
+monitor_present		0
+eld_valid		0
+
+This is odd, since ELD information really should be present. Perhaps
+tegradrm simply doesn't have the code to set up an eld yet though?
+Anyway, I thought that in the absence of ELD information, ALSA core fell
+back to allowing arbitrary audio formats to be used in the hope they'd
+work anyway, so perhaps this isn't an issue.
