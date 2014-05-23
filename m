@@ -1,75 +1,96 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 2/5] ARM: tegra: of: add GK20A device tree
-	binding
-Date: Fri, 23 May 2014 16:13:47 +0900
-Message-ID: <CAAVeFuK_DbvukzvnNrDLOLPAYThEoy-TMgU65COa1xUHyChFUQ@mail.gmail.com>
-References: <1400491450-19223-1-git-send-email-acourbot@nvidia.com>
- <1400491450-19223-3-git-send-email-acourbot@nvidia.com>
- <537A7450.5030904@wwwdotorg.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 2/4] drm/ttm: introduce dma cache sync helpers
+Date: Fri, 23 May 2014 09:31:59 +0200
+Message-ID: <20140523073159.GE6310@ulmo>
+References: <1400483458-9648-1-git-send-email-acourbot@nvidia.com>
+ <1400483458-9648-3-git-send-email-acourbot@nvidia.com>
+ <20140519083355.GA7138@ulmo>
+ <CAAVeFuKCx677Uxcu3XNLkU+er-GBAxqdj_hUDUXHwUN+CS5EsA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <537A7450.5030904-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============1444988969=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAAVeFuKCx677Uxcu3XNLkU+er-GBAxqdj_hUDUXHwUN+CS5EsA@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ben Skeggs <bskeggs@redhat.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, May 20, 2014 at 6:14 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 05/19/2014 03:24 AM, Alexandre Courbot wrote:
->> Add the device tree binding documentation for the GK20A GPU used in
->> Tegra K1 SoCs.
->
-> A few minor nits, but otherwise,
-> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
->> diff --git a/Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt b/Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt
->
->> +Required properties:
->> +- compatible: "nvidia,<chip>-<gpu>"
->> +  Currently recognized values:
->> +  - nvidia,tegra124-gk20a
->> +- reg: Physical base address and length of the controller's registers.
->> +  Must contain two entries:
->> +  - first entry for bar0
->> +  - second entry for bar1
->> +- interrupts: The interrupt outputs from the controller.
->
-> To be consistent with the clocks and resets properties, it'd be nice to
-> reword that as:
->
-> interrupts: Must contain an entry for each entry in interrupt-names.
->
->> +- interrupt-names: Must include the following entries:
->
-> ... and add the following here:
->
-> See ../interrupt-controller/interrupts.txt
->
->> +/ {
->
-> No need to wrap a root node around this in the example.
->
->> +     gpu@0,57000000 {
-> ...
->> +     };
->> +
->
-> Extra blank line here.
->
->> +};
->
 
-All fixed and acked-by added to the commit log.
+--===============1444988969==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="hwvH6HDNit2nSK4j"
+Content-Disposition: inline
 
-Thanks,
-Alex.
+
+--hwvH6HDNit2nSK4j
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, May 23, 2014 at 02:49:40PM +0900, Alexandre Courbot wrote:
+> On Mon, May 19, 2014 at 5:33 PM, Thierry Reding
+> <thierry.reding@gmail.com> wrote:
+> > On Mon, May 19, 2014 at 04:10:56PM +0900, Alexandre Courbot wrote:
+> >> From: Lucas Stach <dev@lynxeye.de>
+> >>
+> >> On arches with non-coherent PCI,
+> >
+> > I guess since this applies to gk20a
+> >
+> >> we need to flush caches ourselfes at
+> >
+> > "ourselves". Or perhaps even reword to something like: "..., caches need
+> > to be flushed and invalidated explicitly", since dma_sync_for_cpu() does
+> > invalidate rather than flush.
+>=20
+> Rephrased as "On arches for which access to GPU memory is non-coherent, c=
+aches
+> need to be flushed and invalidated explicitly at the appropriate places."
+
+Nit: s/arches/architectures/
+
+Thierry
+
+--hwvH6HDNit2nSK4j
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTfvlvAAoJEN0jrNd/PrOhQiIP/AiDx9oH1hs0VSq3AYwSSkYz
+g+yR5eXTlIoC0hIdR5/N39iTcZHbXkf8Y5J8hijMZA8DiqdUMzSEnORZEkvOdefP
+lv2KJqEcYG/KiH4+nrtUirbPNv5S6QqBbOcSi8dmbtLGN/WcxWrqBLDpfK4yZ5LH
+glVn476lkN+srnNN8Ml+BQJOc26Yjzke34+2s7zMmMVcXX+5s3YtygKZ+ATxaiKJ
+O2xrgCCqlSbRyvy3LWuQtfs41yLuusOHa3dDgCM2ii5c5ki+qCrgVlD3dNhn/sFL
+ala1EzQXKpyeuaMdBz1Iy4kJ0oWFRBMqDFjRS84RYvWKg+bmIeDVgidpipXUOkjQ
+5ViqLfAP6QyPzbzkk6pPSRHQsdO6U8gRzEwPz+ndoTSLDfn1iYm4SnHNTe3sU8B3
+jRf4MrLh4HTXbkJmuLbaaw9xoLxChipxjIDs7X9HD3UxDuArtfFwi1nOeVokoMkO
+AGftjvho/qB12Ejmjj0M93B7tYwsfuEa4rP+TCw033bKetaay7Ki8Sj9oPWGSYiG
+JBh6KuKHRb8QH7SO9aeUnAgEa9zAnzLKKATXBitaawoZHuSmQm2pdkBf6WZWTf0e
+wGL4wGLfHK8HcS4qOASChx5Nfst4kTL3xs/tpJ4osL9gP70spTwvTvPAi5jExR46
++EZwQZgjAjnZv3VLSmXm
+=frga
+-----END PGP SIGNATURE-----
+
+--hwvH6HDNit2nSK4j--
+
+--===============1444988969==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============1444988969==--
