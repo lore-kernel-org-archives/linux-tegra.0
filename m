@@ -1,65 +1,68 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: pull request for Tegra clock fixes for 3.16 with HDA clocks
-Date: Thu, 22 May 2014 22:36:47 -0700
-Message-ID: <20140523053647.23136.40842@quantum>
-References: <20140521112516.GA22484@tbergstrom-lnx.Nvidia.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 2/4] drm/ttm: introduce dma cache sync helpers
+Date: Fri, 23 May 2014 14:49:40 +0900
+Message-ID: <CAAVeFuKCx677Uxcu3XNLkU+er-GBAxqdj_hUDUXHwUN+CS5EsA@mail.gmail.com>
+References: <1400483458-9648-1-git-send-email-acourbot@nvidia.com>
+ <1400483458-9648-3-git-send-email-acourbot@nvidia.com>
+ <20140519083355.GA7138@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20140521112516.GA22484@tbergstrom-lnx.Nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: "mark.rutland@arm.com" <mark.rutland@arm.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <20140519083355.GA7138@ulmo>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Peter De Schrijver (2014-05-21 04:25:16)
-> Hi Mike,
-> 
-> A number of fixes which are needed by the upcoming XHCI and SATA drivers and
-> the HDA audio driver.
-> 
-> Thanks,
-> 
-> Peter.
+On Mon, May 19, 2014 at 5:33 PM, Thierry Reding
+<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Mon, May 19, 2014 at 04:10:56PM +0900, Alexandre Courbot wrote:
+>> From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+>>
+>> On arches with non-coherent PCI,
+>
+> I guess since this applies to gk20a
+>
+>> we need to flush caches ourselfes at
+>
+> "ourselves". Or perhaps even reword to something like: "..., caches need
+> to be flushed and invalidated explicitly", since dma_sync_for_cpu() does
+> invalidate rather than flush.
 
-Pulled.
+Rephrased as "On arches for which access to GPU memory is non-coherent, caches
+need to be flushed and invalidated explicitly at the appropriate places."
 
-Regards,
-Mike
+>
+>> the appropriate places. Introduce two small helpers to make things easy
+>> for TTM based drivers.
+>>
+>> Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+>> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>  drivers/gpu/drm/ttm/ttm_tt.c    | 25 +++++++++++++++++++++++++
+>>  include/drm/ttm/ttm_bo_driver.h | 28 ++++++++++++++++++++++++++++
+>>  2 files changed, 53 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/ttm/ttm_tt.c b/drivers/gpu/drm/ttm/ttm_tt.c
+> [...]
+>> +void ttm_dma_tt_cache_sync_for_device(struct ttm_dma_tt *ttm_dma,
+>> +                                   struct device *dev)
+>> +{
+>> +     int i;
+>
+> This should probably be unsigned long to match the type of
+> ttm_dma->ttm.num_pages.
 
-> 
-> The following changes since commit d6d211db37e75de2ddc3a4f979038c40df7cc79c:
-> 
->   Linux 3.15-rc5 (2014-05-09 13:10:52 -0700)
-> 
-> are available in the git repository at:
->   git://nv-tegra.nvidia.com/user/pdeschrijver/linux.git tegra-clk-v3.16-1
-> 
-> Andrew Bresticker (2):
->       clk: tegra: Fix xusb_hs_src clock hierarchy
->       clk: tegra: Initialize xusb clocks
-> 
-> Dylan Reid (1):
->       clk: tegra124: Enable hda to hdmi clocks
-> 
-> Jim Lin (2):
->       clk: tegra: Enable hardware control of PLLE
->       clk: tegra: Fix xusb_fs_src mux
-> 
->  drivers/clk/tegra/clk-id.h               |    1 +
->  drivers/clk/tegra/clk-pll.c              |   33 +++++++++++++++++++++++++++++-
->  drivers/clk/tegra/clk-tegra-periph.c     |   10 ++++++++-
->  drivers/clk/tegra/clk-tegra114.c         |   22 ++++++++++----------
->  drivers/clk/tegra/clk-tegra124.c         |   26 ++++++++++++++---------
->  include/dt-bindings/clock/tegra114-car.h |    3 +-
->  include/dt-bindings/clock/tegra124-car.h |    3 +-
->  7 files changed, 73 insertions(+), 25 deletions(-)
+Fixed.
+
+Thanks,
+Alex.
