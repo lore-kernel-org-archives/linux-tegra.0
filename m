@@ -1,135 +1,147 @@
-From: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: Re: [RFC] drm/nouveau: disable caching for VRAM BOs on ARM
-Date: Fri, 23 May 2014 11:59:46 +0200
-Message-ID: <1400839186.4921.17.camel@weser.hi.pengutronix.de>
-References: <1400492771-9746-1-git-send-email-acourbot@nvidia.com>
- <1400493433.8467.24.camel@weser.hi.pengutronix.de>
- <5379D7A0.3050509@nvidia.com>
- <1400494582.8467.28.camel@weser.hi.pengutronix.de>
- <CAAVeFuLKTjaZPSxNSK3nEG+XK+mMmPDDq85qMF-EHp3bGwVJYA@mail.gmail.com>
- <1400837055.4921.4.camel@weser.hi.pengutronix.de>
- <537F1853.7050800@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [RFC PATCH] clk: flatten clk tree in debugfs
+Date: Fri, 23 May 2014 13:59:32 +0300
+Message-ID: <1400842772-4862-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <537F1853.7050800-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Am Freitag, den 23.05.2014, 18:43 +0900 schrieb Alexandre Courbot:
-> On 05/23/2014 06:24 PM, Lucas Stach wrote:
-> > Am Freitag, den 23.05.2014, 16:10 +0900 schrieb Alexandre Courbot:
-> >> On Mon, May 19, 2014 at 7:16 PM, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
-> >>> Am Montag, den 19.05.2014, 19:06 +0900 schrieb Alexandre Courbot:
-> >>>> On 05/19/2014 06:57 PM, Lucas Stach wrote:
-> >>>>> Am Montag, den 19.05.2014, 18:46 +0900 schrieb Alexandre Courbot:
-> >>>>>> This patch is not meant to be merged, but rather to try and understand
-> >>>>>> why this is needed and what a more suitable solution could be.
-> >>>>>>
-> >>>>>> Allowing BOs to be write-cached results in the following happening when
-> >>>>>> trying to run any program on Tegra/GK20A:
-> >>>>>>
-> >>>>>> Unhandled fault: external abort on non-linefetch (0x1008) at 0xf0036010
-> >>>>>> ...
-> >>>>>> (nouveau_bo_rd32) from [<c0357d00>] (nouveau_fence_update+0x5c/0x80)
-> >>>>>> (nouveau_fence_update) from [<c0357d40>] (nouveau_fence_done+0x1c/0x38)
-> >>>>>> (nouveau_fence_done) from [<c02c3d00>] (ttm_bo_wait+0xec/0x168)
-> >>>>>> (ttm_bo_wait) from [<c035e334>] (nouveau_gem_ioctl_cpu_prep+0x44/0x100)
-> >>>>>> (nouveau_gem_ioctl_cpu_prep) from [<c02aaa84>] (drm_ioctl+0x1d8/0x4f4)
-> >>>>>> (drm_ioctl) from [<c0355394>] (nouveau_drm_ioctl+0x54/0x80)
-> >>>>>> (nouveau_drm_ioctl) from [<c00ee7b0>] (do_vfs_ioctl+0x3dc/0x5a0)
-> >>>>>> (do_vfs_ioctl) from [<c00ee9a8>] (SyS_ioctl+0x34/0x5c)
-> >>>>>> (SyS_ioctl) from [<c000e6e0>] (ret_fast_syscall+0x0/0x30
-> >>>>>>
-> >>>>>> The offending nouveau_bo_rd32 is done over an IO-mapped BO, e.g. a BO
-> >>>>>> mapped through the BAR.
-> >>>>>>
-> >>>>> Um wait, this memory is behind an already mapped bar? I think ioremap on
-> >>>>> ARM defaults to uncached mappings, so if you want to access the memory
-> >>>>> behind this bar as WC you need to map the BAR as a whole as WC by using
-> >>>>> ioremap_wc.
-> >>>>
-> >>>> Tried mapping the BAR using ioremap_wc(), but to no avail. On the other
-> >>>> hand, could it be that VRAM BOs end up creating a mapping over an
-> >>>> already-mapped region? I seem to remember that ARM might not like it...
-> >>>
-> >>> Multiple mapping are generally allowed, as long as they have the same
-> >>> caching state. It's conflicting mappings (uncached vs cached, or cached
-> >>> vs wc), that are documented to yield undefined results.
-> >>
-> >> Sorry about the confusion. The BAR is *not* mapped to the kernel yet
-> >> (it is BAR1, there is no BAR3 on GK20A) and an ioremap_*() is
-> >> performed in ttm_bo_ioremap() to make the part of the BAR where the
-> >> buffer is mapped visible. It seems that doing an ioremap_wc() on the
-> >> BAR area on Tegra is what leads to these errors. ioremap() or
-> >> ioremap_nocache() (which are in effect the same on ARM) do not cause
-> >> this issue.
-> >>
-> > It would be cool if you could ask HW, or the blob developers, if this is
-> > a general issue. The external abort is clearly the GPUs AXI client
-> > responding with an error to the read request, though I'm not clear where
-> > a WC read differs from an uncached one.
-> 
-> Will check that.
-> 
-> >
-> >> The best way to solve this issue would be to not use the BAR at all
-> >> since the memory behind these objects can be directly accessed by the
-> >> CPU. As such it would better be mapped using ttm_bo_kmap_ttm()
-> >> instead. But right now this is clearly not how nouveau_bo.c is written
-> >> and it does not look like this can easily be done. :/
-> >
-> > Yeah, it sounds like we want this shortcut for stolen VRAM
-> > implementations.
-> 
-> Actually, isn't it the case that we do not want to use TTM at all for 
-> stolen VRAM (UMA) devices?
-> 
-> I am trying to wrap my head around this since a while already, and could 
-> not think of a way to use the current TTM-based nouveau_bo optimally for 
-> GK20A. Because we cannot do without the idea of VRAM and GART, we will 
-> always have to "move" objects from one location to another, or deal with 
-> constraints that do not make sense for UMA devices (like in the current 
-> case, accessing VRAM objects through the BAR).
-> 
-> I am currently contemplating the idea of writing an alternative non-TTM 
-> implementation of nouveau_bo for UMA devices, that would (hopefully) be 
-> much simpler and would spare us a lot of stunts.
-> 
-> On the other hand, this sounds like a considerable work and I would like 
-> to make sure that my lack of understanding of TTM is not driving me to 
-> the wrong solution. Thoughts?
-> 
-You may want to make yourself aware of all the quirks required for
-sharing memory between the GPU and CPU on an ARM host. I think there are
-far more involved than what you see now and writing an replacement for
-TTM will not be an easy task.
+This patch flattens the clk tree in CCF debugfs. Instead of representing the
+clocks and their hierarchy as a directory structure under
+/sys/kernel/debug/clk, each clock gets a single directory directly under
+/sys/kernel/debug/clk.
 
-Doing away with the concept of two memory areas will not get you to a
-single unified address space. You would have to deal with things like
-not being able to change the caching state of pages in the systems
-lowmem yourself. You will still have to deal with remapping pages that
-aren't currently visible to the CPU (ok this is not an issue on Jetson
-right now as it only has 2GB of RAM), because it's in systems highmem,
-or even in a different LPAE area.
+While this may seem strange, here's way I think this is the right thing to do:
 
-You really want to be sure you are aware of all the consequences of
-this, before considering this task.
+1) a directory structure cannot be 'snapshotted' atomically, therefore it's
+   not in general possible to get a consistent view of the clocktree, because
+   clocks can be reparented at any time. This was solved by adding clk_dump
+   and clk_summary, which do guarantee an atomic snapshot of the tree.
+   Therefore I think the directory structure doesn't add any value.
 
-Regards,
-Lucas
+2) When writing userspace programs which use the files in the clock
+   directories (eg. for testing purposes), it's impossible to know for sure
+   where a certain clock will be, because it might have been reparented by the
+   time you figured out the path from clk_dump. This makes writing such
+   programs more difficult than it should be.
 
+So because the directory structure doesn't give any information we don't
+already provide by other means and it makes certain usecases more difficult
+than the should be, I think we should move to a flat directory containing
+one subdir per clock.
+
+Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/clk/clk.c |   54 +++-------------------------------------------------
+ 1 files changed, 4 insertions(+), 50 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index dff0373..53c6b4f 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -306,7 +306,7 @@ static int clk_debug_create_subtree(struct clk *clk, struct dentry *pdentry)
+ 		goto out;
+ 
+ 	hlist_for_each_entry(child, &clk->children, child_node)
+-		clk_debug_create_subtree(child, clk->dentry);
++		clk_debug_create_subtree(child, pdentry);
+ 
+ 	ret = 0;
+ out:
+@@ -326,29 +326,20 @@ out:
+  */
+ static int clk_debug_register(struct clk *clk)
+ {
+-	struct clk *parent;
+ 	struct dentry *pdentry;
+ 	int ret = 0;
+ 
+ 	if (!inited)
+ 		goto out;
+ 
+-	parent = clk->parent;
+-
+ 	/*
+ 	 * Check to see if a clk is a root clk.  Also check that it is
+ 	 * safe to add this clk to debugfs
+ 	 */
+-	if (!parent)
+-		if (clk->flags & CLK_IS_ROOT)
+-			pdentry = rootdir;
+-		else
+-			pdentry = orphandir;
++	if (clk->flags & CLK_IS_ROOT)
++		pdentry = rootdir;
+ 	else
+-		if (parent->dentry)
+-			pdentry = parent->dentry;
+-		else
+-			goto out;
++		pdentry = orphandir;
+ 
+ 	ret = clk_debug_create_subtree(clk, pdentry);
+ 
+@@ -372,39 +363,6 @@ static void clk_debug_unregister(struct clk *clk)
+ }
+ 
+ /**
+- * clk_debug_reparent - reparent clk node in the debugfs clk tree
+- * @clk: the clk being reparented
+- * @new_parent: the new clk parent, may be NULL
+- *
+- * Rename clk entry in the debugfs clk tree if debugfs has been
+- * initialized.  Otherwise it bails out early since the debugfs clk tree
+- * will be created lazily by clk_debug_init as part of a late_initcall.
+- *
+- * Caller must hold prepare_lock.
+- */
+-static void clk_debug_reparent(struct clk *clk, struct clk *new_parent)
+-{
+-	struct dentry *d;
+-	struct dentry *new_parent_d;
+-
+-	if (!inited)
+-		return;
+-
+-	if (new_parent)
+-		new_parent_d = new_parent->dentry;
+-	else
+-		new_parent_d = orphandir;
+-
+-	d = debugfs_rename(clk->dentry->d_parent, clk->dentry,
+-			new_parent_d, clk->name);
+-	if (d)
+-		clk->dentry = d;
+-	else
+-		pr_debug("%s: failed to rename debugfs entry for %s\n",
+-				__func__, clk->name);
+-}
+-
+-/**
+  * clk_debug_init - lazily create the debugfs clk tree visualization
+  *
+  * clks are often initialized very early during boot before memory can
+@@ -1277,9 +1235,6 @@ static void __clk_set_parent_after(struct clk *clk, struct clk *parent,
+ 		clk_disable(old_parent);
+ 		__clk_unprepare(old_parent);
+ 	}
+-
+-	/* update debugfs with new clk tree topology */
+-	clk_debug_reparent(clk, parent);
+ }
+ 
+ static int __clk_set_parent(struct clk *clk, struct clk *parent, u8 p_index)
+@@ -1685,7 +1640,6 @@ out:
+ void __clk_reparent(struct clk *clk, struct clk *new_parent)
+ {
+ 	clk_reparent(clk, new_parent);
+-	clk_debug_reparent(clk, new_parent);
+ 	__clk_recalc_accuracies(clk);
+ 	__clk_recalc_rates(clk, POST_RATE_CHANGE);
+ }
 -- 
-Pengutronix e.K.             | Lucas Stach                 |
-Industrial Linux Solutions   | http://www.pengutronix.de/  |
+1.7.7.rc0.72.g4b5ea.dirty
