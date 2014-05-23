@@ -1,139 +1,96 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC] drm/nouveau: disable caching for VRAM BOs on ARM
-Date: Fri, 23 May 2014 23:40:45 +0900
-Message-ID: <537F5DED.8050702@nvidia.com>
-References: <1400492771-9746-1-git-send-email-acourbot@nvidia.com>		 <1400493433.8467.24.camel@weser.hi.pengutronix.de>		 <5379D7A0.3050509@nvidia.com>		 <1400494582.8467.28.camel@weser.hi.pengutronix.de>		 <CAAVeFuLKTjaZPSxNSK3nEG+XK+mMmPDDq85qMF-EHp3bGwVJYA@mail.gmail.com>	 <1400837055.4921.4.camel@weser.hi.pengutronix.de>	 <537F1853.7050800@nvidia.com> <1400839186.4921.17.camel@weser.hi.pengutronix.de>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v2 0/7] drm/tegra: Convert to master/component framework
+Date: Fri, 23 May 2014 20:03:00 +0900
+Message-ID: <20140523110300.GA24374@kroah.com>
+References: <1399995050-28435-1-git-send-email-thierry.reding@gmail.com>
+ <20140522095621.GA11613@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1400839186.4921.17.camel-WzVe3FnzCwFR6QfukMTsflXZhhPuCNm+@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20140522095621.GA11613@ulmo>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/23/2014 06:59 PM, Lucas Stach wrote:
-> Am Freitag, den 23.05.2014, 18:43 +0900 schrieb Alexandre Courbot:
->> On 05/23/2014 06:24 PM, Lucas Stach wrote:
->>> Am Freitag, den 23.05.2014, 16:10 +0900 schrieb Alexandre Courbot:
->>>> On Mon, May 19, 2014 at 7:16 PM, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
->>>>> Am Montag, den 19.05.2014, 19:06 +0900 schrieb Alexandre Courbot:
->>>>>> On 05/19/2014 06:57 PM, Lucas Stach wrote:
->>>>>>> Am Montag, den 19.05.2014, 18:46 +0900 schrieb Alexandre Courbot:
->>>>>>>> This patch is not meant to be merged, but rather to try and understand
->>>>>>>> why this is needed and what a more suitable solution could be.
->>>>>>>>
->>>>>>>> Allowing BOs to be write-cached results in the following happening when
->>>>>>>> trying to run any program on Tegra/GK20A:
->>>>>>>>
->>>>>>>> Unhandled fault: external abort on non-linefetch (0x1008) at 0xf0036010
->>>>>>>> ...
->>>>>>>> (nouveau_bo_rd32) from [<c0357d00>] (nouveau_fence_update+0x5c/0x80)
->>>>>>>> (nouveau_fence_update) from [<c0357d40>] (nouveau_fence_done+0x1c/0x38)
->>>>>>>> (nouveau_fence_done) from [<c02c3d00>] (ttm_bo_wait+0xec/0x168)
->>>>>>>> (ttm_bo_wait) from [<c035e334>] (nouveau_gem_ioctl_cpu_prep+0x44/0x100)
->>>>>>>> (nouveau_gem_ioctl_cpu_prep) from [<c02aaa84>] (drm_ioctl+0x1d8/0x4f4)
->>>>>>>> (drm_ioctl) from [<c0355394>] (nouveau_drm_ioctl+0x54/0x80)
->>>>>>>> (nouveau_drm_ioctl) from [<c00ee7b0>] (do_vfs_ioctl+0x3dc/0x5a0)
->>>>>>>> (do_vfs_ioctl) from [<c00ee9a8>] (SyS_ioctl+0x34/0x5c)
->>>>>>>> (SyS_ioctl) from [<c000e6e0>] (ret_fast_syscall+0x0/0x30
->>>>>>>>
->>>>>>>> The offending nouveau_bo_rd32 is done over an IO-mapped BO, e.g. a BO
->>>>>>>> mapped through the BAR.
->>>>>>>>
->>>>>>> Um wait, this memory is behind an already mapped bar? I think ioremap on
->>>>>>> ARM defaults to uncached mappings, so if you want to access the memory
->>>>>>> behind this bar as WC you need to map the BAR as a whole as WC by using
->>>>>>> ioremap_wc.
->>>>>>
->>>>>> Tried mapping the BAR using ioremap_wc(), but to no avail. On the other
->>>>>> hand, could it be that VRAM BOs end up creating a mapping over an
->>>>>> already-mapped region? I seem to remember that ARM might not like it...
->>>>>
->>>>> Multiple mapping are generally allowed, as long as they have the same
->>>>> caching state. It's conflicting mappings (uncached vs cached, or cached
->>>>> vs wc), that are documented to yield undefined results.
->>>>
->>>> Sorry about the confusion. The BAR is *not* mapped to the kernel yet
->>>> (it is BAR1, there is no BAR3 on GK20A) and an ioremap_*() is
->>>> performed in ttm_bo_ioremap() to make the part of the BAR where the
->>>> buffer is mapped visible. It seems that doing an ioremap_wc() on the
->>>> BAR area on Tegra is what leads to these errors. ioremap() or
->>>> ioremap_nocache() (which are in effect the same on ARM) do not cause
->>>> this issue.
->>>>
->>> It would be cool if you could ask HW, or the blob developers, if this is
->>> a general issue. The external abort is clearly the GPUs AXI client
->>> responding with an error to the read request, though I'm not clear where
->>> a WC read differs from an uncached one.
->>
->> Will check that.
+On Thu, May 22, 2014 at 11:56:23AM +0200, Thierry Reding wrote:
+> On Tue, May 13, 2014 at 05:30:43PM +0200, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> > 
+> > Hi,
+> > 
+> > This series converts the Tegra DRM driver to the master/component
+> > framework. The length of the series and the list of people in Cc is
+> > mostly due to the fact that Tegra has some special requirements as
+> > opposed to other drivers and therefore requires some changes outside
+> > of DRM.
+> > 
+> > Patch 1 introduces a helper function that can be used by new DRM drivers
+> > that don't rely on legacy userspace ABIs. It allows them to register DRM
+> > devices much more easily and without much of the midlayer that currently
+> > exists in the DRM subsystem.
+> > 
+> > Patches 2 and 3 make some changes to the master/component framework
+> > which are necessary to convert Tegra DRM to use it. All current users of
+> > the API have been converted as part of this patch. Note that at the same
+> > time the drivers are converted to no longer use drm_platform_init() in
+> > favour of the drm_set_unique() from patch 1 in conjunction with
+> > drm_dev_alloc() and drm_dev_register(). I would've liked to avoid such
+> > invasive changes in a single patch, but unfortunately I couldn't think
+> > of a way how to do that. I'm open to suggestions.
+> > 
+> > Patch 4 adds a new interface framework that supplements the master/
+> > component framework and can be used in situations where there is no
+> > struct device * that a driver can bind to.
+> > 
+> > The Tegra DRM driver is converted to using the master/component
+> > framework in patch 5 using the above four patches.
+> > 
+> > Finally patches 6 and 7 add some documentation about the new way of
+> > registering DRM devices that don't need legacy support.
+> > 
+> > Each patch has a somewhat more elaborate description of why it is needed
+> > or what problem it solves. The patchset applies on top of linux-next.
+> > 
+> > I welcome any questions or comments you might have.
+> > 
+> > Thierry
+> > 
+> > Thierry Reding (7):
+> >   drm: Introduce drm_set_unique()
+> >   drivers/base: Allow driver-data to be attached to a master
+> >   drivers/base: Allow multiple masters per device
+> >   drivers/base: Add interface framework
+> >   drm/tegra: Convert to master/component framework
+> >   drm: Add device registration documentation
+> >   drm: Document how to register devices without struct drm_bus
+> 
+> Greg, Russell,
+> 
+> Any comments on this? I've been blocking a bunch of patches in the hopes
+> of getting this merged since it allows the Tegra DRM driver to be
+> cleaned up a great deal, but if nobody's going to look at or comment on
+> this I'll abandon this series and keep using the custom solution we've
+> had for a while now.
 
-So after checking with more knowledgeable people, it turns out this is 
-the expected behavior on ARM and BAR regions should be mapped uncached 
-on GK20A. All the more reasons to avoid using the BAR at all.
+I'd like Russell to comment on this, as he just added some driver core
+work to do drm device work that seems to me to be much the same here.
 
->>
->>>
->>>> The best way to solve this issue would be to not use the BAR at all
->>>> since the memory behind these objects can be directly accessed by the
->>>> CPU. As such it would better be mapped using ttm_bo_kmap_ttm()
->>>> instead. But right now this is clearly not how nouveau_bo.c is written
->>>> and it does not look like this can easily be done. :/
->>>
->>> Yeah, it sounds like we want this shortcut for stolen VRAM
->>> implementations.
->>
->> Actually, isn't it the case that we do not want to use TTM at all for
->> stolen VRAM (UMA) devices?
->>
->> I am trying to wrap my head around this since a while already, and could
->> not think of a way to use the current TTM-based nouveau_bo optimally for
->> GK20A. Because we cannot do without the idea of VRAM and GART, we will
->> always have to "move" objects from one location to another, or deal with
->> constraints that do not make sense for UMA devices (like in the current
->> case, accessing VRAM objects through the BAR).
->>
->> I am currently contemplating the idea of writing an alternative non-TTM
->> implementation of nouveau_bo for UMA devices, that would (hopefully) be
->> much simpler and would spare us a lot of stunts.
->>
->> On the other hand, this sounds like a considerable work and I would like
->> to make sure that my lack of understanding of TTM is not driving me to
->> the wrong solution. Thoughts?
->>
-> You may want to make yourself aware of all the quirks required for
-> sharing memory between the GPU and CPU on an ARM host. I think there are
-> far more involved than what you see now and writing an replacement for
-> TTM will not be an easy task.
->
-> Doing away with the concept of two memory areas will not get you to a
-> single unified address space. You would have to deal with things like
-> not being able to change the caching state of pages in the systems
-> lowmem yourself. You will still have to deal with remapping pages that
-> aren't currently visible to the CPU (ok this is not an issue on Jetson
-> right now as it only has 2GB of RAM), because it's in systems highmem,
-> or even in a different LPAE area.
->
-> You really want to be sure you are aware of all the consequences of
-> this, before considering this task.
+There's also the work that the media developers are working on to handle
+power management issues that seem to also be hitting the same area.  Due
+to all of that, I really don't want to add yet-another-driver-core
+addition for just one drm driver, all of them should be able to use it.
 
-Yep, that's why I am seeking advice here. My first hope is that with a 
-few tweaks we will be able to keep using TTM and the current nouveau_bo 
-implementation. But unless I missed something this is not going to be easy.
+thanks,
 
-We can also use something like the patch I originally sent to make it 
-work, although not with good performance, on GK20A. Not very graceful, 
-but it will allow applications to run.
-
-In the long run though, we will want to achieve better performance, and 
-it seems like a BO implementation targeted at UMA devices would also be 
-beneficial to quite a few desktop GPUs. So as tricky as it may be I'm 
-interested in gathering thoughts and why not giving it a first try with 
-GK20A, even if it imposes some limitations like having buffers in lowmem 
-in a first time (we can probably live with this one for a short while, 
-and 64 bits will also be coming to the rescue :))
-
-Thanks,
-Alex.
+greg k-h
