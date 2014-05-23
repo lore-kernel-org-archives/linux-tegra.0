@@ -1,113 +1,135 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
+From: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 Subject: Re: [RFC] drm/nouveau: disable caching for VRAM BOs on ARM
-Date: Fri, 23 May 2014 18:43:47 +0900
-Message-ID: <537F1853.7050800@nvidia.com>
-References: <1400492771-9746-1-git-send-email-acourbot@nvidia.com>	
- <1400493433.8467.24.camel@weser.hi.pengutronix.de>	
- <5379D7A0.3050509@nvidia.com>	
- <1400494582.8467.28.camel@weser.hi.pengutronix.de>	
+Date: Fri, 23 May 2014 11:59:46 +0200
+Message-ID: <1400839186.4921.17.camel@weser.hi.pengutronix.de>
+References: <1400492771-9746-1-git-send-email-acourbot@nvidia.com>
+ <1400493433.8467.24.camel@weser.hi.pengutronix.de>
+ <5379D7A0.3050509@nvidia.com>
+ <1400494582.8467.28.camel@weser.hi.pengutronix.de>
  <CAAVeFuLKTjaZPSxNSK3nEG+XK+mMmPDDq85qMF-EHp3bGwVJYA@mail.gmail.com>
  <1400837055.4921.4.camel@weser.hi.pengutronix.de>
+ <537F1853.7050800@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1400837055.4921.4.camel@weser.hi.pengutronix.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Lucas Stach <l.stach@pengutronix.de>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ben Skeggs <bskeggs@redhat.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <537F1853.7050800-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/23/2014 06:24 PM, Lucas Stach wrote:
-> Am Freitag, den 23.05.2014, 16:10 +0900 schrieb Alexandre Courbot:
->> On Mon, May 19, 2014 at 7:16 PM, Lucas Stach <l.stach@pengutronix.de> wrote:
->>> Am Montag, den 19.05.2014, 19:06 +0900 schrieb Alexandre Courbot:
->>>> On 05/19/2014 06:57 PM, Lucas Stach wrote:
->>>>> Am Montag, den 19.05.2014, 18:46 +0900 schrieb Alexandre Courbot:
->>>>>> This patch is not meant to be merged, but rather to try and understand
->>>>>> why this is needed and what a more suitable solution could be.
->>>>>>
->>>>>> Allowing BOs to be write-cached results in the following happening when
->>>>>> trying to run any program on Tegra/GK20A:
->>>>>>
->>>>>> Unhandled fault: external abort on non-linefetch (0x1008) at 0xf0036010
->>>>>> ...
->>>>>> (nouveau_bo_rd32) from [<c0357d00>] (nouveau_fence_update+0x5c/0x80)
->>>>>> (nouveau_fence_update) from [<c0357d40>] (nouveau_fence_done+0x1c/0x38)
->>>>>> (nouveau_fence_done) from [<c02c3d00>] (ttm_bo_wait+0xec/0x168)
->>>>>> (ttm_bo_wait) from [<c035e334>] (nouveau_gem_ioctl_cpu_prep+0x44/0x100)
->>>>>> (nouveau_gem_ioctl_cpu_prep) from [<c02aaa84>] (drm_ioctl+0x1d8/0x4f4)
->>>>>> (drm_ioctl) from [<c0355394>] (nouveau_drm_ioctl+0x54/0x80)
->>>>>> (nouveau_drm_ioctl) from [<c00ee7b0>] (do_vfs_ioctl+0x3dc/0x5a0)
->>>>>> (do_vfs_ioctl) from [<c00ee9a8>] (SyS_ioctl+0x34/0x5c)
->>>>>> (SyS_ioctl) from [<c000e6e0>] (ret_fast_syscall+0x0/0x30
->>>>>>
->>>>>> The offending nouveau_bo_rd32 is done over an IO-mapped BO, e.g. a BO
->>>>>> mapped through the BAR.
->>>>>>
->>>>> Um wait, this memory is behind an already mapped bar? I think ioremap on
->>>>> ARM defaults to uncached mappings, so if you want to access the memory
->>>>> behind this bar as WC you need to map the BAR as a whole as WC by using
->>>>> ioremap_wc.
->>>>
->>>> Tried mapping the BAR using ioremap_wc(), but to no avail. On the other
->>>> hand, could it be that VRAM BOs end up creating a mapping over an
->>>> already-mapped region? I seem to remember that ARM might not like it...
->>>
->>> Multiple mapping are generally allowed, as long as they have the same
->>> caching state. It's conflicting mappings (uncached vs cached, or cached
->>> vs wc), that are documented to yield undefined results.
->>
->> Sorry about the confusion. The BAR is *not* mapped to the kernel yet
->> (it is BAR1, there is no BAR3 on GK20A) and an ioremap_*() is
->> performed in ttm_bo_ioremap() to make the part of the BAR where the
->> buffer is mapped visible. It seems that doing an ioremap_wc() on the
->> BAR area on Tegra is what leads to these errors. ioremap() or
->> ioremap_nocache() (which are in effect the same on ARM) do not cause
->> this issue.
->>
-> It would be cool if you could ask HW, or the blob developers, if this is
-> a general issue. The external abort is clearly the GPUs AXI client
-> responding with an error to the read request, though I'm not clear where
-> a WC read differs from an uncached one.
+Am Freitag, den 23.05.2014, 18:43 +0900 schrieb Alexandre Courbot:
+> On 05/23/2014 06:24 PM, Lucas Stach wrote:
+> > Am Freitag, den 23.05.2014, 16:10 +0900 schrieb Alexandre Courbot:
+> >> On Mon, May 19, 2014 at 7:16 PM, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
+> >>> Am Montag, den 19.05.2014, 19:06 +0900 schrieb Alexandre Courbot:
+> >>>> On 05/19/2014 06:57 PM, Lucas Stach wrote:
+> >>>>> Am Montag, den 19.05.2014, 18:46 +0900 schrieb Alexandre Courbot:
+> >>>>>> This patch is not meant to be merged, but rather to try and understand
+> >>>>>> why this is needed and what a more suitable solution could be.
+> >>>>>>
+> >>>>>> Allowing BOs to be write-cached results in the following happening when
+> >>>>>> trying to run any program on Tegra/GK20A:
+> >>>>>>
+> >>>>>> Unhandled fault: external abort on non-linefetch (0x1008) at 0xf0036010
+> >>>>>> ...
+> >>>>>> (nouveau_bo_rd32) from [<c0357d00>] (nouveau_fence_update+0x5c/0x80)
+> >>>>>> (nouveau_fence_update) from [<c0357d40>] (nouveau_fence_done+0x1c/0x38)
+> >>>>>> (nouveau_fence_done) from [<c02c3d00>] (ttm_bo_wait+0xec/0x168)
+> >>>>>> (ttm_bo_wait) from [<c035e334>] (nouveau_gem_ioctl_cpu_prep+0x44/0x100)
+> >>>>>> (nouveau_gem_ioctl_cpu_prep) from [<c02aaa84>] (drm_ioctl+0x1d8/0x4f4)
+> >>>>>> (drm_ioctl) from [<c0355394>] (nouveau_drm_ioctl+0x54/0x80)
+> >>>>>> (nouveau_drm_ioctl) from [<c00ee7b0>] (do_vfs_ioctl+0x3dc/0x5a0)
+> >>>>>> (do_vfs_ioctl) from [<c00ee9a8>] (SyS_ioctl+0x34/0x5c)
+> >>>>>> (SyS_ioctl) from [<c000e6e0>] (ret_fast_syscall+0x0/0x30
+> >>>>>>
+> >>>>>> The offending nouveau_bo_rd32 is done over an IO-mapped BO, e.g. a BO
+> >>>>>> mapped through the BAR.
+> >>>>>>
+> >>>>> Um wait, this memory is behind an already mapped bar? I think ioremap on
+> >>>>> ARM defaults to uncached mappings, so if you want to access the memory
+> >>>>> behind this bar as WC you need to map the BAR as a whole as WC by using
+> >>>>> ioremap_wc.
+> >>>>
+> >>>> Tried mapping the BAR using ioremap_wc(), but to no avail. On the other
+> >>>> hand, could it be that VRAM BOs end up creating a mapping over an
+> >>>> already-mapped region? I seem to remember that ARM might not like it...
+> >>>
+> >>> Multiple mapping are generally allowed, as long as they have the same
+> >>> caching state. It's conflicting mappings (uncached vs cached, or cached
+> >>> vs wc), that are documented to yield undefined results.
+> >>
+> >> Sorry about the confusion. The BAR is *not* mapped to the kernel yet
+> >> (it is BAR1, there is no BAR3 on GK20A) and an ioremap_*() is
+> >> performed in ttm_bo_ioremap() to make the part of the BAR where the
+> >> buffer is mapped visible. It seems that doing an ioremap_wc() on the
+> >> BAR area on Tegra is what leads to these errors. ioremap() or
+> >> ioremap_nocache() (which are in effect the same on ARM) do not cause
+> >> this issue.
+> >>
+> > It would be cool if you could ask HW, or the blob developers, if this is
+> > a general issue. The external abort is clearly the GPUs AXI client
+> > responding with an error to the read request, though I'm not clear where
+> > a WC read differs from an uncached one.
+> 
+> Will check that.
+> 
+> >
+> >> The best way to solve this issue would be to not use the BAR at all
+> >> since the memory behind these objects can be directly accessed by the
+> >> CPU. As such it would better be mapped using ttm_bo_kmap_ttm()
+> >> instead. But right now this is clearly not how nouveau_bo.c is written
+> >> and it does not look like this can easily be done. :/
+> >
+> > Yeah, it sounds like we want this shortcut for stolen VRAM
+> > implementations.
+> 
+> Actually, isn't it the case that we do not want to use TTM at all for 
+> stolen VRAM (UMA) devices?
+> 
+> I am trying to wrap my head around this since a while already, and could 
+> not think of a way to use the current TTM-based nouveau_bo optimally for 
+> GK20A. Because we cannot do without the idea of VRAM and GART, we will 
+> always have to "move" objects from one location to another, or deal with 
+> constraints that do not make sense for UMA devices (like in the current 
+> case, accessing VRAM objects through the BAR).
+> 
+> I am currently contemplating the idea of writing an alternative non-TTM 
+> implementation of nouveau_bo for UMA devices, that would (hopefully) be 
+> much simpler and would spare us a lot of stunts.
+> 
+> On the other hand, this sounds like a considerable work and I would like 
+> to make sure that my lack of understanding of TTM is not driving me to 
+> the wrong solution. Thoughts?
+> 
+You may want to make yourself aware of all the quirks required for
+sharing memory between the GPU and CPU on an ARM host. I think there are
+far more involved than what you see now and writing an replacement for
+TTM will not be an easy task.
 
-Will check that.
+Doing away with the concept of two memory areas will not get you to a
+single unified address space. You would have to deal with things like
+not being able to change the caching state of pages in the systems
+lowmem yourself. You will still have to deal with remapping pages that
+aren't currently visible to the CPU (ok this is not an issue on Jetson
+right now as it only has 2GB of RAM), because it's in systems highmem,
+or even in a different LPAE area.
 
->
->> The best way to solve this issue would be to not use the BAR at all
->> since the memory behind these objects can be directly accessed by the
->> CPU. As such it would better be mapped using ttm_bo_kmap_ttm()
->> instead. But right now this is clearly not how nouveau_bo.c is written
->> and it does not look like this can easily be done. :/
->
-> Yeah, it sounds like we want this shortcut for stolen VRAM
-> implementations.
+You really want to be sure you are aware of all the consequences of
+this, before considering this task.
 
-Actually, isn't it the case that we do not want to use TTM at all for 
-stolen VRAM (UMA) devices?
+Regards,
+Lucas
 
-I am trying to wrap my head around this since a while already, and could 
-not think of a way to use the current TTM-based nouveau_bo optimally for 
-GK20A. Because we cannot do without the idea of VRAM and GART, we will 
-always have to "move" objects from one location to another, or deal with 
-constraints that do not make sense for UMA devices (like in the current 
-case, accessing VRAM objects through the BAR).
-
-I am currently contemplating the idea of writing an alternative non-TTM 
-implementation of nouveau_bo for UMA devices, that would (hopefully) be 
-much simpler and would spare us a lot of stunts.
-
-On the other hand, this sounds like a considerable work and I would like 
-to make sure that my lack of understanding of TTM is not driving me to 
-the wrong solution. Thoughts?
-
-Thanks,
-Alex.
+-- 
+Pengutronix e.K.             | Lucas Stach                 |
+Industrial Linux Solutions   | http://www.pengutronix.de/  |
