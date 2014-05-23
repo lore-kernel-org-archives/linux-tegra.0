@@ -1,147 +1,49 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [RFC PATCH] clk: flatten clk tree in debugfs
-Date: Fri, 23 May 2014 13:59:32 +0300
-Message-ID: <1400842772-4862-1-git-send-email-pdeschrijver@nvidia.com>
+From: Chris Ball <chris@printf.net>
+Subject: Re: [PATCH v3 1/2] mmc: tegra: disable UHS modes
+Date: Fri, 23 May 2014 13:52:42 +0100
+Message-ID: <86fvk0r71h.fsf@void.printf.net>
+References: <1400774136-12396-1-git-send-email-abrestic@chromium.org>
+ <CAPDyKFpt98rbFpvu1uzbOuhCTrO96hzQU2VwNRgJGfoi_7F-OA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAPDyKFpt98rbFpvu1uzbOuhCTrO96hzQU2VwNRgJGfoi_7F-OA@mail.gmail.com>
+ (Ulf Hansson's message of "Fri, 23 May 2014 09:03:33 +0200")
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Andrew Bresticker <abrestic@chromium.org>, linux-mmc <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch flattens the clk tree in CCF debugfs. Instead of representing the
-clocks and their hierarchy as a directory structure under
-/sys/kernel/debug/clk, each clock gets a single directory directly under
-/sys/kernel/debug/clk.
+Hi,
 
-While this may seem strange, here's way I think this is the right thing to do:
+On Fri, May 23 2014, Ulf Hansson wrote:
+> On 22 May 2014 17:55, Andrew Bresticker <abrestic@chromium.org> wrote:
+>> Program TEGRA_SDHCI_VENDOR_MISC_CTRL so that UHS modes aren't advertised
+>> in SDHCI_CAPABILITIES_1.  While the Tegra SDHCI controller does support
+>> these modes, they require Tegra-specific tuning and calibration routines
+>> which the driver does not support yet.
+>>
+>> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+>> Tested-by: Stephen Warren <swarren@nvidia.com>
+>> Acked-by: Stephen Warren <swarren@nvidia.com>
+>
+> Thanks Andrew!
+>
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+>
+> Chris, can you pick this up?
 
-1) a directory structure cannot be 'snapshotted' atomically, therefore it's
-   not in general possible to get a consistent view of the clocktree, because
-   clocks can be reparented at any time. This was solved by adding clk_dump
-   and clk_summary, which do guarantee an atomic snapshot of the tree.
-   Therefore I think the directory structure doesn't add any value.
+Thanks, pushed to mmc-next for 3.16.
 
-2) When writing userspace programs which use the files in the clock
-   directories (eg. for testing purposes), it's impossible to know for sure
-   where a certain clock will be, because it might have been reparented by the
-   time you figured out the path from clk_dump. This makes writing such
-   programs more difficult than it should be.
-
-So because the directory structure doesn't give any information we don't
-already provide by other means and it makes certain usecases more difficult
-than the should be, I think we should move to a flat directory containing
-one subdir per clock.
-
-Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/clk/clk.c |   54 +++-------------------------------------------------
- 1 files changed, 4 insertions(+), 50 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index dff0373..53c6b4f 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -306,7 +306,7 @@ static int clk_debug_create_subtree(struct clk *clk, struct dentry *pdentry)
- 		goto out;
- 
- 	hlist_for_each_entry(child, &clk->children, child_node)
--		clk_debug_create_subtree(child, clk->dentry);
-+		clk_debug_create_subtree(child, pdentry);
- 
- 	ret = 0;
- out:
-@@ -326,29 +326,20 @@ out:
-  */
- static int clk_debug_register(struct clk *clk)
- {
--	struct clk *parent;
- 	struct dentry *pdentry;
- 	int ret = 0;
- 
- 	if (!inited)
- 		goto out;
- 
--	parent = clk->parent;
--
- 	/*
- 	 * Check to see if a clk is a root clk.  Also check that it is
- 	 * safe to add this clk to debugfs
- 	 */
--	if (!parent)
--		if (clk->flags & CLK_IS_ROOT)
--			pdentry = rootdir;
--		else
--			pdentry = orphandir;
-+	if (clk->flags & CLK_IS_ROOT)
-+		pdentry = rootdir;
- 	else
--		if (parent->dentry)
--			pdentry = parent->dentry;
--		else
--			goto out;
-+		pdentry = orphandir;
- 
- 	ret = clk_debug_create_subtree(clk, pdentry);
- 
-@@ -372,39 +363,6 @@ static void clk_debug_unregister(struct clk *clk)
- }
- 
- /**
-- * clk_debug_reparent - reparent clk node in the debugfs clk tree
-- * @clk: the clk being reparented
-- * @new_parent: the new clk parent, may be NULL
-- *
-- * Rename clk entry in the debugfs clk tree if debugfs has been
-- * initialized.  Otherwise it bails out early since the debugfs clk tree
-- * will be created lazily by clk_debug_init as part of a late_initcall.
-- *
-- * Caller must hold prepare_lock.
-- */
--static void clk_debug_reparent(struct clk *clk, struct clk *new_parent)
--{
--	struct dentry *d;
--	struct dentry *new_parent_d;
--
--	if (!inited)
--		return;
--
--	if (new_parent)
--		new_parent_d = new_parent->dentry;
--	else
--		new_parent_d = orphandir;
--
--	d = debugfs_rename(clk->dentry->d_parent, clk->dentry,
--			new_parent_d, clk->name);
--	if (d)
--		clk->dentry = d;
--	else
--		pr_debug("%s: failed to rename debugfs entry for %s\n",
--				__func__, clk->name);
--}
--
--/**
-  * clk_debug_init - lazily create the debugfs clk tree visualization
-  *
-  * clks are often initialized very early during boot before memory can
-@@ -1277,9 +1235,6 @@ static void __clk_set_parent_after(struct clk *clk, struct clk *parent,
- 		clk_disable(old_parent);
- 		__clk_unprepare(old_parent);
- 	}
--
--	/* update debugfs with new clk tree topology */
--	clk_debug_reparent(clk, parent);
- }
- 
- static int __clk_set_parent(struct clk *clk, struct clk *parent, u8 p_index)
-@@ -1685,7 +1640,6 @@ out:
- void __clk_reparent(struct clk *clk, struct clk *new_parent)
- {
- 	clk_reparent(clk, new_parent);
--	clk_debug_reparent(clk, new_parent);
- 	__clk_recalc_accuracies(clk);
- 	__clk_recalc_rates(clk, POST_RATE_CHANGE);
- }
+- Chris.
 -- 
-1.7.7.rc0.72.g4b5ea.dirty
+Chris Ball   <http://printf.net/>
