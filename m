@@ -1,163 +1,168 @@
-From: Saravana Kannan <skannan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: Re: [RFC PATCH] clk: flatten clk tree in debugfs
-Date: Fri, 23 May 2014 15:24:32 -0700
-Message-ID: <537FCAA0.6080106@codeaurora.org>
-References: <1400842772-4862-1-git-send-email-pdeschrijver@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v2 0/7] drm/tegra: Convert to master/component framework
+Date: Sun, 25 May 2014 13:45:07 +0200
+Message-ID: <20140525114504.GA8233@mithrandir>
+References: <1399995050-28435-1-git-send-email-thierry.reding@gmail.com>
+ <20140522095621.GA11613@ulmo> <20140523110300.GA24374@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1400842772-4862-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: multipart/mixed; boundary="===============0585179740=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20140523110300.GA24374@kroah.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/23/2014 03:59 AM, Peter De Schrijver wrote:
-> This patch flattens the clk tree in CCF debugfs. Instead of representing the
-> clocks and their hierarchy as a directory structure under
-> /sys/kernel/debug/clk, each clock gets a single directory directly under
-> /sys/kernel/debug/clk.
->
-> While this may seem strange, here's way I think this is the right thing to do:
->
-> 1) a directory structure cannot be 'snapshotted' atomically, therefore it's
->     not in general possible to get a consistent view of the clocktree, because
->     clocks can be reparented at any time. This was solved by adding clk_dump
->     and clk_summary, which do guarantee an atomic snapshot of the tree.
->     Therefore I think the directory structure doesn't add any value.
->
-> 2) When writing userspace programs which use the files in the clock
->     directories (eg. for testing purposes), it's impossible to know for sure
->     where a certain clock will be, because it might have been reparented by the
->     time you figured out the path from clk_dump. This makes writing such
->     programs more difficult than it should be.
->
-> So because the directory structure doesn't give any information we don't
-> already provide by other means and it makes certain usecases more difficult
-> than the should be, I think we should move to a flat directory containing
-> one subdir per clock.
 
-Completely agree and a huge ACK to this idea.
+--===============0585179740==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="PEIAKu/WMn1b1Hv9"
+Content-Disposition: inline
 
->
-> Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->   drivers/clk/clk.c |   54 +++-------------------------------------------------
->   1 files changed, 4 insertions(+), 50 deletions(-)
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index dff0373..53c6b4f 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -306,7 +306,7 @@ static int clk_debug_create_subtree(struct clk *clk, struct dentry *pdentry)
->   		goto out;
->
->   	hlist_for_each_entry(child, &clk->children, child_node)
-> -		clk_debug_create_subtree(child, clk->dentry);
-> +		clk_debug_create_subtree(child, pdentry);
->
->   	ret = 0;
->   out:
-> @@ -326,29 +326,20 @@ out:
->    */
->   static int clk_debug_register(struct clk *clk)
->   {
-> -	struct clk *parent;
->   	struct dentry *pdentry;
->   	int ret = 0;
->
->   	if (!inited)
->   		goto out;
->
-> -	parent = clk->parent;
-> -
->   	/*
->   	 * Check to see if a clk is a root clk.  Also check that it is
->   	 * safe to add this clk to debugfs
->   	 */
-> -	if (!parent)
-> -		if (clk->flags & CLK_IS_ROOT)
-> -			pdentry = rootdir;
-> -		else
-> -			pdentry = orphandir;
-> +	if (clk->flags & CLK_IS_ROOT)
-> +		pdentry = rootdir;
->   	else
-> -		if (parent->dentry)
-> -			pdentry = parent->dentry;
-> -		else
-> -			goto out;
-> +		pdentry = orphandir;
 
-I'm confused by this code. Shouldn't pdentry always be the same? Do we 
-need a dir for orphans? Also, I'm not sure the code is actually right? 
-Looks like you are putting everything but the root into orphandir?
+--PEIAKu/WMn1b1Hv9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->
->   	ret = clk_debug_create_subtree(clk, pdentry);
->
-> @@ -372,39 +363,6 @@ static void clk_debug_unregister(struct clk *clk)
->   }
->
->   /**
-> - * clk_debug_reparent - reparent clk node in the debugfs clk tree
-> - * @clk: the clk being reparented
-> - * @new_parent: the new clk parent, may be NULL
-> - *
-> - * Rename clk entry in the debugfs clk tree if debugfs has been
-> - * initialized.  Otherwise it bails out early since the debugfs clk tree
-> - * will be created lazily by clk_debug_init as part of a late_initcall.
-> - *
-> - * Caller must hold prepare_lock.
-> - */
-> -static void clk_debug_reparent(struct clk *clk, struct clk *new_parent)
-> -{
-> -	struct dentry *d;
-> -	struct dentry *new_parent_d;
-> -
-> -	if (!inited)
-> -		return;
-> -
-> -	if (new_parent)
-> -		new_parent_d = new_parent->dentry;
-> -	else
-> -		new_parent_d = orphandir;
-> -
-> -	d = debugfs_rename(clk->dentry->d_parent, clk->dentry,
-> -			new_parent_d, clk->name);
-> -	if (d)
-> -		clk->dentry = d;
-> -	else
-> -		pr_debug("%s: failed to rename debugfs entry for %s\n",
-> -				__func__, clk->name);
-> -}
-> -
-> -/**
->    * clk_debug_init - lazily create the debugfs clk tree visualization
->    *
->    * clks are often initialized very early during boot before memory can
-> @@ -1277,9 +1235,6 @@ static void __clk_set_parent_after(struct clk *clk, struct clk *parent,
->   		clk_disable(old_parent);
->   		__clk_unprepare(old_parent);
->   	}
-> -
-> -	/* update debugfs with new clk tree topology */
-> -	clk_debug_reparent(clk, parent);
->   }
->
->   static int __clk_set_parent(struct clk *clk, struct clk *parent, u8 p_index)
-> @@ -1685,7 +1640,6 @@ out:
->   void __clk_reparent(struct clk *clk, struct clk *new_parent)
->   {
->   	clk_reparent(clk, new_parent);
-> -	clk_debug_reparent(clk, new_parent);
+On Fri, May 23, 2014 at 08:03:00PM +0900, Greg Kroah-Hartman wrote:
+> On Thu, May 22, 2014 at 11:56:23AM +0200, Thierry Reding wrote:
+> > On Tue, May 13, 2014 at 05:30:43PM +0200, Thierry Reding wrote:
+> > > From: Thierry Reding <treding@nvidia.com>
+> > >=20
+> > > Hi,
+> > >=20
+> > > This series converts the Tegra DRM driver to the master/component
+> > > framework. The length of the series and the list of people in Cc is
+> > > mostly due to the fact that Tegra has some special requirements as
+> > > opposed to other drivers and therefore requires some changes outside
+> > > of DRM.
+> > >=20
+> > > Patch 1 introduces a helper function that can be used by new DRM driv=
+ers
+> > > that don't rely on legacy userspace ABIs. It allows them to register =
+DRM
+> > > devices much more easily and without much of the midlayer that curren=
+tly
+> > > exists in the DRM subsystem.
+> > >=20
+> > > Patches 2 and 3 make some changes to the master/component framework
+> > > which are necessary to convert Tegra DRM to use it. All current users=
+ of
+> > > the API have been converted as part of this patch. Note that at the s=
+ame
+> > > time the drivers are converted to no longer use drm_platform_init() in
+> > > favour of the drm_set_unique() from patch 1 in conjunction with
+> > > drm_dev_alloc() and drm_dev_register(). I would've liked to avoid such
+> > > invasive changes in a single patch, but unfortunately I couldn't think
+> > > of a way how to do that. I'm open to suggestions.
+> > >=20
+> > > Patch 4 adds a new interface framework that supplements the master/
+> > > component framework and can be used in situations where there is no
+> > > struct device * that a driver can bind to.
+> > >=20
+> > > The Tegra DRM driver is converted to using the master/component
+> > > framework in patch 5 using the above four patches.
+> > >=20
+> > > Finally patches 6 and 7 add some documentation about the new way of
+> > > registering DRM devices that don't need legacy support.
+> > >=20
+> > > Each patch has a somewhat more elaborate description of why it is nee=
+ded
+> > > or what problem it solves. The patchset applies on top of linux-next.
+> > >=20
+> > > I welcome any questions or comments you might have.
+> > >=20
+> > > Thierry
+> > >=20
+> > > Thierry Reding (7):
+> > >   drm: Introduce drm_set_unique()
+> > >   drivers/base: Allow driver-data to be attached to a master
+> > >   drivers/base: Allow multiple masters per device
+> > >   drivers/base: Add interface framework
+> > >   drm/tegra: Convert to master/component framework
+> > >   drm: Add device registration documentation
+> > >   drm: Document how to register devices without struct drm_bus
+> >=20
+> > Greg, Russell,
+> >=20
+> > Any comments on this? I've been blocking a bunch of patches in the hopes
+> > of getting this merged since it allows the Tegra DRM driver to be
+> > cleaned up a great deal, but if nobody's going to look at or comment on
+> > this I'll abandon this series and keep using the custom solution we've
+> > had for a while now.
+>=20
+> I'd like Russell to comment on this, as he just added some driver core
+> work to do drm device work that seems to me to be much the same here.
 
-This should also make a lot of set rate/parent calls faster even when 
-debug is enabled.
+Yes. In fact that's what this series is all about. It converts the Tegra
+DRM driver to use Russell's master/component helpers. But there are also
+special requirements on Tegra DRM that require some enhancements to the
+helpers, which this series does. Furthermore the interface framework
+introduced here is supposed to complement the master/components helpers.
+It is not a duplicate implementation but attempts to solves a completely
+different problem.
 
--Saravana
+> There's also the work that the media developers are working on to handle
+> power management issues that seem to also be hitting the same area.  Due
+> to all of that, I really don't want to add yet-another-driver-core
+> addition for just one drm driver, all of them should be able to use it.
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-hosted by The Linux Foundation
+Like I said, this "interface" framework is meant to address something
+different and was specifically designed to be useful for more than just
+one DRM driver. However, people seem to prefer to make assumptions about
+this code rather than actually go look (or even read the description)
+what it really is about.
+
+Besides I already have a working solution for the "one DRM driver". And
+replacing it with the component/master helpers as-is will make it worse
+than it is. Hence in order to avoid wasting more of everyone's time I
+have now dropped patches 2-4 and changed patch 5 to only convert to the
+drm_dev_set_unique() function, which is the more important piece of the
+series anyway.
+
+Thierry
+
+--PEIAKu/WMn1b1Hv9
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTgdfAAAoJEN0jrNd/PrOh87gP/3ILg/LAhrVk4+DjdtZ42W7+
+8Szy0NoZ6l0IVNYD8XOku2cZBszRl7n1vv+jjl8gjsB5UDbncFCPNqJ7c0ceq7GM
+6eYAal86Wpv1mprsF4LKpf3LEFFmaNWHgHnCMP9sBdkqZIijcsaev4fNm2J2S7s4
+8A44QjF0oZqZBPpLfcbC6m70LSSjuOwQ7dAxemsLPwdAq6OZeFjWermvUDdSnQ75
+lRUWc5vwYVRtfeQXdv5UvSMRMWbj6yX+ATrRGol7HZTHCkXY5LbMlqeUCO1sgWC9
++5GR8rpnmlQqvQe3cz5xthwUI4TJ1lAnAj5sSrQqYKrU/VtE1ja2GdcZJriT3L2p
+BAXwV6QEnTdjjdVX9aUqHkwOOxI9Srv5au//5fV+qs6v1f6WB5n1NHnSP+lTSkdk
+51sqE2aSZFKOCnap2+W5r9Mno069MBoXvWxLVPW15jHIVHAL3L9s57/m3uzARt8p
+2sRlXdUrKxHzGaPpjWOjgnntBzQe+S5PiKPqrZ8VmG8frakEUF+b4rxCCX6BkMoX
+44Vyv2rbGeatYfuH9AbHVs9p7OrXF325O0Nd3CBVKgDFL/N+e4QeZU90eEs0Ut9R
+FsRL4oK5+B+I3TXCA6pbuL1fDotMAM3BVzDcvo11Bs6/IIoy7fBkSf6YqHUEcWAZ
+DxQHR4y8zFdqoQUQphkZ
+=ttrC
+-----END PGP SIGNATURE-----
+
+--PEIAKu/WMn1b1Hv9--
+
+--===============0585179740==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============0585179740==--
