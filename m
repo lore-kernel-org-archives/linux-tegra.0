@@ -1,168 +1,83 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2 0/7] drm/tegra: Convert to master/component framework
-Date: Sun, 25 May 2014 13:45:07 +0200
-Message-ID: <20140525114504.GA8233@mithrandir>
-References: <1399995050-28435-1-git-send-email-thierry.reding@gmail.com>
- <20140522095621.GA11613@ulmo> <20140523110300.GA24374@kroah.com>
+From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC] drm/nouveau: disable caching for VRAM BOs on ARM
+Date: Mon, 26 May 2014 09:45:56 +0300
+Message-ID: <5382E324.5090108@nvidia.com>
+References: <1400492771-9746-1-git-send-email-acourbot@nvidia.com>
+ <1400493433.8467.24.camel@weser.hi.pengutronix.de>
+ <5379D7A0.3050509@nvidia.com>
+ <1400494582.8467.28.camel@weser.hi.pengutronix.de>
+ <CAAVeFuLKTjaZPSxNSK3nEG+XK+mMmPDDq85qMF-EHp3bGwVJYA@mail.gmail.com>
+ <1400837055.4921.4.camel@weser.hi.pengutronix.de>
+ <537F1853.7050800@nvidia.com>
+ <1400839186.4921.17.camel@weser.hi.pengutronix.de>
+ <537F5DED.8050702@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0585179740=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20140523110300.GA24374@kroah.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <537F5DED.8050702-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 23.05.2014 17:40, Alex Courbot wrote:
+> On 05/23/2014 06:59 PM, Lucas Stach wrote:
+> So after checking with more knowledgeable people, it turns out this is 
+> the expected behavior on ARM and BAR regions should be mapped uncached 
+> on GK20A. All the more reasons to avoid using the BAR at all.
 
---===============0585179740==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="PEIAKu/WMn1b1Hv9"
-Content-Disposition: inline
+This is actually specific to Tegra.
 
+>> You may want to make yourself aware of all the quirks required for
+>> sharing memory between the GPU and CPU on an ARM host. I think there are
+>> far more involved than what you see now and writing an replacement for
+>> TTM will not be an easy task.
+>>
+>> Doing away with the concept of two memory areas will not get you to a
+>> single unified address space. You would have to deal with things like
+>> not being able to change the caching state of pages in the systems
+>> lowmem yourself. You will still have to deal with remapping pages that
+>> aren't currently visible to the CPU (ok this is not an issue on Jetson
+>> right now as it only has 2GB of RAM), because it's in systems highmem,
+>> or even in a different LPAE area.
+>>
+>> You really want to be sure you are aware of all the consequences of
+>> this, before considering this task.
+> 
+> Yep, that's why I am seeking advice here. My first hope is that with a 
+> few tweaks we will be able to keep using TTM and the current nouveau_bo 
+> implementation. But unless I missed something this is not going to be easy.
+> 
+> We can also use something like the patch I originally sent to make it 
+> work, although not with good performance, on GK20A. Not very graceful, 
+> but it will allow applications to run.
+> 
+> In the long run though, we will want to achieve better performance, and 
+> it seems like a BO implementation targeted at UMA devices would also be 
+> beneficial to quite a few desktop GPUs. So as tricky as it may be I'm 
+> interested in gathering thoughts and why not giving it a first try with 
+> GK20A, even if it imposes some limitations like having buffers in lowmem 
+> in a first time (we can probably live with this one for a short while, 
+> and 64 bits will also be coming to the rescue :))
 
---PEIAKu/WMn1b1Hv9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I don't think lowmem or LPAE is any problem, if the memory manager is
+designed with that in mind. Vast majority of the buffers kernel
+allocates do not need to be touched in kernel space.
 
-On Fri, May 23, 2014 at 08:03:00PM +0900, Greg Kroah-Hartman wrote:
-> On Thu, May 22, 2014 at 11:56:23AM +0200, Thierry Reding wrote:
-> > On Tue, May 13, 2014 at 05:30:43PM +0200, Thierry Reding wrote:
-> > > From: Thierry Reding <treding@nvidia.com>
-> > >=20
-> > > Hi,
-> > >=20
-> > > This series converts the Tegra DRM driver to the master/component
-> > > framework. The length of the series and the list of people in Cc is
-> > > mostly due to the fact that Tegra has some special requirements as
-> > > opposed to other drivers and therefore requires some changes outside
-> > > of DRM.
-> > >=20
-> > > Patch 1 introduces a helper function that can be used by new DRM driv=
-ers
-> > > that don't rely on legacy userspace ABIs. It allows them to register =
-DRM
-> > > devices much more easily and without much of the midlayer that curren=
-tly
-> > > exists in the DRM subsystem.
-> > >=20
-> > > Patches 2 and 3 make some changes to the master/component framework
-> > > which are necessary to convert Tegra DRM to use it. All current users=
- of
-> > > the API have been converted as part of this patch. Note that at the s=
-ame
-> > > time the drivers are converted to no longer use drm_platform_init() in
-> > > favour of the drm_set_unique() from patch 1 in conjunction with
-> > > drm_dev_alloc() and drm_dev_register(). I would've liked to avoid such
-> > > invasive changes in a single patch, but unfortunately I couldn't think
-> > > of a way how to do that. I'm open to suggestions.
-> > >=20
-> > > Patch 4 adds a new interface framework that supplements the master/
-> > > component framework and can be used in situations where there is no
-> > > struct device * that a driver can bind to.
-> > >=20
-> > > The Tegra DRM driver is converted to using the master/component
-> > > framework in patch 5 using the above four patches.
-> > >=20
-> > > Finally patches 6 and 7 add some documentation about the new way of
-> > > registering DRM devices that don't need legacy support.
-> > >=20
-> > > Each patch has a somewhat more elaborate description of why it is nee=
-ded
-> > > or what problem it solves. The patchset applies on top of linux-next.
-> > >=20
-> > > I welcome any questions or comments you might have.
-> > >=20
-> > > Thierry
-> > >=20
-> > > Thierry Reding (7):
-> > >   drm: Introduce drm_set_unique()
-> > >   drivers/base: Allow driver-data to be attached to a master
-> > >   drivers/base: Allow multiple masters per device
-> > >   drivers/base: Add interface framework
-> > >   drm/tegra: Convert to master/component framework
-> > >   drm: Add device registration documentation
-> > >   drm: Document how to register devices without struct drm_bus
-> >=20
-> > Greg, Russell,
-> >=20
-> > Any comments on this? I've been blocking a bunch of patches in the hopes
-> > of getting this merged since it allows the Tegra DRM driver to be
-> > cleaned up a great deal, but if nobody's going to look at or comment on
-> > this I'll abandon this series and keep using the custom solution we've
-> > had for a while now.
->=20
-> I'd like Russell to comment on this, as he just added some driver core
-> work to do drm device work that seems to me to be much the same here.
+Actually I can't think of any buffers that we allocate on behalf of user
+space that would need to be permanently mapped also to kernel. In case
+or relocs only push buffer needs to be temporarily mapped to kernel.
 
-Yes. In fact that's what this series is all about. It converts the Tegra
-DRM driver to use Russell's master/component helpers. But there are also
-special requirements on Tegra DRM that require some enhancements to the
-helpers, which this series does. Furthermore the interface framework
-introduced here is supposed to complement the master/components helpers.
-It is not a duplicate implementation but attempts to solves a completely
-different problem.
+Ultimately even relocs are not necessary if we expose GPU virtual
+addresses directly to user space. But that's another topic.
 
-> There's also the work that the media developers are working on to handle
-> power management issues that seem to also be hitting the same area.  Due
-> to all of that, I really don't want to add yet-another-driver-core
-> addition for just one drm driver, all of them should be able to use it.
-
-Like I said, this "interface" framework is meant to address something
-different and was specifically designed to be useful for more than just
-one DRM driver. However, people seem to prefer to make assumptions about
-this code rather than actually go look (or even read the description)
-what it really is about.
-
-Besides I already have a working solution for the "one DRM driver". And
-replacing it with the component/master helpers as-is will make it worse
-than it is. Hence in order to avoid wasting more of everyone's time I
-have now dropped patches 2-4 and changed patch 5 to only convert to the
-drm_dev_set_unique() function, which is the more important piece of the
-series anyway.
-
-Thierry
-
---PEIAKu/WMn1b1Hv9
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTgdfAAAoJEN0jrNd/PrOh87gP/3ILg/LAhrVk4+DjdtZ42W7+
-8Szy0NoZ6l0IVNYD8XOku2cZBszRl7n1vv+jjl8gjsB5UDbncFCPNqJ7c0ceq7GM
-6eYAal86Wpv1mprsF4LKpf3LEFFmaNWHgHnCMP9sBdkqZIijcsaev4fNm2J2S7s4
-8A44QjF0oZqZBPpLfcbC6m70LSSjuOwQ7dAxemsLPwdAq6OZeFjWermvUDdSnQ75
-lRUWc5vwYVRtfeQXdv5UvSMRMWbj6yX+ATrRGol7HZTHCkXY5LbMlqeUCO1sgWC9
-+5GR8rpnmlQqvQe3cz5xthwUI4TJ1lAnAj5sSrQqYKrU/VtE1ja2GdcZJriT3L2p
-BAXwV6QEnTdjjdVX9aUqHkwOOxI9Srv5au//5fV+qs6v1f6WB5n1NHnSP+lTSkdk
-51sqE2aSZFKOCnap2+W5r9Mno069MBoXvWxLVPW15jHIVHAL3L9s57/m3uzARt8p
-2sRlXdUrKxHzGaPpjWOjgnntBzQe+S5PiKPqrZ8VmG8frakEUF+b4rxCCX6BkMoX
-44Vyv2rbGeatYfuH9AbHVs9p7OrXF325O0Nd3CBVKgDFL/N+e4QeZU90eEs0Ut9R
-FsRL4oK5+B+I3TXCA6pbuL1fDotMAM3BVzDcvo11Bs6/IIoy7fBkSf6YqHUEcWAZ
-DxQHR4y8zFdqoQUQphkZ
-=ttrC
------END PGP SIGNATURE-----
-
---PEIAKu/WMn1b1Hv9--
-
---===============0585179740==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============0585179740==--
+Terje
