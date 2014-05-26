@@ -1,7 +1,7 @@
-From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 Subject: Re: [RFC] drm/nouveau: disable caching for VRAM BOs on ARM
-Date: Mon, 26 May 2014 09:45:56 +0300
-Message-ID: <5382E324.5090108@nvidia.com>
+Date: Mon, 26 May 2014 11:21:35 +0200
+Message-ID: <1401096095.4829.16.camel@weser.hi.pengutronix.de>
 References: <1400492771-9746-1-git-send-email-acourbot@nvidia.com>
  <1400493433.8467.24.camel@weser.hi.pengutronix.de>
  <5379D7A0.3050509@nvidia.com>
@@ -10,12 +10,12 @@ References: <1400492771-9746-1-git-send-email-acourbot@nvidia.com>
  <1400837055.4921.4.camel@weser.hi.pengutronix.de>
  <537F1853.7050800@nvidia.com>
  <1400839186.4921.17.camel@weser.hi.pengutronix.de>
- <537F5DED.8050702@nvidia.com>
+ <537F5DED.8050702@nvidia.com> <5382E324.5090108@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <537F5DED.8050702-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <5382E324.5090108-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
  <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/nouveau>
@@ -25,59 +25,78 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
  <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
 Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+To: Terje =?ISO-8859-1?Q?Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 23.05.2014 17:40, Alex Courbot wrote:
-> On 05/23/2014 06:59 PM, Lucas Stach wrote:
-> So after checking with more knowledgeable people, it turns out this is 
-> the expected behavior on ARM and BAR regions should be mapped uncached 
-> on GK20A. All the more reasons to avoid using the BAR at all.
-
-This is actually specific to Tegra.
-
->> You may want to make yourself aware of all the quirks required for
->> sharing memory between the GPU and CPU on an ARM host. I think there are
->> far more involved than what you see now and writing an replacement for
->> TTM will not be an easy task.
->>
->> Doing away with the concept of two memory areas will not get you to a
->> single unified address space. You would have to deal with things like
->> not being able to change the caching state of pages in the systems
->> lowmem yourself. You will still have to deal with remapping pages that
->> aren't currently visible to the CPU (ok this is not an issue on Jetson
->> right now as it only has 2GB of RAM), because it's in systems highmem,
->> or even in a different LPAE area.
->>
->> You really want to be sure you are aware of all the consequences of
->> this, before considering this task.
-> 
-> Yep, that's why I am seeking advice here. My first hope is that with a 
-> few tweaks we will be able to keep using TTM and the current nouveau_bo 
-> implementation. But unless I missed something this is not going to be easy.
-> 
-> We can also use something like the patch I originally sent to make it 
-> work, although not with good performance, on GK20A. Not very graceful, 
-> but it will allow applications to run.
-> 
-> In the long run though, we will want to achieve better performance, and 
-> it seems like a BO implementation targeted at UMA devices would also be 
-> beneficial to quite a few desktop GPUs. So as tricky as it may be I'm 
-> interested in gathering thoughts and why not giving it a first try with 
-> GK20A, even if it imposes some limitations like having buffers in lowmem 
-> in a first time (we can probably live with this one for a short while, 
-> and 64 bits will also be coming to the rescue :))
-
-I don't think lowmem or LPAE is any problem, if the memory manager is
-designed with that in mind. Vast majority of the buffers kernel
-allocates do not need to be touched in kernel space.
-
-Actually I can't think of any buffers that we allocate on behalf of user
-space that would need to be permanently mapped also to kernel. In case
-or relocs only push buffer needs to be temporarily mapped to kernel.
-
-Ultimately even relocs are not necessary if we expose GPU virtual
-addresses directly to user space. But that's another topic.
-
-Terje
+QW0gTW9udGFnLCBkZW4gMjYuMDUuMjAxNCwgMDk6NDUgKzAzMDAgc2NocmllYiBUZXJqZSBCZXJn
+c3Ryw7ZtOgo+IE9uIDIzLjA1LjIwMTQgMTc6NDAsIEFsZXggQ291cmJvdCB3cm90ZToKPiA+IE9u
+IDA1LzIzLzIwMTQgMDY6NTkgUE0sIEx1Y2FzIFN0YWNoIHdyb3RlOgo+ID4gU28gYWZ0ZXIgY2hl
+Y2tpbmcgd2l0aCBtb3JlIGtub3dsZWRnZWFibGUgcGVvcGxlLCBpdCB0dXJucyBvdXQgdGhpcyBp
+cyAKPiA+IHRoZSBleHBlY3RlZCBiZWhhdmlvciBvbiBBUk0gYW5kIEJBUiByZWdpb25zIHNob3Vs
+ZCBiZSBtYXBwZWQgdW5jYWNoZWQgCj4gPiBvbiBHSzIwQS4gQWxsIHRoZSBtb3JlIHJlYXNvbnMg
+dG8gYXZvaWQgdXNpbmcgdGhlIEJBUiBhdCBhbGwuCj4gCj4gVGhpcyBpcyBhY3R1YWxseSBzcGVj
+aWZpYyB0byBUZWdyYS4KPiAKPiA+PiBZb3UgbWF5IHdhbnQgdG8gbWFrZSB5b3Vyc2VsZiBhd2Fy
+ZSBvZiBhbGwgdGhlIHF1aXJrcyByZXF1aXJlZCBmb3IKPiA+PiBzaGFyaW5nIG1lbW9yeSBiZXR3
+ZWVuIHRoZSBHUFUgYW5kIENQVSBvbiBhbiBBUk0gaG9zdC4gSSB0aGluayB0aGVyZSBhcmUKPiA+
+PiBmYXIgbW9yZSBpbnZvbHZlZCB0aGFuIHdoYXQgeW91IHNlZSBub3cgYW5kIHdyaXRpbmcgYW4g
+cmVwbGFjZW1lbnQgZm9yCj4gPj4gVFRNIHdpbGwgbm90IGJlIGFuIGVhc3kgdGFzay4KPiA+Pgo+
+ID4+IERvaW5nIGF3YXkgd2l0aCB0aGUgY29uY2VwdCBvZiB0d28gbWVtb3J5IGFyZWFzIHdpbGwg
+bm90IGdldCB5b3UgdG8gYQo+ID4+IHNpbmdsZSB1bmlmaWVkIGFkZHJlc3Mgc3BhY2UuIFlvdSB3
+b3VsZCBoYXZlIHRvIGRlYWwgd2l0aCB0aGluZ3MgbGlrZQo+ID4+IG5vdCBiZWluZyBhYmxlIHRv
+IGNoYW5nZSB0aGUgY2FjaGluZyBzdGF0ZSBvZiBwYWdlcyBpbiB0aGUgc3lzdGVtcwo+ID4+IGxv
+d21lbSB5b3Vyc2VsZi4gWW91IHdpbGwgc3RpbGwgaGF2ZSB0byBkZWFsIHdpdGggcmVtYXBwaW5n
+IHBhZ2VzIHRoYXQKPiA+PiBhcmVuJ3QgY3VycmVudGx5IHZpc2libGUgdG8gdGhlIENQVSAob2sg
+dGhpcyBpcyBub3QgYW4gaXNzdWUgb24gSmV0c29uCj4gPj4gcmlnaHQgbm93IGFzIGl0IG9ubHkg
+aGFzIDJHQiBvZiBSQU0pLCBiZWNhdXNlIGl0J3MgaW4gc3lzdGVtcyBoaWdobWVtLAo+ID4+IG9y
+IGV2ZW4gaW4gYSBkaWZmZXJlbnQgTFBBRSBhcmVhLgo+ID4+Cj4gPj4gWW91IHJlYWxseSB3YW50
+IHRvIGJlIHN1cmUgeW91IGFyZSBhd2FyZSBvZiBhbGwgdGhlIGNvbnNlcXVlbmNlcyBvZgo+ID4+
+IHRoaXMsIGJlZm9yZSBjb25zaWRlcmluZyB0aGlzIHRhc2suCj4gPiAKPiA+IFllcCwgdGhhdCdz
+IHdoeSBJIGFtIHNlZWtpbmcgYWR2aWNlIGhlcmUuIE15IGZpcnN0IGhvcGUgaXMgdGhhdCB3aXRo
+IGEgCj4gPiBmZXcgdHdlYWtzIHdlIHdpbGwgYmUgYWJsZSB0byBrZWVwIHVzaW5nIFRUTSBhbmQg
+dGhlIGN1cnJlbnQgbm91dmVhdV9ibyAKPiA+IGltcGxlbWVudGF0aW9uLiBCdXQgdW5sZXNzIEkg
+bWlzc2VkIHNvbWV0aGluZyB0aGlzIGlzIG5vdCBnb2luZyB0byBiZSBlYXN5Lgo+ID4gCj4gPiBX
+ZSBjYW4gYWxzbyB1c2Ugc29tZXRoaW5nIGxpa2UgdGhlIHBhdGNoIEkgb3JpZ2luYWxseSBzZW50
+IHRvIG1ha2UgaXQgCj4gPiB3b3JrLCBhbHRob3VnaCBub3Qgd2l0aCBnb29kIHBlcmZvcm1hbmNl
+LCBvbiBHSzIwQS4gTm90IHZlcnkgZ3JhY2VmdWwsIAo+ID4gYnV0IGl0IHdpbGwgYWxsb3cgYXBw
+bGljYXRpb25zIHRvIHJ1bi4KPiA+IAo+ID4gSW4gdGhlIGxvbmcgcnVuIHRob3VnaCwgd2Ugd2ls
+bCB3YW50IHRvIGFjaGlldmUgYmV0dGVyIHBlcmZvcm1hbmNlLCBhbmQgCj4gPiBpdCBzZWVtcyBs
+aWtlIGEgQk8gaW1wbGVtZW50YXRpb24gdGFyZ2V0ZWQgYXQgVU1BIGRldmljZXMgd291bGQgYWxz
+byBiZSAKPiA+IGJlbmVmaWNpYWwgdG8gcXVpdGUgYSBmZXcgZGVza3RvcCBHUFVzLiBTbyBhcyB0
+cmlja3kgYXMgaXQgbWF5IGJlIEknbSAKPiA+IGludGVyZXN0ZWQgaW4gZ2F0aGVyaW5nIHRob3Vn
+aHRzIGFuZCB3aHkgbm90IGdpdmluZyBpdCBhIGZpcnN0IHRyeSB3aXRoIAo+ID4gR0syMEEsIGV2
+ZW4gaWYgaXQgaW1wb3NlcyBzb21lIGxpbWl0YXRpb25zIGxpa2UgaGF2aW5nIGJ1ZmZlcnMgaW4g
+bG93bWVtIAo+ID4gaW4gYSBmaXJzdCB0aW1lICh3ZSBjYW4gcHJvYmFibHkgbGl2ZSB3aXRoIHRo
+aXMgb25lIGZvciBhIHNob3J0IHdoaWxlLCAKPiA+IGFuZCA2NCBiaXRzIHdpbGwgYWxzbyBiZSBj
+b21pbmcgdG8gdGhlIHJlc2N1ZSA6KSkKPiAKPiBJIGRvbid0IHRoaW5rIGxvd21lbSBvciBMUEFF
+IGlzIGFueSBwcm9ibGVtLCBpZiB0aGUgbWVtb3J5IG1hbmFnZXIgaXMKPiBkZXNpZ25lZCB3aXRo
+IHRoYXQgaW4gbWluZC4gVmFzdCBtYWpvcml0eSBvZiB0aGUgYnVmZmVycyBrZXJuZWwKPiBhbGxv
+Y2F0ZXMgZG8gbm90IG5lZWQgdG8gYmUgdG91Y2hlZCBpbiBrZXJuZWwgc3BhY2UuCj4gCj4gQWN0
+dWFsbHkgSSBjYW4ndCB0aGluayBvZiBhbnkgYnVmZmVycyB0aGF0IHdlIGFsbG9jYXRlIG9uIGJl
+aGFsZiBvZiB1c2VyCj4gc3BhY2UgdGhhdCB3b3VsZCBuZWVkIHRvIGJlIHBlcm1hbmVudGx5IG1h
+cHBlZCBhbHNvIHRvIGtlcm5lbC4gSW4gY2FzZQo+IG9yIHJlbG9jcyBvbmx5IHB1c2ggYnVmZmVy
+IG5lZWRzIHRvIGJlIHRlbXBvcmFyaWx5IG1hcHBlZCB0byBrZXJuZWwuCj4gCj4gVWx0aW1hdGVs
+eSBldmVuIHJlbG9jcyBhcmUgbm90IG5lY2Vzc2FyeSBpZiB3ZSBleHBvc2UgR1BVIHZpcnR1YWwK
+PiBhZGRyZXNzZXMgZGlyZWN0bHkgdG8gdXNlciBzcGFjZS4gQnV0IHRoYXQncyBhbm90aGVyIHRv
+cGljLgo+IApOb3V2ZWF1IGFscmVhZHkgZXhwb3NlcyBjb25zdGFudCB2aXJ0dWFsIGFkZHJlc3Nl
+cyB0byB1c2Vyc3BhY2UgYW5kCnNraXBzIHRoZSBwdXNoYnVmIHBhdGNoaW5nIHdoZW4gdGhlIHBy
+ZXN1bWVkIG9mZnNldCBmcm9tIHVzZXJzcGFjZSBpcwp0aGUgc2FtZSBhcyB3aGF0IHRoZSBrZXJu
+ZWwgdGhpbmtzIGl0IHNob3VsZCBiZS4KClRoZSBwcm9ibGVtIHdpdGggbG93bWVtIG9uIEFSTSBp
+cyB0aGF0IHlvdSBjYW4ndCB1bm1hcCB0aG9zZSBwYWdlcyBmcm9tCnRoZSBrZXJuZWwgY2FjaGVk
+IG1hcHBpbmcuIFNvIGlmIHlvdSBhbGxvYyBhIHBhZ2UsIGdpdmUgaXQgdG8gdXNlcnNwYWNlCmFu
+ZCB1c2Vyc3BhY2UgZGVjaWRlcyB0byBtYXAgdGhlIHBhZ2UgV0MgeW91IGp1c3QgcHJvZHVjZWQg
+YSBjb25mbGljdGluZwptYXBwaW5nLCB3aGljaCBtYXkgeWllbGQgdW5kZWZpbmVkIHJlc3VsdHMg
+b24gQVJNdjcuIFlvdSBtYXkgdGhpbmsgdGhpcwppcyBub3QgYSBwcm9ibGVtIGFzIHlvdSBhcmUg
+bm90IHRvdWNoaW5nIHRoZSBrZXJuZWwgY2FjaGVkIG1hcHBpbmcsIGJ1dAppbiBmYWN0IGl0IGlz
+LiBUaGUgQ1BVcyBwcmVmZXRjaGVyIGNhbiBzdGlsbCBhY2Nlc3MgdGhpcyBtYXBwaW5nLgoKQWx0
+aG91Z2ggaXQgd29uJ3Qgd2FuZGVyIG92ZXIgYSBwYWdlIGJvdW5kYXJ5IGZvciBhdXRvbWF0aWMg
+cHJlZmV0Y2hpbmcKaXQgbWF5IHN0aWxsIGRvIHRoaXMgd2hlbiBleHBsaWNpdGx5IGluc3RydWN0
+ZWQgdG8gZG8gc28gYnkgY29kZSwgd2hpY2gKbWF5IGhhcHBlbiBmb3IgZXhhbXBsZSBpZiB5b3Vy
+IHBhZ2UgaGFwcGVucyB0byBiZSBuZWFyIGEga2VybmVsIGxpc3QsCndoZXJlIHRoZSBsaXN0IHRy
+YXZlcnNhbCBjb2RlIGluY2x1ZGVzIGV4cGxpY2l0IHByZWZldGNoIGluc3RydWN0aW9ucy4KClJl
+Z2FyZHMsCkx1Y2FzCgotLSAKUGVuZ3V0cm9uaXggZS5LLiAgICAgICAgICAgICB8IEx1Y2FzIFN0
+YWNoICAgICAgICAgICAgICAgICB8CkluZHVzdHJpYWwgTGludXggU29sdXRpb25zICAgfCBodHRw
+Oi8vd3d3LnBlbmd1dHJvbml4LmRlLyAgfAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX18KTm91dmVhdSBtYWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVl
+ZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
+L25vdXZlYXUK
