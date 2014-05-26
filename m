@@ -1,116 +1,107 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC PATCH] clk: flatten clk tree in debugfs
-Date: Mon, 26 May 2014 14:14:53 +0300
-Message-ID: <20140526111453.GE5961@tbergstrom-lnx.Nvidia.com>
-References: <1400842772-4862-1-git-send-email-pdeschrijver@nvidia.com>
- <537FCAA0.6080106@codeaurora.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [RFC PATCH 3/3] clk: tegra: Implement Tegra124 shared/cbus clks
+Date: Mon, 26 May 2014 15:07:26 +0200
+Message-ID: <20140526130725.GA1594@ulmo>
+References: <1399990023-30318-1-git-send-email-pdeschrijver@nvidia.com>
+ <1399990023-30318-4-git-send-email-pdeschrijver@nvidia.com>
+ <53725FED.7050303@wwwdotorg.org>
+ <20140514142739.GA8612@ulmo>
+ <20140514193518.19795.64334@quantum>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Nq2Wo0NMKNjxTN9z"
+Return-path: <linux-pm-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <537FCAA0.6080106-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Saravana Kannan <skannan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <20140514193518.19795.64334@quantum>
+Sender: linux-pm-owner@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, May 24, 2014 at 12:24:32AM +0200, Saravana Kannan wrote:
-> On 05/23/2014 03:59 AM, Peter De Schrijver wrote:
-> > This patch flattens the clk tree in CCF debugfs. Instead of representing the
-> > clocks and their hierarchy as a directory structure under
-> > /sys/kernel/debug/clk, each clock gets a single directory directly under
-> > /sys/kernel/debug/clk.
-> >
-> > While this may seem strange, here's way I think this is the right thing to do:
-> >
-> > 1) a directory structure cannot be 'snapshotted' atomically, therefore it's
-> >     not in general possible to get a consistent view of the clocktree, because
-> >     clocks can be reparented at any time. This was solved by adding clk_dump
-> >     and clk_summary, which do guarantee an atomic snapshot of the tree.
-> >     Therefore I think the directory structure doesn't add any value.
-> >
-> > 2) When writing userspace programs which use the files in the clock
-> >     directories (eg. for testing purposes), it's impossible to know for sure
-> >     where a certain clock will be, because it might have been reparented by the
-> >     time you figured out the path from clk_dump. This makes writing such
-> >     programs more difficult than it should be.
-> >
-> > So because the directory structure doesn't give any information we don't
-> > already provide by other means and it makes certain usecases more difficult
-> > than the should be, I think we should move to a flat directory containing
-> > one subdir per clock.
-> 
-> Completely agree and a huge ACK to this idea.
-> 
 
-Thanks.
+--Nq2Wo0NMKNjxTN9z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> >
-> > Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >   drivers/clk/clk.c |   54 +++-------------------------------------------------
-> >   1 files changed, 4 insertions(+), 50 deletions(-)
-> >
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index dff0373..53c6b4f 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -306,7 +306,7 @@ static int clk_debug_create_subtree(struct clk *clk, struct dentry *pdentry)
-> >   		goto out;
-> >
-> >   	hlist_for_each_entry(child, &clk->children, child_node)
-> > -		clk_debug_create_subtree(child, clk->dentry);
-> > +		clk_debug_create_subtree(child, pdentry);
-> >
-> >   	ret = 0;
-> >   out:
-> > @@ -326,29 +326,20 @@ out:
-> >    */
-> >   static int clk_debug_register(struct clk *clk)
-> >   {
-> > -	struct clk *parent;
-> >   	struct dentry *pdentry;
-> >   	int ret = 0;
-> >
-> >   	if (!inited)
-> >   		goto out;
-> >
-> > -	parent = clk->parent;
-> > -
-> >   	/*
-> >   	 * Check to see if a clk is a root clk.  Also check that it is
-> >   	 * safe to add this clk to debugfs
-> >   	 */
-> > -	if (!parent)
-> > -		if (clk->flags & CLK_IS_ROOT)
-> > -			pdentry = rootdir;
-> > -		else
-> > -			pdentry = orphandir;
-> > +	if (clk->flags & CLK_IS_ROOT)
-> > +		pdentry = rootdir;
-> >   	else
-> > -		if (parent->dentry)
-> > -			pdentry = parent->dentry;
-> > -		else
-> > -			goto out;
-> > +		pdentry = orphandir;
-> 
-> I'm confused by this code. Shouldn't pdentry always be the same? Do we 
-> need a dir for orphans? Also, I'm not sure the code is actually right? 
+On Wed, May 14, 2014 at 12:35:18PM -0700, Mike Turquette wrote:
+> Quoting Thierry Reding (2014-05-14 07:27:40)
+[...]
+> > As for shared clocks I'm only aware of one use-case, namely EMC scaling.
+> > Using clocks for that doesn't seem like the best option to me. While it
+> > can probably fix the immediate issue of choosing an appropriate
+> > frequency for the EMC clock it isn't a complete solution for the problem
+> > that we're trying to solve. From what I understand EMC scaling is one
+> > part of ensuring quality of service. The current implementations of that
+> > seems to abuse clocks (essentially one X.emc clock per X clock) to
+> > signal the amount of memory bandwidth required by any given device. But
+> > there are other parts to the puzzle. Latency allowance is one. The value
+> > programmed to the latency allowance registers for example depends on the
+> > EMC frequency.
+> >=20
+> > Has anyone ever looked into using a different framework to model all of
+> > these requirements? PM QoS looks like it might fit, but if none of the
+> > existing frameworks have what we need, perhaps something new can be
+> > created.
+>=20
+> It has been discussed. Using a QoS throughput constraint could help
+> scale frequency. But this deserves a wider discussion and starts to
+> stray into both PM QoS territory and also into "should we have a DVFS
+> framework" territory.
 
-Indeed. This code is most likely wrong... I don't have a strong opinion
-if we need an orphan dir or if we can just have a file to list orphaned
-clocks. I would still like to be able to see if there are orphaned clocks.
-You could argue that the same race exists for the orphan dir. It is possible
-for the parent to be registered while you're traversing the orphan dir and
-cause a clock to move around. In practice this seems rather unlikely to happen
-to me?
+I've looked into this for a bit and it doesn't look like PM QoS is going
+to be a good match after all. One of the issues I found was that PM QoS
+deals with individual devices and there's no builtin way to collect the
+requests from multiple devices to produce a global constraint. So if we
+want to add something like that either the API would need to be extended
+or it would need to be tacked on using the notifier mechanism and some
+way of tracking (and filtering) the individual devices.
 
-> Looks like you are putting everything but the root into orphandir?
-> 
+Looking at devfreq it seems to be the DVFS framework that you mentioned,
+but from what I can tell it suffers from mostly the same problems. The
+governor applies some frequency scaling policy to a single device and
+does not allow multiple devices to register constraints against a single
+(global) constraint so that the result can be accumulated.
 
-Yes...
+For Tegra EMC scaling what we need is something more along the lines of
+this: we have a resource (external memory) that is shared by multiple
+devices in the system. Each of those devices requires a certain amount
+of that resource (memory bandwidth). The resource driver will need to
+accumulate all requests for the resource and apply the resulting
+constraint so that all requests can be satisfied.
 
-Cheers,
+One solution I could imagine to make this work with PM QoS would be to
+add the concept of a pm_qos_group to manage a set of pm_qos_requests,
+but that will require a bunch of extra checks to make sure that requests
+are of the correct type and so on. In other words it would still be
+tacked on.
 
-Peter.
+Adding the linux-pm mailing list for more visibility. Perhaps somebody
+has some ideas on how to extend any of the existing frameworks to make
+it work for Tegra's EMC scaling (or how to implement the requirements of
+Tegra's EMC scaling within the existing frameworks).
+
+Thierry
+
+--Nq2Wo0NMKNjxTN9z
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTgzyNAAoJEN0jrNd/PrOhqn4QAJClN4TDk5AvQhE3QqZ9U+BW
+V2/Qs4dICKGGroOsaVqLtk0SEu2uIJjqKPi4nsoRGxOtm4rCQHkyD5p4Rs1qFRX5
+5LBKazX3mNeCpjbaTqprU7SYpd1bs+c9+S82M3Pe9SgrCpJDGpJNjKZgEvcqdWnV
+sKmsvLxdhAvX5UKyWBDGMBppWwoRo3GiY7qnQ6iOmS7aMMgjbJ6tNcW8Ih0DrUBJ
+iJBmK6NhPxa8b2prgBiLSiGApw5Qr9DobZ1MClNBYfWt1PfO0dudE0BqlX+vtN4B
+rrxpF0ZQxgjcSMQlJR8FFUKg40J60+2wKgv7EWGrhv+zOkZxbAAfnjnkIyBaXEIh
+ogK/RQugZIs36g+fI0dVnCwCOj8oe3ydWlVoz40uOqU8iqD8HuJWOiDij6sBQ9W0
+Szz4cn9AzmE9WjuH+p1tyila3OC6tl4ox7vIr6pdyZIANXAUfQzC+AXuw6GZuAJK
+cogGrgPPzlbvMC+nXzcp7u1SJSBSimIbIaW9VTFhIa7cZZcbMj6c08WUPu17+DWG
+fAycae5C+M/nJ37BIRGlv1boJ7nx81BXI+s3DiD6sxMd3YIjK9fWclZz3kAaqbS4
+NlFmoHZtSLFDjdaaC4v2zhmYotzCLQhhLfk0DgAmOtwuvT9Aip30qSQ+D2bx/N68
+NuP5kVd0B6oIPaJg8HJV
+=PQnT
+-----END PGP SIGNATURE-----
+
+--Nq2Wo0NMKNjxTN9z--
