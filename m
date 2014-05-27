@@ -1,108 +1,137 @@
-From: =?UTF-8?Q?St=C3=A9phane_Marchesin?= <stephane.marchesin@gmail.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [Nouveau] [RFC] drm/nouveau: disable caching for VRAM BOs on ARM
-Date: Mon, 26 May 2014 18:07:04 -0700
-Message-ID: <CACP_E++Kh467jPAWOngBxCyc+tscKgnRDBH+i324a6DQQDV1Nw@mail.gmail.com>
+Date: Tue, 27 May 2014 11:42:16 +0900
+Message-ID: <CAAVeFuJNXH+EN6XekdfKnEzbz8n=LFSQBpKKbiOgsQ3cRyXrtw@mail.gmail.com>
 References: <1400492771-9746-1-git-send-email-acourbot@nvidia.com>
- <1400493433.8467.24.camel@weser.hi.pengutronix.de>
- <5379D7A0.3050509@nvidia.com>
- <1400494582.8467.28.camel@weser.hi.pengutronix.de>
- <CAAVeFuLKTjaZPSxNSK3nEG+XK+mMmPDDq85qMF-EHp3bGwVJYA@mail.gmail.com>
- <1400837055.4921.4.camel@weser.hi.pengutronix.de>
- <537F1853.7050800@nvidia.com>
- <1400839186.4921.17.camel@weser.hi.pengutronix.de>
- <537F5DED.8050702@nvidia.com> <5382E324.5090108@nvidia.com>
- <1401096095.4829.16.camel@weser.hi.pengutronix.de>
- <CAAVeFuKfPKZy81ZO9Wbdtv6gzsCzEF=iJbqOVKPecPqZSnMVUQ@mail.gmail.com>
+ <1400493433.8467.24.camel@weser.hi.pengutronix.de> <5379D7A0.3050509@nvidia.com>
+ <1400494582.8467.28.camel@weser.hi.pengutronix.de> <CAAVeFuLKTjaZPSxNSK3nEG+XK+mMmPDDq85qMF-EHp3bGwVJYA@mail.gmail.com>
+ <1400837055.4921.4.camel@weser.hi.pengutronix.de> <537F1853.7050800@nvidia.com>
+ <1400839186.4921.17.camel@weser.hi.pengutronix.de> <537F5DED.8050702@nvidia.com>
+ <5382E324.5090108@nvidia.com> <1401096095.4829.16.camel@weser.hi.pengutronix.de>
+ <CAAVeFuKfPKZy81ZO9Wbdtv6gzsCzEF=iJbqOVKPecPqZSnMVUQ@mail.gmail.com> <CACP_E++Kh467jPAWOngBxCyc+tscKgnRDBH+i324a6DQQDV1Nw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAAVeFuKfPKZy81ZO9Wbdtv6gzsCzEF=iJbqOVKPecPqZSnMVUQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ben Skeggs <bskeggs@redhat.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACP_E++Kh467jPAWOngBxCyc+tscKgnRDBH+i324a6DQQDV1Nw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?UTF-8?Q?St=C3=A9phane_Marchesin?= <stephane.marchesin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gTW9uLCBNYXkgMjYsIDIwMTQgYXQgNTowMiBQTSwgQWxleGFuZHJlIENvdXJib3QgPGdudXJv
-dUBnbWFpbC5jb20+IHdyb3RlOgo+IE9uIE1vbiwgTWF5IDI2LCAyMDE0IGF0IDY6MjEgUE0sIEx1
-Y2FzIFN0YWNoIDxsLnN0YWNoQHBlbmd1dHJvbml4LmRlPiB3cm90ZToKPj4gQW0gTW9udGFnLCBk
-ZW4gMjYuMDUuMjAxNCwgMDk6NDUgKzAzMDAgc2NocmllYiBUZXJqZSBCZXJnc3Ryw7ZtOgo+Pj4g
-T24gMjMuMDUuMjAxNCAxNzo0MCwgQWxleCBDb3VyYm90IHdyb3RlOgo+Pj4gPiBPbiAwNS8yMy8y
-MDE0IDA2OjU5IFBNLCBMdWNhcyBTdGFjaCB3cm90ZToKPj4+ID4gU28gYWZ0ZXIgY2hlY2tpbmcg
-d2l0aCBtb3JlIGtub3dsZWRnZWFibGUgcGVvcGxlLCBpdCB0dXJucyBvdXQgdGhpcyBpcwo+Pj4g
-PiB0aGUgZXhwZWN0ZWQgYmVoYXZpb3Igb24gQVJNIGFuZCBCQVIgcmVnaW9ucyBzaG91bGQgYmUg
-bWFwcGVkIHVuY2FjaGVkCj4+PiA+IG9uIEdLMjBBLiBBbGwgdGhlIG1vcmUgcmVhc29ucyB0byBh
-dm9pZCB1c2luZyB0aGUgQkFSIGF0IGFsbC4KPj4+Cj4+PiBUaGlzIGlzIGFjdHVhbGx5IHNwZWNp
-ZmljIHRvIFRlZ3JhLgo+Pj4KPj4+ID4+IFlvdSBtYXkgd2FudCB0byBtYWtlIHlvdXJzZWxmIGF3
-YXJlIG9mIGFsbCB0aGUgcXVpcmtzIHJlcXVpcmVkIGZvcgo+Pj4gPj4gc2hhcmluZyBtZW1vcnkg
-YmV0d2VlbiB0aGUgR1BVIGFuZCBDUFUgb24gYW4gQVJNIGhvc3QuIEkgdGhpbmsgdGhlcmUgYXJl
-Cj4+PiA+PiBmYXIgbW9yZSBpbnZvbHZlZCB0aGFuIHdoYXQgeW91IHNlZSBub3cgYW5kIHdyaXRp
-bmcgYW4gcmVwbGFjZW1lbnQgZm9yCj4+PiA+PiBUVE0gd2lsbCBub3QgYmUgYW4gZWFzeSB0YXNr
-Lgo+Pj4gPj4KPj4+ID4+IERvaW5nIGF3YXkgd2l0aCB0aGUgY29uY2VwdCBvZiB0d28gbWVtb3J5
-IGFyZWFzIHdpbGwgbm90IGdldCB5b3UgdG8gYQo+Pj4gPj4gc2luZ2xlIHVuaWZpZWQgYWRkcmVz
-cyBzcGFjZS4gWW91IHdvdWxkIGhhdmUgdG8gZGVhbCB3aXRoIHRoaW5ncyBsaWtlCj4+PiA+PiBu
-b3QgYmVpbmcgYWJsZSB0byBjaGFuZ2UgdGhlIGNhY2hpbmcgc3RhdGUgb2YgcGFnZXMgaW4gdGhl
-IHN5c3RlbXMKPj4+ID4+IGxvd21lbSB5b3Vyc2VsZi4gWW91IHdpbGwgc3RpbGwgaGF2ZSB0byBk
-ZWFsIHdpdGggcmVtYXBwaW5nIHBhZ2VzIHRoYXQKPj4+ID4+IGFyZW4ndCBjdXJyZW50bHkgdmlz
-aWJsZSB0byB0aGUgQ1BVIChvayB0aGlzIGlzIG5vdCBhbiBpc3N1ZSBvbiBKZXRzb24KPj4+ID4+
-IHJpZ2h0IG5vdyBhcyBpdCBvbmx5IGhhcyAyR0Igb2YgUkFNKSwgYmVjYXVzZSBpdCdzIGluIHN5
-c3RlbXMgaGlnaG1lbSwKPj4+ID4+IG9yIGV2ZW4gaW4gYSBkaWZmZXJlbnQgTFBBRSBhcmVhLgo+
-Pj4gPj4KPj4+ID4+IFlvdSByZWFsbHkgd2FudCB0byBiZSBzdXJlIHlvdSBhcmUgYXdhcmUgb2Yg
-YWxsIHRoZSBjb25zZXF1ZW5jZXMgb2YKPj4+ID4+IHRoaXMsIGJlZm9yZSBjb25zaWRlcmluZyB0
-aGlzIHRhc2suCj4+PiA+Cj4+PiA+IFllcCwgdGhhdCdzIHdoeSBJIGFtIHNlZWtpbmcgYWR2aWNl
-IGhlcmUuIE15IGZpcnN0IGhvcGUgaXMgdGhhdCB3aXRoIGEKPj4+ID4gZmV3IHR3ZWFrcyB3ZSB3
-aWxsIGJlIGFibGUgdG8ga2VlcCB1c2luZyBUVE0gYW5kIHRoZSBjdXJyZW50IG5vdXZlYXVfYm8K
-Pj4+ID4gaW1wbGVtZW50YXRpb24uIEJ1dCB1bmxlc3MgSSBtaXNzZWQgc29tZXRoaW5nIHRoaXMg
-aXMgbm90IGdvaW5nIHRvIGJlIGVhc3kuCj4+PiA+Cj4+PiA+IFdlIGNhbiBhbHNvIHVzZSBzb21l
-dGhpbmcgbGlrZSB0aGUgcGF0Y2ggSSBvcmlnaW5hbGx5IHNlbnQgdG8gbWFrZSBpdAo+Pj4gPiB3
-b3JrLCBhbHRob3VnaCBub3Qgd2l0aCBnb29kIHBlcmZvcm1hbmNlLCBvbiBHSzIwQS4gTm90IHZl
-cnkgZ3JhY2VmdWwsCj4+PiA+IGJ1dCBpdCB3aWxsIGFsbG93IGFwcGxpY2F0aW9ucyB0byBydW4u
-Cj4+PiA+Cj4+PiA+IEluIHRoZSBsb25nIHJ1biB0aG91Z2gsIHdlIHdpbGwgd2FudCB0byBhY2hp
-ZXZlIGJldHRlciBwZXJmb3JtYW5jZSwgYW5kCj4+PiA+IGl0IHNlZW1zIGxpa2UgYSBCTyBpbXBs
-ZW1lbnRhdGlvbiB0YXJnZXRlZCBhdCBVTUEgZGV2aWNlcyB3b3VsZCBhbHNvIGJlCj4+PiA+IGJl
-bmVmaWNpYWwgdG8gcXVpdGUgYSBmZXcgZGVza3RvcCBHUFVzLiBTbyBhcyB0cmlja3kgYXMgaXQg
-bWF5IGJlIEknbQo+Pj4gPiBpbnRlcmVzdGVkIGluIGdhdGhlcmluZyB0aG91Z2h0cyBhbmQgd2h5
-IG5vdCBnaXZpbmcgaXQgYSBmaXJzdCB0cnkgd2l0aAo+Pj4gPiBHSzIwQSwgZXZlbiBpZiBpdCBp
-bXBvc2VzIHNvbWUgbGltaXRhdGlvbnMgbGlrZSBoYXZpbmcgYnVmZmVycyBpbiBsb3dtZW0KPj4+
-ID4gaW4gYSBmaXJzdCB0aW1lICh3ZSBjYW4gcHJvYmFibHkgbGl2ZSB3aXRoIHRoaXMgb25lIGZv
-ciBhIHNob3J0IHdoaWxlLAo+Pj4gPiBhbmQgNjQgYml0cyB3aWxsIGFsc28gYmUgY29taW5nIHRv
-IHRoZSByZXNjdWUgOikpCj4+Pgo+Pj4gSSBkb24ndCB0aGluayBsb3dtZW0gb3IgTFBBRSBpcyBh
-bnkgcHJvYmxlbSwgaWYgdGhlIG1lbW9yeSBtYW5hZ2VyIGlzCj4+PiBkZXNpZ25lZCB3aXRoIHRo
-YXQgaW4gbWluZC4gVmFzdCBtYWpvcml0eSBvZiB0aGUgYnVmZmVycyBrZXJuZWwKPj4+IGFsbG9j
-YXRlcyBkbyBub3QgbmVlZCB0byBiZSB0b3VjaGVkIGluIGtlcm5lbCBzcGFjZS4KPj4+Cj4+PiBB
-Y3R1YWxseSBJIGNhbid0IHRoaW5rIG9mIGFueSBidWZmZXJzIHRoYXQgd2UgYWxsb2NhdGUgb24g
-YmVoYWxmIG9mIHVzZXIKPj4+IHNwYWNlIHRoYXQgd291bGQgbmVlZCB0byBiZSBwZXJtYW5lbnRs
-eSBtYXBwZWQgYWxzbyB0byBrZXJuZWwuIEluIGNhc2UKPj4+IG9yIHJlbG9jcyBvbmx5IHB1c2gg
-YnVmZmVyIG5lZWRzIHRvIGJlIHRlbXBvcmFyaWx5IG1hcHBlZCB0byBrZXJuZWwuCj4+Pgo+Pj4g
-VWx0aW1hdGVseSBldmVuIHJlbG9jcyBhcmUgbm90IG5lY2Vzc2FyeSBpZiB3ZSBleHBvc2UgR1BV
-IHZpcnR1YWwKPj4+IGFkZHJlc3NlcyBkaXJlY3RseSB0byB1c2VyIHNwYWNlLiBCdXQgdGhhdCdz
-IGFub3RoZXIgdG9waWMuCj4+Pgo+PiBOb3V2ZWF1IGFscmVhZHkgZXhwb3NlcyBjb25zdGFudCB2
-aXJ0dWFsIGFkZHJlc3NlcyB0byB1c2Vyc3BhY2UgYW5kCj4+IHNraXBzIHRoZSBwdXNoYnVmIHBh
-dGNoaW5nIHdoZW4gdGhlIHByZXN1bWVkIG9mZnNldCBmcm9tIHVzZXJzcGFjZSBpcwo+PiB0aGUg
-c2FtZSBhcyB3aGF0IHRoZSBrZXJuZWwgdGhpbmtzIGl0IHNob3VsZCBiZS4KPj4KPj4gVGhlIHBy
-b2JsZW0gd2l0aCBsb3dtZW0gb24gQVJNIGlzIHRoYXQgeW91IGNhbid0IHVubWFwIHRob3NlIHBh
-Z2VzIGZyb20KPj4gdGhlIGtlcm5lbCBjYWNoZWQgbWFwcGluZy4gU28gaWYgeW91IGFsbG9jIGEg
-cGFnZSwgZ2l2ZSBpdCB0byB1c2Vyc3BhY2UKPj4gYW5kIHVzZXJzcGFjZSBkZWNpZGVzIHRvIG1h
-cCB0aGUgcGFnZSBXQyB5b3UganVzdCBwcm9kdWNlZCBhIGNvbmZsaWN0aW5nCj4+IG1hcHBpbmcs
-IHdoaWNoIG1heSB5aWVsZCB1bmRlZmluZWQgcmVzdWx0cyBvbiBBUk12Ny4gWW91IG1heSB0aGlu
-ayB0aGlzCj4+IGlzIG5vdCBhIHByb2JsZW0gYXMgeW91IGFyZSBub3QgdG91Y2hpbmcgdGhlIGtl
-cm5lbCBjYWNoZWQgbWFwcGluZywgYnV0Cj4+IGluIGZhY3QgaXQgaXMuIFRoZSBDUFVzIHByZWZl
-dGNoZXIgY2FuIHN0aWxsIGFjY2VzcyB0aGlzIG1hcHBpbmcuCj4KPiBXaHkgd291bGQgdGhpcyBt
-ZW1vcnkgYmUgbWFwcGVkIGludG8gdGhlIGtlcm5lbD8KCk9uIEFSTSB0aGUga2VybmVsIGtlZXBz
-IGEgbGluZWFyIG1hcHBpbmcgb2YgbG93bWVtIHVzaW5nIHNlY3Rpb25zCihBUk0ncyB2ZXJzaW9u
-IG9mIGh1Z2UgcGFnZXMpLiBUaGlzIGlzIGFsd2F5cyBjYWNoZWQsIGFuZCBiZWNhdXNlIHRoZQpz
-ZWN0aW9ucyBhcmUgbm90IDRrLCBpdCdzIGEgcGFpbiB0byByZW1vdmUgcGFydHMgb2YgaXQuIFNl
-ZQphcmNoL2FybS9tbS9tbXUuYwoKVGhhdCBzYWlkLCBJIGRvbid0IHRoaW5rIHRoaXMgaXNzdWUg
-ZXhpc3RzIG9uIEExNSAod2hpY2ggaXMgd2hhdCB0aG9zZQpHUFVzIGFyZSBwYWlyZWQgd2l0aCks
-IHNvIGl0J3MgYSBwdXJlbHkgdGhlb3JldGljYWwgcHJvYmxlbS4KClN0w6lwaGFuZQpfX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
-ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVk
-ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Tue, May 27, 2014 at 10:07 AM, St=C3=A9phane Marchesin
+<stephane.marchesin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Mon, May 26, 2014 at 5:02 PM, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>=
+ wrote:
+>> On Mon, May 26, 2014 at 6:21 PM, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org=
+> wrote:
+>>> Am Montag, den 26.05.2014, 09:45 +0300 schrieb Terje Bergstr=C3=B6m=
+:
+>>>> On 23.05.2014 17:40, Alex Courbot wrote:
+>>>> > On 05/23/2014 06:59 PM, Lucas Stach wrote:
+>>>> > So after checking with more knowledgeable people, it turns out t=
+his is
+>>>> > the expected behavior on ARM and BAR regions should be mapped un=
+cached
+>>>> > on GK20A. All the more reasons to avoid using the BAR at all.
+>>>>
+>>>> This is actually specific to Tegra.
+>>>>
+>>>> >> You may want to make yourself aware of all the quirks required =
+for
+>>>> >> sharing memory between the GPU and CPU on an ARM host. I think =
+there are
+>>>> >> far more involved than what you see now and writing an replacem=
+ent for
+>>>> >> TTM will not be an easy task.
+>>>> >>
+>>>> >> Doing away with the concept of two memory areas will not get yo=
+u to a
+>>>> >> single unified address space. You would have to deal with thing=
+s like
+>>>> >> not being able to change the caching state of pages in the syst=
+ems
+>>>> >> lowmem yourself. You will still have to deal with remapping pag=
+es that
+>>>> >> aren't currently visible to the CPU (ok this is not an issue on=
+ Jetson
+>>>> >> right now as it only has 2GB of RAM), because it's in systems h=
+ighmem,
+>>>> >> or even in a different LPAE area.
+>>>> >>
+>>>> >> You really want to be sure you are aware of all the consequence=
+s of
+>>>> >> this, before considering this task.
+>>>> >
+>>>> > Yep, that's why I am seeking advice here. My first hope is that =
+with a
+>>>> > few tweaks we will be able to keep using TTM and the current nou=
+veau_bo
+>>>> > implementation. But unless I missed something this is not going =
+to be easy.
+>>>> >
+>>>> > We can also use something like the patch I originally sent to ma=
+ke it
+>>>> > work, although not with good performance, on GK20A. Not very gra=
+ceful,
+>>>> > but it will allow applications to run.
+>>>> >
+>>>> > In the long run though, we will want to achieve better performan=
+ce, and
+>>>> > it seems like a BO implementation targeted at UMA devices would =
+also be
+>>>> > beneficial to quite a few desktop GPUs. So as tricky as it may b=
+e I'm
+>>>> > interested in gathering thoughts and why not giving it a first t=
+ry with
+>>>> > GK20A, even if it imposes some limitations like having buffers i=
+n lowmem
+>>>> > in a first time (we can probably live with this one for a short =
+while,
+>>>> > and 64 bits will also be coming to the rescue :))
+>>>>
+>>>> I don't think lowmem or LPAE is any problem, if the memory manager=
+ is
+>>>> designed with that in mind. Vast majority of the buffers kernel
+>>>> allocates do not need to be touched in kernel space.
+>>>>
+>>>> Actually I can't think of any buffers that we allocate on behalf o=
+f user
+>>>> space that would need to be permanently mapped also to kernel. In =
+case
+>>>> or relocs only push buffer needs to be temporarily mapped to kerne=
+l.
+>>>>
+>>>> Ultimately even relocs are not necessary if we expose GPU virtual
+>>>> addresses directly to user space. But that's another topic.
+>>>>
+>>> Nouveau already exposes constant virtual addresses to userspace and
+>>> skips the pushbuf patching when the presumed offset from userspace =
+is
+>>> the same as what the kernel thinks it should be.
+>>>
+>>> The problem with lowmem on ARM is that you can't unmap those pages =
+from
+>>> the kernel cached mapping. So if you alloc a page, give it to users=
+pace
+>>> and userspace decides to map the page WC you just produced a confli=
+cting
+>>> mapping, which may yield undefined results on ARMv7. You may think =
+this
+>>> is not a problem as you are not touching the kernel cached mapping,=
+ but
+>>> in fact it is. The CPUs prefetcher can still access this mapping.
+>>
+>> Why would this memory be mapped into the kernel?
+>
+> On ARM the kernel keeps a linear mapping of lowmem using sections
+> (ARM's version of huge pages). This is always cached, and because the
+> sections are not 4k, it's a pain to remove parts of it. See
+> arch/arm/mm/mmu.c
+
+Ah, are we talking about the directly-mapped low memory region
+starting at PAGE_OFFSET? Ok, it makes sense now, thanks.
+
+But it seems to me that such different mappings can also happen in
+many other scenarios as well, don't they? How is the issue handled in
+these cases?
