@@ -1,47 +1,106 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH] ALSA: hda: fix tegra build
-Date: Mon, 26 May 2014 21:10:30 +0200
-Message-ID: <201405262110.31143.arnd@arndb.de>
-References: <4769804.MRZYg8zfIB@wuerfel> <s5h61ksjybu.wl%tiwai@suse.de>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC] drm/nouveau: disable caching for VRAM BOs on ARM
+Date: Tue, 27 May 2014 09:02:33 +0900
+Message-ID: <CAAVeFuKfPKZy81ZO9Wbdtv6gzsCzEF=iJbqOVKPecPqZSnMVUQ@mail.gmail.com>
+References: <1400492771-9746-1-git-send-email-acourbot@nvidia.com>
+ <1400493433.8467.24.camel@weser.hi.pengutronix.de>
+ <5379D7A0.3050509@nvidia.com>
+ <1400494582.8467.28.camel@weser.hi.pengutronix.de>
+ <CAAVeFuLKTjaZPSxNSK3nEG+XK+mMmPDDq85qMF-EHp3bGwVJYA@mail.gmail.com>
+ <1400837055.4921.4.camel@weser.hi.pengutronix.de>
+ <537F1853.7050800@nvidia.com>
+ <1400839186.4921.17.camel@weser.hi.pengutronix.de>
+ <537F5DED.8050702@nvidia.com> <5382E324.5090108@nvidia.com>
+ <1401096095.4829.16.camel@weser.hi.pengutronix.de>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <s5h61ksjybu.wl%tiwai-l3A5Bk7waGM@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>
-Cc: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <1401096095.4829.16.camel-WzVe3FnzCwFR6QfukMTsflXZhhPuCNm+@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Monday 26 May 2014, Takashi Iwai wrote:
-> At Mon, 26 May 2014 18:14:21 +0200,
-> Arnd Bergmann wrote:
-> > 
-> > When CONFIG_PM is disabled, the CONFIG_SND_HDA_POWER_SAVE_DEFAULT symbol
-> > does not get defined, which causes a build error for the hda-tegra driver:
-> > 
-> > hda/hda_tegra.c:80:25: error: 'CONFIG_SND_HDA_POWER_SAVE_DEFAULT' undeclared here (not in a function)
-> >  static int power_save = CONFIG_SND_HDA_POWER_SAVE_DEFAULT;
-> >                          ^
-> > /git/arm-soc/sound/pci/hda/hda_tegra.c:235:13: warning: 'hda_tegra_disable_clocks' defined but not used [-Wunused-function]
-> >  static void hda_tegra_disable_clocks(struct hda_tegra *data)
-> >              ^
-> > 
-> > This works around the problem by not referencing that macro
-> > when CONFIG_PM is disabled. Instead, we assume that it's disabled
-> > unconditionally and cannot be enabled at runtime.
-> > 
-> > Signed-off-by: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-> > Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > Signed-off-by: Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>
-> 
-> Oh, you cloned me?
-> 
-
-Damn, copy-paste error on my side. All three are wrong and should be Cc:,
-also my Signed-off-by is missing.
-
-Let me resend.
-
-	Arnd
+T24gTW9uLCBNYXkgMjYsIDIwMTQgYXQgNjoyMSBQTSwgTHVjYXMgU3RhY2ggPGwuc3RhY2hAcGVu
+Z3V0cm9uaXguZGU+IHdyb3RlOgo+IEFtIE1vbnRhZywgZGVuIDI2LjA1LjIwMTQsIDA5OjQ1ICsw
+MzAwIHNjaHJpZWIgVGVyamUgQmVyZ3N0csO2bToKPj4gT24gMjMuMDUuMjAxNCAxNzo0MCwgQWxl
+eCBDb3VyYm90IHdyb3RlOgo+PiA+IE9uIDA1LzIzLzIwMTQgMDY6NTkgUE0sIEx1Y2FzIFN0YWNo
+IHdyb3RlOgo+PiA+IFNvIGFmdGVyIGNoZWNraW5nIHdpdGggbW9yZSBrbm93bGVkZ2VhYmxlIHBl
+b3BsZSwgaXQgdHVybnMgb3V0IHRoaXMgaXMKPj4gPiB0aGUgZXhwZWN0ZWQgYmVoYXZpb3Igb24g
+QVJNIGFuZCBCQVIgcmVnaW9ucyBzaG91bGQgYmUgbWFwcGVkIHVuY2FjaGVkCj4+ID4gb24gR0sy
+MEEuIEFsbCB0aGUgbW9yZSByZWFzb25zIHRvIGF2b2lkIHVzaW5nIHRoZSBCQVIgYXQgYWxsLgo+
+Pgo+PiBUaGlzIGlzIGFjdHVhbGx5IHNwZWNpZmljIHRvIFRlZ3JhLgo+Pgo+PiA+PiBZb3UgbWF5
+IHdhbnQgdG8gbWFrZSB5b3Vyc2VsZiBhd2FyZSBvZiBhbGwgdGhlIHF1aXJrcyByZXF1aXJlZCBm
+b3IKPj4gPj4gc2hhcmluZyBtZW1vcnkgYmV0d2VlbiB0aGUgR1BVIGFuZCBDUFUgb24gYW4gQVJN
+IGhvc3QuIEkgdGhpbmsgdGhlcmUgYXJlCj4+ID4+IGZhciBtb3JlIGludm9sdmVkIHRoYW4gd2hh
+dCB5b3Ugc2VlIG5vdyBhbmQgd3JpdGluZyBhbiByZXBsYWNlbWVudCBmb3IKPj4gPj4gVFRNIHdp
+bGwgbm90IGJlIGFuIGVhc3kgdGFzay4KPj4gPj4KPj4gPj4gRG9pbmcgYXdheSB3aXRoIHRoZSBj
+b25jZXB0IG9mIHR3byBtZW1vcnkgYXJlYXMgd2lsbCBub3QgZ2V0IHlvdSB0byBhCj4+ID4+IHNp
+bmdsZSB1bmlmaWVkIGFkZHJlc3Mgc3BhY2UuIFlvdSB3b3VsZCBoYXZlIHRvIGRlYWwgd2l0aCB0
+aGluZ3MgbGlrZQo+PiA+PiBub3QgYmVpbmcgYWJsZSB0byBjaGFuZ2UgdGhlIGNhY2hpbmcgc3Rh
+dGUgb2YgcGFnZXMgaW4gdGhlIHN5c3RlbXMKPj4gPj4gbG93bWVtIHlvdXJzZWxmLiBZb3Ugd2ls
+bCBzdGlsbCBoYXZlIHRvIGRlYWwgd2l0aCByZW1hcHBpbmcgcGFnZXMgdGhhdAo+PiA+PiBhcmVu
+J3QgY3VycmVudGx5IHZpc2libGUgdG8gdGhlIENQVSAob2sgdGhpcyBpcyBub3QgYW4gaXNzdWUg
+b24gSmV0c29uCj4+ID4+IHJpZ2h0IG5vdyBhcyBpdCBvbmx5IGhhcyAyR0Igb2YgUkFNKSwgYmVj
+YXVzZSBpdCdzIGluIHN5c3RlbXMgaGlnaG1lbSwKPj4gPj4gb3IgZXZlbiBpbiBhIGRpZmZlcmVu
+dCBMUEFFIGFyZWEuCj4+ID4+Cj4+ID4+IFlvdSByZWFsbHkgd2FudCB0byBiZSBzdXJlIHlvdSBh
+cmUgYXdhcmUgb2YgYWxsIHRoZSBjb25zZXF1ZW5jZXMgb2YKPj4gPj4gdGhpcywgYmVmb3JlIGNv
+bnNpZGVyaW5nIHRoaXMgdGFzay4KPj4gPgo+PiA+IFllcCwgdGhhdCdzIHdoeSBJIGFtIHNlZWtp
+bmcgYWR2aWNlIGhlcmUuIE15IGZpcnN0IGhvcGUgaXMgdGhhdCB3aXRoIGEKPj4gPiBmZXcgdHdl
+YWtzIHdlIHdpbGwgYmUgYWJsZSB0byBrZWVwIHVzaW5nIFRUTSBhbmQgdGhlIGN1cnJlbnQgbm91
+dmVhdV9ibwo+PiA+IGltcGxlbWVudGF0aW9uLiBCdXQgdW5sZXNzIEkgbWlzc2VkIHNvbWV0aGlu
+ZyB0aGlzIGlzIG5vdCBnb2luZyB0byBiZSBlYXN5Lgo+PiA+Cj4+ID4gV2UgY2FuIGFsc28gdXNl
+IHNvbWV0aGluZyBsaWtlIHRoZSBwYXRjaCBJIG9yaWdpbmFsbHkgc2VudCB0byBtYWtlIGl0Cj4+
+ID4gd29yaywgYWx0aG91Z2ggbm90IHdpdGggZ29vZCBwZXJmb3JtYW5jZSwgb24gR0syMEEuIE5v
+dCB2ZXJ5IGdyYWNlZnVsLAo+PiA+IGJ1dCBpdCB3aWxsIGFsbG93IGFwcGxpY2F0aW9ucyB0byBy
+dW4uCj4+ID4KPj4gPiBJbiB0aGUgbG9uZyBydW4gdGhvdWdoLCB3ZSB3aWxsIHdhbnQgdG8gYWNo
+aWV2ZSBiZXR0ZXIgcGVyZm9ybWFuY2UsIGFuZAo+PiA+IGl0IHNlZW1zIGxpa2UgYSBCTyBpbXBs
+ZW1lbnRhdGlvbiB0YXJnZXRlZCBhdCBVTUEgZGV2aWNlcyB3b3VsZCBhbHNvIGJlCj4+ID4gYmVu
+ZWZpY2lhbCB0byBxdWl0ZSBhIGZldyBkZXNrdG9wIEdQVXMuIFNvIGFzIHRyaWNreSBhcyBpdCBt
+YXkgYmUgSSdtCj4+ID4gaW50ZXJlc3RlZCBpbiBnYXRoZXJpbmcgdGhvdWdodHMgYW5kIHdoeSBu
+b3QgZ2l2aW5nIGl0IGEgZmlyc3QgdHJ5IHdpdGgKPj4gPiBHSzIwQSwgZXZlbiBpZiBpdCBpbXBv
+c2VzIHNvbWUgbGltaXRhdGlvbnMgbGlrZSBoYXZpbmcgYnVmZmVycyBpbiBsb3dtZW0KPj4gPiBp
+biBhIGZpcnN0IHRpbWUgKHdlIGNhbiBwcm9iYWJseSBsaXZlIHdpdGggdGhpcyBvbmUgZm9yIGEg
+c2hvcnQgd2hpbGUsCj4+ID4gYW5kIDY0IGJpdHMgd2lsbCBhbHNvIGJlIGNvbWluZyB0byB0aGUg
+cmVzY3VlIDopKQo+Pgo+PiBJIGRvbid0IHRoaW5rIGxvd21lbSBvciBMUEFFIGlzIGFueSBwcm9i
+bGVtLCBpZiB0aGUgbWVtb3J5IG1hbmFnZXIgaXMKPj4gZGVzaWduZWQgd2l0aCB0aGF0IGluIG1p
+bmQuIFZhc3QgbWFqb3JpdHkgb2YgdGhlIGJ1ZmZlcnMga2VybmVsCj4+IGFsbG9jYXRlcyBkbyBu
+b3QgbmVlZCB0byBiZSB0b3VjaGVkIGluIGtlcm5lbCBzcGFjZS4KPj4KPj4gQWN0dWFsbHkgSSBj
+YW4ndCB0aGluayBvZiBhbnkgYnVmZmVycyB0aGF0IHdlIGFsbG9jYXRlIG9uIGJlaGFsZiBvZiB1
+c2VyCj4+IHNwYWNlIHRoYXQgd291bGQgbmVlZCB0byBiZSBwZXJtYW5lbnRseSBtYXBwZWQgYWxz
+byB0byBrZXJuZWwuIEluIGNhc2UKPj4gb3IgcmVsb2NzIG9ubHkgcHVzaCBidWZmZXIgbmVlZHMg
+dG8gYmUgdGVtcG9yYXJpbHkgbWFwcGVkIHRvIGtlcm5lbC4KPj4KPj4gVWx0aW1hdGVseSBldmVu
+IHJlbG9jcyBhcmUgbm90IG5lY2Vzc2FyeSBpZiB3ZSBleHBvc2UgR1BVIHZpcnR1YWwKPj4gYWRk
+cmVzc2VzIGRpcmVjdGx5IHRvIHVzZXIgc3BhY2UuIEJ1dCB0aGF0J3MgYW5vdGhlciB0b3BpYy4K
+Pj4KPiBOb3V2ZWF1IGFscmVhZHkgZXhwb3NlcyBjb25zdGFudCB2aXJ0dWFsIGFkZHJlc3NlcyB0
+byB1c2Vyc3BhY2UgYW5kCj4gc2tpcHMgdGhlIHB1c2hidWYgcGF0Y2hpbmcgd2hlbiB0aGUgcHJl
+c3VtZWQgb2Zmc2V0IGZyb20gdXNlcnNwYWNlIGlzCj4gdGhlIHNhbWUgYXMgd2hhdCB0aGUga2Vy
+bmVsIHRoaW5rcyBpdCBzaG91bGQgYmUuCj4KPiBUaGUgcHJvYmxlbSB3aXRoIGxvd21lbSBvbiBB
+Uk0gaXMgdGhhdCB5b3UgY2FuJ3QgdW5tYXAgdGhvc2UgcGFnZXMgZnJvbQo+IHRoZSBrZXJuZWwg
+Y2FjaGVkIG1hcHBpbmcuIFNvIGlmIHlvdSBhbGxvYyBhIHBhZ2UsIGdpdmUgaXQgdG8gdXNlcnNw
+YWNlCj4gYW5kIHVzZXJzcGFjZSBkZWNpZGVzIHRvIG1hcCB0aGUgcGFnZSBXQyB5b3UganVzdCBw
+cm9kdWNlZCBhIGNvbmZsaWN0aW5nCj4gbWFwcGluZywgd2hpY2ggbWF5IHlpZWxkIHVuZGVmaW5l
+ZCByZXN1bHRzIG9uIEFSTXY3LiBZb3UgbWF5IHRoaW5rIHRoaXMKPiBpcyBub3QgYSBwcm9ibGVt
+IGFzIHlvdSBhcmUgbm90IHRvdWNoaW5nIHRoZSBrZXJuZWwgY2FjaGVkIG1hcHBpbmcsIGJ1dAo+
+IGluIGZhY3QgaXQgaXMuIFRoZSBDUFVzIHByZWZldGNoZXIgY2FuIHN0aWxsIGFjY2VzcyB0aGlz
+IG1hcHBpbmcuCgpXaHkgd291bGQgdGhpcyBtZW1vcnkgYmUgbWFwcGVkIGludG8gdGhlIGtlcm5l
+bD8gQUZBSUNUIE5vdXZlYXUgb25seQptYXBzIGZlbmNlcyBhbmQgKHNvbWVob3cpIFBCcyBpbnRv
+IHRoZSBrZXJuZWwuIE90aGVyIEJPcyBhcmUgbm90Cm1hcHBlZCB1bmxlc3MgSSBtaXNzZWQgc29t
+ZXRoaW5nLiBPciBhcmUgeW91IHRhbGtpbmcgYWJvdXQgVlJBTQphbGxvY2F0ZWQgYnkgZG1hX2Fs
+bG9jXyooKT8gV2UgcHJldmVudCB0aGlzIGZyb20gaGFwcGVuaW5nIGJ5IHVzaW5nCnRoZSBDTUEg
+YWxsb2NhdG9yICh3aGljaCBkb2Vzbid0IGNyZWF0ZSBhIGttYXApIGRpcmVjdGx5LCB3aGljaCBo
+YXMKaXRzIG93biBwcm9ibGVtcyAoY2Fubm90IGNvbXBpbGUgTm91dmVhdSBhcyBhIG1vZHVsZSBh
+bmQgdXNlIHRoZXNlCmFsbG9jYXRvcnMpLiBJbiB0aGUgZnV0dXJlIHdlIHBsYW4gdG8gdXNlIHRo
+ZSBpb21tdSB0byBwcmVzZW50IHNwYXJzZQptZW1vcnkgcGFnZXMgaW4gYSB3YXkgdGhlIEdQVSBs
+aWtlcy4KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91
+dmVhdSBtYWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xp
+c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL25vdXZlYXUK
