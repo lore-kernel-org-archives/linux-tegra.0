@@ -1,101 +1,99 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH v2 2/2] nvc0: use SM35 ISA with GK20A
-Date: Tue, 27 May 2014 16:03:02 +0900
-Message-ID: <1401174182-2182-3-git-send-email-acourbot@nvidia.com>
+From: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>
+Subject: Re: [PATCH 1/2] nvc0: add GK20A 3D class
+Date: Tue, 27 May 2014 11:48:34 -0400
+Message-ID: <CAKb7Uvj=MSm0Sc+acwOUc9MfGz=GZ0+KfpXtXpzEOMCdK9OjZQ@mail.gmail.com>
 References: <1401166783-24086-1-git-send-email-acourbot@nvidia.com>
+	<1401166783-24086-2-git-send-email-acourbot@nvidia.com>
+	<CAKb7Uvjvo=9u-mSH01AHidOBS_6cE88kpy+H=QoJQprtLekvKg@mail.gmail.com>
+	<53843236.4030508@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <mesa-dev-bounces@lists.freedesktop.org>
-In-Reply-To: <1401166783-24086-1-git-send-email-acourbot@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/mesa-dev>,
- <mailto:mesa-dev-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/mesa-dev>
-List-Post: <mailto:mesa-dev@lists.freedesktop.org>
-List-Help: <mailto:mesa-dev-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/mesa-dev>,
- <mailto:mesa-dev-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: mesa-dev-bounces@lists.freedesktop.org
-Sender: "mesa-dev" <mesa-dev-bounces@lists.freedesktop.org>
-To: Ilia Mirkin <imirkin@alum.mit.edu>, Ken Adams <KAdams@nvidia.com>, Terje Bergstrom <tbergstrom@nvidia.com>, Thierry Reding <treding@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, nouveau@lists.freedesktop.org, gnurou@gmail.com, mesa-dev@lists.freedesktop.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <53843236.4030508-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "mesa-dev-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <mesa-dev-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-GK20A is mostly compatible with GK104, but uses the SM35 ISA. Use
-the GK110 path when this chip is detected.
+On Tue, May 27, 2014 at 2:35 AM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> On 05/27/2014 02:29 PM, Ilia Mirkin wrote:
+>>
+>> On Tue, May 27, 2014 at 12:59 AM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> wrote:
+>>>
+>>> GK20A is mostly compatible with GK104, but features a new 3D
+>>> class. Add it to the relevant header and use it when GK20A is
+>>> detected.
+>>>
+>>> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>> ---
+>>>   src/gallium/drivers/nouveau/nv_object.xml.h    | 1 +
+>>>   src/gallium/drivers/nouveau/nvc0/nvc0_screen.c | 9 ++++++++-
+>>>   2 files changed, 9 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/src/gallium/drivers/nouveau/nv_object.xml.h
+>>> b/src/gallium/drivers/nouveau/nv_object.xml.h
+>>> index 4c93e6564838..0a0e187dc028 100644
+>>> --- a/src/gallium/drivers/nouveau/nv_object.xml.h
+>>> +++ b/src/gallium/drivers/nouveau/nv_object.xml.h
+>>> @@ -190,6 +190,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+>>> SOFTWARE.
+>>>   #define NVC8_3D_CLASS
+>>> 0x00009297
+>>>   #define NVE4_3D_CLASS
+>>> 0x0000a097
+>>>   #define NVF0_3D_CLASS
+>>> 0x0000a197
+>>> +#define NVEA_3D_CLASS
+>>> 0x0000a297
+>>>   #define GM107_3D_CLASS
+>>> 0x0000b097
+>>>   #define NV50_2D_CLASS
+>>> 0x0000502d
+>>>   #define NVC0_2D_CLASS
+>>> 0x0000902d
+>>> diff --git a/src/gallium/drivers/nouveau/nvc0/nvc0_screen.c
+>>> b/src/gallium/drivers/nouveau/nvc0/nvc0_screen.c
+>>> index cccfe2bba23d..95e5ef81cd79 100644
+>>> --- a/src/gallium/drivers/nouveau/nvc0/nvc0_screen.c
+>>> +++ b/src/gallium/drivers/nouveau/nvc0/nvc0_screen.c
+>>> @@ -702,7 +702,14 @@ nvc0_screen_create(struct nouveau_device *dev)
+>>>         obj_class = NVF0_3D_CLASS;
+>>>         break;
+>>>      case 0xe0:
+>>> -      obj_class = NVE4_3D_CLASS;
+>>> +      switch (dev->chipset) {
+>>> +      case 0xea:
+>>> +         obj_class = NVEA_3D_CLASS;
+>>
+>>
+>> Again, would be nice to be consistent with the way you set the ISA...
+>> perhaps change this to a >= as well? But I guess the two could be
+>> disconnected. Up to you, just thought I'd bring it up.
+>
+>
+> Right below we have the following being done:
+>
+>      switch (dev->chipset) {
+>       case 0xc8:
+>          obj_class = NVC8_3D_CLASS;
+>          break;
+>       case 0xc1:
+>          obj_class = NVC1_3D_CLASS;
+>          break;
+>       default:
+>          obj_class = NVC0_3D_CLASS;
+>          break;
+>       }
+>
+> Shouldn't we try to be consistent with this more local example instead?
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
- src/gallium/drivers/nouveau/codegen/nv50_ir_driver.h      |  2 +-
- src/gallium/drivers/nouveau/codegen/nv50_ir_emit_nvc0.cpp |  2 +-
- .../drivers/nouveau/codegen/nv50_ir_target_nvc0.cpp       | 15 ++++++++++-----
- 3 files changed, 12 insertions(+), 7 deletions(-)
+Which is why I didn't insist. The situation with nvcx is a little
+different -- nvc8 (GF110) and nvc1 (GF108) are special, but e.g. nvce
+(GF114) and nvcf (GF116) want the nvc0 class. OTOH you're using >=
+0xea as the metric for selecting SM35, so I was just pointing out the
+inconsistency. Of course there needn't be a 1:1 mapping between these
+things, and the likelihood of another 0xex chipset being released is
+fairly low. So:
 
-diff --git a/src/gallium/drivers/nouveau/codegen/nv50_ir_driver.h b/src/gallium/drivers/nouveau/codegen/nv50_ir_driver.h
-index bbb89d97932e..f829aac0bcc2 100644
---- a/src/gallium/drivers/nouveau/codegen/nv50_ir_driver.h
-+++ b/src/gallium/drivers/nouveau/codegen/nv50_ir_driver.h
-@@ -91,7 +91,7 @@ struct nv50_ir_prog_symbol
- #define NVISA_GF100_CHIPSET_C0 0xc0
- #define NVISA_GF100_CHIPSET_D0 0xd0
- #define NVISA_GK104_CHIPSET    0xe0
--#define NVISA_GK110_CHIPSET    0xf0
-+#define NVISA_GK20A_CHIPSET    0xea
- #define NVISA_GM107_CHIPSET    0x110
- 
- struct nv50_ir_prog_info
-diff --git a/src/gallium/drivers/nouveau/codegen/nv50_ir_emit_nvc0.cpp b/src/gallium/drivers/nouveau/codegen/nv50_ir_emit_nvc0.cpp
-index b1f76cf80432..f69e6a183e19 100644
---- a/src/gallium/drivers/nouveau/codegen/nv50_ir_emit_nvc0.cpp
-+++ b/src/gallium/drivers/nouveau/codegen/nv50_ir_emit_nvc0.cpp
-@@ -3027,7 +3027,7 @@ TargetNVC0::createCodeEmitterNVC0(Program::Type type)
- CodeEmitter *
- TargetNVC0::getCodeEmitter(Program::Type type)
- {
--   if (chipset >= NVISA_GK110_CHIPSET)
-+   if (chipset >= NVISA_GK20A_CHIPSET)
-       return createCodeEmitterGK110(type);
-    return createCodeEmitterNVC0(type);
- }
-diff --git a/src/gallium/drivers/nouveau/codegen/nv50_ir_target_nvc0.cpp b/src/gallium/drivers/nouveau/codegen/nv50_ir_target_nvc0.cpp
-index 064e7a2c63f9..963b6e47ddfc 100644
---- a/src/gallium/drivers/nouveau/codegen/nv50_ir_target_nvc0.cpp
-+++ b/src/gallium/drivers/nouveau/codegen/nv50_ir_target_nvc0.cpp
-@@ -49,9 +49,12 @@ TargetNVC0::getBuiltinCode(const uint32_t **code, uint32_t *size) const
- {
-    switch (chipset & ~0xf) {
-    case 0xe0:
--      *code = (const uint32_t *)&gk104_builtin_code[0];
--      *size = sizeof(gk104_builtin_code);
--      break;
-+      if (chipset < NVISA_GK20A_CHIPSET) {
-+         *code = (const uint32_t *)&gk104_builtin_code[0];
-+         *size = sizeof(gk104_builtin_code);
-+         break;
-+      }
-+      /* fall-through for GK20A */
-    case 0xf0:
-    case 0x100:
-       *code = (const uint32_t *)&gk110_builtin_code[0];
-@@ -71,7 +74,9 @@ TargetNVC0::getBuiltinOffset(int builtin) const
- 
-    switch (chipset & ~0xf) {
-    case 0xe0:
--      return gk104_builtin_offsets[builtin];
-+      if (chipset < NVISA_GK20A_CHIPSET)
-+         return gk104_builtin_offsets[builtin];
-+      /* fall-through for GK20A */
-    case 0xf0:
-    case 0x100:
-       return gk110_builtin_offsets[builtin];
-@@ -235,7 +240,7 @@ TargetNVC0::getFileSize(DataFile file) const
- {
-    switch (file) {
-    case FILE_NULL:          return 0;
--   case FILE_GPR:           return (chipset >= NVISA_GK110_CHIPSET) ? 255 : 63;
-+   case FILE_GPR:           return (chipset >= NVISA_GK20A_CHIPSET) ? 255 : 63;
-    case FILE_PREDICATE:     return 7;
-    case FILE_FLAGS:         return 1;
-    case FILE_ADDRESS:       return 0;
--- 
-1.9.3
+Reviewed-by: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>
