@@ -1,80 +1,39 @@
 From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/2] nvc0: use SM35 ISA with GK20A
-Date: Tue, 27 May 2014 15:51:27 +0900
-Message-ID: <538435EF.6060201@nvidia.com>
-References: <1401166783-24086-1-git-send-email-acourbot@nvidia.com>	<1401166783-24086-3-git-send-email-acourbot@nvidia.com> <CAKb7Uvi_-DrhjFPS+D=P71bF+V5K21xKYK_+FhxmvX-Kyyf89Q@mail.gmail.com>
+Subject: [PATCH v2 0/2] nvc0: support for GK20A (Tegra K1)
+Date: Tue, 27 May 2014 16:03:00 +0900
+Message-ID: <1401174182-2182-1-git-send-email-acourbot@nvidia.com>
+References: <1401166783-24086-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAKb7Uvi_-DrhjFPS+D=P71bF+V5K21xKYK_+FhxmvX-Kyyf89Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <1401166783-24086-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>
-Cc: "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "mesa-dev-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <mesa-dev-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>, Ken Adams <KAdams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, mesa-dev-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/27/2014 02:26 PM, Ilia Mirkin wrote:
-> On Tue, May 27, 2014 at 12:59 AM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->> GK20A is mostly compatible with GK104, but uses the SM35 ISA. Use
->> the GK110 path when this chip is detected.
->>
->> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>   src/gallium/drivers/nouveau/codegen/nv50_ir_driver.h        |  1 +
->>   src/gallium/drivers/nouveau/codegen/nv50_ir_emit_nvc0.cpp   |  2 +-
->>   src/gallium/drivers/nouveau/codegen/nv50_ir_target_nvc0.cpp | 13 +++++++++----
->>   3 files changed, 11 insertions(+), 5 deletions(-)
->>
->> diff --git a/src/gallium/drivers/nouveau/codegen/nv50_ir_driver.h b/src/gallium/drivers/nouveau/codegen/nv50_ir_driver.h
->> index bbb89d97932e..aab857ee7e4f 100644
->> --- a/src/gallium/drivers/nouveau/codegen/nv50_ir_driver.h
->> +++ b/src/gallium/drivers/nouveau/codegen/nv50_ir_driver.h
->> @@ -91,6 +91,7 @@ struct nv50_ir_prog_symbol
->>   #define NVISA_GF100_CHIPSET_C0 0xc0
->>   #define NVISA_GF100_CHIPSET_D0 0xd0
->>   #define NVISA_GK104_CHIPSET    0xe0
->> +#define NVISA_GK20A_CHIPSET    0xea
->>   #define NVISA_GK110_CHIPSET    0xf0
->>   #define NVISA_GM107_CHIPSET    0x110
->>
->> diff --git a/src/gallium/drivers/nouveau/codegen/nv50_ir_emit_nvc0.cpp b/src/gallium/drivers/nouveau/codegen/nv50_ir_emit_nvc0.cpp
->> index b1f76cf80432..f69e6a183e19 100644
->> --- a/src/gallium/drivers/nouveau/codegen/nv50_ir_emit_nvc0.cpp
->> +++ b/src/gallium/drivers/nouveau/codegen/nv50_ir_emit_nvc0.cpp
->> @@ -3027,7 +3027,7 @@ TargetNVC0::createCodeEmitterNVC0(Program::Type type)
->>   CodeEmitter *
->>   TargetNVC0::getCodeEmitter(Program::Type type)
->>   {
->> -   if (chipset >= NVISA_GK110_CHIPSET)
->> +   if (chipset >= NVISA_GK20A_CHIPSET)
->>         return createCodeEmitterGK110(type);
->>      return createCodeEmitterNVC0(type);
->>   }
->
-> As mentioned on IRC, you also need to update TargetNVC0::getFileSize
-> to return 255 GPRs, since that value is presumably ISA-specific. You
-> could, at that point, get rid of the GK110_CHIPSET define.
+The following 2 patches make it possible to run Mesa programs on GK20A
+(Tegra K1).
 
-Will do.
+GK20A is very similar to GK104, but uses a new (backward-compatible) 3D class
+as well as the same ISA as GK110 (SM35). Taking these differences into account
+is sufficient to successfully render simple off-screen buffers.
 
-> Eventually
-> all that stuff needs to be nuked and replaced with an 'isa' property.
-> But you don't have to do that.
->
->> diff --git a/src/gallium/drivers/nouveau/codegen/nv50_ir_target_nvc0.cpp b/src/gallium/drivers/nouveau/codegen/nv50_ir_target_nvc0.cpp
->> index 064e7a2c63f9..8212bfd9555e 100644
->> --- a/src/gallium/drivers/nouveau/codegen/nv50_ir_target_nvc0.cpp
->> +++ b/src/gallium/drivers/nouveau/codegen/nv50_ir_target_nvc0.cpp
->> @@ -49,9 +49,12 @@ TargetNVC0::getBuiltinCode(const uint32_t **code, uint32_t *size) const
->>   {
->>      switch (chipset & ~0xf) {
->>      case 0xe0:
->> -      *code = (const uint32_t *)&gk104_builtin_code[0];
->> -      *size = sizeof(gk104_builtin_code);
->> -      break;
->> +      if (chipset != NVISA_GK20A_CHIPSET) {
->
-> You change the code emitter if chipset >= GK20A. Might as well be
-> consistent here and below.
+Changes since v1:
+- Update TargetNVC0::getFileSize() to return the right number of GPR
+- Remove definition for unneeded NVISA_GK110_CHIPSET
+- Use consistent comparison scheme in nv50_ir_emit_nvc0.cpp
 
-Sure.
+Alexandre Courbot (2):
+  nvc0: add GK20A 3D class
+  nvc0: use SM35 ISA with GK20A
+
+ src/gallium/drivers/nouveau/codegen/nv50_ir_driver.h      |  2 +-
+ src/gallium/drivers/nouveau/codegen/nv50_ir_emit_nvc0.cpp |  2 +-
+ .../drivers/nouveau/codegen/nv50_ir_target_nvc0.cpp       | 15 ++++++++++-----
+ src/gallium/drivers/nouveau/nv_object.xml.h               |  1 +
+ src/gallium/drivers/nouveau/nvc0/nvc0_screen.c            |  9 ++++++++-
+ 5 files changed, 21 insertions(+), 8 deletions(-)
+
+-- 
+1.9.3
