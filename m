@@ -1,149 +1,96 @@
-From: =?UTF-8?Q?St=C3=A9phane_Marchesin?= <stephane.marchesin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [Nouveau] [RFC] drm/nouveau: disable caching for VRAM BOs on ARM
-Date: Mon, 26 May 2014 22:18:40 -0700
-Message-ID: <CACP_E++_ZoOXLU042Tv7yiYX+ayMeZLM74EodpYH-zmQVk5xYw@mail.gmail.com>
-References: <1400492771-9746-1-git-send-email-acourbot@nvidia.com>
- <1400493433.8467.24.camel@weser.hi.pengutronix.de> <5379D7A0.3050509@nvidia.com>
- <1400494582.8467.28.camel@weser.hi.pengutronix.de> <CAAVeFuLKTjaZPSxNSK3nEG+XK+mMmPDDq85qMF-EHp3bGwVJYA@mail.gmail.com>
- <1400837055.4921.4.camel@weser.hi.pengutronix.de> <537F1853.7050800@nvidia.com>
- <1400839186.4921.17.camel@weser.hi.pengutronix.de> <537F5DED.8050702@nvidia.com>
- <5382E324.5090108@nvidia.com> <1401096095.4829.16.camel@weser.hi.pengutronix.de>
- <CAAVeFuKfPKZy81ZO9Wbdtv6gzsCzEF=iJbqOVKPecPqZSnMVUQ@mail.gmail.com>
- <CACP_E++Kh467jPAWOngBxCyc+tscKgnRDBH+i324a6DQQDV1Nw@mail.gmail.com> <CAAVeFuJNXH+EN6XekdfKnEzbz8n=LFSQBpKKbiOgsQ3cRyXrtw@mail.gmail.com>
+From: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>
+Subject: Re: [PATCH 2/2] nvc0: use SM35 ISA with GK20A
+Date: Tue, 27 May 2014 01:26:34 -0400
+Message-ID: <CAKb7Uvi_-DrhjFPS+D=P71bF+V5K21xKYK_+FhxmvX-Kyyf89Q@mail.gmail.com>
+References: <1401166783-24086-1-git-send-email-acourbot@nvidia.com>
+	<1401166783-24086-3-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAVeFuJNXH+EN6XekdfKnEzbz8n=LFSQBpKKbiOgsQ3cRyXrtw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <1401166783-24086-3-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "mesa-dev-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <mesa-dev-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, May 26, 2014 at 7:42 PM, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> w=
-rote:
-> On Tue, May 27, 2014 at 10:07 AM, St=C3=A9phane Marchesin
-> <stephane.marchesin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->> On Mon, May 26, 2014 at 5:02 PM, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org=
-> wrote:
->>> On Mon, May 26, 2014 at 6:21 PM, Lucas Stach <l.stach@pengutronix.d=
-e> wrote:
->>>> Am Montag, den 26.05.2014, 09:45 +0300 schrieb Terje Bergstr=C3=B6=
-m:
->>>>> On 23.05.2014 17:40, Alex Courbot wrote:
->>>>> > On 05/23/2014 06:59 PM, Lucas Stach wrote:
->>>>> > So after checking with more knowledgeable people, it turns out =
-this is
->>>>> > the expected behavior on ARM and BAR regions should be mapped u=
-ncached
->>>>> > on GK20A. All the more reasons to avoid using the BAR at all.
->>>>>
->>>>> This is actually specific to Tegra.
->>>>>
->>>>> >> You may want to make yourself aware of all the quirks required=
- for
->>>>> >> sharing memory between the GPU and CPU on an ARM host. I think=
- there are
->>>>> >> far more involved than what you see now and writing an replace=
-ment for
->>>>> >> TTM will not be an easy task.
->>>>> >>
->>>>> >> Doing away with the concept of two memory areas will not get y=
-ou to a
->>>>> >> single unified address space. You would have to deal with thin=
-gs like
->>>>> >> not being able to change the caching state of pages in the sys=
-tems
->>>>> >> lowmem yourself. You will still have to deal with remapping pa=
-ges that
->>>>> >> aren't currently visible to the CPU (ok this is not an issue o=
-n Jetson
->>>>> >> right now as it only has 2GB of RAM), because it's in systems =
-highmem,
->>>>> >> or even in a different LPAE area.
->>>>> >>
->>>>> >> You really want to be sure you are aware of all the consequenc=
-es of
->>>>> >> this, before considering this task.
->>>>> >
->>>>> > Yep, that's why I am seeking advice here. My first hope is that=
- with a
->>>>> > few tweaks we will be able to keep using TTM and the current no=
-uveau_bo
->>>>> > implementation. But unless I missed something this is not going=
- to be easy.
->>>>> >
->>>>> > We can also use something like the patch I originally sent to m=
-ake it
->>>>> > work, although not with good performance, on GK20A. Not very gr=
-aceful,
->>>>> > but it will allow applications to run.
->>>>> >
->>>>> > In the long run though, we will want to achieve better performa=
-nce, and
->>>>> > it seems like a BO implementation targeted at UMA devices would=
- also be
->>>>> > beneficial to quite a few desktop GPUs. So as tricky as it may =
-be I'm
->>>>> > interested in gathering thoughts and why not giving it a first =
-try with
->>>>> > GK20A, even if it imposes some limitations like having buffers =
-in lowmem
->>>>> > in a first time (we can probably live with this one for a short=
- while,
->>>>> > and 64 bits will also be coming to the rescue :))
->>>>>
->>>>> I don't think lowmem or LPAE is any problem, if the memory manage=
-r is
->>>>> designed with that in mind. Vast majority of the buffers kernel
->>>>> allocates do not need to be touched in kernel space.
->>>>>
->>>>> Actually I can't think of any buffers that we allocate on behalf =
-of user
->>>>> space that would need to be permanently mapped also to kernel. In=
- case
->>>>> or relocs only push buffer needs to be temporarily mapped to kern=
-el.
->>>>>
->>>>> Ultimately even relocs are not necessary if we expose GPU virtual
->>>>> addresses directly to user space. But that's another topic.
->>>>>
->>>> Nouveau already exposes constant virtual addresses to userspace an=
-d
->>>> skips the pushbuf patching when the presumed offset from userspace=
- is
->>>> the same as what the kernel thinks it should be.
->>>>
->>>> The problem with lowmem on ARM is that you can't unmap those pages=
- from
->>>> the kernel cached mapping. So if you alloc a page, give it to user=
-space
->>>> and userspace decides to map the page WC you just produced a confl=
-icting
->>>> mapping, which may yield undefined results on ARMv7. You may think=
- this
->>>> is not a problem as you are not touching the kernel cached mapping=
-, but
->>>> in fact it is. The CPUs prefetcher can still access this mapping.
->>>
->>> Why would this memory be mapped into the kernel?
->>
->> On ARM the kernel keeps a linear mapping of lowmem using sections
->> (ARM's version of huge pages). This is always cached, and because th=
-e
->> sections are not 4k, it's a pain to remove parts of it. See
->> arch/arm/mm/mmu.c
+On Tue, May 27, 2014 at 12:59 AM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> GK20A is mostly compatible with GK104, but uses the SM35 ISA. Use
+> the GK110 path when this chip is detected.
 >
-> Ah, are we talking about the directly-mapped low memory region
-> starting at PAGE_OFFSET? Ok, it makes sense now, thanks.
+> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  src/gallium/drivers/nouveau/codegen/nv50_ir_driver.h        |  1 +
+>  src/gallium/drivers/nouveau/codegen/nv50_ir_emit_nvc0.cpp   |  2 +-
+>  src/gallium/drivers/nouveau/codegen/nv50_ir_target_nvc0.cpp | 13 +++++++++----
+>  3 files changed, 11 insertions(+), 5 deletions(-)
 >
-> But it seems to me that such different mappings can also happen in
-> many other scenarios as well, don't they? How is the issue handled in
-> these cases?
+> diff --git a/src/gallium/drivers/nouveau/codegen/nv50_ir_driver.h b/src/gallium/drivers/nouveau/codegen/nv50_ir_driver.h
+> index bbb89d97932e..aab857ee7e4f 100644
+> --- a/src/gallium/drivers/nouveau/codegen/nv50_ir_driver.h
+> +++ b/src/gallium/drivers/nouveau/codegen/nv50_ir_driver.h
+> @@ -91,6 +91,7 @@ struct nv50_ir_prog_symbol
+>  #define NVISA_GF100_CHIPSET_C0 0xc0
+>  #define NVISA_GF100_CHIPSET_D0 0xd0
+>  #define NVISA_GK104_CHIPSET    0xe0
+> +#define NVISA_GK20A_CHIPSET    0xea
+>  #define NVISA_GK110_CHIPSET    0xf0
+>  #define NVISA_GM107_CHIPSET    0x110
+>
+> diff --git a/src/gallium/drivers/nouveau/codegen/nv50_ir_emit_nvc0.cpp b/src/gallium/drivers/nouveau/codegen/nv50_ir_emit_nvc0.cpp
+> index b1f76cf80432..f69e6a183e19 100644
+> --- a/src/gallium/drivers/nouveau/codegen/nv50_ir_emit_nvc0.cpp
+> +++ b/src/gallium/drivers/nouveau/codegen/nv50_ir_emit_nvc0.cpp
+> @@ -3027,7 +3027,7 @@ TargetNVC0::createCodeEmitterNVC0(Program::Type type)
+>  CodeEmitter *
+>  TargetNVC0::getCodeEmitter(Program::Type type)
+>  {
+> -   if (chipset >= NVISA_GK110_CHIPSET)
+> +   if (chipset >= NVISA_GK20A_CHIPSET)
+>        return createCodeEmitterGK110(type);
+>     return createCodeEmitterNVC0(type);
+>  }
 
-It depends. A lot of cache controllers actually implement a solution
-for that in hardware, in the cache controller. For example I think
-Tegra2 is one of those platforms. And then a lot of platforms just
-ignore the issue completely because it has very low probability.
+As mentioned on IRC, you also need to update TargetNVC0::getFileSize
+to return 255 GPRs, since that value is presumably ISA-specific. You
+could, at that point, get rid of the GK110_CHIPSET define. Eventually
+all that stuff needs to be nuked and replaced with an 'isa' property.
+But you don't have to do that.
 
-St=C3=A9phane
+> diff --git a/src/gallium/drivers/nouveau/codegen/nv50_ir_target_nvc0.cpp b/src/gallium/drivers/nouveau/codegen/nv50_ir_target_nvc0.cpp
+> index 064e7a2c63f9..8212bfd9555e 100644
+> --- a/src/gallium/drivers/nouveau/codegen/nv50_ir_target_nvc0.cpp
+> +++ b/src/gallium/drivers/nouveau/codegen/nv50_ir_target_nvc0.cpp
+> @@ -49,9 +49,12 @@ TargetNVC0::getBuiltinCode(const uint32_t **code, uint32_t *size) const
+>  {
+>     switch (chipset & ~0xf) {
+>     case 0xe0:
+> -      *code = (const uint32_t *)&gk104_builtin_code[0];
+> -      *size = sizeof(gk104_builtin_code);
+> -      break;
+> +      if (chipset != NVISA_GK20A_CHIPSET) {
+
+You change the code emitter if chipset >= GK20A. Might as well be
+consistent here and below.
+
+> +         *code = (const uint32_t *)&gk104_builtin_code[0];
+> +         *size = sizeof(gk104_builtin_code);
+> +         break;
+> +      }
+> +      /* fall-through for GK20A */
+>     case 0xf0:
+>     case 0x100:
+>        *code = (const uint32_t *)&gk110_builtin_code[0];
+> @@ -71,7 +74,9 @@ TargetNVC0::getBuiltinOffset(int builtin) const
+>
+>     switch (chipset & ~0xf) {
+>     case 0xe0:
+> -      return gk104_builtin_offsets[builtin];
+> +      if (chipset != NVISA_GK20A_CHIPSET)
+> +         return gk104_builtin_offsets[builtin];
+> +      /* fall-through for GK20A */
+>     case 0xf0:
+>     case 0x100:
+>        return gk110_builtin_offsets[builtin];
+> --
+> 1.9.3
+>
