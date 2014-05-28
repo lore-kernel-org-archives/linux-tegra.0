@@ -1,98 +1,110 @@
-From: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>
-Subject: Re: [PATCH v2 2/2] nvc0: use SM35 ISA with GK20A
-Date: Tue, 27 May 2014 11:49:24 -0400
-Message-ID: <CAKb7Uvg65NzSSQKxs2ovUEr7aUeX3mm__dov8qve_3epaqG6Fg@mail.gmail.com>
-References: <1401166783-24086-1-git-send-email-acourbot@nvidia.com>
-	<1401174182-2182-3-git-send-email-acourbot@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v5 0/5] efuse driver for Tegra
+Date: Wed, 28 May 2014 15:54:32 +0300
+Message-ID: <1401281677-32110-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1401174182-2182-3-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Ken Adams <KAdams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "mesa-dev-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <mesa-dev-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, May 27, 2014 at 3:03 AM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> GK20A is mostly compatible with GK104, but uses the SM35 ISA. Use
-> the GK110 path when this chip is detected.
->
-> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+This driver allows userspace to read the raw efuse data. Its userspace
+interface is modelled after the sunxi_sid driver which provides similar
+functionality for some Allwinner SoCs. It has been tested on
+Tegra20 (ventana), Tegra30 (beaverboard), Tegra114 (dalmore) and
+Tegra124 (jetson TK1).
 
-Reviewed-by: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>
+Changes since v1:
 
-> ---
->  src/gallium/drivers/nouveau/codegen/nv50_ir_driver.h      |  2 +-
->  src/gallium/drivers/nouveau/codegen/nv50_ir_emit_nvc0.cpp |  2 +-
->  .../drivers/nouveau/codegen/nv50_ir_target_nvc0.cpp       | 15 ++++++++++-----
->  3 files changed, 12 insertions(+), 7 deletions(-)
->
-> diff --git a/src/gallium/drivers/nouveau/codegen/nv50_ir_driver.h b/src/gallium/drivers/nouveau/codegen/nv50_ir_driver.h
-> index bbb89d97932e..f829aac0bcc2 100644
-> --- a/src/gallium/drivers/nouveau/codegen/nv50_ir_driver.h
-> +++ b/src/gallium/drivers/nouveau/codegen/nv50_ir_driver.h
-> @@ -91,7 +91,7 @@ struct nv50_ir_prog_symbol
->  #define NVISA_GF100_CHIPSET_C0 0xc0
->  #define NVISA_GF100_CHIPSET_D0 0xd0
->  #define NVISA_GK104_CHIPSET    0xe0
-> -#define NVISA_GK110_CHIPSET    0xf0
-> +#define NVISA_GK20A_CHIPSET    0xea
->  #define NVISA_GM107_CHIPSET    0x110
->
->  struct nv50_ir_prog_info
-> diff --git a/src/gallium/drivers/nouveau/codegen/nv50_ir_emit_nvc0.cpp b/src/gallium/drivers/nouveau/codegen/nv50_ir_emit_nvc0.cpp
-> index b1f76cf80432..f69e6a183e19 100644
-> --- a/src/gallium/drivers/nouveau/codegen/nv50_ir_emit_nvc0.cpp
-> +++ b/src/gallium/drivers/nouveau/codegen/nv50_ir_emit_nvc0.cpp
-> @@ -3027,7 +3027,7 @@ TargetNVC0::createCodeEmitterNVC0(Program::Type type)
->  CodeEmitter *
->  TargetNVC0::getCodeEmitter(Program::Type type)
->  {
-> -   if (chipset >= NVISA_GK110_CHIPSET)
-> +   if (chipset >= NVISA_GK20A_CHIPSET)
->        return createCodeEmitterGK110(type);
->     return createCodeEmitterNVC0(type);
->  }
-> diff --git a/src/gallium/drivers/nouveau/codegen/nv50_ir_target_nvc0.cpp b/src/gallium/drivers/nouveau/codegen/nv50_ir_target_nvc0.cpp
-> index 064e7a2c63f9..963b6e47ddfc 100644
-> --- a/src/gallium/drivers/nouveau/codegen/nv50_ir_target_nvc0.cpp
-> +++ b/src/gallium/drivers/nouveau/codegen/nv50_ir_target_nvc0.cpp
-> @@ -49,9 +49,12 @@ TargetNVC0::getBuiltinCode(const uint32_t **code, uint32_t *size) const
->  {
->     switch (chipset & ~0xf) {
->     case 0xe0:
-> -      *code = (const uint32_t *)&gk104_builtin_code[0];
-> -      *size = sizeof(gk104_builtin_code);
-> -      break;
-> +      if (chipset < NVISA_GK20A_CHIPSET) {
-> +         *code = (const uint32_t *)&gk104_builtin_code[0];
-> +         *size = sizeof(gk104_builtin_code);
-> +         break;
-> +      }
-> +      /* fall-through for GK20A */
->     case 0xf0:
->     case 0x100:
->        *code = (const uint32_t *)&gk110_builtin_code[0];
-> @@ -71,7 +74,9 @@ TargetNVC0::getBuiltinOffset(int builtin) const
->
->     switch (chipset & ~0xf) {
->     case 0xe0:
-> -      return gk104_builtin_offsets[builtin];
-> +      if (chipset < NVISA_GK20A_CHIPSET)
-> +         return gk104_builtin_offsets[builtin];
-> +      /* fall-through for GK20A */
->     case 0xf0:
->     case 0x100:
->        return gk110_builtin_offsets[builtin];
-> @@ -235,7 +240,7 @@ TargetNVC0::getFileSize(DataFile file) const
->  {
->     switch (file) {
->     case FILE_NULL:          return 0;
-> -   case FILE_GPR:           return (chipset >= NVISA_GK110_CHIPSET) ? 255 : 63;
-> +   case FILE_GPR:           return (chipset >= NVISA_GK20A_CHIPSET) ? 255 : 63;
->     case FILE_PREDICATE:     return 7;
->     case FILE_FLAGS:         return 1;
->     case FILE_ADDRESS:       return 0;
-> --
-> 1.9.3
->
+* Add documentation for sysfs interface
+* Cleanup messages
+
+Changes since v2:
+
+* Incorporate early fuse code
+* Remove module support
+* Make driver always build when Tegra platform is selected
+* Add DT binding document
+* Address comments on v2
+
+Changes since v3:
+
+* Document sysfs file format
+* Added apbmisc DT node for access to the apbmisc registers
+* Address comments on v3
+
+Changes since v4:
+
+* Provide fallback to hardcoded 0x70000800 in case the apbmisc DT node is
+  missing. This is exactly what the current code does and prevents a system
+  crash in that case due to an invalid memory access by tegra_read_chipid()
+* Added tegra_fuse_readl() function for drivers to read calibration data
+
+Peter De Schrijver (5):
+  ARM: tegra: export apb dma readl/writel
+  ARM: tegra: move fuse exports to tegra-soc.h
+  misc: fuse: Add efuse driver for Tegra
+  ARM: tegra: Add efuse and apbmisc bindings
+  ARM: tegra: build new fuse driver in drivers/misc
+
+ Documentation/ABI/testing/sysfs-driver-tegra-fuse  |  201 +++++++++++++
+ .../devicetree/bindings/fuse/fuse-tegra.txt        |   30 ++
+ .../devicetree/bindings/misc/nvidia,apbmisc.txt    |   13 +
+ arch/arm/boot/dts/tegra114.dtsi                    |   12 +
+ arch/arm/boot/dts/tegra124.dtsi                    |   12 +
+ arch/arm/boot/dts/tegra20.dtsi                     |   12 +
+ arch/arm/boot/dts/tegra30.dtsi                     |   12 +
+ arch/arm/mach-tegra/Makefile                       |    4 -
+ arch/arm/mach-tegra/apbio.c                        |   51 ++--
+ arch/arm/mach-tegra/cpuidle.c                      |    2 +-
+ arch/arm/mach-tegra/flowctrl.c                     |    2 +-
+ arch/arm/mach-tegra/fuse.c                         |  252 -----------------
+ arch/arm/mach-tegra/fuse.h                         |   79 ------
+ arch/arm/mach-tegra/hotplug.c                      |    2 +-
+ arch/arm/mach-tegra/platsmp.c                      |    2 +-
+ arch/arm/mach-tegra/pm.c                           |    2 +-
+ arch/arm/mach-tegra/pmc.c                          |    2 +-
+ arch/arm/mach-tegra/powergate.c                    |    2 +-
+ arch/arm/mach-tegra/reset-handler.S                |    2 +-
+ arch/arm/mach-tegra/reset.c                        |    2 +-
+ arch/arm/mach-tegra/sleep-tegra30.S                |    2 +-
+ arch/arm/mach-tegra/tegra.c                        |    2 +-
+ arch/arm/mach-tegra/tegra114_speedo.c              |  104 -------
+ arch/arm/mach-tegra/tegra20_speedo.c               |  109 --------
+ arch/arm/mach-tegra/tegra30_speedo.c               |  292 -------------------
+ drivers/misc/Makefile                              |    2 +
+ drivers/misc/fuse/Makefile                         |    1 +
+ drivers/misc/fuse/tegra/Makefile                   |    7 +
+ drivers/misc/fuse/tegra/fuse-tegra.c               |  250 +++++++++++++++++
+ drivers/misc/fuse/tegra/fuse-tegra20.c             |  134 +++++++++
+ drivers/misc/fuse/tegra/fuse-tegra30.c             |  177 ++++++++++++
+ drivers/misc/fuse/tegra/fuse.h                     |   82 ++++++
+ drivers/misc/fuse/tegra/speedo-tegra114.c          |  110 ++++++++
+ drivers/misc/fuse/tegra/speedo-tegra124.c          |  180 ++++++++++++
+ drivers/misc/fuse/tegra/speedo-tegra20.c           |  110 ++++++++
+ drivers/misc/fuse/tegra/speedo-tegra30.c           |  294 ++++++++++++++++++++
+ include/linux/tegra-soc.h                          |   43 +++
+ 37 files changed, 1724 insertions(+), 871 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-driver-tegra-fuse
+ create mode 100644 Documentation/devicetree/bindings/fuse/fuse-tegra.txt
+ create mode 100644 Documentation/devicetree/bindings/misc/nvidia,apbmisc.txt
+ delete mode 100644 arch/arm/mach-tegra/fuse.c
+ delete mode 100644 arch/arm/mach-tegra/fuse.h
+ delete mode 100644 arch/arm/mach-tegra/tegra114_speedo.c
+ delete mode 100644 arch/arm/mach-tegra/tegra20_speedo.c
+ delete mode 100644 arch/arm/mach-tegra/tegra30_speedo.c
+ create mode 100644 drivers/misc/fuse/Makefile
+ create mode 100644 drivers/misc/fuse/tegra/Makefile
+ create mode 100644 drivers/misc/fuse/tegra/fuse-tegra.c
+ create mode 100644 drivers/misc/fuse/tegra/fuse-tegra20.c
+ create mode 100644 drivers/misc/fuse/tegra/fuse-tegra30.c
+ create mode 100644 drivers/misc/fuse/tegra/fuse.h
+ create mode 100644 drivers/misc/fuse/tegra/speedo-tegra114.c
+ create mode 100644 drivers/misc/fuse/tegra/speedo-tegra124.c
+ create mode 100644 drivers/misc/fuse/tegra/speedo-tegra20.c
+ create mode 100644 drivers/misc/fuse/tegra/speedo-tegra30.c
+
+-- 
+1.7.7.rc0.72.g4b5ea.dirty
