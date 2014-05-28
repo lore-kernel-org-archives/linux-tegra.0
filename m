@@ -1,419 +1,138 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/2] clk: tegra: periph, PLL and super clk debugfs entries
-Date: Wed, 28 May 2014 19:51:08 +0300
-Message-ID: <1401295868-18697-3-git-send-email-pdeschrijver@nvidia.com>
-References: <1401295868-18697-1-git-send-email-pdeschrijver@nvidia.com>
+From: Saravana Kannan <skannan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Subject: Re: [RFC PATCH] clk: flatten clk tree in debugfs
+Date: Wed, 28 May 2014 10:47:46 -0700
+Message-ID: <53862142.8080006@codeaurora.org>
+References: <1400842772-4862-1-git-send-email-pdeschrijver@nvidia.com> <537FCAA0.6080106@codeaurora.org> <20140526111453.GE5961@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1401295868-18697-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20140526111453.GE5961-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Implement debugs entries for periph clks, super clks and PLLs.
+On 05/26/2014 04:14 AM, Peter De Schrijver wrote:
+> On Sat, May 24, 2014 at 12:24:32AM +0200, Saravana Kannan wrote:
+>> On 05/23/2014 03:59 AM, Peter De Schrijver wrote:
+>>> This patch flattens the clk tree in CCF debugfs. Instead of representing the
+>>> clocks and their hierarchy as a directory structure under
+>>> /sys/kernel/debug/clk, each clock gets a single directory directly under
+>>> /sys/kernel/debug/clk.
+>>>
+>>> While this may seem strange, here's way I think this is the right thing to do:
+>>>
+>>> 1) a directory structure cannot be 'snapshotted' atomically, therefore it's
+>>>      not in general possible to get a consistent view of the clocktree, because
+>>>      clocks can be reparented at any time. This was solved by adding clk_dump
+>>>      and clk_summary, which do guarantee an atomic snapshot of the tree.
+>>>      Therefore I think the directory structure doesn't add any value.
+>>>
+>>> 2) When writing userspace programs which use the files in the clock
+>>>      directories (eg. for testing purposes), it's impossible to know for sure
+>>>      where a certain clock will be, because it might have been reparented by the
+>>>      time you figured out the path from clk_dump. This makes writing such
+>>>      programs more difficult than it should be.
+>>>
+>>> So because the directory structure doesn't give any information we don't
+>>> already provide by other means and it makes certain usecases more difficult
+>>> than the should be, I think we should move to a flat directory containing
+>>> one subdir per clock.
+>>
+>> Completely agree and a huge ACK to this idea.
+>>
+>
+> Thanks.
+>
+>>>
+>>> Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>> ---
+>>>    drivers/clk/clk.c |   54 +++-------------------------------------------------
+>>>    1 files changed, 4 insertions(+), 50 deletions(-)
+>>>
+>>> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+>>> index dff0373..53c6b4f 100644
+>>> --- a/drivers/clk/clk.c
+>>> +++ b/drivers/clk/clk.c
+>>> @@ -306,7 +306,7 @@ static int clk_debug_create_subtree(struct clk *clk, struct dentry *pdentry)
+>>>    		goto out;
+>>>
+>>>    	hlist_for_each_entry(child, &clk->children, child_node)
+>>> -		clk_debug_create_subtree(child, clk->dentry);
+>>> +		clk_debug_create_subtree(child, pdentry);
+>>>
+>>>    	ret = 0;
+>>>    out:
+>>> @@ -326,29 +326,20 @@ out:
+>>>     */
+>>>    static int clk_debug_register(struct clk *clk)
+>>>    {
+>>> -	struct clk *parent;
+>>>    	struct dentry *pdentry;
+>>>    	int ret = 0;
+>>>
+>>>    	if (!inited)
+>>>    		goto out;
+>>>
+>>> -	parent = clk->parent;
+>>> -
+>>>    	/*
+>>>    	 * Check to see if a clk is a root clk.  Also check that it is
+>>>    	 * safe to add this clk to debugfs
+>>>    	 */
+>>> -	if (!parent)
+>>> -		if (clk->flags & CLK_IS_ROOT)
+>>> -			pdentry = rootdir;
+>>> -		else
+>>> -			pdentry = orphandir;
+>>> +	if (clk->flags & CLK_IS_ROOT)
+>>> +		pdentry = rootdir;
+>>>    	else
+>>> -		if (parent->dentry)
+>>> -			pdentry = parent->dentry;
+>>> -		else
+>>> -			goto out;
+>>> +		pdentry = orphandir;
+>>
+>> I'm confused by this code. Shouldn't pdentry always be the same? Do we
+>> need a dir for orphans? Also, I'm not sure the code is actually right?
+>
+> Indeed. This code is most likely wrong... I don't have a strong opinion
+> if we need an orphan dir or if we can just have a file to list orphaned
+> clocks.
+I don't have a strong opinion either. A file is probably safer in case 
+we add debug files that allow changes to the clock. In which case, we 
+don't want orphan clocks to be modifiable.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/clk/tegra/clk-periph.c |   24 +++++++
- drivers/clk/tegra/clk-pll.c    |  144 +++++++++++++++++++++++++++++++++++++---
- drivers/clk/tegra/clk-super.c  |   24 +++++++
- drivers/clk/tegra/clk.h        |    3 +
- 4 files changed, 186 insertions(+), 9 deletions(-)
+> I would still like to be able to see if there are orphaned clocks.
+Agree
 
-diff --git a/drivers/clk/tegra/clk-periph.c b/drivers/clk/tegra/clk-periph.c
-index 9e899c18..9a5061b 100644
---- a/drivers/clk/tegra/clk-periph.c
-+++ b/drivers/clk/tegra/clk-periph.c
-@@ -111,6 +111,29 @@ static void clk_periph_disable(struct clk_hw *hw)
- 	gate_ops->disable(gate_hw);
- }
- 
-+#ifdef CONFIG_DEBUG_FS
-+#include <linux/debugfs.h>
-+
-+static int clk_periph_show(struct seq_file *s, struct clk_hw *hw,
-+			   void __iomem *clk_base)
-+{
-+	struct tegra_clk_periph *periph = to_clk_periph(hw);
-+	u32 offset = periph->divider.reg - clk_base;
-+
-+	seq_printf(s, "clk_source_%s(0x%x): %08x\n", __clk_get_name(hw->clk),
-+		    offset, readl_relaxed(periph->divider.reg));
-+
-+	return 0;
-+}
-+
-+static int clk_periph_debug_init(struct clk_hw *hw, struct dentry *parent_dir)
-+{
-+	return tegra_clk_debug_init(hw, parent_dir, clk_periph_show);
-+}
-+#else
-+#define clk_periph_debug_init NULL
-+#endif
-+
- const struct clk_ops tegra_clk_periph_ops = {
- 	.get_parent = clk_periph_get_parent,
- 	.set_parent = clk_periph_set_parent,
-@@ -120,6 +143,7 @@ const struct clk_ops tegra_clk_periph_ops = {
- 	.is_enabled = clk_periph_is_enabled,
- 	.enable = clk_periph_enable,
- 	.disable = clk_periph_disable,
-+	.debug_init = clk_periph_debug_init,
- };
- 
- static const struct clk_ops tegra_clk_periph_nodiv_ops = {
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 0d20241..c5f830e 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -20,6 +20,7 @@
- #include <linux/err.h>
- #include <linux/clk-provider.h>
- #include <linux/clk.h>
-+#include <linux/debugfs.h>
- 
- #include "clk.h"
- 
-@@ -662,6 +663,66 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
- 	return rate;
- }
- 
-+#ifdef CONFIG_DEBUG_FS
-+#include <linux/debugfs.h>
-+
-+static int clk_pll_debug_print(struct seq_file *s, const char *name,
-+			       const char *reg, u32 offset,
-+			       struct tegra_clk_pll *pll)
-+{
-+	return seq_printf(s, "%s_%s(0x%x): %08x\n", name, reg, offset,
-+			  readl_relaxed(pll->clk_base + offset));
-+}
-+
-+static int clk_pll_debug_print_base(struct seq_file *s, const char *name,
-+				    struct tegra_clk_pll *pll)
-+{
-+	clk_pll_debug_print(s, name, "base", pll->params->base_reg, pll);
-+	clk_pll_debug_print(s, name, "misc", pll->params->misc_reg, pll);
-+
-+	return 0;
-+}
-+
-+static int clk_pll_show(struct seq_file *s, struct clk_hw *hw,
-+			void __iomem *clk_base)
-+{
-+	const char *name = __clk_get_name(hw->clk);
-+	struct tegra_clk_pll *pll = to_clk_pll(hw);
-+	struct tegra_clk_pll_params *params = pll->params;
-+
-+	clk_pll_debug_print_base(s, name, pll);
-+
-+	if (params->flags & TEGRA_PLLM) {
-+		seq_printf(s, "%s(0x%x): %08x\n",
-+			   "apbdev_pmc_pllm_wb0_override_freq",
-+			   params->pmc_divnm_reg,
-+			   pll_override_readl(params->pmc_divnm_reg, pll));
-+
-+		if (params->pmc_divnm_reg != params->pmc_divp_reg)
-+			seq_printf(s, "%s(0x%x): %08x\n",
-+				"apbdev_pmc_pllm_wb0_override2",
-+				params->pmc_divp_reg,
-+				pll_override_readl(params->pmc_divp_reg, pll));
-+	}
-+
-+	return 0;
-+}
-+
-+static int clk_pll_debug_init(struct clk_hw *hw, struct dentry *parent_dir)
-+{
-+	struct tegra_clk_pll *pll = to_clk_pll(hw);
-+	tegra_clk_debugfn *show;
-+
-+	show = pll->show;
-+	if (!show)
-+		show = clk_pll_show;
-+
-+	return tegra_clk_debug_init(hw, parent_dir, show);
-+}
-+#else
-+#define clk_pll_debug_init NULL
-+#endif
-+
- static int clk_plle_training(struct tegra_clk_pll *pll)
- {
- 	u32 val;
-@@ -775,6 +836,22 @@ static unsigned long clk_plle_recalc_rate(struct clk_hw *hw,
- 	return rate;
- }
- 
-+#ifdef CONFIG_DEBUG_FS
-+static int clk_plle_show(struct seq_file *s, struct clk_hw *hw,
-+			 void __iomem *clk_base)
-+{
-+	const char *name = __clk_get_name(hw->clk);
-+	struct tegra_clk_pll *pll = to_clk_pll(hw);
-+
-+	clk_pll_debug_print_base(s, name, pll);
-+	clk_pll_debug_print(s, name, "aux", pll->params->aux_reg, pll);
-+
-+	return 0;
-+}
-+#else
-+#define clk_plle_show NULL
-+#endif
-+
- const struct clk_ops tegra_clk_pll_ops = {
- 	.is_enabled = clk_pll_is_enabled,
- 	.enable = clk_pll_enable,
-@@ -782,6 +859,7 @@ const struct clk_ops tegra_clk_pll_ops = {
- 	.recalc_rate = clk_pll_recalc_rate,
- 	.round_rate = clk_pll_round_rate,
- 	.set_rate = clk_pll_set_rate,
-+	.debug_init = clk_pll_debug_init,
- };
- 
- const struct clk_ops tegra_clk_plle_ops = {
-@@ -789,6 +867,7 @@ const struct clk_ops tegra_clk_plle_ops = {
- 	.is_enabled = clk_pll_is_enabled,
- 	.disable = clk_pll_disable,
- 	.enable = clk_plle_enable,
-+	.debug_init = clk_pll_debug_init,
- };
- 
- #if defined(CONFIG_ARCH_TEGRA_114_SOC) || defined(CONFIG_ARCH_TEGRA_124_SOC)
-@@ -1346,11 +1425,49 @@ static void clk_plle_tegra114_disable(struct clk_hw *hw)
- 	if (pll->lock)
- 		spin_unlock_irqrestore(pll->lock, flags);
- }
-+#ifdef CONFIG_DEBUG_FS
-+static int clk_pllxc_show(struct seq_file *s, struct clk_hw *hw,
-+			  void __iomem *clk_base)
-+{
-+	const char *name = __clk_get_name(hw->clk);
-+	struct tegra_clk_pll *pll = to_clk_pll(hw);
-+	struct tegra_clk_pll_params *params = pll->params;
-+
-+	clk_pll_debug_print_base(s, name, pll);
-+
-+	clk_pll_debug_print(s, name, "misc_2", params->dyn_ramp_reg, pll);
-+
-+	if (pll->params->iddq_reg != pll->params->misc_reg)
-+		clk_pll_debug_print(s, name, "misc_3", params->iddq_reg, pll);
-+
-+	return 0;
-+}
-+
-+static int clk_pllc_show(struct seq_file *s, struct clk_hw *hw,
-+			 void __iomem *clk_base)
-+{
-+	const char *name = __clk_get_name(hw->clk);
-+	struct tegra_clk_pll *pll = to_clk_pll(hw);
-+	u32 *ext_misc_reg = &pll->params->ext_misc_reg[0];
-+
-+	clk_pll_debug_print_base(s, name, pll);
-+
-+	clk_pll_debug_print(s, name, "misc_1", ext_misc_reg[0], pll);
-+	clk_pll_debug_print(s, name, "misc_2", ext_misc_reg[1], pll);
-+	clk_pll_debug_print(s, name, "misc_3", ext_misc_reg[2], pll);
-+
-+	return 0;
-+}
-+#else
-+#define clk_pllxc_show NULL
-+#define clk_pllc_show NULL
-+#endif
-+
- #endif
- 
- static struct tegra_clk_pll *_tegra_init_pll(void __iomem *clk_base,
- 		void __iomem *pmc, struct tegra_clk_pll_params *pll_params,
--		spinlock_t *lock)
-+		tegra_clk_debugfn *show, spinlock_t *lock)
- {
- 	struct tegra_clk_pll *pll;
- 
-@@ -1364,6 +1481,8 @@ static struct tegra_clk_pll *_tegra_init_pll(void __iomem *clk_base,
- 	pll->params = pll_params;
- 	pll->lock = lock;
- 
-+	pll->show = show;
-+
- 	if (!pll_params->div_nmp)
- 		pll_params->div_nmp = &default_nmp;
- 
-@@ -1398,7 +1517,7 @@ struct clk *tegra_clk_register_pll(const char *name, const char *parent_name,
- 
- 	pll_params->flags |= TEGRA_PLL_BYPASS;
- 	pll_params->flags |= TEGRA_PLL_HAS_LOCK_ENABLE;
--	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
-+	pll = _tegra_init_pll(clk_base, pmc, pll_params, NULL, lock);
- 	if (IS_ERR(pll))
- 		return ERR_CAST(pll);
- 
-@@ -1420,7 +1539,8 @@ struct clk *tegra_clk_register_plle(const char *name, const char *parent_name,
- 
- 	pll_params->flags |= TEGRA_PLL_LOCK_MISC | TEGRA_PLL_BYPASS;
- 	pll_params->flags |= TEGRA_PLL_HAS_LOCK_ENABLE;
--	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
-+	pll = _tegra_init_pll(clk_base, pmc, pll_params, clk_plle_show,
-+			      lock);
- 	if (IS_ERR(pll))
- 		return ERR_CAST(pll);
- 
-@@ -1440,6 +1560,7 @@ static const struct clk_ops tegra_clk_pllxc_ops = {
- 	.recalc_rate = clk_pll_recalc_rate,
- 	.round_rate = clk_pll_ramp_round_rate,
- 	.set_rate = clk_pllxc_set_rate,
-+	.debug_init = clk_pll_debug_init,
- };
- 
- static const struct clk_ops tegra_clk_pllm_ops = {
-@@ -1449,6 +1570,7 @@ static const struct clk_ops tegra_clk_pllm_ops = {
- 	.recalc_rate = clk_pll_recalc_rate,
- 	.round_rate = clk_pll_ramp_round_rate,
- 	.set_rate = clk_pllm_set_rate,
-+	.debug_init = clk_pll_debug_init,
- };
- 
- static const struct clk_ops tegra_clk_pllc_ops = {
-@@ -1458,6 +1580,7 @@ static const struct clk_ops tegra_clk_pllc_ops = {
- 	.recalc_rate = clk_pll_recalc_rate,
- 	.round_rate = clk_pll_ramp_round_rate,
- 	.set_rate = clk_pllc_set_rate,
-+	.debug_init = clk_pll_debug_init,
- };
- 
- static const struct clk_ops tegra_clk_pllre_ops = {
-@@ -1467,6 +1590,7 @@ static const struct clk_ops tegra_clk_pllre_ops = {
- 	.recalc_rate = clk_pllre_recalc_rate,
- 	.round_rate = clk_pllre_round_rate,
- 	.set_rate = clk_pllre_set_rate,
-+	.debug_init = clk_pll_debug_init,
- };
- 
- static const struct clk_ops tegra_clk_plle_tegra114_ops = {
-@@ -1474,6 +1598,7 @@ static const struct clk_ops tegra_clk_plle_tegra114_ops = {
- 	.enable = clk_plle_tegra114_enable,
- 	.disable = clk_plle_tegra114_disable,
- 	.recalc_rate = clk_pll_recalc_rate,
-+	.debug_init = clk_pll_debug_init,
- };
- 
- 
-@@ -1518,7 +1643,7 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
- 	}
- 
- 	pll_params->flags |= TEGRA_PLL_HAS_LOCK_ENABLE;
--	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
-+	pll = _tegra_init_pll(clk_base, pmc, pll_params, clk_pllxc_show, lock);
- 	if (IS_ERR(pll))
- 		return ERR_CAST(pll);
- 
-@@ -1544,7 +1669,7 @@ struct clk *tegra_clk_register_pllre(const char *name, const char *parent_name,
- 
- 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
- 
--	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
-+	pll = _tegra_init_pll(clk_base, pmc, pll_params, NULL, lock);
- 	if (IS_ERR(pll))
- 		return ERR_CAST(pll);
- 
-@@ -1604,7 +1729,7 @@ struct clk *tegra_clk_register_pllm(const char *name, const char *parent_name,
- 	pll_params->flags |= TEGRA_PLL_BYPASS;
- 	pll_params->flags |= TEGRA_PLL_HAS_LOCK_ENABLE;
- 	pll_params->flags |= TEGRA_PLLM;
--	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
-+	pll = _tegra_init_pll(clk_base, pmc, pll_params, NULL, lock);
- 	if (IS_ERR(pll))
- 		return ERR_CAST(pll);
- 
-@@ -1643,7 +1768,7 @@ struct clk *tegra_clk_register_pllc(const char *name, const char *parent_name,
- 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
- 
- 	pll_params->flags |= TEGRA_PLL_BYPASS;
--	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
-+	pll = _tegra_init_pll(clk_base, pmc, pll_params, clk_pllc_show, lock);
- 	if (IS_ERR(pll))
- 		return ERR_CAST(pll);
- 
-@@ -1701,7 +1826,7 @@ struct clk *tegra_clk_register_plle_tegra114(const char *name,
- 	u32 val, val_aux;
- 
- 	pll_params->flags |= TEGRA_PLL_HAS_LOCK_ENABLE;
--	pll = _tegra_init_pll(clk_base, NULL, pll_params, lock);
-+	pll = _tegra_init_pll(clk_base, NULL, pll_params, NULL, lock);
- 	if (IS_ERR(pll))
- 		return ERR_CAST(pll);
- 
-@@ -1738,6 +1863,7 @@ static const struct clk_ops tegra_clk_pllss_ops = {
- 	.recalc_rate = clk_pll_recalc_rate,
- 	.round_rate = clk_pll_ramp_round_rate,
- 	.set_rate = clk_pllxc_set_rate,
-+	.debug_init = clk_pll_debug_init,
- };
- 
- struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
-@@ -1763,7 +1889,7 @@ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
- 	}
- 
- 	pll_params->flags = TEGRA_PLL_HAS_LOCK_ENABLE | TEGRA_PLL_USE_LOCK;
--	pll = _tegra_init_pll(clk_base, NULL, pll_params, lock);
-+	pll = _tegra_init_pll(clk_base, NULL, pll_params, clk_pllc_show, lock);
- 	if (IS_ERR(pll))
- 		return ERR_CAST(pll);
- 
-diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-super.c
-index 2fd924d..5426b9a 100644
---- a/drivers/clk/tegra/clk-super.c
-+++ b/drivers/clk/tegra/clk-super.c
-@@ -122,9 +122,33 @@ out:
- 	return err;
- }
- 
-+#ifdef CONFIG_DEBUG_FS
-+#include <linux/debugfs.h>
-+
-+static int clk_super_show(struct seq_file *s, struct clk_hw *hw,
-+			  void __iomem *clk_base)
-+{
-+	struct tegra_clk_super_mux *mux = to_clk_super_mux(hw);
-+	u32 offset = mux->reg - clk_base;
-+
-+	seq_printf(s, "%s_burst_policy(0x%x): %08x\n", __clk_get_name(hw->clk),
-+			offset, readl_relaxed(mux->reg));
-+
-+	return 0;
-+}
-+
-+static int clk_super_debug_init(struct clk_hw *hw, struct dentry *parent_dir)
-+{
-+	return tegra_clk_debug_init(hw, parent_dir, clk_super_show);
-+}
-+#else
-+#define clk_super_debug_init NULL
-+#endif
-+
- const struct clk_ops tegra_clk_super_ops = {
- 	.get_parent = clk_super_get_parent,
- 	.set_parent = clk_super_set_parent,
-+	.debug_init = clk_super_debug_init,
- };
- 
- struct clk *tegra_clk_register_super_mux(const char *name,
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index facbd99..32c699d 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -248,6 +248,9 @@ struct tegra_clk_pll {
- 	void __iomem	*pmc;
- 	spinlock_t	*lock;
- 	struct tegra_clk_pll_params	*params;
-+#ifdef CONFIG_DEBUG_FS
-+	tegra_clk_debugfn *show;
-+#endif
- };
- 
- #define to_clk_pll(_hw) container_of(_hw, struct tegra_clk_pll, hw)
+> You could argue that the same race exists for the orphan dir. It is possible
+> for the parent to be registered while you're traversing the orphan dir and
+> cause a clock to move around. In practice this seems rather unlikely to happen
+> to me?
+I think you read too much into my comment. I wasn't in any way against 
+knowing orphaned clocks from debugfs. I was just referring to that 
+specific point in code, the clock might always need to pick the same 
+dentry. I might be wrong about the code too (I just looked at the diff).
+
+
+>> Looks like you are putting everything but the root into orphandir?
+>>
+>
+> Yes...
+
+Now I'm confused. Does some other code path unorphan and move them into 
+the clock debug "root" dir later on?
+
+Mike, others,
+
+Any objections to this idea? If there's not much opposition, then maybe 
+Peter can actually spend time fixing and testing this patch?
+
+-Saravana
+
 -- 
-1.7.7.rc0.72.g4b5ea.dirty
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+hosted by The Linux Foundation
