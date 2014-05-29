@@ -1,29 +1,41 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v5 0/5] efuse driver for Tegra
-Date: Thu, 29 May 2014 13:01:27 -0600
-Message-ID: <53878407.3050409@wwwdotorg.org>
-References: <1401281677-32110-1-git-send-email-pdeschrijver@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v5 3/5] misc: fuse: Add efuse driver for Tegra
+Date: Thu, 29 May 2014 13:04:33 -0600
+Message-ID: <538784C1.6000504@wwwdotorg.org>
+References: <1401281677-32110-1-git-send-email-pdeschrijver@nvidia.com> <1401281677-32110-4-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1401281677-32110-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1401281677-32110-4-git-send-email-pdeschrijver@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 On 05/28/2014 06:54 AM, Peter De Schrijver wrote:
-> This driver allows userspace to read the raw efuse data. Its userspace
-> interface is modelled after the sunxi_sid driver which provides similar
-> functionality for some Allwinner SoCs. It has been tested on
-> Tegra20 (ventana), Tegra30 (beaverboard), Tegra114 (dalmore) and
-> Tegra124 (jetson TK1).
+> Implement fuse driver for Tegra20, Tegra30, Tegra114 and Tegra124.
 
-> Changes since v4:
-> 
-> * Provide fallback to hardcoded 0x70000800 in case the apbmisc DT node is
->   missing. This is exactly what the current code does and prevents a system
->   crash in that case due to an invalid memory access by tegra_read_chipid()
+> diff --git a/Documentation/ABI/testing/sysfs-driver-tegra-fuse b/Documentation/ABI/testing/sysfs-driver-tegra-fuse
 
-Wouldn't it be better to simply return an error?
+> +Description:	read-only access to the efuses on Tegra20, Tegra30, Tegra114
+> +		and Tegra124 SoC's from NVIDIA. The efuses contain write once
+> +		data programmed at the factory. The data is layed out in 32bit
+> +		words in LSB first formnat. The number of valid bits depends
+
+s/formnat/format/
+
+> +		on the word and the SoC. The mapping is as follows:
+> +
+> +		For Tegra20:
+> +		Word 0 - 1    : bit 0
+> +		Word 2        : unused
+> +		Word 3        : bits 0 - 31
+> +		Word 4        : bits 0 - 7
+
+Do we really need these long tables that indicate which bits are used?
+As I mentioned before, when I asked for documentation of the format of
+these files, all I wanted was a brief not indicating that the data was
+binary, and that each bit potentially represents a fuse... Either we
+should leave it at that, or actually document what each bit represents,
+which would hopefully be a pointless duplication of the TRM.
