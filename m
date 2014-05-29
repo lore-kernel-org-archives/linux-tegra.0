@@ -1,30 +1,112 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v5 0/5] efuse driver for Tegra
-Date: Thu, 29 May 2014 13:22:57 -0600
-Message-ID: <53878911.9090508@wwwdotorg.org>
-References: <1401281677-32110-1-git-send-email-pdeschrijver@nvidia.com> <20140528061645.252c2fbc.akpm@linux-foundation.org>
+From: Nishanth Menon <nm@ti.com>
+Subject: Re: [RFC PATCH 3/3] clk: tegra: Implement Tegra124 shared/cbus clks
+Date: Thu, 29 May 2014 18:22:45 -0500
+Message-ID: <5387C145.8050609@ti.com>
+References: <1399990023-30318-1-git-send-email-pdeschrijver@nvidia.com> <1399990023-30318-4-git-send-email-pdeschrijver@nvidia.com> <53725FED.7050303@wwwdotorg.org> <20140514142739.GA8612@ulmo> <20140514193518.19795.64334@quantum> <20140526130725.GA1594@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140528061645.252c2fbc.akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <20140526130725.GA1594@ulmo>
+Sender: linux-pm-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Mike Turquette <mturquette@linaro.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/28/2014 07:16 AM, Andrew Morton wrote:
-> On Wed, 28 May 2014 15:54:32 +0300 Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+On 05/26/2014 08:07 AM, Thierry Reding wrote:
+> On Wed, May 14, 2014 at 12:35:18PM -0700, Mike Turquette wrote:
+>> Quoting Thierry Reding (2014-05-14 07:27:40)
+> [...]
+>>> As for shared clocks I'm only aware of one use-case, namely EMC scaling.
+>>> Using clocks for that doesn't seem like the best option to me. While it
+>>> can probably fix the immediate issue of choosing an appropriate
+>>> frequency for the EMC clock it isn't a complete solution for the problem
+>>> that we're trying to solve. From what I understand EMC scaling is one
+>>> part of ensuring quality of service. The current implementations of that
+>>> seems to abuse clocks (essentially one X.emc clock per X clock) to
+>>> signal the amount of memory bandwidth required by any given device. But
+>>> there are other parts to the puzzle. Latency allowance is one. The value
+>>> programmed to the latency allowance registers for example depends on the
+>>> EMC frequency.
+>>>
+>>> Has anyone ever looked into using a different framework to model all of
+>>> these requirements? PM QoS looks like it might fit, but if none of the
+>>> existing frameworks have what we need, perhaps something new can be
+>>> created.
+>>
+>> It has been discussed. Using a QoS throughput constraint could help
+>> scale frequency. But this deserves a wider discussion and starts to
+>> stray into both PM QoS territory and also into "should we have a DVFS
+>> framework" territory.
 > 
->> This driver allows userspace to read the raw efuse data.
+> I've looked into this for a bit and it doesn't look like PM QoS is going
+> to be a good match after all. One of the issues I found was that PM QoS
+> deals with individual devices and there's no builtin way to collect the
+> requests from multiple devices to produce a global constraint. So if we
+> want to add something like that either the API would need to be extended
+> or it would need to be tacked on using the notifier mechanism and some
+> way of tracking (and filtering) the individual devices.
 > 
-> The patchset uses an inexplicable mixture of "fuse" and "efuse".
-> Given that the kernel already has a "fuse", it would be nice if
-> this code could use "efuse" everywhere.
+> Looking at devfreq it seems to be the DVFS framework that you mentioned,
+> but from what I can tell it suffers from mostly the same problems. The
+> governor applies some frequency scaling policy to a single device and
+> does not allow multiple devices to register constraints against a single
+> (global) constraint so that the result can be accumulated.
+> 
+> For Tegra EMC scaling what we need is something more along the lines of
+> this: we have a resource (external memory) that is shared by multiple
+> devices in the system. Each of those devices requires a certain amount
+> of that resource (memory bandwidth). The resource driver will need to
+> accumulate all requests for the resource and apply the resulting
+> constraint so that all requests can be satisfied.
+> 
+> One solution I could imagine to make this work with PM QoS would be to
+> add the concept of a pm_qos_group to manage a set of pm_qos_requests,
+> but that will require a bunch of extra checks to make sure that requests
+> are of the correct type and so on. In other words it would still be
+> tacked on.
 
-I didn't check every instance, but a mix of those two terms seems
-reasonable. "fuse" is the type of HW object; it's a generic HW term that
-exists outside the scope of this patch. While the conflict with Linux's
-filesystem is unfortunate, it's a name collision that I think we'll
-simply have to live with; it's not created by this patch. "efuse" is the
-name of the Tegra module that hosts Tegra's fuses.
+just a minor note from previous experience: We(at TI) had attempted in
+our product kernel[1] to use QoS constraint for certain SoCs for
+rather unspectacular results.
+
+Our use case was similar: devices -> L3(core bus)->memory. We had the
+following intent:
+a) wanted to scale L3 based on QoS requests coming in from various
+device drivers. intent was to scale either to 133MHz or 266MHz (two
+OPPs we supported on our devices) based on performance needs -> So we
+asked drivers to report QoS requirements using an standard function -
+except drivers cannot always report it satisfactorily - example bursty
+transfer devices - ended up with consolidated requests > total
+bandwidth possible on the bus -> (and never in practise hitting the
+lower frequency).
+b) timing closure issues on certain devices such as USB - which can
+only function based on async bridge closure requirements on the core
+bus etc.. these would require bus to be at higher frequency - QoS
+model was "misused" in such requirements.
+b.1) a variation: interdependent constraints -> if MPU is > freq X,
+timing closure required L3 to be at 266MHz. again - it is not a QoS
+requirement perse, just a dependency requirement that cannot easily be
+addressed doing a pure QoS like framework solution.
+
+Even though EMC does sound like (a) - I suspect you might want to be
+100% sure that you dont have variations of (b) in the SoC as well and
+betting completely on QoS approach might not actually work in practice.
+
+> 
+> Adding the linux-pm mailing list for more visibility. Perhaps somebody
+For folks new on the discussion: complete thread:
+http://thread.gmane.org/gmane.linux.drivers.devicetree/73967
+
+> has some ideas on how to extend any of the existing frameworks to make
+> it work for Tegra's EMC scaling (or how to implement the requirements of
+> Tegra's EMC scaling within the existing frameworks).
+> 
+
+
+[1]
+https://android.googlesource.com/kernel/omap.git/+/android-omap-panda-3.0/arch/arm/plat-omap/omap-pm-helper.c
+
+-- 
+Regards,
+Nishanth Menon
