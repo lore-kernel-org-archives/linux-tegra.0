@@ -1,7 +1,7 @@
 From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCHv8 18/21] iommu/tegra124: smmu: adjust TLB_FLUSH_ASID bit range
-Date: Fri, 30 May 2014 14:20:31 +0300
-Message-ID: <1401448834-32659-19-git-send-email-hdoyu@nvidia.com>
+Subject: [PATCHv8 14/21] iommu/tegra124: smmu: convert swgroup ID to asid offset
+Date: Fri, 30 May 2014 14:20:27 +0300
+Message-ID: <1401448834-32659-15-git-send-email-hdoyu@nvidia.com>
 References: <1401448834-32659-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -11,53 +11,62 @@ Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-TLB_FLUSH_ASID bit range depends on the number of asids to support
-other number than the current 4, especially for a new Tegra124. Based
-on Terje's internal patch.
+Provide a conversion table from swgroup ID to MC_SMMU_<swgroup
+name>_ASID_0 register offset to support non-linear conversion. This
+conversion used to be exactly linear but after T124 we need a
+conversion table to support non-linear cases. We would also need
+another table to convert swgroup ID to HOTRESET bit.
 
 Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/iommu/tegra-smmu.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/iommu/tegra-smmu.c | 21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 7f13133eab0a..f499ca1f8498 100644
+index 20dddc305fb2..080dbda874e5 100644
 --- a/drivers/iommu/tegra-smmu.c
 +++ b/drivers/iommu/tegra-smmu.c
-@@ -92,11 +92,14 @@ enum {
- #define SMMU_TLB_FLUSH_VA_MATCH_ALL		0
- #define SMMU_TLB_FLUSH_VA_MATCH_SECTION		2
- #define SMMU_TLB_FLUSH_VA_MATCH_GROUP		3
--#define SMMU_TLB_FLUSH_ASID_SHIFT		29
-+#define SMMU_TLB_FLUSH_ASID_SHIFT_BASE		31
- #define SMMU_TLB_FLUSH_ASID_MATCH_DISABLE	0
- #define SMMU_TLB_FLUSH_ASID_MATCH_ENABLE	1
- #define SMMU_TLB_FLUSH_ASID_MATCH_SHIFT		31
+@@ -184,8 +184,6 @@ enum {
+ #define __smmu_client_enable_swgroups(c, m) __smmu_client_set_swgroups(c, m, 1)
+ #define __smmu_client_disable_swgroups(c) __smmu_client_set_swgroups(c, 0, 0)
  
-+#define SMMU_TLB_FLUSH_ASID_SHIFT(as)					\
-+	(SMMU_TLB_FLUSH_ASID_SHIFT_BASE - __ffs((as)->smmu->num_as))
+-#define SWGROUPS_ASID_REG(x) ((x) * sizeof(u32) + SMMU_ASID_BASE)
+-
+ /*
+  * Per client for address space
+  */
+@@ -314,6 +312,23 @@ static inline void smmu_write(struct smmu_device *smmu, u32 val, size_t offs)
+  */
+ #define FLUSH_SMMU_REGS(smmu)	smmu_read(smmu, SMMU_CONFIG)
+ 
++static size_t smmu_get_asid_offset(int id)
++{
++	switch (id) {
++	case TEGRA_SWGROUP_DC14:
++		return 0x490;
++	case TEGRA_SWGROUP_DC12:
++		return 0xa88;
++	case TEGRA_SWGROUP_AFI...TEGRA_SWGROUP_ISP:
++	case TEGRA_SWGROUP_MPE...TEGRA_SWGROUP_PPCS1:
++		return (id - TEGRA_SWGROUP_AFI) * sizeof(u32) + SMMU_ASID_BASE;
++	case TEGRA_SWGROUP_SDMMC1A...63:
++		return (id - TEGRA_SWGROUP_SDMMC1A) * sizeof(u32) + 0xa94;
++	};
 +
- #define SMMU_PTC_FLUSH				0x34
- #define SMMU_PTC_FLUSH_TYPE_ALL			0
- #define SMMU_PTC_FLUSH_TYPE_ADR			1
-@@ -562,7 +565,7 @@ static void flush_ptc_and_tlb(struct smmu_device *smmu,
++	BUG();
++}
++
+ static struct smmu_client *find_smmu_client(struct smmu_device *smmu,
+ 					    struct device_node *dev_node)
+ {
+@@ -415,7 +430,7 @@ static int __smmu_client_set_swgroups(struct smmu_client *c,
+ 		map = c->swgroups;
  
- 	val = tlb_flush_va |
- 		SMMU_TLB_FLUSH_ASID_MATCH__ENABLE |
--		(as->asid << SMMU_TLB_FLUSH_ASID_SHIFT);
-+		(as->asid << SMMU_TLB_FLUSH_ASID_SHIFT(as));
- 	smmu_write(smmu, val, SMMU_TLB_FLUSH);
- 	FLUSH_SMMU_REGS(smmu);
- }
-@@ -729,7 +732,7 @@ static int alloc_pdir(struct smmu_as *as)
- 
- 	val = SMMU_TLB_FLUSH_VA_MATCH_ALL |
- 		SMMU_TLB_FLUSH_ASID_MATCH__ENABLE |
--		(as->asid << SMMU_TLB_FLUSH_ASID_SHIFT);
-+		(as->asid << SMMU_TLB_FLUSH_ASID_SHIFT(as));
- 	smmu_write(smmu, val, SMMU_TLB_FLUSH);
- 	FLUSH_SMMU_REGS(as->smmu);
- 
+ 	for_each_set_bit(i, map, TEGRA_SWGROUP_MAX) {
+-		offs = SWGROUPS_ASID_REG(i);
++		offs = smmu_get_asid_offset(i);
+ 		val = smmu_read(smmu, offs);
+ 		if (on) {
+ 			if (val) {
 -- 
 2.0.0.rc1.15.g7e76a2f
