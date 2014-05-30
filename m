@@ -1,57 +1,28 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH v5 3/5] misc: fuse: Add efuse driver for Tegra
-Date: Fri, 30 May 2014 14:36:18 +0300
-Message-ID: <20140530113618.GQ5961@tbergstrom-lnx.Nvidia.com>
-References: <1401281677-32110-1-git-send-email-pdeschrijver@nvidia.com>
- <1401281677-32110-4-git-send-email-pdeschrijver@nvidia.com>
- <538784C1.6000504@wwwdotorg.org>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 0/2] debugfs entries for Tegra clocks
+Date: Fri, 30 May 2014 16:12:26 +0300
+Message-ID: <20140530131226.GR5961@tbergstrom-lnx.Nvidia.com>
+References: <1401295868-18697-1-git-send-email-pdeschrijver@nvidia.com>
+ <538773C0.30906@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <538784C1.6000504@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+In-Reply-To: <538773C0.30906-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, May 29, 2014 at 09:04:33PM +0200, Stephen Warren wrote:
-> On 05/28/2014 06:54 AM, Peter De Schrijver wrote:
-> > Implement fuse driver for Tegra20, Tegra30, Tegra114 and Tegra124.
+On Thu, May 29, 2014 at 07:52:00PM +0200, Stephen Warren wrote:
+> On 05/28/2014 10:51 AM, Peter De Schrijver wrote:
+> > This patch set introduces the 'regs' debugfs entry which shows the
+> > contents of all registers related to a clock.
 > 
-> > diff --git a/Documentation/ABI/testing/sysfs-driver-tegra-fuse b/Documentation/ABI/testing/sysfs-driver-tegra-fuse
-> 
-> > +Description:	read-only access to the efuses on Tegra20, Tegra30, Tegra114
-> > +		and Tegra124 SoC's from NVIDIA. The efuses contain write once
-> > +		data programmed at the factory. The data is layed out in 32bit
-> > +		words in LSB first formnat. The number of valid bits depends
-> 
-> s/formnat/format/
-> 
-> > +		on the word and the SoC. The mapping is as follows:
-> > +
-> > +		For Tegra20:
-> > +		Word 0 - 1    : bit 0
-> > +		Word 2        : unused
-> > +		Word 3        : bits 0 - 31
-> > +		Word 4        : bits 0 - 7
-> 
-> Do we really need these long tables that indicate which bits are used?
-> As I mentioned before, when I asked for documentation of the format of
-> these files, all I wanted was a brief not indicating that the data was
-> binary, and that each bit potentially represents a fuse... Either we
-> should leave it at that, or actually document what each bit represents,
-> which would hopefully be a pointless duplication of the TRM.
+> Would it be better to create a regmap object for the entire clock module
+> register space, and then get all the debugfs stuff for free?
 
-Some fuses are OEM defined, so there is no way to document all fuses there.
-Would you be ok with just dropping the tables then? So, the description would
-become:
-
-Description:    read-only access to the efuses on Tegra20, Tegra30, Tegra114
-                and Tegra124 SoC's from NVIDIA. The efuses contain write once
-                data programmed at the factory. The data is layed out in 32bit
-                words in LSB first format. The number of valid bits depends
-                on the word and the SoC.
+Maybe. You wouldn't get the register names though.
 
 Cheers,
 
