@@ -1,7 +1,7 @@
 From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCHv8 15/21] iommu/tegra124: smmu: add support platform data
-Date: Fri, 30 May 2014 14:20:28 +0300
-Message-ID: <1401448834-32659-16-git-send-email-hdoyu@nvidia.com>
+Subject: [PATCHv8 06/21] ARM: tegra: create a DT header defining SWGROUP ID
+Date: Fri, 30 May 2014 14:20:19 +0300
+Message-ID: <1401448834-32659-7-git-send-email-hdoyu@nvidia.com>
 References: <1401448834-32659-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -11,200 +11,78 @@ Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The later Tegra SoC(>= T124) has more registers for
-MC_SMMU_TRANSLATION_ENABLE_*. Now those info is provided as platfrom
-data. If those varies a lot on SoCs in the future, we can consider
-putting them into DT later.
+Create a header file to define the swgroup IDs used by the IOMMU(SMMU)
+binding. "swgroup" is a group of H/W clients which a Tegra SoC
+supports. This unique ID can be used to calculate MC_SMMU_<swgroup
+name>_ASID_0 register offset and MC_<swgroup name>_HOTRESET_*_0
+register bit. This will allow the same header to be used by both
+device tree files, and drivers implementing this binding, which
+guarantees that the two stay in sync. This also makes device trees
+more readable by using names instead of magic numbers. For HOTRESET
+bit shifting we need another conversion table, which will come later.
 
 Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- .../bindings/iommu/nvidia,tegra30-smmu.txt         |  4 +-
- drivers/iommu/tegra-smmu.c                         | 68 ++++++++++++++--------
- 2 files changed, 47 insertions(+), 25 deletions(-)
+ include/dt-bindings/memory/tegra-swgroup.h | 50 ++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
+ create mode 100644 include/dt-bindings/memory/tegra-swgroup.h
 
-diff --git a/Documentation/devicetree/bindings/iommu/nvidia,tegra30-smmu.txt b/Documentation/devicetree/bindings/iommu/nvidia,tegra30-smmu.txt
-index 89fb5434b730..38b444ff1d4c 100644
---- a/Documentation/devicetree/bindings/iommu/nvidia,tegra30-smmu.txt
-+++ b/Documentation/devicetree/bindings/iommu/nvidia,tegra30-smmu.txt
-@@ -1,8 +1,8 @@
- NVIDIA Tegra 30 IOMMU H/W, SMMU (System Memory Management Unit)
- 
- Required properties:
--- compatible : "nvidia,tegra30-smmu"
--- reg : Should contain 3 register banks(address and length) for each
-+- compatible : "nvidia,tegra124-smmu", "nvidia,tegra30-smmu"
-+- reg : Can contain multiple register banks(address and length) for each
-   of the SMMU register blocks.
- - interrupts : Should contain MC General interrupt.
- - nvidia,#asids : # of ASIDs
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 080dbda874e5..12a4a8f68538 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -32,6 +32,7 @@
- #include <linux/iommu.h>
- #include <linux/io.h>
- #include <linux/of.h>
-+#include <linux/of_device.h>
- #include <linux/of_iommu.h>
- #include <linux/debugfs.h>
- #include <linux/seq_file.h>
-@@ -108,8 +109,6 @@ enum {
- 	(SMMU_STATS_CACHE_COUNT_BASE + 8 * cache + 4 * hitmiss)
- 
- #define SMMU_TRANSLATION_ENABLE_0		0x228
--#define SMMU_TRANSLATION_ENABLE_1		0x22c
--#define SMMU_TRANSLATION_ENABLE_2		0x230
- 
- #define SMMU_AFI_ASID	0x238   /* PCIE */
- #define SMMU_ASID_BASE	SMMU_AFI_ASID
-@@ -237,12 +236,12 @@ struct smmu_device {
- 	struct rb_root	clients;
- 	struct page *avp_vector_page;	/* dummy page shared by all AS's */
- 
-+	int nr_xlats;		/* number of translation_enable registers */
+diff --git a/include/dt-bindings/memory/tegra-swgroup.h b/include/dt-bindings/memory/tegra-swgroup.h
+new file mode 100644
+index 000000000000..32dd307e5f8e
+--- /dev/null
++++ b/include/dt-bindings/memory/tegra-swgroup.h
+@@ -0,0 +1,50 @@
++/*
++ * This header provides constants for binding nvidia,swgroup ID
++ */
 +
- 	/*
- 	 * Register image savers for suspend/resume
- 	 */
--	unsigned long translation_enable_0;
--	unsigned long translation_enable_1;
--	unsigned long translation_enable_2;
-+	u32 *xlat;
- 	unsigned long asid_security;
- 
- 	struct dentry *debugfs_root;
-@@ -256,6 +255,11 @@ struct smmu_device {
- 	struct smmu_as	as[0];		/* Run-time allocated array */
- };
- 
-+struct smmu_platform_data {
-+	int asids;		/* number of asids */
-+	int nr_xlats;		/* number of translation_enable registers */
-+};
++#ifndef _DT_BINDINGS_MEMORY_TEGRA_SWGROUP_H
++#define _DT_BINDINGS_MEMORY_TEGRA_SWGROUP_H
 +
- static struct smmu_device *smmu_handle; /* unique for a system */
- 
- /*
-@@ -505,9 +509,10 @@ static int smmu_setup_regs(struct smmu_device *smmu)
- 			__smmu_client_set_swgroups(c, c->swgroups, 1);
- 	}
- 
--	smmu_write(smmu, smmu->translation_enable_0, SMMU_TRANSLATION_ENABLE_0);
--	smmu_write(smmu, smmu->translation_enable_1, SMMU_TRANSLATION_ENABLE_1);
--	smmu_write(smmu, smmu->translation_enable_2, SMMU_TRANSLATION_ENABLE_2);
-+	for (i = 0; i < smmu->nr_xlats; i++)
-+		smmu_write(smmu, smmu->xlat[i],
-+			   SMMU_TRANSLATION_ENABLE_0 + i * sizeof(u32));
++#define TEGRA_SWGROUP_AFI	0	/* 0x238 */
++#define TEGRA_SWGROUP_AVPC	1	/* 0x23c */
++#define TEGRA_SWGROUP_DC	2	/* 0x240 */
++#define TEGRA_SWGROUP_DCB	3	/* 0x244 */
++#define TEGRA_SWGROUP_EPP	4	/* 0x248 */
++#define TEGRA_SWGROUP_G2	5	/* 0x24c */
++#define TEGRA_SWGROUP_HC	6	/* 0x250 */
++#define TEGRA_SWGROUP_HDA	7	/* 0x254 */
++#define TEGRA_SWGROUP_ISP	8	/* 0x258 */
++#define TEGRA_SWGROUP_ISP2	8
++#define TEGRA_SWGROUP_DC14	9	/* 0x490 *//* Exceptional non-linear */
++#define TEGRA_SWGROUP_DC12	10	/* 0xa88 *//* Exceptional non-linear */
++#define TEGRA_SWGROUP_MPE	11	/* 0x264 */
++#define TEGRA_SWGROUP_MSENC	11
++#define TEGRA_SWGROUP_NV	12	/* 0x268 */
++#define TEGRA_SWGROUP_NV2	13	/* 0x26c */
++#define TEGRA_SWGROUP_PPCS	14	/* 0x270 */
++#define TEGRA_SWGROUP_SATA2	15	/* 0x274 */
++#define TEGRA_SWGROUP_SATA	16	/* 0x278 */
++#define TEGRA_SWGROUP_VDE	17	/* 0x27c */
++#define TEGRA_SWGROUP_VI	18	/* 0x280 */
++#define TEGRA_SWGROUP_VIC	19	/* 0x284 */
++#define TEGRA_SWGROUP_XUSB_HOST	20	/* 0x288 */
++#define TEGRA_SWGROUP_XUSB_DEV	21	/* 0x28c */
++#define TEGRA_SWGROUP_A9AVP	22	/* 0x290 */
++#define TEGRA_SWGROUP_TSEC	23	/* 0x294 */
++#define TEGRA_SWGROUP_PPCS1	24	/* 0x298 */
++#define TEGRA_SWGROUP_SDMMC1A	25	/* 0xa94 *//* Linear shift again */
++#define TEGRA_SWGROUP_SDMMC2A	26	/* 0xa98 */
++#define TEGRA_SWGROUP_SDMMC3A	27	/* 0xa9c */
++#define TEGRA_SWGROUP_SDMMC4A	28	/* 0xaa0 */
++#define TEGRA_SWGROUP_ISP2B	29	/* 0xaa4 */
++#define TEGRA_SWGROUP_GPU	30	/* 0xaa8 */
++#define TEGRA_SWGROUP_GPUB	31	/* 0xaac */
++#define TEGRA_SWGROUP_PPCS2	32	/* 0xab0 */
 +
- 	smmu_write(smmu, smmu->asid_security, SMMU_ASID_SECURITY);
- 	smmu_write(smmu, SMMU_TLB_CONFIG_RESET_VAL, SMMU_CACHE_CONFIG(_TLB));
- 	smmu_write(smmu, SMMU_PTC_CONFIG_RESET_VAL, SMMU_CACHE_CONFIG(_PTC));
-@@ -1204,11 +1209,13 @@ err_out:
- 
- static int tegra_smmu_suspend(struct device *dev)
- {
-+	int i;
- 	struct smmu_device *smmu = dev_get_drvdata(dev);
- 
--	smmu->translation_enable_0 = smmu_read(smmu, SMMU_TRANSLATION_ENABLE_0);
--	smmu->translation_enable_1 = smmu_read(smmu, SMMU_TRANSLATION_ENABLE_1);
--	smmu->translation_enable_2 = smmu_read(smmu, SMMU_TRANSLATION_ENABLE_2);
-+	for (i = 0; i < smmu->nr_xlats; i++)
-+		smmu->xlat[i] = smmu_read(smmu,
-+				SMMU_TRANSLATION_ENABLE_0 + i * sizeof(u32));
++#define TWO_U32_OF_U64(x)	((x) & 0xffffffff) ((x) >> 32)
++#define TEGRA_SWGROUP_BIT(x)	(1ULL << TEGRA_SWGROUP_##x)
++#define TEGRA_SWGROUP_CELLS(x)	TWO_U32_OF_U64(TEGRA_SWGROUP_BIT(x))
 +
- 	smmu->asid_security = smmu_read(smmu, SMMU_ASID_SECURITY);
- 	return 0;
- }
-@@ -1242,6 +1249,18 @@ static void tegra_smmu_create_default_map(struct smmu_device *smmu)
- 	}
- }
- 
-+static const struct smmu_platform_data tegra124_smmu_pdata = {
-+	.asids = 128,
-+	.nr_xlats = 4,
-+};
++#define TEGRA_SWGROUP_MAX	64
 +
-+static struct of_device_id tegra_smmu_of_match[] = {
-+	{ .compatible = "nvidia,tegra124-smmu", .data = &tegra124_smmu_pdata, },
-+	{ .compatible = "nvidia,tegra30-smmu", },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, tegra_smmu_of_match);
-+
- static int tegra_smmu_probe(struct platform_device *pdev)
- {
- 	struct smmu_device *smmu;
-@@ -1249,20 +1268,29 @@ static int tegra_smmu_probe(struct platform_device *pdev)
- 	int i, asids, err = 0;
- 	dma_addr_t uninitialized_var(base);
- 	size_t bytes, uninitialized_var(size);
-+	const struct of_device_id *match;
-+	const struct smmu_platform_data *pdata;
-+	int nr_xlats;
- 
- 	if (smmu_handle)
- 		return -EIO;
- 
- 	BUILD_BUG_ON(PAGE_SHIFT != SMMU_PAGE_SHIFT);
- 
--	if (of_property_read_u32(dev->of_node, "nvidia,#asids", &asids))
--		return -ENODEV;
-+	match = of_match_device(tegra_smmu_of_match, &pdev->dev);
-+	if (!match)
-+		return -EINVAL;
-+	pdata = match->data;
-+	nr_xlats = (pdata && pdata->nr_xlats) ?	pdata->nr_xlats : 3;
- 
-+	if (of_property_read_u32(dev->of_node, "nvidia,#asids", &asids))
-+		asids = (pdata && pdata->asids) ? pdata->asids : 4;
- 	if (asids < NUM_OF_STATIC_MAPS)
- 		return -EINVAL;
- 
- 	bytes = sizeof(*smmu) + asids * (sizeof(*smmu->as) +
- 					 sizeof(struct dma_iommu_mapping *));
-+	bytes += sizeof(u32) * nr_xlats;
- 	smmu = devm_kzalloc(dev, bytes, GFP_KERNEL);
- 	if (!smmu) {
- 		dev_err(dev, "failed to allocate smmu_device\n");
-@@ -1271,6 +1299,7 @@ static int tegra_smmu_probe(struct platform_device *pdev)
- 
- 	smmu->clients = RB_ROOT;
- 	smmu->map = (struct dma_iommu_mapping **)(smmu->as + asids);
-+	smmu->xlat = (u32 *)(smmu->map + smmu->num_as);
- 	smmu->nregs = pdev->num_resources;
- 	smmu->regs = devm_kzalloc(dev, 2 * smmu->nregs * sizeof(*smmu->regs),
- 				  GFP_KERNEL);
-@@ -1303,13 +1332,12 @@ static int tegra_smmu_probe(struct platform_device *pdev)
- 	smmu->ahb = of_parse_phandle(dev->of_node, "nvidia,ahb", 0);
- 	smmu->iommu.dev = dev;
- 	smmu->num_as = asids;
-+	smmu->nr_xlats = nr_xlats;
- 	smmu->iovmm_base = base;
- 	smmu->page_count = size;
--
--	smmu->translation_enable_0 = ~0;
--	smmu->translation_enable_1 = ~0;
--	smmu->translation_enable_2 = ~0;
- 	smmu->asid_security = 0;
-+	for (i = 0; i < smmu->nr_xlats; i++)
-+		smmu->xlat[i] = ~0;
- 
- 	for (i = 0; i < smmu->num_as; i++) {
- 		struct smmu_as *as = &smmu->as[i];
-@@ -1364,12 +1392,6 @@ static const struct dev_pm_ops tegra_smmu_pm_ops = {
- 	.resume		= tegra_smmu_resume,
- };
- 
--static struct of_device_id tegra_smmu_of_match[] = {
--	{ .compatible = "nvidia,tegra30-smmu", },
--	{ },
--};
--MODULE_DEVICE_TABLE(of, tegra_smmu_of_match);
--
- static struct platform_driver tegra_smmu_driver = {
- 	.probe		= tegra_smmu_probe,
- 	.remove		= tegra_smmu_remove,
++#endif /* _DT_BINDINGS_MEMORY_TEGRA_SWGROUP_H */
 -- 
 2.0.0.rc1.15.g7e76a2f
