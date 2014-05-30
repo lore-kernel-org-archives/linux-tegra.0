@@ -1,67 +1,41 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v5 3/5] misc: fuse: Add efuse driver for Tegra
-Date: Fri, 30 May 2014 10:12:43 -0600
-Message-ID: <5388ADFB.1060505@wwwdotorg.org>
-References: <1401281677-32110-1-git-send-email-pdeschrijver@nvidia.com> <1401281677-32110-4-git-send-email-pdeschrijver@nvidia.com> <538784C1.6000504@wwwdotorg.org> <20140530113618.GQ5961@tbergstrom-lnx.Nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v5 0/5] efuse driver for Tegra
+Date: Fri, 30 May 2014 10:17:49 -0600
+Message-ID: <5388AF2D.4060909@wwwdotorg.org>
+References: <1401281677-32110-1-git-send-email-pdeschrijver@nvidia.com> <53878407.3050409@wwwdotorg.org> <20140530082356.GP5961@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140530113618.GQ5961@tbergstrom-lnx.Nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140530082356.GP5961-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/30/2014 05:36 AM, Peter De Schrijver wrote:
-> On Thu, May 29, 2014 at 09:04:33PM +0200, Stephen Warren wrote:
+On 05/30/2014 02:23 AM, Peter De Schrijver wrote:
+> On Thu, May 29, 2014 at 09:01:27PM +0200, Stephen Warren wrote:
 >> On 05/28/2014 06:54 AM, Peter De Schrijver wrote:
->>> Implement fuse driver for Tegra20, Tegra30, Tegra114 and Tegra124.
+>>> This driver allows userspace to read the raw efuse data. Its userspace
+>>> interface is modelled after the sunxi_sid driver which provides similar
+>>> functionality for some Allwinner SoCs. It has been tested on
+>>> Tegra20 (ventana), Tegra30 (beaverboard), Tegra114 (dalmore) and
+>>> Tegra124 (jetson TK1).
 >>
->>> diff --git a/Documentation/ABI/testing/sysfs-driver-tegra-fuse b/Documentation/ABI/testing/sysfs-driver-tegra-fuse
+>>> Changes since v4:
+>>>
+>>> * Provide fallback to hardcoded 0x70000800 in case the apbmisc DT node is
+>>>   missing. This is exactly what the current code does and prevents a system
+>>>   crash in that case due to an invalid memory access by tegra_read_chipid()
 >>
->>> +Description:	read-only access to the efuses on Tegra20, Tegra30, Tegra114
->>> +		and Tegra124 SoC's from NVIDIA. The efuses contain write once
->>> +		data programmed at the factory. The data is layed out in 32bit
->>> +		words in LSB first formnat. The number of valid bits depends
->>
->> s/formnat/format/
->>
->>> +		on the word and the SoC. The mapping is as follows:
->>> +
->>> +		For Tegra20:
->>> +		Word 0 - 1    : bit 0
->>> +		Word 2        : unused
->>> +		Word 3        : bits 0 - 31
->>> +		Word 4        : bits 0 - 7
->>
->> Do we really need these long tables that indicate which bits are used?
->> As I mentioned before, when I asked for documentation of the format of
->> these files, all I wanted was a brief not indicating that the data was
->> binary, and that each bit potentially represents a fuse... Either we
->> should leave it at that, or actually document what each bit represents,
->> which would hopefully be a pointless duplication of the TRM.
+>> Wouldn't it be better to simply return an error?
 > 
-> Some fuses are OEM defined, so there is no way to document all fuses there.
-> Would you be ok with just dropping the tables then?
+> This would mean you can't boot a system with these patches applied unless you
+> also update the device tree. The system would crash during boot because CCF
+> relies on tegra_read_chipid() as an APB barrier. Also tegra_boot_secondary()
+> relies on the chipid to select the correct method for booting secondary cores.
 
-Yes.
-
-> So, the description would become:
-> 
-> Description:    read-only access to the efuses on Tegra20, Tegra30, Tegra114
->                 and Tegra124 SoC's from NVIDIA. The efuses contain write once
->                 data programmed at the factory. The data is layed out in 32bit
->                 words in LSB first format. The number of valid bits depends
->                 on the word and the SoC.
-
-Almost. That's still missing the key information that the data format is
-one bit per fuse, and the ordering. Perhaps change from:
-
-The data is layed out in 32bit words in LSB first format.
-
-to:
-
-The data is laid out in 32bit words in LSB first format. Each bit
-represents a single fuse value. Bits order/assignment exactly matches
-the HW registers, including any unused bits.
+Is this series really backwards-compatible anyway? tegra_init_fuse()
+contains a whole bunch of places where resources are pulled out of DT,
+and only one of those has a fallback to use APBMISC_BASE if the DT entry
+isn't present.
