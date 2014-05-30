@@ -1,7 +1,7 @@
 From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCHv8 06/21] ARM: tegra: create a DT header defining SWGROUP ID
-Date: Fri, 30 May 2014 14:20:19 +0300
-Message-ID: <1401448834-32659-7-git-send-email-hdoyu@nvidia.com>
+Subject: [PATCHv8 17/21] iommu/tegra124: smmu: {TLB,PTC} reset value per SoC
+Date: Fri, 30 May 2014 14:20:30 +0300
+Message-ID: <1401448834-32659-18-git-send-email-hdoyu@nvidia.com>
 References: <1401448834-32659-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -11,78 +11,77 @@ Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Create a header file to define the swgroup IDs used by the IOMMU(SMMU)
-binding. "swgroup" is a group of H/W clients which a Tegra SoC
-supports. This unique ID can be used to calculate MC_SMMU_<swgroup
-name>_ASID_0 register offset and MC_<swgroup name>_HOTRESET_*_0
-register bit. This will allow the same header to be used by both
-device tree files, and drivers implementing this binding, which
-guarantees that the two stay in sync. This also makes device trees
-more readable by using names instead of magic numbers. For HOTRESET
-bit shifting we need another conversion table, which will come later.
+T124 has some new register bits in {TLB,PTC}_CONFIG:
+
+- TLB_RR_ARB and PTC_REQ_LIMIT
+- TLB_ACTIVE_LINES 0x20 instead of 0x10
+
+They are defined as platform data now.
 
 Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- include/dt-bindings/memory/tegra-swgroup.h | 50 ++++++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
- create mode 100644 include/dt-bindings/memory/tegra-swgroup.h
+ drivers/iommu/tegra-smmu.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/include/dt-bindings/memory/tegra-swgroup.h b/include/dt-bindings/memory/tegra-swgroup.h
-new file mode 100644
-index 000000000000..32dd307e5f8e
---- /dev/null
-+++ b/include/dt-bindings/memory/tegra-swgroup.h
-@@ -0,0 +1,50 @@
-+/*
-+ * This header provides constants for binding nvidia,swgroup ID
-+ */
-+
-+#ifndef _DT_BINDINGS_MEMORY_TEGRA_SWGROUP_H
-+#define _DT_BINDINGS_MEMORY_TEGRA_SWGROUP_H
-+
-+#define TEGRA_SWGROUP_AFI	0	/* 0x238 */
-+#define TEGRA_SWGROUP_AVPC	1	/* 0x23c */
-+#define TEGRA_SWGROUP_DC	2	/* 0x240 */
-+#define TEGRA_SWGROUP_DCB	3	/* 0x244 */
-+#define TEGRA_SWGROUP_EPP	4	/* 0x248 */
-+#define TEGRA_SWGROUP_G2	5	/* 0x24c */
-+#define TEGRA_SWGROUP_HC	6	/* 0x250 */
-+#define TEGRA_SWGROUP_HDA	7	/* 0x254 */
-+#define TEGRA_SWGROUP_ISP	8	/* 0x258 */
-+#define TEGRA_SWGROUP_ISP2	8
-+#define TEGRA_SWGROUP_DC14	9	/* 0x490 *//* Exceptional non-linear */
-+#define TEGRA_SWGROUP_DC12	10	/* 0xa88 *//* Exceptional non-linear */
-+#define TEGRA_SWGROUP_MPE	11	/* 0x264 */
-+#define TEGRA_SWGROUP_MSENC	11
-+#define TEGRA_SWGROUP_NV	12	/* 0x268 */
-+#define TEGRA_SWGROUP_NV2	13	/* 0x26c */
-+#define TEGRA_SWGROUP_PPCS	14	/* 0x270 */
-+#define TEGRA_SWGROUP_SATA2	15	/* 0x274 */
-+#define TEGRA_SWGROUP_SATA	16	/* 0x278 */
-+#define TEGRA_SWGROUP_VDE	17	/* 0x27c */
-+#define TEGRA_SWGROUP_VI	18	/* 0x280 */
-+#define TEGRA_SWGROUP_VIC	19	/* 0x284 */
-+#define TEGRA_SWGROUP_XUSB_HOST	20	/* 0x288 */
-+#define TEGRA_SWGROUP_XUSB_DEV	21	/* 0x28c */
-+#define TEGRA_SWGROUP_A9AVP	22	/* 0x290 */
-+#define TEGRA_SWGROUP_TSEC	23	/* 0x294 */
-+#define TEGRA_SWGROUP_PPCS1	24	/* 0x298 */
-+#define TEGRA_SWGROUP_SDMMC1A	25	/* 0xa94 *//* Linear shift again */
-+#define TEGRA_SWGROUP_SDMMC2A	26	/* 0xa98 */
-+#define TEGRA_SWGROUP_SDMMC3A	27	/* 0xa9c */
-+#define TEGRA_SWGROUP_SDMMC4A	28	/* 0xaa0 */
-+#define TEGRA_SWGROUP_ISP2B	29	/* 0xaa4 */
-+#define TEGRA_SWGROUP_GPU	30	/* 0xaa8 */
-+#define TEGRA_SWGROUP_GPUB	31	/* 0xaac */
-+#define TEGRA_SWGROUP_PPCS2	32	/* 0xab0 */
-+
-+#define TWO_U32_OF_U64(x)	((x) & 0xffffffff) ((x) >> 32)
-+#define TEGRA_SWGROUP_BIT(x)	(1ULL << TEGRA_SWGROUP_##x)
-+#define TEGRA_SWGROUP_CELLS(x)	TWO_U32_OF_U64(TEGRA_SWGROUP_BIT(x))
-+
-+#define TEGRA_SWGROUP_MAX	64
-+
-+#endif /* _DT_BINDINGS_MEMORY_TEGRA_SWGROUP_H */
+diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+index 24fe16f1a1d8..7f13133eab0a 100644
+--- a/drivers/iommu/tegra-smmu.c
++++ b/drivers/iommu/tegra-smmu.c
+@@ -71,12 +71,13 @@ enum {
+ #define SMMU_CACHE_CONFIG_STATS_TEST		(1 << SMMU_CACHE_CONFIG_STATS_TEST_SHIFT)
+ 
+ #define SMMU_TLB_CONFIG_HIT_UNDER_MISS__ENABLE	(1 << 29)
+-#define SMMU_TLB_CONFIG_ACTIVE_LINES__VALUE	0x10
+-#define SMMU_TLB_CONFIG_RESET_VAL		0x20000010
++#define SMMU_TLB_CONFIG_RESET_VAL		0x20000000
++#define SMMU_TLB_RR_ARB				(1 << 28)
+ 
+ #define SMMU_PTC_CONFIG_CACHE__ENABLE		(1 << 29)
+ #define SMMU_PTC_CONFIG_INDEX_MAP__PATTERN	0x3f
+ #define SMMU_PTC_CONFIG_RESET_VAL		0x2000003f
++#define SMMU_PTC_REQ_LIMIT			(8 << 24)
+ 
+ #define SMMU_PTB_ASID				0x1c
+ #define SMMU_PTB_ASID_CURRENT_SHIFT		0
+@@ -239,6 +240,8 @@ struct smmu_device {
+ 	struct page *avp_vector_page;	/* dummy page shared by all AS's */
+ 
+ 	int nr_xlats;		/* number of translation_enable registers */
++	u32 tlb_reset;		/* TLB config reset value */
++	u32 ptc_reset;		/* PTC config reset value */
+ 
+ 	/*
+ 	 * Register image savers for suspend/resume
+@@ -261,6 +264,8 @@ struct smmu_platform_data {
+ 	int asids;		/* number of asids */
+ 	int nr_xlats;		/* number of translation_enable registers */
+ 	bool lpae;		/* PA > 32 bit */
++	u32 tlb_reset;		/* TLB config reset value */
++	u32 ptc_reset;		/* PTC config reset value */
+ };
+ 
+ static struct smmu_device *smmu_handle; /* unique for a system */
+@@ -519,8 +524,8 @@ static int smmu_setup_regs(struct smmu_device *smmu)
+ 			   SMMU_TRANSLATION_ENABLE_0 + i * sizeof(u32));
+ 
+ 	smmu_write(smmu, smmu->asid_security, SMMU_ASID_SECURITY);
+-	smmu_write(smmu, SMMU_TLB_CONFIG_RESET_VAL, SMMU_CACHE_CONFIG(_TLB));
+-	smmu_write(smmu, SMMU_PTC_CONFIG_RESET_VAL, SMMU_CACHE_CONFIG(_PTC));
++	smmu_write(smmu, smmu->ptc_reset, SMMU_CACHE_CONFIG(_PTC));
++	smmu_write(smmu, smmu->tlb_reset, SMMU_CACHE_CONFIG(_TLB));
+ 
+ 	smmu_flush_regs(smmu, 1);
+ 
+@@ -1323,6 +1328,10 @@ static int tegra_smmu_probe(struct platform_device *pdev)
+ 	smmu->map = (struct dma_iommu_mapping **)(smmu->as + asids);
+ 	smmu->xlat = (u32 *)(smmu->map + smmu->num_as);
+ 	smmu->nregs = pdev->num_resources;
++	smmu->tlb_reset = (pdata && pdata->tlb_reset) ? pdata->tlb_reset :
++		(SMMU_TLB_CONFIG_RESET_VAL | 0x10);
++	smmu->ptc_reset = (pdata && pdata->ptc_reset) ? pdata->ptc_reset :
++		(SMMU_PTC_CONFIG_RESET_VAL | SMMU_PTC_REQ_LIMIT);
+ 	smmu->regs = devm_kzalloc(dev, 2 * smmu->nregs * sizeof(*smmu->regs),
+ 				  GFP_KERNEL);
+ 	smmu->rege = smmu->regs + smmu->nregs;
 -- 
 2.0.0.rc1.15.g7e76a2f
