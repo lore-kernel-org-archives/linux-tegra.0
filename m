@@ -1,196 +1,101 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] drm/gk20a/fb: use dma_alloc_coherent() for VRAM
-Date: Fri, 30 May 2014 15:47:00 +0900
-Message-ID: <1401432420-29477-1-git-send-email-acourbot@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Fri, 30 May 2014 09:30:08 +0200
+Message-ID: <20140530073006.GA24748@ulmo>
+References: <1400877395-4235-1-git-send-email-thierry.reding@gmail.com>
+ <538757B6.4010109@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ken Adams <KAdams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="3MwIy2ne0vdjdPXF"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <538757B6.4010109@wwwdotorg.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Cho KyongHo <pullip.cho@samsung.com>, Grant Grundler <grundler@chromium.org>, Dave Martin <Dave.Martin@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Will Deacon <will.deacon@arm.com>, Joerg Roedel <joro@8bytes.org>, Hiroshi Doyu <hdoyu@nvidia.com>, devicetree@vger.kernel.org, iommu@lists.linux-foundation.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-GK20A's RAM driver was using CMA functions in order to allocate VRAM.
-This is wrong because these functions are not exported, which causes
-compilation to fail when CMA is enabled and Nouveau is built as a
-module. On top of that the driver was leaking (or rather bleeding)
-memory.
 
-dma_alloc_coherent() will also use CMA when needed but has the
-advantage of being properly exported. It creates a permanent kernel
-mapping, but experiment revealed that the lowmem mapping is actually
-reused, and this mapping can also be taken advantage of to implement
-faster instmem. We lose the ability to allocate memory at finer
-granularity, but that's what CMA is here for and it also simplifies the
-driver.
+--3MwIy2ne0vdjdPXF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This driver is to be replaced by an IOMMU-based one in the future ;
-until then, its current form will allow it to do its job.
+On Thu, May 29, 2014 at 09:52:22AM -0600, Stephen Warren wrote:
+> On 05/23/2014 02:36 PM, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> > This commit introduces a generic device tree binding for IOMMU devices.
+> > Only a very minimal subset is described here, but it is enough to cover
+> > the requirements of both the Exynos System MMU and Tegra SMMU as
+> > discussed here:
+> >=20
+> >     https://lkml.org/lkml/2014/4/27/346
+> >=20
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > ---
+> > Apologies for the noise, but apparently I mistyped one of the email
+> > addresses, should be fixed now.
+> >=20
+> > Changes in v2:
+> > - add notes about "dma-ranges" property (drop note from commit message)
+> > - document priorities of "iommus" property vs. "dma-ranges" property
+> > - drop #iommu-cells in favour of #address-cells and #size-cells
+>=20
+> I think this is a mistake. address-cells/size-cells are for transactions
+> flowing down the bus (from the CPU to date). Describing a connection
+> from a device to an IOMMU is something completely different, and should
+> therefore simply use an iommu-cells property to describe any necessary
+> information. If we start re-using properties for different things in
+> different contexts, how is anyone going to know what they mean, and how
+> will conflicts be resolved. For example, what if there's a single HW
+> module that both acts as a regular register bus with children (where
+> address-cells/size-cells defines how transactions reach the children
+> from the parent), and is also an IOMMU (where according to this binding
+> proposal, address-cells/size-cells represent some aspect of the IOMMU
+> feature). Using different properties for different things is the only
+> sane way to keep different concepts separate. Another alternative would
+> be to represent the single HW module as separate nodes in DT, but I
+> think that will only make our lives harder, and where I've done that in
+> the past, I've regretted it.
 
-Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/gpu/drm/nouveau/core/subdev/fb/ramgk20a.c | 97 ++++++++++-------------
- 1 file changed, 42 insertions(+), 55 deletions(-)
+There was some back-and-forth on this topic and the latest concensus
+when I wrote the second version was that #address-cells and #size-cells
+were to be used.
 
-diff --git a/drivers/gpu/drm/nouveau/core/subdev/fb/ramgk20a.c b/drivers/gpu/drm/nouveau/core/subdev/fb/ramgk20a.c
-index 7effd1a63458..10cdcf8b8a7f 100644
---- a/drivers/gpu/drm/nouveau/core/subdev/fb/ramgk20a.c
-+++ b/drivers/gpu/drm/nouveau/core/subdev/fb/ramgk20a.c
-@@ -24,32 +24,32 @@
- 
- #include <subdev/fb.h>
- 
--#include <linux/mm.h>
- #include <linux/types.h>
--#include <linux/dma-contiguous.h>
-+#include <linux/mm.h>
-+#include <linux/dma-mapping.h>
-+
-+struct gk20a_mem {
-+	struct nouveau_mem base;
-+	void *cpuaddr;
-+	dma_addr_t handle;
-+};
-+#define to_gk20a_mem(m) container_of(m, struct gk20a_mem, base)
- 
- static void
- gk20a_ram_put(struct nouveau_fb *pfb, struct nouveau_mem **pmem)
- {
- 	struct device *dev = nv_device_base(nv_device(pfb));
--	struct nouveau_mem *mem = *pmem;
--	int i;
-+	struct gk20a_mem *mem = to_gk20a_mem(*pmem);
- 
- 	*pmem = NULL;
- 	if (unlikely(mem == NULL))
- 		return;
- 
--	for (i = 0; i < mem->size; i++) {
--		struct page *page;
--
--		if (mem->pages[i] == 0)
--			break;
-+	if (likely(mem->cpuaddr))
-+		dma_free_coherent(dev, mem->base.size << PAGE_SHIFT,
-+				  mem->cpuaddr, mem->handle);
- 
--		page = pfn_to_page(mem->pages[i] >> PAGE_SHIFT);
--		dma_release_from_contiguous(dev, page, 1);
--	}
--
--	kfree(mem->pages);
-+	kfree(mem->base.pages);
- 	kfree(mem);
- }
- 
-@@ -58,11 +58,9 @@ gk20a_ram_get(struct nouveau_fb *pfb, u64 size, u32 align, u32 ncmin,
- 	     u32 memtype, struct nouveau_mem **pmem)
- {
- 	struct device *dev = nv_device_base(nv_device(pfb));
--	struct nouveau_mem *mem;
--	int type = memtype & 0xff;
--	dma_addr_t dma_addr;
--	int npages;
--	int order;
-+	struct gk20a_mem *mem;
-+	u32 type = memtype & 0xff;
-+	u32 npages, order;
- 	int i;
- 
- 	nv_debug(pfb, "%s: size: %llx align: %x, ncmin: %x\n", __func__, size,
-@@ -80,59 +78,48 @@ gk20a_ram_get(struct nouveau_fb *pfb, u64 size, u32 align, u32 ncmin,
- 	order = fls(align);
- 	if ((align & (align - 1)) == 0)
- 		order--;
-+	align = BIT(order);
- 
--	ncmin >>= PAGE_SHIFT;
--	/*
--	 * allocate pages by chunks of "align" size, otherwise we may leave
--	 * holes in the contiguous memory area.
--	 */
--	if (ncmin == 0)
--		ncmin = npages;
--	else if (align > ncmin)
--		ncmin = align;
-+	/* ensure returned address is correctly aligned */
-+	npages = max(align, npages);
- 
- 	mem = kzalloc(sizeof(*mem), GFP_KERNEL);
- 	if (!mem)
- 		return -ENOMEM;
- 
--	mem->size = npages;
--	mem->memtype = type;
-+	mem->base.size = npages;
-+	mem->base.memtype = type;
- 
--	mem->pages = kzalloc(sizeof(dma_addr_t) * npages, GFP_KERNEL);
--	if (!mem) {
-+	mem->base.pages = kzalloc(sizeof(dma_addr_t) * npages, GFP_KERNEL);
-+	if (!mem->base.pages) {
- 		kfree(mem);
- 		return -ENOMEM;
- 	}
- 
--	while (npages) {
--		struct page *pages;
--		int pos = 0;
--
--		/* don't overflow in case size is not a multiple of ncmin */
--		if (ncmin > npages)
--			ncmin = npages;
--
--		pages = dma_alloc_from_contiguous(dev, ncmin, order);
--		if (!pages) {
--			gk20a_ram_put(pfb, &mem);
--			return -ENOMEM;
--		}
-+	*pmem = &mem->base;
- 
--		dma_addr = (dma_addr_t)(page_to_pfn(pages) << PAGE_SHIFT);
-+	mem->cpuaddr = dma_alloc_coherent(dev, npages << PAGE_SHIFT,
-+					  &mem->handle, GFP_KERNEL);
-+	if (!mem->cpuaddr) {
-+		nv_error(pfb, "%s: cannot allocate memory!\n", __func__);
-+		gk20a_ram_put(pfb, pmem);
-+		return -ENOMEM;
-+	}
- 
--		nv_debug(pfb, "  alloc count: %x, order: %x, addr: %pad\n", ncmin,
--			 order, &dma_addr);
-+	align <<= PAGE_SHIFT;
- 
--		for (i = 0; i < ncmin; i++)
--			mem->pages[pos + i] = dma_addr + (PAGE_SIZE * i);
-+	/* alignment check */
-+	if (unlikely(mem->handle & (align - 1)))
-+		nv_warn(pfb, "memory not aligned as requested: %pad (0x%x)\n",
-+			&mem->handle, align);
- 
--		pos += ncmin;
--		npages -= ncmin;
--	}
-+	nv_debug(pfb, "alloc size: 0x%x, align: 0x%x, paddr: %pad, vaddr: %p\n",
-+		 npages << PAGE_SHIFT, align, &mem->handle, mem->cpuaddr);
- 
--	mem->offset = (u64)mem->pages[0];
-+	for (i = 0; i < npages; i++)
-+		mem->base.pages[i] = mem->handle + (PAGE_SIZE * i);
- 
--	*pmem = mem;
-+	mem->base.offset = (u64)mem->base.pages[0];
- 
- 	return 0;
- }
--- 
-1.9.3
+But there was some bore back-and-forth after that, and it seems like
+Arnd no longer thinks that using #address-cells and #size-cells is a
+good idea either[0].
+
+Arnd, can you take another look at this binding and see if there's
+anything else missing? If not I'll go through the document again and
+update all #address-cells/#size-cells references with #iommu-cells as
+appropriate and submit v3.
+
+Thanks,
+Thierry
+
+[0]: https://lkml.org/lkml/2014/5/20/609
+
+--3MwIy2ne0vdjdPXF
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTiDN+AAoJEN0jrNd/PrOhrpwP/28UxOr3xF30hFVjZUvRegoA
+QxLOiXKgYfLiDpVTqR6XiJHbnhFv/I7gfwOC5jphjDH3MkH4HN3sMn1pFjzqlcu1
+rbiUksPkuqGhuHSuHD2+9IY7RdgKrsYE+5afTSAR5q3PLXPIDdIoyRukuJa17oI0
+bcQUWsK+uQ4T9NkelSQPFQZhHLPA0csPGzA5L4l/3Dz3ZVrWyIgrs0ZGmm9yI5Q3
+uBP4gtRsOpLB7OEmR70nXVn90W/Ndz2U2mb7T2N57R+oLADcGoMGe7W8n5szy/bu
+fWoJ/4Quw7ZMqXN9cGRbnb4aDxfefhDIVIR7gLOciosVQltDOwRMxnnGkJgQ4okN
+BZrxJ2zKIjNm9eus5LIKvjydNAkPjUnw9k455b8NNEQT6pLdldUa2XCiRs4VFSuy
+iNk9HeBTVykQtyyZCGC4g4wA9HsLYgNFSqX1MjI0yDZk4FCsbaUXwTiaKJRBwVtf
+85khJ4TTHVdeTaBvpDGCDmyx8L7s3ZPWrSIxKY9K/1dwCFe49Fb5dmJzokiyd72i
+O/eXjDSKcE5bGgYCRdWliL8qvS5BnpayrR2hY70lyr6ROSX3L6inofh4E62urUIH
+PJUSnlM2YVTn1mwg+WGq41gin6wiEy7xArEOkrcD0k7nxlsl+Y2S1toWf8gHn9QV
+akEZa3AIOH+rQ/U7/MjP
+=Ifqv
+-----END PGP SIGNATURE-----
+
+--3MwIy2ne0vdjdPXF--
