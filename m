@@ -1,143 +1,196 @@
-From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC PATCH 3/3] clk: tegra: Implement Tegra124 shared/cbus clks
-Date: Thu, 29 May 2014 21:47:49 -0700
-Message-ID: <20140530044749.10062.16436@quantum>
-References: <1399990023-30318-1-git-send-email-pdeschrijver@nvidia.com>
- <1399990023-30318-4-git-send-email-pdeschrijver@nvidia.com>
- <53725FED.7050303@wwwdotorg.org> <20140514142739.GA8612@ulmo>
- <20140514193518.19795.64334@quantum> <20140526130725.GA1594@ulmo>
- <5387C145.8050609@ti.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] drm/gk20a/fb: use dma_alloc_coherent() for VRAM
+Date: Fri, 30 May 2014 15:47:00 +0900
+Message-ID: <1401432420-29477-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5387C145.8050609-l0cyMroinI0@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ken Adams <KAdams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Nishanth Menon (2014-05-29 16:22:45)
-> On 05/26/2014 08:07 AM, Thierry Reding wrote:
-> > On Wed, May 14, 2014 at 12:35:18PM -0700, Mike Turquette wrote:
-> >> Quoting Thierry Reding (2014-05-14 07:27:40)
-> > [...]
-> >>> As for shared clocks I'm only aware of one use-case, namely EMC scaling.
-> >>> Using clocks for that doesn't seem like the best option to me. While it
-> >>> can probably fix the immediate issue of choosing an appropriate
-> >>> frequency for the EMC clock it isn't a complete solution for the problem
-> >>> that we're trying to solve. From what I understand EMC scaling is one
-> >>> part of ensuring quality of service. The current implementations of that
-> >>> seems to abuse clocks (essentially one X.emc clock per X clock) to
-> >>> signal the amount of memory bandwidth required by any given device. But
-> >>> there are other parts to the puzzle. Latency allowance is one. The value
-> >>> programmed to the latency allowance registers for example depends on the
-> >>> EMC frequency.
-> >>>
-> >>> Has anyone ever looked into using a different framework to model all of
-> >>> these requirements? PM QoS looks like it might fit, but if none of the
-> >>> existing frameworks have what we need, perhaps something new can be
-> >>> created.
-> >>
-> >> It has been discussed. Using a QoS throughput constraint could help
-> >> scale frequency. But this deserves a wider discussion and starts to
-> >> stray into both PM QoS territory and also into "should we have a DVFS
-> >> framework" territory.
-> > 
-> > I've looked into this for a bit and it doesn't look like PM QoS is going
-> > to be a good match after all. One of the issues I found was that PM QoS
-> > deals with individual devices and there's no builtin way to collect the
-> > requests from multiple devices to produce a global constraint. So if we
-> > want to add something like that either the API would need to be extended
-> > or it would need to be tacked on using the notifier mechanism and some
-> > way of tracking (and filtering) the individual devices.
-> > 
-> > Looking at devfreq it seems to be the DVFS framework that you mentioned,
-> > but from what I can tell it suffers from mostly the same problems. The
-> > governor applies some frequency scaling policy to a single device and
-> > does not allow multiple devices to register constraints against a single
-> > (global) constraint so that the result can be accumulated.
-> > 
-> > For Tegra EMC scaling what we need is something more along the lines of
-> > this: we have a resource (external memory) that is shared by multiple
-> > devices in the system. Each of those devices requires a certain amount
-> > of that resource (memory bandwidth). The resource driver will need to
-> > accumulate all requests for the resource and apply the resulting
-> > constraint so that all requests can be satisfied.
-> > 
-> > One solution I could imagine to make this work with PM QoS would be to
-> > add the concept of a pm_qos_group to manage a set of pm_qos_requests,
-> > but that will require a bunch of extra checks to make sure that requests
-> > are of the correct type and so on. In other words it would still be
-> > tacked on.
-> 
-> just a minor note from previous experience: We(at TI) had attempted in
-> our product kernel[1] to use QoS constraint for certain SoCs for
-> rather unspectacular results.
-> 
-> Our use case was similar: devices -> L3(core bus)->memory. We had the
-> following intent:
-> a) wanted to scale L3 based on QoS requests coming in from various
-> device drivers. intent was to scale either to 133MHz or 266MHz (two
-> OPPs we supported on our devices) based on performance needs -> So we
-> asked drivers to report QoS requirements using an standard function -
-> except drivers cannot always report it satisfactorily - example bursty
-> transfer devices - ended up with consolidated requests > total
-> bandwidth possible on the bus -> (and never in practise hitting the
-> lower frequency).
+GK20A's RAM driver was using CMA functions in order to allocate VRAM.
+This is wrong because these functions are not exported, which causes
+compilation to fail when CMA is enabled and Nouveau is built as a
+module. On top of that the driver was leaking (or rather bleeding)
+memory.
 
-My opinion on why L3 QoS failed on OMAP is that we only used it for
-DVFS. The voltage domain corresponding to the L3 interconnect had only
-two OPPs, which meant that drivers submitting their constraints only had
-two options: slow vs fast in the best case, or non-functional vs
-functional in the worst case (some IPs simply did not work at the lower
-OPP).
+dma_alloc_coherent() will also use CMA when needed but has the
+advantage of being properly exported. It creates a permanent kernel
+mapping, but experiment revealed that the lowmem mapping is actually
+reused, and this mapping can also be taken advantage of to implement
+faster instmem. We lose the ability to allocate memory at finer
+granularity, but that's what CMA is here for and it also simplifies the
+driver.
 
-But the big failure in my opinion was that we did not use any of the
-traffic-shaping or priority handling features of the L3 NoC. OMAP4 used
-the Arteris NoC[1] which has plenty of capabilities for setting
-initiator priorities and bandwidth-throttling on a point-to-point basis,
-which is exactly that QoS is for. If these had been exposed a bit more
-in software then I imagine some of the constraints that always resulted
-in running at the fast OPP might have instead resulted in running at the
-slow OPP, but with a fine-grained mixture of varying bandwidth
-allocations and access priorities.
+This driver is to be replaced by an IOMMU-based one in the future ;
+until then, its current form will allow it to do its job.
 
-All of the hardware in the world doesn't do any good if we don't have
-software that uses it. Anyways, just my $0.02.
+Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/gpu/drm/nouveau/core/subdev/fb/ramgk20a.c | 97 ++++++++++-------------
+ 1 file changed, 42 insertions(+), 55 deletions(-)
 
-Regards,
-Mike
-
-[1] http://www.arteris.com/OMAP4_QoS_security_NoC
-
-> b) timing closure issues on certain devices such as USB - which can
-> only function based on async bridge closure requirements on the core
-> bus etc.. these would require bus to be at higher frequency - QoS
-> model was "misused" in such requirements.
-> b.1) a variation: interdependent constraints -> if MPU is > freq X,
-> timing closure required L3 to be at 266MHz. again - it is not a QoS
-> requirement perse, just a dependency requirement that cannot easily be
-> addressed doing a pure QoS like framework solution.
-> 
-> Even though EMC does sound like (a) - I suspect you might want to be
-> 100% sure that you dont have variations of (b) in the SoC as well and
-> betting completely on QoS approach might not actually work in practice.
-> 
-> > 
-> > Adding the linux-pm mailing list for more visibility. Perhaps somebody
-> For folks new on the discussion: complete thread:
-> http://thread.gmane.org/gmane.linux.drivers.devicetree/73967
-> 
-> > has some ideas on how to extend any of the existing frameworks to make
-> > it work for Tegra's EMC scaling (or how to implement the requirements of
-> > Tegra's EMC scaling within the existing frameworks).
-> > 
-> 
-> 
-> [1]
-> https://android.googlesource.com/kernel/omap.git/+/android-omap-panda-3.0/arch/arm/plat-omap/omap-pm-helper.c
-> 
-> -- 
-> Regards,
-> Nishanth Menon
+diff --git a/drivers/gpu/drm/nouveau/core/subdev/fb/ramgk20a.c b/drivers/gpu/drm/nouveau/core/subdev/fb/ramgk20a.c
+index 7effd1a63458..10cdcf8b8a7f 100644
+--- a/drivers/gpu/drm/nouveau/core/subdev/fb/ramgk20a.c
++++ b/drivers/gpu/drm/nouveau/core/subdev/fb/ramgk20a.c
+@@ -24,32 +24,32 @@
+ 
+ #include <subdev/fb.h>
+ 
+-#include <linux/mm.h>
+ #include <linux/types.h>
+-#include <linux/dma-contiguous.h>
++#include <linux/mm.h>
++#include <linux/dma-mapping.h>
++
++struct gk20a_mem {
++	struct nouveau_mem base;
++	void *cpuaddr;
++	dma_addr_t handle;
++};
++#define to_gk20a_mem(m) container_of(m, struct gk20a_mem, base)
+ 
+ static void
+ gk20a_ram_put(struct nouveau_fb *pfb, struct nouveau_mem **pmem)
+ {
+ 	struct device *dev = nv_device_base(nv_device(pfb));
+-	struct nouveau_mem *mem = *pmem;
+-	int i;
++	struct gk20a_mem *mem = to_gk20a_mem(*pmem);
+ 
+ 	*pmem = NULL;
+ 	if (unlikely(mem == NULL))
+ 		return;
+ 
+-	for (i = 0; i < mem->size; i++) {
+-		struct page *page;
+-
+-		if (mem->pages[i] == 0)
+-			break;
++	if (likely(mem->cpuaddr))
++		dma_free_coherent(dev, mem->base.size << PAGE_SHIFT,
++				  mem->cpuaddr, mem->handle);
+ 
+-		page = pfn_to_page(mem->pages[i] >> PAGE_SHIFT);
+-		dma_release_from_contiguous(dev, page, 1);
+-	}
+-
+-	kfree(mem->pages);
++	kfree(mem->base.pages);
+ 	kfree(mem);
+ }
+ 
+@@ -58,11 +58,9 @@ gk20a_ram_get(struct nouveau_fb *pfb, u64 size, u32 align, u32 ncmin,
+ 	     u32 memtype, struct nouveau_mem **pmem)
+ {
+ 	struct device *dev = nv_device_base(nv_device(pfb));
+-	struct nouveau_mem *mem;
+-	int type = memtype & 0xff;
+-	dma_addr_t dma_addr;
+-	int npages;
+-	int order;
++	struct gk20a_mem *mem;
++	u32 type = memtype & 0xff;
++	u32 npages, order;
+ 	int i;
+ 
+ 	nv_debug(pfb, "%s: size: %llx align: %x, ncmin: %x\n", __func__, size,
+@@ -80,59 +78,48 @@ gk20a_ram_get(struct nouveau_fb *pfb, u64 size, u32 align, u32 ncmin,
+ 	order = fls(align);
+ 	if ((align & (align - 1)) == 0)
+ 		order--;
++	align = BIT(order);
+ 
+-	ncmin >>= PAGE_SHIFT;
+-	/*
+-	 * allocate pages by chunks of "align" size, otherwise we may leave
+-	 * holes in the contiguous memory area.
+-	 */
+-	if (ncmin == 0)
+-		ncmin = npages;
+-	else if (align > ncmin)
+-		ncmin = align;
++	/* ensure returned address is correctly aligned */
++	npages = max(align, npages);
+ 
+ 	mem = kzalloc(sizeof(*mem), GFP_KERNEL);
+ 	if (!mem)
+ 		return -ENOMEM;
+ 
+-	mem->size = npages;
+-	mem->memtype = type;
++	mem->base.size = npages;
++	mem->base.memtype = type;
+ 
+-	mem->pages = kzalloc(sizeof(dma_addr_t) * npages, GFP_KERNEL);
+-	if (!mem) {
++	mem->base.pages = kzalloc(sizeof(dma_addr_t) * npages, GFP_KERNEL);
++	if (!mem->base.pages) {
+ 		kfree(mem);
+ 		return -ENOMEM;
+ 	}
+ 
+-	while (npages) {
+-		struct page *pages;
+-		int pos = 0;
+-
+-		/* don't overflow in case size is not a multiple of ncmin */
+-		if (ncmin > npages)
+-			ncmin = npages;
+-
+-		pages = dma_alloc_from_contiguous(dev, ncmin, order);
+-		if (!pages) {
+-			gk20a_ram_put(pfb, &mem);
+-			return -ENOMEM;
+-		}
++	*pmem = &mem->base;
+ 
+-		dma_addr = (dma_addr_t)(page_to_pfn(pages) << PAGE_SHIFT);
++	mem->cpuaddr = dma_alloc_coherent(dev, npages << PAGE_SHIFT,
++					  &mem->handle, GFP_KERNEL);
++	if (!mem->cpuaddr) {
++		nv_error(pfb, "%s: cannot allocate memory!\n", __func__);
++		gk20a_ram_put(pfb, pmem);
++		return -ENOMEM;
++	}
+ 
+-		nv_debug(pfb, "  alloc count: %x, order: %x, addr: %pad\n", ncmin,
+-			 order, &dma_addr);
++	align <<= PAGE_SHIFT;
+ 
+-		for (i = 0; i < ncmin; i++)
+-			mem->pages[pos + i] = dma_addr + (PAGE_SIZE * i);
++	/* alignment check */
++	if (unlikely(mem->handle & (align - 1)))
++		nv_warn(pfb, "memory not aligned as requested: %pad (0x%x)\n",
++			&mem->handle, align);
+ 
+-		pos += ncmin;
+-		npages -= ncmin;
+-	}
++	nv_debug(pfb, "alloc size: 0x%x, align: 0x%x, paddr: %pad, vaddr: %p\n",
++		 npages << PAGE_SHIFT, align, &mem->handle, mem->cpuaddr);
+ 
+-	mem->offset = (u64)mem->pages[0];
++	for (i = 0; i < npages; i++)
++		mem->base.pages[i] = mem->handle + (PAGE_SIZE * i);
+ 
+-	*pmem = mem;
++	mem->base.offset = (u64)mem->base.pages[0];
+ 
+ 	return 0;
+ }
+-- 
+1.9.3
