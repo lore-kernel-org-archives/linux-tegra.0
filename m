@@ -1,184 +1,163 @@
-From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Fri, 30 May 2014 08:16:05 -0500
-Message-ID: <CAL_JsqKumG1PSFoVfeGpLLG+MjXFeF4aUjun=vv1BJpaxk0Byg@mail.gmail.com>
-References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
+From: Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>
+Subject: Re: [RFC PATCH 3/3] clk: tegra: Implement Tegra124 shared/cbus clks
+Date: Fri, 30 May 2014 08:24:37 -0500
+Message-ID: <53888695.2020507@ti.com>
+References: <1399990023-30318-1-git-send-email-pdeschrijver@nvidia.com> <1399990023-30318-4-git-send-email-pdeschrijver@nvidia.com> <53725FED.7050303@wwwdotorg.org> <20140514142739.GA8612@ulmo> <20140514193518.19795.64334@quantum> <20140526130725.GA1594@ulmo> <5387C145.8050609@ti.com> <20140530044749.10062.16436@quantum>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1400877218-4113-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140530044749.10062.16436@quantum>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, May 23, 2014 at 3:33 PM, Thierry Reding
-<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> This commit introduces a generic device tree binding for IOMMU devices.
-> Only a very minimal subset is described here, but it is enough to cover
-> the requirements of both the Exynos System MMU and Tegra SMMU as
-> discussed here:
->
->     https://lkml.org/lkml/2014/4/27/346
->
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Changes in v2:
-> - add notes about "dma-ranges" property (drop note from commit message)
-> - document priorities of "iommus" property vs. "dma-ranges" property
-> - drop #iommu-cells in favour of #address-cells and #size-cells
-> - remove multiple-master device example
->
->  Documentation/devicetree/bindings/iommu/iommu.txt | 167 ++++++++++++++++++++++
->  1 file changed, 167 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iommu/iommu.txt
->
-> diff --git a/Documentation/devicetree/bindings/iommu/iommu.txt b/Documentation/devicetree/bindings/iommu/iommu.txt
-> new file mode 100644
-> index 000000000000..6ce759afcc94
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iommu/iommu.txt
-> @@ -0,0 +1,167 @@
-> +This document describes the generic device tree binding for IOMMUs and their
-> +master(s).
-> +
-> +
-> +IOMMU device node:
-> +==================
-> +
-> +An IOMMU can provide the following services:
-> +
-> +* Remap address space to allow devices to access physical memory ranges that
-> +  they otherwise wouldn't be capable of accessing.
-> +
-> +  Example: 32-bit DMA to 64-bit physical addresses
-> +
-> +* Implement scatter-gather at page level granularity so that the device does
-> +  not have to.
-> +
-> +* Provide system protection against "rogue" DMA by forcing all accesses to go
-> +  through the IOMMU and faulting when encountering accesses to unmapped
-> +  address regions.
-> +
-> +* Provide address space isolation between multiple contexts.
-> +
-> +  Example: Virtualization
-> +
-> +Device nodes compatible with this binding represent hardware with some of the
-> +above capabilities.
-> +
-> +IOMMUs can be single-master or multiple-master. Single-master IOMMU devices
-> +typically have a fixed association to the master device, whereas multiple-
-> +master IOMMU devices can translate accesses from more than one master.
-> +
-> +The device tree node of the IOMMU device's parent bus must contain a valid
-> +"dma-ranges" property that describes how the physical address space of the
-> +IOMMU maps to memory. An empty "dma-ranges" property means that there is a
-> +1:1 mapping from IOMMU to memory.
-> +
-> +Required properties:
-> +--------------------
-> +- #address-cells: The number of cells in an IOMMU specifier needed to encode
-> +  an address.
-> +- #size-cells: The number of cells in an IOMMU specifier needed to represent
-> +  the length of an address range.
-> +
-> +Typical values for the above include:
-> +- #address-cells = <0>, size-cells = <0>: Single master IOMMU devices are not
-> +  configurable and therefore no additional information needs to be encoded in
-> +  the specifier. This may also apply to multiple master IOMMU devices that do
-> +  not allow the association of masters to be configured.
-> +- #address-cells = <1>, size-cells = <0>: Multiple master IOMMU devices may
-> +  need to be configured in order to enable translation for a given master. In
-> +  such cases the single address cell corresponds to the master device's ID.
-> +- #address-cells = <2>, size-cells = <2>: Some IOMMU devices allow the DMA
-> +  window for masters to be configured. The first cell of the address in this
-> +  may contain the master device's ID for example, while the second cell could
-> +  contain the start of the DMA window for the given device. The length of the
-> +  DMA window is specified by two additional cells.
-> +
-> +
-> +IOMMU master node:
-> +==================
-> +
-> +Devices that access memory through an IOMMU are called masters. A device can
-> +have multiple master interfaces (to one or more IOMMU devices).
-> +
-> +Required properties:
-> +--------------------
-> +- iommus: A list of phandle and IOMMU specifier pairs that describe the IOMMU
-> +  master interfaces of the device. One entry in the list describes one master
-> +  interface of the device.
-> +
-> +When an "iommus" property is specified in a device tree node, the IOMMU will
-> +be used for address translation. If a "dma-ranges" property exists in the
-> +device's parent node it will be ignored. An exception to this rule is if the
-> +referenced IOMMU is disabled, in which case the "dma-ranges" property of the
-> +parent shall take effect.
+On 05/29/2014 11:47 PM, Mike Turquette wrote:
+> Quoting Nishanth Menon (2014-05-29 16:22:45)
+>> On 05/26/2014 08:07 AM, Thierry Reding wrote:
+>>> On Wed, May 14, 2014 at 12:35:18PM -0700, Mike Turquette wrote:
+>>>> Quoting Thierry Reding (2014-05-14 07:27:40)
+>>> [...]
+>>>>> As for shared clocks I'm only aware of one use-case, namely EMC scaling.
+>>>>> Using clocks for that doesn't seem like the best option to me. While it
+>>>>> can probably fix the immediate issue of choosing an appropriate
+>>>>> frequency for the EMC clock it isn't a complete solution for the problem
+>>>>> that we're trying to solve. From what I understand EMC scaling is one
+>>>>> part of ensuring quality of service. The current implementations of that
+>>>>> seems to abuse clocks (essentially one X.emc clock per X clock) to
+>>>>> signal the amount of memory bandwidth required by any given device. But
+>>>>> there are other parts to the puzzle. Latency allowance is one. The value
+>>>>> programmed to the latency allowance registers for example depends on the
+>>>>> EMC frequency.
+>>>>>
+>>>>> Has anyone ever looked into using a different framework to model all of
+>>>>> these requirements? PM QoS looks like it might fit, but if none of the
+>>>>> existing frameworks have what we need, perhaps something new can be
+>>>>> created.
+>>>>
+>>>> It has been discussed. Using a QoS throughput constraint could help
+>>>> scale frequency. But this deserves a wider discussion and starts to
+>>>> stray into both PM QoS territory and also into "should we have a DVFS
+>>>> framework" territory.
+>>>
+>>> I've looked into this for a bit and it doesn't look like PM QoS is going
+>>> to be a good match after all. One of the issues I found was that PM QoS
+>>> deals with individual devices and there's no builtin way to collect the
+>>> requests from multiple devices to produce a global constraint. So if we
+>>> want to add something like that either the API would need to be extended
+>>> or it would need to be tacked on using the notifier mechanism and some
+>>> way of tracking (and filtering) the individual devices.
+>>>
+>>> Looking at devfreq it seems to be the DVFS framework that you mentioned,
+>>> but from what I can tell it suffers from mostly the same problems. The
+>>> governor applies some frequency scaling policy to a single device and
+>>> does not allow multiple devices to register constraints against a single
+>>> (global) constraint so that the result can be accumulated.
+>>>
+>>> For Tegra EMC scaling what we need is something more along the lines of
+>>> this: we have a resource (external memory) that is shared by multiple
+>>> devices in the system. Each of those devices requires a certain amount
+>>> of that resource (memory bandwidth). The resource driver will need to
+>>> accumulate all requests for the resource and apply the resulting
+>>> constraint so that all requests can be satisfied.
+>>>
+>>> One solution I could imagine to make this work with PM QoS would be to
+>>> add the concept of a pm_qos_group to manage a set of pm_qos_requests,
+>>> but that will require a bunch of extra checks to make sure that requests
+>>> are of the correct type and so on. In other words it would still be
+>>> tacked on.
+>>
+>> just a minor note from previous experience: We(at TI) had attempted in
+>> our product kernel[1] to use QoS constraint for certain SoCs for
+>> rather unspectacular results.
+>>
+>> Our use case was similar: devices -> L3(core bus)->memory. We had the
+>> following intent:
+>> a) wanted to scale L3 based on QoS requests coming in from various
+>> device drivers. intent was to scale either to 133MHz or 266MHz (two
+>> OPPs we supported on our devices) based on performance needs -> So we
+>> asked drivers to report QoS requirements using an standard function -
+>> except drivers cannot always report it satisfactorily - example bursty
+>> transfer devices - ended up with consolidated requests > total
+>> bandwidth possible on the bus -> (and never in practise hitting the
+>> lower frequency).
+> 
+> My opinion on why L3 QoS failed on OMAP is that we only used it for
+> DVFS. The voltage domain corresponding to the L3 interconnect had only
+> two OPPs, which meant that drivers submitting their constraints only had
+> two options: slow vs fast in the best case, or non-functional vs
+> functional in the worst case (some IPs simply did not work at the lower
+> OPP).
+> 
+> But the big failure in my opinion was that we did not use any of the
+> traffic-shaping or priority handling features of the L3 NoC. OMAP4 used
+> the Arteris NoC[1] which has plenty of capabilities for setting
+> initiator priorities and bandwidth-throttling on a point-to-point basis,
+> which is exactly that QoS is for. If these had been exposed a bit more
+> in software then I imagine some of the constraints that always resulted
+> in running at the fast OPP might have instead resulted in running at the
+> slow OPP, but with a fine-grained mixture of varying bandwidth
+> allocations and access priorities.
 
-Just thinking out loud, could you have dma-ranges in the iommu node
-for the case when the iommu is enabled rather than putting the DMA
-window information into the iommus property?
+Thanks Mike for reminding me about it, I agree that modelling of
+complete bus capability was never complete or accurate. that is just
+one factor, not to mention some of those abilities are not modifiable
+on secure devices without adequate handlers inside secure side code.
+but, for the discussion context, just details of implementation.
 
-This would probably mean that you need both #iommu-cells and #address-cells.
 
-> +
-> +Optional properties:
-> +--------------------
-> +- iommu-names: A list of names identifying each entry in the "iommus"
-> +  property.
+> 
+> All of the hardware in the world doesn't do any good if we don't have
+> software that uses it. Anyways, just my $0.02.
 
-Do we really need a name here? I would not expect that you have
-clearly documented names here from the datasheet like you would for
-interrupts or clocks, so you'd just be making up names. Sorry, but I'm
-not a fan of names properties in general.
+Yep, the key issue as far as I recollect(its been over a couple of
+years now:) ), from productization efforts of the approach has been
+the users. SoCs are rarely a single ARM centric world - they have
+GPUs, co-processors etc.. no matter how accurately we model the bus
+handling, it all boils down to ensuring every single user is
+appropriately using the defined functions and ensuring this central
+book-keeping authority has exact knowledge of the device requirements.
+That is always the hard part.
 
-> +
-> +
-> +Notes:
-> +======
-> +
-> +One possible extension to the above is to use an "iommus" property along with
-> +a "dma-ranges" property in a bus device node (such as PCI host bridges). This
-> +can be useful to describe how children on the bus relate to the IOMMU if they
-> +are not explicitly listed in the device tree (e.g. PCI devices). However, the
-> +requirements of that use-case haven't been fully determined yet. Implementing
-> +this is therefore not recommended without further discussion and extension of
-> +this binding.
-> +
-> +
+> 
+> Regards,
+> Mike
+> 
+> [1] http://www.arteris.com/OMAP4_QoS_security_NoC
+> 
+>> b) timing closure issues on certain devices such as USB - which can
+>> only function based on async bridge closure requirements on the core
+>> bus etc.. these would require bus to be at higher frequency - QoS
+>> model was "misused" in such requirements.
+>> b.1) a variation: interdependent constraints -> if MPU is > freq X,
+>> timing closure required L3 to be at 266MHz. again - it is not a QoS
+>> requirement perse, just a dependency requirement that cannot easily be
+>> addressed doing a pure QoS like framework solution.
+>>
+>> Even though EMC does sound like (a) - I suspect you might want to be
+>> 100% sure that you dont have variations of (b) in the SoC as well and
+>> betting completely on QoS approach might not actually work in practice.
+>>
+>>>
+>>> Adding the linux-pm mailing list for more visibility. Perhaps somebody
+>> For folks new on the discussion: complete thread:
+>> http://thread.gmane.org/gmane.linux.drivers.devicetree/73967
+>>
+>>> has some ideas on how to extend any of the existing frameworks to make
+>>> it work for Tegra's EMC scaling (or how to implement the requirements of
+>>> Tegra's EMC scaling within the existing frameworks).
+>>>
+>>
+>>
+>> [1]
+>> https://android.googlesource.com/kernel/omap.git/+/android-omap-panda-3.0/arch/arm/plat-omap/omap-pm-helper.c
+>>
+>> -- 
+>> Regards,
+>> Nishanth Menon
 
-[...]
 
-> +Multiple-master IOMMU:
-> +----------------------
-> +
-> +       iommu {
-> +               /* the specifier represents the ID of the master */
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +       };
-> +
-> +       master {
-> +               /* device has master ID 42 in the IOMMU */
-> +               iommus = <&/iommu 42>;
-> +       };
-
-Presumably the ID would be the streamID on ARM's SMMU. How would a
-master with 8 streamIDs be described? This is what Calxeda midway has
-for SATA and I would expect that to be somewhat common. Either you
-need some ID masking or you'll have lots of duplication when you have
-windows.
-
-Rob
+-- 
+Regards,
+Nishanth Menon
