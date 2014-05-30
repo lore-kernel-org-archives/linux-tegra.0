@@ -1,13 +1,13 @@
 From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] clk: flatten clk tree in debugfs
-Date: Fri, 30 May 2014 18:01:20 +0300
-Message-ID: <1401462080-14848-1-git-send-email-pdeschrijver@nvidia.com>
+Subject: [PATCH RESEND] clk: flatten clk tree in debugfs
+Date: Fri, 30 May 2014 18:03:57 +0300
+Message-ID: <1401462237-14954-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 This patch flattens the clk tree in CCF debugfs. Instead of representing the
@@ -17,6 +17,10 @@ clocks and their hierarchy as a directory structure under
 clk_orphan_summary.
 
 Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Apologies for the noise. I missed linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org in the
+first post.
+
 ---
  drivers/clk/clk.c |  114 ++++++++++++++++------------------------------------
  1 files changed, 35 insertions(+), 79 deletions(-)
