@@ -1,163 +1,245 @@
-From: Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>
-Subject: Re: [RFC PATCH 3/3] clk: tegra: Implement Tegra124 shared/cbus clks
-Date: Fri, 30 May 2014 08:24:37 -0500
-Message-ID: <53888695.2020507@ti.com>
-References: <1399990023-30318-1-git-send-email-pdeschrijver@nvidia.com> <1399990023-30318-4-git-send-email-pdeschrijver@nvidia.com> <53725FED.7050303@wwwdotorg.org> <20140514142739.GA8612@ulmo> <20140514193518.19795.64334@quantum> <20140526130725.GA1594@ulmo> <5387C145.8050609@ti.com> <20140530044749.10062.16436@quantum>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] clk: flatten clk tree in debugfs
+Date: Fri, 30 May 2014 18:01:20 +0300
+Message-ID: <1401462080-14848-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140530044749.10062.16436@quantum>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/29/2014 11:47 PM, Mike Turquette wrote:
-> Quoting Nishanth Menon (2014-05-29 16:22:45)
->> On 05/26/2014 08:07 AM, Thierry Reding wrote:
->>> On Wed, May 14, 2014 at 12:35:18PM -0700, Mike Turquette wrote:
->>>> Quoting Thierry Reding (2014-05-14 07:27:40)
->>> [...]
->>>>> As for shared clocks I'm only aware of one use-case, namely EMC scaling.
->>>>> Using clocks for that doesn't seem like the best option to me. While it
->>>>> can probably fix the immediate issue of choosing an appropriate
->>>>> frequency for the EMC clock it isn't a complete solution for the problem
->>>>> that we're trying to solve. From what I understand EMC scaling is one
->>>>> part of ensuring quality of service. The current implementations of that
->>>>> seems to abuse clocks (essentially one X.emc clock per X clock) to
->>>>> signal the amount of memory bandwidth required by any given device. But
->>>>> there are other parts to the puzzle. Latency allowance is one. The value
->>>>> programmed to the latency allowance registers for example depends on the
->>>>> EMC frequency.
->>>>>
->>>>> Has anyone ever looked into using a different framework to model all of
->>>>> these requirements? PM QoS looks like it might fit, but if none of the
->>>>> existing frameworks have what we need, perhaps something new can be
->>>>> created.
->>>>
->>>> It has been discussed. Using a QoS throughput constraint could help
->>>> scale frequency. But this deserves a wider discussion and starts to
->>>> stray into both PM QoS territory and also into "should we have a DVFS
->>>> framework" territory.
->>>
->>> I've looked into this for a bit and it doesn't look like PM QoS is going
->>> to be a good match after all. One of the issues I found was that PM QoS
->>> deals with individual devices and there's no builtin way to collect the
->>> requests from multiple devices to produce a global constraint. So if we
->>> want to add something like that either the API would need to be extended
->>> or it would need to be tacked on using the notifier mechanism and some
->>> way of tracking (and filtering) the individual devices.
->>>
->>> Looking at devfreq it seems to be the DVFS framework that you mentioned,
->>> but from what I can tell it suffers from mostly the same problems. The
->>> governor applies some frequency scaling policy to a single device and
->>> does not allow multiple devices to register constraints against a single
->>> (global) constraint so that the result can be accumulated.
->>>
->>> For Tegra EMC scaling what we need is something more along the lines of
->>> this: we have a resource (external memory) that is shared by multiple
->>> devices in the system. Each of those devices requires a certain amount
->>> of that resource (memory bandwidth). The resource driver will need to
->>> accumulate all requests for the resource and apply the resulting
->>> constraint so that all requests can be satisfied.
->>>
->>> One solution I could imagine to make this work with PM QoS would be to
->>> add the concept of a pm_qos_group to manage a set of pm_qos_requests,
->>> but that will require a bunch of extra checks to make sure that requests
->>> are of the correct type and so on. In other words it would still be
->>> tacked on.
->>
->> just a minor note from previous experience: We(at TI) had attempted in
->> our product kernel[1] to use QoS constraint for certain SoCs for
->> rather unspectacular results.
->>
->> Our use case was similar: devices -> L3(core bus)->memory. We had the
->> following intent:
->> a) wanted to scale L3 based on QoS requests coming in from various
->> device drivers. intent was to scale either to 133MHz or 266MHz (two
->> OPPs we supported on our devices) based on performance needs -> So we
->> asked drivers to report QoS requirements using an standard function -
->> except drivers cannot always report it satisfactorily - example bursty
->> transfer devices - ended up with consolidated requests > total
->> bandwidth possible on the bus -> (and never in practise hitting the
->> lower frequency).
-> 
-> My opinion on why L3 QoS failed on OMAP is that we only used it for
-> DVFS. The voltage domain corresponding to the L3 interconnect had only
-> two OPPs, which meant that drivers submitting their constraints only had
-> two options: slow vs fast in the best case, or non-functional vs
-> functional in the worst case (some IPs simply did not work at the lower
-> OPP).
-> 
-> But the big failure in my opinion was that we did not use any of the
-> traffic-shaping or priority handling features of the L3 NoC. OMAP4 used
-> the Arteris NoC[1] which has plenty of capabilities for setting
-> initiator priorities and bandwidth-throttling on a point-to-point basis,
-> which is exactly that QoS is for. If these had been exposed a bit more
-> in software then I imagine some of the constraints that always resulted
-> in running at the fast OPP might have instead resulted in running at the
-> slow OPP, but with a fine-grained mixture of varying bandwidth
-> allocations and access priorities.
+This patch flattens the clk tree in CCF debugfs. Instead of representing the
+clocks and their hierarchy as a directory structure under
+/sys/kernel/debug/clk, each clock gets a single directory directly under
+/sys/kernel/debug/clk. The orphans directory is replaced by a file called
+clk_orphan_summary.
 
-Thanks Mike for reminding me about it, I agree that modelling of
-complete bus capability was never complete or accurate. that is just
-one factor, not to mention some of those abilities are not modifiable
-on secure devices without adequate handlers inside secure side code.
-but, for the discussion context, just details of implementation.
+Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/clk/clk.c |  114 ++++++++++++++++------------------------------------
+ 1 files changed, 35 insertions(+), 79 deletions(-)
 
-
-> 
-> All of the hardware in the world doesn't do any good if we don't have
-> software that uses it. Anyways, just my $0.02.
-
-Yep, the key issue as far as I recollect(its been over a couple of
-years now:) ), from productization efforts of the approach has been
-the users. SoCs are rarely a single ARM centric world - they have
-GPUs, co-processors etc.. no matter how accurately we model the bus
-handling, it all boils down to ensuring every single user is
-appropriately using the defined functions and ensuring this central
-book-keeping authority has exact knowledge of the device requirements.
-That is always the hard part.
-
-> 
-> Regards,
-> Mike
-> 
-> [1] http://www.arteris.com/OMAP4_QoS_security_NoC
-> 
->> b) timing closure issues on certain devices such as USB - which can
->> only function based on async bridge closure requirements on the core
->> bus etc.. these would require bus to be at higher frequency - QoS
->> model was "misused" in such requirements.
->> b.1) a variation: interdependent constraints -> if MPU is > freq X,
->> timing closure required L3 to be at 266MHz. again - it is not a QoS
->> requirement perse, just a dependency requirement that cannot easily be
->> addressed doing a pure QoS like framework solution.
->>
->> Even though EMC does sound like (a) - I suspect you might want to be
->> 100% sure that you dont have variations of (b) in the SoC as well and
->> betting completely on QoS approach might not actually work in practice.
->>
->>>
->>> Adding the linux-pm mailing list for more visibility. Perhaps somebody
->> For folks new on the discussion: complete thread:
->> http://thread.gmane.org/gmane.linux.drivers.devicetree/73967
->>
->>> has some ideas on how to extend any of the existing frameworks to make
->>> it work for Tegra's EMC scaling (or how to implement the requirements of
->>> Tegra's EMC scaling within the existing frameworks).
->>>
->>
->>
->> [1]
->> https://android.googlesource.com/kernel/omap.git/+/android-omap-panda-3.0/arch/arm/plat-omap/omap-pm-helper.c
->>
->> -- 
->> Regards,
->> Nishanth Menon
-
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index dff0373..453ff3b0 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -36,6 +36,17 @@ static HLIST_HEAD(clk_root_list);
+ static HLIST_HEAD(clk_orphan_list);
+ static LIST_HEAD(clk_notifier_list);
+ 
++static struct hlist_head *all_lists[] = {
++	&clk_root_list,
++	&clk_orphan_list,
++	NULL,
++};
++
++static struct hlist_head *orphan_list[] = {
++	&clk_orphan_list,
++	NULL,
++};
++
+ /***           locking             ***/
+ static void clk_prepare_lock(void)
+ {
+@@ -98,7 +109,6 @@ static void clk_enable_unlock(unsigned long flags)
+ #include <linux/debugfs.h>
+ 
+ static struct dentry *rootdir;
+-static struct dentry *orphandir;
+ static int inited = 0;
+ 
+ static void clk_summary_show_one(struct seq_file *s, struct clk *c, int level)
+@@ -131,17 +141,16 @@ static void clk_summary_show_subtree(struct seq_file *s, struct clk *c,
+ static int clk_summary_show(struct seq_file *s, void *data)
+ {
+ 	struct clk *c;
++	struct hlist_head **lists = (struct hlist_head **)s->private;
+ 
+ 	seq_printf(s, "   clock                        enable_cnt  prepare_cnt  rate        accuracy\n");
+ 	seq_printf(s, "---------------------------------------------------------------------------------\n");
+ 
+ 	clk_prepare_lock();
+ 
+-	hlist_for_each_entry(c, &clk_root_list, child_node)
+-		clk_summary_show_subtree(s, c, 0);
+-
+-	hlist_for_each_entry(c, &clk_orphan_list, child_node)
+-		clk_summary_show_subtree(s, c, 0);
++	for (; *lists; lists++)
++		hlist_for_each_entry(c, *lists, child_node)
++			clk_summary_show_subtree(s, c, 0);
+ 
+ 	clk_prepare_unlock();
+ 
+@@ -194,21 +203,19 @@ static int clk_dump(struct seq_file *s, void *data)
+ {
+ 	struct clk *c;
+ 	bool first_node = true;
++	struct hlist_head **lists = (struct hlist_head **)s->private;
+ 
+ 	seq_printf(s, "{");
+ 
+ 	clk_prepare_lock();
+ 
+-	hlist_for_each_entry(c, &clk_root_list, child_node) {
+-		if (!first_node)
+-			seq_printf(s, ",");
+-		first_node = false;
+-		clk_dump_subtree(s, c, 0);
+-	}
+-
+-	hlist_for_each_entry(c, &clk_orphan_list, child_node) {
+-		seq_printf(s, ",");
+-		clk_dump_subtree(s, c, 0);
++	for (; *lists; lists++) {
++		hlist_for_each_entry(c, *lists, child_node) {
++			if (!first_node)
++				seq_puts(s, ",");
++			first_node = false;
++			clk_dump_subtree(s, c, 0);
++		}
+ 	}
+ 
+ 	clk_prepare_unlock();
+@@ -306,7 +313,7 @@ static int clk_debug_create_subtree(struct clk *clk, struct dentry *pdentry)
+ 		goto out;
+ 
+ 	hlist_for_each_entry(child, &clk->children, child_node)
+-		clk_debug_create_subtree(child, clk->dentry);
++		clk_debug_create_subtree(child, pdentry);
+ 
+ 	ret = 0;
+ out:
+@@ -326,31 +333,12 @@ out:
+  */
+ static int clk_debug_register(struct clk *clk)
+ {
+-	struct clk *parent;
+-	struct dentry *pdentry;
+ 	int ret = 0;
+ 
+ 	if (!inited)
+ 		goto out;
+ 
+-	parent = clk->parent;
+-
+-	/*
+-	 * Check to see if a clk is a root clk.  Also check that it is
+-	 * safe to add this clk to debugfs
+-	 */
+-	if (!parent)
+-		if (clk->flags & CLK_IS_ROOT)
+-			pdentry = rootdir;
+-		else
+-			pdentry = orphandir;
+-	else
+-		if (parent->dentry)
+-			pdentry = parent->dentry;
+-		else
+-			goto out;
+-
+-	ret = clk_debug_create_subtree(clk, pdentry);
++	ret = clk_debug_create_subtree(clk, rootdir);
+ 
+ out:
+ 	return ret;
+@@ -372,39 +360,6 @@ static void clk_debug_unregister(struct clk *clk)
+ }
+ 
+ /**
+- * clk_debug_reparent - reparent clk node in the debugfs clk tree
+- * @clk: the clk being reparented
+- * @new_parent: the new clk parent, may be NULL
+- *
+- * Rename clk entry in the debugfs clk tree if debugfs has been
+- * initialized.  Otherwise it bails out early since the debugfs clk tree
+- * will be created lazily by clk_debug_init as part of a late_initcall.
+- *
+- * Caller must hold prepare_lock.
+- */
+-static void clk_debug_reparent(struct clk *clk, struct clk *new_parent)
+-{
+-	struct dentry *d;
+-	struct dentry *new_parent_d;
+-
+-	if (!inited)
+-		return;
+-
+-	if (new_parent)
+-		new_parent_d = new_parent->dentry;
+-	else
+-		new_parent_d = orphandir;
+-
+-	d = debugfs_rename(clk->dentry->d_parent, clk->dentry,
+-			new_parent_d, clk->name);
+-	if (d)
+-		clk->dentry = d;
+-	else
+-		pr_debug("%s: failed to rename debugfs entry for %s\n",
+-				__func__, clk->name);
+-}
+-
+-/**
+  * clk_debug_init - lazily create the debugfs clk tree visualization
+  *
+  * clks are often initialized very early during boot before memory can
+@@ -426,19 +381,24 @@ static int __init clk_debug_init(void)
+ 	if (!rootdir)
+ 		return -ENOMEM;
+ 
+-	d = debugfs_create_file("clk_summary", S_IRUGO, rootdir, NULL,
++	d = debugfs_create_file("clk_summary", S_IRUGO, rootdir, &all_lists,
+ 				&clk_summary_fops);
+ 	if (!d)
+ 		return -ENOMEM;
+ 
+-	d = debugfs_create_file("clk_dump", S_IRUGO, rootdir, NULL,
++	d = debugfs_create_file("clk_dump", S_IRUGO, rootdir, &all_lists,
+ 				&clk_dump_fops);
+ 	if (!d)
+ 		return -ENOMEM;
+ 
+-	orphandir = debugfs_create_dir("orphans", rootdir);
++	d = debugfs_create_file("clk_orphan_summary", S_IRUGO, rootdir,
++				&orphan_list, &clk_summary_fops);
++	if (!d)
++		return -ENOMEM;
+ 
+-	if (!orphandir)
++	d = debugfs_create_file("clk_orphan_dump", S_IRUGO, rootdir,
++				&orphan_list, &clk_dump_fops);
++	if (!d)
+ 		return -ENOMEM;
+ 
+ 	clk_prepare_lock();
+@@ -447,7 +407,7 @@ static int __init clk_debug_init(void)
+ 		clk_debug_create_subtree(clk, rootdir);
+ 
+ 	hlist_for_each_entry(clk, &clk_orphan_list, child_node)
+-		clk_debug_create_subtree(clk, orphandir);
++		clk_debug_create_subtree(clk, rootdir);
+ 
+ 	inited = 1;
+ 
+@@ -1277,9 +1237,6 @@ static void __clk_set_parent_after(struct clk *clk, struct clk *parent,
+ 		clk_disable(old_parent);
+ 		__clk_unprepare(old_parent);
+ 	}
+-
+-	/* update debugfs with new clk tree topology */
+-	clk_debug_reparent(clk, parent);
+ }
+ 
+ static int __clk_set_parent(struct clk *clk, struct clk *parent, u8 p_index)
+@@ -1685,7 +1642,6 @@ out:
+ void __clk_reparent(struct clk *clk, struct clk *new_parent)
+ {
+ 	clk_reparent(clk, new_parent);
+-	clk_debug_reparent(clk, new_parent);
+ 	__clk_recalc_accuracies(clk);
+ 	__clk_recalc_rates(clk, POST_RATE_CHANGE);
+ }
 -- 
-Regards,
-Nishanth Menon
+1.7.7.rc0.72.g4b5ea.dirty
