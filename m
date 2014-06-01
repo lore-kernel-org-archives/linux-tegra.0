@@ -1,61 +1,100 @@
-From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Sun, 1 Jun 2014 10:55:46 +0100
-Message-ID: <20140601095546.GA8625@arm.com>
-References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
- <4545972.cM7IP1qTXQ@wuerfel>
- <87tx87rrp2.fsf@nvidia.com>
- <4462924.8iRbdkOPp7@wuerfel>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
+Subject: [PATCH 2/3] arm: tegra: enable igb, stmpe, i2c chardev, spidev, lm95245, pwm leds
+Date: Mon,  2 Jun 2014 01:37:17 +0200
+Message-ID: <39a8704a4c8170d6b0620a1e5e44042eae6d8810.1401665237.git.marcel@ziswiler.com>
+References: <c5522b0efcbfc7690dcde6aaf78b9dd568f99604.1401665237.git.marcel@ziswiler.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4462924.8iRbdkOPp7@wuerfel>
+In-Reply-To: <c5522b0efcbfc7690dcde6aaf78b9dd568f99604.1401665237.git.marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stefan-XLVq0VzYD2Y@public.gmane.org, marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, May 30, 2014 at 08:54:37PM +0100, Arnd Bergmann wrote:
-> On Friday 30 May 2014 22:29:13 Hiroshi Doyu wrote:
-> > Tegra,SMMU has a similar problem and we have used a fixed size bitmap(64
-> > bit) to afford 64 stream IDs so that a single device can hold multiple
-> > IDs. If we apply the same bitmap to the above exmaple:
-> > 
-> >        iommu {
-> >                /* the specifier represents the ID of the master */
-> >                #address-cells = <1>;
-> >                #size-cells = <0>;
-> >        };
-> > 
-> >         master@a {
-> >                 ...
-> >                 iommus = <&smmu (BIT(1) | BIT(2) | BIT(3))>; # IDs 1 2 3
-> >         };
-> > 
-> >         master@b {
-> >                 ...
-> >                 iommus = <&smmu BIT(4)>;     # ID 4
-> >         };
-> > 
-> > The disadvantage of this is that this limits the max number of streamIDs
-> > to support. If # of streamID is increased later more than 64, this
-> > format cannot cover any more. You have to predict the max # of streamIDs
-> > in advance if steamID is statically assigned.
-> > 
-> 
-> Well, the iommu specific binding could allow a variable #address-cells.
-> That way, you just need to know the number of stream IDs for that instance
-> of the iommu.
+The NVIDIA Tegra 3 based Apalis T30 module contains an Intel i210 resp.
+i211 gigabit Ethernet controller, an STMPE811 ADC/touch controller, I2C
+as well as SPI buses and PWM LEDs generically accessible from user
+space and an LM95245 temperature sensor chip. The later five can also
+be found on the Colibri T30 module.
 
-In general, though, the SMMU will be able to support a large number of
-stream IDs (say a 16-bit space). The restriction we're interested in here is
-how many different stream IDs can be emitted by a single master device
-coming into the SMMU. *That* is a property of the master, not the SMMU.
+While at it move the PCA953x GPIO entry down to its proper place to
+have it all nicely ordered again.
 
-In the current arm,smmu binding I have a #stream-id-cells property in each
-master. I can then feed that straight into of_parse_phandle_with_args to
-enumerate the IDs for that master. The problem with that is we're
-artificially restricted by MAX_PHANDLE_ARGS.
+Signed-off-by: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
+---
+BTW: How about MTD_SPI_NOR, PROC_DEVICETREE and CRYPTO_DEV_TEGRA_AES
+which I haven't found any mentioning anywhere?
 
-Will
+ arch/arm/configs/tegra_defconfig |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index fb25e29..4ed82f9 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -23,7 +23,6 @@ CONFIG_MODULE_FORCE_UNLOAD=y
+ CONFIG_PARTITION_ADVANCED=y
+ # CONFIG_IOSCHED_DEADLINE is not set
+ # CONFIG_IOSCHED_CFQ is not set
+-CONFIG_GPIO_PCA953X=y
+ CONFIG_ARCH_TEGRA=y
+ CONFIG_ARCH_TEGRA_2x_SOC=y
+ CONFIG_ARCH_TEGRA_3x_SOC=y
+@@ -111,6 +110,7 @@ CONFIG_SCSI_MULTI_LUN=y
+ # CONFIG_SCSI_LOWLEVEL is not set
+ CONFIG_NETDEVICES=y
+ CONFIG_DUMMY=y
++CONFIG_IGB=y
+ CONFIG_R8169=y
+ CONFIG_USB_PEGASUS=y
+ CONFIG_USB_USBNET=y
+@@ -125,6 +125,8 @@ CONFIG_KEYBOARD_GPIO=y
+ CONFIG_KEYBOARD_TEGRA=y
+ CONFIG_KEYBOARD_CROS_EC=y
+ CONFIG_MOUSE_PS2_ELANTECH=y
++CONFIG_INPUT_TOUCHSCREEN=y
++CONFIG_TOUCHSCREEN_STMPE=y
+ CONFIG_INPUT_MISC=y
+ CONFIG_INPUT_MPU3050=y
+ # CONFIG_LEGACY_PTYS is not set
+@@ -135,6 +137,7 @@ CONFIG_SERIAL_TEGRA=y
+ CONFIG_SERIAL_OF_PLATFORM=y
+ # CONFIG_HW_RANDOM is not set
+ # CONFIG_I2C_COMPAT is not set
++CONFIG_I2C_CHARDEV=y
+ CONFIG_I2C_MUX_PCA954x=y
+ CONFIG_I2C_MUX_PINCTRL=y
+ CONFIG_I2C_TEGRA=y
+@@ -142,8 +145,10 @@ CONFIG_SPI=y
+ CONFIG_SPI_TEGRA114=y
+ CONFIG_SPI_TEGRA20_SFLASH=y
+ CONFIG_SPI_TEGRA20_SLINK=y
++CONFIG_SPI_SPIDEV=y
+ CONFIG_PINCTRL_AS3722=y
+ CONFIG_PINCTRL_PALMAS=y
++CONFIG_GPIO_PCA953X=y
+ CONFIG_GPIO_PCA953X_IRQ=y
+ CONFIG_GPIO_PALMAS=y
+ CONFIG_GPIO_TPS6586X=y
+@@ -155,10 +160,12 @@ CONFIG_POWER_RESET=y
+ CONFIG_POWER_RESET_AS3722=y
+ CONFIG_POWER_RESET_GPIO=y
+ CONFIG_SENSORS_LM90=y
++CONFIG_SENSORS_LM95245=y
+ CONFIG_MFD_AS3722=y
+ CONFIG_MFD_CROS_EC=y
+ CONFIG_MFD_CROS_EC_SPI=y
+ CONFIG_MFD_MAX8907=y
++CONFIG_MFD_STMPE=y
+ CONFIG_MFD_PALMAS=y
+ CONFIG_MFD_TPS65090=y
+ CONFIG_MFD_TPS6586X=y
+@@ -221,6 +228,7 @@ CONFIG_MMC_SDHCI_TEGRA=y
+ CONFIG_NEW_LEDS=y
+ CONFIG_LEDS_CLASS=y
+ CONFIG_LEDS_GPIO=y
++CONFIG_LEDS_PWM=y
+ CONFIG_LEDS_TRIGGERS=y
+ CONFIG_LEDS_TRIGGER_TIMER=y
+ CONFIG_LEDS_TRIGGER_ONESHOT=y
+-- 
+1.7.9.5
