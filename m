@@ -1,48 +1,28 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 2/3] arm: tegra: enable igb, stmpe, i2c chardev, spidev,
- lm95245, pwm leds
-Date: Mon, 02 Jun 2014 10:11:55 -0600
-Message-ID: <538CA24B.1010602@wwwdotorg.org>
-References: <c5522b0efcbfc7690dcde6aaf78b9dd568f99604.1401665237.git.marcel@ziswiler.com> <39a8704a4c8170d6b0620a1e5e44042eae6d8810.1401665237.git.marcel@ziswiler.com>
+From: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH 1/3] arm: multi_v7: enable igb, stmpe, spidev, lm95245,
+ pwm leds
+Date: Mon, 02 Jun 2014 18:24:17 +0200
+Message-ID: <538CA531.2090006@ziswiler.com>
+References: <cc612cd3f24f01cfc8fd3e81b1027ff94862e8b4.1401700579.git.marcel@ziswiler.com> <538C9F83.1010800@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <39a8704a4c8170d6b0620a1e5e44042eae6d8810.1401665237.git.marcel@ziswiler.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marcel Ziswiler <marcel@ziswiler.com>, thierry.reding@gmail.com
-Cc: linux@arm.linux.org.uk, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, stefan@agner.ch
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <538C9F83.1010800-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stefan-XLVq0VzYD2Y@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/01/2014 05:37 PM, Marcel Ziswiler wrote:
-> The NVIDIA Tegra 3 based Apalis T30 module contains an Intel i210 resp.
-> i211 gigabit Ethernet controller, an STMPE811 ADC/touch controller, I2C
-> as well as SPI buses and PWM LEDs generically accessible from user
-> space and an LM95245 temperature sensor chip. The later five can also
-> be found on the Colibri T30 module.
-> 
-> While at it move the PCA953x GPIO entry down to its proper place to
-> have it all nicely ordered again.
-> 
-> Signed-off-by: Marcel Ziswiler <marcel@ziswiler.com>
-> ---
-> BTW: How about MTD_SPI_NOR,
+On 06/02/2014 06:00 PM, Stephen Warren wrote:
+>> BTW: How about TEGRA_EMC_SCALING_ENABLE
+>
+> I thought a patch was sent to remove that. Perhaps the patch was only
+> sent to tegra_defconfig.
+>
+>> ... MTD_M25P80 which depends on MTD_SPI_NOR
+>
+> I've seen patches to fix that too.
 
-That might only exist in linux-next.
-
-> PROC_DEVICETREE and CRYPTO_DEV_TEGRA_AES
-> which I haven't found any mentioning anywhere?
-
-The TEGRA_AES driver has been removed, so the option should be removed
-from defconfig too. I don't know what happened to PROC_DEVICTREE - it
-doesn't seem to exist any more. Was it replaced by something else or
-deleted? Feel free to send patches for those.
-
-> diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-
-> +CONFIG_SPI_SPIDEV=y
-
-Is this useful with DT? I thought that unlike I2C_CHARDEV, spidev needed
-dummy devices to exist in DT for spidev to work? If so, there's not much
-point adding the option to defconfig, since people can add it when they
-put the dummy devices into DT.
+Yes, you are right. I have seen patches as well but none of them made it 
+yet I guess.
