@@ -1,126 +1,44 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 3/3] arm: tegra: initial support for apalis t30
-Date: Mon, 02 Jun 2014 10:26:43 -0600
-Message-ID: <538CA5C3.5050709@wwwdotorg.org>
-References: <c5522b0efcbfc7690dcde6aaf78b9dd568f99604.1401665237.git.marcel@ziswiler.com> <b470c9c8631a6ef021d140192eb07006de3cfd93.1401665237.git.marcel@ziswiler.com>
+From: Marcel Ziswiler <marcel@ziswiler.com>
+Subject: Re: [PATCH 2/3] arm: tegra: enable igb, stmpe, i2c chardev, spidev,
+ lm95245, pwm leds
+Date: Mon, 02 Jun 2014 18:28:37 +0200
+Message-ID: <538CA635.4050502@ziswiler.com>
+References: <c5522b0efcbfc7690dcde6aaf78b9dd568f99604.1401665237.git.marcel@ziswiler.com> <39a8704a4c8170d6b0620a1e5e44042eae6d8810.1401665237.git.marcel@ziswiler.com> <538CA24B.1010602@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <b470c9c8631a6ef021d140192eb07006de3cfd93.1401665237.git.marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stefan-XLVq0VzYD2Y@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <538CA24B.1010602@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, thierry.reding@gmail.com
+Cc: linux@arm.linux.org.uk, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, stefan@agner.ch
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/01/2014 05:37 PM, Marcel Ziswiler wrote:
-> This patch adds the device tree to support Toradex Apalis T30, a
-> computer on module which can be used on different carrier boards.
-> 
-> The module consists of a Tegra 3 SoC, two PMICs, 1 or 2 GB of DDR3L
-> RAM, eMMC, an LM95245 temperature sensor chip, an i210 resp. i211
-> gigabit Ethernet controller, an STMPE811 ADC/touch controller as well
-> as two MCP2515 CAN controllers. Furthermore, there is an SGTL5000 audio
-> codec which is not yet supported. Anything that is not self contained
-> on the module is disabled by default.
-> 
-> The device tree for the Evaluation Board includes the modules device
-> tree and enables the supported peripherals of the carrier board (the
-> Evaluation Board supports almost all of them).
-> 
-> While at it also add the device tree binding documentation for Apalis
-> T30 as well as the previously missing one for the recently added
-> Colibri T30.
+On 06/02/2014 06:11 PM, Stephen Warren wrote:
+>> BTW: How about MTD_SPI_NOR,
+>
+> That might only exist in linux-next.
+>
+>> PROC_DEVICETREE and CRYPTO_DEV_TEGRA_AES
+>> which I haven't found any mentioning anywhere?
+>
+> The TEGRA_AES driver has been removed, so the option should be removed
+> from defconfig too. I don't know what happened to PROC_DEVICTREE - it
+> doesn't seem to exist any more. Was it replaced by something else or
+> deleted? Feel free to send patches for those.
 
-> diff --git a/Documentation/devicetree/bindings/arm/tegra.txt b/Documentation/devicetree/bindings/arm/tegra.txt
+OK, will do.
 
-> +  toradex,colibri_t30
-> +  toradex,colibri_t30-eval-v3
+>> diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+>
+>> +CONFIG_SPI_SPIDEV=y
+>
+> Is this useful with DT? I thought that unlike I2C_CHARDEV, spidev needed
+> dummy devices to exist in DT for spidev to work? If so, there's not much
+> point adding the option to defconfig, since people can add it when they
+> put the dummy devices into DT.
 
-Those don't seem to be related to Apalis support.
-
-> diff --git a/arch/arm/boot/dts/tegra30-apalis-eval.dts b/arch/arm/boot/dts/tegra30-apalis-eval.dts
-> +	host1x@50000000 {
-> +		dc@54200000 {
-> +			rgb {
-> +				status = "okay";
-> +				nvidia,panel = <&panel>;
-> +			};
-> +		};
-> +		hdmi@54280000 {
-
-Nit: Add a blank line between the nodes. Check elsewhere too.
-
-> +	serial@70006040 {
-> +		compatible = "nvidia,tegra30-hsuart";
-> +		status = "okay";
-> +	};
-
-Nit: Put the status property first followed by new/overridden
-properties, to be consistent with other Tegra DTs. Check elsewhere too.
-
-> +	/* SPI1: Apalis SPI1 */
-> +	spi@7000d400 {
-> +		status = "okay";
-> +		spi-max-frequency = <25000000>;
-> +		spidev0: spidev@1 {
-
-Nit: Add a blank line between properties and nodes. Check elsewhere too.
-
-> +	sd1: sdhci@78000000 {
-...
-> +	mmc1: sdhci@78000400 {
-
-Do those nodes really need labels? Nothing appears to reference them,
-and I can't see why anything would.
-
-Should the mmc1 node be non-removable? It seems a bit odd for a
-removable device to have an 8-bit data bus.
-
-> +	backlight: backlight {
-> +		compatible = "pwm-backlight";
-> +
-> +		/* PWM0 */
-
-Nit: No need for a blank line between a bunch of related properties.
-Check elsewhere too.
-
-> +	pwmleds {
-> +		compatible = "pwm-leds";
-> +
-> +		pwm3 {
-> +			label = "PWM3";
-> +			pwms = <&pwm 1 19600>;
-> +			max-brightness = <255>;
-> +		};
-> +		pwm2 {
-> +			label = "PWM2";
-> +			pwms = <&pwm 2 19600>;
-> +			max-brightness = <255>;
-> +		};
-> +		pwm1 {
-> +			label = "PWM1";
-> +			pwms = <&pwm 3 19600>;
-> +			max-brightness = <255>;
-> +		};
-
-Nit: Why not sort those nodes in numerical order?
-
-> +	regulators {
-> +		sys_5v0_reg: regulator@1 {
-
-Nit: Why not start the numbering at 0?
-
-> diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-
-> +	pinmux@70000868 {
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&state_default>;
-> +
-> +		state_default: pinmux {
-
-It might make sense to add all the pinmux data to
-https://github.com/NVIDIA/tegra-pinmux-scripts, so that both the kernel
-and U-Boot pinmux initialization tables can be auto-generated from a
-single data-structure. I think that'll get a small amount of
-error-/consistency-checking of the data too.
+Yes, the Apalis T30 DT I sent actually contains two of them which we 
+call generic Apalis SPI1 and SPI2 out-of-the-box configured for exactly 
+that. Without the config enabled though it probably does not make much 
+sense to include it in the DT so I would consider removing it again.
