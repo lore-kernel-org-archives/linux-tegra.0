@@ -1,57 +1,103 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH v5 0/5] efuse driver for Tegra
-Date: Mon, 2 Jun 2014 11:27:13 +0300
-Message-ID: <20140602082713.GZ5961@tbergstrom-lnx.Nvidia.com>
-References: <1401281677-32110-1-git-send-email-pdeschrijver@nvidia.com>
- <53878407.3050409@wwwdotorg.org>
- <20140530082356.GP5961@tbergstrom-lnx.Nvidia.com>
- <5388AF2D.4060909@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5388AF2D.4060909@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
+Subject: [PATCH 1/3] arm: multi_v7: enable igb, stmpe, spidev, lm95245, pwm leds
+Date: Mon,  2 Jun 2014 11:43:50 +0200
+Message-ID: <cc612cd3f24f01cfc8fd3e81b1027ff94862e8b4.1401700579.git.marcel@ziswiler.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stefan-XLVq0VzYD2Y@public.gmane.org, marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, May 30, 2014 at 06:17:49PM +0200, Stephen Warren wrote:
-> On 05/30/2014 02:23 AM, Peter De Schrijver wrote:
-> > On Thu, May 29, 2014 at 09:01:27PM +0200, Stephen Warren wrote:
-> >> On 05/28/2014 06:54 AM, Peter De Schrijver wrote:
-> >>> This driver allows userspace to read the raw efuse data. Its userspace
-> >>> interface is modelled after the sunxi_sid driver which provides similar
-> >>> functionality for some Allwinner SoCs. It has been tested on
-> >>> Tegra20 (ventana), Tegra30 (beaverboard), Tegra114 (dalmore) and
-> >>> Tegra124 (jetson TK1).
-> >>
-> >>> Changes since v4:
-> >>>
-> >>> * Provide fallback to hardcoded 0x70000800 in case the apbmisc DT node is
-> >>>   missing. This is exactly what the current code does and prevents a system
-> >>>   crash in that case due to an invalid memory access by tegra_read_chipid()
-> >>
-> >> Wouldn't it be better to simply return an error?
-> > 
-> > This would mean you can't boot a system with these patches applied unless you
-> > also update the device tree. The system would crash during boot because CCF
-> > relies on tegra_read_chipid() as an APB barrier. Also tegra_boot_secondary()
-> > relies on the chipid to select the correct method for booting secondary cores.
-> 
-> Is this series really backwards-compatible anyway? tegra_init_fuse()
-> contains a whole bunch of places where resources are pulled out of DT,
-> and only one of those has a fallback to use APBMISC_BASE if the DT entry
-> isn't present.
+The NVIDIA Tegra 3 based Apalis T30 module contains an Intel i210 resp.
+i211 gigabit Ethernet controller, an STMPE811 ADC/touch controller,
+SPI bus and PWM LEDs generically accessible from user space and an
+LM95245 temperature sensor chip. The later four can also be found on
+the Colibri T30 module.
 
-Apart from the randomness initialization, there are no users of
-tegra_read_straps(). tegra_fuse_readl() is a new API, so that doesn't pose
-any backwards-compatibility problems. The only bug I noticed when rereading
-the code is that tegra_get_revision() reads the fuses on an A03 Tegra20 to
-findout if it's A03 or A03p. This would obviously crash if the DT entries
-are missing. I think this can be worked around by claiming it's an A03
-in case the DT entries are missing. I don't think that will cause any problems?
+While at it move the NEON entry down to its proper place to have it all
+nicely ordered again.
 
-Cheers,
+Signed-off-by: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
+---
+BTW: How about TEGRA_EMC_SCALING_ENABLE, MACH_UX500_DT, OMAP_USB3 and
+MMC_SUNXI which I haven't found any mentioning anywhere, MTD_M25P80
+which depends on MTD_SPI_NOR or DOVE_THERMAL which depends on the
+legacy ARCH_DOVE (besides USE_OF of course) being not much of multi
+compatible?
 
-Peter.
+ arch/arm/configs/multi_v7_defconfig |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 7f4645c..7cfc176 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -65,7 +65,6 @@ CONFIG_ARCH_VEXPRESS=y
+ CONFIG_ARCH_VEXPRESS_CA9X4=y
+ CONFIG_ARCH_WM8850=y
+ CONFIG_ARCH_ZYNQ=y
+-CONFIG_NEON=y
+ CONFIG_TRUSTED_FOUNDATIONS=y
+ CONFIG_PCI=y
+ CONFIG_PCI_MSI=y
+@@ -81,6 +80,7 @@ CONFIG_CPU_FREQ=y
+ CONFIG_CPU_FREQ_STAT_DETAILS=y
+ CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
+ CONFIG_CPU_IDLE=y
++CONFIG_NEON=y
+ CONFIG_NET=y
+ CONFIG_PACKET=y
+ CONFIG_UNIX=y
+@@ -132,6 +132,7 @@ CONFIG_NETDEVICES=y
+ CONFIG_SUN4I_EMAC=y
+ CONFIG_MACB=y
+ CONFIG_NET_CALXEDA_XGMAC=y
++CONFIG_IGB=y
+ CONFIG_MV643XX_ETH=y
+ CONFIG_MVNETA=y
+ CONFIG_KS8851=y
+@@ -155,6 +156,8 @@ CONFIG_KEYBOARD_TEGRA=y
+ CONFIG_KEYBOARD_SPEAR=y
+ CONFIG_KEYBOARD_CROS_EC=y
+ CONFIG_MOUSE_PS2_ELANTECH=y
++CONFIG_INPUT_TOUCHSCREEN=y
++CONFIG_TOUCHSCREEN_STMPE=y
+ CONFIG_INPUT_MISC=y
+ CONFIG_INPUT_MPU3050=y
+ CONFIG_SERIO_AMBAKMI=y
+@@ -200,6 +203,7 @@ CONFIG_SPI_SUN6I=y
+ CONFIG_SPI_TEGRA114=y
+ CONFIG_SPI_TEGRA20_SFLASH=y
+ CONFIG_SPI_TEGRA20_SLINK=y
++CONFIG_SPI_SPIDEV=y
+ CONFIG_PINCTRL_AS3722=y
+ CONFIG_PINCTRL_PALMAS=y
+ CONFIG_GPIO_SYSFS=y
+@@ -217,6 +221,7 @@ CONFIG_POWER_RESET_AS3722=y
+ CONFIG_POWER_RESET_GPIO=y
+ CONFIG_POWER_RESET_SUN6I=y
+ CONFIG_SENSORS_LM90=y
++CONFIG_SENSORS_LM95245=y
+ CONFIG_THERMAL=y
+ CONFIG_DOVE_THERMAL=y
+ CONFIG_ARMADA_THERMAL=y
+@@ -227,6 +232,7 @@ CONFIG_MFD_AS3722=y
+ CONFIG_MFD_CROS_EC=y
+ CONFIG_MFD_CROS_EC_SPI=y
+ CONFIG_MFD_MAX8907=y
++CONFIG_MFD_STMPE=y
+ CONFIG_MFD_PALMAS=y
+ CONFIG_MFD_TPS65090=y
+ CONFIG_MFD_TPS6586X=y
+@@ -303,6 +309,9 @@ CONFIG_MMC_OMAP=y
+ CONFIG_MMC_OMAP_HS=y
+ CONFIG_MMC_MVSDIO=y
+ CONFIG_MMC_SUNXI=y
++CONFIG_NEW_LEDS=y
++CONFIG_LEDS_CLASS=y
++CONFIG_LEDS_PWM=y
+ CONFIG_EDAC=y
+ CONFIG_EDAC_MM_EDAC=y
+ CONFIG_EDAC_HIGHBANK_MC=y
+-- 
+1.7.9.5
