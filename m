@@ -1,103 +1,140 @@
-From: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
-Subject: [PATCH 1/3] arm: multi_v7: enable igb, stmpe, spidev, lm95245, pwm leds
-Date: Mon,  2 Jun 2014 11:43:50 +0200
-Message-ID: <cc612cd3f24f01cfc8fd3e81b1027ff94862e8b4.1401700579.git.marcel@ziswiler.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stefan-XLVq0VzYD2Y@public.gmane.org, marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org
+From: Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Mon, 2 Jun 2014 11:41:04 +0100
+Message-ID: <20140602104104.GD3855@e103592.cambridge.arm.com>
+References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
+	<4545972.cM7IP1qTXQ@wuerfel>
+	<CAL_Jsq+tkFNpjSEZboT+o69B_Z3a8e-ZVKaYDmLwtkyYoPy6VQ@mail.gmail.com>
+	<5288123.eXagyPAxNq@wuerfel>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <5288123.eXagyPAxNq@wuerfel>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The NVIDIA Tegra 3 based Apalis T30 module contains an Intel i210 resp.
-i211 gigabit Ethernet controller, an STMPE811 ADC/touch controller,
-SPI bus and PWM LEDs generically accessible from user space and an
-LM95245 temperature sensor chip. The later four can also be found on
-the Colibri T30 module.
+On Fri, May 30, 2014 at 09:49:59PM +0200, Arnd Bergmann wrote:
+> On Friday 30 May 2014 14:31:55 Rob Herring wrote:
+> > On Fri, May 30, 2014 at 2:06 PM, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
+> > > On Friday 30 May 2014 08:16:05 Rob Herring wrote:
+> > >> On Fri, May 23, 2014 at 3:33 PM, Thierry Reding
+> > >> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> > >> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > >> > +IOMMU master node:
+> > >> > +==================
+> > >> > +
+> > >> > +Devices that access memory through an IOMMU are called masters. A device can
+> > >> > +have multiple master interfaces (to one or more IOMMU devices).
+> > >> > +
+> > >> > +Required properties:
+> > >> > +--------------------
+> > >> > +- iommus: A list of phandle and IOMMU specifier pairs that describe the IOMMU
+> > >> > +  master interfaces of the device. One entry in the list describes one master
+> > >> > +  interface of the device.
+> > >> > +
+> > >> > +When an "iommus" property is specified in a device tree node, the IOMMU will
+> > >> > +be used for address translation. If a "dma-ranges" property exists in the
+> > >> > +device's parent node it will be ignored. An exception to this rule is if the
+> > >> > +referenced IOMMU is disabled, in which case the "dma-ranges" property of the
+> > >> > +parent shall take effect.
+> > >>
+> > >> Just thinking out loud, could you have dma-ranges in the iommu node
+> > >> for the case when the iommu is enabled rather than putting the DMA
+> > >> window information into the iommus property?
+> > >>
+> > >> This would probably mean that you need both #iommu-cells and #address-cells.
+> > >
+> > > The reason for doing like this was that you may need a different window
+> > > for each device, while there can only be one dma-ranges property in
+> > > an iommu node.
+> > 
+> > My suggestion was that you also put the IDs in the dma-ranges as the
+> > first cell much as ranges for PCI encodes other information in the
+> > first cell. Then you can have an entry for each ID. The downside is
+> > another special case like PCI.
+> > 
+> > The argument for using #address-cells and #size-cells seems to be to
+> > align with how ranges work. If that's the route we want to go, then I
+> > say we should not stop there and actually use dma-ranges as well.
+> > Otherwise, I don't see the advantage over #iommu-cells.
+> 
+> I can see how dma-ranges in bus nodes work, it just doesn't seem to
+> have any reasonable meaning in the iommu node itself.
 
-While at it move the NEON entry down to its proper place to have it all
-nicely ordered again.
+dma-ranges defines a static mapping for mastering through the bus node.
 
-Signed-off-by: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
----
-BTW: How about TEGRA_EMC_SCALING_ENABLE, MACH_UX500_DT, OMAP_USB3 and
-MMC_SUNXI which I haven't found any mentioning anywhere, MTD_M25P80
-which depends on MTD_SPI_NOR or DOVE_THERMAL which depends on the
-legacy ARCH_DOVE (besides USE_OF of course) being not much of multi
-compatible?
+The whole point of an IOMMU is that it maps dynamically, so I agree:
+I'm unclear on what dma-ranges should mean in the IOMMU node itself
+(if anything).
 
- arch/arm/configs/multi_v7_defconfig |   11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+> 
+> > > I don't understand the problem. If you have stream IDs 0 through 7,
+> > > you would have
+> > >
+> > >         master@a {
+> > >                 ...
+> > >                 iommus = <&smmu 0>;
+> > >         };
+> > >
+> > >         master@b {
+> > >                 ...
+> > >                 iommus = <&smmu 1;
+> > >         };
+> > >
+> > >         ...
+> > >
+> > >         master@12 {
+> > >                 ...
+> > >                 iommus = <&smmu 7;
+> > >         };
+> > >
+> > > and you don't need a window at all. Why would you need a mask of
+> > > some sort?
+> > 
+> > 1 master with 7 IDs like this:
+> > 
+> >          master@a {
+> >                  ...
+> >                  iommus = <&smmu 0> <&smmu 1> <&smmu 2> <&smmu 3>
+> > <&smmu 4> <&smmu 5> <&smmu 6> <&smmu 7>;
+> >          };
+> > 
+> > If there was any sort of window, then it is almost certainly the same
+> > window for each ID.
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 7f4645c..7cfc176 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -65,7 +65,6 @@ CONFIG_ARCH_VEXPRESS=y
- CONFIG_ARCH_VEXPRESS_CA9X4=y
- CONFIG_ARCH_WM8850=y
- CONFIG_ARCH_ZYNQ=y
--CONFIG_NEON=y
- CONFIG_TRUSTED_FOUNDATIONS=y
- CONFIG_PCI=y
- CONFIG_PCI_MSI=y
-@@ -81,6 +80,7 @@ CONFIG_CPU_FREQ=y
- CONFIG_CPU_FREQ_STAT_DETAILS=y
- CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
- CONFIG_CPU_IDLE=y
-+CONFIG_NEON=y
- CONFIG_NET=y
- CONFIG_PACKET=y
- CONFIG_UNIX=y
-@@ -132,6 +132,7 @@ CONFIG_NETDEVICES=y
- CONFIG_SUN4I_EMAC=y
- CONFIG_MACB=y
- CONFIG_NET_CALXEDA_XGMAC=y
-+CONFIG_IGB=y
- CONFIG_MV643XX_ETH=y
- CONFIG_MVNETA=y
- CONFIG_KS8851=y
-@@ -155,6 +156,8 @@ CONFIG_KEYBOARD_TEGRA=y
- CONFIG_KEYBOARD_SPEAR=y
- CONFIG_KEYBOARD_CROS_EC=y
- CONFIG_MOUSE_PS2_ELANTECH=y
-+CONFIG_INPUT_TOUCHSCREEN=y
-+CONFIG_TOUCHSCREEN_STMPE=y
- CONFIG_INPUT_MISC=y
- CONFIG_INPUT_MPU3050=y
- CONFIG_SERIO_AMBAKMI=y
-@@ -200,6 +203,7 @@ CONFIG_SPI_SUN6I=y
- CONFIG_SPI_TEGRA114=y
- CONFIG_SPI_TEGRA20_SFLASH=y
- CONFIG_SPI_TEGRA20_SLINK=y
-+CONFIG_SPI_SPIDEV=y
- CONFIG_PINCTRL_AS3722=y
- CONFIG_PINCTRL_PALMAS=y
- CONFIG_GPIO_SYSFS=y
-@@ -217,6 +221,7 @@ CONFIG_POWER_RESET_AS3722=y
- CONFIG_POWER_RESET_GPIO=y
- CONFIG_POWER_RESET_SUN6I=y
- CONFIG_SENSORS_LM90=y
-+CONFIG_SENSORS_LM95245=y
- CONFIG_THERMAL=y
- CONFIG_DOVE_THERMAL=y
- CONFIG_ARMADA_THERMAL=y
-@@ -227,6 +232,7 @@ CONFIG_MFD_AS3722=y
- CONFIG_MFD_CROS_EC=y
- CONFIG_MFD_CROS_EC_SPI=y
- CONFIG_MFD_MAX8907=y
-+CONFIG_MFD_STMPE=y
- CONFIG_MFD_PALMAS=y
- CONFIG_MFD_TPS65090=y
- CONFIG_MFD_TPS6586X=y
-@@ -303,6 +309,9 @@ CONFIG_MMC_OMAP=y
- CONFIG_MMC_OMAP_HS=y
- CONFIG_MMC_MVSDIO=y
- CONFIG_MMC_SUNXI=y
-+CONFIG_NEW_LEDS=y
-+CONFIG_LEDS_CLASS=y
-+CONFIG_LEDS_PWM=y
- CONFIG_EDAC=y
- CONFIG_EDAC_MM_EDAC=y
- CONFIG_EDAC_HIGHBANK_MC=y
--- 
-1.7.9.5
+Do we have real examples of using a window *and* an ID?  I thought the
+windowed-IOMMU concept was partly a way of encoding the ID in some
+real address bits on the bus.  If you're doing that, it seems less likely
+that there is a true "ID" as such (though it is possible).
+
+> Ok, I see. In that case you'd probably want to have #address-cells = <1>
+> and #size-cells = <1> and give a range of IDs like
+> 
+> 	iommus = <&smmu 0 8>;
+> 
+> Do you think that ranges can have a meaningful definition with the ARM
+> SMMU stream IDs?
+
+In the strictest sense, no.
+
+But for a large set of sane configurations, this probably works.
+
+Small sets of randomly-assigned IDs can just be enumerated one by one.
+
+We wouldn't be able to describe folding and bit shuffling, but we
+probably don't want to encourage that anyway.
+
+Cheers
+---Dave
