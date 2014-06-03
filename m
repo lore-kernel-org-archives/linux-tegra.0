@@ -1,45 +1,46 @@
-From: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH 2/3] arm: tegra: enable igb, stmpe, i2c chardev, spidev,
- lm95245, pwm leds
-Date: Tue, 03 Jun 2014 08:02:37 +0200
-Message-ID: <538D64FD.2010909@ziswiler.com>
-References: <c5522b0efcbfc7690dcde6aaf78b9dd568f99604.1401665237.git.marcel@ziswiler.com> <39a8704a4c8170d6b0620a1e5e44042eae6d8810.1401665237.git.marcel@ziswiler.com> <538CA24B.1010602@wwwdotorg.org> <538CA635.4050502@ziswiler.com> <20140602221627.GP31751@sirena.org.uk>
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v3.15-rc5
+Date: Mon, 2 Jun 2014 23:46:31 -0700
+Message-ID: <538D6F47.6030801@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140602221627.GP31751-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stefan-XLVq0VzYD2Y@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/03/2014 12:16 AM, Mark Brown wrote:
-> On Mon, Jun 02, 2014 at 06:28:37PM +0200, Marcel Ziswiler wrote:
->> On 06/02/2014 06:11 PM, Stephen Warren wrote:
->
->>>> +CONFIG_SPI_SPIDEV=y
->
->>> Is this useful with DT? I thought that unlike I2C_CHARDEV, spidev needed
->>> dummy devices to exist in DT for spidev to work? If so, there's not much
->>> point adding the option to defconfig, since people can add it when they
->>> put the dummy devices into DT.
->
->> Yes, the Apalis T30 DT I sent actually contains two of them which we call
->> generic Apalis SPI1 and SPI2 out-of-the-box configured for exactly that.
->> Without the config enabled though it probably does not make much sense to
->> include it in the DT so I would consider removing it again.
->
-> Your DT is broken if it's got a "spidev" node in it, you should be
-> describing the hardware not the Linux implementation of the software.
-> It would be really nice if we had a good way of handling this but we
-> don't yet.
+Here are some basic Tegra test results for Linux v3.15-rc5.
+Logs and other details at:
 
-I strongly disagree, it almost perfectly describes the hardware. Unlike 
-on I2c where modelling a bus is enough to allow generic user space 
-access unfortunately on SPI this is not enough as it requires a specific 
-chip-select as well. This is exactly what spidev does and maps to our 
-hardware perfectly which has one dedicated chip-select per SPI bus on a 
-dedicated header which allows our customers out-of-the-box spidev user 
-space access to almost any SPI device connected to those buses just like 
-with i2c-devs on I2C buses.
+     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.15-rc5/20140509133105/
+
+
+Test summary
+------------
+
+Build: zImage:
+     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Boot to userspace: multi_v7_defconfig:
+     Pass: ( 2/ 2): tegra114-dalmore-a04, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+     Pass: ( 2/ 2): tegra114-dalmore-a04, tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v3.15-rc4 (89ca3b881987f5a4be4c5dbaa7f0df12bbdde2fd)):
+    text     data      bss    total  kernel
+    +359     +120        0     +479  multi_v7_defconfig
+    +379     +128        0     +507  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v3.15-rc4 (89ca3b881987f5a4be4c5dbaa7f0df12bbdde2fd))
+     avail    rsrvd     high    freed                board              kconfig                  dtb
+         .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+         .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+         .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+         .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
