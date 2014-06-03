@@ -1,31 +1,61 @@
-From: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: [PATCH] ARM: tegra: jetson-tk1: mark eMMC as non-removable
-Date: Tue,  3 Jun 2014 14:48:46 +0200
-Message-ID: <1401799726-8161-1-git-send-email-l.stach@pengutronix.de>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH] drm/nouveau/vm: fix mapping of SG pages list
+Date: Tue,  3 Jun 2014 22:56:28 +0900
+Message-ID: <1401803788-21494-1-git-send-email-acourbot@nvidia.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ben Skeggs <bskeggs@redhat.com>, Thierry Reding <treding@nvidia.com>
+Cc: nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-The eMMC is soldered to the board, reflect this in the DT.
+SG pages lists (not to be confused with scatterlists) are a list of 4KB
+memory pages used to define a nouveau_mem. Mapping them to a VM that
+does not use 4KB apertures resulted in each subsequent 4KB physical page
+being mapped into a larger VM aperture, thus creating an incorrect,
+overlapping mapping.
 
-Signed-off-by: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+This patch fixes this issue by detecting when such mappings occur and by
+skipping the required number of pages in the list to ensure a correct
+linear mapping.
+
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
- arch/arm/boot/dts/tegra124-jetson-tk1.dts | 1 +
- 1 file changed, 1 insertion(+)
+Ben, how does this look? This issue has been highlighted by the GK20A
+RAM driver which makes use of nouveau_mem::pages to provide system
+memory. The mapping overlap resulted in rendering issues for buffers
+that were bigger than 1 big VM page.
 
-diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-index e31fb61a81d3..16082c0bdaca 100644
---- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-+++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-@@ -1633,6 +1633,7 @@
- 	sdhci@0,700b0600 {
- 		status = "okay";
- 		bus-width = <8>;
-+		non-removable;
- 	};
+I believe this is the correct way to fix this, and this way of building
+nouveau_mem instances is not much used in the driver anyway, but you
+know better. :)
+
+ drivers/gpu/drm/nouveau/core/subdev/vm/base.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/nouveau/core/subdev/vm/base.c b/drivers/gpu/drm/nouveau/core/subdev/vm/base.c
+index 7dd680f..db35e8d 100644
+--- a/drivers/gpu/drm/nouveau/core/subdev/vm/base.c
++++ b/drivers/gpu/drm/nouveau/core/subdev/vm/base.c
+@@ -152,13 +152,18 @@ nouveau_vm_map_sg(struct nouveau_vma *vma, u64 delta, u64 length,
+ 		end = (pte + num);
+ 		if (unlikely(end >= max))
+ 			end = max;
+-		len = end - pte;
++
++		/*
++		 * Map pages >4KB one by one so we can fix the list pointer
++		 * as to not map intermediate pages to the next PTE
++		 */
++		len = bits ? 1 : end - pte;
  
- 	ahub@0,70300000 {
+ 		vmm->map_sg(vma, pgt, mem, pte, len, list);
+ 
+ 		num  -= len;
+ 		pte  += len;
+-		list += len;
++		list += len << bits;
+ 		if (unlikely(end >= max)) {
+ 			pde++;
+ 			pte = 0;
 -- 
-2.0.0.rc2
+2.0.0
