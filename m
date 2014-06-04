@@ -1,58 +1,50 @@
-From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Wed, 4 Jun 2014 17:41:32 +0100
-Message-ID: <20140604164132.GF6644@arm.com>
-References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
-	<4545972.cM7IP1qTXQ@wuerfel>
-	<CAL_Jsq+tkFNpjSEZboT+o69B_Z3a8e-ZVKaYDmLwtkyYoPy6VQ@mail.gmail.com>
-	<5288123.eXagyPAxNq@wuerfel>
-	<20140602104104.GD3855@e103592.cambridge.arm.com>
-	<20140604143509.GF28484@ulmo>
+From: Lucas Stach <dev@lynxeye.de>
+Subject: Re: Tegra 2 T20 NAND Flash Support
+Date: Wed, 04 Jun 2014 19:32:09 +0200
+Message-ID: <1401903129.9454.2.camel@tellur>
+References: <538E6FB5.5020806@ziswiler.com> <1401866283.2173.3.camel@tellur>
+ <538EC96A.4050702@ziswiler.com> <20140604144134.GH28484@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20140604143509.GF28484@ulmo>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20140604144134.GH28484@ulmo>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>, Marcel Ziswiler <marcel@ziswiler.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Stefan Agner <stefan@agner.ch>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jun 04, 2014 at 03:35:10PM +0100, Thierry Reding wrote:
-> On Mon, Jun 02, 2014 at 11:41:04AM +0100, Dave Martin wrote:
-> > In the strictest sense, no.
+Am Mittwoch, den 04.06.2014, 16:41 +0200 schrieb Thierry Reding:
+> On Wed, Jun 04, 2014 at 09:23:22AM +0200, Marcel Ziswiler wrote:
+> > On 06/04/2014 09:18 AM, Lucas Stach wrote:
+> > >I took the Linux Tegra NAND driver from Thierry and cleaned it up quite
+> > >a bit. It now works with both ONFI and non-ONFI NAND, at least for
+> > >reading. Writing doesn't quite work yet and I've got side-tracked with
+> > >other stuff.
+> > >
+> > >If you are interested in moving this forward I can put up my WIP patches
+> > >to some public location.
 > > 
-> > But for a large set of sane configurations, this probably works.
+> > Sounds great, yes. That would be perfect, thanks.
 > > 
-> > Small sets of randomly-assigned IDs can just be enumerated one by one.
-> > 
-> > We wouldn't be able to describe folding and bit shuffling, but we
-> > probably don't want to encourage that anyway.
+> > We even once got an universal NAND test infrastructure from Micron based on
+> > a re-worked Colibri T20 which we could use to validate it with various NAND
+> > flash parts.
 > 
-> I'm having some difficulty understanding this. You make it sound like
-> there's a fairly arbitrary number of IDs that the SMMU can handle. So
-> how is the mapping to devices defined? If you say encourage that does
-> make it sound like the assignment of IDs is purely defined by some
-> mechanism in software rather than in hardware. Or they are more or less
-> randomly picked by someone. If that's the case, is that not something
-> that should be dynamically allocated by the kernel rather than put into
-> the device tree?
+> Excellent, I would've had a hard time digging up those patches. It's
+> really been quite a while.
+> 
+I've put up a rebased version of the patches at
 
-The set of StreamIDs that can be generated by a master is fixed in the
-hardware. The SMMU can then be programmed to map these incoming IDs onto
-a context ID (or a set of context IDs), which are the IDs used internally
-by the SMMU to find the page tables etc.
+git://git.pengutronix.de/git/lst/linux.git tegra-nand
 
-The StreamID -> ContextID mapping is dynamic and controlled by software.
-The Master -> StreamIDs mapping is fixed in the hardware.
-
-Will
+Regards,
+Lucas
