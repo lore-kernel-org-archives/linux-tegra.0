@@ -1,93 +1,51 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 2/3] arm: tegra: enable igb, stmpe, i2c chardev, spidev,
- lm95245, pwm leds
-Date: Wed, 4 Jun 2014 12:17:55 +0100
-Message-ID: <20140604111755.GG2520@sirena.org.uk>
-References: <c5522b0efcbfc7690dcde6aaf78b9dd568f99604.1401665237.git.marcel@ziswiler.com>
- <39a8704a4c8170d6b0620a1e5e44042eae6d8810.1401665237.git.marcel@ziswiler.com>
- <538CA24B.1010602@wwwdotorg.org>
- <538CA635.4050502@ziswiler.com>
- <20140602221627.GP31751@sirena.org.uk>
- <538D64FD.2010909@ziswiler.com>
- <20140603094537.GQ31751@sirena.org.uk>
- <538EBACB.70100@ziswiler.com>
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 0/9] Serial ATA support for NVIDIA Tegra124
+Date: Wed, 4 Jun 2014 14:32:30 +0300
+Message-ID: <1401881559-18469-1-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Fnm8lRGFTVS/3GuM"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <538EBACB.70100@ziswiler.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marcel Ziswiler <marcel@ziswiler.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, thierry.reding@gmail.com, linux@arm.linux.org.uk, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, stefan@agner.ch
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi,
 
---Fnm8lRGFTVS/3GuM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This series adds support for the onboard AHCI-compliant Serial ATA
+controller found on Tegra124 systems-on-chip. The controller is
+enabled on Jetson TK1. The series depends on Peter's efuse series 
+and Thierry's yet to be submitted XUSB pinctrl driver.
 
-On Wed, Jun 04, 2014 at 08:20:59AM +0200, Marcel Ziswiler wrote:
-> On 06/03/2014 11:45 AM, Mark Brown wrote:
+A branch containing the series is located at 
+	git://github.com/cyndis/linux.git
+branch ahci-rel.
 
-> >When you say "generic user space access" you are describing a specific
-> >detail of how this device happens to be controlled with your software.
+Mikko Perttunen (9):
+  of: Add NVIDIA Tegra SATA controller binding
+  ARM: tegra: Add SATA controller to Tegra124 device tree
+  ARM: tegra: Add SATA and SATA power to Jetson TK1 device tree
+  clk: tegra: Enable hardware control of SATA PLL
+  clk: tegra: Add SATA clocks to Tegra124 initialization table
+  ARM: tegra: Export tegra_powergate_power_on
+  ahci: Increase AHCI_MAX_CLKS to 4
+  ata: Add support for the Tegra124 SATA controller
+  ARM: tegra: Add options for Tegra AHCI support to tegra_defconfig
 
-> No, not at all. In fact I did not even specify neither the exact type of
-> device apart from it being a SPI device nor any property of the software
-> apart from the generic user space access thereof implemented in the Linux
+ .../devicetree/bindings/ata/tegra-sata.txt         |  29 ++
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts          |  36 ++
+ arch/arm/boot/dts/tegra124.dtsi                    |  24 ++
+ arch/arm/configs/tegra_defconfig                   |   3 +
+ arch/arm/mach-tegra/powergate.c                    |   1 +
+ drivers/ata/Kconfig                                |   9 +
+ drivers/ata/Makefile                               |   1 +
+ drivers/ata/ahci.h                                 |   2 +-
+ drivers/ata/ahci_tegra.c                           | 386 +++++++++++++++++++++
+ drivers/clk/tegra/clk-pll.c                        |   8 +
+ drivers/clk/tegra/clk-tegra124.c                   |   2 +
+ 11 files changed, 500 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/ata/tegra-sata.txt
+ create mode 100644 drivers/ata/ahci_tegra.c
 
-You're saying you're controlling it from userspace.  This is a
-particular detail of what you are doing in your system.  You happen to
-want to control the devices you are hanging off the system with
-userspace drivers but that's just what you're doing right now.
-
-> kernel. I really don't see any difference to i2c chardev which is already
-> enabled in multi_v7_defconfig.
-
-That does not require explicit registration as the device driver for the
-device in order to be used.
-
-> >This is not a description of your hardware, it is a description of how
-> >it is controlled with your current software.
-
-> Sorry, but I really don't know what you are referring to. It's a pure
-> hardware description of some pins being the SPI bus namely MISO/MOSI and the
-> clock plus an accompanying chip-select pin.
-
-No, that's in the controller node - the chip selects are described
-there.  The child node references a chip select number that the master
-has and describes what's connected to that chip select.
-
-> I fear for some reason or another you have some affinity against spidev
-> which strikes me odd. Admittedly it is not perfect but it is the only
-> generic SPI user space access currently implemented in the Linux kernel and
-> so far did its job perfectly for many of our customers.
-
-It's a perfectly fine way of controlling things from userspace if that's
-a sensible way of controlling devices but that does not mean you should
-describe it in the device tree in that fashion.
-
---Fnm8lRGFTVS/3GuM
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTjwBfAAoJELSic+t+oim9g0kP/21/0pU2F2LXOmH3xpr0/hkV
-emJkq4yant0EYn3b2iG3DJS6LKVu4rXKnV/TyHeAHjJnxROGA1284YlZdiTxasxd
-Fucib/fvMQVFnEIiyMmwhb/RLQbd7Ieui8ViTP0o7hmA43ZKZ/G0yIMWXAVE3Uck
-Te7w5qrgZXsEg6/s+w/j79SqGCeBwlY/8A2dQzdsgn76FPbDrHuqrVEz/SOKwPoz
-7OcPsWYSaesjLq2uU0Amt/hDp13WgEZvO2F6CQXaQMlbxP2eVao0ayA8ElS+G4g4
-4ZDyw6wLwooXIuJiTh07la7PP9JmmZw8ymTdRI/tgG8Y4Qoyfk1GMAosFmIhBWFw
-o/71CJSil4OkuOJO7bvHBF2ei7l9ZksB+J1ZaIXju/oUelM4I3bT7HRysmmmNvCE
-aleTkdpKFJVxwfvYeeHkE8BYb9BAcMmdjkA1Lspq4PAiXsqODzwdIFkakVwc/SRS
-QH0eIpiaVggSuIH3F/eYE55jaBPSlJtMGrR5JyKIJpA1CYc3JILWir6BW3SWNzJ5
-0dvYpWEeaP5SulTNiRk+EpZQ2LB0tpImF7aE1xVMLjFm06X89amqzgnCFuV7MAT8
-KPogyqmoJmW2Nxcl+Jo3vcQzk8bMQhOqxeEh6dKOewL6bsDxMjJabDvYWqWD5X5B
-2JUWUObJXL1Hz3UB75oi
-=6UGA
------END PGP SIGNATURE-----
-
---Fnm8lRGFTVS/3GuM--
+-- 
+1.8.1.5
