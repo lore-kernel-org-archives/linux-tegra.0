@@ -1,87 +1,110 @@
-From: Thierry Reding <thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Wed, 4 Jun 2014 23:12:38 +0200
-Message-ID: <20140604211237.GC18710@mithrandir>
+Date: Wed, 4 Jun 2014 23:32:00 +0200
+Message-ID: <20140604213159.GB18780@mithrandir>
 References: <1400877395-4235-1-git-send-email-thierry.reding@gmail.com>
- <538757B6.4010109@wwwdotorg.org>
- <20140530073006.GA24748@ulmo>
- <20140530112728.GB3949@e103592.cambridge.arm.com>
+	<20140530112226.GA3949@e103592.cambridge.arm.com>
+	<4830064.JvgTAs8Xty@wuerfel>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="VywGB/WGlW4DM4P8"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140530112728.GB3949@e103592.cambridge.arm.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Mark Rutland <Mark.Rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Cho KyongHo <pullip.cho@samsung.com>, Grant Grundler <grundler@chromium.org>, Marc Zyngier <Marc.Zyngier@arm.com>, Will Deacon <Will.Deacon@arm.com>, Joerg Roedel <joro@8bytes.org>, Hiroshi Doyu <hdoyu@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="===============7145590475466759764=="
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <4830064.JvgTAs8Xty@wuerfel>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---VywGB/WGlW4DM4P8
+--===============7145590475466759764==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="dc+cDN39EJAMEtIO"
+Content-Disposition: inline
+
+
+--dc+cDN39EJAMEtIO
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 30, 2014 at 12:27:28PM +0100, Dave Martin wrote:
-> On Fri, May 30, 2014 at 08:30:08AM +0100, Thierry Reding wrote:
-[...]
-> > Arnd, can you take another look at this binding and see if there's
-> > anything else missing? If not I'll go through the document again and
-> > update all #address-cells/#size-cells references with #iommu-cells as
-> > appropriate and submit v3.
+On Fri, May 30, 2014 at 09:01:19PM +0200, Arnd Bergmann wrote:
+> On Friday 30 May 2014 12:22:32 Dave Martin wrote:
+> > > +
+> > > +Examples:
+> > > +=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > +
+> > > +Single-master IOMMU:
+> > > +--------------------
+> > > +
+> > > +	iommu {
+> > > +		#address-cells =3D <0>;
+> > > +		#size-cells =3D <0>;
+> > > +	};
+> > > +
+> > > +	master {
+> > > +		iommus =3D <&/iommu>;
+> > > +	};
+> > > +
+> > > +Multiple-master IOMMU with fixed associations:
+> > > +----------------------------------------------
+> > > +
+> > > +	/* multiple-master IOMMU */
+> > > +	iommu {
+> > > +		/*
+> > > +		 * Masters are statically associated with this IOMMU and
+> > > +		 * address translation is always enabled.
+> > > +		 */
+> > > +		#address-cells =3D <0>;
+> > > +		#size-cells =3D <0>;
+> >=20
+> > In this example, can different translations be set up for the different
+> > masters?
+> >=20
+> > With no cells available to contain any sort of ID, it looks like this
+> > is not possible.
 >=20
-> How do you envisage propagation of the master ID bits downstream of the
-> IOMMU would be described?
->=20
-> We will definitely need a way to describe this for GICv3.  How those
-> values are propagated is likely to vary between related SoCs and doesn't
-> feel like it should be baked into a driver, especially for the ARM SMMU
-> which may get reused in radically different SoC families from different
-> vendors.
+> Correct, this example is for an IOMMU that does not use IDs but has a
+> shared address space for all devices.
 
-Well, we've had cases like these in the past (power sequences come to
-mind). Some concepts are just too difficult or unwieldy to be put into
-device tree. I think that this is one of them.
-
-> The most likely types of remapping are the adding of a base offset or
-> some extra bits to the ID -- because not all MSIs to the GIC will
-> necessarily pass through the IOMMU.  It's also possible that we might
-> see ID squashing or folding in some systems.
-
-It can easily be argued that if the algorithm used to remap the ID
-varies, the compatibility of the device changes. Therefore I would
-expect any variant of the GICv3 that deviates from the "standard"
-mapping (if there is such a thing) to have its own compatible string.
-
-At that point there are two possibilities: a) handle the remapping in
-code hooked into the driver via matching of the compatible string or
-b) specifying a different specifier for each of these and keep the
-description in DT. From an implementation point of view, variant b) is
-likely going to be very similar to a), though (I'm thinking .of_xlate
-type of functions here).
+Couldn't these device all still have separate address spaces?
 
 Thierry
 
---VywGB/WGlW4DM4P8
+--dc+cDN39EJAMEtIO
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTj4vFAAoJEN0jrNd/PrOheCAP/i+lBZElAIcRlK6s2zrZYOSX
-92zTVfj0mb8G1wjEGuuFARffdwwjiiy6EvSMvFHelQr7eHdhBaWS1NnXDTArNeHe
-1GXXRMG7v3uJaIY7FDIHWxloL+v6/8FOpiQD8oyXwnZRE7cUwp1wikYO34fwRURH
-KQ4TwBNFYe8wXku1gffSYLKIF5HeN0zd+36f2E+JmbzEJEcvjagRSDdfV03uj3KA
-lqzwHNuIqBzsUVBCg7SI5fInfstUOTo/yRqXA6KYNms0twy7xC5wbKi5K2MQhAl4
-3xHrfwaC42Z6W2tXt8XGYRgS31V5nvq3Xg+sd/pr9v73jnwXzvyYNrlAuRBPvrPO
-UdKOpI8//EqU1+abQDpO0nZZtGEPYFqg7Rljz66gCav2faEn+44qZlAsQvDIzON3
-1FyEQIbFEUd/2m/RGEMO+Dhk0M0cpkVlmYteSvuNNRK/nrzCldYH8ubhGF5lFOCr
-dYfZfXXRS8JT3jH1o+i4eSts/cDQr29h9rE/fqhOercD2vc6DQjzC8UHFNgO78yN
-ozBhBd1EyQ1McT5SROrTqY1VXHjOAsADfP5pW2fbdDCyBnX3mVznqHYx0G5CINf7
-Ux1xscC6qGldF9+xFMTXJd8g5xAglPRZzXf9pP68ZJnxV+OJcuwsDixP3zcLIpMg
-UX+JzjNS4F7MccluPvrz
-=xLVK
+iQIcBAEBAgAGBQJTj5BPAAoJEN0jrNd/PrOhGcQP/A2I75o+TqycvUJtqqiz5AQC
+bh2K9rRqbUgQoBTnAwD4oOmnM50zXpxxOd+1OAEE9Q6mRFw4FpZqGmHnkep89LtR
+mh9grCRO6rqnLjt/98K2KzRdW5vtJ0PvuBHsyPW1VIhXr1vp114YkV7+bMqsrtwe
+TN3W5YPZLw/vfG4VJV+lkFji3AHFgBnJgvOx12T4eiX4RoTzW4wvNzFsP+2dr50L
+rythOupdjbDufTMqoWB4bmXDQBUc5FHax+jTxzAPpLAumTvWn5f3hUjfutPVPzrj
+JTy3xkdIXtx+yhLf3DFzMvoWiLbS0xnu1+qJ9xp8Av6R8fCWKLyG/SkP2FAKfWCb
+qc4yxogkG49yXIeLteuCFwO3SGqVMeN0b5jWPiuyBWq1avbZq1vJkfExzV+KdAxy
+u0wVHxX12ab/NW+lfl2UHRdoNxJdcaVXSdrxlo6UHTptwjKiOiknf+KNQooHU3wr
+LJ0dNc2Pay96PLElOkwP/Cv5iZjlp0IeZxvM4/lpYRZc4xxnl1V1gROmWTJGTUcY
+m3CXyZ0hJhWBddoDODPeaY7oua2VjeEeZ8nBPkFZncvw9cezPH6EVH/+wLjxGKcG
+lWWo7bT6XH4ZFjKp3tU5/J3gAnTAPHrDiOfpQWVns//jh7DHH0EdZCVvAtKpo6re
+azJUtvUntUZEH6CGSCXy
+=PEUa
 -----END PGP SIGNATURE-----
 
---VywGB/WGlW4DM4P8--
+--dc+cDN39EJAMEtIO--
+
+--===============7145590475466759764==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============7145590475466759764==--
