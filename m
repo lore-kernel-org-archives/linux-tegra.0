@@ -1,47 +1,103 @@
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH 5/9] clk: tegra: Add SATA clocks to Tegra124 initialization
- table
-Date: Wed, 4 Jun 2014 14:32:35 +0300
-Message-ID: <1401881559-18469-6-git-send-email-mperttunen@nvidia.com>
-References: <1401881559-18469-1-git-send-email-mperttunen@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 6/6] usb: host: ohci-exynos: Use devm_ioremap_resource
+ instead of devm_ioremap
+Date: Wed, 4 Jun 2014 15:13:07 +0200
+Message-ID: <20140604131306.GB28484@ulmo>
+References: <1399723210-21569-1-git-send-email-gautam.vivek@samsung.com>
+ <1399723210-21569-7-git-send-email-gautam.vivek@samsung.com>
+ <CAFp+6iFufCh6SVEF-HQA62ZsJGJGSebDSs28eqcrMy1X8e5vjA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1401881559-18469-1-git-send-email-mperttunen@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: swarren@wwwdotorg.org, thierry.reding@gmail.com, tj@kernel.org, pdeschrijver@nvidia.com
-Cc: linux-tegra@vger.kernel.org, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Mikko Perttunen <mperttunen@nvidia.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="7ZAtKRhVyVSsbBD2"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CAFp+6iFufCh6SVEF-HQA62ZsJGJGSebDSs28eqcrMy1X8e5vjA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This adds two clocks, SATA and SATA_OOB, to the Tegra124 clock initialization
-table. The clocks are needed for working SATA support.
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
- drivers/clk/tegra/clk-tegra124.c | 2 ++
- 1 file changed, 2 insertions(+)
+--7ZAtKRhVyVSsbBD2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index 80efe51..6770787 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -1369,6 +1369,8 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{TEGRA124_CLK_XUSB_HS_SRC, TEGRA124_CLK_PLL_U_60M, 60000000, 0},
- 	{TEGRA124_CLK_XUSB_FALCON_SRC, TEGRA124_CLK_PLL_RE_OUT, 224000000, 0},
- 	{TEGRA124_CLK_XUSB_HOST_SRC, TEGRA124_CLK_PLL_RE_OUT, 112000000, 0},
-+	{TEGRA124_CLK_SATA, TEGRA124_CLK_PLL_P, 104000000, 0},
-+	{TEGRA124_CLK_SATA_OOB, TEGRA124_CLK_PLL_P, 204000000, 0},
- 	/* This MUST be the last entry. */
- 	{TEGRA124_CLK_CLK_MAX, TEGRA124_CLK_CLK_MAX, 0, 0},
- };
--- 
-1.8.1.5
+On Wed, Jun 04, 2014 at 03:41:20PM +0530, Vivek Gautam wrote:
+> Hi,
+>=20
+>=20
+> On Sat, May 10, 2014 at 5:30 PM, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> =
+wrote:
+> > Using devm_ioremap_resource() API should actually be preferred over
+> > devm_ioremap(), since the former request the mem region first and then
+> > gives back the ioremap'ed memory pointer.
+> > devm_ioremap_resource() calls request_mem_region(), therby preventing
+> > other drivers to make any overlapping call to the same region.
+> >
+> > Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>=20
+> Although this patch and rest in the series are merged.
+> But i have got a doubt, so making this thread alive.
+>=20
+> > ---
+> >  drivers/usb/host/ohci-exynos.c |    7 +++----
+> >  1 file changed, 3 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exy=
+nos.c
+> > index 9cf80cb..dec691d 100644
+> > --- a/drivers/usb/host/ohci-exynos.c
+> > +++ b/drivers/usb/host/ohci-exynos.c
+> > @@ -120,10 +120,9 @@ skip_phy:
+> >
+> >         hcd->rsrc_start =3D res->start;
+> >         hcd->rsrc_len =3D resource_size(res);
+> > -       hcd->regs =3D devm_ioremap(&pdev->dev, res->start, hcd->rsrc_le=
+n);
+> > -       if (!hcd->regs) {
+> > -               dev_err(&pdev->dev, "Failed to remap I/O memory\n");
+> > -               err =3D -ENOMEM;
+> > +       hcd->regs =3D devm_ioremap_resource(&pdev->dev, res);
+>=20
+> Here, we replaced devm_ioremap() call with devm_ioremap_resource(),
+> which internally requests the memory region
+
+I guess this could lead to problems if drivers haven't been written to
+cleanly split the register ranges that they access, since now two
+overlapping regions may be requested and cause the drivers to fail.
+
+> and then does a "devm_ioremap()" or "devm_ioremap_nocache()" based on
+> the check for IORESOURCE_CACHEABLE flag.
+>=20
+> But this flag is not set for the resource of this device.
+> So should we be explicitly setting the flag in driver ?
+
+I don't think it makes much sense to map these registers cached anyway.
+Drivers will likely expect writes to this region to take effect without
+needing any kind of flushing.
+
+Thierry
+
+--7ZAtKRhVyVSsbBD2
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTjxtiAAoJEN0jrNd/PrOhiTYP/2NPPViprewJ60qZhUc+hJ7G
+hMv0Qa08HrSeNLnHN/jOqIwdgDMFSy/8Um2yCyqH5Wpy0+ohJL2V0PuBuXA/ZIbO
+ZQ6Q3CChqGxqc939kaVjoeLYlNJCPaz2lkxqGHpuSLDY9ojIbbHgfPbEVFeQj6Z4
+6+VkGh06/+Ato8Rpp5xmzr77x9qujLzGPe6e8zS7cr272TwBXBgBGo/jUBHt4aE1
+EKo4TQtVfkBXIeSqvSKBXQSxVq3ADWOS5EOl7o0MTfoxd/2DKt3Ktd8SFisvBCWQ
+aGu6QjHIaEMiAjmAwIYSTZW9Djw1x62xgdRA/ZFQufLJK2anwxgKv+jEz0Fz1XPu
+LSJCGiCWzma9IywPEc5abTRSsfIYI6iQJxwq7Fg4Z2ssLII6aPljyozbUm81YjxS
+ViB8OtzJnUjqcpca2UmDfvuG3Ty3LgyH+mopNP28daMcEeY4LczBX/Pk3uftS2Nm
++s+Whk9Ssv1WNlYz4nq737PuwnZ8leSf8hhfPDqWh9Zw8mZ/F8Cv/jqWEF7vK7ar
+lckvyWfGH/9CYqZu/WYgzid70hO4T32SnS+sJiqx/6/oGqI1bVEc+JVcNherwL88
+azmSggvCzovSD9B9Tlp4Bu2Lj7tSfsmHPIOvf5CVsKUHWWJYT6egfnm/vin2Y2L3
++3awh4NG713uFf5l4gfm
+=1dt2
+-----END PGP SIGNATURE-----
+
+--7ZAtKRhVyVSsbBD2--
