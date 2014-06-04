@@ -1,50 +1,25 @@
-From: Lucas Stach <dev@lynxeye.de>
-Subject: Re: Tegra 2 T20 NAND Flash Support
-Date: Wed, 04 Jun 2014 19:32:09 +0200
-Message-ID: <1401903129.9454.2.camel@tellur>
-References: <538E6FB5.5020806@ziswiler.com> <1401866283.2173.3.camel@tellur>
- <538EC96A.4050702@ziswiler.com> <20140604144134.GH28484@ulmo>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: tegra: Add Tegra124 HDA support
+Date: Wed, 04 Jun 2014 11:13:31 -0600
+Message-ID: <538F53BB.7060903@wwwdotorg.org>
+References: <CAEUnVG7+=1ko8NL1Z3ovSpGveUADUidy4sBhU_dTUe1zbe-bMA@mail.gmail.com> <537BCF39.6050909@wwwdotorg.org> <CAEUnVG7CRWx5Y3RsgPzrHgYRGAx=bS4WY=w1xBUw0Ukt0DTdUQ@mail.gmail.com> <20140521205538.GA6237@mithrandir> <CAEUnVG7tDjw_6wHc=FN0KsOKsSS1u8H8SzYdxt9VCwUsARRTeQ@mail.gmail.com> <20140522094958.GA11585@ulmo> <CAEUnVG5pNMzDoXGso+UiAWPpD0hNPhBPyGr8KfV587AuU70QPQ@mail.gmail.com> <537E39D9.2000304@wwwdotorg.org> <CAEUnVG4UettOj0xDy+f6qEhUbhNs=u-wgyCf_Prsd2JpnmFfLw@mail.gmail.com> <CAEUnVG42Fmn4QOu-jObpoyViscmfKn35oDmb=WR8t=X7YVSB=Q@mail.gmail.com> <537F9BEB.5020102@wwwdotorg.org> <CAEUnVG63BCgpGuo+qcYkvpnVSSguBy9xwSC_AoZqCt1RgBqm7w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20140604144134.GH28484@ulmo>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>, Marcel Ziswiler <marcel@ziswiler.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Stefan Agner <stefan@agner.ch>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAEUnVG63BCgpGuo+qcYkvpnVSSguBy9xwSC_AoZqCt1RgBqm7w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Am Mittwoch, den 04.06.2014, 16:41 +0200 schrieb Thierry Reding:
-> On Wed, Jun 04, 2014 at 09:23:22AM +0200, Marcel Ziswiler wrote:
-> > On 06/04/2014 09:18 AM, Lucas Stach wrote:
-> > >I took the Linux Tegra NAND driver from Thierry and cleaned it up quite
-> > >a bit. It now works with both ONFI and non-ONFI NAND, at least for
-> > >reading. Writing doesn't quite work yet and I've got side-tracked with
-> > >other stuff.
-> > >
-> > >If you are interested in moving this forward I can put up my WIP patches
-> > >to some public location.
-> > 
-> > Sounds great, yes. That would be perfect, thanks.
-> > 
-> > We even once got an universal NAND test infrastructure from Micron based on
-> > a re-worked Colibri T20 which we could use to validate it with various NAND
-> > flash parts.
-> 
-> Excellent, I would've had a hard time digging up those patches. It's
-> really been quite a while.
-> 
-I've put up a rebased version of the patches at
+On 05/23/2014 02:34 PM, Dylan Reid wrote:
+...
+> I also ran the HDMI audio compliance test suite.  It failed the ACR
+> (clock regeneration packet) test and the audio packet timing jitter
+> test, I could see that upsetting some monitors.  It looks like ACR
+> packets are generated for 44.1 even when playing 48k.
 
-git://git.pengutronix.de/git/lst/linux.git tegra-nand
-
-Regards,
-Lucas
+That's because the only thing that sets hdmi->audio_freq is
+tegra_hdmi_probe(). There needs to be a callback from the sound/HDA
+driver to the display driver telling it what audio frequency is in use.
