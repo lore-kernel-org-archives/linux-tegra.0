@@ -1,69 +1,93 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: Re: [PATCH v2 6/6] usb: host: ohci-exynos: Use devm_ioremap_resource
- instead of devm_ioremap
-Date: Wed, 4 Jun 2014 15:41:20 +0530
-Message-ID: <CAFp+6iFufCh6SVEF-HQA62ZsJGJGSebDSs28eqcrMy1X8e5vjA@mail.gmail.com>
-References: <1399723210-21569-1-git-send-email-gautam.vivek@samsung.com>
-	<1399723210-21569-7-git-send-email-gautam.vivek@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 2/3] arm: tegra: enable igb, stmpe, i2c chardev, spidev,
+ lm95245, pwm leds
+Date: Wed, 4 Jun 2014 12:17:55 +0100
+Message-ID: <20140604111755.GG2520@sirena.org.uk>
+References: <c5522b0efcbfc7690dcde6aaf78b9dd568f99604.1401665237.git.marcel@ziswiler.com>
+ <39a8704a4c8170d6b0620a1e5e44042eae6d8810.1401665237.git.marcel@ziswiler.com>
+ <538CA24B.1010602@wwwdotorg.org>
+ <538CA635.4050502@ziswiler.com>
+ <20140602221627.GP31751@sirena.org.uk>
+ <538D64FD.2010909@ziswiler.com>
+ <20140603094537.GQ31751@sirena.org.uk>
+ <538EBACB.70100@ziswiler.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <1399723210-21569-7-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Linux USB Mailing List <linux-usb@vger.kernel.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Greg KH <gregkh@linuxfoundation.org>, Alan Stern <stern@rowland.harvard.edu>, Stephen Warren <swarren@wwwdotorg.org>, Kukjin Kim <kgene.kim@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Alexander Shiyan <shc_work@mail.ru>, Vivek Gautam <gautam.vivek@samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Fnm8lRGFTVS/3GuM"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <538EBACB.70100@ziswiler.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marcel Ziswiler <marcel@ziswiler.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, thierry.reding@gmail.com, linux@arm.linux.org.uk, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, stefan@agner.ch
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
 
+--Fnm8lRGFTVS/3GuM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Sat, May 10, 2014 at 5:30 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
-> Using devm_ioremap_resource() API should actually be preferred over
-> devm_ioremap(), since the former request the mem region first and then
-> gives back the ioremap'ed memory pointer.
-> devm_ioremap_resource() calls request_mem_region(), therby preventing
-> other drivers to make any overlapping call to the same region.
->
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+On Wed, Jun 04, 2014 at 08:20:59AM +0200, Marcel Ziswiler wrote:
+> On 06/03/2014 11:45 AM, Mark Brown wrote:
 
-Although this patch and rest in the series are merged.
-But i have got a doubt, so making this thread alive.
+> >When you say "generic user space access" you are describing a specific
+> >detail of how this device happens to be controlled with your software.
 
-> ---
->  drivers/usb/host/ohci-exynos.c |    7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-> index 9cf80cb..dec691d 100644
-> --- a/drivers/usb/host/ohci-exynos.c
-> +++ b/drivers/usb/host/ohci-exynos.c
-> @@ -120,10 +120,9 @@ skip_phy:
->
->         hcd->rsrc_start = res->start;
->         hcd->rsrc_len = resource_size(res);
-> -       hcd->regs = devm_ioremap(&pdev->dev, res->start, hcd->rsrc_len);
-> -       if (!hcd->regs) {
-> -               dev_err(&pdev->dev, "Failed to remap I/O memory\n");
-> -               err = -ENOMEM;
-> +       hcd->regs = devm_ioremap_resource(&pdev->dev, res);
+> No, not at all. In fact I did not even specify neither the exact type of
+> device apart from it being a SPI device nor any property of the software
+> apart from the generic user space access thereof implemented in the Linux
 
-Here, we replaced devm_ioremap() call with devm_ioremap_resource(),
-which internally
-requests the memory region and then does a "devm_ioremap()" or
-"devm_ioremap_nocache()"
-based on the check for IORESOURCE_CACHEABLE flag.
+You're saying you're controlling it from userspace.  This is a
+particular detail of what you are doing in your system.  You happen to
+want to control the devices you are hanging off the system with
+userspace drivers but that's just what you're doing right now.
 
-But this flag is not set for the resource of this device.
-So should we be explicitly setting the flag in driver ?
+> kernel. I really don't see any difference to i2c chardev which is already
+> enabled in multi_v7_defconfig.
 
-The query goes for other patches too in this series, wherein
-devm_ioremap() call is replaced with devm_ioremap_resource().
+That does not require explicit registration as the device driver for the
+device in order to be used.
 
-[snip]
+> >This is not a description of your hardware, it is a description of how
+> >it is controlled with your current software.
 
+> Sorry, but I really don't know what you are referring to. It's a pure
+> hardware description of some pins being the SPI bus namely MISO/MOSI and the
+> clock plus an accompanying chip-select pin.
 
--- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+No, that's in the controller node - the chip selects are described
+there.  The child node references a chip select number that the master
+has and describes what's connected to that chip select.
+
+> I fear for some reason or another you have some affinity against spidev
+> which strikes me odd. Admittedly it is not perfect but it is the only
+> generic SPI user space access currently implemented in the Linux kernel and
+> so far did its job perfectly for many of our customers.
+
+It's a perfectly fine way of controlling things from userspace if that's
+a sensible way of controlling devices but that does not mean you should
+describe it in the device tree in that fashion.
+
+--Fnm8lRGFTVS/3GuM
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTjwBfAAoJELSic+t+oim9g0kP/21/0pU2F2LXOmH3xpr0/hkV
+emJkq4yant0EYn3b2iG3DJS6LKVu4rXKnV/TyHeAHjJnxROGA1284YlZdiTxasxd
+Fucib/fvMQVFnEIiyMmwhb/RLQbd7Ieui8ViTP0o7hmA43ZKZ/G0yIMWXAVE3Uck
+Te7w5qrgZXsEg6/s+w/j79SqGCeBwlY/8A2dQzdsgn76FPbDrHuqrVEz/SOKwPoz
+7OcPsWYSaesjLq2uU0Amt/hDp13WgEZvO2F6CQXaQMlbxP2eVao0ayA8ElS+G4g4
+4ZDyw6wLwooXIuJiTh07la7PP9JmmZw8ymTdRI/tgG8Y4Qoyfk1GMAosFmIhBWFw
+o/71CJSil4OkuOJO7bvHBF2ei7l9ZksB+J1ZaIXju/oUelM4I3bT7HRysmmmNvCE
+aleTkdpKFJVxwfvYeeHkE8BYb9BAcMmdjkA1Lspq4PAiXsqODzwdIFkakVwc/SRS
+QH0eIpiaVggSuIH3F/eYE55jaBPSlJtMGrR5JyKIJpA1CYc3JILWir6BW3SWNzJ5
+0dvYpWEeaP5SulTNiRk+EpZQ2LB0tpImF7aE1xVMLjFm06X89amqzgnCFuV7MAT8
+KPogyqmoJmW2Nxcl+Jo3vcQzk8bMQhOqxeEh6dKOewL6bsDxMjJabDvYWqWD5X5B
+2JUWUObJXL1Hz3UB75oi
+=6UGA
+-----END PGP SIGNATURE-----
+
+--Fnm8lRGFTVS/3GuM--
