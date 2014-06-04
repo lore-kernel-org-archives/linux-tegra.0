@@ -1,206 +1,69 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Wed, 4 Jun 2014 16:35:10 +0200
-Message-ID: <20140604143509.GF28484@ulmo>
-References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
-	<4545972.cM7IP1qTXQ@wuerfel>
-	<CAL_Jsq+tkFNpjSEZboT+o69B_Z3a8e-ZVKaYDmLwtkyYoPy6VQ@mail.gmail.com>
-	<5288123.eXagyPAxNq@wuerfel>
-	<20140602104104.GD3855@e103592.cambridge.arm.com>
+Subject: Re: Tegra 2 T20 NAND Flash Support
+Date: Wed, 4 Jun 2014 16:41:35 +0200
+Message-ID: <20140604144134.GH28484@ulmo>
+References: <538E6FB5.5020806@ziswiler.com>
+ <1401866283.2173.3.camel@tellur>
+ <538EC96A.4050702@ziswiler.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1695500003348279704=="
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20140602104104.GD3855-M5GwZQ6tE7x5pKCnmE3YQBJ8xKzm50AiAL8bYrjMMd8@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Hlh2aiwFLCZwGcpw"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <538EC96A.4050702-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
+Cc: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============1695500003348279704==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="FeAIMMcddNRN4P4/"
-Content-Disposition: inline
-
-
---FeAIMMcddNRN4P4/
+--Hlh2aiwFLCZwGcpw
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 02, 2014 at 11:41:04AM +0100, Dave Martin wrote:
-> On Fri, May 30, 2014 at 09:49:59PM +0200, Arnd Bergmann wrote:
-> > On Friday 30 May 2014 14:31:55 Rob Herring wrote:
-> > > On Fri, May 30, 2014 at 2:06 PM, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
-> > > > On Friday 30 May 2014 08:16:05 Rob Herring wrote:
-> > > >> On Fri, May 23, 2014 at 3:33 PM, Thierry Reding
-> > > >> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> > > >> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > >> > +IOMMU master node:
-> > > >> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > >> > +
-> > > >> > +Devices that access memory through an IOMMU are called masters.=
- A device can
-> > > >> > +have multiple master interfaces (to one or more IOMMU devices).
-> > > >> > +
-> > > >> > +Required properties:
-> > > >> > +--------------------
-> > > >> > +- iommus: A list of phandle and IOMMU specifier pairs that desc=
-ribe the IOMMU
-> > > >> > +  master interfaces of the device. One entry in the list descri=
-bes one master
-> > > >> > +  interface of the device.
-> > > >> > +
-> > > >> > +When an "iommus" property is specified in a device tree node, t=
-he IOMMU will
-> > > >> > +be used for address translation. If a "dma-ranges" property exi=
-sts in the
-> > > >> > +device's parent node it will be ignored. An exception to this r=
-ule is if the
-> > > >> > +referenced IOMMU is disabled, in which case the "dma-ranges" pr=
-operty of the
-> > > >> > +parent shall take effect.
-> > > >>
-> > > >> Just thinking out loud, could you have dma-ranges in the iommu node
-> > > >> for the case when the iommu is enabled rather than putting the DMA
-> > > >> window information into the iommus property?
-> > > >>
-> > > >> This would probably mean that you need both #iommu-cells and #addr=
-ess-cells.
-> > > >
-> > > > The reason for doing like this was that you may need a different wi=
-ndow
-> > > > for each device, while there can only be one dma-ranges property in
-> > > > an iommu node.
-> > >=20
-> > > My suggestion was that you also put the IDs in the dma-ranges as the
-> > > first cell much as ranges for PCI encodes other information in the
-> > > first cell. Then you can have an entry for each ID. The downside is
-> > > another special case like PCI.
-> > >=20
-> > > The argument for using #address-cells and #size-cells seems to be to
-> > > align with how ranges work. If that's the route we want to go, then I
-> > > say we should not stop there and actually use dma-ranges as well.
-> > > Otherwise, I don't see the advantage over #iommu-cells.
-> >=20
-> > I can see how dma-ranges in bus nodes work, it just doesn't seem to
-> > have any reasonable meaning in the iommu node itself.
+On Wed, Jun 04, 2014 at 09:23:22AM +0200, Marcel Ziswiler wrote:
+> On 06/04/2014 09:18 AM, Lucas Stach wrote:
+> >I took the Linux Tegra NAND driver from Thierry and cleaned it up quite
+> >a bit. It now works with both ONFI and non-ONFI NAND, at least for
+> >reading. Writing doesn't quite work yet and I've got side-tracked with
+> >other stuff.
+> >
+> >If you are interested in moving this forward I can put up my WIP patches
+> >to some public location.
 >=20
-> dma-ranges defines a static mapping for mastering through the bus node.
+> Sounds great, yes. That would be perfect, thanks.
 >=20
-> The whole point of an IOMMU is that it maps dynamically, so I agree:
-> I'm unclear on what dma-ranges should mean in the IOMMU node itself
-> (if anything).
->=20
-> >=20
-> > > > I don't understand the problem. If you have stream IDs 0 through 7,
-> > > > you would have
-> > > >
-> > > >         master@a {
-> > > >                 ...
-> > > >                 iommus =3D <&smmu 0>;
-> > > >         };
-> > > >
-> > > >         master@b {
-> > > >                 ...
-> > > >                 iommus =3D <&smmu 1;
-> > > >         };
-> > > >
-> > > >         ...
-> > > >
-> > > >         master@12 {
-> > > >                 ...
-> > > >                 iommus =3D <&smmu 7;
-> > > >         };
-> > > >
-> > > > and you don't need a window at all. Why would you need a mask of
-> > > > some sort?
-> > >=20
-> > > 1 master with 7 IDs like this:
-> > >=20
-> > >          master@a {
-> > >                  ...
-> > >                  iommus =3D <&smmu 0> <&smmu 1> <&smmu 2> <&smmu 3>
-> > > <&smmu 4> <&smmu 5> <&smmu 6> <&smmu 7>;
-> > >          };
-> > >=20
-> > > If there was any sort of window, then it is almost certainly the same
-> > > window for each ID.
->=20
-> Do we have real examples of using a window *and* an ID?  I thought the
-> windowed-IOMMU concept was partly a way of encoding the ID in some
-> real address bits on the bus.  If you're doing that, it seems less likely
-> that there is a true "ID" as such (though it is possible).
->=20
-> > Ok, I see. In that case you'd probably want to have #address-cells =3D =
-<1>
-> > and #size-cells =3D <1> and give a range of IDs like
-> >=20
-> > 	iommus =3D <&smmu 0 8>;
-> >=20
-> > Do you think that ranges can have a meaningful definition with the ARM
-> > SMMU stream IDs?
->=20
-> In the strictest sense, no.
->=20
-> But for a large set of sane configurations, this probably works.
->=20
-> Small sets of randomly-assigned IDs can just be enumerated one by one.
->=20
-> We wouldn't be able to describe folding and bit shuffling, but we
-> probably don't want to encourage that anyway.
+> We even once got an universal NAND test infrastructure from Micron based =
+on
+> a re-worked Colibri T20 which we could use to validate it with various NA=
+ND
+> flash parts.
 
-I'm having some difficulty understanding this. You make it sound like
-there's a fairly arbitrary number of IDs that the SMMU can handle. So
-how is the mapping to devices defined? If you say encourage that does
-make it sound like the assignment of IDs is purely defined by some
-mechanism in software rather than in hardware. Or they are more or less
-randomly picked by someone. If that's the case, is that not something
-that should be dynamically allocated by the kernel rather than put into
-the device tree?
-
-Maybe in the above case all you really need to know is how many IDs a
-device needs to be assigned so that they can be properly allocated,
-rather than the device exactly specifying which ones.
+Excellent, I would've had a hard time digging up those patches. It's
+really been quite a while.
 
 Thierry
 
---FeAIMMcddNRN4P4/
+--Hlh2aiwFLCZwGcpw
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTjy6dAAoJEN0jrNd/PrOhcOAQAJqUSIBzsGrY10WGZKf6eFFU
-SiNsCrnpvKvQ9f98ZwGrCLjad/d+h7N5Wy7CrlBuZnM48gwvxjJd8upD0ovqNGO6
-vXWee/4QT6dVxqobcRFwoyca8JQOu+rhbCWXod5+APvkE5JUYgnQgztLdzTYV+Z5
-3WWwku3KXH2uDCSCeqkpCVYOdWZ8a2tMvGFQdFqi+eFHZrSkAPie4IEm9IO7m8A6
-ob+qT/QLFJ2QPEmE6OAUCoVbF75KSaPZyjJsQ6EoQ8ZCX/pnzfRMYiHqi2sEuymS
-O7YgrSeauCdJwck5KU1Qyy3XthIDo9MdykN6MxVKKR0B4pDtn7aTQxfpgyu79+Fk
-Mhi2j2K6CAYVtpD+UR4qP53WGrpVW1DhevCXOLeGio89LmUFx4AoMhl+3YxRLsPV
-oWDO1iaESD2ZVHa1moQ2iyAWltb9Ox/yJuyIjKkJfXgQ1ehZSrR9v1lOhoBxJuGe
-qYpmQKXphXtSa10XH88c8FtwYxvUJRwD7bWDSZ86qKbTm65rzD/ajN7D0CFb4mBx
-9P5YYqXX8u90Nbb7EpDHHtBJrxN1ZE3zuHVKtDupOv5UXPcLlu9DDThIkm2Po4Jc
-Q3QcweMzt4ROb1JJ/pq25AxW3WrUNxu1+qeumcCH4sGs2CS/9sIzeCdsLvYG22M/
-qPP4LCQYQ36BNu6Ma8LH
-=xaoS
+iQIcBAEBAgAGBQJTjzAeAAoJEN0jrNd/PrOhtCgQAIhnoZ5dZoDz68B9F9Ezq4Yj
+PA/InMPo16m9G6VYBfgnMoMJm0hq8Yj/6lMSpp3GuEyEHro9sOfKZOfaUgMVM0QP
+ONs0jbye//V5Ztd51PTYM9ipFkKo8U1Ng4ox9ZTdk6VwoM+ah3kB/yAYZWzbAnH8
+oQ344iN6lLhwcxJxCov+ElNH+4fH+JRnIMnYAx8mU8w7tTkcPDdPvprsSrR8fMz5
+FRcPgWoJDsrKbwfALkKDRtm7PJAIgRUKZ6YgsZAH6GJlpkj/bbPDRLay3wDZDIkd
+e731e/2p3K41SYqIKAa3U9/g1nFOA7Mtp2yKrLMzd5AEQd3gwZorw7KFxPYGroX0
+vMjMNENLMiT84mU8Gabqc6wSmMriazMvZ+esDzDMJ/H8qtz7X0M2B0zQg+I1/M4z
+V4dM6h4XCMsQVX0RMosgp6MzQAWE7dPVidv9R/x56D5xVoyBjRHR/mSjhZWqWLKZ
+IKEhwBnbVs78bhakM0Q66pfcfHYN9aybSdL33NcI+BgLr2xhT2fz+R6FfE+IHPcY
+Cypw9dM2e3NfSe6CyqhcD2agCeaM3js20mvO0oAubq2WeChkVh2Xezi7MwjGiwWp
+tdhcGMAukRn77nzNG9QAolaTG3kl6GavXyEB2ARzSfx8a7/WBa19OFDWjrA6n/n/
+bvZNdy+cEP01uCGeGQFr
+=G4/m
 -----END PGP SIGNATURE-----
 
---FeAIMMcddNRN4P4/--
-
---===============1695500003348279704==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============1695500003348279704==--
+--Hlh2aiwFLCZwGcpw--
