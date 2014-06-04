@@ -1,88 +1,87 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCHv8 15/21] iommu/tegra124: smmu: add support platform data
-Date: Wed, 4 Jun 2014 23:37:25 +0200
-Message-ID: <20140604213724.GC18780@mithrandir>
+Subject: Re: [PATCHv8 21/21] ARM: dt: tegra124: add sdhci iommus bindings
+Date: Wed, 4 Jun 2014 23:39:50 +0200
+Message-ID: <20140604213949.GD18780@mithrandir>
 References: <1401448834-32659-1-git-send-email-hdoyu@nvidia.com>
- <1401448834-32659-16-git-send-email-hdoyu@nvidia.com>
- <5388B260.5000403@wwwdotorg.org>
- <87zjhzrzkq.fsf@nvidia.com>
+ <1401448834-32659-22-git-send-email-hdoyu@nvidia.com>
+ <5388B2FD.7040307@wwwdotorg.org>
+ <87y4xjrzc9.fsf@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="1ccMZA6j1vT5UqiK"
+	protocol="application/pgp-signature"; boundary="0/kgSOzhNoDC5T3a"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <87zjhzrzkq.fsf-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <87y4xjrzc9.fsf-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---1ccMZA6j1vT5UqiK
+--0/kgSOzhNoDC5T3a
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 30, 2014 at 07:39:01PM +0300, Hiroshi Doyu wrote:
+On Fri, May 30, 2014 at 07:44:06PM +0300, Hiroshi Doyu wrote:
 >=20
 > Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> writes:
 >=20
 > > On 05/30/2014 05:20 AM, Hiroshi Doyu wrote:
-> >> The later Tegra SoC(>=3D T124) has more registers for
-> >> MC_SMMU_TRANSLATION_ENABLE_*. Now those info is provided as platfrom
-> >> data. If those varies a lot on SoCs in the future, we can consider
-> >> putting them into DT later.
+> >> Add sdhci iommus bindings.
 > >
-> >> diff --git a/Documentation/devicetree/bindings/iommu/nvidia,tegra30-sm=
-mu.txt b/Documentation/devicetree/bindings/iommu/nvidia,tegra30-smmu.txt
+> > This isn't adding bindings, it's adding DT properties. A binding is the
+> > documentation of the schema, not the actual data in the DT.
 > >
-> >>  Required properties:
-> >> -- compatible : "nvidia,tegra30-smmu"
-> >> -- reg : Should contain 3 register banks(address and length) for each
-> >> +- compatible : "nvidia,tegra124-smmu", "nvidia,tegra30-smmu"
-> >> +- reg : Can contain multiple register banks(address and length) for e=
-ach
-> >>    of the SMMU register blocks.
+> >> diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra=
+124.dtsi
+> >> index 5b339ca8a1ab..011831ffd390 100644
+> >> --- a/arch/arm/boot/dts/tegra124.dtsi
+> >> +++ b/arch/arm/boot/dts/tegra124.dtsi
+> >> @@ -472,6 +472,7 @@
+> >>  		resets =3D <&tegra_car 14>;
+> >>  		reset-names =3D "sdhci";
+> >>  		status =3D "disabled";
+> >> +		iommus=3D<&smmu TEGRA_SWGROUP_CELLS(SDMMC1A)>;
 > >
-> > How many is "multiple"? This seems like rather a weak definition of how
-> > many entries are expected. What are the different register banks?
+> > Is the "iommus" property documented anywhere? I suspect not, since
+> > there's an active ongoing discussion about how IOMMU bindings should be
+> > structured. I suspect this series needs to wait until that discussion
+> > completes, and the "iommus" property is documented somewhere.
 >=20
-> SMMU registers are part of MC registers. SMMU registeres are interleaved
-> by MC(non-SMMU) registeres, most likely it's about ~10 banks.
+> Yes, I'm catching up that thread now. That's why I drop document part.
 >=20
-> We concluded to not have SMMU as a child of MC since their features are
-> so independent long time ago. This interleaved register locations are
-> not so good. I requested H/W team to have them completely separated, but
-> itt was too late to change.
+> If Thierry's patch(v2 or v3) is accpeted, this patch won't need any
+> further doc since it will use the IOMMU standard bindings("iommus =3D ").
 
-This situation is really messy. In my opinion we should break DT
-compatibility and expose this through a single memory-controller driver
-rather than split it up into different subdevices.
+The binding for the Tegra SMMU would still need to document what the
+specifier means. Also I think we should change the current meaning of a
+two-cell bitmask to the more explicit one cell per SWGROUP binding, that
+is something like this:
 
-That reflects the hardware more accurately and gets rid of a number of
-quirks currently required just to make things work.
+	iommus =3D <&smmu TEGRA_SWGROUP_SDMMC1A>;
 
 Thierry
 
---1ccMZA6j1vT5UqiK
+--0/kgSOzhNoDC5T3a
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTj5GUAAoJEN0jrNd/PrOh2mMP/3DOz5DR5tTA5s1as+t3V1Bs
-b+/V/sIY28MxEtRT6R2W1y0OxcwHKe69LE48nq+l3sHvR/qJ8La8LvAp9eoC69hF
-/nplCs3u2+trAg8CFI954hP1YQ4vlafUYIkEsoUbgbuVT3iS4hloOhBYDpgW2NCl
-Ul+i2WqrTpOSr9aG74NI3tvZgAKNx+H7t3r1caCE2mu+LaoDturrrGQstNXdMKqm
-3HNZK+qRUKPrgODSZWgp4Kz57kEXoFqA73Yje2PU5bR5i8Qq+lYgGcLRYStHlhKN
-uSpra39u+NgdRou7pDysJlEiKk5HCdvCbavHjQ7N5hn5wltqZLCu/Z7R7355Qe1t
-V57dfjMy7WqbVKOrRLkykd9+7Kt/kJmY8h9EtgNKY/NFZbYaLWuwiaw8dUjyc5Og
-gQfiRhzlLZlyV+iJKGQ7lxqj2QBjtGvDAXjl5Sl4h8GzB7B1zVJRkkMkvhGOBOlt
-S6Rs2i7SEvuqPMoZRUiwWDdTVl8ahVFXN0iKrj8+IcuXobyPPJaCQnm8mz8j54ek
-kAcwKP0QT5SyE8+tpFlfipiSA0/5tujulpnHWA7sqjRl3xNHTg1FWXCmZThpw3zl
-bO9Ks8ynnJmOYpRmqzTa0n2dlyYkab+B0DtaQS89U9PQUf8AyKir5UKHd984EmVB
-7JS06pvQnVOKahh0vScc
-=I9An
+iQIcBAEBAgAGBQJTj5IlAAoJEN0jrNd/PrOhjPsQAIn9vJmIilLQW9KhKUtMb4pQ
+sd/+WQtWBtK39mpKrWEo7JEr1bT0oFMKvP+2MC/pZIMJ6uLzxSqttumN9atuneOc
+VsvU2379Ew6YvI+o1qTzD/tm3Tv3xtEz4SFC3yNtLItu9XMpFv/XN50IBxsDgyZW
+ReKPlMXNwxKqBvsJsHw1VDcb7TLreb8kydQcdPxWpJDw8Hb1gEcJO8S21AddDTAh
+dlGbWUIO4gljuklgcGdy6uRp0S/oavLge+f9/RDXbF189mFc7137xcvR+gPkrLvv
+3af2sN4hg3GdwoCBDsxsL5/Qd4kCkYKMaQcoy1qzoydKX0kJQg1dC4XGTA2BYpyX
+iYNSyXNbqOFVsComEPChVihjQB13CeXvOPCXfBTlfM1uJmGw9+d8nJQurrFEcoKL
+TC2EPn7jCexF/c7ONlcPaILyQCXtH6AawvevYz7FJHsodRHeU2e3F0Zgvo0uIOm7
+5daPN650Glt3yTFyL39O+v9CIoHODGVYZ1RCOer7znBBJCXboCEbtpf3EPBkESO9
+Ei6hLraK+xK9sxPKV6J+Vm+X7K1GP2E7aQiVphYWdJ1RyaSSBDMLIfYxtkFiQqua
+cQFojGdweDC7KZvPUJDNwVuttT7R0wMP/KXOhCRSC+ZByZzGgV4Fg9B8QHk2wRFq
+lQCTgiWVXsQW2vcu4yJh
+=vZke
 -----END PGP SIGNATURE-----
 
---1ccMZA6j1vT5UqiK--
+--0/kgSOzhNoDC5T3a--
