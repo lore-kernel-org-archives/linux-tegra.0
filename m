@@ -1,69 +1,60 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: Tegra 2 T20 NAND Flash Support
-Date: Wed, 4 Jun 2014 16:41:35 +0200
-Message-ID: <20140604144134.GH28484@ulmo>
-References: <538E6FB5.5020806@ziswiler.com>
- <1401866283.2173.3.camel@tellur>
- <538EC96A.4050702@ziswiler.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Hlh2aiwFLCZwGcpw"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <538EC96A.4050702-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
-Cc: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH 4/4] ARM: tegra: jetson-tk1: Add XUSB pad controller
+Date: Wed,  4 Jun 2014 17:16:30 +0200
+Message-ID: <1401894990-30092-4-git-send-email-thierry.reding@gmail.com>
+References: <1401894990-30092-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1401894990-30092-1-git-send-email-thierry.reding@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Andrew Bresticker <abrestic@chromium.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding@nvidia.com>
 
---Hlh2aiwFLCZwGcpw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Assign lanes to the XUSB pads as used on the Jetson TK1.
 
-On Wed, Jun 04, 2014 at 09:23:22AM +0200, Marcel Ziswiler wrote:
-> On 06/04/2014 09:18 AM, Lucas Stach wrote:
-> >I took the Linux Tegra NAND driver from Thierry and cleaned it up quite
-> >a bit. It now works with both ONFI and non-ONFI NAND, at least for
-> >reading. Writing doesn't quite work yet and I've got side-tracked with
-> >other stuff.
-> >
-> >If you are interested in moving this forward I can put up my WIP patches
-> >to some public location.
->=20
-> Sounds great, yes. That would be perfect, thanks.
->=20
-> We even once got an universal NAND test infrastructure from Micron based =
-on
-> a re-worked Colibri T20 which we could use to validate it with various NA=
-ND
-> flash parts.
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-Excellent, I would've had a hard time digging up those patches. It's
-really been quite a while.
-
-Thierry
-
---Hlh2aiwFLCZwGcpw
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTjzAeAAoJEN0jrNd/PrOhtCgQAIhnoZ5dZoDz68B9F9Ezq4Yj
-PA/InMPo16m9G6VYBfgnMoMJm0hq8Yj/6lMSpp3GuEyEHro9sOfKZOfaUgMVM0QP
-ONs0jbye//V5Ztd51PTYM9ipFkKo8U1Ng4ox9ZTdk6VwoM+ah3kB/yAYZWzbAnH8
-oQ344iN6lLhwcxJxCov+ElNH+4fH+JRnIMnYAx8mU8w7tTkcPDdPvprsSrR8fMz5
-FRcPgWoJDsrKbwfALkKDRtm7PJAIgRUKZ6YgsZAH6GJlpkj/bbPDRLay3wDZDIkd
-e731e/2p3K41SYqIKAa3U9/g1nFOA7Mtp2yKrLMzd5AEQd3gwZorw7KFxPYGroX0
-vMjMNENLMiT84mU8Gabqc6wSmMriazMvZ+esDzDMJ/H8qtz7X0M2B0zQg+I1/M4z
-V4dM6h4XCMsQVX0RMosgp6MzQAWE7dPVidv9R/x56D5xVoyBjRHR/mSjhZWqWLKZ
-IKEhwBnbVs78bhakM0Q66pfcfHYN9aybSdL33NcI+BgLr2xhT2fz+R6FfE+IHPcY
-Cypw9dM2e3NfSe6CyqhcD2agCeaM3js20mvO0oAubq2WeChkVh2Xezi7MwjGiwWp
-tdhcGMAukRn77nzNG9QAolaTG3kl6GavXyEB2ARzSfx8a7/WBa19OFDWjrA6n/n/
-bvZNdy+cEP01uCGeGQFr
-=G4/m
------END PGP SIGNATURE-----
-
---Hlh2aiwFLCZwGcpw--
+diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+index e31fb61a81d3..38d30877057c 100644
+--- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
++++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+@@ -1619,6 +1619,32 @@
+ 		nvidia,sys-clock-req-active-high;
+ 	};
+ 
++	padctl@0,7009f000 {
++		pinctrl-0 = <&padctl_default>;
++		pinctrl-names = "default";
++
++		padctl_default: pinmux {
++			usb3 {
++				nvidia,lanes = "pcie-0", "pcie-1";
++				nvidia,function = "usb3";
++				nvidia,iddq = <0>;
++			};
++
++			pcie {
++				nvidia,lanes = "pcie-2", "pcie-3",
++					       "pcie-4";
++				nvidia,function = "pcie";
++				nvidia,iddq = <0>;
++			};
++
++			sata {
++				nvidia,lanes = "sata-0";
++				nvidia,function = "sata";
++				nvidia,iddq = <0>;
++			};
++		};
++	};
++
+ 	/* SD card */
+ 	sdhci@0,700b0400 {
+ 		status = "okay";
+-- 
+1.9.2
