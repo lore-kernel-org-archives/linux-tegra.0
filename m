@@ -1,103 +1,126 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 6/6] usb: host: ohci-exynos: Use devm_ioremap_resource
- instead of devm_ioremap
-Date: Wed, 4 Jun 2014 15:13:07 +0200
-Message-ID: <20140604131306.GB28484@ulmo>
-References: <1399723210-21569-1-git-send-email-gautam.vivek@samsung.com>
- <1399723210-21569-7-git-send-email-gautam.vivek@samsung.com>
- <CAFp+6iFufCh6SVEF-HQA62ZsJGJGSebDSs28eqcrMy1X8e5vjA@mail.gmail.com>
+Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Wed, 4 Jun 2014 15:39:36 +0200
+Message-ID: <20140604133934.GD28484@ulmo>
+References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
+	<4545972.cM7IP1qTXQ@wuerfel> <87tx87rrp2.fsf@nvidia.com>
+	<4462924.8iRbdkOPp7@wuerfel> <20140601095546.GA8625@arm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="7ZAtKRhVyVSsbBD2"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAFp+6iFufCh6SVEF-HQA62ZsJGJGSebDSs28eqcrMy1X8e5vjA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============7066928884594820527=="
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20140601095546.GA8625-5wv7dgnIgG8@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---7ZAtKRhVyVSsbBD2
+--===============7066928884594820527==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="T7mxYSe680VjQnyC"
+Content-Disposition: inline
+
+
+--T7mxYSe680VjQnyC
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 04, 2014 at 03:41:20PM +0530, Vivek Gautam wrote:
-> Hi,
+On Sun, Jun 01, 2014 at 10:55:46AM +0100, Will Deacon wrote:
+> On Fri, May 30, 2014 at 08:54:37PM +0100, Arnd Bergmann wrote:
+> > On Friday 30 May 2014 22:29:13 Hiroshi Doyu wrote:
+> > > Tegra,SMMU has a similar problem and we have used a fixed size bitmap=
+(64
+> > > bit) to afford 64 stream IDs so that a single device can hold multiple
+> > > IDs. If we apply the same bitmap to the above exmaple:
+> > >=20
+> > >        iommu {
+> > >                /* the specifier represents the ID of the master */
+> > >                #address-cells =3D <1>;
+> > >                #size-cells =3D <0>;
+> > >        };
+> > >=20
+> > >         master@a {
+> > >                 ...
+> > >                 iommus =3D <&smmu (BIT(1) | BIT(2) | BIT(3))>; # IDs =
+1 2 3
+> > >         };
+> > >=20
+> > >         master@b {
+> > >                 ...
+> > >                 iommus =3D <&smmu BIT(4)>;     # ID 4
+> > >         };
+> > >=20
+> > > The disadvantage of this is that this limits the max number of stream=
+IDs
+> > > to support. If # of streamID is increased later more than 64, this
+> > > format cannot cover any more. You have to predict the max # of stream=
+IDs
+> > > in advance if steamID is statically assigned.
+> > >=20
+> >=20
+> > Well, the iommu specific binding could allow a variable #address-cells.
+> > That way, you just need to know the number of stream IDs for that insta=
+nce
+> > of the iommu.
 >=20
+> In general, though, the SMMU will be able to support a large number of
+> stream IDs (say a 16-bit space). The restriction we're interested in here=
+ is
+> how many different stream IDs can be emitted by a single master device
+> coming into the SMMU. *That* is a property of the master, not the SMMU.
 >=20
-> On Sat, May 10, 2014 at 5:30 PM, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> =
-wrote:
-> > Using devm_ioremap_resource() API should actually be preferred over
-> > devm_ioremap(), since the former request the mem region first and then
-> > gives back the ioremap'ed memory pointer.
-> > devm_ioremap_resource() calls request_mem_region(), therby preventing
-> > other drivers to make any overlapping call to the same region.
-> >
-> > Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->=20
-> Although this patch and rest in the series are merged.
-> But i have got a doubt, so making this thread alive.
->=20
-> > ---
-> >  drivers/usb/host/ohci-exynos.c |    7 +++----
-> >  1 file changed, 3 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exy=
-nos.c
-> > index 9cf80cb..dec691d 100644
-> > --- a/drivers/usb/host/ohci-exynos.c
-> > +++ b/drivers/usb/host/ohci-exynos.c
-> > @@ -120,10 +120,9 @@ skip_phy:
-> >
-> >         hcd->rsrc_start =3D res->start;
-> >         hcd->rsrc_len =3D resource_size(res);
-> > -       hcd->regs =3D devm_ioremap(&pdev->dev, res->start, hcd->rsrc_le=
-n);
-> > -       if (!hcd->regs) {
-> > -               dev_err(&pdev->dev, "Failed to remap I/O memory\n");
-> > -               err =3D -ENOMEM;
-> > +       hcd->regs =3D devm_ioremap_resource(&pdev->dev, res);
->=20
-> Here, we replaced devm_ioremap() call with devm_ioremap_resource(),
-> which internally requests the memory region
+> In the current arm,smmu binding I have a #stream-id-cells property in each
+> master. I can then feed that straight into of_parse_phandle_with_args to
+> enumerate the IDs for that master. The problem with that is we're
+> artificially restricted by MAX_PHANDLE_ARGS.
 
-I guess this could lead to problems if drivers haven't been written to
-cleanly split the register ranges that they access, since now two
-overlapping regions may be requested and cause the drivers to fail.
+Maybe I don't fully understand, but since we leave it up to the IOMMU
+binding to define the exact meaning of #iommu-cells, can't you simply
+use that to your advantage and define something like:
 
-> and then does a "devm_ioremap()" or "devm_ioremap_nocache()" based on
-> the check for IORESOURCE_CACHEABLE flag.
->=20
-> But this flag is not set for the resource of this device.
-> So should we be explicitly setting the flag in driver ?
+	iommus =3D <&smmu 0 7>;
 
-I don't think it makes much sense to map these registers cached anyway.
-Drivers will likely expect writes to this region to take effect without
-needing any kind of flushing.
+to mean IDs 0 to 7 for this particular IOMMU type?
 
 Thierry
 
---7ZAtKRhVyVSsbBD2
+--T7mxYSe680VjQnyC
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTjxtiAAoJEN0jrNd/PrOhiTYP/2NPPViprewJ60qZhUc+hJ7G
-hMv0Qa08HrSeNLnHN/jOqIwdgDMFSy/8Um2yCyqH5Wpy0+ohJL2V0PuBuXA/ZIbO
-ZQ6Q3CChqGxqc939kaVjoeLYlNJCPaz2lkxqGHpuSLDY9ojIbbHgfPbEVFeQj6Z4
-6+VkGh06/+Ato8Rpp5xmzr77x9qujLzGPe6e8zS7cr272TwBXBgBGo/jUBHt4aE1
-EKo4TQtVfkBXIeSqvSKBXQSxVq3ADWOS5EOl7o0MTfoxd/2DKt3Ktd8SFisvBCWQ
-aGu6QjHIaEMiAjmAwIYSTZW9Djw1x62xgdRA/ZFQufLJK2anwxgKv+jEz0Fz1XPu
-LSJCGiCWzma9IywPEc5abTRSsfIYI6iQJxwq7Fg4Z2ssLII6aPljyozbUm81YjxS
-ViB8OtzJnUjqcpca2UmDfvuG3Ty3LgyH+mopNP28daMcEeY4LczBX/Pk3uftS2Nm
-+s+Whk9Ssv1WNlYz4nq737PuwnZ8leSf8hhfPDqWh9Zw8mZ/F8Cv/jqWEF7vK7ar
-lckvyWfGH/9CYqZu/WYgzid70hO4T32SnS+sJiqx/6/oGqI1bVEc+JVcNherwL88
-azmSggvCzovSD9B9Tlp4Bu2Lj7tSfsmHPIOvf5CVsKUHWWJYT6egfnm/vin2Y2L3
-+3awh4NG713uFf5l4gfm
-=1dt2
+iQIcBAEBAgAGBQJTjyGWAAoJEN0jrNd/PrOhJxsP/1QEAS+0iTQlOqf1sv4Oez0K
+DasrIeJ6Hg9a/Rgr3N+LLHF0uocLBhW17z+gG1wzPghsRyqzsnK9574Rlc+hpCEz
+98+hbQq1Vv+gZJbm80kuSNZEwScteyNblaG7tSk83YQhqLs7EXczVuU9Mlg2TnCX
+z+bZArGke7KrMAseG4HcdoZiauMwM+2CcMXE8Nib43+OZj5Xpin8HHn9so53VZCc
+VSE+m+SVydcEVIq3DlEQOTNywCRHiyOtYy1esUPo+H9lkMOOFUkXnm0PYDP5iCFb
+TZ4NZ0AoJO6zjXSFRba9M1TpJEZ+ZXoEA8HxmRKXCUUZnoSpcnJc490T09K3cKLf
+bkdhqdwkGairvX849B9GaHWDFLy6v6ZBqYrFSC5xWh1J9SFDoq/7rpCosJxBmdOK
+EH6SSmPaQgtko3iFbSxU75BQoHLB+/TD/9xx5eWhmDTkfmV79Sg1cCo2sBrTZmvm
+J2m1Qmp1LKv7gwSq8dVQmhW+g19WyPKzr3GsqnZuaNpFvSPik61BloeNe9iTOLvS
+f1MHMWFhypILGZyhXmV7RCoMfl36L9eKAdgHY9oDZNBqGRgk7G19kCxxHA1lKbw/
+/jiwG1IuFwme9QRODqgmfUJtYQcroGP6aQRQQ7ethVp9oxUH8AH5hHUFoB1P3mzO
+bu+xsmkOPv/NcGnNT1Ps
+=KYXF
 -----END PGP SIGNATURE-----
 
---7ZAtKRhVyVSsbBD2--
+--T7mxYSe680VjQnyC--
+
+--===============7066928884594820527==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============7066928884594820527==--
