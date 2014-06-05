@@ -1,42 +1,29 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 0/9] Serial ATA support for NVIDIA Tegra124
-Date: Thu, 05 Jun 2014 11:29:29 -0600
-Message-ID: <5390A8F9.2090408@wwwdotorg.org>
-References: <1401881559-18469-1-git-send-email-mperttunen@nvidia.com>
+Subject: Re: [PATCH v7 1/5] ARM: tegra: export apb dma readl/writel
+Date: Thu, 05 Jun 2014 11:57:28 -0600
+Message-ID: <5390AF88.9050007@wwwdotorg.org>
+References: <1401973754-19701-1-git-send-email-pdeschrijver@nvidia.com> <1401973754-19701-2-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1401881559-18469-1-git-send-email-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1401973754-19701-2-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/04/2014 05:32 AM, Mikko Perttunen wrote:
-> Hi,
-> 
-> This series adds support for the onboard AHCI-compliant Serial ATA
-> controller found on Tegra124 systems-on-chip. The controller is
-> enabled on Jetson TK1. The series depends on Peter's efuse series 
-> and Thierry's yet to be submitted XUSB pinctrl driver.
+On 06/05/2014 07:09 AM, Peter De Schrijver wrote:
+> Export APB DMA readl and writel. These are needed because we can't access
+> the fuses directly on Tegra20 without potentially causing a system hang.
+> Also have the APB DMA readl and writel return an error in case of a read
+> failure instead of just returning zero or ignore write failures.
 
-This series includes patches to a lot of different subsystems. That will
-complicate applying it.
+> diff --git a/include/linux/tegra-soc.h b/include/linux/tegra-soc.h
 
-Can you write a summary of the *compile time* dependencies, since that
-will influence how the patches get merged.
+> +int tegra_apb_readl_using_dma(unsigned long offset, u32 *value);
+> +int tegra_apb_writel_using_dma(u32 value, unsigned long offset);
 
-You mentioned that this series depends on efuse and XUSB padctl. Can you
-point out which specific parts of this series depend on which of those
-two other series, and whether this is a compile-time or run-time dependency.
-
-I hope that the drivers/ata patches, drivers/clk patches, DT, and
-defconfig patches can each be applied to their normal tree and don't
-depend on each-other at compile-time at all.
-
-At run-time, obviously all the patches are needed to make the code work,
-but since this is a new feature, it's fine if this all only works once
-everything is merged together in linux-next or Linus's tree.
-
-Thanks.
+Hmm. I wonder why we're exporting those low-level internal functions
+rather than the higher-level tegra_apb_readl()/writel() wrappers that
+"clients" are supposed to be using.
