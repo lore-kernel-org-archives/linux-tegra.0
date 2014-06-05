@@ -1,74 +1,28 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 2/4] of: Add NVIDIA Tegra XUSB pad controller binding
-Date: Thu, 05 Jun 2014 10:47:45 -0600
-Message-ID: <53909F31.4050603@wwwdotorg.org>
-References: <1401894990-30092-1-git-send-email-thierry.reding@gmail.com> <1401894990-30092-2-git-send-email-thierry.reding@gmail.com>
+From: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v7 3/5] misc: fuse: Add efuse driver for Tegra
+Date: Thu, 5 Jun 2014 20:01:22 +0300
+Message-ID: <5390A262.50402@nvidia.com>
+References: <1401973754-19701-1-git-send-email-pdeschrijver@nvidia.com> <1401973754-19701-4-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1401894990-30092-2-git-send-email-thierry.reding@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Andrew Bresticker <abrestic@chromium.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1401973754-19701-4-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/04/2014 09:16 AM, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> This patch adds the device tree binding documentation for the XUSB pad
-> controller found on NVIDIA Tegra SoCs. It exposes both pinmuxing and PHY
-> capabilities.
+On 05/06/14 16:09, Peter De Schrijver wrote:
+> +       dev_info(dev,
+> +               "Tegra Revision: %s SKU: %d CPU Process: %d Core Process: %d\n",
+> +               tegra_revision_name[sku_info->revision],
+> +               sku_info->sku_id, sku_info->cpu_process_id,
+> +               sku_info->core_process_id);
 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt
+sku_info->sku_id doesn't seem to get initialized anywhere - with an 
+older revision of this set I see SKU: 0 in place of what the L4T kernel 
+prints (SKU: 0x81).
 
-> +- #phy-cells: Should be 1. The specifier is the index of the PHY to reference.
-> +  Possible values are:
-> +  - 0: PCIe
-> +  - 1: SATA
-
-Those values are defined in
-include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h. I personally consider
-the <dt-bindings/> header files to be part of the binding itself, rather
-than being derived from the binding. As such, I'd suggest the following
-changes:
-
-* Make this patch 1 not patch 2
-* Move pinctrl-tegra-xusb.h into this patch.
-* Remove the list of values above, and replace it with the text "See
-<dt-bindings/pinctrl/pinctrl-tegra-xusb.h> for the set of valid values".
-
-We'll need to make sure this patch is applied to a topic branch that can
-be merged into the pinctrl tree and the Tegra tree for 3.17, assuming
-that you'll be sending patches for 3.17 that use pinctrl-tegra-xusb.h.
-
-> +Example:
-> +========
-> +
-> +SoC file extract:
-> +-----------------
-> +
-> +	padctl@0,7009f000 {
-> +		compatible = "nvidia,tegra124-xusb-padctl";
-> +		reg = <0x0 0x7009f000 0x0 0x1000>;
-> +		resets = <&tegra_car 142>;
-> +		reset-names = "padctl";
-> +
-> +		#address-cells = <0>;
-> +		#size-cells = <0>;
-
-Why are those two properties required? Yes, this node has sub-nodes, but
-those sub-nodes don't have a reg property or unit address. The main
-Tegra pinctrl nodes don't have #address/size-cells.
-
-> +Board file extract:
-> +-------------------
-
-> +	padctl: padctl@0,7009f000 {
-> +		pinmux {
-> +			pinctrl-0 = <&padctl_default>;
-> +			pinctrl-names = "default";
-
-Isn't there one extra level of nodes here. In the DT patches later in
-this series, pinctrl-0/pinctrl-names are directly inside the top-level
-padctl node.
+-- 
+nvpublic
