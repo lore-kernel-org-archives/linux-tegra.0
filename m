@@ -1,77 +1,103 @@
-From: Varun Sethi <Varun.Sethi@freescale.com>
-Subject: RE: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Thu, 5 Jun 2014 19:10:19 +0000
-Message-ID: <07321368d15d4ad9928ebb83af87e401@DM2PR03MB479.namprd03.prod.outlook.com>
-References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
- <4545972.cM7IP1qTXQ@wuerfel>
- <CAL_Jsq+tkFNpjSEZboT+o69B_Z3a8e-ZVKaYDmLwtkyYoPy6VQ@mail.gmail.com>
- <5288123.eXagyPAxNq@wuerfel>
- <20140602104104.GD3855@e103592.cambridge.arm.com>
- <20140604143509.GF28484@ulmo> <20140604164132.GF6644@arm.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v7 3/5] misc: fuse: Add efuse driver for Tegra
+Date: Fri, 6 Jun 2014 01:09:46 +0300
+Message-ID: <20140605220946.GP5961@tbergstrom-lnx.Nvidia.com>
+References: <1401973754-19701-1-git-send-email-pdeschrijver@nvidia.com>
+ <1401973754-19701-4-git-send-email-pdeschrijver@nvidia.com>
+ <5390B8E6.1050600@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20140604164132.GF6644@arm.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Will Deacon <will.deacon@arm.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Arnd Bergmann <arnd@arndb.de>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Grant Grundler <grundler@chromium.org>, Stephen Warren <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stuart Yoder <stuart.yoder@freescale.com>, Marc Zyngier <Marc.Zyngier@arm.com>, Linux IOMMU <iommu@lists.linux-foundation.org>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Cho KyongHo <pullip.cho@samsung.com>, Dave P Martin <Dave.Martin@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <5390B8E6.1050600-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-
-> -----Original Message-----
-> From: iommu-bounces@lists.linux-foundation.org [mailto:iommu-
-> bounces@lists.linux-foundation.org] On Behalf Of Will Deacon
-> Sent: Wednesday, June 04, 2014 10:12 PM
-> To: Thierry Reding
-> Cc: Mark Rutland; devicetree@vger.kernel.org; linux-samsung-
-> soc@vger.kernel.org; Pawel Moll; Arnd Bergmann; Ian Campbell; Grant
-> Grundler; Stephen Warren; linux-kernel@vger.kernel.org; Marc Zyngier;
-> Linux IOMMU; Rob Herring; Kumar Gala; linux-tegra@vger.kernel.org; Cho
-> KyongHo; Dave P Martin; linux-arm-kernel@lists.infradead.org
-> Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree
-> bindings
+On Thu, Jun 05, 2014 at 08:37:26PM +0200, Stephen Warren wrote:
+> On 06/05/2014 07:09 AM, Peter De Schrijver wrote:
+> > Implement fuse driver for Tegra20, Tegra30, Tegra114 and Tegra124.
+> > 
+> > Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> >  Documentation/ABI/testing/sysfs-driver-tegra-fuse |   11 +
+> >  drivers/misc/fuse/Makefile                        |    1 +
+> >  drivers/misc/fuse/tegra/Makefile                  |    7 +
+> >  drivers/misc/fuse/tegra/fuse-tegra.c              |  250 +++++++++++++++++
 > 
-> On Wed, Jun 04, 2014 at 03:35:10PM +0100, Thierry Reding wrote:
-> > On Mon, Jun 02, 2014 at 11:41:04AM +0100, Dave Martin wrote:
-> > > In the strictest sense, no.
-> > >
-> > > But for a large set of sane configurations, this probably works.
-> > >
-> > > Small sets of randomly-assigned IDs can just be enumerated one by
-> one.
-> > >
-> > > We wouldn't be able to describe folding and bit shuffling, but we
-> > > probably don't want to encourage that anyway.
-> >
-> > I'm having some difficulty understanding this. You make it sound like
-> > there's a fairly arbitrary number of IDs that the SMMU can handle. So
-> > how is the mapping to devices defined? If you say encourage that does
-> > make it sound like the assignment of IDs is purely defined by some
-> > mechanism in software rather than in hardware. Or they are more or
-> > less randomly picked by someone. If that's the case, is that not
-> > something that should be dynamically allocated by the kernel rather
-> > than put into the device tree?
+> I wonder if we shouldn't put this into drivers/soc/tegra?
 > 
-> The set of StreamIDs that can be generated by a master is fixed in the
-> hardware. The SMMU can then be programmed to map these incoming IDs onto
-> a context ID (or a set of context IDs), which are the IDs used internally
-> by the SMMU to find the page tables etc.
+> > diff --git a/drivers/misc/fuse/tegra/fuse-tegra.c b/drivers/misc/fuse/tegra/fuse-tegra.c
 > 
-> The StreamID -> ContextID mapping is dynamic and controlled by software.
-> The Master -> StreamIDs mapping is fixed in the hardware.
-The Master -> StreamIDs mapping may not always be fixed in the hardware. At, least in our case we plan to program these via software. PCI devices is one place where this mapping would have to be dynamic (based on the topology i.e. if the devices are connected to a bridge etc). Also, we have a hot plug device architecture where the stream ID is software programmable.
+> > +void __init tegra_init_fuse(void)
+> > +{
+> > +	struct device_node *np;
+> > +	u32 id;
+> > +	void __iomem *car_base;
+> > +
+> > +	np = of_find_matching_node(NULL, apbmisc_match);
+> > +	apbmisc_base = of_iomap(np, 0);
+> > +	if (!apbmisc_base) {
+> > +		pr_warn("ioremap tegra apbmisc failed. using %08x instead\n",
+> > +			APBMISC_BASE);
+> > +		apbmisc_base = ioremap(APBMISC_BASE, APBMISC_SIZE);
+> > +	}
+> > +
+> > +	id = tegra_read_chipid();
+> > +	tegra_chip_id = (id >> 8) & 0xff;
+> 
+> So there's a fallback using APBMIS_BASE above if the node is missing, so
+> those last 2 lines always happen. However, if any of the following fail:
+> 
+> > +	strapping_base = of_iomap(np, 0);
+> ...
+> > +	np = of_find_matching_node(NULL, tegra_fuse_match);
+> ...
+> > +	np = of_find_matching_node(NULL, car_match);
+> 
+> Then this doesn't get executed:
+> 
+> > +	tegra_get_revision(id);
+> 
+> Isn't that important?
+> 
 
-Other than that, based on the isolation requirements (iommu domain) software programmability offers greater flexibility.
+No. It's only used to populate /sys/devices/soc0/revision. I don't think
+that's particularly important.
 
--Varun
+> I guess that can't run if the lookup for tegra_fuse_match isn't
+> successful, since that tegra_get_revision may call
+> tegra20_spare_fuse_early() which uses fuse_base which is set up in
+> response to succesfully calling on of those node lookups. Isn't a
+> fallback needed there too?
+> 
+
+tegra20_spare_fuse_early() will not be called if fuse_base is NULL.
+
+> I'm also a bit concerned that the driver probes, rather than the early
+> function tegra_init_fuse(), are doing things like setting up the speedo
+> data initialization, randomness addition, etc. For one, those won't
+> happen any more unless the DT nodes are present, and secondly,
+> triggering all those from driver probe rather than a function that's
+> called from the machine descriptor makes guaranteeing the timing
+> problematic.
+> 
+
+Today there are no users of the speedo ID in upstream. Looking at chromeos
+the users of the speedo ID are: CPU dvfs, GPU dvfs and sdhci. The last 2 also
+need regulators and therefor will need to support deferred probing anyway.
+CPU dvfs isn't critical at all, we don't care when it gets initialized. So
+deferred probe is fine.
+sdhci needs this for faster modes I guess which will also need extra DT
+properties looking at the chromeos driver. The others definitely will need
+an updated DT. For randomness I haven't seen any appreciable difference in when
+the 'random: nonblocking pool is initialized' message appears between having
+the randomness addition or not. Most likely the bulk of the randomness comes
+from serial interrupts rather than the fuse data. So I don't think the move to
+a driver probe will cause any problem. Nor do I think the lack of an updated
+DT will cause problems.
+
+Cheers,
+
+Peter.
