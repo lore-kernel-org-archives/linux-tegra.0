@@ -1,28 +1,77 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v7 4/5] ARM: tegra: Add efuse and apbmisc bindings
-Date: Thu, 05 Jun 2014 12:41:55 -0600
-Message-ID: <5390B9F3.8030108@wwwdotorg.org>
-References: <1401973754-19701-1-git-send-email-pdeschrijver@nvidia.com> <1401973754-19701-5-git-send-email-pdeschrijver@nvidia.com>
+From: Varun Sethi <Varun.Sethi@freescale.com>
+Subject: RE: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Thu, 5 Jun 2014 19:10:19 +0000
+Message-ID: <07321368d15d4ad9928ebb83af87e401@DM2PR03MB479.namprd03.prod.outlook.com>
+References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
+ <4545972.cM7IP1qTXQ@wuerfel>
+ <CAL_Jsq+tkFNpjSEZboT+o69B_Z3a8e-ZVKaYDmLwtkyYoPy6VQ@mail.gmail.com>
+ <5288123.eXagyPAxNq@wuerfel>
+ <20140602104104.GD3855@e103592.cambridge.arm.com>
+ <20140604143509.GF28484@ulmo> <20140604164132.GF6644@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1401973754-19701-5-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20140604164132.GF6644@arm.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Will Deacon <will.deacon@arm.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Arnd Bergmann <arnd@arndb.de>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Grant Grundler <grundler@chromium.org>, Stephen Warren <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stuart Yoder <stuart.yoder@freescale.com>, Marc Zyngier <Marc.Zyngier@arm.com>, Linux IOMMU <iommu@lists.linux-foundation.org>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Cho KyongHo <pullip.cho@samsung.com>, Dave P Martin <Dave.Martin@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/05/2014 07:09 AM, Peter De Schrijver wrote:
-> Add efuse and apbmisc bindings for Tegra20, Tegra30, Tegra114 and Tegra124.
 
-> diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
 
-> +	apbmisc@70000800 {
-> +		compatible = "nvidia,tegra114-apbmisc", "nvidia,tegra20-apbmisc";
+> -----Original Message-----
+> From: iommu-bounces@lists.linux-foundation.org [mailto:iommu-
+> bounces@lists.linux-foundation.org] On Behalf Of Will Deacon
+> Sent: Wednesday, June 04, 2014 10:12 PM
+> To: Thierry Reding
+> Cc: Mark Rutland; devicetree@vger.kernel.org; linux-samsung-
+> soc@vger.kernel.org; Pawel Moll; Arnd Bergmann; Ian Campbell; Grant
+> Grundler; Stephen Warren; linux-kernel@vger.kernel.org; Marc Zyngier;
+> Linux IOMMU; Rob Herring; Kumar Gala; linux-tegra@vger.kernel.org; Cho
+> KyongHo; Dave P Martin; linux-arm-kernel@lists.infradead.org
+> Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree
+> bindings
+> 
+> On Wed, Jun 04, 2014 at 03:35:10PM +0100, Thierry Reding wrote:
+> > On Mon, Jun 02, 2014 at 11:41:04AM +0100, Dave Martin wrote:
+> > > In the strictest sense, no.
+> > >
+> > > But for a large set of sane configurations, this probably works.
+> > >
+> > > Small sets of randomly-assigned IDs can just be enumerated one by
+> one.
+> > >
+> > > We wouldn't be able to describe folding and bit shuffling, but we
+> > > probably don't want to encourage that anyway.
+> >
+> > I'm having some difficulty understanding this. You make it sound like
+> > there's a fairly arbitrary number of IDs that the SMMU can handle. So
+> > how is the mapping to devices defined? If you say encourage that does
+> > make it sound like the assignment of IDs is purely defined by some
+> > mechanism in software rather than in hardware. Or they are more or
+> > less randomly picked by someone. If that's the case, is that not
+> > something that should be dynamically allocated by the kernel rather
+> > than put into the device tree?
+> 
+> The set of StreamIDs that can be generated by a master is fixed in the
+> hardware. The SMMU can then be programmed to map these incoming IDs onto
+> a context ID (or a set of context IDs), which are the IDs used internally
+> by the SMMU to find the page tables etc.
+> 
+> The StreamID -> ContextID mapping is dynamic and controlled by software.
+> The Master -> StreamIDs mapping is fixed in the hardware.
+The Master -> StreamIDs mapping may not always be fixed in the hardware. At, least in our case we plan to program these via software. PCI devices is one place where this mapping would have to be dynamic (based on the topology i.e. if the devices are connected to a bridge etc). Also, we have a hot plug device architecture where the stream ID is software programmable.
 
-Is the Tegra114 APBMISC register layout 100% a backwards-compatible
-superset of that in Tegra20? For both registers the code currently uses
-*and* all possible registers the code could ever use? Since the APB MISC
-is a bit of a dumping ground for random registers, that feels unlikely,
-but perhaps it's possible.
+Other than that, based on the isolation requirements (iommu domain) software programmability offers greater flexibility.
+
+-Varun
