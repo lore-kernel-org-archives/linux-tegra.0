@@ -1,103 +1,121 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v7 3/5] misc: fuse: Add efuse driver for Tegra
-Date: Fri, 6 Jun 2014 01:09:46 +0300
-Message-ID: <20140605220946.GP5961@tbergstrom-lnx.Nvidia.com>
-References: <1401973754-19701-1-git-send-email-pdeschrijver@nvidia.com>
- <1401973754-19701-4-git-send-email-pdeschrijver@nvidia.com>
- <5390B8E6.1050600@wwwdotorg.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 2/4] of: Add NVIDIA Tegra XUSB pad controller binding
+Date: Fri, 6 Jun 2014 00:08:34 +0200
+Message-ID: <20140605220833.GA28817@ulmo>
+References: <1401894990-30092-1-git-send-email-thierry.reding@gmail.com>
+ <1401894990-30092-2-git-send-email-thierry.reding@gmail.com>
+ <53909F31.4050603@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="HcAYCG3uE/tztfnV"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <5390B8E6.1050600-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <53909F31.4050603-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jun 05, 2014 at 08:37:26PM +0200, Stephen Warren wrote:
-> On 06/05/2014 07:09 AM, Peter De Schrijver wrote:
-> > Implement fuse driver for Tegra20, Tegra30, Tegra114 and Tegra124.
-> > 
-> > Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >  Documentation/ABI/testing/sysfs-driver-tegra-fuse |   11 +
-> >  drivers/misc/fuse/Makefile                        |    1 +
-> >  drivers/misc/fuse/tegra/Makefile                  |    7 +
-> >  drivers/misc/fuse/tegra/fuse-tegra.c              |  250 +++++++++++++++++
-> 
-> I wonder if we shouldn't put this into drivers/soc/tegra?
-> 
-> > diff --git a/drivers/misc/fuse/tegra/fuse-tegra.c b/drivers/misc/fuse/tegra/fuse-tegra.c
-> 
-> > +void __init tegra_init_fuse(void)
-> > +{
-> > +	struct device_node *np;
-> > +	u32 id;
-> > +	void __iomem *car_base;
+
+--HcAYCG3uE/tztfnV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Jun 05, 2014 at 10:47:45AM -0600, Stephen Warren wrote:
+> On 06/04/2014 09:16 AM, Thierry Reding wrote:
+> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >=20
+> > This patch adds the device tree binding documentation for the XUSB pad
+> > controller found on NVIDIA Tegra SoCs. It exposes both pinmuxing and PHY
+> > capabilities.
+>=20
+> > diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-=
+xusb-padctl.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124=
+-xusb-padctl.txt
+>=20
+> > +- #phy-cells: Should be 1. The specifier is the index of the PHY to re=
+ference.
+> > +  Possible values are:
+> > +  - 0: PCIe
+> > +  - 1: SATA
+>=20
+> Those values are defined in
+> include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h. I personally consider
+> the <dt-bindings/> header files to be part of the binding itself, rather
+> than being derived from the binding. As such, I'd suggest the following
+> changes:
+>=20
+> * Make this patch 1 not patch 2
+> * Move pinctrl-tegra-xusb.h into this patch.
+> * Remove the list of values above, and replace it with the text "See
+> <dt-bindings/pinctrl/pinctrl-tegra-xusb.h> for the set of valid values".
+
+I remember discussions where people explicitly said that relying on the
+symbolic names in the DT bindings was a mistake because it would mean
+that everyone would need to have access to a mechanism similar to what
+we have in the Linux kernel (and that the header files would always need
+to be shipped with the DT bindings).
+
+> > +Example:
+> > +=3D=3D=3D=3D=3D=3D=3D=3D
 > > +
-> > +	np = of_find_matching_node(NULL, apbmisc_match);
-> > +	apbmisc_base = of_iomap(np, 0);
-> > +	if (!apbmisc_base) {
-> > +		pr_warn("ioremap tegra apbmisc failed. using %08x instead\n",
-> > +			APBMISC_BASE);
-> > +		apbmisc_base = ioremap(APBMISC_BASE, APBMISC_SIZE);
-> > +	}
+> > +SoC file extract:
+> > +-----------------
 > > +
-> > +	id = tegra_read_chipid();
-> > +	tegra_chip_id = (id >> 8) & 0xff;
-> 
-> So there's a fallback using APBMIS_BASE above if the node is missing, so
-> those last 2 lines always happen. However, if any of the following fail:
-> 
-> > +	strapping_base = of_iomap(np, 0);
-> ...
-> > +	np = of_find_matching_node(NULL, tegra_fuse_match);
-> ...
-> > +	np = of_find_matching_node(NULL, car_match);
-> 
-> Then this doesn't get executed:
-> 
-> > +	tegra_get_revision(id);
-> 
-> Isn't that important?
-> 
+> > +	padctl@0,7009f000 {
+> > +		compatible =3D "nvidia,tegra124-xusb-padctl";
+> > +		reg =3D <0x0 0x7009f000 0x0 0x1000>;
+> > +		resets =3D <&tegra_car 142>;
+> > +		reset-names =3D "padctl";
+> > +
+> > +		#address-cells =3D <0>;
+> > +		#size-cells =3D <0>;
+>=20
+> Why are those two properties required? Yes, this node has sub-nodes, but
+> those sub-nodes don't have a reg property or unit address. The main
+> Tegra pinctrl nodes don't have #address/size-cells.
 
-No. It's only used to populate /sys/devices/soc0/revision. I don't think
-that's particularly important.
+I seem to remember that there was a reason but I'm pulling a blank. I'll
+do some testing with those removed and verify that they are indeed not
+needed.
 
-> I guess that can't run if the lookup for tegra_fuse_match isn't
-> successful, since that tegra_get_revision may call
-> tegra20_spare_fuse_early() which uses fuse_base which is set up in
-> response to succesfully calling on of those node lookups. Isn't a
-> fallback needed there too?
-> 
+> > +Board file extract:
+> > +-------------------
+>=20
+> > +	padctl: padctl@0,7009f000 {
+> > +		pinmux {
+> > +			pinctrl-0 =3D <&padctl_default>;
+> > +			pinctrl-names =3D "default";
+>=20
+> Isn't there one extra level of nodes here. In the DT patches later in
+> this series, pinctrl-0/pinctrl-names are directly inside the top-level
+> padctl node.
 
-tegra20_spare_fuse_early() will not be called if fuse_base is NULL.
+Yes, this is left-over from an earlier version of the patch. Thanks for
+catching this.
 
-> I'm also a bit concerned that the driver probes, rather than the early
-> function tegra_init_fuse(), are doing things like setting up the speedo
-> data initialization, randomness addition, etc. For one, those won't
-> happen any more unless the DT nodes are present, and secondly,
-> triggering all those from driver probe rather than a function that's
-> called from the machine descriptor makes guaranteeing the timing
-> problematic.
-> 
+Thierry
 
-Today there are no users of the speedo ID in upstream. Looking at chromeos
-the users of the speedo ID are: CPU dvfs, GPU dvfs and sdhci. The last 2 also
-need regulators and therefor will need to support deferred probing anyway.
-CPU dvfs isn't critical at all, we don't care when it gets initialized. So
-deferred probe is fine.
-sdhci needs this for faster modes I guess which will also need extra DT
-properties looking at the chromeos driver. The others definitely will need
-an updated DT. For randomness I haven't seen any appreciable difference in when
-the 'random: nonblocking pool is initialized' message appears between having
-the randomness addition or not. Most likely the bulk of the randomness comes
-from serial interrupts rather than the fuse data. So I don't think the move to
-a driver probe will cause any problem. Nor do I think the lack of an updated
-DT will cause problems.
+--HcAYCG3uE/tztfnV
+Content-Type: application/pgp-signature
 
-Cheers,
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-Peter.
+iQIcBAEBAgAGBQJTkOpgAAoJEN0jrNd/PrOh43IQAJqKwAMJMy9dEiuPXWZRHqRQ
+ZQDl9VUQYidevWc6B97ljjV2AksA64X9q/diMN6C47A8l0eys63qYUBMmA0LlzGB
+XR+9xPTK/l6dk9AckuzdIrT3cnOLouEeCD4BoJ1gt0baNDFB0HlBh5m1itz7tjUa
+DD/nsPSwZM6kwTlLfmZjavKJ9ivJk23/myqNpZXt406n7WIlDx4VdGNGM43oc0VU
+V0pE55lUOjhC1MMCSUwlxJqRxhYGXy4WC5XSlng/6meVzol3GAHyzBpxWntbYywA
+d9EKqXWEenvYMq517oZehnzL8CpLW/m/M6lFdtiyeSingZ5+YyhgmABwyVrY8CN1
+3z3IeNzWuXuJkJkNM6YOfQj/OBBrBxrZdlvyvMy1rRLXbT3LMsTzdrA2PTGQFK0G
+Yc5+7iRCvgHpN3txWmcfPOF1a55qGpyryuPdRJRnnaGDdiy8BlWcvyI7z+/5vL/G
+5w7/JckV4WapBvSWetIUgNMDIRhKeDhOzDjjaZSex5twfY/BQkvA1D70XEVeexn1
+R3xB3mY4bAYFHsLEMUCUc1A7xe3KuRx6PvJuYn6F30u9CqthlQpncidQIS1cWcRv
+iVOxCPHgdPpqBHN8a49ib7a5nHozzTEGpuL2WYitGwEjxf666PH7palt4mPngO4Y
+MUI4TH4gMLsQC6S0bOnT
+=CjvU
+-----END PGP SIGNATURE-----
+
+--HcAYCG3uE/tztfnV--
