@@ -1,28 +1,44 @@
-From: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v7 3/5] misc: fuse: Add efuse driver for Tegra
-Date: Thu, 5 Jun 2014 20:01:22 +0300
-Message-ID: <5390A262.50402@nvidia.com>
-References: <1401973754-19701-1-git-send-email-pdeschrijver@nvidia.com> <1401973754-19701-4-git-send-email-pdeschrijver@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 1/4] pinctrl: Add NVIDIA Tegra XUSB pad controller support
+Date: Thu, 05 Jun 2014 11:08:54 -0600
+Message-ID: <5390A426.1050307@wwwdotorg.org>
+References: <1401894990-30092-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1401973754-19701-4-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1401894990-30092-1-git-send-email-thierry.reding@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Andrew Bresticker <abrestic@chromium.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/06/14 16:09, Peter De Schrijver wrote:
-> +       dev_info(dev,
-> +               "Tegra Revision: %s SKU: %d CPU Process: %d Core Process: %d\n",
-> +               tegra_revision_name[sku_info->revision],
-> +               sku_info->sku_id, sku_info->cpu_process_id,
-> +               sku_info->core_process_id);
+On 06/04/2014 09:16 AM, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> The XUSB pad controller found on NVIDIA Tegra SoCs provides several pads
+> that lanes can be assigned to in order to support a variety of interface
+> options: USB 2.0, USB 3.0, PCIe and SATA.
+> 
+> In addition to the pin controller used to assign lanes to pads two PHYs
+> are exposed to allow the bricks for PCIe and SATA to be powered up and
+> down by PCIe and SATA drivers.
 
-sku_info->sku_id doesn't seem to get initialized anywhere - with an 
-older revision of this set I see SKU: 0 in place of what the L4T kernel 
-prints (SKU: 0x81).
+> +#define TEGRA124_GROUP(_funcs)						\
+> +	{								\
+> +		.num_funcs = ARRAY_SIZE(tegra124_##_funcs##_functions),	\
+> +		.funcs = tegra124_##_funcs##_functions,			\
+> +	}
+> +
+> +static const struct tegra_xusb_padctl_group tegra124_groups[] = {
+> +	TEGRA124_GROUP(otg),
+> +	TEGRA124_GROUP(usb),
+> +	TEGRA124_GROUP(pci),
+> +};
 
--- 
-nvpublic
+I'm not sure what this set of groups is for.
+
+pinctrl muxes functions onto groups, so given that each pin in padctl is
+individually configurable, we need 1 group per pin. As far as I can
+tell, tegra_xusb_padctl_get_groups_count()/name() implement this
+correctly, and this array isn't used anywhere?
