@@ -1,137 +1,81 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH 2/3] ARM: tegra: Use the cros-ec-keyboard fragment in venice2
-Date: Wed,  4 Jun 2014 15:20:19 -0700
-Message-ID: <1401920421-25729-2-git-send-email-dianders@chromium.org>
-References: <1401920421-25729-1-git-send-email-dianders@chromium.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1401920421-25729-1-git-send-email-dianders@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@nvidia.com>, Thierry Reding <treding@nvidia.com>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, olof@lixom.net
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Doug Anderson <dianders@chromium.org>, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, swarren@wwwdotorg.org, thierry.reding@gmail.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Thu, 05 Jun 2014 11:42:12 +0200
+Message-ID: <6794037.0YTCc6JFQV@wuerfel>
+References: <1400877395-4235-1-git-send-email-thierry.reding@gmail.com>
+	<4830064.JvgTAs8Xty@wuerfel> <20140604213159.GB18780@mithrandir>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20140604213159.GB18780@mithrandir>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Signed-off-by: Doug Anderson <dianders@chromium.org>
----
- arch/arm/boot/dts/tegra124-venice2.dts | 96 ++--------------------------------
- 1 file changed, 3 insertions(+), 93 deletions(-)
+On Wednesday 04 June 2014 23:32:00 Thierry Reding wrote:
+> On Fri, May 30, 2014 at 09:01:19PM +0200, Arnd Bergmann wrote:
+> > On Friday 30 May 2014 12:22:32 Dave Martin wrote:
+> > > > +
+> > > > +Examples:
+> > > > +=========
+> > > > +
+> > > > +Single-master IOMMU:
+> > > > +--------------------
+> > > > +
+> > > > + iommu {
+> > > > +         #address-cells = <0>;
+> > > > +         #size-cells = <0>;
+> > > > + };
+> > > > +
+> > > > + master {
+> > > > +         iommus = <&/iommu>;
+> > > > + };
+> > > > +
+> > > > +Multiple-master IOMMU with fixed associations:
+> > > > +----------------------------------------------
+> > > > +
+> > > > + /* multiple-master IOMMU */
+> > > > + iommu {
+> > > > +         /*
+> > > > +          * Masters are statically associated with this IOMMU and
+> > > > +          * address translation is always enabled.
+> > > > +          */
+> > > > +         #address-cells = <0>;
+> > > > +         #size-cells = <0>;
+> > > 
+> > > In this example, can different translations be set up for the different
+> > > masters?
+> > > 
+> > > With no cells available to contain any sort of ID, it looks like this
+> > > is not possible.
+> > 
+> > Correct, this example is for an IOMMU that does not use IDs but has a
+> > shared address space for all devices.
+> 
+> Couldn't these device all still have separate address spaces?
 
-diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
-index f0bb842..72585c82 100644
---- a/arch/arm/boot/dts/tegra124-venice2.dts
-+++ b/arch/arm/boot/dts/tegra124-venice2.dts
-@@ -816,7 +816,7 @@
- 	spi@0,7000d400 {
- 		status = "okay";
- 
--		cros-ec@0 {
-+		cros_ec: cros-ec@0 {
- 			compatible = "google,cros-ec-spi";
- 			spi-max-frequency = <4000000>;
- 			interrupt-parent = <&gpio>;
-@@ -824,98 +824,6 @@
- 			reg = <0>;
- 
- 			google,cros-ec-spi-msg-delay = <2000>;
--
--			cros-ec-keyb {
--				compatible = "google,cros-ec-keyb";
--				keypad,num-rows = <8>;
--				keypad,num-columns = <13>;
--				google,needs-ghost-filter;
--
--				linux,keymap = <
--					MATRIX_KEY(0x00, 0x01, KEY_LEFTMETA)
--					MATRIX_KEY(0x00, 0x02, KEY_F1)
--					MATRIX_KEY(0x00, 0x03, KEY_B)
--					MATRIX_KEY(0x00, 0x04, KEY_F10)
--					MATRIX_KEY(0x00, 0x06, KEY_N)
--					MATRIX_KEY(0x00, 0x08, KEY_EQUAL)
--					MATRIX_KEY(0x00, 0x0a, KEY_RIGHTALT)
--
--					MATRIX_KEY(0x01, 0x01, KEY_ESC)
--					MATRIX_KEY(0x01, 0x02, KEY_F4)
--					MATRIX_KEY(0x01, 0x03, KEY_G)
--					MATRIX_KEY(0x01, 0x04, KEY_F7)
--					MATRIX_KEY(0x01, 0x06, KEY_H)
--					MATRIX_KEY(0x01, 0x08, KEY_APOSTROPHE)
--					MATRIX_KEY(0x01, 0x09, KEY_F9)
--					MATRIX_KEY(0x01, 0x0b, KEY_BACKSPACE)
--
--					MATRIX_KEY(0x02, 0x00, KEY_LEFTCTRL)
--					MATRIX_KEY(0x02, 0x01, KEY_TAB)
--					MATRIX_KEY(0x02, 0x02, KEY_F3)
--					MATRIX_KEY(0x02, 0x03, KEY_T)
--					MATRIX_KEY(0x02, 0x04, KEY_F6)
--					MATRIX_KEY(0x02, 0x05, KEY_RIGHTBRACE)
--					MATRIX_KEY(0x02, 0x06, KEY_Y)
--					MATRIX_KEY(0x02, 0x07, KEY_102ND)
--					MATRIX_KEY(0x02, 0x08, KEY_LEFTBRACE)
--					MATRIX_KEY(0x02, 0x09, KEY_F8)
--
--					MATRIX_KEY(0x03, 0x01, KEY_GRAVE)
--					MATRIX_KEY(0x03, 0x02, KEY_F2)
--					MATRIX_KEY(0x03, 0x03, KEY_5)
--					MATRIX_KEY(0x03, 0x04, KEY_F5)
--					MATRIX_KEY(0x03, 0x06, KEY_6)
--					MATRIX_KEY(0x03, 0x08, KEY_MINUS)
--					MATRIX_KEY(0x03, 0x0b, KEY_BACKSLASH)
--
--					MATRIX_KEY(0x04, 0x00, KEY_RIGHTCTRL)
--					MATRIX_KEY(0x04, 0x01, KEY_A)
--					MATRIX_KEY(0x04, 0x02, KEY_D)
--					MATRIX_KEY(0x04, 0x03, KEY_F)
--					MATRIX_KEY(0x04, 0x04, KEY_S)
--					MATRIX_KEY(0x04, 0x05, KEY_K)
--					MATRIX_KEY(0x04, 0x06, KEY_J)
--					MATRIX_KEY(0x04, 0x08, KEY_SEMICOLON)
--					MATRIX_KEY(0x04, 0x09, KEY_L)
--					MATRIX_KEY(0x04, 0x0a, KEY_BACKSLASH)
--					MATRIX_KEY(0x04, 0x0b, KEY_ENTER)
--
--					MATRIX_KEY(0x05, 0x01, KEY_Z)
--					MATRIX_KEY(0x05, 0x02, KEY_C)
--					MATRIX_KEY(0x05, 0x03, KEY_V)
--					MATRIX_KEY(0x05, 0x04, KEY_X)
--					MATRIX_KEY(0x05, 0x05, KEY_COMMA)
--					MATRIX_KEY(0x05, 0x06, KEY_M)
--					MATRIX_KEY(0x05, 0x07, KEY_LEFTSHIFT)
--					MATRIX_KEY(0x05, 0x08, KEY_SLASH)
--					MATRIX_KEY(0x05, 0x09, KEY_DOT)
--					MATRIX_KEY(0x05, 0x0b, KEY_SPACE)
--
--					MATRIX_KEY(0x06, 0x01, KEY_1)
--					MATRIX_KEY(0x06, 0x02, KEY_3)
--					MATRIX_KEY(0x06, 0x03, KEY_4)
--					MATRIX_KEY(0x06, 0x04, KEY_2)
--					MATRIX_KEY(0x06, 0x05, KEY_8)
--					MATRIX_KEY(0x06, 0x06, KEY_7)
--					MATRIX_KEY(0x06, 0x08, KEY_0)
--					MATRIX_KEY(0x06, 0x09, KEY_9)
--					MATRIX_KEY(0x06, 0x0a, KEY_LEFTALT)
--					MATRIX_KEY(0x06, 0x0b, KEY_DOWN)
--					MATRIX_KEY(0x06, 0x0c, KEY_RIGHT)
--
--					MATRIX_KEY(0x07, 0x01, KEY_Q)
--					MATRIX_KEY(0x07, 0x02, KEY_E)
--					MATRIX_KEY(0x07, 0x03, KEY_R)
--					MATRIX_KEY(0x07, 0x04, KEY_W)
--					MATRIX_KEY(0x07, 0x05, KEY_I)
--					MATRIX_KEY(0x07, 0x06, KEY_U)
--					MATRIX_KEY(0x07, 0x07, KEY_RIGHTSHIFT)
--					MATRIX_KEY(0x07, 0x08, KEY_P)
--					MATRIX_KEY(0x07, 0x09, KEY_O)
--					MATRIX_KEY(0x07, 0x0b, KEY_UP)
--					MATRIX_KEY(0x07, 0x0c, KEY_LEFT)
--				>;
--			};
- 		};
- 	};
- 
-@@ -1205,3 +1113,5 @@
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
- 	};
- };
-+
-+#include "cros-ec-keyboard.dtsi"
--- 
-2.0.0.526.g5318336
+No. If they had separate address spaces, they would require a more
+sophisticated IOMMU. A simple IOMMU without IDs can only be used
+for overcoming address space limits (e.g. for 32-bit DMA masters on
+systems with more than 4GB RAM) but not for strict isolation.
+
+You basically have one page table shared across all devices connected
+to the IOMMU, and every call to dma_alloc_coherent or dma_map_*
+allocates a new IOVA that isn't used by any of the other devices
+already, but you can't prevent a malicious user from getting a device
+to do DMA to an IOVA that has been set up for another device.
+
+You could have one such IOMMU per device of course, but I guess that's
+not what you mean.
+
+	Arnd
