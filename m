@@ -1,179 +1,141 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL] drm/tegra: Changes for v3.16-rc1
-Date: Mon, 9 Jun 2014 12:26:25 +0200
-Message-ID: <20140609102624.GA2687@ulmo>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 4/4] drm/nouveau: introduce CPU cache flushing
+	macro
+Date: Mon, 9 Jun 2014 19:41:39 +0900
+Message-ID: <CAAVeFu+KZ9AqB5ji5-AA+qzEFDWd7y0=J1eSEPqQ-OyhmXufig@mail.gmail.com>
+References: <1400483458-9648-1-git-send-email-acourbot@nvidia.com>
+ <1400483458-9648-5-git-send-email-acourbot@nvidia.com>
+ <20140519090202.GC7138@ulmo>
+ <1400491331.8467.8.camel@weser.hi.pengutronix.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="xHFwDpU9dbj6ez1V"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <1400491331.8467.8.camel-WzVe3FnzCwFR6QfukMTsflXZhhPuCNm+@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Mon, May 19, 2014 at 6:22 PM, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
+> Am Montag, den 19.05.2014, 11:02 +0200 schrieb Thierry Reding:
+>> On Mon, May 19, 2014 at 04:10:58PM +0900, Alexandre Courbot wrote:
+>> > Some architectures (e.g. ARM) need the CPU buffers to be explicitely
+>> > flushed for a memory write to take effect. Not doing so results in
+>> > synchronization issues, especially after writing to BOs.
+>>
+>> It seems to me that the above is generally true for all architectures,
+>> not just ARM.
+>>
+> No, on PCI coherent arches, like x86 and some PowerPCs, the GPU will
+> snoop the CPU caches and therefore an explicit cache flush is not
+> required.
+>
+>> Also: s/explicitely/explicitly/
+>>
+>> > This patch introduces a macro that flushes the caches on ARM and
+>> > translates to a no-op on other architectures, and uses it when
+>> > writing to in-memory BOs. It will also be useful for implementations of
+>> > instmem that access shared memory directly instead of going through
+>> > PRAMIN.
+>>
+>> Presumably instmem can access shared memory on all architectures, so
+>> this doesn't seem like a property of the architecture but rather of the
+>> memory pool backing the instmem.
+>>
+>> In that case I wonder if this shouldn't be moved into an operation that
+>> is implemented by the backing memory pool and be a noop where the cache
+>> doesn't need explicit flushing.
+>>
+>> > diff --git a/drivers/gpu/drm/nouveau/core/os.h b/drivers/gpu/drm/nouveau/core/os.h
+>> > index d0ced94ca54c..274b4460bb03 100644
+>> > --- a/drivers/gpu/drm/nouveau/core/os.h
+>> > +++ b/drivers/gpu/drm/nouveau/core/os.h
+>> > @@ -38,4 +38,21 @@
+>> >  #endif /* def __BIG_ENDIAN else */
+>> >  #endif /* !ioread32_native */
+>> >
+>> > +#if defined(__arm__)
+>> > +
+>> > +#define nv_cpu_cache_flush_area(va, size)  \
+>> > +do {                                               \
+>> > +   phys_addr_t pa = virt_to_phys(va);      \
+>> > +   __cpuc_flush_dcache_area(va, size);     \
+>> > +   outer_flush_range(pa, pa + size);       \
+>> > +} while (0)
+>>
+>> Couldn't this be a static inline function?
+>>
+>> > diff --git a/drivers/gpu/drm/nouveau/nouveau_bo.c b/drivers/gpu/drm/nouveau/nouveau_bo.c
+>> [...]
+>> > index 0886f47e5244..b9c9729c5733 100644
+>> > --- a/drivers/gpu/drm/nouveau/nouveau_bo.c
+>> > +++ b/drivers/gpu/drm/nouveau/nouveau_bo.c
+>> > @@ -437,8 +437,10 @@ nouveau_bo_wr16(struct nouveau_bo *nvbo, unsigned index, u16 val)
+>> >     mem = &mem[index];
+>> >     if (is_iomem)
+>> >             iowrite16_native(val, (void __force __iomem *)mem);
+>> > -   else
+>> > +   else {
+>> >             *mem = val;
+>> > +           nv_cpu_cache_flush_area(mem, 2);
+>> > +   }
+>> >  }
+>> >
+>> >  u32
+>> > @@ -461,8 +463,10 @@ nouveau_bo_wr32(struct nouveau_bo *nvbo, unsigned index, u32 val)
+>> >     mem = &mem[index];
+>> >     if (is_iomem)
+>> >             iowrite32_native(val, (void __force __iomem *)mem);
+>> > -   else
+>> > +   else {
+>> >             *mem = val;
+>> > +           nv_cpu_cache_flush_area(mem, 4);
+>> > +   }
+>>
+>> This looks rather like a sledgehammer to me. Effectively this turns nvbo
+>> into an uncached buffer. With additional overhead of constantly flushing
+>> caches. Wouldn't it make more sense to locate the places where these are
+>> called and flush the cache after all the writes have completed?
+>>
+> I don't think the explicit flushing for those things makes sense. I
+> think it is a lot more effective to just map the BOs write-combined on
+> PCI non-coherent arches. This way any writes will be buffered. Reads
+> will be slow, but I don't think nouveau is reading back a lot from those
+> buffers.
+> Using the write-combining buffer doesn't need any additional
+> synchronization as it will get flushed on pushbuf kickoff anyways.
 
---xHFwDpU9dbj6ez1V
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I tried to go that way, and something interesting happened.
 
-Hi Dave,
+What I did: remove this patch and instead set the following caching
+parameters for the TTM_PL_TT case in nouveau_bo_init_mem_type():
 
-The following changes since commit 5ea1f752ae04be403a3dc8ec876a60d7f5f6990a:
+    man->available_caching = TTM_PL_FLAG_UNCACHED | TTM_PL_FLAG_WC;
+    man->default_caching = TTM_PL_FLAG_WC;
 
-  drm: add drm_fb_helper_restore_fbdev_mode_unlocked() (2014-06-05 10:02:40=
- +1000)
+What happened: no runtime errors as what happened when caching is
+enabled. However, many of the vertex and texture buffers seem to be
+partially corrupted. In glmark2 the 3d models had many vertices (but
+not all) at the wrong position. Note that not all the scenes ended up
+being corrupted - in particular, when two consecutive scenes used the
+same model, the second instance would be uncorrupted.
 
-are available in the git repository at:
+Forcing the caching to TTM_PL_FLAG_UNCACHED led to the same result.
+What is interesting is that while data like vertices and textures got
+corrupted, pushbuffers and shader programs seem to be just fine, as I
+could not see any runtime error.
 
-  git://anongit.freedesktop.org/tegra/linux tags/drm/tegra/for-3.16-rc1
-
-for you to fetch changes up to 1f64ae7c5af0d65b2491af30ce7a295569e452c9:
-
-  drm/tegra: sor - Remove obsolete comment (2014-06-09 12:02:51 +0200)
+I don't really understand what kind of caching behavior could lead to
+that. If anyone has any idea, I'd love to hear.
 
 Thanks,
-Thierry
-
-----------------------------------------------------------------
-drm/tegra: Changes for v3.16-rc1
-
-The majority of these changes are a slew of cleanups across the board.
-A more noteworthy change is the addition of drm_dev_set_unique() and the
-conversion of the Tegra DRM driver to use it. This allows us to get rid
-of the host1x drm_bus implementation. Other USB and platform drivers can
-be changed in a similar way. Unfortunately for most PCI devices there is
-some userspace that relies on the old functionality and cannot be as
-easily converted.
-
-HDMI and hardware cursor support is added for Tegra124. The SOR output
-gains support for exposing CRCs via debugfs, which can be used for
-automated testing. Many values that were hardcoded in the SOR/eDP code
-are now computed at runtime to increase compatibility with more devices.
-
-----------------------------------------------------------------
-St=C3=A9phane Marchesin (3):
-      drm/tegra: sor - Remove pixel clock rounding
-      drm/tegra: sor - Fix copy/paste error
-      drm/tegra: sor - Change power down ordering
-
-Thierry Reding (44):
-      drm/tegra: Cleanup header file
-      drm/tegra: dc - Add YUYV support
-      drm/tegra: sor - Add CRC debugfs support
-      drm/tegra: dc - Rename INVERT_V to V_DIRECTION
-      drm/tegra: dc - Reshuffle code to get rid of prototypes
-      drm/tegra: dc - Do not touch power control register
-      drm/tegra: dc - Use proper H/V ref-to-sync values
-      drm/tegra: hdmi - Add connector supply support
-      drm/tegra: hdmi - Remove duplicate code
-      drm/tegra: hdmi - Reverse regulator enable ordering
-      drm/tegra: hdmi - Clean up clock usage
-      drm/tegra: hdmi - Use proper power-up sequence
-      drm/tegra: hdmi - Disable LVDS mode
-      drm/tegra: hdmi - Fix disable sequence
-      drm/tegra: dsi - Use internal pixel format
-      drm/tegra: dsi - Remove unneeded code
-      drm/tegra: dsi - Implement VDD supply support
-      drm/tegra: dsi - Initialize proper packet sequences
-      drm/tegra: dsi - Add enable guard
-      drm/tegra: dsi - Fix typo when disabling controller
-      drm/tegra: dsi - Reset controller on driver unload
-      drm/tegra: dc - Move around shift clock programming
-      drm/tegra: dc - Compute shift clock divider in output drivers
-      drm/tegra: dsi - Do not needlessly recompute pclk
-      drm/tegra: sor - Protect CRC debugfs against enable state
-      drm/tegra: hdmi - Add Tegra124 support
-      drm/tegra: gem - Make tegra_bo_import() static
-      gpu: host1x: Rename internal functions for clarity
-      drm: Introduce drm_dev_set_unique()
-      drm: Add device registration documentation
-      drm: Document how to register devices without struct drm_bus
-      drm/tegra: Remove host1x drm_bus implementation
-      drm/tegra: Add hardware cursor support
-      drm/tegra: dp - Implement hotplug detection in work queue
-      drm/tegra: dp - Mark the connector as hotplug capable
-      drm/tegra: sor - Recursively remove debugfs tree
-      drm/tegra: sor - Make debugfs setup consistent
-      drm/tegra: sor - Don't hardcode link parameters
-      drm/tegra: sor - Do not hardcode number of blank symbols
-      drm/tegra: sor - Do not hardcode link speed
-      drm/tegra: sor - Do not program interlaced mode registers
-      drm/tegra: sor - Power on only the necessary lanes
-      drm/tegra: sor - Enable only the necessary number of lanes
-      drm/tegra: sor - Remove obsolete comment
-
- Documentation/DocBook/drm.tmpl                                  |  36 ++++=
-++++++++++
- Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt |   2 +
- drivers/gpu/drm/drm_ioctl.c                                     |  24 ++++=
-++---
- drivers/gpu/drm/drm_pci.c                                       |  80 ++++=
-++++++++++----------------
- drivers/gpu/drm/drm_platform.c                                  |  15 +++-=
---
- drivers/gpu/drm/drm_stub.c                                      |  48 ++++=
-+++++++++-----
- drivers/gpu/drm/drm_usb.c                                       |  20 ++++=
-+++-
- drivers/gpu/drm/tegra/Makefile                                  |   1 -
- drivers/gpu/drm/tegra/bus.c                                     |  64 ----=
---------------------
- drivers/gpu/drm/tegra/dc.c                                      | 673 ++++=
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++---------=
----------------------------------------------------------------------------=
------------------
- drivers/gpu/drm/tegra/dc.h                                      |  33 ++++=
-+++++++--
- drivers/gpu/drm/tegra/dpaux.c                                   |  31 ++++=
-++++----
- drivers/gpu/drm/tegra/drm.c                                     |  36 ++++=
-++++++++--
- drivers/gpu/drm/tegra/drm.h                                     |  58 ++++=
-++++++------------
- drivers/gpu/drm/tegra/dsi.c                                     | 250 ++++=
-+++++++++++++++++++++++++++++++++++++++++++++++++--------------------------=
--------------
- drivers/gpu/drm/tegra/dsi.h                                     |  10 ++++
- drivers/gpu/drm/tegra/gem.c                                     |   3 +-
- drivers/gpu/drm/tegra/gr2d.c                                    |   8 +--
- drivers/gpu/drm/tegra/gr3d.c                                    |   8 +--
- drivers/gpu/drm/tegra/hdmi.c                                    | 202 ++++=
-+++++++++++++++++++++++++++++++++++++++++++++++++++-------------------
- drivers/gpu/drm/tegra/hdmi.h                                    |   5 ++
- drivers/gpu/drm/tegra/rgb.c                                     |  31 ++++=
-+++++++-
- drivers/gpu/drm/tegra/sor.c                                     | 478 ++++=
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
-++-------------------
- drivers/gpu/drm/tegra/sor.h                                     |   4 ++
- drivers/gpu/host1x/bus.c                                        |  12 ++---
- include/drm/drmP.h                                              |   2 +
- 26 files changed, 1446 insertions(+), 688 deletions(-)
- delete mode 100644 drivers/gpu/drm/tegra/bus.c
-
---xHFwDpU9dbj6ez1V
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTlYvQAAoJEN0jrNd/PrOhiCsP/2p5ZGtTh7ntNlSmFNHwi1Uu
-n35sqOYLiIStAYXMp6rIp6TSPAY8dCthebA+TWZp9tMeIcPhQhbTxTp7r27c02N/
-Lojb8EAckBRdb2eHcThMogpUP8LbhO0+5g8wb0su/2eKc+enkuJXqEiOURW4nS4n
-h+D8i/dtX3d3McHqnnnFv8zE/rDEkO4kEKDBIawGIcXoN34Nb1NGHrWuJ+c89mTN
-E7n/skyHQO9rQhw7fQ70RD5lZs2aliQAKHUDtWwUI0Rot4w8jAxeMQReK2cBQCUV
-dBfQaEIKo4JCb9ZPVQhi+TWcGuCL6o/IOieMHbOIKuI+JQOvxPevTwI7bRXWZA1O
-gAZTU+HRI189zY6w84Dliw4jiykhbga7Djtupq7b2hMeJgnKkOJf+c8vtukYKnGt
-55lTcCajW50c0fMRQYdNVMLAJOveK4vH3EVpLYc9+x93BRZUdnPr1QDw9OWAyeSO
-UpOQoiVYe82i9pdIVIEYZ8plIjnqpqQ3HAf3Rdb7rweeWsXByX1e5AMOh2m5Mbzs
-4QqoOe5gqOAr4F/+x2j+IpjE1wTGFWvCmvkd4BTHBDTSzk7EBydhbdRESLg3vTNp
-kO1BUSny3JtyrNIBpUP4xuzCJEeP6GFhwVHUVUkIcF+1/Zk1RvNVXP1sIM1+i2yX
-BkntQKp+oM56mQGYeU7Y
-=Y4ZR
------END PGP SIGNATURE-----
-
---xHFwDpU9dbj6ez1V--
+Alex.
