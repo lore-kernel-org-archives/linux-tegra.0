@@ -1,141 +1,191 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 4/4] drm/nouveau: introduce CPU cache flushing
-	macro
-Date: Mon, 9 Jun 2014 19:41:39 +0900
-Message-ID: <CAAVeFu+KZ9AqB5ji5-AA+qzEFDWd7y0=J1eSEPqQ-OyhmXufig@mail.gmail.com>
-References: <1400483458-9648-1-git-send-email-acourbot@nvidia.com>
- <1400483458-9648-5-git-send-email-acourbot@nvidia.com>
- <20140519090202.GC7138@ulmo>
- <1400491331.8467.8.camel@weser.hi.pengutronix.de>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Mon, 9 Jun 2014 12:49:06 +0200
+Message-ID: <20140609104905.GD2687@ulmo>
+References: <20140606224542.GA22188@mithrandir>
+ <4306568.dZTtF4xhhK@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <1400491331.8467.8.camel-WzVe3FnzCwFR6QfukMTsflXZhhPuCNm+@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============6865396888189635512=="
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <4306568.dZTtF4xhhK@wuerfel>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, May 19, 2014 at 6:22 PM, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
-> Am Montag, den 19.05.2014, 11:02 +0200 schrieb Thierry Reding:
->> On Mon, May 19, 2014 at 04:10:58PM +0900, Alexandre Courbot wrote:
->> > Some architectures (e.g. ARM) need the CPU buffers to be explicitely
->> > flushed for a memory write to take effect. Not doing so results in
->> > synchronization issues, especially after writing to BOs.
->>
->> It seems to me that the above is generally true for all architectures,
->> not just ARM.
->>
-> No, on PCI coherent arches, like x86 and some PowerPCs, the GPU will
-> snoop the CPU caches and therefore an explicit cache flush is not
-> required.
->
->> Also: s/explicitely/explicitly/
->>
->> > This patch introduces a macro that flushes the caches on ARM and
->> > translates to a no-op on other architectures, and uses it when
->> > writing to in-memory BOs. It will also be useful for implementations of
->> > instmem that access shared memory directly instead of going through
->> > PRAMIN.
->>
->> Presumably instmem can access shared memory on all architectures, so
->> this doesn't seem like a property of the architecture but rather of the
->> memory pool backing the instmem.
->>
->> In that case I wonder if this shouldn't be moved into an operation that
->> is implemented by the backing memory pool and be a noop where the cache
->> doesn't need explicit flushing.
->>
->> > diff --git a/drivers/gpu/drm/nouveau/core/os.h b/drivers/gpu/drm/nouveau/core/os.h
->> > index d0ced94ca54c..274b4460bb03 100644
->> > --- a/drivers/gpu/drm/nouveau/core/os.h
->> > +++ b/drivers/gpu/drm/nouveau/core/os.h
->> > @@ -38,4 +38,21 @@
->> >  #endif /* def __BIG_ENDIAN else */
->> >  #endif /* !ioread32_native */
->> >
->> > +#if defined(__arm__)
->> > +
->> > +#define nv_cpu_cache_flush_area(va, size)  \
->> > +do {                                               \
->> > +   phys_addr_t pa = virt_to_phys(va);      \
->> > +   __cpuc_flush_dcache_area(va, size);     \
->> > +   outer_flush_range(pa, pa + size);       \
->> > +} while (0)
->>
->> Couldn't this be a static inline function?
->>
->> > diff --git a/drivers/gpu/drm/nouveau/nouveau_bo.c b/drivers/gpu/drm/nouveau/nouveau_bo.c
->> [...]
->> > index 0886f47e5244..b9c9729c5733 100644
->> > --- a/drivers/gpu/drm/nouveau/nouveau_bo.c
->> > +++ b/drivers/gpu/drm/nouveau/nouveau_bo.c
->> > @@ -437,8 +437,10 @@ nouveau_bo_wr16(struct nouveau_bo *nvbo, unsigned index, u16 val)
->> >     mem = &mem[index];
->> >     if (is_iomem)
->> >             iowrite16_native(val, (void __force __iomem *)mem);
->> > -   else
->> > +   else {
->> >             *mem = val;
->> > +           nv_cpu_cache_flush_area(mem, 2);
->> > +   }
->> >  }
->> >
->> >  u32
->> > @@ -461,8 +463,10 @@ nouveau_bo_wr32(struct nouveau_bo *nvbo, unsigned index, u32 val)
->> >     mem = &mem[index];
->> >     if (is_iomem)
->> >             iowrite32_native(val, (void __force __iomem *)mem);
->> > -   else
->> > +   else {
->> >             *mem = val;
->> > +           nv_cpu_cache_flush_area(mem, 4);
->> > +   }
->>
->> This looks rather like a sledgehammer to me. Effectively this turns nvbo
->> into an uncached buffer. With additional overhead of constantly flushing
->> caches. Wouldn't it make more sense to locate the places where these are
->> called and flush the cache after all the writes have completed?
->>
-> I don't think the explicit flushing for those things makes sense. I
-> think it is a lot more effective to just map the BOs write-combined on
-> PCI non-coherent arches. This way any writes will be buffered. Reads
-> will be slow, but I don't think nouveau is reading back a lot from those
-> buffers.
-> Using the write-combining buffer doesn't need any additional
-> synchronization as it will get flushed on pushbuf kickoff anyways.
 
-I tried to go that way, and something interesting happened.
+--===============6865396888189635512==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="eqp4TxRxnD4KrmFZ"
+Content-Disposition: inline
 
-What I did: remove this patch and instead set the following caching
-parameters for the TTM_PL_TT case in nouveau_bo_init_mem_type():
 
-    man->available_caching = TTM_PL_FLAG_UNCACHED | TTM_PL_FLAG_WC;
-    man->default_caching = TTM_PL_FLAG_WC;
+--eqp4TxRxnD4KrmFZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-What happened: no runtime errors as what happened when caching is
-enabled. However, many of the vertex and texture buffers seem to be
-partially corrupted. In glmark2 the 3d models had many vertices (but
-not all) at the wrong position. Note that not all the scenes ended up
-being corrupted - in particular, when two consecutive scenes used the
-same model, the second instance would be uncorrupted.
+On Sat, Jun 07, 2014 at 03:22:13PM +0200, Arnd Bergmann wrote:
+> On Saturday 07 June 2014 00:45:45 Thierry Reding wrote:
+> > This is somewhat off-topic, but given the various concepts discussed in
+> > this thread I'm beginning to wonder how they will be implemented.
+>=20
+> I think it's good you raised the question.
+>=20
+> > The
+> > current implementation hooks the IOMMU API into the DMA mapping API, and
+> > the way this is done is by setting a single IOMMU (or rather a set of
+> > IOMMU operations) globally per bus type.
+>=20
+> I hadn't realized that we have a per-bus iommu_ops pointer. I agree
+> this will become a limitation as soon as we have a soc with two different
+> IOMMUs that have platform devices attached, and it has to be moved into
+> the device or a structure related to that.
+>=20
+> If that turns out controversial, we can probably have a set of pseudo
+> iommu ops that just call into dev->archdata->iommu_ops->function()
+> for ARM.
+>=20
+> > There are two issues that I can see with that: one is that we can't
+> > support multiple IOMMUs in the system at all, and the other is that
+> > there is no context associated with the IOMMU ops, and therefore there
+> > is no way to differentiate between two instances of the same IOMMU. A
+> > few drivers use global variables to keep track of context information
+> > but that won't work with multiple instances, unless they keep a global
+> > list of all instances and then require explicit lookup in each of the
+> > IOMMU operations. That sounds more like a workaround rather than a
+> > proper solution to me.
+>=20
+> Supporting multiple iommus that share one iommu driver should work
+> without such hacks, as you can put the per-device information into
+> dev->device_dma_parameters (this works only for very simple IOMMUs)
+> or dev->archdata->iommu
 
-Forcing the caching to TTM_PL_FLAG_UNCACHED led to the same result.
-What is interesting is that while data like vertices and textures got
-corrupted, pushbuffers and shader programs seem to be just fine, as I
-could not see any runtime error.
+I was talking about the lack of a place to store context for the IOMMU
+itself. Currently none of the functions in iommu_ops have a way to get
+access to the IOMMU context itself. In fact there's not even a common
+structure that could be used for this purpose. I have a couple of local
+patches that try to add something like that, along with functions to
+more explicitly hook up a device with it's IOMMU(s). It looks somewhat
+like this:
 
-I don't really understand what kind of caching behavior could lead to
-that. If anyone has any idea, I'd love to hear.
+	struct iommu {
+		struct device *dev;
 
-Thanks,
-Alex.
+		struct list_head list;
+
+		const struct iommu_ops *ops;
+	};
+
+	/* register and unregister IOMMU device with core */
+	int iommu_add(struct iommu *iommu);
+	void iommu_remove(struct iommu *iommu);
+
+	/*
+	 * Attach a device to one or more IOMMUs (according to the
+	 * iommus property).
+	 */
+	int iommu_attach(struct device *dev);
+	int iommu_detach(struct device *dev);
+
+Does that look like a direction that we would want to pursue?
+
+> (we may want to generalize that, I think someone just posted patches
+> for it).
+
+Perhaps you mean this:
+
+	[PATCHv3 1/3] device.h: arm dma-iommu: Move out dma_iommu_mapping struct
+
+? From a quick glance that indeed looks like a promising step towards
+unifying this across architectures.
+
+> > Discussion in this thread indicates that both of the above will be
+> > required at some point. Have I completely missed something or will we
+> > have to rework (parts of) the IOMMU API to make this work?
+> >=20
+> > One other thing that I have some difficulty understanding is how we can
+> > support things like process isolation using the current IOMMU API. Since
+> > a device will be statically assigned to one IOMMU domain at probe time
+> > there is no way we can change the address space upon a context switch.
+>=20
+> We have just introduced a way to parse dma-ranges in of_dma_configure().
+>=20
+> The only way I see this done for platform devices is to do the IOMMU
+> configuration in the same place: if an iommus property is found there,
+> we call out to the iommu driver that matches the respective iommu device
+> and let it configure the master device.
+>=20
+> The device already has multiple properties related to iommus:
+> 'struct device_dma_parameters', 'archdata', 'iommu_group', and
+> pdev_archdata for platform devices. This should be enough to set up
+> the default iommu dma_map_ops so we can have non-isolated DMA using
+> dma_map_* and dma_alloc_coherent.
+
+Right, I think up to that point things should be fine with the existing
+IOMMU API and using only DMA mapping functions.
+
+> I haven't given much thought to devices that want to use the IOMMU
+> API directly so they can have multiple domains rather than rely on
+> the dma-mapping abstraction.
+
+I'm specifically thinking about cases where we want to use the IOMMU to
+isolate processes from each other. This is probably most relevant for
+GPUs, since they are driven to a large degree from userspace. Other
+peripherals are mostly services in kernel space exclusively, so I don't
+think the issue is as relevant there.
+
+On Tegra there's two IOMMUs, one system-wide and another one directly
+used by the GPU (and programmed by the GPU driver (nouveau)). For the
+latter it probably doesn't make sense to expose it via the IOMMU API,
+and we may be able to get sufficient process isolation using only it
+rather than in combination with the SMMU. However some of the graphics
+components don't master through the GPU's IOMMU, so if we want any kind
+of process isolation there we may need to control the IOMMU more
+explicitly. I'm still trying to get a more full understanding of this,
+but it would seem to me that we'd need some way to use different domains
+(which I think is the proper abstraction for what the Tegra SMMU calls
+an Address Space ID (ASID)) in one driver, depending on the current
+process.
+
+Thierry
+
+--eqp4TxRxnD4KrmFZ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTlZEhAAoJEN0jrNd/PrOh7K4QAIhAT8R1UyC7rp/hm215jpaQ
+/KXTWRXvGBswoOBcW7YSk8z2mVlJKyruhbW1jV8pKEbZqBdgJBeoFGSsbvc9YwK6
+iABlgHtqYiZZFBhudwDS5kVQiVIOISK2zkKbGJizP7uraWls74LS2OQUgGndLbmA
+zh5dptghZn2F9ifSg/8N1+WZj5+DogKF4CukO8dpXllK+VSMm9Owid2shaYSbwWp
+6dJ+bg2Gb4bpOwJCDVefHI84Ohi+2yKOwJ8N/ahwxL3nRFdkn2uyRtg6MAbTambF
+BlJ7dTGdHcG7YgcqUtH/8Hfpi+nSCheSrS7R0hN71WnF1Y2lKbEL4lH6sSBDc6o6
+H+aPnSbGev7lFiPLRV+8egcIsMpRdDrMJ0SspVQFkBqiJT7V/XZdKrxQAi3ZooZq
+yPlJ8cy65+1ig3sItOfUlYD7GRX6QXDxHG2yitbIzeCITD28iHcw8eUPV/Qob8z0
+wcvvoEzHP91T/9XnBGf7upqVJ5TvEco50u8cM9SF4G5KuG48iNBxOqdEXRLjlxLa
+qX5VWLzTGnu+lJGzMmeLmsgJTiDgt7RWWqhAXlgqRWAuQCfBt3vxHykHmiDNlyjm
+2jdagxgiqdZ2ToTW332Q4rZ00vNIKNYW3m1kRpKVEVkOXV9EPwAFtgHHm72YjEsY
+B2asu4t59lPypkSq5DfR
+=0t66
+-----END PGP SIGNATURE-----
+
+--eqp4TxRxnD4KrmFZ--
+
+--===============6865396888189635512==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============6865396888189635512==--
