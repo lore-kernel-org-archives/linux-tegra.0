@@ -1,42 +1,92 @@
-From: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH 2/3] arm: tegra: enable igb, stmpe, i2c chardev, spidev,
- lm95245, pwm leds
-Date: Tue, 10 Jun 2014 00:16:13 +0200
-Message-ID: <5396322D.6030003@ziswiler.com>
-References: <c5522b0efcbfc7690dcde6aaf78b9dd568f99604.1401665237.git.marcel@ziswiler.com> <39a8704a4c8170d6b0620a1e5e44042eae6d8810.1401665237.git.marcel@ziswiler.com> <538CA24B.1010602@wwwdotorg.org> <538CA635.4050502@ziswiler.com> <20140602221627.GP31751@sirena.org.uk> <538D64FD.2010909@ziswiler.com> <20140603094537.GQ31751@sirena.org.uk> <538EBACB.70100@ziswiler.com> <20140604111755.GG2520@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140604111755.GG2520-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stefan-XLVq0VzYD2Y@public.gmane.org
+From: Marcel Ziswiler <marcel@ziswiler.com>
+Subject: [PATCH v2 1/3] arm: multi_v7: enable igb, stmpe, lm95245, pwm leds
+Date: Tue, 10 Jun 2014 00:49:50 +0200
+Message-ID: <1741a33cd88cd5525f3c50c0e0cacc0853a3512a.1402350905.git.marcel@ziswiler.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: swarren@wwwdotorg.org, thierry.reding@gmail.com
+Cc: arm@kernel.org, linux@arm.linux.org.uk, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, stefan@agner.ch, Marcel Ziswiler <marcel@ziswiler.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/04/2014 01:17 PM, Mark Brown wrote:
-> You're saying you're controlling it from userspace.  This is a
-> particular detail of what you are doing in your system.  You happen to
-> want to control the devices you are hanging off the system with
-> userspace drivers but that's just what you're doing right now.
+The NVIDIA Tegra 3 based Apalis T30 module contains an Intel i210 resp.
+i211 gigabit Ethernet controller, an STMPE811 ADC/touch controller, PWM
+LEDs generically accessible from user space and an LM95245 temperature
+sensor chip. The later three can also be found on the Colibri T30
+module.
 
-Sorry, I don't get it. Yes, spidev is to control stuff from user space 
-just like i2c-dev however bad that might sound.
+While at it move the NEON entry down to its proper place to have it all
+nicely ordered again.
 
-> No, that's in the controller node - the chip selects are described
-> there.  The child node references a chip select number that the master
-> has and describes what's connected to that chip select.
+Signed-off-by: Marcel Ziswiler <marcel@ziswiler.com>
+---
+Changes since v1:
+- Forget about spidev for now.
 
-Well, unfortunately SPI without any chip select is just plain simply 
-useless. It won't work.
+ arch/arm/configs/multi_v7_defconfig |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-> It's a perfectly fine way of controlling things from userspace if that's
-> a sensible way of controlling devices but that does not mean you should
-> describe it in the device tree in that fashion.
-
-Only that without describing such a chip select in the device tree 
-spidev won't ever work.
-
-I don't see us reaching any consensus here therefore I retreat. I will 
-re-submit the whole thing without spidev however sad having to see that 
-useful feature being dropped.
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 19dbddb..b0b996e 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -66,7 +66,6 @@ CONFIG_ARCH_VEXPRESS=y
+ CONFIG_ARCH_VEXPRESS_CA9X4=y
+ CONFIG_ARCH_WM8850=y
+ CONFIG_ARCH_ZYNQ=y
+-CONFIG_NEON=y
+ CONFIG_TRUSTED_FOUNDATIONS=y
+ CONFIG_PCI=y
+ CONFIG_PCI_MSI=y
+@@ -83,6 +82,7 @@ CONFIG_CPU_FREQ=y
+ CONFIG_CPU_FREQ_STAT_DETAILS=y
+ CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
+ CONFIG_CPU_IDLE=y
++CONFIG_NEON=y
+ CONFIG_NET=y
+ CONFIG_PACKET=y
+ CONFIG_UNIX=y
+@@ -134,6 +134,7 @@ CONFIG_NETDEVICES=y
+ CONFIG_SUN4I_EMAC=y
+ CONFIG_MACB=y
+ CONFIG_NET_CALXEDA_XGMAC=y
++CONFIG_IGB=y
+ CONFIG_MV643XX_ETH=y
+ CONFIG_MVNETA=y
+ CONFIG_KS8851=y
+@@ -157,6 +158,8 @@ CONFIG_KEYBOARD_TEGRA=y
+ CONFIG_KEYBOARD_SPEAR=y
+ CONFIG_KEYBOARD_CROS_EC=y
+ CONFIG_MOUSE_PS2_ELANTECH=y
++CONFIG_INPUT_TOUCHSCREEN=y
++CONFIG_TOUCHSCREEN_STMPE=y
+ CONFIG_INPUT_MISC=y
+ CONFIG_INPUT_MPU3050=y
+ CONFIG_SERIO_AMBAKMI=y
+@@ -222,6 +225,7 @@ CONFIG_POWER_RESET_AS3722=y
+ CONFIG_POWER_RESET_GPIO=y
+ CONFIG_POWER_RESET_SUN6I=y
+ CONFIG_SENSORS_LM90=y
++CONFIG_SENSORS_LM95245=y
+ CONFIG_THERMAL=y
+ CONFIG_DOVE_THERMAL=y
+ CONFIG_ARMADA_THERMAL=y
+@@ -233,6 +237,7 @@ CONFIG_MFD_CROS_EC=y
+ CONFIG_MFD_CROS_EC_SPI=y
+ CONFIG_MFD_MAX8907=y
+ CONFIG_MFD_SEC_CORE=y
++CONFIG_MFD_STMPE=y
+ CONFIG_MFD_PALMAS=y
+ CONFIG_MFD_TPS65090=y
+ CONFIG_MFD_TPS6586X=y
+@@ -315,6 +320,9 @@ CONFIG_MMC_MVSDIO=y
+ CONFIG_MMC_SUNXI=y
+ CONFIG_MMC_DW=y
+ CONFIG_MMC_DW_EXYNOS=y
++CONFIG_NEW_LEDS=y
++CONFIG_LEDS_CLASS=y
++CONFIG_LEDS_PWM=y
+ CONFIG_EDAC=y
+ CONFIG_EDAC_MM_EDAC=y
+ CONFIG_EDAC_HIGHBANK_MC=y
+-- 
+1.7.9.5
