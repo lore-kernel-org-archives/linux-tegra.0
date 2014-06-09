@@ -1,48 +1,25 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v7 3/5] misc: fuse: Add efuse driver for Tegra
-Date: Mon, 09 Jun 2014 12:29:21 -0600
-Message-ID: <5395FD01.2060908@wwwdotorg.org>
-References: <1401973754-19701-1-git-send-email-pdeschrijver@nvidia.com> <1401973754-19701-4-git-send-email-pdeschrijver@nvidia.com> <5390B8E6.1050600@wwwdotorg.org> <20140605220946.GP5961@tbergstrom-lnx.Nvidia.com> <5390F508.8080104@wwwdotorg.org> <20140606073507.GS5961@tbergstrom-lnx.Nvidia.com>
+Subject: Re: [PATCH 0/9] Serial ATA support for NVIDIA Tegra124
+Date: Mon, 09 Jun 2014 12:33:50 -0600
+Message-ID: <5395FE0E.80105@wwwdotorg.org>
+References: <1401881559-18469-1-git-send-email-mperttunen@nvidia.com> <5390A8F9.2090408@wwwdotorg.org> <53915F3B.6050806@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140606073507.GS5961-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+In-Reply-To: <53915F3B.6050806-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/06/2014 01:35 AM, Peter De Schrijver wrote:
-> On Fri, Jun 06, 2014 at 12:54:00AM +0200, Stephen Warren wrote:
-...
->>> No. It's only used to populate /sys/devices/soc0/revision. I don't think
->>> that's particularly important.
->>
->> But it's a feature that works today. Why should we break it?
-> 
-> I don't expect people to not update their DT actually...
+On 06/06/2014 12:27 AM, Mikko Perttunen wrote:
+> The only compile-time dependencies here should be that:
+> - patch 8 of 9 which contains the actual driver depends on patch 6 of 9
+> (though only when building as a module) and the efuse series
 
-But that's not how DT works; old DTs must continue to work.
+> - patch 2 of 9 refers to the DT node called "padctl", so it requires the
+> xusb series. (in the submitted xusb series, the node isn't actually
+> named, though. I will fix this in v2)
 
->>> sdhci needs this for faster modes I guess which will also need extra DT
->>> properties looking at the chromeos driver. The others definitely will need
->>> an updated DT. For randomness I haven't seen any appreciable difference in when
->>> the 'random: nonblocking pool is initialized' message appears between having
->>> the randomness addition or not. Most likely the bulk of the randomness comes
->>> from serial interrupts rather than the fuse data. So I don't think the move to
->>> a driver probe will cause any problem. Nor do I think the lack of an updated
->>> DT will cause problems.
->>
->> But what advantage do we have by actively changing it?
-> 
-> We need to move the code anyway when we will have 64bit SoCs. Using DT also
-> allows us to reuse the code even when the base address changes in the future.
-> If it weren't for Tegra20 A03p, we could also drop the hack to enable the
-> clocks directly, but use CCF instead.
-
-Sure we need to move the code out of arch/arm so it can be shared with
-arm64. However, that doesn't imply that we need to change anything about
-the way the code works or is initialized; we can still do all the
-initialization in response to a function call from the arch/board
-support, and not in response to driver probe.
+Isn't that dependency a run-time dependency?
