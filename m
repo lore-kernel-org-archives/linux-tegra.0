@@ -1,92 +1,107 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH v2 1/3] arm: multi_v7: enable igb, stmpe, lm95245, pwm leds
-Date: Tue, 10 Jun 2014 00:49:50 +0200
-Message-ID: <1741a33cd88cd5525f3c50c0e0cacc0853a3512a.1402350905.git.marcel@ziswiler.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH v2 2/3] arm: tegra: enable igb, stmpe, i2c chardev, lm95245,
+ pwm leds
+Date: Tue, 10 Jun 2014 00:52:45 +0200
+Message-ID: <dadd07f9ed693d6bcf541764b62a2caf4cc38630.1402353627.git.marcel@ziswiler.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: swarren@wwwdotorg.org, thierry.reding@gmail.com
-Cc: arm@kernel.org, linux@arm.linux.org.uk, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, stefan@agner.ch, Marcel Ziswiler <marcel@ziswiler.com>
+Cc: devicetree@vger.kernel.org, linux@arm.linux.org.uk, linux-kernel@vger.kernel.org, stefan@agner.ch, Marcel Ziswiler <marcel@ziswiler.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 The NVIDIA Tegra 3 based Apalis T30 module contains an Intel i210 resp.
-i211 gigabit Ethernet controller, an STMPE811 ADC/touch controller, PWM
-LEDs generically accessible from user space and an LM95245 temperature
-sensor chip. The later three can also be found on the Colibri T30
-module.
+i211 gigabit Ethernet controller, an STMPE811 ADC/touch controller, I2C
+buses and PWM LEDs generically accessible from user space and an
+LM95245 temperature sensor chip. The later four can also be found on
+the Colibri T30 module.
 
-While at it move the NEON entry down to its proper place to have it all
-nicely ordered again.
+While at it move the PCA953x GPIO entry down to its proper place to
+have it all nicely ordered again.
 
 Signed-off-by: Marcel Ziswiler <marcel@ziswiler.com>
 ---
 Changes since v1:
 - Forget about spidev for now.
 
- arch/arm/configs/multi_v7_defconfig |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ arch/arm/configs/tegra_defconfig |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 19dbddb..b0b996e 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -66,7 +66,6 @@ CONFIG_ARCH_VEXPRESS=y
- CONFIG_ARCH_VEXPRESS_CA9X4=y
- CONFIG_ARCH_WM8850=y
- CONFIG_ARCH_ZYNQ=y
--CONFIG_NEON=y
- CONFIG_TRUSTED_FOUNDATIONS=y
- CONFIG_PCI=y
- CONFIG_PCI_MSI=y
-@@ -83,6 +82,7 @@ CONFIG_CPU_FREQ=y
- CONFIG_CPU_FREQ_STAT_DETAILS=y
- CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
- CONFIG_CPU_IDLE=y
-+CONFIG_NEON=y
- CONFIG_NET=y
- CONFIG_PACKET=y
- CONFIG_UNIX=y
-@@ -134,6 +134,7 @@ CONFIG_NETDEVICES=y
- CONFIG_SUN4I_EMAC=y
- CONFIG_MACB=y
- CONFIG_NET_CALXEDA_XGMAC=y
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index fb25e29..d05eec8 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -23,7 +23,6 @@ CONFIG_MODULE_FORCE_UNLOAD=y
+ CONFIG_PARTITION_ADVANCED=y
+ # CONFIG_IOSCHED_DEADLINE is not set
+ # CONFIG_IOSCHED_CFQ is not set
+-CONFIG_GPIO_PCA953X=y
+ CONFIG_ARCH_TEGRA=y
+ CONFIG_ARCH_TEGRA_2x_SOC=y
+ CONFIG_ARCH_TEGRA_3x_SOC=y
+@@ -111,6 +110,7 @@ CONFIG_SCSI_MULTI_LUN=y
+ # CONFIG_SCSI_LOWLEVEL is not set
+ CONFIG_NETDEVICES=y
+ CONFIG_DUMMY=y
 +CONFIG_IGB=y
- CONFIG_MV643XX_ETH=y
- CONFIG_MVNETA=y
- CONFIG_KS8851=y
-@@ -157,6 +158,8 @@ CONFIG_KEYBOARD_TEGRA=y
- CONFIG_KEYBOARD_SPEAR=y
+ CONFIG_R8169=y
+ CONFIG_USB_PEGASUS=y
+ CONFIG_USB_USBNET=y
+@@ -125,6 +125,8 @@ CONFIG_KEYBOARD_GPIO=y
+ CONFIG_KEYBOARD_TEGRA=y
  CONFIG_KEYBOARD_CROS_EC=y
  CONFIG_MOUSE_PS2_ELANTECH=y
 +CONFIG_INPUT_TOUCHSCREEN=y
 +CONFIG_TOUCHSCREEN_STMPE=y
  CONFIG_INPUT_MISC=y
  CONFIG_INPUT_MPU3050=y
- CONFIG_SERIO_AMBAKMI=y
-@@ -222,6 +225,7 @@ CONFIG_POWER_RESET_AS3722=y
+ # CONFIG_LEGACY_PTYS is not set
+@@ -135,6 +137,7 @@ CONFIG_SERIAL_TEGRA=y
+ CONFIG_SERIAL_OF_PLATFORM=y
+ # CONFIG_HW_RANDOM is not set
+ # CONFIG_I2C_COMPAT is not set
++CONFIG_I2C_CHARDEV=y
+ CONFIG_I2C_MUX_PCA954x=y
+ CONFIG_I2C_MUX_PINCTRL=y
+ CONFIG_I2C_TEGRA=y
+@@ -144,6 +147,7 @@ CONFIG_SPI_TEGRA20_SFLASH=y
+ CONFIG_SPI_TEGRA20_SLINK=y
+ CONFIG_PINCTRL_AS3722=y
+ CONFIG_PINCTRL_PALMAS=y
++CONFIG_GPIO_PCA953X=y
+ CONFIG_GPIO_PCA953X_IRQ=y
+ CONFIG_GPIO_PALMAS=y
+ CONFIG_GPIO_TPS6586X=y
+@@ -155,10 +159,12 @@ CONFIG_POWER_RESET=y
+ CONFIG_POWER_RESET_AS3722=y
  CONFIG_POWER_RESET_GPIO=y
- CONFIG_POWER_RESET_SUN6I=y
  CONFIG_SENSORS_LM90=y
 +CONFIG_SENSORS_LM95245=y
- CONFIG_THERMAL=y
- CONFIG_DOVE_THERMAL=y
- CONFIG_ARMADA_THERMAL=y
-@@ -233,6 +237,7 @@ CONFIG_MFD_CROS_EC=y
+ CONFIG_MFD_AS3722=y
+ CONFIG_MFD_CROS_EC=y
  CONFIG_MFD_CROS_EC_SPI=y
  CONFIG_MFD_MAX8907=y
- CONFIG_MFD_SEC_CORE=y
 +CONFIG_MFD_STMPE=y
  CONFIG_MFD_PALMAS=y
  CONFIG_MFD_TPS65090=y
  CONFIG_MFD_TPS6586X=y
-@@ -315,6 +320,9 @@ CONFIG_MMC_MVSDIO=y
- CONFIG_MMC_SUNXI=y
- CONFIG_MMC_DW=y
- CONFIG_MMC_DW_EXYNOS=y
-+CONFIG_NEW_LEDS=y
-+CONFIG_LEDS_CLASS=y
+@@ -221,6 +227,7 @@ CONFIG_MMC_SDHCI_TEGRA=y
+ CONFIG_NEW_LEDS=y
+ CONFIG_LEDS_CLASS=y
+ CONFIG_LEDS_GPIO=y
 +CONFIG_LEDS_PWM=y
- CONFIG_EDAC=y
- CONFIG_EDAC_MM_EDAC=y
- CONFIG_EDAC_HIGHBANK_MC=y
+ CONFIG_LEDS_TRIGGERS=y
+ CONFIG_LEDS_TRIGGER_TIMER=y
+ CONFIG_LEDS_TRIGGER_ONESHOT=y
 -- 
 1.7.9.5
