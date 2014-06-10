@@ -1,144 +1,33 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v2 1/4] of: Add NVIDIA Tegra XUSB pad controller binding
-Date: Tue, 10 Jun 2014 13:11:45 +0200
-Message-ID: <1402398708-10722-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v2 4/4] ARM: tegra: jetson-tk1: Add XUSB pad controller
+Date: Tue, 10 Jun 2014 13:11:48 +0200
+Message-ID: <1402398708-10722-4-git-send-email-thierry.reding@gmail.com>
+References: <1402398708-10722-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1402398708-10722-1-git-send-email-thierry.reding@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Andrew Bresticker <abrestic@chromium.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Thierry Reding <treding@nvidia.com>
 
-This patch adds the device tree binding documentation for the XUSB pad
-controller found on NVIDIA Tegra SoCs. It exposes both pinmuxing and PHY
-capabilities.
+Assign lanes to the XUSB pads as used on the Jetson TK1.
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
-Changes in v2:
-- move header file to this patch and refer to it in the binding
-- update example to match the latest binding
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
- .../pinctrl/nvidia,tegra124-xusb-padctl.txt        | 131 +++++++++++++++++++++
- include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h   |   7 ++
- 2 files changed, 138 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt
- create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h
-
-diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt
-new file mode 100644
-index 000000000000..9a6b04d9ff92
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt
-@@ -0,0 +1,131 @@
-+Device tree binding for NVIDIA Tegra XUSB pad controller
-+========================================================
-+
-+The Tegra XUSB pad controller manages a set of lanes, each of which can be
-+assigned to one out of a set of different pads. Some of these pads have an
-+associated PHY that must be powered up before the pad can be used.
-+
-+This document defines the device-specific binding for the XUSB pad controller.
-+
-+Refer to pinctrl-bindings.txt in this directory for generic information about
-+pin controller device tree bindings and ../phy/phy-bindings.txt for details on
-+how to describe and reference PHYs in device trees.
-+
-+Required properties:
-+--------------------
-+- compatible: should be "nvidia,tegra124-xusb-padctl"
-+- reg: Physical base address and length of the controller's registers.
-+- resets: Must contain an entry for each entry in reset-names.
-+  See ../reset/reset.txt for details.
-+- reset-names: Must include the following entries:
-+  - padctl
-+- #address-cells: Should be 0.
-+- #size-cells: Should be 0.
-+- #phy-cells: Should be 1. The specifier is the index of the PHY to reference.
-+  See <dt-bindings/pinctrl/pinctrl-tegra-xusb.h> for the list of valid values.
-+
-+Lane muxing:
-+------------
-+
-+Child nodes contain the pinmux configurations following the conventions from
-+the pinctrl-bindings.txt document. Typically a single, static configuration is
-+given and applied at boot time.
-+
-+Each subnode describes groups of lanes along with parameters and pads that
-+they should be assigned to. The name of these subnodes is not important. All
-+subnodes should be parsed solely based on their content.
-+
-+Each subnode only applies the parameters that are explicitly listed. In other
-+words, if a subnode that lists a function but no pin configuration parameters
-+implies no information about any pin configuration parameters. Similarly, a
-+subnode that describes only an IDDQ parameter implies no information about
-+what function the pins are assigned to. For this reason even seemingly boolean
-+values are actually tristates in this binding: unspecified, off or on.
-+Unspecified is represented as an absent property, and off/on are represented
-+as integer values 0 and 1.
-+
-+Required properties:
-+- nvidia,lanes: An array of strings. Each string is the name of a lane.
-+
-+Optional properties:
-+- nvidia,function: A string that is the name of the function (pad) that the
-+  pin or group should be assigned to. Valid values for function names are
-+  listed below.
-+- nvidia,iddq: Enables IDDQ mode of the lane. (0: no, 1: yes)
-+
-+Note that not all of these properties are valid for all lanes. Lanes can be
-+divided into three groups:
-+
-+  - otg-0, otg-1, otg-2:
-+
-+    Valid functions for this group are: "snps", "xusb", "uart", "rsvd".
-+
-+    The nvidia,iddq property does not apply to this group.
-+
-+  - ulpi-0, hsic-0, hsic-1:
-+
-+    Valid functions for this group are: "snps", "xusb".
-+
-+    The nvidia,iddq property does not apply to this group.
-+
-+  - pcie-0, pcie-1, pcie-2, pcie-3, pcie-4, sata-0:
-+
-+    Valid functions for this group are: "pcie", "usb3", "sata", "rsvd".
-+
-+
-+Example:
-+========
-+
-+SoC file extract:
-+-----------------
-+
+diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+index e31fb61a81d3..38d30877057c 100644
+--- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
++++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+@@ -1619,6 +1619,32 @@
+ 		nvidia,sys-clock-req-active-high;
+ 	};
+ 
 +	padctl@0,7009f000 {
-+		compatible = "nvidia,tegra124-xusb-padctl";
-+		reg = <0x0 0x7009f000 0x0 0x1000>;
-+		resets = <&tegra_car 142>;
-+		reset-names = "padctl";
-+
-+		#address-cells = <0>;
-+		#size-cells = <0>;
-+		#phy-cells = <1>;
-+	};
-+
-+Board file extract:
-+-------------------
-+
-+	pcie-controller@0,01003000 {
-+		...
-+
-+		phys = <&padctl 0>;
-+		phy-names = "pcie";
-+
-+		...
-+	};
-+
-+	...
-+
-+	padctl: padctl@0,7009f000 {
 +		pinctrl-0 = <&padctl_default>;
 +		pinctrl-names = "default";
 +
@@ -163,18 +52,9 @@ index 000000000000..9a6b04d9ff92
 +			};
 +		};
 +	};
-diff --git a/include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h b/include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h
-new file mode 100644
-index 000000000000..914d56da9324
---- /dev/null
-+++ b/include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h
-@@ -0,0 +1,7 @@
-+#ifndef _DT_BINDINGS_PINCTRL_TEGRA_XUSB_H
-+#define _DT_BINDINGS_PINCTRL_TEGRA_XUSB_H 1
 +
-+#define TEGRA_XUSB_PADCTL_PCIE 0
-+#define TEGRA_XUSB_PADCTL_SATA 1
-+
-+#endif /* _DT_BINDINGS_PINCTRL_TEGRA_XUSB_H */
+ 	/* SD card */
+ 	sdhci@0,700b0400 {
+ 		status = "okay";
 -- 
 1.9.2
