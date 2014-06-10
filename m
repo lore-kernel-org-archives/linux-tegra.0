@@ -1,217 +1,968 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] drm/tegra: Make job submission 64-bit safe
-Date: Tue, 10 Jun 2014 13:07:39 +0200
-Message-ID: <1402398459-10500-1-git-send-email-thierry.reding@gmail.com>
+Subject: [PATCH v2 2/4] pinctrl: Add NVIDIA Tegra XUSB pad controller support
+Date: Tue, 10 Jun 2014 13:11:46 +0200
+Message-ID: <1402398708-10722-2-git-send-email-thierry.reding@gmail.com>
+References: <1402398708-10722-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1402398708-10722-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Job submission currently relies on the fact that struct drm_tegra_reloc
-and struct host1x_reloc are the same size and uses a simple call to the
-copy_from_user() function to copy them to kernel space. This causes the
-handle to be stored in the buffer object field, which then needs a cast
-to a 32 bit integer to resolve it to a proper buffer object pointer and
-store it back in the buffer object field.
+The XUSB pad controller found on NVIDIA Tegra SoCs provides several pads
+that lanes can be assigned to in order to support a variety of interface
+options: USB 2.0, USB 3.0, PCIe and SATA.
 
-On 64-bit architectures that will no longer work, since pointers are 64
-bits wide whereas handles will remain 32 bits. This causes the sizes of
-both structures to because different and copying will no longer work.
-
-Fix this by adding a new function, host1x_reloc_get_user(), that copies
-the structures field by field.
-
-While at it, use substructures for the command and target buffers in
-struct host1x_reloc for better readability. Also use unsized types to
-make it more obvious that this isn't part of userspace ABI.
+In addition to the pin controller used to assign lanes to pads two PHYs
+are exposed to allow the bricks for PCIe and SATA to be powered up and
+down by PCIe and SATA drivers.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/drm.c | 62 ++++++++++++++++++++++++++++++++-------------
- drivers/gpu/host1x/job.c    | 22 ++++++++--------
- include/linux/host1x.h      | 15 ++++++-----
- 3 files changed, 64 insertions(+), 35 deletions(-)
+Changes in v2:
+- remove unused tegra124_groups array
+- move header file to binding patch
+- default to y for ARCH_TEGRA
 
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index 56ef81a6f28f..57a774b8402a 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -132,6 +132,45 @@ host1x_bo_lookup(struct drm_device *drm, struct drm_file *file, u32 handle)
- 	return &bo->base;
- }
+ drivers/pinctrl/Kconfig              |   6 +
+ drivers/pinctrl/Makefile             |   1 +
+ drivers/pinctrl/pinctrl-tegra-xusb.c | 896 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 903 insertions(+)
+ create mode 100644 drivers/pinctrl/pinctrl-tegra-xusb.c
+
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index 0042ccb46b9a..0fa42be8df00 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -328,6 +328,12 @@ config PINCTRL_TEGRA124
+ 	bool
+ 	select PINCTRL_TEGRA
  
-+static int host1x_reloc_copy_from_user(struct host1x_reloc *dest,
-+				       struct drm_tegra_reloc __user *src,
-+				       struct drm_device *drm,
-+				       struct drm_file *file)
++config PINCTRL_TEGRA_XUSB
++	def_bool y if ARCH_TEGRA
++	select GENERIC_PHY
++	select PINCONF
++	select PINMUX
++
+ config PINCTRL_TZ1090
+ 	bool "Toumaz Xenif TZ1090 pin control driver"
+ 	depends on SOC_TZ1090
+diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
+index c4b5d405b8f5..df8878839b44 100644
+--- a/drivers/pinctrl/Makefile
++++ b/drivers/pinctrl/Makefile
+@@ -55,6 +55,7 @@ obj-$(CONFIG_PINCTRL_TEGRA20)	+= pinctrl-tegra20.o
+ obj-$(CONFIG_PINCTRL_TEGRA30)	+= pinctrl-tegra30.o
+ obj-$(CONFIG_PINCTRL_TEGRA114)	+= pinctrl-tegra114.o
+ obj-$(CONFIG_PINCTRL_TEGRA124)	+= pinctrl-tegra124.o
++obj-$(CONFIG_PINCTRL_TEGRA_XUSB)	+= pinctrl-tegra-xusb.o
+ obj-$(CONFIG_PINCTRL_TZ1090)	+= pinctrl-tz1090.o
+ obj-$(CONFIG_PINCTRL_TZ1090_PDC)	+= pinctrl-tz1090-pdc.o
+ obj-$(CONFIG_PINCTRL_U300)	+= pinctrl-u300.o
+diff --git a/drivers/pinctrl/pinctrl-tegra-xusb.c b/drivers/pinctrl/pinctrl-tegra-xusb.c
+new file mode 100644
+index 000000000000..8f730c7efdbf
+--- /dev/null
++++ b/drivers/pinctrl/pinctrl-tegra-xusb.c
+@@ -0,0 +1,896 @@
++/*
++ * Copyright (c) 2014, NVIDIA CORPORATION.  All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ */
++
++#include <linux/delay.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/phy/phy.h>
++#include <linux/pinctrl/pinctrl.h>
++#include <linux/pinctrl/pinmux.h>
++#include <linux/platform_device.h>
++#include <linux/reset.h>
++
++#include <dt-bindings/pinctrl/pinctrl-tegra-xusb.h>
++
++#include "core.h"
++#include "pinctrl-utils.h"
++
++#define XUSB_PADCTL_ELPG_PROGRAM 0x01c
++#define XUSB_PADCTL_ELPG_PROGRAM_AUX_MUX_LP0_VCORE_DOWN (1 << 26)
++#define XUSB_PADCTL_ELPG_PROGRAM_AUX_MUX_LP0_CLAMP_EN_EARLY (1 << 25)
++#define XUSB_PADCTL_ELPG_PROGRAM_AUX_MUX_LP0_CLAMP_EN (1 << 24)
++
++#define XUSB_PADCTL_IOPHY_PLL_P0_CTL1 0x040
++#define XUSB_PADCTL_IOPHY_PLL_P0_CTL1_PLL0_LOCKDET (1 << 19)
++#define XUSB_PADCTL_IOPHY_PLL_P0_CTL1_REFCLK_SEL_MASK (0xf << 12)
++#define XUSB_PADCTL_IOPHY_PLL_P0_CTL1_PLL_RST (1 << 1)
++
++#define XUSB_PADCTL_IOPHY_PLL_P0_CTL2 0x044
++#define XUSB_PADCTL_IOPHY_PLL_P0_CTL2_REFCLKBUF_EN (1 << 6)
++#define XUSB_PADCTL_IOPHY_PLL_P0_CTL2_TXCLKREF_EN (1 << 5)
++#define XUSB_PADCTL_IOPHY_PLL_P0_CTL2_TXCLKREF_SEL (1 << 4)
++
++#define XUSB_PADCTL_IOPHY_PLL_S0_CTL1 0x138
++#define XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL1_LOCKDET (1 << 27)
++#define XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL1_MODE (1 << 24)
++#define XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL_PWR_OVRD (1 << 3)
++#define XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL_RST (1 << 1)
++#define XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL_IDDQ (1 << 0)
++
++#define XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL1 0x148
++#define XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL1_IDDQ_OVRD (1 << 1)
++#define XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL1_IDDQ (1 << 0)
++
++struct tegra_xusb_padctl_function {
++	const char *name;
++	const char * const *groups;
++	unsigned int num_groups;
++};
++
++struct tegra_xusb_padctl_group {
++	const unsigned int *funcs;
++	unsigned int num_funcs;
++};
++
++struct tegra_xusb_padctl_soc {
++	const struct pinctrl_pin_desc *pins;
++	unsigned int num_pins;
++
++	const struct tegra_xusb_padctl_function *functions;
++	unsigned int num_functions;
++
++	const struct tegra_xusb_padctl_lane *lanes;
++	unsigned int num_lanes;
++};
++
++struct tegra_xusb_padctl_lane {
++	const char *name;
++
++	unsigned int offset;
++	unsigned int shift;
++	unsigned int mask;
++	unsigned int iddq;
++
++	const unsigned int *funcs;
++	unsigned int num_funcs;
++};
++
++struct tegra_xusb_padctl {
++	struct device *dev;
++	void __iomem *regs;
++	struct mutex lock;
++	struct reset_control *rst;
++
++	const struct tegra_xusb_padctl_soc *soc;
++	struct pinctrl_dev *pinctrl;
++	struct pinctrl_desc desc;
++
++	struct phy_provider *provider;
++	struct phy *phys[2];
++
++	unsigned int enable;
++};
++
++static inline void padctl_writel(struct tegra_xusb_padctl *padctl, u32 value,
++				 unsigned long offset)
 +{
-+	u32 cmdbuf, target;
-+	int err;
++	writel(value, padctl->regs + offset);
++}
 +
-+	err = get_user(cmdbuf, &src->cmdbuf.handle);
++static inline u32 padctl_readl(struct tegra_xusb_padctl *padctl,
++			       unsigned long offset)
++{
++	return readl(padctl->regs + offset);
++}
++
++static int tegra_xusb_padctl_get_groups_count(struct pinctrl_dev *pinctrl)
++{
++	struct tegra_xusb_padctl *padctl = pinctrl_dev_get_drvdata(pinctrl);
++
++	return padctl->soc->num_pins;
++}
++
++static const char *tegra_xusb_padctl_get_group_name(struct pinctrl_dev *pinctrl,
++						    unsigned int group)
++{
++	struct tegra_xusb_padctl *padctl = pinctrl_dev_get_drvdata(pinctrl);
++
++	return padctl->soc->pins[group].name;
++}
++
++enum tegra_xusb_padctl_param {
++	TEGRA_XUSB_PADCTL_IDDQ,
++};
++
++static const struct tegra_xusb_padctl_property {
++	const char *name;
++	enum tegra_xusb_padctl_param param;
++} properties[] = {
++	{ "nvidia,iddq", TEGRA_XUSB_PADCTL_IDDQ },
++};
++
++#define TEGRA_XUSB_PADCTL_PACK(param, value) ((param) << 16 | (value))
++#define TEGRA_XUSB_PADCTL_UNPACK_PARAM(config) ((config) >> 16)
++#define TEGRA_XUSB_PADCTL_UNPACK_VALUE(config) ((config) & 0xffff)
++
++static int tegra_xusb_padctl_parse_subnode(struct tegra_xusb_padctl *padctl,
++					   struct device_node *np,
++					   struct pinctrl_map **maps,
++					   unsigned int *reserved_maps,
++					   unsigned int *num_maps)
++{
++	unsigned int i, reserve = 0, num_configs = 0;
++	unsigned long config, *configs = NULL;
++	const char *function, *group;
++	struct property *prop;
++	int err = 0;
++	u32 value;
++
++	err = of_property_read_string(np, "nvidia,function", &function);
++	if (err < 0) {
++		if (err != -EINVAL)
++			return err;
++
++		function = NULL;
++	}
++
++	for (i = 0; i < ARRAY_SIZE(properties); i++) {
++		err = of_property_read_u32(np, properties[i].name, &value);
++		if (err < 0) {
++			if (err == -EINVAL)
++				continue;
++
++			return err;
++		}
++
++		config = TEGRA_XUSB_PADCTL_PACK(properties[i].param, value);
++
++		err = pinctrl_utils_add_config(padctl->pinctrl, &configs,
++					       &num_configs, config);
++		if (err < 0)
++			return err;
++	}
++
++	if (function)
++		reserve++;
++
++	if (num_configs)
++		reserve++;
++
++	err = of_property_count_strings(np, "nvidia,lanes");
 +	if (err < 0)
 +		return err;
 +
-+	err = get_user(dest->cmdbuf.offset, &src->cmdbuf.offset);
++	reserve *= err;
++
++	err = pinctrl_utils_reserve_map(padctl->pinctrl, maps, reserved_maps,
++					num_maps, reserve);
 +	if (err < 0)
 +		return err;
 +
-+	err = get_user(target, &src->target.handle);
-+	if (err < 0)
-+		return err;
++	of_property_for_each_string(np, "nvidia,lanes", prop, group) {
++		if (function) {
++			err = pinctrl_utils_add_map_mux(padctl->pinctrl, maps,
++					reserved_maps, num_maps, group,
++					function);
++			if (err < 0)
++				return err;
++		}
 +
-+	err = get_user(dest->target.offset, &src->cmdbuf.offset);
-+	if (err < 0)
-+		return err;
-+
-+	err = get_user(dest->shift, &src->shift);
-+	if (err < 0)
-+		return err;
-+
-+	dest->cmdbuf.bo = host1x_bo_lookup(drm, file, cmdbuf);
-+	if (!dest->cmdbuf.bo)
-+		return -ENOENT;
-+
-+	dest->target.bo = host1x_bo_lookup(drm, file, target);
-+	if (!dest->target.bo)
-+		return -ENOENT;
++		if (num_configs) {
++			err = pinctrl_utils_add_map_configs(padctl->pinctrl,
++					maps, reserved_maps, num_maps, group,
++					configs, num_configs,
++					PIN_MAP_TYPE_CONFIGS_GROUP);
++			if (err < 0)
++				return err;
++		}
++	}
 +
 +	return 0;
 +}
 +
- int tegra_drm_submit(struct tegra_drm_context *context,
- 		     struct drm_tegra_submit *args, struct drm_device *drm,
- 		     struct drm_file *file)
-@@ -184,26 +223,13 @@ int tegra_drm_submit(struct tegra_drm_context *context,
- 		cmdbufs++;
- 	}
- 
--	if (copy_from_user(job->relocarray, relocs,
--			   sizeof(*relocs) * num_relocs)) {
--		err = -EFAULT;
--		goto fail;
--	}
--
-+	/* copy and resolve relocations from submit */
- 	while (num_relocs--) {
--		struct host1x_reloc *reloc = &job->relocarray[num_relocs];
--		struct host1x_bo *cmdbuf, *target;
--
--		cmdbuf = host1x_bo_lookup(drm, file, (u32)reloc->cmdbuf);
--		target = host1x_bo_lookup(drm, file, (u32)reloc->target);
--
--		reloc->cmdbuf = cmdbuf;
--		reloc->target = target;
--
--		if (!reloc->target || !reloc->cmdbuf) {
--			err = -ENOENT;
-+		err = host1x_reloc_copy_from_user(&job->relocarray[num_relocs],
-+						  &relocs[num_relocs], drm,
-+						  file);
++static int tegra_xusb_padctl_dt_node_to_map(struct pinctrl_dev *pinctrl,
++					    struct device_node *parent,
++					    struct pinctrl_map **maps,
++					    unsigned int *num_maps)
++{
++	struct tegra_xusb_padctl *padctl = pinctrl_dev_get_drvdata(pinctrl);
++	unsigned int reserved_maps = 0;
++	struct device_node *np;
++	int err;
++
++	*num_maps = 0;
++	*maps = NULL;
++
++	for_each_child_of_node(parent, np) {
++		err = tegra_xusb_padctl_parse_subnode(padctl, np, maps,
++						      &reserved_maps,
++						      num_maps);
 +		if (err < 0)
- 			goto fail;
--		}
- 	}
- 
- 	if (copy_from_user(job->waitchk, waitchks,
-diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
-index 6f72b6e01d36..e115bf22e5d8 100644
---- a/drivers/gpu/host1x/job.c
-+++ b/drivers/gpu/host1x/job.c
-@@ -185,16 +185,16 @@ static unsigned int pin_job(struct host1x_job *job)
- 		struct sg_table *sgt;
- 		dma_addr_t phys_addr;
- 
--		reloc->target = host1x_bo_get(reloc->target);
--		if (!reloc->target)
-+		reloc->target.bo = host1x_bo_get(reloc->target.bo);
-+		if (!reloc->target.bo)
- 			goto unpin;
- 
--		phys_addr = host1x_bo_pin(reloc->target, &sgt);
-+		phys_addr = host1x_bo_pin(reloc->target.bo, &sgt);
- 		if (!phys_addr)
- 			goto unpin;
- 
- 		job->addr_phys[job->num_unpins] = phys_addr;
--		job->unpins[job->num_unpins].bo = reloc->target;
-+		job->unpins[job->num_unpins].bo = reloc->target.bo;
- 		job->unpins[job->num_unpins].sgt = sgt;
- 		job->num_unpins++;
- 	}
-@@ -235,21 +235,21 @@ static unsigned int do_relocs(struct host1x_job *job, struct host1x_bo *cmdbuf)
- 	for (i = 0; i < job->num_relocs; i++) {
- 		struct host1x_reloc *reloc = &job->relocarray[i];
- 		u32 reloc_addr = (job->reloc_addr_phys[i] +
--			reloc->target_offset) >> reloc->shift;
-+				  reloc->target.offset) >> reloc->shift;
- 		u32 *target;
- 
- 		/* skip all other gathers */
--		if (cmdbuf != reloc->cmdbuf)
-+		if (cmdbuf != reloc->cmdbuf.bo)
- 			continue;
- 
--		if (last_page != reloc->cmdbuf_offset >> PAGE_SHIFT) {
-+		if (last_page != reloc->cmdbuf.offset >> PAGE_SHIFT) {
- 			if (cmdbuf_page_addr)
- 				host1x_bo_kunmap(cmdbuf, last_page,
- 						 cmdbuf_page_addr);
- 
- 			cmdbuf_page_addr = host1x_bo_kmap(cmdbuf,
--					reloc->cmdbuf_offset >> PAGE_SHIFT);
--			last_page = reloc->cmdbuf_offset >> PAGE_SHIFT;
-+					reloc->cmdbuf.offset >> PAGE_SHIFT);
-+			last_page = reloc->cmdbuf.offset >> PAGE_SHIFT;
- 
- 			if (unlikely(!cmdbuf_page_addr)) {
- 				pr_err("Could not map cmdbuf for relocation\n");
-@@ -257,7 +257,7 @@ static unsigned int do_relocs(struct host1x_job *job, struct host1x_bo *cmdbuf)
- 			}
- 		}
- 
--		target = cmdbuf_page_addr + (reloc->cmdbuf_offset & ~PAGE_MASK);
-+		target = cmdbuf_page_addr + (reloc->cmdbuf.offset & ~PAGE_MASK);
- 		*target = reloc_addr;
- 	}
- 
-@@ -272,7 +272,7 @@ static bool check_reloc(struct host1x_reloc *reloc, struct host1x_bo *cmdbuf,
- {
- 	offset *= sizeof(u32);
- 
--	if (reloc->cmdbuf != cmdbuf || reloc->cmdbuf_offset != offset)
-+	if (reloc->cmdbuf.bo != cmdbuf || reloc->cmdbuf.offset != offset)
- 		return false;
- 
- 	return true;
-diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-index b432b3ddbc13..f4f65e23cfcc 100644
---- a/include/linux/host1x.h
-+++ b/include/linux/host1x.h
-@@ -165,12 +165,15 @@ int host1x_job_submit(struct host1x_job *job);
-  */
- 
- struct host1x_reloc {
--	struct host1x_bo *cmdbuf;
--	u32 cmdbuf_offset;
--	struct host1x_bo *target;
--	u32 target_offset;
--	u32 shift;
--	u32 pad;
-+	struct {
-+		struct host1x_bo *bo;
-+		unsigned long offset;
-+	} cmdbuf;
-+	struct {
-+		struct host1x_bo *bo;
-+		unsigned long offset;
-+	} target;
-+	unsigned long shift;
- };
- 
- struct host1x_job {
++			return err;
++	}
++
++	return 0;
++}
++
++static const struct pinctrl_ops tegra_xusb_padctl_pinctrl_ops = {
++	.get_groups_count = tegra_xusb_padctl_get_groups_count,
++	.get_group_name = tegra_xusb_padctl_get_group_name,
++	.dt_node_to_map = tegra_xusb_padctl_dt_node_to_map,
++	.dt_free_map = pinctrl_utils_dt_free_map,
++};
++
++static int tegra_xusb_padctl_get_functions_count(struct pinctrl_dev *pinctrl)
++{
++	struct tegra_xusb_padctl *padctl = pinctrl_dev_get_drvdata(pinctrl);
++
++	return padctl->soc->num_functions;
++}
++
++static const char *
++tegra_xusb_padctl_get_function_name(struct pinctrl_dev *pinctrl,
++				    unsigned int function)
++{
++	struct tegra_xusb_padctl *padctl = pinctrl_dev_get_drvdata(pinctrl);
++
++	return padctl->soc->functions[function].name;
++}
++
++static int tegra_xusb_padctl_get_function_groups(struct pinctrl_dev *pinctrl,
++						 unsigned int function,
++						 const char * const **groups,
++						 unsigned * const num_groups)
++{
++	struct tegra_xusb_padctl *padctl = pinctrl_dev_get_drvdata(pinctrl);
++
++	*num_groups = padctl->soc->functions[function].num_groups;
++	*groups = padctl->soc->functions[function].groups;
++
++	return 0;
++}
++
++static int tegra_xusb_padctl_pinmux_enable(struct pinctrl_dev *pinctrl,
++					   unsigned int function,
++					   unsigned int group)
++{
++	struct tegra_xusb_padctl *padctl = pinctrl_dev_get_drvdata(pinctrl);
++	const struct tegra_xusb_padctl_lane *lane;
++	unsigned int i;
++	u32 value;
++
++	lane = &padctl->soc->lanes[group];
++
++	for (i = 0; i < lane->num_funcs; i++)
++		if (lane->funcs[i] == function)
++			break;
++
++	if (i >= lane->num_funcs)
++		return -EINVAL;
++
++	value = padctl_readl(padctl, lane->offset);
++	value &= ~(lane->mask << lane->shift);
++	value |= i << lane->shift;
++	padctl_writel(padctl, value, lane->offset);
++
++	return 0;
++}
++
++static const struct pinmux_ops tegra_xusb_padctl_pinmux_ops = {
++	.get_functions_count = tegra_xusb_padctl_get_functions_count,
++	.get_function_name = tegra_xusb_padctl_get_function_name,
++	.get_function_groups = tegra_xusb_padctl_get_function_groups,
++	.enable = tegra_xusb_padctl_pinmux_enable,
++};
++
++static int tegra_xusb_padctl_pinconf_group_get(struct pinctrl_dev *pinctrl,
++					       unsigned int group,
++					       unsigned long *config)
++{
++	struct tegra_xusb_padctl *padctl = pinctrl_dev_get_drvdata(pinctrl);
++	const struct tegra_xusb_padctl_lane *lane;
++	enum tegra_xusb_padctl_param param;
++	u32 value;
++
++	param = TEGRA_XUSB_PADCTL_UNPACK_PARAM(*config);
++	lane = &padctl->soc->lanes[group];
++
++	switch (param) {
++	case TEGRA_XUSB_PADCTL_IDDQ:
++		value = padctl_readl(padctl, lane->offset);
++		value = (value >> lane->iddq) & 0x1;
++		*config = TEGRA_XUSB_PADCTL_PACK(param, value);
++		break;
++
++	default:
++		dev_err(padctl->dev, "invalid configuration parameter: %04x\n",
++			param);
++		return -ENOTSUPP;
++	}
++
++	return 0;
++}
++
++static int tegra_xusb_padctl_pinconf_group_set(struct pinctrl_dev *pinctrl,
++					       unsigned int group,
++					       unsigned long *configs,
++					       unsigned int num_configs)
++{
++	struct tegra_xusb_padctl *padctl = pinctrl_dev_get_drvdata(pinctrl);
++	const struct tegra_xusb_padctl_lane *lane;
++	enum tegra_xusb_padctl_param param;
++	unsigned int i;
++	u32 value;
++
++	lane = &padctl->soc->lanes[group];
++
++	for (i = 0; i < num_configs; i++) {
++		param = TEGRA_XUSB_PADCTL_UNPACK_PARAM(configs[i]);
++		value = TEGRA_XUSB_PADCTL_UNPACK_VALUE(configs[i]);
++
++		switch (param) {
++		case TEGRA_XUSB_PADCTL_IDDQ:
++			value = padctl_readl(padctl, lane->offset);
++
++			if (!value)
++				value &= ~lane->iddq;
++			else
++				value |= lane->iddq;
++
++			padctl_writel(padctl, value, lane->offset);
++			break;
++
++		default:
++			dev_err(padctl->dev,
++				"invalid configuration parameter: %04x\n",
++				param);
++			return -ENOTSUPP;
++		}
++	}
++
++	return 0;
++}
++
++static const struct pinconf_ops tegra_xusb_padctl_pinconf_ops = {
++	.pin_config_group_get = tegra_xusb_padctl_pinconf_group_get,
++	.pin_config_group_set = tegra_xusb_padctl_pinconf_group_set,
++};
++
++static int tegra_xusb_padctl_enable(struct tegra_xusb_padctl *padctl)
++{
++	u32 value;
++
++	mutex_lock(&padctl->lock);
++
++	if (padctl->enable++ > 0)
++		goto out;
++
++	value = padctl_readl(padctl, XUSB_PADCTL_ELPG_PROGRAM);
++	value &= ~XUSB_PADCTL_ELPG_PROGRAM_AUX_MUX_LP0_CLAMP_EN;
++	padctl_writel(padctl, value, XUSB_PADCTL_ELPG_PROGRAM);
++
++	usleep_range(100, 200);
++
++	value = padctl_readl(padctl, XUSB_PADCTL_ELPG_PROGRAM);
++	value &= ~XUSB_PADCTL_ELPG_PROGRAM_AUX_MUX_LP0_CLAMP_EN_EARLY;
++	padctl_writel(padctl, value, XUSB_PADCTL_ELPG_PROGRAM);
++
++	usleep_range(100, 200);
++
++	value = padctl_readl(padctl, XUSB_PADCTL_ELPG_PROGRAM);
++	value &= ~XUSB_PADCTL_ELPG_PROGRAM_AUX_MUX_LP0_VCORE_DOWN;
++	padctl_writel(padctl, value, XUSB_PADCTL_ELPG_PROGRAM);
++
++out:
++	mutex_unlock(&padctl->lock);
++	return 0;
++}
++
++static int tegra_xusb_padctl_disable(struct tegra_xusb_padctl *padctl)
++{
++	u32 value;
++
++	mutex_lock(&padctl->lock);
++
++	if (WARN_ON(padctl->enable == 0))
++		goto out;
++
++	if (--padctl->enable > 0)
++		goto out;
++
++	value = padctl_readl(padctl, XUSB_PADCTL_ELPG_PROGRAM);
++	value |= XUSB_PADCTL_ELPG_PROGRAM_AUX_MUX_LP0_VCORE_DOWN;
++	padctl_writel(padctl, value, XUSB_PADCTL_ELPG_PROGRAM);
++
++	usleep_range(100, 200);
++
++	value = padctl_readl(padctl, XUSB_PADCTL_ELPG_PROGRAM);
++	value |= XUSB_PADCTL_ELPG_PROGRAM_AUX_MUX_LP0_CLAMP_EN_EARLY;
++	padctl_writel(padctl, value, XUSB_PADCTL_ELPG_PROGRAM);
++
++	usleep_range(100, 200);
++
++	value = padctl_readl(padctl, XUSB_PADCTL_ELPG_PROGRAM);
++	value |= XUSB_PADCTL_ELPG_PROGRAM_AUX_MUX_LP0_CLAMP_EN;
++	padctl_writel(padctl, value, XUSB_PADCTL_ELPG_PROGRAM);
++
++out:
++	mutex_unlock(&padctl->lock);
++	return 0;
++}
++
++static int tegra_xusb_phy_init(struct phy *phy)
++{
++	struct tegra_xusb_padctl *padctl = phy_get_drvdata(phy);
++
++	return tegra_xusb_padctl_enable(padctl);
++}
++
++static int tegra_xusb_phy_exit(struct phy *phy)
++{
++	struct tegra_xusb_padctl *padctl = phy_get_drvdata(phy);
++
++	return tegra_xusb_padctl_disable(padctl);
++}
++
++static int pcie_phy_power_on(struct phy *phy)
++{
++	struct tegra_xusb_padctl *padctl = phy_get_drvdata(phy);
++	unsigned long timeout;
++	int err = -ETIMEDOUT;
++	u32 value;
++
++	value = padctl_readl(padctl, XUSB_PADCTL_IOPHY_PLL_P0_CTL1);
++	value &= ~XUSB_PADCTL_IOPHY_PLL_P0_CTL1_REFCLK_SEL_MASK;
++	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_PLL_P0_CTL1);
++
++	value = padctl_readl(padctl, XUSB_PADCTL_IOPHY_PLL_P0_CTL2);
++	value |= XUSB_PADCTL_IOPHY_PLL_P0_CTL2_REFCLKBUF_EN |
++		 XUSB_PADCTL_IOPHY_PLL_P0_CTL2_TXCLKREF_EN |
++		 XUSB_PADCTL_IOPHY_PLL_P0_CTL2_TXCLKREF_SEL;
++	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_PLL_P0_CTL2);
++
++	value = padctl_readl(padctl, XUSB_PADCTL_IOPHY_PLL_P0_CTL1);
++	value |= XUSB_PADCTL_IOPHY_PLL_P0_CTL1_PLL_RST;
++	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_PLL_P0_CTL1);
++
++	timeout = jiffies + msecs_to_jiffies(50);
++
++	while (time_before(jiffies, timeout)) {
++		value = padctl_readl(padctl, XUSB_PADCTL_IOPHY_PLL_P0_CTL1);
++		if (value & XUSB_PADCTL_IOPHY_PLL_P0_CTL1_PLL0_LOCKDET) {
++			err = 0;
++			break;
++		}
++
++		usleep_range(100, 200);
++	}
++
++	return err;
++}
++
++static int pcie_phy_power_off(struct phy *phy)
++{
++	struct tegra_xusb_padctl *padctl = phy_get_drvdata(phy);
++	u32 value;
++
++	value = padctl_readl(padctl, XUSB_PADCTL_IOPHY_PLL_P0_CTL1);
++	value &= ~XUSB_PADCTL_IOPHY_PLL_P0_CTL1_PLL_RST;
++	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_PLL_P0_CTL1);
++
++	return 0;
++}
++
++static const struct phy_ops pcie_phy_ops = {
++	.init = tegra_xusb_phy_init,
++	.exit = tegra_xusb_phy_exit,
++	.power_on = pcie_phy_power_on,
++	.power_off = pcie_phy_power_off,
++	.owner = THIS_MODULE,
++};
++
++static int sata_phy_power_on(struct phy *phy)
++{
++	struct tegra_xusb_padctl *padctl = phy_get_drvdata(phy);
++	unsigned long timeout;
++	int err = -ETIMEDOUT;
++	u32 value;
++
++	value = padctl_readl(padctl, XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL1);
++	value &= ~XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL1_IDDQ_OVRD;
++	value &= ~XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL1_IDDQ;
++	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL1);
++
++	value = padctl_readl(padctl, XUSB_PADCTL_IOPHY_PLL_S0_CTL1);
++	value &= ~XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL_PWR_OVRD;
++	value &= ~XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL_IDDQ;
++	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_PLL_S0_CTL1);
++
++	value = padctl_readl(padctl, XUSB_PADCTL_IOPHY_PLL_S0_CTL1);
++	value |= XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL1_MODE;
++	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_PLL_S0_CTL1);
++
++	value = padctl_readl(padctl, XUSB_PADCTL_IOPHY_PLL_S0_CTL1);
++	value |= XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL_RST;
++	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_PLL_S0_CTL1);
++
++	timeout = jiffies + msecs_to_jiffies(50);
++
++	while (time_before(jiffies, timeout)) {
++		value = padctl_readl(padctl, XUSB_PADCTL_IOPHY_PLL_S0_CTL1);
++		if (value & XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL1_LOCKDET) {
++			err = 0;
++			break;
++		}
++
++		usleep_range(100, 200);
++	}
++
++	return err;
++}
++
++static int sata_phy_power_off(struct phy *phy)
++{
++	struct tegra_xusb_padctl *padctl = phy_get_drvdata(phy);
++	u32 value;
++
++	value = padctl_readl(padctl, XUSB_PADCTL_IOPHY_PLL_S0_CTL1);
++	value &= ~XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL_RST;
++	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_PLL_S0_CTL1);
++
++	value = padctl_readl(padctl, XUSB_PADCTL_IOPHY_PLL_S0_CTL1);
++	value &= ~XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL1_MODE;
++	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_PLL_S0_CTL1);
++
++	value = padctl_readl(padctl, XUSB_PADCTL_IOPHY_PLL_S0_CTL1);
++	value |= XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL_PWR_OVRD;
++	value |= XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL_IDDQ;
++	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_PLL_S0_CTL1);
++
++	value = padctl_readl(padctl, XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL1);
++	value |= ~XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL1_IDDQ_OVRD;
++	value |= ~XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL1_IDDQ;
++	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL1);
++
++	return 0;
++}
++
++static const struct phy_ops sata_phy_ops = {
++	.init = tegra_xusb_phy_init,
++	.exit = tegra_xusb_phy_exit,
++	.power_on = sata_phy_power_on,
++	.power_off = sata_phy_power_off,
++	.owner = THIS_MODULE,
++};
++
++static struct phy *tegra_xusb_padctl_xlate(struct device *dev,
++					   struct of_phandle_args *args)
++{
++	struct tegra_xusb_padctl *padctl = dev_get_drvdata(dev);
++	unsigned int index = args->args[0];
++
++	if (args->args_count <= 0)
++		return ERR_PTR(-EINVAL);
++
++	if (index > ARRAY_SIZE(padctl->phys))
++		return ERR_PTR(-EINVAL);
++
++	return padctl->phys[index];
++}
++
++#define PIN_OTG_0   0
++#define PIN_OTG_1   1
++#define PIN_OTG_2   2
++#define PIN_ULPI_0  3
++#define PIN_HSIC_0  4
++#define PIN_HSIC_1  5
++#define PIN_PCIE_0  6
++#define PIN_PCIE_1  7
++#define PIN_PCIE_2  8
++#define PIN_PCIE_3  9
++#define PIN_PCIE_4 10
++#define PIN_SATA_0 11
++
++static const struct pinctrl_pin_desc tegra124_pins[] = {
++	PINCTRL_PIN(PIN_OTG_0,  "otg-0"),
++	PINCTRL_PIN(PIN_OTG_1,  "otg-1"),
++	PINCTRL_PIN(PIN_OTG_2,  "otg-2"),
++	PINCTRL_PIN(PIN_ULPI_0, "ulpi-0"),
++	PINCTRL_PIN(PIN_HSIC_0, "hsic-0"),
++	PINCTRL_PIN(PIN_HSIC_1, "hsic-1"),
++	PINCTRL_PIN(PIN_PCIE_0, "pcie-0"),
++	PINCTRL_PIN(PIN_PCIE_1, "pcie-1"),
++	PINCTRL_PIN(PIN_PCIE_2, "pcie-2"),
++	PINCTRL_PIN(PIN_PCIE_3, "pcie-3"),
++	PINCTRL_PIN(PIN_PCIE_4, "pcie-4"),
++	PINCTRL_PIN(PIN_SATA_0, "sata-0"),
++};
++
++static const char * const tegra124_snps_groups[] = {
++	"otg-0",
++	"otg-1",
++	"otg-2",
++	"ulpi-0",
++	"hsic-0",
++	"hsic-1",
++};
++
++static const char * const tegra124_xusb_groups[] = {
++	"otg-0",
++	"otg-1",
++	"otg-2",
++	"ulpi-0",
++	"hsic-0",
++	"hsic-1",
++};
++
++static const char * const tegra124_uart_groups[] = {
++	"otg-0",
++	"otg-1",
++	"otg-2",
++};
++
++static const char * const tegra124_pcie_groups[] = {
++	"pcie-0",
++	"pcie-1",
++	"pcie-2",
++	"pcie-3",
++	"pcie-4",
++	"sata-0",
++};
++
++static const char * const tegra124_usb3_groups[] = {
++	"pcie-0",
++	"pcie-1",
++	"pcie-2",
++	"pcie-3",
++	"pcie-4",
++	"sata-0",
++};
++
++static const char * const tegra124_sata_groups[] = {
++	"pcie-0",
++	"pcie-1",
++	"pcie-2",
++	"pcie-3",
++	"pcie-4",
++	"sata-0",
++};
++
++static const char * const tegra124_rsvd_groups[] = {
++	"otg-0",
++	"otg-1",
++	"otg-2",
++	"pcie-0",
++	"pcie-1",
++	"pcie-2",
++	"pcie-3",
++	"pcie-4",
++	"sata-0",
++};
++
++#define TEGRA124_FUNCTION(_name)					\
++	{								\
++		.name = #_name,						\
++		.num_groups = ARRAY_SIZE(tegra124_##_name##_groups),	\
++		.groups = tegra124_##_name##_groups,			\
++	}
++
++static struct tegra_xusb_padctl_function tegra124_functions[] = {
++	TEGRA124_FUNCTION(snps),
++	TEGRA124_FUNCTION(xusb),
++	TEGRA124_FUNCTION(uart),
++	TEGRA124_FUNCTION(pcie),
++	TEGRA124_FUNCTION(usb3),
++	TEGRA124_FUNCTION(sata),
++	TEGRA124_FUNCTION(rsvd),
++};
++
++enum tegra124_function {
++	TEGRA124_FUNC_SNPS,
++	TEGRA124_FUNC_XUSB,
++	TEGRA124_FUNC_UART,
++	TEGRA124_FUNC_PCIE,
++	TEGRA124_FUNC_USB3,
++	TEGRA124_FUNC_SATA,
++	TEGRA124_FUNC_RSVD,
++};
++
++static const unsigned int tegra124_otg_functions[] = {
++	TEGRA124_FUNC_SNPS,
++	TEGRA124_FUNC_XUSB,
++	TEGRA124_FUNC_UART,
++	TEGRA124_FUNC_RSVD,
++};
++
++static const unsigned int tegra124_usb_functions[] = {
++	TEGRA124_FUNC_SNPS,
++	TEGRA124_FUNC_XUSB,
++};
++
++static const unsigned int tegra124_pci_functions[] = {
++	TEGRA124_FUNC_PCIE,
++	TEGRA124_FUNC_USB3,
++	TEGRA124_FUNC_SATA,
++	TEGRA124_FUNC_RSVD,
++};
++
++#define TEGRA124_LANE(_name, _offset, _shift, _mask, _iddq, _funcs)	\
++	{								\
++		.name = _name,						\
++		.offset = _offset,					\
++		.shift = _shift,					\
++		.mask = _mask,						\
++		.iddq = _iddq,						\
++		.num_funcs = ARRAY_SIZE(tegra124_##_funcs##_functions),	\
++		.funcs = tegra124_##_funcs##_functions,			\
++	}
++
++static const struct tegra_xusb_padctl_lane tegra124_lanes[] = {
++	TEGRA124_LANE("otg-0",  0x004,  0, 0x3, 0, otg),
++	TEGRA124_LANE("otg-1",  0x004,  2, 0x3, 0, otg),
++	TEGRA124_LANE("otg-2",  0x004,  4, 0x3, 0, otg),
++	TEGRA124_LANE("ulpi-0", 0x004, 12, 0x1, 0, usb),
++	TEGRA124_LANE("hsic-0", 0x004, 14, 0x1, 0, usb),
++	TEGRA124_LANE("hsic-1", 0x004, 15, 0x1, 0, usb),
++	TEGRA124_LANE("pcie-0", 0x134, 16, 0x3, 1, pci),
++	TEGRA124_LANE("pcie-1", 0x134, 18, 0x3, 2, pci),
++	TEGRA124_LANE("pcie-2", 0x134, 20, 0x3, 3, pci),
++	TEGRA124_LANE("pcie-3", 0x134, 22, 0x3, 4, pci),
++	TEGRA124_LANE("pcie-4", 0x134, 24, 0x3, 5, pci),
++	TEGRA124_LANE("sata-0", 0x134, 26, 0x3, 6, pci),
++};
++
++static const struct tegra_xusb_padctl_soc tegra124_soc = {
++	.num_pins = ARRAY_SIZE(tegra124_pins),
++	.pins = tegra124_pins,
++	.num_functions = ARRAY_SIZE(tegra124_functions),
++	.functions = tegra124_functions,
++	.num_lanes = ARRAY_SIZE(tegra124_lanes),
++	.lanes = tegra124_lanes,
++};
++
++static const struct of_device_id tegra_xusb_padctl_of_match[] = {
++	{ .compatible = "nvidia,tegra124-xusb-padctl", .data = &tegra124_soc },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, tegra_xusb_padctl_of_match);
++
++static int tegra_xusb_padctl_probe(struct platform_device *pdev)
++{
++	struct tegra_xusb_padctl *padctl;
++	const struct of_device_id *match;
++	struct resource *res;
++	struct phy *phy;
++	int err;
++
++	padctl = devm_kzalloc(&pdev->dev, sizeof(*padctl), GFP_KERNEL);
++	if (!padctl)
++		return -ENOMEM;
++
++	platform_set_drvdata(pdev, padctl);
++	mutex_init(&padctl->lock);
++	padctl->dev = &pdev->dev;
++
++	match = of_match_node(tegra_xusb_padctl_of_match, pdev->dev.of_node);
++	padctl->soc = match->data;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	padctl->regs = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(padctl->regs))
++		return PTR_ERR(padctl->regs);
++
++	padctl->rst = devm_reset_control_get(&pdev->dev, NULL);
++	if (IS_ERR(padctl->rst))
++		return PTR_ERR(padctl->rst);
++
++	err = reset_control_deassert(padctl->rst);
++	if (err < 0)
++		return err;
++
++	memset(&padctl->desc, 0, sizeof(padctl->desc));
++	padctl->desc.name = dev_name(padctl->dev);
++	padctl->desc.pctlops = &tegra_xusb_padctl_pinctrl_ops;
++	padctl->desc.pmxops = &tegra_xusb_padctl_pinmux_ops;
++	padctl->desc.confops = &tegra_xusb_padctl_pinconf_ops;
++	padctl->desc.owner = THIS_MODULE;
++
++	padctl->pinctrl = pinctrl_register(&padctl->desc, &pdev->dev, padctl);
++	if (!padctl->pinctrl) {
++		dev_err(&pdev->dev, "failed to register pincontrol\n");
++		err = -ENODEV;
++		goto reset;
++	}
++
++	phy = devm_phy_create(&pdev->dev, &pcie_phy_ops, NULL);
++	if (IS_ERR(phy)) {
++		err = PTR_ERR(phy);
++		goto unregister;
++	}
++
++	padctl->phys[TEGRA_XUSB_PADCTL_PCIE] = phy;
++	phy_set_drvdata(phy, padctl);
++
++	phy = devm_phy_create(&pdev->dev, &sata_phy_ops, NULL);
++	if (IS_ERR(phy)) {
++		err = PTR_ERR(phy);
++		goto unregister;
++	}
++
++	padctl->phys[TEGRA_XUSB_PADCTL_SATA] = phy;
++	phy_set_drvdata(phy, padctl);
++
++	padctl->provider = devm_of_phy_provider_register(&pdev->dev,
++							 tegra_xusb_padctl_xlate);
++	if (err < 0) {
++		dev_err(&pdev->dev, "failed to register PHYs: %d\n", err);
++		goto unregister;
++	}
++
++	return 0;
++
++unregister:
++	pinctrl_unregister(padctl->pinctrl);
++reset:
++	reset_control_assert(padctl->rst);
++	return err;
++}
++
++static int tegra_xusb_padctl_remove(struct platform_device *pdev)
++{
++	struct tegra_xusb_padctl *padctl = platform_get_drvdata(pdev);
++	int err;
++
++	pinctrl_unregister(padctl->pinctrl);
++
++	err = reset_control_assert(padctl->rst);
++	if (err < 0)
++		dev_err(&pdev->dev, "failed to assert reset: %d\n", err);
++
++	return err;
++}
++
++static struct platform_driver tegra_xusb_padctl_driver = {
++	.driver = {
++		.name = "tegra-xusb-padctl",
++		.of_match_table = tegra_xusb_padctl_of_match,
++	},
++	.probe = tegra_xusb_padctl_probe,
++	.remove = tegra_xusb_padctl_remove,
++};
++module_platform_driver(tegra_xusb_padctl_driver);
++
++MODULE_AUTHOR("Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
++MODULE_DESCRIPTION("Tegra 124 XUSB Pad Control driver");
++MODULE_LICENSE("GPL v2");
 -- 
 1.9.2
