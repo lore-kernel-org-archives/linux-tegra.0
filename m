@@ -1,90 +1,235 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: [PATCH v3 5/7] mfd: cros_ec: Sync to the latest
- cros_ec_commands.h from EC sources
-Date: Wed, 11 Jun 2014 12:37:48 +0200
-Message-ID: <1402483068.3798.82.camel@x220>
-References: <1398879850-9111-1-git-send-email-dianders@chromium.org>
-	 <1398879850-9111-6-git-send-email-dianders@chromium.org>
-	 <20140520084602.GF24991@lee--X1>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <20140520084602.GF24991@lee--X1>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Bill Richardson <wfrichar@chromium.org>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Lee Jones <lee.jones@linaro.org>
-Cc: swarren@nvidia.com, wsa@the-dreams.de, abrestic@chromium.org, dgreid@chromium.org, olof@lixom.net, sameo@linux.intel.com, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] ARM: tegra: powergate: Use PMC register accessors
+Date: Wed, 11 Jun 2014 13:48:05 +0200
+Message-ID: <1402487285-5626-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 2014-05-20 at 09:46 +0100, Lee Jones wrote:
-> On Wed, 30 Apr 2014, Doug Anderson wrote:
-> > From: Bill Richardson <wfrichar@chromium.org>
-> > 
-> > This just updates include/linux/mfd/cros_ec_commands.h to match the
-> > latest EC version (which is the One True Source for such things).  See
-> > <https://chromium.googlesource.com/chromiumos/platform/ec>
-> > 
-> > [dianders: took today's ToT version from the Chromium OS EC; deleted
-> > references to cros_ec_dev and cros_ec_lpc since those aren't upstream
-> > yet]
-> > 
-> > Signed-off-by: Bill Richardson <wfrichar@chromium.org>
-> > Signed-off-by: Doug Anderson <dianders@chromium.org>
-> > Acked-by: Lee Jones <lee.jones@linaro.org>
-> > Reviewed-by: Simon Glass <sjg@chromium.org>
-> > Tested-by: Andrew Bresticker <abrestic@chromium.org>
-> > Tested-by: Stephen Warren <swarren@nvidia.com>
-> > ---
-> > Changes in v3: None
-> > Changes in v2: None
-> > 
-> >  drivers/mfd/cros_ec.c                |    2 +-
-> >  include/linux/mfd/cros_ec.h          |    4 +-
-> >  include/linux/mfd/cros_ec_commands.h | 1128 +++++++++++++++++++++++++++++++---
-> >  3 files changed, 1059 insertions(+), 75 deletions(-)
-> 
-> Applied, thanks.
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-This patch is included in linux-next since next-20140521. I'm not sure
-why I waited three weeks before sending this question...
+Instead of I/O remapping the registers itself, make the powergate API
+use the PMC register accessors from the PMC implementation.
 
-> > [...]
-> > diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
-> > index 86fd069..7853a64 100644
-> > --- a/include/linux/mfd/cros_ec_commands.h
-> > +++ b/include/linux/mfd/cros_ec_commands.h
->> [...]
-> > @@ -1206,14 +1865,231 @@ struct ec_params_force_idle {
-> > [...]
-> > +/*
-> > + * Known param numbers are defined here. Ranges are reserved for board-specific
-> > + * params, which are handled by the particular implementations.
-> > + */
-> > +enum charge_state_params {
-> > +	CS_PARAM_CHG_VOLTAGE,	      /* charger voltage limit */
-> > +	CS_PARAM_CHG_CURRENT,	      /* charger current limit */
-> > +	CS_PARAM_CHG_INPUT_CURRENT,   /* charger input current limit */
-> > +	CS_PARAM_CHG_STATUS,	      /* charger-specific status */
-> > +	CS_PARAM_CHG_OPTION,	      /* charger-specific options */
-> > +	/* How many so far? */
-> > +	CS_NUM_BASE_PARAMS,
-> > +
-> > +	/* Range for CONFIG_CHARGER_PROFILE_OVERRIDE params */
+This is necessary to allow these drivers to be moved out of arch/arm,
+which in turn will be needed to share code with 64-bit Tegra SoCs.
 
-CONFIG_CHARGER_PROFILE_OVERRIDE doesn't match anything in linux-next. Is
-a Kconfig symbol CHARGER_PROFILE_OVERRIDE perhaps queued somewhere?
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/pmc.c       | 13 +------------
+ arch/arm/mach-tegra/pmc.h       | 13 +++++++++++++
+ arch/arm/mach-tegra/powergate.c | 40 ++++++++++++++--------------------------
+ 3 files changed, 28 insertions(+), 38 deletions(-)
 
-> > +	CS_PARAM_CUSTOM_PROFILE_MIN = 0x10000,
-> > +	CS_PARAM_CUSTOM_PROFILE_MAX = 0x1ffff,
-> > +
-
-I guess so, because these two constants aren't used anywhere.
-
-> > +	/* Other custom param ranges go here... */
-> > +};
-> > [...]
-
-Thanks,
-
-
-Paul Bolle
+diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
+index 7c7123e7557b..f8c86b49a1db 100644
+--- a/arch/arm/mach-tegra/pmc.c
++++ b/arch/arm/mach-tegra/pmc.c
+@@ -17,7 +17,6 @@
+ 
+ #include <linux/kernel.h>
+ #include <linux/clk.h>
+-#include <linux/io.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/tegra-powergate.h>
+@@ -60,9 +59,9 @@ static u8 tegra_cpu_domains[] = {
+ };
+ static DEFINE_SPINLOCK(tegra_powergate_lock);
+ 
+-static void __iomem *tegra_pmc_base;
+ static bool tegra_pmc_invert_interrupt;
+ static struct clk *tegra_pclk;
++void __iomem *tegra_pmc_base;
+ 
+ struct pmc_pm_data {
+ 	u32 cpu_good_time;	/* CPU power good time in uS */
+@@ -80,16 +79,6 @@ struct pmc_pm_data {
+ };
+ static struct pmc_pm_data pmc_pm_data;
+ 
+-static inline u32 tegra_pmc_readl(u32 reg)
+-{
+-	return readl(tegra_pmc_base + reg);
+-}
+-
+-static inline void tegra_pmc_writel(u32 val, u32 reg)
+-{
+-	writel(val, tegra_pmc_base + reg);
+-}
+-
+ static int tegra_pmc_get_cpu_powerdomain_id(int cpuid)
+ {
+ 	if (cpuid <= 0 || cpuid >= num_possible_cpus())
+diff --git a/arch/arm/mach-tegra/pmc.h b/arch/arm/mach-tegra/pmc.h
+index 59e19c344298..139a30867cb2 100644
+--- a/arch/arm/mach-tegra/pmc.h
++++ b/arch/arm/mach-tegra/pmc.h
+@@ -18,6 +18,7 @@
+ #ifndef __MACH_TEGRA_PMC_H
+ #define __MACH_TEGRA_PMC_H
+ 
++#include <linux/io.h>
+ #include <linux/reboot.h>
+ 
+ enum tegra_suspend_mode {
+@@ -37,6 +38,18 @@ void tegra_pmc_pm_set(enum tegra_suspend_mode mode);
+ void tegra_pmc_suspend_init(void);
+ #endif
+ 
++extern void __iomem *tegra_pmc_base;
++
++static inline u32 tegra_pmc_readl(u32 reg)
++{
++	return readl(tegra_pmc_base + reg);
++}
++
++static inline void tegra_pmc_writel(u32 val, u32 reg)
++{
++	writel(val, tegra_pmc_base + reg);
++}
++
+ bool tegra_pmc_cpu_is_powered(int cpuid);
+ int tegra_pmc_cpu_power_on(int cpuid);
+ int tegra_pmc_cpu_remove_clamping(int cpuid);
+diff --git a/arch/arm/mach-tegra/powergate.c b/arch/arm/mach-tegra/powergate.c
+index 4cefc5cd6bed..f5fe5c5fa3f5 100644
+--- a/arch/arm/mach-tegra/powergate.c
++++ b/arch/arm/mach-tegra/powergate.c
+@@ -32,7 +32,7 @@
+ #include <linux/tegra-powergate.h>
+ 
+ #include "fuse.h"
+-#include "iomap.h"
++#include "pmc.h"
+ 
+ #define DPD_SAMPLE		0x020
+ #define  DPD_SAMPLE_ENABLE	(1 << 0)
+@@ -85,18 +85,6 @@ static const u8 tegra124_cpu_domains[] = {
+ 
+ static DEFINE_SPINLOCK(tegra_powergate_lock);
+ 
+-static void __iomem *pmc = IO_ADDRESS(TEGRA_PMC_BASE);
+-
+-static u32 pmc_read(unsigned long reg)
+-{
+-	return readl(pmc + reg);
+-}
+-
+-static void pmc_write(u32 val, unsigned long reg)
+-{
+-	writel(val, pmc + reg);
+-}
+-
+ static int tegra_powergate_set(int id, bool new_state)
+ {
+ 	bool status;
+@@ -104,14 +92,14 @@ static int tegra_powergate_set(int id, bool new_state)
+ 
+ 	spin_lock_irqsave(&tegra_powergate_lock, flags);
+ 
+-	status = pmc_read(PWRGATE_STATUS) & (1 << id);
++	status = tegra_pmc_readl(PWRGATE_STATUS) & (1 << id);
+ 
+ 	if (status == new_state) {
+ 		spin_unlock_irqrestore(&tegra_powergate_lock, flags);
+ 		return 0;
+ 	}
+ 
+-	pmc_write(PWRGATE_TOGGLE_START | id, PWRGATE_TOGGLE);
++	tegra_pmc_writel(PWRGATE_TOGGLE_START | id, PWRGATE_TOGGLE);
+ 
+ 	spin_unlock_irqrestore(&tegra_powergate_lock, flags);
+ 
+@@ -142,7 +130,7 @@ int tegra_powergate_is_powered(int id)
+ 	if (id < 0 || id >= tegra_num_powerdomains)
+ 		return -EINVAL;
+ 
+-	status = pmc_read(PWRGATE_STATUS) & (1 << id);
++	status = tegra_pmc_readl(PWRGATE_STATUS) & (1 << id);
+ 	return !!status;
+ }
+ 
+@@ -159,7 +147,7 @@ int tegra_powergate_remove_clamping(int id)
+ 	 */
+ 	if (tegra_chip_id == TEGRA124) {
+ 		if (id == TEGRA_POWERGATE_3D) {
+-			pmc_write(0, GPU_RG_CNTRL);
++			tegra_pmc_writel(0, GPU_RG_CNTRL);
+ 			return 0;
+ 		}
+ 	}
+@@ -175,7 +163,7 @@ int tegra_powergate_remove_clamping(int id)
+ 	else
+ 		mask = (1 << id);
+ 
+-	pmc_write(mask, REMOVE_CLAMPING);
++	tegra_pmc_writel(mask, REMOVE_CLAMPING);
+ 
+ 	return 0;
+ }
+@@ -425,12 +413,12 @@ static int tegra_io_rail_prepare(int id, unsigned long *request,
+ 	rate = clk_get_rate(clk);
+ 	clk_put(clk);
+ 
+-	pmc_write(DPD_SAMPLE_ENABLE, DPD_SAMPLE);
++	tegra_pmc_writel(DPD_SAMPLE_ENABLE, DPD_SAMPLE);
+ 
+ 	/* must be at least 200 ns, in APB (PCLK) clock cycles */
+ 	value = DIV_ROUND_UP(1000000000, rate);
+ 	value = DIV_ROUND_UP(200, value);
+-	pmc_write(value, SEL_DPD_TIM);
++	tegra_pmc_writel(value, SEL_DPD_TIM);
+ 
+ 	return 0;
+ }
+@@ -443,7 +431,7 @@ static int tegra_io_rail_poll(unsigned long offset, unsigned long mask,
+ 	timeout = jiffies + msecs_to_jiffies(timeout);
+ 
+ 	while (time_after(timeout, jiffies)) {
+-		value = pmc_read(offset);
++		value = tegra_pmc_readl(offset);
+ 		if ((value & mask) == val)
+ 			return 0;
+ 
+@@ -455,7 +443,7 @@ static int tegra_io_rail_poll(unsigned long offset, unsigned long mask,
+ 
+ static void tegra_io_rail_unprepare(void)
+ {
+-	pmc_write(DPD_SAMPLE_DISABLE, DPD_SAMPLE);
++	tegra_pmc_writel(DPD_SAMPLE_DISABLE, DPD_SAMPLE);
+ }
+ 
+ int tegra_io_rail_power_on(int id)
+@@ -470,11 +458,11 @@ int tegra_io_rail_power_on(int id)
+ 
+ 	mask = 1 << bit;
+ 
+-	value = pmc_read(request);
++	value = tegra_pmc_readl(request);
+ 	value |= mask;
+ 	value &= ~IO_DPD_REQ_CODE_MASK;
+ 	value |= IO_DPD_REQ_CODE_OFF;
+-	pmc_write(value, request);
++	tegra_pmc_writel(value, request);
+ 
+ 	err = tegra_io_rail_poll(status, mask, 0, 250);
+ 	if (err < 0)
+@@ -498,11 +486,11 @@ int tegra_io_rail_power_off(int id)
+ 
+ 	mask = 1 << bit;
+ 
+-	value = pmc_read(request);
++	value = tegra_pmc_readl(request);
+ 	value |= mask;
+ 	value &= ~IO_DPD_REQ_CODE_MASK;
+ 	value |= IO_DPD_REQ_CODE_ON;
+-	pmc_write(value, request);
++	tegra_pmc_writel(value, request);
+ 
+ 	err = tegra_io_rail_poll(status, mask, mask, 250);
+ 	if (err < 0)
+-- 
+1.9.2
