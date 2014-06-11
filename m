@@ -1,47 +1,53 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v7 3/5] misc: fuse: Add efuse driver for Tegra
-Date: Wed, 11 Jun 2014 09:58:28 -0600
-Message-ID: <53987CA4.4040506@wwwdotorg.org>
-References: <1401973754-19701-1-git-send-email-pdeschrijver@nvidia.com> <1401973754-19701-4-git-send-email-pdeschrijver@nvidia.com> <53984FE3.6010509@nvidia.com> <20140611152551.GH5961@tbergstrom-lnx.Nvidia.com>
+From: =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH 4/4] drm/tegra: Allow non-authenticated processes to
+ create buffer objects
+Date: Wed, 11 Jun 2014 09:17:03 -0700
+Message-ID: <CADMs+9ZufFewFLEgXqHp=dDbPuHSQY6_4FRroYG+QSnYLhfxTg@mail.gmail.com>
+References: <1402398294-10252-1-git-send-email-thierry.reding@gmail.com> <1402398294-10252-4-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140611152551.GH5961@tbergstrom-lnx.Nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1402398294-10252-4-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-api-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/11/2014 09:25 AM, Peter De Schrijver wrote:
-> On Wed, Jun 11, 2014 at 02:47:31PM +0200, Mikko Perttunen wrote:
->> On 05/06/14 16:09, Peter De Schrijver wrote:
->> ...
->>> +int tegra_fuse_readl(u32 offset, u32 *val)
->>> +{
->>> +       if (!fuse_readl)
->>> +               return -ENXIO;
->>> +
->>> +       *val = fuse_readl(offset);
->>> +
->>> +       return 0;
->>> +}
->>> +
->>
->> -EPROBE_DEFER would be a better error value, so that drivers can work 
-> 
-> Ok.
-> 
->> even if they are initially probed before the fuse driver. Of course, if 
->> the fuse initialization is moved into machine init then this is a non-issue.
-> 
-> The exported function will always be initialized later because on Tegra20 it
-> requires APB DMA to be available. If you read the fuses directly, the system
-> sometimes hangs.
+On Tue, Jun 10, 2014 at 4:04 AM, Thierry Reding
+<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> This matches what other drivers do for equivalent IOCTLs.
+>
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-That's not true in the current code. IIRC, the bug was that *if* an APB
-DMA access to anything and a CPU access to the fuses happen at the same
-time, then there can be a hang. As such, the current fuse code accesses
-the fuses directly (without potential for a hang) if the APB DMA driver
-is not available, but once the driver becomes available, it reads the
-fuses through DMA instead. Does the new code not do that?
+Reviewed-by: St=C3=A9phane Marchesin <marcheu-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+
+> ---
+>  drivers/gpu/drm/tegra/drm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.=
+c
+> index f292c29ef62f..56ef81a6f28f 100644
+> --- a/drivers/gpu/drm/tegra/drm.c
+> +++ b/drivers/gpu/drm/tegra/drm.c
+> @@ -598,7 +598,7 @@ static int tegra_gem_get_flags(struct drm_device =
+*drm, void *data,
+>
+>  static const struct drm_ioctl_desc tegra_drm_ioctls[] =3D {
+>  #ifdef CONFIG_DRM_TEGRA_STAGING
+> -       DRM_IOCTL_DEF_DRV(TEGRA_GEM_CREATE, tegra_gem_create, DRM_UNL=
+OCKED | DRM_AUTH),
+> +       DRM_IOCTL_DEF_DRV(TEGRA_GEM_CREATE, tegra_gem_create, DRM_UNL=
+OCKED),
+>         DRM_IOCTL_DEF_DRV(TEGRA_GEM_MMAP, tegra_gem_mmap, DRM_UNLOCKE=
+D),
+>         DRM_IOCTL_DEF_DRV(TEGRA_SYNCPT_READ, tegra_syncpt_read, DRM_U=
+NLOCKED),
+>         DRM_IOCTL_DEF_DRV(TEGRA_SYNCPT_INCR, tegra_syncpt_incr, DRM_U=
+NLOCKED),
+> --
+> 1.9.2
+>
