@@ -1,38 +1,90 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [patch] drm/tegra: sor - missing unlock on error
-Date: Wed, 11 Jun 2014 10:06:09 +0300
-Message-ID: <20140611070608.GD16443@mwanda>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: Re: [PATCH v3 5/7] mfd: cros_ec: Sync to the latest
+ cros_ec_commands.h from EC sources
+Date: Wed, 11 Jun 2014 12:37:48 +0200
+Message-ID: <1402483068.3798.82.camel@x220>
+References: <1398879850-9111-1-git-send-email-dianders@chromium.org>
+	 <1398879850-9111-6-git-send-email-dianders@chromium.org>
+	 <20140520084602.GF24991@lee--X1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <20140520084602.GF24991@lee--X1>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Bill Richardson <wfrichar@chromium.org>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Lee Jones <lee.jones@linaro.org>
+Cc: swarren@nvidia.com, wsa@the-dreams.de, abrestic@chromium.org, dgreid@chromium.org, olof@lixom.net, sameo@linux.intel.com, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-We should unlock before returning the error code.
+On Tue, 2014-05-20 at 09:46 +0100, Lee Jones wrote:
+> On Wed, 30 Apr 2014, Doug Anderson wrote:
+> > From: Bill Richardson <wfrichar@chromium.org>
+> > 
+> > This just updates include/linux/mfd/cros_ec_commands.h to match the
+> > latest EC version (which is the One True Source for such things).  See
+> > <https://chromium.googlesource.com/chromiumos/platform/ec>
+> > 
+> > [dianders: took today's ToT version from the Chromium OS EC; deleted
+> > references to cros_ec_dev and cros_ec_lpc since those aren't upstream
+> > yet]
+> > 
+> > Signed-off-by: Bill Richardson <wfrichar@chromium.org>
+> > Signed-off-by: Doug Anderson <dianders@chromium.org>
+> > Acked-by: Lee Jones <lee.jones@linaro.org>
+> > Reviewed-by: Simon Glass <sjg@chromium.org>
+> > Tested-by: Andrew Bresticker <abrestic@chromium.org>
+> > Tested-by: Stephen Warren <swarren@nvidia.com>
+> > ---
+> > Changes in v3: None
+> > Changes in v2: None
+> > 
+> >  drivers/mfd/cros_ec.c                |    2 +-
+> >  include/linux/mfd/cros_ec.h          |    4 +-
+> >  include/linux/mfd/cros_ec_commands.h | 1128 +++++++++++++++++++++++++++++++---
+> >  3 files changed, 1059 insertions(+), 75 deletions(-)
+> 
+> Applied, thanks.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This patch is included in linux-next since next-20140521. I'm not sure
+why I waited three weeks before sending this question...
 
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index 27c979b..64f57fa 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -516,7 +516,7 @@ static int tegra_output_sor_enable(struct tegra_output *output)
- 		if (err < 0) {
- 			dev_err(sor->dev, "failed to probe eDP link: %d\n",
- 				err);
--			return err;
-+			goto unlock;
- 		}
- 	}
+> > [...]
+> > diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
+> > index 86fd069..7853a64 100644
+> > --- a/include/linux/mfd/cros_ec_commands.h
+> > +++ b/include/linux/mfd/cros_ec_commands.h
+>> [...]
+> > @@ -1206,14 +1865,231 @@ struct ec_params_force_idle {
+> > [...]
+> > +/*
+> > + * Known param numbers are defined here. Ranges are reserved for board-specific
+> > + * params, which are handled by the particular implementations.
+> > + */
+> > +enum charge_state_params {
+> > +	CS_PARAM_CHG_VOLTAGE,	      /* charger voltage limit */
+> > +	CS_PARAM_CHG_CURRENT,	      /* charger current limit */
+> > +	CS_PARAM_CHG_INPUT_CURRENT,   /* charger input current limit */
+> > +	CS_PARAM_CHG_STATUS,	      /* charger-specific status */
+> > +	CS_PARAM_CHG_OPTION,	      /* charger-specific options */
+> > +	/* How many so far? */
+> > +	CS_NUM_BASE_PARAMS,
+> > +
+> > +	/* Range for CONFIG_CHARGER_PROFILE_OVERRIDE params */
+
+CONFIG_CHARGER_PROFILE_OVERRIDE doesn't match anything in linux-next. Is
+a Kconfig symbol CHARGER_PROFILE_OVERRIDE perhaps queued somewhere?
+
+> > +	CS_PARAM_CUSTOM_PROFILE_MIN = 0x10000,
+> > +	CS_PARAM_CUSTOM_PROFILE_MAX = 0x1ffff,
+> > +
+
+I guess so, because these two constants aren't used anywhere.
+
+> > +	/* Other custom param ranges go here... */
+> > +};
+> > [...]
+
+Thanks,
+
+
+Paul Bolle
