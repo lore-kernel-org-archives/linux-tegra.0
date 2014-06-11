@@ -1,54 +1,47 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [RFC] irqchip: gic: always mask interrupts during suspend
-Date: Wed, 11 Jun 2014 09:31:57 -0600
-Message-ID: <5398766D.1070900@wwwdotorg.org>
-References: <1402442098-21093-1-git-send-email-computersforpeace@gmail.com> <alpine.DEB.2.10.1406110129270.5170@nanos> <20140610234826.GK3599@ld-irv-0074>
+Subject: Re: [PATCH v7 3/5] misc: fuse: Add efuse driver for Tegra
+Date: Wed, 11 Jun 2014 09:58:28 -0600
+Message-ID: <53987CA4.4040506@wwwdotorg.org>
+References: <1401973754-19701-1-git-send-email-pdeschrijver@nvidia.com> <1401973754-19701-4-git-send-email-pdeschrijver@nvidia.com> <53984FE3.6010509@nvidia.com> <20140611152551.GH5961@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140610234826.GK3599@ld-irv-0074>
+In-Reply-To: <20140611152551.GH5961@tbergstrom-lnx.Nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Brian Norris <computersforpeace@gmail.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, Tony Lindgren <tony@atomide.com>, Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Jason Cooper <jason@lakedaemon.net>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/10/2014 05:48 PM, Brian Norris wrote:
-> On Wed, Jun 11, 2014 at 01:34:39AM +0200, Thomas Gleixner wrote:
->> On Tue, 10 Jun 2014, Brian Norris wrote:
->>> Other random thought: it seems like any irqchip driver which does lazy IRQ
->>> masking ought to use IRQCHIP_MASK_ON_SUSPEND. So maybe the IRQ core should just
->>> do something like:
->>>
->>> 	if (!chip->irq_disable)
->>> 		chip->flags |= IRQCHIP_MASK_ON_SUSPEND;
+On 06/11/2014 09:25 AM, Peter De Schrijver wrote:
+> On Wed, Jun 11, 2014 at 02:47:31PM +0200, Mikko Perttunen wrote:
+>> On 05/06/14 16:09, Peter De Schrijver wrote:
+>> ...
+>>> +int tegra_fuse_readl(u32 offset, u32 *val)
+>>> +{
+>>> +       if (!fuse_readl)
+>>> +               return -ENXIO;
+>>> +
+>>> +       *val = fuse_readl(offset);
+>>> +
+>>> +       return 0;
+>>> +}
+>>> +
 >>
->> No. Lazy irq disable and the suspend logic are different beasts.
+>> -EPROBE_DEFER would be a better error value, so that drivers can work 
 > 
-> OK, fair enough. Drop that random thought then. It's not in the patch
-> content anyway.
+> Ok.
 > 
->> That's up to the platform to decide this. Just for the record: there
->> is a world outside of ARM...
+>> even if they are initially probed before the fuse driver. Of course, if 
+>> the fuse initialization is moved into machine init then this is a non-issue.
 > 
-> OK. But GIC is ARM-specific, so we can still constrain this patch and
-> related topics to the world of ARM.
-> 
->> But that brings me to a different question:
->>
->>     Why are you not putting that customization into the device tree
->>     instead of trying to add this to some random arch/arm/mach-foo
->>     files?
-> 
-> I'm not adding customization to arch/arm/mach-foo files. I'm trying to
-> remove it.
-> 
-> This property could be added to device tree, if there was really a valid
-> use case for a GIC which leaves its interrupts unmasked for suspend. My
-> question in this patch is essentially: does such a use case exist?
+> The exported function will always be initialized later because on Tegra20 it
+> requires APB DMA to be available. If you read the fuses directly, the system
+> sometimes hangs.
 
-DT should genernally only contain data that's expected to vary between
-boards, or just possibly between SoCs. Anything that the kernel knows
-simply because it knows what HW model it's driving has no place in DT,
-since it just adds redundant work to parse the DT and end up with the
-same data.
+That's not true in the current code. IIRC, the bug was that *if* an APB
+DMA access to anything and a CPU access to the fuses happen at the same
+time, then there can be a hang. As such, the current fuse code accesses
+the fuses directly (without potential for a hang) if the APB DMA driver
+is not available, but once the driver becomes available, it reads the
+fuses through DMA instead. Does the new code not do that?
