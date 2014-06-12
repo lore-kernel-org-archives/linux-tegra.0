@@ -1,81 +1,29 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2 2/4] pinctrl: Add NVIDIA Tegra XUSB pad controller
- support
-Date: Thu, 12 Jun 2014 09:22:21 +0200
-Message-ID: <20140612072220.GC17027@ulmo>
-References: <1402398708-10722-1-git-send-email-thierry.reding@gmail.com>
- <1402398708-10722-2-git-send-email-thierry.reding@gmail.com>
- <CAL1qeaGKUGjSzriDGptR+h23+bS3ZWuStz6koPURCstkFbEjNA@mail.gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 2/4] of: Add NVIDIA Tegra XUSB pad controller binding
+Date: Thu, 12 Jun 2014 10:46:13 +0200
+Message-ID: <CACRpkdZxS3UKaykTXsaGADCWmvfpAW_nhbxYHLSh44HMXLWvCg@mail.gmail.com>
+References: <1401894990-30092-1-git-send-email-thierry.reding@gmail.com>
+	<1401894990-30092-2-git-send-email-thierry.reding@gmail.com>
+	<53909F31.4050603@wwwdotorg.org>
+	<20140605220833.GA28817@ulmo>
+	<5390F5C7.5070301@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Sr1nOIr3CvdE5hEN"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAL1qeaGKUGjSzriDGptR+h23+bS3ZWuStz6koPURCstkFbEjNA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Bresticker <abrestic@chromium.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5390F5C7.5070301-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Fri, Jun 6, 2014 at 12:57 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
 
---Sr1nOIr3CvdE5hEN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> In my opinion, the headers *are*
+> part of the bindings, so of course anyone either reading DT bindings, or
+> parsing DT, must have the headers, and hence the headers must be bundled
+> with the DT files or with the bindings wherever they go.
 
-On Wed, Jun 11, 2014 at 01:23:59PM -0700, Andrew Bresticker wrote:
-> On Tue, Jun 10, 2014 at 4:11 AM, Thierry Reding <thierry.reding@gmail.com=
-> wrote:
-[...]
-> > +static int tegra_xusb_padctl_pinconf_group_set(struct pinctrl_dev *pin=
-ctrl,
-> > +                                              unsigned int group,
-> > +                                              unsigned long *configs,
-> > +                                              unsigned int num_configs)
-> > +{
-> > +       struct tegra_xusb_padctl *padctl =3D pinctrl_dev_get_drvdata(pi=
-nctrl);
-> > +       const struct tegra_xusb_padctl_lane *lane;
-> > +       enum tegra_xusb_padctl_param param;
-> > +       unsigned int i;
-> > +       u32 value;
-> > +
-> > +       lane =3D &padctl->soc->lanes[group];
-> > +
-> > +       for (i =3D 0; i < num_configs; i++) {
-> > +               param =3D TEGRA_XUSB_PADCTL_UNPACK_PARAM(configs[i]);
-> > +               value =3D TEGRA_XUSB_PADCTL_UNPACK_VALUE(configs[i]);
-> > +
-> > +               switch (param) {
-> > +               case TEGRA_XUSB_PADCTL_IDDQ:
-> > +                       value =3D padctl_readl(padctl, lane->offset);
->=20
-> This overwrites the configuration value - probably want to use a
-> separate variable for the register value.
+I agree 100% with Stephen's stance. Reference the headers.
 
-Good catch, thanks.
-
-Thierry
-
---Sr1nOIr3CvdE5hEN
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTmVUsAAoJEN0jrNd/PrOh+6EP/RUAe4FJ6STniIkgYa/Snsz8
-rtxsLjiXJ2Fk8T8kNgJ6fmZo9txwDHJLD9Z0LmxvVWa22BFQoLTBWr08Z04t+T+J
-dq4pT3H7nUCRr/oQaefUy2tnA6giAJwjBZPqA4R4UAK9WlZh7pMqHnnEt780UUwN
-4Tvd1b4E9ufRLLDPWt634AmVjcAjardhKg4qqvMl7+dGwHND0E3m9AGogn287y+U
-I9u7lUne+eddyl/akrkMr2KPA41smAKhjZ/Bfti6zdRNdPUrxVb1aMkdS6TtnCYF
-7dTR9BoSD6hjz/OAG2uzrJTndqpSrz/kl2NqxI++M9ZgQzzO0+oboB/EXSwdFQh+
-nR1eLk/pGTiHd4zNeV3JL3WQXaEPuiXYoJm+fsNMmOGuGowW2ZEU3NRCDgfrGqVb
-9OYU0m+A5FIC5sD5Rc4DRx0Pgme78SU3ewkszyuR2eq66zhWe3pFbqBr7pac6UtU
-EUaXmZylfJRrlGLHXQ9gRa9E8IFKHVgDYuMvbGol2y4K9IjDSniJBW5I/ljAMpbN
-JfdMJ1r7oPOtNZRJ5lIXetnBVWFsDsSxF7luWw71TTOHzFOrfFmDSG8Dl4q/dDd3
-s60htEBBlSQrg3JtWSkaRm7ngyw4urWix9ImDE/IPwpRNdLE/tuUqD9K7BWhwOG2
-Y7Zjqk86Mc9PGTmViTOh
-=Elqb
------END PGP SIGNATURE-----
-
---Sr1nOIr3CvdE5hEN--
+Yours,
+Linus Walleij
