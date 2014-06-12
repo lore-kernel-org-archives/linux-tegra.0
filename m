@@ -1,69 +1,46 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v2 3/3] clocksource: tegra: Use us counter as delay timer
-Date: Thu, 12 Jun 2014 18:58:29 +0300
-Message-ID: <1402588713-18766-4-git-send-email-pdeschrijver@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 0/3] Use Tegra's microsecond counter for udelay()
+Date: Thu, 12 Jun 2014 13:38:28 -0600
+Message-ID: <539A01B4.3050503@wwwdotorg.org>
 References: <1402588713-18766-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1402588713-18766-1-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1402588713-18766-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
+Cc: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-All Tegra SoCs have a freerunning microsecond counter which can be used as a
-delay timer.
+On 06/12/2014 09:58 AM, Peter De Schrijver wrote:
+> This patchset introduces support for Tegra's microsecond counter as the
+> udelay() timer. This is useful on Tegra SoCs which do not have an arch timer
+> such as Tegra20 and Tegra30. Using the microsecond counter instead of a delay
+> based loop avoids potential problems during cpu frequency changes.
+> 
+> The set consists of 3 patches:
+> 
+> Patch 1 introduces a new call which is used by the ARM architecture delay
+> timer code to prevent changing the delay timer after calibration is finished
+> and thus can be in use.
+> 
+> Patch 2 adds logic to choose the delay timer with the highest resolution. This
+> allows the same registration code to be used on all Tegra SoCs and yet use the
+> higher resolution arch timer when available (eg on Tegra114 or Tegra124).
+> 
+> Patch 3 adds the actual delay timer code.
+> 
+> Patch set has been verified on ventana (Tegra20), beaver (Tegra30),
+> dalmore (Tegra114) and jetson TK1 (Tegra124).
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clocksource/tegra20_timer.c |   13 +++++++++++++
- 1 files changed, 13 insertions(+), 0 deletions(-)
+Russell, Paul, do patches 1 and 2 look good to you? If so, if you can
+ack them, I'd be happy to queue this series in the Tegra git tree. If
+that doesn't work for you, please let me know who will apply these
+patches. Thanks.
 
-diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
-index d1869f0..d2616ef 100644
---- a/drivers/clocksource/tegra20_timer.c
-+++ b/drivers/clocksource/tegra20_timer.c
-@@ -27,6 +27,7 @@
- #include <linux/of_address.h>
- #include <linux/of_irq.h>
- #include <linux/sched_clock.h>
-+#include <linux/delay.h>
- 
- #include <asm/mach/time.h>
- #include <asm/smp_twd.h>
-@@ -53,6 +54,8 @@ static void __iomem *rtc_base;
- static struct timespec persistent_ts;
- static u64 persistent_ms, last_persistent_ms;
- 
-+static struct delay_timer tegra_delay_timer;
-+
- #define timer_writel(value, reg) \
- 	__raw_writel(value, timer_reg_base + (reg))
- #define timer_readl(reg) \
-@@ -139,6 +142,11 @@ static void tegra_read_persistent_clock(struct timespec *ts)
- 	*ts = *tsp;
- }
- 
-+static unsigned long tegra_delay_timer_read_counter_long(void)
-+{
-+	return readl(timer_reg_base + TIMERUS_CNTR_1US);
-+}
-+
- static irqreturn_t tegra_timer_interrupt(int irq, void *dev_id)
- {
- 	struct clock_event_device *evt = (struct clock_event_device *)dev_id;
-@@ -206,6 +214,11 @@ static void __init tegra20_init_timer(struct device_node *np)
- 		BUG();
- 	}
- 
-+	tegra_delay_timer.read_current_timer =
-+			tegra_delay_timer_read_counter_long;
-+	tegra_delay_timer.freq = 1000000;
-+	register_current_timer_delay(&tegra_delay_timer);
-+
- 	ret = setup_irq(tegra_timer_irq.irq, &tegra_timer_irq);
- 	if (ret) {
- 		pr_err("Failed to register timer IRQ: %d\n", ret);
--- 
-1.7.7.rc0.72.g4b5ea.dirty
+> Changes since v1:
+> * Address review comments
+
+That's not a very useful description of the changes, and there's no "V2"
+in the subject...
