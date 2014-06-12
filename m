@@ -1,217 +1,161 @@
-From: Alban Bedel <alban.bedel@avionic-design.de>
-Subject: [PATCH 1/2] ARM: tegra: tamonten: add the base board regulators
-Date: Thu, 12 Jun 2014 17:11:24 +0200
-Message-ID: <1402585885-28247-1-git-send-email-alban.bedel@avionic-design.de>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Alban Bedel <alban.bedel@avionic-design.de>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v8 1/6] ARM: tegra: export apb dma readl/writel
+Date: Thu, 12 Jun 2014 18:36:35 +0300
+Message-ID: <1402587400-1544-2-git-send-email-pdeschrijver@nvidia.com>
+References: <1402587400-1544-1-git-send-email-pdeschrijver@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1402587400-1544-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Currently the Tamonten DTS define a fixed regulator for the 5V supply.
-However this regulator is in fact on the base board. Fix this by
-properly defining the regulators found on the base boards.
+Export APB DMA readl and writel. These are needed because we can't access
+the fuses directly on Tegra20 without potentially causing a system hang.
+Also have the APB DMA readl and writel return an error in case of a read
+failure instead of just returning zero or ignore write failures.
 
-Signed-off-by: Alban Bedel <alban.bedel@avionic-design.de>
+Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra20-medcom-wide.dts | 46 +++++++++++++++++++++++++++++++
- arch/arm/boot/dts/tegra20-plutux.dts      | 46 +++++++++++++++++++++++++++++++
- arch/arm/boot/dts/tegra20-tamonten.dtsi   | 10 +------
- arch/arm/boot/dts/tegra20-tec.dts         | 46 +++++++++++++++++++++++++++++++
- 4 files changed, 139 insertions(+), 9 deletions(-)
+ arch/arm/mach-tegra/apbio.c |   51 ++++++++++++++++++++++++++----------------
+ include/linux/tegra-soc.h   |   14 +++++++++++
+ 2 files changed, 45 insertions(+), 20 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra20-medcom-wide.dts b/arch/arm/boot/dts/tegra20-medcom-wide.dts
-index 6d3a4cb..0cd05f7 100644
---- a/arch/arm/boot/dts/tegra20-medcom-wide.dts
-+++ b/arch/arm/boot/dts/tegra20-medcom-wide.dts
-@@ -64,4 +64,50 @@
- 			 <&tegra_car TEGRA20_CLK_CDEV1>;
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
- 	};
-+
-+	board_regulators {
-+		compatible = "simple-bus";
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		vcc_24v_reg: regulator@0 {
-+			compatible = "regulator-fixed";
-+			reg = <0>;
-+			regulator-name = "vcc_24v";
-+			regulator-min-microvolt = <24000000>;
-+			regulator-max-microvolt = <24000000>;
-+			regulator-always-on;
-+		};
-+
-+		vdd_5v0_reg: regulator@1 {
-+			compatible = "regulator-fixed";
-+			reg = <1>;
-+			regulator-name = "vdd_5v0";
-+			vin-supply = <&vcc_24v_reg>;
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+			regulator-always-on;
-+		};
-+
-+		vdd_3v3_reg: regulator@2 {
-+			compatible = "regulator-fixed";
-+			reg = <2>;
-+			regulator-name = "vdd_3v3";
-+			vin-supply = <&vcc_24v_reg>;
-+			regulator-min-microvolt = <3300000>;
-+			regulator-max-microvolt = <3300000>;
-+			regulator-always-on;
-+		};
-+
-+		vdd_1v8_reg: regulator@3 {
-+			compatible = "regulator-fixed";
-+			reg = <3>;
-+			regulator-name = "vdd_1v8";
-+			vin-supply = <&vdd_3v3_reg>;
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-always-on;
-+		};
-+	};
- };
-diff --git a/arch/arm/boot/dts/tegra20-plutux.dts b/arch/arm/boot/dts/tegra20-plutux.dts
-index 29051a2..a1b0e86 100644
---- a/arch/arm/boot/dts/tegra20-plutux.dts
-+++ b/arch/arm/boot/dts/tegra20-plutux.dts
-@@ -58,4 +58,50 @@
- 			 <&tegra_car TEGRA20_CLK_CDEV1>;
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
- 	};
-+
-+	board_regulators {
-+		compatible = "simple-bus";
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		vcc_24v_reg: regulator@0 {
-+			compatible = "regulator-fixed";
-+			reg = <0>;
-+			regulator-name = "vcc_24v";
-+			regulator-min-microvolt = <24000000>;
-+			regulator-max-microvolt = <24000000>;
-+			regulator-always-on;
-+		};
-+
-+		vdd_5v0_reg: regulator@1 {
-+			compatible = "regulator-fixed";
-+			reg = <1>;
-+			regulator-name = "vdd_5v0";
-+			vin-supply = <&vcc_24v_reg>;
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+			regulator-always-on;
-+		};
-+
-+		vdd_3v3_reg: regulator@2 {
-+			compatible = "regulator-fixed";
-+			reg = <2>;
-+			regulator-name = "vdd_3v3";
-+			vin-supply = <&vcc_24v_reg>;
-+			regulator-min-microvolt = <3300000>;
-+			regulator-max-microvolt = <3300000>;
-+			regulator-always-on;
-+		};
-+
-+		vdd_1v8_reg: regulator@3 {
-+			compatible = "regulator-fixed";
-+			reg = <3>;
-+			regulator-name = "vdd_1v8";
-+			vin-supply = <&vdd_3v3_reg>;
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-always-on;
-+		};
-+	};
- };
-diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-index a1b0d96..9c83185 100644
---- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
-+++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-@@ -334,6 +334,7 @@
- 			#gpio-cells = <2>;
- 			gpio-controller;
+diff --git a/arch/arm/mach-tegra/apbio.c b/arch/arm/mach-tegra/apbio.c
+index bc47197..e0bf49d 100644
+--- a/arch/arm/mach-tegra/apbio.c
++++ b/arch/arm/mach-tegra/apbio.c
+@@ -32,8 +32,8 @@ static u32 *tegra_apb_bb;
+ static dma_addr_t tegra_apb_bb_phys;
+ static DECLARE_COMPLETION(tegra_apb_wait);
  
-+			/* vdd_5v0_reg must be provided by the base board */
- 			sys-supply = <&vdd_5v0_reg>;
- 			vin-sm0-supply = <&sys_reg>;
- 			vin-sm1-supply = <&sys_reg>;
-@@ -511,15 +512,6 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+-static u32 tegra_apb_readl_direct(unsigned long offset);
+-static void tegra_apb_writel_direct(u32 value, unsigned long offset);
++static int tegra_apb_readl_direct(unsigned long offset, u32 *value);
++static int tegra_apb_writel_direct(u32 value, unsigned long offset);
  
--		vdd_5v0_reg: regulator@0 {
--			compatible = "regulator-fixed";
--			reg = <0>;
--			regulator-name = "vdd_5v0";
--			regulator-min-microvolt = <5000000>;
--			regulator-max-microvolt = <5000000>;
--			regulator-always-on;
--		};
--
- 		pci_vdd_reg: regulator@1 {
- 			compatible = "regulator-fixed";
- 			reg = <1>;
-diff --git a/arch/arm/boot/dts/tegra20-tec.dts b/arch/arm/boot/dts/tegra20-tec.dts
-index 890562c..173201a 100644
---- a/arch/arm/boot/dts/tegra20-tec.dts
-+++ b/arch/arm/boot/dts/tegra20-tec.dts
-@@ -67,4 +67,50 @@
- 			 <&tegra_car TEGRA20_CLK_CDEV1>;
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
- 	};
+ static struct dma_chan *tegra_apb_dma_chan;
+ static struct dma_slave_config dma_sconfig;
+@@ -128,58 +128,64 @@ static int do_dma_transfer(unsigned long apb_add,
+ 	return 0;
+ }
+ 
+-static u32 tegra_apb_readl_using_dma(unsigned long offset)
++int tegra_apb_readl_using_dma(unsigned long offset, u32 *value)
+ {
+ 	int ret;
+ 
+ 	if (!tegra_apb_dma_chan && !tegra_apb_dma_init())
+-		return tegra_apb_readl_direct(offset);
++		return tegra_apb_readl_direct(offset, value);
+ 
+ 	mutex_lock(&tegra_apb_dma_lock);
+ 	ret = do_dma_transfer(offset, DMA_DEV_TO_MEM);
+-	if (ret < 0) {
++	if (ret < 0)
+ 		pr_err("error in reading offset 0x%08lx using dma\n", offset);
+-		*(u32 *)tegra_apb_bb = 0;
+-	}
++	else
++		*value = *tegra_apb_bb;
 +
-+	board_regulators {
-+		compatible = "simple-bus";
+ 	mutex_unlock(&tegra_apb_dma_lock);
+-	return *((u32 *)tegra_apb_bb);
 +
-+		#address-cells = <1>;
-+		#size-cells = <0>;
++	return ret;
+ }
+ 
+-static void tegra_apb_writel_using_dma(u32 value, unsigned long offset)
++int tegra_apb_writel_using_dma(u32 value, unsigned long offset)
+ {
+ 	int ret;
+ 
+-	if (!tegra_apb_dma_chan && !tegra_apb_dma_init()) {
+-		tegra_apb_writel_direct(value, offset);
+-		return;
+-	}
++	if (!tegra_apb_dma_chan && !tegra_apb_dma_init())
++		return tegra_apb_writel_direct(value, offset);
+ 
+ 	mutex_lock(&tegra_apb_dma_lock);
+ 	*((u32 *)tegra_apb_bb) = value;
+ 	ret = do_dma_transfer(offset, DMA_MEM_TO_DEV);
++	mutex_unlock(&tegra_apb_dma_lock);
+ 	if (ret < 0)
+ 		pr_err("error in writing offset 0x%08lx using dma\n", offset);
+-	mutex_unlock(&tegra_apb_dma_lock);
 +
-+		vcc_24v_reg: regulator@0 {
-+			compatible = "regulator-fixed";
-+			reg = <0>;
-+			regulator-name = "vcc_24v";
-+			regulator-min-microvolt = <24000000>;
-+			regulator-max-microvolt = <24000000>;
-+			regulator-always-on;
-+		};
++	return ret;
+ }
+ #else
+ #define tegra_apb_readl_using_dma tegra_apb_readl_direct
+ #define tegra_apb_writel_using_dma tegra_apb_writel_direct
+ #endif
+ 
+-typedef u32 (*apbio_read_fptr)(unsigned long offset);
+-typedef void (*apbio_write_fptr)(u32 value, unsigned long offset);
++typedef int (*apbio_read_fptr)(unsigned long offset, u32 *value);
++typedef int (*apbio_write_fptr)(u32 value, unsigned long offset);
+ 
+ static apbio_read_fptr apbio_read;
+ static apbio_write_fptr apbio_write;
+ 
+-static u32 tegra_apb_readl_direct(unsigned long offset)
++static int tegra_apb_readl_direct(unsigned long offset, u32 *value)
+ {
+-	return readl(IO_ADDRESS(offset));
++	*value = readl(IO_ADDRESS(offset));
 +
-+		vdd_5v0_reg: regulator@1 {
-+			compatible = "regulator-fixed";
-+			reg = <1>;
-+			regulator-name = "vdd_5v0";
-+			vin-supply = <&vcc_24v_reg>;
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+			regulator-always-on;
-+		};
++	return 0;
+ }
+ 
+-static void tegra_apb_writel_direct(u32 value, unsigned long offset)
++static int tegra_apb_writel_direct(u32 value, unsigned long offset)
+ {
+ 	writel(value, IO_ADDRESS(offset));
 +
-+		vdd_3v3_reg: regulator@2 {
-+			compatible = "regulator-fixed";
-+			reg = <2>;
-+			regulator-name = "vdd_3v3";
-+			vin-supply = <&vcc_24v_reg>;
-+			regulator-min-microvolt = <3300000>;
-+			regulator-max-microvolt = <3300000>;
-+			regulator-always-on;
-+		};
++	return 0;
+ }
+ 
+ void tegra_apb_io_init(void)
+@@ -197,7 +203,12 @@ void tegra_apb_io_init(void)
+ 
+ u32 tegra_apb_readl(unsigned long offset)
+ {
+-	return apbio_read(offset);
++	u32 val;
 +
-+		vdd_1v8_reg: regulator@3 {
-+			compatible = "regulator-fixed";
-+			reg = <3>;
-+			regulator-name = "vdd_1v8";
-+			vin-supply = <&vdd_3v3_reg>;
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-always-on;
-+		};
-+	};
- };
++	if (apbio_read(offset, &val) < 0)
++		return 0;
++	else
++		return val;
+ }
+ 
+ void tegra_apb_writel(u32 value, unsigned long offset)
+diff --git a/include/linux/tegra-soc.h b/include/linux/tegra-soc.h
+index 95f611d..b02d73b 100644
+--- a/include/linux/tegra-soc.h
++++ b/include/linux/tegra-soc.h
+@@ -19,4 +19,18 @@
+ 
+ u32 tegra_read_chipid(void);
+ 
++
++#if defined(CONFIG_TEGRA20_APB_DMA)
++int tegra_apb_readl_using_dma(unsigned long offset, u32 *value);
++int tegra_apb_writel_using_dma(u32 value, unsigned long offset);
++#else
++static inline int tegra_apb_readl_using_dma(unsigned long offset, u32 *value)
++{
++	return -EINVAL;
++}
++static inline int tegra_apb_writel_using_dma(u32 value, unsigned long offset)
++{
++	return -EINVAL;
++}
++#endif
+ #endif /* __LINUX_TEGRA_SOC_H_ */
 -- 
-2.0.0
+1.7.7.rc0.72.g4b5ea.dirty
