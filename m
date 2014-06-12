@@ -1,50 +1,140 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2 2/4] pinctrl: Add NVIDIA Tegra XUSB pad controller
- support
-Date: Wed, 11 Jun 2014 15:06:37 -0600
-Message-ID: <5398C4DD.6020509@wwwdotorg.org>
-References: <1402398708-10722-1-git-send-email-thierry.reding@gmail.com>	<1402398708-10722-2-git-send-email-thierry.reding@gmail.com> <CAL1qeaGKUGjSzriDGptR+h23+bS3ZWuStz6koPURCstkFbEjNA@mail.gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 2/4] drm/tegra: Add SET/GET_TILING IOCTLs
+Date: Thu, 12 Jun 2014 09:01:01 +0200
+Message-ID: <20140612070100.GA17027@ulmo>
+References: <1402398294-10252-1-git-send-email-thierry.reding@gmail.com>
+ <1402398294-10252-2-git-send-email-thierry.reding@gmail.com>
+ <CADMs+9YJgP7GqG0qhaTzd8QtANnTb4yFq2GkAYiS_U+HFw+e0w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAL1qeaGKUGjSzriDGptR+h23+bS3ZWuStz6koPURCstkFbEjNA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============1125775350=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CADMs+9YJgP7GqG0qhaTzd8QtANnTb4yFq2GkAYiS_U+HFw+e0w@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: =?utf-8?B?U3TDqXBoYW5l?= Marchesin <marcheu@chromium.org>
+Cc: linux-tegra@vger.kernel.org, linux-api@vger.kernel.org, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/11/2014 02:23 PM, Andrew Bresticker wrote:
-> On Tue, Jun 10, 2014 at 4:11 AM, Thierry Reding
-> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> The XUSB pad controller found on NVIDIA Tegra SoCs provides several pads
->> that lanes can be assigned to in order to support a variety of interface
->> options: USB 2.0, USB 3.0, PCIe and SATA.
->>
->> In addition to the pin controller used to assign lanes to pads two PHYs
->> are exposed to allow the bricks for PCIe and SATA to be powered up and
->> down by PCIe and SATA drivers.
 
->> diff --git a/drivers/pinctrl/pinctrl-tegra-xusb.c b/drivers/pinctrl/pinctrl-tegra-xusb.c
+--===============1125775350==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="FL5UXtIhxfXey3p5"
+Content-Disposition: inline
 
->> +static int tegra_xusb_padctl_pinconf_group_set(struct pinctrl_dev *pinctrl,
->> +                                              unsigned int group,
->> +                                              unsigned long *configs,
->> +                                              unsigned int num_configs)
 
->> +       for (i = 0; i < num_configs; i++) {
->> +               param = TEGRA_XUSB_PADCTL_UNPACK_PARAM(configs[i]);
->> +               value = TEGRA_XUSB_PADCTL_UNPACK_VALUE(configs[i]);
->> +
->> +               switch (param) {
->> +               case TEGRA_XUSB_PADCTL_IDDQ:
->> +                       value = padctl_readl(padctl, lane->offset);
-> 
-> This overwrites the configuration value - probably want to use a
-> separate variable for the register value.
+--FL5UXtIhxfXey3p5
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It'd be nice to trim what you quote so that people don't have to wade
-through hundreds of lines of code to find a 2-line comment. It's easily
-missed.
+On Wed, Jun 11, 2014 at 10:43:30AM -0700, St=C3=A9phane Marchesin wrote:
+> On Tue, Jun 10, 2014 at 4:04 AM, Thierry Reding
+> <thierry.reding@gmail.com> wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >
+> > Currently the tiling parameters of buffer objects can only be set at
+> > allocation time, and only a single tiled mode is supported. This new
+> > DRM_TEGRA_GEM_SET_TILING IOCTL allows more modes to be set and also
+> > allows the tiling mode to be changed after the allocation. This will
+> > enable the Tegra DRM driver to import buffers from a GPU and directly
+> > scan them out by configuring the display controller appropriately.
+>=20
+> I was wondering why not support the new tiling modes on creation as
+> well, I guess because you don't have room for height in the creation
+> ioctl?
+
+Yes, back at the time when the GEM_CREATE IOCTL was added we only left
+enough room for "flags", so it'll be difficult to add support for the
+newer tiling modes.
+
+One possibility that I see is to extend struct drm_tegra_gem_create in a
+backwards-compatible way and make new fields dependent on some new flag,
+somewhat like this:
+
+	#define DRM_TEGRA_GEM_CREATE_BLOCK_LINEAR (1 << 3)
+
+	struct drm_tegra_gem_create {
+		__u64 size;
+		__u32 flags;
+		__u32 handle;
+		__u32 height;
+		__u32 pad;
+	};
+
+Then the DRM driver can parse the height field only if the BLOCK_LINEAR
+flag is set.
+
+To be honest, though, I'd prefer to deprecate the flags at creation if
+these patches get merged so that we can have a standard way of setting
+these rather than a few.
+
+Do you see any particular advantages in specifying the tiling mode at
+creation time?
+
+> > diff --git a/include/uapi/drm/tegra_drm.h b/include/uapi/drm/tegra_drm.h
+> > index b75482112428..0829f75eb986 100644
+> > --- a/include/uapi/drm/tegra_drm.h
+> > +++ b/include/uapi/drm/tegra_drm.h
+> > @@ -129,6 +129,27 @@ struct drm_tegra_submit {
+> >         __u32 reserved[5];      /* future expansion */
+> >  };
+> >
+> > +#define DRM_TEGRA_GEM_TILING_MODE_PITCH 0
+> > +#define DRM_TEGRA_GEM_TILING_MODE_TILED 1
+> > +#define DRM_TEGRA_GEM_TILING_MODE_BLOCK 2
+> > +
+> > +struct drm_tegra_gem_set_tiling {
+> > +       /* input */
+> > +       __u32 handle;
+> > +       __u32 mode;
+> > +       __u32 value;
+>=20
+> This seems to only be used for height, if so should it be called height?
+
+The idea here was to have a generic name here so that it could be more
+easily extended if/when newer tiling modes are introduced.
+
+Thierry
+
+--FL5UXtIhxfXey3p5
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTmVArAAoJEN0jrNd/PrOh+QEP/1Zw85p1ZLyM2emGgEtIH7g8
+kSP0oN8EF723vc7f1TOO3aU4mIoODEIlKHIA/YyNEQCHAEbTa/ZadHRQ3rAPekVs
+RZxm8CV8/eW1JB3gvSmdPz0ZvKozCp89b89VDv1QFNRBsoTaZav8SKp3nusFoatI
+a/BCGJOBlHTD3pPClInr6fFw89MaIQLWniW3RIpaOattiDEoX5zipTwE8EqloXkA
+bAsD55HTNu6/1jspwLNDXqgYcKKTNlqpuV85y/f8Ae+CgE2ElHdRxU7TxtsvmBrW
+XVWAeZjuyERCEQvbd5IWhqdT8YSXXBPQUnOLdN5OoE5KCsWtMotJPWhxGvbMdE8M
+QIvSPfztFTUFYo3/VXziuo5eKdi3JI725y+4jf/uHncvncTPXAuY44VqbxquedCb
+JpBSGnQXZPxbND04t5aRXldv1NgvTE7o3WeniPwMGCAhpYL5PdwiAT1vnsPHja02
+jaJcI/NCgH35DyFCpzzva3M6dhdUcWSvQOmLbmIRpSpYI21pl2bcUIanT3xDA4YS
+HbondaU0+Q2UObFN48ppPevEm/aZJ7EMNZRwGG0uq7cmsLYaatMtaCrAB8tZJp7P
+dV9+MnRqX+KVpDSoFZnLXrfqsxJKuunEAKJIMucnbTXQGF6zIl/RhH+37Gz4A+do
+4nZlfdnb6InkoxN9sMP7
+=ALa2
+-----END PGP SIGNATURE-----
+
+--FL5UXtIhxfXey3p5--
+
+--===============1125775350==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============1125775350==--
