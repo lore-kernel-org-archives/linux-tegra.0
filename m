@@ -1,34 +1,38 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: tegra: tamonten: add the base board regulators
-Date: Thu, 12 Jun 2014 15:17:56 -0600
-Message-ID: <539A1904.2000601@wwwdotorg.org>
-References: <1402585885-28247-1-git-send-email-alban.bedel@avionic-design.de>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v8 0/6] efuse driver for Tegra
+Date: Thu, 12 Jun 2014 16:17:02 -0600
+Message-ID: <539A26DE.8050609@wwwdotorg.org>
+References: <1402587400-1544-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1402585885-28247-1-git-send-email-alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alban Bedel <alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1402587400-1544-1-git-send-email-pdeschrijver@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Stefan Agner <stefan@agner.ch>, Paul Gortmaker <paul.gortmaker@windriver.com>, Thierry Reding <thierry.reding@gmail.com>, Joseph Lo <josephl@nvidia.com>, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, linux-doc@vger.kernel.org, Grant Likely <grant.likely@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Tejun Heo <tj@kernel.org>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-arm-kernel@lists.infradead.org, Herbert Xu <herbert@gondor.apana.org.au>, Greg Kroah-Hartman <gregkh@linuxf>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/12/2014 09:11 AM, Alban Bedel wrote:
-> Currently the Tamonten DTS define a fixed regulator for the 5V supply.
-> However this regulator is in fact on the base board. Fix this by
-> properly defining the regulators found on the base boards.
+On 06/12/2014 09:36 AM, Peter De Schrijver wrote:
+> This driver allows userspace to read the raw efuse data. Its userspace
+> interface is modelled after the sunxi_sid driver which provides similar
+> functionality for some Allwinner SoCs. It has been tested on
+> Tegra20 (ventana), Tegra30 (beaverboard), Tegra114 (dalmore) and
+> Tegra124 (jetson TK1).
 
-> diff --git a/arch/arm/boot/dts/tegra20-medcom-wide.dts b/arch/arm/boot/dts/tegra20-medcom-wide.dts
+I think this series looks OK now. However, I noticed one change in
+behaviour that I don't think is expected:
 
-> +	board_regulators {
+The current code/DTB print:
+Tegra Revision: A01 SKU: 0 CPU Process: 0 Core Process: 0
 
-The name "board_regulators" encodes both type ("regulators") and
-identify ("board": the regulators on the board). DT node names are
-suposed to contain type but not identity information.
-
-The way this is done in other Tegra DTs is to have a regulators node in
-both the board and module DT files, and use different ranges of reg
-values for the board and module; e.g. 0..99 for module and 100.. for the
-board or similar.
-
-Other than that, this patch looks fine.
+However, applying these patches and booting yields:
+Tegra Revision: A01 SKU: 0 CPU Process: 1 Core Process: 1
