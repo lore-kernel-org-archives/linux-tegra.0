@@ -1,159 +1,152 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 3/4] drm/tegra: Add SET/GET_FLAGS IOCTLs
-Date: Thu, 12 Jun 2014 13:02:57 +0200
-Message-ID: <20140612110256.GA27153@ulmo>
-References: <1402398294-10252-1-git-send-email-thierry.reding@gmail.com>
- <1402398294-10252-3-git-send-email-thierry.reding@gmail.com>
- <CADMs+9Y+i7H9GGpMKJNs2kkxzyruOjiXEv2O1_SipudPGZW-8g@mail.gmail.com>
- <20140612071840.GB17027@ulmo>
- <20140612092843.GW5821@phenom.ffwll.local>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 4/4] drm/nouveau: introduce CPU cache flushing
+	macro
+Date: Thu, 12 Jun 2014 22:50:01 +0900
+Message-ID: <CAAVeFuJYe5wVH_gTok80hT=4GbwhYq4C9c7S5No_V11qjs3brQ@mail.gmail.com>
+References: <1400483458-9648-1-git-send-email-acourbot@nvidia.com>
+ <1400483458-9648-5-git-send-email-acourbot@nvidia.com>
+ <20140519090202.GC7138@ulmo>
+ <1400491331.8467.8.camel@weser.hi.pengutronix.de>
+ <CAAVeFu+KZ9AqB5ji5-AA+qzEFDWd7y0=J1eSEPqQ-OyhmXufig@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1591903606=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20140612092843.GW5821@phenom.ffwll.local>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-tegra@vger.kernel.org, =?utf-8?B?U3TDqXBoYW5l?= Marchesin <marcheu@chromium.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linux-api@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <CAAVeFu+KZ9AqB5ji5-AA+qzEFDWd7y0=J1eSEPqQ-OyhmXufig-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Mon, Jun 9, 2014 at 7:41 PM, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Mon, May 19, 2014 at 6:22 PM, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
+>> Am Montag, den 19.05.2014, 11:02 +0200 schrieb Thierry Reding:
+>>> On Mon, May 19, 2014 at 04:10:58PM +0900, Alexandre Courbot wrote:
+>>> > Some architectures (e.g. ARM) need the CPU buffers to be explicitely
+>>> > flushed for a memory write to take effect. Not doing so results in
+>>> > synchronization issues, especially after writing to BOs.
+>>>
+>>> It seems to me that the above is generally true for all architectures,
+>>> not just ARM.
+>>>
+>> No, on PCI coherent arches, like x86 and some PowerPCs, the GPU will
+>> snoop the CPU caches and therefore an explicit cache flush is not
+>> required.
+>>
+>>> Also: s/explicitely/explicitly/
+>>>
+>>> > This patch introduces a macro that flushes the caches on ARM and
+>>> > translates to a no-op on other architectures, and uses it when
+>>> > writing to in-memory BOs. It will also be useful for implementations of
+>>> > instmem that access shared memory directly instead of going through
+>>> > PRAMIN.
+>>>
+>>> Presumably instmem can access shared memory on all architectures, so
+>>> this doesn't seem like a property of the architecture but rather of the
+>>> memory pool backing the instmem.
+>>>
+>>> In that case I wonder if this shouldn't be moved into an operation that
+>>> is implemented by the backing memory pool and be a noop where the cache
+>>> doesn't need explicit flushing.
+>>>
+>>> > diff --git a/drivers/gpu/drm/nouveau/core/os.h b/drivers/gpu/drm/nouveau/core/os.h
+>>> > index d0ced94ca54c..274b4460bb03 100644
+>>> > --- a/drivers/gpu/drm/nouveau/core/os.h
+>>> > +++ b/drivers/gpu/drm/nouveau/core/os.h
+>>> > @@ -38,4 +38,21 @@
+>>> >  #endif /* def __BIG_ENDIAN else */
+>>> >  #endif /* !ioread32_native */
+>>> >
+>>> > +#if defined(__arm__)
+>>> > +
+>>> > +#define nv_cpu_cache_flush_area(va, size)  \
+>>> > +do {                                               \
+>>> > +   phys_addr_t pa = virt_to_phys(va);      \
+>>> > +   __cpuc_flush_dcache_area(va, size);     \
+>>> > +   outer_flush_range(pa, pa + size);       \
+>>> > +} while (0)
+>>>
+>>> Couldn't this be a static inline function?
+>>>
+>>> > diff --git a/drivers/gpu/drm/nouveau/nouveau_bo.c b/drivers/gpu/drm/nouveau/nouveau_bo.c
+>>> [...]
+>>> > index 0886f47e5244..b9c9729c5733 100644
+>>> > --- a/drivers/gpu/drm/nouveau/nouveau_bo.c
+>>> > +++ b/drivers/gpu/drm/nouveau/nouveau_bo.c
+>>> > @@ -437,8 +437,10 @@ nouveau_bo_wr16(struct nouveau_bo *nvbo, unsigned index, u16 val)
+>>> >     mem = &mem[index];
+>>> >     if (is_iomem)
+>>> >             iowrite16_native(val, (void __force __iomem *)mem);
+>>> > -   else
+>>> > +   else {
+>>> >             *mem = val;
+>>> > +           nv_cpu_cache_flush_area(mem, 2);
+>>> > +   }
+>>> >  }
+>>> >
+>>> >  u32
+>>> > @@ -461,8 +463,10 @@ nouveau_bo_wr32(struct nouveau_bo *nvbo, unsigned index, u32 val)
+>>> >     mem = &mem[index];
+>>> >     if (is_iomem)
+>>> >             iowrite32_native(val, (void __force __iomem *)mem);
+>>> > -   else
+>>> > +   else {
+>>> >             *mem = val;
+>>> > +           nv_cpu_cache_flush_area(mem, 4);
+>>> > +   }
+>>>
+>>> This looks rather like a sledgehammer to me. Effectively this turns nvbo
+>>> into an uncached buffer. With additional overhead of constantly flushing
+>>> caches. Wouldn't it make more sense to locate the places where these are
+>>> called and flush the cache after all the writes have completed?
+>>>
+>> I don't think the explicit flushing for those things makes sense. I
+>> think it is a lot more effective to just map the BOs write-combined on
+>> PCI non-coherent arches. This way any writes will be buffered. Reads
+>> will be slow, but I don't think nouveau is reading back a lot from those
+>> buffers.
+>> Using the write-combining buffer doesn't need any additional
+>> synchronization as it will get flushed on pushbuf kickoff anyways.
+>
+> I tried to go that way, and something interesting happened.
+>
+> What I did: remove this patch and instead set the following caching
+> parameters for the TTM_PL_TT case in nouveau_bo_init_mem_type():
+>
+>     man->available_caching = TTM_PL_FLAG_UNCACHED | TTM_PL_FLAG_WC;
+>     man->default_caching = TTM_PL_FLAG_WC;
+>
+> What happened: no runtime errors as what happened when caching is
+> enabled. However, many of the vertex and texture buffers seem to be
+> partially corrupted. In glmark2 the 3d models had many vertices (but
+> not all) at the wrong position. Note that not all the scenes ended up
+> being corrupted - in particular, when two consecutive scenes used the
+> same model, the second instance would be uncorrupted.
+>
+> Forcing the caching to TTM_PL_FLAG_UNCACHED led to the same result.
+> What is interesting is that while data like vertices and textures got
+> corrupted, pushbuffers and shader programs seem to be just fine, as I
+> could not see any runtime error.
 
---===============1591903606==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="MGYHOYXEY6WxJCY8"
-Content-Disposition: inline
+An interesting fact: if I change ttm_bo_kmap_ttm() such as kernel
+mappings of BOs are always performed write-combined, and leave the
+TTM_PL_TT default caching to TTM_PL_FLAG_CACHED so user-space mappings
+remain cached, the corruptions just vanish. It seems to be the fact of
+setting user-space mappings to anything non-cached that leads to this
+puzzling behavior. Certainly some subtlety of ARM mappings are getting
+over my head here.
 
+If we need to implement different policies for kernel and user-space
+mappings, this might complicate things a bit, especially since support
+needs to be in TTM and not only Nouveau. I will submit a RFC tomorrow
+if I don't hear better ideas by then.
 
---MGYHOYXEY6WxJCY8
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Jun 12, 2014 at 11:28:43AM +0200, Daniel Vetter wrote:
-> On Thu, Jun 12, 2014 at 09:18:40AM +0200, Thierry Reding wrote:
-> > On Wed, Jun 11, 2014 at 09:21:21AM -0700, St=C3=A9phane Marchesin wrote:
-> > > On Tue, Jun 10, 2014 at 4:04 AM, Thierry Reding
-> > > <thierry.reding@gmail.com> wrote:
-> > > > From: Thierry Reding <treding@nvidia.com>
-> > > >
-> > > > The DRM_TEGRA_GEM_SET_FLAGS IOCTL can be used to set the flags of a
-> > > > buffer object after it has been allocated or imported. Flags associ=
-ated
-> > > > with a buffer object can be queried using the DRM_TEGRA_GEM_GET_FLA=
-GS
-> > > > IOCTL.
-> > > >
-> > > > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > > > ---
-> > > >  drivers/gpu/drm/tegra/drm.c  | 48 ++++++++++++++++++++++++++++++++=
-++++++++++++
-> > > >  include/uapi/drm/tegra_drm.h | 21 +++++++++++++++++++
-> > > >  2 files changed, 69 insertions(+)
-> > > >
-> > > > diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/dr=
-m.c
-> > > > index 5dca20982f3b..f292c29ef62f 100644
-> > > > --- a/drivers/gpu/drm/tegra/drm.c
-> > > > +++ b/drivers/gpu/drm/tegra/drm.c
-> > > > @@ -548,6 +548,52 @@ static int tegra_gem_get_tiling(struct drm_dev=
-ice *drm, void *data,
-> > > >
-> > > >         return err;
-> > > >  }
-> > > > +
-> > > > +static int tegra_gem_set_flags(struct drm_device *drm, void *data,
-> > > > +                              struct drm_file *file)
-> > > > +{
-> > > > +       struct drm_tegra_gem_set_flags *args =3D data;
-> > > > +       struct drm_tegra_bo *bo;
-> > > > +       unsigned long flags =3D 0;
-> > > > +
-> > > > +       if (args->flags & ~DRM_TEGRA_GEM_FLAGS)
-> > > > +               return -EINVAL;
-> > > > +
-> > > > +       gem =3D drm_gem_object_lookup(drm, file, args->handle);
-> > > > +       if (!gem)
-> > > > +               return -EINVAL;
-> > >=20
-> > > Usually -ENOENT is returned for unknown objects I think?
-> >=20
-> > We've had that discussion on IRC a little while back. I came across a
-> > few places where this was returned to userspace, and since I remember
-> > a particular email[0] about this error code so well I thought it should
-> > be discussed, but I can't remember the outcome (if any). Quoting from
-> > that email:
-> >=20
-> > 	ENOENT is not a valid error return from an ioctl. Never has been,
-> > 	never will be. ENOENT means "No such file and directory", and is
-> > 	for path operations. ioctl's are done on files that have already
-> > 	been opened, there's no way in hell that ENOENT would ever be
-> > 	valid.
-> >=20
-> > Given that -ENOENT is used *a lot* in DRM (many, if not most, of the
-> > instances returning the error from an IOCTL), I wonder how this can be
-> > resolved. Given that userspace may rely on this error code and that we
-> > can't break userspace I don't see a way out.
->=20
-> Imo returning -ENOENT for lookup failures is perfectly ok, after all the
-> error code spelled out means "No entity" or so. So might as well extend
-> the meaning. Without slight bending of error codes the only thing we'd
-> ever be able to return is -EINVAL for ioctls, which is completely
-> pointless.
-
-I disagree. -EINVAL makes perfect sense because one of the arguments
-passed into the IOCTL (the handle) is invalid.
-
-> So my approach is to throw the vfs experts opinion into the wind and
-> continue with the well-established rules we have in drm.
-
-The quoted comments was from Linus himself and I didn't feel like being
-shouted at. Given his above explanation it doesn't seem like the thing
-that he'd consider subsystem specific. But then again, ENOENT usage has
-gone unnoticed in DRM for some time, so maybe we'll get away with it.
-
-I'll update the patch to make it consistent with the rest of DRM.
-
-Thierry
-
---MGYHOYXEY6WxJCY8
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTmYjgAAoJEN0jrNd/PrOhK5AP/04BZDVa3uQT0C+jq3rjb7m5
-ckpqnl+B/w/aKaPDThEzlHqE7FgNZ4d6CMP+wgrfuwGUBnAtBFmMOcYZnp3TLdh0
-FkUKas7ozfnbIDqR1fDe1CTY3ykTOcETHA0xcyfjs5KGv9HxvLqbZRzmsUyM9s1v
-48CE08Kd2hd/s2PmAErpsassk3huwk0Q352ZBcD2fH5EuzrbFv9jyHUHegpyz6Ti
-vsuUbGKKj84HRX7Pea7YeCXJBx8O4jqRbk+DKe5eW9fcY/GApHIFBtepzzRl9S6u
-e/ZNOWSyh8YAd0KckNPQi28XHUFPRLjWta3Y6vRgtF8SYoTHcaxTlC25o3bA6lCB
-inRYk4mNeimwbQ45cn6rYQQ1qUTmZZJrF/WbWaNyfxNz4LcocPEtRZHwSWJxyXSd
-478bLCZRQVgTCWodwHWqnLBfMRfmRiYOaJSR1LRqECfn6LVVl7BDwreNeUlw3Wze
-lEfKlHbJlLS8x2gx27cpuOJy6VejepPjHj6AEHmOJcMPJobOha64n6UNtgajKW0H
-nopX/HkOuOkubFnMukbEkYZQHjgzuV3bIagPOGeFLJz9o5fYd76NwXNBw67HGmID
-jqwaDnbwrihd+xZ1pMlurPhB+1azFNGy3ZFH+UxfqWTN+HqN/RXM89NEngSkQA/W
-KbXUpacsbWTYT4YQF5/G
-=hFhd
------END PGP SIGNATURE-----
-
---MGYHOYXEY6WxJCY8--
-
---===============1591903606==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============1591903606==--
+Alex.
