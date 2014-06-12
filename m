@@ -1,38 +1,56 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v8 0/6] efuse driver for Tegra
-Date: Thu, 12 Jun 2014 16:17:02 -0600
-Message-ID: <539A26DE.8050609@wwwdotorg.org>
-References: <1402587400-1544-1-git-send-email-pdeschrijver@nvidia.com>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Subject: Re: [PATCH 0/3] Use Tegra's microsecond counter for udelay()
+Date: Thu, 12 Jun 2014 23:55:54 +0100
+Message-ID: <20140612225553.GO23430@n2100.arm.linux.org.uk>
+References: <1402588713-18766-1-git-send-email-pdeschrijver@nvidia.com> <539A01B4.3050503@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1402587400-1544-1-git-send-email-pdeschrijver@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Stefan Agner <stefan@agner.ch>, Paul Gortmaker <paul.gortmaker@windriver.com>, Thierry Reding <thierry.reding@gmail.com>, Joseph Lo <josephl@nvidia.com>, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, linux-doc@vger.kernel.org, Grant Likely <grant.likely@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Tejun Heo <tj@kernel.org>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-arm-kernel@lists.infradead.org, Herbert Xu <herbert@gondor.apana.org.au>, Greg Kroah-Hartman <gregkh@linuxf>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <539A01B4.3050503-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/12/2014 09:36 AM, Peter De Schrijver wrote:
-> This driver allows userspace to read the raw efuse data. Its userspace
-> interface is modelled after the sunxi_sid driver which provides similar
-> functionality for some Allwinner SoCs. It has been tested on
-> Tegra20 (ventana), Tegra30 (beaverboard), Tegra114 (dalmore) and
-> Tegra124 (jetson TK1).
+On Thu, Jun 12, 2014 at 01:38:28PM -0600, Stephen Warren wrote:
+> On 06/12/2014 09:58 AM, Peter De Schrijver wrote:
+> > This patchset introduces support for Tegra's microsecond counter as the
+> > udelay() timer. This is useful on Tegra SoCs which do not have an arch timer
+> > such as Tegra20 and Tegra30. Using the microsecond counter instead of a delay
+> > based loop avoids potential problems during cpu frequency changes.
+> > 
+> > The set consists of 3 patches:
+> > 
+> > Patch 1 introduces a new call which is used by the ARM architecture delay
+> > timer code to prevent changing the delay timer after calibration is finished
+> > and thus can be in use.
+> > 
+> > Patch 2 adds logic to choose the delay timer with the highest resolution. This
+> > allows the same registration code to be used on all Tegra SoCs and yet use the
+> > higher resolution arch timer when available (eg on Tegra114 or Tegra124).
+> > 
+> > Patch 3 adds the actual delay timer code.
+> > 
+> > Patch set has been verified on ventana (Tegra20), beaver (Tegra30),
+> > dalmore (Tegra114) and jetson TK1 (Tegra124).
+> 
+> Russell, Paul, do patches 1 and 2 look good to you? If so, if you can
+> ack them, I'd be happy to queue this series in the Tegra git tree. If
+> that doesn't work for you, please let me know who will apply these
+> patches. Thanks.
 
-I think this series looks OK now. However, I noticed one change in
-behaviour that I don't think is expected:
+When I saw them, I did have a question in the back of my mind about
+the interlocking - whether we should just mandate that these are
+always registered before delay calibration.  Then I remember the
+mess that platforms made of the sched_clock() stuff.
 
-The current code/DTB print:
-Tegra Revision: A01 SKU: 0 CPU Process: 0 Core Process: 0
+So, I don't see any other way to ensure that platforms do the right
+thing other than providing that kind of stick...  so I guess we'll
+have to have them.
 
-However, applying these patches and booting yields:
-Tegra Revision: A01 SKU: 0 CPU Process: 1 Core Process: 1
+Acked-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+
+-- 
+FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
+improving, and getting towards what was expected from it.
