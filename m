@@ -1,7 +1,8 @@
 From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 3/3] ARM: tegra: add GK20A GPU to Tegra124 DT
-Date: Fri, 13 Jun 2014 18:52:46 +0900
-Message-ID: <1402653166-8441-4-git-send-email-acourbot@nvidia.com>
+Subject: [PATCH v2 2/3] ARM: tegra: of: add GK20A device tree
+	binding
+Date: Fri, 13 Jun 2014 18:52:45 +0900
+Message-ID: <1402653166-8441-3-git-send-email-acourbot@nvidia.com>
 References: <1402653166-8441-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -18,27 +19,53 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
 Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Add the device tree binding documentation for the GK20A GPU used in
+Tegra K1 SoCs.
 
-Add the GK20A device node to Tegra124's device tree.
-
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra124.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ .../devicetree/bindings/gpu/nvidia,gk20a.txt       | 43 ++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt
 
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index 6e6bc4e8185c..09321f10e8ea 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -102,6 +102,21 @@
- 			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
- 	};
- 
+diff --git a/Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt b/Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt
+new file mode 100644
+index 000000000000..23bfe8e1f7cc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt
+@@ -0,0 +1,43 @@
++NVIDIA GK20A Graphics Processing Unit
++
++Required properties:
++- compatible: "nvidia,<chip>-<gpu>"
++  Currently recognized values:
++  - nvidia,tegra124-gk20a
++- reg: Physical base address and length of the controller's registers.
++  Must contain two entries:
++  - first entry for bar0
++  - second entry for bar1
++- interrupts: Must contain an entry for each entry in interrupt-names.
++  See ../interrupt-controller/interrupts.txt for details.
++- interrupt-names: Must include the following entries:
++  - stall
++  - nonstall
++- vdd-supply: regulator for supply voltage.
++- clocks: Must contain an entry for each entry in clock-names.
++  See ../clocks/clock-bindings.txt for details.
++- clock-names: Must include the following entries:
++  - gpu
++  - pwr
++- resets: Must contain an entry for each entry in reset-names.
++  See ../reset/reset.txt for details.
++- reset-names: Must include the following entries:
++  - gpu
++
++Example:
++
 +	gpu@0,57000000 {
 +		compatible = "nvidia,gk20a";
 +		reg = <0x0 0x57000000 0x0 0x01000000>,
@@ -46,6 +73,7 @@ index 6e6bc4e8185c..09321f10e8ea 100644
 +		interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>,
 +			     <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
 +		interrupt-names = "stall", "nonstall";
++		vdd-supply = <&vdd_gpu>;
 +		clocks = <&tegra_car TEGRA124_CLK_GPU>,
 +			 <&tegra_car TEGRA124_CLK_PLL_P_OUT5>;
 +		clock-names = "gpu", "pwr";
@@ -53,9 +81,5 @@ index 6e6bc4e8185c..09321f10e8ea 100644
 +		reset-names = "gpu";
 +		status = "disabled";
 +	};
-+
- 	timer@0,60005000 {
- 		compatible = "nvidia,tegra124-timer", "nvidia,tegra20-timer";
- 		reg = <0x0 0x60005000 0x0 0x400>;
 -- 
 2.0.0
