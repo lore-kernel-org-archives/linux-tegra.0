@@ -1,24 +1,20 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2 2/3] arm: tegra: enable igb, stmpe, i2c chardev, lm95245,
- pwm leds
-Date: Mon, 16 Jun 2014 12:57:50 -0600
-Message-ID: <539F3E2E.8060602@wwwdotorg.org>
-References: <dadd07f9ed693d6bcf541764b62a2caf4cc38630.1402353627.git.marcel@ziswiler.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v3 7/7] ARM: tegra: Add the EC i2c tunnel to tegra124-venice2
+Date: Mon, 16 Jun 2014 13:01:35 -0600
+Message-ID: <539F3F0F.1060101@wwwdotorg.org>
+References: <1398879850-9111-1-git-send-email-dianders@chromium.org> <1398879850-9111-8-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <dadd07f9ed693d6bcf541764b62a2caf4cc38630.1402353627.git.marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stefan-XLVq0VzYD2Y@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <1398879850-9111-8-git-send-email-dianders@chromium.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>, lee.jones@linaro.org, swarren@nvidia.com, wsa@the-dreams.de
+Cc: abrestic@chromium.org, dgreid@chromium.org, olof@lixom.net, sjg@chromium.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, thierry.reding@gmail.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/09/2014 04:52 PM, Marcel Ziswiler wrote:
-> The NVIDIA Tegra 3 based Apalis T30 module contains an Intel i210 resp.
-> i211 gigabit Ethernet controller, an STMPE811 ADC/touch controller, I2C
-> buses and PWM LEDs generically accessible from user space and an
-> LM95245 temperature sensor chip. The later four can also be found on
-> the Colibri T30 module.
+On 04/30/2014 11:44 AM, Doug Anderson wrote:
+> This adds the EC i2c tunnel (and devices under it) to the
+> tegra124-venice2 device tree.
 
-I've applied this patch to Tegra's for-3.17/defconfig branch.
+I've applied this to Tegra's for-3.17/dt branch.
