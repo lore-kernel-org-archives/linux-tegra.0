@@ -1,64 +1,73 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v8 0/6] efuse driver for Tegra
-Date: Fri, 13 Jun 2014 10:38:19 -0600
-Message-ID: <539B28FB.3000504@wwwdotorg.org>
-References: <1402587400-1544-1-git-send-email-pdeschrijver@nvidia.com>
- <539A26DE.8050609@wwwdotorg.org>
- <20140613072328.GK5961@tbergstrom-lnx.Nvidia.com>
- <20140613080052.GN5961@tbergstrom-lnx.Nvidia.com>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Subject: Re: [PATCH 23/38] mmc: sdhci: convert sdhci_set_uhs_signaling()
+	into a library function
+Date: Mon, 16 Jun 2014 11:46:16 +0100
+Message-ID: <20140616104615.GA10701@n2100.arm.linux.org.uk>
+References: <20140423185534.GA26756@n2100.arm.linux.org.uk> <E1Wd2Wd-0003vp-S2@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20140613080052.GN5961@tbergstrom-lnx.Nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Stefan Agner <stefan@agner.ch>, Paul Gortmaker <paul.gortmaker@windriver.com>, Thierry Reding <thierry.reding@gmail.com>, Joseph Lo <josephl@nvidia.com>, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Olof Johansson <olof@lixom.net>, Rob Herring <robh+dt@kernel.org>, Alex Courbot <acourbot@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <E1Wd2Wd-0003vp-S2-eh5Bv4kxaXIANfyc6IWni62ZND6+EDdj@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Chris Ball <chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Barry Song <baohua-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, spear-devel-nkJGhpqTU55BDgjK7y7TUQ@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Anton Vorontsov <anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Viresh Kumar <viresh.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/13/2014 02:00 AM, Peter De Schrijver wrote:
-> On Fri, Jun 13, 2014 at 09:23:28AM +0200, Peter De Schrijver wrote:
->> On Fri, Jun 13, 2014 at 12:17:02AM +0200, Stephen Warren wrote:
->>> On 06/12/2014 09:36 AM, Peter De Schrijver wrote:
->>>> This driver allows userspace to read the raw efuse data. Its userspace
->>>> interface is modelled after the sunxi_sid driver which provides similar
->>>> functionality for some Allwinner SoCs. It has been tested on
->>>> Tegra20 (ventana), Tegra30 (beaverboard), Tegra114 (dalmore) and
->>>> Tegra124 (jetson TK1).
->>>
->>> I think this series looks OK now. However, I noticed one change in
->>> behaviour that I don't think is expected:
->>>
->>> The current code/DTB print:
->>> Tegra Revision: A01 SKU: 0 CPU Process: 0 Core Process: 0
->>>
->>> However, applying these patches and booting yields:
->>> Tegra Revision: A01 SKU: 0 CPU Process: 1 Core Process: 1
->>
->> On which board/SoC?
+On Wed, Apr 23, 2014 at 08:08:07PM +0100, Russell King wrote:
+> @@ -1507,25 +1529,7 @@ static void sdhci_do_set_ios(struct sdhci_host *host, struct mmc_ios *ios)
+>  			host->ops->set_clock(host, host->clock);
+>  		}
+>  
+> -		if (host->ops->set_uhs_signaling)
+> -			host->ops->set_uhs_signaling(host, ios->timing);
+> -		else {
+> -			ctrl_2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+> -			/* Select Bus Speed Mode for host */
+> -			ctrl_2 &= ~SDHCI_CTRL_UHS_MASK;
+> -			if ((ios->timing == MMC_TIMING_MMC_HS200) ||
+> -			    (ios->timing == MMC_TIMING_UHS_SDR104))
+> -				ctrl_2 |= SDHCI_CTRL_UHS_SDR104;
+> -			else if (ios->timing == MMC_TIMING_UHS_SDR12)
+> -				ctrl_2 |= SDHCI_CTRL_UHS_SDR12;
+> -			else if (ios->timing == MMC_TIMING_UHS_SDR25)
+> -				ctrl_2 |= SDHCI_CTRL_UHS_SDR25;
+> -			else if (ios->timing == MMC_TIMING_UHS_SDR50)
+> -				ctrl_2 |= SDHCI_CTRL_UHS_SDR50;
+> -			else if (ios->timing == MMC_TIMING_UHS_DDR50)
+> -				ctrl_2 |= SDHCI_CTRL_UHS_DDR50;
+> -			sdhci_writew(host, ctrl_2, SDHCI_HOST_CONTROL2);
+> -		}
+> +		host->ops->set_uhs_signaling(host, ios->timing);
+>  
+>  		if (!(host->quirks2 & SDHCI_QUIRK2_PRESET_VALUE_BROKEN) &&
+>  				((ios->timing == MMC_TIMING_UHS_SDR12) ||
 
-Oops. Venice2/Tegra124.
+Whoever decided to poorly pick these patches up against my will has
+slightly messed this patch up - whereas my original patch left the
+code correctly formatted, when whoever applied this patch did so, they
+left an additional blank line in the above.
 
-> I'm guessing you're running on Tegra124 because the silicon revision reported
-> is A01. If this is correct then, the current output is bogus. The current fuse
-> code does not have any Tegra124 support and will fall back to reading the same
-> fuse bits as on Tegra20 to determine the process IDs. You should get a warning
-> message though: 'Tegra: unknown chip id'
+The other thing I'd ask is that the MMC people learn C precedence
+rules, and realise that it's not necessary (and actively harmful)
+to add additional parenthesis around simple if() conditions.  Testing
+for timing being one of two values does not need anything more than
+one set of parenthesis - it does not need if ((a == b) || (a == c)) -
+if (a == b || a == c) does just fine, and is less confusing when
+encountering more complex statements, such as:
 
-Ah yes:
-Tegra: unknown chip id 64
+	if ((((a == b) || (a == c)) && ((d > a) || (d < c))) || (z == f))
 
-OK, so there's nothing wrong with this change in behaviour:-)
+compared with:
 
-If that error message still exists, it might be nice if that value was
-printed in hex since that's what the data sheets and code usually
-represents it as. That can certainly be a followon patch though; no need
-for a respin.
+	if (((a == b || a == c) && (d > a || d < c)) || z == f)
+
+With the former "style", I normally end up having to pull the file into
+the editor, and rewrite the damned statement to work out what the
+grouping is, because the excessive use of parenthesis is detrimental to
+readability.  Don't do it.  Learn the C precedence rules and keep code
+readable.
+
+-- 
+FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
+improving, and getting towards what was expected from it.
