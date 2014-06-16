@@ -1,79 +1,45 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: rebuild tegra_defconfig
-Date: Mon, 16 Jun 2014 12:04:25 -0600
-Message-ID: <1402941865-18249-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH v2 0/5] PCI: tegra: Overhaul regulator usage
+Date: Mon, 16 Jun 2014 12:30:27 -0600
+Message-ID: <539F37C3.7070600@wwwdotorg.org>
+References: <1401288555-24197-1-git-send-email-thierry.reding@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1401288555-24197-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 05/28/2014 08:49 AM, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> The current device tree binding for the regulator setup on Tegra PCIe is
+> not accurate. While it does work for current use-cases, that's likely by
+> accident rather than design. This series replaces the existing set of
+> power-supply properties with a new set that accurately describes the
+> inputs of the IP block (depending on SoC generation).
+> 
+> As a heads-up, this breaks backwards compatibility with prior versions
+> of the device tree bindings, but I don't see a reason why that should
+> keep us from fixing this properly. Not many people are currently using
+> these bindings and those who are are most likely tracking upstream
+> development closely enough not to be impacted by this.
+> 
+> I've aimed to keep the series bisectible, which has the downside of
+> interleaving patches to unrelated trees (ARM and PCI). I'm hoping that
+> perhaps we can find a way to merge this as a whole to keep it possible
+> to bisect across the series. Although again, I guess it wouldn't be all
+> that bad if that wasn't the case, given how little PCIe is actually
+> being used.
+> 
+> This second version of the series has Bjorn's Acked-by for patch 3 from
+> the RFC. Stephen, it would be great if you can take this through the
+> Tegra tree so that the bisectability can be preserved. I have a bunch of
+> other smaller changes for the PCIe driver (mostly cleanups). I don't
+> think any of them will conflict, but for extra safety Bjorn may want to
+> pull this as a stable branch into his tree.
 
-Run "make tegra_defconfig; make savedefconf" on v3.16-rc1. This allows
-other people to do the same thing to adjust the defconfig file without
-their patch bringing in a bunch of irrelevant diffs.
-
-All of the removed options either have been removed from Kconfig, or
-are now default y.
-
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-I intend to apply this immediately to Tegra's for-3.17/defconfig branch.
-
- arch/arm/configs/tegra_defconfig | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
-
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index fb25e2982f64..157a4f144479 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -23,14 +23,11 @@ CONFIG_MODULE_FORCE_UNLOAD=y
- CONFIG_PARTITION_ADVANCED=y
- # CONFIG_IOSCHED_DEADLINE is not set
- # CONFIG_IOSCHED_CFQ is not set
--CONFIG_GPIO_PCA953X=y
- CONFIG_ARCH_TEGRA=y
- CONFIG_ARCH_TEGRA_2x_SOC=y
- CONFIG_ARCH_TEGRA_3x_SOC=y
- CONFIG_ARCH_TEGRA_114_SOC=y
- CONFIG_ARCH_TEGRA_124_SOC=y
--CONFIG_TEGRA_EMC_SCALING_ENABLE=y
--CONFIG_TRUSTED_FOUNDATIONS=y
- CONFIG_PCI=y
- CONFIG_PCI_MSI=y
- CONFIG_PCI_TEGRA=y
-@@ -74,9 +71,6 @@ CONFIG_IPV6_MIP6=y
- CONFIG_IPV6_TUNNEL=y
- CONFIG_IPV6_MULTIPLE_TABLES=y
- CONFIG_CAN=y
--CONFIG_CAN_RAW=y
--CONFIG_CAN_BCM=y
--CONFIG_CAN_DEV=y
- CONFIG_CAN_MCP251X=y
- CONFIG_BT=y
- CONFIG_BT_RFCOMM=y
-@@ -96,7 +90,6 @@ CONFIG_CMA_SIZE_MBYTES=64
- CONFIG_MTD=y
- CONFIG_MTD_M25P80=y
- CONFIG_MTD_SPI_NOR=y
--CONFIG_PROC_DEVICETREE=y
- CONFIG_BLK_DEV_LOOP=y
- CONFIG_AD525X_DPOT=y
- CONFIG_AD525X_DPOT_I2C=y
-@@ -144,6 +137,7 @@ CONFIG_SPI_TEGRA20_SFLASH=y
- CONFIG_SPI_TEGRA20_SLINK=y
- CONFIG_PINCTRL_AS3722=y
- CONFIG_PINCTRL_PALMAS=y
-+CONFIG_GPIO_PCA953X=y
- CONFIG_GPIO_PCA953X_IRQ=y
- CONFIG_GPIO_PALMAS=y
- CONFIG_GPIO_TPS6586X=y
-@@ -291,5 +285,4 @@ CONFIG_DEBUG_LL=y
- CONFIG_EARLY_PRINTK=y
- CONFIG_CRYPTO_TWOFISH=y
- # CONFIG_CRYPTO_ANSI_CPRNG is not set
--CONFIG_CRYPTO_DEV_TEGRA_AES=y
- CONFIG_CRC_CCITT=y
--- 
-1.8.1.5
+I've applied this series to Tegra's for-3.17/pcie-regulators branch.
