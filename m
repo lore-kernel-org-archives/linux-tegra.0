@@ -1,41 +1,52 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [GIT PULL] ARM: create a cros-ec-keyboard DT fragment
-Date: Mon, 16 Jun 2014 14:15:51 -0600
-Message-ID: <1402949751-930-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH] misc: fuse: fix dummy functions
+Date: Mon, 16 Jun 2014 15:11:55 -0600
+Message-ID: <1402953115-32489-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This branch contains a series from Doug Anderson that creates a DT
-include file to share some common DT content between Tegra and Exynos
-boards that use cros-ec. I'll be pulling this into Tegra's for-3.17/dt
-branch, and I assume the Samsung maintainers will do something similar.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-----------------------------------------------------------------
+The Tegra fuse header's dummy functions for the case where Tegra20 is
+disabled are inconsistent with the correct prototypes, and have some
+syntax errors. Fix these. While at it, fix the indentation level of
+the dummy function bodies.
 
-The following changes since commit 7171511eaec5bf23fb06078f59784a3a0626b38f:
+Fixes: 40969e30ad7c ("misc: fuse: Add efuse driver for Tegra")
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+I intend to immediately apply this to Tegra's for-3.17/fuse-move branch.
+---
+ drivers/misc/fuse/tegra/fuse.h | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-  Linux 3.16-rc1
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tegra-for-3.17-dt-cros-ec-kbd
-
-for you to fetch changes up to 1a395e3b4f2e9038964c9eec392ed5300a4b5b83:
-
-  ARM: dts: Use the cros-ec-keyboard fragment in exynos5250-snow
-
-----------------------------------------------------------------
-
-Doug Anderson (3):
-      ARM: dts: Create a cros-ec-keyboard fragment
-      ARM: tegra: Use the cros-ec-keyboard fragment in venice2
-      ARM: dts: Use the cros-ec-keyboard fragment in exynos5250-snow
-
- arch/arm/boot/dts/cros-ec-keyboard.dtsi | 105 +++++++++++++++++++++++++++
- arch/arm/boot/dts/exynos5250-snow.dts   |  93 +-----------------------
- arch/arm/boot/dts/tegra124-venice2.dts  |  96 +-----------------------
- 3 files changed, 111 insertions(+), 183 deletions(-)
- create mode 100644 arch/arm/boot/dts/cros-ec-keyboard.dtsi
+diff --git a/drivers/misc/fuse/tegra/fuse.h b/drivers/misc/fuse/tegra/fuse.h
+index b3442770df09..3a398bf3572c 100644
+--- a/drivers/misc/fuse/tegra/fuse.h
++++ b/drivers/misc/fuse/tegra/fuse.h
+@@ -38,14 +38,14 @@ void tegra20_init_fuse_early(void);
+ u32 tegra20_fuse_early(const unsigned int offset);
+ #else
+ static inline void tegra20_init_speedo_data(struct tegra_sku_info *sku_info) {}
+-static inline bool tegra20_spare_fuse_early(int spare_bit, void *fuse_base)
++static inline bool tegra20_spare_fuse_early(int spare_bit)
+ {
+-			return false;
++	return false;
+ }
+-static inline void tegra20_init_fuse_early(void);
+-static inline tegra20_fuse_early(const unsigned int offset);
++static inline void tegra20_init_fuse_early(void) {}
++static inline u32 tegra20_fuse_early(const unsigned int offset)
+ {
+-			return 0;
++	return 0;
+ }
+ #endif
+ 
+-- 
+1.8.1.5
