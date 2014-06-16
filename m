@@ -1,36 +1,41 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [RFC PATCH 3/4] drm/tegra: Request memory bandwidth for the
- display controller
-Date: Mon, 16 Jun 2014 14:06:43 -0600
-Message-ID: <539F4E53.6080205@wwwdotorg.org>
-References: <1402925713-25426-1-git-send-email-tomeu.vizoso@collabora.com>
- <1402925713-25426-4-git-send-email-tomeu.vizoso@collabora.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1402925713-25426-4-git-send-email-tomeu.vizoso@collabora.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Thierry Reding <thierry.reding@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, David Airlie <airlied@linux.ie>, Mike Turquette <mturquette@linaro.org>, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [GIT PULL] ARM: create a cros-ec-keyboard DT fragment
+Date: Mon, 16 Jun 2014 14:15:51 -0600
+Message-ID: <1402949751-930-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/16/2014 07:35 AM, Tomeu Vizoso wrote:
-> Request it based solely on the current mode's refresh rate. More
-> accurate requirements can be requested in future patches.
+This branch contains a series from Doug Anderson that creates a DT
+include file to share some common DT content between Tegra and Exynos
+boards that use cros-ec. I'll be pulling this into Tegra's for-3.17/dt
+branch, and I assume the Samsung maintainers will do something similar.
 
-> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+----------------------------------------------------------------
 
-> +	bandwidth = mode->clock * window.bits_per_pixel / 8;
-> +	err = tegra124_emc_reserve_bandwidth(TEGRA_EMC_CONSUMER_DISP1, bandwidth);
+The following changes since commit 7171511eaec5bf23fb06078f59784a3a0626b38f:
 
-DISP1 shouldn't be hard-coded here; the code should use DISP1 or DISP2
-based on head or DC identity. We certainly have some boards capable of
-dual-head operation.
+  Linux 3.16-rc1
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tegra-for-3.17-dt-cros-ec-kbd
+
+for you to fetch changes up to 1a395e3b4f2e9038964c9eec392ed5300a4b5b83:
+
+  ARM: dts: Use the cros-ec-keyboard fragment in exynos5250-snow
+
+----------------------------------------------------------------
+
+Doug Anderson (3):
+      ARM: dts: Create a cros-ec-keyboard fragment
+      ARM: tegra: Use the cros-ec-keyboard fragment in venice2
+      ARM: dts: Use the cros-ec-keyboard fragment in exynos5250-snow
+
+ arch/arm/boot/dts/cros-ec-keyboard.dtsi | 105 +++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5250-snow.dts   |  93 +-----------------------
+ arch/arm/boot/dts/tegra124-venice2.dts  |  96 +-----------------------
+ 3 files changed, 111 insertions(+), 183 deletions(-)
+ create mode 100644 arch/arm/boot/dts/cros-ec-keyboard.dtsi
