@@ -1,52 +1,38 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] misc: fuse: fix dummy functions
-Date: Mon, 16 Jun 2014 15:11:55 -0600
-Message-ID: <1402953115-32489-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH v3 1/4] of: Add NVIDIA Tegra XUSB pad controller binding
+Date: Mon, 16 Jun 2014 15:35:20 -0600
+Message-ID: <539F6318.5010306@wwwdotorg.org>
+References: <1402930623-28886-1-git-send-email-thierry.reding@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1402930623-28886-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 06/16/2014 08:57 AM, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> This patch adds the device tree binding documentation for the XUSB pad
+> controller found on NVIDIA Tegra SoCs. It exposes both pinmuxing and PHY
+> capabilities.
 
-The Tegra fuse header's dummy functions for the case where Tegra20 is
-disabled are inconsistent with the correct prototypes, and have some
-syntax errors. Fix these. While at it, fix the indentation level of
-the dummy function bodies.
+This looks fine to me, with one issue below:
 
-Fixes: 40969e30ad7c ("misc: fuse: Add efuse driver for Tegra")
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-I intend to immediately apply this to Tegra's for-3.17/fuse-move branch.
----
- drivers/misc/fuse/tegra/fuse.h | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt
 
-diff --git a/drivers/misc/fuse/tegra/fuse.h b/drivers/misc/fuse/tegra/fuse.h
-index b3442770df09..3a398bf3572c 100644
---- a/drivers/misc/fuse/tegra/fuse.h
-+++ b/drivers/misc/fuse/tegra/fuse.h
-@@ -38,14 +38,14 @@ void tegra20_init_fuse_early(void);
- u32 tegra20_fuse_early(const unsigned int offset);
- #else
- static inline void tegra20_init_speedo_data(struct tegra_sku_info *sku_info) {}
--static inline bool tegra20_spare_fuse_early(int spare_bit, void *fuse_base)
-+static inline bool tegra20_spare_fuse_early(int spare_bit)
- {
--			return false;
-+	return false;
- }
--static inline void tegra20_init_fuse_early(void);
--static inline tegra20_fuse_early(const unsigned int offset);
-+static inline void tegra20_init_fuse_early(void) {}
-+static inline u32 tegra20_fuse_early(const unsigned int offset)
- {
--			return 0;
-+	return 0;
- }
- #endif
- 
--- 
-1.8.1.5
+> +Required properties:
+> +--------------------
+
+> +- #address-cells: Should be 0.
+> +- #size-cells: Should be 0.
+
+I don't think those properties are needed. If they are, a value of 0 for
+both doesn't seem useful. I assume those two lines should just be
+deleted, and also from the example below.
+
+Assuming I take this through the Tegra tree, If this is the only issue,
+I can delete those lines when applying.
