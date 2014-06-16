@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v3 3/4] ARM: tegra: tegra124: Add XUSB pad controller
-Date: Mon, 16 Jun 2014 16:57:02 +0200
-Message-ID: <1402930623-28886-3-git-send-email-thierry.reding@gmail.com>
+Subject: [PATCH v3 4/4] ARM: tegra: jetson-tk1: Add XUSB pad controller
+Date: Mon, 16 Jun 2014 16:57:03 +0200
+Message-ID: <1402930623-28886-4-git-send-email-thierry.reding@gmail.com>
 References: <1402930623-28886-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1402930623-28886-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,48 +12,49 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The device tree node in the SoC file contains only the resources (such
-as registers, resets, ...) but none of the lane assignment information
-since that's board specific and belongs in the board file.
+Assign lanes to the XUSB pads as used on the Jetson TK1.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-Changes in v2:
-- include dt-bindings/pinctrl/pinctrl-tegra-xusb.h so that board files
-  don't have to include it explicitly
-- remove unneeded #address-cells/#size-cells = <0>
-- add padctl label for XUSB pad controller node
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
- arch/arm/boot/dts/tegra124.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index 6e6bc4e8185c..b7cb944b2faa 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -1,6 +1,7 @@
- #include <dt-bindings/clock/tegra124-car.h>
- #include <dt-bindings/gpio/tegra-gpio.h>
- #include <dt-bindings/pinctrl/pinctrl-tegra.h>
-+#include <dt-bindings/pinctrl/pinctrl-tegra-xusb.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
- #include "skeleton.dtsi"
-@@ -449,6 +450,15 @@
- 		clock-names = "pclk", "clk32k_in";
+diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+index e31fb61a81d3..38d30877057c 100644
+--- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
++++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+@@ -1619,6 +1619,32 @@
+ 		nvidia,sys-clock-req-active-high;
  	};
  
-+	padctl: padctl@0,7009f000 {
-+		compatible = "nvidia,tegra124-xusb-padctl";
-+		reg = <0x0 0x7009f000 0x0 0x1000>;
-+		resets = <&tegra_car 142>;
-+		reset-names = "padctl";
++	padctl@0,7009f000 {
++		pinctrl-0 = <&padctl_default>;
++		pinctrl-names = "default";
 +
-+		#phy-cells = <1>;
++		padctl_default: pinmux {
++			usb3 {
++				nvidia,lanes = "pcie-0", "pcie-1";
++				nvidia,function = "usb3";
++				nvidia,iddq = <0>;
++			};
++
++			pcie {
++				nvidia,lanes = "pcie-2", "pcie-3",
++					       "pcie-4";
++				nvidia,function = "pcie";
++				nvidia,iddq = <0>;
++			};
++
++			sata {
++				nvidia,lanes = "sata-0";
++				nvidia,function = "sata";
++				nvidia,iddq = <0>;
++			};
++		};
 +	};
 +
- 	sdhci@0,700b0000 {
- 		compatible = "nvidia,tegra124-sdhci";
- 		reg = <0x0 0x700b0000 0x0 0x200>;
+ 	/* SD card */
+ 	sdhci@0,700b0400 {
+ 		status = "okay";
 -- 
 1.9.2
