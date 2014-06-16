@@ -1,53 +1,68 @@
-From: Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Mon, 16 Jun 2014 16:27:39 +0100
-Message-ID: <20140616152739.GS16758@arm.com>
-References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
- <4545972.cM7IP1qTXQ@wuerfel>
- <CAL_Jsq+tkFNpjSEZboT+o69B_Z3a8e-ZVKaYDmLwtkyYoPy6VQ@mail.gmail.com>
- <5288123.eXagyPAxNq@wuerfel>
- <20140602104104.GD3855@e103592.cambridge.arm.com>
- <20140604143509.GF28484@ulmo>
- <20140604164132.GF6644@arm.com>
- <07321368d15d4ad9928ebb83af87e401@DM2PR03MB479.namprd03.prod.outlook.com>
+From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 23/38] mmc: sdhci: convert sdhci_set_uhs_signaling() into
+ a library function
+Date: Mon, 16 Jun 2014 18:10:55 +0200
+Message-ID: <CAPDyKFoeZLMCNpMMyLKKES+CUmTXt1g1rCPLB6HKXy9AMw1Zng@mail.gmail.com>
+References: <20140423185534.GA26756@n2100.arm.linux.org.uk>
+	<E1Wd2Wd-0003vp-S2@rmk-PC.arm.linux.org.uk>
+	<20140616104615.GA10701@n2100.arm.linux.org.uk>
+	<CAPDyKFrp8JokqBbo3rg2i6WYykU1C9CuPF0FL7AOHh=Gcp5=hg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <07321368d15d4ad9928ebb83af87e401@DM2PR03MB479.namprd03.prod.outlook.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Varun Sethi <Varun.Sethi@freescale.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Arnd Bergmann <arnd@arndb.de>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Grant Grundler <grundler@chromium.org>, Stephen Warren <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Marc Zyngier <Marc.Zyngier@arm.com>, Linux IOMMU <iommu@lists.linux-foundation.org>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Cho KyongHo <pullip.cho@samsung.com>, Dave P Martin <Dave.Martin@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Stuart Yoder <stuart.yoder@freescale.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAPDyKFrp8JokqBbo3rg2i6WYykU1C9CuPF0FL7AOHh=Gcp5=hg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: Chris Ball <chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org>, linux-mmc <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Barry Song <baohua-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, spear-devel-nkJGhpqTU55BDgjK7y7TUQ@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Anton Vorontsov <anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Viresh Kumar <viresh.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Varun,
+On 16 June 2014 14:17, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> On 16 June 2014 12:46, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote:
+>> On Wed, Apr 23, 2014 at 08:08:07PM +0100, Russell King wrote:
+>>> @@ -1507,25 +1529,7 @@ static void sdhci_do_set_ios(struct sdhci_host *host, struct mmc_ios *ios)
+>>>                       host->ops->set_clock(host, host->clock);
+>>>               }
+>>>
+>>> -             if (host->ops->set_uhs_signaling)
+>>> -                     host->ops->set_uhs_signaling(host, ios->timing);
+>>> -             else {
+>>> -                     ctrl_2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+>>> -                     /* Select Bus Speed Mode for host */
+>>> -                     ctrl_2 &= ~SDHCI_CTRL_UHS_MASK;
+>>> -                     if ((ios->timing == MMC_TIMING_MMC_HS200) ||
+>>> -                         (ios->timing == MMC_TIMING_UHS_SDR104))
+>>> -                             ctrl_2 |= SDHCI_CTRL_UHS_SDR104;
+>>> -                     else if (ios->timing == MMC_TIMING_UHS_SDR12)
+>>> -                             ctrl_2 |= SDHCI_CTRL_UHS_SDR12;
+>>> -                     else if (ios->timing == MMC_TIMING_UHS_SDR25)
+>>> -                             ctrl_2 |= SDHCI_CTRL_UHS_SDR25;
+>>> -                     else if (ios->timing == MMC_TIMING_UHS_SDR50)
+>>> -                             ctrl_2 |= SDHCI_CTRL_UHS_SDR50;
+>>> -                     else if (ios->timing == MMC_TIMING_UHS_DDR50)
+>>> -                             ctrl_2 |= SDHCI_CTRL_UHS_DDR50;
+>>> -                     sdhci_writew(host, ctrl_2, SDHCI_HOST_CONTROL2);
+>>> -             }
+>>> +             host->ops->set_uhs_signaling(host, ios->timing);
+>>>
+>>>               if (!(host->quirks2 & SDHCI_QUIRK2_PRESET_VALUE_BROKEN) &&
+>>>                               ((ios->timing == MMC_TIMING_UHS_SDR12) ||
+>>
+>> Whoever decided to poorly pick these patches up against my will has
+>> slightly messed this patch up - whereas my original patch left the
+>> code correctly formatted, when whoever applied this patch did so, they
+>> left an additional blank line in the above.
+>
 
-On Thu, Jun 05, 2014 at 08:10:19PM +0100, Varun Sethi wrote:
-> > The set of StreamIDs that can be generated by a master is fixed in the
-> > hardware. The SMMU can then be programmed to map these incoming IDs onto
-> > a context ID (or a set of context IDs), which are the IDs used internally
-> > by the SMMU to find the page tables etc.
-> > 
-> > The StreamID -> ContextID mapping is dynamic and controlled by software.
-> > The Master -> StreamIDs mapping is fixed in the hardware.
-> The Master -> StreamIDs mapping may not always be fixed in the hardware.
-> At, least in our case we plan to program these via software. PCI devices
-> is one place where this mapping would have to be dynamic (based on the
-> topology i.e. if the devices are connected to a bridge etc). Also, we have
-> a hot plug device architecture where the stream ID is software
-> programmable.
-> 
-> Other than that, based on the isolation requirements (iommu domain)
-> software programmability offers greater flexibility.
+[snip]
 
-For the sake of consistency, I'd really like to treat the master ->
-streamIDs mapping as fixed. If that means setting it once during boot in
-your case, then so be it (ideally in the firmware). That way, we just
-describe the fixed mapping to the kernel and the driver doesn't have to
-worry about changing the mapping, especially given that that's likely to be
-highly error-prone once the SMMU is in us.
+> Please, feel free to send a patch to fixup my misstake. I will happily apply it.
 
-Do you have use-cases where you really need to change these mappings
-dynamically?
+I had a second look to fix it up myself, but I just can't find that
+your patch was different than the one I applied (beside the conflict I
+resolved).
 
-Will
+If you do find any other issue regarding the patches in this patchset
+- please let me know and I will try to help.
+
+Kind regards
+Uffe
