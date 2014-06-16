@@ -1,73 +1,92 @@
-From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Subject: Re: [PATCH 23/38] mmc: sdhci: convert sdhci_set_uhs_signaling()
-	into a library function
-Date: Mon, 16 Jun 2014 11:46:16 +0100
-Message-ID: <20140616104615.GA10701@n2100.arm.linux.org.uk>
-References: <20140423185534.GA26756@n2100.arm.linux.org.uk> <E1Wd2Wd-0003vp-S2@rmk-PC.arm.linux.org.uk>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCHv8 05/21] iommu/core: add ops->{bound,unbind}_driver()
+Date: Mon, 16 Jun 2014 14:02:28 +0300
+Message-ID: <878uox15iz.fsf@nvidia.com>
+References: <1401448834-32659-1-git-send-email-hdoyu@nvidia.com> <1401448834-32659-6-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <E1Wd2Wd-0003vp-S2-eh5Bv4kxaXIANfyc6IWni62ZND6+EDdj@public.gmane.org>
+In-Reply-To: <1401448834-32659-6-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chris Ball <chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Barry Song <baohua-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, spear-devel-nkJGhpqTU55BDgjK7y7TUQ@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Anton Vorontsov <anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Viresh Kumar <viresh.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Apr 23, 2014 at 08:08:07PM +0100, Russell King wrote:
-> @@ -1507,25 +1529,7 @@ static void sdhci_do_set_ios(struct sdhci_host *host, struct mmc_ios *ios)
->  			host->ops->set_clock(host, host->clock);
+
+Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> writes:
+
+> ops->{bound,unbind}_driver() functions are called at
+> BUS_NOTIFY_{BOUND,UNBIND}_DRIVER respectively.
+>
+> This is necessary to control the device population order. IOMMU master
+> devices depend on an IOMMU device instanciation. IOMMU master devices
+> can be registered to an IOMMU only after it's successfully
+> populated. This IOMMU registration is done via
+> ops->bound_driver(). Currently this population can be deferred if
+> depending IOMMU device hasn't yet been populated in driver core. This
+> cannot be done via ops->add_device() since after add_device() device's
+> population/instanciation can be still deferred via probe().
+>
+> Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/iommu/iommu.c | 13 +++++++++++--
+>  include/linux/iommu.h |  4 ++++
+>  2 files changed, 15 insertions(+), 2 deletions(-)
+
+I have just noticed that we could make use of IOMMU group for this
+purpose so that we could avoid this iommu core part modification but
+just tegra-smmu part modification which would be easier to merge.
+
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index e5555fcfe703..5469d361e7bc 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -540,14 +540,23 @@ static int iommu_bus_notifier(struct notifier_block *nb,
+>  	 * ADD/DEL call into iommu driver ops if provided, which may
+>  	 * result in ADD/DEL notifiers to group->notifier
+>  	 */
+> -	if (action == BUS_NOTIFY_ADD_DEVICE) {
+> +	switch (action) {
+> +	case BUS_NOTIFY_ADD_DEVICE:
+>  		if (ops->add_device)
+>  			return ops->add_device(dev);
+> -	} else if (action == BUS_NOTIFY_DEL_DEVICE) {
+> +	case BUS_NOTIFY_DEL_DEVICE:
+>  		if (ops->remove_device && dev->iommu_group) {
+>  			ops->remove_device(dev);
+>  			return 0;
 >  		}
+> +	case BUS_NOTIFY_BOUND_DRIVER:
+> +		if (ops->bound_driver)
+> +			ops->bound_driver(dev);
+> +		break;
+> +	case BUS_NOTIFY_UNBIND_DRIVER:
+> +		if (ops->unbind_driver)
+> +			ops->unbind_driver(dev);
+> +		break;
+>  	}
 >  
-> -		if (host->ops->set_uhs_signaling)
-> -			host->ops->set_uhs_signaling(host, ios->timing);
-> -		else {
-> -			ctrl_2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
-> -			/* Select Bus Speed Mode for host */
-> -			ctrl_2 &= ~SDHCI_CTRL_UHS_MASK;
-> -			if ((ios->timing == MMC_TIMING_MMC_HS200) ||
-> -			    (ios->timing == MMC_TIMING_UHS_SDR104))
-> -				ctrl_2 |= SDHCI_CTRL_UHS_SDR104;
-> -			else if (ios->timing == MMC_TIMING_UHS_SDR12)
-> -				ctrl_2 |= SDHCI_CTRL_UHS_SDR12;
-> -			else if (ios->timing == MMC_TIMING_UHS_SDR25)
-> -				ctrl_2 |= SDHCI_CTRL_UHS_SDR25;
-> -			else if (ios->timing == MMC_TIMING_UHS_SDR50)
-> -				ctrl_2 |= SDHCI_CTRL_UHS_SDR50;
-> -			else if (ios->timing == MMC_TIMING_UHS_DDR50)
-> -				ctrl_2 |= SDHCI_CTRL_UHS_DDR50;
-> -			sdhci_writew(host, ctrl_2, SDHCI_HOST_CONTROL2);
-> -		}
-> +		host->ops->set_uhs_signaling(host, ios->timing);
->  
->  		if (!(host->quirks2 & SDHCI_QUIRK2_PRESET_VALUE_BROKEN) &&
->  				((ios->timing == MMC_TIMING_UHS_SDR12) ||
-
-Whoever decided to poorly pick these patches up against my will has
-slightly messed this patch up - whereas my original patch left the
-code correctly formatted, when whoever applied this patch did so, they
-left an additional blank line in the above.
-
-The other thing I'd ask is that the MMC people learn C precedence
-rules, and realise that it's not necessary (and actively harmful)
-to add additional parenthesis around simple if() conditions.  Testing
-for timing being one of two values does not need anything more than
-one set of parenthesis - it does not need if ((a == b) || (a == c)) -
-if (a == b || a == c) does just fine, and is less confusing when
-encountering more complex statements, such as:
-
-	if ((((a == b) || (a == c)) && ((d > a) || (d < c))) || (z == f))
-
-compared with:
-
-	if (((a == b || a == c) && (d > a || d < c)) || z == f)
-
-With the former "style", I normally end up having to pull the file into
-the editor, and rewrite the damned statement to work out what the
-grouping is, because the excessive use of parenthesis is detrimental to
-readability.  Don't do it.  Learn the C precedence rules and keep code
-readable.
-
--- 
-FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
-improving, and getting towards what was expected from it.
+>  	/*
+> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> index b96a5b2136e4..141eea25bdea 100644
+> --- a/include/linux/iommu.h
+> +++ b/include/linux/iommu.h
+> @@ -97,6 +97,8 @@ enum iommu_attr {
+>   * @domain_has_cap: domain capabilities query
+>   * @add_device: add device to iommu grouping
+>   * @remove_device: remove device from iommu grouping
+> + * @bound_driver: called at BUS_NOTIFY_BOUND_DRIVER
+> + * @unbind_driver: called at BUS_NOTIFY_UNBIND_DRIVER
+>   * @domain_get_attr: Query domain attributes
+>   * @domain_set_attr: Change domain attributes
+>   * @pgsize_bitmap: bitmap of supported page sizes
+> @@ -115,6 +117,8 @@ struct iommu_ops {
+>  			      unsigned long cap);
+>  	int (*add_device)(struct device *dev);
+>  	void (*remove_device)(struct device *dev);
+> +	int (*bound_driver)(struct device *dev);
+> +	void (*unbind_driver)(struct device *dev);
+>  	int (*device_group)(struct device *dev, unsigned int *groupid);
+>  	int (*domain_get_attr)(struct iommu_domain *domain,
+>  			       enum iommu_attr attr, void *data);
+> -- 
+> 2.0.0.rc1.15.g7e76a2f
