@@ -1,67 +1,39 @@
-From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Tue, 17 Jun 2014 11:43:04 +0100
-Message-ID: <20140617104304.GD13808@arm.com>
-References: <5288123.eXagyPAxNq@wuerfel>
-	<20140602104104.GD3855@e103592.cambridge.arm.com>
-	<20140604143509.GF28484@ulmo> <20140604164132.GF6644@arm.com>
-	<07321368d15d4ad9928ebb83af87e401@DM2PR03MB479.namprd03.prod.outlook.com>
-	<20140616152739.GS16758@arm.com>
-	<8b0492b4697943a0b1f276ef42cc8223@DM2PR03MB352.namprd03.prod.outlook.com>
-	<20140616170416.GA16758@arm.com>
-	<419e67f783524d208ab3be16bcd94bd9@DM2PR03MB352.namprd03.prod.outlook.com>
-	<0587e1f4894546398be0798d2bc2c84f@BL2PR03MB468.namprd03.prod.outlook.com>
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v3 2/4] pinctrl: Add NVIDIA Tegra XUSB pad controller
+ support
+Date: Tue, 17 Jun 2014 14:20:25 +0300
+Message-ID: <53A02479.8080405@nvidia.com>
+References: <1402930623-28886-1-git-send-email-thierry.reding@gmail.com> <1402930623-28886-2-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <0587e1f4894546398be0798d2bc2c84f-AZ66ij2kwaacCcN9WK45f+O6mTEJWrR4XA4E9RH9d+qIuWR1G4zioA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
-Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stuart Yoder <stuart.yoder-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1402930623-28886-2-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jun 17, 2014 at 11:26:48AM +0100, Varun Sethi wrote:
-> > The way we generally thought it would work was something like
-> > this:
-> >    -u-boot/bootloader makes any static streamID allocation if needed,
-> >     sets a default streamID  (e.g. 0x0) in device and expresses
-> >     that in the device tree
-> >    -device tree would express relationship between devices
-> >     (including bus controllers) and the SMMU through mmu-masters
-> >     property
-> >    -u-boot would express the range of unused (or used) streamIDs via a
-> > new
-> >     device tree property so the kernel SMMU driver knows what streamIDs
-> > are
-> >     free
-> >    -in the SMMU driver a different vendor specific 'add_device' callback
-> >     could be used to handle our special cases where we need to set/change
-> >     the stream ID for devices added to a domain
-> 
-> Another possibility, could be to program the stream Id in the device
-> registers (reference for the stream ID register can be obtained from the
-> device tree) during device attach. This could be relevant in case of VFIO,
-> when we are assigning multiple devices to a single VM. All the devices can
-> share the same stream ID.
+This v3 breaks SATA; see below
 
-I think for simple masters (i.e. those that have all their StreamIDs under
-control of one driver), then setting something during attach (or add?)
-based on the DT could work pretty well. The other case is when we have
-masters behind a bridge (such as a PCI RC). In this case, it might actually
-be better to ask the bridge for the IDs and let it sort out the allocation
-itself. That would also move the RequesterID -> StreamID mapping out of
-the SMMU code.
+On 16/06/14 17:57, Thierry Reding wrote:
+...
+> +                       regval = padctl_readl(padctl, lane->offset);
+> +
+> +                       if (!value)
+> +                               regval &= ~lane->iddq;
+> +                       else
+> +                               regval |= lane->iddq;
+> +
+> +                       padctl_writel(padctl, regval, lane->offset);
+...
 
-What do you think?
+The bits at at lane->iddq are actually IDDQ_DISABLE bits, so this is the 
+wrong way around: having iddq = <0> in device tree leads to the device 
+turning off. So either the DT property should be renamed or the branches 
+of the if here should be switched around.
 
-Will
+v2 used the wrong variable so the else branch ended up being chosen each 
+time, this also meant that SATA worked by chance.
+
+- Mikko
