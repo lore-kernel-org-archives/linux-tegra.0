@@ -1,74 +1,76 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [RFC PATCH 1/4] memory: tegra124-emc: Add EMC driver
-Date: Tue, 17 Jun 2014 10:15:50 -0600
-Message-ID: <53A069B6.6070902@wwwdotorg.org>
-References: <1402925713-25426-1-git-send-email-tomeu.vizoso@collabora.com>
- <1402925713-25426-2-git-send-email-tomeu.vizoso@collabora.com>
- <539F4D44.3070309@wwwdotorg.org> <53A03186.3040703@collabora.com>
+Subject: Re: [PATCH v3 5/7] mfd: cros_ec: Sync to the latest cros_ec_commands.h
+ from EC sources
+Date: Tue, 17 Jun 2014 10:20:36 -0600
+Message-ID: <53A06AD4.3000704@wwwdotorg.org>
+References: <1398879850-9111-1-git-send-email-dianders@chromium.org>	 <1398879850-9111-6-git-send-email-dianders@chromium.org>	 <20140520084602.GF24991@lee--X1> <1402483068.3798.82.camel@x220>	 <CAD=FV=XL9tnEqza8Zx8mt_Z7-bj8TCzdeyHMhnpewKp_1CR-ig@mail.gmail.com>	 <1402646902.28881.15.camel@x220>	 <CAD=FV=XcK5R1sdNwoJkFPapwWQ9vqxvmQi_L3BqTSt8EKRTNHw@mail.gmail.com> <1402995202.1984.22.camel@x220>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <53A03186.3040703@collabora.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Thierry Reding <thierry.reding@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, David Airlie <airlied@linux.ie>, Mike Turquette <mturquette@linaro.org>, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <1402995202.1984.22.camel@x220>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Paul Bolle <pebolle@tiscali.nl>, Doug Anderson <dianders@chromium.org>
+Cc: Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@chromium.org>, Lee Jones <lee.jones@linaro.org>, Stephen Warren <swarren@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>, Andrew Bresticker <abrestic@chromium.org>, Dylan Reid <dgreid@chromium.org>, Olof Johansson <olof@lixom.net>, Samuel Ortiz <sameo@linux.intel.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/17/2014 06:16 AM, Tomeu Vizoso wrote:
-> On 06/16/2014 10:02 PM, Stephen Warren wrote:
->> On 06/16/2014 07:35 AM, Tomeu Vizoso wrote:
-
->> This binding looks quite anaemic vs.
->> Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt; I
->> would expect that this binding needs all the EMC register data from the
->> tegra20-emc binding too. Can the two bindings be identical?
+On 06/17/2014 02:53 AM, Paul Bolle wrote:
+> Doug,
 > 
-> There's even less stuff needed right now, as all what ultimately the EMC
-> driver does is call clk_set_rate on the EMC clock. As the T124 EMC
-> driver gains more features, they should get more similar.
-
-IIRC, even changing the EMC clock rate requires modifying the memory
-controller's programming (e.g. delays/taps/tuning etc.). That's exactly
-what the more complex stuff in the nvidia,tegra20-emc.txt is all about.
-I not convinced that a driver that just modifies the clock rate without
-adjusting the EMC programming will work reliably.
-
->>> +#ifdef CONFIG_TEGRA124_EMC
->>> +int tegra124_emc_reserve_bandwidth(unsigned int consumer, unsigned
->>> long rate);
->>> +void tegra124_emc_set_floor(unsigned long freq);
->>> +void tegra124_emc_set_ceiling(unsigned long freq);
->>> +#else
->>> +int tegra124_emc_reserve_bandwidth(unsigned int consumer, unsigned
->>> long rate)
->>> +{ return -ENODEV; }
->>> +void tegra124_emc_set_floor(unsigned long freq)
->>> +{ return; }
->>> +void tegra124_emc_set_ceiling(unsigned long freq)
->>> +{ return; }
->>> +#endif
+> On Fri, 2014-06-13 at 08:22 -0700, Doug Anderson wrote:
+>> On Fri, Jun 13, 2014 at 1:08 AM, Paul Bolle <pebolle@tiscali.nl> wrote:
+>>> On Wed, 2014-06-11 at 08:11 -0700, Doug Anderson wrote:
+>>>> This is a config option on the ChromeOS EC
+>>>> <https://chromium.googlesource.com/chromiumos/platform/ec>.  Doing a
+>>>> grep there:
+>>>>
+>>>> board/samus/board.h:#define CONFIG_CHARGER_PROFILE_OVERRIDE
+>>>> common/charge_state_v2.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
+>>>> common/charge_state_v2.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
+>>>> common/charge_state_v2.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
+>>>> driver/battery/samus.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
+>>>> driver/battery/samus.c:#endif   /* CONFIG_CHARGER_PROFILE_OVERRIDE */
+>>>> include/config.h:#undef CONFIG_CHARGER_PROFILE_OVERRIDE
+>>>> include/ec_commands.h:  /* Range for CONFIG_CHARGER_PROFILE_OVERRIDE params */
+>>>> test/test_config.h:#define CONFIG_CHARGER_PROFILE_OVERRIDE
+>>>
+>>> I see. So this is not a Kconfig macro but a general macro with a CONFIG_
+>>> prefix. There are quite a bit of those in the tree already, but still,
+>>> would another prefix also do?
 >>
->> I'll repeat what I said off-list so that we can have the whole
->> conversation on the list:
->>
->> That looks like a custom Tegra-specific API. I think it'd be much better
->> to integrate this into the common clock framework as a standard clock
->> constraints API. There are other use-cases for clock constraints besides
->> EMC scaling (e.g. some in audio on Tegra, and I'm sure many on other
->> SoCs too).
+>> Given that it's an entirely separate project and this is a valid
+>> CONFIG option in that project, it seems a lot to ask them not to use
+>> the CONFIG_ prefix.  Also: the part you are objecting to is only a
+>> comment, right?
 > 
-> Yes, I wrote a bit in the cover letter about our requirements and how
-> they map to the CCF. Could you please comment on that?
+> So all the hits you quoted above are actually from code that's never
+> going to be included in the kernel tree, right? If so, then yes, we're
+> only discussing a single comment.
+> 
+>> We could certainly add extra wording in the comment to make it obvious
+>> that this is a CONFIG option for the EC and not the kernel.  Would
+>> that be enough?  ...or are you trying to use some scripts to
+>> automatically process files to look for CONFIG options?
+> 
+> Yes, I'm using a script to check for Kconfig macros, among other things.
+> It doesn't care about comments (because every now and then mistakes are
+> made in comments too, and some of those can get surprisingly confusing).
+> 
+> Anyhow, the CONFIG_ prefix used in the kernel tree is quite generic, but
+> we're stuck with it. Would it be bothersome to drop it in that comment?
+> Mentioning a preprocessor macro from a separate project is a bit
+> confusing to begin with. How is one supposed to know that this is a
+> reference to something out of tree?
+> 
+> So, in summary, while we're apparently only discussing a single comment,
+> I would appreciate it if it could be reworded, preferably by dropping
+> that the CONFIG_ prefix. But other people might care very little, as
+> they don't share this particular pet peeve.
 
-My comments remain the same. I believe this is something that belongs in
-the clock driver, or at the least, some API that takes a struct clock as
-its parameter, so that drivers can use the existing DT clock lookup
-mechanism.
+Can't your tool maintain a whitelist or ignore list? There are many
+cases where the kernel can pull in headers/data from other projects
+(Firmware interfaces to an arbitrarily large set of HW, Device trees,
+IO/network protocools, perhaps more). It feels quite unreasonable for
+the kernel to decide that it exclusively owns the CONFIG_* namespace
+even in comments, and that every other project it interacts with must
+not use that namespace.
