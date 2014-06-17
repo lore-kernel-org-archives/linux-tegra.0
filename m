@@ -1,58 +1,77 @@
-From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: RE: [GIT PULL] ARM: create a cros-ec-keyboard DT fragment
-Date: Tue, 17 Jun 2014 11:15:22 +0900
-Message-ID: <00d301cf89d2$00612e20$01238a60$@samsung.com>
-References: <1402949751-930-1-git-send-email-swarren@wwwdotorg.org>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: Re: [PATCH v3 5/7] mfd: cros_ec: Sync to the latest
+ cros_ec_commands.h from EC sources
+Date: Tue, 17 Jun 2014 10:53:22 +0200
+Message-ID: <1402995202.1984.22.camel@x220>
+References: <1398879850-9111-1-git-send-email-dianders@chromium.org>
+	 <1398879850-9111-6-git-send-email-dianders@chromium.org>
+	 <20140520084602.GF24991@lee--X1> <1402483068.3798.82.camel@x220>
+	 <CAD=FV=XL9tnEqza8Zx8mt_Z7-bj8TCzdeyHMhnpewKp_1CR-ig@mail.gmail.com>
+	 <1402646902.28881.15.camel@x220>
+	 <CAD=FV=XcK5R1sdNwoJkFPapwWQ9vqxvmQi_L3BqTSt8EKRTNHw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1402949751-930-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Content-language: ko
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Stephen Warren' <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Tomasz Figa' <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAD=FV=XcK5R1sdNwoJkFPapwWQ9vqxvmQi_L3BqTSt8EKRTNHw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@chromium.org>, Lee Jones <lee.jones@linaro.org>, Stephen Warren <swarren@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>, Andrew Bresticker <abrestic@chromium.org>, Dylan Reid <dgreid@chromium.org>, Olof Johansson <olof@lixom.net>, Samuel Ortiz <sameo@linux.intel.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Stephen Warren wrote:
-> 
-> This branch contains a series from Doug Anderson that creates a DT
-> include file to share some common DT content between Tegra and Exynos
+Doug,
 
-Looks good to me.
+On Fri, 2014-06-13 at 08:22 -0700, Doug Anderson wrote:
+> On Fri, Jun 13, 2014 at 1:08 AM, Paul Bolle <pebolle@tiscali.nl> wrote:
+> > On Wed, 2014-06-11 at 08:11 -0700, Doug Anderson wrote:
+> >> This is a config option on the ChromeOS EC
+> >> <https://chromium.googlesource.com/chromiumos/platform/ec>.  Doing a
+> >> grep there:
+> >>
+> >> board/samus/board.h:#define CONFIG_CHARGER_PROFILE_OVERRIDE
+> >> common/charge_state_v2.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
+> >> common/charge_state_v2.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
+> >> common/charge_state_v2.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
+> >> driver/battery/samus.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
+> >> driver/battery/samus.c:#endif   /* CONFIG_CHARGER_PROFILE_OVERRIDE */
+> >> include/config.h:#undef CONFIG_CHARGER_PROFILE_OVERRIDE
+> >> include/ec_commands.h:  /* Range for CONFIG_CHARGER_PROFILE_OVERRIDE params */
+> >> test/test_config.h:#define CONFIG_CHARGER_PROFILE_OVERRIDE
+> >
+> > I see. So this is not a Kconfig macro but a general macro with a CONFIG_
+> > prefix. There are quite a bit of those in the tree already, but still,
+> > would another prefix also do?
+> 
+> Given that it's an entirely separate project and this is a valid
+> CONFIG option in that project, it seems a lot to ask them not to use
+> the CONFIG_ prefix.  Also: the part you are objecting to is only a
+> comment, right?
 
-> boards that use cros-ec. I'll be pulling this into Tegra's for-3.17/dt
-> branch, and I assume the Samsung maintainers will do something similar.
-> 
-Yeah, I'll merge the branch into samsung tree as well.
+So all the hits you quoted above are actually from code that's never
+going to be included in the kernel tree, right? If so, then yes, we're
+only discussing a single comment.
 
-Thanks for your inform ;-)
-- Kukjin
+> We could certainly add extra wording in the comment to make it obvious
+> that this is a CONFIG option for the EC and not the kernel.  Would
+> that be enough?  ...or are you trying to use some scripts to
+> automatically process files to look for CONFIG options?
 
-> ----------------------------------------------------------------
-> 
-> The following changes since commit 7171511eaec5bf23fb06078f59784a3a0626b38f:
-> 
->   Linux 3.16-rc1
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tegra-for-3.17-dt-cros-
-> ec-kbd
-> 
-> for you to fetch changes up to 1a395e3b4f2e9038964c9eec392ed5300a4b5b83:
-> 
->   ARM: dts: Use the cros-ec-keyboard fragment in exynos5250-snow
-> 
-> ----------------------------------------------------------------
-> 
-> Doug Anderson (3):
->       ARM: dts: Create a cros-ec-keyboard fragment
->       ARM: tegra: Use the cros-ec-keyboard fragment in venice2
->       ARM: dts: Use the cros-ec-keyboard fragment in exynos5250-snow
-> 
->  arch/arm/boot/dts/cros-ec-keyboard.dtsi | 105 +++++++++++++++++++++++++++
->  arch/arm/boot/dts/exynos5250-snow.dts   |  93 +-----------------------
->  arch/arm/boot/dts/tegra124-venice2.dts  |  96 +-----------------------
->  3 files changed, 111 insertions(+), 183 deletions(-)
->  create mode 100644 arch/arm/boot/dts/cros-ec-keyboard.dtsi
+Yes, I'm using a script to check for Kconfig macros, among other things.
+It doesn't care about comments (because every now and then mistakes are
+made in comments too, and some of those can get surprisingly confusing).
+
+Anyhow, the CONFIG_ prefix used in the kernel tree is quite generic, but
+we're stuck with it. Would it be bothersome to drop it in that comment?
+Mentioning a preprocessor macro from a separate project is a bit
+confusing to begin with. How is one supposed to know that this is a
+reference to something out of tree?
+
+So, in summary, while we're apparently only discussing a single comment,
+I would appreciate it if it could be reworded, preferably by dropping
+that the CONFIG_ prefix. But other people might care very little, as
+they don't share this particular pet peeve.
+
+Thanks,
+
+
+Paul Bolle
