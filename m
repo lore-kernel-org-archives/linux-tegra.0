@@ -1,32 +1,39 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v4 1/4] of: Add NVIDIA Tegra XUSB pad controller binding
-Date: Tue, 17 Jun 2014 10:24:54 -0600
-Message-ID: <53A06BD6.40608@wwwdotorg.org>
-References: <1403006877-19850-1-git-send-email-thierry.reding@gmail.com>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH 8/9] ata: Add support for the Tegra124 SATA controller
+Date: Tue, 17 Jun 2014 12:32:42 -0400
+Message-ID: <20140617163242.GK31819@htj.dyndns.org>
+References: <1401881559-18469-1-git-send-email-mperttunen@nvidia.com>
+ <1401881559-18469-9-git-send-email-mperttunen@nvidia.com>
+ <1470404.13mIFv0Hnj@amdc1032>
+ <53A0686F.4000303@wwwdotorg.org>
+ <20140617161320.GG31819@htj.dyndns.org>
+ <20140617161447.GH31819@htj.dyndns.org>
+ <53A06B65.7030407@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1403006877-19850-1-git-send-email-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Andrew Bresticker <abrestic@chromium.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Mikko Perttunen <mperttunen@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <53A06B65.7030407@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Mikko Perttunen <mperttunen@nvidia.com>, thierry.reding@gmail.com, pdeschrijver@nvidia.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-ide@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/17/2014 06:07 AM, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
+On Tue, Jun 17, 2014 at 10:23:01AM -0600, Stephen Warren wrote:
+> > Please also drop inline.  It isn't a difficult optimization to perform
+> > for the compiler.
 > 
-> This patch adds the device tree binding documentation for the XUSB pad
-> controller found on NVIDIA Tegra SoCs. It exposes both pinmuxing and PHY
-> capabilities.
+> There are probably hundreds of drivers marking those functions inline.
 
-Thanks. I'll wait for a Tested-by from Mikko and an Acked-by from Linus
-before taking this series.
+We used to need them.  We no longer do.  We're in a very long
+transition phase.
+
+> If they aren't marked inline, it'll just stick out as unusual when
+> people read them all, and then they'll send patches to fix it.
+
+Don't worry.  They won't be applied.
+
+Thanks.
+
+-- 
+tejun
