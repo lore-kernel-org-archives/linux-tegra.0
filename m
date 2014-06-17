@@ -1,40 +1,55 @@
-From: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-Subject: Re: [RFC PATCH 1/4] memory: tegra124-emc: Add EMC driver
-Date: Tue, 17 Jun 2014 19:59:35 +0300
-Message-ID: <53A073F7.20700@kapsi.fi>
-References: <1402925713-25426-1-git-send-email-tomeu.vizoso@collabora.com> <1402925713-25426-2-git-send-email-tomeu.vizoso@collabora.com> <539F4D44.3070309@wwwdotorg.org> <53A03186.3040703@collabora.com> <53A069B6.6070902@wwwdotorg.org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 8/9] ata: Add support for the Tegra124 SATA controller
+Date: Tue, 17 Jun 2014 19:04:14 +0200
+Message-ID: <6652229.bPNq3Yp8If@amdc1032>
+References: <1401881559-18469-1-git-send-email-mperttunen@nvidia.com>
+ <1470404.13mIFv0Hnj@amdc1032> <53A0686F.4000303@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <53A069B6.6070902@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Thierry Reding <thierry.reding@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, David Airlie <airlied@linux.ie>, Mike Turquette <mturquette@linaro.org>, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-ide-owner@vger.kernel.org>
+In-reply-to: <53A0686F.4000303@wwwdotorg.org>
+Sender: linux-ide-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>, thierry.reding@gmail.com, tj@kernel.org, pdeschrijver@nvidia.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-ide@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/17/2014 07:15 PM, Stephen Warren wrote:
-> On 06/17/2014 06:16 AM, Tomeu Vizoso wrote:
->> On 06/16/2014 10:02 PM, Stephen Warren wrote:
->>> On 06/16/2014 07:35 AM, Tomeu Vizoso wrote:
->
->>> This binding looks quite anaemic vs.
->>> Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt; I
->>> would expect that this binding needs all the EMC register data from the
->>> tegra20-emc binding too. Can the two bindings be identical?
->>
->> There's even less stuff needed right now, as all what ultimately the EMC
->> driver does is call clk_set_rate on the EMC clock. As the T124 EMC
->> driver gains more features, they should get more similar.
->
-> IIRC, even changing the EMC clock rate requires modifying the memory
-> controller's programming (e.g. delays/taps/tuning etc.). That's exactly
-> what the more complex stuff in the nvidia,tegra20-emc.txt is all about.
-> I not convinced that a driver that just modifies the clock rate without
-> adjusting the EMC programming will work reliably.
 
-Indeed, changing the EMC clock rate is a somewhat complicated sequence 
-of ~10 steps. The kernel even won't let one the rate be change directly, 
-as the change would be propagated to PLL_M which cannot have its rate 
-changed while it is enabled. I suppose the sequence should be hidden in 
-the EMC clk's set_rate implementation, which I guess would leave just 
-the rate policy to this driver.
+Hi,
+
+On Tuesday, June 17, 2014 10:10:23 AM Stephen Warren wrote:
+> On 06/17/2014 06:14 AM, Bartlomiej Zolnierkiewicz wrote:
+
+[...]
+
+> >> +static struct platform_driver tegra_ahci_driver = {
+> >> +	.probe = tegra_ahci_probe,
+> >> +	.remove = ata_platform_remove_one,
+> >> +	.driver = {
+> >> +		.name = "tegra-ahci",
+> >> +		.owner = THIS_MODULE,
+> >> +		.of_match_table = tegra_ahci_of_match,
+> >> +	},
+> > 
+> > This driver lacks PM suspend/resume support.  I assume that
+> > the Tegra124 platform also doesn't support suspend/resume yet
+> > (if so a comment in the driver code about this would be useful),
+> > otherwise the driver should be fixed.
+> 
+> We do have basic system suspend/resume support. However, I don't think
+> missing suspend/resume in an individual driver should stop it from being
+> merged. It can certainly be added later.
+
+There should be at least FIXME in the driver explaining the situation and
+I would really prefer to have PM support added when the driver is still
+"hot" (meaning there are people actively working on it) instead of possibly
+having to chase people months/years later when they have already moved on
+and are working on something else.  Please also note that adding PM support
+should be quite simple if the driver is designed correctly.
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
