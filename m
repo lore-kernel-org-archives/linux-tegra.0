@@ -1,58 +1,52 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 8/9] ata: Add support for the Tegra124 SATA controller
-Date: Tue, 17 Jun 2014 11:37:49 -0600
-Message-ID: <53A07CED.7010503@wwwdotorg.org>
-References: <1401881559-18469-1-git-send-email-mperttunen@nvidia.com> <1470404.13mIFv0Hnj@amdc1032> <53A0686F.4000303@wwwdotorg.org> <6652229.bPNq3Yp8If@amdc1032> <53A07CA4.7080206@kapsi.fi>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH] USB: EHCI: tegra: Fix use-after-free in .remove()
+Date: Tue, 17 Jun 2014 15:30:34 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1406171423120.1187-100000@iolanthe.rowland.org>
+References: <53A0653F.7090001@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53A07CA4.7080206-/1wQRMveznE@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <53A0653F.7090001@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Tuomas Tynkkynen <ttynkkynen@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/17/2014 11:36 AM, Mikko Perttunen wrote:
-> On 06/17/2014 08:04 PM, Bartlomiej Zolnierkiewicz wrote:
->>
->> Hi,
->>
->> On Tuesday, June 17, 2014 10:10:23 AM Stephen Warren wrote:
->>> On 06/17/2014 06:14 AM, Bartlomiej Zolnierkiewicz wrote:
->>
->> [...]
->>
->>>>> +static struct platform_driver tegra_ahci_driver = {
->>>>> +    .probe = tegra_ahci_probe,
->>>>> +    .remove = ata_platform_remove_one,
->>>>> +    .driver = {
->>>>> +        .name = "tegra-ahci",
->>>>> +        .owner = THIS_MODULE,
->>>>> +        .of_match_table = tegra_ahci_of_match,
->>>>> +    },
->>>>
->>>> This driver lacks PM suspend/resume support.  I assume that
->>>> the Tegra124 platform also doesn't support suspend/resume yet
->>>> (if so a comment in the driver code about this would be useful),
->>>> otherwise the driver should be fixed.
->>>
->>> We do have basic system suspend/resume support. However, I don't think
->>> missing suspend/resume in an individual driver should stop it from being
->>> merged. It can certainly be added later.
->>
->> There should be at least FIXME in the driver explaining the situation and
->> I would really prefer to have PM support added when the driver is still
->> "hot" (meaning there are people actively working on it) instead of
->> possibly
->> having to chase people months/years later when they have already moved on
->> and are working on something else.  Please also note that adding PM
->> support
->> should be quite simple if the driver is designed correctly.
->
-> AFAIK, the deepest level of suspend currently supported on upstream is
-> LP1, for which the driver doesn't need to do anything. Only when we go
-> to LP0 the driver will need to save/reload registers and stuff.
+On Tue, 17 Jun 2014, Stephen Warren wrote:
 
-Yes, it's generally true that no SoC register state is lost during
-suspend, only CPU state.
+> On 06/17/2014 08:17 AM, Tuomas Tynkkynen wrote:
+> > The tegra_ehci_hcd structure is located in the private space allocated
+> > by the core USB code so it must not be accessed after the HCD is
+> > freed.
+> 
+> > diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
+> 
+> This seems to be a persistent problem. Witness commit ecc8a0cdca18 "usb:
+> host: tegra: fix warning messages in ehci_remove". So, I wonder if ...
+> 
+> > @@ -479,10 +479,11 @@ static int tegra_ehci_remove(struct platform_device *pdev)
+> >  
+> >  	usb_phy_shutdown(hcd->phy);
+> >  	usb_remove_hcd(hcd);
+> > -	usb_put_hcd(hcd);
+> >  
+> >  	clk_disable_unprepare(tegra->clk);
+> >  
+> 
+> It's worth putting a comment here:
+> 
+> 	/* This must be last, since *tegra is part of *hcd */
+> > +	usb_put_hcd(hcd);
+> > +
+> >  	return 0;
+> >  }
+
+Well, maybe.  At this stage it's not too likely that anything will be 
+added after the usb_put_hcd().
+
+> Of course, that could be a separate commit if you want.
+
+This affects more than ehci-tegra.  The same concept applies to all the 
+EHCI and OHCI platform drivers that use the platform-private area.
+
+Alan Stern
