@@ -1,95 +1,100 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [RFC PATCH 3/4] drm/tegra: Request memory bandwidth for the
- display controller
-Date: Wed, 18 Jun 2014 00:43:35 +0200
-Message-ID: <20140617224334.GC25309@mithrandir>
-References: <1402925713-25426-1-git-send-email-tomeu.vizoso@collabora.com>
- <1402925713-25426-4-git-send-email-tomeu.vizoso@collabora.com>
- <539F4E53.6080205@wwwdotorg.org>
+Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Wed, 18 Jun 2014 01:37:16 +0200
+Message-ID: <20140617233714.GD25525@mithrandir>
+References: <1400877395-4235-1-git-send-email-thierry.reding@gmail.com>
+ <538757B6.4010109@wwwdotorg.org>
+ <20140530073006.GA24748@ulmo>
+ <20140530112728.GB3949@e103592.cambridge.arm.com>
+ <20140604211237.GC18710@mithrandir>
+ <20140616125704.GE16758@arm.com>
+ <20140617115829.GB18816@ulmo>
+ <20140617121811.GG13808@arm.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1954057530=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <539F4E53.6080205@wwwdotorg.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: devicetree@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, myungjoo.ham@samsung.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="5gxpn/Q6ypwruk0T"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20140617121811.GG13808@arm.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Will Deacon <will.deacon@arm.com>
+Cc: Dave P Martin <Dave.Martin@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Mark Rutland <Mark.Rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Cho KyongHo <pullip.cho@samsung.com>, Grant Grundler <grundler@chromium.org>, Marc Zyngier <Marc.Zyngier@arm.com>, Joerg Roedel <joro@8bytes.org>, Hiroshi Doyu <hdoyu@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.o>
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============1954057530==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="5QAgd0e35j3NYeGe"
-Content-Disposition: inline
-
-
---5QAgd0e35j3NYeGe
+--5gxpn/Q6ypwruk0T
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 16, 2014 at 02:06:43PM -0600, Stephen Warren wrote:
-> On 06/16/2014 07:35 AM, Tomeu Vizoso wrote:
-> > Request it based solely on the current mode's refresh rate. More
-> > accurate requirements can be requested in future patches.
+On Tue, Jun 17, 2014 at 01:18:11PM +0100, Will Deacon wrote:
+> On Tue, Jun 17, 2014 at 12:58:30PM +0100, Thierry Reding wrote:
+> > On Mon, Jun 16, 2014 at 01:57:04PM +0100, Will Deacon wrote:
+> > > On Wed, Jun 04, 2014 at 10:12:38PM +0100, Thierry Reding wrote:
+> > > > It can easily be argued that if the algorithm used to remap the ID
+> > > > varies, the compatibility of the device changes. Therefore I would
+> > > > expect any variant of the GICv3 that deviates from the "standard"
+> > > > mapping (if there is such a thing) to have its own compatible strin=
+g.
+> > >=20
+> > > There is no standard mapping; it's a property defined at system integ=
+ration
+> > > time. I fully expect different SoCs to do different things here.
+> >=20
+> > My point was that the mapping itself seems to be fundamental enough to
+> > make devices with different mappings "incompatible". Therefore I think
+> > this could probably be handled by using different compatible values,
+> > something along the lines of this:
+> >=20
+> > 	compatible =3D "vendor,soc-gicv3", "arm,gicv3";
+> >=20
+> > Then the mapping can be described in code, which should be a whole lot
+> > easier and more flexible than a more or less generic notation in device
+> > tree.
 >=20
-> > diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+> I don't think that scales well beyond a handful of unique mappings, and I
+> really anticipate everybody doing something different based on their
+> integration constraints.
 >=20
-> > +	bandwidth =3D mode->clock * window.bits_per_pixel / 8;
-> > +	err =3D tegra124_emc_reserve_bandwidth(TEGRA_EMC_CONSUMER_DISP1, band=
-width);
->=20
-> DISP1 shouldn't be hard-coded here; the code should use DISP1 or DISP2
-> based on head or DC identity. We certainly have some boards capable of
-> dual-head operation.
+> You'd very quickly end up with sets of tables for each SoC, describing the
+> topology and associated IDs in the kernel source, which feels like a giant
+> step backwards from where we are today with device tree.
 
-On a general note, I think perhaps a better way to represent this in an
-API, and perhaps this would help with making the API more generic, too,
-would be to make drivers request some sort of handle in .probe() and use
-that handle subsequently when making requests. That's somewhat analogous
-to the PM QoS' struct pm_qos_request.
+Well, today we don't have a generic binding at all, so anything will
+really be a giant step forward in my opinion.
+
+But seriously, from what you said earlier I got the impression that some
+of the mappings may not be easy or possible to represent in DT, which is
+why I proposed to encode it into the compatible property so that it can
+be handled in code instead.
+
+We've had similar discussions before (power sequences anyone?) where we
+tried to come up with a generic way to describe something in device tree
+that just didn't work out too well. Some things are better done in code,
+so I think we should at least consider that possibility rather than
+blindly try and force everything into device tree.
 
 Thierry
 
---5QAgd0e35j3NYeGe
+--5gxpn/Q6ypwruk0T
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJToMSWAAoJEN0jrNd/PrOhfj8P/iyTsGARiA5Lne+A7aJZ5AFc
-ZX4Au48rgSI6RYvVl/0k/uTHr/G/DmE9XVzn+8uZQLioNJJ/jQKjxBnYC5jW/ix5
-Ntvi5tdJdNCbCSioEyP1dFJxc0jeUprQkaQB2ZN/jHiOL03PJHzFnYfOJUsp2pKg
-S7C9pjuc24Xcds/NKPYFkYVdm7eitG70WZmKwTu/eD0LTWwhc19WgMfMW8qsecpr
-4lEwpRXy+APalXmqQQwNwsEPDUClrk4VTq5m1nufTlqhn4GaAxiNtmP/3AH1DLME
-8O2IRzDjkYBl+L+CphQvI1f+TbbDxHIkGPgeAOnsANR5lrrSNA3Id6tGMfH+BKkj
-l52RjmyZCvOR2Dnab+13J7pG/qCNgHrKRBEV+Ldlsi9dido7IoSR61XEkp9HEKb4
-zoVNp317JgzCFV4ivsNKi9cPKPHzU8f1aun4U0y0nxN/4X4ZpsT9/rnx8C6O2h68
-3Li4RnyAXuqUfp7Chqn5C/3rIFAGy1TfW/JShV23PupLrv4bkl+21uX9b/0PyhCF
-dlvZeLJLHh9gRIL1jCfDE0HC7ZQYdw3KV/XpByWKhfaicUm4EglWWYuo0lCVi/0S
-fUFbCU2sEV5LKwqWjkQw8W0aaPSwhaSg9/+cSrsDlcPz489sM/KP65iPZ3J5oGRr
-eTk6nZwT2q2/NUc8W91u
-=vNlq
+iQIcBAEBAgAGBQJToNEqAAoJEN0jrNd/PrOhHfkP/20CokZ/MGSysULm7FBTbZfY
+9rpRrhTmEWx4gZxW+m8geyWRYroUsxW+M1EXuRSN/fCAPXHA/5tsYZwvX9HB+lrv
+ZzkalhrUzVSStM2IA0dG5VcZCJhe9ZIOIbtWnt3xDhnkBw3PCr4yK6gEww6hcOZX
+mfV/cqyqQrkT4b5uZXz4zmcGNyE552b1J0DG837f6OpHnFbsm4Nw9PxttdMetiCF
+fh/VDgDWxkYP77Sqn56kBRVonYEPPk3AYeouJ3h9vX3yyUzXlPuISBIQX8jXEmp5
+qhK9X2XSn0GRUJh7k2fZh/UYdf7DA+hz00zNdpK3KCm83VBt78GK6p+gE3kUSxkm
+pITIFAzqJQWJV5PlwVU0g6uS3JRrvmpkMeKkeKx/NNoiAY9PnAhiJC2thm2DTqHp
++HsMeIyPJpi9fUyR/LmlOpMREIt530mhZhCIBoOWa0iPAZ0B2hEAMTlA+S6iDzQN
+pZ8Lpbt4sZwPRk16BAFAaLrIs2ErXGtFccoy6ATImjbF5+8bvEB5udVRU93VTImY
+6q1lRRMkE7JwXHtm072uP6xXFVUi1Mbl3JPoS2v57X6NQl6DJjMnaPnai9XVV/AM
+VMJlrDNBI/TC+ZaE1wTbk81exJ5HGqpP0WwpVqhblssB5bieQcPC0r/NUCm+wFi0
+sQNECjGapTL5xAhbmgmP
+=sJ1K
 -----END PGP SIGNATURE-----
 
---5QAgd0e35j3NYeGe--
-
---===============1954057530==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============1954057530==--
+--5gxpn/Q6ypwruk0T--
