@@ -1,39 +1,40 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH 6/9] ARM: tegra: Export tegra_powergate_power_on
-Date: Tue, 17 Jun 2014 17:01:46 +0300
-Message-ID: <20140617140146.GH3407@tbergstrom-lnx.Nvidia.com>
-References: <1401881559-18469-1-git-send-email-mperttunen@nvidia.com>
- <1401881559-18469-7-git-send-email-mperttunen@nvidia.com>
- <539F691E.5030204@wwwdotorg.org> <20140617121313.GE18816@ulmo>
+From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Subject: [PATCH] USB: EHCI: tegra: Fix use-after-free in .remove()
+Date: Tue, 17 Jun 2014 17:17:40 +0300
+Message-ID: <1403014660-15509-1-git-send-email-ttynkkynen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140617121313.GE18816@ulmo>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Mikko Perttunen <mperttunen@nvidia.com>, "tj@kernel.org" <tj@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jun 17, 2014 at 02:13:15PM +0200, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Mon, Jun 16, 2014 at 04:01:02PM -0600, Stephen Warren wrote:
-> > On 06/04/2014 05:32 AM, Mikko Perttunen wrote:
-> > > This symbol needs to be exported to power on rails without using
-> > > tegra_powergate_sequence_power_up. tegra_powergate_sequence_power_up
-> > > cannot be used in situations where the driver wants to handle clocking
-> > > by itself.
-> > 
-> > Thierry, are you OK with this change?
-> 
-> I would've preferred tegra_powergate_sequence_power_up() to be used
+The tegra_ehci_hcd structure is located in the private space allocated
+by the core USB code so it must not be accessed after the HCD is
+freed.
 
-I don't think the current tegra_powergate_sequence_power_up() API is very well
-defined though. I don't think the clocks and resets required by the sequence
-should be provided by the driver. For one, there can be several clocks and
-resets that need to be controlled for a single domain.
+Signed-off-by: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+---
+ drivers/usb/host/ehci-tegra.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Cheers,
-
-Peter.
+diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
+index 6fdcb8a..5590567 100644
+--- a/drivers/usb/host/ehci-tegra.c
++++ b/drivers/usb/host/ehci-tegra.c
+@@ -479,10 +479,11 @@ static int tegra_ehci_remove(struct platform_device *pdev)
+ 
+ 	usb_phy_shutdown(hcd->phy);
+ 	usb_remove_hcd(hcd);
+-	usb_put_hcd(hcd);
+ 
+ 	clk_disable_unprepare(tegra->clk);
+ 
++	usb_put_hcd(hcd);
++
+ 	return 0;
+ }
+ 
+-- 
+1.8.1.5
