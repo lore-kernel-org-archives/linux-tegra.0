@@ -1,76 +1,48 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v3 5/7] mfd: cros_ec: Sync to the latest cros_ec_commands.h
- from EC sources
-Date: Tue, 17 Jun 2014 10:20:36 -0600
-Message-ID: <53A06AD4.3000704@wwwdotorg.org>
-References: <1398879850-9111-1-git-send-email-dianders@chromium.org>	 <1398879850-9111-6-git-send-email-dianders@chromium.org>	 <20140520084602.GF24991@lee--X1> <1402483068.3798.82.camel@x220>	 <CAD=FV=XL9tnEqza8Zx8mt_Z7-bj8TCzdeyHMhnpewKp_1CR-ig@mail.gmail.com>	 <1402646902.28881.15.camel@x220>	 <CAD=FV=XcK5R1sdNwoJkFPapwWQ9vqxvmQi_L3BqTSt8EKRTNHw@mail.gmail.com> <1402995202.1984.22.camel@x220>
+Subject: Re: [PATCH 8/9] ata: Add support for the Tegra124 SATA controller
+Date: Tue, 17 Jun 2014 10:23:01 -0600
+Message-ID: <53A06B65.7030407@wwwdotorg.org>
+References: <1401881559-18469-1-git-send-email-mperttunen@nvidia.com>
+ <1401881559-18469-9-git-send-email-mperttunen@nvidia.com>
+ <1470404.13mIFv0Hnj@amdc1032> <53A0686F.4000303@wwwdotorg.org>
+ <20140617161320.GG31819@htj.dyndns.org>
+ <20140617161447.GH31819@htj.dyndns.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <1402995202.1984.22.camel@x220>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Paul Bolle <pebolle@tiscali.nl>, Doug Anderson <dianders@chromium.org>
-Cc: Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@chromium.org>, Lee Jones <lee.jones@linaro.org>, Stephen Warren <swarren@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>, Andrew Bresticker <abrestic@chromium.org>, Dylan Reid <dgreid@chromium.org>, Olof Johansson <olof@lixom.net>, Samuel Ortiz <sameo@linux.intel.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20140617161447.GH31819@htj.dyndns.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Tejun Heo <tj@kernel.org>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, pdeschrijver@nvidia.com, linux-kernel@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>, linux-ide@vger.kernel.org, thierry.reding@gmail.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/17/2014 02:53 AM, Paul Bolle wrote:
-> Doug,
-> 
-> On Fri, 2014-06-13 at 08:22 -0700, Doug Anderson wrote:
->> On Fri, Jun 13, 2014 at 1:08 AM, Paul Bolle <pebolle@tiscali.nl> wrote:
->>> On Wed, 2014-06-11 at 08:11 -0700, Doug Anderson wrote:
->>>> This is a config option on the ChromeOS EC
->>>> <https://chromium.googlesource.com/chromiumos/platform/ec>.  Doing a
->>>> grep there:
+On 06/17/2014 10:14 AM, Tejun Heo wrote:
+> On Tue, Jun 17, 2014 at 12:13:20PM -0400, Tejun Heo wrote:
+>> On Tue, Jun 17, 2014 at 10:10:23AM -0600, Stephen Warren wrote:
+>>>> sata_writel() and sata_read() static inlines don't seem to add any value.
 >>>>
->>>> board/samus/board.h:#define CONFIG_CHARGER_PROFILE_OVERRIDE
->>>> common/charge_state_v2.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
->>>> common/charge_state_v2.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
->>>> common/charge_state_v2.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
->>>> driver/battery/samus.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
->>>> driver/battery/samus.c:#endif   /* CONFIG_CHARGER_PROFILE_OVERRIDE */
->>>> include/config.h:#undef CONFIG_CHARGER_PROFILE_OVERRIDE
->>>> include/ec_commands.h:  /* Range for CONFIG_CHARGER_PROFILE_OVERRIDE params */
->>>> test/test_config.h:#define CONFIG_CHARGER_PROFILE_OVERRIDE
+>>>> Can they be removed?
 >>>
->>> I see. So this is not a Kconfig macro but a general macro with a CONFIG_
->>> prefix. There are quite a bit of those in the tree already, but still,
->>> would another prefix also do?
+>>> Such functions are quite idiomatic in drivers, and serve to simplify all
+>>> the call-sites by removing the need to write out the addition of the
+>>> base address everywhere.
 >>
->> Given that it's an entirely separate project and this is a valid
->> CONFIG option in that project, it seems a lot to ask them not to use
->> the CONFIG_ prefix.  Also: the part you are objecting to is only a
->> comment, right?
+>> I think it obfuscates more than helps.  If you absoluately have to
+>> keep it, please at least name it so that it's clear that it's
+>> something specific to this driver.
 > 
-> So all the hits you quoted above are actually from code that's never
-> going to be included in the kernel tree, right? If so, then yes, we're
-> only discussing a single comment.
-> 
->> We could certainly add extra wording in the comment to make it obvious
->> that this is a CONFIG option for the EC and not the kernel.  Would
->> that be enough?  ...or are you trying to use some scripts to
->> automatically process files to look for CONFIG options?
-> 
-> Yes, I'm using a script to check for Kconfig macros, among other things.
-> It doesn't care about comments (because every now and then mistakes are
-> made in comments too, and some of those can get surprisingly confusing).
-> 
-> Anyhow, the CONFIG_ prefix used in the kernel tree is quite generic, but
-> we're stuck with it. Would it be bothersome to drop it in that comment?
-> Mentioning a preprocessor macro from a separate project is a bit
-> confusing to begin with. How is one supposed to know that this is a
-> reference to something out of tree?
-> 
-> So, in summary, while we're apparently only discussing a single comment,
-> I would appreciate it if it could be reworded, preferably by dropping
-> that the CONFIG_ prefix. But other people might care very little, as
-> they don't share this particular pet peeve.
+> Please also drop inline.  It isn't a difficult optimization to perform
+> for the compiler.
 
-Can't your tool maintain a whitelist or ignore list? There are many
-cases where the kernel can pull in headers/data from other projects
-(Firmware interfaces to an arbitrarily large set of HW, Device trees,
-IO/network protocools, perhaps more). It feels quite unreasonable for
-the kernel to decide that it exclusively owns the CONFIG_* namespace
-even in comments, and that every other project it interacts with must
-not use that namespace.
+There are probably hundreds of drivers marking those functions inline.
+If they aren't marked inline, it'll just stick out as unusual when
+people read them all, and then they'll send patches to fix it.
