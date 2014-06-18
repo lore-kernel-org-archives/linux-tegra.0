@@ -1,70 +1,96 @@
-From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH v1 7/9] ARM: tegra: Add Tegra124 XUSB mailbox and XHCI controller
-Date: Tue, 17 Jun 2014 23:16:18 -0700
-Message-ID: <1403072180-4944-8-git-send-email-abrestic@chromium.org>
-References: <1403072180-4944-1-git-send-email-abrestic@chromium.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1403072180-4944-1-git-send-email-abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+From: Andrew Bresticker <abrestic@chromium.org>
+Subject: [PATCH v1 0/9] Tegra XHCI support
+Date: Tue, 17 Jun 2014 23:16:11 -0700
+Message-ID: <1403072180-4944-1-git-send-email-abrestic@chromium.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>, Russell King <linux@arm.linux.org.uk>, Mathias Nyman <mathias.nyman@intel.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Andrew Bresticker <abrestic@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Randy Dunlap <rdunlap@infradead.org>, Kishon Vijay Abraham I <kishon@ti.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Alan Stern <stern@rowland.harvard.edu>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-tegra@vger.kernel.org
 
-Add nodes for the Tegra XUSB mailbox and Tegra XHCI controller.
-Update the XUSB pad controller node with a phandle to the XUSB
-mailbox.
+This series adds support for XHCI on NVIDIA Tegra SoCs.  This includes:
+ - extending the XUSB pad controller driver to support the USB PHY
+   types (UTMI, HSIC, and USB3),
+ - adding a driver for the mailbox used to communicate with the XHCI
+   controller's firmware, and
+ - adding a XHCI host-controller driver.
 
-Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
----
- arch/arm/boot/dts/tegra124.dtsi | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+Based on Stephen Warren's for-next branch plus Thierry Reding's XUSB
+pad controller driver [1].
 
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index 514e490..4e1cd92 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -480,11 +480,42 @@
- 		status = "disabled";
- 	};
- 
-+	usb@0,70090000 {
-+		compatible = "nvidia,tegra124-xhci";
-+		reg = <0x0 0x70090000 0x0 0x8000>,
-+		      <0x0 0x70098000 0x0 0x1000>,
-+		      <0x0 0x70099000 0x0 0x1000>;
-+		interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA124_CLK_XUSB_HOST>,
-+			 <&tegra_car TEGRA124_CLK_XUSB_FALCON_SRC>,
-+			 <&tegra_car TEGRA124_CLK_XUSB_SS>,
-+			 <&tegra_car TEGRA124_CLK_XUSB_SS_SRC>,
-+			 <&tegra_car TEGRA124_CLK_XUSB_HS_SRC>,
-+			 <&tegra_car TEGRA124_CLK_XUSB_FS_SRC>,
-+			 <&tegra_car TEGRA124_CLK_PLL_U_480M>,
-+			 <&tegra_car TEGRA124_CLK_CLK_M>,
-+			 <&tegra_car TEGRA124_CLK_PLL_E>;
-+		clock-names = "xusb_host", "xusb_falcon_src", "xusb_ss",
-+			      "xusb_ss_src", "xusb_hs_src", "xusb_fs_src",
-+			      "pll_u_480m", "clk_m", "pll_e";
-+		resets = <&tegra_car 89>, <&tegra_car 156>;
-+		reset-names = "xusb_host", "xusb_ss";
-+		nvidia,xusb-mbox = <&mbox>;
-+		status = "disabled";
-+	};
-+
-+	mbox: mailbox@0,70098000 {
-+		compatible = "nvidia,tegra124-xusb-mbox";
-+		reg = <0x0 0x70098000 0x0 0x1000>;
-+		interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
- 	padctl: padctl@0,7009f000 {
- 		compatible = "nvidia,tegra124-xusb-padctl";
- 		reg = <0x0 0x7009f000 0x0 0x1000>;
- 		resets = <&tegra_car 142>;
- 		reset-names = "padctl";
-+		nvidia,xusb-mbox = <&mbox>;
- 
- 		#phy-cells = <1>;
- 	};
+Tested on Venice2 and Jetson TK1 with a variety of USB2.0 and USB3.0 memory
+sticks and ethernet dongles using controller firmware from the ChromiumOS
+tree [2].
+
+Notes:
+ - HSIC support is mostly untested and I think there are still some issues
+   to work out there.  I do have a Tegra124 board with a HSIC hub so I'll
+   try to sort those out later.
+ - The XUSB padctl driver doesn't play nice with the existing Tegra USB2.0
+   PHY driver, so all ports should be assigned to the XHCI controller.
+
+Based on work by:
+  a lot of people, but from what I can tell from the L4T tree [3], the
+  original authors of the Tegra XHCI driver are:
+    Ajay Gupta <ajayg@nvidia.com>
+    Bharath Yadav <byadav@nvidia.com>
+
+Changes from RFC:
+ - Dropped Tegra114 support.
+ - Split out mailbox into separate driver.
+ - Stopped using child xhci-plat device in XHCI host-controller driver.
+ - Added PHY support to Thierry's XUSB padctl driver instead of in a separate
+   USB PHY driver.
+ - Added Jetson TK1 support.
+ - Misc. cleanups.
+
+[1] http://patchwork.ozlabs.org/patch/360458/
+[2] http://commondatastorage.googleapis.com/chromeos-localmirror/distfiles/xhci-firmware-2014.05.09.00.00.tbz2
+[3] git://nv-tegra.nvidia.com/linux-3.10.git
+
+Andrew Bresticker (9):
+  of: Add NVIDIA Tegra XUSB mailbox binding
+  mailbox: Add NVIDIA Tegra XUSB mailbox driver
+  of: Update Tegra XUSB pad controller binding for USB
+  pinctrl: tegra-xusb: Add USB PHY support
+  of: Add NVIDIA Tegra XHCI controller binding
+  usb: xhci: Add NVIDIA Tegra XHCI host-controller driver
+  ARM: tegra: Add Tegra124 XUSB mailbox and XHCI controller
+  ARM: tegra: jetson-tk1: Add XHCI support
+  ARM: tegra: venice2: Add XHCI support
+
+ .../bindings/mailbox/nvidia,tegra124-xusb-mbox.txt |   25 +
+ .../pinctrl/nvidia,tegra124-xusb-padctl.txt        |   53 +-
+ .../bindings/usb/nvidia,tegra124-xhci.txt          |   76 ++
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts          |   43 +-
+ arch/arm/boot/dts/tegra124-venice2.dts             |   72 +-
+ arch/arm/boot/dts/tegra124.dtsi                    |   31 +
+ drivers/mailbox/Kconfig                            |    7 +
+ drivers/mailbox/Makefile                           |    2 +
+ drivers/mailbox/tegra-xusb-mbox.c                  |  308 ++++++
+ drivers/pinctrl/pinctrl-tegra-xusb.c               | 1106 +++++++++++++++++++-
+ drivers/usb/host/Kconfig                           |   12 +
+ drivers/usb/host/Makefile                          |    2 +
+ drivers/usb/host/xhci-tegra.c                      |  900 ++++++++++++++++
+ include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h   |    7 +
+ include/linux/tegra-xusb-mbox.h                    |   98 ++
+ 15 files changed, 2673 insertions(+), 69 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/nvidia,tegra124-xusb-mbox.txt
+ create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra124-xhci.txt
+ create mode 100644 drivers/mailbox/tegra-xusb-mbox.c
+ create mode 100644 drivers/usb/host/xhci-tegra.c
+ create mode 100644 include/linux/tegra-xusb-mbox.h
+
 -- 
 2.0.0.526.g5318336
