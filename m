@@ -1,64 +1,46 @@
-From: Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Wed, 18 Jun 2014 10:29:06 +0100
-Message-ID: <20140618092906.GA32699@arm.com>
-References: <20140604164132.GF6644@arm.com>
- <07321368d15d4ad9928ebb83af87e401@DM2PR03MB479.namprd03.prod.outlook.com>
- <20140616152739.GS16758@arm.com>
- <8b0492b4697943a0b1f276ef42cc8223@DM2PR03MB352.namprd03.prod.outlook.com>
- <20140616170416.GA16758@arm.com>
- <419e67f783524d208ab3be16bcd94bd9@DM2PR03MB352.namprd03.prod.outlook.com>
- <0587e1f4894546398be0798d2bc2c84f@BL2PR03MB468.namprd03.prod.outlook.com>
- <20140617104304.GD13808@arm.com>
- <32165315f0b84be9948f489fd87bf6a9@BL2PR03MB468.namprd03.prod.outlook.com>
- <7c03c5cffa174b20962bff3b09de0eb8@DM2PR03MB352.namprd03.prod.outlook.com>
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v4 2/4] pinctrl: Add NVIDIA Tegra XUSB pad controller
+ support
+Date: Wed, 18 Jun 2014 12:53:31 +0300
+Message-ID: <53A1619B.8080806@nvidia.com>
+References: <1403006877-19850-1-git-send-email-thierry.reding@gmail.com> <1403006877-19850-2-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <7c03c5cffa174b20962bff3b09de0eb8@DM2PR03MB352.namprd03.prod.outlook.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Stuart Yoder <stuart.yoder@freescale.com>
-Cc: Varun Sethi <Varun.Sethi@freescale.com>, Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Pawel Moll <Pawel.Moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Grant Grundler <grundler@chromium.org>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Marc Zyngier <Marc.Zyngier@arm.com>, Linux IOMMU <iommu@lists.linux-foundation.org>, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Cho KyongHo <pullip.cho@samsung.com>, Dave P Martin <Dave.Martin@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1403006877-19850-2-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jun 17, 2014 at 03:50:25PM +0100, Stuart Yoder wrote:
-> > > I think for simple masters (i.e. those that have all their StreamIDs
-> > > under control of one driver), then setting something during attach (or
-> > > add?) based on the DT could work pretty well. The other case is when we
-> > > have masters behind a bridge (such as a PCI RC). In this case, it might
-> > > actually be better to ask the bridge for the IDs and let it sort out
-> > the
-> > > allocation itself. That would also move the RequesterID -> StreamID
-> > > mapping out of the SMMU code.
-> > >
-> > > What do you think?
-> > The PCI bus iommu group creation code would be part of the SMMU driver
-> > (it is handled by other IOMMU drivers as well). My understanding is that
-> > there would be one is to one correspondence between the requestor ID and
-> > the iommu group. May be, we can have an API provided by the PCI bridge
-> > (architecture specific) for setting the stream ID.
-> 
-> I think Will is suggesting something along those lines-- I think it's a
-> question of where the streamID allocation happens.  You could
-> either do something like the following in the SMMU driver when attaching
-> a PCI device:
-> 
->     id = alloc_stream_id(...);
->     pci_set_streamid(pci-dev, id);
-> 
->     or
-> 
->     id = pci_get_streamid(pci-dev);
-> 
-> ...i.e the PCI RC could allocate (from some TBD
-> allocator) and set the stream ID itself.
-> 
-> Not sure how big a deal it is to extend PCI RC interfaces for 
-> something like that.
+On 17/06/14 15:07, Thierry Reding wrote:
+> +static int tegra_xusb_padctl_pinconf_group_get(struct pinctrl_dev *pinctrl,
+> +                                              unsigned int group,
+> +                                              unsigned long *config)
+> +{
+> +       struct tegra_xusb_padctl *padctl = pinctrl_dev_get_drvdata(pinctrl);
+> +       const struct tegra_xusb_padctl_lane *lane;
+> +       enum tegra_xusb_padctl_param param;
+> +       u32 value;
+> +
+> +       param = TEGRA_XUSB_PADCTL_UNPACK_PARAM(*config);
+> +       lane = &padctl->soc->lanes[group];
+> +
+> +       switch (param) {
+> +       case TEGRA_XUSB_PADCTL_IDDQ:
+> +               value = padctl_readl(padctl, lane->offset);
+> +               value = (value >> lane->iddq) & 0x1;
+> +               *config = TEGRA_XUSB_PADCTL_PACK(param, value);
+> +               break;
+> +
+> +       default:
+> +               dev_err(padctl->dev, "invalid configuration parameter: %04x\n",
+> +                       param);
+> +               return -ENOTSUPP;
+> +       }
+> +
+> +       return 0;
+> +}
 
-I think both interfaces have their place; the latter for hotpluggable buses
-and the former for static allocation (i.e. set once). The only way to see
-how well it works is to try implementing it, I guess.
-
-Will
+I guess `value' should also be negated here?
