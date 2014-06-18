@@ -1,69 +1,64 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC PATCH 1/4] memory: tegra124-emc: Add EMC driver
-Date: Wed, 18 Jun 2014 11:57:25 +0300
-Message-ID: <20140618085725.GI3407@tbergstrom-lnx.Nvidia.com>
-References: <1402925713-25426-1-git-send-email-tomeu.vizoso@collabora.com>
- <1402925713-25426-2-git-send-email-tomeu.vizoso@collabora.com>
- <539F4D44.3070309@wwwdotorg.org> <53A03186.3040703@collabora.com>
- <20140617223518.GA25309@mithrandir>
+From: Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Wed, 18 Jun 2014 10:29:06 +0100
+Message-ID: <20140618092906.GA32699@arm.com>
+References: <20140604164132.GF6644@arm.com>
+ <07321368d15d4ad9928ebb83af87e401@DM2PR03MB479.namprd03.prod.outlook.com>
+ <20140616152739.GS16758@arm.com>
+ <8b0492b4697943a0b1f276ef42cc8223@DM2PR03MB352.namprd03.prod.outlook.com>
+ <20140616170416.GA16758@arm.com>
+ <419e67f783524d208ab3be16bcd94bd9@DM2PR03MB352.namprd03.prod.outlook.com>
+ <0587e1f4894546398be0798d2bc2c84f@BL2PR03MB468.namprd03.prod.outlook.com>
+ <20140617104304.GD13808@arm.com>
+ <32165315f0b84be9948f489fd87bf6a9@BL2PR03MB468.namprd03.prod.outlook.com>
+ <7c03c5cffa174b20962bff3b09de0eb8@DM2PR03MB352.namprd03.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20140617223518.GA25309@mithrandir>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <7c03c5cffa174b20962bff3b09de0eb8@DM2PR03MB352.namprd03.prod.outlook.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Stuart Yoder <stuart.yoder@freescale.com>
+Cc: Varun Sethi <Varun.Sethi@freescale.com>, Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Pawel Moll <Pawel.Moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Grant Grundler <grundler@chromium.org>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Marc Zyngier <Marc.Zyngier@arm.com>, Linux IOMMU <iommu@lists.linux-foundation.org>, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Cho KyongHo <pullip.cho@samsung.com>, Dave P Martin <Dave.Martin@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jun 18, 2014 at 12:35:27AM +0200, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Tue, Jun 17, 2014 at 02:16:06PM +0200, Tomeu Vizoso wrote:
-> > On 06/16/2014 10:02 PM, Stephen Warren wrote:
-> > >On 06/16/2014 07:35 AM, Tomeu Vizoso wrote:
-> > >>+
-> > >>+Child device nodes describe the memory settings for different configurations and
-> > >>+clock rates.
+On Tue, Jun 17, 2014 at 03:50:25PM +0100, Stuart Yoder wrote:
+> > > I think for simple masters (i.e. those that have all their StreamIDs
+> > > under control of one driver), then setting something during attach (or
+> > > add?) based on the DT could work pretty well. The other case is when we
+> > > have masters behind a bridge (such as a PCI RC). In this case, it might
+> > > actually be better to ask the bridge for the IDs and let it sort out
+> > the
+> > > allocation itself. That would also move the RequesterID -> StreamID
+> > > mapping out of the SMMU code.
 > > >
-> > >How do the child nodes do that? The binding needs to specify the format
-> > >of the child node.
-> > 
-> > Sorry, that file was sent before I had finished removing the bits from
-> > downstream that aren't needed yet. There's no current need for any child
-> > nodes.
-> > 
-> > >This binding looks quite anaemic vs.
-> > >Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt; I
-> > >would expect that this binding needs all the EMC register data from the
-> > >tegra20-emc binding too. Can the two bindings be identical?
-> > 
-> > There's even less stuff needed right now, as all what ultimately the EMC
-> > driver does is call clk_set_rate on the EMC clock. As the T124 EMC driver
-> > gains more features, they should get more similar.
-> > 
-> > >Can you explain what the nvidia,mc and nvidia,pmc references are needed
-> > >for? Hopefully, this driver isn't going to reach into those devices and
-> > >touch their registers directly.
-> > 
-> > Not really needed, see above.
+> > > What do you think?
+> > The PCI bus iommu group creation code would be part of the SMMU driver
+> > (it is handled by other IOMMU drivers as well). My understanding is that
+> > there would be one is to one correspondence between the requestor ID and
+> > the iommu group. May be, we can have an API provided by the PCI bridge
+> > (architecture specific) for setting the stream ID.
 > 
-> I've been working on a prototype driver for the memory controller. Part
-> of what I've added is programming of the latency allowance registers (it
-> doesn't yet expose an API to do so yet, though). I think that needs to
-> eventually take into account the EMC frequency (and needs to be notified
-> of changes to the same).
+> I think Will is suggesting something along those lines-- I think it's a
+> question of where the streamID allocation happens.  You could
+> either do something like the following in the SMMU driver when attaching
+> a PCI device:
 > 
-> Without having thought this through very thoroughly, I suspect that
-> rather than referencing the MC from the EMC it might be better to have
-> the MC register with the EMC for notifications.
+>     id = alloc_stream_id(...);
+>     pci_set_streamid(pci-dev, id);
 > 
-> But perhaps there are other services from MC that EMC needs to work?
+>     or
 > 
+>     id = pci_get_streamid(pci-dev);
+> 
+> ...i.e the PCI RC could allocate (from some TBD
+> allocator) and set the stream ID itself.
+> 
+> Not sure how big a deal it is to extend PCI RC interfaces for 
+> something like that.
 
-If the emc frequency change is modelled as a clock, you could use CCF
-notifications for this?
+I think both interfaces have their place; the latter for hotpluggable buses
+and the former for static allocation (i.e. set once). The only way to see
+how well it works is to try implementing it, I guess.
 
-Cheers,
-
-Peter.
+Will
