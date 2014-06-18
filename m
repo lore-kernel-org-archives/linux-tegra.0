@@ -1,131 +1,99 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] drm/tegra: add MODULE_DEVICE_TABLEs
-Date: Wed, 18 Jun 2014 15:19:15 -0600
-Message-ID: <1403126355-16236-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] drm/tegra: add MODULE_DEVICE_TABLEs
+Date: Wed, 18 Jun 2014 23:51:00 +0200
+Message-ID: <20140618215058.GA26514@mithrandir>
+References: <1403126355-16236-1-git-send-email-swarren@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============1257681972=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1403126355-16236-1-git-send-email-swarren@wwwdotorg.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, stable@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-When tegra-drm.ko is built as a module, these MODULE_DEVICE_TABLEs allow
-the module to be auto-loaded since the module will match the devices
-instantiated from device tree.
+--===============1257681972==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="+QahgC5+KEYLbs62"
+Content-Disposition: inline
 
-(Notes for stable: in 3.14+, just git rm any conflicting file, since they
-are added in later kernels. For 3.13 and below, manual merging will be
-needed)
 
-Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/gpu/drm/tegra/dc.c    | 1 +
- drivers/gpu/drm/tegra/dpaux.c | 1 +
- drivers/gpu/drm/tegra/drm.c   | 1 +
- drivers/gpu/drm/tegra/dsi.c   | 1 +
- drivers/gpu/drm/tegra/gr2d.c  | 1 +
- drivers/gpu/drm/tegra/gr3d.c  | 1 +
- drivers/gpu/drm/tegra/hdmi.c  | 1 +
- drivers/gpu/drm/tegra/sor.c   | 1 +
- 8 files changed, 8 insertions(+)
+--+QahgC5+KEYLbs62
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index ef40381f3909..48c3bc460eef 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -1303,6 +1303,7 @@ static const struct of_device_id tegra_dc_of_match[] = {
- 		/* sentinel */
- 	}
- };
-+MODULE_DEVICE_TABLE(of, tegra_dc_of_match);
- 
- static int tegra_dc_parse_dt(struct tegra_dc *dc)
- {
-diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
-index 3f132e356e9c..708f783ead47 100644
---- a/drivers/gpu/drm/tegra/dpaux.c
-+++ b/drivers/gpu/drm/tegra/dpaux.c
-@@ -382,6 +382,7 @@ static const struct of_device_id tegra_dpaux_of_match[] = {
- 	{ .compatible = "nvidia,tegra124-dpaux", },
- 	{ },
- };
-+MODULE_DEVICE_TABLE(of, tegra_dpaux_of_match);
- 
- struct platform_driver tegra_dpaux_driver = {
- 	.driver = {
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index 3396f9f6a9f7..a1f9b06a75d5 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -694,6 +694,7 @@ static const struct of_device_id host1x_drm_subdevs[] = {
- 	{ .compatible = "nvidia,tegra124-hdmi", },
- 	{ /* sentinel */ }
- };
-+MODULE_DEVICE_TABLE(of, host1x_drm_subdevs);
- 
- static struct host1x_driver host1x_drm_driver = {
- 	.name = "drm",
-diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
-index bd56f2affa78..97c409f10456 100644
---- a/drivers/gpu/drm/tegra/dsi.c
-+++ b/drivers/gpu/drm/tegra/dsi.c
-@@ -982,6 +982,7 @@ static const struct of_device_id tegra_dsi_of_match[] = {
- 	{ .compatible = "nvidia,tegra114-dsi", },
- 	{ },
- };
-+MODULE_DEVICE_TABLE(of, tegra_dsi_of_match);
- 
- struct platform_driver tegra_dsi_driver = {
- 	.driver = {
-diff --git a/drivers/gpu/drm/tegra/gr2d.c b/drivers/gpu/drm/tegra/gr2d.c
-index 7c53941f2a9e..02cd3e37a6ec 100644
---- a/drivers/gpu/drm/tegra/gr2d.c
-+++ b/drivers/gpu/drm/tegra/gr2d.c
-@@ -121,6 +121,7 @@ static const struct of_device_id gr2d_match[] = {
- 	{ .compatible = "nvidia,tegra20-gr2d" },
- 	{ },
- };
-+MODULE_DEVICE_TABLE(of, gr2d_match);
- 
- static const u32 gr2d_addr_regs[] = {
- 	GR2D_UA_BASE_ADDR,
-diff --git a/drivers/gpu/drm/tegra/gr3d.c b/drivers/gpu/drm/tegra/gr3d.c
-index 30f5ba9bd6d0..2bea2b2d204e 100644
---- a/drivers/gpu/drm/tegra/gr3d.c
-+++ b/drivers/gpu/drm/tegra/gr3d.c
-@@ -130,6 +130,7 @@ static const struct of_device_id tegra_gr3d_match[] = {
- 	{ .compatible = "nvidia,tegra20-gr3d" },
- 	{ }
- };
-+MODULE_DEVICE_TABLE(of, tegra_gr3d_match);
- 
- static const u32 gr3d_addr_regs[] = {
- 	GR3D_IDX_ATTRIBUTE( 0),
-diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
-index ba067bb767e3..ffe26547328d 100644
---- a/drivers/gpu/drm/tegra/hdmi.c
-+++ b/drivers/gpu/drm/tegra/hdmi.c
-@@ -1450,6 +1450,7 @@ static const struct of_device_id tegra_hdmi_of_match[] = {
- 	{ .compatible = "nvidia,tegra20-hdmi", .data = &tegra20_hdmi_config },
- 	{ },
- };
-+MODULE_DEVICE_TABLE(of, tegra_hdmi_of_match);
- 
- static int tegra_hdmi_probe(struct platform_device *pdev)
- {
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index 27c979b50111..061a5c501124 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -1455,6 +1455,7 @@ static const struct of_device_id tegra_sor_of_match[] = {
- 	{ .compatible = "nvidia,tegra124-sor", },
- 	{ },
- };
-+MODULE_DEVICE_TABLE(of, tegra_sor_of_match);
- 
- struct platform_driver tegra_sor_driver = {
- 	.driver = {
--- 
-1.8.1.5
+On Wed, Jun 18, 2014 at 03:19:15PM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren@nvidia.com>
+>=20
+> When tegra-drm.ko is built as a module, these MODULE_DEVICE_TABLEs allow
+> the module to be auto-loaded since the module will match the devices
+> instantiated from device tree.
+
+I vaguely remember doing something like this a while back and getting a
+bunch of link-time errors. But I assume that you've tested this, so I
+must be remembering wrongly.
+
+One comment below:
+
+> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+> index 3396f9f6a9f7..a1f9b06a75d5 100644
+> --- a/drivers/gpu/drm/tegra/drm.c
+> +++ b/drivers/gpu/drm/tegra/drm.c
+> @@ -694,6 +694,7 @@ static const struct of_device_id host1x_drm_subdevs[]=
+ =3D {
+>  	{ .compatible =3D "nvidia,tegra124-hdmi", },
+>  	{ /* sentinel */ }
+>  };
+> +MODULE_DEVICE_TABLE(of, host1x_drm_subdevs);
+
+I don't think this one is really required. It's a union of all other
+compatible values and only used to delay the DRM subsystem driver
+registration until all needed subdevices have been probed.
+
+Thierry
+
+--+QahgC5+KEYLbs62
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTognCAAoJEN0jrNd/PrOhoAYP/3hs1FVNlDMMe7cSZw5C5oLw
+ldDy22rK7GJ8zsb/Ta0SwHnsb4CeoMf0hSetAyW7bI18l70aCat8BHQAxlXh16B5
+oi4Tm7yiVK2JSFdLZgBuZdEo6wc8yZr9i/KYjRx2ia7/XtpY/ec8Ndxx7Wc8/oDl
+vwax9MVw5pK+QcQc5QXnGlhTTo7yt1wqMXwemUzgzXMEb37QJXHPGzCff2RkrBW4
+lKT8OoFytIfpu60I+vgGNxOCGU0S/EO7x5s/+ewSU1vzoluyhQQKVNrWdZrGpZsq
+Xf6inWutUaGalQRcUuDFRqsLKgV4YpNF9uIt6xvQa7AsHBbHeCuGU6qi+gvyapF/
+vAK7QiopuaRKIrWCnC9LMeKdDPSWvQTLVR5xvDfI3WSEmKQsGJ8+rJnMoEdMBBx3
+3oP7/rsUo66KE1NiP28gkrUe8RFIloIwpMr5DKcpWqkl5+8xHZY/O1fXbAKIKLxy
+M8sEc+g6KoD0ome8kzpZTEasouAFYW/Qyj8bbU+3LqenqyKNpHatPX7sdjdm/h/N
+OvZBGXknunCrDy+6c4GLOd5nSs33dKpu7DZ7D7RCyHwb0e7E7mjZ1kEqU3eW8i5z
+1f13sO1hiUtlkO9gCQsWuLQRJf8o2SGF2wGX+ZfN/uJPaRDOiFB2cDhgym1kcxxo
++ntAtbFZ+HITKpdJZV9l
+=0+TT
+-----END PGP SIGNATURE-----
+
+--+QahgC5+KEYLbs62--
+
+--===============1257681972==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============1257681972==--
