@@ -1,12 +1,15 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] drm/tegra: add MODULE_DEVICE_TABLEs
-Date: Wed, 18 Jun 2014 23:51:00 +0200
-Message-ID: <20140618215058.GA26514@mithrandir>
-References: <1403126355-16236-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [RFC PATCH 1/4] memory: tegra124-emc: Add EMC driver
+Date: Thu, 19 Jun 2014 00:00:09 +0200
+Message-ID: <20140618220008.GC26514@mithrandir>
+References: <1402925713-25426-1-git-send-email-tomeu.vizoso@collabora.com>
+ <1402925713-25426-2-git-send-email-tomeu.vizoso@collabora.com>
+ <539F4D44.3070309@wwwdotorg.org> <53A03186.3040703@collabora.com>
+ <53A069B6.6070902@wwwdotorg.org> <53A1CB23.5090307@collabora.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1257681972=="
+Content-Type: multipart/mixed; boundary="===============1918013067=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1403126355-16236-1-git-send-email-swarren@wwwdotorg.org>
+In-Reply-To: <53A1CB23.5090307@collabora.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -16,76 +19,111 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, stable@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: devicetree@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, myungjoo.ham@samsung.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============1257681972==
+--===============1918013067==
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="+QahgC5+KEYLbs62"
+	protocol="application/pgp-signature"; boundary="LwW0XdcUbUexiWVK"
 Content-Disposition: inline
 
 
---+QahgC5+KEYLbs62
+--LwW0XdcUbUexiWVK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 18, 2014 at 03:19:15PM -0600, Stephen Warren wrote:
-> From: Stephen Warren <swarren@nvidia.com>
+On Wed, Jun 18, 2014 at 07:23:47PM +0200, Tomeu Vizoso wrote:
+> On 06/17/2014 06:15 PM, Stephen Warren wrote:
+> >On 06/17/2014 06:16 AM, Tomeu Vizoso wrote:
+> >>On 06/16/2014 10:02 PM, Stephen Warren wrote:
+> >>>On 06/16/2014 07:35 AM, Tomeu Vizoso wrote:
+> >>>>+#ifdef CONFIG_TEGRA124_EMC
+> >>>>+int tegra124_emc_reserve_bandwidth(unsigned int consumer, unsigned
+> >>>>long rate);
+> >>>>+void tegra124_emc_set_floor(unsigned long freq);
+> >>>>+void tegra124_emc_set_ceiling(unsigned long freq);
+> >>>>+#else
+> >>>>+int tegra124_emc_reserve_bandwidth(unsigned int consumer, unsigned
+> >>>>long rate)
+> >>>>+{ return -ENODEV; }
+> >>>>+void tegra124_emc_set_floor(unsigned long freq)
+> >>>>+{ return; }
+> >>>>+void tegra124_emc_set_ceiling(unsigned long freq)
+> >>>>+{ return; }
+> >>>>+#endif
+> >>>
+> >>>I'll repeat what I said off-list so that we can have the whole
+> >>>conversation on the list:
+> >>>
+> >>>That looks like a custom Tegra-specific API. I think it'd be much bett=
+er
+> >>>to integrate this into the common clock framework as a standard clock
+> >>>constraints API. There are other use-cases for clock constraints besid=
+es
+> >>>EMC scaling (e.g. some in audio on Tegra, and I'm sure many on other
+> >>>SoCs too).
+> >>
+> >>Yes, I wrote a bit in the cover letter about our requirements and how
+> >>they map to the CCF. Could you please comment on that?
+> >
+> >My comments remain the same. I believe this is something that belongs in
+> >the clock driver, or at the least, some API that takes a struct clock as
+> >its parameter, so that drivers can use the existing DT clock lookup
+> >mechanism.
 >=20
-> When tegra-drm.ko is built as a module, these MODULE_DEVICE_TABLEs allow
-> the module to be auto-loaded since the module will match the devices
-> instantiated from device tree.
+> Ok, let me put this strawman here to see if I have gotten close to what y=
+ou
+> have in mind:
+>=20
+> * add per-client accounting (Rabin's patches referenced before)
+>=20
+> * add clk_set_floor, to be used by cpufreq, load stats, etc.
+>=20
+> * add clk_set_ceiling, to be used by battery drivers, thermal, etc.
+>=20
+> * an EMC driver would collect bandwidth and latency requests from consume=
+rs
+> and call clk_set_floor on the EMC clock.
+>=20
+> * the EMC driver would also register for rate change notifications in the
+> EMC clock and would update the latency allowance registers at that point.
 
-I vaguely remember doing something like this a while back and getting a
-bunch of link-time errors. But I assume that you've tested this, so I
-must be remembering wrongly.
+Latency allowance registers are part of the MC rather than the EMC. So I
+think we have two options: a) have a unified driver for MC and EMC or b)
+provide two parts of the API in two drivers.
 
-One comment below:
-
-> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-> index 3396f9f6a9f7..a1f9b06a75d5 100644
-> --- a/drivers/gpu/drm/tegra/drm.c
-> +++ b/drivers/gpu/drm/tegra/drm.c
-> @@ -694,6 +694,7 @@ static const struct of_device_id host1x_drm_subdevs[]=
- =3D {
->  	{ .compatible =3D "nvidia,tegra124-hdmi", },
->  	{ /* sentinel */ }
->  };
-> +MODULE_DEVICE_TABLE(of, host1x_drm_subdevs);
-
-I don't think this one is really required. It's a union of all other
-compatible values and only used to delay the DRM subsystem driver
-registration until all needed subdevices have been probed.
+Or perhaps c), create a generic framework that both MC and EMC can
+register with (bandwidth for EMC, latency for MC).
 
 Thierry
 
---+QahgC5+KEYLbs62
+--LwW0XdcUbUexiWVK
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTognCAAoJEN0jrNd/PrOhoAYP/3hs1FVNlDMMe7cSZw5C5oLw
-ldDy22rK7GJ8zsb/Ta0SwHnsb4CeoMf0hSetAyW7bI18l70aCat8BHQAxlXh16B5
-oi4Tm7yiVK2JSFdLZgBuZdEo6wc8yZr9i/KYjRx2ia7/XtpY/ec8Ndxx7Wc8/oDl
-vwax9MVw5pK+QcQc5QXnGlhTTo7yt1wqMXwemUzgzXMEb37QJXHPGzCff2RkrBW4
-lKT8OoFytIfpu60I+vgGNxOCGU0S/EO7x5s/+ewSU1vzoluyhQQKVNrWdZrGpZsq
-Xf6inWutUaGalQRcUuDFRqsLKgV4YpNF9uIt6xvQa7AsHBbHeCuGU6qi+gvyapF/
-vAK7QiopuaRKIrWCnC9LMeKdDPSWvQTLVR5xvDfI3WSEmKQsGJ8+rJnMoEdMBBx3
-3oP7/rsUo66KE1NiP28gkrUe8RFIloIwpMr5DKcpWqkl5+8xHZY/O1fXbAKIKLxy
-M8sEc+g6KoD0ome8kzpZTEasouAFYW/Qyj8bbU+3LqenqyKNpHatPX7sdjdm/h/N
-OvZBGXknunCrDy+6c4GLOd5nSs33dKpu7DZ7D7RCyHwb0e7E7mjZ1kEqU3eW8i5z
-1f13sO1hiUtlkO9gCQsWuLQRJf8o2SGF2wGX+ZfN/uJPaRDOiFB2cDhgym1kcxxo
-+ntAtbFZ+HITKpdJZV9l
-=0+TT
+iQIcBAEBAgAGBQJTogvoAAoJEN0jrNd/PrOhMf4QAKKMXnLhZIJ6WU1MXERj6DoH
+PamUhHa6MlEhXjygSdRiPJ5xMCdmEzwY/ZZfj1Tz+FmBELxbVdb0WrPbrzXmkE5v
+VDYTurEEV+yaaYBemZv1oRa/GjJwzgi9rYmKOBaMlO6ldLlsxsTYnVIPa5mWXnBO
+WVUGsOohbC05iVyL2tInJhyT0+GXmABsCNhFpPQ+xc8aqTHwT+bJcP/f37pSzxF2
+jzrVMXHCQtMSSyEBkbHQE9uVEbZY8SpF+YsZ7Fozzw7uMseL5LUpLWhuWPKJIcnq
+xSVEGXHGfOUu8DuSHohWcypgCulW9+ZcFxobhbnsvZFPCK4JGD6YYDt/Q6kWTypz
+AVD6te2pXYCGZHPfEuBkGDn4xY17AGpizMAgqMSKrLwB0My1JRfGqW/lNkJDu2JL
+TTQAJmlS3eClqwfx4hNnymVAvzI8TBiE6kpcQT2i8vg9d7PASEajh1ZOF/yUnSiB
+jVcqP3eJu5AujzLUKPTRrje5gjvnx5kIYFdELdP1s9W/ePwZ6K9cDbEIPhewuZbR
+cQ9C8bNWn+t7+xg53W73mZk/J/jTB6rN7tveLfAw9rWMKYK5SsYDWQ5nOkVIhbl8
+G4Vq1QZntqrpOvG1rxpq5hWHjhKfJKrrzBm34E5+SalexPuk1fEwPlIR8Jxz3BVf
+2b9lc5PRE4PG7qtBVE1n
+=CRS8
 -----END PGP SIGNATURE-----
 
---+QahgC5+KEYLbs62--
+--LwW0XdcUbUexiWVK--
 
---===============1257681972==
+--===============1918013067==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -96,4 +134,4 @@ dri-devel mailing list
 dri-devel@lists.freedesktop.org
 http://lists.freedesktop.org/mailman/listinfo/dri-devel
 
---===============1257681972==--
+--===============1918013067==--
