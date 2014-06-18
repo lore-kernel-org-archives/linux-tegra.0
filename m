@@ -1,121 +1,97 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH V2] drm/tegra: add MODULE_DEVICE_TABLEs
-Date: Wed, 18 Jun 2014 16:21:55 -0600
-Message-ID: <1403130115-23583-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [RFC PATCH 1/4] memory: tegra124-emc: Add EMC driver
+Date: Wed, 18 Jun 2014 16:33:39 -0600
+Message-ID: <53A213C3.2020207@wwwdotorg.org>
+References: <1402925713-25426-1-git-send-email-tomeu.vizoso@collabora.com>
+ <1402925713-25426-2-git-send-email-tomeu.vizoso@collabora.com>
+ <539F4D44.3070309@wwwdotorg.org> <53A03186.3040703@collabora.com>
+ <53A069B6.6070902@wwwdotorg.org> <53A1CB23.5090307@collabora.com>
+ <20140618220008.GC26514@mithrandir>
+ <CACP_E+Jr5QyYm92Mc2=WVhKMbk=9Ty1fvJuH+fqOmDnYmdqFRg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CACP_E+Jr5QyYm92Mc2=WVhKMbk=9Ty1fvJuH+fqOmDnYmdqFRg@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: =?UTF-8?B?U3TDqXBoYW5lIE1hcmNoZXNpbg==?= <stephane.marchesin@gmail.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux Kernel list <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, myungjoo.ham@samsung.com, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-When tegra-drm.ko is built as a module, these MODULE_DEVICE_TABLEs allow
-the module to be auto-loaded since the module will match the devices
-instantiated from device tree.
-
-(Notes for stable: in 3.14+, just git rm any conflicting file, since they
-are added in later kernels. For 3.13 and below, manual merging will be
-needed)
-
-Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-v2: Remove change to drm.c, since the match table there isn't used for
-probing.
----
- drivers/gpu/drm/tegra/dc.c    | 1 +
- drivers/gpu/drm/tegra/dpaux.c | 1 +
- drivers/gpu/drm/tegra/dsi.c   | 1 +
- drivers/gpu/drm/tegra/gr2d.c  | 1 +
- drivers/gpu/drm/tegra/gr3d.c  | 1 +
- drivers/gpu/drm/tegra/hdmi.c  | 1 +
- drivers/gpu/drm/tegra/sor.c   | 1 +
- 7 files changed, 7 insertions(+)
-
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index ef40381f3909..48c3bc460eef 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -1303,6 +1303,7 @@ static const struct of_device_id tegra_dc_of_match[] = {
- 		/* sentinel */
- 	}
- };
-+MODULE_DEVICE_TABLE(of, tegra_dc_of_match);
- 
- static int tegra_dc_parse_dt(struct tegra_dc *dc)
- {
-diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
-index 3f132e356e9c..708f783ead47 100644
---- a/drivers/gpu/drm/tegra/dpaux.c
-+++ b/drivers/gpu/drm/tegra/dpaux.c
-@@ -382,6 +382,7 @@ static const struct of_device_id tegra_dpaux_of_match[] = {
- 	{ .compatible = "nvidia,tegra124-dpaux", },
- 	{ },
- };
-+MODULE_DEVICE_TABLE(of, tegra_dpaux_of_match);
- 
- struct platform_driver tegra_dpaux_driver = {
- 	.driver = {
-diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
-index bd56f2affa78..97c409f10456 100644
---- a/drivers/gpu/drm/tegra/dsi.c
-+++ b/drivers/gpu/drm/tegra/dsi.c
-@@ -982,6 +982,7 @@ static const struct of_device_id tegra_dsi_of_match[] = {
- 	{ .compatible = "nvidia,tegra114-dsi", },
- 	{ },
- };
-+MODULE_DEVICE_TABLE(of, tegra_dsi_of_match);
- 
- struct platform_driver tegra_dsi_driver = {
- 	.driver = {
-diff --git a/drivers/gpu/drm/tegra/gr2d.c b/drivers/gpu/drm/tegra/gr2d.c
-index 7c53941f2a9e..02cd3e37a6ec 100644
---- a/drivers/gpu/drm/tegra/gr2d.c
-+++ b/drivers/gpu/drm/tegra/gr2d.c
-@@ -121,6 +121,7 @@ static const struct of_device_id gr2d_match[] = {
- 	{ .compatible = "nvidia,tegra20-gr2d" },
- 	{ },
- };
-+MODULE_DEVICE_TABLE(of, gr2d_match);
- 
- static const u32 gr2d_addr_regs[] = {
- 	GR2D_UA_BASE_ADDR,
-diff --git a/drivers/gpu/drm/tegra/gr3d.c b/drivers/gpu/drm/tegra/gr3d.c
-index 30f5ba9bd6d0..2bea2b2d204e 100644
---- a/drivers/gpu/drm/tegra/gr3d.c
-+++ b/drivers/gpu/drm/tegra/gr3d.c
-@@ -130,6 +130,7 @@ static const struct of_device_id tegra_gr3d_match[] = {
- 	{ .compatible = "nvidia,tegra20-gr3d" },
- 	{ }
- };
-+MODULE_DEVICE_TABLE(of, tegra_gr3d_match);
- 
- static const u32 gr3d_addr_regs[] = {
- 	GR3D_IDX_ATTRIBUTE( 0),
-diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
-index a0b8d8539d07..84ea0c8b47f7 100644
---- a/drivers/gpu/drm/tegra/hdmi.c
-+++ b/drivers/gpu/drm/tegra/hdmi.c
-@@ -1370,6 +1370,7 @@ static const struct of_device_id tegra_hdmi_of_match[] = {
- 	{ .compatible = "nvidia,tegra20-hdmi", .data = &tegra20_hdmi_config },
- 	{ },
- };
-+MODULE_DEVICE_TABLE(of, tegra_hdmi_of_match);
- 
- static int tegra_hdmi_probe(struct platform_device *pdev)
- {
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index 27c979b50111..061a5c501124 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -1455,6 +1455,7 @@ static const struct of_device_id tegra_sor_of_match[] = {
- 	{ .compatible = "nvidia,tegra124-sor", },
- 	{ },
- };
-+MODULE_DEVICE_TABLE(of, tegra_sor_of_match);
- 
- struct platform_driver tegra_sor_driver = {
- 	.driver = {
--- 
-1.8.1.5
+T24gMDYvMTgvMjAxNCAwNDoxOSBQTSwgU3TDqXBoYW5lIE1hcmNoZXNpbiB3cm90ZToKPiBPbiBX
+ZWQsIEp1biAxOCwgMjAxNCBhdCAzOjAwIFBNLCBUaGllcnJ5IFJlZGluZwo+IDx0aGllcnJ5LnJl
+ZGluZ0BnbWFpbC5jb20+IHdyb3RlOgo+PiBPbiBXZWQsIEp1biAxOCwgMjAxNCBhdCAwNzoyMzo0
+N1BNICswMjAwLCBUb21ldSBWaXpvc28gd3JvdGU6Cj4+PiBPbiAwNi8xNy8yMDE0IDA2OjE1IFBN
+LCBTdGVwaGVuIFdhcnJlbiB3cm90ZToKPj4+PiBPbiAwNi8xNy8yMDE0IDA2OjE2IEFNLCBUb21l
+dSBWaXpvc28gd3JvdGU6Cj4+Pj4+IE9uIDA2LzE2LzIwMTQgMTA6MDIgUE0sIFN0ZXBoZW4gV2Fy
+cmVuIHdyb3RlOgo+Pj4+Pj4gT24gMDYvMTYvMjAxNCAwNzozNSBBTSwgVG9tZXUgVml6b3NvIHdy
+b3RlOgo+Pj4+Pj4+ICsjaWZkZWYgQ09ORklHX1RFR1JBMTI0X0VNQwo+Pj4+Pj4+ICtpbnQgdGVn
+cmExMjRfZW1jX3Jlc2VydmVfYmFuZHdpZHRoKHVuc2lnbmVkIGludCBjb25zdW1lciwgdW5zaWdu
+ZWQKPj4+Pj4+PiBsb25nIHJhdGUpOwo+Pj4+Pj4+ICt2b2lkIHRlZ3JhMTI0X2VtY19zZXRfZmxv
+b3IodW5zaWduZWQgbG9uZyBmcmVxKTsKPj4+Pj4+PiArdm9pZCB0ZWdyYTEyNF9lbWNfc2V0X2Nl
+aWxpbmcodW5zaWduZWQgbG9uZyBmcmVxKTsKPj4+Pj4+PiArI2Vsc2UKPj4+Pj4+PiAraW50IHRl
+Z3JhMTI0X2VtY19yZXNlcnZlX2JhbmR3aWR0aCh1bnNpZ25lZCBpbnQgY29uc3VtZXIsIHVuc2ln
+bmVkCj4+Pj4+Pj4gbG9uZyByYXRlKQo+Pj4+Pj4+ICt7IHJldHVybiAtRU5PREVWOyB9Cj4+Pj4+
+Pj4gK3ZvaWQgdGVncmExMjRfZW1jX3NldF9mbG9vcih1bnNpZ25lZCBsb25nIGZyZXEpCj4+Pj4+
+Pj4gK3sgcmV0dXJuOyB9Cj4+Pj4+Pj4gK3ZvaWQgdGVncmExMjRfZW1jX3NldF9jZWlsaW5nKHVu
+c2lnbmVkIGxvbmcgZnJlcSkKPj4+Pj4+PiAreyByZXR1cm47IH0KPj4+Pj4+PiArI2VuZGlmCj4+
+Pj4+Pgo+Pj4+Pj4gSSdsbCByZXBlYXQgd2hhdCBJIHNhaWQgb2ZmLWxpc3Qgc28gdGhhdCB3ZSBj
+YW4gaGF2ZSB0aGUgd2hvbGUKPj4+Pj4+IGNvbnZlcnNhdGlvbiBvbiB0aGUgbGlzdDoKPj4+Pj4+
+Cj4+Pj4+PiBUaGF0IGxvb2tzIGxpa2UgYSBjdXN0b20gVGVncmEtc3BlY2lmaWMgQVBJLiBJIHRo
+aW5rIGl0J2QgYmUgbXVjaCBiZXR0ZXIKPj4+Pj4+IHRvIGludGVncmF0ZSB0aGlzIGludG8gdGhl
+IGNvbW1vbiBjbG9jayBmcmFtZXdvcmsgYXMgYSBzdGFuZGFyZCBjbG9jawo+Pj4+Pj4gY29uc3Ry
+YWludHMgQVBJLiBUaGVyZSBhcmUgb3RoZXIgdXNlLWNhc2VzIGZvciBjbG9jayBjb25zdHJhaW50
+cyBiZXNpZGVzCj4+Pj4+PiBFTUMgc2NhbGluZyAoZS5nLiBzb21lIGluIGF1ZGlvIG9uIFRlZ3Jh
+LCBhbmQgSSdtIHN1cmUgbWFueSBvbiBvdGhlcgo+Pj4+Pj4gU29DcyB0b28pLgo+Pj4+Pgo+Pj4+
+PiBZZXMsIEkgd3JvdGUgYSBiaXQgaW4gdGhlIGNvdmVyIGxldHRlciBhYm91dCBvdXIgcmVxdWly
+ZW1lbnRzIGFuZCBob3cKPj4+Pj4gdGhleSBtYXAgdG8gdGhlIENDRi4gQ291bGQgeW91IHBsZWFz
+ZSBjb21tZW50IG9uIHRoYXQ/Cj4+Pj4KPj4+PiBNeSBjb21tZW50cyByZW1haW4gdGhlIHNhbWUu
+IEkgYmVsaWV2ZSB0aGlzIGlzIHNvbWV0aGluZyB0aGF0IGJlbG9uZ3MgaW4KPj4+PiB0aGUgY2xv
+Y2sgZHJpdmVyLCBvciBhdCB0aGUgbGVhc3QsIHNvbWUgQVBJIHRoYXQgdGFrZXMgYSBzdHJ1Y3Qg
+Y2xvY2sgYXMKPj4+PiBpdHMgcGFyYW1ldGVyLCBzbyB0aGF0IGRyaXZlcnMgY2FuIHVzZSB0aGUg
+ZXhpc3RpbmcgRFQgY2xvY2sgbG9va3VwCj4+Pj4gbWVjaGFuaXNtLgo+Pj4KPj4+IE9rLCBsZXQg
+bWUgcHV0IHRoaXMgc3RyYXdtYW4gaGVyZSB0byBzZWUgaWYgSSBoYXZlIGdvdHRlbiBjbG9zZSB0
+byB3aGF0IHlvdQo+Pj4gaGF2ZSBpbiBtaW5kOgo+Pj4KPj4+ICogYWRkIHBlci1jbGllbnQgYWNj
+b3VudGluZyAoUmFiaW4ncyBwYXRjaGVzIHJlZmVyZW5jZWQgYmVmb3JlKQo+Pj4KPj4+ICogYWRk
+IGNsa19zZXRfZmxvb3IsIHRvIGJlIHVzZWQgYnkgY3B1ZnJlcSwgbG9hZCBzdGF0cywgZXRjLgo+
+Pj4KPj4+ICogYWRkIGNsa19zZXRfY2VpbGluZywgdG8gYmUgdXNlZCBieSBiYXR0ZXJ5IGRyaXZl
+cnMsIHRoZXJtYWwsIGV0Yy4KPj4+Cj4+PiAqIGFuIEVNQyBkcml2ZXIgd291bGQgY29sbGVjdCBi
+YW5kd2lkdGggYW5kIGxhdGVuY3kgcmVxdWVzdHMgZnJvbSBjb25zdW1lcnMKPj4+IGFuZCBjYWxs
+IGNsa19zZXRfZmxvb3Igb24gdGhlIEVNQyBjbG9jay4KPj4+Cj4+PiAqIHRoZSBFTUMgZHJpdmVy
+IHdvdWxkIGFsc28gcmVnaXN0ZXIgZm9yIHJhdGUgY2hhbmdlIG5vdGlmaWNhdGlvbnMgaW4gdGhl
+Cj4+PiBFTUMgY2xvY2sgYW5kIHdvdWxkIHVwZGF0ZSB0aGUgbGF0ZW5jeSBhbGxvd2FuY2UgcmVn
+aXN0ZXJzIGF0IHRoYXQgcG9pbnQuCj4+Cj4+IExhdGVuY3kgYWxsb3dhbmNlIHJlZ2lzdGVycyBh
+cmUgcGFydCBvZiB0aGUgTUMgcmF0aGVyIHRoYW4gdGhlIEVNQy4gU28gSQo+PiB0aGluayB3ZSBo
+YXZlIHR3byBvcHRpb25zOiBhKSBoYXZlIGEgdW5pZmllZCBkcml2ZXIgZm9yIE1DIGFuZCBFTUMg
+b3IgYikKPj4gcHJvdmlkZSB0d28gcGFydHMgb2YgdGhlIEFQSSBpbiB0d28gZHJpdmVycy4KPj4K
+Pj4gT3IgcGVyaGFwcyBjKSwgY3JlYXRlIGEgZ2VuZXJpYyBmcmFtZXdvcmsgdGhhdCBib3RoIE1D
+IGFuZCBFTUMgY2FuCj4+IHJlZ2lzdGVyIHdpdGggKGJhbmR3aWR0aCBmb3IgRU1DLCBsYXRlbmN5
+IGZvciBNQykuCj4gCj4gSXMgdGhlcmUgYW55IG1vdGl2YXRpb24gZm9yIGtlZXBpbmcgTUMgYW5k
+IEVNQyBzZXBhcmF0ZT8gSW4gbXkgbWluZCwKPiB0aGUgc29sdXRpb24gd2FzIGFsd2F5cyB0byBo
+YW5kbGUgdGhvc2UgdG9nZXRoZXIuCgpXZWxsLCB0aGV5IGFyZSBkb2N1bWVudGVkIGFzIGJlaW5n
+IHNlcGFyYXRlIEhXIG1vZHVsZXMgaW4gdGhlIFRSTS4KCkkga25vdyB0aGVyZSdzIGFuIGludGVy
+bG9jayBpbiBIVyBzbyB0aGF0IHdoZW4gdGhlIEVNQyBjbG9jayBpcyBjaGFuZ2VkLAp0aGUgRU1D
+IHJlZ2lzdGVycyBjYW4gZmxpcCBhdG9taWNhbGx5IHRvIGEgbmV3IGNvbmZpZ3VyYXRpb24uCgpJ
+J20gbm90IGF3YXJlIG9mIGFueSBzaW1pbGFyIEhXIGludGVybG9jayBiZXR3ZWVuIE1DIGFuZCBF
+TUMgcmVnaXN0ZXJzLgpUaGF0IHdvdWxkIGltcGx5IHRoYXQgdmVyeSB0aWdodCBjby1vcmRpbmF0
+aW9uIHNob3VsZG4ndCBiZSByZXF1aXJlZC4KCkRvIHRoZSBNQyBsYXRlbmN5IGFsbG93YW5jZSBy
+ZWdpc3RlcnMgL3JlYWxseS8gbmVlZCB0byBiZSAqdmVyeSB0aWdodGx5KgptYW5hZ2VkIHdoZW5l
+dmVyIHRoZSBFTUMgY2xvY2sgaXMgY2hhbmdlZCwgb3IgaXMgaXQganVzdCBhIG1hdHRlciBvZiBp
+dApiZWluZyBhIGdvb2QgaWRlYSB0byB1cGRhdGUgRU1DIGNsb2NrIGFuZCBNQyBsYXRlbmN5IGFs
+bG93YW5jZSByZWdpc3RlcnMKYXQgcm91Z2hseSB0aGUgc2FtZSB0aW1lPyBFdmVuIGlmIHRoZXJl
+J3Mgc29tZSBjby1vcmRpbmF0aW9uIHJlcXVpcmVkLAptYXliZSBpdCBjYW4gYmUgaGFuZGxlZCBy
+YXRoZXIgbGlrZSBjcHVmcmVxIG5vdGlmaWNhdGlvbnM7IHVzZSBjbG9jawpwcmUtcmF0ZSBjaGFu
+Z2Ugbm90aWZpY2F0aW9ucyB0byBzZXQgTUMgdXAgaW4gYSB3YXkgdGhhdCdsbCB3b3JrIGF0IGJv
+dGgKb2xkL25ldyBFTUMgY2xvY2tzLCBhbmQgdGhlbiBjbG9jayBwb3N0LXJhdGUgbm90aWZpY2F0
+aW9ucyB0byB0aGUgZmluYWwKTUMgY29uZmlndXJhdGlvbj8KX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
+ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
+bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
