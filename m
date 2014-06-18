@@ -1,94 +1,131 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [RFC PATCH 1/4] memory: tegra124-emc: Add EMC driver
-Date: Wed, 18 Jun 2014 11:46:49 -0600
-Message-ID: <53A1D089.8010605@wwwdotorg.org>
-References: <1402925713-25426-1-git-send-email-tomeu.vizoso@collabora.com>
- <1402925713-25426-2-git-send-email-tomeu.vizoso@collabora.com>
- <539F4D44.3070309@wwwdotorg.org> <53A03186.3040703@collabora.com>
- <53A069B6.6070902@wwwdotorg.org> <53A1CB23.5090307@collabora.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <53A1CB23.5090307@collabora.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Thierry Reding <thierry.reding@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, David Airlie <airlied@linux.ie>, Mike Turquette <mturquette@linaro.org>, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH] drm/tegra: add MODULE_DEVICE_TABLEs
+Date: Wed, 18 Jun 2014 15:19:15 -0600
+Message-ID: <1403126355-16236-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/18/2014 11:23 AM, Tomeu Vizoso wrote:
-> On 06/17/2014 06:15 PM, Stephen Warren wrote:
->> On 06/17/2014 06:16 AM, Tomeu Vizoso wrote:
->>> On 06/16/2014 10:02 PM, Stephen Warren wrote:
->>>> On 06/16/2014 07:35 AM, Tomeu Vizoso wrote:
->>>>> +#ifdef CONFIG_TEGRA124_EMC
->>>>> +int tegra124_emc_reserve_bandwidth(unsigned int consumer, unsigned
->>>>> long rate);
->>>>> +void tegra124_emc_set_floor(unsigned long freq);
->>>>> +void tegra124_emc_set_ceiling(unsigned long freq);
->>>>> +#else
->>>>> +int tegra124_emc_reserve_bandwidth(unsigned int consumer, unsigned
->>>>> long rate)
->>>>> +{ return -ENODEV; }
->>>>> +void tegra124_emc_set_floor(unsigned long freq)
->>>>> +{ return; }
->>>>> +void tegra124_emc_set_ceiling(unsigned long freq)
->>>>> +{ return; }
->>>>> +#endif
->>>>
->>>> I'll repeat what I said off-list so that we can have the whole
->>>> conversation on the list:
->>>>
->>>> That looks like a custom Tegra-specific API. I think it'd be much
->>>> better
->>>> to integrate this into the common clock framework as a standard clock
->>>> constraints API. There are other use-cases for clock constraints
->>>> besides
->>>> EMC scaling (e.g. some in audio on Tegra, and I'm sure many on other
->>>> SoCs too).
->>>
->>> Yes, I wrote a bit in the cover letter about our requirements and how
->>> they map to the CCF. Could you please comment on that?
->>
->> My comments remain the same. I believe this is something that belongs in
->> the clock driver, or at the least, some API that takes a struct clock as
->> its parameter, so that drivers can use the existing DT clock lookup
->> mechanism.
-> 
-> Ok, let me put this strawman here to see if I have gotten close to what
-> you have in mind:
-> 
-> * add per-client accounting (Rabin's patches referenced before)
-> 
-> * add clk_set_floor, to be used by cpufreq, load stats, etc.
-> 
-> * add clk_set_ceiling, to be used by battery drivers, thermal, etc.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Yes. I'd expect those to be maintained per-client, and so the clock core
-(or whatever higher level code implements clk_set_floor/ceiling)
-performs the logic that "blends" together all the different requests
-from different clients.
+When tegra-drm.ko is built as a module, these MODULE_DEVICE_TABLEs allow
+the module to be auto-loaded since the module will match the devices
+instantiated from device tree.
 
-As an aside, for audio usage, I would expect clk_set_rate to be a
-per-client (rather than per HW clock) operation too, and to error out if
-one client says it wants to set pll_a to the rate needed for
-44.1KHz-based audio and a different client wants the rate for
-48KHz-based audio.
+(Notes for stable: in 3.14+, just git rm any conflicting file, since they
+are added in later kernels. For 3.13 and below, manual merging will be
+needed)
 
-> * an EMC driver would collect bandwidth and latency requests from
-> consumers and call clk_set_floor on the EMC clock.
-> 
-> * the EMC driver would also register for rate change notifications in
-> the EMC clock and would update the latency allowance registers at that
-> point.
-> 
-> How does it sound?
+Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/gpu/drm/tegra/dc.c    | 1 +
+ drivers/gpu/drm/tegra/dpaux.c | 1 +
+ drivers/gpu/drm/tegra/drm.c   | 1 +
+ drivers/gpu/drm/tegra/dsi.c   | 1 +
+ drivers/gpu/drm/tegra/gr2d.c  | 1 +
+ drivers/gpu/drm/tegra/gr3d.c  | 1 +
+ drivers/gpu/drm/tegra/hdmi.c  | 1 +
+ drivers/gpu/drm/tegra/sor.c   | 1 +
+ 8 files changed, 8 insertions(+)
 
-At a high level, yes this sounds about right to me.
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index ef40381f3909..48c3bc460eef 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -1303,6 +1303,7 @@ static const struct of_device_id tegra_dc_of_match[] = {
+ 		/* sentinel */
+ 	}
+ };
++MODULE_DEVICE_TABLE(of, tegra_dc_of_match);
+ 
+ static int tegra_dc_parse_dt(struct tegra_dc *dc)
+ {
+diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
+index 3f132e356e9c..708f783ead47 100644
+--- a/drivers/gpu/drm/tegra/dpaux.c
++++ b/drivers/gpu/drm/tegra/dpaux.c
+@@ -382,6 +382,7 @@ static const struct of_device_id tegra_dpaux_of_match[] = {
+ 	{ .compatible = "nvidia,tegra124-dpaux", },
+ 	{ },
+ };
++MODULE_DEVICE_TABLE(of, tegra_dpaux_of_match);
+ 
+ struct platform_driver tegra_dpaux_driver = {
+ 	.driver = {
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index 3396f9f6a9f7..a1f9b06a75d5 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -694,6 +694,7 @@ static const struct of_device_id host1x_drm_subdevs[] = {
+ 	{ .compatible = "nvidia,tegra124-hdmi", },
+ 	{ /* sentinel */ }
+ };
++MODULE_DEVICE_TABLE(of, host1x_drm_subdevs);
+ 
+ static struct host1x_driver host1x_drm_driver = {
+ 	.name = "drm",
+diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
+index bd56f2affa78..97c409f10456 100644
+--- a/drivers/gpu/drm/tegra/dsi.c
++++ b/drivers/gpu/drm/tegra/dsi.c
+@@ -982,6 +982,7 @@ static const struct of_device_id tegra_dsi_of_match[] = {
+ 	{ .compatible = "nvidia,tegra114-dsi", },
+ 	{ },
+ };
++MODULE_DEVICE_TABLE(of, tegra_dsi_of_match);
+ 
+ struct platform_driver tegra_dsi_driver = {
+ 	.driver = {
+diff --git a/drivers/gpu/drm/tegra/gr2d.c b/drivers/gpu/drm/tegra/gr2d.c
+index 7c53941f2a9e..02cd3e37a6ec 100644
+--- a/drivers/gpu/drm/tegra/gr2d.c
++++ b/drivers/gpu/drm/tegra/gr2d.c
+@@ -121,6 +121,7 @@ static const struct of_device_id gr2d_match[] = {
+ 	{ .compatible = "nvidia,tegra20-gr2d" },
+ 	{ },
+ };
++MODULE_DEVICE_TABLE(of, gr2d_match);
+ 
+ static const u32 gr2d_addr_regs[] = {
+ 	GR2D_UA_BASE_ADDR,
+diff --git a/drivers/gpu/drm/tegra/gr3d.c b/drivers/gpu/drm/tegra/gr3d.c
+index 30f5ba9bd6d0..2bea2b2d204e 100644
+--- a/drivers/gpu/drm/tegra/gr3d.c
++++ b/drivers/gpu/drm/tegra/gr3d.c
+@@ -130,6 +130,7 @@ static const struct of_device_id tegra_gr3d_match[] = {
+ 	{ .compatible = "nvidia,tegra20-gr3d" },
+ 	{ }
+ };
++MODULE_DEVICE_TABLE(of, tegra_gr3d_match);
+ 
+ static const u32 gr3d_addr_regs[] = {
+ 	GR3D_IDX_ATTRIBUTE( 0),
+diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
+index ba067bb767e3..ffe26547328d 100644
+--- a/drivers/gpu/drm/tegra/hdmi.c
++++ b/drivers/gpu/drm/tegra/hdmi.c
+@@ -1450,6 +1450,7 @@ static const struct of_device_id tegra_hdmi_of_match[] = {
+ 	{ .compatible = "nvidia,tegra20-hdmi", .data = &tegra20_hdmi_config },
+ 	{ },
+ };
++MODULE_DEVICE_TABLE(of, tegra_hdmi_of_match);
+ 
+ static int tegra_hdmi_probe(struct platform_device *pdev)
+ {
+diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+index 27c979b50111..061a5c501124 100644
+--- a/drivers/gpu/drm/tegra/sor.c
++++ b/drivers/gpu/drm/tegra/sor.c
+@@ -1455,6 +1455,7 @@ static const struct of_device_id tegra_sor_of_match[] = {
+ 	{ .compatible = "nvidia,tegra124-sor", },
+ 	{ },
+ };
++MODULE_DEVICE_TABLE(of, tegra_sor_of_match);
+ 
+ struct platform_driver tegra_sor_driver = {
+ 	.driver = {
+-- 
+1.8.1.5
