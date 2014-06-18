@@ -1,17 +1,13 @@
-From: =?UTF-8?Q?St=C3=A9phane_Marchesin?= <stephane.marchesin@gmail.com>
-Subject: Re: [RFC PATCH 1/4] memory: tegra124-emc: Add EMC driver
-Date: Wed, 18 Jun 2014 15:19:27 -0700
-Message-ID: <CACP_E+Jr5QyYm92Mc2=WVhKMbk=9Ty1fvJuH+fqOmDnYmdqFRg@mail.gmail.com>
-References: <1402925713-25426-1-git-send-email-tomeu.vizoso@collabora.com>
- <1402925713-25426-2-git-send-email-tomeu.vizoso@collabora.com>
- <539F4D44.3070309@wwwdotorg.org> <53A03186.3040703@collabora.com>
- <53A069B6.6070902@wwwdotorg.org> <53A1CB23.5090307@collabora.com>
- <20140618220008.GC26514@mithrandir>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH] drm/tegra: add MODULE_DEVICE_TABLEs
+Date: Wed, 18 Jun 2014 16:21:18 -0600
+Message-ID: <53A210DE.80704@wwwdotorg.org>
+References: <1403126355-16236-1-git-send-email-swarren@wwwdotorg.org>
+ <20140618215058.GA26514@mithrandir>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============1766082239=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20140618220008.GC26514@mithrandir>
+In-Reply-To: <20140618215058.GA26514@mithrandir>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -22,58 +18,90 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-pm@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux Kernel list <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, myungjoo.ham@samsung.com, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, linux-arm-kernel@lists.infradead.org
+Cc: linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom@nvidia.com>, stable@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gV2VkLCBKdW4gMTgsIDIwMTQgYXQgMzowMCBQTSwgVGhpZXJyeSBSZWRpbmcKPHRoaWVycnku
-cmVkaW5nQGdtYWlsLmNvbT4gd3JvdGU6Cj4gT24gV2VkLCBKdW4gMTgsIDIwMTQgYXQgMDc6MjM6
-NDdQTSArMDIwMCwgVG9tZXUgVml6b3NvIHdyb3RlOgo+PiBPbiAwNi8xNy8yMDE0IDA2OjE1IFBN
-LCBTdGVwaGVuIFdhcnJlbiB3cm90ZToKPj4gPk9uIDA2LzE3LzIwMTQgMDY6MTYgQU0sIFRvbWV1
-IFZpem9zbyB3cm90ZToKPj4gPj5PbiAwNi8xNi8yMDE0IDEwOjAyIFBNLCBTdGVwaGVuIFdhcnJl
-biB3cm90ZToKPj4gPj4+T24gMDYvMTYvMjAxNCAwNzozNSBBTSwgVG9tZXUgVml6b3NvIHdyb3Rl
-Ogo+PiA+Pj4+KyNpZmRlZiBDT05GSUdfVEVHUkExMjRfRU1DCj4+ID4+Pj4raW50IHRlZ3JhMTI0
-X2VtY19yZXNlcnZlX2JhbmR3aWR0aCh1bnNpZ25lZCBpbnQgY29uc3VtZXIsIHVuc2lnbmVkCj4+
-ID4+Pj5sb25nIHJhdGUpOwo+PiA+Pj4+K3ZvaWQgdGVncmExMjRfZW1jX3NldF9mbG9vcih1bnNp
-Z25lZCBsb25nIGZyZXEpOwo+PiA+Pj4+K3ZvaWQgdGVncmExMjRfZW1jX3NldF9jZWlsaW5nKHVu
-c2lnbmVkIGxvbmcgZnJlcSk7Cj4+ID4+Pj4rI2Vsc2UKPj4gPj4+PitpbnQgdGVncmExMjRfZW1j
-X3Jlc2VydmVfYmFuZHdpZHRoKHVuc2lnbmVkIGludCBjb25zdW1lciwgdW5zaWduZWQKPj4gPj4+
-PmxvbmcgcmF0ZSkKPj4gPj4+Pit7IHJldHVybiAtRU5PREVWOyB9Cj4+ID4+Pj4rdm9pZCB0ZWdy
-YTEyNF9lbWNfc2V0X2Zsb29yKHVuc2lnbmVkIGxvbmcgZnJlcSkKPj4gPj4+Pit7IHJldHVybjsg
-fQo+PiA+Pj4+K3ZvaWQgdGVncmExMjRfZW1jX3NldF9jZWlsaW5nKHVuc2lnbmVkIGxvbmcgZnJl
-cSkKPj4gPj4+Pit7IHJldHVybjsgfQo+PiA+Pj4+KyNlbmRpZgo+PiA+Pj4KPj4gPj4+SSdsbCBy
-ZXBlYXQgd2hhdCBJIHNhaWQgb2ZmLWxpc3Qgc28gdGhhdCB3ZSBjYW4gaGF2ZSB0aGUgd2hvbGUK
-Pj4gPj4+Y29udmVyc2F0aW9uIG9uIHRoZSBsaXN0Ogo+PiA+Pj4KPj4gPj4+VGhhdCBsb29rcyBs
-aWtlIGEgY3VzdG9tIFRlZ3JhLXNwZWNpZmljIEFQSS4gSSB0aGluayBpdCdkIGJlIG11Y2ggYmV0
-dGVyCj4+ID4+PnRvIGludGVncmF0ZSB0aGlzIGludG8gdGhlIGNvbW1vbiBjbG9jayBmcmFtZXdv
-cmsgYXMgYSBzdGFuZGFyZCBjbG9jawo+PiA+Pj5jb25zdHJhaW50cyBBUEkuIFRoZXJlIGFyZSBv
-dGhlciB1c2UtY2FzZXMgZm9yIGNsb2NrIGNvbnN0cmFpbnRzIGJlc2lkZXMKPj4gPj4+RU1DIHNj
-YWxpbmcgKGUuZy4gc29tZSBpbiBhdWRpbyBvbiBUZWdyYSwgYW5kIEknbSBzdXJlIG1hbnkgb24g
-b3RoZXIKPj4gPj4+U29DcyB0b28pLgo+PiA+Pgo+PiA+PlllcywgSSB3cm90ZSBhIGJpdCBpbiB0
-aGUgY292ZXIgbGV0dGVyIGFib3V0IG91ciByZXF1aXJlbWVudHMgYW5kIGhvdwo+PiA+PnRoZXkg
-bWFwIHRvIHRoZSBDQ0YuIENvdWxkIHlvdSBwbGVhc2UgY29tbWVudCBvbiB0aGF0Pwo+PiA+Cj4+
-ID5NeSBjb21tZW50cyByZW1haW4gdGhlIHNhbWUuIEkgYmVsaWV2ZSB0aGlzIGlzIHNvbWV0aGlu
-ZyB0aGF0IGJlbG9uZ3MgaW4KPj4gPnRoZSBjbG9jayBkcml2ZXIsIG9yIGF0IHRoZSBsZWFzdCwg
-c29tZSBBUEkgdGhhdCB0YWtlcyBhIHN0cnVjdCBjbG9jayBhcwo+PiA+aXRzIHBhcmFtZXRlciwg
-c28gdGhhdCBkcml2ZXJzIGNhbiB1c2UgdGhlIGV4aXN0aW5nIERUIGNsb2NrIGxvb2t1cAo+PiA+
-bWVjaGFuaXNtLgo+Pgo+PiBPaywgbGV0IG1lIHB1dCB0aGlzIHN0cmF3bWFuIGhlcmUgdG8gc2Vl
-IGlmIEkgaGF2ZSBnb3R0ZW4gY2xvc2UgdG8gd2hhdCB5b3UKPj4gaGF2ZSBpbiBtaW5kOgo+Pgo+
-PiAqIGFkZCBwZXItY2xpZW50IGFjY291bnRpbmcgKFJhYmluJ3MgcGF0Y2hlcyByZWZlcmVuY2Vk
-IGJlZm9yZSkKPj4KPj4gKiBhZGQgY2xrX3NldF9mbG9vciwgdG8gYmUgdXNlZCBieSBjcHVmcmVx
-LCBsb2FkIHN0YXRzLCBldGMuCj4+Cj4+ICogYWRkIGNsa19zZXRfY2VpbGluZywgdG8gYmUgdXNl
-ZCBieSBiYXR0ZXJ5IGRyaXZlcnMsIHRoZXJtYWwsIGV0Yy4KPj4KPj4gKiBhbiBFTUMgZHJpdmVy
-IHdvdWxkIGNvbGxlY3QgYmFuZHdpZHRoIGFuZCBsYXRlbmN5IHJlcXVlc3RzIGZyb20gY29uc3Vt
-ZXJzCj4+IGFuZCBjYWxsIGNsa19zZXRfZmxvb3Igb24gdGhlIEVNQyBjbG9jay4KPj4KPj4gKiB0
-aGUgRU1DIGRyaXZlciB3b3VsZCBhbHNvIHJlZ2lzdGVyIGZvciByYXRlIGNoYW5nZSBub3RpZmlj
-YXRpb25zIGluIHRoZQo+PiBFTUMgY2xvY2sgYW5kIHdvdWxkIHVwZGF0ZSB0aGUgbGF0ZW5jeSBh
-bGxvd2FuY2UgcmVnaXN0ZXJzIGF0IHRoYXQgcG9pbnQuCj4KPiBMYXRlbmN5IGFsbG93YW5jZSBy
-ZWdpc3RlcnMgYXJlIHBhcnQgb2YgdGhlIE1DIHJhdGhlciB0aGFuIHRoZSBFTUMuIFNvIEkKPiB0
-aGluayB3ZSBoYXZlIHR3byBvcHRpb25zOiBhKSBoYXZlIGEgdW5pZmllZCBkcml2ZXIgZm9yIE1D
-IGFuZCBFTUMgb3IgYikKPiBwcm92aWRlIHR3byBwYXJ0cyBvZiB0aGUgQVBJIGluIHR3byBkcml2
-ZXJzLgo+Cj4gT3IgcGVyaGFwcyBjKSwgY3JlYXRlIGEgZ2VuZXJpYyBmcmFtZXdvcmsgdGhhdCBi
-b3RoIE1DIGFuZCBFTUMgY2FuCj4gcmVnaXN0ZXIgd2l0aCAoYmFuZHdpZHRoIGZvciBFTUMsIGxh
-dGVuY3kgZm9yIE1DKS4KCklzIHRoZXJlIGFueSBtb3RpdmF0aW9uIGZvciBrZWVwaW5nIE1DIGFu
-ZCBFTUMgc2VwYXJhdGU/IEluIG15IG1pbmQsCnRoZSBzb2x1dGlvbiB3YXMgYWx3YXlzIHRvIGhh
-bmRsZSB0aG9zZSB0b2dldGhlci4KClN0w6lwaGFuZQpfX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBs
-aXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2RyaS1kZXZlbAo=
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--===============1766082239==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="klx2xAta3N4vXX6fH9KR5Gjjb1712BRFL"
+
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--klx2xAta3N4vXX6fH9KR5Gjjb1712BRFL
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+On 06/18/2014 03:51 PM, Thierry Reding wrote:
+> On Wed, Jun 18, 2014 at 03:19:15PM -0600, Stephen Warren wrote:
+>> From: Stephen Warren <swarren@nvidia.com>
+>>
+>> When tegra-drm.ko is built as a module, these MODULE_DEVICE_TABLEs all=
+ow
+>> the module to be auto-loaded since the module will match the devices
+>> instantiated from device tree.
+>=20
+> I vaguely remember doing something like this a while back and getting a=
+
+> bunch of link-time errors. But I assume that you've tested this, so I
+> must be remembering wrongly.
+
+Were the problems due to:
+
+a) Simply building the tegradrm driver as modules.
+
+I vaguely recall some runtime issues with tegradrm as a module, but I'm
+not sure about build issues. I don't think this patch could make this
+any worse.
+
+b) Building as modules works, but adding MODULE_DEVICE_TABLE broke that.
+
+This seems unlikely since *many* module in the kernel have a
+MODULE_DEVICE_TABLE...
+
+Certainly, with this patch applied, building tegradrm as a module in
+next-20140611 works out just fine, and the code runs fine too. Building
+tegra_defconfig (which has tegradrm builtin) on Linus' master with this
+patch applied also works out fine.
+
+I'll post v2 with the issue you mentioned addressed.
+
+
+--klx2xAta3N4vXX6fH9KR5Gjjb1712BRFL
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+
+iQIcBAEBAgAGBQJTohDeAAoJEJuNpwkmVCGc8FcP/3k/VL7uswWA5rA1R5fhZrKW
+y/ZP7knehXqHYn10mS+VsCZU/rcsZ387C5OAKff5+5FKizcGJ2RulQtKH6prJGxm
+ZpOs478/jJ/QlU5vZ903wjwGpJU4Hof47V3LyKeeNfjw/aLPcuv77iwe7otMWVyW
+dOG++lr+fRu+sYvKZFHoGzH5Ljpj/cBxZUoIsDr6Sp0thHYEGM2eLtYEhscmmZKK
+D+o2eYa1ucZ+/N9x8UoRfki3EDYjyULTyceIK9asZXyj/wT5Nnpo6SEdEPxYsSOy
+G0S9jVir/0rAUB6jbvSmnxFcgRU4Kv+OpO2eqFwYGAt23UP2ShYbg4L1wQ2cBIaN
+j8UM9iiYQPCSLGizwT9D5/4YQvkQc6n+YshKo4UzLIw0skjF1VMafECrPz885Cl/
+Rhq67Ce8/hvApvdxeNNi8Pe/SS47Qvw13AB3Hve8aOlIPlQSgxmITtb3Q/Jb/bkc
+HjY0G4H4m7BW/oUEmHjk9jt22QbNA3JZQlxxl6Rf0AlDxxGKlaITT+ogCBuKyo/h
+YQRWruqAQxH4Wa+ZAlulHusyQZInjZOXNBSzEmCzJV5kMy1nw5DFoAP8OEBdhaCA
+6zj0HqCw/Q03/St5bkBgDbDy71NjNFvxELdgz5cHzGrDbqMVtH2SyxNobTS9w8DB
+dPfAfAoDOwisMS2+aQ0n
+=JWM9
+-----END PGP SIGNATURE-----
+
+--klx2xAta3N4vXX6fH9KR5Gjjb1712BRFL--
+
+--===============1766082239==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============1766082239==--
