@@ -1,68 +1,46 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 6/9] ARM: tegra: Export tegra_powergate_power_on
-Date: Wed, 18 Jun 2014 15:18:06 +0300
-Message-ID: <20140618121806.GJ3407@tbergstrom-lnx.Nvidia.com>
-References: <1401881559-18469-1-git-send-email-mperttunen@nvidia.com>
- <1401881559-18469-7-git-send-email-mperttunen@nvidia.com>
- <539F691E.5030204@wwwdotorg.org>
- <20140617121313.GE18816@ulmo>
- <20140617140146.GH3407@tbergstrom-lnx.Nvidia.com>
- <20140617215119.GC24743@mithrandir>
+From: Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [PATCH v2 0/7] Serial ATA support for NVIDIA Tegra124
+Date: Wed, 18 Jun 2014 17:23:19 +0300
+Message-ID: <1403101406-15439-1-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20140617215119.GC24743@mithrandir>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: swarren@wwwdotorg.org, thierry.reding@gmail.com, tj@kernel.org, pdeschrijver@nvidia.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-ide@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jun 17, 2014 at 11:51:20PM +0200, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Tue, Jun 17, 2014 at 05:01:46PM +0300, Peter De Schrijver wrote:
-> > On Tue, Jun 17, 2014 at 02:13:15PM +0200, Thierry Reding wrote:
-> > > > Old Signed by an unknown key
-> > > 
-> > > On Mon, Jun 16, 2014 at 04:01:02PM -0600, Stephen Warren wrote:
-> > > > On 06/04/2014 05:32 AM, Mikko Perttunen wrote:
-> > > > > This symbol needs to be exported to power on rails without using
-> > > > > tegra_powergate_sequence_power_up. tegra_powergate_sequence_power_up
-> > > > > cannot be used in situations where the driver wants to handle clocking
-> > > > > by itself.
-> > > > 
-> > > > Thierry, are you OK with this change?
-> > > 
-> > > I would've preferred tegra_powergate_sequence_power_up() to be used
-> > 
-> > I don't think the current tegra_powergate_sequence_power_up() API is very well
-> > defined though. I don't think the clocks and resets required by the sequence
-> > should be provided by the driver. For one, there can be several clocks and
-> > resets that need to be controlled for a single domain.
-> 
-> Do you have any suggestions for what the API should look like? Even if
-> we plan to move to some different API, I think there's some advantage in
-> using it consistently if for no other reason than to make it easier to
-> replace occurrences later on.
-> 
+Hi,
 
-I think the API should only have the domain ID as input so:
+This series adds support for the onboard AHCI-compliant Serial ATA
+controller found on Tegra124 systems-on-chip. The series depends on
+Thierry's XUSB pinctrl driver.
 
-int tegra_powerdomain_on(int id) 
+A branch containing the series is located at 
+	git://github.com/cyndis/linux.git
+branch ahci-rel-v2.
 
-/*
- * Prerequisites: domain is off
- * Result: domain is on, clocks of the modules in the domain are off, modules are in reset
- */
+Mikko Perttunen (7):
+  of: Add NVIDIA Tegra SATA controller binding
+  ARM: tegra: Add SATA controller to Tegra124 device tree
+  ARM: tegra: Add SATA and SATA power to Jetson TK1 device tree
+  clk: tegra: Enable hardware control of SATA PLL
+  clk: tegra: Add SATA clocks to Tegra124 initialization table
+  ata: Add support for the Tegra124 SATA controller
+  ARM: tegra: Add options for Tegra AHCI support to tegra_defconfig
 
-int tegra_powerdomain_off(int id)
+ .../devicetree/bindings/ata/tegra-sata.txt         |  30 ++
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts          |  35 ++
+ arch/arm/boot/dts/tegra124.dtsi                    |  25 ++
+ arch/arm/configs/tegra_defconfig                   |   3 +
+ drivers/ata/Kconfig                                |   9 +
+ drivers/ata/Makefile                               |   1 +
+ drivers/ata/ahci_tegra.c                           | 448 +++++++++++++++++++++
+ drivers/clk/tegra/clk-pll.c                        |   8 +
+ drivers/clk/tegra/clk-tegra124.c                   |   2 +
+ 9 files changed, 561 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/ata/tegra-sata.txt
+ create mode 100644 drivers/ata/ahci_tegra.c
 
-/*
- * Prerequisites: all clocks of the modules in the domain are off
- * result: domain is off
- */
-
-Cheers,
-
-Peter/
+-- 
+1.8.1.5
