@@ -1,118 +1,89 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [RFC PATCH 1/4] memory: tegra124-emc: Add EMC driver
-Date: Wed, 18 Jun 2014 17:24:47 -0600
-Message-ID: <53A21FBF.5090806@wwwdotorg.org>
-References: <1402925713-25426-1-git-send-email-tomeu.vizoso@collabora.com>
- <1402925713-25426-2-git-send-email-tomeu.vizoso@collabora.com>
- <539F4D44.3070309@wwwdotorg.org> <53A03186.3040703@collabora.com>
- <53A069B6.6070902@wwwdotorg.org> <53A1CB23.5090307@collabora.com>
- <53A1D089.8010605@wwwdotorg.org> <20140618220343.GD26514@mithrandir>
- <53A20E02.5050900@wwwdotorg.org> <20140618231410.GG26514@mithrandir>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] drm/tegra: add MODULE_DEVICE_TABLEs
+Date: Thu, 19 Jun 2014 01:27:01 +0200
+Message-ID: <20140618232651.GI26514@mithrandir>
+References: <1403126355-16236-1-git-send-email-swarren@wwwdotorg.org>
+ <20140618215058.GA26514@mithrandir>
+ <53A210DE.80704@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1293100697=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20140618231410.GG26514@mithrandir>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, myungjoo.ham@samsung.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="kr14OxHsRwZHHqxS"
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <53A210DE.80704@wwwdotorg.org>
+Sender: stable-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, stable@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---===============1293100697==
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="I2dPCOm6FCrSjaWnNTXfrE9fh6llVORAp"
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---I2dPCOm6FCrSjaWnNTXfrE9fh6llVORAp
-Content-Type: text/plain; charset=ISO-8859-1
+--kr14OxHsRwZHHqxS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On 06/18/2014 05:14 PM, Thierry Reding wrote:
-> On Wed, Jun 18, 2014 at 04:09:06PM -0600, Stephen Warren wrote:
->> On 06/18/2014 04:03 PM, Thierry Reding wrote:
-=2E..
->>> From what I remember, Mike was fairly strongly opposing the idea of
->>> virtual clocks, but what you're proposing here sounds like it would
->>> assume the existence of virtual clocks. clk_set_rate() per client
->>> doesn't work with the current API as I understand it.
->>>
->>> Or perhaps what you're proposing isn't about the individual clocks at=
-
->>> all but rather about a mechanism to express constraints for a set of
->>> clocks?
->>
->> This doesn't have anything to do with virtual clocks. As you mention,
->> it's just about constraints.
->>
->> One user of clock "cpu" wants min rate 216MHz. Another wants max rate
->> 1GHz. cpufreq will request some rate between the 2, or be capped to
->> those limits. These set of imposed constraints would need to be stored=
-
->> per client of the clock, not per HW clock, since many clients could se=
-t
->> different max rates (e.g. thermal throttle 1.5GHz due to temperature,
->> CPU policy 1GHz due to the user selecting low CPU power, etc.)
->>
->> Similarly for audio, of there are N clients of 1 clock/PLL, and they
->> each want the PLL to run at a different rate, something needs to detec=
-t
->> that and deny it.
+On Wed, Jun 18, 2014 at 04:21:18PM -0600, Stephen Warren wrote:
+> On 06/18/2014 03:51 PM, Thierry Reding wrote:
+> > On Wed, Jun 18, 2014 at 03:19:15PM -0600, Stephen Warren wrote:
+> >> From: Stephen Warren <swarren@nvidia.com>
+> >>
+> >> When tegra-drm.ko is built as a module, these MODULE_DEVICE_TABLEs all=
+ow
+> >> the module to be auto-loaded since the module will match the devices
+> >> instantiated from device tree.
+> >=20
+> > I vaguely remember doing something like this a while back and getting a
+> > bunch of link-time errors. But I assume that you've tested this, so I
+> > must be remembering wrongly.
 >=20
-> I'm wondering how this should work with the current API. Could the cloc=
-k
-> core be modified to return a per-client struct clk * that references th=
-e
-> hardware clock internally? Or do we need to add a new API?
+> Were the problems due to:
+>=20
+> a) Simply building the tegradrm driver as modules.
+>=20
+> I vaguely recall some runtime issues with tegradrm as a module, but I'm
+> not sure about build issues. I don't think this patch could make this
+> any worse.
+>=20
+> b) Building as modules works, but adding MODULE_DEVICE_TABLE broke that.
 
-I would assume the we can just change struct clk and hide the details
-from any driver. Hopefully only clock-core and clock-drivers would need
-any changes.
+I think it was this variant. Although adding MODULE_DEVICE_TABLE also
+broke building the driver as builtin module. I think the issue was that
+the linker was complaining about some symbol being defined multiple
+times. But admittedly this was a long time ago, so I'm not sure that my
+memory is entirely accurate.
 
+> This seems unlikely since *many* module in the kernel have a
+> MODULE_DEVICE_TABLE...
+>=20
+> Certainly, with this patch applied, building tegradrm as a module in
+> next-20140611 works out just fine, and the code runs fine too. Building
+> tegra_defconfig (which has tegradrm builtin) on Linus' master with this
+> patch applied also works out fine.
 
---I2dPCOm6FCrSjaWnNTXfrE9fh6llVORAp
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+Okay, sounds good then. I'll do some build testing to see if I can
+reproduce the errors, otherwise this looks good to me.
+
+Thierry
+
+--kr14OxHsRwZHHqxS
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJToh+/AAoJEJuNpwkmVCGcEQQQAIzeqtCG/DISo4rxAND+3zpE
-U7yQJPFAJ7TXQGPygiCSBUNCPEhN0uhX7yCh8t+BphJdN180YYvHs8S2pbxsxQgq
-rtUZcAXmD6AVA/n42ptWR6R+Cg90axWhGRsVMYGQDuzmS+ibz1Ra3vAHe7jxOFPC
-g8p3IaXCBB5l0vkRXBTd8KXsj5jtjP2qq0YYtMyGNoRiLgip0fOLX9qEsxMVdaEn
-I5FCd4qObGu9FEb2h0T7P4dwPqVcP/5yxQB7gpWfZQsPZNLoEBRPQJmCkZJafBXB
-lM8DZGjnwvqBLDKjQ9TTP2gOq5mNmKmoLWQTKRfGJe3j44ltVd6zyMKUfPXcSCT4
-KLb/jyLPK6P1mTc1qGqKUT3x+hlAIN8f+pI+mGxurjVjzQG+Msilkt9kVLY4mjgA
-f5p0bBlBi0fteh9hAuiJJq2Td/WLhMib2PtodlQrAVD8HD6STqg1o7uY5qghXCGD
-EsVfNFfxPEl6caTE9dgFpTeQX/HyO8g+bJ6MCX0r/eSx0Vg2tRE/dcviLAnC4gI1
-B4QXJgE3ySNjFCnYrv6bQrf0Nq5+0ZzD1WK33T2hYuLyyR8wGkny/lAzL20lqRmH
-mr2RZQv/htsHZOMMEbqsKUgf3h3i7iL6XQQm3up8Juf72/RzjEb+WqnoXY0OXUGK
-vvu0XmhibyGb1VZS290+
-=VeD4
+iQIcBAEBAgAGBQJToiBBAAoJEN0jrNd/PrOh224P/RCgBN5vtxmaT/yoNq0a267A
+/hVh+h0irKRCRxqySTTV9hdnhnndWEr16qabEj2bHZwJE07QHcGA/q9LaYBOYgn2
+oD9mVHZXy4MQbvdSk2rMjLjkdau0DVtXjmEZLKuYc+EUdNpPCHbgiyndMhDMZi7U
+slzGnV7taXU4sA8y9mH8RUrLDs8q/6egD3ov2ipe/iUIeSja4zdSsCUvO5XPXtKd
+LZc1+eXx97uyBl592c6XujRHZuij43ICxVdsje6WQNraw7QvMnyaX1rIG6SxDEfD
+Eop+CVTGzd/JMrMdxJChDo3VCVCbW6ouCs+M6jYj4+HsVhEEp8QE7LMFB9ri5pS1
+5vfP0Cuspra48eSgFCqlnC/frOIw4pUGGjepMpbsLFRl71/vLmHGYtJqoYJ1IwQG
+KeI9pdZ6+o4U4qKOFa57lz4n0ETn7HM/OSSHTwwj5kyYphSm9sca/E8F/r+CBlE1
+2RboSx1an1PiEWkWZ0P/ykLLaPbza6+mMxmKN6f+rkU0zrvfR9W64qmki/V0rcoP
+pgDjqp+2mcNUhZHLpvUJ0qenim4Euqj0nIyAE3IZ6JIlH1nc/OBUAU9nxsSYwreS
+ldgXWduB/VhjeRHTlgnlxiR9AzqfmbymORSUvJvY0W/bgsNfijgDaIax8gB+CgNF
+i14W2h8yA9PPTBUeYUAz
+=hhSc
 -----END PGP SIGNATURE-----
 
---I2dPCOm6FCrSjaWnNTXfrE9fh6llVORAp--
-
---===============1293100697==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============1293100697==--
+--kr14OxHsRwZHHqxS--
