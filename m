@@ -1,11 +1,13 @@
 From: Andrew Bresticker <abrestic@chromium.org>
-Subject: [PATCH v1 0/9] Tegra XHCI support
-Date: Tue, 17 Jun 2014 23:16:11 -0700
-Message-ID: <1403072180-4944-1-git-send-email-abrestic@chromium.org>
+Subject: [PATCH v1 5/9] of: Add NVIDIA Tegra XHCI controller binding
+Date: Tue, 17 Jun 2014 23:16:16 -0700
+Message-ID: <1403072180-4944-6-git-send-email-abrestic@chromium.org>
+References: <1403072180-4944-1-git-send-email-abrestic@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1403072180-4944-1-git-send-email-abrestic@chromium.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -19,78 +21,96 @@ To: devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-tegra@vger.kern
 Cc: Mark Rutland <mark.rutland@arm.com>, Russell King <linux@arm.linux.org.uk>, Mathias Nyman <mathias.nyman@intel.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Andrew Bresticker <abrestic@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Randy Dunlap <rdunlap@infradead.org>, Kishon Vijay Abraham I <kishon@ti.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Alan Stern <stern@rowland.harvard.edu>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-tegra@vger.kernel.org
 
-This series adds support for XHCI on NVIDIA Tegra SoCs.  This includes:
- - extending the XUSB pad controller driver to support the USB PHY
-   types (UTMI, HSIC, and USB3),
- - adding a driver for the mailbox used to communicate with the XHCI
-   controller's firmware, and
- - adding a XHCI host-controller driver.
+Add device-tree binding documentation for the XHCI controller present
+on Tegra124 and later SoCs.
 
-Based on Stephen Warren's for-next branch plus Thierry Reding's XUSB
-pad controller driver [1].
-
-Tested on Venice2 and Jetson TK1 with a variety of USB2.0 and USB3.0 memory
-sticks and ethernet dongles using controller firmware from the ChromiumOS
-tree [2].
-
-Notes:
- - HSIC support is mostly untested and I think there are still some issues
-   to work out there.  I do have a Tegra124 board with a HSIC hub so I'll
-   try to sort those out later.
- - The XUSB padctl driver doesn't play nice with the existing Tegra USB2.0
-   PHY driver, so all ports should be assigned to the XHCI controller.
-
-Based on work by:
-  a lot of people, but from what I can tell from the L4T tree [3], the
-  original authors of the Tegra XHCI driver are:
-    Ajay Gupta <ajayg@nvidia.com>
-    Bharath Yadav <byadav@nvidia.com>
-
-Changes from RFC:
- - Dropped Tegra114 support.
- - Split out mailbox into separate driver.
- - Stopped using child xhci-plat device in XHCI host-controller driver.
- - Added PHY support to Thierry's XUSB padctl driver instead of in a separate
-   USB PHY driver.
- - Added Jetson TK1 support.
- - Misc. cleanups.
-
-[1] http://patchwork.ozlabs.org/patch/360458/
-[2] http://commondatastorage.googleapis.com/chromeos-localmirror/distfiles/xhci-firmware-2014.05.09.00.00.tbz2
-[3] git://nv-tegra.nvidia.com/linux-3.10.git
-
-Andrew Bresticker (9):
-  of: Add NVIDIA Tegra XUSB mailbox binding
-  mailbox: Add NVIDIA Tegra XUSB mailbox driver
-  of: Update Tegra XUSB pad controller binding for USB
-  pinctrl: tegra-xusb: Add USB PHY support
-  of: Add NVIDIA Tegra XHCI controller binding
-  usb: xhci: Add NVIDIA Tegra XHCI host-controller driver
-  ARM: tegra: Add Tegra124 XUSB mailbox and XHCI controller
-  ARM: tegra: jetson-tk1: Add XHCI support
-  ARM: tegra: venice2: Add XHCI support
-
- .../bindings/mailbox/nvidia,tegra124-xusb-mbox.txt |   25 +
- .../pinctrl/nvidia,tegra124-xusb-padctl.txt        |   53 +-
- .../bindings/usb/nvidia,tegra124-xhci.txt          |   76 ++
- arch/arm/boot/dts/tegra124-jetson-tk1.dts          |   43 +-
- arch/arm/boot/dts/tegra124-venice2.dts             |   72 +-
- arch/arm/boot/dts/tegra124.dtsi                    |   31 +
- drivers/mailbox/Kconfig                            |    7 +
- drivers/mailbox/Makefile                           |    2 +
- drivers/mailbox/tegra-xusb-mbox.c                  |  308 ++++++
- drivers/pinctrl/pinctrl-tegra-xusb.c               | 1106 +++++++++++++++++++-
- drivers/usb/host/Kconfig                           |   12 +
- drivers/usb/host/Makefile                          |    2 +
- drivers/usb/host/xhci-tegra.c                      |  900 ++++++++++++++++
- include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h   |    7 +
- include/linux/tegra-xusb-mbox.h                    |   98 ++
- 15 files changed, 2673 insertions(+), 69 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mailbox/nvidia,tegra124-xusb-mbox.txt
+Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+---
+ .../bindings/usb/nvidia,tegra124-xhci.txt          | 76 ++++++++++++++++++++++
+ 1 file changed, 76 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra124-xhci.txt
- create mode 100644 drivers/mailbox/tegra-xusb-mbox.c
- create mode 100644 drivers/usb/host/xhci-tegra.c
- create mode 100644 include/linux/tegra-xusb-mbox.h
 
+diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra124-xhci.txt b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xhci.txt
+new file mode 100644
+index 0000000..fdb8624
+--- /dev/null
++++ b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xhci.txt
+@@ -0,0 +1,76 @@
++NVIDIA Tegra XHCI controller
++============================
++
++The Tegra XHCI controller supports both USB2 and USB3 interfaces exposed
++by the Tegra XUSB pad controller.
++
++Required properties:
++--------------------
++ - compatible: Should be "nvidia,tegra124-xhci".
++ - reg: Address and length of the register sets.  There should be three
++   entries in the following order: XHCI host registers, FPCI registers, and
++   IPFS registers.
++ - interrupts: XHCI host interrupt.
++ - clocks: Must contain an entry for each entry in clock-names.
++   See ../clock/clock-bindings.txt for details.
++ - clock-names: Must include the following entries:
++    - xusb_host
++    - xusb_falcon_src
++    - xusb_ss
++    - xusb_ss_src
++    - xusb_hs_src
++    - xusb_fs_src
++    - pll_u_480m
++    - clk_m
++    - pll_e
++ - resets: Must contain an entry for each entry in reset-names.
++   See ../reset/reset.txt for details.
++ - reset-names: Must include the following entries:
++   - xusb_host
++   - xusb_ss
++ - nvidia,xusb-mbox: Handle to the Tegra XUSB mailbox node.
++
++Optional properties:
++--------------------
++ - phys: Must contain an entry for each entry in phy-names.
++   See ../phy/phy-bindings.txt for details.
++ - phy-names: Should include an entry for each PHY used by the controller.
++   May be a subset of the following:
++    - utmi-{0,1,2}
++    - hsic-{0,1}
++    - usb3-{0,1}
++ - s1p05v-supply: 1.05V supply regulator.
++ - s1p8v-supply: 1.8V supply regulator.
++ - s3p3v-supply: 3.3V supply regulator.
++
++Example:
++--------
++	usb@0,70090000 {
++		compatible = "nvidia,tegra124-xhci";
++		reg = <0x0 0x70090000 0x0 0x8000>,
++		      <0x0 0x70098000 0x0 0x1000>,
++		      <0x0 0x70099000 0x0 0x1000>;
++		interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA124_CLK_XUSB_HOST>,
++			 <&tegra_car TEGRA124_CLK_XUSB_FALCON_SRC>,
++			 <&tegra_car TEGRA124_CLK_XUSB_SS>,
++			 <&tegra_car TEGRA124_CLK_XUSB_SS_SRC>,
++			 <&tegra_car TEGRA124_CLK_XUSB_HS_SRC>,
++			 <&tegra_car TEGRA124_CLK_XUSB_FS_SRC>,
++			 <&tegra_car TEGRA124_CLK_PLL_U_480M>,
++			 <&tegra_car TEGRA124_CLK_CLK_M>,
++			 <&tegra_car TEGRA124_CLK_PLL_E>;
++		clock-names = "xusb_host", "xusb_falcon_src", "xusb_ss",
++			      "xusb_ss_src", "xusb_hs_src", "xusb_fs_src",
++			      "pll_u_480m", "clk_m", "pll_e";
++		resets = <&tegra_car 89>, <&tegra_car 156>;
++		reset-names = "xusb_host", "xusb_ss";
++		nvidia,xusb-mbox = <&mbox>;
++		phys = <&padctl TEGRA_XUSB_PADCTL_UTMI_P1>, /* mini-PCIe USB */
++		       <&padctl TEGRA_XUSB_PADCTL_UTMI_P2>, /* USB A */
++		       <&padctl TEGRA_XUSB_PADCTL_USB3_P0>; /* USB A */
++		phy-names = "utmi-1", "utmi-2", "usb3-0";
++		s1p05v-supply = <&vdd_1v05_run>;
++		s3p3v-supply = <&vdd_3v3_lp0>;
++		s1p8v-supply = <&vddio_1v8>;
++	};
 -- 
 2.0.0.526.g5318336
