@@ -1,55 +1,80 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH] ARM: tegra: TN7: relax some regulators
-Date: Thu, 19 Jun 2014 16:49:14 +0900
-Message-ID: <1403164154-1362-1-git-send-email-acourbot@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH 6/9] ARM: tegra: Export tegra_powergate_power_on
+Date: Thu, 19 Jun 2014 11:02:35 +0300
+Message-ID: <20140619080234.GK3407@tbergstrom-lnx.Nvidia.com>
+References: <1401881559-18469-1-git-send-email-mperttunen@nvidia.com>
+ <1401881559-18469-7-git-send-email-mperttunen@nvidia.com>
+ <539F691E.5030204@wwwdotorg.org> <20140617121313.GE18816@ulmo>
+ <20140617140146.GH3407@tbergstrom-lnx.Nvidia.com>
+ <20140617215119.GC24743@mithrandir>
+ <20140618121806.GJ3407@tbergstrom-lnx.Nvidia.com>
+ <53A1B252.1030204@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-ide-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <53A1B252.1030204@wwwdotorg.org>
+Sender: linux-ide-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, "tj@kernel.org" <tj@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Remove the regulator-always-on property from some regulators that do not
-need it. On recent kernels fixed regulators which supply is always on
-fail registration.
+On Wed, Jun 18, 2014 at 05:37:54PM +0200, Stephen Warren wrote:
+> On 06/18/2014 06:18 AM, Peter De Schrijver wrote:
+> > On Tue, Jun 17, 2014 at 11:51:20PM +0200, Thierry Reding wrote:
+> >> * PGP Signed by an unknown key
+> >>
+> >> On Tue, Jun 17, 2014 at 05:01:46PM +0300, Peter De Schrijver wrote:
+> >>> On Tue, Jun 17, 2014 at 02:13:15PM +0200, Thierry Reding wrote:
+> >>>>> Old Signed by an unknown key
+> >>>>
+> >>>> On Mon, Jun 16, 2014 at 04:01:02PM -0600, Stephen Warren wrote:
+> >>>>> On 06/04/2014 05:32 AM, Mikko Perttunen wrote:
+> >>>>>> This symbol needs to be exported to power on rails without using
+> >>>>>> tegra_powergate_sequence_power_up. tegra_powergate_sequence_power_up
+> >>>>>> cannot be used in situations where the driver wants to handle clocking
+> >>>>>> by itself.
+> >>>>>
+> >>>>> Thierry, are you OK with this change?
+> >>>>
+> >>>> I would've preferred tegra_powergate_sequence_power_up() to be used
+> >>>
+> >>> I don't think the current tegra_powergate_sequence_power_up() API is very well
+> >>> defined though. I don't think the clocks and resets required by the sequence
+> >>> should be provided by the driver. For one, there can be several clocks and
+> >>> resets that need to be controlled for a single domain.
+> >>
+> >> Do you have any suggestions for what the API should look like? Even if
+> >> we plan to move to some different API, I think there's some advantage in
+> >> using it consistently if for no other reason than to make it easier to
+> >> replace occurrences later on.
+> >>
+> > 
+> > I think the API should only have the domain ID as input so:
+> > 
+> > int tegra_powerdomain_on(int id) 
+> > 
+> > /*
+> >  * Prerequisites: domain is off
+> >  * Result: domain is on, clocks of the modules in the domain are off, modules are in reset
+> >  */
+> > 
+> > int tegra_powerdomain_off(int id)
+> > 
+> > /*
+> >  * Prerequisites: all clocks of the modules in the domain are off
+> >  * result: domain is off
+> >  */
+> 
+> That doesn't make sense; the PMC doesn't have access to the clock and
+> reset IDs - that's why the API requires them to be passed in.
+> 
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
-Stephen, do you think you could queue this for 3.16-rc2 or 3? Without
-this the TN7 panel does not show up which makes the device virtually
-unusable.
+We should make driver look them up by name then. It doesn't make sense to
+move this knowledge to the drivers as there can be several modules in 1
+powerdomain. So every driver would then need to have access to all clock
+and reset IDs of the modules of the domain?
 
- arch/arm/boot/dts/tegra114-tn7.dts | 3 ---
- 1 file changed, 3 deletions(-)
+Cheers,
 
-diff --git a/arch/arm/boot/dts/tegra114-tn7.dts b/arch/arm/boot/dts/tegra114-tn7.dts
-index 963662145635..abcfe77c3a99 100644
---- a/arch/arm/boot/dts/tegra114-tn7.dts
-+++ b/arch/arm/boot/dts/tegra114-tn7.dts
-@@ -114,7 +114,6 @@
- 						regulator-name = "vs-pmu-1v8";
- 						regulator-min-microvolt = <1800000>;
- 						regulator-max-microvolt = <1800000>;
--						regulator-always-on;
- 						regulator-boot-on;
- 					};
- 
-@@ -130,7 +129,6 @@
- 						regulator-name = "vd-smps10-out1";
- 						regulator-min-microvolt = <5000000>;
- 						regulator-max-microvolt = <5000000>;
--						regulator-always-on;
- 						regulator-boot-on;
- 					};
- 
-@@ -138,7 +136,6 @@
- 						regulator-name = "vd-smps10-out2";
- 						regulator-min-microvolt = <5000000>;
- 						regulator-max-microvolt = <5000000>;
--						regulator-always-on;
- 						regulator-boot-on;
- 					};
- 
--- 
-2.0.0
+Peter.
