@@ -1,78 +1,180 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH 6/9] ARM: tegra: Export tegra_powergate_power_on
-Date: Thu, 19 Jun 2014 11:36:12 +0300
-Message-ID: <20140619083612.GL3407@tbergstrom-lnx.Nvidia.com>
-References: <1401881559-18469-1-git-send-email-mperttunen@nvidia.com>
- <1401881559-18469-7-git-send-email-mperttunen@nvidia.com>
- <539F691E.5030204@wwwdotorg.org>
- <20140617121313.GE18816@ulmo>
- <20140617140146.GH3407@tbergstrom-lnx.Nvidia.com>
- <20140617215119.GC24743@mithrandir>
- <20140618121806.GJ3407@tbergstrom-lnx.Nvidia.com>
- <53A1B252.1030204@wwwdotorg.org>
- <20140619080234.GK3407@tbergstrom-lnx.Nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-ide-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140619080234.GK3407@tbergstrom-lnx.Nvidia.com>
-Sender: linux-ide-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, "tj@kernel.org" <tj@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v5 1/4] of: Add NVIDIA Tegra XUSB pad controller binding
+Date: Thu, 19 Jun 2014 13:37:07 +0200
+Message-ID: <1403177830-28595-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jun 19, 2014 at 10:02:35AM +0200, Peter De Schrijver wrote:
-> On Wed, Jun 18, 2014 at 05:37:54PM +0200, Stephen Warren wrote:
-> > On 06/18/2014 06:18 AM, Peter De Schrijver wrote:
-> > > On Tue, Jun 17, 2014 at 11:51:20PM +0200, Thierry Reding wrote:
-> > >> * PGP Signed by an unknown key
-> > >>
-> > >> On Tue, Jun 17, 2014 at 05:01:46PM +0300, Peter De Schrijver wrote:
-> > >>> On Tue, Jun 17, 2014 at 02:13:15PM +0200, Thierry Reding wrote:
-> > >>>>> Old Signed by an unknown key
-> > >>>>
-> > >>>> On Mon, Jun 16, 2014 at 04:01:02PM -0600, Stephen Warren wrote:
-> > >>>>> On 06/04/2014 05:32 AM, Mikko Perttunen wrote:
-> > >>>>>> This symbol needs to be exported to power on rails without using
-> > >>>>>> tegra_powergate_sequence_power_up. tegra_powergate_sequence_power_up
-> > >>>>>> cannot be used in situations where the driver wants to handle clocking
-> > >>>>>> by itself.
-> > >>>>>
-> > >>>>> Thierry, are you OK with this change?
-> > >>>>
-> > >>>> I would've preferred tegra_powergate_sequence_power_up() to be used
-> > >>>
-> > >>> I don't think the current tegra_powergate_sequence_power_up() API is very well
-> > >>> defined though. I don't think the clocks and resets required by the sequence
-> > >>> should be provided by the driver. For one, there can be several clocks and
-> > >>> resets that need to be controlled for a single domain.
-> > >>
-> > >> Do you have any suggestions for what the API should look like? Even if
-> > >> we plan to move to some different API, I think there's some advantage in
-> > >> using it consistently if for no other reason than to make it easier to
-> > >> replace occurrences later on.
-> > >>
-> > > 
-> > > I think the API should only have the domain ID as input so:
-> > > 
-> > > int tegra_powerdomain_on(int id) 
-> > > 
-> > > /*
-> > >  * Prerequisites: domain is off
-> > >  * Result: domain is on, clocks of the modules in the domain are off, modules are in reset
-> > >  */
-> > > 
-> > > int tegra_powerdomain_off(int id)
-> > > 
-> > > /*
-> > >  * Prerequisites: all clocks of the modules in the domain are off
-> > >  * result: domain is off
-> > >  */
-> > 
-> > That doesn't make sense; the PMC doesn't have access to the clock and
-> > reset IDs - that's why the API requires them to be passed in.
-> > 
-> 
-> We should make driver look them up by name then. It doesn't make sense to
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I mean the PMC driver here.
+This patch adds the device tree binding documentation for the XUSB pad
+controller found on NVIDIA Tegra SoCs. It exposes both pinmuxing and PHY
+capabilities.
+
+Tested-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Changes in v4:
+- drop unneeded #address-cells = <0> and #size-cells = <0>
+
+Changes in v2:
+- move header file to this patch and refer to it in the binding
+- update example to match the latest binding
+
+ .../pinctrl/nvidia,tegra124-xusb-padctl.txt        | 127 +++++++++++++++++++++
+ include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h   |   7 ++
+ 2 files changed, 134 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt
+ create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt
+new file mode 100644
+index 000000000000..2f9c0bd66457
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt
+@@ -0,0 +1,127 @@
++Device tree binding for NVIDIA Tegra XUSB pad controller
++========================================================
++
++The Tegra XUSB pad controller manages a set of lanes, each of which can be
++assigned to one out of a set of different pads. Some of these pads have an
++associated PHY that must be powered up before the pad can be used.
++
++This document defines the device-specific binding for the XUSB pad controller.
++
++Refer to pinctrl-bindings.txt in this directory for generic information about
++pin controller device tree bindings and ../phy/phy-bindings.txt for details on
++how to describe and reference PHYs in device trees.
++
++Required properties:
++--------------------
++- compatible: should be "nvidia,tegra124-xusb-padctl"
++- reg: Physical base address and length of the controller's registers.
++- resets: Must contain an entry for each entry in reset-names.
++  See ../reset/reset.txt for details.
++- reset-names: Must include the following entries:
++  - padctl
++- #phy-cells: Should be 1. The specifier is the index of the PHY to reference.
++  See <dt-bindings/pinctrl/pinctrl-tegra-xusb.h> for the list of valid values.
++
++Lane muxing:
++------------
++
++Child nodes contain the pinmux configurations following the conventions from
++the pinctrl-bindings.txt document. Typically a single, static configuration is
++given and applied at boot time.
++
++Each subnode describes groups of lanes along with parameters and pads that
++they should be assigned to. The name of these subnodes is not important. All
++subnodes should be parsed solely based on their content.
++
++Each subnode only applies the parameters that are explicitly listed. In other
++words, if a subnode that lists a function but no pin configuration parameters
++implies no information about any pin configuration parameters. Similarly, a
++subnode that describes only an IDDQ parameter implies no information about
++what function the pins are assigned to. For this reason even seemingly boolean
++values are actually tristates in this binding: unspecified, off or on.
++Unspecified is represented as an absent property, and off/on are represented
++as integer values 0 and 1.
++
++Required properties:
++- nvidia,lanes: An array of strings. Each string is the name of a lane.
++
++Optional properties:
++- nvidia,function: A string that is the name of the function (pad) that the
++  pin or group should be assigned to. Valid values for function names are
++  listed below.
++- nvidia,iddq: Enables IDDQ mode of the lane. (0: no, 1: yes)
++
++Note that not all of these properties are valid for all lanes. Lanes can be
++divided into three groups:
++
++  - otg-0, otg-1, otg-2:
++
++    Valid functions for this group are: "snps", "xusb", "uart", "rsvd".
++
++    The nvidia,iddq property does not apply to this group.
++
++  - ulpi-0, hsic-0, hsic-1:
++
++    Valid functions for this group are: "snps", "xusb".
++
++    The nvidia,iddq property does not apply to this group.
++
++  - pcie-0, pcie-1, pcie-2, pcie-3, pcie-4, sata-0:
++
++    Valid functions for this group are: "pcie", "usb3", "sata", "rsvd".
++
++
++Example:
++========
++
++SoC file extract:
++-----------------
++
++	padctl@0,7009f000 {
++		compatible = "nvidia,tegra124-xusb-padctl";
++		reg = <0x0 0x7009f000 0x0 0x1000>;
++		resets = <&tegra_car 142>;
++		reset-names = "padctl";
++
++		#phy-cells = <1>;
++	};
++
++Board file extract:
++-------------------
++
++	pcie-controller@0,01003000 {
++		...
++
++		phys = <&padctl 0>;
++		phy-names = "pcie";
++
++		...
++	};
++
++	...
++
++	padctl: padctl@0,7009f000 {
++		pinctrl-0 = <&padctl_default>;
++		pinctrl-names = "default";
++
++		padctl_default: pinmux {
++			usb3 {
++				nvidia,lanes = "pcie-0", "pcie-1";
++				nvidia,function = "usb3";
++				nvidia,iddq = <0>;
++			};
++
++			pcie {
++				nvidia,lanes = "pcie-2", "pcie-3",
++					       "pcie-4";
++				nvidia,function = "pcie";
++				nvidia,iddq = <0>;
++			};
++
++			sata {
++				nvidia,lanes = "sata-0";
++				nvidia,function = "sata";
++				nvidia,iddq = <0>;
++			};
++		};
++	};
+diff --git a/include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h b/include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h
+new file mode 100644
+index 000000000000..914d56da9324
+--- /dev/null
++++ b/include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h
+@@ -0,0 +1,7 @@
++#ifndef _DT_BINDINGS_PINCTRL_TEGRA_XUSB_H
++#define _DT_BINDINGS_PINCTRL_TEGRA_XUSB_H 1
++
++#define TEGRA_XUSB_PADCTL_PCIE 0
++#define TEGRA_XUSB_PADCTL_SATA 1
++
++#endif /* _DT_BINDINGS_PINCTRL_TEGRA_XUSB_H */
+-- 
+1.9.2
