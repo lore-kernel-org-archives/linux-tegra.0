@@ -1,205 +1,63 @@
-From: Alban Bedel <alban.bedel@avionic-design.de>
-Subject: [PATCHv2 1/2] ARM: tegra: tamonten: add the base board regulators
-Date: Thu, 19 Jun 2014 15:25:49 +0200
-Message-ID: <1403184350-25403-1-git-send-email-alban.bedel@avionic-design.de>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Alban Bedel <alban.bedel@avionic-design.de>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 23/38] mmc: sdhci: convert sdhci_set_uhs_signaling() into
+ a library function
+Date: Thu, 19 Jun 2014 09:57:06 -0600
+Message-ID: <53A30852.2090405@wwwdotorg.org>
+References: <20140423185534.GA26756@n2100.arm.linux.org.uk> <E1Wd2Wd-0003vp-S2@rmk-PC.arm.linux.org.uk> <20140616104615.GA10701@n2100.arm.linux.org.uk> <CAPDyKFrp8JokqBbo3rg2i6WYykU1C9CuPF0FL7AOHh=Gcp5=hg@mail.gmail.com> <20140619122830.GP32514@n2100.arm.linux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140619122830.GP32514-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Chris Ball <chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org>, linux-mmc <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Barry Song <baohua-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, spear-devel-nkJGhpqTU55BDgjK7y7TUQ@public.gmane.org, Anton Vorontsov <anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Viresh Kumar <viresh.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Currently the Tamonten DTS define a fixed regulator for the 5V supply.
-However this regulator is in fact on the base board. Fix this by
-properly defining the regulators found on the base boards.
+On 06/19/2014 06:28 AM, Russell King - ARM Linux wrote:
+> On Mon, Jun 16, 2014 at 02:17:30PM +0200, Ulf Hansson wrote:
+>> Anyway, we did get some folks to test the patches and was thus fairly
+>> confident that we could merge them. Chris asked me to try to collect
+>> them in a PR for him, so I did. Sorry if I managed to screw some
+>> things up, there were several conflicts and actual regressions, which
+>> I tried to take care of.
+>>
+>> The mmc people were also very helping in sending patches to fixup
+>> related regressions, immediately after we merged your patchset. Thus
+>> together I think we managed to pull it off.
+> 
+> I tend to look through slightly less rose-tinted glasses.
+> 
+> The fact is... there's loads of ARM platforms which now fail in Olof's
+> build/boot testing, and they all seem to have a very similar pattern:
+> 
+> hummingboard:
+> [    1.149688] sdhci: Secure Digital Host Controller Interface driver
+> [    1.155901] sdhci: Copyright(c) Pierre Ossman
+> ...
+> [    1.253630] Waiting for root device /dev/mmcblk0p2...
+> [   60.325469] imx-sdma 20ec000.sdma: firmware not found
+> ~$off
+> # PYBOOT: Exception: timeout
+> 
+> jetson:
+> [    2.261355] Waiting for root device /dev/mmcblk0p1...
+> 
+> wandboard:
+> [    1.186870] sdhci: Secure Digital Host Controller Interface driver
+> [    1.193075] sdhci: Copyright(c) Pierre Ossman
+> ...
+> [    1.291064] Waiting for root device /dev/mmcblk0p2...
 
-Signed-off-by: Alban Bedel <alban.bedel@avionic-design.de>
----
-v2: * Put the board regualtors in the 'regulator' group with IDs
-      starting at 100
----
- arch/arm/boot/dts/tegra20-medcom-wide.dts | 41 +++++++++++++++++++++++++++++++
- arch/arm/boot/dts/tegra20-plutux.dts      | 41 +++++++++++++++++++++++++++++++
- arch/arm/boot/dts/tegra20-tamonten.dtsi   | 10 +-------
- arch/arm/boot/dts/tegra20-tec.dts         | 41 +++++++++++++++++++++++++++++++
- 4 files changed, 124 insertions(+), 9 deletions(-)
+Any SDHCI failures in Linus' tree (but not linux-next) that occur only
+in multi_v7_defconfig are likely solved by:
 
-diff --git a/arch/arm/boot/dts/tegra20-medcom-wide.dts b/arch/arm/boot/dts/tegra20-medcom-wide.dts
-index 6d3a4cb..0318b84 100644
---- a/arch/arm/boot/dts/tegra20-medcom-wide.dts
-+++ b/arch/arm/boot/dts/tegra20-medcom-wide.dts
-@@ -64,4 +64,45 @@
- 			 <&tegra_car TEGRA20_CLK_CDEV1>;
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
- 	};
-+
-+	regulators {
-+		vcc_24v_reg: regulator@100 {
-+			compatible = "regulator-fixed";
-+			reg = <100>;
-+			regulator-name = "vcc_24v";
-+			regulator-min-microvolt = <24000000>;
-+			regulator-max-microvolt = <24000000>;
-+			regulator-always-on;
-+		};
-+
-+		vdd_5v0_reg: regulator@101 {
-+			compatible = "regulator-fixed";
-+			reg = <101>;
-+			regulator-name = "vdd_5v0";
-+			vin-supply = <&vcc_24v_reg>;
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+			regulator-always-on;
-+		};
-+
-+		vdd_3v3_reg: regulator@102 {
-+			compatible = "regulator-fixed";
-+			reg = <102>;
-+			regulator-name = "vdd_3v3";
-+			vin-supply = <&vcc_24v_reg>;
-+			regulator-min-microvolt = <3300000>;
-+			regulator-max-microvolt = <3300000>;
-+			regulator-always-on;
-+		};
-+
-+		vdd_1v8_reg: regulator@103 {
-+			compatible = "regulator-fixed";
-+			reg = <103>;
-+			regulator-name = "vdd_1v8";
-+			vin-supply = <&vdd_3v3_reg>;
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-always-on;
-+		};
-+	};
- };
-diff --git a/arch/arm/boot/dts/tegra20-plutux.dts b/arch/arm/boot/dts/tegra20-plutux.dts
-index 29051a2..a10b415 100644
---- a/arch/arm/boot/dts/tegra20-plutux.dts
-+++ b/arch/arm/boot/dts/tegra20-plutux.dts
-@@ -58,4 +58,45 @@
- 			 <&tegra_car TEGRA20_CLK_CDEV1>;
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
- 	};
-+
-+	regulators {
-+		vcc_24v_reg: regulator@100 {
-+			compatible = "regulator-fixed";
-+			reg = <100>;
-+			regulator-name = "vcc_24v";
-+			regulator-min-microvolt = <24000000>;
-+			regulator-max-microvolt = <24000000>;
-+			regulator-always-on;
-+		};
-+
-+		vdd_5v0_reg: regulator@101 {
-+			compatible = "regulator-fixed";
-+			reg = <101>;
-+			regulator-name = "vdd_5v0";
-+			vin-supply = <&vcc_24v_reg>;
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+			regulator-always-on;
-+		};
-+
-+		vdd_3v3_reg: regulator@102 {
-+			compatible = "regulator-fixed";
-+			reg = <102>;
-+			regulator-name = "vdd_3v3";
-+			vin-supply = <&vcc_24v_reg>;
-+			regulator-min-microvolt = <3300000>;
-+			regulator-max-microvolt = <3300000>;
-+			regulator-always-on;
-+		};
-+
-+		vdd_1v8_reg: regulator@103 {
-+			compatible = "regulator-fixed";
-+			reg = <103>;
-+			regulator-name = "vdd_1v8";
-+			vin-supply = <&vdd_3v3_reg>;
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-always-on;
-+		};
-+	};
- };
-diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-index a1b0d96..9c83185 100644
---- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
-+++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-@@ -334,6 +334,7 @@
- 			#gpio-cells = <2>;
- 			gpio-controller;
- 
-+			/* vdd_5v0_reg must be provided by the base board */
- 			sys-supply = <&vdd_5v0_reg>;
- 			vin-sm0-supply = <&sys_reg>;
- 			vin-sm1-supply = <&sys_reg>;
-@@ -511,15 +512,6 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		vdd_5v0_reg: regulator@0 {
--			compatible = "regulator-fixed";
--			reg = <0>;
--			regulator-name = "vdd_5v0";
--			regulator-min-microvolt = <5000000>;
--			regulator-max-microvolt = <5000000>;
--			regulator-always-on;
--		};
--
- 		pci_vdd_reg: regulator@1 {
- 			compatible = "regulator-fixed";
- 			reg = <1>;
-diff --git a/arch/arm/boot/dts/tegra20-tec.dts b/arch/arm/boot/dts/tegra20-tec.dts
-index 890562c..c12d8be 100644
---- a/arch/arm/boot/dts/tegra20-tec.dts
-+++ b/arch/arm/boot/dts/tegra20-tec.dts
-@@ -67,4 +67,45 @@
- 			 <&tegra_car TEGRA20_CLK_CDEV1>;
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
- 	};
-+
-+	regulators {
-+		vcc_24v_reg: regulator@100 {
-+			compatible = "regulator-fixed";
-+			reg = <100>;
-+			regulator-name = "vcc_24v";
-+			regulator-min-microvolt = <24000000>;
-+			regulator-max-microvolt = <24000000>;
-+			regulator-always-on;
-+		};
-+
-+		vdd_5v0_reg: regulator@101 {
-+			compatible = "regulator-fixed";
-+			reg = <101>;
-+			regulator-name = "vdd_5v0";
-+			vin-supply = <&vcc_24v_reg>;
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+			regulator-always-on;
-+		};
-+
-+		vdd_3v3_reg: regulator@102 {
-+			compatible = "regulator-fixed";
-+			reg = <102>;
-+			regulator-name = "vdd_3v3";
-+			vin-supply = <&vcc_24v_reg>;
-+			regulator-min-microvolt = <3300000>;
-+			regulator-max-microvolt = <3300000>;
-+			regulator-always-on;
-+		};
-+
-+		vdd_1v8_reg: regulator@103 {
-+			compatible = "regulator-fixed";
-+			reg = <103>;
-+			regulator-name = "vdd_1v8";
-+			vin-supply = <&vdd_3v3_reg>;
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-always-on;
-+		};
-+	};
- };
--- 
-2.0.0
+http://lists.infradead.org/pipermail/linux-arm-kernel/2014-June/264012.html
+
+[PATCH] ARM: multi_v7_defconfig: re-enable SDHCI drivers
+
+> Whether these are caused by the patch set or not is anyone's guess,
+> because we (a) don't know what's causing these failures, and (b)
+> my patch series was never tested on anything but iMX6.
+
+I thought that I'd tested at least some of it on Tegra.
