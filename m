@@ -1,85 +1,91 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 6/9] ARM: tegra: Export tegra_powergate_power_on
-Date: Thu, 19 Jun 2014 10:01:47 -0600
-Message-ID: <53A3096B.1040409@wwwdotorg.org>
-References: <1401881559-18469-1-git-send-email-mperttunen@nvidia.com> <1401881559-18469-7-git-send-email-mperttunen@nvidia.com> <539F691E.5030204@wwwdotorg.org> <20140617121313.GE18816@ulmo> <20140617140146.GH3407@tbergstrom-lnx.Nvidia.com> <20140617215119.GC24743@mithrandir> <20140618121806.GJ3407@tbergstrom-lnx.Nvidia.com> <53A1B252.1030204@wwwdotorg.org> <20140619080234.GK3407@tbergstrom-lnx.Nvidia.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 23/38] mmc: sdhci: convert sdhci_set_uhs_signaling() into
+ a library function
+Date: Thu, 19 Jun 2014 10:02:16 -0700
+Message-ID: <CAOesGMh_8JSMzZQXVncBGmiTN6B--udY11kX=xmD5_TWRsUiSg@mail.gmail.com>
+References: <20140423185534.GA26756@n2100.arm.linux.org.uk>
+	<E1Wd2Wd-0003vp-S2@rmk-PC.arm.linux.org.uk>
+	<20140616104615.GA10701@n2100.arm.linux.org.uk>
+	<CAPDyKFrp8JokqBbo3rg2i6WYykU1C9CuPF0FL7AOHh=Gcp5=hg@mail.gmail.com>
+	<20140619122830.GP32514@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140619080234.GK3407@tbergstrom-lnx.Nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, "tj@kernel.org" <tj@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <20140619122830.GP32514@n2100.arm.linux.org.uk>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Chris Ball <chris@printf.net>, linux-mmc <linux-mmc@vger.kernel.org>, Barry Song <baohua@kernel.org>, spear-devel <spear-devel@list.st.com>, Stephen Warren <swarren@wwwdotorg.org>, Anton Vorontsov <anton@enomsg.org>, Michal Simek <michal.simek@xilinx.com>, Thierry Reding <thierry.reding@gmail.com>, Viresh Kumar <viresh.linux@gmail.com>, Ben Dooks <ben-linux@fluff.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/19/2014 02:02 AM, Peter De Schrijver wrote:
-> On Wed, Jun 18, 2014 at 05:37:54PM +0200, Stephen Warren wrote:
->> On 06/18/2014 06:18 AM, Peter De Schrijver wrote:
->>> On Tue, Jun 17, 2014 at 11:51:20PM +0200, Thierry Reding wrote:
->>>> * PGP Signed by an unknown key
->>>>
->>>> On Tue, Jun 17, 2014 at 05:01:46PM +0300, Peter De Schrijver wrote:
->>>>> On Tue, Jun 17, 2014 at 02:13:15PM +0200, Thierry Reding wrote:
->>>>>>> Old Signed by an unknown key
->>>>>>
->>>>>> On Mon, Jun 16, 2014 at 04:01:02PM -0600, Stephen Warren wrote:
->>>>>>> On 06/04/2014 05:32 AM, Mikko Perttunen wrote:
->>>>>>>> This symbol needs to be exported to power on rails without using
->>>>>>>> tegra_powergate_sequence_power_up. tegra_powergate_sequence_power_up
->>>>>>>> cannot be used in situations where the driver wants to handle clocking
->>>>>>>> by itself.
->>>>>>>
->>>>>>> Thierry, are you OK with this change?
->>>>>>
->>>>>> I would've preferred tegra_powergate_sequence_power_up() to be used
->>>>>
->>>>> I don't think the current tegra_powergate_sequence_power_up() API is very well
->>>>> defined though. I don't think the clocks and resets required by the sequence
->>>>> should be provided by the driver. For one, there can be several clocks and
->>>>> resets that need to be controlled for a single domain.
->>>>
->>>> Do you have any suggestions for what the API should look like? Even if
->>>> we plan to move to some different API, I think there's some advantage in
->>>> using it consistently if for no other reason than to make it easier to
->>>> replace occurrences later on.
->>>>
->>>
->>> I think the API should only have the domain ID as input so:
->>>
->>> int tegra_powerdomain_on(int id) 
->>>
->>> /*
->>>  * Prerequisites: domain is off
->>>  * Result: domain is on, clocks of the modules in the domain are off, modules are in reset
->>>  */
->>>
->>> int tegra_powerdomain_off(int id)
->>>
->>> /*
->>>  * Prerequisites: all clocks of the modules in the domain are off
->>>  * result: domain is off
->>>  */
+On Thu, Jun 19, 2014 at 5:28 AM, Russell King - ARM Linux
+<linux@arm.linux.org.uk> wrote:
+> On Mon, Jun 16, 2014 at 02:17:30PM +0200, Ulf Hansson wrote:
+>> Anyway, we did get some folks to test the patches and was thus fairly
+>> confident that we could merge them. Chris asked me to try to collect
+>> them in a PR for him, so I did. Sorry if I managed to screw some
+>> things up, there were several conflicts and actual regressions, which
+>> I tried to take care of.
 >>
->> That doesn't make sense; the PMC doesn't have access to the clock and
->> reset IDs - that's why the API requires them to be passed in.
->>
-> 
-> We should make driver look them up by name then. It doesn't make sense to
-> move this knowledge to the drivers as there can be several modules in 1
-> powerdomain. So every driver would then need to have access to all clock
-> and reset IDs of the modules of the domain?
+>> The mmc people were also very helping in sending patches to fixup
+>> related regressions, immediately after we merged your patchset. Thus
+>> together I think we managed to pull it off.
+>
+> I tend to look through slightly less rose-tinted glasses.
+>
+> The fact is... there's loads of ARM platforms which now fail in Olof's
+> build/boot testing, and they all seem to have a very similar pattern:
+>
+> hummingboard:
+> [    1.149688] sdhci: Secure Digital Host Controller Interface driver
+> [    1.155901] sdhci: Copyright(c) Pierre Ossman
+> ...
+> [    1.253630] Waiting for root device /dev/mmcblk0p2...
+> [   60.325469] imx-sdma 20ec000.sdma: firmware not found
+> ~$off
+> # PYBOOT: Exception: timeout
+>
+> jetson:
+> [    2.261355] Waiting for root device /dev/mmcblk0p1...
+>
+> wandboard:
+> [    1.186870] sdhci: Secure Digital Host Controller Interface driver
+> [    1.193075] sdhci: Copyright(c) Pierre Ossman
+> ...
+> [    1.291064] Waiting for root device /dev/mmcblk0p2...
+>
+> Whether these are caused by the patch set or not is anyone's guess,
+> because we (a) don't know what's causing these failures, and (b)
+> my patch series was never tested on anything but iMX6.
+>
+> I'm pretty certain that the hummingboard failure is not related to
+> my series as that's one of the platforms I did test my series on.
+>
+> There's more failures which look like possibly something in core MMC is
+> rather screwed, as OMAP5 (which doesn't use SDHCI) is also failing at
+> a similar point.
+>
+> What these failures /do/ mean is that when I'm pushing my ARM for-next
+> branch out, Olof's builder picks it up and runs a build across it, and
+> the report returns a whole load of failures.  A whole load of failures
+> means that those platforms haven't tested my changes, which means the
+> quality of testing is much lower than it should be.
+>
+> With 26 passing and 15 failing, that's over 1/3 of platforms failing,
+> which means 1/3 aren't getting tested.
+>
+> This level of failure has been going on for quite a while now, and (afaik)
+> it remains uninvestigated and undiagnosed.  (This is one of the complaints
+> I have about Olof's build/boot test system, much of the information about
+> the build and boot is hidden away and unpublished, which makes it almost
+> impossible for third parties to diagnose any problem there.  I've given up
+> looking at most of Olof's build/boot mails because of this - it's just
+> not interesting to see the same abbreviated boot failure logs which give
+> no useful information time and time again.)
 
-Having the drivers know the clocks, resets, and power domains that
-affect their HW module seems perfectly reasonable.
+Most of this is because I want to avoid sending huuuge emails out with
+the failures. I'll add a push of the full log to arm-soc.lixom.net and
+include a link to it in the emails, similar to how I do the build
+logs. I'll let you know when I've made that change.
 
-Do we actually have any case where unrelated modules are in the same
-power domain /and/ there's some need for those drivers to manipulate the
-power domain?
 
-BTW, any objections here should have been raised when the initial API
-design for powergating was created. Now that we have the current API,
-which in turn has driven the DT bindings for at least some HW modules,
-we're stuck with it due to DT ABIness. Well, perhaps we can introduce
-something new, but we'll always have to support the old way, so there's
-little point.
+-Olof
