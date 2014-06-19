@@ -1,84 +1,70 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 23/38] mmc: sdhci: convert sdhci_set_uhs_signaling()
-	into a library function
-Date: Thu, 19 Jun 2014 13:28:31 +0100
-Message-ID: <20140619122830.GP32514@n2100.arm.linux.org.uk>
-References: <20140423185534.GA26756@n2100.arm.linux.org.uk> <E1Wd2Wd-0003vp-S2@rmk-PC.arm.linux.org.uk> <20140616104615.GA10701@n2100.arm.linux.org.uk> <CAPDyKFrp8JokqBbo3rg2i6WYykU1C9CuPF0FL7AOHh=Gcp5=hg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFrp8JokqBbo3rg2i6WYykU1C9CuPF0FL7AOHh=Gcp5=hg@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>, Olof Johansson <olof@lixom.net>
-Cc: Chris Ball <chris@printf.net>, linux-mmc <linux-mmc@vger.kernel.org>, Barry Song <baohua@kernel.org>, spear-devel@list.st.com, Stephen Warren <swarren@wwwdotorg.org>, Anton Vorontsov <anton@enomsg.org>, Michal Simek <michal.simek@xilinx.com>, Thierry Reding <thierry.reding@gmail.com>, Viresh Kumar <viresh.linux@gmail.com>, Ben Dooks <ben-linux@fluff.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Alban Bedel <alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: [PATCHv2 2/2] ARM: tegra: tamonten: add the display to the Medcom Wide
+Date: Thu, 19 Jun 2014 15:25:50 +0200
+Message-ID: <1403184350-25403-2-git-send-email-alban.bedel@avionic-design.de>
+References: <1403184350-25403-1-git-send-email-alban.bedel@avionic-design.de>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1403184350-25403-1-git-send-email-alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alban Bedel <alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jun 16, 2014 at 02:17:30PM +0200, Ulf Hansson wrote:
-> Anyway, we did get some folks to test the patches and was thus fairly
-> confident that we could merge them. Chris asked me to try to collect
-> them in a PR for him, so I did. Sorry if I managed to screw some
-> things up, there were several conflicts and actual regressions, which
-> I tried to take care of.
-> 
-> The mmc people were also very helping in sending patches to fixup
-> related regressions, immediately after we merged your patchset. Thus
-> together I think we managed to pull it off.
+Enable the RGB output and add the panel definition to the Medcom Wide
+DTS. Also add a label to the backlight defintion to reference it in
+the panel definition.
 
-I tend to look through slightly less rose-tinted glasses.
+Signed-off-by: Alban Bedel <alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+---
+v2: * no changes since v1
+---
+ arch/arm/boot/dts/tegra20-medcom-wide.dts | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
-The fact is... there's loads of ARM platforms which now fail in Olof's
-build/boot testing, and they all seem to have a very similar pattern:
-
-hummingboard:
-[    1.149688] sdhci: Secure Digital Host Controller Interface driver
-[    1.155901] sdhci: Copyright(c) Pierre Ossman
-...
-[    1.253630] Waiting for root device /dev/mmcblk0p2...
-[   60.325469] imx-sdma 20ec000.sdma: firmware not found
-~$off
-# PYBOOT: Exception: timeout
-
-jetson:
-[    2.261355] Waiting for root device /dev/mmcblk0p1...
-
-wandboard:
-[    1.186870] sdhci: Secure Digital Host Controller Interface driver
-[    1.193075] sdhci: Copyright(c) Pierre Ossman
-...
-[    1.291064] Waiting for root device /dev/mmcblk0p2...
-
-Whether these are caused by the patch set or not is anyone's guess,
-because we (a) don't know what's causing these failures, and (b)
-my patch series was never tested on anything but iMX6.
-
-I'm pretty certain that the hummingboard failure is not related to
-my series as that's one of the platforms I did test my series on.
-
-There's more failures which look like possibly something in core MMC is
-rather screwed, as OMAP5 (which doesn't use SDHCI) is also failing at
-a similar point.
-
-What these failures /do/ mean is that when I'm pushing my ARM for-next
-branch out, Olof's builder picks it up and runs a build across it, and
-the report returns a whole load of failures.  A whole load of failures
-means that those platforms haven't tested my changes, which means the
-quality of testing is much lower than it should be.
-
-With 26 passing and 15 failing, that's over 1/3 of platforms failing,
-which means 1/3 aren't getting tested.
-
-This level of failure has been going on for quite a while now, and (afaik)
-it remains uninvestigated and undiagnosed.  (This is one of the complaints
-I have about Olof's build/boot test system, much of the information about
-the build and boot is hidden away and unpublished, which makes it almost
-impossible for third parties to diagnose any problem there.  I've given up
-looking at most of Olof's build/boot mails because of this - it's just
-not interesting to see the same abbreviated boot failure logs which give
-no useful information time and time again.)
-
-We need to get on top of these failures and get them sorted.
-
+diff --git a/arch/arm/boot/dts/tegra20-medcom-wide.dts b/arch/arm/boot/dts/tegra20-medcom-wide.dts
+index 0318b84..1b7c56b 100644
+--- a/arch/arm/boot/dts/tegra20-medcom-wide.dts
++++ b/arch/arm/boot/dts/tegra20-medcom-wide.dts
+@@ -10,6 +10,15 @@
+ 		status = "okay";
+ 	};
+ 
++	host1x@50000000 {
++		dc@54200000 {
++			rgb {
++				status = "okay";
++				nvidia,panel = <&panel>;
++			};
++		};
++	};
++
+ 	i2c@7000c000 {
+ 		wm8903: wm8903@1a {
+ 			compatible = "wlf,wm8903";
+@@ -30,7 +39,7 @@
+ 		};
+ 	};
+ 
+-	backlight {
++	backlight: backlight {
+ 		compatible = "pwm-backlight";
+ 		pwms = <&pwm 0 5000000>;
+ 
+@@ -38,6 +47,15 @@
+ 		default-brightness-level = <6>;
+ 	};
+ 
++	panel: panel {
++		compatible = "innolux,n156bge-l21", "simple-panel";
++
++		power-supply =  <&vdd_1v8_reg>, <&vdd_3v3_reg>;
++		enable-gpios = <&gpio TEGRA_GPIO(B, 2) GPIO_ACTIVE_HIGH>;
++
++		backlight = <&backlight>;
++	};
++
+ 	sound {
+ 		compatible = "ad,tegra-audio-wm8903-medcom-wide",
+ 			     "nvidia,tegra-audio-wm8903";
 -- 
-FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
-improving, and getting towards what was expected from it.
+2.0.0
