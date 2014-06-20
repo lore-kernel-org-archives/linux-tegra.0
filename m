@@ -1,59 +1,93 @@
-From: Mark Brown <broonie@kernel.org>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH] ARM: tegra: TN7: relax some regulators
-Date: Thu, 19 Jun 2014 18:56:43 +0100
-Message-ID: <20140619175643.GR5099@sirena.org.uk>
-References: <1403164154-1362-1-git-send-email-acourbot@nvidia.com>
- <53A308C8.2070004@wwwdotorg.org>
+Date: Fri, 20 Jun 2014 14:26:43 +0900
+Message-ID: <53A3C613.8030207@nvidia.com>
+References: <1403164154-1362-1-git-send-email-acourbot@nvidia.com> <53A308C8.2070004@wwwdotorg.org> <20140619175643.GR5099@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="CFQN6Iaevez+I9dc"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <53A308C8.2070004@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140619175643.GR5099-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 06/20/2014 02:56 AM, Mark Brown wrote:
+> * PGP Signed by an unknown key
+>
+> On Thu, Jun 19, 2014 at 09:59:04AM -0600, Stephen Warren wrote:
+>> On 06/19/2014 01:49 AM, Alexandre Courbot wrote:
+>
+>>> Remove the regulator-always-on property from some regulators that do not
+>>> need it. On recent kernels fixed regulators which supply is always on
+>>> fail registration.
+>
+>> That sounds like a bug in the regulator core, which should be fixed there.
+>
+> Please actually describe the problem you believe you are seeing - I've
+> seen no reports and I can't tell anything from what you've described,
+> nor can I see any obvious way that a regulator being fixed would have
+> any effect on its supply.
 
---CFQN6Iaevez+I9dc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Here is some more information about what happens.
 
-On Thu, Jun 19, 2014 at 09:59:04AM -0600, Stephen Warren wrote:
-> On 06/19/2014 01:49 AM, Alexandre Courbot wrote:
+We have a fixed regulator defined as follows:
 
-> > Remove the regulator-always-on property from some regulators that do not
-> > need it. On recent kernels fixed regulators which supply is always on
-> > fail registration.
+vdd_lcd: regulator@2 {
+         compatible = "regulator-fixed";
+         reg = <2>;
+         regulator-name = "VD_LCD_1V8";
+         regulator-min-microvolt = <1800000>;
+         regulator-max-microvolt = <1800000>;
+         gpio = <&palmas_gpio 4 GPIO_ACTIVE_HIGH>;
+         enable-active-high;
+         vin-supply = <&vdd_1v8>;
+         regulator-boot-on;
+};
 
-> That sounds like a bug in the regulator core, which should be fixed there.
+Its vin-supply is part of the palmas device:
 
-Please actually describe the problem you believe you are seeing - I've
-seen no reports and I can't tell anything from what you've described,
-nor can I see any obvious way that a regulator being fixed would have
-any effect on its supply.
+vdd_1v8: smps8 {
+         regulator-name = "vs-pmu-1v8";
+         regulator-min-microvolt = <1800000>;
+         regulator-max-microvolt = <1800000>;
+         regulator-always-on;
+         regulator-boot-on;
+};
 
---CFQN6Iaevez+I9dc
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+When vdd_lcd is registered, set_supply() is called, which creates a new 
+regulator for vdd_1v8. In create_regulator(), 
+_regulator_can_change_status() returns false (as it should since the 
+regulator is always_on) and _regulator_is_enabled() *also* returns 
+false, so as a result regulator->always_on remains false for vdd_1v8.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Later in regulator_register(), we try to enable the supply. Since 
+regulator->always_on is false, _regulator_enable() is called on vdd_1v8, 
+and the pair _regulator_is_enabled() / _regulator_can_change_status() is 
+called again with the same result, which causes _regulator_enable() to 
+return -EPERM. This prevents vdd_lcd from being registered.
 
-iQIcBAEBAgAGBQJToyRYAAoJELSic+t+oim9c0oP/jiCLyF4BZVcp9FshcBaTixR
-VRbJ0BhzWPP9eWvdQgm16bKv3f2oPe2jav/jwNXX3mob4eB4QUsWfwATdNDNZS1s
-uh7GnZeG+buCVKR8VmVBDdfM43yzaOiJQf/uStBFVbS9Ib95GfhZGOH765L8Js02
-NjdwHFr0KnWGRyqCWO/hBM61YFYmi4QZ4AHPONon1zV9WmxkkQ8nYLD80ABBVeXc
-incGynisThTLtzhAwnz+8eS58sLoqH7/58CBnv6RfHAbvA+36P206fO4wM3SqCvH
-sD4oFElO24v9bERI+Xsvf7P1Z+0TZ4idt44bZ8WbRpIoLi76uBn98VoIb4LdkBnl
-+6oICmt2rpGJpt5gzJS2KYePahMQ/vdqwGyH5zCnNE5fKw1X7+S9IXPk7A7xFUGQ
-9Ef2hQ4ak7bf2lgtb2c1Sb+p8bS6qtfEfY15rALjadJft2CVxgxd6NMHo2o/YpP4
-IgTxtPYeaBybxT1olfJ6THQ+k+gHdFjk9M80NKGRQbI54gG5GoI0M67tnZPmFfZj
-hLJxFRE6lhKtCTPS1JRCue06OW3tuYXASvbfTrdOOyz6pi4ExWodExLCs4AsEpB7
-J/SZM0OenhkAhCgxXGub2emlEf/IpAQ9EVwffbPYAIkKExi+/m388iMGuQEwcIR6
-gbYNAoJ0tic5WsOwq7qC
-=AZsZ
------END PGP SIGNATURE-----
+So I can see three questions here:
 
---CFQN6Iaevez+I9dc--
+1) Why does _regulator_enable() on vdd_1v8 return 0 while everything 
+suggests that it is enabled (this regulator powers lot of devices, like 
+eMMC, which are working fine). This may be an issue with the palmas driver.
+
+2) When an always-on regulator that is not yet enabled is registered, 
+shouldn't it be switched on by the regulator framework?
+
+3) When a boot-on regulator is registered and _regulator_is_enabled() 
+returns contradictory information, what should be done?
+
+Note that whether the regulator-boot-on property is present or not does 
+not change anything.
+
+I tried to find a recent patch that could have introduced a change of 
+behavior, but could not find anything so far. Bisecting is made harder 
+by the fact this happens on a newly-introduced board which requires a 
+bunch of patches of its own, but it we need more information I can try 
+to do it anyway.
+
+Thanks,
+Alex.
