@@ -1,28 +1,52 @@
-From: Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>
-Subject: Re: Palmas regulator broken (was Re: [PATCH] ARM: tegra: TN7: relax
- some regulators)
-Date: Fri, 20 Jun 2014 12:27:37 -0500
-Message-ID: <53A46F09.1050505@ti.com>
-References: <1403164154-1362-1-git-send-email-acourbot@nvidia.com> <53A308C8.2070004@wwwdotorg.org> <20140619175643.GR5099@sirena.org.uk> <53A3C613.8030207@nvidia.com> <53A3D85E.7030704@nvidia.com> <20140620094119.GT5099@sirena.org.uk> <53A4039B.7000504@nvidia.com> <20140620132310.GA11936@kahuna> <20140620135454.GA10566@kahuna> <CAAVeFuJ=JTNkwDKBvuoyL=ARQs_UJb_MHzL9S8gOc8EU98znPg@mail.gmail.com>
+From: Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Fri, 20 Jun 2014 18:50:51 +0100
+Message-ID: <20140620175051.GE30656@arm.com>
+References: <1400877395-4235-1-git-send-email-thierry.reding@gmail.com>
+ <20140617233714.GD25525@mithrandir>
+ <20140618101439.GF32699@arm.com>
+ <39682213.otHMo6zoRf@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAVeFuJ=JTNkwDKBvuoyL=ARQs_UJb_MHzL9S8gOc8EU98znPg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <39682213.otHMo6zoRf@wuerfel>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Thierry Reding <thierry.reding@gmail.com>, Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Grant Grundler <grundler@chromium.org>, Joerg Roedel <joro@8bytes.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Marc Zyngier <Marc.Zyngier@arm.com>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Cho KyongHo <pullip.cho@samsung.com>, Dave P Martin <Dave.Martin@arm.com>, Hiroshi Doyu <hd>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/20/2014 09:14 AM, Alexandre Courbot wrote:
-[...]
-> Tried this v2 and it seems to do the trick! My panel switches on as expected.
+On Fri, Jun 20, 2014 at 04:53:08PM +0100, Arnd Bergmann wrote:
+> On Wednesday 18 June 2014 11:14:39 Will Deacon wrote:
+> > On Wed, Jun 18, 2014 at 12:37:16AM +0100, Thierry Reding wrote:
+> >   - Each master has a set of fixed StreamIDs
+> >   - StreamIDs can be remastered by adding a constant offset (this could also
+> >     be used to describe RequesterID -> StreamID mapping)
+> > 
+> > I'd hope this would be sufficient for most people. Dynamic ID assignment can
+> > be worked out later (I'm not even sure it belongs in this binding) and any
+> > mappings other than `add a constant offset' can be treated on a case-by-case
+> > basis. We don't want to throw the kitchen sink at a language for describing
+> > arbitrary transformations!
+> > 
+> > > We've had similar discussions before (power sequences anyone?) where we
+> > > tried to come up with a generic way to describe something in device tree
+> > > that just didn't work out too well. Some things are better done in code,
+> > > so I think we should at least consider that possibility rather than
+> > > blindly try and force everything into device tree.
+> > 
+> > If we can support 90% of SoCs with a simple DT-based description, we can
+> > address the corner cases as they arise. I'm not ruling our hardcoding
+> > topology if we have no choice, but I don't think that's a healthy place to
+> > start from.
+> 
+> So we could use the "arm,gicv3" comaptible string for all those that
+> have a relatively simple mapping, and describe that mapping entirely
+> in DT properties, but use a different compatible string for those
+> SoCs that have a mapping which we can't easily describe, and then
+> put that into code?
 
-Thanks. I posted a formal patch
-https://patchwork.kernel.org/patch/4391271/ -> might want to add
-tested/reviewed/ack on that thread. I hope I got your email ID correct
-as well there..
+That doesn't sound unreasonable, but I don't think we should commit to
+putting things into code until they come along and we can't describe them.
 
--- 
-Regards,
-Nishanth Menon
+Will
