@@ -1,67 +1,147 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCHv2 2/2] ARM: tegra: tamonten: add the display to the
- Medcom Wide
-Date: Fri, 20 Jun 2014 22:32:30 +0200
-Message-ID: <20140620203229.GB28814@mithrandir>
-References: <1403184350-25403-1-git-send-email-alban.bedel@avionic-design.de>
- <1403184350-25403-2-git-send-email-alban.bedel@avionic-design.de>
+From: Olav Haugan <ohaugan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Fri, 20 Jun 2014 16:16:25 -0700
+Message-ID: <53A4C0C9.2050908@codeaurora.org>
+References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
+	<CAL_JsqKumG1PSFoVfeGpLLG+MjXFeF4aUjun=vv1BJpaxk0Byg@mail.gmail.com>
+	<4545972.cM7IP1qTXQ@wuerfel>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ZfOjI3PrQbgiZnxM"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1403184350-25403-2-git-send-email-alban.bedel@avionic-design.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alban Bedel <alban.bedel@avionic-design.de>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <4545972.cM7IP1qTXQ@wuerfel>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 5/30/2014 12:06 PM, Arnd Bergmann wrote:
+> On Friday 30 May 2014 08:16:05 Rob Herring wrote:
+>> On Fri, May 23, 2014 at 3:33 PM, Thierry Reding
+>> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>>> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>> +IOMMU master node:
+>>> +==================
+>>> +
+>>> +Devices that access memory through an IOMMU are called masters. A device can
+>>> +have multiple master interfaces (to one or more IOMMU devices).
+>>> +
+>>> +Required properties:
+>>> +--------------------
+>>> +- iommus: A list of phandle and IOMMU specifier pairs that describe the IOMMU
+>>> +  master interfaces of the device. One entry in the list describes one master
+>>> +  interface of the device.
+>>> +
+>>> +When an "iommus" property is specified in a device tree node, the IOMMU will
+>>> +be used for address translation. If a "dma-ranges" property exists in the
+>>> +device's parent node it will be ignored. An exception to this rule is if the
+>>> +referenced IOMMU is disabled, in which case the "dma-ranges" property of the
+>>> +parent shall take effect.
+>>
+>> Just thinking out loud, could you have dma-ranges in the iommu node
+>> for the case when the iommu is enabled rather than putting the DMA
+>> window information into the iommus property?
+>>
+>> This would probably mean that you need both #iommu-cells and #address-cells.
+> 
+> The reason for doing like this was that you may need a different window
+> for each device, while there can only be one dma-ranges property in 
+> an iommu node.
+> 
+>>> +
+>>> +Optional properties:
+>>> +--------------------
+>>> +- iommu-names: A list of names identifying each entry in the "iommus"
+>>> +  property.
+>>
+>> Do we really need a name here? I would not expect that you have
+>> clearly documented names here from the datasheet like you would for
+>> interrupts or clocks, so you'd just be making up names. Sorry, but I'm
+>> not a fan of names properties in general.
+> 
+> Good point, this was really overdesign by modeling it after other
+> subsystems that can have a use for names.
+>  
+>>> +Multiple-master IOMMU:
+>>> +----------------------
+>>> +
+>>> +       iommu {
+>>> +               /* the specifier represents the ID of the master */
+>>> +               #address-cells = <1>;
+>>> +               #size-cells = <0>;
+>>> +       };
+>>> +
+>>> +       master {
+>>> +               /* device has master ID 42 in the IOMMU */
+>>> +               iommus = <&/iommu 42>;
+>>> +       };
+>>
+>> Presumably the ID would be the streamID on ARM's SMMU. How would a
+>> master with 8 streamIDs be described? This is what Calxeda midway has
+>> for SATA and I would expect that to be somewhat common. Either you
+>> need some ID masking or you'll have lots of duplication when you have
+>> windows.
+> 
+> I don't understand the problem. If you have stream IDs 0 through 7,
+> you would have
+> 
+> 	master@a {
+> 		...
+> 		iommus = <&smmu 0>;
+> 	};
+> 
+> 	master@b {
+> 		...
+> 		iommus = <&smmu 1;
+> 	};
+> 
+> 	...
+> 
+> 	master@12 {
+> 		...
+> 		iommus = <&smmu 7;
+> 	};
+> 
+> and you don't need a window at all. Why would you need a mask of
+> some sort?
 
---ZfOjI3PrQbgiZnxM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+We have multiple-master SMMUs and each master emits a variable number of
+StreamIDs. However, we have to apply a mask (the ARM SMMU spec allows
+for this) to the StreamIDs due to limited number of StreamID 2 Context
+Bank entries in the SMMU. If my understanding is correct we would
+represent this in the DT like this:
 
-On Thu, Jun 19, 2014 at 03:25:50PM +0200, Alban Bedel wrote:
-[...]
-> diff --git a/arch/arm/boot/dts/tegra20-medcom-wide.dts b/arch/arm/boot/dt=
-s/tegra20-medcom-wide.dts
-[...]
-> @@ -38,6 +47,15 @@
->  		default-brightness-level =3D <6>;
->  	};
-> =20
-> +	panel: panel {
-> +		compatible =3D "innolux,n156bge-l21", "simple-panel";
-> +
-> +		power-supply =3D  <&vdd_1v8_reg>, <&vdd_3v3_reg>;
+	iommu {
+		#address-cells = <2>;
+		#size-cells = <0>;
+	};
 
-Does this work? simple-panel supports only a single power supply. Both
-of these seem to be always on, so I guess it doesn't matter all that
-much, and if indeed both of these are required to power the panel then
-this is the correct thing to do in the DTS.
+	master@a {
+		...
+		iommus = <&iommu StreamID0 MASK0>,
+			 <&iommu StreamID1 MASK1>,
+			 <&iommu StreamID2 MASK2>;
+	};
 
-Thierry
+	master@b {
+		...
+		iommus = <&iommu StreamID3 MASK3>,
+			 <&iommu StreamID4 MASK4>;
+	};
 
---ZfOjI3PrQbgiZnxM
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+Thanks,
 
-iQIcBAEBAgAGBQJTpJpdAAoJEN0jrNd/PrOhDasQAMEpZPdKD79zmvvl+Ug/b5MB
-HS922ekY6+TtbvvST2IuLzekJCgG6d8FNEPLyeCODYNHmw4kj+7BY03HN3H0jmlI
-F6jZRPXuQGoNIgkrw3YFfBNRvv+K2kvAQl1acf0KzRIZeb62oq706wFSzmzIm7oU
-QQv2ggMPs6lE2cGRsUa5u7z7QuhYYUg65o2o3mY701eq0EC/JZvRdFhmFhkqbsX0
-J/O6tVcK1CQ1Ku0f3xvy9X4PLAlogyyN8YnkA+kLDQoELbLFQVZ8D60mMUBBxqWU
-htekOb3CIHBnMaaKd90G+mCyTKsy5bYrLoB/vYDvh4DdAxSRyAYHeWRFu8bmx5MX
-sTGXyZWDWAB8COb+3c1E89KanaGVcAiif1Vm5QVreW0evh0zx0i0gCEtlOAg3gn2
-mufqWnK37e3jinmv/bGlyGXyyhtmL+A8zaYaYL7ERJsNGTcqzyryJhHssDz+xBGC
-nCVyOlvnIHJuI8Gx2kfQdvg/yQIn22jkCSSBtKAbTDagl1E1RUQbQ0q/G2FvwYE/
-dhtcExqAeh8f4BflfeQzgFSCZ4RfY8Lqw20avCwTpIYLzTS0fvnFAMU1jji03NnR
-AWgL39XYfXw5WRdDToeMhUNJewRbObvZmWjElB5uHCee/+NBz2eGZPT1XkC6Gef3
-16RivhW64xWAkffphgxA
-=GhRo
------END PGP SIGNATURE-----
+Olav Haugan
 
---ZfOjI3PrQbgiZnxM--
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
