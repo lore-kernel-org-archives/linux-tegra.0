@@ -1,43 +1,69 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Mark Brown <broonie@kernel.org>
 Subject: Re: [PATCH] ARM: tegra: TN7: relax some regulators
-Date: Fri, 20 Jun 2014 18:49:15 +0900
-Message-ID: <53A4039B.7000504@nvidia.com>
-References: <1403164154-1362-1-git-send-email-acourbot@nvidia.com> <53A308C8.2070004@wwwdotorg.org> <20140619175643.GR5099@sirena.org.uk> <53A3C613.8030207@nvidia.com> <53A3D85E.7030704@nvidia.com> <20140620094119.GT5099@sirena.org.uk>
+Date: Fri, 20 Jun 2014 11:16:18 +0100
+Message-ID: <20140620101618.GU5099@sirena.org.uk>
+References: <1403164154-1362-1-git-send-email-acourbot@nvidia.com>
+ <53A308C8.2070004@wwwdotorg.org>
+ <20140619175643.GR5099@sirena.org.uk>
+ <53A3C613.8030207@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140620094119.GT5099-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>, Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ncfrQ09dBbS73TfA"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <53A3C613.8030207@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/20/2014 06:41 PM, Mark Brown wrote:
-> * PGP Signed by an unknown key
->
-> On Fri, Jun 20, 2014 at 03:44:46PM +0900, Alexandre Courbot wrote:
->
->> dbabd624d
->> regulator: palmas: Reemove open coded functions with helper functions
->
->> Keerthy, Nishanth, could it be that there is still something wrong with the
->> REGULATOR_LINEAR_RANGE() definitions?
->
->> This seems to be the cause for our trouble, but the other questions might
->> still stand, in case there is interest in discussing them.
->
-> There was a bug fix to the Palmas driver which just went to Linus the
-> other day, are you sure this isn't fixed in mainline (or -next, it's
-> been in -next for a week or something)?
 
-If you are talking about
+--ncfrQ09dBbS73TfA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-6b7f2d82d5
-regulator: palmas: Fix SMPS list for 0V
+On Fri, Jun 20, 2014 at 02:26:43PM +0900, Alexandre Courbot wrote:
 
-then it is in my tree. There is actually no difference on 
-palmas-regulator.c between my tree and the current -next (or Linus' tree 
-for that instance).
+> So I can see three questions here:
 
-So it seems to be something else we are dealing with here.
+> 1) Why does _regulator_enable() on vdd_1v8 return 0 while everything
+> suggests that it is enabled (this regulator powers lot of devices, like
+> eMMC, which are working fine). This may be an issue with the palmas driver.
+
+Returning 0 is reporting success and you say it is enabled so I'm not
+seeing any contradiction here...  or do you mean regulator_is_enabled()
+here?  An always on regulator should report that it is enabled.
+
+> 2) When an always-on regulator that is not yet enabled is registered,
+> shouldn't it be switched on by the regulator framework?
+
+This happens during set_machine_constraints().
+
+> 3) When a boot-on regulator is registered and _regulator_is_enabled()
+> returns contradictory information, what should be done?
+
+Same thing here (same check even).
+
+--ncfrQ09dBbS73TfA
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTpAnvAAoJELSic+t+oim9BkwP/37LtNgu5Src16mIeQcafYF/
+dpONEBPZyXaV3K+Oxg5PuanPNN+VaSi3LxQoDYMnXYq4TC1VbzDk6Hpb4Wi8dAJL
+0BpVRX2mhOvNL5x9DmE+Dt1JrNIeTIuLqDjZXKx3li3dfRUsStSd10TA2z6TbMT4
+B4tW8YSgep+Nfd5xngw6+6AFRNNOlMG32EsRtgkACdvwkQZoRowl0jAis3z7C1N+
+3Q6A61KApTvV2NxqkpUa0ny1gqWtd7lEstc4OLlvJDw+gGzJK/oTQp4haz6ITCnT
+NXpeJkJ530g6+H08r0ex4dy2WyEpmssXJobFL0ASIDh/2wImTBxag6rQ2KZ9Pfjf
+ur8N4M4GGLBqukWiU/8hGPsncm+lXjKe5INDqyYKCBTLHzExAE8vBDrAW4cxzQQH
+ykDEmLHzA860A0rVyZXkp/DoMNPek8Bwzg/pT4cO+4o1OA1XYCNzXOs1YajAGvtR
+VjWL/EWV22hwf7GFgw2VG5mjq0/GsmOzJwVZqyRiDFCipu8hhTv59t3WVA87L3EB
+87oMhTNgQjOgAQ67R2k20sTpUb/43bnbX8QQoGcyoD3GmuZDb3T0l1niMhMtxcfn
+D7a4lqXByHk14Gf0PVNkZuJJGBVqI6uXIu6o5v8DT9k+nWjs3/zrT5WLo+r2srfD
+1zU+OfsUn83vqnOVOcaM
+=2SD8
+-----END PGP SIGNATURE-----
+
+--ncfrQ09dBbS73TfA--
