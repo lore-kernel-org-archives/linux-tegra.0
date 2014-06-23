@@ -1,56 +1,116 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/2] ARM: tegra: roth: enable input on mmc clock pins
-Date: Mon, 23 Jun 2014 16:32:59 +0900
-Message-ID: <1403508779-25896-3-git-send-email-acourbot@nvidia.com>
-References: <1403508779-25896-1-git-send-email-acourbot@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH 6/9] ARM: tegra: Export tegra_powergate_power_on
+Date: Mon, 23 Jun 2014 13:14:42 +0300
+Message-ID: <20140623101441.GU3407@tbergstrom-lnx.Nvidia.com>
+References: <1401881559-18469-1-git-send-email-mperttunen@nvidia.com>
+ <1401881559-18469-7-git-send-email-mperttunen@nvidia.com>
+ <539F691E.5030204@wwwdotorg.org>
+ <20140617121313.GE18816@ulmo>
+ <20140617140146.GH3407@tbergstrom-lnx.Nvidia.com>
+ <20140617215119.GC24743@mithrandir>
+ <20140618121806.GJ3407@tbergstrom-lnx.Nvidia.com>
+ <53A1B252.1030204@wwwdotorg.org>
+ <20140619080234.GK3407@tbergstrom-lnx.Nvidia.com>
+ <53A3096B.1040409@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1403508779-25896-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <53A3096B.1040409@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, "tj@kernel.org" <tj@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Input had been disabled by mistake on these pins, leading to issues with
-SDIO devices like the Wifi module not being probed or random errors
-occuring on the SD card.
+On Thu, Jun 19, 2014 at 06:01:47PM +0200, Stephen Warren wrote:
+> On 06/19/2014 02:02 AM, Peter De Schrijver wrote:
+> > On Wed, Jun 18, 2014 at 05:37:54PM +0200, Stephen Warren wrote:
+> >> On 06/18/2014 06:18 AM, Peter De Schrijver wrote:
+> >>> On Tue, Jun 17, 2014 at 11:51:20PM +0200, Thierry Reding wrote:
+> >>>> * PGP Signed by an unknown key
+> >>>>
+> >>>> On Tue, Jun 17, 2014 at 05:01:46PM +0300, Peter De Schrijver wrote:
+> >>>>> On Tue, Jun 17, 2014 at 02:13:15PM +0200, Thierry Reding wrote:
+> >>>>>>> Old Signed by an unknown key
+> >>>>>>
+> >>>>>> On Mon, Jun 16, 2014 at 04:01:02PM -0600, Stephen Warren wrote:
+> >>>>>>> On 06/04/2014 05:32 AM, Mikko Perttunen wrote:
+> >>>>>>>> This symbol needs to be exported to power on rails without using
+> >>>>>>>> tegra_powergate_sequence_power_up. tegra_powergate_sequence_power_up
+> >>>>>>>> cannot be used in situations where the driver wants to handle clocking
+> >>>>>>>> by itself.
+> >>>>>>>
+> >>>>>>> Thierry, are you OK with this change?
+> >>>>>>
+> >>>>>> I would've preferred tegra_powergate_sequence_power_up() to be used
+> >>>>>
+> >>>>> I don't think the current tegra_powergate_sequence_power_up() API is very well
+> >>>>> defined though. I don't think the clocks and resets required by the sequence
+> >>>>> should be provided by the driver. For one, there can be several clocks and
+> >>>>> resets that need to be controlled for a single domain.
+> >>>>
+> >>>> Do you have any suggestions for what the API should look like? Even if
+> >>>> we plan to move to some different API, I think there's some advantage in
+> >>>> using it consistently if for no other reason than to make it easier to
+> >>>> replace occurrences later on.
+> >>>>
+> >>>
+> >>> I think the API should only have the domain ID as input so:
+> >>>
+> >>> int tegra_powerdomain_on(int id) 
+> >>>
+> >>> /*
+> >>>  * Prerequisites: domain is off
+> >>>  * Result: domain is on, clocks of the modules in the domain are off, modules are in reset
+> >>>  */
+> >>>
+> >>> int tegra_powerdomain_off(int id)
+> >>>
+> >>> /*
+> >>>  * Prerequisites: all clocks of the modules in the domain are off
+> >>>  * result: domain is off
+> >>>  */
+> >>
+> >> That doesn't make sense; the PMC doesn't have access to the clock and
+> >> reset IDs - that's why the API requires them to be passed in.
+> >>
+> > 
+> > We should make driver look them up by name then. It doesn't make sense to
+> > move this knowledge to the drivers as there can be several modules in 1
+> > powerdomain. So every driver would then need to have access to all clock
+> > and reset IDs of the modules of the domain?
+> 
+> Having the drivers know the clocks, resets, and power domains that
+> affect their HW module seems perfectly reasonable.
+> 
 
-Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra114-roth.dts | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Yes, but the problem is that you also need clocks and reset of other modules
+in the same domain to safely control the domain's status. Eg: the ISPs, VI and
+CSI share a domain. VI and CSI are useable without ISP and the ISP lacks
+public documentation. So it's not unlikely a VI and CSI driver will upstreamed
+someday which means we would need to control the domain and therefore would
+need to tell that driver about the ISPs clocks and resets even though the
+driver doesn't know anything about the ISP hw otherwise.
 
-diff --git a/arch/arm/boot/dts/tegra114-roth.dts b/arch/arm/boot/dts/tegra114-roth.dts
-index a67885250f81..ba210c6e189f 100644
---- a/arch/arm/boot/dts/tegra114-roth.dts
-+++ b/arch/arm/boot/dts/tegra114-roth.dts
-@@ -244,7 +244,7 @@
- 				nvidia,function = "sdmmc1";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
--				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
- 			};
- 			sdmmc1_cmd_pz1 {
- 				nvidia,pins = "sdmmc1_cmd_pz1",
-@@ -262,7 +262,7 @@
- 				nvidia,function = "sdmmc3";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
--				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
- 			};
- 			sdmmc3_cmd_pa7 {
- 				nvidia,pins = "sdmmc3_cmd_pa7",
-@@ -290,7 +290,7 @@
- 				nvidia,function = "sdmmc4";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
--				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
- 			};
- 			sdmmc4_cmd_pt7 {
- 				nvidia,pins = "sdmmc4_cmd_pt7",
--- 
-2.0.0
+> Do we actually have any case where unrelated modules are in the same
+> power domain /and/ there's some need for those drivers to manipulate the
+> power domain?
+> 
+
+According to the TRM, the reset state of the power domains is undefined. While
+that seems unlikely, I do think the kernel should not assume any domain is on
+apart from the obvious ones (like the CPU domain it is running on),
+
+> BTW, any objections here should have been raised when the initial API
+> design for powergating was created. Now that we have the current API,
+> which in turn has driven the DT bindings for at least some HW modules,
+> we're stuck with it due to DT ABIness. Well, perhaps we can introduce
+> something new, but we'll always have to support the old way, so there's
+> little point.
+
+I don't think the bindings need to be changed at all as long as the PMC driver
+can parse the relevant DT nodes to get the clock and reset information.
+
+Cheers,
+
+Peter.
