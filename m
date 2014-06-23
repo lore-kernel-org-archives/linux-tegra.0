@@ -1,102 +1,57 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [GIT PULL 2/3] ARM: tegra: move fuse code out of arch/arm
-Date: Mon, 23 Jun 2014 15:23:45 -0600
-Message-ID: <1403558626-13422-2-git-send-email-swarren@wwwdotorg.org>
-References: <1403558626-13422-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1403558626-13422-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+From: Nishanth Menon <nm@ti.com>
+Subject: Re: [PATCH] regulator: palmas: fix typo in enable_reg calculation
+Date: Mon, 23 Jun 2014 17:28:30 -0500
+Message-ID: <53A8AA0E.8070705@ti.com>
+References: <1403556805-22824-1-git-send-email-swarren@wwwdotorg.org>
+Reply-To: nm@ti.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1403556805-22824-1-git-send-email-swarren@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, Alex Courbot <gnurou@gmail.com>, Keerthy <j-keerthy@ti.com>, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This branch moves code related to the Tegra fuses out of arch/arm and
-into a centralized location which could be shared with ARM64. It also
-adds support for reading the fuse data through sysfs.
+On 06/23/2014 03:53 PM, Stephen Warren wrote:
+> From: Stephen Warren <swarren@nvidia.com>
+>
+> When setting up .enable_reg for an SMPS regulator, presumably we should
+> call PALMAS_BASE_TO_REG(PALMAS_SMPS_BASE, ...) rather than using
+> LDO_BASE. This change makes the LCD panel and HDMI work again on the
+> NVIDIA Dalmore board anyway.
+>
+> Cc: Alex Courbot <gnurou@gmail.com>
+> Cc: Keerthy <j-keerthy@ti.com>
+> Cc: Nishanth Menon <nm@ti.com>
+> Cc: linux-omap@vger.kernel.org
+> Cc: linux-tegra@vger.kernel.org
+> Fixes: 318dbb02b50c ("regulator: palmas: Fix SMPS enable/disable/is_enabled")
+> Fixes: dbabd624d4eec50b6 ("regulator: palmas: Reemove open coded functions with helper functions")
+> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+> ---
+>   drivers/regulator/palmas-regulator.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/regulator/palmas-regulator.c b/drivers/regulator/palmas-regulator.c
+> index 3c861d5f9245..93b4ad842901 100644
+> --- a/drivers/regulator/palmas-regulator.c
+> +++ b/drivers/regulator/palmas-regulator.c
+> @@ -970,7 +970,7 @@ static int palmas_regulators_probe(struct platform_device *pdev)
+>   					PALMAS_SMPS12_CTRL_MODE_ACTIVE_MASK;
+>
+>   			pmic->desc[id].enable_reg =
+> -					PALMAS_BASE_TO_REG(PALMAS_LDO_BASE,
+> +					PALMAS_BASE_TO_REG(PALMAS_SMPS_BASE,
+>   						palmas_regs_info[id].ctrl_addr);
+>   			pmic->desc[id].enable_mask =
+>   					PALMAS_SMPS12_CTRL_MODE_ACTIVE_MASK;
+>
 
-This is a separate branch because it will be a dependency for the
-upcoming XUSB padctrl driver, which is in turn a dependency for Tegra124
-SATA, XHCI, and PCIe support.
 
-----------------------------------------------------------------
+Uggh... my bad..
 
-The following changes since commit 7171511eaec5bf23fb06078f59784a3a0626b38f:
+Thanks for catching this.
 
-  Linux 3.16-rc1
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tegra-for-3.17-fuse-move
-
-for you to fetch changes up to d97f79366c566b2986cf6a142eb4d04a6eb4e970:
-
-  misc: fuse: fix dummy functions
-
-----------------------------------------------------------------
-
-Peter De Schrijver (6):
-      ARM: tegra: export apb dma readl/writel
-      ARM: tegra: move fuse exports to tegra-soc.h
-      misc: fuse: Add efuse driver for Tegra
-      ARM: tegra: Add efuse and apbmisc bindings
-      ARM: tegra: build new fuse driver in drivers/misc
-      misc: fuse: move APB DMA into Tegra20 fuse driver
-
-Stephen Warren (1):
-      misc: fuse: fix dummy functions
-
- .../ABI/testing/sysfs-driver-tegra-fuse         |  11 +
- .../bindings/fuse/nvidia,tegra20-fuse.txt       |  40 +++
- .../bindings/misc/nvidia,tegra20-apbmisc.txt    |  13 +
- arch/arm/boot/dts/tegra114.dtsi                 |  15 ++
- arch/arm/boot/dts/tegra124.dtsi                 |  15 ++
- arch/arm/boot/dts/tegra20.dtsi                  |  15 ++
- arch/arm/boot/dts/tegra30.dtsi                  |  15 ++
- arch/arm/mach-tegra/Makefile                    |   5 -
- arch/arm/mach-tegra/apbio.c                     | 206 ---------------
- arch/arm/mach-tegra/apbio.h                     |  22 --
- arch/arm/mach-tegra/cpuidle.c                   |   2 +-
- arch/arm/mach-tegra/flowctrl.c                  |   2 +-
- arch/arm/mach-tegra/fuse.c                      | 252 -------------------
- arch/arm/mach-tegra/fuse.h                      |  79 ------
- arch/arm/mach-tegra/hotplug.c                   |   2 +-
- arch/arm/mach-tegra/platsmp.c                   |   2 +-
- arch/arm/mach-tegra/pm.c                        |   2 +-
- arch/arm/mach-tegra/pmc.c                       |   2 +-
- arch/arm/mach-tegra/powergate.c                 |   2 +-
- arch/arm/mach-tegra/reset-handler.S             |   2 +-
- arch/arm/mach-tegra/reset.c                     |   2 +-
- arch/arm/mach-tegra/sleep-tegra30.S             |   2 +-
- arch/arm/mach-tegra/tegra.c                     |   7 +-
- drivers/misc/Makefile                           |   1 +
- drivers/misc/fuse/Makefile                      |   1 +
- drivers/misc/fuse/tegra/Makefile                |   8 +
- drivers/misc/fuse/tegra/fuse-tegra.c            | 154 ++++++++++++
- drivers/misc/fuse/tegra/fuse-tegra20.c          | 214 ++++++++++++++++
- drivers/misc/fuse/tegra/fuse-tegra30.c          | 223 ++++++++++++++++
- drivers/misc/fuse/tegra/fuse.h                  |  71 ++++++
- .../misc/fuse/tegra/speedo-tegra114.c           |  53 ++--
- drivers/misc/fuse/tegra/speedo-tegra124.c       | 167 ++++++++++++
- .../misc/fuse/tegra/speedo-tegra20.c            |  42 ++--
- .../misc/fuse/tegra/speedo-tegra30.c            | 173 +++++++------
- drivers/misc/fuse/tegra/tegra-apbmisc.c         | 110 ++++++++
- include/linux/tegra-soc.h                       |  42 ++++
- 36 files changed, 1262 insertions(+), 712 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-driver-tegra-fuse
- create mode 100644 Documentation/devicetree/bindings/fuse/nvidia,tegra20-fuse.txt
- create mode 100644 Documentation/devicetree/bindings/misc/nvidia,tegra20-apbmisc.txt
- delete mode 100644 arch/arm/mach-tegra/apbio.c
- delete mode 100644 arch/arm/mach-tegra/apbio.h
- delete mode 100644 arch/arm/mach-tegra/fuse.c
- delete mode 100644 arch/arm/mach-tegra/fuse.h
- create mode 100644 drivers/misc/fuse/Makefile
- create mode 100644 drivers/misc/fuse/tegra/Makefile
- create mode 100644 drivers/misc/fuse/tegra/fuse-tegra.c
- create mode 100644 drivers/misc/fuse/tegra/fuse-tegra20.c
- create mode 100644 drivers/misc/fuse/tegra/fuse-tegra30.c
- create mode 100644 drivers/misc/fuse/tegra/fuse.h
- rename arch/arm/mach-tegra/tegra114_speedo.c => drivers/misc/fuse/tegra/speedo-tegra114.c (55%)
- create mode 100644 drivers/misc/fuse/tegra/speedo-tegra124.c
- rename arch/arm/mach-tegra/tegra20_speedo.c => drivers/misc/fuse/tegra/speedo-tegra20.c (67%)
- rename arch/arm/mach-tegra/tegra30_speedo.c => drivers/misc/fuse/tegra/speedo-tegra30.c (52%)
- create mode 100644 drivers/misc/fuse/tegra/tegra-apbmisc.c
+Acked-by: Nishanth Menon <nm@ti.com>
