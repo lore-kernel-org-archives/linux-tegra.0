@@ -1,40 +1,99 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/2] ARM: tegra: roth: enable input on mmc clock pins
-Date: Tue, 24 Jun 2014 14:44:06 +0900
-Message-ID: <53A91026.7040506@nvidia.com>
-References: <1403508779-25896-1-git-send-email-acourbot@nvidia.com> <1403508779-25896-3-git-send-email-acourbot@nvidia.com> <53A87979.6000104@wwwdotorg.org>
+From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v2 6/6] usb: host: ohci-exynos: Use devm_ioremap_resource
+ instead of devm_ioremap
+Date: Tue, 24 Jun 2014 11:19:08 +0530
+Message-ID: <CAFp+6iHqX+huiYJo7c38tgQZ-iE7v2nXXQHrJU6v55e8zkb7Dw@mail.gmail.com>
+References: <1399723210-21569-1-git-send-email-gautam.vivek@samsung.com>
+	<1399723210-21569-7-git-send-email-gautam.vivek@samsung.com>
+	<CAFp+6iFufCh6SVEF-HQA62ZsJGJGSebDSs28eqcrMy1X8e5vjA@mail.gmail.com>
+	<20140604131306.GB28484@ulmo>
+	<CAFp+6iEe8fvxboG79=2s=oe4BkQJYAoVUPtYkPdjJHCe+bC=8Q@mail.gmail.com>
+	<20140606225246.GB22188@mithrandir>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53A87979.6000104-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20140606225246.GB22188@mithrandir>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/24/2014 04:01 AM, Stephen Warren wrote:
-> On 06/23/2014 01:32 AM, Alexandre Courbot wrote:
->> Input had been disabled by mistake on these pins, leading to issues with
->> SDIO devices like the Wifi module not being probed or random errors
->> occuring on the SD card.
+Hi,
+
+
+On Sat, Jun 7, 2014 at 4:22 AM, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Fri, Jun 06, 2014 at 06:32:42PM +0530, Vivek Gautam wrote:
+>> On Wed, Jun 4, 2014 at 6:43 PM, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>> > On Wed, Jun 04, 2014 at 03:41:20PM +0530, Vivek Gautam wrote:
+>> >> On Sat, May 10, 2014 at 5:30 PM, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> [...]
+>> >> > diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+>> >> > index 9cf80cb..dec691d 100644
+>> >> > --- a/drivers/usb/host/ohci-exynos.c
+>> >> > +++ b/drivers/usb/host/ohci-exynos.c
+>> >> > @@ -120,10 +120,9 @@ skip_phy:
+>> >> >
+>> >> >         hcd->rsrc_start = res->start;
+>> >> >         hcd->rsrc_len = resource_size(res);
+>> >> > -       hcd->regs = devm_ioremap(&pdev->dev, res->start, hcd->rsrc_len);
+>> >> > -       if (!hcd->regs) {
+>> >> > -               dev_err(&pdev->dev, "Failed to remap I/O memory\n");
+>> >> > -               err = -ENOMEM;
+>> >> > +       hcd->regs = devm_ioremap_resource(&pdev->dev, res);
+>> >>
+>> >> Here, we replaced devm_ioremap() call with devm_ioremap_resource(),
+>> >> which internally requests the memory region
+>> >
+>> > I guess this could lead to problems if drivers haven't been written to
+>> > cleanly split the register ranges that they access, since now two
+>> > overlapping regions may be requested and cause the drivers to fail.
+>>
+>> Sorry i did not understand completely. Wouldn't the request_mem_region()
+>> fail for an already busy resource ?
+>> So devm_ioremap_resource() will in fact prevent the drivers from requesting
+>> the same memory region twice until the first request frees the region.
+>> Isn't it ?
 >
-> I thought the host controller always drove the clock, so there should be
-> no need for the pin's input path to be enabled. Perhaps it depends on
-> the transfer mode (e.g. UHS)?
+> Yes exactly. What I was trying to say is that since drivers weren't
+> requesting the resources before they may be using overlapping regions.
+> Now that this patch changes these drivers to also request the resources
+> they will fail if the regions overlap with those of other drivers.
 
-That's what I thought too, so I went against what was done downstream 
-and disabled input mode. Eventually noticed various issues with MMC 
-devices, reverted to the downstream settings and noticed my problems 
-were solved by this single change.
+Thanks for explaining it further.
+I understand this fact. And i am sure this case does not arise in exynos.
+For Tegra, Stephen noted this fact about the ehci driver and the
+corresponding PHY.
+So that the PHY does a devm_ioremap() only.
+For other platforms too we did not get any concerns raised, so we
+moved ahead with the series
+for merging.
 
 >
-> If this fix is valid, perhaps Jetson TK1's sdmmc3_clk and Venice2's
-> sdmmc1_clk need the same fix, although we'll need to file bugs against
-> their pinmux spreadsheets first if that's the case.
+>> >> and then does a "devm_ioremap()" or "devm_ioremap_nocache()" based on
+>> >> the check for IORESOURCE_CACHEABLE flag.
+>> >>
+>> >> But this flag is not set for the resource of this device.
+>> >> So should we be explicitly setting the flag in driver ?
+>> >
+>> > I don't think it makes much sense to map these registers cached anyway.
+>> > Drivers will likely expect writes to this region to take effect without
+>> > needing any kind of flushing.
+>>
+>> These "hcd->regs" are going to be used by the controller, so wouldn't
+>> there be a performance difference when the requested address space is
+>> cacheable/non-cacheable ?
 >
+> The issue here is that if the region is mapped cacheable then register
+> writes may not immediately take effect and that's almost certainly not
+> what the driver will expect. I don't think it ever makes sense to map
+> registers cacheable.
 
-Are we having MMC issues with Jetson? I haven't noticed anything 
-recently, and I have been using both eMMC and SD card.
+Ok, this explains things.
 
-Anyway, at least for SHIELD, this change seems to be valid.
+
+
+-- 
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
