@@ -1,72 +1,87 @@
-From: Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Tue, 24 Jun 2014 10:18:08 +0100
-Message-ID: <20140624091808.GC26013@arm.com>
-References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
- <CAL_JsqKumG1PSFoVfeGpLLG+MjXFeF4aUjun=vv1BJpaxk0Byg@mail.gmail.com>
- <4545972.cM7IP1qTXQ@wuerfel>
- <53A4C0C9.2050908@codeaurora.org>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2 0/3] drm/ttm: nouveau: memory coherency for ARM
+Date: Tue, 24 Jun 2014 18:54:24 +0900
+Message-ID: <1403603667-11302-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <53A4C0C9.2050908@codeaurora.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Olav Haugan <ohaugan@codeaurora.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robherring2@gmail.com>, Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Grant Grundler <grundler@chromium.org>, Joerg Roedel <joro@8bytes.org>, Stephen Warren <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Marc Zyngier <Marc.Zyngier@arm.com>, Linux IOMMU <iommu@lists.linux-foundation.org>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Cho KyongHo <pullip.cho@samsung.com>, Dave P Martin <Dave.Martin@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm->
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, Jun 21, 2014 at 12:16:25AM +0100, Olav Haugan wrote:
-> On 5/30/2014 12:06 PM, Arnd Bergmann wrote:
-> > On Friday 30 May 2014 08:16:05 Rob Herring wrote:
-> >> Presumably the ID would be the streamID on ARM's SMMU. How would a
-> >> master with 8 streamIDs be described? This is what Calxeda midway has
-> >> for SATA and I would expect that to be somewhat common. Either you
-> >> need some ID masking or you'll have lots of duplication when you have
-> >> windows.
-> > 
-> > I don't understand the problem. If you have stream IDs 0 through 7,
-> > you would have
-> > 
-> > 	master@a {
-> > 		...
-> > 		iommus = <&smmu 0>;
-> > 	};
-> > 
-> > 	master@b {
-> > 		...
-> > 		iommus = <&smmu 1;
-> > 	};
-> > 
-> > 	...
-> > 
-> > 	master@12 {
-> > 		...
-> > 		iommus = <&smmu 7;
-> > 	};
-> > 
-> > and you don't need a window at all. Why would you need a mask of
-> > some sort?
-> 
-> We have multiple-master SMMUs and each master emits a variable number of
-> StreamIDs. However, we have to apply a mask (the ARM SMMU spec allows
-> for this) to the StreamIDs due to limited number of StreamID 2 Context
-> Bank entries in the SMMU. If my understanding is correct we would
-> represent this in the DT like this:
-> 
-> 	iommu {
-> 		#address-cells = <2>;
-> 		#size-cells = <0>;
-> 	};
-> 
-> 	master@a {
-> 		...
-> 		iommus = <&iommu StreamID0 MASK0>,
-> 			 <&iommu StreamID1 MASK1>,
-> 			 <&iommu StreamID2 MASK2>;
-> 	};
+For this v2 I have fixed the patches that are non-controversial (all Lucas' :))
+and am resubmitting them in the hope that they will get merged. This will
+just leave the issue of Nouveau system-memory buffers mapping to be solved.
 
-Stupid question, but why not simply describe the masked IDs? What use does
-the `raw' ID have to Linux?
+This issue is quite complex, so let me summarize the situation and the data
+I have at hand. ARM caching is like a quantum world where Murphy's law
+constantly applies: sometimes things that you don't expect to work happen to
+work, but never the ones you would like to.
 
-Will
+On ARM the accepted wisdom is that all CPU mappings must share the same
+attributes, and that failure to do so results in undefined behavior. I have
+heard voices claiming that recent ARM SoCs were not affected by this, but have
+yet to see hard evidence that it is indeed the case.
+
+Most (or all) physical memory happens to be already mapped, cached, in the
+lowmem area of the virtual address space. This means that if we want to be
+safe wrt. the rule mentioned above, we must perform all subsequent memory
+mappings the same way.
+
+Nouveau currently performs its memory mappings cached, since it can rely on PCI
+to snoop and invalidate addresses written by the CPU - something that we don't
+have on ARM shared-memory systems. I had proposed a (bad) patch in the previous
+revision of this series that added a way to flush the CPU cache after each write
+(http://lists.freedesktop.org/archives/dri-devel/2014-May/059893.html ) but it
+did not trigger a lot of approval. Instead, it has been suggested to map such
+BOs write-combined.
+
+This would break the "one mapping type only" rule, but I gave it a try by
+changing the TTM_PL_TT manager's authorized caching to WC. This immediatly
+resulted in breakage of applications using the GPU. Digging a little further,
+I noticed that kernel mappings could be performed WC or uncached without any
+problem, but that user-space mappings *must* be cached under all circumstances.
+Failure to do so results in invalid pushbuffers being sent to the GPUs, messed
+up vertices, and other corruptions. Uncached mappings result in the same
+breakage.
+
+So, to summarize our options for GK20A:
+1) Keeping mappings of TTM buffers cached seems to be the safest option, as it
+is consistent with the lowmem mapping likely affecting the memory of our
+buffers. But we will have to flush kernel CPU writes to these buffers one way
+or the other.
+2) Changing the kernel mappings to WC or uncached seems to be safe. However
+user-space mappings must still be cached or inconsistencies happen. This
+double-policy for kernel and user-space mappings is not implemented in TTM
+and nothing so far suggests that it should be.
+
+And that's the state where we are. I am not considering the other possibilities
+(carving memory out of lowmem, etc.) as they have already been discussed many
+times by people much smarter than me (e.g. http://lists.linaro.org/pipermail/linaro-mm-sig/2011-April/000003.html )
+and it seems that the issue is still here nonetheless.
+
+At this point suggestions towards option 1) or 2) (or where I could have
+screwed up in my understanding of ARM mappings) are welcome. And in the
+meantime, let's try to get the 3 guys below merged!
+
+Changes since v1:
+- Removed conditional compilation for Nouveau cache sync handler
+- Refactored nouveau_gem_ioctl_cpu_prep() into a new function to keep buffer
+  cache management into nouveau_bo.c
+
+Lucas Stach (3):
+  drm/ttm: recognize ARM arch in ioprot handler
+  drm/ttm: introduce dma cache sync helpers
+  drm/nouveau: hook up cache sync functions
+
+ drivers/gpu/drm/nouveau/nouveau_bo.c  | 47 +++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/nouveau/nouveau_bo.h  |  1 +
+ drivers/gpu/drm/nouveau/nouveau_gem.c | 10 +++-----
+ drivers/gpu/drm/ttm/ttm_bo_util.c     |  2 +-
+ drivers/gpu/drm/ttm/ttm_tt.c          | 25 +++++++++++++++++++
+ include/drm/ttm/ttm_bo_driver.h       | 28 +++++++++++++++++++++
+ 6 files changed, 105 insertions(+), 8 deletions(-)
+
+-- 
+2.0.0
