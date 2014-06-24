@@ -1,55 +1,60 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] regulator: palmas: fix typo in enable_reg calculation
-Date: Tue, 24 Jun 2014 12:01:36 +0100
-Message-ID: <20140624110136.GJ23300@sirena.org.uk>
-References: <1403556805-22824-1-git-send-email-swarren@wwwdotorg.org>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 2/3] drm/ttm: introduce dma cache sync
+	helpers
+Date: Tue, 24 Jun 2014 21:23:05 +0900
+Message-ID: <CAAVeFu+rbCViC87kYCLfxGV18iYq=Pa0ABb+L=iNiYPLn+mR8Q@mail.gmail.com>
+References: <1403603667-11302-1-git-send-email-acourbot@nvidia.com>
+ <1403603667-11302-3-git-send-email-acourbot@nvidia.com>
+ <20140624100220.GK32514@n2100.arm.linux.org.uk>
+ <53A953E6.2030503@nvidia.com> <53A95910.20104@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Z8yxTSU1mh2gsre7"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1403556805-22824-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alex Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>, Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <53A95910.20104-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
---Z8yxTSU1mh2gsre7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Jun 23, 2014 at 02:53:25PM -0600, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> When setting up .enable_reg for an SMPS regulator, presumably we should
-> call PALMAS_BASE_TO_REG(PALMAS_SMPS_BASE, ...) rather than using
-> LDO_BASE. This change makes the LCD panel and HDMI work again on the
-> NVIDIA Dalmore board anyway.
-
-Applied, thanks.
-
---Z8yxTSU1mh2gsre7
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJTqVqNAAoJELSic+t+oim9WA4P/iiRFO2DcyLsf2kXeve75xXW
-RA4TyjYs0oLnpYymayeEnfXT/w6Hm2moTJGGuk81MxQRauTHaFKc1DwSRaXK/JMg
-WBfytAkTezbsOc8mvAiaRixlvRdGyg4jvbi2Y9gMWa6eJn9pMxtRCTwxsbLecnWJ
-ws6zO9pDQkM4ien10rpkaE+KZlJYWMFa2tEn3KT7gJhfO5RWJ9A7fIl9VW4DneAD
-0dNH8ujcC/LnuCLxnzLo6urrRCZkItjJe+oVsy9FKEMeGzTWRKtfDiviJBJirvxh
-+jHiIkoVGknArfg0el904a6ZNnBx26kM3cFk6Ee8Wp67dzaoDYbRNrEuYk0SJMn0
-6Pc+9rjyNB68QEacxstgwYXHJFPMmO1LHX6xKhA50MoEoah7dHONx9Kolmr5jwu5
-hZ9qLE3TiWUal+N1sji26sX3aLrw6ZQYjSY8ij/kQ3jV4RuVke5p3/hfqHFgS0cF
-mZu2oRfT4+vw3oVlAO3e24mpwGzx/AVsUoyG34HImlFrxpHmGtM3/MS8myRmL1vl
-nnWcCR4GSjQ3AHJvP8zvXgr0HStcfdBKxKzeIdQqzm00GaAZLLUx8AHGsJQEoPNc
-D6MUZj31aurA1ZuZQ5BIFD4ugBktXh/3l0y2ise/b8WTma4ZCRjJKVqz9HJ54fBD
-SuRoXZqfJlIsNv1F7HeU
-=Ef3O
------END PGP SIGNATURE-----
-
---Z8yxTSU1mh2gsre7--
+T24gVHVlLCBKdW4gMjQsIDIwMTQgYXQgNzo1NSBQTSwgQWxleGFuZHJlIENvdXJib3QgPGFjb3Vy
+Ym90QG52aWRpYS5jb20+IHdyb3RlOgo+IE9uIDA2LzI0LzIwMTQgMDc6MzMgUE0sIEFsZXhhbmRy
+ZSBDb3VyYm90IHdyb3RlOgo+Pgo+PiBPbiAwNi8yNC8yMDE0IDA3OjAyIFBNLCBSdXNzZWxsIEtp
+bmcgLSBBUk0gTGludXggd3JvdGU6Cj4+Pgo+Pj4gT24gVHVlLCBKdW4gMjQsIDIwMTQgYXQgMDY6
+NTQ6MjZQTSArMDkwMCwgQWxleGFuZHJlIENvdXJib3Qgd3JvdGU6Cj4+Pj4KPj4+PiBGcm9tOiBM
+dWNhcyBTdGFjaCA8ZGV2QGx5bnhleWUuZGU+Cj4+Pj4KPj4+PiBPbiBhcmNoaXRlY3R1cmVzIGZv
+ciB3aGljaCBhY2Nlc3MgdG8gR1BVIG1lbW9yeSBpcyBub24tY29oZXJlbnQsCj4+Pj4gY2FjaGVz
+IG5lZWQgdG8gYmUgZmx1c2hlZCBhbmQgaW52YWxpZGF0ZWQgZXhwbGljaXRseSBhdCB0aGUKPj4+
+PiBhcHByb3ByaWF0ZSBwbGFjZXMuIEludHJvZHVjZSB0d28gc21hbGwgaGVscGVycyB0byBtYWtl
+IHRoaW5ncwo+Pj4+IGVhc3kgZm9yIFRUTS1iYXNlZCBkcml2ZXJzLgo+Pj4KPj4+Cj4+PiBIYXZl
+IHlvdSBydW4gdGhpcyB3aXRoIERNQSBBUEkgZGVidWdnaW5nIGVuYWJsZWQ/ICBJIHN1c3BlY3Qg
+eW91IGhhdmVuJ3QsCj4+PiBhbmQgSSByZWNvbW1lbmQgdGhhdCB5b3UgZG8uCj4+Cj4+Cj4+ICMg
+Y2F0IC9zeXMva2VybmVsL2RlYnVnL2RtYS1hcGkvZXJyb3JfY291bnQKPj4gMTYyNjIxCj4+Cj4+
+ICjila/CsOKWocKw77yJ4pWv77i1IOKUu+KUgeKUuykKPgo+Cj4gKnB1dHMgdGFibGUgYmFjayBv
+biBpdHMgZmVldCoKPgo+IFNvLCB5ZWFoIC0gVFRNIG1lbW9yeSBpcyBub3QgYWxsb2NhdGVkIHVz
+aW5nIHRoZSBETUEgQVBJLCBoZW5jZSB3ZSBjYW5ub3QKPiB1c2UgdGhlIERNQSBBUEkgdG8gc3lu
+YyBpdC4gVGhhbmtzIFJ1c3NlbGwgZm9yIHBvaW50aW5nIGl0IG91dC4KPgo+IFRoZSBvbmx5IGFs
+dGVybmF0aXZlIEkgc2VlIGhlcmUgaXMgdG8gZmx1c2ggdGhlIENQVSBjYWNoZXMgd2hlbiBzeW5j
+aW5nIGZvcgo+IHRoZSBkZXZpY2UsIGFuZCBpbnZhbGlkYXRlIHRoZW0gZm9yIHRoZSBvdGhlciBk
+aXJlY3Rpb24uIE9mIGNvdXJzZSBpZiB0aGUKPiBkZXZpY2UgaGFzIGNhY2hlcyBvbiBpdHMgc2lk
+ZSBhcyB3ZWxsIHRoZSBvcHBvc2l0ZSBvcGVyYXRpb24gbXVzdCBhbHNvIGJlCj4gZG9uZSBmb3Ig
+aXQuIEd1ZXNzIHRoZSBvbmx5IHdheSBpcyB0byBoYW5kbGUgaXQgYWxsIGJ5IG91cnNlbHZlcyBo
+ZXJlLiA6LwoKLi4uIGFuZCBpdCByZWFsbHkgc3Vja3MuIEJhc2ljYWxseSBpZiB3ZSBjYW5ub3Qg
+dXNlIHRoZSBETUEgQVBJIGhlcmUKd2Ugd2lsbCBsb3NlIHRoZSBjb252ZW5pZW5jZSBvZiBoYXZp
+bmcgYSBwb3J0YWJsZSBBUEkgdGhhdCBkb2VzIGp1c3QKdGhlIHJpZ2h0IHRoaW5nIGZvciB0aGUg
+dW5kZXJseWluZyBwbGF0Zm9ybS4gV2l0aG91dCBpdCB3ZSB3b3VsZCBoYXZlCnRvIGR1cGxpY2F0
+ZSBhcm1faW9tbXVfc3luY19zaW5nbGVfZm9yX2NwdS9kZXZpY2UoKSBhbmQgd2Ugd291bGQgb25s
+eQpoYXZlIHN1cHBvcnQgZm9yIEFSTS4KClRoZSB1c2FnZSBvZiB0aGUgRE1BIEFQSSB0aGF0IHdl
+IGFyZSBkb2luZyBtaWdodCBiZSBpbGxlZ2FsLCBidXQgaW4KZXNzZW5jZSBpdCBkb2VzIGV4YWN0
+bHkgd2hhdCB3ZSBuZWVkIC0gYXQgbGVhc3QgZm9yIEFSTS4gV2hhdCBhcmUgdGhlCmFsdGVybmF0
+aXZlcz8KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91
+dmVhdSBtYWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xp
+c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL25vdXZlYXUK
