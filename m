@@ -1,99 +1,33 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 2/3] drm/ttm: introduce dma cache sync
-	helpers
-Date: Tue, 24 Jun 2014 23:03:21 +0900
-Message-ID: <CAAVeFuKMVHFXU02CZUHEfHfWOq6pDavF0SXogzmnwuAk2K3-zw@mail.gmail.com>
-References: <1403603667-11302-1-git-send-email-acourbot@nvidia.com>
- <1403603667-11302-3-git-send-email-acourbot@nvidia.com>
- <20140624100220.GK32514@n2100.arm.linux.org.uk>
- <53A953E6.2030503@nvidia.com> <53A95910.20104@nvidia.com>
- <CAAVeFu+rbCViC87kYCLfxGV18iYq=Pa0ABb+L=iNiYPLn+mR8Q@mail.gmail.com>
- <53A96EC5.3030701@canonical.com>
- <1403616338.4230.8.camel@weser.hi.pengutronix.de>
- <CAAVeFuLcC30BdWierY8Bg0vBmfNCaB=Qs34h790jGB=BRYvGAg@mail.gmail.com>
- <1403618295.4230.13.camel@weser.hi.pengutronix.de>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 2/2] ARM: tegra: roth: enable input on mmc clock pins
+Date: Tue, 24 Jun 2014 09:53:45 -0600
+Message-ID: <53A99F09.1070504@wwwdotorg.org>
+References: <1403508779-25896-1-git-send-email-acourbot@nvidia.com> <1403508779-25896-3-git-send-email-acourbot@nvidia.com> <53A87979.6000104@wwwdotorg.org> <53A91026.7040506@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <1403618295.4230.13.camel-WzVe3FnzCwFR6QfukMTsflXZhhPuCNm+@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <53A91026.7040506@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "gnurou@gmail.com" <gnurou@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCBKdW4gMjQsIDIwMTQgYXQgMTA6NTggUE0sIEx1Y2FzIFN0YWNoIDxsLnN0YWNoQHBl
-bmd1dHJvbml4LmRlPiB3cm90ZToKPiBBbSBEaWVuc3RhZywgZGVuIDI0LjA2LjIwMTQsIDIyOjUy
-ICswOTAwIHNjaHJpZWIgQWxleGFuZHJlIENvdXJib3Q6Cj4+IE9uIFR1ZSwgSnVuIDI0LCAyMDE0
-IGF0IDEwOjI1IFBNLCBMdWNhcyBTdGFjaCA8bC5zdGFjaEBwZW5ndXRyb25peC5kZT4gd3JvdGU6
-Cj4+ID4gQW0gRGllbnN0YWcsIGRlbiAyNC4wNi4yMDE0LCAxNDoyNyArMDIwMCBzY2hyaWViIE1h
-YXJ0ZW4gTGFua2hvcnN0Ogo+PiA+PiBvcCAyNC0wNi0xNCAxNDoyMywgQWxleGFuZHJlIENvdXJi
-b3Qgc2NocmVlZjoKPj4gPj4gPiBPbiBUdWUsIEp1biAyNCwgMjAxNCBhdCA3OjU1IFBNLCBBbGV4
-YW5kcmUgQ291cmJvdCA8YWNvdXJib3RAbnZpZGlhLmNvbT4gd3JvdGU6Cj4+ID4+ID4+IE9uIDA2
-LzI0LzIwMTQgMDc6MzMgUE0sIEFsZXhhbmRyZSBDb3VyYm90IHdyb3RlOgo+PiA+PiA+Pj4gT24g
-MDYvMjQvMjAxNCAwNzowMiBQTSwgUnVzc2VsbCBLaW5nIC0gQVJNIExpbnV4IHdyb3RlOgo+PiA+
-PiA+Pj4+IE9uIFR1ZSwgSnVuIDI0LCAyMDE0IGF0IDA2OjU0OjI2UE0gKzA5MDAsIEFsZXhhbmRy
-ZSBDb3VyYm90IHdyb3RlOgo+PiA+PiA+Pj4+PiBGcm9tOiBMdWNhcyBTdGFjaCA8ZGV2QGx5bnhl
-eWUuZGU+Cj4+ID4+ID4+Pj4+Cj4+ID4+ID4+Pj4+IE9uIGFyY2hpdGVjdHVyZXMgZm9yIHdoaWNo
-IGFjY2VzcyB0byBHUFUgbWVtb3J5IGlzIG5vbi1jb2hlcmVudCwKPj4gPj4gPj4+Pj4gY2FjaGVz
-IG5lZWQgdG8gYmUgZmx1c2hlZCBhbmQgaW52YWxpZGF0ZWQgZXhwbGljaXRseSBhdCB0aGUKPj4g
-Pj4gPj4+Pj4gYXBwcm9wcmlhdGUgcGxhY2VzLiBJbnRyb2R1Y2UgdHdvIHNtYWxsIGhlbHBlcnMg
-dG8gbWFrZSB0aGluZ3MKPj4gPj4gPj4+Pj4gZWFzeSBmb3IgVFRNLWJhc2VkIGRyaXZlcnMuCj4+
-ID4+ID4+Pj4KPj4gPj4gPj4+PiBIYXZlIHlvdSBydW4gdGhpcyB3aXRoIERNQSBBUEkgZGVidWdn
-aW5nIGVuYWJsZWQ/ICBJIHN1c3BlY3QgeW91IGhhdmVuJ3QsCj4+ID4+ID4+Pj4gYW5kIEkgcmVj
-b21tZW5kIHRoYXQgeW91IGRvLgo+PiA+PiA+Pj4KPj4gPj4gPj4+ICMgY2F0IC9zeXMva2VybmVs
-L2RlYnVnL2RtYS1hcGkvZXJyb3JfY291bnQKPj4gPj4gPj4+IDE2MjYyMQo+PiA+PiA+Pj4KPj4g
-Pj4gPj4+ICjila/CsOKWocKw77yJ4pWv77i1IOKUu+KUgeKUuykKPj4gPj4gPj4KPj4gPj4gPj4g
-KnB1dHMgdGFibGUgYmFjayBvbiBpdHMgZmVldCoKPj4gPj4gPj4KPj4gPj4gPj4gU28sIHllYWgg
-LSBUVE0gbWVtb3J5IGlzIG5vdCBhbGxvY2F0ZWQgdXNpbmcgdGhlIERNQSBBUEksIGhlbmNlIHdl
-IGNhbm5vdAo+PiA+PiA+PiB1c2UgdGhlIERNQSBBUEkgdG8gc3luYyBpdC4gVGhhbmtzIFJ1c3Nl
-bGwgZm9yIHBvaW50aW5nIGl0IG91dC4KPj4gPj4gPj4KPj4gPj4gPj4gVGhlIG9ubHkgYWx0ZXJu
-YXRpdmUgSSBzZWUgaGVyZSBpcyB0byBmbHVzaCB0aGUgQ1BVIGNhY2hlcyB3aGVuIHN5bmNpbmcg
-Zm9yCj4+ID4+ID4+IHRoZSBkZXZpY2UsIGFuZCBpbnZhbGlkYXRlIHRoZW0gZm9yIHRoZSBvdGhl
-ciBkaXJlY3Rpb24uIE9mIGNvdXJzZSBpZiB0aGUKPj4gPj4gPj4gZGV2aWNlIGhhcyBjYWNoZXMg
-b24gaXRzIHNpZGUgYXMgd2VsbCB0aGUgb3Bwb3NpdGUgb3BlcmF0aW9uIG11c3QgYWxzbyBiZQo+
-PiA+PiA+PiBkb25lIGZvciBpdC4gR3Vlc3MgdGhlIG9ubHkgd2F5IGlzIHRvIGhhbmRsZSBpdCBh
-bGwgYnkgb3Vyc2VsdmVzIGhlcmUuIDovCj4+ID4+ID4gLi4uIGFuZCBpdCByZWFsbHkgc3Vja3Mu
-IEJhc2ljYWxseSBpZiB3ZSBjYW5ub3QgdXNlIHRoZSBETUEgQVBJIGhlcmUKPj4gPj4gPiB3ZSB3
-aWxsIGxvc2UgdGhlIGNvbnZlbmllbmNlIG9mIGhhdmluZyBhIHBvcnRhYmxlIEFQSSB0aGF0IGRv
-ZXMganVzdAo+PiA+PiA+IHRoZSByaWdodCB0aGluZyBmb3IgdGhlIHVuZGVybHlpbmcgcGxhdGZv
-cm0uIFdpdGhvdXQgaXQgd2Ugd291bGQgaGF2ZQo+PiA+PiA+IHRvIGR1cGxpY2F0ZSBhcm1faW9t
-bXVfc3luY19zaW5nbGVfZm9yX2NwdS9kZXZpY2UoKSBhbmQgd2Ugd291bGQgb25seQo+PiA+PiA+
-IGhhdmUgc3VwcG9ydCBmb3IgQVJNLgo+PiA+PiA+Cj4+ID4+ID4gVGhlIHVzYWdlIG9mIHRoZSBE
-TUEgQVBJIHRoYXQgd2UgYXJlIGRvaW5nIG1pZ2h0IGJlIGlsbGVnYWwsIGJ1dCBpbgo+PiA+PiA+
-IGVzc2VuY2UgaXQgZG9lcyBleGFjdGx5IHdoYXQgd2UgbmVlZCAtIGF0IGxlYXN0IGZvciBBUk0u
-IFdoYXQgYXJlIHRoZQo+PiA+PiA+IGFsdGVybmF0aXZlcz8KPj4gPj4gQ29udmVydCBUVE0gdG8g
-dXNlIHRoZSBkbWEgYXBpPyA6LSkKPj4gPgo+PiA+IEFjdHVhbGx5IFRUTSBhbHJlYWR5IGhhcyBh
-IHBhZ2UgYWxsb2MgYmFja2VuZCB1c2luZyB0aGUgRE1BIEFQSS4gSXQncwo+PiA+IGp1c3Qgbm90
-IHVzZWQgZm9yIHRoZSBzdGFuZGFyZCBjYXNlIHJpZ2h0IG5vdy4KPj4KPj4gSW5kZWVkLCBhbmQg
-Tm91dmVhdSBldmVuIGFscmVhZHkgbWFrZXMgdXNlIG9mIGl0IGlmIENPTkZJR19TV0lPVExCIGlz
-Cj4+IHNldCBhcHBhcmVudGx5Lgo+Pgo+PiA+IEkgd291bGQgYXJndWUgdGhhdCB3ZSBzaG91bGQg
-anVzdCB1c2UgdGhpcyBwYWdlIGFsbG9jYXRvciAod2hpY2ggaGFzIHRoZQo+PiA+IHNpZGUgZWZm
-ZWN0IG9mIGdldHRpbmcgcGFnZXMgZnJvbSBDTUEgaWYgYXZhaWxhYmxlIC0+IHlvdSBhcmUgYWN0
-dWFsbHkKPj4gPiBmcmVlIHRvIGNoYW5nZSB0aGUgY2FjaGluZykgYW5kIGRvIGF3YXkgd2l0aCB0
-aGUgb3RoZXIgYWxsb2NhdG9yIGluIHRoZQo+PiA+IEFSTSBjYXNlLgo+Pgo+PiBNbT8gRG9lcyBp
-dCBtZWFuIHRoYXQgQ01BIG1lbW9yeSBpcyBub3QgbWFwcGVkIGludG8gbG93bWVtPyBUaGF0IHdv
-dWxkCj4+IGNlcnRhaW5seSBoZWxwIGluIHRoZSBwcmVzZW50IGNhc2UsIGJ1dCBJIHdvbmRlciBo
-b3cgdXNlZnVsIGl0IHdpbGwgYmUKPj4gb25jZSB0aGUgaW9tbXUgc3VwcG9ydCBpcyBpbiBwbGFj
-ZS4gV2lsbCBhbHNvIG5lZWQgdG8gY29uc2lkZXIKPj4gcGVyZm9ybWFuY2Ugb2Ygc3VjaCBjb2hl
-cmVudCBtZW1vcnkgZm9yIGUuZy4gdXNlci1zcGFjZSBtYXBwaW5ncy4KPj4KPj4gQW55d2F5LCBJ
-IHdpbGwgZXhwZXJpbWVudCBhIGJpdCB3aXRoIHRoaXMgdG9tb3Jyb3csIHRoYW5rcyEKPgo+IENN
-QSBtZW1vcnkgaXMgcmVzZXJ2ZWQgYmVmb3JlIHRoZSBsb3dtZW0gc2VjdGlvbiBtYXBwaW5nIGlz
-IHNldCB1cC4gSXQKPiBpcyB0aGVuIG1hcHBlZCB3aXRoIGluZGl2aWR1YWwgNGsgcGFnZXMgYmVm
-b3JlIGdpdmluZyBpdCBiYWNrIHRvIHRoZQo+IGJ1ZGR5IGFsbG9jYXRvci4KPiBUaGlzIG1lYW5z
-IENNQSBwYWdlcyBpbiB1c2UgYnkgdGhlIGtlcm5lbCBhcmUgbWFwcGVkIGludG8gbG93bWVtLCBi
-dXQKPiB0aGV5IGFyZSBhY3R1YWxseSB1bm1hcHBlZCBmcm9tIGxvd21lbSBvbmNlIHlvdSBhbGxv
-Y2F0ZSB0aGVtIGFzIERNQQo+IG1lbW9yeS4KClRoYW5rcyBmb3IgdGhlIGV4cGxhbmF0aW9uLiBJ
-IHJlYWxseSBuZWVkIHRvIHNwZW5kIG1vcmUgdGltZSBzdHVkeWluZwp0aGUgRE1BIGFsbG9jYXRv
-ci4gSSB3b25kZXIgaWYgYWxsIHRoaXMgaXMgYWxyZWFkeSBleHBsYWluZWQgc29tZXdoZXJlCmlu
-IERvY3VtZW50YXRpb24vID8KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX18KTm91dmVhdSBtYWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5v
-cmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL25vdXZlYXUK
+On 06/23/2014 11:44 PM, Alexandre Courbot wrote:
+> On 06/24/2014 04:01 AM, Stephen Warren wrote:
+>> On 06/23/2014 01:32 AM, Alexandre Courbot wrote:
+>>> Input had been disabled by mistake on these pins, leading to issues with
+>>> SDIO devices like the Wifi module not being probed or random errors
+>>> occuring on the SD card.
+>>
+>> I thought the host controller always drove the clock, so there should be
+>> no need for the pin's input path to be enabled. Perhaps it depends on
+>> the transfer mode (e.g. UHS)?
+> 
+> That's what I thought too, so I went against what was done downstream
+> and disabled input mode. Eventually noticed various issues with MMC
+> devices, reverted to the downstream settings and noticed my problems
+> were solved by this single change.
+
+Hmm. That's odd. Can you talk to one of the HW engineers behind the
+SDHCI controller and get a definitive answer. Thanks.
