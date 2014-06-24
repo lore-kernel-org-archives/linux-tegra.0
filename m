@@ -1,99 +1,72 @@
-From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v2 6/6] usb: host: ohci-exynos: Use devm_ioremap_resource
- instead of devm_ioremap
-Date: Tue, 24 Jun 2014 11:19:08 +0530
-Message-ID: <CAFp+6iHqX+huiYJo7c38tgQZ-iE7v2nXXQHrJU6v55e8zkb7Dw@mail.gmail.com>
-References: <1399723210-21569-1-git-send-email-gautam.vivek@samsung.com>
-	<1399723210-21569-7-git-send-email-gautam.vivek@samsung.com>
-	<CAFp+6iFufCh6SVEF-HQA62ZsJGJGSebDSs28eqcrMy1X8e5vjA@mail.gmail.com>
-	<20140604131306.GB28484@ulmo>
-	<CAFp+6iEe8fvxboG79=2s=oe4BkQJYAoVUPtYkPdjJHCe+bC=8Q@mail.gmail.com>
-	<20140606225246.GB22188@mithrandir>
+From: Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Tue, 24 Jun 2014 10:18:08 +0100
+Message-ID: <20140624091808.GC26013@arm.com>
+References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
+ <CAL_JsqKumG1PSFoVfeGpLLG+MjXFeF4aUjun=vv1BJpaxk0Byg@mail.gmail.com>
+ <4545972.cM7IP1qTXQ@wuerfel>
+ <53A4C0C9.2050908@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140606225246.GB22188@mithrandir>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <53A4C0C9.2050908@codeaurora.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Olav Haugan <ohaugan@codeaurora.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robherring2@gmail.com>, Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Grant Grundler <grundler@chromium.org>, Joerg Roedel <joro@8bytes.org>, Stephen Warren <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Marc Zyngier <Marc.Zyngier@arm.com>, Linux IOMMU <iommu@lists.linux-foundation.org>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Cho KyongHo <pullip.cho@samsung.com>, Dave P Martin <Dave.Martin@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm->
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+On Sat, Jun 21, 2014 at 12:16:25AM +0100, Olav Haugan wrote:
+> On 5/30/2014 12:06 PM, Arnd Bergmann wrote:
+> > On Friday 30 May 2014 08:16:05 Rob Herring wrote:
+> >> Presumably the ID would be the streamID on ARM's SMMU. How would a
+> >> master with 8 streamIDs be described? This is what Calxeda midway has
+> >> for SATA and I would expect that to be somewhat common. Either you
+> >> need some ID masking or you'll have lots of duplication when you have
+> >> windows.
+> > 
+> > I don't understand the problem. If you have stream IDs 0 through 7,
+> > you would have
+> > 
+> > 	master@a {
+> > 		...
+> > 		iommus = <&smmu 0>;
+> > 	};
+> > 
+> > 	master@b {
+> > 		...
+> > 		iommus = <&smmu 1;
+> > 	};
+> > 
+> > 	...
+> > 
+> > 	master@12 {
+> > 		...
+> > 		iommus = <&smmu 7;
+> > 	};
+> > 
+> > and you don't need a window at all. Why would you need a mask of
+> > some sort?
+> 
+> We have multiple-master SMMUs and each master emits a variable number of
+> StreamIDs. However, we have to apply a mask (the ARM SMMU spec allows
+> for this) to the StreamIDs due to limited number of StreamID 2 Context
+> Bank entries in the SMMU. If my understanding is correct we would
+> represent this in the DT like this:
+> 
+> 	iommu {
+> 		#address-cells = <2>;
+> 		#size-cells = <0>;
+> 	};
+> 
+> 	master@a {
+> 		...
+> 		iommus = <&iommu StreamID0 MASK0>,
+> 			 <&iommu StreamID1 MASK1>,
+> 			 <&iommu StreamID2 MASK2>;
+> 	};
 
+Stupid question, but why not simply describe the masked IDs? What use does
+the `raw' ID have to Linux?
 
-On Sat, Jun 7, 2014 at 4:22 AM, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Fri, Jun 06, 2014 at 06:32:42PM +0530, Vivek Gautam wrote:
->> On Wed, Jun 4, 2014 at 6:43 PM, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->> > On Wed, Jun 04, 2014 at 03:41:20PM +0530, Vivek Gautam wrote:
->> >> On Sat, May 10, 2014 at 5:30 PM, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> [...]
->> >> > diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
->> >> > index 9cf80cb..dec691d 100644
->> >> > --- a/drivers/usb/host/ohci-exynos.c
->> >> > +++ b/drivers/usb/host/ohci-exynos.c
->> >> > @@ -120,10 +120,9 @@ skip_phy:
->> >> >
->> >> >         hcd->rsrc_start = res->start;
->> >> >         hcd->rsrc_len = resource_size(res);
->> >> > -       hcd->regs = devm_ioremap(&pdev->dev, res->start, hcd->rsrc_len);
->> >> > -       if (!hcd->regs) {
->> >> > -               dev_err(&pdev->dev, "Failed to remap I/O memory\n");
->> >> > -               err = -ENOMEM;
->> >> > +       hcd->regs = devm_ioremap_resource(&pdev->dev, res);
->> >>
->> >> Here, we replaced devm_ioremap() call with devm_ioremap_resource(),
->> >> which internally requests the memory region
->> >
->> > I guess this could lead to problems if drivers haven't been written to
->> > cleanly split the register ranges that they access, since now two
->> > overlapping regions may be requested and cause the drivers to fail.
->>
->> Sorry i did not understand completely. Wouldn't the request_mem_region()
->> fail for an already busy resource ?
->> So devm_ioremap_resource() will in fact prevent the drivers from requesting
->> the same memory region twice until the first request frees the region.
->> Isn't it ?
->
-> Yes exactly. What I was trying to say is that since drivers weren't
-> requesting the resources before they may be using overlapping regions.
-> Now that this patch changes these drivers to also request the resources
-> they will fail if the regions overlap with those of other drivers.
-
-Thanks for explaining it further.
-I understand this fact. And i am sure this case does not arise in exynos.
-For Tegra, Stephen noted this fact about the ehci driver and the
-corresponding PHY.
-So that the PHY does a devm_ioremap() only.
-For other platforms too we did not get any concerns raised, so we
-moved ahead with the series
-for merging.
-
->
->> >> and then does a "devm_ioremap()" or "devm_ioremap_nocache()" based on
->> >> the check for IORESOURCE_CACHEABLE flag.
->> >>
->> >> But this flag is not set for the resource of this device.
->> >> So should we be explicitly setting the flag in driver ?
->> >
->> > I don't think it makes much sense to map these registers cached anyway.
->> > Drivers will likely expect writes to this region to take effect without
->> > needing any kind of flushing.
->>
->> These "hcd->regs" are going to be used by the controller, so wouldn't
->> there be a performance difference when the requested address space is
->> cacheable/non-cacheable ?
->
-> The issue here is that if the region is mapped cacheable then register
-> writes may not immediately take effect and that's almost certainly not
-> what the driver will expect. I don't think it ever makes sense to map
-> registers cacheable.
-
-Ok, this explains things.
-
-
-
--- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+Will
