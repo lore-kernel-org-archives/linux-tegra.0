@@ -1,88 +1,75 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 2/3] drm/ttm: introduce dma cache sync helpers
-Date: Tue, 24 Jun 2014 22:25:34 +0900
-Message-ID: <CAAVeFuKah7yeTpzt+BySFGs7vSkuOw5GLWvJp5-b63HZ_G8=yA@mail.gmail.com>
+From: Lucas Stach <l.stach@pengutronix.de>
+Subject: Re: [Nouveau] [PATCH v2 2/3] drm/ttm: introduce dma cache sync helpers
+Date: Tue, 24 Jun 2014 15:25:38 +0200
+Message-ID: <1403616338.4230.8.camel@weser.hi.pengutronix.de>
 References: <1403603667-11302-1-git-send-email-acourbot@nvidia.com>
- <1403603667-11302-3-git-send-email-acourbot@nvidia.com> <20140624100220.GK32514@n2100.arm.linux.org.uk>
- <53A953E6.2030503@nvidia.com> <53A95910.20104@nvidia.com> <CAAVeFu+rbCViC87kYCLfxGV18iYq=Pa0ABb+L=iNiYPLn+mR8Q@mail.gmail.com>
- <20140624130930.GN32514@n2100.arm.linux.org.uk>
+ <1403603667-11302-3-git-send-email-acourbot@nvidia.com>
+ <20140624100220.GK32514@n2100.arm.linux.org.uk>
+ <53A953E6.2030503@nvidia.com> <53A95910.20104@nvidia.com>
+ <CAAVeFu+rbCViC87kYCLfxGV18iYq=Pa0ABb+L=iNiYPLn+mR8Q@mail.gmail.com>
+ <53A96EC5.3030701@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140624130930.GN32514-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <53A96EC5.3030701@canonical.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Maarten Lankhorst <maarten.lankhorst@canonical.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Alexandre Courbot <acourbot@nvidia.com>, Ben Skeggs <bskeggs@redhat.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jun 24, 2014 at 10:09 PM, Russell King - ARM Linux
-<linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote:
-> On Tue, Jun 24, 2014 at 09:23:05PM +0900, Alexandre Courbot wrote:
->> On Tue, Jun 24, 2014 at 7:55 PM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->> > The only alternative I see here is to flush the CPU caches when syncing for
->> > the device, and invalidate them for the other direction. Of course if the
->> > device has caches on its side as well the opposite operation must also be
->> > done for it. Guess the only way is to handle it all by ourselves here. :/
->>
->> ... and it really sucks. Basically if we cannot use the DMA API here
->> we will lose the convenience of having a portable API that does just
->> the right thing for the underlying platform. Without it we would have
->> to duplicate arm_iommu_sync_single_for_cpu/device() and we would only
->> have support for ARM.
->>
->> The usage of the DMA API that we are doing might be illegal, but in
->> essence it does exactly what we need - at least for ARM. What are the
->> alternatives?
->
-> It may seem /to you/ as a driver developer to be the easiest thing in
-> the world to abuse an API in a way that it's not supposed to be used,
-> and it is easy to do that.
->
-> However, what you're actually saying is that you don't respect your
-> fellow kernel developers who have to maintain the other side of that
-> interface.  When they need to change the implementation of that
-> interface, what if those changes then screw your abuse of that
-> interface.
->
-> The reason we define the behaviours and properties of APIs is to give
-> both the user and the implementer of the API some degree of latitude
-> in how that interface works, so that it can be maintained into the
-> future.  If abuses (such as these) are allowed, then we've lost,
-> because the interface can no longer be sanely maintained - especially
-> if driver authors eventually end up not caring about their pile of
-> abuse they've created after they've moved on to new wonderful hardware.
->
-> With an API such as the DMA API, where we have hundreds, if not a
-> thousand users of it, this /really/ matters.
->
-> We've been here before with the DMA API on older ARM platforms, where
-> we've had people abusing the API or going beneath the API because "it
-> does what they need it to", which then makes stuff much harder to change
-> at architecture level.
->
-> Last time it happened, it was when ARMv6 came along and ARM moved away
-> from VIVT caches.  The options were either to break the crap drivers
-> and support ARMv6+ CPUs, or keep the crap drivers working and not
-> support DMA in any shape or form on ARMv6+.
->
-> Obviously, this was too important to for one or two abusive drivers to
-> block, so I changed the architecture level /anyway/ and just said screw
-> the drivers which end up being broken by their short-sightedness, they
-> can either rot or someone else can fix them.
->
-> I have no beef for intentionally breaking stuff when people abuse well
-> defined interfaces and/or refuse to discuss their requirements when
-> interfaces don't quite do what they want - or worse, refuse to listen
-> to objections.
->
-> As I say, it's disrespectful to your fellow kernel developers to abuse
-> well defined interfaces.
-
-Apologies if I sounded that way - I wasn't suggesting that we carry on
-with this clearly illegal usage of the DMA API, but was merely noting
-that if we were to implement the intended behavior on our side it
-would look just like what the ARM implementation currently does. My
-question about alternatives wasn't rethorical, I am not so familiar
-with this part of the system (as should be obvious by now) and would
-like to know whether there aren't other solutions that would spare us
-the need to re-implement something that already exists.
+QW0gRGllbnN0YWcsIGRlbiAyNC4wNi4yMDE0LCAxNDoyNyArMDIwMCBzY2hyaWViIE1hYXJ0ZW4g
+TGFua2hvcnN0Ogo+IG9wIDI0LTA2LTE0IDE0OjIzLCBBbGV4YW5kcmUgQ291cmJvdCBzY2hyZWVm
+Ogo+ID4gT24gVHVlLCBKdW4gMjQsIDIwMTQgYXQgNzo1NSBQTSwgQWxleGFuZHJlIENvdXJib3Qg
+PGFjb3VyYm90QG52aWRpYS5jb20+IHdyb3RlOgo+ID4+IE9uIDA2LzI0LzIwMTQgMDc6MzMgUE0s
+IEFsZXhhbmRyZSBDb3VyYm90IHdyb3RlOgo+ID4+PiBPbiAwNi8yNC8yMDE0IDA3OjAyIFBNLCBS
+dXNzZWxsIEtpbmcgLSBBUk0gTGludXggd3JvdGU6Cj4gPj4+PiBPbiBUdWUsIEp1biAyNCwgMjAx
+NCBhdCAwNjo1NDoyNlBNICswOTAwLCBBbGV4YW5kcmUgQ291cmJvdCB3cm90ZToKPiA+Pj4+PiBG
+cm9tOiBMdWNhcyBTdGFjaCA8ZGV2QGx5bnhleWUuZGU+Cj4gPj4+Pj4KPiA+Pj4+PiBPbiBhcmNo
+aXRlY3R1cmVzIGZvciB3aGljaCBhY2Nlc3MgdG8gR1BVIG1lbW9yeSBpcyBub24tY29oZXJlbnQs
+Cj4gPj4+Pj4gY2FjaGVzIG5lZWQgdG8gYmUgZmx1c2hlZCBhbmQgaW52YWxpZGF0ZWQgZXhwbGlj
+aXRseSBhdCB0aGUKPiA+Pj4+PiBhcHByb3ByaWF0ZSBwbGFjZXMuIEludHJvZHVjZSB0d28gc21h
+bGwgaGVscGVycyB0byBtYWtlIHRoaW5ncwo+ID4+Pj4+IGVhc3kgZm9yIFRUTS1iYXNlZCBkcml2
+ZXJzLgo+ID4+Pj4KPiA+Pj4+IEhhdmUgeW91IHJ1biB0aGlzIHdpdGggRE1BIEFQSSBkZWJ1Z2dp
+bmcgZW5hYmxlZD8gIEkgc3VzcGVjdCB5b3UgaGF2ZW4ndCwKPiA+Pj4+IGFuZCBJIHJlY29tbWVu
+ZCB0aGF0IHlvdSBkby4KPiA+Pj4KPiA+Pj4gIyBjYXQgL3N5cy9rZXJuZWwvZGVidWcvZG1hLWFw
+aS9lcnJvcl9jb3VudAo+ID4+PiAxNjI2MjEKPiA+Pj4KPiA+Pj4gKOKVr8Kw4pahwrDvvInila/v
+uLUg4pS74pSB4pS7KQo+ID4+Cj4gPj4gKnB1dHMgdGFibGUgYmFjayBvbiBpdHMgZmVldCoKPiA+
+Pgo+ID4+IFNvLCB5ZWFoIC0gVFRNIG1lbW9yeSBpcyBub3QgYWxsb2NhdGVkIHVzaW5nIHRoZSBE
+TUEgQVBJLCBoZW5jZSB3ZSBjYW5ub3QKPiA+PiB1c2UgdGhlIERNQSBBUEkgdG8gc3luYyBpdC4g
+VGhhbmtzIFJ1c3NlbGwgZm9yIHBvaW50aW5nIGl0IG91dC4KPiA+Pgo+ID4+IFRoZSBvbmx5IGFs
+dGVybmF0aXZlIEkgc2VlIGhlcmUgaXMgdG8gZmx1c2ggdGhlIENQVSBjYWNoZXMgd2hlbiBzeW5j
+aW5nIGZvcgo+ID4+IHRoZSBkZXZpY2UsIGFuZCBpbnZhbGlkYXRlIHRoZW0gZm9yIHRoZSBvdGhl
+ciBkaXJlY3Rpb24uIE9mIGNvdXJzZSBpZiB0aGUKPiA+PiBkZXZpY2UgaGFzIGNhY2hlcyBvbiBp
+dHMgc2lkZSBhcyB3ZWxsIHRoZSBvcHBvc2l0ZSBvcGVyYXRpb24gbXVzdCBhbHNvIGJlCj4gPj4g
+ZG9uZSBmb3IgaXQuIEd1ZXNzIHRoZSBvbmx5IHdheSBpcyB0byBoYW5kbGUgaXQgYWxsIGJ5IG91
+cnNlbHZlcyBoZXJlLiA6Lwo+ID4gLi4uIGFuZCBpdCByZWFsbHkgc3Vja3MuIEJhc2ljYWxseSBp
+ZiB3ZSBjYW5ub3QgdXNlIHRoZSBETUEgQVBJIGhlcmUKPiA+IHdlIHdpbGwgbG9zZSB0aGUgY29u
+dmVuaWVuY2Ugb2YgaGF2aW5nIGEgcG9ydGFibGUgQVBJIHRoYXQgZG9lcyBqdXN0Cj4gPiB0aGUg
+cmlnaHQgdGhpbmcgZm9yIHRoZSB1bmRlcmx5aW5nIHBsYXRmb3JtLiBXaXRob3V0IGl0IHdlIHdv
+dWxkIGhhdmUKPiA+IHRvIGR1cGxpY2F0ZSBhcm1faW9tbXVfc3luY19zaW5nbGVfZm9yX2NwdS9k
+ZXZpY2UoKSBhbmQgd2Ugd291bGQgb25seQo+ID4gaGF2ZSBzdXBwb3J0IGZvciBBUk0uCj4gPgo+
+ID4gVGhlIHVzYWdlIG9mIHRoZSBETUEgQVBJIHRoYXQgd2UgYXJlIGRvaW5nIG1pZ2h0IGJlIGls
+bGVnYWwsIGJ1dCBpbgo+ID4gZXNzZW5jZSBpdCBkb2VzIGV4YWN0bHkgd2hhdCB3ZSBuZWVkIC0g
+YXQgbGVhc3QgZm9yIEFSTS4gV2hhdCBhcmUgdGhlCj4gPiBhbHRlcm5hdGl2ZXM/Cj4gQ29udmVy
+dCBUVE0gdG8gdXNlIHRoZSBkbWEgYXBpPyA6LSkKCkFjdHVhbGx5IFRUTSBhbHJlYWR5IGhhcyBh
+IHBhZ2UgYWxsb2MgYmFja2VuZCB1c2luZyB0aGUgRE1BIEFQSS4gSXQncwpqdXN0IG5vdCB1c2Vk
+IGZvciB0aGUgc3RhbmRhcmQgY2FzZSByaWdodCBub3cuCgpJIHdvdWxkIGFyZ3VlIHRoYXQgd2Ug
+c2hvdWxkIGp1c3QgdXNlIHRoaXMgcGFnZSBhbGxvY2F0b3IgKHdoaWNoIGhhcyB0aGUKc2lkZSBl
+ZmZlY3Qgb2YgZ2V0dGluZyBwYWdlcyBmcm9tIENNQSBpZiBhdmFpbGFibGUgLT4geW91IGFyZSBh
+Y3R1YWxseQpmcmVlIHRvIGNoYW5nZSB0aGUgY2FjaGluZykgYW5kIGRvIGF3YXkgd2l0aCB0aGUg
+b3RoZXIgYWxsb2NhdG9yIGluIHRoZQpBUk0gY2FzZS4KClJlZ2FyZHMsCkx1Y2FzCi0tIApQZW5n
+dXRyb25peCBlLksuICAgICAgICAgICAgIHwgTHVjYXMgU3RhY2ggICAgICAgICAgICAgICAgIHwK
+SW5kdXN0cmlhbCBMaW51eCBTb2x1dGlvbnMgICB8IGh0dHA6Ly93d3cucGVuZ3V0cm9uaXguZGUv
+ICB8CgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGlu
+dXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRl
+YWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgt
+YXJtLWtlcm5lbAo=
