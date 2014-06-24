@@ -1,25 +1,26 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 5/6] include/linux/platform_data/tegra_emc.h: Remove unused
- header
-Date: Tue, 24 Jun 2014 13:21:23 -0600
-Message-ID: <53A9CFB3.6080501@wwwdotorg.org>
-References: <1403630855-29186-1-git-send-email-linux@rasmusvillemoes.dk> <1403630855-29186-6-git-send-email-linux@rasmusvillemoes.dk>
+Subject: Re: [PATCH v2 5/7] clk: tegra: Add SATA clocks to Tegra124 initialization
+ table
+Date: Tue, 24 Jun 2014 13:32:27 -0600
+Message-ID: <53A9D24B.4040301@wwwdotorg.org>
+References: <1403101406-15439-1-git-send-email-mperttunen@nvidia.com> <1403101406-15439-6-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1403630855-29186-6-git-send-email-linux@rasmusvillemoes.dk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Return-path: <linux-ide-owner@vger.kernel.org>
+In-Reply-To: <1403101406-15439-6-git-send-email-mperttunen@nvidia.com>
+Sender: linux-ide-owner@vger.kernel.org
+To: Mikko Perttunen <mperttunen@nvidia.com>, thierry.reding@gmail.com, tj@kernel.org, pdeschrijver@nvidia.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-ide@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/24/2014 11:27 AM, Rasmus Villemoes wrote:
-> The header file include/linux/platform_data/tegra_emc.h does not seem
-> to be used anywhere. It was orphaned by a7cbe92c "ARM: tegra: remove
-> tegra EMC scaling driver". Remove it.
+On 06/18/2014 08:23 AM, Mikko Perttunen wrote:
+> This adds two clocks, SATA and SATA_OOB, to the Tegra124 clock initialization
+> table. The clocks are needed for working SATA support.
 
 Acked-by: Stephen Warren <swarren@nvidia.com>
+(When I wrote that for v1, it applied to both patches 4 and 5, not just
+patch 4)
 
-Perhaps this should go through the arm-soc tree like the original
-commit, but it doesn't really matter either way.
+Peter, can you please pick up patches 4 and 5, and get them into
+linux-next. Thanks.
