@@ -1,48 +1,27 @@
-From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v3.16-rc1
-Date: Mon, 23 Jun 2014 16:57:43 -0700
-Message-ID: <53A8BEF7.5090304@nvidia.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] regulator: palmas: fix typo in enable_reg calculation
+Date: Tue, 24 Jun 2014 09:11:52 +0900
+Message-ID: <CAAVeFuJxb0vvfcebZtoQwYQzK7S03NR5OasK1mV11ZUBtt4c+g@mail.gmail.com>
+References: <1403556805-22824-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1403556805-22824-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>, Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, Jun 24, 2014 at 5:53 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> When setting up .enable_reg for an SMPS regulator, presumably we should
+> call PALMAS_BASE_TO_REG(PALMAS_SMPS_BASE, ...) rather than using
+> LDO_BASE. This change makes the LCD panel and HDMI work again on the
+> NVIDIA Dalmore board anyway.
 
-Here are some basic Tegra test results for Linux v3.16-rc1.
-Logs and other details at:
+Tested-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.16-rc1/20140615210102/
-
-
-Test summary
-------------
-
-Build: zImage:
-     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
-
-Boot to userspace: multi_v7_defconfig:
-     FAIL: ( 2/ 2): tegra114-dalmore-a04, tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-     Pass: ( 2/ 2): tegra114-dalmore-a04, tegra30-beaver
-
-
-
-vmlinux object size
-(delta in bytes from test_v3.15 (1860e379875dfe7271c649058aeddffe5afd9d0d)):
-    text     data      bss    total  kernel
-+438973  +168256   +14472  +621701  multi_v7_defconfig
-+136940     -408   +12724  +149256  tegra_defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v3.15 (1860e379875dfe7271c649058aeddffe5afd9d0d))
-     avail    rsrvd     high    freed                board              kconfig                  dtb
-     -636k     636k        .    -548k tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-     -148k     148k        .       4k tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-     -636k     636k        .    -548k       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-     -148k     148k        .       4k       tegra30-beaver      tegra_defconfig       tegra30-beaver
+Interestingly the first fix was enough for Tegra Note 7's panel -
+probably due to the fact the panel was already on when the kernel took
+over.
