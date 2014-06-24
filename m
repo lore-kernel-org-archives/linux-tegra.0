@@ -1,87 +1,128 @@
 From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 0/3] drm/ttm: nouveau: memory coherency for ARM
-Date: Tue, 24 Jun 2014 18:54:24 +0900
-Message-ID: <1403603667-11302-1-git-send-email-acourbot@nvidia.com>
+Subject: [PATCH v2 2/3] drm/ttm: introduce dma cache sync helpers
+Date: Tue, 24 Jun 2014 18:54:26 +0900
+Message-ID: <1403603667-11302-3-git-send-email-acourbot@nvidia.com>
+References: <1403603667-11302-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <1403603667-11302-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 To: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-For this v2 I have fixed the patches that are non-controversial (all Lucas' :))
-and am resubmitting them in the hope that they will get merged. This will
-just leave the issue of Nouveau system-memory buffers mapping to be solved.
+From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
 
-This issue is quite complex, so let me summarize the situation and the data
-I have at hand. ARM caching is like a quantum world where Murphy's law
-constantly applies: sometimes things that you don't expect to work happen to
-work, but never the ones you would like to.
+On architectures for which access to GPU memory is non-coherent,
+caches need to be flushed and invalidated explicitly at the
+appropriate places. Introduce two small helpers to make things
+easy for TTM-based drivers.
 
-On ARM the accepted wisdom is that all CPU mappings must share the same
-attributes, and that failure to do so results in undefined behavior. I have
-heard voices claiming that recent ARM SoCs were not affected by this, but have
-yet to see hard evidence that it is indeed the case.
+Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/gpu/drm/ttm/ttm_tt.c    | 25 +++++++++++++++++++++++++
+ include/drm/ttm/ttm_bo_driver.h | 28 ++++++++++++++++++++++++++++
+ 2 files changed, 53 insertions(+)
 
-Most (or all) physical memory happens to be already mapped, cached, in the
-lowmem area of the virtual address space. This means that if we want to be
-safe wrt. the rule mentioned above, we must perform all subsequent memory
-mappings the same way.
-
-Nouveau currently performs its memory mappings cached, since it can rely on PCI
-to snoop and invalidate addresses written by the CPU - something that we don't
-have on ARM shared-memory systems. I had proposed a (bad) patch in the previous
-revision of this series that added a way to flush the CPU cache after each write
-(http://lists.freedesktop.org/archives/dri-devel/2014-May/059893.html ) but it
-did not trigger a lot of approval. Instead, it has been suggested to map such
-BOs write-combined.
-
-This would break the "one mapping type only" rule, but I gave it a try by
-changing the TTM_PL_TT manager's authorized caching to WC. This immediatly
-resulted in breakage of applications using the GPU. Digging a little further,
-I noticed that kernel mappings could be performed WC or uncached without any
-problem, but that user-space mappings *must* be cached under all circumstances.
-Failure to do so results in invalid pushbuffers being sent to the GPUs, messed
-up vertices, and other corruptions. Uncached mappings result in the same
-breakage.
-
-So, to summarize our options for GK20A:
-1) Keeping mappings of TTM buffers cached seems to be the safest option, as it
-is consistent with the lowmem mapping likely affecting the memory of our
-buffers. But we will have to flush kernel CPU writes to these buffers one way
-or the other.
-2) Changing the kernel mappings to WC or uncached seems to be safe. However
-user-space mappings must still be cached or inconsistencies happen. This
-double-policy for kernel and user-space mappings is not implemented in TTM
-and nothing so far suggests that it should be.
-
-And that's the state where we are. I am not considering the other possibilities
-(carving memory out of lowmem, etc.) as they have already been discussed many
-times by people much smarter than me (e.g. http://lists.linaro.org/pipermail/linaro-mm-sig/2011-April/000003.html )
-and it seems that the issue is still here nonetheless.
-
-At this point suggestions towards option 1) or 2) (or where I could have
-screwed up in my understanding of ARM mappings) are welcome. And in the
-meantime, let's try to get the 3 guys below merged!
-
-Changes since v1:
-- Removed conditional compilation for Nouveau cache sync handler
-- Refactored nouveau_gem_ioctl_cpu_prep() into a new function to keep buffer
-  cache management into nouveau_bo.c
-
-Lucas Stach (3):
-  drm/ttm: recognize ARM arch in ioprot handler
-  drm/ttm: introduce dma cache sync helpers
-  drm/nouveau: hook up cache sync functions
-
- drivers/gpu/drm/nouveau/nouveau_bo.c  | 47 +++++++++++++++++++++++++++++++++++
- drivers/gpu/drm/nouveau/nouveau_bo.h  |  1 +
- drivers/gpu/drm/nouveau/nouveau_gem.c | 10 +++-----
- drivers/gpu/drm/ttm/ttm_bo_util.c     |  2 +-
- drivers/gpu/drm/ttm/ttm_tt.c          | 25 +++++++++++++++++++
- include/drm/ttm/ttm_bo_driver.h       | 28 +++++++++++++++++++++
- 6 files changed, 105 insertions(+), 8 deletions(-)
-
+diff --git a/drivers/gpu/drm/ttm/ttm_tt.c b/drivers/gpu/drm/ttm/ttm_tt.c
+index 75f319090043..66c16ad35f70 100644
+--- a/drivers/gpu/drm/ttm/ttm_tt.c
++++ b/drivers/gpu/drm/ttm/ttm_tt.c
+@@ -38,6 +38,7 @@
+ #include <linux/swap.h>
+ #include <linux/slab.h>
+ #include <linux/export.h>
++#include <linux/dma-mapping.h>
+ #include <drm/drm_cache.h>
+ #include <drm/drm_mem_util.h>
+ #include <drm/ttm/ttm_module.h>
+@@ -248,6 +249,30 @@ void ttm_dma_tt_fini(struct ttm_dma_tt *ttm_dma)
+ }
+ EXPORT_SYMBOL(ttm_dma_tt_fini);
+ 
++void ttm_dma_tt_cache_sync_for_device(struct ttm_dma_tt *ttm_dma,
++				      struct device *dev)
++{
++	unsigned long i;
++
++	for (i = 0; i < ttm_dma->ttm.num_pages; i++) {
++		dma_sync_single_for_device(dev, ttm_dma->dma_address[i],
++					   PAGE_SIZE, DMA_TO_DEVICE);
++	}
++}
++EXPORT_SYMBOL(ttm_dma_tt_cache_sync_for_device);
++
++void ttm_dma_tt_cache_sync_for_cpu(struct ttm_dma_tt *ttm_dma,
++				   struct device *dev)
++{
++	unsigned long i;
++
++	for (i = 0; i < ttm_dma->ttm.num_pages; i++) {
++		dma_sync_single_for_cpu(dev, ttm_dma->dma_address[i],
++					PAGE_SIZE, DMA_FROM_DEVICE);
++	}
++}
++EXPORT_SYMBOL(ttm_dma_tt_cache_sync_for_cpu);
++
+ void ttm_tt_unbind(struct ttm_tt *ttm)
+ {
+ 	int ret;
+diff --git a/include/drm/ttm/ttm_bo_driver.h b/include/drm/ttm/ttm_bo_driver.h
+index a5183da3ef92..52fb709568fc 100644
+--- a/include/drm/ttm/ttm_bo_driver.h
++++ b/include/drm/ttm/ttm_bo_driver.h
+@@ -41,6 +41,7 @@
+ #include <linux/fs.h>
+ #include <linux/spinlock.h>
+ #include <linux/reservation.h>
++#include <linux/device.h>
+ 
+ struct ttm_backend_func {
+ 	/**
+@@ -690,6 +691,33 @@ extern int ttm_tt_swapout(struct ttm_tt *ttm,
+  */
+ extern void ttm_tt_unpopulate(struct ttm_tt *ttm);
+ 
++/**
++ * ttm_dma_tt_cache_sync_for_device:
++ *
++ * @ttm A struct ttm_tt of the type returned by ttm_dma_tt_init.
++ * @dev A struct device representing the device to which to sync.
++ *
++ * This function will flush the CPU caches on arches where snooping in the
++ * TT is not available. On fully coherent arches this will turn into an (almost)
++ * noop. This makes sure that data written by the CPU is visible to the device.
++ */
++extern void ttm_dma_tt_cache_sync_for_device(struct ttm_dma_tt *ttm_dma,
++					     struct device *dev);
++
++/**
++ * ttm_dma_tt_cache_sync_for_cpu:
++ *
++ * @ttm A struct ttm_tt of the type returned by ttm_dma_tt_init.
++ * @dev A struct device representing the device from which to sync.
++ *
++ * This function will invalidate the CPU caches on arches where snooping in the
++ * TT is not available. On fully coherent arches this will turn into an (almost)
++ * noop. This makes sure that the CPU does not read any stale cached or
++ * prefetched data.
++ */
++extern void ttm_dma_tt_cache_sync_for_cpu(struct ttm_dma_tt *ttm_dma,
++					  struct device *dev);
++
+ /*
+  * ttm_bo.c
+  */
 -- 
 2.0.0
