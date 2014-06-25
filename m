@@ -1,59 +1,89 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v1 5/9] of: Add NVIDIA Tegra XHCI controller binding
-Date: Wed, 25 Jun 2014 17:14:53 -0600
-Message-ID: <53AB57ED.7080600@wwwdotorg.org>
-References: <1403072180-4944-1-git-send-email-abrestic@chromium.org>	<1403072180-4944-6-git-send-email-abrestic@chromium.org>	<53AB4530.2050106@wwwdotorg.org> <CAL1qeaHThKVBoY0fikFCh9X00BFNJ=XKfovOBwztEyOVjHBLjg@mail.gmail.com>
+From: Andrew Bresticker <abrestic@chromium.org>
+Subject: Re: [PATCH v1 4/9] pinctrl: tegra-xusb: Add USB PHY support
+Date: Wed, 25 Jun 2014 16:30:48 -0700
+Message-ID: <CAL1qeaHhoqEPu-j+drNiRMyeutz=qqZPxSP8H+v-sgjZSfS5tQ@mail.gmail.com>
+References: <1403072180-4944-1-git-send-email-abrestic@chromium.org>
+	<1403072180-4944-5-git-send-email-abrestic@chromium.org>
+	<53AB493F.3030802@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAL1qeaHThKVBoY0fikFCh9X00BFNJ=XKfovOBwztEyOVjHBLjg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <53AB493F.3030802@wwwdotorg.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-usb@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Randy Dunlap <rdunlap@infradead.org>, Thierry Reding <thierry.reding@gmail.com>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman <mathias.nyman@intel.com>, Grant Likely <grant.likely@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Kishon Vijay Abraham I <kishon@ti.com>, Arnd Bergmann <arnd@arndb.de>, bal
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/25/2014 05:02 PM, Andrew Bresticker wrote:
-> On Wed, Jun 25, 2014 at 2:54 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->> On 06/18/2014 12:16 AM, Andrew Bresticker wrote:
->>> Add device-tree binding documentation for the XHCI controller present
->>> on Tegra124 and later SoCs.
+On Wed, Jun 25, 2014 at 3:12 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+> On 06/18/2014 12:16 AM, Andrew Bresticker wrote:
+>> In addition to the PCIe and SATA PHYs, the XUSB pad controller also
+>> supports 3 UTMI, 2 HSIC, and 2 USB3 PHYs.  Each USB3 PHY uses a single
+>> PCIe or SATA lane and is mapped to one of the three UTMI ports.
 >>
->>> diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra124-xhci.txt b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xhci.txt
+>
+>> diff --git a/drivers/pinctrl/pinctrl-tegra-xusb.c b/drivers/pinctrl/pinctrl-tegra-xusb.c
+>
+>> @@ -372,6 +720,193 @@ static int tegra_xusb_padctl_pinconf_group_set(struct pinctrl_dev *pinctrl,
+>>                       padctl_writel(padctl, regval, lane->offset);
+>>                       break;
 >>
->>> + - clock-names: Must include the following entries:
->>> +    - xusb_host
->>> +    - xusb_falcon_src
->>> +    - xusb_ss
->>> +    - xusb_ss_src
->>> +    - xusb_hs_src
->>> +    - xusb_fs_src
->>
->> Looking at include/dt-bindings/clock/tegra124-car.h I see a few entries
->> potentially missing here:
->>
->> #define TEGRA124_CLK_XUSB_HOST_SRC 252
->> #define TEGRA124_CLK_XUSB_DEV_SRC 256
->> #define TEGRA124_CLK_XUSB_DEV 257
->> #define TEGRA124_CLK_XUSB_SS_DIV2 312
-> 
-> The driver doesn't use them, so I didn't put them in the binding.
+>> +             case TEGRA_XUSB_PADCTL_USB3_PORT_NUM:
+>> +                     if (value >= TEGRA_XUSB_PADCTL_USB3_PORTS) {
+>> +                             dev_err(padctl->dev, "Invalid USB3 port: %lu\n",
+>> +                                     value);
+>> +                             return -EINVAL;
+>> +                     }
+>> +                     if (!is_pcie_sata_lane(group)) {
+>> +                             dev_err(padctl->dev,
+>> +                                     "USB3 port not applicable for pin %d\n",
+>> +                                     group);
+>> +                             return -EINVAL;
+>> +                     }
+>> +                     padctl->usb3_ports[value].lane = group;
+>> +                     break;
+>
+> It feels odd to use pinctrl for a SW-only purpose. In other words, that
+> chunk of code isn't writing the pinconf data to HW, but rather some
+> internal variable.
 
-I think we should add them in case we need them later. Best to fully
-describe the HW rather than the parts of the HW that SW currently uses.
+Well the mapping of lanes to USB3 ports is a hardware property and we
+do use it when programming the hardware later to choose which set of
+lane registers to program given a USB3 port, but it's true that it's
+not some value we program into HW directly.
 
->>> +    - pll_u_480m
->>
->> Not just pll_u?
-> 
-> We specifically want pll_u_480M as that's what we use as the parent of
-> xusb_ss_src when scaling it to 120Mhz.
+> Perhaps it would make more sense for the DT binding to represent this
+> data directly in a custom property that's parsed at probe() time. That
+> way, pinctrl only touches "real" HW stuff.
 
-OK. I recall text in the TRM implying that SW should just leave PLL_U
-alone and not fiddle with the separate output clocks. Still, if we have
-a clock ID for each output, and it's the correct parent for the clock,
-then it does make sense to use that ID.
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I'm on the fence about this.  If you or others feel strongly about
+this then I can make it a separate DT property and move it out of the
+pinctrl properties.
+
+>> +static int usb3_phy_power_on(struct phy *phy)
+>> +{
+>> +     struct tegra_xusb_padctl *padctl = phy_get_drvdata(phy);
+>> +     int port = usb3_phy_to_port(phy);
+>> +     int lane = padctl->usb3_ports[port].lane;
+>> +     u32 value, offset;
+>> +
+>> +     value = padctl_readl(padctl, XUSB_PADCTL_IOPHY_USB3_PADX_CTL2(port));
+>> +     value &= ~((XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_WANDER_MASK <<
+>> +                 XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_WANDER_SHIFT) |
+>> +                (XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_MASK <<
+>> +                 XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_SHIFT) |
+>> +                (XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_CDR_CNTL_MASK <<
+>> +                 XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_CDR_CNTL_SHIFT));
+>
+> Hmm. So there is a lot of "PHY" stuff here after all.
+>
+> However, the PHYs implemented here appear to implement very low-level
+> I/O pad code, whereas the PHYs we have for our USB 2.0 controller are
+> somewhat higher-level; they're more USB-oriented than just IO pad
+> oriented. Do you know which level of abstraction a Linux PHY object is
+> supposed to be? I could never get an answer when I asked before.
+
+The only other PHY driver I've worked with (Exynos USB2/3 PHYs) also
+mainly only did low-level pad control stuff, but looking at a couple
+of other USB PHYs (MSM, MV), there appear to be others that have
+higher-level USB stuff in the PHY driver.  Perhaps Kishon or Felipe
+could offer us some guidance?
