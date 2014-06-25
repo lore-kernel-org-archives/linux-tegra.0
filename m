@@ -1,47 +1,43 @@
-From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v1 5/9] of: Add NVIDIA Tegra XHCI controller binding
-Date: Wed, 25 Jun 2014 16:02:48 -0700
-Message-ID: <CAL1qeaHThKVBoY0fikFCh9X00BFNJ=XKfovOBwztEyOVjHBLjg@mail.gmail.com>
+From: Andrew Bresticker <abrestic@chromium.org>
+Subject: Re: [PATCH v1 2/9] mailbox: Add NVIDIA Tegra XUSB mailbox driver
+Date: Wed, 25 Jun 2014 16:07:53 -0700
+Message-ID: <CAL1qeaH+pfyJKQyS3=7M7C6QGFkm3r5ssDohur7KUwk2EXG2tA@mail.gmail.com>
 References: <1403072180-4944-1-git-send-email-abrestic@chromium.org>
-	<1403072180-4944-6-git-send-email-abrestic@chromium.org>
-	<53AB4530.2050106@wwwdotorg.org>
+	<1403072180-4944-3-git-send-email-abrestic@chromium.org>
+	<53AB46E0.5010908@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53AB4530.2050106-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <53AB46E0.5010908@wwwdotorg.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-usb@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Randy Dunlap <rdunlap@infradead.org>, Thierry Reding <thierry.reding@gmail.com>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman <mathias.nyman@intel.com>, Grant Likely <grant.likely@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Kishon Vijay Abraham I <kishon@ti.com>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jun 25, 2014 at 2:54 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+On Wed, Jun 25, 2014 at 3:02 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
 > On 06/18/2014 12:16 AM, Andrew Bresticker wrote:
->> Add device-tree binding documentation for the XHCI controller present
->> on Tegra124 and later SoCs.
+>> The Tegra XHCI controller communicates requests to the host through
+>> a mailbox interface.  Host drivers which can handle these requests,
+>> such as the Tegra XUSB pad controller driver and upcoming Tegra XHCI
+>> host controller driver, can send messages and register to be notified
+>> of incoming messages.
 >
->> diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra124-xhci.txt b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xhci.txt
+>> diff --git a/include/linux/tegra-xusb-mbox.h b/include/linux/tegra-xusb-mbox.h
 >
->> + - clock-names: Must include the following entries:
->> +    - xusb_host
->> +    - xusb_falcon_src
->> +    - xusb_ss
->> +    - xusb_ss_src
->> +    - xusb_hs_src
->> +    - xusb_fs_src
+>> +extern int tegra_xusb_mbox_register_notifier(struct tegra_xusb_mbox *mbox,
+>> +                                          struct notifier_block *nb);
+>> +extern void tegra_xusb_mbox_unregister_notifier(struct tegra_xusb_mbox *mbox,
+>> +                                             struct notifier_block *nb);
+>> +extern int tegra_xusb_mbox_send(struct tegra_xusb_mbox *mbox,
+>> +                             enum tegra_xusb_mbox_cmd cmd, u32 data);
+>> +extern struct tegra_xusb_mbox *
+>> +tegra_xusb_mbox_lookup_by_phandle(struct device_node *np, const char *prop);
 >
-> Looking at include/dt-bindings/clock/tegra124-car.h I see a few entries
-> potentially missing here:
->
-> #define TEGRA124_CLK_XUSB_HOST_SRC 252
-> #define TEGRA124_CLK_XUSB_DEV_SRC 256
-> #define TEGRA124_CLK_XUSB_DEV 257
-> #define TEGRA124_CLK_XUSB_SS_DIV2 312
+> This seems to use a custom API. I've seen mention of a mailbox
+> subsystem, and I assume that has a standardized API. Should this driver
+> implement that instead?
 
-The driver doesn't use them, so I didn't put them in the binding.
-
->> +    - pll_u_480m
->
-> Not just pll_u?
-
-We specifically want pll_u_480M as that's what we use as the parent of
-xusb_ss_src when scaling it to 120Mhz.
+All the mailbox drivers currently use a custom API, but there is
+indeed a patch series floating around to create a generic mailbox
+framework, though it hasn't landed in -next yet.  I can take a look at
+how this driver would fit into that framework.
