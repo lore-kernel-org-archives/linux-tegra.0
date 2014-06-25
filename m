@@ -1,48 +1,43 @@
-From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] clk: define and export __clk_get_debug for providers
-Date: Wed, 25 Jun 2014 11:23:49 -0700
-Message-ID: <20140625182349.32686.25931@quantum>
-References: <1403713591-17179-1-git-send-email-pdeschrijver@nvidia.com>
- <44039675.8s16pHQIVH@wuerfel>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+From: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
+Subject: [PATCH] ARM: tegra: Migrate Apalis T30 PCIe power supply scheme
+Date: Wed, 25 Jun 2014 22:10:01 +0200
+Message-ID: <67868f9464baee36eba48582d56f586ad69d3e86.1403725976.git.marcel@ziswiler.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <44039675.8s16pHQIVH@wuerfel>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org
+Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stefan-XLVq0VzYD2Y@public.gmane.org, Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Arnd Bergmann (2014-06-25 11:07:37)
-> On Wednesday 25 June 2014 19:26:31 Peter De Schrijver wrote:
-> > Define and export a new function __clk_get_debug which returns the debugfs
-> > directory entry pointer. This can be used by clock providers to add debugfs
-> > entries which are not related to a specific clock type. Examples include the
-> > ability to measure the rate of a clock. It can also be used by modules to
-> > create new debugfs entries. This is useful if you want to expose features
-> > for testing which can potentially cause system instability such as allowing
-> > to change a clock's rate from userspace.
-> > 
-> > Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > 
-> 
-> Just an idea, but would it be better to add a pair of functions to add/remove
-> debugfs files rather than exposing the dentry itself?
+This migration is required for continued PCIe operation after commit:
 
-Arnd,
+d3c7e24b84fcb62f96fa9a585a41f1829f326878
 
-Yes, accessor functions are much better than exposing struct clk
-internals.
+Signed-off-by: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra30-apalis.dtsi |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-Peter,
-
-Just FYI, I'm trying to reverse the trend of prepending double
-underscores for functions that are used by clock providers. That stuff
-started out small and sort of grew out of control ;-)
-
-Regards,
-Mike
-
-> 
->         Arnd
+diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
+index d04efcf..8adaa78 100644
+--- a/arch/arm/boot/dts/tegra30-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+@@ -9,9 +9,14 @@
+ 	compatible = "toradex,apalis_t30", "nvidia,tegra30";
+ 
+ 	pcie-controller@00003000 {
+-		pex-clk-supply = <&sys_3v3_reg>;
+-		vdd-supply = <&vdd2_reg>;
+-		avdd-supply = <&ldo6_reg>;
++		avdd-pexa-supply = <&vdd2_reg>;
++		vdd-pexa-supply = <&vdd2_reg>;
++		avdd-pexb-supply = <&vdd2_reg>;
++		vdd-pexb-supply = <&vdd2_reg>;
++		avdd-pex-pll-supply = <&vdd2_reg>;
++		avdd-plle-supply = <&ldo6_reg>;
++		vddio-pex-ctl-supply = <&sys_3v3_reg>;
++		hvdd-pex-supply = <&sys_3v3_reg>;
+ 
+ 		pci@1,0 {
+ 			nvidia,num-lanes = <4>;
+-- 
+1.7.9.5
