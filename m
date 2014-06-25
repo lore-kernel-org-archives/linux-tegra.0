@@ -1,80 +1,62 @@
-From: Andrew Bresticker <abrestic@chromium.org>
-Subject: Re: [PATCH v1 3/9] of: Update Tegra XUSB pad controller binding for USB
-Date: Wed, 25 Jun 2014 15:25:54 -0700
-Message-ID: <CAL1qeaEnOEgdNp8F1YyUAeco6WVY0XffpiEDsPGdcCQL62sw3Q@mail.gmail.com>
+From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v1 1/9] of: Add NVIDIA Tegra XUSB mailbox binding
+Date: Wed, 25 Jun 2014 15:37:04 -0700
+Message-ID: <CAL1qeaFPjq9nqA2GDZZW+=DZsddWCkUjJcnRsfPkBWj8gmFsiw@mail.gmail.com>
 References: <1403072180-4944-1-git-send-email-abrestic@chromium.org>
-	<1403072180-4944-4-git-send-email-abrestic@chromium.org>
-	<53AB432A.7010400@wwwdotorg.org>
+	<1403072180-4944-2-git-send-email-abrestic@chromium.org>
+	<53AB422E.4040707@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <53AB432A.7010400@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-usb@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Randy Dunlap <rdunlap@infradead.org>, Thierry Reding <thierry.reding@gmail.com>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman <mathias.nyman@intel.com>, Grant Likely <grant.likely@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Kishon Vijay Abraham I <kishon@ti.com>, Arnd Bergmann <arnd@arndb.de>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <53AB422E.4040707-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Thanks for the review Stephen!
-
-On Wed, Jun 25, 2014 at 2:46 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+On Wed, Jun 25, 2014 at 2:42 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
 > On 06/18/2014 12:16 AM, Andrew Bresticker wrote:
->> Add new bindings used for USB support by the Tegra XUSB pad controller.
->> This includes additional PHY types, USB-specific pinconfig properties, etc.
+>> Add device-tree bindings for the Tegra XUSB mailbox which will be used
+>> for communication between the Tegra XHCI controller and the host.
 >
->> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt
+> Sorry for the slow review.
 >
->> @@ -21,6 +21,12 @@ Required properties:
->>    - padctl
->>  - #phy-cells: Should be 1. The specifier is the index of the PHY to reference.
->>    See <dt-bindings/pinctrl/pinctrl-tegra-xusb.h> for the list of valid values.
->> +- nvidia,xusb-mbox: Handle to the Tegra XUSB mailbox node.
+>> diff --git a/Documentation/devicetree/bindings/mailbox/nvidia,tegra124-xusb-mbox.txt b/Documentation/devicetree/bindings/mailbox/nvidia,tegra124-xusb-mbox.txt
 >
-> Why does the padctrl code need access to the XUSB mailbox?
-
-The XUSB firmware sends messages which make requests of the PHY (XUSB
-pad controller), such as idling/un-idling the HSIC PHYs or saving USB3
-PHY context.
-
-> Isn't the padctrl HW module something that provides services to the XUSB
-> code. I would have expected the XUSB node to reference the padctrl node.
-
-The XUSB padctrl HW does provide services to the XUSB host in the form
-of PHYs and it is through the PHY bindings that the host references
-the padctrl node.
-
-> If notifications need to be sent back from XUSB padctrl to XUSB, then that
-> seems like an internal SW detail that doesn't need to be represented in DT.
-
-I think you mean notifications need to be sent back from the XUSB host
-to the XUSB padctrl?  This is what the mailbox is for and I chose to
-have the padctrl refer to the mailbox since messages are sent from the
-mailbox which make requests to the PHY specifically and not the host
-(see above).
-
->> +Optional properties:
->> +-------------------
->> +- vbus-otg-{0,1,2}-supply: VBUS regulator for the corresponding UTMI pad.
+>> +NVIDIA Tegra XUSB mailbox
+>> +=========================
+>> +
+>> +The Tegra XUSB mailbox is used by the Tegra XHCI controller's firmware to
+>> +communicate with the host.
 >
-> Isn't VBUS something that's controlled by the USB PHY? I think the PHYs
-> are part of the XUSB controller, whereas the XUSB pad control is just
-> the low level IO pad HW.
-
-In the next patch in the series I extend the XUSB padctrl driver to
-provide USB PHY support as it already does for SATA and PCIe.  Since
-XUSB padctrl is also the PHY provider, I put the USB PHY properties
-here.
-
->> +- nvidia,usb3-port-num: USB3 port (0 or 1) to which the lane is mapped.
->> +- nvidia,usb2-port-num: USB2 port (0, 1, or 2) to which the lane is mapped.
->> +- nvidia,hsic-strobe-trim: HSIC strobe trimmer value.
->> +- nvidia,hsic-rx-strobe-trim: HSIC RX strobe trimmer value.
->> +- nvidia,hsic-rx-data-trim: HSIC RX data trimmer value.
->> +- nvidia,hsic-tx-rtune-n: HSIC TX RTUNEN value.
->> +- nvidia,hsic-tx-rtune-p: HSIC TX RTUNEP value.
->> +- nvidia,hsic-tx-slew-n: HSIC TX SLEWN value.
->> +- nvidia,hsic-tx-slew-p: HSIC TX SLEWP value.
->> +- nvidia,hsic-auto-term: Enables HSIC AUTO_TERM. (0: no, 1: yes)
+> Isn't the mailbox an internal implementation detail of the XUSB controller.
 >
-> I wonder if some of that isn't part of the PHY not the pads?
+> In other words, I'd naively think that there isn't a standalone generic
+> mailbox that can be used by anything, but we just happen to want to use
+> for XUSB. Rather, there's an XUSB controller, and part of the interface
+> to that controller is a mailbox.
 
-See above.
+Yes, the mailbox isn't an actual piece of hardware but rather the
+interface through which the XUSB host and AP communicate.
+
+> As such, I don't think we want a standalone mailbox node in DT. Rather,
+> we should add the required reg and interrupt values into the XUSB DT node.
+>
+> The driver for that XUSB HW module can either:
+>
+> a) Register as both a mailbox driver and an EHCI driver.
+>
+> b) Spawn a child device to instantiate the mailbox driver.
+>
+> Perhaps (b) could be assisted by using the MFD framework?
+
+So in the RFC series I did something like (a) where the XUSB host
+handled the mailbox interrupt with both the PHY and host could
+registering notifiers to handle the messages.  It was suggested by
+Arnd though that I make a separate mailbox driver.  Instead of having
+a both a host and mailbox node, I could have a single XUSB host node
+and have the mailbox driver bind to that - thoughts?
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
