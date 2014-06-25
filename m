@@ -1,49 +1,47 @@
-From: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
-Subject: Re: Tegra30: Unknown SKU 177
-Date: Wed, 25 Jun 2014 16:47:54 +0200
-Message-ID: <53AAE11A.6090304@ziswiler.com>
-References: <534403CD.8010303@ziswiler.com> <534414F2.8080407@wwwdotorg.org>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] clk: define and export __clk_get_debug for providers
+Date: Wed, 25 Jun 2014 18:20:55 +0300
+Message-ID: <1403709655-6220-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <534414F2.8080407-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/08/2014 05:25 PM, Stephen Warren wrote:
-> On 04/08/2014 08:12 AM, Marcel Ziswiler wrote:
->> Hi there
->>
->> Looks like the latest T30MQS-P-A3 embedded SKUs that can e.g. be found
->> on Toradex Colibri T30 V1.1D modules are not yet recognised by the
->> mainline speedo driver:
->>
->> [    0.000000] Tegra30: Unknown SKU 177
->> [    0.000000] fuse_speedo_calib: ATE prog ver 4.0
->> [    0.000000] Tegra30: CPU Speedo ID 0, Soc Speedo ID 0
->> [    0.000000] Tegra Revision: A03 SKU: 177 CPU Process: 2 Core Process: 0
->>
->> Does this have any adverse effects?
->
-> No.
->
-> NVIDIA's downstream kernels use SKU (along with other) information to
-> determine clock/voltage limits, etc. However, we don't have any DVFS
-> code or aggressive clock settings in mainline at present, so unknown
-> SKUS won't be a problem. The same goes for mainline U-Boot.
->
-> Still, it would be nice to squash the warning for you.
->
-> Peter, any chance you could look up the appropriate speedo IDs and fill
-> in a case for this SKU in tegra30_speedo.c? Is it possible to fill in
-> all known SKUs?
+Define and export a new function __clk_get_debug which returns the debugfs
+directory entry pointer. This can be used by clock providers to add debugfs
+entries which are not related to a specific clock type. Examples include the
+ability to measure the rate of a clock. It can also be used by modules to
+create new debugfs entries. This is useful if you want to expose features
+for testing which can potentially cause system instability such as allowing
+to change a clock's rate from userspace.
 
-We actually found some T30IQS-P-A3 chips which have an unknown SKU as well:
+Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/clk/clk.c |    9 +++++++++
+ 1 files changed, 9 insertions(+), 0 deletions(-)
 
-[    0.000000] Tegra Unknown SKU 176
-[    0.000000] Tegra Revision: A03 SKU: 176 CPU Process: 1 Core Process: 0
-
-Any update on any of this?
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 8b73ede..5fe7942 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -652,6 +652,15 @@ unsigned long __clk_get_flags(struct clk *clk)
+ }
+ EXPORT_SYMBOL_GPL(__clk_get_flags);
+ 
++struct dentry *__clk_get_dentry(struct clk *clk)
++{
++	if (!clk)
++		return NULL;
++
++	return clk->dentry;
++}
++EXPORT_SYMBOL_GPL(__clk_get_dentry);
++
+ bool __clk_is_prepared(struct clk *clk)
+ {
+ 	int ret;
+-- 
+1.7.7.rc0.72.g4b5ea.dirty
