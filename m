@@ -1,47 +1,39 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] clk: define and export __clk_get_debug for providers
-Date: Wed, 25 Jun 2014 19:26:31 +0300
-Message-ID: <1403713591-17179-1-git-send-email-pdeschrijver@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH boot script generator] Run tftpboot not tftp for network downloads
+Date: Wed, 25 Jun 2014 11:33:10 -0600
+Message-ID: <1403717590-4686-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Define and export a new function __clk_get_debug which returns the debugfs
-directory entry pointer. This can be used by clock providers to add debugfs
-entries which are not related to a specific clock type. Examples include the
-ability to measure the rate of a clock. It can also be used by modules to
-create new debugfs entries. This is useful if you want to expose features
-for testing which can potentially cause system instability such as allowing
-to change a clock's rate from userspace.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+"tftp" only works because it's an abbreviation of "tftpboot", and is
+unique within the typical set of enabled commands on Tegra devices. Fix
+the script to use the full command name "tftpboot" so that it works
+even when other TFTP-related commands (such as tftpput) are enabled.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/clk/clk.c |    9 +++++++++
- 1 files changed, 9 insertions(+), 0 deletions(-)
+I'll apply this immediately.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 8b73ede..5fe7942 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -652,6 +652,15 @@ unsigned long __clk_get_flags(struct clk *clk)
- }
- EXPORT_SYMBOL_GPL(__clk_get_flags);
+ gen-uboot-script.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gen-uboot-script.py b/gen-uboot-script.py
+index 46847e50834a..a60aed0d598f 100755
+--- a/gen-uboot-script.py
++++ b/gen-uboot-script.py
+@@ -103,7 +103,7 @@ else:
  
-+struct dentry *__clk_get_dentry(struct clk *clk)
-+{
-+	if (!clk)
-+		return NULL;
-+
-+	return clk->dentry;
-+}
-+EXPORT_SYMBOL_GPL(__clk_get_dentry);
-+
- bool __clk_is_prepared(struct clk *clk)
- {
- 	int ret;
+ if args.type == 'net':
+     f.write('dhcp\n')
+-    load='tftp'
++    load='tftpboot'
+     prefix=''
+ else:
+     load='load ${devtype} ${devnum}:${rootpart}'
 -- 
-1.7.7.rc0.72.g4b5ea.dirty
+1.8.1.5
