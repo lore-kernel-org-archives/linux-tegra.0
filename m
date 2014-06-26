@@ -1,41 +1,55 @@
 From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH RESEND] clk: flatten clk tree in debugfs
-Date: Thu, 26 Jun 2014 14:36:45 -0700
-Message-ID: <20140626213645.32686.26036@quantum>
-References: <1401462237-14954-1-git-send-email-pdeschrijver@nvidia.com>
- <20140613080239.GO5961@tbergstrom-lnx.Nvidia.com>
- <20140626163906.GI3679@tbergstrom-lnx.Nvidia.com>
+Subject: Re: [PATCH] clk: define and export __clk_get_debug for providers
+Date: Thu, 26 Jun 2014 15:11:09 -0700
+Message-ID: <CAPtuhTgp2Ubr-9CiVGeJjG91J765dYKcY3gF+i+o1MTf2ELKPA@mail.gmail.com>
+References: <1403713591-17179-1-git-send-email-pdeschrijver@nvidia.com>
+ <44039675.8s16pHQIVH@wuerfel> <20140625182349.32686.25931@quantum> <CAAObsKDVrXRgO1e2=SorGiNUMhGPCCUUPtsjDfnST9gFN4=qTQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140626163906.GI3679-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+In-Reply-To: <CAAObsKDVrXRgO1e2=SorGiNUMhGPCCUUPtsjDfnST9gFN4=qTQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Peter De Schrijver (2014-06-26 09:39:06)
-> On Fri, Jun 13, 2014 at 10:02:39AM +0200, Peter De Schrijver wrote:
-> > On Fri, May 30, 2014 at 05:03:57PM +0200, Peter De Schrijver wrote:
-> > > This patch flattens the clk tree in CCF debugfs. Instead of representing the
-> > > clocks and their hierarchy as a directory structure under
-> > > /sys/kernel/debug/clk, each clock gets a single directory directly under
-> > > /sys/kernel/debug/clk. The orphans directory is replaced by a file called
-> > > clk_orphan_summary.
-> > 
-> > Mike,
-> > 
-> > Any problems with this? What needs to be done to make this patch go forward?
+On Thu, Jun 26, 2014 at 12:37 AM, Tomeu Vizoso
+<tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org> wrote:
+> On 25 June 2014 20:23, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+>>
+>> Peter,
+>>
+>> Just FYI, I'm trying to reverse the trend of prepending double
+>> underscores for functions that are used by clock providers. That stuff
+>> started out small and sort of grew out of control ;-)
+>
+> I'm looking at rebasing Rabin's patches for per-user clks, and I have
+> had to add a few variants for providers, so they can be called with
+> clk_core instead. Have been prepending underscores for those internal
+> variants, but in some cases I had to also append a _internal suffix
+> because there were already variants without locking.
+>
+> What convention were you thinking of for distinguishing provider-only
+> variants for e.g. clk_set_rate?
 
-Applied to clk-next.
+Hmm. Now we need a convention. Damn. ;-)
+
+I'm open to suggestions. I think prepending a single underscore makes
+great sense for a lock-free inner function. And some number of
+underscores (1 or 2) makes sense for static functions not exposed to
+clock providers. I kind of like using 2 underscores for the static
+functions so that it is easier to differentiate them.
+
+For any new functions you create with unique names that are exposed to
+clock providers, do not prepend any underscore at all. It's just
+another public function in clk-provider.h.
+
+If any taste makers out there have suggestions I am happy to listen.
 
 Regards,
 Mike
 
-> > 
-> 
-> Do you think this could be merged for the 3.17?
-> 
-> Thanks,
-> 
-> Peter.
+>
+> Regards,
+>
+> Tomeu
