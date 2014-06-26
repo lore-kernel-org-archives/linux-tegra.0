@@ -1,34 +1,70 @@
-From: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: Migrate Apalis T30 PCIe power supply scheme
-Date: Thu, 26 Jun 2014 23:05:47 +0400
-Message-ID: <53AC6F0B.6020608@cogentembedded.com>
-References: <67868f9464baee36eba48582d56f586ad69d3e86.1403725976.git.marcel@ziswiler.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v1 3/9] of: Update Tegra XUSB pad controller binding for
+ USB
+Date: Thu, 26 Jun 2014 14:00:14 -0600
+Message-ID: <53AC7BCE.4030604@wwwdotorg.org>
+References: <1403072180-4944-1-git-send-email-abrestic@chromium.org>	<1403072180-4944-4-git-send-email-abrestic@chromium.org>	<53AB432A.7010400@wwwdotorg.org> <CAL1qeaEnOEgdNp8F1YyUAeco6WVY0XffpiEDsPGdcCQL62sw3Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <67868f9464baee36eba48582d56f586ad69d3e86.1403725976.git.marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stefan-XLVq0VzYD2Y@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <CAL1qeaEnOEgdNp8F1YyUAeco6WVY0XffpiEDsPGdcCQL62sw3Q@mail.gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Andrew Bresticker <abrestic@chromium.org>
+Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-usb@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Randy Dunlap <rdunlap@infradead.org>, Thierry Reding <thierry.reding@gmail.com>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman <mathias.nyman@intel.com>, Grant Likely <grant.likely@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Kishon Vijay Abraham I <kishon@ti.com>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-tegra@vger.kernel.org
 
-Hello.
+On 06/25/2014 04:25 PM, Andrew Bresticker wrote:
+> Thanks for the review Stephen!
+> 
+> On Wed, Jun 25, 2014 at 2:46 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+>> On 06/18/2014 12:16 AM, Andrew Bresticker wrote:
+>>> Add new bindings used for USB support by the Tegra XUSB pad controller.
+>>> This includes additional PHY types, USB-specific pinconfig properties, etc.
+>>
+>>> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt
+>>
+>>> @@ -21,6 +21,12 @@ Required properties:
+>>>    - padctl
+>>>  - #phy-cells: Should be 1. The specifier is the index of the PHY to reference.
+>>>    See <dt-bindings/pinctrl/pinctrl-tegra-xusb.h> for the list of valid values.
+>>> +- nvidia,xusb-mbox: Handle to the Tegra XUSB mailbox node.
+>>
+>> Why does the padctrl code need access to the XUSB mailbox?
+> 
+> The XUSB firmware sends messages which make requests of the PHY (XUSB
+> pad controller), such as idling/un-idling the HSIC PHYs or saving USB3
+> PHY context.
+> 
+>> Isn't the padctrl HW module something that provides services to the XUSB
+>> code. I would have expected the XUSB node to reference the padctrl node.
+> 
+> The XUSB padctrl HW does provide services to the XUSB host in the form
+> of PHYs and it is through the PHY bindings that the host references
+> the padctrl node.
+> 
+>> If notifications need to be sent back from XUSB padctrl to XUSB, then that
+>> seems like an internal SW detail that doesn't need to be represented in DT.
+> 
+> I think you mean notifications need to be sent back from the XUSB host
+> to the XUSB padctrl?  This is what the mailbox is for and I chose to
+> have the padctrl refer to the mailbox since messages are sent from the
+> mailbox which make requests to the PHY specifically and not the host
+> (see above).
 
-On 06/26/2014 12:10 AM, Marcel Ziswiler wrote:
+I've looked at the details of the mailbox messages a bit more now. It
+seems that the firmware running on the XUSB controller sends a variety
+of different messages, some of which are relevant to the XHCI controller
+driver and some relevant to the PHY/PAD driver. It's a pity these
+different message streams are intermixed, but I guess that's not changing.
 
-> This migration is required for continued PCIe operation after commit:
+As such, I think at this stage it does make sense for the mailbox to be
+represented as a separate node, with each of the XHCI controller and USB
+PADCTL nodes referring to the mailbox node by phandle.
 
-> d3c7e24b84fcb62f96fa9a585a41f1829f326878
-
-    Please also specify that commit's summary line in parens.
-
-> Signed-off-by: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
-
-WBR, Sergei
-
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I'm still not 100% sure about whether the PHY driver is the same level
+of abstraction intended by the Linux kernel's PHY layer. Pending that
+discussion's results, the "PHY" message from the firmware may not go to
+a Linux kernel PHY but some layer above which might get subsumed into
+the overall XHCI controller driver, which would change my argument above
+a bit.
