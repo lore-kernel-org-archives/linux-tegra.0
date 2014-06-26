@@ -1,55 +1,53 @@
-From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] clk: define and export __clk_get_debug for providers
-Date: Thu, 26 Jun 2014 15:11:09 -0700
-Message-ID: <CAPtuhTgp2Ubr-9CiVGeJjG91J765dYKcY3gF+i+o1MTf2ELKPA@mail.gmail.com>
-References: <1403713591-17179-1-git-send-email-pdeschrijver@nvidia.com>
- <44039675.8s16pHQIVH@wuerfel> <20140625182349.32686.25931@quantum> <CAAObsKDVrXRgO1e2=SorGiNUMhGPCCUUPtsjDfnST9gFN4=qTQ@mail.gmail.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 2/3] drm/ttm: introduce dma cache sync
+	helpers
+Date: Fri, 27 Jun 2014 08:17:59 +0900
+Message-ID: <CAAVeFuK5L9+nCP=KZTBSG9OifJrFKcfQdCYuBEQbZ2+s9FmFdQ@mail.gmail.com>
+References: <1403603667-11302-1-git-send-email-acourbot@nvidia.com>
+ <1403603667-11302-3-git-send-email-acourbot@nvidia.com>
+ <20140624100220.GK32514@n2100.arm.linux.org.uk>
+ <53A953E6.2030503@nvidia.com> <53A95910.20104@nvidia.com>
+ <CAAVeFu+rbCViC87kYCLfxGV18iYq=Pa0ABb+L=iNiYPLn+mR8Q@mail.gmail.com>
+ <53A96EC5.3030701@canonical.com>
+ <1403616338.4230.8.camel@weser.hi.pengutronix.de>
+ <CACP_E+KECMyusuZd6hpzthL-RpfUOJpWh0EABf1DGAeaXc00aA@mail.gmail.com>
+ <CAAVeFuLU04rk1DWMhVJV=ktVCpq4js38p1ipCr1jh1x72b=GZw@mail.gmail.com>
+ <20140626161055.GX32514@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAObsKDVrXRgO1e2=SorGiNUMhGPCCUUPtsjDfnST9gFN4=qTQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <20140626161055.GX32514-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jun 26, 2014 at 12:37 AM, Tomeu Vizoso
-<tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org> wrote:
-> On 25 June 2014 20:23, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
->>
->> Peter,
->>
->> Just FYI, I'm trying to reverse the trend of prepending double
->> underscores for functions that are used by clock providers. That stuff
->> started out small and sort of grew out of control ;-)
+On Fri, Jun 27, 2014 at 1:10 AM, Russell King - ARM Linux
+<linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote:
+> On Thu, Jun 26, 2014 at 11:53:20PM +0900, Alexandre Courbot wrote:
+>> We don't plan to rely on CMA for too long. IOMMU support is on the way
+>> and should make our life easier, although no matter the source of
+>> memory, we will still have the issue of the lowmem mappings.
 >
-> I'm looking at rebasing Rabin's patches for per-user clks, and I have
-> had to add a few variants for providers, so they can be called with
-> clk_core instead. Have been prepending underscores for those internal
-> variants, but in some cases I had to also append a _internal suffix
-> because there were already variants without locking.
+> When it comes to DMA memory, talking about lowmem vs highmem is utterly
+> meaningless.
 >
-> What convention were you thinking of for distinguishing provider-only
-> variants for e.g. clk_set_rate?
+> The lowmem/highmem split is entirely a software concept and is completely
+> adjustable.  An extreme example is that you can boot any platform with
+> more than 32MB of memory with 32MB of lowmem and the remainder as
+> highmem.
 
-Hmm. Now we need a convention. Damn. ;-)
-
-I'm open to suggestions. I think prepending a single underscore makes
-great sense for a lock-free inner function. And some number of
-underscores (1 or 2) makes sense for static functions not exposed to
-clock providers. I kind of like using 2 underscores for the static
-functions so that it is easier to differentiate them.
-
-For any new functions you create with unique names that are exposed to
-clock providers, do not prepend any underscore at all. It's just
-another public function in clk-provider.h.
-
-If any taste makers out there have suggestions I am happy to listen.
-
-Regards,
-Mike
-
->
-> Regards,
->
-> Tomeu
+True, but isn't it also the case that all lowmem is already mapped in
+the kernel address space, and that re-mapping this memory with
+different cache settings (e.g. by creating a WC mapping for user-space
+to write into) is undefined on ARM and must be avoided? That is the
+issue I was referring to.
