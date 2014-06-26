@@ -1,47 +1,39 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] clk: define and export __clk_get_debug for providers
-Date: Thu, 26 Jun 2014 16:22:01 +0300
-Message-ID: <1403788921-7963-1-git-send-email-pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH] clk: tegra124: init table updates
+Date: Thu, 26 Jun 2014 17:34:12 +0300
+Message-ID: <1403793253-16534-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Define and export a new function __clk_get_debug which returns the debugfs
-directory entry pointer. This can be used by clock providers to add debugfs
-entries which are not related to a specific clock type. Examples include the
-ability to measure the rate of a clock. It can also be used by modules to
-create new debugfs entries. This is useful if you want to expose features
-for testing which can potentially cause system instability such as allowing
-to change a clock's rate from userspace.
+Ensure some clocks critical for system operation are always. Also enable csite
+for JTAG debugging and set the tsensor clock frequency for the upcoming
+soctherm driver.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- drivers/clk/clk.c |    9 +++++++++
- 1 files changed, 9 insertions(+), 0 deletions(-)
+ drivers/clk/tegra/clk-tegra124.c |    5 +++++
+ 1 files changed, 5 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 8b73ede..5fe7942 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -652,6 +652,15 @@ unsigned long __clk_get_flags(struct clk *clk)
- }
- EXPORT_SYMBOL_GPL(__clk_get_flags);
- 
-+struct dentry *__clk_get_dentry(struct clk *clk)
-+{
-+	if (!clk)
-+		return NULL;
-+
-+	return clk->dentry;
-+}
-+EXPORT_SYMBOL_GPL(__clk_get_dentry);
-+
- bool __clk_is_prepared(struct clk *clk)
- {
- 	int ret;
+diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+index 80efe51..0f5275a 100644
+--- a/drivers/clk/tegra/clk-tegra124.c
++++ b/drivers/clk/tegra/clk-tegra124.c
+@@ -1369,6 +1369,11 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{TEGRA124_CLK_XUSB_HS_SRC, TEGRA124_CLK_PLL_U_60M, 60000000, 0},
+ 	{TEGRA124_CLK_XUSB_FALCON_SRC, TEGRA124_CLK_PLL_RE_OUT, 224000000, 0},
+ 	{TEGRA124_CLK_XUSB_HOST_SRC, TEGRA124_CLK_PLL_RE_OUT, 112000000, 0},
++	{TEGRA124_CLK_EMC, TEGRA124_CLK_CLK_MAX, 0, 1},
++	{TEGRA124_CLK_CCLK_G, TEGRA124_CLK_CLK_MAX, 0, 1},
++	{TEGRA124_CLK_MSELECT, TEGRA124_CLK_CLK_MAX, 0, 1},
++	{TEGRA124_CLK_CSITE, TEGRA124_CLK_CLK_MAX, 0, 1},
++	{TEGRA124_CLK_TSENSOR, TEGRA124_CLK_CLK_M, 40000, 0},
+ 	/* This MUST be the last entry. */
+ 	{TEGRA124_CLK_CLK_MAX, TEGRA124_CLK_CLK_MAX, 0, 0},
+ };
 -- 
 1.7.7.rc0.72.g4b5ea.dirty
