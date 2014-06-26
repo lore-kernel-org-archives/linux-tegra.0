@@ -1,25 +1,21 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH] clk: tegra: export clock names for debugging
-Date: Thu, 26 Jun 2014 09:52:16 -0600
-Message-ID: <53AC41B0.40307@wwwdotorg.org>
-References: <1403797705-26910-1-git-send-email-pdeschrijver@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v2] clk: tegra124: init table updates
+Date: Thu, 26 Jun 2014 09:53:18 -0600
+Message-ID: <53AC41EE.7090103@wwwdotorg.org>
+References: <1403796403-26443-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1403797705-26910-1-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1403796403-26443-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/26/2014 09:48 AM, Peter De Schrijver wrote:
-> When writing a module for testing or debugging purposes, there is no way to
-> get hold of clk handles. This patch solves this by exposing all valid clocks
-> as clkdev's for the virtual device tegra-clk-debug.
+On 06/26/2014 09:26 AM, Peter De Schrijver wrote:
+> Ensure some clocks critical for system operation are always on. Also enable
+> csite for JTAG debugging and set the tsensor clock frequency for the upcoming
+> soctherm driver.
 
-This is to support clk_get_sys()?
-
-I guess this seems fine, so feel free to apply it, but I slightly wonder
-why not just include this change as part of the presumably local and
-never-to-be-upstreamed test/dev module?
+Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
