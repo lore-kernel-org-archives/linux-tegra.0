@@ -1,146 +1,92 @@
 From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [Nouveau] [PATCH v2 2/3] drm/ttm: introduce dma cache sync helpers
-Date: Thu, 26 Jun 2014 23:50:04 +0900
-Message-ID: <CAAVeFu+74HhBQM3Zr3O5Must5-SX8OGi9wwmegQfHcFnKiyG=w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] drm/ttm: introduce dma cache sync
+	helpers
+Date: Thu, 26 Jun 2014 23:53:20 +0900
+Message-ID: <CAAVeFuLU04rk1DWMhVJV=ktVCpq4js38p1ipCr1jh1x72b=GZw@mail.gmail.com>
 References: <1403603667-11302-1-git-send-email-acourbot@nvidia.com>
- <1403603667-11302-3-git-send-email-acourbot@nvidia.com> <20140624100220.GK32514@n2100.arm.linux.org.uk>
- <53A953E6.2030503@nvidia.com> <53A95910.20104@nvidia.com> <CAAVeFu+rbCViC87kYCLfxGV18iYq=Pa0ABb+L=iNiYPLn+mR8Q@mail.gmail.com>
- <53A96EC5.3030701@canonical.com> <1403616338.4230.8.camel@weser.hi.pengutronix.de>
- <CAAVeFuLcC30BdWierY8Bg0vBmfNCaB=Qs34h790jGB=BRYvGAg@mail.gmail.com> <1403618295.4230.13.camel@weser.hi.pengutronix.de>
+ <1403603667-11302-3-git-send-email-acourbot@nvidia.com>
+ <20140624100220.GK32514@n2100.arm.linux.org.uk>
+ <53A953E6.2030503@nvidia.com> <53A95910.20104@nvidia.com>
+ <CAAVeFu+rbCViC87kYCLfxGV18iYq=Pa0ABb+L=iNiYPLn+mR8Q@mail.gmail.com>
+ <53A96EC5.3030701@canonical.com>
+ <1403616338.4230.8.camel@weser.hi.pengutronix.de>
+ <CACP_E+KECMyusuZd6hpzthL-RpfUOJpWh0EABf1DGAeaXc00aA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1403618295.4230.13.camel-WzVe3FnzCwFR6QfukMTsflXZhhPuCNm+@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: Maarten Lankhorst <maarten.lankhorst-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <CACP_E+KECMyusuZd6hpzthL-RpfUOJpWh0EABf1DGAeaXc00aA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: =?UTF-8?Q?St=C3=A9phane_Marchesin?= <stephane.marchesin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jun 24, 2014 at 10:58 PM, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> =
-wrote:
-> Am Dienstag, den 24.06.2014, 22:52 +0900 schrieb Alexandre Courbot:
->> On Tue, Jun 24, 2014 at 10:25 PM, Lucas Stach <l.stach@pengutronix.d=
-e> wrote:
->> > Am Dienstag, den 24.06.2014, 14:27 +0200 schrieb Maarten Lankhorst=
-:
->> >> op 24-06-14 14:23, Alexandre Courbot schreef:
->> >> > On Tue, Jun 24, 2014 at 7:55 PM, Alexandre Courbot <acourbot@nv=
-idia.com> wrote:
->> >> >> On 06/24/2014 07:33 PM, Alexandre Courbot wrote:
->> >> >>> On 06/24/2014 07:02 PM, Russell King - ARM Linux wrote:
->> >> >>>> On Tue, Jun 24, 2014 at 06:54:26PM +0900, Alexandre Courbot =
-wrote:
->> >> >>>>> From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
->> >> >>>>>
->> >> >>>>> On architectures for which access to GPU memory is non-cohe=
-rent,
->> >> >>>>> caches need to be flushed and invalidated explicitly at the
->> >> >>>>> appropriate places. Introduce two small helpers to make thi=
-ngs
->> >> >>>>> easy for TTM-based drivers.
->> >> >>>>
->> >> >>>> Have you run this with DMA API debugging enabled?  I suspect=
- you haven't,
->> >> >>>> and I recommend that you do.
->> >> >>>
->> >> >>> # cat /sys/kernel/debug/dma-api/error_count
->> >> >>> 162621
->> >> >>>
->> >> >>> (=E2=95=AF=C2=B0=E2=96=A1=C2=B0=EF=BC=89=E2=95=AF=EF=B8=B5 =E2=
-=94=BB=E2=94=81=E2=94=BB)
->> >> >>
->> >> >> *puts table back on its feet*
->> >> >>
->> >> >> So, yeah - TTM memory is not allocated using the DMA API, henc=
-e we cannot
->> >> >> use the DMA API to sync it. Thanks Russell for pointing it out=
-=2E
->> >> >>
->> >> >> The only alternative I see here is to flush the CPU caches whe=
-n syncing for
->> >> >> the device, and invalidate them for the other direction. Of co=
-urse if the
->> >> >> device has caches on its side as well the opposite operation m=
-ust also be
->> >> >> done for it. Guess the only way is to handle it all by ourselv=
-es here. :/
->> >> > ... and it really sucks. Basically if we cannot use the DMA API=
- here
->> >> > we will lose the convenience of having a portable API that does=
- just
->> >> > the right thing for the underlying platform. Without it we woul=
-d have
->> >> > to duplicate arm_iommu_sync_single_for_cpu/device() and we woul=
-d only
->> >> > have support for ARM.
->> >> >
->> >> > The usage of the DMA API that we are doing might be illegal, bu=
-t in
->> >> > essence it does exactly what we need - at least for ARM. What a=
-re the
->> >> > alternatives?
->> >> Convert TTM to use the dma api? :-)
->> >
->> > Actually TTM already has a page alloc backend using the DMA API. I=
-t's
->> > just not used for the standard case right now.
->>
->> Indeed, and Nouveau even already makes use of it if CONFIG_SWIOTLB i=
-s
->> set apparently.
->>
->> > I would argue that we should just use this page allocator (which h=
-as the
->> > side effect of getting pages from CMA if available -> you are actu=
-ally
->> > free to change the caching) and do away with the other allocator i=
-n the
->> > ARM case.
->>
->> Mm? Does it mean that CMA memory is not mapped into lowmem? That wou=
-ld
->> certainly help in the present case, but I wonder how useful it will =
-be
->> once the iommu support is in place. Will also need to consider
->> performance of such coherent memory for e.g. user-space mappings.
->>
->> Anyway, I will experiment a bit with this tomorrow, thanks!
->
-> CMA memory is reserved before the lowmem section mapping is set up. I=
-t
-> is then mapped with individual 4k pages before giving it back to the
-> buddy allocator.
-> This means CMA pages in use by the kernel are mapped into lowmem, but
-> they are actually unmapped from lowmem once you allocate them as DMA
-> memory.
-
-Tried enabling the DMA page allocation for GK20A. The great news is
-that with it caching works as expected and that DMA API debugging does
-not complain anymore when calling the sync functions. Actually, since
-the DMA page allocator returns coherent memory, there is no need for
-these sync functions anymore, which makes things easier. This seems to
-be the simplest way towards enabling GK20A - albeit performance
-suffers a little, but we can revisit that later once we have IOMMU
-support.
-
-I would not claim that we are fully compliant with what the DMA API
-expects though. For instance, pages allocated for TTM via
-dma_alloc_coherent() are later re-mapped in ttm_bo_kmap_ttm() using
-vmap(), potentially with a different pgprot. The waste of address
-space produced by these two simultaneous mappings aside, is this even
-allowed? And when it comes to mapping these pages to user-space, TTM
-does it without calling dma_mmap_coherent(), and again with whatever
-flags we give it. IIUC memory allocated through the DMA API should
-only be touched through the vaddr returned by dma_alloc_coherent(), or
-through mappings provided by other DMA API functions. So is TTM
-misusing the DMA API here?
-
-In general, should we still be afraid of non-identical mappings on
-modern CPUs like the A15 found in Tegra K1? I have heard contradictory
-information so far and would really like to be able to understand this
-once and for all, as it would give us more choices as for which memory
-provider we can use.
-
-Thanks,
-Alex.
+T24gV2VkLCBKdW4gMjUsIDIwMTQgYXQgMTowMCBQTSwgU3TDqXBoYW5lIE1hcmNoZXNpbgo8c3Rl
+cGhhbmUubWFyY2hlc2luQGdtYWlsLmNvbT4gd3JvdGU6Cj4gT24gVHVlLCBKdW4gMjQsIDIwMTQg
+YXQgNjoyNSBBTSwgTHVjYXMgU3RhY2ggPGwuc3RhY2hAcGVuZ3V0cm9uaXguZGU+IHdyb3RlOgo+
+PiBBbSBEaWVuc3RhZywgZGVuIDI0LjA2LjIwMTQsIDE0OjI3ICswMjAwIHNjaHJpZWIgTWFhcnRl
+biBMYW5raG9yc3Q6Cj4+PiBvcCAyNC0wNi0xNCAxNDoyMywgQWxleGFuZHJlIENvdXJib3Qgc2No
+cmVlZjoKPj4+ID4gT24gVHVlLCBKdW4gMjQsIDIwMTQgYXQgNzo1NSBQTSwgQWxleGFuZHJlIENv
+dXJib3QgPGFjb3VyYm90QG52aWRpYS5jb20+IHdyb3RlOgo+Pj4gPj4gT24gMDYvMjQvMjAxNCAw
+NzozMyBQTSwgQWxleGFuZHJlIENvdXJib3Qgd3JvdGU6Cj4+PiA+Pj4gT24gMDYvMjQvMjAxNCAw
+NzowMiBQTSwgUnVzc2VsbCBLaW5nIC0gQVJNIExpbnV4IHdyb3RlOgo+Pj4gPj4+PiBPbiBUdWUs
+IEp1biAyNCwgMjAxNCBhdCAwNjo1NDoyNlBNICswOTAwLCBBbGV4YW5kcmUgQ291cmJvdCB3cm90
+ZToKPj4+ID4+Pj4+IEZyb206IEx1Y2FzIFN0YWNoIDxkZXZAbHlueGV5ZS5kZT4KPj4+ID4+Pj4+
+Cj4+PiA+Pj4+PiBPbiBhcmNoaXRlY3R1cmVzIGZvciB3aGljaCBhY2Nlc3MgdG8gR1BVIG1lbW9y
+eSBpcyBub24tY29oZXJlbnQsCj4+PiA+Pj4+PiBjYWNoZXMgbmVlZCB0byBiZSBmbHVzaGVkIGFu
+ZCBpbnZhbGlkYXRlZCBleHBsaWNpdGx5IGF0IHRoZQo+Pj4gPj4+Pj4gYXBwcm9wcmlhdGUgcGxh
+Y2VzLiBJbnRyb2R1Y2UgdHdvIHNtYWxsIGhlbHBlcnMgdG8gbWFrZSB0aGluZ3MKPj4+ID4+Pj4+
+IGVhc3kgZm9yIFRUTS1iYXNlZCBkcml2ZXJzLgo+Pj4gPj4+Pgo+Pj4gPj4+PiBIYXZlIHlvdSBy
+dW4gdGhpcyB3aXRoIERNQSBBUEkgZGVidWdnaW5nIGVuYWJsZWQ/ICBJIHN1c3BlY3QgeW91IGhh
+dmVuJ3QsCj4+PiA+Pj4+IGFuZCBJIHJlY29tbWVuZCB0aGF0IHlvdSBkby4KPj4+ID4+Pgo+Pj4g
+Pj4+ICMgY2F0IC9zeXMva2VybmVsL2RlYnVnL2RtYS1hcGkvZXJyb3JfY291bnQKPj4+ID4+PiAx
+NjI2MjEKPj4+ID4+Pgo+Pj4gPj4+ICjila/CsOKWocKw77yJ4pWv77i1IOKUu+KUgeKUuykKPj4+
+ID4+Cj4+PiA+PiAqcHV0cyB0YWJsZSBiYWNrIG9uIGl0cyBmZWV0Kgo+Pj4gPj4KPj4+ID4+IFNv
+LCB5ZWFoIC0gVFRNIG1lbW9yeSBpcyBub3QgYWxsb2NhdGVkIHVzaW5nIHRoZSBETUEgQVBJLCBo
+ZW5jZSB3ZSBjYW5ub3QKPj4+ID4+IHVzZSB0aGUgRE1BIEFQSSB0byBzeW5jIGl0LiBUaGFua3Mg
+UnVzc2VsbCBmb3IgcG9pbnRpbmcgaXQgb3V0Lgo+Pj4gPj4KPj4+ID4+IFRoZSBvbmx5IGFsdGVy
+bmF0aXZlIEkgc2VlIGhlcmUgaXMgdG8gZmx1c2ggdGhlIENQVSBjYWNoZXMgd2hlbiBzeW5jaW5n
+IGZvcgo+Pj4gPj4gdGhlIGRldmljZSwgYW5kIGludmFsaWRhdGUgdGhlbSBmb3IgdGhlIG90aGVy
+IGRpcmVjdGlvbi4gT2YgY291cnNlIGlmIHRoZQo+Pj4gPj4gZGV2aWNlIGhhcyBjYWNoZXMgb24g
+aXRzIHNpZGUgYXMgd2VsbCB0aGUgb3Bwb3NpdGUgb3BlcmF0aW9uIG11c3QgYWxzbyBiZQo+Pj4g
+Pj4gZG9uZSBmb3IgaXQuIEd1ZXNzIHRoZSBvbmx5IHdheSBpcyB0byBoYW5kbGUgaXQgYWxsIGJ5
+IG91cnNlbHZlcyBoZXJlLiA6Lwo+Pj4gPiAuLi4gYW5kIGl0IHJlYWxseSBzdWNrcy4gQmFzaWNh
+bGx5IGlmIHdlIGNhbm5vdCB1c2UgdGhlIERNQSBBUEkgaGVyZQo+Pj4gPiB3ZSB3aWxsIGxvc2Ug
+dGhlIGNvbnZlbmllbmNlIG9mIGhhdmluZyBhIHBvcnRhYmxlIEFQSSB0aGF0IGRvZXMganVzdAo+
+Pj4gPiB0aGUgcmlnaHQgdGhpbmcgZm9yIHRoZSB1bmRlcmx5aW5nIHBsYXRmb3JtLiBXaXRob3V0
+IGl0IHdlIHdvdWxkIGhhdmUKPj4+ID4gdG8gZHVwbGljYXRlIGFybV9pb21tdV9zeW5jX3Npbmds
+ZV9mb3JfY3B1L2RldmljZSgpIGFuZCB3ZSB3b3VsZCBvbmx5Cj4+PiA+IGhhdmUgc3VwcG9ydCBm
+b3IgQVJNLgo+Pj4gPgo+Pj4gPiBUaGUgdXNhZ2Ugb2YgdGhlIERNQSBBUEkgdGhhdCB3ZSBhcmUg
+ZG9pbmcgbWlnaHQgYmUgaWxsZWdhbCwgYnV0IGluCj4+PiA+IGVzc2VuY2UgaXQgZG9lcyBleGFj
+dGx5IHdoYXQgd2UgbmVlZCAtIGF0IGxlYXN0IGZvciBBUk0uIFdoYXQgYXJlIHRoZQo+Pj4gPiBh
+bHRlcm5hdGl2ZXM/Cj4+PiBDb252ZXJ0IFRUTSB0byB1c2UgdGhlIGRtYSBhcGk/IDotKQo+Pgo+
+PiBBY3R1YWxseSBUVE0gYWxyZWFkeSBoYXMgYSBwYWdlIGFsbG9jIGJhY2tlbmQgdXNpbmcgdGhl
+IERNQSBBUEkuIEl0J3MKPj4ganVzdCBub3QgdXNlZCBmb3IgdGhlIHN0YW5kYXJkIGNhc2Ugcmln
+aHQgbm93Lgo+Pgo+PiBJIHdvdWxkIGFyZ3VlIHRoYXQgd2Ugc2hvdWxkIGp1c3QgdXNlIHRoaXMg
+cGFnZSBhbGxvY2F0b3IgKHdoaWNoIGhhcyB0aGUKPj4gc2lkZSBlZmZlY3Qgb2YgZ2V0dGluZyBw
+YWdlcyBmcm9tIENNQSBpZiBhdmFpbGFibGUgLT4geW91IGFyZSBhY3R1YWxseQo+PiBmcmVlIHRv
+IGNoYW5nZSB0aGUgY2FjaGluZykgYW5kIGRvIGF3YXkgd2l0aCB0aGUgb3RoZXIgYWxsb2NhdG9y
+IGluIHRoZQo+PiBBUk0gY2FzZS4KPgo+IENNQSBjb21lcyB3aXRoIGl0cyBvd24gc2V0IG9mIChz
+ZXZlcmUpIGxpbWl0YXRpb25zIHRob3VnaCwgaW4KPiBwYXJ0aWN1bGFyIGl0J3Mgbm90IHBvc3Np
+YmxlIHRvIG1hcCBhcmJpdHJhcnkgQ1BVIHBhZ2VzIGludG8gdGhlIEdQVQo+IHdpdGhvdXQgaW5j
+dXJyaW5nIGEgY29weSwgeW91IGFkZCBhcmJpdHJhcnkgbWVtb3J5IGxpbWl0cyBldGMuIE92ZXJh
+bGwKPiB0aGF0J3Mgbm90IHJlYWxseSBhIGdvb2QgcGljayBmb3IgdGhlIGxvbmcgdGVybS4uLgoK
+V2UgZG9uJ3QgcGxhbiB0byByZWx5IG9uIENNQSBmb3IgdG9vIGxvbmcuIElPTU1VIHN1cHBvcnQg
+aXMgb24gdGhlIHdheQphbmQgc2hvdWxkIG1ha2Ugb3VyIGxpZmUgZWFzaWVyLCBhbHRob3VnaCBu
+byBtYXR0ZXIgdGhlIHNvdXJjZSBvZgptZW1vcnksIHdlIHdpbGwgc3RpbGwgaGF2ZSB0aGUgaXNz
+dWUgb2YgdGhlIGxvd21lbSBtYXBwaW5ncy4gU28gZmFyIGl0CnNvdW5kcyBsaWtlIENNQSBpcyB0
+aGUgb25seSB3YXkgdG8gInVuZG8iIHRoZW0sIHNvIGluIHRoZSBlbmQgaXQgbWF5CmNvbWUgZG93
+biB0byB3aGV0aGVyIG9yIG5vdCB0aGUgbXVsdGktbWFwcGluZyBjb250cmFpbnQgYXBwbGllcyB0
+bwpUSzEuIEkgd2lsbCB0YXAgaW50byBvdXIgaW50ZXJuYWwgc291cmNlcyBvZiBrbm93bGVkZ2Ug
+dG8gdHJ5IGFuZApmaWd1cmUgdGhpcyBvbmUgb3V0LgpfX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fXwpOb3V2ZWF1IG1haWxpbmcgbGlzdApOb3V2ZWF1QGxpc3Rz
+LmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
+dGluZm8vbm91dmVhdQo=
