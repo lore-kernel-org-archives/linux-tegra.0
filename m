@@ -1,28 +1,47 @@
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: Re: [PATCH v2 6/7] ata: Add support for the Tegra124 SATA controller
-Date: Thu, 26 Jun 2014 14:18:50 +0300
-Message-ID: <53AC019A.40404@nvidia.com>
-References: <1403101406-15439-1-git-send-email-mperttunen@nvidia.com> <1403101406-15439-7-git-send-email-mperttunen@nvidia.com> <53A9D31A.6030307@wwwdotorg.org>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] clk: define and export __clk_get_debug for providers
+Date: Thu, 26 Jun 2014 16:22:01 +0300
+Message-ID: <1403788921-7963-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-ide-owner@vger.kernel.org>
-In-Reply-To: <53A9D31A.6030307@wwwdotorg.org>
-Sender: linux-ide-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, "tj@kernel.org" <tj@kernel.org>
-Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-FWIW, from IRC, the series
+Define and export a new function __clk_get_debug which returns the debugfs
+directory entry pointer. This can be used by clock providers to add debugfs
+entries which are not related to a specific clock type. Examples include the
+ability to measure the rate of a clock. It can also be used by modules to
+create new debugfs entries. This is useful if you want to expose features
+for testing which can potentially cause system instability such as allowing
+to change a clock's rate from userspace.
 
- > Tested-by: Steev Klimaszewski <steev@gentoo.org>
+Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/clk/clk.c |    9 +++++++++
+ 1 files changed, 9 insertions(+), 0 deletions(-)
 
-On 24/06/14 22:35, Stephen Warren wrote:
-> On 06/18/2014 08:23 AM, Mikko Perttunen wrote:
->> This adds support for the integrated AHCI-compliant Serial ATA
->> controller present on the NVIDIA Tegra124 system-on-chip.
->
-> At a quick glance, this looks fine to me now. I'll wait for an ack to
-> take this patch through the Tegra tree, for the reasons I mentioned in
-> response to v1.
->
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 8b73ede..5fe7942 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -652,6 +652,15 @@ unsigned long __clk_get_flags(struct clk *clk)
+ }
+ EXPORT_SYMBOL_GPL(__clk_get_flags);
+ 
++struct dentry *__clk_get_dentry(struct clk *clk)
++{
++	if (!clk)
++		return NULL;
++
++	return clk->dentry;
++}
++EXPORT_SYMBOL_GPL(__clk_get_dentry);
++
+ bool __clk_is_prepared(struct clk *clk)
+ {
+ 	int ret;
+-- 
+1.7.7.rc0.72.g4b5ea.dirty
