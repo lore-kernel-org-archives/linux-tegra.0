@@ -1,94 +1,90 @@
-From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v3 02/10] devicetree: Add generic IOMMU device tree
- bindings
-Date: Fri, 27 Jun 2014 14:55:38 +0100
-Message-ID: <20140627135537.GU26276@arm.com>
-References: <1403815790-8548-1-git-send-email-thierry.reding@gmail.com>
- <1403815790-8548-3-git-send-email-thierry.reding@gmail.com>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH v1 4/9] pinctrl: tegra-xusb: Add USB PHY support
+Date: Fri, 27 Jun 2014 10:00:04 -0500
+Message-ID: <20140627150004.GF8069@saruman.home>
+References: <1403072180-4944-1-git-send-email-abrestic@chromium.org>
+ <1403072180-4944-5-git-send-email-abrestic@chromium.org>
+ <53AB493F.3030802@wwwdotorg.org>
+ <CAL1qeaHhoqEPu-j+drNiRMyeutz=qqZPxSP8H+v-sgjZSfS5tQ@mail.gmail.com>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="qp4W5+cUSnZs0RIF"
+Return-path: <linux-doc-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1403815790-8548-3-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olav Haugan <ohaugan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra@vger.>
+In-Reply-To: <CAL1qeaHhoqEPu-j+drNiRMyeutz=qqZPxSP8H+v-sgjZSfS5tQ@mail.gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Andrew Bresticker <abrestic@chromium.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-usb@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Randy Dunlap <rdunlap@infradead.org>, Thierry Reding <thierry.reding@gmail.com>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman <mathias.nyman@intel.com>, Grant Likely <grant.likely@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Kishon Vijay Abraham I <kish>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry,
+--qp4W5+cUSnZs0RIF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 26, 2014 at 09:49:42PM +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> This commit introduces a generic device tree binding for IOMMU devices.
-> Only a very minimal subset is described here, but it is enough to cover
-> the requirements of both the Exynos System MMU and Tegra SMMU as
-> discussed here:
-> 
->     https://lkml.org/lkml/2014/4/27/346
-> 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Wed, Jun 25, 2014 at 04:30:48PM -0700, Andrew Bresticker wrote:
+> >> +static int usb3_phy_power_on(struct phy *phy)
+> >> +{
+> >> +     struct tegra_xusb_padctl *padctl =3D phy_get_drvdata(phy);
+> >> +     int port =3D usb3_phy_to_port(phy);
+> >> +     int lane =3D padctl->usb3_ports[port].lane;
+> >> +     u32 value, offset;
+> >> +
+> >> +     value =3D padctl_readl(padctl, XUSB_PADCTL_IOPHY_USB3_PADX_CTL2(=
+port));
+> >> +     value &=3D ~((XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_WANDER_MASK <<
+> >> +                 XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_WANDER_SHIFT) |
+> >> +                (XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_MASK <<
+> >> +                 XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_SHIFT) |
+> >> +                (XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_CDR_CNTL_MASK <<
+> >> +                 XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_CDR_CNTL_SHIFT));
+> >
+> > Hmm. So there is a lot of "PHY" stuff here after all.
+> >
+> > However, the PHYs implemented here appear to implement very low-level
+> > I/O pad code, whereas the PHYs we have for our USB 2.0 controller are
+> > somewhat higher-level; they're more USB-oriented than just IO pad
+> > oriented. Do you know which level of abstraction a Linux PHY object is
+> > supposed to be? I could never get an answer when I asked before.
+>=20
+> The only other PHY driver I've worked with (Exynos USB2/3 PHYs) also
+> mainly only did low-level pad control stuff, but looking at a couple
+> of other USB PHYs (MSM, MV), there appear to be others that have
+> higher-level USB stuff in the PHY driver.  Perhaps Kishon or Felipe
+> could offer us some guidance?
 
-[...]
+well, if you're adding a new driver, I'd rather see folks moving over to
+the generic phy framework (drivers/phy) because we're trying really hard
+to get rid of drivers/usb/phy/. And I think, in your case, it's actually
+ok to use pinctrl because you actually are muxing pads to the USB3 PHY,
+you just do it lazyly.
 
-> +Required properties:
-> +--------------------
-> +- #iommu-cells: The number of cells in an IOMMU specifier needed to encode an
-> +  address.
-> +
-> +Typical values for the above include:
-> +- #iommu-cells = <0>: Single master IOMMU devices are not configurable and
-> +  therefore no additional information needs to be encoded in the specifier.
-> +  This may also apply to multiple master IOMMU devices that do not allow the
-> +  association of masters to be configured.
+my 2 cents
 
-A multiple-master capable IOMMU could be built with a single master, but
-we'd still need #iommu-cells > 0 here. I appreciate this is just an example,
-but the wording sounds like it's enforced.
+--=20
+balbi
 
-> +- #iommu-cells = <1>: Multiple master IOMMU devices may need to be configured
-> +  in order to enable translation for a given master. In such cases the single
-> +  address cell corresponds to the master device's ID.
+--qp4W5+cUSnZs0RIF
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Again, we will definitely need more than one cell in this case, as I fully
-expect multiple StreamIDs for each master (e.g. Qualcomm mentioned on the
-list the other day that they have a master emitting 43 unique IDs).
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Anyway, the actual binding looks great, I just don't want people to think
-they need to do something different because they don't fit your example
-use-cases.
+iQIcBAEBAgAGBQJTrYb0AAoJEIaOsuA1yqRESYgP/ioYc9AcPqPaQF9qHk26g2D5
++C8aIXKab+FhejXsJDUHJCh2Ww5nECcHwK7BtX7r6C5ZMd07wbAP/4jAEXexYoyc
+woaPwonAXa1NL58sojIfcH7fYnc3eYY5PuLImRMruLTs7XKK0hs1y2B/en/dHHnx
+V9Y2jQ4sVI5WeD0cV1a7xUTMjNnqCIRSnzl8HBNCPBnd4ZtIF4adTVy79kG4KtnK
+SDOu7FBhSqSVtcrFbfWv5bBYbbmJvSxzXgAwMvN6voaQ0NRpVHuPb8HvZXZuzDE7
+mNvk5Oab0T5u2DYL1ora6OQ/kXluY3cWCufNlfU+56HS6OIs/TIlOHgKGM5juXZe
+0hhVqnazgsxa6/Ci7rV//7hxeX8l4tkHwPiM74sJuPVOhe6u45RUVfsMUsB/um23
+IUQNRJp7YtQTBkFM4g8e7MPH/Fx9ezSdRst/0nCIu7E6rlYxoT/s9y+nM/x5Upqt
+e/bGrx0OM/rWE/uyW0HgcRhwxYGgKgY45Rg9/ooIoUG6oAkDZSmiSX7vVlbgZbhC
+ZWhvMeqDTQQan/ToQFrnk+TdjDj9AXa9Q9cVZvAKcXkXkjel3pSuhhfdAYhflbpI
+f7HD6HweVEBqfOOxNUjW1Q5YS/JafmKXZi+Uc8udV0IPhbMlo98lXsaEVaCWKWXq
+p2yhgFQ6Q9CmQefgXNgL
+=kYXQ
+-----END PGP SIGNATURE-----
 
-> +Multiple-master IOMMU:
-> +----------------------
-> +
-> +	iommu {
-> +		/* the specifier represents the ID of the master */
-> +		#iommu-cells = <1>;
-> +	};
-> +
-> +	master {
-> +		/* device has master ID 42 in the IOMMU */
-> +		iommus = <&/iommu 42>;
-> +	};
-> +
-> +Multiple-master IOMMU with configurable DMA window:
-> +---------------------------------------------------
-> +
-> +	/ {
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +
-> +		iommu {
-> +			/* master ID, address and length of DMA window */
-> +			#iommu-cells = <4>;
-> +		};
-> +
-> +		master {
-> +			/* master ID 42, 4 GiB DMA window starting at 0 */
-> +			iommus = <&/iommu  42  0  0x1 0x0>;
-> +		};
-> +	};
-
-Could you also please include an example of a master with multiple IDs?
-
-Will
+--qp4W5+cUSnZs0RIF--
