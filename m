@@ -1,182 +1,65 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/2] drm/gk20a: add BAR instance
-Date: Fri, 27 Jun 2014 19:28:51 +0900
-Message-ID: <1403864931-4663-2-git-send-email-acourbot@nvidia.com>
-References: <1403864931-4663-1-git-send-email-acourbot@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 1/4] drm/tegra: Implement more tiling modes
+Date: Fri, 27 Jun 2014 12:45:25 +0200
+Message-ID: <20140627104524.GA2797@ulmo>
+References: <1403857706-15989-1-git-send-email-thierry.reding@gmail.com>
+ <CAAVeFu+ja-PvqMyJuCPjkTu+e7jf4rgFLPsjFD3=7CmAEfjs5A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <1403864931-4663-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="W/nzBZO5zC0uMSeA"
+Return-path: <linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CAAVeFu+ja-PvqMyJuCPjkTu+e7jf4rgFLPsjFD3=7CmAEfjs5A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?utf-8?B?U3TDqXBoYW5l?= Marchesin <marcheu-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-api-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-GK20A's BAR is functionally identical to NVC0's, but do not support
-being ioremapped write-combined. Create a BAR instance for GK20A that
-reflect that state.
 
-Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/gpu/drm/nouveau/Makefile                  |  1 +
- drivers/gpu/drm/nouveau/core/engine/device/nve0.c |  2 +-
- drivers/gpu/drm/nouveau/core/include/subdev/bar.h |  1 +
- drivers/gpu/drm/nouveau/core/subdev/bar/gk20a.c   | 54 +++++++++++++++++++++++
- drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c    |  6 +--
- drivers/gpu/drm/nouveau/core/subdev/bar/priv.h    |  6 +++
- 6 files changed, 66 insertions(+), 4 deletions(-)
- create mode 100644 drivers/gpu/drm/nouveau/core/subdev/bar/gk20a.c
+--W/nzBZO5zC0uMSeA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/gpu/drm/nouveau/Makefile b/drivers/gpu/drm/nouveau/Makefile
-index 8b307e143632..11d9561d67c1 100644
---- a/drivers/gpu/drm/nouveau/Makefile
-+++ b/drivers/gpu/drm/nouveau/Makefile
-@@ -26,6 +26,7 @@ nouveau-y += core/core/subdev.o
- nouveau-y += core/subdev/bar/base.o
- nouveau-y += core/subdev/bar/nv50.o
- nouveau-y += core/subdev/bar/nvc0.o
-+nouveau-y += core/subdev/bar/gk20a.o
- nouveau-y += core/subdev/bios/base.o
- nouveau-y += core/subdev/bios/bit.o
- nouveau-y += core/subdev/bios/boost.o
-diff --git a/drivers/gpu/drm/nouveau/core/engine/device/nve0.c b/drivers/gpu/drm/nouveau/core/engine/device/nve0.c
-index 2d1e97d4264f..a2b9ccc48f66 100644
---- a/drivers/gpu/drm/nouveau/core/engine/device/nve0.c
-+++ b/drivers/gpu/drm/nouveau/core/engine/device/nve0.c
-@@ -165,7 +165,7 @@ nve0_identify(struct nouveau_device *device)
- 		device->oclass[NVDEV_SUBDEV_IBUS   ] = &gk20a_ibus_oclass;
- 		device->oclass[NVDEV_SUBDEV_INSTMEM] = nv50_instmem_oclass;
- 		device->oclass[NVDEV_SUBDEV_VM     ] = &nvc0_vmmgr_oclass;
--		device->oclass[NVDEV_SUBDEV_BAR    ] = &nvc0_bar_oclass;
-+		device->oclass[NVDEV_SUBDEV_BAR    ] = &gk20a_bar_oclass;
- 		device->oclass[NVDEV_ENGINE_DMAOBJ ] = &nvd0_dmaeng_oclass;
- 		device->oclass[NVDEV_ENGINE_FIFO   ] =  gk20a_fifo_oclass;
- 		device->oclass[NVDEV_ENGINE_SW     ] =  nvc0_software_oclass;
-diff --git a/drivers/gpu/drm/nouveau/core/include/subdev/bar.h b/drivers/gpu/drm/nouveau/core/include/subdev/bar.h
-index 9002cbb6432b..be037fac534c 100644
---- a/drivers/gpu/drm/nouveau/core/include/subdev/bar.h
-+++ b/drivers/gpu/drm/nouveau/core/include/subdev/bar.h
-@@ -33,5 +33,6 @@ nouveau_bar(void *obj)
- 
- extern struct nouveau_oclass nv50_bar_oclass;
- extern struct nouveau_oclass nvc0_bar_oclass;
-+extern struct nouveau_oclass gk20a_bar_oclass;
- 
- #endif
-diff --git a/drivers/gpu/drm/nouveau/core/subdev/bar/gk20a.c b/drivers/gpu/drm/nouveau/core/subdev/bar/gk20a.c
-new file mode 100644
-index 000000000000..cc7c3db211d1
---- /dev/null
-+++ b/drivers/gpu/drm/nouveau/core/subdev/bar/gk20a.c
-@@ -0,0 +1,54 @@
-+/*
-+ * Copyright (c) 2014, NVIDIA CORPORATION. All rights reserved.
-+ *
-+ * Permission is hereby granted, free of charge, to any person obtaining a
-+ * copy of this software and associated documentation files (the "Software"),
-+ * to deal in the Software without restriction, including without limitation
-+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
-+ * and/or sell copies of the Software, and to permit persons to whom the
-+ * Software is furnished to do so, subject to the following conditions:
-+ *
-+ * The above copyright notice and this permission notice shall be included in
-+ * all copies or substantial portions of the Software.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-+ * DEALINGS IN THE SOFTWARE.
-+ */
-+
-+#include <subdev/bar.h>
-+
-+#include "priv.h"
-+
-+int
-+gk20a_bar_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
-+	       struct nouveau_oclass *oclass, void *data, u32 size,
-+	       struct nouveau_object **pobject)
-+{
-+	struct nouveau_bar *bar;
-+	int ret;
-+
-+	ret = nvc0_bar_ctor(parent, engine, oclass, data, size, pobject);
-+	if (ret)
-+		return ret;
-+
-+	bar = *pobject;
-+	bar->iomap_uncached = true;
-+
-+	return 0;
-+}
-+
-+struct nouveau_oclass
-+gk20a_bar_oclass = {
-+	.handle = NV_SUBDEV(BAR, 0xea),
-+	.ofuncs = &(struct nouveau_ofuncs) {
-+		.ctor = gk20a_bar_ctor,
-+		.dtor = nvc0_bar_dtor,
-+		.init = nvc0_bar_init,
-+		.fini = _nouveau_bar_fini,
-+	},
-+};
-diff --git a/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c b/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c
-index ca8139b9ab27..0a44459844e3 100644
---- a/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c
-+++ b/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c
-@@ -133,7 +133,7 @@ nvc0_bar_init_vm(struct nvc0_bar_priv *priv, struct nvc0_bar_priv_vm *bar_vm,
- 	return 0;
- }
- 
--static int
-+int
- nvc0_bar_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
- 	      struct nouveau_oclass *oclass, void *data, u32 size,
- 	      struct nouveau_object **pobject)
-@@ -169,7 +169,7 @@ nvc0_bar_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
- 	return 0;
- }
- 
--static void
-+void
- nvc0_bar_dtor(struct nouveau_object *object)
- {
- 	struct nvc0_bar_priv *priv = (void *)object;
-@@ -188,7 +188,7 @@ nvc0_bar_dtor(struct nouveau_object *object)
- 	nouveau_bar_destroy(&priv->base);
- }
- 
--static int
-+int
- nvc0_bar_init(struct nouveau_object *object)
- {
- 	struct nvc0_bar_priv *priv = (void *)object;
-diff --git a/drivers/gpu/drm/nouveau/core/subdev/bar/priv.h b/drivers/gpu/drm/nouveau/core/subdev/bar/priv.h
-index ffad8f337ead..3ee8b1476d00 100644
---- a/drivers/gpu/drm/nouveau/core/subdev/bar/priv.h
-+++ b/drivers/gpu/drm/nouveau/core/subdev/bar/priv.h
-@@ -23,4 +23,10 @@ int  nouveau_bar_alloc(struct nouveau_bar *, struct nouveau_object *,
- 
- void nv84_bar_flush(struct nouveau_bar *);
- 
-+int nvc0_bar_ctor(struct nouveau_object *, struct nouveau_object *,
-+		  struct nouveau_oclass *, void *, u32,
-+		  struct nouveau_object **);
-+void nvc0_bar_dtor(struct nouveau_object *);
-+int nvc0_bar_init(struct nouveau_object *);
-+
- #endif
--- 
-2.0.0
+On Fri, Jun 27, 2014 at 07:17:24PM +0900, Alexandre Courbot wrote:
+> On Fri, Jun 27, 2014 at 5:28 PM, Thierry Reding
+> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >
+> > Tegra124 supports a block-linear mode in addition to the regular pitch
+> > linear and tiled modes. Add support for these by moving the internal
+> > representation into a structure rather than a simple flag.
+>=20
+> Tested-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>=20
+> For the 4 patches. The first one has a trivial conflict on drm.h when
+> applied on today's -next.
+
+That conflict is caused by another patch I have in my tree. I can easily
+resolve that when pulling this patch to my drm/tegra/for-next branch.
+
+Thanks for testing!
+Thierry
+
+--W/nzBZO5zC0uMSeA
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTrUtEAAoJEN0jrNd/PrOhEcYP/2zDTz2l8qckplzMNEYjDkUe
+vrVSlQoiTMb1q1RpT53L6B0AFSuDRUdwgSj3sNBhF+ZkfOXUjuV0w/RLdUq8LJmV
+8lSevgtEwb66cE8XWk1yT3qjf0MOs2flZ90CqjtiWUZoj99cQj7Hqaiy7sBhS0GV
+iYPH3psZTz9sJn5NQ/4Ti7IFPa6fG2tnrzDdXEnDM3DOBjFcSSA9l3Kx7Qicua8f
+W/d5z2JDkSTf2+EoFkKnvazdYTmOxXM0s+DlQ1Ae3SPD65rTAI5Sa9TuYU1x875N
+yknhN7ZagxIgtx6jplT/8U5jfZpZHjCZsl67nmXbT2NyQKsIj4k535SU9GOhGd7J
+LHy9zzANTxqH8WaG/Z6Vs6ZTJe0XesVK0xqRhUliG0mi44aV4e3Sctf5QF6J2t76
+Y0kIIivn48bQvdAIamOJFVEPO6dXWM0zLdeCOIUOr5RWAQyf2nO2ZQ3pqKMcPcoy
+R18s+dGhUBwdn9ENbA/xtuduxL4VZvje99J3srXEDvHw4feaqeUcH408i7HK8ecn
+4lmMCM8CBjQZhXZtQ3hmcsixqzSyoEq70Cs81zSrbyhERy+NFbSn+ruxYEd8Rkx+
+PNBTeZJ6GUrbVjQ5/ueS51YiFlr5zGLIRZyZVLUvpjyewVxIqARZ0IXBrksOpI3k
+gj7Mz0rn7KrWfGoXTXqx
+=EQR8
+-----END PGP SIGNATURE-----
+
+--W/nzBZO5zC0uMSeA--
