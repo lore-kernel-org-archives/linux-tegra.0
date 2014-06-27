@@ -1,119 +1,79 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [RFC 04/10] memory: Add Tegra124 memory controller support
-Date: Fri, 27 Jun 2014 15:37:52 -0600
-Message-ID: <53ADE430.6020209@wwwdotorg.org>
-References: <1403815790-8548-1-git-send-email-thierry.reding@gmail.com>
-	<1403815790-8548-5-git-send-email-thierry.reding@gmail.com>
-	<9283417.yKmnrljUYI@wuerfel> <20140627111514.GE2797@ulmo>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v1 6/9] usb: xhci: Add NVIDIA Tegra XHCI host-controller
+ driver
+Date: Fri, 27 Jun 2014 16:01:06 -0600
+Message-ID: <53ADE9A2.5020305@wwwdotorg.org>
+References: <1403072180-4944-1-git-send-email-abrestic@chromium.org>	<1403072180-4944-7-git-send-email-abrestic@chromium.org>	<53AB4F2D.2060208@wwwdotorg.org>	<CAL1qeaFhfYdW06Md10eGVYWBrRR+f1yykVYHNp5+9-t1C9joPQ@mail.gmail.com>	<53AC6152.5060908@wwwdotorg.org> <CAL1qeaEb2aV16F+sXWZ=FtEFW2rcGHhqVJk7+OmU5AtjZiHBDQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============7745243224801172801=="
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20140627111514.GE2797@ulmo>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Olav Haugan <ohaugan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <CAL1qeaEb2aV16F+sXWZ=FtEFW2rcGHhqVJk7+OmU5AtjZiHBDQ@mail.gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Andrew Bresticker <abrestic@chromium.org>
+Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-usb@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Randy Dunlap <rdunlap@infradead.org>, Thierry Reding <thierry.reding@gmail.com>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman <mathias.nyman@intel.com>, Grant Likely <grant.likely@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Kishon Vijay Abraham I <kishon@ti.com>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-tegra@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---===============7745243224801172801==
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="TbSh8CbnGl4I5cbR7oiQW815JJmtWRwJv"
-
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---TbSh8CbnGl4I5cbR7oiQW815JJmtWRwJv
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-
-On 06/27/2014 05:15 AM, Thierry Reding wrote:
-> On Fri, Jun 27, 2014 at 01:07:04PM +0200, Arnd Bergmann wrote:
->> On Thursday 26 June 2014 22:49:44 Thierry Reding wrote:
->>> +static const struct tegra_mc_client tegra124_mc_clients[] =3D {
->>> +       {
->>> +               .id =3D 0x01,
->>> +               .name =3D "display0a",
->>> +               .swgroup =3D TEGRA_SWGROUP_DC,
->>> +               .smmu =3D {
->>> +                       .reg =3D 0x228,
->>> +                       .bit =3D 1,
->>> +               },
->>> +               .latency =3D {
->>> +                       .reg =3D 0x2e8,
->>> +                       .shift =3D 0,
->>> +                       .mask =3D 0xff,
->>> +                       .def =3D 0xc2,
->>> +               },
->>> +       }, {
+On 06/27/2014 03:19 PM, Andrew Bresticker wrote:
+> On Thu, Jun 26, 2014 at 11:07 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+>> On 06/25/2014 06:06 PM, Andrew Bresticker wrote:
+>>> On Wed, Jun 25, 2014 at 3:37 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+>>>> On 06/18/2014 12:16 AM, Andrew Bresticker wrote:
+>>>>> Add support for the on-chip XHCI host controller present on Tegra SoCs.
+>>>>>
+>>>>> The driver is currently very basic: it loads the controller with its
+>>>>> firmware, starts the controller, and is able to service messages sent
+>>>>> by the controller's firmware.  The hardware supports device mode as
+>>>>> well as runtime power-gating, but support for these is not yet
+>>>>> implemented here.
+> 
+>>>>> diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+> 
+>>>>> +static int tegra_xhci_set_ss_clk(struct tegra_xhci_hcd *tegra,
+>>>>> +                              unsigned long rate)
+>>>>
+>>>>> +     switch (rate) {
+>>>>> +     case TEGRA_XHCI_SS_CLK_HIGH_SPEED:
+>>>>> +             /* Reparent to PLLU_480M. Set div first to avoid overclocking */
+>>>>> +             old_parent_rate = clk_get_rate(clk_get_parent(clk));
+>>>>> +             new_parent_rate = clk_get_rate(tegra->pll_u_480m);
+>>>>> +             div = new_parent_rate / rate;
+>>>>> +             ret = clk_set_rate(clk, old_parent_rate / div);
+>>>>> +             if (ret)
+>>>>> +                     return ret;
+>>>>> +             ret = clk_set_parent(clk, tegra->pll_u_480m);
+>>>>> +             if (ret)
+>>>>> +                     return ret;
+>>>>
+>>>> Don't you need to call clk_set_rate() again after reparenting, since the
+>>>> divisor will be different, and the rounding too.
+>>>
+>>> Nope, the divider we set before remains in-tact after clk_set_parent().
 >>
->> This is a rather long table that I assume would need to get duplicated=
+>> Oh I see, the clk_set_rate() call is setting up div so it's appropriate
+>> after the new parent is selected.
+>>
+>> Wouldn't it be better to just stop the clock, assert reset, reparent the
+>> clock, and then set the desired rate directly?
+> 
+> I'm not sure how that would be better than making it more obvious as
+> to how we arrive at the final rate.  Keep in mind that the XHCI host
+> is running at this point (we usually get the scale-up message as a
+> USB3 device is being enumerated) and that disabling the clock and/or
+> asserting reset to the SS partition clock may not be the best idea...
 
->> and modified for each specific SoC. Have you considered to put the inf=
-ormation
->> into DT instead, as auxiliary data in the iommu specifier as provided =
-by
->> the device?
->=20
-> Most of this data really is register information and I don't think that=
+Oh, this happens while the device is running rather than when
+initializing it? Applying reset is probably a bad idea then. Still,
+perhaps stopping the clock for a short time is fine? What about:
 
-> belongs in DT.
+clk_disable_unprepare(clk);
+clk_set_parent(clk, tegra->pll_u_480m);
+clk_set_rate(clk, rate);
+clk_prepare_enable(clk);
 
-I agree. I think it's quite inappropriate to put information into DT
-that could simply be put into a table in the driver. If the information
-is put into DT, you have to define a fixed binding for it, munge the
-table and data representation to fit DT's much less flexible (than C
-structs/arrays) syntax, write a whole bunch of code to parse it back out
-(at probably not do a good job with error-checking), all only to end up
-with exactly the same C structs in the driver at the end of the process.
-Oh, and if multiple SoCs use the same data values, you have to duplicate
-those tables into at least the DTBs if not in the .dts files, whereas
-with C you can just point at the same struct.
+That seems much more direct to me. The code above feels over-complex to me.
 
-SoCs come out much less frequently than new boards (perhaps ignoring the
-fact that we support a small subset of boards in mainline, so the
-frequency isn't too dissimilar there). It makes good sense to put
-board-to-board differences in DT, but I see little point in putting
-static SoC information into DT.
-
-
---TbSh8CbnGl4I5cbR7oiQW815JJmtWRwJv
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iQIcBAEBAgAGBQJTreQwAAoJEJuNpwkmVCGc3xMP/jasqeisefLXjClmATi81K7C
-HVR3B3q8CCg8m5Bu0MfW8w5Y5IuuEzfQce3KxYuAnFthO+C9BMZC69SB5dSc+5r9
-f6l1cLqhE/WvM9OCnn72Yn1fe3GU/qOB4EAnT7UcBBTProTSraQPJfXUqzoIlFI+
-Yi5oToZ7AQCuuC11PmxWW10XP+9JQYGdYbZT6DX1bzgmKF8o/qnxnfesEDGbCYMk
-gEy/9gSKJ70qbO9F+sb0ca6asVQSJtJF5HzoosgkX1g21rTw9ehsNCJB0tnrakQA
-kMyMMk3tjY362lsHf4FtJJb2hnZ2c2jSdnrA9L4XrqYwpB4euA/jTsOlUTq0o6BN
-r/YT+f3Cnj+4viZiSGEmCmMoZN1LfoAsUQqOueRTKH24pLuzfOKKiKogy9w3Wb8C
-zFust1l9qSpzp1rdz6qZKxyfNwNxciiyW5fkfIP2DLRflma+4sQCdW8IPRbN/rbW
-2ItJUZruiiDguufYyyuvegrabZ/usj9yaNcyVTLJ1hf/+q5JIKMasIFl8p30DlA2
-TLVJm5Lxc76eCkqHxMQL4AfNdTMrUsigTZDYQew7hdhU42C1UR005w6p8dVVw0i2
-1A2aXvFNSQ/00xksLsiuryOEHG6kWKsEnY/LV3x3LY7gYO/CaDnFCr9B9LCMUdWn
-LqdFpAb6wacRAxAuZRuD
-=P+UN
------END PGP SIGNATURE-----
-
---TbSh8CbnGl4I5cbR7oiQW815JJmtWRwJv--
-
---===============7745243224801172801==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============7745243224801172801==--
+If the clock really can't be stopped, then I suppose the existing code
+in the patch is fine. I'd like to see a final clk_get_rate(clk) call
+added, and the value compared against the expected value, to make sure
+no rounding/truncation of the divider happened though.
