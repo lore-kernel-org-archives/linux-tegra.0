@@ -1,187 +1,151 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2] drm/gk20a: add BAR instance
-Date: Fri, 27 Jun 2014 20:36:54 +0900
-Message-ID: <1403869014-16209-1-git-send-email-acourbot@nvidia.com>
-References: <1403864931-4663-2-git-send-email-acourbot@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <1403864931-4663-2-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v2 3/3] ARM: tegra: Initialize flow controller from DT
+Date: Fri, 27 Jun 2014 14:07:28 +0200
+Message-ID: <1403870848-1754-3-git-send-email-thierry.reding@gmail.com>
+References: <1403870848-1754-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1403870848-1754-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-GK20A's BAR is functionally identical to NVC0's, but do not support
-being ioremapped write-combined. Create a BAR instance for GK20A that
-reflect that state.
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Use a matching device tree node to initialize the flow controller driver
+instead of hard-coding the I/O address. This is necessary to get rid of
+the iomap.h include, which in turn make it easier to share this code
+with 64-bit Tegra SoCs.
+
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-Changes since v1:
-- Fix compilation warning due to missing cast
+Changes in v2:
+- implement fallback when the device tree node is missing
+- while at it, reorder includes alphabetically
 
-Patch 1 of the series was ok and thus has not been resent.
+ arch/arm/mach-tegra/flowctrl.c | 48 ++++++++++++++++++++++++++++++++++--------
+ arch/arm/mach-tegra/flowctrl.h |  2 ++
+ arch/arm/mach-tegra/tegra.c    |  2 ++
+ 3 files changed, 43 insertions(+), 9 deletions(-)
 
- drivers/gpu/drm/nouveau/Makefile                  |  1 +
- drivers/gpu/drm/nouveau/core/engine/device/nve0.c |  2 +-
- drivers/gpu/drm/nouveau/core/include/subdev/bar.h |  1 +
- drivers/gpu/drm/nouveau/core/subdev/bar/gk20a.c   | 54 +++++++++++++++++++++++
- drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c    |  6 +--
- drivers/gpu/drm/nouveau/core/subdev/bar/priv.h    |  6 +++
- 6 files changed, 66 insertions(+), 4 deletions(-)
- create mode 100644 drivers/gpu/drm/nouveau/core/subdev/bar/gk20a.c
-
-diff --git a/drivers/gpu/drm/nouveau/Makefile b/drivers/gpu/drm/nouveau/Makefile
-index 8b307e143632..11d9561d67c1 100644
---- a/drivers/gpu/drm/nouveau/Makefile
-+++ b/drivers/gpu/drm/nouveau/Makefile
-@@ -26,6 +26,7 @@ nouveau-y += core/core/subdev.o
- nouveau-y += core/subdev/bar/base.o
- nouveau-y += core/subdev/bar/nv50.o
- nouveau-y += core/subdev/bar/nvc0.o
-+nouveau-y += core/subdev/bar/gk20a.o
- nouveau-y += core/subdev/bios/base.o
- nouveau-y += core/subdev/bios/bit.o
- nouveau-y += core/subdev/bios/boost.o
-diff --git a/drivers/gpu/drm/nouveau/core/engine/device/nve0.c b/drivers/gpu/drm/nouveau/core/engine/device/nve0.c
-index 2d1e97d4264f..a2b9ccc48f66 100644
---- a/drivers/gpu/drm/nouveau/core/engine/device/nve0.c
-+++ b/drivers/gpu/drm/nouveau/core/engine/device/nve0.c
-@@ -165,7 +165,7 @@ nve0_identify(struct nouveau_device *device)
- 		device->oclass[NVDEV_SUBDEV_IBUS   ] = &gk20a_ibus_oclass;
- 		device->oclass[NVDEV_SUBDEV_INSTMEM] = nv50_instmem_oclass;
- 		device->oclass[NVDEV_SUBDEV_VM     ] = &nvc0_vmmgr_oclass;
--		device->oclass[NVDEV_SUBDEV_BAR    ] = &nvc0_bar_oclass;
-+		device->oclass[NVDEV_SUBDEV_BAR    ] = &gk20a_bar_oclass;
- 		device->oclass[NVDEV_ENGINE_DMAOBJ ] = &nvd0_dmaeng_oclass;
- 		device->oclass[NVDEV_ENGINE_FIFO   ] =  gk20a_fifo_oclass;
- 		device->oclass[NVDEV_ENGINE_SW     ] =  nvc0_software_oclass;
-diff --git a/drivers/gpu/drm/nouveau/core/include/subdev/bar.h b/drivers/gpu/drm/nouveau/core/include/subdev/bar.h
-index 9002cbb6432b..be037fac534c 100644
---- a/drivers/gpu/drm/nouveau/core/include/subdev/bar.h
-+++ b/drivers/gpu/drm/nouveau/core/include/subdev/bar.h
-@@ -33,5 +33,6 @@ nouveau_bar(void *obj)
+diff --git a/arch/arm/mach-tegra/flowctrl.c b/arch/arm/mach-tegra/flowctrl.c
+index 4b31091f0d40..89d13b2fa0b5 100644
+--- a/arch/arm/mach-tegra/flowctrl.c
++++ b/arch/arm/mach-tegra/flowctrl.c
+@@ -18,14 +18,15 @@
+  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
  
- extern struct nouveau_oclass nv50_bar_oclass;
- extern struct nouveau_oclass nvc0_bar_oclass;
-+extern struct nouveau_oclass gk20a_bar_oclass;
++#include <linux/cpumask.h>
+ #include <linux/init.h>
+-#include <linux/kernel.h>
+ #include <linux/io.h>
+-#include <linux/cpumask.h>
++#include <linux/kernel.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
+ #include <linux/tegra-soc.h>
  
- #endif
-diff --git a/drivers/gpu/drm/nouveau/core/subdev/bar/gk20a.c b/drivers/gpu/drm/nouveau/core/subdev/bar/gk20a.c
-new file mode 100644
-index 000000000000..bf877af9d3bd
---- /dev/null
-+++ b/drivers/gpu/drm/nouveau/core/subdev/bar/gk20a.c
-@@ -0,0 +1,54 @@
-+/*
-+ * Copyright (c) 2014, NVIDIA CORPORATION. All rights reserved.
-+ *
-+ * Permission is hereby granted, free of charge, to any person obtaining a
-+ * copy of this software and associated documentation files (the "Software"),
-+ * to deal in the Software without restriction, including without limitation
-+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
-+ * and/or sell copies of the Software, and to permit persons to whom the
-+ * Software is furnished to do so, subject to the following conditions:
-+ *
-+ * The above copyright notice and this permission notice shall be included in
-+ * all copies or substantial portions of the Software.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-+ * DEALINGS IN THE SOFTWARE.
-+ */
+ #include "flowctrl.h"
+-#include "iomap.h"
+ 
+ static u8 flowctrl_offset_halt_cpu[] = {
+ 	FLOW_CTRL_HALT_CPU0_EVENTS,
+@@ -41,23 +42,22 @@ static u8 flowctrl_offset_cpu_csr[] = {
+ 	FLOW_CTRL_CPU1_CSR + 16,
+ };
+ 
++static void __iomem *tegra_flowctrl_base;
 +
-+#include <subdev/bar.h>
+ static void flowctrl_update(u8 offset, u32 value)
+ {
+-	void __iomem *addr = IO_ADDRESS(TEGRA_FLOW_CTRL_BASE) + offset;
+-
+-	writel(value, addr);
++	writel(value, tegra_flowctrl_base + offset);
+ 
+ 	/* ensure the update has reached the flow controller */
+ 	wmb();
+-	readl_relaxed(addr);
++	readl_relaxed(tegra_flowctrl_base + offset);
+ }
+ 
+ u32 flowctrl_read_cpu_csr(unsigned int cpuid)
+ {
+ 	u8 offset = flowctrl_offset_cpu_csr[cpuid];
+-	void __iomem *addr = IO_ADDRESS(TEGRA_FLOW_CTRL_BASE) + offset;
+ 
+-	return readl(addr);
++	return readl(tegra_flowctrl_base + offset);
+ }
+ 
+ void flowctrl_write_cpu_csr(unsigned int cpuid, u32 value)
+@@ -138,3 +138,33 @@ void flowctrl_cpu_suspend_exit(unsigned int cpuid)
+ 	reg |= FLOW_CTRL_CSR_EVENT_FLAG;		/* clear event */
+ 	flowctrl_write_cpu_csr(cpuid, reg);
+ }
 +
-+#include "priv.h"
-+
-+int
-+gk20a_bar_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
-+	       struct nouveau_oclass *oclass, void *data, u32 size,
-+	       struct nouveau_object **pobject)
-+{
-+	struct nouveau_bar *bar;
-+	int ret;
-+
-+	ret = nvc0_bar_ctor(parent, engine, oclass, data, size, pobject);
-+	if (ret)
-+		return ret;
-+
-+	bar = (struct nouveau_bar *)*pobject;
-+	bar->iomap_uncached = true;
-+
-+	return 0;
-+}
-+
-+struct nouveau_oclass
-+gk20a_bar_oclass = {
-+	.handle = NV_SUBDEV(BAR, 0xea),
-+	.ofuncs = &(struct nouveau_ofuncs) {
-+		.ctor = gk20a_bar_ctor,
-+		.dtor = nvc0_bar_dtor,
-+		.init = nvc0_bar_init,
-+		.fini = _nouveau_bar_fini,
-+	},
++static const struct of_device_id matches[] __initconst = {
++	{ .compatible = "nvidia,tegra124-flowctrl" },
++	{ .compatible = "nvidia,tegra114-flowctrl" },
++	{ .compatible = "nvidia,tegra30-flowctrl" },
++	{ .compatible = "nvidia,tegra20-flowctrl" },
++	{ }
 +};
-diff --git a/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c b/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c
-index ca8139b9ab27..0a44459844e3 100644
---- a/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c
-+++ b/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c
-@@ -133,7 +133,7 @@ nvc0_bar_init_vm(struct nvc0_bar_priv *priv, struct nvc0_bar_priv_vm *bar_vm,
- 	return 0;
- }
- 
--static int
-+int
- nvc0_bar_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
- 	      struct nouveau_oclass *oclass, void *data, u32 size,
- 	      struct nouveau_object **pobject)
-@@ -169,7 +169,7 @@ nvc0_bar_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
- 	return 0;
- }
- 
--static void
-+void
- nvc0_bar_dtor(struct nouveau_object *object)
- {
- 	struct nvc0_bar_priv *priv = (void *)object;
-@@ -188,7 +188,7 @@ nvc0_bar_dtor(struct nouveau_object *object)
- 	nouveau_bar_destroy(&priv->base);
- }
- 
--static int
-+int
- nvc0_bar_init(struct nouveau_object *object)
- {
- 	struct nvc0_bar_priv *priv = (void *)object;
-diff --git a/drivers/gpu/drm/nouveau/core/subdev/bar/priv.h b/drivers/gpu/drm/nouveau/core/subdev/bar/priv.h
-index ffad8f337ead..3ee8b1476d00 100644
---- a/drivers/gpu/drm/nouveau/core/subdev/bar/priv.h
-+++ b/drivers/gpu/drm/nouveau/core/subdev/bar/priv.h
-@@ -23,4 +23,10 @@ int  nouveau_bar_alloc(struct nouveau_bar *, struct nouveau_object *,
- 
- void nv84_bar_flush(struct nouveau_bar *);
- 
-+int nvc0_bar_ctor(struct nouveau_object *, struct nouveau_object *,
-+		  struct nouveau_oclass *, void *, u32,
-+		  struct nouveau_object **);
-+void nvc0_bar_dtor(struct nouveau_object *);
-+int nvc0_bar_init(struct nouveau_object *);
 +
++void __init tegra_flowctrl_init(void)
++{
++	/* hardcoded fallback if device tree node is missing */
++	unsigned long base = 0x60007000;
++	unsigned long size = SZ_4K;
++	struct device_node *np;
++
++	np = of_find_matching_node(NULL, matches);
++	if (np) {
++		struct resource res;
++
++		if (of_address_to_resource(np, 0, &res) == 0) {
++			size = resource_size(&res);
++			base = res.start;
++		}
++
++		of_node_put(np);
++	}
++
++	tegra_flowctrl_base = ioremap_nocache(base, size);
++}
+diff --git a/arch/arm/mach-tegra/flowctrl.h b/arch/arm/mach-tegra/flowctrl.h
+index c89aac60a143..73a9c5016c1a 100644
+--- a/arch/arm/mach-tegra/flowctrl.h
++++ b/arch/arm/mach-tegra/flowctrl.h
+@@ -59,6 +59,8 @@ void flowctrl_write_cpu_halt(unsigned int cpuid, u32 value);
+ 
+ void flowctrl_cpu_suspend_enter(unsigned int cpuid);
+ void flowctrl_cpu_suspend_exit(unsigned int cpuid);
++
++void tegra_flowctrl_init(void);
  #endif
+ 
+ #endif
+diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
+index 76a6779c5f84..8e139e246526 100644
+--- a/arch/arm/mach-tegra/tegra.c
++++ b/arch/arm/mach-tegra/tegra.c
+@@ -46,6 +46,7 @@
+ #include "board.h"
+ #include "common.h"
+ #include "cpuidle.h"
++#include "flowctrl.h"
+ #include "iomap.h"
+ #include "irq.h"
+ #include "pmc.h"
+@@ -78,6 +79,7 @@ static void __init tegra_init_early(void)
+ 	tegra_cpu_reset_handler_init();
+ 	tegra_powergate_init();
+ 	tegra_hotplug_init();
++	tegra_flowctrl_init();
+ }
+ 
+ static void __init tegra_dt_init_irq(void)
 -- 
 2.0.0
