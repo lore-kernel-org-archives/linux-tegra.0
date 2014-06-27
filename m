@@ -1,371 +1,65 @@
 From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [RFC 4/5] clk: per-user clock accounting for debug
-Date: Fri, 27 Jun 2014 09:57:51 +0200
-Message-ID: <1403855872-14749-5-git-send-email-tomeu.vizoso@collabora.com>
+Subject: [RFC 1/5] clk: Add temporary mapping to the existing API
+Date: Fri, 27 Jun 2014 09:57:48 +0200
+Message-ID: <1403855872-14749-2-git-send-email-tomeu.vizoso@collabora.com>
 References: <1403855872-14749-1-git-send-email-tomeu.vizoso@collabora.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1403855872-14749-1-git-send-email-tomeu.vizoso@collabora.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Mike Turquette <mturquette@linaro.org>, Rabin Vincent <rabin.vincent@stericsson.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Rabin Vincent <rabin.vincent@stericsson.com>
-
-When a clock has multiple users, the WARNING on imbalance of
-enable/disable may not show the guilty party since although they may
-have commited the error earlier, the warning is emitted later when some
-other user, presumably innocent, disables the clock.
-
-Provide per-user clock enable/disable accounting and disabler tracking
-in order to help debug these problems.
-
-NOTE: with this patch, clk_get_parent() behaves like clk_get(), i.e. it
-needs to be matched with a clk_put().  Otherwise, memory will leak.
+To preserve git-bisectability, add aliases from the future provider API to the
+existing public API.
 
 Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
 ---
- drivers/clk/clk-devres.c        |  3 ++-
- drivers/clk/clk-highbank.c      |  2 +-
- drivers/clk/clk.c               | 52 ++++++++++++++++++++++++++++++++++++++---
- drivers/clk/clk.h               |  2 +-
- drivers/clk/clkdev.c            | 27 +++++++++++++++++----
- drivers/clk/qcom/mmcc-msm8960.c |  9 ++++---
- drivers/clk/sunxi/clk-sunxi.c   |  2 +-
- drivers/clk/tegra/clk.c         |  2 +-
- drivers/clk/zynq/clkc.c         | 12 +++++-----
- include/linux/clk-private.h     |  6 ++++-
- include/linux/clk-provider.h    |  3 ++-
- 11 files changed, 96 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-index 85a9b40..dcaabb0 100644
---- a/drivers/clk/clk-devres.c
-+++ b/drivers/clk/clk-devres.c
-@@ -37,7 +37,8 @@ EXPORT_SYMBOL(__devm_clk_get_internal);
- 
- struct clk *devm_clk_get(struct device *dev, const char *id)
- {
--	return clk_core_to_clk(__devm_clk_get_internal(dev, id));
-+	const char *dev_id = dev ? dev_name(dev) : NULL;
-+	return clk_core_to_clk(__devm_clk_get_internal(dev, id), dev_id, id);
- }
- EXPORT_SYMBOL(devm_clk_get);
- 
-diff --git a/drivers/clk/clk-highbank.c b/drivers/clk/clk-highbank.c
-index cc1bae1..4e38856 100644
---- a/drivers/clk/clk-highbank.c
-+++ b/drivers/clk/clk-highbank.c
-@@ -331,7 +331,7 @@ CLK_OF_DECLARE(hb_a9periph, "calxeda,hb-a9periph-clock", hb_a9periph_init);
- static void __init hb_a9bus_init(struct device_node *node)
- {
- 	struct clk_core *clk = hb_clk_init(node, &a9bclk_ops);
--	clk_prepare_enable(clk_core_to_clk(clk));
-+	clk_prepare_enable(clk_core_to_clk(clk, node->full_name, NULL));
- }
- CLK_OF_DECLARE(hb_a9bus, "calxeda,hb-a9bus-clock", hb_a9bus_init);
- 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index f9a603a..7fc1937 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -568,6 +568,28 @@ static int clk_disable_unused(void)
- }
- late_initcall_sync(clk_disable_unused);
- 
-+struct clk *clk_core_to_clk(struct clk_core *clk_core, const char *dev,
-+			    const char *con)
-+{
-+	struct clk *clk;
-+
-+	clk = kzalloc(sizeof(*clk), GFP_KERNEL);
-+	if (!clk)
-+		return ERR_PTR(-ENOMEM);
-+
-+	clk->core = clk_core;
-+	clk->dev_id = dev;
-+	clk->con_id = con;
-+
-+	return clk;
-+}
-+EXPORT_SYMBOL_GPL(clk_core_to_clk);
-+
-+struct clk_core *clk_to_clk_core(struct clk *clk)
-+{
-+	return clk->core;
-+}
-+
- /***    helper functions   ***/
- 
- const char *__clk_get_name(struct clk_core *clk)
-@@ -935,7 +957,20 @@ static void __clk_disable_internal(struct clk_core *clk)
-  */
- void clk_disable(struct clk *clk_user)
- {
--	__clk_disable_internal(clk_to_clk_core(clk_user));
-+	struct clk_core *clk = clk_to_clk_core(clk_user);
-+	unsigned long flags;
-+
-+	flags = clk_enable_lock();
-+	if (!WARN(clk_user->enable_count == 0,
-+		  "incorrect disable clk dev %s con %s last disabler %pF\n",
-+		  clk_user->dev_id, clk_user->con_id, clk_user->last_disable)) {
-+
-+		clk_user->last_disable = __builtin_return_address(0);
-+		clk_user->enable_count--;
-+
-+		__clk_disable(clk);
-+	}
-+	clk_enable_unlock(flags);
- }
- EXPORT_SYMBOL_GPL(clk_disable);
- 
-@@ -995,7 +1030,17 @@ static int __clk_enable_internal(struct clk_core *clk)
-  */
- int clk_enable(struct clk *clk_user)
- {
--	return __clk_enable_internal(clk_to_clk_core(clk_user));
-+	struct clk_core *clk = clk_to_clk_core(clk_user);
-+	unsigned long flags;
-+	int ret;
-+
-+	flags = clk_enable_lock();
-+	ret = __clk_enable(clk);
-+	if (!ret)
-+		clk_user->enable_count++;
-+	clk_enable_unlock(flags);
-+
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(clk_enable);
- 
-@@ -1671,8 +1716,9 @@ EXPORT_SYMBOL_GPL(__clk_get_parent_internal);
- struct clk *clk_get_parent(struct clk *clk_user)
- {
- 	struct clk_core *clk = clk_to_clk_core(clk_user);
-+	struct clk_core *parent = __clk_get_parent_internal(clk);
- 
--	return clk_core_to_clk(__clk_get_parent_internal(clk));
-+	return clk_core_to_clk(parent, clk_user->dev_id, clk_user->con_id);
- }
- EXPORT_SYMBOL_GPL(clk_get_parent);
- 
-diff --git a/drivers/clk/clk.h b/drivers/clk/clk.h
-index 677ced3..2f682bf 100644
---- a/drivers/clk/clk.h
-+++ b/drivers/clk/clk.h
-@@ -17,5 +17,5 @@ void of_clk_unlock(void);
- #endif
- 
- #if defined(CONFIG_COMMON_CLK)
--#define clk_to_clk_core(clk)	((struct clk_core *)(clk))
-+struct clk_core *clk_to_clk_core(struct clk *clk);
- #endif
-diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-index 73cb33a..bf1a2d7 100644
---- a/drivers/clk/clkdev.c
-+++ b/drivers/clk/clkdev.c
-@@ -18,6 +18,7 @@
- #include <linux/string.h>
- #include <linux/mutex.h>
- #include <linux/clk.h>
-+#include <linux/clk-provider.h>
- #include <linux/clkdev.h>
- #include <linux/clk-provider.h>
- #include <linux/of.h>
-@@ -75,7 +76,9 @@ struct clk_core *__of_clk_get_internal(struct device_node *np, int index)
- 
- struct clk *of_clk_get(struct device_node *np, int index)
- {
--	return clk_core_to_clk(__of_clk_get_internal(np, index));
-+	struct clk_core *clk = __of_clk_get_internal(np, index);
-+
-+	return clk_core_to_clk(clk, np->full_name, NULL);
- }
- EXPORT_SYMBOL(of_clk_get);
- 
-@@ -127,7 +130,9 @@ struct clk_core *__of_clk_get_by_name_internal(struct device_node *np, const cha
-  */
- struct clk *of_clk_get_by_name(struct device_node *np, const char *name)
- {
--	return clk_core_to_clk(__of_clk_get_by_name_internal(np, name));
-+	struct clk_core *clk = __of_clk_get_by_name_internal(np, name);
-+
-+	return clk_core_to_clk(clk, np->full_name, NULL);
- }
- EXPORT_SYMBOL(of_clk_get_by_name);
- #endif
-@@ -194,7 +199,9 @@ EXPORT_SYMBOL_GPL(__clk_get_sys_internal);
- 
- struct clk *clk_get_sys(const char *dev_id, const char *con_id)
- {
--	return clk_core_to_clk(__clk_get_sys_internal(dev_id, con_id));
-+	struct clk_core *clk = __clk_get_sys_internal(dev_id, con_id);
-+
-+	return clk_core_to_clk(clk, dev_id, con_id);
- }
- EXPORT_SYMBOL(clk_get_sys);
- 
-@@ -217,13 +224,23 @@ EXPORT_SYMBOL(__clk_get_internal);
- 
- struct clk *clk_get(struct device *dev, const char *con_id)
- {
--	return clk_core_to_clk(__clk_get_internal(dev, con_id));
-+	const char *dev_id = dev ? dev_name(dev) : NULL;
-+
-+	return clk_core_to_clk(__clk_get_internal(dev, con_id), dev_id, con_id);
- }
- EXPORT_SYMBOL(clk_get);
- 
-+static void clk_free_clk(struct clk *clk)
-+{
-+	kfree(clk);
-+}
-+
- void clk_put(struct clk *clk)
- {
--	__clk_put(clk_to_clk_core(clk));
-+	clk_core_t *core = clk_to_clk_core(clk);
-+
-+	clk_free_clk(clk);
-+	__clk_put(core);
- }
- EXPORT_SYMBOL(clk_put);
- 
-diff --git a/drivers/clk/qcom/mmcc-msm8960.c b/drivers/clk/qcom/mmcc-msm8960.c
-index 28a5d30..47f21ea 100644
---- a/drivers/clk/qcom/mmcc-msm8960.c
-+++ b/drivers/clk/qcom/mmcc-msm8960.c
-@@ -470,7 +470,8 @@ static int pix_rdi_set_parent(struct clk_hw *hw, u8 index)
- 	 * needs to be on at what time.
- 	 */
- 	for (i = 0; i < num_parents; i++) {
--		ret = clk_prepare_enable(clk_core_to_clk(clk_get_parent_by_index(clk, i)));
-+		struct clk_core *parent = clk_get_parent_by_index(clk, i);
-+		ret = clk_prepare_enable(clk_core_to_clk(parent, NULL, __clk_get_name(parent)));
- 		if (ret)
- 			goto err;
- 	}
-@@ -498,8 +499,10 @@ static int pix_rdi_set_parent(struct clk_hw *hw, u8 index)
- 	udelay(1);
- 
- err:
--	for (i--; i >= 0; i--)
--		clk_disable_unprepare(clk_core_to_clk(clk_get_parent_by_index(clk, i)));
-+	for (i--; i >= 0; i--) {
-+		struct clk_core *parent = clk_get_parent_by_index(clk, i);
-+		clk_disable_unprepare(clk_core_to_clk(parent, NULL, __clk_get_name(parent)));
-+	}
- 
- 	return ret;
- }
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index b3149d4..183b60d 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -1196,7 +1196,7 @@ static void __init sunxi_init_clocks(const char *clocks[], int nclocks)
- 		struct clk_core *clk = __clk_get_internal(NULL, clocks[i]);
- 
- 		if (!IS_ERR(clk))
--			clk_prepare_enable(clk_core_to_clk(clk));
-+			clk_prepare_enable(clk_core_to_clk(clk, NULL, clocks[i]));
- 	}
- }
- 
-diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
-index 299b40e..548f138 100644
---- a/drivers/clk/tegra/clk.c
-+++ b/drivers/clk/tegra/clk.c
-@@ -228,7 +228,7 @@ void __init tegra_init_from_table(struct tegra_clk_init_table *tbl,
- 			}
- 
- 		if (tbl->state)
--			if (clk_prepare_enable(clk_core_to_clk(clk))) {
-+			if (clk_prepare_enable(clk_core_to_clk(clk, NULL, __clk_get_name(clk)))) {
- 				pr_err("%s: Failed to enable %s\n", __func__,
- 				       __clk_get_name(clk));
- 				WARN_ON(1);
-diff --git a/drivers/clk/zynq/clkc.c b/drivers/clk/zynq/clkc.c
-index c58c540..ed3e1cba 100644
---- a/drivers/clk/zynq/clkc.c
-+++ b/drivers/clk/zynq/clkc.c
-@@ -154,7 +154,7 @@ static void __init zynq_clk_register_fclk(enum zynq_clk fclk,
- 			0, CLK_GATE_SET_TO_DISABLE, fclk_gate_lock);
- 	enable_reg = clk_readl(fclk_gate_reg) & 1;
- 	if (enable && !enable_reg) {
--		if (clk_prepare_enable(clk_core_to_clk(clks[fclk])))
-+		if (clk_prepare_enable(clk_core_to_clk(clks[fclk], NULL, clk_name)))
- 			pr_warn("%s: FCLK%u enable failed\n", __func__,
- 					fclk - fclk0);
- 	}
-@@ -333,13 +333,13 @@ static void __init zynq_clk_setup(struct device_node *np)
- 			CLK_DIVIDER_ALLOW_ZERO, &ddrclk_lock);
- 	clks[ddr2x] = clk_register_gate(NULL, clk_output_name[ddr2x],
- 			"ddr2x_div", 0, SLCR_DDR_CLK_CTRL, 1, 0, &ddrclk_lock);
--	clk_prepare_enable(clk_core_to_clk(clks[ddr2x]));
-+	clk_prepare_enable(clk_core_to_clk(clks[ddr2x], NULL, clk_output_name[ddr2x]));
- 	clk = clk_register_divider(NULL, "ddr3x_div", "ddrpll", 0,
- 			SLCR_DDR_CLK_CTRL, 20, 6, CLK_DIVIDER_ONE_BASED |
- 			CLK_DIVIDER_ALLOW_ZERO, &ddrclk_lock);
- 	clks[ddr3x] = clk_register_gate(NULL, clk_output_name[ddr3x],
- 			"ddr3x_div", 0, SLCR_DDR_CLK_CTRL, 0, 0, &ddrclk_lock);
--	clk_prepare_enable(clk_core_to_clk(clks[ddr3x]));
-+	clk_prepare_enable(clk_core_to_clk(clks[ddr3x], NULL, clk_output_name[ddr3x]));
- 
- 	clk = clk_register_divider(NULL, "dci_div0", "ddrpll", 0,
- 			SLCR_DCI_CLK_CTRL, 8, 6, CLK_DIVIDER_ONE_BASED |
-@@ -351,7 +351,7 @@ static void __init zynq_clk_setup(struct device_node *np)
- 	clks[dci] = clk_register_gate(NULL, clk_output_name[dci], "dci_div1",
- 			CLK_SET_RATE_PARENT, SLCR_DCI_CLK_CTRL, 0, 0,
- 			&dciclk_lock);
--	clk_prepare_enable(clk_core_to_clk(clks[dci]));
-+	clk_prepare_enable(clk_core_to_clk(clks[dci], NULL, clk_output_name[dci]));
- 
- 	/* Peripheral clocks */
- 	for (i = fclk0; i <= fclk3; i++) {
-@@ -505,10 +505,10 @@ static void __init zynq_clk_setup(struct device_node *np)
- 	/* leave debug clocks in the state the bootloader set them up to */
- 	tmp = clk_readl(SLCR_DBG_CLK_CTRL);
- 	if (tmp & DBG_CLK_CTRL_CLKACT_TRC)
--		if (clk_prepare_enable(clk_core_to_clk(clks[dbg_trc])))
-+		if (clk_prepare_enable(clk_core_to_clk(clks[dbg_trc], NULL, clk_output_name[dbg_trc])))
- 			pr_warn("%s: trace clk enable failed\n", __func__);
- 	if (tmp & DBG_CLK_CTRL_CPU_1XCLKACT)
--		if (clk_prepare_enable(clk_core_to_clk(clks[dbg_apb])))
-+		if (clk_prepare_enable(clk_core_to_clk(clks[dbg_apb], NULL, clk_output_name[dbg_apb])))
- 			pr_warn("%s: debug APB clk enable failed\n", __func__);
- 
- 	/* One gated clock for all APER clocks. */
-diff --git a/include/linux/clk-private.h b/include/linux/clk-private.h
-index 91659b2..9657fc8 100644
---- a/include/linux/clk-private.h
-+++ b/include/linux/clk-private.h
-@@ -56,7 +56,11 @@ struct clk_core {
- };
- 
- struct clk {
--	struct clk_core clk;
-+	struct clk_core	*core;
-+	unsigned int	enable_count;
-+	const char	*dev_id;
-+	const char	*con_id;
-+	void		*last_disable;
- };
- 
- /*
+Don't like this much, would be great to hear of alternatives.
+
+ include/linux/clk-provider.h | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
 diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index be3e958..7beab62 100644
+index 0c287db..e9ccc50 100644
 --- a/include/linux/clk-provider.h
 +++ b/include/linux/clk-provider.h
-@@ -533,7 +533,8 @@ struct clk_core *__clk_get_sys_internal(const char *dev_id, const char *con_id);
- struct clk_core *__clk_get_internal(struct device *dev, const char *con_id);
- struct clk_core *__devm_clk_get_internal(struct device *dev, const char *id);
+@@ -16,6 +16,24 @@
  
--#define clk_core_to_clk(core)	((struct clk *)(core))
-+struct clk *clk_core_to_clk(struct clk_core *clk_core, const char *dev,
-+			    const char *con);
+ #ifdef CONFIG_COMMON_CLK
  
++/* Temporarily map the to-be-added API to the old API, just so stuff compiles */
++#define clk_core			clk
++
++#define clk_core_to_clk
++
++#define __clk_get_internal		clk_get
++#define __clk_get_sys_internal		clk_get_sys
++#define __devm_clk_get_internal		devm_clk_get
++#define __of_clk_get_internal		of_clk_get
++#define __of_clk_get_by_name_internal	of_clk_get_by_name
++
++#define __clk_set_rate_internal		clk_set_rate
++#define __clk_get_rate_internal		clk_get_rate
++#define __clk_set_parent_internal	clk_set_parent
++#define __clk_get_parent_internal	clk_get_parent
++#define __clk_prepare_internal		clk_prepare
++#define __clk_unprepare_internal	clk_unprepare
++
  /*
-  * FIXME clock api without lock protection
+  * flags used across common struct clk.  these flags should only affect the
+  * top-level framework.  custom flags for dealing with hardware specifics
 -- 
 1.9.3
