@@ -1,65 +1,56 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [RFC 1/5] clk: Add temporary mapping to the existing API
-Date: Fri, 27 Jun 2014 09:57:48 +0200
-Message-ID: <1403855872-14749-2-git-send-email-tomeu.vizoso@collabora.com>
-References: <1403855872-14749-1-git-send-email-tomeu.vizoso@collabora.com>
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 0/6] of-thermal hardware trip points + Tegra124 SOCTHERM driver
+Date: Fri, 27 Jun 2014 11:11:33 +0300
+Message-ID: <1403856699-2140-1-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1403855872-14749-1-git-send-email-tomeu.vizoso@collabora.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Mike Turquette <mturquette@linaro.org>, Rabin Vincent <rabin.vincent@stericsson.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mlongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-To preserve git-bisectability, add aliases from the future provider API to the
-existing public API.
+Hi everyone,
 
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
----
+this series adds support for hardware-tracked thermal trip points
+for the device tree thermal framework and introduces a new Tegra124 thermal
+driver that uses them.
 
-Don't like this much, would be great to hear of alternatives.
+Hardware-tracked trip points are trip points that do not need to be polled;
+the hardware gives an interrupt when the trip point is reached. The device
+tree thermal framework has not previously given the sensor driver any
+information about set trip points, so using these has been impossible.
+This series adds a new callback from of-thermal to the driver to allow telling
+the driver about trip points. The driver only needs to track two trip points,
+the framework ensures that the current temperature lies between those two.
+Behavior for drivers that do not include this callback is unchanged.
 
- include/linux/clk-provider.h | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+The Tegra124 SOCTHERM thermal driver that is included exposes four thermal zones
+(the thermctl thermal zones) with hardware-tracked trip point support. While the
+hardware supports four tracked trip points, only one is used.
 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 0c287db..e9ccc50 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -16,6 +16,24 @@
- 
- #ifdef CONFIG_COMMON_CLK
- 
-+/* Temporarily map the to-be-added API to the old API, just so stuff compiles */
-+#define clk_core			clk
-+
-+#define clk_core_to_clk
-+
-+#define __clk_get_internal		clk_get
-+#define __clk_get_sys_internal		clk_get_sys
-+#define __devm_clk_get_internal		devm_clk_get
-+#define __of_clk_get_internal		of_clk_get
-+#define __of_clk_get_by_name_internal	of_clk_get_by_name
-+
-+#define __clk_set_rate_internal		clk_set_rate
-+#define __clk_get_rate_internal		clk_get_rate
-+#define __clk_set_parent_internal	clk_set_parent
-+#define __clk_get_parent_internal	clk_get_parent
-+#define __clk_prepare_internal		clk_prepare
-+#define __clk_unprepare_internal	clk_unprepare
-+
- /*
-  * flags used across common struct clk.  these flags should only affect the
-  * top-level framework.  custom flags for dealing with hardware specifics
+Mikko Perttunen (6):
+  thermal: of: Add support for hardware-tracked trip points
+  of: Add bindings for nvidia,tegra124-soctherm
+  ARM: tegra: Add thermal trip points for Jetson TK1
+  ARM: tegra: Add soctherm and thermal zones to Tegra124 device tree
+  clk: tegra: Add soctherm and tsensor clocks to Tegra124 init table
+  thermal: Add Tegra SOCTHERM thermal management driver
+
+ .../devicetree/bindings/thermal/tegra-soctherm.txt |  32 ++
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts          |  32 ++
+ arch/arm/boot/dts/tegra124.dtsi                    |  48 ++
+ drivers/clk/tegra/clk-tegra124.c                   |   2 +
+ drivers/thermal/Kconfig                            |   7 +
+ drivers/thermal/Makefile                           |   1 +
+ drivers/thermal/of-thermal.c                       |  97 +++-
+ drivers/thermal/tegra_soctherm.c                   | 553 +++++++++++++++++++++
+ include/dt-bindings/thermal/tegra124-soctherm.h    |  15 +
+ include/linux/thermal.h                            |   3 +-
+ 10 files changed, 785 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/thermal/tegra-soctherm.txt
+ create mode 100644 drivers/thermal/tegra_soctherm.c
+ create mode 100644 include/dt-bindings/thermal/tegra124-soctherm.h
+
 -- 
-1.9.3
+1.8.1.5
