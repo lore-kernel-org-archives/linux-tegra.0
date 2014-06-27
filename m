@@ -1,127 +1,147 @@
-From: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>
-Subject: Re: [RFC 1/4] ARM: tegra: Move SoC drivers to drivers/soc/tegra
-Date: Fri, 27 Jun 2014 13:30:04 -0400
-Message-ID: <53ADAA1C.70407@ti.com>
-References: <1403888329-24755-1-git-send-email-thierry.reding@gmail.com>
+From: =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>
+Subject: Re: [PATCH v2 2/4] drm/tegra: Add SET/GET_TILING IOCTLs
+Date: Fri, 27 Jun 2014 10:59:24 -0700
+Message-ID: <CADMs+9a79K-rxiA-sy+XUPKmoL5kUSGHd0-RgBmWNcZVrSRNmQ@mail.gmail.com>
+References: <1403857706-15989-1-git-send-email-thierry.reding@gmail.com>
+ <1403857706-15989-2-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1403888329-24755-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kumar Gala <galak-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1403857706-15989-2-git-send-email-thierry.reding@gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-api@vger.kernel.org, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
 List-Id: linux-tegra@vger.kernel.org
 
-+Arnd, Greg, Catalin and Kumar,
-
-On Friday 27 June 2014 12:58 PM, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> These drivers are closely coupled and need to be moved as a whole. One
-> reason for moving them out of arch/arm/mach-tegra is to allow them to be
-> shared with 64-bit ARM.
-> 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  arch/arm/mach-tegra/Makefile                       | 32 --------
->  arch/arm/mach-tegra/common.h                       |  4 -
->  arch/arm/mach-tegra/io.c                           | 27 +++++-
->  arch/arm/mach-tegra/pmc.h                          | 62 --------------
->  arch/arm/mach-tegra/tegra.c                        |  9 --
->  drivers/soc/Makefile                               |  1 +
->  drivers/soc/tegra/Makefile                         | 34 ++++++++
->  .../soc/tegra}/cpuidle-tegra114.c                  |  0
->  .../soc/tegra}/cpuidle-tegra20.c                   |  6 +-
->  .../soc/tegra}/cpuidle-tegra30.c                   |  0
->  .../arm/mach-tegra => drivers/soc/tegra}/cpuidle.c |  0
->  .../arm/mach-tegra => drivers/soc/tegra}/cpuidle.h |  3 -
->  .../mach-tegra => drivers/soc/tegra}/flowctrl.c    |  0
->  .../mach-tegra => drivers/soc/tegra}/flowctrl.h    |  2 -
->  .../arm/mach-tegra => drivers/soc/tegra}/headsmp.S |  0
->  .../arm/mach-tegra => drivers/soc/tegra}/hotplug.c |  0
->  {arch/arm/mach-tegra => drivers/soc/tegra}/iomap.h |  0
->  .../arm/mach-tegra => drivers/soc/tegra}/irammap.h |  0
->  {arch/arm/mach-tegra => drivers/soc/tegra}/irq.c   |  1 -
->  {arch/arm/mach-tegra => drivers/soc/tegra}/irq.h   |  6 --
->  .../arm/mach-tegra => drivers/soc/tegra}/platsmp.c |  5 --
->  .../mach-tegra => drivers/soc/tegra}/pm-tegra20.c  |  0
->  .../mach-tegra => drivers/soc/tegra}/pm-tegra30.c  |  0
->  {arch/arm/mach-tegra => drivers/soc/tegra}/pm.c    |  0
->  {arch/arm/mach-tegra => drivers/soc/tegra}/pm.h    |  4 +-
->  {arch/arm/mach-tegra => drivers/soc/tegra}/pmc.c   |  0
->  drivers/soc/tegra/pmc.h                            | 35 ++++++++
->  .../mach-tegra => drivers/soc/tegra}/powergate.c   |  0
->  .../soc/tegra}/reset-handler.S                     |  0
->  {arch/arm/mach-tegra => drivers/soc/tegra}/reset.c |  0
->  {arch/arm/mach-tegra => drivers/soc/tegra}/reset.h |  2 -
->  .../soc/tegra}/sleep-tegra20.S                     |  0
->  .../soc/tegra}/sleep-tegra30.S                     |  0
->  {arch/arm/mach-tegra => drivers/soc/tegra}/sleep.S |  0
->  {arch/arm/mach-tegra => drivers/soc/tegra}/sleep.h |  2 -
->  include/linux/tegra-soc.h                          | 95 ++++++++++++++++++++++
->  36 files changed, 195 insertions(+), 135 deletions(-)
->  delete mode 100644 arch/arm/mach-tegra/common.h
->  delete mode 100644 arch/arm/mach-tegra/pmc.h
->  create mode 100644 drivers/soc/tegra/Makefile
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle-tegra114.c (100%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle-tegra20.c (100%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle-tegra30.c (100%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle.c (100%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle.h (91%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/flowctrl.c (100%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/flowctrl.h (98%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/headsmp.S (100%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/hotplug.c (100%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/iomap.h (100%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/irammap.h (100%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/irq.c (99%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/irq.h (83%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/platsmp.c (98%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/pm-tegra20.c (100%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/pm-tegra30.c (100%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/pm.c (100%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/pm.h (94%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/pmc.c (100%)
->  create mode 100644 drivers/soc/tegra/pmc.h
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/powergate.c (100%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/reset-handler.S (100%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/reset.c (100%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/reset.h (97%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/sleep-tegra20.S (100%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/sleep-tegra30.S (100%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/sleep.S (100%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/sleep.h (98%)
-> 
-NAK for this patch.
-
-You are using drivers/soc/* as a dump yard for your SOC code which
-is not the intention we created drivers/soc/.
-
-Its really for subsystem drivers which doesn't have appropriate
-home in Linux kernel today. From your above patch ...
-
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle-tegra114.c (100%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle-tegra20.c (100%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle-tegra30.c (100%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle.c (100%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle.h (91%)
-This should go into drivers/idle/*. if you have dependencies, please sort
-them out.
-
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/reset-handler.S (100%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/reset.c (100%)
->  rename {arch/arm/mach-tegra => drivers/soc/tegra}/reset.h (97%)
-subsystem: drivers/power/reset/
-
-For tegra/*pm*/, you can use drivers/power or drivers/base/power/
-
-For SMP boot, ARMv8 expecting to have either PSCI based implementation or
-device tree based boot scheme. you can move towards that model if possible.
-
-Please find appropriate subsystem to move your SOC code and if you don't
-find an appropriate subsystem, we can discuss adding that under drivers/soc.
-The drivers/soc/* isn't a dumping ground so please don't abuse it.
-
-regards,
-Santosh
+T24gRnJpLCBKdW4gMjcsIDIwMTQgYXQgMToyOCBBTSwgVGhpZXJyeSBSZWRpbmcKPHRoaWVycnku
+cmVkaW5nQGdtYWlsLmNvbT4gd3JvdGU6Cj4gRnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdA
+bnZpZGlhLmNvbT4KPgo+IEN1cnJlbnRseSB0aGUgdGlsaW5nIHBhcmFtZXRlcnMgb2YgYnVmZmVy
+IG9iamVjdHMgY2FuIG9ubHkgYmUgc2V0IGF0Cj4gYWxsb2NhdGlvbiB0aW1lLCBhbmQgb25seSBh
+IHNpbmdsZSB0aWxlZCBtb2RlIGlzIHN1cHBvcnRlZC4gVGhpcyBuZXcKPiBEUk1fVEVHUkFfR0VN
+X1NFVF9USUxJTkcgSU9DVEwgYWxsb3dzIG1vcmUgbW9kZXMgdG8gYmUgc2V0IGFuZCBhbHNvCj4g
+YWxsb3dzIHRoZSB0aWxpbmcgbW9kZSB0byBiZSBjaGFuZ2VkIGFmdGVyIHRoZSBhbGxvY2F0aW9u
+LiBUaGlzIHdpbGwKPiBlbmFibGUgdGhlIFRlZ3JhIERSTSBkcml2ZXIgdG8gaW1wb3J0IGJ1ZmZl
+cnMgZnJvbSBhIEdQVSBhbmQgZGlyZWN0bHkKPiBzY2FuIHRoZW0gb3V0IGJ5IGNvbmZpZ3VyaW5n
+IHRoZSBkaXNwbGF5IGNvbnRyb2xsZXIgYXBwcm9wcmlhdGVseS4KPgo+IFRvIGNvbXBsZW1lbnQg
+dGhpcywgdGhlIERSTV9URUdSQV9HRU1fR0VUX1RJTElORyBJT0NUTCBjYW4gcXVlcnkgdGhlCj4g
+Y3VycmVudCB0aWxpbmcgbW9kZSBvZiBhIGJ1ZmZlciBvYmplY3QuIFRoaXMgaXMgbmVjZXNzYXJ5
+IHdoZW4gaW1wb3J0aW5nCj4gYnVmZmVycyB2aWEgaGFuZGxlIChhcyBpcyBkb25lIGluIE1lc2Eg
+Zm9yIGV4YW1wbGUpIHNvIHRoYXQgdXNlcnNwYWNlCj4gY2FuIGRldGVybWluZSB0aGUgcHJvcGVy
+IHBhcmFtZXRlcnMgZm9yIHRoZSAyRCBvciAzRCBlbmdpbmVzLgo+Cj4gU2lnbmVkLW9mZi1ieTog
+VGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClJldmlld2VkLWJ5OiBTdMOpcGhh
+bmUgTWFyY2hlc2luIDxtYXJjaGV1QGNocm9taXVtLm9yZz4KCj4gLS0tCj4gQ2hhbmdlcyBpbiB2
+MjoKPiAtIHVzZSAtRU5PRU5UIGlmIG5vIEdFTSBvYmplY3QgaXMgZm91bmQKPgo+ICBkcml2ZXJz
+L2dwdS9kcm0vdGVncmEvZHJtLmMgIHwgOTUgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysKPiAgaW5jbHVkZS91YXBpL2RybS90ZWdyYV9kcm0uaCB8IDI1ICsrKysr
+KysrKysrKwo+ICAyIGZpbGVzIGNoYW5nZWQsIDEyMCBpbnNlcnRpb25zKCspCj4KPiBkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3Jh
+L2RybS5jCj4gaW5kZXggZmQ3MzZlZmQxNGJkLi5hMDI5NTI1YjU5OGYgMTAwNjQ0Cj4gLS0tIGEv
+ZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3Jh
+L2RybS5jCj4gQEAgLTQ1NSw2ICs0NTUsOTkgQEAgc3RhdGljIGludCB0ZWdyYV9nZXRfc3luY3B0
+X2Jhc2Uoc3RydWN0IGRybV9kZXZpY2UgKmRybSwgdm9pZCAqZGF0YSwKPgo+ICAgICAgICAgcmV0
+dXJuIDA7Cj4gIH0KPiArCj4gK3N0YXRpYyBpbnQgdGVncmFfZ2VtX3NldF90aWxpbmcoc3RydWN0
+IGRybV9kZXZpY2UgKmRybSwgdm9pZCAqZGF0YSwKPiArICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIHN0cnVjdCBkcm1fZmlsZSAqZmlsZSkKPiArewo+ICsgICAgICAgc3RydWN0IGRybV90
+ZWdyYV9nZW1fc2V0X3RpbGluZyAqYXJncyA9IGRhdGE7Cj4gKyAgICAgICBlbnVtIHRlZ3JhX2Jv
+X3RpbGluZ19tb2RlIG1vZGU7Cj4gKyAgICAgICBzdHJ1Y3QgZHJtX2dlbV9vYmplY3QgKmdlbTsK
+PiArICAgICAgIHVuc2lnbmVkIGxvbmcgdmFsdWUgPSAwOwo+ICsgICAgICAgc3RydWN0IHRlZ3Jh
+X2JvICpibzsKPiArCj4gKyAgICAgICBzd2l0Y2ggKGFyZ3MtPm1vZGUpIHsKPiArICAgICAgIGNh
+c2UgRFJNX1RFR1JBX0dFTV9USUxJTkdfTU9ERV9QSVRDSDoKPiArICAgICAgICAgICAgICAgbW9k
+ZSA9IFRFR1JBX0JPX1RJTElOR19NT0RFX1BJVENIOwo+ICsKPiArICAgICAgICAgICAgICAgaWYg
+KGFyZ3MtPnZhbHVlICE9IDApCj4gKyAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIC1FSU5W
+QUw7Cj4gKwo+ICsgICAgICAgICAgICAgICBicmVhazsKPiArCj4gKyAgICAgICBjYXNlIERSTV9U
+RUdSQV9HRU1fVElMSU5HX01PREVfVElMRUQ6Cj4gKyAgICAgICAgICAgICAgIG1vZGUgPSBURUdS
+QV9CT19USUxJTkdfTU9ERV9USUxFRDsKPiArCj4gKyAgICAgICAgICAgICAgIGlmIChhcmdzLT52
+YWx1ZSAhPSAwKQo+ICsgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiAtRUlOVkFMOwo+ICsK
+PiArICAgICAgICAgICAgICAgYnJlYWs7Cj4gKwo+ICsgICAgICAgY2FzZSBEUk1fVEVHUkFfR0VN
+X1RJTElOR19NT0RFX0JMT0NLOgo+ICsgICAgICAgICAgICAgICBtb2RlID0gVEVHUkFfQk9fVElM
+SU5HX01PREVfQkxPQ0s7Cj4gKwo+ICsgICAgICAgICAgICAgICBpZiAoYXJncy0+dmFsdWUgPiA1
+KQo+ICsgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiAtRUlOVkFMOwo+ICsKPiArICAgICAg
+ICAgICAgICAgdmFsdWUgPSBhcmdzLT52YWx1ZTsKPiArICAgICAgICAgICAgICAgYnJlYWs7Cj4g
+Kwo+ICsgICAgICAgZGVmYXVsdDoKPiArICAgICAgICAgICAgICAgcmV0dXJuIC1FSU5WQUw7Cj4g
+KyAgICAgICB9Cj4gKwo+ICsgICAgICAgZ2VtID0gZHJtX2dlbV9vYmplY3RfbG9va3VwKGRybSwg
+ZmlsZSwgYXJncy0+aGFuZGxlKTsKPiArICAgICAgIGlmICghZ2VtKQo+ICsgICAgICAgICAgICAg
+ICByZXR1cm4gLUVOT0VOVDsKPiArCj4gKyAgICAgICBibyA9IHRvX3RlZ3JhX2JvKGdlbSk7Cj4g
+Kwo+ICsgICAgICAgYm8tPnRpbGluZy5tb2RlID0gbW9kZTsKPiArICAgICAgIGJvLT50aWxpbmcu
+dmFsdWUgPSB2YWx1ZTsKPiArCj4gKyAgICAgICBkcm1fZ2VtX29iamVjdF91bnJlZmVyZW5jZShn
+ZW0pOwo+ICsKPiArICAgICAgIHJldHVybiAwOwo+ICt9Cj4gKwo+ICtzdGF0aWMgaW50IHRlZ3Jh
+X2dlbV9nZXRfdGlsaW5nKHN0cnVjdCBkcm1fZGV2aWNlICpkcm0sIHZvaWQgKmRhdGEsCj4gKyAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgZHJtX2ZpbGUgKmZpbGUpCj4gK3sK
+PiArICAgICAgIHN0cnVjdCBkcm1fdGVncmFfZ2VtX2dldF90aWxpbmcgKmFyZ3MgPSBkYXRhOwo+
+ICsgICAgICAgc3RydWN0IGRybV9nZW1fb2JqZWN0ICpnZW07Cj4gKyAgICAgICBzdHJ1Y3QgdGVn
+cmFfYm8gKmJvOwo+ICsgICAgICAgaW50IGVyciA9IDA7Cj4gKwo+ICsgICAgICAgZ2VtID0gZHJt
+X2dlbV9vYmplY3RfbG9va3VwKGRybSwgZmlsZSwgYXJncy0+aGFuZGxlKTsKPiArICAgICAgIGlm
+ICghZ2VtKQo+ICsgICAgICAgICAgICAgICByZXR1cm4gLUVOT0VOVDsKPiArCj4gKyAgICAgICBi
+byA9IHRvX3RlZ3JhX2JvKGdlbSk7Cj4gKwo+ICsgICAgICAgc3dpdGNoIChiby0+dGlsaW5nLm1v
+ZGUpIHsKPiArICAgICAgIGNhc2UgVEVHUkFfQk9fVElMSU5HX01PREVfUElUQ0g6Cj4gKyAgICAg
+ICAgICAgICAgIGFyZ3MtPm1vZGUgPSBEUk1fVEVHUkFfR0VNX1RJTElOR19NT0RFX1BJVENIOwo+
+ICsgICAgICAgICAgICAgICBhcmdzLT52YWx1ZSA9IDA7Cj4gKyAgICAgICAgICAgICAgIGJyZWFr
+Owo+ICsKPiArICAgICAgIGNhc2UgVEVHUkFfQk9fVElMSU5HX01PREVfVElMRUQ6Cj4gKyAgICAg
+ICAgICAgICAgIGFyZ3MtPm1vZGUgPSBEUk1fVEVHUkFfR0VNX1RJTElOR19NT0RFX1RJTEVEOwo+
+ICsgICAgICAgICAgICAgICBhcmdzLT52YWx1ZSA9IDA7Cj4gKyAgICAgICAgICAgICAgIGJyZWFr
+Owo+ICsKPiArICAgICAgIGNhc2UgVEVHUkFfQk9fVElMSU5HX01PREVfQkxPQ0s6Cj4gKyAgICAg
+ICAgICAgICAgIGFyZ3MtPm1vZGUgPSBEUk1fVEVHUkFfR0VNX1RJTElOR19NT0RFX0JMT0NLOwo+
+ICsgICAgICAgICAgICAgICBhcmdzLT52YWx1ZSA9IGJvLT50aWxpbmcudmFsdWU7Cj4gKyAgICAg
+ICAgICAgICAgIGJyZWFrOwo+ICsKPiArICAgICAgIGRlZmF1bHQ6Cj4gKyAgICAgICAgICAgICAg
+IGVyciA9IC1FSU5WQUw7Cj4gKyAgICAgICAgICAgICAgIGJyZWFrOwo+ICsgICAgICAgfQo+ICsK
+PiArICAgICAgIGRybV9nZW1fb2JqZWN0X3VucmVmZXJlbmNlKGdlbSk7Cj4gKwo+ICsgICAgICAg
+cmV0dXJuIGVycjsKPiArfQo+ICAjZW5kaWYKPgo+ICBzdGF0aWMgY29uc3Qgc3RydWN0IGRybV9p
+b2N0bF9kZXNjIHRlZ3JhX2RybV9pb2N0bHNbXSA9IHsKPiBAQCAtNDY5LDYgKzU2Miw4IEBAIHN0
+YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX2lvY3RsX2Rlc2MgdGVncmFfZHJtX2lvY3Rsc1tdID0gewo+
+ICAgICAgICAgRFJNX0lPQ1RMX0RFRl9EUlYoVEVHUkFfR0VUX1NZTkNQVCwgdGVncmFfZ2V0X3N5
+bmNwdCwgRFJNX1VOTE9DS0VEKSwKPiAgICAgICAgIERSTV9JT0NUTF9ERUZfRFJWKFRFR1JBX1NV
+Qk1JVCwgdGVncmFfc3VibWl0LCBEUk1fVU5MT0NLRUQpLAo+ICAgICAgICAgRFJNX0lPQ1RMX0RF
+Rl9EUlYoVEVHUkFfR0VUX1NZTkNQVF9CQVNFLCB0ZWdyYV9nZXRfc3luY3B0X2Jhc2UsIERSTV9V
+TkxPQ0tFRCksCj4gKyAgICAgICBEUk1fSU9DVExfREVGX0RSVihURUdSQV9HRU1fU0VUX1RJTElO
+RywgdGVncmFfZ2VtX3NldF90aWxpbmcsIERSTV9VTkxPQ0tFRCksCj4gKyAgICAgICBEUk1fSU9D
+VExfREVGX0RSVihURUdSQV9HRU1fR0VUX1RJTElORywgdGVncmFfZ2VtX2dldF90aWxpbmcsIERS
+TV9VTkxPQ0tFRCksCj4gICNlbmRpZgo+ICB9Owo+Cj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvdWFw
+aS9kcm0vdGVncmFfZHJtLmggYi9pbmNsdWRlL3VhcGkvZHJtL3RlZ3JhX2RybS5oCj4gaW5kZXgg
+Yjc1NDgyMTEyNDI4Li4wODI5Zjc1ZWI5ODYgMTAwNjQ0Cj4gLS0tIGEvaW5jbHVkZS91YXBpL2Ry
+bS90ZWdyYV9kcm0uaAo+ICsrKyBiL2luY2x1ZGUvdWFwaS9kcm0vdGVncmFfZHJtLmgKPiBAQCAt
+MTI5LDYgKzEyOSwyNyBAQCBzdHJ1Y3QgZHJtX3RlZ3JhX3N1Ym1pdCB7Cj4gICAgICAgICBfX3Uz
+MiByZXNlcnZlZFs1XTsgICAgICAvKiBmdXR1cmUgZXhwYW5zaW9uICovCj4gIH07Cj4KPiArI2Rl
+ZmluZSBEUk1fVEVHUkFfR0VNX1RJTElOR19NT0RFX1BJVENIIDAKPiArI2RlZmluZSBEUk1fVEVH
+UkFfR0VNX1RJTElOR19NT0RFX1RJTEVEIDEKPiArI2RlZmluZSBEUk1fVEVHUkFfR0VNX1RJTElO
+R19NT0RFX0JMT0NLIDIKPiArCj4gK3N0cnVjdCBkcm1fdGVncmFfZ2VtX3NldF90aWxpbmcgewo+
+ICsgICAgICAgLyogaW5wdXQgKi8KPiArICAgICAgIF9fdTMyIGhhbmRsZTsKPiArICAgICAgIF9f
+dTMyIG1vZGU7Cj4gKyAgICAgICBfX3UzMiB2YWx1ZTsKPiArICAgICAgIF9fdTMyIHBhZDsKPiAr
+fTsKPiArCj4gK3N0cnVjdCBkcm1fdGVncmFfZ2VtX2dldF90aWxpbmcgewo+ICsgICAgICAgLyog
+aW5wdXQgKi8KPiArICAgICAgIF9fdTMyIGhhbmRsZTsKPiArICAgICAgIC8qIG91dHB1dCAqLwo+
+ICsgICAgICAgX191MzIgbW9kZTsKPiArICAgICAgIF9fdTMyIHZhbHVlOwo+ICsgICAgICAgX191
+MzIgcGFkOwo+ICt9Owo+ICsKPiAgI2RlZmluZSBEUk1fVEVHUkFfR0VNX0NSRUFURSAgICAgICAg
+ICAgMHgwMAo+ICAjZGVmaW5lIERSTV9URUdSQV9HRU1fTU1BUCAgICAgICAgICAgICAweDAxCj4g
+ICNkZWZpbmUgRFJNX1RFR1JBX1NZTkNQVF9SRUFEICAgICAgICAgIDB4MDIKPiBAQCAtMTM5LDYg
+KzE2MCw4IEBAIHN0cnVjdCBkcm1fdGVncmFfc3VibWl0IHsKPiAgI2RlZmluZSBEUk1fVEVHUkFf
+R0VUX1NZTkNQVCAgICAgICAgICAgMHgwNwo+ICAjZGVmaW5lIERSTV9URUdSQV9TVUJNSVQgICAg
+ICAgICAgICAgICAweDA4Cj4gICNkZWZpbmUgRFJNX1RFR1JBX0dFVF9TWU5DUFRfQkFTRSAgICAg
+IDB4MDkKPiArI2RlZmluZSBEUk1fVEVHUkFfR0VNX1NFVF9USUxJTkcgICAgICAgMHgwYQo+ICsj
+ZGVmaW5lIERSTV9URUdSQV9HRU1fR0VUX1RJTElORyAgICAgICAweDBiCj4KPiAgI2RlZmluZSBE
+Uk1fSU9DVExfVEVHUkFfR0VNX0NSRUFURSBEUk1fSU9XUihEUk1fQ09NTUFORF9CQVNFICsgRFJN
+X1RFR1JBX0dFTV9DUkVBVEUsIHN0cnVjdCBkcm1fdGVncmFfZ2VtX2NyZWF0ZSkKPiAgI2RlZmlu
+ZSBEUk1fSU9DVExfVEVHUkFfR0VNX01NQVAgRFJNX0lPV1IoRFJNX0NPTU1BTkRfQkFTRSArIERS
+TV9URUdSQV9HRU1fTU1BUCwgc3RydWN0IGRybV90ZWdyYV9nZW1fbW1hcCkKPiBAQCAtMTUwLDUg
+KzE3Myw3IEBAIHN0cnVjdCBkcm1fdGVncmFfc3VibWl0IHsKPiAgI2RlZmluZSBEUk1fSU9DVExf
+VEVHUkFfR0VUX1NZTkNQVCBEUk1fSU9XUihEUk1fQ09NTUFORF9CQVNFICsgRFJNX1RFR1JBX0dF
+VF9TWU5DUFQsIHN0cnVjdCBkcm1fdGVncmFfZ2V0X3N5bmNwdCkKPiAgI2RlZmluZSBEUk1fSU9D
+VExfVEVHUkFfU1VCTUlUIERSTV9JT1dSKERSTV9DT01NQU5EX0JBU0UgKyBEUk1fVEVHUkFfU1VC
+TUlULCBzdHJ1Y3QgZHJtX3RlZ3JhX3N1Ym1pdCkKPiAgI2RlZmluZSBEUk1fSU9DVExfVEVHUkFf
+R0VUX1NZTkNQVF9CQVNFIERSTV9JT1dSKERSTV9DT01NQU5EX0JBU0UgKyBEUk1fVEVHUkFfR0VU
+X1NZTkNQVF9CQVNFLCBzdHJ1Y3QgZHJtX3RlZ3JhX2dldF9zeW5jcHRfYmFzZSkKPiArI2RlZmlu
+ZSBEUk1fSU9DVExfVEVHUkFfR0VNX1NFVF9USUxJTkcgRFJNX0lPV1IoRFJNX0NPTU1BTkRfQkFT
+RSArIERSTV9URUdSQV9HRU1fU0VUX1RJTElORywgc3RydWN0IGRybV90ZWdyYV9nZW1fc2V0X3Rp
+bGluZykKPiArI2RlZmluZSBEUk1fSU9DVExfVEVHUkFfR0VNX0dFVF9USUxJTkcgRFJNX0lPV1Io
+RFJNX0NPTU1BTkRfQkFTRSArIERSTV9URUdSQV9HRU1fR0VUX1RJTElORywgc3RydWN0IGRybV90
+ZWdyYV9nZW1fZ2V0X3RpbGluZykKPgo+ICAjZW5kaWYKPiAtLQo+IDIuMC4wCj4KX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
+bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVz
+a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
