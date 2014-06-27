@@ -1,45 +1,71 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [RFC 0/5] Per-user clock constraints
-Date: Fri, 27 Jun 2014 16:30:08 -0600
-Message-ID: <53ADF070.8050002@wwwdotorg.org>
-References: <1403855872-14749-1-git-send-email-tomeu.vizoso@collabora.com>
+Subject: Re: [RFC 3/5] clk: use struct clk only for external API
+Date: Fri, 27 Jun 2014 16:37:45 -0600
+Message-ID: <53ADF239.9050008@wwwdotorg.org>
+References: <1403855872-14749-1-git-send-email-tomeu.vizoso@collabora.com> <1403855872-14749-4-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1403855872-14749-1-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+In-Reply-To: <1403855872-14749-4-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rabin Vincent <rabin.vincent-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 On 06/27/2014 01:57 AM, Tomeu Vizoso wrote:
-> Hi,
+> From: Rabin Vincent <rabin.vincent-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>
 > 
-> I'm retaking Rabin's patches [0] for splitting the clk API in two: one API for
-> clk consumers and another for providers. The consumer API uses a clk structure
-> that just keeps track of the consumer and has a reference to the actual
-> clk_core struct, which is used internally.
+> In order to provide per-user accounting, this separates the struct clk
+> used in the common clock framework into two structures 'struct clk_core'
+> and 'struct clk'.  struct clk_core will be used for internal
+> manipulation and struct clk will be used in the clock API
+> implementation.
 > 
-> I have kept a patch from Rabin that aims to aid in debugging nested
-> enable/disable calls, though my personal aim is to allow more than one consumer
-> to influence the final, effective rate. For now this is limited to setting
-> floor and ceiling constraints.
-> 
-> For those functions in the consumer clk API that were called from providers, I
-> have added variants to clk-provider.h that are the same only that accept a
-> clk_core instead. In this first version of the patchset, these functions are
-> prepended with two underscores and have the _internal suffix at the end. Mike
-> has stated his preference of not prefixing with underscores any public API and
-> I agree with him, but we still need a way to distinguish e.g. clk_set_parent()
-> in the provider API from that in the consumer API (and from the lock-less
-> variant in clk-provider.h!).
+> In this patch, struct clk is simply renamed to struct clk_core and a new
+> struct clk is implemented which simply wraps it.  In the next patch, the
+> new struct clk will be used to implement per-user clock enable
+> accounting.
 
-The name clk_provider_set_rate would be a good hint that it's an API for
-clock providers not consumers.
+> diff --git a/include/linux/clk-private.h b/include/linux/clk-private.h
 
-The name clk_core_set_rate would be a good hint that the function takes
-a clk_core object rather than the clk (client) object.
+> -struct clk {
+> +struct clk_core {
+>  	const char		*name;
+>  	const struct clk_ops	*ops;
+>  	struct clk_hw		*hw;
+>  	struct module		*owner;
+> -	struct clk		*parent;
+> +	struct clk_core		*parent;
+>  	const char		**parent_names;
+> -	struct clk		**parents;
+> +	struct clk_core		**parents;
+>  	u8			num_parents;
+>  	u8			new_parent_index;
+>  	unsigned long		rate;
+>  	unsigned long		new_rate;
+> -	struct clk		*new_parent;
+> -	struct clk		*new_child;
+> +	struct clk_core		*new_parent;
+> +	struct clk_core		*new_child;
+>  	unsigned long		flags;
+>  	unsigned int		enable_count;
+>  	unsigned int		prepare_count;
+> @@ -55,6 +55,10 @@ struct clk {
+>  	struct kref		ref;
+>  };
+>  
+> +struct clk {
+> +	struct clk_core clk;
+> +};
 
-Neither names see too unwieldy to me.
+I'm confused why that field isn't a pointer instead. Don't we want to
+end up with the following data structure:
 
-Anyway, that's the color of my bikeshed:-)
+(dev a's) struct clk --------v
+                           struct clk_core -----> struct clk_hw
+(dev b's) struct clk --------^
+
+Where all 3 arrows are pointers? (and struct clk_core probably contains
+a list of the struct clk that point at it).
+
+Otherwise, we end up creating a whole struct clk_core for each client.
