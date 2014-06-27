@@ -1,101 +1,72 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v2 1/3] of: Add NVIDIA Tegra flow controller bindings
-Date: Fri, 27 Jun 2014 14:07:26 +0200
-Message-ID: <1403870848-1754-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Rob Clark <robdclark@gmail.com>
+Subject: Re: [Nouveau] [PATCH v2 2/3] drm/ttm: introduce dma cache sync helpers
+Date: Fri, 27 Jun 2014 08:08:22 -0400
+Message-ID: <CAF6AEGv+aBJSsHAPiz4b4CP7=hvKhXwzywVQyighxnj-Lo=QTQ@mail.gmail.com>
+References: <1403603667-11302-1-git-send-email-acourbot@nvidia.com>
+ <1403603667-11302-3-git-send-email-acourbot@nvidia.com>
+ <20140624100220.GK32514@n2100.arm.linux.org.uk>
+ <53A953E6.2030503@nvidia.com> <53A95910.20104@nvidia.com>
+ <CAAVeFu+rbCViC87kYCLfxGV18iYq=Pa0ABb+L=iNiYPLn+mR8Q@mail.gmail.com>
+ <53A96EC5.3030701@canonical.com>
+ <1403616338.4230.8.camel@weser.hi.pengutronix.de>
+ <CACP_E+KECMyusuZd6hpzthL-RpfUOJpWh0EABf1DGAeaXc00aA@mail.gmail.com>
+ <CAAVeFuLU04rk1DWMhVJV=ktVCpq4js38p1ipCr1jh1x72b=GZw@mail.gmail.com>
+ <20140626161055.GX32514@n2100.arm.linux.org.uk>
+ <CAAVeFuK5L9+nCP=KZTBSG9OifJrFKcfQdCYuBEQbZ2+s9FmFdQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAAVeFuK5L9+nCP=KZTBSG9OifJrFKcfQdCYuBEQbZ2+s9FmFdQ@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ben Skeggs <bskeggs@redhat.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Thu, Jun 26, 2014 at 7:17 PM, Alexandre Courbot <gnurou@gmail.com> wrote:
+> On Fri, Jun 27, 2014 at 1:10 AM, Russell King - ARM Linux
+> <linux@arm.linux.org.uk> wrote:
+>> On Thu, Jun 26, 2014 at 11:53:20PM +0900, Alexandre Courbot wrote:
+>>> We don't plan to rely on CMA for too long. IOMMU support is on the way
+>>> and should make our life easier, although no matter the source of
+>>> memory, we will still have the issue of the lowmem mappings.
+>>
+>> When it comes to DMA memory, talking about lowmem vs highmem is utterly
+>> meaningless.
+>>
+>> The lowmem/highmem split is entirely a software concept and is completely
+>> adjustable.  An extreme example is that you can boot any platform with
+>> more than 32MB of memory with 32MB of lowmem and the remainder as
+>> highmem.
+>
+> True, but isn't it also the case that all lowmem is already mapped in
+> the kernel address space, and that re-mapping this memory with
+> different cache settings (e.g. by creating a WC mapping for user-space
+> to write into) is undefined on ARM and must be avoided? That is the
+> issue I was referring to.
+>
 
-Add device tree bindings for the flow controller found on NVIDIA Tegra
-SoCs.
+dma memory should be removed from the kernel linear map (if needed)..
+assuming it is allocated w/ dma api's.
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- .../bindings/arm/tegra/nvidia,tegra114-flowctrl.txt          | 12 ++++++++++++
- .../bindings/arm/tegra/nvidia,tegra124-flowctrl.txt          | 12 ++++++++++++
- .../bindings/arm/tegra/nvidia,tegra20-flowctrl.txt           | 12 ++++++++++++
- .../bindings/arm/tegra/nvidia,tegra30-flowctrl.txt           | 12 ++++++++++++
- 4 files changed, 48 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra114-flowctrl.txt
- create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra124-flowctrl.txt
- create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-flowctrl.txt
- create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra30-flowctrl.txt
+btw, something I've been wondering for a little while, but haven't had
+time to investigate.  Not sure if this applies to you as well.  But
+seems like I have IOMMU's which can be outer-coherent (snoop L2), but
+I *think* they are not inner-coherent (L1).  No idea if current dma
+memory code can grok this and only do inner-cache op's..
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra114-flowctrl.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra114-flowctrl.txt
-new file mode 100644
-index 000000000000..72599fdb09a2
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra114-flowctrl.txt
-@@ -0,0 +1,12 @@
-+NVIDIA Tegra114 Flow Controller
-+
-+Required properties:
-+- compatible: "nvidia,tegra114-flowctrl"
-+- reg: Should contain one register range (address and length)
-+
-+Example:
-+
-+	flow-controller@60007000 {
-+		compatible = "nvidia,tegra114-flowctrl";
-+		reg = <0x60007000 0x1000>;
-+	};
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra124-flowctrl.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra124-flowctrl.txt
-new file mode 100644
-index 000000000000..3af5fe2019f2
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra124-flowctrl.txt
-@@ -0,0 +1,12 @@
-+NVIDIA Tegra124 Flow Controller
-+
-+Required properties:
-+- compatible: "nvidia,tegra124-flowctrl"
-+- reg: Should contain one register range (address and length)
-+
-+Example:
-+
-+	flow-controller@0,60007000 {
-+		compatible = "nvidia,tegra124-flowctrl";
-+		reg = <0x0 0x60007000 0x0 0x1000>;
-+	};
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-flowctrl.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-flowctrl.txt
-new file mode 100644
-index 000000000000..b077ca8a22c6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-flowctrl.txt
-@@ -0,0 +1,12 @@
-+NVIDIA Tegra20 Flow Controller
-+
-+Required properties:
-+- compatible: "nvidia,tegra20-flowctrl"
-+- reg: Should contain one register range (address and length)
-+
-+Example:
-+
-+	flow-controller@60007000 {
-+		compatible = "nvidia,tegra20-flowctrl";
-+		reg = <0x60007000 0x1000>;
-+	};
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra30-flowctrl.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra30-flowctrl.txt
-new file mode 100644
-index 000000000000..72c90dd59110
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra30-flowctrl.txt
-@@ -0,0 +1,12 @@
-+NVIDIA Tegra30 Flow Controller
-+
-+Required properties:
-+- compatible: "nvidia,tegra30-flowctrl"
-+- reg: Should contain one register range (address and length)
-+
-+Example:
-+
-+	flow-controller@60007000 {
-+		compatible = "nvidia,tegra30-flowctrl";
-+		reg = <0x60007000 0x1000>;
-+	};
--- 
-2.0.0
+BR,
+-R
+
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
