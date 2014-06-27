@@ -1,90 +1,165 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH v1 4/9] pinctrl: tegra-xusb: Add USB PHY support
-Date: Fri, 27 Jun 2014 10:00:04 -0500
-Message-ID: <20140627150004.GF8069@saruman.home>
-References: <1403072180-4944-1-git-send-email-abrestic@chromium.org>
- <1403072180-4944-5-git-send-email-abrestic@chromium.org>
- <53AB493F.3030802@wwwdotorg.org>
- <CAL1qeaHhoqEPu-j+drNiRMyeutz=qqZPxSP8H+v-sgjZSfS5tQ@mail.gmail.com>
-Reply-To: <balbi@ti.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v3 1/4] drm/fb-helper: Fix hpd vs. initial
+	config races
+Date: Fri, 27 Jun 2014 17:19:22 +0200
+Message-ID: <1403882365-18337-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="qp4W5+cUSnZs0RIF"
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAL1qeaHhoqEPu-j+drNiRMyeutz=qqZPxSP8H+v-sgjZSfS5tQ@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Andrew Bresticker <abrestic@chromium.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-usb@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Randy Dunlap <rdunlap@infradead.org>, Thierry Reding <thierry.reding@gmail.com>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman <mathias.nyman@intel.com>, Grant Likely <grant.likely@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Kishon Vijay Abraham I <kish>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
---qp4W5+cUSnZs0RIF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-On Wed, Jun 25, 2014 at 04:30:48PM -0700, Andrew Bresticker wrote:
-> >> +static int usb3_phy_power_on(struct phy *phy)
-> >> +{
-> >> +     struct tegra_xusb_padctl *padctl =3D phy_get_drvdata(phy);
-> >> +     int port =3D usb3_phy_to_port(phy);
-> >> +     int lane =3D padctl->usb3_ports[port].lane;
-> >> +     u32 value, offset;
-> >> +
-> >> +     value =3D padctl_readl(padctl, XUSB_PADCTL_IOPHY_USB3_PADX_CTL2(=
-port));
-> >> +     value &=3D ~((XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_WANDER_MASK <<
-> >> +                 XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_WANDER_SHIFT) |
-> >> +                (XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_MASK <<
-> >> +                 XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_SHIFT) |
-> >> +                (XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_CDR_CNTL_MASK <<
-> >> +                 XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_CDR_CNTL_SHIFT));
-> >
-> > Hmm. So there is a lot of "PHY" stuff here after all.
-> >
-> > However, the PHYs implemented here appear to implement very low-level
-> > I/O pad code, whereas the PHYs we have for our USB 2.0 controller are
-> > somewhat higher-level; they're more USB-oriented than just IO pad
-> > oriented. Do you know which level of abstraction a Linux PHY object is
-> > supposed to be? I could never get an answer when I asked before.
->=20
-> The only other PHY driver I've worked with (Exynos USB2/3 PHYs) also
-> mainly only did low-level pad control stuff, but looking at a couple
-> of other USB PHYs (MSM, MV), there appear to be others that have
-> higher-level USB stuff in the PHY driver.  Perhaps Kishon or Felipe
-> could offer us some guidance?
+Some drivers need to be able to have a perfect race-free fbcon setup.
+Current drivers only enable hotplug processing after the call to
+drm_fb_helper_initial_config which leaves a tiny but important race.
 
-well, if you're adding a new driver, I'd rather see folks moving over to
-the generic phy framework (drivers/phy) because we're trying really hard
-to get rid of drivers/usb/phy/. And I think, in your case, it's actually
-ok to use pinctrl because you actually are muxing pads to the USB3 PHY,
-you just do it lazyly.
+This race is especially noticable on embedded platforms where the
+driver itself enables the voltage for the hdmi output, since only then
+will monitors (after a bit of delay, as usual) respond by asserting
+the hpd pin.
 
-my 2 cents
+Most of the infrastructure is already there with the split-out
+drm_fb_helper_init. And drm_fb_helper_initial_config already has all
+the required locking to handle concurrent hpd events since
 
---=20
-balbi
+commit 53f1904bced78d7c00f5d874c662ec3ac85d0f9f
+Author: Daniel Vetter <daniel.vetter@ffwll.ch>
+Date:   Thu Mar 20 14:26:35 2014 +0100
 
---qp4W5+cUSnZs0RIF
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+    drm/fb-helper: improve drm_fb_helper_initial_config locking
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+The only missing bit is making drm_fb_helper_hotplug_event save
+against concurrent calls of drm_fb_helper_initial_config. The only
+unprotected bit is the check for fb_helper->fb.
 
-iQIcBAEBAgAGBQJTrYb0AAoJEIaOsuA1yqRESYgP/ioYc9AcPqPaQF9qHk26g2D5
-+C8aIXKab+FhejXsJDUHJCh2Ww5nECcHwK7BtX7r6C5ZMd07wbAP/4jAEXexYoyc
-woaPwonAXa1NL58sojIfcH7fYnc3eYY5PuLImRMruLTs7XKK0hs1y2B/en/dHHnx
-V9Y2jQ4sVI5WeD0cV1a7xUTMjNnqCIRSnzl8HBNCPBnd4ZtIF4adTVy79kG4KtnK
-SDOu7FBhSqSVtcrFbfWv5bBYbbmJvSxzXgAwMvN6voaQ0NRpVHuPb8HvZXZuzDE7
-mNvk5Oab0T5u2DYL1ora6OQ/kXluY3cWCufNlfU+56HS6OIs/TIlOHgKGM5juXZe
-0hhVqnazgsxa6/Ci7rV//7hxeX8l4tkHwPiM74sJuPVOhe6u45RUVfsMUsB/um23
-IUQNRJp7YtQTBkFM4g8e7MPH/Fx9ezSdRst/0nCIu7E6rlYxoT/s9y+nM/x5Upqt
-e/bGrx0OM/rWE/uyW0HgcRhwxYGgKgY45Rg9/ooIoUG6oAkDZSmiSX7vVlbgZbhC
-ZWhvMeqDTQQan/ToQFrnk+TdjDj9AXa9Q9cVZvAKcXkXkjel3pSuhhfdAYhflbpI
-f7HD6HweVEBqfOOxNUjW1Q5YS/JafmKXZi+Uc8udV0IPhbMlo98lXsaEVaCWKWXq
-p2yhgFQ6Q9CmQefgXNgL
-=kYXQ
------END PGP SIGNATURE-----
+With that drivers can first initialize the fb helper, then enabel
+hotplug processing and then set up the initial config all in a
+completely race-free manner. Update kerneldoc and convert i915 as a
+proof of concept.
 
---qp4W5+cUSnZs0RIF--
+Feature requested by Thierry since his tegra driver atm reliably boots
+slowly enough to misses the hotplug event for an external hdmi screen,
+but also reliably boots to quickly for the hpd pin to be asserted when
+the fb helper calls into the hdmi ->detect function.
+
+Cc: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+Changes in v3:
+- remove an additional occurrence of i915's enable_hotplug_processing
+  that was introduced after the original patch
+
+ drivers/gpu/drm/drm_fb_helper.c | 11 +++++------
+ drivers/gpu/drm/i915/i915_dma.c |  3 ---
+ drivers/gpu/drm/i915/i915_drv.c |  2 --
+ drivers/gpu/drm/i915/i915_drv.h |  1 -
+ drivers/gpu/drm/i915/i915_irq.c |  4 ----
+ 5 files changed, 5 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+index d5d8cea1a679..13a098c9af31 100644
+--- a/drivers/gpu/drm/drm_fb_helper.c
++++ b/drivers/gpu/drm/drm_fb_helper.c
+@@ -1613,8 +1613,10 @@ EXPORT_SYMBOL(drm_fb_helper_initial_config);
+  * either the output polling work or a work item launched from the driver's
+  * hotplug interrupt).
+  *
+- * Note that the driver must ensure that this is only called _after_ the fb has
+- * been fully set up, i.e. after the call to drm_fb_helper_initial_config.
++ * Note that drivers may call this even before calling
++ * drm_fb_helper_initial_config but only aftert drm_fb_helper_init. This allows
++ * for a race-free fbcon setup and will make sure that the fbdev emulation will
++ * not miss any hotplug events.
+  *
+  * RETURNS:
+  * 0 on success and a non-zero error code otherwise.
+@@ -1624,11 +1626,8 @@ int drm_fb_helper_hotplug_event(struct drm_fb_helper *fb_helper)
+ 	struct drm_device *dev = fb_helper->dev;
+ 	u32 max_width, max_height;
+ 
+-	if (!fb_helper->fb)
+-		return 0;
+-
+ 	mutex_lock(&fb_helper->dev->mode_config.mutex);
+-	if (!drm_fb_helper_is_bound(fb_helper)) {
++	if (!fb_helper->fb || !drm_fb_helper_is_bound(fb_helper)) {
+ 		fb_helper->delayed_hotplug = true;
+ 		mutex_unlock(&fb_helper->dev->mode_config.mutex);
+ 		return 0;
+diff --git a/drivers/gpu/drm/i915/i915_dma.c b/drivers/gpu/drm/i915/i915_dma.c
+index 5e583a1838f8..84b55665bd87 100644
+--- a/drivers/gpu/drm/i915/i915_dma.c
++++ b/drivers/gpu/drm/i915/i915_dma.c
+@@ -1377,9 +1377,6 @@ static int i915_load_modeset_init(struct drm_device *dev)
+ 	 */
+ 	intel_fbdev_initial_config(dev);
+ 
+-	/* Only enable hotplug handling once the fbdev is fully set up. */
+-	dev_priv->enable_hotplug_processing = true;
+-
+ 	drm_kms_helper_poll_init(dev);
+ 
+ 	return 0;
+diff --git a/drivers/gpu/drm/i915/i915_drv.c b/drivers/gpu/drm/i915/i915_drv.c
+index 6eb45ac7a7d5..b0955fffca98 100644
+--- a/drivers/gpu/drm/i915/i915_drv.c
++++ b/drivers/gpu/drm/i915/i915_drv.c
+@@ -521,7 +521,6 @@ static int i915_drm_freeze(struct drm_device *dev)
+ 		}
+ 
+ 		intel_runtime_pm_disable_interrupts(dev);
+-		dev_priv->enable_hotplug_processing = false;
+ 
+ 		intel_suspend_gt_powersave(dev);
+ 
+@@ -659,7 +658,6 @@ static int __i915_drm_thaw(struct drm_device *dev, bool restore_gtt_mappings)
+ 		 * notifications.
+ 		 * */
+ 		intel_hpd_init(dev);
+-		dev_priv->enable_hotplug_processing = true;
+ 		/* Config may have changed between suspend and resume */
+ 		drm_helper_hpd_irq_event(dev);
+ 	}
+diff --git a/drivers/gpu/drm/i915/i915_drv.h b/drivers/gpu/drm/i915/i915_drv.h
+index 8cea59649ef2..df6a98cd702f 100644
+--- a/drivers/gpu/drm/i915/i915_drv.h
++++ b/drivers/gpu/drm/i915/i915_drv.h
+@@ -1404,7 +1404,6 @@ struct drm_i915_private {
+ 	u32 pipestat_irq_mask[I915_MAX_PIPES];
+ 
+ 	struct work_struct hotplug_work;
+-	bool enable_hotplug_processing;
+ 	struct {
+ 		unsigned long hpd_last_jiffies;
+ 		int hpd_cnt;
+diff --git a/drivers/gpu/drm/i915/i915_irq.c b/drivers/gpu/drm/i915/i915_irq.c
+index 1c1ec22bc7ef..c0d7674c45cd 100644
+--- a/drivers/gpu/drm/i915/i915_irq.c
++++ b/drivers/gpu/drm/i915/i915_irq.c
+@@ -1109,10 +1109,6 @@ static void i915_hotplug_work_func(struct work_struct *work)
+ 	bool changed = false;
+ 	u32 hpd_event_bits;
+ 
+-	/* HPD irq before everything is fully set up. */
+-	if (!dev_priv->enable_hotplug_processing)
+-		return;
+-
+ 	mutex_lock(&mode_config->mutex);
+ 	DRM_DEBUG_KMS("running encoder hotplug functions\n");
+ 
+-- 
+2.0.0
