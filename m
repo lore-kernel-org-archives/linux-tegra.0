@@ -1,116 +1,222 @@
-From: =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>
-Subject: Re: [PATCH v2 3/4] drm/tegra: Add SET/GET_FLAGS IOCTLs
-Date: Fri, 27 Jun 2014 11:04:18 -0700
-Message-ID: <CADMs+9a24ED8eJKL9ruppF6S4i+qOG=itU9SS_D-oc9Oxp90Zw@mail.gmail.com>
-References: <1403857706-15989-1-git-send-email-thierry.reding@gmail.com>
- <1403857706-15989-3-git-send-email-thierry.reding@gmail.com>
+From: Ken Adams <KAdams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2] drm/gk20a: add BAR instance
+Date: Fri, 27 Jun 2014 11:51:31 -0700
+Message-ID: <CFD332E4.8F1A4%kadams@nvidia.com>
+References: <1403869014-16209-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1403857706-15989-3-git-send-email-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-api@vger.kernel.org, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1403869014-16209-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gRnJpLCBKdW4gMjcsIDIwMTQgYXQgMToyOCBBTSwgVGhpZXJyeSBSZWRpbmcKPHRoaWVycnku
-cmVkaW5nQGdtYWlsLmNvbT4gd3JvdGU6Cj4gRnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdA
-bnZpZGlhLmNvbT4KPgo+IFRoZSBEUk1fVEVHUkFfR0VNX1NFVF9GTEFHUyBJT0NUTCBjYW4gYmUg
-dXNlZCB0byBzZXQgdGhlIGZsYWdzIG9mIGEKPiBidWZmZXIgb2JqZWN0IGFmdGVyIGl0IGhhcyBi
-ZWVuIGFsbG9jYXRlZCBvciBpbXBvcnRlZC4gRmxhZ3MgYXNzb2NpYXRlZAo+IHdpdGggYSBidWZm
-ZXIgb2JqZWN0IGNhbiBiZSBxdWVyaWVkIHVzaW5nIHRoZSBEUk1fVEVHUkFfR0VNX0dFVF9GTEFH
-Uwo+IElPQ1RMLgo+Cj4gU2lnbmVkLW9mZi1ieTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZp
-ZGlhLmNvbT4KClJldmlld2VkLWJ5OiBTdMOpcGhhbmUgTWFyY2hlc2luIDxtYXJjaGV1QGNocm9t
-aXVtLm9yZz4KCj4gLS0tCj4gQ2hhbmdlcyBpbiB2MjoKPiAtIHVzZSAtRU5PRU5UIGlmIG5vIEdF
-TSBvYmplY3QgaXMgZm91bmQKPgo+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgIHwgNDkg
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysKPiAgaW5jbHVkZS91
-YXBpL2RybS90ZWdyYV9kcm0uaCB8IDIxICsrKysrKysrKysrKysrKysrKysKPiAgMiBmaWxlcyBj
-aGFuZ2VkLCA3MCBpbnNlcnRpb25zKCspCj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJt
-L3RlZ3JhL2RybS5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jCj4gaW5kZXggYTAyOTUy
-NWI1OThmLi42ZTJlNzE0YTA2NDkgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3Jh
-L2RybS5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jCj4gQEAgLTU0OCw2ICs1
-NDgsNTMgQEAgc3RhdGljIGludCB0ZWdyYV9nZW1fZ2V0X3RpbGluZyhzdHJ1Y3QgZHJtX2Rldmlj
-ZSAqZHJtLCB2b2lkICpkYXRhLAo+Cj4gICAgICAgICByZXR1cm4gZXJyOwo+ICB9Cj4gKwo+ICtz
-dGF0aWMgaW50IHRlZ3JhX2dlbV9zZXRfZmxhZ3Moc3RydWN0IGRybV9kZXZpY2UgKmRybSwgdm9p
-ZCAqZGF0YSwKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IGRybV9maWxl
-ICpmaWxlKQo+ICt7Cj4gKyAgICAgICBzdHJ1Y3QgZHJtX3RlZ3JhX2dlbV9zZXRfZmxhZ3MgKmFy
-Z3MgPSBkYXRhOwo+ICsgICAgICAgc3RydWN0IGRybV9nZW1fb2JqZWN0ICpnZW07Cj4gKyAgICAg
-ICBzdHJ1Y3QgdGVncmFfYm8gKmJvOwo+ICsKPiArICAgICAgIGlmIChhcmdzLT5mbGFncyAmIH5E
-Uk1fVEVHUkFfR0VNX0ZMQUdTKQo+ICsgICAgICAgICAgICAgICByZXR1cm4gLUVJTlZBTDsKPiAr
-Cj4gKyAgICAgICBnZW0gPSBkcm1fZ2VtX29iamVjdF9sb29rdXAoZHJtLCBmaWxlLCBhcmdzLT5o
-YW5kbGUpOwo+ICsgICAgICAgaWYgKCFnZW0pCj4gKyAgICAgICAgICAgICAgIHJldHVybiAtRU5P
-RU5UOwo+ICsKPiArICAgICAgIGJvID0gdG9fdGVncmFfYm8oZ2VtKTsKPiArICAgICAgIGJvLT5m
-bGFncyA9IDA7Cj4gKwo+ICsgICAgICAgaWYgKGFyZ3MtPmZsYWdzICYgRFJNX1RFR1JBX0dFTV9C
-T1RUT01fVVApCj4gKyAgICAgICAgICAgICAgIGJvLT5mbGFncyB8PSBURUdSQV9CT19CT1RUT01f
-VVA7Cj4gKwo+ICsgICAgICAgZHJtX2dlbV9vYmplY3RfdW5yZWZlcmVuY2UoZ2VtKTsKPiArCj4g
-KyAgICAgICByZXR1cm4gMDsKPiArfQo+ICsKPiArc3RhdGljIGludCB0ZWdyYV9nZW1fZ2V0X2Zs
-YWdzKHN0cnVjdCBkcm1fZGV2aWNlICpkcm0sIHZvaWQgKmRhdGEsCj4gKyAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgIHN0cnVjdCBkcm1fZmlsZSAqZmlsZSkKPiArewo+ICsgICAgICAgc3Ry
-dWN0IGRybV90ZWdyYV9nZW1fZ2V0X2ZsYWdzICphcmdzID0gZGF0YTsKPiArICAgICAgIHN0cnVj
-dCBkcm1fZ2VtX29iamVjdCAqZ2VtOwo+ICsgICAgICAgc3RydWN0IHRlZ3JhX2JvICpibzsKPiAr
-Cj4gKyAgICAgICBnZW0gPSBkcm1fZ2VtX29iamVjdF9sb29rdXAoZHJtLCBmaWxlLCBhcmdzLT5o
-YW5kbGUpOwo+ICsgICAgICAgaWYgKCFnZW0pCj4gKyAgICAgICAgICAgICAgIHJldHVybiAtRU5P
-RU5UOwo+ICsKPiArICAgICAgIGJvID0gdG9fdGVncmFfYm8oZ2VtKTsKPiArICAgICAgIGFyZ3Mt
-PmZsYWdzID0gMDsKPiArCj4gKyAgICAgICBpZiAoYm8tPmZsYWdzICYgVEVHUkFfQk9fQk9UVE9N
-X1VQKQo+ICsgICAgICAgICAgICAgICBhcmdzLT5mbGFncyB8PSBEUk1fVEVHUkFfR0VNX0JPVFRP
-TV9VUDsKPiArCj4gKyAgICAgICBkcm1fZ2VtX29iamVjdF91bnJlZmVyZW5jZShnZW0pOwo+ICsK
-PiArICAgICAgIHJldHVybiAwOwo+ICt9Cj4gICNlbmRpZgo+Cj4gIHN0YXRpYyBjb25zdCBzdHJ1
-Y3QgZHJtX2lvY3RsX2Rlc2MgdGVncmFfZHJtX2lvY3Rsc1tdID0gewo+IEBAIC01NjQsNiArNjEx
-LDggQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBkcm1faW9jdGxfZGVzYyB0ZWdyYV9kcm1faW9jdGxz
-W10gPSB7Cj4gICAgICAgICBEUk1fSU9DVExfREVGX0RSVihURUdSQV9HRVRfU1lOQ1BUX0JBU0Us
-IHRlZ3JhX2dldF9zeW5jcHRfYmFzZSwgRFJNX1VOTE9DS0VEKSwKPiAgICAgICAgIERSTV9JT0NU
-TF9ERUZfRFJWKFRFR1JBX0dFTV9TRVRfVElMSU5HLCB0ZWdyYV9nZW1fc2V0X3RpbGluZywgRFJN
-X1VOTE9DS0VEKSwKPiAgICAgICAgIERSTV9JT0NUTF9ERUZfRFJWKFRFR1JBX0dFTV9HRVRfVElM
-SU5HLCB0ZWdyYV9nZW1fZ2V0X3RpbGluZywgRFJNX1VOTE9DS0VEKSwKPiArICAgICAgIERSTV9J
-T0NUTF9ERUZfRFJWKFRFR1JBX0dFTV9TRVRfRkxBR1MsIHRlZ3JhX2dlbV9zZXRfZmxhZ3MsIERS
-TV9VTkxPQ0tFRCksCj4gKyAgICAgICBEUk1fSU9DVExfREVGX0RSVihURUdSQV9HRU1fR0VUX0ZM
-QUdTLCB0ZWdyYV9nZW1fZ2V0X2ZsYWdzLCBEUk1fVU5MT0NLRUQpLAo+ICAjZW5kaWYKPiAgfTsK
-Pgo+IGRpZmYgLS1naXQgYS9pbmNsdWRlL3VhcGkvZHJtL3RlZ3JhX2RybS5oIGIvaW5jbHVkZS91
-YXBpL2RybS90ZWdyYV9kcm0uaAo+IGluZGV4IDA4MjlmNzVlYjk4Ni4uYzE1ZDc4MWVjYzBmIDEw
-MDY0NAo+IC0tLSBhL2luY2x1ZGUvdWFwaS9kcm0vdGVncmFfZHJtLmgKPiArKysgYi9pbmNsdWRl
-L3VhcGkvZHJtL3RlZ3JhX2RybS5oCj4gQEAgLTE1MCw2ICsxNTAsMjMgQEAgc3RydWN0IGRybV90
-ZWdyYV9nZW1fZ2V0X3RpbGluZyB7Cj4gICAgICAgICBfX3UzMiBwYWQ7Cj4gIH07Cj4KPiArI2Rl
-ZmluZSBEUk1fVEVHUkFfR0VNX0JPVFRPTV9VUCAgICAgICAgICAgICAgICAoMSA8PCAwKQo+ICsj
-ZGVmaW5lIERSTV9URUdSQV9HRU1fRkxBR1MgICAgICAgICAgICAoRFJNX1RFR1JBX0dFTV9CT1RU
-T01fVVApCj4gKwo+ICtzdHJ1Y3QgZHJtX3RlZ3JhX2dlbV9zZXRfZmxhZ3Mgewo+ICsgICAgICAg
-LyogaW5wdXQgKi8KPiArICAgICAgIF9fdTMyIGhhbmRsZTsKPiArICAgICAgIC8qIG91dHB1dCAq
-Lwo+ICsgICAgICAgX191MzIgZmxhZ3M7Cj4gK307Cj4gKwo+ICtzdHJ1Y3QgZHJtX3RlZ3JhX2dl
-bV9nZXRfZmxhZ3Mgewo+ICsgICAgICAgLyogaW5wdXQgKi8KPiArICAgICAgIF9fdTMyIGhhbmRs
-ZTsKPiArICAgICAgIC8qIG91dHB1dCAqLwo+ICsgICAgICAgX191MzIgZmxhZ3M7Cj4gK307Cj4g
-Kwo+ICAjZGVmaW5lIERSTV9URUdSQV9HRU1fQ1JFQVRFICAgICAgICAgICAweDAwCj4gICNkZWZp
-bmUgRFJNX1RFR1JBX0dFTV9NTUFQICAgICAgICAgICAgIDB4MDEKPiAgI2RlZmluZSBEUk1fVEVH
-UkFfU1lOQ1BUX1JFQUQgICAgICAgICAgMHgwMgo+IEBAIC0xNjIsNiArMTc5LDggQEAgc3RydWN0
-IGRybV90ZWdyYV9nZW1fZ2V0X3RpbGluZyB7Cj4gICNkZWZpbmUgRFJNX1RFR1JBX0dFVF9TWU5D
-UFRfQkFTRSAgICAgIDB4MDkKPiAgI2RlZmluZSBEUk1fVEVHUkFfR0VNX1NFVF9USUxJTkcgICAg
-ICAgMHgwYQo+ICAjZGVmaW5lIERSTV9URUdSQV9HRU1fR0VUX1RJTElORyAgICAgICAweDBiCj4g
-KyNkZWZpbmUgRFJNX1RFR1JBX0dFTV9TRVRfRkxBR1MgICAgICAgICAgICAgICAgMHgwYwo+ICsj
-ZGVmaW5lIERSTV9URUdSQV9HRU1fR0VUX0ZMQUdTICAgICAgICAgICAgICAgIDB4MGQKPgo+ICAj
-ZGVmaW5lIERSTV9JT0NUTF9URUdSQV9HRU1fQ1JFQVRFIERSTV9JT1dSKERSTV9DT01NQU5EX0JB
-U0UgKyBEUk1fVEVHUkFfR0VNX0NSRUFURSwgc3RydWN0IGRybV90ZWdyYV9nZW1fY3JlYXRlKQo+
-ICAjZGVmaW5lIERSTV9JT0NUTF9URUdSQV9HRU1fTU1BUCBEUk1fSU9XUihEUk1fQ09NTUFORF9C
-QVNFICsgRFJNX1RFR1JBX0dFTV9NTUFQLCBzdHJ1Y3QgZHJtX3RlZ3JhX2dlbV9tbWFwKQo+IEBA
-IC0xNzUsNSArMTk0LDcgQEAgc3RydWN0IGRybV90ZWdyYV9nZW1fZ2V0X3RpbGluZyB7Cj4gICNk
-ZWZpbmUgRFJNX0lPQ1RMX1RFR1JBX0dFVF9TWU5DUFRfQkFTRSBEUk1fSU9XUihEUk1fQ09NTUFO
-RF9CQVNFICsgRFJNX1RFR1JBX0dFVF9TWU5DUFRfQkFTRSwgc3RydWN0IGRybV90ZWdyYV9nZXRf
-c3luY3B0X2Jhc2UpCj4gICNkZWZpbmUgRFJNX0lPQ1RMX1RFR1JBX0dFTV9TRVRfVElMSU5HIERS
-TV9JT1dSKERSTV9DT01NQU5EX0JBU0UgKyBEUk1fVEVHUkFfR0VNX1NFVF9USUxJTkcsIHN0cnVj
-dCBkcm1fdGVncmFfZ2VtX3NldF90aWxpbmcpCj4gICNkZWZpbmUgRFJNX0lPQ1RMX1RFR1JBX0dF
-TV9HRVRfVElMSU5HIERSTV9JT1dSKERSTV9DT01NQU5EX0JBU0UgKyBEUk1fVEVHUkFfR0VNX0dF
-VF9USUxJTkcsIHN0cnVjdCBkcm1fdGVncmFfZ2VtX2dldF90aWxpbmcpCj4gKyNkZWZpbmUgRFJN
-X0lPQ1RMX1RFR1JBX0dFTV9TRVRfRkxBR1MgRFJNX0lPV1IoRFJNX0NPTU1BTkRfQkFTRSArIERS
-TV9URUdSQV9HRU1fU0VUX0ZMQUdTLCBzdHJ1Y3QgZHJtX3RlZ3JhX2dlbV9zZXRfZmxhZ3MpCj4g
-KyNkZWZpbmUgRFJNX0lPQ1RMX1RFR1JBX0dFTV9HRVRfRkxBR1MgRFJNX0lPV1IoRFJNX0NPTU1B
-TkRfQkFTRSArIERSTV9URUdSQV9HRU1fR0VUX0ZMQUdTLCBzdHJ1Y3QgZHJtX3RlZ3JhX2dlbV9n
-ZXRfZmxhZ3MpCj4KPiAgI2VuZGlmCj4gLS0KPiAyLjAuMAo+Cl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
-dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
-aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+quick note re: tegra and gpu bars...
+
+to this point we've explicitly avoided providing user-mode mappings due to
+power management issues, etc.
+looks to me like this would allow such mappings.  is that the case?  are
+there any paths which would require such mappings to function properly?
+
+thanks
+---
+ken
+
+p.s.: hello :)
+
+On 6/27/14 7:36 AM, "Alex Courbot" <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+
+>GK20A's BAR is functionally identical to NVC0's, but do not support
+>being ioremapped write-combined. Create a BAR instance for GK20A that
+>reflect that state.
+>
+>Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>---
+>Changes since v1:
+>- Fix compilation warning due to missing cast
+>
+>Patch 1 of the series was ok and thus has not been resent.
+>
+> drivers/gpu/drm/nouveau/Makefile                  |  1 +
+> drivers/gpu/drm/nouveau/core/engine/device/nve0.c |  2 +-
+> drivers/gpu/drm/nouveau/core/include/subdev/bar.h |  1 +
+> drivers/gpu/drm/nouveau/core/subdev/bar/gk20a.c   | 54
+>+++++++++++++++++++++++
+> drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c    |  6 +--
+> drivers/gpu/drm/nouveau/core/subdev/bar/priv.h    |  6 +++
+> 6 files changed, 66 insertions(+), 4 deletions(-)
+> create mode 100644 drivers/gpu/drm/nouveau/core/subdev/bar/gk20a.c
+>
+>diff --git a/drivers/gpu/drm/nouveau/Makefile
+>b/drivers/gpu/drm/nouveau/Makefile
+>index 8b307e143632..11d9561d67c1 100644
+>--- a/drivers/gpu/drm/nouveau/Makefile
+>+++ b/drivers/gpu/drm/nouveau/Makefile
+>@@ -26,6 +26,7 @@ nouveau-y += core/core/subdev.o
+> nouveau-y += core/subdev/bar/base.o
+> nouveau-y += core/subdev/bar/nv50.o
+> nouveau-y += core/subdev/bar/nvc0.o
+>+nouveau-y += core/subdev/bar/gk20a.o
+> nouveau-y += core/subdev/bios/base.o
+> nouveau-y += core/subdev/bios/bit.o
+> nouveau-y += core/subdev/bios/boost.o
+>diff --git a/drivers/gpu/drm/nouveau/core/engine/device/nve0.c
+>b/drivers/gpu/drm/nouveau/core/engine/device/nve0.c
+>index 2d1e97d4264f..a2b9ccc48f66 100644
+>--- a/drivers/gpu/drm/nouveau/core/engine/device/nve0.c
+>+++ b/drivers/gpu/drm/nouveau/core/engine/device/nve0.c
+>@@ -165,7 +165,7 @@ nve0_identify(struct nouveau_device *device)
+> 		device->oclass[NVDEV_SUBDEV_IBUS   ] = &gk20a_ibus_oclass;
+> 		device->oclass[NVDEV_SUBDEV_INSTMEM] = nv50_instmem_oclass;
+> 		device->oclass[NVDEV_SUBDEV_VM     ] = &nvc0_vmmgr_oclass;
+>-		device->oclass[NVDEV_SUBDEV_BAR    ] = &nvc0_bar_oclass;
+>+		device->oclass[NVDEV_SUBDEV_BAR    ] = &gk20a_bar_oclass;
+> 		device->oclass[NVDEV_ENGINE_DMAOBJ ] = &nvd0_dmaeng_oclass;
+> 		device->oclass[NVDEV_ENGINE_FIFO   ] =  gk20a_fifo_oclass;
+> 		device->oclass[NVDEV_ENGINE_SW     ] =  nvc0_software_oclass;
+>diff --git a/drivers/gpu/drm/nouveau/core/include/subdev/bar.h
+>b/drivers/gpu/drm/nouveau/core/include/subdev/bar.h
+>index 9002cbb6432b..be037fac534c 100644
+>--- a/drivers/gpu/drm/nouveau/core/include/subdev/bar.h
+>+++ b/drivers/gpu/drm/nouveau/core/include/subdev/bar.h
+>@@ -33,5 +33,6 @@ nouveau_bar(void *obj)
+> 
+> extern struct nouveau_oclass nv50_bar_oclass;
+> extern struct nouveau_oclass nvc0_bar_oclass;
+>+extern struct nouveau_oclass gk20a_bar_oclass;
+> 
+> #endif
+>diff --git a/drivers/gpu/drm/nouveau/core/subdev/bar/gk20a.c
+>b/drivers/gpu/drm/nouveau/core/subdev/bar/gk20a.c
+>new file mode 100644
+>index 000000000000..bf877af9d3bd
+>--- /dev/null
+>+++ b/drivers/gpu/drm/nouveau/core/subdev/bar/gk20a.c
+>@@ -0,0 +1,54 @@
+>+/*
+>+ * Copyright (c) 2014, NVIDIA CORPORATION. All rights reserved.
+>+ *
+>+ * Permission is hereby granted, free of charge, to any person obtaining
+>a
+>+ * copy of this software and associated documentation files (the
+>"Software"),
+>+ * to deal in the Software without restriction, including without
+>limitation
+>+ * the rights to use, copy, modify, merge, publish, distribute,
+>sublicense,
+>+ * and/or sell copies of the Software, and to permit persons to whom the
+>+ * Software is furnished to do so, subject to the following conditions:
+>+ *
+>+ * The above copyright notice and this permission notice shall be
+>included in
+>+ * all copies or substantial portions of the Software.
+>+ *
+>+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+>EXPRESS OR
+>+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+>MERCHANTABILITY,
+>+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT
+>SHALL
+>+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+>OTHER
+>+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+>ARISING
+>+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+>+ * DEALINGS IN THE SOFTWARE.
+>+ */
+>+
+>+#include <subdev/bar.h>
+>+
+>+#include "priv.h"
+>+
+>+int
+>+gk20a_bar_ctor(struct nouveau_object *parent, struct nouveau_object
+>*engine,
+>+	       struct nouveau_oclass *oclass, void *data, u32 size,
+>+	       struct nouveau_object **pobject)
+>+{
+>+	struct nouveau_bar *bar;
+>+	int ret;
+>+
+>+	ret = nvc0_bar_ctor(parent, engine, oclass, data, size, pobject);
+>+	if (ret)
+>+		return ret;
+>+
+>+	bar = (struct nouveau_bar *)*pobject;
+>+	bar->iomap_uncached = true;
+>+
+>+	return 0;
+>+}
+>+
+>+struct nouveau_oclass
+>+gk20a_bar_oclass = {
+>+	.handle = NV_SUBDEV(BAR, 0xea),
+>+	.ofuncs = &(struct nouveau_ofuncs) {
+>+		.ctor = gk20a_bar_ctor,
+>+		.dtor = nvc0_bar_dtor,
+>+		.init = nvc0_bar_init,
+>+		.fini = _nouveau_bar_fini,
+>+	},
+>+};
+>diff --git a/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c
+>b/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c
+>index ca8139b9ab27..0a44459844e3 100644
+>--- a/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c
+>+++ b/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c
+>@@ -133,7 +133,7 @@ nvc0_bar_init_vm(struct nvc0_bar_priv *priv, struct
+>nvc0_bar_priv_vm *bar_vm,
+> 	return 0;
+> }
+> 
+>-static int
+>+int
+> nvc0_bar_ctor(struct nouveau_object *parent, struct nouveau_object
+>*engine,
+> 	      struct nouveau_oclass *oclass, void *data, u32 size,
+> 	      struct nouveau_object **pobject)
+>@@ -169,7 +169,7 @@ nvc0_bar_ctor(struct nouveau_object *parent, struct
+>nouveau_object *engine,
+> 	return 0;
+> }
+> 
+>-static void
+>+void
+> nvc0_bar_dtor(struct nouveau_object *object)
+> {
+> 	struct nvc0_bar_priv *priv = (void *)object;
+>@@ -188,7 +188,7 @@ nvc0_bar_dtor(struct nouveau_object *object)
+> 	nouveau_bar_destroy(&priv->base);
+> }
+> 
+>-static int
+>+int
+> nvc0_bar_init(struct nouveau_object *object)
+> {
+> 	struct nvc0_bar_priv *priv = (void *)object;
+>diff --git a/drivers/gpu/drm/nouveau/core/subdev/bar/priv.h
+>b/drivers/gpu/drm/nouveau/core/subdev/bar/priv.h
+>index ffad8f337ead..3ee8b1476d00 100644
+>--- a/drivers/gpu/drm/nouveau/core/subdev/bar/priv.h
+>+++ b/drivers/gpu/drm/nouveau/core/subdev/bar/priv.h
+>@@ -23,4 +23,10 @@ int  nouveau_bar_alloc(struct nouveau_bar *, struct
+>nouveau_object *,
+> 
+> void nv84_bar_flush(struct nouveau_bar *);
+> 
+>+int nvc0_bar_ctor(struct nouveau_object *, struct nouveau_object *,
+>+		  struct nouveau_oclass *, void *, u32,
+>+		  struct nouveau_object **);
+>+void nvc0_bar_dtor(struct nouveau_object *);
+>+int nvc0_bar_init(struct nouveau_object *);
+>+
+> #endif
+>-- 
+>2.0.0
+>
+>--
+>To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+>the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>More majordomo info at  http://vger.kernel.org/majordomo-info.html
