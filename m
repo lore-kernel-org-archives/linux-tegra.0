@@ -1,83 +1,127 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [RFC 4/4] soc/tegra: Remove unused defines
-Date: Fri, 27 Jun 2014 18:58:49 +0200
-Message-ID: <1403888329-24755-4-git-send-email-thierry.reding@gmail.com>
+From: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>
+Subject: Re: [RFC 1/4] ARM: tegra: Move SoC drivers to drivers/soc/tegra
+Date: Fri, 27 Jun 2014 13:30:04 -0400
+Message-ID: <53ADAA1C.70407@ti.com>
 References: <1403888329-24755-1-git-send-email-thierry.reding@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1403888329-24755-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kumar Gala <galak-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
++Arnd, Greg, Catalin and Kumar,
 
-Eventually the aim is to get rid of this file because it cannot be built
-on ARM64. Until it can be completely removed, eliminate unused entries
-to make it easier to see which are still used.
+On Friday 27 June 2014 12:58 PM, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> These drivers are closely coupled and need to be moved as a whole. One
+> reason for moving them out of arch/arm/mach-tegra is to allow them to be
+> shared with 64-bit ARM.
+> 
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  arch/arm/mach-tegra/Makefile                       | 32 --------
+>  arch/arm/mach-tegra/common.h                       |  4 -
+>  arch/arm/mach-tegra/io.c                           | 27 +++++-
+>  arch/arm/mach-tegra/pmc.h                          | 62 --------------
+>  arch/arm/mach-tegra/tegra.c                        |  9 --
+>  drivers/soc/Makefile                               |  1 +
+>  drivers/soc/tegra/Makefile                         | 34 ++++++++
+>  .../soc/tegra}/cpuidle-tegra114.c                  |  0
+>  .../soc/tegra}/cpuidle-tegra20.c                   |  6 +-
+>  .../soc/tegra}/cpuidle-tegra30.c                   |  0
+>  .../arm/mach-tegra => drivers/soc/tegra}/cpuidle.c |  0
+>  .../arm/mach-tegra => drivers/soc/tegra}/cpuidle.h |  3 -
+>  .../mach-tegra => drivers/soc/tegra}/flowctrl.c    |  0
+>  .../mach-tegra => drivers/soc/tegra}/flowctrl.h    |  2 -
+>  .../arm/mach-tegra => drivers/soc/tegra}/headsmp.S |  0
+>  .../arm/mach-tegra => drivers/soc/tegra}/hotplug.c |  0
+>  {arch/arm/mach-tegra => drivers/soc/tegra}/iomap.h |  0
+>  .../arm/mach-tegra => drivers/soc/tegra}/irammap.h |  0
+>  {arch/arm/mach-tegra => drivers/soc/tegra}/irq.c   |  1 -
+>  {arch/arm/mach-tegra => drivers/soc/tegra}/irq.h   |  6 --
+>  .../arm/mach-tegra => drivers/soc/tegra}/platsmp.c |  5 --
+>  .../mach-tegra => drivers/soc/tegra}/pm-tegra20.c  |  0
+>  .../mach-tegra => drivers/soc/tegra}/pm-tegra30.c  |  0
+>  {arch/arm/mach-tegra => drivers/soc/tegra}/pm.c    |  0
+>  {arch/arm/mach-tegra => drivers/soc/tegra}/pm.h    |  4 +-
+>  {arch/arm/mach-tegra => drivers/soc/tegra}/pmc.c   |  0
+>  drivers/soc/tegra/pmc.h                            | 35 ++++++++
+>  .../mach-tegra => drivers/soc/tegra}/powergate.c   |  0
+>  .../soc/tegra}/reset-handler.S                     |  0
+>  {arch/arm/mach-tegra => drivers/soc/tegra}/reset.c |  0
+>  {arch/arm/mach-tegra => drivers/soc/tegra}/reset.h |  2 -
+>  .../soc/tegra}/sleep-tegra20.S                     |  0
+>  .../soc/tegra}/sleep-tegra30.S                     |  0
+>  {arch/arm/mach-tegra => drivers/soc/tegra}/sleep.S |  0
+>  {arch/arm/mach-tegra => drivers/soc/tegra}/sleep.h |  2 -
+>  include/linux/tegra-soc.h                          | 95 ++++++++++++++++++++++
+>  36 files changed, 195 insertions(+), 135 deletions(-)
+>  delete mode 100644 arch/arm/mach-tegra/common.h
+>  delete mode 100644 arch/arm/mach-tegra/pmc.h
+>  create mode 100644 drivers/soc/tegra/Makefile
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle-tegra114.c (100%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle-tegra20.c (100%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle-tegra30.c (100%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle.c (100%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle.h (91%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/flowctrl.c (100%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/flowctrl.h (98%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/headsmp.S (100%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/hotplug.c (100%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/iomap.h (100%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/irammap.h (100%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/irq.c (99%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/irq.h (83%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/platsmp.c (98%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/pm-tegra20.c (100%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/pm-tegra30.c (100%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/pm.c (100%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/pm.h (94%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/pmc.c (100%)
+>  create mode 100644 drivers/soc/tegra/pmc.h
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/powergate.c (100%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/reset-handler.S (100%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/reset.c (100%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/reset.h (97%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/sleep-tegra20.S (100%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/sleep-tegra30.S (100%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/sleep.S (100%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/sleep.h (98%)
+> 
+NAK for this patch.
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/soc/tegra/iomap.h | 30 ------------------------------
- 1 file changed, 30 deletions(-)
+You are using drivers/soc/* as a dump yard for your SOC code which
+is not the intention we created drivers/soc/.
 
-diff --git a/drivers/soc/tegra/iomap.h b/drivers/soc/tegra/iomap.h
-index 52bbb5c8fe84..c2fd86a9b43f 100644
---- a/drivers/soc/tegra/iomap.h
-+++ b/drivers/soc/tegra/iomap.h
-@@ -28,21 +28,9 @@
- #define TEGRA_ARM_PERIF_BASE		0x50040000
- #define TEGRA_ARM_PERIF_SIZE		SZ_8K
- 
--#define TEGRA_TMR1_BASE			0x60005000
--#define TEGRA_TMR1_SIZE			SZ_8
--
--#define TEGRA_TMR2_BASE			0x60005008
--#define TEGRA_TMR2_SIZE			SZ_8
--
- #define TEGRA_TMRUS_BASE		0x60005010
- #define TEGRA_TMRUS_SIZE		SZ_64
- 
--#define TEGRA_TMR3_BASE			0x60005050
--#define TEGRA_TMR3_SIZE			SZ_8
--
--#define TEGRA_TMR4_BASE			0x60005058
--#define TEGRA_TMR4_SIZE			SZ_8
--
- #define TEGRA_CLK_RESET_BASE		0x60006000
- #define TEGRA_CLK_RESET_SIZE		SZ_4K
- 
-@@ -58,21 +46,6 @@
- #define TEGRA_APB_MISC_BASE		0x70000000
- #define TEGRA_APB_MISC_SIZE		SZ_4K
- 
--#define TEGRA_UARTA_BASE		0x70006000
--#define TEGRA_UARTA_SIZE		SZ_64
--
--#define TEGRA_UARTB_BASE		0x70006040
--#define TEGRA_UARTB_SIZE		SZ_64
--
--#define TEGRA_UARTC_BASE		0x70006200
--#define TEGRA_UARTC_SIZE		SZ_256
--
--#define TEGRA_UARTD_BASE		0x70006300
--#define TEGRA_UARTD_SIZE		SZ_256
--
--#define TEGRA_UARTE_BASE		0x70006400
--#define TEGRA_UARTE_SIZE		SZ_256
--
- #define TEGRA_PMC_BASE			0x7000E400
- #define TEGRA_PMC_SIZE			SZ_256
- 
-@@ -91,9 +64,6 @@
- #define TEGRA124_EMC_BASE		0x7001B000
- #define TEGRA124_EMC_SIZE		SZ_2K
- 
--#define TEGRA_CSITE_BASE		0x70040000
--#define TEGRA_CSITE_SIZE		SZ_256K
--
- /* On TEGRA, many peripherals are very closely packed in
-  * two 256MB io windows (that actually only use about 64KB
-  * at the start of each).
--- 
-2.0.0
+Its really for subsystem drivers which doesn't have appropriate
+home in Linux kernel today. From your above patch ...
+
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle-tegra114.c (100%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle-tegra20.c (100%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle-tegra30.c (100%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle.c (100%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle.h (91%)
+This should go into drivers/idle/*. if you have dependencies, please sort
+them out.
+
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/reset-handler.S (100%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/reset.c (100%)
+>  rename {arch/arm/mach-tegra => drivers/soc/tegra}/reset.h (97%)
+subsystem: drivers/power/reset/
+
+For tegra/*pm*/, you can use drivers/power or drivers/base/power/
+
+For SMP boot, ARMv8 expecting to have either PSCI based implementation or
+device tree based boot scheme. you can move towards that model if possible.
+
+Please find appropriate subsystem to move your SOC code and if you don't
+find an appropriate subsystem, we can discuss adding that under drivers/soc.
+The drivers/soc/* isn't a dumping ground so please don't abuse it.
+
+regards,
+Santosh
