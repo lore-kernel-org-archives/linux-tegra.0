@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v2 4/4] soc/tegra: Remove unused defines
-Date: Sat, 28 Jun 2014 03:02:31 +0200
-Message-ID: <1403917351-13215-4-git-send-email-thierry.reding@gmail.com>
+Subject: [PATCH v2 2/4] ARM: tegra: Add legacy interrupt controller nodes
+Date: Sat, 28 Jun 2014 03:02:29 +0200
+Message-ID: <1403917351-13215-2-git-send-email-thierry.reding@gmail.com>
 References: <1403917351-13215-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1403917351-13215-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,73 +12,100 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Eventually the aim is to get rid of this file because it cannot be built
-on ARM64. Until it can be completely removed, eliminate unused entries
-to make it easier to see which are still used.
+Add device tree nodes for the legacy interrupt controller so that the
+driver can get the register ranges from device tree rather than hard-
+coding them.
 
-Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/iomap.h | 30 ------------------------------
- 1 file changed, 30 deletions(-)
+Changes in v2:
+- add chip-specific compatible string
+- drop quinary controller on Tegra20
 
-diff --git a/arch/arm/mach-tegra/iomap.h b/arch/arm/mach-tegra/iomap.h
-index 52bbb5c8fe84..c2fd86a9b43f 100644
---- a/arch/arm/mach-tegra/iomap.h
-+++ b/arch/arm/mach-tegra/iomap.h
-@@ -28,21 +28,9 @@
- #define TEGRA_ARM_PERIF_BASE		0x50040000
- #define TEGRA_ARM_PERIF_SIZE		SZ_8K
+ arch/arm/boot/dts/tegra114.dtsi | 9 +++++++++
+ arch/arm/boot/dts/tegra124.dtsi | 9 +++++++++
+ arch/arm/boot/dts/tegra20.dtsi  | 8 ++++++++
+ arch/arm/boot/dts/tegra30.dtsi  | 9 +++++++++
+ 4 files changed, 35 insertions(+)
+
+diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
+index 335a1d8047f2..88cee16cb4dd 100644
+--- a/arch/arm/boot/dts/tegra114.dtsi
++++ b/arch/arm/boot/dts/tegra114.dtsi
+@@ -138,6 +138,15 @@
+ 			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+ 	};
  
--#define TEGRA_TMR1_BASE			0x60005000
--#define TEGRA_TMR1_SIZE			SZ_8
--
--#define TEGRA_TMR2_BASE			0x60005008
--#define TEGRA_TMR2_SIZE			SZ_8
--
- #define TEGRA_TMRUS_BASE		0x60005010
- #define TEGRA_TMRUS_SIZE		SZ_64
++	interrupt-controller@60004000 {
++		compatible = "nvidia,tegra114-ictlr", "nvidia,tegra30-ictlr";
++		reg = <0x60004000 0x40   /* primary controller */
++		       0x60004100 0x40   /* secondary controller */
++		       0x60004200 0x40   /* tertiary controller */
++		       0x60004300 0x40   /* quaternary controller */
++		       0x60004400 0x40>; /* quinary controller */
++	};
++
+ 	timer@60005000 {
+ 		compatible = "nvidia,tegra114-timer", "nvidia,tegra20-timer";
+ 		reg = <0x60005000 0x400>;
+diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+index d675186d8eba..71d5f98bdc95 100644
+--- a/arch/arm/boot/dts/tegra124.dtsi
++++ b/arch/arm/boot/dts/tegra124.dtsi
+@@ -102,6 +102,15 @@
+ 			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+ 	};
  
--#define TEGRA_TMR3_BASE			0x60005050
--#define TEGRA_TMR3_SIZE			SZ_8
--
--#define TEGRA_TMR4_BASE			0x60005058
--#define TEGRA_TMR4_SIZE			SZ_8
--
- #define TEGRA_CLK_RESET_BASE		0x60006000
- #define TEGRA_CLK_RESET_SIZE		SZ_4K
++	interrupt-controller@0,60004000 {
++		compatible = "nvidia,tegra124-ictlr", "nvidia,tegra30-ictlr";
++		reg = <0x0 0x60004000 0x0 0x40   /* primary controller */
++		       0x0 0x60004100 0x0 0x40   /* secondary controller */
++		       0x0 0x60004200 0x0 0x40   /* tertiary controller */
++		       0x0 0x60004300 0x0 0x40   /* quaternary controller */
++		       0x0 0x60004400 0x0 0x40>; /* quinary controller */
++	};
++
+ 	timer@0,60005000 {
+ 		compatible = "nvidia,tegra124-timer", "nvidia,tegra20-timer";
+ 		reg = <0x0 0x60005000 0x0 0x400>;
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 243d84cdbae8..542ffbea99d1 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -173,6 +173,14 @@
+ 		cache-level = <2>;
+ 	};
  
-@@ -58,21 +46,6 @@
- #define TEGRA_APB_MISC_BASE		0x70000000
- #define TEGRA_APB_MISC_SIZE		SZ_4K
++	interrupt-controller@60004000 {
++		compatible = "nvidia,tegra20-ictlr";
++		reg = <0x60004000 0x40   /* primary controller */
++		       0x60004100 0x40   /* secondary controller */
++		       0x60004200 0x40   /* tertiary controller */
++		       0x60004300 0x40>; /* quaternary controller */
++	};
++
+ 	timer@60005000 {
+ 		compatible = "nvidia,tegra20-timer";
+ 		reg = <0x60005000 0x60>;
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index 0b1ede940d1f..2ead5745c712 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -253,6 +253,15 @@
+ 		cache-level = <2>;
+ 	};
  
--#define TEGRA_UARTA_BASE		0x70006000
--#define TEGRA_UARTA_SIZE		SZ_64
--
--#define TEGRA_UARTB_BASE		0x70006040
--#define TEGRA_UARTB_SIZE		SZ_64
--
--#define TEGRA_UARTC_BASE		0x70006200
--#define TEGRA_UARTC_SIZE		SZ_256
--
--#define TEGRA_UARTD_BASE		0x70006300
--#define TEGRA_UARTD_SIZE		SZ_256
--
--#define TEGRA_UARTE_BASE		0x70006400
--#define TEGRA_UARTE_SIZE		SZ_256
--
- #define TEGRA_PMC_BASE			0x7000E400
- #define TEGRA_PMC_SIZE			SZ_256
- 
-@@ -91,9 +64,6 @@
- #define TEGRA124_EMC_BASE		0x7001B000
- #define TEGRA124_EMC_SIZE		SZ_2K
- 
--#define TEGRA_CSITE_BASE		0x70040000
--#define TEGRA_CSITE_SIZE		SZ_256K
--
- /* On TEGRA, many peripherals are very closely packed in
-  * two 256MB io windows (that actually only use about 64KB
-  * at the start of each).
++	interrupt-controller@60004000 {
++		compatible = "nvidia,tegra30-ictlr";
++		reg = <0x60004000 0x40   /* primary controller */
++		       0x60004100 0x40   /* secondary controller */
++		       0x60004200 0x40   /* tertiary controller */
++		       0x60004300 0x40   /* quaternary controller */
++		       0x60004400 0x40>; /* quinary controller */
++	};
++
+ 	timer@60005000 {
+ 		compatible = "nvidia,tegra30-timer", "nvidia,tegra20-timer";
+ 		reg = <0x60005000 0x400>;
 -- 
 2.0.0
