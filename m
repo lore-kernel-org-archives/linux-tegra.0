@@ -1,234 +1,95 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v2 3/4] soc/tegra: Initialize interrupt controller from DT
-Date: Sat, 28 Jun 2014 03:02:30 +0200
-Message-ID: <1403917351-13215-3-git-send-email-thierry.reding@gmail.com>
-References: <1403917351-13215-1-git-send-email-thierry.reding@gmail.com>
+Subject: Re: [RFC 3/4] soc/tegra: Initialize interrupt controller from DT
+Date: Sat, 28 Jun 2014 03:12:09 +0200
+Message-ID: <20140628011208.GA13290@ulmo>
+References: <1403888329-24755-1-git-send-email-thierry.reding@gmail.com>
+ <1403888329-24755-3-git-send-email-thierry.reding@gmail.com>
+ <53ADDC0C.4060401@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="mYCpIKhGyMATD0i+"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1403917351-13215-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <53ADDC0C.4060401-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Obtains the register ranges for the legacy interrupt controller from DT
-and provide hard-coded values as fallback.
+--mYCpIKhGyMATD0i+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Changes in v2:
-- check for the exact number of controllers expected
-- fallback to tegra_chip_id for non-DT
-- warn on parsing errors
+On Fri, Jun 27, 2014 at 03:03:08PM -0600, Stephen Warren wrote:
+> On 06/27/2014 10:58 AM, Thierry Reding wrote:
+> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >=20
+> > Obtains the register ranges for the legacy interrupt controller from DT
+> > and provide hard-coded values as fallback.
+>=20
+> > diff --git a/drivers/soc/tegra/irq.c b/drivers/soc/tegra/irq.c
+>=20
+> >  void __init tegra_init_irq(void)
+>=20
+> > -	distbase =3D IO_ADDRESS(TEGRA_ARM_INT_DIST_BASE);
+> > +	np =3D of_find_matching_node(NULL, ictlr_matches);
+> > +	if (np) {
+> > +		for (i =3D 0; i < ARRAY_SIZE(ictlr_regs); i++)
+> > +			if (of_address_to_resource(np, i, &res) =3D=3D 0)
+> > +				ictlr_regs[i] =3D res;
+>=20
+> It'd be nice to check that loop ran exactly the number of times expected
+> based on the compatible value (i.e. SoC) if the legacy interrupt
+> controller node.
+>=20
+> What about erroring out if entries are missing or can't be parsed.
 
- arch/arm/mach-tegra/iomap.h |  18 -------
- arch/arm/mach-tegra/irq.c   | 123 ++++++++++++++++++++++++++++++++++++--------
- 2 files changed, 101 insertions(+), 40 deletions(-)
+I've added some strict checking of the expected number of entries. I
+decided against erroring out on missing entries or when they can't be
+parsed because we can still continue using the fallback entries in the
+ictlr_regs table. However if a mismatch between the number of detected
+entries and the expected entries is detected, the code will now WARN.
 
-diff --git a/arch/arm/mach-tegra/iomap.h b/arch/arm/mach-tegra/iomap.h
-index ee79808e93a3..52bbb5c8fe84 100644
---- a/arch/arm/mach-tegra/iomap.h
-+++ b/arch/arm/mach-tegra/iomap.h
-@@ -28,24 +28,6 @@
- #define TEGRA_ARM_PERIF_BASE		0x50040000
- #define TEGRA_ARM_PERIF_SIZE		SZ_8K
- 
--#define TEGRA_ARM_INT_DIST_BASE		0x50041000
--#define TEGRA_ARM_INT_DIST_SIZE		SZ_4K
--
--#define TEGRA_PRIMARY_ICTLR_BASE	0x60004000
--#define TEGRA_PRIMARY_ICTLR_SIZE	SZ_64
--
--#define TEGRA_SECONDARY_ICTLR_BASE	0x60004100
--#define TEGRA_SECONDARY_ICTLR_SIZE	SZ_64
--
--#define TEGRA_TERTIARY_ICTLR_BASE	0x60004200
--#define TEGRA_TERTIARY_ICTLR_SIZE	SZ_64
--
--#define TEGRA_QUATERNARY_ICTLR_BASE	0x60004300
--#define TEGRA_QUATERNARY_ICTLR_SIZE	SZ_64
--
--#define TEGRA_QUINARY_ICTLR_BASE	0x60004400
--#define TEGRA_QUINARY_ICTLR_SIZE	SZ_64
--
- #define TEGRA_TMR1_BASE			0x60005000
- #define TEGRA_TMR1_SIZE			SZ_8
- 
-diff --git a/arch/arm/mach-tegra/irq.c b/arch/arm/mach-tegra/irq.c
-index 1a74d562dca1..1d52fe961d2b 100644
---- a/arch/arm/mach-tegra/irq.c
-+++ b/arch/arm/mach-tegra/irq.c
-@@ -26,9 +26,7 @@
- #include <linux/of_address.h>
- #include <linux/irqchip/arm-gic.h>
- #include <linux/syscore_ops.h>
--
--#include "board.h"
--#include "iomap.h"
-+#include <linux/tegra-soc.h>
- 
- #define ICTLR_CPU_IEP_VFIQ	0x08
- #define ICTLR_CPU_IEP_FIR	0x14
-@@ -52,13 +50,7 @@
- 
- static int num_ictlrs;
- 
--static void __iomem *ictlr_reg_base[] = {
--	IO_ADDRESS(TEGRA_PRIMARY_ICTLR_BASE),
--	IO_ADDRESS(TEGRA_SECONDARY_ICTLR_BASE),
--	IO_ADDRESS(TEGRA_TERTIARY_ICTLR_BASE),
--	IO_ADDRESS(TEGRA_QUATERNARY_ICTLR_BASE),
--	IO_ADDRESS(TEGRA_QUINARY_ICTLR_BASE),
--};
-+static void __iomem *ictlr_reg_base[] = { NULL, NULL, NULL, NULL, NULL };
- 
- #ifdef CONFIG_PM_SLEEP
- static u32 cop_ier[TEGRA_MAX_NUM_ICTLRS];
-@@ -70,10 +62,11 @@ static u32 ictlr_wake_mask[TEGRA_MAX_NUM_ICTLRS];
- static void __iomem *tegra_gic_cpu_base;
- #endif
- 
-+static void __iomem *distbase;
-+
- bool tegra_pending_sgi(void)
- {
- 	u32 pending_set;
--	void __iomem *distbase = IO_ADDRESS(TEGRA_ARM_INT_DIST_BASE);
- 
- 	pending_set = readl_relaxed(distbase + GIC_DIST_PENDING_SET);
- 
-@@ -255,24 +248,109 @@ static void tegra114_gic_cpu_pm_registration(void)
- static void tegra114_gic_cpu_pm_registration(void) { }
- #endif
- 
-+static struct resource ictlr_regs[] = {
-+	{ .start = 0x60004000, .end = 0x6000403f, .flags = IORESOURCE_MEM },
-+	{ .start = 0x60004100, .end = 0x6000413f, .flags = IORESOURCE_MEM },
-+	{ .start = 0x60004200, .end = 0x6000423f, .flags = IORESOURCE_MEM },
-+	{ .start = 0x60004300, .end = 0x6000433f, .flags = IORESOURCE_MEM },
-+	{ .start = 0x60004400, .end = 0x6000443f, .flags = IORESOURCE_MEM },
-+};
-+
-+struct tegra_ictlr_soc {
-+	unsigned int num_ictlrs;
-+};
-+
-+static const struct tegra_ictlr_soc tegra20_ictlr_soc = {
-+	.num_ictlrs = 4,
-+};
-+
-+static const struct tegra_ictlr_soc tegra30_ictlr_soc = {
-+	.num_ictlrs = 5,
-+};
-+
-+static const struct of_device_id ictlr_matches[] = {
-+	{ .compatible = "nvidia,tegra30-ictlr", .data = &tegra30_ictlr_soc },
-+	{ .compatible = "nvidia,tegra20-ictlr", .data = &tegra20_ictlr_soc },
-+	{ }
-+};
-+
-+static const struct of_device_id gic_matches[] = {
-+	{ .compatible = "arm,cortex-a15-gic", },
-+	{ .compatible = "arm,cortex-a9-gic", },
-+	{ }
-+};
-+
- void __init tegra_init_irq(void)
- {
--	int i;
--	void __iomem *distbase;
-+	unsigned int max_ictlrs = ARRAY_SIZE(ictlr_regs), i;
-+	const struct of_device_id *match;
-+	struct device_node *np;
-+	struct resource res;
-+
-+	np = of_find_matching_node_and_match(NULL, ictlr_matches, &match);
-+	if (np) {
-+		const struct tegra_ictlr_soc *soc = match->data;
-+
-+		for (i = 0; i < soc->num_ictlrs; i++) {
-+			if (of_address_to_resource(np, i, &res) < 0)
-+				break;
-+
-+			ictlr_regs[i] = res;
-+		}
-+
-+		WARN(i != soc->num_ictlrs,
-+		     "Found %u interrupt controllers in DT; expected %u.\n",
-+		     i, soc->num_ictlrs);
-+
-+		max_ictlrs = soc->num_ictlrs;
-+		of_node_put(np);
-+	} else {
-+		/*
-+		 * If no matching device node was found, fall back to using
-+		 * the chip ID.
-+		 */
-+
-+		/* Tegra30 and later have five interrupt controllers, ... */
-+		max_ictlrs = ARRAY_SIZE(ictlr_regs);
-+
-+		/* ..., but Tegra20 only has four. */
-+		if (tegra_chip_id <= TEGRA20)
-+			max_ictlrs--;
-+	}
-+
-+	np = of_find_matching_node(NULL, gic_matches);
-+	if (np) {
-+		if (of_address_to_resource(np, 0, &res) < 0) {
-+			WARN(1, "GIC registers are missing from DT\n");
-+			res.start = res.end = 0;
-+		}
- 
--	distbase = IO_ADDRESS(TEGRA_ARM_INT_DIST_BASE);
-+		of_node_put(np);
-+	}
-+
-+	if (res.start == 0 || res.end == 0) {
-+		res.start = 0x50041000;
-+		res.end = 0x50041fff;
-+		res.flags = IORESOURCE_MEM;
-+	}
-+
-+	distbase = ioremap_nocache(res.start, resource_size(&res));
- 	num_ictlrs = readl_relaxed(distbase + GIC_DIST_CTR) & 0x1f;
- 
--	if (num_ictlrs > ARRAY_SIZE(ictlr_reg_base)) {
--		WARN(1, "Too many (%d) interrupt controllers found. Maximum is %d.",
--			num_ictlrs, ARRAY_SIZE(ictlr_reg_base));
--		num_ictlrs = ARRAY_SIZE(ictlr_reg_base);
-+	if (num_ictlrs != max_ictlrs) {
-+		WARN(1, "Too many (%d) interrupt controllers found. Maximum is %u.",
-+		     num_ictlrs, max_ictlrs);
-+		num_ictlrs = max_ictlrs;
- 	}
- 
- 	for (i = 0; i < num_ictlrs; i++) {
--		void __iomem *ictlr = ictlr_reg_base[i];
-+		struct resource *regs = &ictlr_regs[i];
-+		void __iomem *ictlr;
-+
-+		ictlr = ioremap_nocache(regs->start, resource_size(regs));
- 		writel(~0, ictlr + ICTLR_CPU_IER_CLR);
- 		writel(0, ictlr + ICTLR_CPU_IEP_CLASS);
-+		ictlr_reg_base[i] = ictlr;
- 	}
- 
- 	gic_arch_extn.irq_ack = tegra_ack;
-@@ -287,9 +365,10 @@ void __init tegra_init_irq(void)
- 	 * Check if there is a devicetree present, since the GIC will be
- 	 * initialized elsewhere under DT.
- 	 */
--	if (!of_have_populated_dt())
--		gic_init(0, 29, distbase,
--			IO_ADDRESS(TEGRA_ARM_PERIF_BASE + 0x100));
-+	if (!of_have_populated_dt()) {
-+		void __iomem *cpubase = ioremap_nocache(0x50040000, 0x2000);
-+		gic_init(0, 29, distbase, cpubase);
-+	}
- 
- 	tegra114_gic_cpu_pm_registration();
- }
--- 
-2.0.0
+> >  	if (num_ictlrs > ARRAY_SIZE(ictlr_reg_base)) {
+> > -		WARN(1, "Too many (%d) interrupt controllers found. Maximum is %d.",
+> > +		WARN(1, "Too many (%d) interrupt controllers found. Maximum is %zu.",
+> >  			num_ictlrs, ARRAY_SIZE(ictlr_reg_base));
+>=20
+> While we're changing this, maybe we should change that test to
+> "num_ictlrs !=3D the expected value", so too few is found as well.
+
+Done. This is slightly complicated by the fact that the non-DT code has
+no notion of how many are expected. The maximum number is only used to
+prevent overflows when accessing the ictlr_reg_base array.
+
+I've solved this by selecting the maximum depending on tegra_chip_id. I
+have sent a v2 to the list with the patch removed that moves all the
+drivers to drivers/soc since more work will be required for that. In the
+meantime this change is separate and can be merged independent of that.
+
+Thierry
+
+--mYCpIKhGyMATD0i+
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTrhZoAAoJEN0jrNd/PrOhSpYP+wVJjq3PAudSZ9FENaH1J4Fi
+kK170YYwXxhUq46r5cy5VWasMSanKDy7Hxtk29FQR0U9GotQ9x+Uaqx7TGv9YLcI
+U2ZrBPZvzmwYDKEW9XhvgsOBFt70QiIRV/GKdsuiIk7SdTHAzOtYBoeXs0J4pgav
+0xFxzt3LlM4HctgRjiHApWS9k2m7BJ42obhgsC7KaVhSHQuwbI+9FF3LSfQsxMvV
+6xVhQpjXVeVRs++E/SX15jaDv7QbeIR7q36Kx5uish6gw747mFoz3KEDVq54Qx0e
+IcqwoTBQkdrYcCRk7vnt5tTujslJ7JYM4eygBYvqzgBPyMc9BmbqmV+d5gw6Mkpa
+yinIBNBk9NklQ+MR46GVn7PzJtzuB3NKIl0VbWxfutl/Ze2av5ZdFPNqzR8VS2dH
+cQj0ShUxguHrxCnYTWZ3ySAVUU5iji8Xazn23ENgfTA0TtHHXZ+xYSMXeZO1An2/
+sSYXnotc8uagEHfdfyikpq3v+BxsXbmw/2J/eoYZiHAfXALes94WhRvQdYIBIUZF
+u9qyv4QYVpralvib0bHrFCCgTeDtZVdBd/TwYJDYPnmllq9KhpmCBUd6pQGGgU6l
+E0el0yQ2aBFGaIAIh3YQeEXYiXfr3WAHQAinGi60AGbIhWXfsHa4uwo1nq/GFuVi
+954rK8g8y1VGyPY4tB8F
+=kl6w
+-----END PGP SIGNATURE-----
+
+--mYCpIKhGyMATD0i+--
