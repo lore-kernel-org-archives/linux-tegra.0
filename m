@@ -1,57 +1,69 @@
 From: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>
 Subject: Re: [RFC 1/4] ARM: tegra: Move SoC drivers to drivers/soc/tegra
-Date: Mon, 30 Jun 2014 11:25:12 +0100
-Message-ID: <20140630102512.GE28951@arm.com>
+Date: Mon, 30 Jun 2014 11:36:49 +0100
+Message-ID: <20140630103649.GF28951@arm.com>
 References: <1403888329-24755-1-git-send-email-thierry.reding@gmail.com>
- <53ADAA1C.70407@ti.com>
- <20140627232757.GB26184@ulmo>
+ <53AEF81D.3080408@ti.com>
+ <20140628204025.GA16415@ulmo>
+ <7497427.LQy8pJts8f@wuerfel>
+ <20140630090118.GA24128@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20140627232757.GB26184@ulmo>
+In-Reply-To: <20140630090118.GA24128@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kumar Gala <galak-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kumar Gala <galak-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, Jun 28, 2014 at 12:27:58AM +0100, Thierry Reding wrote:
-> On Fri, Jun 27, 2014 at 01:30:04PM -0400, Santosh Shilimkar wrote:
-> > On Friday 27 June 2014 12:58 PM, Thierry Reding wrote:
-> > >  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle-tegra114.c (100%)
-> > >  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle-tegra20.c (100%)
-> > >  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle-tegra30.c (100%)
-> > >  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle.c (100%)
-> > >  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle.h (91%)
-> > This should go into drivers/idle/*. if you have dependencies, please sort
-> > them out.
+On Mon, Jun 30, 2014 at 10:01:19AM +0100, Thierry Reding wrote:
+> On Mon, Jun 30, 2014 at 09:20:30AM +0200, Arnd Bergmann wrote:
+> > On Saturday 28 June 2014 22:40:26 Thierry Reding wrote:
+> > > Also, the real win we get from moving code out into drivers/ is if we
+> > > can provide a common framework for them. I don't see how we can possibly
+> > > do that for this code since there simply isn't enough commonality
+> > > between SoCs. At the same time we now have a situation where both 32-bit
+> > > and 64-bit variants of some SoCs share some of the same hardware at the
+> > > very low level and since we don't have mach-* directories for 64-bit ARM
+> > > and shouldn't be duplicating code either, we need to find a new home for
+> > > this type of code. drivers/soc seemed to fit perfectly well.
+> > 
+> > For the low-level stuff yes, but I agree with Santosh there needs to be
+> > some more work trying to split out individual high-level drivers.
+> > 
+> > There are two common patterns for the interface between the low-level
+> > register access and the more high-level stuff:  you can either use
+> > a "syscon" driver that just exports a struct regmap and that gets referenced
+> > from other drivers using a phandle in their device nodes, or you have
+> > a driver in drivers/soc that exports a somewhat higher-level interface
+> > and comes with its own header file that gets included by other drivers.
+> > At the moment, the syscon/regmap variant can only be used once device
+> > drivers are loaded, but there is some broad agreement that it should
+> > be changed to allow calling syscon_regmap_lookup_by_phandle() at
+> > early boot using just DT accessors.
 > 
-> What exactly is the difference between drivers/idle and drivers/cpuidle?
-> There's an intel_idle driver in drivers/idle that includes cpuidle.h and
-> registers with that subsystem. But there's also an i7300_idle driver
-> that doesn't.
-> 
-> drivers/cpuidle seems like a better fit. I'll look into moving the code
-> there.
+> Note that we already have all these drivers and they do work for earlier
+> Tegra generations. My attempt to move these out of arch/arm/mach-tegra
+> is merely about being able to share them with upcoming 64-bit variants.
+> So it's not about adding new functionality but rather about keeping the
+> existing level of functionality on 64-bit.
 
-Actually, please look at Lorenzo's generic cpuidle series. Basically
-most cpuidle drivers simply define some C states and call the
-corresponding platform back-end. On arm64, we aim to separate the
-back-end in the cpu_operations structure and just have a generic cpuidle
-driver with states defined in the DT (and passed to the back-end).
+Only that for arm64 we try to do things slightly differently and not
+because we just like to but because we want better standardisation
+across SoCs. One example is the booting protocol. Another example, you
+don't get some early initcalls for your SoC (no machine descriptor). The
+hardware should be configured by firmware in such a way that it boots at
+least up to arch_initcall() level (ideally, we should move anything to
+device_initcall() but it's not always easy).
 
-As for the back-end, what about using PSCI?
+> I'm not a fan of the syscon/regmap approach at all and the existing
+> drivers use a higher-level API already, so I think we're going to stick
+> with that.
 
-> > >  rename {arch/arm/mach-tegra => drivers/soc/tegra}/reset-handler.S (100%)
-> > >  rename {arch/arm/mach-tegra => drivers/soc/tegra}/reset.c (100%)
-> > >  rename {arch/arm/mach-tegra => drivers/soc/tegra}/reset.h (97%)
-> > subsystem: drivers/power/reset/
-> 
-> drivers/power/reset seems to be for drivers that register functions to
-> reset a board. The above code for Tegra doesn't do that. Rather it sets
-> up the reset handlers for secondary CPUs and for suspend/resume.
-
-PSCI again?
+It's not about whether you are a fan of it or not but whether we can get
+more code sharing across several SoCs and not just between tegra arm32
+and arm64 versions.
 
 -- 
 Catalin
