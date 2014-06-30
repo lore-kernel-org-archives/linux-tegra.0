@@ -1,27 +1,64 @@
 From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC 3/4] soc/tegra: Initialize interrupt controller from DT
-Date: Mon, 30 Jun 2014 14:30:13 +0300
-Message-ID: <20140630113013.GS3679@tbergstrom-lnx.Nvidia.com>
+Subject: Re: [RFC 1/4] ARM: tegra: Move SoC drivers to drivers/soc/tegra
+Date: Mon, 30 Jun 2014 14:46:21 +0300
+Message-ID: <20140630114621.GT3679@tbergstrom-lnx.Nvidia.com>
 References: <1403888329-24755-1-git-send-email-thierry.reding@gmail.com>
- <1403888329-24755-3-git-send-email-thierry.reding@gmail.com>
+ <53ADAA1C.70407@ti.com> <20140627232757.GB26184@ulmo>
+ <20140630102512.GE28951@arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1403888329-24755-3-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20140630102512.GE28951-5wv7dgnIgG8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kumar Gala <galak-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jun 27, 2014 at 06:58:48PM +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Mon, Jun 30, 2014 at 12:25:12PM +0200, Catalin Marinas wrote:
+> On Sat, Jun 28, 2014 at 12:27:58AM +0100, Thierry Reding wrote:
+> > On Fri, Jun 27, 2014 at 01:30:04PM -0400, Santosh Shilimkar wrote:
+> > > On Friday 27 June 2014 12:58 PM, Thierry Reding wrote:
+> > > >  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle-tegra114.c (100%)
+> > > >  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle-tegra20.c (100%)
+> > > >  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle-tegra30.c (100%)
+> > > >  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle.c (100%)
+> > > >  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle.h (91%)
+> > > This should go into drivers/idle/*. if you have dependencies, please sort
+> > > them out.
+> > 
+> > What exactly is the difference between drivers/idle and drivers/cpuidle?
+> > There's an intel_idle driver in drivers/idle that includes cpuidle.h and
+> > registers with that subsystem. But there's also an i7300_idle driver
+> > that doesn't.
+> > 
+> > drivers/cpuidle seems like a better fit. I'll look into moving the code
+> > there.
 > 
-> Obtains the register ranges for the legacy interrupt controller from DT
-> and provide hard-coded values as fallback.
+> Actually, please look at Lorenzo's generic cpuidle series. Basically
+> most cpuidle drivers simply define some C states and call the
+> corresponding platform back-end. On arm64, we aim to separate the
+> back-end in the cpu_operations structure and just have a generic cpuidle
+> driver with states defined in the DT (and passed to the back-end).
 > 
+> As for the back-end, what about using PSCI?
+> 
+> > > >  rename {arch/arm/mach-tegra => drivers/soc/tegra}/reset-handler.S (100%)
+> > > >  rename {arch/arm/mach-tegra => drivers/soc/tegra}/reset.c (100%)
+> > > >  rename {arch/arm/mach-tegra => drivers/soc/tegra}/reset.h (97%)
+> > > subsystem: drivers/power/reset/
+> > 
+> > drivers/power/reset seems to be for drivers that register functions to
+> > reset a board. The above code for Tegra doesn't do that. Rather it sets
+> > up the reset handlers for secondary CPUs and for suspend/resume.
+> 
+> PSCI again?
 
-Any reason this file cannot be in drivers/irqchip/ ?
+Not possible for boards where linux runs in NS (roth and tn7). The secure
+monitor on those is outside our control and does not implement PSCI. There
+might be some value for Tegra114 and Tegra124 if we would like to use HYP
+mode, but that's not on the radar today. It's a waste of time for Tegra20
+and Tegra30.
 
 Cheers,
 
