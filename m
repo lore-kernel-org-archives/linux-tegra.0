@@ -1,50 +1,75 @@
-From: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [RFC 1/4] ARM: tegra: Move SoC drivers to drivers/soc/tegra
-Date: Mon, 30 Jun 2014 17:08:53 +0100
-Message-ID: <20140630160853.GQ28951@arm.com>
-References: <1403888329-24755-1-git-send-email-thierry.reding@gmail.com>
- <53ADAA1C.70407@ti.com>
- <20140627232757.GB26184@ulmo>
- <20140630102512.GE28951@arm.com>
- <20140630114621.GT3679@tbergstrom-lnx.Nvidia.com>
- <20140630141334.GK28951@arm.com>
- <20140630144217.GV3679@tbergstrom-lnx.Nvidia.com>
+From: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v2 1/4] of: Add NVIDIA Tegra Legacy Interrupt Controller
+ binding
+Date: Mon, 30 Jun 2014 18:43:34 +0100
+Message-ID: <20140630174334.GF28740@leverpostej>
+References: <1403917351-13215-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20140630144217.GV3679-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+In-Reply-To: <1403917351-13215-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kumar Gala <galak-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jun 30, 2014 at 03:42:17PM +0100, Peter De Schrijver wrote:
-> > > There might be some value for Tegra114 and Tegra124 if we would like
-> > > to use HYP mode, but that's not on the radar today. It's a waste of
-> > > time for Tegra20 and Tegra30.
-> > 
-> > I think you should keep the Hyp support in mind anyway and test Linux
-> > booting in NS mode on your platforms. It may not be on your radar today
-> > for a SoC but if you later decide that it is, we end up with needing
-> > different code paths in Linux for the same SoC depending on how it boots
-> > (and you can't easily detect this at boot time, nor you can pass it via
-> > DT).
+On Sat, Jun 28, 2014 at 02:02:28AM +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> You can just look for a psci DT node? If this node is missing, fallback to
-> the existing tegra specific mechanism. At least, that's how I envision doing
-> PSCI for HYP mode on v7 based boards where linux today runs in secure mode.
+> The Legacy Interrupt Controller found on NVIDIA Tegra SoCs is used by
+> the AVP coprocessor and can also serve as a backup for the ARM Cortex
+> CPU's local interrupt controller (GIC).
+> 
+> The LIC is subdivided into multiple identical units, each handling 32
+> possible interrupt sources.
+> 
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> Changes in v2:
+> - new patch
+> 
+>  .../interrupt-controller/nvidia,tegra20-ictlr.txt     | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt b/Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt
+> new file mode 100644
+> index 000000000000..c695ec713740
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt
+> @@ -0,0 +1,19 @@
+> +NVIDIA Tegra Legacy Interrupt Controller
+> +
+> +The legacy interrupt controller is divided into units that serve 32 interrupts
+> +each. Tegra20 implements four units, whereas Tegra30 and later implement five.
+> +
+> +Required properties:
+> +- compatible: "nvidia,tegra<chip>-ictlr"
 
-This should work, assuming that setup required before the DT is
-available is already handled by firmware (for example, SMP coherency bit
-in secure-only registers).
+And valid <chip> values are?
 
-> u-boot loads a minimal secure monitor which only does PSCI (we don't care about
-> any security as there are no keys available for signing on those boards
-> anyway), adds the PSCI node to the DT and then boots linux in HYP mode. 
+> +- reg: Physical base address and length of the controller's registers. There
+> +  should be one entry for each unit.
+> +
+> +Example:
+> +
+> +	interrupt-controller@60004000 {
+> +		compatible = "nvidia,tegra20-ictlr";
+> +		reg = <0x60004000 0x40   /* primary controller */
+> +		       0x60004100 0x40   /* secondary controller */
+> +		       0x60004200 0x40   /* tertiary controller */
+> +		       0x60004300 0x40>; /* quaternary controller */
 
-BTW, there are some patches under review for adding PSCI support to
-U-Boot.
+Could we please bracket the entries individually, e.g.
 
--- 
-Catalin
+		reg = <0x60004000 0x40>,
+		      <0x60004100 0x40>,
+		      <0x60004200 0x40>,
+		      <0x60004300 0x40>;
+
+How do the interrupt lines correspond to those of the GIC?
+
+Cheers,
+Mark.
