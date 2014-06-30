@@ -1,33 +1,46 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V2 0/6] regulator: palmas: cleanup and fixes
-Date: Mon, 30 Jun 2014 14:22:04 -0600
-Message-ID: <53B1C6EC.7070907@wwwdotorg.org>
-References: <1404143859-8160-1-git-send-email-nm@ti.com>
+Subject: Re: [PATCH v2 3/4] soc/tegra: Initialize interrupt controller from
+ DT
+Date: Mon, 30 Jun 2014 14:31:02 -0600
+Message-ID: <53B1C906.2080806@wwwdotorg.org>
+References: <1403917351-13215-1-git-send-email-thierry.reding@gmail.com> <1403917351-13215-3-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1404143859-8160-1-git-send-email-nm-l0cyMroinI0@public.gmane.org>
+In-Reply-To: <1403917351-13215-3-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Keerthy J <j-keerthy-l0cyMroinI0@public.gmane.org>
-Cc: Tero Kristo <t-kristo-l0cyMroinI0@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/30/2014 09:57 AM, Nishanth Menon wrote:
-> Hi,
-> 	Original thread (v1): http://marc.info/?t=140380766500004&r=1&w=2
-> This series is based on: git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git
-> branch: topic/palmas (4c0c9ca Merge remote-tracking branch 'regulator/fix/palmas' into regulator-palmas)
+On 06/27/2014 07:02 PM, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> This series does a few cleanups to help ensure we dont make typo mistakes and finally provides a fix as attempted by (v1).
-> 
-> Basic cpufreq tests performed on OMAP5uEVM, DRA7-evm, DRA72-evm all of which are palmas variants.
-> 
-> The patches are also available here: https://github.com/nmenon/linux-2.6-playground/commits/broonie-topic-palmas-fixes
+> Obtains the register ranges for the legacy interrupt controller from DT
+> and provide hard-coded values as fallback.
 
-The series,
-Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> diff --git a/arch/arm/mach-tegra/irq.c b/arch/arm/mach-tegra/irq.c
+> -	if (num_ictlrs > ARRAY_SIZE(ictlr_reg_base)) {
+> -		WARN(1, "Too many (%d) interrupt controllers found. Maximum is %d.",
+> -			num_ictlrs, ARRAY_SIZE(ictlr_reg_base));
+> -		num_ictlrs = ARRAY_SIZE(ictlr_reg_base);
+> +	if (num_ictlrs != max_ictlrs) {
+> +		WARN(1, "Too many (%d) interrupt controllers found. Maximum is %u.",
+> +		     num_ictlrs, max_ictlrs);
 
-(An NVIDIA Dalmore board boots and shuts down OK with these applied on
-top of next-20140630, and various peripherals such as LCD panel, audio,
-USB, and SPI flash all work)
+We should change that message to something more like:
+
+Wrong number (%d) interrupt controllers found. Expected %u.
+
+Feel free to make that a separate patch though.
+
+> -	if (!of_have_populated_dt())
+> -		gic_init(0, 29, distbase,
+> -			IO_ADDRESS(TEGRA_ARM_PERIF_BASE + 0x100));
+> +	if (!of_have_populated_dt()) {
+> +		void __iomem *cpubase = ioremap_nocache(0x50040000, 0x2000);
+> +		gic_init(0, 29, distbase, cpubase);
+> +	}
+
+That if will never fire these days. We should rip out that block sometime.
