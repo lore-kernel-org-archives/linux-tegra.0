@@ -1,32 +1,50 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v5 2/4] pinctrl: Add NVIDIA Tegra XUSB pad controller
- support
-Date: Mon, 30 Jun 2014 10:04:23 -0600
-Message-ID: <53B18A87.7040305@wwwdotorg.org>
-References: <1403177830-28595-1-git-send-email-thierry.reding@gmail.com> <1403177830-28595-2-git-send-email-thierry.reding@gmail.com>
+From: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [RFC 1/4] ARM: tegra: Move SoC drivers to drivers/soc/tegra
+Date: Mon, 30 Jun 2014 17:08:53 +0100
+Message-ID: <20140630160853.GQ28951@arm.com>
+References: <1403888329-24755-1-git-send-email-thierry.reding@gmail.com>
+ <53ADAA1C.70407@ti.com>
+ <20140627232757.GB26184@ulmo>
+ <20140630102512.GE28951@arm.com>
+ <20140630114621.GT3679@tbergstrom-lnx.Nvidia.com>
+ <20140630141334.GK28951@arm.com>
+ <20140630144217.GV3679@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1403177830-28595-2-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20140630144217.GV3679-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kumar Gala <galak-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/19/2014 05:37 AM, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Mon, Jun 30, 2014 at 03:42:17PM +0100, Peter De Schrijver wrote:
+> > > There might be some value for Tegra114 and Tegra124 if we would like
+> > > to use HYP mode, but that's not on the radar today. It's a waste of
+> > > time for Tegra20 and Tegra30.
+> > 
+> > I think you should keep the Hyp support in mind anyway and test Linux
+> > booting in NS mode on your platforms. It may not be on your radar today
+> > for a SoC but if you later decide that it is, we end up with needing
+> > different code paths in Linux for the same SoC depending on how it boots
+> > (and you can't easily detect this at boot time, nor you can pass it via
+> > DT).
 > 
-> The XUSB pad controller found on NVIDIA Tegra SoCs provides several pads
-> that lanes can be assigned to in order to support a variety of interface
-> options: USB 2.0, USB 3.0, PCIe and SATA.
-> 
-> In addition to the pin controller used to assign lanes to pads two PHYs
-> are exposed to allow the bricks for PCIe and SATA to be powered up and
-> down by PCIe and SATA drivers.
+> You can just look for a psci DT node? If this node is missing, fallback to
+> the existing tegra specific mechanism. At least, that's how I envision doing
+> PSCI for HYP mode on v7 based boards where linux today runs in secure mode.
 
-Linus, does the driver look OK? I'm hoping for an ack from you so that I
-can take this series through the Tegra tree to resolve some
-dependencies; we have various other drivers that depend on this series.
+This should work, assuming that setup required before the DT is
+available is already handled by firmware (for example, SMP coherency bit
+in secure-only registers).
 
-Thanks!
+> u-boot loads a minimal secure monitor which only does PSCI (we don't care about
+> any security as there are no keys available for signing on those boards
+> anyway), adds the PSCI node to the DT and then boots linux in HYP mode. 
+
+BTW, there are some patches under review for adding PSCI support to
+U-Boot.
+
+-- 
+Catalin
