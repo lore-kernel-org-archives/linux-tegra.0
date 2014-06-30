@@ -1,68 +1,68 @@
-From: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [RFC 1/4] ARM: tegra: Move SoC drivers to drivers/soc/tegra
-Date: Mon, 30 Jun 2014 10:44:29 +0100
-Message-ID: <20140630094429.GD28951@arm.com>
-References: <1403888329-24755-1-git-send-email-thierry.reding@gmail.com>
- <20140627232757.GB26184@ulmo>
- <53AEF81D.3080408@ti.com>
- <5279186.O063V9ZcHh@wuerfel>
+From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Mon, 30 Jun 2014 10:52:20 +0100
+Message-ID: <20140630095220.GA25779@arm.com>
+References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
+ <CAL_JsqKumG1PSFoVfeGpLLG+MjXFeF4aUjun=vv1BJpaxk0Byg@mail.gmail.com>
+ <4545972.cM7IP1qTXQ@wuerfel>
+ <53A4C0C9.2050908@codeaurora.org>
+ <20140624091808.GC26013@arm.com>
+ <53A9BC18.2090106@codeaurora.org>
+ <20140624181150.GB4067@arm.com>
+ <53A9EF3A.2070704@codeaurora.org>
+ <20140625091858.GG6153@arm.com>
+ <53ADEEDF.7060902@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <5279186.O063V9ZcHh@wuerfel>
+In-Reply-To: <53ADEEDF.7060902-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kumar Gala <galak-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Olav Haugan <ohaugan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Hiroshi
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jun 30, 2014 at 08:23:45AM +0100, Arnd Bergmann wrote:
-> On Saturday 28 June 2014 13:15:09 Santosh Shilimkar wrote:
-> > >> For SMP boot, ARMv8 expecting to have either PSCI based implementation or
-> > >> device tree based boot scheme. you can move towards that model if possible.
-> > > 
-> > > But we also have the code for SMP on 32-bit ARM. Should that remain in
-> > > arch/arm/mach-tegra or can it move to drivers/soc/tegra?
-> > > 
-> > You answered yourself. I don't see any point moving such a code to drivers
-> > which is really SMP bring up code for ARM 32 bit. For ARM 64 bit, as
-> > outline by maintainers (Catalin, Arnd), you should use PSCI or DT based
-> > boot scheme.
+Hi Olav,
+
+On Fri, Jun 27, 2014 at 11:23:27PM +0100, Olav Haugan wrote:
+> On 6/25/2014 2:18 AM, Will Deacon wrote:
+> > Why can't it be dynamically detected? Whilst the StreamIDs are fixed in
+> > hardware (from the SMMU architecture perspective), the SMRs are completely
+> > programmable. Why doesn't something like Andreas's proposal work for you?
+> > The idea there was to find the constant bits among the StreamIDs for a
+> > master and create the mask accordingly.
+> > 
+> Lets say I have an IOMMU with 2 masters and 2 SMRn slots with the
+> following stream IDs coming from the masters:
 > 
-> I was hoping that one day we could unify the SMP bootup code with the
-> cpuidle infrastructure, as a lot of the underlying functions are shared
-> on the majority of SoCs. I have no plans to work on that myself though,
-> and it would have to be agreed on by the cpuidle maintainers.
+> Master 1: 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28
+> Master 2: 0x30
+> 
+> To make this work I would program SMR[0] with StreamID 0x20 and mask 0xF
+> to ignore lower 4 bits. SMR[1] would just be StreamID 0x30 with mask 0x0.
+> 
+> However, I could also have an IOMMU with 2 masters and 9 SMRn slots with
+> the following stream IDs:
+> 
+> Master 1: 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28
+> Master 2: 0x29
+> 
+> Here I would program all SMRn and leave the mask to be 0 for all SMRn's.
+> So how do I detect when to apply a mask or not?
 
-If you look at the arm64 implementation and Lorenzo's generic cpuidle
-code, that's not far off. Basically for arm64 we have a cpu_operations
-structure which implements boot, suspend, disable etc., placing SMP
-booting, hotplug and cpuidle together.
+You would aim to use the smallest number of SMRs per master possible.
+You could probably use:
 
-While PSCI is the (strongly) recommended way, the current structure
-allows for other implementations and spin-table is an example (though
-this lacks any form of parking CPUs back to firmware). What I don't want
-to see is every platform implementing its own booting method for no good
-reasons and especially when functionality is duplicated with other
-platforms.
+  Master 1: SMR[0].id == 0x20, SMR[0].mask = 0x07
+            SMR[1].id == 0x28, SMR[1].mask = 0x00
 
-In the tegra case, I suppose the arm32 implementation assumes Linux
-running in secure mode. On arm64 we don't support this (though it may
-work for certain configurations) and once you realise you need SMC calls
-for CPU up/down/suspend, I would rather standardise on PSCI (unless a
-better standard appears ;)).
+  Master 2: SMR[2].id == 0x29, SMR[2].mask = 0x00
 
-> For ARM64, the hope was indeed to use PSCI for all SoCs. I just have no
-> idea how that would be enforced for mobile SoCs that get shipped to
-> system integrators with an bootloader and kernel tree that doesn't even
-> get reviewed anywhere first.
+> I am not familiar with Andreas's proposal. Do you have a link?
 
-We can't enforce this but at least with enough "marketing" support, we
-can sell this as a good idea. For example, if one implements PSCI you
-get (generic) cpuidle for free (just DT bindings). That's definitely not
-enough and other things like a comprehensive validation suite for PSCI
-also helps (currently ARM only works on bare metal but it would be good
-to have a kernel-based test suite as well).
+  http://marc.info/?l=linux-arm-kernel&m=139110598005846&w=2
 
--- 
-Catalin
+Note that since Calxeda went under, Andreas is unfortunately no longer
+working on this.
+
+Will
