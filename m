@@ -1,71 +1,25 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 6/6] thermal: Add Tegra SOCTHERM thermal management driver
-Date: Mon, 30 Jun 2014 15:23:04 -0600
-Message-ID: <53B1D538.6000704@wwwdotorg.org>
-References: <1403856699-2140-1-git-send-email-mperttunen@nvidia.com> <1403856699-2140-7-git-send-email-mperttunen@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] [cbootimage-configs] Add support for norrin board
+Date: Mon, 30 Jun 2014 15:25:37 -0600
+Message-ID: <53B1D5D1.9060606@wwwdotorg.org>
+References: <1404160939-10555-1-git-send-email-amartin@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1403856699-2140-7-git-send-email-mperttunen@nvidia.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Mikko Perttunen <mperttunen@nvidia.com>, rui.zhang@intel.com, edubezval@gmail.com, thierry.reding@gmail.com, pdeschrijver@nvidia.com, mlongnecker@nvidia.com
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1404160939-10555-1-git-send-email-amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/27/2014 02:11 AM, Mikko Perttunen wrote:
-> This adds support for the Tegra SOCTHERM thermal sensing and management
-> system found in the Tegra124 system-on-chip. This initial driver supports
-> the four thermal zones with hardware-tracked trip points.
+On 06/30/2014 02:42 PM, Allen Martin wrote:
+> Norrin (PM370) is an NVIDIA Tegra124 Chromebook reference platform.
+> It is also called "nyan" in the ChromeOS tree.
 
-> diff --git a/drivers/thermal/tegra_soctherm.c b/drivers/thermal/tegra_soctherm.c
+I thought only some versions/revisions of Nyan were actually Norrin?
+Isn't nyan-rev0 Venice2, but nyan-rev1 Norrin?
 
-> +static struct tegra_tsensor t124_tsensors[] = {
-> +	{
-> +		.base = 0xc0,
-> +		.name = "cpu0",
-> +		.config = &t124_tsensor_config,
-> +		.calib_fuse_offset = 0x098,
-> +		.fuse_corr_alpha = 1135400,
-> +		.fuse_corr_beta = -6266900,
-> +	},
-
-I wonder why some of those fields are named "fuse_xxx" when the values
-are hard-coded in these tables rather than read from fuses? These values
-don't seem to be used to adjust values read from fuses.
-
-> +static int tegra_thermctl_get_temp(void *data, long *out_temp)
-
-> +	switch (zone->sensor) {
-> +	case 0:
-> +		val = readl(zone->tegra->regs + SENSOR_TEMP1)
-> +			>> SENSOR_TEMP1_CPU_TEMP_SHIFT;
-
-Can't the register offset and shift be stored in *zone, so that this
-whole switch can be replaced with something generic:
-
-val = readl(zone->tegra->regs + zone->reg_offset) >> zone->value_shift;
-
-> +static int tegra_soctherm_probe(struct platform_device *pdev)
-
-> +	irq = platform_get_irq(pdev, 0);
-> +	if (irq <= 0) {
-> +		dev_err(&pdev->dev, "can't get interrupt\n");
-> +		return -EINVAL;
-> +	}
-
-irq is assigned once here ... (see later)
-
-> +	for (i = 0; i < 4; ++i) {
-
-Why "4"? Should the loop count be the ARRAY_SIZE(some array)? At the
-very least, a named constant that describes the value would be useful...
-
-> +		err = devm_request_threaded_irq(&pdev->dev, irq, soctherm_isr,
-> +						soctherm_isr_thread,
-> +						IRQF_SHARED, "tegra_soctherm",
-> +						zone);
-
-Why request the same IRQ 4 times here. Rather, shouldn't the IRQ be
-requested once, and the ISR simply loop over the status register (or
-whatever there are 4 of)?
+When we have Norrins with Tegra132 (which I thought was actually the
+more common version, but perhaps not), what is the plan for naming them;
+perhaps norrin-t132?
