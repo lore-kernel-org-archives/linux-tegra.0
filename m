@@ -1,40 +1,59 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 0/2] ARM: tegra: roth: pinmux fixes
-Date: Sun, 29 Jun 2014 13:27:13 +0900
-Message-ID: <CAAVeFuKjfmuo0JjRnhhfbuo-Ed-QqVciAQ3g6ESCmzxhOvv0JA@mail.gmail.com>
-References: <1403508779-25896-1-git-send-email-acourbot@nvidia.com> <53ADEB5F.5030502@wwwdotorg.org>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [RFC 1/4] ARM: tegra: Move SoC drivers to drivers/soc/tegra
+Date: Mon, 30 Jun 2014 09:20:30 +0200
+Message-ID: <7497427.LQy8pJts8f@wuerfel>
+References: <1403888329-24755-1-git-send-email-thierry.reding@gmail.com> <53AEF81D.3080408@ti.com> <20140628204025.GA16415@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <53ADEB5F.5030502@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140628204025.GA16415@ulmo>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kumar Gala <galak-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, Jun 28, 2014 at 7:08 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
-> On 06/23/2014 01:32 AM, Alexandre Courbot wrote:
->> Two small but important fixes to SHIELD's pinmux configuration.
->> The use of invalid properties caused the pinmux to not be applied
->> at all. Also the setting for sdmmc clock lines resulted in random
->> errors or even the impossibility to probe attached devices.
->>
->> Alexandre Courbot (2):
->>   ARM: tegra: roth: fix unsupported pinmux properties
->>   ARM: tegra: roth: enable input on mmc clock pins
->
-> The series, applied to Tegra's for-3.17/dt branch.
->
-> Sorry for the delay; I'd forgotten that our internal discussion resolved
-> my questions about patch 2.
+On Saturday 28 June 2014 22:40:26 Thierry Reding wrote:
+> > > pmc.c implements various routines to access the power management
+> > > controller, some of which is needed by suspend/resume, some of it is
+> > > needed by SMP. powergate.c implements a subset of the PMC that needs to
+> > > be exported to drivers to enable power partitions on the SoC. I'm not
+> > > aware of subsystems that deal with this kind of driver.
+> > >
+> > Please see above.
+> 
+> Like I said, I don't see what business suspend/resume related code has
+> in drivers/power. What we're talking about here really is functionality
+> very specific to Tegra. Also some of that code needs to be run at very
+> early points in the boot process, so we can't reasonably turn it into a
+> proper driver anyway.
 
-Thanks! And sorry for not mirroring the discussion on the public list.
+I believe the powergate.c stuff can be changed into pm_domain code, but
+we don't have a good subsystem with generic DT bindings yet, so that
+may need some more groundwork first. drivers/power or a subdirectory
+of that may end up being the right place though.
 
-> Still looking forward to internal bugs files against the Jetson TK1 and
-> Venice2 board pinmux spreadsheets for the same issue:-)
+> Also, the real win we get from moving code out into drivers/ is if we
+> can provide a common framework for them. I don't see how we can possibly
+> do that for this code since there simply isn't enough commonality
+> between SoCs. At the same time we now have a situation where both 32-bit
+> and 64-bit variants of some SoCs share some of the same hardware at the
+> very low level and since we don't have mach-* directories for 64-bit ARM
+> and shouldn't be duplicating code either, we need to find a new home for
+> this type of code. drivers/soc seemed to fit perfectly well.
 
-Are the spreadsheets you are talking about the following documents?
+For the low-level stuff yes, but I agree with Santosh there needs to be
+some more work trying to split out individual high-level drivers.
 
-https://github.com/NVIDIA/tegra-pinmux-scripts/blob/master/configs/jetson-tk1.board
+There are two common patterns for the interface between the low-level
+register access and the more high-level stuff:  you can either use
+a "syscon" driver that just exports a struct regmap and that gets referenced
+from other drivers using a phandle in their device nodes, or you have
+a driver in drivers/soc that exports a somewhat higher-level interface
+and comes with its own header file that gets included by other drivers.
+At the moment, the syscon/regmap variant can only be used once device
+drivers are loaded, but there is some broad agreement that it should
+be changed to allow calling syscon_regmap_lookup_by_phandle() at
+early boot using just DT accessors.
 
-Or do we have internal structures we need to update as well?
+	Arnd
