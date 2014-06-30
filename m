@@ -1,68 +1,57 @@
-From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Mon, 30 Jun 2014 10:52:20 +0100
-Message-ID: <20140630095220.GA25779@arm.com>
-References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
- <CAL_JsqKumG1PSFoVfeGpLLG+MjXFeF4aUjun=vv1BJpaxk0Byg@mail.gmail.com>
- <4545972.cM7IP1qTXQ@wuerfel>
- <53A4C0C9.2050908@codeaurora.org>
- <20140624091808.GC26013@arm.com>
- <53A9BC18.2090106@codeaurora.org>
- <20140624181150.GB4067@arm.com>
- <53A9EF3A.2070704@codeaurora.org>
- <20140625091858.GG6153@arm.com>
- <53ADEEDF.7060902@codeaurora.org>
+From: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [RFC 1/4] ARM: tegra: Move SoC drivers to drivers/soc/tegra
+Date: Mon, 30 Jun 2014 11:25:12 +0100
+Message-ID: <20140630102512.GE28951@arm.com>
+References: <1403888329-24755-1-git-send-email-thierry.reding@gmail.com>
+ <53ADAA1C.70407@ti.com>
+ <20140627232757.GB26184@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <53ADEEDF.7060902-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+In-Reply-To: <20140627232757.GB26184@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olav Haugan <ohaugan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Hiroshi
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kumar Gala <galak-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Olav,
-
-On Fri, Jun 27, 2014 at 11:23:27PM +0100, Olav Haugan wrote:
-> On 6/25/2014 2:18 AM, Will Deacon wrote:
-> > Why can't it be dynamically detected? Whilst the StreamIDs are fixed in
-> > hardware (from the SMMU architecture perspective), the SMRs are completely
-> > programmable. Why doesn't something like Andreas's proposal work for you?
-> > The idea there was to find the constant bits among the StreamIDs for a
-> > master and create the mask accordingly.
-> > 
-> Lets say I have an IOMMU with 2 masters and 2 SMRn slots with the
-> following stream IDs coming from the masters:
+On Sat, Jun 28, 2014 at 12:27:58AM +0100, Thierry Reding wrote:
+> On Fri, Jun 27, 2014 at 01:30:04PM -0400, Santosh Shilimkar wrote:
+> > On Friday 27 June 2014 12:58 PM, Thierry Reding wrote:
+> > >  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle-tegra114.c (100%)
+> > >  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle-tegra20.c (100%)
+> > >  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle-tegra30.c (100%)
+> > >  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle.c (100%)
+> > >  rename {arch/arm/mach-tegra => drivers/soc/tegra}/cpuidle.h (91%)
+> > This should go into drivers/idle/*. if you have dependencies, please sort
+> > them out.
 > 
-> Master 1: 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28
-> Master 2: 0x30
+> What exactly is the difference between drivers/idle and drivers/cpuidle?
+> There's an intel_idle driver in drivers/idle that includes cpuidle.h and
+> registers with that subsystem. But there's also an i7300_idle driver
+> that doesn't.
 > 
-> To make this work I would program SMR[0] with StreamID 0x20 and mask 0xF
-> to ignore lower 4 bits. SMR[1] would just be StreamID 0x30 with mask 0x0.
+> drivers/cpuidle seems like a better fit. I'll look into moving the code
+> there.
+
+Actually, please look at Lorenzo's generic cpuidle series. Basically
+most cpuidle drivers simply define some C states and call the
+corresponding platform back-end. On arm64, we aim to separate the
+back-end in the cpu_operations structure and just have a generic cpuidle
+driver with states defined in the DT (and passed to the back-end).
+
+As for the back-end, what about using PSCI?
+
+> > >  rename {arch/arm/mach-tegra => drivers/soc/tegra}/reset-handler.S (100%)
+> > >  rename {arch/arm/mach-tegra => drivers/soc/tegra}/reset.c (100%)
+> > >  rename {arch/arm/mach-tegra => drivers/soc/tegra}/reset.h (97%)
+> > subsystem: drivers/power/reset/
 > 
-> However, I could also have an IOMMU with 2 masters and 9 SMRn slots with
-> the following stream IDs:
-> 
-> Master 1: 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28
-> Master 2: 0x29
-> 
-> Here I would program all SMRn and leave the mask to be 0 for all SMRn's.
-> So how do I detect when to apply a mask or not?
+> drivers/power/reset seems to be for drivers that register functions to
+> reset a board. The above code for Tegra doesn't do that. Rather it sets
+> up the reset handlers for secondary CPUs and for suspend/resume.
 
-You would aim to use the smallest number of SMRs per master possible.
-You could probably use:
+PSCI again?
 
-  Master 1: SMR[0].id == 0x20, SMR[0].mask = 0x07
-            SMR[1].id == 0x28, SMR[1].mask = 0x00
-
-  Master 2: SMR[2].id == 0x29, SMR[2].mask = 0x00
-
-> I am not familiar with Andreas's proposal. Do you have a link?
-
-  http://marc.info/?l=linux-arm-kernel&m=139110598005846&w=2
-
-Note that since Calxeda went under, Andreas is unfortunately no longer
-working on this.
-
-Will
+-- 
+Catalin
