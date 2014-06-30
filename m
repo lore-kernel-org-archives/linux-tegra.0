@@ -1,35 +1,47 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] [tegra-uboot-flasher-scripts] Add support for norrin
- board
-Date: Mon, 30 Jun 2014 15:29:08 -0600
-Message-ID: <53B1D6A4.9070309@wwwdotorg.org>
-References: <1404161040-10747-1-git-send-email-amartin@nvidia.com>
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v3.16-rc2
+Date: Mon, 30 Jun 2014 14:52:06 -0700
+Message-ID: <53B1DC06.8040308@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1404161040-10747-1-git-send-email-amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/30/2014 02:44 PM, Allen Martin wrote:
-> Add support for norrin (Tegra124 Chromebook reference design)
+Here are some basic Tegra test results for Linux v3.16-rc2.
+Logs and other details at:
 
-It would be nice to get naming capitalization right; Norrin not norrin.
-I can fix that up when applying. In another patch, Venice2, SD card, CD,
-DTB.
+     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.16-rc2/20140621223108/
 
-Note that since tegra-uboot-flasher builds all boards that it knows
-about by default, and building for Norrin will fail until the U-Boot
-patches make there way up to the main U-Boot tree, I'll need to add:
 
-    'disabled': True,
+Test summary
+------------
 
-... to norrin.board to prevent that. See the following commits for examples:
+Build: zImage:
+     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
 
-9a971ee7c3e3 Enable Jetson TK1 board by default
-84484c2c521f Add support for Jetson TK1 board
+Boot to userspace: multi_v7_defconfig:
+     Pass: ( 2/ 2): tegra114-dalmore-a04, tegra30-beaver
 
-Again, I can add that when applying.
+Boot to userspace: tegra_defconfig:
+     Pass: ( 2/ 2): tegra114-dalmore-a04, tegra30-beaver
+
+
+
+vmlinux object size
+(delta in bytes from test_v3.16-rc1 (7171511eaec5bf23fb06078f59784a3a0626b38f)):
+    text     data      bss    total  kernel
+  +27997    +1624        0   +29621  multi_v7_defconfig
+    +766       -8        0     +758  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v3.16-rc1 (7171511eaec5bf23fb06078f59784a3a0626b38f))
+     avail    rsrvd     high    freed                board              kconfig                  dtb
+      -24k      24k        .     652k tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+         .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+      -24k      24k        .     652k       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+         .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
