@@ -1,49 +1,35 @@
-From: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] [tegra-uboot-flasher-scripts] Add support for norrin board
-Date: Mon, 30 Jun 2014 13:44:00 -0700
-Message-ID: <1404161040-10747-1-git-send-email-amartin@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 3/6] ARM: tegra: Add thermal trip points for Jetson TK1
+Date: Mon, 30 Jun 2014 14:45:28 -0600
+Message-ID: <53B1CC68.8070104@wwwdotorg.org>
+References: <1403856699-2140-1-git-send-email-mperttunen@nvidia.com> <1403856699-2140-4-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1403856699-2140-4-git-send-email-mperttunen@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Mikko Perttunen <mperttunen@nvidia.com>, rui.zhang@intel.com, edubezval@gmail.com, thierry.reding@gmail.com, pdeschrijver@nvidia.com, mlongnecker@nvidia.com
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add support for norrin (Tegra124 Chromebook reference design)
+On 06/27/2014 02:11 AM, Mikko Perttunen wrote:
+> This adds critical trip points to the Jetson TK1 device tree.
+> The device will do a controlled shutdown when either the CPU, GPU
+> or MEM thermal zone reaches 101 degrees Celsius.
 
-Signed-off-by: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- configs/norrin.board  | 4 ++++
- configs/norrin.config | 9 +++++++++
- 2 files changed, 13 insertions(+)
- create mode 100644 configs/norrin.board
- create mode 100644 configs/norrin.config
+It would be more typical to order the patches with changes to
+tegra124.dtsi first, then changes to board files (that build on the core
+SoC support) second.
 
-diff --git a/configs/norrin.board b/configs/norrin.board
-new file mode 100644
-index 000000000000..73b23ae86dd2
---- /dev/null
-+++ b/configs/norrin.board
-@@ -0,0 +1,4 @@
-+board = {
-+    'vendor': 'nvidia',
-+    'soc': 'tegra124',
-+}
-diff --git a/configs/norrin.config b/configs/norrin.config
-new file mode 100644
-index 000000000000..cce4f26c61fb
---- /dev/null
-+++ b/configs/norrin.config
-@@ -0,0 +1,9 @@
-+config = {
-+    'bct': 'PM370_Hynix_2GB_H5TC4G63AFR_PBA_924MHz_01212014.bct',
-+    'board': 'norrin',
-+    'dtbfn-extra': '',
-+    'flash-erase-size': 1048576,
-+    'flash-image': 'norrin-spi.img',
-+    'flash-type': 'spi',
-+    'flash-id-uboot': '1:0',
-+}
--- 
-1.8.1.5
+> diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+
+> +	thermal-zones {
+> +		cpu {
+> +			trips {
+> +				cpu-critical {
+
+Can we name that simply "critical"? DT node names are supposed to
+represent type of object more than identity of object. Even "critical"
+is a bit of an identity, and "trip@0" would be better, but I imagine the
+core thermal DT bindings precluded that?
