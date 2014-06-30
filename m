@@ -1,48 +1,32 @@
-From: Nishanth Menon <nm@ti.com>
-Subject: [PATCH V2 4/6] regulator: palmas: Rename palmas_regs_info to palmas_generic_regs_info
-Date: Mon, 30 Jun 2014 10:57:37 -0500
-Message-ID: <1404143859-8160-5-git-send-email-nm@ti.com>
-References: <1404143859-8160-1-git-send-email-nm@ti.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v5 2/4] pinctrl: Add NVIDIA Tegra XUSB pad controller
+ support
+Date: Mon, 30 Jun 2014 10:04:23 -0600
+Message-ID: <53B18A87.7040305@wwwdotorg.org>
+References: <1403177830-28595-1-git-send-email-thierry.reding@gmail.com> <1403177830-28595-2-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1404143859-8160-1-git-send-email-nm@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Keerthy J <j-keerthy@ti.com>
-Cc: Tero Kristo <t-kristo@ti.com>, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org, Nishanth Menon <nm@ti.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1403177830-28595-2-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-With commit d6f83370ed978d5570b7c8c22988310cb9376202 (regulator: palmas:
-Add tps65917 PMIC support) palmas_regs_info naming is confusing as it is
-a driver data parameter and a local variable. To prevent mistaken
-updates, rename the local variable to palmas_generic_regs_info.
+On 06/19/2014 05:37 AM, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> The XUSB pad controller found on NVIDIA Tegra SoCs provides several pads
+> that lanes can be assigned to in order to support a variety of interface
+> options: USB 2.0, USB 3.0, PCIe and SATA.
+> 
+> In addition to the pin controller used to assign lanes to pads two PHYs
+> are exposed to allow the bricks for PCIe and SATA to be powered up and
+> down by PCIe and SATA drivers.
 
-Signed-off-by: Nishanth Menon <nm@ti.com>
----
- drivers/regulator/palmas-regulator.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Linus, does the driver look OK? I'm hoping for an ack from you so that I
+can take this series through the Tegra tree to resolve some
+dependencies; we have various other drivers that depend on this series.
 
-diff --git a/drivers/regulator/palmas-regulator.c b/drivers/regulator/palmas-regulator.c
-index f75fb90..d6b734f 100644
---- a/drivers/regulator/palmas-regulator.c
-+++ b/drivers/regulator/palmas-regulator.c
-@@ -41,7 +41,7 @@ static const struct regulator_linear_range smps_high_ranges[] = {
- 	REGULATOR_LINEAR_RANGE(3300000, 0x7A, 0x7f, 0),
- };
- 
--static struct palmas_regs_info palmas_regs_info[] = {
-+static struct palmas_regs_info palmas_generic_regs_info[] = {
- 	{
- 		.name		= "SMPS12",
- 		.sname		= "smps1-in",
-@@ -1417,7 +1417,7 @@ static struct palmas_pmic_driver_data palmas_ddata = {
- 	.ldo_begin = PALMAS_REG_LDO1,
- 	.ldo_end = PALMAS_REG_LDOUSB,
- 	.max_reg = PALMAS_NUM_REGS,
--	.palmas_regs_info = palmas_regs_info,
-+	.palmas_regs_info = palmas_generic_regs_info,
- 	.palmas_matches = palmas_matches,
- 	.sleep_req_info = palma_sleep_req_info,
- 	.smps_register = palmas_smps_registration,
--- 
-1.7.9.5
+Thanks!
