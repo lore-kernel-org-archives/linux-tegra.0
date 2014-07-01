@@ -1,90 +1,63 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH V2 2/6] regulator: palmas: Rename reg_info to
- palmas_reg_info
-Date: Tue, 1 Jul 2014 08:41:05 +0100
-Message-ID: <20140701074105.GB27971@lee--X1>
-References: <1404143859-8160-1-git-send-email-nm@ti.com>
- <1404143859-8160-3-git-send-email-nm@ti.com>
+From: Mikko Perttunen <mperttunen@nvidia.com>
+Subject: Re: [PATCH 4/6] ARM: tegra: Add soctherm and thermal zones to Tegra124
+ device tree
+Date: Tue, 1 Jul 2014 10:49:47 +0300
+Message-ID: <53B2681B.8020805@nvidia.com>
+References: <1403856699-2140-1-git-send-email-mperttunen@nvidia.com> <1403856699-2140-5-git-send-email-mperttunen@nvidia.com> <53B1CD20.3010008@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1404143859-8160-3-git-send-email-nm@ti.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Nishanth Menon <nm@ti.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Keerthy J <j-keerthy@ti.com>, Tero Kristo <t-kristo@ti.com>, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <53B1CD20.3010008@wwwdotorg.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, "rui.zhang@intel.com" <rui.zhang@intel.com>, "edubezval@gmail.com" <edubezval@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Matthew Longnecker <MLongnecker@nvidia.com>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 30 Jun 2014, Nishanth Menon wrote:
+Inline.
 
-> reg_info is a generic term which might cause conflict at a later poin=
-t
-> in time. To prevent such a thing from occuring in future, rename to
-> palmas_reg_info.
->=20
-> Signed-off-by: Nishanth Menon <nm@ti.com>
-> ---
->  drivers/regulator/palmas-regulator.c |    4 ++--
->  include/linux/mfd/palmas.h           |    4 ++--
->  2 files changed, 4 insertions(+), 4 deletions(-)
+On 30/06/14 23:48, Stephen Warren wrote:
+> On 06/27/2014 02:11 AM, Mikko Perttunen wrote:
+>> This adds the soctherm thermal sensing and management unit to the
+>> Tegra124 device tree along with the four thermal zones it exports.
+>
+>> diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+>
+>> +	thermal-zones {
+>> +		cpu {
+>> +			polling-delay-passive = <0>;
+>> +			polling-delay = <0>;
+>
+> I think we should still define a polling delay so that if there's SW
+> that doesn't support HW trip points/interrupts, it still knows how often
+> it should reasonably check the sensor.
+>
+> Perhaps a delay of 0 is used to determine whether to use HW trip points
+> vs polling (I haven't read patch 1 yet)? If so, I'd prefer not to do
+> that. Rather, the driver should advertize its ability to provide HW trip
+> points, and it would be up to the core to then make use of them. The DT
+> should just describe the HW, not assume it can influence SW's choice of
+> whether to use HW trip points.
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
+Yes, a delay of 0 disables polling in the thermal core. (The hw trip 
+code doesn't do anything with it) One way to fix this would be to export 
+a rate changing function in the thermal core and have of-thermal set the 
+polling rate to 0 or the value from device tree depending on if hw trip 
+point programming succeeded or not. This would also be good for error 
+handling, since if hw trip poing programming failed for whatever reason, 
+we could still fall back to polling.
 
-> diff --git a/drivers/regulator/palmas-regulator.c b/drivers/regulator=
-/palmas-regulator.c
-> index 91f60fa..05f11b9 100644
-> --- a/drivers/regulator/palmas-regulator.c
-> +++ b/drivers/regulator/palmas-regulator.c
-> @@ -41,7 +41,7 @@ static const struct regulator_linear_range smps_hig=
-h_ranges[] =3D {
->  	REGULATOR_LINEAR_RANGE(3300000, 0x7A, 0x7f, 0),
->  };
-> =20
-> -static struct regs_info palmas_regs_info[] =3D {
-> +static struct palmas_regs_info palmas_regs_info[] =3D {
->  	{
->  		.name		=3D "SMPS12",
->  		.sname		=3D "smps1-in",
-> @@ -227,7 +227,7 @@ static struct regs_info palmas_regs_info[] =3D {
->  	},
->  };
-> =20
-> -static struct regs_info tps65917_regs_info[] =3D {
-> +static struct palmas_regs_info tps65917_regs_info[] =3D {
->  	{
->  		.name		=3D "SMPS1",
->  		.sname		=3D "smps1-in",
-> diff --git a/include/linux/mfd/palmas.h b/include/linux/mfd/palmas.h
-> index 1a045ba..fb0390a 100644
-> --- a/include/linux/mfd/palmas.h
-> +++ b/include/linux/mfd/palmas.h
-> @@ -102,7 +102,7 @@ struct palmas_sleep_requestor_info {
->  	int bit_pos;
->  };
-> =20
-> -struct regs_info {
-> +struct palmas_regs_info {
->  	char	*name;
->  	char	*sname;
->  	u8	vsel_addr;
-> @@ -117,7 +117,7 @@ struct palmas_pmic_driver_data {
->  	int ldo_begin;
->  	int ldo_end;
->  	int max_reg;
-> -	struct regs_info *palmas_regs_info;
-> +	struct palmas_regs_info *palmas_regs_info;
->  	struct of_regulator_match *palmas_matches;
->  	struct palmas_sleep_requestor_info *sleep_req_info;
->  	int (*smps_register)(struct palmas_pmic *pmic,
+>
+>> +	soctherm: soctherm@0,700e2000 {
+> ...
+>> +		reset-names = "soctherm";
+>> +
+>> +		#thermal-sensor-cells = <1>;
+>
+> I don't see any real need for that blank line. If there was, there would
+> probably be more blank lines in the big list of properties above.
+>
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe linux-omap" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+The reasoning was that #thermal-sensor-cells as a cells-property is a 
+bit different from the rest, so separate them. But I can remove the 
+blank line just as well.
