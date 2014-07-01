@@ -1,64 +1,42 @@
-From: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v2 1/4] of: Add NVIDIA Tegra Legacy Interrupt Controller
- binding
-Date: Tue, 1 Jul 2014 14:10:41 +0100
-Message-ID: <20140701131041.GC6064@leverpostej>
-References: <1403917351-13215-1-git-send-email-thierry.reding@gmail.com>
- <20140630174334.GF28740@leverpostej>
- <53B1AE95.3000602@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [RFC 1/4] ARM: tegra: Move SoC drivers to drivers/soc/tegra
+Date: Tue, 01 Jul 2014 09:05:47 -0600
+Message-ID: <53B2CE4B.2010506@wwwdotorg.org>
+References: <1403888329-24755-1-git-send-email-thierry.reding@gmail.com> <53AEF81D.3080408@ti.com> <20140628204025.GA16415@ulmo> <7497427.LQy8pJts8f@wuerfel> <20140630090118.GA24128@ulmo> <20140630103649.GF28951@arm.com> <20140630104814.GA1495@ulmo> <20140630131628.GA31517@e102568-lin.cambridge.arm.com> <20140630193635.GB32594@mithrandir> <20140701105056.GO18313@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <53B1AE95.3000602-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20140701105056.GO18313-5wv7dgnIgG8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Lorenzo Pieralisi <Lorenzo.Pieralisi-5wv7dgnIgG8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kumar Gala <galak-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jun 30, 2014 at 07:38:13PM +0100, Stephen Warren wrote:
-> On 06/30/2014 11:43 AM, Mark Rutland wrote:
-> > On Sat, Jun 28, 2014 at 02:02:28AM +0100, Thierry Reding wrote:
-> >> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >>
-> >> The Legacy Interrupt Controller found on NVIDIA Tegra SoCs is used by
-> >> the AVP coprocessor and can also serve as a backup for the ARM Cortex
-> >> CPU's local interrupt controller (GIC).
-> >>
-> >> The LIC is subdivided into multiple identical units, each handling 32
-> >> possible interrupt sources.
-> >>
-> >> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >> ---
-> >> Changes in v2:
-> >> - new patch
-> >>
-> >>  .../interrupt-controller/nvidia,tegra20-ictlr.txt     | 19 +++++++++++++++++++
-> >>  1 file changed, 19 insertions(+)
-> >>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt b/Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt
-> >> new file mode 100644
-> >> index 000000000000..c695ec713740
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt
-> >> @@ -0,0 +1,19 @@
-> >> +NVIDIA Tegra Legacy Interrupt Controller
-> >> +
-> >> +The legacy interrupt controller is divided into units that serve 32 interrupts
-> >> +each. Tegra20 implements four units, whereas Tegra30 and later implement five.
-> >> +
-> >> +Required properties:
-> >> +- compatible: "nvidia,tegra<chip>-ictlr"
-> > 
-> > And valid <chip> values are?
+On 07/01/2014 04:50 AM, Catalin Marinas wrote:
+> On Mon, Jun 30, 2014 at 08:36:36PM +0100, Thierry Reding wrote:
+>> On Mon, Jun 30, 2014 at 02:16:34PM +0100, Lorenzo Pieralisi wrote:
+>>> And I think that most of the early bring up issues are just related to
+>>> powering-up/resetting a cpu for it to be booted, probably that's the
+>>> abstraction we should be focusing on, because it should just require poking
+>>> a bunch of registers to kickstart a CPU, no more than that, FW should be
+>>> able to deal with that and that's yet another reason behind PSCI design.
+>>
+>> Right, I agree that if we can push that into PSCI that would be great
+>> (provided there's an open-source implementation of PSCI).
 > 
-> Do you really want us to edit every single binding every time a new chip
-> comes out? Surely just relying NVIDIA's published chip names is fine?
+> At least one (BSD-style license):
 > 
+> https://github.com/ARM-software/arm-trusted-firmware
+> 
+> There are also some patches for U-Boot (only covering secondary CPU
+> booting for now and not merged yet).
 
-While I am not a fan of wildcards in documentation, if you feel this is
-clear as is then feel free to leave it as-is. The example is probably
-sufficient.
+Are the U-Boot patches:
 
-Mark.
+a) Patches to make U-Boot provide a PSCI implementation.
+
+b) Patches to make U-Boot use PSCI as a client.
+
+If you have a link or patch subject to search for, that'd be
+interesting. Thanks.
