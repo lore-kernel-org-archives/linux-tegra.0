@@ -1,53 +1,63 @@
-From: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans-2StjZFpD7GcAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] ARM: convert all "mov.* pc,
-	reg" to "bx reg" for ARMv6+ (part1)
-Date: Tue, 1 Jul 2014 17:42:42 +0100
-Message-ID: <yw1x4mz1f2t9.fsf@unicorn.mansr.com>
-References: <E1X20mL-00083I-Sv@rmk-PC.arm.linux.org.uk>
+From: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [RFC 1/4] ARM: tegra: Move SoC drivers to drivers/soc/tegra
+Date: Tue, 1 Jul 2014 18:00:05 +0100
+Message-ID: <20140701170005.GW18313@arm.com>
+References: <53AEF81D.3080408@ti.com>
+ <20140628204025.GA16415@ulmo>
+ <7497427.LQy8pJts8f@wuerfel>
+ <20140630090118.GA24128@ulmo>
+ <20140630103649.GF28951@arm.com>
+ <20140630104814.GA1495@ulmo>
+ <20140630131628.GA31517@e102568-lin.cambridge.arm.com>
+ <20140630193635.GB32594@mithrandir>
+ <20140701105056.GO18313@arm.com>
+ <53B2CE4B.2010506@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <davinci-linux-open-source-bounces+gld-davinci-linux-open-source=gmane.org-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-In-Reply-To: <E1X20mL-00083I-Sv-eh5Bv4kxaXIANfyc6IWni62ZND6+EDdj@public.gmane.org> (Russell King's
-	message of "Tue, 01 Jul 2014 17:19:33 +0100")
-List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
-	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
-List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
-List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
-	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
-Sender: <davinci-linux-open-source-bounces+gld-davinci-linux-open-source=gmane.org-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
-Errors-To: davinci-linux-open-source-bounces+gld-davinci-linux-open-source=gmane.org-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
-To: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kvm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, xen-devel-GuqFBffKawtpuQazS67q72D2FQJk+8+b@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kvmarm-FPEHb7Xf0XXUo1n7N8X6UoWGPAHP3yOg@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <53B2CE4B.2010506-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lorenzo Pieralisi <Lorenzo.Pieralisi-5wv7dgnIgG8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kumar Gala <galak-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> writes:
+On Tue, Jul 01, 2014 at 04:05:47PM +0100, Stephen Warren wrote:
+> On 07/01/2014 04:50 AM, Catalin Marinas wrote:
+> > On Mon, Jun 30, 2014 at 08:36:36PM +0100, Thierry Reding wrote:
+> >> On Mon, Jun 30, 2014 at 02:16:34PM +0100, Lorenzo Pieralisi wrote:
+> >>> And I think that most of the early bring up issues are just related to
+> >>> powering-up/resetting a cpu for it to be booted, probably that's the
+> >>> abstraction we should be focusing on, because it should just require poking
+> >>> a bunch of registers to kickstart a CPU, no more than that, FW should be
+> >>> able to deal with that and that's yet another reason behind PSCI design.
+> >>
+> >> Right, I agree that if we can push that into PSCI that would be great
+> >> (provided there's an open-source implementation of PSCI).
+> > 
+> > At least one (BSD-style license):
+> > 
+> > https://github.com/ARM-software/arm-trusted-firmware
+> > 
+> > There are also some patches for U-Boot (only covering secondary CPU
+> > booting for now and not merged yet).
+> 
+> Are the U-Boot patches:
+> 
+> a) Patches to make U-Boot provide a PSCI implementation.
+> 
+> b) Patches to make U-Boot use PSCI as a client.
+> 
+> If you have a link or patch subject to search for, that'd be
+> interesting.
 
-> ARMv6 and greater introduced a new instruction ("bx") which can be used
-> to return from function calls.  Recent CPUs perform better when the
-> "bx lr" instruction is used rather than the "mov pc, lr" instruction,
-> and this sequence is strongly recommended to be used by the ARM
-> architecture manual (section A.4.1.1).
->
-> We provide a new macro "ret" with all its variants for the condition
-> code which will resolve to the appropriate instruction.
+It's (a). See the base stuff:
 
-When the source register is not "lr" the name "ret" is a misnomer since
-only the "bx lr" instruction is predicted as a function return.  The
-"bx" instruction with other source registers uses the normal prediction
-mechanisms, leaving the return stack alone, and should not be used for
-function returns.  Any code currently using another register to return
-from a function should probably be modified to use lr instead, unless
-there are special reasons for doing otherwise.  If code jumping to an
-address in a non-lr register is not a return, using the "ret" name will
-make for some rather confusing reading.
+https://git.kernel.org/cgit/linux/kernel/git/maz/u-boot.git/log/?h=wip/psci-v4
 
-I would suggest either using a more neutral name than "ret" or adding an
-alias to be used for non-return jumps so as to make the intent clearer.
+and Allwinner specifics:
 
--- =
+https://git.kernel.org/cgit/linux/kernel/git/maz/u-boot.git/log/?h=wip/psci-v4-a20
 
-M=E5ns Rullg=E5rd
-mans-2StjZFpD7GcAvxtiuMwx3w@public.gmane.org
+-- 
+Catalin
