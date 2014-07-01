@@ -1,40 +1,138 @@
-From: Keerthy <a0393675-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH V2 0/6] regulator: palmas: cleanup and fixes
-Date: Tue, 1 Jul 2014 10:44:03 +0530
-Message-ID: <53B2439B.7060001@ti.com>
-References: <1404143859-8160-1-git-send-email-nm@ti.com> <53B1C6EC.7070907@wwwdotorg.org>
+From: Mikko Perttunen <mperttunen@nvidia.com>
+Subject: Re: [PATCH 1/6] thermal: of: Add support for hardware-tracked trip
+ points
+Date: Tue, 1 Jul 2014 10:27:38 +0300
+Message-ID: <53B262EA.9030806@nvidia.com>
+References: <1403856699-2140-1-git-send-email-mperttunen@nvidia.com> <1403856699-2140-2-git-send-email-mperttunen@nvidia.com> <53B1D1C8.5010907@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53B1C6EC.7070907-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Keerthy J <j-keerthy-l0cyMroinI0@public.gmane.org>, Tero Kristo <t-kristo-l0cyMroinI0@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <53B1D1C8.5010907@wwwdotorg.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, "rui.zhang@intel.com" <rui.zhang@intel.com>, "edubezval@gmail.com" <edubezval@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Matthew Longnecker <MLongnecker@nvidia.com>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 01 July 2014 01:52 AM, Stephen Warren wrote:
-> On 06/30/2014 09:57 AM, Nishanth Menon wrote:
->> Hi,
->> 	Original thread (v1): http://marc.info/?t=140380766500004&r=1&w=2
->> This series is based on: git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git
->> branch: topic/palmas (4c0c9ca Merge remote-tracking branch 'regulator/fix/palmas' into regulator-palmas)
+Inline.
+
+On 01/07/14 00:08, Stephen Warren wrote:
+> On 06/27/2014 02:11 AM, Mikko Perttunen wrote:
+>> This adds support for hardware-tracked trip points to the device tree
+>> thermal sensor framework.
 >>
->> This series does a few cleanups to help ensure we dont make typo mistakes and finally provides a fix as attempted by (v1).
+>> The framework supports an arbitrary number of trip points. Whenever
+>> the current temperature is updated, the trip points immediately
+>> below and above the current temperature are found. A sensor driver
+>> callback `set_trips' is then called with the temperatures.
+>> If there is no trip point above or below the current temperature,
+>> the passed trip temperature will be LONG_MAX or LONG_MIN respectively.
+>> In this callback, the driver should program the hardware such that
+>> it is notified when either of these trip points are triggered.
+>> When a trip point is triggered, the driver should call
+>> `thermal_zone_device_update' for the respective thermal zone. This
+>> will cause the trip points to be updated again.
 >>
->> Basic cpufreq tests performed on OMAP5uEVM, DRA7-evm, DRA72-evm all of which are palmas variants.
->>
->> The patches are also available here: https://github.com/nmenon/linux-2.6-playground/commits/broonie-topic-palmas-fixes
-> The series,
-> Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> If the `set_trips' callback is not implemented (is NULL), the framework
+>> behaves as before.
 >
-> (An NVIDIA Dalmore board boots and shuts down OK with these applied on
-> top of next-20140630, and various peripherals such as LCD panel, audio,
-> USB, and SPI flash all work)
-Tested the series on DRA72 board. Checked for all the regulator
-and SMPS states and voltages of TPS65917 PMIC.
+> Is there no "core thermal" code? I would have expected this new feature
+> to be implemented in "core" code rather than of/dt "support" code.
+> Perhaps there would also be some additions to the of/dt code, but I'd
+> still expect the bulk of the feature to be complete independant of
+> of/dt. Systems still using board files or ACPI or ... would surely
+> benefit from this too?
 
-Tested-by: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
+The thermal core only supports a fixed number of trip points for each 
+driver and the core informs the driver of any changes to those, so 
+drivers using the core framework can already have hardware trip points, 
+but just a fixed number of them.
 
-Regards,
-Keerthy
+The way of-thermal works, is it reads all the trip points from the 
+device tree, registers a new thermal_zone_device with that number of 
+trip points and then handles the trip points completely independently. 
+Of course, if we're just polling, this is fine, since the thermal core
+also knows about those trip points and will trigger cooling when polling 
+the each zone. However, the driver doesn't, so it cannot setup any 
+interrupts to call thermal_zone_device_update.
+
+>
+>> diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-thermal.c
+>
+>> +static int of_thermal_set_trips(struct thermal_zone_device *tz, long temp)
+>
+> s/tz/tzd/ or s/tz/tzdev/ ? Since "tz" says "thermal zone" to me, but
+> it's actually a "thermal zone device".
+
+I followed the existing convention; "tz" is the name used most often by 
+both the core and the of-thermal framework.
+
+>
+>> +	struct __thermal_zone *data = tz->devdata;
+>
+> s/data/tz/ ? "data" is a rather generic term, and "tz" seems like a good
+> abbreviation for a __thermal_zone.
+
+Same, though here both "data" and "tz" seem to be used..
+
+>
+>> +	for (i = 0; i < data->ntrips; ++i) {
+>> +		struct __thermal_trip *trip = data->trips + i;
+>> +		long trip_low = trip->temperature - trip->hysteresis;
+>> +
+>> +		if (trip_low < temp && trip_low > low)
+>> +			low = trip_low;
+>> +
+>> +		if (trip->temperature > temp && trip->temperature < high)
+>> +			high = trip->temperature;
+>> +	}
+>
+> That seems to always apply hysteresis to the low end of a trip object.
+> Don't you need to apply the hysteresis to either the low or high end of
+> the range, depending on whether the temperature is currently below/above
+> the range, and hence which direction the edge will be crossed?
+
+I believe applying only to the low end is correct. Say that we have a 
+trip point at 40C and hysteresis of 2C. When we exceed 40C cooling will 
+start immediately, but it will only be stopped when we cool down to 38C. 
+At that point there is again a 2C gap between the current temperature 
+and the trip point. It would seem that this is the interpretation used 
+by our downstream kernel and also some people on the Internet (however 
+trustworthy they may be..)
+
+If you don't feel this is right, please elaborate.
+
+>
+> Similar comments elsewhere. Perhaps the patch is consistent with some
+> existing confusing naming style though?
+>
+>> +static int of_thermal_update_trips(struct thermal_zone_device *tz)
+>> +{
+>> +	long temp;
+>> +	int err;
+>> +
+>> +	err = of_thermal_get_temp(tz, &temp);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	err = of_thermal_set_trips(tz, temp);
+>
+> Doesn't this patch modify of_thermal_get_temp() to call
+> of_thermal_set_trips() itself?
+
+You're right. I suppose this function is unneeded.
+
+>
+>> @@ -384,7 +467,8 @@ thermal_zone_of_add_sensor(struct device_node *zone,
+>>   struct thermal_zone_device *
+>>   thermal_zone_of_sensor_register(struct device *dev, int sensor_id,
+>>   				void *data, int (*get_temp)(void *, long *),
+>> -				int (*get_trend)(void *, long *))
+>> +				int (*get_trend)(void *, long *),
+>> +				int (*set_trips)(void *, long, long))
+>
+> Passing in a struct containing fields for all the ops seem better than
+> forever extending this function with more and more function pointers.
+>
+
+Very true.
