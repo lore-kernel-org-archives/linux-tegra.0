@@ -1,138 +1,90 @@
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: Re: [PATCH 1/6] thermal: of: Add support for hardware-tracked trip
- points
-Date: Tue, 1 Jul 2014 10:27:38 +0300
-Message-ID: <53B262EA.9030806@nvidia.com>
-References: <1403856699-2140-1-git-send-email-mperttunen@nvidia.com> <1403856699-2140-2-git-send-email-mperttunen@nvidia.com> <53B1D1C8.5010907@wwwdotorg.org>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH V2 2/6] regulator: palmas: Rename reg_info to
+ palmas_reg_info
+Date: Tue, 1 Jul 2014 08:41:05 +0100
+Message-ID: <20140701074105.GB27971@lee--X1>
+References: <1404143859-8160-1-git-send-email-nm@ti.com>
+ <1404143859-8160-3-git-send-email-nm@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <53B1D1C8.5010907@wwwdotorg.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, "rui.zhang@intel.com" <rui.zhang@intel.com>, "edubezval@gmail.com" <edubezval@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Matthew Longnecker <MLongnecker@nvidia.com>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-omap-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1404143859-8160-3-git-send-email-nm@ti.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: Nishanth Menon <nm@ti.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Keerthy J <j-keerthy@ti.com>, Tero Kristo <t-kristo@ti.com>, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Inline.
+On Mon, 30 Jun 2014, Nishanth Menon wrote:
 
-On 01/07/14 00:08, Stephen Warren wrote:
-> On 06/27/2014 02:11 AM, Mikko Perttunen wrote:
->> This adds support for hardware-tracked trip points to the device tree
->> thermal sensor framework.
->>
->> The framework supports an arbitrary number of trip points. Whenever
->> the current temperature is updated, the trip points immediately
->> below and above the current temperature are found. A sensor driver
->> callback `set_trips' is then called with the temperatures.
->> If there is no trip point above or below the current temperature,
->> the passed trip temperature will be LONG_MAX or LONG_MIN respectively.
->> In this callback, the driver should program the hardware such that
->> it is notified when either of these trip points are triggered.
->> When a trip point is triggered, the driver should call
->> `thermal_zone_device_update' for the respective thermal zone. This
->> will cause the trip points to be updated again.
->>
->> If the `set_trips' callback is not implemented (is NULL), the framework
->> behaves as before.
->
-> Is there no "core thermal" code? I would have expected this new feature
-> to be implemented in "core" code rather than of/dt "support" code.
-> Perhaps there would also be some additions to the of/dt code, but I'd
-> still expect the bulk of the feature to be complete independant of
-> of/dt. Systems still using board files or ACPI or ... would surely
-> benefit from this too?
+> reg_info is a generic term which might cause conflict at a later poin=
+t
+> in time. To prevent such a thing from occuring in future, rename to
+> palmas_reg_info.
+>=20
+> Signed-off-by: Nishanth Menon <nm@ti.com>
+> ---
+>  drivers/regulator/palmas-regulator.c |    4 ++--
+>  include/linux/mfd/palmas.h           |    4 ++--
+>  2 files changed, 4 insertions(+), 4 deletions(-)
 
-The thermal core only supports a fixed number of trip points for each 
-driver and the core informs the driver of any changes to those, so 
-drivers using the core framework can already have hardware trip points, 
-but just a fixed number of them.
+Acked-by: Lee Jones <lee.jones@linaro.org>
 
-The way of-thermal works, is it reads all the trip points from the 
-device tree, registers a new thermal_zone_device with that number of 
-trip points and then handles the trip points completely independently. 
-Of course, if we're just polling, this is fine, since the thermal core
-also knows about those trip points and will trigger cooling when polling 
-the each zone. However, the driver doesn't, so it cannot setup any 
-interrupts to call thermal_zone_device_update.
+> diff --git a/drivers/regulator/palmas-regulator.c b/drivers/regulator=
+/palmas-regulator.c
+> index 91f60fa..05f11b9 100644
+> --- a/drivers/regulator/palmas-regulator.c
+> +++ b/drivers/regulator/palmas-regulator.c
+> @@ -41,7 +41,7 @@ static const struct regulator_linear_range smps_hig=
+h_ranges[] =3D {
+>  	REGULATOR_LINEAR_RANGE(3300000, 0x7A, 0x7f, 0),
+>  };
+> =20
+> -static struct regs_info palmas_regs_info[] =3D {
+> +static struct palmas_regs_info palmas_regs_info[] =3D {
+>  	{
+>  		.name		=3D "SMPS12",
+>  		.sname		=3D "smps1-in",
+> @@ -227,7 +227,7 @@ static struct regs_info palmas_regs_info[] =3D {
+>  	},
+>  };
+> =20
+> -static struct regs_info tps65917_regs_info[] =3D {
+> +static struct palmas_regs_info tps65917_regs_info[] =3D {
+>  	{
+>  		.name		=3D "SMPS1",
+>  		.sname		=3D "smps1-in",
+> diff --git a/include/linux/mfd/palmas.h b/include/linux/mfd/palmas.h
+> index 1a045ba..fb0390a 100644
+> --- a/include/linux/mfd/palmas.h
+> +++ b/include/linux/mfd/palmas.h
+> @@ -102,7 +102,7 @@ struct palmas_sleep_requestor_info {
+>  	int bit_pos;
+>  };
+> =20
+> -struct regs_info {
+> +struct palmas_regs_info {
+>  	char	*name;
+>  	char	*sname;
+>  	u8	vsel_addr;
+> @@ -117,7 +117,7 @@ struct palmas_pmic_driver_data {
+>  	int ldo_begin;
+>  	int ldo_end;
+>  	int max_reg;
+> -	struct regs_info *palmas_regs_info;
+> +	struct palmas_regs_info *palmas_regs_info;
+>  	struct of_regulator_match *palmas_matches;
+>  	struct palmas_sleep_requestor_info *sleep_req_info;
+>  	int (*smps_register)(struct palmas_pmic *pmic,
 
->
->> diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-thermal.c
->
->> +static int of_thermal_set_trips(struct thermal_zone_device *tz, long temp)
->
-> s/tz/tzd/ or s/tz/tzdev/ ? Since "tz" says "thermal zone" to me, but
-> it's actually a "thermal zone device".
-
-I followed the existing convention; "tz" is the name used most often by 
-both the core and the of-thermal framework.
-
->
->> +	struct __thermal_zone *data = tz->devdata;
->
-> s/data/tz/ ? "data" is a rather generic term, and "tz" seems like a good
-> abbreviation for a __thermal_zone.
-
-Same, though here both "data" and "tz" seem to be used..
-
->
->> +	for (i = 0; i < data->ntrips; ++i) {
->> +		struct __thermal_trip *trip = data->trips + i;
->> +		long trip_low = trip->temperature - trip->hysteresis;
->> +
->> +		if (trip_low < temp && trip_low > low)
->> +			low = trip_low;
->> +
->> +		if (trip->temperature > temp && trip->temperature < high)
->> +			high = trip->temperature;
->> +	}
->
-> That seems to always apply hysteresis to the low end of a trip object.
-> Don't you need to apply the hysteresis to either the low or high end of
-> the range, depending on whether the temperature is currently below/above
-> the range, and hence which direction the edge will be crossed?
-
-I believe applying only to the low end is correct. Say that we have a 
-trip point at 40C and hysteresis of 2C. When we exceed 40C cooling will 
-start immediately, but it will only be stopped when we cool down to 38C. 
-At that point there is again a 2C gap between the current temperature 
-and the trip point. It would seem that this is the interpretation used 
-by our downstream kernel and also some people on the Internet (however 
-trustworthy they may be..)
-
-If you don't feel this is right, please elaborate.
-
->
-> Similar comments elsewhere. Perhaps the patch is consistent with some
-> existing confusing naming style though?
->
->> +static int of_thermal_update_trips(struct thermal_zone_device *tz)
->> +{
->> +	long temp;
->> +	int err;
->> +
->> +	err = of_thermal_get_temp(tz, &temp);
->> +	if (err)
->> +		return err;
->> +
->> +	err = of_thermal_set_trips(tz, temp);
->
-> Doesn't this patch modify of_thermal_get_temp() to call
-> of_thermal_set_trips() itself?
-
-You're right. I suppose this function is unneeded.
-
->
->> @@ -384,7 +467,8 @@ thermal_zone_of_add_sensor(struct device_node *zone,
->>   struct thermal_zone_device *
->>   thermal_zone_of_sensor_register(struct device *dev, int sensor_id,
->>   				void *data, int (*get_temp)(void *, long *),
->> -				int (*get_trend)(void *, long *))
->> +				int (*get_trend)(void *, long *),
->> +				int (*set_trips)(void *, long, long))
->
-> Passing in a struct containing fields for all the ops seem better than
-> forever extending this function with more and more function pointers.
->
-
-Very true.
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe linux-omap" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
