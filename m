@@ -1,96 +1,43 @@
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: Re: [PATCH 6/6] thermal: Add Tegra SOCTHERM thermal management driver
-Date: Tue, 1 Jul 2014 11:06:10 +0300
-Message-ID: <53B26BF2.7090009@nvidia.com>
-References: <1403856699-2140-1-git-send-email-mperttunen@nvidia.com> <1403856699-2140-7-git-send-email-mperttunen@nvidia.com> <53B1D538.6000704@wwwdotorg.org>
+From: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [RFC 1/4] ARM: tegra: Move SoC drivers to drivers/soc/tegra
+Date: Tue, 1 Jul 2014 11:50:56 +0100
+Message-ID: <20140701105056.GO18313@arm.com>
+References: <1403888329-24755-1-git-send-email-thierry.reding@gmail.com>
+ <53AEF81D.3080408@ti.com>
+ <20140628204025.GA16415@ulmo>
+ <7497427.LQy8pJts8f@wuerfel>
+ <20140630090118.GA24128@ulmo>
+ <20140630103649.GF28951@arm.com>
+ <20140630104814.GA1495@ulmo>
+ <20140630131628.GA31517@e102568-lin.cambridge.arm.com>
+ <20140630193635.GB32594@mithrandir>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <53B1D538.6000704@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, "rui.zhang@intel.com" <rui.zhang@intel.com>, "edubezval@gmail.com" <edubezval@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Matthew Longnecker <MLongnecker@nvidia.com>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20140630193635.GB32594@mithrandir>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Lorenzo Pieralisi <Lorenzo.Pieralisi-5wv7dgnIgG8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kumar Gala <galak-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Inline.
+On Mon, Jun 30, 2014 at 08:36:36PM +0100, Thierry Reding wrote:
+> On Mon, Jun 30, 2014 at 02:16:34PM +0100, Lorenzo Pieralisi wrote:
+> > And I think that most of the early bring up issues are just related to
+> > powering-up/resetting a cpu for it to be booted, probably that's the
+> > abstraction we should be focusing on, because it should just require poking
+> > a bunch of registers to kickstart a CPU, no more than that, FW should be
+> > able to deal with that and that's yet another reason behind PSCI design.
+> 
+> Right, I agree that if we can push that into PSCI that would be great
+> (provided there's an open-source implementation of PSCI).
 
-On 01/07/14 00:23, Stephen Warren wrote:
-> On 06/27/2014 02:11 AM, Mikko Perttunen wrote:
->> This adds support for the Tegra SOCTHERM thermal sensing and management
->> system found in the Tegra124 system-on-chip. This initial driver supports
->> the four thermal zones with hardware-tracked trip points.
->
->> diff --git a/drivers/thermal/tegra_soctherm.c b/drivers/thermal/tegra_soctherm.c
->
->> +static struct tegra_tsensor t124_tsensors[] = {
->> +	{
->> +		.base = 0xc0,
->> +		.name = "cpu0",
->> +		.config = &t124_tsensor_config,
->> +		.calib_fuse_offset = 0x098,
->> +		.fuse_corr_alpha = 1135400,
->> +		.fuse_corr_beta = -6266900,
->> +	},
->
-> I wonder why some of those fields are named "fuse_xxx" when the values
-> are hard-coded in these tables rather than read from fuses? These values
-> don't seem to be used to adjust values read from fuses.
+At least one (BSD-style license):
 
-They are used to when calculating the thermal calibration in 
-calculate_tsensor_calibration, which is based on the value read from the 
-fuse. Downstream calls them fuse correction values, so I kept that. (I 
-guess the meaning of corr might not be obvious..) On downstream there is 
-another set of these correction values used depending on the fuse 
-revision, but I believe the older revision is only found internally.
+https://github.com/ARM-software/arm-trusted-firmware
 
->
->> +static int tegra_thermctl_get_temp(void *data, long *out_temp)
->
->> +	switch (zone->sensor) {
->> +	case 0:
->> +		val = readl(zone->tegra->regs + SENSOR_TEMP1)
->> +			>> SENSOR_TEMP1_CPU_TEMP_SHIFT;
->
-> Can't the register offset and shift be stored in *zone, so that this
-> whole switch can be replaced with something generic:
->
-> val = readl(zone->tegra->regs + zone->reg_offset) >> zone->value_shift;
+There are also some patches for U-Boot (only covering secondary CPU
+booting for now and not merged yet).
 
-Yes, certainly doable.
-
->
->> +static int tegra_soctherm_probe(struct platform_device *pdev)
->
->> +	irq = platform_get_irq(pdev, 0);
->> +	if (irq <= 0) {
->> +		dev_err(&pdev->dev, "can't get interrupt\n");
->> +		return -EINVAL;
->> +	}
->
-> irq is assigned once here ... (see later)
->
->> +	for (i = 0; i < 4; ++i) {
->
-> Why "4"? Should the loop count be the ARRAY_SIZE(some array)? At the
-> very least, a named constant that describes the value would be useful...
-
-The thermctl sensors have been unchanged for a few chip generations, so 
-I was thinking that just hardcoding this wouldn't be so bad. But I guess
-an array would look nicer here. Will fix.
-
->
->> +		err = devm_request_threaded_irq(&pdev->dev, irq, soctherm_isr,
->> +						soctherm_isr_thread,
->> +						IRQF_SHARED, "tegra_soctherm",
->> +						zone);
->
-> Why request the same IRQ 4 times here. Rather, shouldn't the IRQ be
-> requested once, and the ISR simply loop over the status register (or
-> whatever there are 4 of)?
->
-
-I had that variant as well, but since we need to pass the list of 
-tripped sensors to soctherm_isr_thread somehow, I guess some kind of 
-locking or atomic is needed. This version doesn't need that, so I went 
-with it.
+-- 
+Catalin
