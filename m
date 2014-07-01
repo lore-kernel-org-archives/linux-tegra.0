@@ -1,74 +1,70 @@
-From: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
-Subject: Re: [PATCH] ARM: convert all "mov.* pc, reg" to "bx reg" for ARMv6+ (part1)
-Date: Tue, 01 Jul 2014 21:04:15 +0100
-Message-ID: <yw1xvbrgethc.fsf@unicorn.mansr.com>
-References: <E1X20mL-00083I-Sv@rmk-PC.arm.linux.org.uk>
-	<yw1x4mz1f2t9.fsf@unicorn.mansr.com>
-	<20140701171346.GP3705@n2100.arm.linux.org.uk>
-	<yw1xzjgtdmas.fsf@unicorn.mansr.com> <20140701173547.GW28164@arm.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-Reply-To: <20140701173547.GW28164@arm.com> (Will Deacon's message of "Tue,
-	1 Jul 2014 18:35:47 +0100")
-Sender: linux-crypto-owner@vger.kernel.org
-To: Will Deacon <will.deacon@arm.com>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [pinmux scripts PATCH] Import latest Venice2 spreadsheet
+Date: Tue,  1 Jul 2014 14:28:55 -0600
+Message-ID: <1404246535-19690-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Will Deacon <will.deacon@arm.com> writes:
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-> Hi Mans,
->
-> On Tue, Jul 01, 2014 at 06:24:43PM +0100, M=E5ns Rullg=E5rd wrote:
->> Russell King - ARM Linux <linux@arm.linux.org.uk> writes:
->> > As you point out, "bx lr" /may/ be treated specially (I've actuall=
-y been
->>=20
->> Most, if not all, Cortex-A cores do this according the public TRMs.
->> They also do the same thing for "mov pc, lr" so there will probably =
-be
->> no performance gain from this change.  It's still a good idea though=
-,
->> since we don't know what future cores will do.
->
-> Funnily enough, that's not actually true (and is more or less what pr=
-ompted
-> this patch after discussion with Russell). There are cores out there =
-that
-> don't predict mov pc, lr at all (let alone do anything with the retur=
-n
-> stack).
+A few fixes were made to the spreadsheet, including one that removes the
+need for the special-case in the import script.
 
-Even ones where the TRM says they do?  I suppose the only way to know
-for sure is to measure it.
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+I evidently forgot to send this out when I imported the new data. Since
+this data is already included in U-Boot, I'll apply this immediately.
 
->> > discussing this with Will Deacon over the last couple of days, who=
- has
->> > also been talking to the hardware people in ARM, and Will is happy=
- with
->> > this patch as in its current form.)  This is why I've changed all
->> > "mov pc, reg" instructions which return in some way to use this ma=
-cro,
->> > and left others (those which are used to call some function and re=
-turn
->> > back to the same point) alone.
->>=20
->> In that case the patch should be fine.  Your patch description didn'=
-t
->> make it clear that only actual returns were being changed.
->
-> I'm led to believe that some predictors require lr in order to update=
- the
-> return stack, whilst others don't. That part is all horribly
-> micro-architectural, so the current patch is doing the right thing by
-> sticking to the ARM ARM but enabling us to hook into other registers =
-later
-> on if we choose.
+ configs/venice2.board         | 8 ++++----
+ csv-to-board-tegra124-xlsx.py | 4 ----
+ 2 files changed, 4 insertions(+), 8 deletions(-)
 
-Agreed.
-
---=20
-M=E5ns Rullg=E5rd
-mans@mansr.com
+diff --git a/configs/venice2.board b/configs/venice2.board
+index 49f8bbf31bef..ea888e8879d4 100644
+--- a/configs/venice2.board
++++ b/configs/venice2.board
+@@ -83,7 +83,7 @@ pins = (
+     ('pi3',                    'spi4',        None,      'none', False, False, False, False),
+     ('pi6',                    None,          'in',      'none', False, True,  False, False),
+     ('pi2',                    None,          'out0',    'none', False, False, False, False),
+-    ('pi5',                    'rsvd2',       None,      'up',   True,  False, False, False),
++    ('pi5',                    None,          'out1',    'none', False, False, False, False),
+     ('pi1',                    None,          'in',      'none', False, True,  False, False),
+     ('pi4',                    None,          'out0',    'none', False, False, False, False),
+     ('pi7',                    'rsvd1',       None,      'down', True,  False, False, False),
+@@ -125,12 +125,12 @@ pins = (
+     ('sdmmc4_dat7_paa7',       'sdmmc4',      None,      'up',   False, True,  False, False),
+     ('kb_col0_pq0',            None,          'in',      'none', False, True,  False, False),
+     ('kb_col1_pq1',            'rsvd2',       None,      'down', True,  False, False, False),
+-    ('kb_col2_pq2',            'rsvd2',       None,      'down', True,  False, False, False),
++    ('kb_col2_pq2',            None,          'in',      'up',   False, True,  False, False),
+     ('kb_col3_pq3',            None,          'in',      'none', False, True,  False, False),
+     ('kb_col4_pq4',            'sdmmc3',      None,      'up',   False, True,  False, False),
+     ('kb_col5_pq5',            'rsvd2',       None,      'down', True,  False, False, False),
+-    ('kb_col6_pq6',            'rsvd2',       None,      'down', True,  False, False, False),
+-    ('kb_col7_pq7',            'rsvd2',       None,      'down', True,  False, False, False),
++    ('kb_col6_pq6',            None,          'in',      'up',   False, True,  False, False),
++    ('kb_col7_pq7',            None,          'in',      'up',   False, True,  False, False),
+     ('kb_row0_pr0',            None,          'out0',    'none', False, False, False, False),
+     ('kb_row1_pr1',            None,          'in',      'none', False, True,  False, False),
+     ('kb_row10_ps2',           'uarta',       None,      'none', False, True,  False, False),
+diff --git a/csv-to-board-tegra124-xlsx.py b/csv-to-board-tegra124-xlsx.py
+index b40cf8173136..f99fda18e70e 100755
+--- a/csv-to-board-tegra124-xlsx.py
++++ b/csv-to-board-tegra124-xlsx.py
+@@ -200,10 +200,6 @@ with open(csvfile, newline='') as fh:
+         else:
+             gpio_init = None
+ 
+-        # FIXME: The spreadsheet should be fixed...
+-        if (args.board == 'venice2') and (ball_name == 'gpio_pi5'):
+-            pupd = 'up'
+-
+         gpio_pin = soc.gpio_or_pin_by_name(ball_name)
+         for i, func in enumerate((f0, f1, f2, f3)):
+             if func != gpio_pin.funcs[i]:
+-- 
+1.8.1.5
