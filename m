@@ -1,60 +1,96 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC 1/4] ARM: tegra: Move SoC drivers to drivers/soc/tegra
-Date: Tue, 1 Jul 2014 10:51:44 +0300
-Message-ID: <20140701075144.GX3679@tbergstrom-lnx.Nvidia.com>
-References: <1403888329-24755-1-git-send-email-thierry.reding@gmail.com>
- <53AEF81D.3080408@ti.com> <20140628204025.GA16415@ulmo>
- <7497427.LQy8pJts8f@wuerfel> <20140630192121.GA32594@mithrandir>
+From: Mikko Perttunen <mperttunen@nvidia.com>
+Subject: Re: [PATCH 6/6] thermal: Add Tegra SOCTHERM thermal management driver
+Date: Tue, 1 Jul 2014 11:06:10 +0300
+Message-ID: <53B26BF2.7090009@nvidia.com>
+References: <1403856699-2140-1-git-send-email-mperttunen@nvidia.com> <1403856699-2140-7-git-send-email-mperttunen@nvidia.com> <53B1D538.6000704@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20140630192121.GA32594@mithrandir>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kumar Gala <galak-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <53B1D538.6000704@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, "rui.zhang@intel.com" <rui.zhang@intel.com>, "edubezval@gmail.com" <edubezval@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Matthew Longnecker <MLongnecker@nvidia.com>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jun 30, 2014 at 09:21:22PM +0200, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Mon, Jun 30, 2014 at 09:20:30AM +0200, Arnd Bergmann wrote:
-> > On Saturday 28 June 2014 22:40:26 Thierry Reding wrote:
-> > > > > pmc.c implements various routines to access the power management
-> > > > > controller, some of which is needed by suspend/resume, some of it is
-> > > > > needed by SMP. powergate.c implements a subset of the PMC that needs to
-> > > > > be exported to drivers to enable power partitions on the SoC. I'm not
-> > > > > aware of subsystems that deal with this kind of driver.
-> > > > >
-> > > > Please see above.
-> > > 
-> > > Like I said, I don't see what business suspend/resume related code has
-> > > in drivers/power. What we're talking about here really is functionality
-> > > very specific to Tegra. Also some of that code needs to be run at very
-> > > early points in the boot process, so we can't reasonably turn it into a
-> > > proper driver anyway.
-> > 
-> > I believe the powergate.c stuff can be changed into pm_domain code, but
-> > we don't have a good subsystem with generic DT bindings yet, so that
-> > may need some more groundwork first. drivers/power or a subdirectory
-> > of that may end up being the right place though.
-> 
-> So I ended up implementing the powergates as generic_pm_domain, but that
-> breaks existing drivers currently. The reason is that generic_pm_domains
-> are automatically turned off on suspend and turned back on on resume. On
-> Tegra if a partition is powered off then the whole module looses state
-> and would need to be completely reinitialized. None of the drivers
-> currently support that and I'm also not sure if it's really what we want
-> since it means for example redetecting links and reenumerating devices
-> on PCI, or probing display outputs in DRM. That's going to take a lot of
-> time and may not be appropriate for suspend-to-RAM.
-> 
-> Unfortunately I haven't found a way to force a domain to remain powered
-> during suspend/resume.
+Inline.
 
-If we make power off a NOP until LP0 gets implemented? Then device state
-will have to be saved/restored.
+On 01/07/14 00:23, Stephen Warren wrote:
+> On 06/27/2014 02:11 AM, Mikko Perttunen wrote:
+>> This adds support for the Tegra SOCTHERM thermal sensing and management
+>> system found in the Tegra124 system-on-chip. This initial driver supports
+>> the four thermal zones with hardware-tracked trip points.
+>
+>> diff --git a/drivers/thermal/tegra_soctherm.c b/drivers/thermal/tegra_soctherm.c
+>
+>> +static struct tegra_tsensor t124_tsensors[] = {
+>> +	{
+>> +		.base = 0xc0,
+>> +		.name = "cpu0",
+>> +		.config = &t124_tsensor_config,
+>> +		.calib_fuse_offset = 0x098,
+>> +		.fuse_corr_alpha = 1135400,
+>> +		.fuse_corr_beta = -6266900,
+>> +	},
+>
+> I wonder why some of those fields are named "fuse_xxx" when the values
+> are hard-coded in these tables rather than read from fuses? These values
+> don't seem to be used to adjust values read from fuses.
 
-Cheers,
+They are used to when calculating the thermal calibration in 
+calculate_tsensor_calibration, which is based on the value read from the 
+fuse. Downstream calls them fuse correction values, so I kept that. (I 
+guess the meaning of corr might not be obvious..) On downstream there is 
+another set of these correction values used depending on the fuse 
+revision, but I believe the older revision is only found internally.
 
-Peter.
+>
+>> +static int tegra_thermctl_get_temp(void *data, long *out_temp)
+>
+>> +	switch (zone->sensor) {
+>> +	case 0:
+>> +		val = readl(zone->tegra->regs + SENSOR_TEMP1)
+>> +			>> SENSOR_TEMP1_CPU_TEMP_SHIFT;
+>
+> Can't the register offset and shift be stored in *zone, so that this
+> whole switch can be replaced with something generic:
+>
+> val = readl(zone->tegra->regs + zone->reg_offset) >> zone->value_shift;
+
+Yes, certainly doable.
+
+>
+>> +static int tegra_soctherm_probe(struct platform_device *pdev)
+>
+>> +	irq = platform_get_irq(pdev, 0);
+>> +	if (irq <= 0) {
+>> +		dev_err(&pdev->dev, "can't get interrupt\n");
+>> +		return -EINVAL;
+>> +	}
+>
+> irq is assigned once here ... (see later)
+>
+>> +	for (i = 0; i < 4; ++i) {
+>
+> Why "4"? Should the loop count be the ARRAY_SIZE(some array)? At the
+> very least, a named constant that describes the value would be useful...
+
+The thermctl sensors have been unchanged for a few chip generations, so 
+I was thinking that just hardcoding this wouldn't be so bad. But I guess
+an array would look nicer here. Will fix.
+
+>
+>> +		err = devm_request_threaded_irq(&pdev->dev, irq, soctherm_isr,
+>> +						soctherm_isr_thread,
+>> +						IRQF_SHARED, "tegra_soctherm",
+>> +						zone);
+>
+> Why request the same IRQ 4 times here. Rather, shouldn't the IRQ be
+> requested once, and the ISR simply loop over the status register (or
+> whatever there are 4 of)?
+>
+
+I had that variant as well, but since we need to pass the list of 
+tripped sensors to soctherm_isr_thread somehow, I guess some kind of 
+locking or atomic is needed. This version doesn't need that, so I went 
+with it.
