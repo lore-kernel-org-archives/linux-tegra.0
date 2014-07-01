@@ -1,63 +1,60 @@
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: Re: [PATCH 4/6] ARM: tegra: Add soctherm and thermal zones to Tegra124
- device tree
-Date: Tue, 1 Jul 2014 10:49:47 +0300
-Message-ID: <53B2681B.8020805@nvidia.com>
-References: <1403856699-2140-1-git-send-email-mperttunen@nvidia.com> <1403856699-2140-5-git-send-email-mperttunen@nvidia.com> <53B1CD20.3010008@wwwdotorg.org>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC 1/4] ARM: tegra: Move SoC drivers to drivers/soc/tegra
+Date: Tue, 1 Jul 2014 10:51:44 +0300
+Message-ID: <20140701075144.GX3679@tbergstrom-lnx.Nvidia.com>
+References: <1403888329-24755-1-git-send-email-thierry.reding@gmail.com>
+ <53AEF81D.3080408@ti.com> <20140628204025.GA16415@ulmo>
+ <7497427.LQy8pJts8f@wuerfel> <20140630192121.GA32594@mithrandir>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <53B1CD20.3010008@wwwdotorg.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, "rui.zhang@intel.com" <rui.zhang@intel.com>, "edubezval@gmail.com" <edubezval@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Matthew Longnecker <MLongnecker@nvidia.com>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20140630192121.GA32594@mithrandir>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kumar Gala <galak-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Inline.
+On Mon, Jun 30, 2014 at 09:21:22PM +0200, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Mon, Jun 30, 2014 at 09:20:30AM +0200, Arnd Bergmann wrote:
+> > On Saturday 28 June 2014 22:40:26 Thierry Reding wrote:
+> > > > > pmc.c implements various routines to access the power management
+> > > > > controller, some of which is needed by suspend/resume, some of it is
+> > > > > needed by SMP. powergate.c implements a subset of the PMC that needs to
+> > > > > be exported to drivers to enable power partitions on the SoC. I'm not
+> > > > > aware of subsystems that deal with this kind of driver.
+> > > > >
+> > > > Please see above.
+> > > 
+> > > Like I said, I don't see what business suspend/resume related code has
+> > > in drivers/power. What we're talking about here really is functionality
+> > > very specific to Tegra. Also some of that code needs to be run at very
+> > > early points in the boot process, so we can't reasonably turn it into a
+> > > proper driver anyway.
+> > 
+> > I believe the powergate.c stuff can be changed into pm_domain code, but
+> > we don't have a good subsystem with generic DT bindings yet, so that
+> > may need some more groundwork first. drivers/power or a subdirectory
+> > of that may end up being the right place though.
+> 
+> So I ended up implementing the powergates as generic_pm_domain, but that
+> breaks existing drivers currently. The reason is that generic_pm_domains
+> are automatically turned off on suspend and turned back on on resume. On
+> Tegra if a partition is powered off then the whole module looses state
+> and would need to be completely reinitialized. None of the drivers
+> currently support that and I'm also not sure if it's really what we want
+> since it means for example redetecting links and reenumerating devices
+> on PCI, or probing display outputs in DRM. That's going to take a lot of
+> time and may not be appropriate for suspend-to-RAM.
+> 
+> Unfortunately I haven't found a way to force a domain to remain powered
+> during suspend/resume.
 
-On 30/06/14 23:48, Stephen Warren wrote:
-> On 06/27/2014 02:11 AM, Mikko Perttunen wrote:
->> This adds the soctherm thermal sensing and management unit to the
->> Tegra124 device tree along with the four thermal zones it exports.
->
->> diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
->
->> +	thermal-zones {
->> +		cpu {
->> +			polling-delay-passive = <0>;
->> +			polling-delay = <0>;
->
-> I think we should still define a polling delay so that if there's SW
-> that doesn't support HW trip points/interrupts, it still knows how often
-> it should reasonably check the sensor.
->
-> Perhaps a delay of 0 is used to determine whether to use HW trip points
-> vs polling (I haven't read patch 1 yet)? If so, I'd prefer not to do
-> that. Rather, the driver should advertize its ability to provide HW trip
-> points, and it would be up to the core to then make use of them. The DT
-> should just describe the HW, not assume it can influence SW's choice of
-> whether to use HW trip points.
+If we make power off a NOP until LP0 gets implemented? Then device state
+will have to be saved/restored.
 
-Yes, a delay of 0 disables polling in the thermal core. (The hw trip 
-code doesn't do anything with it) One way to fix this would be to export 
-a rate changing function in the thermal core and have of-thermal set the 
-polling rate to 0 or the value from device tree depending on if hw trip 
-point programming succeeded or not. This would also be good for error 
-handling, since if hw trip poing programming failed for whatever reason, 
-we could still fall back to polling.
+Cheers,
 
->
->> +	soctherm: soctherm@0,700e2000 {
-> ...
->> +		reset-names = "soctherm";
->> +
->> +		#thermal-sensor-cells = <1>;
->
-> I don't see any real need for that blank line. If there was, there would
-> probably be more blank lines in the big list of properties above.
->
-
-The reasoning was that #thermal-sensor-cells as a cells-property is a 
-bit different from the rest, so separate them. But I can remove the 
-blank line just as well.
+Peter.
