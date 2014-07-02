@@ -1,7 +1,7 @@
 From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH 3/4] drm/panel: LG LH500WX1-SD03 uses continuous clock
-Date: Wed,  2 Jul 2014 21:19:19 +0900
-Message-ID: <1404303560-32209-4-git-send-email-acourbot@nvidia.com>
+Subject: [PATCH 4/4] ARM: tegra: roth: add display DT node
+Date: Wed,  2 Jul 2014 21:19:20 +0900
+Message-ID: <1404303560-32209-5-git-send-email-acourbot@nvidia.com>
 References: <1404303560-32209-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,26 +21,79 @@ To: Thierry Reding <thierry.reding@gmail.com>, Terje Bergstrom <tbergstrom@nvidi
 Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-This panel can only operate in continuous clock behavior, so set the
-appropriate flag to inform host drivers of this fact.
+DSI support has been fixed to support continuous clock behavior that the
+panel used on SHIELD requires, so finally add its device tree node since
+it is functional.
 
 Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
- drivers/gpu/drm/panel/panel-simple.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/tegra114-roth.dts | 23 ++++++++++++++++++++---
+ 1 file changed, 20 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index a251361..428cdf3 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -572,7 +572,7 @@ static const struct panel_desc_dsi lg_lh500wx1_sd03 = {
- 			.height = 110,
- 		},
- 	},
--	.flags = MIPI_DSI_MODE_VIDEO,
-+	.flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_CLOCK_CONTINUOUS,
- 	.format = MIPI_DSI_FMT_RGB888,
- 	.lanes = 4,
- };
+diff --git a/arch/arm/boot/dts/tegra114-roth.dts b/arch/arm/boot/dts/tegra114-roth.dts
+index ba210c6..c03c853 100644
+--- a/arch/arm/boot/dts/tegra114-roth.dts
++++ b/arch/arm/boot/dts/tegra114-roth.dts
+@@ -28,6 +28,22 @@
+ 		reg = <0x80000000 0x79600000>;
+ 	};
+ 
++	host1x@50000000 {
++		dsi@54300000 {
++			status = "okay";
++
++			vdd-supply = <&vdd_1v2_ap>;
++
++			panel@0 {
++				compatible = "lg,lh500wx1-sd03";
++				reg = <0>;
++
++				power-supply = <&vdd_lcd>;
++				backlight = <&backlight>;
++			};
++		};
++	};
++
+ 	pinmux@70000868 {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&state_default>;
+@@ -811,7 +827,6 @@
+ 						regulator-name = "vdd-1v8";
+ 						regulator-min-microvolt = <1800000>;
+ 						regulator-max-microvolt = <1800000>;
+-						regulator-always-on;
+ 						regulator-boot-on;
+ 					};
+ 
+@@ -858,10 +873,11 @@
+ 						regulator-name = "vdd-2v8-display";
+ 						regulator-min-microvolt = <2800000>;
+ 						regulator-max-microvolt = <2800000>;
++						regulator-always-on;
+ 						regulator-boot-on;
+ 					};
+ 
+-					ldo3 {
++					vdd_1v2_ap: ldo3 {
+ 						regulator-name = "avdd-1v2";
+ 						regulator-min-microvolt = <1200000>;
+ 						regulator-max-microvolt = <1200000>;
+@@ -1048,7 +1064,7 @@
+ 			regulator-boot-on;
+ 		};
+ 
+-		regulator@1 {
++		vdd_lcd: regulator@1 {
+ 			compatible = "regulator-fixed";
+ 			reg = <1>;
+ 			regulator-name = "vdd_lcd_1v8";
+@@ -1057,6 +1073,7 @@
+ 			vin-supply = <&vdd_1v8>;
+ 			enable-active-high;
+ 			gpio = <&gpio TEGRA_GPIO(U, 4) GPIO_ACTIVE_HIGH>;
++			regulator-always-on;
+ 			regulator-boot-on;
+ 		};
+ 
 -- 
 2.0.0
