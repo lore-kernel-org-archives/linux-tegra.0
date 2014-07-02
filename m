@@ -1,99 +1,33 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH 4/4] ARM: tegra: roth: add display DT node
-Date: Wed,  2 Jul 2014 21:19:20 +0900
-Message-ID: <1404303560-32209-5-git-send-email-acourbot@nvidia.com>
-References: <1404303560-32209-1-git-send-email-acourbot@nvidia.com>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH 0/3] Tegra USB probe order issue fix
+Date: Wed, 2 Jul 2014 10:02:32 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1407021001290.874-100000@iolanthe.rowland.org>
+References: <1404248923-21086-1-git-send-email-ttynkkynen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1404303560-32209-1-git-send-email-acourbot@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>, Terje Bergstrom <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1404248923-21086-1-git-send-email-ttynkkynen@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Warren <swarren@wwwdotorg.org>, Felipe Balbi <balbi@ti.com>, Philipp Zabel <p.zabel@pengutronix.de>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, tuomas.tynkkynen@iki.fi
 List-Id: linux-tegra@vger.kernel.org
 
-DSI support has been fixed to support continuous clock behavior that the
-panel used on SHIELD requires, so finally add its device tree node since
-it is functional.
+On Wed, 2 Jul 2014, Tuomas Tynkkynen wrote:
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
- arch/arm/boot/dts/tegra114-roth.dts | 23 ++++++++++++++++++++---
- 1 file changed, 20 insertions(+), 3 deletions(-)
+> Hi all,
+> 
+> This series fixes a probe order issue with the Tegra EHCI driver.
+> Basically, the register area of the 1st USB controller contains some
+> registers that are global to all of the controllers, but that are also
+> cleared when reset is asserted to the 1st controller. So if (say) the
+> 3rd controller would be the first one to finish probing successfully,
+> then the reset that happens during the 1st controller's probe would
+> result in broken USB. So the before doing anything with the USB HW,
+> we should reset the 1st controller once, and then never ever reset
+> it again.
 
-diff --git a/arch/arm/boot/dts/tegra114-roth.dts b/arch/arm/boot/dts/tegra114-roth.dts
-index ba210c6..c03c853 100644
---- a/arch/arm/boot/dts/tegra114-roth.dts
-+++ b/arch/arm/boot/dts/tegra114-roth.dts
-@@ -28,6 +28,22 @@
- 		reg = <0x80000000 0x79600000>;
- 	};
- 
-+	host1x@50000000 {
-+		dsi@54300000 {
-+			status = "okay";
-+
-+			vdd-supply = <&vdd_1v2_ap>;
-+
-+			panel@0 {
-+				compatible = "lg,lh500wx1-sd03";
-+				reg = <0>;
-+
-+				power-supply = <&vdd_lcd>;
-+				backlight = <&backlight>;
-+			};
-+		};
-+	};
-+
- 	pinmux@70000868 {
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&state_default>;
-@@ -811,7 +827,6 @@
- 						regulator-name = "vdd-1v8";
- 						regulator-min-microvolt = <1800000>;
- 						regulator-max-microvolt = <1800000>;
--						regulator-always-on;
- 						regulator-boot-on;
- 					};
- 
-@@ -858,10 +873,11 @@
- 						regulator-name = "vdd-2v8-display";
- 						regulator-min-microvolt = <2800000>;
- 						regulator-max-microvolt = <2800000>;
-+						regulator-always-on;
- 						regulator-boot-on;
- 					};
- 
--					ldo3 {
-+					vdd_1v2_ap: ldo3 {
- 						regulator-name = "avdd-1v2";
- 						regulator-min-microvolt = <1200000>;
- 						regulator-max-microvolt = <1200000>;
-@@ -1048,7 +1064,7 @@
- 			regulator-boot-on;
- 		};
- 
--		regulator@1 {
-+		vdd_lcd: regulator@1 {
- 			compatible = "regulator-fixed";
- 			reg = <1>;
- 			regulator-name = "vdd_lcd_1v8";
-@@ -1057,6 +1073,7 @@
- 			vin-supply = <&vdd_1v8>;
- 			enable-active-high;
- 			gpio = <&gpio TEGRA_GPIO(U, 4) GPIO_ACTIVE_HIGH>;
-+			regulator-always-on;
- 			regulator-boot-on;
- 		};
- 
--- 
-2.0.0
+This sounds very much like the sort of thing that ought to be described 
+in DT.  It is a hardware dependence, and DT exists for the purpose of 
+describing the hardware.
+
+Alan Stern
