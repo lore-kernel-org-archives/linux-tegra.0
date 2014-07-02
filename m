@@ -1,43 +1,101 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v3 0/3] drm/nouveau: support for probing platform devices
-Date: Wed, 02 Jul 2014 10:23:00 -0600
-Message-ID: <53B431E4.60404@wwwdotorg.org>
-References: <1403760814-26148-1-git-send-email-acourbot@nvidia.com>
- <CAAVeFu+O+Z7kQ3Sre=WKkcYoxXYUx4zCzZK8cVMj1WAtwA5eMg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAAVeFu+O+Z7kQ3Sre=WKkcYoxXYUx4zCzZK8cVMj1WAtwA5eMg@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ben Skeggs <bskeggs@redhat.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [flasher PATCH 1/2] Switch flasher script to subprocess
+Date: Wed,  2 Jul 2014 11:32:42 -0600
+Message-ID: <1404322363-11580-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/02/2014 03:09 AM, Alexandre Courbot wrote:
-> On Thu, Jun 26, 2014 at 2:33 PM, Alexandre Courbot <acourbot@nvidia.com> wrote:
->> This series adds support for probing platform devices on Nouveau, as well as
->> the DT bindings for GK20A. It doesn't enable the GPU yet on Tegra boards since
->> a few extra things need to be supported before that.
->>
->> This version is mostly identical to v2 but fixes an important issue: the drvdata
->> must be set to the drm_device for sysfs to work, so the platform device
->> structure now includes the nouveau_device flattened into it to let us compute
->> the address of one from the other. Since the platform device resources (clocks,
->> regulators, ...) need to live longer than the nouveau_device, they are stored
->> into their own structure which is allocated separately.
-...
-> Stephen, Thierry,
-> 
-> Ben has merged the first patch of this series into the Nouveau tree.
-> Could you get patches 2 and 3 through the Tegra tree? Thanks!
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I've applied patches 2 and 3 to Tegra's for-3.17/dt branch.
+This avoids any issues re: quoting the commands we execute, such as
+fdtput to modify the DTB sent to the flashing process.
+
+The build script already uses subprocess, so this doesn't introduce any
+new dependencies overall.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ tegra-uboot-flasher | 26 +++++++++++---------------
+ 1 file changed, 11 insertions(+), 15 deletions(-)
+
+diff --git a/tegra-uboot-flasher b/tegra-uboot-flasher
+index ded8d171a14a..c9adba607c69 100755
+--- a/tegra-uboot-flasher
++++ b/tegra-uboot-flasher
+@@ -26,6 +26,7 @@ import os
+ import os.path
+ import shutil
+ import stat
++import subprocess
+ import sys
+ import tempfile
+ from tegraboardconfigs import *
+@@ -42,15 +43,10 @@ def rmtree(path):
+     if os.path.exists(path):
+         shutil.rmtree(path)
+ 
+-def run(dir, cmd):
+-    oldcwd = os.getcwd()
+-    print '+ cd', dir
+-    os.chdir(dir)
+-    print '+', cmd
+-    ret = os.system(cmd)
+-    if ret:
+-        raise Exception('Command failed: %d' % ret)
+-    os.chdir(oldcwd)
++def run(cd, cmd):
++    print '+ cd', cd
++    print '+', ' '.join(cmd)
++    subprocess.check_call(cmd, cwd=cd)
+ 
+ def gen_flashcmd_mmc(flash_image_addr, readback_addr, flash_img_size):
+     flash_id = config['flash-id-uboot']
+@@ -97,7 +93,7 @@ def get_loadaddr():
+ def gen_tegrarcm_cmd(bootloader, loadaddr):
+     if type(loadaddr) != str:
+         loadaddr = "0x%08x" % loadaddr
+-    return 'tegrarcm --bct=' + bct + ' --bootloader=' + bootloader + ' --loadaddr=' + loadaddr
++    return ['tegrarcm', '--bct=' + bct, '--bootloader=' + bootloader , '--loadaddr=' + loadaddr]
+ 
+ def find_config_dir():
+     if not configs.has_key(args.configname):
+@@ -198,8 +194,8 @@ def func_flash():
+         u_boot_dtb_runflash = os.path.join(workdir, 'u-boot-runflash.dtb')
+         cp(u_boot_dtb, u_boot_dtb_runflash)
+ 
+-        # -2; never delay or interrupt
+-        cmd = 'fdtput -p -t i ' + u_boot_dtb_runflash + ' /config bootdelay 0xfffffffe'
++        # 0xfffffffe==-2; never delay or interrupt
++        cmd = ['fdtput', '-p', '-t', 'i', u_boot_dtb_runflash, '/config', 'bootdelay', '0xfffffffe']
+         run(workdir, cmd)
+ 
+         bootcmd = ''
+@@ -224,7 +220,7 @@ def func_flash():
+         # If wanting to run installer, set installer_args.configname in environment, 'run bootcmd'
+         bootcmd += 'reset'
+         print 'bootcmd:', bootcmd
+-        cmd = 'fdtput -p -t s ' + u_boot_dtb_runflash + ' /config bootcmd "' + bootcmd + '"'
++        cmd = ['fdtput', '-p', '-t', 's', u_boot_dtb_runflash, '/config', 'bootcmd', bootcmd]
+         run(workdir, cmd)
+ 
+         u_boot_dtb_runflash_size = os.path.getsize(u_boot_dtb_runflash)
+@@ -249,12 +245,12 @@ def func_flash():
+         os.fchmod(f.fileno(), stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
+         f.write("#!/bin/sh\n")
+         f.write("\n")
+-        f.write(cmd)
++        f.write(' '.join(cmd))
+         f.write("\n")
+         f.close()
+ 
+         if not args.gen_only:
+-            run(workdir, flasher_sh)
++            run(workdir, [flasher_sh])
+     except:
+         raise
+     finally:
+-- 
+1.8.1.5
