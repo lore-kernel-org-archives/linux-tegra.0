@@ -1,39 +1,60 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 4/4] ARM: tegra: roth: add display DT node
-Date: Wed, 02 Jul 2014 09:55:12 -0600
-Message-ID: <53B42B60.1000600@wwwdotorg.org>
-References: <1404303560-32209-1-git-send-email-acourbot@nvidia.com>
- <1404303560-32209-5-git-send-email-acourbot@nvidia.com>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH 0/3] Tegra USB probe order issue fix
+Date: Wed, 2 Jul 2014 12:09:31 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1407021204570.874-100000@iolanthe.rowland.org>
+References: <53B42920.8080700@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1404303560-32209-5-git-send-email-acourbot@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Alexandre Courbot <acourbot@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Terje Bergstrom <tbergstrom@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <53B42920.8080700@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Tuomas Tynkkynen <ttynkkynen@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@ti.com>, Philipp Zabel <p.zabel@pengutronix.de>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, tuomas.tynkkynen@iki.fi
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/02/2014 06:19 AM, Alexandre Courbot wrote:
-> DSI support has been fixed to support continuous clock behavior that the
-> panel used on SHIELD requires, so finally add its device tree node since
-> it is functional.
+On Wed, 2 Jul 2014, Stephen Warren wrote:
 
-> diff --git a/arch/arm/boot/dts/tegra114-roth.dts b/arch/arm/boot/dts/tegra114-roth.dts
+> On 07/02/2014 08:02 AM, Alan Stern wrote:
+> > On Wed, 2 Jul 2014, Tuomas Tynkkynen wrote:
+> > 
+> >> Hi all,
+> >>
+> >> This series fixes a probe order issue with the Tegra EHCI driver.
+> >> Basically, the register area of the 1st USB controller contains some
+> >> registers that are global to all of the controllers, but that are also
+> >> cleared when reset is asserted to the 1st controller. So if (say) the
+> >> 3rd controller would be the first one to finish probing successfully,
+> >> then the reset that happens during the 1st controller's probe would
+> >> result in broken USB. So the before doing anything with the USB HW,
+> >> we should reset the 1st controller once, and then never ever reset
+> >> it again.
+> > 
+> > This sounds very much like the sort of thing that ought to be described 
+> > in DT.  It is a hardware dependence, and DT exists for the purpose of 
+> > describing the hardware.
+> 
+> DT is more about describing the HW, not how SW has to use the HW.
 
-> +	host1x@50000000 {
-> +		dsi@54300000 {
+Tuomas wrote: "the register area of the 1st USB controller contains
+some registers that are global to all of the controllers, but that are
+also cleared when reset is asserted to the 1st controller."  That is
+very much an attribute of the hardware and so DT should describe it.
 
-That node looks fine, but I wonder why we need to mark a bunch of
-regulators as always-on? shouldn't the references to vdd-supply and
-power-supply from this node be enough? If not, perhaps the tree
-structure of the regulators isn't correct, or the DSI or panel bindings
-don't allow enough regulators to be referenced?
+> probe() ordering is a SW issue, not a HW description. It's driver
+> knowledge that the HW resets have to run in a certain order, and if the
+> driver didn't actually reset the HW ever (but rather, re-programmed all
+> registers so reset was never needed), then order wouldn't be relevant
+> 
+> DT certainly doesn't have any mechanism for describing probe order or
+> anything like that, although you can fake it out by adding phandles
+> between nodes, and having SW wait for the driver for the referenced node
+> to probe first. That won't work here though, since there's no guarantee
+> that the USB1 node will actually be enabled (that USB port might not be
+> hooked up on the board, hence the DT node will be disabled), so we can't
+> rely on a driver for it ever appearing.
+
+I wasn't talking about probe order; I was talking about the fact that 
+registers pertinent to the later controllers are in the reset domain of 
+the first controller.
+
+Alan Stern
