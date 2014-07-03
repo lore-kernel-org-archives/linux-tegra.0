@@ -1,7 +1,7 @@
 From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [RFC v2 1/5] clk: Add temporary mapping to the existing API
-Date: Thu,  3 Jul 2014 16:38:39 +0200
-Message-ID: <1404398323-18934-2-git-send-email-tomeu.vizoso@collabora.com>
+Subject: [RFC v2 5/5] clk: Add floor and ceiling constraints to clock rates
+Date: Thu,  3 Jul 2014 16:38:43 +0200
+Message-ID: <1404398323-18934-6-git-send-email-tomeu.vizoso@collabora.com>
 References: <1404398323-18934-1-git-send-email-tomeu.vizoso@collabora.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1404398323-18934-1-git-send-email-tomeu.vizoso@collabora.com>
@@ -10,97 +10,240 @@ To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail
 Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
 List-Id: linux-tegra@vger.kernel.org
 
-To preserve git-bisectability, add aliases from the future provider API to the
-existing public API.
-
-Also includes clk-provider.h and clk-dev.h in a few places so the right
-functions are defined.
+Adds a way for clock consumers to set maximum and minimum rates. This can be
+used for thermal drivers to set ceiling rates, or by misc. drivers to set
+floor rates to assure a minimum performance level.
 
 Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
 ---
- drivers/clk/berlin/bg2.c     |  1 +
- drivers/clk/berlin/bg2q.c    |  1 +
- drivers/clk/clkdev.c         |  1 +
- include/linux/clk-provider.h | 18 ++++++++++++++++++
- include/linux/clk/zynq.h     |  1 +
- 5 files changed, 22 insertions(+)
+ drivers/clk/clk.c           | 103 ++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/clk.h           |   1 +
+ drivers/clk/clkdev.c        |   7 +--
+ include/linux/clk-private.h |   1 +
+ include/linux/clk.h         |  18 ++++++++
+ 5 files changed, 124 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/berlin/bg2.c b/drivers/clk/berlin/bg2.c
-index 515fb13..4c81e09 100644
---- a/drivers/clk/berlin/bg2.c
-+++ b/drivers/clk/berlin/bg2.c
-@@ -19,6 +19,7 @@
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index b887c69..3efcd18 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -23,6 +23,19 @@
  
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
- #include <linux/kernel.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-diff --git a/drivers/clk/berlin/bg2q.c b/drivers/clk/berlin/bg2q.c
-index 21784e4..748da9b 100644
---- a/drivers/clk/berlin/bg2q.c
-+++ b/drivers/clk/berlin/bg2q.c
-@@ -19,6 +19,7 @@
+ #include "clk.h"
  
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
- #include <linux/kernel.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
++enum constraint_type {
++	CONSTRAINT_FLOOR,
++	CONSTRAINT_CEILING,
++};
++
++struct rate_constraint {
++	struct hlist_node	node;
++	const char		*dev_id;
++	const char		*con_id;
++	enum constraint_type	type;
++	unsigned long		rate;
++};
++
+ static DEFINE_SPINLOCK(enable_lock);
+ static DEFINE_MUTEX(prepare_lock);
+ 
+@@ -1624,6 +1637,7 @@ static void clk_change_rate(struct clk_core *clk)
+ int clk_provider_set_rate(struct clk_core *clk, unsigned long rate)
+ {
+ 	struct clk_core *top, *fail_clk;
++	struct rate_constraint *constraint;
+ 	int ret = 0;
+ 
+ 	if (!clk)
+@@ -1632,6 +1646,17 @@ int clk_provider_set_rate(struct clk_core *clk, unsigned long rate)
+ 	/* prevent racing with updates to the clock topology */
+ 	clk_prepare_lock();
+ 
++	hlist_for_each_entry(constraint, &clk->rate_constraints, node) {
++		switch(constraint->type) {
++		case CONSTRAINT_FLOOR:
++			rate = max(rate, constraint->rate);
++			break;
++		case CONSTRAINT_CEILING:
++			rate = min(rate, constraint->rate);
++			break;
++		}
++	}
++
+ 	/* bail early if nothing to do */
+ 	if (rate == clk_provider_get_rate(clk))
+ 		goto out;
+@@ -1695,6 +1720,65 @@ int clk_set_rate(struct clk *clk_user, unsigned long rate)
+ }
+ EXPORT_SYMBOL_GPL(clk_set_rate);
+ 
++static struct rate_constraint *__ensure_constraint(struct clk *clk_user,
++						   enum constraint_type type)
++{
++	struct clk_core *clk = clk_to_clk_core(clk_user);
++	struct rate_constraint *constraint = NULL;
++	bool found = false;
++
++	hlist_for_each_entry(constraint, &clk->rate_constraints, node) {
++		if (constraint->dev_id == clk_user->dev_id &&
++		    constraint->con_id == clk_user->con_id &&
++		    constraint->type == type)
++			found = true;
++	}
++
++	if (!found) {
++		constraint = kzalloc(sizeof(*constraint), GFP_KERNEL);
++		if (!constraint)
++			return NULL;
++		hlist_add_head(&constraint->node, &clk->rate_constraints);
++	}
++
++	return constraint;
++}
++
++static int __clk_set_constraint(struct clk *clk_user, unsigned long rate,
++				enum constraint_type type)
++{
++	struct clk_core *clk = clk_to_clk_core(clk_user);
++	struct rate_constraint *constraint;
++	int ret;
++
++	clk_prepare_lock();
++
++	constraint = __ensure_constraint(clk_user, type);
++	if (!constraint)
++		return -ENOMEM;
++
++	constraint->rate = rate;
++
++	/* Update the rate so the new constraint is taken into account */
++	ret = clk_provider_set_rate(clk, clk_provider_get_rate(clk));
++
++	clk_prepare_unlock();
++
++	return ret;
++}
++
++int clk_set_floor_rate(struct clk *clk_user, unsigned long rate)
++{
++	return __clk_set_constraint(clk_user, rate, CONSTRAINT_FLOOR);
++}
++EXPORT_SYMBOL_GPL(clk_set_floor_rate);
++
++int clk_set_ceiling_rate(struct clk *clk_user, unsigned long rate)
++{
++	return __clk_set_constraint(clk_user, rate, CONSTRAINT_CEILING);
++}
++EXPORT_SYMBOL_GPL(clk_set_ceiling_rate);
++
+ struct clk_core *clk_provider_get_parent(struct clk_core *clk)
+ {
+ 	struct clk_core *parent;
+@@ -2028,6 +2112,8 @@ int __clk_init(struct device *dev, struct clk_core *clk)
+ 			}
+ 	 }
+ 
++	INIT_HLIST_HEAD(&clk->rate_constraints);
++
+ 	/*
+ 	 * optional platform-specific magic
+ 	 *
+@@ -2458,6 +2544,23 @@ int clk_notifier_unregister(struct clk *clk_user, struct notifier_block *nb)
+ }
+ EXPORT_SYMBOL_GPL(clk_notifier_unregister);
+ 
++void __clk_free_clk(struct clk *clk_user)
++{
++	struct clk_core *clk = clk_to_clk_core(clk_user);
++	struct rate_constraint *constraint;
++	struct hlist_node *tmp;
++
++	hlist_for_each_entry_safe(constraint, tmp, &clk->rate_constraints, node) {
++		if (constraint->dev_id == clk_user->dev_id &&
++		    constraint->con_id == clk_user->con_id) {
++			hlist_del(&constraint->node);
++			kfree(constraint);
++		}
++	}
++
++	kfree(clk);
++}
++
+ #ifdef CONFIG_OF
+ /**
+  * struct of_clk_provider - Clock provider registration structure
+diff --git a/drivers/clk/clk.h b/drivers/clk/clk.h
+index 2f682bf..ea84797 100644
+--- a/drivers/clk/clk.h
++++ b/drivers/clk/clk.h
+@@ -18,4 +18,5 @@ void of_clk_unlock(void);
+ 
+ #if defined(CONFIG_COMMON_CLK)
+ struct clk_core *clk_to_clk_core(struct clk *clk);
++void __clk_free_clk(struct clk *clk_user);
+ #endif
 diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-index f890b90..000c1ae 100644
+index 5be6bb1..40f1c66 100644
 --- a/drivers/clk/clkdev.c
 +++ b/drivers/clk/clkdev.c
-@@ -18,6 +18,7 @@
- #include <linux/string.h>
- #include <linux/mutex.h>
- #include <linux/clk.h>
-+#include <linux/clk-provider.h>
- #include <linux/clkdev.h>
- #include <linux/of.h>
+@@ -230,16 +230,11 @@ struct clk *clk_get(struct device *dev, const char *con_id)
+ }
+ EXPORT_SYMBOL(clk_get);
  
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 0c287db..f359f3e 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -16,6 +16,24 @@
+-static void clk_free_clk(struct clk *clk)
+-{
+-	kfree(clk);
+-}
+-
+ void clk_put(struct clk *clk)
+ {
+ 	clk_core_t *core = clk_to_clk_core(clk);
  
- #ifdef CONFIG_COMMON_CLK
+-	clk_free_clk(clk);
++	__clk_free_clk(clk);
+ 	__clk_put(core);
+ }
+ EXPORT_SYMBOL(clk_put);
+diff --git a/include/linux/clk-private.h b/include/linux/clk-private.h
+index 9657fc8..a8279e1 100644
+--- a/include/linux/clk-private.h
++++ b/include/linux/clk-private.h
+@@ -48,6 +48,7 @@ struct clk_core {
+ 	unsigned long		accuracy;
+ 	struct hlist_head	children;
+ 	struct hlist_node	child_node;
++	struct hlist_head	rate_constraints;
+ 	unsigned int		notifier_count;
+ #ifdef CONFIG_DEBUG_FS
+ 	struct dentry		*dentry;
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 9633459..fbfc8eb 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -274,6 +274,24 @@ long clk_round_rate(struct clk *clk, unsigned long rate);
+ int clk_set_rate(struct clk *clk, unsigned long rate);
  
-+/* Temporarily map the to-be-added API to the old API, just so stuff compiles */
-+#define clk_core			clk
+ /**
++ * clk_set_floor_rate - set a minimum clock rate for a clock source
++ * @clk: clock source
++ * @rate: desired minimum clock rate in Hz
++ *
++ * Returns success (0) or negative errno.
++ */
++int clk_set_floor_rate(struct clk *clk, unsigned long rate);
 +
-+#define clk_core_to_clk
++/**
++ * clk_set_ceiling_rate - set a maximum clock rate for a clock source
++ * @clk: clock source
++ * @rate: desired maximum clock rate in Hz
++ *
++ * Returns success (0) or negative errno.
++ */
++int clk_set_ceiling_rate(struct clk *clk, unsigned long rate);
 +
-+#define clk_provider_get		clk_get
-+#define clk_provider_get_sys		clk_get_sys
-+#define devm_clk_provider_get		devm_clk_get
-+#define of_clk_provider_get		of_clk_get
-+#define of_clk_provider_get_by_name	of_clk_get_by_name
-+
-+#define clk_provider_set_rate		clk_set_rate
-+#define clk_provider_get_rate		clk_get_rate
-+#define clk_provider_set_parent		clk_set_parent
-+#define clk_provider_get_parent		clk_get_parent
-+#define clk_provider_prepare		clk_prepare
-+#define clk_provider_unprepare		clk_unprepare
-+
- /*
-  * flags used across common struct clk.  these flags should only affect the
-  * top-level framework.  custom flags for dealing with hardware specifics
-diff --git a/include/linux/clk/zynq.h b/include/linux/clk/zynq.h
-index 7a5633b..a990a59 100644
---- a/include/linux/clk/zynq.h
-+++ b/include/linux/clk/zynq.h
-@@ -21,6 +21,7 @@
- #define __LINUX_CLK_ZYNQ_H_
- 
- #include <linux/spinlock.h>
-+#include <linux/clk-provider.h>
- 
- void zynq_clock_init(void);
- 
++/**
+  * clk_set_parent - set the parent clock source for this clock
+  * @clk: clock source
+  * @parent: parent clock source
 -- 
 1.9.3
