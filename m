@@ -1,39 +1,86 @@
 From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 4/4] ARM: tegra: roth: add display DT node
-Date: Thu, 3 Jul 2014 12:10:56 +0900
-Message-ID: <53B4C9C0.4000605@nvidia.com>
-References: <1404303560-32209-1-git-send-email-acourbot@nvidia.com> <1404303560-32209-5-git-send-email-acourbot@nvidia.com> <53B42B60.1000600@wwwdotorg.org>
+Subject: [PATCH v2] ARM: tegra: roth: add display DT node
+Date: Thu, 3 Jul 2014 12:15:07 +0900
+Message-ID: <1404357307-7594-1-git-send-email-acourbot@nvidia.com>
+References: <1404303560-32209-5-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53B42B60.1000600-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1404303560-32209-5-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/03/2014 12:55 AM, Stephen Warren wrote:
-> On 07/02/2014 06:19 AM, Alexandre Courbot wrote:
->> DSI support has been fixed to support continuous clock behavior that the
->> panel used on SHIELD requires, so finally add its device tree node since
->> it is functional.
->
->> diff --git a/arch/arm/boot/dts/tegra114-roth.dts b/arch/arm/boot/dts/tegra114-roth.dts
->
->> +	host1x@50000000 {
->> +		dsi@54300000 {
->
-> That node looks fine, but I wonder why we need to mark a bunch of
-> regulators as always-on? shouldn't the references to vdd-supply and
-> power-supply from this node be enough? If not, perhaps the tree
-> structure of the regulators isn't correct, or the DSI or panel bindings
-> don't allow enough regulators to be referenced?
+DSI support has been fixed to support continuous clock behavior that the
+panel used on SHIELD requires, so finally add its device tree node since
+it is functional.
 
-regulator-always-on is indeed not needed for vdd_lcd. I actually had a 
-patch in my tree removing this line that I forgot to squash. Will post a 
-v2 for this patch that fixes this, thanks.
+Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Changes since v1:
+- Removed unneeded regulator-always-on property for vdd_lcd regulator
+Only patch 4/4 of the original series has been resent for this v2.
 
-vdd-2v8-display needs to remain always-on however. Here we may hit a 
-limitation of the simple-panel driver, where only one power supply can 
-be provided.
+ arch/arm/boot/dts/tegra114-roth.dts | 22 +++++++++++++++++++---
+ 1 file changed, 19 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra114-roth.dts b/arch/arm/boot/dts/tegra114-roth.dts
+index ba210c6e189f..c7c6825f11fb 100644
+--- a/arch/arm/boot/dts/tegra114-roth.dts
++++ b/arch/arm/boot/dts/tegra114-roth.dts
+@@ -28,6 +28,22 @@
+ 		reg = <0x80000000 0x79600000>;
+ 	};
+ 
++	host1x@50000000 {
++		dsi@54300000 {
++			status = "okay";
++
++			vdd-supply = <&vdd_1v2_ap>;
++
++			panel@0 {
++				compatible = "lg,lh500wx1-sd03";
++				reg = <0>;
++
++				power-supply = <&vdd_lcd>;
++				backlight = <&backlight>;
++			};
++		};
++	};
++
+ 	pinmux@70000868 {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&state_default>;
+@@ -811,7 +827,6 @@
+ 						regulator-name = "vdd-1v8";
+ 						regulator-min-microvolt = <1800000>;
+ 						regulator-max-microvolt = <1800000>;
+-						regulator-always-on;
+ 						regulator-boot-on;
+ 					};
+ 
+@@ -858,10 +873,11 @@
+ 						regulator-name = "vdd-2v8-display";
+ 						regulator-min-microvolt = <2800000>;
+ 						regulator-max-microvolt = <2800000>;
++						regulator-always-on;
+ 						regulator-boot-on;
+ 					};
+ 
+-					ldo3 {
++					vdd_1v2_ap: ldo3 {
+ 						regulator-name = "avdd-1v2";
+ 						regulator-min-microvolt = <1200000>;
+ 						regulator-max-microvolt = <1200000>;
+@@ -1048,7 +1064,7 @@
+ 			regulator-boot-on;
+ 		};
+ 
+-		regulator@1 {
++		vdd_lcd: regulator@1 {
+ 			compatible = "regulator-fixed";
+ 			reg = <1>;
+ 			regulator-name = "vdd_lcd_1v8";
+-- 
+2.0.0
