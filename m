@@ -1,91 +1,45 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: Re: [RFC 5/5] clk: Add floor and ceiling constraints to clock rates
-Date: Thu, 03 Jul 2014 16:02:14 +0200
-Message-ID: <53B56266.8090208@collabora.com>
-References: <1403855872-14749-1-git-send-email-tomeu.vizoso@collabora.com> <1403855872-14749-6-git-send-email-tomeu.vizoso@collabora.com> <53ADF6E6.6090705@wwwdotorg.org>
+From: Mikko Perttunen <mperttunen@nvidia.com>
+Subject: Re: [PATCH 1/6] thermal: of: Add support for hardware-tracked trip
+ points
+Date: Thu, 3 Jul 2014 17:15:36 +0300
+Message-ID: <53B56588.6090703@nvidia.com>
+References: <1403856699-2140-1-git-send-email-mperttunen@nvidia.com> <1403856699-2140-2-git-send-email-mperttunen@nvidia.com> <53B1D1C8.5010907@wwwdotorg.org> <53B262EA.9030806@nvidia.com> <53B2FADC.8060708@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
-	format=flowed
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <53ADF6E6.6090705@wwwdotorg.org>
+In-Reply-To: <53B2FADC.8060708@wwwdotorg.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Mike Turquette <mturquette@linaro.org>, Rabin Vincent <rabin.vincent@stericsson.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Stephen Warren <swarren@wwwdotorg.org>, "rui.zhang@intel.com" <rui.zhang@intel.com>, "edubezval@gmail.com" <edubezval@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Matthew Longnecker <MLongnecker@nvidia.com>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/28/2014 12:57 AM, Stephen Warren wrote:
-> On 06/27/2014 01:57 AM, Tomeu Vizoso wrote:
->> Adds a way for clock consumers to set maximum and minimum rates. This can be
->> used for thermal drivers to set ceiling rates, or by misc. drivers to set
->> floor rates to assure a minimum performance level.
+On 01/07/14 21:15, Stephen Warren wrote:
+>> The thermal core only supports a fixed number of trip points for each
+>> driver and the core informs the driver of any changes to those, so
+>> drivers using the core framework can already have hardware trip points,
+>> but just a fixed number of them.
+>>
+>> The way of-thermal works, is it reads all the trip points from the
+>> device tree, registers a new thermal_zone_device with that number of
+>> trip points and then handles the trip points completely independently.
+>> Of course, if we're just polling, this is fine, since the thermal core
+>> also knows about those trip points and will trigger cooling when polling
+>> the each zone. However, the driver doesn't, so it cannot setup any
+>> interrupts to call thermal_zone_device_update.
 >
->> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
->
->> +static struct rate_constraint *__ensure_constraint(struct clk *clk_user,
->> +						   enum constraint_type type)
->
->> +	if (!found) {
->> +		constraint = kzalloc(sizeof(*constraint), GFP_KERNEL);
->> +		if (!constraint) {
->> +			pr_err("%s: could not allocate constraint\n", __func__);
->
-> Doesn't kzalloc print an error itself if the allocation fails? I've
-> certainly seen quite a few patches ripping out custom "allocation
-> failed" errors in code.
+> Is there any possibility of cleaning that up? It's obviously horribly
+> inconsistent if core driver functionality works completely differently
+> simply because the list of trip-points comes from DT rather than a
+> static table in the driver. of_thermal should be limited to DT parsing
+> and related device instantiation/lookup, not introducing a completely
+> different functionality model.
 
-Thanks for pointing this out, have fixed it in a new version that will 
-be sent soon.
-
->> +void __clk_free_clk(struct clk *clk_user)
->> +{
->> +	struct clk_core *clk = clk_to_clk_core(clk_user);
->> +	struct rate_constraint *constraint;
->> +	struct hlist_node *tmp;
->> +
->> +	hlist_for_each_entry_safe(constraint, tmp, &clk->rate_constraints, node) {
->> +		if (constraint->dev_id == clk_user->dev_id &&
->> +		    constraint->con_id == clk_user->con_id) {
->> +			hlist_del(&constraint->node);
->> +			kfree(constraint);
->
-> Perhaps the list of constraints should be indexed by the client clk
-> structure, so that test should be:
->
-> if (constraint->clk_user == clk_user)
->
-> It might be a bit more work, but perhaps the constraints should simply
-> be stored directly in the struct clk rater than the struct clk_core.
-> That would require a nested loop to apply constraints though; first over
-> each struct clk associated with a struct clk_core, then over each
-> constraints in that struct clk. It would slightly simplify
-> adding/removing constraints though, and store the constraints at their
-> "source".
-
-Yeah, I like this alternative from a code organization point of view, 
-but I found the increased code complexity hard to justify. Wonder if 
-anybody else has an opinion on this.
-
->> diff --git a/include/linux/clk.h b/include/linux/clk.h
->
->> +int clk_set_floor_rate(struct clk *clk, unsigned long rate);
->
->> +int clk_set_ceiling_rate(struct clk *clk, unsigned long rate);
->
-> Additions functions to explicitly remove any previously requested
-> floor/ceiling rate might be useful. The same effect could be achieved by
-> a floor of 0 or a very high ceiling, but it feels cleaner to remove them.
-
-I'm also on the fence on whether the improved readability justifies the 
-additional API, because I find convenient that one just has to grep for 
-a single function call to find all usages (it was certainly useful when 
-I looked at how downstream does the equivalent). I'll be glad to add the 
-functions in a future version if there's consensus on this.
-
-> Overall, this series seems to implement the right kind of concept to me.
-> It'll certainly stop us (NVIDIA at least) wanting to create all kinds of
-> "virtual" clock objects (and associated clock IDs and device tree clock
-> IDs) to achieve a similar effect.
-
-Thanks for the great feedback,
-
-Tomeu
+I guess the smallest possible change would be to add a 
+#hardware-trip-cells property to the thermal driver node (this would 
+need to designate both the thermal zone and the trip point) and a 
+hardware-trip-point phandle node to trip points. Then trip points could 
+point to a hardware trip point that would get programmed. Since this is 
+just adding properties, it would be backwards-compatible as well.
+This is starting to sound like a good idea. Will have to give think 
+about it some more.
