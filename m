@@ -1,45 +1,59 @@
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: Re: [PATCH 1/6] thermal: of: Add support for hardware-tracked trip
- points
-Date: Thu, 3 Jul 2014 17:15:36 +0300
-Message-ID: <53B56588.6090703@nvidia.com>
-References: <1403856699-2140-1-git-send-email-mperttunen@nvidia.com> <1403856699-2140-2-git-send-email-mperttunen@nvidia.com> <53B1D1C8.5010907@wwwdotorg.org> <53B262EA.9030806@nvidia.com> <53B2FADC.8060708@wwwdotorg.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH V2 0/6] regulator: palmas: cleanup and fixes
+Date: Thu, 3 Jul 2014 15:26:24 +0100
+Message-ID: <20140703142624.GD410@sirena.org.uk>
+References: <1404143859-8160-1-git-send-email-nm@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="89VDYHnQ8ukgENkm"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <53B2FADC.8060708@wwwdotorg.org>
+Content-Disposition: inline
+In-Reply-To: <1404143859-8160-1-git-send-email-nm@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, "rui.zhang@intel.com" <rui.zhang@intel.com>, "edubezval@gmail.com" <edubezval@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Matthew Longnecker <MLongnecker@nvidia.com>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Nishanth Menon <nm@ti.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Keerthy J <j-keerthy@ti.com>, Tero Kristo <t-kristo@ti.com>, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/07/14 21:15, Stephen Warren wrote:
->> The thermal core only supports a fixed number of trip points for each
->> driver and the core informs the driver of any changes to those, so
->> drivers using the core framework can already have hardware trip points,
->> but just a fixed number of them.
->>
->> The way of-thermal works, is it reads all the trip points from the
->> device tree, registers a new thermal_zone_device with that number of
->> trip points and then handles the trip points completely independently.
->> Of course, if we're just polling, this is fine, since the thermal core
->> also knows about those trip points and will trigger cooling when polling
->> the each zone. However, the driver doesn't, so it cannot setup any
->> interrupts to call thermal_zone_device_update.
->
-> Is there any possibility of cleaning that up? It's obviously horribly
-> inconsistent if core driver functionality works completely differently
-> simply because the list of trip-points comes from DT rather than a
-> static table in the driver. of_thermal should be limited to DT parsing
-> and related device instantiation/lookup, not introducing a completely
-> different functionality model.
 
-I guess the smallest possible change would be to add a 
-#hardware-trip-cells property to the thermal driver node (this would 
-need to designate both the thermal zone and the trip point) and a 
-hardware-trip-point phandle node to trip points. Then trip points could 
-point to a hardware trip point that would get programmed. Since this is 
-just adding properties, it would be backwards-compatible as well.
-This is starting to sound like a good idea. Will have to give think 
-about it some more.
+--89VDYHnQ8ukgENkm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Jun 30, 2014 at 10:57:33AM -0500, Nishanth Menon wrote:
+> Hi,
+> 	Original thread (v1): http://marc.info/?t=3D140380766500004&r=3D1&w=3D2
+> This series is based on: git://git.kernel.org/pub/scm/linux/kernel/git/br=
+oonie/regulator.git
+> branch: topic/palmas (4c0c9ca Merge remote-tracking branch 'regulator/fix=
+/palmas' into regulator-palmas)
+>=20
+> This series does a few cleanups to help ensure we dont make typo mistakes=
+ and finally provides a fix as attempted by (v1).
+
+Applied all, thanks.  Please fix your mailer to word wrap within
+paragraphs.
+
+--89VDYHnQ8ukgENkm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTtWgMAAoJELSic+t+oim9g4EP/1W5PW5hccjao2K24+M9yASp
+ldBmwzIkqxif+uHWKCMAQdzUaXIebG8YOipWflG5U/gPJT4I4ZyqqHBGQ7WFUDF2
+Dhyvj2tqn1X8oPrsfME9UJw2FGAtwJfegEBiOZx/5uTvul66AAGb/9VGiZH2rUt3
+CA0hE3YhURYDq5kvH4GH4n0F7oaQ+37MdtoaHBF89P0wZ7fU7kJDj5i5icmNivml
+IUluUk3nJ0cEmvW2NacmpL9iTSTEsRAOk4l1zeankF6t2WANIla2C0ovQu26H/Am
+KbzLit6PN01WTVm3TRpOshosHqwkdVp9ftutjm0Kz6UF2/LByX8zk4YkzdUC9brr
+Owpmeflhdy/7XHdF66bAs+59i48zE+G4H/PtZysYtF8RtYYpbyrOcSPO8fpN9fi6
+Qc26jt3mu5odSQGzbT6pIz/oMSYR8v/VwtaBWtIsVf5eP3kryoOzsMLZE2U+4XlE
+/4aHCokolHyaLwHZhwbTZ3DGaLp6NMhFvrQSKg5FXP6ZGW6y6453m6ujnuzjTL4A
+MfB6kWcsHIZn+Vd2gPLK8OP2s4XHb9fmSkoPdGTdqtMSdcGlS/hphmdnHt5xOSGD
+D3ssDI2jYC5ghXcNctvt82PsADN4zArI4IxqnfQa6Fgi8hwXwgTelGvgQqD0n8zA
+5lDxQ1YigQ7prG0eJo7I
+=zZ50
+-----END PGP SIGNATURE-----
+
+--89VDYHnQ8ukgENkm--
