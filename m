@@ -1,59 +1,33 @@
-From: Julian Andres Klode <jak@jak-linux.org>
-Subject: Re: [PATCH] staging: nvec: remove unneccessary 'else' after 'return'
- statement
-Date: Fri, 4 Jul 2014 22:59:41 +0200
-Message-ID: <20140704205941.GA7406@jak-x230>
-References: <20140704195746.GA4346@ThinkPad>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 1/4] of: Add NVIDIA Tegra XUSB pad controller binding
+Date: Sat, 5 Jul 2014 01:01:30 +0200
+Message-ID: <CACRpkdaLG+f41ot0H7sRm0zq+5=HROBKpKeXJC2+JYkq6a4Yog@mail.gmail.com>
+References: <1402398708-10722-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-Content-Disposition: inline
-In-Reply-To: <20140704195746.GA4346@ThinkPad>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: driverdev-devel-bounces@linuxdriverproject.org
-To: Pawel Lebioda <pawel.lebioda89@gmail.com>
-Cc: devel@driverdev.osuosl.org, Julian Andres Klode <jak@jak-linux.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, ac100@lists.launchpad.net
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1402398708-10722-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jul 04, 2014 at 09:57:50PM +0200, Pawel Lebioda wrote:
-> Hi,
+On Tue, Jun 10, 2014 at 1:11 PM, Thierry Reding
+<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >
-> This patch fixes the following warning reported by checkpatch.pl:
-> 
-> WARNING: else is not generally useful after a break or return
-> #235: FILE: drivers/staging/nvec/nvec.c:235:
-> 
-> Regards
-> Pawel Lebioda
-> 
-> Signed-off-by: Pawel Lebioda <pawel.lebioda89@gmail.com>
->  drivers/staging/nvec/nvec.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> This patch adds the device tree binding documentation for the XUSB pad
+> controller found on NVIDIA Tegra SoCs. It exposes both pinmuxing and PHY
+> capabilities.
+>
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> Changes in v2:
+> - move header file to this patch and refer to it in the binding
+> - update example to match the latest binding
 
-Hi Pawel,
+Stephen/Laxman: any comments on this patch?
 
-Please format your patches correctly. There should be no
-"Hi", no "Regards", etc. After the signed off should be a
-dashed line.
-
-Use git format-patch to format patches and you can send
-them using git-send-email.
-
-See Documentation/SubmittingPatches for more details
-
-Thanks,
--- 
-Julian Andres Klode  - Debian Developer, Ubuntu Member
-
-See http://wiki.debian.org/JulianAndresKlode and http://jak-linux.org/.
-
-Be friendly, do not top-post, and follow RFC 1855 "Netiquette".
-    - If you don't I might ignore you.
+Yours,
+Linus Walleij
