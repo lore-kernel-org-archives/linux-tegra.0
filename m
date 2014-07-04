@@ -1,33 +1,37 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 1/4] of: Add NVIDIA Tegra XUSB pad controller binding
-Date: Sat, 5 Jul 2014 01:01:30 +0200
-Message-ID: <CACRpkdaLG+f41ot0H7sRm0zq+5=HROBKpKeXJC2+JYkq6a4Yog@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 2/4] pinctrl: Add NVIDIA Tegra XUSB pad controller support
+Date: Sat, 5 Jul 2014 01:04:10 +0200
+Message-ID: <CACRpkdZvO-RZZKDtbFY6Uv5Td2NJ828xj0sVbTh2=ehx7Ha6fA@mail.gmail.com>
 References: <1402398708-10722-1-git-send-email-thierry.reding@gmail.com>
+	<1402398708-10722-2-git-send-email-thierry.reding@gmail.com>
+	<539A0FE9.1080802@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1402398708-10722-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <539A0FE9.1080802@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Andrew Bresticker <abrestic@chromium.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jun 10, 2014 at 1:11 PM, Thierry Reding
-<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+On Thu, Jun 12, 2014 at 10:39 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+> On 06/10/2014 05:11 AM, Thierry Reding wrote:
 
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Aside from the issue Andrew pointed out, this series looks good to me.
+> I'll apply once that one issue is fixed.
 >
-> This patch adds the device tree binding documentation for the XUSB pad
-> controller found on NVIDIA Tegra SoCs. It exposes both pinmuxing and PHY
-> capabilities.
+> Linus,
 >
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Changes in v2:
-> - move header file to this patch and refer to it in the binding
-> - update example to match the latest binding
+> Patch 2 (pinctrl driver) depends on patch 1 (binding header), and there
+> are other patches that will also depend on the binding header in patch
+> 1. I guess I should apply patch 1 in a topic branch and send you a pull
+> request which you can merge before applying patch 2. Does that sound OK
+> to you?
 
-Stephen/Laxman: any comments on this patch?
+Bah I've got some mess in my mailbox.
+
+Please proceed as this Stephen, I trust your pull request will
+be fine.
 
 Yours,
 Linus Walleij
