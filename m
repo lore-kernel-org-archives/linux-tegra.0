@@ -1,189 +1,59 @@
-From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
-Subject: [PATCH v2 2/4] ARM: tegra: Add resets & has-utmi-pad-registers flag
- to all USB PHYs
-Date: Fri,  4 Jul 2014 04:09:37 +0300
-Message-ID: <1404436179-10745-3-git-send-email-ttynkkynen@nvidia.com>
-References: <1404436179-10745-1-git-send-email-ttynkkynen@nvidia.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/4] drm/dsi: Add flag for continuous clock behavior
+Date: Fri, 4 Jul 2014 14:57:21 +0900
+Message-ID: <CAAVeFu+sTWhwCTd9ntqdJQA1aaFV93zHnyRSj6WA-8VicFuvgQ@mail.gmail.com>
+References: <1404303560-32209-1-git-send-email-acourbot@nvidia.com>
+ <1404303560-32209-2-git-send-email-acourbot@nvidia.com> <53B5131B.1060702@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1404436179-10745-1-git-send-email-ttynkkynen@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: devicetree@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Thierry Reding <thierry.reding@gmail.com>, Tuomas Tynkkynen <ttynkkynen@nvidia.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <53B5131B.1060702-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add new properties to all of the Tegra PHYs that are now required
-according to the binding.
+Hi Andrejz,
 
-In order to stay compatible with old device trees, the USB drivers
-will still function without these reset properties but with the old,
-potentially buggy behaviour.
+On Thu, Jul 3, 2014 at 5:23 PM, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>
+> Hi Alexandre,
+>
+> Thanks for the patch.
+>
+> On 07/02/2014 02:19 PM, Alexandre Courbot wrote:
+>> As per section 5.6.1 of the DSI specification, all DSI transmitters must
+>> support continuous clock behavior on the clock lane, while non-continuous
+>> mode support is only optional. Add a flag that allows devices to indicate
+>> that they require continuous clock mode to operate properly.
+>>
+>> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>  include/drm/drm_mipi_dsi.h | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
+>> index 944f33f..5913ef4 100644
+>> --- a/include/drm/drm_mipi_dsi.h
+>> +++ b/include/drm/drm_mipi_dsi.h
+>> @@ -94,6 +94,8 @@ void mipi_dsi_host_unregister(struct mipi_dsi_host *host);
+>>  #define MIPI_DSI_MODE_VSYNC_FLUSH    BIT(8)
+>>  /* disable EoT packets in HS mode */
+>>  #define MIPI_DSI_MODE_EOT_PACKET     BIT(9)
+>> +/* use continuous clock behavior on the clock lane */
+>> +#define MIPI_DSI_MODE_CLOCK_CONTINUOUS       BIT(10)
+>>
+>
+> According to MIPI DSI specification "All DSI transmitters and receivers
+> shall support continuous clock behavior on the Clock Lane, and
+> optionally may support non-continuous clock behavior". It suggests that
+> continuous clock should be default behavior. So maybe better is to
+> introduce sth like:
+> +#define MIPI_DSI_MODE_CLOCK_NON_CONTINUOUS     BIT(10)
 
-Signed-off-by: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
----
-v2 changes: new patch, didn't exist in v1
- arch/arm/boot/dts/tegra114.dtsi |    5 +++++
- arch/arm/boot/dts/tegra124.dtsi |    7 +++++++
- arch/arm/boot/dts/tegra20.dtsi  |    7 +++++++
- arch/arm/boot/dts/tegra30.dtsi  |    7 +++++++
- 4 files changed, 26 insertions(+)
-
-diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-index 335a1d8..80b8edd 100644
---- a/arch/arm/boot/dts/tegra114.dtsi
-+++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -672,6 +672,8 @@
- 			 <&tegra_car TEGRA114_CLK_PLL_U>,
- 			 <&tegra_car TEGRA114_CLK_USBD>;
- 		clock-names = "reg", "pll_u", "utmi-pads";
-+		resets = <&tegra_car 22>, <&tegra_car 22>;
-+		reset-names = "usb", "utmi-pads";
- 		nvidia,hssync-start-delay = <0>;
- 		nvidia,idle-wait-delay = <17>;
- 		nvidia,elastic-limit = <16>;
-@@ -682,6 +684,7 @@
- 		nvidia,hssquelch-level = <2>;
- 		nvidia,hsdiscon-level = <5>;
- 		nvidia,xcvr-hsslew = <12>;
-+		nvidia,has-utmi-pad-registers;
- 		status = "disabled";
- 	};
- 
-@@ -705,6 +708,8 @@
- 			 <&tegra_car TEGRA114_CLK_PLL_U>,
- 			 <&tegra_car TEGRA114_CLK_USBD>;
- 		clock-names = "reg", "pll_u", "utmi-pads";
-+		resets = <&tegra_car 59>, <&tegra_car 22>;
-+		reset-names = "usb", "utmi-pads";
- 		nvidia,hssync-start-delay = <0>;
- 		nvidia,idle-wait-delay = <17>;
- 		nvidia,elastic-limit = <16>;
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index d675186..5b14d79 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -643,6 +643,8 @@
- 			 <&tegra_car TEGRA124_CLK_PLL_U>,
- 			 <&tegra_car TEGRA124_CLK_USBD>;
- 		clock-names = "reg", "pll_u", "utmi-pads";
-+		resets = <&tegra_car 22>, <&tegra_car 22>;
-+		reset-names = "usb", "utmi-pads";
- 		nvidia,hssync-start-delay = <0>;
- 		nvidia,idle-wait-delay = <17>;
- 		nvidia,elastic-limit = <16>;
-@@ -653,6 +655,7 @@
- 		nvidia,hssquelch-level = <2>;
- 		nvidia,hsdiscon-level = <5>;
- 		nvidia,xcvr-hsslew = <12>;
-+		nvidia,has-utmi-pad-registers;
- 		status = "disabled";
- 	};
- 
-@@ -677,6 +680,8 @@
- 			 <&tegra_car TEGRA124_CLK_PLL_U>,
- 			 <&tegra_car TEGRA124_CLK_USBD>;
- 		clock-names = "reg", "pll_u", "utmi-pads";
-+		resets = <&tegra_car 58>, <&tegra_car 22>;
-+		reset-names = "usb", "utmi-pads";
- 		nvidia,hssync-start-delay = <0>;
- 		nvidia,idle-wait-delay = <17>;
- 		nvidia,elastic-limit = <16>;
-@@ -711,6 +716,8 @@
- 			 <&tegra_car TEGRA124_CLK_PLL_U>,
- 			 <&tegra_car TEGRA124_CLK_USBD>;
- 		clock-names = "reg", "pll_u", "utmi-pads";
-+		resets = <&tegra_car 59>, <&tegra_car 22>;
-+		reset-names = "usb", "utmi-pads";
- 		nvidia,hssync-start-delay = <0>;
- 		nvidia,idle-wait-delay = <17>;
- 		nvidia,elastic-limit = <16>;
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 243d84c..1908f69 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -645,6 +645,8 @@
- 			 <&tegra_car TEGRA20_CLK_CLK_M>,
- 			 <&tegra_car TEGRA20_CLK_USBD>;
- 		clock-names = "reg", "pll_u", "timer", "utmi-pads";
-+		resets = <&tegra_car 22>, <&tegra_car 22>;
-+		reset-names = "usb", "utmi-pads";
- 		nvidia,has-legacy-mode;
- 		nvidia,hssync-start-delay = <9>;
- 		nvidia,idle-wait-delay = <17>;
-@@ -653,6 +655,7 @@
- 		nvidia,xcvr-setup = <9>;
- 		nvidia,xcvr-lsfslew = <1>;
- 		nvidia,xcvr-lsrslew = <1>;
-+		nvidia,has-utmi-pad-registers;
- 		status = "disabled";
- 	};
- 
-@@ -676,6 +679,8 @@
- 			 <&tegra_car TEGRA20_CLK_PLL_U>,
- 			 <&tegra_car TEGRA20_CLK_CDEV2>;
- 		clock-names = "reg", "pll_u", "ulpi-link";
-+		resets = <&tegra_car 58>, <&tegra_car 22>;
-+		reset-names = "usb", "utmi-pads";
- 		status = "disabled";
- 	};
- 
-@@ -700,6 +705,8 @@
- 			 <&tegra_car TEGRA20_CLK_CLK_M>,
- 			 <&tegra_car TEGRA20_CLK_USBD>;
- 		clock-names = "reg", "pll_u", "timer", "utmi-pads";
-+		resets = <&tegra_car 59>, <&tegra_car 22>;
-+		reset-names = "usb", "utmi-pads";
- 		nvidia,hssync-start-delay = <9>;
- 		nvidia,idle-wait-delay = <17>;
- 		nvidia,elastic-limit = <16>;
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 0b1ede9..6b35c29 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -790,6 +790,8 @@
- 			 <&tegra_car TEGRA30_CLK_PLL_U>,
- 			 <&tegra_car TEGRA30_CLK_USBD>;
- 		clock-names = "reg", "pll_u", "utmi-pads";
-+		resets = <&tegra_car 22>, <&tegra_car 22>;
-+		reset-names = "usb", "utmi-pads";
- 		nvidia,hssync-start-delay = <9>;
- 		nvidia,idle-wait-delay = <17>;
- 		nvidia,elastic-limit = <16>;
-@@ -801,6 +803,7 @@
- 		nvidia,xcvr-hsslew = <32>;
- 		nvidia,hssquelch-level = <2>;
- 		nvidia,hsdiscon-level = <5>;
-+		nvidia,has-utmi-pad-registers;
- 		status = "disabled";
- 	};
- 
-@@ -824,6 +827,8 @@
- 			 <&tegra_car TEGRA30_CLK_PLL_U>,
- 			 <&tegra_car TEGRA30_CLK_USBD>;
- 		clock-names = "reg", "pll_u", "utmi-pads";
-+		resets = <&tegra_car 58>, <&tegra_car 22>;
-+		reset-names = "usb", "utmi-pads";
- 		nvidia,hssync-start-delay = <9>;
- 		nvidia,idle-wait-delay = <17>;
- 		nvidia,elastic-limit = <16>;
-@@ -858,6 +863,8 @@
- 			 <&tegra_car TEGRA30_CLK_PLL_U>,
- 			 <&tegra_car TEGRA30_CLK_USBD>;
- 		clock-names = "reg", "pll_u", "utmi-pads";
-+		resets = <&tegra_car 59>, <&tegra_car 22>;
-+		reset-names = "usb", "utmi-pads";
- 		nvidia,hssync-start-delay = <0>;
- 		nvidia,idle-wait-delay = <17>;
- 		nvidia,elastic-limit = <16>;
--- 
-1.7.9.5
+I started under the assumption that current host drivers assumed
+non-continuous clock (as the Tegra driver currently does). In that
+light, it seemed to make sense (and to be less intrusive) to introduce
+that flag as a restriction rather than a capability. But if you think
+this should be a capability I am not strongly against it - either way,
+host drivers need to be changed to take that flag into account.
