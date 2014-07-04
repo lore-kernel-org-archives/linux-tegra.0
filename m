@@ -1,100 +1,93 @@
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: Re: [PATCH 6/6] thermal: Add Tegra SOCTHERM thermal management driver
-Date: Fri, 4 Jul 2014 14:52:48 +0300
-Message-ID: <53B69590.6070004@nvidia.com>
-References: <1403856699-2140-1-git-send-email-mperttunen@nvidia.com> <1403856699-2140-7-git-send-email-mperttunen@nvidia.com> <53B66915.4040309@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC 01/10] iommu: Add IOMMU device registry
+Date: Fri, 4 Jul 2014 15:47:10 +0200
+Message-ID: <20140704134709.GA4203@ulmo>
+References: <1403815790-8548-1-git-send-email-thierry.reding@gmail.com>
+	<1403815790-8548-2-git-send-email-thierry.reding@gmail.com>
+	<20140704110529.GF13434@8bytes.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <53B66915.4040309@nvidia.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Wei Ni <wni@nvidia.com>, "rui.zhang@intel.com" <rui.zhang@intel.com>, "edubezval@gmail.com" <edubezval@gmail.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Matthew Longnecker <MLongnecker@nvidia.com>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: multipart/mixed; boundary="===============5568363894153179835=="
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20140704110529.GF13434-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/07/14 11:43, Wei Ni wrote:
-> On 06/27/2014 04:11 PM, Mikko Perttunen wrote:
->> This adds support for the Tegra SOCTHERM thermal sensing and management
->> system found in the Tegra124 system-on-chip. This initial driver supports
->> the four thermal zones with hardware-tracked trip points.
->
->> diff --git a/drivers/thermal/tegra_soctherm.c b/drivers/thermal/tegra_soctherm.c
->
->> +static int calculate_shared_calibration(struct tsensor_shared_calibration *r)
->> +{
->> +       u32 val;
->> +       u32 shifted_cp, shifted_ft;
->> +       int err;
->> +
->> +       err = tegra_fuse_readl(FUSE_TSENSOR8_CALIB, &val);
->> +       if (err)
->> +               return err;
->> +       r->base_cp = val & 0x3ff;
->> +       r->base_ft = (val & (0x7ff << 10)) >> 10;
->> +
->> +       err = tegra_fuse_readl(FUSE_SPARE_REALIGNMENT_REG_0, &val);
->> +       if (err)
->> +               return err;
->> +       /* Sign extend from 6 bits to 32 bits */
->> +       shifted_cp = (s32)((val & 0x1f) | ((val & 0x20) ? 0xffffffe0 : 0x0));
->> +       val = ((val & (0x1f << 21)) >> 21);
->> +       /* Sign extend from 5 bits to 32 bits */
->> +       shifted_ft = (s32)((val & 0xf) | ((val & 0x10) ? 0xfffffff0 : 0x0));
->> +
->> +       r->actual_temp_cp = 2 * 25 + shifted_cp;
-> Do we need to define the "25" as constant, just like below line.
 
-I believe downstream just uses "25" which is the reason I used it, but 
-yes, a constant would be nicer.
+--===============5568363894153179835==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="+HP7ph2BbKc20aGI"
+Content-Disposition: inline
 
->
->> +       r->actual_temp_ft = 2 * NOMINAL_CALIB_FT_T124 + shifted_ft;
->> +
->> +       return 0;
->> +}
->
->> +
->> +static irqreturn_t soctherm_isr(int irq, void *dev_id)
->> +{
->> +       struct tegra_thermctl_zone *zone = dev_id;
->> +       u32 val;
->> +       u32 intr_mask = 0x03 << t124_thermctl_shifts[zone->sensor];
->> +
->> +       val = readl(zone->tegra->regs + THERMCTL_INTR_STATUS);
->> +
->> +       if ((val & intr_mask) == 0)
->> +               return IRQ_NONE;
->> +
->> +       writel(val & intr_mask, zone->tegra->regs + THERMCTL_INTR_STATUS);
-> I think we need to disable the interrupt here, and enable it again after
-> updating the high/low limited values. If not, there will trigger mass of
-> interrupts.
->
 
-Good point. It works now because of-thermal will set up the new trip 
-points during soctherm_thread_isr, and apparently the interrupt is kept 
-disabled until after that.
+--+HP7ph2BbKc20aGI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->> +
->> +static struct platform_driver tegra_soctherm_driver = {
->> +       .probe = tegra_soctherm_probe,
->> +       .remove = tegra_soctherm_remove,
->> +       .driver = {
->> +               .name = "tegra_soctherm",
->> +               .owner = THIS_MODULE,
->> +               .of_match_table = tegra_soctherm_of_match,
->> +       },
->> +};
-> Will you consider to add suspend/resume support?
+On Fri, Jul 04, 2014 at 01:05:30PM +0200, Joerg Roedel wrote:
+> On Thu, Jun 26, 2014 at 10:49:41PM +0200, Thierry Reding wrote:
+> > Add an IOMMU device registry for drivers to register with and implement
+> > a method for users of the IOMMU API to attach to an IOMMU device. This
+> > allows to support deferred probing and gives the IOMMU API a convenient
+> > hook to perform early initialization of a device if necessary.
+>=20
+> Can you elaborate on why exactly you need this? The IOMMU-API is
+> designed to hide any details from the user about the available IOMMUs in
+> the system and which IOMMU handles which device. This looks like it is
+> going in a completly different direction from that.
 
-I guess for this one it should be simple; same driver probe and teardown 
-as normally. Although currently suspend doesn't support LP0 so no-op is 
-enough.
+I need this primarily to properly serialize device probing order.
+Without it the IOMMU may be probed later than its clients, in which case
+the client drivers will assume that there is no IOMMU (iommu_present()
+for the parent bus fails).
 
->
-> Thanks.
-> Wei.
->
+There are other ways around this, but I think we'll need to eventually
+come up with something like this anyway. Consider for example what
+happens when a device has master interfaces on two different IOMMUs. Not
+only does the current model of having one and one only IOMMU per struct
+bus_type break down, but also IOMMU masters will need a way to specify
+which IOMMU they're talking to.
 
-Thanks
+Thierry
+
+--+HP7ph2BbKc20aGI
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTtrBdAAoJEN0jrNd/PrOhzl0P/iwj8bP8nXBSPf/py2sTO2lo
+r6ME8Ag48kI8cccEXWQgDCmaw8mKPF8Tf6Wbtjzgd+aFSGuDyG5DdRu90yFGNYJz
+y+WZapVkdCIVt2HhgtqrldVEi4+1Ins2PWP6iqzHp4SJ0NAFZwWMeTkHLEQQC3Wm
+HrDBZJJ4SpS4SiNGElZ5cfmZOXHO1nPYMPdvDTFmRAtFpLgSvWrqEyoRGl6AKhip
+t4VLiUUEd2Mi1hR1UwDVrKsUX4nz6KGFhUSHe49MaITkUHzAwZ6gdxIYBMcZ/G1b
+09O2MBhJvtRMsGsCd7q4sa1dj5tDxTDn5kUz3BOyL2pAxeOIIH+f7RqHd3/AWBbv
+djJlFR8nFmqo/DuwM00U+i40u3yLtJm8OWZOh15JKoIp64AWdjZ6GuMHRrM553wA
+pRJIIYewjngLR8cLvC2s27bl0ZwQUjYP02rHZGlpqTKstAwnOcjhv8AW6gEijV7I
+xgZLXqDBvf4aVZNeXSYCycxcndRjzQ4AG0WIdGBv+iloPkP4e7znMuVxvueiLMVq
+EcPwYdRcwnSVLSaP+vk5WNYrM7Iml7xA8jZ42m3EK9SpFzVkqVG62h8+C8jzeJT3
+EdmRD5GMqBdh60jpt58HZitnb9kHAujF1smMeRjxlcXGZNsQQy/shK6gHFcsfz71
+OSkMzl9QvDDINi9jjBvG
+=7jBS
+-----END PGP SIGNATURE-----
+
+--+HP7ph2BbKc20aGI--
+
+--===============5568363894153179835==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============5568363894153179835==--
