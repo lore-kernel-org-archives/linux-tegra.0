@@ -1,44 +1,59 @@
-From: Pawel Lebioda <pawel.lebioda89-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] staging: nvec: remove unneccessary 'out of memory' message
-Date: Fri, 4 Jul 2014 22:04:59 +0200
-Message-ID: <20140704200457.GA4932@ThinkPad>
+From: Julian Andres Klode <jak@jak-linux.org>
+Subject: Re: [PATCH] staging: nvec: remove unneccessary 'else' after 'return'
+ statement
+Date: Fri, 4 Jul 2014 22:59:41 +0200
+Message-ID: <20140704205941.GA7406@jak-x230>
+References: <20140704195746.GA4346@ThinkPad>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
 Content-Disposition: inline
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <20140704195746.GA4346@ThinkPad>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: driverdev-devel-bounces@linuxdriverproject.org
+To: Pawel Lebioda <pawel.lebioda89@gmail.com>
+Cc: devel@driverdev.osuosl.org, Julian Andres Klode <jak@jak-linux.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, ac100@lists.launchpad.net
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+On Fri, Jul 04, 2014 at 09:57:50PM +0200, Pawel Lebioda wrote:
+> Hi,
+>
+> This patch fixes the following warning reported by checkpatch.pl:
+> 
+> WARNING: else is not generally useful after a break or return
+> #235: FILE: drivers/staging/nvec/nvec.c:235:
+> 
+> Regards
+> Pawel Lebioda
+> 
+> Signed-off-by: Pawel Lebioda <pawel.lebioda89@gmail.com>
+>  drivers/staging/nvec/nvec.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 
-This patch fixes the following warning reported by checkpatch.pl:
+Hi Pawel,
 
-WARNING: Possible unnecessary 'out of memory' message
-#811: FILE: drivers/staging/nvec/nvec.c:811
+Please format your patches correctly. There should be no
+"Hi", no "Regards", etc. After the signed off should be a
+dashed line.
 
-Regards
-Pawel Lebioda
+Use git format-patch to format patches and you can send
+them using git-send-email.
 
-Signed-off-by: Pawel Lebioda <pawel.lebioda89-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
- drivers/staging/nvec/nvec.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+See Documentation/SubmittingPatches for more details
 
-diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-index 90f1c4d..70109f6 100644
---- a/drivers/staging/nvec/nvec.c
-+++ b/drivers/staging/nvec/nvec.c
-@@ -807,10 +807,9 @@ static int tegra_nvec_probe(struct platform_device *pdev)
- 	}
- 
- 	nvec = devm_kzalloc(&pdev->dev, sizeof(struct nvec_chip), GFP_KERNEL);
--	if (nvec == NULL) {
--		dev_err(&pdev->dev, "failed to reserve memory\n");
-+	if (nvec == NULL)
- 		return -ENOMEM;
--	}
-+
- 	platform_set_drvdata(pdev, nvec);
- 	nvec->dev = &pdev->dev;
- 
+Thanks,
+-- 
+Julian Andres Klode  - Debian Developer, Ubuntu Member
+
+See http://wiki.debian.org/JulianAndresKlode and http://jak-linux.org/.
+
+Be friendly, do not top-post, and follow RFC 1855 "Netiquette".
+    - If you don't I might ignore you.
