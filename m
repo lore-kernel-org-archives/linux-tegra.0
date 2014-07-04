@@ -1,8 +1,8 @@
 From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
-Subject: [PATCH v2 3/4] USB: EHCI: tegra: Fix probe order issue leading to
- broken USB
-Date: Fri,  4 Jul 2014 04:09:38 +0300
-Message-ID: <1404436179-10745-4-git-send-email-ttynkkynen@nvidia.com>
+Subject: [PATCH v2 2/4] ARM: tegra: Add resets & has-utmi-pad-registers flag
+ to all USB PHYs
+Date: Fri,  4 Jul 2014 04:09:37 +0300
+Message-ID: <1404436179-10745-3-git-send-email-ttynkkynen@nvidia.com>
 References: <1404436179-10745-1-git-send-email-ttynkkynen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,116 +22,168 @@ To: Alan Stern <stern@rowland.harvard.edu>
 Cc: devicetree@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Thierry Reding <thierry.reding@gmail.com>, Tuomas Tynkkynen <ttynkkynen@nvidia.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-The Tegra USB complex has a particularly annoying misdesign: some of the
-UTMI pad configuration registers are global for all the 3 USB controllers
-on the chip, but those registers are located in the first controller's
-register space and will be cleared when the reset to the first
-controller is asserted. Currently, this means that if the 1st controller
-were to finish probing after the 2nd or 3rd controller, USB would not
-work at all.
+Add new properties to all of the Tegra PHYs that are now required
+according to the binding.
 
-Fix this situation by always resetting the 1st controller before doing
-any other setup to any of the controllers, and then never ever reset the
-first controller again. As the UTMI registers are related to the PHY,
-the PHY driver should probably reset the Tegra controllers instead,
-but since old device trees only have reset phandles in the EHCI nodes,
-do it here, which means a bit of device tree groveling. Those old DTs
-also won't get the reset fix from this commit, so we'll dev_warn() them,
-but the driver will still keep probing successfully.
+In order to stay compatible with old device trees, the USB drivers
+will still function without these reset properties but with the old,
+potentially buggy behaviour.
 
 Signed-off-by: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
 ---
-v2 changes: assume we can find the usb1 reset from the PHY DT node,
-            don't fail if it's not found but just issue a warning
- drivers/usb/host/ehci-tegra.c |   62 +++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 59 insertions(+), 3 deletions(-)
+v2 changes: new patch, didn't exist in v1
+ arch/arm/boot/dts/tegra114.dtsi |    5 +++++
+ arch/arm/boot/dts/tegra124.dtsi |    7 +++++++
+ arch/arm/boot/dts/tegra20.dtsi  |    7 +++++++
+ arch/arm/boot/dts/tegra30.dtsi  |    7 +++++++
+ 4 files changed, 26 insertions(+)
 
-diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
-index 5590567..f495775 100644
---- a/drivers/usb/host/ehci-tegra.c
-+++ b/drivers/usb/host/ehci-tegra.c
-@@ -46,6 +46,7 @@
- #define DRV_NAME "tegra-ehci"
+diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
+index 335a1d8..80b8edd 100644
+--- a/arch/arm/boot/dts/tegra114.dtsi
++++ b/arch/arm/boot/dts/tegra114.dtsi
+@@ -672,6 +672,8 @@
+ 			 <&tegra_car TEGRA114_CLK_PLL_U>,
+ 			 <&tegra_car TEGRA114_CLK_USBD>;
+ 		clock-names = "reg", "pll_u", "utmi-pads";
++		resets = <&tegra_car 22>, <&tegra_car 22>;
++		reset-names = "usb", "utmi-pads";
+ 		nvidia,hssync-start-delay = <0>;
+ 		nvidia,idle-wait-delay = <17>;
+ 		nvidia,elastic-limit = <16>;
+@@ -682,6 +684,7 @@
+ 		nvidia,hssquelch-level = <2>;
+ 		nvidia,hsdiscon-level = <5>;
+ 		nvidia,xcvr-hsslew = <12>;
++		nvidia,has-utmi-pad-registers;
+ 		status = "disabled";
+ 	};
  
- static struct hc_driver __read_mostly tegra_ehci_hc_driver;
-+static bool usb1_reset_attempted;
+@@ -705,6 +708,8 @@
+ 			 <&tegra_car TEGRA114_CLK_PLL_U>,
+ 			 <&tegra_car TEGRA114_CLK_USBD>;
+ 		clock-names = "reg", "pll_u", "utmi-pads";
++		resets = <&tegra_car 59>, <&tegra_car 22>;
++		reset-names = "usb", "utmi-pads";
+ 		nvidia,hssync-start-delay = <0>;
+ 		nvidia,idle-wait-delay = <17>;
+ 		nvidia,elastic-limit = <16>;
+diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+index d675186..5b14d79 100644
+--- a/arch/arm/boot/dts/tegra124.dtsi
++++ b/arch/arm/boot/dts/tegra124.dtsi
+@@ -643,6 +643,8 @@
+ 			 <&tegra_car TEGRA124_CLK_PLL_U>,
+ 			 <&tegra_car TEGRA124_CLK_USBD>;
+ 		clock-names = "reg", "pll_u", "utmi-pads";
++		resets = <&tegra_car 22>, <&tegra_car 22>;
++		reset-names = "usb", "utmi-pads";
+ 		nvidia,hssync-start-delay = <0>;
+ 		nvidia,idle-wait-delay = <17>;
+ 		nvidia,elastic-limit = <16>;
+@@ -653,6 +655,7 @@
+ 		nvidia,hssquelch-level = <2>;
+ 		nvidia,hsdiscon-level = <5>;
+ 		nvidia,xcvr-hsslew = <12>;
++		nvidia,has-utmi-pad-registers;
+ 		status = "disabled";
+ 	};
  
- struct tegra_ehci_soc_config {
- 	bool has_hostpc;
-@@ -60,6 +61,61 @@ struct tegra_ehci_hcd {
- 	enum tegra_usb_phy_port_speed port_speed;
- };
+@@ -677,6 +680,8 @@
+ 			 <&tegra_car TEGRA124_CLK_PLL_U>,
+ 			 <&tegra_car TEGRA124_CLK_USBD>;
+ 		clock-names = "reg", "pll_u", "utmi-pads";
++		resets = <&tegra_car 58>, <&tegra_car 22>;
++		reset-names = "usb", "utmi-pads";
+ 		nvidia,hssync-start-delay = <0>;
+ 		nvidia,idle-wait-delay = <17>;
+ 		nvidia,elastic-limit = <16>;
+@@ -711,6 +716,8 @@
+ 			 <&tegra_car TEGRA124_CLK_PLL_U>,
+ 			 <&tegra_car TEGRA124_CLK_USBD>;
+ 		clock-names = "reg", "pll_u", "utmi-pads";
++		resets = <&tegra_car 59>, <&tegra_car 22>;
++		reset-names = "usb", "utmi-pads";
+ 		nvidia,hssync-start-delay = <0>;
+ 		nvidia,idle-wait-delay = <17>;
+ 		nvidia,elastic-limit = <16>;
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 243d84c..1908f69 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -645,6 +645,8 @@
+ 			 <&tegra_car TEGRA20_CLK_CLK_M>,
+ 			 <&tegra_car TEGRA20_CLK_USBD>;
+ 		clock-names = "reg", "pll_u", "timer", "utmi-pads";
++		resets = <&tegra_car 22>, <&tegra_car 22>;
++		reset-names = "usb", "utmi-pads";
+ 		nvidia,has-legacy-mode;
+ 		nvidia,hssync-start-delay = <9>;
+ 		nvidia,idle-wait-delay = <17>;
+@@ -653,6 +655,7 @@
+ 		nvidia,xcvr-setup = <9>;
+ 		nvidia,xcvr-lsfslew = <1>;
+ 		nvidia,xcvr-lsrslew = <1>;
++		nvidia,has-utmi-pad-registers;
+ 		status = "disabled";
+ 	};
  
-+/*
-+ * The 1st USB controller contains some UTMI pad registers that are global for
-+ * all the controllers on the chip. Those registers are also cleared when
-+ * reset is asserted to the 1st controller. This means that the 1st controller
-+ * can only be reset when no other controlled has finished probing. So we'll
-+ * reset the 1st controller before doing any other setup on any of the
-+ * controllers, and then never again.
-+ *
-+ * Since this is a PHY issue, the Tegra PHY driver should probably be doing
-+ * the resetting of the USB controllers. But to keep compatibility with old
-+ * device trees that don't have reset phandles in the PHYs, do it here.
-+ * Those old DTs will be vulnerable to total USB breakage if the 1st EHCI
-+ * device isn't the first one to finish probing, so warn them.
-+ */
-+static int tegra_reset_usb_controller(struct platform_device *pdev)
-+{
-+	struct device_node *phy_np;
-+	struct usb_hcd *hcd = platform_get_drvdata(pdev);
-+	struct tegra_ehci_hcd *tegra =
-+		(struct tegra_ehci_hcd *)hcd_to_ehci(hcd)->priv;
-+
-+	phy_np = of_parse_phandle(pdev->dev.of_node, "nvidia,phy", 0);
-+	if (!phy_np)
-+		return -ENOENT;
-+
-+	if (!usb1_reset_attempted) {
-+		struct reset_control *usb1_reset;
-+
-+		usb1_reset = of_reset_control_get(phy_np, "usb");
-+		if (IS_ERR(usb1_reset)) {
-+			dev_warn(&pdev->dev,
-+				 "can't get utmi-pads reset from the PHY\n");
-+			dev_warn(&pdev->dev,
-+				 "continuing, but please update your DT\n");
-+		} else {
-+			reset_control_assert(usb1_reset);
-+			udelay(1);
-+			reset_control_deassert(usb1_reset);
-+		}
-+
-+		reset_control_put(usb1_reset);
-+		usb1_reset_attempted = true;
-+	}
-+
-+	if (!of_property_read_bool(phy_np, "nvidia,has-utmi-pad-registers")) {
-+		reset_control_assert(tegra->rst);
-+		udelay(1);
-+		reset_control_deassert(tegra->rst);
-+	}
-+
-+	of_node_put(phy_np);
-+
-+	return 0;
-+}
-+
- static int tegra_ehci_internal_port_reset(
- 	struct ehci_hcd	*ehci,
- 	u32 __iomem	*portsc_reg
-@@ -389,9 +445,9 @@ static int tegra_ehci_probe(struct platform_device *pdev)
- 	if (err)
- 		goto cleanup_hcd_create;
+@@ -676,6 +679,8 @@
+ 			 <&tegra_car TEGRA20_CLK_PLL_U>,
+ 			 <&tegra_car TEGRA20_CLK_CDEV2>;
+ 		clock-names = "reg", "pll_u", "ulpi-link";
++		resets = <&tegra_car 58>, <&tegra_car 22>;
++		reset-names = "usb", "utmi-pads";
+ 		status = "disabled";
+ 	};
  
--	reset_control_assert(tegra->rst);
--	udelay(1);
--	reset_control_deassert(tegra->rst);
-+	err = tegra_reset_usb_controller(pdev);
-+	if (err)
-+		goto cleanup_clk_en;
+@@ -700,6 +705,8 @@
+ 			 <&tegra_car TEGRA20_CLK_CLK_M>,
+ 			 <&tegra_car TEGRA20_CLK_USBD>;
+ 		clock-names = "reg", "pll_u", "timer", "utmi-pads";
++		resets = <&tegra_car 59>, <&tegra_car 22>;
++		reset-names = "usb", "utmi-pads";
+ 		nvidia,hssync-start-delay = <9>;
+ 		nvidia,idle-wait-delay = <17>;
+ 		nvidia,elastic-limit = <16>;
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index 0b1ede9..6b35c29 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -790,6 +790,8 @@
+ 			 <&tegra_car TEGRA30_CLK_PLL_U>,
+ 			 <&tegra_car TEGRA30_CLK_USBD>;
+ 		clock-names = "reg", "pll_u", "utmi-pads";
++		resets = <&tegra_car 22>, <&tegra_car 22>;
++		reset-names = "usb", "utmi-pads";
+ 		nvidia,hssync-start-delay = <9>;
+ 		nvidia,idle-wait-delay = <17>;
+ 		nvidia,elastic-limit = <16>;
+@@ -801,6 +803,7 @@
+ 		nvidia,xcvr-hsslew = <32>;
+ 		nvidia,hssquelch-level = <2>;
+ 		nvidia,hsdiscon-level = <5>;
++		nvidia,has-utmi-pad-registers;
+ 		status = "disabled";
+ 	};
  
- 	u_phy = devm_usb_get_phy_by_phandle(&pdev->dev, "nvidia,phy", 0);
- 	if (IS_ERR(u_phy)) {
+@@ -824,6 +827,8 @@
+ 			 <&tegra_car TEGRA30_CLK_PLL_U>,
+ 			 <&tegra_car TEGRA30_CLK_USBD>;
+ 		clock-names = "reg", "pll_u", "utmi-pads";
++		resets = <&tegra_car 58>, <&tegra_car 22>;
++		reset-names = "usb", "utmi-pads";
+ 		nvidia,hssync-start-delay = <9>;
+ 		nvidia,idle-wait-delay = <17>;
+ 		nvidia,elastic-limit = <16>;
+@@ -858,6 +863,8 @@
+ 			 <&tegra_car TEGRA30_CLK_PLL_U>,
+ 			 <&tegra_car TEGRA30_CLK_USBD>;
+ 		clock-names = "reg", "pll_u", "utmi-pads";
++		resets = <&tegra_car 59>, <&tegra_car 22>;
++		reset-names = "usb", "utmi-pads";
+ 		nvidia,hssync-start-delay = <0>;
+ 		nvidia,idle-wait-delay = <17>;
+ 		nvidia,elastic-limit = <16>;
 -- 
 1.7.9.5
