@@ -1,78 +1,68 @@
-From: Pawel Lebioda <pawel.lebioda89@gmail.com>
-Subject: [PATCH] staging: nvec: insert blank lines after declarations
-Date: Thu, 3 Jul 2014 21:15:57 +0200
-Message-ID: <20140703191554.GA12029@ThinkPad>
+From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Subject: [PATCH v2 0/4] Tegra USB probe order issue fix
+Date: Fri,  4 Jul 2014 04:09:35 +0300
+Message-ID: <1404436179-10745-1-git-send-email-ttynkkynen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-Content-Disposition: inline
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: driverdev-devel-bounces@linuxdriverproject.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: devel@driverdev.osuosl.org, Julian Andres Klode <jak@jak-linux.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, ac100@lists.launchpad.net
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: devicetree@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Thierry Reding <thierry.reding@gmail.com>, Tuomas Tynkkynen <ttynkkynen@nvidia.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+Hi all,
 
-This patch fixes coding style warnings reported by checkpatch.pl:
-"Missing a blank line after declarations".
+Here's a second version of the probe order issue series. This time I've
+added the USB1 resets to the PHYs, thus replacing the really ugly parts
+with something slightly better. Old device trees will still probe
+successfully, but instead of this bugfix they'll get a dev_warn().
 
-Regards
-Pawel Lebioda
+The reset control patch was dropped, as a similar patch from someone
+else has landed in linux-next.
 
-Signed-off-by: Pawel Lebioda <pawel.lebioda89@gmail.com>
- drivers/staging/nvec/nvec_paz00.c | 1 +
- drivers/staging/nvec/nvec_power.c | 1 +
- drivers/staging/nvec/nvec_ps2.c   | 2 ++
- 3 files changed, 4 insertions(+)
+For a recap of the issue from the previous series:
 
-diff --git a/drivers/staging/nvec/nvec_paz00.c b/drivers/staging/nvec/nvec_paz00.c
-index 934b796..e2e675a 100644
---- a/drivers/staging/nvec/nvec_paz00.c
-+++ b/drivers/staging/nvec/nvec_paz00.c
-@@ -35,6 +35,7 @@ static void nvec_led_brightness_set(struct led_classdev *led_cdev,
- {
- 	struct nvec_led *led = to_nvec_led(led_cdev);
- 	unsigned char buf[] = NVEC_LED_REQ;
-+
- 	buf[4] = value;
- 
- 	nvec_write_async(led->nvec, buf, sizeof(buf));
-diff --git a/drivers/staging/nvec/nvec_power.c b/drivers/staging/nvec/nvec_power.c
-index aacfcd6..6446e15 100644
---- a/drivers/staging/nvec/nvec_power.c
-+++ b/drivers/staging/nvec/nvec_power.c
-@@ -226,6 +226,7 @@ static int nvec_power_get_property(struct power_supply *psy,
- 				   union power_supply_propval *val)
- {
- 	struct nvec_power *power = dev_get_drvdata(psy->dev->parent);
-+
- 	switch (psp) {
- 	case POWER_SUPPLY_PROP_ONLINE:
- 		val->intval = power->on;
-diff --git a/drivers/staging/nvec/nvec_ps2.c b/drivers/staging/nvec/nvec_ps2.c
-index 45b2f13..f56f1db 100644
---- a/drivers/staging/nvec/nvec_ps2.c
-+++ b/drivers/staging/nvec/nvec_ps2.c
-@@ -53,12 +53,14 @@ static struct nvec_ps2 ps2_dev;
- static int ps2_startstreaming(struct serio *ser_dev)
- {
- 	unsigned char buf[] = { NVEC_PS2, AUTO_RECEIVE_N, PACKET_SIZE };
-+
- 	return nvec_write_async(ps2_dev.nvec, buf, sizeof(buf));
- }
- 
- static void ps2_stopstreaming(struct serio *ser_dev)
- {
- 	unsigned char buf[] = { NVEC_PS2, CANCEL_AUTO_RECEIVE };
-+
- 	nvec_write_async(ps2_dev.nvec, buf, sizeof(buf));
- }
+Basically, the register area of the 1st USB controller contains some
+registers that are global to all of the controllers, but that are also
+cleared when reset is asserted to the 1st controller. So if (say) the
+3rd controller would be the first one to finish probing successfully,
+then the reset that happens during the 1st controller's probe would
+result in broken USB. So the before doing anything with the USB HW,
+we should reset the 1st controller once, and then never ever reset
+it again.
+
+While testing that the 1st USB controller still works without a reset
+when the driver is unbound and bound again, I discovered an unbalanced
+regulator_disable + clk_disable_unprepare in the PHY code if the EHCI
+driver is unbound and rebound. This is fixed in patch 4.
+
+Thanks,
+Tuomas.
+
+Tuomas Tynkkynen (4):
+  USB: tegra: Add resets & has-utmi-pad-registers flag to the PHY
+    binding
+  ARM: tegra: Add resets & has-utmi-pad-registers flag to all USB PHYs
+  USB: EHCI: tegra: Fix probe order issue leading to broken USB
+  USB: PHY: tegra: Call tegra_usb_phy_close only on device removal
+
+ .../bindings/usb/nvidia,tegra20-usb-phy.txt        |    8 +++
+ arch/arm/boot/dts/tegra114.dtsi                    |    5 ++
+ arch/arm/boot/dts/tegra124.dtsi                    |    7 +++
+ arch/arm/boot/dts/tegra20.dtsi                     |    7 +++
+ arch/arm/boot/dts/tegra30.dtsi                     |    7 +++
+ drivers/usb/host/ehci-tegra.c                      |   62 +++++++++++++++++++-
+ drivers/usb/phy/phy-tegra-usb.c                    |    8 +--
+ 7 files changed, 96 insertions(+), 8 deletions(-)
+
+-- 
+1.7.9.5
