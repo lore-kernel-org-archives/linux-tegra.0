@@ -1,8 +1,7 @@
 From: Pawel Lebioda <pawel.lebioda89@gmail.com>
-Subject: [PATCH 1/2] staging: nvec: remove unnecessary 'else' after 'return'
- statement
-Date: Sat,  5 Jul 2014 22:30:55 +0200
-Message-ID: <55d9b3cb9cf1c54d1fc87dd1d6a582f6067cc295.1404586529.git.pawel.lebioda89@gmail.com>
+Subject: [PATCH 2/2] staging: nvec: remove unneccessary 'out of memory' message
+Date: Sat,  5 Jul 2014 22:30:56 +0200
+Message-ID: <df2e426106dbb1040fded1f2ae69cb88e6c8c5cc.1404586529.git.pawel.lebioda89@gmail.com>
 References: <cover.1404586529.git.pawel.lebioda89@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -26,27 +25,30 @@ List-Id: linux-tegra@vger.kernel.org
 
 Fix the following warning reported by checkpatch.pl:
 
-WARNING: else is not generally useful after a break or return
-235: FILE: drivers/staging/nvec/nvec.c:235
+WARNING: Possible unnecessary 'out of memory' message
+811: FILE: drivers/staging/nvec/nvec.c:811
 
 Signed-off-by: Pawel Lebioda <pawel.lebioda89@gmail.com>
 ---
- drivers/staging/nvec/nvec.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/staging/nvec/nvec.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-index 90f1c4d..8a3dd47 100644
+index 8a3dd47..d325048 100644
 --- a/drivers/staging/nvec/nvec.c
 +++ b/drivers/staging/nvec/nvec.c
-@@ -232,8 +232,7 @@ static size_t nvec_msg_size(struct nvec_msg *msg)
- 		return 2;
- 	else if (event_length == NVEC_3BYTES)
- 		return 3;
--	else
--		return 0;
-+	return 0;
- }
+@@ -806,10 +806,9 @@ static int tegra_nvec_probe(struct platform_device *pdev)
+ 	}
  
- /**
+ 	nvec = devm_kzalloc(&pdev->dev, sizeof(struct nvec_chip), GFP_KERNEL);
+-	if (nvec == NULL) {
+-		dev_err(&pdev->dev, "failed to reserve memory\n");
++	if (nvec == NULL)
+ 		return -ENOMEM;
+-	}
++
+ 	platform_set_drvdata(pdev, nvec);
+ 	nvec->dev = &pdev->dev;
+ 
 -- 
 1.8.3.2
