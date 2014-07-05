@@ -1,21 +1,52 @@
-From: Pawel Lebioda <pawel.lebioda89-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 0/2] staging: nvec: fix some coding style problems
-Date: Sat,  5 Jul 2014 22:30:54 +0200
-Message-ID: <cover.1404586529.git.pawel.lebioda89@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Pawel Lebioda <pawel.lebioda89@gmail.com>
+Subject: [PATCH 1/2] staging: nvec: remove unnecessary 'else' after 'return'
+ statement
+Date: Sat,  5 Jul 2014 22:30:55 +0200
+Message-ID: <55d9b3cb9cf1c54d1fc87dd1d6a582f6067cc295.1404586529.git.pawel.lebioda89@gmail.com>
+References: <cover.1404586529.git.pawel.lebioda89@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <cover.1404586529.git.pawel.lebioda89@gmail.com>
+In-Reply-To: <cover.1404586529.git.pawel.lebioda89@gmail.com>
+References: <cover.1404586529.git.pawel.lebioda89@gmail.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: driverdev-devel-bounces@linuxdriverproject.org
+To: Julian Andres Klode <jak@jak-linux.org>, Marc Dietrich <marvin24@gmx.de>
+Cc: linux-tegra@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, ac100@lists.launchpad.net
 List-Id: linux-tegra@vger.kernel.org
 
-The following patches fix some warnings reported by checkpatch.pl
+Fix the following warning reported by checkpatch.pl:
 
-Pawel Lebioda (2):
-  staging: nvec: remove unnecessary 'else' after 'return' statement
-  staging: nvec: remove unneccessary 'out of memory' message
+WARNING: else is not generally useful after a break or return
+235: FILE: drivers/staging/nvec/nvec.c:235
 
- drivers/staging/nvec/nvec.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+Signed-off-by: Pawel Lebioda <pawel.lebioda89@gmail.com>
+---
+ drivers/staging/nvec/nvec.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index 90f1c4d..8a3dd47 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -232,8 +232,7 @@ static size_t nvec_msg_size(struct nvec_msg *msg)
+ 		return 2;
+ 	else if (event_length == NVEC_3BYTES)
+ 		return 3;
+-	else
+-		return 0;
++	return 0;
+ }
+ 
+ /**
 -- 
 1.8.3.2
