@@ -1,42 +1,67 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] ARM: convert all "mov.* pc, reg" to "bx reg" for ARMv6+
- (part1)
-Date: Sat, 05 Jul 2014 03:06:39 +0200
-Message-ID: <53B74F9F.8030604@gmail.com>
-References: <E1X20mL-00083I-Sv@rmk-PC.arm.linux.org.uk>
+From: Marc Dietrich <marvin24@gmx.de>
+Subject: Re: [PATCH] staging: nvec: remove unneccessary 'else' after
+ 'return'statement
+Date: Sat, 5 Jul 2014 13:49:03 +0200
+Message-ID: <20140705134903.89ec088a6b90e48be9c36f89@gmx.de>
+References: <20140704195746.GA4346@ThinkPad> <20140704205941.GA7406@jak-x230>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <E1X20mL-00083I-Sv@rmk-PC.arm.linux.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Russell King <rmk+kernel@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
-Cc: davinci-linux-open-source@linux.davincidsp.com, linux-samsung-soc@vger.kernel.org, kvm@vger.kernel.org, linux-sh@vger.kernel.org, linux-crypto@vger.kernel.org, linux-tegra@vger.kernel.org, xen-devel@lists.xenproject.org, linux-omap@vger.kernel.org, kvmarm@lists.cs.columbia.edu
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <20140704205941.GA7406@jak-x230>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: driverdev-devel-bounces@linuxdriverproject.org
+To: Julian Andres Klode <jak@jak-linux.org>
+Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Pawel Lebioda <pawel.lebioda89@gmail.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, ac100@lists.launchpad.net
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Russell,
+On Fri, 4 Jul 2014 22:59:41 +0200
+Julian Andres Klode <jak@jak-linux.org> wrote:
 
-On 01.07.2014 18:19, Russell King wrote:
-> ARMv6 and greater introduced a new instruction ("bx") which can be used
-> to return from function calls.  Recent CPUs perform better when the
-> "bx lr" instruction is used rather than the "mov pc, lr" instruction,
-> and this sequence is strongly recommended to be used by the ARM
-> architecture manual (section A.4.1.1).
+> On Fri, Jul 04, 2014 at 09:57:50PM +0200, Pawel Lebioda wrote:
+> > Hi,
+> >
+> > This patch fixes the following warning reported by checkpatch.pl:
+> > 
+> > WARNING: else is not generally useful after a break or return
+> > #235: FILE: drivers/staging/nvec/nvec.c:235:
+> > 
+> > Regards
+> > Pawel Lebioda
+> > 
+> > Signed-off-by: Pawel Lebioda <pawel.lebioda89@gmail.com>
+> >  drivers/staging/nvec/nvec.c | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> We provide a new macro "ret" with all its variants for the condition
-> code which will resolve to the appropriate instruction.
+> Hi Pawel,
 > 
-> Rather than doing this piecemeal, and miss some instances, change all
-> the "mov pc" instances to use the new macro, with the exception of
-> the "movs" instruction and the kprobes code.  This allows us to detect
-> the "mov pc, lr" case and fix it up - and also gives us the possibility
-> of deploying this for other registers depending on the CPU selection.
+> Please format your patches correctly. There should be no
+> "Hi", no "Regards", etc. After the signed off should be a
+> dashed line.
 > 
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> Use git format-patch to format patches and you can send
+> them using git-send-email.
 
-Build- and boot-tested on mach-s3c64xx.
+yes, this way you reduce some apply-burdon from Greg. Ideally,
+you would combine all patches (one patch per checkpatch warning)
+in a common thread like this:
 
-Tested-by: Tomasz Figa <tomasz.figa@gmail.com>
+git-format-patch --cover-letter --thread -s <first commit of your
+patches>
 
-Best regards,
-Tomasz
+This way you could add some comments (if any) to the cover letter
+and just keep the plain checkpatch message in the other patches. This
+has also the advantage that the maintainers only have to ack the "cover
+letter".
+
+Marc
+ 
+-- 
+Marc Dietrich <marvin24@gmx.de>
