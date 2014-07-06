@@ -1,15 +1,12 @@
-From: Pawel Lebioda <pawel.lebioda89@gmail.com>
-Subject: [PATCH 2/2] staging: nvec: remove unneccessary 'out of memory' message
-Date: Sat,  5 Jul 2014 22:30:56 +0200
-Message-ID: <df2e426106dbb1040fded1f2ae69cb88e6c8c5cc.1404586529.git.pawel.lebioda89@gmail.com>
+From: Marc Dietrich <marvin24@gmx.de>
+Subject: Re: [PATCH 0/2] staging: nvec: fix some coding style problems
+Date: Sun, 06 Jul 2014 10:26:41 +0200
+Message-ID: <280954076.FMFuBvGU15@fb07-iapwap2>
 References: <cover.1404586529.git.pawel.lebioda89@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============1032843673445446678=="
 Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
 In-Reply-To: <cover.1404586529.git.pawel.lebioda89@gmail.com>
-In-Reply-To: <cover.1404586529.git.pawel.lebioda89@gmail.com>
-References: <cover.1404586529.git.pawel.lebioda89@gmail.com>
 List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
 List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
@@ -19,36 +16,64 @@ List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driver
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
 Sender: driverdev-devel-bounces@linuxdriverproject.org
-To: Julian Andres Klode <jak@jak-linux.org>, Marc Dietrich <marvin24@gmx.de>
-Cc: linux-tegra@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, ac100@lists.launchpad.net
+To: Pawel Lebioda <pawel.lebioda89@gmail.com>
+Cc: devel@driverdev.osuosl.org, Julian Andres Klode <jak@jak-linux.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, ac100@lists.launchpad.net
 List-Id: linux-tegra@vger.kernel.org
 
-Fix the following warning reported by checkpatch.pl:
 
-WARNING: Possible unnecessary 'out of memory' message
-811: FILE: drivers/staging/nvec/nvec.c:811
+--===============1032843673445446678==
+Content-Type: multipart/signed; boundary="nextPart9849659.i5ZEGLnPSd"; micalg="pgp-sha1"; protocol="application/pgp-signature"
 
-Signed-off-by: Pawel Lebioda <pawel.lebioda89@gmail.com>
----
- drivers/staging/nvec/nvec.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-index 8a3dd47..d325048 100644
---- a/drivers/staging/nvec/nvec.c
-+++ b/drivers/staging/nvec/nvec.c
-@@ -806,10 +806,9 @@ static int tegra_nvec_probe(struct platform_device *pdev)
- 	}
- 
- 	nvec = devm_kzalloc(&pdev->dev, sizeof(struct nvec_chip), GFP_KERNEL);
--	if (nvec == NULL) {
--		dev_err(&pdev->dev, "failed to reserve memory\n");
-+	if (nvec == NULL)
- 		return -ENOMEM;
--	}
-+
- 	platform_set_drvdata(pdev, nvec);
- 	nvec->dev = &pdev->dev;
- 
--- 
-1.8.3.2
+--nextPart9849659.i5ZEGLnPSd
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="ISO-8859-1"
+
+Hi Pawel,
+
+Am Samstag, 5. Juli 2014, 22:30:54 schrieb Pawel Lebioda:
+> The following patches fix some warnings reported by checkpatch.pl
+> 
+> Pawel Lebioda (2):
+>   staging: nvec: remove unnecessary 'else' after 'return' statement
+>   staging: nvec: remove unneccessary 'out of memory' message
+> 
+>  drivers/staging/nvec/nvec.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+
+thanks for fixing, so for this series
+
+Acked-by: Marc Dietrich <marvin24@gmx.de>
+
+--nextPart9849659.i5ZEGLnPSd
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQEcBAABAgAGBQJTuQhBAAoJEKyeR39HFBto4KsH/2xv2G50rEedyYWKUUvWwi8P
+zpC0SUKt0OHQiihuWx3VaORFqZUWZoR/8mlOftu0/EUoH2YRc4AmNlBPkoMeM/pa
+Xg+nKltAyYAh8iA2aZdzOdt/++LemCHmq4oYwmR8tLbzf96vtCQvSarwGoQj0NBT
+HuFAS0M+PwgilJkXTUy2XtkzURiDZ2hula3xEKFgI/5nluJ3V5g4WeYmhwT4Pm7F
+6rUWrz9zgPWXYHS3lYbA74I4Ib1xh5k7hlsMb/XqWq8FSX1kld8GX+WC79lOe3yY
+FBLJnipU30AwvpBF4dCVPHQjB7d2q1CuErcJqa3AbRzjyz6cD35HC1IalkEG5jA=
+=EGnp
+-----END PGP SIGNATURE-----
+
+--nextPart9849659.i5ZEGLnPSd--
+
+
+--===============1032843673445446678==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+
+--===============1032843673445446678==--
