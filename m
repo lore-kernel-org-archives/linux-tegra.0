@@ -1,52 +1,69 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH] ARM: convert all "mov.* pc, reg" to "bx reg" for ARMv6+
-Date: Mon, 7 Jul 2014 11:21:42 +0200
-Message-ID: <20140707092142.GC3118@verge.net.au>
-References: <E1X20Rs-00082S-KI@rmk-PC.arm.linux.org.uk>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [RFC 01/10] iommu: Add IOMMU device registry
+Date: Sun, 6 Jul 2014 20:17:22 +0200
+Message-ID: <201407062017.23049.arnd@arndb.de>
+References: <1403815790-8548-1-git-send-email-thierry.reding@gmail.com>
+	<20140704134709.GA4203@ulmo> <20140704134928.GA25714@arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <E1X20Rs-00082S-KI@rmk-PC.arm.linux.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: Andrew Lunn <andrew@lunn.ch>, kvm@vger.kernel.org, linux-sh@vger.kernel.org, Kevin Hilman <khilman@deeprootsystems.com>, Sekhar Nori <nsekhar@ti.com>, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, kvmarm@lists.cs.columbia.edu, Kukjin Kim <kgene.kim@samsung.com>, Herbert Xu <herbert@gondor.apana.org.au>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Magnus Damm <magnus.damm@gmail.com>, Gleb Natapov <gleb@kernel.org>, Tony Lindgren <tony@atomide.com>, linux-arm-kernel@lists.infradead.org, xen-devel@lists.xenproject.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Stephen Warren <swarren@wwwdotorg.org>, Marc Zyngier <marc.zyngier@arm.com>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.or>
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20140704134928.GA25714-5wv7dgnIgG8@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jul 01, 2014 at 04:58:24PM +0100, Russell King wrote:
-> ARMv6 and greater introduced a new instruction ("bx") which can be used
-> to return from function calls.  Recent CPUs perform better when the
-> "bx lr" instruction is used rather than the "mov pc, lr" instruction,
-> and this sequence is strongly recommended to be used by the ARM
-> architecture manual (section A.4.1.1).
+On Friday 04 July 2014, Will Deacon wrote:
+> On Fri, Jul 04, 2014 at 02:47:10PM +0100, Thierry Reding wrote:
+> > On Fri, Jul 04, 2014 at 01:05:30PM +0200, Joerg Roedel wrote:
+> > > On Thu, Jun 26, 2014 at 10:49:41PM +0200, Thierry Reding wrote:
+> > > > Add an IOMMU device registry for drivers to register with and implement
+> > > > a method for users of the IOMMU API to attach to an IOMMU device. This
+> > > > allows to support deferred probing and gives the IOMMU API a convenient
+> > > > hook to perform early initialization of a device if necessary.
+> > > 
+> > > Can you elaborate on why exactly you need this? The IOMMU-API is
+> > > designed to hide any details from the user about the available IOMMUs in
+> > > the system and which IOMMU handles which device. This looks like it is
+> > > going in a completly different direction from that.
+> > 
+> > I need this primarily to properly serialize device probing order.
+> > Without it the IOMMU may be probed later than its clients, in which case
+> > the client drivers will assume that there is no IOMMU (iommu_present()
+> > for the parent bus fails).
 > 
-> We provide a new macro "ret" with all its variants for the condition
-> code which will resolve to the appropriate instruction.
-> 
-> Rather than doing this piecemeal, and miss some instances, change all
-> the "mov pc" instances to use the new macro, with the exception of
-> the "movs" instruction and the kprobes code.  This allows us to detect
-> the "mov pc, lr" case and fix it up - and also gives us the possibility
-> of deploying this for other registers depending on the CPU selection.
-> 
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> I can also vouch for needing a solution to this problem. The ARM SMMU (and
+> I think others) rely on initcall ordering rather than the driver probing
+> model to ensure the IOMMU is probed before any of its masters.
 
-A conflict in next notification from Stephen Rothwell tells me that this
-has made it there but regardless I would like to note that I have
-successfully tested this on the following shmobile boards:
-Genmai, Koelsh, Lager, Marzen, Bockw, APE6EVM, KZM9D, KZM9G,
-Armadillo800 EVA and Mackerel. This covers all but one board (I do not
-have access to a Henninger) and all SoCs supported in mainline.
+I think it would be best to attach platform devices to IOMMUs from the
+of_dma_configure() we just introduced. That still requires handling
+IOMMUs special though, and I don't know how we should best deal
+with that. It would not be too hard to scan for IOMMUs in DT first
+and register them all in a way that we can later look them up
+by phandle, but that would break down if we ever get nested IOMMUs.
 
-Accordingly, the shmobile portion:
+Another possibility might be to register all devices as we do today,
+including IOMMU devices, but return -EPROBE_DEFER from
+platform_drv_probe() before we call into the driver's probe function
+if the IOMMU has not been set up at that point.
 
-Tested-by: Simon Horman <horms+renesas@verge.net.au>
+For PCI devices, we need a different way of dealing with the IOMMUs,
+some generic PCI code needs to be added to attach the correct IOMMU
+to a newly added PCI device based on how the host bridge is configured.
+
+We can probably for now get away with not worrying about any bus type
+other than platform, amba or PCI: we don't use any other DMA master
+capable bus on ARM, and other architectures can probably rely on
+having only a single IOMMU implementation in the system.
+
+	Arnd
