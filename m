@@ -1,79 +1,70 @@
-From: Marc Dietrich <marvin24@gmx.de>
-Subject: Re: [PATCH 0/2] staging: nvec: fix some coding style problems
-Date: Sun, 06 Jul 2014 10:26:41 +0200
-Message-ID: <280954076.FMFuBvGU15@fb07-iapwap2>
-References: <cover.1404586529.git.pawel.lebioda89@gmail.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/4] drm/dsi: Add flag for continuous clock behavior
+Date: Sun, 6 Jul 2014 18:30:57 +0900
+Message-ID: <CAAVeFuLxJ0AwHJFf1A3z1ezCXHonMayQUoy-Re2_R=3mLaS7Rg@mail.gmail.com>
+References: <1404303560-32209-1-git-send-email-acourbot@nvidia.com>
+ <1404303560-32209-2-git-send-email-acourbot@nvidia.com> <53B5131B.1060702@samsung.com>
+ <CAAVeFu+sTWhwCTd9ntqdJQA1aaFV93zHnyRSj6WA-8VicFuvgQ@mail.gmail.com> <53B679A0.1060306@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1032843673445446678=="
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <cover.1404586529.git.pawel.lebioda89@gmail.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: driverdev-devel-bounces@linuxdriverproject.org
-To: Pawel Lebioda <pawel.lebioda89@gmail.com>
-Cc: devel@driverdev.osuosl.org, Julian Andres Klode <jak@jak-linux.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, ac100@lists.launchpad.net
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <53B679A0.1060306-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Fri, Jul 4, 2014 at 6:53 PM, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> On 07/04/2014 07:57 AM, Alexandre Courbot wrote:
+>> Hi Andrejz,
+>>
+>> On Thu, Jul 3, 2014 at 5:23 PM, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>>> Hi Alexandre,
+>>>
+>>> Thanks for the patch.
+>>>
+>>> On 07/02/2014 02:19 PM, Alexandre Courbot wrote:
+>>>> As per section 5.6.1 of the DSI specification, all DSI transmitters must
+>>>> support continuous clock behavior on the clock lane, while non-continuous
+>>>> mode support is only optional. Add a flag that allows devices to indicate
+>>>> that they require continuous clock mode to operate properly.
+>>>>
+>>>> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>> ---
+>>>>  include/drm/drm_mipi_dsi.h | 2 ++
+>>>>  1 file changed, 2 insertions(+)
+>>>>
+>>>> diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
+>>>> index 944f33f..5913ef4 100644
+>>>> --- a/include/drm/drm_mipi_dsi.h
+>>>> +++ b/include/drm/drm_mipi_dsi.h
+>>>> @@ -94,6 +94,8 @@ void mipi_dsi_host_unregister(struct mipi_dsi_host *host);
+>>>>  #define MIPI_DSI_MODE_VSYNC_FLUSH    BIT(8)
+>>>>  /* disable EoT packets in HS mode */
+>>>>  #define MIPI_DSI_MODE_EOT_PACKET     BIT(9)
+>>>> +/* use continuous clock behavior on the clock lane */
+>>>> +#define MIPI_DSI_MODE_CLOCK_CONTINUOUS       BIT(10)
+>>>>
+>>> According to MIPI DSI specification "All DSI transmitters and receivers
+>>> shall support continuous clock behavior on the Clock Lane, and
+>>> optionally may support non-continuous clock behavior". It suggests that
+>>> continuous clock should be default behavior. So maybe better is to
+>>> introduce sth like:
+>>> +#define MIPI_DSI_MODE_CLOCK_NON_CONTINUOUS     BIT(10)
+>> I started under the assumption that current host drivers assumed
+>> non-continuous clock (as the Tegra driver currently does).
+>
+> Exynos DSI driver uses continuous clock.
+> Currently, in mainline,  there are no more dsi hosts using drm_mipi_dsi.h.
+> As I stated before I prefer to follow dsi specification and it states
+> clearly that
+> continuous behavior is required, non-continouous is optional.
+> Moreover for tegra chip continuous behavior is also the default one.
 
---===============1032843673445446678==
-Content-Type: multipart/signed; boundary="nextPart9849659.i5ZEGLnPSd"; micalg="pgp-sha1"; protocol="application/pgp-signature"
+Makes perfect sense indeed, especially if we have only two users of
+this interface for now. Will resubmit this series to make the Tegra
+driver use continuous clock by default, and update the panels it used
+to far to make use of the new flag.
 
-
---nextPart9849659.i5ZEGLnPSd
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="ISO-8859-1"
-
-Hi Pawel,
-
-Am Samstag, 5. Juli 2014, 22:30:54 schrieb Pawel Lebioda:
-> The following patches fix some warnings reported by checkpatch.pl
-> 
-> Pawel Lebioda (2):
->   staging: nvec: remove unnecessary 'else' after 'return' statement
->   staging: nvec: remove unneccessary 'out of memory' message
-> 
->  drivers/staging/nvec/nvec.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
-
-thanks for fixing, so for this series
-
-Acked-by: Marc Dietrich <marvin24@gmx.de>
-
---nextPart9849659.i5ZEGLnPSd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQEcBAABAgAGBQJTuQhBAAoJEKyeR39HFBto4KsH/2xv2G50rEedyYWKUUvWwi8P
-zpC0SUKt0OHQiihuWx3VaORFqZUWZoR/8mlOftu0/EUoH2YRc4AmNlBPkoMeM/pa
-Xg+nKltAyYAh8iA2aZdzOdt/++LemCHmq4oYwmR8tLbzf96vtCQvSarwGoQj0NBT
-HuFAS0M+PwgilJkXTUy2XtkzURiDZ2hula3xEKFgI/5nluJ3V5g4WeYmhwT4Pm7F
-6rUWrz9zgPWXYHS3lYbA74I4Ib1xh5k7hlsMb/XqWq8FSX1kld8GX+WC79lOe3yY
-FBLJnipU30AwvpBF4dCVPHQjB7d2q1CuErcJqa3AbRzjyz6cD35HC1IalkEG5jA=
-=EGnp
------END PGP SIGNATURE-----
-
---nextPart9849659.i5ZEGLnPSd--
-
-
---===============1032843673445446678==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
-
---===============1032843673445446678==--
+Thanks,
+Alex.
