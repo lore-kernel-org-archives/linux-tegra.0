@@ -1,70 +1,36 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/4] drm/dsi: Add flag for continuous clock behavior
-Date: Sun, 6 Jul 2014 18:30:57 +0900
-Message-ID: <CAAVeFuLxJ0AwHJFf1A3z1ezCXHonMayQUoy-Re2_R=3mLaS7Rg@mail.gmail.com>
-References: <1404303560-32209-1-git-send-email-acourbot@nvidia.com>
- <1404303560-32209-2-git-send-email-acourbot@nvidia.com> <53B5131B.1060702@samsung.com>
- <CAAVeFu+sTWhwCTd9ntqdJQA1aaFV93zHnyRSj6WA-8VicFuvgQ@mail.gmail.com> <53B679A0.1060306@samsung.com>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH v2 1/3] arm: multi_v7: enable igb, stmpe, lm95245, pwm
+ leds
+Date: Sun, 6 Jul 2014 16:43:56 -0700
+Message-ID: <20140706234356.GB5539@quad.lixom.net>
+References: <1741a33cd88cd5525f3c50c0e0cacc0853a3512a.1402350905.git.marcel@ziswiler.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53B679A0.1060306-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1741a33cd88cd5525f3c50c0e0cacc0853a3512a.1402350905.git.marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stefan-XLVq0VzYD2Y@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jul 4, 2014 at 6:53 PM, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> On 07/04/2014 07:57 AM, Alexandre Courbot wrote:
->> Hi Andrejz,
->>
->> On Thu, Jul 3, 2014 at 5:23 PM, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->>> Hi Alexandre,
->>>
->>> Thanks for the patch.
->>>
->>> On 07/02/2014 02:19 PM, Alexandre Courbot wrote:
->>>> As per section 5.6.1 of the DSI specification, all DSI transmitters must
->>>> support continuous clock behavior on the clock lane, while non-continuous
->>>> mode support is only optional. Add a flag that allows devices to indicate
->>>> that they require continuous clock mode to operate properly.
->>>>
->>>> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>> ---
->>>>  include/drm/drm_mipi_dsi.h | 2 ++
->>>>  1 file changed, 2 insertions(+)
->>>>
->>>> diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
->>>> index 944f33f..5913ef4 100644
->>>> --- a/include/drm/drm_mipi_dsi.h
->>>> +++ b/include/drm/drm_mipi_dsi.h
->>>> @@ -94,6 +94,8 @@ void mipi_dsi_host_unregister(struct mipi_dsi_host *host);
->>>>  #define MIPI_DSI_MODE_VSYNC_FLUSH    BIT(8)
->>>>  /* disable EoT packets in HS mode */
->>>>  #define MIPI_DSI_MODE_EOT_PACKET     BIT(9)
->>>> +/* use continuous clock behavior on the clock lane */
->>>> +#define MIPI_DSI_MODE_CLOCK_CONTINUOUS       BIT(10)
->>>>
->>> According to MIPI DSI specification "All DSI transmitters and receivers
->>> shall support continuous clock behavior on the Clock Lane, and
->>> optionally may support non-continuous clock behavior". It suggests that
->>> continuous clock should be default behavior. So maybe better is to
->>> introduce sth like:
->>> +#define MIPI_DSI_MODE_CLOCK_NON_CONTINUOUS     BIT(10)
->> I started under the assumption that current host drivers assumed
->> non-continuous clock (as the Tegra driver currently does).
->
-> Exynos DSI driver uses continuous clock.
-> Currently, in mainline,  there are no more dsi hosts using drm_mipi_dsi.h.
-> As I stated before I prefer to follow dsi specification and it states
-> clearly that
-> continuous behavior is required, non-continouous is optional.
-> Moreover for tegra chip continuous behavior is also the default one.
+On Tue, Jun 10, 2014 at 12:49:50AM +0200, Marcel Ziswiler wrote:
+> The NVIDIA Tegra 3 based Apalis T30 module contains an Intel i210 resp.
+> i211 gigabit Ethernet controller, an STMPE811 ADC/touch controller, PWM
+> LEDs generically accessible from user space and an LM95245 temperature
+> sensor chip. The later three can also be found on the Colibri T30
+> module.
+> 
+> While at it move the NEON entry down to its proper place to have it all
+> nicely ordered again.
+> 
+> Signed-off-by: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
 
-Makes perfect sense indeed, especially if we have only two users of
-this interface for now. Will resubmit this series to make the Tegra
-driver use continuous clock by default, and update the panels it used
-to far to make use of the new flag.
+Applied for 3.17.
 
-Thanks,
-Alex.
+
+-Olof
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
