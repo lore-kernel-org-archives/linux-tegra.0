@@ -1,63 +1,38 @@
-From: Pawel Lebioda <pawel.lebioda89-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] staging: nvec: add missing blank line after declarations
-Date: Mon,  7 Jul 2014 18:05:41 +0200
-Message-ID: <1404749141-3943-1-git-send-email-pawel.lebioda89@gmail.com>
+From: Guillaume Clement <gclement-nky7s8twH9kdnm+yROfE0A@public.gmane.org>
+Subject: [PATCH 1/5] staging:nvec: Fix "unnecessary else" coding style warning.
+Date: Tue,  8 Jul 2014 00:31:33 +0200
+Message-ID: <1404772297-6549-2-git-send-email-gclement@baobob.org>
+References: <1404772297-6549-1-git-send-email-gclement@baobob.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1404772297-6549-1-git-send-email-gclement-nky7s8twH9kdnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Guillaume Clement <gclement-nky7s8twH9kdnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Fix 'missing blank line after declaration' warnings reported by checkpatch.pl.
-Signed-off-by: Pawel Lebioda <pawel.lebioda89-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/staging/nvec/nvec_paz00.c | 1 +
- drivers/staging/nvec/nvec_power.c | 1 +
- drivers/staging/nvec/nvec_ps2.c   | 2 ++
- 3 files changed, 4 insertions(+)
+The last else is unnessary as all the if statements end with a return.
 
-diff --git a/drivers/staging/nvec/nvec_paz00.c b/drivers/staging/nvec/nvec_paz00.c
-index 934b796..e2e675a 100644
---- a/drivers/staging/nvec/nvec_paz00.c
-+++ b/drivers/staging/nvec/nvec_paz00.c
-@@ -35,6 +35,7 @@ static void nvec_led_brightness_set(struct led_classdev *led_cdev,
- {
- 	struct nvec_led *led = to_nvec_led(led_cdev);
- 	unsigned char buf[] = NVEC_LED_REQ;
-+
- 	buf[4] = value;
- 
- 	nvec_write_async(led->nvec, buf, sizeof(buf));
-diff --git a/drivers/staging/nvec/nvec_power.c b/drivers/staging/nvec/nvec_power.c
-index aacfcd6..6446e15 100644
---- a/drivers/staging/nvec/nvec_power.c
-+++ b/drivers/staging/nvec/nvec_power.c
-@@ -226,6 +226,7 @@ static int nvec_power_get_property(struct power_supply *psy,
- 				   union power_supply_propval *val)
- {
- 	struct nvec_power *power = dev_get_drvdata(psy->dev->parent);
-+
- 	switch (psp) {
- 	case POWER_SUPPLY_PROP_ONLINE:
- 		val->intval = power->on;
-diff --git a/drivers/staging/nvec/nvec_ps2.c b/drivers/staging/nvec/nvec_ps2.c
-index 45b2f13..f56f1db 100644
---- a/drivers/staging/nvec/nvec_ps2.c
-+++ b/drivers/staging/nvec/nvec_ps2.c
-@@ -53,12 +53,14 @@ static struct nvec_ps2 ps2_dev;
- static int ps2_startstreaming(struct serio *ser_dev)
- {
- 	unsigned char buf[] = { NVEC_PS2, AUTO_RECEIVE_N, PACKET_SIZE };
-+
- 	return nvec_write_async(ps2_dev.nvec, buf, sizeof(buf));
+Signed-off-by: Guillaume Cl=C3=A9ment <gclement-nky7s8twH9kdnm+yROfE0A@public.gmane.org>
+---
+ drivers/staging/nvec/nvec.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index 90f1c4d..8a3dd47 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -232,8 +232,7 @@ static size_t nvec_msg_size(struct nvec_msg *msg)
+ 		return 2;
+ 	else if (event_length =3D=3D NVEC_3BYTES)
+ 		return 3;
+-	else
+-		return 0;
++	return 0;
  }
- 
- static void ps2_stopstreaming(struct serio *ser_dev)
- {
- 	unsigned char buf[] = { NVEC_PS2, CANCEL_AUTO_RECEIVE };
-+
- 	nvec_write_async(ps2_dev.nvec, buf, sizeof(buf));
- }
- 
--- 
-1.8.3.2
+=20
+ /**
+--=20
+1.8.5.5
