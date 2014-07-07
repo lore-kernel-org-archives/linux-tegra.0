@@ -1,7 +1,7 @@
 From: Guillaume Clement <gclement@baobob.org>
-Subject: [PATCH 4/5] staging:nvec: Add missing blank line after declarations.
-Date: Tue,  8 Jul 2014 00:31:36 +0200
-Message-ID: <1404772297-6549-5-git-send-email-gclement@baobob.org>
+Subject: [PATCH 3/5] staging:nvec: Add missing blank line after declarations.
+Date: Tue,  8 Jul 2014 00:31:35 +0200
+Message-ID: <1404772297-6549-4-git-send-email-gclement@baobob.org>
 References: <1404772297-6549-1-git-send-email-gclement@baobob.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -15,22 +15,22 @@ List-Id: linux-tegra@vger.kernel.org
 
 Signed-off-by: Guillaume Cl=C3=A9ment <gclement@baobob.org>
 ---
- drivers/staging/nvec/nvec_power.c | 1 +
+ drivers/staging/nvec/nvec_paz00.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/staging/nvec/nvec_power.c b/drivers/staging/nvec/n=
-vec_power.c
-index aacfcd6..6446e15 100644
---- a/drivers/staging/nvec/nvec_power.c
-+++ b/drivers/staging/nvec/nvec_power.c
-@@ -226,6 +226,7 @@ static int nvec_power_get_property(struct power_sup=
-ply *psy,
- 				   union power_supply_propval *val)
+diff --git a/drivers/staging/nvec/nvec_paz00.c b/drivers/staging/nvec/n=
+vec_paz00.c
+index 934b796..e2e675a 100644
+--- a/drivers/staging/nvec/nvec_paz00.c
++++ b/drivers/staging/nvec/nvec_paz00.c
+@@ -35,6 +35,7 @@ static void nvec_led_brightness_set(struct led_classd=
+ev *led_cdev,
  {
- 	struct nvec_power *power =3D dev_get_drvdata(psy->dev->parent);
+ 	struct nvec_led *led =3D to_nvec_led(led_cdev);
+ 	unsigned char buf[] =3D NVEC_LED_REQ;
 +
- 	switch (psp) {
- 	case POWER_SUPPLY_PROP_ONLINE:
- 		val->intval =3D power->on;
+ 	buf[4] =3D value;
+=20
+ 	nvec_write_async(led->nvec, buf, sizeof(buf));
 --=20
 1.8.5.5
