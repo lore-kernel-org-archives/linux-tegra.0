@@ -1,83 +1,84 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [GIT PULL 1/3] ARM: tegra: rework PCIe regulators
-Date: Mon, 7 Jul 2014 07:52:12 +0200
-Message-ID: <20140707055211.GA15216@ulmo>
-References: <1403558626-13422-1-git-send-email-swarren@wwwdotorg.org>
- <20140707003854.GD8469@quad.lixom.net>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 1/2] staging: nvec: remove unnecessary 'else' after
+ 'return' statement
+Date: Mon, 7 Jul 2014 07:53:25 +0200
+Message-ID: <20140707055324.GB15216@ulmo>
+References: <cover.1404586529.git.pawel.lebioda89@gmail.com>
+ <55d9b3cb9cf1c54d1fc87dd1d6a582f6067cc295.1404586529.git.pawel.lebioda89@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="h31gzZEtNLTqOjlF"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20140707003854.GD8469-O5ziIzlqnXUVNXGz7ipsyg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============0907320595958050516=="
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <55d9b3cb9cf1c54d1fc87dd1d6a582f6067cc295.1404586529.git.pawel.lebioda89@gmail.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: driverdev-devel-bounces@linuxdriverproject.org
+To: Pawel Lebioda <pawel.lebioda89@gmail.com>
+Cc: devel@driverdev.osuosl.org, Julian Andres Klode <jak@jak-linux.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, ac100@lists.launchpad.net
 List-Id: linux-tegra@vger.kernel.org
 
 
---h31gzZEtNLTqOjlF
+--===============0907320595958050516==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="24zk1gE8NUlDmwG9"
+Content-Disposition: inline
+
+
+--24zk1gE8NUlDmwG9
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jul 06, 2014 at 05:38:54PM -0700, Olof Johansson wrote:
-> On Mon, Jun 23, 2014 at 03:23:44PM -0600, Stephen Warren wrote:
-> > This branch reworks the set of regulators that the Tegra PCIe driver
-> > uses, so that the driver and DT bindings more correctly model what's
-> > really going on in HW.
-> >=20
-> > I've made this a separate branch in case it needs to be pulled into the
-> > PCIe tree to resolve any conflicts. Any branch that adds Tegra124
-> > support to the PCIe driver will need to be based on this branch, and
-> > such patches might show up for 3.17, and be taken through the ARM tree
-> > so we can manage our own dependencies.
+On Sat, Jul 05, 2014 at 10:30:55PM +0200, Pawel Lebioda wrote:
+> Fix the following warning reported by checkpatch.pl:
 >=20
-> Isn't PCI broken if you boot with an older device tree now?
+> WARNING: else is not generally useful after a break or return
+> 235: FILE: drivers/staging/nvec/nvec.c:235
+>=20
+> Signed-off-by: Pawel Lebioda <pawel.lebioda89@gmail.com>
+> ---
+>  drivers/staging/nvec/nvec.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 
-Yes.
+Reviewed-by: Thierry Reding <treding@nvidia.com>
 
-> I would like to see this as two branches: One to the PCI driver, and one
-> modifying DT contents. The PCI driver should remain working for old DTs,
-> so the last couple of commits on this branch can't be there.
-
-This is one of my main gripes with device tree these days. We have many
-situations where device tree bindings got rushed with the result that
-many of them describe hardware in a *completely* wrong way.
-
-The Tegra PCIe binding was designed with an incomplete understanding of
-the hardware (I wonder how many other cases there are like this in
-mainline) and it just happens to work by accident on existing platforms.
-
-So this really boils down to one question: how do we fix bugs in device
-tree bindings?
-
-I suppose we could keep some sort of backwards-compatible shim inside
-the driver to cope with the existing, wrong device tree binding. However
-that means an additional maintenance burden and I'm not convinced that
-there's a need in this particular case.
-
-Thierry
-
---h31gzZEtNLTqOjlF
+--24zk1gE8NUlDmwG9
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJTujWLAAoJEN0jrNd/PrOhjHgQAIlkXhaEnDKfqls9E0EjOAqb
-F2dMov2ww7FfJtlbEP1i9KPHrZB7Mrw2Nu4h9nJPeCTl41Ot9WuSLkQLu+8Mk//i
-iJgjgartp8Hlkbga6iLIOH2qsyOHll1p1r/pGp4dnVyVOb0geH1hM71k6w0njC7n
-9zaWDC7rKopk8AgHm+vpE7eV7WIttx9UXKTPGEUPyAKmzPa2Ui4bOJYbqjlAL5Xb
-zEHx7uWUv6E5b2OTmH0rU8QZ67jMuehYlFP1+PwBqDFt/TYjZNWpb9It6Bc7EEBO
-YOkTnHaEZW99cXIwxAtRTinc4mqUZZloiBSCHQpTIZ2oS/pgVjh1roOzU4gda2qR
-Li7awiFJVibxdj7E1rMDaelbPNbbXbdCSti9z4zjtB8X/3Mdh4Q/yFMOr1wbiSMU
-uTHaUMm8h8mzlCkegoVssyEdy6AT0F6p5sjKwDCg04cOP2zhXE4rrwy30FD8v6Lg
-FcdlNkNhCMmn5jkod/jmjANRSPGAFtrY+22tAif5Ma2M/one/Vt0GxuS+dw8YaZi
-Ukna49F0XbGTbTUFjk9sU1g+w5sghQQjyt6iTNd0w9T/jUo/UdOBJNKDYlZSvZGj
-fUCDMpXY3YYJfcvM64DAnzPmRfq1hvgq5CxUwcHc0G9lFqX4m7D73mbjNZg8NVbM
-TvOHJ6LJ8aZOtu+Bffnc
-=zZkH
+iQIcBAEBAgAGBQJTujXUAAoJEN0jrNd/PrOhbcMP/iiRMnLKuRAtXfu2ruzFOZfR
+Xim7F3M+CmK/Cklt7aVWvN1/z4uwjJm/dAKxf32F82R0K1KCSzSMvaETgglheM8I
+J5rjLGm6BMD0TjqdhYVgJuvhykBON0i53URnzOsQ6u7ADqJTP2e+LNUbtjfFujpj
+GAovR3IenBqQ42kMnr5s2l/LTg9TapQoECxvkXrK2lrSSMjhGQ3FF1FOEGcvBEwz
+n8dG4MFF4L9bblWJhsWkd2IfU3Tx1UuV5gT8u1zr9kxv7V0TD1nwS0aKNy/9w9ZW
+ACzdoS2Qr9uJ3a5yPypTRsbzjKtfd77ERMqegLTgL40TDgjNZUP1MukpG4banC2H
+4MDz4P+q5a67zraTmuXQ0TnfKKlvUQzwQnP1/TnxfVoFfbX7SnxBRBS3nhX1FwIl
+XvzZ6gYjiMqbniyw9AdGDtYHDlVrKfMdUqx3T2TRhnbcIc3WHOHwp0jrtK5j/t89
+OybSwJahjR2Kh6KTshP1YxsIxW23BjW8oXUMSQ/R1X0yD6GQo9gs8S3fHYiIo+N0
+J2RBXbzPE+smrwiNZYSQJP6GMr9++ngLkli15eK2JwhwDzTLERalVE3XhGNNIK32
+uAzBMlZwUQiMOYQe7rMv7w8fvpItqFt0pwp8XbzTsayROnXVeDbUEFCLf2nJwbLT
+A6JzI1Zv/0alCB40RGMe
+=xzUD
 -----END PGP SIGNATURE-----
 
---h31gzZEtNLTqOjlF--
+--24zk1gE8NUlDmwG9--
+
+--===============0907320595958050516==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+
+--===============0907320595958050516==--
