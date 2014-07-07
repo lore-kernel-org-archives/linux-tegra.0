@@ -1,39 +1,63 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v5 2/4] pinctrl: Add NVIDIA Tegra XUSB pad controller support
-Date: Mon, 7 Jul 2014 16:26:36 +0200
-Message-ID: <CACRpkdae+LSfhEN9KZDeGYxcK8OkmqtHBb=uUxgBrpJmEWnaug@mail.gmail.com>
-References: <1403177830-28595-1-git-send-email-thierry.reding@gmail.com>
-	<1403177830-28595-2-git-send-email-thierry.reding@gmail.com>
-	<53B18A87.7040305@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Pawel Lebioda <pawel.lebioda89-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] staging: nvec: add missing blank line after declarations
+Date: Mon,  7 Jul 2014 18:05:41 +0200
+Message-ID: <1404749141-3943-1-git-send-email-pawel.lebioda89@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53B18A87.7040305-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jun 30, 2014 at 6:04 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 06/19/2014 05:37 AM, Thierry Reding wrote:
->> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> The XUSB pad controller found on NVIDIA Tegra SoCs provides several pads
->> that lanes can be assigned to in order to support a variety of interface
->> options: USB 2.0, USB 3.0, PCIe and SATA.
->>
->> In addition to the pin controller used to assign lanes to pads two PHYs
->> are exposed to allow the bricks for PCIe and SATA to be powered up and
->> down by PCIe and SATA drivers.
->
-> Linus, does the driver look OK? I'm hoping for an ack from you so that I
-> can take this series through the Tegra tree to resolve some
-> dependencies; we have various other drivers that depend on this series.
+Fix 'missing blank line after declaration' warnings reported by checkpatch.pl.
+Signed-off-by: Pawel Lebioda <pawel.lebioda89-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/staging/nvec/nvec_paz00.c | 1 +
+ drivers/staging/nvec/nvec_power.c | 1 +
+ drivers/staging/nvec/nvec_ps2.c   | 2 ++
+ 3 files changed, 4 insertions(+)
 
-Sure thing, if it looks OK to you, by all means apply it yo your tree.
-Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-
-(Also goes for the DT bindings FWIW)
-
-Yours,
-Linus Walleij
+diff --git a/drivers/staging/nvec/nvec_paz00.c b/drivers/staging/nvec/nvec_paz00.c
+index 934b796..e2e675a 100644
+--- a/drivers/staging/nvec/nvec_paz00.c
++++ b/drivers/staging/nvec/nvec_paz00.c
+@@ -35,6 +35,7 @@ static void nvec_led_brightness_set(struct led_classdev *led_cdev,
+ {
+ 	struct nvec_led *led = to_nvec_led(led_cdev);
+ 	unsigned char buf[] = NVEC_LED_REQ;
++
+ 	buf[4] = value;
+ 
+ 	nvec_write_async(led->nvec, buf, sizeof(buf));
+diff --git a/drivers/staging/nvec/nvec_power.c b/drivers/staging/nvec/nvec_power.c
+index aacfcd6..6446e15 100644
+--- a/drivers/staging/nvec/nvec_power.c
++++ b/drivers/staging/nvec/nvec_power.c
+@@ -226,6 +226,7 @@ static int nvec_power_get_property(struct power_supply *psy,
+ 				   union power_supply_propval *val)
+ {
+ 	struct nvec_power *power = dev_get_drvdata(psy->dev->parent);
++
+ 	switch (psp) {
+ 	case POWER_SUPPLY_PROP_ONLINE:
+ 		val->intval = power->on;
+diff --git a/drivers/staging/nvec/nvec_ps2.c b/drivers/staging/nvec/nvec_ps2.c
+index 45b2f13..f56f1db 100644
+--- a/drivers/staging/nvec/nvec_ps2.c
++++ b/drivers/staging/nvec/nvec_ps2.c
+@@ -53,12 +53,14 @@ static struct nvec_ps2 ps2_dev;
+ static int ps2_startstreaming(struct serio *ser_dev)
+ {
+ 	unsigned char buf[] = { NVEC_PS2, AUTO_RECEIVE_N, PACKET_SIZE };
++
+ 	return nvec_write_async(ps2_dev.nvec, buf, sizeof(buf));
+ }
+ 
+ static void ps2_stopstreaming(struct serio *ser_dev)
+ {
+ 	unsigned char buf[] = { NVEC_PS2, CANCEL_AUTO_RECEIVE };
++
+ 	nvec_write_async(ps2_dev.nvec, buf, sizeof(buf));
+ }
+ 
+-- 
+1.8.3.2
