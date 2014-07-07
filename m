@@ -1,7 +1,7 @@
 From: Guillaume Clement <gclement@baobob.org>
-Subject: [PATCH 5/5] staging:nvec: Add missing blank line after declarations.
-Date: Tue,  8 Jul 2014 00:31:37 +0200
-Message-ID: <1404772297-6549-6-git-send-email-gclement@baobob.org>
+Subject: [PATCH 4/5] staging:nvec: Add missing blank line after declarations.
+Date: Tue,  8 Jul 2014 00:31:36 +0200
+Message-ID: <1404772297-6549-5-git-send-email-gclement@baobob.org>
 References: <1404772297-6549-1-git-send-email-gclement@baobob.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -15,28 +15,22 @@ List-Id: linux-tegra@vger.kernel.org
 
 Signed-off-by: Guillaume Cl=C3=A9ment <gclement@baobob.org>
 ---
- drivers/staging/nvec/nvec_ps2.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/staging/nvec/nvec_power.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/staging/nvec/nvec_ps2.c b/drivers/staging/nvec/nve=
-c_ps2.c
-index 45b2f13..f56f1db 100644
---- a/drivers/staging/nvec/nvec_ps2.c
-+++ b/drivers/staging/nvec/nvec_ps2.c
-@@ -53,12 +53,14 @@ static struct nvec_ps2 ps2_dev;
- static int ps2_startstreaming(struct serio *ser_dev)
+diff --git a/drivers/staging/nvec/nvec_power.c b/drivers/staging/nvec/n=
+vec_power.c
+index aacfcd6..6446e15 100644
+--- a/drivers/staging/nvec/nvec_power.c
++++ b/drivers/staging/nvec/nvec_power.c
+@@ -226,6 +226,7 @@ static int nvec_power_get_property(struct power_sup=
+ply *psy,
+ 				   union power_supply_propval *val)
  {
- 	unsigned char buf[] =3D { NVEC_PS2, AUTO_RECEIVE_N, PACKET_SIZE };
+ 	struct nvec_power *power =3D dev_get_drvdata(psy->dev->parent);
 +
- 	return nvec_write_async(ps2_dev.nvec, buf, sizeof(buf));
- }
-=20
- static void ps2_stopstreaming(struct serio *ser_dev)
- {
- 	unsigned char buf[] =3D { NVEC_PS2, CANCEL_AUTO_RECEIVE };
-+
- 	nvec_write_async(ps2_dev.nvec, buf, sizeof(buf));
- }
-=20
+ 	switch (psp) {
+ 	case POWER_SUPPLY_PROP_ONLINE:
+ 		val->intval =3D power->on;
 --=20
 1.8.5.5
