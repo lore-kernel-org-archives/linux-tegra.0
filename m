@@ -1,55 +1,77 @@
-From: Andrew Bresticker <abrestic@chromium.org>
-Subject: Re: [PATCH v2 4/7] clk: tegra: Enable hardware control of SATA PLL
-Date: Mon, 7 Jul 2014 18:26:33 -0700
-Message-ID: <CAL1qeaHo_HEoXoCQjQuqux_BNPtz4BtOnrYTa4=vcNQCYxiDSg@mail.gmail.com>
-References: <1403101406-15439-1-git-send-email-mperttunen@nvidia.com>
-	<1403101406-15439-5-git-send-email-mperttunen@nvidia.com>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [GIT PULL 1/3] ARM: tegra: rework PCIe regulators
+Date: Mon, 7 Jul 2014 21:45:46 -0700
+Message-ID: <CAOesGMjwE=xThuUwmBF02YaQ32_uFogryW5anNoGc8yfkuN_Pg@mail.gmail.com>
+References: <1403558626-13422-1-git-send-email-swarren@wwwdotorg.org>
+	<20140707003854.GD8469@quad.lixom.net>
+	<20140707055211.GA15216@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-ide-owner@vger.kernel.org>
-In-Reply-To: <1403101406-15439-5-git-send-email-mperttunen@nvidia.com>
-Sender: linux-ide-owner@vger.kernel.org
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Tejun Heo <tj@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, linux-ide@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140707055211.GA15216@ulmo>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jun 18, 2014 at 7:23 AM, Mikko Perttunen <mperttunen@nvidia.com> wrote:
-> This makes the SATA PLL be controlled by hardware instead of software.
-> This is required for working SATA support.
+On Sun, Jul 6, 2014 at 10:52 PM, Thierry Reding
+<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Sun, Jul 06, 2014 at 05:38:54PM -0700, Olof Johansson wrote:
+>> On Mon, Jun 23, 2014 at 03:23:44PM -0600, Stephen Warren wrote:
+>> > This branch reworks the set of regulators that the Tegra PCIe driver
+>> > uses, so that the driver and DT bindings more correctly model what's
+>> > really going on in HW.
+>> >
+>> > I've made this a separate branch in case it needs to be pulled into the
+>> > PCIe tree to resolve any conflicts. Any branch that adds Tegra124
+>> > support to the PCIe driver will need to be based on this branch, and
+>> > such patches might show up for 3.17, and be taken through the ARM tree
+>> > so we can manage our own dependencies.
+>>
+>> Isn't PCI broken if you boot with an older device tree now?
 >
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> Acked-by: Stephen Warren <swarren@nvidia.com>
-
-I know Peter sent a pull request including this patch already, but I
-don't see it yet in Mike's tree, so perhaps it's possible to address
-my comment below (or else I'll include it in the next spin of my XUSB
-series.
-
-> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-
-> @@ -1361,6 +1364,11 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
->         val |= XUSBIO_PLL_CFG0_SEQ_ENABLE;
->         pll_writel(val, XUSBIO_PLL_CFG0, pll);
+> Yes.
 >
-> +       /* Enable hw control of SATA pll */
-> +       val = pll_readl(SATA_PLL_CFG0, pll);
-> +       val &= ~SATA_PLL_CFG0_PADPLL_RESET_SWCTL;
-> +       pll_writel(val, SATA_PLL_CFG0, pll);
-> +
+>> I would like to see this as two branches: One to the PCI driver, and one
+>> modifying DT contents. The PCI driver should remain working for old DTs,
+>> so the last couple of commits on this branch can't be there.
+>
+> This is one of my main gripes with device tree these days. We have many
+> situations where device tree bindings got rushed with the result that
+> many of them describe hardware in a *completely* wrong way.
+>
+> The Tegra PCIe binding was designed with an incomplete understanding of
+> the hardware (I wonder how many other cases there are like this in
+> mainline) and it just happens to work by accident on existing platforms.
+>
+> So this really boils down to one question: how do we fix bugs in device
+> tree bindings?
+>
+> I suppose we could keep some sort of backwards-compatible shim inside
+> the driver to cope with the existing, wrong device tree binding. However
+> that means an additional maintenance burden and I'm not convinced that
+> there's a need in this particular case.
 
-Apparently the procedure for enabling the SATA PLL for XUSB (when the
-SATA lane is used) is slightly different.  Specifically, it would be:
+It's really unfortunate, and this is very likely not the last time
+we're going to see something like this.
 
-val = pll_readl(SATA_PLL_CFG0, pll);
-val &= ~SATA_PLL_CFG0_PADPLL_RESET_SWCTL;
-val |= SATA_PLL_CFG0_PADPLL_USE_LOCKDET;
-val |= SATA_PLL_CFG0_SEQ_START_STATE;
-pll_writel(val, SATA_PLL_CFG0, pll);
+Backwards compatibility is only needed where there actually are users
+of it. Are you absolutely 100% sure that there will not be such a
+case? Trimslice users? Out-of-tree DTS:es that now need to be fixed up
+or they will break? This isn't the same thing as in-kernel interface
+changes where we say "out of tree, out of mind".
 
-udelay(1);
+If you have to stay compatible, then I suggest you try to fill in
+local driver variables with derivatives of the old properties (and
+directly from the newer properties where you can). I haven't looked at
+the specifics here so I don't know how hard it might be.
 
-val = pll_readl(SATA_PLL_CFG0, pll);
-val |= SATA_PLL_CFG0_SEQ_ENABLE;
-pll_writel(val, SATA_PLL_CFG0, pll);
+If you are 100% sure that you don't have to stay compatible, then you
+can remove the code handling the old bindings. Still, even then I am a
+little worried about dependencies (and more importantly conflicts)
+between these dtsi changes and others done by tegra platform code for
+this release. I suppose that can be resolved by having this as a base
+of any DT changes for tegra if needed.
 
-Do you know if this sequence also works when the SATA lane is used for SATA?
+
+-Olof
