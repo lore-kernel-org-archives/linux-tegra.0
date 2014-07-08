@@ -1,8 +1,7 @@
 From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH v3 2/4] drm/panel: Set non-continuous clock flag on supporting
- panels
-Date: Tue,  8 Jul 2014 21:32:12 +0900
-Message-ID: <1404822734-8603-3-git-send-email-acourbot@nvidia.com>
+Subject: [PATCH v3 3/4] drm/tegra: dsi - Handle non-continuous clock flag
+Date: Tue,  8 Jul 2014 21:32:13 +0900
+Message-ID: <1404822734-8603-4-git-send-email-acourbot@nvidia.com>
 References: <1404822734-8603-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,37 +21,28 @@ To: Andrzej Hajda <a.hajda@samsung.com>, Thierry Reding <thierry.reding@gmail.co
 Cc: linux-tegra@vger.kernel.org, gnurou@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-The LG LD070WX3-SL01 and Panasonic VVX10F004B00 are DSI support
-non-continuous clock mode. Set the MIPI_DSI_CLOCK_NON_CONTINUOUS
-to their definition so host drivers become aware of this capability.
+Handle the MIPI_DSI_CLOCK_NONCONTINUOUS flag and only set TX-only
+clock behavior when this flag is present to allow panels requiring
+continuous clock mode to operate with this driver.
 
 Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
- drivers/gpu/drm/panel/panel-simple.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/tegra/dsi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index a251361..869a84e3 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -545,7 +545,7 @@ static const struct panel_desc_dsi lg_ld070wx3_sl01 = {
- 			.height = 151,
- 		},
- 	},
--	.flags = MIPI_DSI_MODE_VIDEO,
-+	.flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_CLOCK_NON_CONTINUOUS,
- 	.format = MIPI_DSI_FMT_RGB888,
- 	.lanes = 4,
- };
-@@ -599,7 +599,8 @@ static const struct panel_desc_dsi panasonic_vvx10f004b00 = {
- 			.height = 136,
- 		},
- 	},
--	.flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_SYNC_PULSE,
-+	.flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_SYNC_PULSE |
-+		 MIPI_DSI_CLOCK_NON_CONTINUOUS,
- 	.format = MIPI_DSI_FMT_RGB888,
- 	.lanes = 4,
- };
+diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
+index bd56f2a..eadfeaf 100644
+--- a/drivers/gpu/drm/tegra/dsi.c
++++ b/drivers/gpu/drm/tegra/dsi.c
+@@ -474,7 +474,8 @@ static int tegra_output_dsi_enable(struct tegra_output *output)
+ 	tegra_dsi_writel(dsi, value, DSI_HOST_CONTROL);
+ 
+ 	value = tegra_dsi_readl(dsi, DSI_CONTROL);
+-	value |= DSI_CONTROL_HS_CLK_CTRL;
++	if (dsi->flags & MIPI_DSI_CLOCK_NON_CONTINUOUS)
++		value |= DSI_CONTROL_HS_CLK_CTRL;
+ 	value &= ~DSI_CONTROL_TX_TRIG(3);
+ 	value &= ~DSI_CONTROL_DCS_ENABLE;
+ 	value |= DSI_CONTROL_VIDEO_ENABLE;
 -- 
 2.0.0
