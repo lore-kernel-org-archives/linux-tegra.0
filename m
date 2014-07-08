@@ -1,36 +1,55 @@
-From: Guillaume Clement <gclement@baobob.org>
-Subject: [PATCH 3/5] staging:nvec: Add missing blank line after declarations.
-Date: Tue,  8 Jul 2014 00:31:35 +0200
-Message-ID: <1404772297-6549-4-git-send-email-gclement@baobob.org>
-References: <1404772297-6549-1-git-send-email-gclement@baobob.org>
+From: Andrew Bresticker <abrestic@chromium.org>
+Subject: Re: [PATCH v2 4/7] clk: tegra: Enable hardware control of SATA PLL
+Date: Mon, 7 Jul 2014 18:26:33 -0700
+Message-ID: <CAL1qeaHo_HEoXoCQjQuqux_BNPtz4BtOnrYTa4=vcNQCYxiDSg@mail.gmail.com>
+References: <1403101406-15439-1-git-send-email-mperttunen@nvidia.com>
+	<1403101406-15439-5-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1404772297-6549-1-git-send-email-gclement@baobob.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Julian Andres Klode <jak@jak-linux.org>, Marc Dietrich <marvin24@gmx.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: ac100@lists.launchpad.net, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, Guillaume Clement <gclement@baobob.org>
+Return-path: <linux-ide-owner@vger.kernel.org>
+In-Reply-To: <1403101406-15439-5-git-send-email-mperttunen@nvidia.com>
+Sender: linux-ide-owner@vger.kernel.org
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Tejun Heo <tj@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, linux-ide@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Signed-off-by: Guillaume Cl=C3=A9ment <gclement@baobob.org>
----
- drivers/staging/nvec/nvec_paz00.c | 1 +
- 1 file changed, 1 insertion(+)
+On Wed, Jun 18, 2014 at 7:23 AM, Mikko Perttunen <mperttunen@nvidia.com> wrote:
+> This makes the SATA PLL be controlled by hardware instead of software.
+> This is required for working SATA support.
+>
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> Acked-by: Stephen Warren <swarren@nvidia.com>
 
-diff --git a/drivers/staging/nvec/nvec_paz00.c b/drivers/staging/nvec/n=
-vec_paz00.c
-index 934b796..e2e675a 100644
---- a/drivers/staging/nvec/nvec_paz00.c
-+++ b/drivers/staging/nvec/nvec_paz00.c
-@@ -35,6 +35,7 @@ static void nvec_led_brightness_set(struct led_classd=
-ev *led_cdev,
- {
- 	struct nvec_led *led =3D to_nvec_led(led_cdev);
- 	unsigned char buf[] =3D NVEC_LED_REQ;
-+
- 	buf[4] =3D value;
-=20
- 	nvec_write_async(led->nvec, buf, sizeof(buf));
---=20
-1.8.5.5
+I know Peter sent a pull request including this patch already, but I
+don't see it yet in Mike's tree, so perhaps it's possible to address
+my comment below (or else I'll include it in the next spin of my XUSB
+series.
+
+> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+
+> @@ -1361,6 +1364,11 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
+>         val |= XUSBIO_PLL_CFG0_SEQ_ENABLE;
+>         pll_writel(val, XUSBIO_PLL_CFG0, pll);
+>
+> +       /* Enable hw control of SATA pll */
+> +       val = pll_readl(SATA_PLL_CFG0, pll);
+> +       val &= ~SATA_PLL_CFG0_PADPLL_RESET_SWCTL;
+> +       pll_writel(val, SATA_PLL_CFG0, pll);
+> +
+
+Apparently the procedure for enabling the SATA PLL for XUSB (when the
+SATA lane is used) is slightly different.  Specifically, it would be:
+
+val = pll_readl(SATA_PLL_CFG0, pll);
+val &= ~SATA_PLL_CFG0_PADPLL_RESET_SWCTL;
+val |= SATA_PLL_CFG0_PADPLL_USE_LOCKDET;
+val |= SATA_PLL_CFG0_SEQ_START_STATE;
+pll_writel(val, SATA_PLL_CFG0, pll);
+
+udelay(1);
+
+val = pll_readl(SATA_PLL_CFG0, pll);
+val |= SATA_PLL_CFG0_SEQ_ENABLE;
+pll_writel(val, SATA_PLL_CFG0, pll);
+
+Do you know if this sequence also works when the SATA lane is used for SATA?
