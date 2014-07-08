@@ -1,31 +1,29 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH 5/5] staging:nvec: Add missing blank line after
- declarations.
-Date: Tue, 8 Jul 2014 11:26:45 +0300
-Message-ID: <20140708082644.GF25880@mwanda>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: Re: [PATCH] staging:nvec: Fix several coding style warnings
+Date: Tue, 8 Jul 2014 12:14:31 +0200
+Message-ID: <20140708121431.a310918dce16a93cc58618a1@gmx.de>
 References: <1404772297-6549-1-git-send-email-gclement@baobob.org>
- <1404772297-6549-6-git-send-email-gclement@baobob.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-Content-Disposition: inline
-In-Reply-To: <1404772297-6549-6-git-send-email-gclement@baobob.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: driverdev-devel-bounces@linuxdriverproject.org
-To: Guillaume Clement <gclement@baobob.org>
-Cc: devel@driverdev.osuosl.org, Julian Andres Klode <jak@jak-linux.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, ac100@lists.launchpad.net
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1404772297-6549-1-git-send-email-gclement-nky7s8twH9kdnm+yROfE0A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Guillaume Clement <gclement-nky7s8twH9kdnm+yROfE0A@public.gmane.org>
+Cc: Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Looks ok.  If you wanted it probably would have been better to fold
-patches 3, 4, and 5 together but this is ok too.
+Hi Guillaume,
 
-regards,
-dan carpenter
+On Tue,  8 Jul 2014 00:31:32 +0200
+Guillaume Clement <gclement-nky7s8twH9kdnm+yROfE0A@public.gmane.org> wrote:
+
+> This fixes several warnings in the nvec staging driver.
+
+Pawel Lebioda already sent a patch series to fix these issues
+a few days ago. From a first look, your patch series looks identical.
+Thanks anyway for taking your time.
+
+Marc
+
+Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
