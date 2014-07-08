@@ -1,8 +1,8 @@
 From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v4 2/6] drm/nouveau: map pages using DMA API on
-	platform devices
-Date: Tue, 8 Jul 2014 17:25:57 +0900
-Message-ID: <1404807961-30530-3-git-send-email-acourbot@nvidia.com>
+Subject: [PATCH v4 3/6] drm/nouveau: introduce
+	nv_device_is_cpu_coherent()
+Date: Tue, 8 Jul 2014 17:25:58 +0900
+Message-ID: <1404807961-30530-4-git-send-email-acourbot@nvidia.com>
 References: <1404807961-30530-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,41 +22,47 @@ To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, David Airlie <
 Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-page_to_phys() is not the correct way to obtain the DMA address of a
-buffer on a non-PCI system. Use the DMA API functions for this, which
-are portable and will allow us to use other DMA API functions for
-buffer synchronization.
+Add a function allowing us to know whether a device is CPU-coherent,
+i.e. accesses performed by the CPU on GPU-mapped buffers will
+be immediately visible on the GPU side and vice-versa.
+
+For now, a device is considered to be coherent if it uses the PCI bus on
+a non-ARM architecture.
 
 Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/nouveau/core/engine/device/base.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/nouveau/core/engine/device/base.c  | 6 ++++++
+ drivers/gpu/drm/nouveau/core/include/core/device.h | 3 +++
+ 2 files changed, 9 insertions(+)
 
 diff --git a/drivers/gpu/drm/nouveau/core/engine/device/base.c b/drivers/gpu/drm/nouveau/core/engine/device/base.c
-index 18c8c7245b73..e4e9e64988fe 100644
+index e4e9e64988fe..23c7061aac3c 100644
 --- a/drivers/gpu/drm/nouveau/core/engine/device/base.c
 +++ b/drivers/gpu/drm/nouveau/core/engine/device/base.c
-@@ -489,7 +489,10 @@ nv_device_map_page(struct nouveau_device *device, struct page *page)
- 		if (pci_dma_mapping_error(device->pdev, ret))
- 			ret = 0;
- 	} else {
--		ret = page_to_phys(page);
-+		ret = dma_map_page(&device->platformdev->dev, page, 0,
-+				   PAGE_SIZE, DMA_BIDIRECTIONAL);
-+		if (dma_mapping_error(&device->platformdev->dev, ret))
-+			ret = 0;
+@@ -520,6 +520,12 @@ nv_device_get_irq(struct nouveau_device *device, bool stall)
  	}
- 
- 	return ret;
-@@ -501,6 +504,9 @@ nv_device_unmap_page(struct nouveau_device *device, dma_addr_t addr)
- 	if (nv_device_is_pci(device))
- 		pci_unmap_page(device->pdev, addr, PAGE_SIZE,
- 			       PCI_DMA_BIDIRECTIONAL);
-+	else
-+		dma_unmap_page(&device->platformdev->dev, addr,
-+			       PAGE_SIZE, DMA_BIDIRECTIONAL);
  }
  
++bool
++nv_device_is_cpu_coherent(struct nouveau_device *device)
++{
++	return (!IS_ENABLED(CONFIG_ARM) && nv_device_is_pci(device));
++}
++
+ static struct nouveau_oclass
+ nouveau_device_oclass = {
+ 	.handle = NV_ENGINE(DEVICE, 0x00),
+diff --git a/drivers/gpu/drm/nouveau/core/include/core/device.h b/drivers/gpu/drm/nouveau/core/include/core/device.h
+index a8a9a9cf16cb..1f9d5d87cf06 100644
+--- a/drivers/gpu/drm/nouveau/core/include/core/device.h
++++ b/drivers/gpu/drm/nouveau/core/include/core/device.h
+@@ -171,4 +171,7 @@ nv_device_unmap_page(struct nouveau_device *device, dma_addr_t addr);
  int
+ nv_device_get_irq(struct nouveau_device *device, bool stall);
+ 
++bool
++nv_device_is_cpu_coherent(struct nouveau_device *device);
++
+ #endif
 -- 
 2.0.0
