@@ -1,46 +1,44 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: pull request for Tegra clock updates for 3.17 (update)
-Date: Tue, 8 Jul 2014 13:58:12 +0300
-Message-ID: <20140708105811.GA23132@tbergstrom-lnx.Nvidia.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: pull request for Tegra clock updates for 3.17
+Date: Tue, 08 Jul 2014 05:31:08 -0700
+Message-ID: <20140708123108.9850.16107@quantum>
+References: <20140703161740.GA6078@tbergstrom-lnx.Nvidia.com>
+ <20140708105239.GY3679@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "pawel.moll-5wv7dgnIgG8@public.gmane.org" <pawel.moll-5wv7dgnIgG8@public.gmane.org>, "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20140708105239.GY3679@tbergstrom-lnx.Nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: "mark.rutland@arm.com" <mark.rutland@arm.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Mike,
+Quoting Peter De Schrijver (2014-07-08 03:52:39)
+> On Thu, Jul 03, 2014 at 06:17:40PM +0200, Peter De Schrijver wrote:
+> > Hi Mike,
+> > 
+> > A few bug fixes for Tegra124 clocks and some updates for the SATA driver
+> > 
+> > 
+> 
+> Did you pull this already? If not discard this pull request.
 
-A few bug fixes for Tegra124 clocks and some updates for the SATA driver.
-This pull request includes 1 more patch PLLE clocking to make it work for
-both SATA and XUSB.
+Discarded!
 
 Thanks,
+Mike
 
-Peter.
-
-The following changes since commit a497c3ba1d97fc69c1e78e7b96435ba8c2cb42ee:
-
-  Linux 3.16-rc2 (2014-06-21 19:02:54 -1000)
-
-are available in the git repository at:
-  git://nv-tegra.nvidia.com/user/pdeschrijver/linux.git tegra-clk-3.17-1
-
-Mikko Perttunen (3):
-      clk: tegra: Enable hardware control of SATA PLL
-      clk: tegra: Add SATA clocks to Tegra124 initialization table
-      clk: tegra: Use XUSB-compatible SATA PLL sequence
-
-Peter De Schrijver (3):
-      clk: tegra: fix vi_sensor clocks on Tegra124
-      clk: tegra124: init table updates
-      clk: tegra: export clock names for debugging
-
- drivers/clk/tegra/clk-pll.c          |   19 +++++++++++++++++++
- drivers/clk/tegra/clk-tegra-periph.c |    4 ++--
- drivers/clk/tegra/clk-tegra114.c     |   31 ++++++++++++++++++++++++++++++-
- drivers/clk/tegra/clk-tegra124.c     |   10 +++++++++-
- drivers/clk/tegra/clk.c              |    6 ++++++
- 5 files changed, 66 insertions(+), 4 deletions(-)
+> 
+> Thanks,
+> 
+> Peter.
+> 
