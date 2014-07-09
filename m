@@ -1,82 +1,39 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 6/9] ARM: tegra: Export tegra_powergate_power_on
-Date: Wed, 9 Jul 2014 16:20:10 +0300
-Message-ID: <20140709132010.GL23218@tbergstrom-lnx.Nvidia.com>
-References: <20140623101441.GU3407@tbergstrom-lnx.Nvidia.com>
- <20140708130501.GC9516@ulmo>
- <20140708141135.GC23218@tbergstrom-lnx.Nvidia.com>
- <20140709063130.GA3170@ulmo>
- <20140709083311.GE23218@tbergstrom-lnx.Nvidia.com>
- <20140709102551.GA19357@ulmo>
- <20140709110816.GF23218@tbergstrom-lnx.Nvidia.com>
- <20140709120400.GA3819@ulmo>
- <20140709124344.GK23218@tbergstrom-lnx.Nvidia.com>
- <20140709125613.GA3262@ulmo>
+From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v4] devicetree: Add generic IOMMU device tree bindings
+Date: Wed, 9 Jul 2014 14:40:50 +0100
+Message-ID: <20140709134050.GN9485@arm.com>
+References: <1404487757-18829-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20140709125613.GA3262@ulmo>
+In-Reply-To: <1404487757-18829-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olav Haugan <ohaugan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Varun Sethi <varun.sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TZNg+MwTxZMZA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jul 09, 2014 at 02:56:14PM +0200, Thierry Reding wrote:
-> * PGP Signed by an unknown key
+On Fri, Jul 04, 2014 at 04:29:17PM +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> On Wed, Jul 09, 2014 at 03:43:44PM +0300, Peter De Schrijver wrote:
-> > On Wed, Jul 09, 2014 at 02:04:02PM +0200, Thierry Reding wrote:
-> > > > For those 2 domains we can find the necessary clocks and resets by parsing
-> > > > the relevant existing DT nodes for PCIe and gr3d. For clocks, this isn't
-> > > > even needed as we can always register some extra clkdev's to get them. There
-> > > > is no equivalent for resets so we have to parse the gr3d and pcie DT nodes,
-> > > > but that's not too bad I think.
-> > > 
-> > > Even if we could really do this, at this point I don't see an advantage.
-> > > All that it would be doing is move to some subsystem that doesn't quite
-> > > match what we need just for the sake of moving to that subsystem. Having
-> > > a Tegra-specific API doesn't sound so bad anymore.
-> > > 
-> > 
-> > The advantage would be that we can use LP0/SC7 as a cpuidle state.
+> This commit introduces a generic device tree binding for IOMMU devices.
+> Only a very minimal subset is described here, but it is enough to cover
+> the requirements of both the Exynos System MMU and Tegra SMMU as
+> discussed here:
 > 
-> How is that going to work? And why does it need powergates to be
-
-pm_runtime_get() and pm_runtime_put() hook into genpd. So genpd knows
-when all devices in a domain are idle. It can then decide to turn off
-the domain (based on the decision of a per domain governor). If all
-domains are off (except for the non-powergateable domain), a special cpuidle
-state can be enabled by genpd which will initiate a transition to LP0 without
-actually doing a full system suspend.
-
-> implemented as power domains? If we switch off power gates, then we need
-> to restore context in the drivers anyway, therefore I assume .suspend()
-> and .resume() would need to be called, in which case powergate handling
-> can surely be done at that stage, can't it?
+>     https://lkml.org/lkml/2014/4/27/346
 > 
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-.suspend() and .resume() are not used for this. genpd uses other per device
-callbacks to save and restore the state which are invoked when the domain
-is turned off and on (.save_state and .restore_state). The major difference
-with .suspend() and .resume() is that .suspend() has to perform 3 tasks:
-prevent any new requests to the driver, finalize or cancel all outstanding
-requests and save the hw context. .save_state will only be called when the
-device is idle (based on the refcount controlled by pm_runtime_get() and
-pm_runtime_put()) which means it only has to handle saving the hw context.
+  Acked-by: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
 
-> > Also system
-> > resume from LP0 can be faster as we potentially don't have to resume all
-> > domains at once.
-> 
-> I don't understand what that's got to do with anything. If we call into
-> the PMC driver explicitly via tegra_powergate_*() functions from driver
-> code, then we have full control over suspend/resume in the drivers, and
-> therefore don't need to resume all at once either.
+I would like to move the ARM SMMU driver over to this for 3.18, if possible.
+One use-case there is the ability to describe groups of masters behind a
+multi-master IOMMU but which must be part of the same domain (i.e. an
+iommu_group). This is useful for presenting devices to a guest with a
+virtual SMMU, where the physical devices share a stage-2 context.
 
-But then we would be duplicating all the bookkeeping required for this? What's
-the point of that?
+With your binding, does this simply mean determining the set of master IDs
+in the group, then describing the complete set for each master?
 
-Cheers,
-
-Peter.
+Will
