@@ -1,92 +1,38 @@
-From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
-Subject: [PATCH] ARM: tegra: Fix typoed ams,ext-control properties
-Date: Wed, 9 Jul 2014 21:53:17 +0300
-Message-ID: <1404931997-7118-1-git-send-email-ttynkkynen@nvidia.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] staging: nvec: add missing blank line after declarations
+Date: Wed, 9 Jul 2014 12:16:14 -0700
+Message-ID: <20140709191614.GA3716@kroah.com>
+References: <1404749141-3943-1-git-send-email-pawel.lebioda89@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Disposition: inline
+In-Reply-To: <1404749141-3943-1-git-send-email-pawel.lebioda89@gmail.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: driverdev-devel-bounces@linuxdriverproject.org
+To: Pawel Lebioda <pawel.lebioda89@gmail.com>
+Cc: devel@driverdev.osuosl.org, Julian Andres Klode <jak@jak-linux.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, ac100@lists.launchpad.net
 List-Id: linux-tegra@vger.kernel.org
 
-The property for enabling external rail control on the AS3722 is
-ams,ext-control, not ams,external-control. Since the external rail
-control property was previously being ignored, LP1 suspend on these
-boards wasn't actually turning the CPU rail off at all.
+On Mon, Jul 07, 2014 at 06:05:41PM +0200, Pawel Lebioda wrote:
+> Fix 'missing blank line after declaration' warnings reported by checkpatch.pl.
+> Signed-off-by: Pawel Lebioda <pawel.lebioda89@gmail.com>
+> ---
+>  drivers/staging/nvec/nvec_paz00.c | 1 +
+>  drivers/staging/nvec/nvec_power.c | 1 +
+>  drivers/staging/nvec/nvec_ps2.c   | 2 ++
+>  3 files changed, 4 insertions(+)
 
-Signed-off-by: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
----
-So here's a dilemma, either change the existing DTs, change the
-binding + driver, or make the driver recognize both properties.
-I chose the first one since the old behaviour was broken in the
-first place and the old DTs stay as buggy as they were before.
+I applied your first version of this patch :)
 
- arch/arm/boot/dts/tegra124-jetson-tk1.dts | 6 +++---
- arch/arm/boot/dts/tegra124-venice2.dts    | 6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
+thanks,
 
-diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-index 16082c0..89a772d 100644
---- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-+++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-@@ -1461,7 +1461,7 @@
- 					regulator-max-microamp = <3500000>;
- 					regulator-always-on;
- 					regulator-boot-on;
--					ams,external-control = <2>;
-+					ams,ext-control = <2>;
- 				};
- 
- 				sd1 {
-@@ -1472,7 +1472,7 @@
- 					regulator-max-microamp = <2500000>;
- 					regulator-always-on;
- 					regulator-boot-on;
--					ams,external-control = <1>;
-+					ams,ext-control = <1>;
- 				};
- 
- 				vdd_1v35_lp0: sd2 {
-@@ -1521,7 +1521,7 @@
- 					regulator-max-microvolt = <1050000>;
- 					regulator-boot-on;
- 					regulator-always-on;
--					ams,external-control = <1>;
-+					ams,ext-control = <1>;
- 				};
- 
- 				ldo1 {
-diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
-index f1a5bac..70ad91d 100644
---- a/arch/arm/boot/dts/tegra124-venice2.dts
-+++ b/arch/arm/boot/dts/tegra124-venice2.dts
-@@ -682,7 +682,7 @@
- 					regulator-max-microamp = <3500000>;
- 					regulator-always-on;
- 					regulator-boot-on;
--					ams,external-control = <2>;
-+					ams,ext-control = <2>;
- 				};
- 
- 				sd1 {
-@@ -693,7 +693,7 @@
- 					regulator-max-microamp = <2500000>;
- 					regulator-always-on;
- 					regulator-boot-on;
--					ams,external-control = <1>;
-+					ams,ext-control = <1>;
- 				};
- 
- 				vdd_1v35_lp0: sd2 {
-@@ -742,7 +742,7 @@
- 					regulator-max-microvolt = <1050000>;
- 					regulator-boot-on;
- 					regulator-always-on;
--					ams,external-control = <1>;
-+					ams,ext-control = <1>;
- 				};
- 
- 				ldo1 {
--- 
-1.8.1.5
+greg k-h
