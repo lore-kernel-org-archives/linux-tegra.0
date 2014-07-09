@@ -1,53 +1,90 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [GIT PULL 2/3] ARM: tegra: move fuse code out of arch/arm
-Date: Wed, 9 Jul 2014 14:50:01 +0200
-Message-ID: <201407091450.02165.arnd@arndb.de>
-References: <1403558626-13422-1-git-send-email-swarren@wwwdotorg.org> <CAOesGMhoqvqf-dktp-OfUNTPLahPwkyAPiTeDngr4QjH=VfOGA@mail.gmail.com> <20140709111633.GG23218@tbergstrom-lnx.Nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 6/9] ARM: tegra: Export tegra_powergate_power_on
+Date: Wed, 9 Jul 2014 14:56:14 +0200
+Message-ID: <20140709125613.GA3262@ulmo>
+References: <53A3096B.1040409@wwwdotorg.org>
+ <20140623101441.GU3407@tbergstrom-lnx.Nvidia.com>
+ <20140708130501.GC9516@ulmo>
+ <20140708141135.GC23218@tbergstrom-lnx.Nvidia.com>
+ <20140709063130.GA3170@ulmo>
+ <20140709083311.GE23218@tbergstrom-lnx.Nvidia.com>
+ <20140709102551.GA19357@ulmo>
+ <20140709110816.GF23218@tbergstrom-lnx.Nvidia.com>
+ <20140709120400.GA3819@ulmo>
+ <20140709124344.GK23218@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140709111633.GG23218-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org" <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="SLDf9lqlvOQaIe6s"
+Return-path: <linux-ide-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20140709124344.GK23218@tbergstrom-lnx.Nvidia.com>
+Sender: linux-ide-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Mikko Perttunen <mperttunen@nvidia.com>, "tj@kernel.org" <tj@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 09 July 2014, Peter De Schrijver wrote:
-> On Tue, Jul 08, 2014 at 07:47:16PM +0200, Olof Johansson wrote:
-> > On Tue, Jul 8, 2014 at 6:43 AM, Peter De Schrijver
-> > <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> > > On Mon, Jul 07, 2014 at 02:44:17AM +0200, Olof Johansson wrote:
-> > >> On Mon, Jun 23, 2014 at 03:23:45PM -0600, Stephen Warren wrote:
-> > >> > This branch moves code related to the Tegra fuses out of arch/arm and
-> > >> > into a centralized location which could be shared with ARM64. It also
-> > >> > adds support for reading the fuse data through sysfs.
-> > >>
-> > >> The new/moved misc driver isn't acked by any misc maintainer, so I can't
-> > >> take this branch.
-> > >>
-> > >> I saw no indication from searching the mailing list of that either,
-> > >> so it wasn't just a missed acked-by.
-> > >>
-> > >> I wonder if this code should go under drivers/soc/ instead?
-> > >
-> > > It's modelled after sunxi_sid.c which lives in drivers/misc/eeprom/.
-> > > Originally this driver was also in drivers/misc/eeprom/, but Stephen objected
-> > > and therefore it was moved to drivers/misc/fuse. I think that's the right
-> > > place still.
-> > 
-> > I disagree, I think this belongs under drivers/soc. Especially since
-> > you're adding dependencies on this misc driver from other parts of the
-> > kernel / other drivers.
-> > 
-> 
-> There are several other drivers doing that already, eg:
-> 
-> drivers/misc/eeprom/eeprom_93cx6.c
-> drivers/misc/atmel-ssc.c
-> drivers/misc/atmel_pwm.c
 
-I believe we have plans to remove the latter two. I don't know about the eeprom one.
+--SLDf9lqlvOQaIe6s
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-	Arnd
+On Wed, Jul 09, 2014 at 03:43:44PM +0300, Peter De Schrijver wrote:
+> On Wed, Jul 09, 2014 at 02:04:02PM +0200, Thierry Reding wrote:
+> > > For those 2 domains we can find the necessary clocks and resets by pa=
+rsing
+> > > the relevant existing DT nodes for PCIe and gr3d. For clocks, this is=
+n't
+> > > even needed as we can always register some extra clkdev's to get them=
+=2E There
+> > > is no equivalent for resets so we have to parse the gr3d and pcie DT =
+nodes,
+> > > but that's not too bad I think.
+> >=20
+> > Even if we could really do this, at this point I don't see an advantage.
+> > All that it would be doing is move to some subsystem that doesn't quite
+> > match what we need just for the sake of moving to that subsystem. Having
+> > a Tegra-specific API doesn't sound so bad anymore.
+> >=20
+>=20
+> The advantage would be that we can use LP0/SC7 as a cpuidle state.
+
+How is that going to work? And why does it need powergates to be
+implemented as power domains? If we switch off power gates, then we need
+to restore context in the drivers anyway, therefore I assume .suspend()
+and .resume() would need to be called, in which case powergate handling
+can surely be done at that stage, can't it?
+
+> Also system
+> resume from LP0 can be faster as we potentially don't have to resume all
+> domains at once.
+
+I don't understand what that's got to do with anything. If we call into
+the PMC driver explicitly via tegra_powergate_*() functions from driver
+code, then we have full control over suspend/resume in the drivers, and
+therefore don't need to resume all at once either.
+
+Thierry
+
+--SLDf9lqlvOQaIe6s
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTvTvtAAoJEN0jrNd/PrOhDuMP/iZGLpO01QcQ00MTPtb/CHWb
+oxQV435smEj7tBrjc7se3k8hEgaOEF1GFPKOQ9eCQlL0JysBGPnlGJOFD13Tp+EU
+H8vJnrSU1zpI/fCmSLmjAnvazwMrVlJtbzD+GgM9bn4zOMsLn9rMaKcfU7GOzky8
+6uIim7Qwp2icvp2ici9HHz5fTZ+a2/VVSgj88b/EtQlOhsMDXpbzJ5Tgaooc2RzR
+iG27JG/sI5ZILXrtZjt9Pjz+U2QWe7zE5tmyhiKGIHKpEoYoS8KeZh7HKdlS9R+D
+t9eNJoyqxD/v4R4h2lgVfcj88pCGhWZ9V1qf/S5z/cdc/3bZra4fzeFyQFVShZ1h
+d6AgY/FJf5PRnWne8aiIMNzTLfzU9tst/yJpv2TMaNZWMR5STxQ5az9zE93ABC3c
+KBxGlUTk277nxYebmj+S2Qveb1PApFktJbLnsu3yLq0TtA8zr9bMiH5TibJz9IBR
+M3jNyo3+RTPYiGwfr6oMbYm7kd6PtnVqxD6tY9Ql5slxyz29x3xEaeyj2D+gggjA
+lkxUBjP0aAErp0Gl4pzpMIxEegaNQK5+qtfKDg7bySuWjRrg8sbIioOwHmeu4TmT
+kq8TkBbQMdgT7RUG1Xr2GEwGq0PM1BXhk3+u9OE2vE5jCxSdwzPpC49O3M2WCFl9
+jYKa66a/gUP5s+X/E31t
+=1Xoq
+-----END PGP SIGNATURE-----
+
+--SLDf9lqlvOQaIe6s--
