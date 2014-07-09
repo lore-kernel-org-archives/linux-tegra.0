@@ -1,91 +1,157 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v4] devicetree: Add generic IOMMU device tree bindings
-Date: Wed, 9 Jul 2014 16:21:27 +0200
-Message-ID: <20140709142125.GB3262@ulmo>
-References: <1404487757-18829-1-git-send-email-thierry.reding@gmail.com>
- <20140709134050.GN9485@arm.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 6/9] ARM: tegra: Export tegra_powergate_power_on
+Date: Wed, 9 Jul 2014 16:42:18 +0200
+Message-ID: <20140709144216.GA32375@ulmo>
+References: <20140708130501.GC9516@ulmo>
+ <20140708141135.GC23218@tbergstrom-lnx.Nvidia.com>
+ <20140709063130.GA3170@ulmo>
+ <20140709083311.GE23218@tbergstrom-lnx.Nvidia.com>
+ <20140709102551.GA19357@ulmo>
+ <20140709110816.GF23218@tbergstrom-lnx.Nvidia.com>
+ <20140709120400.GA3819@ulmo>
+ <20140709124344.GK23218@tbergstrom-lnx.Nvidia.com>
+ <20140709125613.GA3262@ulmo>
+ <20140709132010.GL23218@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="IrhDeMKUP4DT/M7F"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="FL5UXtIhxfXey3p5"
+Return-path: <linux-ide-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20140709134050.GN9485-5wv7dgnIgG8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olav Haugan <ohaugan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Varun Sethi <varun.sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TZNg+MwTxZMZA@public.gmane.org>
+In-Reply-To: <20140709132010.GL23218@tbergstrom-lnx.Nvidia.com>
+Sender: linux-ide-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Mikko Perttunen <mperttunen@nvidia.com>, "tj@kernel.org" <tj@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---IrhDeMKUP4DT/M7F
+--FL5UXtIhxfXey3p5
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 09, 2014 at 02:40:50PM +0100, Will Deacon wrote:
-> On Fri, Jul 04, 2014 at 04:29:17PM +0100, Thierry Reding wrote:
-> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Wed, Jul 09, 2014 at 04:20:10PM +0300, Peter De Schrijver wrote:
+> On Wed, Jul 09, 2014 at 02:56:14PM +0200, Thierry Reding wrote:
+> > * PGP Signed by an unknown key
 > >=20
-> > This commit introduces a generic device tree binding for IOMMU devices.
-> > Only a very minimal subset is described here, but it is enough to cover
-> > the requirements of both the Exynos System MMU and Tegra SMMU as
-> > discussed here:
+> > On Wed, Jul 09, 2014 at 03:43:44PM +0300, Peter De Schrijver wrote:
+> > > On Wed, Jul 09, 2014 at 02:04:02PM +0200, Thierry Reding wrote:
+> > > > > For those 2 domains we can find the necessary clocks and resets b=
+y parsing
+> > > > > the relevant existing DT nodes for PCIe and gr3d. For clocks, thi=
+s isn't
+> > > > > even needed as we can always register some extra clkdev's to get =
+them. There
+> > > > > is no equivalent for resets so we have to parse the gr3d and pcie=
+ DT nodes,
+> > > > > but that's not too bad I think.
+> > > >=20
+> > > > Even if we could really do this, at this point I don't see an advan=
+tage.
+> > > > All that it would be doing is move to some subsystem that doesn't q=
+uite
+> > > > match what we need just for the sake of moving to that subsystem. H=
+aving
+> > > > a Tegra-specific API doesn't sound so bad anymore.
+> > > >=20
+> > >=20
+> > > The advantage would be that we can use LP0/SC7 as a cpuidle state.
 > >=20
-> >     https://lkml.org/lkml/2014/4/27/346
+> > How is that going to work? And why does it need powergates to be
+>=20
+> pm_runtime_get() and pm_runtime_put() hook into genpd. So genpd knows
+> when all devices in a domain are idle. It can then decide to turn off
+> the domain (based on the decision of a per domain governor). If all
+> domains are off (except for the non-powergateable domain), a special cpui=
+dle
+> state can be enabled by genpd which will initiate a transition to LP0 wit=
+hout
+> actually doing a full system suspend.
+
+Okay, I see.
+
+> > implemented as power domains? If we switch off power gates, then we need
+> > to restore context in the drivers anyway, therefore I assume .suspend()
+> > and .resume() would need to be called, in which case powergate handling
+> > can surely be done at that stage, can't it?
 > >=20
-> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >=20
->   Acked-by: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+> .suspend() and .resume() are not used for this. genpd uses other per devi=
+ce
+> callbacks to save and restore the state which are invoked when the domain
+> is turned off and on (.save_state and .restore_state). The major differen=
+ce
+> with .suspend() and .resume() is that .suspend() has to perform 3 tasks:
+> prevent any new requests to the driver, finalize or cancel all outstanding
+> requests and save the hw context. .save_state will only be called when the
+> device is idle (based on the refcount controlled by pm_runtime_get() and
+> pm_runtime_put()) which means it only has to handle saving the hw context.
+
+With the above, would it be possible to make turning off the domain
+conditional on whether or not all devices in the domain implement
+=2Esave_state() and .restore_state()? That would allow us to convert to
+power domains and then stage in context save/restore in drivers (or even
+leave it out if there's not enough to be gained from turning the
+partition off).
+
+> > > Also system
+> > > resume from LP0 can be faster as we potentially don't have to resume =
+all
+> > > domains at once.
+> >=20
+> > I don't understand what that's got to do with anything. If we call into
+> > the PMC driver explicitly via tegra_powergate_*() functions from driver
+> > code, then we have full control over suspend/resume in the drivers, and
+> > therefore don't need to resume all at once either.
 >=20
-> I would like to move the ARM SMMU driver over to this for 3.18, if possib=
-le.
-> One use-case there is the ability to describe groups of masters behind a
-> multi-master IOMMU but which must be part of the same domain (i.e. an
-> iommu_group). This is useful for presenting devices to a guest with a
-> virtual SMMU, where the physical devices share a stage-2 context.
->=20
-> With your binding, does this simply mean determining the set of master IDs
-> in the group, then describing the complete set for each master?
+> But then we would be duplicating all the bookkeeping required for this? W=
+hat's
+> the point of that?
 
-I'm not sure I properly understand what you're trying to do, but I don't
-think the binding is designed to cover that. Rather the goal was to
-describe the IDs belonging to each master, so that an IOMMU can be
-properly configured.
+We're doing fine without any bookkeeping currently. I understand that
+this may change eventually, but I'm hesitant to start any conversion
+like this before we don't have a better understanding of how it should
+work (and actual use-cases which we can test). Also we've seen in the
+past that coding things up before we have enough use-cases we're bound
+to fail at coming up with a proper binding and then we have to keep
+carrying loads of code for compatibility.
 
-Anything beyond that (e.g. logical grouping of masters) isn't directly
-within the scope of the binding (it doesn't describe hardware but some
-policy pertaining to some specific use-case).
+So if you're willing to give this a shot, I'm not at all opposed to it
+generally. But we need to make sure that both the binding is reasonably
+future-proof and that we can actually test things like reference-counted
+power domains.
 
-That said, the IOMMU driver that I prototyped for Tegra did some similar
-grouping of devices, although in a much more restricted way. The goal of
-that was to add a known set of devices into one group, "peripherals", so
-that they could share one IOMMU domain. This was meant to separate them
-=66rom devices with more advanced needs (such as a GPU driver). Devices in
-the "peripherals" group would be using the DMA mapping API integration
-whereas other devices would have to explicitly allocate an IOMMU domain.
-
-I'm not sure how much that helps for the use-case that you have in mind.
+Now in the meantime there are a bunch of other drivers that will need to
+use the powergate API. DC is one of them. We haven't needed this before
+because we assumed the partitions would be on by default. That's not
+always the case apparently (ChromeOS does some funky things here). Both
+the SATA and XUSB drivers that have been posted use them as well and the
+nouveau driver that Alex has been working on uses at least parts of it.
+I don't think it's fair to keep them from being merged while we're
+trying to make the transition to power domains, but we should keep an
+eye on what's happening there so it doesn't conflict with any of the
+work we're planning for power domains.
 
 Thierry
 
---IrhDeMKUP4DT/M7F
+--FL5UXtIhxfXey3p5
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJTvU/lAAoJEN0jrNd/PrOhN50P/1dI3aJhI4/+i6WX1nsXpCN2
-8VcmnlCJHdY1rmynJNk3WMEAepjVM6DRhDykwpPGRTD226yJWbiIfyIo53+yyx4a
-A4RjJKluaIfGL0bnlN/cg3lafoh3GwEkahTEPjhOHD8DgvYJNWu6ziojbaUplC9D
-V/UgfqHWtKrrxlum0nNJb8ObdJS/ef7RxAKLN08DMbZJe162Q+FNU/dMEQiueoJ8
-+dGtEM27qP9+XMvgpeiqynyXTnc+/ZyTNQsrZuhwqHyhd3C0ey3aBQ0BF0Z2u4Yg
-ok//PUQcCYgL3mQaK0Ev2zlcHKwXIqt7HiSlIluzKXSPXvx/CUuEXaIjgzceWse8
-9VZ1HmPnTW/UKlcvDdrG9GFtsXTZ9H4p/JGYbTsPM1+Ffc7wzwcKoXrqWigkd9iH
-KdYT3ZsYD/rqz2BrR+8twQJRgFqjku55vu4tojNNs0tt4s5u1RWqbF/9e/y8tPIb
-oM+tLOAsesyBcjlUeYogjT02XHh7SqWg8dSQFm+fMjmlbX6t4nuGCrJrVvSFBJtf
-BwRVX0bA1NM19ybK02GSeTgEOHyQUsQJ0tbkNF/RvYUvqEaXFShhDYZrLxSEk/j3
-WoUhqKO48NvyWMlonaCwMM3DswiJX4raer6gbNUNXhSSSDIl+WQitkhqx81cKIQP
-bdnXlao7qtH18ZygWVGj
-=Hh+x
+iQIcBAEBAgAGBQJTvVTIAAoJEN0jrNd/PrOhxiIP/islHnoUUloS9K6rEJdoGZW9
+aD+cEkfRKde7jakDD/KgscrqiKcNxf4+6Z3B7Fh4RJ8bssZoWNTVv0BOgCsave19
+qLn1DeafEijTbMQTD1GDs+56u6SbLerlVyxKjkd7nY2iPseydLZ6bjC9hAajc31y
+oWMSLL3smU0szTN2PCFwRwITBp5X9C7S2cCO48YuF9uYIHBHBQADRllXqj7psuP8
+oRslOH9MorcA2gnOmWgU7s3WBtwYQeHEILNcjZ8Hpr2OxexMtXJWVXO6x/CO/wCi
+dSnNETApknS8EsrJrjlMNGIDYoTh1ckZedIsYaUK4mKPWZTvJu8TS+G6Ypp+WqtW
+54YwqqjC+I0CZPhjcfhTCOoIUqhSYSjGIBgcuDNKGKJRowD3lHmU6HZ+OtCSBhze
+DdyWv7e3470jnMaNR6qhQ6Xfgw625cqVJzxD3r4Ie4aNNgAHIAqLc3zXQ25O857h
+U3cI63xFyo4AWA+Wlu+ROMl2eX2meoomeWcI02HF4xlOHvSi77boBKGv4QsB8n3e
+Gq8GTAEp5FvmHN+gNHBfgTqE71O3j54tN4SUs1V3V5J3iFxwr1U+FI8ZOaDOu72t
+QiGnUtoJIp1GwnPPZIG6jdtWLM1BqXCQDSg9u5D1Adhv9/lBXO9CcpzaBYpxb+Q2
+zg9vq5NQCzwlvkKiVh9p
+=gyfF
 -----END PGP SIGNATURE-----
 
---IrhDeMKUP4DT/M7F--
+--FL5UXtIhxfXey3p5--
