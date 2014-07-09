@@ -1,94 +1,75 @@
-From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v1 6/9] usb: xhci: Add NVIDIA Tegra XHCI host-controller driver
-Date: Tue, 8 Jul 2014 14:52:10 -0700
-Message-ID: <CAL1qeaHT8Yz7kRY3Qm5i+bYCF4D5BT=BVZ6BMfQufyaQFkt0mw@mail.gmail.com>
-References: <1403072180-4944-1-git-send-email-abrestic@chromium.org>
-	<1403072180-4944-7-git-send-email-abrestic@chromium.org>
-	<CAODwPW-HSY3RoBi9VEhHSJ98drTsdche-2=mKfAViXWaUa3X1g@mail.gmail.com>
+From: Olav Haugan <ohaugan@codeaurora.org>
+Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Tue, 08 Jul 2014 18:07:38 -0700
+Message-ID: <53BC95DA.1010500@codeaurora.org>
+References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com> <CAL_JsqKumG1PSFoVfeGpLLG+MjXFeF4aUjun=vv1BJpaxk0Byg@mail.gmail.com> <4545972.cM7IP1qTXQ@wuerfel> <53A4C0C9.2050908@codeaurora.org> <20140624091808.GC26013@arm.com> <53A9BC18.2090106@codeaurora.org> <20140624181150.GB4067@arm.com> <53A9EF3A.2070704@codeaurora.org> <20140625091858.GG6153@arm.com> <53ADEEDF.7060902@codeaurora.org> <20140630095220.GA25779@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAODwPW-HSY3RoBi9VEhHSJ98drTsdche-2=mKfAViXWaUa3X1g-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Julius Werner <jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Cc: "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <20140630095220.GA25779@arm.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Will Deacon <will.deacon@arm.com>
+Cc: Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Pawel Moll <Pawel.Moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Grant Grundler <grundler@chromium.org>, Joerg Roedel <joro@8bytes.org>, Stephen Warren <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Marc Zyngier <Marc.Zyngier@arm.com>, Linux IOMMU <iommu@lists.linux-foundation.org>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Cho KyongHo <pullip.cho@samsung.com>, Dave P Martin <Dave.Martin@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Hiroshi
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jun 20, 2014 at 9:58 AM, Julius Werner <jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
->> +static const struct hc_driver tegra_xhci_hc_driver = {
->> +       .description =          "tegra-xhci-hcd",
->> +       .product_desc =         "Tegra xHCI Host Controller",
->> +       .hcd_priv_size =        sizeof(struct xhci_hcd *),
->> +
->> +       /*
->> +        * generic hardware linkage
->> +        */
->> +       .irq =                  xhci_irq,
->> +       .flags =                HCD_MEMORY | HCD_USB3 | HCD_SHARED,
->> +
->> +       /*
->> +        * basic lifecycle operations
->> +        */
->> +       .reset =                tegra_xhci_setup,
->> +       .start =                xhci_run,
->> +       .stop =                 xhci_stop,
->> +       .shutdown =             xhci_shutdown,
->> +
->> +       /*
->> +        * managing i/o requests and associated device resources
->> +        */
->> +       .urb_enqueue =          xhci_urb_enqueue,
->> +       .urb_dequeue =          xhci_urb_dequeue,
->> +       .alloc_dev =            xhci_alloc_dev,
->> +       .free_dev =             xhci_free_dev,
->> +       .alloc_streams =        xhci_alloc_streams,
->> +       .free_streams =         xhci_free_streams,
->> +       .add_endpoint =         xhci_add_endpoint,
->> +       .drop_endpoint =        xhci_drop_endpoint,
->> +       .endpoint_reset =       xhci_endpoint_reset,
->> +       .check_bandwidth =      xhci_check_bandwidth,
->> +       .reset_bandwidth =      xhci_reset_bandwidth,
->> +       .address_device =       xhci_address_device,
->> +       .enable_device =        xhci_enable_device,
->> +       .update_hub_device =    xhci_update_hub_device,
->> +       .reset_device =         xhci_discover_or_reset_device,
->> +
->> +       /*
->> +        * scheduling support
->> +        */
->> +       .get_frame_number =     xhci_get_frame,
->> +
->> +       /* Root hub support */
->> +       .hub_control =          xhci_hub_control,
->> +       .hub_status_data =      xhci_hub_status_data,
->> +       .bus_suspend =          xhci_bus_suspend,
->> +       .bus_resume =           xhci_bus_resume,
->> +};
->
-> I know I missed the first round of discussion where this was
-> suggested, but I don't think it's a good idea to pull the whole
-> hc_driver structure out into every platform implementation. It will
-> lead to duplication, then to future additions only being applied to
-> some of the implementations and everything getting out of sync. This
-> is already a problem with the PCI/plat split (e.g. the LPM functions
-> were only added to xhci-pci even though they should apply to both).
-> Also, if I'm not mistaken this code would fail to compile as a module
-> (you are referencing lots of symbols that are internal to the xhci-hcd
-> module).
+On 6/30/2014 2:52 AM, Will Deacon wrote:
+> Hi Olav,
+> 
+> On Fri, Jun 27, 2014 at 11:23:27PM +0100, Olav Haugan wrote:
+>> On 6/25/2014 2:18 AM, Will Deacon wrote:
+>>> Why can't it be dynamically detected? Whilst the StreamIDs are fixed in
+>>> hardware (from the SMMU architecture perspective), the SMRs are completely
+>>> programmable. Why doesn't something like Andreas's proposal work for you?
+>>> The idea there was to find the constant bits among the StreamIDs for a
+>>> master and create the mask accordingly.
+>>>
+>> Lets say I have an IOMMU with 2 masters and 2 SMRn slots with the
+>> following stream IDs coming from the masters:
+>>
+>> Master 1: 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28
+>> Master 2: 0x30
+>>
+>> To make this work I would program SMR[0] with StreamID 0x20 and mask 0xF
+>> to ignore lower 4 bits. SMR[1] would just be StreamID 0x30 with mask 0x0.
+>>
+>> However, I could also have an IOMMU with 2 masters and 9 SMRn slots with
+>> the following stream IDs:
+>>
+>> Master 1: 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28
+>> Master 2: 0x29
+>>
+>> Here I would program all SMRn and leave the mask to be 0 for all SMRn's.
+>> So how do I detect when to apply a mask or not?
+> 
+> You would aim to use the smallest number of SMRs per master possible.
+> You could probably use:
+> 
+>   Master 1: SMR[0].id == 0x20, SMR[0].mask = 0x07
+>             SMR[1].id == 0x28, SMR[1].mask = 0x00
+> 
+>   Master 2: SMR[2].id == 0x29, SMR[2].mask = 0x00
 
-You're right Julius, this won't build as a module without a few EXPORT_SYMBOLs.
+So how does an algorithm figure this out in both my examples? The
+algorithm would have to know about both (all) bus masters and their
+stream IDs for a specific SMMU. If the algorithm operates on the set of
+stream IDs for one bus master at a time the algorithm has no way of
+knowing which bits can be ignored since it doesn't know the value of the
+other stream IDs for the other bus masters and thus could potentially
+create a mask that could cause a stream ID to match in two different
+entries.
 
-> I think at the very least you should add a function
-> "xhci_default_driver(struct hc_driver *driver)" to xhci-plat.c (or
-> even better to xhci.c and use it for PCI as well) that initializes all
-> function pointers to the default (internal) symbols, and can then be
-> overridden afterwards.
+>> I am not familiar with Andreas's proposal. Do you have a link?
+> 
+>   http://marc.info/?l=linux-arm-kernel&m=139110598005846&w=2
 
-Currently all XHCI host drivers (PCI, platform, MVEBU) will be built
-into the xhci-hcd module.  I could append the Tegra driver to that
-module or introduce a xhci_init_driver() like EHCI does as Julius
-suggests.  USB folks, do you have a preference?
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Unless I am mistaken the algorithm works on one bus master at a time. I
+don't think that will work.
+
+Thanks,
+
+Olav Haugan
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
