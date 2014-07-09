@@ -1,205 +1,36 @@
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: Re: [PATCH v2 6/7] ata: Add support for the Tegra124 SATA controller
-Date: Wed, 9 Jul 2014 16:45:16 +0300
-Message-ID: <53BD476C.1030601@nvidia.com>
-References: <1403101406-15439-1-git-send-email-mperttunen@nvidia.com> <1403101406-15439-7-git-send-email-mperttunen@nvidia.com> <20140709064928.GC3170@ulmo>
+From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Subject: Re: [PATCH v1 6/9] usb: xhci: Add NVIDIA Tegra XHCI host-controller
+ driver
+Date: Wed, 9 Jul 2014 10:08:05 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1407091001150.873-100000@iolanthe.rowland.org>
+References: <CAL1qeaHT8Yz7kRY3Qm5i+bYCF4D5BT=BVZ6BMfQufyaQFkt0mw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-ide-owner@vger.kernel.org>
-In-Reply-To: <20140709064928.GC3170@ulmo>
-Sender: linux-ide-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "tj@kernel.org" <tj@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAL1qeaHT8Yz7kRY3Qm5i+bYCF4D5BT=BVZ6BMfQufyaQFkt0mw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Julius Werner <jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Thanks, will fix these. Looks like I will have to change the fuse code 
-to the old style as well.
+On Tue, 8 Jul 2014, Andrew Bresticker wrote:
 
-On 09/07/14 09:49, Thierry Reding wrote:
-> * PGP Signed by an unknown key
->
-> On Wed, Jun 18, 2014 at 05:23:25PM +0300, Mikko Perttunen wrote:
-> [...]
->> diff --git a/drivers/ata/ahci_tegra.c b/drivers/ata/ahci_tegra.c
-> [...]
->> +#include <linux/ahci_platform.h>
->> +#include <linux/reset.h>
->> +#include <linux/errno.h>
->> +#include <linux/kernel.h>
->> +#include <linux/module.h>
->> +#include <linux/of_device.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/tegra-powergate.h>
->> +#include <linux/regulator/consumer.h>
->> +#include <linux/tegra-soc.h>
->> +#include "ahci.h"
->> +
->> +#define SATA_CONFIGURATION_0				0x180
->> +#define		SATA_CONFIGURATION_EN_FPCI		BIT(0)
->
-> This, and the register/field definitions below look weirdly indented,
-> but I guess that's mostly a matter of taste.
->
->> +#define T_SATA0_CHX_PHY_CTRL1_GEN1			0x690
->> +#define		T_SATA0_CHX_PHY_CTRL1_GEN1_TX_AMP_MASK	0xff
->> +#define		T_SATA0_CHX_PHY_CTRL1_GEN1_TX_AMP_SHIFT	0
->> +#define		T_SATA0_CHX_PHY_CTRL1_GEN1_TX_PEAK_MASK	(0xff<<8)
->
-> Perhaps single spaces around "<<"? The same for other occurrences below.
->
->> +struct sata_pad_calibration {
->> +	u8 gen1_tx_amp, gen1_tx_peak, gen2_tx_amp, gen2_tx_peak;
->> +};
->
-> I think a more idiomatic way would be to put the fields in a structure
-> declaration on separate lines.
->
->> +static const struct sata_pad_calibration tegra124_pad_calibration[] = {
->> +	{0x18, 0x04, 0x18, 0x0a},
->
-> Maybe spaces after '{' and before '}'?
->
->> +static int tegra_ahci_power_on(struct ahci_host_priv *hpriv)
->> +{
->> +	struct tegra_ahci_priv *tegra = hpriv->plat_data;
->> +	int ret;
->> +
->> +	ret = regulator_bulk_enable(ARRAY_SIZE(tegra->supplies),
->> +				    tegra->supplies);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = tegra_powergate_sequence_power_up(TEGRA_POWERGATE_SATA,
->> +		tegra->sata_clk, tegra->sata_rst);
->
-> These could be aligned with TEGRA_POWERGATE_SATA.
->
->> +	ret = clk_prepare_enable(tegra->cml1_clk);
->> +	if (ret) {
->> +		clk_disable_unprepare(tegra->sata_oob_clk);
->> +		goto disable_power;
->> +	}
->> +
->> +	ret = clk_prepare_enable(tegra->plle_clk);
->> +	if (ret) {
->> +		clk_disable_unprepare(tegra->cml1_clk);
->> +		clk_disable_unprepare(tegra->sata_oob_clk);
->> +		goto disable_power;
->> +	}
->> +
->> +	reset_control_deassert(tegra->sata_cold_rst);
->> +	reset_control_deassert(tegra->sata_oob_rst);
->> +
->> +	ret = phy_power_on(tegra->padctl_phy);
->> +	if (ret) {
->> +		clk_disable_unprepare(tegra->plle_clk);
->> +		clk_disable_unprepare(tegra->cml1_clk);
->> +		clk_disable_unprepare(tegra->sata_oob_clk);
->> +		goto disable_power;
->> +	}
->
-> These error paths might be more readable if you did unwind them similar
-> to how you did with sata_clk below.
->
->> +static int tegra_ahci_controller_init(struct ahci_host_priv *hpriv)
->> +{
->> +	struct tegra_ahci_priv *tegra = hpriv->plat_data;
->> +	int ret;
->> +	unsigned int val;
->> +	struct sata_pad_calibration calib;
->> +
->> +	ret = tegra_ahci_power_on(hpriv);
->> +	if (ret) {
->> +		dev_err(&tegra->pdev->dev,
->> +			"failed to power on ahci controller: %d\n", ret);
->
-> s/ahci/AHCI/
->
->> +		return ret;
->> +	}
->> +
->> +	val = readl(tegra->sata_regs + SATA_CONFIGURATION_0);
->> +	val |= SATA_CONFIGURATION_EN_FPCI;
->> +	writel(val, tegra->sata_regs + SATA_CONFIGURATION_0);
->> +
->> +	/* Pad calibration */
->> +
->> +	ret = tegra_fuse_readl(FUSE_SATA_CALIB, &val);
->> +	if (ret) {
->> +		dev_err(&tegra->pdev->dev,
->> +			"failed to read sata calibration fuse: %d\n", ret);
->
-> s/sata/SATA/
->
->> +static struct ata_port_operations ahci_tegra_port_ops = {
->> +	.inherits	= &ahci_ops,
->> +	.host_stop	= tegra_ahci_host_stop,
->> +};
->> +
->> +static const struct ata_port_info ahci_tegra_port_info = {
->> +	.flags		= AHCI_FLAG_COMMON,
->> +	.pio_mask	= ATA_PIO4,
->> +	.udma_mask	= ATA_UDMA6,
->> +	.port_ops	= &ahci_tegra_port_ops,
->> +};
->
-> I prefer these to not be arbitrarily indented, but Tejun seemed to
-> indicate he did, so it's ultimately his call.
->
->> +static const struct of_device_id tegra_ahci_of_match[] = {
->> +	{ .compatible = "nvidia,tegra124-ahci" },
->> +	{},
->
-> Technically there's no need for the comma at the end here. Usually you'd
-> put one here so that if somebody ever were to add a new entry after this
-> the diff wouldn't need to include the line that you only add a comma to.
-> But in this particular case the last entry is used as a sentinel, so
-> leaving away the comma is actually useful as a hint that entries should
-> be added in front rather than at the end.
->
->> +	hpriv->mmio = devm_ioremap_resource(&pdev->dev,
->> +		platform_get_resource(pdev, IORESOURCE_MEM, 0));
->
-> Perhaps a temporary variable for the result of platform_get_resource()
-> would help make this look less cluttered.
->
->> +	if (IS_ERR(hpriv->mmio)) {
->> +		dev_err(&pdev->dev, "Failed to get AHCI IO memory\n");
->
-> This isn't necessary. devm_ioremap_resource() will already output an
-> error message.
->
->> +	tegra->sata_regs = devm_ioremap_resource(&pdev->dev,
->> +		platform_get_resource(pdev, IORESOURCE_MEM, 1));
->> +	if (IS_ERR(tegra->sata_regs)) {
->> +		dev_err(&pdev->dev, "Failed to get SATA IO memory\n");
->
-> Same here.
->
->> +	tegra->padctl_phy = devm_phy_get(&pdev->dev, "sata-phy");
->> +	if (IS_ERR(tegra->padctl_phy)) {
->> +		dev_err(&pdev->dev, "Failed to get phy\n");
->
-> s/phy/PHY/
->
->> +	ret = devm_regulator_bulk_get(&pdev->dev, ARRAY_SIZE(tegra->supplies),
->> +					tegra->supplies);
->
-> The trailing argument here isn't aligned as in other places.
->
->> +static struct platform_driver tegra_ahci_driver = {
->> +	.probe = tegra_ahci_probe,
->> +	.remove = ata_platform_remove_one,
->> +	.driver = {
->> +		.name = "tegra-ahci",
->> +		.owner = THIS_MODULE,
->
-> This isn't really needed anymore, module_platform_driver will end up
-> setting this for you anyway.
->
-> Thierry
->
-> * Unknown Key
-> * 0x7F3EB3A1
->
+> > I think at the very least you should add a function
+> > "xhci_default_driver(struct hc_driver *driver)" to xhci-plat.c (or
+> > even better to xhci.c and use it for PCI as well) that initializes all
+> > function pointers to the default (internal) symbols, and can then be
+> > overridden afterwards.
+> 
+> Currently all XHCI host drivers (PCI, platform, MVEBU) will be built
+> into the xhci-hcd module.  I could append the Tegra driver to that
+> module or introduce a xhci_init_driver() like EHCI does as Julius
+> suggests.  USB folks, do you have a preference?
+
+As the EHCI maintainer, I naturally approve of Julius's suggestion.  
+
+Alan Stern
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
