@@ -1,111 +1,51 @@
-From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: Re: [RFC v2 3/5] clk: use struct clk only for external API
-Date: Thu, 10 Jul 2014 11:16:34 +0200
-Message-ID: <53BE59F2.1090102@collabora.com>
-References: <1404398323-18934-1-git-send-email-tomeu.vizoso@collabora.com> <1404398323-18934-4-git-send-email-tomeu.vizoso@collabora.com> <53BDA21D.3070504@gmail.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 0/3] drm/gk20a: support for reclocking
+Date: Thu, 10 Jul 2014 12:43:00 +0300
+Message-ID: <20140710094300.GP23218@tbergstrom-lnx.Nvidia.com>
+References: <1404977677-22248-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53BDA21D.3070504-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1404977677-22248-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, rabin-66gdRtMMWGc@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Rabin Vincent <rabin.vincent-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/09/2014 10:12 PM, Tomasz Figa wrote:
-> Actually few more comments, see inline.
->
-> On 03.07.2014 16:38, Tomeu Vizoso wrote:
->> From: Rabin Vincent <rabin.vincent-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>
->>
->> In order to provide per-user accounting, this separates the struct clk
->> used in the common clock framework into two structures 'struct clk_core'
->> and 'struct clk'.  struct clk_core will be used for internal
->> manipulation and struct clk will be used in the clock API
->> implementation.
->
-> [snip]
->
->> diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
->> index 8f57154..5f2aba9 100644
->> --- a/drivers/clk/clk-devres.c
->> +++ b/drivers/clk/clk-devres.c
->> @@ -5,6 +5,7 @@
->>    */
->>
->>   #include <linux/clk.h>
->> +#include <linux/clk-provider.h>
->>   #include <linux/device.h>
->>   #include <linux/export.h>
->>   #include <linux/gfp.h>
->> @@ -14,15 +15,15 @@ static void devm_clk_release(struct device *dev, void *res)
->>   	clk_put(*(struct clk **)res);
->
-> This function still expects to get a (struct clk *) here, but...
->
->>   }
->>
->> -struct clk *devm_clk_get(struct device *dev, const char *id)
->> +struct clk_core *devm_clk_provider_get(struct device *dev, const char *id)
->>   {
->> -	struct clk **ptr, *clk;
->> +	struct clk_core **ptr, *clk;
->>
->>   	ptr = devres_alloc(devm_clk_release, sizeof(*ptr), GFP_KERNEL);
->>   	if (!ptr)
->>   		return ERR_PTR(-ENOMEM);
->>
->> -	clk = clk_get(dev, id);
->> +	clk = clk_provider_get(dev, id);
->>   	if (!IS_ERR(clk)) {
->>   		*ptr = clk;
->
-> ...here a (struct clk_core *) is stored.
+On Thu, Jul 10, 2014 at 09:34:34AM +0200, Alexandre Courbot wrote:
+> This series adds support for reclocking on GK20A. The first two patches touch
+> the clock subsystem to allow GK20A to operate, by making the presence of the
+> thermal and voltage devices optional, and allowing pstates to be provided
+> directly instead of being probed using the BIOS (which Tegra does not have).
+> 
+> The last patch adds the GK20A clock device. Arguably the clock can be seen as a
+> stripped-down version of what is seen on NVE0, however instead of using NVE0
+> support has been written from scratch using the ChromeOS kernel as a basis.
+> There are several reasons for this:
+> 
+> - The ChromeOS driver uses a lookup table for the P coefficient which I could
+>   not find in the NVE0 driver,
+> - Some registers that NVE0 expects to find are not present on GK20A (e.g.
+>   0x137120 and 0x137140),
+> - Calculation of MNP is done differently from what is performed in
+>   nva3_pll_calc(), and it might be interesting to compare the two methods,
+> - All the same, the programming sequence is done differently in the ChromeOS
+>   driver and NVE0 could possibly benefit from it (?)
+> 
+> It would be interesting to try and merge both, but for now I prefer to have the
+> two coexisting to ensure proper operation on GK20A and besure I don't break
+> dGPU support. :)
+> 
+> Regarding the first patch, one might argue that I could as well add thermal
+> and voltage devices to GK20A. The reason this is not done is because these
+> currently depend heavily on the presence of a BIOS, and will require a rework
+> similar to that done in patch 2 for clocks. I would like to make sure this
+> approach is approved because applying it to other subdevs.
 
-Thanks, well spotted.
-
->>   		devres_add(dev, ptr);
->
-> [snip]
->
->> diff --git a/drivers/clk/clk.h b/drivers/clk/clk.h
->> index d278572..c69f4fe 100644
->> --- a/drivers/clk/clk.h
->> +++ b/drivers/clk/clk.h
->> @@ -15,3 +15,7 @@ struct clk_core *__of_clk_get_from_provider(struct of_phandle_args *clkspec);
->>   void of_clk_lock(void);
->>   void of_clk_unlock(void);
->>   #endif
->> +
->> +#if defined(CONFIG_COMMON_CLK)
->> +#define clk_to_clk_core(clk)	(clk->core)
->
-> Making this a static inline will benefit you with type checking at
-> compilation time.
-
-Good point.
-
->> +#endif
->
-> [snip]
->
->> +
->> +#define clk_core_to_clk(core)	((struct clk *)(core))
->
-> Hmm, I'm not following. clk_to_clk_core() returns clk->core, while
-> clk_core_to_clk() simply casts whatever the former returns into a
-> pointer to struct clk?
-
-Yeah, this is totally wrong, v3 will be fixing this, I have tested it on 
-an Odroid U2, so the most embarrassing issues have been fixed.
+I think this should use CCF so we can use pre and post rate change notifiers
+to hookup vdd_gpu DVS.
 
 Thanks,
 
-Tomeu
-
-> Also this should be a static inline to benefit from compiler type checking.
->
-> Best regards,
-> Tomasz
->
+Peter.
