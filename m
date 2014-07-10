@@ -1,48 +1,39 @@
-From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC v2 0/5] Per-user clock constraints
-Date: Wed, 09 Jul 2014 22:16:29 +0200
-Message-ID: <53BDA31D.40502@gmail.com>
-References: <1404398323-18934-1-git-send-email-tomeu.vizoso@collabora.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1404398323-18934-1-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, rabin-66gdRtMMWGc@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+From: Andrew Bresticker <abrestic@chromium.org>
+Subject: [PATCH 0/4] Allow xHCI drivers to be built as separate modules
+Date: Wed,  9 Jul 2014 18:05:46 -0700
+Message-ID: <1404954350-26343-1-git-send-email-abrestic@chromium.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman <mathias.nyman@intel.com>, Alan Stern <stern@rowland.harvard.edu>, Julius Werner <jwerner@chromium.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Tomeu,
+It was suggested in the review of the Tegra xHCI driver [1] that we
+allow xHCI drivers to be built as individual modules (like EHCI) instead
+of building them all into the single xhci-hcd module as they are today.
 
-On 03.07.2014 16:38, Tomeu Vizoso wrote:
-> Hello,
-> 
-> here is another round for commenting, not very different from the first one.
-> 
-> Something I forgot to mention before is that the function rename was performed
-> by the scripts in:
-> 
-> http://cgit.collabora.com/git/user/tomeu/linux.git/commit/?h=clk-refactoring-4&id=0e983e28864229f2cd525f87d59e034c4876b233
-> 
-> As before, I have only checked that drivers/clk/ builds with allyesconfig, and
-> that a kernel can be built for tegra_defconfig.
+Patches 1-3 prepare for making the xHCI PCI and platform drivers able
+to be built as individual modules and patch 4 actually creates the 3
+separate modules (core, platform, PCI).
 
-This is quite an interesting series. I have reviewed two of five patches
-and have plans to look at remaining ones, however here are few general
-issues I'd like to raise:
+Based on 3.16-rc4.
 
-- somehow I don't see patch 2/5 on LAKML. Too big?
+[1] http://patchwork.ozlabs.org/patch/361265/
 
-- I see the series changing particular clock drivers. A good practice
-would be to Cc respective driver maintainers to take a look at those
-changes.
+Andrew Bresticker (4):
+  xhci: Introduce xhci_init_driver()
+  xhci: Check for XHCI_COMP_MODE_QUIRK when disabling D3cold
+  xhci: Export symbols used by host-controller drivers
+  xhci: Allow xHCI drivers to be built as separate modules
 
-- please make sure that all the patches don't have checkpatch errors or
-significant warnings.
+ drivers/usb/host/Kconfig     |  5 +++
+ drivers/usb/host/Makefile    | 10 ++---
+ drivers/usb/host/xhci-dbg.c  |  1 +
+ drivers/usb/host/xhci-pci.c  | 80 +++++++-----------------------------
+ drivers/usb/host/xhci-plat.c | 69 +++++--------------------------
+ drivers/usb/host/xhci.c      | 96 +++++++++++++++++++++++++++++++++-----------
+ drivers/usb/host/xhci.h      | 23 +----------
+ 7 files changed, 111 insertions(+), 173 deletions(-)
 
-Will try (myself or by asking someone else) to do some testing on
-Samsung platforms.
-
-Best regards,
-Tomasz
+-- 
+2.0.0.526.g5318336
