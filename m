@@ -1,114 +1,107 @@
-From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
-Subject: [PATCH 05/13] clk: tegra: Add DFLL DVCO reset control for Tegra124
-Date: Fri, 11 Jul 2014 00:42:41 +0300
-Message-ID: <1405028569-14253-6-git-send-email-ttynkkynen@nvidia.com>
-References: <1405028569-14253-1-git-send-email-ttynkkynen@nvidia.com>
+From: Olav Haugan <ohaugan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Thu, 10 Jul 2014 15:32:16 -0700
+Message-ID: <53BF1470.1000704@codeaurora.org>
+References: <4545972.cM7IP1qTXQ@wuerfel> <53A4C0C9.2050908@codeaurora.org>
+	<20140624091808.GC26013@arm.com> <53A9BC18.2090106@codeaurora.org>
+	<20140624181150.GB4067@arm.com> <53A9EF3A.2070704@codeaurora.org>
+	<20140625091858.GG6153@arm.com> <53ADEEDF.7060902@codeaurora.org>
+	<20140630095220.GA25779@arm.com> <53BC95DA.1010500@codeaurora.org>
+	<20140709105441.GE9485@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1405028569-14253-1-git-send-email-ttynkkynen@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, devicetree@vger.kernel.org, Paul Walmsley <pwalmsley@nvidia.com>, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20140709105441.GE9485-5wv7dgnIgG8@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Paul Walmsley <pwalmsley@nvidia.com>
+On 7/9/2014 3:54 AM, Will Deacon wrote:
+> On Wed, Jul 09, 2014 at 02:07:38AM +0100, Olav Haugan wrote:
+>> On 6/30/2014 2:52 AM, Will Deacon wrote:
+>>> On Fri, Jun 27, 2014 at 11:23:27PM +0100, Olav Haugan wrote:
+>>>> Lets say I have an IOMMU with 2 masters and 2 SMRn slots with the
+>>>> following stream IDs coming from the masters:
+>>>>
+>>>> Master 1: 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28
+>>>> Master 2: 0x30
+>>>>
+>>>> To make this work I would program SMR[0] with StreamID 0x20 and mask 0xF
+>>>> to ignore lower 4 bits. SMR[1] would just be StreamID 0x30 with mask 0x0.
+>>>>
+>>>> However, I could also have an IOMMU with 2 masters and 9 SMRn slots with
+>>>> the following stream IDs:
+>>>>
+>>>> Master 1: 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28
+>>>> Master 2: 0x29
+>>>>
+>>>> Here I would program all SMRn and leave the mask to be 0 for all SMRn's.
+>>>> So how do I detect when to apply a mask or not?
+>>>
+>>> You would aim to use the smallest number of SMRs per master possible.
+>>> You could probably use:
+>>>
+>>>   Master 1: SMR[0].id == 0x20, SMR[0].mask = 0x07
+>>>             SMR[1].id == 0x28, SMR[1].mask = 0x00
+>>>
+>>>   Master 2: SMR[2].id == 0x29, SMR[2].mask = 0x00
+>>
+>> So how does an algorithm figure this out in both my examples? The
+>> algorithm would have to know about both (all) bus masters and their
+>> stream IDs for a specific SMMU. If the algorithm operates on the set of
+>> stream IDs for one bus master at a time the algorithm has no way of
+>> knowing which bits can be ignored since it doesn't know the value of the
+>> other stream IDs for the other bus masters and thus could potentially
+>> create a mask that could cause a stream ID to match in two different
+>> entries.
+> 
+> Complete knowledge of the system topology (i.e. all bus masters) is a
+> requirement for being able to configure the SMMU correctly if you want to
+> guarantee that you don't have SMR aliasing issues.
 
-The DVCO present in the DFLL IP block has a separate reset line,
-exposed via the CAR IP block.  This reset line is asserted upon SoC
-reset.  Unless something (such as the DFLL driver) deasserts this
-line, the DVCO will not oscillate, although reads and writes to the
-DFLL IP block will complete.
+So you agree that an algorithm needs to know about all the bus
+masters/stream IDs for a specific IOMMU before it can figure out the
+StreamID masks and how many SMRs can be allocated to a specific bus
+master? Andreas's algorithm does not know about the other bus
+masters/stream IDs. It operates on one bus master at a time.
 
-Thanks to Aleksandr Frid <afrid@nvidia.com> for identifying this and
-saving hours of debugging time.
+>>>> I am not familiar with Andreas's proposal. Do you have a link?
+>>>
+>>>   http://marc.info/?l=linux-arm-kernel&m=139110598005846&w=2
+>>
+>> Unless I am mistaken the algorithm works on one bus master at a time. I
+>> don't think that will work.
+> 
+> IIRC, it works for densely packed SIDs on the master, so it tries to build
+> up power-of-2 sized groups for that master then mops up the rest with
+> individual entries.
 
-Signed-off-by: Paul Walmsley <pwalmsley@nvidia.com>
-[ttynkkynen: ported to tegra124 from tegra114]
-Signed-off-by: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
----
- drivers/clk/tegra/clk-tegra124.c | 47 ++++++++++++++++++++++++++++++++++++++++
- drivers/clk/tegra/clk.h          |  3 +++
- 2 files changed, 50 insertions(+)
+I ran the algorithm through a few trivial cases:
 
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index 80efe51..77fbf38 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -31,6 +31,9 @@
- #define CLK_SOURCE_CSITE 0x1d4
- #define CLK_SOURCE_EMC 0x19c
- 
-+#define RST_DFLL_DVCO			0x2f4
-+#define DVFS_DFLL_RESET_SHIFT		0
-+
- #define PLLC_BASE 0x80
- #define PLLC_OUT 0x84
- #define PLLC_MISC2 0x88
-@@ -1378,6 +1381,50 @@ static void __init tegra124_clock_apply_init_table(void)
- 	tegra_init_from_table(init_table, clks, TEGRA124_CLK_CLK_MAX);
- }
- 
-+/**
-+ * tegra124_car_barrier - wait for pending writes to the CAR to complete
-+ *
-+ * Wait for any outstanding writes to the CAR MMIO space from this CPU
-+ * to complete before continuing execution.  No return value.
-+ */
-+static void tegra124_car_barrier(void)
-+{
-+	readl_relaxed(clk_base + RST_DFLL_DVCO);
-+}
-+
-+/**
-+ * tegra124_clock_assert_dfll_dvco_reset - assert the DFLL's DVCO reset
-+ *
-+ * Assert the reset line of the DFLL's DVCO.  No return value.
-+ */
-+void tegra124_clock_assert_dfll_dvco_reset(void)
-+{
-+	u32 v;
-+
-+	v = readl_relaxed(clk_base + RST_DFLL_DVCO);
-+	v |= (1 << DVFS_DFLL_RESET_SHIFT);
-+	writel_relaxed(v, clk_base + RST_DFLL_DVCO);
-+	tegra124_car_barrier();
-+}
-+EXPORT_SYMBOL(tegra124_clock_assert_dfll_dvco_reset);
-+
-+/**
-+ * tegra124_clock_deassert_dfll_dvco_reset - deassert the DFLL's DVCO reset
-+ *
-+ * Deassert the reset line of the DFLL's DVCO, allowing the DVCO to
-+ * operate.  No return value.
-+ */
-+void tegra124_clock_deassert_dfll_dvco_reset(void)
-+{
-+	u32 v;
-+
-+	v = readl_relaxed(clk_base + RST_DFLL_DVCO);
-+	v &= ~(1 << DVFS_DFLL_RESET_SHIFT);
-+	writel_relaxed(v, clk_base + RST_DFLL_DVCO);
-+	tegra124_car_barrier();
-+}
-+EXPORT_SYMBOL(tegra124_clock_deassert_dfll_dvco_reset);
-+
- static void __init tegra124_clock_init(struct device_node *np)
- {
- 	struct device_node *node;
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 16ec8d6..4b3f3d0 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -627,6 +627,9 @@ void tegra114_clock_tune_cpu_trimmers_init(void);
- void tegra114_clock_assert_dfll_dvco_reset(void);
- void tegra114_clock_deassert_dfll_dvco_reset(void);
- 
-+void tegra124_clock_assert_dfll_dvco_reset(void);
-+void tegra124_clock_deassert_dfll_dvco_reset(void);
-+
- typedef void (*tegra_clk_apply_init_table_func)(void);
- extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
- 
+1)
+Stream IDs: 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28
+Number of SMRs: 9
+
+In this case the algorithm decided to set mask to 0 for all entries
+using up 8 of the SMRs.
+
+2) Same Stream IDs but only 2 SMRs.
+The algorithm gave an error saying I did not have enough SMRs.
+
+Thanks,
+
+Olav
+
 -- 
-1.8.1.5
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
