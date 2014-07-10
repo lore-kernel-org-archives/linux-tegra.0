@@ -1,236 +1,192 @@
-From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: Re: [RFC v2 4/5] clk: per-user clock accounting for debug
-Date: Thu, 10 Jul 2014 12:51:56 +0200
-Message-ID: <53BE704C.8080502@collabora.com>
-References: <1404398323-18934-1-git-send-email-tomeu.vizoso@collabora.com> <1404398323-18934-5-git-send-email-tomeu.vizoso@collabora.com> <53BD9FA3.1040204@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v4] devicetree: Add generic IOMMU device tree bindings
+Date: Thu, 10 Jul 2014 12:57:38 +0200
+Message-ID: <20140710105737.GD21583@ulmo>
+References: <1404487757-18829-1-git-send-email-thierry.reding@gmail.com>
+	<20140709134050.GN9485@arm.com> <20140709142125.GB3262@ulmo>
+	<20140709181048.GX9485@arm.com> <20140710094909.GA21583@ulmo>
+	<20140710102334.GG2449@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
-	format=flowed
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53BD9FA3.1040204-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, rabin-66gdRtMMWGc@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Rabin Vincent <rabin.vincent-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============0174358065936859531=="
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20140710102334.GG2449-5wv7dgnIgG8@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Varun Sethi <varun.sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/09/2014 10:01 PM, Tomasz Figa wrote:
-> Hi Tomeu, Rabin,
->
-> Please see my comments inline.
->
-> On 03.07.2014 16:38, Tomeu Vizoso wrote:
->> From: Rabin Vincent <rabin.vincent-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>
->>
->> When a clock has multiple users, the WARNING on imbalance of
->> enable/disable may not show the guilty party since although they may
->> have commited the error earlier, the warning is emitted later when some
->> other user, presumably innocent, disables the clock.
->
-> [snip]
->
->> diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
->> index 5f2aba9..d6a5e59 100644
->> --- a/drivers/clk/clk-devres.c
->> +++ b/drivers/clk/clk-devres.c
->> @@ -37,7 +37,8 @@ EXPORT_SYMBOL(devm_clk_provider_get);
->>
->>   struct clk *devm_clk_get(struct device *dev, const char *id)
->>   {
->> -	return clk_core_to_clk(devm_clk_provider_get(dev, id));
->> +	const char *dev_id = dev ? dev_name(dev) : NULL;
->> +	return clk_core_to_clk(devm_clk_provider_get(dev, id), dev_id, id);
->
-> Hmm, correct me if I'm missing something but you're just calling
-> devm_clk_provider() which guarantees calling of clk_provider_put() on
-> device removal, but what about the consumer struct being created here?
->
-> Shouldn't you rather call normal clk_provider_get() here, then create a
-> consumer struct for it and then wrap it up using devres, providing
-> appropriate release function?
 
-You are totally right.
+--===============0174358065936859531==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="n/aVsWSeQ4JHkrmm"
+Content-Disposition: inline
 
->>   }
->>   EXPORT_SYMBOL(devm_clk_get);
->>
->> diff --git a/drivers/clk/clk-highbank.c b/drivers/clk/clk-highbank.c
->> index cc1bae1..4e38856 100644
->> --- a/drivers/clk/clk-highbank.c
->> +++ b/drivers/clk/clk-highbank.c
->> @@ -331,7 +331,7 @@ CLK_OF_DECLARE(hb_a9periph, "calxeda,hb-a9periph-clock", hb_a9periph_init);
->>   static void __init hb_a9bus_init(struct device_node *node)
->>   {
->>   	struct clk_core *clk = hb_clk_init(node, &a9bclk_ops);
->> -	clk_prepare_enable(clk_core_to_clk(clk));
->> +	clk_prepare_enable(clk_core_to_clk(clk, node->full_name, NULL));
->>   }
->>   CLK_OF_DECLARE(hb_a9bus, "calxeda,hb-a9bus-clock", hb_a9bus_init);
->>
->> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
->> index 644a824..b887c69 100644
->> --- a/drivers/clk/clk.c
->> +++ b/drivers/clk/clk.c
->> @@ -568,6 +568,28 @@ static int clk_disable_unused(void)
->>   }
->>   late_initcall_sync(clk_disable_unused);
->>
->> +struct clk *clk_core_to_clk(struct clk_core *clk_core, const char *dev,
->> +			    const char *con)
->
-> Name of this function suggests that this is just a simple conversion,
-> while it creates new object. I would suggest calling this
-> clk_create_consumer() or something along these lines.
 
-Agreed, that sounds better.
+--n/aVsWSeQ4JHkrmm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->> +{
->> +	struct clk *clk;
->> +
->> +	clk = kzalloc(sizeof(*clk), GFP_KERNEL);
->> +	if (!clk)
->> +		return ERR_PTR(-ENOMEM);
->
-> [snip]
->
->> +static void clk_free_clk(struct clk *clk)
->> +{
->> +	kfree(clk);
->> +}
->
-> Any need for this one-liner? Seems to be used just once below.
+On Thu, Jul 10, 2014 at 11:23:34AM +0100, Will Deacon wrote:
+> On Thu, Jul 10, 2014 at 10:49:10AM +0100, Thierry Reding wrote:
+> > On Wed, Jul 09, 2014 at 07:10:48PM +0100, Will Deacon wrote:
+> > > On Wed, Jul 09, 2014 at 03:21:27PM +0100, Thierry Reding wrote:
+> > > > Anything beyond that (e.g. logical grouping of masters) isn't direc=
+tly
+> > > > within the scope of the binding (it doesn't describe hardware but s=
+ome
+> > > > policy pertaining to some specific use-case).
+> > >=20
+> > > This *is* for hardware. I can use PCI as an example, but this could e=
+qually
+> > > apply to other types of bus. If you have a bunch of PCI master devices
+> > > sitting being a non-transparent bridge, they can end up sharing the s=
+ame
+> > > master device ID (requester ID). This means that there is no way in t=
+he
+> > > IOMMU to initialise a translation for one of these devices without al=
+so
+> > > affecting the others. We currently have iommu_groups to deal with thi=
+s, but
+> > > it *is* a property of the hardware and we absolutely need a way to de=
+scribe
+> > > it. I'm happy to add it later, but we need to think about it now to a=
+void
+> > > merging something that can't easily be extended.
+> > >=20
+> > > For PCI, the topology is probable but even then, we need this informa=
+tion to
+> > > describe the resulting master device ID emitted by the bridge for the
+> > > upstream group. One way to do this with your binding would be to trea=
+t all
+> > > of the upstream masters as having the same device ID.
+> >=20
+> > Yes, I think that makes most sense. After all from the IOMMU's point of
+> > view requests from all devices behind the bridge will originate from the
+> > same ID.
+> >=20
+> > So technically it's not really correct to encode the master ID within
+> > each of the devices, but rather they should be inheriting the ID from
+> > the non-transparent bridge.
+>=20
+> Indeed. Is that possible with your binding, or would we just duplicate the
+> IDs between the masters?
 
-Yeah, should probably remove it from this patch and only reintroduce it 
-later when it's actually needed.
+No, the binding only describes direct relationships between the IOMMU
+and masters. There's no way to translate them inbetween or inherit them.
 
->> +
->>   void clk_put(struct clk *clk)
->>   {
->> -	__clk_put(clk_to_clk_core(clk));
->> +	clk_core_t *core = clk_to_clk_core(clk);
->> +
->> +	clk_free_clk(clk);
->> +	__clk_put(core);
->>   }
->>   EXPORT_SYMBOL(clk_put);
->>
->> diff --git a/drivers/clk/qcom/mmcc-msm8960.c b/drivers/clk/qcom/mmcc-msm8960.c
->> index 28a5d30..47f21ea 100644
->> --- a/drivers/clk/qcom/mmcc-msm8960.c
->> +++ b/drivers/clk/qcom/mmcc-msm8960.c
->> @@ -470,7 +470,8 @@ static int pix_rdi_set_parent(struct clk_hw *hw, u8 index)
->>   	 * needs to be on at what time.
->>   	 */
->>   	for (i = 0; i < num_parents; i++) {
->> -		ret = clk_prepare_enable(clk_core_to_clk(clk_get_parent_by_index(clk, i)));
->> +		struct clk_core *parent = clk_get_parent_by_index(clk, i);
->> +		ret = clk_prepare_enable(clk_core_to_clk(parent, NULL, __clk_get_name(parent)));
->
-> Shouldn't this use clk_provider_*() instead? IMHO clk_core_to_clk() and
-> clk_to_clk_core() shouldn't be available to clock drivers, just the core
-> clock code. Consumers should operate on struct clks alone, clock drivers
-> should operate only on struct clk_cores and only the core code should be
-> responsible for necessary conversions.
+I'm wondering how this could be described in device tree, though.
+Perhaps something like this:
 
-Totally, this is already fixed in my local version.
+	iommu {
+		#iommu-cells =3D <1>;
+	};
 
->>   		if (ret)
->>   			goto err;
->>   	}
->> @@ -498,8 +499,10 @@ static int pix_rdi_set_parent(struct clk_hw *hw, u8 index)
->>   	udelay(1);
->>
->>   err:
->> -	for (i--; i >= 0; i--)
->> -		clk_disable_unprepare(clk_core_to_clk(clk_get_parent_by_index(clk, i)));
->> +	for (i--; i >= 0; i--) {
->> +		struct clk_core *parent = clk_get_parent_by_index(clk, i);
->> +		clk_disable_unprepare(clk_core_to_clk(parent, NULL, __clk_get_name(parent)));
->
-> Hmm. Memory leak? Every time this operation is called you create a
-> consumer struct for each parent two times.
+	bridge {
+		iommus =3D <&/iommu 42>;
+		#iommu-cells =3D <0>;
 
-Yes, fortunately this won't be needed as we'll have 
-clk_provider_disable_unprepare and friends.
+		device@0 {
+			iommus =3D <&/bridge>;
+		};
 
->> +	}
->>
->>   	return ret;
->>   }
->> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
->> index 5de44c1..550a691 100644
->> --- a/drivers/clk/sunxi/clk-sunxi.c
->> +++ b/drivers/clk/sunxi/clk-sunxi.c
->> @@ -1196,7 +1196,7 @@ static void __init sunxi_init_clocks(const char *clocks[], int nclocks)
->>   		struct clk_core *clk = clk_provider_get(NULL, clocks[i]);
->>
->>   		if (!IS_ERR(clk))
->> -			clk_prepare_enable(clk_core_to_clk(clk));
->> +			clk_prepare_enable(clk_core_to_clk(clk, NULL, clocks[i]));
->
-> Probably should use clk_provider_*()?
->
->>   	}
->>   }
->>
->> diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
->> index 385d101..2a03d47 100644
->> --- a/drivers/clk/tegra/clk.c
->> +++ b/drivers/clk/tegra/clk.c
->> @@ -228,7 +228,7 @@ void __init tegra_init_from_table(struct tegra_clk_init_table *tbl,
->>   			}
->>
->>   		if (tbl->state)
->> -			if (clk_prepare_enable(clk_core_to_clk(clk))) {
->> +			if (clk_prepare_enable(clk_core_to_clk(clk, NULL, __clk_get_name(clk)))) {
->
-> Ditto. And all similar cases below which I skipped due to lack of any
-> added value to this review.
->
->>   				pr_err("%s: Failed to enable %s\n", __func__,
->>   				       __clk_get_name(clk));
->>   				WARN_ON(1);
->
-> [snip]
->
->> diff --git a/include/linux/clk-private.h b/include/linux/clk-private.h
->> index 2c1ece9..9657fc8 100644
->> --- a/include/linux/clk-private.h
->> +++ b/include/linux/clk-private.h
->> @@ -57,6 +57,10 @@ struct clk_core {
->>
->>   struct clk {
->>   	struct clk_core	*core;
->> +	unsigned int	enable_count;
->> +	const char	*dev_id;
->> +	const char	*con_id;
->> +	void		*last_disable;
->
-> Probably the same as for enables should be done for prepares.
+		device@1 {
+			iommus =3D <&/bridge>;
+		};
 
-Yes, I think it would be useful as well.
+		...
+	};
 
->>   };
->>
->>   /*
->> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
->> index 87de32c..abfc31a 100644
->> --- a/include/linux/clk-provider.h
->> +++ b/include/linux/clk-provider.h
->> @@ -533,7 +533,8 @@ struct clk_core *clk_provider_get_sys(const char *dev_id, const char *con_id);
->>   struct clk_core *clk_provider_get(struct device *dev, const char *con_id);
->>   struct clk_core *devm_clk_provider_get(struct device *dev, const char *id);
->>
->> -#define clk_core_to_clk(core)	((struct clk *)(core))
->
-> Btw. this should have been a static inline.
+? That way some code could walk up the IOMMU tree to resolve this. Or
+perhaps even easier:
 
-Agreed.
+	iommu {
+		#iommu-cells =3D <1>;
+	};
 
-Thanks,
+	bridge {
+		iommus =3D <&/iommu 42>;
 
-Tomeu
+		device@0 {
+			...
+		};
 
-> Best regards,
-> Tomasz
->
+		device@1 {
+			...
+		};
+
+		...
+	};
+
+And we could enhance the binding by defining that the iommus node is
+inherited by devices on a bus, which by what you're saying would be the
+sensible thing to do anyway.
+
+In the second example above, the presence of an iommus property in the
+bridge would indicate that it's non-transparent regarding IOMMU
+translation and therefore the master ID should be inherited. Devices
+could still override by providing their own iommus property, though I'd
+be a little surprised if there ever was hardware like that.
+
+> > > With virtualisation, we may want to assign a group of devices to a gu=
+est but
+> > > without emulating the bridge. This would need something the device-tr=
+ee to
+> > > describe that they are grouped together.
+> >=20
+> > But that's also a software decision, isn't it? Virtualization doesn't
+> > have anything to do with the hardware description. Or am I missing
+> > something? Of course I guess you could generate a DTB for the guest and
+> > group device together, in which case you're pretty much free to do what
+> > you want since you're essentially defining your own hardware.
+>=20
+> If you're doing device passthrough and you want to allow the guest to
+> program the IOMMU, I think that virtualisation is directly related to the
+> hardware description, since the guest will be bound by physical properties
+> of the system.
+
+Evidently you know much better what the requirements are here and what
+will actually be required. I guess we'll need to have more discussions
+along with examples of use-cases.
+
+Thierry
+
+--n/aVsWSeQ4JHkrmm
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTvnGhAAoJEN0jrNd/PrOhgnIP/2/PQINwth2sas2l1+AE2qbx
+/OckQuyNw0J8nQHttsSwA9NQJtxH1Nffe5bLDx7Q7E2l+35zkHvQ0NoeK6/I3Bnp
+VXMXAZ84k7BTher0MkwxbP6VNCJAS+vQBbtbEORkq5N7IrFR8fq6rQvvn5UFCAmu
+CFP355SgCoLw/WmaDlRfk5kaRzd/jCCKFWGQ1Pw62Q/0q70PgC4GOdC2kgmp0x3I
+Sd2LnJIclAmalkbA6ByEk1KK+QIr4A2zZQKmrV+GIMwDwM7JmZcC5u7n4OrYo3u0
+qLUPpNommsbbztZ5cthNt1fW7ht69uZNdEdc40bROQlbIfX0TE7LqPDpvwEPrY/2
+CLiWpzHhrjLdhTHzKQ5kmjLNtNg1mTgoaBQFyWc6T/P9Juzbsdw6oX7SxoHuqAg2
+xmVZxBf4jrl6/uO1GD4H292qslOKh7+lpjhAQXJbXDzdojctaSGIGnyeJslWFBZq
+eDi7ZTDDaSrOdMzDqbRpRJwtNAIjWVag2oUYdeBhQYBubgVVvC2rYKD7nfmy4isN
+sd+xrRQeKDF1Mot4qmBjx/1lbQ08QAKt7US+uMMAR9ZWBdhtI9F6G2o9C20IOWRn
+GuU+8fJv81Cty/xz7Cj0wyIiACEqo79nw16QMl/nWxIhyErxjEWYvt/weJDXqN58
+SOxu9sRC7yZhsi6Flnk2
+=yjDS
+-----END PGP SIGNATURE-----
+
+--n/aVsWSeQ4JHkrmm--
+
+--===============0174358065936859531==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============0174358065936859531==--
