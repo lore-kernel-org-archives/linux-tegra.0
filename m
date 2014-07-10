@@ -1,66 +1,74 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 15/16] i2c: i2c-tegra: Drop class based scanning to
- improve bootup time
-Date: Thu, 10 Jul 2014 15:43:30 +0200
-Message-ID: <20140710134329.GB14961@ulmo>
-References: <1404992799-3705-1-git-send-email-wsa@the-dreams.de>
- <1404992799-3705-16-git-send-email-wsa@the-dreams.de>
+From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH v2 4/4] USB: PHY: tegra: Call tegra_usb_phy_close only on
+ device removal
+Date: Thu, 10 Jul 2014 08:48:59 -0500
+Message-ID: <20140710134859.GM15340@saruman.home>
+References: <1404436179-10745-1-git-send-email-ttynkkynen@nvidia.com>
+ <1404436179-10745-5-git-send-email-ttynkkynen@nvidia.com>
+Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="eJnRUKwClWJh1Khz"
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="EOHJn1TVIJfeVXv2"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1404992799-3705-16-git-send-email-wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1404436179-10745-5-git-send-email-ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
---eJnRUKwClWJh1Khz
+--EOHJn1TVIJfeVXv2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 10, 2014 at 01:46:35PM +0200, Wolfram Sang wrote:
-> This driver has been flagged to drop class based instantiation. The remov=
-al
-> improves boot-up time and is unneeded for embedded controllers. Users hav=
-e been
-> warned to switch for some time now, so we can actually do the removal. Ke=
-ep the
-> DEPRECATED flag, so the core can inform users that the behaviour finally
-> changed now. After another transition period, this flag can go, too.
+Hi,
+
+On Fri, Jul 04, 2014 at 04:09:39AM +0300, Tuomas Tynkkynen wrote:
+> tegra_usb_phy_close() is supposed to undo the effects of
+> tegra_usb_phy_init(). It is also currently added as the USB PHY shutdown
+> callback, which is wrong, since tegra_usb_phy_init() is only called
+
+you could just make tegra_usb_phy_init() be called as u_phy->init().
+That way you even delay enabling clocks and regulators to the point
+where they are more likely to be needed. Also, if EHCI is never loaded,
+you won't power up the PHY for no reason.
+
+> during probing wheras the shutdown callback can get called multiple
+> times. This then leads to warnings about unbalanced regulator_disable if
+> the EHCI driver is unbound and bound again at runtime.
 >=20
-> Signed-off-by: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-> ---
->  drivers/i2c/busses/i2c-tegra.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Signed-off-by: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-It looks as though this currently doesn't do anything on !X86 anyway and
-I'll trust Mikko's testing, so:
+I suppose this has no dependencies with the rest of the series ?
 
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+--=20
+balbi
 
---eJnRUKwClWJh1Khz
-Content-Type: application/pgp-signature
+--EOHJn1TVIJfeVXv2
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Version: GnuPG v1
 
-iQIcBAEBAgAGBQJTvpiBAAoJEN0jrNd/PrOhDb8P/2DQMSn8ZMMHOcqMf1h8sv7S
-Ymo+qUhJoood5RKsgXWriAJBs9A5wOS+Kl9+JN/FDMFCs8gGCEb9/ur+QYY5ySps
-TR1+RO6rE19IdXzZZpVaL58H5H/oTC9BcadRni3Rd3ZAivOeE4ikW+4VIAX4CpPi
-WA0DVIWLhiCqUQEg8CyrGmBaZGbHf2BDuNuvz19HOjrL/R0DeBEnXwk91rjLHpi8
-IqeqZQLoAwnF1+RAnbflZeSXFUVtKxb8tf45la2E3scXOax+nAcaJvBKERYj4wWh
-3QYTwKKNqHrVFbCUMmi/CTbtFPoYI2yOZkEo1ygISt1Grc5g+c9EsKTVo02+dVWF
-uuIQtnY7ao4UROHg2rhUDt0Z5iYvvk6NWkdL3iBDelT+rZn75RrJVC0xOZ6a9et4
-K3DiOUaqckBqCCcmuCOMnloZJ7N7H60jukTNP1Uw2oaEoqs/IQU7KEM55818qJsH
-0lEhxVW/2aB5PvxEICl3Lwyeqmu2hgQ5Ef8nLXthsqUxamHyPJXEkOI0bm7MgfaQ
-OHfrGs+QHPLWaeWz4nzbdwEliwQpjXAuVyCc6HLqomB9saGmC8VvXFSkx1bYqCL5
-ufDvmvagQ8+legtUhHwmg3IJLFkXvmEOWM7yslRDSOtnH7fcrSzmNmwkwYg0i7WB
-qae1z5Va6b7NyeL/a/Gh
-=jyu0
+iQIcBAEBAgAGBQJTvpnLAAoJEIaOsuA1yqREJxcP/A9JLCAOpspUWYp+jTJnY+kz
+f3UKdp/1M2Phrs7YWdjoJb+INYErWCCOqR8dBfoSXetU8ZVV/gVf8Tp958kaYXsn
+mIOeP9Tc/YSD+hTJvgTkFvuVh9dFtSpREJz/1Au5SKOsGPlW+sr9Oih9pvIvhzLB
+shnKeAb0i5XheYxkLbc18/RvoRj4u4u0yAXz4H0DTnbnzsfMgDxtJM2uYL2jddkP
+/7Hg7A8Esl2D+wWvUkxTiNdRlocCK8BQKqVD4qgiAGiqxI8RDe+8A3D4QqHwlr1Y
+AMKCdf1i+MdyrVNUETGOvHj59WkIUTeTLPZYV+Xv/NM3Cvq1SRD033ynCsKokjC5
+sjVSdh3fmsHtgu0g3aBg5pkuB5+7rX8QFeZLe2TRwzT745M7or3he2Jx47ZkCwBM
+BEhTyauaumRLxr16xdvJB0Cz98famlgMuCJRHOHjoQzFvhAvB+/Mt1vNL+/OGeCC
+pDI96a/P0CsLV5vUcMpuMinG2rIkdxeZuwCXO+1VaOt1BHi7IoKHylE+nYMb1wOd
+gxnwVfJVdYS19rXanV9SHulVW/Ylt8RJEy0KwWFZtXIBtOXu1E3MtaY3xUc38Qb2
+LZeKC+RzV42t7m4xMcNMQI/BD5RGfzSPWjjlEKuRnDjRMT00tV/FXDX7KwEfL05o
+qVztcGO41cC7px//u0uB
+=HY2Z
 -----END PGP SIGNATURE-----
 
---eJnRUKwClWJh1Khz--
+--EOHJn1TVIJfeVXv2--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
