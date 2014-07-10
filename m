@@ -1,68 +1,59 @@
-From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v4] devicetree: Add generic IOMMU device tree bindings
-Date: Thu, 10 Jul 2014 11:23:34 +0100
-Message-ID: <20140710102334.GG2449@arm.com>
-References: <1404487757-18829-1-git-send-email-thierry.reding@gmail.com>
- <20140709134050.GN9485@arm.com>
- <20140709142125.GB3262@ulmo>
- <20140709181048.GX9485@arm.com>
- <20140710094909.GA21583@ulmo>
+From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/3] Rename last_bl_blk to last_blk
+Date: Thu, 10 Jul 2014 18:26:17 +0800
+Message-ID: <53BE6A49.9050103@nvidia.com>
+References: <1404987710-26375-1-git-send-email-vinceh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20140710094909.GA21583@ulmo>
+In-Reply-To: <1404987710-26375-1-git-send-email-vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olav Haugan <ohaugan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Varun Sethi <varun.sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TZNg+MwTxZMZA@public.gmane.org>
+To: Allen Martin <AMartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jul 10, 2014 at 10:49:10AM +0100, Thierry Reding wrote:
-> On Wed, Jul 09, 2014 at 07:10:48PM +0100, Will Deacon wrote:
-> > On Wed, Jul 09, 2014 at 03:21:27PM +0100, Thierry Reding wrote:
-> > > Anything beyond that (e.g. logical grouping of masters) isn't directly
-> > > within the scope of the binding (it doesn't describe hardware but some
-> > > policy pertaining to some specific use-case).
-> > 
-> > This *is* for hardware. I can use PCI as an example, but this could equally
-> > apply to other types of bus. If you have a bunch of PCI master devices
-> > sitting being a non-transparent bridge, they can end up sharing the same
-> > master device ID (requester ID). This means that there is no way in the
-> > IOMMU to initialise a translation for one of these devices without also
-> > affecting the others. We currently have iommu_groups to deal with this, but
-> > it *is* a property of the hardware and we absolutely need a way to describe
-> > it. I'm happy to add it later, but we need to think about it now to avoid
-> > merging something that can't easily be extended.
-> > 
-> > For PCI, the topology is probable but even then, we need this information to
-> > describe the resulting master device ID emitted by the bridge for the
-> > upstream group. One way to do this with your binding would be to treat all
-> > of the upstream masters as having the same device ID.
-> 
-> Yes, I think that makes most sense. After all from the IOMMU's point of
-> view requests from all devices behind the bridge will originate from the
-> same ID.
-> 
-> So technically it's not really correct to encode the master ID within
-> each of the devices, but rather they should be inheriting the ID from
-> the non-transparent bridge.
+Sorry, this is a series for cbootimage. I forgot to add the prefix. Will 
+add in next version.
 
-Indeed. Is that possible with your binding, or would we just duplicate the
-IDs between the masters?
+Thanks,
+Vince
 
-> > With virtualisation, we may want to assign a group of devices to a guest but
-> > without emulating the bridge. This would need something the device-tree to
-> > describe that they are grouped together.
-> 
-> But that's also a software decision, isn't it? Virtualization doesn't
-> have anything to do with the hardware description. Or am I missing
-> something? Of course I guess you could generate a DTB for the guest and
-> group device together, in which case you're pretty much free to do what
-> you want since you're essentially defining your own hardware.
-
-If you're doing device passthrough and you want to allow the guest to
-program the IOMMU, I think that virtualisation is directly related to the
-hardware description, since the guest will be bound by physical properties
-of the system.
-
-Will
+On 07/10/2014 06:21 PM, Vince Hsu wrote:
+> Also update the next_bct_blk. Then we have the correct pointer
+> to the next block for the next image write.
+>
+> Signed-off-by: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>   src/cbootimage.h  | 2 +-
+>   src/data_layout.c | 3 ++-
+>   2 files changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/src/cbootimage.h b/src/cbootimage.h
+> index 6def766f1770..baade00f5e33 100644
+> --- a/src/cbootimage.h
+> +++ b/src/cbootimage.h
+> @@ -95,7 +95,7 @@ typedef struct build_image_context_rec
+>   	u_int8_t *bct;
+>   
+>   	char *bct_filename;
+> -	u_int32_t last_bl_blk;
+> +	u_int32_t last_blk;
+>   	u_int32_t bct_size; /* The BCT file size */
+>   	u_int32_t boot_data_version; /* The boot data version of BCT */
+>   	u_int8_t bct_init; /* The flag for the memory allocation of bct */
+> diff --git a/src/data_layout.c b/src/data_layout.c
+> index c848a6141b2b..73663beffbe2 100644
+> --- a/src/data_layout.c
+> +++ b/src/data_layout.c
+> @@ -552,8 +552,9 @@ write_bootloaders(build_image_context *context)
+>   				current_blk++;
+>   				virtual_blk++;
+>   			}
+> -			context->last_bl_blk = current_blk;
+> +			context->last_blk = current_blk;
+>   		}
+> +		context->next_bct_blk = context->last_blk + 1;
+>   		free(buffer);
+>   	}
+>   
