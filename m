@@ -1,55 +1,82 @@
-From: Julius Werner <jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH 4/4] xhci: Allow xHCI drivers to be built as separate modules
-Date: Thu, 10 Jul 2014 11:34:36 -0700
-Message-ID: <CAODwPW9FORb2jnxFi6US6CUJvJzKyUkT8cuSzkPues41hJe+Jw@mail.gmail.com>
-References: <1404954350-26343-1-git-send-email-abrestic@chromium.org>
-	<1404954350-26343-5-git-send-email-abrestic@chromium.org>
+From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Subject: [PATCH 00/13] Tegra124 CL-DVFS / DFLL clocksource, plus cpufreq
+Date: Fri, 11 Jul 2014 00:42:36 +0300
+Message-ID: <1405028569-14253-1-git-send-email-ttynkkynen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1404954350-26343-5-git-send-email-abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Julius Werner <jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, devicetree@vger.kernel.org, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-> diff --git a/drivers/usb/host/Makefile b/drivers/usb/host/Makefile
-> index af89a90..bafba71 100644
-> --- a/drivers/usb/host/Makefile
-> +++ b/drivers/usb/host/Makefile
-> @@ -15,19 +15,19 @@ fhci-$(CONFIG_FHCI_DEBUG) += fhci-dbg.o
->  xhci-hcd-y := xhci.o xhci-mem.o
->  xhci-hcd-y += xhci-ring.o xhci-hub.o xhci-dbg.o
->  xhci-hcd-y += xhci-trace.o
-> -xhci-hcd-$(CONFIG_PCI) += xhci-pci.o
->
-> -ifneq ($(CONFIG_USB_XHCI_PLATFORM), )
-> -       xhci-hcd-y              += xhci-plat.o
-> +xhci-plat-hcd-y := xhci-plat.o
->  ifneq ($(CONFIG_USB_XHCI_MVEBU), )
-> -       xhci-hcd-y              += xhci-mvebu.o
-> -endif
+This series implements the DFLL/CL-DVFS clock source for the fast CPU
+cluster on Tegra124, and a cpufreq driver that uses the DFLL for
+clocking the CPU. Most of this is based on Paul Walmsley's public patch
+set from December 2013, which is available at
+http://comments.gmane.org/gmane.linux.ports.tegra/15273
 
-nit: Can do this even simpler now, just
-"xhci-plat-hcd-$(CONFIG_USB_XHCI_MVEBU) += xhci-mvebu.o" without the
-ifneq.
+The DFLL clock hardware is a voltage-controlled oscillator plus
+control logic that compares the generated output clock with a
+51 MHz reference clock, and can make decisions to either lower
+or raise the DFLL voltage to keep the output rate close to the
+software-requested rate. The voltage changes are done by
+communicating with an off-chip PMIC via either I2C or PWM.
+As the DFLL oscillator is powered via the CPU rail, using
+the DFLL as the CPU clocksource also gives us dynamic CPU
+voltage scaling.
 
-> +       xhci-plat-hcd-y         += xhci-mvebu.o
->  endif
->
->  obj-$(CONFIG_USB_WHCI_HCD)     += whci/
->
->  obj-$(CONFIG_PCI)              += pci-quirks.o
->
-> +obj-$(CONFIG_USB_XHCI_PCI)     += xhci-pci.o
-> +obj-$(CONFIG_USB_XHCI_PLATFORM) += xhci-plat-hcd.o
-> +
->  obj-$(CONFIG_USB_EHCI_HCD)     += ehci-hcd.o
->  obj-$(CONFIG_USB_EHCI_PCI)     += ehci-pci.o
->  obj-$(CONFIG_USB_EHCI_HCD_PLATFORM)    += ehci-platform.o
+This series has been tested on the Jetson TK1 (Rev C). Before attempting
+to port this to the Venice2, do note that there are two versions of the
+AS3722 with different voltage tables for the CPU rail (and that Venice2
+does not have active cooling).
 
-Great patch series, thank you!
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks,
+Tuomas
+
+Paul Walmsley (1):
+  clk: tegra: Add DFLL DVCO reset control for Tegra124
+
+Tuomas Tynkkynen (12):
+  clk: tegra: Add binding for the Tegra124 DFLL clocksource
+  clk: tegra: Add library for the DFLL clock source (open-loop mode)
+  clk: tegra: Add closed loop support for the DFLL
+  clk: tegra: Add functions for parsing CVB tables
+  clk: tegra: Add Tegra124 DFLL clocksource platform driver
+  clk: tegra: Save/restore CCLKG_BURST_POLICY on suspend
+  clk: tegra: Add the DFLL as a possible parent of the cclk_g clock
+  ARM: tegra: Add the DFLL to Tegra124 device tree
+  ARM: tegra: Enable the DFLL on the Jetson-TK1
+  cpufreq: tegra124: Add device tree bindings
+  cpufreq: Add cpufreq driver for Tegra124
+  ARM: tegra: Add entries for cpufreq on Tegra124
+
+ .../bindings/clock/nvidia,tegra124-dfll.txt        |   86 +
+ .../bindings/cpufreq/tegra124-cpufreq.txt          |   37 +
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts          |   83 +-
+ arch/arm/boot/dts/tegra124.dtsi                    |   29 +
+ arch/arm/mach-tegra/Kconfig                        |    1 +
+ drivers/clk/tegra/Makefile                         |    3 +
+ drivers/clk/tegra/clk-dfll.c                       | 1759 ++++++++++++++++++++
+ drivers/clk/tegra/clk-dfll.h                       |   55 +
+ drivers/clk/tegra/clk-tegra-super-gen4.c           |    4 +-
+ drivers/clk/tegra/clk-tegra124-dfll-fcpu.c         |  156 ++
+ drivers/clk/tegra/clk-tegra124.c                   |   61 +
+ drivers/clk/tegra/clk.h                            |    3 +
+ drivers/clk/tegra/cvb.c                            |  133 ++
+ drivers/clk/tegra/cvb.h                            |   67 +
+ drivers/cpufreq/Makefile                           |    1 +
+ drivers/cpufreq/tegra124-cpufreq.c                 |  221 +++
+ 16 files changed, 2697 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+ create mode 100644 Documentation/devicetree/bindings/cpufreq/tegra124-cpufreq.txt
+ create mode 100644 drivers/clk/tegra/clk-dfll.c
+ create mode 100644 drivers/clk/tegra/clk-dfll.h
+ create mode 100644 drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+ create mode 100644 drivers/clk/tegra/cvb.c
+ create mode 100644 drivers/clk/tegra/cvb.h
+ create mode 100644 drivers/cpufreq/tegra124-cpufreq.c
+
+-- 
+1.8.1.5
+
