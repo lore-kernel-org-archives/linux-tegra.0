@@ -1,59 +1,40 @@
-From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/3] Rename last_bl_blk to last_blk
-Date: Thu, 10 Jul 2014 18:26:17 +0800
-Message-ID: <53BE6A49.9050103@nvidia.com>
-References: <1404987710-26375-1-git-send-email-vinceh@nvidia.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH v1 6/9] usb: xhci: Add NVIDIA Tegra XHCI host-controller driver
+Date: Thu, 10 Jul 2014 12:40:56 +0200
+Message-ID: <201407101240.56828.arnd@arndb.de>
+References: <Pine.LNX.4.44L0.1407091001150.873-100000@iolanthe.rowland.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1404987710-26375-1-git-send-email-vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Allen Martin <AMartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <Pine.LNX.4.44L0.1407091001150.873-100000-IYeN2dnnYyZXsRXLowluHWD2FQJk+8+b@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Cc: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Julius Werner <jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.o>
 List-Id: linux-tegra@vger.kernel.org
 
-Sorry, this is a series for cbootimage. I forgot to add the prefix. Will 
-add in next version.
+On Wednesday 09 July 2014, Alan Stern wrote:
+> On Tue, 8 Jul 2014, Andrew Bresticker wrote:
+> 
+> > > I think at the very least you should add a function
+> > > "xhci_default_driver(struct hc_driver *driver)" to xhci-plat.c (or
+> > > even better to xhci.c and use it for PCI as well) that initializes all
+> > > function pointers to the default (internal) symbols, and can then be
+> > > overridden afterwards.
+> > 
+> > Currently all XHCI host drivers (PCI, platform, MVEBU) will be built
+> > into the xhci-hcd module.  I could append the Tegra driver to that
+> > module or introduce a xhci_init_driver() like EHCI does as Julius
+> > suggests.  USB folks, do you have a preference?
+> 
+> As the EHCI maintainer, I naturally approve of Julius's suggestion.  
 
-Thanks,
-Vince
+I'm not a USB maintainer, but I also agree that's the best way forward,
+since it's similar to what all other similar drivers in the kernel do.
 
-On 07/10/2014 06:21 PM, Vince Hsu wrote:
-> Also update the next_bct_blk. Then we have the correct pointer
-> to the next block for the next image write.
->
-> Signed-off-by: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->   src/cbootimage.h  | 2 +-
->   src/data_layout.c | 3 ++-
->   2 files changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/src/cbootimage.h b/src/cbootimage.h
-> index 6def766f1770..baade00f5e33 100644
-> --- a/src/cbootimage.h
-> +++ b/src/cbootimage.h
-> @@ -95,7 +95,7 @@ typedef struct build_image_context_rec
->   	u_int8_t *bct;
->   
->   	char *bct_filename;
-> -	u_int32_t last_bl_blk;
-> +	u_int32_t last_blk;
->   	u_int32_t bct_size; /* The BCT file size */
->   	u_int32_t boot_data_version; /* The boot data version of BCT */
->   	u_int8_t bct_init; /* The flag for the memory allocation of bct */
-> diff --git a/src/data_layout.c b/src/data_layout.c
-> index c848a6141b2b..73663beffbe2 100644
-> --- a/src/data_layout.c
-> +++ b/src/data_layout.c
-> @@ -552,8 +552,9 @@ write_bootloaders(build_image_context *context)
->   				current_blk++;
->   				virtual_blk++;
->   			}
-> -			context->last_bl_blk = current_blk;
-> +			context->last_blk = current_blk;
->   		}
-> +		context->next_bct_blk = context->last_blk + 1;
->   		free(buffer);
->   	}
->   
+	Arnd
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
