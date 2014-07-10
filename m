@@ -1,7 +1,7 @@
 From: Andrew Bresticker <abrestic@chromium.org>
-Subject: [PATCH 4/4] xhci: Allow xHCI drivers to be built as separate modules
-Date: Wed,  9 Jul 2014 18:05:50 -0700
-Message-ID: <1404954350-26343-5-git-send-email-abrestic@chromium.org>
+Subject: [PATCH 2/4] xhci: Check for XHCI_COMP_MODE_QUIRK when disabling D3cold
+Date: Wed,  9 Jul 2014 18:05:48 -0700
+Message-ID: <1404954350-26343-3-git-send-email-abrestic@chromium.org>
 References: <1404954350-26343-1-git-send-email-abrestic@chromium.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1404954350-26343-1-git-send-email-abrestic@chromium.org>
@@ -10,188 +10,63 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman <mathias.nyma
 Cc: linux-tegra@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Instead of building all of the xHCI code into a single module, separate
-it out into the core (xhci-hcd), PCI (xhci-pci, now selected by the new
-config option CONFIG_USB_XHCI_PCI), and platform (xhci-plat) drivers.
-Also update the PCI/platform drivers with module descriptions/licenses
-and have them register their respective drivers in their initcalls.
+Instead of calling xhci_compliance_mode_recovery_timer_quirk_check() again
+in the PCI suspend path, just check for XHCI_COMP_MODE_QUIRK which will
+have been set based on xhci_compliance_mode_recovery_timer_quirk_check()
+in xhci_init().
 
 Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
 ---
- drivers/usb/host/Kconfig     |  5 +++++
- drivers/usb/host/Makefile    | 10 +++++-----
- drivers/usb/host/xhci-pci.c  |  9 +++++++--
- drivers/usb/host/xhci-plat.c |  9 +++++++--
- drivers/usb/host/xhci.c      | 22 ----------------------
- drivers/usb/host/xhci.h      | 19 -------------------
- 6 files changed, 24 insertions(+), 50 deletions(-)
+ drivers/usb/host/xhci-pci.c | 2 +-
+ drivers/usb/host/xhci.c     | 3 ++-
+ drivers/usb/host/xhci.h     | 3 ---
+ 3 files changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-index 03314f8..aea6a13 100644
---- a/drivers/usb/host/Kconfig
-+++ b/drivers/usb/host/Kconfig
-@@ -26,6 +26,11 @@ config USB_XHCI_HCD
- 
- if USB_XHCI_HCD
- 
-+config USB_XHCI_PCI
-+       tristate
-+       depends on PCI
-+       default y
-+
- config USB_XHCI_PLATFORM
- 	tristate
- 
-diff --git a/drivers/usb/host/Makefile b/drivers/usb/host/Makefile
-index af89a90..bafba71 100644
---- a/drivers/usb/host/Makefile
-+++ b/drivers/usb/host/Makefile
-@@ -15,19 +15,19 @@ fhci-$(CONFIG_FHCI_DEBUG) += fhci-dbg.o
- xhci-hcd-y := xhci.o xhci-mem.o
- xhci-hcd-y += xhci-ring.o xhci-hub.o xhci-dbg.o
- xhci-hcd-y += xhci-trace.o
--xhci-hcd-$(CONFIG_PCI)	+= xhci-pci.o
- 
--ifneq ($(CONFIG_USB_XHCI_PLATFORM), )
--	xhci-hcd-y		+= xhci-plat.o
-+xhci-plat-hcd-y := xhci-plat.o
- ifneq ($(CONFIG_USB_XHCI_MVEBU), )
--	xhci-hcd-y		+= xhci-mvebu.o
--endif
-+	xhci-plat-hcd-y		+= xhci-mvebu.o
- endif
- 
- obj-$(CONFIG_USB_WHCI_HCD)	+= whci/
- 
- obj-$(CONFIG_PCI)		+= pci-quirks.o
- 
-+obj-$(CONFIG_USB_XHCI_PCI)	+= xhci-pci.o
-+obj-$(CONFIG_USB_XHCI_PLATFORM) += xhci-plat-hcd.o
-+
- obj-$(CONFIG_USB_EHCI_HCD)	+= ehci-hcd.o
- obj-$(CONFIG_USB_EHCI_PCI)	+= ehci-pci.o
- obj-$(CONFIG_USB_EHCI_HCD_PLATFORM)	+= ehci-platform.o
 diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
-index d06ffe7..fbfd4a7 100644
+index 97648e4..d06ffe7 100644
 --- a/drivers/usb/host/xhci-pci.c
 +++ b/drivers/usb/host/xhci-pci.c
-@@ -344,7 +344,7 @@ static struct pci_driver xhci_pci_driver = {
- #endif
- };
+@@ -277,7 +277,7 @@ static int xhci_pci_suspend(struct usb_hcd *hcd, bool do_wakeup)
+ 	 * Systems with the TI redriver that loses port status change events
+ 	 * need to have the registers polled during D3, so avoid D3cold.
+ 	 */
+-	if (xhci_compliance_mode_recovery_timer_quirk_check())
++	if (xhci->quirks & XHCI_COMP_MODE_QUIRK)
+ 		pdev->no_d3cold = true;
  
--int __init xhci_register_pci(void)
-+static int __init xhci_pci_init(void)
- {
- 	xhci_init_driver(&xhci_pci_hc_driver, xhci_pci_setup);
- #ifdef CONFIG_PM
-@@ -353,8 +353,13 @@ int __init xhci_register_pci(void)
- #endif
- 	return pci_register_driver(&xhci_pci_driver);
- }
-+module_init(xhci_pci_init);
- 
--void xhci_unregister_pci(void)
-+static void __exit xhci_pci_exit(void)
- {
- 	pci_unregister_driver(&xhci_pci_driver);
- }
-+module_exit(xhci_pci_exit);
-+
-+MODULE_DESCRIPTION("xHCI PCI Host Controller Driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-index 49799db..c324408 100644
---- a/drivers/usb/host/xhci-plat.c
-+++ b/drivers/usb/host/xhci-plat.c
-@@ -233,13 +233,18 @@ static struct platform_driver usb_xhci_driver = {
- };
- MODULE_ALIAS("platform:xhci-hcd");
- 
--int xhci_register_plat(void)
-+static int __init xhci_plat_init(void)
- {
- 	xhci_init_driver(&xhci_plat_hc_driver, xhci_plat_setup);
- 	return platform_driver_register(&usb_xhci_driver);
- }
-+module_init(xhci_plat_init);
- 
--void xhci_unregister_plat(void)
-+static void __exit xhci_plat_exit(void)
- {
- 	platform_driver_unregister(&usb_xhci_driver);
- }
-+module_exit(xhci_plat_exit);
-+
-+MODULE_DESCRIPTION("xHCI Platform Host Controller Driver");
-+MODULE_LICENSE("GPL");
+ 	return xhci_suspend(xhci);
 diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-index 4958a60..3f32b5a 100644
+index 8de75b7..f681087 100644
 --- a/drivers/usb/host/xhci.c
 +++ b/drivers/usb/host/xhci.c
-@@ -4951,18 +4951,6 @@ MODULE_LICENSE("GPL");
- 
- static int __init xhci_hcd_init(void)
+@@ -491,7 +491,7 @@ static void compliance_mode_recovery_timer_init(struct xhci_hcd *xhci)
+  * Systems:
+  * Vendor: Hewlett-Packard -> System Models: Z420, Z620 and Z820
+  */
+-bool xhci_compliance_mode_recovery_timer_quirk_check(void)
++static bool xhci_compliance_mode_recovery_timer_quirk_check(void)
  {
--	int retval;
--
--	retval = xhci_register_pci();
--	if (retval < 0) {
--		pr_debug("Problem registering PCI driver.\n");
--		return retval;
--	}
--	retval = xhci_register_plat();
--	if (retval < 0) {
--		pr_debug("Problem registering platform driver.\n");
--		goto unreg_pci;
--	}
- 	/*
- 	 * Check the compiler generated sizes of structures that must be laid
- 	 * out in specific ways for hardware access.
-@@ -4981,15 +4969,5 @@ static int __init xhci_hcd_init(void)
- 	/* xhci_run_regs has eight fields and embeds 128 xhci_intr_regs */
- 	BUILD_BUG_ON(sizeof(struct xhci_run_regs) != (8+8*128)*32/8);
- 	return 0;
--unreg_pci:
--	xhci_unregister_pci();
--	return retval;
+ 	const char *dmi_product_name, *dmi_sys_vendor;
+ 
+@@ -4936,6 +4936,7 @@ static const struct hc_driver xhci_hc_driver = {
+ 
+ void xhci_init_driver(struct hc_driver *drv, int (*setup_fn)(struct usb_hcd *))
+ {
++	BUG_ON(!setup_fn);
+ 	*drv = xhci_hc_driver;
+ 	drv->reset = setup_fn;
  }
- module_init(xhci_hcd_init);
--
--static void __exit xhci_hcd_cleanup(void)
--{
--	xhci_unregister_pci();
--	xhci_unregister_plat();
--}
--module_exit(xhci_hcd_cleanup);
 diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
-index 902f55b..ac03d22 100644
+index 0d9b2cf..902f55b 100644
 --- a/drivers/usb/host/xhci.h
 +++ b/drivers/usb/host/xhci.h
-@@ -1729,25 +1729,6 @@ void xhci_urb_free_priv(struct xhci_hcd *xhci, struct urb_priv *urb_priv);
- void xhci_free_command(struct xhci_hcd *xhci,
- 		struct xhci_command *command);
+@@ -1886,7 +1886,4 @@ struct xhci_input_control_ctx *xhci_get_input_control_ctx(struct xhci_hcd *xhci,
+ struct xhci_slot_ctx *xhci_get_slot_ctx(struct xhci_hcd *xhci, struct xhci_container_ctx *ctx);
+ struct xhci_ep_ctx *xhci_get_ep_ctx(struct xhci_hcd *xhci, struct xhci_container_ctx *ctx, unsigned int ep_index);
  
--#ifdef CONFIG_PCI
--/* xHCI PCI glue */
--int xhci_register_pci(void);
--void xhci_unregister_pci(void);
--#else
--static inline int xhci_register_pci(void) { return 0; }
--static inline void xhci_unregister_pci(void) {}
--#endif
+-/* xHCI quirks */
+-bool xhci_compliance_mode_recovery_timer_quirk_check(void);
 -
--#if IS_ENABLED(CONFIG_USB_XHCI_PLATFORM)
--int xhci_register_plat(void);
--void xhci_unregister_plat(void);
--#else
--static inline int xhci_register_plat(void)
--{ return 0; }
--static inline void xhci_unregister_plat(void)
--{  }
--#endif
--
- /* xHCI host controller glue */
- typedef void (*xhci_get_quirks_t)(struct device *, struct xhci_hcd *);
- int xhci_handshake(struct xhci_hcd *xhci, void __iomem *ptr,
+ #endif /* __LINUX_XHCI_HCD_H */
 -- 
 2.0.0.526.g5318336
