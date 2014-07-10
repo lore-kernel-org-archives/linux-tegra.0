@@ -1,84 +1,178 @@
-From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
-Subject: Re: [PATCH v4 2/6] drm/nouveau: map pages using DMA API
- on platform devices
-Date: Thu, 10 Jul 2014 14:58:49 +0200
-Message-ID: <20140710125849.GF17271@phenom.ffwll.local>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [Nouveau] [PATCH v4 4/6] drm/nouveau: synchronize BOs when
+ required
+Date: Thu, 10 Jul 2014 15:04:49 +0200
+Message-ID: <20140710130449.GG17271@phenom.ffwll.local>
 References: <1404807961-30530-1-git-send-email-acourbot@nvidia.com>
- <1404807961-30530-3-git-send-email-acourbot@nvidia.com>
+ <1404807961-30530-5-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <1404807961-30530-3-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, David Herrmann <dh.herrmann-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1404807961-30530-5-git-send-email-acourbot@nvidia.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jul 08, 2014 at 05:25:57PM +0900, Alexandre Courbot wrote:
-> page_to_phys() is not the correct way to obtain the DMA address of a
-> buffer on a non-PCI system. Use the DMA API functions for this, which
-> are portable and will allow us to use other DMA API functions for
-> buffer synchronization.
+On Tue, Jul 08, 2014 at 05:25:59PM +0900, Alexandre Courbot wrote:
+> On architectures for which access to GPU memory is non-coherent,
+> caches need to be flushed and invalidated explicitly when BO control
+> changes between CPU and GPU.
 > 
-> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> This patch adds buffer synchronization functions which invokes the
+> correct API (PCI or DMA) to ensure synchronization is effective.
+> 
+> Based on the TTM DMA cache helper patches by Lucas Stach.
+> 
+> Signed-off-by: Lucas Stach <dev@lynxeye.de>
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 > ---
->  drivers/gpu/drm/nouveau/core/engine/device/base.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
+>  drivers/gpu/drm/nouveau/nouveau_bo.c  | 56 +++++++++++++++++++++++++++++++++++
+>  drivers/gpu/drm/nouveau/nouveau_bo.h  |  2 ++
+>  drivers/gpu/drm/nouveau/nouveau_gem.c | 12 ++++++++
+>  3 files changed, 70 insertions(+)
 > 
-> diff --git a/drivers/gpu/drm/nouveau/core/engine/device/base.c b/drivers/gpu/drm/nouveau/core/engine/device/base.c
-> index 18c8c7245b73..e4e9e64988fe 100644
-> --- a/drivers/gpu/drm/nouveau/core/engine/device/base.c
-> +++ b/drivers/gpu/drm/nouveau/core/engine/device/base.c
-> @@ -489,7 +489,10 @@ nv_device_map_page(struct nouveau_device *device, struct page *page)
->  		if (pci_dma_mapping_error(device->pdev, ret))
->  			ret = 0;
->  	} else {
-> -		ret = page_to_phys(page);
-> +		ret = dma_map_page(&device->platformdev->dev, page, 0,
-> +				   PAGE_SIZE, DMA_BIDIRECTIONAL);
-> +		if (dma_mapping_error(&device->platformdev->dev, ret))
-> +			ret = 0;
->  	}
->  
->  	return ret;
-> @@ -501,6 +504,9 @@ nv_device_unmap_page(struct nouveau_device *device, dma_addr_t addr)
->  	if (nv_device_is_pci(device))
->  		pci_unmap_page(device->pdev, addr, PAGE_SIZE,
->  			       PCI_DMA_BIDIRECTIONAL);
-
-pci_map/unmap alias to dma_unmap/map when called on the underlying struct
-device embedded in pci_device (like for platform drivers). Dunno whether
-it's worth to track a pointer to the struct device directly and always
-call dma_unmap/map.
-
-Just drive-by comment since I'm interested in how you solve this - i915
-has similar fun with buffer sharing and coherent and non-coherent
-platforms. Although we don't have fun with pci and non-pci based
-platforms.
--Daniel
-
-> +	else
-> +		dma_unmap_page(&device->platformdev->dev, addr,
-> +			       PAGE_SIZE, DMA_BIDIRECTIONAL);
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_bo.c b/drivers/gpu/drm/nouveau/nouveau_bo.c
+> index 67e9e8e2e2ec..47e4e8886769 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_bo.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_bo.c
+> @@ -402,6 +402,60 @@ nouveau_bo_unmap(struct nouveau_bo *nvbo)
+>  		ttm_bo_kunmap(&nvbo->kmap);
 >  }
 >  
+> +void
+> +nouveau_bo_sync_for_device(struct nouveau_bo *nvbo)
+> +{
+> +	struct nouveau_drm *drm = nouveau_bdev(nvbo->bo.bdev);
+> +	struct nouveau_device *device = nouveau_dev(drm->dev);
+> +	struct ttm_dma_tt *ttm_dma = (struct ttm_dma_tt *)nvbo->bo.ttm;
+> +	int i;
+> +
+> +	if (!ttm_dma)
+> +		return;
+> +
+> +	if (nv_device_is_cpu_coherent(device) || nvbo->force_coherent)
+> +		return;
+
+Is the is_cpu_coherent check really required? On coherent platforms the
+sync_for_foo should be a noop. It's the dma api's job to encapsulate this
+knowledge so that drivers can be blissfully ignorant. The explicit
+is_coherent check makes this a bit leaky. And same comment that underlying
+the bus-specifics dma-mapping functions are identical.
+-Daniel
+
+> +
+> +	if (nv_device_is_pci(device)) {
+> +		for (i = 0; i < ttm_dma->ttm.num_pages; i++)
+> +			pci_dma_sync_single_for_device(device->pdev,
+> +				ttm_dma->dma_address[i], PAGE_SIZE,
+> +				PCI_DMA_TODEVICE);
+> +	} else {
+> +		for (i = 0; i < ttm_dma->ttm.num_pages; i++)
+> +			dma_sync_single_for_device(nv_device_base(device),
+> +				ttm_dma->dma_address[i], PAGE_SIZE,
+> +				DMA_TO_DEVICE);
+> +	}
+> +}
+> +
+> +void
+> +nouveau_bo_sync_for_cpu(struct nouveau_bo *nvbo)
+> +{
+> +	struct nouveau_drm *drm = nouveau_bdev(nvbo->bo.bdev);
+> +	struct nouveau_device *device = nouveau_dev(drm->dev);
+> +	struct ttm_dma_tt *ttm_dma = (struct ttm_dma_tt *)nvbo->bo.ttm;
+> +	int i;
+> +
+> +	if (!ttm_dma)
+> +		return;
+> +
+> +	if (nv_device_is_cpu_coherent(device) || nvbo->force_coherent)
+> +		return;
+> +
+> +	if (nv_device_is_pci(device)) {
+> +		for (i = 0; i < ttm_dma->ttm.num_pages; i++)
+> +			pci_dma_sync_single_for_cpu(device->pdev,
+> +				ttm_dma->dma_address[i], PAGE_SIZE,
+> +				PCI_DMA_FROMDEVICE);
+> +	} else {
+> +		for (i = 0; i < ttm_dma->ttm.num_pages; i++)
+> +			dma_sync_single_for_cpu(nv_device_base(device),
+> +				ttm_dma->dma_address[i], PAGE_SIZE,
+> +				DMA_FROM_DEVICE);
+> +	}
+> +}
+> +
 >  int
+>  nouveau_bo_validate(struct nouveau_bo *nvbo, bool interruptible,
+>  		    bool no_wait_gpu)
+> @@ -418,6 +472,8 @@ nouveau_bo_validate(struct nouveau_bo *nvbo, bool interruptible,
+>  	if (!ttm)
+>  		return ret;
+>  
+> +	nouveau_bo_sync_for_device(nvbo);
+> +
+>  	device = nouveau_dev(nouveau_bdev(ttm->bdev)->dev);
+>  	nv_wr32(device, 0x70004, 0x00000001);
+>  	if (!nv_wait(device, 0x070004, 0x00000001, 0x00000000))
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_bo.h b/drivers/gpu/drm/nouveau/nouveau_bo.h
+> index ff17c1f432fc..fa42298d2dca 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_bo.h
+> +++ b/drivers/gpu/drm/nouveau/nouveau_bo.h
+> @@ -81,6 +81,8 @@ void nouveau_bo_wr32(struct nouveau_bo *, unsigned index, u32 val);
+>  void nouveau_bo_fence(struct nouveau_bo *, struct nouveau_fence *);
+>  int  nouveau_bo_validate(struct nouveau_bo *, bool interruptible,
+>  			 bool no_wait_gpu);
+> +void nouveau_bo_sync_for_device(struct nouveau_bo *nvbo);
+> +void nouveau_bo_sync_for_cpu(struct nouveau_bo *nvbo);
+>  
+>  struct nouveau_vma *
+>  nouveau_bo_vma_find(struct nouveau_bo *, struct nouveau_vm *);
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_gem.c b/drivers/gpu/drm/nouveau/nouveau_gem.c
+> index c90c0dc0afe8..08829a720891 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_gem.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_gem.c
+> @@ -896,6 +896,7 @@ nouveau_gem_ioctl_cpu_prep(struct drm_device *dev, void *data,
+>  	spin_lock(&nvbo->bo.bdev->fence_lock);
+>  	ret = ttm_bo_wait(&nvbo->bo, true, true, no_wait);
+>  	spin_unlock(&nvbo->bo.bdev->fence_lock);
+> +	nouveau_bo_sync_for_cpu(nvbo);
+>  	drm_gem_object_unreference_unlocked(gem);
+>  	return ret;
+>  }
+> @@ -904,6 +905,17 @@ int
+>  nouveau_gem_ioctl_cpu_fini(struct drm_device *dev, void *data,
+>  			   struct drm_file *file_priv)
+>  {
+> +	struct drm_nouveau_gem_cpu_fini *req = data;
+> +	struct drm_gem_object *gem;
+> +	struct nouveau_bo *nvbo;
+> +
+> +	gem = drm_gem_object_lookup(dev, file_priv, req->handle);
+> +	if (!gem)
+> +		return -ENOENT;
+> +	nvbo = nouveau_gem_object(gem);
+> +
+> +	nouveau_bo_sync_for_device(nvbo);
+> +	drm_gem_object_unreference_unlocked(gem);
+>  	return 0;
+>  }
+>  
 > -- 
 > 2.0.0
 > 
 > _______________________________________________
 > Nouveau mailing list
-> Nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+> Nouveau@lists.freedesktop.org
 > http://lists.freedesktop.org/mailman/listinfo/nouveau
 
 -- 
