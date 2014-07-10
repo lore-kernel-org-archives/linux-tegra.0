@@ -1,181 +1,64 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [Nouveau] [PATCH v4 4/6] drm/nouveau: synchronize BOs when
- required
-Date: Thu, 10 Jul 2014 15:04:49 +0200
-Message-ID: <20140710130449.GG17271@phenom.ffwll.local>
-References: <1404807961-30530-1-git-send-email-acourbot@nvidia.com>
- <1404807961-30530-5-git-send-email-acourbot@nvidia.com>
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [PATCH 00/16] i2c: drop class based instantiaion for selected
+ drivers
+Date: Thu, 10 Jul 2014 15:13:07 +0200
+Message-ID: <20140710131307.GI2728@katana>
+References: <1404992799-3705-1-git-send-email-wsa@the-dreams.de>
+ <20140710143837.558c1d07@ipc1.ka-ro>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="l0l+eSofNeLXHSnY"
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1404807961-30530-5-git-send-email-acourbot@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>
+In-Reply-To: <20140710143837.558c1d07-VjFSrY7JcPWvSplVBqRQBQ@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lothar =?utf-8?Q?Wa=C3=9Fmann?= <LW-bxm8fMRDkQLDiMYJYoSAnRvVK+yQ3ZXh@public.gmane.org>
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, adi-buildroot-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jul 08, 2014 at 05:25:59PM +0900, Alexandre Courbot wrote:
-> On architectures for which access to GPU memory is non-coherent,
-> caches need to be flushed and invalidated explicitly when BO control
-> changes between CPU and GPU.
-> 
-> This patch adds buffer synchronization functions which invokes the
-> correct API (PCI or DMA) to ensure synchronization is effective.
-> 
-> Based on the TTM DMA cache helper patches by Lucas Stach.
-> 
-> Signed-off-by: Lucas Stach <dev@lynxeye.de>
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> ---
->  drivers/gpu/drm/nouveau/nouveau_bo.c  | 56 +++++++++++++++++++++++++++++++++++
->  drivers/gpu/drm/nouveau/nouveau_bo.h  |  2 ++
->  drivers/gpu/drm/nouveau/nouveau_gem.c | 12 ++++++++
->  3 files changed, 70 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_bo.c b/drivers/gpu/drm/nouveau/nouveau_bo.c
-> index 67e9e8e2e2ec..47e4e8886769 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_bo.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_bo.c
-> @@ -402,6 +402,60 @@ nouveau_bo_unmap(struct nouveau_bo *nvbo)
->  		ttm_bo_kunmap(&nvbo->kmap);
->  }
->  
-> +void
-> +nouveau_bo_sync_for_device(struct nouveau_bo *nvbo)
-> +{
-> +	struct nouveau_drm *drm = nouveau_bdev(nvbo->bo.bdev);
-> +	struct nouveau_device *device = nouveau_dev(drm->dev);
-> +	struct ttm_dma_tt *ttm_dma = (struct ttm_dma_tt *)nvbo->bo.ttm;
-> +	int i;
-> +
-> +	if (!ttm_dma)
-> +		return;
-> +
-> +	if (nv_device_is_cpu_coherent(device) || nvbo->force_coherent)
-> +		return;
 
-Is the is_cpu_coherent check really required? On coherent platforms the
-sync_for_foo should be a noop. It's the dma api's job to encapsulate this
-knowledge so that drivers can be blissfully ignorant. The explicit
-is_coherent check makes this a bit leaky. And same comment that underlying
-the bus-specifics dma-mapping functions are identical.
--Daniel
+--l0l+eSofNeLXHSnY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> +
-> +	if (nv_device_is_pci(device)) {
-> +		for (i = 0; i < ttm_dma->ttm.num_pages; i++)
-> +			pci_dma_sync_single_for_device(device->pdev,
-> +				ttm_dma->dma_address[i], PAGE_SIZE,
-> +				PCI_DMA_TODEVICE);
-> +	} else {
-> +		for (i = 0; i < ttm_dma->ttm.num_pages; i++)
-> +			dma_sync_single_for_device(nv_device_base(device),
-> +				ttm_dma->dma_address[i], PAGE_SIZE,
-> +				DMA_TO_DEVICE);
-> +	}
-> +}
-> +
-> +void
-> +nouveau_bo_sync_for_cpu(struct nouveau_bo *nvbo)
-> +{
-> +	struct nouveau_drm *drm = nouveau_bdev(nvbo->bo.bdev);
-> +	struct nouveau_device *device = nouveau_dev(drm->dev);
-> +	struct ttm_dma_tt *ttm_dma = (struct ttm_dma_tt *)nvbo->bo.ttm;
-> +	int i;
-> +
-> +	if (!ttm_dma)
-> +		return;
-> +
-> +	if (nv_device_is_cpu_coherent(device) || nvbo->force_coherent)
-> +		return;
-> +
-> +	if (nv_device_is_pci(device)) {
-> +		for (i = 0; i < ttm_dma->ttm.num_pages; i++)
-> +			pci_dma_sync_single_for_cpu(device->pdev,
-> +				ttm_dma->dma_address[i], PAGE_SIZE,
-> +				PCI_DMA_FROMDEVICE);
-> +	} else {
-> +		for (i = 0; i < ttm_dma->ttm.num_pages; i++)
-> +			dma_sync_single_for_cpu(nv_device_base(device),
-> +				ttm_dma->dma_address[i], PAGE_SIZE,
-> +				DMA_FROM_DEVICE);
-> +	}
-> +}
-> +
->  int
->  nouveau_bo_validate(struct nouveau_bo *nvbo, bool interruptible,
->  		    bool no_wait_gpu)
-> @@ -418,6 +472,8 @@ nouveau_bo_validate(struct nouveau_bo *nvbo, bool interruptible,
->  	if (!ttm)
->  		return ret;
->  
-> +	nouveau_bo_sync_for_device(nvbo);
-> +
->  	device = nouveau_dev(nouveau_bdev(ttm->bdev)->dev);
->  	nv_wr32(device, 0x70004, 0x00000001);
->  	if (!nv_wait(device, 0x070004, 0x00000001, 0x00000000))
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_bo.h b/drivers/gpu/drm/nouveau/nouveau_bo.h
-> index ff17c1f432fc..fa42298d2dca 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_bo.h
-> +++ b/drivers/gpu/drm/nouveau/nouveau_bo.h
-> @@ -81,6 +81,8 @@ void nouveau_bo_wr32(struct nouveau_bo *, unsigned index, u32 val);
->  void nouveau_bo_fence(struct nouveau_bo *, struct nouveau_fence *);
->  int  nouveau_bo_validate(struct nouveau_bo *, bool interruptible,
->  			 bool no_wait_gpu);
-> +void nouveau_bo_sync_for_device(struct nouveau_bo *nvbo);
-> +void nouveau_bo_sync_for_cpu(struct nouveau_bo *nvbo);
->  
->  struct nouveau_vma *
->  nouveau_bo_vma_find(struct nouveau_bo *, struct nouveau_vm *);
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_gem.c b/drivers/gpu/drm/nouveau/nouveau_gem.c
-> index c90c0dc0afe8..08829a720891 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_gem.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_gem.c
-> @@ -896,6 +896,7 @@ nouveau_gem_ioctl_cpu_prep(struct drm_device *dev, void *data,
->  	spin_lock(&nvbo->bo.bdev->fence_lock);
->  	ret = ttm_bo_wait(&nvbo->bo, true, true, no_wait);
->  	spin_unlock(&nvbo->bo.bdev->fence_lock);
-> +	nouveau_bo_sync_for_cpu(nvbo);
->  	drm_gem_object_unreference_unlocked(gem);
->  	return ret;
->  }
-> @@ -904,6 +905,17 @@ int
->  nouveau_gem_ioctl_cpu_fini(struct drm_device *dev, void *data,
->  			   struct drm_file *file_priv)
->  {
-> +	struct drm_nouveau_gem_cpu_fini *req = data;
-> +	struct drm_gem_object *gem;
-> +	struct nouveau_bo *nvbo;
-> +
-> +	gem = drm_gem_object_lookup(dev, file_priv, req->handle);
-> +	if (!gem)
-> +		return -ENOENT;
-> +	nvbo = nouveau_gem_object(gem);
-> +
-> +	nouveau_bo_sync_for_device(nvbo);
-> +	drm_gem_object_unreference_unlocked(gem);
->  	return 0;
->  }
->  
-> -- 
-> 2.0.0
-> 
-> _______________________________________________
-> Nouveau mailing list
-> Nouveau@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/nouveau
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+> > +	/* Warn that the adapter lost class based instantiation */
+> > +	if (adapter->class == I2C_CLASS_DEPRECATED) {
+> > +		dev_dbg(&adapter->dev,
+> > +			"This adapter dropped support for I2C classes and "
+> > +			"won't auto-detect %s devices anymore. If you need it, check "
+> > +			"'Documentation/i2c/instantiating-devices' for alternatives.\n",
+> >
+> It's usually a bad idea to split kernel messages across source lines
+
+Yes, "usually". Not for this message, though, it's specific. The lines
+would have been quite long.
+
+> You could at least do the split at the sentence boundary.
+
+OK, this would have been a compromise.
+
+
+--l0l+eSofNeLXHSnY
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJTvpFjAAoJEBQN5MwUoCm2kUQQAKG2LIG6MzewzMHuFwCTeoFS
+idHvMdE1d5HF8BUL/GE/IepNikzy9bvTQu1IPBhnaGcQQMQ0wSU9U5K1EClj1zgv
+3s+n9hHLH/d3plLDM5ZRmf00DEjDGkHxX63vFctuyaWw20bRXeD86bvYAvZrc58n
++hed8FyF6KKzDS61jfoWA70LEG39Xssj/QIPDt5+bn3pUPK9OiTX234U1n5M9SV6
+cfi7apgrT+KH2SIUzYsB8n8FXNH/QfrPjdIPIT3c7OZDrNIDzCP6kG68L4MPCT7v
++nET25q1MxMhYkrd1HaXkUNA3RFe4ZV7TuL7zhZCBetHDOe5Pg1NbloNwZiSkw+2
+mMlvNyJBrmeRXVv3Ahbhpczh/WCi0pcLDmmeZEgBykB9Rz3atFQg9iCt5TA38kmf
+xzbAU3h7la9b3FsvgUcfQ2v27g7uO5jv1WEdU59GXceEqDHcIq05Oop3XLBdNLeR
+c1FAsJaMtiIlhsUMrx/o0Ex01NQFRdTdjAKjAzRifaAR7kCtDL93hR+sbdMyvyLq
+2CJ+p/0mwVFkQuajN0zvmL/Rrs4PqF6Rs84Hq2hrqMF1C2PDqE9gBhMRzPCGljOz
+RYauUQq0ZVOrpw5DQziLNF4eIh979umxHcq7EtSEY6D+H0Tai2VprqY1j/bwFAJi
+3GxX/ks54HgF7b9PO+Aw
+=/pKZ
+-----END PGP SIGNATURE-----
+
+--l0l+eSofNeLXHSnY--
