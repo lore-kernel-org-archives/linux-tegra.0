@@ -1,182 +1,66 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [RFC v3 4/5] clk: per-user clock accounting for debug
-Date: Thu, 10 Jul 2014 15:32:25 +0200
-Message-ID: <1404999146-32691-5-git-send-email-tomeu.vizoso@collabora.com>
-References: <1404999146-32691-1-git-send-email-tomeu.vizoso@collabora.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1404999146-32691-1-git-send-email-tomeu.vizoso@collabora.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Mike Turquette <mturquette@linaro.org>, rabin@rab.in, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tomasz.figa@gmail.com
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 15/16] i2c: i2c-tegra: Drop class based scanning to
+ improve bootup time
+Date: Thu, 10 Jul 2014 15:43:30 +0200
+Message-ID: <20140710134329.GB14961@ulmo>
+References: <1404992799-3705-1-git-send-email-wsa@the-dreams.de>
+ <1404992799-3705-16-git-send-email-wsa@the-dreams.de>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="eJnRUKwClWJh1Khz"
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1404992799-3705-16-git-send-email-wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-When a clock has multiple users, the WARNING on imbalance of
-enable/disable may not show the guilty party since although they may
-have commited the error earlier, the warning is emitted later when some
-other user, presumably innocent, disables the clock.
 
-Provide per-user clock enable/disable accounting and disabler tracking
-in order to help debug these problems.
+--eJnRUKwClWJh1Khz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Based on previous work by Rabin Vincent <rabin@rab.in>.
+On Thu, Jul 10, 2014 at 01:46:35PM +0200, Wolfram Sang wrote:
+> This driver has been flagged to drop class based instantiation. The remov=
+al
+> improves boot-up time and is unneeded for embedded controllers. Users hav=
+e been
+> warned to switch for some time now, so we can actually do the removal. Ke=
+ep the
+> DEPRECATED flag, so the core can inform users that the behaviour finally
+> changed now. After another transition period, this flag can go, too.
+>=20
+> Signed-off-by: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+> ---
+>  drivers/i2c/busses/i2c-tegra.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
----
- drivers/clk/clk.c           | 35 +++++++++++++++++++++++++++++++----
- drivers/clk/clk.h           |  3 ++-
- drivers/clk/clkdev.c        | 16 ++++++++++++----
- include/linux/clk-private.h |  4 ++++
- 4 files changed, 49 insertions(+), 9 deletions(-)
+It looks as though this currently doesn't do anything on !X86 anyway and
+I'll trust Mikko's testing, so:
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index cc1d09b..9d51900 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -568,7 +568,8 @@ static int clk_disable_unused(void)
- }
- late_initcall_sync(clk_disable_unused);
- 
--struct clk *__clk_create_clk(struct clk_core *clk_core)
-+struct clk *__clk_create_clk(struct clk_core *clk_core, const char *dev,
-+			     const char *con)
- {
- 	struct clk *clk;
- 
-@@ -581,6 +582,8 @@ struct clk *__clk_create_clk(struct clk_core *clk_core)
- 		return ERR_PTR(-ENOMEM);
- 
- 	clk->core = clk_core;
-+	clk->dev_id = dev;
-+	clk->con_id = con;
- 
- 	return clk;
- }
-@@ -955,7 +958,20 @@ EXPORT_SYMBOL_GPL(clk_provider_disable);
-  */
- void clk_disable(struct clk *clk_user)
- {
--	clk_provider_disable(clk_to_clk_core(clk_user));
-+	struct clk_core *clk = clk_to_clk_core(clk_user);
-+	unsigned long flags;
-+
-+	flags = clk_enable_lock();
-+	if (!WARN(clk_user->enable_count == 0,
-+		  "incorrect disable clk dev %s con %s last disabler %pF\n",
-+		  clk_user->dev_id, clk_user->con_id, clk_user->last_disable)) {
-+
-+		clk_user->last_disable = __builtin_return_address(0);
-+		clk_user->enable_count--;
-+
-+		__clk_disable(clk);
-+	}
-+	clk_enable_unlock(flags);
- }
- EXPORT_SYMBOL_GPL(clk_disable);
- 
-@@ -1016,7 +1032,17 @@ EXPORT_SYMBOL_GPL(clk_provider_enable);
-  */
- int clk_enable(struct clk *clk_user)
- {
--	return clk_provider_enable(clk_to_clk_core(clk_user));
-+	struct clk_core *clk = clk_to_clk_core(clk_user);
-+	unsigned long flags;
-+	int ret;
-+
-+	flags = clk_enable_lock();
-+	ret = __clk_enable(clk);
-+	if (!ret)
-+		clk_user->enable_count++;
-+	clk_enable_unlock(flags);
-+
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(clk_enable);
- 
-@@ -1692,8 +1718,9 @@ EXPORT_SYMBOL_GPL(clk_provider_get_parent);
- struct clk *clk_get_parent(struct clk *clk_user)
- {
- 	struct clk_core *clk = clk_to_clk_core(clk_user);
-+	struct clk_core *parent = clk_provider_get_parent(clk);
- 
--	return __clk_create_clk(clk_provider_get_parent(clk));
-+	return __clk_create_clk(parent, clk_user->dev_id, clk_user->con_id);
- }
- EXPORT_SYMBOL_GPL(clk_get_parent);
- 
-diff --git a/drivers/clk/clk.h b/drivers/clk/clk.h
-index 4d7398f..3987594 100644
---- a/drivers/clk/clk.h
-+++ b/drivers/clk/clk.h
-@@ -23,5 +23,6 @@ static inline struct clk_core *clk_to_clk_core(struct clk *clk)
- {
- 	return clk->core;
- }
--struct clk *__clk_create_clk(struct clk_core *clk_core);
-+struct clk *__clk_create_clk(struct clk_core *clk_core, const char *dev,
-+			     const char *con);
- #endif
-diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-index 10020b2..6ea91bf 100644
---- a/drivers/clk/clkdev.c
-+++ b/drivers/clk/clkdev.c
-@@ -76,7 +76,9 @@ struct clk_core *of_clk_provider_get(struct device_node *np, int index)
- 
- struct clk *of_clk_get(struct device_node *np, int index)
- {
--	return __clk_create_clk(of_clk_provider_get(np, index));
-+	struct clk_core *clk = of_clk_provider_get(np, index);
-+
-+	return __clk_create_clk(clk, np->full_name, NULL);
- }
- EXPORT_SYMBOL(of_clk_get);
- 
-@@ -128,7 +130,9 @@ struct clk_core *of_clk_provider_get_by_name(struct device_node *np, const char
-  */
- struct clk *of_clk_get_by_name(struct device_node *np, const char *name)
- {
--	return __clk_create_clk(of_clk_provider_get_by_name(np, name));
-+	struct clk_core *clk = of_clk_provider_get_by_name(np, name);
-+
-+	return __clk_create_clk(clk, np->full_name, NULL);
- }
- EXPORT_SYMBOL(of_clk_get_by_name);
- #endif
-@@ -195,7 +199,9 @@ EXPORT_SYMBOL_GPL(clk_provider_get_sys);
- 
- struct clk *clk_get_sys(const char *dev_id, const char *con_id)
- {
--	return __clk_create_clk(clk_provider_get_sys(dev_id, con_id));
-+	struct clk_core *clk = clk_provider_get_sys(dev_id, con_id);
-+
-+	return __clk_create_clk(clk, dev_id, con_id);
- }
- EXPORT_SYMBOL(clk_get_sys);
- 
-@@ -218,7 +224,9 @@ EXPORT_SYMBOL(clk_provider_get);
- 
- struct clk *clk_get(struct device *dev, const char *con_id)
- {
--	return __clk_create_clk(clk_provider_get(dev, con_id));
-+	const char *dev_id = dev ? dev_name(dev) : NULL;
-+
-+	return __clk_create_clk(clk_provider_get(dev, con_id), dev_id, con_id);
- }
- EXPORT_SYMBOL(clk_get);
- 
-diff --git a/include/linux/clk-private.h b/include/linux/clk-private.h
-index 2c1ece9..9657fc8 100644
---- a/include/linux/clk-private.h
-+++ b/include/linux/clk-private.h
-@@ -57,6 +57,10 @@ struct clk_core {
- 
- struct clk {
- 	struct clk_core	*core;
-+	unsigned int	enable_count;
-+	const char	*dev_id;
-+	const char	*con_id;
-+	void		*last_disable;
- };
- 
- /*
--- 
-1.9.3
+Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+--eJnRUKwClWJh1Khz
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTvpiBAAoJEN0jrNd/PrOhDb8P/2DQMSn8ZMMHOcqMf1h8sv7S
+Ymo+qUhJoood5RKsgXWriAJBs9A5wOS+Kl9+JN/FDMFCs8gGCEb9/ur+QYY5ySps
+TR1+RO6rE19IdXzZZpVaL58H5H/oTC9BcadRni3Rd3ZAivOeE4ikW+4VIAX4CpPi
+WA0DVIWLhiCqUQEg8CyrGmBaZGbHf2BDuNuvz19HOjrL/R0DeBEnXwk91rjLHpi8
+IqeqZQLoAwnF1+RAnbflZeSXFUVtKxb8tf45la2E3scXOax+nAcaJvBKERYj4wWh
+3QYTwKKNqHrVFbCUMmi/CTbtFPoYI2yOZkEo1ygISt1Grc5g+c9EsKTVo02+dVWF
+uuIQtnY7ao4UROHg2rhUDt0Z5iYvvk6NWkdL3iBDelT+rZn75RrJVC0xOZ6a9et4
+K3DiOUaqckBqCCcmuCOMnloZJ7N7H60jukTNP1Uw2oaEoqs/IQU7KEM55818qJsH
+0lEhxVW/2aB5PvxEICl3Lwyeqmu2hgQ5Ef8nLXthsqUxamHyPJXEkOI0bm7MgfaQ
+OHfrGs+QHPLWaeWz4nzbdwEliwQpjXAuVyCc6HLqomB9saGmC8VvXFSkx1bYqCL5
+ufDvmvagQ8+legtUhHwmg3IJLFkXvmEOWM7yslRDSOtnH7fcrSzmNmwkwYg0i7WB
+qae1z5Va6b7NyeL/a/Gh
+=jyu0
+-----END PGP SIGNATURE-----
+
+--eJnRUKwClWJh1Khz--
