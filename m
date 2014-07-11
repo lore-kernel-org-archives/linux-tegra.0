@@ -1,50 +1,73 @@
-From: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 12/13] cpufreq: Add cpufreq driver for Tegra124
-Date: Fri, 11 Jul 2014 17:14:10 +0300
-Message-ID: <53BFF132.3020700@nvidia.com>
-References: <1405028569-14253-1-git-send-email-ttynkkynen@nvidia.com>	<1405028569-14253-13-git-send-email-ttynkkynen@nvidia.com> <CAKohpom9ORXFiUU4=V+CxgN0ZOFLMEhEjHiU8HsYUYDybNXgHQ@mail.gmail.com>
+From: Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [PATCH 0/8] Tegra124 EMC (external memory controller) support
+Date: Fri, 11 Jul 2014 17:18:25 +0300
+Message-ID: <1405088313-20048-1-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAKohpom9ORXFiUU4=V+CxgN0ZOFLMEhEjHiU8HsYUYDybNXgHQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@linaro.org, swarren@wwwdotorg.org, thierry.reding@gmail.com
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi everyone,
 
+this series adds support for the EMC (external memory controller) clock
+in the Tegra124 system-on-chip. The series has been tested on Jetson TK1.
 
-On 11/07/14 07:35, Viresh Kumar wrote:
-> Hi Tuomas,
->
-> On 11 July 2014 03:12, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->> Add a new cpufreq driver for Tegra124. Instead of using the PLLX as
->> the CPU clocksource, switch immediately to the DFLL. It allows the use
->> of higher clock rates, and will automatically scale the CPU voltage as
->> well. We also rely on the DFLL driver to determine the CPU clock
->> frequencies that the chip supports, so that we can directly build a
->> cpufreq table with the OPP library helper dev_pm_opp_init_cpufreq_table.
->>
->> This driver is a completely independent of the old cpufreq driver
->> (tegra-cpufreq), which is only used on Tegra20.
->>
->> Signed-off-by: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> Please reuse cpufreq-cpu0 instead of adding a new driver. Similar
-> is being adopted by all platforms now: krait, mvebu, etc..
->
+The first two patches remove the old "emc_mux" and "emc" clocks from the
+clock tree and the device tree bindings. This is, of course, not backwards
+compatible, but as these clocks have never been useful for anything
+(apart from maybe reading the boot rate of the EMC clock). If this is still
+not acceptable, the second patch can be dropped.
 
-Sure, I can do the CPU clock parent change first and then instantiate 
-the cpufreq-cpu0 driver, like highbank-cpufreq. That'll depend on the 
-patch 'cpufreq: cpu0: OPPs can be populated at runtime' from your 
-'Extend support beyond CPU0' series though, any idea when that patch 
-will land in?
+The second two patches add two clocks, PLL_M_UD and PLL_C_UD, that are
+low jitter variants derived from PLL_M and PLL_C respectively. They are used
+by some higher EMC clock rates as clock parents.
 
+Patch 5 adds device tree binding documentation for the EMC clock node. It is
+a whole separate block on the chip, so it does not go under CAR, as previous
+clocks have done.
+
+Patches 6 and 7 enable the EMC clock on Tegra124 and Jetson TK-1. The driver
+is enabled always, but can only provide read-only access without EMC tables
+that contain hardware characterization data for each operating point of the
+clock.
+
+Patch 8 adds the actual driver. The driver needs to write to both CAR and MC
+registers in addition to EMC registers. These register accesses are either
+shadowed or control a hardware state machine, so delegating them to other
+drivers can be dangerous.
+
+Patch 1 must go before patch 2 and patch 4 needs to go after patch 3
+but otherwise there shouldn't be any compile-time dependencies. 
+Patch 7 has a DTC dependency on patch 3.
+
+Also available from git in
+  git://github.com/cyndis/linux.git, branch emc-v1
+
+Mikko Perttunen (8):
+  clk: tegra124: Remove old emc_mux and emc clocks
+  ARM: tegra: Remove TEGRA124_CLK_EMC from tegra124-car.h
+  ARM: tegra: Add PLL_M_UD and PLL_C_UD to tegra124-car binding header
+  clk: tegra124: Add PLL_M_UD and PLL_C_UD clocks
+  of: Add Tegra124 EMC bindings
+  ARM: tegra: Add EMC to Tegra124 device tree
+  ARM: tegra: Add EMC timings to Jetson TK1 device tree
+  clk: tegra: Add EMC clock driver
+
+ .../bindings/memory-controllers/tegra-emc.txt      |   42 +
+ arch/arm/boot/dts/tegra124-jetson-tk1-emc.dtsi     | 2323 ++++++++++++++++++++
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts          |    2 +
+ arch/arm/boot/dts/tegra124.dtsi                    |    6 +
+ drivers/clk/tegra/Makefile                         |    2 +-
+ drivers/clk/tegra/clk-emc.c                        | 1508 +++++++++++++
+ drivers/clk/tegra/clk-tegra124.c                   |   21 +-
+ include/dt-bindings/clock/tegra124-car.h           |    8 +-
+ 8 files changed, 3896 insertions(+), 16 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt
+ create mode 100644 arch/arm/boot/dts/tegra124-jetson-tk1-emc.dtsi
+ create mode 100644 drivers/clk/tegra/clk-emc.c
 
 -- 
-nvpublic
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.8.1.5
