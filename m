@@ -1,101 +1,80 @@
-From: Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 0/3] drm/gk20a: support for reclocking
-Date: Fri, 11 Jul 2014 12:01:02 +1000
-Message-ID: <CACAvsv7O-Jw_h0=V4URM7YE3TQjS3UgN=+tOo-wxb5YC6BuL8Q@mail.gmail.com>
-References: <1404977677-22248-1-git-send-email-acourbot@nvidia.com>
- <20140710094300.GP23218@tbergstrom-lnx.Nvidia.com>
- <53BF4292.1060009@nvidia.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [Nouveau] [PATCH v4 2/6] drm/nouveau: map pages using DMA API
+ on platform devices
+Date: Fri, 11 Jul 2014 11:35:23 +0900
+Message-ID: <53BF4D6B.70904@nvidia.com>
+References: <1404807961-30530-1-git-send-email-acourbot@nvidia.com> <1404807961-30530-3-git-send-email-acourbot@nvidia.com> <20140710125849.GF17271@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <53BF4292.1060009-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140710125849.GF17271-dv86pmgwkMBes7Z6vYuT8azUEOm+Xw19@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Cc: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, David Herrmann <dh.herrmann-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Maarten Lankhorst <maarten.lankhorst-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jul 11, 2014 at 11:49 AM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> On 07/10/2014 06:43 PM, Peter De Schrijver wrote:
+On 07/10/2014 09:58 PM, Daniel Vetter wrote:
+> On Tue, Jul 08, 2014 at 05:25:57PM +0900, Alexandre Courbot wrote:
+>> page_to_phys() is not the correct way to obtain the DMA address of a
+>> buffer on a non-PCI system. Use the DMA API functions for this, which
+>> are portable and will allow us to use other DMA API functions for
+>> buffer synchronization.
 >>
->> On Thu, Jul 10, 2014 at 09:34:34AM +0200, Alexandre Courbot wrote:
->>>
->>> This series adds support for reclocking on GK20A. The first two patches
->>> touch
->>> the clock subsystem to allow GK20A to operate, by making the presence of
->>> the
->>> thermal and voltage devices optional, and allowing pstates to be provided
->>> directly instead of being probed using the BIOS (which Tegra does not
->>> have).
->>>
->>> The last patch adds the GK20A clock device. Arguably the clock can be
->>> seen as a
->>> stripped-down version of what is seen on NVE0, however instead of using
->>> NVE0
->>> support has been written from scratch using the ChromeOS kernel as a
->>> basis.
->>> There are several reasons for this:
->>>
->>> - The ChromeOS driver uses a lookup table for the P coefficient which I
->>> could
->>>    not find in the NVE0 driver,
->>> - Some registers that NVE0 expects to find are not present on GK20A (e.g.
->>>    0x137120 and 0x137140),
->>> - Calculation of MNP is done differently from what is performed in
->>>    nva3_pll_calc(), and it might be interesting to compare the two
->>> methods,
->>> - All the same, the programming sequence is done differently in the
->>> ChromeOS
->>>    driver and NVE0 could possibly benefit from it (?)
->>>
->>> It would be interesting to try and merge both, but for now I prefer to
->>> have the
->>> two coexisting to ensure proper operation on GK20A and besure I don't
->>> break
->>> dGPU support. :)
->>>
->>> Regarding the first patch, one might argue that I could as well add
->>> thermal
->>> and voltage devices to GK20A. The reason this is not done is because
->>> these
->>> currently depend heavily on the presence of a BIOS, and will require a
->>> rework
->>> similar to that done in patch 2 for clocks. I would like to make sure
->>> this
->>> approach is approved because applying it to other subdevs.
+>> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>   drivers/gpu/drm/nouveau/core/engine/device/base.c | 8 +++++++-
+>>   1 file changed, 7 insertions(+), 1 deletion(-)
 >>
+>> diff --git a/drivers/gpu/drm/nouveau/core/engine/device/base.c b/drivers/gpu/drm/nouveau/core/engine/device/base.c
+>> index 18c8c7245b73..e4e9e64988fe 100644
+>> --- a/drivers/gpu/drm/nouveau/core/engine/device/base.c
+>> +++ b/drivers/gpu/drm/nouveau/core/engine/device/base.c
+>> @@ -489,7 +489,10 @@ nv_device_map_page(struct nouveau_device *device, struct page *page)
+>>   		if (pci_dma_mapping_error(device->pdev, ret))
+>>   			ret = 0;
+>>   	} else {
+>> -		ret = page_to_phys(page);
+>> +		ret = dma_map_page(&device->platformdev->dev, page, 0,
+>> +				   PAGE_SIZE, DMA_BIDIRECTIONAL);
+>> +		if (dma_mapping_error(&device->platformdev->dev, ret))
+>> +			ret = 0;
+>>   	}
 >>
->> I think this should use CCF so we can use pre and post rate change
->> notifiers
->> to hookup vdd_gpu DVS.
+>>   	return ret;
+>> @@ -501,6 +504,9 @@ nv_device_unmap_page(struct nouveau_device *device, dma_addr_t addr)
+>>   	if (nv_device_is_pci(device))
+>>   		pci_unmap_page(device->pdev, addr, PAGE_SIZE,
+>>   			       PCI_DMA_BIDIRECTIONAL);
 >
->
-> Do you mean that we should turn the Nouveau gk20a clock driver into a
-> consumer of this CCF clock? I have nothing against this, but note that
-> Nouveau can also perform DVS on its own, as the pstates can also contain a
-> voltage to be applied to the volt device (not yet implemented in this
-> series).
->
-> The question then becomes whether we want an additional layer of abstraction
-> on these devices and whether the pre/post rate change notifiers give us any
-> advantage compared to what Nouveau currently proposes.
-I had a brief look at this, and personally I don't think the CCF is a
-very good match at all for how we're *supposed* to manage clock
-frequencies as described by a discrete GPU VBIOS, and especially for
-when we get to the point of using the PMU falcon to coordinate all the
-various bits and pieces that go towards power management.
+> pci_map/unmap alias to dma_unmap/map when called on the underlying struct
+> device embedded in pci_device (like for platform drivers). Dunno whether
+> it's worth to track a pointer to the struct device directly and always
+> call dma_unmap/map.
+
+Isn't it (theoretically) possible to have a platform that does not use 
+the DMA API for its PCI implementation and thus requires the pci_* 
+functions to be called? I could not find such a case in -next, which 
+suggests that all PCI platforms have been converted to the DMA API 
+already and that we could indeed refactor this to always use the DMA 
+functions.
+
+But at the same time the way we use APIs should not be directed by their 
+implementation, but by their intent - and unless the PCI API has been 
+deprecated in some way (something I am not aware of), the rule is still 
+that you should use it on a PCI device.
 
 >
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+> Just drive-by comment since I'm interested in how you solve this - i915
+> has similar fun with buffer sharing and coherent and non-coherent
+> platforms. Although we don't have fun with pci and non-pci based
+> platforms.
+
+Yeah, I am not familiar with i915 but it seems like we are on a similar 
+boat here (excepted ARM is more constrained as to its memory mappings). 
+The strategy in this series is, map buffers used by user-space cached 
+and explicitly synchronize them (since the ownership transition from 
+user to GPU is always clearly performed by syscalls), and use coherent 
+mappings for buffers used by the kernel which are accessed more 
+randomly. This has solved all our coherency issues and resulted in the 
+best performance so far.
