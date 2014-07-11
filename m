@@ -1,107 +1,103 @@
-From: Olav Haugan <ohaugan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Thu, 10 Jul 2014 15:32:16 -0700
-Message-ID: <53BF1470.1000704@codeaurora.org>
-References: <4545972.cM7IP1qTXQ@wuerfel> <53A4C0C9.2050908@codeaurora.org>
-	<20140624091808.GC26013@arm.com> <53A9BC18.2090106@codeaurora.org>
-	<20140624181150.GB4067@arm.com> <53A9EF3A.2070704@codeaurora.org>
-	<20140625091858.GG6153@arm.com> <53ADEEDF.7060902@codeaurora.org>
-	<20140630095220.GA25779@arm.com> <53BC95DA.1010500@codeaurora.org>
-	<20140709105441.GE9485@arm.com>
+From: Ben Skeggs <skeggsb@gmail.com>
+Subject: Re: [Nouveau] [PATCH 0/3] drm/gk20a: support for reclocking
+Date: Fri, 11 Jul 2014 11:07:35 +1000
+Message-ID: <CACAvsv7cxHbXaF-0wi=cijACUBdrH_rqamM+=okrb0+cJxYAsw@mail.gmail.com>
+References: <1404977677-22248-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20140709105441.GE9485-5wv7dgnIgG8@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1404977677-22248-1-git-send-email-acourbot@nvidia.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, Ben Skeggs <bskeggs@redhat.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 7/9/2014 3:54 AM, Will Deacon wrote:
-> On Wed, Jul 09, 2014 at 02:07:38AM +0100, Olav Haugan wrote:
->> On 6/30/2014 2:52 AM, Will Deacon wrote:
->>> On Fri, Jun 27, 2014 at 11:23:27PM +0100, Olav Haugan wrote:
->>>> Lets say I have an IOMMU with 2 masters and 2 SMRn slots with the
->>>> following stream IDs coming from the masters:
->>>>
->>>> Master 1: 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28
->>>> Master 2: 0x30
->>>>
->>>> To make this work I would program SMR[0] with StreamID 0x20 and mask 0xF
->>>> to ignore lower 4 bits. SMR[1] would just be StreamID 0x30 with mask 0x0.
->>>>
->>>> However, I could also have an IOMMU with 2 masters and 9 SMRn slots with
->>>> the following stream IDs:
->>>>
->>>> Master 1: 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28
->>>> Master 2: 0x29
->>>>
->>>> Here I would program all SMRn and leave the mask to be 0 for all SMRn's.
->>>> So how do I detect when to apply a mask or not?
->>>
->>> You would aim to use the smallest number of SMRs per master possible.
->>> You could probably use:
->>>
->>>   Master 1: SMR[0].id == 0x20, SMR[0].mask = 0x07
->>>             SMR[1].id == 0x28, SMR[1].mask = 0x00
->>>
->>>   Master 2: SMR[2].id == 0x29, SMR[2].mask = 0x00
->>
->> So how does an algorithm figure this out in both my examples? The
->> algorithm would have to know about both (all) bus masters and their
->> stream IDs for a specific SMMU. If the algorithm operates on the set of
->> stream IDs for one bus master at a time the algorithm has no way of
->> knowing which bits can be ignored since it doesn't know the value of the
->> other stream IDs for the other bus masters and thus could potentially
->> create a mask that could cause a stream ID to match in two different
->> entries.
-> 
-> Complete knowledge of the system topology (i.e. all bus masters) is a
-> requirement for being able to configure the SMMU correctly if you want to
-> guarantee that you don't have SMR aliasing issues.
+On Thu, Jul 10, 2014 at 5:34 PM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+> This series adds support for reclocking on GK20A. The first two patches touch
+> the clock subsystem to allow GK20A to operate, by making the presence of the
+> thermal and voltage devices optional, and allowing pstates to be provided
+> directly instead of being probed using the BIOS (which Tegra does not have).
+Hey Alex,
 
-So you agree that an algorithm needs to know about all the bus
-masters/stream IDs for a specific IOMMU before it can figure out the
-StreamID masks and how many SMRs can be allocated to a specific bus
-master? Andreas's algorithm does not know about the other bus
-masters/stream IDs. It operates on one bus master at a time.
+I mentioned a while back I had some stuff in-progress to make
+implementing this a bit cleaner for you, but as you can probably tell,
+I didn't get to it yet.  It's likely I won't manage to before the next
+merge window either.  So, I'll likely take these patches as-is
+(assuming no objections on reviews here) and rebase my stuff on top.
 
->>>> I am not familiar with Andreas's proposal. Do you have a link?
->>>
->>>   http://marc.info/?l=linux-arm-kernel&m=139110598005846&w=2
->>
->> Unless I am mistaken the algorithm works on one bus master at a time. I
->> don't think that will work.
-> 
-> IIRC, it works for densely packed SIDs on the master, so it tries to build
-> up power-of-2 sized groups for that master then mops up the rest with
-> individual entries.
+>
+> The last patch adds the GK20A clock device. Arguably the clock can be seen as a
+> stripped-down version of what is seen on NVE0, however instead of using NVE0
+> support has been written from scratch using the ChromeOS kernel as a basis.
+> There are several reasons for this:
+>
+> - The ChromeOS driver uses a lookup table for the P coefficient which I could
+>   not find in the NVE0 driver,
+Interesting.  Can you give more details on how "PL" works exactly,
+we'd been operating on the assumption (mainly inherited from code that
+appeared in xf86-video-nv) that it was always a straight division.
 
-I ran the algorithm through a few trivial cases:
+> - Some registers that NVE0 expects to find are not present on GK20A (e.g.
+>   0x137120 and 0x137140),
+> - Calculation of MNP is done differently from what is performed in
+>   nva3_pll_calc(), and it might be interesting to compare the two methods,
+> - All the same, the programming sequence is done differently in the ChromeOS
+>   driver and NVE0 could possibly benefit from it (?)
+>
+> It would be interesting to try and merge both, but for now I prefer to have the
+> two coexisting to ensure proper operation on GK20A and besure I don't break
+> dGPU support. :)
+It's something we can look to achieving down the road, but won't block
+merging the support.
 
-1)
-Stream IDs: 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28
-Number of SMRs: 9
+>
+> Regarding the first patch, one might argue that I could as well add thermal
+> and voltage devices to GK20A. The reason this is not done is because these
+> currently depend heavily on the presence of a BIOS, and will require a rework
+> similar to that done in patch 2 for clocks. I would like to make sure this
+> approach is approved because applying it to other subdevs.
+They don't *need* to depend on the BIOS, you can opt for an
+implementation that doesn't use the base classes that the rest of the
+dGPU implementations do.  But, it's fine to take the approach you've
+taken.
 
-In this case the algorithm decided to set mask to 0 for all entries
-using up 8 of the SMRs.
+Thanks!
+Ben.
 
-2) Same Stream IDs but only 2 SMRs.
-The algorithm gave an error saying I did not have enough SMRs.
-
-Thanks,
-
-Olav
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+>
+> Alexandre Courbot (3):
+>   drm/nouveau/clk: make therm and volt devices optional
+>   drm/nouveau/clk: support for non-BIOS pstates
+>   drm/gk20a: reclocking support
+>
+>  drivers/gpu/drm/nouveau/Makefile                   |   1 +
+>  drivers/gpu/drm/nouveau/core/engine/device/nve0.c  |   1 +
+>  .../gpu/drm/nouveau/core/include/subdev/clock.h    |   9 +-
+>  drivers/gpu/drm/nouveau/core/subdev/clock/base.c   |  52 +-
+>  drivers/gpu/drm/nouveau/core/subdev/clock/gk20a.c  | 670 +++++++++++++++++++++
+>  drivers/gpu/drm/nouveau/core/subdev/clock/nv04.c   |   4 +-
+>  drivers/gpu/drm/nouveau/core/subdev/clock/nv40.c   |   4 +-
+>  drivers/gpu/drm/nouveau/core/subdev/clock/nv50.c   |   2 +-
+>  drivers/gpu/drm/nouveau/core/subdev/clock/nva3.c   |   4 +-
+>  drivers/gpu/drm/nouveau/core/subdev/clock/nvaa.c   |   4 +-
+>  drivers/gpu/drm/nouveau/core/subdev/clock/nvc0.c   |   4 +-
+>  drivers/gpu/drm/nouveau/core/subdev/clock/nve0.c   |   4 +-
+>  12 files changed, 725 insertions(+), 34 deletions(-)
+>  create mode 100644 drivers/gpu/drm/nouveau/core/subdev/clock/gk20a.c
+>
+> --
+> 2.0.0
+>
+> _______________________________________________
+> Nouveau mailing list
+> Nouveau@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/nouveau
