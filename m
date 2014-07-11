@@ -1,48 +1,87 @@
-From: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH 1/2] PCI: mvebu: Fix license string
-Date: Fri, 11 Jul 2014 09:24:47 +0200
-Message-ID: <20140711092447.3b40f24a@free-electrons.com>
-References: <1405061938-2191-1-git-send-email-thierry.reding@gmail.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [Nouveau] [PATCH v4 2/6] drm/nouveau: map pages using DMA API on
+ platform devices
+Date: Fri, 11 Jul 2014 09:38:07 +0200
+Message-ID: <20140711073807.GV17271@phenom.ffwll.local>
+References: <1404807961-30530-1-git-send-email-acourbot@nvidia.com>
+ <1404807961-30530-3-git-send-email-acourbot@nvidia.com>
+ <20140710125849.GF17271@phenom.ffwll.local>
+ <53BF4D6B.70904@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1405061938-2191-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <53BF4D6B.70904@nvidia.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Dear Thierry Reding,
-
-On Fri, 11 Jul 2014 08:58:57 +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Fri, Jul 11, 2014 at 11:35:23AM +0900, Alexandre Courbot wrote:
+> On 07/10/2014 09:58 PM, Daniel Vetter wrote:
+> >On Tue, Jul 08, 2014 at 05:25:57PM +0900, Alexandre Courbot wrote:
+> >>page_to_phys() is not the correct way to obtain the DMA address of a
+> >>buffer on a non-PCI system. Use the DMA API functions for this, which
+> >>are portable and will allow us to use other DMA API functions for
+> >>buffer synchronization.
+> >>
+> >>Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> >>---
+> >>  drivers/gpu/drm/nouveau/core/engine/device/base.c | 8 +++++++-
+> >>  1 file changed, 7 insertions(+), 1 deletion(-)
+> >>
+> >>diff --git a/drivers/gpu/drm/nouveau/core/engine/device/base.c b/drivers/gpu/drm/nouveau/core/engine/device/base.c
+> >>index 18c8c7245b73..e4e9e64988fe 100644
+> >>--- a/drivers/gpu/drm/nouveau/core/engine/device/base.c
+> >>+++ b/drivers/gpu/drm/nouveau/core/engine/device/base.c
+> >>@@ -489,7 +489,10 @@ nv_device_map_page(struct nouveau_device *device, struct page *page)
+> >>  		if (pci_dma_mapping_error(device->pdev, ret))
+> >>  			ret = 0;
+> >>  	} else {
+> >>-		ret = page_to_phys(page);
+> >>+		ret = dma_map_page(&device->platformdev->dev, page, 0,
+> >>+				   PAGE_SIZE, DMA_BIDIRECTIONAL);
+> >>+		if (dma_mapping_error(&device->platformdev->dev, ret))
+> >>+			ret = 0;
+> >>  	}
+> >>
+> >>  	return ret;
+> >>@@ -501,6 +504,9 @@ nv_device_unmap_page(struct nouveau_device *device, dma_addr_t addr)
+> >>  	if (nv_device_is_pci(device))
+> >>  		pci_unmap_page(device->pdev, addr, PAGE_SIZE,
+> >>  			       PCI_DMA_BIDIRECTIONAL);
+> >
+> >pci_map/unmap alias to dma_unmap/map when called on the underlying struct
+> >device embedded in pci_device (like for platform drivers). Dunno whether
+> >it's worth to track a pointer to the struct device directly and always
+> >call dma_unmap/map.
 > 
-> The proper MODULE_LICENSE() string for the GPL v2 is "GPL v2", not
-> "GPLv2".
+> Isn't it (theoretically) possible to have a platform that does not use the
+> DMA API for its PCI implementation and thus requires the pci_* functions to
+> be called? I could not find such a case in -next, which suggests that all
+> PCI platforms have been converted to the DMA API already and that we could
+> indeed refactor this to always use the DMA functions.
 > 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/pci/host/pci-mvebu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/host/pci-mvebu.c b/drivers/pci/host/pci-mvebu.c
-> index ce23e0f076b6..a8c6f1a92e0f 100644
-> --- a/drivers/pci/host/pci-mvebu.c
-> +++ b/drivers/pci/host/pci-mvebu.c
-> @@ -1094,4 +1094,4 @@ module_platform_driver(mvebu_pcie_driver);
->  
->  MODULE_AUTHOR("Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>");
->  MODULE_DESCRIPTION("Marvell EBU PCIe driver");
-> -MODULE_LICENSE("GPLv2");
-> +MODULE_LICENSE("GPL v2");
+> But at the same time the way we use APIs should not be directed by their
+> implementation, but by their intent - and unless the PCI API has been
+> deprecated in some way (something I am not aware of), the rule is still that
+> you should use it on a PCI device.
 
-Acked-by: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-
-Thanks!
-
-Thomas
+Hm, somehow I've thought that it's recommended to just use the dma api
+directly. It's what we're doing in i915 at least, but now I'm not so sure
+any more. My guess is that this is just history really when the dma api
+was pci-only.
+-Daniel
 -- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
