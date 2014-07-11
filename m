@@ -1,49 +1,29 @@
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH 4/8] clk: tegra124: Add PLL_M_UD and PLL_C_UD clocks
-Date: Fri, 11 Jul 2014 17:18:29 +0300
-Message-ID: <1405088313-20048-5-git-send-email-mperttunen@nvidia.com>
-References: <1405088313-20048-1-git-send-email-mperttunen@nvidia.com>
+From: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 12/13] cpufreq: Add cpufreq driver for Tegra124
+Date: Fri, 11 Jul 2014 20:07:42 +0530
+Message-ID: <CAKohpon_YKkRP+iYnUaE14fKmcSx_SfWVHPiA48BGiPTCPHTKA@mail.gmail.com>
+References: <1405028569-14253-1-git-send-email-ttynkkynen@nvidia.com>
+	<1405028569-14253-13-git-send-email-ttynkkynen@nvidia.com>
+	<CAKohpom9ORXFiUU4=V+CxgN0ZOFLMEhEjHiU8HsYUYDybNXgHQ@mail.gmail.com>
+	<53BFF132.3020700@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1405088313-20048-1-git-send-email-mperttunen@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@linaro.org, swarren@wwwdotorg.org, thierry.reding@gmail.com
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <53BFF132.3020700-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-These clocks are used as parents for some EMC timings.
+On 11 July 2014 19:44, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> Sure, I can do the CPU clock parent change first and then instantiate the
+> cpufreq-cpu0 driver, like highbank-cpufreq. That'll depend on the patch
+> 'cpufreq: cpu0: OPPs can be populated at runtime' from your 'Extend support
+> beyond CPU0' series though, any idea when that patch will land in?
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
- drivers/clk/tegra/clk-tegra124.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+So, after your mail I had a chat with Rafael. As this patch happens to be a
+fix, we will try to take it into 3.16 only (I am going to send few patches out
+of that series separately in few mins). Otherwise 3.17 is where most of it
+should go.
 
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index 99cc5ea..a4f8150 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -1153,6 +1153,12 @@ static void __init tegra124_pll_init(void __iomem *clk_base,
- 	clk_register_clkdev(clk, "pll_c_out1", NULL);
- 	clks[TEGRA124_CLK_PLL_C_OUT1] = clk;
- 
-+	/* PLLC_UD */
-+	clk = clk_register_fixed_factor(NULL, "pll_c_ud", "pll_c",
-+					CLK_SET_RATE_PARENT, 1, 1);
-+	clk_register_clkdev(clk, "pll_c_ud", NULL);
-+	clks[TEGRA124_CLK_PLL_C_UD] = clk;
-+
- 	/* PLLC2 */
- 	clk = tegra_clk_register_pllc("pll_c2", "pll_ref", clk_base, pmc, 0,
- 			     &pll_c2_params, NULL);
-@@ -1185,6 +1191,8 @@ static void __init tegra124_pll_init(void __iomem *clk_base,
- 	/* PLLM_UD */
- 	clk = clk_register_fixed_factor(NULL, "pll_m_ud", "pll_m",
- 					CLK_SET_RATE_PARENT, 1, 1);
-+	clk_register_clkdev(clk, "pll_m_ud", NULL);
-+	clks[TEGRA124_CLK_PLL_M_UD] = clk;
- 
- 	/* PLLU */
- 	val = readl(clk_base + pll_u_params.base_reg);
--- 
-1.8.1.5
+Thanks for your agreement to make our life easier :)
