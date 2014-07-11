@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 03/12] ARM: tegra: export apb dma readl/writel
-Date: Fri, 11 Jul 2014 14:16:02 +0200
-Message-ID: <1405080971-7609-4-git-send-email-thierry.reding@gmail.com>
+Subject: [PATCH 04/12] ARM: tegra: move fuse exports to tegra-soc.h
+Date: Fri, 11 Jul 2014 14:16:03 +0200
+Message-ID: <1405080971-7609-5-git-send-email-thierry.reding@gmail.com>
 References: <1405080971-7609-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1405080971-7609-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,155 +12,130 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Export APB DMA readl and writel. These are needed because we can't
-access the fuses directly on Tegra20 without potentially causing a
-system hang. Also have the APB DMA readl and writel return an error in
-case of a read failure instead of just returning zero or ignore write
-failures.
+All fuse related functionality will move to a driver in the following
+patches. To prepare for this, export all the required functionality in a
+global header file and move all users of fuse.h to tegra-soc.h. While
+we're at it, remove tegra_bct_strapping, as its only user was removed in
+Commit a7cbe92cef27 ("ARM: tegra: remove tegra EMC scaling driver").
 
 Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/apbio.c | 51 +++++++++++++++++++++++++++------------------
- include/linux/tegra-soc.h   | 14 +++++++++++++
- 2 files changed, 45 insertions(+), 20 deletions(-)
+ arch/arm/mach-tegra/fuse.h            | 13 -------------
+ arch/arm/mach-tegra/tegra.c           |  1 -
+ arch/arm/mach-tegra/tegra114_speedo.c |  1 +
+ arch/arm/mach-tegra/tegra20_speedo.c  |  1 +
+ arch/arm/mach-tegra/tegra30_speedo.c  |  1 +
+ include/linux/tegra-soc.h             | 16 ++++++++++++++++
+ 6 files changed, 19 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/apbio.c b/arch/arm/mach-tegra/apbio.c
-index 5f9647b3f81d..f2488722c79c 100644
---- a/arch/arm/mach-tegra/apbio.c
-+++ b/arch/arm/mach-tegra/apbio.c
-@@ -32,8 +32,8 @@ static u32 *tegra_apb_bb;
- static dma_addr_t tegra_apb_bb_phys;
- static DECLARE_COMPLETION(tegra_apb_wait);
+diff --git a/arch/arm/mach-tegra/fuse.h b/arch/arm/mach-tegra/fuse.h
+index 7a08b4b70c8d..48a48861c19b 100644
+--- a/arch/arm/mach-tegra/fuse.h
++++ b/arch/arm/mach-tegra/fuse.h
+@@ -27,27 +27,14 @@
+ #define SKU_ID_T25E	28
  
--static u32 tegra_apb_readl_direct(unsigned long offset);
--static void tegra_apb_writel_direct(u32 value, unsigned long offset);
-+static int tegra_apb_readl_direct(unsigned long offset, u32 *value);
-+static int tegra_apb_writel_direct(u32 value, unsigned long offset);
+ #ifndef __ASSEMBLY__
+-enum tegra_revision {
+-	TEGRA_REVISION_UNKNOWN = 0,
+-	TEGRA_REVISION_A01,
+-	TEGRA_REVISION_A02,
+-	TEGRA_REVISION_A03,
+-	TEGRA_REVISION_A03p,
+-	TEGRA_REVISION_A04,
+-	TEGRA_REVISION_MAX,
+-};
  
- static struct dma_chan *tegra_apb_dma_chan;
- static struct dma_slave_config dma_sconfig;
-@@ -128,58 +128,64 @@ static int do_dma_transfer(unsigned long apb_add,
- 	return 0;
- }
+ extern int tegra_sku_id;
+ extern int tegra_cpu_process_id;
+ extern int tegra_core_process_id;
+ extern int tegra_cpu_speedo_id;		/* only exist in Tegra30 and later */
+ extern int tegra_soc_speedo_id;
+-extern enum tegra_revision tegra_revision;
+-
+-extern int tegra_bct_strapping;
  
--static u32 tegra_apb_readl_using_dma(unsigned long offset)
-+int tegra_apb_readl_using_dma(unsigned long offset, u32 *value)
- {
- 	int ret;
+ unsigned long long tegra_chip_uid(void);
+-void tegra_init_fuse(void);
+ bool tegra_spare_fuse(int bit);
+ u32 tegra_fuse_readl(unsigned long offset);
  
- 	if (!tegra_apb_dma_chan && !tegra_apb_dma_init())
--		return tegra_apb_readl_direct(offset);
-+		return tegra_apb_readl_direct(offset, value);
+diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
+index e36b81870e66..f4c5f6469ee4 100644
+--- a/arch/arm/mach-tegra/tegra.c
++++ b/arch/arm/mach-tegra/tegra.c
+@@ -47,7 +47,6 @@
+ #include "board.h"
+ #include "common.h"
+ #include "cpuidle.h"
+-#include "fuse.h"
+ #include "iomap.h"
+ #include "irq.h"
+ #include "pmc.h"
+diff --git a/arch/arm/mach-tegra/tegra114_speedo.c b/arch/arm/mach-tegra/tegra114_speedo.c
+index 86eca17e5286..f086a3ea291e 100644
+--- a/arch/arm/mach-tegra/tegra114_speedo.c
++++ b/arch/arm/mach-tegra/tegra114_speedo.c
+@@ -16,6 +16,7 @@
  
- 	mutex_lock(&tegra_apb_dma_lock);
- 	ret = do_dma_transfer(offset, DMA_DEV_TO_MEM);
--	if (ret < 0) {
-+	if (ret < 0)
- 		pr_err("error in reading offset 0x%08lx using dma\n", offset);
--		*(u32 *)tegra_apb_bb = 0;
--	}
-+	else
-+		*value = *tegra_apb_bb;
-+
- 	mutex_unlock(&tegra_apb_dma_lock);
--	return *((u32 *)tegra_apb_bb);
-+
-+	return ret;
- }
+ #include <linux/bug.h>
+ #include <linux/kernel.h>
++#include <linux/tegra-soc.h>
  
--static void tegra_apb_writel_using_dma(u32 value, unsigned long offset)
-+int tegra_apb_writel_using_dma(u32 value, unsigned long offset)
- {
- 	int ret;
+ #include "fuse.h"
  
--	if (!tegra_apb_dma_chan && !tegra_apb_dma_init()) {
--		tegra_apb_writel_direct(value, offset);
--		return;
--	}
-+	if (!tegra_apb_dma_chan && !tegra_apb_dma_init())
-+		return tegra_apb_writel_direct(value, offset);
+diff --git a/arch/arm/mach-tegra/tegra20_speedo.c b/arch/arm/mach-tegra/tegra20_speedo.c
+index dcd29a0b0187..83431011a23c 100644
+--- a/arch/arm/mach-tegra/tegra20_speedo.c
++++ b/arch/arm/mach-tegra/tegra20_speedo.c
+@@ -16,6 +16,7 @@
  
- 	mutex_lock(&tegra_apb_dma_lock);
- 	*((u32 *)tegra_apb_bb) = value;
- 	ret = do_dma_transfer(offset, DMA_MEM_TO_DEV);
-+	mutex_unlock(&tegra_apb_dma_lock);
- 	if (ret < 0)
- 		pr_err("error in writing offset 0x%08lx using dma\n", offset);
--	mutex_unlock(&tegra_apb_dma_lock);
-+
-+	return ret;
- }
- #else
- #define tegra_apb_readl_using_dma tegra_apb_readl_direct
- #define tegra_apb_writel_using_dma tegra_apb_writel_direct
- #endif
+ #include <linux/bug.h>
+ #include <linux/kernel.h>
++#include <linux/tegra-soc.h>
  
--typedef u32 (*apbio_read_fptr)(unsigned long offset);
--typedef void (*apbio_write_fptr)(u32 value, unsigned long offset);
-+typedef int (*apbio_read_fptr)(unsigned long offset, u32 *value);
-+typedef int (*apbio_write_fptr)(u32 value, unsigned long offset);
+ #include "fuse.h"
  
- static apbio_read_fptr apbio_read;
- static apbio_write_fptr apbio_write;
+diff --git a/arch/arm/mach-tegra/tegra30_speedo.c b/arch/arm/mach-tegra/tegra30_speedo.c
+index 7c0038326cf5..4dda681bdaf9 100644
+--- a/arch/arm/mach-tegra/tegra30_speedo.c
++++ b/arch/arm/mach-tegra/tegra30_speedo.c
+@@ -16,6 +16,7 @@
  
--static u32 tegra_apb_readl_direct(unsigned long offset)
-+static int tegra_apb_readl_direct(unsigned long offset, u32 *value)
- {
--	return readl(IO_ADDRESS(offset));
-+	*value = readl(IO_ADDRESS(offset));
-+
-+	return 0;
- }
+ #include <linux/bug.h>
+ #include <linux/kernel.h>
++#include <linux/tegra-soc.h>
  
--static void tegra_apb_writel_direct(u32 value, unsigned long offset)
-+static int tegra_apb_writel_direct(u32 value, unsigned long offset)
- {
- 	writel(value, IO_ADDRESS(offset));
-+
-+	return 0;
- }
+ #include "fuse.h"
  
- void tegra_apb_io_init(void)
-@@ -197,7 +203,12 @@ void tegra_apb_io_init(void)
- 
- u32 tegra_apb_readl(unsigned long offset)
- {
--	return apbio_read(offset);
-+	u32 val;
-+
-+	if (apbio_read(offset, &val) < 0)
-+		return 0;
-+	else
-+		return val;
- }
- 
- void tegra_apb_writel(u32 value, unsigned long offset)
 diff --git a/include/linux/tegra-soc.h b/include/linux/tegra-soc.h
-index 34c068989806..5b419760ff5f 100644
+index 5b419760ff5f..3a00b3419594 100644
 --- a/include/linux/tegra-soc.h
 +++ b/include/linux/tegra-soc.h
-@@ -27,6 +27,20 @@
+@@ -27,6 +27,22 @@
  u32 tegra_read_chipid(void);
  u8 tegra_get_chip_id(void);
  
-+#if defined(CONFIG_TEGRA20_APB_DMA)
-+int tegra_apb_readl_using_dma(unsigned long offset, u32 *value);
-+int tegra_apb_writel_using_dma(u32 value, unsigned long offset);
-+#else
-+static inline int tegra_apb_readl_using_dma(unsigned long offset, u32 *value)
-+{
-+	return -EINVAL;
-+}
-+static inline int tegra_apb_writel_using_dma(u32 value, unsigned long offset)
-+{
-+	return -EINVAL;
-+}
-+#endif /* CONFIG_TEGRA20_APB_DMA */
++enum tegra_revision {
++	TEGRA_REVISION_UNKNOWN = 0,
++	TEGRA_REVISION_A01,
++	TEGRA_REVISION_A02,
++	TEGRA_REVISION_A03,
++	TEGRA_REVISION_A03p,
++	TEGRA_REVISION_A04,
++	TEGRA_REVISION_MAX,
++};
 +
- #endif /* __ASSEMBLY__ */
- 
- #endif /* __LINUX_TEGRA_SOC_H_ */
++u32 tegra_read_straps(void);
++u32 tegra_read_chipid(void);
++void tegra_init_fuse(void);
++
++extern enum tegra_revision tegra_revision;
++
+ #if defined(CONFIG_TEGRA20_APB_DMA)
+ int tegra_apb_readl_using_dma(unsigned long offset, u32 *value);
+ int tegra_apb_writel_using_dma(u32 value, unsigned long offset);
 -- 
 2.0.1
