@@ -1,64 +1,54 @@
-From: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-Subject: Re: [PATCH 5/8] of: Add Tegra124 EMC bindings
-Date: Fri, 11 Jul 2014 19:48:32 +0300
-Message-ID: <53C01560.3070200@kapsi.fi>
-References: <1405088313-20048-1-git-send-email-mperttunen@nvidia.com>	<1405088313-20048-6-git-send-email-mperttunen@nvidia.com> <CAL1qeaGHfjQhLHvgzt85hmbuY4FOG5-k=f80=CNvzPDEgi9_6w@mail.gmail.com>
+From: Andrew Bresticker <abrestic@chromium.org>
+Subject: Re: [PATCH 01/13] clk: tegra: Add binding for the Tegra124 DFLL clocksource
+Date: Fri, 11 Jul 2014 10:08:55 -0700
+Message-ID: <CAL1qeaHETQ7kSGNjPiwi_9WNMtr9qZp0KwjZCCxY29+_N4AcuA@mail.gmail.com>
+References: <1405028569-14253-1-git-send-email-ttynkkynen@nvidia.com>
+	<1405028569-14253-2-git-send-email-ttynkkynen@nvidia.com>
+	<CAL1qeaFF0ZpUFovxTuLXrBPRg2Lbf-754Z=ztD5HFZPbfnDsAw@mail.gmail.com>
+	<53C01558.3090607@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAL1qeaGHfjQhLHvgzt85hmbuY4FOG5-k=f80=CNvzPDEgi9_6w@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Bresticker <abrestic@chromium.org>, Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <53C01558.3090607@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Viresh Kumar <viresh.kumar@linaro.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Thierry Reding <thierry.reding@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Sure, I'll do that for v2.
+On Fri, Jul 11, 2014 at 9:48 AM, Tuomas Tynkkynen <ttynkkynen@nvidia.com> wrote:
+>
+>
+> On 11/07/14 19:28, Andrew Bresticker wrote:
+>>
+>> On Thu, Jul 10, 2014 at 2:42 PM, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+>> wrote:
+>>>
+>>> The DFLL is the main clocksource for the fast CPU cluster on Tegra124
+>>> and also provides automatic CPU rail voltage scaling as well. The DFLL
+>>> is a separate IP block from the usual Tegra124 clock-and-reset
+>>> controller, so it gets its own node in the device tree.
+>>
+>>
+>>> diff --git
+>>> a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+>>> b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+>>
+>>
+>>> +- nvidia,pmic-voltage-table: Array of 2-tuples.  Each entry should have
+>>> the
+>>> +  form <register-value voltage-in-uV>, indicating the register value
+>>> that
+>>> +  needs to be programmed to the PMIC for changing the VDD_CPU voltage to
+>>> +  the specified voltage. The table must be in ascending order by the
+>>> voltage.
+>>
+>>
+>> Instead of listing the register values for each voltage in the DT,
+>> can't you use regulator_list_voltage() to create this map?
+>>
+>
+> I don't see a way to get the register values that way, unless we assume that
+> the mapping is linear and doesn't have holes.
 
-On 07/11/2014 07:43 PM, Andrew Bresticker wrote:
-> On Fri, Jul 11, 2014 at 7:18 AM, Mikko Perttunen <mperttunen@nvidia.com> wrote:
->> Add binding documentation for the nvidia,tegra124-emc device tree
->> node.
->
->> diff --git a/Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt b/Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt
->
->> +Required properties :
->> +- compatible : "nvidia,tegra124-emc".
->> +- reg : Should contain 1 or 2 entries:
->> +  - EMC register set
->> +  - MC register set : Required only if no node with
->> +    'compatible = "nvidia,tegra124-mc"' exists. The MC register set
->> +    is first read from the MC node. If it doesn't exist, it is read
->> +    from this property.
->> +- timings : Should contain 1 entry for each supported clock rate.
->> +  Entries should be named "timing@n" where n is a 0-based increasing
->> +  number. The timings must be listed in rate-ascending order.
->
-> There are upcoming boards which support multiple DRAM configurations
-> and require a separate set of timings for each configuration.  Could
-> we instead have multiple sets of timings with the proper one selected
-> at runtime by RAM code, as reported by PMC_STRAPPING_OPT_A_0?
-> Something like:
->
-> emc {
->          emc-table@0 {
->                  nvidia,ram-code = <0>;
->                  timing@0 {
->                          ...
->                  };
->                  ...
->          };
->          emc-table@1 {
->                  nvidia,ram-code = <4>;
->                  timing@0 {
->                          ...
->                  };
->                  ...
->          };
->          ...
-> };
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+Hmm... I guess if you don't assume it's linear and continuous you'd
+have to iterate over all 256 selectors.
