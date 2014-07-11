@@ -1,65 +1,84 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] ARM: tegra: Fix typoed ams,ext-control properties
-Date: Fri, 11 Jul 2014 15:04:57 +0200
-Message-ID: <20140711130456.GB10827@ulmo>
-References: <1404931997-7118-1-git-send-email-ttynkkynen@nvidia.com>
+Subject: Re: [PATCH v3 4/4] ARM: tegra: roth: add display DT node
+Date: Fri, 11 Jul 2014 15:14:22 +0200
+Message-ID: <20140711131421.GD10827@ulmo>
+References: <1404822734-8603-1-git-send-email-acourbot@nvidia.com>
+ <1404822734-8603-5-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="dTy3Mrz/UPE2dbVg"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1404931997-7118-1-git-send-email-ttynkkynen@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============0397952534=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1404822734-8603-5-git-send-email-acourbot@nvidia.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: gnurou@gmail.com, Terje Bergstrom <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---dTy3Mrz/UPE2dbVg
+--===============0397952534==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="11Y7aswkeuHtSBEs"
+Content-Disposition: inline
+
+
+--11Y7aswkeuHtSBEs
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 09, 2014 at 09:53:17PM +0300, Tuomas Tynkkynen wrote:
-> The property for enabling external rail control on the AS3722 is
-> ams,ext-control, not ams,external-control. Since the external rail
-> control property was previously being ignored, LP1 suspend on these
-> boards wasn't actually turning the CPU rail off at all.
+On Tue, Jul 08, 2014 at 09:32:14PM +0900, Alexandre Courbot wrote:
+> Tegra DSI support has been fixed to support continuous clock behavior that
+> the panel used on SHIELD requires, so finally add its device tree node
+> since it is functional.
 >=20
-> Signed-off-by: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 > ---
-> So here's a dilemma, either change the existing DTs, change the
-> binding + driver, or make the driver recognize both properties.
-> I chose the first one since the old behaviour was broken in the
-> first place and the old DTs stay as buggy as they were before.
->=20
->  arch/arm/boot/dts/tegra124-jetson-tk1.dts | 6 +++---
->  arch/arm/boot/dts/tegra124-venice2.dts    | 6 +++---
->  2 files changed, 6 insertions(+), 6 deletions(-)
+>  arch/arm/boot/dts/tegra114-roth.dts | 22 +++++++++++++++++++---
+>  1 file changed, 19 insertions(+), 3 deletions(-)
 
-Applied to the for-3.17/dt branch. Thanks.
+I've applied this to Tegra's for-3.17/dt branch. Thanks.
 
 Thierry
 
---dTy3Mrz/UPE2dbVg
+--11Y7aswkeuHtSBEs
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJTv+D4AAoJEN0jrNd/PrOhJ74P+gMFmAwPpZIOKH2Or2vKvh7i
-dLO6/M30XCr8yQ+EULdwxpgwxrSJ1lrAlIOSjI/CR6xUrQn8XXeuCizUpUY2Pqof
-UBQ7UM2igY/1uKu6vQJ0a8ZDR6Zo1u7V3JDzivIWckspYeJK1DqqZNL64cOKqcDb
-RTPQ0XPtjvH3/yg97dEROpHljRcVzSyR3Q+rzbWw/qvryJkESWvqdk/dANVSiSYM
-w9hodE684qZul9igSWvOaGzIuWJvYnrIOAn3z3yx4YxpakvbNi71OTU832bpWzG3
-PXQscQzEOAj85EFFcxjaSCdwECdjqNEwhWeiiJYxpfZ3rj6LU3GxPHO+0eH7dh0s
-7xI/zjHQ+Rn6Z1JSFwLyoEMA+5v25kitMozjgsAAwPfFAsfjl/bYAc1YbsrhY0Jz
-i2BVHtPNAydDIbKBlvlqEsRsAGphcz+AuunklKZdJYsnLCYWY6G5ZYIXKmZ0a2aV
-CmfeYCaWWYDMoB7V/1yB2uupA7N8KDlXSumD4h0fmoKQCjanFvBL0dZjqHEVWtOK
-00S3fNd4AI4Wgpfr9Rk+P6yfr7TXo5POO9V1PoLuGoiXHgV/NE0i3EC94bgxRZLi
-AOMEtS1JiLKdIdHwC1QGkoV1jNtAQiAJtHhAD1RwZ378TC9Ec1k19IXWrDiccgkx
-k1H4prJcX2jLxLkY5nfi
-=c9Ag
+iQIcBAEBAgAGBQJTv+MtAAoJEN0jrNd/PrOhUcQQAJFUrru8mU40w0L9H6Cu7cVb
+ljJ23wwc81SJo4QzIJIbhIXL0LQkIZ50vt+sgYC7Jzlr9WQ8OU/wvUkvrtUIAPVI
+bf9SoR5zbOi6K+1ih1/5nCFFyhlCQ8Ovp3VHy54fIuG8kI2yPgLchR/9sP0NKZTu
+dYfudFla9bpGpOkGvdXBGMRU18JCQ5P//MN+azjB80qCB79NaQyFAXZMUwiyc5fO
+g/vuFep9+CGDZF6+6vvLcgvBAXK0fu0UXSI3Vl0Lbb2/Wy/3aUqwsgDZ+rU4ORjD
+8c3yY3hwQ9AgAqNORIn7MlB7RlCfMqA1r369CQOwVXIWr7wxuQLJKrADH5kUtPre
+uLL0Lk1YQ7bzuAinI875tKmnKIyN2N/G7f4dmqvFRI9zzw4Qhs2QtuC1eV72MXqG
+CTy38tR0HhQIzEW5GABImH8W/F0QDY98wuh7xFCAWVKPr8LycGtpc8XJvSeFjKzV
+6TWV8PM+cWwU3SuHEBWVYQjRbxgS9hx+VCcS9tl9fnoTls3X+sIg5bDJxgfSPjAf
+cojezho0Yyhi42VCel7XAYX0IJ9FEoW8WUQIlhFQ5Bc+w3W8CpcBNTPj1oL3wS+i
+vicU9kAQCPVcIk8I/z8yGBBsSgKF6psG4Keor/CVLNAd4T4/K9E9a38p00F5qQbR
+1FqiyZ3LqPcgme9nG8oo
+=o2Q7
 -----END PGP SIGNATURE-----
 
---dTy3Mrz/UPE2dbVg--
+--11Y7aswkeuHtSBEs--
+
+--===============0397952534==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============0397952534==--
