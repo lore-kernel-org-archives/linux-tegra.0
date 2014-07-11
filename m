@@ -1,32 +1,32 @@
-From: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 12/13] cpufreq: Add cpufreq driver for Tegra124
-Date: Fri, 11 Jul 2014 10:05:56 +0530
-Message-ID: <CAKohpom9ORXFiUU4=V+CxgN0ZOFLMEhEjHiU8HsYUYDybNXgHQ@mail.gmail.com>
-References: <1405028569-14253-1-git-send-email-ttynkkynen@nvidia.com>
-	<1405028569-14253-13-git-send-email-ttynkkynen@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1405028569-14253-13-git-send-email-ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH 1/2] PCI: mvebu: Fix license string
+Date: Fri, 11 Jul 2014 08:58:57 +0200
+Message-ID: <1405061938-2191-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-pci-owner@vger.kernel.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Stephen Warren <swarren@wwwdotorg.org>, linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Tuomas,
+From: Thierry Reding <treding@nvidia.com>
 
-On 11 July 2014 03:12, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> Add a new cpufreq driver for Tegra124. Instead of using the PLLX as
-> the CPU clocksource, switch immediately to the DFLL. It allows the use
-> of higher clock rates, and will automatically scale the CPU voltage as
-> well. We also rely on the DFLL driver to determine the CPU clock
-> frequencies that the chip supports, so that we can directly build a
-> cpufreq table with the OPP library helper dev_pm_opp_init_cpufreq_table.
->
-> This driver is a completely independent of the old cpufreq driver
-> (tegra-cpufreq), which is only used on Tegra20.
->
-> Signed-off-by: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+The proper MODULE_LICENSE() string for the GPL v2 is "GPL v2", not
+"GPLv2".
 
-Please reuse cpufreq-cpu0 instead of adding a new driver. Similar
-is being adopted by all platforms now: krait, mvebu, etc..
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/pci/host/pci-mvebu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pci/host/pci-mvebu.c b/drivers/pci/host/pci-mvebu.c
+index ce23e0f076b6..a8c6f1a92e0f 100644
+--- a/drivers/pci/host/pci-mvebu.c
++++ b/drivers/pci/host/pci-mvebu.c
+@@ -1094,4 +1094,4 @@ module_platform_driver(mvebu_pcie_driver);
+ 
+ MODULE_AUTHOR("Thomas Petazzoni <thomas.petazzoni@free-electrons.com>");
+ MODULE_DESCRIPTION("Marvell EBU PCIe driver");
+-MODULE_LICENSE("GPLv2");
++MODULE_LICENSE("GPL v2");
+-- 
+2.0.1
