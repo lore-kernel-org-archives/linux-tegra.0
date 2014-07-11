@@ -1,84 +1,78 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v3 4/4] ARM: tegra: roth: add display DT node
-Date: Fri, 11 Jul 2014 15:14:22 +0200
-Message-ID: <20140711131421.GD10827@ulmo>
-References: <1404822734-8603-1-git-send-email-acourbot@nvidia.com>
- <1404822734-8603-5-git-send-email-acourbot@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [GIT PULL] pinctrl: Add NVIDIA Tegra XUSB pad controller support
+Date: Fri, 11 Jul 2014 15:49:42 +0200
+Message-ID: <20140711134940.GA13692@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0397952534=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1404822734-8603-5-git-send-email-acourbot@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: gnurou@gmail.com, Terje Bergstrom <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, linux-tegra@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="WIyZ46R2i8wDzkSu"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============0397952534==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="11Y7aswkeuHtSBEs"
-Content-Disposition: inline
-
-
---11Y7aswkeuHtSBEs
+--WIyZ46R2i8wDzkSu
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 08, 2014 at 09:32:14PM +0900, Alexandre Courbot wrote:
-> Tegra DSI support has been fixed to support continuous clock behavior that
-> the panel used on SHIELD requires, so finally add its device tree node
-> since it is functional.
->=20
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> ---
->  arch/arm/boot/dts/tegra114-roth.dts | 22 +++++++++++++++++++---
->  1 file changed, 19 insertions(+), 3 deletions(-)
+Hi Linus,
 
-I've applied this to Tegra's for-3.17/dt branch. Thanks.
+The following changes since commit 7171511eaec5bf23fb06078f59784a3a0626b38f:
 
+  Linux 3.16-rc1 (2014-06-15 17:45:28 -1000)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-3.17/xusb-padctl
+
+for you to fetch changes up to dc0a3938668706f3a63cde4ceb431e9189fb2a0a:
+
+  pinctrl: Add NVIDIA Tegra XUSB pad controller support (2014-07-11 14:41:06 +0200)
+
+I've based the Tegra tree's for-3.17/dt branch on this to handle the
+dependency on the pinctrl-tegra-xusb.h header introduced in this series.
+This for-3.17/xusb-padctl branch is stable, so if you need/want to pull
+it into the pinctrl tree that'll be fine.
+
+Thanks,
 Thierry
 
---11Y7aswkeuHtSBEs
+----------------------------------------------------------------
+Thierry Reding (2):
+      of: Add NVIDIA Tegra XUSB pad controller binding
+      pinctrl: Add NVIDIA Tegra XUSB pad controller support
+
+ .../pinctrl/nvidia,tegra124-xusb-padctl.txt        | 127 +++
+ drivers/pinctrl/Kconfig                            |   6 +
+ drivers/pinctrl/Makefile                           |   1 +
+ drivers/pinctrl/pinctrl-tegra-xusb.c               | 973 +++++++++++++++++++++
+ include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h   |   7 +
+ 5 files changed, 1114 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt
+ create mode 100644 drivers/pinctrl/pinctrl-tegra-xusb.c
+ create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h
+
+--WIyZ46R2i8wDzkSu
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJTv+MtAAoJEN0jrNd/PrOhUcQQAJFUrru8mU40w0L9H6Cu7cVb
-ljJ23wwc81SJo4QzIJIbhIXL0LQkIZ50vt+sgYC7Jzlr9WQ8OU/wvUkvrtUIAPVI
-bf9SoR5zbOi6K+1ih1/5nCFFyhlCQ8Ovp3VHy54fIuG8kI2yPgLchR/9sP0NKZTu
-dYfudFla9bpGpOkGvdXBGMRU18JCQ5P//MN+azjB80qCB79NaQyFAXZMUwiyc5fO
-g/vuFep9+CGDZF6+6vvLcgvBAXK0fu0UXSI3Vl0Lbb2/Wy/3aUqwsgDZ+rU4ORjD
-8c3yY3hwQ9AgAqNORIn7MlB7RlCfMqA1r369CQOwVXIWr7wxuQLJKrADH5kUtPre
-uLL0Lk1YQ7bzuAinI875tKmnKIyN2N/G7f4dmqvFRI9zzw4Qhs2QtuC1eV72MXqG
-CTy38tR0HhQIzEW5GABImH8W/F0QDY98wuh7xFCAWVKPr8LycGtpc8XJvSeFjKzV
-6TWV8PM+cWwU3SuHEBWVYQjRbxgS9hx+VCcS9tl9fnoTls3X+sIg5bDJxgfSPjAf
-cojezho0Yyhi42VCel7XAYX0IJ9FEoW8WUQIlhFQ5Bc+w3W8CpcBNTPj1oL3wS+i
-vicU9kAQCPVcIk8I/z8yGBBsSgKF6psG4Keor/CVLNAd4T4/K9E9a38p00F5qQbR
-1FqiyZ3LqPcgme9nG8oo
-=o2Q7
+iQIcBAEBAgAGBQJTv+t0AAoJEN0jrNd/PrOhLOMP/1wTzhClzWWkgDCuvQBTZH/v
+7XyXWoAPW8D9KUAS3mxS+r5wd43x8Nwp9hIMdm1fnzkZGNFNbgLtXiye8dmFk4zi
+QaASHQ8FoC9sUVEtKFDuLU5VsRHfBCZOCPZvPFufhrxQAOhq+obXDmEA0bvHLDN9
+73xfqj5+6She028xMb4nRYETnxqrdDocTHAbmZH/roH67fmhZ0SLxmbZx/6iIhI0
+LvrYQD4/2Bk8m7TNQkJaWe1T75oF0SV6ZbcX35LShqLh1X74IsMB91Iq7A4hmu1+
++AAtbV5dP7bnPAntB2XZglxBd7AYeTY8Tq5f058dHq3Nq8BHmeF4eb+vi2bBnz0m
+CbdXU1jLXZoPvNeE7vUcbixcqG1Q+k2G19I7zK8H7dIVTXsAx3k3BQyNpb11QIyV
+9TPgGayMRbIEdAPcydMamR6+5Ms9Soven3871KPfCiCh3qSuamfQmVCyiyR/PCos
+0hDqkaTNxvG5TU32rsxXQiih6drQ+3At2QhPfcAIjbvI/dMFXLrBUd22FxtxDfGu
+2U1HmV0+lehopi/5kbictE1yNS37ovWXQGtP9ZFi6bV3KVqmEVlgQ8Yv9ds1ataE
+P4PM1H1MaPyhiUADyVkMcoaVnJGAfZZq+B5WBTM+PSDNXN2KK12RrxuqenXw1Y64
+LyjuoMwknMuDjolvqYMu
+=aDRE
 -----END PGP SIGNATURE-----
 
---11Y7aswkeuHtSBEs--
-
---===============0397952534==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============0397952534==--
+--WIyZ46R2i8wDzkSu--
