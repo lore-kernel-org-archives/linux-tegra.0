@@ -1,47 +1,139 @@
-From: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 2/2] PCI: tegra: Fix license string
-Date: Fri, 11 Jul 2014 16:07:21 +0900
-Message-ID: <004301cf9cd6$c22ae840$4680b8c0$%han@samsung.com>
-References: <1405061938-2191-1-git-send-email-thierry.reding@gmail.com>
- <1405061938-2191-2-git-send-email-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 1/2] resource: Add device-managed request/release_resource()
+Date: Fri, 11 Jul 2014 09:08:24 +0200
+Message-ID: <1405062505-2606-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1405061938-2191-2-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-language: ko
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Thierry Reding' <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, 'Bjorn Helgaas' <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Cc: 'Thomas Petazzoni' <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, 'Jason Cooper' <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, 'Stephen Warren' <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Jingoo Han' <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+To: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday, July 11, 2014 3:59 PM, Thierry Reding wrote:
-> 
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> The proper MODULE_LICENSE() string for the GPL v2 is "GPL v2", not
-> "GPLv2".
-> 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Reviewed-by: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Provide device-managed implementations of the request_resource() and
+release_resource() functions. Upon failure to request a resource, the
+new devm_request_resource() function will output an error message for
+consistent error reporting.
 
-Best regards,
-Jingoo Han
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ Documentation/driver-model/devres.txt |  2 +
+ include/linux/ioport.h                |  5 +++
+ kernel/resource.c                     | 73 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 80 insertions(+)
 
-> ---
->  drivers/pci/host/pci-tegra.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> index 7df5aaf58921..14ec5b2c69e0 100644
-> --- a/drivers/pci/host/pci-tegra.c
-> +++ b/drivers/pci/host/pci-tegra.c
-> @@ -1742,4 +1742,4 @@ module_platform_driver(tegra_pcie_driver);
-> 
->  MODULE_AUTHOR("Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
->  MODULE_DESCRIPTION("NVIDIA Tegra PCIe driver");
-> -MODULE_LICENSE("GPLv2");
-> +MODULE_LICENSE("GPL v2");
-> --
-> 2.0.1
+diff --git a/Documentation/driver-model/devres.txt b/Documentation/driver-model/devres.txt
+index 034d32b00846..b466f3d19bcb 100644
+--- a/Documentation/driver-model/devres.txt
++++ b/Documentation/driver-model/devres.txt
+@@ -252,6 +252,8 @@ IIO
+   devm_iio_device_unregister()
+ 
+ IO region
++  devm_request_resource()
++  devm_release_resource()
+   devm_request_region()
+   devm_request_mem_region()
+   devm_release_region()
+diff --git a/include/linux/ioport.h b/include/linux/ioport.h
+index 142ec544167c..2c5250222278 100644
+--- a/include/linux/ioport.h
++++ b/include/linux/ioport.h
+@@ -215,6 +215,11 @@ static inline int __deprecated check_region(resource_size_t s,
+ 
+ /* Wrappers for managed devices */
+ struct device;
++
++extern int devm_request_resource(struct device *dev, struct resource *root,
++				 struct resource *new);
++extern void devm_release_resource(struct device *dev, struct resource *new);
++
+ #define devm_request_region(dev,start,n,name) \
+ 	__devm_request_region(dev, &ioport_resource, (start), (n), (name))
+ #define devm_request_mem_region(dev,start,n,name) \
+diff --git a/kernel/resource.c b/kernel/resource.c
+index da14b8d09296..39d99aa401a6 100644
+--- a/kernel/resource.c
++++ b/kernel/resource.c
+@@ -1248,6 +1248,79 @@ int release_mem_region_adjustable(struct resource *parent,
+ /*
+  * Managed region resource
+  */
++static void devm_resource_release(struct device *dev, void *ptr)
++{
++	struct resource **r = ptr;
++
++	release_resource(*r);
++}
++
++/**
++ * devm_request_resource() - request and reserve an I/O or memory resource
++ * @dev: device for which to request the resource
++ * @root: root of the resource tree from which to request the resource
++ * @new: descriptor of the resource to request
++ *
++ * This is a device-managed version of request_resource(). There is usually
++ * no need to release resources requested by this function explicitly since
++ * that will be taken care of when the device is unbound from its driver.
++ * If for some reason the resource needs to be released explicitly, because
++ * of ordering issues for example, drivers must call devm_release_resource()
++ * rather than the regular release_resource().
++ *
++ * When a conflict is detected between any existing resources and the newly
++ * requested resource, an error message will be printed.
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int devm_request_resource(struct device *dev, struct resource *root,
++			  struct resource *new)
++{
++	struct resource *conflict, **ptr;
++
++	ptr = devres_alloc(devm_resource_release, sizeof(*ptr), GFP_KERNEL);
++	if (!ptr)
++		return -ENOMEM;
++
++	*ptr = new;
++
++	conflict = request_resource_conflict(root, new);
++	if (!conflict) {
++		devres_add(dev, ptr);
++		return 0;
++	}
++
++	dev_err(dev, "resource collision: %pR conflicts with %s %pR\n", new,
++		conflict->name, conflict);
++	devres_free(ptr);
++	return -EBUSY;
++}
++EXPORT_SYMBOL(devm_request_resource);
++
++static int devm_resource_match(struct device *dev, void *res, void *data)
++{
++	struct resource **ptr = res;
++
++	if (WARN_ON(!ptr || !*ptr))
++		return 0;
++
++	return *ptr == data;
++}
++
++/**
++ * devm_release_resource() - release a previously requested resource
++ * @dev: device for which to release the resource
++ * @new: descriptor of the resource to release
++ *
++ * Releases a resource previously requested using devm_request_resource().
++ */
++void devm_release_resource(struct device *dev, struct resource *new)
++{
++	WARN_ON(devres_release(dev, devm_resource_release, devm_resource_match,
++			       new));
++}
++EXPORT_SYMBOL(devm_release_resource);
++
+ struct region_devres {
+ 	struct resource *parent;
+ 	resource_size_t start;
+-- 
+2.0.1
