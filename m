@@ -1,73 +1,41 @@
 From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH 0/8] Tegra124 EMC (external memory controller) support
-Date: Fri, 11 Jul 2014 17:18:25 +0300
-Message-ID: <1405088313-20048-1-git-send-email-mperttunen@nvidia.com>
+Subject: [PATCH 2/8] ARM: tegra: Remove TEGRA124_CLK_EMC from tegra124-car.h
+Date: Fri, 11 Jul 2014 17:18:27 +0300
+Message-ID: <1405088313-20048-3-git-send-email-mperttunen@nvidia.com>
+References: <1405088313-20048-1-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1405088313-20048-1-git-send-email-mperttunen@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@linaro.org, swarren@wwwdotorg.org, thierry.reding@gmail.com
 Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi everyone,
+Remove the TEGRA124_CLK_EMC cell value define for tegra124-car
+from the binding headers. This clock has never been able to do
+anything and is being replaced with a separate EMC driver with
+its own device tree node. Removing the define ensures that any
+user will not mistakenly refer to <&tegra_car TEGRA124_CLK_EMC>
+instead of <&emc> or similar.
 
-this series adds support for the EMC (external memory controller) clock
-in the Tegra124 system-on-chip. The series has been tested on Jetson TK1.
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+ include/dt-bindings/clock/tegra124-car.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The first two patches remove the old "emc_mux" and "emc" clocks from the
-clock tree and the device tree bindings. This is, of course, not backwards
-compatible, but as these clocks have never been useful for anything
-(apart from maybe reading the boot rate of the EMC clock). If this is still
-not acceptable, the second patch can be dropped.
-
-The second two patches add two clocks, PLL_M_UD and PLL_C_UD, that are
-low jitter variants derived from PLL_M and PLL_C respectively. They are used
-by some higher EMC clock rates as clock parents.
-
-Patch 5 adds device tree binding documentation for the EMC clock node. It is
-a whole separate block on the chip, so it does not go under CAR, as previous
-clocks have done.
-
-Patches 6 and 7 enable the EMC clock on Tegra124 and Jetson TK-1. The driver
-is enabled always, but can only provide read-only access without EMC tables
-that contain hardware characterization data for each operating point of the
-clock.
-
-Patch 8 adds the actual driver. The driver needs to write to both CAR and MC
-registers in addition to EMC registers. These register accesses are either
-shadowed or control a hardware state machine, so delegating them to other
-drivers can be dangerous.
-
-Patch 1 must go before patch 2 and patch 4 needs to go after patch 3
-but otherwise there shouldn't be any compile-time dependencies. 
-Patch 7 has a DTC dependency on patch 3.
-
-Also available from git in
-  git://github.com/cyndis/linux.git, branch emc-v1
-
-Mikko Perttunen (8):
-  clk: tegra124: Remove old emc_mux and emc clocks
-  ARM: tegra: Remove TEGRA124_CLK_EMC from tegra124-car.h
-  ARM: tegra: Add PLL_M_UD and PLL_C_UD to tegra124-car binding header
-  clk: tegra124: Add PLL_M_UD and PLL_C_UD clocks
-  of: Add Tegra124 EMC bindings
-  ARM: tegra: Add EMC to Tegra124 device tree
-  ARM: tegra: Add EMC timings to Jetson TK1 device tree
-  clk: tegra: Add EMC clock driver
-
- .../bindings/memory-controllers/tegra-emc.txt      |   42 +
- arch/arm/boot/dts/tegra124-jetson-tk1-emc.dtsi     | 2323 ++++++++++++++++++++
- arch/arm/boot/dts/tegra124-jetson-tk1.dts          |    2 +
- arch/arm/boot/dts/tegra124.dtsi                    |    6 +
- drivers/clk/tegra/Makefile                         |    2 +-
- drivers/clk/tegra/clk-emc.c                        | 1508 +++++++++++++
- drivers/clk/tegra/clk-tegra124.c                   |   21 +-
- include/dt-bindings/clock/tegra124-car.h           |    8 +-
- 8 files changed, 3896 insertions(+), 16 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt
- create mode 100644 arch/arm/boot/dts/tegra124-jetson-tk1-emc.dtsi
- create mode 100644 drivers/clk/tegra/clk-emc.c
-
+diff --git a/include/dt-bindings/clock/tegra124-car.h b/include/dt-bindings/clock/tegra124-car.h
+index 8a4c589..4faabce 100644
+--- a/include/dt-bindings/clock/tegra124-car.h
++++ b/include/dt-bindings/clock/tegra124-car.h
+@@ -73,7 +73,7 @@
+ #define TEGRA124_CLK_I2C2 54
+ #define TEGRA124_CLK_UARTC 55
+ #define TEGRA124_CLK_MIPI_CAL 56
+-#define TEGRA124_CLK_EMC 57
++/* 57 */
+ #define TEGRA124_CLK_USB2 58
+ #define TEGRA124_CLK_USB3 59
+ /* 60 */
 -- 
 1.8.1.5
