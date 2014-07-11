@@ -1,29 +1,101 @@
-From: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 12/13] cpufreq: Add cpufreq driver for Tegra124
-Date: Fri, 11 Jul 2014 20:07:42 +0530
-Message-ID: <CAKohpon_YKkRP+iYnUaE14fKmcSx_SfWVHPiA48BGiPTCPHTKA@mail.gmail.com>
-References: <1405028569-14253-1-git-send-email-ttynkkynen@nvidia.com>
-	<1405028569-14253-13-git-send-email-ttynkkynen@nvidia.com>
-	<CAKohpom9ORXFiUU4=V+CxgN0ZOFLMEhEjHiU8HsYUYDybNXgHQ@mail.gmail.com>
-	<53BFF132.3020700@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 5/8] of: Add Tegra124 EMC bindings
+Date: Fri, 11 Jul 2014 16:51:47 +0200
+Message-ID: <20140711145146.GA6523@ulmo>
+References: <1405088313-20048-1-git-send-email-mperttunen@nvidia.com>
+ <1405088313-20048-6-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="tThc/1wpZn/ma/RB"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53BFF132.3020700-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1405088313-20048-6-git-send-email-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11 July 2014 19:44, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> Sure, I can do the CPU clock parent change first and then instantiate the
-> cpufreq-cpu0 driver, like highbank-cpufreq. That'll depend on the patch
-> 'cpufreq: cpu0: OPPs can be populated at runtime' from your 'Extend support
-> beyond CPU0' series though, any idea when that patch will land in?
 
-So, after your mail I had a chat with Rafael. As this patch happens to be a
-fix, we will try to take it into 3.16 only (I am going to send few patches out
-of that series separately in few mins). Otherwise 3.17 is where most of it
-should go.
+--tThc/1wpZn/ma/RB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for your agreement to make our life easier :)
+On Fri, Jul 11, 2014 at 05:18:30PM +0300, Mikko Perttunen wrote:
+> Add binding documentation for the nvidia,tegra124-emc device tree
+> node.
+>=20
+> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  .../bindings/memory-controllers/tegra-emc.txt      | 42 ++++++++++++++++=
+++++++
+>  1 file changed, 42 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/=
+tegra-emc.txt
+>=20
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/tegra-e=
+mc.txt b/Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt
+> new file mode 100644
+> index 0000000..2dde17e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt
+> @@ -0,0 +1,42 @@
+> +Tegra124 SoC EMC controller
+> +
+> +Required properties :
+> +- compatible : "nvidia,tegra124-emc".
+> +- reg : Should contain 1 or 2 entries:
+> +  - EMC register set
+> +  - MC register set : Required only if no node with
+> +    'compatible =3D "nvidia,tegra124-mc"' exists. The MC register set
+> +    is first read from the MC node. If it doesn't exist, it is read
+> +    from this property.
+
+No can do. Memory regions shouldn't be shared between drivers like this.
+It makes it impossible to ensure that they don't stump on each others'
+toes.
+
+One possibility to make this work is to export global functions from the
+memory controller driver that this driver can call into. Perhaps if you
+want you can be extra explicit by linking them in DT, like this:
+
+	mc: memory-controller@0,70019000 {
+		compatible =3D "nvidia,tegra124-mc";
+		reg =3D <0x0 0x70019000 0x0 0x00001000>;
+		...
+	};
+
+	memory-controller@0,7001b000 {
+		compatible =3D "nvidia,tegra124-emc";
+		reg =3D <0x0 0x7001b000 0x0 0x00001000>;
+		memory-controller =3D <&mc>;
+		...
+	};
+
+But I think it's safe enough to assume that there will only be a single
+memory controller/EMC pair in the device.
+
+Thierry
+
+--tThc/1wpZn/ma/RB
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTv/oCAAoJEN0jrNd/PrOhzQkQALGAnMdHYbyJkd7LKouan99x
+8GbDnQmaM5ThtC4A27u9fahogSq7MuB15dBkqsR+VKjH7u1Eptkg0YFWbiSn0MIi
+uvLhVBdcqwjqbHoGC/RGjrvU/luqHxUHoBia1hMqBEjm9toZUqoWy+AoBlXN9oYy
+D8+iySspQAueOuFTM1kZrg5t31h/fySyZ2Sflh1unP/q1qEdiZE0NVKU8TaO4bxP
+kXzj6RtW5duPNJjol7yu8YyAWl1MHd7uJjUChBHHX3TzWMK6khMsnl2LkbpvY+19
+r8a6DKooA62qpxFocQwcoB+UQc86Vom7/6QoB22TvaDNwR3CeIOY4I062tfwbDHy
+Mr6FA92mwL8/7t3OqPBie3tx1HhDHZpiQmG+C+/qm7FptKLs/i8yzmqlwQ2nHrkx
+d+KT/Jl61Co8ce7Cvt2+j5pBrw9l4vxgxdKUInb3sbYmz+feGe5hx7DvUVJ3bP7M
+uLlwDRuuTcy76h8UZgnlmBn+gvIYZg8np4R9H2ACuUZBDQl3qOjmom7S2EwVtaXU
+yUtbFnjgnpoZGBn+csLjXfjfK3s/NlBZMvrNgA73soMPjK5v5jJ5l0yL30JlCgmn
+thDmoAoA2qh87YSx5pv95XAcS1rSZcr+KENe2e8QRAMg2aPBFElfsLfjofUgGLZr
+POo682DcBGzbAPcPYGZ1
+=40vN
+-----END PGP SIGNATURE-----
+
+--tThc/1wpZn/ma/RB--
