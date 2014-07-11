@@ -1,92 +1,103 @@
-From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 00/13] Tegra124 CL-DVFS / DFLL clocksource, plus cpufreq
-Date: Fri, 11 Jul 2014 08:32:50 -0700
-Message-ID: <20140711153250.9850.23148@quantum>
-References: <1405028569-14253-1-git-send-email-ttynkkynen@nvidia.com>
+From: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+Subject: Re: [PATCH 5/8] of: Add Tegra124 EMC bindings
+Date: Fri, 11 Jul 2014 19:01:27 +0300
+Message-ID: <53C00A57.5070102@kapsi.fi>
+References: <1405088313-20048-1-git-send-email-mperttunen@nvidia.com> <1405088313-20048-6-git-send-email-mperttunen@nvidia.com> <20140711145146.GA6523@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1405028569-14253-1-git-send-email-ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140711145146.GA6523@ulmo>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@linaro.org, swarren@wwwdotorg.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Tuomas Tynkkynen (2014-07-10 14:42:36)
-> This series implements the DFLL/CL-DVFS clock source for the fast CPU
-> cluster on Tegra124, and a cpufreq driver that uses the DFLL for
-> clocking the CPU. Most of this is based on Paul Walmsley's public patch
-> set from December 2013, which is available at
-> http://comments.gmane.org/gmane.linux.ports.tegra/15273
-> 
-> The DFLL clock hardware is a voltage-controlled oscillator plus
-> control logic that compares the generated output clock with a
-> 51 MHz reference clock, and can make decisions to either lower
-> or raise the DFLL voltage to keep the output rate close to the
-> software-requested rate. The voltage changes are done by
-> communicating with an off-chip PMIC via either I2C or PWM.
-> As the DFLL oscillator is powered via the CPU rail, using
-> the DFLL as the CPU clocksource also gives us dynamic CPU
-> voltage scaling.
+On 07/11/2014 05:51 PM, Thierry Reding wrote:
+> On Fri, Jul 11, 2014 at 05:18:30PM +0300, Mikko Perttunen wrote:
+>> Add binding documentation for the nvidia,tegra124-emc device tree
+>> node.
+>>
+>> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+>> ---
+>>   .../bindings/memory-controllers/tegra-emc.txt      | 42 ++++++++++++++++++++++
+>>   1 file changed, 42 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt b/Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt
+>> new file mode 100644
+>> index 0000000..2dde17e
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt
+>> @@ -0,0 +1,42 @@
+>> +Tegra124 SoC EMC controller
+>> +
+>> +Required properties :
+>> +- compatible : "nvidia,tegra124-emc".
+>> +- reg : Should contain 1 or 2 entries:
+>> +  - EMC register set
+>> +  - MC register set : Required only if no node with
+>> +    'compatible = "nvidia,tegra124-mc"' exists. The MC register set
+>> +    is first read from the MC node. If it doesn't exist, it is read
+>> +    from this property.
+>
+> No can do. Memory regions shouldn't be shared between drivers like this.
+> It makes it impossible to ensure that they don't stump on each others'
+> toes.
 
-Clock driver bits look good to me. CVB table stuff is pretty neat.
+In this case, all the registers that will be written are such that the 
+MC driver will never need to write them. They are shadowed registers, 
+meaning that all writes are stored and are only effective starting from 
+the next time the EMC rate change state machine is activated, so writing 
+them from anywhere except than the EMC driver would be pointless.
 
-Regards,
-Mike
+I can find two users of these registers in downstream:
+1) mc.c saves and loads them on suspend/restore (I don't know why, that 
+shouldn't do anything. They will be overridden anyway during the next 
+EMC rate change).
+2) tegra12x_la.c reads MC_EMEM_ARB_MISC0 during a core_initcall to 
+calculate a value which it then writes to a register that is also 
+shadowed and that is part of downstream burst registers so that doesn't 
+do anything either.
 
-> 
-> This series has been tested on the Jetson TK1 (Rev C). Before attempting
-> to port this to the Venice2, do note that there are two versions of the
-> AS3722 with different voltage tables for the CPU rail (and that Venice2
-> does not have active cooling).
-> 
-> Thanks,
-> Tuomas
-> 
-> Paul Walmsley (1):
->   clk: tegra: Add DFLL DVCO reset control for Tegra124
-> 
-> Tuomas Tynkkynen (12):
->   clk: tegra: Add binding for the Tegra124 DFLL clocksource
->   clk: tegra: Add library for the DFLL clock source (open-loop mode)
->   clk: tegra: Add closed loop support for the DFLL
->   clk: tegra: Add functions for parsing CVB tables
->   clk: tegra: Add Tegra124 DFLL clocksource platform driver
->   clk: tegra: Save/restore CCLKG_BURST_POLICY on suspend
->   clk: tegra: Add the DFLL as a possible parent of the cclk_g clock
->   ARM: tegra: Add the DFLL to Tegra124 device tree
->   ARM: tegra: Enable the DFLL on the Jetson-TK1
->   cpufreq: tegra124: Add device tree bindings
->   cpufreq: Add cpufreq driver for Tegra124
->   ARM: tegra: Add entries for cpufreq on Tegra124
-> 
->  .../bindings/clock/nvidia,tegra124-dfll.txt        |   86 +
->  .../bindings/cpufreq/tegra124-cpufreq.txt          |   37 +
->  arch/arm/boot/dts/tegra124-jetson-tk1.dts          |   83 +-
->  arch/arm/boot/dts/tegra124.dtsi                    |   29 +
->  arch/arm/mach-tegra/Kconfig                        |    1 +
->  drivers/clk/tegra/Makefile                         |    3 +
->  drivers/clk/tegra/clk-dfll.c                       | 1759 ++++++++++++++++++++
->  drivers/clk/tegra/clk-dfll.h                       |   55 +
->  drivers/clk/tegra/clk-tegra-super-gen4.c           |    4 +-
->  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c         |  156 ++
->  drivers/clk/tegra/clk-tegra124.c                   |   61 +
->  drivers/clk/tegra/clk.h                            |    3 +
->  drivers/clk/tegra/cvb.c                            |  133 ++
->  drivers/clk/tegra/cvb.h                            |   67 +
->  drivers/cpufreq/Makefile                           |    1 +
->  drivers/cpufreq/tegra124-cpufreq.c                 |  221 +++
->  16 files changed, 2697 insertions(+), 2 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
->  create mode 100644 Documentation/devicetree/bindings/cpufreq/tegra124-cpufreq.txt
->  create mode 100644 drivers/clk/tegra/clk-dfll.c
->  create mode 100644 drivers/clk/tegra/clk-dfll.h
->  create mode 100644 drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
->  create mode 100644 drivers/clk/tegra/cvb.c
->  create mode 100644 drivers/clk/tegra/cvb.h
->  create mode 100644 drivers/cpufreq/tegra124-cpufreq.c
-> 
-> -- 
-> 1.8.1.5
-> 
+The reason I implemented two ways to specify the MC register area was 
+that this could be merged before an MC driver and retain 
+backwards-compatibility after the MC driver arrives.
+
+If this is not acceptable, we can certainly wait for the MC driver to be 
+merged first. (Although with the general rate of things, I hope I won't 
+be back at school at that point..) I assume that this is blocked on the 
+IOMMU bindings discussion? In that case, there are several options: the 
+MC driver could have its own tables for each EMC rate or we could just 
+make the EMC tables global (i.e. not under the EMC node). In any case, 
+the MC driver would need to implement a function that would just write 
+these values but be guaranteed to not do anything else, since that could 
+cause nasty things during the EMC rate change sequence.
+
+Yet another option is to just not write to these registers at all. In my 
+tests, that would entail a 20-25% penalty to memory throughput for most 
+timings.
+
+>
+> One possibility to make this work is to export global functions from the
+> memory controller driver that this driver can call into. Perhaps if you
+> want you can be extra explicit by linking them in DT, like this:
+>
+> 	mc: memory-controller@0,70019000 {
+> 		compatible = "nvidia,tegra124-mc";
+> 		reg = <0x0 0x70019000 0x0 0x00001000>;
+> 		...
+> 	};
+>
+> 	memory-controller@0,7001b000 {
+> 		compatible = "nvidia,tegra124-emc";
+> 		reg = <0x0 0x7001b000 0x0 0x00001000>;
+> 		memory-controller = <&mc>;
+> 		...
+> 	};
+>
+> But I think it's safe enough to assume that there will only be a single
+> memory controller/EMC pair in the device.
+>
+> Thierry
+>
