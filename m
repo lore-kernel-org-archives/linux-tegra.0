@@ -1,31 +1,75 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 4/4] ARM: tegra: roth: add display DT node
-Date: Sun, 13 Jul 2014 11:37:14 +0900
-Message-ID: <CAAVeFuKMU3vpDoog-k3X82OZn1VR5iRMpwo5LSeX7cPMOqfXVg@mail.gmail.com>
-References: <1404822734-8603-1-git-send-email-acourbot@nvidia.com>
- <1404822734-8603-5-git-send-email-acourbot@nvidia.com> <20140711131421.GD10827@ulmo>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH 00/12] Add NVIDIA Tegra FUSE driver
+Date: Sat, 12 Jul 2014 23:38:15 -0700
+Message-ID: <20140713063815.GA24843@quad.lixom.net>
+References: <1405080971-7609-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140711131421.GD10827@ulmo>
+Content-Disposition: inline
+In-Reply-To: <1405080971-7609-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jul 11, 2014 at 10:14 PM, Thierry Reding
-<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Tue, Jul 08, 2014 at 09:32:14PM +0900, Alexandre Courbot wrote:
->> Tegra DSI support has been fixed to support continuous clock behavior that
->> the panel used on SHIELD requires, so finally add its device tree node
->> since it is functional.
->>
->> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  arch/arm/boot/dts/tegra114-roth.dts | 22 +++++++++++++++++++---
->>  1 file changed, 19 insertions(+), 3 deletions(-)
->
-> I've applied this to Tegra's for-3.17/dt branch. Thanks.
+On Fri, Jul 11, 2014 at 02:15:59PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> This series is an extension of Peter's original series to add a proper
+> driver for the FUSE block on Tegra.
+> 
+> Patches 1 and 2 are preparatory work that cleans up include lists and
+> introduces a function to query the Tegra chip ID rather than accessing
+> a simple variable. This is used by subsequent patches to allow us to
+> execute code when the variable is accessed to help in pin-pointing
+> locations where it's accessed before the driver had a chance to
+> initialize.
+> 
+> Patches 3 through 8 are Peter's series with a fixup patch by Stephen. I
+> also moved the driver to drivers/soc/tegra/fuse as requested by Olof.
+> 
+> Patches 9 and 10 defer usages of the tegra_get_chip_id() function to a
+> later stage (pure_initcall). This allows patch 11 to set up the early
+> FUSE support code from an early initcall. This has the advantage of not
+> requiring an explicit call from SoC setup code in arch/arm/mach-tegra
+> and will allow the code to be shared on 64-bit variants of Tegra.
+> 
+> Patch 12 finally turns the PMC and powergate support code into a proper
+> driver which also sets up a minimal environment from an early initcall.
+> The driver isn't moved out of arch/arm/mach-tegra yet because people
+> have suggested drivers/power as a good home, but that whole directory
+> depends on the POWER_SUPPLY Kconfig symbol yet this driver doesn't have
+> anything to do with that. Once that debate has been settled the driver
+> can easily be moved out in a separate patch.
+> 
+> Some of the patches in this series introduce diagnostic WARN() messages
+> if functions are called without setup having completed. I've booted the
+> v3.16-rc1 kernel with these changes on top on Tegra20 (TrimSlice),
+> Tegra30 (Beaver), Tegra114 (Dalmore) and Tegra124 (Jetson TK1) without
+> encountering any of the diagnostic warnings and without noticing any
+> breakage.
+> 
+> Olof, this series should address the concerns you expressed after
+> reviewing Stephen's earlier pull request for Peter's FUSE driver series.
+> It would be great if you could take another look to see if this is more
+> according to your taste. I'll see if I can take this through linux-next
+> for a little and if you have no objections will submit another pull
+> request next week.
 
-Thanks - how about the other patches of the series? Ideally this one
-should be applied last.
+I haven't looked at all the patches in detail yet, but I do like
+the approach in general. I've also applied and pushed them out for
+build+test here, but they're queued behind a couple of other builds
+so I won't have it until morning (you can poll for boot logs at
+arm-soc.lixom.net/bootlogs/misc/v3.16-rc4-371-g2c9d948 if you want to
+preempt me).
+
+> Peter De Schrijver (5):
+>   ARM: tegra: export apb dma readl/writel
+
+I thought I saw a patch from Peter that moved the apbio read code to
+the fuse driver since there are no other consumers. I think that's a
+reasonable thing to do.
+
+
+-Olof
