@@ -1,112 +1,131 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 00/12] Add NVIDIA Tegra FUSE driver
-Date: Mon, 14 Jul 2014 08:57:57 +0200
-Message-ID: <20140714065756.GG2081@ulmo>
-References: <1405080971-7609-1-git-send-email-thierry.reding@gmail.com>
- <20140713063815.GA24843@quad.lixom.net>
+From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/3] Add Tegra132 support for the cbootimage utility
+Date: Mon, 14 Jul 2014 15:54:28 +0800
+Message-ID: <53C38CB4.5030301@nvidia.com>
+References: <1404987710-26375-1-git-send-email-vinceh@nvidia.com> <1404987710-26375-2-git-send-email-vinceh@nvidia.com> <20140711182317.GA1730@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ahP6B03r4gLOj5uD"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20140713063815.GA24843-O5ziIzlqnXUVNXGz7ipsyg@public.gmane.org>
+In-Reply-To: <20140711182317.GA1730-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 07/12/2014 02:23 AM, Allen Martin wrote:
+> On Thu, Jul 10, 2014 at 03:21:49AM -0700, Vince Hsu wrote:
+>> Signed-off-by: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Need more of a patch description here.  At least mention the new
+> command line arguments, and what Tegra132 is.
+>
+>
+>> @@ -327,6 +328,27 @@ do {                                                        \
+>>          SET_BL_FIELD(to,   field,  v);                      \
+>>   } while (0);
+>>
+>> +#define SET_MTS_FIELD(instance, field, value)   \
+>> +do {                                            \
+>> +       g_soc_config->set_mts_info(context,         \
+>> +               instance,                                                               \
+>> +               token_mts_info_##field,                 \
+>> +               value);                                                         \
+>> +} while (0);
+>> +
+>> +#define GET_MTS_FIELD(instance, field, ptr)            \
+>> +g_soc_config->get_mts_info(context,                            \
+>> +               instance,                                                               \
+>> +               token_mts_info_##field,                                 \
+>> +               ptr);
+>> +
+>> +#define COPY_MTS_FIELD(from, to, field)         \
+>> +do {                                            \
+>> +       u_int32_t v;                                \
+>> +       GET_MTS_FIELD(from, field, &v);             \
+>> +       SET_MTS_FIELD(to,   field,  v);             \
+>> +} while (0);
+>> +
+> The trailing backslashes appear to have a lot of variable whitespace
+> here, can you clean these up?
+>
+>
+>>          return err;
+>>   }
+>>
+>> +/*
+>> + * Load the mts image then update it with the information from config file.
+>> + * In the interest of expediency, all mts's allocated from bottom to top start
+>> + * at page 0 of a block, and all mts's allocated from top to bottom end at
+>> + * the end of a block.
+>> + *
+>> + * @param context              The main context pointer
+>> + * @return 0 for success
+>> + */
+>> +static int
+>> +write_mts_image(build_image_context *context)
+>> +{
+> This whole function is almost identical to write_bootloaders(), can
+> you pull out the common parts of these functions and parameterize the
+> differences to avoid the code duplication?
+>
+>> @@ -87,6 +89,8 @@ static parse_item parse_simple_items[] =
+>>          { "BootLoader=",    token_bootloader,           parse_bootloader },
+>>          { "Redundancy=",    token_redundancy,           parse_value_u32 },
+>>          { "Bctcopy=",       token_bct_copy,             parse_value_u32 },
+>> +       { "MtsPreboot=",    token_mts_preboot,          parse_mts_image},
+>> +       { "Mts=",           token_mts,                          parse_mts_image},
+> Whitespace looks off here
+>
+>
+>>          { "Version=",       token_version,              parse_value_u32 },
+>>          { "PreBctPadBlocks=", token_pre_bct_pad_blocks, parse_value_u32 },
+>>          { NULL, 0, NULL } /* Must be last */
+>> @@ -105,6 +109,8 @@ static parse_item s_top_level_items[] = {
+>>          { "BootLoader=",    token_bootloader,           parse_bootloader },
+>>          { "Redundancy=",    token_redundancy,           parse_value_u32 },
+>>          { "Bctcopy=",       token_bct_copy,             parse_value_u32 },
+>> +       { "MtsPreboot=",    token_mts_preboot,          parse_mts_image},
+>> +       { "Mts=",           token_mts,                          parse_mts_image},
+> and here
+Will modify for all the comments above accordingly. Thanks.
+>
+>
+>> +cbootimage_soc_config tegra132_config = {
+>> +       .init_bad_block_table           = t132_init_bad_block_table,
+>> +       .set_dev_param                          = t132_set_dev_param,
+>> +       .get_dev_param                          = t132_get_dev_param,
+>> +       .set_sdram_param                        = t132_set_sdram_param,
+>> +       .get_sdram_param                        = t132_get_sdram_param,
+>> +       .setbl_param                            = t132_setbl_param,
+>> +       .getbl_param                            = t132_getbl_param,
+>> +       .set_value                                      = t132_bct_set_value,
+>> +       .get_value                                      = t132_bct_get_value,
+>> +       .set_data                                       = t132_bct_set_data,
+>> +       .get_bct_size                           = t132_get_bct_size,
+>> +       .set_mts_info                           = t132_set_mts_info,
+>> +       .get_mts_info                           = t132_get_mts_info,
+>> +       .token_supported                        = t132_bct_token_supported,
+>> +
+>> +       .devtype_table                          = s_devtype_table_t132,
+>> +       .sdmmc_data_width_table         = s_sdmmc_data_width_table_t132,
+>> +       .spi_clock_source_table         = s_spi_clock_source_table_t132,
+>> +       .nvboot_memory_type_table       = s_nvboot_memory_type_table_t132,
+>> +       .sdram_field_table                      = s_sdram_field_table_t132,
+>> +       .nand_table                                     = 0,
+>> +       .sdmmc_table                            = s_sdmmc_table_t132,
+>> +       .spiflash_table                         = s_spiflash_table_t132,
+>> +       .device_type_table                      = s_device_type_table_t132,
+>> +};
+>> +
+> Since Tegra132 and Tegra124 are so similar, can we reuse the Tegra124
+> version of any of these to avoid the duplication?
+We can export most of the functions in nvbctlib_t124.c for this. Do you 
+like that?
 
---ahP6B03r4gLOj5uD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sat, Jul 12, 2014 at 11:38:15PM -0700, Olof Johansson wrote:
-> On Fri, Jul 11, 2014 at 02:15:59PM +0200, Thierry Reding wrote:
-> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >=20
-> > This series is an extension of Peter's original series to add a proper
-> > driver for the FUSE block on Tegra.
-> >=20
-> > Patches 1 and 2 are preparatory work that cleans up include lists and
-> > introduces a function to query the Tegra chip ID rather than accessing
-> > a simple variable. This is used by subsequent patches to allow us to
-> > execute code when the variable is accessed to help in pin-pointing
-> > locations where it's accessed before the driver had a chance to
-> > initialize.
-> >=20
-> > Patches 3 through 8 are Peter's series with a fixup patch by Stephen. I
-> > also moved the driver to drivers/soc/tegra/fuse as requested by Olof.
-> >=20
-> > Patches 9 and 10 defer usages of the tegra_get_chip_id() function to a
-> > later stage (pure_initcall). This allows patch 11 to set up the early
-> > FUSE support code from an early initcall. This has the advantage of not
-> > requiring an explicit call from SoC setup code in arch/arm/mach-tegra
-> > and will allow the code to be shared on 64-bit variants of Tegra.
-> >=20
-> > Patch 12 finally turns the PMC and powergate support code into a proper
-> > driver which also sets up a minimal environment from an early initcall.
-> > The driver isn't moved out of arch/arm/mach-tegra yet because people
-> > have suggested drivers/power as a good home, but that whole directory
-> > depends on the POWER_SUPPLY Kconfig symbol yet this driver doesn't have
-> > anything to do with that. Once that debate has been settled the driver
-> > can easily be moved out in a separate patch.
-> >=20
-> > Some of the patches in this series introduce diagnostic WARN() messages
-> > if functions are called without setup having completed. I've booted the
-> > v3.16-rc1 kernel with these changes on top on Tegra20 (TrimSlice),
-> > Tegra30 (Beaver), Tegra114 (Dalmore) and Tegra124 (Jetson TK1) without
-> > encountering any of the diagnostic warnings and without noticing any
-> > breakage.
-> >=20
-> > Olof, this series should address the concerns you expressed after
-> > reviewing Stephen's earlier pull request for Peter's FUSE driver series.
-> > It would be great if you could take another look to see if this is more
-> > according to your taste. I'll see if I can take this through linux-next
-> > for a little and if you have no objections will submit another pull
-> > request next week.
->=20
-> I haven't looked at all the patches in detail yet, but I do like
-> the approach in general. I've also applied and pushed them out for
-> build+test here, but they're queued behind a couple of other builds
-> so I won't have it until morning (you can poll for boot logs at
-> arm-soc.lixom.net/bootlogs/misc/v3.16-rc4-371-g2c9d948 if you want to
-> preempt me).
-
-Looks like Tegra boards are all fine. Thanks for testing these.
-
-> > Peter De Schrijver (5):
-> >   ARM: tegra: export apb dma readl/writel
->=20
-> I thought I saw a patch from Peter that moved the apbio read code to
-> the fuse driver since there are no other consumers. I think that's a
-> reasonable thing to do.
-
-That's a later patch in this series:
-
-	soc/tegra: fuse: move APB DMA into Tegra20 fuse driver
-
-Thierry
-
---ahP6B03r4gLOj5uD
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJTw390AAoJEN0jrNd/PrOh6sUP/iOYkPVCU3DLjWCZUnI894ov
-IZs40b4YzBmp+wtiOCGagUNjZBHdAdj8kxk6r9QBBHSvXon6nu2mVUDcW8z1iPZ5
-H3STElyTL8JPabRJnu/7wvzpwJDmEeIqUPIyAvTS2yGeG55cY0Om3LZdtlGMEON1
-EtF9VMYdM79XA21hjt0YfbjU0VVt9Tbi83ltrwjvEscJOS0rIVCdid/S5Cfh77go
-+gQ/QhCZmPSxMOmlGOLRHl6A5TDfaT0HNT/U63ZpCvkngOTUsRVmkaaOjIdohciq
-w/qi2GCQ/WSq2sVezzY5Mc29e2PAdNewxLo0AfgadlFBRBqwMfFjWdIGV5UuVQH3
-vtk0JJ5usHZGBslbQoHRUJKicJhiE2LF0+HTnHmJqAAeYGi80SKUquTNfoJIOl48
-uT4wA5MvT+HME9aN7ZfzvKyxrTxGcp4510gGaPm6pL5L8qf3DNhkrRG10EzCdqb0
-bfx/DGIiOyrrpB8K0kAf0Lydeyho1ouCFRxFArlIoEjkk/3zk+QF5v5TPeQ3m57T
-zaJmOD0LpMpjnvjA1HR2MNjL6n3iE/+1fDUGqodzVP0wuI1dQbMwhJvzMepL4zZ/
-ke695F98rUPsTX4gPD1ddqoLKgtx4TKouI33nsp38ok4N5zEFgCBaHucNyJp6Lzf
-pVEvY43icTrZ6zH9zYd+
-=6deC
------END PGP SIGNATURE-----
-
---ahP6B03r4gLOj5uD--
+Thanks,
+Vince
+>
+>
+> -Allen
+>
+> nvpublic
