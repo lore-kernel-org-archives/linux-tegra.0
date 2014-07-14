@@ -1,114 +1,89 @@
-From: Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v4] devicetree: Add generic IOMMU device tree bindings
-Date: Sun, 13 Jul 2014 07:43:08 -0400
-Message-ID: <CAF6AEGt5cQhDCZgYX4=M1EKE=n2J=9G6mO02JMx-+Fcq_0ukfw@mail.gmail.com>
-References: <1404487757-18829-1-git-send-email-thierry.reding@gmail.com>
-	<20140712093917.GD18601@arm.com>
-	<CAF6AEGutHp+3f3iPA+jjaRkqq=5T_vytZ_ESoSqsQ4RHZ8F8yQ@mail.gmail.com>
-	<201407121422.02078.arnd@arndb.de>
-	<CAF6AEGs7=3UByP2DLm-uwU03wr7M14x2t-0hLX-VPJ6_eZbU3g@mail.gmail.com>
-	<20140713094341.GB23235@arm.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 0/3] drm/gk20a: support for reclocking
+Date: Mon, 14 Jul 2014 11:08:37 +0900
+Message-ID: <CAAVeFuJsaH=z7YKPet1eiMhA-QKX2WYgYUrhNDFgU8stL=f9jQ@mail.gmail.com>
+References: <1404977677-22248-1-git-send-email-acourbot@nvidia.com>
+ <CACAvsv7cxHbXaF-0wi=cijACUBdrH_rqamM+=okrb0+cJxYAsw@mail.gmail.com>
+ <53BF4029.5060301@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20140713094341.GB23235-5wv7dgnIgG8@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Varun Sethi <varun.sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-arm-msm <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <53BF4029.5060301-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sun, Jul 13, 2014 at 5:43 AM, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org> wrote:
-> On Sat, Jul 12, 2014 at 01:57:31PM +0100, Rob Clark wrote:
->> On Sat, Jul 12, 2014 at 8:22 AM, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
->> > On Saturday 12 July 2014, Rob Clark wrote:
->> >> >> Was there actually a good reason for having the device link to the
->> >> >> iommu rather than the other way around?  How much would people hate it
->> >> >> if I just ignore the generic bindings and use something that works for
->> >> >> me instead.  I mean, it isn't exactly like there is going to be .dts
->> >> >> re-use across different SoC's..  and at least with current IOMMU API
->> >> >> some sort of of_get_named_iommu() API doesn't really make sense.
->> >> >
->> >> > The thing is, if you end up ignoring the generic binding then we have two
->> >> > IOMMUs using the same (ARM SMMU) binding and it begs the question as to
->> >> > which is the more generic! I know we're keen to get this merged, but merging
->> >> > something that people won't use and calling it generic doesn't seem ideal
->> >> > either. We do, however, desperately need a generic binding.
->> >>
->> >> yeah, ignoring the generic binding is not my first choice.  I'd rather
->> >> have something that works well for everyone.  But I wasn't really sure
->> >> if the current proposal was arbitrary, or if there are some
->> >> conflicting requirements between different platforms.
->> >
->> > The common case that needs to be simple is attaching one (master) device
->> > to an IOMMU using the shared global context for the purposes of implementing
->> > the dma-mapping API.
+On Fri, Jul 11, 2014 at 10:38 AM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> Hi Ben,
+>
+>
+> On 07/11/2014 10:07 AM, Ben Skeggs wrote:
 >>
->> well, I don't disagree that IOMMU API has some problems.  It is too
->> tied to the bus type, which doesn't really seem to make sense for
->> platform devices.  (Unless we start having multiple platform busses?)
+>> On Thu, Jul 10, 2014 at 5:34 PM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> wrote:
+>>>
+>>> This series adds support for reclocking on GK20A. The first two patches
+>>> touch
+>>> the clock subsystem to allow GK20A to operate, by making the presence of
+>>> the
+>>> thermal and voltage devices optional, and allowing pstates to be provided
+>>> directly instead of being probed using the BIOS (which Tegra does not
+>>> have).
 >>
->> But at least given the current IOMMU API I'm not really sure how it
->> makes a difference which way the link goes.  But if there has already
->> been some discussion about how you want to handle the tie in with
->> dma-mapping, if you could point me at that then maybe your point will
->> make more sense to me.
+>> Hey Alex,
+>>
+>> I mentioned a while back I had some stuff in-progress to make
+>> implementing this a bit cleaner for you, but as you can probably tell,
+>> I didn't get to it yet.  It's likely I won't manage to before the next
+>> merge window either.  So, I'll likely take these patches as-is
+>> (assuming no objections on reviews here) and rebase my stuff on top.
 >
-> If you look at the proposed binding in isolation, I think it *is* cleaner
-> than the ARM SMMU binding (I've acked it...) and I believe it's more
-> consistent with the way we describe linkages elsewhere.
 >
-> However, the issue you're raising is that it's more difficult to make use of
-> in a Linux IOMMU driver. The reward you'll get for using it will come
-> eventually when the DMA ops are automatically swizzled for devices using the
-> generic binding.
+> Thanks. You will probably notice that these patches won't apply to your tree
+> and require some tweaking. I will probably end up sending a v2 anyway, so
+> maybe you should wait for it. If you want to try this version anyway, I have
+> fixed-up patches against your tree.
 >
-> My plan for the ARM SMMU driver is:
+> Note that your tree currently won't build against -next because it uses
+> drm_sysfs_connector_add/remove which are not available anymore (replaced by
+> drm_connector_register/unregister I believe).
 >
->   (1) Change ->probe() to walk the device-tree looking for all masters with
->       phandles back to the SMMU instance being probed
+> Oh and while I'm at it, there seems to be a typo in line 131 of clock.h,
+> which should read _nouveau_clock_fini and not _nouveau_clock_init.
 >
->   (2) For each master, extract the Stream IDs and add them to the internal
->       SMMU driver data structures (an rbtree per SMMU instance). For
->       hotpluggable buses, we'll need a way for the bus controller to
->       reserve a range of IDs -- this will likely be a later extension to
->       the binding.
 >
->   (3) When we get an ->add() call, warn if it's a device we haven't seen
->       and reject the addition.
+>>>
+>>> The last patch adds the GK20A clock device. Arguably the clock can be
+>>> seen as a
+>>> stripped-down version of what is seen on NVE0, however instead of using
+>>> NVE0
+>>> support has been written from scratch using the ChromeOS kernel as a
+>>> basis.
+>>> There are several reasons for this:
+>>>
+>>> - The ChromeOS driver uses a lookup table for the P coefficient which I
+>>> could
+>>>    not find in the NVE0 driver,
+>>
+>> Interesting.  Can you give more details on how "PL" works exactly,
+>> we'd been operating on the assumption (mainly inherited from code that
+>> appeared in xf86-video-nv) that it was always a straight division.
 >
-> That way, ->attach() should be the same as it is now, I think.
 >
-> Have you tried implementing something like that? We agreed that (1) isn't
-> pretty, but I don't have a good alternative and it's only done at
-> probe-time.
+> The pl_to_div table in clock/gk20a.c should give the right coefficients, but
+> I have seen contradictory information in our docs. Let me ask the right
+> people so we can get to the bottom of this.
 
-I haven't tried implementing that yet, but I'm sure it would work.  I
-was just hoping to avoid having to do that ;-)
-
-I suppose perhaps there is room for a shared helper here, to at least
-avoid duplicating that in each IOMMU driver which needs the
-stream-id's up front.
-
-> Will
->
-> BTW: Is the msm-v0 IOMMU compatible with the ARM SMMU driver, or is it a
-> completely different design requiring a different driver?
-
-My understanding is that it is different from msm v1 IOMMU, although I
-think it shares the same pagetable format with v1.  Not sure if that
-is the same as arm-smmu?   If so it might be nice to try to extract
-out some shared helper fxns for map/unmap as well.
-
-I expect Olav knows better the similarities/differences.
-
-BR,
--R
+So as it turns out this seems to be gk20a-specific. Other Kepler GPUs
+use it as a straight division, but gk20a uses a narrower range and
+thus requires this table.
