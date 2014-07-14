@@ -1,105 +1,97 @@
-From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 5/8] of: Add Tegra124 EMC bindings
-Date: Mon, 14 Jul 2014 12:57:26 +0300
-Message-ID: <53C3A986.9050602@nvidia.com>
-References: <1405088313-20048-1-git-send-email-mperttunen@nvidia.com> <1405088313-20048-6-git-send-email-mperttunen@nvidia.com> <20140711145146.GA6523@ulmo> <53C00A57.5070102@kapsi.fi> <53C38D07.4030402@nvidia.com> <20140714081524.GI2081@ulmo> <53C39D98.9040802@nvidia.com> <20140714093136.GB9755@ulmo>
+From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v4] devicetree: Add generic IOMMU device tree bindings
+Date: Mon, 14 Jul 2014 11:08:13 +0100
+Message-ID: <20140714100813.GC1779@arm.com>
+References: <1404487757-18829-1-git-send-email-thierry.reding@gmail.com>
+	<20140712093917.GD18601@arm.com>
+	<CAF6AEGutHp+3f3iPA+jjaRkqq=5T_vytZ_ESoSqsQ4RHZ8F8yQ@mail.gmail.com>
+	<201407121422.02078.arnd@arndb.de>
+	<CAF6AEGs7=3UByP2DLm-uwU03wr7M14x2t-0hLX-VPJ6_eZbU3g@mail.gmail.com>
+	<20140713094341.GB23235@arm.com> <20140714064452.GD2081@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140714093136.GB9755@ulmo>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20140714064452.GD2081@ulmo>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Varun Sethi <varun.sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-arm-msm <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 14/07/14 12:31, Thierry Reding wrote:
-> * PGP Signed by an unknown key
->
-> On Mon, Jul 14, 2014 at 12:06:32PM +0300, Mikko Perttunen wrote:
->> On 14/07/14 11:15, Thierry Reding wrote:
->>>> Old Signed by an unknown key
->>>
->>> On Mon, Jul 14, 2014 at 10:55:51AM +0300, Mikko Perttunen wrote:
->>>> On 11/07/14 19:01, Mikko Perttunen wrote:
->>>>> On 07/11/2014 05:51 PM, Thierry Reding wrote:
->>>>>> On Fri, Jul 11, 2014 at 05:18:30PM +0300, Mikko Perttunen wrote:
->>>>>>> ...
->>>>>> ...
->>>>>
->>>>> In this case, all the registers that will be written are such that the
->>>>> MC driver will never need to write them. They are shadowed registers,
->>>>> meaning that all writes are stored and are only effective starting from
->>>>> the next time the EMC rate change state machine is activated, so writing
->>>>> them from anywhere except than the EMC driver would be pointless.
->>>>>
->>>>> I can find two users of these registers in downstream:
->>>>> 1) mc.c saves and loads them on suspend/restore (I don't know why, that
->>>>> shouldn't do anything. They will be overridden anyway during the next
->>>>> EMC rate change).
->>>>> 2) tegra12x_la.c reads MC_EMEM_ARB_MISC0 during a core_initcall to
->>>>> calculate a value which it then writes to a register that is also
->>>>> shadowed and that is part of downstream burst registers so that doesn't
->>>>> do anything either.
->>>>>
->>>>> The reason I implemented two ways to specify the MC register area was
->>>>> that this could be merged before an MC driver and retain
->>>>> backwards-compatibility after the MC driver arrives.
->>>>>
->>>>> If this is not acceptable, we can certainly wait for the MC driver to be
->>>>> merged first. (Although with the general rate of things, I hope I won't
->>>>> be back at school at that point..) I assume that this is blocked on the
->>>>> IOMMU bindings discussion? In that case, there are several options: the
->>>>> MC driver could have its own tables for each EMC rate or we could just
->>>>> make the EMC tables global (i.e. not under the EMC node). In any case,
->>>>> the MC driver would need to implement a function that would just write
->>>>> these values but be guaranteed to not do anything else, since that could
->>>>> cause nasty things during the EMC rate change sequence.
->>>>
->>>> Having taken another look at the code, I don't think the MC driver could do
->>>> anything that bad. There are also two other places where the EMC driver
->>>> needs to read MC registers: Inside the sequence, it reads a register but
->>>> discards its contents. According to comments, this acts as a memory barrier,
->>>> probably for the preceding step that writes into MC memory. If the register
->>>> writes are moved to the MC driver, it could also handle that. In another
->>>> place it reads the number of RAM modules from a MC register. The MC driver
->>>> could export this as another function.
->>>
->>> Exporting this functionality from the MC driver is the right thing to do
->>> in my opinion.
->>
->> Ok, let's do that then. Do you think I could make a bare-bones MC driver to
->> support the EMC driver before your MC driver with IOMMU/LA is ready? Can the
->> MC device tree node be stabilized yet? Of course, if things go well, that
->> concern might turn out to be unnecessary.
->
-> Well, at this point this isn't 3.17 material anyway, so there's no need
-> to rush things.
+Hi Thierry,
 
-Very true.
+On Mon, Jul 14, 2014 at 07:44:53AM +0100, Thierry Reding wrote:
+> On Sun, Jul 13, 2014 at 10:43:41AM +0100, Will Deacon wrote:
+> > My plan for the ARM SMMU driver is:
+> > 
+> >   (1) Change ->probe() to walk the device-tree looking for all masters with
+> >       phandles back to the SMMU instance being probed
+> 
+> You and Rob mentioned this several times and I don't understand why the
+> SMMU needs to know all masters up front. Is this necessary because it
+> needs to program all registers at .probe() time and they can't be
+> reprogrammed subsequently? Or is this just some kind of optimization?
 
-> I'd prefer to take a patch on top of my proposed MC
-> driver patch in anticipation of merging that for 3.18. But if it turns
-> out that for whatever reason we can't do that, having a separate patch
-> makes it easy to extract the changes into a bare-bones driver.
+It's an optimization to reduce resource usage in the IOMMU, but one that
+is *required* by certain platforms (e.g. Olav mentioned his 43-ID master
+and Calxeda had something similar).
 
-Yes, this sounds sensible. I'll make such a patch. I suppose having 
-another timings table in the MC node with just the rate and 
-mc-burst-data would separate the concerns best. It occurs to me that we 
-could also write the regs in the pre-rate change notifier, but this 
-would turn the dependency around and would mean that the regs are not 
-written when entering backup rates. The latter shouldn't be a problem 
-but the reversed dependency would, so I guess a custom function is the 
-way to go, and we need to add at least one anyway.
+Basically, in order to perform an ->attach() for a master to a domain, we
+need complete knowledge of the system so that we can avoid accidentally
+attaching other masters to the same domain. The programming is done using
+a form of StreamID wildcarding, so at this point we would need to have
+parsed the entire DT to ensure our wildcard doesn't match other masters.
 
-The downstream kernel also overwrites most LA registers during EMC rate 
-change without regard for the driver-set values, and we might have to 
-read those values from the device tree too. Upstream can do this in rate 
-change notifiers if needed. I'll look into this a bit more.
+> >   (2) For each master, extract the Stream IDs and add them to the internal
+> >       SMMU driver data structures (an rbtree per SMMU instance). For
+> >       hotpluggable buses, we'll need a way for the bus controller to
+> >       reserve a range of IDs -- this will likely be a later extension to
+> >       the binding.
+> > 
+> >   (3) When we get an ->add() call, warn if it's a device we haven't seen
+> >       and reject the addition.
+> 
+> It seems to me like this would be the logical place to parse stream IDs.
 
->
-> Thierry
->
-> * Unknown Key
-> * 0x7F3EB3A1
->
+We could do that only if we were guaranteed to have an ->add() call for
+*every* master before an ->attach() call for *any* master. I don't think
+that is necessarily true.
+
+> You could for example have a case where some device tree contains a node
+> for which no driver will ever be loaded (for example because it hasn't
+> been built-in, or the device is never used and the module is therefore
+> never loaded). That's a situation that you cannot determine by simply
+> walking the device tree in the IOMMU's .probe().
+
+Why not? If we're simply searching for phandles to the IOMMU, why does it
+matter whether a driver is bound to the master?
+
+> I've always thought about IOMMU masters much in the same way as other
+> types of resources, such as memory or interrupts. In the rest of the
+> kernel we do carefully try to postpone allocation of these resources
+> until they are required, specifically so we don't waste resources when
+> they're unused.
+
+See above, they are all required the moment anybody tries an ->attach().
+
+> That's also one of the reasons why I think associating an IOMMU with the
+> bus type is bad. Currently if an IOMMU driver thinks it should enable
+> translation for a given device, then there's no way for that device's
+> driver to opt out again. There may be reasons (performance, hardware
+> bugs, ...) for the driver to decide against using the IOMMU for
+> translation, but there's currently no way to do that if the IOMMU driver
+> disagrees.
+
+Yes, we need a way to associate an IOMMU with a bus instance, but I think
+that's a separate topic, no?
+
+Will
