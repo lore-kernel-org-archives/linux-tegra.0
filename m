@@ -1,124 +1,60 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 5/8] of: Add Tegra124 EMC bindings
-Date: Mon, 14 Jul 2014 11:31:37 +0200
-Message-ID: <20140714093136.GB9755@ulmo>
-References: <1405088313-20048-1-git-send-email-mperttunen@nvidia.com>
- <1405088313-20048-6-git-send-email-mperttunen@nvidia.com>
- <20140711145146.GA6523@ulmo>
- <53C00A57.5070102@kapsi.fi>
- <53C38D07.4030402@nvidia.com>
- <20140714081524.GI2081@ulmo>
- <53C39D98.9040802@nvidia.com>
+Subject: Re: [PATCH v2 2/4] ARM: tegra: Add resets & has-utmi-pad-registers
+ flag to all USB PHYs
+Date: Mon, 14 Jul 2014 11:51:06 +0200
+Message-ID: <20140714095105.GA9870@ulmo>
+References: <1404436179-10745-1-git-send-email-ttynkkynen@nvidia.com>
+ <1404436179-10745-3-git-send-email-ttynkkynen@nvidia.com>
+ <53BEAD70.5010504@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="0ntfKIWw70PvrIHh"
+	protocol="application/pgp-signature"; boundary="r5Pyd7+fXNt84Ff3"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <53C39D98.9040802-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <53BEAD70.5010504-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---0ntfKIWw70PvrIHh
+--r5Pyd7+fXNt84Ff3
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 14, 2014 at 12:06:32PM +0300, Mikko Perttunen wrote:
-> On 14/07/14 11:15, Thierry Reding wrote:
-> >* PGP Signed by an unknown key
-> >
-> >On Mon, Jul 14, 2014 at 10:55:51AM +0300, Mikko Perttunen wrote:
-> >>On 11/07/14 19:01, Mikko Perttunen wrote:
-> >>>On 07/11/2014 05:51 PM, Thierry Reding wrote:
-> >>>>On Fri, Jul 11, 2014 at 05:18:30PM +0300, Mikko Perttunen wrote:
-> >>>>>...
-> >>>>...
-> >>>
-> >>>In this case, all the registers that will be written are such that the
-> >>>MC driver will never need to write them. They are shadowed registers,
-> >>>meaning that all writes are stored and are only effective starting from
-> >>>the next time the EMC rate change state machine is activated, so writi=
-ng
-> >>>them from anywhere except than the EMC driver would be pointless.
-> >>>
-> >>>I can find two users of these registers in downstream:
-> >>>1) mc.c saves and loads them on suspend/restore (I don't know why, that
-> >>>shouldn't do anything. They will be overridden anyway during the next
-> >>>EMC rate change).
-> >>>2) tegra12x_la.c reads MC_EMEM_ARB_MISC0 during a core_initcall to
-> >>>calculate a value which it then writes to a register that is also
-> >>>shadowed and that is part of downstream burst registers so that doesn't
-> >>>do anything either.
-> >>>
-> >>>The reason I implemented two ways to specify the MC register area was
-> >>>that this could be merged before an MC driver and retain
-> >>>backwards-compatibility after the MC driver arrives.
-> >>>
-> >>>If this is not acceptable, we can certainly wait for the MC driver to =
-be
-> >>>merged first. (Although with the general rate of things, I hope I won't
-> >>>be back at school at that point..) I assume that this is blocked on the
-> >>>IOMMU bindings discussion? In that case, there are several options: the
-> >>>MC driver could have its own tables for each EMC rate or we could just
-> >>>make the EMC tables global (i.e. not under the EMC node). In any case,
-> >>>the MC driver would need to implement a function that would just write
-> >>>these values but be guaranteed to not do anything else, since that cou=
-ld
-> >>>cause nasty things during the EMC rate change sequence.
-> >>
-> >>Having taken another look at the code, I don't think the MC driver coul=
-d do
-> >>anything that bad. There are also two other places where the EMC driver
-> >>needs to read MC registers: Inside the sequence, it reads a register but
-> >>discards its contents. According to comments, this acts as a memory bar=
-rier,
-> >>probably for the preceding step that writes into MC memory. If the regi=
-ster
-> >>writes are moved to the MC driver, it could also handle that. In another
-> >>place it reads the number of RAM modules from a MC register. The MC dri=
-ver
-> >>could export this as another function.
-> >
-> >Exporting this functionality from the MC driver is the right thing to do
-> >in my opinion.
+On Thu, Jul 10, 2014 at 06:12:48PM +0300, Tuomas Tynkkynen wrote:
+> Thierry,
 >=20
-> Ok, let's do that then. Do you think I could make a bare-bones MC driver =
-to
-> support the EMC driver before your MC driver with IOMMU/LA is ready? Can =
-the
-> MC device tree node be stabilized yet? Of course, if things go well, that
-> concern might turn out to be unnecessary.
+> Since Stephen's on a vacation, I'd like to double-check with you that the=
+ DT
+> changes looks good. Greg has applied these to the USB tree today.
 
-Well, at this point this isn't 3.17 material anyway, so there's no need
-to rush things. I'd prefer to take a patch on top of my proposed MC
-driver patch in anticipation of merging that for 3.18. But if it turns
-out that for whatever reason we can't do that, having a separate patch
-makes it easy to extract the changes into a bare-bones driver.
+Yes, looks sane to me. Not sure how much people will like to see the DTS
+changes go in through the USB tree, but I don't see a lot of potential
+for conflicts, so chances are nobody will notice anyway.
 
 Thierry
 
---0ntfKIWw70PvrIHh
+--r5Pyd7+fXNt84Ff3
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJTw6N4AAoJEN0jrNd/PrOh//IQAKKu+8XkU1NQ3I6maWLqiOs8
-I3SnT9bBaQTukLfsIqh+t4t3CAXIJrzm7pC4VXRxG3o/ZmEC37KXiwb/Ryhqm84K
-oUFtBaoFgTlyO/tM0m2nKJmv22zCF58t3fU+VsHgYpA/3Hddu7OWZUYTvFSEZF8U
-qg4EsgbpV20MBmbHCnMgo1CYYn5ZT4Rd6HCb8djMkw2b0WjMtCf0wZwht8TbEifU
-och/XL88TYoE9bgSiR9HmITrmhLLpdSCCiD1bEdhAZYZRRellYJfknS8slFkFaIs
-p55WyrlZJBmPYPTtvkzmwUxjibPfgE5ZSIvR9JYCbYAbv2GB1tMHgUVT770vlMWQ
-rWEVKtkEvRNnxHJq8lxBhBEGkwtmvWYsOEfsn+L3oDxWFxFDHyjda9ytY1AjgN+p
-gwJR3gZDEALDT772RgFTuzMc5nfBA/Utl4EjNRS/hEyvDT8X2HJ9YtAEQeXxPCL/
-+V3JG9yBnmMCB0CY/INIO9wzMU6dbKMIGxy126CI2S1IPFJttqPT4nM3UAQQ2nMy
-FsLNZN9vAgyQIsA0oUu98em9qFwgVjXlP6k5l7T0IoZ2A69QHHFfofA69ZdjmWcD
-/99XtyjROWw1AH79bIJVlY0g+BvzGs6Jn3BA02goXGo/OQH9Ya9lNHbSmZrQtkbt
-+hP/XzSyF1PBSpwzba9O
-=7mmC
+iQIcBAEBAgAGBQJTw6gJAAoJEN0jrNd/PrOhGZYQAIWAWjQKLY6zmitSDSIQ3YFr
+CEdHCnI1/VVaVNLRLtUM7e/qRvY34W9mrY4wIi3u8SbwbiVKURjuZpbsc+bc0TC5
+ykdTgi9/AnLbddqVVupzrZrYbi7+T1r/F++J3eGLHnPAl1ckwO0gc8DJ4NInMlEM
+4+jCpvMCFxeL58HOqhDfTmocQojJpUz0IvRv2SmjStehgMIIDBEQuL4Mqbzp00eV
+jPPQ+TN7GmiCIHjm6KJxy9C4brP5YBYwdmXXIgqmkQN7AmXCVCGHG8Ebh55x3Tbg
+5vQ0KljngDRjXm9OWmX1hgZYTZ+eYZl5ceMw2/pCVr30PHjYxDtM7Yg6ZhYsOQ6F
+8vPxYe73um8uXAs+7HNWQRce9GZc+FwegW+NizBqszUqfkL12ZAtB7Szds6mVa56
+LXyAsKYJ30y1aico6CUlcm1P/UDpY2IA2Qg/BVattfdmKtaGR8FAaSljppKCFCOk
+DuynaPLtFkwlnBklXVgK9xxIPZ2E+QCBASKpHCfaVdRidDpa6Ca/0NKBmT98NfrM
+bNqGF6ALhIWwZUSXS++MUyL/C6aeu286f7SwM3pz3iaJtsc9EvoSc/FHNV7cOpY1
+i3PFyCLMlis73MjlnHGXeCIzux5X34vPvusqNboFDE4yyox0w4iBRYnFXEbLAkmS
+bCzBIuyIcRVCPHbPn4O3
+=WvrZ
 -----END PGP SIGNATURE-----
 
---0ntfKIWw70PvrIHh--
+--r5Pyd7+fXNt84Ff3--
