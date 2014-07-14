@@ -1,60 +1,105 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 2/4] ARM: tegra: Add resets & has-utmi-pad-registers
- flag to all USB PHYs
-Date: Mon, 14 Jul 2014 11:51:06 +0200
-Message-ID: <20140714095105.GA9870@ulmo>
-References: <1404436179-10745-1-git-send-email-ttynkkynen@nvidia.com>
- <1404436179-10745-3-git-send-email-ttynkkynen@nvidia.com>
- <53BEAD70.5010504@nvidia.com>
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 5/8] of: Add Tegra124 EMC bindings
+Date: Mon, 14 Jul 2014 12:57:26 +0300
+Message-ID: <53C3A986.9050602@nvidia.com>
+References: <1405088313-20048-1-git-send-email-mperttunen@nvidia.com> <1405088313-20048-6-git-send-email-mperttunen@nvidia.com> <20140711145146.GA6523@ulmo> <53C00A57.5070102@kapsi.fi> <53C38D07.4030402@nvidia.com> <20140714081524.GI2081@ulmo> <53C39D98.9040802@nvidia.com> <20140714093136.GB9755@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="r5Pyd7+fXNt84Ff3"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <53BEAD70.5010504-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20140714093136.GB9755@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 14/07/14 12:31, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+>
+> On Mon, Jul 14, 2014 at 12:06:32PM +0300, Mikko Perttunen wrote:
+>> On 14/07/14 11:15, Thierry Reding wrote:
+>>>> Old Signed by an unknown key
+>>>
+>>> On Mon, Jul 14, 2014 at 10:55:51AM +0300, Mikko Perttunen wrote:
+>>>> On 11/07/14 19:01, Mikko Perttunen wrote:
+>>>>> On 07/11/2014 05:51 PM, Thierry Reding wrote:
+>>>>>> On Fri, Jul 11, 2014 at 05:18:30PM +0300, Mikko Perttunen wrote:
+>>>>>>> ...
+>>>>>> ...
+>>>>>
+>>>>> In this case, all the registers that will be written are such that the
+>>>>> MC driver will never need to write them. They are shadowed registers,
+>>>>> meaning that all writes are stored and are only effective starting from
+>>>>> the next time the EMC rate change state machine is activated, so writing
+>>>>> them from anywhere except than the EMC driver would be pointless.
+>>>>>
+>>>>> I can find two users of these registers in downstream:
+>>>>> 1) mc.c saves and loads them on suspend/restore (I don't know why, that
+>>>>> shouldn't do anything. They will be overridden anyway during the next
+>>>>> EMC rate change).
+>>>>> 2) tegra12x_la.c reads MC_EMEM_ARB_MISC0 during a core_initcall to
+>>>>> calculate a value which it then writes to a register that is also
+>>>>> shadowed and that is part of downstream burst registers so that doesn't
+>>>>> do anything either.
+>>>>>
+>>>>> The reason I implemented two ways to specify the MC register area was
+>>>>> that this could be merged before an MC driver and retain
+>>>>> backwards-compatibility after the MC driver arrives.
+>>>>>
+>>>>> If this is not acceptable, we can certainly wait for the MC driver to be
+>>>>> merged first. (Although with the general rate of things, I hope I won't
+>>>>> be back at school at that point..) I assume that this is blocked on the
+>>>>> IOMMU bindings discussion? In that case, there are several options: the
+>>>>> MC driver could have its own tables for each EMC rate or we could just
+>>>>> make the EMC tables global (i.e. not under the EMC node). In any case,
+>>>>> the MC driver would need to implement a function that would just write
+>>>>> these values but be guaranteed to not do anything else, since that could
+>>>>> cause nasty things during the EMC rate change sequence.
+>>>>
+>>>> Having taken another look at the code, I don't think the MC driver could do
+>>>> anything that bad. There are also two other places where the EMC driver
+>>>> needs to read MC registers: Inside the sequence, it reads a register but
+>>>> discards its contents. According to comments, this acts as a memory barrier,
+>>>> probably for the preceding step that writes into MC memory. If the register
+>>>> writes are moved to the MC driver, it could also handle that. In another
+>>>> place it reads the number of RAM modules from a MC register. The MC driver
+>>>> could export this as another function.
+>>>
+>>> Exporting this functionality from the MC driver is the right thing to do
+>>> in my opinion.
+>>
+>> Ok, let's do that then. Do you think I could make a bare-bones MC driver to
+>> support the EMC driver before your MC driver with IOMMU/LA is ready? Can the
+>> MC device tree node be stabilized yet? Of course, if things go well, that
+>> concern might turn out to be unnecessary.
+>
+> Well, at this point this isn't 3.17 material anyway, so there's no need
+> to rush things.
 
---r5Pyd7+fXNt84Ff3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Very true.
 
-On Thu, Jul 10, 2014 at 06:12:48PM +0300, Tuomas Tynkkynen wrote:
-> Thierry,
->=20
-> Since Stephen's on a vacation, I'd like to double-check with you that the=
- DT
-> changes looks good. Greg has applied these to the USB tree today.
+> I'd prefer to take a patch on top of my proposed MC
+> driver patch in anticipation of merging that for 3.18. But if it turns
+> out that for whatever reason we can't do that, having a separate patch
+> makes it easy to extract the changes into a bare-bones driver.
 
-Yes, looks sane to me. Not sure how much people will like to see the DTS
-changes go in through the USB tree, but I don't see a lot of potential
-for conflicts, so chances are nobody will notice anyway.
+Yes, this sounds sensible. I'll make such a patch. I suppose having 
+another timings table in the MC node with just the rate and 
+mc-burst-data would separate the concerns best. It occurs to me that we 
+could also write the regs in the pre-rate change notifier, but this 
+would turn the dependency around and would mean that the regs are not 
+written when entering backup rates. The latter shouldn't be a problem 
+but the reversed dependency would, so I guess a custom function is the 
+way to go, and we need to add at least one anyway.
 
-Thierry
+The downstream kernel also overwrites most LA registers during EMC rate 
+change without regard for the driver-set values, and we might have to 
+read those values from the device tree too. Upstream can do this in rate 
+change notifiers if needed. I'll look into this a bit more.
 
---r5Pyd7+fXNt84Ff3
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJTw6gJAAoJEN0jrNd/PrOhGZYQAIWAWjQKLY6zmitSDSIQ3YFr
-CEdHCnI1/VVaVNLRLtUM7e/qRvY34W9mrY4wIi3u8SbwbiVKURjuZpbsc+bc0TC5
-ykdTgi9/AnLbddqVVupzrZrYbi7+T1r/F++J3eGLHnPAl1ckwO0gc8DJ4NInMlEM
-4+jCpvMCFxeL58HOqhDfTmocQojJpUz0IvRv2SmjStehgMIIDBEQuL4Mqbzp00eV
-jPPQ+TN7GmiCIHjm6KJxy9C4brP5YBYwdmXXIgqmkQN7AmXCVCGHG8Ebh55x3Tbg
-5vQ0KljngDRjXm9OWmX1hgZYTZ+eYZl5ceMw2/pCVr30PHjYxDtM7Yg6ZhYsOQ6F
-8vPxYe73um8uXAs+7HNWQRce9GZc+FwegW+NizBqszUqfkL12ZAtB7Szds6mVa56
-LXyAsKYJ30y1aico6CUlcm1P/UDpY2IA2Qg/BVattfdmKtaGR8FAaSljppKCFCOk
-DuynaPLtFkwlnBklXVgK9xxIPZ2E+QCBASKpHCfaVdRidDpa6Ca/0NKBmT98NfrM
-bNqGF6ALhIWwZUSXS++MUyL/C6aeu286f7SwM3pz3iaJtsc9EvoSc/FHNV7cOpY1
-i3PFyCLMlis73MjlnHGXeCIzux5X34vPvusqNboFDE4yyox0w4iBRYnFXEbLAkmS
-bCzBIuyIcRVCPHbPn4O3
-=WvrZ
------END PGP SIGNATURE-----
-
---r5Pyd7+fXNt84Ff3--
+>
+> Thierry
+>
+> * Unknown Key
+> * 0x7F3EB3A1
+>
