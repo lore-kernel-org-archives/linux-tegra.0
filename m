@@ -1,90 +1,68 @@
-From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 5/8] of: Add Tegra124 EMC bindings
-Date: Mon, 14 Jul 2014 12:06:32 +0300
-Message-ID: <53C39D98.9040802@nvidia.com>
-References: <1405088313-20048-1-git-send-email-mperttunen@nvidia.com> <1405088313-20048-6-git-send-email-mperttunen@nvidia.com> <20140711145146.GA6523@ulmo> <53C00A57.5070102@kapsi.fi> <53C38D07.4030402@nvidia.com> <20140714081524.GI2081@ulmo>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 01/13] clk: tegra: Add binding for the Tegra124 DFLL
+ clocksource
+Date: Mon, 14 Jul 2014 10:12:33 +0100
+Message-ID: <20140714091233.GC6800@sirena.org.uk>
+References: <1405028569-14253-1-git-send-email-ttynkkynen@nvidia.com>
+ <1405028569-14253-2-git-send-email-ttynkkynen@nvidia.com>
+ <CAL1qeaFF0ZpUFovxTuLXrBPRg2Lbf-754Z=ztD5HFZPbfnDsAw@mail.gmail.com>
+ <53C01558.3090607@nvidia.com>
+ <CAL1qeaHETQ7kSGNjPiwi_9WNMtr9qZp0KwjZCCxY29+_N4AcuA@mail.gmail.com>
+ <53C01D17.2050906@nvidia.com>
+ <20140714083854.GO2081@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Izn7cH1Com+I3R9J"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140714081524.GI2081@ulmo>
+Content-Disposition: inline
+In-Reply-To: <20140714083854.GO2081@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 14/07/14 11:15, Thierry Reding wrote:
-> * PGP Signed by an unknown key
->
-> On Mon, Jul 14, 2014 at 10:55:51AM +0300, Mikko Perttunen wrote:
->> On 11/07/14 19:01, Mikko Perttunen wrote:
->>> On 07/11/2014 05:51 PM, Thierry Reding wrote:
->>>> On Fri, Jul 11, 2014 at 05:18:30PM +0300, Mikko Perttunen wrote:
->>>>> ...
->>>> ...
->>>
->>> In this case, all the registers that will be written are such that the
->>> MC driver will never need to write them. They are shadowed registers,
->>> meaning that all writes are stored and are only effective starting from
->>> the next time the EMC rate change state machine is activated, so writing
->>> them from anywhere except than the EMC driver would be pointless.
->>>
->>> I can find two users of these registers in downstream:
->>> 1) mc.c saves and loads them on suspend/restore (I don't know why, that
->>> shouldn't do anything. They will be overridden anyway during the next
->>> EMC rate change).
->>> 2) tegra12x_la.c reads MC_EMEM_ARB_MISC0 during a core_initcall to
->>> calculate a value which it then writes to a register that is also
->>> shadowed and that is part of downstream burst registers so that doesn't
->>> do anything either.
->>>
->>> The reason I implemented two ways to specify the MC register area was
->>> that this could be merged before an MC driver and retain
->>> backwards-compatibility after the MC driver arrives.
->>>
->>> If this is not acceptable, we can certainly wait for the MC driver to be
->>> merged first. (Although with the general rate of things, I hope I won't
->>> be back at school at that point..) I assume that this is blocked on the
->>> IOMMU bindings discussion? In that case, there are several options: the
->>> MC driver could have its own tables for each EMC rate or we could just
->>> make the EMC tables global (i.e. not under the EMC node). In any case,
->>> the MC driver would need to implement a function that would just write
->>> these values but be guaranteed to not do anything else, since that could
->>> cause nasty things during the EMC rate change sequence.
->>
->> Having taken another look at the code, I don't think the MC driver could do
->> anything that bad. There are also two other places where the EMC driver
->> needs to read MC registers: Inside the sequence, it reads a register but
->> discards its contents. According to comments, this acts as a memory barrier,
->> probably for the preceding step that writes into MC memory. If the register
->> writes are moved to the MC driver, it could also handle that. In another
->> place it reads the number of RAM modules from a MC register. The MC driver
->> could export this as another function.
->
-> Exporting this functionality from the MC driver is the right thing to do
-> in my opinion.
 
-Ok, let's do that then. Do you think I could make a bare-bones MC driver 
-to support the EMC driver before your MC driver with IOMMU/LA is ready? 
-Can the MC device tree node be stabilized yet? Of course, if things go 
-well, that concern might turn out to be unnecessary.
+--Izn7cH1Com+I3R9J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks, Mikko.
+On Mon, Jul 14, 2014 at 10:38:56AM +0200, Thierry Reding wrote:
+> On Fri, Jul 11, 2014 at 08:21:27PM +0300, Tuomas Tynkkynen wrote:
 
->
->> That said, I still suspect it might not be worth it to divide this between
->> two drivers.
->
-> If we don't separate, then we make it easy for people to break things in
-> the future. Both drivers may not be accessing the same registers now,
-> but if there's no barrier in place to actively enforce this split, then
-> it's only a matter of time before it gets broken. A typical way to
-> ensure this is done properly is via request_resource() (called by the
-> devm_ioremap_resource() function). That will fail if two drivers try to
-> use the same memory region, and with good reason.
->
-> Thierry
->
-> * Unknown Key
-> * 0x7F3EB3A1
->
+> > I don't think we can assume that each selector maps to a concrete register
+> > value, though I'm not sure. include/linux/regulator/driver.h documents for
+> > @list_voltage "Selectors range from zero to one less
+> > regulator_desc.n_voltages." but maybe the consumer API could take different
+> > values.
+
+> I don't think the regulator API makes any guarantees that the selector
+> corresponds to a register value. Adding Mark Brown, maybe he can help
+> figure out the best way to do this.
+
+The selector value is opaque, it's entirely up to the driver to define
+it.  If you could tell me what "this" is I might be able to advise on
+how to do it.
+
+--Izn7cH1Com+I3R9J
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTw57+AAoJELSic+t+oim9AGsP/RZe8JPihANdv/oeybcpori8
+i2DpTFTqDeqbjE6YqHLCjBuQdHAwr+liAFnYyuaYOy1mIymqufXZw+oiUX9jNraW
+LOXJuq8pU1z+nJvjBgQVNsy8t6lScak1IpLYmA8N2wpL2AMtlBqnKCyxs1OZloYF
+3TXHwfPGZ9cQrONrYAHSEEpX+xkBZ0NSc9VaCwwEC+DR9jc8ODXj/bJkBp9JXrZm
+jHLGl4p5H8IvIKQSxp1iFc/lDkNgobzTEV/I+n2NksyVRqYRZaHlMOzzzT6u/jyf
+8bJqjFe0gg982lBs8j07yWG6hgralBiC98nvlS1zunuXepM0Nge9IO6gsycd31qJ
+CD0RabiwRSlJGlliSiePNNDDH7pzO8bDq1NuG2SijnZq2YvP2kN2z6xu4x8q+YpJ
+h/c2i3/Y5rBeliT5LcukoIKicc6QAuKP2lZUWA2aZWcGHgUDHhivE6ibjkaFwco5
+GQSZ63psaIbJINtVKeWbkFtswwGeGxPdgK5I3qEcoRnEfn/Aala4XmorgpV90seL
+OnrWFOdjZuTDYHmr3SKoRs48u74Bt4Ce2Fq1rAgeltXfiRff1exiwYcoupUx9pkQ
+INA/P9TAguSJBy0hj4/zBMtZObsp9T/T89gliTf8v/yBo5+N9l4xQNJakq9muS4P
+jBg4x2lRrdNC/7a/Qpn9
+=oEVi
+-----END PGP SIGNATURE-----
+
+--Izn7cH1Com+I3R9J--
