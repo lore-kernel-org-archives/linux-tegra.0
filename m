@@ -1,70 +1,96 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 0/3] drm/gk20a: support for reclocking
-Date: Mon, 14 Jul 2014 11:13:46 +0900
-Message-ID: <CAAVeFuLNzLwH83iZx=X_sYyLaNRou48Mv2KzYpGCZJq+x8eWtA@mail.gmail.com>
-References: <1404977677-22248-1-git-send-email-acourbot@nvidia.com>
- <20140710094300.GP23218@tbergstrom-lnx.Nvidia.com> <53BF4292.1060009@nvidia.com>
- <20140711105427.GZ23218@tbergstrom-lnx.Nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v3 4/4] ARM: tegra: roth: add display DT node
+Date: Mon, 14 Jul 2014 08:05:09 +0200
+Message-ID: <20140714060508.GA2081@ulmo>
+References: <1404822734-8603-1-git-send-email-acourbot@nvidia.com>
+ <1404822734-8603-5-git-send-email-acourbot@nvidia.com>
+ <20140711131421.GD10827@ulmo>
+ <CAAVeFuKMU3vpDoog-k3X82OZn1VR5iRMpwo5LSeX7cPMOqfXVg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140711105427.GZ23218-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============1770182132=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAAVeFuKMU3vpDoog-k3X82OZn1VR5iRMpwo5LSeX7cPMOqfXVg@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Terje Bergstrom <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jul 11, 2014 at 7:54 PM, Peter De Schrijver
-<pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> On Fri, Jul 11, 2014 at 03:49:06AM +0200, Alex Courbot wrote:
->> On 07/10/2014 06:43 PM, Peter De Schrijver wrote:
->> > On Thu, Jul 10, 2014 at 09:34:34AM +0200, Alexandre Courbot wrote:
->> >> This series adds support for reclocking on GK20A. The first two patches touch
->> >> the clock subsystem to allow GK20A to operate, by making the presence of the
->> >> thermal and voltage devices optional, and allowing pstates to be provided
->> >> directly instead of being probed using the BIOS (which Tegra does not have).
->> >>
->> >> The last patch adds the GK20A clock device. Arguably the clock can be seen as a
->> >> stripped-down version of what is seen on NVE0, however instead of using NVE0
->> >> support has been written from scratch using the ChromeOS kernel as a basis.
->> >> There are several reasons for this:
->> >>
->> >> - The ChromeOS driver uses a lookup table for the P coefficient which I could
->> >>    not find in the NVE0 driver,
->> >> - Some registers that NVE0 expects to find are not present on GK20A (e.g.
->> >>    0x137120 and 0x137140),
->> >> - Calculation of MNP is done differently from what is performed in
->> >>    nva3_pll_calc(), and it might be interesting to compare the two methods,
->> >> - All the same, the programming sequence is done differently in the ChromeOS
->> >>    driver and NVE0 could possibly benefit from it (?)
->> >>
->> >> It would be interesting to try and merge both, but for now I prefer to have the
->> >> two coexisting to ensure proper operation on GK20A and besure I don't break
->> >> dGPU support. :)
->> >>
->> >> Regarding the first patch, one might argue that I could as well add thermal
->> >> and voltage devices to GK20A. The reason this is not done is because these
->> >> currently depend heavily on the presence of a BIOS, and will require a rework
->> >> similar to that done in patch 2 for clocks. I would like to make sure this
->> >> approach is approved because applying it to other subdevs.
->> >
->> > I think this should use CCF so we can use pre and post rate change notifiers
->> > to hookup vdd_gpu DVS.
->>
->> Do you mean that we should turn the Nouveau gk20a clock driver into a
->> consumer of this CCF clock? I have nothing against this, but note that
->> Nouveau can also perform DVS on its own, as the pstates can also contain
->> a voltage to be applied to the volt device (not yet implemented in this
->> series).
->>
->
-> Yes. For Tegra I think it makes sense to move DVS out of the individual
-> drivers. Then we can share the code which has to deal with building the OPP
-> tables with other DVS rails (eg. vdd_core) for example. Often there are also
-> chip specific quirks to be dealt with (such as the maximum allowed voltage step
-> or voltage relationships between rails), which are easier to handle in common
-> code.
 
-I see, thanks for the explanation. It should be relatively easy to
-convert the clock to CCF if/when we need it - for now I will keep the
-direct Nouveau implementation for simplicity purposes.
+--===============1770182132==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="6TrnltStXW4iwmi0"
+Content-Disposition: inline
+
+
+--6TrnltStXW4iwmi0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sun, Jul 13, 2014 at 11:37:14AM +0900, Alexandre Courbot wrote:
+> On Fri, Jul 11, 2014 at 10:14 PM, Thierry Reding
+> <thierry.reding@gmail.com> wrote:
+> > On Tue, Jul 08, 2014 at 09:32:14PM +0900, Alexandre Courbot wrote:
+> >> Tegra DSI support has been fixed to support continuous clock behavior =
+that
+> >> the panel used on SHIELD requires, so finally add its device tree node
+> >> since it is functional.
+> >>
+> >> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> >> ---
+> >>  arch/arm/boot/dts/tegra114-roth.dts | 22 +++++++++++++++++++---
+> >>  1 file changed, 19 insertions(+), 3 deletions(-)
+> >
+> > I've applied this to Tegra's for-3.17/dt branch. Thanks.
+>=20
+> Thanks - how about the other patches of the series? Ideally this one
+> should be applied last.
+
+Those will go into separate trees and I haven't gotten to those yet.
+I'll probably apply them later today.
+
+Thierry
+
+--6TrnltStXW4iwmi0
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTw3MUAAoJEN0jrNd/PrOhs+8P/R71NN/w/x8f5TVbiQ5t5l7z
+s1qs+h8YRjF7k6cBG73X7l/e/7fhhn0Yq9IfaX/bGYF5YcmKEYd65orm8dOqrpcs
+c6qgCiaXr4bl+5jXt3PKHC8ehXI7SnO/pQh3DDvtHVMOuEgvq3Kg1t4JZ2Cz+WRn
+MAe72bZlj40Ue+bXXa93kr0hTna1H2XAQGd87V/bjcOBmRE84ZAb/OHODbw35QDm
+Gc7BE9gAfrqdDtvW9YntVW3CUmpvZlzZAYXqAeZTh2tE2QrDHpchOwTKbgVQM1VU
+z/j5vMqgh3Pilv1B2dzaX4GyNDIon3C2D/f7AqxP1ch5jfUk+e73yyhqjn4aPGhY
+29x0sYcvTQ8eNuXBmjtDsgXvKBx0LUMlx/w4Xae7QmUQrJJ97h8gJ6b6snwpoaEc
+ujq2mo+TALuFBU+VtLwbAB28upkgfW1es2VbERg1OdcvqLGzoOHbqGohSRGLf6Yg
+ASBm8aWr4uFLGFLugDF9H8f5kbypA5WKBA+Up1wKWs6Wh2TOAlhqtNePps2daSL4
+1q9CVT25chLS9I+m5Re7EURqlnRVvRkqUim3ctgXfQOFn7vnqhNtxFcH3a9Ijk80
+KqGlPxfZW7+Ap+tXoTGLS7cLwivB+FIee/dd1sxjh1VInBC1HMEli+NOydTsgDaf
+aNPoC8QaJgYW9zIHjwD8
+=0jhA
+-----END PGP SIGNATURE-----
+
+--6TrnltStXW4iwmi0--
+
+--===============1770182132==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============1770182132==--
