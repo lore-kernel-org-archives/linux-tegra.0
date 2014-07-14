@@ -1,93 +1,62 @@
-From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [cbootimage PATH v2 3/3] Dump MTS information by bct_dump utility.
-Date: Tue, 15 Jul 2014 04:58:16 +0800
-Message-ID: <1405371496-21525-3-git-send-email-vinceh@nvidia.com>
-References: <1405371496-21525-1-git-send-email-vinceh@nvidia.com>
+From: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/3] Add Tegra132 support for the cbootimage utility
+Date: Mon, 14 Jul 2014 15:36:59 -0700
+Message-ID: <20140714223659.GA13652@nvidia.com>
+References: <1404987710-26375-1-git-send-email-vinceh@nvidia.com>
+ <1404987710-26375-2-git-send-email-vinceh@nvidia.com>
+ <20140711182317.GA1730@nvidia.com>
+ <53C44402.8020803@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1405371496-21525-1-git-send-email-vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <53C44402.8020803-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: AMartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The MTS is only for Tegra132 now.
+On Mon, Jul 14, 2014 at 01:56:34PM -0700, Vince Hsu wrote:
+> Hi,
+> 
+> On 07/12/2014 02:23 AM, Allen Martin wrote:
+> >> >+cbootimage_soc_config tegra132_config = {
+> >> >+       .init_bad_block_table           = t132_init_bad_block_table,
+> >> >+       .set_dev_param                          = t132_set_dev_param,
+> >> >+       .get_dev_param                          = t132_get_dev_param,
+> >> >+       .set_sdram_param                        = t132_set_sdram_param,
+> >> >+       .get_sdram_param                        = t132_get_sdram_param,
+> >> >+       .setbl_param                            = t132_setbl_param,
+> >> >+       .getbl_param                            = t132_getbl_param,
+> >> >+       .set_value                                      = t132_bct_set_value,
+> >> >+       .get_value                                      = t132_bct_get_value,
+> >> >+       .set_data                                       = t132_bct_set_data,
+> >> >+       .get_bct_size                           = t132_get_bct_size,
+> >> >+       .set_mts_info                           = t132_set_mts_info,
+> >> >+       .get_mts_info                           = t132_get_mts_info,
+> >> >+       .token_supported                        = t132_bct_token_supported,
+> >> >+
+> >> >+       .devtype_table                          = s_devtype_table_t132,
+> >> >+       .sdmmc_data_width_table         = s_sdmmc_data_width_table_t132,
+> >> >+       .spi_clock_source_table         = s_spi_clock_source_table_t132,
+> >> >+       .nvboot_memory_type_table       = s_nvboot_memory_type_table_t132,
+> >> >+       .sdram_field_table                      = s_sdram_field_table_t132,
+> >> >+       .nand_table                                     = 0,
+> >> >+       .sdmmc_table                            = s_sdmmc_table_t132,
+> >> >+       .spiflash_table                         = s_spiflash_table_t132,
+> >> >+       .device_type_table                      = s_device_type_table_t132,
+> >> >+};
+> >> >+
+> > Since Tegra132 and Tegra124 are so similar, can we reuse the Tegra124
+> > version of any of these to avoid the duplication?
+> Some of these functions like setbl_param refer to the macros/definitions 
+> in nvboot_bct_txx.h. So maybe they look similar, actually they don't. If 
+> we want to generalize these functions, we might have to refactor 
+> nvboot_bct_txx.h and some more stuff. Can we leave it as is?
 
-Signed-off-by: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+I can see how this could turn into a can of worms.  I just seems like
+a shame to have to duplicate so much code for a new SoC that's ~90% the
+same as the previous SoC.  Can the token tables be reused, or do they
+have the same issue?
 
----
-Changes from v1:
-	- Rename start_block/load_address as start_blk/load_addr
----
----
- src/bct_dump.c | 40 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
-
-diff --git a/src/bct_dump.c b/src/bct_dump.c
-index 6735c355761a..e2181b251ff9 100644
---- a/src/bct_dump.c
-+++ b/src/bct_dump.c
-@@ -73,6 +73,16 @@ static value_data const bl_values[] = {
- 	{ token_bl_attribute,   "Attributes   = ", format_u32_hex8 },
- };
- 
-+static value_data const mts_values[] = {
-+	{ token_mts_info_version,      "Version      = ", format_u32_hex8 },
-+	{ token_mts_info_start_blk,    "Start block  = ", format_u32 },
-+	{ token_mts_info_start_page,   "Start page   = ", format_u32 },
-+	{ token_mts_info_length,       "Length       = ", format_u32 },
-+	{ token_mts_info_load_addr,    "Load address = ", format_u32_hex8 },
-+	{ token_mts_info_entry_point,  "Entry point  = ", format_u32_hex8 },
-+	{ token_mts_info_attribute,    "Attributes   = ", format_u32_hex8 },
-+};
-+
- /*****************************************************************************/
- static void format_u32_hex8(char const * message, void * data)
- {
-@@ -177,6 +187,7 @@ int main(int argc, char *argv[])
- 	u_int32_t bootloaders_used;
- 	u_int32_t parameters_used;
- 	u_int32_t sdram_used;
-+	u_int32_t mts_used;
- 	nvboot_dev_type type;
- 	param_types data;
- 	int i;
-@@ -234,6 +245,35 @@ int main(int argc, char *argv[])
- 		}
- 	}
- 
-+	/* Display mts values */
-+	e = g_soc_config->get_value(token_mts_used,
-+				     &mts_used,
-+				     context.bct);
-+
-+	if ((e == 0) && (mts_used> 0)) {
-+		int mts_count = sizeof(mts_values) / sizeof(mts_values[0]);
-+
-+		printf("#\n"
-+		       "# These values are set by cbootimage using the\n"
-+		       "# mts provided by the Mts=... or MtsPreboot=...\n"
-+		       "# configuration option.\n"
-+		       "#\n");
-+
-+		for (i = 0; i < mts_used; ++i) {
-+			for (j = 0; j < mts_count; ++j) {
-+				e = g_soc_config->get_mts_info(&context,
-+								i,
-+								mts_values[j].id,
-+								&(data.val));
-+				printf("# Mts[%d].", i);
-+
-+				if (e)
-+					data.val = -1;
-+
-+				mts_values[j].format(mts_values[j].message, &data);
-+			}
-+		}
-+	}
- 	/* Display flash device parameters */
- 	e = g_soc_config->get_value(token_num_param_sets,
- 				     &parameters_used,
--- 
-1.8.3.2
+-Allen
