@@ -1,90 +1,124 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 01/13] clk: tegra: Add binding for the Tegra124 DFLL
- clocksource
-Date: Mon, 14 Jul 2014 11:24:35 +0200
-Message-ID: <20140714092434.GA9755@ulmo>
-References: <1405028569-14253-1-git-send-email-ttynkkynen@nvidia.com>
- <1405028569-14253-2-git-send-email-ttynkkynen@nvidia.com>
- <CAL1qeaFF0ZpUFovxTuLXrBPRg2Lbf-754Z=ztD5HFZPbfnDsAw@mail.gmail.com>
- <53C01558.3090607@nvidia.com>
- <CAL1qeaHETQ7kSGNjPiwi_9WNMtr9qZp0KwjZCCxY29+_N4AcuA@mail.gmail.com>
- <53C01D17.2050906@nvidia.com>
- <20140714083854.GO2081@ulmo>
- <20140714091233.GC6800@sirena.org.uk>
+Subject: Re: [PATCH 5/8] of: Add Tegra124 EMC bindings
+Date: Mon, 14 Jul 2014 11:31:37 +0200
+Message-ID: <20140714093136.GB9755@ulmo>
+References: <1405088313-20048-1-git-send-email-mperttunen@nvidia.com>
+ <1405088313-20048-6-git-send-email-mperttunen@nvidia.com>
+ <20140711145146.GA6523@ulmo>
+ <53C00A57.5070102@kapsi.fi>
+ <53C38D07.4030402@nvidia.com>
+ <20140714081524.GI2081@ulmo>
+ <53C39D98.9040802@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="+HP7ph2BbKc20aGI"
+	protocol="application/pgp-signature"; boundary="0ntfKIWw70PvrIHh"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20140714091233.GC6800-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+In-Reply-To: <53C39D98.9040802-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>
+To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---+HP7ph2BbKc20aGI
+--0ntfKIWw70PvrIHh
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 14, 2014 at 10:12:33AM +0100, Mark Brown wrote:
-> On Mon, Jul 14, 2014 at 10:38:56AM +0200, Thierry Reding wrote:
-> > On Fri, Jul 11, 2014 at 08:21:27PM +0300, Tuomas Tynkkynen wrote:
+On Mon, Jul 14, 2014 at 12:06:32PM +0300, Mikko Perttunen wrote:
+> On 14/07/14 11:15, Thierry Reding wrote:
+> >* PGP Signed by an unknown key
+> >
+> >On Mon, Jul 14, 2014 at 10:55:51AM +0300, Mikko Perttunen wrote:
+> >>On 11/07/14 19:01, Mikko Perttunen wrote:
+> >>>On 07/11/2014 05:51 PM, Thierry Reding wrote:
+> >>>>On Fri, Jul 11, 2014 at 05:18:30PM +0300, Mikko Perttunen wrote:
+> >>>>>...
+> >>>>...
+> >>>
+> >>>In this case, all the registers that will be written are such that the
+> >>>MC driver will never need to write them. They are shadowed registers,
+> >>>meaning that all writes are stored and are only effective starting from
+> >>>the next time the EMC rate change state machine is activated, so writi=
+ng
+> >>>them from anywhere except than the EMC driver would be pointless.
+> >>>
+> >>>I can find two users of these registers in downstream:
+> >>>1) mc.c saves and loads them on suspend/restore (I don't know why, that
+> >>>shouldn't do anything. They will be overridden anyway during the next
+> >>>EMC rate change).
+> >>>2) tegra12x_la.c reads MC_EMEM_ARB_MISC0 during a core_initcall to
+> >>>calculate a value which it then writes to a register that is also
+> >>>shadowed and that is part of downstream burst registers so that doesn't
+> >>>do anything either.
+> >>>
+> >>>The reason I implemented two ways to specify the MC register area was
+> >>>that this could be merged before an MC driver and retain
+> >>>backwards-compatibility after the MC driver arrives.
+> >>>
+> >>>If this is not acceptable, we can certainly wait for the MC driver to =
+be
+> >>>merged first. (Although with the general rate of things, I hope I won't
+> >>>be back at school at that point..) I assume that this is blocked on the
+> >>>IOMMU bindings discussion? In that case, there are several options: the
+> >>>MC driver could have its own tables for each EMC rate or we could just
+> >>>make the EMC tables global (i.e. not under the EMC node). In any case,
+> >>>the MC driver would need to implement a function that would just write
+> >>>these values but be guaranteed to not do anything else, since that cou=
+ld
+> >>>cause nasty things during the EMC rate change sequence.
+> >>
+> >>Having taken another look at the code, I don't think the MC driver coul=
+d do
+> >>anything that bad. There are also two other places where the EMC driver
+> >>needs to read MC registers: Inside the sequence, it reads a register but
+> >>discards its contents. According to comments, this acts as a memory bar=
+rier,
+> >>probably for the preceding step that writes into MC memory. If the regi=
+ster
+> >>writes are moved to the MC driver, it could also handle that. In another
+> >>place it reads the number of RAM modules from a MC register. The MC dri=
+ver
+> >>could export this as another function.
+> >
+> >Exporting this functionality from the MC driver is the right thing to do
+> >in my opinion.
 >=20
-> > > I don't think we can assume that each selector maps to a concrete reg=
-ister
-> > > value, though I'm not sure. include/linux/regulator/driver.h document=
-s for
-> > > @list_voltage "Selectors range from zero to one less
-> > > regulator_desc.n_voltages." but maybe the consumer API could take dif=
-ferent
-> > > values.
->=20
-> > I don't think the regulator API makes any guarantees that the selector
-> > corresponds to a register value. Adding Mark Brown, maybe he can help
-> > figure out the best way to do this.
->=20
-> The selector value is opaque, it's entirely up to the driver to define
-> it.  If you could tell me what "this" is I might be able to advise on
-> how to do it.
+> Ok, let's do that then. Do you think I could make a bare-bones MC driver =
+to
+> support the EMC driver before your MC driver with IOMMU/LA is ready? Can =
+the
+> MC device tree node be stabilized yet? Of course, if things go well, that
+> concern might turn out to be unnecessary.
 
-Tegra124 (and later, also some earlier variants) have this DFLL clock
-that can program a PMIC automatically depending on the CPU frequency.
-This DT binding did propose putting this into device tree as a table of
-<frequency value> pairs where the frequency corresponds to the CPU
-frequency and the value is the register value to be programmed into the
-PMIC by the DFLL hardware (there are two additional properties to define
-the slave address and the register offset).
-
-Andrew proposed that this table could instead be built by using
-regulator_list_voltage() instead. However, due to the fact that the DFLL
-hardware needs to know the immediate value to write into a register, the
-requirement would be for a 1:1 mapping between selector and register
-value. Given that the API needs to cover the general case I don't see
-how it could practically ensure this.
+Well, at this point this isn't 3.17 material anyway, so there's no need
+to rush things. I'd prefer to take a patch on top of my proposed MC
+driver patch in anticipation of merging that for 3.18. But if it turns
+out that for whatever reason we can't do that, having a separate patch
+makes it easy to extract the changes into a bare-bones driver.
 
 Thierry
 
---+HP7ph2BbKc20aGI
+--0ntfKIWw70PvrIHh
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJTw6HSAAoJEN0jrNd/PrOhbFwP/03tePNKsD5IznjxmNgv6AMm
-uot8qEnBu6iDp29m/HYArNbmtbsmpvVPiYdmV26DkpT21YP8qokTEmvKHwKSJ9gV
-zeZlVKUXIRf04NfZLttOxWkQYIm3rx4WLlszJa4HE6i9K/bBKqrIgemffLW7aq54
-vlDYd6QMOM6fIEJUk6+tZ5LyhwVhuiNFOJWVt+onhI0bxAMU+oiHCD//z82JXNQq
-Je05gDP0KqGUtM7xjDrCH0c+pQ1OVcUK1veDAmuvSJvlR3Rlf6fLn4lKlKwSSEqj
-nHAtUdoDvqIrFj5KISWpuYkrkk4K6Kg0PQ4Ux/ojWEqoecAzKCnhIgzW2IL3tIUA
-16tq6tn6pc6CGSchljYNG0P2zxmweBROtzPL0rBSCmxT052mK1+G6RXNMGE8dpie
-U+XuXYxlweGxMVJk1OIUAg/Y2o4EBz6LUjcpmOGuB3YqeJ9qV2bD9kKQadHtYSl7
-dvt1ZFdaYA6iHrFZYJ/k1QvmNey4b5sri4vTJ7d9PDJBPL07xsljDx83nXMFoC+Y
-XI2GVaA2/pbsce5CTSzBcaWMp6ipaMrb6WrOsYO3b52VBELOZhO5ix54W2kZykTC
-3zFh6OGqZJAXfULF7nRi/Q6IC0dVuipIHCuZIRhfvEilE0sad1zszCTtFTM/HE+v
-m8SKSlf9hUiGbK7D+iHH
-=8il+
+iQIcBAEBAgAGBQJTw6N4AAoJEN0jrNd/PrOh//IQAKKu+8XkU1NQ3I6maWLqiOs8
+I3SnT9bBaQTukLfsIqh+t4t3CAXIJrzm7pC4VXRxG3o/ZmEC37KXiwb/Ryhqm84K
+oUFtBaoFgTlyO/tM0m2nKJmv22zCF58t3fU+VsHgYpA/3Hddu7OWZUYTvFSEZF8U
+qg4EsgbpV20MBmbHCnMgo1CYYn5ZT4Rd6HCb8djMkw2b0WjMtCf0wZwht8TbEifU
+och/XL88TYoE9bgSiR9HmITrmhLLpdSCCiD1bEdhAZYZRRellYJfknS8slFkFaIs
+p55WyrlZJBmPYPTtvkzmwUxjibPfgE5ZSIvR9JYCbYAbv2GB1tMHgUVT770vlMWQ
+rWEVKtkEvRNnxHJq8lxBhBEGkwtmvWYsOEfsn+L3oDxWFxFDHyjda9ytY1AjgN+p
+gwJR3gZDEALDT772RgFTuzMc5nfBA/Utl4EjNRS/hEyvDT8X2HJ9YtAEQeXxPCL/
++V3JG9yBnmMCB0CY/INIO9wzMU6dbKMIGxy126CI2S1IPFJttqPT4nM3UAQQ2nMy
+FsLNZN9vAgyQIsA0oUu98em9qFwgVjXlP6k5l7T0IoZ2A69QHHFfofA69ZdjmWcD
+/99XtyjROWw1AH79bIJVlY0g+BvzGs6Jn3BA02goXGo/OQH9Ya9lNHbSmZrQtkbt
++hP/XzSyF1PBSpwzba9O
+=7mmC
 -----END PGP SIGNATURE-----
 
---+HP7ph2BbKc20aGI--
+--0ntfKIWw70PvrIHh--
