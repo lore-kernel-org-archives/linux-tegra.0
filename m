@@ -1,43 +1,54 @@
-From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH 4/4] xhci: Allow xHCI drivers to be built as separate modules
-Date: Mon, 14 Jul 2014 11:50:40 -0700
-Message-ID: <CAL1qeaFRuw9wn+uAMEJk9bkMKnSivsG02zMda1+iK0kknBNr=g@mail.gmail.com>
-References: <1404954350-26343-1-git-send-email-abrestic@chromium.org>
-	<1404954350-26343-5-git-send-email-abrestic@chromium.org>
-	<CAODwPW9FORb2jnxFi6US6CUJvJzKyUkT8cuSzkPues41hJe+Jw@mail.gmail.com>
-	<CAL1qeaGCLw0LSE_Oy_VteAyWLHS9D4y-U8+6Mu+cGKEUp3T3GQ@mail.gmail.com>
-	<CAODwPW_=aoCB3K_cFvEKvztNjo=qHXCwmY4mwXMXRaJ+gzSogw@mail.gmail.com>
+From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/3] Add Tegra132 support for the cbootimage utility
+Date: Tue, 15 Jul 2014 04:56:34 +0800
+Message-ID: <53C44402.8020803@nvidia.com>
+References: <1404987710-26375-1-git-send-email-vinceh@nvidia.com> <1404987710-26375-2-git-send-email-vinceh@nvidia.com> <20140711182317.GA1730@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAODwPW_=aoCB3K_cFvEKvztNjo=qHXCwmY4mwXMXRaJ+gzSogw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <20140711182317.GA1730-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Julius Werner <jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
+To: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-+Gregory
+Hi,
 
-On Mon, Jul 14, 2014 at 11:36 AM, Julius Werner <jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
->> Nope - since CONFIG_USB_XHCI_MVEBU can be 'y' or 'm' we need the ifneq
->> here (which matches against both) to ensure xhci-mvebu.o is built is
->> part of xhci-plat-hcd.o.
->
-> Oh... does it make sense to have it tristate at all, then? Looks like
-> was never really buildable as an independent module (and still won't
-> be after this patch), so I bet that was just a mistake when the
-> Kconfig for it was first written that should be fixed.
+On 07/12/2014 02:23 AM, Allen Martin wrote:
+>> >+cbootimage_soc_config tegra132_config = {
+>> >+       .init_bad_block_table           = t132_init_bad_block_table,
+>> >+       .set_dev_param                          = t132_set_dev_param,
+>> >+       .get_dev_param                          = t132_get_dev_param,
+>> >+       .set_sdram_param                        = t132_set_sdram_param,
+>> >+       .get_sdram_param                        = t132_get_sdram_param,
+>> >+       .setbl_param                            = t132_setbl_param,
+>> >+       .getbl_param                            = t132_getbl_param,
+>> >+       .set_value                                      = t132_bct_set_value,
+>> >+       .get_value                                      = t132_bct_get_value,
+>> >+       .set_data                                       = t132_bct_set_data,
+>> >+       .get_bct_size                           = t132_get_bct_size,
+>> >+       .set_mts_info                           = t132_set_mts_info,
+>> >+       .get_mts_info                           = t132_get_mts_info,
+>> >+       .token_supported                        = t132_bct_token_supported,
+>> >+
+>> >+       .devtype_table                          = s_devtype_table_t132,
+>> >+       .sdmmc_data_width_table         = s_sdmmc_data_width_table_t132,
+>> >+       .spi_clock_source_table         = s_spi_clock_source_table_t132,
+>> >+       .nvboot_memory_type_table       = s_nvboot_memory_type_table_t132,
+>> >+       .sdram_field_table                      = s_sdram_field_table_t132,
+>> >+       .nand_table                                     = 0,
+>> >+       .sdmmc_table                            = s_sdmmc_table_t132,
+>> >+       .spiflash_table                         = s_spiflash_table_t132,
+>> >+       .device_type_table                      = s_device_type_table_t132,
+>> >+};
+>> >+
+> Since Tegra132 and Tegra124 are so similar, can we reuse the Tegra124
+> version of any of these to avoid the duplication?
+Some of these functions like setbl_param refer to the macros/definitions 
+in nvboot_bct_txx.h. So maybe they look similar, actually they don't. If 
+we want to generalize these functions, we might have to refactor 
+nvboot_bct_txx.h and some more stuff. Can we leave it as is?
 
-Making it a bool wouldn't really be accurate either since it could
-still be built as part of the xhci-plat-hcd loadable module.  Gregory,
-do you have a preference?  I could also re-spin making xhci-mvebu and
-independently-loadable module.
-
-> (Ideally, xhci-plat.c should probably go away in favor of dwc3/host.c
-> and xhci-mvebu.c implementing the wrapper to xhci_init_driver()
-> directly, but that is a longer-term goal.)
-
-Well I don't think xhci-plat can ever go away (it's possible that
-there are XHCI platform devices that need no extra platform-specific
-setup), but yes, I agree that dwc3 and xhci-mvebu should be converted
-over to use xhci_init_driver().
+Thanks,
+Vince
