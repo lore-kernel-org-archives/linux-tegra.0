@@ -1,111 +1,90 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 01/13] clk: tegra: Add binding for the Tegra124 DFLL
- clocksource
-Date: Mon, 14 Jul 2014 10:38:56 +0200
-Message-ID: <20140714083854.GO2081@ulmo>
-References: <1405028569-14253-1-git-send-email-ttynkkynen@nvidia.com>
- <1405028569-14253-2-git-send-email-ttynkkynen@nvidia.com>
- <CAL1qeaFF0ZpUFovxTuLXrBPRg2Lbf-754Z=ztD5HFZPbfnDsAw@mail.gmail.com>
- <53C01558.3090607@nvidia.com>
- <CAL1qeaHETQ7kSGNjPiwi_9WNMtr9qZp0KwjZCCxY29+_N4AcuA@mail.gmail.com>
- <53C01D17.2050906@nvidia.com>
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 5/8] of: Add Tegra124 EMC bindings
+Date: Mon, 14 Jul 2014 12:06:32 +0300
+Message-ID: <53C39D98.9040802@nvidia.com>
+References: <1405088313-20048-1-git-send-email-mperttunen@nvidia.com> <1405088313-20048-6-git-send-email-mperttunen@nvidia.com> <20140711145146.GA6523@ulmo> <53C00A57.5070102@kapsi.fi> <53C38D07.4030402@nvidia.com> <20140714081524.GI2081@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="MmQIYbZiCoQ2kDro"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <53C01D17.2050906@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
-Cc: Andrew Bresticker <abrestic@chromium.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Viresh Kumar <viresh.kumar@linaro.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140714081524.GI2081@ulmo>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 14/07/14 11:15, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+>
+> On Mon, Jul 14, 2014 at 10:55:51AM +0300, Mikko Perttunen wrote:
+>> On 11/07/14 19:01, Mikko Perttunen wrote:
+>>> On 07/11/2014 05:51 PM, Thierry Reding wrote:
+>>>> On Fri, Jul 11, 2014 at 05:18:30PM +0300, Mikko Perttunen wrote:
+>>>>> ...
+>>>> ...
+>>>
+>>> In this case, all the registers that will be written are such that the
+>>> MC driver will never need to write them. They are shadowed registers,
+>>> meaning that all writes are stored and are only effective starting from
+>>> the next time the EMC rate change state machine is activated, so writing
+>>> them from anywhere except than the EMC driver would be pointless.
+>>>
+>>> I can find two users of these registers in downstream:
+>>> 1) mc.c saves and loads them on suspend/restore (I don't know why, that
+>>> shouldn't do anything. They will be overridden anyway during the next
+>>> EMC rate change).
+>>> 2) tegra12x_la.c reads MC_EMEM_ARB_MISC0 during a core_initcall to
+>>> calculate a value which it then writes to a register that is also
+>>> shadowed and that is part of downstream burst registers so that doesn't
+>>> do anything either.
+>>>
+>>> The reason I implemented two ways to specify the MC register area was
+>>> that this could be merged before an MC driver and retain
+>>> backwards-compatibility after the MC driver arrives.
+>>>
+>>> If this is not acceptable, we can certainly wait for the MC driver to be
+>>> merged first. (Although with the general rate of things, I hope I won't
+>>> be back at school at that point..) I assume that this is blocked on the
+>>> IOMMU bindings discussion? In that case, there are several options: the
+>>> MC driver could have its own tables for each EMC rate or we could just
+>>> make the EMC tables global (i.e. not under the EMC node). In any case,
+>>> the MC driver would need to implement a function that would just write
+>>> these values but be guaranteed to not do anything else, since that could
+>>> cause nasty things during the EMC rate change sequence.
+>>
+>> Having taken another look at the code, I don't think the MC driver could do
+>> anything that bad. There are also two other places where the EMC driver
+>> needs to read MC registers: Inside the sequence, it reads a register but
+>> discards its contents. According to comments, this acts as a memory barrier,
+>> probably for the preceding step that writes into MC memory. If the register
+>> writes are moved to the MC driver, it could also handle that. In another
+>> place it reads the number of RAM modules from a MC register. The MC driver
+>> could export this as another function.
+>
+> Exporting this functionality from the MC driver is the right thing to do
+> in my opinion.
 
---MmQIYbZiCoQ2kDro
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ok, let's do that then. Do you think I could make a bare-bones MC driver 
+to support the EMC driver before your MC driver with IOMMU/LA is ready? 
+Can the MC device tree node be stabilized yet? Of course, if things go 
+well, that concern might turn out to be unnecessary.
 
-On Fri, Jul 11, 2014 at 08:21:27PM +0300, Tuomas Tynkkynen wrote:
->=20
->=20
-> On 11/07/14 20:08, Andrew Bresticker wrote:
-> >On Fri, Jul 11, 2014 at 9:48 AM, Tuomas Tynkkynen <ttynkkynen@nvidia.com=
-> wrote:
-> >>
-> >>
-> >>On 11/07/14 19:28, Andrew Bresticker wrote:
-> >>>
-> >>>On Thu, Jul 10, 2014 at 2:42 PM, Tuomas Tynkkynen <ttynkkynen@nvidia.c=
-om>
-> >>>wrote:
-> >>>>
-> >>>>The DFLL is the main clocksource for the fast CPU cluster on Tegra124
-> >>>>and also provides automatic CPU rail voltage scaling as well. The DFLL
-> >>>>is a separate IP block from the usual Tegra124 clock-and-reset
-> >>>>controller, so it gets its own node in the device tree.
-> >>>
-> >>>
-> >>>>diff --git
-> >>>>a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-> >>>>b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-> >>>
-> >>>
-> >>>>+- nvidia,pmic-voltage-table: Array of 2-tuples.  Each entry should h=
-ave
-> >>>>the
-> >>>>+  form <register-value voltage-in-uV>, indicating the register value
-> >>>>that
-> >>>>+  needs to be programmed to the PMIC for changing the VDD_CPU voltag=
-e to
-> >>>>+  the specified voltage. The table must be in ascending order by the
-> >>>>voltage.
-> >>>
-> >>>
-> >>>Instead of listing the register values for each voltage in the DT,
-> >>>can't you use regulator_list_voltage() to create this map?
-> >>>
-> >>
-> >>I don't see a way to get the register values that way, unless we assume=
- that
-> >>the mapping is linear and doesn't have holes.
-> >
-> >Hmm... I guess if you don't assume it's linear and continuous you'd
-> >have to iterate over all 256 selectors.
-> >
->=20
-> I don't think we can assume that each selector maps to a concrete register
-> value, though I'm not sure. include/linux/regulator/driver.h documents for
-> @list_voltage "Selectors range from zero to one less
-> regulator_desc.n_voltages." but maybe the consumer API could take differe=
-nt
-> values.
+Thanks, Mikko.
 
-I don't think the regulator API makes any guarantees that the selector
-corresponds to a register value. Adding Mark Brown, maybe he can help
-figure out the best way to do this.
-
-Thierry
-
---MmQIYbZiCoQ2kDro
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJTw5ceAAoJEN0jrNd/PrOhSIwP/i8ObzBFUR0bWFqC9Kwqs3aX
-vu7z+L0oMXbkiHx2qcaAjhF7M8vVV3lAxwXQIDde9uMc/LevjN43YqhRnGgXZAvC
-bSurdg1+RQRht3uPKA6IIVyz3O+mra4MrQgzRqfA2AY2NrixLqyBohLel2Eebf7Q
-HjHqFhagTmFv7fL9iIZpec0/gkR2Ht7R3+NCLG7VBs+Xby5qvkdDJTaWHSpreSSK
-KQ233hrtlrcAogqq/PTKR8bALJeP/Z56U9Q7VTBvQkRRczz9ihidfApz+xQiGv6B
-NnmGpM/3zz/C+RHwQ47HjWB4yCS8tcv6br6mCsIykUrHnE6rSz7H4Z5uJSvRoo+a
-ZNuKVkOoSiaaTzlx3wt2c/MdSX49ISrJZZqDUMFWOr9oEGPA/1U89cONa1AZSrkq
-ev1fFF5UcnYU0uhmnIt36YunCLv1TFH9jBUVSjhEk0mGue2ZyPLvdmaHcccqc+gx
-ADlah85xU44xcGOeQtJfAq8drL6a8JeTUtrNUzttLOaTEcV7tPt/3IUXiVKVGFvm
-kY3HTCDEWbnu65NSYHLxzqPBkml/8B9rorL/83PP7qaVQ5njT6nnE/hHjYb7QKpM
-464KI+3pq4EFNa79dja1H2FOeuwIBbT/mQp5DGVamQk+KqaIs2aB2a7HPK14GUNx
-4XCGet3kN2duFTpuozy/
-=suW1
------END PGP SIGNATURE-----
-
---MmQIYbZiCoQ2kDro--
+>
+>> That said, I still suspect it might not be worth it to divide this between
+>> two drivers.
+>
+> If we don't separate, then we make it easy for people to break things in
+> the future. Both drivers may not be accessing the same registers now,
+> but if there's no barrier in place to actively enforce this split, then
+> it's only a matter of time before it gets broken. A typical way to
+> ensure this is done properly is via request_resource() (called by the
+> devm_ioremap_resource() function). That will fail if two drivers try to
+> use the same memory region, and with good reason.
+>
+> Thierry
+>
+> * Unknown Key
+> * 0x7F3EB3A1
+>
