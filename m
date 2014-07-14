@@ -1,84 +1,111 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v3 3/4] drm/tegra: dsi - Handle non-continuous clock flag
-Date: Mon, 14 Jul 2014 10:30:16 +0200
-Message-ID: <20140714083012.GN2081@ulmo>
-References: <1404822734-8603-1-git-send-email-acourbot@nvidia.com>
- <1404822734-8603-4-git-send-email-acourbot@nvidia.com>
+Subject: Re: [PATCH 01/13] clk: tegra: Add binding for the Tegra124 DFLL
+ clocksource
+Date: Mon, 14 Jul 2014 10:38:56 +0200
+Message-ID: <20140714083854.GO2081@ulmo>
+References: <1405028569-14253-1-git-send-email-ttynkkynen@nvidia.com>
+ <1405028569-14253-2-git-send-email-ttynkkynen@nvidia.com>
+ <CAL1qeaFF0ZpUFovxTuLXrBPRg2Lbf-754Z=ztD5HFZPbfnDsAw@mail.gmail.com>
+ <53C01558.3090607@nvidia.com>
+ <CAL1qeaHETQ7kSGNjPiwi_9WNMtr9qZp0KwjZCCxY29+_N4AcuA@mail.gmail.com>
+ <53C01D17.2050906@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0673382231=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1404822734-8603-4-git-send-email-acourbot@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: gnurou@gmail.com, Terje Bergstrom <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, linux-tegra@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="MmQIYbZiCoQ2kDro"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <53C01D17.2050906@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Cc: Andrew Bresticker <abrestic@chromium.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Viresh Kumar <viresh.kumar@linaro.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Mark Brown <broonie@kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============0673382231==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="kUBUi7JBpjcBtem/"
-Content-Disposition: inline
-
-
---kUBUi7JBpjcBtem/
+--MmQIYbZiCoQ2kDro
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 08, 2014 at 09:32:13PM +0900, Alexandre Courbot wrote:
-> Handle the MIPI_DSI_CLOCK_NONCONTINUOUS flag and only set TX-only
-> clock behavior when this flag is present to allow panels requiring
-> continuous clock mode to operate with this driver.
+On Fri, Jul 11, 2014 at 08:21:27PM +0300, Tuomas Tynkkynen wrote:
 >=20
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> ---
->  drivers/gpu/drm/tegra/dsi.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> On 11/07/14 20:08, Andrew Bresticker wrote:
+> >On Fri, Jul 11, 2014 at 9:48 AM, Tuomas Tynkkynen <ttynkkynen@nvidia.com=
+> wrote:
+> >>
+> >>
+> >>On 11/07/14 19:28, Andrew Bresticker wrote:
+> >>>
+> >>>On Thu, Jul 10, 2014 at 2:42 PM, Tuomas Tynkkynen <ttynkkynen@nvidia.c=
+om>
+> >>>wrote:
+> >>>>
+> >>>>The DFLL is the main clocksource for the fast CPU cluster on Tegra124
+> >>>>and also provides automatic CPU rail voltage scaling as well. The DFLL
+> >>>>is a separate IP block from the usual Tegra124 clock-and-reset
+> >>>>controller, so it gets its own node in the device tree.
+> >>>
+> >>>
+> >>>>diff --git
+> >>>>a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+> >>>>b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+> >>>
+> >>>
+> >>>>+- nvidia,pmic-voltage-table: Array of 2-tuples.  Each entry should h=
+ave
+> >>>>the
+> >>>>+  form <register-value voltage-in-uV>, indicating the register value
+> >>>>that
+> >>>>+  needs to be programmed to the PMIC for changing the VDD_CPU voltag=
+e to
+> >>>>+  the specified voltage. The table must be in ascending order by the
+> >>>>voltage.
+> >>>
+> >>>
+> >>>Instead of listing the register values for each voltage in the DT,
+> >>>can't you use regulator_list_voltage() to create this map?
+> >>>
+> >>
+> >>I don't see a way to get the register values that way, unless we assume=
+ that
+> >>the mapping is linear and doesn't have holes.
+> >
+> >Hmm... I guess if you don't assume it's linear and continuous you'd
+> >have to iterate over all 256 selectors.
+> >
+>=20
+> I don't think we can assume that each selector maps to a concrete register
+> value, though I'm not sure. include/linux/regulator/driver.h documents for
+> @list_voltage "Selectors range from zero to one less
+> regulator_desc.n_voltages." but maybe the consumer API could take differe=
+nt
+> values.
 
-Applied, thanks.
+I don't think the regulator API makes any guarantees that the selector
+corresponds to a register value. Adding Mark Brown, maybe he can help
+figure out the best way to do this.
 
 Thierry
 
---kUBUi7JBpjcBtem/
+--MmQIYbZiCoQ2kDro
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJTw5UUAAoJEN0jrNd/PrOho5MP/i3fs6MK8tvS0uec4Zd4lMdp
-6fPYb9IBA9JobEhqURFvmutDuSKqJs1ZuYteeVnPLIEOnLin6lTPT/X6+9/Ppanh
-OfBW9I6yHz3fS8f27zsoQgg4YfaDyOWMftb+1tkRoUk/lQArRhL9j3yk3Et+ZDfR
-tJJlv8Gub4wliitza/fjDfElBf0zWH0HBGTylamfLsOT6DdNuUk8v3ylcYalNiWl
-1JAXG0omG6LVcDuclDyQAWuBphM1yg2DUpuAiLRqGJmeu1AIwwHkrvSJ++Fkpqw/
-ZbqyzbnMOfm5/xyG1mrgFlwnyWl0phDavsKRhRCqeTvocBERpdppRQHHSZQXZ3G2
-3SeSMaZDOYNpZHOVHOKZ1nUNEJh2Aob0TosauNUjRowufAwtFzYH4gJtg2yWeIIg
-RouWctH5X3NjoS4nJgtTj9Nsm8R3+Ubu4vav1UgDq4gaJUJjBU1HlERvDR8vsiGl
-MF68iV1yqRwmL3xjAq6T1LA/XS3+9wasWSWn0/9M0iogI3vaZGg+ee92+Mw67Bge
-jDxdACxjG/Xnw6zCrdJZvvq8W3mvxYTSAW5p5c/szp3ER5PA88iwNjK0CIlsj8FA
-hIHPN8rixTijYRNlgtnykMHHbvhLP0nKIz0asUDVVEsJgfAP0OZ9EZOTj40N4C2C
-36ER2bfoLFiMWQZDGdU9
-=VAH/
+iQIcBAEBAgAGBQJTw5ceAAoJEN0jrNd/PrOhSIwP/i8ObzBFUR0bWFqC9Kwqs3aX
+vu7z+L0oMXbkiHx2qcaAjhF7M8vVV3lAxwXQIDde9uMc/LevjN43YqhRnGgXZAvC
+bSurdg1+RQRht3uPKA6IIVyz3O+mra4MrQgzRqfA2AY2NrixLqyBohLel2Eebf7Q
+HjHqFhagTmFv7fL9iIZpec0/gkR2Ht7R3+NCLG7VBs+Xby5qvkdDJTaWHSpreSSK
+KQ233hrtlrcAogqq/PTKR8bALJeP/Z56U9Q7VTBvQkRRczz9ihidfApz+xQiGv6B
+NnmGpM/3zz/C+RHwQ47HjWB4yCS8tcv6br6mCsIykUrHnE6rSz7H4Z5uJSvRoo+a
+ZNuKVkOoSiaaTzlx3wt2c/MdSX49ISrJZZqDUMFWOr9oEGPA/1U89cONa1AZSrkq
+ev1fFF5UcnYU0uhmnIt36YunCLv1TFH9jBUVSjhEk0mGue2ZyPLvdmaHcccqc+gx
+ADlah85xU44xcGOeQtJfAq8drL6a8JeTUtrNUzttLOaTEcV7tPt/3IUXiVKVGFvm
+kY3HTCDEWbnu65NSYHLxzqPBkml/8B9rorL/83PP7qaVQ5njT6nnE/hHjYb7QKpM
+464KI+3pq4EFNa79dja1H2FOeuwIBbT/mQp5DGVamQk+KqaIs2aB2a7HPK14GUNx
+4XCGet3kN2duFTpuozy/
+=suW1
 -----END PGP SIGNATURE-----
 
---kUBUi7JBpjcBtem/--
-
---===============0673382231==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============0673382231==--
+--MmQIYbZiCoQ2kDro--
