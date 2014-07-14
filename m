@@ -1,54 +1,51 @@
 From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/3] Add Tegra132 support for the cbootimage utility
-Date: Tue, 15 Jul 2014 04:56:34 +0800
-Message-ID: <53C44402.8020803@nvidia.com>
-References: <1404987710-26375-1-git-send-email-vinceh@nvidia.com> <1404987710-26375-2-git-send-email-vinceh@nvidia.com> <20140711182317.GA1730@nvidia.com>
+Subject: [cbootimage PATH v2 1/3] Rename last_bl_blk to last_blk
+Date: Tue, 15 Jul 2014 04:58:14 +0800
+Message-ID: <1405371496-21525-1-git-send-email-vinceh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140711182317.GA1730-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: AMartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+Also update the next_bct_blk. Then we have the correct pointer
+to the next block for the next image write.
 
-On 07/12/2014 02:23 AM, Allen Martin wrote:
->> >+cbootimage_soc_config tegra132_config = {
->> >+       .init_bad_block_table           = t132_init_bad_block_table,
->> >+       .set_dev_param                          = t132_set_dev_param,
->> >+       .get_dev_param                          = t132_get_dev_param,
->> >+       .set_sdram_param                        = t132_set_sdram_param,
->> >+       .get_sdram_param                        = t132_get_sdram_param,
->> >+       .setbl_param                            = t132_setbl_param,
->> >+       .getbl_param                            = t132_getbl_param,
->> >+       .set_value                                      = t132_bct_set_value,
->> >+       .get_value                                      = t132_bct_get_value,
->> >+       .set_data                                       = t132_bct_set_data,
->> >+       .get_bct_size                           = t132_get_bct_size,
->> >+       .set_mts_info                           = t132_set_mts_info,
->> >+       .get_mts_info                           = t132_get_mts_info,
->> >+       .token_supported                        = t132_bct_token_supported,
->> >+
->> >+       .devtype_table                          = s_devtype_table_t132,
->> >+       .sdmmc_data_width_table         = s_sdmmc_data_width_table_t132,
->> >+       .spi_clock_source_table         = s_spi_clock_source_table_t132,
->> >+       .nvboot_memory_type_table       = s_nvboot_memory_type_table_t132,
->> >+       .sdram_field_table                      = s_sdram_field_table_t132,
->> >+       .nand_table                                     = 0,
->> >+       .sdmmc_table                            = s_sdmmc_table_t132,
->> >+       .spiflash_table                         = s_spiflash_table_t132,
->> >+       .device_type_table                      = s_device_type_table_t132,
->> >+};
->> >+
-> Since Tegra132 and Tegra124 are so similar, can we reuse the Tegra124
-> version of any of these to avoid the duplication?
-Some of these functions like setbl_param refer to the macros/definitions 
-in nvboot_bct_txx.h. So maybe they look similar, actually they don't. If 
-we want to generalize these functions, we might have to refactor 
-nvboot_bct_txx.h and some more stuff. Can we leave it as is?
+Signed-off-by: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ src/cbootimage.h  | 2 +-
+ src/data_layout.c | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-Thanks,
-Vince
+diff --git a/src/cbootimage.h b/src/cbootimage.h
+index 6def766f1770..baade00f5e33 100644
+--- a/src/cbootimage.h
++++ b/src/cbootimage.h
+@@ -95,7 +95,7 @@ typedef struct build_image_context_rec
+ 	u_int8_t *bct;
+ 
+ 	char *bct_filename;
+-	u_int32_t last_bl_blk;
++	u_int32_t last_blk;
+ 	u_int32_t bct_size; /* The BCT file size */
+ 	u_int32_t boot_data_version; /* The boot data version of BCT */
+ 	u_int8_t bct_init; /* The flag for the memory allocation of bct */
+diff --git a/src/data_layout.c b/src/data_layout.c
+index c848a6141b2b..73663beffbe2 100644
+--- a/src/data_layout.c
++++ b/src/data_layout.c
+@@ -552,8 +552,9 @@ write_bootloaders(build_image_context *context)
+ 				current_blk++;
+ 				virtual_blk++;
+ 			}
+-			context->last_bl_blk = current_blk;
++			context->last_blk = current_blk;
+ 		}
++		context->next_bct_blk = context->last_blk + 1;
+ 		free(buffer);
+ 	}
+ 
+-- 
+1.8.3.2
