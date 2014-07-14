@@ -1,131 +1,63 @@
-From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/3] Add Tegra132 support for the cbootimage utility
-Date: Mon, 14 Jul 2014 15:54:28 +0800
-Message-ID: <53C38CB4.5030301@nvidia.com>
-References: <1404987710-26375-1-git-send-email-vinceh@nvidia.com> <1404987710-26375-2-git-send-email-vinceh@nvidia.com> <20140711182317.GA1730@nvidia.com>
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 5/8] of: Add Tegra124 EMC bindings
+Date: Mon, 14 Jul 2014 10:55:51 +0300
+Message-ID: <53C38D07.4030402@nvidia.com>
+References: <1405088313-20048-1-git-send-email-mperttunen@nvidia.com> <1405088313-20048-6-git-send-email-mperttunen@nvidia.com> <20140711145146.GA6523@ulmo> <53C00A57.5070102@kapsi.fi>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140711182317.GA1730-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <53C00A57.5070102-/1wQRMveznE@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/12/2014 02:23 AM, Allen Martin wrote:
-> On Thu, Jul 10, 2014 at 03:21:49AM -0700, Vince Hsu wrote:
->> Signed-off-by: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Need more of a patch description here.  At least mention the new
-> command line arguments, and what Tegra132 is.
+On 11/07/14 19:01, Mikko Perttunen wrote:
+> On 07/11/2014 05:51 PM, Thierry Reding wrote:
+>> On Fri, Jul 11, 2014 at 05:18:30PM +0300, Mikko Perttunen wrote:
+>>> ...
+>> ...
 >
+> In this case, all the registers that will be written are such that the
+> MC driver will never need to write them. They are shadowed registers,
+> meaning that all writes are stored and are only effective starting from
+> the next time the EMC rate change state machine is activated, so writing
+> them from anywhere except than the EMC driver would be pointless.
 >
->> @@ -327,6 +328,27 @@ do {                                                        \
->>          SET_BL_FIELD(to,   field,  v);                      \
->>   } while (0);
->>
->> +#define SET_MTS_FIELD(instance, field, value)   \
->> +do {                                            \
->> +       g_soc_config->set_mts_info(context,         \
->> +               instance,                                                               \
->> +               token_mts_info_##field,                 \
->> +               value);                                                         \
->> +} while (0);
->> +
->> +#define GET_MTS_FIELD(instance, field, ptr)            \
->> +g_soc_config->get_mts_info(context,                            \
->> +               instance,                                                               \
->> +               token_mts_info_##field,                                 \
->> +               ptr);
->> +
->> +#define COPY_MTS_FIELD(from, to, field)         \
->> +do {                                            \
->> +       u_int32_t v;                                \
->> +       GET_MTS_FIELD(from, field, &v);             \
->> +       SET_MTS_FIELD(to,   field,  v);             \
->> +} while (0);
->> +
-> The trailing backslashes appear to have a lot of variable whitespace
-> here, can you clean these up?
+> I can find two users of these registers in downstream:
+> 1) mc.c saves and loads them on suspend/restore (I don't know why, that
+> shouldn't do anything. They will be overridden anyway during the next
+> EMC rate change).
+> 2) tegra12x_la.c reads MC_EMEM_ARB_MISC0 during a core_initcall to
+> calculate a value which it then writes to a register that is also
+> shadowed and that is part of downstream burst registers so that doesn't
+> do anything either.
 >
+> The reason I implemented two ways to specify the MC register area was
+> that this could be merged before an MC driver and retain
+> backwards-compatibility after the MC driver arrives.
 >
->>          return err;
->>   }
->>
->> +/*
->> + * Load the mts image then update it with the information from config file.
->> + * In the interest of expediency, all mts's allocated from bottom to top start
->> + * at page 0 of a block, and all mts's allocated from top to bottom end at
->> + * the end of a block.
->> + *
->> + * @param context              The main context pointer
->> + * @return 0 for success
->> + */
->> +static int
->> +write_mts_image(build_image_context *context)
->> +{
-> This whole function is almost identical to write_bootloaders(), can
-> you pull out the common parts of these functions and parameterize the
-> differences to avoid the code duplication?
->
->> @@ -87,6 +89,8 @@ static parse_item parse_simple_items[] =
->>          { "BootLoader=",    token_bootloader,           parse_bootloader },
->>          { "Redundancy=",    token_redundancy,           parse_value_u32 },
->>          { "Bctcopy=",       token_bct_copy,             parse_value_u32 },
->> +       { "MtsPreboot=",    token_mts_preboot,          parse_mts_image},
->> +       { "Mts=",           token_mts,                          parse_mts_image},
-> Whitespace looks off here
->
->
->>          { "Version=",       token_version,              parse_value_u32 },
->>          { "PreBctPadBlocks=", token_pre_bct_pad_blocks, parse_value_u32 },
->>          { NULL, 0, NULL } /* Must be last */
->> @@ -105,6 +109,8 @@ static parse_item s_top_level_items[] = {
->>          { "BootLoader=",    token_bootloader,           parse_bootloader },
->>          { "Redundancy=",    token_redundancy,           parse_value_u32 },
->>          { "Bctcopy=",       token_bct_copy,             parse_value_u32 },
->> +       { "MtsPreboot=",    token_mts_preboot,          parse_mts_image},
->> +       { "Mts=",           token_mts,                          parse_mts_image},
-> and here
-Will modify for all the comments above accordingly. Thanks.
->
->
->> +cbootimage_soc_config tegra132_config = {
->> +       .init_bad_block_table           = t132_init_bad_block_table,
->> +       .set_dev_param                          = t132_set_dev_param,
->> +       .get_dev_param                          = t132_get_dev_param,
->> +       .set_sdram_param                        = t132_set_sdram_param,
->> +       .get_sdram_param                        = t132_get_sdram_param,
->> +       .setbl_param                            = t132_setbl_param,
->> +       .getbl_param                            = t132_getbl_param,
->> +       .set_value                                      = t132_bct_set_value,
->> +       .get_value                                      = t132_bct_get_value,
->> +       .set_data                                       = t132_bct_set_data,
->> +       .get_bct_size                           = t132_get_bct_size,
->> +       .set_mts_info                           = t132_set_mts_info,
->> +       .get_mts_info                           = t132_get_mts_info,
->> +       .token_supported                        = t132_bct_token_supported,
->> +
->> +       .devtype_table                          = s_devtype_table_t132,
->> +       .sdmmc_data_width_table         = s_sdmmc_data_width_table_t132,
->> +       .spi_clock_source_table         = s_spi_clock_source_table_t132,
->> +       .nvboot_memory_type_table       = s_nvboot_memory_type_table_t132,
->> +       .sdram_field_table                      = s_sdram_field_table_t132,
->> +       .nand_table                                     = 0,
->> +       .sdmmc_table                            = s_sdmmc_table_t132,
->> +       .spiflash_table                         = s_spiflash_table_t132,
->> +       .device_type_table                      = s_device_type_table_t132,
->> +};
->> +
-> Since Tegra132 and Tegra124 are so similar, can we reuse the Tegra124
-> version of any of these to avoid the duplication?
-We can export most of the functions in nvbctlib_t124.c for this. Do you 
-like that?
+> If this is not acceptable, we can certainly wait for the MC driver to be
+> merged first. (Although with the general rate of things, I hope I won't
+> be back at school at that point..) I assume that this is blocked on the
+> IOMMU bindings discussion? In that case, there are several options: the
+> MC driver could have its own tables for each EMC rate or we could just
+> make the EMC tables global (i.e. not under the EMC node). In any case,
+> the MC driver would need to implement a function that would just write
+> these values but be guaranteed to not do anything else, since that could
+> cause nasty things during the EMC rate change sequence.
 
-Thanks,
-Vince
->
->
-> -Allen
->
-> nvpublic
+Having taken another look at the code, I don't think the MC driver could 
+do anything that bad. There are also two other places where the EMC 
+driver needs to read MC registers: Inside the sequence, it reads a 
+register but discards its contents. According to comments, this acts as 
+a memory barrier, probably for the preceding step that writes into MC 
+memory. If the register writes are moved to the MC driver, it could also 
+handle that. In another place it reads the number of RAM modules from a 
+MC register. The MC driver could export this as another function.
+
+That said, I still suspect it might not be worth it to divide this 
+between two drivers.
+
+- Mikko
