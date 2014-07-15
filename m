@@ -1,49 +1,83 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 6/6] clk: tegra: Add Tegra132 ccplex clocks
-Date: Tue, 15 Jul 2014 16:40:17 -0400
-Message-ID: <53C591B1.4080302@nvidia.com>
-References: <1405437890-6468-1-git-send-email-pdeschrijver@nvidia.com> <1405437890-6468-7-git-send-email-pdeschrijver@nvidia.com> <53C5908C.5000009@nvidia.com>
+From: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/3] Add Tegra132 support for the cbootimage utility
+Date: Tue, 15 Jul 2014 14:34:35 -0700
+Message-ID: <20140715213434.GA18639@nvidia.com>
+References: <1404987710-26375-1-git-send-email-vinceh@nvidia.com>
+ <1404987710-26375-2-git-send-email-vinceh@nvidia.com>
+ <20140711182317.GA1730@nvidia.com>
+ <53C44402.8020803@nvidia.com>
+ <20140714223659.GA13652@nvidia.com>
+ <53C4BEE3.7080604@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53C5908C.5000009-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <53C4BEE3.7080604-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 7/15/2014 4:35 PM, Rhyland Klein wrote:
-> On 7/15/2014 11:24 AM, Peter De Schrijver wrote:
->> Add support for the ccplex clocks in Tegra132.
->>
->> Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  drivers/clk/tegra/Makefile |    2 ++
->>  1 files changed, 2 insertions(+), 0 deletions(-)
->>
->> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
->> index f7dfb72..4231865 100644
->> --- a/drivers/clk/tegra/Makefile
->> +++ b/drivers/clk/tegra/Makefile
->> @@ -15,3 +15,5 @@ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
->>  obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
->>  obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= clk-tegra114.o
->>  obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124.o
->> +obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.c
->> +obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra132-ccplex.c
-
-Also, shouldn't both these be .o not .c ?
-
--rhyland
-
->>
+On Mon, Jul 14, 2014 at 10:40:51PM -0700, Vince Hsu wrote:
+> On 07/15/2014 06:36 AM, Allen Martin wrote:
+> > On Mon, Jul 14, 2014 at 01:56:34PM -0700, Vince Hsu wrote:
+> >> Hi,
+> >>
+> >> On 07/12/2014 02:23 AM, Allen Martin wrote:
+> >>>>> +cbootimage_soc_config tegra132_config = {
+> >>>>> +       .init_bad_block_table           = t132_init_bad_block_table,
+> >>>>> +       .set_dev_param                          = t132_set_dev_param,
+> >>>>> +       .get_dev_param                          = t132_get_dev_param,
+> >>>>> +       .set_sdram_param                        = t132_set_sdram_param,
+> >>>>> +       .get_sdram_param                        = t132_get_sdram_param,
+> >>>>> +       .setbl_param                            = t132_setbl_param,
+> >>>>> +       .getbl_param                            = t132_getbl_param,
+> >>>>> +       .set_value                                      = t132_bct_set_value,
+> >>>>> +       .get_value                                      = t132_bct_get_value,
+> >>>>> +       .set_data                                       = t132_bct_set_data,
+> >>>>> +       .get_bct_size                           = t132_get_bct_size,
+> >>>>> +       .set_mts_info                           = t132_set_mts_info,
+> >>>>> +       .get_mts_info                           = t132_get_mts_info,
+> >>>>> +       .token_supported                        = t132_bct_token_supported,
+> >>>>> +
+> >>>>> +       .devtype_table                          = s_devtype_table_t132,
+> >>>>> +       .sdmmc_data_width_table         = s_sdmmc_data_width_table_t132,
+> >>>>> +       .spi_clock_source_table         = s_spi_clock_source_table_t132,
+> >>>>> +       .nvboot_memory_type_table       = s_nvboot_memory_type_table_t132,
+> >>>>> +       .sdram_field_table                      = s_sdram_field_table_t132,
+> >>>>> +       .nand_table                                     = 0,
+> >>>>> +       .sdmmc_table                            = s_sdmmc_table_t132,
+> >>>>> +       .spiflash_table                         = s_spiflash_table_t132,
+> >>>>> +       .device_type_table                      = s_device_type_table_t132,
+> >>>>> +};
+> >>>>> +
+> >>> Since Tegra132 and Tegra124 are so similar, can we reuse the Tegra124
+> >>> version of any of these to avoid the duplication?
+> >> Some of these functions like setbl_param refer to the macros/definitions
+> >> in nvboot_bct_txx.h. So maybe they look similar, actually they don't. If
+> >> we want to generalize these functions, we might have to refactor
+> >> nvboot_bct_txx.h and some more stuff. Can we leave it as is?
+> > I can see how this could turn into a can of worms.  I just seems like
+> > a shame to have to duplicate so much code for a new SoC that's ~90% the
+> > same as the previous SoC.  Can the token tables be reused, or do they
+> > have the same issue?
+> The token table is something like supported feature list. Every SoC from 
+> t20 to t132 has only slight differences from others. But keeping a 
+> simple table for each SoC might be reasonable here?
 > 
-> This doesn't seem to actually add the clk-tegra132-ccplex.c file.
-> 
-> -rhyland
-> 
 
+Some of them, like s_sdram_field_table_t124 are not so simple.  Maybe
+what's really needed is a better way to describe the BCT that's not
+implemented in C code combined with a very generic parser.  
 
--- 
-nvpublic
+It just doesn't seem maintainable to keep having to copy over a
+thousand lines of code for each SoC to just tweak a few fields.  It
+makes it hard to review too, since it's really hard to see what the
+new Tegra132 features are.
+
+I agree it's probably beyond the scope of this patch to fix this, but
+could you add detail to the commit message about the differences
+between the Tegra124 and Tegra132 BCT and what changes you made
+relative to Tegra124 to help me with the review?
+
+-Allen
