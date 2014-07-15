@@ -1,93 +1,33 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH 5/6] clk: tegra: Add support for Tegra132 CAR clocks
-Date: Tue, 15 Jul 2014 18:24:35 +0300
-Message-ID: <1405437890-6468-6-git-send-email-pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 6/6] clk: tegra: Add Tegra132 ccplex clocks
+Date: Tue, 15 Jul 2014 18:24:36 +0300
+Message-ID: <1405437890-6468-7-git-send-email-pdeschrijver@nvidia.com>
 References: <1405437890-6468-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1405437890-6468-1-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Russell King <linux@arm.linux.org.uk>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Joseph Lo <josephl@nvidia.com>, Alexandre Courbot <acourbot@nvidia.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Tuomas Tynkkynen <ttynkkynen@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1405437890-6468-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra132 CAR supports almost the same clocks as Tegra124 CAR. This patch
-deals with the small differences.
+Add support for the ccplex clocks in Tegra132.
 
---
-I'm not entirely sure why the soc_therm clock needs to be enabled on Tegra132,
-but turning it off results in a system hang. I presume this might be because
-of fastboot initializing soc_therm.
-
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/clk/tegra/clk-tegra124.c |   32 ++++++++++++++++++++++++++++++++
- 1 files changed, 32 insertions(+), 0 deletions(-)
+ drivers/clk/tegra/Makefile |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index 80efe51..b857aab 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -1369,6 +1369,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{TEGRA124_CLK_XUSB_HS_SRC, TEGRA124_CLK_PLL_U_60M, 60000000, 0},
- 	{TEGRA124_CLK_XUSB_FALCON_SRC, TEGRA124_CLK_PLL_RE_OUT, 224000000, 0},
- 	{TEGRA124_CLK_XUSB_HOST_SRC, TEGRA124_CLK_PLL_RE_OUT, 112000000, 0},
-+	{TEGRA124_CLK_SOC_THERM, TEGRA124_CLK_PLL_P, 51000000, 0},
- 	/* This MUST be the last entry. */
- 	{TEGRA124_CLK_CLK_MAX, TEGRA124_CLK_CLK_MAX, 0, 0},
- };
-@@ -1378,9 +1379,25 @@ static void __init tegra124_clock_apply_init_table(void)
- 	tegra_init_from_table(init_table, clks, TEGRA124_CLK_CLK_MAX);
- }
- 
-+enum {
-+	TEGRA124_CLK,
-+	TEGRA132_CLK,
-+};
-+
-+static const struct of_device_id tegra_clock_of_match[] = {
-+	{ .compatible = "nvidia,tegra124-car", .data = (void *)TEGRA124_CLK },
-+	{ .compatible = "nvidia,tegra132-car", .data = (void *)TEGRA132_CLK },
-+	{},
-+};
-+
- static void __init tegra124_clock_init(struct device_node *np)
- {
- 	struct device_node *node;
-+	const struct of_device_id *match;
-+	uintptr_t id;
-+
-+	match = of_match_node(tegra_clock_of_match, np);
-+	id = (uintptr_t)match->data;
- 
- 	clk_base = of_iomap(np, 0);
- 	if (!clk_base) {
-@@ -1416,6 +1433,20 @@ static void __init tegra124_clock_init(struct device_node *np)
- 	tegra_audio_clk_init(clk_base, pmc_base, tegra124_clks, &pll_a_params);
- 	tegra_pmc_clk_init(pmc_base, tegra124_clks);
- 
-+	if (id == TEGRA132_CLK) {
-+		int i;
-+
-+		tegra124_clks[tegra_clk_cclk_g].present = false;
-+		tegra124_clks[tegra_clk_cclk_lp].present = false;
-+		tegra124_clks[tegra_clk_pll_x].present = false;
-+		tegra124_clks[tegra_clk_pll_x_out0].present = false;
-+
-+		/* Tegra132 requires the soc_therm clock to be always on */
-+		for (i = 0; i < ARRAY_SIZE(init_table); i++) {
-+			if (init_table[i].clk_id == TEGRA124_CLK_SOC_THERM)
-+				init_table[i].state = 1;
-+		}
-+	}
- 	tegra_super_clk_gen4_init(clk_base, pmc_base, tegra124_clks,
- 					&pll_x_params);
- 	tegra_add_of_provider(np);
-@@ -1426,3 +1457,4 @@ static void __init tegra124_clock_init(struct device_node *np)
- 	tegra_cpu_car_ops = &tegra124_cpu_car_ops;
- }
- CLK_OF_DECLARE(tegra124, "nvidia,tegra124-car", tegra124_clock_init);
-+CLK_OF_DECLARE(tegra132, "nvidia,tegra132-car", tegra124_clock_init);
+diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+index f7dfb72..4231865 100644
+--- a/drivers/clk/tegra/Makefile
++++ b/drivers/clk/tegra/Makefile
+@@ -15,3 +15,5 @@ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
+ obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
+ obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= clk-tegra114.o
+ obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124.o
++obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.c
++obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra132-ccplex.c
 -- 
 1.7.7.rc0.72.g4b5ea.dirty
