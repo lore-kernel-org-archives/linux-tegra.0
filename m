@@ -1,92 +1,86 @@
-From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [cbootimage PATH V2 RESEND 3/3] Dump MTS information by bct_dump utility.
-Date: Tue, 15 Jul 2014 13:59:57 +0800
-Message-ID: <1405403997-29477-3-git-send-email-vinceh@nvidia.com>
-References: <1405403997-29477-1-git-send-email-vinceh@nvidia.com>
+From: Mikko Perttunen <mperttunen@nvidia.com>
+Subject: Re: [PATCH v2 6/7] ata: Add support for the Tegra124 SATA controller
+Date: Tue, 15 Jul 2014 10:12:50 +0300
+Message-ID: <53C4D472.9010507@nvidia.com>
+References: <1403101406-15439-1-git-send-email-mperttunen@nvidia.com> <1403101406-15439-7-git-send-email-mperttunen@nvidia.com> <20140708132216.GA4979@htj.dyndns.org> <53C3DCF0.3030001@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1405403997-29477-1-git-send-email-vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: AMartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, TWarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-ide-owner@vger.kernel.org>
+In-Reply-To: <53C3DCF0.3030001@redhat.com>
+Sender: linux-ide-owner@vger.kernel.org
+To: Hans de Goede <hdegoede@redhat.com>, Tejun Heo <tj@kernel.org>
+Cc: "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The MTS is only for Tegra132 now.
+Heh, what you are describing is the v1 of this series :)
 
-Signed-off-by: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+However,
 
----
-Changes from v1:
-	- Rename start_block/load_address as start_blk/load_addr
----
----
- src/bct_dump.c | 40 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+17/06/14 Thierry Reding wrote:
+ > I would've preferred tegra_powergate_sequence_power_up() to be used
+ > consistently in all drivers. I'm still not convinced that using the
+ > platform AHCI driver this way is really the best option, since we're
+ > bending over backwards to fit into what this driver dictates. There
+ > shouldn't be a need for that.
 
-diff --git a/src/bct_dump.c b/src/bct_dump.c
-index 6735c355761a..e2181b251ff9 100644
---- a/src/bct_dump.c
-+++ b/src/bct_dump.c
-@@ -73,6 +73,16 @@ static value_data const bl_values[] = {
- 	{ token_bl_attribute,   "Attributes   = ", format_u32_hex8 },
- };
- 
-+static value_data const mts_values[] = {
-+	{ token_mts_info_version,      "Version      = ", format_u32_hex8 },
-+	{ token_mts_info_start_blk,    "Start block  = ", format_u32 },
-+	{ token_mts_info_start_page,   "Start page   = ", format_u32 },
-+	{ token_mts_info_length,       "Length       = ", format_u32 },
-+	{ token_mts_info_load_addr,    "Load address = ", format_u32_hex8 },
-+	{ token_mts_info_entry_point,  "Entry point  = ", format_u32_hex8 },
-+	{ token_mts_info_attribute,    "Attributes   = ", format_u32_hex8 },
-+};
-+
- /*****************************************************************************/
- static void format_u32_hex8(char const * message, void * data)
- {
-@@ -177,6 +187,7 @@ int main(int argc, char *argv[])
- 	u_int32_t bootloaders_used;
- 	u_int32_t parameters_used;
- 	u_int32_t sdram_used;
-+	u_int32_t mts_used;
- 	nvboot_dev_type type;
- 	param_types data;
- 	int i;
-@@ -234,6 +245,35 @@ int main(int argc, char *argv[])
- 		}
- 	}
- 
-+	/* Display mts values */
-+	e = g_soc_config->get_value(token_mts_used,
-+				     &mts_used,
-+				     context.bct);
-+
-+	if ((e == 0) && (mts_used> 0)) {
-+		int mts_count = sizeof(mts_values) / sizeof(mts_values[0]);
-+
-+		printf("#\n"
-+		       "# These values are set by cbootimage using the\n"
-+		       "# mts provided by the Mts=... or MtsPreboot=...\n"
-+		       "# configuration option.\n"
-+		       "#\n");
-+
-+		for (i = 0; i < mts_used; ++i) {
-+			for (j = 0; j < mts_count; ++j) {
-+				e = g_soc_config->get_mts_info(&context,
-+								i,
-+								mts_values[j].id,
-+								&(data.val));
-+				printf("# Mts[%d].", i);
-+
-+				if (e)
-+					data.val = -1;
-+
-+				mts_values[j].format(mts_values[j].message, &data);
-+			}
-+		}
-+	}
- 	/* Display flash device parameters */
- 	e = g_soc_config->get_value(token_num_param_sets,
- 				     &parameters_used,
--- 
-1.8.3.2
+As you probably noticed, the issue is that on Tegra we want to use 
+tegra_powergate_sequence_power_up to enable the SATA power rail. That 
+function assumes that it gets a disabled clock and returns with the 
+clock enabled. If we use ahci_platform's resource management functions,
+this is not doable, since it wants to handle clocks by itself.
+
+To be honest, I too would prefer handling the resources in the driver. 
+The driver needs other resources than what ahci_platform currently 
+manages (at least reset_controls and multiple regulators, later we might 
+get more) and managing them in the driver allows the driver to do proper 
+error handling and manage all resources consistently and in one place. 
+Also, I don't think it is sensible to add support for loading every 
+possible kind of DT resource to ahci_platform, since most drivers won't 
+need them. Other subsystems I've been in don't have this kind of helper 
+library, so diverging here seems weird.
+
+That said, if you feel strongly about this, I can do what you described.
+
+Thanks,
+Mikko
+
+On 14/07/14 16:36, Hans de Goede wrote:
+> Hi,
+>
+> On 07/08/2014 03:22 PM, Tejun Heo wrote:
+>> (cc'ing Hans)
+>>
+>> Hans, can you please review this patch?
+>
+> Done.
+>
+> Mikko, it looks like you are doing a lot of stuff
+> the DIY way. I can see there are good reasons for
+> that though.
+>
+> Still it would be nice if you could use a little bit
+> more of the helper functions provided by libahci_platform.c
+>
+> Specifically I think it would be better if you used
+> ahci_platform_get_resources, that would remove a lot of
+> duplicate code from the new driver.
+>
+> To be specific I would like to suggest that you
+> raise AHCI_MAX_CLKS to 4, and then specify an order
+> in which the clks must be listed in the devicetree
+> binding. Then you can put that order in an enum
+> and use hpriv->clks[CLK_FOO] in your driver, where
+> CLK_FOO comes from the enum.
+>
+> This way you should be able to use ahci_platform_get_resources
+> and drop doing the iomap of the base registers, all the
+> clk_gets and the phy_get yourself.
+>
+> You could then also use ahci_platform_disable_clks() in
+> tegra_ahci_power_off
+>
+> Regards,
+>
+> Hans
+>
