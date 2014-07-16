@@ -1,135 +1,109 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH 00/16] i2c: drop class based instantiaion for selected
- drivers
-Date: Wed, 16 Jul 2014 19:46:05 +0200
-Message-ID: <20140716174604.GI2759@katana>
-References: <1404992799-3705-1-git-send-email-wsa@the-dreams.de>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 12/12] ARM: tegra: Convert PMC to a driver
+Date: Wed, 16 Jul 2014 20:57:16 +0200
+Message-ID: <20140716185715.GA4843@mithrandir>
+References: <1405080971-7609-1-git-send-email-thierry.reding@gmail.com>
+ <17053542.QUGvfkeRmc@wuerfel>
+ <20140716151427.GA22027@ulmo>
+ <6322144.IB6iKDb6TK@wuerfel>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============6301060798827206376=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1404992799-3705-1-git-send-email-wsa@the-dreams.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-i2c@vger.kernel.org
-Cc: davinci-linux-open-source@linux.davincidsp.com, linux-samsung-soc@vger.kernel.org, adi-buildroot-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="17pEHd4RhPHOinZp"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <6322144.IB6iKDb6TK@wuerfel>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============6301060798827206376==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="QDIl5R72YNOeCxaP"
-Content-Disposition: inline
-
-
---QDIl5R72YNOeCxaP
+--17pEHd4RhPHOinZp
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 10, 2014 at 01:46:20PM +0200, Wolfram Sang wrote:
-> Some drivers were flagged to remove class based instantiation soon to imp=
-rove
-> boot-up time. Originally, I was planning for a longer deprecation time so=
- users
-> could switch over to some other kind of instantiation. However, the deman=
-d for
-> the speed up is high enough and class based instantiation is used rarely,=
- so
-> the removal takes place now. To make up for the deprecation time, another
-> warning is added to the i2c core pointing out that the behaviour has now
-> changed:
+On Wed, Jul 16, 2014 at 05:22:03PM +0200, Arnd Bergmann wrote:
+> On Wednesday 16 July 2014 17:14:29 Thierry Reding wrote:
+> > >=20
+> > > Ok, I'll have a look. I think when this becomes a separate driver, it
+> > > should also have its own header file, so maybe you can in the meantime
+> > > make it a local header file in mach-tegra until we have found a good
+> > > place for it.
+> >=20
+> > Why do you think it should be a separate header? We already have a
+> > couple in include/linux and I'm not sure it's useful to add even more.
+> > If anything I would've thought it made sense to move the content of the
+> > other headers into tegra-soc.h.
 >=20
-> +	/* Warn that the adapter lost class based instantiation */
-> +	if (adapter->class =3D=3D I2C_CLASS_DEPRECATED) {
-> +		dev_dbg(&adapter->dev,
-> +			"This adapter dropped support for I2C classes and "
-> +			"won't auto-detect %s devices anymore. If you need it, check "
-> +			"'Documentation/i2c/instantiating-devices' for alternatives.\n",
-> +			driver->driver.name);
-> +		return 0;
-> +	}
->=20
-> A branch can be found here (with two other cleanups -> driver removals):
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/deprecate=
-_stuff
->=20
-> I hope this meets all the needs. Please comment, ack, test...
->=20
-> Thanks,
->=20
->    Wolfram
->=20
->=20
-> Wolfram Sang (16):
->   i2c: add debug info when class instantiation was dropped
->   i2c: i2c-at91: Drop class based scanning to improve bootup time
->   i2c: i2c-bcm2835: Drop class based scanning to improve bootup time
->   i2c: i2c-bfin-twi: Drop class based scanning to improve bootup time
->   i2c: i2c-davinci: Drop class based scanning to improve bootup time
->   i2c: i2c-designware-platdrv: Drop class based scanning to improve
->     bootup time
->   i2c: i2c-mv64xxx: Drop class based scanning to improve bootup time
->   i2c: i2c-nomadik: Drop class based scanning to improve bootup time
->   i2c: i2c-ocores: Drop class based scanning to improve bootup time
->   i2c: i2c-omap: Drop class based scanning to improve bootup time
->   i2c: i2c-rcar: Drop class based scanning to improve bootup time
->   i2c: i2c-s3c2410: Drop class based scanning to improve bootup time
->   i2c: i2c-sirf: Drop class based scanning to improve bootup time
->   i2c: i2c-stu300: Drop class based scanning to improve bootup time
->   i2c: i2c-tegra: Drop class based scanning to improve bootup time
->   i2c: i2c-xiic: Drop class based scanning to improve bootup time
->=20
->  drivers/i2c/busses/i2c-at91.c               |  2 +-
->  drivers/i2c/busses/i2c-bcm2835.c            |  2 +-
->  drivers/i2c/busses/i2c-bfin-twi.c           |  2 +-
->  drivers/i2c/busses/i2c-davinci.c            |  2 +-
->  drivers/i2c/busses/i2c-designware-platdrv.c |  2 +-
->  drivers/i2c/busses/i2c-mv64xxx.c            |  2 +-
+> I very much dislike the idea of having a per-vendor header file that
+> everything gets crammed into. We should try to have proper subsystems
+> and generic interfaces for these wherever possible.
 
-Applied to for-next, thanks!
+I completely agree. However spreading the SoC-specific functions across
+multiple header files isn't going to help. If we keep all the per-vendor
+APIs in one file it makes it easier to see what could still be moved off
+into a separate subsystem.
 
+Now for PMC specifically, we've investigated converting the powergate
+API to power domains. I don't think it will be possible to make that
+work. The issue is that there's a defined sequence that needs to be
+respected to make sure the device is powered up properly. That sequence
+involves the primary clock and reset of the device. It's been proposed
+to make these clocks available to the PMC driver so that it can control
+them, but then we can't make sure that clocks are really off if they
+need to be, since we have two drivers accessing them. The only way I see
+to make that work reliably is by moving complete control of the
+powergate into drivers so that they can make sure clocks and resets are
+in the correct states.
 
---QDIl5R72YNOeCxaP
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+The PMC driver also provides access to I/O rails and specifically a deep
+power down state. Some modules are in deep power down state by default,
+so they need to be brought out of that state. I suppose this would be
+easier to turn into a generic framework because there aren't any cross-
+dependencies like for powergates, but I'm not aware of any other SoC
+having a similar feature (or implementation thereof in the kernel). And
+adding a subsystem just for the sake of it if only one implementation is
+available isn't a good idea in my opinion because it will be naturally
+designed to work best (and therefore maybe only) for the one instance.
+
+This issue is a fundamental one and there are bound to be other SoCs
+that have similarly unique blocks for which it's impractical to add a
+framework. I suspect the primary reason why we haven't run into it this
+frequently is because a lot of it is still hidden in arch/arm/mach-*.
+
+I'm open to suggestions of course, but the best option I currently see
+is to collect these custom APIs in a central place so that we can easily
+compare various SoCs for commonalities as time goes by and factor them
+out into subsystems where appropriate.
+
+For the same reason I think it's valid to put this type of code into
+drivers/soc. That way we have one subdirectory to look through for
+potential unification rather than various ones sprinkled across arch
+directories. It makes little sense in my opinion to move this code to
+drivers/power if there's no common framework anyway.
+
+Thierry
+
+--17pEHd4RhPHOinZp
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTxrpcAAoJEBQN5MwUoCm2WtEP/i6iS+LXxbARgxhigYAWFkUr
-klsJEY41o723X7V6MWVXK5ud2s+1GWY3Z74PTHS8Y2bY79V1mDdq4Sa+FegKM3Q8
-9aOD5VXJBWWyiEufSsqUsJGxxWSz81eLX5n3b4olGWclu8BYKZ73jAt9PNF7SAP4
-G1i8DFZadoBxUbVW/hXk86IULb7Lmq3GOMmNIHJ1PFykI/dq7rogSo5yLccked9r
-Ho3kvEWIHeumRYdDsnlUqUayysl+yTvaJRhuXN+NrfDyH5ZB2/MY/4ZK+poV/cUM
-HrkhvF7Yok4udMtvpcGWaga/GKo5sLZZdz33uZutV09Iek7ce/guPsOuX4/yP+0t
-gjwPpMblPPGhC95aM7rDEELYZ434nszEpHLlE7amPONcCxbjrSYu8Qkg76ZjC/N+
-qaxq0l0QL6292ZBZOa366SxtlY3e8sg/YCJ4SE2Iw2/1aM60W2Gb5M3sqGkzaDZf
-TQTQiKuQbM8OTxiBXT6xKOM5h1n/hX780mJvuCXLdzWC5CbsUob0GHkDOBoDpY9r
-Jf2VXoJ7NYj0bUPEaXOWrn0k+BhBc8rXKaIET6m6Oi3AqhQPFO3OlCamlywOCozi
-90OHHciXrVxLlvWTPbx3H/tM+swlHGlGt+oKvvDxhAUnE/zMnbfM/sDC11+7Vlko
-q8c/leBJlfax/IyaZ3wv
-=2yuG
+iQIcBAEBAgAGBQJTxssLAAoJEN0jrNd/PrOh1GwP/3HBlh7d1DeMcTTz1EbWP2Z7
+usTgGCHY4zPoaXCgACtYVKm4MO2BemKDRDWnCiI8Ntg2vTfonZUYTV1S/VwacmBN
+hg4MR8pa1lNnkR9+2Bn1nDmI692lXvWbqJ9E4C2Ecy3ZU+6FVi8+IObLK3xNo4XC
+B1WjW/y/P0J3vOrwutNFbBnCal8piZAhbm1K7Jcu4gRAoR2fRChD8ywUX0q8ffni
+pSI+i3JpPRGsOYIhlpKBq0wHhHlhGFL/5zpRuoHE6xOXrcX7ajee8VpUjbwFYzhO
+acVGy+CzufWoqSkoaiYQ854yl1yxpyq/GpfMadCk5KH/BzW5bHFhicRp6VDyToZv
+PVQuByl71zafYujhvIs544pwwhLpDoVrJ2ScdY8uU2T9Z2tLKUSqQ8FX0glNqvkK
+k4ue0hRCGvMw/CpY6BB5ldRYg4yoOyhaeyYsWzpsRT4gLZop2oWYIKqxL1reMLaj
+riLOV7XJYC0kfuhsJ5t0VQSPU5dKwQhEXnALMjCd5DYF9BKGUGhh/WC+VxElUd9D
+kyDzlVSXM7OcGM+a64UfJez9rbVwPT47ZLQWz6dK4WGlSMlW9CsMonZRDneQSu+g
+DKIQy+/iB1G+OK0F8vktG2Sy0NnNDucOcfa3sDxfXwlQLhaysQYQ6rI/tzyrxTj6
+GZoalkHXO3UvNLjxiwbR
+=dMDy
 -----END PGP SIGNATURE-----
 
---QDIl5R72YNOeCxaP--
-
-
---===============6301060798827206376==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============6301060798827206376==--
+--17pEHd4RhPHOinZp--
