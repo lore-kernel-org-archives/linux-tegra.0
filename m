@@ -1,74 +1,62 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 3/6] clk: tegra: Update binding doc Tegra132
-Date: Wed, 16 Jul 2014 11:42:44 +0300
-Message-ID: <20140716084244.GO23218@tbergstrom-lnx.Nvidia.com>
-References: <1405437890-6468-1-git-send-email-pdeschrijver@nvidia.com>
- <1405437890-6468-4-git-send-email-pdeschrijver@nvidia.com>
- <20140716072539.GD7978@ulmo>
+From: Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [PATCH v3 0/8] Serial ATA support for NVIDIA Tegra124
+Date: Wed, 16 Jul 2014 11:54:15 +0300
+Message-ID: <1405500863-19696-1-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20140716072539.GD7978@ulmo>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-ide-owner@vger.kernel.org>
+Sender: linux-ide-owner@vger.kernel.org
+To: swarren@wwwdotorg.org, thierry.reding@gmail.com, tj@kernel.org, hdegoede@redhat.com
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-ide@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jul 16, 2014 at 09:25:40AM +0200, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Tue, Jul 15, 2014 at 06:24:33PM +0300, Peter De Schrijver wrote:
-> > Tegra132 has almost the same clock structure than Tegra124. This patch
-> > documents the missing clock IDs.
-> > 
-> > Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >  .../bindings/clock/nvidia,tegra124-car.txt         |    8 +++++---
-> >  1 files changed, 5 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
-> > index ded5d62..28129a9 100644
-> > --- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
-> > +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
-> > @@ -1,4 +1,4 @@
-> > -NVIDIA Tegra124 Clock And Reset Controller
-> > +NVIDIA Tegra124 and Tegra132 Clock And Reset Controller
-> >  
-> >  This binding uses the common clock binding:
-> >  Documentation/devicetree/bindings/clock/clock-bindings.txt
-> > @@ -7,14 +7,16 @@ The CAR (Clock And Reset) Controller on Tegra is the HW module responsible
-> >  for muxing and gating Tegra's clocks, and setting their rates.
-> >  
-> >  Required properties :
-> > -- compatible : Should be "nvidia,tegra124-car"
-> > +- compatible : Should be "nvidia,tegra124-car" or "nvidia,tegra132-car"
-> >  - reg : Should contain CAR registers location and length
-> >  - clocks : Should contain phandle and clock specifiers for two clocks:
-> >    the 32 KHz "32k_in", and the board-specific oscillator "osc".
-> >  - #clock-cells : Should be 1.
-> >    In clock consumers, this cell represents the clock ID exposed by the
-> >    CAR. The assignments may be found in header file
-> > -  <dt-bindings/clock/tegra124-car.h>.
-> > +  <dt-bindings/clock/tegra124-car.h>. The following clocks do not exist
-> > +  in the nvidia,tegra132-car binding: TEGRA124_CLK_CCLK_G,
-> > +  TEGRA124_CLK_CCLK_LP, TEGRA124_CLK_PLL_X and TEGRA124_CLK_PLL_X_OUT0.
-> 
-> Perhaps it would be useful to split up the common clocks and the
-> Tegra124-only clocks into separate header files and then provide
-> tegra132-car.h which includes only the ones in common with Tegra124.
-> 
-> In other words: tegra124-car-common.h would have all except the ones
-> above, then tegra124-car.h includes tegra124-car-common.h and defines
-> those that are Tegra124-only (the ones you listed above) and
-> tegra132-car.h can include tegra124-car-common.h.
-> 
-> That's somewhat extreme, but it has the benefit of giving us compile-
-> time checks as to whether the correct clocks are being used.
-> 
+Hi,
 
-Yes. That seems like a good plan.
+This series adds support for the onboard AHCI-compliant Serial ATA
+controller found on Tegra124 systems-on-chip.
 
-Cheers,
+A branch containing the series is located at 
+	git://github.com/cyndis/linux.git
+branch ahci-rel-v3.
 
-Peter.
+Changes in v3:
+- Fixed style issues in driver
+- Changed resource management to use libahci_platform's functions
+  I opted to not add reset_control support to libahci_platform yet
+  in the interest of getting this series into 3.17. Adding support
+  probably requires breaking the existing API and getting ACKs from
+  the maintainers of each platform driver.
+- Removed code that reads the calibration set to use from fuses.
+  The new-style fuse driver this requires is also going in for 3.17,
+  so this should make merging easier. For now, the driver defaults
+  to assuming FUSE_SATA_CALIB = 0, which works at least for my testing
+  hardware. This should be changed to read the actual fuse once the
+  fuse series has landed.
+
+Mikko Perttunen (8):
+  of: Add NVIDIA Tegra SATA controller binding
+  ARM: tegra: Add SATA controller to Tegra124 device tree
+  ARM: tegra: Add SATA and SATA power to Jetson TK1 device tree
+  clk: tegra: Enable hardware control of SATA PLL
+  clk: tegra: Add SATA clocks to Tegra124 initialization table
+  ata: ahci_platform: Increase AHCI_MAX_CLKS to 4
+  ata: Add support for the Tegra124 SATA controller
+  ARM: tegra: Add options for Tegra AHCI support to tegra_defconfig
+
+ .../devicetree/bindings/ata/tegra-sata.txt         |  30 ++
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts          |  35 ++
+ arch/arm/boot/dts/tegra124.dtsi                    |  25 ++
+ arch/arm/configs/tegra_defconfig                   |   3 +
+ drivers/ata/Kconfig                                |   9 +
+ drivers/ata/Makefile                               |   1 +
+ drivers/ata/ahci.h                                 |   2 +-
+ drivers/ata/ahci_tegra.c                           | 406 +++++++++++++++++++++
+ drivers/clk/tegra/clk-pll.c                        |   8 +
+ drivers/clk/tegra/clk-tegra124.c                   |   2 +
+ 10 files changed, 520 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/ata/tegra-sata.txt
+ create mode 100644 drivers/ata/ahci_tegra.c
+
+-- 
+1.8.1.5
+
