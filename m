@@ -1,50 +1,68 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH 12/12] ARM: tegra: Convert PMC to a driver
-Date: Wed, 16 Jul 2014 13:56:44 +0200
-Message-ID: <201407161356.44693.arnd@arndb.de>
-References: <1405080971-7609-1-git-send-email-thierry.reding@gmail.com> <1405080971-7609-13-git-send-email-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v4 1/8] of: Add NVIDIA Tegra SATA controller binding
+Date: Wed, 16 Jul 2014 15:13:06 +0200
+Message-ID: <20140716131306.GB23384@ulmo>
+References: <1405500863-19696-2-git-send-email-mperttunen@nvidia.com>
+ <1405510814-31928-1-git-send-email-mperttunen@nvidia.com>
+ <53C666E5.6030009@redhat.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="hHWLQfXTYDoKhP50"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1405080971-7609-13-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <53C666E5.6030009-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 11 July 2014, Thierry Reding wrote:
-> +/*
-> + * PMC
-> + */
-> +enum tegra_suspend_mode {
-> +       TEGRA_SUSPEND_NONE = 0,
-> +       TEGRA_SUSPEND_LP2, /* CPU voltage off */
-> +       TEGRA_SUSPEND_LP1, /* CPU voltage off, DRAM self-refresh */
-> +       TEGRA_SUSPEND_LP0, /* CPU + core voltage off, DRAM self-refresh */
-> +       TEGRA_MAX_SUSPEND_MODE,
-> +};
-> +
-> +#ifdef CONFIG_PM_SLEEP
-> +enum tegra_suspend_mode tegra_pmc_get_suspend_mode(void);
-> +void tegra_pmc_set_suspend_mode(enum tegra_suspend_mode mode);
-> +void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode);
-> +
-> +bool tegra_pmc_cpu_is_powered(int cpuid);
-> +int tegra_pmc_cpu_power_on(int cpuid);
-> +int tegra_pmc_cpu_remove_clamping(int cpuid);
-> +
-> +void tegra_pmc_restart(enum reboot_mode mode, const char *cmd);
-> +#endif
-> +
-> +/*
 
-This part is causing multiple build failures in the randconfig tests.
-You can avoid them by removing the #ifdef.
+--hHWLQfXTYDoKhP50
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On a more general note, why are you adding this stuff into a global
-header file in the first place? All users are in the same directory
-in which the functions are defined.
+On Wed, Jul 16, 2014 at 01:49:57PM +0200, Hans de Goede wrote:
+> Hi,
+>=20
+> On 07/16/2014 01:40 PM, Mikko Perttunen wrote:
+> > This patch adds device tree binding documentation for the SATA
+> > controller found on NVIDIA Tegra SoCs.
+> >=20
+> > Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> > v4: clarify mandatory clock order
+>=20
+> Thanks this and the new v4 of "ata: Add support for the Tegra124 SATA con=
+troller"
+> both look good to me. So these 2 + v3 for the rest of the series are:
+>=20
+> Acked-by: Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 
-	Arnd
+Like I said in my reply to PATCH v3 7/8, I think this mandatory clock
+order is a mistake.
+
+Thierry
+
+--hHWLQfXTYDoKhP50
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTxnphAAoJEN0jrNd/PrOhkncP/iyGERPZkrZbduzJZBzQbuL5
+OXkmppcnCvf78ngO1k7x/I177OEgdJK/veHVXSJ9ZzJaRJfRPjvDEG502R4+MjG2
+dgBVo30WB7XDU+tmqdY7uAABkPjaNyGQn9q8XHZdOue2jV14J3qjaAu0ZK3A1tf9
+y7sda0EPQGYteWthklOY0/roQs6cHrvD7RYVK87/jgjb1mf46xEb3gKQ2iI4Flyq
+vpxEUzSsP/u1hjUjY66C32UkKKGaDXoUGQSvDOlMkd1vELEdeR0G1gubam+W0IyQ
+OTprXcJpq/RoqGgzoVj2rjFZw0g3kPurjPp4G3FvWCYeHKsDqEatDt4KiIFuQriJ
+61cCQrmiEVIcqh+mdnerzwUlZKxlQPIOdbkOhSwm31Zq/300gdMnDkFsvwkv+QRq
+5pV6Oj6KMUSllnnD5rUjKZ9fqGJAQyX+5EguJoGfD94PAbFywUHAALQz/Oj8s/if
+/0mTROQ1cCD+px3IxL0FY64yEi0SV+NwJy7/3GnEGyb9ZKj1pHc/lO689FCXdcqq
+XgKNRTPRcRipI7M+lON5dp/7r8l/2pBSE+KOGm5fk00lHO0vG0tD9lodTS6tHdwG
+f/vCKGkNZ2yNtdwumulebTF1bIGM0Qfi+noBihyT12GAocdupA3/Bdkrs8XMq5ML
+whzq/5vI/dqAa7o/pdoq
+=zfux
+-----END PGP SIGNATURE-----
+
+--hHWLQfXTYDoKhP50--
