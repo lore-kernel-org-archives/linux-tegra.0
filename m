@@ -1,97 +1,104 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 3/6] clk: tegra: Update binding doc Tegra132
-Date: Wed, 16 Jul 2014 09:25:40 +0200
-Message-ID: <20140716072539.GD7978@ulmo>
+Subject: Re: [PATCH 4/6] clk: tegra: add nvidia,tegra132-ccplex-clk binding
+Date: Wed, 16 Jul 2014 09:32:01 +0200
+Message-ID: <20140716073200.GE7978@ulmo>
 References: <1405437890-6468-1-git-send-email-pdeschrijver@nvidia.com>
- <1405437890-6468-4-git-send-email-pdeschrijver@nvidia.com>
+ <1405437890-6468-5-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="HWvPVVuAAfuRc6SZ"
+	protocol="application/pgp-signature"; boundary="WBsA/oQW3eTA3LlM"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1405437890-6468-4-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1405437890-6468-5-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---HWvPVVuAAfuRc6SZ
+--WBsA/oQW3eTA3LlM
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 15, 2014 at 06:24:33PM +0300, Peter De Schrijver wrote:
-> Tegra132 has almost the same clock structure than Tegra124. This patch
-> documents the missing clock IDs.
+On Tue, Jul 15, 2014 at 06:24:34PM +0300, Peter De Schrijver wrote:
+> Tegra132 has a few new clocks for the CPU complex (ccplex).
 >=20
 > Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  .../bindings/clock/nvidia,tegra124-car.txt         |    8 +++++---
->  1 files changed, 5 insertions(+), 3 deletions(-)
+>  .../bindings/clock/nvidia,tegra132-ccplex-clk.txt  |   27 ++++++++++++++=
+++++++
+>  include/dt-bindings/clock/tegra132-ccplex.h        |   12 +++++++++
+>  2 files changed, 39 insertions(+), 0 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra1=
+32-ccplex-clk.txt
+>  create mode 100644 include/dt-bindings/clock/tegra132-ccplex.h
 >=20
-> diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.=
-txt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
-> index ded5d62..28129a9 100644
-> --- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
-> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
-> @@ -1,4 +1,4 @@
-> -NVIDIA Tegra124 Clock And Reset Controller
-> +NVIDIA Tegra124 and Tegra132 Clock And Reset Controller
-> =20
->  This binding uses the common clock binding:
->  Documentation/devicetree/bindings/clock/clock-bindings.txt
-> @@ -7,14 +7,16 @@ The CAR (Clock And Reset) Controller on Tegra is the HW=
- module responsible
->  for muxing and gating Tegra's clocks, and setting their rates.
-> =20
->  Required properties :
-> -- compatible : Should be "nvidia,tegra124-car"
-> +- compatible : Should be "nvidia,tegra124-car" or "nvidia,tegra132-car"
->  - reg : Should contain CAR registers location and length
->  - clocks : Should contain phandle and clock specifiers for two clocks:
->    the 32 KHz "32k_in", and the board-specific oscillator "osc".
->  - #clock-cells : Should be 1.
->    In clock consumers, this cell represents the clock ID exposed by the
->    CAR. The assignments may be found in header file
-> -  <dt-bindings/clock/tegra124-car.h>.
-> +  <dt-bindings/clock/tegra124-car.h>. The following clocks do not exist
-> +  in the nvidia,tegra132-car binding: TEGRA124_CLK_CCLK_G,
-> +  TEGRA124_CLK_CCLK_LP, TEGRA124_CLK_PLL_X and TEGRA124_CLK_PLL_X_OUT0.
+> diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra132-ccpl=
+ex-clk.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra132-ccplex=
+-clk.txt
+> new file mode 100644
+> index 0000000..1441e36
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra132-ccplex-clk.=
+txt
+> @@ -0,0 +1,27 @@
+> +NVIDIA Tegra132 ccplex clocks
 
-Perhaps it would be useful to split up the common clocks and the
-Tegra124-only clocks into separate header files and then provide
-tegra132-car.h which includes only the ones in common with Tegra124.
+Perhaps: "NVIDIA Tegra132 CPU complex (ccplex) clocks". Otherwise this
+file doesn't expand the ccplex abbreviation at all and it may not be
+obvious to everyone.
 
-In other words: tegra124-car-common.h would have all except the ones
-above, then tegra124-car.h includes tegra124-car-common.h and defines
-those that are Tegra124-only (the ones you listed above) and
-tegra132-car.h can include tegra124-car-common.h.
+> +This binding uses the common clock binding:
+> +Documentation/devicetree/bindings/clock/clock-bindings.txt
 
-That's somewhat extreme, but it has the benefit of giving us compile-
-time checks as to whether the correct clocks are being used.
+clock-bindings.txt is in the same directory as this file, so a slightly
+better wording would be:
+
+	This binding uses the common clock binding as described in the
+	clock-bindings.txt file in this directory.
+
+Note that these absolute paths may not remain the same when the device
+tree bindings are moved out of the kernel tree.
+
+> +The Tegra132 ccplex clock module on Tegra132 is the HW module responsible
+> +for the ccplex related clocks.
+
+The end repeats the beginning of this sentence, so its information
+content is rather low. Maybe the last part of this sentence could be:
+"... responsible for the CPU and related clocks".
+
+> diff --git a/include/dt-bindings/clock/tegra132-ccplex.h b/include/dt-bin=
+dings/clock/tegra132-ccplex.h
+[...]
+> +#define TEGRA132_CCPLEX_CCLK_G 1
+> +#define TEGRA132_PLL_X 2
+> +#define TEGRA132_CCPLEX_CLK_MAX 3
+
+Maybe these should use TEGRA132_CLK_ as prefix for consistency with the
+CAR binding?
 
 Thierry
 
---HWvPVVuAAfuRc6SZ
+--WBsA/oQW3eTA3LlM
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJTxijzAAoJEN0jrNd/PrOhFN0P/A3B7zYsiC028WGDI52iVrgC
-AQn7n/NFjThVdLh/gH9YNJDFReJZ0vUVkXoKMroMgI2tNPJPj39KS5P2vK2eS5y9
-eAzKYl344v4gMpMoWcJ/wB0K7C2kLGx2jhI6yUoZQ1xzsqV7AU4NQpZi7qg0kVyz
-/eNeeKhSfaZzSvbS8zcyXcoXM9TzUqUjvucWoxCAG07Vb42CCR8cgyr0947k6sVP
-Q6wohze8NVNQQnc0y3Eo1kJ3xthKQBrrQzV+GR4mnPn08aytZ8cT/eFatVcP9+bM
-wj6Xkrcxs94DODZGbQQJQdHbEHC6cBYF4mnTpqj4adtoaIduPN3PO3M88Mssw8pZ
-Nxyp16UsYMSVOBbar904OFG8VOrLtJLAT0lysYFfyphGi2fMk81MK8DZCuHv48Ao
-7/TmmDKZ+wT/tZq6y6T00An6ot+7CWobSHYGlwT420wK3FcG3EIUJ/9gKXuBPyAN
-YfNJ/gsquszf55Xs9wAOzY3zf7YXtWTx3yTM6rbCF7EpZus58Hmfi47Gj47sOmKt
-/mMZq+pUMc+7M/zUu4ZIKFkpwBVaS7laVfbcFLB6Wh98DlvAIw+Lrq2fyspR9IEg
-rKVsn/XLHFDXqn/KgI1iir5vwRLsrWNh0YvbJ/X8GUCBO20VEWIZHC8DAWRlqCZe
-xqnhvoIsBOqGXlg99ze/
-=Dbr2
+iQIcBAEBAgAGBQJTxipwAAoJEN0jrNd/PrOhXRsP+wUmTSZ+S/1VYWQ50sZCQtSh
+SM3OSy96drsNEJehN6kRezqC4QaLqv31xDVUgocqac8mJwkUNtb8ZNGmB0g9ORYe
+ce0oDBGrIKwPo+E8NvFUenYNR4Me6IuAa705SpaElON6EhRyz4IHHLGgEj/z08J/
+GjA+3ZQFpJ+i7WRICuAMr/f6b0AomLU6+Amvokxt0RITqHSCo98kTlzz2vbrduEk
+kqn25w3wOZ7FywGw9J+Nj7ODF7LdOUksKj16hy9g5LGv82LjEj/jdtos5NoW3SE8
+PEMe03tW4PouZcV3D+cfrlimarBr0zuhzGnp3JoU+yN0ZN+HgI8g4fsCuJmwe374
+/3sLZbCsWrqwvBGaMZrE508SYxkrbJHtko1IrKSWLFMs5gvUF8hef3I9cjvuZl3r
+yOQoUoCpYpyNpI2aoj1kU2M/9doorPAJGDgxGbjkR3Rb8WeuihXfqCuMY6XD1YC6
+6yLXPWoM5wa6WLd/RB8M6AOuf1P4coUuN0lm9nZGRNfms9mYn9jVzn9F7SlPb0ZD
+/uHGXXiUrZEX0gNl+JqmuijBnNIRl/+0YNpJ65M9VEy6GWM1GxsvTXQQ0UubF/Sf
+qbwBMntO//bexAI6hrVjiocF5SO6P2CLaaDafpdOHjRe+i4hYcVU4Hr6GKTMdveU
+EQFYkxP0Ovyte9QGogYh
+=GaJ/
 -----END PGP SIGNATURE-----
 
---HWvPVVuAAfuRc6SZ--
+--WBsA/oQW3eTA3LlM--
