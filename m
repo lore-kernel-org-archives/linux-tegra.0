@@ -1,104 +1,165 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 4/6] clk: tegra: add nvidia,tegra132-ccplex-clk binding
-Date: Wed, 16 Jul 2014 09:32:01 +0200
-Message-ID: <20140716073200.GE7978@ulmo>
+Subject: Re: [PATCH 5/6] clk: tegra: Add support for Tegra132 CAR clocks
+Date: Wed, 16 Jul 2014 09:44:10 +0200
+Message-ID: <20140716074410.GF7978@ulmo>
 References: <1405437890-6468-1-git-send-email-pdeschrijver@nvidia.com>
- <1405437890-6468-5-git-send-email-pdeschrijver@nvidia.com>
+ <1405437890-6468-6-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="WBsA/oQW3eTA3LlM"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="65ImJOski3p8EhYV"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1405437890-6468-5-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1405437890-6468-6-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---WBsA/oQW3eTA3LlM
+--65ImJOski3p8EhYV
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 15, 2014 at 06:24:34PM +0300, Peter De Schrijver wrote:
-> Tegra132 has a few new clocks for the CPU complex (ccplex).
+On Tue, Jul 15, 2014 at 06:24:35PM +0300, Peter De Schrijver wrote:
+> Tegra132 CAR supports almost the same clocks as Tegra124 CAR. This patch
+> deals with the small differences.
+>=20
+> --
+> I'm not entirely sure why the soc_therm clock needs to be enabled on Tegr=
+a132,
+> but turning it off results in a system hang. I presume this might be beca=
+use
+> of fastboot initializing soc_therm.
 >=20
 > Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  .../bindings/clock/nvidia,tegra132-ccplex-clk.txt  |   27 ++++++++++++++=
-++++++
->  include/dt-bindings/clock/tegra132-ccplex.h        |   12 +++++++++
->  2 files changed, 39 insertions(+), 0 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra1=
-32-ccplex-clk.txt
->  create mode 100644 include/dt-bindings/clock/tegra132-ccplex.h
+>  drivers/clk/tegra/clk-tegra124.c |   32 ++++++++++++++++++++++++++++++++
+>  1 files changed, 32 insertions(+), 0 deletions(-)
 >=20
-> diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra132-ccpl=
-ex-clk.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra132-ccplex=
--clk.txt
-> new file mode 100644
-> index 0000000..1441e36
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra132-ccplex-clk.=
-txt
-> @@ -0,0 +1,27 @@
-> +NVIDIA Tegra132 ccplex clocks
+> diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-teg=
+ra124.c
+> index 80efe51..b857aab 100644
+> --- a/drivers/clk/tegra/clk-tegra124.c
+> +++ b/drivers/clk/tegra/clk-tegra124.c
+> @@ -1369,6 +1369,7 @@ static struct tegra_clk_init_table init_table[] __i=
+nitdata =3D {
+>  	{TEGRA124_CLK_XUSB_HS_SRC, TEGRA124_CLK_PLL_U_60M, 60000000, 0},
+>  	{TEGRA124_CLK_XUSB_FALCON_SRC, TEGRA124_CLK_PLL_RE_OUT, 224000000, 0},
+>  	{TEGRA124_CLK_XUSB_HOST_SRC, TEGRA124_CLK_PLL_RE_OUT, 112000000, 0},
+> +	{TEGRA124_CLK_SOC_THERM, TEGRA124_CLK_PLL_P, 51000000, 0},
+>  	/* This MUST be the last entry. */
+>  	{TEGRA124_CLK_CLK_MAX, TEGRA124_CLK_CLK_MAX, 0, 0},
+>  };
+> @@ -1378,9 +1379,25 @@ static void __init tegra124_clock_apply_init_table=
+(void)
+>  	tegra_init_from_table(init_table, clks, TEGRA124_CLK_CLK_MAX);
+>  }
+> =20
+> +enum {
+> +	TEGRA124_CLK,
+> +	TEGRA132_CLK,
+> +};
 
-Perhaps: "NVIDIA Tegra132 CPU complex (ccplex) clocks". Otherwise this
-file doesn't expand the ccplex abbreviation at all and it may not be
-obvious to everyone.
+I'd prefer this to be something like:
 
-> +This binding uses the common clock binding:
-> +Documentation/devicetree/bindings/clock/clock-bindings.txt
+	struct tegra_car_soc {
+		bool has_ccplex_clk;
+	};
 
-clock-bindings.txt is in the same directory as this file, so a slightly
-better wording would be:
+	static const struct tegra_car_soc tegra124_car_soc =3D {
+		.has_ccplex_clk =3D false,
+	};
 
-	This binding uses the common clock binding as described in the
-	clock-bindings.txt file in this directory.
+	static const struct tegra_car_soc tegra132_car_soc =3D {
+		.has_ccplex_clk =3D true,
+	};
 
-Note that these absolute paths may not remain the same when the device
-tree bindings are moved out of the kernel tree.
+> +static const struct of_device_id tegra_clock_of_match[] =3D {
+> +	{ .compatible =3D "nvidia,tegra124-car", .data =3D (void *)TEGRA124_CLK=
+ },
 
-> +The Tegra132 ccplex clock module on Tegra132 is the HW module responsible
-> +for the ccplex related clocks.
+	                                       .data =3D &tegra124_car_soc,
 
-The end repeats the beginning of this sentence, so its information
-content is rather low. Maybe the last part of this sentence could be:
-"... responsible for the CPU and related clocks".
+> +	{ .compatible =3D "nvidia,tegra132-car", .data =3D (void *)TEGRA132_CLK=
+ },
 
-> diff --git a/include/dt-bindings/clock/tegra132-ccplex.h b/include/dt-bin=
-dings/clock/tegra132-ccplex.h
-[...]
-> +#define TEGRA132_CCPLEX_CCLK_G 1
-> +#define TEGRA132_PLL_X 2
-> +#define TEGRA132_CCPLEX_CLK_MAX 3
+	                                       .data =3D &tegra132_car_soc,
 
-Maybe these should use TEGRA132_CLK_ as prefix for consistency with the
-CAR binding?
+>  static void __init tegra124_clock_init(struct device_node *np)
+>  {
+>  	struct device_node *node;
+> +	const struct of_device_id *match;
+
+	const struct tegra_car_soc *soc;
+
+> +	uintptr_t id;
+
+> +	match =3D of_match_node(tegra_clock_of_match, np);
+> +	id =3D (uintptr_t)match->data;
+
+	soc =3D match->data;
+
+> =20
+>  	clk_base =3D of_iomap(np, 0);
+>  	if (!clk_base) {
+> @@ -1416,6 +1433,20 @@ static void __init tegra124_clock_init(struct devi=
+ce_node *np)
+>  	tegra_audio_clk_init(clk_base, pmc_base, tegra124_clks, &pll_a_params);
+>  	tegra_pmc_clk_init(pmc_base, tegra124_clks);
+> =20
+> +	if (id =3D=3D TEGRA132_CLK) {
+
+	if (soc->has_ccplex_clk) {
+
+That's somewhat more explicit and avoids a lot of ugly casting.
+
+> +		int i;
+> +
+> +		tegra124_clks[tegra_clk_cclk_g].present =3D false;
+> +		tegra124_clks[tegra_clk_cclk_lp].present =3D false;
+> +		tegra124_clks[tegra_clk_pll_x].present =3D false;
+> +		tegra124_clks[tegra_clk_pll_x_out0].present =3D false;
+> +
+> +		/* Tegra132 requires the soc_therm clock to be always on */
+> +		for (i =3D 0; i < ARRAY_SIZE(init_table); i++) {
+> +			if (init_table[i].clk_id =3D=3D TEGRA124_CLK_SOC_THERM)
+> +				init_table[i].state =3D 1;
+
+I wonder if we could do this someplace else. If we could, then we'd have
+the opportunity to make the init_table const.
+
+> +		}
+> +	}
+>  	tegra_super_clk_gen4_init(clk_base, pmc_base, tegra124_clks,
+
+Could use a blank line after the closing } above.
 
 Thierry
 
---WBsA/oQW3eTA3LlM
+--65ImJOski3p8EhYV
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJTxipwAAoJEN0jrNd/PrOhXRsP+wUmTSZ+S/1VYWQ50sZCQtSh
-SM3OSy96drsNEJehN6kRezqC4QaLqv31xDVUgocqac8mJwkUNtb8ZNGmB0g9ORYe
-ce0oDBGrIKwPo+E8NvFUenYNR4Me6IuAa705SpaElON6EhRyz4IHHLGgEj/z08J/
-GjA+3ZQFpJ+i7WRICuAMr/f6b0AomLU6+Amvokxt0RITqHSCo98kTlzz2vbrduEk
-kqn25w3wOZ7FywGw9J+Nj7ODF7LdOUksKj16hy9g5LGv82LjEj/jdtos5NoW3SE8
-PEMe03tW4PouZcV3D+cfrlimarBr0zuhzGnp3JoU+yN0ZN+HgI8g4fsCuJmwe374
-/3sLZbCsWrqwvBGaMZrE508SYxkrbJHtko1IrKSWLFMs5gvUF8hef3I9cjvuZl3r
-yOQoUoCpYpyNpI2aoj1kU2M/9doorPAJGDgxGbjkR3Rb8WeuihXfqCuMY6XD1YC6
-6yLXPWoM5wa6WLd/RB8M6AOuf1P4coUuN0lm9nZGRNfms9mYn9jVzn9F7SlPb0ZD
-/uHGXXiUrZEX0gNl+JqmuijBnNIRl/+0YNpJ65M9VEy6GWM1GxsvTXQQ0UubF/Sf
-qbwBMntO//bexAI6hrVjiocF5SO6P2CLaaDafpdOHjRe+i4hYcVU4Hr6GKTMdveU
-EQFYkxP0Ovyte9QGogYh
-=GaJ/
+iQIcBAEBAgAGBQJTxi1JAAoJEN0jrNd/PrOhxWEP/RMExt+SxkJo+Ak93ELZHlsL
+xjXKFvIN6bnI1zDm1icO6w6A+EM0HFOwdjpFJALdhaDR6mCfaYq3RA54dCFTwG9X
+w/OplnN3Wm2bb5PrlA5dl/0fWgJeElJe+SVQZ3asnFNfxi/vOxH+XJzGP+YVqO/2
+llgMkD509XY7006qTI3FrG4bAb1LVUyu24lR3E7Rz8D5d6jjAIoamzHfI0ckqHkg
+MMoGMHgqGvkN798657QvUUuuDvWQeJVfYN5lz2JJFK1cbjw6Tk34DFSSvJDGIxJk
+XviKyDf1K6/rx0TnlOyjMuA7B0WcREpwoECEk29LaFsQthcpikJx/2V8KJyho/oD
+jw0RDy1njsIQuzyh8ATxH3b9HQ5/719aACpFbG2YoceVnN0ItwEC04jQ2cdFkxj2
+rQqTIZ9XbFaoFksBskEqrCjmLEHrPDK1krT3nOrSMm1Rmswxo1zDSQMA/5SybXc+
+1xbq5RdDnzJ5+a72lX99eUZKW264hbUQpOs8TpPAwjD8V5mNFNVMRaeF6M0MhRme
+s0jOzzyCSsqNcbHsnj2Dq/r2aek9usnTt8+80Igj2FRYKOCHVwgOcCku3dDR75h/
+p+DaYYeq93K5JELfWOjSyOnZaIrzQFe7tgwmrFYvGTme+5sqiH78D0bZdtmceLfD
+ZnPFmezOr3qL2mSjwTK6
+=FARf
 -----END PGP SIGNATURE-----
 
---WBsA/oQW3eTA3LlM--
+--65ImJOski3p8EhYV--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
