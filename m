@@ -1,52 +1,56 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/6] clk: tegra: make tegra_clocks_apply_init_table
- arch_initcall
-Date: Wed, 16 Jul 2014 11:27:40 +0300
-Message-ID: <20140716082740.GK23218@tbergstrom-lnx.Nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH 6/6] clk: tegra: Add Tegra132 ccplex clocks
+Date: Wed, 16 Jul 2014 11:30:42 +0300
+Message-ID: <20140716083042.GL23218@tbergstrom-lnx.Nvidia.com>
 References: <1405437890-6468-1-git-send-email-pdeschrijver@nvidia.com>
- <1405437890-6468-3-git-send-email-pdeschrijver@nvidia.com>
- <20140716071932.GB7978@ulmo>
+ <1405437890-6468-7-git-send-email-pdeschrijver@nvidia.com>
+ <53C5908C.5000009@nvidia.com> <53C591B1.4080302@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <20140716071932.GB7978@ulmo>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <53C591B1.4080302@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Joseph Lo <josephl@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Tuomas Tynkkynen <ttynkkynen@nvidia.com>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Alex Courbot <acourbot@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jul 16, 2014 at 09:19:33AM +0200, Thierry Reding wrote:
-> * PGP Signed by an unknown key
+On Tue, Jul 15, 2014 at 10:40:17PM +0200, Rhyland Klein wrote:
+> On 7/15/2014 4:35 PM, Rhyland Klein wrote:
+> > On 7/15/2014 11:24 AM, Peter De Schrijver wrote:
+> >> Add support for the ccplex clocks in Tegra132.
+> >>
+> >> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> >> ---
+> >>  drivers/clk/tegra/Makefile |    2 ++
+> >>  1 files changed, 2 insertions(+), 0 deletions(-)
+> >>
+> >> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+> >> index f7dfb72..4231865 100644
+> >> --- a/drivers/clk/tegra/Makefile
+> >> +++ b/drivers/clk/tegra/Makefile
+> >> @@ -15,3 +15,5 @@ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
+> >>  obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
+> >>  obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= clk-tegra114.o
+> >>  obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124.o
+> >> +obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.c
+> >> +obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra132-ccplex.c
 > 
-> On Tue, Jul 15, 2014 at 06:24:32PM +0300, Peter De Schrijver wrote:
-> [...]
-> > diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
-> > index d081732..65cde4e 100644
-> > --- a/drivers/clk/tegra/clk.c
-> > +++ b/drivers/clk/tegra/clk.c
-> > @@ -290,10 +290,13 @@ struct clk ** __init tegra_lookup_dt_id(int clk_id,
-> >  
-> >  tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
-> >  
-> > -void __init tegra_clocks_apply_init_table(void)
-> > +static int __init tegra_clocks_apply_init_table(void)
-> >  {
-> >  	if (!tegra_clk_apply_init_table)
-> > -		return;
-> > +		return 0;
+> Also, shouldn't both these be .o not .c ?
 > 
-> Shouldn't this be an error? Or perhaps WARN()? To make sure this gets
+> -rhyland
 
-An arch_initcall will be called for every ARM platform I think? In case
-this gets called on a non-Tegra platform, tegra_clk_apply_init_table will not
-be set and therefore a silent return 0; seems the most appropriate thing to do
-to me?
+Yes, obviously :)
 
 Cheers,
 
 Peter.
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
