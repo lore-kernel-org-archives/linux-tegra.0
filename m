@@ -1,43 +1,72 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [RFC 1/4] ARM: tegra: Move SoC drivers to drivers/soc/tegra
-Date: Thu, 17 Jul 2014 09:21:53 -0700
-Message-ID: <CAOesGMgbWGYLK1hZtpLsKiG=WhXNijJ56C4zVygk1cWdQi5RjA@mail.gmail.com>
-References: <1403888329-24755-1-git-send-email-thierry.reding@gmail.com>
-	<53AEF81D.3080408@ti.com>
-	<20140628204025.GA16415@ulmo>
-	<7497427.LQy8pJts8f@wuerfel>
-	<CAOesGMjgNZ0hvWy0p1fh36gOMfBVd-uJSf=AWUsr9GdrrErtyw@mail.gmail.com>
-	<20140717093149.GB3180@arm.com>
+From: Bastian Hecht <hechtb@gmail.com>
+Subject: Re: [PATCH v2 5/5] i2c: tegra: Remove suspension check
+Date: Thu, 17 Jul 2014 18:52:35 +0200
+Message-ID: <CABYn4swY5yRe=eGzCYo0uJtmjn05Ut4oDWupPjmU9bXbuU6+Pw@mail.gmail.com>
+References: <1405608520-5644-1-git-send-email-hechtb@gmail.com>
+ <1405608520-5644-5-git-send-email-hechtb@gmail.com>
+ <20140717145958.GA32534@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140717093149.GB3180-5wv7dgnIgG8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>
-Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kumar Gala <galak-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20140717145958.GA32534@ulmo>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Linux-SH <linux-sh@vger.kernel.org>, Tomoya MORINAGA <tomoya.rohm@gmail.com>, open list <linux-kernel@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, linux-i2c@vger.kernel.org, "open list:TEGRA ARCHITECTUR..." <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jul 17, 2014 at 2:31 AM, Catalin Marinas
-<catalin.marinas-5wv7dgnIgG8@public.gmane.org> wrote:
-> On Wed, Jul 16, 2014 at 08:31:00PM +0100, Olof Johansson wrote:
->> [ Gee, I had completely missed this thread because nobody bothered to
->> cc me. Seems to be standard procedure on 64-bit these days. :( ]
+2014-07-17 16:59 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
+> On Thu, Jul 17, 2014 at 04:48:40PM +0200, Bastian Hecht wrote:
+> [...]
+>>  #ifdef CONFIG_PM_SLEEP
+>> -static int tegra_i2c_suspend(struct device *dev)
+>> -{
+>> -     struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+>> -
+>> -     i2c_lock_adapter(&i2c_dev->adapter);
+>> -     i2c_dev->is_suspended = true;
+>> -     i2c_unlock_adapter(&i2c_dev->adapter);
+>> -
+>> -     return 0;
+>> -}
+>> -
+>>  static int tegra_i2c_resume(struct device *dev)
+>>  {
+>>       struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+>> @@ -842,14 +827,12 @@ static int tegra_i2c_resume(struct device *dev)
+>>               return ret;
+>>       }
+>>
+>> -     i2c_dev->is_suspended = false;
+>> -
+>>       i2c_unlock_adapter(&i2c_dev->adapter);
+>>
+>>       return 0;
+>>  }
+>>
+>> -static SIMPLE_DEV_PM_OPS(tegra_i2c_pm, tegra_i2c_suspend, tegra_i2c_resume);
+>> +static SIMPLE_DEV_PM_OPS(tegra_i2c_pm, tegra_i2c_resume);
 >
-> Just to clarify this point, as per prior agreement I'm expecting the
-> arm-soc guys to help reviewing/merging arm64-soc as well, even though
-> there are no arch/arm64/{mach,plat}-* directories. That means that
-> arm-soc folks should also be cc'ed on such patches.
+> Shouldn't this be:
 >
-> However, the "ARM SUB-ARCHITECTURES" MAINTAINERS entry does not mention
-> arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org (neither Olof nor Arnd). Was this not meant as an arm-soc
-> email alias?
+>         static SIMPLE_DEV_OPS(tegra_i2c_pm, NULL, tegra_i2c_resume);
+>
+> instead?
 
-Yes, however we've been reluctant to add it because we don't want
-people to post patches directly to us, we mostly expect maintainers to
-send pull request and/or direct patches there.
+Oh yes thanks. I made the same mistake in [PATCH 3/5] too.
 
-We can do it and add annotation to not send patches directly there.
-I'll post a patch for that update.
+Thanks,
+
+ Bastian
 
 
--Olof
+
+> Thierry
