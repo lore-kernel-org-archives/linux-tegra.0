@@ -1,67 +1,68 @@
-From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v4 1/8] of: Add NVIDIA Tegra SATA controller binding
-Date: Thu, 17 Jul 2014 10:56:46 +0300
-Message-ID: <53C781BE.8080608@nvidia.com>
-References: <1405500863-19696-2-git-send-email-mperttunen@nvidia.com> <1405510814-31928-1-git-send-email-mperttunen@nvidia.com> <53C666E5.6030009@redhat.com> <20140716131306.GB23384@ulmo> <53C6908A.2050200@redhat.com> <20140716195136.GB5212@mithrandir> <53C77263.7050903@redhat.com> <20140717073956.GA18640@ulmo>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 12/12] ARM: tegra: Convert PMC to a driver
+Date: Thu, 17 Jul 2014 11:53:08 +0300
+Message-ID: <20140717085308.GQ23218@tbergstrom-lnx.Nvidia.com>
+References: <1405080971-7609-1-git-send-email-thierry.reding@gmail.com>
+ <17053542.QUGvfkeRmc@wuerfel>
+ <20140716151427.GA22027@ulmo>
+ <6322144.IB6iKDb6TK@wuerfel>
+ <20140716185715.GA4843@mithrandir>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140717073956.GA18640@ulmo>
+Content-Disposition: inline
+In-Reply-To: <20140716185715.GA4843@mithrandir>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 17/07/14 10:39, Thierry Reding wrote:
-> ...
-> One other thing that I've been thinking about is whether it would make
-> sense to make the ahci_platform library use a list of clock names that
-> it should request. This would better mirror the clock bindings
-> convention and allow drivers (such as the Tegra one) to take ownership
-> of clocks that need special handling while at the same time leaving it
-> to the helpers to do the bulk of the work.
->
-> One way I can think of to handle this would be by adding a struct
-> ahci_platform_resources * parameter to ahci_platform_get_resources(),
-> sowewhat like this:
->
-> 	struct ahci_platform_resources {
-> 		const char *const *clocks;
-> 		unsigned int num_clocks;
->
-> 		const char *const *resets;
-> 		unsigned int num_resets;
-> 	};
->
-> 	struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev,
-> 							   const struct ahci_platform_resources *res)
-> 	{
-> 		...
->
-> 		for (i = 0; i < res->num_clocks; i++) {
-> 			clk = clk_get(&pdev->dev, res->clocks[i]);
-> 			...
-> 		}
->
-> 		...
->
-> 		for (i = 0; i < res->num_resets; i++) {
-> 			rst = reset_control_get(&pdev->dev, res->resets[i]);
-> 			...
-> 		}
->
-> 		...
-> 	}
->
+On Wed, Jul 16, 2014 at 08:57:16PM +0200, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Wed, Jul 16, 2014 at 05:22:03PM +0200, Arnd Bergmann wrote:
+> > On Wednesday 16 July 2014 17:14:29 Thierry Reding wrote:
+> > > > 
+> > > > Ok, I'll have a look. I think when this becomes a separate driver, it
+> > > > should also have its own header file, so maybe you can in the meantime
+> > > > make it a local header file in mach-tegra until we have found a good
+> > > > place for it.
+> > > 
+> > > Why do you think it should be a separate header? We already have a
+> > > couple in include/linux and I'm not sure it's useful to add even more.
+> > > If anything I would've thought it made sense to move the content of the
+> > > other headers into tegra-soc.h.
+> > 
+> > I very much dislike the idea of having a per-vendor header file that
+> > everything gets crammed into. We should try to have proper subsystems
+> > and generic interfaces for these wherever possible.
+> 
+> I completely agree. However spreading the SoC-specific functions across
+> multiple header files isn't going to help. If we keep all the per-vendor
+> APIs in one file it makes it easier to see what could still be moved off
+> into a separate subsystem.
+> 
+> Now for PMC specifically, we've investigated converting the powergate
+> API to power domains. I don't think it will be possible to make that
+> work. The issue is that there's a defined sequence that needs to be
+> respected to make sure the device is powered up properly. That sequence
+> involves the primary clock and reset of the device. It's been proposed
+> to make these clocks available to the PMC driver so that it can control
+> them, but then we can't make sure that clocks are really off if they
+> need to be, since we have two drivers accessing them. The only way I see
 
-I think something like this would be required to support reset_controls 
-anyway, as you can only get reset controls by name. This is what I 
-alluded to (in the cover letter) when saying that adding reset control 
-support would require an API break.
+resets do not have reference counts, so they can be controlled by a
+powerdomain driver without any problems. For clocks, there would only be
+a problem for the module clocks if the drivers don't use runtime PM. If
+we move all drivers to runtime PM, the clock control can move into the
+powerdomain code and runtime PM will ensure domains are not turned off
+with active modules.
 
-Also: is there a reason to not use the devm_* variants? I note that the 
-helper code has not been able to prevent any of the ahci_platform 
-drivers from messing up by not calling ahci_platform_put_resources.
+> to make that work reliably is by moving complete control of the
+> powergate into drivers so that they can make sure clocks and resets are
+> in the correct states.
+> 
 
-- Mikko
+Which won't work if you have domains which contain several modules.
+
+Peter.
