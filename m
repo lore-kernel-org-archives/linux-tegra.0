@@ -1,39 +1,61 @@
-From: Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>
-Subject: [PATCH] ARM: tegra: Fix comment typo 'CONFIG_SLEEP'
-Date: Thu, 17 Jul 2014 11:45:57 +0200
-Message-ID: <1405590357.4808.15.camel@x220>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: Fix comment typo 'CONFIG_SLEEP'
+Date: Thu, 17 Jul 2014 11:54:10 +0200
+Message-ID: <20140717095409.GB17877@ulmo>
+References: <1405590357.4808.15.camel@x220>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ZfOjI3PrQbgiZnxM"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1405590357.4808.15.camel@x220>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Signed-off-by: Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>
----
-Untested! Please shout if that bothers you.
 
-This typo entered linux-next as of today (in next-20140717). Its fix
-would be fine for the trivial tree, if trivial would track linux-next.
-But it doesn't.
+--ZfOjI3PrQbgiZnxM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- include/linux/tegra-soc.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, Jul 17, 2014 at 11:45:57AM +0200, Paul Bolle wrote:
+> Signed-off-by: Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>
+> ---
+> Untested! Please shout if that bothers you.
+>=20
+> This typo entered linux-next as of today (in next-20140717). Its fix
+> would be fine for the trivial tree, if trivial would track linux-next.
+> But it doesn't.
+>=20
+>  include/linux/tegra-soc.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/tegra-soc.h b/include/linux/tegra-soc.h
-index 197aa5bd66d2..25caa520b784 100644
---- a/include/linux/tegra-soc.h
-+++ b/include/linux/tegra-soc.h
-@@ -81,7 +81,7 @@ void tegra_pmc_restart(enum reboot_mode mode, const char *cmd);
- enum tegra_suspend_mode tegra_pmc_get_suspend_mode(void);
- void tegra_pmc_set_suspend_mode(enum tegra_suspend_mode mode);
- void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode);
--#endif /* CONFIG_SLEEP */
-+#endif /* CONFIG_PM_SLEEP */
- 
- #ifdef CONFIG_SMP
- bool tegra_pmc_cpu_is_powered(int cpuid);
--- 
-1.9.3
+I don't have this typo in my local tree, so I guess I must have fixed it
+sometime late yesterday but then forgot push this for linux-next.
+
+Thierry
+
+--ZfOjI3PrQbgiZnxM
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTx51BAAoJEN0jrNd/PrOhAtoP/0xxLqis4BgHHYM4iB8ByjUj
+8FaLlXBzL6H66EdPkX0kWV/WzFfFsUne547aFk97+Hsc5Zwr1QRa0FfvOknHhhhu
+rLFc95/1xggKG/sLpufY8Vkugr+ZWKcfrkdPEMvnx9ElrdoVc+bepmAajz6GOkk+
+8TQ5uuvKU6yQRzzZs76ZkBDgcMW/04pwy+l1WPdX5cfKFnZ7FrBqV//lbexxZxXH
+SPuZyt34gcT618s6CVfuo/3zT7OezBPOR9kV3DLYUD/rG602aU9mUMYYyZYvYkzZ
+1yb1QSZmPvZTha0h6rByKzwDV3gxv+8ZecKbSBdZZk+Vc/rxl0FhePy9lLhznOMl
++oujAGuPEFfbz+R1glfXR8pjjWisk50Xhj6WnsXKgZZtSOh8u6gVM0Hf9hRP1Xjb
+/nqAnJJwzdBeFgjjj3QqJUZAKW9RpxkKqEzYvx/K4NagfgfGc+Kt2BTQbKORGoyo
+zAmrW+oWGnJmCM1cRjX7BF5ffy8VzDuRJNMo2LtQSZdZAgMy9ZnvPYU5VfuAfb5+
+tYEN/ySL5j7Ezsh0eEvBGWLYjJF2C2Spr2G0rwNG0rTkX3Y9LAYLdlP1KIuADjuF
+JeIAjOyxAlG4vTaVgJEgDAKrlMOQt5yzDIqaWVWuDi7s4E9S8ZptJQ9g7WT+zfC0
+pflGTVxzRkJ7B2xS9e1t
+=ZaQ4
+-----END PGP SIGNATURE-----
+
+--ZfOjI3PrQbgiZnxM--
