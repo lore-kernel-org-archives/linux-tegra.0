@@ -1,147 +1,112 @@
-From: Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v4] devicetree: Add generic IOMMU device tree bindings
-Date: Wed, 16 Jul 2014 16:24:21 -0400
-Message-ID: <CAF6AEGu9K6zu2EoN3LJhCUFwJ6dV+J0YCLeJ1TkWMHp8H3LjQA@mail.gmail.com>
-References: <1404487757-18829-1-git-send-email-thierry.reding@gmail.com>
-	<20140712093917.GD18601@arm.com>
-	<CAF6AEGutHp+3f3iPA+jjaRkqq=5T_vytZ_ESoSqsQ4RHZ8F8yQ@mail.gmail.com>
-	<201407121422.02078.arnd@arndb.de>
-	<CAF6AEGs7=3UByP2DLm-uwU03wr7M14x2t-0hLX-VPJ6_eZbU3g@mail.gmail.com>
-	<20140713094341.GB23235@arm.com>
-	<CAF6AEGt5cQhDCZgYX4=M1EKE=n2J=9G6mO02JMx-+Fcq_0ukfw@mail.gmail.com>
-	<53C5D480.3030409@codeaurora.org>
+From: Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH v4 1/8] of: Add NVIDIA Tegra SATA controller binding
+Date: Thu, 17 Jul 2014 08:51:15 +0200
+Message-ID: <53C77263.7050903@redhat.com>
+References: <1405500863-19696-2-git-send-email-mperttunen@nvidia.com> <1405510814-31928-1-git-send-email-mperttunen@nvidia.com> <53C666E5.6030009@redhat.com> <20140716131306.GB23384@ulmo> <53C6908A.2050200@redhat.com> <20140716195136.GB5212@mithrandir>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <53C5D480.3030409-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Olav Haugan <ohaugan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Varun Sethi <varun.sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-arm-msm <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Return-path: <linux-ide-owner@vger.kernel.org>
+In-Reply-To: <20140716195136.GB5212@mithrandir>
+Sender: linux-ide-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>, swarren@wwwdotorg.org, tj@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-ide@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jul 15, 2014 at 9:25 PM, Olav Haugan <ohaugan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org> wrote:
-> On 7/13/2014 4:43 AM, Rob Clark wrote:
->> On Sun, Jul 13, 2014 at 5:43 AM, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org> wrote:
->>> On Sat, Jul 12, 2014 at 01:57:31PM +0100, Rob Clark wrote:
->>>> On Sat, Jul 12, 2014 at 8:22 AM, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
->>>>> On Saturday 12 July 2014, Rob Clark wrote:
->>>>>>>> Was there actually a good reason for having the device link to the
->>>>>>>> iommu rather than the other way around?  How much would people hate it
->>>>>>>> if I just ignore the generic bindings and use something that works for
->>>>>>>> me instead.  I mean, it isn't exactly like there is going to be .dts
->>>>>>>> re-use across different SoC's..  and at least with current IOMMU API
->>>>>>>> some sort of of_get_named_iommu() API doesn't really make sense.
->>>>>>>
->>>>>>> The thing is, if you end up ignoring the generic binding then we have two
->>>>>>> IOMMUs using the same (ARM SMMU) binding and it begs the question as to
->>>>>>> which is the more generic! I know we're keen to get this merged, but merging
->>>>>>> something that people won't use and calling it generic doesn't seem ideal
->>>>>>> either. We do, however, desperately need a generic binding.
->>>>>>
->>>>>> yeah, ignoring the generic binding is not my first choice.  I'd rather
->>>>>> have something that works well for everyone.  But I wasn't really sure
->>>>>> if the current proposal was arbitrary, or if there are some
->>>>>> conflicting requirements between different platforms.
+Hi,
+
+On 07/16/2014 09:51 PM, Thierry Reding wrote:
+> On Wed, Jul 16, 2014 at 04:47:38PM +0200, Hans de Goede wrote:
+>> Hi,
+>>
+>> On 07/16/2014 03:13 PM, Thierry Reding wrote:
+>>> On Wed, Jul 16, 2014 at 01:49:57PM +0200, Hans de Goede wrote:
+>>>> Hi,
+>>>>
+>>>> On 07/16/2014 01:40 PM, Mikko Perttunen wrote:
+>>>>> This patch adds device tree binding documentation for the SATA
+>>>>> controller found on NVIDIA Tegra SoCs.
 >>>>>
->>>>> The common case that needs to be simple is attaching one (master) device
->>>>> to an IOMMU using the shared global context for the purposes of implementing
->>>>> the dma-mapping API.
+>>>>> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+>>>>> ---
+>>>>> v4: clarify mandatory clock order
 >>>>
->>>> well, I don't disagree that IOMMU API has some problems.  It is too
->>>> tied to the bus type, which doesn't really seem to make sense for
->>>> platform devices.  (Unless we start having multiple platform busses?)
+>>>> Thanks this and the new v4 of "ata: Add support for the Tegra124 SATA controller"
+>>>> both look good to me. So these 2 + v3 for the rest of the series are:
 >>>>
->>>> But at least given the current IOMMU API I'm not really sure how it
->>>> makes a difference which way the link goes.  But if there has already
->>>> been some discussion about how you want to handle the tie in with
->>>> dma-mapping, if you could point me at that then maybe your point will
->>>> make more sense to me.
+>>>> Acked-by: Hans de Goede <hdegoede@redhat.com>
 >>>
->>> If you look at the proposed binding in isolation, I think it *is* cleaner
->>> than the ARM SMMU binding (I've acked it...) and I believe it's more
->>> consistent with the way we describe linkages elsewhere.
->>>
->>> However, the issue you're raising is that it's more difficult to make use of
->>> in a Linux IOMMU driver. The reward you'll get for using it will come
->>> eventually when the DMA ops are automatically swizzled for devices using the
->>> generic binding.
->>>
->>> My plan for the ARM SMMU driver is:
->>>
->>>   (1) Change ->probe() to walk the device-tree looking for all masters with
->>>       phandles back to the SMMU instance being probed
->>>
->>>   (2) For each master, extract the Stream IDs and add them to the internal
->>>       SMMU driver data structures (an rbtree per SMMU instance). For
->>>       hotpluggable buses, we'll need a way for the bus controller to
->>>       reserve a range of IDs -- this will likely be a later extension to
->>>       the binding.
->>>
->>>   (3) When we get an ->add() call, warn if it's a device we haven't seen
->>>       and reject the addition.
->>>
->>> That way, ->attach() should be the same as it is now, I think.
->>>
->>> Have you tried implementing something like that? We agreed that (1) isn't
->>> pretty, but I don't have a good alternative and it's only done at
->>> probe-time.
+>>> Like I said in my reply to PATCH v3 7/8, I think this mandatory clock
+>>> order is a mistake.
 >>
->> I haven't tried implementing that yet, but I'm sure it would work.  I
->> was just hoping to avoid having to do that ;-)
->
-> Is the reason you want to do it this way because you want to guarantee
-> that all masters (and stream IDs) have been identified before the first
-> attach call? I am just wondering why you cannot continue doing the
-> master/streamID discovery during add_device() callback?
+>> We've plenty of other dt bindings where things need to be specified in
+>> a certain order, e.g. registers. So I don't really see what the problem
+>> is here.
+> 
+> Like I said, the clock-names exists so that drivers can request a clock
+> by name. Therefore the order in which they are listed doesn't matter.
+> The only thing that matters is that the entries in clocks and
+> clock-names match up.
 
-it was mostly because I couldn't think of a sane way to differentiate
-between first and second time a device attaches (without keeping a
-reference to the device).  But I guess it is ok to assume no hotplug
-(since walking the device tree also seems acceptable)
+Ok so I've been think about this, and about the unbalance I've noticed
+between tegra_ahci_power_on which does everything DIY and tegra_ahci_power_off
+which uses ahci_platform_disable_resources() in v3 and later.
 
-BR,
--R
+Really only the "sata" clock needs special handling, so I think the following
+solution is best:
 
->>>
->>> BTW: Is the msm-v0 IOMMU compatible with the ARM SMMU driver, or is it a
->>> completely different design requiring a different driver?
->>
->> My understanding is that it is different from msm v1 IOMMU, although I
->> think it shares the same pagetable format with v1.  Not sure if that
->> is the same as arm-smmu?   If so it might be nice to try to extract
->> out some shared helper fxns for map/unmap as well.
->>
->> I expect Olav knows better the similarities/differences.
->>
->
-> The msm-v0 IOMMU is not compatible with ARM SMMUv1 specification.
-> However, it is a close cousin. The hardware was designed before the ARM
-> SMMUv1 specification was available I believe. But it shares many of the
-> same concepts as the ARM SMMUv1.
->
-> msm-v0 IOMMU supports V7S page table format only. The ARM SMMU driver
-> does not support V7S at this time. However, I believe we need to support
-> this.
->
-> Will, this reminds me. We definitely have a need to use different page
-> tables in the ARM SMMU driver vs. the ARM CPU. We have an SoC with ARMv8
-> cores (and thus ARMv8 page tables) but the SMMUs (SMMUv1) on this SoC
-> only have support for V7S/V7L page table format. So we cannot use the
-> same page table format as the CPU.
->
-> Thanks,
->
-> Olav
->
-> --
-> The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> hosted by The Linux Foundation
+1) Drop the clock ordering requirement and the clk enum
+
+2) Make ahci_tegra.c do a devm_clk_get(dev, "sata"), so that it gets its
+own handle to the sata-clk (store this in tegra_ahci_priv). no need to
+get all the other clks which need no special handling
+
+3) Start using ahci_platform_enable_resources() in tegra_ahci_power_on,
+so it would look something like this:
+
+static int tegra_ahci_power_on(struct ahci_host_priv *hpriv)
+{
+	struct tegra_ahci_priv *tegra = hpriv->plat_data;
+	int ret;
+
+	ret = regulator_bulk_enable(ARRAY_SIZE(tegra->supplies),
+				    tegra->supplies);
+	if (ret)
+		return ret;
+
+	ret = tegra_powergate_sequence_power_up(TEGRA_POWERGATE_SATA,
+						tegra->sata_clk,
+						tegra->sata_rst);
+	if (ret)
+		goto disable_regulators;
+
+	reset_control_deassert(tegra->sata_cold_rst);
+	reset_control_deassert(tegra->sata_oob_rst);
+
+	ret = ahci_platform_enable_resources(hpriv);
+	if (ret)
+		goto powergate_sequence_power_off;
+
+	return 0;
+...
+
+This will make tegra_ahci_power_on and tegra_ahci_power_off symmetrical
+which is something I always like to see in functions like this.
+
+I realize that this changes the reset-deassert vs clock enabling ordering,
+if this is an issue please add reset support to libahci-platform.c I believe
+that is something which we will need to do soonish anyways (reset controllers
+are popping up everywhere in newer SoCs).
+
+This will nicely reduce the amount of code and also greatly simplify the error
+return path of tegra_ahci_power_on.
+
+This means that the sata_clk will get enabled twice, but that is harmless
+as long as we disable it twice too. This means that we need to add an
+extra disable to tegra_ahci_power_off because tegra_powergate_power_off
+seems to not do this (unlike power-on, which is rather unsymmetrical
+it would be nice to fix this).
+
+Regards,
+
+Hans
