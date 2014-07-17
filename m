@@ -1,117 +1,80 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [PATCH v4 1/6] clk: Add temporary mapping to the existing API
-Date: Thu, 17 Jul 2014 16:13:14 +0200
-Message-ID: <1405606399-26608-2-git-send-email-tomeu.vizoso@collabora.com>
-References: <1405606399-26608-1-git-send-email-tomeu.vizoso@collabora.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <1405606399-26608-1-git-send-email-tomeu.vizoso@collabora.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Mike Turquette <mturquette@linaro.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Ulf Hansson <ulf.hansson@linaro.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Tony Lindgren <tony@atomide.com>, Tomasz Figa <t.figa@samsung.com>, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Thierry Reding <thierry.reding@gmail.com>, Paul Mackerras <paulus@samba.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Daniel Walker <dwalker@fifo99.com>, linux-arch@vger.kernel.org, Boris Brezillon <boris.brezillon@free-electrons.com>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>, Takashi Iwai <tiwai@suse.de>, Michal Simek <michal.simek@xilinx.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kevin Hilman <khilman@deeprootsystems.com>, linux-arm-kernel@lists.infradead.org, patches@opensource.wolfsonmicro.com, Vire
+From: Bastian Hecht <hechtb@gmail.com>
+Subject: [PATCH v2 5/5] i2c: tegra: Remove suspension check
+Date: Thu, 17 Jul 2014 16:48:40 +0200
+Message-ID: <1405608520-5644-5-git-send-email-hechtb@gmail.com>
+References: <1405608520-5644-1-git-send-email-hechtb@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1405608520-5644-1-git-send-email-hechtb@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-i2c@vger.kernel.org
+Cc: Linux-SH <linux-sh@vger.kernel.org>, Tomoya MORINAGA <tomoya.rohm@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, linux-arm-kernel@lists.infradead.org, Bastian Hecht <hechtb@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "open list:TEGRA ARCHITECTUR..." <linux-tegra@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-VG8gcHJlc2VydmUgZ2l0LWJpc2VjdGFiaWxpdHksIGFkZCBhbGlhc2VzIGZyb20gdGhlIGZ1dHVy
-ZSBwcm92aWRlciBBUEkgdG8gdGhlCmV4aXN0aW5nIHB1YmxpYyBBUEkuCgpBbHNvIGluY2x1ZGVz
-IGNsay1wcm92aWRlci5oIGFuZCBjbGstZGV2LmggaW4gYSBmZXcgcGxhY2VzIHNvIHRoZSByaWdo
-dApmdW5jdGlvbnMgYXJlIGRlZmluZWQuCgpTaWduZWQtb2ZmLWJ5OiBUb21ldSBWaXpvc28gPHRv
-bWV1LnZpem9zb0Bjb2xsYWJvcmEuY29tPgoKLS0tCgp2NDoJKiBBZGQgbW9yZSBjbGstcHJvdmlk
-ZXIuaCBpbmNsdWRlcyB0byBjbGsgaW1wbGVtZW50YXRpb25zCgkqIEFkZCBtYXBwaW5nIGZvciBj
-bGtfcHJvdmlkZXJfcm91bmRfcmF0ZQotLS0KIGFyY2gvYXJtL21hY2gtb21hcDIvZGlzcGxheS5j
-ICAgICAgICAgICAgICAgICB8ICAxICsKIGFyY2gvYXJtL21hY2gtb21hcDIvb21hcF9kZXZpY2Uu
-YyAgICAgICAgICAgICB8ICAxICsKIGFyY2gvYXJtL3BsYXQtb3Jpb24vY29tbW9uLmMgICAgICAg
-ICAgICAgICAgICB8ICAxICsKIGRyaXZlcnMvY2xrL2Jlcmxpbi9iZzIuYyAgICAgICAgICAgICAg
-ICAgICAgICB8ICAxICsKIGRyaXZlcnMvY2xrL2Jlcmxpbi9iZzJxLmMgICAgICAgICAgICAgICAg
-ICAgICB8ICAxICsKIGRyaXZlcnMvY2xrL2Nsa2Rldi5jICAgICAgICAgICAgICAgICAgICAgICAg
-ICB8ICAxICsKIGRyaXZlcnMvbWVkaWEvcGxhdGZvcm0vZXh5bm9zNC1pcy9tZWRpYS1kZXYuYyB8
-ICAxICsKIGluY2x1ZGUvbGludXgvY2xrLXByb3ZpZGVyLmggICAgICAgICAgICAgICAgICB8IDIz
-ICsrKysrKysrKysrKysrKysrKysrKysrCiBpbmNsdWRlL2xpbnV4L2Nsay96eW5xLmggICAgICAg
-ICAgICAgICAgICAgICAgfCAgMSArCiA5IGZpbGVzIGNoYW5nZWQsIDMxIGluc2VydGlvbnMoKykK
-CmRpZmYgLS1naXQgYS9hcmNoL2FybS9tYWNoLW9tYXAyL2Rpc3BsYXkuYyBiL2FyY2gvYXJtL21h
-Y2gtb21hcDIvZGlzcGxheS5jCmluZGV4IGJmODUyZDcuLjBmOWU0NzkgMTAwNjQ0Ci0tLSBhL2Fy
-Y2gvYXJtL21hY2gtb21hcDIvZGlzcGxheS5jCisrKyBiL2FyY2gvYXJtL21hY2gtb21hcDIvZGlz
-cGxheS5jCkBAIC0yMSw2ICsyMSw3IEBACiAjaW5jbHVkZSA8bGludXgvcGxhdGZvcm1fZGV2aWNl
-Lmg+CiAjaW5jbHVkZSA8bGludXgvaW8uaD4KICNpbmNsdWRlIDxsaW51eC9jbGsuaD4KKyNpbmNs
-dWRlIDxsaW51eC9jbGstcHJvdmlkZXIuaD4KICNpbmNsdWRlIDxsaW51eC9lcnIuaD4KICNpbmNs
-dWRlIDxsaW51eC9kZWxheS5oPgogI2luY2x1ZGUgPGxpbnV4L29mLmg+CmRpZmYgLS1naXQgYS9h
-cmNoL2FybS9tYWNoLW9tYXAyL29tYXBfZGV2aWNlLmMgYi9hcmNoL2FybS9tYWNoLW9tYXAyL29t
-YXBfZGV2aWNlLmMKaW5kZXggMDFlZjU5ZC4uZmJlOGNmMCAxMDA2NDQKLS0tIGEvYXJjaC9hcm0v
-bWFjaC1vbWFwMi9vbWFwX2RldmljZS5jCisrKyBiL2FyY2gvYXJtL21hY2gtb21hcDIvb21hcF9k
-ZXZpY2UuYwpAQCAtMzIsNiArMzIsNyBAQAogI2luY2x1ZGUgPGxpbnV4L2lvLmg+CiAjaW5jbHVk
-ZSA8bGludXgvY2xrLmg+CiAjaW5jbHVkZSA8bGludXgvY2xrZGV2Lmg+CisjaW5jbHVkZSA8bGlu
-dXgvY2xrLXByb3ZpZGVyLmg+CiAjaW5jbHVkZSA8bGludXgvcG1fcnVudGltZS5oPgogI2luY2x1
-ZGUgPGxpbnV4L29mLmg+CiAjaW5jbHVkZSA8bGludXgvbm90aWZpZXIuaD4KZGlmZiAtLWdpdCBh
-L2FyY2gvYXJtL3BsYXQtb3Jpb24vY29tbW9uLmMgYi9hcmNoL2FybS9wbGF0LW9yaW9uL2NvbW1v
-bi5jCmluZGV4IDNlYzZlOGUuLjk2MWI1OTMgMTAwNjQ0Ci0tLSBhL2FyY2gvYXJtL3BsYXQtb3Jp
-b24vY29tbW9uLmMKKysrIGIvYXJjaC9hcm0vcGxhdC1vcmlvbi9jb21tb24uYwpAQCAtMTUsNiAr
-MTUsNyBAQAogI2luY2x1ZGUgPGxpbnV4L3NlcmlhbF84MjUwLmg+CiAjaW5jbHVkZSA8bGludXgv
-YXRhX3BsYXRmb3JtLmg+CiAjaW5jbHVkZSA8bGludXgvY2xrLmg+CisjaW5jbHVkZSA8bGludXgv
-Y2xrLXByb3ZpZGVyLmg+CiAjaW5jbHVkZSA8bGludXgvY2xrZGV2Lmg+CiAjaW5jbHVkZSA8bGlu
-dXgvbXY2NDN4eF9ldGguaD4KICNpbmNsdWRlIDxsaW51eC9tdjY0M3h4X2kyYy5oPgpkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9jbGsvYmVybGluL2JnMi5jIGIvZHJpdmVycy9jbGsvYmVybGluL2JnMi5j
-CmluZGV4IDUxNWZiMTMuLjRjODFlMDkgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvY2xrL2Jlcmxpbi9i
-ZzIuYworKysgYi9kcml2ZXJzL2Nsay9iZXJsaW4vYmcyLmMKQEAgLTE5LDYgKzE5LDcgQEAKIAog
-I2luY2x1ZGUgPGxpbnV4L2Nsay5oPgogI2luY2x1ZGUgPGxpbnV4L2Nsay1wcm92aWRlci5oPgor
-I2luY2x1ZGUgPGxpbnV4L2Nsa2Rldi5oPgogI2luY2x1ZGUgPGxpbnV4L2tlcm5lbC5oPgogI2lu
-Y2x1ZGUgPGxpbnV4L29mLmg+CiAjaW5jbHVkZSA8bGludXgvb2ZfYWRkcmVzcy5oPgpkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9jbGsvYmVybGluL2JnMnEuYyBiL2RyaXZlcnMvY2xrL2Jlcmxpbi9iZzJx
-LmMKaW5kZXggMjE3ODRlNC4uNzQ4ZGE5YiAxMDA2NDQKLS0tIGEvZHJpdmVycy9jbGsvYmVybGlu
-L2JnMnEuYworKysgYi9kcml2ZXJzL2Nsay9iZXJsaW4vYmcycS5jCkBAIC0xOSw2ICsxOSw3IEBA
-CiAKICNpbmNsdWRlIDxsaW51eC9jbGsuaD4KICNpbmNsdWRlIDxsaW51eC9jbGstcHJvdmlkZXIu
-aD4KKyNpbmNsdWRlIDxsaW51eC9jbGtkZXYuaD4KICNpbmNsdWRlIDxsaW51eC9rZXJuZWwuaD4K
-ICNpbmNsdWRlIDxsaW51eC9vZi5oPgogI2luY2x1ZGUgPGxpbnV4L29mX2FkZHJlc3MuaD4KZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvY2xrL2Nsa2Rldi5jIGIvZHJpdmVycy9jbGsvY2xrZGV2LmMKaW5k
-ZXggZjg5MGI5MC4uMDAwYzFhZSAxMDA2NDQKLS0tIGEvZHJpdmVycy9jbGsvY2xrZGV2LmMKKysr
-IGIvZHJpdmVycy9jbGsvY2xrZGV2LmMKQEAgLTE4LDYgKzE4LDcgQEAKICNpbmNsdWRlIDxsaW51
-eC9zdHJpbmcuaD4KICNpbmNsdWRlIDxsaW51eC9tdXRleC5oPgogI2luY2x1ZGUgPGxpbnV4L2Ns
-ay5oPgorI2luY2x1ZGUgPGxpbnV4L2Nsay1wcm92aWRlci5oPgogI2luY2x1ZGUgPGxpbnV4L2Ns
-a2Rldi5oPgogI2luY2x1ZGUgPGxpbnV4L29mLmg+CiAKZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWVk
-aWEvcGxhdGZvcm0vZXh5bm9zNC1pcy9tZWRpYS1kZXYuYyBiL2RyaXZlcnMvbWVkaWEvcGxhdGZv
-cm0vZXh5bm9zNC1pcy9tZWRpYS1kZXYuYwppbmRleCAzNDQ3MThkLi4yNjIwYzQ4IDEwMDY0NAot
-LS0gYS9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL2V4eW5vczQtaXMvbWVkaWEtZGV2LmMKKysrIGIv
-ZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9leHlub3M0LWlzL21lZGlhLWRldi5jCkBAIC0xMyw2ICsx
-Myw3IEBACiAjaW5jbHVkZSA8bGludXgvYnVnLmg+CiAjaW5jbHVkZSA8bGludXgvY2xrLmg+CiAj
-aW5jbHVkZSA8bGludXgvY2xrLXByb3ZpZGVyLmg+CisjaW5jbHVkZSA8bGludXgvY2xrZGV2Lmg+
-CiAjaW5jbHVkZSA8bGludXgvZGV2aWNlLmg+CiAjaW5jbHVkZSA8bGludXgvZXJybm8uaD4KICNp
-bmNsdWRlIDxsaW51eC9pMmMuaD4KZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvY2xrLXByb3Zp
-ZGVyLmggYi9pbmNsdWRlL2xpbnV4L2Nsay1wcm92aWRlci5oCmluZGV4IDBjMjg3ZGIuLjhlNGE1
-OGQgMTAwNjQ0Ci0tLSBhL2luY2x1ZGUvbGludXgvY2xrLXByb3ZpZGVyLmgKKysrIGIvaW5jbHVk
-ZS9saW51eC9jbGstcHJvdmlkZXIuaApAQCAtMTYsNiArMTYsMjkgQEAKIAogI2lmZGVmIENPTkZJ
-R19DT01NT05fQ0xLCiAKKy8qIFRlbXBvcmFyaWx5IG1hcCB0aGUgdG8tYmUtYWRkZWQgQVBJIHRv
-IHRoZSBvbGQgQVBJLCBqdXN0IHNvIHN0dWZmIGNvbXBpbGVzICovCisjZGVmaW5lIGNsa19jb3Jl
-CQkJY2xrCisKKyNkZWZpbmUgX19jbGtfY3JlYXRlX2NsaworCisjZGVmaW5lIGNsa19wcm92aWRl
-cl9nZXQJCWNsa19nZXQKKyNkZWZpbmUgY2xrX3Byb3ZpZGVyX2dldF9zeXMJCWNsa19nZXRfc3lz
-CisjZGVmaW5lIGRldm1fY2xrX3Byb3ZpZGVyX2dldAkJZGV2bV9jbGtfZ2V0CisjZGVmaW5lIG9m
-X2Nsa19wcm92aWRlcl9nZXQJCW9mX2Nsa19nZXQKKyNkZWZpbmUgb2ZfY2xrX3Byb3ZpZGVyX2dl
-dF9ieV9uYW1lCW9mX2Nsa19nZXRfYnlfbmFtZQorCisjZGVmaW5lIGNsa19wcm92aWRlcl9zZXRf
-cmF0ZQkJY2xrX3NldF9yYXRlCisjZGVmaW5lIGNsa19wcm92aWRlcl9nZXRfcmF0ZQkJY2xrX2dl
-dF9yYXRlCisjZGVmaW5lIGNsa19wcm92aWRlcl9yb3VuZF9yYXRlCQljbGtfcm91bmRfcmF0ZQor
-I2RlZmluZSBjbGtfcHJvdmlkZXJfc2V0X3BhcmVudAkJY2xrX3NldF9wYXJlbnQKKyNkZWZpbmUg
-Y2xrX3Byb3ZpZGVyX2dldF9wYXJlbnQJCWNsa19nZXRfcGFyZW50CisjZGVmaW5lIGNsa19wcm92
-aWRlcl9wcmVwYXJlCQljbGtfcHJlcGFyZQorI2RlZmluZSBjbGtfcHJvdmlkZXJfdW5wcmVwYXJl
-CQljbGtfdW5wcmVwYXJlCisjZGVmaW5lIGNsa19wcm92aWRlcl9lbmFibGUJCWNsa19lbmFibGUK
-KyNkZWZpbmUgY2xrX3Byb3ZpZGVyX2Rpc2FibGUJCWNsa19kaXNhYmxlCisjZGVmaW5lIGNsa19w
-cm92aWRlcl9wcmVwYXJlX2VuYWJsZQljbGtfcHJlcGFyZV9lbmFibGUKKyNkZWZpbmUgY2xrX3By
-b3ZpZGVyX2Rpc2FibGVfdW5wcmVwYXJlCWNsa191bnByZXBhcmUKKwogLyoKICAqIGZsYWdzIHVz
-ZWQgYWNyb3NzIGNvbW1vbiBzdHJ1Y3QgY2xrLiAgdGhlc2UgZmxhZ3Mgc2hvdWxkIG9ubHkgYWZm
-ZWN0IHRoZQogICogdG9wLWxldmVsIGZyYW1ld29yay4gIGN1c3RvbSBmbGFncyBmb3IgZGVhbGlu
-ZyB3aXRoIGhhcmR3YXJlIHNwZWNpZmljcwpkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9jbGsv
-enlucS5oIGIvaW5jbHVkZS9saW51eC9jbGsvenlucS5oCmluZGV4IDdhNTYzM2IuLmE5OTBhNTkg
-MTAwNjQ0Ci0tLSBhL2luY2x1ZGUvbGludXgvY2xrL3p5bnEuaAorKysgYi9pbmNsdWRlL2xpbnV4
-L2Nsay96eW5xLmgKQEAgLTIxLDYgKzIxLDcgQEAKICNkZWZpbmUgX19MSU5VWF9DTEtfWllOUV9I
-XwogCiAjaW5jbHVkZSA8bGludXgvc3BpbmxvY2suaD4KKyNpbmNsdWRlIDxsaW51eC9jbGstcHJv
-dmlkZXIuaD4KIAogdm9pZCB6eW5xX2Nsb2NrX2luaXQodm9pZCk7CiAKLS0gCjEuOS4zCgpfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eHBwYy1kZXYg
-bWFpbGluZyBsaXN0CkxpbnV4cHBjLWRldkBsaXN0cy5vemxhYnMub3JnCmh0dHBzOi8vbGlzdHMu
-b3psYWJzLm9yZy9saXN0aW5mby9saW51eHBwYy1kZXY=
+We now take care of suspension in the i2c core code. So we can remove this
+check here.
+
+Signed-off-by: Bastian Hecht <hechtb@gmail.com>
+---
+same as v1
+
+ drivers/i2c/busses/i2c-tegra.c | 19 +------------------
+ 1 file changed, 1 insertion(+), 18 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index f1bb2fc..c279d85 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -172,7 +172,6 @@ struct tegra_i2c_dev {
+ 	size_t msg_buf_remaining;
+ 	int msg_read;
+ 	u32 bus_clk_rate;
+-	bool is_suspended;
+ };
+ 
+ static void dvc_writel(struct tegra_i2c_dev *i2c_dev, u32 val, unsigned long reg)
+@@ -628,9 +627,6 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
+ 	int i;
+ 	int ret = 0;
+ 
+-	if (i2c_dev->is_suspended)
+-		return -EBUSY;
+-
+ 	ret = tegra_i2c_clock_enable(i2c_dev);
+ 	if (ret < 0) {
+ 		dev_err(i2c_dev->dev, "Clock enable failed %d\n", ret);
+@@ -817,17 +813,6 @@ static int tegra_i2c_remove(struct platform_device *pdev)
+ }
+ 
+ #ifdef CONFIG_PM_SLEEP
+-static int tegra_i2c_suspend(struct device *dev)
+-{
+-	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+-
+-	i2c_lock_adapter(&i2c_dev->adapter);
+-	i2c_dev->is_suspended = true;
+-	i2c_unlock_adapter(&i2c_dev->adapter);
+-
+-	return 0;
+-}
+-
+ static int tegra_i2c_resume(struct device *dev)
+ {
+ 	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+@@ -842,14 +827,12 @@ static int tegra_i2c_resume(struct device *dev)
+ 		return ret;
+ 	}
+ 
+-	i2c_dev->is_suspended = false;
+-
+ 	i2c_unlock_adapter(&i2c_dev->adapter);
+ 
+ 	return 0;
+ }
+ 
+-static SIMPLE_DEV_PM_OPS(tegra_i2c_pm, tegra_i2c_suspend, tegra_i2c_resume);
++static SIMPLE_DEV_PM_OPS(tegra_i2c_pm, tegra_i2c_resume);
+ #define TEGRA_I2C_PM	(&tegra_i2c_pm)
+ #else
+ #define TEGRA_I2C_PM	NULL
+-- 
+1.9.1
