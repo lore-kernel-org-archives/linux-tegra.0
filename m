@@ -1,72 +1,67 @@
-From: Bastian Hecht <hechtb@gmail.com>
-Subject: Re: [PATCH v2 5/5] i2c: tegra: Remove suspension check
-Date: Thu, 17 Jul 2014 18:52:35 +0200
-Message-ID: <CABYn4swY5yRe=eGzCYo0uJtmjn05Ut4oDWupPjmU9bXbuU6+Pw@mail.gmail.com>
-References: <1405608520-5644-1-git-send-email-hechtb@gmail.com>
- <1405608520-5644-5-git-send-email-hechtb@gmail.com>
- <20140717145958.GA32534@ulmo>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [GIT PULL 1/3] ARM: tegra: rework PCIe regulators
+Date: Thu, 17 Jul 2014 10:52:09 -0700
+Message-ID: <CAOesGMjdfMDKK5EyA96g3ECxxfJC3W3ZtSpYsijgt+Fp+i3_yg@mail.gmail.com>
+References: <1403558626-13422-1-git-send-email-swarren@wwwdotorg.org>
+	<20140707003854.GD8469@quad.lixom.net>
+	<20140707055211.GA15216@ulmo>
+	<CAOesGMjwE=xThuUwmBF02YaQ32_uFogryW5anNoGc8yfkuN_Pg@mail.gmail.com>
+	<20140710101527.GC21583@ulmo>
+	<20140717142037.GA17494@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20140717145958.GA32534@ulmo>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Linux-SH <linux-sh@vger.kernel.org>, Tomoya MORINAGA <tomoya.rohm@gmail.com>, open list <linux-kernel@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, linux-i2c@vger.kernel.org, "open list:TEGRA ARCHITECTUR..." <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140717142037.GA17494@ulmo>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-2014-07-17 16:59 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
-> On Thu, Jul 17, 2014 at 04:48:40PM +0200, Bastian Hecht wrote:
+On Thu, Jul 17, 2014 at 7:20 AM, Thierry Reding
+<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Thu, Jul 10, 2014 at 12:15:28PM +0200, Thierry Reding wrote:
+>> On Mon, Jul 07, 2014 at 09:45:46PM -0700, Olof Johansson wrote:
 > [...]
->>  #ifdef CONFIG_PM_SLEEP
->> -static int tegra_i2c_suspend(struct device *dev)
->> -{
->> -     struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
->> -
->> -     i2c_lock_adapter(&i2c_dev->adapter);
->> -     i2c_dev->is_suspended = true;
->> -     i2c_unlock_adapter(&i2c_dev->adapter);
->> -
->> -     return 0;
->> -}
->> -
->>  static int tegra_i2c_resume(struct device *dev)
->>  {
->>       struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
->> @@ -842,14 +827,12 @@ static int tegra_i2c_resume(struct device *dev)
->>               return ret;
->>       }
+>> > If you have to stay compatible, then I suggest you try to fill in
+>> > local driver variables with derivatives of the old properties (and
+>> > directly from the newer properties where you can). I haven't looked at
+>> > the specifics here so I don't know how hard it might be.
+>> >
+>> > If you are 100% sure that you don't have to stay compatible, then you
+>> > can remove the code handling the old bindings. Still, even then I am a
+>> > little worried about dependencies (and more importantly conflicts)
+>> > between these dtsi changes and others done by tegra platform code for
+>> > this release. I suppose that can be resolved by having this as a base
+>> > of any DT changes for tegra if needed.
 >>
->> -     i2c_dev->is_suspended = false;
->> -
->>       i2c_unlock_adapter(&i2c_dev->adapter);
->>
->>       return 0;
->>  }
->>
->> -static SIMPLE_DEV_PM_OPS(tegra_i2c_pm, tegra_i2c_suspend, tegra_i2c_resume);
->> +static SIMPLE_DEV_PM_OPS(tegra_i2c_pm, tegra_i2c_resume);
+>> To be honest, I'm very much tempted to just drop this series. Even if
+>> that means keeping a totally broken DT binding. But frankly I don't have
+>> any energy left to debate DT stability.
 >
-> Shouldn't this be:
+> So this kept bugging me and I couldn't leave it alone after all. How
+> about if I squash in the attached patch. I've verified that that keeps
+> compatibility with old device trees on TrimSlice and Beaver. I think the
+> remainder of the series could still remain as-is (the top few commits
+> that you said shouldn't be there) if I squash this into
 >
->         static SIMPLE_DEV_OPS(tegra_i2c_pm, NULL, tegra_i2c_resume);
+>         PCI: tegra: Implement accurate power supply scheme
 >
-> instead?
+> That way the binding will be the new one so that people don't get any
+> wrong ideas about taking shortcuts while still preserving compatibility
+> with existing DTBs.
 
-Oh yes thanks. I made the same mistake in [PATCH 3/5] too.
+Taking a quick look at the patch, it looks sane to me and pretty much
+exactly what I would expect the code to look like w.r.t. handling old
+bindings.
 
-Thanks,
+> Interestingly, despite my initial disgust for having to keep around old
+> code (it's in fact new code in this case) for compatibility reasons, it
+> ended up making the code look more mature.
 
- Bastian
+I'm glad it went that way. It shouldn't be _too_ bad to keep the
+compatibility with old bindings in the code like this in most cases,
+it's mostly a matter of filling in the newer structures like you did
+in this patch.
 
 
-
-> Thierry
+-Olof
