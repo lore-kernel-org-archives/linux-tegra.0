@@ -1,88 +1,68 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v5 1/8] of: Add NVIDIA Tegra SATA controller binding
-Date: Fri, 18 Jul 2014 17:06:04 +0200
-Message-ID: <20140718150603.GA7196@ulmo>
-References: <1405500863-19696-2-git-send-email-mperttunen@nvidia.com>
- <1405667500-7402-1-git-send-email-mperttunen@nvidia.com>
- <53C8C9BD.3070709@nvidia.com>
- <53C8F6E6.6020901@redhat.com>
+From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>
+Subject: [PATCH v2 0/4] ARM: dts: exynos: Prepare Spring
+Date: Fri, 18 Jul 2014 19:20:05 +0200
+Message-ID: <1405704009-8430-1-git-send-email-afaerber@suse.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="0F1p//8PRICkK4MW"
-Return-path: <linux-ide-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <53C8F6E6.6020901@redhat.com>
-Sender: linux-ide-owner@vger.kernel.org
-To: Tejun Heo <tj@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>
-Cc: Hans de Goede <hdegoede@redhat.com>, Mikko Perttunen <mperttunen@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Stephan van Schaik <stephan-zGZ7W/ttz6xN8Ch2cx6nig@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hello,
 
---0F1p//8PRICkK4MW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Based on the preinstalled 3.8 based ChromeOS kernel and previous 3.15=20
+based attempts by Stephan and me that broke for 3.16, I've prepared a=20
+device tree for the HP Chromebook 11 aka Google Spring.
 
-On Fri, Jul 18, 2014 at 12:28:54PM +0200, Hans de Goede wrote:
-> Hi,
->=20
-> On 07/18/2014 09:16 AM, Mikko Perttunen wrote:
-> > So here's v5: this time, as suggested, I handle the sata clock myself a=
-nd let ahci_platform handle it too, leading it to be prepared+enabled twice=
-=2E This works fine, and allows us to remove the DT ordering requirement.
-> >=20
-> > I also have in the works a patchset that adds the name-based ahci_platf=
-orm_get_resources function, but that is not quite ready yet, even if it is =
-quite far along. Also, I am going on vacation and returning on 28.7., so if=
- this v5 is acceptable maybe it could be merged for 3.17 and I could work o=
-n the new get_resources scheme after I get back from vacation?
->=20
-> Yes that works for me v3 of all the patches with no newer version +
-> v5 of patch 1 and 7 are pretty clean and can go into 3.17 from my pov,
-> Tejun can you pick these up for 3.17 please?
+v2 reuses the new cros-ec-keyboard.dtsi and retires exynos5250-cros-com=
+mon.dtsi.
+It drops the timings subnode from dp-controller in expectation of the n=
+ew
+drm eDP bridge framework, which needs it under a different node.
+The built-in MMC is now usable, its node had been inherited as "disable=
+d".
 
-Tejun,
+Not yet enabled are trackpad, Wifi and sound.
 
-I think the following patches can go through your tree without causing
-breakage through unresolved dependencies:
+Now depends on a Tegra branch (pull pending):
+http://git.kernel.org/cgit/linux/kernel/git/tegra/linux.git/log/?h=3Dfo=
+r-3.17/dt-cros-ec-kbd
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-	[PATCH v5 1/8] of: Add NVIDIA Tegra SATA controller binding
-	[PATCH v3 6/8] ata: ahci_platform: Increase AHCI_MAX_CLKS to 4
-	[PATCH v5 7/8] ata: Add support for the Tegra124 SATA controller
+My rebasing branch for testing is here:
+https://github.com/afaerber/linux/commits/spring-next
 
-Peter, you should probably pick up
+Regards,
+Andreas
 
-	[PATCH v3 4/8] clk: tegra: Enable hardware control of SATA PLL
-	[PATCH v3 5/8] clk: tegra: Add SATA clocks to Tegra124 initialization table
+v1 -> v2:
+* Dropped 3 documentation patches from series:
+  2 picked up,
+  https://patchwork.kernel.org/patch/4397271/
+  https://patchwork.kernel.org/patch/4397291/
+  1 already sent separately as v2, pending.
+  https://patchwork.kernel.org/patch/4424881/
+* Minimized and beautified Spring device tree and to some degree Snow a=
+s well.
+  See individual patches.
 
-and send them off to Mike for 3.17 if there's still time.
+Andreas F=C3=A4rber (4):
+  ARM: dts: exynos5250: max77686 is Snow only
+  ARM: dts: exynos5250: cypress,cyapa trackpad is Snow only
+  ARM: dts: exynos5250: Fold common ChromeOS parts into Snow
+  ARM: dts: exynos5250: Add Spring device tree
 
-Stephen, the rest of the patches would probably best go through the
-Tegra tree so that we can handle the dependencies there. I've already
-sent out pull requests for 3.17 today, but maybe Arnd and Olof can be
-convinced to take one more.
+ arch/arm/boot/dts/Makefile                    |   1 +
+ arch/arm/boot/dts/exynos5250-cros-common.dtsi | 323 -----------------
+ arch/arm/boot/dts/exynos5250-snow.dts         | 334 ++++++++++++++++--
+ arch/arm/boot/dts/exynos5250-spring.dts       | 485 ++++++++++++++++++=
+++++++++
+ 4 files changed, 799 insertions(+), 344 deletions(-)
+ delete mode 100644 arch/arm/boot/dts/exynos5250-cros-common.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos5250-spring.dts
 
-Thierry
-
---0F1p//8PRICkK4MW
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJTyTfbAAoJEN0jrNd/PrOhqksP/RUaZd/72w+68XWcMveQTbOW
-q8bW66jCALkUTJ4MOC807toKPD60VXyPKOEVpCvAdkr6tUFU8EbGgUAVlde3KMhG
-AVlY7A9UCMwSNxHKAlCIzk3wLiStFKuU70B5JWVBcS6Is9yLkIFviyfcENN0flU6
-9MMuobbNvRI0wJXE1dXtILqd5alqZl+L4/x3sSeoaAnmpaVYxJfdtnDJU2k+AK4R
-Cad3g6OyOB0TXOjeRUnN++tT4CkaWnVE1gGl+aTG3ECFJLiI1YNXgll1YEY3Y9bx
-dkQUv7MiwmZvjrxTMtmxQmCruyhrzGDg58mAPTJ+zpGEyaDehYyjBbUKzn+0s7mO
-yofIXEDaq5coU35om4pjgl+WVQEne+v5UWZ7PE48BI0C7D5y0B32/PdYlMAyaH5V
-ENEZXIOuTwRVJ3asgEvUo8rjDOQMHKseV+CJPIw0PQhuyxKQJQdaq8ee2VqLbuDt
-Ip06o/fDbKgA7con6sWvw4VsmjIDfXiiveGVNFQrRfgJkJSw7OUOyG/F48erkyDd
-Q+du1olR+j38ZgLjv/6e9wSU8EYo8AEkAJBwna98CvdsZoNEAz4Kh2SlDBdL9c0K
-WvyGesxE/Pm0w5HUYjXfCQc4PmAaiMp9DUElAVnpPhPaDuR6Txc0wXdOGOdjGcDS
-361mlgub+rMHt84K05Mi
-=Ihqj
------END PGP SIGNATURE-----
-
---0F1p//8PRICkK4MW--
+--=20
+1.9.3
