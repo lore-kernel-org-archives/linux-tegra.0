@@ -1,62 +1,64 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [GIT PULL 2/3] ARM: tegra: move fuse code out of arch/arm
-Date: Thu, 17 Jul 2014 22:33:36 -0700
-Message-ID: <CAOesGMh+zLV781wzdR5=_Bpzh+XMwJfWL-5XMDP6DwG_Hg80kw@mail.gmail.com>
-References: <1403558626-13422-1-git-send-email-swarren@wwwdotorg.org>
-	<1403558626-13422-2-git-send-email-swarren@wwwdotorg.org>
-	<20140707004417.GE8469@quad.lixom.net>
-	<20140708134359.GA23218@tbergstrom-lnx.Nvidia.com>
-	<CAOesGMhoqvqf-dktp-OfUNTPLahPwkyAPiTeDngr4QjH=VfOGA@mail.gmail.com>
-	<53C88A4C.3070304@wwwdotorg.org>
+From: Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [PATCH v5 1/8] of: Add NVIDIA Tegra SATA controller binding
+Date: Fri, 18 Jul 2014 10:11:40 +0300
+Message-ID: <1405667500-7402-1-git-send-email-mperttunen@nvidia.com>
+References: <1405500863-19696-2-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53C88A4C.3070304-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org" <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-ide-owner@vger.kernel.org>
+In-Reply-To: <1405500863-19696-2-git-send-email-mperttunen@nvidia.com>
+Sender: linux-ide-owner@vger.kernel.org
+To: swarren@wwwdotorg.org, thierry.reding@gmail.com, tj@kernel.org, hdegoede@redhat.com
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-ide@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jul 17, 2014 at 7:45 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 07/08/2014 11:47 AM, Olof Johansson wrote:
->> On Tue, Jul 8, 2014 at 6:43 AM, Peter De Schrijver
->> <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->>> On Mon, Jul 07, 2014 at 02:44:17AM +0200, Olof Johansson wrote:
->>>> On Mon, Jun 23, 2014 at 03:23:45PM -0600, Stephen Warren wrote:
->>>>> This branch moves code related to the Tegra fuses out of arch/arm and
->>>>> into a centralized location which could be shared with ARM64. It also
->>>>> adds support for reading the fuse data through sysfs.
->>>>
->>>> The new/moved misc driver isn't acked by any misc maintainer, so I can't
->>>> take this branch.
->>>>
->>>> I saw no indication from searching the mailing list of that either,
->>>> so it wasn't just a missed acked-by.
->>>>
->>>> I wonder if this code should go under drivers/soc/ instead?
->>>
->>> It's modelled after sunxi_sid.c which lives in drivers/misc/eeprom/.
->>> Originally this driver was also in drivers/misc/eeprom/, but Stephen objected
->>> and therefore it was moved to drivers/misc/fuse. I think that's the right
->>> place still.
->>
->> I disagree, I think this belongs under drivers/soc. Especially since
->> you're adding dependencies on this misc driver from other parts of the
->> kernel / other drivers.
->>
->> I also don't like seeing init calls form platform code down into
->> drivers/misc like you're adding here. Can you please look at doing
->> that as a regular init call setup?
->
-> I strongly disagree with using init calls for this kind of thing. There
-> are ordering dependencies between the initialization code that can only
-> be sanely managed by explicitly calling functions in a particular order;
-> there's simply no way to manage this using initcalls. This is exactly
-> why the hooks in the ARM machine descriptors exist...
+This patch adds device tree binding documentation for the SATA
+controller found on NVIDIA Tegra SoCs.
 
-Right, but there are non on 64-bit, so you need to solve it for there
-anyway. And once it's solved there, you might as well keep it common
-with 32-bit.
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+v5: remove ordering requirement again
 
+ .../devicetree/bindings/ata/tegra-sata.txt         | 30 ++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/ata/tegra-sata.txt
 
--Olof
+diff --git a/Documentation/devicetree/bindings/ata/tegra-sata.txt b/Documentation/devicetree/bindings/ata/tegra-sata.txt
+new file mode 100644
+index 0000000..946f207
+--- /dev/null
++++ b/Documentation/devicetree/bindings/ata/tegra-sata.txt
+@@ -0,0 +1,30 @@
++Tegra124 SoC SATA AHCI controller
++
++Required properties :
++- compatible : "nvidia,tegra124-ahci".
++- reg : Should contain 2 entries:
++  - AHCI register set (SATA BAR5)
++  - SATA register set
++- interrupts : Defines the interrupt used by SATA
++- clocks : Must contain an entry for each entry in clock-names.
++  See ../clocks/clock-bindings.txt for details.
++- clock-names : Must include the following entries:
++  - sata
++  - sata-oob
++  - cml1
++  - pll_e
++- resets : Must contain an entry for each entry in reset-names.
++  See ../reset/reset.txt for details.
++- reset-names : Must include the following entries:
++  - sata
++  - sata-oob
++  - sata-cold
++- phys : Must contain an entry for each entry in phy-names.
++  See ../phy/phy-bindings.txt for details.
++- phy-names : Must include the following entries:
++  - sata-phy : XUSB PADCTL SATA PHY
++- hvdd-supply : Defines the SATA HVDD regulator
++- vddio-supply : Defines the SATA VDDIO regulator
++- avdd-supply : Defines the SATA AVDD regulator
++- target-5v-supply : Defines the SATA 5V power regulator
++- target-12v-supply : Defines the SATA 12V power regulator
+-- 
+1.8.1.5
+
