@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 6/7] ARM: tegra: device tree changes for 3.17
-Date: Fri, 18 Jul 2014 16:45:39 +0200
-Message-ID: <1405694740-4090-6-git-send-email-thierry.reding@gmail.com>
+Subject: [GIT PULL 5/7] ARM: create a cros-ec-keyboard DT fragment
+Date: Fri, 18 Jul 2014 16:45:38 +0200
+Message-ID: <1405694740-4090-5-git-send-email-thierry.reding@gmail.com>
 References: <1405694740-4090-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1405694740-4090-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -10,85 +10,34 @@ To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The following changes since commit 69c018268b3bbebbd0d9013a1b72831a8ae9e790:
+The following changes since commit 7171511eaec5bf23fb06078f59784a3a0626b38f:
 
-  Merge branch 'for-3.17/xusb-padctl' into for-3.17/dt (2014-07-17 15:01:57 +0200)
+  Linux 3.16-rc1 (2014-06-15 17:45:28 -1000)
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-3.17-dt
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-3.17-dt-cros-ec-kbd
 
-for you to fetch changes up to 2236927d9820199bb6f29f2a89b1783c4513d34f:
+for you to fetch changes up to 1a395e3b4f2e9038964c9eec392ed5300a4b5b83:
 
-  ARM: tegra: roth: add display DT node (2014-07-17 15:02:14 +0200)
-
-----------------------------------------------------------------
-ARM: tegra: device tree changes for 3.17
-
-- New board support:
-  - Apalis T30
-- HDA support for Tegra124 and Venice2
-- Display on Medcom Wide and Roth
-- GK20A support on Tegra124
-- XUSB pad controller for Tegra124 and Jetson TK1
-- Various cleanups
-
-This pulls in the for-3.17/fuse-move, for-3.17/dt-cros-ec-kbd and
-for-3.17/xusb-padctl branches to resolve dependencies.
-
-Note that the Apalis T30 support has a runtime dependency on the
-for-3.17/pcie-regulators branch, so they should preferably be applied
-in that order. I didn't merge that branch into this because Apalis T30
-support is new, therefore can't regress, and because the dependency
-exists only at runtime.
+  ARM: dts: Use the cros-ec-keyboard fragment in exynos5250-snow (2014-06-16 12:11:32 -0600)
 
 ----------------------------------------------------------------
-Alban Bedel (2):
-      ARM: tegra: tamonten: add the base board regulators
-      ARM: tegra: tamonten: add the display to the Medcom Wide
+ARM: create a cros-ec-keyboard DT fragment
 
-Alexandre Courbot (4):
-      ARM: tegra: roth: fix unsupported pinmux properties
-      ARM: tegra: roth: enable input on mmc clock pins
-      ARM: tegra: of: add GK20A device tree binding
-      ARM: tegra: roth: add display DT node
+This branch contains a series from Doug Anderson that creates a DT
+include file to share some common DT content between Tegra and Exynos
+boards that use cros-ec. I'll be pulling this into Tegra's for-3.17/dt
+branch, and I assume the Samsung maintainers will do something similar.
 
-Doug Anderson (1):
-      ARM: tegra: Add the EC i2c tunnel to tegra124-venice2
+----------------------------------------------------------------
+Doug Anderson (3):
+      ARM: dts: Create a cros-ec-keyboard fragment
+      ARM: tegra: Use the cros-ec-keyboard fragment in venice2
+      ARM: dts: Use the cros-ec-keyboard fragment in exynos5250-snow
 
-Dylan Reid (2):
-      ARM: tegra: Add Tegra124 HDA support
-      ARM: tegra: venice2 - Enable HDA
-
-Lucas Stach (1):
-      ARM: tegra: jetson-tk1: mark eMMC as non-removable
-
-Marcel Ziswiler (2):
-      ARM: tegra: initial support for apalis t30
-      ARM: tegra: Migrate Apalis T30 PCIe power supply scheme
-
-Thierry Reding (3):
-      ARM: tegra: add GK20A GPU to Tegra124 DT
-      ARM: tegra: tegra124: Add XUSB pad controller
-      ARM: tegra: jetson-tk1: Add XUSB pad controller
-
-Tuomas Tynkkynen (1):
-      ARM: tegra: Fix typoed ams,ext-control properties
-
- Documentation/devicetree/bindings/arm/tegra.txt    |   2 +
- .../devicetree/bindings/gpu/nvidia,gk20a.txt       |  43 ++
- arch/arm/boot/dts/Makefile                         |   1 +
- arch/arm/boot/dts/tegra114-roth.dts                |  32 +-
- arch/arm/boot/dts/tegra124-jetson-tk1.dts          |  33 +-
- arch/arm/boot/dts/tegra124-venice2.dts             |  36 +-
- arch/arm/boot/dts/tegra124.dtsi                    |  40 ++
- arch/arm/boot/dts/tegra20-medcom-wide.dts          |  61 +-
- arch/arm/boot/dts/tegra20-plutux.dts               |  41 ++
- arch/arm/boot/dts/tegra20-tamonten.dtsi            |  10 +-
- arch/arm/boot/dts/tegra20-tec.dts                  |  41 ++
- arch/arm/boot/dts/tegra30-apalis-eval.dts          | 260 ++++++++
- arch/arm/boot/dts/tegra30-apalis.dtsi              | 678 +++++++++++++++++++++
- 13 files changed, 1252 insertions(+), 26 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt
- create mode 100644 arch/arm/boot/dts/tegra30-apalis-eval.dts
- create mode 100644 arch/arm/boot/dts/tegra30-apalis.dtsi
+ arch/arm/boot/dts/cros-ec-keyboard.dtsi | 105 ++++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5250-snow.dts   |  93 +---------------------------
+ arch/arm/boot/dts/tegra124-venice2.dts  |  96 +----------------------------
+ 3 files changed, 111 insertions(+), 183 deletions(-)
+ create mode 100644 arch/arm/boot/dts/cros-ec-keyboard.dtsi
