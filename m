@@ -1,46 +1,86 @@
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: Re: [PATCH v5 1/8] of: Add NVIDIA Tegra SATA controller binding
-Date: Fri, 18 Jul 2014 14:32:53 +0300
-Message-ID: <53C905E5.2040406@nvidia.com>
-References: <1405500863-19696-2-git-send-email-mperttunen@nvidia.com> <1405667500-7402-1-git-send-email-mperttunen@nvidia.com> <53C8C9BD.3070709@nvidia.com> <53C8F6E6.6020901@redhat.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-ide-owner@vger.kernel.org>
-In-Reply-To: <53C8F6E6.6020901@redhat.com>
-Sender: linux-ide-owner@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "tj@kernel.org" <tj@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [GIT PULL 2/7] ARM: tegra: core code changes for 3.17
+Date: Fri, 18 Jul 2014 16:45:35 +0200
+Message-ID: <1405694740-4090-2-git-send-email-thierry.reding@gmail.com>
+References: <1405694740-4090-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1405694740-4090-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 18/07/14 13:28, Hans de Goede wrote:
-> Hi,
->
-> On 07/18/2014 09:16 AM, Mikko Perttunen wrote:
->> So here's v5: this time, as suggested, I handle the sata clock myself and let ahci_platform handle it too, leading it to be prepared+enabled twice. This works fine, and allows us to remove the DT ordering requirement.
->>
->> I also have in the works a patchset that adds the name-based ahci_platform_get_resources function, but that is not quite ready yet, even if it is quite far along. Also, I am going on vacation and returning on 28.7., so if this v5 is acceptable maybe it could be merged for 3.17 and I could work on the new get_resources scheme after I get back from vacation?
->
-> Yes that works for me v3 of all the patches with no newer version +
-> v5 of patch 1 and 7 are pretty clean and can go into 3.17 from my pov,
-> Tejun can you pick these up for 3.17 please?
+The following changes since commit dd849e581d7d23e1729c23bb2d6b85360ce4dd9d:
 
-Note that the DTC step will fail if Thierry's xusb pinctrl series is not
-applied before this one. (The DTS changes depend on a node called 
-'padctl' and the pinctrl-tegra-xusb header)
+  Merge branch 'for-3.17/fuse-move' into for-3.17/soc (2014-07-17 14:58:18 +0200)
 
->
-> And thanks for working on a name-based ahci_platform_get_resources function
-> since what we've now in v5 is quite clean already I think it will be good
-> to take our time to get this right, so postponing this to 3.18 is fine
-> with me.
+are available in the git repository at:
 
-Yes.
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-3.17-soc
 
->
-> Regards,
->
-> Hans
->
+for you to fetch changes up to 7232398abc6a7186e315425638c367d50c674718:
 
-Thanks, Mikko
+  ARM: tegra: Convert PMC to a driver (2014-07-17 14:58:43 +0200)
+
+----------------------------------------------------------------
+ARM: tegra: core code changes for 3.17
+
+Some of the code that's currently called from the Tegra machine setup
+code is moved to regular initcalls. To catch dependency violations, the
+various code paths now WARN if they're called to early. Not all of the
+potential candidates are converted yet, but those that were have been
+verified to work across all supported Tegra generations.
+
+A new function, soc_is_tegra(), is also provided to make sure that the
+initcalls can abort early if they aren't run on Tegra, which can happen
+for multi-platform builds.
+
+Finally this also moves out the PMC driver to drivers/soc/tegra so that
+it can be shared with 64-bit ARM.
+
+This is based on the for-3.17/fuse-move branch. The split is somewhat
+arbitrary but allows the dependents of the for-3.17/fuse-move to pull
+in as little code as necessary.
+
+----------------------------------------------------------------
+Thierry Reding (5):
+      soc/tegra: Implement runtime check for Tegra SoCs
+      ARM: tegra: Setup CPU hotplug in a pure initcall
+      ARM: tegra: Always lock the CPU reset vector
+      soc/tegra: fuse: Set up in early initcall
+      ARM: tegra: Convert PMC to a driver
+
+ arch/arm/mach-tegra/Makefile             |   2 -
+ arch/arm/mach-tegra/board.h              |   7 -
+ arch/arm/mach-tegra/hotplug.c            |  16 +-
+ arch/arm/mach-tegra/platsmp.c            |   2 +-
+ arch/arm/mach-tegra/pm.c                 |  32 +-
+ arch/arm/mach-tegra/pm.h                 |  10 +-
+ arch/arm/mach-tegra/pmc.c                | 414 -------------
+ arch/arm/mach-tegra/pmc.h                |  49 --
+ arch/arm/mach-tegra/powergate.c          | 516 -----------------
+ arch/arm/mach-tegra/reset.c              |  10 +-
+ arch/arm/mach-tegra/sleep.h              |   3 -
+ arch/arm/mach-tegra/tegra.c              |   9 +-
+ drivers/clk/tegra/clk-tegra30.c          |   2 +-
+ drivers/gpu/drm/tegra/gr3d.c             |   2 +-
+ drivers/gpu/drm/tegra/sor.c              |   2 +-
+ drivers/pci/host/pci-tegra.c             |   2 +-
+ drivers/soc/tegra/Makefile               |   3 +
+ drivers/soc/tegra/common.c               |  30 +
+ drivers/soc/tegra/fuse/fuse-tegra.c      |  11 +-
+ drivers/soc/tegra/fuse/tegra-apbmisc.c   |   7 +-
+ drivers/soc/tegra/pmc.c                  | 957 +++++++++++++++++++++++++++++++
+ include/soc/tegra/common.h               |  14 +
+ include/soc/tegra/fuse.h                 |   1 -
+ include/soc/tegra/pm.h                   |  38 ++
+ include/soc/tegra/{powergate.h => pmc.h} |  31 +-
+ 25 files changed, 1132 insertions(+), 1038 deletions(-)
+ delete mode 100644 arch/arm/mach-tegra/pmc.c
+ delete mode 100644 arch/arm/mach-tegra/pmc.h
+ delete mode 100644 arch/arm/mach-tegra/powergate.c
+ create mode 100644 drivers/soc/tegra/common.c
+ create mode 100644 drivers/soc/tegra/pmc.c
+ create mode 100644 include/soc/tegra/common.h
+ create mode 100644 include/soc/tegra/pm.h
+ rename include/soc/tegra/{powergate.h => pmc.h} (82%)
