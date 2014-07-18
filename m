@@ -1,68 +1,36 @@
-From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>
-Subject: [PATCH v2 0/4] ARM: dts: exynos: Prepare Spring
-Date: Fri, 18 Jul 2014 19:20:05 +0200
-Message-ID: <1405704009-8430-1-git-send-email-afaerber@suse.de>
+From: Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v5 1/8] of: Add NVIDIA Tegra SATA controller binding
+Date: Fri, 18 Jul 2014 17:54:04 -0400
+Message-ID: <20140718215404.GA1819@htj.dyndns.org>
+References: <1405500863-19696-2-git-send-email-mperttunen@nvidia.com>
+ <1405667500-7402-1-git-send-email-mperttunen@nvidia.com>
+ <53C8C9BD.3070709@nvidia.com>
+ <53C8F6E6.6020901@redhat.com>
+ <20140718150603.GA7196@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20140718150603.GA7196@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Stephan van Schaik <stephan-zGZ7W/ttz6xN8Ch2cx6nig@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hello,
+On Fri, Jul 18, 2014 at 05:06:04PM +0200, Thierry Reding wrote:
+> I think the following patches can go through your tree without causing
+> breakage through unresolved dependencies:
+> 
+> 	[PATCH v5 1/8] of: Add NVIDIA Tegra SATA controller binding
+> 	[PATCH v3 6/8] ata: ahci_platform: Increase AHCI_MAX_CLKS to 4
+> 	[PATCH v5 7/8] ata: Add support for the Tegra124 SATA controller
 
-Based on the preinstalled 3.8 based ChromeOS kernel and previous 3.15=20
-based attempts by Stephan and me that broke for 3.16, I've prepared a=20
-device tree for the HP Chromebook 11 aka Google Spring.
+Applied to libata/for-3.17 w/ Hans' acks added.  Please check the
+following branch and give me a holler if something is amiss.
 
-v2 reuses the new cros-ec-keyboard.dtsi and retires exynos5250-cros-com=
-mon.dtsi.
-It drops the timings subnode from dp-controller in expectation of the n=
-ew
-drm eDP bridge framework, which needs it under a different node.
-The built-in MMC is now usable, its node had been inherited as "disable=
-d".
+ git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git for-3.17
 
-Not yet enabled are trackpad, Wifi and sound.
+Thanks.
 
-Now depends on a Tegra branch (pull pending):
-http://git.kernel.org/cgit/linux/kernel/git/tegra/linux.git/log/?h=3Dfo=
-r-3.17/dt-cros-ec-kbd
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-
-My rebasing branch for testing is here:
-https://github.com/afaerber/linux/commits/spring-next
-
-Regards,
-Andreas
-
-v1 -> v2:
-* Dropped 3 documentation patches from series:
-  2 picked up,
-  https://patchwork.kernel.org/patch/4397271/
-  https://patchwork.kernel.org/patch/4397291/
-  1 already sent separately as v2, pending.
-  https://patchwork.kernel.org/patch/4424881/
-* Minimized and beautified Spring device tree and to some degree Snow a=
-s well.
-  See individual patches.
-
-Andreas F=C3=A4rber (4):
-  ARM: dts: exynos5250: max77686 is Snow only
-  ARM: dts: exynos5250: cypress,cyapa trackpad is Snow only
-  ARM: dts: exynos5250: Fold common ChromeOS parts into Snow
-  ARM: dts: exynos5250: Add Spring device tree
-
- arch/arm/boot/dts/Makefile                    |   1 +
- arch/arm/boot/dts/exynos5250-cros-common.dtsi | 323 -----------------
- arch/arm/boot/dts/exynos5250-snow.dts         | 334 ++++++++++++++++--
- arch/arm/boot/dts/exynos5250-spring.dts       | 485 ++++++++++++++++++=
-++++++++
- 4 files changed, 799 insertions(+), 344 deletions(-)
- delete mode 100644 arch/arm/boot/dts/exynos5250-cros-common.dtsi
- create mode 100644 arch/arm/boot/dts/exynos5250-spring.dts
-
---=20
-1.9.3
+-- 
+tejun
