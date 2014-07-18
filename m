@@ -1,90 +1,88 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [GIT PULL 5/7] ARM: create a cros-ec-keyboard DT fragment
-Date: Fri, 18 Jul 2014 16:48:14 +0200
-Message-ID: <20140718144813.GA7149@ulmo>
-References: <1405694740-4090-1-git-send-email-thierry.reding@gmail.com>
- <1405694740-4090-5-git-send-email-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v5 1/8] of: Add NVIDIA Tegra SATA controller binding
+Date: Fri, 18 Jul 2014 17:06:04 +0200
+Message-ID: <20140718150603.GA7196@ulmo>
+References: <1405500863-19696-2-git-send-email-mperttunen@nvidia.com>
+ <1405667500-7402-1-git-send-email-mperttunen@nvidia.com>
+ <53C8C9BD.3070709@nvidia.com>
+ <53C8F6E6.6020901@redhat.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="4Ckj6UjgE2iN1+kY"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="0F1p//8PRICkK4MW"
+Return-path: <linux-ide-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1405694740-4090-5-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+In-Reply-To: <53C8F6E6.6020901@redhat.com>
+Sender: linux-ide-owner@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, Mikko Perttunen <mperttunen@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---4Ckj6UjgE2iN1+kY
+--0F1p//8PRICkK4MW
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 18, 2014 at 04:45:38PM +0200, Thierry Reding wrote:
-> The following changes since commit 7171511eaec5bf23fb06078f59784a3a0626b3=
-8f:
+On Fri, Jul 18, 2014 at 12:28:54PM +0200, Hans de Goede wrote:
+> Hi,
 >=20
->   Linux 3.16-rc1 (2014-06-15 17:45:28 -1000)
+> On 07/18/2014 09:16 AM, Mikko Perttunen wrote:
+> > So here's v5: this time, as suggested, I handle the sata clock myself a=
+nd let ahci_platform handle it too, leading it to be prepared+enabled twice=
+=2E This works fine, and allows us to remove the DT ordering requirement.
+> >=20
+> > I also have in the works a patchset that adds the name-based ahci_platf=
+orm_get_resources function, but that is not quite ready yet, even if it is =
+quite far along. Also, I am going on vacation and returning on 28.7., so if=
+ this v5 is acceptable maybe it could be merged for 3.17 and I could work o=
+n the new get_resources scheme after I get back from vacation?
 >=20
-> are available in the git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegr=
-a-for-3.17-dt-cros-ec-kbd
->=20
-> for you to fetch changes up to 1a395e3b4f2e9038964c9eec392ed5300a4b5b83:
->=20
->   ARM: dts: Use the cros-ec-keyboard fragment in exynos5250-snow (2014-06=
--16 12:11:32 -0600)
->=20
-> ----------------------------------------------------------------
-> ARM: create a cros-ec-keyboard DT fragment
->=20
-> This branch contains a series from Doug Anderson that creates a DT
-> include file to share some common DT content between Tegra and Exynos
-> boards that use cros-ec. I'll be pulling this into Tegra's for-3.17/dt
-> branch, and I assume the Samsung maintainers will do something similar.
->=20
-> ----------------------------------------------------------------
-> Doug Anderson (3):
->       ARM: dts: Create a cros-ec-keyboard fragment
->       ARM: tegra: Use the cros-ec-keyboard fragment in venice2
->       ARM: dts: Use the cros-ec-keyboard fragment in exynos5250-snow
->=20
->  arch/arm/boot/dts/cros-ec-keyboard.dtsi | 105 ++++++++++++++++++++++++++=
-++++++
->  arch/arm/boot/dts/exynos5250-snow.dts   |  93 +-------------------------=
---
->  arch/arm/boot/dts/tegra124-venice2.dts  |  96 +-------------------------=
----
->  3 files changed, 111 insertions(+), 183 deletions(-)
->  create mode 100644 arch/arm/boot/dts/cros-ec-keyboard.dtsi
+> Yes that works for me v3 of all the patches with no newer version +
+> v5 of patch 1 and 7 are pretty clean and can go into 3.17 from my pov,
+> Tejun can you pick these up for 3.17 please?
 
-Note that Olof already mentioned that he had pulled this, but he also
-said that he hadn't pulled it into anything that feeds into linux-next
-so I thought I'd better send it again to make sure it's not forgotten.
+Tejun,
+
+I think the following patches can go through your tree without causing
+breakage through unresolved dependencies:
+
+	[PATCH v5 1/8] of: Add NVIDIA Tegra SATA controller binding
+	[PATCH v3 6/8] ata: ahci_platform: Increase AHCI_MAX_CLKS to 4
+	[PATCH v5 7/8] ata: Add support for the Tegra124 SATA controller
+
+Peter, you should probably pick up
+
+	[PATCH v3 4/8] clk: tegra: Enable hardware control of SATA PLL
+	[PATCH v3 5/8] clk: tegra: Add SATA clocks to Tegra124 initialization table
+
+and send them off to Mike for 3.17 if there's still time.
+
+Stephen, the rest of the patches would probably best go through the
+Tegra tree so that we can handle the dependencies there. I've already
+sent out pull requests for 3.17 today, but maybe Arnd and Olof can be
+convinced to take one more.
 
 Thierry
 
---4Ckj6UjgE2iN1+kY
+--0F1p//8PRICkK4MW
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJTyTOtAAoJEN0jrNd/PrOhjhEQAILtCjfik/2gluaaX1aqwq5c
-xX3R4khT+hRpYJilZZdxcxoeF27WgSwC0vmVoViXt3eLdmY7ldmb++jHsfV5TfCG
-Ruew2Xvm6yOLNtHiIIjh7QDkKO6OXY5nJJeJiU7DrCVkYLdeslwNkvW3lS82c/CC
-B0u2dNo6K/+8J5GR0ig1uNbHCNT1YHdX8XLc712vwUHA8l/r/B4rIpzBm8jINUo6
-xlcYy2mlyu4p/ufM5qC/ZqlJ9QYEOExeeRpUO+YWpV53enXhaTQnPEIE+4H67WO4
-oFUXlMmICLiVR3PoxWaxr5twCDoDSYrBzLP9ZAPFgtgPSivrV1JICmt7lBJNEIUt
-Zap105icYY9Sw12M96p3RfsZCKX3McSvvxJFB2pUGZhuwcG+L8VMiJgaH5+fnai7
-+S7PLPmuE4K+dCNCcndchl8jqLO0JLHBfZrUAKFQxXybDm2ON1q6cg4uqqQimWpf
-CTgXLjYM9L4f3iRksihYvSgmNS6ZMxKMtKskNgyOPCdEP1FQQUygrL7fiCKnErMY
-H63X74VOnJhS1RYkFPE6NGnmUDQ6jZX7Xuc/1Zpl+nnOY85QYMm1j3fUu7z5617R
-C5/Py62fhUZk5Ga2LTU1gE6mkB94xrJUaUZCBfdS4Cz9m64nOPooJkThkLAmntnn
-DLMv4dpzABy/KesR8zaB
-=NSWQ
+iQIcBAEBAgAGBQJTyTfbAAoJEN0jrNd/PrOhqksP/RUaZd/72w+68XWcMveQTbOW
+q8bW66jCALkUTJ4MOC807toKPD60VXyPKOEVpCvAdkr6tUFU8EbGgUAVlde3KMhG
+AVlY7A9UCMwSNxHKAlCIzk3wLiStFKuU70B5JWVBcS6Is9yLkIFviyfcENN0flU6
+9MMuobbNvRI0wJXE1dXtILqd5alqZl+L4/x3sSeoaAnmpaVYxJfdtnDJU2k+AK4R
+Cad3g6OyOB0TXOjeRUnN++tT4CkaWnVE1gGl+aTG3ECFJLiI1YNXgll1YEY3Y9bx
+dkQUv7MiwmZvjrxTMtmxQmCruyhrzGDg58mAPTJ+zpGEyaDehYyjBbUKzn+0s7mO
+yofIXEDaq5coU35om4pjgl+WVQEne+v5UWZ7PE48BI0C7D5y0B32/PdYlMAyaH5V
+ENEZXIOuTwRVJ3asgEvUo8rjDOQMHKseV+CJPIw0PQhuyxKQJQdaq8ee2VqLbuDt
+Ip06o/fDbKgA7con6sWvw4VsmjIDfXiiveGVNFQrRfgJkJSw7OUOyG/F48erkyDd
+Q+du1olR+j38ZgLjv/6e9wSU8EYo8AEkAJBwna98CvdsZoNEAz4Kh2SlDBdL9c0K
+WvyGesxE/Pm0w5HUYjXfCQc4PmAaiMp9DUElAVnpPhPaDuR6Txc0wXdOGOdjGcDS
+361mlgub+rMHt84K05Mi
+=Ihqj
 -----END PGP SIGNATURE-----
 
---4Ckj6UjgE2iN1+kY--
+--0F1p//8PRICkK4MW--
