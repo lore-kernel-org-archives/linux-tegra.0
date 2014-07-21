@@ -1,92 +1,67 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 4/4] ARM: tegra: roth: add display DT node
-Date: Mon, 21 Jul 2014 23:16:32 +0200
-Message-ID: <20140721211630.GA12076@mithrandir>
-References: <1404303560-32209-1-git-send-email-acourbot@nvidia.com>
- <1404303560-32209-5-git-send-email-acourbot@nvidia.com>
- <53B42B60.1000600@wwwdotorg.org>
- <53B4C9C0.4000605@nvidia.com>
- <53CD333F.2070805@wwwdotorg.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] PCI: tegra: Add debugfs support
+Date: Mon, 21 Jul 2014 23:19:34 +0200
+Message-ID: <20140721211932.GB12076@mithrandir>
+References: <1405062024-2364-1-git-send-email-thierry.reding@gmail.com>
+ <53CD37CA.7020308@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="d6Gm4EdcadzBjdND"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="TakKZr9L6Hm6aLOc"
+Return-path: <linux-pci-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <53CD333F.2070805-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <53CD37CA.7020308@wwwdotorg.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---d6Gm4EdcadzBjdND
+--TakKZr9L6Hm6aLOc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 21, 2014 at 09:35:27AM -0600, Stephen Warren wrote:
-> On 07/02/2014 09:10 PM, Alexandre Courbot wrote:
-> > On 07/03/2014 12:55 AM, Stephen Warren wrote:
-> >> On 07/02/2014 06:19 AM, Alexandre Courbot wrote:
-> >>> DSI support has been fixed to support continuous clock behavior that =
-the
-> >>> panel used on SHIELD requires, so finally add its device tree node si=
-nce
-> >>> it is functional.
-> >>
-> >>> diff --git a/arch/arm/boot/dts/tegra114-roth.dts
-> >>> b/arch/arm/boot/dts/tegra114-roth.dts
-> >>
-> >>> +    host1x@50000000 {
-> >>> +        dsi@54300000 {
-> >>
-> >> That node looks fine, but I wonder why we need to mark a bunch of
-> >> regulators as always-on? shouldn't the references to vdd-supply and
-> >> power-supply from this node be enough? If not, perhaps the tree
-> >> structure of the regulators isn't correct, or the DSI or panel bindings
-> >> don't allow enough regulators to be referenced?
+On Mon, Jul 21, 2014 at 09:54:50AM -0600, Stephen Warren wrote:
+> On 07/11/2014 01:00 AM, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
 > >=20
-> > regulator-always-on is indeed not needed for vdd_lcd. I actually had a
-> > patch in my tree removing this line that I forgot to squash. Will post a
-> > v2 for this patch that fixes this, thanks.
-> >=20
-> > vdd-2v8-display needs to remain always-on however. Here we may hit a
-> > limitation of the simple-panel driver, where only one power supply can
-> > be provided.
+> > Provide a debugfs file that shows the current link status for each root
+> > port.
 >=20
-> Can't we fix the simple-panel driver to allow a list of regulators in
-> the property?
+> Reviewed-by: Stephen Warren <swarren@nvidia.com>
+>=20
+> Does this patch conflict with or merge well with the Tegra124 PCIe
+> driver patches, I wonder?
 
-I have no objection to allowing that. But I don't think there's a way to
-do that with the current regulator API. You can use the bulk API, but
-that requires separate properties, not multiple regulators in one
-property.
+Yes. The Tegra124 PCIe patches are part of the same branch. My plan was
+to get this merged for 3.17 (if it's not too late yet) and then submit
+Tegra124 support for 3.18 soonish after 3.17 is released.
 
-Perhaps one idea to solve this would be to make the regulator API return
-a regulator handle that in fact controls an array of regulators? Adding
-Mark.
+I also have a bunch of patches that allow the Tegra PCIe driver to be
+built as a module (though that has even more cross-tree dependencies, so
+should probably be phased in over a couple of cycles).
 
 Thierry
 
---d6Gm4EdcadzBjdND
+--TakKZr9L6Hm6aLOc
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTzYMuAAoJEN0jrNd/PrOhRlYP/267hH2TOWbVMHr5gzd6V5Dp
-CfK7zto/h37uT0Z+VwTo1SFHMm2YhWKg1O5Xk9q6QMrUyWJJVDrbf6S1cgvKZn63
-l/Z8pz42AqWqDXP86sGdvwjdu/zrZDGPLF6P7+5EP5y6QKGmASFzJkxF4XN1RT09
-CrLlJea9/o2tdJ9qfQV/s08Mde5B4+tZ6ZYmVJ05LB7418tp8ZDgsRWKfT7B/U2a
-WvbSZUVsEObC5PIEWNJgOsZGiCGGqOKqXEo5ubua5/d0s1FgPark7jGaRXKN5Xj6
-1/T/etv9oGgV6wvz9rPG8arM/k3/mP3e9Wsax4mHM6YvUsN55HibGAJe69G9e5cp
-UeHvHXqk449lyLMX0r/K+3Mtuxd2m3pPe8PuR95nbAyyuPX0QJDE+aoV/ncbiq6i
-IA8W7b3GwHcryM+2KEB7b209s5DdWnFwUpzXYPc6TH0a92R5qIe6YX2hNBrTF/wf
-1oNjB/A3UsTxYt0GwYTad4Q7a9kC4GWtfGly3CwmMRGtT9cNEu0PAL4POvIj6mrb
-rHRB6GGHmM6AOpd8TimCCrEp21RkSmM1JYPYLK9zbg7rNarIvrJ5C/X2BGA5xa/e
-RL3fnIVPtUppkV+la4Ynn69eTpG9ZiF3NuEQJvZkqzO0QVwkwYkAS3+o7YRSW9on
-HddJoCuv7OVLx/Lq1PET
-=SaFc
+iQIcBAEBAgAGBQJTzYPkAAoJEN0jrNd/PrOhuhYQALJriv+0xZQhNVSyPJIUovYB
+snS3iOcKIu1kKpIIj2kh+Pp3AHVWZYM9Rv+cbTwZwIG0eehixu+3L+tICb/KHPV8
+VX/w2EDBvIt42S/L3aRy+aKedNFYMyt0sTkEnqVahqf1VLBfqsieaNbAVUt7bVJi
+iNi3c7KKwrZYtF1YEFPgqP7CjPDxbsDVTAVmMTtNJjOZaTVNF9obl2kNGnNcwPXV
+LWxEORsjSprXQyKoNTQOu07hS0avSCWdjiU4dXNn+IO/9eBosPhx6Q1aG/t+Y9r3
+/GMeON8YiIe8+lGnz1Q95U0HoPNdZEe39Aj/MnbyVgO4yRA1+xailsUCzRgBq85g
+BT5yg3u8t/dAKuchx9Z9z2HgGxyQZeQGGUKPbeyby3hiQQRA55uxdHQMx1LEBEVv
+VSLjKjxeYlL46UyiTdsEpOQqhqJmgQKZd0MWITp37FBr0otFFnpLFvDR67+DoCOr
+9+pp44pWKQj5SqeY7XsMET0a2jZkR6Fd1XEg9Vwkg00V2RkEKT6wCeM0D4DC44nV
+4S0J3qFMF4ZePdi6jTnzX3YqrSQIpn4U1W7QpSS1E8DcZnUvL5PSxRU+pq56g5KA
+1Jwx9pCU565FaZh6SixFQPcJVlP9+V7/+WuCfJ6Efbcd9FUfMg9h4l55Ndh0ne0J
+pVaE323PEEpnFOd64vyG
+=OyXj
 -----END PGP SIGNATURE-----
 
---d6Gm4EdcadzBjdND--
+--TakKZr9L6Hm6aLOc--
