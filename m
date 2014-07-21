@@ -1,57 +1,101 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 4/4] ARM: tegra: roth: add display DT node
-Date: Mon, 21 Jul 2014 09:35:27 -0600
-Message-ID: <53CD333F.2070805@wwwdotorg.org>
-References: <1404303560-32209-1-git-send-email-acourbot@nvidia.com>
- <1404303560-32209-5-git-send-email-acourbot@nvidia.com>
- <53B42B60.1000600@wwwdotorg.org> <53B4C9C0.4000605@nvidia.com>
+From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Subject: [PATCH v2 00/16] Tegra124 CL-DVFS / DFLL clocksource, plus cpufreq
+Date: Mon, 21 Jul 2014 18:38:46 +0300
+Message-ID: <1405957142-19416-1-git-send-email-ttynkkynen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <53B4C9C0.4000605@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Alexandre Courbot <acourbot@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Terje Bergstrom <tbergstrom@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Paul Walmsley <pwalmsley@nvidia.com>, devicetree@vger.kernel.org, Tuomas Tynkkynen <ttynkkynen@nvidia.com>, broonie@kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/02/2014 09:10 PM, Alexandre Courbot wrote:
-> On 07/03/2014 12:55 AM, Stephen Warren wrote:
->> On 07/02/2014 06:19 AM, Alexandre Courbot wrote:
->>> DSI support has been fixed to support continuous clock behavior that the
->>> panel used on SHIELD requires, so finally add its device tree node since
->>> it is functional.
->>
->>> diff --git a/arch/arm/boot/dts/tegra114-roth.dts
->>> b/arch/arm/boot/dts/tegra114-roth.dts
->>
->>> +    host1x@50000000 {
->>> +        dsi@54300000 {
->>
->> That node looks fine, but I wonder why we need to mark a bunch of
->> regulators as always-on? shouldn't the references to vdd-supply and
->> power-supply from this node be enough? If not, perhaps the tree
->> structure of the regulators isn't correct, or the DSI or panel bindings
->> don't allow enough regulators to be referenced?
-> 
-> regulator-always-on is indeed not needed for vdd_lcd. I actually had a
-> patch in my tree removing this line that I forgot to squash. Will post a
-> v2 for this patch that fixes this, thanks.
-> 
-> vdd-2v8-display needs to remain always-on however. Here we may hit a
-> limitation of the simple-panel driver, where only one power supply can
-> be provided.
+v2 changes:
+- Add new helpers to the regulator framework to obtain the voltage
+  register address etc., as suggested by Mark. Added in patches 1 & 2.
+  They get used in patch 5.
+- Use cpufreq-cpu0 in the cpufreq driver
+- Fixed one bug in patch 8, where deferred probing would attempt to
+  fill the OPP table multiple times and cause a bunch of warnings
 
-Can't we fix the simple-panel driver to allow a list of regulators in
-the property?
+Original cover letter:
 
-I suppose that this technique is OK though; we can always simplify the
-DT later if the simple-panel binding gets enhanced.
+This series implements the DFLL/CL-DVFS clock source for the fast CPU
+cluster on Tegra124, and a cpufreq driver that uses the DFLL for
+clocking the CPU. Most of this is based on Paul Walmsley's public patch
+set from December 2013, which is available at
+http://comments.gmane.org/gmane.linux.ports.tegra/15273
+
+The DFLL clock hardware is a voltage-controlled oscillator plus
+control logic that compares the generated output clock with a
+51 MHz reference clock, and can make decisions to either lower
+or raise the DFLL voltage to keep the output rate close to the
+software-requested rate. The voltage changes are done by
+communicating with an off-chip PMIC via either I2C or PWM.
+As the DFLL oscillator is powered via the CPU rail, using
+the DFLL as the CPU clocksource also gives us dynamic CPU
+voltage scaling.
+
+This series has been tested on the Jetson TK1 (Rev C). Porting this to
+the Venice2 should be simple, though do note that it does not have
+active cooling.
+
+Thanks,
+Tuomas
+
+Paul Walmsley (1):
+  clk: tegra: Add DFLL DVCO reset control for Tegra124
+
+Tuomas Tynkkynen (15):
+  regmap: Add regmap_get_device
+  regulator: Add helpers for low-level register access
+  clk: tegra: Add binding for the Tegra124 DFLL clocksource
+  clk: tegra: Add library for the DFLL clock source (open-loop mode)
+  clk: tegra: Add closed loop support for the DFLL
+  clk: tegra: Add functions for parsing CVB tables
+  clk: tegra: Add Tegra124 DFLL clocksource platform driver
+  clk: tegra: Save/restore CCLKG_BURST_POLICY on suspend
+  clk: tegra: Add the DFLL as a possible parent of the cclk_g clock
+  ARM: tegra: Add the DFLL to Tegra124 device tree
+  ARM: tegra: Enable the DFLL on the Jetson TK1
+  cpufreq: tegra124: Add device tree bindings
+  cpufreq: Add cpufreq driver for Tegra124
+  ARM: tegra: Add entries for cpufreq on Tegra124
+  ARM: tegra: Update defconfig for tegra124-cpufreq
+
+ .../bindings/clock/nvidia,tegra124-dfll.txt        |   69 +
+ .../bindings/cpufreq/tegra124-cpufreq.txt          |   42 +
+ Documentation/power/regulator/consumer.txt         |   35 +
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts          |    8 +-
+ arch/arm/boot/dts/tegra124.dtsi                    |   31 +
+ arch/arm/configs/tegra_defconfig                   |    1 +
+ arch/arm/mach-tegra/Kconfig                        |    1 +
+ drivers/base/regmap/regmap.c                       |   12 +
+ drivers/clk/tegra/Makefile                         |    3 +
+ drivers/clk/tegra/clk-dfll.c                       | 1735 ++++++++++++++++++++
+ drivers/clk/tegra/clk-dfll.h                       |   55 +
+ drivers/clk/tegra/clk-tegra-super-gen4.c           |    4 +-
+ drivers/clk/tegra/clk-tegra124-dfll-fcpu.c         |  165 ++
+ drivers/clk/tegra/clk-tegra124.c                   |   61 +
+ drivers/clk/tegra/clk.h                            |    3 +
+ drivers/clk/tegra/cvb.c                            |  133 ++
+ drivers/clk/tegra/cvb.h                            |   67 +
+ drivers/cpufreq/Kconfig.arm                        |    1 +
+ drivers/cpufreq/Makefile                           |    1 +
+ drivers/cpufreq/tegra124-cpufreq.c                 |  169 ++
+ drivers/regulator/core.c                           |   71 +
+ include/linux/regmap.h                             |    7 +
+ include/linux/regulator/consumer.h                 |   26 +
+ 23 files changed, 2698 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+ create mode 100644 Documentation/devicetree/bindings/cpufreq/tegra124-cpufreq.txt
+ create mode 100644 drivers/clk/tegra/clk-dfll.c
+ create mode 100644 drivers/clk/tegra/clk-dfll.h
+ create mode 100644 drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+ create mode 100644 drivers/clk/tegra/cvb.c
+ create mode 100644 drivers/clk/tegra/cvb.h
+ create mode 100644 drivers/cpufreq/tegra124-cpufreq.c
+
+-- 
+1.8.1.5
+
