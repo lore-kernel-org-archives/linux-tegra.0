@@ -1,78 +1,75 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 5/8] of: Add Tegra124 EMC bindings
-Date: Mon, 21 Jul 2014 16:36:34 -0600
-Message-ID: <53CD95F2.10008@wwwdotorg.org>
-References: <1405088313-20048-1-git-send-email-mperttunen@nvidia.com> <1405088313-20048-6-git-send-email-mperttunen@nvidia.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 4/4] ARM: tegra: roth: add display DT node
+Date: Mon, 21 Jul 2014 23:51:53 +0100
+Message-ID: <20140721225153.GJ17528@sirena.org.uk>
+References: <1404303560-32209-1-git-send-email-acourbot@nvidia.com>
+ <1404303560-32209-5-git-send-email-acourbot@nvidia.com>
+ <53B42B60.1000600@wwwdotorg.org>
+ <53B4C9C0.4000605@nvidia.com>
+ <53CD333F.2070805@wwwdotorg.org>
+ <20140721211630.GA12076@mithrandir>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1405088313-20048-6-git-send-email-mperttunen@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mikko Perttunen <mperttunen@nvidia.com>, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@linaro.org, thierry.reding@gmail.com
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="w47z9evyjOavafUr"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20140721211630.GA12076@mithrandir>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/11/2014 08:18 AM, Mikko Perttunen wrote:
-> Add binding documentation for the nvidia,tegra124-emc device tree
-> node.
 
-> diff --git a/Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt b/Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt
+--w47z9evyjOavafUr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> +Required properties :
-> +- compatible : "nvidia,tegra124-emc".
-> +- reg : Should contain 1 or 2 entries:
-> +  - EMC register set
-> +  - MC register set : Required only if no node with
-> +    'compatible = "nvidia,tegra124-mc"' exists. The MC register set
-> +    is first read from the MC node. If it doesn't exist, it is read
-> +    from this property.
+On Mon, Jul 21, 2014 at 11:16:32PM +0200, Thierry Reding wrote:
+> On Mon, Jul 21, 2014 at 09:35:27AM -0600, Stephen Warren wrote:
 
-I echo what Thierry said about the MC register sharing.
+> > > vdd-2v8-display needs to remain always-on however. Here we may hit a
+> > > limitation of the simple-panel driver, where only one power supply can
+> > > be provided.
 
-> +- timings : Should contain 1 entry for each supported clock rate.
+> > Can't we fix the simple-panel driver to allow a list of regulators in
+> > the property?
 
-s/entry/node/ I think.
+> I have no objection to allowing that. But I don't think there's a way to
+> do that with the current regulator API. You can use the bulk API, but
+> that requires separate properties, not multiple regulators in one
+> property.
 
-> +  Entries should be named "timing@n" where n is a 0-based increasing
-> +  number. The timings must be listed in rate-ascending order.
+> Perhaps one idea to solve this would be to make the regulator API return
+> a regulator handle that in fact controls an array of regulators? Adding
+> Mark.
 
-That implies that #address-cells and #size-cells are required too.
+I'm really not comfortable with that idea, it seems like most of the
+users would be abusing it - one of the biggest issues is always getting
+people to understand that their driver may be used in other systems with
+the supplies mapped differently.  If you were going to do something
+along those lines you'd need to do something that enumerated all the
+supply properties on the device.
 
-> +Required properties for timings :
+--w47z9evyjOavafUr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-... and a reg property is needed here.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-> +- clock-frequency : Should contain the memory clock rate.
-> +- nvidia,parent-clock-frequency : Should contain the rate of the EMC
-> +  clock's parent clock.
+iQIcBAEBAgAGBQJTzZmAAAoJELSic+t+oim9nwUP/jK/eXoKVl99dSmhUmDtv+9E
+CeL0oOyWN7ovsIbFi800l43DW19imQqvN6JA2lwWqGan0uZ7EyChCqe3ttv9y8Ul
+a5HtfqM8Yhoigosz6FMmVLhY2//XAaYpnUBTrjo3SZmN4ZDdI6cNWrTRx1IhJHIM
+YNR9mvCLQJM3B8/Fxh+FM8Ayly3rdkvzIVbfurw6bhqQ1z06zWTO8bGdXFaKU+xh
+YgBMDrtH1ctgNlCwsD35MdNjh6GD4SYrWOyR3s7Ki0v5VI0RdMxGBbW7j/m+h6Zf
+PvJrjqUsqpM/FX1GsIHttsm6+Cmhj8cQuvStBgOKIP4TQuML5Q/k58R914bUAjv7
+Oy0Zhrs0Xed+S95sL9Va0B45El4reSe+GGRDwD4etFojQ36zCUZOlamzRwtZ3AKB
+eDmMwdh53DHWL6iYkwsQVT15L7yLc519SRHh6/M0jjYfjpCc3OjXCx7VmFBJToOD
+4zSc8ObXFEcBY+6JEES/I66PY/7lQ50cEfeOAu+MWpKcTxtJscYCDsKibMo3lT+8
+etEAkPGqCPO/DOB0CedkAF0/vfqu+1sd3dN5nS4M1ovv4tsIztLaI+QWMqcquLAc
+vQo8SfPKXlsdoJ2kEZaYIVhuuj+pBuztkPQPqXQjDbzdKQROqssH7GocuT3iHbpa
+P18re0tQtirmXt9c4mS+
+=3it+
+-----END PGP SIGNATURE-----
 
-> +- clocks : Must contain an entry for each entry in clock-names.
-> +  See ../clocks/clock-bindings.txt for details.
-> +- clock-names : Must include the following entries:
-> +  - emc-parent : EMC's parent clock.
-
-Shouldn't clocks/clock-names be part of the main node, not the
-per-timing node?
-
-> +- The following properties contain EMC timing characterization values:
-> +  - nvidia,emc-zcal-cnt-long
-> +  - nvidia,emc-auto-cal-interval
-> +  - nvidia,emc-ctt-term-ctrl
-> +  - nvidia,emc-cfg
-> +  - nvidia,emc-cfg-2
-> +  - nvidia,emc-sel-dpd-ctrl
-> +  - nvidia,emc-cfg-dig-dll
-> +  - nvidia,emc-bgbias-ctl0
-> +  - nvidia,emc-auto-cal-config
-> +  - nvidia,emc-auto-cal-config2
-> +  - nvidia,emc-auto-cal-config3
-> +  - nvidia,emc-mode-reset
-> +  - nvidia,emc-mode-1
-> +  - nvidia,emc-mode-2
-> +  - nvidia,emc-mode-4
-> +- nvidia,emc-burst-data : EMC timing characterization data written to
-> +                          EMC registers.
-> +- nvidia,mc-burst-data : EMC timing characterization data written to
-> +                         MC registers.
-> 
+--w47z9evyjOavafUr--
