@@ -1,43 +1,43 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [flasher PATCH 1/2] Switch flasher script to subprocess
-Date: Mon, 21 Jul 2014 09:42:25 -0600
-Message-ID: <53CD34E1.1080705@wwwdotorg.org>
-References: <1404322363-11580-1-git-send-email-swarren@wwwdotorg.org>	<53B4935D.8040504@wwwdotorg.org> <CA+G9XgdAAMttS66oscdY15jUns+ojOJ4-ny0eRfFYO6PXBNXCg@mail.gmail.com>
+From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Subject: [PATCH v2 10/16] clk: tegra: Add the DFLL as a possible parent of the cclk_g clock
+Date: Mon, 21 Jul 2014 18:38:56 +0300
+Message-ID: <1405957142-19416-11-git-send-email-ttynkkynen@nvidia.com>
+References: <1405957142-19416-1-git-send-email-ttynkkynen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CA+G9XgdAAMttS66oscdY15jUns+ojOJ4-ny0eRfFYO6PXBNXCg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vince Hsu <hsienwen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1405957142-19416-1-git-send-email-ttynkkynen@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Paul Walmsley <pwalmsley@nvidia.com>, devicetree@vger.kernel.org, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/09/2014 02:38 AM, Vince Hsu wrote:
-> Hi Stephen,
-> 
-> Sometimes I got the following errors with the tegra-uboot-flasher.
-> Re-executing the script might work.
+The DFLL clocksource was missing from the list of possible parents for
+the fast CPU cluster. Add it to the list.
 
-Sorry for the slow response; I was on vacation.
+Signed-off-by: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+---
+v2 changes:
+    - none
 
-...
-> downloading miniloader to target at address 0x4000e000 (136920 bytes)...
-> miniloader downloaded successfully
-> tegrarcm: retreiving platform info
-> Traceback (most recent call last):
-...
->   File "./tegra-uboot-flasher", line 49, in run
->     subprocess.check_call(cmd, cwd=cd)
->   File "/usr/lib/python2.7/subprocess.py", line 511, in check_call
->     raise CalledProcessError(retcode, cmd)
-> subprocess.CalledProcessError: Command '['/tmp/tmpcgEOsW/flasher.sh']'
-> returned non-zero exit status 1
+ drivers/clk/tegra/clk-tegra-super-gen4.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-I have not seen this. The error message simply means that the tegrarcm
-binary exited with a non-zero error code. I think you'll need to run the
-tegrarcm command under gdb (or add more debug prints) to find out why.
-Passing the --debug and --save-work-dir parameters to
-tegra-uboot-flasher will help you see exactly which commands and data
-files tegra-uboot-flasher is executing, so you can run the same thing
-manually.
+diff --git a/drivers/clk/tegra/clk-tegra-super-gen4.c b/drivers/clk/tegra/clk-tegra-super-gen4.c
+index feb3201..f1f4410 100644
+--- a/drivers/clk/tegra/clk-tegra-super-gen4.c
++++ b/drivers/clk/tegra/clk-tegra-super-gen4.c
+@@ -44,7 +44,9 @@ static const char *sclk_parents[] = { "clk_m", "pll_c_out1", "pll_p_out4",
+ 
+ static const char *cclk_g_parents[] = { "clk_m", "pll_c", "clk_32k", "pll_m",
+ 					"pll_p", "pll_p_out4", "unused",
+-					"unused", "pll_x" };
++					"unused", "pll_x", "unused", "unused",
++					"unused", "unused", "unused", "unused",
++					"dfllCPU_out" };
+ 
+ static const char *cclk_lp_parents[] = { "clk_m", "pll_c", "clk_32k", "pll_m",
+ 					 "pll_p", "pll_p_out4", "unused",
+-- 
+1.8.1.5
+
