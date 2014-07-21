@@ -1,87 +1,99 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] staging/nvec: Pass proper resource to mfd_add_devices()
-Date: Mon, 21 Jul 2014 23:49:38 +0200
-Message-ID: <20140721214936.GD12076@mithrandir>
-References: <1405943561-2656-1-git-send-email-thierry.reding@gmail.com>
- <20140721220136.5bd54deb52f7717d8880b11c@gmx.de>
- <20140721213915.GA8168@kroah.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 2/6] clk: tegra: make tegra_clocks_apply_init_table
+ arch_initcall
+Date: Mon, 21 Jul 2014 23:55:25 +0200
+Message-ID: <20140721215523.GE12076@mithrandir>
+References: <1405437890-6468-1-git-send-email-pdeschrijver@nvidia.com>
+ <1405437890-6468-3-git-send-email-pdeschrijver@nvidia.com>
+ <20140716071932.GB7978@ulmo>
+ <20140716082740.GK23218@tbergstrom-lnx.Nvidia.com>
+ <53CD896C.3030605@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="q9KOos5vDmpwPx9o"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="5oH/S/bF6lOfqCQb"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20140721213915.GA8168-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org
+In-Reply-To: <53CD896C.3030605@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Joseph Lo <josephl@nvidia.com>, Alex Courbot <acourbot@nvidia.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Tuomas Tynkkynen <ttynkkynen@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---q9KOos5vDmpwPx9o
+--5oH/S/bF6lOfqCQb
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 21, 2014 at 02:39:15PM -0700, Greg Kroah-Hartman wrote:
-> On Mon, Jul 21, 2014 at 10:01:36PM +0200, Marc Dietrich wrote:
-> > Hi Thierry,
+On Mon, Jul 21, 2014 at 03:43:08PM -0600, Stephen Warren wrote:
+> On 07/16/2014 02:27 AM, Peter De Schrijver wrote:
+> > On Wed, Jul 16, 2014 at 09:19:33AM +0200, Thierry Reding wrote:
+> >> * PGP Signed by an unknown key
+> >>
+> >> On Tue, Jul 15, 2014 at 06:24:32PM +0300, Peter De Schrijver wrote:
+> >> [...]
+> >>> diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
+> >>> index d081732..65cde4e 100644
+> >>> --- a/drivers/clk/tegra/clk.c
+> >>> +++ b/drivers/clk/tegra/clk.c
+> >>> @@ -290,10 +290,13 @@ struct clk ** __init tegra_lookup_dt_id(int clk=
+_id,
+> >>> =20
+> >>>  tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
+> >>> =20
+> >>> -void __init tegra_clocks_apply_init_table(void)
+> >>> +static int __init tegra_clocks_apply_init_table(void)
+> >>>  {
+> >>>  	if (!tegra_clk_apply_init_table)
+> >>> -		return;
+> >>> +		return 0;
+> >>
+> >> Shouldn't this be an error? Or perhaps WARN()? To make sure this gets
 > >=20
-> > On Mon, 21 Jul 2014 13:52:41 +0200
-> > Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> >=20
-> > > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > >=20
-> > > The mfd_add_devices() parameter takes a struct resource * as fifth
-> > > argument, but the nvec driver passes in a void __iomem *. The driver
-> > > gets away with it because none of the subdevices ever directly access
-> > > the registers.
-> >=20
-> > you are right, this one looked bogus.=20
-> >=20
-> > > While at it, use platform_get_irq() instead of platform_get_resource()
-> > > to get the device's interrupt. This makes it easier to pass in the
-> > > register region since the variable is no longer reused.
-> > >=20
-> > > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > ---
-> > > Alternatively we could simply pass NULL into mfd_add_devices(), which
-> > > might be a slightly more accurate representation of what's going on.
-> > >
-> > > Marc, Greg, any preferences?
-> >=20
-> > I just tested with NULL as base and it seems to produce no harm. Even
-> > if we may get rid of mfd_add_devices in the future, passing NULL is
-> > cleaner for now and no children will ever make use of it. So please send
-> > a new version with this change.
-> >=20
-> > Otherwise, thanks for looking and cleaning up.
+> > An arch_initcall will be called for every ARM platform I think? In case
+> > this gets called on a non-Tegra platform, tegra_clk_apply_init_table wi=
+ll not
+> > be set and therefore a silent return 0; seems the most appropriate thin=
+g to do
+> > to me?
 >=20
-> Ok, can I get your ack for this patch then?
+> This is one reason that doing all the initialization from separate
+> initcalls sucks. Much better to have a single top-level initialization
+> function that calls exactly what is needed, only what is needed, and
+> only runs on the correct SoCs.
+>=20
+> But failing that, I guess you need to say something like
+> of_is_compatible(root node, "nvidia Tegra"), but of course the
+> definition of "nvidia Tegra" is an ever-growing list of possible values
+> that needs to be used from each separate initcall...
 
-I'll resend a patch which passes in NULL as base tomorrow as requested
-by Marc.
+FWIW, we have soc_is_tegra() now in include/soc/tegra/common.h which is
+meant to be used for exactly this purpose. I agree that it isn't optimal
+but it's pretty good. It should be easy to refactor this to make it
+callable from a top-level initialization function when a decision
+regarding that has been made.
 
 Thierry
 
---q9KOos5vDmpwPx9o
+--5oH/S/bF6lOfqCQb
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTzYrwAAoJEN0jrNd/PrOhOE0P/2ztVGFvcczZv+QhfM39yCcH
-J7yZG3IlL8D8ns9wq6IPtLYq39BhAxyp1ZTYNQP/9B4SHTZdpvykWRzmveFLFlo+
-ONg/vLXLm+R78xfM2jF+7+UH/tOYtBEkad9hIXsDAcHXmIYiuoSRnqxEuzlMg4DG
-Kla2YhcHnciQqjMv8avQ4zUt7lf0WQi2KlRQodOrAFm0pJe5bAJb7wRFRp8RUkDA
-ajwvooOFihh4laTWbJcni2F63czfBfA65BCX4PT8iX2ZiMiuxjzTbtPJeCxQdL92
-Qkvhge3rueT+4o62AaM2cgLjeBTleKbPzt5ZEWX9dJk+4G4QqTsMM/ixKmeGvxjl
-ZnN0iy6fM8hP0u9d1g6UBeOxRZ6j2k+jIZUxotguzL9WnJpj54X1LmIhUrVYwYcD
-1n7kwp7zlkcGg2TvL/YBNJVHHLzzv/KPlqXdsyt3NgkY+Bpw4GGiVLNfWkzJ3XGE
-E+AhXPytUXz8BbnhnULyUfLrJd0OR2J+t7d6uSZ6t+Obef6mbwJnnptJ/fDdzqc2
-/mKsFgA4KHBrPYgg5M22FHoKn9SbjqzVPKoQtOfbAnX244bQ/uuW6jcAD+6p+5km
-18g3obC7VGecn9mBU9uOVTrEFQhkk3cotMPsMSebkZq23ClVQFOhO8MeaP/FEozH
-pc8U0+vX47dVsacKXP5N
-=Mu1q
+iQIcBAEBAgAGBQJTzYxLAAoJEN0jrNd/PrOhERgQAJsRZRUQ+9TQKgFfuvk3nMCR
+CASncN/V2m5XRMICNWB/0CauxcV+WsPkD5Vjvgra07bWbarO1hePbKkLidfc7l9B
+0io8Nvw+P9yFXmV52JVuCa7pJJnLs3KWN+msf9rYT9tk7XSFMW5Pnl+e192+ILtH
+oQi0HvQ3zEmB/tGnoE+5SiGvTu9rQl08dV68qVQnTCrHE598Q+zRSXoyEPTHxd8a
+rXIS3TgmICuZccLmTosu3Kv/jdoGpyAWdskvyiUVfVoXiqhGDMYrl4D+kTK2Yq8i
+530pdVfZVZ6yA38HLRr5Mch8rNDSh626xIgQlmWoKXeHOexYTh5f1DQKyjbzROkm
+O0oYIzk/L1gIUuXtzttCr5Fl7hckN5KI/r6g3Jt2v1WovK8Fbq7eEitVXyxEk4+7
+rG0MrA33zc+nM+1VdhDlTFec6GQiXfiKVU+3NV5Gk8+rQHq7NTjTS15E9QzTUF1e
+TyyOJGPbD9nRVtvrW7HGq+u8IFx1C1GuD31pul0+srIa5fsV1aYptq6P0r5BrlkL
+CLL7uXuA5wdil4T1D34Z/0sHA8AYyOWcMFCvkhekSkW5L2+I72LwDPYlcZ5DYNH7
+XHrh821WxGsLqoTRy3VQEAlcgUQ3TZx8veWMl5Zd0g6GQmLL0X4At97anydfFxqN
+58cTrS0O1lw1obOeFv7O
+=bqXL
 -----END PGP SIGNATURE-----
 
---q9KOos5vDmpwPx9o--
+--5oH/S/bF6lOfqCQb--
