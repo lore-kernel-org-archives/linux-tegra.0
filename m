@@ -1,26 +1,78 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/8] ARM: tegra: Remove TEGRA124_CLK_EMC from tegra124-car.h
-Date: Mon, 21 Jul 2014 16:37:20 -0600
-Message-ID: <53CD9620.3090301@wwwdotorg.org>
-References: <1405088313-20048-1-git-send-email-mperttunen@nvidia.com> <1405088313-20048-3-git-send-email-mperttunen@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 5/8] of: Add Tegra124 EMC bindings
+Date: Mon, 21 Jul 2014 16:36:34 -0600
+Message-ID: <53CD95F2.10008@wwwdotorg.org>
+References: <1405088313-20048-1-git-send-email-mperttunen@nvidia.com> <1405088313-20048-6-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1405088313-20048-3-git-send-email-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1405088313-20048-6-git-send-email-mperttunen@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mikko Perttunen <mperttunen@nvidia.com>, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@linaro.org, thierry.reding@gmail.com
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 On 07/11/2014 08:18 AM, Mikko Perttunen wrote:
-> Remove the TEGRA124_CLK_EMC cell value define for tegra124-car
-> from the binding headers. This clock has never been able to do
-> anything and is being replaced with a separate EMC driver with
-> its own device tree node. Removing the define ensures that any
-> user will not mistakenly refer to <&tegra_car TEGRA124_CLK_EMC>
-> instead of <&emc> or similar.
+> Add binding documentation for the nvidia,tegra124-emc device tree
+> node.
 
-If the clock physically exists in HW, I see no reason to remove it from
-the binding definition, even if we don't implement it (or remove the
-implementation of it) in the Linux clock driver.
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt b/Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt
+
+> +Required properties :
+> +- compatible : "nvidia,tegra124-emc".
+> +- reg : Should contain 1 or 2 entries:
+> +  - EMC register set
+> +  - MC register set : Required only if no node with
+> +    'compatible = "nvidia,tegra124-mc"' exists. The MC register set
+> +    is first read from the MC node. If it doesn't exist, it is read
+> +    from this property.
+
+I echo what Thierry said about the MC register sharing.
+
+> +- timings : Should contain 1 entry for each supported clock rate.
+
+s/entry/node/ I think.
+
+> +  Entries should be named "timing@n" where n is a 0-based increasing
+> +  number. The timings must be listed in rate-ascending order.
+
+That implies that #address-cells and #size-cells are required too.
+
+> +Required properties for timings :
+
+... and a reg property is needed here.
+
+> +- clock-frequency : Should contain the memory clock rate.
+> +- nvidia,parent-clock-frequency : Should contain the rate of the EMC
+> +  clock's parent clock.
+
+> +- clocks : Must contain an entry for each entry in clock-names.
+> +  See ../clocks/clock-bindings.txt for details.
+> +- clock-names : Must include the following entries:
+> +  - emc-parent : EMC's parent clock.
+
+Shouldn't clocks/clock-names be part of the main node, not the
+per-timing node?
+
+> +- The following properties contain EMC timing characterization values:
+> +  - nvidia,emc-zcal-cnt-long
+> +  - nvidia,emc-auto-cal-interval
+> +  - nvidia,emc-ctt-term-ctrl
+> +  - nvidia,emc-cfg
+> +  - nvidia,emc-cfg-2
+> +  - nvidia,emc-sel-dpd-ctrl
+> +  - nvidia,emc-cfg-dig-dll
+> +  - nvidia,emc-bgbias-ctl0
+> +  - nvidia,emc-auto-cal-config
+> +  - nvidia,emc-auto-cal-config2
+> +  - nvidia,emc-auto-cal-config3
+> +  - nvidia,emc-mode-reset
+> +  - nvidia,emc-mode-1
+> +  - nvidia,emc-mode-2
+> +  - nvidia,emc-mode-4
+> +- nvidia,emc-burst-data : EMC timing characterization data written to
+> +                          EMC registers.
+> +- nvidia,mc-burst-data : EMC timing characterization data written to
+> +                         MC registers.
+> 
