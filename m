@@ -1,39 +1,45 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] clk/tegra: Fix a bunch of sparse warnings
-Date: Mon, 21 Jul 2014 13:23:21 +0200
-Message-ID: <1405941801-27455-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH] usb: phy: tegra: Avoid use of sizeof(void)
+Date: Mon, 21 Jul 2014 13:37:37 +0200
+Message-ID: <1405942657-2080-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Felipe Balbi <balbi@ti.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Thierry Reding <treding@nvidia.com>
 
-The second to last parameter of the TEGRA_CLK_PERIPH macro denotes a
-table and should therefore users should pass in NULL instead of 0.
+The PHY configuration is stored in an opaque "config" field, but when
+allocating the structure, its proper size needs to be known. In the case
+of UTMI, the proper structure is tegra_utmip_config of which a local
+variable already exists, so we can use that to obtain the size from.
 
-Fixes a bunch of sparse warnings like this:
+Fixes the following warning from the sparse checker:
 
-	warning: Using plain integer as NULL pointer
+	drivers/usb/phy/phy-tegra-usb.c:882:17: warning: expression using sizeof(void)
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Fixes: 81d5dfe6d8b3 (usb: phy: tegra: Read UTMIP parameters from device tree)
+Cc: stable@vger.kernel.org
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/clk/tegra/clk-tegra-periph.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/phy/phy-tegra-usb.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-index adf6b814b5bc..0bc59fba9e6a 100644
---- a/drivers/clk/tegra/clk-tegra-periph.c
-+++ b/drivers/clk/tegra/clk-tegra-periph.c
-@@ -218,7 +218,7 @@
- 		.clk_id = _clk_id,					\
- 		.p.parent_name = _parent_name,				\
- 		.periph = TEGRA_CLK_PERIPH(0, 0, 0, 0, 0, 0, 0,		\
--				_clk_num, _gate_flags, 0, NULL),	\
-+				_clk_num, _gate_flags, NULL, NULL),	\
- 		.flags = _flags						\
+diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
+index 13b4fa287da8..886f1807a67b 100644
+--- a/drivers/usb/phy/phy-tegra-usb.c
++++ b/drivers/usb/phy/phy-tegra-usb.c
+@@ -878,8 +878,8 @@ static int utmi_phy_probe(struct tegra_usb_phy *tegra_phy,
+ 		return -ENOMEM;
  	}
  
+-	tegra_phy->config = devm_kzalloc(&pdev->dev,
+-		sizeof(*tegra_phy->config), GFP_KERNEL);
++	tegra_phy->config = devm_kzalloc(&pdev->dev, sizeof(*config),
++					 GFP_KERNEL);
+ 	if (!tegra_phy->config) {
+ 		dev_err(&pdev->dev,
+ 			"unable to allocate memory for USB UTMIP config\n");
 -- 
 2.0.1
