@@ -1,56 +1,92 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/2] ARM: tegra: Convert PMC to a driver
-Date: Mon, 21 Jul 2014 15:08:49 -0600
-Message-ID: <53CD8161.2030204@wwwdotorg.org>
-References: <1404742610-4951-1-git-send-email-thierry.reding@gmail.com> <1404742610-4951-3-git-send-email-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 4/4] ARM: tegra: roth: add display DT node
+Date: Mon, 21 Jul 2014 23:16:32 +0200
+Message-ID: <20140721211630.GA12076@mithrandir>
+References: <1404303560-32209-1-git-send-email-acourbot@nvidia.com>
+ <1404303560-32209-5-git-send-email-acourbot@nvidia.com>
+ <53B42B60.1000600@wwwdotorg.org>
+ <53B4C9C0.4000605@nvidia.com>
+ <53CD333F.2070805@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="d6Gm4EdcadzBjdND"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1404742610-4951-3-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <53CD333F.2070805-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Cc: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kumar Gala <galak-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/07/2014 08:16 AM, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> This commit converts the PMC support code to a platform driver. Because
-> the boot process needs to call into this driver very early, set up a
-> minimalistic environment via an early initcall.
 
-Can we do this without using standalone initcalls? There's no way to
-ensure ordering with initcalls, which seems like it'll be problematic
-once we start converting more stuff.
+--d6Gm4EdcadzBjdND
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Instead, can we have some "driver" that binds to the top-level DT node,
-does all the low-/chip-level init, then continues processing the DT? I
-suspect that Pawel's "platform: Make platform_bus device a platform
-device" will help out here. He just posted it today:
+On Mon, Jul 21, 2014 at 09:35:27AM -0600, Stephen Warren wrote:
+> On 07/02/2014 09:10 PM, Alexandre Courbot wrote:
+> > On 07/03/2014 12:55 AM, Stephen Warren wrote:
+> >> On 07/02/2014 06:19 AM, Alexandre Courbot wrote:
+> >>> DSI support has been fixed to support continuous clock behavior that =
+the
+> >>> panel used on SHIELD requires, so finally add its device tree node si=
+nce
+> >>> it is functional.
+> >>
+> >>> diff --git a/arch/arm/boot/dts/tegra114-roth.dts
+> >>> b/arch/arm/boot/dts/tegra114-roth.dts
+> >>
+> >>> +    host1x@50000000 {
+> >>> +        dsi@54300000 {
+> >>
+> >> That node looks fine, but I wonder why we need to mark a bunch of
+> >> regulators as always-on? shouldn't the references to vdd-supply and
+> >> power-supply from this node be enough? If not, perhaps the tree
+> >> structure of the regulators isn't correct, or the DSI or panel bindings
+> >> don't allow enough regulators to be referenced?
+> >=20
+> > regulator-always-on is indeed not needed for vdd_lcd. I actually had a
+> > patch in my tree removing this line that I forgot to squash. Will post a
+> > v2 for this patch that fixes this, thanks.
+> >=20
+> > vdd-2v8-display needs to remain always-on however. Here we may hit a
+> > limitation of the simple-panel driver, where only one power supply can
+> > be provided.
+>=20
+> Can't we fix the simple-panel driver to allow a list of regulators in
+> the property?
 
-http://www.spinics.net/lists/arm-kernel/msg349328.html
+I have no objection to allowing that. But I don't think there's a way to
+do that with the current regulator API. You can use the bulk API, but
+that requires separate properties, not multiple regulators in one
+property.
 
-> While at it, also move the driver out to drivers/power so that it can be
-> shared with 64-bit SoCs.
+Perhaps one idea to solve this would be to make the regulator API return
+a regulator handle that in fact controls an array of regulators? Adding
+Mark.
 
->  arch/arm/mach-tegra/pmc.c       | 402 -----------------
->  arch/arm/mach-tegra/powergate.c | 503 ---------------------
+Thierry
 
->  drivers/power/tegra-pmc.c       | 948 ++++++++++++++++++++++++++++++++++++++++
+--d6Gm4EdcadzBjdND
+Content-Type: application/pgp-signature
 
-It's a bit hard to review this patch because two files at the source
-were merged into one at the destination, and so "git diff -M" couldn't
-detect/represent any changes that happened during the move and highlight
-just those. I assume this just cut/pastes the whole of pmc.c and
-powergate.c into the new tegra-pmc.c without actually changing anything
-much?
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-I wonder if putting the file into drivers/power/ directly makes sense?
-We have "class"-specific sub-directories drivers/power/supply (after
-this series) and drives/power/{avs,reset}/ before. Should we have a
-drivers/power/domain or drivers/power/soc/? instead?
+iQIcBAEBAgAGBQJTzYMuAAoJEN0jrNd/PrOhRlYP/267hH2TOWbVMHr5gzd6V5Dp
+CfK7zto/h37uT0Z+VwTo1SFHMm2YhWKg1O5Xk9q6QMrUyWJJVDrbf6S1cgvKZn63
+l/Z8pz42AqWqDXP86sGdvwjdu/zrZDGPLF6P7+5EP5y6QKGmASFzJkxF4XN1RT09
+CrLlJea9/o2tdJ9qfQV/s08Mde5B4+tZ6ZYmVJ05LB7418tp8ZDgsRWKfT7B/U2a
+WvbSZUVsEObC5PIEWNJgOsZGiCGGqOKqXEo5ubua5/d0s1FgPark7jGaRXKN5Xj6
+1/T/etv9oGgV6wvz9rPG8arM/k3/mP3e9Wsax4mHM6YvUsN55HibGAJe69G9e5cp
+UeHvHXqk449lyLMX0r/K+3Mtuxd2m3pPe8PuR95nbAyyuPX0QJDE+aoV/ncbiq6i
+IA8W7b3GwHcryM+2KEB7b209s5DdWnFwUpzXYPc6TH0a92R5qIe6YX2hNBrTF/wf
+1oNjB/A3UsTxYt0GwYTad4Q7a9kC4GWtfGly3CwmMRGtT9cNEu0PAL4POvIj6mrb
+rHRB6GGHmM6AOpd8TimCCrEp21RkSmM1JYPYLK9zbg7rNarIvrJ5C/X2BGA5xa/e
+RL3fnIVPtUppkV+la4Ynn69eTpG9ZiF3NuEQJvZkqzO0QVwkwYkAS3+o7YRSW9on
+HddJoCuv7OVLx/Lq1PET
+=SaFc
+-----END PGP SIGNATURE-----
 
-That said, drivers/soc/tegra still feels fine to me for this code...
-
-Aside from that, at a quick look through, this series looks OK to me.
+--d6Gm4EdcadzBjdND--
