@@ -1,47 +1,55 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] ARM: tegra: paz00: Fix some indentation inconsistencies
-Date: Mon, 21 Jul 2014 13:59:08 +0200
-Message-ID: <1405943948-3209-1-git-send-email-thierry.reding@gmail.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH 12/12] ARM: tegra: Convert PMC to a driver
+Date: Mon, 21 Jul 2014 14:06:10 +0200
+Message-ID: <6373493.kzO00ziuYq@wuerfel>
+References: <1405080971-7609-1-git-send-email-thierry.reding@gmail.com> <111661024.qGiugVUugr@wuerfel> <20140717110652.GA18383@ulmo>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140717110652.GA18383@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Thursday 17 July 2014 13:06:53 Thierry Reding wrote:
+> 
+> We could go all the way and make it include/soc/tegra/*.h for better
+> namespacing. I guess either way would be fine, really, since the number
+> of files in those directories should be small by definition, so we
+> should be able to do without the extra SoC directory, too. I have a
+> slight preference for a separate SoC directory, do you have any
+> objections?
 
-Indentation of the clock property used a hodgepodge of tabs and spaces.
-Make them more consistent (tabs for indentation followed by spaces for
-alignment).
+I'm fine with it either way. I just noticed that you have now
+moved the file, which resulted in a build error:
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra20-paz00.dts | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+../drivers/ata/ahci_tegra.c:27:35: fatal error: linux/tegra-powergate.h: No such file or directory
+ #include <linux/tegra-powergate.h>
+                                   ^
+compilation terminated.
+make[4]: *** [drivers/ata/ahci_tegra.o] Error 1
 
-diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
-index 9a39a8001f78..d4438e30de45 100644
---- a/arch/arm/boot/dts/tegra20-paz00.dts
-+++ b/arch/arm/boot/dts/tegra20-paz00.dts
-@@ -296,7 +296,7 @@
- 		request-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_HIGH>;
- 		slave-addr = <138>;
- 		clocks = <&tegra_car TEGRA20_CLK_I2C3>,
--		       	 <&tegra_car TEGRA20_CLK_PLL_P_OUT3>;
-+		         <&tegra_car TEGRA20_CLK_PLL_P_OUT3>;
- 		clock-names = "div-clk", "fast-clk";
- 		resets = <&tegra_car 67>;
- 		reset-names = "i2c";
-@@ -589,8 +589,8 @@
- 			GPIO_ACTIVE_HIGH>;
+so somebody needs to pick up this patch:
+
+diff --git a/drivers/ata/ahci_tegra.c b/drivers/ata/ahci_tegra.c
+index d30bb21afd67..d7c6b1f550cd 100644
+--- a/drivers/ata/ahci_tegra.c
++++ b/drivers/ata/ahci_tegra.c
+@@ -24,8 +24,8 @@
+ #include <linux/module.h>
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
+-#include <linux/tegra-powergate.h>
+ #include <linux/regulator/consumer.h>
++#include <soc/tegra/pmc.h>
+ #include "ahci.h"
  
- 		clocks = <&tegra_car TEGRA20_CLK_PLL_A>,
--		       	 <&tegra_car TEGRA20_CLK_PLL_A_OUT0>,
--			 <&tegra_car TEGRA20_CLK_CDEV1>;
-+		         <&tegra_car TEGRA20_CLK_PLL_A_OUT0>,
-+		         <&tegra_car TEGRA20_CLK_CDEV1>;
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
- 	};
- };
--- 
-2.0.1
+ #define SATA_CONFIGURATION_0				0x180
+
+
+I haven't checked which trees are affected of if you have already posted
+a patch to do this.
+
+	Arnd
