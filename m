@@ -1,39 +1,73 @@
-From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH 0/4] Allow xHCI drivers to be built as separate modules
-Date: Mon, 21 Jul 2014 16:41:08 -0700
-Message-ID: <CAL1qeaEDSUmh8p___T5HVp7ERGRHDR3BSBoA2Bb+WCz+=RoM3w@mail.gmail.com>
-References: <1404954350-26343-1-git-send-email-abrestic@chromium.org>
+From: Matthew Longnecker <mlongnecker@nvidia.com>
+Subject: Re: [PATCH 1/6] thermal: of: Add support for hardware-tracked trip
+ points
+Date: Mon, 21 Jul 2014 16:53:04 -0700
+Message-ID: <53CDA7E0.2060207@nvidia.com>
+References: <1403856699-2140-1-git-send-email-mperttunen@nvidia.com> <1403856699-2140-2-git-send-email-mperttunen@nvidia.com> <53B1D1C8.5010907@wwwdotorg.org> <53B262EA.9030806@nvidia.com> <53B2FADC.8060708@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1404954350-26343-1-git-send-email-abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Julius Werner <jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <53B2FADC.8060708@wwwdotorg.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: linux-pm@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jul 9, 2014 at 6:05 PM, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
-> It was suggested in the review of the Tegra xHCI driver [1] that we
-> allow xHCI drivers to be built as individual modules (like EHCI) instead
-> of building them all into the single xhci-hcd module as they are today.
->
-> Patches 1-3 prepare for making the xHCI PCI and platform drivers able
-> to be built as individual modules and patch 4 actually creates the 3
-> separate modules (core, platform, PCI).
->
-> Based on 3.16-rc4.
->
-> [1] http://patchwork.ozlabs.org/patch/361265/
->
-> Andrew Bresticker (4):
->   xhci: Introduce xhci_init_driver()
->   xhci: Check for XHCI_COMP_MODE_QUIRK when disabling D3cold
->   xhci: Export symbols used by host-controller drivers
->   xhci: Allow xHCI drivers to be built as separate modules
+On 7/1/2014 11:15 AM, Stephen Warren wrote:
+> On 07/01/2014 01:27 AM, Mikko Perttunen wrote:
+>> >Inline.
+>> >
+>> >On 01/07/14 00:08, Stephen Warren wrote:
+>>> >>On 06/27/2014 02:11 AM, Mikko Perttunen wrote:
+>>>> >>>This adds support for hardware-tracked trip points to the device tree
+>>>> >>>thermal sensor framework.
+>>>> >>>
+>>>> >>>The framework supports an arbitrary number of trip points. Whenever
+>>>> >>>the current temperature is updated, the trip points immediately
+>>>> >>>below and above the current temperature are found. A sensor driver
+>>>> >>>callback `set_trips' is then called with the temperatures.
+>>>> >>>If there is no trip point above or below the current temperature,
+>>>> >>>the passed trip temperature will be LONG_MAX or LONG_MIN respectively.
+>>>> >>>In this callback, the driver should program the hardware such that
+>>>> >>>it is notified when either of these trip points are triggered.
+>>>> >>>When a trip point is triggered, the driver should call
+>>>> >>>`thermal_zone_device_update' for the respective thermal zone. This
+>>>> >>>will cause the trip points to be updated again.
+>>>> >>>
+>>>> >>>If the `set_trips' callback is not implemented (is NULL), the framework
+>>>> >>>behaves as before.
+>>> >>
+>>> >>Is there no "core thermal" code? I would have expected this new feature
+>>> >>to be implemented in "core" code rather than of/dt "support" code.
+>>> >>Perhaps there would also be some additions to the of/dt code, but I'd
+>>> >>still expect the bulk of the feature to be complete independant of
+>>> >>of/dt. Systems still using board files or ACPI or ... would surely
+>>> >>benefit from this too?
 
-Ping.  I was hoping to get these in for 3.17 (though it may be too
-late now...) as they're a dependency for the upcoming Tegra XHCI
-driver.
+Stephen, the "core thermal code" defined two major object types:
+  * a thermal zone
+  * a cooling device
 
-Thanks!
-Andrew
+Each thermal zone corresponds to a physical region in space within a 
+device. A sane person might expect there to be one physical temperature 
+sensor associated with each zone. But, that's not always the case.
+
+Because the thermal core did not expose the concept of a "sensor" 
+separately from a "zone", many drivers which register thermal zones are 
+messy -- they include a mix of device driver code (i.e. poking at 
+register for a thermal sensor IP block) and device-agnostic code for 
+implementing behaviors required of a thermal zone.
+
+of-thermal does more than just parse device tree. It registers thermal 
+zones using its own implementation of that device-agnostic code. Having 
+that centralized implementation of the thermal zone code allows thermal 
+sensor device drivers which talk to of-thermal to be simpler than 
+drivers which try to talk directly to the thermal core.
+
+The fact that you need to use DT to make use of the simpler sensor 
+driver interface doesn't seem like a good reason to push back on Mikko's 
+change.
+
+-Matt
+
