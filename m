@@ -1,77 +1,59 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 12/12] ARM: tegra: Convert PMC to a driver
-Date: Mon, 21 Jul 2014 15:39:43 +0200
-Message-ID: <20140721133942.GK15238@ulmo>
-References: <1405080971-7609-1-git-send-email-thierry.reding@gmail.com>
- <111661024.qGiugVUugr@wuerfel>
- <20140717110652.GA18383@ulmo>
- <6373493.kzO00ziuYq@wuerfel>
- <20140721131233.GG15238@ulmo>
- <20140721131619.GE12921@htj.dyndns.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [GIT PULL 2/3] ARM: tegra: move fuse code out of arch/arm
+Date: Mon, 21 Jul 2014 09:06:00 -0600
+Message-ID: <53CD2C58.6060601@wwwdotorg.org>
+References: <1403558626-13422-1-git-send-email-swarren@wwwdotorg.org>	<1403558626-13422-2-git-send-email-swarren@wwwdotorg.org>	<20140707004417.GE8469@quad.lixom.net>	<20140708134359.GA23218@tbergstrom-lnx.Nvidia.com>	<CAOesGMhoqvqf-dktp-OfUNTPLahPwkyAPiTeDngr4QjH=VfOGA@mail.gmail.com>	<53C88A4C.3070304@wwwdotorg.org> <CAOesGMh+zLV781wzdR5=_Bpzh+XMwJfWL-5XMDP6DwG_Hg80kw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="uuKVzAmB+c+zQlhu"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20140721131619.GE12921-Gd/HAXX7CRxy/B6EtB590w@public.gmane.org>
+In-Reply-To: <CAOesGMh+zLV781wzdR5=_Bpzh+XMwJfWL-5XMDP6DwG_Hg80kw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org" <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 07/17/2014 11:33 PM, Olof Johansson wrote:
+> On Thu, Jul 17, 2014 at 7:45 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>> On 07/08/2014 11:47 AM, Olof Johansson wrote:
+>>> On Tue, Jul 8, 2014 at 6:43 AM, Peter De Schrijver
+>>> <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>>>> On Mon, Jul 07, 2014 at 02:44:17AM +0200, Olof Johansson wrote:
+>>>>> On Mon, Jun 23, 2014 at 03:23:45PM -0600, Stephen Warren wrote:
+>>>>>> This branch moves code related to the Tegra fuses out of arch/arm and
+>>>>>> into a centralized location which could be shared with ARM64. It also
+>>>>>> adds support for reading the fuse data through sysfs.
+>>>>>
+>>>>> The new/moved misc driver isn't acked by any misc maintainer, so I can't
+>>>>> take this branch.
+>>>>>
+>>>>> I saw no indication from searching the mailing list of that either,
+>>>>> so it wasn't just a missed acked-by.
+>>>>>
+>>>>> I wonder if this code should go under drivers/soc/ instead?
+>>>>
+>>>> It's modelled after sunxi_sid.c which lives in drivers/misc/eeprom/.
+>>>> Originally this driver was also in drivers/misc/eeprom/, but Stephen objected
+>>>> and therefore it was moved to drivers/misc/fuse. I think that's the right
+>>>> place still.
+>>>
+>>> I disagree, I think this belongs under drivers/soc. Especially since
+>>> you're adding dependencies on this misc driver from other parts of the
+>>> kernel / other drivers.
+>>>
+>>> I also don't like seeing init calls form platform code down into
+>>> drivers/misc like you're adding here. Can you please look at doing
+>>> that as a regular init call setup?
+>>
+>> I strongly disagree with using init calls for this kind of thing. There
+>> are ordering dependencies between the initialization code that can only
+>> be sanely managed by explicitly calling functions in a particular order;
+>> there's simply no way to manage this using initcalls. This is exactly
+>> why the hooks in the ARM machine descriptors exist...
+> 
+> Right, but there are non on 64-bit, so you need to solve it for there
+> anyway. And once it's solved there, you might as well keep it common
+> with 32-bit.
 
---uuKVzAmB+c+zQlhu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Jul 21, 2014 at 09:16:19AM -0400, Tejun Heo wrote:
-> On Mon, Jul 21, 2014 at 03:12:34PM +0200, Thierry Reding wrote:
-> > Adding Tejun, since he took this into his tree on Friday I think, just a
-> > few hours after I sent out pull requests for this.
-> >=20
-> > I hadn't considered this build dependency. We could resolve this in two
-> > ways I think:
-> >=20
-> > 	- merge the for-3.17/fuse-move branch from the Tegra tree into
-> > 	  the libata tree and apply Arnd's patch to the libata tree
->=20
-> I can pull the tegra tree into the libata if the tegra maintainer is
-> okay with it.
-
-It's fine with me, but maybe give Stephen, Arnd and Olof an opportunity
-to object.
-
-If you plan to go ahead with merging it in, this would be the right
-signed tag to use:
-
-	https://git.kernel.org/cgit/linux/kernel/git/tegra/linux.git/tag/?id=3Dteg=
-ra-for-3.17-soc
-
-And then you simply need to replace #include <linux/tegra-powergate.h>
-with #include <soc/tegra/pmc.h> as Arnd showed.
-
-Thierry
-
---uuKVzAmB+c+zQlhu
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJTzRgeAAoJEN0jrNd/PrOh+pAQAKHFiRiORAb6IAdn/2V75ozq
-5dxNSAzFpEGFo73sRvWUuwzYFhdahNWNlafYy7ySmemWxo6gGsDsfjNcU8tzGCKY
-bahsFTJB4BI3+ATS7JFbLj7jERN2S3RpjMr1LSkF4ykYl5fHBijAn9Q97SYQBnDK
-2Y5K9h/Ap48b0GfSBkXWGaUbEPhK1oLiiP7kmIF1uxeIDNiBS+pu051IPejJTX04
-8PSHdsVi3IBbpOWOg3Ib3CeZkHGak6TmoqvIcZ7cKwc/b5SmyvBukDx/mj4AsNW8
-lbMtmw3NnUPivqNeivYfMmKT3XaLUGg1nAgMrw4uM0cKdJW0TQPpwm87uZN13A2X
-vgWPl/TXvITK3H453U8IQyA9VBeru+kIR5ErP9mIgsorenv/ZsSsIRT4KfXNBMnG
-gwUTUwV20OE3YMpVhROanK3jfrV8UHxvvja3r1wO0nf2uzf7TVIV5OsDEefI7Z4P
-6WDrXVa4PooxcIvZRHgy21MHFVJSQ0wj2tIyqFso56QNfBKkD/HLI/GeXo2bnHug
-bXjyUdUpQW6BSQvTFwVFv5WsG5Nlbt0eAlMSyjmbPIDPS9nuHhImrRnLrYHDn5AC
-Ww8V8JRQS+cJ4ulHPc+P3jlnkTRyMpqW39Jij7gp41ZX5Yg2g6baR5oJ+H1aEwU+
-TzjBUVpPpWtoKmqnDtEu
-=bg0y
------END PGP SIGNATURE-----
-
---uuKVzAmB+c+zQlhu--
+My assertion is that we should just do it directly on 64-bit too.
+There's no reason for arm64 to deviate from what arch/arm does already.
