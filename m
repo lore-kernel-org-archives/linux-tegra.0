@@ -1,67 +1,44 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] PCI: tegra: Add debugfs support
-Date: Mon, 21 Jul 2014 23:19:34 +0200
-Message-ID: <20140721211932.GB12076@mithrandir>
-References: <1405062024-2364-1-git-send-email-thierry.reding@gmail.com>
- <53CD37CA.7020308@wwwdotorg.org>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] staging/nvec: Pass proper resource to mfd_add_devices()
+Date: Mon, 21 Jul 2014 14:20:13 -0700
+Message-ID: <20140721212013.GA13866@kroah.com>
+References: <1405943561-2656-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="TakKZr9L6Hm6aLOc"
-Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
 Content-Disposition: inline
-In-Reply-To: <53CD37CA.7020308@wwwdotorg.org>
-Sender: linux-pci-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
+In-Reply-To: <1405943561-2656-1-git-send-email-thierry.reding@gmail.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: driverdev-devel-bounces@linuxdriverproject.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, ac100@lists.launchpad.net
 List-Id: linux-tegra@vger.kernel.org
 
+On Mon, Jul 21, 2014 at 01:52:41PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> The mfd_add_devices() parameter takes a struct resource * as fifth
+> argument, but the nvec driver passes in a void __iomem *. The driver
+> gets away with it because none of the subdevices ever directly access
+> the registers.
+> 
+> While at it, use platform_get_irq() instead of platform_get_resource()
+> to get the device's interrupt. This makes it easier to pass in the
+> register region since the variable is no longer reused.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+> Alternatively we could simply pass NULL into mfd_add_devices(), which
+> might be a slightly more accurate representation of what's going on.
+> 
+> Marc, Greg, any preferences?
 
---TakKZr9L6Hm6aLOc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Jul 21, 2014 at 09:54:50AM -0600, Stephen Warren wrote:
-> On 07/11/2014 01:00 AM, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > Provide a debugfs file that shows the current link status for each root
-> > port.
->=20
-> Reviewed-by: Stephen Warren <swarren@nvidia.com>
->=20
-> Does this patch conflict with or merge well with the Tegra124 PCIe
-> driver patches, I wonder?
-
-Yes. The Tegra124 PCIe patches are part of the same branch. My plan was
-to get this merged for 3.17 (if it's not too late yet) and then submit
-Tegra124 support for 3.18 soonish after 3.17 is released.
-
-I also have a bunch of patches that allow the Tegra PCIe driver to be
-built as a module (though that has even more cross-tree dependencies, so
-should probably be phased in over a couple of cycles).
-
-Thierry
-
---TakKZr9L6Hm6aLOc
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTzYPkAAoJEN0jrNd/PrOhuhYQALJriv+0xZQhNVSyPJIUovYB
-snS3iOcKIu1kKpIIj2kh+Pp3AHVWZYM9Rv+cbTwZwIG0eehixu+3L+tICb/KHPV8
-VX/w2EDBvIt42S/L3aRy+aKedNFYMyt0sTkEnqVahqf1VLBfqsieaNbAVUt7bVJi
-iNi3c7KKwrZYtF1YEFPgqP7CjPDxbsDVTAVmMTtNJjOZaTVNF9obl2kNGnNcwPXV
-LWxEORsjSprXQyKoNTQOu07hS0avSCWdjiU4dXNn+IO/9eBosPhx6Q1aG/t+Y9r3
-/GMeON8YiIe8+lGnz1Q95U0HoPNdZEe39Aj/MnbyVgO4yRA1+xailsUCzRgBq85g
-BT5yg3u8t/dAKuchx9Z9z2HgGxyQZeQGGUKPbeyby3hiQQRA55uxdHQMx1LEBEVv
-VSLjKjxeYlL46UyiTdsEpOQqhqJmgQKZd0MWITp37FBr0otFFnpLFvDR67+DoCOr
-9+pp44pWKQj5SqeY7XsMET0a2jZkR6Fd1XEg9Vwkg00V2RkEKT6wCeM0D4DC44nV
-4S0J3qFMF4ZePdi6jTnzX3YqrSQIpn4U1W7QpSS1E8DcZnUvL5PSxRU+pq56g5KA
-1Jwx9pCU565FaZh6SixFQPcJVlP9+V7/+WuCfJ6Efbcd9FUfMg9h4l55Ndh0ne0J
-pVaE323PEEpnFOd64vyG
-=OyXj
------END PGP SIGNATURE-----
-
---TakKZr9L6Hm6aLOc--
+None from me, Marc?
