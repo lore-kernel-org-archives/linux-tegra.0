@@ -1,76 +1,36 @@
-From: Andrew Bresticker <abrestic@chromium.org>
-Subject: Re: [PATCH 5/8] of: Add Tegra124 EMC bindings
-Date: Mon, 21 Jul 2014 15:52:19 -0700
-Message-ID: <CAL1qeaHtGQxCO3cGdeCRUYuk6mxei6z1B63-iZdBECEbFqGhHw@mail.gmail.com>
-References: <1405088313-20048-1-git-send-email-mperttunen@nvidia.com>
-	<1405088313-20048-6-git-send-email-mperttunen@nvidia.com>
-	<CAL1qeaGHfjQhLHvgzt85hmbuY4FOG5-k=f80=CNvzPDEgi9_6w@mail.gmail.com>
-	<53CD860B.7030800@wwwdotorg.org>
+From: Matthew Longnecker <mlongnecker@nvidia.com>
+Subject: Re: [PATCH 4/6] ARM: tegra: Add soctherm and thermal zones to Tegra124
+ device tree
+Date: Mon, 21 Jul 2014 16:12:41 -0700
+Message-ID: <53CD9E69.4000309@nvidia.com>
+References: <1403856699-2140-1-git-send-email-mperttunen@nvidia.com> <1403856699-2140-5-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <53CD860B.7030800@wwwdotorg.org>
+In-Reply-To: <1403856699-2140-5-git-send-email-mperttunen@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jul 21, 2014 at 2:28 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
-> On 07/11/2014 10:43 AM, Andrew Bresticker wrote:
->> On Fri, Jul 11, 2014 at 7:18 AM, Mikko Perttunen <mperttunen@nvidia.com> wrote:
->>> Add binding documentation for the nvidia,tegra124-emc device tree
->>> node.
->>
->>> diff --git a/Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt b/Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt
->>
->>> +Required properties :
->>> +- compatible : "nvidia,tegra124-emc".
->>> +- reg : Should contain 1 or 2 entries:
->>> +  - EMC register set
->>> +  - MC register set : Required only if no node with
->>> +    'compatible = "nvidia,tegra124-mc"' exists. The MC register set
->>> +    is first read from the MC node. If it doesn't exist, it is read
->>> +    from this property.
->>> +- timings : Should contain 1 entry for each supported clock rate.
->>> +  Entries should be named "timing@n" where n is a 0-based increasing
->>> +  number. The timings must be listed in rate-ascending order.
->>
->> There are upcoming boards which support multiple DRAM configurations
->> and require a separate set of timings for each configuration.  Could
->> we instead have multiple sets of timings with the proper one selected
->> at runtime by RAM code, as reported by PMC_STRAPPING_OPT_A_0?
->> Something like:
->>
->> emc {
->>         emc-table@0 {
->>                 nvidia,ram-code = <0>;
->>                 timing@0 {
->>                         ...
->>                 };
->>                 ...
->>         };
->
-> Until recently, there was a binding for Tegra20 EMC in mainline. We
-> should make sure the Tegra124 driver (or rather binding...) is at least
-> as feature-ful as that was.
->
-> Furthermore, I thought that with some boards, there were more RAM
-> options that there were available RAM code strap bits. I assume that in
-> mainline, we'll simply have different base DT files for the different
-> sets of configurations? Or, will we want to add another level to the DT
-> to represent different sets of RAM code values? I'm not sure what data
-> source the bootloader uses to determine which set of RAM configuration
-> to use when there aren't enough entries in the BCT for the boot ROM to
-> do this automatically, and whether we have any way to get that value
-> into the kernel, so it could use it for the extra DT level lookup?
+On 6/27/2014 1:11 AM, Mikko Perttunen wrote:
+> This adds the soctherm thermal sensing and management unit to the
+> Tegra124 device tree along with the four thermal zones it exports.
 
-For the ChromeOS boards at least we are neither limited by the number
-of strapping bits (4) nor the number of BCT entries supported by the
-boot ROM (since coreboot does not rely on the boot ROM for SDRAM
-initialization), so having a single set of SDRAM configurations for
-each board, indexed by APBDEV_PMC_STRAPPING_OPT_A_0[7:4] works just
-fine.  Not sure how boards which do use the boot ROM for SDRAM
-initialization handle the BCT limitation.  I believe we considered
-using more board ID strapping bits in order to map the RAM codes to
-sets of configurations before switching to having coreboot do SDRAM
-initialization.
+Mikko, soctherm doesn't "export thermal zones". I would rewrite your 
+desription like this:
+
+   Extend the Tegra124 device tree by adding the soctherm thermal
+   sensing and management unit and by defining four thermal zones --
+   one for each temperature sensor in soctherm.
+
+System integrators have some flexibility in deciding how many thermal 
+zones to define for their platform. For example, an integrator could 
+define a single zone for the entire Tegra chip (giving a simple system 
+at runtime) or with multiple zones (giving potentially higher 
+performance near thermal limits). That's why I don't like the 
+implication that soctherm dictates the existence of particular thermal 
+zones.
+
+-Matt
