@@ -1,225 +1,43 @@
-From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
-Subject: [PATCH v2 08/16] clk: tegra: Add Tegra124 DFLL clocksource platform
- driver
-Date: Mon, 21 Jul 2014 18:38:54 +0300
-Message-ID: <1405957142-19416-9-git-send-email-ttynkkynen@nvidia.com>
-References: <1405957142-19416-1-git-send-email-ttynkkynen@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [flasher PATCH 1/2] Switch flasher script to subprocess
+Date: Mon, 21 Jul 2014 09:42:25 -0600
+Message-ID: <53CD34E1.1080705@wwwdotorg.org>
+References: <1404322363-11580-1-git-send-email-swarren@wwwdotorg.org>	<53B4935D.8040504@wwwdotorg.org> <CA+G9XgdAAMttS66oscdY15jUns+ojOJ4-ny0eRfFYO6PXBNXCg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1405957142-19416-1-git-send-email-ttynkkynen@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
-Cc: devicetree@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Viresh Kumar <viresh.kumar@linaro.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Thierry Reding <thierry.reding@gmail.com>, Tuomas Tynkkynen <ttynkkynen@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CA+G9XgdAAMttS66oscdY15jUns+ojOJ4-ny0eRfFYO6PXBNXCg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vince Hsu <hsienwen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add basic platform driver support for the fast CPU cluster DFLL
-clocksource found on Tegra124 SoCs. This small driver selects the
-appropriate Tegra124-specific characterization data and integration
-code. It relies on the DFLL common code to do most of the work.
+On 07/09/2014 02:38 AM, Vince Hsu wrote:
+> Hi Stephen,
+> 
+> Sometimes I got the following errors with the tegra-uboot-flasher.
+> Re-executing the script might work.
 
-Signed-off-by: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
----
-v2 changes:
-    - moved most of the init code to module_init, otherwise the OPP
-      tables could get filled multiple times on probe deferral, leading
-      to lots of warnings
-    - #include <linux/tegra-soc.h> changed to #include <soc/tegra/fuse.h>
+Sorry for the slow response; I was on vacation.
 
- drivers/clk/tegra/Makefile                 |   2 +
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 165 +++++++++++++++++++++++++++++
- 2 files changed, 167 insertions(+)
- create mode 100644 drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+...
+> downloading miniloader to target at address 0x4000e000 (136920 bytes)...
+> miniloader downloaded successfully
+> tegrarcm: retreiving platform info
+> Traceback (most recent call last):
+...
+>   File "./tegra-uboot-flasher", line 49, in run
+>     subprocess.check_call(cmd, cwd=cd)
+>   File "/usr/lib/python2.7/subprocess.py", line 511, in check_call
+>     raise CalledProcessError(retcode, cmd)
+> subprocess.CalledProcessError: Command '['/tmp/tmpcgEOsW/flasher.sh']'
+> returned non-zero exit status 1
 
-diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-index 47320ca..2f87188 100644
---- a/drivers/clk/tegra/Makefile
-+++ b/drivers/clk/tegra/Makefile
-@@ -16,3 +16,5 @@ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
- obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
- obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= clk-tegra114.o
- obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124.o
-+obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124-dfll-fcpu.o
-+obj-y					+= cvb.o
-diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-new file mode 100644
-index 0000000..f068360
---- /dev/null
-+++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-@@ -0,0 +1,165 @@
-+/*
-+ * Tegra124 DFLL FCPU clock source driver
-+ *
-+ * Copyright (C) 2012-2014 NVIDIA Corporation.  All rights reserved.
-+ *
-+ * Aleksandr Frid <afrid@nvidia.com>
-+ * Paul Walmsley <pwalmsley@nvidia.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ */
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
-+#include <linux/cpu.h>
-+#include <linux/err.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <soc/tegra/fuse.h>
-+
-+#include "clk.h"
-+#include "clk-dfll.h"
-+#include "cvb.h"
-+
-+/* Maximum CPU frequency, indexed by CPU speedo id */
-+static const unsigned long cpu_max_freq_table[] = {
-+	[0] = 2014500000UL,
-+	[1] = 2320500000UL,
-+	[2] = 2116500000UL,
-+	[3] = 2524500000UL,
-+};
-+
-+static const struct cvb_table tegra124_cpu_cvb_tables[] = {
-+	{
-+		.speedo_id = -1,
-+		.process_id = -1,
-+		.min_millivolts = 900,
-+		.max_millivolts = 1260,
-+		.alignment = {
-+			.step_uv = 10000, /* 10mV */
-+		},
-+		.speedo_scale = 100,
-+		.voltage_scale = 1000,
-+		.cvb_table = {
-+			{204000000UL,   {1112619, -29295, 402} },
-+			{306000000UL,	{1150460, -30585, 402} },
-+			{408000000UL,	{1190122, -31865, 402} },
-+			{510000000UL,	{1231606, -33155, 402} },
-+			{612000000UL,	{1274912, -34435, 402} },
-+			{714000000UL,	{1320040, -35725, 402} },
-+			{816000000UL,	{1366990, -37005, 402} },
-+			{918000000UL,	{1415762, -38295, 402} },
-+			{1020000000UL,	{1466355, -39575, 402} },
-+			{1122000000UL,	{1518771, -40865, 402} },
-+			{1224000000UL,	{1573009, -42145, 402} },
-+			{1326000000UL,	{1629068, -43435, 402} },
-+			{1428000000UL,	{1686950, -44715, 402} },
-+			{1530000000UL,	{1746653, -46005, 402} },
-+			{1632000000UL,	{1808179, -47285, 402} },
-+			{1734000000UL,	{1871526, -48575, 402} },
-+			{1836000000UL,	{1936696, -49855, 402} },
-+			{1938000000UL,	{2003687, -51145, 402} },
-+			{2014500000UL,	{2054787, -52095, 402} },
-+			{2116500000UL,	{2124957, -53385, 402} },
-+			{2218500000UL,	{2196950, -54665, 402} },
-+			{2320500000UL,	{2270765, -55955, 402} },
-+			{2422500000UL,	{2346401, -57235, 402} },
-+			{2524500000UL,	{2437299, -58535, 402} },
-+			{0,		{      0,      0,   0} },
-+		},
-+		.cpu_dfll_data = {
-+			.tune0_low = 0x005020ff,
-+			.tune0_high = 0x005040ff,
-+			.tune1 = 0x00000060,
-+		}
-+	},
-+};
-+
-+static struct tegra_dfll_soc_data soc;
-+
-+static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
-+{
-+	return tegra_dfll_register(pdev, &soc);
-+}
-+
-+static struct of_device_id tegra124_dfll_fcpu_of_match[] = {
-+	{ .compatible = "nvidia,tegra124-dfll", },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, tegra124_dfll_fcpu_of_match);
-+
-+static const struct dev_pm_ops tegra124_dfll_pm_ops = {
-+	SET_RUNTIME_PM_OPS(tegra_dfll_runtime_suspend,
-+			   tegra_dfll_runtime_resume, NULL)
-+};
-+
-+static struct platform_driver tegra124_dfll_fcpu_driver = {
-+	.probe		= tegra124_dfll_fcpu_probe,
-+	.remove		= tegra_dfll_unregister,
-+	.driver		= {
-+		.name		= "tegra124-dfll",
-+		.owner		= THIS_MODULE,
-+		.of_match_table = tegra124_dfll_fcpu_of_match,
-+		.pm		= &tegra124_dfll_pm_ops,
-+	},
-+};
-+
-+static int __init tegra124_dfll_fcpu_init(void)
-+{
-+	int process_id, speedo_id, speedo_value;
-+	const struct cvb_table *cvb;
-+
-+	process_id = tegra_sku_info.cpu_process_id;
-+	speedo_id = tegra_sku_info.cpu_speedo_id;
-+	speedo_value = tegra_sku_info.cpu_speedo_value;
-+
-+	if (speedo_id >= ARRAY_SIZE(cpu_max_freq_table)) {
-+		pr_err("unknown max CPU freq for speedo_id=%d\n", speedo_id);
-+		return -ENODEV;
-+	}
-+
-+	soc.opp_dev = get_cpu_device(0);
-+	if (!soc.opp_dev) {
-+		pr_err("no CPU0 device\n");
-+		return -ENODEV;
-+	}
-+
-+	cvb = tegra_cvb_build_opp_table(tegra124_cpu_cvb_tables,
-+					ARRAY_SIZE(tegra124_cpu_cvb_tables),
-+					process_id, speedo_id, speedo_value,
-+					cpu_max_freq_table[speedo_id],
-+					soc.opp_dev);
-+	if (IS_ERR(cvb)) {
-+		pr_err("couldn't build OPP table: %ld\n", PTR_ERR(cvb));
-+		return PTR_ERR(cvb);
-+	}
-+
-+	soc.assert_dvco_reset = tegra124_clock_assert_dfll_dvco_reset,
-+	soc.deassert_dvco_reset = tegra124_clock_deassert_dfll_dvco_reset,
-+	soc.min_millivolts = cvb->min_millivolts;
-+	soc.tune0_low = cvb->cpu_dfll_data.tune0_low;
-+	soc.tune0_high = cvb->cpu_dfll_data.tune0_high;
-+	soc.tune1 = cvb->cpu_dfll_data.tune1;
-+
-+	return platform_driver_register(&tegra124_dfll_fcpu_driver);
-+}
-+module_init(tegra124_dfll_fcpu_init);
-+
-+static void __exit tegra124_dfll_fcpu_exit(void)
-+{
-+	platform_driver_unregister(&tegra124_dfll_fcpu_driver);
-+}
-+module_exit(tegra124_dfll_fcpu_exit);
-+
-+MODULE_DESCRIPTION("Tegra124 DFLL clock source driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_AUTHOR("Aleksandr Frid <afrid@nvidia.com>");
-+MODULE_AUTHOR("Paul Walmsley <pwalmsley@nvidia.com>");
--- 
-1.8.1.5
+I have not seen this. The error message simply means that the tegrarcm
+binary exited with a non-zero error code. I think you'll need to run the
+tegrarcm command under gdb (or add more debug prints) to find out why.
+Passing the --debug and --save-work-dir parameters to
+tegra-uboot-flasher will help you see exactly which commands and data
+files tegra-uboot-flasher is executing, so you can run the same thing
+manually.
