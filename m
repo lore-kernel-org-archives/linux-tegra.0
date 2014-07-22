@@ -1,185 +1,171 @@
 From: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] PCI: tegra: Add debugfs support
-Date: Tue, 22 Jul 2014 12:35:23 -0600
-Message-ID: <20140722183523.GB19181@google.com>
-References: <1405062024-2364-1-git-send-email-thierry.reding@gmail.com>
+Subject: Re: [PATCH 1/2] resource: Add device-managed
+ request/release_resource()
+Date: Tue, 22 Jul 2014 12:50:02 -0600
+Message-ID: <20140722185002.GC19181@google.com>
+References: <1405062505-2606-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1405062024-2364-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1405062505-2606-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jul 11, 2014 at 09:00:24AM +0200, Thierry Reding wrote:
+[+cc Tejun, LKML]
+
+On Fri, Jul 11, 2014 at 09:08:24AM +0200, Thierry Reding wrote:
 > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> Provide a debugfs file that shows the current link status for each root
-> port.
+> Provide device-managed implementations of the request_resource() and
+> release_resource() functions. Upon failure to request a resource, the
+> new devm_request_resource() function will output an error message for
+> consistent error reporting.
 > 
 > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I applied this with Stephen's ack to my pci/host-tegra branch for v3.17.
-Let me know if you prefer a different merge strategy.  I'll be on vacation
-until Aug 11, so it won't be in my first pull request, but I plan to do
-another for things like this.
+This seems OK to me, but I don't consider myself a devres maintainer.  I
+added Tejun and LKML for any comment.  Minor nit below.
 
 > ---
->  drivers/pci/host/pci-tegra.c | 118 +++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 118 insertions(+)
+>  Documentation/driver-model/devres.txt |  2 +
+>  include/linux/ioport.h                |  5 +++
+>  kernel/resource.c                     | 73 +++++++++++++++++++++++++++++++++++
+>  3 files changed, 80 insertions(+)
 > 
-> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> index 14ec5b2c69e0..49b3bd5f5926 100644
-> --- a/drivers/pci/host/pci-tegra.c
-> +++ b/drivers/pci/host/pci-tegra.c
-> @@ -25,6 +25,7 @@
+> diff --git a/Documentation/driver-model/devres.txt b/Documentation/driver-model/devres.txt
+> index 034d32b00846..b466f3d19bcb 100644
+> --- a/Documentation/driver-model/devres.txt
+> +++ b/Documentation/driver-model/devres.txt
+> @@ -252,6 +252,8 @@ IIO
+>    devm_iio_device_unregister()
+>  
+>  IO region
+> +  devm_request_resource()
+> +  devm_release_resource()
+>    devm_request_region()
+>    devm_request_mem_region()
+>    devm_release_region()
+> diff --git a/include/linux/ioport.h b/include/linux/ioport.h
+> index 142ec544167c..2c5250222278 100644
+> --- a/include/linux/ioport.h
+> +++ b/include/linux/ioport.h
+> @@ -215,6 +215,11 @@ static inline int __deprecated check_region(resource_size_t s,
+>  
+>  /* Wrappers for managed devices */
+>  struct device;
+> +
+> +extern int devm_request_resource(struct device *dev, struct resource *root,
+> +				 struct resource *new);
+> +extern void devm_release_resource(struct device *dev, struct resource *new);
+> +
+>  #define devm_request_region(dev,start,n,name) \
+>  	__devm_request_region(dev, &ioport_resource, (start), (n), (name))
+>  #define devm_request_mem_region(dev,start,n,name) \
+> diff --git a/kernel/resource.c b/kernel/resource.c
+> index da14b8d09296..39d99aa401a6 100644
+> --- a/kernel/resource.c
+> +++ b/kernel/resource.c
+> @@ -1248,6 +1248,79 @@ int release_mem_region_adjustable(struct resource *parent,
+>  /*
+>   * Managed region resource
 >   */
->  
->  #include <linux/clk.h>
-> +#include <linux/debugfs.h>
->  #include <linux/delay.h>
->  #include <linux/export.h>
->  #include <linux/interrupt.h>
-> @@ -275,6 +276,7 @@ struct tegra_pcie {
->  	unsigned int num_supplies;
->  
->  	const struct tegra_pcie_soc_data *soc_data;
-> +	struct dentry *debugfs;
->  };
->  
->  struct tegra_pcie_port {
-> @@ -1664,6 +1666,115 @@ static const struct of_device_id tegra_pcie_of_match[] = {
->  };
->  MODULE_DEVICE_TABLE(of, tegra_pcie_of_match);
->  
-> +static void *tegra_pcie_ports_seq_start(struct seq_file *s, loff_t *pos)
+> +static void devm_resource_release(struct device *dev, void *ptr)
 > +{
-> +	struct tegra_pcie *pcie = s->private;
+> +	struct resource **r = ptr;
 > +
-> +	if (list_empty(&pcie->ports))
-> +		return NULL;
-> +
-> +	seq_printf(s, "Index  Status\n");
-> +
-> +	return seq_list_start(&pcie->ports, *pos);
+> +	release_resource(*r);
 > +}
 > +
-> +static void *tegra_pcie_ports_seq_next(struct seq_file *s, void *v, loff_t *pos)
+> +/**
+> + * devm_request_resource() - request and reserve an I/O or memory resource
+> + * @dev: device for which to request the resource
+> + * @root: root of the resource tree from which to request the resource
+> + * @new: descriptor of the resource to request
+> + *
+> + * This is a device-managed version of request_resource(). There is usually
+> + * no need to release resources requested by this function explicitly since
+> + * that will be taken care of when the device is unbound from its driver.
+> + * If for some reason the resource needs to be released explicitly, because
+> + * of ordering issues for example, drivers must call devm_release_resource()
+> + * rather than the regular release_resource().
+> + *
+> + * When a conflict is detected between any existing resources and the newly
+> + * requested resource, an error message will be printed.
+> + *
+> + * Returns 0 on success or a negative error code on failure.
+> + */
+> +int devm_request_resource(struct device *dev, struct resource *root,
+> +			  struct resource *new)
 > +{
-> +	struct tegra_pcie *pcie = s->private;
+> +	struct resource *conflict, **ptr;
 > +
-> +	return seq_list_next(v, &pcie->ports, pos);
-> +}
-> +
-> +static void tegra_pcie_ports_seq_stop(struct seq_file *s, void *v)
-> +{
-> +}
-> +
-> +static int tegra_pcie_ports_seq_show(struct seq_file *s, void *v)
-> +{
-> +	bool up = false, active = false;
-> +	struct tegra_pcie_port *port;
-> +	unsigned int value;
-> +
-> +	port = list_entry(v, struct tegra_pcie_port, list);
-> +
-> +	value = readl(port->base + RP_VEND_XP);
-> +
-> +	if (value & RP_VEND_XP_DL_UP)
-> +		up = true;
-> +
-> +	value = readl(port->base + RP_LINK_CONTROL_STATUS);
-> +
-> +	if (value & RP_LINK_CONTROL_STATUS_DL_LINK_ACTIVE)
-> +		active = true;
-> +
-> +	seq_printf(s, "%2u     ", port->index);
-> +
-> +	if (up)
-> +		seq_printf(s, "up");
-> +
-> +	if (active) {
-> +		if (up)
-> +			seq_printf(s, ", ");
-> +
-> +		seq_printf(s, "active");
-> +	}
-> +
-> +	seq_printf(s, "\n");
-> +	return 0;
-> +}
-> +
-> +static const struct seq_operations tegra_pcie_ports_seq_ops = {
-> +	.start = tegra_pcie_ports_seq_start,
-> +	.next = tegra_pcie_ports_seq_next,
-> +	.stop = tegra_pcie_ports_seq_stop,
-> +	.show = tegra_pcie_ports_seq_show,
-> +};
-> +
-> +static int tegra_pcie_ports_open(struct inode *inode, struct file *file)
-> +{
-> +	struct tegra_pcie *pcie = inode->i_private;
-> +	struct seq_file *s;
-> +	int err;
-> +
-> +	err = seq_open(file, &tegra_pcie_ports_seq_ops);
-> +	if (err)
-> +		return err;
-> +
-> +	s = file->private_data;
-> +	s->private = pcie;
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct file_operations tegra_pcie_ports_ops = {
-> +	.owner = THIS_MODULE,
-> +	.open = tegra_pcie_ports_open,
-> +	.read = seq_read,
-> +	.llseek = seq_lseek,
-> +	.release = seq_release,
-> +};
-> +
-> +static int tegra_pcie_debugfs_init(struct tegra_pcie *pcie)
-> +{
-> +	struct dentry *file;
-> +
-> +	pcie->debugfs = debugfs_create_dir("pcie", NULL);
-> +	if (!pcie->debugfs)
+> +	ptr = devres_alloc(devm_resource_release, sizeof(*ptr), GFP_KERNEL);
+> +	if (!ptr)
 > +		return -ENOMEM;
 > +
-> +	file = debugfs_create_file("ports", S_IFREG | S_IRUGO, pcie->debugfs,
-> +				   pcie, &tegra_pcie_ports_ops);
-> +	if (!file)
-> +		goto remove;
+> +	*ptr = new;
 > +
-> +	return 0;
-> +
-> +remove:
-> +	debugfs_remove_recursive(pcie->debugfs);
-> +	pcie->debugfs = NULL;
-> +	return -ENOMEM;
-> +}
-> +
->  static int tegra_pcie_probe(struct platform_device *pdev)
->  {
->  	const struct of_device_id *match;
-> @@ -1718,6 +1829,13 @@ static int tegra_pcie_probe(struct platform_device *pdev)
->  		goto disable_msi;
->  	}
->  
-> +	if (IS_ENABLED(CONFIG_DEBUG_FS)) {
-> +		err = tegra_pcie_debugfs_init(pcie);
-> +		if (err < 0)
-> +			dev_err(&pdev->dev, "failed to setup debugfs: %d\n",
-> +				err);
+> +	conflict = request_resource_conflict(root, new);
+> +	if (!conflict) {
+> +		devres_add(dev, ptr);
+> +		return 0;
 > +	}
 > +
->  	platform_set_drvdata(pdev, pcie);
->  	return 0;
->  
+> +	dev_err(dev, "resource collision: %pR conflicts with %s %pR\n", new,
+> +		conflict->name, conflict);
+> +	devres_free(ptr);
+> +	return -EBUSY;
+
+Personally I would write this as:
+
+  conflict = request_resource_conflict(...);
+  if (conflict) {
+    dev_err(...);
+    devres_free(...);
+    return -EBUSY;
+  }
+
+  devres_add(...);
+  return 0;
+
+so the straight-line path is the normal, non-error path and errors are
+detected and dealt with in the "if" bodies.  Right now the "if" bodies
+are a mix of error handling and normal path.  But that's just my personal
+preference.
+
+> +}
+> +EXPORT_SYMBOL(devm_request_resource);
+> +
+> +static int devm_resource_match(struct device *dev, void *res, void *data)
+> +{
+> +	struct resource **ptr = res;
+> +
+> +	if (WARN_ON(!ptr || !*ptr))
+> +		return 0;
+> +
+> +	return *ptr == data;
+> +}
+> +
+> +/**
+> + * devm_release_resource() - release a previously requested resource
+> + * @dev: device for which to release the resource
+> + * @new: descriptor of the resource to release
+> + *
+> + * Releases a resource previously requested using devm_request_resource().
+> + */
+> +void devm_release_resource(struct device *dev, struct resource *new)
+> +{
+> +	WARN_ON(devres_release(dev, devm_resource_release, devm_resource_match,
+> +			       new));
+> +}
+> +EXPORT_SYMBOL(devm_release_resource);
+> +
+>  struct region_devres {
+>  	struct resource *parent;
+>  	resource_size_t start;
 > -- 
 > 2.0.1
 > 
