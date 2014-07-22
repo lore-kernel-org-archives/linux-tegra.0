@@ -1,105 +1,77 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 8/8] clk: tegra: Add EMC clock driver
-Date: Tue, 22 Jul 2014 10:57:22 -0600
-Message-ID: <53CE97F2.80300@wwwdotorg.org>
-References: <1405088313-20048-1-git-send-email-mperttunen@nvidia.com> <1405088313-20048-9-git-send-email-mperttunen@nvidia.com>
+From: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [GIT PULL 2/3] ARM: tegra: move fuse code out of arch/arm
+Date: Tue, 22 Jul 2014 18:04:15 +0100
+Message-ID: <20140722170415.GU2219@arm.com>
+References: <20140707004417.GE8469@quad.lixom.net>
+ <20140708134359.GA23218@tbergstrom-lnx.Nvidia.com>
+ <CAOesGMhoqvqf-dktp-OfUNTPLahPwkyAPiTeDngr4QjH=VfOGA@mail.gmail.com>
+ <53C88A4C.3070304@wwwdotorg.org>
+ <CAOesGMh+zLV781wzdR5=_Bpzh+XMwJfWL-5XMDP6DwG_Hg80kw@mail.gmail.com>
+ <53CD2C58.6060601@wwwdotorg.org>
+ <20140721155451.GF32578@arm.com>
+ <53CD4201.5070705@wwwdotorg.org>
+ <20140722112651.GC2219@arm.com>
+ <53CE8FB1.4060307@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1405088313-20048-9-git-send-email-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <53CE8FB1.4060307-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org" <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/11/2014 08:18 AM, Mikko Perttunen wrote:
-> The driver is currently only tested on Tegra124 Jetson TK1, but should
-> work with other Tegra124 boards, provided that correct EMC tables are
-> provided through the device tree. Older chip models have differing
-> timing change sequences, so they are not currently supported.
+On Tue, Jul 22, 2014 at 05:22:09PM +0100, Stephen Warren wrote:
+> On 07/22/2014 05:26 AM, Catalin Marinas wrote:
+> > On Mon, Jul 21, 2014 at 05:38:25PM +0100, Stephen Warren wrote:
+> >> On 07/21/2014 09:54 AM, Catalin Marinas wrote:
+> >>> On arm64, I really want to get away from any SoC specific early
+> >>> initcall. One of the main reason is for things like SCU, interconnects,
+> >>> system cache configurations (even certain clocks) to be enabled in
+> >>> firmware before Linux starts (it's an education process but that's a way
+> >>> for example to prevent people sending patches to enable SoC coherency
+> >>> because they haven't thought about it before upstreaming).
+> >>>
+> >>> It would be nice to be able to initialise SoC stuff at device_initcall()
+> >>> level (and even keep such code as modules in initramfs) but one of the
+> >>> problems we have is dependency on clocks (and the clock model which
+> >>> doesn't follow the device/driver model). The of_platform_populate() is
+> >>> called at arch_initcall_sync (after arch_initcall to still allow some
+> >>> SoC code, if needed, to run at arch_initcall).
+> >>
+> >> The main thing I want to avoid is a ton of separate drivers that all
+> >> rely on each-other getting resolved by deferred probe. While that might
+> >> work out, it seems pointless to make the kernel try and probe a bunch of
+> >> stuff just to have it fail and get repeated, when we know exactly which
+> >> order everything should get initialized in.
+> > 
+> > So of_platform_populate() is called at arch_initcall_sync() level on
+> > arm64. This allows at least two levels of probing separation before
+> > (e.g. drivers registered as arch_initcall) and after (device_initcall).
+> > If you register a driver earlier than arch_initcall_sync (see for
+> > example vexpress_osc_init), it will get probed when the platform devices
+> > are populated. Any later device_initcalls will get probed when the
+> > corresponding drivers are registered. If you need ordering between
+> > device_initcalls, I would recommend deferred probing.
+> > 
+> > The tricky part is if you need more drivers to be initialised at
+> > arch_initcall_sync() in a specific order.
+> 
+> I believe relying on initcall ordering, even in the case where there are
+> enough initcall levels to achieve a particular SoC's needs, is
+> completely and utterly the wrong way to go.
 
-> diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
+I don't like it either and I agree that there may not be enough
+initcalls. But I'm ok with using two levels like arch_initcall() for
+something like fuse and device_initcall() for the rest. If that's not
+enough (I haven't looked in detail at Tegra), with Pawel's patch you can
+get a SoC specific probe where you can call the initialisation in the
+right order.
 
-> +struct emc_timing {
-> +	unsigned long rate, parent_rate;
-> +	u8 parent_index;
-> +	struct clk *parent;
-> +
-> +	/* Store EMC burst data in a union to minimize mistakes. This allows
-> +	 * us to use the same burst data lists as used by the downstream and
-> +	 * ChromeOS kernels. */
+Tegra is not the first nor the last platform with such issue. Is there
+anything we could do better at the DT or driver registration level
+(other than introducing machine_desc)?
 
-Nit: */ should be on its own line. This applies to many comments in the
-file.
-
-> +/* * * * * * * * * * * * * * * * * * * * * * * * * *
-> + * Timing change sequence functions                *
-> + * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-Nit: This kind of banner comment is unusual, but I guess it's fine.
-
-> +static void emc_seq_update_timing(struct tegra_emc *tegra)
-...
-> +	dev_err(&tegra->pdev->dev, "timing update failed\n");
-> +	BUG();
-> +}
-
-Is there any way to avoid all these BUGs? Can we just continue on and
-retry the next time, or disallow any further clock rate changes or
-something?
-
-> +/* * * * * * * * * * * * * * * * * * * * * * * * * *
-> + * Debugfs entry                                   *
-> + * * * * * * * * * * * * * * * * * * * * * * * * * */
-> +
-> +static int emc_debug_rate_get(void *data, u64 *rate)
-> +{
-> +	struct tegra_emc *tegra = data;
-> +
-> +	*rate = clk_get_rate(tegra->hw.clk);
-> +
-> +	return 0;
-> +}
-> +
-> +static int emc_debug_rate_set(void *data, u64 rate)
-> +{
-> +	struct tegra_emc *tegra = data;
-> +
-> +	return clk_set_rate(tegra->hw.clk, rate);
-> +}
-> +
-> +DEFINE_SIMPLE_ATTRIBUTE(emc_debug_rate_fops, emc_debug_rate_get,
-> +			emc_debug_rate_set, "%lld\n");
-
-I think the rate can already be obtained through
-...debug/clock/clock_summary. I'm not sure about changing the rate, but
-shouldn't that be a feature of the common clock core, not individual
-drivers?
-
-> +static int load_timings_from_dt(struct tegra_emc *tegra,
-> +				struct device_node *node)
-> +{
-...
-> +	for_each_child_of_node(node, child) {
-...
-> +		if (timing->rate <= prev_rate) {
-> +			dev_err(&tegra->pdev->dev,
-> +				"timing %s: rate not increasing\n",
-> +				child->name);
-
-I don't believe there's any guaranteed node enumeration order. If the
-driver needs the child nodes sorted, it should sort them itself.
-
-> +static const struct of_device_id tegra_car_of_match[] = {
-> +	{ .compatible = "nvidia,tegra124-car" },
-> +	{}
-> +};
-> +
-> +static const struct of_device_id tegra_mc_of_match[] = {
-> +	{ .compatible = "nvidia,tegra124-mc" },
-> +	{}
-> +};
-
-It would be better if this driver explicitly called into the driver for
-other modules, rather than directly touching their registers.
+-- 
+Catalin
