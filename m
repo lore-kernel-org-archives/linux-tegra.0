@@ -1,116 +1,185 @@
-From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: Re: [PATCH v3] platform: Make platform_bus device a platform device
-Date: Tue, 22 Jul 2014 11:15:05 -0700
-Message-ID: <20140722181505.GA9898@kroah.com>
-References: <20140722173713.GA8959@kroah.com>
- <1406051719-17354-1-git-send-email-pawel.moll@arm.com>
- <1406052069.25343.93.camel@hornet>
+From: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] PCI: tegra: Add debugfs support
+Date: Tue, 22 Jul 2014 12:35:23 -0600
+Message-ID: <20140722183523.GB19181@google.com>
+References: <1405062024-2364-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1406052069.25343.93.camel@hornet>
+In-Reply-To: <1405062024-2364-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Catalin Marinas <Catalin.Marinas-5wv7dgnIgG8@public.gmane.org>, "paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org" <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jul 22, 2014 at 07:01:09PM +0100, Pawel Moll wrote:
-> On Tue, 2014-07-22 at 18:55 +0100, Pawel Moll wrote:
-> > * replaced references to platform_bus.dev with NULL
-> >   in places where it shouldn't make any difference
+On Fri, Jul 11, 2014 at 09:00:24AM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> So now the leftovers...
+> Provide a debugfs file that shows the current link status for each root
+> port.
 > 
-> > diff --git a/arch/arm/mach-imx/devices/devices.c b/arch/arm/mach-imx/devices/devices.c
-> > index 1b4366a..48c3817 100644
-> > --- a/arch/arm/mach-imx/devices/devices.c
-> > +++ b/arch/arm/mach-imx/devices/devices.c
-> > @@ -24,12 +24,12 @@
-> > 
-> >  struct device mxc_aips_bus = {
-> >         .init_name      = "mxc_aips",
-> > -       .parent         = &platform_bus,
-> > +       .parent         = &platform_bus.dev,
-> >  };
-> > 
-> >  struct device mxc_ahb_bus = {
-> >         .init_name      = "mxc_ahb",
-> > -       .parent         = &platform_bus,
-> > +       .parent         = &platform_bus.dev,
-> >  };
-> > 
-> >  int __init mxc_device_init(void)
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+I applied this with Stephen's ack to my pci/host-tegra branch for v3.17.
+Let me know if you prefer a different merge strategy.  I'll be on vacation
+until Aug 11, so it won't be in my first pull request, but I plan to do
+another for things like this.
+
+> ---
+>  drivers/pci/host/pci-tegra.c | 118 +++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 118 insertions(+)
 > 
-> Seems that the author meant to have those two bus devices hanging from
-> the platform_bus in device hierarchy. Seems fair enough to me.
-
-No, not at all, this is a different bus, put the root bus at the root of
-the sysfs tree, not at some "arbritrary" point on a platform device.
-
-> > diff --git a/drivers/char/tile-srom.c b/drivers/char/tile-srom.c
-> > index bd37747..4e4b7a2 100644
-> > --- a/drivers/char/tile-srom.c
-> > +++ b/drivers/char/tile-srom.c
-> > @@ -350,7 +350,7 @@ static int srom_setup_minor(struct srom_dev *srom, int index)
-> >                        SROM_PAGE_SIZE_OFF, sizeof(srom->page_size)) < 0)
-> >                 return -EIO;
-> > 
-> > -       dev = device_create(srom_class, &platform_bus,
-> > +       dev = device_create(srom_class, &platform_bus.dev,
-> >                             MKDEV(srom_major, index), srom, "%d", index);
-> >         return PTR_ERR_OR_ZERO(dev);
-> >  }
+> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+> index 14ec5b2c69e0..49b3bd5f5926 100644
+> --- a/drivers/pci/host/pci-tegra.c
+> +++ b/drivers/pci/host/pci-tegra.c
+> @@ -25,6 +25,7 @@
+>   */
+>  
+>  #include <linux/clk.h>
+> +#include <linux/debugfs.h>
+>  #include <linux/delay.h>
+>  #include <linux/export.h>
+>  #include <linux/interrupt.h>
+> @@ -275,6 +276,7 @@ struct tegra_pcie {
+>  	unsigned int num_supplies;
+>  
+>  	const struct tegra_pcie_soc_data *soc_data;
+> +	struct dentry *debugfs;
+>  };
+>  
+>  struct tegra_pcie_port {
+> @@ -1664,6 +1666,115 @@ static const struct of_device_id tegra_pcie_of_match[] = {
+>  };
+>  MODULE_DEVICE_TABLE(of, tegra_pcie_of_match);
+>  
+> +static void *tegra_pcie_ports_seq_start(struct seq_file *s, loff_t *pos)
+> +{
+> +	struct tegra_pcie *pcie = s->private;
+> +
+> +	if (list_empty(&pcie->ports))
+> +		return NULL;
+> +
+> +	seq_printf(s, "Index  Status\n");
+> +
+> +	return seq_list_start(&pcie->ports, *pos);
+> +}
+> +
+> +static void *tegra_pcie_ports_seq_next(struct seq_file *s, void *v, loff_t *pos)
+> +{
+> +	struct tegra_pcie *pcie = s->private;
+> +
+> +	return seq_list_next(v, &pcie->ports, pos);
+> +}
+> +
+> +static void tegra_pcie_ports_seq_stop(struct seq_file *s, void *v)
+> +{
+> +}
+> +
+> +static int tegra_pcie_ports_seq_show(struct seq_file *s, void *v)
+> +{
+> +	bool up = false, active = false;
+> +	struct tegra_pcie_port *port;
+> +	unsigned int value;
+> +
+> +	port = list_entry(v, struct tegra_pcie_port, list);
+> +
+> +	value = readl(port->base + RP_VEND_XP);
+> +
+> +	if (value & RP_VEND_XP_DL_UP)
+> +		up = true;
+> +
+> +	value = readl(port->base + RP_LINK_CONTROL_STATUS);
+> +
+> +	if (value & RP_LINK_CONTROL_STATUS_DL_LINK_ACTIVE)
+> +		active = true;
+> +
+> +	seq_printf(s, "%2u     ", port->index);
+> +
+> +	if (up)
+> +		seq_printf(s, "up");
+> +
+> +	if (active) {
+> +		if (up)
+> +			seq_printf(s, ", ");
+> +
+> +		seq_printf(s, "active");
+> +	}
+> +
+> +	seq_printf(s, "\n");
+> +	return 0;
+> +}
+> +
+> +static const struct seq_operations tegra_pcie_ports_seq_ops = {
+> +	.start = tegra_pcie_ports_seq_start,
+> +	.next = tegra_pcie_ports_seq_next,
+> +	.stop = tegra_pcie_ports_seq_stop,
+> +	.show = tegra_pcie_ports_seq_show,
+> +};
+> +
+> +static int tegra_pcie_ports_open(struct inode *inode, struct file *file)
+> +{
+> +	struct tegra_pcie *pcie = inode->i_private;
+> +	struct seq_file *s;
+> +	int err;
+> +
+> +	err = seq_open(file, &tegra_pcie_ports_seq_ops);
+> +	if (err)
+> +		return err;
+> +
+> +	s = file->private_data;
+> +	s->private = pcie;
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct file_operations tegra_pcie_ports_ops = {
+> +	.owner = THIS_MODULE,
+> +	.open = tegra_pcie_ports_open,
+> +	.read = seq_read,
+> +	.llseek = seq_lseek,
+> +	.release = seq_release,
+> +};
+> +
+> +static int tegra_pcie_debugfs_init(struct tegra_pcie *pcie)
+> +{
+> +	struct dentry *file;
+> +
+> +	pcie->debugfs = debugfs_create_dir("pcie", NULL);
+> +	if (!pcie->debugfs)
+> +		return -ENOMEM;
+> +
+> +	file = debugfs_create_file("ports", S_IFREG | S_IRUGO, pcie->debugfs,
+> +				   pcie, &tegra_pcie_ports_ops);
+> +	if (!file)
+> +		goto remove;
+> +
+> +	return 0;
+> +
+> +remove:
+> +	debugfs_remove_recursive(pcie->debugfs);
+> +	pcie->debugfs = NULL;
+> +	return -ENOMEM;
+> +}
+> +
+>  static int tegra_pcie_probe(struct platform_device *pdev)
+>  {
+>  	const struct of_device_id *match;
+> @@ -1718,6 +1829,13 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+>  		goto disable_msi;
+>  	}
+>  
+> +	if (IS_ENABLED(CONFIG_DEBUG_FS)) {
+> +		err = tegra_pcie_debugfs_init(pcie);
+> +		if (err < 0)
+> +			dev_err(&pdev->dev, "failed to setup debugfs: %d\n",
+> +				err);
+> +	}
+> +
+>  	platform_set_drvdata(pdev, pcie);
+>  	return 0;
+>  
+> -- 
+> 2.0.1
 > 
-> Again, non-platform device placed in the hierarchy.
-
-Again, not ok.  If it's a platform device, it's a platform device, and
-make it one.  If it isn't, like this one, make it a virtual device and
-pass NULL here.
-
-> > diff --git a/drivers/mmc/host/sdhci-pltfm.c b/drivers/mmc/host/sdhci-pltfm.c
-> > index 7e834fb..9a2b0d0 100644
-> > --- a/drivers/mmc/host/sdhci-pltfm.c
-> > +++ b/drivers/mmc/host/sdhci-pltfm.c
-> > @@ -137,7 +137,7 @@ struct sdhci_host *sdhci_pltfm_init(struct platform_device *pdev,
-> >                 dev_err(&pdev->dev, "Invalid iomem size!\n");
-> > 
-> >         /* Some PCI-based MFD need the parent here */
-> > -       if (pdev->dev.parent != &platform_bus && !np)
-> > +       if (pdev->dev.parent != &platform_bus.dev && !np)
-> >                 host = sdhci_alloc_host(pdev->dev.parent,
-> >                         sizeof(struct sdhci_pltfm_host) + priv_size);
-> >         else
-> 
-> Special treatment for non-platform devices.
-
-Ugh, why should you care?  I don't understand the logic here.
-
-> > diff --git a/drivers/scsi/hosts.c b/drivers/scsi/hosts.c
-> > index 3cbb57a..c14c36f 100644
-> > --- a/drivers/scsi/hosts.c
-> > +++ b/drivers/scsi/hosts.c
-> > @@ -218,7 +218,7 @@ int scsi_add_host_with_dma(struct Scsi_Host *shost, struct device *dev,
-> >                 goto fail;
-> > 
-> >         if (!shost->shost_gendev.parent)
-> > -               shost->shost_gendev.parent = dev ? dev : &platform_bus;
-> > +               shost->shost_gendev.parent = dev ? dev : &platform_bus.dev;
-> >         if (!dma_dev)
-> >                 dma_dev = shost->shost_gendev.parent;
-> > 
-> 
-> shost_gendev is a generic (as in struct device, non-platform one)
-> device, that is being explicitly placed in the hierarchy.
-
-Then make it a virtual device, as that's what it is, replace this with
-NULL.
-
-> So it makes it 4, not 3 ;-) places where referencing platform_bus
-> *maybe* makes some sense.
-
-Nope, see above :)
-
-thanks,
-
-greg k-h
