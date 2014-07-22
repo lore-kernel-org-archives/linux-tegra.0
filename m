@@ -1,73 +1,257 @@
-From: Matthew Longnecker <mlongnecker@nvidia.com>
-Subject: Re: [PATCH 1/6] thermal: of: Add support for hardware-tracked trip
- points
-Date: Mon, 21 Jul 2014 16:53:04 -0700
-Message-ID: <53CDA7E0.2060207@nvidia.com>
-References: <1403856699-2140-1-git-send-email-mperttunen@nvidia.com> <1403856699-2140-2-git-send-email-mperttunen@nvidia.com> <53B1D1C8.5010907@wwwdotorg.org> <53B262EA.9030806@nvidia.com> <53B2FADC.8060708@wwwdotorg.org>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v2 14/16] cpufreq: Add cpufreq driver for Tegra124
+Date: Tue, 22 Jul 2014 02:49:27 +0200
+Message-ID: <1705813.PajOGXDDbB@vostro.rjw.lan>
+References: <1405957142-19416-1-git-send-email-ttynkkynen@nvidia.com>
+ <1405957142-19416-15-git-send-email-ttynkkynen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <53B2FADC.8060708@wwwdotorg.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: linux-pm@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1405957142-19416-15-git-send-email-ttynkkynen@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Cc: devicetree@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Viresh Kumar <viresh.kumar@linaro.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Paul Walmsley <pwalmsley@nvidia.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 7/1/2014 11:15 AM, Stephen Warren wrote:
-> On 07/01/2014 01:27 AM, Mikko Perttunen wrote:
->> >Inline.
->> >
->> >On 01/07/14 00:08, Stephen Warren wrote:
->>> >>On 06/27/2014 02:11 AM, Mikko Perttunen wrote:
->>>> >>>This adds support for hardware-tracked trip points to the device tree
->>>> >>>thermal sensor framework.
->>>> >>>
->>>> >>>The framework supports an arbitrary number of trip points. Whenever
->>>> >>>the current temperature is updated, the trip points immediately
->>>> >>>below and above the current temperature are found. A sensor driver
->>>> >>>callback `set_trips' is then called with the temperatures.
->>>> >>>If there is no trip point above or below the current temperature,
->>>> >>>the passed trip temperature will be LONG_MAX or LONG_MIN respectively.
->>>> >>>In this callback, the driver should program the hardware such that
->>>> >>>it is notified when either of these trip points are triggered.
->>>> >>>When a trip point is triggered, the driver should call
->>>> >>>`thermal_zone_device_update' for the respective thermal zone. This
->>>> >>>will cause the trip points to be updated again.
->>>> >>>
->>>> >>>If the `set_trips' callback is not implemented (is NULL), the framework
->>>> >>>behaves as before.
->>> >>
->>> >>Is there no "core thermal" code? I would have expected this new feature
->>> >>to be implemented in "core" code rather than of/dt "support" code.
->>> >>Perhaps there would also be some additions to the of/dt code, but I'd
->>> >>still expect the bulk of the feature to be complete independant of
->>> >>of/dt. Systems still using board files or ACPI or ... would surely
->>> >>benefit from this too?
+On Monday, July 21, 2014 06:39:00 PM Tuomas Tynkkynen wrote:
+> Add a new cpufreq driver for Tegra124. Instead of using the PLLX as
+> the CPU clocksource, switch immediately to the DFLL. It allows the use
+> of higher clock rates, and will automatically scale the CPU voltage as
+> well. Besides the CPU clocksource switch, we let the cpufreq-cpu0 driver
+> for all the cpufreq operations.
+> 
+> This driver also relies on the DFLL driver to fill the OPP table for the
+> CPU0 device, so that the cpufreq-cpu0 driver knows what frequencies to
+> use.
+> 
+> This driver is a completely independent of the old cpufreq driver
+> (tegra-cpufreq), which is only used on Tegra20.
+> 
+> Signed-off-by: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
 
-Stephen, the "core thermal code" defined two major object types:
-  * a thermal zone
-  * a cooling device
+I'm leaving this to Viresh.  If he AKCs it for you, please feel free to push
+this through whatever tree you think is appropriate.
 
-Each thermal zone corresponds to a physical region in space within a 
-device. A sane person might expect there to be one physical temperature 
-sensor associated with each zone. But, that's not always the case.
+> ---
+> v2 changes:
+>     - use the cpufreq-cpu0 driver
+> 
+>  drivers/cpufreq/Kconfig.arm        |   1 +
+>  drivers/cpufreq/Makefile           |   1 +
+>  drivers/cpufreq/tegra124-cpufreq.c | 169 +++++++++++++++++++++++++++++++++++++
+>  3 files changed, 171 insertions(+)
+>  create mode 100644 drivers/cpufreq/tegra124-cpufreq.c
+> 
+> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+> index 7364a53..df3c73e 100644
+> --- a/drivers/cpufreq/Kconfig.arm
+> +++ b/drivers/cpufreq/Kconfig.arm
+> @@ -244,6 +244,7 @@ config ARM_SPEAR_CPUFREQ
+>  config ARM_TEGRA_CPUFREQ
+>  	bool "TEGRA CPUFreq support"
+>  	depends on ARCH_TEGRA
+> +	depends on GENERIC_CPUFREQ_CPU0
+>  	default y
+>  	help
+>  	  This adds the CPUFreq driver support for TEGRA SOCs.
+> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+> index db6d9a2..3437d24 100644
+> --- a/drivers/cpufreq/Makefile
+> +++ b/drivers/cpufreq/Makefile
+> @@ -76,6 +76,7 @@ obj-$(CONFIG_ARM_SA1100_CPUFREQ)	+= sa1100-cpufreq.o
+>  obj-$(CONFIG_ARM_SA1110_CPUFREQ)	+= sa1110-cpufreq.o
+>  obj-$(CONFIG_ARM_SPEAR_CPUFREQ)		+= spear-cpufreq.o
+>  obj-$(CONFIG_ARM_TEGRA_CPUFREQ)		+= tegra-cpufreq.o
+> +obj-$(CONFIG_ARM_TEGRA_CPUFREQ)		+= tegra124-cpufreq.o
+>  obj-$(CONFIG_ARM_VEXPRESS_SPC_CPUFREQ)	+= vexpress-spc-cpufreq.o
+>  
+>  ##################################################################################
+> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+> new file mode 100644
+> index 0000000..65ff428
+> --- /dev/null
+> +++ b/drivers/cpufreq/tegra124-cpufreq.c
+> @@ -0,0 +1,169 @@
+> +/*
+> + * Tegra 124 cpufreq driver
+> + *
+> + * This software is licensed under the terms of the GNU General Public
+> + * License version 2, as published by the Free Software Foundation, and
+> + * may be copied, distributed, and modified under those terms.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + *
+> + */
+> +
+> +#define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
+> +
+> +#include <linux/clk.h>
+> +#include <linux/cpufreq.h>
+> +#include <linux/cpu.h>
+> +#include <linux/err.h>
+> +#include <linux/init.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_opp.h>
+> +#include <linux/types.h>
+> +
+> +static struct cpufreq_frequency_table *freq_table;
+> +
+> +static struct device *cpu_dev;
+> +static struct clk *cpu_clk;
+> +static struct clk *pllp_clk;
+> +static struct clk *pllx_clk;
+> +static struct clk *dfll_clk;
+> +
+> +static int tegra124_cpu_switch_to_dfll(void)
+> +{
+> +	struct clk *original_cpu_clk_parent;
+> +	unsigned long rate;
+> +	struct dev_pm_opp *opp;
+> +	int ret;
+> +
+> +	rate = clk_get_rate(cpu_clk);
+> +	opp = dev_pm_opp_find_freq_ceil(cpu_dev, &rate);
+> +	if (IS_ERR(opp))
+> +		return PTR_ERR(opp);
+> +
+> +	ret = clk_set_rate(dfll_clk, rate);
+> +	if (ret)
+> +		return ret;
+> +
+> +	original_cpu_clk_parent = clk_get_parent(cpu_clk);
+> +	clk_set_parent(cpu_clk, pllp_clk);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = clk_prepare_enable(dfll_clk);
+> +	if (ret)
+> +		goto out_switch_to_original_parent;
+> +
+> +	clk_set_parent(cpu_clk, dfll_clk);
+> +
+> +	return 0;
+> +
+> +out_switch_to_original_parent:
+> +	clk_set_parent(cpu_clk, original_cpu_clk_parent);
+> +
+> +	return ret;
+> +}
+> +
+> +static struct platform_device_info cpufreq_cpu0_devinfo = {
+> +	.name = "cpufreq-cpu0",
+> +};
+> +
+> +static int tegra124_cpufreq_probe(struct platform_device *pdev)
+> +{
+> +	int ret;
+> +
+> +	cpu_dev = get_cpu_device(0);
+> +	if (!cpu_dev)
+> +		return -ENODEV;
+> +
+> +	cpu_clk = of_clk_get_by_name(cpu_dev->of_node, "cpu_g");
+> +	if (IS_ERR(cpu_clk))
+> +		return PTR_ERR(cpu_clk);
+> +
+> +	dfll_clk = of_clk_get_by_name(cpu_dev->of_node, "dfll");
+> +	if (IS_ERR(dfll_clk)) {
+> +		ret = PTR_ERR(dfll_clk);
+> +		goto out_put_cpu_clk;
+> +	}
+> +
+> +	pllx_clk = of_clk_get_by_name(cpu_dev->of_node, "pll_x");
+> +	if (IS_ERR(pllx_clk)) {
+> +		ret = PTR_ERR(pllx_clk);
+> +		goto out_put_dfll_clk;
+> +	}
+> +
+> +	pllp_clk = of_clk_get_by_name(cpu_dev->of_node, "pll_p");
+> +	if (IS_ERR(pllp_clk)) {
+> +		ret = PTR_ERR(pllp_clk);
+> +		goto out_put_pllx_clk;
+> +	}
+> +
+> +	ret = dev_pm_opp_init_cpufreq_table(cpu_dev, &freq_table);
+> +	if (ret)
+> +		goto out_put_pllp_clk;
+> +
+> +	ret = tegra124_cpu_switch_to_dfll();
+> +	if (ret)
+> +		goto out_free_table;
+> +
+> +	platform_device_register_full(&cpufreq_cpu0_devinfo);
+> +
+> +	return 0;
+> +
+> +out_free_table:
+> +	dev_pm_opp_free_cpufreq_table(cpu_dev, &freq_table);
+> +out_put_pllp_clk:
+> +	clk_put(pllp_clk);
+> +out_put_pllx_clk:
+> +	clk_put(pllx_clk);
+> +out_put_dfll_clk:
+> +	clk_put(dfll_clk);
+> +out_put_cpu_clk:
+> +	clk_put(cpu_clk);
+> +
+> +	return ret;
+> +}
+> +
+> +static struct platform_driver tegra124_cpufreq_platdrv = {
+> +	.driver = {
+> +		.name	= "cpufreq-tegra124",
+> +		.owner	= THIS_MODULE,
+> +	},
+> +	.probe		= tegra124_cpufreq_probe,
+> +};
+> +
+> +static const struct of_device_id soc_of_matches[] = {
+> +	{ .compatible = "nvidia,tegra124", },
+> +	{}
+> +};
+> +
+> +static int __init tegra_cpufreq_init(void)
+> +{
+> +	int ret;
+> +	struct platform_device *pdev;
+> +
+> +	if (!of_find_matching_node(NULL, soc_of_matches))
+> +		return -ENODEV;
+> +
+> +	ret = platform_driver_register(&tegra124_cpufreq_platdrv);
+> +	if (ret)
+> +		return ret;
+> +
+> +	pdev = platform_device_register_simple("cpufreq-tegra124", -1, NULL, 0);
+> +	if (IS_ERR(pdev)) {
+> +		platform_driver_unregister(&tegra124_cpufreq_platdrv);
+> +		return PTR_ERR(pdev);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +MODULE_AUTHOR("Tuomas Tynkkynen <ttynkkynen@nvidia.com>");
+> +MODULE_DESCRIPTION("cpufreq driver for nVIDIA Tegra124");
+> +MODULE_LICENSE("GPLv2");
+> +module_init(tegra_cpufreq_init);
+> 
 
-Because the thermal core did not expose the concept of a "sensor" 
-separately from a "zone", many drivers which register thermal zones are 
-messy -- they include a mix of device driver code (i.e. poking at 
-register for a thermal sensor IP block) and device-agnostic code for 
-implementing behaviors required of a thermal zone.
-
-of-thermal does more than just parse device tree. It registers thermal 
-zones using its own implementation of that device-agnostic code. Having 
-that centralized implementation of the thermal zone code allows thermal 
-sensor device drivers which talk to of-thermal to be simpler than 
-drivers which try to talk directly to the thermal core.
-
-The fact that you need to use DT to make use of the simpler sensor 
-driver interface doesn't seem like a good reason to push back on Mikko's 
-change.
-
--Matt
-
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
