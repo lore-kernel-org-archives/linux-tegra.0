@@ -1,39 +1,24 @@
-From: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v3] platform: Make platform_bus device a platform device
-Date: Wed, 23 Jul 2014 15:27:33 +0100
-Message-ID: <1406125653.25343.141.camel@hornet>
-References: <20140722173713.GA8959@kroah.com>
-	 <1406051719-17354-1-git-send-email-pawel.moll@arm.com>
-	 <20140722221619.GA15781@kroah.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH v2 14/16] cpufreq: Add cpufreq driver for Tegra124
+Date: Wed, 23 Jul 2014 22:20:14 +0530
+Message-ID: <CAKohponLh66Ubr6=wY2OZCCrK11KZDj=DmXXqXsGGTHSG45wpA@mail.gmail.com>
+References: <1405957142-19416-1-git-send-email-ttynkkynen@nvidia.com>
+	<1405957142-19416-15-git-send-email-ttynkkynen@nvidia.com>
+	<CAKohpomQthJ_XE-HhzW07Q4aVtxQVy97iaL0Vy6Q4Lhw22A=VA@mail.gmail.com>
+	<53CFA33F.6030307@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140722221619.GA15781-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Catalin Marinas <Catalin.Marinas-5wv7dgnIgG8@public.gmane.org>, "paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org" <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <53CFA33F.6030307@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Paul Walmsley <pwalmsley@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 2014-07-22 at 23:16 +0100, Greg Kroah-Hartman wrote:
-> On Tue, Jul 22, 2014 at 06:55:19PM +0100, Pawel Moll wrote:
-> > ... describing the root of the device tree, so one can write
-> > a platform driver initializing the platform.
-> > 
-> > There has been a lot of references to platform_bus device where
-> > it didn't make any sense, because simply using NULL as a parent
-> > will make the device be adopted by the top level anyway.
-> > 
-> > Signed-off-by: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
-> > ---
-> > Changes since v2:
-> > 
-> > * replaced references to platform_bus.dev with NULL
-> >   in places where it shouldn't make any difference
-> 
-> How about split this up with just the "change to NULL" changes as one
-> patch, and the rest as a second one?
+On 23 July 2014 17:27, Tuomas Tynkkynen <ttynkkynen@nvidia.com> wrote:
+> The platform device is required for the deferred probe that can happen if the
+> DFLL driver hasn't initialized yet, and module_init() callbacks don't seem to
+> respect -EPROBE_DEFER.
 
-Yes, was about to do exactly this.
-
-Pawel
+Oh, which call in this file will return EPROBE_DEFER? I couldn't make out
+which one will depend on DFLL driver.
