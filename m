@@ -1,35 +1,41 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH v4 2/2] platform: Make platform_bus device a platform
- device
-Date: Wed, 23 Jul 2014 11:53:34 -0700
-Message-ID: <20140723185334.GA9531@quad.lixom.net>
-References: <1406135239-17550-1-git-send-email-pawel.moll@arm.com>
- <1406135239-17550-2-git-send-email-pawel.moll@arm.com>
+From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Subject: Re: [PATCH v2 14/16] cpufreq: Add cpufreq driver for Tegra124
+Date: Wed, 23 Jul 2014 22:17:27 +0300
+Message-ID: <53D00A47.7050203@nvidia.com>
+References: <1405957142-19416-1-git-send-email-ttynkkynen@nvidia.com>	<1405957142-19416-15-git-send-email-ttynkkynen@nvidia.com>	<CAKohpomQthJ_XE-HhzW07Q4aVtxQVy97iaL0Vy6Q4Lhw22A=VA@mail.gmail.com>	<53CFA33F.6030307@nvidia.com> <CAKohponLh66Ubr6=wY2OZCCrK11KZDj=DmXXqXsGGTHSG45wpA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1406135239-17550-2-git-send-email-pawel.moll-5wv7dgnIgG8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Catalin Marinas <Catalin.Marinas-5wv7dgnIgG8@public.gmane.org>, paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CAKohponLh66Ubr6=wY2OZCCrK11KZDj=DmXXqXsGGTHSG45wpA@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Paul Walmsley <pwalmsley@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jul 23, 2014 at 06:07:19PM +0100, Pawel Moll wrote:
-> ... describing the root of the device tree, so one can write
-> a platform driver initializing the platform.
+
+
+On 23/07/14 19:50, Viresh Kumar wrote:
+> On 23 July 2014 17:27, Tuomas Tynkkynen <ttynkkynen@nvidia.com> wrote:
+>> The platform device is required for the deferred probe that can happen if the
+>> DFLL driver hasn't initialized yet, and module_init() callbacks don't seem to
+>> respect -EPROBE_DEFER.
 > 
-> Signed-off-by: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
+> Oh, which call in this file will return EPROBE_DEFER? I couldn't make out
+> which one will depend on DFLL driver.
+> 
 
-Ran it through the boot farm. Results at:
+It's this:
 
-http://arm-soc.lixom.net/bootlogs/misc/v3.16-rc6-772-g7926904/
++static int tegra124_cpufreq_probe(struct platform_device *pdev)
++{
+[...]
++
++	dfll_clk = of_clk_get_by_name(cpu_dev->of_node, "dfll");
++	if (IS_ERR(dfll_clk)) {
++		ret = PTR_ERR(dfll_clk);
++		goto out_put_cpu_clk;
++	}
 
-Tested-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-
-For when Greg is happy with this:
-
-Acked-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-
-
--Olof
+-- 
+nvpublic
