@@ -1,44 +1,211 @@
-From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH] ARM: tegra: apalis t30: fix device tree compatible node
-Date: Wed, 23 Jul 2014 04:23:00 +0200
-Message-ID: <aa2cbaac07707c3d64599d3841b9d6f77567a91f.1406081870.git.marcel@ziswiler.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH v2 14/16] cpufreq: Add cpufreq driver for Tegra124
+Date: Wed, 23 Jul 2014 10:14:44 +0530
+Message-ID: <CAKohpomQthJ_XE-HhzW07Q4aVtxQVy97iaL0Vy6Q4Lhw22A=VA@mail.gmail.com>
+References: <1405957142-19416-1-git-send-email-ttynkkynen@nvidia.com>
+	<1405957142-19416-15-git-send-email-ttynkkynen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: swarren@wwwdotorg.org, thierry.reding@gmail.com
-Cc: devicetree@vger.kernel.org, linux@arm.linux.org.uk, linux-kernel@vger.kernel.org, stefan@agner.ch, marcel@ziswiler.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1405957142-19416-15-git-send-email-ttynkkynen@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Paul Walmsley <pwalmsley@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Working on sound support I noticed the Apalis T30 Evaluation board
-device tree missing the more generic Apalis T30 compatible string.
+On 21 July 2014 21:09, Tuomas Tynkkynen <ttynkkynen@nvidia.com> wrote:
 
-Signed-off-by: Marcel Ziswiler <marcel@ziswiler.com>
----
- arch/arm/boot/dts/tegra30-apalis-eval.dts |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+> index 7364a53..df3c73e 100644
+> --- a/drivers/cpufreq/Kconfig.arm
+> +++ b/drivers/cpufreq/Kconfig.arm
+> @@ -244,6 +244,7 @@ config ARM_SPEAR_CPUFREQ
+>  config ARM_TEGRA_CPUFREQ
+>         bool "TEGRA CPUFreq support"
+>         depends on ARCH_TEGRA
+> +       depends on GENERIC_CPUFREQ_CPU0
 
-diff --git a/arch/arm/boot/dts/tegra30-apalis-eval.dts b/arch/arm/boot/dts/tegra30-apalis-eval.dts
-index 9921433..45d40f0 100644
---- a/arch/arm/boot/dts/tegra30-apalis-eval.dts
-+++ b/arch/arm/boot/dts/tegra30-apalis-eval.dts
-@@ -5,7 +5,7 @@
- 
- / {
- 	model = "Toradex Apalis T30 on Apalis Evaluation Board";
--	compatible = "toradex,apalis_t30-eval", "nvidia,tegra30";
-+	compatible = "toradex,apalis_t30-eval", "toradex,apalis_t30", "nvidia,tegra30";
- 
- 	aliases {
- 		rtc0 = "/i2c@7000c000/rtc@68";
--- 
-1.7.9.5
+Wouldn't this also disturb the existing cpufreq driver for earlier
+tegra platforms? i.e. we don't need cpufreq-cpu0 for them
+atleast as of now.
+
+>         default y
+>         help
+>           This adds the CPUFreq driver support for TEGRA SOCs.
+> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+> index db6d9a2..3437d24 100644
+> --- a/drivers/cpufreq/Makefile
+> +++ b/drivers/cpufreq/Makefile
+> @@ -76,6 +76,7 @@ obj-$(CONFIG_ARM_SA1100_CPUFREQ)      += sa1100-cpufreq.o
+>  obj-$(CONFIG_ARM_SA1110_CPUFREQ)       += sa1110-cpufreq.o
+>  obj-$(CONFIG_ARM_SPEAR_CPUFREQ)                += spear-cpufreq.o
+>  obj-$(CONFIG_ARM_TEGRA_CPUFREQ)                += tegra-cpufreq.o
+> +obj-$(CONFIG_ARM_TEGRA_CPUFREQ)                += tegra124-cpufreq.o
+
+Maybe, you can update the same line if you want.
+
+>  obj-$(CONFIG_ARM_VEXPRESS_SPC_CPUFREQ) += vexpress-spc-cpufreq.o
+>
+>  ##################################################################################
+> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+
+> +static struct cpufreq_frequency_table *freq_table;
+> +
+> +static struct device *cpu_dev;
+> +static struct clk *cpu_clk;
+> +static struct clk *pllp_clk;
+> +static struct clk *pllx_clk;
+> +static struct clk *dfll_clk;
+
+The routines in this file are going to be called just once at boot, right?
+In that case we are actually wasting some memory by creating globals.
+Probably just move all these in a struct and allocate it at runtime.
+
+> +static int tegra124_cpu_switch_to_dfll(void)
+> +{
+> +       struct clk *original_cpu_clk_parent;
+> +       unsigned long rate;
+> +       struct dev_pm_opp *opp;
+> +       int ret;
+> +
+> +       rate = clk_get_rate(cpu_clk);
+> +       opp = dev_pm_opp_find_freq_ceil(cpu_dev, &rate);
+> +       if (IS_ERR(opp))
+> +               return PTR_ERR(opp);
+> +
+> +       ret = clk_set_rate(dfll_clk, rate);
+> +       if (ret)
+> +               return ret;
+> +
+> +       original_cpu_clk_parent = clk_get_parent(cpu_clk);
+> +       clk_set_parent(cpu_clk, pllp_clk);
+> +       if (ret)
+> +               return ret;
+> +
+> +       ret = clk_prepare_enable(dfll_clk);
+> +       if (ret)
+> +               goto out_switch_to_original_parent;
+> +
+> +       clk_set_parent(cpu_clk, dfll_clk);
+> +
+> +       return 0;
+> +
+> +out_switch_to_original_parent:
+> +       clk_set_parent(cpu_clk, original_cpu_clk_parent);
+> +
+> +       return ret;
+> +}
+> +
+> +static struct platform_device_info cpufreq_cpu0_devinfo = {
+> +       .name = "cpufreq-cpu0",
+> +};
+> +
+> +static int tegra124_cpufreq_probe(struct platform_device *pdev)
+> +{
+> +       int ret;
+> +
+> +       cpu_dev = get_cpu_device(0);
+> +       if (!cpu_dev)
+> +               return -ENODEV;
+> +
+
+Shouldn't we do a of_node_get() here?
+
+> +       cpu_clk = of_clk_get_by_name(cpu_dev->of_node, "cpu_g");
+> +       if (IS_ERR(cpu_clk))
+> +               return PTR_ERR(cpu_clk);
+> +
+> +       dfll_clk = of_clk_get_by_name(cpu_dev->of_node, "dfll");
+> +       if (IS_ERR(dfll_clk)) {
+> +               ret = PTR_ERR(dfll_clk);
+> +               goto out_put_cpu_clk;
+> +       }
+> +
+> +       pllx_clk = of_clk_get_by_name(cpu_dev->of_node, "pll_x");
+> +       if (IS_ERR(pllx_clk)) {
+> +               ret = PTR_ERR(pllx_clk);
+> +               goto out_put_dfll_clk;
+> +       }
+> +
+> +       pllp_clk = of_clk_get_by_name(cpu_dev->of_node, "pll_p");
+> +       if (IS_ERR(pllp_clk)) {
+> +               ret = PTR_ERR(pllp_clk);
+> +               goto out_put_pllx_clk;
+> +       }
+> +
+> +       ret = dev_pm_opp_init_cpufreq_table(cpu_dev, &freq_table);
+> +       if (ret)
+> +               goto out_put_pllp_clk;
+
+Why do you need this? cpufreq-cpu0 also does it and this freq_table is
+just not getting used at all then.
+
+> +
+> +       ret = tegra124_cpu_switch_to_dfll();
+> +       if (ret)
+> +               goto out_free_table;
+> +
+> +       platform_device_register_full(&cpufreq_cpu0_devinfo);
+> +
+> +       return 0;
+> +
+> +out_free_table:
+> +       dev_pm_opp_free_cpufreq_table(cpu_dev, &freq_table);
+> +out_put_pllp_clk:
+> +       clk_put(pllp_clk);
+> +out_put_pllx_clk:
+> +       clk_put(pllx_clk);
+> +out_put_dfll_clk:
+> +       clk_put(dfll_clk);
+> +out_put_cpu_clk:
+> +       clk_put(cpu_clk);
+> +
+> +       return ret;
+> +}
+> +
+> +static struct platform_driver tegra124_cpufreq_platdrv = {
+> +       .driver = {
+> +               .name   = "cpufreq-tegra124",
+> +               .owner  = THIS_MODULE,
+> +       },
+> +       .probe          = tegra124_cpufreq_probe,
+> +};
+> +
+> +static const struct of_device_id soc_of_matches[] = {
+> +       { .compatible = "nvidia,tegra124", },
+> +       {}
+> +};
+> +
+> +static int __init tegra_cpufreq_init(void)
+> +{
+> +       int ret;
+> +       struct platform_device *pdev;
+> +
+> +       if (!of_find_matching_node(NULL, soc_of_matches))
+> +               return -ENODEV;
+> +
+> +       ret = platform_driver_register(&tegra124_cpufreq_platdrv);
+> +       if (ret)
+> +               return ret;
+> +
+> +       pdev = platform_device_register_simple("cpufreq-tegra124", -1, NULL, 0);
+> +       if (IS_ERR(pdev)) {
+> +               platform_driver_unregister(&tegra124_cpufreq_platdrv);
+> +               return PTR_ERR(pdev);
+> +       }
+
+Why create another unnecessary platform-device/driver here? If
+of_find_matching_node() passes and you really need to probe cpufreq-cpu0
+here, then just remove the other two calls and move probe's implementation
+here only.
+
+> +       return 0;
+> +}
+> +
+> +MODULE_AUTHOR("Tuomas Tynkkynen <ttynkkynen@nvidia.com>");
+> +MODULE_DESCRIPTION("cpufreq driver for nVIDIA Tegra124");
+> +MODULE_LICENSE("GPLv2");
+> +module_init(tegra_cpufreq_init);
+> --
+> 1.8.1.5
+>
