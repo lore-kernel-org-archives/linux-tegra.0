@@ -1,34 +1,144 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH V2] drm/tegra: add MODULE_DEVICE_TABLEs
-Date: Wed, 23 Jul 2014 13:29:32 -0600
-Message-ID: <53D00D1C.9030305@wwwdotorg.org>
-References: <1403130115-23583-1-git-send-email-swarren@wwwdotorg.org>
+From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Subject: Re: [PATCH v3] platform: Make platform_bus device a platform device
+Date: Wed, 23 Jul 2014 12:34:34 -0700
+Message-ID: <20140723193434.GA31983@kroah.com>
+References: <20140722173713.GA8959@kroah.com>
+ <1406051719-17354-1-git-send-email-pawel.moll@arm.com>
+ <1406052069.25343.93.camel@hornet>
+ <20140722181505.GA9898@kroah.com>
+ <1406135762.25343.151.camel@hornet>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <1403130115-23583-1-git-send-email-swarren@wwwdotorg.org>
-Sender: stable-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom@nvidia.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1406135762.25343.151.camel@hornet>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Catalin Marinas <Catalin.Marinas-5wv7dgnIgG8@public.gmane.org>, "paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org" <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/18/2014 04:21 PM, Stephen Warren wrote:
-> From: Stephen Warren <swarren@nvidia.com>
+On Wed, Jul 23, 2014 at 06:16:02PM +0100, Pawel Moll wrote:
+> On Tue, 2014-07-22 at 19:15 +0100, Greg Kroah-Hartman wrote:
+> > > > diff --git a/arch/arm/mach-imx/devices/devices.c b/arch/arm/mach-imx/devices/devices.c
+> > > > index 1b4366a..48c3817 100644
+> > > > --- a/arch/arm/mach-imx/devices/devices.c
+> > > > +++ b/arch/arm/mach-imx/devices/devices.c
+> > > > @@ -24,12 +24,12 @@
+> > > > 
+> > > >  struct device mxc_aips_bus = {
+> > > >         .init_name      = "mxc_aips",
+> > > > -       .parent         = &platform_bus,
+> > > > +       .parent         = &platform_bus.dev,
+> > > >  };
+> > > > 
+> > > >  struct device mxc_ahb_bus = {
+> > > >         .init_name      = "mxc_ahb",
+> > > > -       .parent         = &platform_bus,
+> > > > +       .parent         = &platform_bus.dev,
+> > > >  };
+> > > > 
+> > > >  int __init mxc_device_init(void)
+> > > 
+> > > Seems that the author meant to have those two bus devices hanging from
+> > > the platform_bus in device hierarchy. Seems fair enough to me.
+> > 
+> > No, not at all, this is a different bus, put the root bus at the root of
+> > the sysfs tree, not at some "arbritrary" point on a platform device.
 > 
-> When tegra-drm.ko is built as a module, these MODULE_DEVICE_TABLEs allow
-> the module to be auto-loaded since the module will match the devices
-> instantiated from device tree.
-> 
-> (Notes for stable: in 3.14+, just git rm any conflicting file, since they
-> are added in later kernels. For 3.13 and below, manual merging will be
-> needed)
-> 
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Stephen Warren <swarren@nvidia.com>
-> ---
-> v2: Remove change to drm.c, since the match table there isn't used for
-> probing.
+> I think the author considers platform bus is understood as a
+> representation of the MMIO space (and he's not alone). So then he wants
+> to represent the physical hierarchy of the interconnect to get it in
+> separate places in the /sys/devices/* tree.
 
-Thierry, I think this patch got lost? It doesn't appear in next-20140721
-anyway.
+That's fine, but again, it's not a "child" of the platform bus.
+Otherwise you could argue that all busses should belong under the
+platform bus as well, which isn't going to happen.
+
+> Whether it's a good thing to do or not, have no strong opinion, but can
+> understand his approach. I don't think it's a big deal either way.
+
+Great, make it NULL :)
+
+> > > > diff --git a/drivers/char/tile-srom.c b/drivers/char/tile-srom.c
+> > > > index bd37747..4e4b7a2 100644
+> > > > --- a/drivers/char/tile-srom.c
+> > > > +++ b/drivers/char/tile-srom.c
+> > > > @@ -350,7 +350,7 @@ static int srom_setup_minor(struct srom_dev *srom, int index)
+> > > >                        SROM_PAGE_SIZE_OFF, sizeof(srom->page_size)) < 0)
+> > > >                 return -EIO;
+> > > > 
+> > > > -       dev = device_create(srom_class, &platform_bus,
+> > > > +       dev = device_create(srom_class, &platform_bus.dev,
+> > > >                             MKDEV(srom_major, index), srom, "%d", index);
+> > > >         return PTR_ERR_OR_ZERO(dev);
+> > > >  }
+> > > 
+> > > Again, non-platform device placed in the hierarchy.
+> > 
+> > Again, not ok.  If it's a platform device, it's a platform device, and
+> > make it one.  If it isn't, like this one, make it a virtual device and
+> > pass NULL here.
+> 
+> Yeah, I can't disagree here.
+> 
+> > > > diff --git a/drivers/mmc/host/sdhci-pltfm.c b/drivers/mmc/host/sdhci-pltfm.c
+> > > > index 7e834fb..9a2b0d0 100644
+> > > > --- a/drivers/mmc/host/sdhci-pltfm.c
+> > > > +++ b/drivers/mmc/host/sdhci-pltfm.c
+> > > > @@ -137,7 +137,7 @@ struct sdhci_host *sdhci_pltfm_init(struct platform_device *pdev,
+> > > >                 dev_err(&pdev->dev, "Invalid iomem size!\n");
+> > > > 
+> > > >         /* Some PCI-based MFD need the parent here */
+> > > > -       if (pdev->dev.parent != &platform_bus && !np)
+> > > > +       if (pdev->dev.parent != &platform_bus.dev && !np)
+> > > >                 host = sdhci_alloc_host(pdev->dev.parent,
+> > > >                         sizeof(struct sdhci_pltfm_host) + priv_size);
+> > > >         else
+> > > 
+> > > Special treatment for non-platform devices.
+> > 
+> > Ugh, why should you care?  I don't understand the logic here.
+> 
+> Neither do I, but maybe there is' some :-) I definitely wouldn't like to
+> change the behaviour without checking with the maintainers.
+
+Then let's ask :)
+
+> > > > diff --git a/drivers/scsi/hosts.c b/drivers/scsi/hosts.c
+> > > > index 3cbb57a..c14c36f 100644
+> > > > --- a/drivers/scsi/hosts.c
+> > > > +++ b/drivers/scsi/hosts.c
+> > > > @@ -218,7 +218,7 @@ int scsi_add_host_with_dma(struct Scsi_Host *shost, struct device *dev,
+> > > >                 goto fail;
+> > > > 
+> > > >         if (!shost->shost_gendev.parent)
+> > > > -               shost->shost_gendev.parent = dev ? dev : &platform_bus;
+> > > > +               shost->shost_gendev.parent = dev ? dev : &platform_bus.dev;
+> > > >         if (!dma_dev)
+> > > >                 dma_dev = shost->shost_gendev.parent;
+> > > > 
+> > > 
+> > > shost_gendev is a generic (as in struct device, non-platform one)
+> > > device, that is being explicitly placed in the hierarchy.
+> > 
+> > Then make it a virtual device, as that's what it is, replace this with
+> > NULL.
+> 
+> Makes sense to me, I just wonder what the author meant.
+
+With scsi code, who knows :)
+
+> > > So it makes it 4, not 3 ;-) places where referencing platform_bus
+> > > *maybe* makes some sense.
+> > 
+> > Nope, see above :)
+> 
+> Let me just point out that I'm just playing the devil's advocate
+> here :-)
+
+Of course, I'm not "shooting the messenger" at all, just pointing out
+problems with the code, you didn't write it.
+
+thanks,
+
+greg k-h
