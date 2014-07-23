@@ -1,230 +1,92 @@
-From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH v2 14/16] cpufreq: Add cpufreq driver for Tegra124
-Date: Wed, 23 Jul 2014 15:35:46 +0300
-Message-ID: <53CFAC22.40106@nvidia.com>
-References: <1405957142-19416-1-git-send-email-ttynkkynen@nvidia.com> <1405957142-19416-15-git-send-email-ttynkkynen@nvidia.com> <20140723070949.GB15759@ulmo.nvidia.com>
+Date: Wed, 23 Jul 2014 15:51:28 +0200
+Message-ID: <20140723135127.GB14263@ulmo.nvidia.com>
+References: <1405957142-19416-1-git-send-email-ttynkkynen@nvidia.com>
+ <1405957142-19416-15-git-send-email-ttynkkynen@nvidia.com>
+ <CAKohpomQthJ_XE-HhzW07Q4aVtxQVy97iaL0Vy6Q4Lhw22A=VA@mail.gmail.com>
+ <20140723065412.GA15759@ulmo.nvidia.com>
+ <CAKohponmg24pvnX2Jhfg5LHKKHx3VEm-6a_JXTGhVXY-aj3EOw@mail.gmail.com>
+ <20140723072442.GC15759@ulmo.nvidia.com>
+ <CAKohponfKzuK+TnQvWcvaT8hRX8XZJWXWGMQw138DCwP=qcx+A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20140723070949.GB15759@ulmo.nvidia.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Paul Walmsley <pwalmsley@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="CdrF4e02JqNVZeln"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CAKohponfKzuK+TnQvWcvaT8hRX8XZJWXWGMQw138DCwP=qcx+A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
+--CdrF4e02JqNVZeln
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 23/07/14 10:09, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Mon, Jul 21, 2014 at 06:39:00PM +0300, Tuomas Tynkkynen wrote:
-> [...]
->> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
-> [...]
->> +static int tegra124_cpu_switch_to_dfll(void)
->> +{
->> +	struct clk *original_cpu_clk_parent;
-> 
-> Maybe just "parent"?
-> 
->> +	unsigned long rate;
->> +	struct dev_pm_opp *opp;
->> +	int ret;
->> +
->> +	rate = clk_get_rate(cpu_clk);
->> +	opp = dev_pm_opp_find_freq_ceil(cpu_dev, &rate);
->> +	if (IS_ERR(opp))
->> +		return PTR_ERR(opp);
->> +
->> +	ret = clk_set_rate(dfll_clk, rate);
->> +	if (ret)
->> +		return ret;
->> +
->> +	original_cpu_clk_parent = clk_get_parent(cpu_clk);
->> +	clk_set_parent(cpu_clk, pllp_clk);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = clk_prepare_enable(dfll_clk);
->> +	if (ret)
->> +		goto out_switch_to_original_parent;
-> 
-> This could simply be "out" or "err" or anything else shorter than the
-> above.
-> 
->> +
->> +	clk_set_parent(cpu_clk, dfll_clk);
->> +
->> +	return 0;
->> +
->> +out_switch_to_original_parent:
->> +	clk_set_parent(cpu_clk, original_cpu_clk_parent);
->> +
->> +	return ret;
->> +}
->> +
->> +static struct platform_device_info cpufreq_cpu0_devinfo = {
->> +	.name = "cpufreq-cpu0",
->> +};
->> +
->> +static int tegra124_cpufreq_probe(struct platform_device *pdev)
->> +{
->> +	int ret;
->> +
->> +	cpu_dev = get_cpu_device(0);
->> +	if (!cpu_dev)
->> +		return -ENODEV;
->> +
->> +	cpu_clk = of_clk_get_by_name(cpu_dev->of_node, "cpu_g");
->> +	if (IS_ERR(cpu_clk))
->> +		return PTR_ERR(cpu_clk);
->> +
->> +	dfll_clk = of_clk_get_by_name(cpu_dev->of_node, "dfll");
->> +	if (IS_ERR(dfll_clk)) {
->> +		ret = PTR_ERR(dfll_clk);
->> +		goto out_put_cpu_clk;
->> +	}
->> +
->> +	pllx_clk = of_clk_get_by_name(cpu_dev->of_node, "pll_x");
->> +	if (IS_ERR(pllx_clk)) {
->> +		ret = PTR_ERR(pllx_clk);
->> +		goto out_put_dfll_clk;
->> +	}
->> +
->> +	pllp_clk = of_clk_get_by_name(cpu_dev->of_node, "pll_p");
->> +	if (IS_ERR(pllp_clk)) {
->> +		ret = PTR_ERR(pllp_clk);
->> +		goto out_put_pllx_clk;
->> +	}
-> 
-> Can the above not be devm_clk_get(cpu_dev, "...") so that you can remove
-> all the clk_put() calls in the cleanup code below?
+On Wed, Jul 23, 2014 at 01:55:57PM +0530, Viresh Kumar wrote:
+> On 23 July 2014 12:54, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> > ARM_TEGRA_CPUFREQ is still optional, so the select only applies when the
+> > Tegra cpufreq driver is enabled. This is mostly just out of convenience,
+> > though. The Tegra cpufreq driver uses the generic CPU0 cpufreq driver so
+> > a select will automatically pull in the necessary dependency. With a
+>=20
+> Not necessarily. cpufreq-cpu0 can have few unmet dependency. And so
+> there are chances that tegra driver is compiled but cpufreq-cpu0 isn't as
+> we didn't mention it as a *hard* dependency.
+>=20
+> And so at boot, there wouldn't be any cpufreq support even when tegra's
+> cpufreq driver is available.
+>=20
+> Though, menuconfig may give some warnings no such situations.
+>=20
+> > "depends on" the Tegra cpufreq driver only becomes available after
+> > you've selected GENERIC_CPUFREQ_CPU0, which is somewhat unintuitive.
+> >
+> > To illustrate with an example: as a user, I want to enable CPU frequency
+> > scaling on Tegra. So I use menuconfig to navigate to the "CPU Frequency
+> > scaling" menu (enable it if not available yet) and look for an entry
+> > that says "Tegra". But I can't find it because it's hidden due to the
+> > lack of GENERIC_CPUFREQ_CPU0. That the Tegra CPU frequency driver uses a
+> > generic driver is an implementation detail that users shouldn't have to
+> > be aware of.
+>=20
+> Don't know, the guy compiling out stuff should be knowledgeable enough to
+> have a look why tegra cpufreq entry isn't shown in menu. As, probably the
+> above problem I mentioned looks to be of more significance than this one,
+> atleast to me :)
+>=20
+> And, another thing to mention is that CONFIG_TEGRA_CPUFREQ is valid
+> for earlier platforms as well and so a select/depends wouldn't be valid f=
+or
+> earlier platforms. We probably need another Kconfig entry here.
 
-That would allocate the clks under the cpu_dev's devres list, i.e. all the
-clk_puts wouldn't happen when the cpufreq driver goes away, but only when
-cpu_dev itself goes away.
+Yes, sounds like a new Kconfig entry for this specific driver would be a
+better approach and should remove all the above concerns.
 
-> 
->> +
->> +	ret = dev_pm_opp_init_cpufreq_table(cpu_dev, &freq_table);
->> +	if (ret)
->> +		goto out_put_pllp_clk;
->> +
->> +	ret = tegra124_cpu_switch_to_dfll();
->> +	if (ret)
->> +		goto out_free_table;
->> +
->> +	platform_device_register_full(&cpufreq_cpu0_devinfo);
-> 
-> Should the cpufreq_cpu0_devinfo device perhaps be a child of pdev?
+Thierry
 
-Yeah, I suppose it should.
+--CdrF4e02JqNVZeln
+Content-Type: application/pgp-signature
 
->> +
->> +	return 0;
->> +
->> +out_free_table:
->> +	dev_pm_opp_free_cpufreq_table(cpu_dev, &freq_table);
->> +out_put_pllp_clk:
->> +	clk_put(pllp_clk);
->> +out_put_pllx_clk:
->> +	clk_put(pllx_clk);
->> +out_put_dfll_clk:
->> +	clk_put(dfll_clk);
->> +out_put_cpu_clk:
->> +	clk_put(cpu_clk);
->> +
->> +	return ret;
->> +}
->> +
->> +static struct platform_driver tegra124_cpufreq_platdrv = {
->> +	.driver = {
->> +		.name	= "cpufreq-tegra124",
->> +		.owner	= THIS_MODULE,
->> +	},
->> +	.probe		= tegra124_cpufreq_probe,
-> 
-> Note that simply leaving out .remove() here doesn't guarantee that the
-> driver won't be unloaded. Also building it into the kernel doesn't
-> prevent that. You can still unbind the driver via sysfs. So you'd need
-> to add a .suppress_bind_attrs = true above.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-I hadn't heard about suppress_bind_attrs before, it indeed sounds useful.
+iQIbBAEBAgAGBQJTz73eAAoJEN0jrNd/PrOhLJYP+IuuRTEEvQoTQ1Y2AMHVsLTf
+tPei0ThoS2Mav5HMWIGOKB8kbmqf0koRR4Z+SHRlwrdyU7VN9aNmDXUY2MCZWs9X
+XLmzPaQAFcvciI+8t6GT0uJBBRCzhC06+PQdKeMEaTyqKhsDaC0fmbQQYiaRzMBe
+F2YG18PY3jDeEXid+OYIuwOt9bH3EGp1Of+9BbFANmBQyG8Jdt6Un7cAWYJj/dTi
+vl4eekndo+Hd0n3QYmW/6Urzb4DEyY+giiZ6d7MLDZs/zx7s+zoCzxgKo4JbMizy
+LlhKyE1FHV8gM7uwfVxyM3f1fv0LGmXYpfv8KfU9+XHK0IDQKjpfAZ7A+TA5bZ1+
+o3U+0nno7E0TSWIJcjuStUP1M8QVlVum87D01zatkgsn/hm/6XxijH+8Br6k1R3E
+cIDQS7+ziEYSpjTrvV4t9pOHmxe1HlhC5yfBs8m1r+gAQBdAKuZeTiDO1DAbf3Ka
+ok9QlOCDWSwCAYMdGrv/qyrkA4/U6aqZtb1xvW5uucc081TnN4cQcW/1KcWhinrQ
+EBVxGAVEaGZnbhlml8SqqVQEzNFsT+aDzkCQYu8fU7g2xEJedgJNv3TpLqxewYFW
+GY2iJcj+QdgqaOoTpWBbGJvNjiqb8iFR0xK+odB/+ops16B19o0rnUffmujdtyJC
+TlT/ri2zehYTNtTnkRg=
+=zC7T
+-----END PGP SIGNATURE-----
 
-> But is there even a reason why we need that? Couldn't we make the
-> driver's .remove() undo what .probe() did so that the driver can be
-> unloaded?
-
-I guess that could be done, though to fully undo everything the regulator
-voltage would also need to be saved/restored.
-
-> Otherwise it probably makes more sense not to use a driver (and dummy
-> device) at all as Viresh already mentioned.
-> 
-
-The dummy platform device is only required for probe deferral, if that
-could be solved in a different way then yes.
-
->> +};
->> +
->> +static const struct of_device_id soc_of_matches[] = {
->> +	{ .compatible = "nvidia,tegra124", },
->> +	{}
->> +};
->> +
->> +static int __init tegra_cpufreq_init(void)
->> +{
->> +	int ret;
->> +	struct platform_device *pdev;
->> +
->> +	if (!of_find_matching_node(NULL, soc_of_matches))
->> +		return -ENODEV;
-> 
-> I think this could be of_machine_is_compatible() since there's only a
-> single entry in the match table. If there's a good chance that we may
-> end up with more entries, perhaps now would be a good time to add an
-> of_match_machine() function?
-
-I think this driver should work on Tegra132 without modifications.
-of_match_machine() does sound useful for some of the other cpufreq
-drivers as well and likely for your soc_is_tegra() from the PMC
-series as well.
-
-> 
->> +
->> +	ret = platform_driver_register(&tegra124_cpufreq_platdrv);
->> +	if (ret)
->> +		return ret;
->> +
->> +	pdev = platform_device_register_simple("cpufreq-tegra124", -1, NULL, 0);
->> +	if (IS_ERR(pdev)) {
->> +		platform_driver_unregister(&tegra124_cpufreq_platdrv);
->> +		return PTR_ERR(pdev);
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +MODULE_AUTHOR("Tuomas Tynkkynen <ttynkkynen@nvidia.com>");
->> +MODULE_DESCRIPTION("cpufreq driver for nVIDIA Tegra124");
-> 
-> We use "NVIDIA" everywhere nowadays.
-> 
->> +MODULE_LICENSE("GPLv2");
-> 
-> The correct license string is "GPL v2".
-> 
->> +module_init(tegra_cpufreq_init);
-> 
-> The placement of this is unusual. It should go immediately below the
-> tegra_cpufreq_init() function.
-> 
-
-Ok.
-
-Thanks,
-Tuomas
-
--- 
-nvpublic
+--CdrF4e02JqNVZeln--
