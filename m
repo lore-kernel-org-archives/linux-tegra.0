@@ -1,47 +1,39 @@
 From: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
 Subject: Re: [PATCH v3] platform: Make platform_bus device a platform device
-Date: Wed, 23 Jul 2014 15:26:53 +0100
-Message-ID: <1406125613.25343.140.camel@hornet>
+Date: Wed, 23 Jul 2014 15:27:33 +0100
+Message-ID: <1406125653.25343.141.camel@hornet>
 References: <20140722173713.GA8959@kroah.com>
 	 <1406051719-17354-1-git-send-email-pawel.moll@arm.com>
-	 <CAOesGMgya9i=zc_AVO_mgrC_FjYz-RWxwXguNueVA=7gpq=5sA@mail.gmail.com>
+	 <20140722221619.GA15781@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAOesGMgya9i=zc_AVO_mgrC_FjYz-RWxwXguNueVA=7gpq=5sA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <20140722221619.GA15781-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Catalin Marinas <Catalin.Marinas-5wv7dgnIgG8@public.gmane.org>, Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Catalin Marinas <Catalin.Marinas-5wv7dgnIgG8@public.gmane.org>, "paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org" <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 2014-07-22 at 20:46 +0100, Olof Johansson wrote:
-> > @@ -946,12 +946,18 @@ int __init platform_bus_init(void)
-> >
-> >         early_platform_cleanup();
-> >
-> > -       error =3D device_register(&platform_bus);
-> > +       dev_set_name(&platform_bus.dev, "%s", platform_bus.name);
-> > +       error =3D device_register(&platform_bus.dev);
-> >         if (error)
-> >                 return error;
-> >         error =3D  bus_register(&platform_bus_type);
-> > -       if (error)
-> > -               device_unregister(&platform_bus);
-> > +       if (!error) {
-> > +               platform_bus.dev.of_node =3D of_allnodes;
->=20
-> This breaks all non-OF platforms:
->=20
-> drivers/base/platform.c: In function 'platform_bus_init':
-> drivers/base/platform.c:955:30: error: 'of_allnodes' undeclared (firs=
-t
-> use in this function)
->    platform_bus.dev.of_node =3D of_allnodes;
+On Tue, 2014-07-22 at 23:16 +0100, Greg Kroah-Hartman wrote:
+> On Tue, Jul 22, 2014 at 06:55:19PM +0100, Pawel Moll wrote:
+> > ... describing the root of the device tree, so one can write
+> > a platform driver initializing the platform.
+> > 
+> > There has been a lot of references to platform_bus device where
+> > it didn't make any sense, because simply using NULL as a parent
+> > will make the device be adopted by the top level anyway.
+> > 
+> > Signed-off-by: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
+> > ---
+> > Changes since v2:
+> > 
+> > * replaced references to platform_bus.dev with NULL
+> >   in places where it shouldn't make any difference
+> 
+> How about split this up with just the "change to NULL" changes as one
+> patch, and the rest as a second one?
 
-Right, of course, my bad. I can't see any other way of getting the tree
-root, so an #ifdef it will be...
+Yes, was about to do exactly this.
 
-Thanks for pointing this out!
-
-Pawe=C5=82
+Pawel
