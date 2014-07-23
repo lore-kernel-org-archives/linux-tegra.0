@@ -1,68 +1,105 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
+From: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH v2 14/16] cpufreq: Add cpufreq driver for Tegra124
-Date: Wed, 23 Jul 2014 13:55:57 +0530
-Message-ID: <CAKohponfKzuK+TnQvWcvaT8hRX8XZJWXWGMQw138DCwP=qcx+A@mail.gmail.com>
-References: <1405957142-19416-1-git-send-email-ttynkkynen@nvidia.com>
-	<1405957142-19416-15-git-send-email-ttynkkynen@nvidia.com>
-	<CAKohpomQthJ_XE-HhzW07Q4aVtxQVy97iaL0Vy6Q4Lhw22A=VA@mail.gmail.com>
-	<20140723065412.GA15759@ulmo.nvidia.com>
-	<CAKohponmg24pvnX2Jhfg5LHKKHx3VEm-6a_JXTGhVXY-aj3EOw@mail.gmail.com>
-	<20140723072442.GC15759@ulmo.nvidia.com>
+Date: Wed, 23 Jul 2014 14:57:51 +0300
+Message-ID: <53CFA33F.6030307@nvidia.com>
+References: <1405957142-19416-1-git-send-email-ttynkkynen@nvidia.com>	<1405957142-19416-15-git-send-email-ttynkkynen@nvidia.com> <CAKohpomQthJ_XE-HhzW07Q4aVtxQVy97iaL0Vy6Q4Lhw22A=VA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20140723072442.GC15759@ulmo.nvidia.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Tuomas Tynkkynen <ttynkkynen@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Paul Walmsley <pwalmsley@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAKohpomQthJ_XE-HhzW07Q4aVtxQVy97iaL0Vy6Q4Lhw22A=VA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 23 July 2014 12:54, Thierry Reding <thierry.reding@gmail.com> wrote:
-> ARM_TEGRA_CPUFREQ is still optional, so the select only applies when the
-> Tegra cpufreq driver is enabled. This is mostly just out of convenience,
-> though. The Tegra cpufreq driver uses the generic CPU0 cpufreq driver so
-> a select will automatically pull in the necessary dependency. With a
 
-Not necessarily. cpufreq-cpu0 can have few unmet dependency. And so
-there are chances that tegra driver is compiled but cpufreq-cpu0 isn't as
-we didn't mention it as a *hard* dependency.
 
-And so at boot, there wouldn't be any cpufreq support even when tegra's
-cpufreq driver is available.
+On 23/07/14 07:44, Viresh Kumar wrote:
+> On 21 July 2014 21:09, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> 
+>> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+>> index 7364a53..df3c73e 100644
+>> --- a/drivers/cpufreq/Kconfig.arm
+>> +++ b/drivers/cpufreq/Kconfig.arm
+>> @@ -244,6 +244,7 @@ config ARM_SPEAR_CPUFREQ
+>>  config ARM_TEGRA_CPUFREQ
+>>         bool "TEGRA CPUFreq support"
+>>         depends on ARCH_TEGRA
+>> +       depends on GENERIC_CPUFREQ_CPU0
+> 
+> Wouldn't this also disturb the existing cpufreq driver for earlier
+> tegra platforms? i.e. we don't need cpufreq-cpu0 for them
+> atleast as of now.
+> 
+>>         default y
+>>         help
+>>           This adds the CPUFreq driver support for TEGRA SOCs.
+>> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+>> index db6d9a2..3437d24 100644
+>> --- a/drivers/cpufreq/Makefile
+>> +++ b/drivers/cpufreq/Makefile
+>> @@ -76,6 +76,7 @@ obj-$(CONFIG_ARM_SA1100_CPUFREQ)      += sa1100-cpufreq.o
+>>  obj-$(CONFIG_ARM_SA1110_CPUFREQ)       += sa1110-cpufreq.o
+>>  obj-$(CONFIG_ARM_SPEAR_CPUFREQ)                += spear-cpufreq.o
+>>  obj-$(CONFIG_ARM_TEGRA_CPUFREQ)                += tegra-cpufreq.o
+>> +obj-$(CONFIG_ARM_TEGRA_CPUFREQ)                += tegra124-cpufreq.o
+> 
+> Maybe, you can update the same line if you want.
 
-Though, menuconfig may give some warnings no such situations.
+Oh, right.
 
-> "depends on" the Tegra cpufreq driver only becomes available after
-> you've selected GENERIC_CPUFREQ_CPU0, which is somewhat unintuitive.
->
-> To illustrate with an example: as a user, I want to enable CPU frequency
-> scaling on Tegra. So I use menuconfig to navigate to the "CPU Frequency
-> scaling" menu (enable it if not available yet) and look for an entry
-> that says "Tegra". But I can't find it because it's hidden due to the
-> lack of GENERIC_CPUFREQ_CPU0. That the Tegra CPU frequency driver uses a
-> generic driver is an implementation detail that users shouldn't have to
-> be aware of.
+> 
+>>  obj-$(CONFIG_ARM_VEXPRESS_SPC_CPUFREQ) += vexpress-spc-cpufreq.o
+>>
+>>  ##################################################################################
+>> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+> 
+>> +static struct cpufreq_frequency_table *freq_table;
+>> +
+>> +static struct device *cpu_dev;
+>> +static struct clk *cpu_clk;
+>> +static struct clk *pllp_clk;
+>> +static struct clk *pllx_clk;
+>> +static struct clk *dfll_clk;
+> 
+> The routines in this file are going to be called just once at boot, right?
+> In that case we are actually wasting some memory by creating globals.
+> Probably just move all these in a struct and allocate it at runtime.
+> 
 
-Don't know, the guy compiling out stuff should be knowledgeable enough to
-have a look why tegra cpufreq entry isn't shown in menu. As, probably the
-above problem I mentioned looks to be of more significance than this one,
-atleast to me :)
+Sure.
 
-And, another thing to mention is that CONFIG_TEGRA_CPUFREQ is valid
-for earlier platforms as well and so a select/depends wouldn't be valid for
-earlier platforms. We probably need another Kconfig entry here.
+[...]
+>> +
+>> +       ret = dev_pm_opp_init_cpufreq_table(cpu_dev, &freq_table);
+>> +       if (ret)
+>> +               goto out_put_pllp_clk;
+> 
+> Why do you need this? cpufreq-cpu0 also does it and this freq_table is
+> just not getting used at all then.
+> 
 
-> But we're using cpu_dev->of_node, so we need to make sure cpu_dev
-> doesn't go away suddenly. Simply keeping a reference to ->of_node
-> won't ensure that.
+Oops, yes I forgot to remove that part when making the conversion.
 
-Oh, yeah I completely agree, but don't see that as a normal code style
-people follow. Probably they take cpu for granted, which doesn't look
-right :)
+>> +
+>> +       pdev = platform_device_register_simple("cpufreq-tegra124", -1, NULL, 0);
+>> +       if (IS_ERR(pdev)) {
+>> +               platform_driver_unregister(&tegra124_cpufreq_platdrv);
+>> +               return PTR_ERR(pdev);
+>> +       }
+> 
+> Why create another unnecessary platform-device/driver here? If
+> of_find_matching_node() passes and you really need to probe cpufreq-cpu0
+> here, then just remove the other two calls and move probe's implementation
+> here only.
+> 
 
-> I guess technically it would be better if get_cpu_device() already
-> incremented the reference count on the returned struct device. Currently
-> it would theoretically still be possible for the device to disappear
-> between the call to get_cpu_device() and a call to get_device().
+The platform device is required for the deferred probe that can happen if the
+DFLL driver hasn't initialized yet, and module_init() callbacks don't seem to
+respect -EPROBE_DEFER.
 
-I agree again.
+[...]
+
+-- 
+nvpublic
