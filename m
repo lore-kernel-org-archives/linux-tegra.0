@@ -1,126 +1,47 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2 14/16] cpufreq: Add cpufreq driver for Tegra124
-Date: Wed, 23 Jul 2014 15:59:20 +0200
-Message-ID: <20140723135918.GC14263@ulmo.nvidia.com>
-References: <1405957142-19416-1-git-send-email-ttynkkynen@nvidia.com>
- <1405957142-19416-15-git-send-email-ttynkkynen@nvidia.com>
- <20140723070949.GB15759@ulmo.nvidia.com>
- <53CFAC22.40106@nvidia.com>
+From: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v3] platform: Make platform_bus device a platform device
+Date: Wed, 23 Jul 2014 15:26:53 +0100
+Message-ID: <1406125613.25343.140.camel@hornet>
+References: <20140722173713.GA8959@kroah.com>
+	 <1406051719-17354-1-git-send-email-pawel.moll@arm.com>
+	 <CAOesGMgya9i=zc_AVO_mgrC_FjYz-RWxwXguNueVA=7gpq=5sA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="adJ1OR3c6QgCpb/j"
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <53CFAC22.40106@nvidia.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Paul Walmsley <pwalmsley@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAOesGMgya9i=zc_AVO_mgrC_FjYz-RWxwXguNueVA=7gpq=5sA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Catalin Marinas <Catalin.Marinas-5wv7dgnIgG8@public.gmane.org>, Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
---adJ1OR3c6QgCpb/j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Jul 23, 2014 at 03:35:46PM +0300, Tuomas Tynkkynen wrote:
-> On 23/07/14 10:09, Thierry Reding wrote:
-> > On Mon, Jul 21, 2014 at 06:39:00PM +0300, Tuomas Tynkkynen wrote:
-[...]
-> >> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegr=
-a124-cpufreq.c
-[...]
-> >> +	cpu_clk =3D of_clk_get_by_name(cpu_dev->of_node, "cpu_g");
-> >> +	if (IS_ERR(cpu_clk))
-> >> +		return PTR_ERR(cpu_clk);
-[...]
-> >> +	pllp_clk =3D of_clk_get_by_name(cpu_dev->of_node, "pll_p");
-> >> +	if (IS_ERR(pllp_clk)) {
-> >> +		ret =3D PTR_ERR(pllp_clk);
-> >> +		goto out_put_pllx_clk;
-> >> +	}
-> >=20
-> > Can the above not be devm_clk_get(cpu_dev, "...") so that you can remove
-> > all the clk_put() calls in the cleanup code below?
+On Tue, 2014-07-22 at 20:46 +0100, Olof Johansson wrote:
+> > @@ -946,12 +946,18 @@ int __init platform_bus_init(void)
+> >
+> >         early_platform_cleanup();
+> >
+> > -       error =3D device_register(&platform_bus);
+> > +       dev_set_name(&platform_bus.dev, "%s", platform_bus.name);
+> > +       error =3D device_register(&platform_bus.dev);
+> >         if (error)
+> >                 return error;
+> >         error =3D  bus_register(&platform_bus_type);
+> > -       if (error)
+> > -               device_unregister(&platform_bus);
+> > +       if (!error) {
+> > +               platform_bus.dev.of_node =3D of_allnodes;
 >=20
-> That would allocate the clks under the cpu_dev's devres list, i.e. all the
-> clk_puts wouldn't happen when the cpufreq driver goes away, but only when
-> cpu_dev itself goes away.
-
-I don't think so. devres_release_all() is called on driver detach as
-well.
-
-> > But is there even a reason why we need that? Couldn't we make the
-> > driver's .remove() undo what .probe() did so that the driver can be
-> > unloaded?
+> This breaks all non-OF platforms:
 >=20
-> I guess that could be done, though to fully undo everything the regulator
-> voltage would also need to be saved/restored.
+> drivers/base/platform.c: In function 'platform_bus_init':
+> drivers/base/platform.c:955:30: error: 'of_allnodes' undeclared (firs=
+t
+> use in this function)
+>    platform_bus.dev.of_node =3D of_allnodes;
 
-That would certainly be my prefered approach. that way the driver can
-simply be unloaded, leaving the CPU in the same state as it was after
-boot.
+Right, of course, my bad. I can't see any other way of getting the tree
+root, so an #ifdef it will be...
 
-> > Otherwise it probably makes more sense not to use a driver (and dummy
-> > device) at all as Viresh already mentioned.
-> >=20
->=20
-> The dummy platform device is only required for probe deferral, if that
-> could be solved in a different way then yes.
+Thanks for pointing this out!
 
-I don't think it can. Probe deferral is pretty closely tied to devices
-so it's unlikely to ever get implemented for regular initcalls. And in
-this case I really think making the driver removable is a good thing.
-
-> >> +};
-> >> +
-> >> +static const struct of_device_id soc_of_matches[] =3D {
-> >> +	{ .compatible =3D "nvidia,tegra124", },
-> >> +	{}
-> >> +};
-> >> +
-> >> +static int __init tegra_cpufreq_init(void)
-> >> +{
-> >> +	int ret;
-> >> +	struct platform_device *pdev;
-> >> +
-> >> +	if (!of_find_matching_node(NULL, soc_of_matches))
-> >> +		return -ENODEV;
-> >=20
-> > I think this could be of_machine_is_compatible() since there's only a
-> > single entry in the match table. If there's a good chance that we may
-> > end up with more entries, perhaps now would be a good time to add an
-> > of_match_machine() function?
->=20
-> I think this driver should work on Tegra132 without modifications.
-> of_match_machine() does sound useful for some of the other cpufreq
-> drivers as well and likely for your soc_is_tegra() from the PMC
-> series as well.
-
-Yes, indeed. I'll give it a shot if you don't beat me to it with this
-series.
-
-Thierry
-
---adJ1OR3c6QgCpb/j
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJTz7+2AAoJEN0jrNd/PrOh+8QQAIc/DP10tF6BRPMbqKvsvKyp
-v7Wfj5fN9DRs9HYH/QPquxC1rt+GK2TCWMx/D9SbaIBakvwjMBQuLuPCr6dAC3L5
-2xx7REzr83DKtXtb92j3i6AA53fw2bmh4k1kwBK9hiRIKPV8K89LoPK3s9bLU0ws
-ra8+LBmtwq6ZpKBJ59vWHQxdV0hk8tQu78z1/VWs+neOt2mvoOZ1cKO/gMVvYso7
-Ryb1C6MYjNrkqTLNsj1NDkdhEsGSErc0nTjYsZHLGGTWp0hR/LmkPbhcdF/WbuAq
-RW61E+3+3ky+P9S/EPKm8wP14zS9RAxh5DNgOfoG1LYWWruzu87XdCxtPgqML8gH
-7mGMvtbjTUSnD3NDMxjzGOW2CUCFhwehNJzws4H2JX1c/P6fapGkAoniAgHPuowq
-hF4BBVWdC4F9H4lBCPRBDYPH0B5X9dbdvHHIrKsDm9GETWqnyeO4hSJ+kjp9WHUF
-zRH7azliBlbdBsWU4UWd/SV7O+NQqYbAO5AyGMPX9Ji5iFISTKi2mhFy5YCubIQM
-FheuX+Ehp/3Mx1n9B3hQlufO5/1nn0mw0aHRRamSJOZxWicUQqpwCLztVLGjNwjM
-Oqe3AhtpX/m4uetKbip9OAsyPo29Yot0pypdTEQpscqhcup5bprCiRzxjAxec/qb
-yeuhwhVidhQXbn4vHCQ9
-=i8Iv
------END PGP SIGNATURE-----
-
---adJ1OR3c6QgCpb/j--
+Pawe=C5=82
