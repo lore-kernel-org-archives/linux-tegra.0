@@ -1,24 +1,165 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v2 14/16] cpufreq: Add cpufreq driver for Tegra124
-Date: Wed, 23 Jul 2014 22:20:14 +0530
-Message-ID: <CAKohponLh66Ubr6=wY2OZCCrK11KZDj=DmXXqXsGGTHSG45wpA@mail.gmail.com>
-References: <1405957142-19416-1-git-send-email-ttynkkynen@nvidia.com>
-	<1405957142-19416-15-git-send-email-ttynkkynen@nvidia.com>
-	<CAKohpomQthJ_XE-HhzW07Q4aVtxQVy97iaL0Vy6Q4Lhw22A=VA@mail.gmail.com>
-	<53CFA33F.6030307@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <53CFA33F.6030307@nvidia.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Paul Walmsley <pwalmsley@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+From: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
+Subject: [PATCH v4 2/2] platform: Make platform_bus device a platform device
+Date: Wed, 23 Jul 2014 18:07:19 +0100
+Message-ID: <1406135239-17550-2-git-send-email-pawel.moll@arm.com>
+References: <1406135239-17550-1-git-send-email-pawel.moll@arm.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1406135239-17550-1-git-send-email-pawel.moll-5wv7dgnIgG8@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Catalin Marinas <Catalin.Marinas-5wv7dgnIgG8@public.gmane.org>, paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 23 July 2014 17:27, Tuomas Tynkkynen <ttynkkynen@nvidia.com> wrote:
-> The platform device is required for the deferred probe that can happen if the
-> DFLL driver hasn't initialized yet, and module_init() callbacks don't seem to
-> respect -EPROBE_DEFER.
+... describing the root of the device tree, so one can write
+a platform driver initializing the platform.
 
-Oh, which call in this file will return EPROBE_DEFER? I couldn't make out
-which one will depend on DFLL driver.
+Signed-off-by: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
+---
+Changes since v3:
+
+* split the platform_bus->NULL changes into a separate patch
+* added #ifdef CONFIG_OF around of_allnodes
+
+Changes since v2:
+
+* replaced references to platform_bus.dev with NULL
+  in places where it shouldn't make any difference
+
+Changes since v1:
+
+* rebased on top of v3.16-rc6
+* fixed up all new explicit references to platform_bus,
+  with majority in mach-shmobile; 99% of them seem completely
+  useless and I was *very* tempted to replace them with
+  NULL - all reasons for and against this are welcomed
+
+
+ arch/arm/mach-imx/devices/devices.c |  4 ++--
+ drivers/base/platform.c             | 20 ++++++++++++++------
+ drivers/char/tile-srom.c            |  2 +-
+ drivers/mmc/host/sdhci-pltfm.c      |  2 +-
+ drivers/scsi/hosts.c                |  2 +-
+ include/linux/platform_device.h     |  2 +-
+ 6 files changed, 20 insertions(+), 12 deletions(-)
+
+diff --git a/arch/arm/mach-imx/devices/devices.c b/arch/arm/mach-imx/devices/devices.c
+index 1b4366a..48c3817 100644
+--- a/arch/arm/mach-imx/devices/devices.c
++++ b/arch/arm/mach-imx/devices/devices.c
+@@ -24,12 +24,12 @@
+ 
+ struct device mxc_aips_bus = {
+ 	.init_name	= "mxc_aips",
+-	.parent		= &platform_bus,
++	.parent		= &platform_bus.dev,
+ };
+ 
+ struct device mxc_ahb_bus = {
+ 	.init_name	= "mxc_ahb",
+-	.parent		= &platform_bus,
++	.parent		= &platform_bus.dev,
+ };
+ 
+ int __init mxc_device_init(void)
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index eee48c4..9caffa7 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -30,8 +30,8 @@
+ /* For automatically allocated device IDs */
+ static DEFINE_IDA(platform_devid_ida);
+ 
+-struct device platform_bus = {
+-	.init_name	= "platform",
++struct platform_device platform_bus = {
++	.name	= "platform",
+ };
+ EXPORT_SYMBOL_GPL(platform_bus);
+ 
+@@ -300,7 +300,7 @@ int platform_device_add(struct platform_device *pdev)
+ 		return -EINVAL;
+ 
+ 	if (!pdev->dev.parent)
+-		pdev->dev.parent = &platform_bus;
++		pdev->dev.parent = &platform_bus.dev;
+ 
+ 	pdev->dev.bus = &platform_bus_type;
+ 
+@@ -946,12 +946,20 @@ int __init platform_bus_init(void)
+ 
+ 	early_platform_cleanup();
+ 
+-	error = device_register(&platform_bus);
++	dev_set_name(&platform_bus.dev, "%s", platform_bus.name);
++	error = device_register(&platform_bus.dev);
+ 	if (error)
+ 		return error;
+ 	error =  bus_register(&platform_bus_type);
+-	if (error)
+-		device_unregister(&platform_bus);
++	if (!error) {
++#ifdef CONFIG_OF
++		platform_bus.dev.of_node = of_allnodes;
++#endif
++		platform_bus.dev.bus = &platform_bus_type;
++		bus_add_device(&platform_bus.dev);
++	} else {
++		device_unregister(&platform_bus.dev);
++	}
+ 	return error;
+ }
+ 
+diff --git a/drivers/char/tile-srom.c b/drivers/char/tile-srom.c
+index bd37747..4e4b7a2 100644
+--- a/drivers/char/tile-srom.c
++++ b/drivers/char/tile-srom.c
+@@ -350,7 +350,7 @@ static int srom_setup_minor(struct srom_dev *srom, int index)
+ 		       SROM_PAGE_SIZE_OFF, sizeof(srom->page_size)) < 0)
+ 		return -EIO;
+ 
+-	dev = device_create(srom_class, &platform_bus,
++	dev = device_create(srom_class, &platform_bus.dev,
+ 			    MKDEV(srom_major, index), srom, "%d", index);
+ 	return PTR_ERR_OR_ZERO(dev);
+ }
+diff --git a/drivers/mmc/host/sdhci-pltfm.c b/drivers/mmc/host/sdhci-pltfm.c
+index 7e834fb..9a2b0d0 100644
+--- a/drivers/mmc/host/sdhci-pltfm.c
++++ b/drivers/mmc/host/sdhci-pltfm.c
+@@ -137,7 +137,7 @@ struct sdhci_host *sdhci_pltfm_init(struct platform_device *pdev,
+ 		dev_err(&pdev->dev, "Invalid iomem size!\n");
+ 
+ 	/* Some PCI-based MFD need the parent here */
+-	if (pdev->dev.parent != &platform_bus && !np)
++	if (pdev->dev.parent != &platform_bus.dev && !np)
+ 		host = sdhci_alloc_host(pdev->dev.parent,
+ 			sizeof(struct sdhci_pltfm_host) + priv_size);
+ 	else
+diff --git a/drivers/scsi/hosts.c b/drivers/scsi/hosts.c
+index 3cbb57a..c14c36f 100644
+--- a/drivers/scsi/hosts.c
++++ b/drivers/scsi/hosts.c
+@@ -218,7 +218,7 @@ int scsi_add_host_with_dma(struct Scsi_Host *shost, struct device *dev,
+ 		goto fail;
+ 
+ 	if (!shost->shost_gendev.parent)
+-		shost->shost_gendev.parent = dev ? dev : &platform_bus;
++		shost->shost_gendev.parent = dev ? dev : &platform_bus.dev;
+ 	if (!dma_dev)
+ 		dma_dev = shost->shost_gendev.parent;
+ 
+diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
+index 16f6654..a99032a 100644
+--- a/include/linux/platform_device.h
++++ b/include/linux/platform_device.h
+@@ -44,7 +44,7 @@ extern int platform_device_register(struct platform_device *);
+ extern void platform_device_unregister(struct platform_device *);
+ 
+ extern struct bus_type platform_bus_type;
+-extern struct device platform_bus;
++extern struct platform_device platform_bus;
+ 
+ extern void arch_setup_pdev_archdata(struct platform_device *);
+ extern struct resource *platform_get_resource(struct platform_device *,
+-- 
+1.9.1
