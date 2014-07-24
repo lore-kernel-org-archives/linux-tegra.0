@@ -1,37 +1,83 @@
-From: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 14/16] cpufreq: Add cpufreq driver for Tegra124
-Date: Thu, 24 Jul 2014 05:43:40 +0530
-Message-ID: <CAKohponsS8WJy4qBa=3em9AcxfpfLZR_mx4Ln8N3Q_gBaf52NA@mail.gmail.com>
-References: <1405957142-19416-1-git-send-email-ttynkkynen@nvidia.com>
-	<1405957142-19416-15-git-send-email-ttynkkynen@nvidia.com>
-	<CAKohpomQthJ_XE-HhzW07Q4aVtxQVy97iaL0Vy6Q4Lhw22A=VA@mail.gmail.com>
-	<53CFA33F.6030307@nvidia.com>
-	<CAKohponLh66Ubr6=wY2OZCCrK11KZDj=DmXXqXsGGTHSG45wpA@mail.gmail.com>
-	<53D00A47.7050203@nvidia.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v4 1/2] platform: Remove most references to platform_bus
+ device
+Date: Wed, 23 Jul 2014 19:14:57 -0700
+Message-ID: <20140724021457.GA31573@kroah.com>
+References: <1406135239-17550-1-git-send-email-pawel.moll@arm.com>
+ <20140723174137.GC16664@kroah.com>
+ <CAOesGMiGzfwLZvkxzzQQ0k4M7i2VukrCHGXCrFhZ6A3mkjVbiw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53D00A47.7050203-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <CAOesGMiGzfwLZvkxzzQQ0k4M7i2VukrCHGXCrFhZ6A3mkjVbiw@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Paul Walmsley <paul@pwsan.com>, Pawel Moll <pawel.moll@arm.com>, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, Catalin Marinas <Catalin.Marinas@arm.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "arm@kernel.org" <arm@kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 24 July 2014 00:47, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> It's this:
->
-> +static int tegra124_cpufreq_probe(struct platform_device *pdev)
-> +{
-> [...]
-> +
-> +       dfll_clk = of_clk_get_by_name(cpu_dev->of_node, "dfll");
-> +       if (IS_ERR(dfll_clk)) {
-> +               ret = PTR_ERR(dfll_clk);
-> +               goto out_put_cpu_clk;
-> +       }
+On Wed, Jul 23, 2014 at 10:49:01AM -0700, Olof Johansson wrote:
+> On Wed, Jul 23, 2014 at 10:41 AM, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> > On Wed, Jul 23, 2014 at 06:07:18PM +0100, Pawel Moll wrote:
+> >> A number of board files in arch/arm and arch/unicore32
+> >> explicitly reference platform_bus device as a parent
+> >> for new platform devices.
+> >>
+> >> This is unnecessary, as platform device API guarantees
+> >> that devices with NULL parent are going to by adopted
+> >> by the mentioned "root" device.
+> >>
+> >> This patch removes or replaces with NULL such references.
+> >>
+> >> Signed-off-by: Pawel Moll <pawel.moll@arm.com>
+> >> ---
+> >>  arch/arm/mach-bcm/board_bcm21664.c      |  3 +--
+> >>  arch/arm/mach-bcm/board_bcm281xx.c      |  3 +--
+> >>  arch/arm/mach-clps711x/board-edb7211.c  |  6 +++---
+> >>  arch/arm/mach-clps711x/board-p720t.c    |  6 +++---
+> >>  arch/arm/mach-imx/mach-mx27ads.c        |  2 +-
+> >>  arch/arm/mach-shmobile/board-ape6evm.c  | 14 +++++++-------
+> >>  arch/arm/mach-shmobile/board-bockw.c    | 19 ++++++++----------
+> >>  arch/arm/mach-shmobile/board-genmai.c   |  5 ++---
+> >>  arch/arm/mach-shmobile/board-koelsch.c  | 26 ++++++++++++-------------
+> >>  arch/arm/mach-shmobile/board-lager.c    | 34 ++++++++++++++-------------------
+> >>  arch/arm/mach-shmobile/board-marzen.c   |  1 -
+> >>  arch/arm/mach-shmobile/setup-r7s72100.c |  2 +-
+> >>  arch/arm/mach-shmobile/setup-r8a73a4.c  |  8 ++++----
+> >>  arch/arm/mach-shmobile/setup-r8a7778.c  | 13 ++++++-------
+> >>  arch/arm/mach-shmobile/setup-r8a7779.c  |  6 +++---
+> >>  arch/arm/mach-shmobile/setup-r8a7790.c  | 10 +++++-----
+> >>  arch/arm/mach-shmobile/setup-r8a7791.c  |  8 ++++----
+> >>  arch/unicore32/kernel/puv3-core.c       |  2 +-
+> >>  arch/unicore32/kernel/puv3-nb0916.c     |  6 +++---
+> >>  19 files changed, 79 insertions(+), 95 deletions(-)
+> >
+> > Looks good, if there are no objections, I'll take this through my
+> > driver-core tree, so that your follow-on patches that change things will
+> > still apply.
+> 
+> Acked-by: Olof Johansson <olof@lixom.net>
+> 
+> Just in case we end up having dependent patches and/or lots of
+> conflicts, can you stick these on a short topic branch that we can
+> also pull in?
 
-This would search for clocks passed via DT, right? Why would we
-get EPROBE_DEFER for that? Sorry for the stupid question.
+Hm, I don't normally do "short topic branches", so I've just stuck it
+into my driver-core-next branch of my driver-core.git tree on
+kernel.org.  I doubt the "make platform_bus static" or "make it a
+platform device" will happen soon, given my questions on the other patch
+in this series.
 
---
-viresh
+thanks,
+
+greg k-h
