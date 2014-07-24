@@ -1,72 +1,51 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2 14/16] cpufreq: Add cpufreq driver for Tegra124
-Date: Thu, 24 Jul 2014 11:10:04 +0200
-Message-ID: <20140724091002.GA3811@ulmo.nvidia.com>
-References: <1405957142-19416-1-git-send-email-ttynkkynen@nvidia.com>
- <1405957142-19416-15-git-send-email-ttynkkynen@nvidia.com>
- <CAKohpomQthJ_XE-HhzW07Q4aVtxQVy97iaL0Vy6Q4Lhw22A=VA@mail.gmail.com>
- <53CFA33F.6030307@nvidia.com>
- <CAKohponLh66Ubr6=wY2OZCCrK11KZDj=DmXXqXsGGTHSG45wpA@mail.gmail.com>
- <53D00A47.7050203@nvidia.com>
- <CAKohponsS8WJy4qBa=3em9AcxfpfLZR_mx4Ln8N3Q_gBaf52NA@mail.gmail.com>
+From: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v3] platform: Make platform_bus device a platform device
+Date: Thu, 24 Jul 2014 18:12:52 +0100
+Message-ID: <1406221972.25343.184.camel@hornet>
+References: <20140722173713.GA8959@kroah.com>
+	 <1406051719-17354-1-git-send-email-pawel.moll@arm.com>
+	 <1406052069.25343.93.camel@hornet> <20140722181505.GA9898@kroah.com>
+	 <1406135762.25343.151.camel@hornet> <20140723193434.GA31983@kroah.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="wRRV7LY7NUeQGEoC"
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAKohponsS8WJy4qBa=3em9AcxfpfLZR_mx4Ln8N3Q_gBaf52NA@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Tuomas Tynkkynen <ttynkkynen@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Paul Walmsley <pwalmsley@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140723193434.GA31983-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Catalin Marinas <Catalin.Marinas-5wv7dgnIgG8@public.gmane.org>, "paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org" <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Wed, 2014-07-23 at 20:34 +0100, Greg Kroah-Hartman wrote:
+> > > > > diff --git a/drivers/scsi/hosts.c b/drivers/scsi/hosts.c
+> > > > > index 3cbb57a..c14c36f 100644
+> > > > > --- a/drivers/scsi/hosts.c
+> > > > > +++ b/drivers/scsi/hosts.c
+> > > > > @@ -218,7 +218,7 @@ int scsi_add_host_with_dma(struct Scsi_Host *shost, struct device *dev,
+> > > > >                 goto fail;
+> > > > > 
+> > > > >         if (!shost->shost_gendev.parent)
+> > > > > -               shost->shost_gendev.parent = dev ? dev : &platform_bus;
+> > > > > +               shost->shost_gendev.parent = dev ? dev : &platform_bus.dev;
+> > > > >         if (!dma_dev)
+> > > > >                 dma_dev = shost->shost_gendev.parent;
+> > > > > 
+> > > > 
+> > > > shost_gendev is a generic (as in struct device, non-platform one)
+> > > > device, that is being explicitly placed in the hierarchy.
+> > > 
+> > > Then make it a virtual device, as that's what it is, replace this with
+> > > NULL.
+> > 
+> > Makes sense to me, I just wonder what the author meant.
+> 
+> With scsi code, who knows :)
 
---wRRV7LY7NUeQGEoC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Looking at this further, it seems that the main purpose here is to make
+sure that dma_dev is not NULL...
 
-On Thu, Jul 24, 2014 at 05:43:40AM +0530, Viresh Kumar wrote:
-> On 24 July 2014 00:47, Tuomas Tynkkynen <ttynkkynen@nvidia.com> wrote:
-> > It's this:
-> >
-> > +static int tegra124_cpufreq_probe(struct platform_device *pdev)
-> > +{
-> > [...]
-> > +
-> > +       dfll_clk =3D of_clk_get_by_name(cpu_dev->of_node, "dfll");
-> > +       if (IS_ERR(dfll_clk)) {
-> > +               ret =3D PTR_ERR(dfll_clk);
-> > +               goto out_put_cpu_clk;
-> > +       }
->=20
-> This would search for clocks passed via DT, right? Why would we
-> get EPROBE_DEFER for that? Sorry for the stupid question.
+So it's not just simply a case of s/&platform_bus/NULL/ - maybe the
+function should fail when !dma_dev? I'll split the patch so each case is
+separate and post them to relevant maintainers.
 
-of_clk_get_by_name() can return -EPROBE_DEFER, which will happen if the
-clock provider hasn't been registered yet.
-
-Thierry
-
---wRRV7LY7NUeQGEoC
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJT0M1qAAoJEN0jrNd/PrOh86YQAI3S6c9lir6DHUekyi7REuFx
-7joUQ8un74bTj+c6jDOxHq14qConR0AXcvb3tOT8N696hBddSYeWfLv87iMEsQsA
-xhZjd3dcgm/9jL1eHzjuCY9GrO7kMu6fGlKm854kTP2BPeWhp93X+aQzEtdw1qja
-KdlXfZKvx6kObrDacZIqq88Ru0jZ+ZebJiKCvpkJac0lQ5AFV3voFKtQXjWdLcnJ
-ebDZ4qhqixhernnpFzhWUxUoTZOFYevSlMI9T4XOubWEgcEn/lXjwI8N3KnGnpKe
-zejX8qBWOmYAfsAxvHjIoC2PPjZdW9U81sOTQUl0H1vDhsV/pki7qSTFVrGcO7Bh
-YoTg7YzUi81g5klG94dZ9nwEkLEzmJJWioHVvXx2cH52WPFqSRnL6NSc9huB2rZS
-B8qNYtLLGBxFItSe5VR4XnbofzNQkUcbMRxDmRK7740K5OcdByoPb4NsGYRH9zCJ
-yqI10am7VkO1+94sjBDUq0qcYeDCTjN5+3ujpyG6LnTFaEtpZa40dfB7tPwRCD3g
-AB5zuGhL83U9wTkfm+lSfYMRtn+tDjO5H4vJ7AQpMXAsQoWT3pWDCzFfX/nYviQZ
-GST6mlKYRcBVVBELwwYkgkmZTNEQXiW9uEvorIG3iENSMsZ4338RrTynztMdLg0h
-Ei2gFch/Zy8Nj2NkhXBQ
-=kWfZ
------END PGP SIGNATURE-----
-
---wRRV7LY7NUeQGEoC--
+Pawel
