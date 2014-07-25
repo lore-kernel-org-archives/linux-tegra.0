@@ -1,41 +1,59 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH tegra-uboot-scripts v2] Make folder for dtb files as an
- argument
-Date: Fri, 25 Jul 2014 10:05:55 -0600
-Message-ID: <53D28063.5090909@wwwdotorg.org>
-References: <aaa2e78cfda2a2afe91e9ac8dca4583e8a860123.1406238873.git.stefan@agner.ch>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v2 01/16] regmap: Add regmap_get_device
+Date: Fri, 25 Jul 2014 18:34:00 +0100
+Message-ID: <20140725173400.GZ17528@sirena.org.uk>
+References: <1405957142-19416-1-git-send-email-ttynkkynen@nvidia.com>
+ <1405957142-19416-2-git-send-email-ttynkkynen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <aaa2e78cfda2a2afe91e9ac8dca4583e8a860123.1406238873.git.stefan-XLVq0VzYD2Y@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="w41lMVNXnOw3ZHPk"
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1405957142-19416-2-git-send-email-ttynkkynen@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Paul Walmsley <pwalmsley@nvidia.com>, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/24/2014 03:55 PM, Stefan Agner wrote:
-> Some distribution use different folders to store the dtb files
-> rather then storing them directly in /boot. This adds a new
-> argument to define which folder U-Boot should search the dtb
-> file.
 
-> diff --git a/gen-uboot-script.py b/gen-uboot-script.py
+--w41lMVNXnOw3ZHPk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> @@ -107,7 +110,10 @@ if args.type == 'net':
->       prefix=''
->   else:
->       load='load ${devtype} ${devnum}:${rootpart}'
-> -    prefix='/boot/'
-> +    if not args.dtbdir:
-> +        prefix='/boot/'
-> +    else:
-> +        prefix=args.dtbdir+'/'
->
->   f.write(load + ' ${kernel_addr_r} ' + prefix + 'zImage\n')
+On Mon, Jul 21, 2014 at 06:38:47PM +0300, Tuomas Tynkkynen wrote:
+> Add a new function regmap_get_device to obtain the underlying struct
+> device from a regmap.
 
-I don't think this is right; it makes --dtbdir affect the value of the 
-prefix variable, which is used for all of zImage, DTBs, and initrd. I 
-didn't think that's what you wanted, although if it is, then (a) the 
-option doesn't have the right name, and (b), it should presumably affect 
-network mode too.
+I've applied this...
+
+> +struct device *regmap_get_device(struct regmap *map)
+> +{
+> +	return map->dev;
+> +}
+> +
+
+...plus a followup exporting the symbol so it can be used from modules.
+
+--w41lMVNXnOw3ZHPk
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJT0pUFAAoJELSic+t+oim9+KAP/RQuuZn2h04DaqFGmgTxw3iw
+8ZcctSQ/V5rJckcCGyGgmNeC7N3x3fIjCUc6rAf+sI4y7o8CoWvLvTE7Rlp9tIx9
+pZ90IgiSOH8nz+N+RjBe4yk35pePuGN3bE+AtlLW3p7AOr47WX8RCtcAJ2pVKs5+
+Qre9QFSAD09fLHKsiW1q0uSf6xWBBNgHpfMzPq003O0zRZvDp7xsGNH5Lz1VSSQg
+NKln7o10n0DmD6nskitiaR3/26f8NEXDm726Bj9z5sothK9j4nz1DubxlPhqHmFl
+EmTGxosU3+iNsxl+hEO5Z1tMpetk2MoWqb50qCCFGUVkhl/b98BBLgvr+zlNtTrz
+QMnCs/l8QJ/tGt44sEKVutctcLnxU/tjnt+7OAcI9KbyvTOjqeS/ntvMebf3rUoC
+ct3ZnRBPnQajAdjNSsXcgR5Xd+jsZEKk2hQPIgViR4ndPWvq33g5gdqRqWhMoxWx
+66xuXBmoIvToJgmDYVZULk50r93887SY1tYw1txNa3TAyhRiHpGRtAll7wxoHAgz
+PTdVkI771vLn8dyzftVzsj95KbHFQi3KKhacCYreUprTCTDxbd3U5ycjZ2kS5mOz
+IOo2l2CjEzydolBiaP/N7Bcir2oCt0cUpGI84O8zcBJoGhKkoWosMcYbHdf/Glnp
+GfNojqxnfKEYyBDvUR6L
+=E4/F
+-----END PGP SIGNATURE-----
+
+--w41lMVNXnOw3ZHPk--
