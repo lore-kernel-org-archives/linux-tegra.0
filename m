@@ -1,50 +1,46 @@
-From: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
-Subject: [PATCH 1/5] ARM: imx: Remove references to platform_bus in mxc code
-Date: Fri, 25 Jul 2014 15:23:49 +0100
-Message-ID: <1406298233-27876-1-git-send-email-pawel.moll@arm.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Catalin Marinas <Catalin.Marinas-5wv7dgnIgG8@public.gmane.org>, paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Shawn Guo <shawn.guo-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+From: Pawel Moll <pawel.moll@arm.com>
+Subject: [PATCH 4/5] [SCSI] Do not use platform_bus as a parent
+Date: Fri, 25 Jul 2014 15:23:52 +0100
+Message-ID: <1406298233-27876-4-git-send-email-pawel.moll@arm.com>
+References: <1406298233-27876-1-git-send-email-pawel.moll@arm.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1406298233-27876-1-git-send-email-pawel.moll@arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@wwwdotorg.org>, Catalin Marinas <Catalin.Marinas@arm.com>, paul@pwsan.com, Arnd Bergmann <arnd@arndb.de>, Peter De Schrijver <pdeschrijver@nvidia.com>, arm@kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The bus devices created to be parents for other peripherals
-were using platform_bus as a parent, not being platform
-devices themselves. Remove the references, making them
-virtual devices instead.
+The host devices without a parent were "forcefully adopted"
+by platform bus. This patch removes this assignment. In
+effect the dev_dev may be NULL now, which means ISA.
 
-Cc: Shawn Guo <shawn.guo-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
-Cc: Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Signed-off-by: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
+Cc: James E.J. Bottomley <JBottomley@parallels.com>
+Cc: linux-scsi@vger.kernel.org
+Signed-off-by: Pawel Moll <pawel.moll@arm.com>
 ---
 
 This patch is a part of effort to remove references to platform_bus
 and make it static.
 
-Shawn, Sascha - could you, please, have a look if such change
-is acceptable for you?
+James, could you please have a look and advice if the change is
+correct? Would you happen to know the "real reasons" behind
+using the root platform_bus device a parent?
 
- arch/arm/mach-imx/devices/devices.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/scsi/hosts.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-imx/devices/devices.c b/arch/arm/mach-imx/devices/devices.c
-index 1b4366a..8eab544 100644
---- a/arch/arm/mach-imx/devices/devices.c
-+++ b/arch/arm/mach-imx/devices/devices.c
-@@ -24,12 +24,10 @@
+diff --git a/drivers/scsi/hosts.c b/drivers/scsi/hosts.c
+index 3cbb57a..0c7389f 100644
+--- a/drivers/scsi/hosts.c
++++ b/drivers/scsi/hosts.c
+@@ -218,7 +218,7 @@ int scsi_add_host_with_dma(struct Scsi_Host *shost, struct device *dev,
+ 		goto fail;
  
- struct device mxc_aips_bus = {
- 	.init_name	= "mxc_aips",
--	.parent		= &platform_bus,
- };
+ 	if (!shost->shost_gendev.parent)
+-		shost->shost_gendev.parent = dev ? dev : &platform_bus;
++		shost->shost_gendev.parent = dev;
+ 	if (!dma_dev)
+ 		dma_dev = shost->shost_gendev.parent;
  
- struct device mxc_ahb_bus = {
- 	.init_name	= "mxc_ahb",
--	.parent		= &platform_bus,
- };
- 
- int __init mxc_device_init(void)
 -- 
 1.9.1
