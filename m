@@ -1,70 +1,41 @@
-From: Pawel Moll <pawel.moll@arm.com>
-Subject: Re: [PATCH 4/5] [SCSI] Do not use platform_bus as a parent
-Date: Fri, 25 Jul 2014 16:40:56 +0100
-Message-ID: <1406302856.17726.18.camel@hornet>
-References: <1406298233-27876-1-git-send-email-pawel.moll@arm.com>
- <1406298233-27876-4-git-send-email-pawel.moll@arm.com>
- <1406299616.1789.13.camel@jarvis.lan>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH tegra-uboot-scripts v2] Make folder for dtb files as an
+ argument
+Date: Fri, 25 Jul 2014 10:05:55 -0600
+Message-ID: <53D28063.5090909@wwwdotorg.org>
+References: <aaa2e78cfda2a2afe91e9ac8dca4583e8a860123.1406238873.git.stefan@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1406299616.1789.13.camel@jarvis.lan>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: "paul@pwsan.com" <paul@pwsan.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "arm@kernel.org" <arm@kernel.org>, Catalin Marinas <Catalin.Marinas@arm.com>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <aaa2e78cfda2a2afe91e9ac8dca4583e8a860123.1406238873.git.stefan-XLVq0VzYD2Y@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gRnJpLCAyMDE0LTA3LTI1IGF0IDE1OjQ2ICswMTAwLCBKYW1lcyBCb3R0b21sZXkgd3JvdGU6
-Cj4gT24gRnJpLCAyMDE0LTA3LTI1IGF0IDE1OjIzICswMTAwLCBQYXdlbCBNb2xsIHdyb3RlOgo+
-ID4gVGhlIGhvc3QgZGV2aWNlcyB3aXRob3V0IGEgcGFyZW50IHdlcmUgImZvcmNlZnVsbHkgYWRv
-cHRlZCIKPiA+IGJ5IHBsYXRmb3JtIGJ1cy4gVGhpcyBwYXRjaCByZW1vdmVzIHRoaXMgYXNzaWdu
-bWVudC4gSW4KPiA+IGVmZmVjdCB0aGUgZGV2X2RldiBtYXkgYmUgTlVMTCBub3csIHdoaWNoIG1l
-YW5zIElTQS4KPiA+IAo+ID4gQ2M6IEphbWVzIEUuSi4gQm90dG9tbGV5IDxKQm90dG9tbGV5QHBh
-cmFsbGVscy5jb20+Cj4gPiBDYzogbGludXgtc2NzaUB2Z2VyLmtlcm5lbC5vcmcKPiA+IFNpZ25l
-ZC1vZmYtYnk6IFBhd2VsIE1vbGwgPHBhd2VsLm1vbGxAYXJtLmNvbT4KPiA+IC0tLQo+ID4gCj4g
-PiBUaGlzIHBhdGNoIGlzIGEgcGFydCBvZiBlZmZvcnQgdG8gcmVtb3ZlIHJlZmVyZW5jZXMgdG8g
-cGxhdGZvcm1fYnVzCj4gPiBhbmQgbWFrZSBpdCBzdGF0aWMuCj4gPiAKPiA+IEphbWVzLCBjb3Vs
-ZCB5b3UgcGxlYXNlIGhhdmUgYSBsb29rIGFuZCBhZHZpY2UgaWYgdGhlIGNoYW5nZSBpcwo+ID4g
-Y29ycmVjdD8gV291bGQgeW91IGhhcHBlbiB0byBrbm93IHRoZSAicmVhbCByZWFzb25zIiBiZWhp
-bmQKPiA+IHVzaW5nIHRoZSByb290IHBsYXRmb3JtX2J1cyBkZXZpY2UgYSBwYXJlbnQ/Cj4gCj4g
-WWVzLCBmb3IgRE1BIHB1cnBvc2VzLCB0aGUgcGFyZW50IGNhbm5vdCBub3cgYmUgTlVMTDsgd2Un
-bGwgZ2V0IGEgcGFuaWMKPiBpbiB0aGUgRE1BIHRyYW5zZmVycyBpZiBpdCBpcy4gIAoKVGhhdCdz
-IHdoYXQgSSB0aG91Z2ggYXQgdGhlIGJlZ2lubmluZyBhcyB3ZWxsLCBidXQgdGhlbiBJIGNyYXds
-ZWQKdGhyb3VnaCBnZXRfZG1hX29wcyhzdHJ1Y3QgZGV2aWNlICpkZXYpIGFuZCBpdCBzZWVtcyB0
-aGF0IG9uIG1vc3QKYXJjaGl0ZWN0dXJlcyAoYWxsIGJ1dCB0d28sIGlmIEkgcmVtZW1iZXIgY29y
-cmVjdGx5KSBpdCB3aWxsIHJldHVybiBhCmRlZmF1bHQgc2V0IG9mIERNQSBvcHMgaWYgdGhlIGRl
-diA9PSBOVUxMLCBlZy4KCnN0YXRpYyBpbmxpbmUgc3RydWN0IGRtYV9tYXBfb3BzICpnZXRfZG1h
-X29wcyhzdHJ1Y3QgZGV2aWNlICpkZXYpCnsKI2lmbmRlZiBDT05GSUdfWDg2X0RFVl9ETUFfT1BT
-CiAgICAgICAgcmV0dXJuIGRtYV9vcHM7CiNlbHNlCiAgICAgICAgaWYgKHVubGlrZWx5KCFkZXYp
-IHx8ICFkZXYtPmFyY2hkYXRhLmRtYV9vcHMpCiAgICAgICAgICAgICAgICByZXR1cm4gZG1hX29w
-czsKICAgICAgICBlbHNlCiAgICAgICAgICAgICAgICByZXR1cm4gZGV2LT5hcmNoZGF0YS5kbWFf
-b3BzOwojZW5kaWYgCn0KCmluIGFyY2gveDg2L2luY2x1ZGUvYXNtL2RtYS1tYXBwaW5nLmguIE5v
-dywgdGhlcmUgc2VlbSB0byBiZSBvbmx5IGEKaGFuZGZ1bCBvZiBwbGFjZXMgd2hlcmUgZGV2X2Rt
-YSBpcyBkZXJlZmVyZW5jZWQ6IHNjc2lfZG1hX21hcCBhbmQKc2NzaV9kbWFfdW5tYXAgaW4gZHJp
-dmVycy9zY3NpL3Njc2lfbGliX2RtYS5jLCB3aGVyZSBhbGwgdGhlIGNhbGxzIHNlZW0KdG8gYmUg
-Ik5VTEwgcmVzaXN0YW50IiBhbmQgX19zY3NpX2FsbG9jX3F1ZXVlIGluIF9fc2NzaV9hbGxvY19x
-dWV1ZQp3aGljaCB3aWxsIG9vcHMgYXMgeW91IHNhaWQuCgpBbnl3YXksIGlmIHlvdSBhcmUgc2F5
-aW5nIHRoYXQgZGV2X2RtYSBtdXN0IG5vdCBiZSBOVUxMIGF0IGFueQpjaXJjdW1zdGFuY2VzLCBJ
-J2xsIGVpdGhlciBoYXZlIHRvIGZpbmQgc29tZSBraW5kIG9mIHJlcGxhY2VtZW50IGZvcgpwbGF0
-Zm9ybV9idXMgb3IgY29udmluY2UgR3JlZyB0aGF0IHBsYXRmb3JtX2J1cyBtdXN0IG5vdCBiZSBt
-YWRlCnN0YXRpYyA7LSkKCj4gQSBsb3Qgb2YgdGhlIGxlZ2FjeSBJU0EgZGV2aWNlIG9uIHg4Ngo+
-IGFuZCBJIHRob3VnaHQgc29tZSBBUk0gU09DIGRldmljZXMgZG9uJ3QgcGFzcyBpbiB0aGUgcGFy
-ZW50IGRldmljZSwgc28KPiB3ZSBoYW5nIHRoZW0gb2ZmIGEga25vd24gcGFyZW50LgoKVGhhdCdz
-IGFub3RoZXIgdGhpbmcgSSdtIG5vdCBzdXJlIC0gb25jZSBhc3NpZ25lZCwgaXMgdGhlIGRtYV9k
-ZXYKcmVsYXRlZCB0byB0aGUgcGFyZW50IGluIGFueSB3YXk/IEV2ZW4gbW9yZSAtIGlzIHRoZSBz
-aG9zdF9nZW5kZXYucGFyZW50CnVzZWQgYXQgYWxsPyBEb2Vzbid0IHNlZW0gdG8gYmUuIElmIGl0
-J3Mgb25seSBhYm91dCBhIHBsYWNlIGluIHRoZQpkZXZpY2UgbW9kZWwgaGllcmFyY2h5LCBsZWF2
-aW5nIHBhcmVudCBhcyBOVUxMIHdpbGwgbWFrZSBzdWNoIGRldmljZSBhCnZpcnR1YWwgb25lLCB3
-aGljaCBpdCBwcm9iYWJseSBzaG91bGQgYmUuLi4KClBhd2XFggoKCl9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBs
-aXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5m
-cmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
+On 07/24/2014 03:55 PM, Stefan Agner wrote:
+> Some distribution use different folders to store the dtb files
+> rather then storing them directly in /boot. This adds a new
+> argument to define which folder U-Boot should search the dtb
+> file.
+
+> diff --git a/gen-uboot-script.py b/gen-uboot-script.py
+
+> @@ -107,7 +110,10 @@ if args.type == 'net':
+>       prefix=''
+>   else:
+>       load='load ${devtype} ${devnum}:${rootpart}'
+> -    prefix='/boot/'
+> +    if not args.dtbdir:
+> +        prefix='/boot/'
+> +    else:
+> +        prefix=args.dtbdir+'/'
+>
+>   f.write(load + ' ${kernel_addr_r} ' + prefix + 'zImage\n')
+
+I don't think this is right; it makes --dtbdir affect the value of the 
+prefix variable, which is used for all of zImage, DTBs, and initrd. I 
+didn't think that's what you wanted, although if it is, then (a) the 
+option doesn't have the right name, and (b), it should presumably affect 
+network mode too.
