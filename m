@@ -1,48 +1,47 @@
-From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-Subject: [PATCH tegra-uboot-scripts v2] Make folder for dtb files as an argument
-Date: Thu, 24 Jul 2014 23:55:09 +0200
-Message-ID: <aaa2e78cfda2a2afe91e9ac8dca4583e8a860123.1406238873.git.stefan@agner.ch>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stefan-XLVq0VzYD2Y@public.gmane.org
+From: Jisheng Zhang <jszhang@marvell.com>
+Subject: [PATCH] PCI: tegra: add missing cleanup in error path and teardown_irq
+Date: Fri, 25 Jul 2014 20:18:23 +0800
+Message-ID: <1406290703-2175-1-git-send-email-jszhang@marvell.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-pci-owner@vger.kernel.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: thierry.reding@gmail.com, bhelgaas@google.com, swarren@wwwdotorg.org
+Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, Jisheng Zhang <jszhang@marvell.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Some distribution use different folders to store the dtb files
-rather then storing them directly in /boot. This adds a new
-argument to define which folder U-Boot should search the dtb
-file.
+We should call tegra_msi_free() to free the msi bit if
+irq_create_mapping() fails. And we need to dispose the irq mapping
+during irq teardown.
 
-Signed-off-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
 ---
- gen-uboot-script.py | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/pci/host/pci-tegra.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/gen-uboot-script.py b/gen-uboot-script.py
-index 8ca3d01..47de520 100755
---- a/gen-uboot-script.py
-+++ b/gen-uboot-script.py
-@@ -71,6 +71,9 @@ parser.add_argument('--noisy', action='store_true',
- parser.add_argument('--cmdline',
-     help='Extra command-line options')
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index 083cf37..695e7b9 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -1203,8 +1203,10 @@ static int tegra_msi_setup_irq(struct msi_chip *chip, struct pci_dev *pdev,
+ 		return hwirq;
  
-+parser.add_argument('--dtb-dir', dest='dtbdir', default=None,
-+    help='Search directory for dtbs on target; defaults to /boot')
-+
- args = parser.parse_args()
- if args.debug: print args
+ 	irq = irq_create_mapping(msi->domain, hwirq);
+-	if (!irq)
++	if (!irq) {
++		tegra_msi_free(msi, hwirq);
+ 		return -EINVAL;
++	}
  
-@@ -107,7 +110,10 @@ if args.type == 'net':
-     prefix=''
- else:
-     load='load ${devtype} ${devnum}:${rootpart}'
--    prefix='/boot/'
-+    if not args.dtbdir:
-+        prefix='/boot/'
-+    else:
-+        prefix=args.dtbdir+'/'
+ 	irq_set_msi_desc(irq, desc);
  
- f.write(load + ' ${kernel_addr_r} ' + prefix + 'zImage\n')
+@@ -1223,6 +1225,7 @@ static void tegra_msi_teardown_irq(struct msi_chip *chip, unsigned int irq)
+ 	struct tegra_msi *msi = to_tegra_msi(chip);
+ 	struct irq_data *d = irq_get_irq_data(irq);
+ 
++	irq_dispose_mapping(irq);
+ 	tegra_msi_free(msi, d->hwirq);
+ }
  
 -- 
-2.0.2
+2.0.1
