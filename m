@@ -1,47 +1,50 @@
-From: Jisheng Zhang <jszhang@marvell.com>
-Subject: [PATCH] PCI: tegra: add missing cleanup in error path and teardown_irq
-Date: Fri, 25 Jul 2014 20:18:23 +0800
-Message-ID: <1406290703-2175-1-git-send-email-jszhang@marvell.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-pci-owner@vger.kernel.org>
-Sender: linux-pci-owner@vger.kernel.org
-To: thierry.reding@gmail.com, bhelgaas@google.com, swarren@wwwdotorg.org
-Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, Jisheng Zhang <jszhang@marvell.com>
+From: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
+Subject: [PATCH 1/5] ARM: imx: Remove references to platform_bus in mxc code
+Date: Fri, 25 Jul 2014 15:23:49 +0100
+Message-ID: <1406298233-27876-1-git-send-email-pawel.moll@arm.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Catalin Marinas <Catalin.Marinas-5wv7dgnIgG8@public.gmane.org>, paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Shawn Guo <shawn.guo-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-We should call tegra_msi_free() to free the msi bit if
-irq_create_mapping() fails. And we need to dispose the irq mapping
-during irq teardown.
+The bus devices created to be parents for other peripherals
+were using platform_bus as a parent, not being platform
+devices themselves. Remove the references, making them
+virtual devices instead.
 
-Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+Cc: Shawn Guo <shawn.guo-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
+Cc: Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Signed-off-by: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
 ---
- drivers/pci/host/pci-tegra.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 083cf37..695e7b9 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -1203,8 +1203,10 @@ static int tegra_msi_setup_irq(struct msi_chip *chip, struct pci_dev *pdev,
- 		return hwirq;
+This patch is a part of effort to remove references to platform_bus
+and make it static.
+
+Shawn, Sascha - could you, please, have a look if such change
+is acceptable for you?
+
+ arch/arm/mach-imx/devices/devices.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/arch/arm/mach-imx/devices/devices.c b/arch/arm/mach-imx/devices/devices.c
+index 1b4366a..8eab544 100644
+--- a/arch/arm/mach-imx/devices/devices.c
++++ b/arch/arm/mach-imx/devices/devices.c
+@@ -24,12 +24,10 @@
  
- 	irq = irq_create_mapping(msi->domain, hwirq);
--	if (!irq)
-+	if (!irq) {
-+		tegra_msi_free(msi, hwirq);
- 		return -EINVAL;
-+	}
+ struct device mxc_aips_bus = {
+ 	.init_name	= "mxc_aips",
+-	.parent		= &platform_bus,
+ };
  
- 	irq_set_msi_desc(irq, desc);
+ struct device mxc_ahb_bus = {
+ 	.init_name	= "mxc_ahb",
+-	.parent		= &platform_bus,
+ };
  
-@@ -1223,6 +1225,7 @@ static void tegra_msi_teardown_irq(struct msi_chip *chip, unsigned int irq)
- 	struct tegra_msi *msi = to_tegra_msi(chip);
- 	struct irq_data *d = irq_get_irq_data(irq);
- 
-+	irq_dispose_mapping(irq);
- 	tegra_msi_free(msi, d->hwirq);
- }
- 
+ int __init mxc_device_init(void)
 -- 
-2.0.1
+1.9.1
