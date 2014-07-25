@@ -1,64 +1,70 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
+From: Pawel Moll <pawel.moll@arm.com>
 Subject: Re: [PATCH 4/5] [SCSI] Do not use platform_bus as a parent
-Date: Fri, 25 Jul 2014 07:46:56 -0700
-Message-ID: <1406299616.1789.13.camel@jarvis.lan>
+Date: Fri, 25 Jul 2014 16:40:56 +0100
+Message-ID: <1406302856.17726.18.camel@hornet>
 References: <1406298233-27876-1-git-send-email-pawel.moll@arm.com>
-	 <1406298233-27876-4-git-send-email-pawel.moll@arm.com>
+ <1406298233-27876-4-git-send-email-pawel.moll@arm.com>
+ <1406299616.1789.13.camel@jarvis.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-scsi-owner@vger.kernel.org>
-In-Reply-To: <1406298233-27876-4-git-send-email-pawel.moll@arm.com>
-Sender: linux-scsi-owner@vger.kernel.org
-To: Pawel Moll <pawel.moll@arm.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@wwwdotorg.org>, Catalin Marinas <Catalin.Marinas@arm.com>, paul@pwsan.com, Arnd Bergmann <arnd@arndb.de>, Peter De Schrijver <pdeschrijver@nvidia.com>, arm@kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1406299616.1789.13.camel@jarvis.lan>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: "paul@pwsan.com" <paul@pwsan.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "arm@kernel.org" <arm@kernel.org>, Catalin Marinas <Catalin.Marinas@arm.com>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, 2014-07-25 at 15:23 +0100, Pawel Moll wrote:
-> The host devices without a parent were "forcefully adopted"
-> by platform bus. This patch removes this assignment. In
-> effect the dev_dev may be NULL now, which means ISA.
-> 
-> Cc: James E.J. Bottomley <JBottomley@parallels.com>
-> Cc: linux-scsi@vger.kernel.org
-> Signed-off-by: Pawel Moll <pawel.moll@arm.com>
-> ---
-> 
-> This patch is a part of effort to remove references to platform_bus
-> and make it static.
-> 
-> James, could you please have a look and advice if the change is
-> correct? Would you happen to know the "real reasons" behind
-> using the root platform_bus device a parent?
-
-Yes, for DMA purposes, the parent cannot now be NULL; we'll get a panic
-in the DMA transfers if it is.  A lot of the legacy ISA device on x86
-and I thought some ARM SOC devices don't pass in the parent device, so
-we hang them off a known parent.
-
-You can grep for it; these are the devices that will begin to panic if
-you apply this patch:
-
-arch/ia64/hp/sim/simscsi.c:     error = scsi_add_host(host, NULL);
-drivers/scsi/a2091.c:   error = scsi_add_host(instance, NULL);
-drivers/scsi/a3000.c:   error = scsi_add_host(instance, NULL);
-drivers/scsi/aha152x.c: if( scsi_add_host(shpnt, NULL) ) {
-drivers/scsi/gdth.c:    error = scsi_add_host(shp, NULL);
-drivers/scsi/gdth.c:    error = scsi_add_host(shp, NULL);
-drivers/scsi/gvp11.c:   error = scsi_add_host(instance, NULL);
-drivers/scsi/imm.c:     err = scsi_add_host(host, NULL);
-drivers/scsi/pcmcia/fdomain_stub.c:    if (scsi_add_host(host, NULL))
-drivers/scsi/pcmcia/nsp_cs.c:   ret = scsi_add_host (host, NULL);
-drivers/scsi/pcmcia/qlogic_stub.c:      if (scsi_add_host(shost, NULL))
-drivers/scsi/pcmcia/sym53c500_cs.c:     if (scsi_add_host(host, NULL))
-drivers/scsi/ppa.c:     err = scsi_add_host(host, NULL);
-drivers/scsi/qlogicfas.c:       if (scsi_add_host(hreg, NULL))
-drivers/scsi/scsi_module.c:             error = scsi_add_host(shost, NULL);
-drivers/scsi/sgiwd93.c: err = scsi_add_host(host, NULL);
-
-Note I've picked up scsi_module, so anything that uses the SCSI module
-interface also has this problem.
-
-James
-
-
+T24gRnJpLCAyMDE0LTA3LTI1IGF0IDE1OjQ2ICswMTAwLCBKYW1lcyBCb3R0b21sZXkgd3JvdGU6
+Cj4gT24gRnJpLCAyMDE0LTA3LTI1IGF0IDE1OjIzICswMTAwLCBQYXdlbCBNb2xsIHdyb3RlOgo+
+ID4gVGhlIGhvc3QgZGV2aWNlcyB3aXRob3V0IGEgcGFyZW50IHdlcmUgImZvcmNlZnVsbHkgYWRv
+cHRlZCIKPiA+IGJ5IHBsYXRmb3JtIGJ1cy4gVGhpcyBwYXRjaCByZW1vdmVzIHRoaXMgYXNzaWdu
+bWVudC4gSW4KPiA+IGVmZmVjdCB0aGUgZGV2X2RldiBtYXkgYmUgTlVMTCBub3csIHdoaWNoIG1l
+YW5zIElTQS4KPiA+IAo+ID4gQ2M6IEphbWVzIEUuSi4gQm90dG9tbGV5IDxKQm90dG9tbGV5QHBh
+cmFsbGVscy5jb20+Cj4gPiBDYzogbGludXgtc2NzaUB2Z2VyLmtlcm5lbC5vcmcKPiA+IFNpZ25l
+ZC1vZmYtYnk6IFBhd2VsIE1vbGwgPHBhd2VsLm1vbGxAYXJtLmNvbT4KPiA+IC0tLQo+ID4gCj4g
+PiBUaGlzIHBhdGNoIGlzIGEgcGFydCBvZiBlZmZvcnQgdG8gcmVtb3ZlIHJlZmVyZW5jZXMgdG8g
+cGxhdGZvcm1fYnVzCj4gPiBhbmQgbWFrZSBpdCBzdGF0aWMuCj4gPiAKPiA+IEphbWVzLCBjb3Vs
+ZCB5b3UgcGxlYXNlIGhhdmUgYSBsb29rIGFuZCBhZHZpY2UgaWYgdGhlIGNoYW5nZSBpcwo+ID4g
+Y29ycmVjdD8gV291bGQgeW91IGhhcHBlbiB0byBrbm93IHRoZSAicmVhbCByZWFzb25zIiBiZWhp
+bmQKPiA+IHVzaW5nIHRoZSByb290IHBsYXRmb3JtX2J1cyBkZXZpY2UgYSBwYXJlbnQ/Cj4gCj4g
+WWVzLCBmb3IgRE1BIHB1cnBvc2VzLCB0aGUgcGFyZW50IGNhbm5vdCBub3cgYmUgTlVMTDsgd2Un
+bGwgZ2V0IGEgcGFuaWMKPiBpbiB0aGUgRE1BIHRyYW5zZmVycyBpZiBpdCBpcy4gIAoKVGhhdCdz
+IHdoYXQgSSB0aG91Z2ggYXQgdGhlIGJlZ2lubmluZyBhcyB3ZWxsLCBidXQgdGhlbiBJIGNyYXds
+ZWQKdGhyb3VnaCBnZXRfZG1hX29wcyhzdHJ1Y3QgZGV2aWNlICpkZXYpIGFuZCBpdCBzZWVtcyB0
+aGF0IG9uIG1vc3QKYXJjaGl0ZWN0dXJlcyAoYWxsIGJ1dCB0d28sIGlmIEkgcmVtZW1iZXIgY29y
+cmVjdGx5KSBpdCB3aWxsIHJldHVybiBhCmRlZmF1bHQgc2V0IG9mIERNQSBvcHMgaWYgdGhlIGRl
+diA9PSBOVUxMLCBlZy4KCnN0YXRpYyBpbmxpbmUgc3RydWN0IGRtYV9tYXBfb3BzICpnZXRfZG1h
+X29wcyhzdHJ1Y3QgZGV2aWNlICpkZXYpCnsKI2lmbmRlZiBDT05GSUdfWDg2X0RFVl9ETUFfT1BT
+CiAgICAgICAgcmV0dXJuIGRtYV9vcHM7CiNlbHNlCiAgICAgICAgaWYgKHVubGlrZWx5KCFkZXYp
+IHx8ICFkZXYtPmFyY2hkYXRhLmRtYV9vcHMpCiAgICAgICAgICAgICAgICByZXR1cm4gZG1hX29w
+czsKICAgICAgICBlbHNlCiAgICAgICAgICAgICAgICByZXR1cm4gZGV2LT5hcmNoZGF0YS5kbWFf
+b3BzOwojZW5kaWYgCn0KCmluIGFyY2gveDg2L2luY2x1ZGUvYXNtL2RtYS1tYXBwaW5nLmguIE5v
+dywgdGhlcmUgc2VlbSB0byBiZSBvbmx5IGEKaGFuZGZ1bCBvZiBwbGFjZXMgd2hlcmUgZGV2X2Rt
+YSBpcyBkZXJlZmVyZW5jZWQ6IHNjc2lfZG1hX21hcCBhbmQKc2NzaV9kbWFfdW5tYXAgaW4gZHJp
+dmVycy9zY3NpL3Njc2lfbGliX2RtYS5jLCB3aGVyZSBhbGwgdGhlIGNhbGxzIHNlZW0KdG8gYmUg
+Ik5VTEwgcmVzaXN0YW50IiBhbmQgX19zY3NpX2FsbG9jX3F1ZXVlIGluIF9fc2NzaV9hbGxvY19x
+dWV1ZQp3aGljaCB3aWxsIG9vcHMgYXMgeW91IHNhaWQuCgpBbnl3YXksIGlmIHlvdSBhcmUgc2F5
+aW5nIHRoYXQgZGV2X2RtYSBtdXN0IG5vdCBiZSBOVUxMIGF0IGFueQpjaXJjdW1zdGFuY2VzLCBJ
+J2xsIGVpdGhlciBoYXZlIHRvIGZpbmQgc29tZSBraW5kIG9mIHJlcGxhY2VtZW50IGZvcgpwbGF0
+Zm9ybV9idXMgb3IgY29udmluY2UgR3JlZyB0aGF0IHBsYXRmb3JtX2J1cyBtdXN0IG5vdCBiZSBt
+YWRlCnN0YXRpYyA7LSkKCj4gQSBsb3Qgb2YgdGhlIGxlZ2FjeSBJU0EgZGV2aWNlIG9uIHg4Ngo+
+IGFuZCBJIHRob3VnaHQgc29tZSBBUk0gU09DIGRldmljZXMgZG9uJ3QgcGFzcyBpbiB0aGUgcGFy
+ZW50IGRldmljZSwgc28KPiB3ZSBoYW5nIHRoZW0gb2ZmIGEga25vd24gcGFyZW50LgoKVGhhdCdz
+IGFub3RoZXIgdGhpbmcgSSdtIG5vdCBzdXJlIC0gb25jZSBhc3NpZ25lZCwgaXMgdGhlIGRtYV9k
+ZXYKcmVsYXRlZCB0byB0aGUgcGFyZW50IGluIGFueSB3YXk/IEV2ZW4gbW9yZSAtIGlzIHRoZSBz
+aG9zdF9nZW5kZXYucGFyZW50CnVzZWQgYXQgYWxsPyBEb2Vzbid0IHNlZW0gdG8gYmUuIElmIGl0
+J3Mgb25seSBhYm91dCBhIHBsYWNlIGluIHRoZQpkZXZpY2UgbW9kZWwgaGllcmFyY2h5LCBsZWF2
+aW5nIHBhcmVudCBhcyBOVUxMIHdpbGwgbWFrZSBzdWNoIGRldmljZSBhCnZpcnR1YWwgb25lLCB3
+aGljaCBpdCBwcm9iYWJseSBzaG91bGQgYmUuLi4KClBhd2XFggoKCl9fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBs
+aXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5m
+cmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
