@@ -1,73 +1,60 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 5/5] platform: Make platform_bus device a platform device
-Date: Sat, 26 Jul 2014 13:13:51 -0700
-Message-ID: <20140726201351.GC21870@kroah.com>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: [PATCH 4/5] [SCSI] Do not use platform_bus as a parent
+Date: Sun, 27 Jul 2014 07:52:57 +0400
+Message-ID: <1406433177.11069.3.camel@jarvis>
 References: <1406298233-27876-1-git-send-email-pawel.moll@arm.com>
- <1406298233-27876-5-git-send-email-pawel.moll@arm.com>
+	 <1406298233-27876-4-git-send-email-pawel.moll@arm.com>
+	 <1406299616.1789.13.camel@jarvis.lan> <20140726201150.GA21870@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1406298233-27876-5-git-send-email-pawel.moll@arm.com>
+In-Reply-To: <20140726201150.GA21870@kroah.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pawel Moll <pawel.moll@arm.com>
-Cc: Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@wwwdotorg.org>, Catalin Marinas <Catalin.Marinas@arm.com>, paul@pwsan.com, Arnd Bergmann <arnd@arndb.de>, Peter De Schrijver <pdeschrijver@nvidia.com>, arm@kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Pawel Moll <pawel.moll@arm.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@wwwdotorg.org>, Catalin Marinas <Catalin.Marinas@arm.com>, paul@pwsan.com, Arnd Bergmann <arnd@arndb.de>, Peter De Schrijver <pdeschrijver@nvidia.com>, arm@kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jul 25, 2014 at 03:23:53PM +0100, Pawel Moll wrote:
-> ... describing the root of the device tree, so one can write
-> a platform driver initializing the platform.
+On Sat, 2014-07-26 at 13:11 -0700, Greg Kroah-Hartman wrote:
+> On Fri, Jul 25, 2014 at 07:46:56AM -0700, James Bottomley wrote:
+> > On Fri, 2014-07-25 at 15:23 +0100, Pawel Moll wrote:
+> > > The host devices without a parent were "forcefully adopted"
+> > > by platform bus. This patch removes this assignment. In
+> > > effect the dev_dev may be NULL now, which means ISA.
+> > > 
+> > > Cc: James E.J. Bottomley <JBottomley@parallels.com>
+> > > Cc: linux-scsi@vger.kernel.org
+> > > Signed-off-by: Pawel Moll <pawel.moll@arm.com>
+> > > ---
+> > > 
+> > > This patch is a part of effort to remove references to platform_bus
+> > > and make it static.
+> > > 
+> > > James, could you please have a look and advice if the change is
+> > > correct? Would you happen to know the "real reasons" behind
+> > > using the root platform_bus device a parent?
+> > 
+> > Yes, for DMA purposes, the parent cannot now be NULL; we'll get a panic
+> > in the DMA transfers if it is.  A lot of the legacy ISA device on x86
+> > and I thought some ARM SOC devices don't pass in the parent device, so
+> > we hang them off a known parent.
 > 
-> Signed-off-by: Pawel Moll <pawel.moll@arm.com>
-> ---
->  drivers/base/platform.c         | 20 ++++++++++++++------
->  include/linux/platform_device.h |  2 +-
->  2 files changed, 15 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-> index eee48c4..9caffa7 100644
-> --- a/drivers/base/platform.c
-> +++ b/drivers/base/platform.c
-> @@ -30,8 +30,8 @@
->  /* For automatically allocated device IDs */
->  static DEFINE_IDA(platform_devid_ida);
->  
-> -struct device platform_bus = {
-> -	.init_name	= "platform",
-> +struct platform_device platform_bus = {
-> +	.name	= "platform",
->  };
->  EXPORT_SYMBOL_GPL(platform_bus);
->  
-> @@ -300,7 +300,7 @@ int platform_device_add(struct platform_device *pdev)
->  		return -EINVAL;
->  
->  	if (!pdev->dev.parent)
-> -		pdev->dev.parent = &platform_bus;
-> +		pdev->dev.parent = &platform_bus.dev;
->  
->  	pdev->dev.bus = &platform_bus_type;
->  
-> @@ -946,12 +946,20 @@ int __init platform_bus_init(void)
->  
->  	early_platform_cleanup();
->  
-> -	error = device_register(&platform_bus);
-> +	dev_set_name(&platform_bus.dev, "%s", platform_bus.name);
-> +	error = device_register(&platform_bus.dev);
->  	if (error)
->  		return error;
->  	error =  bus_register(&platform_bus_type);
-> -	if (error)
-> -		device_unregister(&platform_bus);
-> +	if (!error) {
-> +#ifdef CONFIG_OF
-> +		platform_bus.dev.of_node = of_allnodes;
-> +#endif
+> The "generic" platform bus device is not a "known parent".  I don't
+> understand the difference between just setting the parent to be NULL,
+> which will then have a "proper" parent pointer filled in by the driver
+> core when the device is registered, or faking it out here.  What is the
+> difference?
 
-Why are you doing this?  The original code didn't do it and all was
-fine, right?  What changes here?
+If you set the parent to NULL, the host template dma_dev will end up
+NULL as well and that will trigger a NULL deref panic in the dma segment
+routines.
 
-thanks,
+If you want to remove platform_bus, we have to have a well known device
+to set dma_dev to at scsi_host_add time.
 
-greg k-h
+> In the end, the device always ends up with a parent pointer, right?
+
+The parent pointer isn't the problem ... assigning the correct dma
+device is.
+
+James
