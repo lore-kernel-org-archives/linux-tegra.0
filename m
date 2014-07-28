@@ -1,47 +1,61 @@
-From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v3.16-rc7
-Date: Mon, 28 Jul 2014 11:35:49 -0700
-Message-ID: <53D69805.3040508@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+Subject: [PATCH tegra-uboot-scripts v3] Make folder for dtb files as an argument
+Date: Mon, 28 Jul 2014 21:40:22 +0200
+Message-ID: <463bd9459319d174d315a31eba4dc24daf03c0c3.1406576139.git.stefan@agner.ch>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stefan-XLVq0VzYD2Y@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v3.16-rc7.
-Logs and other details at:
+Some distribution use different folders to store the dtb files
+rather then storing them directly in /boot. This adds a new
+argument to define in which folder U-Boot should search the dtb
+file.
 
-     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.16-rc7/20140727130104/
+Signed-off-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+---
+No that was not what I wanted. The dtbdir should only affect the
+DTB. Looks like beer and sending patches do not go well togheter
+:-)
 
+ gen-uboot-script.py | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-Test summary
-------------
-
-Build: zImage:
-     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
-
-Boot to userspace: multi_v7_defconfig:
-     Pass: ( 2/ 2): tegra114-dalmore-a04, tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-     Pass: ( 2/ 2): tegra114-dalmore-a04, tegra30-beaver
-
-
-
-vmlinux object size
-(delta in bytes from test_v3.16-rc6 (9a3c4145af32125c5ee39c0272662b47307a8323)):
-    text     data      bss    total  kernel
-    +128       -8        0     +120  multi_v7_defconfig
-     -28      -24        0      -52  tegra_defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v3.16-rc6 (9a3c4145af32125c5ee39c0272662b47307a8323))
-     avail    rsrvd     high    freed                board              kconfig                  dtb
-         .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-         .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-         .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-         .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+diff --git a/gen-uboot-script.py b/gen-uboot-script.py
+index 8ca3d01..3f2c401 100755
+--- a/gen-uboot-script.py
++++ b/gen-uboot-script.py
+@@ -71,6 +71,9 @@ parser.add_argument('--noisy', action='store_true',
+ parser.add_argument('--cmdline',
+     help='Extra command-line options')
+ 
++parser.add_argument('--dtb-dir', dest='dtbdir', default=None,
++    help='Search directory for dtbs on target; defaults to boot directory')
++
+ args = parser.parse_args()
+ if args.debug: print args
+ 
+@@ -109,6 +112,11 @@ else:
+     load='load ${devtype} ${devnum}:${rootpart}'
+     prefix='/boot/'
+ 
++if not args.dtbdir:
++    args.dtbdir = prefix
++elif args.dtbdir[-1:] != '/':
++    args.dtbdir += '/'
++
+ f.write(load + ' ${kernel_addr_r} ' + prefix + 'zImage\n')
+ 
+ if args.initrd:
+@@ -126,7 +134,7 @@ else
+     set _fdt ${soc}-${board}${boardver}.dtb;
+ fi
+ ''')
+-f.write(load + ' ${fdt_addr_r} ' + prefix + '${_fdt}\n')
++f.write(load + ' ${fdt_addr_r} ' + args.dtbdir + '${_fdt}\n')
+ f.write('set _fdt\n')
+ 
+ bootargs = ''
+-- 
+2.0.3
