@@ -1,40 +1,44 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-Subject: Re: [PATCH] MAINTAINERS: Update Tegra Git URL
-Date: Mon, 28 Jul 2014 20:02:28 +0200
-Message-ID: <53D69034.6080302@suse.de>
-References: <1406568643-2047-1-git-send-email-afaerber@suse.de> <53D68F5F.6050109@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH] MAINTAINERS: Update Tegra Git URL
+Date: Mon, 28 Jul 2014 12:06:26 -0600
+Message-ID: <1406570786-10432-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <53D68F5F.6050109@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: linux-tegra@vger.kernel.org, thierry.reding@gmail.com, linux-arm-kernel@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Am 28.07.2014 19:58, schrieb Stephen Warren:
-> On 07/28/2014 11:30 AM, Andreas F=C3=A4rber wrote:
->> swarren/linux-tegra.git does not exist, it's tegra/linux.git.
->=20
-> FWIW, there is a redirect in place, so "git clone" on the old URL wor=
-ks
-> fine. Still, we should indeed update the MAINTAINERS entry to point a=
-t
-> the correct location.
+=46rom: Andreas F=C3=A4rber <afaerber-l3A5Bk7waGM@public.gmane.org>
 
-http://git.kernel.org/cgit/linux/kernel/git/swarren/linux-tegra.git doe=
-s
-not redirect unfortunately.
+swarren/linux-tegra.git is a stale location; it has moved to
+tegra/linux.git.
 
-> I'll forward this on to arm@kernel.org to be applied.
+While the git protocol re-directs to the new location, HTTP does not.
+Besides, MAINTAINERS should contain the canonical URL.
 
-=46eel free to edit the commit message to your liking.
+Signed-off-by: Andreas F=C3=A4rber <afaerber-l3A5Bk7waGM@public.gmane.org>
+[swarren, updated commit message]
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Andreas
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 86efa7e213c2..dcda974bd7ec 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8922,7 +8922,7 @@ M:	Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+ M:	Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+ L:	linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+ Q:	http://patchwork.ozlabs.org/project/linux-tegra/list/
+-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-teg=
+ra.git
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git
+ S:	Supported
+ N:	[^a-z]tegra
+=20
 --=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
-=BCrnberg
+1.9.1
