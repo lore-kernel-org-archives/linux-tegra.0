@@ -1,132 +1,91 @@
-From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 8/8] clk: tegra: Add EMC clock driver
-Date: Tue, 29 Jul 2014 11:47:35 +0300
-Message-ID: <53D75FA7.1030300@nvidia.com>
-References: <1405088313-20048-1-git-send-email-mperttunen@nvidia.com> <1405088313-20048-9-git-send-email-mperttunen@nvidia.com> <53CE97F2.80300@wwwdotorg.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v3] PCI: tegra: add missing cleanup in error path and
+ teardown_irq
+Date: Tue, 29 Jul 2014 12:34:43 +0200
+Message-ID: <20140729103442.GE21182@ulmo.nvidia.com>
+References: <1406597610-6748-1-git-send-email-jszhang@marvell.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="BZaMRJmqxGScZ8Mx"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53CE97F2.80300-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1406597610-6748-1-git-send-email-jszhang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Jisheng Zhang <jszhang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
+Cc: bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 22/07/14 19:57, Stephen Warren wrote:
-> On 07/11/2014 08:18 AM, Mikko Perttunen wrote:
->> The driver is currently only tested on Tegra124 Jetson TK1, but should
->> work with other Tegra124 boards, provided that correct EMC tables are
->> provided through the device tree. Older chip models have differing
->> timing change sequences, so they are not currently supported.
->
->> diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
->
->> +struct emc_timing {
->> +	unsigned long rate, parent_rate;
->> +	u8 parent_index;
->> +	struct clk *parent;
->> +
->> +	/* Store EMC burst data in a union to minimize mistakes. This allows
->> +	 * us to use the same burst data lists as used by the downstream and
->> +	 * ChromeOS kernels. */
->
-> Nit: */ should be on its own line. This applies to many comments in the
-> file.
 
-Will fix.
+--BZaMRJmqxGScZ8Mx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->
->> +/* * * * * * * * * * * * * * * * * * * * * * * * * *
->> + * Timing change sequence functions                *
->> + * * * * * * * * * * * * * * * * * * * * * * * * * */
->
-> Nit: This kind of banner comment is unusual, but I guess it's fine.
->
->> +static void emc_seq_update_timing(struct tegra_emc *tegra)
-> ...
->> +	dev_err(&tegra->pdev->dev, "timing update failed\n");
->> +	BUG();
->> +}
->
-> Is there any way to avoid all these BUGs? Can we just continue on and
-> retry the next time, or disallow any further clock rate changes or
-> something?
+On Tue, Jul 29, 2014 at 09:33:30AM +0800, Jisheng Zhang wrote:
+> We should call tegra_msi_free() to free the MSI bit if
+> irq_create_mapping() fails. And we need to dispose the IRQ mapping
+> during IRQ teardown.
+>=20
+> Signed-off-by: Jisheng Zhang <jszhang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  drivers/pci/host/pci-tegra.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+> index 083cf37..4ccc418 100644
+> --- a/drivers/pci/host/pci-tegra.c
+> +++ b/drivers/pci/host/pci-tegra.c
+> @@ -1203,8 +1203,10 @@ static int tegra_msi_setup_irq(struct msi_chip *ch=
+ip, struct pci_dev *pdev,
+>  		return hwirq;
+> =20
+>  	irq =3D irq_create_mapping(msi->domain, hwirq);
+> -	if (!irq)
+> +	if (!irq) {
+> +		tegra_msi_free(msi, hwirq);
+>  		return -EINVAL;
+> +	}
+> =20
+>  	irq_set_msi_desc(irq, desc);
+> =20
+> @@ -1222,8 +1224,10 @@ static void tegra_msi_teardown_irq(struct msi_chip=
+ *chip, unsigned int irq)
+>  {
+>  	struct tegra_msi *msi =3D to_tegra_msi(chip);
+>  	struct irq_data *d =3D irq_get_irq_data(irq);
+> +	unsigned long hwirq =3D d->hwirq;
 
-I guess I can just remove the BUG()s and keep going. The clock might 
-temporarily end up in a strange state but that should be fine since 
-these shouldn't be happening anyway.
+There seems to be an inconsistency regarding the data type of hwirq. The
+irq_data structure uses unsigned long, but irqd_to_hwirq() function
+returns irq_hw_number_t. Perhaps it would be best to use this instead:
 
->
->> +/* * * * * * * * * * * * * * * * * * * * * * * * * *
->> + * Debugfs entry                                   *
->> + * * * * * * * * * * * * * * * * * * * * * * * * * */
->> +
->> +static int emc_debug_rate_get(void *data, u64 *rate)
->> +{
->> +	struct tegra_emc *tegra = data;
->> +
->> +	*rate = clk_get_rate(tegra->hw.clk);
->> +
->> +	return 0;
->> +}
->> +
->> +static int emc_debug_rate_set(void *data, u64 rate)
->> +{
->> +	struct tegra_emc *tegra = data;
->> +
->> +	return clk_set_rate(tegra->hw.clk, rate);
->> +}
->> +
->> +DEFINE_SIMPLE_ATTRIBUTE(emc_debug_rate_fops, emc_debug_rate_get,
->> +			emc_debug_rate_set, "%lld\n");
->
-> I think the rate can already be obtained through
-> ...debug/clock/clock_summary. I'm not sure about changing the rate, but
-> shouldn't that be a feature of the common clock core, not individual
-> drivers?
+	irq_hw_number_t hwirq =3D irqd_to_hwirq(d);
 
-The core doesn't allow writing to the rate debugfs files, so this is the 
-only way to trigger an EMC clock change for now. I agree that the core 
-might be a better place. I don't know if there are any philosophical 
-objections to that. I'd like to keep this in until a possible core 
-feature addition. Mike, any comments?
+But I don't have a strong preference for either way, so with or without
+that change:
 
->
->> +static int load_timings_from_dt(struct tegra_emc *tegra,
->> +				struct device_node *node)
->> +{
-> ...
->> +	for_each_child_of_node(node, child) {
-> ...
->> +		if (timing->rate <= prev_rate) {
->> +			dev_err(&tegra->pdev->dev,
->> +				"timing %s: rate not increasing\n",
->> +				child->name);
->
-> I don't believe there's any guaranteed node enumeration order. If the
-> driver needs the child nodes sorted, it should sort them itself.
+Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-True. I'll fix this.
+--BZaMRJmqxGScZ8Mx
+Content-Type: application/pgp-signature
 
->
->> +static const struct of_device_id tegra_car_of_match[] = {
->> +	{ .compatible = "nvidia,tegra124-car" },
->> +	{}
->> +};
->> +
->> +static const struct of_device_id tegra_mc_of_match[] = {
->> +	{ .compatible = "nvidia,tegra124-mc" },
->> +	{}
->> +};
->
-> It would be better if this driver explicitly called into the driver for
-> other modules, rather than directly touching their registers.
->
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-My local v2 already has the MC-related code split into Thierry's MC 
-driver. The CAR register writing is still done from the EMC driver. I 
-could add helpers for it to the CAR driver.
+iQIcBAEBAgAGBQJT13jCAAoJEN0jrNd/PrOh5rAP/3VrMEHtf6F2AdCx6bEL/rcU
+3NgrrkSVv5V++AysHqU3N1KkS+drGl7PU6wJvNL4FPi4mUGuY8abUSrHWUMzzlod
+FwEcIi3e6tO005j1r0yFJ2Wj95/nAW6N7urVuj8eb6dO3AJpQG8uep1Ncv4grfKq
+ogiSRp1eFJ9eneWYA73bCYLPm4zM3YuXwPQ93ooTWNr0/C34BgZkHeSn9BacjQ/h
+xTGwv0cGU49JK4+TnzAjIQjnPS2JUyoMIloz5EdVxft0ETg1iOKEII79LxJvwh0M
+636ZPSZFzZCnV6SJ9m9+g0hdd4NxEH+kDr9fw9J4Ob05iV+++YSpkIiQ3hHf8/7y
+dBSFAPS9B+lCxjHZ8fRiupN5Kzr9StXratFV2+WTiWRz97XA40FS0YCtJCxD2cF8
+CGMWhIO/tApeh5hWhrIeAoi+L7betcBQrtaSdTvT8dUuPKEnChE6zSPwiKuMSNSG
+V3sVvbsdAOqnGt4LtMSqfQAPT4c+kLFem04R07V/Sm5IrvelRveSH/1bdkCkckSW
+CF2LUDX0SE/U0ZYBO5c5iibhwQzZVqufi1oaDzyqAsrSqxtsa+ReyOfbAHKqQgPc
+LmRP8qvA7n9Fh8/np7vvhgU6GmqAT6UPJXHQSrSIvaGyhb2/9+olCeG3fSZkSbhI
+8KmeeGZ397CEs4mgQKag
+=59cK
+-----END PGP SIGNATURE-----
 
-Thanks,
-Mikko
+--BZaMRJmqxGScZ8Mx--
