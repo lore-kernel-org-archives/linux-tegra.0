@@ -1,67 +1,50 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: Move AHB Kconfig to drivers/amba
-Date: Tue, 29 Jul 2014 10:21:02 -0600
-Message-ID: <53D7C9EE.60503@wwwdotorg.org>
-References: <1406643934-16301-1-git-send-email-thierry.reding@gmail.com>
+From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 8/8] clk: tegra: Add EMC clock driver
+Date: Tue, 29 Jul 2014 13:19:39 -0700
+Message-ID: <20140729201939.4627.79710@quantum>
+References: <1405088313-20048-1-git-send-email-mperttunen@nvidia.com>
+ <1405088313-20048-9-git-send-email-mperttunen@nvidia.com>
+ <53CE97F2.80300@wwwdotorg.org> <53D75FA7.1030300@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1406643934-16301-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <53D75FA7.1030300-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/29/2014 08:25 AM, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> This will allow the Kconfig option to be shared among 32-bit and 64-bit
-> ARM.
+Quoting Mikko Perttunen (2014-07-29 01:47:35)
+> On 22/07/14 19:57, Stephen Warren wrote:
+> > On 07/11/2014 08:18 AM, Mikko Perttunen wrote:
+> >> +static int emc_debug_rate_set(void *data, u64 rate)
+> >> +{
+> >> +    struct tegra_emc *tegra = data;
+> >> +
+> >> +    return clk_set_rate(tegra->hw.clk, rate);
+> >> +}
+> >> +
+> >> +DEFINE_SIMPLE_ATTRIBUTE(emc_debug_rate_fops, emc_debug_rate_get,
+> >> +                    emc_debug_rate_set, "%lld\n");
+> >
+> > I think the rate can already be obtained through
+> > ...debug/clock/clock_summary. I'm not sure about changing the rate, but
+> > shouldn't that be a feature of the common clock core, not individual
+> > drivers?
+> 
+> The core doesn't allow writing to the rate debugfs files, so this is the 
+> only way to trigger an EMC clock change for now. I agree that the core 
+> might be a better place. I don't know if there are any philosophical 
+> objections to that. I'd like to keep this in until a possible core 
+> feature addition. Mike, any comments?
 
-This seems fine to me. I'd expect to apply it for 3.18, provided I get 
-an ack from Russell as drivers/amba maintainer (hence CCing him without 
-trimming the quote).
+Yes, there is a philosophical rejection to exposing rate-change knobs to
+userspace through debugfs. These can and will ship in real products
+(typically Android) with lots of nasty userspace hacks, and also
+represent pretty dangerous things to expose to userspace. I have always
+maintained that such knobs should remain out of tree or, with the advent
+of the custom debugfs entries, should be burden of the clock drivers.
 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->   arch/arm/mach-tegra/Kconfig |  8 --------
->   drivers/amba/Kconfig        | 11 +++++++++++
->   2 files changed, 11 insertions(+), 8 deletions(-)
->   create mode 100644 drivers/amba/Kconfig
->
-> diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-> index 052fba07a3cb..fae2eb2f52ea 100644
-> --- a/arch/arm/mach-tegra/Kconfig
-> +++ b/arch/arm/mach-tegra/Kconfig
-> @@ -64,12 +64,4 @@ config ARCH_TEGRA_124_SOC
->   	  Support for NVIDIA Tegra T124 processor family, based on the
->   	  ARM CortexA15MP CPU
->
-> -config TEGRA_AHB
-> -	bool "Enable AHB driver for NVIDIA Tegra SoCs"
-> -	default y
-> -	help
-> -	  Adds AHB configuration functionality for NVIDIA Tegra SoCs,
-> -	  which controls AHB bus master arbitration and some
-> -	  performance parameters(priority, prefech size).
-> -
->   endif
-> diff --git a/drivers/amba/Kconfig b/drivers/amba/Kconfig
-> new file mode 100644
-> index 000000000000..3f7350a03708
-> --- /dev/null
-> +++ b/drivers/amba/Kconfig
-> @@ -0,0 +1,11 @@
-> +if ARM_AMBA
-> +
-> +config TEGRA_AHB
-> +	bool "Enable AHB driver for NVIDIA Tegra SoCs"
-> +	default y if ARCH_TEGRA
-> +	help
-> +	  Adds AHB configuration functionality for NVIDIA Tegra SoCs,
-> +	  which controls AHB bus master arbitration and some performance
-> +	  parameters (priority, prefetch size).
-> +
-> +endif
->
+Regards,
+Mike
