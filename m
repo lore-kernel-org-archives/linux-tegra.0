@@ -1,58 +1,61 @@
-From: Marc Dietrich <Marc.Dietrich-wkdnK3oF/XPYtB+G+YtuwQgYPMzSbZxj@public.gmane.org>
-Subject: Re: [PATCH 2/2] staging/nvec: Use platform_get_irq()
-Date: Tue, 29 Jul 2014 22:24:03 +0200
-Message-ID: <4292851.WR4mddmlu0@ax5200p>
-References: <1406632575-26075-1-git-send-email-thierry.reding@gmail.com> <1406632575-26075-2-git-send-email-thierry.reding@gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 8/8] clk: tegra: Add EMC clock driver
+Date: Tue, 29 Jul 2014 16:14:44 -0600
+Message-ID: <53D81CD4.5010307@wwwdotorg.org>
+References: <1405088313-20048-1-git-send-email-mperttunen@nvidia.com> <1405088313-20048-9-git-send-email-mperttunen@nvidia.com> <53CE97F2.80300@wwwdotorg.org> <53D75FA7.1030300@nvidia.com> <20140729201939.4627.79710@quantum>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1406632575-26075-2-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20140729201939.4627.79710@quantum>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Am Dienstag 29 Juli 2014, 13:16:15 schrieb Thierry Reding:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> As opposed to platform_get_resource(), the platform_get_irq() function
-> has special code to handle driver probe deferral when booting using DT
-> and where an interrupt provider hasn't been registered yet. While this
-> is unlikely to become an issue for nvec, platform_get_irq() is the
-> recommended way to get at interrupts.
-> 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 07/29/2014 02:19 PM, Mike Turquette wrote:
+> Quoting Mikko Perttunen (2014-07-29 01:47:35)
+>> On 22/07/14 19:57, Stephen Warren wrote:
+>>> On 07/11/2014 08:18 AM, Mikko Perttunen wrote:
+>>>> +static int emc_debug_rate_set(void *data, u64 rate)
+>>>> +{
+>>>> +    struct tegra_emc *tegra = data;
+>>>> +
+>>>> +    return clk_set_rate(tegra->hw.clk, rate);
+>>>> +}
+>>>> +
+>>>> +DEFINE_SIMPLE_ATTRIBUTE(emc_debug_rate_fops, emc_debug_rate_get,
+>>>> +                    emc_debug_rate_set, "%lld\n");
+>>>
+>>> I think the rate can already be obtained through
+>>> ...debug/clock/clock_summary. I'm not sure about changing the rate, but
+>>> shouldn't that be a feature of the common clock core, not individual
+>>> drivers?
+>>
+>> The core doesn't allow writing to the rate debugfs files, so this is the
+>> only way to trigger an EMC clock change for now. I agree that the core
+>> might be a better place. I don't know if there are any philosophical
+>> objections to that. I'd like to keep this in until a possible core
+>> feature addition. Mike, any comments?
+>
+> Yes, there is a philosophical rejection to exposing rate-change knobs to
+> userspace through debugfs. These can and will ship in real products
+> (typically Android) with lots of nasty userspace hacks, and also
+> represent pretty dangerous things to expose to userspace. I have always
+> maintained that such knobs should remain out of tree or, with the advent
+> of the custom debugfs entries, should be burden of the clock drivers.
 
-Thanks again, Thierry!
+That argument seems a bit inconsistent.
 
-Acked-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+I can see the argument to disallow code that lets user-space fiddle with 
+clocks. However, if that argument holds, then surely it must apply to 
+either the clock core *or* a clock driver; the end effect of allowing 
+the code in either place is that people will be able to implement the 
+user-space hacks you want to avoid. Yet, if we allow the code because 
+it's a useful debug tool, then surely it should be in the clock core so 
+we don't implement it redundantly in each clock driver.
 
-
-
-> ---
->  drivers/staging/nvec/nvec.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-> index 815065837ce7..a93208adbfcf 100644
-> --- a/drivers/staging/nvec/nvec.c
-> +++ b/drivers/staging/nvec/nvec.c
-> @@ -821,8 +821,8 @@ static int tegra_nvec_probe(struct platform_device
-> *pdev) if (IS_ERR(base))
->  		return PTR_ERR(base);
-> 
-> -	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
-> -	if (!res) {
-> +	nvec->irq = platform_get_irq(pdev, 0);
-> +	if (nvec->irq < 0) {
->  		dev_err(&pdev->dev, "no irq resource?\n");
->  		return -ENODEV;
->  	}
-> @@ -840,7 +840,6 @@ static int tegra_nvec_probe(struct platform_device
-> *pdev) }
-> 
->  	nvec->base = base;
-> -	nvec->irq = res->start;
->  	nvec->i2c_clk = i2c_clk;
->  	nvec->rx = &nvec->msg_pool[0];
+We could always taint the kernel if the feature is used. Admittedly that 
+wouldn't stop people using the feature as a hack in Android/product 
+kernels, but at least nobody would have to unknowingly debug problems 
+due to such manipulation, in the context of an upstream kernel.
