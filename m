@@ -1,50 +1,46 @@
-From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 8/8] clk: tegra: Add EMC clock driver
-Date: Tue, 29 Jul 2014 13:19:39 -0700
-Message-ID: <20140729201939.4627.79710@quantum>
-References: <1405088313-20048-1-git-send-email-mperttunen@nvidia.com>
- <1405088313-20048-9-git-send-email-mperttunen@nvidia.com>
- <53CE97F2.80300@wwwdotorg.org> <53D75FA7.1030300@nvidia.com>
+From: Marc Dietrich <Marc.Dietrich-wkdnK3oF/XPYtB+G+YtuwQgYPMzSbZxj@public.gmane.org>
+Subject: Re: [PATCH 1/2] staging/nvec: Do not pass resource to mfd_add_devices()
+Date: Tue, 29 Jul 2014 22:23:17 +0200
+Message-ID: <21317349.CjmK2Kpl80@ax5200p>
+References: <1406632575-26075-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53D75FA7.1030300-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1406632575-26075-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Mikko Perttunen (2014-07-29 01:47:35)
-> On 22/07/14 19:57, Stephen Warren wrote:
-> > On 07/11/2014 08:18 AM, Mikko Perttunen wrote:
-> >> +static int emc_debug_rate_set(void *data, u64 rate)
-> >> +{
-> >> +    struct tegra_emc *tegra = data;
-> >> +
-> >> +    return clk_set_rate(tegra->hw.clk, rate);
-> >> +}
-> >> +
-> >> +DEFINE_SIMPLE_ATTRIBUTE(emc_debug_rate_fops, emc_debug_rate_get,
-> >> +                    emc_debug_rate_set, "%lld\n");
-> >
-> > I think the rate can already be obtained through
-> > ...debug/clock/clock_summary. I'm not sure about changing the rate, but
-> > shouldn't that be a feature of the common clock core, not individual
-> > drivers?
+Am Dienstag 29 Juli 2014, 13:16:14 schrieb Thierry Reding:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> The core doesn't allow writing to the rate debugfs files, so this is the 
-> only way to trigger an EMC clock change for now. I agree that the core 
-> might be a better place. I don't know if there are any philosophical 
-> objections to that. I'd like to keep this in until a possible core 
-> feature addition. Mike, any comments?
+> The mfd_add_devices() function takes a struct resource * as fifth
+> argument, but the nvec driver passes in a void __iomem *. The driver
+> gets away with it because none of the subdevices ever directly access
+> the registers.
+> 
+> Since subdevices never need to access the registers we can simply pass
+> NULL instead.
+> 
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Yes, there is a philosophical rejection to exposing rate-change knobs to
-userspace through debugfs. These can and will ship in real products
-(typically Android) with lots of nasty userspace hacks, and also
-represent pretty dangerous things to expose to userspace. I have always
-maintained that such knobs should remain out of tree or, with the advent
-of the custom debugfs entries, should be burden of the clock drivers.
+Acked-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 
-Regards,
-Mike
+> ---
+>  drivers/staging/nvec/nvec.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+> index 0a5c84ad3f41..815065837ce7 100644
+> --- a/drivers/staging/nvec/nvec.c
+> +++ b/drivers/staging/nvec/nvec.c
+> @@ -893,7 +893,7 @@ static int tegra_nvec_probe(struct platform_device
+> *pdev) }
+> 
+>  	ret = mfd_add_devices(nvec->dev, -1, nvec_devices,
+> -			      ARRAY_SIZE(nvec_devices), base, 0, NULL);
+> +			      ARRAY_SIZE(nvec_devices), NULL, 0, NULL);
+>  	if (ret)
+>  		dev_err(nvec->dev, "error adding subdevices\n");
