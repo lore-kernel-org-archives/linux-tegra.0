@@ -1,111 +1,60 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 8/8] clk: tegra: Add EMC clock driver
-Date: Wed, 30 Jul 2014 11:34:57 +0200
-Message-ID: <20140730093456.GA29590@ulmo>
-References: <1405088313-20048-1-git-send-email-mperttunen@nvidia.com>
- <1405088313-20048-9-git-send-email-mperttunen@nvidia.com>
- <53CE97F2.80300@wwwdotorg.org>
- <53D75FA7.1030300@nvidia.com>
- <20140729201939.4627.79710@quantum>
- <53D81CD4.5010307@wwwdotorg.org>
+From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v4] devicetree: Add generic IOMMU device tree bindings
+Date: Wed, 30 Jul 2014 12:04:25 +0100
+Message-ID: <20140730110425.GI12239@arm.com>
+References: <1404487757-18829-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="YiEDa0DAkWCtVeE4"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <53D81CD4.5010307-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1404487757-18829-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olav Haugan <ohaugan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Varun Sethi <varun.sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TZNg+MwTxZMZA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi all,
 
---YiEDa0DAkWCtVeE4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Jul 04, 2014 at 04:29:17PM +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> This commit introduces a generic device tree binding for IOMMU devices.
+> Only a very minimal subset is described here, but it is enough to cover
+> the requirements of both the Exynos System MMU and Tegra SMMU as
+> discussed here:
+> 
+>     https://lkml.org/lkml/2014/4/27/346
+> 
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> Changes in v4:
+> - clarify that disabling an IOMMU DT node may not disable translation
+> - be more explicit that examples are only examples
+> - add multi-ID master example
+> 
+> Changes in v3:
+> - use #iommu-cells instead of #address-cells/#size-cells
+> - drop optional iommu-names property
+> 
+> Changes in v2:
+> - add notes about "dma-ranges" property (drop note from commit message)
+> - document priorities of "iommus" property vs. "dma-ranges" property
+> - drop #iommu-cells in favour of #address-cells and #size-cells
+> - remove multiple-master device example
+> 
+>  Documentation/devicetree/bindings/iommu/iommu.txt | 172 ++++++++++++++++++++++
+>  1 file changed, 172 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iommu/iommu.txt
 
-On Tue, Jul 29, 2014 at 04:14:44PM -0600, Stephen Warren wrote:
-> On 07/29/2014 02:19 PM, Mike Turquette wrote:
-> >Quoting Mikko Perttunen (2014-07-29 01:47:35)
-> >>On 22/07/14 19:57, Stephen Warren wrote:
-> >>>On 07/11/2014 08:18 AM, Mikko Perttunen wrote:
-> >>>>+static int emc_debug_rate_set(void *data, u64 rate)
-> >>>>+{
-> >>>>+    struct tegra_emc *tegra =3D data;
-> >>>>+
-> >>>>+    return clk_set_rate(tegra->hw.clk, rate);
-> >>>>+}
-> >>>>+
-> >>>>+DEFINE_SIMPLE_ATTRIBUTE(emc_debug_rate_fops, emc_debug_rate_get,
-> >>>>+                    emc_debug_rate_set, "%lld\n");
-> >>>
-> >>>I think the rate can already be obtained through
-> >>>...debug/clock/clock_summary. I'm not sure about changing the rate, but
-> >>>shouldn't that be a feature of the common clock core, not individual
-> >>>drivers?
-> >>
-> >>The core doesn't allow writing to the rate debugfs files, so this is the
-> >>only way to trigger an EMC clock change for now. I agree that the core
-> >>might be a better place. I don't know if there are any philosophical
-> >>objections to that. I'd like to keep this in until a possible core
-> >>feature addition. Mike, any comments?
-> >
-> >Yes, there is a philosophical rejection to exposing rate-change knobs to
-> >userspace through debugfs. These can and will ship in real products
-> >(typically Android) with lots of nasty userspace hacks, and also
-> >represent pretty dangerous things to expose to userspace. I have always
-> >maintained that such knobs should remain out of tree or, with the advent
-> >of the custom debugfs entries, should be burden of the clock drivers.
->=20
-> That argument seems a bit inconsistent.
->=20
-> I can see the argument to disallow code that lets user-space fiddle with
-> clocks. However, if that argument holds, then surely it must apply to eit=
-her
-> the clock core *or* a clock driver; the end effect of allowing the code in
-> either place is that people will be able to implement the user-space hacks
-> you want to avoid. Yet, if we allow the code because it's a useful debug
-> tool, then surely it should be in the clock core so we don't implement it
-> redundantly in each clock driver.
->=20
-> We could always taint the kernel if the feature is used. Admittedly that
-> wouldn't stop people using the feature as a hack in Android/product kerne=
-ls,
-> but at least nobody would have to unknowingly debug problems due to such
-> manipulation, in the context of an upstream kernel.
+I'm concerned that this patch hasn't been picked up for 3.17 (I can't see it
+in -next). If we want to move the ARM SMMU driver over to this new binding,
+we can't keep dragging our feet for much longer as I *really* don't plan to
+support two bindings in parallel (one is complicated enough already).
 
-Not merging this feature upstream won't stop anybody from implementing
-it as a hack in Android/product kernels either. If it's useful then
-somebody will implement it in whatever downstream kernel they use. And
-if it's useful to more than one vendor then we'll end up with a copy of
-the implementation (and derivations on top) in each vendor's tree.
+Any chance we can see this merged, please?
 
-debugfs requires superuser privileges anyway, in which case you could
-equally well write userspace software that directly bangs on the clock
-controller registers.
-
-Thierry
-
---YiEDa0DAkWCtVeE4
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJT2LxAAAoJEN0jrNd/PrOhxZoQAJk1fYmviE/GShQrR/7rWR2b
-N+s9LxHjuqJGQBlqHlXWCE8Nr0WxwnIFgAU0SSqBXatgK/2rm5u0ZXYI8qtwHffF
-FE0f3s6fRoQ48Gp9vAn6OwAlJoR+eJGf4hKEwLNW3oQmv7XhogRk0/Q2AI6v2B1c
-+zJ8xNEbeoDb0qc3sNNbCzICmcEERtZ1IPS8a1FX8EZ58AtNCi+x5kVqRKfsZPEN
-rnxlKK9+gT8kNIsnVtJUWlM8deLgLxJl/FWqHj+ckKSNREBf787KN+jSHhv7Q53r
-Vr7sihutdQNcFYXpFMMD2xepkZ+jyxwkQBi+egEfduAr4pGujAxySVhRC/0f/XXP
-ca3Ggy9bvkdt4bUGvfEyAT4ySMGtsdWlTqHarnoaCjPmd479LbFyhkljIIVcljqe
-xTVZK5BXihAoVTxVMivPX0P3f8vW2uEX19WeAV/2RVv3dz81Q5CR9DsfLpHdcdJa
-JiPFvzt+RQGuJIQq1+N+w93NAe0vIb2EUyATZ3aEazpPX/txEEE6sKEWAMRMV+Xg
-a4HlRPpBSNgYyA6nbqVUd72lLC6wk1kCF3LROV3bSLjG/urM6NXl/hqE6JFhngky
-UkRoLYeqKQ9Ds/EQFTB8y9D68dz/yAsKm3rpNadlBz1PkfgT9McHiGLCCUsVU8Mn
-D2VmKh7SjAdTPbkuIV9V
-=tuJw
------END PGP SIGNATURE-----
-
---YiEDa0DAkWCtVeE4--
+Will
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
