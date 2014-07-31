@@ -1,156 +1,62 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v4] devicetree: Add generic IOMMU device tree bindings
-Date: Thu, 31 Jul 2014 13:14:54 +0200
-Message-ID: <20140731111453.GA11955@ulmo>
-References: <1404487757-18829-1-git-send-email-thierry.reding@gmail.com>
-	<20140730152646.GC20162@leverpostej>
-	<CAOesGMi3zM1-cqmeGddJ69RNXx0ktFm_zXO_yq7N0EeA3HNrUQ@mail.gmail.com>
-	<20140730181842.GG20162@leverpostej> <20140731100905.GA7458@ulmo>
-	<20140731105017.GB22994@leverpostej>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: Re: [PATCH v4 6/6] clk: Add floor and ceiling constraints to clock
+ rates
+Date: Thu, 31 Jul 2014 13:47:23 +0200
+Message-ID: <53DA2CCB.2080300@collabora.com>
+References: <1405606399-26608-1-git-send-email-tomeu.vizoso@collabora.com>
+ <1405606399-26608-7-git-send-email-tomeu.vizoso@collabora.com>
+ <53CEA483.6090704@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0165621258106789330=="
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20140731105017.GB22994@leverpostej>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Will Deacon <Will.Deacon-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Varun Sethi <varun.sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <53CEA483.6090704@wwwdotorg.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+To: Stephen Warren <swarren@wwwdotorg.org>, Mike Turquette <mturquette@linaro.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Ulf Hansson <ulf.hansson@linaro.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Tony Lindgren <tony@atomide.com>, Tomasz Figa <t.figa@samsung.com>, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Thierry Reding <thierry.reding@gmail.com>, Paul Mackerras <paulus@samba.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Daniel Walker <dwalker@fifo99.com>, linux-arch@vger.kernel.org, Boris Brezillon <boris.brezillon@free-electrons.com>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, =?ISO-8859-1?Q?Emilio_L=F3pez?= <emilio@elopez.com.ar>, Takashi Iwai <tiwai@suse.de>, Michal Simek <michal.simek@xilinx.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kevin Hilman <khilman@deeprootsystems.com>, linux-arm-kernel@lists.infradead.org, patches@opensource.wolfsonmicro.com, Vire
 List-Id: linux-tegra@vger.kernel.org
 
-
---===============0165621258106789330==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="gKMricLos+KVdGMg"
-Content-Disposition: inline
-
-
---gKMricLos+KVdGMg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Jul 31, 2014 at 11:50:17AM +0100, Mark Rutland wrote:
-> On Thu, Jul 31, 2014 at 11:09:06AM +0100, Thierry Reding wrote:
-> > On Wed, Jul 30, 2014 at 07:18:42PM +0100, Mark Rutland wrote:
-> > [...]
-> > > > >> +
-> > > > >> +Multiple-master IOMMU with configurable DMA window:
-> > > > >> +---------------------------------------------------
-> > > > >> +
-> > > > >> +     / {
-> > > > >> +             #address-cells =3D <1>;
-> > > > >> +             #size-cells =3D <1>;
-> > > > >> +
-> > > > >> +             iommu {
-> > > > >> +                     /* master ID, address and length of DMA wi=
-ndow */
-> > > > >> +                     #iommu-cells =3D <4>;
-> > > > >> +             };
-> > > > >> +
-> > > > >> +             master {
-> > > > >> +                     /* master ID 42, 4 GiB DMA window starting=
- at 0 */
-> > > > >> +                     iommus =3D <&/iommu  42  0  0x1 0x0>;
-> > > > >
-> > > > > Is this that window is from the POV of the master, i.e. the maste=
-r can
-> > > > > address 0x0 to 0xffffffff when generating transactions, and these=
- get
-> > > > > translated somehow?
-> > > > >
-> > > > > Or is this the physical addresses to allocate to the master?
-> > > >=20
-> > > > It needs to be clarified in the documentation, but as far as I know=
- it
-> > > > is the DMA address space that is used.
-> > >=20
-> > > Ok. So that's pre-translation, from the POV of the master?
-> >=20
-> > Correct. It represents the window of the IOMMU's addressable I/O virtual
-> > address space that should be assigned to this particular master.
-> >=20
-> > > If we don't have that knowledge about the master already (e.g. based =
-on
-> > > the compatible string), surely we always need that information in a
-> > > given iommu-specifier format? Otherwise certain iommus won't be able =
-to
-> > > handle masters with limited addressing only due to limitations of the=
-ir
-> > > binding.
-> >=20
-> > This is only used for what's often called a windowed IOMMU. Many IOMMUs
-> > (non-windowed) typically allow only a complete address space to be
-> > assigned to a master without additional control over subregions. So this
-> > is really a property/capability of the IOMMU rather than the masters
-> > themselves.
->=20
-> I'm not sure I follow, but I'm happy to wait until we have the first
-> windowed IOMMU using this binding. I'll try to get myself up to speed in
-> the mean time.
-
-As I understand it, a windowed IOMMU manages a given I/O virtual address
-space (only one or perhaps even several). Each such address space is the
-complete range that the IOMMU can take as inputs from any master. For
-purposes of virtualization and process separation it can subdivide this
-address space into subranges, so that each context can only access that
-given range of virtual I/O addresses. I suspect that this works by
-setting up a mapping between that range and the context's master ID(s).
-And I also suppose it could be possible for the DMA windows to be truly
-configurable within the IOMMU or for specific devices to be assigned a
-fixed window.
-
-Simpler IOMMUs (Tegra uses one of those for example) know only address
-spaces. That is each address space can be assigned to one or more
-masters. But each master can always access the whole address space and
-accesses cannot be restricted to subregions thereof.
-
-So from a memory protection point of view the difference is that for
-non-windowed IOMMUs translations will fault only if no mapping has been
-set up for the I/O virtual address being accessed, whereas for windowed
-IOMMUs translations can in addition also fault if they access an I/O
-virtual addresses outside of the range that they've been assigned.
-
-Does that help? Note that I've never dealt with windowed IOMMUs myself,
-so this is largely based on what I scooped up in previous discussions
-with Arnd.
-
-Thierry
-
---gKMricLos+KVdGMg
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJT2iUtAAoJEN0jrNd/PrOhhyYP/idsFANwRuln/m9YRqBJchql
-nhE8TlmdbateiHmAsSH1+cUGMysvJEENqnK48yveLAHVlTnjKrhIKC5Z038OsCJX
-uyxWns5PbTMcfqtGobdPEOgOwqf5lTnXL+FRFCBaCzMC/W+EeZBawmEVY7fVuPxK
-qTQoyhYYNEchGovGVrQcyUtUNJZWZIdyWcy/OesTD4zXOccgLzxjLyYOqhiv62F+
-rTLn/woHsbLVgTU50t6Q3HpOm9LWYStfQk7PeaiiwJPVg77v/Ns0LA8AToj7WuPX
-eBKrbkGRocq3xo5Edghh/NfmjavrKtU4my4HrrZjgF7uYZIY+zQb/diUfMhvHd1e
-B96H5S8MCa1zJpBiqGpLUInYkf3F0OUW52QbkBOUaNIaYDUTPg7VPn4LHv+BhnM3
-VjGs1MYFijcz1WwAwSMqVmLGrLwcu28oCkla0hSKrO09MGIEFS59DXIJcriTY+lL
-Ce628gnZNU0NDpQzeHk/gIElwflanoMzJjpkGtOqHccf9HHyUsyfkrQlzQE/zk1w
-1dyzde2n4miho3M0V5GWjKGpmR1LLGronA8AYlpt7pRCmZBuizZe+GEvvOddObxJ
-gBkeBdNhtx7B/tRATfGdaSiZKX4EnZ5zFeqQuICeAevTjxB0rs0ULjRzj99CqLna
-jOqy2xRyl+aaPuYN7TF8
-=M/bv
------END PGP SIGNATURE-----
-
---gKMricLos+KVdGMg--
-
---===============0165621258106789330==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============0165621258106789330==--
+T24gMDcvMjIvMjAxNCAwNzo1MCBQTSwgU3RlcGhlbiBXYXJyZW4gd3JvdGU6Cj4gT24gMDcvMTcv
+MjAxNCAwODoxMyBBTSwgVG9tZXUgVml6b3NvIHdyb3RlOgo+PiBBZGRzIGEgd2F5IGZvciBjbG9j
+ayBjb25zdW1lcnMgdG8gc2V0IG1heGltdW0gYW5kIG1pbmltdW0gcmF0ZXMuIFRoaXMgY2FuIGJl
+Cj4+IHVzZWQgZm9yIHRoZXJtYWwgZHJpdmVycyB0byBzZXQgY2VpbGluZyByYXRlcywgb3IgYnkg
+bWlzYy4gZHJpdmVycyB0byBzZXQKPj4gZmxvb3IgcmF0ZXMgdG8gYXNzdXJlIGEgbWluaW11bSBw
+ZXJmb3JtYW5jZSBsZXZlbC4KPgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvY2xrLmMgYi9k
+cml2ZXJzL2Nsay9jbGsuYwo+Cj4+ICtzdHJ1Y3QgcmF0ZV9jb25zdHJhaW50IHsKPj4gKwlzdHJ1
+Y3QgaGxpc3Rfbm9kZQlub2RlOwo+PiArCWNvbnN0IGNoYXIJCSpkZXZfaWQ7Cj4+ICsJY29uc3Qg
+Y2hhcgkJKmNvbl9pZDsKPj4gKwllbnVtIGNvbnN0cmFpbnRfdHlwZQl0eXBlOwo+PiArCXVuc2ln
+bmVkIGxvbmcJCXJhdGU7Cj4+ICt9Owo+Cj4gSSB3b3VsZCBwZXJzb25hbGx5IHN0aWxsIHByZWZl
+ciBlaXRoZXI6Cj4KPiBhKSBUaGUgc3RydWN0IHJhdGVfY29uc3RyYWludHMgYmUgc3RvcmVkIGlu
+IHN0cnVjdCBjbGsgcmF0aGVyIHRoYW4KPiBzdHJ1Y3QgY2xrX2NvcmUsIHNvIHRoZXkncmUgc3Rv
+cmVkIGluIHRoZSBjb250YWluZXIgdGhhdCAic2V0IiB0aGUKPiBjb25zdHJhaW50cy4gVGhpcyB3
+b3VsZCBtZWFuIGl0ZXJhdGluZyBvdmVyIGEgc3RydWN0IGNsa19jb3JlJ3MKPiBhc3NvY2lhdGVk
+IHN0cnVjdCBjbGtzLCB0aGVuIGl0ZXJhdGluZyBvdmVyIHRoZSBzdHJ1Y3QgcmF0ZV9jb25zdHJh
+aW50cwo+IHdpdGhpbiBlYWNoIHN0cnVjdCBjbGsuCj4KPiBvcjoKPgo+IGIpIHN0cnVjdCByYXRl
+X2NvbnN0cmFpbnQgdG8gY29udGFpbiBhIHBvaW50ZXIgdG8gdGhlIHN0cnVjdCBjbGsgdGhhdAo+
+IGNyZWF0ZWQgdGhlIGNvbnN0cmFpbnQsIHJhdGhlciB0aGFuIGNvcHlpbmcgdGhlIGRldl9pZC9j
+b25faWQgZnJvbSB0aGF0Cj4gc3RydWN0IGNsayBpbnRvIHRoZSBzdHJ1Y3QgcmF0ZV9jb25zdHJh
+aW50Lgo+Cj4gV2l0aCBlaXRoZXIgb2YgdGhvc2UgY2hhbmdlcywgdGhlIGNvbnN0cmFpbnRzIGFy
+ZSBkaXJlY3RseSBhc3NvY2lhdGVkCj4gd2l0aCB0aGUgY2xvY2sgY2xpZW50IG9iamVjdCB0aGF0
+IGNyZWF0ZWQgdGhlIGNvbnN0cmFpbnQgbXVjaCBiZXR0ZXIKPiB0aGFuIHJpZ2h0IG5vdywgd2hl
+cmUgdGhlIG1hdGNoaW5nIGlzIG9ubHkgYmVjYXVzZSB0aGUgc3RydWN0IGNsayBhbmQKPiBzdHJ1
+Y3QgcmF0ZV9jb25zdHJhaW50ICJoYXBwZW4gdG8iIGhhdmUgdGhlIHNhbWUgZGV2X2lkL2Nvbl9p
+ZCB2YWx1ZXMuCj4KPiBTdGlsbCwgdGhpcyBpcyBhIHByZXR0eSBtaW5vciBpc3N1ZSwgYW5kIG92
+ZXJhbGwgdGhpcyBzZXJpZXMgbG9va3MKPiByZWFzb25hYmxlIHRvIG1lIGF0IGEgcXVpY2sgbG9v
+ay4KClllYWgsIEkgYWdyZWUgYW5kIHBlcnNvbmFsbHkgcHJlZmVyIGEpLCBidXQgZ2l2ZW4gdGhl
+IGxpdHRsZSBmZWVkYmFjayAKdGhhdCBJIGhhdmUgZ290dGVuIHNvIGZhciBvbiB0aGUgcmVmYWN0
+b3JpbmcsIEknbSBzdGFydGluZyB0byBjb25zaWRlciAKZm9yZ2V0dGluZyBhYm91dCB0aGUgcGVy
+LXVzZXIgY2xrIHN0cnVjdCBhbmQgZ28gaW5zdGVhZCB3aXRoIGEgCnJlcXVlc3QtYmFzZWQgQVBJ
+IHNpbWlsYXIgdG8gdGhhdCBvZiBwbV9xb3MsIGZvciBzZXR0aW5nIGZsb29yIGFuZCAKY2VpbGlu
+ZyBmcmVxdWVuY2llcy4KClJlZ2FyZHMsCgpUb21ldQpfX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fXwpMaW51eHBwYy1kZXYgbWFpbGluZyBsaXN0CkxpbnV4cHBj
+LWRldkBsaXN0cy5vemxhYnMub3JnCmh0dHBzOi8vbGlzdHMub3psYWJzLm9yZy9saXN0aW5mby9s
+aW51eHBwYy1kZXY=
