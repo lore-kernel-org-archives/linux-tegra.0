@@ -1,268 +1,88 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v5] devicetree: Add generic IOMMU device tree bindings
-Date: Thu, 31 Jul 2014 20:09:42 +0200
-Message-ID: <5073694.BaMdO1z6rq@avalon>
-References: <1406803383-11601-1-git-send-email-thierry.reding@gmail.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v4 6/6] clk: Add floor and ceiling constraints to clock
+ rates
+Date: Thu, 31 Jul 2014 11:54:44 -0700
+Message-ID: <20140731185444.4463.35237@quantum>
+References: <1405606399-26608-1-git-send-email-tomeu.vizoso@collabora.com>
+ <1405606399-26608-7-git-send-email-tomeu.vizoso@collabora.com>
+ <53CEA483.6090704@wwwdotorg.org> <53DA2CCB.2080300@collabora.com>
+ <53DA8218.7070300@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1406803383-11601-1-git-send-email-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Joerg Roedel <joro@8bytes.org>, Will Deacon <Will.Deacon@arm.com>, Rob Herring <robh+dt@kernel.org>, Olof Johansson <olof@lixom.net>, iommu@lists.linux-foundation.org, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <53DA8218.7070300@wwwdotorg.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+To: Stephen Warren <swarren@wwwdotorg.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, "Jason Cooper  <jason@lakedaemon.net>,
+ Andrew Lunn  <andrew@lunn.ch>,
+ Sebastian Hesselbarth  <sebastian.hesselbarth@gmail.com>,
+ Russell King  <linux@arm.linux.org.uk>,
+ Shawn Guo  <shawn.guo@freescale.com>,
+ Sascha Hauer  <kernel@pengutronix.de>,
+ David Brown  <davidb@codeaurora.org>,  Daniel Walker  <dwalker@fifo99.com>,
+ Bryan Huntsman  <bryanh@codeaurora.org>,  Paul Walmsley  <paul@pwsan.com>,
+ Tony Lindgren  <tony@atomide.com>,
+ =?utf-8?q?=22_Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
+ Kevin Hilman" <khilman@deeprootsystems.com>, Tomasz Figa <t.figa@samsung.com>, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Thierry Reding <thierry.reding@gmail.com>, Paul Mackerras <paulus@samba.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arch@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry,
-
-On Thursday 31 July 2014 12:43:03 Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> This commit introduces a generic device tree binding for IOMMU devices.
-> Only a very minimal subset is described here, but it is enough to cover
-> the requirements of both the Exynos System MMU and Tegra SMMU as
-> discussed here:
-> 
->     https://lkml.org/lkml/2014/4/27/346
-> 
-> Acked-by: Will Deacon <will.deacon@arm.com>
-> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-> Acked-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-
-Thank you for the great work. This is nearly identical to my own IOMMU DT 
-bindings experiment developed with the Renesas IPMMU-VMSA driver, so I can't 
-disagree.
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
-> Changes in v5:
-> - clarify comment about dma-ranges vs. IOMMU regarding a device's
->   disabled state
-> - use proper DTS syntax reference absolute nodes for phandles
-> - clarify the meaning of the #iommu-cells = <0> example
-> - remove confusing (and unnecessary) #address-cells and #size-cells from
->   multi-master windowed IOMMU example and clarify the meaning of DMA
->   window
-> 
-> Changes in v4:
-> - clarify that disabling an IOMMU DT node may not disable translation
-> - be more explicit that examples are only examples
-> - add multi-ID master example
-> 
-> Changes in v3:
-> - use #iommu-cells instead of #address-cells/#size-cells
-> - drop optional iommu-names property
-> 
-> Changes in v2:
-> - add notes about "dma-ranges" property (drop note from commit message)
-> - document priorities of "iommus" property vs. "dma-ranges" property
-> - drop #iommu-cells in favour of #address-cells and #size-cells
-> - remove multiple-master device example
-> 
->  Documentation/devicetree/bindings/iommu/iommu.txt | 182
-> ++++++++++++++++++++++ 1 file changed, 182 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iommu/iommu.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/iommu/iommu.txt
-> b/Documentation/devicetree/bindings/iommu/iommu.txt new file mode 100644
-> index 000000000000..5a8b4624defc
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iommu/iommu.txt
-> @@ -0,0 +1,182 @@
-> +This document describes the generic device tree binding for IOMMUs and
-> their +master(s).
-> +
-> +
-> +IOMMU device node:
-> +==================
-> +
-> +An IOMMU can provide the following services:
-> +
-> +* Remap address space to allow devices to access physical memory ranges
-> that +  they otherwise wouldn't be capable of accessing.
-> +
-> +  Example: 32-bit DMA to 64-bit physical addresses
-> +
-> +* Implement scatter-gather at page level granularity so that the device
-> does +  not have to.
-> +
-> +* Provide system protection against "rogue" DMA by forcing all accesses to
-> go +  through the IOMMU and faulting when encountering accesses to unmapped
-> +  address regions.
-> +
-> +* Provide address space isolation between multiple contexts.
-> +
-> +  Example: Virtualization
-> +
-> +Device nodes compatible with this binding represent hardware with some of
-> the +above capabilities.
-> +
-> +IOMMUs can be single-master or multiple-master. Single-master IOMMU devices
-> +typically have a fixed association to the master device, whereas multiple-
-> +master IOMMU devices can translate accesses from more than one master. +
-> +The device tree node of the IOMMU device's parent bus must contain a valid
-> +"dma-ranges" property that describes how the physical address space of the
-> +IOMMU maps to memory. An empty "dma-ranges" property means that there is a
-> +1:1 mapping from IOMMU to memory.
-> +
-> +Required properties:
-> +--------------------
-> +- #iommu-cells: The number of cells in an IOMMU specifier needed to encode
-> an +  address.
-> +
-> +The meaning of the IOMMU specifier is defined by the device tree binding of
-> +the specific IOMMU. Below are a few examples of typical use-cases: +
-> +- #iommu-cells = <0>: Single master IOMMU devices are not configurable and
-> +  therefore no additional information needs to be encoded in the specifier.
-> +  This may also apply to multiple master IOMMU devices that do not allow
-> the +  association of masters to be configured. Note that an IOMMU can by
-> design +  be multi-master yet only expose a single master in a given
-> configuration. +  In such cases the number of cells will usually be 1 as in
-> the next case. +- #iommu-cells = <1>: Multiple master IOMMU devices may
-> need to be configured +  in order to enable translation for a given master.
-> In such cases the single +  address cell corresponds to the master device's
-> ID. In some cases more than +  one cell can be required to represent a
-> single master ID.
-> +- #iommu-cells = <4>: Some IOMMU devices allow the DMA window for masters
-> to +  be configured. The first cell of the address in this may contain the
-> master +  device's ID for example, while the second cell could contain the
-> start of +  the DMA window for the given device. The length of the DMA
-> window is given +  by the third and fourth cells.
-> +
-> +Note that these are merely examples and real-world use-cases may use
-> different +definitions to represent their individual needs. Always refer to
-> the specific +IOMMU binding for the exact meaning of the cells that make up
-> the specifier. +
-> +
-> +IOMMU master node:
-> +==================
-> +
-> +Devices that access memory through an IOMMU are called masters. A device
-> can +have multiple master interfaces (to one or more IOMMU devices).
-> +
-> +Required properties:
-> +--------------------
-> +- iommus: A list of phandle and IOMMU specifier pairs that describe the
-> IOMMU +  master interfaces of the device. One entry in the list describes
-> one master +  interface of the device.
-> +
-> +When an "iommus" property is specified in a device tree node, the IOMMU
-> will +be used for address translation. If a "dma-ranges" property exists in
-> the +device's parent node it will be ignored. An exception to this rule is
-> if the +referenced IOMMU is disabled, in which case the "dma-ranges"
-> property of the +parent shall take effect. Note that merely disabling a
-> device tree node does +not guarantee that the IOMMU is really disabled
-> since the hardware may not +have a means to turn off translation. But it is
-> invalid in such cases to +disable the IOMMU's device tree node in the first
-> place because it would +prevent any driver from properly setting up the
-> translations.
-> +
-> +
-> +Notes:
-> +======
-> +
-> +One possible extension to the above is to use an "iommus" property along
-> with +a "dma-ranges" property in a bus device node (such as PCI host
-> bridges). This +can be useful to describe how children on the bus relate to
-> the IOMMU if they +are not explicitly listed in the device tree (e.g. PCI
-> devices). However, the +requirements of that use-case haven't been fully
-> determined yet. Implementing +this is therefore not recommended without
-> further discussion and extension of +this binding.
-> +
-> +
-> +Examples:
-> +=========
-> +
-> +Single-master IOMMU:
-> +--------------------
-> +
-> +	iommu {
-> +		#iommu-cells = <0>;
-> +	};
-> +
-> +	master {
-> +		iommus = <&{/iommu}>;
-> +	};
-> +
-> +Multiple-master IOMMU with fixed associations:
-> +----------------------------------------------
-> +
-> +	/* multiple-master IOMMU */
-> +	iommu {
-> +		/*
-> +		 * Masters are statically associated with this IOMMU and share
-> +		 * the same address translations because the IOMMU does not
-> +		 * have sufficient information to distinguish between masters.
-> +		 *
-> +		 * Consequently address translation is always on or off for
-> +		 * all masters at any given point in time.
-> +		 */
-> +		#iommu-cells = <0>;
-> +	};
-> +
-> +	/* static association with IOMMU */
-> +	master@1 {
-> +		reg = <1>;
-> +		iommus = <&{/iommu}>;
-> +	};
-> +
-> +	/* static association with IOMMU */
-> +	master@2 {
-> +		reg = <2>;
-> +		iommus = <&{/iommu}>;
-> +	};
-> +
-> +Multiple-master IOMMU:
-> +----------------------
-> +
-> +	iommu {
-> +		/* the specifier represents the ID of the master */
-> +		#iommu-cells = <1>;
-> +	};
-> +
-> +	master@1 {
-> +		/* device has master ID 42 in the IOMMU */
-> +		iommus = <&{/iommu} 42>;
-> +	};
-> +
-> +	master@2 {
-> +		/* device has master IDs 23 and 24 in the IOMMU */
-> +		iommus = <&{/iommu} 23>, <&{/iommu} 24>;
-> +	};
-> +
-> +Multiple-master IOMMU with configurable DMA window:
-> +---------------------------------------------------
-> +
-> +	/ {
-> +		iommu {
-> +			/*
-> +			 * One cell for the master ID and one cell for the
-> +			 * address of the DMA window. The length of the DMA
-> +			 * window is encoded in two cells.
-> +			 *
-> +			 * The DMA window is the range addressable by the
-> +			 * master (i.e. the I/O virtual address space).
-> +			 */
-> +			#iommu-cells = <4>;
-> +		};
-> +
-> +		master {
-> +			/* master ID 42, 4 GiB DMA window starting at 0 */
-> +			iommus = <&{/iommu}  42  0  0x1 0x0>;
-> +		};
-> +	};
-
--- 
-Regards,
-
-Laurent Pinchart
+UXVvdGluZyBTdGVwaGVuIFdhcnJlbiAoMjAxNC0wNy0zMSAxMDo1MToyMCkKPiBPbiAwNy8zMS8y
+MDE0IDA1OjQ3IEFNLCBUb21ldSBWaXpvc28gd3JvdGU6Cj4gPiBPbiAwNy8yMi8yMDE0IDA3OjUw
+IFBNLCBTdGVwaGVuIFdhcnJlbiB3cm90ZToKPiA+PiBPbiAwNy8xNy8yMDE0IDA4OjEzIEFNLCBU
+b21ldSBWaXpvc28gd3JvdGU6Cj4gPj4+IEFkZHMgYSB3YXkgZm9yIGNsb2NrIGNvbnN1bWVycyB0
+byBzZXQgbWF4aW11bSBhbmQgbWluaW11bSByYXRlcy4gVGhpcwo+ID4+PiBjYW4gYmUKPiA+Pj4g
+dXNlZCBmb3IgdGhlcm1hbCBkcml2ZXJzIHRvIHNldCBjZWlsaW5nIHJhdGVzLCBvciBieSBtaXNj
+LiBkcml2ZXJzIHRvCj4gPj4+IHNldAo+ID4+PiBmbG9vciByYXRlcyB0byBhc3N1cmUgYSBtaW5p
+bXVtIHBlcmZvcm1hbmNlIGxldmVsLgo+ID4+Cj4gPj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Ns
+ay9jbGsuYyBiL2RyaXZlcnMvY2xrL2Nsay5jCj4gPj4KPiA+Pj4gK3N0cnVjdCByYXRlX2NvbnN0
+cmFpbnQgewo+ID4+PiArICAgIHN0cnVjdCBobGlzdF9ub2RlICAgIG5vZGU7Cj4gPj4+ICsgICAg
+Y29uc3QgY2hhciAgICAgICAgKmRldl9pZDsKPiA+Pj4gKyAgICBjb25zdCBjaGFyICAgICAgICAq
+Y29uX2lkOwo+ID4+PiArICAgIGVudW0gY29uc3RyYWludF90eXBlICAgIHR5cGU7Cj4gPj4+ICsg
+ICAgdW5zaWduZWQgbG9uZyAgICAgICAgcmF0ZTsKPiA+Pj4gK307Cj4gPj4KPiA+PiBJIHdvdWxk
+IHBlcnNvbmFsbHkgc3RpbGwgcHJlZmVyIGVpdGhlcjoKPiA+Pgo+ID4+IGEpIFRoZSBzdHJ1Y3Qg
+cmF0ZV9jb25zdHJhaW50cyBiZSBzdG9yZWQgaW4gc3RydWN0IGNsayByYXRoZXIgdGhhbgo+ID4+
+IHN0cnVjdCBjbGtfY29yZSwgc28gdGhleSdyZSBzdG9yZWQgaW4gdGhlIGNvbnRhaW5lciB0aGF0
+ICJzZXQiIHRoZQo+ID4+IGNvbnN0cmFpbnRzLiBUaGlzIHdvdWxkIG1lYW4gaXRlcmF0aW5nIG92
+ZXIgYSBzdHJ1Y3QgY2xrX2NvcmUncwo+ID4+IGFzc29jaWF0ZWQgc3RydWN0IGNsa3MsIHRoZW4g
+aXRlcmF0aW5nIG92ZXIgdGhlIHN0cnVjdCByYXRlX2NvbnN0cmFpbnRzCj4gPj4gd2l0aGluIGVh
+Y2ggc3RydWN0IGNsay4KPiA+Pgo+ID4+IG9yOgo+ID4+Cj4gPj4gYikgc3RydWN0IHJhdGVfY29u
+c3RyYWludCB0byBjb250YWluIGEgcG9pbnRlciB0byB0aGUgc3RydWN0IGNsayB0aGF0Cj4gPj4g
+Y3JlYXRlZCB0aGUgY29uc3RyYWludCwgcmF0aGVyIHRoYW4gY29weWluZyB0aGUgZGV2X2lkL2Nv
+bl9pZCBmcm9tIHRoYXQKPiA+PiBzdHJ1Y3QgY2xrIGludG8gdGhlIHN0cnVjdCByYXRlX2NvbnN0
+cmFpbnQuCj4gPj4KPiA+PiBXaXRoIGVpdGhlciBvZiB0aG9zZSBjaGFuZ2VzLCB0aGUgY29uc3Ry
+YWludHMgYXJlIGRpcmVjdGx5IGFzc29jaWF0ZWQKPiA+PiB3aXRoIHRoZSBjbG9jayBjbGllbnQg
+b2JqZWN0IHRoYXQgY3JlYXRlZCB0aGUgY29uc3RyYWludCBtdWNoIGJldHRlcgo+ID4+IHRoYW4g
+cmlnaHQgbm93LCB3aGVyZSB0aGUgbWF0Y2hpbmcgaXMgb25seSBiZWNhdXNlIHRoZSBzdHJ1Y3Qg
+Y2xrIGFuZAo+ID4+IHN0cnVjdCByYXRlX2NvbnN0cmFpbnQgImhhcHBlbiB0byIgaGF2ZSB0aGUg
+c2FtZSBkZXZfaWQvY29uX2lkIHZhbHVlcy4KPiA+Pgo+ID4+IFN0aWxsLCB0aGlzIGlzIGEgcHJl
+dHR5IG1pbm9yIGlzc3VlLCBhbmQgb3ZlcmFsbCB0aGlzIHNlcmllcyBsb29rcwo+ID4+IHJlYXNv
+bmFibGUgdG8gbWUgYXQgYSBxdWljayBsb29rLgo+ID4KPiA+IFllYWgsIEkgYWdyZWUgYW5kIHBl
+cnNvbmFsbHkgcHJlZmVyIGEpLCBidXQgZ2l2ZW4gdGhlIGxpdHRsZSBmZWVkYmFjawo+ID4gdGhh
+dCBJIGhhdmUgZ290dGVuIHNvIGZhciBvbiB0aGUgcmVmYWN0b3JpbmcsIEknbSBzdGFydGluZyB0
+byBjb25zaWRlcgo+ID4gZm9yZ2V0dGluZyBhYm91dCB0aGUgcGVyLXVzZXIgY2xrIHN0cnVjdCBh
+bmQgZ28gaW5zdGVhZCB3aXRoIGEKPiA+IHJlcXVlc3QtYmFzZWQgQVBJIHNpbWlsYXIgdG8gdGhh
+dCBvZiBwbV9xb3MsIGZvciBzZXR0aW5nIGZsb29yIGFuZAo+ID4gY2VpbGluZyBmcmVxdWVuY2ll
+cy4KPiAKPiBJIHdvdWxkIG9idmlvdXNseSBlbmNvdXJhZ2UgeW91IHRvIGNvbnRpbnVlIHB1c2hp
+bmcgZm9yIHRoaXMgZmVhdHVyZSwgCj4gYWx0aG91Z2ggSSB1bmRlcnN0YW5kIGl0IGNhbiBiZSBk
+aWZmaWN1bHQgdG8gYmUgbW90aXZhdGVkIHdoZW4gdGhlIAo+IHBhdGNoZXMgZG9uJ3QgZ2V0IG11
+Y2ggZmVlZGJhY2suCgpTb3JyeSBmb3Igbm90IGdpdmluZyB0aGlzIG1vcmUgb2YgYSBsb29rLiBN
+eSBzZWNyZXQgcGxhbiB3YXMgdG8gcmV2aWV3CnRoaXMgaW4gbW9yZSBkZXRhaWwgb25jZSB3ZSdy
+ZSBjbG9zZXIgdG8gdGhlIG1lcmdlIHdpbmRvdyBhbmQsIGlmCmFwcHJvcHJpYXRlLCBhcHBseSBp
+dCBhcyBvbmUgb2YgdGhlIGZpcnN0IHRoaW5ncyBzaW5jZSB0aGlzIGlzIGJvdW5kIHRvCmNhdXNl
+IHNvbWUgYnJlYWthZ2UgZWFybHkgb24gd2hpY2ggbmVlZHMgdG8gYmUgY2F1Z2h0IGFuZCBmaXhl
+ZCB1cApxdWlja2x5LgoKV2UgYXJlIHZlcnkgY2xvc2UgdG8gdGhlIG1lcmdlIHdpbmRvdyBzbyBJ
+IHdpbGwgdHJ5IHRvIGdldCB0byB0aGlzIGxhdGVyCnRoaXMgd2Vlay4gSSBsaWtlIHRoZSBwZXIt
+dXNlciBzdHJ1Y3QgY2xrIG15c2VsZiBhbmQgSSBob3BlIHdlIGNhbiBnZXQKdGhpcyBpbiBmb3Ig
+My4xOC4KClJlZ2FyZHMsCk1pa2UKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KTGludXhwcGMtZGV2IG1haWxpbmcgbGlzdApMaW51eHBwYy1kZXZAbGlzdHMu
+b3psYWJzLm9yZwpodHRwczovL2xpc3RzLm96bGFicy5vcmcvbGlzdGluZm8vbGludXhwcGMtZGV2
