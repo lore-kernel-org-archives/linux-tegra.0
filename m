@@ -1,52 +1,48 @@
-From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v5] devicetree: Add generic IOMMU device tree bindings
-Date: Thu, 31 Jul 2014 19:23:19 +0200
-Message-ID: <20140731172319.GN9809@8bytes.org>
-References: <1406803383-11601-1-git-send-email-thierry.reding@gmail.com>
-	<20140731120424.GK9809@8bytes.org>
-	<CAOesGMiS_MJNnkfPOsqxV27=rXPgT9UNbp-+VhpMRNf9u0+-eA@mail.gmail.com>
-	<20140731163611.GM9809@8bytes.org>
-	<CAOesGMjovbqn86Q97_SCgsC4jeZf1M_gTKk-Twjr_=6rvnXTCg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAOesGMjovbqn86Q97_SCgsC4jeZf1M_gTKk-Twjr_=6rvnXTCg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Will Deacon <Will.Deacon-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [flasher PATCH] Adapt to new U-Boot build commands
+Date: Thu, 31 Jul 2014 11:48:05 -0600
+Message-ID: <1406828885-8561-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Masahiro Yamada <yamada.m-NAum8xwdG0+S7A1Ibl2khg@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jul 31, 2014 at 10:14:08AM -0700, Olof Johansson wrote:
-> On Thu, Jul 31, 2014 at 9:36 AM, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org> wrote:
-> > On Thu, Jul 31, 2014 at 08:38:47AM -0700, Olof Johansson wrote:
-> >> >
-> >> > Applied, thanks everyone.
-> >>
-> >> Really?
-> >>
-> >> Gee, thanks for giving people a chance to reply with acks. It's
-> >> considered polite to do so when there has been outstanding questions.
-> >
-> > Its not pushed yet, I can still make changes. Do you have any objections
-> > or an Ack?
-> 
-> No outstanding objections. We have some things to amend with later but
-> that's perfectly fine:
-> 
-> Reviewed-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Thanks, added your Reviewed-by and will push the new tree out in the
-evening.
+U-Boot commit 51148790f26e "kconfig: switch to Kconfig" changed the
+commands required to configure U-Boot. Adapt the flasher build script
+to those changes, in a way that automatically works with either old or
+new U-Boot source trees.
 
+Cc: Masahiro Yamada <yamada.m-NAum8xwdG0+S7A1Ibl2khg@public.gmane.org>
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ build | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-	Joerg
+diff --git a/build b/build
+index af863dd3b395..e61cac8ea4c7 100755
+--- a/build
++++ b/build
+@@ -186,7 +186,17 @@ def build_uboot_one_board(boardname):
+     out_board_dir = gen_out_board_dir(boardname)
+     mkdir(out_board_dir)
+ 
+-    run(uboot_dir, 'make O=' + build_uboot_dir + ' ' + boardname + '_config')
++    # U-Boot commit 51148790f26e "kconfig: switch to Kconfig" changed the
++    # build commands from "make ${board}_config; make" to
++    # "make ${board}_defconfig; make". That commit also added file
++    # scripts/multiconfig.py, so we happen to have an easy way to check for
++    # the existence of that file to tell how to compile U-Boot:-/
++    new_build_commands_file = os.path.join(uboot_dir, "scripts/multiconfig.py")
++    if os.path.exists(new_build_commands_file):
++        config_target_suffix = '_defconfig'
++    else:
++        config_target_suffix = '_config'
++    run(uboot_dir, 'make O=' + build_uboot_dir + ' ' + boardname + config_target_suffix)
+     run(uboot_dir, 'make O=' + build_uboot_dir + ' -s ' + makejobs)
+ 
+     import_uboot_one_board(boardname, build_uboot_dir)
+-- 
+1.9.1
