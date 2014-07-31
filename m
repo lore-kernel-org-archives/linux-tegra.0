@@ -1,72 +1,49 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [patch 2/2] pinctrl: tegra-xusb: testing wrong variable in
- probe()
-Date: Thu, 31 Jul 2014 17:36:53 +0200
-Message-ID: <20140731153651.GB21098@ulmo.nvidia.com>
-References: <20140731152308.GE31539@mwanda>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH v5] devicetree: Add generic IOMMU device tree bindings
+Date: Thu, 31 Jul 2014 08:38:47 -0700
+Message-ID: <CAOesGMiS_MJNnkfPOsqxV27=rXPgT9UNbp-+VhpMRNf9u0+-eA@mail.gmail.com>
+References: <1406803383-11601-1-git-send-email-thierry.reding@gmail.com>
+	<20140731120424.GK9809@8bytes.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="QKdGvSO+nmPlgiQ/"
-Return-path: <kernel-janitors-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140731152308.GE31539@mwanda>
-Sender: kernel-janitors-owner@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20140731120424.GK9809-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Will Deacon <Will.Deacon-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Thu, Jul 31, 2014 at 5:04 AM, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org> wrote:
+> On Thu, Jul 31, 2014 at 12:43:03PM +0200, Thierry Reding wrote:
+>> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>
+>> This commit introduces a generic device tree binding for IOMMU devices.
+>> Only a very minimal subset is described here, but it is enough to cover
+>> the requirements of both the Exynos System MMU and Tegra SMMU as
+>> discussed here:
+>>
+>>     https://lkml.org/lkml/2014/4/27/346
+>>
+>> Acked-by: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+>> Reviewed-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+>> Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+>> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> Applied, thanks everyone.
 
---QKdGvSO+nmPlgiQ/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Really?
 
-On Thu, Jul 31, 2014 at 06:23:08PM +0300, Dan Carpenter wrote:
-> There is a cut and paste bug so we test the wrong variable.  "err" is
-> never less than zero at this point.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> diff --git a/drivers/pinctrl/pinctrl-tegra-xusb.c b/drivers/pinctrl/pinct=
-rl-tegra-xusb.c
-> index 419a047..e641b42 100644
-> --- a/drivers/pinctrl/pinctrl-tegra-xusb.c
-> +++ b/drivers/pinctrl/pinctrl-tegra-xusb.c
-> @@ -930,7 +930,8 @@ static int tegra_xusb_padctl_probe(struct platform_de=
-vice *pdev)
-> =20
->  	padctl->provider =3D devm_of_phy_provider_register(&pdev->dev,
->  							 tegra_xusb_padctl_xlate);
-> -	if (err < 0) {
-> +	if (IS_ERR(padctl->provider)) {
-> +		err =3D PTR_ERR(padctl->provider);
->  		dev_err(&pdev->dev, "failed to register PHYs: %d\n", err);
->  		goto unregister;
->  	}
+Gee, thanks for giving people a chance to reply with acks. It's
+considered polite to do so when there has been outstanding questions.
 
-And another good catch. Thanks Dan.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---QKdGvSO+nmPlgiQ/
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJT2mKTAAoJEN0jrNd/PrOhes8QAJErJsllQDazZDHti+6ALxEx
-v2SntZenDYkvK9uBiuR8JO2y5gP8EyG00oqqVVcLFpmRRY1onS3aHZ7/aX4yVifU
-/N2U1OjdMTnxhWQKpc1JoBPamPRXAT0smFifhvJIEEmbyeMtc4SSg6ITCHfVMToH
-UeONojLr37jxv73mCd2Ac/X3qFZzofp4Nf8r4LGQWu0pBWAtHJfwdxr6kVB0Lmh6
-LSHNqhmbus7mA3ZP/7E7K3YBppNfTCJ8Ermu11THpOtbQP3twabgEbLUJ9Po6eDj
-7P0KwHQgTbSb86h5FzPv7kFBVbuvHxriIzlI9vL7yVJHJ8l+dw0ajr6XtbOJaC3a
-E/MadFQe1BA6LyrBBUo4Jbpe9kKN0YFB6WNZn3IslbhephsXmOrPIkEjJBb/NSq6
-PX0FRidDh+4e6N2jkOubicSWDOuSxOsvwCk2hestMFn+v2QI25DkdXG26NlkJ/Lw
-KAi6uNcxqlMlTsv/FIeKvS2X3mph4t1jA3KoONdl0jdqu8stiOVJVvZnfYOgiuTs
-tf0gORMQ87+hqkhWQYKjEIsfsdGNctUkKTE7mxMhviyL/usSD0AFPrRiw6r+3oAw
-pVMiErLRs/GIHYIJm5PyWF4tB6+UdXOwZHrBd0KXDm9lfunD2iQMjGGw2kd1/POE
-icG9bti8Yv6+KWp7deCm
-=TAhs
------END PGP SIGNATURE-----
-
---QKdGvSO+nmPlgiQ/--
+-Olof
