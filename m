@@ -1,88 +1,114 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v4 6/6] clk: Add floor and ceiling constraints to clock
- rates
-Date: Thu, 31 Jul 2014 11:54:44 -0700
-Message-ID: <20140731185444.4463.35237@quantum>
-References: <1405606399-26608-1-git-send-email-tomeu.vizoso@collabora.com>
- <1405606399-26608-7-git-send-email-tomeu.vizoso@collabora.com>
- <53CEA483.6090704@wwwdotorg.org> <53DA2CCB.2080300@collabora.com>
- <53DA8218.7070300@wwwdotorg.org>
+From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 8/8] clk: tegra: Add EMC clock driver
+Date: Thu, 31 Jul 2014 12:06:59 -0700
+Message-ID: <20140731190659.4463.92139@quantum>
+References: <1405088313-20048-1-git-send-email-mperttunen@nvidia.com>
+ <1405088313-20048-9-git-send-email-mperttunen@nvidia.com>
+ <53CE97F2.80300@wwwdotorg.org> <53D75FA7.1030300@nvidia.com>
+ <20140729201939.4627.79710@quantum> <53D81CD4.5010307@wwwdotorg.org>
+ <20140730093456.GA29590@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <53DA8218.7070300@wwwdotorg.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Stephen Warren <swarren@wwwdotorg.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, "Jason Cooper  <jason@lakedaemon.net>,
- Andrew Lunn  <andrew@lunn.ch>,
- Sebastian Hesselbarth  <sebastian.hesselbarth@gmail.com>,
- Russell King  <linux@arm.linux.org.uk>,
- Shawn Guo  <shawn.guo@freescale.com>,
- Sascha Hauer  <kernel@pengutronix.de>,
- David Brown  <davidb@codeaurora.org>,  Daniel Walker  <dwalker@fifo99.com>,
- Bryan Huntsman  <bryanh@codeaurora.org>,  Paul Walmsley  <paul@pwsan.com>,
- Tony Lindgren  <tony@atomide.com>,
- =?utf-8?q?=22_Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
- Kevin Hilman" <khilman@deeprootsystems.com>, Tomasz Figa <t.figa@samsung.com>, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Thierry Reding <thierry.reding@gmail.com>, Paul Mackerras <paulus@samba.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arch@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140730093456.GA29590@ulmo>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-UXVvdGluZyBTdGVwaGVuIFdhcnJlbiAoMjAxNC0wNy0zMSAxMDo1MToyMCkKPiBPbiAwNy8zMS8y
-MDE0IDA1OjQ3IEFNLCBUb21ldSBWaXpvc28gd3JvdGU6Cj4gPiBPbiAwNy8yMi8yMDE0IDA3OjUw
-IFBNLCBTdGVwaGVuIFdhcnJlbiB3cm90ZToKPiA+PiBPbiAwNy8xNy8yMDE0IDA4OjEzIEFNLCBU
-b21ldSBWaXpvc28gd3JvdGU6Cj4gPj4+IEFkZHMgYSB3YXkgZm9yIGNsb2NrIGNvbnN1bWVycyB0
-byBzZXQgbWF4aW11bSBhbmQgbWluaW11bSByYXRlcy4gVGhpcwo+ID4+PiBjYW4gYmUKPiA+Pj4g
-dXNlZCBmb3IgdGhlcm1hbCBkcml2ZXJzIHRvIHNldCBjZWlsaW5nIHJhdGVzLCBvciBieSBtaXNj
-LiBkcml2ZXJzIHRvCj4gPj4+IHNldAo+ID4+PiBmbG9vciByYXRlcyB0byBhc3N1cmUgYSBtaW5p
-bXVtIHBlcmZvcm1hbmNlIGxldmVsLgo+ID4+Cj4gPj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Ns
-ay9jbGsuYyBiL2RyaXZlcnMvY2xrL2Nsay5jCj4gPj4KPiA+Pj4gK3N0cnVjdCByYXRlX2NvbnN0
-cmFpbnQgewo+ID4+PiArICAgIHN0cnVjdCBobGlzdF9ub2RlICAgIG5vZGU7Cj4gPj4+ICsgICAg
-Y29uc3QgY2hhciAgICAgICAgKmRldl9pZDsKPiA+Pj4gKyAgICBjb25zdCBjaGFyICAgICAgICAq
-Y29uX2lkOwo+ID4+PiArICAgIGVudW0gY29uc3RyYWludF90eXBlICAgIHR5cGU7Cj4gPj4+ICsg
-ICAgdW5zaWduZWQgbG9uZyAgICAgICAgcmF0ZTsKPiA+Pj4gK307Cj4gPj4KPiA+PiBJIHdvdWxk
-IHBlcnNvbmFsbHkgc3RpbGwgcHJlZmVyIGVpdGhlcjoKPiA+Pgo+ID4+IGEpIFRoZSBzdHJ1Y3Qg
-cmF0ZV9jb25zdHJhaW50cyBiZSBzdG9yZWQgaW4gc3RydWN0IGNsayByYXRoZXIgdGhhbgo+ID4+
-IHN0cnVjdCBjbGtfY29yZSwgc28gdGhleSdyZSBzdG9yZWQgaW4gdGhlIGNvbnRhaW5lciB0aGF0
-ICJzZXQiIHRoZQo+ID4+IGNvbnN0cmFpbnRzLiBUaGlzIHdvdWxkIG1lYW4gaXRlcmF0aW5nIG92
-ZXIgYSBzdHJ1Y3QgY2xrX2NvcmUncwo+ID4+IGFzc29jaWF0ZWQgc3RydWN0IGNsa3MsIHRoZW4g
-aXRlcmF0aW5nIG92ZXIgdGhlIHN0cnVjdCByYXRlX2NvbnN0cmFpbnRzCj4gPj4gd2l0aGluIGVh
-Y2ggc3RydWN0IGNsay4KPiA+Pgo+ID4+IG9yOgo+ID4+Cj4gPj4gYikgc3RydWN0IHJhdGVfY29u
-c3RyYWludCB0byBjb250YWluIGEgcG9pbnRlciB0byB0aGUgc3RydWN0IGNsayB0aGF0Cj4gPj4g
-Y3JlYXRlZCB0aGUgY29uc3RyYWludCwgcmF0aGVyIHRoYW4gY29weWluZyB0aGUgZGV2X2lkL2Nv
-bl9pZCBmcm9tIHRoYXQKPiA+PiBzdHJ1Y3QgY2xrIGludG8gdGhlIHN0cnVjdCByYXRlX2NvbnN0
-cmFpbnQuCj4gPj4KPiA+PiBXaXRoIGVpdGhlciBvZiB0aG9zZSBjaGFuZ2VzLCB0aGUgY29uc3Ry
-YWludHMgYXJlIGRpcmVjdGx5IGFzc29jaWF0ZWQKPiA+PiB3aXRoIHRoZSBjbG9jayBjbGllbnQg
-b2JqZWN0IHRoYXQgY3JlYXRlZCB0aGUgY29uc3RyYWludCBtdWNoIGJldHRlcgo+ID4+IHRoYW4g
-cmlnaHQgbm93LCB3aGVyZSB0aGUgbWF0Y2hpbmcgaXMgb25seSBiZWNhdXNlIHRoZSBzdHJ1Y3Qg
-Y2xrIGFuZAo+ID4+IHN0cnVjdCByYXRlX2NvbnN0cmFpbnQgImhhcHBlbiB0byIgaGF2ZSB0aGUg
-c2FtZSBkZXZfaWQvY29uX2lkIHZhbHVlcy4KPiA+Pgo+ID4+IFN0aWxsLCB0aGlzIGlzIGEgcHJl
-dHR5IG1pbm9yIGlzc3VlLCBhbmQgb3ZlcmFsbCB0aGlzIHNlcmllcyBsb29rcwo+ID4+IHJlYXNv
-bmFibGUgdG8gbWUgYXQgYSBxdWljayBsb29rLgo+ID4KPiA+IFllYWgsIEkgYWdyZWUgYW5kIHBl
-cnNvbmFsbHkgcHJlZmVyIGEpLCBidXQgZ2l2ZW4gdGhlIGxpdHRsZSBmZWVkYmFjawo+ID4gdGhh
-dCBJIGhhdmUgZ290dGVuIHNvIGZhciBvbiB0aGUgcmVmYWN0b3JpbmcsIEknbSBzdGFydGluZyB0
-byBjb25zaWRlcgo+ID4gZm9yZ2V0dGluZyBhYm91dCB0aGUgcGVyLXVzZXIgY2xrIHN0cnVjdCBh
-bmQgZ28gaW5zdGVhZCB3aXRoIGEKPiA+IHJlcXVlc3QtYmFzZWQgQVBJIHNpbWlsYXIgdG8gdGhh
-dCBvZiBwbV9xb3MsIGZvciBzZXR0aW5nIGZsb29yIGFuZAo+ID4gY2VpbGluZyBmcmVxdWVuY2ll
-cy4KPiAKPiBJIHdvdWxkIG9idmlvdXNseSBlbmNvdXJhZ2UgeW91IHRvIGNvbnRpbnVlIHB1c2hp
-bmcgZm9yIHRoaXMgZmVhdHVyZSwgCj4gYWx0aG91Z2ggSSB1bmRlcnN0YW5kIGl0IGNhbiBiZSBk
-aWZmaWN1bHQgdG8gYmUgbW90aXZhdGVkIHdoZW4gdGhlIAo+IHBhdGNoZXMgZG9uJ3QgZ2V0IG11
-Y2ggZmVlZGJhY2suCgpTb3JyeSBmb3Igbm90IGdpdmluZyB0aGlzIG1vcmUgb2YgYSBsb29rLiBN
-eSBzZWNyZXQgcGxhbiB3YXMgdG8gcmV2aWV3CnRoaXMgaW4gbW9yZSBkZXRhaWwgb25jZSB3ZSdy
-ZSBjbG9zZXIgdG8gdGhlIG1lcmdlIHdpbmRvdyBhbmQsIGlmCmFwcHJvcHJpYXRlLCBhcHBseSBp
-dCBhcyBvbmUgb2YgdGhlIGZpcnN0IHRoaW5ncyBzaW5jZSB0aGlzIGlzIGJvdW5kIHRvCmNhdXNl
-IHNvbWUgYnJlYWthZ2UgZWFybHkgb24gd2hpY2ggbmVlZHMgdG8gYmUgY2F1Z2h0IGFuZCBmaXhl
-ZCB1cApxdWlja2x5LgoKV2UgYXJlIHZlcnkgY2xvc2UgdG8gdGhlIG1lcmdlIHdpbmRvdyBzbyBJ
-IHdpbGwgdHJ5IHRvIGdldCB0byB0aGlzIGxhdGVyCnRoaXMgd2Vlay4gSSBsaWtlIHRoZSBwZXIt
-dXNlciBzdHJ1Y3QgY2xrIG15c2VsZiBhbmQgSSBob3BlIHdlIGNhbiBnZXQKdGhpcyBpbiBmb3Ig
-My4xOC4KClJlZ2FyZHMsCk1pa2UKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX18KTGludXhwcGMtZGV2IG1haWxpbmcgbGlzdApMaW51eHBwYy1kZXZAbGlzdHMu
-b3psYWJzLm9yZwpodHRwczovL2xpc3RzLm96bGFicy5vcmcvbGlzdGluZm8vbGludXhwcGMtZGV2
+Quoting Thierry Reding (2014-07-30 02:34:57)
+> On Tue, Jul 29, 2014 at 04:14:44PM -0600, Stephen Warren wrote:
+> > On 07/29/2014 02:19 PM, Mike Turquette wrote:
+> > >Quoting Mikko Perttunen (2014-07-29 01:47:35)
+> > >>On 22/07/14 19:57, Stephen Warren wrote:
+> > >>>On 07/11/2014 08:18 AM, Mikko Perttunen wrote:
+> > >>>>+static int emc_debug_rate_set(void *data, u64 rate)
+> > >>>>+{
+> > >>>>+    struct tegra_emc *tegra = data;
+> > >>>>+
+> > >>>>+    return clk_set_rate(tegra->hw.clk, rate);
+> > >>>>+}
+> > >>>>+
+> > >>>>+DEFINE_SIMPLE_ATTRIBUTE(emc_debug_rate_fops, emc_debug_rate_get,
+> > >>>>+                    emc_debug_rate_set, "%lld\n");
+> > >>>
+> > >>>I think the rate can already be obtained through
+> > >>>...debug/clock/clock_summary. I'm not sure about changing the rate, but
+> > >>>shouldn't that be a feature of the common clock core, not individual
+> > >>>drivers?
+> > >>
+> > >>The core doesn't allow writing to the rate debugfs files, so this is the
+> > >>only way to trigger an EMC clock change for now. I agree that the core
+> > >>might be a better place. I don't know if there are any philosophical
+> > >>objections to that. I'd like to keep this in until a possible core
+> > >>feature addition. Mike, any comments?
+> > >
+> > >Yes, there is a philosophical rejection to exposing rate-change knobs to
+> > >userspace through debugfs. These can and will ship in real products
+> > >(typically Android) with lots of nasty userspace hacks, and also
+> > >represent pretty dangerous things to expose to userspace. I have always
+> > >maintained that such knobs should remain out of tree or, with the advent
+> > >of the custom debugfs entries, should be burden of the clock drivers.
+> > 
+> > That argument seems a bit inconsistent.
+> > 
+> > I can see the argument to disallow code that lets user-space fiddle with
+> > clocks. However, if that argument holds, then surely it must apply to either
+> > the clock core *or* a clock driver; the end effect of allowing the code in
+
+Stephen,
+
+You meant to say, "it must apply to both the clock core and a clock
+driver"? I agree.
+
+> > either place is that people will be able to implement the user-space hacks
+> > you want to avoid. Yet, if we allow the code because it's a useful debug
+> > tool, then surely it should be in the clock core so we don't implement it
+> > redundantly in each clock driver.
+
+I don't want it anywhere to be honest. Read-only debugfs stuff is great
+and I'm happy to merge it. I have repeatedly NAK'd any attempt to get
+the userspace rate-change stuff merged into the core.
+
+Recently we have the ability to assign custom debugfs entries that are
+specific to the clock driver. I'm trying to find the right balance
+between giving the clock driver authors the right amount of autonomy to
+implement what they need while trying to keep the crazy out of the
+kernel. Maybe in this case I should stick to my guns and NAK this patch.
+
+> > 
+> > We could always taint the kernel if the feature is used. Admittedly that
+> > wouldn't stop people using the feature as a hack in Android/product kernels,
+> > but at least nobody would have to unknowingly debug problems due to such
+> > manipulation, in the context of an upstream kernel.
+> 
+> Not merging this feature upstream won't stop anybody from implementing
+> it as a hack in Android/product kernels either. If it's useful then
+> somebody will implement it in whatever downstream kernel they use. And
+> if it's useful to more than one vendor then we'll end up with a copy of
+> the implementation (and derivations on top) in each vendor's tree.
+
+Thierry,
+
+That argument is not sufficient to merit merging code. There is all
+kinds of wacky downstream code that gets duplicated by various hardware
+vendors, Linux distributions, the Cyanogenmod community, etc. Should we
+merge any piece of downstream code just because more than one person
+wants to use it?
+
+> 
+> debugfs requires superuser privileges anyway, in which case you could
+> equally well write userspace software that directly bangs on the clock
+> controller registers.
+
+Sure. There are lots of technical reasons why this isn't such a bad idea
+(e.g. you need admin privileges, we shouldn't ship devices with debugfs
+turned on, etc). But by merging it we tell people, "hey, this is an OK
+thing to do", which it is not.
+
+Regards,
+Mike
+
+> 
+> Thierry
