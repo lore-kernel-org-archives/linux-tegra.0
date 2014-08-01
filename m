@@ -1,63 +1,83 @@
 From: Pawel Moll <pawel.moll@arm.com>
-Subject: Re: [PATCH 5/5] platform: Make platform_bus device a platform device
-Date: Fri, 01 Aug 2014 18:21:14 +0100
-Message-ID: <1406913674.22529.45.camel@hornet>
+Subject: Re: [PATCH 4/5] [SCSI] Do not use platform_bus as a parent
+Date: Fri, 01 Aug 2014 18:25:24 +0100
+Message-ID: <1406913924.22529.51.camel@hornet>
 References: <1406298233-27876-1-git-send-email-pawel.moll@arm.com>
-	 <1406298233-27876-5-git-send-email-pawel.moll@arm.com>
-	 <20140726201240.GB21870@kroah.com>
+	 <1406298233-27876-4-git-send-email-pawel.moll@arm.com>
+	 <1406299616.1789.13.camel@jarvis.lan> <20140726201150.GA21870@kroah.com>
+	 <1406433177.11069.3.camel@jarvis> <20140727150720.GC1723@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140726201240.GB21870@kroah.com>
+In-Reply-To: <20140727150720.GC1723@kroah.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@wwwdotorg.org>, Catalin Marinas <Catalin.Marinas@arm.com>, "paul@pwsan.com" <paul@pwsan.com>, Arnd Bergmann <arnd@arndb.de>, Peter De Schrijver <pdeschrijver@nvidia.com>, "arm@kernel.org" <arm@kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@wwwdotorg.org>, Catalin Marinas <Catalin.Marinas@arm.com>, "paul@pwsan.com" <paul@pwsan.com>, Arnd Bergmann <arnd@arndb.de>, Peter De Schrijver <pdeschrijver@nvidia.com>, "arm@kernel.org" <arm@kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, 2014-07-26 at 21:12 +0100, Greg Kroah-Hartman wrote:
-> On Fri, Jul 25, 2014 at 03:23:53PM +0100, Pawel Moll wrote:
-> > ... describing the root of the device tree, so one can write
-> > a platform driver initializing the platform.
->=20
-> Wait, what do you mean by "one can write a platform driver initializi=
-ng
-> the platform"?  I don't understand your end goal here...
+On Sun, 2014-07-27 at 16:07 +0100, Greg Kroah-Hartman wrote:
+> Ah, ok, it's a scsi core thing, not a driver core thing, that's less
+> confusing now.  For a "fallback" of a platform device, if you switch the
+> lines around you should be fine, something like this patch perhaps:
+> 
+> diff --git a/drivers/scsi/hosts.c b/drivers/scsi/hosts.c
+> index 3cbb57a8b846..d8d3b294f5bc 100644
+> --- a/drivers/scsi/hosts.c
+> +++ b/drivers/scsi/hosts.c
+> @@ -218,16 +218,16 @@ int scsi_add_host_with_dma(struct Scsi_Host *shost, struct device *dev,
+>  		goto fail;
+>  
+>  	if (!shost->shost_gendev.parent)
+> -		shost->shost_gendev.parent = dev ? dev : &platform_bus;
+> -	if (!dma_dev)
+> -		dma_dev = shost->shost_gendev.parent;
+> -
+> -	shost->dma_dev = dma_dev;
+> +		shost->shost_gendev.parent = dev;
+>  
+>  	error = device_add(&shost->shost_gendev);
+>  	if (error)
+>  		goto out;
+>  
+> +	if (!dma_dev)
+> +		dma_dev = shost->shost_gendev.parent;
+> +	shost->dma_dev = dma_dev;
+> +
+>  	pm_runtime_set_active(&shost->shost_gendev);
+>  	pm_runtime_enable(&shost->shost_gendev);
+>  	device_enable_async_suspend(&shost->shost_gendev);
 
-Bad wording, sorry. The goal is to have a platform driver (as in
-platform bus) that will initialize my platform (as in: board, machine,
-hardware). My platform (as in: the board) will be represented by the
-root platform bus device (as in: the bus ;-) with compatible value
-matching the one passed in the device tree's root.
+But this will still make shost->dma_dev == NULL in the cases James
+quoted:
 
-The tree:
+On Fri, 2014-07-25 at 15:46 +0100, James Bottomley wrote:
+> Yes, for DMA purposes, the parent cannot now be NULL; we'll get a panic
+> in the DMA transfers if it is.  A lot of the legacy ISA device on x86
+> and I thought some ARM SOC devices don't pass in the parent device, so
+> we hang them off a known parent.
+> 
+> You can grep for it; these are the devices that will begin to panic if
+> you apply this patch:
+> 
+> arch/ia64/hp/sim/simscsi.c:     error = scsi_add_host(host, NULL);
+> drivers/scsi/a2091.c:   error = scsi_add_host(instance, NULL);
+> drivers/scsi/a3000.c:   error = scsi_add_host(instance, NULL);
+> drivers/scsi/aha152x.c: if( scsi_add_host(shpnt, NULL) ) {
+> drivers/scsi/gdth.c:    error = scsi_add_host(shp, NULL);
+> drivers/scsi/gdth.c:    error = scsi_add_host(shp, NULL);
+> drivers/scsi/gvp11.c:   error = scsi_add_host(instance, NULL);
+> drivers/scsi/imm.c:     err = scsi_add_host(host, NULL);
+> drivers/scsi/pcmcia/fdomain_stub.c:    if (scsi_add_host(host, NULL))
+> drivers/scsi/pcmcia/nsp_cs.c:   ret = scsi_add_host (host, NULL);
+> drivers/scsi/pcmcia/qlogic_stub.c:      if (scsi_add_host(shost, NULL))
+> drivers/scsi/pcmcia/sym53c500_cs.c:     if (scsi_add_host(host, NULL))
+> drivers/scsi/ppa.c:     err = scsi_add_host(host, NULL);
+> drivers/scsi/qlogicfas.c:       if (scsi_add_host(hreg, NULL))
+> drivers/scsi/scsi_module.c:             error = scsi_add_host(shost, NULL);
+> drivers/scsi/sgiwd93.c: err = scsi_add_host(host, NULL);
 
-8<----------------------------
-/ {
-	compatible =3D "my,board";
-}
-8<----------------------------
+Maybe the DMA API should be coping with NULL device? It seems to handle
+it in a half of the methods and fails in the other half...
 
-The driver:
-
-8<----------------------------
-static struct of_device_id my_board_match[] =3D {
-        { .compatible =3D "my,board", },
-        {},
-};
-
-static struct platform_driver my_board_driver =3D {
-        .driver =3D {
-                .name =3D "my_board",
-                .owner =3D THIS_MODULE,
-                .of_match_table =3D of_match_ptr(my_board_match),
-        },
-        .probe =3D my_board_probe,
-        .remove =3D my_board_remove,
-};
-module_platform_driver(my_board_driver);
-8<----------------------------
-
-I'll work on better commit message for the next spin.
-
-Pawe=C5=82
+Pawel
