@@ -1,218 +1,142 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH] clk: tegra: Implement memory-controller clock
-Date: Fri,  1 Aug 2014 14:09:05 +0200
-Message-ID: <1406894945-32069-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc: Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v2 1/2] resource: Add device-managed request/release_resource()
+Date: Fri,  1 Aug 2014 14:15:10 +0200
+Message-ID: <1406895311-18869-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The memory controller clock runs either at half or the same frequency as
-the EMC clock.
+Provide device-managed implementations of the request_resource() and
+release_resource() functions. Upon failure to request a resource, the
+new devm_request_resource() function will output an error message for
+consistent error reporting.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
 Changes in v2:
-- split registration into a separate function that can be reused for all
-  SoC generations, but pass in the name and parent parameters for
-  clarity as well as the register address (in case it ever changes) and
-  the EMC spin-lock since it isn't globally available
+- use more natural flow for error handling
+- don't needlessly check for NULL pointers
 
- drivers/clk/tegra/clk-divider.c          | 13 +++++++++++++
- drivers/clk/tegra/clk-tegra114.c         |  7 ++++++-
- drivers/clk/tegra/clk-tegra124.c         |  7 ++++++-
- drivers/clk/tegra/clk-tegra20.c          |  8 +++++++-
- drivers/clk/tegra/clk-tegra30.c          |  7 ++++++-
- drivers/clk/tegra/clk.h                  |  2 ++
- include/dt-bindings/clock/tegra114-car.h |  2 +-
- include/dt-bindings/clock/tegra124-car.h |  2 +-
- include/dt-bindings/clock/tegra20-car.h  |  2 +-
- 9 files changed, 43 insertions(+), 7 deletions(-)
+ Documentation/driver-model/devres.txt |  2 +
+ include/linux/ioport.h                |  5 +++
+ kernel/resource.c                     | 70 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 77 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
-index 290f9c1a3749..84e1b3c1fb2a 100644
---- a/drivers/clk/tegra/clk-divider.c
-+++ b/drivers/clk/tegra/clk-divider.c
-@@ -185,3 +185,16 @@ struct clk *tegra_clk_register_divider(const char *name,
+diff --git a/Documentation/driver-model/devres.txt b/Documentation/driver-model/devres.txt
+index d14710b04439..befc3fe12ba6 100644
+--- a/Documentation/driver-model/devres.txt
++++ b/Documentation/driver-model/devres.txt
+@@ -264,8 +264,10 @@ IIO
+ IO region
+   devm_release_mem_region()
+   devm_release_region()
++  devm_release_resource()
+   devm_request_mem_region()
+   devm_request_region()
++  devm_request_resource()
  
- 	return clk;
- }
+ IOMAP
+   devm_ioport_map()
+diff --git a/include/linux/ioport.h b/include/linux/ioport.h
+index 142ec544167c..2c5250222278 100644
+--- a/include/linux/ioport.h
++++ b/include/linux/ioport.h
+@@ -215,6 +215,11 @@ static inline int __deprecated check_region(resource_size_t s,
+ 
+ /* Wrappers for managed devices */
+ struct device;
 +
-+static const struct clk_div_table mc_div_table[] = {
-+	{ .val = 0, .div = 2 },
-+	{ .val = 1, .div = 1 },
-+	{ .val = 0, .div = 0 },
-+};
++extern int devm_request_resource(struct device *dev, struct resource *root,
++				 struct resource *new);
++extern void devm_release_resource(struct device *dev, struct resource *new);
 +
-+struct clk *tegra_clk_register_mc(const char *name, const char *parent_name,
-+				  void __iomem *reg, spinlock_t *lock)
-+{
-+	return clk_register_divider_table(NULL, "mc", "emc_mux", 0, reg,
-+					  16, 1, 0, mc_div_table, lock);
-+}
-diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index f760f31d05c4..0b03d2cf7264 100644
---- a/drivers/clk/tegra/clk-tegra114.c
-+++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -173,6 +173,7 @@ static DEFINE_SPINLOCK(pll_d_lock);
- static DEFINE_SPINLOCK(pll_d2_lock);
- static DEFINE_SPINLOCK(pll_u_lock);
- static DEFINE_SPINLOCK(pll_re_lock);
-+static DEFINE_SPINLOCK(emc_lock);
- 
- static struct div_nmp pllxc_nmp = {
- 	.divm_shift = 0,
-@@ -1228,7 +1229,11 @@ static __init void tegra114_periph_clk_init(void __iomem *clk_base,
- 			       ARRAY_SIZE(mux_pllmcp_clkm),
- 			       CLK_SET_RATE_NO_REPARENT,
- 			       clk_base + CLK_SOURCE_EMC,
--			       29, 3, 0, NULL);
-+			       29, 3, 0, &emc_lock);
-+
-+	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
-+				    &emc_lock);
-+	clks[TEGRA114_CLK_MC] = clk;
- 
- 	for (i = 0; i < ARRAY_SIZE(tegra_periph_clk_list); i++) {
- 		data = &tegra_periph_clk_list[i];
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index 3acd42f1ad55..b04fb2fb4689 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -132,6 +132,7 @@ static DEFINE_SPINLOCK(pll_d2_lock);
- static DEFINE_SPINLOCK(pll_e_lock);
- static DEFINE_SPINLOCK(pll_re_lock);
- static DEFINE_SPINLOCK(pll_u_lock);
-+static DEFINE_SPINLOCK(emc_lock);
- 
- /* possible OSC frequencies in Hz */
- static unsigned long tegra124_input_freq[] = {
-@@ -1132,7 +1133,11 @@ static __init void tegra124_periph_clk_init(void __iomem *clk_base,
- 	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
- 			       ARRAY_SIZE(mux_pllmcp_clkm), 0,
- 			       clk_base + CLK_SOURCE_EMC,
--			       29, 3, 0, NULL);
-+			       29, 3, 0, &emc_lock);
-+
-+	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
-+				    &emc_lock);
-+	clks[TEGRA124_CLK_MC] = clk;
- 
- 	/* cml0 */
- 	clk = clk_register_gate(NULL, "cml0", "pll_e", 0, clk_base + PLLE_AUX,
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index dace2b1b5ae6..41272dcc9e22 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -140,6 +140,8 @@ static struct cpu_clk_suspend_context {
- static void __iomem *clk_base;
- static void __iomem *pmc_base;
- 
-+static DEFINE_SPINLOCK(emc_lock);
-+
- #define TEGRA_INIT_DATA_MUX(_name, _parents, _offset,	\
- 			    _clk_num, _gate_flags, _clk_id)	\
- 	TEGRA_INIT_DATA(_name, NULL, NULL, _parents, _offset,	\
-@@ -819,11 +821,15 @@ static void __init tegra20_periph_clk_init(void)
- 			       ARRAY_SIZE(mux_pllmcp_clkm),
- 			       CLK_SET_RATE_NO_REPARENT,
- 			       clk_base + CLK_SOURCE_EMC,
--			       30, 2, 0, NULL);
-+			       30, 2, 0, &emc_lock);
- 	clk = tegra_clk_register_periph_gate("emc", "emc_mux", 0, clk_base, 0,
- 				    57, periph_clk_enb_refcnt);
- 	clks[TEGRA20_CLK_EMC] = clk;
- 
-+	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
-+				    &emc_lock);
-+	clks[TEGRA20_CLK_MC] = clk;
-+
- 	/* dsi */
- 	clk = tegra_clk_register_periph_gate("dsi", "pll_d", 0, clk_base, 0,
- 				    48, periph_clk_enb_refcnt);
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 5bbacd01094f..4b9d8bd3d0bf 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -177,6 +177,7 @@ static unsigned long input_freq;
- 
- static DEFINE_SPINLOCK(cml_lock);
- static DEFINE_SPINLOCK(pll_d_lock);
-+static DEFINE_SPINLOCK(emc_lock);
- 
- #define TEGRA_INIT_DATA_MUX(_name, _parents, _offset,	\
- 			    _clk_num, _gate_flags, _clk_id)	\
-@@ -1157,11 +1158,15 @@ static void __init tegra30_periph_clk_init(void)
- 			       ARRAY_SIZE(mux_pllmcp_clkm),
- 			       CLK_SET_RATE_NO_REPARENT,
- 			       clk_base + CLK_SOURCE_EMC,
--			       30, 2, 0, NULL);
-+			       30, 2, 0, &emc_lock);
- 	clk = tegra_clk_register_periph_gate("emc", "emc_mux", 0, clk_base, 0,
- 				    57, periph_clk_enb_refcnt);
- 	clks[TEGRA30_CLK_EMC] = clk;
- 
-+	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
-+				    &emc_lock);
-+	clks[TEGRA30_CLK_MC] = clk;
-+
- 	/* cml0 */
- 	clk = clk_register_gate(NULL, "cml0", "pll_e", 0, clk_base + PLLE_AUX,
- 				0, 0, &cml_lock);
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 16ec8d6bb87f..4e458aa8d45c 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -86,6 +86,8 @@ struct clk *tegra_clk_register_divider(const char *name,
- 		const char *parent_name, void __iomem *reg,
- 		unsigned long flags, u8 clk_divider_flags, u8 shift, u8 width,
- 		u8 frac_width, spinlock_t *lock);
-+struct clk *tegra_clk_register_mc(const char *name, const char *parent_name,
-+				  void __iomem *reg, spinlock_t *lock);
- 
+ #define devm_request_region(dev,start,n,name) \
+ 	__devm_request_region(dev, &ioport_resource, (start), (n), (name))
+ #define devm_request_mem_region(dev,start,n,name) \
+diff --git a/kernel/resource.c b/kernel/resource.c
+index da14b8d09296..ca24f19f9d18 100644
+--- a/kernel/resource.c
++++ b/kernel/resource.c
+@@ -1248,6 +1248,76 @@ int release_mem_region_adjustable(struct resource *parent,
  /*
-  * Tegra PLL:
-diff --git a/include/dt-bindings/clock/tegra114-car.h b/include/dt-bindings/clock/tegra114-car.h
-index fc12621fb432..534c03f8ad72 100644
---- a/include/dt-bindings/clock/tegra114-car.h
-+++ b/include/dt-bindings/clock/tegra114-car.h
-@@ -49,7 +49,7 @@
- #define TEGRA114_CLK_I2S0 30
- /* 31 */
- 
--/* 32 */
-+#define TEGRA114_CLK_MC 32
- /* 33 */
- #define TEGRA114_CLK_APBDMA 34
- /* 35 */
-diff --git a/include/dt-bindings/clock/tegra124-car.h b/include/dt-bindings/clock/tegra124-car.h
-index 8a4c5892890f..a75b9b8f0d5d 100644
---- a/include/dt-bindings/clock/tegra124-car.h
-+++ b/include/dt-bindings/clock/tegra124-car.h
-@@ -48,7 +48,7 @@
- #define TEGRA124_CLK_I2S0 30
- /* 31 */
- 
--/* 32 */
-+#define TEGRA124_CLK_MC 32
- /* 33 */
- #define TEGRA124_CLK_APBDMA 34
- /* 35 */
-diff --git a/include/dt-bindings/clock/tegra20-car.h b/include/dt-bindings/clock/tegra20-car.h
-index 9406207cfac8..04500b243a4d 100644
---- a/include/dt-bindings/clock/tegra20-car.h
-+++ b/include/dt-bindings/clock/tegra20-car.h
-@@ -49,7 +49,7 @@
- /* 30 */
- #define TEGRA20_CLK_CACHE2 31
- 
--#define TEGRA20_CLK_MEM 32
-+#define TEGRA20_CLK_MC 32
- #define TEGRA20_CLK_AHBDMA 33
- #define TEGRA20_CLK_APBDMA 34
- /* 35 */
+  * Managed region resource
+  */
++static void devm_resource_release(struct device *dev, void *ptr)
++{
++	struct resource **r = ptr;
++
++	release_resource(*r);
++}
++
++/**
++ * devm_request_resource() - request and reserve an I/O or memory resource
++ * @dev: device for which to request the resource
++ * @root: root of the resource tree from which to request the resource
++ * @new: descriptor of the resource to request
++ *
++ * This is a device-managed version of request_resource(). There is usually
++ * no need to release resources requested by this function explicitly since
++ * that will be taken care of when the device is unbound from its driver.
++ * If for some reason the resource needs to be released explicitly, because
++ * of ordering issues for example, drivers must call devm_release_resource()
++ * rather than the regular release_resource().
++ *
++ * When a conflict is detected between any existing resources and the newly
++ * requested resource, an error message will be printed.
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int devm_request_resource(struct device *dev, struct resource *root,
++			  struct resource *new)
++{
++	struct resource *conflict, **ptr;
++
++	ptr = devres_alloc(devm_resource_release, sizeof(*ptr), GFP_KERNEL);
++	if (!ptr)
++		return -ENOMEM;
++
++	*ptr = new;
++
++	conflict = request_resource_conflict(root, new);
++	if (conflict) {
++		dev_err(dev, "resource collision: %pR conflicts with %s %pR\n",
++			new, conflict->name, conflict);
++		devres_free(ptr);
++		return -EBUSY;
++	}
++
++	devres_add(dev, ptr);
++	return 0;
++}
++EXPORT_SYMBOL(devm_request_resource);
++
++static int devm_resource_match(struct device *dev, void *res, void *data)
++{
++	struct resource **ptr = res;
++
++	return *ptr == data;
++}
++
++/**
++ * devm_release_resource() - release a previously requested resource
++ * @dev: device for which to release the resource
++ * @new: descriptor of the resource to release
++ *
++ * Releases a resource previously requested using devm_request_resource().
++ */
++void devm_release_resource(struct device *dev, struct resource *new)
++{
++	WARN_ON(devres_release(dev, devm_resource_release, devm_resource_match,
++			       new));
++}
++EXPORT_SYMBOL(devm_release_resource);
++
+ struct region_devres {
+ 	struct resource *parent;
+ 	resource_size_t start;
 -- 
 2.0.3
