@@ -1,40 +1,70 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [tegra-pinmux-scripts] [PATCH] Add support for Norrin
-Date: Thu, 31 Jul 2014 17:17:06 -0600
-Message-ID: <53DACE72.2060602@wwwdotorg.org>
-References: <1406846532-12611-1-git-send-email-amartin@nvidia.com>
+From: Masahiro Yamada <yamada.m-NAum8xwdG0+S7A1Ibl2khg@public.gmane.org>
+Subject: Re: [flasher PATCH] Adapt to new U-Boot build commands
+Date: Fri, 01 Aug 2014 11:13:28 +0900
+Message-ID: <20140801111328.D505.AA925319@jp.panasonic.com>
+References: <1406828885-8561-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1406846532-12611-1-git-send-email-amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1406828885-8561-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/31/2014 04:42 PM, Allen Martin wrote:
-> Add support for Tegra124 Norrin FFD reference board (PM370).  Pinmux
-> is based on PM370_T124_customer_pinmux_1.1 spreadsheet.
+Hi Stephen,
 
-Oh good; I guess the Excel spreadsheet format was similar enough to 
-Jetson TK1 and Venice2 so no changes were required to 
-csv-to-board-tegra124-xlsx.py other than adding the board name. That's 
-good news:-)
 
-Out of curiosity, have you ported U-Boot to Norrin (32) and tried the 
-auto-generated U-Boot tables that result from running 
-soc-to-uboot-driver.py on this new data file?
+On Thu, 31 Jul 2014 11:48:05 -0600
+Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
 
-> diff --git a/csv-to-board-tegra124-xlsx.py b/csv-to-board-tegra124-xlsx.py
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> U-Boot commit 51148790f26e "kconfig: switch to Kconfig" changed the
+> commands required to configure U-Boot. Adapt the flasher build script
+> to those changes, in a way that automatically works with either old or
+> new U-Boot source trees.
+> 
+> Cc: Masahiro Yamada <yamada.m-NAum8xwdG0+S7A1Ibl2khg@public.gmane.org>
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  build | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/build b/build
+> index af863dd3b395..e61cac8ea4c7 100755
+> --- a/build
+> +++ b/build
+> @@ -186,7 +186,17 @@ def build_uboot_one_board(boardname):
+>      out_board_dir = gen_out_board_dir(boardname)
+>      mkdir(out_board_dir)
+>  
+> -    run(uboot_dir, 'make O=' + build_uboot_dir + ' ' + boardname + '_config')
+> +    # U-Boot commit 51148790f26e "kconfig: switch to Kconfig" changed the
+> +    # build commands from "make ${board}_config; make" to
+> +    # "make ${board}_defconfig; make". That commit also added file
+> +    # scripts/multiconfig.py, so we happen to have an easy way to check for
+> +    # the existence of that file to tell how to compile U-Boot:-/
+> +    new_build_commands_file = os.path.join(uboot_dir, "scripts/multiconfig.py")
+> +    if os.path.exists(new_build_commands_file):
+> +        config_target_suffix = '_defconfig'
+> +    else:
+> +        config_target_suffix = '_config'
+> +    run(uboot_dir, 'make O=' + build_uboot_dir + ' ' + boardname + config_target_suffix)
+>      run(uboot_dir, 'make O=' + build_uboot_dir + ' -s ' + makejobs)
+>  
+>      import_uboot_one_board(boardname, build_uboot_dir)
 
-> +    'norrin': 'PM370_T124_customer_pinmux_1.1.csv', # worksheet Customer_Configuration
 
-I'd like to also get a patch (off-list) that adds 
-PM370_T124_customer_pinmux_1.1.csv to the internal version of this repo. 
-I assume you were able to git fetch my internal git tree from my dev 
-machine? If you could send me a patch to add the csv file to 
-nv-internal-data/ that would be great. I suppose we should find a better 
-server than my dev machine too!
+IMHO, this way depends on how Kconfig is implemented in U-Boot, right?
 
-I'll likely apply this tomorrow morning.
+
+Maybe you can check the returncode of
+
+make help 2>/dev/null | grep -q 'Configuration targets'
+
+
+
+Best Regards
+Masahiro Yamada
