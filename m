@@ -1,52 +1,76 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [flasher PATCH V2] Adapt to new U-Boot build commands
-Date: Fri,  1 Aug 2014 13:40:35 -0600
-Message-ID: <1406922035-30281-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [tegra-pinmux-scripts] [PATCH] Add support for Norrin
+Date: Fri, 01 Aug 2014 13:45:21 -0600
+Message-ID: <53DBEE51.1060102@wwwdotorg.org>
+References: <1406846532-12611-1-git-send-email-amartin@nvidia.com> <53DACE72.2060602@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <53DACE72.2060602-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Masahiro Yamada <yamada.m-NAum8xwdG0+S7A1Ibl2khg@public.gmane.org>
+To: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 07/31/2014 05:17 PM, Stephen Warren wrote:
+> On 07/31/2014 04:42 PM, Allen Martin wrote:
+>> Add support for Tegra124 Norrin FFD reference board (PM370).  Pinmux
+>> is based on PM370_T124_customer_pinmux_1.1 spreadsheet.
+>
+> Oh good; I guess the Excel spreadsheet format was similar enough to
+> Jetson TK1 and Venice2 so no changes were required to
+> csv-to-board-tegra124-xlsx.py other than adding the board name. That's
+> good news:-)
 
-U-Boot commit 51148790f26e "kconfig: switch to Kconfig" changed the
-commands required to configure U-Boot. Adapt the flasher build script
-to those changes, in a way that automatically works with either old or
-new U-Boot source trees.
+Oh, I see I have the changes below in my local tree from when I was 
+fiddling with adding Norrin to tegra-pinmux-scripts. Are you sure you 
+don't need those?
 
-Cc: Masahiro Yamada <yamada.m-NAum8xwdG0+S7A1Ibl2khg@public.gmane.org>
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
---
-v2: Check for the modified "make help" output rather than a file added
-by commit 51148790f26e. Hopefully this will be more independant from
-changes to U-Boot's implementation details.
----
- build | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+> diff --git a/csv-to-board-tegra124-xlsx.py b/csv-to-board-tegra124-xlsx.py
+> index e7afda7cd04d..fa986dc7b48a 100755
+> --- a/csv-to-board-tegra124-xlsx.py
+> +++ b/csv-to-board-tegra124-xlsx.py
+> @@ -43,6 +43,7 @@ if dbg: print(args)
+>
+>  supported_boards = {
+>      'jetson-tk1': 'T124_customer_pinmux_PM375_30Apr2014_v2.csv', # worksheet PM375Beaver_Configuration
+> +    'norrin': 'PM370_T124_customer_pinmux_1.1.csv', # worksheet Customer_Configuration
+>      'venice2': 'Venice2_T124_customer_pinmux_based_on_P4_rev47_2013-07-12.csv', # worksheet Customer_Configuration
+>  }
+>
 
-diff --git a/build b/build
-index af863dd3b395..b58112e12be2 100755
---- a/build
-+++ b/build
-@@ -186,7 +186,17 @@ def build_uboot_one_board(boardname):
-     out_board_dir = gen_out_board_dir(boardname)
-     mkdir(out_board_dir)
- 
--    run(uboot_dir, 'make O=' + build_uboot_dir + ' ' + boardname + '_config')
-+    # U-Boot commit 51148790f26e "kconfig: switch to Kconfig" changed the
-+    # build commands from "make ${board}_config; make" to
-+    # "make ${board}_defconfig; make". That commit also introduced some new
-+    # text into the "make help" output. Check for that text here in order to
-+    # tell how to compile U-Boot:-/
-+    ret = subprocess.call('make help 2>/dev/null | grep -q "Configuration targets"', shell=True, cwd=uboot_dir)
-+    if ret:
-+        config_target_suffix = '_config'
-+    else:
-+        config_target_suffix = '_defconfig'
-+    run(uboot_dir, 'make O=' + build_uboot_dir + ' ' + boardname + config_target_suffix)
-     run(uboot_dir, 'make O=' + build_uboot_dir + ' -s ' + makejobs)
- 
-     import_uboot_one_board(boardname, build_uboot_dir)
--- 
-1.9.1
+Your patch has the part above, but none of:
+
+> @@ -69,6 +70,7 @@ COL_E_INPUT = 12
+>  COL_GPIO_INIT_VAL = 13
+>  COL_DIRECTION = 14
+>  COL_RCV_SEL = 15
+> +COL_CUST_USAGE = 16
+>
+>  col_names = {
+>      COL_BALL_NAME:     'Ball Name',
+> @@ -85,6 +87,7 @@ col_names = {
+>      COL_TRI:           'Tristate',
+>      COL_E_INPUT:       'E_Input',
+>      COL_GPIO_INIT_VAL: 'GPIO Init Value',
+> +    COL_CUST_USAGE:    'Customer Usage',
+>      COL_DIRECTION:     'Pin Direction',
+>      COL_RCV_SEL:       'High or Normal VIL/VIH',
+>  }
+> @@ -184,13 +187,14 @@ with open(csvfile, newline='') as fh:
+>          pupd = pupd_munge(row[cols[COL_PUPD]])
+>          tri = tri_munge(row[cols[COL_TRI]])
+>          e_input = e_input_munge(row[cols[COL_E_INPUT]])
+> +        cust_usage = row[cols[COL_CUST_USAGE]].lower()
+>          od = od_from_direction(row[cols[COL_DIRECTION]])
+>          if cols[COL_RCV_SEL]:
+>              rcv_sel = rcv_sel_munge(row[cols[COL_RCV_SEL]])
+>          else:
+>              rcv_sel = False
+>
+> -        mux_gpio = mux.startswith('gpio_p') or (mux == gpio)
+> +        mux_gpio = mux.startswith('gpio_p') or (mux == gpio) or cust_usage.startswith('gpio3_p')
+>          if mux_gpio:
+>              mux = None
+>              if e_input:
