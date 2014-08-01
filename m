@@ -1,55 +1,49 @@
 From: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH 2/5] char: tile-srom: Remove reference to platform_bus
-Date: Fri, 01 Aug 2014 18:21:18 +0100
-Message-ID: <1406913678.22529.46.camel@hornet>
+Subject: Re: [PATCH 5/5] platform: Make platform_bus device a platform device
+Date: Fri, 01 Aug 2014 18:21:09 +0100
+Message-ID: <1406913669.22529.44.camel@hornet>
 References: <1406298233-27876-1-git-send-email-pawel.moll@arm.com>
-	 <1406298233-27876-2-git-send-email-pawel.moll@arm.com>
-	 <53DAA605.2030500@tilera.com>
+	 <1406298233-27876-5-git-send-email-pawel.moll@arm.com>
+	 <20140726201351.GC21870@kroah.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53DAA605.2030500-kv+TWInifGbQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20140726201351.GC21870-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chris Metcalf <cmetcalf-kv+TWInifGbQT0dZR+AlfA@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Catalin Marinas <Catalin.Marinas-5wv7dgnIgG8@public.gmane.org>, "paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org" <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Catalin Marinas <Catalin.Marinas-5wv7dgnIgG8@public.gmane.org>, "paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org" <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 2014-07-31 at 21:24 +0100, Chris Metcalf wrote:
-> On 7/25/2014 10:23 AM, Pawel Moll wrote:
-> > The code was creating "srom" class devices using
-> > platform_bus as a parent. As they are not really
-> > platform devices, make them virtual, using NULL instead.
-> >
-> > Cc: Chris Metcalf<cmetcalf-kv+TWInifGbQT0dZR+AlfA@public.gmane.org>
-> > Signed-off-by: Pawel Moll<pawel.moll-5wv7dgnIgG8@public.gmane.org>
-> > ---
-> >   drivers/char/tile-srom.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
+On Sat, 2014-07-26 at 21:13 +0100, Greg Kroah-Hartman wrote:
+> > @@ -946,12 +946,20 @@ int __init platform_bus_init(void)
+> >  
+> >  	early_platform_cleanup();
+> >  
+> > -	error = device_register(&platform_bus);
+> > +	dev_set_name(&platform_bus.dev, "%s", platform_bus.name);
+> > +	error = device_register(&platform_bus.dev);
+> >  	if (error)
+> >  		return error;
+> >  	error =  bus_register(&platform_bus_type);
+> > -	if (error)
+> > -		device_unregister(&platform_bus);
+> > +	if (!error) {
+> > +#ifdef CONFIG_OF
+> > +		platform_bus.dev.of_node = of_allnodes;
+> > +#endif
 > 
-> Can you clarify the point of this change a bit? 
+> Why are you doing this?  The original code didn't do it and all was
+> fine, right?  What changes here?
 
-Theoretically speaking there shouldn't be any need to export the
-platform bus root, as all devices should be registered via the platform
-API (platform_device_register & co.)
+You mean the #ifdef? It wasn't there, but Olof figured out that it
+breaks !CONFIG_OF builds:
 
->  The SROM devices
-> in question are real devices (bits of silicon on the processor die), not
-> some kind of virtual construct.  
+http://article.gmane.org/gmane.linux.ports.tegra/18473
 
-... but the driver seems to be accessing then through hypervisor calls
-only? One could say that you this make them virtual ;-)
-
-> In addition, we also have user binaries
-> in the wild that know to look for /sys/devices/platform/srom/ paths,
-> so I'm pretty reluctant to change this path without good reason.
-
-So what is the srom class for then if not for device discovery? And why
-do they look for them in the first place? To get relevant character
-device's data, if I understand it right?
-
-Maybe you could just register a simple "proper" platform device for all
-the sroms and then hang the class devices from it? I can type some code
-doing this if it sound reasonably?
+as of_allnodes is only defined when CONFIG_OF. I had a choice of
+#ifdefing the assignment above or providing a dummy symbol. The latter
+doesn't seem sensibly, as there should be no other users for it (the
+symbol).
 
 Pawel
