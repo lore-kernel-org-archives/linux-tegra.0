@@ -1,350 +1,218 @@
-From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/6] thermal: of: Add support for hardware-tracked trip
- points
-Date: Fri, 1 Aug 2014 14:42:05 +0300
-Message-ID: <53DB7D0D.1070508@nvidia.com>
-References: <1403856699-2140-1-git-send-email-mperttunen@nvidia.com> <1403856699-2140-2-git-send-email-mperttunen@nvidia.com> <20140730141639.GA3715@developer>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140730141639.GA3715@developer>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH] clk: tegra: Implement memory-controller clock
+Date: Fri,  1 Aug 2014 14:09:05 +0200
+Message-ID: <1406894945-32069-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc: Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Moi Eduardo :)
+From: Thierry Reding <treding@nvidia.com>
 
-On 30/07/14 17:16, Eduardo Valentin wrote:
-> Terve Mikko,
->
-> On Fri, Jun 27, 2014 at 11:11:34AM +0300, Mikko Perttunen wrote:
->> This adds support for hardware-tracked trip points to the device tree
->> thermal sensor framework.
->>
->> The framework supports an arbitrary number of trip points. Whenever
->> the current temperature is updated, the trip points immediately
->> below and above the current temperature are found. A sensor driver
->
-> One thing I don't follow on your proposal is the groundings you need to
-> 'set_trips' whenever temperature changes. Given your intention is to add
-> support to interrupt driven devices, shouldn't we 'set_trips' just when
-> we cross the previously set trips range?
+The memory controller clock runs either at half or the same frequency as
+the EMC clock.
 
-I think the reasoning for this was that I didn't want to make changes to 
-thermal_core and thermal_zone_device_update only calls get_temp on the 
-zone, so I had to add this code to get_temp. set_trips would anyway only 
-be called if we had crossed a trip point.
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+Changes in v2:
+- split registration into a separate function that can be reused for all
+  SoC generations, but pass in the name and parent parameters for
+  clarity as well as the register address (in case it ever changes) and
+  the EMC spin-lock since it isn't globally available
 
->
->> callback `set_trips' is then called with the temperatures.
->> If there is no trip point above or below the current temperature,
->> the passed trip temperature will be LONG_MAX or LONG_MIN respectively.
->> In this callback, the driver should program the hardware such that
->> it is notified when either of these trip points are triggered.
->> When a trip point is triggered, the driver should call
->> `thermal_zone_device_update' for the respective thermal zone. This
->> will cause the trip points to be updated again.
->>
->> If the `set_trips' callback is not implemented (is NULL), the framework
->> behaves as before.
->
-> As already mentioned by swarren, the proposal must be wider. We shall
-> keep the same support in case the device is used in a system without
-> device tree. In other words, if you want to see extra functionality for
-> interrupt driven devices, you shall update the core part too, and draft
-> a common messaging path.
+ drivers/clk/tegra/clk-divider.c          | 13 +++++++++++++
+ drivers/clk/tegra/clk-tegra114.c         |  7 ++++++-
+ drivers/clk/tegra/clk-tegra124.c         |  7 ++++++-
+ drivers/clk/tegra/clk-tegra20.c          |  8 +++++++-
+ drivers/clk/tegra/clk-tegra30.c          |  7 ++++++-
+ drivers/clk/tegra/clk.h                  |  2 ++
+ include/dt-bindings/clock/tegra114-car.h |  2 +-
+ include/dt-bindings/clock/tegra124-car.h |  2 +-
+ include/dt-bindings/clock/tegra20-car.h  |  2 +-
+ 9 files changed, 43 insertions(+), 7 deletions(-)
 
-Yeah, this is sensible. A simpler solution would be to just tell 
-of-thermal drivers about the trip points and let the driver do whatever 
-it wants. That would mirror the way normal thermal_core drivers are 
-done. What is your opinion on that?
-
->
-> In general, interrupt driven devices are not mapped in the current
-> thermal framework. That is, the current code is timer interrupt driven.
-> Other interrupt updates from devices are propagated to
-> the framework using thermal_zone_device_update(). In other words, you would
-> reprogram your hardware trips from your interrupt handler/workqueue then
-> just let the framework know what is going on with temperature, via a simple
-> thermal_zone_device_update().
->
-> The way I see this going forward it would be a common interface to
-> configure the thermal zones to be monitored:
-> a. via polling only
-> b. via interrupt only
-> c. both a + b
->
-> obviously, the above shall be informative only for userland.
->
-> keep in mind also that changing interrupt configuration for high and low
-> temperature thresholds can be racy.
->
-> This feature was kept in the TODO list of the of-thermal.c because the
-> we lack a proper support from the thermal framework (never came out of
-> the TODO list, I know, I apologize for this). And this missing feature
-> was spotted by the hwmon folks also, as they do have such support. So,
-> the major missing improvements on interrupt driven devices shall come in
-> three steps: (i) thermal framework, (ii) of-thermal (iii) thermal
-> framework and hwmon interface.
-
-For now, I think I'll submit a driver with just polling support so that 
-we can get some support in.
-
->
->
-> Cheers,
->
->
-
-Thanks, Mikko
-
->>
->> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>   drivers/thermal/of-thermal.c | 97 ++++++++++++++++++++++++++++++++++++++++++--
->>   include/linux/thermal.h      |  3 +-
->>   2 files changed, 95 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-thermal.c
->> index 04b1be7..bfccea5 100644
->> --- a/drivers/thermal/of-thermal.c
->> +++ b/drivers/thermal/of-thermal.c
->> @@ -89,6 +89,7 @@ struct __thermal_zone {
->>        /* trip data */
->>        int ntrips;
->>        struct __thermal_trip *trips;
->> +     long prev_low_trip, prev_high_trip;
->>
->>        /* cooling binding data */
->>        int num_tbps;
->> @@ -98,19 +99,66 @@ struct __thermal_zone {
->>        void *sensor_data;
->>        int (*get_temp)(void *, long *);
->>        int (*get_trend)(void *, long *);
->> +     int (*set_trips)(void *, long, long);
->>   };
->>
->> +/***   Automatic trip handling   ***/
->> +
->> +static int of_thermal_set_trips(struct thermal_zone_device *tz, long temp)
->> +{
->> +     struct __thermal_zone *data = tz->devdata;
->> +     long low = LONG_MIN, high = LONG_MAX;
->> +     int i;
->> +
->> +     /* Hardware trip points not supported */
->> +     if (!data->set_trips)
->> +             return 0;
->> +
->> +     /* No need to change trip points */
->> +     if (temp > data->prev_low_trip && temp < data->prev_high_trip)
->> +             return 0;
->> +
->> +     for (i = 0; i < data->ntrips; ++i) {
->> +             struct __thermal_trip *trip = data->trips + i;
->> +             long trip_low = trip->temperature - trip->hysteresis;
->> +
->> +             if (trip_low < temp && trip_low > low)
->> +                     low = trip_low;
->> +
->> +             if (trip->temperature > temp && trip->temperature < high)
->> +                     high = trip->temperature;
->> +     }
->> +
->> +     dev_dbg(&tz->device,
->> +             "temperature %ld, updating trip points to %ld, %ld\n",
->> +             temp, low, high);
->> +
->> +     data->prev_low_trip = low;
->> +     data->prev_high_trip = high;
->> +
->> +     return data->set_trips(data->sensor_data, low, high);
->> +}
->> +
->>   /***   DT thermal zone device callbacks   ***/
->>
->>   static int of_thermal_get_temp(struct thermal_zone_device *tz,
->>                               unsigned long *temp)
->>   {
->>        struct __thermal_zone *data = tz->devdata;
->> +     int err;
->>
->>        if (!data->get_temp)
->>                return -EINVAL;
->>
->> -     return data->get_temp(data->sensor_data, temp);
->> +     err = data->get_temp(data->sensor_data, temp);
->> +     if (err)
->> +             return err;
->> +
->> +     err = of_thermal_set_trips(tz, *temp);
->
-> Here, if you update trips whenever you get_temp, you are possibly
-> reprogramming your trips on every poll. Remember, this function will be
-> called on every poll, in the current implementation.
->
->> +     if (err)
->> +             return err;
->> +
->> +     return 0;
->>   }
->>
->>   static int of_thermal_get_trend(struct thermal_zone_device *tz, int trip,
->> @@ -222,6 +270,22 @@ static int of_thermal_set_mode(struct thermal_zone_device *tz,
->>        return 0;
->>   }
->>
->> +static int of_thermal_update_trips(struct thermal_zone_device *tz)
->> +{
->> +     long temp;
->> +     int err;
->> +
->> +     err = of_thermal_get_temp(tz, &temp);
->> +     if (err)
->> +             return err;
->> +
->> +     err = of_thermal_set_trips(tz, temp);
->> +     if (err)
->> +             return err;
->> +
->> +     return 0;
->> +}
->> +
->>   static int of_thermal_get_trip_type(struct thermal_zone_device *tz, int trip,
->>                                    enum thermal_trip_type *type)
->>   {
->> @@ -252,6 +316,7 @@ static int of_thermal_set_trip_temp(struct thermal_zone_device *tz, int trip,
->>                                    unsigned long temp)
->>   {
->>        struct __thermal_zone *data = tz->devdata;
->> +     int err;
->>
->>        if (trip >= data->ntrips || trip < 0)
->>                return -EDOM;
->> @@ -259,6 +324,10 @@ static int of_thermal_set_trip_temp(struct thermal_zone_device *tz, int trip,
->>        /* thermal framework should take care of data->mask & (1 << trip) */
->>        data->trips[trip].temperature = temp;
->>
->> +     err = of_thermal_update_trips(tz);
->> +     if (err)
->> +             return err;
->> +
->>        return 0;
->>   }
->>
->> @@ -279,6 +348,7 @@ static int of_thermal_set_trip_hyst(struct thermal_zone_device *tz, int trip,
->>                                    unsigned long hyst)
->>   {
->>        struct __thermal_zone *data = tz->devdata;
->> +     int err;
->>
->>        if (trip >= data->ntrips || trip < 0)
->>                return -EDOM;
->> @@ -286,6 +356,10 @@ static int of_thermal_set_trip_hyst(struct thermal_zone_device *tz, int trip,
->>        /* thermal framework should take care of data->mask & (1 << trip) */
->>        data->trips[trip].hysteresis = hyst;
->>
->> +     err = of_thermal_update_trips(tz);
->> +     if (err)
->> +             return err;
->> +
->>        return 0;
->>   }
->>
->> @@ -325,10 +399,12 @@ static struct thermal_zone_device *
->>   thermal_zone_of_add_sensor(struct device_node *zone,
->>                           struct device_node *sensor, void *data,
->>                           int (*get_temp)(void *, long *),
->> -                        int (*get_trend)(void *, long *))
->> +                        int (*get_trend)(void *, long *),
->> +                        int (*set_trips)(void *, long, long))
->
-> we need to clean the above arguments. they should become a .ops.
->
->>   {
->>        struct thermal_zone_device *tzd;
->>        struct __thermal_zone *tz;
->> +     int err;
->>
->>        tzd = thermal_zone_get_zone_by_name(zone->name);
->>        if (IS_ERR(tzd))
->> @@ -339,8 +415,15 @@ thermal_zone_of_add_sensor(struct device_node *zone,
->>        mutex_lock(&tzd->lock);
->>        tz->get_temp = get_temp;
->>        tz->get_trend = get_trend;
->> +     tz->set_trips = set_trips;
->>        tz->sensor_data = data;
->>
->> +     err = of_thermal_update_trips(tzd);
->> +     if (err) {
->> +             mutex_unlock(&tzd->lock);
->> +             return ERR_PTR(err);
->> +     }
->> +
->>        tzd->ops->get_temp = of_thermal_get_temp;
->>        tzd->ops->get_trend = of_thermal_get_trend;
->>        mutex_unlock(&tzd->lock);
->> @@ -384,7 +467,8 @@ thermal_zone_of_add_sensor(struct device_node *zone,
->>   struct thermal_zone_device *
->>   thermal_zone_of_sensor_register(struct device *dev, int sensor_id,
->>                                void *data, int (*get_temp)(void *, long *),
->> -                             int (*get_trend)(void *, long *))
->> +                             int (*get_trend)(void *, long *),
->> +                             int (*set_trips)(void *, long, long))
->
-> ditto.
->
->>   {
->>        struct device_node *np, *child, *sensor_np;
->>
->> @@ -422,7 +506,8 @@ thermal_zone_of_sensor_register(struct device *dev, int sensor_id,
->>                        return thermal_zone_of_add_sensor(child, sensor_np,
->>                                                          data,
->>                                                          get_temp,
->> -                                                       get_trend);
->> +                                                       get_trend,
->> +                                                       set_trips);
->
-> ditto.
->
->>                }
->>        }
->>        of_node_put(np);
->> @@ -466,6 +551,7 @@ void thermal_zone_of_sensor_unregister(struct device *dev,
->>
->>        tz->get_temp = NULL;
->>        tz->get_trend = NULL;
->> +     tz->set_trips = NULL;
->>        tz->sensor_data = NULL;
->>        mutex_unlock(&tzd->lock);
->>   }
->> @@ -671,6 +757,9 @@ thermal_of_build_thermal_zone(struct device_node *np)
->>        /* trips */
->>        child = of_get_child_by_name(np, "trips");
->>
->> +     tz->prev_high_trip = LONG_MIN;
->> +     tz->prev_low_trip = LONG_MAX;
->> +
->>        /* No trips provided */
->>        if (!child)
->>                goto finish;
->> diff --git a/include/linux/thermal.h b/include/linux/thermal.h
->> index f7e11c7..2f8951c 100644
->> --- a/include/linux/thermal.h
->> +++ b/include/linux/thermal.h
->> @@ -248,7 +248,8 @@ struct thermal_genl_event {
->>   struct thermal_zone_device *
->>   thermal_zone_of_sensor_register(struct device *dev, int id,
->>                                void *data, int (*get_temp)(void *, long *),
->> -                             int (*get_trend)(void *, long *));
->> +                             int (*get_trend)(void *, long *),
->> +                             int (*set_trips)(void *, long, long));
->>   void thermal_zone_of_sensor_unregister(struct device *dev,
->>                                       struct thermal_zone_device *tz);
->>   #else
->> --
->> 1.8.1.5
->>
->
+diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
+index 290f9c1a3749..84e1b3c1fb2a 100644
+--- a/drivers/clk/tegra/clk-divider.c
++++ b/drivers/clk/tegra/clk-divider.c
+@@ -185,3 +185,16 @@ struct clk *tegra_clk_register_divider(const char *name,
+ 
+ 	return clk;
+ }
++
++static const struct clk_div_table mc_div_table[] = {
++	{ .val = 0, .div = 2 },
++	{ .val = 1, .div = 1 },
++	{ .val = 0, .div = 0 },
++};
++
++struct clk *tegra_clk_register_mc(const char *name, const char *parent_name,
++				  void __iomem *reg, spinlock_t *lock)
++{
++	return clk_register_divider_table(NULL, "mc", "emc_mux", 0, reg,
++					  16, 1, 0, mc_div_table, lock);
++}
+diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+index f760f31d05c4..0b03d2cf7264 100644
+--- a/drivers/clk/tegra/clk-tegra114.c
++++ b/drivers/clk/tegra/clk-tegra114.c
+@@ -173,6 +173,7 @@ static DEFINE_SPINLOCK(pll_d_lock);
+ static DEFINE_SPINLOCK(pll_d2_lock);
+ static DEFINE_SPINLOCK(pll_u_lock);
+ static DEFINE_SPINLOCK(pll_re_lock);
++static DEFINE_SPINLOCK(emc_lock);
+ 
+ static struct div_nmp pllxc_nmp = {
+ 	.divm_shift = 0,
+@@ -1228,7 +1229,11 @@ static __init void tegra114_periph_clk_init(void __iomem *clk_base,
+ 			       ARRAY_SIZE(mux_pllmcp_clkm),
+ 			       CLK_SET_RATE_NO_REPARENT,
+ 			       clk_base + CLK_SOURCE_EMC,
+-			       29, 3, 0, NULL);
++			       29, 3, 0, &emc_lock);
++
++	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
++				    &emc_lock);
++	clks[TEGRA114_CLK_MC] = clk;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(tegra_periph_clk_list); i++) {
+ 		data = &tegra_periph_clk_list[i];
+diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+index 3acd42f1ad55..b04fb2fb4689 100644
+--- a/drivers/clk/tegra/clk-tegra124.c
++++ b/drivers/clk/tegra/clk-tegra124.c
+@@ -132,6 +132,7 @@ static DEFINE_SPINLOCK(pll_d2_lock);
+ static DEFINE_SPINLOCK(pll_e_lock);
+ static DEFINE_SPINLOCK(pll_re_lock);
+ static DEFINE_SPINLOCK(pll_u_lock);
++static DEFINE_SPINLOCK(emc_lock);
+ 
+ /* possible OSC frequencies in Hz */
+ static unsigned long tegra124_input_freq[] = {
+@@ -1132,7 +1133,11 @@ static __init void tegra124_periph_clk_init(void __iomem *clk_base,
+ 	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
+ 			       ARRAY_SIZE(mux_pllmcp_clkm), 0,
+ 			       clk_base + CLK_SOURCE_EMC,
+-			       29, 3, 0, NULL);
++			       29, 3, 0, &emc_lock);
++
++	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
++				    &emc_lock);
++	clks[TEGRA124_CLK_MC] = clk;
+ 
+ 	/* cml0 */
+ 	clk = clk_register_gate(NULL, "cml0", "pll_e", 0, clk_base + PLLE_AUX,
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index dace2b1b5ae6..41272dcc9e22 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -140,6 +140,8 @@ static struct cpu_clk_suspend_context {
+ static void __iomem *clk_base;
+ static void __iomem *pmc_base;
+ 
++static DEFINE_SPINLOCK(emc_lock);
++
+ #define TEGRA_INIT_DATA_MUX(_name, _parents, _offset,	\
+ 			    _clk_num, _gate_flags, _clk_id)	\
+ 	TEGRA_INIT_DATA(_name, NULL, NULL, _parents, _offset,	\
+@@ -819,11 +821,15 @@ static void __init tegra20_periph_clk_init(void)
+ 			       ARRAY_SIZE(mux_pllmcp_clkm),
+ 			       CLK_SET_RATE_NO_REPARENT,
+ 			       clk_base + CLK_SOURCE_EMC,
+-			       30, 2, 0, NULL);
++			       30, 2, 0, &emc_lock);
+ 	clk = tegra_clk_register_periph_gate("emc", "emc_mux", 0, clk_base, 0,
+ 				    57, periph_clk_enb_refcnt);
+ 	clks[TEGRA20_CLK_EMC] = clk;
+ 
++	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
++				    &emc_lock);
++	clks[TEGRA20_CLK_MC] = clk;
++
+ 	/* dsi */
+ 	clk = tegra_clk_register_periph_gate("dsi", "pll_d", 0, clk_base, 0,
+ 				    48, periph_clk_enb_refcnt);
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 5bbacd01094f..4b9d8bd3d0bf 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -177,6 +177,7 @@ static unsigned long input_freq;
+ 
+ static DEFINE_SPINLOCK(cml_lock);
+ static DEFINE_SPINLOCK(pll_d_lock);
++static DEFINE_SPINLOCK(emc_lock);
+ 
+ #define TEGRA_INIT_DATA_MUX(_name, _parents, _offset,	\
+ 			    _clk_num, _gate_flags, _clk_id)	\
+@@ -1157,11 +1158,15 @@ static void __init tegra30_periph_clk_init(void)
+ 			       ARRAY_SIZE(mux_pllmcp_clkm),
+ 			       CLK_SET_RATE_NO_REPARENT,
+ 			       clk_base + CLK_SOURCE_EMC,
+-			       30, 2, 0, NULL);
++			       30, 2, 0, &emc_lock);
+ 	clk = tegra_clk_register_periph_gate("emc", "emc_mux", 0, clk_base, 0,
+ 				    57, periph_clk_enb_refcnt);
+ 	clks[TEGRA30_CLK_EMC] = clk;
+ 
++	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
++				    &emc_lock);
++	clks[TEGRA30_CLK_MC] = clk;
++
+ 	/* cml0 */
+ 	clk = clk_register_gate(NULL, "cml0", "pll_e", 0, clk_base + PLLE_AUX,
+ 				0, 0, &cml_lock);
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 16ec8d6bb87f..4e458aa8d45c 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -86,6 +86,8 @@ struct clk *tegra_clk_register_divider(const char *name,
+ 		const char *parent_name, void __iomem *reg,
+ 		unsigned long flags, u8 clk_divider_flags, u8 shift, u8 width,
+ 		u8 frac_width, spinlock_t *lock);
++struct clk *tegra_clk_register_mc(const char *name, const char *parent_name,
++				  void __iomem *reg, spinlock_t *lock);
+ 
+ /*
+  * Tegra PLL:
+diff --git a/include/dt-bindings/clock/tegra114-car.h b/include/dt-bindings/clock/tegra114-car.h
+index fc12621fb432..534c03f8ad72 100644
+--- a/include/dt-bindings/clock/tegra114-car.h
++++ b/include/dt-bindings/clock/tegra114-car.h
+@@ -49,7 +49,7 @@
+ #define TEGRA114_CLK_I2S0 30
+ /* 31 */
+ 
+-/* 32 */
++#define TEGRA114_CLK_MC 32
+ /* 33 */
+ #define TEGRA114_CLK_APBDMA 34
+ /* 35 */
+diff --git a/include/dt-bindings/clock/tegra124-car.h b/include/dt-bindings/clock/tegra124-car.h
+index 8a4c5892890f..a75b9b8f0d5d 100644
+--- a/include/dt-bindings/clock/tegra124-car.h
++++ b/include/dt-bindings/clock/tegra124-car.h
+@@ -48,7 +48,7 @@
+ #define TEGRA124_CLK_I2S0 30
+ /* 31 */
+ 
+-/* 32 */
++#define TEGRA124_CLK_MC 32
+ /* 33 */
+ #define TEGRA124_CLK_APBDMA 34
+ /* 35 */
+diff --git a/include/dt-bindings/clock/tegra20-car.h b/include/dt-bindings/clock/tegra20-car.h
+index 9406207cfac8..04500b243a4d 100644
+--- a/include/dt-bindings/clock/tegra20-car.h
++++ b/include/dt-bindings/clock/tegra20-car.h
+@@ -49,7 +49,7 @@
+ /* 30 */
+ #define TEGRA20_CLK_CACHE2 31
+ 
+-#define TEGRA20_CLK_MEM 32
++#define TEGRA20_CLK_MC 32
+ #define TEGRA20_CLK_AHBDMA 33
+ #define TEGRA20_CLK_APBDMA 34
+ /* 35 */
+-- 
+2.0.3
