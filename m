@@ -1,99 +1,71 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 8/8] clk: tegra: Add EMC clock driver
-Date: Fri, 1 Aug 2014 10:40:04 +0200
-Message-ID: <20140801084003.GA21724@ulmo>
-References: <1405088313-20048-1-git-send-email-mperttunen@nvidia.com>
- <1405088313-20048-9-git-send-email-mperttunen@nvidia.com>
- <53CE97F2.80300@wwwdotorg.org>
- <53D75FA7.1030300@nvidia.com>
- <20140729201939.4627.79710@quantum>
- <53D81CD4.5010307@wwwdotorg.org>
- <20140730093456.GA29590@ulmo>
- <20140731190659.4463.92139@quantum>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V2] drm/tegra: add MODULE_DEVICE_TABLEs
+Date: Fri, 1 Aug 2014 12:12:04 +0200
+Message-ID: <20140801101202.GF21724@ulmo>
+References: <1403130115-23583-1-git-send-email-swarren@wwwdotorg.org>
+ <53D00D1C.9030305@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="vkogqOf2sHV7VnPd"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="vKFfOv5t3oGVpiF+"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20140731190659.4463.92139@quantum>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Mikko Perttunen <mperttunen@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+In-Reply-To: <53D00D1C.9030305-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---vkogqOf2sHV7VnPd
+--vKFfOv5t3oGVpiF+
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 31, 2014 at 12:06:59PM -0700, Mike Turquette wrote:
-> Quoting Thierry Reding (2014-07-30 02:34:57)
-[...]
-> > Not merging this feature upstream won't stop anybody from implementing
-> > it as a hack in Android/product kernels either. If it's useful then
-> > somebody will implement it in whatever downstream kernel they use. And
-> > if it's useful to more than one vendor then we'll end up with a copy of
-> > the implementation (and derivations on top) in each vendor's tree.
+On Wed, Jul 23, 2014 at 01:29:32PM -0600, Stephen Warren wrote:
+> On 06/18/2014 04:21 PM, Stephen Warren wrote:
+> > From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >=20
+> > When tegra-drm.ko is built as a module, these MODULE_DEVICE_TABLEs allow
+> > the module to be auto-loaded since the module will match the devices
+> > instantiated from device tree.
+> >=20
+> > (Notes for stable: in 3.14+, just git rm any conflicting file, since th=
+ey
+> > are added in later kernels. For 3.13 and below, manual merging will be
+> > needed)
+> >=20
+> > Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+> > Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> > v2: Remove change to drm.c, since the match table there isn't used for
+> > probing.
 >=20
-> Thierry,
->=20
-> That argument is not sufficient to merit merging code. There is all
-> kinds of wacky downstream code that gets duplicated by various hardware
-> vendors, Linux distributions, the Cyanogenmod community, etc. Should we
-> merge any piece of downstream code just because more than one person
-> wants to use it?
+> Thierry, I think this patch got lost? It doesn't appear in next-20140721
+> anyway.
 
-Of course not. And that wasn't my point. My point was that if people
-want to implement hacks as shortcuts and avoid the work involved in
-doing things properly, then they will find ways to do so irrespective
-of whether code can be merged upstream or not.
-
-But we're talking about a debugfs interface here. It was designed to be
-used to make life easier for *developers* and provide a way to make it
-easier to debug problems. I've certainly been in a situation a couple of
-times where I wished this kind of knob had been available to avoid
-rebuilding the kernel and rebooting just to tune some clock frequency to
-see if it would make things work.
-
-> > debugfs requires superuser privileges anyway, in which case you could
-> > equally well write userspace software that directly bangs on the clock
-> > controller registers.
->=20
-> Sure. There are lots of technical reasons why this isn't such a bad idea
-> (e.g. you need admin privileges, we shouldn't ship devices with debugfs
-> turned on, etc). But by merging it we tell people, "hey, this is an OK
-> thing to do", which it is not.
-
-I disagree. What we'd be telling people is: "Here's a bunch of knobs
-that you can use to play around with clock frequencies for *debugging*
-purposes." Using debugfs is never an OK thing to do for production
-software. But I don't think you'll prevent people from doing stupid
-things by limiting what a debug interface can do. The only thing you'll
-achieve is to make it more difficult for people who want to use it the
-right way.
+Applied, sorry for the delay.
 
 Thierry
 
---vkogqOf2sHV7VnPd
+--vKFfOv5t3oGVpiF+
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJT21JjAAoJEN0jrNd/PrOh4D4P/34h95JtSC1TN6pVliHH5gXd
-elVsZHgq7cDdo4x5/kUyrEeIIEuV2W2xg6pZcHLiuuuCtgJr3xlNaW6SI1drXe8B
-n9SHwCsHZ7oEsKSrdLAffUT0fFjT29Z5I8XEQMv1GLGxQOzN4/TCpJi8OlBMDHcv
-quC9arTVz1XkN8wfkNmnWpVvwdHSkIQmKvcqosQWk2xSV9WvrIWKZ0wXy//v4JNy
-75hTvZL6icM+A86TnsoKITolv1JDbwp7FcBoWX2rA9svzhfK4PcMkblKdGMPfWU1
-KfeDVuEXV4s6IuowuxdrgeF7udAFCjDs3H23PUfA20MZPwLrPqH9XQ/RZoopZDqR
-YYqwt+xpyjzeOAjsAPqj8/UzFcgz4w3spYPQ6BNS0C7YeFwqkjvkj1GSaGg4KSxc
-rAIoxP3vso+gF9K4l2qBDRXDhMUU+m2M7XpypH//ezvwez+RsV1rvb//vrkSMIpl
-Pyz1+63PBTRKVczAZPlzhA/FwNRSMTRPcNlvzb3s3aGu6MPzOpzNW6HxjXRvnW/I
-2KBiK/lv8BZuUC9kGCY4wojMBPRDyKUR6WpRyxSvK2uRt73cn35gBsky+TxyizAX
-Veqj0O9oI/WyCgVGAuj4vI5HTNpsmxnTsdtgUGUH/vdjsqAw7S0N/N0d/fM7Bak/
-Ey11ihxIz2mDMYXJcPev
-=gghn
+iQIcBAEBAgAGBQJT22fyAAoJEN0jrNd/PrOhaPcP/jRw9r4pVmyvO38jr5ePcWwk
+yVMSdb8hCuToqxKNswiYaUxJCxnD9e+jZtCveOiDDfcIWrlnlyj5jcV1+Wlx+kq1
+L4xq5dzVX9unfW9r7o3/Ug3LgwrKjENYVgMLaUJ6WGQDYpE3O0VsqtdJ1Uc8q/s5
+WrmNWYTy6LY/cgHZyq/61g40oWJFtwJO/G9T2bJnEIfxfpO5BBPQUKIZmS9F0Kb0
+yf3kCAmVAQ9XBeTl7/m9bzGUIMK89LNQZd8191ShleUVzhxakAEBKQ20vqxs/rQY
+qsNtcahOfGhjxELDP4O9Z+ZQmWYOTveWJfX9WfqQxxJOwa964JZ4op7F4ZEyjTjA
+quomYrgWafP8xjHOtjppQg3ETJQqNupS7ox4f9dwHBbqOvEGEffljYR71Jf8dWNv
+54tRUdEAebtYSGRWCoHMJzBn7exL0j601mpTsZbAp1OAK/8rSHmXsm/PAZI8JV1k
+8nh0Nh2fMXKBj/efHkUy3rVdBADCGVz5OIPM6c+1wLPE6xvEB/4G2kjsmBknPg92
+1+RyxjsolhQ1vycwUvHk9O1K6Im4CYTo7l1A6ypDVu0vdw6d4GXqJEeqvIBmSh7o
++CuqI13UKLK41tC1U2+7xBneCYdIj8SuJOhfViOlff0Lf3PrgxsuEeb5KtRdr4tI
+y2TkuuL3taFTfvRs1Ui+
+=68O8
 -----END PGP SIGNATURE-----
 
---vkogqOf2sHV7VnPd--
+--vKFfOv5t3oGVpiF+--
