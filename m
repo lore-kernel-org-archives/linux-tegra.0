@@ -1,23 +1,42 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [flasher PATCH V2] Adapt to new U-Boot build commands
-Date: Mon, 04 Aug 2014 10:52:41 -0600
-Message-ID: <53DFBA59.8090809@wwwdotorg.org>
-References: <1406922035-30281-1-git-send-email-swarren@wwwdotorg.org>
+From: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [tegra-pinmux-scripts] [PATCH] Add support for Norrin
+Date: Mon, 4 Aug 2014 11:35:55 -0700
+Message-ID: <20140804183544.GA30474@nvidia.com>
+References: <1406846532-12611-1-git-send-email-amartin@nvidia.com>
+ <53DACE72.2060602@wwwdotorg.org>
+ <53DBEE51.1060102@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1406922035-30281-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <53DBEE51.1060102-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Masahiro Yamada <yamada.m-NAum8xwdG0+S7A1Ibl2khg@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/01/2014 01:40 PM, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> U-Boot commit 51148790f26e "kconfig: switch to Kconfig" changed the
-> commands required to configure U-Boot. Adapt the flasher build script
-> to those changes, in a way that automatically works with either old or
-> new U-Boot source trees.
+On Fri, Aug 01, 2014 at 12:45:21PM -0700, Stephen Warren wrote:
+> On 07/31/2014 05:17 PM, Stephen Warren wrote:
+> > On 07/31/2014 04:42 PM, Allen Martin wrote:
+> >> Add support for Tegra124 Norrin FFD reference board (PM370).  Pinmux
+> >> is based on PM370_T124_customer_pinmux_1.1 spreadsheet.
+> >
+> > Oh good; I guess the Excel spreadsheet format was similar enough to
+> > Jetson TK1 and Venice2 so no changes were required to
+> > csv-to-board-tegra124-xlsx.py other than adding the board name. That's
+> > good news:-)
+> 
+> Oh, I see I have the changes below in my local tree from when I was 
+> fiddling with adding Norrin to tegra-pinmux-scripts. Are you sure you 
+> don't need those?
+> 
 
-I have applied this.
+Not any more, I filed a bug on the original pinmux spreadsheet because
+it was more than just the GPIOs that were wrong, when that got fixed
+the spreadsheet works fine without any of the other changes to the
+script.
+
+
+-Allen
+
+nvpublic
