@@ -1,101 +1,49 @@
 From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-Subject: Re: [flasher PATCH] Adapt to new U-Boot build commands
-Date: Tue, 05 Aug 2014 23:57:17 +0200
-Message-ID: <10c8add69c2413709719f8d29927f9ce@agner.ch>
-References: <1406828885-8561-1-git-send-email-swarren@wwwdotorg.org>
- <20140801111328.D505.AA925319@jp.panasonic.com>
- <1364a21ed6c2d2c002d3c2d6daf63972@agner.ch> <53E15063.3060202@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=
-Content-Transfer-Encoding: 7bit
+Subject: [flasher PATCH] Add support for colibri_t30
+Date: Tue,  5 Aug 2014 23:57:55 +0200
+Message-ID: <1407275875-18722-1-git-send-email-stefan@agner.ch>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53E15063.3060202-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Masahiro Yamada <yamada.m-NAum8xwdG0+S7A1Ibl2khg@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org, dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org, stefan-XLVq0VzYD2Y@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Am 2014-08-05 23:45, schrieb Stephen Warren:
-> On 08/05/2014 03:41 PM, Stefan Agner wrote:
->> Am 2014-08-01 04:13, schrieb Masahiro Yamada:
->>> Hi Stephen,
->>>
->>>
->>> On Thu, 31 Jul 2014 11:48:05 -0600
->>> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->>>
->>>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>>
->>>> U-Boot commit 51148790f26e "kconfig: switch to Kconfig" changed the
->>>> commands required to configure U-Boot. Adapt the flasher build script
->>>> to those changes, in a way that automatically works with either old or
->>>> new U-Boot source trees.
->>>>
->>>> Cc: Masahiro Yamada <yamada.m-NAum8xwdG0+S7A1Ibl2khg@public.gmane.org>
->>>> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>> ---
->>>>   build | 12 +++++++++++-
->>>>   1 file changed, 11 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/build b/build
->>>> index af863dd3b395..e61cac8ea4c7 100755
->>>> --- a/build
->>>> +++ b/build
->>>> @@ -186,7 +186,17 @@ def build_uboot_one_board(boardname):
->>>>       out_board_dir = gen_out_board_dir(boardname)
->>>>       mkdir(out_board_dir)
->>>>
->>>> -    run(uboot_dir, 'make O=' + build_uboot_dir + ' ' + boardname + '_config')
->>>> +    # U-Boot commit 51148790f26e "kconfig: switch to Kconfig" changed the
->>>> +    # build commands from "make ${board}_config; make" to
->>>> +    # "make ${board}_defconfig; make". That commit also added file
->>>> +    # scripts/multiconfig.py, so we happen to have an easy way to check for
->>>> +    # the existence of that file to tell how to compile U-Boot:-/
->>>> +    new_build_commands_file = os.path.join(uboot_dir, "scripts/multiconfig.py")
->>>> +    if os.path.exists(new_build_commands_file):
->>>> +        config_target_suffix = '_defconfig'
->>>> +    else:
->>>> +        config_target_suffix = '_config'
->>>> +    run(uboot_dir, 'make O=' + build_uboot_dir + ' ' + boardname + config_target_suffix)
->>>>       run(uboot_dir, 'make O=' + build_uboot_dir + ' -s ' + makejobs)
->>>>
->>>>       import_uboot_one_board(boardname, build_uboot_dir)
->>
->> Funny discovered and tried to fix that on Thursday too. Stephens
->> upstream change now just created a merge conflict on my local changes
->> :-)
->>
->>>
->>>
->>> IMHO, this way depends on how Kconfig is implemented in U-Boot, right?
->>>
->>>
->>> Maybe you can check the returncode of
->>>
->>> make help 2>/dev/null | grep -q 'Configuration targets'
->>>
->>
->> IMHO the check now depends on the help message, which easily might
->> change.
->>
->> My approach was to simple check if the file Kconfig is in the root
->> folder. Since the change to switch to defconfig was done at the same
->> time the kernel build system was introduced, this works perfectly and
->> matches the reasons behind the renaming (align with the kernel)...
->> os.path.isfile(os.path.join(uboot_dir, "Kconfig")
->>
->> I bet U-Boot will not change the build system anytime soon, especially
->> not before they move to another build system :-) Regarding the help
->> message, I'm not so sure about that...
-> 
-> Unfortunately, the specific commit which changed the commands required
-> to build U-Boot wasn't the one that added the Kconfig file. Checking
-> for the Kconfig file would work fine for a bunch of release commits,
-> but not arbitrary points in the development history.
-> 
+This commit adds support for the Toradex Colibri T30 module. Since
+we use the same boot loader for all carrier board, in the boot
+loader world (U-Boot/BCT) the board name consists of the module
+name only, without any reference to the carrier board.
 
-Ok, didn't catch that. Well then, I guess this solution is more
-appropriate...
+Signed-off-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+---
+ configs/colibri_t30.board  | 4 ++++
+ configs/colibri_t30.config | 8 ++++++++
+ 2 files changed, 12 insertions(+)
+ create mode 100644 configs/colibri_t30.board
+ create mode 100644 configs/colibri_t30.config
 
---
-Stefan
+diff --git a/configs/colibri_t30.board b/configs/colibri_t30.board
+new file mode 100644
+index 0000000..1549ec9
+--- /dev/null
++++ b/configs/colibri_t30.board
+@@ -0,0 +1,4 @@
++board = {
++    'vendor': 'toradex',
++    'soc': 'tegra30',
++}
+diff --git a/configs/colibri_t30.config b/configs/colibri_t30.config
+new file mode 100644
+index 0000000..ee986ea
+--- /dev/null
++++ b/configs/colibri_t30.config
+@@ -0,0 +1,8 @@
++config = {
++    'bct': 'colibri_t30_12MHz_1GB_NT5CC256M16CP-DI_400MHz-shmoo.bct',
++    'board': 'colibri_t30',
++    'dtbfn-extra': '',
++    'flash-id-uboot': 0,
++    'flash-image': 'colibri_t30.img',
++    'flash-type': 'emmc',
++}
+-- 
+2.0.4
