@@ -1,111 +1,77 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [RFC 1/2] PM / QoS: Add PM_QOS_MEMORY_BANDWIDTH class
-Date: Tue,  5 Aug 2014 16:35:23 +0200
-Message-ID: <1407249324-8568-2-git-send-email-tomeu.vizoso@collabora.com>
-References: <1407249324-8568-1-git-send-email-tomeu.vizoso@collabora.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1407249324-8568-1-git-send-email-tomeu.vizoso@collabora.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-pm@vger.kernel.org
-Cc: Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Tomeu Vizoso <tomeu.vizoso@collabora.com>
+From: Chris Metcalf <cmetcalf-kv+TWInifGbQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/5] char: tile-srom: Remove reference to platform_bus
+Date: Tue, 5 Aug 2014 16:08:40 -0400
+Message-ID: <53E139C8.9000502@tilera.com>
+References: <1406298233-27876-1-git-send-email-pawel.moll@arm.com>	 <1406298233-27876-2-git-send-email-pawel.moll@arm.com>	 <53DAA605.2030500@tilera.com> <1406913678.22529.46.camel@hornet>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1406913678.22529.46.camel@hornet>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Catalin Marinas <Catalin.Marinas-5wv7dgnIgG8@public.gmane.org>, "paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org" <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Also adds a class type PM_QOS_SUM that aggregates the values by summing them.
+On 8/1/2014 1:21 PM, Pawel Moll wrote:
+> On Thu, 2014-07-31 at 21:24 +0100, Chris Metcalf wrote:
+>> On 7/25/2014 10:23 AM, Pawel Moll wrote:
+>>> The code was creating "srom" class devices using
+>>> platform_bus as a parent. As they are not really
+>>> platform devices, make them virtual, using NULL instead.
+>>>
+>>> Cc: Chris Metcalf<cmetcalf-kv+TWInifGbQT0dZR+AlfA@public.gmane.org>
+>>> Signed-off-by: Pawel Moll<pawel.moll-5wv7dgnIgG8@public.gmane.org>
+>>> ---
+>>>    drivers/char/tile-srom.c | 2 +-
+>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>> Can you clarify the point of this change a bit?
+> Theoretically speaking there shouldn't be any need to export the
+> platform bus root, as all devices should be registered via the platform
+> API (platform_device_register & co.)
 
-It can be used by memory controllers to calculate the optimum clock frequency
-based on the bandwidth needs of the different memory clients.
+So, perhaps the right fix is to just use platform_device_register()
+etc for this device, rather than making it virtual?
 
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
----
- include/linux/pm_qos.h |  5 ++++-
- kernel/power/qos.c     | 27 ++++++++++++++++++++++++++-
- 2 files changed, 30 insertions(+), 2 deletions(-)
+I think what I'm missing is why the platform bus isn't the right bus
+for this device.  The driver-model/platform.txt doc says it's "used to
+integrate peripherals on many system-on-chip processors", which is
+how it's being used here.  It's directly addressable via MMIO from
+the cores.
 
-diff --git a/include/linux/pm_qos.h b/include/linux/pm_qos.h
-index 9ab4bf7..636e828 100644
---- a/include/linux/pm_qos.h
-+++ b/include/linux/pm_qos.h
-@@ -15,6 +15,7 @@ enum {
- 	PM_QOS_CPU_DMA_LATENCY,
- 	PM_QOS_NETWORK_LATENCY,
- 	PM_QOS_NETWORK_THROUGHPUT,
-+	PM_QOS_MEMORY_BANDWIDTH,
- 
- 	/* insert new class ID */
- 	PM_QOS_NUM_CLASSES,
-@@ -32,6 +33,7 @@ enum pm_qos_flags_status {
- #define PM_QOS_CPU_DMA_LAT_DEFAULT_VALUE	(2000 * USEC_PER_SEC)
- #define PM_QOS_NETWORK_LAT_DEFAULT_VALUE	(2000 * USEC_PER_SEC)
- #define PM_QOS_NETWORK_THROUGHPUT_DEFAULT_VALUE	0
-+#define PM_QOS_MEMORY_BANDWIDTH_DEFAULT_VALUE	0
- #define PM_QOS_RESUME_LATENCY_DEFAULT_VALUE	0
- #define PM_QOS_LATENCY_TOLERANCE_DEFAULT_VALUE	0
- #define PM_QOS_LATENCY_TOLERANCE_NO_CONSTRAINT	(-1)
-@@ -69,7 +71,8 @@ struct dev_pm_qos_request {
- enum pm_qos_type {
- 	PM_QOS_UNITIALIZED,
- 	PM_QOS_MAX,		/* return the largest value */
--	PM_QOS_MIN		/* return the smallest value */
-+	PM_QOS_MIN,		/* return the smallest value */
-+	PM_QOS_SUM		/* return the sum */
- };
- 
- /*
-diff --git a/kernel/power/qos.c b/kernel/power/qos.c
-index 884b770..5f4c006 100644
---- a/kernel/power/qos.c
-+++ b/kernel/power/qos.c
-@@ -105,11 +105,27 @@ static struct pm_qos_object network_throughput_pm_qos = {
- };
- 
- 
-+static BLOCKING_NOTIFIER_HEAD(memory_bandwidth_notifier);
-+static struct pm_qos_constraints memory_bw_constraints = {
-+	.list = PLIST_HEAD_INIT(memory_bw_constraints.list),
-+	.target_value = PM_QOS_MEMORY_BANDWIDTH_DEFAULT_VALUE,
-+	.default_value = PM_QOS_MEMORY_BANDWIDTH_DEFAULT_VALUE,
-+	.no_constraint_value = PM_QOS_MEMORY_BANDWIDTH_DEFAULT_VALUE,
-+	.type = PM_QOS_SUM,
-+	.notifiers = &memory_bandwidth_notifier,
-+};
-+static struct pm_qos_object memory_bandwidth_pm_qos = {
-+	.constraints = &memory_bw_constraints,
-+	.name = "memory_bandwidth",
-+};
-+
-+
- static struct pm_qos_object *pm_qos_array[] = {
- 	&null_pm_qos,
- 	&cpu_dma_pm_qos,
- 	&network_lat_pm_qos,
--	&network_throughput_pm_qos
-+	&network_throughput_pm_qos,
-+	&memory_bandwidth_pm_qos,
- };
- 
- static ssize_t pm_qos_power_write(struct file *filp, const char __user *buf,
-@@ -130,6 +146,9 @@ static const struct file_operations pm_qos_power_fops = {
- /* unlocked internal variant */
- static inline int pm_qos_get_value(struct pm_qos_constraints *c)
- {
-+	struct plist_node *node;
-+	int total_value = 0;
-+
- 	if (plist_head_empty(&c->list))
- 		return c->no_constraint_value;
- 
-@@ -140,6 +159,12 @@ static inline int pm_qos_get_value(struct pm_qos_constraints *c)
- 	case PM_QOS_MAX:
- 		return plist_last(&c->list)->prio;
- 
-+	case PM_QOS_SUM:
-+		plist_for_each(node, &c->list)
-+			total_value += node->prio;
-+
-+		return total_value;
-+
- 	default:
- 		/* runtime check for not using enum */
- 		BUG();
+I grant you there's some confusion about our use of hypervisor calls
+here, but effectively this is just a consequence of our use of the
+Tilera hypervisor for kernel isolation; it's more like invoking the
+BIOS on an Intel box, than it is about modern virtualization.
+
+The current tilegx series hardware always contains this device, so
+there's no FDT-like model for discovering it dynamically; we just always
+enable it on tilegx hardware.
+
+>> In addition, we also have user binaries
+>> in the wild that know to look for /sys/devices/platform/srom/ paths,
+>> so I'm pretty reluctant to change this path without good reason.
+> So what is the srom class for then if not for device discovery? And why
+> do they look for them in the first place? To get relevant character
+> device's data, if I understand it right?
+>
+> Maybe you could just register a simple "proper" platform device for all
+> the sroms and then hang the class devices from it? I can type some code
+> doing this if it sound reasonably?
+
+I'm not sure exactly what you mean by device discovery here.  The
+subdirectories under /sys/devices/platform/srom/ correspond to partitions
+in the SPI-ROM, which are software constructs created by the Tilera hypervisor.
+By default we have three, where the first holds boot data that the chip
+can use to boot out of hardware, and the other two are smaller partitions
+for boot- and user-specific data.  We use the /sys files primarily to get the
+page size and sector size for the sroms, and also export other interesting
+information like the total size of the particular srom device.
+
+Thank you for volunteering to write a bit of code; if that's the best
+way to clarify this for us, fantastic, or else pointing us at existing
+good practices or documentation would be great too.
+
 -- 
-1.9.3
+Chris Metcalf, Tilera Corp.
+http://www.tilera.com
