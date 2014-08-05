@@ -1,708 +1,101 @@
 From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-Subject: [cbootimage-configs PATCH] Rename colibri-t30 BCT files to colibri_t30
-Date: Tue,  5 Aug 2014 23:51:11 +0200
-Message-ID: <1407275471-18567-1-git-send-email-stefan@agner.ch>
+Subject: Re: [flasher PATCH] Adapt to new U-Boot build commands
+Date: Tue, 05 Aug 2014 23:57:17 +0200
+Message-ID: <10c8add69c2413709719f8d29927f9ce@agner.ch>
+References: <1406828885-8561-1-git-send-email-swarren@wwwdotorg.org>
+ <20140801111328.D505.AA925319@jp.panasonic.com>
+ <1364a21ed6c2d2c002d3c2d6daf63972@agner.ch> <53E15063.3060202@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <53E15063.3060202-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org, dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org, stefan-XLVq0VzYD2Y@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Masahiro Yamada <yamada.m-NAum8xwdG0+S7A1Ibl2khg@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This renaming aligns the board name to the U-Boot board name.
+Am 2014-08-05 23:45, schrieb Stephen Warren:
+> On 08/05/2014 03:41 PM, Stefan Agner wrote:
+>> Am 2014-08-01 04:13, schrieb Masahiro Yamada:
+>>> Hi Stephen,
+>>>
+>>>
+>>> On Thu, 31 Jul 2014 11:48:05 -0600
+>>> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>>>
+>>>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>>
+>>>> U-Boot commit 51148790f26e "kconfig: switch to Kconfig" changed the
+>>>> commands required to configure U-Boot. Adapt the flasher build script
+>>>> to those changes, in a way that automatically works with either old or
+>>>> new U-Boot source trees.
+>>>>
+>>>> Cc: Masahiro Yamada <yamada.m-NAum8xwdG0+S7A1Ibl2khg@public.gmane.org>
+>>>> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>> ---
+>>>>   build | 12 +++++++++++-
+>>>>   1 file changed, 11 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/build b/build
+>>>> index af863dd3b395..e61cac8ea4c7 100755
+>>>> --- a/build
+>>>> +++ b/build
+>>>> @@ -186,7 +186,17 @@ def build_uboot_one_board(boardname):
+>>>>       out_board_dir = gen_out_board_dir(boardname)
+>>>>       mkdir(out_board_dir)
+>>>>
+>>>> -    run(uboot_dir, 'make O=' + build_uboot_dir + ' ' + boardname + '_config')
+>>>> +    # U-Boot commit 51148790f26e "kconfig: switch to Kconfig" changed the
+>>>> +    # build commands from "make ${board}_config; make" to
+>>>> +    # "make ${board}_defconfig; make". That commit also added file
+>>>> +    # scripts/multiconfig.py, so we happen to have an easy way to check for
+>>>> +    # the existence of that file to tell how to compile U-Boot:-/
+>>>> +    new_build_commands_file = os.path.join(uboot_dir, "scripts/multiconfig.py")
+>>>> +    if os.path.exists(new_build_commands_file):
+>>>> +        config_target_suffix = '_defconfig'
+>>>> +    else:
+>>>> +        config_target_suffix = '_config'
+>>>> +    run(uboot_dir, 'make O=' + build_uboot_dir + ' ' + boardname + config_target_suffix)
+>>>>       run(uboot_dir, 'make O=' + build_uboot_dir + ' -s ' + makejobs)
+>>>>
+>>>>       import_uboot_one_board(boardname, build_uboot_dir)
+>>
+>> Funny discovered and tried to fix that on Thursday too. Stephens
+>> upstream change now just created a merge conflict on my local changes
+>> :-)
+>>
+>>>
+>>>
+>>> IMHO, this way depends on how Kconfig is implemented in U-Boot, right?
+>>>
+>>>
+>>> Maybe you can check the returncode of
+>>>
+>>> make help 2>/dev/null | grep -q 'Configuration targets'
+>>>
+>>
+>> IMHO the check now depends on the help message, which easily might
+>> change.
+>>
+>> My approach was to simple check if the file Kconfig is in the root
+>> folder. Since the change to switch to defconfig was done at the same
+>> time the kernel build system was introduced, this works perfectly and
+>> matches the reasons behind the renaming (align with the kernel)...
+>> os.path.isfile(os.path.join(uboot_dir, "Kconfig")
+>>
+>> I bet U-Boot will not change the build system anytime soon, especially
+>> not before they move to another build system :-) Regarding the help
+>> message, I'm not so sure about that...
+> 
+> Unfortunately, the specific commit which changed the commands required
+> to build U-Boot wasn't the one that added the Kconfig file. Checking
+> for the Kconfig file would work fine for a bunch of release commits,
+> but not arbitrary points in the development history.
+> 
 
-Signed-off-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
----
- ...12MHz_1GB_NT5CC256M16CP-DI_400MHz-shmoo.bct.cfg | 240 ---------------------
- ...12MHz_1GB_NT5CC256M16CP-DI_400MHz-shmoo.img.cfg |  22 --
- tegra30/toradex/colibri-t30/Makefile               |  30 ---
- tegra30/toradex/colibri-t30/build.sh               |  21 --
- tegra30/toradex/colibri_t30/Makefile               |  30 +++
- tegra30/toradex/colibri_t30/build.sh               |  21 ++
- tegra30/toradex/colibri_t30/colibri_t30.img.cfg    |  22 ++
- ...12MHz_1GB_NT5CC256M16CP-DI_400MHz-shmoo.bct.cfg | 240 +++++++++++++++++++++
- 8 files changed, 313 insertions(+), 313 deletions(-)
- delete mode 100755 tegra30/toradex/colibri-t30/Colibri_t30_12MHz_1GB_NT5CC256M16CP-DI_400MHz-shmoo.bct.cfg
- delete mode 100644 tegra30/toradex/colibri-t30/Colibri_t30_12MHz_1GB_NT5CC256M16CP-DI_400MHz-shmoo.img.cfg
- delete mode 100644 tegra30/toradex/colibri-t30/Makefile
- delete mode 100755 tegra30/toradex/colibri-t30/build.sh
- create mode 100644 tegra30/toradex/colibri_t30/Makefile
- create mode 100755 tegra30/toradex/colibri_t30/build.sh
- create mode 100644 tegra30/toradex/colibri_t30/colibri_t30.img.cfg
- create mode 100755 tegra30/toradex/colibri_t30/colibri_t30_12MHz_1GB_NT5CC256M16CP-DI_400MHz-shmoo.bct.cfg
+Ok, didn't catch that. Well then, I guess this solution is more
+appropriate...
 
-diff --git a/tegra30/toradex/colibri-t30/Colibri_t30_12MHz_1GB_NT5CC256M16CP-DI_400MHz-shmoo.bct.cfg b/tegra30/toradex/colibri-t30/Colibri_t30_12MHz_1GB_NT5CC256M16CP-DI_400MHz-shmoo.bct.cfg
-deleted file mode 100755
-index b77bf35..0000000
---- a/tegra30/toradex/colibri-t30/Colibri_t30_12MHz_1GB_NT5CC256M16CP-DI_400MHz-shmoo.bct.cfg
-+++ /dev/null
-@@ -1,240 +0,0 @@
--# Copyright (c) 2013, Toradex AG.  All rights reserved.
--#
--# This software is provided 'as-is', without any express or implied
--# warranty. In no event will the authors be held liable for any damages
--# arising from the use of this software.
--#
--# Permission is granted to anyone to use this software for any purpose,
--# including commercial applications, and to alter it and redistribute it
--# freely, subject to the following restrictions:
--#
--# 1. The origin of this software must not be misrepresented; you must not
--#    claim that you wrote the original software. If you use this software
--#    in a product, an acknowledgment in the product documentation would be
--#    appreciated but is not required.
--# 2. Altered source versions must be plainly marked as such, and must not be
--#    misrepresented as being the original software.
--# 3. This notice may not be removed or altered from any source distribution.
--
--Version        = 0x00030001;
--PartitionSize  = 33554432;
--BlockSize      = 16384;
--PageSize       = 512;
--OdmData        = 0x400c0000;
--
--DevType[0]  =  Sdmmc;
--DeviceParam[0].SdmmcParams.ClockDivider            = 9; # 216/9 = 24MHz
--DeviceParam[0].SdmmcParams.DataWidth               = NvBootSdmmcDataWidth_8Bit;
--DeviceParam[0].SdmmcParams.MaxPowerClassSupported  = 0;
--DeviceParam[0].SdmmcParams.SdController            = NvBootSdmmcCntrl_4;
--
--DevType[1]  =  Sdmmc;
--DeviceParam[1].SdmmcParams.ClockDivider            = 9; # 216/9 = 24MHz
--DeviceParam[1].SdmmcParams.DataWidth               = NvBootSdmmcDataWidth_8Bit;
--DeviceParam[1].SdmmcParams.MaxPowerClassSupported  = 0;
--DeviceParam[1].SdmmcParams.SdController            = NvBootSdmmcCntrl_4;
--
--DevType[2]  =  Sdmmc;
--DeviceParam[2].SdmmcParams.ClockDivider            = 9; # 216/9 = 24MHz
--DeviceParam[2].SdmmcParams.DataWidth               = NvBootSdmmcDataWidth_8Bit;
--DeviceParam[2].SdmmcParams.MaxPowerClassSupported  = 0;
--DeviceParam[2].SdmmcParams.SdController            = NvBootSdmmcCntrl_4;
--
--DevType[3]  =  Sdmmc;
--DeviceParam[3].SdmmcParams.ClockDivider            = 9; # 216/9 = 24MHz
--DeviceParam[3].SdmmcParams.DataWidth               = NvBootSdmmcDataWidth_8Bit;
--DeviceParam[3].SdmmcParams.MaxPowerClassSupported  = 0;
--DeviceParam[3].SdmmcParams.SdController            = NvBootSdmmcCntrl_4;
--
--SDRAM[0].MemoryType                               = NvBootMemoryType_Ddr3;
--SDRAM[0].PllMChargePumpSetupControl               = 0x00000008;
--SDRAM[0].PllMLoopFilterSetupControl               = 0x00000000;
--SDRAM[0].PllMInputDivider                         = 0x0000000c;
--SDRAM[0].PllMFeedbackDivider                      = 0x00000320;
--SDRAM[0].PllMPostDivider                          = 0x00000000;
--SDRAM[0].PllMStableTime                           = 0x0000012c;
--SDRAM[0].EmcClockDivider                          = 0x00000002;
--SDRAM[0].EmcClockSource                           = 0x00000000;
--SDRAM[0].EmcClockUsePllMUD                        = 0x00000000;
--SDRAM[0].EmcAutoCalInterval                       = 0x001fffff;
--SDRAM[0].EmcAutoCalConfig                         = 0xa0f10000;
--SDRAM[0].EmcAutoCalWait                           = 0x00000064;
--SDRAM[0].EmcAdrCfg                                = 0x00000000;
--SDRAM[0].EmcPinProgramWait                        = 0x00000001;
--SDRAM[0].EmcPinExtraWait                          = 0x00000000;
--SDRAM[0].EmcTimingControlWait                     = 0x00000000;
--SDRAM[0].EmcRc                                    = 0x00000012;
--SDRAM[0].EmcRfc                                   = 0x0000008a;
--SDRAM[0].EmcRas                                   = 0x0000000c;
--SDRAM[0].EmcRp                                    = 0x00000004;
--SDRAM[0].EmcR2w                                   = 0x00000003;
--SDRAM[0].EmcW2r                                   = 0x00000008;
--SDRAM[0].EmcR2p                                   = 0x00000002;
--SDRAM[0].EmcW2p                                   = 0x0000000a;
--SDRAM[0].EmcRdRcd                                 = 0x00000004;
--SDRAM[0].EmcWrRcd                                 = 0x00000004;
--SDRAM[0].EmcRrd                                   = 0x00000002;
--SDRAM[0].EmcRext                                  = 0x00000001;
--SDRAM[0].EmcWext                                  = 0x00000000;
--SDRAM[0].EmcWdv                                   = 0x00000004;
--SDRAM[0].EmcQUse                                  = 0x00000006;
--SDRAM[0].EmcQRst                                  = 0x00000004;
--SDRAM[0].EmcQSafe                                 = 0x00000009;
--SDRAM[0].EmcRdv                                   = 0x0000000c;
--SDRAM[0].EmcCtt                                   = 0x00000000;
--SDRAM[0].EmcCttDuration                           = 0x00000000;
--SDRAM[0].EmcRefresh                               = 0x00000bf5;
--SDRAM[0].EmcBurstRefreshNum                       = 0x00000000;
--SDRAM[0].EmcPreRefreshReqCnt                      = 0x000002fd;
--SDRAM[0].EmcPdEx2Wr                               = 0x00000001;
--SDRAM[0].EmcPdEx2Rd                               = 0x00000008;
--SDRAM[0].EmcPChg2Pden                             = 0x00000001;
--SDRAM[0].EmcAct2Pden                              = 0x00000000;
--SDRAM[0].EmcAr2Pden                               = 0x00000008;
--SDRAM[0].EmcRw2Pden                               = 0x0000000f;
--SDRAM[0].EmcTxsr                                  = 0x00000090;
--SDRAM[0].EmcTxsrDll                               = 0x00000200;
--SDRAM[0].EmcTcke                                  = 0x00000004;
--SDRAM[0].EmcTfaw                                  = 0x00000010;
--SDRAM[0].EmcTrpab                                 = 0x00000000;
--SDRAM[0].EmcTClkStable                            = 0x00000004;
--SDRAM[0].EmcTClkStop                              = 0x00000005;
--SDRAM[0].EmcTRefBw                                = 0x00000c35;
--SDRAM[0].EmcQUseExtra                             = 0x00000000;
--SDRAM[0].EmcFbioCfg5                              = 0x00007088;
--SDRAM[0].EmcFbioCfg6                              = 0x00000004;
--SDRAM[0].EmcFbioSpare                             = 0xe8000000;
--SDRAM[0].EmcCfgRsv                                = 0xff00ff88;
--SDRAM[0].EmcMrs                                   = 0x80000521;
--SDRAM[0].EmcEmrs                                  = 0x80100002;
--SDRAM[0].EmcMrw1                                  = 0x00000000;
--SDRAM[0].EmcMrw2                                  = 0x00000000;
--SDRAM[0].EmcMrw3                                  = 0x00000000;
--SDRAM[0].EmcMrwExtra                              = 0x00000000;
--SDRAM[0].EmcWarmBootMrw1                          = 0x00000000;
--SDRAM[0].EmcWarmBootMrw2                          = 0x00000000;
--SDRAM[0].EmcWarmBootMrw3                          = 0x00000000;
--SDRAM[0].EmcWarmBootMrwExtra                      = 0x00000000;
--SDRAM[0].EmcWarmBootExtraModeRegWriteEnable       = 0x00000000;
--SDRAM[0].EmcExtraModeRegWriteEnable               = 0x00000000;
--SDRAM[0].EmcMrwResetCommand                       = 0x00000000;
--SDRAM[0].EmcMrwResetNInitWait                     = 0x00000000;
--SDRAM[0].EmcMrsWaitCnt                            = 0x0134000c;
--SDRAM[0].EmcCfg                                   = 0x23c00000;
--SDRAM[0].EmcCfg2                                  = 0x000c0099;
--SDRAM[0].EmcDbg                                   = 0x01000400;
--SDRAM[0].EmcCmdQ                                  = 0x10004408;
--SDRAM[0].EmcMc2EmcQ                               = 0x06000404;
--SDRAM[0].EmcDynSelfRefControl                     = 0x800018d1;
--SDRAM[0].AhbArbitrationXbarCtrlMemInitDone        = 0x00000001;
--SDRAM[0].EmcCfgDigDll                             = 0x00360084;
--SDRAM[0].EmcCfgDigDllPeriod                       = 0x00008000;
--SDRAM[0].EmcDevSelect                             = 0x00000002;
--SDRAM[0].EmcSelDpdCtrl                            = 0x0004032c;
--SDRAM[0].EmcDllXformDqs0                          = 0x0000c002;
--SDRAM[0].EmcDllXformDqs1                          = 0x00014002;
--SDRAM[0].EmcDllXformDqs2                          = 0x0000c002;
--SDRAM[0].EmcDllXformDqs3                          = 0x00014002;
--SDRAM[0].EmcDllXformDqs4                          = 0x00014000;
--SDRAM[0].EmcDllXformDqs5                          = 0x00014000;
--SDRAM[0].EmcDllXformDqs6                          = 0x00014000;
--SDRAM[0].EmcDllXformDqs7                          = 0x00014000;
--SDRAM[0].EmcDllXformQUse0                         = 0x00000000;
--SDRAM[0].EmcDllXformQUse1                         = 0x00000000;
--SDRAM[0].EmcDllXformQUse2                         = 0x00000000;
--SDRAM[0].EmcDllXformQUse3                         = 0x00000000;
--SDRAM[0].EmcDllXformQUse4                         = 0x00000000;
--SDRAM[0].EmcDllXformQUse5                         = 0x00000000;
--SDRAM[0].EmcDllXformQUse6                         = 0x00000000;
--SDRAM[0].EmcDllXformQUse7                         = 0x00000000;
--SDRAM[0].EmcDliTrimTxDqs0                         = 0x00000000;
--SDRAM[0].EmcDliTrimTxDqs1                         = 0x00000000;
--SDRAM[0].EmcDliTrimTxDqs2                         = 0x00000000;
--SDRAM[0].EmcDliTrimTxDqs3                         = 0x00000000;
--SDRAM[0].EmcDliTrimTxDqs4                         = 0x00000000;
--SDRAM[0].EmcDliTrimTxDqs5                         = 0x00000000;
--SDRAM[0].EmcDliTrimTxDqs6                         = 0x00000000;
--SDRAM[0].EmcDliTrimTxDqs7                         = 0x00000000;
--SDRAM[0].EmcDllXformDq0                           = 0x00018000;
--SDRAM[0].EmcDllXformDq1                           = 0x00018000;
--SDRAM[0].EmcDllXformDq2                           = 0x00018000;
--SDRAM[0].EmcDllXformDq3                           = 0x00018000;
--SDRAM[0].WarmBootWait                             = 0x00000002;
--SDRAM[0].EmcCttTermCtrl                           = 0x00000802;
--SDRAM[0].EmcOdtWrite                              = 0x00000000;
--SDRAM[0].EmcOdtRead                               = 0x00000000;
--SDRAM[0].EmcZcalInterval                          = 0x00020000;
--SDRAM[0].EmcZcalWaitCnt                           = 0x00000040;
--SDRAM[0].EmcZcalMrwCmd                            = 0x80000000;
--SDRAM[0].EmcMrsResetDll                           = 0x00000000;
--SDRAM[0].EmcZcalInitDev0                          = 0x80000011;
--SDRAM[0].EmcZcalInitDev1                          = 0x00000000;
--SDRAM[0].EmcZcalInitWait                          = 0x00000002;
--SDRAM[0].EmcZcalColdBootEnable                    = 0x00000001;
--SDRAM[0].EmcZcalWarmBootEnable                    = 0x00000001;
--SDRAM[0].EmcMrwLpddr2ZcalWarmBoot                 = 0x000a00ab;
--SDRAM[0].EmcZqCalDdr3WarmBoot                     = 0x00000011;
--SDRAM[0].EmcZcalWarmBootWait                      = 0x00000001;
--SDRAM[0].EmcMrsWarmBootEnable                     = 0x00000001;
--SDRAM[0].EmcMrsResetDllWait                       = 0x00000000;
--SDRAM[0].EmcEmrsEmr2                              = 0x80200000;
--SDRAM[0].EmcEmrsEmr3                              = 0x80300000;
--SDRAM[0].EmcMrsExtra                              = 0x80000521;
--SDRAM[0].EmcWarmBootMrs                           = 0x80100002;
--SDRAM[0].EmcWarmBootEmrs                          = 0x80000521;
--SDRAM[0].EmcWarmBootEmr2                          = 0x80200000;
--SDRAM[0].EmcWarmBootEmr3                          = 0x80300000;
--SDRAM[0].EmcWarmBootMrsExtra                      = 0x80100002;
--SDRAM[0].EmcEmrsDdr2DllEnable                     = 0x00000000;
--SDRAM[0].EmcMrsDdr2DllReset                       = 0x00000000;
--SDRAM[0].EmcEmrsDdr2OcdCalib                      = 0x00000000;
--SDRAM[0].EmcDdr2Wait                              = 0x00000000;
--SDRAM[0].EmcClkenOverride                         = 0x00000000;
--SDRAM[0].EmcExtraRefreshNum                       = 0x00000002;
--SDRAM[0].EmcClkenOverrideAllWarmBoot              = 0x00000000;
--SDRAM[0].McClkenOverrideAllWarmBoot               = 0x00000000;
--SDRAM[0].EmcCfgDigDllPeriodWarmBoot               = 0x00000003;
--SDRAM[0].PmcVddpSel                               = 0x00000002;
--SDRAM[0].PmcDdrPwr                                = 0x00000003;
--SDRAM[0].PmcDdrCfg                                = 0x00000002;
--SDRAM[0].PmcIoDpdReq                              = 0x80800000;
--SDRAM[0].PmcENoVttGen                             = 0x00000000;
--SDRAM[0].PmcNoIoPower                             = 0x00000000;
--SDRAM[0].EmcXm2CmdPadCtrl                         = 0x000002a0;
--SDRAM[0].EmcXm2CmdPadCtrl2                        = 0x770c0000;
--SDRAM[0].EmcXm2DqsPadCtrl                         = 0x770c1414;
--SDRAM[0].EmcXm2DqsPadCtrl2                        = 0x0a00013d;
--SDRAM[0].EmcXm2DqsPadCtrl3                        = 0x08000021;
--SDRAM[0].EmcXm2DqPadCtrl                          = 0x770c2990;
--SDRAM[0].EmcXm2DqPadCtrl2                         = 0x00000000;
--SDRAM[0].EmcXm2ClkPadCtrl                         = 0x77fff884;
--SDRAM[0].EmcXm2CompPadCtrl                        = 0x01f1f508;
--SDRAM[0].EmcXm2VttGenPadCtrl                      = 0x05057404;
--SDRAM[0].EmcXm2VttGenPadCtrl2                     = 0x54000007;
--SDRAM[0].EmcXm2QUsePadCtrl                        = 0x080001e8;
--SDRAM[0].McEmemAdrCfg                             = 0x00000000;
--SDRAM[0].McEmemAdrCfgDev0                         = 0x00080303;
--SDRAM[0].McEmemAdrCfgDev1                         = 0x00080303;
--SDRAM[0].McEmemCfg                                = 0x00000400;
--SDRAM[0].McEmemArbCfg                             = 0x00000006;
--SDRAM[0].McEmemArbOutstandingReq                  = 0x80000048;
--SDRAM[0].McEmemArbTimingRcd                       = 0x00000001;
--SDRAM[0].McEmemArbTimingRp                        = 0x00000002;
--SDRAM[0].McEmemArbTimingRc                        = 0x00000009;
--SDRAM[0].McEmemArbTimingRas                       = 0x00000005;
--SDRAM[0].McEmemArbTimingFaw                       = 0x00000007;
--SDRAM[0].McEmemArbTimingRrd                       = 0x00000001;
--SDRAM[0].McEmemArbTimingRap2Pre                   = 0x00000002;
--SDRAM[0].McEmemArbTimingWap2Pre                   = 0x00000008;
--SDRAM[0].McEmemArbTimingR2R                       = 0x00000002;
--SDRAM[0].McEmemArbTimingW2W                       = 0x00000002;
--SDRAM[0].McEmemArbTimingR2W                       = 0x00000003;
--SDRAM[0].McEmemArbTimingW2R                       = 0x00000006;
--SDRAM[0].McEmemArbDaTurns                         = 0x06030202;
--SDRAM[0].McEmemArbDaCovers                        = 0x000d0709;
--SDRAM[0].McEmemArbMisc0                           = 0x7086120a;
--SDRAM[0].McEmemArbMisc1                           = 0x78000000;
--SDRAM[0].McEmemArbRing1Throttle                   = 0x001f0000;
--SDRAM[0].McEmemArbOverride                        = 0x00000080;
--SDRAM[0].McEmemArbRsv                             = 0xff00ff00;
--SDRAM[0].McClkenOverride                          = 0x00000000;
-diff --git a/tegra30/toradex/colibri-t30/Colibri_t30_12MHz_1GB_NT5CC256M16CP-DI_400MHz-shmoo.img.cfg b/tegra30/toradex/colibri-t30/Colibri_t30_12MHz_1GB_NT5CC256M16CP-DI_400MHz-shmoo.img.cfg
-deleted file mode 100644
-index 1371e8d..0000000
---- a/tegra30/toradex/colibri-t30/Colibri_t30_12MHz_1GB_NT5CC256M16CP-DI_400MHz-shmoo.img.cfg
-+++ /dev/null
-@@ -1,22 +0,0 @@
--# Copyright (C) 2013 Toradex AG
--#
--# This software is provided 'as-is', without any express or implied
--# warranty. In no event will the authors be held liable for any damages
--# arising from the use of this software.
--#
--# Permission is granted to anyone to use this software for any purpose,
--# including commercial applications, and to alter it and redistribute it
--# freely, subject to the following restrictions:
--#
--# 1. The origin of this software must not be misrepresented; you must not
--#    claim that you wrote the original software. If you use this software
--#    in a product, an acknowledgment in the product documentation would be
--#    appreciated but is not required.
--# 2. Altered source versions must be plainly marked as such, and must not be
--#    misrepresented as being the original software.
--# 3. This notice may not be removed or altered from any source distribution.
--
--Version       = 0x00020001;
--Bctcopy       = 1;
--Bctfile       = Colibri_t30_12MHz_1GB_NT5CC256M16CP-DI_400MHz-shmoo.bct;
--BootLoader    = u-boot.bin,0x80108000,0x80108000,Complete;
-diff --git a/tegra30/toradex/colibri-t30/Makefile b/tegra30/toradex/colibri-t30/Makefile
-deleted file mode 100644
-index 11816b3..0000000
---- a/tegra30/toradex/colibri-t30/Makefile
-+++ /dev/null
-@@ -1,30 +0,0 @@
--# Copyright (c) 2013, Toradex AG. All rights reserved.
--# Copyright (c) 2013, NVIDIA CORPORATION.  All rights reserved.
--#
--# This software is provided 'as-is', without any express or implied
--# warranty. In no event will the authors be held liable for any damages
--# arising from the use of this software.
--#
--# Permission is granted to anyone to use this software for any purpose,
--# including commercial applications, and to alter it and redistribute it
--# freely, subject to the following restrictions:
--#
--# 1. The origin of this software must not be misrepresented; you must not
--#    claim that you wrote the original software. If you use this software
--#    in a product, an acknowledgment in the product documentation would be
--#    appreciated but is not required.
--# 2. Altered source versions must be plainly marked as such, and must not be
--#    misrepresented as being the original software.
--# 3. This notice may not be removed or altered from any source distribution.
--
--include ../../../build/pre.mk
--
--soc := t30
--
--bcts := \
--	Colibri_t30_12MHz_1GB_NT5CC256M16CP-DI_400MHz-shmoo.bct
--
--images := \
--	Colibri_t30_12MHz_1GB_NT5CC256M16CP-DI_400MHz-shmoo.img
--
--include ../../../build/post.mk
-diff --git a/tegra30/toradex/colibri-t30/build.sh b/tegra30/toradex/colibri-t30/build.sh
-deleted file mode 100755
-index 7dc6a05..0000000
---- a/tegra30/toradex/colibri-t30/build.sh
-+++ /dev/null
-@@ -1,21 +0,0 @@
--#!/bin/sh
--
--# Copyright (c) 2013, NVIDIA CORPORATION.  All rights reserved.
--#
--# This software is provided 'as-is', without any express or implied
--# warranty. In no event will the authors be held liable for any damages
--# arising from the use of this software.
--#
--# Permission is granted to anyone to use this software for any purpose,
--# including commercial applications, and to alter it and redistribute it
--# freely, subject to the following restrictions:
--#
--# 1. The origin of this software must not be misrepresented; you must not
--#    claim that you wrote the original software. If you use this software
--#    in a product, an acknowledgment in the product documentation would be
--#    appreciated but is not required.
--# 2. Altered source versions must be plainly marked as such, and must not be
--#    misrepresented as being the original software.
--# 3. This notice may not be removed or altered from any source distribution.
--
--make
-diff --git a/tegra30/toradex/colibri_t30/Makefile b/tegra30/toradex/colibri_t30/Makefile
-new file mode 100644
-index 0000000..dffc9f0
---- /dev/null
-+++ b/tegra30/toradex/colibri_t30/Makefile
-@@ -0,0 +1,30 @@
-+# Copyright (c) 2013, Toradex AG. All rights reserved.
-+# Copyright (c) 2013, NVIDIA CORPORATION.  All rights reserved.
-+#
-+# This software is provided 'as-is', without any express or implied
-+# warranty. In no event will the authors be held liable for any damages
-+# arising from the use of this software.
-+#
-+# Permission is granted to anyone to use this software for any purpose,
-+# including commercial applications, and to alter it and redistribute it
-+# freely, subject to the following restrictions:
-+#
-+# 1. The origin of this software must not be misrepresented; you must not
-+#    claim that you wrote the original software. If you use this software
-+#    in a product, an acknowledgment in the product documentation would be
-+#    appreciated but is not required.
-+# 2. Altered source versions must be plainly marked as such, and must not be
-+#    misrepresented as being the original software.
-+# 3. This notice may not be removed or altered from any source distribution.
-+
-+include ../../../build/pre.mk
-+
-+soc := t30
-+
-+bcts := \
-+	colibri_t30_12MHz_1GB_NT5CC256M16CP-DI_400MHz-shmoo.bct
-+
-+images := \
-+	colibri_t30.img
-+
-+include ../../../build/post.mk
-diff --git a/tegra30/toradex/colibri_t30/build.sh b/tegra30/toradex/colibri_t30/build.sh
-new file mode 100755
-index 0000000..7dc6a05
---- /dev/null
-+++ b/tegra30/toradex/colibri_t30/build.sh
-@@ -0,0 +1,21 @@
-+#!/bin/sh
-+
-+# Copyright (c) 2013, NVIDIA CORPORATION.  All rights reserved.
-+#
-+# This software is provided 'as-is', without any express or implied
-+# warranty. In no event will the authors be held liable for any damages
-+# arising from the use of this software.
-+#
-+# Permission is granted to anyone to use this software for any purpose,
-+# including commercial applications, and to alter it and redistribute it
-+# freely, subject to the following restrictions:
-+#
-+# 1. The origin of this software must not be misrepresented; you must not
-+#    claim that you wrote the original software. If you use this software
-+#    in a product, an acknowledgment in the product documentation would be
-+#    appreciated but is not required.
-+# 2. Altered source versions must be plainly marked as such, and must not be
-+#    misrepresented as being the original software.
-+# 3. This notice may not be removed or altered from any source distribution.
-+
-+make
-diff --git a/tegra30/toradex/colibri_t30/colibri_t30.img.cfg b/tegra30/toradex/colibri_t30/colibri_t30.img.cfg
-new file mode 100644
-index 0000000..54d8f05
---- /dev/null
-+++ b/tegra30/toradex/colibri_t30/colibri_t30.img.cfg
-@@ -0,0 +1,22 @@
-+# Copyright (C) 2013 Toradex AG
-+#
-+# This software is provided 'as-is', without any express or implied
-+# warranty. In no event will the authors be held liable for any damages
-+# arising from the use of this software.
-+#
-+# Permission is granted to anyone to use this software for any purpose,
-+# including commercial applications, and to alter it and redistribute it
-+# freely, subject to the following restrictions:
-+#
-+# 1. The origin of this software must not be misrepresented; you must not
-+#    claim that you wrote the original software. If you use this software
-+#    in a product, an acknowledgment in the product documentation would be
-+#    appreciated but is not required.
-+# 2. Altered source versions must be plainly marked as such, and must not be
-+#    misrepresented as being the original software.
-+# 3. This notice may not be removed or altered from any source distribution.
-+
-+Version       = 0x00020001;
-+Bctcopy       = 1;
-+Bctfile       = colibri_t30_12MHz_1GB_NT5CC256M16CP-DI_400MHz-shmoo.bct;
-+BootLoader    = u-boot.bin,0x80108000,0x80108000,Complete;
-diff --git a/tegra30/toradex/colibri_t30/colibri_t30_12MHz_1GB_NT5CC256M16CP-DI_400MHz-shmoo.bct.cfg b/tegra30/toradex/colibri_t30/colibri_t30_12MHz_1GB_NT5CC256M16CP-DI_400MHz-shmoo.bct.cfg
-new file mode 100755
-index 0000000..b77bf35
---- /dev/null
-+++ b/tegra30/toradex/colibri_t30/colibri_t30_12MHz_1GB_NT5CC256M16CP-DI_400MHz-shmoo.bct.cfg
-@@ -0,0 +1,240 @@
-+# Copyright (c) 2013, Toradex AG.  All rights reserved.
-+#
-+# This software is provided 'as-is', without any express or implied
-+# warranty. In no event will the authors be held liable for any damages
-+# arising from the use of this software.
-+#
-+# Permission is granted to anyone to use this software for any purpose,
-+# including commercial applications, and to alter it and redistribute it
-+# freely, subject to the following restrictions:
-+#
-+# 1. The origin of this software must not be misrepresented; you must not
-+#    claim that you wrote the original software. If you use this software
-+#    in a product, an acknowledgment in the product documentation would be
-+#    appreciated but is not required.
-+# 2. Altered source versions must be plainly marked as such, and must not be
-+#    misrepresented as being the original software.
-+# 3. This notice may not be removed or altered from any source distribution.
-+
-+Version        = 0x00030001;
-+PartitionSize  = 33554432;
-+BlockSize      = 16384;
-+PageSize       = 512;
-+OdmData        = 0x400c0000;
-+
-+DevType[0]  =  Sdmmc;
-+DeviceParam[0].SdmmcParams.ClockDivider            = 9; # 216/9 = 24MHz
-+DeviceParam[0].SdmmcParams.DataWidth               = NvBootSdmmcDataWidth_8Bit;
-+DeviceParam[0].SdmmcParams.MaxPowerClassSupported  = 0;
-+DeviceParam[0].SdmmcParams.SdController            = NvBootSdmmcCntrl_4;
-+
-+DevType[1]  =  Sdmmc;
-+DeviceParam[1].SdmmcParams.ClockDivider            = 9; # 216/9 = 24MHz
-+DeviceParam[1].SdmmcParams.DataWidth               = NvBootSdmmcDataWidth_8Bit;
-+DeviceParam[1].SdmmcParams.MaxPowerClassSupported  = 0;
-+DeviceParam[1].SdmmcParams.SdController            = NvBootSdmmcCntrl_4;
-+
-+DevType[2]  =  Sdmmc;
-+DeviceParam[2].SdmmcParams.ClockDivider            = 9; # 216/9 = 24MHz
-+DeviceParam[2].SdmmcParams.DataWidth               = NvBootSdmmcDataWidth_8Bit;
-+DeviceParam[2].SdmmcParams.MaxPowerClassSupported  = 0;
-+DeviceParam[2].SdmmcParams.SdController            = NvBootSdmmcCntrl_4;
-+
-+DevType[3]  =  Sdmmc;
-+DeviceParam[3].SdmmcParams.ClockDivider            = 9; # 216/9 = 24MHz
-+DeviceParam[3].SdmmcParams.DataWidth               = NvBootSdmmcDataWidth_8Bit;
-+DeviceParam[3].SdmmcParams.MaxPowerClassSupported  = 0;
-+DeviceParam[3].SdmmcParams.SdController            = NvBootSdmmcCntrl_4;
-+
-+SDRAM[0].MemoryType                               = NvBootMemoryType_Ddr3;
-+SDRAM[0].PllMChargePumpSetupControl               = 0x00000008;
-+SDRAM[0].PllMLoopFilterSetupControl               = 0x00000000;
-+SDRAM[0].PllMInputDivider                         = 0x0000000c;
-+SDRAM[0].PllMFeedbackDivider                      = 0x00000320;
-+SDRAM[0].PllMPostDivider                          = 0x00000000;
-+SDRAM[0].PllMStableTime                           = 0x0000012c;
-+SDRAM[0].EmcClockDivider                          = 0x00000002;
-+SDRAM[0].EmcClockSource                           = 0x00000000;
-+SDRAM[0].EmcClockUsePllMUD                        = 0x00000000;
-+SDRAM[0].EmcAutoCalInterval                       = 0x001fffff;
-+SDRAM[0].EmcAutoCalConfig                         = 0xa0f10000;
-+SDRAM[0].EmcAutoCalWait                           = 0x00000064;
-+SDRAM[0].EmcAdrCfg                                = 0x00000000;
-+SDRAM[0].EmcPinProgramWait                        = 0x00000001;
-+SDRAM[0].EmcPinExtraWait                          = 0x00000000;
-+SDRAM[0].EmcTimingControlWait                     = 0x00000000;
-+SDRAM[0].EmcRc                                    = 0x00000012;
-+SDRAM[0].EmcRfc                                   = 0x0000008a;
-+SDRAM[0].EmcRas                                   = 0x0000000c;
-+SDRAM[0].EmcRp                                    = 0x00000004;
-+SDRAM[0].EmcR2w                                   = 0x00000003;
-+SDRAM[0].EmcW2r                                   = 0x00000008;
-+SDRAM[0].EmcR2p                                   = 0x00000002;
-+SDRAM[0].EmcW2p                                   = 0x0000000a;
-+SDRAM[0].EmcRdRcd                                 = 0x00000004;
-+SDRAM[0].EmcWrRcd                                 = 0x00000004;
-+SDRAM[0].EmcRrd                                   = 0x00000002;
-+SDRAM[0].EmcRext                                  = 0x00000001;
-+SDRAM[0].EmcWext                                  = 0x00000000;
-+SDRAM[0].EmcWdv                                   = 0x00000004;
-+SDRAM[0].EmcQUse                                  = 0x00000006;
-+SDRAM[0].EmcQRst                                  = 0x00000004;
-+SDRAM[0].EmcQSafe                                 = 0x00000009;
-+SDRAM[0].EmcRdv                                   = 0x0000000c;
-+SDRAM[0].EmcCtt                                   = 0x00000000;
-+SDRAM[0].EmcCttDuration                           = 0x00000000;
-+SDRAM[0].EmcRefresh                               = 0x00000bf5;
-+SDRAM[0].EmcBurstRefreshNum                       = 0x00000000;
-+SDRAM[0].EmcPreRefreshReqCnt                      = 0x000002fd;
-+SDRAM[0].EmcPdEx2Wr                               = 0x00000001;
-+SDRAM[0].EmcPdEx2Rd                               = 0x00000008;
-+SDRAM[0].EmcPChg2Pden                             = 0x00000001;
-+SDRAM[0].EmcAct2Pden                              = 0x00000000;
-+SDRAM[0].EmcAr2Pden                               = 0x00000008;
-+SDRAM[0].EmcRw2Pden                               = 0x0000000f;
-+SDRAM[0].EmcTxsr                                  = 0x00000090;
-+SDRAM[0].EmcTxsrDll                               = 0x00000200;
-+SDRAM[0].EmcTcke                                  = 0x00000004;
-+SDRAM[0].EmcTfaw                                  = 0x00000010;
-+SDRAM[0].EmcTrpab                                 = 0x00000000;
-+SDRAM[0].EmcTClkStable                            = 0x00000004;
-+SDRAM[0].EmcTClkStop                              = 0x00000005;
-+SDRAM[0].EmcTRefBw                                = 0x00000c35;
-+SDRAM[0].EmcQUseExtra                             = 0x00000000;
-+SDRAM[0].EmcFbioCfg5                              = 0x00007088;
-+SDRAM[0].EmcFbioCfg6                              = 0x00000004;
-+SDRAM[0].EmcFbioSpare                             = 0xe8000000;
-+SDRAM[0].EmcCfgRsv                                = 0xff00ff88;
-+SDRAM[0].EmcMrs                                   = 0x80000521;
-+SDRAM[0].EmcEmrs                                  = 0x80100002;
-+SDRAM[0].EmcMrw1                                  = 0x00000000;
-+SDRAM[0].EmcMrw2                                  = 0x00000000;
-+SDRAM[0].EmcMrw3                                  = 0x00000000;
-+SDRAM[0].EmcMrwExtra                              = 0x00000000;
-+SDRAM[0].EmcWarmBootMrw1                          = 0x00000000;
-+SDRAM[0].EmcWarmBootMrw2                          = 0x00000000;
-+SDRAM[0].EmcWarmBootMrw3                          = 0x00000000;
-+SDRAM[0].EmcWarmBootMrwExtra                      = 0x00000000;
-+SDRAM[0].EmcWarmBootExtraModeRegWriteEnable       = 0x00000000;
-+SDRAM[0].EmcExtraModeRegWriteEnable               = 0x00000000;
-+SDRAM[0].EmcMrwResetCommand                       = 0x00000000;
-+SDRAM[0].EmcMrwResetNInitWait                     = 0x00000000;
-+SDRAM[0].EmcMrsWaitCnt                            = 0x0134000c;
-+SDRAM[0].EmcCfg                                   = 0x23c00000;
-+SDRAM[0].EmcCfg2                                  = 0x000c0099;
-+SDRAM[0].EmcDbg                                   = 0x01000400;
-+SDRAM[0].EmcCmdQ                                  = 0x10004408;
-+SDRAM[0].EmcMc2EmcQ                               = 0x06000404;
-+SDRAM[0].EmcDynSelfRefControl                     = 0x800018d1;
-+SDRAM[0].AhbArbitrationXbarCtrlMemInitDone        = 0x00000001;
-+SDRAM[0].EmcCfgDigDll                             = 0x00360084;
-+SDRAM[0].EmcCfgDigDllPeriod                       = 0x00008000;
-+SDRAM[0].EmcDevSelect                             = 0x00000002;
-+SDRAM[0].EmcSelDpdCtrl                            = 0x0004032c;
-+SDRAM[0].EmcDllXformDqs0                          = 0x0000c002;
-+SDRAM[0].EmcDllXformDqs1                          = 0x00014002;
-+SDRAM[0].EmcDllXformDqs2                          = 0x0000c002;
-+SDRAM[0].EmcDllXformDqs3                          = 0x00014002;
-+SDRAM[0].EmcDllXformDqs4                          = 0x00014000;
-+SDRAM[0].EmcDllXformDqs5                          = 0x00014000;
-+SDRAM[0].EmcDllXformDqs6                          = 0x00014000;
-+SDRAM[0].EmcDllXformDqs7                          = 0x00014000;
-+SDRAM[0].EmcDllXformQUse0                         = 0x00000000;
-+SDRAM[0].EmcDllXformQUse1                         = 0x00000000;
-+SDRAM[0].EmcDllXformQUse2                         = 0x00000000;
-+SDRAM[0].EmcDllXformQUse3                         = 0x00000000;
-+SDRAM[0].EmcDllXformQUse4                         = 0x00000000;
-+SDRAM[0].EmcDllXformQUse5                         = 0x00000000;
-+SDRAM[0].EmcDllXformQUse6                         = 0x00000000;
-+SDRAM[0].EmcDllXformQUse7                         = 0x00000000;
-+SDRAM[0].EmcDliTrimTxDqs0                         = 0x00000000;
-+SDRAM[0].EmcDliTrimTxDqs1                         = 0x00000000;
-+SDRAM[0].EmcDliTrimTxDqs2                         = 0x00000000;
-+SDRAM[0].EmcDliTrimTxDqs3                         = 0x00000000;
-+SDRAM[0].EmcDliTrimTxDqs4                         = 0x00000000;
-+SDRAM[0].EmcDliTrimTxDqs5                         = 0x00000000;
-+SDRAM[0].EmcDliTrimTxDqs6                         = 0x00000000;
-+SDRAM[0].EmcDliTrimTxDqs7                         = 0x00000000;
-+SDRAM[0].EmcDllXformDq0                           = 0x00018000;
-+SDRAM[0].EmcDllXformDq1                           = 0x00018000;
-+SDRAM[0].EmcDllXformDq2                           = 0x00018000;
-+SDRAM[0].EmcDllXformDq3                           = 0x00018000;
-+SDRAM[0].WarmBootWait                             = 0x00000002;
-+SDRAM[0].EmcCttTermCtrl                           = 0x00000802;
-+SDRAM[0].EmcOdtWrite                              = 0x00000000;
-+SDRAM[0].EmcOdtRead                               = 0x00000000;
-+SDRAM[0].EmcZcalInterval                          = 0x00020000;
-+SDRAM[0].EmcZcalWaitCnt                           = 0x00000040;
-+SDRAM[0].EmcZcalMrwCmd                            = 0x80000000;
-+SDRAM[0].EmcMrsResetDll                           = 0x00000000;
-+SDRAM[0].EmcZcalInitDev0                          = 0x80000011;
-+SDRAM[0].EmcZcalInitDev1                          = 0x00000000;
-+SDRAM[0].EmcZcalInitWait                          = 0x00000002;
-+SDRAM[0].EmcZcalColdBootEnable                    = 0x00000001;
-+SDRAM[0].EmcZcalWarmBootEnable                    = 0x00000001;
-+SDRAM[0].EmcMrwLpddr2ZcalWarmBoot                 = 0x000a00ab;
-+SDRAM[0].EmcZqCalDdr3WarmBoot                     = 0x00000011;
-+SDRAM[0].EmcZcalWarmBootWait                      = 0x00000001;
-+SDRAM[0].EmcMrsWarmBootEnable                     = 0x00000001;
-+SDRAM[0].EmcMrsResetDllWait                       = 0x00000000;
-+SDRAM[0].EmcEmrsEmr2                              = 0x80200000;
-+SDRAM[0].EmcEmrsEmr3                              = 0x80300000;
-+SDRAM[0].EmcMrsExtra                              = 0x80000521;
-+SDRAM[0].EmcWarmBootMrs                           = 0x80100002;
-+SDRAM[0].EmcWarmBootEmrs                          = 0x80000521;
-+SDRAM[0].EmcWarmBootEmr2                          = 0x80200000;
-+SDRAM[0].EmcWarmBootEmr3                          = 0x80300000;
-+SDRAM[0].EmcWarmBootMrsExtra                      = 0x80100002;
-+SDRAM[0].EmcEmrsDdr2DllEnable                     = 0x00000000;
-+SDRAM[0].EmcMrsDdr2DllReset                       = 0x00000000;
-+SDRAM[0].EmcEmrsDdr2OcdCalib                      = 0x00000000;
-+SDRAM[0].EmcDdr2Wait                              = 0x00000000;
-+SDRAM[0].EmcClkenOverride                         = 0x00000000;
-+SDRAM[0].EmcExtraRefreshNum                       = 0x00000002;
-+SDRAM[0].EmcClkenOverrideAllWarmBoot              = 0x00000000;
-+SDRAM[0].McClkenOverrideAllWarmBoot               = 0x00000000;
-+SDRAM[0].EmcCfgDigDllPeriodWarmBoot               = 0x00000003;
-+SDRAM[0].PmcVddpSel                               = 0x00000002;
-+SDRAM[0].PmcDdrPwr                                = 0x00000003;
-+SDRAM[0].PmcDdrCfg                                = 0x00000002;
-+SDRAM[0].PmcIoDpdReq                              = 0x80800000;
-+SDRAM[0].PmcENoVttGen                             = 0x00000000;
-+SDRAM[0].PmcNoIoPower                             = 0x00000000;
-+SDRAM[0].EmcXm2CmdPadCtrl                         = 0x000002a0;
-+SDRAM[0].EmcXm2CmdPadCtrl2                        = 0x770c0000;
-+SDRAM[0].EmcXm2DqsPadCtrl                         = 0x770c1414;
-+SDRAM[0].EmcXm2DqsPadCtrl2                        = 0x0a00013d;
-+SDRAM[0].EmcXm2DqsPadCtrl3                        = 0x08000021;
-+SDRAM[0].EmcXm2DqPadCtrl                          = 0x770c2990;
-+SDRAM[0].EmcXm2DqPadCtrl2                         = 0x00000000;
-+SDRAM[0].EmcXm2ClkPadCtrl                         = 0x77fff884;
-+SDRAM[0].EmcXm2CompPadCtrl                        = 0x01f1f508;
-+SDRAM[0].EmcXm2VttGenPadCtrl                      = 0x05057404;
-+SDRAM[0].EmcXm2VttGenPadCtrl2                     = 0x54000007;
-+SDRAM[0].EmcXm2QUsePadCtrl                        = 0x080001e8;
-+SDRAM[0].McEmemAdrCfg                             = 0x00000000;
-+SDRAM[0].McEmemAdrCfgDev0                         = 0x00080303;
-+SDRAM[0].McEmemAdrCfgDev1                         = 0x00080303;
-+SDRAM[0].McEmemCfg                                = 0x00000400;
-+SDRAM[0].McEmemArbCfg                             = 0x00000006;
-+SDRAM[0].McEmemArbOutstandingReq                  = 0x80000048;
-+SDRAM[0].McEmemArbTimingRcd                       = 0x00000001;
-+SDRAM[0].McEmemArbTimingRp                        = 0x00000002;
-+SDRAM[0].McEmemArbTimingRc                        = 0x00000009;
-+SDRAM[0].McEmemArbTimingRas                       = 0x00000005;
-+SDRAM[0].McEmemArbTimingFaw                       = 0x00000007;
-+SDRAM[0].McEmemArbTimingRrd                       = 0x00000001;
-+SDRAM[0].McEmemArbTimingRap2Pre                   = 0x00000002;
-+SDRAM[0].McEmemArbTimingWap2Pre                   = 0x00000008;
-+SDRAM[0].McEmemArbTimingR2R                       = 0x00000002;
-+SDRAM[0].McEmemArbTimingW2W                       = 0x00000002;
-+SDRAM[0].McEmemArbTimingR2W                       = 0x00000003;
-+SDRAM[0].McEmemArbTimingW2R                       = 0x00000006;
-+SDRAM[0].McEmemArbDaTurns                         = 0x06030202;
-+SDRAM[0].McEmemArbDaCovers                        = 0x000d0709;
-+SDRAM[0].McEmemArbMisc0                           = 0x7086120a;
-+SDRAM[0].McEmemArbMisc1                           = 0x78000000;
-+SDRAM[0].McEmemArbRing1Throttle                   = 0x001f0000;
-+SDRAM[0].McEmemArbOverride                        = 0x00000080;
-+SDRAM[0].McEmemArbRsv                             = 0xff00ff00;
-+SDRAM[0].McClkenOverride                          = 0x00000000;
--- 
-2.0.4
+--
+Stefan
