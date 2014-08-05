@@ -1,89 +1,91 @@
-From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Subject: Re: [flasher PATCH] Adapt to new U-Boot build commands
-Date: Tue, 05 Aug 2014 23:41:28 +0200
-Message-ID: <1364a21ed6c2d2c002d3c2d6daf63972@agner.ch>
-References: <1406828885-8561-1-git-send-email-swarren@wwwdotorg.org>
- <20140801111328.D505.AA925319@jp.panasonic.com>
+Date: Tue, 05 Aug 2014 15:45:07 -0600
+Message-ID: <53E15063.3060202@wwwdotorg.org>
+References: <1406828885-8561-1-git-send-email-swarren@wwwdotorg.org> <20140801111328.D505.AA925319@jp.panasonic.com> <1364a21ed6c2d2c002d3c2d6daf63972@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140801111328.D505.AA925319-NAum8xwdG0+S7A1Ibl2khg@public.gmane.org>
+In-Reply-To: <1364a21ed6c2d2c002d3c2d6daf63972-XLVq0VzYD2Y@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Masahiro Yamada <yamada.m-NAum8xwdG0+S7A1Ibl2khg@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+To: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Masahiro Yamada <yamada.m-NAum8xwdG0+S7A1Ibl2khg@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Am 2014-08-01 04:13, schrieb Masahiro Yamada:
-> Hi Stephen,
-> 
-> 
-> On Thu, 31 Jul 2014 11:48:05 -0600
-> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> 
->> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 08/05/2014 03:41 PM, Stefan Agner wrote:
+> Am 2014-08-01 04:13, schrieb Masahiro Yamada:
+>> Hi Stephen,
 >>
->> U-Boot commit 51148790f26e "kconfig: switch to Kconfig" changed the
->> commands required to configure U-Boot. Adapt the flasher build script
->> to those changes, in a way that automatically works with either old or
->> new U-Boot source trees.
 >>
->> Cc: Masahiro Yamada <yamada.m-NAum8xwdG0+S7A1Ibl2khg@public.gmane.org>
->> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  build | 12 +++++++++++-
->>  1 file changed, 11 insertions(+), 1 deletion(-)
+>> On Thu, 31 Jul 2014 11:48:05 -0600
+>> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
 >>
->> diff --git a/build b/build
->> index af863dd3b395..e61cac8ea4c7 100755
->> --- a/build
->> +++ b/build
->> @@ -186,7 +186,17 @@ def build_uboot_one_board(boardname):
->>      out_board_dir = gen_out_board_dir(boardname)
->>      mkdir(out_board_dir)
+>>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>
+>>> U-Boot commit 51148790f26e "kconfig: switch to Kconfig" changed the
+>>> commands required to configure U-Boot. Adapt the flasher build script
+>>> to those changes, in a way that automatically works with either old or
+>>> new U-Boot source trees.
+>>>
+>>> Cc: Masahiro Yamada <yamada.m-NAum8xwdG0+S7A1Ibl2khg@public.gmane.org>
+>>> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>> ---
+>>>   build | 12 +++++++++++-
+>>>   1 file changed, 11 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/build b/build
+>>> index af863dd3b395..e61cac8ea4c7 100755
+>>> --- a/build
+>>> +++ b/build
+>>> @@ -186,7 +186,17 @@ def build_uboot_one_board(boardname):
+>>>       out_board_dir = gen_out_board_dir(boardname)
+>>>       mkdir(out_board_dir)
+>>>
+>>> -    run(uboot_dir, 'make O=' + build_uboot_dir + ' ' + boardname + '_config')
+>>> +    # U-Boot commit 51148790f26e "kconfig: switch to Kconfig" changed the
+>>> +    # build commands from "make ${board}_config; make" to
+>>> +    # "make ${board}_defconfig; make". That commit also added file
+>>> +    # scripts/multiconfig.py, so we happen to have an easy way to check for
+>>> +    # the existence of that file to tell how to compile U-Boot:-/
+>>> +    new_build_commands_file = os.path.join(uboot_dir, "scripts/multiconfig.py")
+>>> +    if os.path.exists(new_build_commands_file):
+>>> +        config_target_suffix = '_defconfig'
+>>> +    else:
+>>> +        config_target_suffix = '_config'
+>>> +    run(uboot_dir, 'make O=' + build_uboot_dir + ' ' + boardname + config_target_suffix)
+>>>       run(uboot_dir, 'make O=' + build_uboot_dir + ' -s ' + makejobs)
+>>>
+>>>       import_uboot_one_board(boardname, build_uboot_dir)
+>
+> Funny discovered and tried to fix that on Thursday too. Stephens
+> upstream change now just created a merge conflict on my local changes
+> :-)
+>
 >>
->> -    run(uboot_dir, 'make O=' + build_uboot_dir + ' ' + boardname + '_config')
->> +    # U-Boot commit 51148790f26e "kconfig: switch to Kconfig" changed the
->> +    # build commands from "make ${board}_config; make" to
->> +    # "make ${board}_defconfig; make". That commit also added file
->> +    # scripts/multiconfig.py, so we happen to have an easy way to check for
->> +    # the existence of that file to tell how to compile U-Boot:-/
->> +    new_build_commands_file = os.path.join(uboot_dir, "scripts/multiconfig.py")
->> +    if os.path.exists(new_build_commands_file):
->> +        config_target_suffix = '_defconfig'
->> +    else:
->> +        config_target_suffix = '_config'
->> +    run(uboot_dir, 'make O=' + build_uboot_dir + ' ' + boardname + config_target_suffix)
->>      run(uboot_dir, 'make O=' + build_uboot_dir + ' -s ' + makejobs)
 >>
->>      import_uboot_one_board(boardname, build_uboot_dir)
+>> IMHO, this way depends on how Kconfig is implemented in U-Boot, right?
+>>
+>>
+>> Maybe you can check the returncode of
+>>
+>> make help 2>/dev/null | grep -q 'Configuration targets'
+>>
+>
+> IMHO the check now depends on the help message, which easily might
+> change.
+>
+> My approach was to simple check if the file Kconfig is in the root
+> folder. Since the change to switch to defconfig was done at the same
+> time the kernel build system was introduced, this works perfectly and
+> matches the reasons behind the renaming (align with the kernel)...
+> os.path.isfile(os.path.join(uboot_dir, "Kconfig")
+>
+> I bet U-Boot will not change the build system anytime soon, especially
+> not before they move to another build system :-) Regarding the help
+> message, I'm not so sure about that...
 
-Funny discovered and tried to fix that on Thursday too. Stephens
-upstream change now just created a merge conflict on my local changes
-:-)
-
-> 
-> 
-> IMHO, this way depends on how Kconfig is implemented in U-Boot, right?
-> 
-> 
-> Maybe you can check the returncode of
-> 
-> make help 2>/dev/null | grep -q 'Configuration targets'
-> 
-
-IMHO the check now depends on the help message, which easily might
-change.
-
-My approach was to simple check if the file Kconfig is in the root
-folder. Since the change to switch to defconfig was done at the same
-time the kernel build system was introduced, this works perfectly and
-matches the reasons behind the renaming (align with the kernel)...
-os.path.isfile(os.path.join(uboot_dir, "Kconfig")
-
-I bet U-Boot will not change the build system anytime soon, especially
-not before they move to another build system :-) Regarding the help
-message, I'm not so sure about that...
-
---
-Stefan
+Unfortunately, the specific commit which changed the commands required 
+to build U-Boot wasn't the one that added the Kconfig file. Checking for 
+the Kconfig file would work fine for a bunch of release commits, but not 
+arbitrary points in the development history.
