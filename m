@@ -1,69 +1,73 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 4/4] host1x: mipi: Set MIPI_CAL_BIAS_PAD_CFG1 register
-Date: Thu, 7 Aug 2014 10:39:45 +0200
-Message-ID: <20140807083944.GB13315@ulmo.nvidia.com>
+From: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH 1/4] host1x: mipi: Add new parent clock for mipi calibration
+Date: Thu, 7 Aug 2014 10:15:42 -0400
+Message-ID: <CAOw6vbKiECG8w6V3zvnr5Z4r4WuRsq556gtspAnM7Drj=A8m8A@mail.gmail.com>
 References: <1407391907-19488-1-git-send-email-seanpaul@chromium.org>
- <1407391907-19488-5-git-send-email-seanpaul@chromium.org>
+ <1407391907-19488-2-git-send-email-seanpaul@chromium.org> <20140807081127.GD18359@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="7ZAtKRhVyVSsbBD2"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1407391907-19488-5-git-send-email-seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+In-Reply-To: <20140807081127.GD18359@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, marcheu-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Thu, Aug 7, 2014 at 4:11 AM, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Thu, Aug 07, 2014 at 02:11:44AM -0400, Sean Paul wrote:
+>> This patch adds a new parent clock to enable/disable the 72MHz
+>> clock required for mipi calibration.
+>
+> s/mipi/MIPI/ please. Also this doesn't explain why this change is
+> necessary. Doesn't MIPI D-PHY calibration work without this patch? It
+> sure does for me.
 
---7ZAtKRhVyVSsbBD2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Thierry,
+Thanks for the prompt reviews.
 
-On Thu, Aug 07, 2014 at 02:11:47AM -0400, Sean Paul wrote:
-> During calibration, set the "internal reference level for drive
-> pull-down" to the value specified in the tegra TRM.
->=20
-> Signed-off-by: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-> ---
->  drivers/gpu/host1x/mipi.c | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/drivers/gpu/host1x/mipi.c b/drivers/gpu/host1x/mipi.c
-> index 80578dc..84ed422 100644
-> --- a/drivers/gpu/host1x/mipi.c
-> +++ b/drivers/gpu/host1x/mipi.c
-> @@ -235,6 +235,8 @@ int tegra_mipi_calibrate(struct tegra_mipi_device *de=
-vice)
->  	value |=3D MIPI_CAL_BIAS_PAD_E_VCLAMP_REF;
->  	tegra_mipi_writel(device->mipi, value, MIPI_CAL_BIAS_PAD_CFG0);
-> =20
-> +	tegra_mipi_writel(device->mipi, 0x20000, MIPI_CAL_BIAS_PAD_CFG1);
+It doesn't work for me on T132 without this additional clock. It seems
+the source for mipi-cal has changed between T124 & T132 from PLL_OUT3
+to CLK72MHZ, so that could be why it's working for you and not for me.
 
-Can you add field definitions for this, please?
+>
+> Furthermore you say 72 MHz clock, but the below uses PLL_P_OUT3 as the
+> parent in the example, yet PLL_P_OUT3 runs at 102 MHz on all of my
+> systems. What 72 MHz clock are you referring to?
+>
 
-Thierry
+This was just a bogus assumption on my part that PLL_P_OUT3 was to be
+programmed to 72MHz on pre-T132 setups.
 
---7ZAtKRhVyVSsbBD2
-Content-Type: application/pgp-signature
+> Also can this parent clock ever be anything other than PLL_P_OUT3? If
+> not it would probably be better to set that statically in the clock
+> initialization tables.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+I'm not entirely certain how I'd set CLK72MHZ statically in the init
+tables, could you elaborate? I can get it to work by re-parenting
+mipi-cal to clk72mhz, however I'm not sure if that would break other
+platforms.
 
-iQIcBAEBAgAGBQJT4ztQAAoJEN0jrNd/PrOhmyAP/3G+mkigBRfhZx+J4Oj9/c1K
-inh2yhGBXhn+elqqpjULOPkWid4iftKcb5TeHP29IIJS411cnKz51FlnnENgw76v
-xkO0pHYpvXWIDwue04WGzRausTxJmjsdgMf7zAENBhQNHuXeoMAIXh9ghpKsSqfJ
-QKEkIis91hLH8sJopMIvV8IZC0duU1wDOug1erg7qUIKHlLCuV6xxe78SO96RLLx
-qZUlPik0z2CErIOyRN1mnzv4XD4Y/GP0+XhmIYLHq4Bih+6V4IclPYFasmSHGCOt
-VJz9ATOuFjpQScv8cCHM+H/6u+wEKn/Mp4Y42YXkpnO4iri4TAsw1vUW2y65EMg7
-TIYNG3ePP7kMqFL+XlBGpDxfnkYuWm+7uoDy+MwY3RspoKyOXY4GCYDiFq0PW6Nr
-p7keqtPAs6M2PxkUg5MgQKdwC5KkY2oRHV6noMBjFuiDxGrZm09QhV9T7fermvVB
-aW7ytauVvuedF09lcyV8VJPwmFYdUmkecXrIK0H7gi2JPFM+gfObe0cFhTEbQ5l/
-ArZ4PTPuyvgNl5pXL/VkkcQaKQa8U/z69L0lusm/yPvd6q6kOhVPcz0dPkHy4aBv
-JoyWFOxstlnpUhz7m1kIZcNuvdy5ulmgtGfY/uYWr2ROHu4hWLWutHGgxcpyzhu7
-XC4htI8+ST4KTIbVdUEF
-=HfF9
------END PGP SIGNATURE-----
+My initial thought was to add a compatible = "nvidia,tegra132-mipi",
+which then would require the parent to be present in the dt.
 
---7ZAtKRhVyVSsbBD2--
+>
+>> diff --git a/drivers/gpu/host1x/mipi.c b/drivers/gpu/host1x/mipi.c
+>> index 9882ea1..4dd91fd 100644
+>> --- a/drivers/gpu/host1x/mipi.c
+>> +++ b/drivers/gpu/host1x/mipi.c
+>> @@ -80,7 +80,8 @@ static const struct module {
+>>  struct tegra_mipi {
+>>       void __iomem *regs;
+>>       struct mutex lock;
+>> -     struct clk *clk;
+>> +     struct clk *clk_parent;
+>> +     struct clk *clk_mipi_cal;
+>
+> I don't think the clk -> clk_mipi_cal rename is warranted here.
+
+Will do.
+
+Sean
+
+>
+> Thierry
