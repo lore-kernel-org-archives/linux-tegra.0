@@ -1,140 +1,134 @@
-From: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH 3/4] host1x: mipi: Include clock lanes in mipi calibrate
-Date: Thu,  7 Aug 2014 02:11:46 -0400
-Message-ID: <1407391907-19488-4-git-send-email-seanpaul@chromium.org>
-References: <1407391907-19488-1-git-send-email-seanpaul@chromium.org>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1407391907-19488-1-git-send-email-seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, marcheu-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [GIT PULL] drm/tegra: Changes for v3.17-rc1
+Date: Thu, 7 Aug 2014 09:53:14 +0200
+Message-ID: <20140807075314.GC18359@ulmo>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="TYecfFk8j8mZq+dy"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-When calibrating the mipi phy, also include the clock lanes
-in the calibration.
 
-Signed-off-by: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
----
- drivers/gpu/host1x/mipi.c | 70 +++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 56 insertions(+), 14 deletions(-)
+--TYecfFk8j8mZq+dy
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/gpu/host1x/mipi.c b/drivers/gpu/host1x/mipi.c
-index 0af2892..80578dc 100644
---- a/drivers/gpu/host1x/mipi.c
-+++ b/drivers/gpu/host1x/mipi.c
-@@ -49,10 +49,18 @@
- #define MIPI_CAL_CONFIG_DSIC		0x10
- #define MIPI_CAL_CONFIG_DSID		0x11
- 
-+#define MIPI_CAL_CONFIG_DSIAB_CLK	0x19
-+#define MIPI_CAL_CONFIG_DSICD_CLK	0x1a
-+#define MIPI_CAL_CONFIG_CSIAB_CLK	0x1b
-+#define MIPI_CAL_CONFIG_CSICD_CLK	0x1c
-+#define MIPI_CAL_CONFIG_CSIE_CLK	0x1d
-+
- #define MIPI_CAL_CONFIG_SELECT		(1 << 21)
- #define MIPI_CAL_CONFIG_HSPDOS(x)	(((x) & 0x1f) << 16)
- #define MIPI_CAL_CONFIG_HSPUOS(x)	(((x) & 0x1f) <<  8)
- #define MIPI_CAL_CONFIG_TERMOS(x)	(((x) & 0x1f) <<  0)
-+#define MIPI_CAL_CONFIG_HSCLKPDOSD(x)	(((x) & 0x1f) << 8)
-+#define MIPI_CAL_CONFIG_HSCLKPUOSD(x)	(((x) & 0x1f) <<  0)
- 
- #define MIPI_CAL_BIAS_PAD_CFG0		0x16
- #define MIPI_CAL_BIAS_PAD_PDVCLAMP	(1 << 1)
-@@ -64,17 +72,45 @@
- #define MIPI_CAL_BIAS_PAD_PDVREG	(1 << 1)
- 
- static const struct module {
--	unsigned long reg;
-+	unsigned long data_reg;
-+	unsigned long clk_reg;
- } modules[] = {
--	{ .reg = MIPI_CAL_CONFIG_CSIA },
--	{ .reg = MIPI_CAL_CONFIG_CSIB },
--	{ .reg = MIPI_CAL_CONFIG_CSIC },
--	{ .reg = MIPI_CAL_CONFIG_CSID },
--	{ .reg = MIPI_CAL_CONFIG_CSIE },
--	{ .reg = MIPI_CAL_CONFIG_DSIA },
--	{ .reg = MIPI_CAL_CONFIG_DSIB },
--	{ .reg = MIPI_CAL_CONFIG_DSIC },
--	{ .reg = MIPI_CAL_CONFIG_DSID },
-+	{
-+		.data_reg = MIPI_CAL_CONFIG_CSIA,
-+		.clk_reg = MIPI_CAL_CONFIG_CSIAB_CLK
-+	},
-+	{
-+		.data_reg = MIPI_CAL_CONFIG_CSIB,
-+		.clk_reg = MIPI_CAL_CONFIG_CSIAB_CLK
-+	},
-+	{
-+		.data_reg = MIPI_CAL_CONFIG_CSIC,
-+		.clk_reg = MIPI_CAL_CONFIG_CSICD_CLK
-+	},
-+	{
-+		.data_reg = MIPI_CAL_CONFIG_CSID,
-+		.clk_reg = MIPI_CAL_CONFIG_CSICD_CLK
-+	},
-+	{
-+		.data_reg = MIPI_CAL_CONFIG_CSIE,
-+		.clk_reg = MIPI_CAL_CONFIG_CSIE_CLK
-+	},
-+	{
-+		.data_reg = MIPI_CAL_CONFIG_DSIA,
-+		.clk_reg = MIPI_CAL_CONFIG_DSIAB_CLK
-+	},
-+	{
-+		.data_reg = MIPI_CAL_CONFIG_DSIB,
-+		.clk_reg = MIPI_CAL_CONFIG_DSIAB_CLK
-+	},
-+	{
-+		.data_reg = MIPI_CAL_CONFIG_DSIC,
-+		.clk_reg = MIPI_CAL_CONFIG_DSICD_CLK
-+	},
-+	{
-+		.data_reg = MIPI_CAL_CONFIG_DSID,
-+		.clk_reg = MIPI_CAL_CONFIG_DSICD_CLK
-+	},
- };
- 
- struct tegra_mipi {
-@@ -178,7 +214,7 @@ static int tegra_mipi_wait(struct tegra_mipi *mipi)
- 
- int tegra_mipi_calibrate(struct tegra_mipi_device *device)
- {
--	unsigned long value;
-+	unsigned long value, clk_value;
- 	unsigned int i;
- 	int err;
- 
-@@ -204,15 +240,21 @@ int tegra_mipi_calibrate(struct tegra_mipi_device *device)
- 	tegra_mipi_writel(device->mipi, value, MIPI_CAL_BIAS_PAD_CFG2);
- 
- 	for (i = 0; i < ARRAY_SIZE(modules); i++) {
--		if (device->pads & BIT(i))
-+		if (device->pads & BIT(i)) {
- 			value = MIPI_CAL_CONFIG_SELECT |
- 				MIPI_CAL_CONFIG_HSPDOS(0) |
- 				MIPI_CAL_CONFIG_HSPUOS(4) |
- 				MIPI_CAL_CONFIG_TERMOS(5);
--		else
-+			clk_value = MIPI_CAL_CONFIG_SELECT |
-+				    MIPI_CAL_CONFIG_HSCLKPDOSD(0) |
-+				    MIPI_CAL_CONFIG_HSCLKPUOSD(4);
-+		} else {
- 			value = 0;
-+			clk_value = 0;
-+		}
- 
--		tegra_mipi_writel(device->mipi, value, modules[i].reg);
-+		tegra_mipi_writel(device->mipi, value, modules[i].data_reg);
-+		tegra_mipi_writel(device->mipi, clk_value, modules[i].clk_reg);
- 	}
- 
- 	value = tegra_mipi_readl(device->mipi, MIPI_CAL_CTRL);
--- 
-2.0.0
+Hi Dave,
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+The following changes since commit e2215321ff180f280d83837f57f3a84f8b6dda0d:
+
+  drm/tegra: Implement race-free hotplug detection (2014-07-08 11:31:36 +10=
+00)
+
+are available in the git repository at:
+
+  git://anongit.freedesktop.org/tegra/linux tags/drm/tegra/for-3.17-rc1
+
+for you to fetch changes up to ef70728c7a6571a1a7115031e932b811f1740b2e:
+
+  drm/tegra: add MODULE_DEVICE_TABLEs (2014-08-04 10:07:39 +0200)
+
+The starting commit of this pull might look somewhat more arbitrary than
+it really is. I chose that as the earliest commit in you drm-next tree
+that prevented a somewhat strange merge conflict between the race-free
+hotplug detection patches and one of the patches in this pull request.
+Note also that this pulls in the first commit of the drm/panel pull
+request to resolve a build-time dependency, so it should be safe to
+merge both pull requests in arbitrary order.
+
+Thierry
+
+----------------------------------------------------------------
+drm/tegra: Changes for v3.17-rc1
+
+Mostly some cleanup all over the place. Pitch alignment limitations of
+the display controller are now honored and job submission is 64-bit
+safe.
+
+The SOR output (used for eDP) properly configures sync signal polarities
+according to the display mode rather than hard-coding them to some value
+and the number of bits per color is now taken from the panel rather than
+hard-coded to properly support 24-bit vs. 18-bit panels.
+
+The DSI controller now properly supports non-continuous clock mode.
+
+GEM objects can now have their flags and tiling mode modified via IOCTLs
+to allow buffers imported from Nouveau to be properly displayed. Newer
+generations of the Tegra display controller can also detile block linear
+buffers at scan-out time.
+
+Finally the driver now properly exports MODULE_DEVICE_TABLEs to allow it
+to be automatically loaded when built as a module.
+
+----------------------------------------------------------------
+Alexandre Courbot (2):
+      drm/dsi: Flag for non-continuous clock behavior
+      drm/tegra: dsi - Handle non-continuous clock flag
+
+Dan Carpenter (1):
+      drm/tegra: sor - missing unlock on error
+
+Stephen Warren (1):
+      drm/tegra: add MODULE_DEVICE_TABLEs
+
+St=C3=A9phane Marchesin (1):
+      drm/tegra: sor - Use bits-per-color from panel
+
+Thierry Reding (9):
+      Merge branch 'drm/dsi/for-next' into drm/tegra/for-next
+      drm/tegra: Implement more tiling modes
+      drm/tegra: Add SET/GET_TILING IOCTLs
+      drm/tegra: Add SET/GET_FLAGS IOCTLs
+      drm/tegra: Allow non-authenticated processes to create buffer objects
+      drm/tegra: Make job submission 64-bit safe
+      drm/tegra: sor - Configure proper sync polarities
+      drm/tegra: Properly align stride for framebuffers
+      drm/tegra: dc - Reset controller on driver remove
+
+ drivers/gpu/drm/tegra/dc.c    | 123 ++++++++++++++++++++++---
+ drivers/gpu/drm/tegra/dc.h    |   5 +
+ drivers/gpu/drm/tegra/dpaux.c |   1 +
+ drivers/gpu/drm/tegra/drm.c   | 208 ++++++++++++++++++++++++++++++++++++++=
+----
+ drivers/gpu/drm/tegra/drm.h   |  10 +-
+ drivers/gpu/drm/tegra/dsi.c   |   4 +-
+ drivers/gpu/drm/tegra/fb.c    |  13 ++-
+ drivers/gpu/drm/tegra/gem.c   |   5 +-
+ drivers/gpu/drm/tegra/gem.h   |  16 +++-
+ drivers/gpu/drm/tegra/gr2d.c  |   1 +
+ drivers/gpu/drm/tegra/gr3d.c  |   1 +
+ drivers/gpu/drm/tegra/hdmi.c  |   1 +
+ drivers/gpu/drm/tegra/sor.c   |  21 ++++-
+ drivers/gpu/host1x/job.c      |  22 ++---
+ include/drm/drm_mipi_dsi.h    |   2 +
+ include/linux/host1x.h        |  15 +--
+ include/uapi/drm/tegra_drm.h  |  46 ++++++++++
+ 17 files changed, 427 insertions(+), 67 deletions(-)
+
+--TYecfFk8j8mZq+dy
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJT4zBpAAoJEN0jrNd/PrOhkpMQAMJqIoeWRg4DKVOR8Jzrq6wu
+6Ii3PUSNmejV1kLHgNbsXI/vnZiym2jWgcZnc+/QRPfRX5Hnxl3PRv2MoPgUZeO8
+iSrqENa+gvwIcvEgXniUOikl/02P1AsWxVyW2g9WJhjZlfXeMlCJKjb/cTfw6vqN
+QpryIoeUB5awI+SXumUE9YjRDQ1H1QNz/BuzT+pgJXNxqLhjYQ5abWPVG2JuHBiC
+E7ZvQ/DbTqVNe48BnKa2RbNyO5q98hglXEfqGnKXtz4GVhiz3JTPlg8BarK1CTvv
+yhxv3zpVpe6rBk5ftBIQb5oHczvYekaTu03p6R07ou2cwn+9yJY+SaNP8uBLs/d4
+pphe8qU9QDUdqN8NT3SHlFCS7CA2Wn5n5OQbCxdgifiyPv6mHlueJq44GWK68RFB
+IxtdaIrDr5bFhi7k05xikNnCyi1L9aHYdBQl1Q/Sku1nHzECRFnsazxdbXcnxupt
+OzcWfxCP2skM2XBctsqpiDXxjW20s9nszaKQLPTKYqwXgb+f2zKXKmp/1s+FpJMQ
+EMO9PZGtoEJeWAyrc6mG3Ddv+5mSIvcoexdNZ9pYOzekyKAKmYCkp8VqUxKvfsuZ
+TPOHCuUd9HfVhgq1VS/UgNZtzXBfBO2qdmlh7o5qnFTcN/n6wuZ5gCtA/liSX6Ib
+jR9rk3Hohdcrk20Md0WC
+=4wNn
+-----END PGP SIGNATURE-----
+
+--TYecfFk8j8mZq+dy--
