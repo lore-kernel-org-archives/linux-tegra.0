@@ -1,47 +1,51 @@
-From: Pawel Moll <pawel.moll@arm.com>
-Subject: Re: [PATCH 2/5] char: tile-srom: Remove reference to platform_bus
-Date: Fri, 08 Aug 2014 17:39:00 +0100
-Message-ID: <1407515940.31897.31.camel@hornet>
-References: <1406298233-27876-1-git-send-email-pawel.moll@arm.com>
-	 <1406298233-27876-2-git-send-email-pawel.moll@arm.com>
-	 <53DAA605.2030500@tilera.com> <1406913678.22529.46.camel@hornet>
-	 <53E139C8.9000502@tilera.com> <1407515691.31897.26.camel@hornet>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH 1/3] of: Add of_match_machine helper
+Date: Fri, 8 Aug 2014 14:01:57 -0500
+Message-ID: <CAL_JsqLFkTGCn-n6+Z644-2iAZ=6PcFD6ox=63pR-eb1s6tNGw@mail.gmail.com>
+References: <1407452515-2390-1-git-send-email-ttynkkynen@nvidia.com>
+ <1407452515-2390-2-git-send-email-ttynkkynen@nvidia.com> <20140808094123.GC5387@ulmo>
+ <53E4CF4E.6010500@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1407515691.31897.26.camel@hornet>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chris Metcalf <cmetcalf@tilera.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@wwwdotorg.org>, Catalin Marinas <Catalin.Marinas@arm.com>, "paul@pwsan.com" <paul@pwsan.com>, Arnd Bergmann <arnd@arndb.de>, Peter De Schrijver <pdeschrijver@nvidia.com>, "arm@kernel.org" <arm@kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <53E4CF4E.6010500@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, 2014-08-08 at 17:34 +0100, Pawel Moll wrote:
-> On Tue, 2014-08-05 at 21:08 +0100, Chris Metcalf wrote:
-> > >> In addition, we also have user binaries
-> > >> in the wild that know to look for /sys/devices/platform/srom/ pa=
-ths,
-> > >> so I'm pretty reluctant to change this path without good reason.
-> > > So what is the srom class for then if not for device discovery? A=
-nd why
-> > > do they look for them in the first place? To get relevant charact=
-er
-> > > device's data, if I understand it right?
-> > >
-> > > Maybe you could just register a simple "proper" platform device f=
-or all
-> > > the sroms and then hang the class devices from it? I can type som=
-e code
-> > > doing this if it sound reasonably?
-> >=20
-> > I'm not sure exactly what you mean by device discovery here. =20
+On Fri, Aug 8, 2014 at 8:23 AM, Tuomas Tynkkynen <ttynkkynen@nvidia.com> wrote:
+>
+>
+> On 08/08/14 12:41, Thierry Reding wrote:
+>>
+>>> +const struct of_device_id *of_match_machine(const struct of_device_id *matches)
+>>> +{
+>>> +    const struct of_device_id *match;
+>>> +    struct device_node *root;
+>>> +
+>>> +    root = of_find_node_by_path("/");
+>>> +    if (!root)
+>>> +            return NULL;
+>>> +
+>>> +    match = of_match_node(matches, root);
+>>> +    of_node_put(root);
+>>> +    return match;
+>>> +}
+>>> +EXPORT_SYMBOL(of_match_machine);
+>>
+>> I wonder if of_find_node_by_path("/") is somewhat overkill here. Perhaps
+>> simply of_node_get(of_allnodes) would be more appropriate here since the
+>> function is implemented in the core?
+>
+> of_machine_is_compatible() uses of_find_node_by_path("/") as well, of_allnodes
+> seems to be only used when during iterating. So I'd prefer to have them
+> consistent.
 
-(sorry, sent too early...)
+Agreed.
 
-By "device discovery" I meant the way you find the way in your devices
-in /sysfs. You seem to be traversing /sys/devices/... tree, while you'v=
-e
-got almost direct access to them through /sys/class/srom and you can (I
-believe, correct me if I'm wrong, Greg) rely on this path being stable.
+For the series:
 
-Pawe=C5=82
+Acked-by: Rob Herring <robh@kernel.org>
+
+Rob
