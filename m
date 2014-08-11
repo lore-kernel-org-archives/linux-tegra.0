@@ -1,7 +1,7 @@
 From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH] ata: ahci_tegra: Change include to fix compilation
-Date: Mon, 11 Aug 2014 13:17:48 +0300
-Message-ID: <1407752268-18745-1-git-send-email-mperttunen@nvidia.com>
+Subject: [PATCH] ata: ahci_tegra: Read calibration fuse
+Date: Mon, 11 Aug 2014 14:19:13 +0300
+Message-ID: <1407755953-11785-1-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-ide-owner@vger.kernel.org>
@@ -10,32 +10,46 @@ To: tj@kernel.org, swarren@wwwdotorg.org, thierry.reding@gmail.com
 Cc: linux-ide@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Before this patch, the driver included <linux/tegra-powergate.h>,
-which was effectively renamed to <soc/tegra/pmc.h> at about the same
-time the ahci_tegra series landed. Fix the include path so that the
-driver compiles.
+The original version of the driver did not read the SATA calibration
+fuse to remove the dependency to the fuse driver. The fuse driver
+is now merged, so add this functionality.
+
+The calibration fuse contains a 2-bit value used to pick a set
+of calibration values for the SATA pad.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
-This would be for 3.17.
-
- drivers/ata/ahci_tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/ata/ahci_tegra.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/ata/ahci_tegra.c b/drivers/ata/ahci_tegra.c
-index fc3df47..f1fef74 100644
+index f1fef74..ad99e0f5 100644
 --- a/drivers/ata/ahci_tegra.c
 +++ b/drivers/ata/ahci_tegra.c
-@@ -24,8 +24,8 @@
- #include <linux/module.h>
- #include <linux/of_device.h>
+@@ -26,6 +26,7 @@
  #include <linux/platform_device.h>
--#include <linux/tegra-powergate.h>
  #include <linux/regulator/consumer.h>
-+#include <soc/tegra/pmc.h>
+ #include <soc/tegra/pmc.h>
++#include <soc/tegra/fuse.h>
  #include "ahci.h"
  
  #define SATA_CONFIGURATION_0				0x180
+@@ -180,9 +181,12 @@ static int tegra_ahci_controller_init(struct ahci_host_priv *hpriv)
+ 
+ 	/* Pad calibration */
+ 
+-	/* FIXME Always use calibration 0. Change this to read the calibration
+-	 * fuse once the fuse driver has landed. */
+-	val = 0;
++	ret = tegra_fuse_readl(FUSE_SATA_CALIB, &val);
++	if (ret) {
++		dev_err(&tegra->pdev->dev,
++			"failed to read calibration fuse: %d\n", ret);
++		return ret;
++	}
+ 
+ 	calib = tegra124_pad_calibration[val & FUSE_SATA_CALIB_MASK];
+ 
 -- 
 1.8.1.5
 
