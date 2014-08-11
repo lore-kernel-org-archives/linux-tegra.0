@@ -1,55 +1,32 @@
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH] ata: ahci_tegra: Read calibration fuse
-Date: Mon, 11 Aug 2014 14:19:13 +0300
-Message-ID: <1407755953-11785-1-git-send-email-mperttunen@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-ide-owner@vger.kernel.org>
-Sender: linux-ide-owner@vger.kernel.org
-To: tj@kernel.org, swarren@wwwdotorg.org, thierry.reding@gmail.com
-Cc: linux-ide@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
+From: Kiran Padwal <kiran.padwal21-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] pinctrl: tegra114: Make of_device_id array const
+Date: Mon, 11 Aug 2014 16:47:50 +0530
+Message-ID: <1407755870-439-1-git-send-email-kiran.padwal21@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kiran.padwal21-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The original version of the driver did not read the SATA calibration
-fuse to remove the dependency to the fuse driver. The fuse driver
-is now merged, so add this functionality.
+Make of_device_id array const, because all OF functions handle it as const.
 
-The calibration fuse contains a 2-bit value used to pick a set
-of calibration values for the SATA pad.
-
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+Signed-off-by: Kiran Padwal <kiran.padwal21-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/ata/ahci_tegra.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/pinctrl/pinctrl-tegra114.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/ata/ahci_tegra.c b/drivers/ata/ahci_tegra.c
-index f1fef74..ad99e0f5 100644
---- a/drivers/ata/ahci_tegra.c
-+++ b/drivers/ata/ahci_tegra.c
-@@ -26,6 +26,7 @@
- #include <linux/platform_device.h>
- #include <linux/regulator/consumer.h>
- #include <soc/tegra/pmc.h>
-+#include <soc/tegra/fuse.h>
- #include "ahci.h"
+diff --git a/drivers/pinctrl/pinctrl-tegra114.c b/drivers/pinctrl/pinctrl-tegra114.c
+index 33614ba..a3db85b 100644
+--- a/drivers/pinctrl/pinctrl-tegra114.c
++++ b/drivers/pinctrl/pinctrl-tegra114.c
+@@ -1850,7 +1850,7 @@ static int tegra114_pinctrl_probe(struct platform_device *pdev)
+ 	return tegra_pinctrl_probe(pdev, &tegra114_pinctrl);
+ }
  
- #define SATA_CONFIGURATION_0				0x180
-@@ -180,9 +181,12 @@ static int tegra_ahci_controller_init(struct ahci_host_priv *hpriv)
- 
- 	/* Pad calibration */
- 
--	/* FIXME Always use calibration 0. Change this to read the calibration
--	 * fuse once the fuse driver has landed. */
--	val = 0;
-+	ret = tegra_fuse_readl(FUSE_SATA_CALIB, &val);
-+	if (ret) {
-+		dev_err(&tegra->pdev->dev,
-+			"failed to read calibration fuse: %d\n", ret);
-+		return ret;
-+	}
- 
- 	calib = tegra124_pad_calibration[val & FUSE_SATA_CALIB_MASK];
- 
+-static struct of_device_id tegra114_pinctrl_of_match[] = {
++static const struct of_device_id tegra114_pinctrl_of_match[] = {
+ 	{ .compatible = "nvidia,tegra114-pinmux", },
+ 	{ },
+ };
 -- 
-1.8.1.5
-
+1.7.9.5
