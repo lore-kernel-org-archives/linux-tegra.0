@@ -1,141 +1,72 @@
-From: Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: autobuild of tegrarcm
-Date: Mon, 11 Aug 2014 14:46:11 -0700
-Message-ID: <EEDD5812DF6BF644B2DD020791B1C0D45EDCD38639@HQMAIL03.nvidia.com>
-References: <18236773.n1AHpLtjGA@fb07-iapwap2.physik.uni-giessen.de>
- <alpine.OSX.2.00.1305122142290.915@macbook-pro-de-lucile-perez.fritz.box>
- <20140727182320.GA14656@simplex.0x539.de> <15635619.1sXO2FqnMG@fb07-iapwap2>
- <53D66B66.4010703@wwwdotorg.org>
+From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 3/5] mmc: sdhci-pltfm: Do not use parent as the host's device
+Date: Tue, 12 Aug 2014 10:58:02 +0200
+Message-ID: <CAPDyKFrb9OSbhHtn=wgbs9Yky1t453rdNBJVgGA62vER-65dYw@mail.gmail.com>
+References: <1406298233-27876-1-git-send-email-pawel.moll@arm.com>
+	<1406298233-27876-3-git-send-email-pawel.moll@arm.com>
+	<1407515785.31897.28.camel@hornet>
+	<CAPDyKFoLU6pnJFmKe7CB0q-hKfwv4uCPSr0cE4aoYMvfhjMteQ@mail.gmail.com>
+	<1407748550.3680.10.camel@hornet>
+	<CAPDyKFruZxUtzUKM+PvsK-_qqcE4OcCaKSkRJ2_01y7TuQMGkA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53D66B66.4010703-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <CAPDyKFruZxUtzUKM+PvsK-_qqcE4OcCaKSkRJ2_01y7TuQMGkA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Stephen Warren' <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Philipp Kern <pkern-8fiUuRrzOP0dnm+yROfE0A@public.gmane.org>, Allen Martin <AMartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "nonfree-sMDJvqjagnvx+JS5GvM4/R2eb7JE58TQ@public.gmane.org" <nonfree-sMDJvqjagnvx+JS5GvM4/R2eb7JE58TQ@public.gmane.org>, Julian Andres Klode <jak-8fiUuRrzOP0dnm+yROfE0A@public.gmane.org>, "dktrkranz-8fiUuRrzOP0dnm+yROfE0A@public.gmane.org" <dktrkranz-8fiUuRrzOP0dnm+yROfE0A@public.gmane.org>, "ftpmaster-8fiUuRrzOP0dnm+yROfE0A@public.gmane.org" <ftpmaster-8fiUuRrzOP0dnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
+Cc: Chris Ball <chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org>, Anton Vorontsov <anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Catalin Marinas <Catalin.Marinas-5wv7dgnIgG8@public.gmane.org>, "paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org" <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-SnVzdCBnZXR0aW5nIHRvIHRoaXMtLSBJJ2xsIGZvbGxvdy11cCB3aXRoIE1hcmMgb2ZmbGluZS4N
-Cg0KVGhhbmtzLA0KRXJpYw0KDQotLQ0KbnZwdWJsaWMNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3Nh
-Z2UtLS0tLQ0KPiBGcm9tOiBsaW51eC10ZWdyYS1vd25lckB2Z2VyLmtlcm5lbC5vcmcgW21haWx0
-bzpsaW51eC10ZWdyYS0NCj4gb3duZXJAdmdlci5rZXJuZWwub3JnXSBPbiBCZWhhbGYgT2YgU3Rl
-cGhlbiBXYXJyZW4NCj4gU2VudDogTW9uZGF5LCBKdWx5IDI4LCAyMDE0IDg6MjUgQU0NCj4gVG86
-IE1hcmMgRGlldHJpY2g7IFBoaWxpcHAgS2VybjsgQWxsZW4gTWFydGluDQo+IENjOiBub25mcmVl
-QHJlbGVhc2UuZGViaWFuLm9yZzsgSnVsaWFuIEFuZHJlcyBLbG9kZTsNCj4gZGt0cmtyYW56QGRl
-Ymlhbi5vcmc7IGZ0cG1hc3RlckBkZWJpYW4ub3JnOyBsaW51eC10ZWdyYUB2Z2VyLmtlcm5lbC5v
-cmcNCj4gU3ViamVjdDogUmU6IGF1dG9idWlsZCBvZiB0ZWdyYXJjbQ0KPiANCj4gT24gMDcvMjgv
-MjAxNCAwMjowMyBBTSwgTWFyYyBEaWV0cmljaCB3cm90ZToNCj4gPiBhZGRlZCB0ZWdyYSBtbCwg
-dGVncmEgbWFpbnRhaW5lciwgYW5kIHRlZ3JhcmNtIG1haW50YWluZXIuDQo+ID4NCj4gPiBJIHRo
-aW5rIHRoZSBsaWNlbnNlIGlzbid0IGFwcHJvcHJpZXRlIGZvciB0aGlzIHNvZnR3YXJlIGF0IGFs
-bC4gU2VlIG15DQo+ID4gbm90ZXMgcmVnYXJkaW5nIHRoaXMgaGVyZSBbMV0uIFNvIGxldHMgdGFr
-ZSB0aGUgY2hhbmNlIGFuZCBwaW5nIG52aWRpYQ0KPiA+IGFnYWluIG9uIHRoaXMgaXNzdWUuDQo+
-IA0KPiBJJ2xsIGFzayBFcmljIHRvIGNvbW1lbnQgb24gdGhpcyBhZ2FpbiwgYWx0aG91Z2ggcGxl
-YXNlIG5vdGUgdGhhdCBoZSdzIG91dCBvbg0KPiB2YWNhdGlvbiB0aGlzIHdlZWsuDQo+IA0KPiBU
-aGF0IGlzLCB1bmxlc3MgQWxsZW4gaGFzIGFueSBjb21tZW50Pw0KPiANCj4gPiBbMV0gaHR0cDov
-L3d3dy5zcGluaWNzLm5ldC9saXN0cy9saW51eC10ZWdyYS9tc2cxMTk0NS5odG1sDQo+ID4NCj4g
-PiBBbSBTb25udGFnLCAyNy4gSnVsaSAyMDE0LCAyMDoyMzoyMCBzY2hyaWViIFBoaWxpcHAgS2Vy
-bjoNCj4gPj4gSGksDQo+ID4+DQo+ID4+IE9uIFN1biwgTWF5IDEyLCAyMDEzIGF0IDA5OjU1OjIw
-UE0gKzAyMDAsIE1hcmMgRGlldHJpY2ggd3JvdGU6DQo+ID4+PiBPbiBTdW4sIDEyIE1heSAyMDEz
-LCBQaGlsaXBwIEtlcm4gd3JvdGU6DQo+ID4+Pj4gSGksDQo+ID4+Pj4NCj4gPj4+PiBPbiBUdWUs
-IEFwciAyMywgMjAxMyBhdCAxMTozMToyMUFNICswMjAwLCBNYXJjIERpZXRyaWNoIHdyb3RlOg0K
-PiA+Pj4+PiBUaGUgcHJvcHJpZXRhcnkgbGljZW5zZSBvbmx5IGFwcGxpZXMgdG8gdGhlIGJpbmFy
-aWVzIGluY2x1ZGVkIGluDQo+ID4+Pj4+IHNvbWUNCj4gPj4+Pj4gaGVhZGVyPiA+DQo+ID4+Pj4+
-IGZpbGVzLiBGWUksIGhlcmUgaXMgdGhlIGxpY2Vuc2U6DQo+ID4+Pj4gaXQgc2VlbXMgbGlrZSBh
-biBvdmVyc2lnaHQ6IExJQ0VOU0Ugc2F5cyAiVGhlIGZpbGVzDQo+ID4+Pj4gdGVncmEyMC1taW5p
-bG9hZGVyLmggYW5kIHRlZ3JhMzAtbWluaWxvYWRlci5oIGFyZSBwcm92aWRlZCBwdXJzdWFudA0K
-PiA+Pj4+IHRvIHRoZSBmb2xsb3dpbmcgbGljZW5zZSBhZ3JlZW1lbnQiLiBCdXQgdGhlcmUgaXMg
-YWxzbw0KPiA+Pj4+IHRlZ3JhMTE0LW1pbmlsb2FkZXIuaCwgd2hpY2ggYmVhcnMgdGhlIHNhbWUg
-Im5vdCB1c2FibGUgd2l0aG91dCBhDQo+IHNwZWNpZmljIGFncmVlbWVudCIgaGVhZGVyLg0KPiA+
-Pj4NCj4gPj4+IHRoYW5rcyBmb3IgZmluZGluZyB0aGlzLiBJIHRoaW5rIHRoaXMgY2FuIGJlIGZp
-eGVkIGVhc2lseS4gSSdsbCBhc2sNCj4gPj4+IG15IE5WSURJQSBjb250YWN0IHRvIHVwZGF0ZSB0
-aGUgTElDRU5TRSBmaWxlIHJlZ2FyZGluZyB0aGlzLg0KPiA+Pj4NCj4gPj4+PiBJbnRlcmVzdGlu
-Z2x5IE5WSURJQSB0ZWxscyB1cyBpbiB0aGUgbGljZW5zZSB0aGF0IGl0IGlzDQo+ID4+Pj4gInJl
-dm9jYWJsZSIsIHdoaWNoIGlzIG5vdCB0aGUgY2FzZSBmb3IgdGhlIGdyYXBoaWNzIGRyaXZlciBv
-bmUuIEkNCj4gPj4+PiBwcmVzdW1lIHdlJ3JlIGFscmVhZHkgdGFsa2luZyBhYm91dCB0aGUgYmlu
-YXJ5IGNvZGUgZm9ybSBoZXJlLiBJdA0KPiA+Pj4+IGRvZXMgbm90IHJlYWxseSBtYWtlIG1lIGhh
-cHB5IHRoYXQgd2UgY2FuIG9ubHkgZGlzdHJpYnV0ZSB0aGlzIHRvDQo+ID4+Pj4gc3VibGljZW5z
-ZWVzIHRoYXQgYWdyZWUgdG8gYmUgYm91bmQgYnkgdGhlIGxpY2Vuc2UgYW5kIHRvIG93bmVycyBv
-Zg0KPiA+Pj4+IE5WSURJQSBoYXJkd2FyZS4gQm90aCBpcyB1bnRydWUgd2hlbg0KPiA+Pj4NCj4g
-Pj4+PiBsb29raW5nIGF0IGJ1aWxkZHMuICk6DQo+ID4+PiBEb2VzIHRoZSB0ZXJtICJyZXZvY2Fi
-bGUiIGNhdXNlIHByb2JsZW1zIHdpdGggdGhlIGRpc3RyaWJ1dGlvbj8gRG9lcw0KPiA+Pj4gdGhp
-cyBtZWFuIHRoYXQgdXNlcnMgZG93bmxvYWRpbmcgdGhlIGNvZGUgKG9yIHRoZSBiaW5hcnkpIG11
-c3QNCj4gPj4+IGRlbGV0ZSBpdCBpZiBOVklESUEgdGVsbHMgZGViaWFuIHRvIGRvIHNvPyBPZiBj
-b3Vyc2UgdGhpcyBpcyBub3QNCj4gPj4+IHBvc3NiaWxlIGJlY2F1c2Ugd2UgZG9uJ3Qga25vdyB0
-aGUgaWRlbnRpdHkgb2YgdGhlIHVzZXJzIGRvd25sb2FkaW5nDQo+ID4+PiB0aGlzIGNvZGUuIEFs
-c28gd2UgZG9uJ3QgYXNrIHRoZSB1c2VycyB0byBhZ2dyZWUgd2l0aCB0aGUgbGljZW5zZQ0KPiA+
-Pj4gYmVmb3JlIGRvd25sb2FkaW5nL3J1bm5pbmcgdGhlIHByb2dyYW0uDQo+ID4+Pg0KPiA+Pj4g
-VGhlIGNvZGUgaW4gdGhlIG1pbmlsb2FkZXIgZmlsZXMgaXMgbm90IHJ1biBvbiB0aGUgbWFjaGlu
-ZSB3aGljaA0KPiA+Pj4gcnVucyB0ZWdyYXJjbS4gSXQgaXMgcnVuIG9uIHRoZSB0YXJnZXQgU29D
-LCB3aGljaCBpcyBsaWtlbHkgVGVncmEsDQo+ID4+PiBiZWNhdXNlIGFsbCBvdGhlciBTb0NzIHdv
-bid0IHJ1biB0aGlzIGJvb3Rsb2FkZXIuIFNvIEkgdGhpbmsgdGhpcyBpcw0KPiA+Pj4gbW9yZSBv
-ciBsZXNzIGhhcm1sZXNzLg0KPiA+Pg0KPiA+PiB3aGVuZXZlciBJIGdvIGJhY2sgdG8gdGhpcyBs
-aWNlbnNlLCBJIGZlZWwgYmFkIGFib3V0IGl0LiBBZGRpbmcgTHVjYQ0KPiA+PiB3aG8gYWNjZXB0
-ZWQgaXQuDQo+ID4+DQo+ID4+IFRoZSBncmFwaGljIGRyaXZlciBsaWNlbnNlIGNsZWFybHkgZXhl
-bXB0cyBMaW51eCBmcm9tIHRoZSBwcm9ibGVtYXRpYw0KPiA+PiBwcm92aXNpb25zLiBUaGUgdGVn
-cmEgb25lIGRvZXMgbm90IGV2ZW4gdHJ5LiBIZXJlJ3MgMi4xOg0KPiA+Pg0KPiA+PiAgIDIuMSAg
-UmlnaHRzIGFuZCBMaW1pdGF0aW9ucyBvZiBHcmFudC4gIE5WSURJQSBoZXJlYnkgZ3JhbnRzIHRv
-IFlvdSB0aGUNCj4gPj4gICBmb2xsb3dpbmcgbm9uLWV4Y2x1c2l2ZSwgbm9uLXRyYW5zZmVyYWJs
-ZSwgcmV2b2NhYmxlIHJpZ2h0IHVuZGVyDQo+ID4+ICAgTlZJRElBw6LigqzihKJzIGNvcHlyaWdo
-dHMgdG8gdXNlLCBjb3B5LCBkaXN0cmlidXRlIGFuZCBzdWJsaWNlbnNlIHRoZQ0KPiA+PiAgIFNP
-RlRXQVJFIChzb2xlbHkgaW4gYmluYXJ5IGNvZGUgZm9ybSkgdG8gWW91ciBzdWJsaWNlbnNlZXMg
-KGEpIHNvbGVseQ0KPiA+PiAgIGZvciB1c2UgaW4gY29ubmVjdGlvbiB3aXRoIE5WSURJQSBoYXJk
-d2FyZSBvciBzb2Z0d2FyZSBwcm9kdWN0czsgYW5kDQo+ID4+ICAgKGIpIHB1cnN1YW50IHRvIHRo
-ZSB0ZXJtcyBhbmQgY29uZGl0aW9ucyBvZiBhbnkgZm9ybSBvZiBlbmQtdXNlcg0KPiA+PiAgIHNv
-ZnR3YXJlIGxpY2Vuc2UgYWdyZWVtZW50OyBwcm92aWRlZCwgdGhhdCBZb3VyIHN1YmxpY2Vuc2Vl
-cyBhZ3JlZSB0bw0KPiA+PiAgIGJlIGJvdW5kIGJ5IHRoaXMgTElDRU5TRSBvciB0ZXJtcyBhbmQg
-Y29uZGl0aW9ucyB0aGF0IGFyZSBhcw0KPiA+PiAgIHByb3RlY3RpdmUgb2YgTlZJRElBw6Ligqzi
-hKJzIEludGVsbGVjdHVhbCBQcm9wZXJ0eSBSaWdodHMgaW4gdGhlIFNPRlRXQVJFDQo+IGFzDQo+
-ID4+ICAgdGhpcyBMSUNFTlNFDQo+ID4+DQo+ID4+IEknbSB1bnN1cmUgaWYgdGhlIGxhdHRlciBw
-YXJ0IG1lYW5zIHRoYXQgdGhlIHVzZXJzIG5lZWQgdG8gY29uc2VudA0KPiA+PiBiZWZvcmUgd2Ug
-Y2FuIG9mZmVyIGl0IChlLmcuIGNsaWNrLXRocm91Z2gpLiBVbmxlc3Mgd2UgZG8gbm90IGFjdHVh
-bGx5DQo+IHN1YmxpY2Vuc2UuDQo+ID4+IE9UT0ggaWYgd2UnZCBzdWJsaWNlbnNlLCB0aGVuIHRo
-ZSB1c2VycyB3b3VsZCBub3QgbmVlZCB0byBkZXN0cm95DQo+ID4+IGNvcGllcyB3aGVuIHdlIG5l
-ZWQgdG8uDQo+ID4+DQo+ID4+IEFuZCB0aGVuIHRoZXJlJ3MgY2xhdXNlIDM6DQo+ID4+DQo+ID4+
-ICAgMy4gIFRFUk0gQU5EIFRFUk1JTkFUSU9ODQo+ID4+ICAgLg0KPiA+PiAgIFRoaXMgTElDRU5T
-RSBhbmQgdGhlIGxpY2Vuc2VzIGdyYW50ZWQgaGVyZXVuZGVyIHNoYWxsIGJlIGVmZmVjdGl2ZSBh
-cw0KPiA+PiAgIG9mIHRoZSBkYXRlIFlvdSBkb3dubG9hZCB0aGUgYXBwbGljYWJsZSBTT0ZUV0FS
-RSAow6LigqzFk0VmZmVjdGl2ZQ0KPiBEYXRlw6LigqzCnSkNCj4gPj4gICBhbmQgY29udGludWUg
-Zm9yIGEgcGVyaW9kIG9mIG9uZSAoMSkgeWVhciAow6LigqzFk0luaXRpYWwgVGVybcOi4oKswp0p
-DQo+ID4+ICAgcmVzcGVjdGl2ZWx5LCB1bmxlc3MgdGVybWluYXRlZCBlYXJsaWVyIGluIGFjY29y
-ZGFuY2Ugd2l0aCB0aGUNCj4gPj4gICDDouKCrMWTVGVybWluYXRpb27DouKCrMKdIHByb3Zpc2lv
-biBvZiB0aGlzIExJQ0VOU0UuICBVbmxlc3MgZWl0aGVyIHBhcnR5DQo+IG5vdGlmaWVzDQo+ID4+
-ICAgdGhlIG90aGVyIHBhcnR5IG9mIGl0cyBpbnRlbnQgdG8gdGVybWluYXRlIHRoaXMgTElDRU5T
-RSBhdCBsZWFzdCB0aHJlZQ0KPiA+PiAgICgzKSBtb250aHMgcHJpb3IgdG8gdGhlIGVuZCBvZiB0
-aGUgSW5pdGlhbCBUZXJtIG9yIHRoZSBhcHBsaWNhYmxlDQo+ID4+ICAgcmVuZXdhbCBwZXJpb2Qs
-IHRoaXMgTGljZW5zZSB3aWxsIGJlIGF1dG9tYXRpY2FsbHkgcmVuZXdlZCBmb3Igb25lICgxKQ0K
-PiA+PiAgIHllYXIgcmVuZXdhbCBwZXJpb2RzIHRoZXJlYWZ0ZXIsIHVubGVzcyB0ZXJtaW5hdGVk
-IGluIGFjY29yZGFuY2Ugd2l0aA0KPiA+PiAgIHRoZSDDouKCrMWTVGVybWluYXRpb27DouKCrMKd
-IHByb3Zpc2lvbiBvZiB0aGlzIExJQ0VOU0UNCj4gPj4gICAuDQo+ID4+ICAgTlZJRElBIG1heSB0
-ZXJtaW5hdGUgdGhpcyBMSUNFTlNFIGF0IGFueSB0aW1lIGlmIFlvdSB2aW9sYXRlIGl0cw0KPiA+
-PiAgIHRlcm1zLiBVcG9uIHRlcm1pbmF0aW9uLCBZb3Ugd2lsbCBpbW1lZGlhdGVseSBkZXN0cm95
-IHRoZSBTT0ZUV0FSRSBvcg0KPiA+PiAgIHJldHVybiBhbGwgY29waWVzIG9mIHRoZSBTT0ZUV0FS
-RSB0byBOVklESUEsIGFuZCBjZXJ0aWZ5IHRvIE5WSURJQSBpbg0KPiA+PiAgIHdyaXRpbmcgdGhh
-dCBzdWNoIGFjdGlvbnMgaGF2ZSBiZWVuIGNvbXBsZXRlZC4gIFVwb24gdGVybWluYXRpb24gb3IN
-Cj4gPj4gICBleHBpcmF0aW9uIG9mIHRoaXMgTElDRU5TRSB0aGUgbGljZW5zZSBncmFudHMgdG8g
-TGljZW5zZWUgc2hhbGwNCj4gPj4gICB0ZXJtaW5hdGUsIGV4Y2VwdCB0aGF0IHN1YmxpY2Vuc2Vz
-IHJpZ2h0ZnVsbHkgZ3JhbnRlZCBieSBMaWNlbnNlZQ0KPiA+PiAgIHVuZGVyIHRoaXMgTElDRU5T
-RSBpbiBjb25uZWN0aW9uIHdpdGggUGFyYWdyYXBoIDIgb2YgdGhpcyBMSUNFTlNFDQo+ID4+ICAg
-cHJvdmlkZWQgYnkgTGljZW5zZWUgcHJpb3IgdG8gdGhlIHRlcm1pbmF0aW9uIG9yIGV4cGlyYXRp
-b24gb2YgdGhpcw0KPiA+PiAgIExJQ0VOU0Ugc2hhbGwgc3Vydml2ZSBpbiBhY2NvcmRhbmNlIHdp
-dGggdGhlaXIgcmVzcGVjdGl2ZSBmb3JtIG9mDQo+ID4+ICAgbGljZW5zZSB0ZXJtcyBhbmQgY29u
-ZGl0aW9ucy4NCj4gPj4gICBbLi4uXQ0KPiA+Pg0KPiA+PiBEbyB3ZSBoYXZlIGEgcHJlY2VkZW50
-IGZvciBzdWNoIGEgY2xhdXNlPyBUaGUgd2hvbGUgbGFuZ3VhZ2UgYWJvdXQNCj4gPj4gb25lIHll
-YXIgdGVybXMgYW5kIGFubm91bmNlbWVudHMgb2YgdGVybWluYXRpb24gd29ycmllcyBtZS4gVGhh
-dCdkDQo+ID4+IG1lYW4gdGhhdCBzb21lb25lJ2QgbmVlZCB0byBtb25pdG9yIE5WSURJQSdzIGFu
-bm91bmNlbWVudHMgYW5kDQo+IHRoZW4NCj4gPj4gcmVxdWVzdCByZW1vdmFsIGZyb20gYSBzdGFi
-bGUgcmVsZWFzZSBpbiB0aW1lPyBPciB3aWxsIHRoYXQgb25seQ0KPiA+PiBoYXBwZW4gdG93YXJk
-cyBzaW5nbGUgdXNlcnM/IChJLmUuIG11c3QgdGhlIG5vdGlmaWNhdGlvbiBiZSBkaXJlY3Q/KQ0K
-PiA+Pg0KPiA+PiBJIGd1ZXNzIHRoZSBsYW5ndWFnZSBhYm91dCBOVklESUEncyBwcm9kdWN0cyBj
-YW4gYmUgb2ssIGdpdmVuIHRoYXQNCj4gPj4gdGhlIGNvbXBpbGVkIHByb2R1Y3QgaXMgb25seSB1
-c2VmdWwgb24gTlZJRElBIGhhcmR3YXJlIGFueXdheSBhbmQNCj4gPj4gd2lsbCBub3QgYmUgZXhl
-Y3V0ZWQgb24gYnVpbGRkc8Oi4oKswqYNCj4gPj4NCj4gPj4gS2luZCByZWdhcmRzDQo+ID4+IFBo
-aWxpcHAgS2Vybg0KPiA+DQo+ID4gLS0NCj4gPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlz
-dDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtdGVncmEiDQo+ID4gaW4gdGhlIGJv
-ZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcgTW9yZQ0KPiBtYWpv
-cmRvbW8NCj4gPiBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZv
-Lmh0bWwNCj4gPg0KPiANCj4gLS0NCj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNl
-bmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXRlZ3JhIiBpbiB0aGUNCj4gYm9keSBvZiBh
-IG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZyBNb3JlIG1ham9yZG9tbyBpbmZv
-IGF0DQo+IGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbA0K
+On 11 August 2014 11:32, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> On 11 August 2014 11:15, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org> wrote:
+>> On Mon, 2014-08-11 at 10:07 +0100, Ulf Hansson wrote:
+>>> On 8 August 2014 18:36, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org> wrote:
+>>> > On Fri, 2014-07-25 at 15:23 +0100, Pawel Moll wrote:
+>>> >> The code selecting a device for the sdhci host has been
+>>> >> continuously tweaked (4b711cb13843f5082e82970dd1e8031383134a65
+>>> >> "mmc: sdhci-pltfm: Add structure for host-specific data" and
+>>> >> a4d2177f00a5252d825236c5124bc1e9918bdb41 "mmc: sdhci-pltfm: dt
+>>> >> device does not pass parent to sdhci_alloc_host") while there
+>>> >> does not seem to be any reason to use platform device's parent
+>>> >> in the first place.
+>>> >>
+>>> >> The comment saying "Some PCI-based MFD need the parent here"
+>>> >> seem to refer to Timberdale FPGA driver (the only MFD driver
+>>> >> registering SDHCI cell, drivers/mfd/timberdale.c) but again,
+>>> >> the only situation when parent device matter is runtime PM,
+>>> >> which is not implemented for Timberdale.
+>>> >>
+>>> >> Cc: Chris Ball <chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org>
+>>> >> Cc: Anton Vorontsov <anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org>
+>>> >> Cc: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>>> >> Cc: linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>>> >> Cc: linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+>>> >> Signed-off-by: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
+>>> >> ---
+>>> >>
+>>> >> This patch is a part of effort to remove references to platform_bus
+>>> >> and make it static.
+>>> >>
+>>> >> Chris, Anton, Ulf - could you please advise if the assumptions
+>>> >> above are correct or if I'm completely wrong? Do you know what
+>>> >> where the real reasons to use parent originally? The PCI comment
+>>> >> seems like a red herring to me...
+>>> >
+>>> > Can I take the silence as a suggestion that the change looks ok-ish for
+>>> > you?
+>>>
+>>> Sorry for the delay. I suppose this make sense, but I really don't
+>>> know for sure.
+>>>
+>>> I guess we need some testing in linux-next, to get some confidence.
+>>
+>> Would you take it into -next then? Unless I'm completely wrong there
+>> should be no impact on any in-tree driver...
+>
+> I will take it; though I think it's best to queue it for 3.18 to get
+> some more testing.
+
+This patch causes a compiler warning, could you please fix it.
+
+Kind regards
+Uffe
