@@ -1,53 +1,63 @@
-From: Vince Hsu <vinceh@nvidia.com>
-Subject: Re: [PATCH v2 08/16] clk: tegra: Add Tegra124 DFLL clocksource platform
- driver
-Date: Tue, 12 Aug 2014 18:37:12 +0800
-Message-ID: <53E9EE58.3060408@nvidia.com>
-References: <1405957142-19416-1-git-send-email-ttynkkynen@nvidia.com> <1405957142-19416-9-git-send-email-ttynkkynen@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1405957142-19416-9-git-send-email-ttynkkynen@nvidia.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Tuomas Tynkkynen <ttynkkynen@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Paul Walmsley <pwalmsley@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH 0/5] MMC cleanup of dev_pm_ops and .owner
+Date: Tue, 12 Aug 2014 17:14:24 +0100
+Message-ID: <1407860069-12706-1-git-send-email-peter.griffin@linaro.org>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, tgih.jun@samsung.com, jh80.chung@samsung.com, chris@printf.net, ulf.hansson@linaro.org, jarkko.lavinen@nokia.com, balajitk@ti.com, baohua@kernel.org, viresh.linux@gmail.com, ian.molton@codethink.co.uk, maxime.ripard@free-electrons.com, linux-mmc@vger.kernel.org, linux-omap@vger.kernel.org, spear-devel@list.st.com, linux-tegra@vger.kernel.org, michal.simek@xilinx.com, swarren@wwwdotorg.org
+Cc: peter.griffin@linaro.org, patches@linaro.org, lee.jones@linaro.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+This series cleans up a few platform drivers in how they are declaring there
+dev_pm_ops structs, and gets rid of a few now redundant #else conditions.
 
-On 07/21/2014 11:38 PM, Tuomas Tynkkynen wrote:
-> Add basic platform driver support for the fast CPU cluster DFLL
-> clocksource found on Tegra124 SoCs. This small driver selects the
-> appropriate Tegra124-specific characterization data and integration
-> code. It relies on the DFLL common code to do most of the work.
->
-> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-> index 47320ca..2f87188 100644
-> --- a/drivers/clk/tegra/Makefile
-> +++ b/drivers/clk/tegra/Makefile
-> @@ -16,3 +16,5 @@ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
->   obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
->   obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= clk-tegra114.o
->   obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124.o
-> +obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124-dfll-fcpu.o
-> +obj-y					+= cvb.o
-> diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> new file mode 100644
-> index 0000000..f068360
-> --- /dev/null
-> +++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-...
-> +	if (IS_ERR(cvb)) {
-> +		pr_err("couldn't build OPP table: %ld\n", PTR_ERR(cvb));
-> +		return PTR_ERR(cvb);
-> +	}
-> +
-> +	soc.assert_dvco_reset = tegra124_clock_assert_dfll_dvco_reset,
-> +	soc.deassert_dvco_reset = tegra124_clock_deassert_dfll_dvco_reset,
-nit: Use semicolon instead at the end of the two lines above.
+Also it removes the .owner field of drivers which use module_platform_driver
+api to register themselves, as this field gets overwritten.
 
+Peter Griffin (5):
+  mmc: remove .owner field for drivers using module_platform_driver
+  mmc: dw_mmc-pci: Remove superflous #else condition on CONFIG_PM_SLEEP
+  mmc: dw_mmc-pltfm: Remove superflous #else condition on
+    CONFIG_PM_SLEEP
+  mmc: sdhci-pci: Use SET_RUNTIME_PM_OPS macro to set runtime pm
+    callbacks
+  mmc: sdhci-acpi.c: Use SET_RUNTIME_PM_OPS macro to set runtime pm
+    callbacks
 
-Thanks,
-Vince
+ drivers/mmc/host/dw_mmc-pci.c      |  3 ---
+ drivers/mmc/host/dw_mmc-pltfm.c    |  3 ---
+ drivers/mmc/host/jz4740_mmc.c      |  1 -
+ drivers/mmc/host/moxart-mmc.c      |  1 -
+ drivers/mmc/host/mxcmmc.c          |  1 -
+ drivers/mmc/host/mxs-mmc.c         |  1 -
+ drivers/mmc/host/omap.c            |  1 -
+ drivers/mmc/host/omap_hsmmc.c      |  1 -
+ drivers/mmc/host/pxamci.c          |  1 -
+ drivers/mmc/host/rtsx_pci_sdmmc.c  |  1 -
+ drivers/mmc/host/rtsx_usb_sdmmc.c  |  1 -
+ drivers/mmc/host/s3cmci.c          |  1 -
+ drivers/mmc/host/sdhci-acpi.c      | 11 ++---------
+ drivers/mmc/host/sdhci-bcm-kona.c  |  1 -
+ drivers/mmc/host/sdhci-bcm2835.c   |  1 -
+ drivers/mmc/host/sdhci-cns3xxx.c   |  1 -
+ drivers/mmc/host/sdhci-dove.c      |  1 -
+ drivers/mmc/host/sdhci-esdhc-imx.c |  1 -
+ drivers/mmc/host/sdhci-msm.c       |  1 -
+ drivers/mmc/host/sdhci-of-arasan.c |  1 -
+ drivers/mmc/host/sdhci-of-esdhc.c  |  1 -
+ drivers/mmc/host/sdhci-of-hlwd.c   |  1 -
+ drivers/mmc/host/sdhci-pci.c       | 11 ++---------
+ drivers/mmc/host/sdhci-pxav2.c     |  1 -
+ drivers/mmc/host/sdhci-pxav3.c     |  1 -
+ drivers/mmc/host/sdhci-s3c.c       |  1 -
+ drivers/mmc/host/sdhci-sirf.c      |  1 -
+ drivers/mmc/host/sdhci-spear.c     |  1 -
+ drivers/mmc/host/sdhci-tegra.c     |  1 -
+ drivers/mmc/host/sh_mmcif.c        |  1 -
+ drivers/mmc/host/sh_mobile_sdhi.c  |  1 -
+ drivers/mmc/host/sunxi-mmc.c       |  1 -
+ 32 files changed, 4 insertions(+), 52 deletions(-)
+
+-- 
+1.9.1
 
