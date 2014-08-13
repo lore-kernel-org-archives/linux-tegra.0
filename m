@@ -1,147 +1,117 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 3/3] ARM: tegra: Add thermal reset (thermtrip) support to
- PMC
-Date: Wed, 13 Aug 2014 09:53:54 +0200
-Message-ID: <20140813075353.GA7735@ulmo>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 1/3] of: Add descriptions of thermtrip properties to
+ Tegra PMC bindings
+Date: Wed, 13 Aug 2014 10:01:39 +0200
+Message-ID: <20140813080138.GB7735@ulmo>
 References: <1407226380-747-1-git-send-email-mperttunen@nvidia.com>
- <1407226380-747-4-git-send-email-mperttunen@nvidia.com>
+ <1407226380-747-2-git-send-email-mperttunen@nvidia.com>
+ <20140813073541.GA17466@ulmo>
+ <53EB18E6.3070203@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="X1bOJ3K7DJ5YkBrT"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="s2ZSL+KKDSLx8OML"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1407226380-747-4-git-send-email-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <53EB18E6.3070203@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---X1bOJ3K7DJ5YkBrT
+--s2ZSL+KKDSLx8OML
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 05, 2014 at 11:13:00AM +0300, Mikko Perttunen wrote:
-> This adds a device tree controlled option to enable PMC-based
-> thermal reset in overheating situations. Thermtrip is supported on
-> Tegra114 and Tegra124. The thermal reset only works when the thermal
+On Wed, Aug 13, 2014 at 10:51:02AM +0300, Mikko Perttunen wrote:
+> On 13/08/14 10:35, Thierry Reding wrote:
+> >On Tue, Aug 05, 2014 at 11:12:58AM +0300, Mikko Perttunen wrote:
+[...]
+> >>+Required properties for hardware-triggered thermal reset:
+> >>+    (only tegra30, tegra114, tegra124)
+> >>+- nvidia,thermtrip-pmu-i2c-addr : I2C address of the power management =
+unit.
+> >>+- nvidia,thermtrip-i2c-controller : Index of the I2C controller the PM=
+U is
+> >>+                                    attached to.
+> >
+> >This duplicates information already associated with the PMU device. Can
+> >this be turned into something like:
+> >
+> >	nvidia,thermtrip-pmu: phandle to Power Management Unit
+> >
+> >Then we can query the relevant information from the I2C client resolved
+> >from the phandle.
+>=20
+> True, that would look nicer.
+>=20
+> >
+> >One problem with that might be that the I2C controller index may not
+> >match the hardware ID.
+>=20
+> Maybe we could resort to checking the controller address in this case. Th=
+is
+> is a safety feature, so programming the wrong controller index accidental=
+ly
+> would be bad.
 
-The binding updates in patch 1/3 say that Tegra30 supports thermtrip as
-well.
+What we've done in the past (for the display controllers) is to add a
+special property that has the "hardware index" of the controller. I
+think in this case it would be appropriate to add one as well. That way
+we could reach into the I2C adapter of the I2C client and parse it from
+the associated device tree node (client->adapter->dev.of_node).
 
-> +void tegra_pmc_init_thermal_reset(struct device_node *np)
+> >>+- nvidia,thermtrip-reg-addr : Address (byte) to send reset command to.
+> >>+- nvidia,thermtrip-reg-data : Data (byte) to use as reset command.
+> >>+
+> >>+Optional properties for hardware-triggered thermal reset:
+> >>+    (only tegra30, tegra114, tegra124)
+> >>+- nvidia,thermtrip-pinmux : Pinmux ID used for I2C access.
+> >
+> >I suppose this takes a phandle? If so the description should probably
+> >say so.
+>=20
+> No, it takes a pinmux ID, described in the boot process (non-public in T1=
+24
+> I guess..) section of the TRM. It seems, though, that all platforms
+> supported by the downstream kernel have pinmux =3D=3D 0.
 
-It would be good for this to take a struct device * so that dev_*() can
-be used instead of pr_*().
+Ugh... we'll need to get this documented publicly.
 
-> +{
-> +	u32 pmu_i2c_addr, i2c_ctrl_id, reg_addr, reg_data, pinmux;
-> +	bool pmu_16bit_ops;
-> +	u32 val, checksum;
+> >What exactly does "16-bit operations" mean? And isn't this a property of
+> >the I2C device, therefore could be queried from the I2C slave via the
+> >phandle?
+>=20
+> That's how it's described in the TRM, but I just found a comment in the
+> downstream kernel about it. Apparently it controls the amount of data sent
+> to the PMIC. The downstream kernel says, though, that the option is not
+> supported and must always be left as zero, so I guess it could be dropped.
 
-Nit: All other register accesses use "value" instead of "val" as the
-name for this variable.
-
-> +	const struct of_device_id *match = of_match_node(tegra_pmc_match, np);
-> +	const struct tegra_pmc_soc *data = match->data;
-> +
-> +	if (!data->has_thermal_reset)
-> +		return;
-> +
-> +	pmu_16bit_ops =
-> +		of_property_read_bool(np, "nvidia,thermtrip-pmu-16bit-ops");
-
-The formatting here (and below) is weird. I think this could be made
-more readable by shortening both property name and/or variable name:
-
-	pmu_16bit = of_property_read_bool(np, "nvidia,thermtrip-pmu-16bit");
-
-And similarily for below.
-
-> +	if (of_property_read_u32(
-> +		np, "nvidia,thermtrip-pmu-i2c-addr", &pmu_i2c_addr))
-> +		goto disabled;
-> +	if (of_property_read_u32(
-> +		np, "nvidia,thermtrip-i2c-controller", &i2c_ctrl_id))
-> +		goto disabled;
-> +	if (of_property_read_u32(
-> +		np, "nvidia,thermtrip-reg-addr", &reg_addr))
-> +		goto disabled;
-> +	if (of_property_read_u32(
-> +		np, "nvidia,thermtrip-reg-data", &reg_data))
-> +		goto disabled;
-> +	if (of_property_read_u32(
-> +		np, "nvidia,thermtrip-pinmux", &pinmux))
-> +		pinmux = 0;
-> +
-> +	val = tegra_pmc_readl(PMC_SENSOR_CTRL);
-> +	val |= PMC_SENSOR_CTRL_SCRATCH_WRITE | PMC_SENSOR_CTRL_ENABLE_RST;
-> +	tegra_pmc_writel(val, PMC_SENSOR_CTRL);
-
-It's not immediately clear to me what this does (therefore it would be
-good to annotate it with a comment), but if this enables thermal
-tripping, shouldn't this be done *after* the registers below have been
-set up?
-
-> +
-> +	val = (reg_data << PMC_SCRATCH54_DATA_SHIFT) |
-> +	      (reg_addr << PMC_SCRATCH54_ADDR_SHIFT);
-> +	tegra_pmc_writel(val, PMC_SCRATCH54);
-> +
-> +	val = 0;
-> +	val |= PMC_SCRATCH55_RESET_TEGRA;
-> +	val |= i2c_ctrl_id << PMC_SCRATCH55_CNTRL_ID_SHIFT;
-> +	val |= pinmux << PMC_SCRATCH55_PINMUX_SHIFT;
-> +	if (pmu_16bit_ops)
-> +		val |= PMC_SCRATCH55_16BITOP;
-> +	val |= pmu_i2c_addr << PMC_SCRATCH55_I2CSLV1_SHIFT;
-> +
-> +	checksum = reg_addr + reg_data + (val & 0xFF) + ((val >> 8) & 0xFF) +
-> +		((val >> 24) & 0xFF);
-> +	checksum &= 0xFF;
-
-I'd prefer lower-case hexadecimals. Also, what about bits 23:16? Are
-they not needed for the checksum? Again, a comment may help to explain
-this.
-
-> +	checksum = 0x100 - checksum;
-> +
-> +	val |= checksum << PMC_SCRATCH55_CHECKSUM_SHIFT;
-> +
-> +	tegra_pmc_writel(val, PMC_SCRATCH55);
-> +
-> +	pr_info("Tegra: PMC thermal reset enabled\n");
-> +
-> +	return;
-> +
-> +disabled:
-> +	pr_warn("Tegra: PMC thermal reset disabled\n");
-
-You're not giving anyone a clue about what went wrong, so when they see
-this warning they don't know what to do about it. Maybe all paths
-leading here should have a more specific warning message themselves.
+Indeed. If ever it becomes necessary we can add it then (and fall back
+to 8-bit "operations" if it's not present).
 
 Thierry
 
---X1bOJ3K7DJ5YkBrT
+--s2ZSL+KKDSLx8OML
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJT6xmRAAoJEN0jrNd/PrOhZ9gP/1PwqLDIC1tGq6x+gPItQPCd
-og6j5kjobiqSCJeLZeg4FiXslRexEipIZCjvKMSvgnwuVb0EYev4FC1fVriCw/dD
-kJkiT4P1qgtxyy348C8yxEByYnjaTUsg7L9yM9x7odLIEvibYCxk3F9at/CxyOL4
-hxwSLhrsb8UEdU+aK0o0Z1ce8xNR8mlq0C1MEhNkxvzSlk9gLRBOMC1OZIYv2RvK
-A/sjVHxR5U2ui4fMzSsgk+yFzsxHS5YoD08CJiyAeLxNPTCp2y/+X/LQ2ns5+nS2
-9T9dGMXHZ4maF1AZiL1Ea7nIr+VnPZHYoasJGdN0MsCwVLIJ6YC93zSGVQN2X2rs
-Ze82sIqcV9xZ4qB8JpE27WD3/XXhPhzcA1j4YVj07xuXijqOoKo1O3ZQ33rIOiUS
-CC/T8FGB+evy+1agotQnItHlnxMEVA+c9I3uL5azgZpaKDklMqI4/pML1c2cZd6Q
-ntc+IsqmDCX9gfoUo/TM52ZhZU5nLrrQOXq+oBt0Ki/wvJOegq5eyGMHK4BJZqNf
-DVL7iBqpIS8i+cF+zg6bnbvI11TafXmqjhy7Z0+gRiqWguUTSeR//Pc/NOy+lcrf
-Dw3cNf4TFwbT064x5083EiIhQDTZdz57mu5rbA87sIApP+iNdimJmLx0PO/a77gi
-bmU//xQ0FzuKN6lQAHws
-=OBSZ
+iQIcBAEBAgAGBQJT6xtiAAoJEN0jrNd/PrOh0l8P+QG9HsF0PlEAp+8yUNz+ws8p
+fQNhnyq3OoRirfV0ECeMpfjb6ibQ01fjAw/y4j88S2jqlhH72vveu3UCNPne+qYH
+cukvGohlJPH3QElGmQseV8FCv6mMw1vkdX/NmUhw02RU2KOASfG3uehfCiix805J
+cVXjHl2vxNQhqFZQmLZs7Li7bc666nN2MihtLiAYB3Gf7E2K0b9RIoujPzX90PZ0
+bj+u6knkySv+oN6s21mRE2dCES97wEV/0X6dMHfWVX8GaCaiKgQdVCNIKUmpdBKD
+YSMdPTH5vt8CaI1ZC0aJdRwtJq2MjhDGOYQNrQW0Dxoukt2vQtIJpklC6YwcfJVZ
+5VLjRe7MY0sVDxchr7aGnPrqla03YoEVh5LcYIF6AaP32hG+NPBhqsPHd1r/g/DX
+wnegxEahSeCaqun5itmNlUQIjFnhVUglv10jp9bcUZ4nFj7jjPXrWc13tk/w66Hd
+Rl7195VH4kiRknOdTJwIQqE7ZVyOqxMfaQdo61qf8Lfp7x+SMj5pUMsDzHFlI92e
+sXcAx+03jcTPyqDDUMnyuvLqlQxSmzIaH0dJKsPCCCEeHJHLMEa0nFX63r2mWx8H
+s1mGrJcESWv/PDuVHqC4uZanJjnwSR1lbqVvzbYSZTgYmVZoqloYoe4NuA9quJcb
+Wr+vW1oVKe5vLW7Exuz7
+=+L4g
 -----END PGP SIGNATURE-----
 
---X1bOJ3K7DJ5YkBrT--
+--s2ZSL+KKDSLx8OML--
