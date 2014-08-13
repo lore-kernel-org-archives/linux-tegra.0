@@ -1,79 +1,88 @@
-From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 0/3] Thermal reset support in PMC
-Date: Wed, 13 Aug 2014 12:52:22 +0300
-Message-ID: <53EB3556.9010504@nvidia.com>
-References: <1407226380-747-1-git-send-email-mperttunen@nvidia.com> <20140813080744.GD7735@ulmo> <53EB1DF5.301@nvidia.com> <53EB250D.5070207@nvidia.com> <20140813085728.GF7735@ulmo>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 3/3] ARM: tegra: Add thermal reset (thermtrip) support
+ to PMC
+Date: Wed, 13 Aug 2014 18:10:02 +0800
+Message-ID: <53EB397A.7000501@nvidia.com>
+References: <1407226380-747-1-git-send-email-mperttunen@nvidia.com> <1407226380-747-4-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140813085728.GF7735@ulmo>
+In-Reply-To: <1407226380-747-4-git-send-email-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 13/08/14 11:57, Thierry Reding wrote:
-> * PGP Signed by an unknown key
->
-> On Wed, Aug 13, 2014 at 11:42:53AM +0300, Mikko Perttunen wrote:
->>
->>
->> On 13/08/14 11:12, Mikko Perttunen wrote:
->>> On 13/08/14 11:07, Thierry Reding wrote:
->>>>> Old Signed by an unknown key
->>>>
->>>> On Tue, Aug 05, 2014 at 11:12:57AM +0300, Mikko Perttunen wrote:
->>>>> Hi,
->>>>>
->>>>> this series adds support for hardware-triggered thermal reset to the PMC
->>>>> driver. Namely, it adds device tree properties for specifying the I2C
->>>>> command to be sent when thermtrip is triggered. It is to be noted
->>>>> that thermtrip won't be ever triggered without a soctherm driver to
->>>>> calibrate the sensors, but I'll follow up with that patch.
->>>>>
->>>>> pmc.c required some juggling around to make the match data usable in
->>>>> probe, since I didn't want to put the code into the initcall either, since
->>>>> the soctherm driver won't be initialized by that point anyway.
->>>>>
->>>>> Series tested on Jetson-TK1. Should work on Tegra30 and Tegra114 too.
->>>>
->>>> Can you describe the procedure used to test this? We currently have a
->>>> bunch of features in Tegra that some people have tested at some point
->>>> during development but the test procedures never got documented. That
->>>> means whenever we want to test something we need to go and reinvent a
->>>> bunch of tests after the fact.
->>>>
->>>> So what I'd like to start doing is collect tests (preferably in some
->>>> scripted way) so that they can be kept in a repository that people can
->>>> easily clone and run on devices.
->>>>
->>>> Could you provide something like that for thermtrip?
->>>
->>> Sure. I'll see if I can make a just a test script or if a local patch is
->>> needed to test. Btw, I also have a pretty nice test script for EMC
->>> ready, and I agree that such a repository would be very nice.
->>
->> Here is a test program. It it works, the device with immediately shut down.
->>
->> https://gist.github.com/cyndis/66126c9c176b5f94a76f
->
-> Is there a way to set the trip temperature without going through
-> /dev/mem? I'd expect the device to have a sysfs interface of some
-> sort.
+On 08/05/2014 04:13 PM, Mikko Perttunen wrote:
+> This adds a device tree controlled option to enable PMC-based
+> thermal reset in overheating situations. Thermtrip is supported on
+> Tegra114 and Tegra124. The thermal reset only works when the thermal
+> sensors are calibrated, so a soctherm driver is also required.
+> 
+> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/soc/tegra/pmc.c | 348 ++++++++++++++++++++++++++++++------------------
+>  1 file changed, 216 insertions(+), 132 deletions(-)
+> 
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index a2c0ceb..2c617d7 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -83,11 +83,28 @@
+> 
+>  #define GPU_RG_CNTRL                   0x2d4
+> 
+> +#define PMC_SENSOR_CTRL                        0x1b0
+> +#define PMC_SENSOR_CTRL_SCRATCH_WRITE  (1 << 2)
+> +#define PMC_SENSOR_CTRL_ENABLE_RST     (1 << 1)
+> +
+> +#define PMC_SCRATCH54                  0x258
+> +#define PMC_SCRATCH54_DATA_SHIFT       8
+> +#define PMC_SCRATCH54_ADDR_SHIFT       0
+> +
+> +#define PMC_SCRATCH55                  0x25c
+> +#define PMC_SCRATCH55_RESET_TEGRA      (1 << 31)
+> +#define PMC_SCRATCH55_CNTRL_ID_SHIFT   27
+> +#define PMC_SCRATCH55_PINMUX_SHIFT     24
+> +#define PMC_SCRATCH55_16BITOP          (1 << 15)
+> +#define PMC_SCRATCH55_CHECKSUM_SHIFT   16
+> +#define PMC_SCRATCH55_I2CSLV1_SHIFT    0
+> +
+>  struct tegra_pmc_soc {
+>         unsigned int num_powergates;
+>         const char *const *powergates;
+>         unsigned int num_cpu_powergates;
+>         const u8 *cpu_powergates;
+> +       bool has_thermal_reset;
 
-The thermtrip "device" isn't currently exposed in any way. If it were 
-exposed, I suppose it would be exposed as thermal zone devices, each 
-with one trip point. Even then, the thermal framework doesn't really 
-support this properly; none of the trip point types really apply to this 
-kind of trip point, and x86 systems don't expose their trips either. 
-Anyway, since debugging is pretty much the only use case for modifying 
-the trip temperature, I thought adding the tz_devices would be a bit 
-overkill.
+According to the DRM, the scratch54/55 is used for TSENSE_RESET, so I
+prefer to change the name to has_tsense_reset().
 
->
-> Thierry
->
-> * Unknown Key
-> * 0x7F3EB3A1
->
+>  };
+> 
+>  /**
+> @@ -606,6 +623,203 @@ void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
+>  }
+
+> +
+> +void tegra_pmc_init_thermal_reset(struct device_node *np)
+
+I prefer to change the name to tegra_pmc_init_tsense_reset().
+
+> +{
+> +       u32 pmu_i2c_addr, i2c_ctrl_id, reg_addr, reg_data, pinmux;
+> +       bool pmu_16bit_ops;
+> +       u32 val, checksum;
+> +       const struct of_device_id *match = of_match_node(tegra_pmc_match, np);
+> +       const struct tegra_pmc_soc *data = match->data;
+> +
+
+> --
+> 1.8.1.5
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
