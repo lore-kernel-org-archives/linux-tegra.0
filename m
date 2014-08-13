@@ -1,78 +1,128 @@
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v2 3/5] ARM: tegra124: Add I2C controller ids to device tree
-Date: Wed, 13 Aug 2014 15:41:23 +0300
-Message-ID: <1407933685-12404-4-git-send-email-mperttunen@nvidia.com>
-References: <1407933685-12404-1-git-send-email-mperttunen@nvidia.com>
+From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: tegra: add Acer Chromebook 13 device tree
+Date: Wed, 13 Aug 2014 09:23:16 -0700
+Message-ID: <CAL1qeaFW2LCETWCy6WduNRCGAonaaAwmoaDRHEtQJmkbpybDiA@mail.gmail.com>
+References: <1407894967-18300-1-git-send-email-dgreid@chromium.org>
+	<20140813085304.GE7735@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1407933685-12404-1-git-send-email-mperttunen@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: swarren@wwwdotorg.org, thierry.reding@gmail.com
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, wni@nvidia.com, Mikko Perttunen <mperttunen@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140813085304.GE7735@ulmo>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-I2C controller ids are required when programming hardware blocks
-that send messages to devices connected to an I2C bus, such as
-when the PMC sends a poweroff message to the PMIC. Add ids
-to all I2C controllers in Tegra124.
+On Wed, Aug 13, 2014 at 1:53 AM, Thierry Reding
+<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Tue, Aug 12, 2014 at 06:56:07PM -0700, Dylan Reid wrote:
+>> The Acer Chromebook 13, codenamed "Big", contains an NVIDIA tegra124
+>> processor and is similar to the Venice2 reference platform.
+>>
+>> The keyboard, USB 2, audio, HDMI, sdcard and emmc have been tested
+>> and work on the 1366x768 models.  I haven't tried on the HD systems
+>> yet.
+>
+> Presumably the HD systems will have a different compatible?
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
- arch/arm/boot/dts/tegra124.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+They do not.  ChromeOS kernels just parse the EDID, so I suppose we'll
+need something similar here to support the HD panel.
 
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index 03916ef..a101960 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -289,6 +289,7 @@
- 		reset-names = "i2c";
- 		dmas = <&apbdma 21>, <&apbdma 21>;
- 		dma-names = "rx", "tx";
-+		nvidia,controller-id = <0>;
- 		status = "disabled";
- 	};
- 
-@@ -304,6 +305,7 @@
- 		reset-names = "i2c";
- 		dmas = <&apbdma 22>, <&apbdma 22>;
- 		dma-names = "rx", "tx";
-+		nvidia,controller-id = <1>;
- 		status = "disabled";
- 	};
- 
-@@ -319,6 +321,7 @@
- 		reset-names = "i2c";
- 		dmas = <&apbdma 23>, <&apbdma 23>;
- 		dma-names = "rx", "tx";
-+		nvidia,controller-id = <2>;
- 		status = "disabled";
- 	};
- 
-@@ -334,6 +337,7 @@
- 		reset-names = "i2c";
- 		dmas = <&apbdma 26>, <&apbdma 26>;
- 		dma-names = "rx", "tx";
-+		nvidia,controller-id = <3>;
- 		status = "disabled";
- 	};
- 
-@@ -349,6 +353,7 @@
- 		reset-names = "i2c";
- 		dmas = <&apbdma 24>, <&apbdma 24>;
- 		dma-names = "rx", "tx";
-+		nvidia,controller-id = <4>;
- 		status = "disabled";
- 	};
- 
-@@ -364,6 +369,7 @@
- 		reset-names = "i2c";
- 		dmas = <&apbdma 30>, <&apbdma 30>;
- 		dma-names = "rx", "tx";
-+		nvidia,controller-id = <5>;
- 		status = "disabled";
- 	};
- 
--- 
-1.8.1.5
+> Is it only the panel that's different or are there other changes?
+
+Only the panel is different.
+
+>> There is also an issue on reboot because the TPM isn't reset.  It will
+>> cause the stock firmware to enter recovery mode.  This can be worked
+>> around by an EC-reset, press refresh and power at the same time.
+>
+> It's not clear to me what exactly this implies. Does it mean the system
+> won't boot unless you manually press "refresh" and "power"? Are those
+> keyboard buttons or keys on some debug board?
+
+The system will enter recovery mode (and thus won't boot) unless you
+do an EC reset.  Refresh and power are keys on the keyboard.
+
+>> diff --git a/arch/arm/boot/dts/tegra124-big.dts b/arch/arm/boot/dts/tegra124-big.dts
+>> new file mode 100644
+>> index 0000000..aa0cd9f
+>> --- /dev/null
+>> +++ b/arch/arm/boot/dts/tegra124-big.dts
+>> @@ -0,0 +1,1137 @@
+>> +/dts-v1/;
+>> +
+>> +#include <dt-bindings/input/input.h>
+>> +#include "tegra124.dtsi"
+>> +
+>> +/ {
+>> +     model = "Google Big";
+>
+> Perhaps this should at least mention that it's the Acer Chromebook 13.
+> Otherwise this could just as well be some random development board.
+
+The convention for other Chromebooks so far (see
+exynos5420-peach-pit.dts for example) has just been to include the
+Google board name.
+
+>> +     compatible = "google,nyan-big", "nvidia,tegra124";
+>
+> What's "nyan"? Are there other variants of "big" other than "nyan"?
+
+Nyan is the name for our Tegra124 reference platform.  Big is derived
+from this and there are other variants of Nyan other than Big.
+
+>> +     serial@0,70006000 {
+>> +             status = "okay";
+>> +     };
+>
+> We've started to annotate some of these nodes in other DTS files to make
+> it easier for people to match them to connectors on the board (or the
+> schematics). This isn't necessarily important for things like PWM, since
+> their use is fairly obvious and usually in-kernel only (with perhaps an
+> exception of a PWM routed to some expansion header on some development
+> board). For generic interfaces it's good to know what they map to on the
+> device.
+>
+> Is this serial available as an accessible connector? Or is it some debug
+> serial that's only available on a (non-equipped) header on the board?
+
+There is a debug connector on the board which provides the serial
+lines.  It is similar to Venice2, but in a different form factor.
+
+>> +     i2c@0,7000c400 {
+>> +             status = "okay";
+>> +             clock-frequency = <100000>;
+>> +     };
+>> +
+>> +     i2c@0,7000c500 {
+>> +             status = "okay";
+>> +             clock-frequency = <400000>;
+>> +
+>> +             tpm@20 {
+>> +                     compatible = "infineon,slb9645tt";
+>> +                     reg = <0x20>;
+>> +             };
+>
+> I presume this is the TPM that you said isn't reset on reboot? Do you
+> know the reason for why it isn't being reset? What's needed to reset
+> this module? I assume it's something that can (and will eventually) be
+> fixed?
+
+Tegra SoCs are normally reset via the PMC, however that does not reset
+any external peripherals.  In order to reset the TPM at the same time
+as the SoC, the GPIO I5 must be driven low.  Something like the
+gpio-poweroff driver, but instead for restart could be used to do
+this.
+
+>> +                             battery: sbs-battery@b {
+>> +                                     compatible = "sbs,sbs-battery";
+>> +                                     reg = <0xb>;
+>> +                                     sbs,i2c-retry-count = <2>;
+>> +                                     sbs,poll-retry-count = <10>;
+>> +                                     power-supplies = <&charger>;
+>
+> The sbs-battery binding doesn't define a power-supplies property.
+
+It does, but it's not specific to sbs-battery.  All power supplies
+have an optional power-supplies property, see
+Documentation/devicetree/bindings/power_supply/power_supply.txt.
