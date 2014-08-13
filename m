@@ -1,86 +1,98 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 2/3] ARM: tegra: Add PMC thermtrip programming to Jetson
- TK1 device tree
-Date: Wed, 13 Aug 2014 09:37:38 +0200
-Message-ID: <20140813073736.GB17466@ulmo>
-References: <1407226380-747-1-git-send-email-mperttunen@nvidia.com>
- <1407226380-747-3-git-send-email-mperttunen@nvidia.com>
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/3] of: Add descriptions of thermtrip properties to Tegra
+ PMC bindings
+Date: Wed, 13 Aug 2014 10:51:02 +0300
+Message-ID: <53EB18E6.3070203@nvidia.com>
+References: <1407226380-747-1-git-send-email-mperttunen@nvidia.com> <1407226380-747-2-git-send-email-mperttunen@nvidia.com> <20140813073541.GA17466@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="mxv5cy4qt+RJ9ypb"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1407226380-747-3-git-send-email-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20140813073541.GA17466@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 13/08/14 10:35, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+>
+> On Tue, Aug 05, 2014 at 11:12:58AM +0300, Mikko Perttunen wrote:
+>> Hardware-triggered thermal reset requires configuring the I2C
+>> reset procedure. This configuration is read from the device tree,
+>> so document the relevant properties in the binding documentation.
+>>
+>> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>   .../devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt    | 13 +++++++++++++
+>>   1 file changed, 13 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+>> index 68ac65f..140e2aa 100644
+>> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+>> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+>> @@ -38,6 +38,19 @@ Required properties when nvidia,suspend-mode is specified:
+>>   			      Core power good time in uS.
+>>   - nvidia,core-pwr-off-time : Core power off time in uS.
+>>
+>> +Required properties for hardware-triggered thermal reset:
+>> +    (only tegra30, tegra114, tegra124)
+>> +- nvidia,thermtrip-pmu-i2c-addr : I2C address of the power management unit.
+>> +- nvidia,thermtrip-i2c-controller : Index of the I2C controller the PMU is
+>> +                                    attached to.
+>
+> This duplicates information already associated with the PMU device. Can
+> this be turned into something like:
+>
+> 	nvidia,thermtrip-pmu: phandle to Power Management Unit
+>
+> Then we can query the relevant information from the I2C client resolved
+> from the phandle.
 
---mxv5cy4qt+RJ9ypb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+True, that would look nicer.
 
-On Tue, Aug 05, 2014 at 11:12:59AM +0300, Mikko Perttunen wrote:
-> This adds the required information to reset the board during an overheati=
-ng
-> situation to the Jetson TK1 device tree. The thermal reset is handled by =
-the
-> PMC by sending an I2C message to the PMIC. The entries specify the I2C
-> message to be sent.
->=20
-> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  arch/arm/boot/dts/tegra124-jetson-tk1.dts | 5 +++++
->  1 file changed, 5 insertions(+)
->=20
-> diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dt=
-s/tegra124-jetson-tk1.dts
-> index 624b0fb..ee178c4 100644
-> --- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-> +++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-> @@ -1617,6 +1617,11 @@
->  		nvidia,core-pwr-off-time =3D <61036>;
->  		nvidia,core-power-req-active-high;
->  		nvidia,sys-clock-req-active-high;
-> +
-> +		nvidia,thermtrip-pmu-i2c-addr =3D <0x40>;
-> +		nvidia,thermtrip-i2c-controller =3D <4>;
-> +		nvidia,thermtrip-reg-addr =3D <0x36>;
-> +		nvidia,thermtrip-reg-data =3D <0x2>;
+>
+> One problem with that might be that the I2C controller index may not
+> match the hardware ID.
 
-Given the number of properties that this can potentially have, I wonder
-if perhaps it would be a good idea to put this into a subnode, like
-this:
+Maybe we could resort to checking the controller address in this case. 
+This is a safety feature, so programming the wrong controller index 
+accidentally would be bad.
 
-		thermtrip {
-			pmu-i2c-addr =3D <0x40>;
-			i2c-controller =3D <4>;
-			...
-		};
+>
+>> +- nvidia,thermtrip-reg-addr : Address (byte) to send reset command to.
+>> +- nvidia,thermtrip-reg-data : Data (byte) to use as reset command.
+>> +
+>> +Optional properties for hardware-triggered thermal reset:
+>> +    (only tegra30, tegra114, tegra124)
+>> +- nvidia,thermtrip-pinmux : Pinmux ID used for I2C access.
+>
+> I suppose this takes a phandle? If so the description should probably
+> say so.
 
-Thierry
+No, it takes a pinmux ID, described in the boot process (non-public in 
+T124 I guess..) section of the TRM. It seems, though, that all platforms 
+supported by the downstream kernel have pinmux == 0.
 
---mxv5cy4qt+RJ9ypb
-Content-Type: application/pgp-signature
+>
+>> +- nvidia,thermtrip-pmu-16bit-ops : Use 16-bit operations.
+>
+> What exactly does "16-bit operations" mean? And isn't this a property of
+> the I2C device, therefore could be queried from the I2C slave via the
+> phandle?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+That's how it's described in the TRM, but I just found a comment in the 
+downstream kernel about it. Apparently it controls the amount of data 
+sent to the PMIC. The downstream kernel says, though, that the option is 
+not supported and must always be left as zero, so I guess it could be 
+dropped.
 
-iQIcBAEBAgAGBQJT6xXAAAoJEN0jrNd/PrOhVuEQAJGtXyrXJ6S1mOGT9sl7wXlk
-kjIxXS3ECkEVnJoaWrTtRsOOmIhbkQNBX4/j9b310HP6iwiZa7xWOrrxkf5XQM8i
-MD95BQERIak/LihVZ2NRvPTkESHSQyx0Aig4OAqQvcD99cztqZwEZTbGJ1Yoiy+z
-So5D+1Ye5MKO54SRPWILzHg14HkpiP456eg1BAq/J0RWZW8fNwmApyHoYF68Jtnz
-noJzfMAlRuFxLrw/fSaWolHegseVQ/V6oPAABobNWfeyhRxWTH+YMM5zi1PnxWlq
-H65z9DW1hGBjfVwhrsahiv9qoJ263uMem3nJOuyz7E15ehamTTk0yelLMYjutqjZ
-3UHipfKQSVTchqfxG6RonhN9vYrroHgIaeg2IdDB5R1D2XqzwMlweVz63ehsX9/w
-+PNYrX2M01cuvGrkurxg++R0ldsH+WpdKndiOmpC1L9/TQcBdUIqIlmXe7XeJ4GO
-cyutFSG5oMZVJOkWckwOZboS9M/YgtJgO05CsiDpTbWZjCzARJceVBJ6WKLfgJRH
-iocbAK2C/cjMUGKi5kbRP07baMcsWXMfuyfLg7uzY5kwg3jSJ5Pyi/5nAHoVr0qG
-Suv3bpFVMLHuo3/zC+J37K9SPyT+2GKcce5ZyeMB5DjduK/lQx9EjLESrsGHP7Dk
-L/IZ9joKTdYlwfVCgTIk
-=PmKx
------END PGP SIGNATURE-----
+>
+> Thierry
+>
+> * Unknown Key
+> * 0x7F3EB3A1
+>
 
---mxv5cy4qt+RJ9ypb--
+Cheers,
+Mikko
