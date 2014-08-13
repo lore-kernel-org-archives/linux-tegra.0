@@ -1,42 +1,122 @@
-From: Boris BREZILLON <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH v5 3/6] clk: Move all drivers to use internal API
-Date: Wed, 13 Aug 2014 11:50:56 +0200
-Message-ID: <20140813115056.0bd5ead7@bbrezillon>
-References: <1407333468-32180-1-git-send-email-tomeu.vizoso@collabora.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 0/3] Thermal reset support in PMC
+Date: Wed, 13 Aug 2014 12:36:14 +0200
+Message-ID: <20140813103613.GA7624@ulmo>
+References: <1407226380-747-1-git-send-email-mperttunen@nvidia.com>
+ <20140813080744.GD7735@ulmo>
+ <53EB1DF5.301@nvidia.com>
+ <53EB250D.5070207@nvidia.com>
+ <20140813085728.GF7735@ulmo>
+ <53EB3556.9010504@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <1407333468-32180-1-git-send-email-tomeu.vizoso@collabora.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Ulf Hansson <ulf.hansson@linaro.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Tony Lindgren <tony@atomide.com>, Tomasz Figa <t.figa@samsung.com>, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Paul Mackerras <paulus@samba.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Daniel Walker <dwalker@fifo99.com>, linux-arch@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Emilio =?UTF-8?B?TMOzcGV6?= <emilio@elopez.com.ar>, Takashi Iwai <tiwai@suse.de>, Michal Simek <michal.simek@xilinx.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kevin Hilman <khilman@deeprootsystems.com>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, patches@opensource.wolfsonmicro.com, Viresh Kumar <viresh.linux@gmai>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <53EB3556.9010504@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgVG9tZXUsCgpPbiBXZWQsICA2IEF1ZyAyMDE0IDE1OjU3OjQ4ICswMjAwClRvbWV1IFZpem9z
-byA8dG9tZXUudml6b3NvQGNvbGxhYm9yYS5jb20+IHdyb3RlOgoKPiBJbiBwcmVwYXJhdGlvbiB0
-byBjaGFuZ2UgdGhlIHB1YmxpYyBBUEkgdG8gcmV0dXJuIGEgcGVyLXVzZXIgY2xrIHN0cnVjdHVy
-ZSwKPiByZW1vdmUgYW55IHVzYWdlIG9mIHRoaXMgcHVibGljIEFQSSBmcm9tIHRoZSBjbG9jayBp
-bXBsZW1lbnRhdGlvbnMuCj4gCj4gVGhlIHJlYXNvbiBmb3IgaGF2aW5nIHRoaXMgaW4gYSBzZXBh
-cmF0ZSBjb21taXQgZnJvbSB0aGUgb25lIHRoYXQgaW50cm9kdWNlcwo+IHRoZSBpbXBsZW1lbnRh
-dGlvbiBvZiB0aGUgbmV3IGZ1bmN0aW9ucyBpcyB0byBzZXBhcmF0ZSB0aGUgY2hhbmdlcyBnZW5l
-cmF0ZWQKPiB3aXRoIENvY2NpbmVsbGUgZnJvbSB0aGUgcmVzdCwgYW5kIGtlZXAgdGhlIHBhdGNo
-ZXMnIHNpemUgcmVhc29uYWJsZS4KPiAKCllvdSBjYW4gYWRkIG15OgoKVGVzdGVkLWJ5OiBCb3Jp
-cyBCcmV6aWxsb24gPGJvcmlzLmJyZXppbGxvbkBmcmVlLWVsZWN0cm9ucy5jb20+CgphbmQKCkFj
-a2VkLWJ5OiBCb3JpcyBCcmV6aWxsb24gPGJvcmlzLmJyZXppbGxvbkBmcmVlLWVsZWN0cm9ucy5j
-b20+Cgpmb3IgdGhlIGF0OTEgcGFydC4KCj4gU2lnbmVkLW9mZi1ieTogVG9tZXUgVml6b3NvIDx0
-b21ldS52aXpvc29AY29sbGFib3JhLmNvbT4KCkJlc3QgUmVnYXJkcywKCkJvcmlzCgotLSAKQm9y
-aXMgQnJlemlsbG9uLCBGcmVlIEVsZWN0cm9ucwpFbWJlZGRlZCBMaW51eCBhbmQgS2VybmVsIGVu
-Z2luZWVyaW5nCmh0dHA6Ly9mcmVlLWVsZWN0cm9ucy5jb20KX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXhwcGMtZGV2IG1haWxpbmcgbGlzdApMaW51
-eHBwYy1kZXZAbGlzdHMub3psYWJzLm9yZwpodHRwczovL2xpc3RzLm96bGFicy5vcmcvbGlzdGlu
-Zm8vbGludXhwcGMtZGV2
+
+--XsQoSWH+UP9D9v3l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Aug 13, 2014 at 12:52:22PM +0300, Mikko Perttunen wrote:
+> On 13/08/14 11:57, Thierry Reding wrote:
+> >* PGP Signed by an unknown key
+> >
+> >On Wed, Aug 13, 2014 at 11:42:53AM +0300, Mikko Perttunen wrote:
+> >>
+> >>
+> >>On 13/08/14 11:12, Mikko Perttunen wrote:
+> >>>On 13/08/14 11:07, Thierry Reding wrote:
+> >>>>>Old Signed by an unknown key
+> >>>>
+> >>>>On Tue, Aug 05, 2014 at 11:12:57AM +0300, Mikko Perttunen wrote:
+> >>>>>Hi,
+> >>>>>
+> >>>>>this series adds support for hardware-triggered thermal reset to the=
+ PMC
+> >>>>>driver. Namely, it adds device tree properties for specifying the I2C
+> >>>>>command to be sent when thermtrip is triggered. It is to be noted
+> >>>>>that thermtrip won't be ever triggered without a soctherm driver to
+> >>>>>calibrate the sensors, but I'll follow up with that patch.
+> >>>>>
+> >>>>>pmc.c required some juggling around to make the match data usable in
+> >>>>>probe, since I didn't want to put the code into the initcall either,=
+ since
+> >>>>>the soctherm driver won't be initialized by that point anyway.
+> >>>>>
+> >>>>>Series tested on Jetson-TK1. Should work on Tegra30 and Tegra114 too.
+> >>>>
+> >>>>Can you describe the procedure used to test this? We currently have a
+> >>>>bunch of features in Tegra that some people have tested at some point
+> >>>>during development but the test procedures never got documented. That
+> >>>>means whenever we want to test something we need to go and reinvent a
+> >>>>bunch of tests after the fact.
+> >>>>
+> >>>>So what I'd like to start doing is collect tests (preferably in some
+> >>>>scripted way) so that they can be kept in a repository that people can
+> >>>>easily clone and run on devices.
+> >>>>
+> >>>>Could you provide something like that for thermtrip?
+> >>>
+> >>>Sure. I'll see if I can make a just a test script or if a local patch =
+is
+> >>>needed to test. Btw, I also have a pretty nice test script for EMC
+> >>>ready, and I agree that such a repository would be very nice.
+> >>
+> >>Here is a test program. It it works, the device with immediately shut d=
+own.
+> >>
+> >>https://gist.github.com/cyndis/66126c9c176b5f94a76f
+> >
+> >Is there a way to set the trip temperature without going through
+> >/dev/mem? I'd expect the device to have a sysfs interface of some
+> >sort.
+>=20
+> The thermtrip "device" isn't currently exposed in any way. If it were
+> exposed, I suppose it would be exposed as thermal zone devices, each with
+> one trip point. Even then, the thermal framework doesn't really support t=
+his
+> properly; none of the trip point types really apply to this kind of trip
+> point, and x86 systems don't expose their trips either.
+
+Okay. The reason why I asked is because I'm not sure yet that having C
+programs in the test suite would be good, so having something that's
+easily scriptable would be preferred.
+
+> Anyway, since debugging is pretty much the only use case for modifying
+> the trip temperature, I thought adding the tz_devices would be a bit
+> overkill.
+
+An alternative could be a file in debugfs.
+
+Thierry
+
+--XsQoSWH+UP9D9v3l
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJT6z+dAAoJEN0jrNd/PrOhWk8P/0t5YQTWexFH7y6bhKc2nC52
+51sc6A28bhFNNGa4h1Dzc4kIwHDp1tnZjCud0sLgM9ot7zJ1OZINaZE/hhNARJ9I
+bVp6U40hh3WW9YLrI19Zug7cxPaiN06zcpUldHKMMsYYjTtIQPhtPhp8DIwH5WcW
+xkEN3fcoTfVJyxu0U26ProqrWspgeozDPH6vtpXMt7lwibnuKGcenj31uG70P4DB
+Ju25BV6ezQgt/r0msWARu2AC2L5BXy3Ldg6G66WDX72kHyxhBFYmXYyiC4kjAQ/l
+Mmw4pBZWaAlU7D/bQ65cKMBuunX4kKeu+2qYWhKRhdCJ/FhVyoyVav5r2mZ9X9Gq
+4Dq0qOpw9+lkm+S9N0SPkW8jyLnAjnQnopCbD/5ihNmGw873Qond+8DiS/F356U9
+cYOzXtpumKy4STnfEnX6HKFj3y4pING9+6sRxv8szdOZJC6NT0t0BFaNQyIJEjvy
+wdAgl7Za47h6UXMokqNVR5wFbzXQch1D0aADSEocrqHioDiu0CpGIvn8mK3R5ieK
+S8qN30ot9GI7G/2cXiGPYwE3Jl1mZJdBGUcs1n6V5FX2chYU1xrjtdcn4FgSBOQw
+DehbUOlwZ+xX1uYGjiaBTmkpjyUV9FTVTHgRgAm3doGgdX5RuQLmUR2GhJwWYGPT
+4WVgl0JngMOp4jzxgbU+
+=V11i
+-----END PGP SIGNATURE-----
+
+--XsQoSWH+UP9D9v3l--
