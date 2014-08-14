@@ -1,66 +1,109 @@
-From: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: remove pinmux setup from Tegra124 boards
-Date: Thu, 14 Aug 2014 10:26:00 +0200
-Message-ID: <1408004760.4649.11.camel@weser.hi.pengutronix.de>
-References: <1403563506-6461-1-git-send-email-swarren@wwwdotorg.org>
-	 <1407921548.5835.20.camel@weser.hi.pengutronix.de>
-	 <53EB91D4.8050402@wwwdotorg.org>
+From: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: tegra: add Acer Chromebook 13 device tree
+Date: Thu, 14 Aug 2014 01:40:43 -0700
+Message-ID: <CAEUnVG4=Jr=L=0x1_MrYqNYvpL_2s3Fnicg0vME_k6NjAxREYQ@mail.gmail.com>
+References: <1407894967-18300-1-git-send-email-dgreid@chromium.org>
+ <53EB9BF0.9010002@wwwdotorg.org> <CAEUnVG6ki9O5hzw9OvJ1+8Www_G1+rqXujmNyJy+qOP-z_JR=A@mail.gmail.com>
+ <53EBC2EC.1010300@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53EB91D4.8050402-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <53EBC2EC.1010300-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Am Mittwoch, den 13.08.2014, 10:27 -0600 schrieb Stephen Warren:
-> On 08/13/2014 03:19 AM, Lucas Stach wrote:
-> > Hi Stephen,
-> >
-> > sorry for getting on this late, I completely missed this and only now
-> > stumbled upon this.
-> >
-> > I'm not really fond of this change. The barebox bootloader completely
-> > probes itself from DT, including the pinmux. We try to stay as close as
-> > possible to the upstream kernel DTs and only introduce minimal changes.
-> > Removing the pinmux from the DTS will completely break barebox, as we
-> > don't have any static pinmux tables there.
-> 
-> Probing bootloaders from DT seems like a huge mistake to me, but that's 
-> probably a separate discussion.
-> 
-Bringing DT into the bootloader was one the single most important
-things for productivity we ever did.
-On i.MX (the best supported arch in Barebox) it has brought down bringup
-time for boards already supported by Linux to a few hours and enables us
-to share effort spent for bootloader development on new boards with
-later Linux development. Writing a single DT description for the
-hardware to bring up the bootloader greatly reduces the time needed to
-bring up Linux later on.
+On Wed, Aug 13, 2014 at 12:56 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> On 08/13/2014 01:07 PM, Dylan Reid wrote:
+>>
+>> On Wed, Aug 13, 2014 at 10:10 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+>> wrote:
+>>>
+>>> On 08/12/2014 07:56 PM, Dylan Reid wrote:
+>>>>
+>>>>
+>>>> The Acer Chromebook 13, codenamed "Big", contains an NVIDIA tegra124
+>>>> processor and is similar to the Venice2 reference platform.
+>>>>
+>>>> The keyboard, USB 2, audio, HDMI, sdcard and emmc have been tested
+>>>> and work on the 1366x768 models.  I haven't tried on the HD systems
+>>>> yet.
+>>>>
+>>>> WiFi does not yet work, it needs at least some PMIC changes to enable
+>>>> the 32k clock.
+>>>>
+>>>> The elan trackpad is not yet functional but hopefully will be soon as
+>>>> there are patches under review.
+>>>>
+>>>> There is also an issue on reboot because the TPM isn't reset.  It will
+>>>> cause the stock firmware to enter recovery mode.  This can be worked
+>>>> around by an EC-reset, press refresh and power at the same time.
+>>>
+>>>
+>>>
+>>>> diff --git a/arch/arm/boot/dts/tegra124-big.dts
+>>>> b/arch/arm/boot/dts/tegra124-big.dts
+>>>
+>>>
+>>>
+>>> I think we need to include the SKU name in the filename and compatible
+>>> value
+>>> below, or at least plan out that for other SKUs, we'll add the SKU name
+>>> on.
+>>>
+>>>
+>>>> +/ {
+>>>> +       model = "Google Big";
+>>>> +       compatible = "google,nyan-big", "nvidia,tegra124";
+>>>
+>>>
+>>>
+>>> I think it'd be more user-friendly if the filename and compatible value
+>>> more
+>>> obviously tied to the end-user-visible product name.
+>>
+>>
+>> I'll change the model to "Acer Chromebook 13"
+>
+>
+> Would mentioning "CB5" in the model be a good idea; that's what it's sold
+> as.
 
-> The pinmux generator scripts spit out DT, so you can easily generate a 
-> DT representation of the board pinmux, and add that to the DT file in 
-> Barebox. See https://github.com/NVIDIA/tegra-pinmux-scripts.
-> 
-I could do that, but...
+I am OK with either,  most of the press has referred to "Acer
+Chromebook 13" although the CB5-311 model number has showed up a few
+times too.
 
-> > In order to not break the bootloader use-case I strongly advocate to
-> > keep the static pinmux in the DT. Can't we just rename the the state to
-> > something like "initial", so Linux won't try to set it by default?
-> 
-> That doesn't seem like a good idea. There's no reason for the DT to 
-> contain data that we know has no use.
-> 
-Just because the DTS are still located in the kernel tree doesn't mean
-the kernel is the only user. DT is meant to be a hardware description.
-IMHO knowing that the kernel isn't using some information contained in
-there is no argument for omitting the info.
-
-Regards,
-Lucas
-
--- 
-Pengutronix e.K.             | Lucas Stach                 |
-Industrial Linux Solutions   | http://www.pengutronix.de/  |
+>
+>
+>> If we need a separate DT for the FullHD skew, then can we add a file
+>> 'tegra124-nyan-big-full-hd.dtsi'?  We may also add
+>> 'tegra124-nyan-big-full-hd-touch.dtsi' as well.  They would just
+>> override the necessary things from this file.
+>
+>
+> *.dts rather than *.dtsi I suspect? Yes, having a common include file and
+> separate top-level files sounds like a good idea.
+>
+>
+>>>> +       gpio-keys {
+>>>> +               compatible = "gpio-keys";
+>>>> +
+>>>> +               lid {
+>>>> +                       label = "Lid";
+>>>> +                       gpios = <&gpio TEGRA_GPIO(R, 4)
+>>>> GPIO_ACTIVE_LOW>;
+>>>> +                       linux,input-type = <5>;
+>>>> +                       linux,code = <0>;
+>>>
+>>>
+>>>
+>>> Aren't there #defines for the 5 and 0 there?
+>>
+>>
+>> yes for code, apparently not for input-type.  I think 5 means EV_SW,
+>> maybe that should get added to include/dt-bindings/input somewhere?
+>
+>
+> Yes, that sounds like a good idea.
+>
