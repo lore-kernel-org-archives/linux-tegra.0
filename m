@@ -1,65 +1,66 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v5] devicetree: Add generic IOMMU device tree bindings
-Date: Thu, 14 Aug 2014 09:47:42 +0300
-Message-ID: <87a9774lf5.fsf@nvidia.com>
-References: <1406803383-11601-1-git-send-email-thierry.reding@gmail.com>
+From: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: remove pinmux setup from Tegra124 boards
+Date: Thu, 14 Aug 2014 10:26:00 +0200
+Message-ID: <1408004760.4649.11.camel@weser.hi.pengutronix.de>
+References: <1403563506-6461-1-git-send-email-swarren@wwwdotorg.org>
+	 <1407921548.5835.20.camel@weser.hi.pengutronix.de>
+	 <53EB91D4.8050402@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1406803383-11601-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Will Deacon <Will.Deacon-5wv7dgnIgG8@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <53EB91D4.8050402-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Am Mittwoch, den 13.08.2014, 10:27 -0600 schrieb Stephen Warren:
+> On 08/13/2014 03:19 AM, Lucas Stach wrote:
+> > Hi Stephen,
+> >
+> > sorry for getting on this late, I completely missed this and only now
+> > stumbled upon this.
+> >
+> > I'm not really fond of this change. The barebox bootloader completely
+> > probes itself from DT, including the pinmux. We try to stay as close as
+> > possible to the upstream kernel DTs and only introduce minimal changes.
+> > Removing the pinmux from the DTS will completely break barebox, as we
+> > don't have any static pinmux tables there.
+> 
+> Probing bootloaders from DT seems like a huge mistake to me, but that's 
+> probably a separate discussion.
+> 
+Bringing DT into the bootloader was one the single most important
+things for productivity we ever did.
+On i.MX (the best supported arch in Barebox) it has brought down bringup
+time for boards already supported by Linux to a few hours and enables us
+to share effort spent for bootloader development on new boards with
+later Linux development. Writing a single DT description for the
+hardware to bring up the bootloader greatly reduces the time needed to
+bring up Linux later on.
 
-Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> writes:
+> The pinmux generator scripts spit out DT, so you can easily generate a 
+> DT representation of the board pinmux, and add that to the DT file in 
+> Barebox. See https://github.com/NVIDIA/tegra-pinmux-scripts.
+> 
+I could do that, but...
 
-> +Multiple-master IOMMU:
-> +----------------------
-> +
-> +       iommu {
-> +               /* the specifier represents the ID of the master */
-> +               #iommu-cells = <1>;
-> +       };
-> +
-> +       master@1 {
-> +               /* device has master ID 42 in the IOMMU */
-> +               iommus = <&{/iommu} 42>;
-> +       };
-> +
-> +       master@2 {
-> +               /* device has master IDs 23 and 24 in the IOMMU */
-> +               iommus = <&{/iommu} 23>, <&{/iommu} 24>;
-> +       };
+> > In order to not break the bootloader use-case I strongly advocate to
+> > keep the static pinmux in the DT. Can't we just rename the the state to
+> > something like "initial", so Linux won't try to set it by default?
+> 
+> That doesn't seem like a good idea. There's no reason for the DT to 
+> contain data that we know has no use.
+> 
+Just because the DTS are still located in the kernel tree doesn't mean
+the kernel is the only user. DT is meant to be a hardware description.
+IMHO knowing that the kernel isn't using some information contained in
+there is no argument for omitting the info.
 
-I think that this "master ID" will be parsed in IOMMU driver. For
-example, ARM,SMMU expects "streamID" as "master ID", right?
+Regards,
+Lucas
 
-If a SoC has a feature to configure to assign streamID to devices at
-runtime, "streamID" is not equal to "master ID".
-
-  iommus = <&{/smmu} "soc specific master ID">;
-
-"soc master ID" needs to be translated into "streamID" by SoC SW. It
-seems that ARM,SMMU kernel driver doesn't expect this kind of ID
-translation. If ARM,SMMU kernel driver is used as is, "soc master ID"
-would be incompatible? ARM,SMMU needs such translation before
-parsing. Is this my understanding right?
-
-If so I think that this master ID configuration/translation may be quite
-reasonable requirment for SoC using ARM,SMMU.
-
-Can we consider this ID translation within ARM,SMMU compatibility?
-
-IOW, is it possible to implement some SoC specific hook for ID
-translation/configuration in ARM,SMMU kernel driver?
+-- 
+Pengutronix e.K.             | Lucas Stach                 |
+Industrial Linux Solutions   | http://www.pengutronix.de/  |
