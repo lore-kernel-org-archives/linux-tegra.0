@@ -1,92 +1,165 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v5] devicetree: Add generic IOMMU device tree bindings
-Date: Thu, 14 Aug 2014 19:04:52 +0300
-Message-ID: <87y4ur2h23.fsf@nvidia.com>
-References: <1406803383-11601-1-git-send-email-thierry.reding@gmail.com>
-	<87a9774lf5.fsf@nvidia.com>
-	<cfb1d2ff66004685b7ead3f5e6321681@BL2PR03MB468.namprd03.prod.outlook.com>
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] i2c: i2c-tegra: Move clk_prepare/clk_set_rate to probe
+Date: Fri, 15 Aug 2014 12:47:14 +0300
+Message-ID: <1408096034-17270-1-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <cfb1d2ff66004685b7ead3f5e6321681-AZ66ij2kwaacCcN9WK45f+O6mTEJWrR4XA4E9RH9d+qIuWR1G4zioA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Will Deacon <Will.Deacon-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Varun,
+Currently the i2c-tegra bus driver prepares, enables
+and set_rates its clocks separately for each transfer.
+This causes locking problems when doing I2C transfers
+from clock notifiers; see
+http://lists.infradead.org/pipermail/linux-arm-kernel/2014-July/268653.html
 
-Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org> writes:
+This patch moves clk_prepare/unprepare and clk_set_rate calls to
+the probe function, leaving only clk_enable/disable to be
+done on each transfer. This solves the locking issue.
 
->> -----Original Message-----
->> From: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org [mailto:iommu-
->> bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org] On Behalf Of Hiroshi Doyu
->> Sent: Thursday, August 14, 2014 12:18 PM
->> To: Thierry Reding; Stephen Warren; Arnd Bergmann; Will Deacon
->> Cc: Mark Rutland; devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Olof Johansson;
->> iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org; Rob Herring; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
->> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
->> Subject: Re: [PATCH v5] devicetree: Add generic IOMMU device tree bindings
->> 
->> 
->> Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> writes:
->> 
->> > +Multiple-master IOMMU:
->> > +----------------------
->> > +
->> > +       iommu {
->> > +               /* the specifier represents the ID of the master */
->> > +               #iommu-cells = <1>;
->> > +       };
->> > +
->> > +       master@1 {
->> > +               /* device has master ID 42 in the IOMMU */
->> > +               iommus = <&{/iommu} 42>;
->> > +       };
->> > +
->> > +       master@2 {
->> > +               /* device has master IDs 23 and 24 in the IOMMU */
->> > +               iommus = <&{/iommu} 23>, <&{/iommu} 24>;
->> > +       };
->> 
->> I think that this "master ID" will be parsed in IOMMU driver. For example,
->> ARM,SMMU expects "streamID" as "master ID", right?
->> 
->> If a SoC has a feature to configure to assign streamID to devices at runtime,
->> "streamID" is not equal to "master ID".
->> 
->>   iommus = <&{/smmu} "soc specific master ID">;
->> 
->> "soc master ID" needs to be translated into "streamID" by SoC SW. It seems
->> that ARM,SMMU kernel driver doesn't expect this kind of ID translation. If
->> ARM,SMMU kernel driver is used as is, "soc master ID"
->> would be incompatible? ARM,SMMU needs such translation before parsing. Is
->> this my understanding right?
->> 
->> If so I think that this master ID configuration/translation may be quite
->> reasonable requirment for SoC using ARM,SMMU.
->> 
->> Can we consider this ID translation within ARM,SMMU compatibility?
->> 
->> IOW, is it possible to implement some SoC specific hook for ID
->> translation/configuration in ARM,SMMU kernel driver?
->
->
-> Can the id translation be done using a SMR mask?
+Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/i2c/busses/i2c-tegra.c | 57 +++++++++++++++++++++++++++++++++---------
+ 1 file changed, 45 insertions(+), 12 deletions(-)
 
-No, "SoC master ID" is completely independenf of SMR.
-
-> Also, for dynamic stream ID allocation we would need to represent the
-> specific master register (to store the stream ID) in the device tree.
-
-I assmue that the above means that iMX has such configuration register
-to map steramID and a device dynamically.
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 87d0371..251f172 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -380,34 +380,33 @@ static inline int tegra_i2c_clock_enable(struct tegra_i2c_dev *i2c_dev)
+ {
+ 	int ret;
+ 	if (!i2c_dev->hw->has_single_clk_source) {
+-		ret = clk_prepare_enable(i2c_dev->fast_clk);
++		ret = clk_enable(i2c_dev->fast_clk);
+ 		if (ret < 0) {
+ 			dev_err(i2c_dev->dev,
+ 				"Enabling fast clk failed, err %d\n", ret);
+ 			return ret;
+ 		}
+ 	}
+-	ret = clk_prepare_enable(i2c_dev->div_clk);
++	ret = clk_enable(i2c_dev->div_clk);
+ 	if (ret < 0) {
+ 		dev_err(i2c_dev->dev,
+ 			"Enabling div clk failed, err %d\n", ret);
+-		clk_disable_unprepare(i2c_dev->fast_clk);
++		clk_disable(i2c_dev->fast_clk);
+ 	}
+ 	return ret;
+ }
+ 
+ static inline void tegra_i2c_clock_disable(struct tegra_i2c_dev *i2c_dev)
+ {
+-	clk_disable_unprepare(i2c_dev->div_clk);
++	clk_disable(i2c_dev->div_clk);
+ 	if (!i2c_dev->hw->has_single_clk_source)
+-		clk_disable_unprepare(i2c_dev->fast_clk);
++		clk_disable(i2c_dev->fast_clk);
+ }
+ 
+ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
+ {
+ 	u32 val;
+ 	int err = 0;
+-	int clk_multiplier = I2C_CLK_MULTIPLIER_STD_FAST_MODE;
+ 	u32 clk_divisor;
+ 
+ 	err = tegra_i2c_clock_enable(i2c_dev);
+@@ -428,9 +427,6 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
+ 	i2c_writel(i2c_dev, val, I2C_CNFG);
+ 	i2c_writel(i2c_dev, 0, I2C_INT_MASK);
+ 
+-	clk_multiplier *= (i2c_dev->hw->clk_divisor_std_fast_mode + 1);
+-	clk_set_rate(i2c_dev->div_clk, i2c_dev->bus_clk_rate * clk_multiplier);
+-
+ 	/* Make sure clock divisor programmed correctly */
+ 	clk_divisor = i2c_dev->hw->clk_divisor_hs_mode;
+ 	clk_divisor |= i2c_dev->hw->clk_divisor_std_fast_mode <<
+@@ -712,6 +708,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	void __iomem *base;
+ 	int irq;
+ 	int ret = 0;
++	int clk_multiplier = I2C_CLK_MULTIPLIER_STD_FAST_MODE;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	base = devm_ioremap_resource(&pdev->dev, res);
+@@ -777,17 +774,39 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, i2c_dev);
+ 
++	if (!i2c_dev->hw->has_single_clk_source) {
++		ret = clk_prepare(i2c_dev->fast_clk);
++		if (ret < 0) {
++			dev_err(i2c_dev->dev, "Clock prepare failed %d\n", ret);
++			return ret;
++		}
++	}
++
++	ret = clk_prepare(i2c_dev->div_clk);
++	if (ret < 0) {
++		dev_err(i2c_dev->dev, "Clock prepare failed %d\n", ret);
++		goto unprepare_fast_clk;
++	}
++
++	clk_multiplier *= (i2c_dev->hw->clk_divisor_std_fast_mode + 1);
++	ret = clk_set_rate(i2c_dev->div_clk,
++			   i2c_dev->bus_clk_rate * clk_multiplier);
++	if (ret) {
++		dev_err(i2c_dev->dev, "Clock rate change failed %d\n", ret);
++		goto unprepare_div_clk;
++	}
++
+ 	ret = tegra_i2c_init(i2c_dev);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to initialize i2c controller");
+-		return ret;
++		goto unprepare_div_clk;
+ 	}
+ 
+ 	ret = devm_request_irq(&pdev->dev, i2c_dev->irq,
+ 			tegra_i2c_isr, 0, dev_name(&pdev->dev), i2c_dev);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to request irq %i\n", i2c_dev->irq);
+-		return ret;
++		goto unprepare_div_clk;
+ 	}
+ 
+ 	i2c_set_adapdata(&i2c_dev->adapter, i2c_dev);
+@@ -803,16 +822,30 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	ret = i2c_add_numbered_adapter(&i2c_dev->adapter);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to add I2C adapter\n");
+-		return ret;
++		goto unprepare_div_clk;
+ 	}
+ 
+ 	return 0;
++
++unprepare_div_clk:
++	clk_unprepare(i2c_dev->div_clk);
++
++unprepare_fast_clk:
++	if (!i2c_dev->hw->has_single_clk_source)
++		clk_unprepare(i2c_dev->fast_clk);
++
++	return ret;
+ }
+ 
+ static int tegra_i2c_remove(struct platform_device *pdev)
+ {
+ 	struct tegra_i2c_dev *i2c_dev = platform_get_drvdata(pdev);
+ 	i2c_del_adapter(&i2c_dev->adapter);
++
++	clk_unprepare(i2c_dev->div_clk);
++	if (!i2c_dev->hw->has_single_clk_source)
++		clk_unprepare(i2c_dev->fast_clk);
++
+ 	return 0;
+ }
+ 
+-- 
+1.8.1.5
