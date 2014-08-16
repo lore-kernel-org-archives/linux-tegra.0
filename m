@@ -1,38 +1,61 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/6] clk: tegra: don't abort clk init on error
-Date: Sat, 16 Aug 2014 01:45:13 +0300
-Message-ID: <20140815224513.GM1626@tbergstrom-lnx.Nvidia.com>
-References: <1405437890-6468-1-git-send-email-pdeschrijver@nvidia.com>
- <1405437890-6468-2-git-send-email-pdeschrijver@nvidia.com>
- <53CE9C5F.1030005@wwwdotorg.org>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [RFC v2 1/3] PM / QoS: Add PM_QOS_MEMORY_BANDWIDTH class
+Date: Sat, 16 Aug 2014 08:35:17 +0200
+Message-ID: <20140816063517.GB13884@Nokia-N900>
+References: <1408107129-29516-1-git-send-email-tomeu.vizoso@collabora.com>
+ <1408107129-29516-2-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pm-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <53CE9C5F.1030005-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1408107129-29516-2-git-send-email-tomeu.vizoso@collabora.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: linux-pm@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Terje Bergstr?m <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jul 22, 2014 at 07:16:15PM +0200, Stephen Warren wrote:
-> On 07/15/2014 09:24 AM, Peter De Schrijver wrote:
-> > Just continue initializing clocks if there's an error on one of them. This
-> > is useful if there's a mistake in the inittable, because the system could
-> > hang if clk_disable_unused() disables some of the critical clocks in this
-> > table.
+Hi!
+
+> Also adds a class type PM_QOS_SUM that aggregates the values by summing them.
 > 
-> If there's a problem in the init table, we should simply fix it instead
-> of working around it.
+> It can be used by memory controllers to calculate the optimum clock frequency
+> based on the bandwidth needs of the different memory clients.
 > 
+> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> ---
+>  Documentation/power/pm_qos_interface.txt |  4 +++-
+>  include/linux/pm_qos.h                   |  5 ++++-
+>  kernel/power/qos.c                       | 27 ++++++++++++++++++++++++++-
+>  3 files changed, 33 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/power/pm_qos_interface.txt b/Documentation/power/pm_qos_interface.txt
+> index a5da5c7..57782e8 100644
+> --- a/Documentation/power/pm_qos_interface.txt
+> +++ b/Documentation/power/pm_qos_interface.txt
+> @@ -5,7 +5,8 @@ performance expectations by drivers, subsystems and user space applications on
+>  one of the parameters.
+>  
+>  Two different PM QoS frameworks are available:
+> -1. PM QoS classes for cpu_dma_latency, network_latency, network_throughput.
+> +1. PM QoS classes for cpu_dma_latency, network_latency, network_throughput,
+> +memory_bandwidth.
+>  2. the per-device PM QoS framework provides the API to manage the per-device latency
+>  constraints and PM QoS flags.
+>  
+> @@ -13,6 +14,7 @@ Each parameters have defined units:
+>   * latency: usec
+>   * timeout: usec
+>   * throughput: kbs (kilo bit / sec)
+> + * memory bandwidth: kbs (kilo bit / sec)
 
-Yes, ofcourse. However today we silently stop processing the init_table if a
-clock cannot be found. That doesn't sound right either to me and makes detecting
-wrong entries in the table more complex than it should be.
+Would mega bits per second make sense here?
 
-> At the very least, we need to WARN on this rather than just ignoring
-> problems.
+I suppose some many-core systems would have memory bandwith
+in > 10 terabit/sec, overflowing u32.
 
-Cheers,
+Plus, if driver in 3/3 is just an example, perhaps comment
+should explain that clearly?
 
-Peter.
+Otherwise looks good,
+
+Acked-by: Pavel Machek <pavel@ucw.cz>
