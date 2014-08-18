@@ -1,53 +1,73 @@
-From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH v2 1/9] of: Add NVIDIA Tegra XUSB mailbox binding
-Date: Mon, 18 Aug 2014 10:08:17 -0700
-Message-ID: <1408381705-3623-2-git-send-email-abrestic@chromium.org>
+From: Andrew Bresticker <abrestic@chromium.org>
+Subject: [PATCH v2 7/9] ARM: tegra: Add Tegra124 XUSB mailbox and xHCI controller
+Date: Mon, 18 Aug 2014 10:08:23 -0700
+Message-ID: <1408381705-3623-8-git-send-email-abrestic@chromium.org>
 References: <1408381705-3623-1-git-send-email-abrestic@chromium.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1408381705-3623-1-git-send-email-abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1408381705-3623-1-git-send-email-abrestic@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Jassi Brar <jassisinghbrar@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman <mathias.nyman@intel.com>, Grant Likely <grant.likely@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Arnd Bergmann <arnd@arndb.de>, Kishon Vijay Abraham I <kishon@ti.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add device-tree bindings for the Tegra XUSB mailbox which will be used
-for communication between the Tegra xHCI controller's firmware and the
-host processor.
+Add nodes for the Tegra XUSB mailbox and Tegra xHCI controller and
+add the PHY mailbox channel to the XUSB padctl node.
 
-Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
 ---
 Changes from v1:
  - Updated to use common mailbox bindings.
+ - Added remaining clocks/resets.
 ---
- .../bindings/mailbox/nvidia,tegra124-xusb-mbox.txt | 30 ++++++++++++++++++++++
- include/dt-bindings/mailbox/tegra-xusb-mailbox.h   |  7 +++++
- 2 files changed, 37 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mailbox/nvidia,tegra124-xusb-mbox.txt
- create mode 100644 include/dt-bindings/mailbox/tegra-xusb-mailbox.h
+ arch/arm/boot/dts/tegra124.dtsi | 40 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mailbox/nvidia,tegra124-xusb-mbox.txt b/Documentation/devicetree/bindings/mailbox/nvidia,tegra124-xusb-mbox.txt
-new file mode 100644
-index 0000000..c46219b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mailbox/nvidia,tegra124-xusb-mbox.txt
-@@ -0,0 +1,30 @@
-+NVIDIA Tegra XUSB mailbox
-+=========================
+diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+index 03916ef..98b8340 100644
+--- a/arch/arm/boot/dts/tegra124.dtsi
++++ b/arch/arm/boot/dts/tegra124.dtsi
+@@ -3,6 +3,7 @@
+ #include <dt-bindings/pinctrl/pinctrl-tegra.h>
+ #include <dt-bindings/pinctrl/pinctrl-tegra-xusb.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/mailbox/tegra-xusb-mailbox.h>
+ 
+ #include "skeleton.dtsi"
+ 
+@@ -495,11 +496,50 @@
+ 		status = "disabled";
+ 	};
+ 
++	usb@0,70090000 {
++		compatible = "nvidia,tegra124-xhci";
++		reg = <0x0 0x70090000 0x0 0x8000>,
++		      <0x0 0x70098000 0x0 0x1000>,
++		      <0x0 0x70099000 0x0 0x1000>;
++		interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA124_CLK_XUSB_HOST>,
++			 <&tegra_car TEGRA124_CLK_XUSB_HOST_SRC>,
++			 <&tegra_car TEGRA124_CLK_XUSB_DEV>,
++			 <&tegra_car TEGRA124_CLK_XUSB_DEV_SRC>,
++			 <&tegra_car TEGRA124_CLK_XUSB_FALCON_SRC>,
++			 <&tegra_car TEGRA124_CLK_XUSB_SS>,
++			 <&tegra_car TEGRA124_CLK_XUSB_SS_DIV2>,
++			 <&tegra_car TEGRA124_CLK_XUSB_SS_SRC>,
++			 <&tegra_car TEGRA124_CLK_XUSB_HS_SRC>,
++			 <&tegra_car TEGRA124_CLK_XUSB_FS_SRC>,
++			 <&tegra_car TEGRA124_CLK_PLL_U_480M>,
++			 <&tegra_car TEGRA124_CLK_CLK_M>,
++			 <&tegra_car TEGRA124_CLK_PLL_E>;
++		clock-names = "xusb_host", "xusb_host_src", "xusb_dev",
++			      "xusb_dev_src", "xusb_falcon_src", "xusb_ss",
++			      "xusb_ss_div2", "xusb_ss_src", "xusb_hs_src",
++			      "xusb_fs_src", "pll_u_480m", "clk_m", "pll_e";
++		resets = <&tegra_car 89>, <&tegra_car 95>, <&tegra_car 156>,
++			 <&tegra_car 143>;
++		reset-names = "xusb_host", "xusb_dev", "xusb_ss", "xusb";
++		mboxes = <&mbox TEGRA_XUSB_MBOX_CHAN_HOST>;
++		status = "disabled";
++	};
 +
-+The Tegra XUSB mailbox is used by the Tegra xHCI controller's firmware to
-+communicate requests to the host and PHY drivers.
-+
-+Required properties:
-+--------------------
-+ - compatible: Should be "nvidia,tegra124-xusb-mbox".
-+ - reg: Address and length of the XUSB FPCI registers.
-+ - interrupts: XUSB mailbox interrupt.
-+ - #mbox-cells: Should be 1.  The specifier is the index of the mailbox to
-+   reference.  See <dt-bindings/mailbox/tegra-xusb-mailbox.h> for the list
-+   of valid values.
-+
-+Example:
-+--------
 +	mbox: mailbox@0,70098000 {
 +		compatible = "nvidia,tegra124-xusb-mbox";
 +		reg = <0x0 0x70098000 0x0 0x1000>;
@@ -56,23 +76,14 @@ index 0000000..c46219b
 +		#mbox-cells = <1>;
 +	};
 +
-+	usb@0,70090000 {
-+		...
-+		mboxes = <&mbox TEGRA_XUSB_MBOX_CHAN_HOST>;
-+		...
-+	};
-diff --git a/include/dt-bindings/mailbox/tegra-xusb-mailbox.h b/include/dt-bindings/mailbox/tegra-xusb-mailbox.h
-new file mode 100644
-index 0000000..59de6b0
---- /dev/null
-+++ b/include/dt-bindings/mailbox/tegra-xusb-mailbox.h
-@@ -0,0 +1,7 @@
-+#ifndef _DT_BINDINGS_TEGRA_XUSB_MAILBOX_H
-+#define _DT_BINDINGS_TEGRA_XUSB_MAILBOX_H
-+
-+#define TEGRA_XUSB_MBOX_CHAN_HOST	0
-+#define TEGRA_XUSB_MBOX_CHAN_PHY	1
-+
-+#endif /* _DT_BINDINGS_TEGRA_XUSB_MAILBOX_H */
+ 	padctl: padctl@0,7009f000 {
+ 		compatible = "nvidia,tegra124-xusb-padctl";
+ 		reg = <0x0 0x7009f000 0x0 0x1000>;
+ 		resets = <&tegra_car 142>;
+ 		reset-names = "padctl";
++		mboxes = <&mbox TEGRA_XUSB_MBOX_CHAN_PHY>;
+ 
+ 		#phy-cells = <1>;
+ 	};
 -- 
 2.1.0.rc2.206.gedb03e5
