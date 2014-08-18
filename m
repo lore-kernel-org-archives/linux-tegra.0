@@ -1,48 +1,74 @@
-From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
-Subject: Re: [PATCH 1/3] of: Add of_match_machine helper
-Date: Mon, 18 Aug 2014 13:10:13 +0300
-Message-ID: <53F1D105.1070107@nvidia.com>
-References: <1407452515-2390-1-git-send-email-ttynkkynen@nvidia.com>	<1407452515-2390-2-git-send-email-ttynkkynen@nvidia.com>
- <20140817152854.5406BC40ADD@trevor.secretlab.ca>
+From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 0/5] MMC cleanup of dev_pm_ops and .owner
+Date: Mon, 18 Aug 2014 14:38:06 +0200
+Message-ID: <CAPDyKFr5ESzjEd3DUO7aMKN9K_Ytuw8GY-fgEyCM4sCGJAX3NQ@mail.gmail.com>
+References: <1407860069-12706-1-git-send-email-peter.griffin@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20140817152854.5406BC40ADD@trevor.secretlab.ca>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Grant Likely <grant.likely@linaro.org>
-Cc: devicetree@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, "Rafael J.
- Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1407860069-12706-1-git-send-email-peter.griffin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter Griffin <peter.griffin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "tgih.jun-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <tgih.jun-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chris Ball <chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org>, jarkko.lavinen-xNZwKgViW5gAvxtiuMwx3w@public.gmane.org, balajitk <balajitk-l0cyMroinI0@public.gmane.org>, Barry Song <baohua-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Viresh Kumar <viresh.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ian Molton <ian.molton-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, linux-mmc <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-omap <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, spear-devel-nkJGhpqTU55BDgjK7y7TUQ@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Patch Tracking <patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 17/08/14 18:28, Grant Likely wrote:
-> On Fri, 8 Aug 2014 02:01:53 +0300, Tuomas Tynkkynen <ttynkkynen@nvidia.com> wrote:
-[...]
->> +EXPORT_SYMBOL(of_match_machine);
-> 
-> Too wordy...
-> 
-> 	return of_match_node(matches, of_allnodes);
-> 
-> :-)
-> 
-> It could be a static inline, but I don't think it's even worth having a
-> helper. The callers could just open code the above.
-> 
+On 12 August 2014 18:14, Peter Griffin <peter.griffin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> This series cleans up a few platform drivers in how they are declaring there
+> dev_pm_ops structs, and gets rid of a few now redundant #else conditions.
+>
+> Also it removes the .owner field of drivers which use module_platform_driver
+> api to register themselves, as this field gets overwritten.
+>
+> Peter Griffin (5):
+>   mmc: remove .owner field for drivers using module_platform_driver
+>   mmc: dw_mmc-pci: Remove superflous #else condition on CONFIG_PM_SLEEP
+>   mmc: dw_mmc-pltfm: Remove superflous #else condition on
+>     CONFIG_PM_SLEEP
+>   mmc: sdhci-pci: Use SET_RUNTIME_PM_OPS macro to set runtime pm
+>     callbacks
+>   mmc: sdhci-acpi.c: Use SET_RUNTIME_PM_OPS macro to set runtime pm
+>     callbacks
 
-Do you mean all the drivers should be referring to of_allnodes directly?
-I see that it's indeed exported, but to me that sounds like relying too
-much on an implementation detail. In fact, Documentation/devicetree/todo.txt
-even seems to have a TODO entry for its removal ("Remove of_allnodes list
-and iterate using list of child nodes alone").
+Thanks! Applied for next!
 
--- 
-nvpublic
+Kind regards
+Uffe
+
+>
+>  drivers/mmc/host/dw_mmc-pci.c      |  3 ---
+>  drivers/mmc/host/dw_mmc-pltfm.c    |  3 ---
+>  drivers/mmc/host/jz4740_mmc.c      |  1 -
+>  drivers/mmc/host/moxart-mmc.c      |  1 -
+>  drivers/mmc/host/mxcmmc.c          |  1 -
+>  drivers/mmc/host/mxs-mmc.c         |  1 -
+>  drivers/mmc/host/omap.c            |  1 -
+>  drivers/mmc/host/omap_hsmmc.c      |  1 -
+>  drivers/mmc/host/pxamci.c          |  1 -
+>  drivers/mmc/host/rtsx_pci_sdmmc.c  |  1 -
+>  drivers/mmc/host/rtsx_usb_sdmmc.c  |  1 -
+>  drivers/mmc/host/s3cmci.c          |  1 -
+>  drivers/mmc/host/sdhci-acpi.c      | 11 ++---------
+>  drivers/mmc/host/sdhci-bcm-kona.c  |  1 -
+>  drivers/mmc/host/sdhci-bcm2835.c   |  1 -
+>  drivers/mmc/host/sdhci-cns3xxx.c   |  1 -
+>  drivers/mmc/host/sdhci-dove.c      |  1 -
+>  drivers/mmc/host/sdhci-esdhc-imx.c |  1 -
+>  drivers/mmc/host/sdhci-msm.c       |  1 -
+>  drivers/mmc/host/sdhci-of-arasan.c |  1 -
+>  drivers/mmc/host/sdhci-of-esdhc.c  |  1 -
+>  drivers/mmc/host/sdhci-of-hlwd.c   |  1 -
+>  drivers/mmc/host/sdhci-pci.c       | 11 ++---------
+>  drivers/mmc/host/sdhci-pxav2.c     |  1 -
+>  drivers/mmc/host/sdhci-pxav3.c     |  1 -
+>  drivers/mmc/host/sdhci-s3c.c       |  1 -
+>  drivers/mmc/host/sdhci-sirf.c      |  1 -
+>  drivers/mmc/host/sdhci-spear.c     |  1 -
+>  drivers/mmc/host/sdhci-tegra.c     |  1 -
+>  drivers/mmc/host/sh_mmcif.c        |  1 -
+>  drivers/mmc/host/sh_mobile_sdhi.c  |  1 -
+>  drivers/mmc/host/sunxi-mmc.c       |  1 -
+>  32 files changed, 4 insertions(+), 52 deletions(-)
+>
+> --
+> 1.9.1
+>
