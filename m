@@ -1,98 +1,42 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2] ARM: tegra: add Acer Chromebook 13 device tree
-Date: Mon, 18 Aug 2014 10:10:06 -0600
-Message-ID: <53F2255E.7090208@wwwdotorg.org>
-References: <1407957267-3258-1-git-send-email-dgreid@chromium.org> <53EF76CF.9050808@suse.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: [PATCH v2 0/4] Allow xHCI drivers to be built as separate modules
+Date: Mon, 18 Aug 2014 09:12:19 -0700
+Message-ID: <1408378343-9352-1-git-send-email-abrestic@chromium.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53EF76CF.9050808-l3A5Bk7waGM@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org
+To: Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Julius Werner <jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Yoshihiro Shimoda <yoshihiro.shimoda.uh-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/16/2014 09:20 AM, Andreas F=E4rber wrote:
-> Hi,
->
-> Am 13.08.2014 21:14, schrieb Dylan Reid:
->> The Acer Chromebook 13, codenamed Big, contains an NVIDIA tegra124
->> processor and is similar to the Venice2 reference platform.
->>
->> The keyboard, USB 2, audio, HDMI, sdcard, and emmc have been tested
->> and work on the 1266x768 models.  The HD models haven't yet been
->> tested.
->>
->> WiFi does not work yet, it needs at least some PMIC changes to enabl=
-e
->> the 32k clock.
->>
->> The elan trackpad is not yet functional but hopefully will be soon a=
-s
->> there are patches under review.
->>
->> There is also an issue on reboot because the TPM isn't reset.  It wi=
-ll
->> cause the stock firmware to enter recovery mode.  This can be worked
->> around by an EC-reset, press the refresh and power keys at the same
->> time.
+It was suggested in the review of the Tegra xHCI driver [1] that we
+allow xHCI drivers to be built as individual modules (like EHCI) instead
+of building them all into the single xhci-hcd module as they are today.
 
->> diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts b/arch/arm/boot=
-/dts/tegra124-nyan-big.dts
->> new file mode 100644
->> index 0000000..79f1852
->> --- /dev/null
->> +++ b/arch/arm/boot/dts/tegra124-nyan-big.dts
->> @@ -0,0 +1,1136 @@
->> +/dts-v1/;
->> +
->> +#include <dt-bindings/input/input.h>
->> +#include "tegra124.dtsi"
->> +
->> +/ {
->> +	model =3D "Acer Chromebook 13";
->> +	compatible =3D "google,nyan-big", "nvidia,tegra124";
->
-> In light of v1 and the above commit message referring to this as Goog=
-le
-> Big, shouldn't this be "google,big", "nvidia,tegra124" and optionally
-> "google,nyan" as secondary string, independent of the new file name?
+Patches 1-3 prepare for making the xHCI PCI and platform drivers able
+to be built as individual modules and patch 4 actually creates the 3
+separate modules (core, platform, PCI).
 
-Despite this board having been derived from Nyan, it isn't Nyan, so I=20
-don't think Nyan should be part of any compatible value, nor a separate=
-=20
-compatible value.
+Based on 3.17-rc1.
 
->> +	pinmux: pinmux@0,70000868 {
->> +		pinctrl-names =3D "default";
->> +		pinctrl-0 =3D <&pinmux_default>;
->> +
->> +		pinmux_default: common {
->> +			dap_mclk1_pw4 {
->
-> Any need to have the nodes this way? Shouldn't this rather be
-> dap-mclk1-pw4 as node name by conventions, with a dap_mclk1_pw4 label
-> for referencing if needed? Same below, obviously.
+Changes from v1:
+ - rebased on changes introduced by xhci-rcar driver
 
-Underscores are consistent with at least all the other Tegra DTs, so I=20
-think this is best as is.
+[1] http://patchwork.ozlabs.org/patch/361265/
 
->> +	pwm: pwm@0,7000a000 {
->
-> Add the label to the .dtsi where the node is first declared? Then you
-> can override it the safer &pwm { ... }; way. Same for all other nodes
-> being extended/overridden here - that's what your colleagues requeste=
-d
-> for Spring. It'll help with the 80 char limit further below by reduci=
-ng
-> indentation.
+Andrew Bresticker (4):
+  xhci: Introduce xhci_init_driver()
+  xhci: Check for XHCI_COMP_MODE_QUIRK when disabling D3cold
+  xhci: Export symbols used by host-controller drivers
+  xhci: Allow xHCI drivers to be built as separate modules
 
-We certainly do have the pwm label in *.dtsi for other SoCs, so we=20
-should probably move the label there.
+ drivers/usb/host/Kconfig     |  5 +++
+ drivers/usb/host/Makefile    | 12 +++---
+ drivers/usb/host/xhci-dbg.c  |  1 +
+ drivers/usb/host/xhci-pci.c  | 80 +++++++-----------------------------
+ drivers/usb/host/xhci-plat.c | 68 ++++++-------------------------
+ drivers/usb/host/xhci.c      | 97 +++++++++++++++++++++++++++++++++-----------
+ drivers/usb/host/xhci.h      | 23 +----------
+ 7 files changed, 114 insertions(+), 172 deletions(-)
 
-Using the &pwm {} syntax would be inconsistent with all the other Tegra=
-=20
-DTs, and isn't really any safer; the HW isn't going to change, so once=20
-this is written, it should continue to "just work".
+-- 
+2.1.0.rc2.206.gedb03e5
