@@ -1,66 +1,176 @@
-From: Andrew Bresticker <abrestic@chromium.org>
-Subject: [PATCH v2 2/4] xhci: Check for XHCI_COMP_MODE_QUIRK when disabling D3cold
-Date: Mon, 18 Aug 2014 09:12:21 -0700
-Message-ID: <1408378343-9352-3-git-send-email-abrestic@chromium.org>
-References: <1408378343-9352-1-git-send-email-abrestic@chromium.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1408378343-9352-1-git-send-email-abrestic@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
-Cc: Alan Stern <stern@rowland.harvard.edu>, Julius Werner <jwerner@chromium.org>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: remove pinmux setup from Tegra124 boards
+Date: Mon, 18 Aug 2014 10:34:24 -0600
+Message-ID: <53F22B10.1010106@wwwdotorg.org>
+References: <1403563506-6461-1-git-send-email-swarren@wwwdotorg.org> <1407921548.5835.20.camel@weser.hi.pengutronix.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1407921548.5835.20.camel-WzVe3FnzCwFR6QfukMTsflXZhhPuCNm+@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Instead of calling xhci_compliance_mode_recovery_timer_quirk_check() again
-in the PCI suspend path, just check for XHCI_COMP_MODE_QUIRK which will
-have been set based on xhci_compliance_mode_recovery_timer_quirk_check()
-in xhci_init().
+On 08/13/2014 03:19 AM, Lucas Stach wrote:
+> Hi Stephen,
+>
+> sorry for getting on this late, I completely missed this and only now
+> stumbled upon this.
+>
+> I'm not really fond of this change. The barebox bootloader completely
+> probes itself from DT, including the pinmux. We try to stay as close as
+> possible to the upstream kernel DTs and only introduce minimal changes.
+> Removing the pinmux from the DTS will completely break barebox, as we
+> don't have any static pinmux tables there.
+>
+> In order to not break the bootloader use-case I strongly advocate to
+> keep the static pinmux in the DT. Can't we just rename the the state to
+> something like "initial", so Linux won't try to set it by default? This
+> way we could still keep the information in the DT, while being able to
+> say "if you are going to program the initial pinmux state you need to
+> follow the sequence defined by NVIDIA syseng".
+>
+> This obviously would make the naming of the state part of the binding,
+> but I think this may be acceptable.
 
-Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
----
-No change from v1.
----
- drivers/usb/host/xhci-pci.c | 2 +-
- drivers/usb/host/xhci.c     | 2 +-
- drivers/usb/host/xhci.h     | 3 ---
- 3 files changed, 2 insertions(+), 5 deletions(-)
+Linus, what do you think of Lucas's proposal?
 
-diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
-index 88d4553..8093ad6 100644
---- a/drivers/usb/host/xhci-pci.c
-+++ b/drivers/usb/host/xhci-pci.c
-@@ -279,7 +279,7 @@ static int xhci_pci_suspend(struct usb_hcd *hcd, bool do_wakeup)
- 	 * Systems with the TI redriver that loses port status change events
- 	 * need to have the registers polled during D3, so avoid D3cold.
- 	 */
--	if (xhci_compliance_mode_recovery_timer_quirk_check())
-+	if (xhci->quirks & XHCI_COMP_MODE_QUIRK)
- 		pdev->no_d3cold = true;
- 
- 	return xhci_suspend(xhci);
-diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-index f94530a..a5cd831 100644
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -491,7 +491,7 @@ static void compliance_mode_recovery_timer_init(struct xhci_hcd *xhci)
-  * Systems:
-  * Vendor: Hewlett-Packard -> System Models: Z420, Z620 and Z820
-  */
--bool xhci_compliance_mode_recovery_timer_quirk_check(void)
-+static bool xhci_compliance_mode_recovery_timer_quirk_check(void)
- {
- 	const char *dmi_product_name, *dmi_sys_vendor;
- 
-diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
-index 194dbd3..71400b3 100644
---- a/drivers/usb/host/xhci.h
-+++ b/drivers/usb/host/xhci.h
-@@ -1888,7 +1888,4 @@ struct xhci_input_control_ctx *xhci_get_input_control_ctx(struct xhci_hcd *xhci,
- struct xhci_slot_ctx *xhci_get_slot_ctx(struct xhci_hcd *xhci, struct xhci_container_ctx *ctx);
- struct xhci_ep_ctx *xhci_get_ep_ctx(struct xhci_hcd *xhci, struct xhci_container_ctx *ctx, unsigned int ep_index);
- 
--/* xHCI quirks */
--bool xhci_compliance_mode_recovery_timer_quirk_check(void);
--
- #endif /* __LINUX_XHCI_HCD_H */
--- 
-2.1.0.rc2.206.gedb03e5
+As background, the Tegra HW design implies that all initial pinmux setup 
+should be applied one time early during boot before peripherals are 
+used. That means it should happen early in boot code, not once an OS 
+like Linux has been loaded, since loading the OS requires use of at 
+least some peripheral(s). Hence, there's no point the kernel re-applying 
+the same configuration.
+
+I had suggested (in this patch) removing the pinmux completely from the 
+DT, since no OS should need it. However, the Barebox bootloader is 
+configured via DT, and so wants to keep the pinmux configuration in the 
+DT, rather than embedding the pinmux tables into the bootloader's board 
+support code. Lucas has suggested simply changing the pinmux state name 
+in the DT so that the kernel won't apply the pinmux configuration yet 
+it's still there for the bootloader to use if it wants.
+
+I'd suggest "boot" rather than "initial" myself for the new state name, 
+but that's just bike-shedding.
+
+> Regards,
+> Lucas
+>
+> Am Montag, den 23.06.2014, 16:45 -0600 schrieb Stephen Warren:
+>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>
+>> The defined mechanism for programming the Tegra pinmux is to perform all
+>> of the following at once:
+>>
+>> - Set the CLAMP_INPUTS_WHEN_TRISTATED PMC register bit.
+>> - Set up any GPIO pins to their "initial" state.
+>> - Program all pinmux settings in one go.
+>>
+>> Other methods such as:
+>>
+>> - Not setting CLAMP_INPUTS_WHEN_TRISTATED.
+>> - Not setting GPIOs to their "initial" state before programming the
+>>    pinmux settings of the related pin, in particular the mux function.
+>> - Not programming the entire pinmux at once, in order to avoid
+>>    possible conflicting settings.
+>>
+>> ... are not qualified or supported by NVIDIA ASIC/syseng. They could
+>> cause glitches or undesired output levels on some pins, or controller
+>> malfunction.
+>>
+>> While we've been getting away with doing something different on many
+>> Tegra boards without issue, I believe we've just been getting lucky.
+>> I'd like to switch all Tegra124 systems to the correct scheme now so
+>> they provide the right example to follow, and require that any new
+>> boards we support upstream work in the same fashion.
+>>
+>> While it would be nice to update boards containing older SoCs for
+>> consistency, I don't anticipate doing so. It's too much churn to change
+>> at this time. At least with all Tegra124 boards converted, the most
+>> recent boards provide the correct example.
+>>
+>> Since the bootloader needs to reprogram the pinmux to access certain
+>> peripherals, it must program the entire pinmux due to the supported
+>> rules above. As such, there is no need to program any part of the pinmux
+>> from the kernel, unless dynamic pinmuxing is used. Hence, this change
+>> removes all static pinmux from all Tegra124 board DTs.
+>>
+>> The following U-Boot commits fully initialize the pinmux:
+>>
+>> Jetson TK1: 4ff213b8e478 ARM: tegra: clamp inputs on Jetson TK1
+>>
+>> Venice2: 3365479ce78a ARM: tegra: Venice2 pinmux spreadsheet updates
+>>
+>> Without those commits, the only fallout I see from this change is that
+>> HDMI on Venice2 no longer works. Given the very small user-base of this
+>> platform, I feel that requiring a bootloader update is reasonable.
+>>
+>> Cc: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>> Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>> Cc: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>> Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+>> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>   arch/arm/boot/dts/tegra124-jetson-tk1.dts | 1320 -----------------------------
+>>   arch/arm/boot/dts/tegra124-venice2.dts    |  541 ------------
+>>   2 files changed, 1861 deletions(-)
+>>
+>> diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+>> index 16082c0bdaca..4935910b16e2 100644
+>> --- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+>> +++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+>> @@ -30,1326 +30,6 @@
+>>   		};
+>>   	};
+>>
+>> -	pinmux: pinmux@0,70000868 {
+>> -		pinctrl-names = "default";
+>> -		pinctrl-0 = <&state_default>;
+>> -
+>> -		state_default: pinmux {
+>> -			clk_32k_out_pa0 {
+>> -				nvidia,pins = "clk_32k_out_pa0";
+>> -				nvidia,function = "soc";
+>> -				nvidia,pull = <TEGRA_PIN_PULL_UP>;
+>> -				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+>> -				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+>> -			};
+...
+>> -			jtag_rtck {
+>> -				nvidia,pins = "jtag_rtck";
+>> -				nvidia,function = "rtck";
+>> -				nvidia,pull = <TEGRA_PIN_PULL_UP>;
+>> -				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+>> -				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+>> -			};
+>> -		};
+>> -	};
+
+>> diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
+
+>> -	pinmux: pinmux@0,70000868 {
+>> -		pinctrl-names = "default";
+>> -		pinctrl-0 = <&pinmux_default>;
+>> -
+>> -		pinmux_default: common {
+>> -			dap_mclk1_pw4 {
+>> -				nvidia,pins = "dap_mclk1_pw4";
+>> -				nvidia,function = "extperiph1";
+>> -				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+>> -				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+>> -				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+>> -			};
+...
+>> -			hp_det_l {
+>> -				nvidia,pins = "ulpi_data1_po2";
+>> -				nvidia,function = "spi3";
+>> -				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+>> -				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+>> -				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+>> -			};
+>> -		};
+>> -	};
