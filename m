@@ -1,106 +1,48 @@
-From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 05/16] clk: tegra: Add closed loop support for the
- DFLL
-Date: Mon, 18 Aug 2014 14:08:08 +0800
-Message-ID: <53F19848.7020303@nvidia.com>
-References: <1405957142-19416-1-git-send-email-ttynkkynen@nvidia.com> <1405957142-19416-6-git-send-email-ttynkkynen@nvidia.com>
+From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Subject: Re: [PATCH 1/3] of: Add of_match_machine helper
+Date: Mon, 18 Aug 2014 13:10:13 +0300
+Message-ID: <53F1D105.1070107@nvidia.com>
+References: <1407452515-2390-1-git-send-email-ttynkkynen@nvidia.com>	<1407452515-2390-2-git-send-email-ttynkkynen@nvidia.com>
+ <20140817152854.5406BC40ADD@trevor.secretlab.ca>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1405957142-19416-6-git-send-email-ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20140817152854.5406BC40ADD@trevor.secretlab.ca>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Grant Likely <grant.likely@linaro.org>
+Cc: devicetree@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, "Rafael J.
+ Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+On 17/08/14 18:28, Grant Likely wrote:
+> On Fri, 8 Aug 2014 02:01:53 +0300, Tuomas Tynkkynen <ttynkkynen@nvidia.com> wrote:
+[...]
+>> +EXPORT_SYMBOL(of_match_machine);
+> 
+> Too wordy...
+> 
+> 	return of_match_node(matches, of_allnodes);
+> 
+> :-)
+> 
+> It could be a static inline, but I don't think it's even worth having a
+> helper. The callers could just open code the above.
+> 
 
-On 07/21/2014 11:38 PM, Tuomas Tynkkynen wrote:
-> With closed loop support, the clock rate of the DFLL can be adjusted.
->
-> The oscillator itself in the DFLL is a free-running oscillator whose
-> rate is directly determined the supply voltage. However, the DFLL
-> module contains logic to compare the DFLL output rate to a fixed
-> reference clock (51 MHz) and make a decision to either lower or raise
-> the DFLL supply voltage. The DFLL module can then autonomously change
-> the supply voltage by communicating with an off-chip PMIC via either I2C
-> or PWM signals. This driver currently supports only I2C.
->
-> Signed-off-by: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> v2 changes:
->      - query the various properties required for I2C mode from the
->        regulator framework
->
->   drivers/clk/tegra/clk-dfll.c | 656 ++++++++++++++++++++++++++++++++++++++++++-
->   1 file changed, 653 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-> index d83e859..0d4b2dd 100644
-> --- a/drivers/clk/tegra/clk-dfll.c
-> +++ b/drivers/clk/tegra/clk-dfll.c
-> @@ -205,12 +205,16 @@
-...
-> +
-> +/**
-> + * dfll_calculate_rate_request - calculate DFLL parameters for a given rate
-> + * @td: DFLL instance
-> + * @req: DFLL-rate-request structure
-> + * @rate: the desired DFLL rate
-> + *
-> + * Populate the DFLL-rate-request record @req fields with the scale_bits
-> + * and mult_bits fields, based on the target input rate. Returns 0 upon
-> + * success, or -EINVAL if the requested rate in req->rate is too high
-> + * or low for the DFLL to generate.
-> + */
-> +static int dfll_calculate_rate_request(struct tegra_dfll *td,
-> +				       struct dfll_rate_req *req,
-> +				       unsigned long rate)
-> +{
-> +	u32 val;
-> +
-> +	/*
-> +	 * If requested rate is below the minimum DVCO rate, active the scaler.
-> +	 * In the future the DVCO minimum voltage should be selected based on
-> +	 * chip temperature and the actual minimum rate should be calibrated
-> +	 * at runtime.
-> +	 */
-> +	req->scale_bits = DFLL_FREQ_REQ_SCALE_MAX - 1;
-> +	if (rate < td->dvco_rate_min) {
-> +		int scale;
-> +
-> +		scale = DIV_ROUND_CLOSEST(rate / 1000 * DFLL_FREQ_REQ_SCALE_MAX,
-> +					  td->dvco_rate_min / 1000);
-> +		if (!scale) {
-> +			dev_err(td->dev, "%s: Rate %lu is too low\n",
-> +				__func__, rate);
-> +			return -EINVAL;
-> +		}
-> +		req->scale_bits = scale - 1;
-> +		rate = td->dvco_rate_min;
-> +	}
-> +
-> +	/* Convert requested rate into frequency request and scale settings */
-> +	val = DVCO_RATE_TO_MULT(rate, td->ref_rate);
-> +	if (val > FREQ_MAX) {
-> +		dev_err(td->dev, "%s: Rate %lu is above dfll range\n",
-> +			__func__, rate);
-> +		return -EINVAL;
-> +	}
-> +	req->mult_bits = val;
-> +	req->dvco_target_rate = MULT_TO_DVCO_RATE(req->mult_bits, td->ref_rate);
-> +	req->rate = dfll_scale_dvco_rate(req->dvco_target_rate,
-> +					 req->scale_bits);
-Should be dfll_scale_dvco_rate(req->scale_bits, req->dvco_target_rate);
+Do you mean all the drivers should be referring to of_allnodes directly?
+I see that it's indeed exported, but to me that sounds like relying too
+much on an implementation detail. In fact, Documentation/devicetree/todo.txt
+even seems to have a TODO entry for its removal ("Remove of_allnodes list
+and iterate using list of child nodes alone").
 
-Thanks,
-Vince
-
-> +	req->lut_index = find_lut_index_for_rate(td, req->dvco_target_rate);
-> +	if (req->lut_index < 0)
-> +		return req->lut_index;
-> +
-> +	return 0;
-> +}
-> +
+-- 
+nvpublic
