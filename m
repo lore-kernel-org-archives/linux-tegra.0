@@ -1,118 +1,115 @@
-From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v2] ARM: tegra: add Acer Chromebook 13 device tree
-Date: Mon, 18 Aug 2014 17:11:16 -0700
-Message-ID: <CAL1qeaFnfLDOXq07fY4xLfdRpG8FQ63ya+-0Hk+ewA1wXkLOLw@mail.gmail.com>
-References: <1407957267-3258-1-git-send-email-dgreid@chromium.org>
-	<53EF76CF.9050808@suse.de>
-	<53F2255E.7090208@wwwdotorg.org>
-	<CAL1qeaH-WfA-DLKwuXA_hBPHYuXksAibLq__zisrT9ALaRGdAw@mail.gmail.com>
-	<53F28F90.3000004@wwwdotorg.org>
+From: Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>
+Subject: [PATCH v3 00/15] Tegra124 CL-DVFS / DFLL clocksource, plus cpufreq
+Date: Tue, 19 Aug 2014 06:33:10 +0300
+Message-ID: <1408419205-10048-1-git-send-email-tuomas.tynkkynen@iki.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53F28F90.3000004-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
+Cc: devicetree@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Vince Hsu <vinceh@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Viresh Kumar <viresh.kumar@linaro.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Thierry Reding <thierry.reding@gmail.com>, Tuomas Tynkkynen <ttynkkynen@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Aug 18, 2014 at 4:43 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>=
- wrote:
-> On 08/18/2014 05:24 PM, Andrew Bresticker wrote:
->>
->> On Mon, Aug 18, 2014 at 9:10 AM, Stephen Warren <swarren@wwwdotorg.o=
-rg>
->> wrote:
->>>
->>> On 08/16/2014 09:20 AM, Andreas F=C3=A4rber wrote:
->>>>
->>>>
->>>> Hi,
->>>>
->>>> Am 13.08.2014 21:14, schrieb Dylan Reid:
->>>>>
->>>>>
->>>>> The Acer Chromebook 13, codenamed Big, contains an NVIDIA tegra12=
-4
->>>>> processor and is similar to the Venice2 reference platform.
->>>>>
->>>>> The keyboard, USB 2, audio, HDMI, sdcard, and emmc have been test=
-ed
->>>>> and work on the 1266x768 models.  The HD models haven't yet been
->>>>> tested.
->>>>>
->>>>> WiFi does not work yet, it needs at least some PMIC changes to en=
-able
->>>>> the 32k clock.
->>>>>
->>>>> The elan trackpad is not yet functional but hopefully will be soo=
-n as
->>>>> there are patches under review.
->>>>>
->>>>> There is also an issue on reboot because the TPM isn't reset.  It=
- will
->>>>> cause the stock firmware to enter recovery mode.  This can be wor=
-ked
->>>>> around by an EC-reset, press the refresh and power keys at the sa=
-me
->>>>> time.
->>>
->>>
->>>
->>>>> diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts
->>>>> b/arch/arm/boot/dts/tegra124-nyan-big.dts
->>>>> new file mode 100644
->>>>> index 0000000..79f1852
->>>>> --- /dev/null
->>>>> +++ b/arch/arm/boot/dts/tegra124-nyan-big.dts
->>>>> @@ -0,0 +1,1136 @@
->>>>> +/dts-v1/;
->>>>> +
->>>>> +#include <dt-bindings/input/input.h>
->>>>> +#include "tegra124.dtsi"
->>>>> +
->>>>> +/ {
->>>>> +       model =3D "Acer Chromebook 13";
->>>>> +       compatible =3D "google,nyan-big", "nvidia,tegra124";
->>>>
->>>>
->>>>
->>>> In light of v1 and the above commit message referring to this as G=
-oogle
->>>> Big, shouldn't this be "google,big", "nvidia,tegra124" and optiona=
-lly
->>>> "google,nyan" as secondary string, independent of the new file nam=
-e?
->>>
->>>
->>>
->>> Despite this board having been derived from Nyan, it isn't Nyan, so=
- I
->>> don't
->>> think Nyan should be part of any compatible value, nor a separate
->>> compatible
->>> value.
->>
->>
->> "google,nyan-big" is the compatible string that the bootloader on
->> these devices looks for.  It's also the convention we are now using
->> for our ARM devices, as Olof has already mentioned.
->
->
-> I don't understand "that the bootloader looks for"; why is the bootlo=
-ader
-> doing anything w.r.t the compatible value in the DT that's passed to =
-the
-> kernel.
+From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
 
-The ChromeOS bootloader ("depthcharge") boots FIT images and selects
-the appropriate device-tree from the image based on the compatible
-string.  On Big boards, it looks for "google,nyan-big".  This only
-becomes an issue if there are multiple device-trees in the FIT image.
-If there's only a single configuration (or you chain-load U-Boot),
-then the bootloader will boot with that configuration.  If you build a
-kernel image in the ChromiumOS environment, however, you'll end up
-with multiple device-trees (all those built by the kernel config at
-least) in the FIT image - this is what allows us to boot the same
-binary on different boards.
+v3 changes:
+- Fix incorrect order of arguments to dfll_scale_dvco_rate
+- Fix accidental commas at end-of-statement to semicolons
+- Some cpufreq changes:
+    - rename cpufreq-tegra to cpufreq-tegra20
+    - have separate Kconfig entries for Tegra20/Tegra124 support
+    - use 'select GENERIC_CPUFREQ_CPU0', not depends
+    - support unbinding of the platform device
+        - requires adding the vdd_cpu regulator to the DT so
+          the old voltage can be restored when switching to PLLX
+    - allocate a state structure instead of globals
+    - use of_match_machine()
+    - various style nits fixed
+
+The cpufreq part is dependant on the of_match_machine() series.
+
+Original cover letter:
+
+This series implements the DFLL/CL-DVFS clock source for the fast CPU
+cluster on Tegra124, and a cpufreq driver that uses the DFLL for
+clocking the CPU. Most of this is based on Paul Walmsley's public patch
+set from December 2013, which is available at
+http://comments.gmane.org/gmane.linux.ports.tegra/15273
+
+The DFLL clock hardware is a voltage-controlled oscillator plus
+control logic that compares the generated output clock with a
+51 MHz reference clock, and can make decisions to either lower
+or raise the DFLL voltage to keep the output rate close to the
+software-requested rate. The voltage changes are done by
+communicating with an off-chip PMIC via either I2C or PWM.
+As the DFLL oscillator is powered via the CPU rail, using
+the DFLL as the CPU clocksource also gives us dynamic CPU
+voltage scaling.
+
+This series has been tested on the Jetson TK1 (Rev C). Porting this to
+the Venice2 should be simple, though do note that it does not have
+active cooling.
+
+Thanks,
+Tuomas
+
+
+Paul Walmsley (1):
+  clk: tegra: Add DFLL DVCO reset control for Tegra124
+
+Tuomas Tynkkynen (14):
+  clk: tegra: Add binding for the Tegra124 DFLL clocksource
+  clk: tegra: Add library for the DFLL clock source (open-loop mode)
+  clk: tegra: Add closed loop support for the DFLL
+  clk: tegra: Add functions for parsing CVB tables
+  clk: tegra: Add Tegra124 DFLL clocksource platform driver
+  clk: tegra: Save/restore CCLKG_BURST_POLICY on suspend
+  clk: tegra: Add the DFLL as a possible parent of the cclk_g clock
+  ARM: tegra: Add the DFLL to Tegra124 device tree
+  ARM: tegra: Enable the DFLL on the Jetson TK1
+  cpufreq: tegra124: Add device tree bindings
+  cpufreq: tegra: Rename tegra-cpufreq to tegra20-cpufreq
+  cpufreq: Add cpufreq driver for Tegra124
+  ARM: tegra: Add entries for cpufreq on Tegra124
+  ARM: tegra: Add CPU regulator to the Jetson TK1 device tree
+
+ .../bindings/clock/nvidia,tegra124-dfll.txt        |   69 +
+ .../bindings/cpufreq/tegra124-cpufreq.txt          |   44 +
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts          |   12 +-
+ arch/arm/boot/dts/tegra124.dtsi                    |   33 +-
+ arch/arm/mach-tegra/Kconfig                        |    1 +
+ drivers/clk/tegra/Makefile                         |    3 +
+ drivers/clk/tegra/clk-dfll.c                       | 1735 ++++++++++++++++++++
+ drivers/clk/tegra/clk-dfll.h                       |   55 +
+ drivers/clk/tegra/clk-tegra-super-gen4.c           |    4 +-
+ drivers/clk/tegra/clk-tegra124-dfll-fcpu.c         |  165 ++
+ drivers/clk/tegra/clk-tegra124.c                   |   61 +
+ drivers/clk/tegra/clk.h                            |    3 +
+ drivers/clk/tegra/cvb.c                            |  133 ++
+ drivers/clk/tegra/cvb.h                            |   67 +
+ drivers/cpufreq/Kconfig.arm                        |   14 +-
+ drivers/cpufreq/Makefile                           |    3 +-
+ drivers/cpufreq/tegra124-cpufreq.c                 |  206 +++
+ .../cpufreq/{tegra-cpufreq.c => tegra20-cpufreq.c} |    0
+ 18 files changed, 2601 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+ create mode 100644 Documentation/devicetree/bindings/cpufreq/tegra124-cpufreq.txt
+ create mode 100644 drivers/clk/tegra/clk-dfll.c
+ create mode 100644 drivers/clk/tegra/clk-dfll.h
+ create mode 100644 drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+ create mode 100644 drivers/clk/tegra/cvb.c
+ create mode 100644 drivers/clk/tegra/cvb.h
+ create mode 100644 drivers/cpufreq/tegra124-cpufreq.c
+ rename drivers/cpufreq/{tegra-cpufreq.c => tegra20-cpufreq.c} (100%)
+
+-- 
+1.8.1.5
