@@ -1,87 +1,225 @@
-From: Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
-Subject: RE: [PATCH v5] devicetree: Add generic IOMMU device tree bindings
-Date: Tue, 19 Aug 2014 12:11:43 +0000
-Message-ID: <6a3d4048ddb84bd19c847adf7f02fc52@BL2PR03MB468.namprd03.prod.outlook.com>
-References: <1406803383-11601-1-git-send-email-thierry.reding@gmail.com>
-	<87a9774lf5.fsf@nvidia.com> <20140815115110.GO27466@arm.com>
+From: Juha-Matti Tilli <juha-matti.tilli@iki.fi>
+Subject: Re: [PATCH v4 4/4] thermal: Add Tegra SOCTHERM thermal management
+ driver
+Date: Tue, 19 Aug 2014 17:09:55 +0300
+Message-ID: <20140819140955.GA50475@sandfort.unics.fi>
+References: <1408100430-29461-1-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20140815115110.GO27466-5wv7dgnIgG8@public.gmane.org>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stuart Yoder <stuart.yoder-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1408100430-29461-1-git-send-email-mperttunen@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: linux-pm@vger.kernel.org, Juha-Matti Tilli <jtilli@nvidia.com>, swarren@wwwdotorg.org, linux-kernel@vger.kernel.org, edubezval@gmail.com, thierry.reding@gmail.com, linux-tegra@vger.kernel.org, rui.zhang@intel.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Will,
+> This adds support for the Tegra SOCTHERM thermal sensing and management
+> system found in the Tegra124 system-on-chip. This initial driver supports
+> temperature polling for four thermal zones.
 
-> -----Original Message-----
-> From: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org [mailto:iommu-
-> bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org] On Behalf Of Will Deacon
-> Sent: Friday, August 15, 2014 5:21 PM
-> To: Hiroshi Doyu
-> Cc: Mark Rutland; devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Stephen Warren; Arnd
-> Bergmann; Rob Herring; iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org; Thierry Reding;
-> linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> Subject: Re: [PATCH v5] devicetree: Add generic IOMMU device tree bindings
-> 
-> On Thu, Aug 14, 2014 at 07:47:42AM +0100, Hiroshi Doyu wrote:
-> > Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> writes:
-> >
-> > > +Multiple-master IOMMU:
-> > > +----------------------
-> > > +
-> > > +       iommu {
-> > > +               /* the specifier represents the ID of the master */
-> > > +               #iommu-cells = <1>;
-> > > +       };
-> > > +
-> > > +       master@1 {
-> > > +               /* device has master ID 42 in the IOMMU */
-> > > +               iommus = <&{/iommu} 42>;
-> > > +       };
-> > > +
-> > > +       master@2 {
-> > > +               /* device has master IDs 23 and 24 in the IOMMU */
-> > > +               iommus = <&{/iommu} 23>, <&{/iommu} 24>;
-> > > +       };
-> >
-> > I think that this "master ID" will be parsed in IOMMU driver. For
-> > example, ARM,SMMU expects "streamID" as "master ID", right?
-> >
-> > If a SoC has a feature to configure to assign streamID to devices at
-> > runtime, "streamID" is not equal to "master ID".
-> >
-> >   iommus = <&{/smmu} "soc specific master ID">;
-> >
-> > "soc master ID" needs to be translated into "streamID" by SoC SW. It
-> > seems that ARM,SMMU kernel driver doesn't expect this kind of ID
-> > translation. If ARM,SMMU kernel driver is used as is, "soc master ID"
-> > would be incompatible? ARM,SMMU needs such translation before parsing.
-> > Is this my understanding right?
-> >
-> > If so I think that this master ID configuration/translation may be
-> > quite reasonable requirment for SoC using ARM,SMMU.
-> >
-> > Can we consider this ID translation within ARM,SMMU compatibility?
-> >
-> > IOW, is it possible to implement some SoC specific hook for ID
-> > translation/configuration in ARM,SMMU kernel driver?
-> 
-> I think there's some confusion here. The ARM architected SMMU does not
-> perform any StreamID translation -- it sees an incoming ID and uses that to
-> lookup a set of translation tables. 
+I have several comments about this patch. Overall, the code looks clean,
+way cleaner than NVIDIA's internal soc_therm driver. I adopted your code
+to run on the internal firmware of a Tegra124 SoC. Additionally, I
+tested the code as-is on a Jetson TK1.
 
-I don't completely agree with this. In case of MMU-500  don't we have the "TBUID + device assigned stream ID" representing the stream ID for matching at the TCU? In case of our platform, we have hot pluggable device objects comprising of devices connected to different TBUs. We have a requirement to use a single stream ID for all the distributed objects. We will have to use the stream ID masking capability to mask out the TBU ID.
+My test shows that the temperature readings look sane and do vary with
+load, so the code seems to work. However, I have some concerns about the
+calibration values calculated by this code and the error handling of the
+code.
 
--Varun
+Originally, I thought the fuse offsets were incorrect but as it turns
+out, the official Linux kernel starts counting the fuses at a different
+location than NVIDIA's internal kernel.
+
+[snip]
+> +static int calculate_shared_calibration(struct tsensor_shared_calibration *r)
+> +{
+> +	u32 val;
+> +	u32 shifted_cp, shifted_ft;
+> +	int err;
+> +
+> +	err = tegra_fuse_readl(FUSE_TSENSOR8_CALIB, &val);
+> +	if (err)
+> +		return err;
+> +	r->base_cp = val & FUSE_TSENSOR8_CALIB_CP_TS_BASE_MASK;
+> +	r->base_ft = (val & FUSE_TSENSOR8_CALIB_FT_TS_BASE_MASK)
+> +		>> FUSE_TSENSOR8_CALIB_FT_TS_BASE_SHIFT;
+> +
+> +	err = tegra_fuse_readl(FUSE_SPARE_REALIGNMENT_REG_0, &val);
+> +	if (err)
+> +		return err;
+> +	shifted_cp = sign_extend32(val, 5);
+> +	val = ((val & FUSE_SPARE_REALIGNMENT_REG_SHIFT_FT_MASK)
+> +		>> FUSE_SPARE_REALIGNMENT_REG_SHIFT_FT_SHIFT);
+> +	shifted_ft = sign_extend32(val, 4);
+> +
+> +	r->actual_temp_cp = 2 * NOMINAL_CALIB_CP_T124 + shifted_cp;
+> +	r->actual_temp_ft = 2 * NOMINAL_CALIB_FT_T124 + shifted_ft;
+> +
+> +	return 0;
+> +}
+> +
+> +static int calculate_tsensor_calibration(
+> +	struct tegra_tsensor *sensor,
+> +	struct tsensor_shared_calibration shared,
+> +	u32 *calib
+> +)
+> +{
+> +	u32 val;
+> +	s32 actual_tsensor_ft, actual_tsensor_cp;
+> +	s32 delta_sens, delta_temp;
+> +	s32 mult, div;
+> +	s16 therma, thermb;
+> +	int err;
+> +
+> +	err = tegra_fuse_readl(sensor->calib_fuse_offset, &val);
+> +	if (err)
+> +		return err;
+> +
+> +	actual_tsensor_cp = (shared.base_cp * 64) + sign_extend32(val, 12);
+> +	val = (val & FUSE_TSENSOR_CALIB_FT_TS_BASE_MASK)
+> +		>> FUSE_TSENSOR_CALIB_FT_TS_BASE_SHIFT;
+> +	actual_tsensor_ft = (shared.base_ft * 32) + sign_extend32(val, 12);
+> +
+> +	delta_sens = actual_tsensor_ft - actual_tsensor_cp;
+> +	delta_temp = shared.actual_temp_ft - shared.actual_temp_cp;
+> +
+> +	mult = t124_tsensor_config.pdiv * t124_tsensor_config.tsample_ate;
+> +	div = t124_tsensor_config.tsample * t124_tsensor_config.pdiv_ate;
+> +
+> +	therma = div_s64((s64) delta_temp * (1LL << 13) * mult,
+> +		(s64) delta_sens * div);
+> +	thermb = div_s64(((s64) actual_tsensor_ft * shared.actual_temp_cp) -
+> +		((s64) actual_tsensor_cp * shared.actual_temp_ft),
+> +		(s64) delta_sens);
+> +
+> +	therma = div_s64((s64) therma * sensor->fuse_corr_alpha,
+> +		(s64) 1000000LL);
+> +	thermb = div_s64((s64) thermb * sensor->fuse_corr_alpha +
+> +		sensor->fuse_corr_beta,
+> +		(s64) 1000000LL);
+> +
+> +	*calib = ((u16)(therma) << SENSOR_CONFIG2_THERMA_SHIFT) |
+> +		((u16)thermb << SENSOR_CONFIG2_THERMB_SHIFT);
+> +
+> +	return 0;
+> +}
+> +
+> +static int enable_tsensor(struct tegra_soctherm *tegra,
+> +			  struct tegra_tsensor *sensor,
+> +			  struct tsensor_shared_calibration shared)
+> +{
+> +	void * __iomem base = tegra->regs + sensor->base;
+> +	unsigned int val;
+> +	u32 calib;
+> +	int err;
+> +
+> +	err = calculate_tsensor_calibration(sensor, shared, &calib);
+> +	if (err)
+> +		return err;
+> +
+> +	val = 0;
+> +	val |= t124_tsensor_config.tall << SENSOR_CONFIG0_TALL_SHIFT;
+> +	writel(val, base + SENSOR_CONFIG0);
+> +
+> +	val = 0;
+> +	val |= (t124_tsensor_config.tsample - 1) <<
+> +		SENSOR_CONFIG1_TSAMPLE_SHIFT;
+> +	val |= t124_tsensor_config.tiddq_en << SENSOR_CONFIG1_TIDDQ_EN_SHIFT;
+> +	val |= t124_tsensor_config.ten_count << SENSOR_CONFIG1_TEN_COUNT_SHIFT;
+> +	val |= SENSOR_CONFIG1_TEMP_ENABLE;
+> +	writel(val, base + SENSOR_CONFIG1);
+> +
+> +	writel(calib, base + SENSOR_CONFIG2);
+> +
+> +	return 0;
+> +}
+
+This code writes different values to SENSOR_CONFIG2 registers than what
+the NVIDIA's internal soc_therm driver does. Because the calibration
+value calculation should be based on the same fuses that NVIDIA's
+internal driver reads, I believe the value calculated and eventually
+written to SENSOR_CONFIG2 should be identical with NVIDIA's internal
+driver. That is not the case now.
+
+I first loaded the NVIDIA's internal soc_therm driver and then loaded
+code adopted from your driver running on Tegra's firmware. Here's a log
+of how the CONFIG2 values are changed by this code to different values
+than NVIDIA's internal soc_therm driver originally sets them to:
+
+CONFIG2: 5b0f813 -> 5c6f7fb
+CONFIG2: 5e8f7cd -> 5fff7b4
+CONFIG2: 5bdf7ce -> 5d3f7b5
+CONFIG2: 596f831 -> 5aaf81a
+CONFIG2: 675f6b5 -> 68cf698
+CONFIG2: 6d6f641 -> 6eff623
+CONFIG2: 641f72b -> 659f710
+CONFIG2: 590f861 -> 5a5f84a
+
+On the left, there's the value set by NVIDIA's internal soc_therm driver
+and on the right, there's the value set by code adopted from your
+driver. My modifications to the code are minor, and I don't think they
+could explain why the CONFIG2 values set are different.
+
+If you want them, I can supply you the values of the fuses on my
+development board.
+
+The temperature readings look sane and do vary with load, but I think
+they're a bit different than what NVIDIA's internal soc_therm driver
+gives. I'm not entirely sure if the calibration values set by your
+driver or the calibration values set by NVIDIA's internal soc_therm
+driver are correct, but it seems to me that only one of these drivers
+can be correct.
+
+The values written to CONFIG1 and CONFIG0 do seem sane.
+
+Since there are divisions being done, some sort of explicit protection
+from divisions by zero should perhaps be considered, although this can
+happen only if the fuses for some reason read all zeroes. I'm not sure
+if that's possible with real hardware.
+
+Where does this code come from? It does not definitely come from
+NVIDIA's internal soc_therm driver, as it looks entirely different. And
+it calculates different calibration values. If you wrote the code, you
+should consider commenting it since there are a lot of complex
+calculations going on that are not obvious to the reader. For example,
+what do "cp" and "ft" mean? Are they acronyms? If so, they should be
+explained.
+
+[snip]
+> +	for (i = 0; i < ARRAY_SIZE(tegra->thermctl_tzs); ++i) {
+> +		struct tegra_thermctl_zone *zone =
+> +			devm_kzalloc(&pdev->dev, sizeof(*zone), GFP_KERNEL);
+> +		if (!zone) {
+> +			err = -ENOMEM;
+
+Shouldn't this one have a --i line like the next IS_ERR block?
+
+> +			goto unregister_tzs;
+> +		}
+> +
+> +		zone->temp_reg = tegra->regs + thermctl_temp_offsets[i];
+> +		zone->temp_shift = thermctl_temp_shifts[i];
+> +
+> +		tz = thermal_zone_of_sensor_register(
+> +			&pdev->dev, i, zone, tegra_thermctl_get_temp, NULL);
+> +		if (IS_ERR(tz)) {
+> +			err = PTR_ERR(tz);
+> +			dev_err(&pdev->dev, "failed to register sensor: %d\n",
+> +				err);
+> +			--i;
+> +			goto unregister_tzs;
+> +		}
+> +
+> +		tegra->thermctl_tzs[i] = tz;
+> +	}
