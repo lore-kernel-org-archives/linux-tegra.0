@@ -1,49 +1,74 @@
-From: Juha-Matti Tilli <juha-matti.tilli@iki.fi>
-Subject: Re: [PATCH v4 4/4] thermal: Add Tegra SOCTHERM thermal management
- driver
-Date: Tue, 19 Aug 2014 21:25:35 +0300
-Message-ID: <20140819182535.GA53418@sandfort.unics.fi>
-References: <1408100430-29461-1-git-send-email-mperttunen@nvidia.com>
- <20140819140955.GA50475@sandfort.unics.fi>
- <CAC-25o-bLeDYpTgPy5UOvBGJ7k7HJkBM3YcCRPSZHBkyxugULA@mail.gmail.com>
- <53F36CC8.8090707@kapsi.fi>
+From: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v3 13/15] cpufreq: Add cpufreq driver for Tegra124
+Date: Tue, 19 Aug 2014 22:44:00 +0300
+Message-ID: <53F3A900.8010805@nvidia.com>
+References: <1408419205-10048-1-git-send-email-tuomas.tynkkynen@iki.fi>	<1408419205-10048-14-git-send-email-tuomas.tynkkynen@iki.fi> <CAKohpokQOALPH13Ykz4nTBOby8J1X6_F30LNKz=gsC4wN3=3vg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <53F36CC8.8090707@kapsi.fi>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-Cc: "edubezval@gmail.com" <edubezval@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, Zhang Rui <rui.zhang@intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Juha-Matti Tilli <jtilli@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAKohpokQOALPH13Ykz4nTBOby8J1X6_F30LNKz=gsC4wN3=3vg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Tuomas Tynkkynen <tuomas.tynkkynen-X3B1VOXEql0@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Aug 19, 2014 at 06:27:04PM +0300, Mikko Perttunen wrote:
-> > Well, I would suggest using the hardware documentation as a base here.
-> > I don't have access to the internal driver, thus, it is hard to judge
-> > what is right, what is wrong.
+On 19/08/14 08:55, Viresh Kumar wrote:
+> On 19 August 2014 09:03, Tuomas Tynkkynen <tuomas.tynkkynen-X3B1VOXEql0@public.gmane.org> wrote:
+>>  - use 'select GENERIC_CPUFREQ_CPU0', not depends
 > 
-> The hardware documentation (TRM) doesn't say anything about these 
-> registers, so I've mostly gone by the downstream driver. FYI, the driver 
-> is publicly available in the L4T kernel sources at 
-> https://developer.nvidia.com/sites/default/files/akamai/mobile/files/L4T/kernel_src.tbz2. 
-> I'm not how useful reading them would be, though.
+> Bad :(
+> 
+> It *has* to be a depends here, its not optional. That was outcome of the
+> chat we had last time, if I remember it well..
 
-I also haven't seen anything about the calibration calculation in any
-hardware documentation so it may very well be the case that nothing has
-been documented and the official information source is the internal
-driver itself. Btw, this downstream driver code is most likely old code
-as I can only find kernel/arch/arm/mach-tegra/tegra11_socterm.c in
-there, and I do remember that on my development branch the file is named
-differently. The CONFIG2 value comparison I posted is most likely
-against a newer version of that code. I'm not sure if that new version
-of that code is publicly available anywhere yet. I'll need to
-investigate more if a newer version of that code calculates different
-calibration values than an older version of that code. I'm currently
-working on soc_therm for future chips, so I have plenty of time to
-investigate this.
+Okay, I misread that conversation then.
 
-At least this internal driver can be used as a benchmark for code
-clarity. Mikko's code is a lot more clear than this internal driver, so
-that's why I decided to base my work on Mikko's code instead of this
-internal driver and which is why I noticed the missing --i bug. But now
-I'm wondering whether the calibration values are correct...
+>> ---
+> 
+> You don't need to add these --- here, just add a blank line and git
+> will take care of things for you :)
+
+There's actually a (mis-?)feature in git format-patch: a literal '---'
+line in a commit message won't be escaped, so the patch notes can be
+written in the commit message directly so the patch files don't need
+to be modified by hand.
+
+>>  drivers/cpufreq/Kconfig.arm        |   8 ++
+>>  drivers/cpufreq/Makefile           |   1 +
+>>  drivers/cpufreq/tegra124-cpufreq.c | 206 +++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 215 insertions(+)
+>>  create mode 100644 drivers/cpufreq/tegra124-cpufreq.c
+>>
+[...]
+>> +static int tegra124_cpufreq_probe(struct platform_device *pdev)
+>> +{
+> 
+>> +       priv->vdd_cpu_reg = regulator_get(get_cpu_device(0), "vdd-cpu");
+> 
+> get_cpu_device() can fail as well, and so you may want to check its return
+> value as well..
+> 
+
+Oh, right.
+
+>> +static int __init tegra_cpufreq_init(void)
+>> +{
+>> +       int ret;
+>> +       struct platform_device *pdev;
+>> +
+>> +       if (!of_match_machine(soc_of_matches))
+>> +               return -ENODEV;
+> 
+> You may want to add a comment here on why you chose to add another layer
+> of platform device/driver.. i.e. to catch -EPROBE_DEFER from clk-APIs..
+>
+
+Yes, a good idea.
+
+-- 
+nvpublic
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
