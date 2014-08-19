@@ -1,116 +1,46 @@
-From: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 13/15] cpufreq: Add cpufreq driver for Tegra124
-Date: Tue, 19 Aug 2014 11:25:47 +0530
-Message-ID: <CAKohpokQOALPH13Ykz4nTBOby8J1X6_F30LNKz=gsC4wN3=3vg@mail.gmail.com>
-References: <1408419205-10048-1-git-send-email-tuomas.tynkkynen@iki.fi>
-	<1408419205-10048-14-git-send-email-tuomas.tynkkynen@iki.fi>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v2 1/4] xhci: Introduce xhci_init_driver()
+Date: Tue, 19 Aug 2014 15:10:36 +0900
+Message-ID: <53F2EA5C.1020403@renesas.com>
+References: <1408378343-9352-1-git-send-email-abrestic@chromium.org> <1408378343-9352-2-git-send-email-abrestic@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1408419205-10048-14-git-send-email-tuomas.tynkkynen-X3B1VOXEql0@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tuomas Tynkkynen <tuomas.tynkkynen-X3B1VOXEql0@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1408378343-9352-2-git-send-email-abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Julius Werner <jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 19 August 2014 09:03, Tuomas Tynkkynen <tuomas.tynkkynen-X3B1VOXEql0@public.gmane.org> wrote:
-> From: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> Add a new cpufreq driver for Tegra124. Instead of using the PLLX as
-> the CPU clocksource, switch immediately to the DFLL. It allows the use
-> of higher clock rates, and will automatically scale the CPU voltage as
-> well. Besides the CPU clocksource switch, we let the cpufreq-cpu0 driver
-> for all the cpufreq operations.
->
-> This driver also relies on the DFLL driver to fill the OPP table for the
-> CPU0 device, so that the cpufreq-cpu0 driver knows what frequencies to
-> use.
->
-> Signed-off-by: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Hi,
+
+(2014/08/19 1:12), Andrew Bresticker wrote:
+> Since the struct hc_driver is mostly the same across the xhci-pci,
+> xhci-plat, and the upcoming xhci-tegra driver, introduce the function
+> xhci_init_driver() which will populate the hc_driver with the default
+> xHCI operations.  The caller must supply a setup function which will
+> be used as the hc_driver's reset callback.
+> 
+> Note that xhci-plat also overrides the default ->start() callback so
+> that it can do rcar-specific initialization.
+> 
+> Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 > ---
-> v3:
->  - separate Kconfig entry
+> Changes from v1:
+>  - rebased on changes introduced by xhci-rcar driver
+< snip >
+> @@ -300,6 +249,8 @@ MODULE_ALIAS("platform:xhci-hcd");
+>  
+>  int xhci_register_plat(void)
+>  {
+> +	xhci_init_driver(&xhci_plat_hc_driver, xhci_plat_setup);
+> +	xhci_plat_hc_drver.start = xhci_plat_start;
 
-Gud..
+Thank you for the care of xhci-rcar driver.
+However, this "xhci_plat_hc_drver" should be "xhci_plat_hc_driver".
 
->  - use 'select GENERIC_CPUFREQ_CPU0', not depends
+After I modified it by myself, I could build the xhci-plat-hcd.ko in my environment.
 
-Bad :(
-
-It *has* to be a depends here, its not optional. That was outcome of the
-chat we had last time, if I remember it well..
-
->  - support unbinding of the platform device
->  - allocate a state structure instead of globals
->  - use of_match_machine()
->  - various style nits fixed
-> ---
-
-You don't need to add these --- here, just add a blank line and git
-will take care of things for you :)
-
->  drivers/cpufreq/Kconfig.arm        |   8 ++
->  drivers/cpufreq/Makefile           |   1 +
->  drivers/cpufreq/tegra124-cpufreq.c | 206 +++++++++++++++++++++++++++++++++++++
->  3 files changed, 215 insertions(+)
->  create mode 100644 drivers/cpufreq/tegra124-cpufreq.c
->
-> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> index 3795a16..07bfed1 100644
-> --- a/drivers/cpufreq/Kconfig.arm
-> +++ b/drivers/cpufreq/Kconfig.arm
-> @@ -247,3 +247,11 @@ config ARM_TEGRA20_CPUFREQ
->         default y
->         help
->           This adds the CPUFreq driver support for Tegra20 SOCs.
-> +
-> +config ARM_TEGRA124_CPUFREQ
-> +       bool "Tegra124 CPUFreq support"
-> +       depends on ARCH_TEGRA
-> +       select GENERIC_CPUFREQ_CPU0
-
-So it will become: depends on ARCH_TEGRA && GENERIC_CPUFREQ_CPU0
-
-> +static int tegra124_cpufreq_probe(struct platform_device *pdev)
-> +{
-
-> +       priv->vdd_cpu_reg = regulator_get(get_cpu_device(0), "vdd-cpu");
-
-get_cpu_device() can fail as well, and so you may want to check its return
-value as well..
-
-> +static int __init tegra_cpufreq_init(void)
-> +{
-> +       int ret;
-> +       struct platform_device *pdev;
-> +
-> +       if (!of_match_machine(soc_of_matches))
-> +               return -ENODEV;
-
-You may want to add a comment here on why you chose to add another layer
-of platform device/driver.. i.e. to catch -EPROBE_DEFER from clk-APIs..
-
-> +       ret = platform_driver_register(&tegra124_cpufreq_platdrv);
-> +       if (ret)
-> +               return ret;
-> +
-> +       pdev = platform_device_register_simple("cpufreq-tegra124", -1, NULL, 0);
-> +       if (IS_ERR(pdev)) {
-> +               platform_driver_unregister(&tegra124_cpufreq_platdrv);
-> +               return PTR_ERR(pdev);
-> +       }
-> +
-> +       return 0;
-> +}
-> +module_init(tegra_cpufreq_init);
-> +
-> +MODULE_AUTHOR("Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
-> +MODULE_DESCRIPTION("cpufreq driver for NVIDIA Tegra124");
-> +MODULE_LICENSE("GPL v2");
-> --
-> 1.8.1.5
->
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Best regards,
+Yoshihiro Shimoda
