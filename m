@@ -1,59 +1,68 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH v3 13/15] cpufreq: Add cpufreq driver for Tegra124
-Date: Wed, 20 Aug 2014 17:39:29 +0200
-Message-ID: <CABxcv=ncm3Y7Ecfymro6TOuP=d10OV5--8n=dYmHyj6zi8hwEw@mail.gmail.com>
-References: <1408419205-10048-1-git-send-email-tuomas.tynkkynen@iki.fi>
-	<1408419205-10048-14-git-send-email-tuomas.tynkkynen@iki.fi>
-	<CAKohpokQOALPH13Ykz4nTBOby8J1X6_F30LNKz=gsC4wN3=3vg@mail.gmail.com>
-	<53F3A900.8010805@nvidia.com>
-	<CAKohponcZv9-MFNUQFxC_49-+P6QOhdjxsnYAyL3i4sXdCBYrw@mail.gmail.com>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH v2] ARM: tegra: add Acer Chromebook 13 device tree
+Date: Wed, 20 Aug 2014 08:40:33 -0700
+Message-ID: <CAOesGMjFGabNOk0ODjbDN5aaro5309t02+B+UZoM_+q5VE9Ltw@mail.gmail.com>
+References: <1407957267-3258-1-git-send-email-dgreid@chromium.org>
+	<53EF76CF.9050808@suse.de>
+	<53F2255E.7090208@wwwdotorg.org>
+	<CAL1qeaH-WfA-DLKwuXA_hBPHYuXksAibLq__zisrT9ALaRGdAw@mail.gmail.com>
+	<53F28F90.3000004@wwwdotorg.org>
+	<CAOesGMhBdQh_ddycZ-Y5dupR9hW74bogHtG3yyPUJ2tAgWi19A@mail.gmail.com>
+	<20140820143201.GA3368@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CAKohponcZv9-MFNUQFxC_49-+P6QOhdjxsnYAyL3i4sXdCBYrw@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Tuomas Tynkkynen <ttynkkynen@nvidia.com>, Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Paul Walmsley <pwalmsley@nvidia.com>, Vince Hsu <vinceh@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140820143201.GA3368@ulmo>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hello Viresh,
-
-On Wed, Aug 20, 2014 at 8:39 AM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> On 20 August 2014 01:14, Tuomas Tynkkynen <ttynkkynen@nvidia.com> wrote:
->> There's actually a (mis-?)feature in git format-patch: a literal '---'
->> line in a commit message won't be escaped, so the patch notes can be
->> written in the commit message directly so the patch files don't need
->> to be modified by hand.
+On Wed, Aug 20, 2014 at 7:32 AM, Thierry Reding
+<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Wed, Aug 20, 2014 at 06:29:14AM -0700, Olof Johansson wrote:
+>> On Mon, Aug 18, 2014 at 4:43 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> [...]
+>> > Again, this board *isn't* Nyan, so it should pretend that it is.
+>>
+>> It is a derivative design of the nyan reference platform, and it is
+>> compatible with it. It is perfectly fine to claim to be compatible
+>> with it. I'm sorry, but you're just wrong here.
 >
-> How exactly? Can you list the command here please..
-> --
+> I guess that depends a little on how you define compatibility. I had
+> always assumed that the top-level compatible string would be a sort of
+> "checksum" over the rest of the content. Which, admittedly, makes it
+> kind of redundant. Compatibility could mean a lot of things. Does it
+> mean any kernel/DTB compatible with one device could run on any device
+> derived from it? Does compatibility mean it needs to provide full
+> functionality or is it still compatible if it runs at a reduced feature
+> set but doesn't "break" otherwise?
 
-I rely on the behavior that Tuomas is mentioning as well but is not
-about git format-patch but git am.
+Consider:
+        compatible = "foo,x", "foo,y";
 
-As you already know when you apply a patch with git am, everything
-that is between a line with 3 dashes line (---) and the actual diff is
-omitted since that is where the generated diffstat is placed by git
-format-patch.
+My interpretation is:  foo,x is compatible with foo,y if and only if:
 
-We usually rely on that behavior to put there the history of a patch
-or any information that we think that is useful for reviewers but is
-not suitable to end in the commit message. Now that means that you
-have to generate the patch and then manually edit it to add the
-history there.
+foo,x can be driven by the same code as foo,y -- i.e. the driver
+doesn't need changes for basic things to work (and nothing should be
+broken).
 
-But since git am omits any text between the first "---" and the diff,
-it means that you can add a "---" on your actual commit message and
-anything that follows will be discarded by git am, that way you can
-maintain your history on your commit message which is way less tedious
-than manually editing patches.
+foo,x _can_ be a superset though. It could have features that foo,y
+doesn't have, that needs driver changes to take advantage of. But
+using the foo,y driver with a foo,x device should give you the foo,y
+functionality.
 
-So the second "---" from Tuomas patch is actually the one generated by
-git format-patch but that gets discarded by git am just like any other
-text so it causes no harm when other apply the patches.
+The simple case is where foo,x is more or less identical to foo,y, but
+there might be some implementation-specific bugs that makes it useful
+to be able to, at some point in the future, tell if you're running on
+a foo,x or foo,y device even if the code is identical today.
 
-If this not the correct workflow and you have a better way to manage
-this, I would love to know about it.
 
-Best regards,
-Javier
+In this particular case, google,nyan and google,nyan-big are very
+similar. There are some differences in panels, etc, but it's described
+in the individual device trees already, but things will come up and be
+functional even if you boot with the wrong device tree (as far as I
+know). Andrew has done that in the past, as far as I know.
+
+
+-Olof
