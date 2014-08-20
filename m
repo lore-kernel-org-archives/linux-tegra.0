@@ -1,132 +1,93 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2] ARM: tegra: add Acer Chromebook 13 device tree
-Date: Tue, 19 Aug 2014 15:47:41 -0600
-Message-ID: <53F3C5FD.4050808@wwwdotorg.org>
-References: <1407957267-3258-1-git-send-email-dgreid@chromium.org>	<53EF76CF.9050808@suse.de>	<53F2255E.7090208@wwwdotorg.org>	<CAL1qeaH-WfA-DLKwuXA_hBPHYuXksAibLq__zisrT9ALaRGdAw@mail.gmail.com>	<53F28F90.3000004@wwwdotorg.org> <CAL1qeaFnfLDOXq07fY4xLfdRpG8FQ63ya+-0Hk+ewA1wXkLOLw@mail.gmail.com>
+From: Vince Hsu <vinceh@nvidia.com>
+Subject: Re: [PATCH v3 03/15] clk: tegra: Add closed loop support for the
+ DFLL
+Date: Wed, 20 Aug 2014 11:01:47 +0800
+Message-ID: <53F40F9B.6070808@nvidia.com>
+References: <1408419205-10048-1-git-send-email-tuomas.tynkkynen@iki.fi> <1408419205-10048-4-git-send-email-tuomas.tynkkynen@iki.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAL1qeaFnfLDOXq07fY4xLfdRpG8FQ63ya+-0Hk+ewA1wXkLOLw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber-l3A5Bk7waGM@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1408419205-10048-4-git-send-email-tuomas.tynkkynen@iki.fi>
+Sender: linux-pm-owner@vger.kernel.org
+To: Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Paul Walmsley <pwalmsley@nvidia.com>, devicetree@vger.kernel.org, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/18/2014 06:11 PM, Andrew Bresticker wrote:
-> On Mon, Aug 18, 2014 at 4:43 PM, Stephen Warren <swarren-3lzwWm7+WeqIh2JisoIxyg@public.gmane.org=
-g> wrote:
->> On 08/18/2014 05:24 PM, Andrew Bresticker wrote:
->>>
->>> On Mon, Aug 18, 2014 at 9:10 AM, Stephen Warren <swarren@wwwdotorg.=
-org>
->>> wrote:
->>>>
->>>> On 08/16/2014 09:20 AM, Andreas F=C3=A4rber wrote:
->>>>>
->>>>>
->>>>> Hi,
->>>>>
->>>>> Am 13.08.2014 21:14, schrieb Dylan Reid:
->>>>>>
->>>>>>
->>>>>> The Acer Chromebook 13, codenamed Big, contains an NVIDIA tegra1=
-24
->>>>>> processor and is similar to the Venice2 reference platform.
->>>>>>
->>>>>> The keyboard, USB 2, audio, HDMI, sdcard, and emmc have been tes=
-ted
->>>>>> and work on the 1266x768 models.  The HD models haven't yet been
->>>>>> tested.
->>>>>>
->>>>>> WiFi does not work yet, it needs at least some PMIC changes to e=
-nable
->>>>>> the 32k clock.
->>>>>>
->>>>>> The elan trackpad is not yet functional but hopefully will be so=
-on as
->>>>>> there are patches under review.
->>>>>>
->>>>>> There is also an issue on reboot because the TPM isn't reset.  I=
-t will
->>>>>> cause the stock firmware to enter recovery mode.  This can be wo=
-rked
->>>>>> around by an EC-reset, press the refresh and power keys at the s=
-ame
->>>>>> time.
->>>>
->>>>
->>>>
->>>>>> diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts
->>>>>> b/arch/arm/boot/dts/tegra124-nyan-big.dts
->>>>>> new file mode 100644
->>>>>> index 0000000..79f1852
->>>>>> --- /dev/null
->>>>>> +++ b/arch/arm/boot/dts/tegra124-nyan-big.dts
->>>>>> @@ -0,0 +1,1136 @@
->>>>>> +/dts-v1/;
->>>>>> +
->>>>>> +#include <dt-bindings/input/input.h>
->>>>>> +#include "tegra124.dtsi"
->>>>>> +
->>>>>> +/ {
->>>>>> +       model =3D "Acer Chromebook 13";
->>>>>> +       compatible =3D "google,nyan-big", "nvidia,tegra124";
->>>>>
->>>>>
->>>>>
->>>>> In light of v1 and the above commit message referring to this as =
-Google
->>>>> Big, shouldn't this be "google,big", "nvidia,tegra124" and option=
-ally
->>>>> "google,nyan" as secondary string, independent of the new file na=
-me?
->>>>
->>>>
->>>>
->>>> Despite this board having been derived from Nyan, it isn't Nyan, s=
-o I
->>>> don't
->>>> think Nyan should be part of any compatible value, nor a separate
->>>> compatible
->>>> value.
->>>
->>>
->>> "google,nyan-big" is the compatible string that the bootloader on
->>> these devices looks for.  It's also the convention we are now using
->>> for our ARM devices, as Olof has already mentioned.
->>
->> I don't understand "that the bootloader looks for"; why is the bootl=
-oader
->> doing anything w.r.t the compatible value in the DT that's passed to=
- the
->> kernel.
+Hi,
+
+On 08/19/2014 11:33 AM, Tuomas Tynkkynen wrote:
+> From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
 >
-> The ChromeOS bootloader ("depthcharge") boots FIT images and selects
-> the appropriate device-tree from the image based on the compatible
-> string.  On Big boards, it looks for "google,nyan-big".  This only
-> becomes an issue if there are multiple device-trees in the FIT image.
-> If there's only a single configuration (or you chain-load U-Boot),
-> then the bootloader will boot with that configuration.  If you build =
-a
-> kernel image in the ChromiumOS environment, however, you'll end up
-> with multiple device-trees (all those built by the kernel config at
-> least) in the FIT image - this is what allows us to boot the same
-> binary on different boards.
+> With closed loop support, the clock rate of the DFLL can be adjusted.
+>
+> The oscillator itself in the DFLL is a free-running oscillator whose
+> rate is directly determined the supply voltage. However, the DFLL
+> module contains logic to compare the DFLL output rate to a fixed
+> reference clock (51 MHz) and make a decision to either lower or raise
+> the DFLL supply voltage. The DFLL module can then autonomously change
+> the supply voltage by communicating with an off-chip PMIC via either I2C
+> or PWM signals. This driver currently supports only I2C.
+>
+> Signed-off-by: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+>
+> ---
+> v3: Fix incorrect order of arguments to dfll_scale_dvco_rate
+> ---
+>   drivers/clk/tegra/clk-dfll.c | 656 ++++++++++++++++++++++++++++++++++++++++++-
+>   1 file changed, 653 insertions(+), 3 deletions(-)
+>
+...
+>   
+>   /**
+> + * dfll_fetch_i2c_params - query PMIC I2C params from DT & regulator subsystem
+> + * @td: DFLL instance
+> + *
+> + * Read all the parameters required for operation in I2C mode. The parameters
+> + * can originate from the device tree or the regulator subsystem.
+> + * Returns 0 on success or -err on failure.
+> + */
+> +static int dfll_fetch_i2c_params(struct tegra_dfll *td)
+> +{
+> +	struct regmap *regmap;
+> +	struct device *i2c_dev;
+> +	struct i2c_client *i2c_client;
+> +	int vsel_reg, vsel_mask;
+> +	int ret;
+> +
+> +	if (!read_dt_param(td, "nvidia,i2c-fs-rate", &td->i2c_fs_rate))
+> +		return -EINVAL;
+> +
+> +	regmap = regulator_get_regmap(td->vdd_reg);
+> +	i2c_dev = regmap_get_device(regmap);
+> +	i2c_client = to_i2c_client(i2c_dev);
+> +
+> +	td->i2c_slave_addr = i2c_client->addr;
+> +
+> +	ret = regulator_get_hardware_vsel_register(td->vdd_reg,
+> +						   &vsel_reg,
+> +						   &vsel_mask);
+> +	if (ret < 0) {
+> +		dev_err(td->dev,
+> +			"regulator unsuitable for DFLL I2C operation\n");
+> +		return -EINVAL;
+> +	}
+> +
+It seems that the td->i2c_reg never gets initialized, and we're lucky on 
+JetsonTK1 or Norrin. We should initialize the regulator offset here. Like:
 
-This just makes me dislike FIT (and DT ABIs) even more, although I=20
-suppose the same issue would arise if the DTBs were stored in separate=20
-files and looked up by filename.
+td->i2c_reg = vsel_reg;
 
-I have to say this sucks, because it means that a downstream bootloader=
-=20
-is imposing an ABI on the mainline kernel without a chance to fix thing=
-s=20
-during upstreaming. For all other boards, we've concentrated on mainlin=
-e=20
-U-Boot as the bootloader precisely so that strange behaviour of our=20
-downstream product kernels don't force the hand of the mainline kernel=20
-design.
+Thanks,
+Vince
+> +	ret = dfll_build_i2c_lut(td);
+> +	if (ret) {
+> +		dev_err(td->dev, "couldn't build I2C LUT\n");
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
 
-Still, I suppose I have no choice but to drop my objection here.
+
