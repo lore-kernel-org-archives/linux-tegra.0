@@ -1,74 +1,53 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-Subject: Handling commit change logs (was: [PATCH v3 13/15] cpufreq: Add cpufreq
- driver for Tegra124)
-Date: Wed, 20 Aug 2014 22:02:28 +0200
-Message-ID: <53F4FED4.7060408@suse.de>
-References: <1408419205-10048-1-git-send-email-tuomas.tynkkynen@iki.fi>	<1408419205-10048-14-git-send-email-tuomas.tynkkynen@iki.fi>	<CAKohpokQOALPH13Ykz4nTBOby8J1X6_F30LNKz=gsC4wN3=3vg@mail.gmail.com>	<53F3A900.8010805@nvidia.com>	<CAKohponcZv9-MFNUQFxC_49-+P6QOhdjxsnYAyL3i4sXdCBYrw@mail.gmail.com> <CABxcv=ncm3Y7Ecfymro6TOuP=d10OV5--8n=dYmHyj6zi8hwEw@mail.gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v2 1/5] of: Add descriptions of thermtrip properties to
+ Tegra PMC bindings
+Date: Wed, 20 Aug 2014 14:16:49 -0600
+Message-ID: <53F50231.5010605@wwwdotorg.org>
+References: <1407933685-12404-1-git-send-email-mperttunen@nvidia.com> <1407933685-12404-2-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CABxcv=ncm3Y7Ecfymro6TOuP=d10OV5--8n=dYmHyj6zi8hwEw@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Tuomas Tynkkynen <ttynkkynen@nvidia.com>, Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Paul Walmsley <pwalmsley@nvidia.com>, Vince Hsu <vinceh@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1407933685-12404-2-git-send-email-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Javier,
+On 08/13/2014 06:41 AM, Mikko Perttunen wrote:
+> Hardware-triggered thermal reset requires configuring the I2C
+> reset procedure. This configuration is read from the device tree,
+> so document the relevant properties in the binding documentation.
 
-Am 20.08.2014 17:39, schrieb Javier Martinez Canillas:
-> As you already know when you apply a patch with git am, everything
-> that is between a line with 3 dashes line (---) and the actual diff i=
-s
-> omitted since that is where the generated diffstat is placed by git
-> format-patch.
->=20
-> We usually rely on that behavior to put there the history of a patch
-> or any information that we think that is useful for reviewers but is
-> not suitable to end in the commit message. Now that means that you
-> have to generate the patch and then manually edit it to add the
-> history there.
->=20
-> But since git am omits any text between the first "---" and the diff,
-> it means that you can add a "---" on your actual commit message and
-> anything that follows will be discarded by git am, that way you can
-> maintain your history on your commit message which is way less tediou=
-s
-> than manually editing patches.
->=20
-> So the second "---" from Tuomas patch is actually the one generated b=
-y
-> git format-patch but that gets discarded by git am just like any othe=
-r
-> text so it causes no harm when other apply the patches.
->=20
-> If this not the correct workflow and you have a better way to manage
-> this, I would love to know about it.
+> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
 
-One drawback of having --- in the commit message is that you can't
-cherry-pick but really need to use git-am for it to be stripped.
+> +Hardware-triggered thermal reset:
+> +On Tegra30, Tegra114 and Tegra124, if the 'i2c-thermtrip' subnode exists,
+> +hardware-triggered thermal reset will be enabled.
 
-I resorted to a scripted way of handling change logs: Per patch series =
-I
-maintain a shell script that after git-format-patch essentially runs
-sed -i "/---/ r /dev/stdin" $OUTDIR/0001-*.patch <<EOCL
-=2E..
-EOCL
-to insert my text after ---. (sed syntax is not POSIX-compliant FWIW.)
-Similarly I fill in the blurbs for the cover letter.
+"will be enabled" sounds like SW behaviour, whereas DT is suppose to 
+describe HW, and leave SW to define its own behaviour. I would suggest:
 
-Another way I've heard of is git-notes, which lets you associate text
-with a given commit id.
-But in my tests that data did not survive a git-rebase -i, it stayed
-attached to the original commit when editing the commit message or
-fixing up a patch. It could still be accessed through the list of
-git-notes but not be comfortably extracted from the updated branch via
-git-rev-list or the likes.
+Optional sub-nodes:
+i2c-thermtrip: Describes how to power off the system in the event of a
+   thermal emergency.
 
-Cheers,
-Andreas
+> +Required properties for hardware-triggered thermal reset (inside 'i2c-thermtrip'):
 
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
-=BCrnberg
+Simpler might be:
+
+Required properties for i2c-thermtrip node:
+
+> +- nvidia,pmu : Phandle to power management unit / PMIC handling poweroff
+> +- nvidia,reg-addr : I2C register address to write poweroff command to
+> +- nvidia,reg-data : Poweroff command to write to PMU
+
+Why are both the PMU/PMIC phandle and the register address/data 
+required? I thought the purpose of having the phandle was to allow the 
+register address and data to be queried from the PMU/PMIC driver.
+
+To me, it seems much simpler to get rid of the phandle and just 
+hard-code the I2C bus number, address, and data into this node, rather 
+than having to go query it from the PMU/PMIC driver, then find the I2C 
+controller, then query it for its ID (and hope that all HW modules that 
+talk to I2C controllers directly use the same numbering scheme...)
