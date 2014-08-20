@@ -1,29 +1,63 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2 5/5] ARM: tegra: Add thermal reset (thermtrip) support
- to PMC
-Date: Wed, 20 Aug 2014 14:25:14 -0600
-Message-ID: <53F5042A.7020603@wwwdotorg.org>
-References: <1407933685-12404-1-git-send-email-mperttunen@nvidia.com> <1407933685-12404-6-git-send-email-mperttunen@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: Handling commit change logs
+Date: Wed, 20 Aug 2014 14:30:12 -0600
+Message-ID: <53F50554.3050505@wwwdotorg.org>
+References: <1408419205-10048-1-git-send-email-tuomas.tynkkynen@iki.fi>	<1408419205-10048-14-git-send-email-tuomas.tynkkynen@iki.fi>	<CAKohpokQOALPH13Ykz4nTBOby8J1X6_F30LNKz=gsC4wN3=3vg@mail.gmail.com>	<53F3A900.8010805@nvidia.com>	<CAKohponcZv9-MFNUQFxC_49-+P6QOhdjxsnYAyL3i4sXdCBYrw@mail.gmail.com> <CABxcv=ncm3Y7Ecfymro6TOuP=d10OV5--8n=dYmHyj6zi8hwEw@mail.gmail.com> <53F4FED4.7060408@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1407933685-12404-6-git-send-email-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Content-Type: text/plain; charset=utf-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <53F4FED4.7060408@suse.de>
+Sender: linux-pm-owner@vger.kernel.org
+To: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, Javier Martinez Canillas <javier@dowhile0.org>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Vince Hsu <vinceh@nvidia.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>, Thierry Reding <thierry.reding@gmail.com>, Tuomas Tynkkynen <ttynkkynen@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/13/2014 06:41 AM, Mikko Perttunen wrote:
-> This adds a device tree controlled option to enable PMC-based
-> thermal reset in overheating situations. Thermtrip is supported on
-> Tegra30, Tegra114 and Tegra124. The thermal reset only works when
-> the thermal sensors are calibrated, so a soctherm driver is also
-> required.
+On 08/20/2014 02:02 PM, Andreas F=C3=A4rber wrote:
+> Hi Javier,
+>
+> Am 20.08.2014 17:39, schrieb Javier Martinez Canillas:
+>> As you already know when you apply a patch with git am, everything
+>> that is between a line with 3 dashes line (---) and the actual diff =
+is
+>> omitted since that is where the generated diffstat is placed by git
+>> format-patch.
+>>
+>> We usually rely on that behavior to put there the history of a patch
+>> or any information that we think that is useful for reviewers but is
+>> not suitable to end in the commit message. Now that means that you
+>> have to generate the patch and then manually edit it to add the
+>> history there.
+>>
+>> But since git am omits any text between the first "---" and the diff=
+,
+>> it means that you can add a "---" on your actual commit message and
+>> anything that follows will be discarded by git am, that way you can
+>> maintain your history on your commit message which is way less tedio=
+us
+>> than manually editing patches.
+>>
+>> So the second "---" from Tuomas patch is actually the one generated =
+by
+>> git format-patch but that gets discarded by git am just like any oth=
+er
+>> text so it causes no harm when other apply the patches.
+>>
+>> If this not the correct workflow and you have a better way to manage
+>> this, I would love to know about it.
+>
+> One drawback of having --- in the commit message is that you can't
+> cherry-pick but really need to use git-am for it to be stripped.
 
-If calibration is required, presumably the soctherm must initialize 
-before this thermtrip code can initialize, or this thermtrip logic might 
-be triggered by uncalibrated sensors?
+You can, you just have to either:
 
-If so, then there needs to be some explicit mechanism to force the two 
-drivers into probing in the right order.
+* Pass -e to git cherry-pick so you get to edit the patch description,
+
+* Run "git commit --amend" right afterwards,
+
+=2E.. and then delete everything starting at ---.
+
+I do this reasonably often on my own patches; I send them to the list,=20
+get them reviewed, and then cherry-pick them into the Tegra maintainer=20
+tree rather than saving them from the email client and running git am.
