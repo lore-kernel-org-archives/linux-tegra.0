@@ -1,47 +1,122 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v3 3/4] ARM: tegra: Add thermal trip points for Jetson
- TK1
-Date: Thu, 21 Aug 2014 10:35:40 -0600
-Message-ID: <53F61FDC.4000604@wwwdotorg.org>
-References: <1407320706-17440-1-git-send-email-mperttunen@nvidia.com> <1407320706-17440-4-git-send-email-mperttunen@nvidia.com> <53F4FA80.9050103@wwwdotorg.org> <20140821160442.GB17621@developer>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 1/5] of: Add descriptions of thermtrip properties to
+ Tegra PMC bindings
+Date: Thu, 21 Aug 2014 18:53:58 +0200
+Message-ID: <20140821165357.GC1172@ulmo>
+References: <1407933685-12404-1-git-send-email-mperttunen@nvidia.com>
+ <1407933685-12404-2-git-send-email-mperttunen@nvidia.com>
+ <53F50231.5010605@wwwdotorg.org>
+ <20140821065853.GE4486@ulmo>
+ <53F61275.9020508@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20140821160442.GB17621@developer>
-Sender: linux-pm-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>, rui.zhang@intel.com, thierry.reding@gmail.com, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="aT9PWwzfKXlsBJM1"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <53F61275.9020508-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/21/2014 10:04 AM, Eduardo Valentin wrote:
-> Stephen,
->
-> On Wed, Aug 20, 2014 at 01:44:00PM -0600, Stephen Warren wrote:
->> On 08/06/2014 04:25 AM, Mikko Perttunen wrote:
->>> This adds critical trip points to the Jetson TK1 device tree.
->>> The device will do a controlled shutdown when either the CPU, GPU
->>> or MEM thermal zone reaches 101 degrees Celsius.
->>
->>> diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
->>
->>> +	thermal-zones {
->>> +		cpu {
->>> +			trips {
->> ...
->>> +			};
->>> +		};
->>
->> thermal.txt states that a cooling-maps sub-node is mandatory. However,
->> it seems to be missing here. Is the DT binding documentation overly
->> strict, or do we need to add such a node here?
->
-> I believe the binding documentation is correct. I believe this driver
-> should still evolve a little bit to accomplish full thermal DT
-> description and include the cooling devices mapping.
->
-> All the best,
 
-Should we hold off applying the Tegra DT until we can actually fill in 
-the cooling aspects, or are you OK with an empty cooling node as Mikko 
-suggested?
+--aT9PWwzfKXlsBJM1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Aug 21, 2014 at 09:38:29AM -0600, Stephen Warren wrote:
+> On 08/21/2014 12:58 AM, Thierry Reding wrote:
+> >On Wed, Aug 20, 2014 at 02:16:49PM -0600, Stephen Warren wrote:
+> >>On 08/13/2014 06:41 AM, Mikko Perttunen wrote:
+> >>>Hardware-triggered thermal reset requires configuring the I2C
+> >>>reset procedure. This configuration is read from the device tree,
+> >>>so document the relevant properties in the binding documentation.
+> >>
+> >>>diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra2=
+0-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.=
+txt
+> >>
+> >>>+Hardware-triggered thermal reset:
+> >>>+On Tegra30, Tegra114 and Tegra124, if the 'i2c-thermtrip' subnode exi=
+sts,
+> >>>+hardware-triggered thermal reset will be enabled.
+> >>
+> >>"will be enabled" sounds like SW behaviour, whereas DT is suppose to
+> >>describe HW, and leave SW to define its own behaviour. I would suggest:
+> >>
+> >>Optional sub-nodes:
+> >>i2c-thermtrip: Describes how to power off the system in the event of a
+> >>   thermal emergency.
+> >>
+> >>>+Required properties for hardware-triggered thermal reset (inside 'i2c=
+-thermtrip'):
+> >>
+> >>Simpler might be:
+> >>
+> >>Required properties for i2c-thermtrip node:
+> >>
+> >>>+- nvidia,pmu : Phandle to power management unit / PMIC handling power=
+off
+> >>>+- nvidia,reg-addr : I2C register address to write poweroff command to
+> >>>+- nvidia,reg-data : Poweroff command to write to PMU
+> >>
+> >>Why are both the PMU/PMIC phandle and the register address/data require=
+d? I
+> >>thought the purpose of having the phandle was to allow the register add=
+ress
+> >>and data to be queried from the PMU/PMIC driver.
+> >>
+> >>To me, it seems much simpler to get rid of the phandle and just hard-co=
+de
+> >>the I2C bus number, address, and data into this node, rather than havin=
+g to
+> >>go query it from the PMU/PMIC driver, then find the I2C controller, then
+> >>query it for its ID (and hope that all HW modules that talk to I2C
+> >>controllers directly use the same numbering scheme...)
+> >
+> >I originally requested this to be changed. It seems wrong to duplicate
+> >information about the PMIC in both the PMIC device tree node and the
+> >i2c-thermtrip node if we can get the same information from the driver
+> >directly (via the phandle). It certainly requires a little more code,
+> >but at the advantage of not having to figure out the I2C controller
+> >hardware number and I2C slave addresses when writing the i2c-thermtrip
+> >node.
+>=20
+> I cant see that argument, but surely the PMIC driver can also supply the
+> "reg-addr" and "reg-data" values too, if it's already being queried for t=
+he
+> I2C device address and bus number? The binding above appears to duplicate
+> part of the information, while requiring querying of the other part.
+
+I suppose that could be done. It would take a new function to do that,
+though, since I'm not aware of a generic mechanism to query this kind of
+information from a PMIC (there's no generic PMIC API, either, so perhaps
+it would be a good time to create one?). The I2C controller and I2C
+slave are generic I2C properties, whereas the register and data to power
+off the device are very device specific.
+
+Thierry
+
+--aT9PWwzfKXlsBJM1
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJT9iQlAAoJEN0jrNd/PrOhDrMQAK+P2klWFNegkLWLP7HHKFaZ
+ROp/3zfVJwUYNlLNNAq3i9wKou2aym2IFz08I9pjjCzaFA5Z0ITzx+2ZCstJx4Px
+CI7M2f1wJSSL3mcwEwmhETLdb+505Il+62D1bw8z7j5HaYk3ylUX/KLfVpdFESI/
+8TCiRZYAU8/4xguAkxFxqX0Fcrvt9erd58uVA2Jw7+bSFrtND9gOPM12htqgUVdK
+zDMFZaTj8tr51ALxMIfZ4KC7fFPCiHbdssmW6Mu7MtPNWcnqB7T/juG12q6aIaYZ
+lV9yeqdRjNCfyFyIPmhfVEic3oTMRa+cdDNprDu0Ycg84JffI7iG86R8NbLUboXg
+7EJwZjFUvlanlHB0x0eGDmXMHbZDnFJYr1mC9qpiqxje7o58af8/CoojDQ8t/5Ch
+/6e2NnRMWU5sogwqujdF59I6x/Z8+5ZlgSlZ4DL+dna/dxvVAPTdYg7njr04iA4Z
+eNlP+06xzyLbxveyRjdP2CeGflat4ucOoQEoNR6KqDjuHKgngr1llkOXtQlYTSKN
+UuJPFQEGYgD7DsBk//2/EHYWcwjjFL0MI52cr/oj3bCwfl3zCdkzRynGCTv1kcF/
++96hldRG3iiAYjrNTXimMgA6LA5Ab4eZxpI5n+0VcSNW7RNDM+iKx+by9Kh/KC1L
+IG/TWdDVuntu9Qf/EmSx
+=GjaV
+-----END PGP SIGNATURE-----
+
+--aT9PWwzfKXlsBJM1--
