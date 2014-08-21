@@ -1,46 +1,63 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2 5/5] ARM: tegra: Add thermal reset (thermtrip) support
- to PMC
-Date: Thu, 21 Aug 2014 09:40:02 -0600
-Message-ID: <53F612D2.8020803@wwwdotorg.org>
-References: <1407933685-12404-1-git-send-email-mperttunen@nvidia.com> <1407933685-12404-6-git-send-email-mperttunen@nvidia.com> <53F5042A.7020603@wwwdotorg.org> <53F5F019.10308@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v2 2/5] of: Add nvidia,controller-id property to Tegra
+ I2C bindings
+Date: Thu, 21 Aug 2014 09:41:57 -0600
+Message-ID: <53F61345.2080803@wwwdotorg.org>
+References: <1407933685-12404-1-git-send-email-mperttunen@nvidia.com> <1407933685-12404-3-git-send-email-mperttunen@nvidia.com> <53F502D7.9030403@wwwdotorg.org> <20140821070511.GF4486@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53F5F019.10308-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140821070511.GF4486@ulmo>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, wni@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/21/2014 07:11 AM, Mikko Perttunen wrote:
-> On 20/08/14 23:25, Stephen Warren wrote:
+On 08/21/2014 01:05 AM, Thierry Reding wrote:
+> On Wed, Aug 20, 2014 at 02:19:35PM -0600, Stephen Warren wrote:
 >> On 08/13/2014 06:41 AM, Mikko Perttunen wrote:
->>> This adds a device tree controlled option to enable PMC-based
->>> thermal reset in overheating situations. Thermtrip is supported on
->>> Tegra30, Tegra114 and Tegra124. The thermal reset only works when
->>> the thermal sensors are calibrated, so a soctherm driver is also
->>> required.
+>>> Sometimes, hardware blocks want to issue requests to devices
+>>> connected to I2C buses by itself. In such case, the bus the
+>>> target device resides on must be configured into a register.
+>>> For this purpose, each I2C controller has a defined ID known
+>>> by the hardware. Add a property for these IDs to the device tree
+>>> bindings, so that drivers can know what ID to write to a hardware
+>>> register when configuring a block that sends I2C messages autonomously.
 >>
->> If calibration is required, presumably the soctherm must initialize
->> before this thermtrip code can initialize, or this thermtrip logic might
->> be triggered by uncalibrated sensors?
->
-> SOCTHERM requires that each sensor be explicitly enabled before it gives
-> readings. If a sensor is not enabled, the temperature given by the
-> register (and used to trigger thermtrip) will be zero. So in order for a
-> thermtrip shutdown to be caused before soctherm is initialized, the
-> thermtrip temperature would have to be programmed to below zero (the
-> default value is 105C), in which case an immediate shutdown would
-> probably be in order anyway (unless the user uses LN2 or something to
-> cool the soc below zero).
->
+>>> diff --git a/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.txt b/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.txt
 >>
->> If so, then there needs to be some explicit mechanism to force the two
->> drivers into probing in the right order.
+>>> +Optional properties:
+>>> +- nvidia,controller-id: ID of controller when referred to in
+>>> +                        hardware registers.
+>>
+>> I'd prefer to put this information into the thermal trip node, since this
+>> represents what ID the PMC uses to communicate with the I2C controller, and
+>> there's no absolute guarantee that multiple clients that communicate
+>> directly with an I2C controller would use the same numbering scheme.
+>>
+>> If that doesn't work, can be at least name this nvidia,pmc-controller-id or
+>> nvidia,id-in-pmc so that if there are different numbering schemes, there's a
+>> clear path to represent this in different properties without conflicting
+>> names?
 >
-> Because of the above, I think it isn't necessary to probe these in order.
+> This is the ID of the controller used internally by the documentation.
+> And as far as I can tell every aspect of the documentation refers to the
+> controllers by the same ID (clocks, interrupts, ...). The PMC uses this
+> same numbering scheme. That makes the ID about as canonical as it gets,
+> so the extra prefix isn't warranted in my opinion.
+>
+> I'd argue that if ever there was a case where something was referring to
+> the controller using a different ID then that should be considered the
+> oddball and get special treatment.
 
-OK, that makes sense. Briefly mentioning this in the commit description 
-could be useful.
+This is certainly true in practice in current SoCs, but in general, 
+there's no reason why every HW module that talks to I2C HW modules needs 
+to be hooked up to all of them in the same order, especially if SoCs 
+start getting put together by mixing/matching components from all kinds 
+of vendors etc.
+
+Still, since they are today, I suppose that binding is fine; we can 
+always modify the binding for any new SoC (and associated compatible 
+value) in the future if the current rule ever gets broken. The code will 
+be a little annoying though.
