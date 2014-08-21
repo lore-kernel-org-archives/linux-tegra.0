@@ -1,47 +1,74 @@
-From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v2 0/9] Tegra xHCI support
-Date: Thu, 21 Aug 2014 10:26:16 -0700
-Message-ID: <CAL1qeaH=8Fgw6Zia3DuBL8wrrYMjZ8pqC2NanYtb5-YVJwmtsg@mail.gmail.com>
-References: <1408381705-3623-1-git-send-email-abrestic@chromium.org>
-	<CAAObsKDT4BV=fGAFkMxieQnC3HX=zm8G_qJ44yay4qG8inxoPQ@mail.gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v2 1/5] of: Add descriptions of thermtrip properties to
+ Tegra PMC bindings
+Date: Thu, 21 Aug 2014 11:54:55 -0600
+Message-ID: <53F6326F.2050600@wwwdotorg.org>
+References: <1407933685-12404-1-git-send-email-mperttunen@nvidia.com> <1407933685-12404-2-git-send-email-mperttunen@nvidia.com> <53F50231.5010605@wwwdotorg.org> <20140821065853.GE4486@ulmo> <53F61275.9020508@wwwdotorg.org> <20140821165357.GC1172@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAObsKDT4BV=fGAFkMxieQnC3HX=zm8G_qJ44yay4qG8inxoPQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <20140821165357.GC1172@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Aug 21, 2014 at 6:34 AM, Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org> wrote:
-> On 18 August 2014 19:08, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+On 08/21/2014 10:53 AM, Thierry Reding wrote:
+> On Thu, Aug 21, 2014 at 09:38:29AM -0600, Stephen Warren wrote:
+>> On 08/21/2014 12:58 AM, Thierry Reding wrote:
+>>> On Wed, Aug 20, 2014 at 02:16:49PM -0600, Stephen Warren wrote:
+>>>> On 08/13/2014 06:41 AM, Mikko Perttunen wrote:
+>>>>> Hardware-triggered thermal reset requires configuring the I2C
+>>>>> reset procedure. This configuration is read from the device tree,
+>>>>> so document the relevant properties in the binding documentation.
+>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+
+>>>>> +- nvidia,pmu : Phandle to power management unit / PMIC handling poweroff
+>>>>> +- nvidia,reg-addr : I2C register address to write poweroff command to
+>>>>> +- nvidia,reg-data : Poweroff command to write to PMU
+>>>>
+>>>> Why are both the PMU/PMIC phandle and the register address/data required? I
+>>>> thought the purpose of having the phandle was to allow the register address
+>>>> and data to be queried from the PMU/PMIC driver.
+>>>>
+>>>> To me, it seems much simpler to get rid of the phandle and just hard-code
+>>>> the I2C bus number, address, and data into this node, rather than having to
+>>>> go query it from the PMU/PMIC driver, then find the I2C controller, then
+>>>> query it for its ID (and hope that all HW modules that talk to I2C
+>>>> controllers directly use the same numbering scheme...)
+>>>
+>>> I originally requested this to be changed. It seems wrong to duplicate
+>>> information about the PMIC in both the PMIC device tree node and the
+>>> i2c-thermtrip node if we can get the same information from the driver
+>>> directly (via the phandle). It certainly requires a little more code,
+>>> but at the advantage of not having to figure out the I2C controller
+>>> hardware number and I2C slave addresses when writing the i2c-thermtrip
+>>> node.
 >>
->> Tested on Venice2, Jetson TK1, and Big with a variety of USB2.0 and
->> USB3.0 memory sticks and ethernet dongles using controller firmware from
->> the ChromiumOS tree [2].
+>> I cant see that argument, but surely the PMIC driver can also supply the
+
+Oops, that was meant to be can not cant.
+
+>> "reg-addr" and "reg-data" values too, if it's already being queried for the
+>> I2C device address and bus number? The binding above appears to duplicate
+>> part of the information, while requiring querying of the other part.
 >
-> Hi Andrew,
->
-> do you have any information regarding the port assignments for the
-> Blaze board? Would like to test this there.
+> I suppose that could be done. It would take a new function to do that,
+> though, since I'm not aware of a generic mechanism to query this kind of
+> information from a PMIC (there's no generic PMIC API, either, so perhaps
+> it would be a good time to create one?). The I2C controller and I2C
+> slave are generic I2C properties, whereas the register and data to power
+> off the device are very device specific.
 
-Sure:
-- USB3 port 0 (using PCIe lane 0) and UTMI port 0 are connected to the
-USB A connector on the left side,
-- UTMI port 1 is connected to an internal hub, which is in turn
-connected to the camera, the LTE modem (if present), and one of the
-USB A connectors on the right side, and
-- UTMI port 2 is connected to the other USB A connector on the right side.
-The mapping of ports on the right side varies by SKU (i.e. the one on
-the internal hub may be the front or rear USB A port).
+I don't think it's possible to generically query an I2C device for its 
+address from the struct i2c_device object; the code still needs to call 
+a function in the PMIC driver to obtain this.
 
-The USB3 device tree bits for Venice2 should work just fine for Blaze;
-the only real difference is that USB3 port 1/PCIe lane 1 are unused.
+That's because some I2C devices respond to multiple I2C addresses, and 
+there's no guarantee that the one I2C address in the DT (and hence the 
+struct i2c_device) is the address upon which the regulator function exists.
 
-Also, because of the board design on Blaze, the fused HS_CURR_LEVEL
-values need to be adjusted before being programmed into
-USB2_OTG_PAD*_CTL0.  This only affects UTMI ports 0 and 2, so ports
-connected to the internal hub should still work.  I'll add a pinconfig
-property to address this in the likely event I need to re-spin this
-series.  Or, if you like, I can send a follow-on patch to this set to
-add the property.
+grep for i2c_new_dummy in drivers/mfd and you'll find quite a few 
+examples. The Atmel MXT touchpad/screen is another example.
