@@ -1,23 +1,39 @@
-From: Juha-Matti Tilli <juha-matti.tilli@iki.fi>
-Subject: Re: [PATCH v5 0/4] Tegra124 soctherm driver
-Date: Thu, 21 Aug 2014 15:20:11 +0300
-Message-ID: <20140821122011.GA99564@sandfort.unics.fi>
-References: <1408616242-21009-1-git-send-email-mperttunen@nvidia.com>
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: Re: [PATCH 1/5] mmc: remove .owner field for drivers using
+ module_platform_driver
+Date: Thu, 21 Aug 2014 14:11:07 +0100
+Message-ID: <20140821131107.GA17487@griffinp-ThinkPad-X1-Carbon-2nd>
+References: <1407860069-12706-1-git-send-email-peter.griffin@linaro.org>
+ <1407860069-12706-2-git-send-email-peter.griffin@linaro.org>
+ <3815db00-4b32-4484-b97e-2144dc5abb45@BY2FFO11FD040.protection.gbl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-mmc-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1408616242-21009-1-git-send-email-mperttunen@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: edubezval@gmail.com, rui.zhang@intel.com, swarren@wwwdotorg.org, thierry.reding@gmail.com, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <3815db00-4b32-4484-b97e-2144dc5abb45@BY2FFO11FD040.protection.gbl>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Michal Simek <michal.simek@xilinx.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, tgih.jun@samsung.com, jh80.chung@samsung.com, chris@printf.net, ulf.hansson@linaro.org, jarkko.lavinen@nokia.com, balajitk@ti.com, baohua@kernel.org, viresh.linux@gmail.com, ian.molton@codethink.co.uk, maxime.ripard@free-electrons.com, linux-mmc@vger.kernel.org, linux-omap@vger.kernel.org, spear-devel@list.st.com, linux-tegra@vger.kernel.org, swarren@wwwdotorg.org, patches@linaro.org, lee.jones@linaro.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Aug 21, 2014 at 01:17:18PM +0300, Mikko Perttunen wrote:
-> this series adds support for the thermal monitoring features of the
-> soctherm unit on the Tegra124 SoC. 
+Hi Michal,
 
-For all patches in this series:
+On Mon, 18 Aug 2014, Michal Simek wrote:
 
-Reviewed-by: Juha-Matti Tilli <jtilli@nvidia.com>
-Tested-by: Juha-Matti Tilli <jtilli@nvidia.com>
+> I have checked this for all xilinx drivers we have in the tree
+> and I have sent similar patches.
+> This problem is probably in all subsystems.
+
+Yep
+
+> With communication with Mark Brown. Don't you have
+> cocinelle script for fixing this everywhere?
+
+Nope. Never really looked at cocinelle until now, but it looks like
+a useful tool for these sort of mass updates.
+
+regards,
+
+Peter.
+
+
