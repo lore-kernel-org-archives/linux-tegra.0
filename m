@@ -1,122 +1,47 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 1/5] of: Add descriptions of thermtrip properties to
- Tegra PMC bindings
-Date: Thu, 21 Aug 2014 18:53:58 +0200
-Message-ID: <20140821165357.GC1172@ulmo>
-References: <1407933685-12404-1-git-send-email-mperttunen@nvidia.com>
- <1407933685-12404-2-git-send-email-mperttunen@nvidia.com>
- <53F50231.5010605@wwwdotorg.org>
- <20140821065853.GE4486@ulmo>
- <53F61275.9020508@wwwdotorg.org>
+From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v2 0/9] Tegra xHCI support
+Date: Thu, 21 Aug 2014 10:26:16 -0700
+Message-ID: <CAL1qeaH=8Fgw6Zia3DuBL8wrrYMjZ8pqC2NanYtb5-YVJwmtsg@mail.gmail.com>
+References: <1408381705-3623-1-git-send-email-abrestic@chromium.org>
+	<CAAObsKDT4BV=fGAFkMxieQnC3HX=zm8G_qJ44yay4qG8inxoPQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="aT9PWwzfKXlsBJM1"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <53F61275.9020508-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <CAAObsKDT4BV=fGAFkMxieQnC3HX=zm8G_qJ44yay4qG8inxoPQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Thu, Aug 21, 2014 at 6:34 AM, Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org> wrote:
+> On 18 August 2014 19:08, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+>>
+>> Tested on Venice2, Jetson TK1, and Big with a variety of USB2.0 and
+>> USB3.0 memory sticks and ethernet dongles using controller firmware from
+>> the ChromiumOS tree [2].
+>
+> Hi Andrew,
+>
+> do you have any information regarding the port assignments for the
+> Blaze board? Would like to test this there.
 
---aT9PWwzfKXlsBJM1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sure:
+- USB3 port 0 (using PCIe lane 0) and UTMI port 0 are connected to the
+USB A connector on the left side,
+- UTMI port 1 is connected to an internal hub, which is in turn
+connected to the camera, the LTE modem (if present), and one of the
+USB A connectors on the right side, and
+- UTMI port 2 is connected to the other USB A connector on the right side.
+The mapping of ports on the right side varies by SKU (i.e. the one on
+the internal hub may be the front or rear USB A port).
 
-On Thu, Aug 21, 2014 at 09:38:29AM -0600, Stephen Warren wrote:
-> On 08/21/2014 12:58 AM, Thierry Reding wrote:
-> >On Wed, Aug 20, 2014 at 02:16:49PM -0600, Stephen Warren wrote:
-> >>On 08/13/2014 06:41 AM, Mikko Perttunen wrote:
-> >>>Hardware-triggered thermal reset requires configuring the I2C
-> >>>reset procedure. This configuration is read from the device tree,
-> >>>so document the relevant properties in the binding documentation.
-> >>
-> >>>diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra2=
-0-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.=
-txt
-> >>
-> >>>+Hardware-triggered thermal reset:
-> >>>+On Tegra30, Tegra114 and Tegra124, if the 'i2c-thermtrip' subnode exi=
-sts,
-> >>>+hardware-triggered thermal reset will be enabled.
-> >>
-> >>"will be enabled" sounds like SW behaviour, whereas DT is suppose to
-> >>describe HW, and leave SW to define its own behaviour. I would suggest:
-> >>
-> >>Optional sub-nodes:
-> >>i2c-thermtrip: Describes how to power off the system in the event of a
-> >>   thermal emergency.
-> >>
-> >>>+Required properties for hardware-triggered thermal reset (inside 'i2c=
--thermtrip'):
-> >>
-> >>Simpler might be:
-> >>
-> >>Required properties for i2c-thermtrip node:
-> >>
-> >>>+- nvidia,pmu : Phandle to power management unit / PMIC handling power=
-off
-> >>>+- nvidia,reg-addr : I2C register address to write poweroff command to
-> >>>+- nvidia,reg-data : Poweroff command to write to PMU
-> >>
-> >>Why are both the PMU/PMIC phandle and the register address/data require=
-d? I
-> >>thought the purpose of having the phandle was to allow the register add=
-ress
-> >>and data to be queried from the PMU/PMIC driver.
-> >>
-> >>To me, it seems much simpler to get rid of the phandle and just hard-co=
-de
-> >>the I2C bus number, address, and data into this node, rather than havin=
-g to
-> >>go query it from the PMU/PMIC driver, then find the I2C controller, then
-> >>query it for its ID (and hope that all HW modules that talk to I2C
-> >>controllers directly use the same numbering scheme...)
-> >
-> >I originally requested this to be changed. It seems wrong to duplicate
-> >information about the PMIC in both the PMIC device tree node and the
-> >i2c-thermtrip node if we can get the same information from the driver
-> >directly (via the phandle). It certainly requires a little more code,
-> >but at the advantage of not having to figure out the I2C controller
-> >hardware number and I2C slave addresses when writing the i2c-thermtrip
-> >node.
->=20
-> I cant see that argument, but surely the PMIC driver can also supply the
-> "reg-addr" and "reg-data" values too, if it's already being queried for t=
-he
-> I2C device address and bus number? The binding above appears to duplicate
-> part of the information, while requiring querying of the other part.
+The USB3 device tree bits for Venice2 should work just fine for Blaze;
+the only real difference is that USB3 port 1/PCIe lane 1 are unused.
 
-I suppose that could be done. It would take a new function to do that,
-though, since I'm not aware of a generic mechanism to query this kind of
-information from a PMIC (there's no generic PMIC API, either, so perhaps
-it would be a good time to create one?). The I2C controller and I2C
-slave are generic I2C properties, whereas the register and data to power
-off the device are very device specific.
-
-Thierry
-
---aT9PWwzfKXlsBJM1
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJT9iQlAAoJEN0jrNd/PrOhDrMQAK+P2klWFNegkLWLP7HHKFaZ
-ROp/3zfVJwUYNlLNNAq3i9wKou2aym2IFz08I9pjjCzaFA5Z0ITzx+2ZCstJx4Px
-CI7M2f1wJSSL3mcwEwmhETLdb+505Il+62D1bw8z7j5HaYk3ylUX/KLfVpdFESI/
-8TCiRZYAU8/4xguAkxFxqX0Fcrvt9erd58uVA2Jw7+bSFrtND9gOPM12htqgUVdK
-zDMFZaTj8tr51ALxMIfZ4KC7fFPCiHbdssmW6Mu7MtPNWcnqB7T/juG12q6aIaYZ
-lV9yeqdRjNCfyFyIPmhfVEic3oTMRa+cdDNprDu0Ycg84JffI7iG86R8NbLUboXg
-7EJwZjFUvlanlHB0x0eGDmXMHbZDnFJYr1mC9qpiqxje7o58af8/CoojDQ8t/5Ch
-/6e2NnRMWU5sogwqujdF59I6x/Z8+5ZlgSlZ4DL+dna/dxvVAPTdYg7njr04iA4Z
-eNlP+06xzyLbxveyRjdP2CeGflat4ucOoQEoNR6KqDjuHKgngr1llkOXtQlYTSKN
-UuJPFQEGYgD7DsBk//2/EHYWcwjjFL0MI52cr/oj3bCwfl3zCdkzRynGCTv1kcF/
-+96hldRG3iiAYjrNTXimMgA6LA5Ab4eZxpI5n+0VcSNW7RNDM+iKx+by9Kh/KC1L
-IG/TWdDVuntu9Qf/EmSx
-=GjaV
------END PGP SIGNATURE-----
-
---aT9PWwzfKXlsBJM1--
+Also, because of the board design on Blaze, the fused HS_CURR_LEVEL
+values need to be adjusted before being programmed into
+USB2_OTG_PAD*_CTL0.  This only affects UTMI ports 0 and 2, so ports
+connected to the internal hub should still work.  I'll add a pinconfig
+property to address this in the likely event I need to re-spin this
+series.  Or, if you like, I can send a follow-on patch to this set to
+add the property.
