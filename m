@@ -1,39 +1,45 @@
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: Re: [PATCH 1/5] mmc: remove .owner field for drivers using
- module_platform_driver
-Date: Thu, 21 Aug 2014 14:11:07 +0100
-Message-ID: <20140821131107.GA17487@griffinp-ThinkPad-X1-Carbon-2nd>
-References: <1407860069-12706-1-git-send-email-peter.griffin@linaro.org>
- <1407860069-12706-2-git-send-email-peter.griffin@linaro.org>
- <3815db00-4b32-4484-b97e-2144dc5abb45@BY2FFO11FD040.protection.gbl>
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 5/5] ARM: tegra: Add thermal reset (thermtrip) support
+ to PMC
+Date: Thu, 21 Aug 2014 16:11:53 +0300
+Message-ID: <53F5F019.10308@nvidia.com>
+References: <1407933685-12404-1-git-send-email-mperttunen@nvidia.com> <1407933685-12404-6-git-send-email-mperttunen@nvidia.com> <53F5042A.7020603@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <3815db00-4b32-4484-b97e-2144dc5abb45@BY2FFO11FD040.protection.gbl>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Michal Simek <michal.simek@xilinx.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, tgih.jun@samsung.com, jh80.chung@samsung.com, chris@printf.net, ulf.hansson@linaro.org, jarkko.lavinen@nokia.com, balajitk@ti.com, baohua@kernel.org, viresh.linux@gmail.com, ian.molton@codethink.co.uk, maxime.ripard@free-electrons.com, linux-mmc@vger.kernel.org, linux-omap@vger.kernel.org, spear-devel@list.st.com, linux-tegra@vger.kernel.org, swarren@wwwdotorg.org, patches@linaro.org, lee.jones@linaro.org
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <53F5042A.7020603-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Michal,
+On 20/08/14 23:25, Stephen Warren wrote:
+> On 08/13/2014 06:41 AM, Mikko Perttunen wrote:
+>> This adds a device tree controlled option to enable PMC-based
+>> thermal reset in overheating situations. Thermtrip is supported on
+>> Tegra30, Tegra114 and Tegra124. The thermal reset only works when
+>> the thermal sensors are calibrated, so a soctherm driver is also
+>> required.
+>
+> If calibration is required, presumably the soctherm must initialize
+> before this thermtrip code can initialize, or this thermtrip logic might
+> be triggered by uncalibrated sensors?
 
-On Mon, 18 Aug 2014, Michal Simek wrote:
+SOCTHERM requires that each sensor be explicitly enabled before it gives 
+readings. If a sensor is not enabled, the temperature given by the 
+register (and used to trigger thermtrip) will be zero. So in order for a 
+thermtrip shutdown to be caused before soctherm is initialized, the 
+thermtrip temperature would have to be programmed to below zero (the 
+default value is 105C), in which case an immediate shutdown would 
+probably be in order anyway (unless the user uses LN2 or something to 
+cool the soc below zero).
 
-> I have checked this for all xilinx drivers we have in the tree
-> and I have sent similar patches.
-> This problem is probably in all subsystems.
+>
+> If so, then there needs to be some explicit mechanism to force the two
+> drivers into probing in the right order.
 
-Yep
+Because of the above, I think it isn't necessary to probe these in order.
 
-> With communication with Mark Brown. Don't you have
-> cocinelle script for fixing this everywhere?
-
-Nope. Never really looked at cocinelle until now, but it looks like
-a useful tool for these sort of mass updates.
-
-regards,
-
-Peter.
-
-
+Cheers,
+Mikko
