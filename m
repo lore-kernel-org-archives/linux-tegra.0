@@ -1,41 +1,102 @@
-From: Heiko Schocher <hs@denx.de>
-Subject: Re: Handling commit change logs
-Date: Thu, 21 Aug 2014 08:13:17 +0200
-Message-ID: <53F58DFD.900@denx.de>
-References: <1408419205-10048-1-git-send-email-tuomas.tynkkynen@iki.fi> <1408419205-10048-14-git-send-email-tuomas.tynkkynen@iki.fi> <CAKohpokQOALPH13Ykz4nTBOby8J1X6_F30LNKz=gsC4wN3=3vg@mail.gmail.com> <53F3A900.8010805@nvidia.com> <CAKohponcZv9-MFNUQFxC_49-+P6QOhdjxsnYAyL3i4sXdCBYrw@mail.gmail.com> <CABxcv=ncm3Y7Ecfymro6TOuP=d10OV5--8n=dYmHyj6zi8hwEw@mail.gmail.com> <53F4FED4.7060408@suse.de> <53F50554.3050505@wwwdotorg.org> <CAOh2x=mO1r76fkvruvBLaL144G8fHgDPMwhKVCxv4HW8FRUE_Q@mail.gmail.com>
-Reply-To: hs@denx.de
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 1/5] of: Add descriptions of thermtrip properties to
+ Tegra PMC bindings
+Date: Thu, 21 Aug 2014 08:58:54 +0200
+Message-ID: <20140821065853.GE4486@ulmo>
+References: <1407933685-12404-1-git-send-email-mperttunen@nvidia.com>
+ <1407933685-12404-2-git-send-email-mperttunen@nvidia.com>
+ <53F50231.5010605@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAOh2x=mO1r76fkvruvBLaL144G8fHgDPMwhKVCxv4HW8FRUE_Q@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Vince Hsu <vinceh@nvidia.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>, Thierry Reding <thierry.reding@gmail.com>, Tuomas Tynkkynen <ttynkkynen@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Javier Martinez Canillas <javier@dowhile0.org>, =?ISO-8859-1?Q?Andreas_?= =?ISO-8859-1?Q?F=E4rber?= <afaerber@suse.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="dFWYt1i2NyOo1oI9"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <53F50231.5010605-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hello Viresh,
 
-Am 21.08.2014 06:26, schrieb Viresh Kumar:
-> On Thu, Aug 21, 2014 at 2:00 AM, Stephen Warren<swarren@wwwdotorg.org=
->  wrote:
->> On 08/20/2014 02:02 PM, Andreas F=E4rber wrote:
->>> Am 20.08.2014 17:39, schrieb Javier Martinez Canillas:
->>>> If this not the correct workflow and you have a better way to mana=
-ge
->>>> this, I would love to know about it.
->
-> Oh yes, this was certainly useful. I was missing this (mis)feature :)
+--dFWYt1i2NyOo1oI9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-maybe patman from u-boot is also interesting for you, see:
+On Wed, Aug 20, 2014 at 02:16:49PM -0600, Stephen Warren wrote:
+> On 08/13/2014 06:41 AM, Mikko Perttunen wrote:
+> >Hardware-triggered thermal reset requires configuring the I2C
+> >reset procedure. This configuration is read from the device tree,
+> >so document the relevant properties in the binding documentation.
+>=20
+> >diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-=
+pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+>=20
+> >+Hardware-triggered thermal reset:
+> >+On Tegra30, Tegra114 and Tegra124, if the 'i2c-thermtrip' subnode exist=
+s,
+> >+hardware-triggered thermal reset will be enabled.
+>=20
+> "will be enabled" sounds like SW behaviour, whereas DT is suppose to
+> describe HW, and leave SW to define its own behaviour. I would suggest:
+>=20
+> Optional sub-nodes:
+> i2c-thermtrip: Describes how to power off the system in the event of a
+>   thermal emergency.
+>=20
+> >+Required properties for hardware-triggered thermal reset (inside 'i2c-t=
+hermtrip'):
+>=20
+> Simpler might be:
+>=20
+> Required properties for i2c-thermtrip node:
+>=20
+> >+- nvidia,pmu : Phandle to power management unit / PMIC handling poweroff
+> >+- nvidia,reg-addr : I2C register address to write poweroff command to
+> >+- nvidia,reg-data : Poweroff command to write to PMU
+>=20
+> Why are both the PMU/PMIC phandle and the register address/data required?=
+ I
+> thought the purpose of having the phandle was to allow the register addre=
+ss
+> and data to be queried from the PMU/PMIC driver.
+>=20
+> To me, it seems much simpler to get rid of the phandle and just hard-code
+> the I2C bus number, address, and data into this node, rather than having =
+to
+> go query it from the PMU/PMIC driver, then find the I2C controller, then
+> query it for its ID (and hope that all HW modules that talk to I2C
+> controllers directly use the same numbering scheme...)
 
-http://git.denx.de/?p=3Du-boot.git;a=3Dblob;f=3Dtools/patman/README;h=3D=
-5fb508b80df10d3b11d95eea95a141ce3d0ef578;hb=3D67ee22b0681305ba1099c508e=
-ecade996abc1c65
+I originally requested this to be changed. It seems wrong to duplicate
+information about the PMIC in both the PMIC device tree node and the
+i2c-thermtrip node if we can get the same information from the driver
+directly (via the phandle). It certainly requires a little more code,
+but at the advantage of not having to figure out the I2C controller
+hardware number and I2C slave addresses when writing the i2c-thermtrip
+node.
 
-bye,
-Heiko
---=20
-DENX Software Engineering GmbH,     MD: Wolfgang Denk & Detlev Zundel
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Thierry
+
+--dFWYt1i2NyOo1oI9
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJT9ZitAAoJEN0jrNd/PrOh5AIQAKAzWYyZBKE3hdtEkt6Z/7Al
+0tjfhWWOBhNApkzDR7n2AX20ZIHfm1wjDjyeW+pvulsZ8+Ztk79FDwIf6k+vbhiP
+xn3iKUXY1QFFy3OmZAxdZWbeBgwqBkGJzH6bwN3BfDQkau+ALXNVgMMY9Eo8O2hh
+QZuTRvBphMPsuDM5fJy1eUCjTxaaCxlaK6y6PO1Leshztj2TykOS7J/2OZrWRLLy
+6Uk3mv2KRBNZvN/8mT5X/7cyFAsF9eAjcfipDtSf7u+AUGaT0X1ckFkbMlLlJXQ7
+qxaXjH/EG4vd85rWeGCG+bKHC3LkjF4DpZjCuVr+9S1wHZu7GqtRaImgGH31etNl
+h12Fcm9r3P3gWbIElWDW9mxdeSd5RLrGuYche5zamyZ1ALkAqFP0QSG15w6mW2SU
+WspCu6z1bGjubSiVn52dZPApPpYEPz7i/HkIiiE8FhFhE+XiPK/68W0A0RaEp0hB
+gX8mqlSg5R83UCh0MjPceqBrXoRP6ZMBe6I7j8umh20RAMCwfKj5FS6jLACv6Ios
+N2h634uosCl2kLVahw+9eZbGieyog/C6E/YJHalnDHdKg/HV5Rjs3KL1gkSfSoIV
+OGxyO2+gkM+YriagMbXMC0ZLl9jy+zcGuYtybaEZNoa773Px6xItcas0RpBXFP8g
+4go5rR96j3GzIyMAxm/U
+=uKsO
+-----END PGP SIGNATURE-----
+
+--dFWYt1i2NyOo1oI9--
