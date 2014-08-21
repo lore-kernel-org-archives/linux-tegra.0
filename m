@@ -1,35 +1,70 @@
-From: Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: ahci_tegra build failure in Linus' tree
-Date: Thu, 21 Aug 2014 14:32:37 -0500
-Message-ID: <20140821193237.GB6168@mtj.dyndns.org>
-References: <E1XKRXZ-0000vL-4b@cassiel.sirena.org.uk>
- <20140821185352.GP24407@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [pinmux PATCH] Warn about unconfigured pins
+Date: Thu, 21 Aug 2014 17:26:04 -0600
+Message-ID: <1408663564-3281-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20140821185352.GP24407-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hello,
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-On Thu, Aug 21, 2014 at 01:53:52PM -0500, Mark Brown wrote:
-> On Thu, Aug 21, 2014 at 01:32:29PM +0100, Build bot for Mark Brown wrote:
-> 
-> > ../drivers/ata/ahci_tegra.c:27:35: fatal error: linux/tegra-powergate.h: No such file or directory
-> 
-> ARM allmodconfig currently fails to build in mainline due to the above
-> error.  It has been fixed in -next by Mikko Perttunen in commit
-> 0e5740770f34381b (ata: ahci_tegra: Change include to fix compilation)
-> but it's not clear to me if that's on it's way to Linus - it'd be great
-> if it could be.
+When generating a kernel or U-Boot pinmux configuration, complain about
+pins that have no configuration. That's probably a bug in the spreadsheet.
 
-Will push it out right away.
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ board-to-kernel-dt.py     | 2 ++
+ board-to-uboot.py         | 2 ++
+ tegra_pmx_board_parser.py | 8 ++++++++
+ 3 files changed, 12 insertions(+)
 
-Thanks.
-
+diff --git a/board-to-kernel-dt.py b/board-to-kernel-dt.py
+index 966fee29eea9..86739db90bee 100755
+--- a/board-to-kernel-dt.py
++++ b/board-to-kernel-dt.py
+@@ -63,3 +63,5 @@ for pincfg in board.pincfgs_by_num():
+ # FIXME: Handle drive groups
+ 
+ print('		};')
++
++board.warn_about_unconfigured_pins()
+diff --git a/board-to-uboot.py b/board-to-uboot.py
+index e4df06e2606a..c67919176a3f 100755
+--- a/board-to-uboot.py
++++ b/board-to-uboot.py
+@@ -168,3 +168,5 @@ print('''\
+ 
+ #endif /* PINMUX_CONFIG_%s_H */
+ ''' % board.definename, end='')
++
++board.warn_about_unconfigured_pins()
+diff --git a/tegra_pmx_board_parser.py b/tegra_pmx_board_parser.py
+index 352bbe0a2499..7b45abe74a00 100644
+--- a/tegra_pmx_board_parser.py
++++ b/tegra_pmx_board_parser.py
+@@ -19,6 +19,7 @@
+ # DEALINGS IN THE SOFTWARE.
+ 
+ import os.path
++import sys
+ import tegra_pmx_soc_parser
+ from tegra_pmx_parser_utils import *
+ 
+@@ -62,6 +63,13 @@ class Board(TopLevelParsedObj):
+     def pincfgs_by_num(self):
+         return self._pincfgs_by_num
+ 
++    def warn_about_unconfigured_pins(self):
++        unconfigured_gpio_pins = {gpio_pin.fullname for gpio_pin in self.soc.gpios_pins_by_num()}
++        for gpio_pin in self.pincfgs_by_num():
++            unconfigured_gpio_pins.remove(gpio_pin.gpio_pin.fullname)
++        for gpio_pin in unconfigured_gpio_pins:
++            print('WARNING: Unconfigured pin ' + gpio_pin, file=sys.stderr)
++
+ def load_board(boardname):
+     fn = os.path.join(configs_dir, boardname + '.board')
+     d = {}
 -- 
-tejun
+2.1.0.rc2.3.g67de23d
