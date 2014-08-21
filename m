@@ -1,63 +1,35 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v2 2/5] of: Add nvidia,controller-id property to Tegra
- I2C bindings
-Date: Thu, 21 Aug 2014 09:41:57 -0600
-Message-ID: <53F61345.2080803@wwwdotorg.org>
-References: <1407933685-12404-1-git-send-email-mperttunen@nvidia.com> <1407933685-12404-3-git-send-email-mperttunen@nvidia.com> <53F502D7.9030403@wwwdotorg.org> <20140821070511.GF4486@ulmo>
+From: Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCH v5 0/4] Tegra124 soctherm driver
+Date: Thu, 21 Aug 2014 12:01:29 -0400
+Message-ID: <20140821160127.GA17621@developer>
+References: <1408616242-21009-1-git-send-email-mperttunen@nvidia.com>
+ <20140821122011.GA99564@sandfort.unics.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140821070511.GF4486@ulmo>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, wni@nvidia.com
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20140821122011.GA99564@sandfort.unics.fi>
+Sender: linux-pm-owner@vger.kernel.org
+To: Juha-Matti Tilli <juha-matti.tilli@iki.fi>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>, rui.zhang@intel.com, swarren@wwwdotorg.org, thierry.reding@gmail.com, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/21/2014 01:05 AM, Thierry Reding wrote:
-> On Wed, Aug 20, 2014 at 02:19:35PM -0600, Stephen Warren wrote:
->> On 08/13/2014 06:41 AM, Mikko Perttunen wrote:
->>> Sometimes, hardware blocks want to issue requests to devices
->>> connected to I2C buses by itself. In such case, the bus the
->>> target device resides on must be configured into a register.
->>> For this purpose, each I2C controller has a defined ID known
->>> by the hardware. Add a property for these IDs to the device tree
->>> bindings, so that drivers can know what ID to write to a hardware
->>> register when configuring a block that sends I2C messages autonomously.
->>
->>> diff --git a/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.txt b/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.txt
->>
->>> +Optional properties:
->>> +- nvidia,controller-id: ID of controller when referred to in
->>> +                        hardware registers.
->>
->> I'd prefer to put this information into the thermal trip node, since this
->> represents what ID the PMC uses to communicate with the I2C controller, and
->> there's no absolute guarantee that multiple clients that communicate
->> directly with an I2C controller would use the same numbering scheme.
->>
->> If that doesn't work, can be at least name this nvidia,pmc-controller-id or
->> nvidia,id-in-pmc so that if there are different numbering schemes, there's a
->> clear path to represent this in different properties without conflicting
->> names?
->
-> This is the ID of the controller used internally by the documentation.
-> And as far as I can tell every aspect of the documentation refers to the
-> controllers by the same ID (clocks, interrupts, ...). The PMC uses this
-> same numbering scheme. That makes the ID about as canonical as it gets,
-> so the extra prefix isn't warranted in my opinion.
->
-> I'd argue that if ever there was a case where something was referring to
-> the controller using a different ID then that should be considered the
-> oddball and get special treatment.
+Hello Juha-Matti,
 
-This is certainly true in practice in current SoCs, but in general, 
-there's no reason why every HW module that talks to I2C HW modules needs 
-to be hooked up to all of them in the same order, especially if SoCs 
-start getting put together by mixing/matching components from all kinds 
-of vendors etc.
+On Thu, Aug 21, 2014 at 03:20:11PM +0300, Juha-Matti Tilli wrote:
+> On Thu, Aug 21, 2014 at 01:17:18PM +0300, Mikko Perttunen wrote:
+> > this series adds support for the thermal monitoring features of the
+> > soctherm unit on the Tegra124 SoC. 
+> 
+> For all patches in this series:
+> 
+> Reviewed-by: Juha-Matti Tilli <jtilli@nvidia.com>
+> Tested-by: Juha-Matti Tilli <jtilli@nvidia.com>
 
-Still, since they are today, I suppose that binding is fine; we can 
-always modify the binding for any new SoC (and associated compatible 
-value) in the future if the current rule ever gets broken. The code will 
-be a little annoying though.
+I suppose the 4 C to 5 C difference is not seen anymore in this version,
+right?
+
+Cheers,
+
+Eduardo
+
