@@ -1,102 +1,89 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 1/5] of: Add descriptions of thermtrip properties to
- Tegra PMC bindings
-Date: Thu, 21 Aug 2014 08:58:54 +0200
-Message-ID: <20140821065853.GE4486@ulmo>
+Subject: Re: [PATCH v2 2/5] of: Add nvidia,controller-id property to Tegra
+ I2C bindings
+Date: Thu, 21 Aug 2014 09:05:12 +0200
+Message-ID: <20140821070511.GF4486@ulmo>
 References: <1407933685-12404-1-git-send-email-mperttunen@nvidia.com>
- <1407933685-12404-2-git-send-email-mperttunen@nvidia.com>
- <53F50231.5010605@wwwdotorg.org>
+ <1407933685-12404-3-git-send-email-mperttunen@nvidia.com>
+ <53F502D7.9030403@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="dFWYt1i2NyOo1oI9"
+	protocol="application/pgp-signature"; boundary="gdTfX7fkYsEEjebm"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <53F50231.5010605-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <53F502D7.9030403-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---dFWYt1i2NyOo1oI9
+--gdTfX7fkYsEEjebm
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 20, 2014 at 02:16:49PM -0600, Stephen Warren wrote:
+On Wed, Aug 20, 2014 at 02:19:35PM -0600, Stephen Warren wrote:
 > On 08/13/2014 06:41 AM, Mikko Perttunen wrote:
-> >Hardware-triggered thermal reset requires configuring the I2C
-> >reset procedure. This configuration is read from the device tree,
-> >so document the relevant properties in the binding documentation.
+> >Sometimes, hardware blocks want to issue requests to devices
+> >connected to I2C buses by itself. In such case, the bus the
+> >target device resides on must be configured into a register.
+> >For this purpose, each I2C controller has a defined ID known
+> >by the hardware. Add a property for these IDs to the device tree
+> >bindings, so that drivers can know what ID to write to a hardware
+> >register when configuring a block that sends I2C messages autonomously.
 >=20
-> >diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-=
-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+> >diff --git a/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.tx=
+t b/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.txt
 >=20
-> >+Hardware-triggered thermal reset:
-> >+On Tegra30, Tegra114 and Tegra124, if the 'i2c-thermtrip' subnode exist=
-s,
-> >+hardware-triggered thermal reset will be enabled.
+> >+Optional properties:
+> >+- nvidia,controller-id: ID of controller when referred to in
+> >+                        hardware registers.
 >=20
-> "will be enabled" sounds like SW behaviour, whereas DT is suppose to
-> describe HW, and leave SW to define its own behaviour. I would suggest:
+> I'd prefer to put this information into the thermal trip node, since this
+> represents what ID the PMC uses to communicate with the I2C controller, a=
+nd
+> there's no absolute guarantee that multiple clients that communicate
+> directly with an I2C controller would use the same numbering scheme.
 >=20
-> Optional sub-nodes:
-> i2c-thermtrip: Describes how to power off the system in the event of a
->   thermal emergency.
->=20
-> >+Required properties for hardware-triggered thermal reset (inside 'i2c-t=
-hermtrip'):
->=20
-> Simpler might be:
->=20
-> Required properties for i2c-thermtrip node:
->=20
-> >+- nvidia,pmu : Phandle to power management unit / PMIC handling poweroff
-> >+- nvidia,reg-addr : I2C register address to write poweroff command to
-> >+- nvidia,reg-data : Poweroff command to write to PMU
->=20
-> Why are both the PMU/PMIC phandle and the register address/data required?=
- I
-> thought the purpose of having the phandle was to allow the register addre=
-ss
-> and data to be queried from the PMU/PMIC driver.
->=20
-> To me, it seems much simpler to get rid of the phandle and just hard-code
-> the I2C bus number, address, and data into this node, rather than having =
-to
-> go query it from the PMU/PMIC driver, then find the I2C controller, then
-> query it for its ID (and hope that all HW modules that talk to I2C
-> controllers directly use the same numbering scheme...)
+> If that doesn't work, can be at least name this nvidia,pmc-controller-id =
+or
+> nvidia,id-in-pmc so that if there are different numbering schemes, there'=
+s a
+> clear path to represent this in different properties without conflicting
+> names?
 
-I originally requested this to be changed. It seems wrong to duplicate
-information about the PMIC in both the PMIC device tree node and the
-i2c-thermtrip node if we can get the same information from the driver
-directly (via the phandle). It certainly requires a little more code,
-but at the advantage of not having to figure out the I2C controller
-hardware number and I2C slave addresses when writing the i2c-thermtrip
-node.
+This is the ID of the controller used internally by the documentation.
+And as far as I can tell every aspect of the documentation refers to the
+controllers by the same ID (clocks, interrupts, ...). The PMC uses this
+same numbering scheme. That makes the ID about as canonical as it gets,
+so the extra prefix isn't warranted in my opinion.
+
+I'd argue that if ever there was a case where something was referring to
+the controller using a different ID then that should be considered the
+oddball and get special treatment.
 
 Thierry
 
---dFWYt1i2NyOo1oI9
+--gdTfX7fkYsEEjebm
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJT9ZitAAoJEN0jrNd/PrOh5AIQAKAzWYyZBKE3hdtEkt6Z/7Al
-0tjfhWWOBhNApkzDR7n2AX20ZIHfm1wjDjyeW+pvulsZ8+Ztk79FDwIf6k+vbhiP
-xn3iKUXY1QFFy3OmZAxdZWbeBgwqBkGJzH6bwN3BfDQkau+ALXNVgMMY9Eo8O2hh
-QZuTRvBphMPsuDM5fJy1eUCjTxaaCxlaK6y6PO1Leshztj2TykOS7J/2OZrWRLLy
-6Uk3mv2KRBNZvN/8mT5X/7cyFAsF9eAjcfipDtSf7u+AUGaT0X1ckFkbMlLlJXQ7
-qxaXjH/EG4vd85rWeGCG+bKHC3LkjF4DpZjCuVr+9S1wHZu7GqtRaImgGH31etNl
-h12Fcm9r3P3gWbIElWDW9mxdeSd5RLrGuYche5zamyZ1ALkAqFP0QSG15w6mW2SU
-WspCu6z1bGjubSiVn52dZPApPpYEPz7i/HkIiiE8FhFhE+XiPK/68W0A0RaEp0hB
-gX8mqlSg5R83UCh0MjPceqBrXoRP6ZMBe6I7j8umh20RAMCwfKj5FS6jLACv6Ios
-N2h634uosCl2kLVahw+9eZbGieyog/C6E/YJHalnDHdKg/HV5Rjs3KL1gkSfSoIV
-OGxyO2+gkM+YriagMbXMC0ZLl9jy+zcGuYtybaEZNoa773Px6xItcas0RpBXFP8g
-4go5rR96j3GzIyMAxm/U
-=uKsO
+iQIcBAEBAgAGBQJT9ZonAAoJEN0jrNd/PrOhb18P/1BvBT3dl0m0F++JJ126LxXO
+GfEnytQDAepqT41BX+sv7FB/LrLjrZ+whdGXgkf6PK9jX8MJ8X9ALnUp5plh7uLW
+LK/x+Yq7MLHwZY11V4WYYLvYzTOypwrM7TdzoiOPCEAwgSQIy/m51q+ntuU89jf3
+Y6i3VsHeW/2SJjV5mgQdugDTvCXferuoti34J2uM1DWFNa/6St/dTAGIS2ZKqvkP
+O65pAz2GB1/1KmQCU4mMY+WpG+s/+j+Ob2Qic+31dlaSOXQ8pGFWVBn8hzx0Qupn
++Szy6OE19IV7knVyjxEICBCk5dhI154UxCXuV1A/+9QIqriAhXOgQLRaTLZQX9EI
+DdMlN9JTQV63rV3ZUuCCTTs0fab6jqtPk29zAJoQaMiZUHK2etbKrV1Vrfyd04zU
+KObZ92lR2nsnCGz7NKhbMpavqMF+ck3aFAe2y8mL3PlaH3QCw/y1RtIuD6qiiqUi
+kWI+KmTQWhVrlk5JPtiAPv20gZskHQV4HnsWaVa4xzNH6Ciz7t3qZLEZzoGF3g3t
+coE3xOZdhrh8c8q7Gi1CTFLMBoeJ+JP45dk/R4nrEzML1M8gz+lXzEamSwujSdtF
+q+gATkjFtTqUjSxkmEueEphlbAFcf4JMu/e/pydEDUHljBYIvRWIGYQqkF6nPSmc
+A1w92ngJ56icMs7LgUyE
+=LEHr
 -----END PGP SIGNATURE-----
 
---dFWYt1i2NyOo1oI9--
+--gdTfX7fkYsEEjebm--
