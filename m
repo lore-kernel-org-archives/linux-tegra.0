@@ -1,99 +1,68 @@
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v5 2/4] ARM: tegra: Add soctherm and thermal zones to Tegra124 device tree
-Date: Thu, 21 Aug 2014 13:17:20 +0300
-Message-ID: <1408616242-21009-3-git-send-email-mperttunen@nvidia.com>
-References: <1408616242-21009-1-git-send-email-mperttunen@nvidia.com>
+From: Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>
+Subject: Re: Handling commit change logs (was: [PATCH v3 13/15] cpufreq: Add
+ cpufreq driver for Tegra124)
+Date: Thu, 21 Aug 2014 12:34:30 +0200
+Message-ID: <CABxcv===wmDEs58_9s--EgvRBfhQP_ctawP_Bvb1y_B_3EGjmQ@mail.gmail.com>
+References: <1408419205-10048-1-git-send-email-tuomas.tynkkynen@iki.fi>
+	<1408419205-10048-14-git-send-email-tuomas.tynkkynen@iki.fi>
+	<CAKohpokQOALPH13Ykz4nTBOby8J1X6_F30LNKz=gsC4wN3=3vg@mail.gmail.com>
+	<53F3A900.8010805@nvidia.com>
+	<CAKohponcZv9-MFNUQFxC_49-+P6QOhdjxsnYAyL3i4sXdCBYrw@mail.gmail.com>
+	<CABxcv=ncm3Y7Ecfymro6TOuP=d10OV5--8n=dYmHyj6zi8hwEw@mail.gmail.com>
+	<53F4FED4.7060408@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1408616242-21009-1-git-send-email-mperttunen@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: edubezval@gmail.com, rui.zhang@intel.com, swarren@wwwdotorg.org, thierry.reding@gmail.com
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, juha-matti.tilli@iki.fi, Mikko Perttunen <mperttunen@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <53F4FED4.7060408-l3A5Bk7waGM@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>
+Cc: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tuomas Tynkkynen <tuomas.tynkkynen-X3B1VOXEql0@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This adds the soctherm thermal sensing and management unit to the
-Tegra124 device tree along with the four thermal zones corresponding
-to the four thermal sensors provided by soctherm.
+Hello Andreas,
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
-v5: reordered nodes
+On Wed, Aug 20, 2014 at 10:02 PM, Andreas F=C3=A4rber <afaerber-l3A5Bk7waGM@public.gmane.org=
+> wrote:
+>>
+>> So the second "---" from Tuomas patch is actually the one generated =
+by
+>> git format-patch but that gets discarded by git am just like any oth=
+er
+>> text so it causes no harm when other apply the patches.
+>>
+>> If this not the correct workflow and you have a better way to manage
+>> this, I would love to know about it.
+>
+> One drawback of having --- in the commit message is that you can't
+> cherry-pick but really need to use git-am for it to be stripped.
+>
 
- arch/arm/boot/dts/tegra124.dtsi | 47 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+It depends on your workflow really, I don't consider the fact that git
+cherry-pick does not omit that part a drawback but a feature ;-)
 
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index 3cb1548..a7608a4 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -3,6 +3,7 @@
- #include <dt-bindings/pinctrl/pinctrl-tegra.h>
- #include <dt-bindings/pinctrl/pinctrl-tegra-xusb.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/thermal/tegra124-soctherm.h>
- 
- #include "skeleton.dtsi"
- 
-@@ -610,6 +611,18 @@
- 		status = "disabled";
- 	};
- 
-+	soctherm: thermal-sensor@0,700e2000 {
-+		compatible = "nvidia,tegra124-soctherm";
-+		reg = <0x0 0x700e2000 0x0 0x1000>;
-+		interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA124_CLK_TSENSOR>,
-+			<&tegra_car TEGRA124_CLK_SOC_THERM>;
-+		clock-names = "tsensor", "soctherm";
-+		resets = <&tegra_car 78>;
-+		reset-names = "soctherm";
-+		#thermal-sensor-cells = <1>;
-+	};
-+
- 	ahub@0,70300000 {
- 		compatible = "nvidia,tegra124-ahub";
- 		reg = <0x0 0x70300000 0x0 0x200>,
-@@ -851,6 +864,40 @@
- 		};
- 	};
- 
-+	thermal-zones {
-+		cpu {
-+			polling-delay-passive = <1000>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors =
-+				<&soctherm TEGRA124_SOCTHERM_SENSOR_CPU>;
-+		};
-+
-+		mem {
-+			polling-delay-passive = <1000>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors =
-+				<&soctherm TEGRA124_SOCTHERM_SENSOR_MEM>;
-+		};
-+
-+		gpu {
-+			polling-delay-passive = <1000>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors =
-+				<&soctherm TEGRA124_SOCTHERM_SENSOR_GPU>;
-+		};
-+
-+		pllx {
-+			polling-delay-passive = <1000>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors =
-+				<&soctherm TEGRA124_SOCTHERM_SENSOR_PLLX>;
-+		};
-+	};
-+
- 	timer {
- 		compatible = "arm,armv7-timer";
- 		interrupts = <GIC_PPI 13
--- 
-1.8.1.5
+And as Stephen said you can do a git cherry-pick -e or amend the
+commit and remove that part.
+
+> I resorted to a scripted way of handling change logs: Per patch serie=
+s I
+> maintain a shell script that after git-format-patch essentially runs
+> sed -i "/---/ r /dev/stdin" $OUTDIR/0001-*.patch <<EOCL
+> ...
+> EOCL
+> to insert my text after ---. (sed syntax is not POSIX-compliant FWIW.=
+)
+> Similarly I fill in the blurbs for the cover letter.
+>
+
+Yes I used to use sed before indeed. Heiko also suggested patman which
+looks quite interesting and may fit my workflow as well.
+
+>
+> Cheers,
+> Andreas
+>
+> --
+
+Best regards,
+Javier
