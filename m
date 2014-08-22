@@ -1,70 +1,30 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [pinmux PATCH] Warn about unconfigured pins
-Date: Thu, 21 Aug 2014 17:26:04 -0600
-Message-ID: <1408663564-3281-1-git-send-email-swarren@wwwdotorg.org>
+From: Rasmus Villemoes <linux-qQsb+v5E8BnlAoU/VqSP6n9LOBIZ5rWg@public.gmane.org>
+Subject: [PATCH] sound: tegra: tegra_asoc_utils.h: Fix typo in include guard
+Date: Fri, 22 Aug 2014 11:27:07 +0200
+Message-ID: <1408699627-7364-1-git-send-email-linux@rasmusvillemoes.dk>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rasmus Villemoes <linux-qQsb+v5E8BnlAoU/VqSP6n9LOBIZ5rWg@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-When generating a kernel or U-Boot pinmux configuration, complain about
-pins that have no configuration. That's probably a bug in the spreadsheet.
-
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Rasmus Villemoes <linux-qQsb+v5E8BnlAoU/VqSP6n9LOBIZ5rWg@public.gmane.org>
 ---
- board-to-kernel-dt.py     | 2 ++
- board-to-uboot.py         | 2 ++
- tegra_pmx_board_parser.py | 8 ++++++++
- 3 files changed, 12 insertions(+)
+ sound/soc/tegra/tegra_asoc_utils.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/board-to-kernel-dt.py b/board-to-kernel-dt.py
-index 966fee29eea9..86739db90bee 100755
---- a/board-to-kernel-dt.py
-+++ b/board-to-kernel-dt.py
-@@ -63,3 +63,5 @@ for pincfg in board.pincfgs_by_num():
- # FIXME: Handle drive groups
+diff --git a/sound/soc/tegra/tegra_asoc_utils.h b/sound/soc/tegra/tegra_asoc_utils.h
+index 9577121..ca80376 100644
+--- a/sound/soc/tegra/tegra_asoc_utils.h
++++ b/sound/soc/tegra/tegra_asoc_utils.h
+@@ -21,7 +21,7 @@
+  */
  
- print('		};')
-+
-+board.warn_about_unconfigured_pins()
-diff --git a/board-to-uboot.py b/board-to-uboot.py
-index e4df06e2606a..c67919176a3f 100755
---- a/board-to-uboot.py
-+++ b/board-to-uboot.py
-@@ -168,3 +168,5 @@ print('''\
+ #ifndef __TEGRA_ASOC_UTILS_H__
+-#define __TEGRA_ASOC_UTILS_H_
++#define __TEGRA_ASOC_UTILS_H__
  
- #endif /* PINMUX_CONFIG_%s_H */
- ''' % board.definename, end='')
-+
-+board.warn_about_unconfigured_pins()
-diff --git a/tegra_pmx_board_parser.py b/tegra_pmx_board_parser.py
-index 352bbe0a2499..7b45abe74a00 100644
---- a/tegra_pmx_board_parser.py
-+++ b/tegra_pmx_board_parser.py
-@@ -19,6 +19,7 @@
- # DEALINGS IN THE SOFTWARE.
- 
- import os.path
-+import sys
- import tegra_pmx_soc_parser
- from tegra_pmx_parser_utils import *
- 
-@@ -62,6 +63,13 @@ class Board(TopLevelParsedObj):
-     def pincfgs_by_num(self):
-         return self._pincfgs_by_num
- 
-+    def warn_about_unconfigured_pins(self):
-+        unconfigured_gpio_pins = {gpio_pin.fullname for gpio_pin in self.soc.gpios_pins_by_num()}
-+        for gpio_pin in self.pincfgs_by_num():
-+            unconfigured_gpio_pins.remove(gpio_pin.gpio_pin.fullname)
-+        for gpio_pin in unconfigured_gpio_pins:
-+            print('WARNING: Unconfigured pin ' + gpio_pin, file=sys.stderr)
-+
- def load_board(boardname):
-     fn = os.path.join(configs_dir, boardname + '.board')
-     d = {}
+ struct clk;
+ struct device;
 -- 
-2.1.0.rc2.3.g67de23d
+1.9.2
