@@ -1,50 +1,88 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] sound: tegra: tegra_asoc_utils.h: Fix typo in include
- guard
-Date: Fri, 22 Aug 2014 13:36:14 -0500
-Message-ID: <20140822183614.GA24407@sirena.org.uk>
-References: <1408699627-7364-1-git-send-email-linux@rasmusvillemoes.dk>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="QNuYedFeXxEqrKRj"
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH] ARM: tegra: apalis/colibri t30: fix on-module 5v0 supplies
+Date: Fri, 22 Aug 2014 13:25:10 -0600
+Message-ID: <1408735510-2654-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1408699627-7364-1-git-send-email-linux-qQsb+v5E8BnlAoU/VqSP6n9LOBIZ5rWg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rasmus Villemoes <linux-qQsb+v5E8BnlAoU/VqSP6n9LOBIZ5rWg@public.gmane.org>
-Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+From: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
 
---QNuYedFeXxEqrKRj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Working on Gigabit/PCIe support in U-Boot for Apalis T30 I realised
+that the current device tree source includes for our modules only
+happen to work due to referencing the on-carrier 5v0 supply from USB
+which is not at all available on-module. The modules actually contain
+TPS60150 charge pumps to generate the PMIC required 5 volts from the
+one and only 3.3 volt module supply. This patch fixes this.
 
-On Fri, Aug 22, 2014 at 11:27:07AM +0200, Rasmus Villemoes wrote:
-> Signed-off-by: Rasmus Villemoes <linux-qQsb+v5E8BnlAoU/VqSP6n9LOBIZ5rWg@public.gmane.org>
+(Note: When back-porting this to v3.16 stable releases, simply drop the
+change to tegra30-apalis.dtsi; that file was added in v3.17)
 
-Applied, thanks - again please try to follow the subject line style.
+Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org> #v3.16+
+Signed-off-by: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra30-apalis.dtsi  | 11 ++++++++++-
+ arch/arm/boot/dts/tegra30-colibri.dtsi | 11 ++++++++++-
+ 2 files changed, 20 insertions(+), 2 deletions(-)
 
---QNuYedFeXxEqrKRj
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJT942bAAoJELSic+t+oim9QVEP/A5lcOY4hD5lH0c9WIdFRVU2
-WyxgGjse3VGcqS4pC463UbwOCPtWbi05oiTPK9/txg3HQihs3SVX1hftq7s+dfpd
-aEXcFTg3bpDWFwp2DjucO7NXg603OG0gPMkh46HbpuMtyqL7UohyJTpmLZTnWL9a
-RtB4uMV4ML51TAVwLofE+RDb1tF9PeEQGKXFR6mGAB5MEMtBf7aX2C6JpVY0ZtTL
-gKK5uAVGS4alcdSw1Bi4WlzsBtAU2/Wm36TqZo2IfZE3pdrzJu5JDZ8C0+wqfGSt
-E627gKgOSTtdnaiAi0am5lIPv64U4lOvYNinPEZ+uQMnk2Kwr6F7/V9gPX3flUe5
-iFP3Wfpnc2oDJTjixCK4Oc3OK89qsjQaZAOmRDdEoa1OdaGN+WEvnMgu3wyAaedh
-hD5Wf4dBBdEKO9DUqKaIVvr+h/U7V4B4r2MhGB8z5Lj+aMdSYVK23qZ+Zq0yqOJ+
-r9QN9rASCu0tjDE8HGlydLOzpFzkKcRdzH0b2xi8vzz/y9xJISkUxu7vaBayTzcx
-nOB0AVi5mqDb66NEvLrehRFRhCvbRVkVZOcfNFol+LDQPemLKiT0eNgGte+BjC78
-m6NRRZOTpUon1ql3YGrcJJ9yoWzLkdyi0UisqNt9lGm+NcMvk88u8PE02Wiwit7v
-DbmqCObdJM38aJEQchos
-=Ly7C
------END PGP SIGNATURE-----
-
---QNuYedFeXxEqrKRj--
+diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
+index 8adaa7871dd3..a5446cba9804 100644
+--- a/arch/arm/boot/dts/tegra30-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+@@ -423,7 +423,7 @@
+ 			vcc4-supply = <&sys_3v3_reg>;
+ 			vcc5-supply = <&sys_3v3_reg>;
+ 			vcc6-supply = <&vio_reg>;
+-			vcc7-supply = <&sys_5v0_reg>;
++			vcc7-supply = <&charge_pump_5v0_reg>;
+ 			vccio-supply = <&sys_3v3_reg>;
+ 
+ 			regulators {
+@@ -674,5 +674,14 @@
+ 			regulator-max-microvolt = <3300000>;
+ 			regulator-always-on;
+ 		};
++
++		charge_pump_5v0_reg: regulator@101 {
++			compatible = "regulator-fixed";
++			reg = <101>;
++			regulator-name = "5v0";
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++			regulator-always-on;
++		};
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
+index bf16f8e65627..c4ed1bec4d92 100644
+--- a/arch/arm/boot/dts/tegra30-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
+@@ -201,7 +201,7 @@
+ 			vcc4-supply = <&sys_3v3_reg>;
+ 			vcc5-supply = <&sys_3v3_reg>;
+ 			vcc6-supply = <&vio_reg>;
+-			vcc7-supply = <&sys_5v0_reg>;
++			vcc7-supply = <&charge_pump_5v0_reg>;
+ 			vccio-supply = <&sys_3v3_reg>;
+ 
+ 			regulators {
+@@ -373,5 +373,14 @@
+ 			regulator-max-microvolt = <3300000>;
+ 			regulator-always-on;
+ 		};
++
++		charge_pump_5v0_reg: regulator@101 {
++			compatible = "regulator-fixed";
++			reg = <101>;
++			regulator-name = "5v0";
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++			regulator-always-on;
++		};
+ 	};
+ };
+-- 
+1.9.1
