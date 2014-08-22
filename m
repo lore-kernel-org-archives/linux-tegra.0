@@ -1,24 +1,44 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] arm: tegra: apalis/colibri t30: fix on-module 5v0 supplies
-Date: Fri, 22 Aug 2014 13:26:10 -0600
-Message-ID: <53F79952.6060002@wwwdotorg.org>
-References: <cbf0902cd98332bc0218d84fd055b42fab3ea3b2.1408719375.git.marcel@ziswiler.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [pinmux PATCH] Jetson TK1: add missing PCIe-related pin configuration
+Date: Fri, 22 Aug 2014 15:02:33 -0600
+Message-ID: <1408741353-10259-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <cbf0902cd98332bc0218d84fd055b42fab3ea3b2.1408719375.git.marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stefan-XLVq0VzYD2Y@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/22/2014 09:06 AM, Marcel Ziswiler wrote:
-> Working on Gigabit/PCIe support in U-Boot for Apalis T30 I realised
-> that the current device tree source includes for our modules only
-> happen to work due to referencing the on-carrier 5v0 supply from USB
-> which is not at all available on-module. The modules actually contain
-> TPS60150 charge pumps to generate the PMIC required 5 volts from the
-> one and only 3.3 volt module supply. This patch fixes this.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I've forwarded this to the ARM SoC maintainers as a fix for v3.17.
+The Jetson TK1 spreadsheet is missing configuration for the PCIe clk_req,
+rst, and wake pins. This causes the generated pinmux tables to also omit
+any configuration for these pins, which in turn causes U-Boot's and the
+Linux Kernel's PCIe support to fail.
+
+Manually add configuration for these pins. The values here match the
+values found in the downstream L4T kernel, and common sense based on the
+usage of these pins.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ configs/jetson-tk1.board | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/configs/jetson-tk1.board b/configs/jetson-tk1.board
+index 1df628406985..f69b89ec0af8 100644
+--- a/configs/jetson-tk1.board
++++ b/configs/jetson-tk1.board
+@@ -89,6 +89,11 @@ pins = (
+     ('pi7',                    'rsvd1',        None,      'down', True,  False, False, False),
+     ('pc7',                    None,           'in',      'up',   False, True,  False, False),
+     ('pi0',                    None,           'out0',    'none', False, False, False, False),
++    ('pex_l0_clkreq_n_pdd2',   'pe0',          None,      'up',   False, True,  False, False),
++    ('pex_l0_rst_n_pdd1',      'pe0',          None,      'none', False, False, False, False),
++    ('pex_l1_clkreq_n_pdd6',   'pe1',          None,      'up',   False, True,  False, False),
++    ('pex_l1_rst_n_pdd5',      'pe1',          None,      'none', False, False, False, False),
++    ('pex_wake_n_pdd3',        'pe',           None,      'up',   False, True,  False, False),
+     ('usb_vbus_en2_pff1',      None,           'out0',    'none', False, False, False, False),
+     ('pff2',                   None,           'in',      'up',   False, True,  False, False),
+     ('clk2_out_pw5',           'extperiph2',   None,      'none', False, False, False, False),
+-- 
+2.1.0.rc2.3.g67de23d
