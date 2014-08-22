@@ -1,70 +1,56 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] sound: tegra: tegra_asoc_utils.h: Fix typo in include
- guard
-Date: Fri, 22 Aug 2014 11:31:39 +0200
-Message-ID: <20140822093137.GA10253@ulmo>
-References: <1408699627-7364-1-git-send-email-linux@rasmusvillemoes.dk>
+From: Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org>
+Subject: Re: [PATCH v2 0/9] Tegra xHCI support
+Date: Fri, 22 Aug 2014 13:23:27 +0200
+Message-ID: <CAAObsKCfKtZm5j9Ecze+3GwWCN3DFOjHUUACdYR4TmV+ExbC8A@mail.gmail.com>
+References: <1408381705-3623-1-git-send-email-abrestic@chromium.org>
+ <CAAObsKDT4BV=fGAFkMxieQnC3HX=zm8G_qJ44yay4qG8inxoPQ@mail.gmail.com> <CAL1qeaH=8Fgw6Zia3DuBL8wrrYMjZ8pqC2NanYtb5-YVJwmtsg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ZGiS0Q5IWpPtfppv"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1408699627-7364-1-git-send-email-linux@rasmusvillemoes.dk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAL1qeaH=8Fgw6Zia3DuBL8wrrYMjZ8pqC2NanYtb5-YVJwmtsg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 21 August 2014 19:26, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+> On Thu, Aug 21, 2014 at 6:34 AM, Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org> wrote:
+>> On 18 August 2014 19:08, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+>>>
+>>> Tested on Venice2, Jetson TK1, and Big with a variety of USB2.0 and
+>>> USB3.0 memory sticks and ethernet dongles using controller firmware from
+>>> the ChromiumOS tree [2].
+>>
+>> Hi Andrew,
+>>
+>> do you have any information regarding the port assignments for the
+>> Blaze board? Would like to test this there.
+>
+> Sure:
+> - USB3 port 0 (using PCIe lane 0) and UTMI port 0 are connected to the
+> USB A connector on the left side,
+> - UTMI port 1 is connected to an internal hub, which is in turn
+> connected to the camera, the LTE modem (if present), and one of the
+> USB A connectors on the right side, and
+> - UTMI port 2 is connected to the other USB A connector on the right side.
+> The mapping of ports on the right side varies by SKU (i.e. the one on
+> the internal hub may be the front or rear USB A port).
+>
+> The USB3 device tree bits for Venice2 should work just fine for Blaze;
+> the only real difference is that USB3 port 1/PCIe lane 1 are unused.
+>
+> Also, because of the board design on Blaze, the fused HS_CURR_LEVEL
+> values need to be adjusted before being programmed into
+> USB2_OTG_PAD*_CTL0.  This only affects UTMI ports 0 and 2, so ports
+> connected to the internal hub should still work.  I'll add a pinconfig
+> property to address this in the likely event I need to re-spin this
+> series.  Or, if you like, I can send a follow-on patch to this set to
+> add the property.
 
---ZGiS0Q5IWpPtfppv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yeah, that would be great, if it's not too much trouble for you. So
+far the internal camera is working so I'm able to do some
+experimenting with it already.
 
-On Fri, Aug 22, 2014 at 11:27:07AM +0200, Rasmus Villemoes wrote:
-> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> ---
->  sound/soc/tegra/tegra_asoc_utils.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/sound/soc/tegra/tegra_asoc_utils.h b/sound/soc/tegra/tegra_a=
-soc_utils.h
-> index 9577121..ca80376 100644
-> --- a/sound/soc/tegra/tegra_asoc_utils.h
-> +++ b/sound/soc/tegra/tegra_asoc_utils.h
-> @@ -21,7 +21,7 @@
->   */
-> =20
->  #ifndef __TEGRA_ASOC_UTILS_H__
-> -#define __TEGRA_ASOC_UTILS_H_
-> +#define __TEGRA_ASOC_UTILS_H__
-> =20
->  struct clk;
->  struct device;
+Thanks,
 
-Hehe, good catch.
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---ZGiS0Q5IWpPtfppv
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJT9w35AAoJEN0jrNd/PrOhykAP/0I7U/Re3ToHKhxX3UuO+b3Z
-iTN4TRR8bYGkd0HTSxdBXVfgXj479UhFRKAzsNWvx/DivXNI7ll6xtzIcT5BALYk
-tEz2axYuz7hZw4yYeMughAJxPqoHF8iU+lDcMvmYFh1zLcpUwbwldKwOJ1TKZaYY
-2xpeZ1W+zdDcBJoOGAsZwt1wL5d6Dhjq0v/148XrohpeRadNBJGuQMcUWd4lRqD4
-JJFPrMrmQjgb7wSRL/z5UosJd0MEA+k3Fxak95OFSWeYPlggFyiVv969LmlvyoU5
-kfw5CZPQXPaNNalQMObEXhBfN9MkrEEKY1RL3b1DNh1hs0ow5bEdFzRUrUFk68h1
-VYcSpLMj7E/jULTto+gBYQkTDSC4+VO08RWuxaeBBZDrDfdH0p/o3hnTdRETHcuP
-iF1+xfjiUjl8BJWPsv1dtaepU+hB8O1seKAO2pHBlRo5DsmaFDHoLkTq5nWfSmLH
-1ggV9GulgINJN4gepBKp/OGiBH5aJMHDTt657IXJFptHWf5GZBwIJrr+Q26S8sux
-5Z1eSGj8AnA5dZ2L0IWGhrl8cO2llEPR7/XjxBSYa+me1UNvMd6D1zysZtbveGC+
-pux/UIhGWHgDGinqAy29H1gkJKBJ0S/s8Z1T4viGVYUVV4SDGV5VDB8qZOKrgegv
-0PxhGSOSXB8jvYQ7wOvP
-=rQL8
------END PGP SIGNATURE-----
-
---ZGiS0Q5IWpPtfppv--
+Tomeu
