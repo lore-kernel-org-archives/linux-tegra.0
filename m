@@ -1,44 +1,74 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [pinmux PATCH] Jetson TK1: add missing PCIe-related pin configuration
-Date: Fri, 22 Aug 2014 15:02:33 -0600
-Message-ID: <1408741353-10259-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH] ARM: tegra: add PCIe-related pins to the Jetson TK1 pinmux tables
+Date: Fri, 22 Aug 2014 15:18:28 -0600
+Message-ID: <1408742308-18004-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The Jetson TK1 spreadsheet is missing configuration for the PCIe clk_req,
-rst, and wake pins. This causes the generated pinmux tables to also omit
-any configuration for these pins, which in turn causes U-Boot's and the
-Linux Kernel's PCIe support to fail.
+This pinmux tables currently omit any configuration for PCIe clk_req,
+wake, and rst pins, which in turn causes intermittent failures in
+U-Boot's PCIe support. Import an updated version of the pinmux tables
+which rectifies this.
 
-Manually add configuration for these pins. The values here match the
-values found in the downstream L4T kernel, and common sense based on the
-usage of these pins.
+(While I'm still hoping to remove the pinmux tables from DTs for
+Tegra124+ devices, while they're still here, they may as well be
+complete and correct).
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- configs/jetson-tk1.board | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts | 35 +++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-diff --git a/configs/jetson-tk1.board b/configs/jetson-tk1.board
-index 1df628406985..f69b89ec0af8 100644
---- a/configs/jetson-tk1.board
-+++ b/configs/jetson-tk1.board
-@@ -89,6 +89,11 @@ pins = (
-     ('pi7',                    'rsvd1',        None,      'down', True,  False, False, False),
-     ('pc7',                    None,           'in',      'up',   False, True,  False, False),
-     ('pi0',                    None,           'out0',    'none', False, False, False, False),
-+    ('pex_l0_clkreq_n_pdd2',   'pe0',          None,      'up',   False, True,  False, False),
-+    ('pex_l0_rst_n_pdd1',      'pe0',          None,      'none', False, False, False, False),
-+    ('pex_l1_clkreq_n_pdd6',   'pe1',          None,      'up',   False, True,  False, False),
-+    ('pex_l1_rst_n_pdd5',      'pe1',          None,      'none', False, False, False, False),
-+    ('pex_wake_n_pdd3',        'pe',           None,      'up',   False, True,  False, False),
-     ('usb_vbus_en2_pff1',      None,           'out0',    'none', False, False, False, False),
-     ('pff2',                   None,           'in',      'up',   False, True,  False, False),
-     ('clk2_out_pw5',           'extperiph2',   None,      'none', False, False, False, False),
+diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+index 6c0253198e09..cdefaaa15ac6 100644
+--- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
++++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+@@ -1251,6 +1251,41 @@
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+ 			};
++			pex_l0_rst_n_pdd1 {
++				nvidia,pins = "pex_l0_rst_n_pdd1";
++				nvidia,function = "pe0";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++			pex_l0_clkreq_n_pdd2 {
++				nvidia,pins = "pex_l0_clkreq_n_pdd2";
++				nvidia,function = "pe0";
++				nvidia,pull = <TEGRA_PIN_PULL_UP>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++			pex_wake_n_pdd3 {
++				nvidia,pins = "pex_wake_n_pdd3";
++				nvidia,function = "pe";
++				nvidia,pull = <TEGRA_PIN_PULL_UP>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++			pex_l1_rst_n_pdd5 {
++				nvidia,pins = "pex_l1_rst_n_pdd5";
++				nvidia,function = "pe1";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++			pex_l1_clkreq_n_pdd6 {
++				nvidia,pins = "pex_l1_clkreq_n_pdd6";
++				nvidia,function = "pe1";
++				nvidia,pull = <TEGRA_PIN_PULL_UP>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
+ 			clk3_out_pee0 {
+ 				nvidia,pins = "clk3_out_pee0";
+ 				nvidia,function = "extperiph3";
 -- 
-2.1.0.rc2.3.g67de23d
+1.9.1
