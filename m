@@ -1,74 +1,26 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: add PCIe-related pins to the Jetson TK1 pinmux tables
-Date: Fri, 22 Aug 2014 15:18:28 -0600
-Message-ID: <1408742308-18004-1-git-send-email-swarren@wwwdotorg.org>
+From: Abdul Nasser Sokariah <abdulsokariah10-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Urgent Assistance from Syria
+Date: Sat, 23 Aug 2014 07:08:47 -0700
+Message-ID: <CAOCHuvxQ9wFBiw8LuhuLFYNbSFdtWYrEu-iSQA5MWQdCoA=_vQ__46738.9980833561$1408804775$gmane$org@mail.gmail.com>
+Reply-To: nabdul247-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-This pinmux tables currently omit any configuration for PCIe clk_req,
-wake, and rst pins, which in turn causes intermittent failures in
-U-Boot's PCIe support. Import an updated version of the pinmux tables
-which rectifies this.
-
-(While I'm still hoping to remove the pinmux tables from DTs for
-Tegra124+ devices, while they're still here, they may as well be
-complete and correct).
-
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra124-jetson-tk1.dts | 35 +++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
-
-diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-index 6c0253198e09..cdefaaa15ac6 100644
---- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-+++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-@@ -1251,6 +1251,41 @@
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
- 			};
-+			pex_l0_rst_n_pdd1 {
-+				nvidia,pins = "pex_l0_rst_n_pdd1";
-+				nvidia,function = "pe0";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			pex_l0_clkreq_n_pdd2 {
-+				nvidia,pins = "pex_l0_clkreq_n_pdd2";
-+				nvidia,function = "pe0";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			pex_wake_n_pdd3 {
-+				nvidia,pins = "pex_wake_n_pdd3";
-+				nvidia,function = "pe";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			pex_l1_rst_n_pdd5 {
-+				nvidia,pins = "pex_l1_rst_n_pdd5";
-+				nvidia,function = "pe1";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			pex_l1_clkreq_n_pdd6 {
-+				nvidia,pins = "pex_l1_clkreq_n_pdd6";
-+				nvidia,function = "pe1";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
- 			clk3_out_pee0 {
- 				nvidia,pins = "clk3_out_pee0";
- 				nvidia,function = "extperiph3";
 -- 
-1.9.1
+Good Day From Syria,
+
+My name is Abdul Nasser Sokariah and I am writing you from Syria, I
+choose to contact you directly as I need a reliable person to trust
+who can help me make claims to my huge deposit with a vault company in
+AFRICA, and based on my present situation in Syria, I need you
+urgently to take  possession of everything and further
+modalities/directives will follow.
+
+Contact me  only on my private Email:nabdul247-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org for
+clarifications,I await your response.
+
+Yours truly, Abdul Nasser Sokariah
+Contact Email:nabdul247-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
