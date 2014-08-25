@@ -1,37 +1,39 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: apalis/colibri t30: fix on-module 5v0
- supplies
-Date: Sun, 24 Aug 2014 11:21:51 -0700
-Message-ID: <20140824182151.GA11563@localhost>
-References: <1408735510-2654-1-git-send-email-swarren@wwwdotorg.org>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v3 0/4] expose lm90 to thermal fw
+Date: Mon, 25 Aug 2014 14:29:44 +0800
+Message-ID: <1408948188-4181-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1408735510-2654-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Aug 22, 2014 at 01:25:10PM -0600, Stephen Warren wrote:
-> From: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
-> 
-> Working on Gigabit/PCIe support in U-Boot for Apalis T30 I realised
-> that the current device tree source includes for our modules only
-> happen to work due to referencing the on-carrier 5v0 supply from USB
-> which is not at all available on-module. The modules actually contain
-> TPS60150 charge pumps to generate the PMIC required 5 volts from the
-> one and only 3.3 volt module supply. This patch fixes this.
-> 
-> (Note: When back-porting this to v3.16 stable releases, simply drop the
-> change to tegra30-apalis.dtsi; that file was added in v3.17)
-> 
-> Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org> #v3.16+
-> Signed-off-by: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Expose lm90 to thermal framework via DT nodes.
 
-Applied, thanks.
+This series is v3, previous version patches are:
+[v2]: https://lkml.org/lkml/2014/3/4/194
 
+Changes from v2:
+add more description in documentation, per Stephen's comment.
 
--Olof
+Changes from v1:
+1. remove the unnecessary log messages, per Guenter's request.
+2. add thermal zones node for nct1008 on dalmore.
+
+Wei Ni (1):
+  thermal: add more description for thermal-zones
+
+lightning314 (3):
+  hwmon: (lm90) split set&show temp as common codes
+  hwmon: lm90: expose to thermal fw via DT nodes
+  ARM: tegra: dalmore: add thermal zones for nct1008
+
+ .../devicetree/bindings/thermal/thermal.txt        |  10 +-
+ arch/arm/boot/dts/tegra114-dalmore.dts             |  20 +-
+ drivers/hwmon/lm90.c                               | 222 ++++++++++++++++-----
+ 3 files changed, 192 insertions(+), 60 deletions(-)
+
+-- 
+1.8.1.5
