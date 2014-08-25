@@ -1,7 +1,7 @@
 From: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH v3 4/4] ARM: tegra: dalmore: add thermal zones for nct1008
-Date: Mon, 25 Aug 2014 07:08:46 -0400
-Message-ID: <20140825110844.GB12349@developer>
+Date: Mon, 25 Aug 2014 07:10:43 -0400
+Message-ID: <20140825111041.GC12349@developer>
 References: <1408948188-4181-1-git-send-email-wni@nvidia.com>
  <1408948188-4181-5-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
@@ -51,6 +51,11 @@ On Mon, Aug 25, 2014 at 02:29:48PM +0800, Wei Ni wrote:
 > +
 > +	thermal-zones {
 > +		nct1008-local {
+
+at this level, can the thermal zone name be a meaningful string? What
+part of the hardware does the local and remote monitors the the dalmore
+platform?
+
 > +			polling-delay-passive = <2000>; /* milliseconds */
 > +			polling-delay = <0>; /* milliseconds */
 > +
@@ -64,11 +69,6 @@ On Mon, Aug 25, 2014 at 02:29:48PM +0800, Wei Ni wrote:
 > +			thermal-sensors = <&nct1008 1>;
 > +		};
 > +	};
-
-The above zones misses the required properties, as per the thermal.txt
-binding description. Could you please have a look on those that are
-required and improve the zones above?
-
 >  };
 > -- 
 > 1.8.1.5
