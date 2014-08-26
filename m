@@ -1,40 +1,145 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v3 4/6] PCI: tegra: Fix extended configuration space mapping
-Date: Tue, 26 Aug 2014 17:11:36 +0200
-Message-ID: <1409065898-26887-5-git-send-email-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v3 1/6] resource: Add device-managed request/release_resource()
+Date: Tue, 26 Aug 2014 17:11:33 +0200
+Message-ID: <1409065898-26887-2-git-send-email-thierry.reding@gmail.com>
 References: <1409065898-26887-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1409065898-26887-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1409065898-26887-1-git-send-email-thierry.reding@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Peter Daifuku <pdaifuku-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Thierry Reding <treding@nvidia.com>
 
-The 16 chunks of 64 KiB that need to be stitched together to make up the
-configuration space for one bus (1 MiB) are located 24 bits (== 16 MiB)
-apart in physical address space. This is determined by the start of the
-extended register field (bits 24-27) in the physical mapping.
+Provide device-managed implementations of the request_resource() and
+release_resource() functions. Upon failure to request a resource, the
+new devm_request_resource() function will output an error message for
+consistent error reporting.
 
-Signed-off-by: Peter Daifuku <pdaifuku-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/pci/host/pci-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v2:
+- use more natural flow for error handling
+- don't needlessly check for NULL pointers
 
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index bd53b123218b..8264bce77750 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -383,7 +383,7 @@ static struct tegra_pcie_bus *tegra_pcie_bus_alloc(struct tegra_pcie *pcie,
- 	for (i = 0; i < 16; i++) {
- 		unsigned long virt = (unsigned long)bus->area->addr +
- 				     i * SZ_64K;
--		phys_addr_t phys = cs + i * SZ_1M + busnr * SZ_64K;
-+		phys_addr_t phys = cs + i * SZ_16M + busnr * SZ_64K;
+ Documentation/driver-model/devres.txt |  2 +
+ include/linux/ioport.h                |  5 +++
+ kernel/resource.c                     | 70 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 77 insertions(+)
+
+diff --git a/Documentation/driver-model/devres.txt b/Documentation/driver-model/devres.txt
+index d14710b04439..befc3fe12ba6 100644
+--- a/Documentation/driver-model/devres.txt
++++ b/Documentation/driver-model/devres.txt
+@@ -264,8 +264,10 @@ IIO
+ IO region
+   devm_release_mem_region()
+   devm_release_region()
++  devm_release_resource()
+   devm_request_mem_region()
+   devm_request_region()
++  devm_request_resource()
  
- 		err = ioremap_page_range(virt, virt + SZ_64K, phys, prot);
- 		if (err < 0) {
+ IOMAP
+   devm_ioport_map()
+diff --git a/include/linux/ioport.h b/include/linux/ioport.h
+index 142ec544167c..2c5250222278 100644
+--- a/include/linux/ioport.h
++++ b/include/linux/ioport.h
+@@ -215,6 +215,11 @@ static inline int __deprecated check_region(resource_size_t s,
+ 
+ /* Wrappers for managed devices */
+ struct device;
++
++extern int devm_request_resource(struct device *dev, struct resource *root,
++				 struct resource *new);
++extern void devm_release_resource(struct device *dev, struct resource *new);
++
+ #define devm_request_region(dev,start,n,name) \
+ 	__devm_request_region(dev, &ioport_resource, (start), (n), (name))
+ #define devm_request_mem_region(dev,start,n,name) \
+diff --git a/kernel/resource.c b/kernel/resource.c
+index 60c5a3856ab7..46322019ab7d 100644
+--- a/kernel/resource.c
++++ b/kernel/resource.c
+@@ -1245,6 +1245,76 @@ int release_mem_region_adjustable(struct resource *parent,
+ /*
+  * Managed region resource
+  */
++static void devm_resource_release(struct device *dev, void *ptr)
++{
++	struct resource **r = ptr;
++
++	release_resource(*r);
++}
++
++/**
++ * devm_request_resource() - request and reserve an I/O or memory resource
++ * @dev: device for which to request the resource
++ * @root: root of the resource tree from which to request the resource
++ * @new: descriptor of the resource to request
++ *
++ * This is a device-managed version of request_resource(). There is usually
++ * no need to release resources requested by this function explicitly since
++ * that will be taken care of when the device is unbound from its driver.
++ * If for some reason the resource needs to be released explicitly, because
++ * of ordering issues for example, drivers must call devm_release_resource()
++ * rather than the regular release_resource().
++ *
++ * When a conflict is detected between any existing resources and the newly
++ * requested resource, an error message will be printed.
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int devm_request_resource(struct device *dev, struct resource *root,
++			  struct resource *new)
++{
++	struct resource *conflict, **ptr;
++
++	ptr = devres_alloc(devm_resource_release, sizeof(*ptr), GFP_KERNEL);
++	if (!ptr)
++		return -ENOMEM;
++
++	*ptr = new;
++
++	conflict = request_resource_conflict(root, new);
++	if (conflict) {
++		dev_err(dev, "resource collision: %pR conflicts with %s %pR\n",
++			new, conflict->name, conflict);
++		devres_free(ptr);
++		return -EBUSY;
++	}
++
++	devres_add(dev, ptr);
++	return 0;
++}
++EXPORT_SYMBOL(devm_request_resource);
++
++static int devm_resource_match(struct device *dev, void *res, void *data)
++{
++	struct resource **ptr = res;
++
++	return *ptr == data;
++}
++
++/**
++ * devm_release_resource() - release a previously requested resource
++ * @dev: device for which to release the resource
++ * @new: descriptor of the resource to release
++ *
++ * Releases a resource previously requested using devm_request_resource().
++ */
++void devm_release_resource(struct device *dev, struct resource *new)
++{
++	WARN_ON(devres_release(dev, devm_resource_release, devm_resource_match,
++			       new));
++}
++EXPORT_SYMBOL(devm_release_resource);
++
+ struct region_devres {
+ 	struct resource *parent;
+ 	resource_size_t start;
 -- 
 2.0.4
