@@ -1,46 +1,44 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v3 0/6] PCI: tegra: Fixes and Tegra124 support
-Date: Tue, 26 Aug 2014 17:11:32 +0200
-Message-ID: <1409065898-26887-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-pci-owner@vger.kernel.org>
-Sender: linux-pci-owner@vger.kernel.org
+Subject: [PATCH v3 5/6] PCI: tegra: Make sure the PCIe PLL is really reset
+Date: Tue, 26 Aug 2014 17:11:37 +0200
+Message-ID: <1409065898-26887-6-git-send-email-thierry.reding@gmail.com>
+References: <1409065898-26887-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1409065898-26887-1-git-send-email-thierry.reding@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Bjorn Helgaas <bhelgaas@google.com>
 Cc: Stephen Warren <swarren@wwwdotorg.org>, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+From: Eric Yuen <eyuen@nvidia.com>
 
-This series implements various fixes and adds support for Tegra124 to the
-Tegra PCIe controller driver.
+Depending on the prior state of the controller, the PLL reset may not be
+pulsed. Clear the register bit and set it after a small delay to ensure
+that the PLL is really reset.
 
-Patches 1 and 2 were already sent out separately earlier on but haven't been
-applied yet, so I'm including them here for convenience.
+Signed-off-by: Eric Yuen <eyuen@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/pci/host/pci-tegra.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Patches 3 to 5 are various fixes that should make the driver more reliable,
-though they don't (except maybe for patch 4) fix any known issues.
-
-Patch 6 finally adds support for Tegra124.
-
-Thierry
-
-Eric Yuen (1):
-  PCI: tegra: Make sure the PCIe PLL is really reset
-
-Peter Daifuku (1):
-  PCI: tegra: Fix extended configuration space mapping
-
-Thierry Reding (4):
-  resource: Add device-managed request/release_resource()
-  PCI: tegra: Implement a proper resource hierarchy
-  PCI: tegra: Clear CLKREQ# enable on port disable
-  PCI: tegra: Add Tegra124 support
-
- .../bindings/pci/nvidia,tegra20-pcie.txt           |  25 +-
- Documentation/driver-model/devres.txt              |   2 +
- drivers/pci/host/pci-tegra.c                       | 257 ++++++++++++++++++---
- include/linux/ioport.h                             |   5 +
- kernel/resource.c                                  |  70 ++++++
- 5 files changed, 323 insertions(+), 36 deletions(-)
-
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index 8264bce77750..0ce43764dd36 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -849,6 +849,13 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
+ 	value |= PADS_PLL_CTL_REFCLK_INTERNAL_CML | soc->tx_ref_sel;
+ 	pads_writel(pcie, value, soc->pads_pll_ctl);
+ 
++	/* reset PLL */
++	value = pads_readl(pcie, soc->pads_pll_ctl);
++	value &= ~PADS_PLL_CTL_RST_B4SM;
++	pads_writel(pcie, value, soc->pads_pll_ctl);
++
++	usleep_range(20, 100);
++
+ 	/* take PLL out of reset  */
+ 	value = pads_readl(pcie, soc->pads_pll_ctl);
+ 	value |= PADS_PLL_CTL_RST_B4SM;
 -- 
 2.0.4
