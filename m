@@ -1,112 +1,46 @@
-From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: [PATCH v4 2/3] drm/tegra: Request memory bandwidth for the display controller
-Date: Tue, 26 Aug 2014 15:12:07 +0200
-Message-ID: <1409058728-13347-3-git-send-email-tomeu.vizoso@collabora.com>
-References: <1409058728-13347-1-git-send-email-tomeu.vizoso@collabora.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1409058728-13347-1-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Len Brown <len.brown-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH v2] ata: ahci_tegra: Read calibration fuse
+Date: Tue, 26 Aug 2014 10:50:59 -0400
+Message-ID: <20140826145059.GA29286@htj.dyndns.org>
+References: <1409043630-9674-1-git-send-email-mperttunen@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-ide-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1409043630-9674-1-git-send-email-mperttunen@nvidia.com>
+Sender: linux-ide-owner@vger.kernel.org
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: swarren@wwwdotorg.org, thierry.reding@gmail.com, linux-ide@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-For now the amount requested is based solely on the current mode's refresh
-rate.
+On Tue, Aug 26, 2014 at 12:00:30PM +0300, Mikko Perttunen wrote:
+> The original version of the driver did not read the SATA calibration
+> fuse to remove the dependency to the fuse driver. The fuse driver
+> is now merged, so add this functionality.
+> 
+> The calibration fuse contains a 2-bit value used to pick a set
+> of calibration values for the SATA pad.
+> 
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Acked-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+Applied to libata/for-3.17-fixes.  One comment below.
 
----
+>  #include <linux/ahci_platform.h>
+> -#include <linux/reset.h>
+>  #include <linux/errno.h>
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+>  #include <linux/of_device.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/regulator/consumer.h>
+> +#include <linux/reset.h>
 
-v4: * Use vertical refresh rate when calculating the bandwidth requirement
+You moved the include of reset.h w/o any explanation in the patch
+description.  The description doesn't have to be super verbose on
+trivial stuff but it at least has to cover all changes included in the
+patch w/ their rationales, however trivial they may be.
 
-v3: * Fixed the bandwidth calculation, and have the units be mbps
----
- drivers/gpu/drm/tegra/dc.c  | 15 +++++++++++++++
- drivers/gpu/drm/tegra/drm.h |  3 +++
- 2 files changed, 18 insertions(+)
+Thanks.
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 6553fd2..8a3fee8 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -9,6 +9,7 @@
- 
- #include <linux/clk.h>
- #include <linux/debugfs.h>
-+#include <linux/pm_qos.h>
- #include <linux/reset.h>
- 
- #include "dc.h"
-@@ -753,6 +754,8 @@ static void tegra_crtc_disable(struct drm_crtc *crtc)
- 	}
- 
- 	drm_vblank_off(drm, dc->pipe);
-+
-+	pm_qos_update_request(&dc->qos_request, PM_QOS_DEFAULT_VALUE);
- }
- 
- static bool tegra_crtc_mode_fixup(struct drm_crtc *crtc,
-@@ -839,6 +842,7 @@ static int tegra_crtc_mode_set(struct drm_crtc *crtc,
- 	struct tegra_dc *dc = to_tegra_dc(crtc);
- 	struct tegra_dc_window window;
- 	u32 value;
-+	unsigned long bandwidth;
- 	int err;
- 
- 	drm_vblank_pre_modeset(crtc->dev, dc->pipe);
-@@ -879,6 +883,12 @@ static int tegra_crtc_mode_set(struct drm_crtc *crtc,
- 	if (err < 0)
- 		dev_err(dc->dev, "failed to enable root plane\n");
- 
-+	bandwidth = window.stride[0] * window.dst.h * 8;
-+	bandwidth *= drm_mode_vrefresh(mode);
-+	bandwidth /= 1024 * 1024;
-+
-+	pm_qos_update_request(&dc->qos_request, bandwidth);
-+
- 	return 0;
- }
- 
-@@ -1499,6 +1509,9 @@ static int tegra_dc_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
-+	pm_qos_add_request(&dc->qos_request, PM_QOS_MEMORY_BANDWIDTH,
-+			   PM_QOS_DEFAULT_VALUE);
-+
- 	platform_set_drvdata(pdev, dc);
- 
- 	return 0;
-@@ -1509,6 +1522,8 @@ static int tegra_dc_remove(struct platform_device *pdev)
- 	struct tegra_dc *dc = platform_get_drvdata(pdev);
- 	int err;
- 
-+	pm_qos_remove_request(&dc->qos_request);
-+
- 	err = host1x_client_unregister(&dc->client);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "failed to unregister host1x client: %d\n",
-diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
-index e89c70f..a99e533d 100644
---- a/drivers/gpu/drm/tegra/drm.h
-+++ b/drivers/gpu/drm/tegra/drm.h
-@@ -12,6 +12,7 @@
- 
- #include <uapi/drm/tegra_drm.h>
- #include <linux/host1x.h>
-+#include <linux/pm_qos.h>
- 
- #include <drm/drmP.h>
- #include <drm/drm_crtc_helper.h>
-@@ -120,6 +121,8 @@ struct tegra_dc {
- 	struct drm_pending_vblank_event *event;
- 
- 	const struct tegra_dc_soc_info *soc;
-+
-+	struct pm_qos_request qos_request;
- };
- 
- static inline struct tegra_dc *
 -- 
-1.9.3
+tejun
