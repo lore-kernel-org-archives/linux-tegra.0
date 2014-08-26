@@ -1,31 +1,25 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v3 1/4] hwmon: (lm90) split set&show temp as common codes
-Date: Tue, 26 Aug 2014 10:37:26 -0600
-Message-ID: <53FCB7C6.8000503@wwwdotorg.org>
-References: <1408948188-4181-1-git-send-email-wni@nvidia.com> <1408948188-4181-2-git-send-email-wni@nvidia.com> <53FB2AAA.30601@nvidia.com> <53FBF09F.8050502@nvidia.com> <20140826121729.GC15219@developer>
+Subject: Re: [PATCH v3 1/6] resource: Add device-managed request/release_resource()
+Date: Tue, 26 Aug 2014 10:53:35 -0600
+Message-ID: <53FCBB8F.1040401@wwwdotorg.org>
+References: <1409065898-26887-1-git-send-email-thierry.reding@gmail.com> <1409065898-26887-2-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140826121729.GC15219@developer>
+In-Reply-To: <1409065898-26887-2-git-send-email-thierry.reding@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>, Wei Ni <wni@nvidia.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>, khali@linux-fr.org, linux@roeck-us.net, lm-sensors@lm-sensors.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/26/2014 06:17 AM, Eduardo Valentin wrote:
-> On Tue, Aug 26, 2014 at 10:27:43AM +0800, Wei Ni wrote:
->> On 08/25/2014 08:23 PM, Mikko Perttunen wrote:
->>> FWIW, please fix the authorship information for next version.
->>
->> Sorry, I didn't get your point, did you mean I should remove the line
->> "From: lightning314 <wni@nvidia.com>" ? Yes I made a mistake on it, I
->> will remove it in next version.
+On 08/26/2014 09:11 AM, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 >
-> No Wei, don't remove the author line. Well, based on email, it is your
-> patch, so, removing may satisfy.
+> Provide device-managed implementations of the request_resource() and
+> release_resource() functions. Upon failure to request a resource, the
+> new devm_request_resource() function will output an error message for
+> consistent error reporting.
 
-The patch authorship should be fixed to have the correct value; 
-"lightning314" is not a valid real name. In turn, depending on your git 
-email configuration, this might automatically remove that line from the 
-message, since it might then exactly match the email's from address.
+The series,
+Tested-by: Stephen Warren <swarren@nvidia.com>
