@@ -1,55 +1,44 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v3 1/5] of: Add NVIDIA Tegra Legacy Interrupt Controller binding
-Date: Tue, 26 Aug 2014 08:41:00 +0200
-Message-ID: <1409035264-16999-1-git-send-email-thierry.reding@gmail.com>
+Subject: [PATCH v3 4/5] ARM: tegra: Remove unused GIC initialization
+Date: Tue, 26 Aug 2014 08:41:03 +0200
+Message-ID: <1409035264-16999-4-git-send-email-thierry.reding@gmail.com>
+References: <1409035264-16999-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1409035264-16999-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The Legacy Interrupt Controller found on NVIDIA Tegra SoCs is used by
-the AVP coprocessor and can also serve as a backup for the ARM Cortex
-CPU's local interrupt controller (GIC).
-
-The LIC is subdivided into multiple identical units, each handling 32
-possible interrupt sources.
+Tegra has been booting from DT exclusively for quite some time, so this
+old code setting up the GIC for non-DT boot is unused and can therefore
+be removed.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-Changes in v3:
-- bracket individual tuples in the "reg" property
+ arch/arm/mach-tegra/irq.c | 9 ---------
+ 1 file changed, 9 deletions(-)
 
- .../interrupt-controller/nvidia,tegra20-ictlr.txt     | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt
-
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt b/Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt
-new file mode 100644
-index 000000000000..1639389b7360
---- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt
-@@ -0,0 +1,19 @@
-+NVIDIA Tegra Legacy Interrupt Controller
-+
-+The legacy interrupt controller is divided into units that serve 32 interrupts
-+each. Tegra20 implements four units, whereas Tegra30 and later implement five.
-+
-+Required properties:
-+- compatible: "nvidia,tegra<chip>-ictlr"
-+- reg: Physical base address and length of the controller's registers. There
-+  should be one entry for each unit.
-+
-+Example:
-+
-+	interrupt-controller@60004000 {
-+		compatible = "nvidia,tegra20-ictlr";
-+		reg = <0x60004000 0x40>, /* primary controller */
-+		      <0x60004100 0x40>, /* secondary controller */
-+		      <0x60004200 0x40>, /* tertiary controller */
-+		      <0x60004300 0x40>; /* quaternary controller */
-+	};
+diff --git a/arch/arm/mach-tegra/irq.c b/arch/arm/mach-tegra/irq.c
+index b2e2e6dbe52d..39a3358877e0 100644
+--- a/arch/arm/mach-tegra/irq.c
++++ b/arch/arm/mach-tegra/irq.c
+@@ -362,14 +362,5 @@ void __init tegra_init_irq(void)
+ 	gic_arch_extn.irq_set_wake = tegra_set_wake;
+ 	gic_arch_extn.flags = IRQCHIP_MASK_ON_SUSPEND;
+ 
+-	/*
+-	 * Check if there is a devicetree present, since the GIC will be
+-	 * initialized elsewhere under DT.
+-	 */
+-	if (!of_have_populated_dt()) {
+-		void __iomem *cpubase = ioremap_nocache(0x50040000, 0x2000);
+-		gic_init(0, 29, distbase, cpubase);
+-	}
+-
+ 	tegra114_gic_cpu_pm_registration();
+ }
 -- 
 2.0.4
