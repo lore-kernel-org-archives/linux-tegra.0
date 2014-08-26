@@ -1,81 +1,84 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3 3/4] thermal: add more description for thermal-zones
-Date: Tue, 26 Aug 2014 11:03:21 +0800
-Message-ID: <53FBF8F9.7070708@nvidia.com>
-References: <1408948188-4181-1-git-send-email-wni@nvidia.com> <1408948188-4181-4-git-send-email-wni@nvidia.com> <20140825110711.GA12349@developer>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 1/3] of: Add NVIDIA Tegra flow controller bindings
+Date: Tue, 26 Aug 2014 08:00:27 +0200
+Message-ID: <20140826060026.GA15573@ulmo>
+References: <1403870848-1754-1-git-send-email-thierry.reding@gmail.com>
+ <53ADE012.5080401@wwwdotorg.org>
+ <53FB7324.9080109@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ikeVEW9yuYc//A+q"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140825110711.GA12349@developer>
+Content-Disposition: inline
+In-Reply-To: <53FB7324.9080109-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/25/2014 07:07 PM, Eduardo Valentin wrote:
-> Hello Wei Ni,
-> 
-> On Mon, Aug 25, 2014 at 02:29:47PM +0800, Wei Ni wrote:
->> Add more description for the "polling-delay" property.
->> Set "trips" and "cooling maps" as optional property, because
->> if missing these two sub-nodes, the thermal zone device still
->> work properly.
->>
->> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  Documentation/devicetree/bindings/thermal/thermal.txt | 10 ++++++----
->>  1 file changed, 6 insertions(+), 4 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/thermal/thermal.txt b/Documentation/devicetree/bindings/thermal/thermal.txt
->> index f5db6b7..e3d3ed9 100644
->> --- a/Documentation/devicetree/bindings/thermal/thermal.txt
->> +++ b/Documentation/devicetree/bindings/thermal/thermal.txt
->> @@ -136,8 +136,8 @@ containing trip nodes and one sub-node containing all the zone cooling maps.
->>  
->>  Required properties:
->>  - polling-delay:	The maximum number of milliseconds to wait between polls
->> -  Type: unsigned	when checking this thermal zone.
->> -  Size: one cell
->> +  Type: unsigned	when checking this thermal zone. If this value is 0, the
->> +  Size: one cell	driver will not run polling queue, but just cancel it.
->>  
-> 
-> The description above is specific to Linux kernel implementation
-> nomenclature. DT description needs to be OS agnostic.
 
-Normally, the user may think a delay of 0 means that software
-continually polls this zone, but in here it mean no polling. May be it's
-better to add this description.
+--ikeVEW9yuYc//A+q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
->>  - polling-delay-passive: The maximum number of milliseconds to wait
->>    Type: unsigned	between polls when performing passive cooling.
->> @@ -148,14 +148,16 @@ Required properties:
->>    phandles + sensor
->>    specifier
->>  
->> +Optional property:
->>  - trips:		A sub-node which is a container of only trip point nodes
->>    Type: sub-node	required to describe the thermal zone.
->>  
->>  - cooling-maps:		A sub-node which is a container of only cooling device
->>    Type: sub-node	map nodes, used to describe the relation between trips
->> -			and cooling devices.
->> +			and cooling devices. If missing the "trips" property,
->> +			This sub-node will not be parsed, because no trips can
->> +			be bound to cooling devices.
-> 
-> Do you mean if the thermal zone misses the "trips" property? Actually,
-> the binding describes both, cooling-maps and trips, as required
-> properties. Thus, both needs to be in place to consider the thermal zone
-> as a proper described zone.
-> 
->>  
->> -Optional property:
->>  - coefficients:		An array of integers (one signed cell) containing
->>    Type: array		coefficients to compose a linear relation between
->>    Elem size: one cell	the sensors listed in the thermal-sensors property.
->> -- 
->> 1.8.1.5
->>
+On Mon, Aug 25, 2014 at 11:32:20AM -0600, Stephen Warren wrote:
+> On 06/27/2014 03:20 PM, Stephen Warren wrote:
+> >On 06/27/2014 06:07 AM, Thierry Reding wrote:
+> >>From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >>
+> >>Add device tree bindings for the flow controller found on NVIDIA Tegra
+> >>SoCs.
+> >>
+> >
+> >>diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20=
+-flowctrl.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-=
+flowctrl.txt
+> >
+> >>+NVIDIA Tegra20 Flow Controller
+> >>+
+> >>+Required properties:
+> >>+- compatible: "nvidia,tegra20-flowctrl"
+> >>+- reg: Should contain one register range (address and length)
+> >>+
+> >>+Example:
+> >>+
+> >>+	flow-controller@60007000 {
+> >>+		compatible =3D "nvidia,tegra20-flowctrl";
+> >>+		reg =3D <0x60007000 0x1000>;
+> >>+	};
+> >
+> >The bindings all have the same structure. Can we collapse them all into
+> >this one file and just list all the valid compatible values and say pick
+> >one?
+>=20
+> Thierry, did you post an updated version of this patch? If so, I seem to
+> have lost it, so a repost would be good. Thanks.
+
+I don't think I did. If my memory serves me well then I did address your
+comments but never sent out the patches. I'll check what the status is.
+
+Thierry
+
+--ikeVEW9yuYc//A+q
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJT/CJ6AAoJEN0jrNd/PrOhfKIP/2//SBGuFiJGHOh428nNOoRm
+kukVv9LgvkjNNWsDRnIWkH6mbMkaVNB7Ewb/TMG0sPZvLEZ7JxTYwC7KxQauM+Qd
+pPvx8l8FOp8PPofrr0uxcmEh9MGARkpPn24d/TSndS7H8U6qDjbNHvRlXsjuz4iJ
+AtuYSV0Ix6Fa2llVPgjl8LeEMcQbqkWAQKoLYOnOuG7wfGeBuuxzwP9OhksVyJga
+dHN6TlkV4O2aZFt2RXBw6hGW58K79mgTVp75wolfsTHxdlvyxq1Q/URBORE79tqC
+C61I8jilQ04ZQ2EslH/jJCons86VDVW/oaxdUbKbOXRHJEZHAv0SlQOiit6IHUpJ
+lKSjc8AicV/wCGJ3a43YKg/yhcjpFxnpn9NfftQyc9qrR8efYkj6jYISDcHWwHka
+t/BaW2h7LG3MtxBjfRVfiNi95NpX45ji9nWpA0Gk/F2I9Yfo53hkF10ZqixvzhLF
+hb3iPN3w2fLniyI43q10n4zg1MxPjeTD+ny/mC0JGSfpCDCGVu2xkXIbo39PGY2U
+IGc+pgkW1SkQDtGQ9DaWdsNaRei9pZlSZdlOkszUEOluxL/+NpneTZzLLrL9v0Ir
+gne5FfnpeB6JzKjHk36STGcQ/VE1tmeQ75zFB3oFmUcof4yspQfFliQe1l/szcJc
+VPnr3cPtHdw0TTh5WhQ5
+=v8Ql
+-----END PGP SIGNATURE-----
+
+--ikeVEW9yuYc//A+q--
