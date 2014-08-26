@@ -1,46 +1,46 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v2] ata: ahci_tegra: Read calibration fuse
-Date: Tue, 26 Aug 2014 10:50:59 -0400
-Message-ID: <20140826145059.GA29286@htj.dyndns.org>
-References: <1409043630-9674-1-git-send-email-mperttunen@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-ide-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1409043630-9674-1-git-send-email-mperttunen@nvidia.com>
-Sender: linux-ide-owner@vger.kernel.org
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: swarren@wwwdotorg.org, thierry.reding@gmail.com, linux-ide@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v2 0/6] PCI: tegra: Fixes and Tegra124 support
+Date: Tue, 26 Aug 2014 16:57:38 +0200
+Message-ID: <1409065064-17617-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-pci-owner@vger.kernel.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Aug 26, 2014 at 12:00:30PM +0300, Mikko Perttunen wrote:
-> The original version of the driver did not read the SATA calibration
-> fuse to remove the dependency to the fuse driver. The fuse driver
-> is now merged, so add this functionality.
-> 
-> The calibration fuse contains a 2-bit value used to pick a set
-> of calibration values for the SATA pad.
-> 
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+From: Thierry Reding <treding@nvidia.com>
 
-Applied to libata/for-3.17-fixes.  One comment below.
+This series implements various fixes and adds support for Tegra124 to the
+Tegra PCIe controller driver.
 
->  #include <linux/ahci_platform.h>
-> -#include <linux/reset.h>
->  #include <linux/errno.h>
->  #include <linux/kernel.h>
->  #include <linux/module.h>
->  #include <linux/of_device.h>
->  #include <linux/platform_device.h>
->  #include <linux/regulator/consumer.h>
-> +#include <linux/reset.h>
+Patches 1 and 2 were already sent out separately earlier on but haven't been
+applied yet, so I'm including them here for convenience.
 
-You moved the include of reset.h w/o any explanation in the patch
-description.  The description doesn't have to be super verbose on
-trivial stuff but it at least has to cover all changes included in the
-patch w/ their rationales, however trivial they may be.
+Patches 3 to 5 are various fixes that should make the driver more reliable,
+though they don't (except maybe for patch 4) fix any known issues.
 
-Thanks.
+Patch 6 finally adds support for Tegra124.
+
+Thierry
+
+Eric Yuen (1):
+  PCI: tegra: Make sure the PCIe PLL is really reset
+
+Peter Daifuku (1):
+  PCI: tegra: Fix extended configuration space mapping
+
+Thierry Reding (4):
+  resource: Add device-managed request/release_resource()
+  PCI: tegra: Implement a proper resource hierarchy
+  PCI: tegra: Clear CLKREQ# enable on port disable
+  PCI: tegra: Add Tegra124 support
+
+ .../bindings/pci/nvidia,tegra20-pcie.txt           |  25 +-
+ Documentation/driver-model/devres.txt              |   2 +
+ drivers/pci/host/pci-tegra.c                       | 257 ++++++++++++++++++---
+ include/linux/ioport.h                             |   5 +
+ kernel/resource.c                                  |  70 ++++++
+ 5 files changed, 323 insertions(+), 36 deletions(-)
 
 -- 
-tejun
+2.0.4
