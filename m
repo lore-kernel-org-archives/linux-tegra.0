@@ -1,145 +1,90 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v2 1/6] resource: Add device-managed request/release_resource()
-Date: Tue, 26 Aug 2014 16:57:39 +0200
-Message-ID: <1409065064-17617-2-git-send-email-thierry.reding@gmail.com>
+Subject: Re: [PATCH v2 0/6] PCI: tegra: Fixes and Tegra124 support
+Date: Tue, 26 Aug 2014 17:08:14 +0200
+Message-ID: <20140826150812.GA26603@ulmo>
 References: <1409065064-17617-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="pWyiEgJYm5f9v55/"
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
 In-Reply-To: <1409065064-17617-1-git-send-email-thierry.reding@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-pci-owner@vger.kernel.org
 To: Bjorn Helgaas <bhelgaas@google.com>
 Cc: Stephen Warren <swarren@wwwdotorg.org>, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
 
-Provide device-managed implementations of the request_resource() and
-release_resource() functions. Upon failure to request a resource, the
-new devm_request_resource() function will output an error message for
-consistent error reporting.
+--pWyiEgJYm5f9v55/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
-Changes in v2:
-- use more natural flow for error handling
-- don't needlessly check for NULL pointers
+On Tue, Aug 26, 2014 at 04:57:38PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+>=20
+> This series implements various fixes and adds support for Tegra124 to the
+> Tegra PCIe controller driver.
+>=20
+> Patches 1 and 2 were already sent out separately earlier on but haven't b=
+een
+> applied yet, so I'm including them here for convenience.
+>=20
+> Patches 3 to 5 are various fixes that should make the driver more reliabl=
+e,
+> though they don't (except maybe for patch 4) fix any known issues.
+>=20
+> Patch 6 finally adds support for Tegra124.
+>=20
+> Thierry
+>=20
+> Eric Yuen (1):
+>   PCI: tegra: Make sure the PCIe PLL is really reset
+>=20
+> Peter Daifuku (1):
+>   PCI: tegra: Fix extended configuration space mapping
+>=20
+> Thierry Reding (4):
+>   resource: Add device-managed request/release_resource()
+>   PCI: tegra: Implement a proper resource hierarchy
+>   PCI: tegra: Clear CLKREQ# enable on port disable
+>   PCI: tegra: Add Tegra124 support
+>=20
+>  .../bindings/pci/nvidia,tegra20-pcie.txt           |  25 +-
+>  Documentation/driver-model/devres.txt              |   2 +
+>  drivers/pci/host/pci-tegra.c                       | 257 +++++++++++++++=
++++---
+>  include/linux/ioport.h                             |   5 +
+>  kernel/resource.c                                  |  70 ++++++
+>  5 files changed, 323 insertions(+), 36 deletions(-)
 
- Documentation/driver-model/devres.txt |  2 +
- include/linux/ioport.h                |  5 +++
- kernel/resource.c                     | 70 +++++++++++++++++++++++++++++++++++
- 3 files changed, 77 insertions(+)
+Hi Bjorn,
 
-diff --git a/Documentation/driver-model/devres.txt b/Documentation/driver-model/devres.txt
-index d14710b04439..befc3fe12ba6 100644
---- a/Documentation/driver-model/devres.txt
-+++ b/Documentation/driver-model/devres.txt
-@@ -264,8 +264,10 @@ IIO
- IO region
-   devm_release_mem_region()
-   devm_release_region()
-+  devm_release_resource()
-   devm_request_mem_region()
-   devm_request_region()
-+  devm_request_resource()
- 
- IOMAP
-   devm_ioport_map()
-diff --git a/include/linux/ioport.h b/include/linux/ioport.h
-index 142ec544167c..2c5250222278 100644
---- a/include/linux/ioport.h
-+++ b/include/linux/ioport.h
-@@ -215,6 +215,11 @@ static inline int __deprecated check_region(resource_size_t s,
- 
- /* Wrappers for managed devices */
- struct device;
-+
-+extern int devm_request_resource(struct device *dev, struct resource *root,
-+				 struct resource *new);
-+extern void devm_release_resource(struct device *dev, struct resource *new);
-+
- #define devm_request_region(dev,start,n,name) \
- 	__devm_request_region(dev, &ioport_resource, (start), (n), (name))
- #define devm_request_mem_region(dev,start,n,name) \
-diff --git a/kernel/resource.c b/kernel/resource.c
-index 60c5a3856ab7..46322019ab7d 100644
---- a/kernel/resource.c
-+++ b/kernel/resource.c
-@@ -1245,6 +1245,76 @@ int release_mem_region_adjustable(struct resource *parent,
- /*
-  * Managed region resource
-  */
-+static void devm_resource_release(struct device *dev, void *ptr)
-+{
-+	struct resource **r = ptr;
-+
-+	release_resource(*r);
-+}
-+
-+/**
-+ * devm_request_resource() - request and reserve an I/O or memory resource
-+ * @dev: device for which to request the resource
-+ * @root: root of the resource tree from which to request the resource
-+ * @new: descriptor of the resource to request
-+ *
-+ * This is a device-managed version of request_resource(). There is usually
-+ * no need to release resources requested by this function explicitly since
-+ * that will be taken care of when the device is unbound from its driver.
-+ * If for some reason the resource needs to be released explicitly, because
-+ * of ordering issues for example, drivers must call devm_release_resource()
-+ * rather than the regular release_resource().
-+ *
-+ * When a conflict is detected between any existing resources and the newly
-+ * requested resource, an error message will be printed.
-+ *
-+ * Returns 0 on success or a negative error code on failure.
-+ */
-+int devm_request_resource(struct device *dev, struct resource *root,
-+			  struct resource *new)
-+{
-+	struct resource *conflict, **ptr;
-+
-+	ptr = devres_alloc(devm_resource_release, sizeof(*ptr), GFP_KERNEL);
-+	if (!ptr)
-+		return -ENOMEM;
-+
-+	*ptr = new;
-+
-+	conflict = request_resource_conflict(root, new);
-+	if (conflict) {
-+		dev_err(dev, "resource collision: %pR conflicts with %s %pR\n",
-+			new, conflict->name, conflict);
-+		devres_free(ptr);
-+		return -EBUSY;
-+	}
-+
-+	devres_add(dev, ptr);
-+	return 0;
-+}
-+EXPORT_SYMBOL(devm_request_resource);
-+
-+static int devm_resource_match(struct device *dev, void *res, void *data)
-+{
-+	struct resource **ptr = res;
-+
-+	return *ptr == data;
-+}
-+
-+/**
-+ * devm_release_resource() - release a previously requested resource
-+ * @dev: device for which to release the resource
-+ * @new: descriptor of the resource to release
-+ *
-+ * Releases a resource previously requested using devm_request_resource().
-+ */
-+void devm_release_resource(struct device *dev, struct resource *new)
-+{
-+	WARN_ON(devres_release(dev, devm_resource_release, devm_resource_match,
-+			       new));
-+}
-+EXPORT_SYMBOL(devm_release_resource);
-+
- struct region_devres {
- 	struct resource *parent;
- 	resource_size_t start;
--- 
-2.0.4
+Right after sending this out I noticed that this series is missing a
+change to the device tree binding that I've only had in my local tree,
+so please don't apply this. I'll send out a v3 with that fixed shortly.
+
+Thierry
+
+--pWyiEgJYm5f9v55/
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJT/KLcAAoJEN0jrNd/PrOhqy8QAJJz/7sn8q1x3zNl3rfJvUS0
+3OC1wh8w9ZR0OPz5d215xnzQnJx8bBOF4vzXzJicj+Jibg+19FzfB905Atqam8KI
+4vGh473Vms+FNHuz1EkDtJDkCN3iufj11Eic4s5cfn9vqEDygdphATQPUIAwKnux
+FDlpm1SI254j5voIXmyfflH5dTI/4Ms1FkTgOudoQBhpv3QCw08DqBSHqdzAM7Ph
+T9ItnrjOymbyS5iRHG8ETY+vPDXNXGuxrxfRSKDY4VdtwaDQugi+xtLWkO/foGTZ
+1rSJjg4YwY9EBLjoXo81U5lz971Hwe2YA+zET0HScluwIyRFGI9kw7IVHB4ixc+n
+smhlRW0p154li2p4pvKPAE3fWv7MuSS3MG7lRjJCQ6np1JjQp7wFHhRE8LawySfJ
+s6L0eYIJiIorlvBt6MLF6loxboXm6xBsEYHn9kxXF9uqWFFXR3PrFSmieUbwC7ib
+zpoLUAyIy14Zk9F6plDKCRn7ikYSwbuVpujnvd4ou9Tj2Vd9aOIalXy9Zo3bNE8Q
+3cgebwv5+PuY9Kq3PH17u8F/2DkjeKb4Qho8PFJTmmJV1u9/uLSUw3S4mhtaBMG4
+gg/ZhpfETTOGpsNkev9FuCH3jMy5uz/4c/4QLUqFtGWZP+ZcvkQwuzX8no9bDDJw
+d+9cl2VrFmBba2MI4zlB
+=7vkZ
+-----END PGP SIGNATURE-----
+
+--pWyiEgJYm5f9v55/--
