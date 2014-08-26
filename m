@@ -1,336 +1,92 @@
-From: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 1/4] hwmon: (lm90) split set&show temp as common codes
-Date: Tue, 26 Aug 2014 08:17:31 -0400
-Message-ID: <20140826121729.GC15219@developer>
-References: <1408948188-4181-1-git-send-email-wni@nvidia.com>
- <1408948188-4181-2-git-send-email-wni@nvidia.com>
- <53FB2AAA.30601@nvidia.com>
- <53FBF09F.8050502@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <53FBF09F.8050502-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: [PATCH v4 0/3] PM QoS: Add support for memory bandwidth constraints
+Date: Tue, 26 Aug 2014 15:12:05 +0200
+Message-ID: <1409058728-13347-1-git-send-email-tomeu.vizoso@collabora.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: linux-pm@vger.kernel.org
+Cc: Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Mikko Perttunen <mperttunen@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Aug 26, 2014 at 10:27:43AM +0800, Wei Ni wrote:
-> On 08/25/2014 08:23 PM, Mikko Perttunen wrote:
-> > FWIW, please fix the authorship information for next version.
-> 
-> Sorry, I didn't get your point, did you mean I should remove the line
-> "From: lightning314 <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>" ? Yes I made a mistake on it, I
-> will remove it in next version.
+Hi,
 
-No Wei, don't remove the author line. Well, based on email, it is your
-patch, so, removing may satisfy. 
+have rebased on top of linux-next and fixed some small issues (see individual
+commit messages for details). Follows the original blurb:
 
-But the point is you should use meaninful names in tags like From and
-Signed off by. "lightning314" sounds quite cryptic or even a nick name.
-You must use real names there, such as "Wei Ni".
+Some device drivers need to sustain transfers to or from external memory at
+given fixed rates for a period of time. If we wait for the devfreq drivers to
+react to this load, the user is likely going to perceive glitches in the user
+experience.
 
-> 
-> Thanks.
-> Wei.
-> 
-> > 
-> > Cheers,
-> > Mikko
-> > 
-> > On 25/08/14 09:29, Wei Ni wrote:
-> >> From: lightning314 <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >>
-> >> Split set&show temp codes as common functions, so we can use it
-> >> directly when implement linux thermal framework.
-> >> And handle error return value for the lm90_select_remote_channel
-> >> and write_tempx, then set_temp8 and set_temp11 could return it
-> >> to user-space.
-> >>
-> >> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >> Signed-off-by: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-> >> ---
-> >>   drivers/hwmon/lm90.c | 164
-> >> ++++++++++++++++++++++++++++++++++-----------------
-> >>   1 file changed, 109 insertions(+), 55 deletions(-)
-> >>
-> >> diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
-> >> index c9ff08d..cb33dcf 100644
-> >> --- a/drivers/hwmon/lm90.c
-> >> +++ b/drivers/hwmon/lm90.c
-> >> @@ -473,20 +473,23 @@ static int lm90_read16(struct i2c_client
-> >> *client, u8 regh, u8 regl, u16 *value)
-> >>    * various registers have different meanings as a result of selecting a
-> >>    * non-default remote channel.
-> >>    */
-> >> -static inline void lm90_select_remote_channel(struct i2c_client *client,
-> >> -                          struct lm90_data *data,
-> >> -                          int channel)
-> >> +static inline int lm90_select_remote_channel(struct i2c_client *client,
-> >> +                         struct lm90_data *data,
-> >> +                         int channel)
-> >>   {
-> >>       u8 config;
-> >> +    int err = 0;
-> >>
-> >>       if (data->kind == max6696) {
-> >>           lm90_read_reg(client, LM90_REG_R_CONFIG1, &config);
-> >>           config &= ~0x08;
-> >>           if (channel)
-> >>               config |= 0x08;
-> >> -        i2c_smbus_write_byte_data(client, LM90_REG_W_CONFIG1,
-> >> -                      config);
-> >> +        err = i2c_smbus_write_byte_data(client, LM90_REG_W_CONFIG1,
-> >> +                        config);
-> >>       }
-> >> +
-> >> +    return err;
-> >>   }
-> >>
-> >>   /*
-> >> @@ -759,29 +762,34 @@ static u16 temp_to_u16_adt7461(struct lm90_data
-> >> *data, long val)
-> >>    * Sysfs stuff
-> >>    */
-> >>
-> >> -static ssize_t show_temp8(struct device *dev, struct device_attribute
-> >> *devattr,
-> >> -              char *buf)
-> >> +static int read_temp8(struct device *dev, int index)
-> >>   {
-> >> -    struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
-> >>       struct lm90_data *data = lm90_update_device(dev);
-> >>       int temp;
-> >>
-> >>       if (data->kind == adt7461 || data->kind == tmp451)
-> >> -        temp = temp_from_u8_adt7461(data, data->temp8[attr->index]);
-> >> +        temp = temp_from_u8_adt7461(data, data->temp8[index]);
-> >>       else if (data->kind == max6646)
-> >> -        temp = temp_from_u8(data->temp8[attr->index]);
-> >> +        temp = temp_from_u8(data->temp8[index]);
-> >>       else
-> >> -        temp = temp_from_s8(data->temp8[attr->index]);
-> >> +        temp = temp_from_s8(data->temp8[index]);
-> >>
-> >>       /* +16 degrees offset for temp2 for the LM99 */
-> >> -    if (data->kind == lm99 && attr->index == 3)
-> >> +    if (data->kind == lm99 && index == 3)
-> >>           temp += 16000;
-> >>
-> >> -    return sprintf(buf, "%d\n", temp);
-> >> +    return temp;
-> >>   }
-> >>
-> >> -static ssize_t set_temp8(struct device *dev, struct device_attribute
-> >> *devattr,
-> >> -             const char *buf, size_t count)
-> >> +static ssize_t show_temp8(struct device *dev, struct device_attribute
-> >> *devattr,
-> >> +              char *buf)
-> >> +{
-> >> +    struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
-> >> +
-> >> +    return sprintf(buf, "%d\n", read_temp8(dev, attr->index));
-> >> +}
-> >> +
-> >> +static int write_temp8(struct device *dev, int index, long val)
-> >>   {
-> >>       static const u8 reg[TEMP8_REG_NUM] = {
-> >>           LM90_REG_W_LOCAL_LOW,
-> >> @@ -794,60 +802,79 @@ static ssize_t set_temp8(struct device *dev,
-> >> struct device_attribute *devattr,
-> >>           MAX6659_REG_W_REMOTE_EMERG,
-> >>       };
-> >>
-> >> -    struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
-> >>       struct lm90_data *data = dev_get_drvdata(dev);
-> >>       struct i2c_client *client = data->client;
-> >> -    int nr = attr->index;
-> >> -    long val;
-> >>       int err;
-> >>
-> >> -    err = kstrtol(buf, 10, &val);
-> >> -    if (err < 0)
-> >> -        return err;
-> >> -
-> >>       /* +16 degrees offset for temp2 for the LM99 */
-> >> -    if (data->kind == lm99 && attr->index == 3)
-> >> +    if (data->kind == lm99 && index == 3)
-> >>           val -= 16000;
-> >>
-> >>       mutex_lock(&data->update_lock);
-> >>       if (data->kind == adt7461 || data->kind == tmp451)
-> >> -        data->temp8[nr] = temp_to_u8_adt7461(data, val);
-> >> +        data->temp8[index] = temp_to_u8_adt7461(data, val);
-> >>       else if (data->kind == max6646)
-> >> -        data->temp8[nr] = temp_to_u8(val);
-> >> +        data->temp8[index] = temp_to_u8(val);
-> >>       else
-> >> -        data->temp8[nr] = temp_to_s8(val);
-> >> -
-> >> -    lm90_select_remote_channel(client, data, nr >= 6);
-> >> -    i2c_smbus_write_byte_data(client, reg[nr], data->temp8[nr]);
-> >> -    lm90_select_remote_channel(client, data, 0);
-> >> +        data->temp8[index] = temp_to_s8(val);
-> >>
-> >> +    if ((err = lm90_select_remote_channel(client, data, index >= 6)) ||
-> >> +        (err = i2c_smbus_write_byte_data(client, reg[index],
-> >> +                         data->temp8[index])) ||
-> >> +        (err = lm90_select_remote_channel(client, data, 0)))
-> >> +        dev_err(dev, "write_temp8 failed, err %d\n", err);
-> >>       mutex_unlock(&data->update_lock);
-> >> +
-> >> +    return err;
-> >> +}
-> >> +
-> >> +static ssize_t set_temp8(struct device *dev, struct device_attribute
-> >> *devattr,
-> >> +             const char *buf, size_t count)
-> >> +{
-> >> +    struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
-> >> +    int index = attr->index;
-> >> +    long val;
-> >> +    int err;
-> >> +
-> >> +    err = kstrtol(buf, 10, &val);
-> >> +    if (err < 0)
-> >> +        return err;
-> >> +
-> >> +    err = write_temp8(dev, index, val);
-> >> +    if (err < 0)
-> >> +        return err;
-> >> +
-> >>       return count;
-> >>   }
-> >>
-> >> -static ssize_t show_temp11(struct device *dev, struct
-> >> device_attribute *devattr,
-> >> -               char *buf)
-> >> +static int read_temp11(struct device *dev, int index)
-> >>   {
-> >> -    struct sensor_device_attribute_2 *attr =
-> >> to_sensor_dev_attr_2(devattr);
-> >>       struct lm90_data *data = lm90_update_device(dev);
-> >>       int temp;
-> >>
-> >>       if (data->kind == adt7461 || data->kind == tmp451)
-> >> -        temp = temp_from_u16_adt7461(data, data->temp11[attr->index]);
-> >> +        temp = temp_from_u16_adt7461(data, data->temp11[index]);
-> >>       else if (data->kind == max6646)
-> >> -        temp = temp_from_u16(data->temp11[attr->index]);
-> >> +        temp = temp_from_u16(data->temp11[index]);
-> >>       else
-> >> -        temp = temp_from_s16(data->temp11[attr->index]);
-> >> +        temp = temp_from_s16(data->temp11[index]);
-> >>
-> >>       /* +16 degrees offset for temp2 for the LM99 */
-> >> -    if (data->kind == lm99 &&  attr->index <= 2)
-> >> +    if (data->kind == lm99 && index <= 2)
-> >>           temp += 16000;
-> >>
-> >> -    return sprintf(buf, "%d\n", temp);
-> >> +    return temp;
-> >>   }
-> >>
-> >> -static ssize_t set_temp11(struct device *dev, struct device_attribute
-> >> *devattr,
-> >> -              const char *buf, size_t count)
-> >> +static ssize_t show_temp11(struct device *dev, struct
-> >> device_attribute *devattr,
-> >> +               char *buf)
-> >> +{
-> >> +    struct sensor_device_attribute_2 *attr =
-> >> to_sensor_dev_attr_2(devattr);
-> >> +
-> >> +    return sprintf(buf, "%d\n", read_temp11(dev, attr->index));
-> >> +}
-> >> +
-> >> +static int write_temp11(struct device *dev, int nr, int index, long val)
-> >>   {
-> >>       struct {
-> >>           u8 high;
-> >> @@ -861,18 +888,10 @@ static ssize_t set_temp11(struct device *dev,
-> >> struct device_attribute *devattr,
-> >>           { LM90_REG_W_REMOTE_HIGHH, LM90_REG_W_REMOTE_HIGHL, 1 }
-> >>       };
-> >>
-> >> -    struct sensor_device_attribute_2 *attr =
-> >> to_sensor_dev_attr_2(devattr);
-> >>       struct lm90_data *data = dev_get_drvdata(dev);
-> >>       struct i2c_client *client = data->client;
-> >> -    int nr = attr->nr;
-> >> -    int index = attr->index;
-> >> -    long val;
-> >>       int err;
-> >>
-> >> -    err = kstrtol(buf, 10, &val);
-> >> -    if (err < 0)
-> >> -        return err;
-> >> -
-> >>       /* +16 degrees offset for temp2 for the LM99 */
-> >>       if (data->kind == lm99 && index <= 2)
-> >>           val -= 16000;
-> >> @@ -887,15 +906,50 @@ static ssize_t set_temp11(struct device *dev,
-> >> struct device_attribute *devattr,
-> >>       else
-> >>           data->temp11[index] = temp_to_s8(val) << 8;
-> >>
-> >> -    lm90_select_remote_channel(client, data, reg[nr].channel);
-> >> -    i2c_smbus_write_byte_data(client, reg[nr].high,
-> >> -                  data->temp11[index] >> 8);
-> >> -    if (data->flags & LM90_HAVE_REM_LIMIT_EXT)
-> >> -        i2c_smbus_write_byte_data(client, reg[nr].low,
-> >> -                      data->temp11[index] & 0xff);
-> >> -    lm90_select_remote_channel(client, data, 0);
-> >> +    err = lm90_select_remote_channel(client, data, reg[nr].channel);
-> >> +    if (err)
-> >> +        goto error;
-> >> +
-> >> +    err = i2c_smbus_write_byte_data(client, reg[nr].high,
-> >> +                    data->temp11[index] >> 8);
-> >> +    if (err)
-> >> +        goto error;
-> >> +
-> >> +    if (data->flags & LM90_HAVE_REM_LIMIT_EXT) {
-> >> +        err = i2c_smbus_write_byte_data(client, reg[nr].low,
-> >> +                        data->temp11[index] & 0xff);
-> >> +        if (err)
-> >> +            goto error;
-> >> +    }
-> >> +
-> >> +    err = lm90_select_remote_channel(client, data, 0);
-> >> +
-> >> +error:
-> >> +    if (err)
-> >> +        dev_err(dev, "write_temp11 failed, err %d\n", err);
-> >>
-> >>       mutex_unlock(&data->update_lock);
-> >> +
-> >> +    return err;
-> >> +}
-> >> +
-> >> +static ssize_t set_temp11(struct device *dev, struct device_attribute
-> >> *devattr,
-> >> +              const char *buf, size_t count)
-> >> +{
-> >> +    struct sensor_device_attribute_2 *attr =
-> >> to_sensor_dev_attr_2(devattr);
-> >> +    int nr = attr->nr;
-> >> +    int index = attr->index;
-> >> +    long val;
-> >> +    int err;
-> >> +
-> >> +    err = kstrtol(buf, 10, &val);
-> >> +    if (err < 0)
-> >> +        return err;
-> >> +
-> >> +    err = write_temp11(dev, nr, index, val);
-> >> +    if (err < 0)
-> >> +        return err;
-> >> +
-> >>       return count;
-> >>   }
-> >>
-> >>
-> 
+Some common scenarios that would benefit from it are display controllers
+setting a new mode, USB drivers starting isochronous transfers, camera drivers
+starting to capture and hw media codecs doing their thing.
+
+I'm proposing adding a new PM_QOS_MEMORY_BANDWIDTH class that device drivers
+can use to register their memory bandwidth needs right when they become known,
+so the external memory clock can be set at the optimum frequency, thus
+preventing glitches.
+
+There have been similar proposals before [0], the first main concern being that
+constraints need to refer to a global resource such as CPUs. If they referred
+to a network NIC or to a UART, there would be no way of knowing how to actually
+constrain each device because there would be a single list of requests.
+
+In this case, the memory bus is a global resource just like the CPUs are, and
+all requests in this class will apply to a single device driver in any
+particular system.
+
+The second serious concern was that constraints need to be defined in a way
+generic enough so they can be consumed in a wide array of particular systems
+without placing the burden of taking into account hw specifics in the driver of
+the memory client.
+
+Here, the PM_QOS_MEMORY_BANDWIDTH constraints are specified always in kbs,
+being the amount of data that the device driver wants to see transferred per
+second. This allows for example for a camera driver to calculate the
+appropriate value based on the size of each frame and the desired FPS and,
+depending on the particular system where the camera block is used, the
+appropriate external memory driver will convert that to the bus clock frequency
+that makes sense for the hardware at hand.
+
+The first patch adds the new class and also a new PM_QOS_SUM class type.
+
+The second illustrates how the driver for such a memory client would request
+its memory bandwidth requirement.
+
+The third patch illustrates how an hypothetical driver for an external memory
+controller would listen for changes in the aggregated bandwidth constraint and
+would set a floor frequency rate on the appropriate clock. Depends on the
+per-user clk series [1].
+
+Most vendor trees carry their own solution for this specific issue, so it would
+be pretty neat if mainline gained a similar mechanism so we get more power
+management goodies in the right place.
+
+[0] https://lkml.org/lkml/2012/3/10/165
+[1] http://article.gmane.org/gmane.linux.ports.arm.kernel/349154
+
+Thanks,
+
+Tomeu
+
+Tomeu Vizoso (3):
+  PM / QoS: Add PM_QOS_MEMORY_BANDWIDTH class
+  drm/tegra: Request memory bandwidth for the display controller
+  memory: tegra124-emc: Add EMC driver
+
+ Documentation/power/pm_qos_interface.txt |   4 +-
+ arch/arm/mach-tegra/tegra.c              |  10 +++
+ drivers/gpu/drm/tegra/dc.c               |  15 ++++
+ drivers/gpu/drm/tegra/drm.h              |   3 +
+ drivers/memory/Kconfig                   |   9 +++
+ drivers/memory/Makefile                  |   1 +
+ drivers/memory/tegra124-emc.c            | 117 +++++++++++++++++++++++++++++++
+ include/linux/pm_qos.h                   |   5 +-
+ kernel/power/qos.c                       |  27 ++++++-
+ 9 files changed, 188 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/memory/tegra124-emc.c
+
+-- 
+1.9.3
+
