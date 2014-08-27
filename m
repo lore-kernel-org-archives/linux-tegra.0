@@ -1,76 +1,164 @@
-From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v2 4/9] pinctrl: tegra-xusb: Add USB PHY support
-Date: Wed, 27 Aug 2014 09:44:02 -0700
-Message-ID: <CAL1qeaHMa_KrqQyPgvJssOnW8mefQ8KPO9+WdkVODbY2XJe_LQ@mail.gmail.com>
+From: Andrew Bresticker <abrestic@chromium.org>
+Subject: Re: [PATCH v2 2/9] mailbox: Add NVIDIA Tegra XUSB mailbox driver
+Date: Wed, 27 Aug 2014 10:38:56 -0700
+Message-ID: <CAL1qeaERHeKKNpqh9qHOppgT7ymvntisdjVvZheP78U6NaPz-A@mail.gmail.com>
 References: <1408381705-3623-1-git-send-email-abrestic@chromium.org>
-	<1408381705-3623-5-git-send-email-abrestic@chromium.org>
-	<53FB8CFE.3090007@wwwdotorg.org>
+	<1408381705-3623-3-git-send-email-abrestic@chromium.org>
+	<53FB8820.4010202@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53FB8CFE.3090007-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel@lists>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <53FB8820.4010202@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman <mathias.nyman@intel.com>, Grant Likely <grant.likely@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Arnd Bergmann <arnd@arndb.de>, Kishon Vijay Abraham I <kishon@ti.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Aug 25, 2014 at 12:22 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+On Mon, Aug 25, 2014 at 12:01 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
 > On 08/18/2014 11:08 AM, Andrew Bresticker wrote:
 >>
->> In addition to the PCIe and SATA PHYs, the XUSB pad controller also
->> supports 3 UTMI, 2 HSIC, and 2 USB3 PHYs.  Each USB3 PHY uses a single
->> PCIe or SATA lane and is mapped to one of the three UTMI ports.
+>> The Tegra xHCI controller's firmware communicates requests to the host
+>> processor through a mailbox interface.  While there is only a single
+>> communication channel, messages sent by the controller can be divided
+>> into two groups: those intended for the PHY driver and those intended
+>> for the host-controller driver.  This mailbox driver exposes the two
+>> channels and routes incoming messages to the appropriate channel based
+>> on the command encoded in the message.
+>
+>
+>> diff --git a/drivers/mailbox/tegra-xusb-mailbox.c
+>> b/drivers/mailbox/tegra-xusb-mailbox.c
+>
+>
+>> +#define XUSB_CFG_ARU_MBOX_CMD                  0xe4
+>> +#define  MBOX_FALC_INT_EN                      BIT(27)
+>> +#define  MBOX_PME_INT_EN                       BIT(28)
+>> +#define  MBOX_SMI_INT_EN                       BIT(29)
+>> +#define  MBOX_XHCI_INT_EN                      BIT(30)
+>> +#define  MBOX_INT_EN                           BIT(31)
+>
+>
+> Those field names don't match the documentation in the TRM; they're called
+> DEST_xxx rather than xxx_INT_EN. I'm not sure what that disconnect means
+> (i.e. whether it's just a different naming choice, or there's some practical
+> disconnect that will cause issues.)
+
+Hmm... interestingly *_INT_EN is the convention the downstream kernels
+used.  DEST_* is definitely more accurate as I'm pretty sure these
+bits select the destination for the interrupt.
+
+>> +static struct mbox_chan *mbox_cmd_to_chan(struct tegra_xusb_mbox *mbox,
+>> u32 cmd)
+>> +{
+>> +       switch (cmd) {
+>> +       case MBOX_CMD_INC_FALC_CLOCK:
+>> +       case MBOX_CMD_DEC_FALC_CLOCK:
+>> +       case MBOX_CMD_INC_SSPI_CLOCK:
+>> +       case MBOX_CMD_DEC_SSPI_CLOCK:
+>> +       case MBOX_CMD_SET_BW:
+>> +               return &mbox->mbox.chans[TEGRA_XUSB_MBOX_CHAN_HOST];
+>> +       case MBOX_CMD_SAVE_DFE_CTLE_CTX:
+>> +       case MBOX_CMD_START_HSIC_IDLE:
+>> +       case MBOX_CMD_STOP_HSIC_IDLE:
+>> +               return &mbox->mbox.chans[TEGRA_XUSB_MBOX_CHAN_PHY];
+>> +       default:
+>> +               return NULL;
+>> +       }
+>> +}
+>
+>
+> This makes me think that the CHAN_HOST/CHAN_PHY values are purely a facet of
+> the Linux driver's message de-multiplexing, rather than anything to do with
+> the HW.
+
+Yup, they are...
+
+> I'm not even sure if it's appropriate for the low-level mailbox driver to
+> know about the semantics of the message, rather than simply sending them on
+> to the client driver? Perhaps when drivers register(?) for callbacks(?) for
+> messages, they should state which types of messages they want to listen to?
+
+So there's not really a way for the client driver to tell the mailbox
+driver which types of messages it wants to listen to on a particular
+channel with the mailbox framework - it simply provides a way for
+clients to bind with channels.  I think there are a couple of options
+here, either: a) have a channel per message (as you mentioned in the
+previous patch), which allows the client to only register for messages
+(channels) it wants to handle, or b) extend the mailbox framework to
+allow shared channels so that both clients can receive messages on the
+single channel and handle messages appropriately.   The disadvantage
+of (a) is that the commands are firmware defined and could
+theoretically change between releases of the firmware, though I'm not
+sure how common that is in practice.  So that leaves (b) - Jassi, what
+do you think about having shared (non-exclusive) channels?
+
+>> +static irqreturn_t tegra_xusb_mbox_irq(int irq, void *p)
+>
+>
+>> +       /* Clear mbox interrupts */
 >>
->> The xHCI controller will also send messages intended for the PHY driver,
->> so request and listen for messages on the mailbox's PHY channel.
+>> +       reg = mbox_readl(mbox, XUSB_CFG_ARU_SMI_INTR);
+>> +       if (reg & MBOX_SMI_INTR_FW_HANG)
+>> +               dev_err(mbox->mbox.dev, "Controller firmware hang\n");
+>> +       mbox_writel(mbox, reg, XUSB_CFG_ARU_SMI_INTR);
 >
 >
-> I'd like a review from Thierry here as the HW expert.
->
-> I need an ack from LinusW in order to take this pinctrl patch through the
-> Tegra tree.
->
->> diff --git a/drivers/pinctrl/pinctrl-tegra-xusb.c
->> b/drivers/pinctrl/pinctrl-tegra-xusb.c
->
->
->> +static int usb3_phy_power_on(struct phy *phy)
->> +{
->> +       struct tegra_xusb_padctl *padctl = phy_get_drvdata(phy);
->> +       int port = usb3_phy_to_port(phy);
->> +       int lane = padctl->usb3_ports[port].lane;
->> +       u32 value, offset;
->> +
->> +       if (!is_pcie_or_sata_lane(lane)) {
->> +               dev_err(padctl->dev, "USB3 PHY %d mapped to invalid lane:
->> %d\n",
->> +                       port, lane);
->> +               return -EINVAL;
->> +       }
+>> +       /*
+>>
+>> +        * Set the mailbox back to idle.  The recipient of the message is
+>> +        * responsible for sending an ACK/NAK, if necessary.
+>> +        */
+>> +       reg = mbox_readl(mbox, XUSB_CFG_ARU_MBOX_CMD);
+>> +       reg &= ~MBOX_SMI_INT_EN;
+>> +       mbox_writel(mbox, reg, XUSB_CFG_ARU_MBOX_CMD);
 >
 >
-> An aside: This implies that the SATA driver should be talking to this
-> pinctrl driver and explicitly powering on the XUSB pins. However, the SATA
-> driver doesn't depend on this series. I'm a bit confused how that works.
-> Perhaps it's just by accident? Mikko, can you comment?
+> Does the protocol not allow the remote firmware to send another message
+> until the host has ack'd/nak'd the message; the code above turns off the IRQ
+> that indicated to the host that a message was sent to it...
 
-As Mikko mentioned, the enabling of the SATA lane in
-usb3_phy_power_on() is for when the SATA lane is being used for USB3.
+While the firmware generally will not send another message until the
+previous one is ACK'd/NAK'd (with the exception of the SET_BW
+command), the above does not prevent it from doing so.  I believe the
+controller sets up the DEST_* bits properly before sending another
+message.
 
->> +static int utmi_phy_to_port(struct phy *phy)
->> +{
->> +       struct tegra_xusb_padctl *padctl = phy_get_drvdata(phy);
->> +       int i;
->> +
->> +       for (i = 0; i < TEGRA_XUSB_UTMI_PHYS; i++) {
->> +               if (phy == padctl->phys[TEGRA_XUSB_PADCTL_UTMI_P0 + i])
->> +                       break;
->> +       }
->> +       BUG_ON(i == TEGRA_XUSB_UTMI_PHYS);
+>> +static int tegra_xusb_mbox_probe(struct platform_device *pdev)
 >
 >
-> Can this be triggered by e.g. bad DT content? If so, returning an error
-> would be nicer. The comment applies to other xxx_to_port() functions.
+>> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>>
+>> +       if (!res)
+>> +               return -ENODEV;
+>
+>
+> Should devm_request_mem_region() be called here to claim the region?
 
-No, it cannot.  The struct phy that's passed in here comes from the
-PHY core and must be a PHY that we registered earlier in probe().
+No, the xHCI host driver also needs to map these registers, so they
+cannot be mapped exclusively here.
+
+>> +       mbox->regs = devm_ioremap_nocache(&pdev->dev, res->start,
+>> +                                         resource_size(res));
+>> +       if (!mbox->regs)
+>> +               return -ENOMEM;
+>
+>
+> Is _nocache required? I don't see other drivers using it. I assume there's
+> nothing special about the mbox registers.
+
+I'll drop the _nocache.
+
+>> +       mbox->irq = platform_get_irq(pdev, 0);
+>> +       if (mbox->irq < 0)
+>> +               return mbox->irq;
+>> +       ret = devm_request_irq(&pdev->dev, mbox->irq, tegra_xusb_mbox_irq,
+>> 0,
+>> +                              dev_name(&pdev->dev), mbox);
+>
+>
+> Is it possible for an IRQ to occur after tegra_xusb_mbox_remove() has
+> returned, but before the cleanup for the devm IRQ allocation occurs? If that
+> happens, will the code handle it gracefully, or crash?
+
+It looks like mbox_chan_received_data() will crash if the channel is
+unbound, so yes, this needs to be fixed.
