@@ -1,126 +1,130 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber-l3A5Bk7waGM@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: add PCIe-related pins to the Jetson TK1 pinmux
- tables
-Date: Wed, 27 Aug 2014 15:29:19 +0200
-Message-ID: <53FDDD2F.20503@suse.de>
-References: <1408742308-18004-1-git-send-email-swarren@wwwdotorg.org> <53FB10B8.3010408@suse.de> <53FB160F.6000700@nvidia.com> <53FB27AB.8010608@nvidia.com> <53FD0980.2010803@suse.de> <20140827055247.GC15640@ulmo>
+From: Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCH v3 3/4] thermal: add more description for thermal-zones
+Date: Wed, 27 Aug 2014 09:32:18 -0400
+Message-ID: <20140827133217.GB15875@developer>
+References: <1408948188-4181-1-git-send-email-wni@nvidia.com>
+ <1408948188-4181-4-git-send-email-wni@nvidia.com>
+ <20140825110711.GA12349@developer>
+ <53FBEE39.2020001@nvidia.com>
+ <20140826121210.GB15219@developer>
+ <53FD484F.7030504@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="2hprvJkwmRwgdGPQWQDFHm5UmswIx2sir"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140827055247.GC15640@ulmo>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <53FD484F.7030504@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Wei Ni <wni@nvidia.com>
+Cc: khali@linux-fr.org, linux@roeck-us.net, swarren@wwwdotorg.org, lm-sensors@lm-sensors.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---2hprvJkwmRwgdGPQWQDFHm5UmswIx2sir
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Hello Wei,
 
-Am 27.08.2014 07:52, schrieb Thierry Reding:
-> On Wed, Aug 27, 2014 at 12:26:08AM +0200, Andreas F=C3=A4rber wrote:
->> Am 25.08.2014 14:10, schrieb Mikko Perttunen:
->>> On 25/08/14 13:55, Mikko Perttunen wrote:
->>>> On 25/08/14 13:32, Andreas F=C3=A4rber wrote:
->>>>> Am 22.08.2014 23:18, schrieb Stephen Warren:
->>>>>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>>>>
->>>>>> This pinmux tables currently omit any configuration for PCIe clk_r=
-eq,
->>>>>> wake, and rst pins, which in turn causes intermittent failures in
->>>>>> U-Boot's PCIe support. Import an updated version of the pinmux tab=
-les
->>>>>> which rectifies this.
->>>>>>
->>>>>> (While I'm still hoping to remove the pinmux tables from DTs for
->>>>>> Tegra124+ devices, while they're still here, they may as well be
->>>>>> complete and correct).
->>>>>>
->>>>>> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>>>> ---
->>>>>>   arch/arm/boot/dts/tegra124-jetson-tk1.dts | 35
->>>>>> +++++++++++++++++++++++++++++++
->>>>>>   1 file changed, 35 insertions(+)
->>>>>
->>>>> I've tested this patch on both -rc1 and yesterday's torvalds/linux.=
-git
->>>>> with tegra_defconfig: Both with or without this patch I get empty l=
-spci
->>>>> output.
->>>>>
->>>>> There doesn't seem to be a tegra/linux.git for-next branch based on=
- -rc1
->>>>> yet - are patches from other subsystem trees needed to get the on-b=
-oard
->>>>> Ethernet detected or maybe some config option?
->>>>
->>>> git://gitorious.org/thierryreding/linux.git staging/pci
->>>
->>> .. and apparently the device tree patches are in staging/tegra.
->>
->> Thanks for the URLs. I tested yesterday's staging/master, but booting
->> from SD seemed broked, sdhci-tegra probe kept deferring. Is that a kno=
-wn
->> issue?
->=20
-> Yes, this is a known issue. The root is that currently there's no way t=
-o
-> allow deferred probing if an IOMMU hasn't been probed, so a driver need=
-s
-> to continue without IOMMU support even if the IOMMU would come up later=
+On Wed, Aug 27, 2014 at 10:54:07AM +0800, Wei Ni wrote:
+> On 08/26/2014 08:12 PM, Eduardo Valentin wrote:
+> > On Tue, Aug 26, 2014 at 10:17:29AM +0800, Wei Ni wrote:
+> >> On 08/25/2014 07:07 PM, Eduardo Valentin wrote:
+> >>> Hello Wei Ni,
+> >>>
+> >>> On Mon, Aug 25, 2014 at 02:29:47PM +0800, Wei Ni wrote:
+> >>>> Add more description for the "polling-delay" property.
+> >>>> Set "trips" and "cooling maps" as optional property, because
+> >>>> if missing these two sub-nodes, the thermal zone device still
+> >>>> work properly.
+> >>>>
+> >>>> Signed-off-by: Wei Ni <wni@nvidia.com>
+> >>>> ---
+> >>>>  Documentation/devicetree/bindings/thermal/thermal.txt | 10 ++++++----
+> >>>>  1 file changed, 6 insertions(+), 4 deletions(-)
+> >>>>
+> >>>> diff --git a/Documentation/devicetree/bindings/thermal/thermal.txt b/Documentation/devicetree/bindings/thermal/thermal.txt
+> >>>> index f5db6b7..e3d3ed9 100644
+> >>>> --- a/Documentation/devicetree/bindings/thermal/thermal.txt
+> >>>> +++ b/Documentation/devicetree/bindings/thermal/thermal.txt
+> >>>> @@ -136,8 +136,8 @@ containing trip nodes and one sub-node containing all the zone cooling maps.
+> >>>>  
+> >>>>  Required properties:
+> >>>>  - polling-delay:	The maximum number of milliseconds to wait between polls
+> >>>> -  Type: unsigned	when checking this thermal zone.
+> >>>> -  Size: one cell
+> >>>> +  Type: unsigned	when checking this thermal zone. If this value is 0, the
+> >>>> +  Size: one cell	driver will not run polling queue, but just cancel it.
+> >>>>  
+> >>>
+> >>> The description above is specific to Linux kernel implementation
+> >>> nomenclature. DT description needs to be OS agnostic.
+> >>>
+> >>>>  - polling-delay-passive: The maximum number of milliseconds to wait
+> >>>>    Type: unsigned	between polls when performing passive cooling.
+> >>>> @@ -148,14 +148,16 @@ Required properties:
+> >>>>    phandles + sensor
+> >>>>    specifier
+> >>>>  
+> >>>> +Optional property:
+> >>>>  - trips:		A sub-node which is a container of only trip point nodes
+> >>>>    Type: sub-node	required to describe the thermal zone.
+> >>>>  
+> >>>>  - cooling-maps:		A sub-node which is a container of only cooling device
+> >>>>    Type: sub-node	map nodes, used to describe the relation between trips
+> >>>> -			and cooling devices.
+> >>>> +			and cooling devices. If missing the "trips" property,
+> >>>> +			This sub-node will not be parsed, because no trips can
+> >>>> +			be bound to cooling devices.
+> >>>
+> >>> Do you mean if the thermal zone misses the "trips" property? Actually,
+> >>> the binding describes both, cooling-maps and trips, as required
+> >>> properties. Thus, both needs to be in place to consider the thermal zone
+> >>> as a proper described zone.
+> >>
+> >> I moved the "trips" and "cooling-maps" to optional property, because if
+> >> missing these two properties, the thermal zone devices still can be
+> >> registered, and the driver can work properly, it has the basic function,
+> >> can read temperature from thermal sysfs, although it doesn't have trips
+> >> and bind with cooling devices.
+> > 
+> > 
+> > If a thermal zone is used only for monitoring, then I believe it lost
+> > its purpose. As  Maybe a different framework shall be used, such as hwmon,
+> > for instance?
+> 
+> Yes, if we only use it for monitoring, we can use hwmon. But we have
+> more functions base on these two thermal zone devices. We have a
+> skin-temperature driver, which used nct1008's remote and local
+> temperatures to estimator the skin temperature. As you know the thermal
+> framework is more powerful, the remote/local sensors can be register as
+> thermal zone, then the skin-temp driver can use thermal_zone_get_temp()
+> to read their temperatures and then estimator skin's temp. We also will
+> set trips and cooling devices for this skin-temp.
 
-> in the boot process. The staging/iommu branch contains a patch to fix i=
-t
-> but it looks as if that won't be merged.
->=20
-> I've since removed the code that registers the Tegra SMMU with the code=
+In this case, don't you think it would make sense to create a thermal
+zone for the skin temperature and add the required sensors (including
+the nct1008) in it?
 
-> that I introduced but haven't removed the registry patch yet, which wil=
-l
-> cause the SMMU never to show up and therefore indefinitely deferring
-> probe. You can easily solve this by removing the iommus property from
-> the sdhci nodes in DTS or by removing the calls to iommu_attach() and
-> iommu_detach() from the SDHCI driver (reverting "mmc: sdhci-tegra: Add
-> IOMMU support").
->=20
-> I'll see if I can find the time today to fix up the branches.
-
-No hurry! I switched to testing the newly updated for-next branch, which
-works fine so far (been using a USB Ethernet adapter).
-
-Thanks,
-Andreas
-
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=BC=
-rnberg
-
-
---2hprvJkwmRwgdGPQWQDFHm5UmswIx2sir
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJT/d0vAAoJEPou0S0+fgE/7VsP+QGZgUv1JYm35B52Uw+LRKU1
-FL/UCiBqaKXESubWecUJTmhMZl1kHfs4x9GKy92Y3TQNljClulaRP8BYKqyeTD2h
-s6F/l5HiQ1dC5HfMGozRPdd6Z4wbq535sfeqybb9OoSmn3a9txCRlnvt90v4HbB7
-mVx1TNDnJPjyxPz0XFA1qZGjMud57B+MXMOmHA5pdvqdHxqUL+7DS7+xR1DNW4RA
-O5BJwmgy7+r3POxEN53aNt24O/Ng7q6Z0A8yMSGYlbbg72N35dTqpGIH7D7gO6+S
-xHemuvWSH5yE+ykb5P1PJfg+3C4NPvnGF9YIYebfFluyc9LGf2sWL7WcpCOSqVj/
-PbGl/d0rPdeua7gvE+MvD5rlEq0jVP8z5e1LHMMrFEjlq0iOTjLDeBF6BmUfcwJW
-iAYCPFbJbHOi9z5LP5aWbKpGIaXF0fZFtfyAgBtYeZi+VA1THcC86PtFXPqZJ84e
-BJIYSqkv+EqgV9xhNCK6CTWh48OvJMaxAqxqehd1K0WF3LqvyzLUlHgNm3fbjCu7
-5cF2YNSpry+vlCHSKyo0c1z7DrncDmtqCIn9FM/wH33AA+rTZDGcGRURyhd8zlke
-KIXV4VdaEe3hZ0F+7gtovBTEupJcAyK9sBvCZscFyoikH7uh8UyMdLCbX4jTb0D7
-gIogAEmkLcecbK6P8n3c
-=hvtj
------END PGP SIGNATURE-----
-
---2hprvJkwmRwgdGPQWQDFHm5UmswIx2sir--
+> 
+> Wei.
+> 
+> > 
+> > The purpose of a thermal zone is to describe thermal behavior of a
+> > hardware. As it is mentioned in the thermal.txt file.
+> > 
+> > 
+> >>
+> >> Thanks.
+> >> Wei.
+> >>
+> >>>
+> >>>>  
+> >>>> -Optional property:
+> >>>>  - coefficients:		An array of integers (one signed cell) containing
+> >>>>    Type: array		coefficients to compose a linear relation between
+> >>>>    Elem size: one cell	the sensors listed in the thermal-sensors property.
+> >>>> -- 
+> >>>> 1.8.1.5
+> >>>>
+> >>
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > 
+> 
