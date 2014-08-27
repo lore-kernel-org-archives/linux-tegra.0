@@ -1,34 +1,60 @@
-From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] ARM: multi_v7_defconfig: Enable Tegra AHCI driver
-Date: Wed, 27 Aug 2014 09:51:15 +0300
-Message-ID: <1409122275-16464-1-git-send-email-mperttunen@nvidia.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: Re: [PATCH v4 3/3] memory: tegra124-emc: Add EMC driver
+Date: Wed, 27 Aug 2014 09:32:05 +0200
+Message-ID: <53FD8975.3050706@collabora.com>
+References: <1409058728-13347-1-git-send-email-tomeu.vizoso@collabora.com> <1409058728-13347-4-git-send-email-tomeu.vizoso@collabora.com> <53FCC139.6020703@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <53FCC139.6020703@wwwdotorg.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Mikko Perttunen <mperttunen@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Cc: linux-pm@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, =?windows-1252?Q?Terje_Bergstr=F6m?= <tbergstrom@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-tegra@vger.kernel.org
 
-This enables AHCI_TEGRA by default. This driver is required
-for Serial ATA support on Tegra124-based boards.
+On 08/26/2014 07:17 PM, Stephen Warren wrote:
+> On 08/26/2014 07:12 AM, Tomeu Vizoso wrote:
+>> Sets the EMC clock rate based on the bandwidth requirements registered by
+>> memory clients through the PM_QOS_MEMORY_BANDWIDTH class.
+>>
+>> Note: this is just an example and not a proper driver for a external
+>> memory
+>> controller. Its only purpose is to illustrate how such a driver would
+>> set the
+>> frequency of the external memory clock based on the bandwidth
+>> requirements of
+>> memory clients.
+>
+>> diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
+>
+>> @@ -112,6 +117,11 @@ static void __init tegra_dt_init(void)
+>>       parent = soc_device_to_device(soc_dev);
+>>
+>>       /*
+>> +     * HACK: register a platform device to probe the driver
+>> +     */
+>> +    platform_device_register(&tegra_emc);
+>
+> I don't think this is a hack, except for the bug: That should only
+> happen on Tegra124 not on all Tegra SoCs.
+>
+> Do you intend all 3 patches in this series to be merged? You'd mentioned
+> you didn't when asked about this for a previous version. I'm not sure if
+> that's changed?
 
-Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Yeah, I don't want 3/3 merged because we don't have a functional EMC 
+clock yet on T124, and because I don't know yet where will be the best 
+place to have that code in. That depends on Mikko's work on the real EMC 
+driver which is in a bit of flux right now.
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 5fb95fb..affd9ee 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -132,6 +132,7 @@ CONFIG_ATA=y
- CONFIG_SATA_AHCI_PLATFORM=y
- CONFIG_AHCI_ST=y
- CONFIG_AHCI_SUNXI=y
-+CONFIG_AHCI_TEGRA=y
- CONFIG_SATA_HIGHBANK=y
- CONFIG_SATA_MV=y
- CONFIG_NETDEVICES=y
--- 
-1.8.1.5
+I have kept posting it just because I think it complements nicely the 
+explanation in the cover letter, but maybe confuses more than helps.
+
+Regards,
+
+Tomeu
+
+> To merge, I'd need Thierry's ack on patch 2, and Thierry's, Peter's,
+> Mikko's, and/or Tuomas's on this patch.
+
