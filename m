@@ -1,193 +1,55 @@
-From: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 3/4] thermal: add more description for thermal-zones
-Date: Thu, 28 Aug 2014 09:21:37 -0400
-Message-ID: <20140828132135.GA17074@developer>
-References: <1408948188-4181-1-git-send-email-wni@nvidia.com>
- <1408948188-4181-4-git-send-email-wni@nvidia.com>
- <20140825110711.GA12349@developer>
- <53FBEE39.2020001@nvidia.com>
- <20140826121210.GB15219@developer>
- <53FD484F.7030504@nvidia.com>
- <20140827133217.GB15875@developer>
- <53FE8AC9.2070907@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v4 1/5] of: Add NVIDIA Tegra Legacy Interrupt Controller binding
+Date: Thu, 28 Aug 2014 17:31:15 +0200
+Message-ID: <1409239879-12376-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <53FE8AC9.2070907-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hello Wei,
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-On Thu, Aug 28, 2014 at 09:50:01AM +0800, Wei Ni wrote:
-> On 08/27/2014 09:32 PM, Eduardo Valentin wrote:
-> > Hello Wei,
-> > 
-> > On Wed, Aug 27, 2014 at 10:54:07AM +0800, Wei Ni wrote:
-> >> On 08/26/2014 08:12 PM, Eduardo Valentin wrote:
-> >>> On Tue, Aug 26, 2014 at 10:17:29AM +0800, Wei Ni wrote:
-> >>>> On 08/25/2014 07:07 PM, Eduardo Valentin wrote:
-> >>>>> Hello Wei Ni,
-> >>>>>
-> >>>>> On Mon, Aug 25, 2014 at 02:29:47PM +0800, Wei Ni wrote:
-> >>>>>> Add more description for the "polling-delay" property.
-> >>>>>> Set "trips" and "cooling maps" as optional property, because
-> >>>>>> if missing these two sub-nodes, the thermal zone device still
-> >>>>>> work properly.
-> >>>>>>
-> >>>>>> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >>>>>> ---
-> >>>>>>  Documentation/devicetree/bindings/thermal/thermal.txt | 10 ++++++----
-> >>>>>>  1 file changed, 6 insertions(+), 4 deletions(-)
-> >>>>>>
-> >>>>>> diff --git a/Documentation/devicetree/bindings/thermal/thermal.txt b/Documentation/devicetree/bindings/thermal/thermal.txt
-> >>>>>> index f5db6b7..e3d3ed9 100644
-> >>>>>> --- a/Documentation/devicetree/bindings/thermal/thermal.txt
-> >>>>>> +++ b/Documentation/devicetree/bindings/thermal/thermal.txt
-> >>>>>> @@ -136,8 +136,8 @@ containing trip nodes and one sub-node containing all the zone cooling maps.
-> >>>>>>  
-> >>>>>>  Required properties:
-> >>>>>>  - polling-delay:	The maximum number of milliseconds to wait between polls
-> >>>>>> -  Type: unsigned	when checking this thermal zone.
-> >>>>>> -  Size: one cell
-> >>>>>> +  Type: unsigned	when checking this thermal zone. If this value is 0, the
-> >>>>>> +  Size: one cell	driver will not run polling queue, but just cancel it.
-> >>>>>>  
-> >>>>>
-> >>>>> The description above is specific to Linux kernel implementation
-> >>>>> nomenclature. DT description needs to be OS agnostic.
-> >>>>>
-> >>>>>>  - polling-delay-passive: The maximum number of milliseconds to wait
-> >>>>>>    Type: unsigned	between polls when performing passive cooling.
-> >>>>>> @@ -148,14 +148,16 @@ Required properties:
-> >>>>>>    phandles + sensor
-> >>>>>>    specifier
-> >>>>>>  
-> >>>>>> +Optional property:
-> >>>>>>  - trips:		A sub-node which is a container of only trip point nodes
-> >>>>>>    Type: sub-node	required to describe the thermal zone.
-> >>>>>>  
-> >>>>>>  - cooling-maps:		A sub-node which is a container of only cooling device
-> >>>>>>    Type: sub-node	map nodes, used to describe the relation between trips
-> >>>>>> -			and cooling devices.
-> >>>>>> +			and cooling devices. If missing the "trips" property,
-> >>>>>> +			This sub-node will not be parsed, because no trips can
-> >>>>>> +			be bound to cooling devices.
-> >>>>>
-> >>>>> Do you mean if the thermal zone misses the "trips" property? Actually,
-> >>>>> the binding describes both, cooling-maps and trips, as required
-> >>>>> properties. Thus, both needs to be in place to consider the thermal zone
-> >>>>> as a proper described zone.
-> >>>>
-> >>>> I moved the "trips" and "cooling-maps" to optional property, because if
-> >>>> missing these two properties, the thermal zone devices still can be
-> >>>> registered, and the driver can work properly, it has the basic function,
-> >>>> can read temperature from thermal sysfs, although it doesn't have trips
-> >>>> and bind with cooling devices.
-> >>>
-> >>>
-> >>> If a thermal zone is used only for monitoring, then I believe it lost
-> >>> its purpose. As  Maybe a different framework shall be used, such as hwmon,
-> >>> for instance?
-> >>
-> >> Yes, if we only use it for monitoring, we can use hwmon. But we have
-> >> more functions base on these two thermal zone devices. We have a
-> >> skin-temperature driver, which used nct1008's remote and local
-> >> temperatures to estimator the skin temperature. As you know the thermal
-> >> framework is more powerful, the remote/local sensors can be register as
-> >> thermal zone, then the skin-temp driver can use thermal_zone_get_temp()
-> >> to read their temperatures and then estimator skin's temp. We also will
-> >> set trips and cooling devices for this skin-temp.
-> > 
-> > In this case, don't you think it would make sense to create a thermal
-> > zone for the skin temperature and add the required sensors (including
-> > the nct1008) in it?
-> 
-> Hi, Eduardo
-> Yes, we will create a thermal zone for the skin-temp driver and add the
-> required sensors in it, but in here we want to register these required
-> sensors as thermal zone devices, then the thermal framework can export
-> functions to read these sensors temperature. If use hwmon framework, it
-> can't export nct1008's internal sensors, such as remote/local sensors,
-> and no exported functions to read these temperatures. If we doesn't use
-> the thermal/of-thermal framework, we have to develop a new framework to
-> parse those sensor nodes, and I think this new one may only have slight
-> difference with current thermal framework.
-> If we set those two properties as optional property, then we can use it
-> in this case simply.
-> 
-> The skin-temp nodes will something like this:
-> 
-> skin_temp: therm-est {
-> 	compatible = "nvidia,tegra124-therm-est";
-> 
-> 	#thermal-sensor-cells = <0>;
-> 
-> 	sub-devs {
-> 		dev@0 {
-> /* we need to register nct1008_remote as thermal zone devices, so that
-> it's easy to handle it by using thermal framework's exported functions. */
-> 			dev = <&nct1008_remote>;
-> 		};
-> 		dev@1 {
-> 			dev = <&nct1008_local>;
-> 		};
-> 	};
-> };
-> 
-> thermal-zones {
-> 	skin-therm {
-> 		polling-delay-passive = <15000>
-> 		polling-delay = <0>;
-> 
-> 		thermal-sensors = <&skin_temp>;
+The Legacy Interrupt Controller found on NVIDIA Tegra SoCs is used by
+the AVP coprocessor and can also serve as a backup for the ARM Cortex
+CPU's local interrupt controller (GIC).
 
-The binding allows you to add several sensors in one thermal zone.
-Please have a look on the example (c) of the thermal.txt binding
-description. It might be that what you want to do is actually:
- 		thermal-sensors = <&ntc1008_local>,
-				<&ntc1008_remote>;
+The LIC is subdivided into multiple identical units, each handling 32
+possible interrupt sources.
 
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Changes in v3:
+- bracket individual tuples in the "reg" property
 
-> 
-> 		trips {
-> 		};
-> 		cooling-maps {
-> 		};
-> 	};
-> };
-> 
-> Wei.
-> > 
-> >>
-> >> Wei.
-> >>
-> >>>
-> >>> The purpose of a thermal zone is to describe thermal behavior of a
-> >>> hardware. As it is mentioned in the thermal.txt file.
-> >>>
-> >>>
-> >>>>
-> >>>> Thanks.
-> >>>> Wei.
-> >>>>
-> >>>>>
-> >>>>>>  
-> >>>>>> -Optional property:
-> >>>>>>  - coefficients:		An array of integers (one signed cell) containing
-> >>>>>>    Type: array		coefficients to compose a linear relation between
-> >>>>>>    Elem size: one cell	the sensors listed in the thermal-sensors property.
-> >>>>>> -- 
-> >>>>>> 1.8.1.5
-> >>>>>>
-> >>>>
-> >>> --
-> >>> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> >>> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> >>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> >>>
-> >>
-> 
+ .../interrupt-controller/nvidia,tegra20-ictlr.txt     | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt
+
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt b/Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt
+new file mode 100644
+index 000000000000..1639389b7360
+--- /dev/null
++++ b/Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt
+@@ -0,0 +1,19 @@
++NVIDIA Tegra Legacy Interrupt Controller
++
++The legacy interrupt controller is divided into units that serve 32 interrupts
++each. Tegra20 implements four units, whereas Tegra30 and later implement five.
++
++Required properties:
++- compatible: "nvidia,tegra<chip>-ictlr"
++- reg: Physical base address and length of the controller's registers. There
++  should be one entry for each unit.
++
++Example:
++
++	interrupt-controller@60004000 {
++		compatible = "nvidia,tegra20-ictlr";
++		reg = <0x60004000 0x40>, /* primary controller */
++		      <0x60004100 0x40>, /* secondary controller */
++		      <0x60004200 0x40>, /* tertiary controller */
++		      <0x60004300 0x40>; /* quaternary controller */
++	};
+-- 
+2.0.4
