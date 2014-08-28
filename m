@@ -1,136 +1,174 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2 2/9] mailbox: Add NVIDIA Tegra XUSB mailbox driver
-Date: Wed, 27 Aug 2014 16:30:37 -0600
-Message-ID: <53FE5C0D.8000004@wwwdotorg.org>
-References: <1408381705-3623-1-git-send-email-abrestic@chromium.org>	<1408381705-3623-3-git-send-email-abrestic@chromium.org>	<53FB8820.4010202@wwwdotorg.org>	<CAL1qeaERHeKKNpqh9qHOppgT7ymvntisdjVvZheP78U6NaPz-A@mail.gmail.com>	<53FE1A7A.4010906@wwwdotorg.org>	<CAL1qeaGPr=BeYL1-=ddRL7rSuvYdQcd6vCEEHDrNA-KYst6bnw@mail.gmail.com>	<53FE2129.6080305@wwwdotorg.org> <CAL1qeaGHz1+L8r-AXetw422ZWSJX1h025YOx9kB+EE4yJpOowQ@mail.gmail.com>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v3 3/4] thermal: add more description for thermal-zones
+Date: Thu, 28 Aug 2014 09:50:01 +0800
+Message-ID: <53FE8AC9.2070907@nvidia.com>
+References: <1408948188-4181-1-git-send-email-wni@nvidia.com> <1408948188-4181-4-git-send-email-wni@nvidia.com> <20140825110711.GA12349@developer> <53FBEE39.2020001@nvidia.com> <20140826121210.GB15219@developer> <53FD484F.7030504@nvidia.com> <20140827133217.GB15875@developer>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAL1qeaGHz1+L8r-AXetw422ZWSJX1h025YOx9kB+EE4yJpOowQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TbrhsbdSgBK9A@public.gmane.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140827133217.GB15875@developer>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/27/2014 03:56 PM, Andrew Bresticker wrote:
-> On Wed, Aug 27, 2014 at 11:19 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->> On 08/27/2014 12:13 PM, Andrew Bresticker wrote:
+On 08/27/2014 09:32 PM, Eduardo Valentin wrote:
+> Hello Wei,
+> 
+> On Wed, Aug 27, 2014 at 10:54:07AM +0800, Wei Ni wrote:
+>> On 08/26/2014 08:12 PM, Eduardo Valentin wrote:
+>>> On Tue, Aug 26, 2014 at 10:17:29AM +0800, Wei Ni wrote:
+>>>> On 08/25/2014 07:07 PM, Eduardo Valentin wrote:
+>>>>> Hello Wei Ni,
+>>>>>
+>>>>> On Mon, Aug 25, 2014 at 02:29:47PM +0800, Wei Ni wrote:
+>>>>>> Add more description for the "polling-delay" property.
+>>>>>> Set "trips" and "cooling maps" as optional property, because
+>>>>>> if missing these two sub-nodes, the thermal zone device still
+>>>>>> work properly.
+>>>>>>
+>>>>>> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>>>> ---
+>>>>>>  Documentation/devicetree/bindings/thermal/thermal.txt | 10 ++++++----
+>>>>>>  1 file changed, 6 insertions(+), 4 deletions(-)
+>>>>>>
+>>>>>> diff --git a/Documentation/devicetree/bindings/thermal/thermal.txt b/Documentation/devicetree/bindings/thermal/thermal.txt
+>>>>>> index f5db6b7..e3d3ed9 100644
+>>>>>> --- a/Documentation/devicetree/bindings/thermal/thermal.txt
+>>>>>> +++ b/Documentation/devicetree/bindings/thermal/thermal.txt
+>>>>>> @@ -136,8 +136,8 @@ containing trip nodes and one sub-node containing all the zone cooling maps.
+>>>>>>  
+>>>>>>  Required properties:
+>>>>>>  - polling-delay:	The maximum number of milliseconds to wait between polls
+>>>>>> -  Type: unsigned	when checking this thermal zone.
+>>>>>> -  Size: one cell
+>>>>>> +  Type: unsigned	when checking this thermal zone. If this value is 0, the
+>>>>>> +  Size: one cell	driver will not run polling queue, but just cancel it.
+>>>>>>  
+>>>>>
+>>>>> The description above is specific to Linux kernel implementation
+>>>>> nomenclature. DT description needs to be OS agnostic.
+>>>>>
+>>>>>>  - polling-delay-passive: The maximum number of milliseconds to wait
+>>>>>>    Type: unsigned	between polls when performing passive cooling.
+>>>>>> @@ -148,14 +148,16 @@ Required properties:
+>>>>>>    phandles + sensor
+>>>>>>    specifier
+>>>>>>  
+>>>>>> +Optional property:
+>>>>>>  - trips:		A sub-node which is a container of only trip point nodes
+>>>>>>    Type: sub-node	required to describe the thermal zone.
+>>>>>>  
+>>>>>>  - cooling-maps:		A sub-node which is a container of only cooling device
+>>>>>>    Type: sub-node	map nodes, used to describe the relation between trips
+>>>>>> -			and cooling devices.
+>>>>>> +			and cooling devices. If missing the "trips" property,
+>>>>>> +			This sub-node will not be parsed, because no trips can
+>>>>>> +			be bound to cooling devices.
+>>>>>
+>>>>> Do you mean if the thermal zone misses the "trips" property? Actually,
+>>>>> the binding describes both, cooling-maps and trips, as required
+>>>>> properties. Thus, both needs to be in place to consider the thermal zone
+>>>>> as a proper described zone.
+>>>>
+>>>> I moved the "trips" and "cooling-maps" to optional property, because if
+>>>> missing these two properties, the thermal zone devices still can be
+>>>> registered, and the driver can work properly, it has the basic function,
+>>>> can read temperature from thermal sysfs, although it doesn't have trips
+>>>> and bind with cooling devices.
 >>>
->>> On Wed, Aug 27, 2014 at 10:50 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
->>> wrote:
->>>>
->>>> On 08/27/2014 11:38 AM, Andrew Bresticker wrote:
->>>>>
->>>>>
->>>>> On Mon, Aug 25, 2014 at 12:01 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
->>>>> wrote:
->>>>>>
->>>>>>
->>>>>> On 08/18/2014 11:08 AM, Andrew Bresticker wrote:
->>>>>>>
->>>>>>>
->>>>>>> +static int tegra_xusb_mbox_probe(struct platform_device *pdev)
->>>>>>
->>>>>>
->>>>>>
->>>>>>
->>>>>>> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>>>>>>
->>>>>>> +       if (!res)
->>>>>>> +               return -ENODEV;
->>>>>>
->>>>>>
->>>>>>
->>>>>>
->>>>>> Should devm_request_mem_region() be called here to claim the region?
->>>>>
->>>>>
->>>>>
->>>>> No, the xHCI host driver also needs to map these registers, so they
->>>>> cannot be mapped exclusively here.
->>>>
->>>>
->>>>
->>>> That's unfortunate. Having multiple drivers with overlapping register
->>>> regions is not a good idea. Can we instead have a top-level driver map
->>>> all
->>>> the IO regions, then instantiate the various different sub-components
->>>> internally, and divide up the address space. Probably via MFD or similar.
->>>> That would prevent multiple drivers from touching the same register
->>>> region.
+>>>
+>>> If a thermal zone is used only for monitoring, then I believe it lost
+>>> its purpose. As  Maybe a different framework shall be used, such as hwmon,
+>>> for instance?
+>>
+>> Yes, if we only use it for monitoring, we can use hwmon. But we have
+>> more functions base on these two thermal zone devices. We have a
+>> skin-temperature driver, which used nct1008's remote and local
+>> temperatures to estimator the skin temperature. As you know the thermal
+>> framework is more powerful, the remote/local sensors can be register as
+>> thermal zone, then the skin-temp driver can use thermal_zone_get_temp()
+>> to read their temperatures and then estimator skin's temp. We also will
+>> set trips and cooling devices for this skin-temp.
+> 
+> In this case, don't you think it would make sense to create a thermal
+> zone for the skin temperature and add the required sensors (including
+> the nct1008) in it?
+
+Hi, Eduardo
+Yes, we will create a thermal zone for the skin-temp driver and add the
+required sensors in it, but in here we want to register these required
+sensors as thermal zone devices, then the thermal framework can export
+functions to read these sensors temperature. If use hwmon framework, it
+can't export nct1008's internal sensors, such as remote/local sensors,
+and no exported functions to read these temperatures. If we doesn't use
+the thermal/of-thermal framework, we have to develop a new framework to
+parse those sensor nodes, and I think this new one may only have slight
+difference with current thermal framework.
+If we set those two properties as optional property, then we can use it
+in this case simply.
+
+The skin-temp nodes will something like this:
+
+skin_temp: therm-est {
+	compatible = "nvidia,tegra124-therm-est";
+
+	#thermal-sensor-cells = <0>;
+
+	sub-devs {
+		dev@0 {
+/* we need to register nct1008_remote as thermal zone devices, so that
+it's easy to handle it by using thermal framework's exported functions. */
+			dev = <&nct1008_remote>;
+		};
+		dev@1 {
+			dev = <&nct1008_local>;
+		};
+	};
+};
+
+thermal-zones {
+	skin-therm {
+		polling-delay-passive = <15000>
+		polling-delay = <0>;
+
+		thermal-sensors = <&skin_temp>;
+
+		trips {
+		};
+		cooling-maps {
+		};
+	};
+};
+
+Wei.
+> 
+>>
+>> Wei.
+>>
+>>>
+>>> The purpose of a thermal zone is to describe thermal behavior of a
+>>> hardware. As it is mentioned in the thermal.txt file.
 >>>
 >>>
->>> Perhaps I'm misunderstanding, but I don't see how MFD would prevent us
->>> from having to map this register space in two different locations -
->>> the XUSB FPCI address space cannot be divided cleanly between host and
->>> mailbox registers.  Or are you saying that there should be a separate
->>> device driver that exposes an API for accessing this register space,
->>> like the Tegra fuse or PMC drivers?
+>>>>
+>>>> Thanks.
+>>>> Wei.
+>>>>
+>>>>>
+>>>>>>  
+>>>>>> -Optional property:
+>>>>>>  - coefficients:		An array of integers (one signed cell) containing
+>>>>>>    Type: array		coefficients to compose a linear relation between
+>>>>>>    Elem size: one cell	the sensors listed in the thermal-sensors property.
+>>>>>> -- 
+>>>>>> 1.8.1.5
+>>>>>>
+>>>>
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+>>> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>
 >>
->>
->> With MFD, there's typically a top-level driver for the HW module (or
->> register space) that gets instantiated by the DT node. This driver then
->> instantiates all the different sub-drivers that use that register space, and
->> provides APIs for the sub-drivers to access the registers (either custom
->> APIs or more recently by passing a regmap object down to the sub-drivers).
->>
->> This top-level driver is the only driver that maps the space, and can manage
->> sharing the space between the various sub-drivers.
->
-> So if I'm understanding correctly, we end up with something like this:
->
-> usb@70090000 {
->          compatible = "nvidia,tegra124-xusb";
->          reg = <0x0 0x70090000 0x0 0x8000>, // xHCI host registers
->                <0x0 0x70098000 0x0 0x1000>, // FPCI registers
->                <0x0 0x70099000 0x0 0x1000>; // IPFS registers
->          interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>, // host interrupt
->                       <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH"; // mailbox interrupt
->
->          host-controller {
->                  compatible = "nvidia,tegra124-xhci";
->                  ...
->          };
->
->          mailbox {
->                  compatible = "nvidia,tegra124-xusb-mailbox";
->                 ...
->          };
-> };
->
-> To be honest though, this seems like overkill to share a couple of
-> registers when no other resources are shared between the two.
-
-Something like that, yes.
-
-Given that the "xusb" driver knows that its HW module contains both an 
-XHCI and XUSB mailbox chunk, those might not need to appear inside the 
-main XUSB module, but could be hard-coded into the driver. They might 
-serve as convenient containers for sub-device-specific properties though.
-
-Other alternatives might be:
-
-a) If the registers that are shared between drivers are distinct, then 
-divide the reg values into non-overlapping lists. We have taken this 
-approach for the MC/SMMU drivers on Tegra, although it's a horrible mess 
-and Thierry is actively thinking about reverting that and doing it 
-through MFD or something MFD-like.
-
-b) Allow the same IO region to be claimed by multiple devices, perhaps 
-with a new API so that it doesn't accidentally happen when not desired.
-
-c) Ignore the issue and deal with the fact that not all driver usage 
-shows up in /proc/iomem. This is what we have for the Tegra USB2 and 
-USB2 PHY drivers, and this is (I think) what your current patch does.
-
-To be honest, none of the options are that good; some end up with the 
-correct result but are a pain to implement, but others are nice and 
-simple yet /proc/iomem isn't complete. Given that, I'm personally not 
-going to try and mandate one option or the other, so the current patch 
-is fine. Food for thought though:-)
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
