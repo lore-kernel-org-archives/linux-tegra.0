@@ -1,76 +1,66 @@
-From: Chris Metcalf <cmetcalf-kv+TWInifGbQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/5] char: tile-srom: Remove reference to platform_bus
-Date: Fri, 29 Aug 2014 14:43:13 -0400
-Message-ID: <5400C9C1.4060904@tilera.com>
-References: <1406298233-27876-1-git-send-email-pawel.moll@arm.com>	 <1406298233-27876-2-git-send-email-pawel.moll@arm.com>	 <53DAA605.2030500@tilera.com> <1406913678.22529.46.camel@hornet>	 <53E139C8.9000502@tilera.com> <1407515691.31897.26.camel@hornet>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH v4 3/5] ARM: tegra: Initialize interrupt controller from DT
+Date: Fri, 29 Aug 2014 21:53:42 +0200
+Message-ID: <3113165.EcqFA5vr07@wuerfel>
+References: <1409239879-12376-1-git-send-email-thierry.reding@gmail.com> <20140829142408.GA31264@ulmo> <20140829150422.GA11035@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1407515691.31897.26.camel@hornet>
+In-Reply-To: <20140829150422.GA11035@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Catalin Marinas <Catalin.Marinas-5wv7dgnIgG8@public.gmane.org>, "paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org" <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-(Resending with text/plain.)
+On Friday 29 August 2014 17:04:28 Thierry Reding wrote:
+>         static struct irq_chip *extn;
+> 
+>         void gic_arch_register(const struct irqchip *chip)
+>         {
+>                 if (WARN(extn != NULL))
+>                         return;
+> 
+>                 gic_chip.flags |= chip->flags;
+>                 extn = chip;
+>         }
+> 
+> Any preferences, or other ideas? Adding Thomas and Jason, perhaps they
+> can provide more input on how to solve this.
 
-First, sorry for the delayed response, with summer vacation and then
-trying to catch up.  :-)
+I think the entire gic_arch_extn method is done in a rather odd way
+and we should try to come up with a replacement.
 
-On 8/8/2014 12:34 PM, Pawel Moll wrote:
-> On Tue, 2014-08-05 at 21:08 +0100, Chris Metcalf wrote:
->>>> In addition, we also have user binaries
->>>> in the wild that know to look for /sys/devices/platform/srom/ paths,
->>>> so I'm pretty reluctant to change this path without good reason.
->>> So what is the srom class for then if not for device discovery? And why
->>> do they look for them in the first place? To get relevant character
->>> device's data, if I understand it right?
->>>
->>> Maybe you could just register a simple "proper" platform device for all
->>> the sroms and then hang the class devices from it? I can type some code
->>> doing this if it sound reasonably?
->> By "device discovery" I meant the way you find the way in your devices
->> in /sysfs. You seem to be traversing /sys/devices/... tree, while you've
->> got almost direct access to them through /sys/class/srom and you can (I
->> believe, correct me if I'm wrong, Greg) rely on this path being stable.
+These are the users at the moment:
 
-Yes, this is an excellent point.  I will change the user tool to use
-/sys/class instead and then it will work with the existing kernel as well
-as with future kernels that incorporate your suggested change.
+arch/arm/mach-exynos/pm.c:      gic_arch_extn.irq_set_wake = exynos_irq_set_wake;
+arch/arm/mach-imx/gpc.c:        gic_arch_extn.irq_mask = imx_gpc_irq_mask;
+arch/arm/mach-imx/gpc.c:        gic_arch_extn.irq_unmask = imx_gpc_irq_unmask;
+arch/arm/mach-imx/gpc.c:        gic_arch_extn.irq_set_wake = imx_gpc_irq_set_wake;
+arch/arm/mach-omap2/omap-wakeupgen.c:   gic_arch_extn.irq_mask = wakeupgen_mask;
+arch/arm/mach-omap2/omap-wakeupgen.c:   gic_arch_extn.irq_unmask = wakeupgen_unmask;
+arch/arm/mach-omap2/omap-wakeupgen.c:   gic_arch_extn.flags = IRQCHIP_MASK_ON_SUSPEND | IRQCHIP_SKIP_SET_W
+arch/arm/mach-shmobile/intc-sh73a0.c:   gic_arch_extn.irq_set_wake = sh73a0_set_wake;
+arch/arm/mach-shmobile/setup-r8a7779.c: gic_arch_extn.irq_set_wake = r8a7779_set_wake;
+arch/arm/mach-tegra/irq.c:      gic_arch_extn.irq_ack = tegra_ack;
+arch/arm/mach-tegra/irq.c:      gic_arch_extn.irq_eoi = tegra_eoi;
+arch/arm/mach-tegra/irq.c:      gic_arch_extn.irq_mask = tegra_mask;
+arch/arm/mach-tegra/irq.c:      gic_arch_extn.irq_unmask = tegra_unmask;
+arch/arm/mach-tegra/irq.c:      gic_arch_extn.irq_retrigger = tegra_retrigger;
+arch/arm/mach-tegra/irq.c:      gic_arch_extn.irq_set_wake = tegra_set_wake;
+arch/arm/mach-tegra/irq.c:      gic_arch_extn.flags = IRQCHIP_MASK_ON_SUSPEND;
+arch/arm/mach-ux500/cpu.c:      gic_arch_extn.flags = IRQCHIP_SKIP_SET_WAKE | IRQCHIP_MASK_ON_SUSPEND;
+arch/arm/mach-zynq/common.c:    gic_arch_extn.flags = IRQCHIP_SKIP_SET_WAKE | IRQCHIP_MASK_ON_SUSPEND;
 
->> The
->> subdirectories under /sys/devices/platform/srom/ correspond to partitions
->> in the SPI-ROM, which are software constructs created by the Tilera hypervisor.
->> By default we have three, where the first holds boot data that the chip
->> can use to boot out of hardware, and the other two are smaller partitions
->> for boot- and user-specific data.  We use the /sys files primarily to get the
->> page size and sector size for the sroms, and also export other interesting
->> information like the total size of the particular srom device.
->>
->> Thank you for volunteering to write a bit of code; if that's the best
->> way to clarify this for us, fantastic, or else pointing us at existing
->> good practices or documentation would be great too.
-> [...]
-> @@ -350,7 +351,7 @@ static int srom_setup_minor(struct srom_dev *srom, int index)
->  		       SROM_PAGE_SIZE_OFF, sizeof(srom->page_size)) < 0)
->  		return -EIO;
->
-> -	dev = device_create(srom_class, &platform_bus,
-> +	dev = device_create(srom_class, srom_parent,
->  			    MKDEV(srom_major, index), srom, "%d", index);
->  	return PTR_ERR_OR_ZERO(dev);
->  }
+I have to admit I don't really understand how these work, but what
+I'd expect to work better is a way to turn the gic code into more
+of a library that can be used by specialized drivers. In that
+case you would register a driver for the tegra gic using IRQCHIP_DECLARE
+and that driver would call a variation of gic_of_init() or gic_init_bases()
+with the extra stuff as arguments.
 
-The second argument should be &srom_parent.dev though, I think.  Right?
+We'd have to hack around the fact that all these platforms currently
+don't list a specialized compatible string, but at least for the future
+we should be able to do this without special hacks.
 
-> Would that work for you? Note that it will move the srom class devices
-> one level deeper in /sys/devices/... hierarchy.
-
-Yes, that seems slightly unfortunately but not too problematic.  If the
-consensus is that this is the way to go, I can certainly take this change
-into the Tile tree.
-
--- 
-Chris Metcalf, Tilera Corp.
-http://www.tilera.com
+	Arnd
