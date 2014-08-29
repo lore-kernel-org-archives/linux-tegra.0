@@ -1,229 +1,40 @@
-From: "edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 3/4] thermal: add more description for thermal-zones
-Date: Fri, 29 Aug 2014 07:32:59 -0400
-Message-ID: <CAC-25o-9OQ-wfpCJmgDGB0kqDHwUc15XX7Ay7Pes6UmpJakUkQ@mail.gmail.com>
-References: <1408948188-4181-1-git-send-email-wni@nvidia.com>
-	<1408948188-4181-4-git-send-email-wni@nvidia.com>
-	<20140825110711.GA12349@developer>
-	<53FBEE39.2020001@nvidia.com>
-	<20140826121210.GB15219@developer>
-	<53FD484F.7030504@nvidia.com>
-	<20140827133217.GB15875@developer>
-	<53FE8AC9.2070907@nvidia.com>
-	<20140828132135.GA17074@developer>
-	<53FFED7B.6010508@nvidia.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 4/9] pinctrl: tegra-xusb: Add USB PHY support
+Date: Fri, 29 Aug 2014 15:36:11 +0200
+Message-ID: <CACRpkdZD2Ww44ExnLQgJvaw64rSiTZAMdphBV3gQSMZpRPj50g@mail.gmail.com>
+References: <1408381705-3623-1-git-send-email-abrestic@chromium.org>
+	<1408381705-3623-5-git-send-email-abrestic@chromium.org>
+	<53FB8CFE.3090007@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53FFED7B.6010508-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <53FB8CFE.3090007-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel@list>
 List-Id: linux-tegra@vger.kernel.org
 
-Hello Wei,
-
-On Thu, Aug 28, 2014 at 11:03 PM, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> On 08/28/2014 09:21 PM, Eduardo Valentin wrote:
->> Hello Wei,
+On Mon, Aug 25, 2014 at 9:22 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> On 08/18/2014 11:08 AM, Andrew Bresticker wrote:
 >>
->> On Thu, Aug 28, 2014 at 09:50:01AM +0800, Wei Ni wrote:
->>> On 08/27/2014 09:32 PM, Eduardo Valentin wrote:
->>>> Hello Wei,
->>>>
->>>> On Wed, Aug 27, 2014 at 10:54:07AM +0800, Wei Ni wrote:
->>>>> On 08/26/2014 08:12 PM, Eduardo Valentin wrote:
->>>>>> On Tue, Aug 26, 2014 at 10:17:29AM +0800, Wei Ni wrote:
->>>>>>> On 08/25/2014 07:07 PM, Eduardo Valentin wrote:
->>>>>>>> Hello Wei Ni,
->>>>>>>>
->>>>>>>> On Mon, Aug 25, 2014 at 02:29:47PM +0800, Wei Ni wrote:
->>>>>>>>> Add more description for the "polling-delay" property.
->>>>>>>>> Set "trips" and "cooling maps" as optional property, because
->>>>>>>>> if missing these two sub-nodes, the thermal zone device still
->>>>>>>>> work properly.
->>>>>>>>>
->>>>>>>>> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>>>>>>> ---
->>>>>>>>>  Documentation/devicetree/bindings/thermal/thermal.txt | 10 ++++++----
->>>>>>>>>  1 file changed, 6 insertions(+), 4 deletions(-)
->>>>>>>>>
->>>>>>>>> diff --git a/Documentation/devicetree/bindings/thermal/thermal.txt b/Documentation/devicetree/bindings/thermal/thermal.txt
->>>>>>>>> index f5db6b7..e3d3ed9 100644
->>>>>>>>> --- a/Documentation/devicetree/bindings/thermal/thermal.txt
->>>>>>>>> +++ b/Documentation/devicetree/bindings/thermal/thermal.txt
->>>>>>>>> @@ -136,8 +136,8 @@ containing trip nodes and one sub-node containing all the zone cooling maps.
->>>>>>>>>
->>>>>>>>>  Required properties:
->>>>>>>>>  - polling-delay:      The maximum number of milliseconds to wait between polls
->>>>>>>>> -  Type: unsigned      when checking this thermal zone.
->>>>>>>>> -  Size: one cell
->>>>>>>>> +  Type: unsigned      when checking this thermal zone. If this value is 0, the
->>>>>>>>> +  Size: one cell      driver will not run polling queue, but just cancel it.
->>>>>>>>>
->>>>>>>>
->>>>>>>> The description above is specific to Linux kernel implementation
->>>>>>>> nomenclature. DT description needs to be OS agnostic.
->>>>>>>>
->>>>>>>>>  - polling-delay-passive: The maximum number of milliseconds to wait
->>>>>>>>>    Type: unsigned      between polls when performing passive cooling.
->>>>>>>>> @@ -148,14 +148,16 @@ Required properties:
->>>>>>>>>    phandles + sensor
->>>>>>>>>    specifier
->>>>>>>>>
->>>>>>>>> +Optional property:
->>>>>>>>>  - trips:              A sub-node which is a container of only trip point nodes
->>>>>>>>>    Type: sub-node      required to describe the thermal zone.
->>>>>>>>>
->>>>>>>>>  - cooling-maps:               A sub-node which is a container of only cooling device
->>>>>>>>>    Type: sub-node      map nodes, used to describe the relation between trips
->>>>>>>>> -                      and cooling devices.
->>>>>>>>> +                      and cooling devices. If missing the "trips" property,
->>>>>>>>> +                      This sub-node will not be parsed, because no trips can
->>>>>>>>> +                      be bound to cooling devices.
->>>>>>>>
->>>>>>>> Do you mean if the thermal zone misses the "trips" property? Actually,
->>>>>>>> the binding describes both, cooling-maps and trips, as required
->>>>>>>> properties. Thus, both needs to be in place to consider the thermal zone
->>>>>>>> as a proper described zone.
->>>>>>>
->>>>>>> I moved the "trips" and "cooling-maps" to optional property, because if
->>>>>>> missing these two properties, the thermal zone devices still can be
->>>>>>> registered, and the driver can work properly, it has the basic function,
->>>>>>> can read temperature from thermal sysfs, although it doesn't have trips
->>>>>>> and bind with cooling devices.
->>>>>>
->>>>>>
->>>>>> If a thermal zone is used only for monitoring, then I believe it lost
->>>>>> its purpose. As  Maybe a different framework shall be used, such as hwmon,
->>>>>> for instance?
->>>>>
->>>>> Yes, if we only use it for monitoring, we can use hwmon. But we have
->>>>> more functions base on these two thermal zone devices. We have a
->>>>> skin-temperature driver, which used nct1008's remote and local
->>>>> temperatures to estimator the skin temperature. As you know the thermal
->>>>> framework is more powerful, the remote/local sensors can be register as
->>>>> thermal zone, then the skin-temp driver can use thermal_zone_get_temp()
->>>>> to read their temperatures and then estimator skin's temp. We also will
->>>>> set trips and cooling devices for this skin-temp.
->>>>
->>>> In this case, don't you think it would make sense to create a thermal
->>>> zone for the skin temperature and add the required sensors (including
->>>> the nct1008) in it?
->>>
->>> Hi, Eduardo
->>> Yes, we will create a thermal zone for the skin-temp driver and add the
->>> required sensors in it, but in here we want to register these required
->>> sensors as thermal zone devices, then the thermal framework can export
->>> functions to read these sensors temperature. If use hwmon framework, it
->>> can't export nct1008's internal sensors, such as remote/local sensors,
->>> and no exported functions to read these temperatures. If we doesn't use
->>> the thermal/of-thermal framework, we have to develop a new framework to
->>> parse those sensor nodes, and I think this new one may only have slight
->>> difference with current thermal framework.
->>> If we set those two properties as optional property, then we can use it
->>> in this case simply.
->>>
->>> The skin-temp nodes will something like this:
->>>
->>> skin_temp: therm-est {
->>>      compatible = "nvidia,tegra124-therm-est";
->>>
->>>      #thermal-sensor-cells = <0>;
->>>
->>>      sub-devs {
->>>              dev@0 {
->>> /* we need to register nct1008_remote as thermal zone devices, so that
->>> it's easy to handle it by using thermal framework's exported functions. */
->>>                      dev = <&nct1008_remote>;
->>>              };
->>>              dev@1 {
->>>                      dev = <&nct1008_local>;
->>>              };
->>>      };
->>> };
->>>
->>> thermal-zones {
->>>      skin-therm {
->>>              polling-delay-passive = <15000>
->>>              polling-delay = <0>;
->>>
->>>              thermal-sensors = <&skin_temp>;
+>> In addition to the PCIe and SATA PHYs, the XUSB pad controller also
+>> supports 3 UTMI, 2 HSIC, and 2 USB3 PHYs.  Each USB3 PHY uses a single
+>> PCIe or SATA lane and is mapped to one of the three UTMI ports.
 >>
->> The binding allows you to add several sensors in one thermal zone.
->> Please have a look on the example (c) of the thermal.txt binding
->> description. It might be that what you want to do is actually:
->>               thermal-sensors = <&ntc1008_local>,
->>                               <&ntc1008_remote>;
+>> The xHCI controller will also send messages intended for the PHY driver,
+>> so request and listen for messages on the mailbox's PHY channel.
 >
 >
-> Yes, we have considered it, but in current kernel, it only supports 1
-> sensor per zone. and according to the example (c), it's supposed to only
-> support simple algorithm, such as:
-> /* hotspot = 100 * bandgap - 120 * adc + 484 */
->  coefficients =          <100    -120    484>;
+> I'd like a review from Thierry here as the HW expert.
 >
-> but in our skin-temp driver, we will recored 20 history temperatures for
-> every sensors, and set different coefficients for every history
-> temperatures, our HW team have private mathematical mode to calculate
-> these coeffs for different boards. And I think other users may use
-> different algorithm to calculate thermal zone temperature based on
-> several sensors.
->
-> So I think it's better to register sensors to thermal zones, not set
-> trips and binding cooling devices, then user's thermal driver can use
-> them freely.
->
+> I need an ack from LinusW in order to take this pinctrl patch through the
+> Tegra tree.
 
-In your system, the used governor is userspace, then?
+Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
-> Thanks.
-> Wei.
->
->>
->>
->>>
->>>              trips {
->>>              };
->>>              cooling-maps {
->>>              };
->>>      };
->>> };
->>>
->>> Wei.
->>>>
->>>>>
->>>>> Wei.
->>>>>
->>>>>>
->>>>>> The purpose of a thermal zone is to describe thermal behavior of a
->>>>>> hardware. As it is mentioned in the thermal.txt file.
->>>>>>
->>>>>>
->>>>>>>
->>>>>>> Thanks.
->>>>>>> Wei.
->>>>>>>
->>>>>>>>
->>>>>>>>>
->>>>>>>>> -Optional property:
->>>>>>>>>  - coefficients:               An array of integers (one signed cell) containing
->>>>>>>>>    Type: array         coefficients to compose a linear relation between
->>>>>>>>>    Elem size: one cell the sensors listed in the thermal-sensors property.
->>>>>>>>> --
->>>>>>>>> 1.8.1.5
->>>>>>>>>
->>>>>>>
->>>>>> --
->>>>>> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
->>>>>> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->>>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>>>>
->>>>>
->>>
->
-
-
-
--- 
-Eduardo Bezerra Valentin
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
