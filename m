@@ -1,111 +1,49 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH] ARM: configs: Remove REGULATOR_VIRTUAL_CONSUMER from defconfigs
-Date: Sun, 31 Aug 2014 13:03:10 +0100
-Message-ID: <1409486590-23645-1-git-send-email-broonie@kernel.org>
+From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v2 6/9] usb: xhci: Add NVIDIA Tegra xHCI host-controller driver
+Date: Sun, 31 Aug 2014 12:04:08 -0700
+Message-ID: <CAL1qeaGhMQiWqEV7GwjFt-4xXSTceRFm8RcaVs9vvVHJ9U8hRQ@mail.gmail.com>
+References: <1408381705-3623-1-git-send-email-abrestic@chromium.org>
+	<1408381705-3623-7-git-send-email-abrestic@chromium.org>
+	<20140830211558.GA13814@kroah.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140830211558.GA13814-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Christian Daudt <bcm-xK7y4jjYLqYh9ZMKESR00Q@public.gmane.org>, Matt Porter <mporter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>"linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linu>
 List-Id: linux-tegra@vger.kernel.org
 
-The virtual consumer is a test device intended to be used while developing
-regulator drivers, it should never be used in production. Remove it from
-all defconfigs to avoid confusion among users.
+On Sat, Aug 30, 2014 at 2:15 PM, Greg Kroah-Hartman
+<gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org> wrote:
+> On Mon, Aug 18, 2014 at 10:08:22AM -0700, Andrew Bresticker wrote:
+>> Add support for the on-chip xHCI host controller present on Tegra SoCs.
+>>
+>> The driver is currently very basic: it loads the controller with its
+>> firmware, starts the controller, and is able to service messages sent
+>> by the controller's firmware.  The hardware supports device mode as
+>> well as lower-power operating modes, but support for these is not yet
+>> implemented here.
+>
+> So you are saying the device doesn't really work?  Can it handle USB
+> transactions properly?
 
-Signed-off-by: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
----
- arch/arm/configs/bcm_defconfig      | 1 -
- arch/arm/configs/ezx_defconfig      | 1 -
- arch/arm/configs/imote2_defconfig   | 1 -
- arch/arm/configs/multi_v7_defconfig | 1 -
- arch/arm/configs/pxa3xx_defconfig   | 1 -
- arch/arm/configs/sunxi_defconfig    | 1 -
- arch/arm/configs/tegra_defconfig    | 1 -
- 7 files changed, 7 deletions(-)
+Huh?  It's just as functional as any other xHCI platform host.
+Perhaps I should have been more clear about "lower-power operating
+modes": this refers to the runtime powergating of the controller's
+SuperSpeed and host-controller logic and has nothing to do with USB
+link/hub/device power management.
 
-diff --git a/arch/arm/configs/bcm_defconfig b/arch/arm/configs/bcm_defconfig
-index fbebcbce1e8c..bc614f44b33d 100644
---- a/arch/arm/configs/bcm_defconfig
-+++ b/arch/arm/configs/bcm_defconfig
-@@ -83,7 +83,6 @@ CONFIG_I2C_CHARDEV=y
- CONFIG_MFD_BCM590XX=y
- CONFIG_REGULATOR=y
- CONFIG_REGULATOR_FIXED_VOLTAGE=y
--CONFIG_REGULATOR_VIRTUAL_CONSUMER=y
- CONFIG_REGULATOR_USERSPACE_CONSUMER=y
- CONFIG_REGULATOR_BCM590XX=y
- 
-diff --git a/arch/arm/configs/ezx_defconfig b/arch/arm/configs/ezx_defconfig
-index d95763d5f0d8..eb440aae4283 100644
---- a/arch/arm/configs/ezx_defconfig
-+++ b/arch/arm/configs/ezx_defconfig
-@@ -230,7 +230,6 @@ CONFIG_POWER_SUPPLY=y
- CONFIG_EZX_PCAP=y
- CONFIG_REGULATOR=y
- CONFIG_REGULATOR_DEBUG=y
--CONFIG_REGULATOR_VIRTUAL_CONSUMER=y
- CONFIG_REGULATOR_USERSPACE_CONSUMER=y
- CONFIG_REGULATOR_PCAP=y
- CONFIG_MEDIA_SUPPORT=y
-diff --git a/arch/arm/configs/imote2_defconfig b/arch/arm/configs/imote2_defconfig
-index fd996bb13022..182e54692664 100644
---- a/arch/arm/configs/imote2_defconfig
-+++ b/arch/arm/configs/imote2_defconfig
-@@ -208,7 +208,6 @@ CONFIG_POWER_SUPPLY=y
- CONFIG_PMIC_DA903X=y
- CONFIG_REGULATOR=y
- CONFIG_REGULATOR_DEBUG=y
--CONFIG_REGULATOR_VIRTUAL_CONSUMER=y
- CONFIG_REGULATOR_USERSPACE_CONSUMER=y
- CONFIG_REGULATOR_DA903X=y
- CONFIG_MEDIA_SUPPORT=y
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 7cfa5fa5f7ac..05c0e7c789df 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -259,7 +259,6 @@ CONFIG_MFD_PALMAS=y
- CONFIG_MFD_TPS65090=y
- CONFIG_MFD_TPS6586X=y
- CONFIG_MFD_TPS65910=y
--CONFIG_REGULATOR_VIRTUAL_CONSUMER=y
- CONFIG_REGULATOR_AB8500=y
- CONFIG_REGULATOR_AS3722=y
- CONFIG_REGULATOR_BCM590XX=y
-diff --git a/arch/arm/configs/pxa3xx_defconfig b/arch/arm/configs/pxa3xx_defconfig
-index 60e313834b3f..5f337d7ceb5b 100644
---- a/arch/arm/configs/pxa3xx_defconfig
-+++ b/arch/arm/configs/pxa3xx_defconfig
-@@ -77,7 +77,6 @@ CONFIG_BATTERY_DA9030=y
- CONFIG_PMIC_DA903X=y
- CONFIG_REGULATOR=y
- CONFIG_REGULATOR_DEBUG=y
--CONFIG_REGULATOR_VIRTUAL_CONSUMER=y
- CONFIG_REGULATOR_DA903X=y
- CONFIG_FB=y
- CONFIG_FB_PXA=y
-diff --git a/arch/arm/configs/sunxi_defconfig b/arch/arm/configs/sunxi_defconfig
-index 6c037f956e36..c1a4ca4f6e6d 100644
---- a/arch/arm/configs/sunxi_defconfig
-+++ b/arch/arm/configs/sunxi_defconfig
-@@ -75,7 +75,6 @@ CONFIG_POWER_RESET_SUN6I=y
- CONFIG_WATCHDOG=y
- CONFIG_SUNXI_WATCHDOG=y
- CONFIG_MFD_AXP20X=y
--CONFIG_REGULATOR_VIRTUAL_CONSUMER=y
- CONFIG_REGULATOR_GPIO=y
- CONFIG_USB=y
- CONFIG_USB_EHCI_HCD=y
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index 2b8be4850347..b448f58f621a 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -168,7 +168,6 @@ CONFIG_MFD_TPS6586X=y
- CONFIG_MFD_TPS65910=y
- CONFIG_REGULATOR=y
- CONFIG_REGULATOR_FIXED_VOLTAGE=y
--CONFIG_REGULATOR_VIRTUAL_CONSUMER=y
- CONFIG_REGULATOR_AS3722=y
- CONFIG_REGULATOR_GPIO=y
- CONFIG_REGULATOR_MAX8907=y
--- 
-2.1.0
+> I have a jetson board here, is this the controller for that hardware?
+> Can I test this series on that platform, or is it for something else?
+
+Yup, that's the platform I primarily used for testing this series.
+
+>> +static const struct tegra_xhci_soc_config tegra124_soc_config = {
+>> +     .firmware_file = "nvidia/tegra124/xusb.bin",
+>> +};
+>> +MODULE_FIRMWARE("nvidia/tegra124/xusb.bin");
+>
+> Has this file been submitted to the linux-firmware tree?
+
+It has been posted, see https://patchwork.ozlabs.org/patch/384013/
