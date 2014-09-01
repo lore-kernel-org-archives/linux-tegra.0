@@ -1,127 +1,233 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v4 3/5] ARM: tegra: Initialize interrupt controller from
- DT
-Date: Mon, 1 Sep 2014 10:47:31 +0200
-Message-ID: <20140901084729.GD24430@ulmo>
-References: <1409239879-12376-1-git-send-email-thierry.reding@gmail.com>
- <20140829142408.GA31264@ulmo>
- <20140829150422.GA11035@ulmo>
- <3113165.EcqFA5vr07@wuerfel>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v3 3/4] thermal: add more description for thermal-zones
+Date: Mon, 1 Sep 2014 18:26:04 +0800
+Message-ID: <540449BC.2050807@nvidia.com>
+References: <1408948188-4181-1-git-send-email-wni@nvidia.com>	<1408948188-4181-4-git-send-email-wni@nvidia.com>	<20140825110711.GA12349@developer>	<53FBEE39.2020001@nvidia.com>	<20140826121210.GB15219@developer>	<53FD484F.7030504@nvidia.com>	<20140827133217.GB15875@developer>	<53FE8AC9.2070907@nvidia.com>	<20140828132135.GA17074@developer>	<53FFED7B.6010508@nvidia.com> <CAC-25o-9OQ-wfpCJmgDGB0kqDHwUc15XX7Ay7Pes6UmpJakUkQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="BI5RvnYi6R4T2M87"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <3113165.EcqFA5vr07@wuerfel>
+In-Reply-To: <CAC-25o-9OQ-wfpCJmgDGB0kqDHwUc15XX7Ay7Pes6UmpJakUkQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+To: "edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 08/29/2014 07:32 PM, edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org wrote:
+> Hello Wei,
+> 
+> On Thu, Aug 28, 2014 at 11:03 PM, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> On 08/28/2014 09:21 PM, Eduardo Valentin wrote:
+>>> Hello Wei,
+>>>
+>>> On Thu, Aug 28, 2014 at 09:50:01AM +0800, Wei Ni wrote:
+>>>> On 08/27/2014 09:32 PM, Eduardo Valentin wrote:
+>>>>> Hello Wei,
+>>>>>
+>>>>> On Wed, Aug 27, 2014 at 10:54:07AM +0800, Wei Ni wrote:
+>>>>>> On 08/26/2014 08:12 PM, Eduardo Valentin wrote:
+>>>>>>> On Tue, Aug 26, 2014 at 10:17:29AM +0800, Wei Ni wrote:
+>>>>>>>> On 08/25/2014 07:07 PM, Eduardo Valentin wrote:
+>>>>>>>>> Hello Wei Ni,
+>>>>>>>>>
+>>>>>>>>> On Mon, Aug 25, 2014 at 02:29:47PM +0800, Wei Ni wrote:
+>>>>>>>>>> Add more description for the "polling-delay" property.
+>>>>>>>>>> Set "trips" and "cooling maps" as optional property, because
+>>>>>>>>>> if missing these two sub-nodes, the thermal zone device still
+>>>>>>>>>> work properly.
+>>>>>>>>>>
+>>>>>>>>>> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>>>>>>>> ---
+>>>>>>>>>>  Documentation/devicetree/bindings/thermal/thermal.txt | 10 ++++++----
+>>>>>>>>>>  1 file changed, 6 insertions(+), 4 deletions(-)
+>>>>>>>>>>
+>>>>>>>>>> diff --git a/Documentation/devicetree/bindings/thermal/thermal.txt b/Documentation/devicetree/bindings/thermal/thermal.txt
+>>>>>>>>>> index f5db6b7..e3d3ed9 100644
+>>>>>>>>>> --- a/Documentation/devicetree/bindings/thermal/thermal.txt
+>>>>>>>>>> +++ b/Documentation/devicetree/bindings/thermal/thermal.txt
+>>>>>>>>>> @@ -136,8 +136,8 @@ containing trip nodes and one sub-node containing all the zone cooling maps.
+>>>>>>>>>>
+>>>>>>>>>>  Required properties:
+>>>>>>>>>>  - polling-delay:      The maximum number of milliseconds to wait between polls
+>>>>>>>>>> -  Type: unsigned      when checking this thermal zone.
+>>>>>>>>>> -  Size: one cell
+>>>>>>>>>> +  Type: unsigned      when checking this thermal zone. If this value is 0, the
+>>>>>>>>>> +  Size: one cell      driver will not run polling queue, but just cancel it.
+>>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> The description above is specific to Linux kernel implementation
+>>>>>>>>> nomenclature. DT description needs to be OS agnostic.
+>>>>>>>>>
+>>>>>>>>>>  - polling-delay-passive: The maximum number of milliseconds to wait
+>>>>>>>>>>    Type: unsigned      between polls when performing passive cooling.
+>>>>>>>>>> @@ -148,14 +148,16 @@ Required properties:
+>>>>>>>>>>    phandles + sensor
+>>>>>>>>>>    specifier
+>>>>>>>>>>
+>>>>>>>>>> +Optional property:
+>>>>>>>>>>  - trips:              A sub-node which is a container of only trip point nodes
+>>>>>>>>>>    Type: sub-node      required to describe the thermal zone.
+>>>>>>>>>>
+>>>>>>>>>>  - cooling-maps:               A sub-node which is a container of only cooling device
+>>>>>>>>>>    Type: sub-node      map nodes, used to describe the relation between trips
+>>>>>>>>>> -                      and cooling devices.
+>>>>>>>>>> +                      and cooling devices. If missing the "trips" property,
+>>>>>>>>>> +                      This sub-node will not be parsed, because no trips can
+>>>>>>>>>> +                      be bound to cooling devices.
+>>>>>>>>>
+>>>>>>>>> Do you mean if the thermal zone misses the "trips" property? Actually,
+>>>>>>>>> the binding describes both, cooling-maps and trips, as required
+>>>>>>>>> properties. Thus, both needs to be in place to consider the thermal zone
+>>>>>>>>> as a proper described zone.
+>>>>>>>>
+>>>>>>>> I moved the "trips" and "cooling-maps" to optional property, because if
+>>>>>>>> missing these two properties, the thermal zone devices still can be
+>>>>>>>> registered, and the driver can work properly, it has the basic function,
+>>>>>>>> can read temperature from thermal sysfs, although it doesn't have trips
+>>>>>>>> and bind with cooling devices.
+>>>>>>>
+>>>>>>>
+>>>>>>> If a thermal zone is used only for monitoring, then I believe it lost
+>>>>>>> its purpose. As  Maybe a different framework shall be used, such as hwmon,
+>>>>>>> for instance?
+>>>>>>
+>>>>>> Yes, if we only use it for monitoring, we can use hwmon. But we have
+>>>>>> more functions base on these two thermal zone devices. We have a
+>>>>>> skin-temperature driver, which used nct1008's remote and local
+>>>>>> temperatures to estimator the skin temperature. As you know the thermal
+>>>>>> framework is more powerful, the remote/local sensors can be register as
+>>>>>> thermal zone, then the skin-temp driver can use thermal_zone_get_temp()
+>>>>>> to read their temperatures and then estimator skin's temp. We also will
+>>>>>> set trips and cooling devices for this skin-temp.
+>>>>>
+>>>>> In this case, don't you think it would make sense to create a thermal
+>>>>> zone for the skin temperature and add the required sensors (including
+>>>>> the nct1008) in it?
+>>>>
+>>>> Hi, Eduardo
+>>>> Yes, we will create a thermal zone for the skin-temp driver and add the
+>>>> required sensors in it, but in here we want to register these required
+>>>> sensors as thermal zone devices, then the thermal framework can export
+>>>> functions to read these sensors temperature. If use hwmon framework, it
+>>>> can't export nct1008's internal sensors, such as remote/local sensors,
+>>>> and no exported functions to read these temperatures. If we doesn't use
+>>>> the thermal/of-thermal framework, we have to develop a new framework to
+>>>> parse those sensor nodes, and I think this new one may only have slight
+>>>> difference with current thermal framework.
+>>>> If we set those two properties as optional property, then we can use it
+>>>> in this case simply.
+>>>>
+>>>> The skin-temp nodes will something like this:
+>>>>
+>>>> skin_temp: therm-est {
+>>>>      compatible = "nvidia,tegra124-therm-est";
+>>>>
+>>>>      #thermal-sensor-cells = <0>;
+>>>>
+>>>>      sub-devs {
+>>>>              dev@0 {
+>>>> /* we need to register nct1008_remote as thermal zone devices, so that
+>>>> it's easy to handle it by using thermal framework's exported functions. */
+>>>>                      dev = <&nct1008_remote>;
+>>>>              };
+>>>>              dev@1 {
+>>>>                      dev = <&nct1008_local>;
+>>>>              };
+>>>>      };
+>>>> };
+>>>>
+>>>> thermal-zones {
+>>>>      skin-therm {
+>>>>              polling-delay-passive = <15000>
+>>>>              polling-delay = <0>;
+>>>>
+>>>>              thermal-sensors = <&skin_temp>;
+>>>
+>>> The binding allows you to add several sensors in one thermal zone.
+>>> Please have a look on the example (c) of the thermal.txt binding
+>>> description. It might be that what you want to do is actually:
+>>>               thermal-sensors = <&ntc1008_local>,
+>>>                               <&ntc1008_remote>;
+>>
+>>
+>> Yes, we have considered it, but in current kernel, it only supports 1
+>> sensor per zone. and according to the example (c), it's supposed to only
+>> support simple algorithm, such as:
+>> /* hotspot = 100 * bandgap - 120 * adc + 484 */
+>>  coefficients =          <100    -120    484>;
+>>
+>> but in our skin-temp driver, we will recored 20 history temperatures for
+>> every sensors, and set different coefficients for every history
+>> temperatures, our HW team have private mathematical mode to calculate
+>> these coeffs for different boards. And I think other users may use
+>> different algorithm to calculate thermal zone temperature based on
+>> several sensors.
+>>
+>> So I think it's better to register sensors to thermal zones, not set
+>> trips and binding cooling devices, then user's thermal driver can use
+>> them freely.
+>>
+> 
+> In your system, the used governor is userspace, then?
 
---BI5RvnYi6R4T2M87
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+No, we developed a new governor named as "pid governor", it manages
+thermals based on output values of PID controller.
 
-On Fri, Aug 29, 2014 at 09:53:42PM +0200, Arnd Bergmann wrote:
-> On Friday 29 August 2014 17:04:28 Thierry Reding wrote:
-> >         static struct irq_chip *extn;
-> >=20
-> >         void gic_arch_register(const struct irqchip *chip)
-> >         {
-> >                 if (WARN(extn !=3D NULL))
-> >                         return;
-> >=20
-> >                 gic_chip.flags |=3D chip->flags;
-> >                 extn =3D chip;
-> >         }
-> >=20
-> > Any preferences, or other ideas? Adding Thomas and Jason, perhaps they
-> > can provide more input on how to solve this.
->=20
-> I think the entire gic_arch_extn method is done in a rather odd way
-> and we should try to come up with a replacement.
->=20
-> These are the users at the moment:
->=20
-> arch/arm/mach-exynos/pm.c:      gic_arch_extn.irq_set_wake =3D exynos_irq=
-_set_wake;
-> arch/arm/mach-imx/gpc.c:        gic_arch_extn.irq_mask =3D imx_gpc_irq_ma=
-sk;
-> arch/arm/mach-imx/gpc.c:        gic_arch_extn.irq_unmask =3D imx_gpc_irq_=
-unmask;
-> arch/arm/mach-imx/gpc.c:        gic_arch_extn.irq_set_wake =3D imx_gpc_ir=
-q_set_wake;
-> arch/arm/mach-omap2/omap-wakeupgen.c:   gic_arch_extn.irq_mask =3D wakeup=
-gen_mask;
-> arch/arm/mach-omap2/omap-wakeupgen.c:   gic_arch_extn.irq_unmask =3D wake=
-upgen_unmask;
-> arch/arm/mach-omap2/omap-wakeupgen.c:   gic_arch_extn.flags =3D IRQCHIP_M=
-ASK_ON_SUSPEND | IRQCHIP_SKIP_SET_W
-> arch/arm/mach-shmobile/intc-sh73a0.c:   gic_arch_extn.irq_set_wake =3D sh=
-73a0_set_wake;
-> arch/arm/mach-shmobile/setup-r8a7779.c: gic_arch_extn.irq_set_wake =3D r8=
-a7779_set_wake;
-> arch/arm/mach-tegra/irq.c:      gic_arch_extn.irq_ack =3D tegra_ack;
-> arch/arm/mach-tegra/irq.c:      gic_arch_extn.irq_eoi =3D tegra_eoi;
-> arch/arm/mach-tegra/irq.c:      gic_arch_extn.irq_mask =3D tegra_mask;
-> arch/arm/mach-tegra/irq.c:      gic_arch_extn.irq_unmask =3D tegra_unmask;
-> arch/arm/mach-tegra/irq.c:      gic_arch_extn.irq_retrigger =3D tegra_ret=
-rigger;
-> arch/arm/mach-tegra/irq.c:      gic_arch_extn.irq_set_wake =3D tegra_set_=
-wake;
-> arch/arm/mach-tegra/irq.c:      gic_arch_extn.flags =3D IRQCHIP_MASK_ON_S=
-USPEND;
-> arch/arm/mach-ux500/cpu.c:      gic_arch_extn.flags =3D IRQCHIP_SKIP_SET_=
-WAKE | IRQCHIP_MASK_ON_SUSPEND;
-> arch/arm/mach-zynq/common.c:    gic_arch_extn.flags =3D IRQCHIP_SKIP_SET_=
-WAKE | IRQCHIP_MASK_ON_SUSPEND;
->=20
-> I have to admit I don't really understand how these work, but what
-> I'd expect to work better is a way to turn the gic code into more
-> of a library that can be used by specialized drivers. In that
-> case you would register a driver for the tegra gic using IRQCHIP_DECLARE
-> and that driver would call a variation of gic_of_init() or gic_init_bases=
-()
-> with the extra stuff as arguments.
->=20
-> We'd have to hack around the fact that all these platforms currently
-> don't list a specialized compatible string, but at least for the future
-> we should be able to do this without special hacks.
+Indeed, our thermal management includes skin-temp, soc-thermal,
+cpu-throttle driver and pid governor. This pach set is prepared for the
+skin-temp driver.
+As you know the tegra soc-therm is in upstreaming, and we will post
+other drivers step by step.
 
-Besides the issue with the missing compatible values, the hardware
-blocks that provide the additional functionality are separate from the
-GIC. So they would have to look up the GIC node explicitly.
+Thanks.
+Wei.
 
-I suppose that might actually be to our advantage, since these blocks
-will presumably have a specialized compatible string. So perhaps one
-solution would be to make the drivers for these separate IP blocks look
-up the GIC device tree node and call gic_of_init_ext() with a pointer to
-the IRQ chip implementation of this platform-specific glue to replace
-gic_arch_extn.
-
-Thierry
-
---BI5RvnYi6R4T2M87
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJUBDKhAAoJEN0jrNd/PrOh7scQAJZLh4VFIGTJ2PGGAhAJSPUb
-PCVaG12SOeFfAKYWi8a57ji66sLNXJnQZ1Hfu3Fo3LqnN5Gt+u3m3G0K3HNMqpJp
-4ejie6L6UjJ7/llMbk1AhPbcgwecWVV7yXbLmQxdr0vbyTUYYNm0/bMXskFbIzKX
-wmHkSaO6JQjdyfnuD83a5IKsG1sUiAl6zEnB9DnrL41/MV+PyF2d60DewxMMFgJb
-WbD11lSEkBgx7Vr4Xj8E2eUl5NT9D0AIzGllW4a0CBxLm2nchkjzHZEU+SrFylQz
-uqb+Lmb5MCp2WsTpjneLCQ5jocD4tBn7q+AfJFHEmyCS58cdyBctLHbWembA3R/L
-Ott7DMEdHxYuXwf3lPs4t6HcXbGFtZuGWbY+X+M4GAAo+qxCpYQbiQLqCYbTfYB/
-URkkHYDEbkGGRxmiqGsY/TnilX+UCP2ZWpG7CEnhGiQ99o9s/I7lbuY2+einHrT9
-lZhsg09+QOik52a1WiUPskDz4X1YkeVFHKpxZFSwzRbXDCKeYbP6rJinJbtXpvCJ
-hYAzuDID0sG60OChHr95aPorxey8LGn3lWF9fYOgX/EN32zL8V+Ko/3YDox+/qA4
-4VCk0X4evdjrdSfAWhDQF66CUMYzMg+tm/Jf6s8dqEBecnnUiIPOzfdjF6iZvKIz
-Y+/cf+b3LJHTJqOZ8BrB
-=UFjG
------END PGP SIGNATURE-----
-
---BI5RvnYi6R4T2M87--
+> 
+>> Thanks.
+>> Wei.
+>>
+>>>
+>>>
+>>>>
+>>>>              trips {
+>>>>              };
+>>>>              cooling-maps {
+>>>>              };
+>>>>      };
+>>>> };
+>>>>
+>>>> Wei.
+>>>>>
+>>>>>>
+>>>>>> Wei.
+>>>>>>
+>>>>>>>
+>>>>>>> The purpose of a thermal zone is to describe thermal behavior of a
+>>>>>>> hardware. As it is mentioned in the thermal.txt file.
+>>>>>>>
+>>>>>>>
+>>>>>>>>
+>>>>>>>> Thanks.
+>>>>>>>> Wei.
+>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>> -Optional property:
+>>>>>>>>>>  - coefficients:               An array of integers (one signed cell) containing
+>>>>>>>>>>    Type: array         coefficients to compose a linear relation between
+>>>>>>>>>>    Elem size: one cell the sensors listed in the thermal-sensors property.
+>>>>>>>>>> --
+>>>>>>>>>> 1.8.1.5
+>>>>>>>>>>
+>>>>>>>>
+>>>>>>> --
+>>>>>>> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+>>>>>>> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>>>>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>>>>>
+>>>>>>
+>>>>
+>>
+> 
+> 
+> 
