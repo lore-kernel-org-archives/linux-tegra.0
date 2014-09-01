@@ -1,45 +1,34 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v4 2/5] ARM: tegra: Add legacy interrupt controller nodes
-Date: Mon, 1 Sep 2014 11:16:10 +0300
-Message-ID: <20140901081610.GN20995@tbergstrom-lnx.Nvidia.com>
-References: <1409239879-12376-1-git-send-email-thierry.reding@gmail.com>
- <1409239879-12376-2-git-send-email-thierry.reding@gmail.com>
- <4707330.BNuO2MquVF@wuerfel>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH v4 3/5] ARM: tegra: Initialize interrupt controller from DT
+Date: Mon, 01 Sep 2014 10:45:52 +0200
+Message-ID: <4149432.nxIqEBW8Gp@wuerfel>
+References: <1409239879-12376-1-git-send-email-thierry.reding@gmail.com> <3113165.EcqFA5vr07@wuerfel> <20140830155459.GI3683@titan.lakedaemon.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4707330.BNuO2MquVF@wuerfel>
+In-Reply-To: <20140830155459.GI3683-u4khhh1J0LxI1Ri9qeTfzeTW4wlIGRCZ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Aug 28, 2014 at 06:11:53PM +0200, Arnd Bergmann wrote:
-> On Thursday 28 August 2014 17:31:16 Thierry Reding wrote:
-> > +       interrupt-controller@60004000 {
-> > +               compatible = "nvidia,tegra114-ictlr", "nvidia,tegra30-ictlr";
-> > +               reg = <0x60004000 0x40>, /* primary controller */
-> > +                     <0x60004100 0x40>, /* secondary controller */
-> > +                     <0x60004200 0x40>, /* tertiary controller */
-> > +                     <0x60004300 0x40>, /* quaternary controller */
-> > +                     <0x60004400 0x40>; /* quinary controller */
-> > +       };
-> > +
-> >         timer@60005000 {
-> >                 compatible = "nvidia,tegra114-timer", "nvidia,tegra20-timer";
+On Saturday 30 August 2014 11:54:59 Jason Cooper wrote:
+> > I have to admit I don't really understand how these work, but what
+> > I'd expect to work better is a way to turn the gic code into more
+> > of a library that can be used by specialized drivers. In that
+> > case you would register a driver for the tegra gic using IRQCHIP_DECLARE
+> > and that driver would call a variation of gic_of_init() or gic_init_bases()
+> > with the extra stuff as arguments.
 > > 
+> > We'd have to hack around the fact that all these platforms currently
+> > don't list a specialized compatible string, but at least for the future
+> > we should be able to do this without special hacks.
 > 
-> Don't you need an interrupt-parent and interrupts property here to point to
-> the GIC interrupts? I would assume this is a nested irqchip.
+> Thomas was talking about this just the other day:
+> 
+>   https://lkml.kernel.org/r/alpine.DEB.2.10.1408271347210.3323@nanos
 
-No. It's not nested. All SoC interrupts are fed into both the LIC and the
-GIC (as SPIs). The LIC also has an interface towards the flowcontroller which
-allows waking up the CPU when an interrupt happens, even if the GIC is off. 
-LIC can also route every interrupt it controls to the AVP.
+Ah, cool. That seems better than what I had in mind. Yes, let's do that.
 
-See also section 3.4.1.4 Interrupt routing of the TRM.
-
-Cheers,
-
-Peter.
+	Arnd
