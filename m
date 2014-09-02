@@ -1,91 +1,61 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] i2c: i2c-tegra: Move clk_prepare/clk_set_rate to probe
-Date: Tue, 02 Sep 2014 09:17:23 -0600
-Message-ID: <5405DF83.3030706@wwwdotorg.org>
-References: <1408096034-17270-1-git-send-email-mperttunen@nvidia.com> <53EE32C7.6000500@wwwdotorg.org> <20140902115615.GH1266@katana>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] ARM: configs: Remove REGULATOR_VIRTUAL_CONSUMER from
+ defconfigs
+Date: Tue, 2 Sep 2014 16:22:28 +0100
+Message-ID: <20140902152228.GW29327@sirena.org.uk>
+References: <1409486590-23645-1-git-send-email-broonie@kernel.org>
+ <5405DD72.30603@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="+FNB8hLr74QeaOK6"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140902115615.GH1266@katana>
+Content-Disposition: inline
+In-Reply-To: <5405DD72.30603-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Christian Daudt <bcm-xK7y4jjYLqYh9ZMKESR00Q@public.gmane.org>, Matt Porter <mporter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/02/2014 05:56 AM, Wolfram Sang wrote:
-> On Fri, Aug 15, 2014 at 10:18:15AM -0600, Stephen Warren wrote:
->> On 08/15/2014 03:47 AM, Mikko Perttunen wrote:
->>> Currently the i2c-tegra bus driver prepares, enables
->>> and set_rates its clocks separately for each transfer.
->>> This causes locking problems when doing I2C transfers
->> >from clock notifiers; see
->>> http://lists.infradead.org/pipermail/linux-arm-kernel/2014-July/268653.html
->>>
->>> This patch moves clk_prepare/unprepare and clk_set_rate calls to
->>> the probe function, leaving only clk_enable/disable to be
->>> done on each transfer. This solves the locking issue.
->>
->>> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
->>
->>> @@ -380,34 +380,33 @@ static inline int tegra_i2c_clock_enable(struct tegra_i2c_dev *i2c_dev)
->>>   {
->>>   	int ret;
->>>   	if (!i2c_dev->hw->has_single_clk_source) {
->>> -		ret = clk_prepare_enable(i2c_dev->fast_clk);
->>> +		ret = clk_enable(i2c_dev->fast_clk);
->>
->> Here, both the prepare and enable wrap just the I2C transfer, ...
->>
->>> @@ -428,9 +427,6 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
->>>   	i2c_writel(i2c_dev, val, I2C_CNFG);
->>>   	i2c_writel(i2c_dev, 0, I2C_INT_MASK);
->>>
->>> -	clk_multiplier *= (i2c_dev->hw->clk_divisor_std_fast_mode + 1);
->>> -	clk_set_rate(i2c_dev->div_clk, i2c_dev->bus_clk_rate * clk_multiplier);
->>
->> ... whereas the rate is set up when the controller is initialized, i.e. much
->> earlier.
->>
->>> @@ -777,17 +774,39 @@ static int tegra_i2c_probe(struct platform_device *pdev)
->>
->>> +	if (!i2c_dev->hw->has_single_clk_source) {
->>> +		ret = clk_prepare(i2c_dev->fast_clk);
->>> +		if (ret < 0) {
->>> +			dev_err(i2c_dev->dev, "Clock prepare failed %d\n", ret);
->>> +			return ret;
->>> +		}
->>> +	}
->>> +
->>> +	ret = clk_prepare(i2c_dev->div_clk);
->>> +	if (ret < 0) {
->>> +		dev_err(i2c_dev->dev, "Clock prepare failed %d\n", ret);
->>> +		goto unprepare_fast_clk;
->>> +	}
->>> +
->>> +	clk_multiplier *= (i2c_dev->hw->clk_divisor_std_fast_mode + 1);
->>> +	ret = clk_set_rate(i2c_dev->div_clk,
->>> +			   i2c_dev->bus_clk_rate * clk_multiplier);
->>> +	if (ret) {
->>> +		dev_err(i2c_dev->dev, "Clock rate change failed %d\n", ret);
->>> +		goto unprepare_div_clk;
->>> +	}
->>
->> However, the new code sets the clock rate after the clock is prepared. I
->> think the rate should be set first, then the clock prepared. While this
->> likely doesn't apply to the Tegra clock controller, prepare() is allowed to
->> enable the clock if enable() can't be implemented in an atomic fashion (in
->> which case enable/disable would be no-ops), and we should make sure that the
->> driver correctly configures the clock before potentially enabling it.
->>
->> I'm not sure if a similar change to our SPI drivers is possible; after all,
->> the SPI transfer rate can vary per message, so if clk_set_rate() acquires a
->> lock, it seems there's no way to avoid the issue there. Luckily, we don't
->> have any SPI-based chips that do anything related to clocks on any of our
->> current boards...
->>
->> Aside from this issue, the patch looks fine to me.
->
-> May I count this as an Ack?
 
-Sure, once the afore-mentioned issue is resolved.
+--+FNB8hLr74QeaOK6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Sep 02, 2014 at 09:08:34AM -0600, Stephen Warren wrote:
+> On 08/31/2014 06:03 AM, Mark Brown wrote:
+
+> >The virtual consumer is a test device intended to be used while developing
+> >regulator drivers, it should never be used in production. Remove it from
+> >all defconfigs to avoid confusion among users.
+
+> tegra_defconfig isn't a distro configuration, and has plenty of other
+> debug/test options turned on. I'm not sure that removing this option really
+> has much benefit. Still, this likely isn't going to cause any issue, so I
+> guess it's fine. People can always add the option locally if they want.
+
+In order to instantiate it you're going to have to generate a custom DT
+anyway so I don't think the burden is excessive.
+
+--+FNB8hLr74QeaOK6
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUBeCxAAoJELSic+t+oim9bDkP/3D+sm040tsRcL0ljNk/Uhdw
+oxZ7xpkszPPNFAosha1TgDuidS5JlHS9sdEkVAf0HVsFmHzZWeiV0oK1Mj7siiDp
+EdByocloRuZukZgH3KTEUTnBfrXuO0vLAsun6DEwE7Uxslcqa5dTGmVNkcdLF9r9
+pN4VaEpOBqS4wlR9fXmioNOfyOufrfmebiR4Cms8LNlycILGroTQBABG+2UjhdBk
+JE8ABtP3snnTg0MCd8NaJTZeLKIEWfwWhVlcVTHf7sSxOYmnHwytl123dbk6kHg1
+jcY0C0rC7jC3s/bpfL7uWEXk1TDy83JxT/vjKu39RKF1NaAwyme6n/itpckIFmqE
+jnnkwJtAuuCZViUUf7hw7+6EhRf9PwbeAk7y2BCVJN3cI1zDbtpb/p2RCk9VQFh4
+2ebB2jU1wET1TmpXsy2I/VQspBXgmvSoZYI6Xr5QfJVUYQSN+ZEikBdXBqBkwqos
+2ScMd9LZ+t4ZdZMxNol2X0l006MJVWzdRHAXF86y5wgwY3bAQ+18QWFsYAeOfSWe
+mm93BRpHEpW9mUcZJ3DLYz+bOS3ilS9W9lVJF5NGFbp2nB8/sjybdOlvqnQAx0Wh
+r8i2wtKYnmLmWKvtBaubbo8IrFmxxHcIuTZKf2Z/hNc55IViv8RQ+PreApCLq0pP
+SZByd/vAs0ConqjIRHOd
+=tvkK
+-----END PGP SIGNATURE-----
+
+--+FNB8hLr74QeaOK6--
