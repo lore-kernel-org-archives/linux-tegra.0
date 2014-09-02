@@ -1,47 +1,131 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v8 3/7] clk: Move all drivers to use internal API
-Date: Tue, 2 Sep 2014 09:13:14 +0200
-Message-ID: <CAPDyKFq2vzUT+NSkC8ZTau=sbFW_frpQ+paLM_EsYLyp_5ivag@mail.gmail.com>
-References: <1409585377-26091-1-git-send-email-tomeu.vizoso@collabora.com>
- <1409585574-26673-1-git-send-email-tomeu.vizoso@collabora.com>
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [PATCH] i2c: i2c-tegra: Move clk_prepare/clk_set_rate to probe
+Date: Tue, 2 Sep 2014 13:56:15 +0200
+Message-ID: <20140902115615.GH1266@katana>
+References: <1408096034-17270-1-git-send-email-mperttunen@nvidia.com>
+ <53EE32C7.6000500@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <1409585574-26673-1-git-send-email-tomeu.vizoso@collabora.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, alsa-devel@alsa-project.org, Prashant Gaikwad <pgaikwad@nvidia.com>, Tony Lindgren <tony@atomide.com>, Tomasz Figa <t.figa@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Paul Mackerras <paulus@samba.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Daniel Walker <dwalker@fifo99.com>, linux-arch@vger.kernel.org, Boris Brezillon <boris.brezillon@free-electrons.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, =?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>, Takashi Iwai <tiwai@suse.de>, Michal Simek <michal.simek@xilinx.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kevin Hilman <khilman@deeprootsystems.com>, linux-omap <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kern>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="X1xGqyAVbSpAWs5A"
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <53EE32C7.6000500-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMSBTZXB0ZW1iZXIgMjAxNCAxNzozMiwgVG9tZXUgVml6b3NvIDx0b21ldS52aXpvc29AY29s
-bGFib3JhLmNvbT4gd3JvdGU6Cj4gSW4gcHJlcGFyYXRpb24gdG8gY2hhbmdlIHRoZSBwdWJsaWMg
-QVBJIHRvIHJldHVybiBhIHBlci11c2VyIGNsayBzdHJ1Y3R1cmUsCj4gcmVtb3ZlIGFueSB1c2Fn
-ZSBvZiB0aGlzIHB1YmxpYyBBUEkgZnJvbSB0aGUgY2xvY2sgaW1wbGVtZW50YXRpb25zLgo+Cj4g
-VGhlIHJlYXNvbiBmb3IgaGF2aW5nIHRoaXMgaW4gYSBzZXBhcmF0ZSBjb21taXQgZnJvbSB0aGUg
-b25lIHRoYXQgaW50cm9kdWNlcwo+IHRoZSBpbXBsZW1lbnRhdGlvbiBvZiB0aGUgbmV3IGZ1bmN0
-aW9ucyBpcyB0byBzZXBhcmF0ZSB0aGUgY2hhbmdlcyBnZW5lcmF0ZWQKPiB3aXRoIENvY2NpbmVs
-bGUgZnJvbSB0aGUgcmVzdCwgYW5kIGtlZXAgdGhlIHBhdGNoZXMnIHNpemUgcmVhc29uYWJsZS4K
-Pgo+IFNpZ25lZC1vZmYtYnk6IFRvbWV1IFZpem9zbyA8dG9tZXUudml6b3NvQGNvbGxhYm9yYS5j
-b20+Cj4gVGVzdGVkLWJ5OiBCb3JpcyBCcmV6aWxsb24gPGJvcmlzLmJyZXppbGxvbkBmcmVlLWVs
-ZWN0cm9ucy5jb20+Cj4gVGVzdGVkLWJ5OiBIZWlrbyBTdHVlYm5lciA8aGVpa29Ac250ZWNoLmRl
-Pgo+IEFja2VkLWJ5OiBCb3JpcyBCcmV6aWxsb24gPGJvcmlzLmJyZXppbGxvbkBmcmVlLWVsZWN0
-cm9ucy5jb20+CgpIaSBUb21ldSwKCkh1aCwgd2hhdCBhIHBhdGNoLiA6LSkgR3JlYXQgd29yayB5
-b3UgYXJlIGRvaW5nIGhlcmUhCgpCeSBqdXN0IGxvb2tpbmcgYXQgdGhlIHV4NTAwIGNoYW5nZXMs
-IEkgcmVhbGl6ZSB0aGF0IHlvdSBub3cgaGF2ZQpyZW1vdmVkIHRoZSBkZXBlbmRlbmN5IHRvICJz
-dHJ1Y3QgY2xrIiwgdGh1cyB3ZSBzaG91bGRuJ3QgaW5jbHVkZSB0aGUKaGVhZGVyIGZpbGUgbGlu
-dXgvY2xrLmggaW4gYW55IGZpbGUgbG9jYXRlZCBpbiBkcml2ZXIvY2xrL3V4NTAwLyosCnJpZ2h0
-IT8KCkkgc3VwcG9zZSB0aGlzIGNvbW1lbnQgbWF5IGFsc28gYXBwbGljYWJsZSBmb3Igb3RoZXJz
-IHRoYW4gdGhlIHV4NTAwCmNsayBkcml2ZXIsIGJ1dCBoYXZlbid0IGNoZWNrZWQuCgpLaW5kIHJl
-Z2FyZHMKVWZmZQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-XwpMaW51eHBwYy1kZXYgbWFpbGluZyBsaXN0CkxpbnV4cHBjLWRldkBsaXN0cy5vemxhYnMub3Jn
-Cmh0dHBzOi8vbGlzdHMub3psYWJzLm9yZy9saXN0aW5mby9saW51eHBwYy1kZXY=
+
+--X1xGqyAVbSpAWs5A
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Aug 15, 2014 at 10:18:15AM -0600, Stephen Warren wrote:
+> On 08/15/2014 03:47 AM, Mikko Perttunen wrote:
+> >Currently the i2c-tegra bus driver prepares, enables
+> >and set_rates its clocks separately for each transfer.
+> >This causes locking problems when doing I2C transfers
+> >from clock notifiers; see
+> >http://lists.infradead.org/pipermail/linux-arm-kernel/2014-July/268653.h=
+tml
+> >
+> >This patch moves clk_prepare/unprepare and clk_set_rate calls to
+> >the probe function, leaving only clk_enable/disable to be
+> >done on each transfer. This solves the locking issue.
+>=20
+> >diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-teg=
+ra.c
+>=20
+> >@@ -380,34 +380,33 @@ static inline int tegra_i2c_clock_enable(struct te=
+gra_i2c_dev *i2c_dev)
+> >  {
+> >  	int ret;
+> >  	if (!i2c_dev->hw->has_single_clk_source) {
+> >-		ret =3D clk_prepare_enable(i2c_dev->fast_clk);
+> >+		ret =3D clk_enable(i2c_dev->fast_clk);
+>=20
+> Here, both the prepare and enable wrap just the I2C transfer, ...
+>=20
+> >@@ -428,9 +427,6 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_=
+dev)
+> >  	i2c_writel(i2c_dev, val, I2C_CNFG);
+> >  	i2c_writel(i2c_dev, 0, I2C_INT_MASK);
+> >
+> >-	clk_multiplier *=3D (i2c_dev->hw->clk_divisor_std_fast_mode + 1);
+> >-	clk_set_rate(i2c_dev->div_clk, i2c_dev->bus_clk_rate * clk_multiplier);
+>=20
+> ... whereas the rate is set up when the controller is initialized, i.e. m=
+uch
+> earlier.
+>=20
+> >@@ -777,17 +774,39 @@ static int tegra_i2c_probe(struct platform_device =
+*pdev)
+>=20
+> >+	if (!i2c_dev->hw->has_single_clk_source) {
+> >+		ret =3D clk_prepare(i2c_dev->fast_clk);
+> >+		if (ret < 0) {
+> >+			dev_err(i2c_dev->dev, "Clock prepare failed %d\n", ret);
+> >+			return ret;
+> >+		}
+> >+	}
+> >+
+> >+	ret =3D clk_prepare(i2c_dev->div_clk);
+> >+	if (ret < 0) {
+> >+		dev_err(i2c_dev->dev, "Clock prepare failed %d\n", ret);
+> >+		goto unprepare_fast_clk;
+> >+	}
+> >+
+> >+	clk_multiplier *=3D (i2c_dev->hw->clk_divisor_std_fast_mode + 1);
+> >+	ret =3D clk_set_rate(i2c_dev->div_clk,
+> >+			   i2c_dev->bus_clk_rate * clk_multiplier);
+> >+	if (ret) {
+> >+		dev_err(i2c_dev->dev, "Clock rate change failed %d\n", ret);
+> >+		goto unprepare_div_clk;
+> >+	}
+>=20
+> However, the new code sets the clock rate after the clock is prepared. I
+> think the rate should be set first, then the clock prepared. While this
+> likely doesn't apply to the Tegra clock controller, prepare() is allowed =
+to
+> enable the clock if enable() can't be implemented in an atomic fashion (in
+> which case enable/disable would be no-ops), and we should make sure that =
+the
+> driver correctly configures the clock before potentially enabling it.
+>=20
+> I'm not sure if a similar change to our SPI drivers is possible; after al=
+l,
+> the SPI transfer rate can vary per message, so if clk_set_rate() acquires=
+ a
+> lock, it seems there's no way to avoid the issue there. Luckily, we don't
+> have any SPI-based chips that do anything related to clocks on any of our
+> current boards...
+>=20
+> Aside from this issue, the patch looks fine to me.
+
+May I count this as an Ack?
+
+
+--X1xGqyAVbSpAWs5A
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJUBbBfAAoJEBQN5MwUoCm2NkgP/337zgF++rkar6BR6f2b+q37
+x1pFVkiwaJVS52jFuCeTwqTilZmNgH5aAFld0pyXDq8kw5+opWhOcZfq/2ZWdspD
+OTTiWsI8cSuIBXASqmQhYpDjljf9RxKeeE0Sq49zMOpiyigCFnvIUJvuOUKkes/5
+2Idi5N/S0uimY6ofbbAV5Te6m9ON/+M8WwGPa/6Ob/ZjB9x6gXuCmPy6QM1gEmtT
+qKFdMNHZy6z9tFDHMrZP3BxLVTpYtOgtplg1UBjUy2APs1wHECU0iKtXmOMqYQVq
+6mncDGTFNT91cnECa8Epp077Gy9cQrp8NRfBBNxiMCDC3ov5k7OlNYR+dmLFvD5g
+3YWofTDcLYBvcCu6ygllzzjV8qj/re6g2Q3KeP6mwqh0U6veqd6x1zIiNfsi+Viq
+Qi5vAoYbBx0yIV9f6+6uLiz5aj9z4y6W8fq6qKmHtOgfQR6fpW0i/iBlNE0/n4UQ
+FlU9WO5/JLfTWat1bhPZ7JNpk5djTKOPAMG1vjngOEGU+3hQXWg26PABybfs7HU2
+Etz7+u88uJDAWU95Wj40Y7/BOJb3BkPYFclBIQJcww8Rte3/SlMR47hYMvCr2YlR
+BjgLS2HbnAHwWNTbKGT0s6XE/tvGMiHv/+eT4/mZGAmouRDqjFoUk4OCQXoc+yGn
+yAow6dO94wkm3Nm48d2k
+=hG72
+-----END PGP SIGNATURE-----
+
+--X1xGqyAVbSpAWs5A--
