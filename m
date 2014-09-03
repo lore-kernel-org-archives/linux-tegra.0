@@ -1,113 +1,25 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [REPOST PATCH v4 2/2] drm/tegra: Request memory bandwidth for the display controller
-Date: Wed,  3 Sep 2014 17:49:33 +0200
-Message-ID: <1409759373-22696-3-git-send-email-tomeu.vizoso@collabora.com>
-References: <1409759373-22696-1-git-send-email-tomeu.vizoso@collabora.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1409759373-22696-1-git-send-email-tomeu.vizoso@collabora.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: linux-pm@vger.kernel.org
-Cc: Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Mikko Perttunen <mperttunen@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v3 1/9] of: Add NVIDIA Tegra XUSB mailbox binding
+Date: Wed, 03 Sep 2014 10:19:56 -0600
+Message-ID: <54073FAC.8030702@wwwdotorg.org>
+References: <1409693701-16520-1-git-send-email-abrestic@chromium.org> <1409693701-16520-2-git-send-email-abrestic@chromium.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1409693701-16520-2-git-send-email-abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-For now the amount requested is based solely on the current mode's refresh
-rate.
+On 09/02/2014 03:34 PM, Andrew Bresticker wrote:
+> Add device-tree bindings for the Tegra XUSB mailbox which will be used
+> for communication between the Tegra xHCI controller's firmware and the
+> host processor.
 
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Acked-by: Pavel Machek <pavel@ucw.cz>
+The series,
+Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
----
-
-v4: * Use vertical refresh rate when calculating the bandwidth requirement
-
-v3: * Fixed the bandwidth calculation, and have the units be mbps
----
- drivers/gpu/drm/tegra/dc.c  | 15 +++++++++++++++
- drivers/gpu/drm/tegra/drm.h |  3 +++
- 2 files changed, 18 insertions(+)
-
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 6553fd2..8a3fee8 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -9,6 +9,7 @@
- 
- #include <linux/clk.h>
- #include <linux/debugfs.h>
-+#include <linux/pm_qos.h>
- #include <linux/reset.h>
- 
- #include "dc.h"
-@@ -753,6 +754,8 @@ static void tegra_crtc_disable(struct drm_crtc *crtc)
- 	}
- 
- 	drm_vblank_off(drm, dc->pipe);
-+
-+	pm_qos_update_request(&dc->qos_request, PM_QOS_DEFAULT_VALUE);
- }
- 
- static bool tegra_crtc_mode_fixup(struct drm_crtc *crtc,
-@@ -839,6 +842,7 @@ static int tegra_crtc_mode_set(struct drm_crtc *crtc,
- 	struct tegra_dc *dc = to_tegra_dc(crtc);
- 	struct tegra_dc_window window;
- 	u32 value;
-+	unsigned long bandwidth;
- 	int err;
- 
- 	drm_vblank_pre_modeset(crtc->dev, dc->pipe);
-@@ -879,6 +883,12 @@ static int tegra_crtc_mode_set(struct drm_crtc *crtc,
- 	if (err < 0)
- 		dev_err(dc->dev, "failed to enable root plane\n");
- 
-+	bandwidth = window.stride[0] * window.dst.h * 8;
-+	bandwidth *= drm_mode_vrefresh(mode);
-+	bandwidth /= 1024 * 1024;
-+
-+	pm_qos_update_request(&dc->qos_request, bandwidth);
-+
- 	return 0;
- }
- 
-@@ -1499,6 +1509,9 @@ static int tegra_dc_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
-+	pm_qos_add_request(&dc->qos_request, PM_QOS_MEMORY_BANDWIDTH,
-+			   PM_QOS_DEFAULT_VALUE);
-+
- 	platform_set_drvdata(pdev, dc);
- 
- 	return 0;
-@@ -1509,6 +1522,8 @@ static int tegra_dc_remove(struct platform_device *pdev)
- 	struct tegra_dc *dc = platform_get_drvdata(pdev);
- 	int err;
- 
-+	pm_qos_remove_request(&dc->qos_request);
-+
- 	err = host1x_client_unregister(&dc->client);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "failed to unregister host1x client: %d\n",
-diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
-index e89c70f..a99e533d 100644
---- a/drivers/gpu/drm/tegra/drm.h
-+++ b/drivers/gpu/drm/tegra/drm.h
-@@ -12,6 +12,7 @@
- 
- #include <uapi/drm/tegra_drm.h>
- #include <linux/host1x.h>
-+#include <linux/pm_qos.h>
- 
- #include <drm/drmP.h>
- #include <drm/drm_crtc_helper.h>
-@@ -120,6 +121,8 @@ struct tegra_dc {
- 	struct drm_pending_vblank_event *event;
- 
- 	const struct tegra_dc_soc_info *soc;
-+
-+	struct pm_qos_request qos_request;
- };
- 
- static inline struct tegra_dc *
--- 
-1.9.3
-
+I'd like Thierry to review at least the XUSB pinctrl and all DT binding 
+changes too, if possible.
