@@ -1,38 +1,46 @@
-From: Husam Al Sayed <oscar55@post.sk>
-Subject: FROM: Husam Al Sayed.
-Date: Wed, 3 Sep 2014 20:52:10 +0200 (CEST)
-Message-ID: <1570058782.347268.1409770330215.JavaMail.root@mbox05>
-Reply-To: "alsayedhusa@hotmail.com" <alsayedhusa@hotmail.com>
+From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v3 0/4] Allow xHCI drivers to be built as separate modules
+Date: Wed, 3 Sep 2014 12:51:25 -0700
+Message-ID: <CAL1qeaFwGYgzL=n0My4eBQMhvtNQfHpU5d1tif0twtYyjw5yqg@mail.gmail.com>
+References: <1408467712-27497-1-git-send-email-abrestic@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <target-devel-owner@vger.kernel.org>
-Sender: target-devel-owner@vger.kernel.org
-Cc: target-devel@vger.kernel.org, bsingharora@gmail.com, jhs@mojatatu.com, hswong3i@gmail.com, hlhung3i@gmail.com, mkrufky@linuxtv.org, jiri@resnulli.us, kernel@savoirfairelinux.com, sean@mess.org, linux-tegra@vger.kernel.org, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, hdoyu@nvidia.com, riyer@nvidia.com, swarren@wwwdotorg.org, thierry.reding@gmail.com, ldewangan@nvidia.com, andy@greyhouse.net, mark.gross@intel.com, chris@zankel.net, jcmvbkbc@gmail.com, linux-xtensa@linux-xtensa.org, rui.zhang@intel.com, vivien.didelot@savoirfairelinux.com, ibm-acpi@hmh.eng.br, ibm-acpi-devel@lists.sourceforge.net, eduardo.valentin@ti.com, linux-pm@vger.kernel.org, oakad@yahoo.com, mr.swami.reddy@ti.com
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1408467712-27497-1-git-send-email-abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Julius Werner <jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Yoshihiro Shimoda <yoshihiro.shimoda.uh-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-FROM: Husam Al Sayed.
+Mathias,
 
-EMAIL:alsayedhusa@hotmail.com
- 
-Hello,
- 
-I decided to write you this proposal in good faith, believing that you will
-not betray me. I am Mr. Husam Al Sayed, a Bank officer here in U.A.E.
- 
-One Mr. Peter Adams, a citizen of your country and Crude Oil dealer made a fixed deposit with my bank in 2005 for 108 calendar months, valued at US$30,000,000.00 (Thirty Million United State Dollars) the due date for this deposit contract was last 22nd of January 2014. Sadly Peter was among the death victims in the May 27 2006 Earthquake disaster in Java, Indonesia that killed over 5,000 people. He was in Indonesia on a business trip and that was how he met his untimely end. My bank management is yet to know about his death, I knew about it because he was my friend and I am his Account Officer. Peter did not mention any Next of Kin/ Heir when the account was opened, he was not married and no children. Last week my Bank Management requested that Peter should give instructions on what to do 
- about his funds, if to renew the contract.
- 
-I know this will happen and that is why I have been looking for a means to handle the situation, because if my Bank Directors happens to know that Peter is dead and do not have any Heir, they will take the funds for their personal use, so I don't want such to happen. That is why I am seeking your co-operation to present you as the Next of Kin/ Heir to the account, since you are a foreigner and my bank head quarters will release the account to you. There is no risk involved; the transaction will be executed under a legitimate arrangement that will protect us from any breach of law. It is better that we claim the money, than allowing the Bank Directors to take it, they are rich already. I am not a greedy person, so I am suggesting we share the funds in this ratio, 50/50%, equal sharing. Let 
- me know your mind on this and please do treat this information highly confidential. We shall go over the details once I receive your urgent response. Please Urgently get back to me through this email address as soon as possible:
- 
- 
- 
-Have a nice day and God bless. Anticipating your communication.
- 
-Regards,
-FROM: Husam Al Sayed.
-EMAIL: alsayedhusa@hotmail.com
-_____________________________________________________________________
+On Tue, Aug 19, 2014 at 10:01 AM, Andrew Bresticker
+<abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+> It was suggested in the review of the Tegra xHCI driver [1] that we
+> allow xHCI drivers to be built as individual modules (like EHCI) instead
+> of building them all into the single xhci-hcd module as they are today.
+>
+> Patches 1-3 prepare for making the xHCI PCI and platform drivers able
+> to be built as individual modules and patch 4 actually creates the 3
+> separate modules (core, platform, PCI).
+>
+> Based on 3.17-rc1.
+>
+> Changes from v2:
+>  - fixed typo in xhci_register_plat
+>  - exported another symbol needed by xhci-pci module
+> Changes from v1:
+>  - rebased on changes introduced by xhci-rcar driver
+>
+> [1] http://patchwork.ozlabs.org/patch/361265/
+>
+> Andrew Bresticker (4):
+>   xhci: Introduce xhci_init_driver()
+>   xhci: Check for XHCI_COMP_MODE_QUIRK when disabling D3cold
+>   xhci: Export symbols used by host-controller drivers
+>   xhci: Allow xHCI drivers to be built as separate modules
 
-Vsetko o autach, vsetko pre motoristov - http://www.autosme.sk
+Any thoughts/comments on this series?
+
+Thanks,
+Andrew
