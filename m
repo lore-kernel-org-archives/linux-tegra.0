@@ -1,25 +1,147 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: tegra: add touchpad to Venice2 DT
-Date: Wed, 03 Sep 2014 09:13:31 -0600
-Message-ID: <5407301B.2050305@wwwdotorg.org>
-References: <1409673430-7039-1-git-send-email-swarren@wwwdotorg.org>
+From: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH] pinctrl: tegra: Add APB misc MIPI pad control
+Date: Wed, 3 Sep 2014 11:24:31 -0400
+Message-ID: <CAOw6vbLFJVtQpXCXvV_b7uvkR5hBeZEN87dr5cANusDXyZjGaQ@mail.gmail.com>
+References: <1409678286-28139-1-git-send-email-seanpaul@chromium.org> <5406290D.6000404@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1409673430-7039-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <5406290D.6000404-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, davidriley-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/02/2014 09:57 AM, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Tue, Sep 2, 2014 at 4:31 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> On 09/02/2014 11:18 AM, Sean Paul wrote:
+>>
+>> This patch adds MIPI CSI/DSIB pad control mux register
+>> from the APB misc block to tegra pinctrl.
+>>
+>> Without writing to this register, the dsib pads are
+>> muxed as csi, and cannot be used.
+>>
+>> The register is not yet documented in the TRM, here is
+>> the description:
+>>
+>> 70000820: APB_MISC_GP_MIPI_PAD_CTRL_0
+>>         [31:02] RESERVED
+>>         [01:01] DSIB_MODE       [CSI=0,DSIB=1]
+>>         [00:00] RESERVED
 >
-> Venice2 contains an Atmel MXT touchpad. Add an I2C node for it to DT.
-> The Linux driver doesn't quite work on this platform yet, but adding
-> the DT node causes no issues, and will allow the device to work once
-> the driver is fixed.
+>
+> That's a very unfortunate HW design, but oh well:-(
+>
+> I slightly wonder whether it's legitimate to even consider that register
+> part of the pinmux controller; I certainly don't see any mention of it in
+> the pinmux spreadsheets. It feels like some unrelated bolt-on feature.
+> Still, I suppose requiring a separate driver for it just because the
+> registers aren't all nicely grouped is a bit silly. At least a quick glance
+> implies there aren't any other missing cases like this, so we shouldn't need
+> to add any more later.
+>
 
-I've applied patch 1 to Tegra's for-3.18/dt and patch to to Tegra's 
-for-3.18/defconfig branch.
+Yeah, the hw is unfortunate. It doesn't feel like this solution was Plan A :-)
+
+> I don't suppose there's any chance you could update:
+> git://github.com/NVIDIA/tegra-pinmux-scripts.git
+> with an equivalent change?
+>
+
+Sure, I can do that.
+
+>> diff --git a/drivers/pinctrl/pinctrl-tegra124.c
+>> b/drivers/pinctrl/pinctrl-tegra124.c
+>
+>
+>> +#define TEGRA_PIN_CSI_DSIB                     _PIN(8)
+>
+>
+> Is that actually the name of the pin on the Tegra package? I don't see
+> anything like that the board schematic I have.
+>
+
+Well, there's more than one pin affected by this register. They're named:
+
+DSI_B_CLK_P
+DSI_B_CLK_N
+DSI_B_D0_P
+DSI_B_D0_N
+DSI_B_D1_P
+DSI_B_D1_N
+DSI_B_D2_P
+DSI_B_D2_N
+DSI_B_D3_P
+DSI_B_D3_N
+
+I'll change this to TEGRA_PIN_DSI_B, does that work for you?
+
+
+>
+>>   #define DRV_PINGROUP_REG_A            0x868   /* bank 0 */
+>>   #define PINGROUP_REG_A                        0x3000  /* bank 1 */
+>> +#define APB_MISC_PINGROUP_REG_A                0x820   /* bank 2 */
+>
+>
+> In order for that to work, an extra reg entry will be required in DT so that
+> registers in bank 2 can be accessed. I would expect this patch (or series)
+> to contain an addition to
+> Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt to
+> mention this. I assume you'll send a patch to
+> arch/arm/boot/dts/tegra124.dtsi separately to add that entry.
+>
+
+Yep, sounds good.
+
+>
+>> +#define APB_MISC_PINGROUP(pg_name, r, b, f0, f1, f_safe)               \
+>
+>
+> f_safe isn't present in any of the upstream Tegra pinctrl drivers any more,
+> so that parameter isn't needed any more...
+>
+>
+>> +       {                                                               \
+>> +               .name = #pg_name,                                       \
+>> +               .pins = pg_name##_pins,                                 \
+>> +               .npins = ARRAY_SIZE(pg_name##_pins),                    \
+>> +               .funcs = {                                              \
+>> +                       TEGRA_MUX_ ## f0,                               \
+>> +                       TEGRA_MUX_ ## f1,                               \
+>> +               },                                                      \
+>> +               .func_safe = TEGRA_MUX_ ## f_safe,                      \
+>
+>
+> ... and I don't think that line will even compile, since that field doesn't
+> exist?
+>
+
+Oh my, sorry about that. I mustn't have had my config set up correctly
+when I built this.
+
+> All 4 entries in .funcs[] should be initialized too. If two don't make
+> sense, then they should at least be hard-coded to TEGRA_MUX_RSVD3/4. It
+> would be nice if the driver knew that this pin only had two valid mux
+> options, but I suppose updating the code to handle that special case isn't
+> really worth it.
+>
+>
+>>         DRV_PINGROUP(ao4,         0x9c8,  2,  3,  4,  12,  7,  20,  7,
+>> 28,  2,  30,  2,  Y),
+>> +
+>> +       /*                      pg_name,        r       b       f0,
+>> f1,     f_safe */
+>> +       APB_MISC_PINGROUP(      csi_dsib,       0x820,  1,      CSI,
+>> DSIB,   DSIB)
+>>   };
+>
+>
+> Can you make the indentation of the added lines consistent here. The
+> existing code uses a TAB at the start of the line (but the patch uses
+> spaces), and spaces internally (but the patch uses TABs) so columns don't
+> have to waste space being TAB aligned. The pg_name column should be nestled
+> right against the opening (, without any intervening space.
+
+I'll upload a new version shortly.
+
+Sean
