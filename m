@@ -1,83 +1,112 @@
-From: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: tegra: Add APB misc MIPI pad control
-Date: Wed, 3 Sep 2014 11:34:54 -0400
-Message-ID: <CAOw6vb+Sz9fzxb4HA0yomj0m0=+Z0z9iB10AK=OTAWcxb895ag@mail.gmail.com>
-References: <1409678286-28139-1-git-send-email-seanpaul@chromium.org>
- <5406290D.6000404@wwwdotorg.org> <CAOw6vbLFJVtQpXCXvV_b7uvkR5hBeZEN87dr5cANusDXyZjGaQ@mail.gmail.com>
- <540734EB.2060508@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH] ARM: tegra: rely on bootloader pinmux programming on Tegra124
+Date: Wed,  3 Sep 2014 09:42:06 -0600
+Message-ID: <1409758926-22966-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <540734EB.2060508-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, davidriley-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Sep 3, 2014 at 11:34 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 09/03/2014 09:24 AM, Sean Paul wrote:
->>
->> On Tue, Sep 2, 2014 at 4:31 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
->> wrote:
->>>
->>> On 09/02/2014 11:18 AM, Sean Paul wrote:
->>>>
->>>>
->>>> This patch adds MIPI CSI/DSIB pad control mux register
->>>> from the APB misc block to tegra pinctrl.
->>>>
->>>> Without writing to this register, the dsib pads are
->>>> muxed as csi, and cannot be used.
->>>>
->>>> The register is not yet documented in the TRM, here is
->>>> the description:
->>>>
->>>> 70000820: APB_MISC_GP_MIPI_PAD_CTRL_0
->>>>          [31:02] RESERVED
->>>>          [01:01] DSIB_MODE       [CSI=0,DSIB=1]
->>>>          [00:00] RESERVED
->
->
->>>> diff --git a/drivers/pinctrl/pinctrl-tegra124.c
->>>> b/drivers/pinctrl/pinctrl-tegra124.c
->>>
->>>
->>>
->>>> +#define TEGRA_PIN_CSI_DSIB                     _PIN(8)
->>>
->>>
->>>
->>> Is that actually the name of the pin on the Tegra package? I don't see
->>> anything like that the board schematic I have.
->>
->>
->> Well, there's more than one pin affected by this register. They're named:
->>
->> DSI_B_CLK_P
->> DSI_B_CLK_N
->> DSI_B_D0_P
->> DSI_B_D0_N
->> DSI_B_D1_P
->> DSI_B_D1_N
->> DSI_B_D2_P
->> DSI_B_D2_N
->> DSI_B_D3_P
->> DSI_B_D3_N
->>
->> I'll change this to TEGRA_PIN_DSI_B, does that work for you?
->
->
-> Would it be possible to add a pin entry for each individual pin, and then
-> create a DSI_B group that contains all those pins?
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Sure, sounds good to me.
+The defined mechanism for programming the Tegra pinmux is to perform all
+of the following at once in order, before using any I/O controller that
+is affected by the pinmux:
 
-Sean
+- Set the CLAMP_INPUTS_WHEN_TRISTATED PMC register bit.
+- Set up any GPIO pins to their "initial" state.
+- Program all pinmux settings in one go.
 
-> Mux selections are made
-> on pin groups rather than individual pins, so this shouldn't affect anything
-> except for a few data tables in the patch. This way, it keeps the PIN macros
-> purely as pins, rather than sometimes using them for groups of pins. As
-> background: On Tegra30+, there's a 1:1 mapping between pins and groups for
-> the regular pinmux registers, but if you look at the Tegra20 HW/driver,
-> you'll see a much smaller set of groups than pins there.
+Other methods such as:
+
+- Not setting CLAMP_INPUTS_WHEN_TRISTATED.
+- Not setting GPIOs to their "initial" state before programming the
+  pinmux settings of the related pin, in particular the mux function.
+- Not programming the entire pinmux at once, in order to avoid
+  possible conflicting settings.
+
+... are not qualified or supported by NVIDIA ASIC/syseng. They could
+cause glitches or undesired output levels on some pins, or controller
+malfunction.
+
+While we've been getting away with doing something different on many
+Tegra boards without issue, I believe we've just been getting lucky.
+I'd like to switch all Tegra124 systems to the correct scheme now so
+they provide the right example to follow, and require that any new
+boards we support upstream work in the same fashion.
+
+While it would be nice to update boards containing older SoCs for
+consistency, I don't anticipate doing so. It's too much churn to change
+at this time. At least with all Tegra124 boards converted, the most
+recent boards provide the correct example.
+
+Since the bootloader needs to reprogram the pinmux to access certain
+peripherals, it must program the entire pinmux due to the supported
+rules above. As such, there is no need to program any part of the pinmux
+from the kernel, unless dynamic pinmuxing is used. Given this, we couuld
+simply remove the pinmux "default" state from the DT entirely. However,
+some bootloaders parse the DT to perform their initial pinmux setup, so
+it's useful to keep the pinmux data in DT. To allow this while avoiding
+redundant work in the kernel, rename the "default" state to "boot". The
+kernel won't apply this, but bootloaders can still look for this state
+name and apply it. Note however that the DT provides zero information
+about the required initial GPIO setup, so bootloaders using this approach
+are not likely to operate correctly without an additional GPIO
+initialization table somewhere. Previous discussions on the DT mailing
+list have rejected adding such a table to DT...
+
+The following U-Boot commits fully initialize the pinmux:
+
+Jetson TK1: 4ff213b8e478 ARM: tegra: clamp inputs on Jetson TK1
+Venice2: 3365479ce78a ARM: tegra: Venice2 pinmux spreadsheet updates
+Both are part of U-Boot v2014.07 and later.
+
+Without those commits, the only fallout I see from this change is that
+HDMI on Venice2 no longer works. Given the very small user-base of this
+platform, I feel that requiring a bootloader update is reasonable.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts | 6 +++---
+ arch/arm/boot/dts/tegra124-venice2.dts    | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+index 3ea41534334d..64828c265414 100644
+--- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
++++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+@@ -31,10 +31,10 @@
+ 	};
+ 
+ 	pinmux: pinmux@0,70000868 {
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&state_default>;
++		pinctrl-names = "boot";
++		pinctrl-0 = <&state_boot>;
+ 
+-		state_default: pinmux {
++		state_boot: pinmux {
+ 			clk_32k_out_pa0 {
+ 				nvidia,pins = "clk_32k_out_pa0";
+ 				nvidia,function = "soc";
+diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
+index dcbe5858faf1..b95891b7c9b9 100644
+--- a/arch/arm/boot/dts/tegra124-venice2.dts
++++ b/arch/arm/boot/dts/tegra124-venice2.dts
+@@ -43,10 +43,10 @@
+ 	};
+ 
+ 	pinmux: pinmux@0,70000868 {
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&pinmux_default>;
++		pinctrl-names = "boot";
++		pinctrl-0 = <&pinmux_boot>;
+ 
+-		pinmux_default: common {
++		pinmux_boot: common {
+ 			dap_mclk1_pw4 {
+ 				nvidia,pins = "dap_mclk1_pw4";
+ 				nvidia,function = "extperiph1";
+-- 
+1.9.1
