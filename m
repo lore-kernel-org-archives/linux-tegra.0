@@ -1,112 +1,139 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: rely on bootloader pinmux programming on Tegra124
-Date: Wed,  3 Sep 2014 09:42:06 -0600
-Message-ID: <1409758926-22966-1-git-send-email-swarren@wwwdotorg.org>
+From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Subject: [REPOST PATCH v4 1/2] PM / QoS: Add PM_QOS_MEMORY_BANDWIDTH class
+Date: Wed,  3 Sep 2014 17:49:32 +0200
+Message-ID: <1409759373-22696-2-git-send-email-tomeu.vizoso@collabora.com>
+References: <1409759373-22696-1-git-send-email-tomeu.vizoso@collabora.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1409759373-22696-1-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Len Brown <len.brown-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Also adds a class type PM_QOS_SUM that aggregates the values by summing them.
 
-The defined mechanism for programming the Tegra pinmux is to perform all
-of the following at once in order, before using any I/O controller that
-is affected by the pinmux:
+It can be used by memory controllers to calculate the optimum clock frequency
+based on the bandwidth needs of the different memory clients.
 
-- Set the CLAMP_INPUTS_WHEN_TRISTATED PMC register bit.
-- Set up any GPIO pins to their "initial" state.
-- Program all pinmux settings in one go.
+Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Acked-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
 
-Other methods such as:
-
-- Not setting CLAMP_INPUTS_WHEN_TRISTATED.
-- Not setting GPIOs to their "initial" state before programming the
-  pinmux settings of the related pin, in particular the mux function.
-- Not programming the entire pinmux at once, in order to avoid
-  possible conflicting settings.
-
-... are not qualified or supported by NVIDIA ASIC/syseng. They could
-cause glitches or undesired output levels on some pins, or controller
-malfunction.
-
-While we've been getting away with doing something different on many
-Tegra boards without issue, I believe we've just been getting lucky.
-I'd like to switch all Tegra124 systems to the correct scheme now so
-they provide the right example to follow, and require that any new
-boards we support upstream work in the same fashion.
-
-While it would be nice to update boards containing older SoCs for
-consistency, I don't anticipate doing so. It's too much churn to change
-at this time. At least with all Tegra124 boards converted, the most
-recent boards provide the correct example.
-
-Since the bootloader needs to reprogram the pinmux to access certain
-peripherals, it must program the entire pinmux due to the supported
-rules above. As such, there is no need to program any part of the pinmux
-from the kernel, unless dynamic pinmuxing is used. Given this, we couuld
-simply remove the pinmux "default" state from the DT entirely. However,
-some bootloaders parse the DT to perform their initial pinmux setup, so
-it's useful to keep the pinmux data in DT. To allow this while avoiding
-redundant work in the kernel, rename the "default" state to "boot". The
-kernel won't apply this, but bootloaders can still look for this state
-name and apply it. Note however that the DT provides zero information
-about the required initial GPIO setup, so bootloaders using this approach
-are not likely to operate correctly without an additional GPIO
-initialization table somewhere. Previous discussions on the DT mailing
-list have rejected adding such a table to DT...
-
-The following U-Boot commits fully initialize the pinmux:
-
-Jetson TK1: 4ff213b8e478 ARM: tegra: clamp inputs on Jetson TK1
-Venice2: 3365479ce78a ARM: tegra: Venice2 pinmux spreadsheet updates
-Both are part of U-Boot v2014.07 and later.
-
-Without those commits, the only fallout I see from this change is that
-HDMI on Venice2 no longer works. Given the very small user-base of this
-platform, I feel that requiring a bootloader update is reasonable.
-
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra124-jetson-tk1.dts | 6 +++---
- arch/arm/boot/dts/tegra124-venice2.dts    | 6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-index 3ea41534334d..64828c265414 100644
---- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-+++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-@@ -31,10 +31,10 @@
- 	};
+v3: * Changed units to be megabits per second
+---
+ Documentation/power/pm_qos_interface.txt |  4 +++-
+ include/linux/pm_qos.h                   |  5 ++++-
+ kernel/power/qos.c                       | 27 ++++++++++++++++++++++++++-
+ 3 files changed, 33 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/power/pm_qos_interface.txt b/Documentation/power/pm_qos_interface.txt
+index a5da5c7..129f7c0 100644
+--- a/Documentation/power/pm_qos_interface.txt
++++ b/Documentation/power/pm_qos_interface.txt
+@@ -5,7 +5,8 @@ performance expectations by drivers, subsystems and user space applications on
+ one of the parameters.
  
- 	pinmux: pinmux@0,70000868 {
--		pinctrl-names = "default";
--		pinctrl-0 = <&state_default>;
-+		pinctrl-names = "boot";
-+		pinctrl-0 = <&state_boot>;
+ Two different PM QoS frameworks are available:
+-1. PM QoS classes for cpu_dma_latency, network_latency, network_throughput.
++1. PM QoS classes for cpu_dma_latency, network_latency, network_throughput,
++memory_bandwidth.
+ 2. the per-device PM QoS framework provides the API to manage the per-device latency
+ constraints and PM QoS flags.
  
--		state_default: pinmux {
-+		state_boot: pinmux {
- 			clk_32k_out_pa0 {
- 				nvidia,pins = "clk_32k_out_pa0";
- 				nvidia,function = "soc";
-diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
-index dcbe5858faf1..b95891b7c9b9 100644
---- a/arch/arm/boot/dts/tegra124-venice2.dts
-+++ b/arch/arm/boot/dts/tegra124-venice2.dts
-@@ -43,10 +43,10 @@
- 	};
+@@ -13,6 +14,7 @@ Each parameters have defined units:
+  * latency: usec
+  * timeout: usec
+  * throughput: kbs (kilo bit / sec)
++ * memory bandwidth: mbs (mega bit / sec)
  
- 	pinmux: pinmux@0,70000868 {
--		pinctrl-names = "default";
--		pinctrl-0 = <&pinmux_default>;
-+		pinctrl-names = "boot";
-+		pinctrl-0 = <&pinmux_boot>;
  
--		pinmux_default: common {
-+		pinmux_boot: common {
- 			dap_mclk1_pw4 {
- 				nvidia,pins = "dap_mclk1_pw4";
- 				nvidia,function = "extperiph1";
+ 1. PM QoS framework
+diff --git a/include/linux/pm_qos.h b/include/linux/pm_qos.h
+index 9ab4bf7..636e828 100644
+--- a/include/linux/pm_qos.h
++++ b/include/linux/pm_qos.h
+@@ -15,6 +15,7 @@ enum {
+ 	PM_QOS_CPU_DMA_LATENCY,
+ 	PM_QOS_NETWORK_LATENCY,
+ 	PM_QOS_NETWORK_THROUGHPUT,
++	PM_QOS_MEMORY_BANDWIDTH,
+ 
+ 	/* insert new class ID */
+ 	PM_QOS_NUM_CLASSES,
+@@ -32,6 +33,7 @@ enum pm_qos_flags_status {
+ #define PM_QOS_CPU_DMA_LAT_DEFAULT_VALUE	(2000 * USEC_PER_SEC)
+ #define PM_QOS_NETWORK_LAT_DEFAULT_VALUE	(2000 * USEC_PER_SEC)
+ #define PM_QOS_NETWORK_THROUGHPUT_DEFAULT_VALUE	0
++#define PM_QOS_MEMORY_BANDWIDTH_DEFAULT_VALUE	0
+ #define PM_QOS_RESUME_LATENCY_DEFAULT_VALUE	0
+ #define PM_QOS_LATENCY_TOLERANCE_DEFAULT_VALUE	0
+ #define PM_QOS_LATENCY_TOLERANCE_NO_CONSTRAINT	(-1)
+@@ -69,7 +71,8 @@ struct dev_pm_qos_request {
+ enum pm_qos_type {
+ 	PM_QOS_UNITIALIZED,
+ 	PM_QOS_MAX,		/* return the largest value */
+-	PM_QOS_MIN		/* return the smallest value */
++	PM_QOS_MIN,		/* return the smallest value */
++	PM_QOS_SUM		/* return the sum */
+ };
+ 
+ /*
+diff --git a/kernel/power/qos.c b/kernel/power/qos.c
+index 884b770..5f4c006 100644
+--- a/kernel/power/qos.c
++++ b/kernel/power/qos.c
+@@ -105,11 +105,27 @@ static struct pm_qos_object network_throughput_pm_qos = {
+ };
+ 
+ 
++static BLOCKING_NOTIFIER_HEAD(memory_bandwidth_notifier);
++static struct pm_qos_constraints memory_bw_constraints = {
++	.list = PLIST_HEAD_INIT(memory_bw_constraints.list),
++	.target_value = PM_QOS_MEMORY_BANDWIDTH_DEFAULT_VALUE,
++	.default_value = PM_QOS_MEMORY_BANDWIDTH_DEFAULT_VALUE,
++	.no_constraint_value = PM_QOS_MEMORY_BANDWIDTH_DEFAULT_VALUE,
++	.type = PM_QOS_SUM,
++	.notifiers = &memory_bandwidth_notifier,
++};
++static struct pm_qos_object memory_bandwidth_pm_qos = {
++	.constraints = &memory_bw_constraints,
++	.name = "memory_bandwidth",
++};
++
++
+ static struct pm_qos_object *pm_qos_array[] = {
+ 	&null_pm_qos,
+ 	&cpu_dma_pm_qos,
+ 	&network_lat_pm_qos,
+-	&network_throughput_pm_qos
++	&network_throughput_pm_qos,
++	&memory_bandwidth_pm_qos,
+ };
+ 
+ static ssize_t pm_qos_power_write(struct file *filp, const char __user *buf,
+@@ -130,6 +146,9 @@ static const struct file_operations pm_qos_power_fops = {
+ /* unlocked internal variant */
+ static inline int pm_qos_get_value(struct pm_qos_constraints *c)
+ {
++	struct plist_node *node;
++	int total_value = 0;
++
+ 	if (plist_head_empty(&c->list))
+ 		return c->no_constraint_value;
+ 
+@@ -140,6 +159,12 @@ static inline int pm_qos_get_value(struct pm_qos_constraints *c)
+ 	case PM_QOS_MAX:
+ 		return plist_last(&c->list)->prio;
+ 
++	case PM_QOS_SUM:
++		plist_for_each(node, &c->list)
++			total_value += node->prio;
++
++		return total_value;
++
+ 	default:
+ 		/* runtime check for not using enum */
+ 		BUG();
 -- 
-1.9.1
+1.9.3
