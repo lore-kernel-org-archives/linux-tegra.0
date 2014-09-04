@@ -1,30 +1,69 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/2] arm: dts: tegra124: Add APB_MISC_GP as a pinctrl
- bank
-Date: Thu, 04 Sep 2014 09:55:37 -0600
-Message-ID: <54088B79.7000806@wwwdotorg.org>
-References: <540734EB.2060508@wwwdotorg.org> <1409764008-5401-1-git-send-email-seanpaul@chromium.org> <1409764008-5401-2-git-send-email-seanpaul@chromium.org>
+Subject: Re: [tegra-pinmux-scripts PATCH] Add APB misc MIPI pad control
+Date: Thu, 04 Sep 2014 10:14:23 -0600
+Message-ID: <54088FDF.5060202@wwwdotorg.org>
+References: <1409845617-22025-1-git-send-email-seanpaul@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1409764008-5401-2-git-send-email-seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+In-Reply-To: <1409845617-22025-1-git-send-email-seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, davidriley-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
+To: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/03/2014 11:06 AM, Sean Paul wrote:
-> This patch adds the APB_MISC_GP_MIPI_PAD_CTRL_0 as a pinctrl
-> bank so the new apb group can be muxed between CSI and DSI_B.
+On 09/04/2014 09:46 AM, Sean Paul wrote:
+> This patch adds MIPI CSI/DSIB pad control mux register
+> from the APB misc block to tegra pinctrl.
+>
+> Without writing to this register, the dsib pads are
+> muxed as csi, and cannot be used.
+>
+> The register is not yet documented in the TRM, here is
+> the description:
+>
+> 70000820: APB_MISC_GP_MIPI_PAD_CTRL_0
+> 	[31:02] RESERVED
+> 	[01:01] DSIB_MODE       [CSI=0,DSIB=1]
+> 	[00:00] RESERVED
 
-> diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+> diff --git a/configs/jetson-tk1.board b/configs/jetson-tk1.board
 
->   	pinmux: pinmux@0,70000868 {
->   		compatible = "nvidia,tegra124-pinmux";
->   		reg = <0x0 0x70000868 0x0 0x164>, /* Pad control registers */
-> -		      <0x0 0x70003000 0x0 0x434>; /* Mux registers */
-> +		      <0x0 0x70003000 0x0 0x434>, /* Mux registers */
-> +		      <0x0 0x70000820 0x0 0x8>;   /* APB misc registers */
+> @@ -192,6 +192,16 @@ pins = (
+>       ('usb_vbus_en0_pn4',       'usb',          None,      'up',   False, True,  True,  False),
+>       ('usb_vbus_en1_pn5',       'usb',          None,      'up',   False, True,  True,  False),
+>       ('dp_hpd_pff0',            'dp',           None,      'up',   False, True,  False, False),
+> +    ('dsi_b_clk_n',	       'csi',         None,      'none', False, False, False, False),
+> +    ('dsi_b_clk_p',	       'csi',         None,      'none', False, False, False, False),
+> +    ('dsi_b_d0_n',	       'csi',         None,      'none', False, False, False, False),
+> +    ('dsi_b_d0_p',	       'csi',         None,      'none', False, False, False, False),
+> +    ('dsi_b_d1_n',	       'csi',         None,      'none', False, False, False, False),
+> +    ('dsi_b_d1_p',	       'csi',         None,      'none', False, False, False, False),
+> +    ('dsi_b_d2_n',	       'csi',         None,      'none', False, False, False, False),
+> +    ('dsi_b_d2_p',	       'csi',         None,      'none', False, False, False, False),
+> +    ('dsi_b_d3_n',	       'csi',         None,      'none', False, False, False, False),
+> +    ('dsi_b_d3_p',	       'csi',         None,      'none', False, False, False, False),
 
-Same naming comment here as for the example in the DT binding docs.
+Mux functions get selected on pin groups, not individual pins (it's just 
+that in Tegra30+, most pin groups contain just a single pin of the same 
+name). So, I would expect only a single "dsi_b" entry in the *.board files.
+
+Do all the "False" properties here cause a DT property to be emitted to 
+set those values (e.g. nvidia,tristate=<0>)? tegra124.soc's pin array 
+only has Booleans for some of the properties to avoid this. A special 
+case (or extra per-pin properties) to avoid that might be nice. I wonder 
+if we need a separate array for the mipi padctrl, like we have separate 
+arrays for pins and drive_groups?
+
+> diff --git a/configs/tegra124.soc b/configs/tegra124.soc
+
+> @@ -523,4 +533,16 @@ drive_group_pins = {
+>       'ao4': (
+>           'jtag_rtck',
+>       ),
+> +    'apb_dsi_b': (
+> +	'dsi_b_clk_p',
+> +	'dsi_b_clk_n',
+
+Indentation here looks like a mix of TABs and spaces. The rest of the 
+file just uses spaces.
