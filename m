@@ -1,249 +1,114 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3 3/4] thermal: add more description for thermal-zones
-Date: Fri, 5 Sep 2014 17:41:12 +0800
-Message-ID: <54098538.1000505@nvidia.com>
-References: <1408948188-4181-1-git-send-email-wni@nvidia.com>	<1408948188-4181-4-git-send-email-wni@nvidia.com>	<20140825110711.GA12349@developer>	<53FBEE39.2020001@nvidia.com>	<20140826121210.GB15219@developer>	<53FD484F.7030504@nvidia.com>	<20140827133217.GB15875@developer>	<53FE8AC9.2070907@nvidia.com>	<20140828132135.GA17074@developer>	<53FFED7B.6010508@nvidia.com> <CAC-25o-9OQ-wfpCJmgDGB0kqDHwUc15XX7Ay7Pes6UmpJakUkQ@mail.gmail.com> <540449BC.2050807@nvidia.com>
+From: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>
+Subject: Re: [PATCH v2 1/5] of: Add descriptions of thermtrip properties to
+ Tegra PMC bindings
+Date: Fri, 05 Sep 2014 12:50:22 +0300
+Message-ID: <5409875E.2080607@kapsi.fi>
+References: <1407933685-12404-1-git-send-email-mperttunen@nvidia.com> <1407933685-12404-2-git-send-email-mperttunen@nvidia.com> <53F50231.5010605@wwwdotorg.org> <20140821065853.GE4486@ulmo> <53F61275.9020508@wwwdotorg.org> <20140821165357.GC1172@ulmo> <53F6326F.2050600@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <540449BC.2050807-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <53F6326F.2050600-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jean Delvare <jdelvare-l3A5Bk7waGM@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi, Eduardo
+Hi again!
 
-On 09/01/2014 06:26 PM, Wei Ni wrote:
-> On 08/29/2014 07:32 PM, edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org wrote:
->> Hello Wei,
->>
->> On Thu, Aug 28, 2014 at 11:03 PM, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->>> On 08/28/2014 09:21 PM, Eduardo Valentin wrote:
->>>> Hello Wei,
->>>>
->>>> On Thu, Aug 28, 2014 at 09:50:01AM +0800, Wei Ni wrote:
->>>>> On 08/27/2014 09:32 PM, Eduardo Valentin wrote:
->>>>>> Hello Wei,
->>>>>>
->>>>>> On Wed, Aug 27, 2014 at 10:54:07AM +0800, Wei Ni wrote:
->>>>>>> On 08/26/2014 08:12 PM, Eduardo Valentin wrote:
->>>>>>>> On Tue, Aug 26, 2014 at 10:17:29AM +0800, Wei Ni wrote:
->>>>>>>>> On 08/25/2014 07:07 PM, Eduardo Valentin wrote:
->>>>>>>>>> Hello Wei Ni,
->>>>>>>>>>
->>>>>>>>>> On Mon, Aug 25, 2014 at 02:29:47PM +0800, Wei Ni wrote:
->>>>>>>>>>> Add more description for the "polling-delay" property.
->>>>>>>>>>> Set "trips" and "cooling maps" as optional property, because
->>>>>>>>>>> if missing these two sub-nodes, the thermal zone device still
->>>>>>>>>>> work properly.
->>>>>>>>>>>
->>>>>>>>>>> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>>>>>>>>> ---
->>>>>>>>>>>  Documentation/devicetree/bindings/thermal/thermal.txt | 10 ++++++----
->>>>>>>>>>>  1 file changed, 6 insertions(+), 4 deletions(-)
->>>>>>>>>>>
->>>>>>>>>>> diff --git a/Documentation/devicetree/bindings/thermal/thermal.txt b/Documentation/devicetree/bindings/thermal/thermal.txt
->>>>>>>>>>> index f5db6b7..e3d3ed9 100644
->>>>>>>>>>> --- a/Documentation/devicetree/bindings/thermal/thermal.txt
->>>>>>>>>>> +++ b/Documentation/devicetree/bindings/thermal/thermal.txt
->>>>>>>>>>> @@ -136,8 +136,8 @@ containing trip nodes and one sub-node containing all the zone cooling maps.
->>>>>>>>>>>
->>>>>>>>>>>  Required properties:
->>>>>>>>>>>  - polling-delay:      The maximum number of milliseconds to wait between polls
->>>>>>>>>>> -  Type: unsigned      when checking this thermal zone.
->>>>>>>>>>> -  Size: one cell
->>>>>>>>>>> +  Type: unsigned      when checking this thermal zone. If this value is 0, the
->>>>>>>>>>> +  Size: one cell      driver will not run polling queue, but just cancel it.
->>>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> The description above is specific to Linux kernel implementation
->>>>>>>>>> nomenclature. DT description needs to be OS agnostic.
->>>>>>>>>>
->>>>>>>>>>>  - polling-delay-passive: The maximum number of milliseconds to wait
->>>>>>>>>>>    Type: unsigned      between polls when performing passive cooling.
->>>>>>>>>>> @@ -148,14 +148,16 @@ Required properties:
->>>>>>>>>>>    phandles + sensor
->>>>>>>>>>>    specifier
->>>>>>>>>>>
->>>>>>>>>>> +Optional property:
->>>>>>>>>>>  - trips:              A sub-node which is a container of only trip point nodes
->>>>>>>>>>>    Type: sub-node      required to describe the thermal zone.
->>>>>>>>>>>
->>>>>>>>>>>  - cooling-maps:               A sub-node which is a container of only cooling device
->>>>>>>>>>>    Type: sub-node      map nodes, used to describe the relation between trips
->>>>>>>>>>> -                      and cooling devices.
->>>>>>>>>>> +                      and cooling devices. If missing the "trips" property,
->>>>>>>>>>> +                      This sub-node will not be parsed, because no trips can
->>>>>>>>>>> +                      be bound to cooling devices.
->>>>>>>>>>
->>>>>>>>>> Do you mean if the thermal zone misses the "trips" property? Actually,
->>>>>>>>>> the binding describes both, cooling-maps and trips, as required
->>>>>>>>>> properties. Thus, both needs to be in place to consider the thermal zone
->>>>>>>>>> as a proper described zone.
->>>>>>>>>
->>>>>>>>> I moved the "trips" and "cooling-maps" to optional property, because if
->>>>>>>>> missing these two properties, the thermal zone devices still can be
->>>>>>>>> registered, and the driver can work properly, it has the basic function,
->>>>>>>>> can read temperature from thermal sysfs, although it doesn't have trips
->>>>>>>>> and bind with cooling devices.
->>>>>>>>
->>>>>>>>
->>>>>>>> If a thermal zone is used only for monitoring, then I believe it lost
->>>>>>>> its purpose. As  Maybe a different framework shall be used, such as hwmon,
->>>>>>>> for instance?
->>>>>>>
->>>>>>> Yes, if we only use it for monitoring, we can use hwmon. But we have
->>>>>>> more functions base on these two thermal zone devices. We have a
->>>>>>> skin-temperature driver, which used nct1008's remote and local
->>>>>>> temperatures to estimator the skin temperature. As you know the thermal
->>>>>>> framework is more powerful, the remote/local sensors can be register as
->>>>>>> thermal zone, then the skin-temp driver can use thermal_zone_get_temp()
->>>>>>> to read their temperatures and then estimator skin's temp. We also will
->>>>>>> set trips and cooling devices for this skin-temp.
->>>>>>
->>>>>> In this case, don't you think it would make sense to create a thermal
->>>>>> zone for the skin temperature and add the required sensors (including
->>>>>> the nct1008) in it?
->>>>>
->>>>> Hi, Eduardo
->>>>> Yes, we will create a thermal zone for the skin-temp driver and add the
->>>>> required sensors in it, but in here we want to register these required
->>>>> sensors as thermal zone devices, then the thermal framework can export
->>>>> functions to read these sensors temperature. If use hwmon framework, it
->>>>> can't export nct1008's internal sensors, such as remote/local sensors,
->>>>> and no exported functions to read these temperatures. If we doesn't use
->>>>> the thermal/of-thermal framework, we have to develop a new framework to
->>>>> parse those sensor nodes, and I think this new one may only have slight
->>>>> difference with current thermal framework.
->>>>> If we set those two properties as optional property, then we can use it
->>>>> in this case simply.
->>>>>
->>>>> The skin-temp nodes will something like this:
->>>>>
->>>>> skin_temp: therm-est {
->>>>>      compatible = "nvidia,tegra124-therm-est";
->>>>>
->>>>>      #thermal-sensor-cells = <0>;
->>>>>
->>>>>      sub-devs {
->>>>>              dev@0 {
->>>>> /* we need to register nct1008_remote as thermal zone devices, so that
->>>>> it's easy to handle it by using thermal framework's exported functions. */
->>>>>                      dev = <&nct1008_remote>;
->>>>>              };
->>>>>              dev@1 {
->>>>>                      dev = <&nct1008_local>;
->>>>>              };
->>>>>      };
->>>>> };
->>>>>
->>>>> thermal-zones {
->>>>>      skin-therm {
->>>>>              polling-delay-passive = <15000>
->>>>>              polling-delay = <0>;
->>>>>
->>>>>              thermal-sensors = <&skin_temp>;
->>>>
->>>> The binding allows you to add several sensors in one thermal zone.
->>>> Please have a look on the example (c) of the thermal.txt binding
->>>> description. It might be that what you want to do is actually:
->>>>               thermal-sensors = <&ntc1008_local>,
->>>>                               <&ntc1008_remote>;
->>>
->>>
->>> Yes, we have considered it, but in current kernel, it only supports 1
->>> sensor per zone. and according to the example (c), it's supposed to only
->>> support simple algorithm, such as:
->>> /* hotspot = 100 * bandgap - 120 * adc + 484 */
->>>  coefficients =          <100    -120    484>;
->>>
->>> but in our skin-temp driver, we will recored 20 history temperatures for
->>> every sensors, and set different coefficients for every history
->>> temperatures, our HW team have private mathematical mode to calculate
->>> these coeffs for different boards. And I think other users may use
->>> different algorithm to calculate thermal zone temperature based on
->>> several sensors.
->>>
->>> So I think it's better to register sensors to thermal zones, not set
->>> trips and binding cooling devices, then user's thermal driver can use
->>> them freely.
->>>
->>
->> In your system, the used governor is userspace, then?
-> 
-> No, we developed a new governor named as "pid governor", it manages
-> thermals based on output values of PID controller.
-> 
-> Indeed, our thermal management includes skin-temp, soc-thermal,
-> cpu-throttle driver and pid governor. This pach set is prepared for the
-> skin-temp driver.
-> As you know the tegra soc-therm is in upstreaming, and we will post
-> other drivers step by step.
+I have fixed all other issues mentioned apart from this one. I can see 
+three ways ahead:
 
-Will you take this patch, if so i will post skin-temp driver later.
-Looking forward your comments :)
+1) Keep things as is. There is a slight possibility that in the future 
+we will have a hardware configuration with multiple bus addresses and 
+this will cause annoyance.
+2) Keep things otherwise as is, but read the bus address from the 
+thermtrip node. While at it, just have a reference to the the I2C bus 
+rather than the PMIC in the bindings.
+3) Create a new poweroff driver class with two operations: poweroff and 
+get_i2c_command. The AS3722 poweroff "driver" is already separated from 
+the MFD and would be relatively straightforward to port to a new driver 
+subsystem. However, other PMICs we have, such as Palmas, don't do this 
+and would require larger refactoring. TBH, this smells of 
+overengineering to me.
+4) Other ideas?
 
-Thanks.
-Wei.
+What is your opinion?
 
-> 
-> Thanks.
-> Wei.
-> 
->>
->>> Thanks.
->>> Wei.
->>>
+Cheers,
+Mikko
+
+On 08/21/2014 08:54 PM, Stephen Warren wrote:
+> On 08/21/2014 10:53 AM, Thierry Reding wrote:
+>> On Thu, Aug 21, 2014 at 09:38:29AM -0600, Stephen Warren wrote:
+>>> On 08/21/2014 12:58 AM, Thierry Reding wrote:
+>>>> On Wed, Aug 20, 2014 at 02:16:49PM -0600, Stephen Warren wrote:
+>>>>> On 08/13/2014 06:41 AM, Mikko Perttunen wrote:
+>>>>>> Hardware-triggered thermal reset requires configuring the I2C
+>>>>>> reset procedure. This configuration is read from the device tree,
+>>>>>> so document the relevant properties in the binding documentation.
+>>>>>
+>>>>>> diff --git
+>>>>>> a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+>>>>>> b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+>
+>>>>>> +- nvidia,pmu : Phandle to power management unit / PMIC handling
+>>>>>> poweroff
+>>>>>> +- nvidia,reg-addr : I2C register address to write poweroff
+>>>>>> command to
+>>>>>> +- nvidia,reg-data : Poweroff command to write to PMU
+>>>>>
+>>>>> Why are both the PMU/PMIC phandle and the register address/data
+>>>>> required? I
+>>>>> thought the purpose of having the phandle was to allow the register
+>>>>> address
+>>>>> and data to be queried from the PMU/PMIC driver.
+>>>>>
+>>>>> To me, it seems much simpler to get rid of the phandle and just
+>>>>> hard-code
+>>>>> the I2C bus number, address, and data into this node, rather than
+>>>>> having to
+>>>>> go query it from the PMU/PMIC driver, then find the I2C controller,
+>>>>> then
+>>>>> query it for its ID (and hope that all HW modules that talk to I2C
+>>>>> controllers directly use the same numbering scheme...)
 >>>>
->>>>
->>>>>
->>>>>              trips {
->>>>>              };
->>>>>              cooling-maps {
->>>>>              };
->>>>>      };
->>>>> };
->>>>>
->>>>> Wei.
->>>>>>
->>>>>>>
->>>>>>> Wei.
->>>>>>>
->>>>>>>>
->>>>>>>> The purpose of a thermal zone is to describe thermal behavior of a
->>>>>>>> hardware. As it is mentioned in the thermal.txt file.
->>>>>>>>
->>>>>>>>
->>>>>>>>>
->>>>>>>>> Thanks.
->>>>>>>>> Wei.
->>>>>>>>>
->>>>>>>>>>
->>>>>>>>>>>
->>>>>>>>>>> -Optional property:
->>>>>>>>>>>  - coefficients:               An array of integers (one signed cell) containing
->>>>>>>>>>>    Type: array         coefficients to compose a linear relation between
->>>>>>>>>>>    Elem size: one cell the sensors listed in the thermal-sensors property.
->>>>>>>>>>> --
->>>>>>>>>>> 1.8.1.5
->>>>>>>>>>>
->>>>>>>>>
->>>>>>>> --
->>>>>>>> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
->>>>>>>> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->>>>>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>>>>>>
->>>>>>>
->>>>>
+>>>> I originally requested this to be changed. It seems wrong to duplicate
+>>>> information about the PMIC in both the PMIC device tree node and the
+>>>> i2c-thermtrip node if we can get the same information from the driver
+>>>> directly (via the phandle). It certainly requires a little more code,
+>>>> but at the advantage of not having to figure out the I2C controller
+>>>> hardware number and I2C slave addresses when writing the i2c-thermtrip
+>>>> node.
 >>>
+>>> I cant see that argument, but surely the PMIC driver can also supply the
+>
+> Oops, that was meant to be can not cant.
+>
+>>> "reg-addr" and "reg-data" values too, if it's already being queried
+>>> for the
+>>> I2C device address and bus number? The binding above appears to
+>>> duplicate
+>>> part of the information, while requiring querying of the other part.
 >>
->>
->>
-> 
+>> I suppose that could be done. It would take a new function to do that,
+>> though, since I'm not aware of a generic mechanism to query this kind of
+>> information from a PMIC (there's no generic PMIC API, either, so perhaps
+>> it would be a good time to create one?). The I2C controller and I2C
+>> slave are generic I2C properties, whereas the register and data to power
+>> off the device are very device specific.
+>
+> I don't think it's possible to generically query an I2C device for its
+> address from the struct i2c_device object; the code still needs to call
+> a function in the PMIC driver to obtain this.
+>
+> That's because some I2C devices respond to multiple I2C addresses, and
+> there's no guarantee that the one I2C address in the DT (and hence the
+> struct i2c_device) is the address upon which the regulator function exists.
+>
+> grep for i2c_new_dummy in drivers/mfd and you'll find quite a few
+> examples. The Atmel MXT touchpad/screen is another example.
 > --
 > To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
 > the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
