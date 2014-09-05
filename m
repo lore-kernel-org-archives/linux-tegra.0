@@ -1,29 +1,20 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2] i2c: i2c-tegra: Move clk_prepare/clk_set_rate to probe
-Date: Fri, 05 Sep 2014 10:56:07 -0600
-Message-ID: <5409EB27.4000905@wwwdotorg.org>
-References: <1409909298-11361-1-git-send-email-cyndis@kapsi.fi>
+Subject: Re: [PATCH v3 1/2] ARM: tegra: Move pwm and dpaux labels to tegra124.dtsi
+Date: Fri, 05 Sep 2014 11:03:46 -0600
+Message-ID: <5409ECF2.8010507@wwwdotorg.org>
+References: <1409869235-8121-1-git-send-email-dgreid@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1409909298-11361-1-git-send-email-cyndis-/1wQRMveznE@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Cc: wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1409869235-8121-1-git-send-email-dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/05/2014 03:28 AM, Mikko Perttunen wrote:
-> From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> Currently the i2c-tegra bus driver prepares, enables
-> and set_rates its clocks separately for each transfer.
-> This causes locking problems when doing I2C transfers
-> from clock notifiers; see
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2014-July/268653.html
->
-> This patch moves clk_prepare/unprepare and clk_set_rate calls to
-> the probe function, leaving only clk_enable/disable to be
-> done on each transfer. This solves the locking issue.
+On 09/04/2014 04:20 PM, Dylan Reid wrote:
+> These labels will be used by other boards in addition to Venice2, move
+> them to tegra124.dtsi so they are defined in a common place.
 
-Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+I've applied the series to Tegra's for-3.18/dt branch.
