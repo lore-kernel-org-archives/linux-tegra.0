@@ -1,63 +1,91 @@
-From: Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org>
+From: Mikko Perttunen <mikko.perttunen@kapsi.fi>
 Subject: Re: [PATCH 0/8] Tegra124 EMC (external memory controller) support
-Date: Fri, 5 Sep 2014 12:22:55 +0200
-Message-ID: <CAAObsKABUa9xD+hntyv97ZQB7Bk05kN0h0-+H7Q9ks6RT0yV2Q@mail.gmail.com>
-References: <1405088313-20048-1-git-send-email-mperttunen@nvidia.com>
- <53FB7511.9090205@wwwdotorg.org> <53FC3A5D.8030708@nvidia.com>
+Date: Fri, 05 Sep 2014 13:55:45 +0300
+Message-ID: <540996B1.4010300@kapsi.fi>
+References: <1405088313-20048-1-git-send-email-mperttunen@nvidia.com> <53FB7511.9090205@wwwdotorg.org> <53FC3A5D.8030708@nvidia.com> <CAAObsKABUa9xD+hntyv97ZQB7Bk05kN0h0-+H7Q9ks6RT0yV2Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53FC3A5D.8030708-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAAObsKABUa9xD+hntyv97ZQB7Bk05kN0h0-+H7Q9ks6RT0yV2Q@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 26 August 2014 09:42, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> On 25/08/14 20:40, Stephen Warren wrote:
->>
->> On 07/11/2014 08:18 AM, Mikko Perttunen wrote:
->>>
->>> Hi everyone,
->>>
->>> this series adds support for the EMC (external memory controller) clock
->>> in the Tegra124 system-on-chip. The series has been tested on Jetson TK1.
->>>
->>> The first two patches remove the old "emc_mux" and "emc" clocks from the
->>> clock tree and the device tree bindings. This is, of course, not
->>> backwards
->>> compatible, but as these clocks have never been useful for anything
->>> (apart from maybe reading the boot rate of the EMC clock). If this is
->>> still
->>> not acceptable, the second patch can be dropped.
->>
->> ...
->>
->> Mikko, this series had some comments, especially on the DT binding
->> (patch 5/8) and how the MC/EMC drivers interact. Is there an updated
->> version of the series? Or, is the series replaced by Tomeu Vizoso's work?
->
->
-> Yes, I have a v2 with these comments addressed. One concern, though, is the
-> part writing to CLK_SOURCE_EMC. If some other driver also wants to read this
-> register (MC, likely), we might need to have an API for it in the CAR
-> driver. On the other hand, maybe not, since it's only one register. Thierry?
->
-> Another point is that v2 adds a new API to the MC driver, which also doesn't
-> exist yet. The EMC driver can technically work without the MC driver (but
-> with a header for MC added), but I'm not sure the result would be very
-> useful.
->
-> I believe the plan is that Tomeu's EMC code will be integrated into this EMC
-> driver once both are ready.
+FYI, the structure the EMC series currently takes (in my local branch) 
+is as follows:
+- clock implementation in CAR code. This just knows about allowed rates 
+and which parents should have them and handles reparenting when required.
+- memory/tegra124-emc: this contains the EMC rate change sequence and 
+exports an API which the clock driver uses.
+- memory/tegra124-mc: contains API to write registers in MC memory 
+space, used by memory/tegra124-emc.
 
-That's mostly right. My clk constraints series just allow consumers to
-influence the effective rate of a clock, such as the EMC. And the
-pm_qos series will allow to track the total memory bandwidth needs in
-the system. I'm not sure yet where in the code this tracking will be
-done. It could be done in an EMC driver in drivers/memory, but it's
-probably too unrelated to be placed in the EMC clock driver.
+(I decided that this is cleaner than having a huge EMC driver that uses 
+an API exported by CAR)
 
-Regards,
+I'm not sure if adding the bandwidth management code to the clock or 
+memory/emc driver would be best. But we can decide that later.
 
-Tomeu
+I need to clean up the series after the big refactorings; I'll submit a 
+new version once that's done.
+
+Mikko
+
+(P.S. my internship ended so I'm using this address now)
+
+On 09/05/2014 01:22 PM, Tomeu Vizoso wrote:
+> On 26 August 2014 09:42, Mikko Perttunen <mperttunen@nvidia.com> wrote:
+>> On 25/08/14 20:40, Stephen Warren wrote:
+>>>
+>>> On 07/11/2014 08:18 AM, Mikko Perttunen wrote:
+>>>>
+>>>> Hi everyone,
+>>>>
+>>>> this series adds support for the EMC (external memory controller) clock
+>>>> in the Tegra124 system-on-chip. The series has been tested on Jetson TK1.
+>>>>
+>>>> The first two patches remove the old "emc_mux" and "emc" clocks from the
+>>>> clock tree and the device tree bindings. This is, of course, not
+>>>> backwards
+>>>> compatible, but as these clocks have never been useful for anything
+>>>> (apart from maybe reading the boot rate of the EMC clock). If this is
+>>>> still
+>>>> not acceptable, the second patch can be dropped.
+>>>
+>>> ...
+>>>
+>>> Mikko, this series had some comments, especially on the DT binding
+>>> (patch 5/8) and how the MC/EMC drivers interact. Is there an updated
+>>> version of the series? Or, is the series replaced by Tomeu Vizoso's work?
+>>
+>>
+>> Yes, I have a v2 with these comments addressed. One concern, though, is the
+>> part writing to CLK_SOURCE_EMC. If some other driver also wants to read this
+>> register (MC, likely), we might need to have an API for it in the CAR
+>> driver. On the other hand, maybe not, since it's only one register. Thierry?
+>>
+>> Another point is that v2 adds a new API to the MC driver, which also doesn't
+>> exist yet. The EMC driver can technically work without the MC driver (but
+>> with a header for MC added), but I'm not sure the result would be very
+>> useful.
+>>
+>> I believe the plan is that Tomeu's EMC code will be integrated into this EMC
+>> driver once both are ready.
+>
+> That's mostly right. My clk constraints series just allow consumers to
+> influence the effective rate of a clock, such as the EMC. And the
+> pm_qos series will allow to track the total memory bandwidth needs in
+> the system. I'm not sure yet where in the code this tracking will be
+> done. It could be done in an EMC driver in drivers/memory, but it's
+> probably too unrelated to be placed in the EMC clock driver.
+>
+> Regards,
+>
+> Tomeu
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
