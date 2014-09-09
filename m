@@ -1,31 +1,33 @@
-From: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
-Subject: [PATCH 0/3] ASoC/ARM: tegra: apalis/colibri t30: sgtl5000 audio
-Date: Tue,  9 Sep 2014 17:28:44 +0200
-Message-ID: <cover.1410276224.git.marcel@ziswiler.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stefan-XLVq0VzYD2Y@public.gmane.org, Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
+From: Marcel Ziswiler <marcel@ziswiler.com>
+Subject: [PATCH 3/3] ARM: tegra: enable sgtl5000 audio
+Date: Tue,  9 Sep 2014 17:28:47 +0200
+Message-ID: <fafd714e121b4b04b3284de72b0fa02ac2f9577c.1410276224.git.marcel@ziswiler.com>
+References: <cover.1410276224.git.marcel@ziswiler.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <cover.1410276224.git.marcel@ziswiler.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: alsa-devel@alsa-project.org
+Cc: Stephen Warren <swarren@wwwdotorg.org>, linux@arm.linux.org.uk, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, stefan@agner.ch, Marcel Ziswiler <marcel@ziswiler.com>
 List-Id: linux-tegra@vger.kernel.org
 
-This series adds/integrates Freescale SGTL5000 analogue audio codec
-support.
+The NVIDIA Tegra 3 based Apalis T30 and Colibri T30 modules contain a Freescale SGTL5000 analogue audio codec.
 
-Marcel Ziswiler (3):
-  ASoC: tegra: add tegra sgtl5000 machine driver
-  ARM: tegra: apalis/colibri t30: integrate audio support
-  ARM: tegra: enable sgtl5000 audio
+Signed-off-by: Marcel Ziswiler <marcel@ziswiler.com>
+---
+ arch/arm/configs/tegra_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
- .../bindings/sound/nvidia,tegra-audio-sgtl5000.txt |  45 +++++
- arch/arm/boot/dts/tegra30-apalis.dtsi              |  49 +++++
- arch/arm/boot/dts/tegra30-colibri.dtsi             |  49 +++++
- arch/arm/configs/tegra_defconfig                   |   1 +
- sound/soc/tegra/Kconfig                            |  10 +
- sound/soc/tegra/Makefile                           |   2 +
- sound/soc/tegra/tegra_sgtl5000.c                   | 216 +++++++++++++++++++++
- 7 files changed, 372 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-sgtl5000.txt
- create mode 100644 sound/soc/tegra/tegra_sgtl5000.c
-
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index 77d6e94..02233d1 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -210,6 +210,7 @@ CONFIG_SND_SOC_TEGRA_WM8903=y
+ CONFIG_SND_SOC_TEGRA_TRIMSLICE=y
+ CONFIG_SND_SOC_TEGRA_ALC5632=y
+ CONFIG_SND_SOC_TEGRA_MAX98090=y
++CONFIG_SND_SOC_TEGRA_SGTL5000=y
+ CONFIG_USB=y
+ CONFIG_USB_XHCI_HCD=y
+ CONFIG_USB_EHCI_HCD=y
 -- 
 1.9.3
