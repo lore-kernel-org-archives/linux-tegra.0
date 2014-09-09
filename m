@@ -1,180 +1,59 @@
-From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 2/3] ARM: tegra: apalis/colibri t30: integrate audio support
-Date: Tue,  9 Sep 2014 17:28:46 +0200
-Message-ID: <6194523f927bd7b4b50e1b4a8f3a2d0282cea502.1410276224.git.marcel@ziswiler.com>
-References: <cover.1410276224.git.marcel@ziswiler.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1410276224.git.marcel@ziswiler.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: alsa-devel@alsa-project.org
-Cc: Stephen Warren <swarren@wwwdotorg.org>, linux@arm.linux.org.uk, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, stefan@agner.ch, Marcel Ziswiler <marcel@ziswiler.com>
+From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v3 0/9] Tegra xHCI support
+Date: Tue, 9 Sep 2014 10:09:50 -0700
+Message-ID: <CAL1qeaFUaqs9SDv1p+dYDYLn9hwDxdTQ=K-wo+Qa5+KGY=U47w@mail.gmail.com>
+References: <1409693701-16520-1-git-send-email-abrestic@chromium.org>
+	<CAAObsKAYqpJMJnxSMxhkkRtnoEwLwgUa1y7ij5ZHvHf1jRok+Q@mail.gmail.com>
+	<CAL1qeaF7U9aoBp5gQPS=r+pe6krKmXdP1qak2gjhNqQMoHFB8A@mail.gmail.com>
+	<CAAObsKAXO-pBtqd1jNj8faXqpE+5Wb0RFzPp+jn9FH0B=dHq8g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAAObsKAXO-pBtqd1jNj8faXqpE+5Wb0RFzPp+jn9FH0B=dHq8g-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel@lists.>
 List-Id: linux-tegra@vger.kernel.org
 
-Integrate Freescale SGTL5000 analogue audio codec support.
+On Tue, Sep 9, 2014 at 1:21 AM, Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org> wrote:
+> On 8 September 2014 18:22, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+>> On Mon, Sep 8, 2014 at 8:34 AM, Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org> wrote:
+>>> On 2 September 2014 23:34, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+>>>>
+>>>> Tested on Venice2, Jetson TK1, and Big with a variety of USB2.0 and
+>>>> USB3.0 memory sticks and ethernet dongles using controller firmware
+>>>> recently posted by Andrew Chew [2].
+>>>
+>>> I have had mixed results when testing this on a Jetson TK1 board. Of 8
+>>> USB devices I tested with, about half where probed correctly, but the
+>>> other half repeatedly fail in hub_port_init because in the GET_STATUS
+>>> right after the reset, the C_PORT_CONNECTION bit is set.
+>>>
+>>> I don't see any correlation between the failure and the kind of usb
+>>> device, but I don't have much experience with USB implementations
+>>> either.
+>>
+>> Hmm... I haven't seen that before.  Which particular devices were you using?
+>
+> Here they are:
+>
+> work:
+>
+> Genius keyboard: 05d5:6782
+> Logitech mouse: 046d:c06a
+> Denver MP3 player: 10d6:1100
+> Atheros Bluetooth dongle: 0cf3:3005
+>
+> don't work:
+>
+> MCS7830 ethernet dongle: 9710:7830
+> Genesys Logic hub: 05e3:0608
+> Alcor flash drive: 058f:6387
+> JMicron SATA bridge: 152d:2329
 
-Signed-off-by: Marcel Ziswiler <marcel@ziswiler.com>
----
- arch/arm/boot/dts/tegra30-apalis.dtsi  | 49 ++++++++++++++++++++++++++++++++++
- arch/arm/boot/dts/tegra30-colibri.dtsi | 49 ++++++++++++++++++++++++++++++++++
- 2 files changed, 98 insertions(+)
+I have the same SATA bridge and it is enumerating fine for me, but
+I've ordered the hub as well and will check that out.
 
-diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index a5446cb..9fe3e4d 100644
---- a/arch/arm/boot/dts/tegra30-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -47,6 +47,24 @@
- 		pinctrl-0 = <&state_default>;
- 
- 		state_default: pinmux {
-+			/* Apalis Analogue Audio */
-+			clk1_out_pw4 {
-+				nvidia,pins = "clk1_out_pw4";
-+				nvidia,function = "extperiph1";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			dap3_fs_pp0 {
-+				nvidia,pins =	"dap3_fs_pp0",
-+						"dap3_sclk_pp3",
-+						"dap3_din_pp1",
-+						"dap3_dout_pp2";
-+				nvidia,function = "i2s2";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+			};
-+
- 			/* Apalis BKL1_ON */
- 			pv2 {
- 				nvidia,pins = "pv2";
-@@ -404,6 +422,15 @@
- 		status = "okay";
- 		clock-frequency = <100000>;
- 
-+		/* SGTL5000 audio codec */
-+		sgtl5000: codec@0a {
-+			compatible = "fsl,sgtl5000";
-+			reg = <0x0a>;
-+			VDDA-supply = <&sys_3v3_reg>;
-+			VDDIO-supply = <&sys_3v3_reg>;
-+			clocks = <&tegra_car TEGRA30_CLK_EXTERN1>;
-+		};
-+
- 		pmic: tps65911@2d {
- 			compatible = "ti,tps65911";
- 			reg = <0x2d>;
-@@ -635,6 +662,12 @@
- 		nvidia,sys-clock-req-active-high;
- 	};
- 
-+	ahub@70080000 {
-+		i2s@70080500 {
-+			status = "okay";
-+		};
-+	};
-+
- 	sdhci@78000600 {
- 		status = "okay";
- 		bus-width = <8>;
-@@ -684,4 +717,20 @@
- 			regulator-always-on;
- 		};
- 	};
-+
-+	sound {
-+		compatible = "toradex,tegra-audio-sgtl5000-apalis_t30",
-+			     "nvidia,tegra-audio-sgtl5000";
-+		nvidia,model = "Toradex Apalis T30";
-+		nvidia,audio-routing =
-+			"Headphone Jack", "HP_OUT",
-+			"LINE_IN", "Line In Jack",
-+			"MIC_IN", "Mic Jack";
-+		nvidia,i2s-controller = <&tegra_i2s2>;
-+		nvidia,audio-codec = <&sgtl5000>;
-+		clocks = <&tegra_car TEGRA30_CLK_PLL_A>,
-+			 <&tegra_car TEGRA30_CLK_PLL_A_OUT0>,
-+			 <&tegra_car TEGRA30_CLK_EXTERN1>;
-+		clock-names = "pll_a", "pll_a_out0", "mclk";
-+	};
- };
-diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
-index c4ed1be..e8ac72e 100644
---- a/arch/arm/boot/dts/tegra30-colibri.dtsi
-+++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-@@ -29,6 +29,24 @@
- 		pinctrl-0 = <&state_default>;
- 
- 		state_default: pinmux {
-+			/* Colibri Analogue Audio */
-+			clk1_out_pw4 {
-+				nvidia,pins = "clk1_out_pw4";
-+				nvidia,function = "extperiph1";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			dap3_fs_pp0 {
-+				nvidia,pins =	"dap3_fs_pp0",
-+						"dap3_sclk_pp3",
-+						"dap3_din_pp1",
-+						"dap3_dout_pp2";
-+				nvidia,function = "i2s2";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+			};
-+
- 			/* Colibri BL_ON */
- 			pv2 {
- 				nvidia,pins = "pv2";
-@@ -182,6 +200,15 @@
- 		status = "okay";
- 		clock-frequency = <100000>;
- 
-+		/* SGTL5000 audio codec */
-+		sgtl5000: codec@0a {
-+			compatible = "fsl,sgtl5000";
-+			reg = <0x0a>;
-+			VDDA-supply = <&sys_3v3_reg>;
-+			VDDIO-supply = <&sys_3v3_reg>;
-+			clocks = <&tegra_car TEGRA30_CLK_EXTERN1>;
-+		};
-+
- 		pmic: tps65911@2d {
- 			compatible = "ti,tps65911";
- 			reg = <0x2d>;
-@@ -331,6 +358,12 @@
- 		nvidia,sys-clock-req-active-high;
- 	};
- 
-+	ahub@70080000 {
-+		i2s@70080500 {
-+			status = "okay";
-+		};
-+	};
-+
- 	emmc: sdhci@78000600 {
- 		status = "okay";
- 		bus-width = <8>;
-@@ -383,4 +416,20 @@
- 			regulator-always-on;
- 		};
- 	};
-+
-+	sound {
-+		compatible = "toradex,tegra-audio-sgtl5000-colibri_t30",
-+			     "nvidia,tegra-audio-sgtl5000";
-+		nvidia,model = "Toradex Colibri T30";
-+		nvidia,audio-routing =
-+			"Headphone Jack", "HP_OUT",
-+			"LINE_IN", "Line In Jack",
-+			"MIC_IN", "Mic Jack";
-+		nvidia,i2s-controller = <&tegra_i2s2>;
-+		nvidia,audio-codec = <&sgtl5000>;
-+		clocks = <&tegra_car TEGRA30_CLK_PLL_A>,
-+			 <&tegra_car TEGRA30_CLK_PLL_A_OUT0>,
-+			 <&tegra_car TEGRA30_CLK_EXTERN1>;
-+		clock-names = "pll_a", "pll_a_out0", "mclk";
-+	};
- };
--- 
-1.9.3
+Did you have any other patches applied when testing these?  Were you
+using either SATA or PCIe at the same time?  Just trying to figure out
+if there's anything else different between our setups.
