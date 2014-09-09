@@ -1,57 +1,54 @@
-From: Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org>
-Subject: Re: [PATCH v3 0/9] Tegra xHCI support
-Date: Tue, 9 Sep 2014 10:21:14 +0200
-Message-ID: <CAAObsKAXO-pBtqd1jNj8faXqpE+5Wb0RFzPp+jn9FH0B=dHq8g@mail.gmail.com>
-References: <1409693701-16520-1-git-send-email-abrestic@chromium.org>
- <CAAObsKAYqpJMJnxSMxhkkRtnoEwLwgUa1y7ij5ZHvHf1jRok+Q@mail.gmail.com> <CAL1qeaF7U9aoBp5gQPS=r+pe6krKmXdP1qak2gjhNqQMoHFB8A@mail.gmail.com>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: Re: [PATCH v3 0/4] Allow xHCI drivers to be built as separate modules
+Date: Tue, 09 Sep 2014 17:27:31 +0300
+Message-ID: <540F0E53.4050106@linux.intel.com>
+References: <1408467712-27497-1-git-send-email-abrestic@chromium.org> <CAL1qeaFwGYgzL=n0My4eBQMhvtNQfHpU5d1tif0twtYyjw5yqg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAL1qeaF7U9aoBp5gQPS=r+pe6krKmXdP1qak2gjhNqQMoHFB8A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel@lists.>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAL1qeaFwGYgzL=n0My4eBQMhvtNQfHpU5d1tif0twtYyjw5yqg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Bresticker <abrestic@chromium.org>, Mathias Nyman <mathias.nyman@intel.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>, Julius Werner <jwerner@chromium.org>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 8 September 2014 18:22, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
-> On Mon, Sep 8, 2014 at 8:34 AM, Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org> wrote:
->> On 2 September 2014 23:34, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
->>>
->>> Tested on Venice2, Jetson TK1, and Big with a variety of USB2.0 and
->>> USB3.0 memory sticks and ethernet dongles using controller firmware
->>> recently posted by Andrew Chew [2].
+On 09/03/2014 10:51 PM, Andrew Bresticker wrote:
+> Mathias,
+> 
+> On Tue, Aug 19, 2014 at 10:01 AM, Andrew Bresticker
+> <abrestic@chromium.org> wrote:
+>> It was suggested in the review of the Tegra xHCI driver [1] that we
+>> allow xHCI drivers to be built as individual modules (like EHCI) instead
+>> of building them all into the single xhci-hcd module as they are today.
 >>
->> I have had mixed results when testing this on a Jetson TK1 board. Of 8
->> USB devices I tested with, about half where probed correctly, but the
->> other half repeatedly fail in hub_port_init because in the GET_STATUS
->> right after the reset, the C_PORT_CONNECTION bit is set.
+>> Patches 1-3 prepare for making the xHCI PCI and platform drivers able
+>> to be built as individual modules and patch 4 actually creates the 3
+>> separate modules (core, platform, PCI).
 >>
->> I don't see any correlation between the failure and the kind of usb
->> device, but I don't have much experience with USB implementations
->> either.
->
-> Hmm... I haven't seen that before.  Which particular devices were you using?
+>> Based on 3.17-rc1.
+>>
+>> Changes from v2:
+>>  - fixed typo in xhci_register_plat
+>>  - exported another symbol needed by xhci-pci module
+>> Changes from v1:
+>>  - rebased on changes introduced by xhci-rcar driver
+>>
+>> [1] http://patchwork.ozlabs.org/patch/361265/
+>>
+>> Andrew Bresticker (4):
+>>   xhci: Introduce xhci_init_driver()
+>>   xhci: Check for XHCI_COMP_MODE_QUIRK when disabling D3cold
+>>   xhci: Export symbols used by host-controller drivers
+>>   xhci: Allow xHCI drivers to be built as separate modules
+> 
+> Any thoughts/comments on this series?
+> 
+> 
 
-Here they are:
+Sorry about the delay.
+When I start looking at this I always get interrupted by some fire that needs to be put out.
 
-work:
+I still need some more time to go through it
 
-Genius keyboard: 05d5:6782
-Logitech mouse: 046d:c06a
-Denver MP3 player: 10d6:1100
-Atheros Bluetooth dongle: 0cf3:3005
-
-don't work:
-
-MCS7830 ethernet dongle: 9710:7830
-Genesys Logic hub: 05e3:0608
-Alcor flash drive: 058f:6387
-JMicron SATA bridge: 152d:2329
-
-HTH,
-
-Tomeu
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-Mathias
