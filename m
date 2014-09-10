@@ -1,27 +1,33 @@
 From: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH v2 0/4] tegra: Some patches to improve MIPI d-phy calibration
-Date: Wed, 10 Sep 2014 10:52:01 -0400
-Message-ID: <1410360725-4286-1-git-send-email-seanpaul@chromium.org>
+Subject: [PATCH] clk/tegra: Fix mux typo, s/pll_m/clk_m/
+Date: Wed, 10 Sep 2014 11:12:05 -0400
+Message-ID: <1410361925-19739-1-git-send-email-seanpaul@chromium.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+To: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-A few patches to make mipi d-phy calibration match the procedure in the TRM,
-as well as making sure the mipi-cal clk has the correct parent.
+Fixes a typo in the mux_pllp_pllc_clkm table which had
+pll_m instead of clk_m.
 
-Sean Paul (4):
-  clk: tegra: Move mipi-cal initialization into clk-tegra1[12]4.c
-  host1x: MIPI: Preserve the contents of MIPI_CAL_CTRL
-  host1x: MIPI: Include clock lanes in MIPI calibrate
-  host1x: MIPI: Set MIPI_CAL_BIAS_PAD_CFG1 register
+Signed-off-by: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+---
+ drivers/clk/tegra/clk-tegra-periph.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/clk/tegra/clk-tegra-periph.c |   1 -
- drivers/clk/tegra/clk-tegra114.c     |   5 ++
- drivers/clk/tegra/clk-tegra124.c     |   5 ++
- drivers/gpu/host1x/mipi.c            | 119 ++++++++++++++++++++++++++---------
- 4 files changed, 101 insertions(+), 29 deletions(-)
-
+diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+index 37f32c4..d3d208d 100644
+--- a/drivers/clk/tegra/clk-tegra-periph.c
++++ b/drivers/clk/tegra/clk-tegra-periph.c
+@@ -303,7 +303,7 @@ static const char *mux_pllm_pllc_pllp_plla[] = {
+ #define mux_pllm_pllc_pllp_plla_idx mux_pllp_pllc_pllm_clkm_idx
+ 
+ static const char *mux_pllp_pllc_clkm[] = {
+-	"pll_p", "pll_c", "pll_m"
++	"pll_p", "pll_c", "clk_m"
+ };
+ static u32 mux_pllp_pllc_clkm_idx[] = {
+ 	[0] = 0, [1] = 1, [2] = 3,
 -- 
 2.0.0
