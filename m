@@ -1,169 +1,47 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCH v3 3/4] thermal: add more description for
-	thermal-zones
-Date: Wed, 10 Sep 2014 10:10:22 -0400
-Message-ID: <20140910141019.GA8747@developer>
-References: <53FD484F.7030504@nvidia.com> <20140827133217.GB15875@developer>
-	<53FE8AC9.2070907@nvidia.com> <20140828132135.GA17074@developer>
-	<53FFED7B.6010508@nvidia.com>
-	<CAC-25o-9OQ-wfpCJmgDGB0kqDHwUc15XX7Ay7Pes6UmpJakUkQ@mail.gmail.com>
-	<540449BC.2050807@nvidia.com> <54098538.1000505@nvidia.com>
-	<20140830194318.GA3025@developer> <5410084A.9020302@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <lm-sensors-bounces@lm-sensors.org>
-Content-Disposition: inline
-In-Reply-To: <5410084A.9020302@nvidia.com>
-List-Unsubscribe: <http://lists.lm-sensors.org/mailman/options/lm-sensors>,
-	<mailto:lm-sensors-request@lm-sensors.org?subject=unsubscribe>
-List-Archive: <http://lists.lm-sensors.org/pipermail/lm-sensors/>
-List-Post: <mailto:lm-sensors@lm-sensors.org>
-List-Help: <mailto:lm-sensors-request@lm-sensors.org?subject=help>
-List-Subscribe: <http://lists.lm-sensors.org/mailman/listinfo/lm-sensors>,
-	<mailto:lm-sensors-request@lm-sensors.org?subject=subscribe>
-Sender: lm-sensors-bounces@lm-sensors.org
-Errors-To: lm-sensors-bounces@lm-sensors.org
-To: Wei Ni <wni@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, LKML <linux-kernel@vger.kernel.org>, lm-sensors@lm-sensors.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+From: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: [PATCH v2 4/4] host1x: MIPI: Set MIPI_CAL_BIAS_PAD_CFG1 register
+Date: Wed, 10 Sep 2014 10:52:05 -0400
+Message-ID: <1410360725-4286-5-git-send-email-seanpaul@chromium.org>
+References: <1410360725-4286-1-git-send-email-seanpaul@chromium.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1410360725-4286-1-git-send-email-seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+During calibration, sets the "internal reference level for drive
+pull-down" to the value specified in the tegra TRM.
 
-Hello Wei,
+Signed-off-by: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+---
+Changes in v2:
+	- Added field definition for PAD_DRV_DN_REF
 
-On Wed, Sep 10, 2014 at 04:14:02PM +0800, Wei Ni wrote:
+ drivers/gpu/host1x/mipi.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-<big cut>
-
-> > 
-> > Have you tried the patch set from Javi? the power allocator schem 
-> > includes a PID controller governor. Might be worth having a common
-> > solution. I think it is easier if I merge his changes into a branch and
-> > you have try on it. His patch series have already gone through several
-> > reviews. But you are free to comment too.
-> 
-> Oh, it's great, could you show me link of the patch set, so that I can
-> try it.
-
-Sure. Version 5 was posted several weeks ago in here:
-https://lkml.org/lkml/2014/7/10/366
-
-Also, I have merged it into a branch in my personal tree here:
-https://git.kernel.org/cgit/linux/kernel/git/evalenti/linux.git/log/?h=thermal_work/thermal_core/power_allocator
-
-
-> 
-> > 
-> >>>
-> >>> Indeed, our thermal management includes skin-temp, soc-thermal,
-> >>> cpu-throttle driver and pid governor. This pach set is prepared for the
-> >>> skin-temp driver.
-> >>> As you know the tegra soc-therm is in upstreaming, and we will post
-> >>> other drivers step by step.
-> >>
-> >> Will you take this patch, if so i will post skin-temp driver later.
-> >> Looking forward your comments :)
-> >>
-> > 
-> > I am afraid moving the maps and trips properties to optional abuses the
-> > purpose of the thermal DT. The primary goal is to describe hardware, and
-> > in this specific case, the hardware proper thermal operating conditions.
-> > 
-> > DT has to be as agnostic to OS implementation as possible.
-> > 
-> > For the above reason, I do not think this patch is a good idea.
-> 
-> Yes, I understand what you are worrying about, but it seems it's
-> difficult to handle this specific case in current framework or even
-> develop a new framework. How about to still set trips and maps as
-> required properties, but just add description something like "If missing
-> it, the thermal zone only has basic function such as reading temperature"
-
-I believe the right way of compsing a skin temperature zone is already
-documented in the thermal.txt DT descriptor. You must add several
-sensors into a zone. And not add several thermal zones that are used
-only for monitoring.
-
-The DT part description needs to focus on the hardware description. If
-you see something is missing in the Linux kernel implementation, let me
-know, and we can improve it.
-
-Cheers,
-
-> 
-> Thanks.
-> Wei.
-> 
-> > 
-> > 
-> > Cheers,
-> > 
-> >> Thanks.
-> >> Wei.
-> >>
-> >>>
-> >>> Thanks.
-> >>> Wei.
-> >>>
-> >>>>
-> >>>>> Thanks.
-> >>>>> Wei.
-> >>>>>
-> >>>>>>
-> >>>>>>
-> >>>>>>>
-> >>>>>>>              trips {
-> >>>>>>>              };
-> >>>>>>>              cooling-maps {
-> >>>>>>>              };
-> >>>>>>>      };
-> >>>>>>> };
-> >>>>>>>
-> >>>>>>> Wei.
-> >>>>>>>>
-> >>>>>>>>>
-> >>>>>>>>> Wei.
-> >>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>> The purpose of a thermal zone is to describe thermal behavior of a
-> >>>>>>>>>> hardware. As it is mentioned in the thermal.txt file.
-> >>>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>>>
-> >>>>>>>>>>> Thanks.
-> >>>>>>>>>>> Wei.
-> >>>>>>>>>>>
-> >>>>>>>>>>>>
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>> -Optional property:
-> >>>>>>>>>>>>>  - coefficients:               An array of integers (one signed cell) containing
-> >>>>>>>>>>>>>    Type: array         coefficients to compose a linear relation between
-> >>>>>>>>>>>>>    Elem size: one cell the sensors listed in the thermal-sensors property.
-> >>>>>>>>>>>>> --
-> >>>>>>>>>>>>> 1.8.1.5
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>
-> >>>>>>>>>> --
-> >>>>>>>>>> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> >>>>>>>>>> the body of a message to majordomo@vger.kernel.org
-> >>>>>>>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> >>>>>>>>>>
-> >>>>>>>>>
-> >>>>>>>
-> >>>>>
-> >>>>
-> >>>>
-> >>>>
-> >>>
-> >>> --
-> >>> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> >>> the body of a message to majordomo@vger.kernel.org
-> >>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> >>>
-> >>
-> 
-
-_______________________________________________
-lm-sensors mailing list
-lm-sensors@lm-sensors.org
-http://lists.lm-sensors.org/mailman/listinfo/lm-sensors
+diff --git a/drivers/gpu/host1x/mipi.c b/drivers/gpu/host1x/mipi.c
+index e017f7f..c7d6819 100644
+--- a/drivers/gpu/host1x/mipi.c
++++ b/drivers/gpu/host1x/mipi.c
+@@ -67,6 +67,7 @@
+ #define MIPI_CAL_BIAS_PAD_E_VCLAMP_REF	(1 << 0)
+ 
+ #define MIPI_CAL_BIAS_PAD_CFG1		0x17
++#define MIPI_CAL_BIAS_PAD_DRV_DN_REF(x) (((x) & 0x7) << 16)
+ 
+ #define MIPI_CAL_BIAS_PAD_CFG2		0x18
+ #define MIPI_CAL_BIAS_PAD_PDVREG	(1 << 1)
+@@ -245,6 +246,9 @@ int tegra_mipi_calibrate(struct tegra_mipi_device *device)
+ 	value |= MIPI_CAL_BIAS_PAD_E_VCLAMP_REF;
+ 	tegra_mipi_writel(device->mipi, value, MIPI_CAL_BIAS_PAD_CFG0);
+ 
++	tegra_mipi_writel(device->mipi, MIPI_CAL_BIAS_PAD_DRV_DN_REF(2),
++			MIPI_CAL_BIAS_PAD_CFG1);
++
+ 	value = tegra_mipi_readl(device->mipi, MIPI_CAL_BIAS_PAD_CFG2);
+ 	value &= ~MIPI_CAL_BIAS_PAD_PDVREG;
+ 	tegra_mipi_writel(device->mipi, value, MIPI_CAL_BIAS_PAD_CFG2);
+-- 
+2.0.0
