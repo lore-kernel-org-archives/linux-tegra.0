@@ -1,87 +1,169 @@
-From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: Re: [PATCH v3 0/9] Tegra xHCI support
-Date: Wed, 10 Sep 2014 12:24:53 +0200
-Message-ID: <541026F5.9000609@collabora.com>
-References: <1409693701-16520-1-git-send-email-abrestic@chromium.org>	<CAAObsKAYqpJMJnxSMxhkkRtnoEwLwgUa1y7ij5ZHvHf1jRok+Q@mail.gmail.com>	<CAL1qeaF7U9aoBp5gQPS=r+pe6krKmXdP1qak2gjhNqQMoHFB8A@mail.gmail.com>	<CAAObsKAXO-pBtqd1jNj8faXqpE+5Wb0RFzPp+jn9FH0B=dHq8g@mail.gmail.com> <CAL1qeaFUaqs9SDv1p+dYDYLn9hwDxdTQ=K-wo+Qa5+KGY=U47w@mail.gmail.com>
+From: Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCH v3 3/4] thermal: add more description for
+	thermal-zones
+Date: Wed, 10 Sep 2014 10:10:22 -0400
+Message-ID: <20140910141019.GA8747@developer>
+References: <53FD484F.7030504@nvidia.com> <20140827133217.GB15875@developer>
+	<53FE8AC9.2070907@nvidia.com> <20140828132135.GA17074@developer>
+	<53FFED7B.6010508@nvidia.com>
+	<CAC-25o-9OQ-wfpCJmgDGB0kqDHwUc15XX7Ay7Pes6UmpJakUkQ@mail.gmail.com>
+	<540449BC.2050807@nvidia.com> <54098538.1000505@nvidia.com>
+	<20140830194318.GA3025@developer> <5410084A.9020302@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAL1qeaFUaqs9SDv1p+dYDYLn9hwDxdTQ=K-wo+Qa5+KGY=U47w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel@lists.>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <lm-sensors-bounces@lm-sensors.org>
+Content-Disposition: inline
+In-Reply-To: <5410084A.9020302@nvidia.com>
+List-Unsubscribe: <http://lists.lm-sensors.org/mailman/options/lm-sensors>,
+	<mailto:lm-sensors-request@lm-sensors.org?subject=unsubscribe>
+List-Archive: <http://lists.lm-sensors.org/pipermail/lm-sensors/>
+List-Post: <mailto:lm-sensors@lm-sensors.org>
+List-Help: <mailto:lm-sensors-request@lm-sensors.org?subject=help>
+List-Subscribe: <http://lists.lm-sensors.org/mailman/listinfo/lm-sensors>,
+	<mailto:lm-sensors-request@lm-sensors.org?subject=subscribe>
+Sender: lm-sensors-bounces@lm-sensors.org
+Errors-To: lm-sensors-bounces@lm-sensors.org
+To: Wei Ni <wni@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, LKML <linux-kernel@vger.kernel.org>, lm-sensors@lm-sensors.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/09/2014 07:09 PM, Andrew Bresticker wrote:
-> On Tue, Sep 9, 2014 at 1:21 AM, Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org> wrote:
->> On 8 September 2014 18:22, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
->>> On Mon, Sep 8, 2014 at 8:34 AM, Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org> wrote:
->>>> On 2 September 2014 23:34, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
->>>>>
->>>>> Tested on Venice2, Jetson TK1, and Big with a variety of USB2.0 and
->>>>> USB3.0 memory sticks and ethernet dongles using controller firmware
->>>>> recently posted by Andrew Chew [2].
->>>>
->>>> I have had mixed results when testing this on a Jetson TK1 board. Of 8
->>>> USB devices I tested with, about half where probed correctly, but the
->>>> other half repeatedly fail in hub_port_init because in the GET_STATUS
->>>> right after the reset, the C_PORT_CONNECTION bit is set.
->>>>
->>>> I don't see any correlation between the failure and the kind of usb
->>>> device, but I don't have much experience with USB implementations
->>>> either.
->>>
->>> Hmm... I haven't seen that before.  Which particular devices were you using?
->>
->> Here they are:
->>
->> work:
->>
->> Genius keyboard: 05d5:6782
->> Logitech mouse: 046d:c06a
->> Denver MP3 player: 10d6:1100
->> Atheros Bluetooth dongle: 0cf3:3005
->>
->> don't work:
->>
->> MCS7830 ethernet dongle: 9710:7830
->> Genesys Logic hub: 05e3:0608
->> Alcor flash drive: 058f:6387
->> JMicron SATA bridge: 152d:2329
+
+Hello Wei,
+
+On Wed, Sep 10, 2014 at 04:14:02PM +0800, Wei Ni wrote:
+
+<big cut>
+
+> > 
+> > Have you tried the patch set from Javi? the power allocator schem 
+> > includes a PID controller governor. Might be worth having a common
+> > solution. I think it is easier if I merge his changes into a branch and
+> > you have try on it. His patch series have already gone through several
+> > reviews. But you are free to comment too.
 > 
-> I have the same SATA bridge and it is enumerating fine for me, but
-> I've ordered the hub as well and will check that out.
+> Oh, it's great, could you show me link of the patch set, so that I can
+> try it.
+
+Sure. Version 5 was posted several weeks ago in here:
+https://lkml.org/lkml/2014/7/10/366
+
+Also, I have merged it into a branch in my personal tree here:
+https://git.kernel.org/cgit/linux/kernel/git/evalenti/linux.git/log/?h=thermal_work/thermal_core/power_allocator
+
+
 > 
-> Did you have any other patches applied when testing these?
+> > 
+> >>>
+> >>> Indeed, our thermal management includes skin-temp, soc-thermal,
+> >>> cpu-throttle driver and pid governor. This pach set is prepared for the
+> >>> skin-temp driver.
+> >>> As you know the tegra soc-therm is in upstreaming, and we will post
+> >>> other drivers step by step.
+> >>
+> >> Will you take this patch, if so i will post skin-temp driver later.
+> >> Looking forward your comments :)
+> >>
+> > 
+> > I am afraid moving the maps and trips properties to optional abuses the
+> > purpose of the thermal DT. The primary goal is to describe hardware, and
+> > in this specific case, the hardware proper thermal operating conditions.
+> > 
+> > DT has to be as agnostic to OS implementation as possible.
+> > 
+> > For the above reason, I do not think this patch is a good idea.
+> 
+> Yes, I understand what you are worrying about, but it seems it's
+> difficult to handle this specific case in current framework or even
+> develop a new framework. How about to still set trips and maps as
+> required properties, but just add description something like "If missing
+> it, the thermal zone only has basic function such as reading temperature"
 
-Here is the branch, including the .config I used:
+I believe the right way of compsing a skin temperature zone is already
+documented in the thermal.txt DT descriptor. You must add several
+sensors into a zone. And not add several thermal zones that are used
+only for monitoring.
 
-http://cgit.collabora.com/git/user/tomeu/linux.git/log/?h=3.17rc4-xhci
+The DT part description needs to focus on the hardware description. If
+you see something is missing in the Linux kernel implementation, let me
+know, and we can improve it.
 
-> Were you
-> using either SATA or PCIe at the same time?
+Cheers,
 
-Nope, haven't even tried those yet.
-
-> Just trying to figure out
-> if there's anything else different between our setups.
-
-Yeah, I'm afraid I don't have any good suggestion to make. But maybe you
-will find some error on my part in how I have applied the patches or in
-the config.
-
-Regards,
-
-Tomeu
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> Thanks.
+> Wei.
+> 
+> > 
+> > 
+> > Cheers,
+> > 
+> >> Thanks.
+> >> Wei.
+> >>
+> >>>
+> >>> Thanks.
+> >>> Wei.
+> >>>
+> >>>>
+> >>>>> Thanks.
+> >>>>> Wei.
+> >>>>>
+> >>>>>>
+> >>>>>>
+> >>>>>>>
+> >>>>>>>              trips {
+> >>>>>>>              };
+> >>>>>>>              cooling-maps {
+> >>>>>>>              };
+> >>>>>>>      };
+> >>>>>>> };
+> >>>>>>>
+> >>>>>>> Wei.
+> >>>>>>>>
+> >>>>>>>>>
+> >>>>>>>>> Wei.
+> >>>>>>>>>
+> >>>>>>>>>>
+> >>>>>>>>>> The purpose of a thermal zone is to describe thermal behavior of a
+> >>>>>>>>>> hardware. As it is mentioned in the thermal.txt file.
+> >>>>>>>>>>
+> >>>>>>>>>>
+> >>>>>>>>>>>
+> >>>>>>>>>>> Thanks.
+> >>>>>>>>>>> Wei.
+> >>>>>>>>>>>
+> >>>>>>>>>>>>
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> -Optional property:
+> >>>>>>>>>>>>>  - coefficients:               An array of integers (one signed cell) containing
+> >>>>>>>>>>>>>    Type: array         coefficients to compose a linear relation between
+> >>>>>>>>>>>>>    Elem size: one cell the sensors listed in the thermal-sensors property.
+> >>>>>>>>>>>>> --
+> >>>>>>>>>>>>> 1.8.1.5
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>
+> >>>>>>>>>> --
+> >>>>>>>>>> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> >>>>>>>>>> the body of a message to majordomo@vger.kernel.org
+> >>>>>>>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> >>>>>>>>>>
+> >>>>>>>>>
+> >>>>>>>
+> >>>>>
+> >>>>
+> >>>>
+> >>>>
+> >>>
+> >>> --
+> >>> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> >>> the body of a message to majordomo@vger.kernel.org
+> >>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> >>>
+> >>
 > 
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+_______________________________________________
+lm-sensors mailing list
+lm-sensors@lm-sensors.org
+http://lists.lm-sensors.org/mailman/listinfo/lm-sensors
