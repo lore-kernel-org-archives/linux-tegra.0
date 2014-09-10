@@ -1,241 +1,288 @@
-From: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH v2] Add MIPI pad control
-Date: Tue,  9 Sep 2014 15:59:59 -0400
-Message-ID: <1410292799-5913-1-git-send-email-seanpaul@chromium.org>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v3 3/4] thermal: add more description for thermal-zones
+Date: Wed, 10 Sep 2014 16:14:02 +0800
+Message-ID: <5410084A.9020302@nvidia.com>
+References: <53FBEE39.2020001@nvidia.com> <20140826121210.GB15219@developer> <53FD484F.7030504@nvidia.com> <20140827133217.GB15875@developer> <53FE8AC9.2070907@nvidia.com> <20140828132135.GA17074@developer> <53FFED7B.6010508@nvidia.com> <CAC-25o-9OQ-wfpCJmgDGB0kqDHwUc15XX7Ay7Pes6UmpJakUkQ@mail.gmail.com> <540449BC.2050807@nvidia.com> <54098538.1000505@nvidia.com> <20140830194318.GA3025@developer>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140830194318.GA3025@developer>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
+To: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Jean Delvare <jdelvare-l3A5Bk7waGM@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch adds MIPI CSI/DSIB pad control mux register
-from the APB misc block to tegra pinctrl.
+On 08/31/2014 03:43 AM, Eduardo Valentin wrote:
+> 
+> Hello Wei,
+> 
+> On Fri, Sep 05, 2014 at 05:41:12PM +0800, Wei Ni wrote:
+>> Hi, Eduardo
+>>
+>> On 09/01/2014 06:26 PM, Wei Ni wrote:
+>>> On 08/29/2014 07:32 PM, edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org wrote:
+>>>> Hello Wei,
+>>>>
+>>>> On Thu, Aug 28, 2014 at 11:03 PM, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>>>>> On 08/28/2014 09:21 PM, Eduardo Valentin wrote:
+>>>>>> Hello Wei,
+>>>>>>
+>>>>>> On Thu, Aug 28, 2014 at 09:50:01AM +0800, Wei Ni wrote:
+>>>>>>> On 08/27/2014 09:32 PM, Eduardo Valentin wrote:
+>>>>>>>> Hello Wei,
+>>>>>>>>
+>>>>>>>> On Wed, Aug 27, 2014 at 10:54:07AM +0800, Wei Ni wrote:
+>>>>>>>>> On 08/26/2014 08:12 PM, Eduardo Valentin wrote:
+>>>>>>>>>> On Tue, Aug 26, 2014 at 10:17:29AM +0800, Wei Ni wrote:
+>>>>>>>>>>> On 08/25/2014 07:07 PM, Eduardo Valentin wrote:
+>>>>>>>>>>>> Hello Wei Ni,
+>>>>>>>>>>>>
+>>>>>>>>>>>> On Mon, Aug 25, 2014 at 02:29:47PM +0800, Wei Ni wrote:
+>>>>>>>>>>>>> Add more description for the "polling-delay" property.
+>>>>>>>>>>>>> Set "trips" and "cooling maps" as optional property, because
+>>>>>>>>>>>>> if missing these two sub-nodes, the thermal zone device still
+>>>>>>>>>>>>> work properly.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>>>>>>>>>>> ---
+>>>>>>>>>>>>>  Documentation/devicetree/bindings/thermal/thermal.txt | 10 ++++++----
+>>>>>>>>>>>>>  1 file changed, 6 insertions(+), 4 deletions(-)
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> diff --git a/Documentation/devicetree/bindings/thermal/thermal.txt b/Documentation/devicetree/bindings/thermal/thermal.txt
+>>>>>>>>>>>>> index f5db6b7..e3d3ed9 100644
+>>>>>>>>>>>>> --- a/Documentation/devicetree/bindings/thermal/thermal.txt
+>>>>>>>>>>>>> +++ b/Documentation/devicetree/bindings/thermal/thermal.txt
+>>>>>>>>>>>>> @@ -136,8 +136,8 @@ containing trip nodes and one sub-node containing all the zone cooling maps.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>>  Required properties:
+>>>>>>>>>>>>>  - polling-delay:      The maximum number of milliseconds to wait between polls
+>>>>>>>>>>>>> -  Type: unsigned      when checking this thermal zone.
+>>>>>>>>>>>>> -  Size: one cell
+>>>>>>>>>>>>> +  Type: unsigned      when checking this thermal zone. If this value is 0, the
+>>>>>>>>>>>>> +  Size: one cell      driver will not run polling queue, but just cancel it.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>
+>>>>>>>>>>>> The description above is specific to Linux kernel implementation
+>>>>>>>>>>>> nomenclature. DT description needs to be OS agnostic.
+>>>>>>>>>>>>
+>>>>>>>>>>>>>  - polling-delay-passive: The maximum number of milliseconds to wait
+>>>>>>>>>>>>>    Type: unsigned      between polls when performing passive cooling.
+>>>>>>>>>>>>> @@ -148,14 +148,16 @@ Required properties:
+>>>>>>>>>>>>>    phandles + sensor
+>>>>>>>>>>>>>    specifier
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> +Optional property:
+>>>>>>>>>>>>>  - trips:              A sub-node which is a container of only trip point nodes
+>>>>>>>>>>>>>    Type: sub-node      required to describe the thermal zone.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>>  - cooling-maps:               A sub-node which is a container of only cooling device
+>>>>>>>>>>>>>    Type: sub-node      map nodes, used to describe the relation between trips
+>>>>>>>>>>>>> -                      and cooling devices.
+>>>>>>>>>>>>> +                      and cooling devices. If missing the "trips" property,
+>>>>>>>>>>>>> +                      This sub-node will not be parsed, because no trips can
+>>>>>>>>>>>>> +                      be bound to cooling devices.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Do you mean if the thermal zone misses the "trips" property? Actually,
+>>>>>>>>>>>> the binding describes both, cooling-maps and trips, as required
+>>>>>>>>>>>> properties. Thus, both needs to be in place to consider the thermal zone
+>>>>>>>>>>>> as a proper described zone.
+>>>>>>>>>>>
+>>>>>>>>>>> I moved the "trips" and "cooling-maps" to optional property, because if
+>>>>>>>>>>> missing these two properties, the thermal zone devices still can be
+>>>>>>>>>>> registered, and the driver can work properly, it has the basic function,
+>>>>>>>>>>> can read temperature from thermal sysfs, although it doesn't have trips
+>>>>>>>>>>> and bind with cooling devices.
+>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>> If a thermal zone is used only for monitoring, then I believe it lost
+>>>>>>>>>> its purpose. As  Maybe a different framework shall be used, such as hwmon,
+>>>>>>>>>> for instance?
+>>>>>>>>>
+>>>>>>>>> Yes, if we only use it for monitoring, we can use hwmon. But we have
+>>>>>>>>> more functions base on these two thermal zone devices. We have a
+>>>>>>>>> skin-temperature driver, which used nct1008's remote and local
+>>>>>>>>> temperatures to estimator the skin temperature. As you know the thermal
+>>>>>>>>> framework is more powerful, the remote/local sensors can be register as
+>>>>>>>>> thermal zone, then the skin-temp driver can use thermal_zone_get_temp()
+>>>>>>>>> to read their temperatures and then estimator skin's temp. We also will
+>>>>>>>>> set trips and cooling devices for this skin-temp.
+>>>>>>>>
+>>>>>>>> In this case, don't you think it would make sense to create a thermal
+>>>>>>>> zone for the skin temperature and add the required sensors (including
+>>>>>>>> the nct1008) in it?
+>>>>>>>
+>>>>>>> Hi, Eduardo
+>>>>>>> Yes, we will create a thermal zone for the skin-temp driver and add the
+>>>>>>> required sensors in it, but in here we want to register these required
+>>>>>>> sensors as thermal zone devices, then the thermal framework can export
+>>>>>>> functions to read these sensors temperature. If use hwmon framework, it
+>>>>>>> can't export nct1008's internal sensors, such as remote/local sensors,
+>>>>>>> and no exported functions to read these temperatures. If we doesn't use
+>>>>>>> the thermal/of-thermal framework, we have to develop a new framework to
+>>>>>>> parse those sensor nodes, and I think this new one may only have slight
+>>>>>>> difference with current thermal framework.
+>>>>>>> If we set those two properties as optional property, then we can use it
+>>>>>>> in this case simply.
+>>>>>>>
+>>>>>>> The skin-temp nodes will something like this:
+>>>>>>>
+>>>>>>> skin_temp: therm-est {
+>>>>>>>      compatible = "nvidia,tegra124-therm-est";
+>>>>>>>
+>>>>>>>      #thermal-sensor-cells = <0>;
+>>>>>>>
+>>>>>>>      sub-devs {
+>>>>>>>              dev@0 {
+>>>>>>> /* we need to register nct1008_remote as thermal zone devices, so that
+>>>>>>> it's easy to handle it by using thermal framework's exported functions. */
+>>>>>>>                      dev = <&nct1008_remote>;
+>>>>>>>              };
+>>>>>>>              dev@1 {
+>>>>>>>                      dev = <&nct1008_local>;
+>>>>>>>              };
+>>>>>>>      };
+>>>>>>> };
+>>>>>>>
+>>>>>>> thermal-zones {
+>>>>>>>      skin-therm {
+>>>>>>>              polling-delay-passive = <15000>
+>>>>>>>              polling-delay = <0>;
+>>>>>>>
+>>>>>>>              thermal-sensors = <&skin_temp>;
+>>>>>>
+>>>>>> The binding allows you to add several sensors in one thermal zone.
+>>>>>> Please have a look on the example (c) of the thermal.txt binding
+>>>>>> description. It might be that what you want to do is actually:
+>>>>>>               thermal-sensors = <&ntc1008_local>,
+>>>>>>                               <&ntc1008_remote>;
+>>>>>
+>>>>>
+>>>>> Yes, we have considered it, but in current kernel, it only supports 1
+>>>>> sensor per zone. and according to the example (c), it's supposed to only
+>>>>> support simple algorithm, such as:
+>>>>> /* hotspot = 100 * bandgap - 120 * adc + 484 */
+>>>>>  coefficients =          <100    -120    484>;
+>>>>>
+>>>>> but in our skin-temp driver, we will recored 20 history temperatures for
+>>>>> every sensors, and set different coefficients for every history
+>>>>> temperatures, our HW team have private mathematical mode to calculate
+>>>>> these coeffs for different boards. And I think other users may use
+>>>>> different algorithm to calculate thermal zone temperature based on
+>>>>> several sensors.
+>>>>>
+>>>>> So I think it's better to register sensors to thermal zones, not set
+>>>>> trips and binding cooling devices, then user's thermal driver can use
+>>>>> them freely.
+>>>>>
+>>>>
+>>>> In your system, the used governor is userspace, then?
+>>>
+>>> No, we developed a new governor named as "pid governor", it manages
+>>> thermals based on output values of PID controller.
+> 
+> Have you tried the patch set from Javi? the power allocator schem 
+> includes a PID controller governor. Might be worth having a common
+> solution. I think it is easier if I merge his changes into a branch and
+> you have try on it. His patch series have already gone through several
+> reviews. But you are free to comment too.
 
-Without writing to this register, the dsib pads are
-muxed as csi, and cannot be used.
+Oh, it's great, could you show me link of the patch set, so that I can
+try it.
 
-The register is not yet documented in the TRM, here is
-the description:
+> 
+>>>
+>>> Indeed, our thermal management includes skin-temp, soc-thermal,
+>>> cpu-throttle driver and pid governor. This pach set is prepared for the
+>>> skin-temp driver.
+>>> As you know the tegra soc-therm is in upstreaming, and we will post
+>>> other drivers step by step.
+>>
+>> Will you take this patch, if so i will post skin-temp driver later.
+>> Looking forward your comments :)
+>>
+> 
+> I am afraid moving the maps and trips properties to optional abuses the
+> purpose of the thermal DT. The primary goal is to describe hardware, and
+> in this specific case, the hardware proper thermal operating conditions.
+> 
+> DT has to be as agnostic to OS implementation as possible.
+> 
+> For the above reason, I do not think this patch is a good idea.
 
-70000820: APB_MISC_GP_MIPI_PAD_CTRL_0
-	[31:02] RESERVED
-	[01:01] DSIB_MODE       [CSI=0,DSIB=1]
-	[00:00] RESERVED
+Yes, I understand what you are worrying about, but it seems it's
+difficult to handle this specific case in current framework or even
+develop a new framework. How about to still set trips and maps as
+required properties, but just add description something like "If missing
+it, the thermal zone only has basic function such as reading temperature"
 
-Signed-off-by: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
----
-Changes in v2:
-	- Renamed to mipi_pad_ctrl
-	- Broke out mipi_pad_ctrl into its own soc/board array
+Thanks.
+Wei.
 
-
- board-to-kernel-dt.py     |  7 +++++++
- configs/jetson-tk1.board  |  5 +++++
- configs/norrin.board      |  5 +++++
- configs/tegra124.soc      | 30 ++++++++++++++++++++++++++++++
- configs/venice2.board     |  5 +++++
- tegra_pmx_board_parser.py | 22 ++++++++++++++++++++++
- tegra_pmx_soc_parser.py   | 19 +++++++++++++++++++
- 7 files changed, 93 insertions(+)
-
-diff --git a/board-to-kernel-dt.py b/board-to-kernel-dt.py
-index 86739db..62658bd 100755
---- a/board-to-kernel-dt.py
-+++ b/board-to-kernel-dt.py
-@@ -62,6 +62,13 @@ for pincfg in board.pincfgs_by_num():
- 
- # FIXME: Handle drive groups
- 
-+for mpccfg in board.mpccfgs_by_conf_order():
-+    print('			' + mpccfg.fullname + ' {')
-+    print('				nvidia,pins = "' + mpccfg.fullname + '";')
-+    print('				nvidia,function = "' + mpccfg.mux + '";')
-+    print('			};')
-+
-+
- print('		};')
- 
- board.warn_about_unconfigured_pins()
-diff --git a/configs/jetson-tk1.board b/configs/jetson-tk1.board
-index f69b89e..fb60017 100644
---- a/configs/jetson-tk1.board
-+++ b/configs/jetson-tk1.board
-@@ -196,3 +196,8 @@ pins = (
- 
- drive_groups = (
- )
-+
-+mipi_pad_ctrl = (
-+    #pin,                      mux
-+    ('mipi_pad_ctrl_dsi_b',    'csi'),
-+)
-diff --git a/configs/norrin.board b/configs/norrin.board
-index d96d366..341f816 100644
---- a/configs/norrin.board
-+++ b/configs/norrin.board
-@@ -196,3 +196,8 @@ pins = (
- 
- drive_groups = (
- )
-+
-+mipi_pad_ctrl = (
-+    #pin,                      mux
-+    ('mipi_pad_ctrl_dsi_b',    'csi'),
-+)
-diff --git a/configs/tegra124.soc b/configs/tegra124.soc
-index 1e13bba..bd30a6c 100644
---- a/configs/tegra124.soc
-+++ b/configs/tegra124.soc
-@@ -203,6 +203,16 @@ pins = (
-     ('owr',          0x3334, 'owr',    'rsvd2', 'rsvd3', 'rsvd4',       False, False, True),
-     ('clk_32k_in',   0x3330, 'clk',    'rsvd2', 'rsvd3', 'rsvd4',       False, False, False),
-     ('jtag_rtck',    0x32b0, 'rtck',   'rsvd2', 'rsvd3', 'rsvd4',       False, False, False),
-+    ('dsi_b_clk_p',  0x820,  'csi',    'dsi_b', 'rsvd3', 'rsvd4',       False, False, False),
-+    ('dsi_b_clk_n',  0x820,  'csi',    'dsi_b', 'rsvd3', 'rsvd4',       False, False, False),
-+    ('dsi_b_d0_p',   0x820,  'csi',    'dsi_b', 'rsvd3', 'rsvd4',       False, False, False),
-+    ('dsi_b_d0_n',   0x820,  'csi',    'dsi_b', 'rsvd3', 'rsvd4',       False, False, False),
-+    ('dsi_b_d1_p',   0x820,  'csi',    'dsi_b', 'rsvd3', 'rsvd4',       False, False, False),
-+    ('dsi_b_d1_n',   0x820,  'csi',    'dsi_b', 'rsvd3', 'rsvd4',       False, False, False),
-+    ('dsi_b_d2_p',   0x820,  'csi',    'dsi_b', 'rsvd3', 'rsvd4',       False, False, False),
-+    ('dsi_b_d2_n',   0x820,  'csi',    'dsi_b', 'rsvd3', 'rsvd4',       False, False, False),
-+    ('dsi_b_d3_p',   0x820,  'csi',    'dsi_b', 'rsvd3', 'rsvd4',       False, False, False),
-+    ('dsi_b_d3_n',   0x820,  'csi',    'dsi_b', 'rsvd3', 'rsvd4',       False, False, False),
- )
- 
- drive_groups = (
-@@ -524,3 +534,23 @@ drive_group_pins = {
-         'jtag_rtck',
-     ),
- }
-+
-+mipi_pad_ctrl_groups = (
-+    #name, r
-+    ('dsi_b', 0x820),
-+)
-+
-+mipi_pad_ctrl_pins = {
-+    'dsi_b': (
-+	    'dsi_b_clk_p',
-+	    'dsi_b_clk_n',
-+	    'dsi_b_d0_p',
-+	    'dsi_b_d0_n',
-+	    'dsi_b_d1_p',
-+	    'dsi_b_d1_n',
-+	    'dsi_b_d2_p',
-+	    'dsi_b_d2_n',
-+	    'dsi_b_d3_p',
-+	    'dsi_b_d3_n',
-+    ),
-+}
-diff --git a/configs/venice2.board b/configs/venice2.board
-index ea888e8..c391e0f 100644
---- a/configs/venice2.board
-+++ b/configs/venice2.board
-@@ -196,3 +196,8 @@ pins = (
- 
- drive_groups = (
- )
-+
-+mipi_pad_ctrl = (
-+    #pin,                      mux
-+    ('mipi_pad_ctrl_dsi_b',    'csi'),
-+)
-diff --git a/tegra_pmx_board_parser.py b/tegra_pmx_board_parser.py
-index 7b45abe..67d8b03 100644
---- a/tegra_pmx_board_parser.py
-+++ b/tegra_pmx_board_parser.py
-@@ -35,6 +35,12 @@ class PinConfig(ReprDictObj):
-             self.__setattr__(field, data[i])
-         self.gpio_pin = soc.gpio_or_pin_by_fullname(self.fullname)
- 
-+class MipiPadConfig(ReprDictObj):
-+    def __init__(self, soc, data):
-+        fields = ('fullname', 'mux')
-+        for i, field in enumerate(fields):
-+            self.__setattr__(field, data[i])
-+
- class Board(TopLevelParsedObj):
-     def __init__(self, name, data):
-         TopLevelParsedObj.__init__(self, name, (), data)
-@@ -52,6 +58,11 @@ class Board(TopLevelParsedObj):
-         # FIXME: fill this in...
-         self.drvcfg = []
- 
-+        self._mpccfgs = []
-+        for num, mpcdata in enumerate(data['mipi_pad_ctrl']):
-+            mpccfg = MipiPadConfig(self.soc, mpcdata)
-+            self._mpccfgs.append(mpccfg)
-+
-         self._generate_derived_data()
- 
-     def _generate_derived_data(self):
-@@ -60,6 +71,9 @@ class Board(TopLevelParsedObj):
-     def pincfgs_by_conf_order(self):
-         return self._pincfgs
- 
-+    def mpccfgs_by_conf_order(self):
-+        return self._mpccfgs;
-+
-     def pincfgs_by_num(self):
-         return self._pincfgs_by_num
- 
-@@ -67,6 +81,14 @@ class Board(TopLevelParsedObj):
-         unconfigured_gpio_pins = {gpio_pin.fullname for gpio_pin in self.soc.gpios_pins_by_num()}
-         for gpio_pin in self.pincfgs_by_num():
-             unconfigured_gpio_pins.remove(gpio_pin.gpio_pin.fullname)
-+
-+        for mpccfg in self.mpccfgs_by_conf_order():
-+            for mpc_group in self.soc.mpc_groups_by_conf_order():
-+                if mpccfg.fullname != mpc_group.fullname:
-+                    continue
-+                for gpio_pin in mpc_group.gpios_pins:
-+                    unconfigured_gpio_pins.remove(gpio_pin.fullname)
-+
-         for gpio_pin in unconfigured_gpio_pins:
-             print('WARNING: Unconfigured pin ' + gpio_pin, file=sys.stderr)
- 
-diff --git a/tegra_pmx_soc_parser.py b/tegra_pmx_soc_parser.py
-index 06e4b44..5f46695 100644
---- a/tegra_pmx_soc_parser.py
-+++ b/tegra_pmx_soc_parser.py
-@@ -85,6 +85,14 @@ class DriveGroup(ReprDictObj):
-         self.gpios_pins = gpios_pins
-         self.fullname = 'drive_' + self.name
- 
-+class MipiPadCtrlGroup(ReprDictObj):
-+    def __init__(self, data, gpios_pins):
-+        fields = ('name', 'reg')
-+        for i, field in enumerate(fields):
-+            self.__setattr__(field, data[i])
-+        self.gpios_pins = gpios_pins
-+        self.fullname = 'mipi_pad_ctrl_' + self.name
-+
- class Function(ReprDictObj):
-     def __init__(self, name):
-         self.name = name
-@@ -126,6 +134,14 @@ class Soc(TopLevelParsedObj):
-                 gpios_pins.append(gpios_pins_by_name[name])
-             self._drive_groups.append(DriveGroup(drive_group, gpios_pins, self.has_drvtype))
- 
-+        self._mpc_groups = []
-+        for mpc_group in data['mipi_pad_ctrl_groups']:
-+            names = data['mipi_pad_ctrl_pins'][mpc_group[0]]
-+            gpios_pins = []
-+            for name in names:
-+                gpios_pins.append(gpios_pins_by_name[name])
-+            self._mpc_groups.append(MipiPadCtrlGroup(mpc_group, gpios_pins))
-+
-         self._generate_derived_data()
- 
-     def _generate_derived_data(self):
-@@ -201,6 +217,9 @@ class Soc(TopLevelParsedObj):
-     def drive_groups_by_alpha(self):
-         return self._drive_groups_by_alpha
- 
-+    def mpc_groups_by_conf_order(self):
-+        return self._mpc_groups;
-+
-     def functions(self):
-         return self._functions
- 
--- 
-2.0.0
+> 
+> 
+> Cheers,
+> 
+>> Thanks.
+>> Wei.
+>>
+>>>
+>>> Thanks.
+>>> Wei.
+>>>
+>>>>
+>>>>> Thanks.
+>>>>> Wei.
+>>>>>
+>>>>>>
+>>>>>>
+>>>>>>>
+>>>>>>>              trips {
+>>>>>>>              };
+>>>>>>>              cooling-maps {
+>>>>>>>              };
+>>>>>>>      };
+>>>>>>> };
+>>>>>>>
+>>>>>>> Wei.
+>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> Wei.
+>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>> The purpose of a thermal zone is to describe thermal behavior of a
+>>>>>>>>>> hardware. As it is mentioned in the thermal.txt file.
+>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>> Thanks.
+>>>>>>>>>>> Wei.
+>>>>>>>>>>>
+>>>>>>>>>>>>
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> -Optional property:
+>>>>>>>>>>>>>  - coefficients:               An array of integers (one signed cell) containing
+>>>>>>>>>>>>>    Type: array         coefficients to compose a linear relation between
+>>>>>>>>>>>>>    Elem size: one cell the sensors listed in the thermal-sensors property.
+>>>>>>>>>>>>> --
+>>>>>>>>>>>>> 1.8.1.5
+>>>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>> --
+>>>>>>>>>> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+>>>>>>>>>> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>>>>>>>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>>>>>>>>
+>>>>>>>>>
+>>>>>>>
+>>>>>
+>>>>
+>>>>
+>>>>
+>>>
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+>>> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>
+>>
