@@ -1,7 +1,7 @@
-From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+From: Andrew Bresticker <abrestic@chromium.org>
 Subject: Re: [PATCH v3 0/9] Tegra xHCI support
-Date: Tue, 16 Sep 2014 15:46:02 -0700
-Message-ID: <CAL1qeaHms021HBTBCnSkcBCHnCVYC0CnSD=JbBWFo_ZN4AKpOw@mail.gmail.com>
+Date: Tue, 16 Sep 2014 15:51:53 -0700
+Message-ID: <CAL1qeaHSFjUbvFCg=CBvps1WUxff4fXYik0zMLaC0YBg0ArOvA@mail.gmail.com>
 References: <1409693701-16520-1-git-send-email-abrestic@chromium.org>
 	<CAAObsKAYqpJMJnxSMxhkkRtnoEwLwgUa1y7ij5ZHvHf1jRok+Q@mail.gmail.com>
 	<CAL1qeaF7U9aoBp5gQPS=r+pe6krKmXdP1qak2gjhNqQMoHFB8A@mail.gmail.com>
@@ -13,157 +13,143 @@ References: <1409693701-16520-1-git-send-email-abrestic@chromium.org>
 	<CAL1qeaEK=C4j+G5CA_91xJNe25d=-y47EyZAYnaMh46fNYVDAw@mail.gmail.com>
 	<54185698.7020600@wwwdotorg.org>
 	<CAL1qeaGf6JSuq=ekZY7Pp2zSAB0+0S9fZ70xWpct2MJ=pTSmug@mail.gmail.com>
+	<5418BC5C.5020108@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAL1qeaGf6JSuq=ekZY7Pp2zSAB0+0S9fZ70xWpct2MJ=pTSmug-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5418BC5C.5020108@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Tomeu Vizoso <tomeu@tomeuvizoso.net>, Thierry Reding <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Jassi Brar <jassisinghbrar@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman <mathias.nyman@intel.com>, Grant Likely <grant.likely@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Arnd Bergmann <arnd@arndb.de>, Kishon Vijay Abraham I <kishon@ti.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.in>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Sep 16, 2014 at 9:57 AM, Andrew Bresticker
-<abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
-> On Tue, Sep 16, 2014 at 8:26 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->> On 09/15/2014 01:30 PM, Andrew Bresticker wrote:
+On Tue, Sep 16, 2014 at 3:40 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+> On 09/16/2014 10:57 AM, Andrew Bresticker wrote:
+>>
+>> On Tue, Sep 16, 2014 at 8:26 AM, Stephen Warren <swarren@wwwdotorg.org>
+>> wrote:
 >>>
->>> On Mon, Sep 15, 2014 at 11:09 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
->>> wrote:
+>>> On 09/15/2014 01:30 PM, Andrew Bresticker wrote:
 >>>>
->>>> On 09/15/2014 11:06 AM, Andrew Bresticker wrote:
+>>>>
+>>>> On Mon, Sep 15, 2014 at 11:09 AM, Stephen Warren <swarren@wwwdotorg.org>
+>>>> wrote:
 >>>>>
->>>>> On Mon, Sep 15, 2014 at 12:00 AM, Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org>
->>>>> wrote:
+>>>>>
+>>>>> On 09/15/2014 11:06 AM, Andrew Bresticker wrote:
 >>>>>>
->>>>>> On 12 September 2014 18:37, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>>>>>>
+>>>>>> On Mon, Sep 15, 2014 at 12:00 AM, Tomeu Vizoso <tomeu@tomeuvizoso.net>
 >>>>>> wrote:
 >>>>>>>
->>>>>>> On Tue, Sep 9, 2014 at 1:21 AM, Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org>
+>>>>>>>
+>>>>>>> On 12 September 2014 18:37, Andrew Bresticker <abrestic@chromium.org>
 >>>>>>> wrote:
 >>>>>>>>
->>>>>>>> On 8 September 2014 18:22, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>>>>>>>>
+>>>>>>>> On Tue, Sep 9, 2014 at 1:21 AM, Tomeu Vizoso <tomeu@tomeuvizoso.net>
 >>>>>>>> wrote:
 >>>>>>>>>
->>>>>>>>> On Mon, Sep 8, 2014 at 8:34 AM, Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org>
+>>>>>>>>>
+>>>>>>>>> On 8 September 2014 18:22, Andrew Bresticker
+>>>>>>>>> <abrestic@chromium.org>
 >>>>>>>>> wrote:
 >>>>>>>>>>
->>>>>>>>>> On 2 September 2014 23:34, Andrew Bresticker
->>>>>>>>>> <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+>>>>>>>>>>
+>>>>>>>>>> On Mon, Sep 8, 2014 at 8:34 AM, Tomeu Vizoso
+>>>>>>>>>> <tomeu@tomeuvizoso.net>
+>>>>>>>>>> wrote:
 >>>>>>>>>>>
->>>>>>>>>>> Tested on Venice2, Jetson TK1, and Big with a variety of USB2.0
->>>>>>>>>>> and
->>>>>>>>>>> USB3.0 memory sticks and ethernet dongles using controller
->>>>>>>>>>> firmware
->>>>>>>>>>> recently posted by Andrew Chew [2].
->>
->> ...
+>>>>>>>>>>>
+>>>>>>>>>>> On 2 September 2014 23:34, Andrew Bresticker
+>>>>>>>>>>> <abrestic@chromium.org> wrote:
+>>>>>>>>>>>>
+>>>>>>>>>>>>
+>>>>>>>>>>>> Tested on Venice2, Jetson TK1, and Big with a variety of USB2.0
+>>>>>>>>>>>> and
+>>>>>>>>>>>> USB3.0 memory sticks and ethernet dongles using controller
+>>>>>>>>>>>> firmware
+>>>>>>>>>>>> recently posted by Andrew Chew [2].
+>>>
+>>>
+>>> ...
+>>>>>>
+>>>>>>
+>>>>>> Stephen, Thierry, have either of you had a chance to test this series?
 >>>>>
->>>>> Stephen, Thierry, have either of you had a chance to test this series?
+>>>>>
+>>>>>
+>>>>> I haven't had a chance to yet. I just went to try it out, and found
+>>>>> that it
+>>>>> depends on a whole slew of other patches that I don't have. Is there a
+>>>>> git
+>>>>> branch somewhere to save me having to track down all the dependencies?
 >>>>
 >>>>
->>>> I haven't had a chance to yet. I just went to try it out, and found that
->>>> it
->>>> depends on a whole slew of other patches that I don't have. Is there a
->>>> git
->>>> branch somewhere to save me having to track down all the dependencies?
+>>>> Yes, Tomeu has the branch he used for testing here:
+>>>> http://cgit.collabora.com/git/user/tomeu/linux.git/log/?h=3.17rc4-xhci
 >>>
 >>>
->>> Yes, Tomeu has the branch he used for testing here:
->>> http://cgit.collabora.com/git/user/tomeu/linux.git/log/?h=3.17rc4-xhci
+>>> Hmm. That git server was quite reluctant to cough up its bits, but it did
+>>> eventually.
+>>>
+>>>> You'll also need the firmware Andrew Chew posted:
+>>>> https://patchwork.ozlabs.org/patch/384013/
+>>>
+>>>
+>>> The XHCI driver can't load its firmware unless it's a module; if I make
+>>> it
+>>> built-in, it fails immediately with error -2 during "Direct firmware
+>>> loading". The driver needs to work with either immediate or deferred
+>>> firmware loading.
 >>
 >>
->> Hmm. That git server was quite reluctant to cough up its bits, but it did
->> eventually.
->>
->>> You'll also need the firmware Andrew Chew posted:
->>> https://patchwork.ozlabs.org/patch/384013/
->>
->>
->> The XHCI driver can't load its firmware unless it's a module; if I make it
->> built-in, it fails immediately with error -2 during "Direct firmware
->> loading". The driver needs to work with either immediate or deferred
->> firmware loading.
+>> If you want the driver to be built-in, you'll either need to build the
+>> firmware in as well (i.e. EXTRA_FIRMWARE) or enable
+>> FW_LOADER_USER_HELPER_FALLBACK to load with userspace/uevent (though
+>> apparently this is deprecated).
 >
-> If you want the driver to be built-in, you'll either need to build the
-> firmware in as well (i.e. EXTRA_FIRMWARE) or enable
-> FW_LOADER_USER_HELPER_FALLBACK to load with userspace/uevent (though
-> apparently this is deprecated).
 >
->> The following USB2 devices had problems:
->>
->> 0b95:7720 ASIX Electronics Corp. AX88772
->>
->>> [  489.140536] usb 1-3: new high-speed USB device number 81 using
->>> xhci-tegra
->>> [  489.260860] usb 1-3: device descriptor read/64, error -71
->>> [  489.370804] xhci-tegra 70090000.usb: Setup ERROR: setup context command
->>> for slot 1.
->>> [  489.378463] usb 1-3: hub failed to enable device, error -22
->>> [  489.500531] usb 1-3: new high-speed USB device number 82 using
->>> xhci-tegra
->>> [  489.655708] usb 1-3: can't set config #1, error -71
->>> [  489.661231] usb 1-3: USB disconnect, device number 82
->>> [  489.940531] usb 1-3: new high-speed USB device number 83 using
->>> xhci-tegra
->>> [  490.060860] usb 1-3: device descriptor read/64, error -71
->>> [  490.170805] xhci-tegra 70090000.usb: Setup ERROR: setup context command
->>> for slot 1.
->>> [  490.178462] usb 1-3: hub failed to enable device, error -22
->>
->> (repeats over and over)
->>
->> 15a4:1336 Afatech Technologies, Inc. SDHC/MicroSD/MMC/MS/M2/CF/XD Flash Card
->> Reader
->>
->> The power light comes on, and the activity light just keeps flashing fast.
->> Usually the activity light flashes a couple times and then turns off. There
->> is nothing in dmesg at all for this device.
->>
->> 05e3:0608 Genesys Logic, Inc. USB-2.0 4-Port HUB
->>
->> Not detected. There is nothing in dmesg at all for this device.
->>
->> 1bcf:0c31 Sunplus Innovation Technology Inc. SPIF30x Serial-ATA bridge
->>
->> Not detected. There is nothing in dmesg at all for this device.
+> Hmm. I didn't have to do that for the Atmel touchpad driver to work, but
+> perhaps it's just ignoring a firmware loading error, and continuing with
+> whatever is in the device's flash already.
 >
-> Thanks, I'll try to figure out what's going on here.
+> It seems odd that such a fundamental feature would require a deprecated
+> Kconfig option. Is there some replacement that does the same thing that
+> isn't deprecated? The Kconfig help for the option doesn't say anything
+> useful...
+>
+> Oh, this option doesn't actually seem to work. I see the following in dmesg:
+>
+>> [root@swarren-dt ~]# dmesg|grep -i -e xhci -e firmware
+>> [    1.461773] xhci-tegra 70090000.usb: Failed to get supply 'avddio-pex':
+>> -517
+>> [    1.468930] platform 70090000.usb: Driver xhci-tegra requests probe
+>> deferral
+>> [    2.567966] xhci-tegra 70090000.usb: Direct firmware load for
+>> nvidia/tegra124/xusb.bin failed with error -2
+>> [    2.577786] xhci-tegra 70090000.usb: Falling back to user helper
+>
+>
+> ... but:
+>
+> [root@swarren-dt ~]# lsusb
+> unable to initialize libusb: -99
+>
+> Perhaps systemd-udevd doesn't implement firmware loading; is it user-space
+> udev that's deprecated implementing user-space firmware loading, rather than
+> the kernel deprecating support for calling out to user space?
 
-Grr... this is due to the unfortunate UTMI pad controller design on Tegra.
+I believe it is userspace udev that has deprecated user firmware
+loading.  The kernel still does call out to userspace.  Alternatively,
+you could use the firmware_class loading interface described in
+Documentation/firmware_class/README, but that kind of sucks too.
 
-Here's the issue:  When UTMI pad 0 is assigned to the EHCI controller
-(as is currently the case on Jetson-TK1), the UTMI parameters from
-UTMIP_BIAS_CFG0 in the global UTMI pad register space are used
-regardless of the owner of the UTMI pads.  If pad 0 is assigned to the
-XUSB controller, then parameters in USB2_BIAS_PAD_CTL0 in the XUSB
-register space are used for all UTMI pads (again, regardless of
-ownership).
+> This sucks, because now I can't just TFTP boot kernels but somehow have to
+> get updated kernel modules onto my device every time before testing a new
+> kernel build.
 
-I wasn't able to reproduce before because I always TFTP booted and
-U-Boot programs the UTMI parameters correctly when starting the EHCI
-controllers.  I suspect you and Tomeu were booting without starting
-the EHCI controllers and thus were stuck with the POR values.
-
-The easiest way to fix this is to just assign UTMI port 0 (i.e. the
-OTG port) to the XUSB controller.  AFAIK, device mode on Tegra isn't
-supported yet in the kernel, so this shouldn't break any existing use
-cases.  If we wanted to support device mode in the future, it would
-just have to be done with the XUSB controller instead.  The
-alternative is some ugly driver that programs the correct register set
-depending on which controller UTMI port 0 is assigned to.
-
-BTW, here's a patch to assign UTMI port 0 to XUSB:
-
-diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-index a473750..dacb0d0 100644
---- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-+++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-@@ -1644,7 +1644,7 @@
-
-                padctl_default: pinmux {
-                        otg {
--                               nvidia,lanes = "otg-1", "otg-2";
-+                               nvidia,lanes = "otg-0", "otg-1", "otg-2";
-                                nvidia,function = "xusb";
-                        };
+Yeah... it does.  I get around this by building the firmware into the
+kernel image (i.e. CONFIG_EXTRA_FIRMWARE), which is also your only
+option if the root device happens to be on USB.  Unfortunately, I'm
+not aware of any other alternatives.
