@@ -1,292 +1,177 @@
-From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v3 0/9] Tegra xHCI support
-Date: Wed, 17 Sep 2014 10:46:52 -0700
-Message-ID: <CAL1qeaGxAj9oKqGepHvXucek4U1nNW2Z0kK_UhWEef6ZQVDVfg@mail.gmail.com>
-References: <1409693701-16520-1-git-send-email-abrestic@chromium.org>
-	<CAAObsKAYqpJMJnxSMxhkkRtnoEwLwgUa1y7ij5ZHvHf1jRok+Q@mail.gmail.com>
-	<CAL1qeaF7U9aoBp5gQPS=r+pe6krKmXdP1qak2gjhNqQMoHFB8A@mail.gmail.com>
-	<CAAObsKAXO-pBtqd1jNj8faXqpE+5Wb0RFzPp+jn9FH0B=dHq8g@mail.gmail.com>
-	<CAL1qeaEk_r5XAKvvJfwXN9+Wi9EjC_2MgBfoP92TK=F+Ou9QTA@mail.gmail.com>
-	<CAAObsKAwgfx1g2p7PQP+=HudvAHHpcPi47gEH6BrxEgLu6w2VQ@mail.gmail.com>
-	<CAL1qeaEC9O8-jgjGC44cFctoZPpp4dRVfQ=mhSb_2on7GgiU0w@mail.gmail.com>
-	<54172B3F.9030901@wwwdotorg.org>
-	<CAL1qeaEK=C4j+G5CA_91xJNe25d=-y47EyZAYnaMh46fNYVDAw@mail.gmail.com>
-	<54185698.7020600@wwwdotorg.org>
-	<CAL1qeaGf6JSuq=ekZY7Pp2zSAB0+0S9fZ70xWpct2MJ=pTSmug@mail.gmail.com>
-	<CAL1qeaHms021HBTBCnSkcBCHnCVYC0CnSD=JbBWFo_ZN4AKpOw@mail.gmail.com>
-	<5418C498.8030208@wwwdotorg.org>
-	<CAL1qeaHhabYHN6B5xCUf-y+ZuEWEBpURDPfmjY=KMpmUbuTg5w@mail.gmail.com>
-	<5419AB9C.3000005@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5419AB9C.3000005-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM@public.gmane.org>
+From: Andrew Bresticker <abrestic@chromium.org>
+Subject: [PATCH v4 3/9] of: Update Tegra XUSB pad controller binding for USB
+Date: Wed, 17 Sep 2014 12:59:24 -0700
+Message-ID: <1410983970-7043-4-git-send-email-abrestic@chromium.org>
+References: <1410983970-7043-1-git-send-email-abrestic@chromium.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1410983970-7043-1-git-send-email-abrestic@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org
+Cc: Andrew Bresticker <abrestic@chromium.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Jassi Brar <jassisinghbrar@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman <mathias.nyman@intel.com>, Grant Likely <grant.likely@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Arnd Bergmann <arnd@arndb.de>, Kishon Vijay Abraham I <kishon@ti.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Sep 17, 2014 at 8:41 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 09/16/2014 05:51 PM, Andrew Bresticker wrote:
->>
->> On Tue, Sep 16, 2014 at 4:15 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
->> wrote:
->>>
->>> On 09/16/2014 04:46 PM, Andrew Bresticker wrote:
->>>>
->>>>
->>>> On Tue, Sep 16, 2014 at 9:57 AM, Andrew Bresticker
->>>> <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
->>>>>
->>>>>
->>>>> On Tue, Sep 16, 2014 at 8:26 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
->>>>> wrote:
->>>>>>
->>>>>>
->>>>>> On 09/15/2014 01:30 PM, Andrew Bresticker wrote:
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>> On Mon, Sep 15, 2014 at 11:09 AM, Stephen Warren
->>>>>>> <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
->>>>>>> wrote:
->>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>> On 09/15/2014 11:06 AM, Andrew Bresticker wrote:
->>>>>>>>>
->>>>>>>>>
->>>>>>>>>
->>>>>>>>> On Mon, Sep 15, 2014 at 12:00 AM, Tomeu Vizoso
->>>>>>>>> <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org>
->>>>>>>>> wrote:
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> On 12 September 2014 18:37, Andrew Bresticker
->>>>>>>>>> <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
->>>>>>>>>> wrote:
->>>>>>>>>>>
->>>>>>>>>>>
->>>>>>>>>>>
->>>>>>>>>>> On Tue, Sep 9, 2014 at 1:21 AM, Tomeu Vizoso
->>>>>>>>>>> <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org>
->>>>>>>>>>> wrote:
->>>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>> On 8 September 2014 18:22, Andrew Bresticker
->>>>>>>>>>>> <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
->>>>>>>>>>>> wrote:
->>>>>>>>>>>>>
->>>>>>>>>>>>>
->>>>>>>>>>>>>
->>>>>>>>>>>>> On Mon, Sep 8, 2014 at 8:34 AM, Tomeu Vizoso
->>>>>>>>>>>>> <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org>
->>>>>>>>>>>>> wrote:
->>>>>>>>>>>>>>
->>>>>>>>>>>>>>
->>>>>>>>>>>>>>
->>>>>>>>>>>>>> On 2 September 2014 23:34, Andrew Bresticker
->>>>>>>>>>>>>> <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>> Tested on Venice2, Jetson TK1, and Big with a variety of
->>>>>>>>>>>>>>> USB2.0
->>>>>>>>>>>>>>> and
->>>>>>>>>>>>>>> USB3.0 memory sticks and ethernet dongles using controller
->>>>>>>>>>>>>>> firmware
->>>>>>>>>>>>>>> recently posted by Andrew Chew [2].
->>>>>>
->>>>>>
->>>>>>
->>>>>> ...
->>>>>>>>>
->>>>>>>>>
->>>>>>>>>
->>>>>>>>> Stephen, Thierry, have either of you had a chance to test this
->>>>>>>>> series?
->>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>> I haven't had a chance to yet. I just went to try it out, and found
->>>>>>>> that
->>>>>>>> it
->>>>>>>> depends on a whole slew of other patches that I don't have. Is there
->>>>>>>> a
->>>>>>>> git
->>>>>>>> branch somewhere to save me having to track down all the
->>>>>>>> dependencies?
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>> Yes, Tomeu has the branch he used for testing here:
->>>>>>>
->>>>>>> http://cgit.collabora.com/git/user/tomeu/linux.git/log/?h=3.17rc4-xhci
->>>>>>
->>>>>>
->>>>>>
->>>>>>
->>>>>> Hmm. That git server was quite reluctant to cough up its bits, but it
->>>>>> did
->>>>>> eventually.
->>>>>>
->>>>>>> You'll also need the firmware Andrew Chew posted:
->>>>>>> https://patchwork.ozlabs.org/patch/384013/
->>>>>>
->>>>>>
->>>>>>
->>>>>>
->>>>>> The XHCI driver can't load its firmware unless it's a module; if I
->>>>>> make
->>>>>> it
->>>>>> built-in, it fails immediately with error -2 during "Direct firmware
->>>>>> loading". The driver needs to work with either immediate or deferred
->>>>>> firmware loading.
->>>>>
->>>>>
->>>>>
->>>>> If you want the driver to be built-in, you'll either need to build the
->>>>> firmware in as well (i.e. EXTRA_FIRMWARE) or enable
->>>>> FW_LOADER_USER_HELPER_FALLBACK to load with userspace/uevent (though
->>>>> apparently this is deprecated).
->>>>>
->>>>>> The following USB2 devices had problems:
->>>>>>
->>>>>> 0b95:7720 ASIX Electronics Corp. AX88772
->>>>>>
->>>>>>> [  489.140536] usb 1-3: new high-speed USB device number 81 using
->>>>>>> xhci-tegra
->>>>>>> [  489.260860] usb 1-3: device descriptor read/64, error -71
->>>>>>> [  489.370804] xhci-tegra 70090000.usb: Setup ERROR: setup context
->>>>>>> command
->>>>>>> for slot 1.
->>>>>>> [  489.378463] usb 1-3: hub failed to enable device, error -22
->>>>>>> [  489.500531] usb 1-3: new high-speed USB device number 82 using
->>>>>>> xhci-tegra
->>>>>>> [  489.655708] usb 1-3: can't set config #1, error -71
->>>>>>> [  489.661231] usb 1-3: USB disconnect, device number 82
->>>>>>> [  489.940531] usb 1-3: new high-speed USB device number 83 using
->>>>>>> xhci-tegra
->>>>>>> [  490.060860] usb 1-3: device descriptor read/64, error -71
->>>>>>> [  490.170805] xhci-tegra 70090000.usb: Setup ERROR: setup context
->>>>>>> command
->>>>>>> for slot 1.
->>>>>>> [  490.178462] usb 1-3: hub failed to enable device, error -22
->>>>>>
->>>>>>
->>>>>>
->>>>>> (repeats over and over)
->>>>>>
->>>>>> 15a4:1336 Afatech Technologies, Inc. SDHC/MicroSD/MMC/MS/M2/CF/XD
->>>>>> Flash
->>>>>> Card
->>>>>> Reader
->>>>>>
->>>>>> The power light comes on, and the activity light just keeps flashing
->>>>>> fast.
->>>>>> Usually the activity light flashes a couple times and then turns off.
->>>>>> There
->>>>>> is nothing in dmesg at all for this device.
->>>>>>
->>>>>> 05e3:0608 Genesys Logic, Inc. USB-2.0 4-Port HUB
->>>>>>
->>>>>> Not detected. There is nothing in dmesg at all for this device.
->>>>>>
->>>>>> 1bcf:0c31 Sunplus Innovation Technology Inc. SPIF30x Serial-ATA bridge
->>>>>>
->>>>>> Not detected. There is nothing in dmesg at all for this device.
->>>>>
->>>>>
->>>>>
->>>>> Thanks, I'll try to figure out what's going on here.
->>>>
->>>>
->>>>
->>>> Grr... this is due to the unfortunate UTMI pad controller design on
->>>> Tegra.
->>>>
->>>> Here's the issue:  When UTMI pad 0 is assigned to the EHCI controller
->>>> (as is currently the case on Jetson-TK1), the UTMI parameters from
->>>> UTMIP_BIAS_CFG0 in the global UTMI pad register space are used
->>>> regardless of the owner of the UTMI pads.  If pad 0 is assigned to the
->>>> XUSB controller, then parameters in USB2_BIAS_PAD_CTL0 in the XUSB
->>>> register space are used for all UTMI pads (again, regardless of
->>>> ownership).
->>>>
->>>> I wasn't able to reproduce before because I always TFTP booted and
->>>> U-Boot programs the UTMI parameters correctly when starting the EHCI
->>>> controllers.  I suspect you and Tomeu were booting without starting
->>>> the EHCI controllers and thus were stuck with the POR values.
->>>
->>>
->>>
->>> I am loading the kernel over the PCIe Ethernet on Jetson TK1. However,
->>> the
->>> U-Boot boot scripts do "usb start" first, so I would assume all the USB
->>> set
->>> is already done either way, before U-Boot attempts to probe USB devices.
->>
->>
->> Interesting - just doing "usb start" made the difference for me.
->>
->>>> The easiest way to fix this is to just assign UTMI port 0 (i.e. the
->>>> OTG port) to the XUSB controller.  AFAIK, device mode on Tegra isn't
->>>> supported yet in the kernel, so this shouldn't break any existing use
->>>> cases.  If we wanted to support device mode in the future, it would
->>>> just have to be done with the XUSB controller instead.  The
->>>> alternative is some ugly driver that programs the correct register set
->>>> depending on which controller UTMI port 0 is assigned to.
->>>>
->>>> BTW, here's a patch to assign UTMI port 0 to XUSB:
->>>>
->>>> diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
->>>> b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
->>>> index a473750..dacb0d0 100644
->>>> --- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
->>>> +++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
->>>> @@ -1644,7 +1644,7 @@
->>>>
->>>>                   padctl_default: pinmux {
->>>>                           otg {
->>>> -                               nvidia,lanes = "otg-1", "otg-2";
->>>> +                               nvidia,lanes = "otg-0", "otg-1",
->>>> "otg-2";
->>>>                                   nvidia,function = "xusb";
->>>>                           };
->>>
->>>
->>>
->>> That's a bit better; I now see dmesg entries when I plug in my hub where
->>> before I got none. However, I still get some descriptor read errors etc.,
->>
->>
->> I see those sometimes with my ethernet dongle too, but it still seems
->> to work ok.
->>
->>> and the USB HDD I have behind the hub isn't fully detected.
->>
->>
->> Can you post the dmesg output?  Does it work when not behind the hub?
->> So far I haven't seen any failures with my pile of USB devices after
->> the above change.
->
->
-> Hmm. I think I must have screwed up my testing after applying that patch;
-> likely I retested a kernel without that patch.
->
-> Today, I retested 4 flash devices, 1 SD reader, 1 HDD, 1 mouse, 1 keyboard,
-> 1 Ethernet dongle, and 1 hub. All worked fine. I tested the
-> HDD/mouse/keyboard/ethernet all together behind the hub too, and with it
-> either plugged in at power on, or plugged in after boot, it all worked.
->
-> So, I think we're good:-)
+Add new bindings used for USB support by the Tegra XUSB pad controller.
+This includes additional PHY types, USB-specific pinconfig properties, etc.
 
-Great!  I'll re-spin with the above and a couple of other fixes.
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+Reviewed-by: Stephen Warren <swarren@nvidia.com>
+---
+Changes from v2:
+ - Added nvidia,otg-hs-curr-level-offset property.
+ - Dropped "-otg" from VBUS supplies.
+ - Added mbox-names property.
+ - Removed extra whitespace.
+Changes from v1:
+ - Updated to use common mailbox bindings.
+ - Made USB3 port-to-lane mappins a top-level binding rather than a pinconfig
+   binding.
+ - Add #defines for the padctl lanes.
+---
+ .../pinctrl/nvidia,tegra124-xusb-padctl.txt        | 56 ++++++++++++++++++++--
+ include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h   | 20 ++++++++
+ 2 files changed, 72 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt
+index 2f9c0bd..4a1b9475 100644
+--- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt
+@@ -21,6 +21,18 @@ Required properties:
+   - padctl
+ - #phy-cells: Should be 1. The specifier is the index of the PHY to reference.
+   See <dt-bindings/pinctrl/pinctrl-tegra-xusb.h> for the list of valid values.
++- mboxes: Must contain an entry for the XUSB mailbox channel.
++  See ../mailbox/mailbox.txt for details.
++- mbox-names: Must include the following entries:
++  - xusb
++
++Optional properties:
++-------------------
++- vbus-{0,1,2}-supply: VBUS regulator for the corresponding UTMI pad.
++- vddio-hsic-supply: VDDIO regulator for the HSIC pads.
++- nvidia,usb3-port-{0,1}-lane: PCIe/SATA lane to which the corresponding USB3
++  port is mapped.  See <dt-bindings/pinctrl/pinctrl-tegra-xusb.h> for the list
++  of valid values.
+ 
+ Lane muxing:
+ ------------
+@@ -50,6 +62,17 @@ Optional properties:
+   pin or group should be assigned to. Valid values for function names are
+   listed below.
+ - nvidia,iddq: Enables IDDQ mode of the lane. (0: no, 1: yes)
++- nvidia,usb2-port-num: USB2 port (0, 1, or 2) to which the lane is mapped.
++- nvidia,hsic-strobe-trim: HSIC strobe trimmer value.
++- nvidia,hsic-rx-strobe-trim: HSIC RX strobe trimmer value.
++- nvidia,hsic-rx-data-trim: HSIC RX data trimmer value.
++- nvidia,hsic-tx-rtune-n: HSIC TX RTUNEN value.
++- nvidia,hsic-tx-rtune-p: HSIC TX RTUNEP value.
++- nvidia,hsic-tx-slew-n: HSIC TX SLEWN value.
++- nvidia,hsic-tx-slew-p: HSIC TX SLEWP value.
++- nvidia,hsic-auto-term: Enables HSIC AUTO_TERM. (0: no, 1: yes)
++- nvidia,otg-hs-curr-level-offset: Offset to be applied to the pad's fused
++  HS_CURR_LEVEL value.
+ 
+ Note that not all of these properties are valid for all lanes. Lanes can be
+ divided into three groups:
+@@ -58,18 +81,21 @@ divided into three groups:
+ 
+     Valid functions for this group are: "snps", "xusb", "uart", "rsvd".
+ 
+-    The nvidia,iddq property does not apply to this group.
++    The nvidia,otg-hs-curr-level-offset property only applies.
+ 
+   - ulpi-0, hsic-0, hsic-1:
+ 
+     Valid functions for this group are: "snps", "xusb".
+ 
+-    The nvidia,iddq property does not apply to this group.
++    The nvidia,hsic-* properties apply only to the pins hsic-{0,1} when
++    the function is xusb.
+ 
+   - pcie-0, pcie-1, pcie-2, pcie-3, pcie-4, sata-0:
+ 
+     Valid functions for this group are: "pcie", "usb3", "sata", "rsvd".
+ 
++    The nvidia,usb2-port-num property only applies and is required when
++    the function is usb3.
+ 
+ Example:
+ ========
+@@ -82,6 +108,8 @@ SoC file extract:
+ 		reg = <0x0 0x7009f000 0x0 0x1000>;
+ 		resets = <&tegra_car 142>;
+ 		reset-names = "padctl";
++		mboxes = <&xusb_mbox>;
++		mbox-names = "xusb";
+ 
+ 		#phy-cells = <1>;
+ 	};
+@@ -100,15 +128,35 @@ Board file extract:
+ 
+ 	...
+ 
++	usb@0,70090000 {
++		...
++
++		phys = <&padctl 5>, <&padctl 6>, <&padctl 7>;
++		phy-names = "utmi-1", "utmi-2", "usb3-0";
++
++		...
++	}
++
++	...
++
+ 	padctl: padctl@0,7009f000 {
+ 		pinctrl-0 = <&padctl_default>;
+ 		pinctrl-names = "default";
+ 
++		nvidia,usb3-port-0-lane = <TEGRA_XUSB_PADCTL_PIN_PCIE_0>;
++		vbus-2-supply = <&vdd_usb3_vbus>;
++
+ 		padctl_default: pinmux {
+-			usb3 {
+-				nvidia,lanes = "pcie-0", "pcie-1";
++			otg {
++				nvidia,lanes = "otg-1", "otg-2";
++				nvidia,function = "xusb";
++			};
++
++			usb3p0 {
++				nvidia,lanes = "pcie-0";
+ 				nvidia,function = "usb3";
+ 				nvidia,iddq = <0>;
++				nvidia,usb2-port-num = <2>;
+ 			};
+ 
+ 			pcie {
+diff --git a/include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h b/include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h
+index 914d56d..17b1aab 100644
+--- a/include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h
++++ b/include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h
+@@ -3,5 +3,25 @@
+ 
+ #define TEGRA_XUSB_PADCTL_PCIE 0
+ #define TEGRA_XUSB_PADCTL_SATA 1
++#define TEGRA_XUSB_PADCTL_USB3_P0 2
++#define TEGRA_XUSB_PADCTL_USB3_P1 3
++#define TEGRA_XUSB_PADCTL_UTMI_P0 4
++#define TEGRA_XUSB_PADCTL_UTMI_P1 5
++#define TEGRA_XUSB_PADCTL_UTMI_P2 6
++#define TEGRA_XUSB_PADCTL_HSIC_P0 7
++#define TEGRA_XUSB_PADCTL_HSIC_P1 8
++
++#define TEGRA_XUSB_PADCTL_PIN_OTG_0   0
++#define TEGRA_XUSB_PADCTL_PIN_OTG_1   1
++#define TEGRA_XUSB_PADCTL_PIN_OTG_2   2
++#define TEGRA_XUSB_PADCTL_PIN_ULPI_0  3
++#define TEGRA_XUSB_PADCTL_PIN_HSIC_0  4
++#define TEGRA_XUSB_PADCTL_PIN_HSIC_1  5
++#define TEGRA_XUSB_PADCTL_PIN_PCIE_0  6
++#define TEGRA_XUSB_PADCTL_PIN_PCIE_1  7
++#define TEGRA_XUSB_PADCTL_PIN_PCIE_2  8
++#define TEGRA_XUSB_PADCTL_PIN_PCIE_3  9
++#define TEGRA_XUSB_PADCTL_PIN_PCIE_4 10
++#define TEGRA_XUSB_PADCTL_PIN_SATA_0 11
+ 
+ #endif /* _DT_BINDINGS_PINCTRL_TEGRA_XUSB_H */
+-- 
+2.1.0.rc2.206.gedb03e5
