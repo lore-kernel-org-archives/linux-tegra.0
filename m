@@ -1,51 +1,45 @@
-From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v3.17-rc3
-Date: Wed, 17 Sep 2014 01:32:20 +0000 (UTC)
-Message-ID: <alpine.DEB.2.02.1409170128010.5860@utopia.booyaka.com>
-Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Subject: [PATCH] clk: tegra: Make clock initialization more robust
+Date: Wed, 17 Sep 2014 11:34:17 +0200
+Message-ID: <1410946457-24669-1-git-send-email-tomeu.vizoso@collabora.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Don't abort clock initialization if we cannot match an entry in
+tegra_clk_init_table to a valid entry in the clk array.
 
-Here are some basic Tegra test results for Linux v3.17-rc3.
-Logs and other details at:
+Also log a corresponding error message.
 
-    http://nvt.pwsan.com/pub/linux/testlogs/test_v3.17-rc3/20140916151848/
+This was discovered when testing a patch that removed the EMC clock from
+tegra124_clks but left a mention in tegra_clk_init_table.
 
+Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+---
+ drivers/clk/tegra/clk.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-Test summary
-------------
-
-Build: zImage:
-    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
-
-Boot to userspace: multi_v7_defconfig:
-    Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-    Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra30-beaver
-
-
-vmlinux object size
-(delta in bytes from test_v3.17-rc2 
-(52addcf9d6669fa439387610bc65c92fa0980cef)):
-   text     data      bss    total  kernel
- -12101     -528        0   -12629  multi_v7_defconfig
-  -4296      +56        0    -4240  tegra_defconfig
-
-Boot-time memory difference
-(delta in bytes from test_v3.17-rc2 
-(52addcf9d6669fa439387610bc65c92fa0980cef))
-    avail    rsrvd     high    freed                board              kconfig                  dtb
-       8k      -8k        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-       8k      -8k        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-       8k      -8k        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-       8k      -8k        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-       8k      -8k        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-       8k      -8k        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
+index d5963f6..562c911 100644
+--- a/drivers/clk/tegra/clk.c
++++ b/drivers/clk/tegra/clk.c
+@@ -206,8 +206,13 @@ void __init tegra_init_from_table(struct tegra_clk_init_table *tbl,
+ 
+ 	for (; tbl->clk_id < clk_max; tbl++) {
+ 		clk = clks[tbl->clk_id];
+-		if (IS_ERR_OR_NULL(clk))
+-			return;
++		if (IS_ERR_OR_NULL(clk)) {
++			pr_err("%s: invalid entry %ld in clks array for id %d\n",
++			       __func__, PTR_ERR(clk), tbl->clk_id);
++			WARN_ON(1);
++
++			continue;
++		}
+ 
+ 		if (tbl->parent_id < clk_max) {
+ 			struct clk_core *parent = clks[tbl->parent_id];
+-- 
+1.9.3
