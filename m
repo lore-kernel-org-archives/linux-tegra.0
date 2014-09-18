@@ -1,39 +1,48 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [GIT PULL 3/3] ARM: tegra: tegra_defconfig changes for 3.18
-Date: Thu, 18 Sep 2014 11:51:32 -0600
-Message-ID: <1411062692-22338-3-git-send-email-swarren@wwwdotorg.org>
-References: <1411062692-22338-1-git-send-email-swarren@wwwdotorg.org>
+From: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v3 1/2] pinctrl: tegra: Add MIPI pad control
+Date: Thu, 18 Sep 2014 14:56:46 -0400
+Message-ID: <CAOw6vbJimj8QfQSSgurQdX5rtwB78bJzsHdd7su6ORJ_H988yw@mail.gmail.com>
+References: <54088B53.6040802@wwwdotorg.org> <1410292726-9179-1-git-send-email-seanpaul@chromium.org>
+ <54107770.708@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1411062692-22338-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <54107770.708-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, davidriley-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Support is enabled for Venice2's touchpad, and Tegra124's AHCI (SATA)
-controller, as used on Jetson TK1.
+On Wed, Sep 10, 2014 at 12:08 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> On 09/09/2014 01:58 PM, Sean Paul wrote:
+>>
+>> This patch adds MIPI CSI/DSIB pad control mux register
+>> from the APB misc block to tegra pinctrl.
+>>
+>> Without writing to this register, the dsib pads are
+>> muxed as csi, and cannot be used.
+>>
+>> The register is not yet documented in the TRM, here is
+>> the description:
+>>
+>> 70000820: APB_MISC_GP_MIPI_PAD_CTRL_0
+>>         [31:02] RESERVED
+>>         [01:01] DSIB_MODE       [CSI=0,DSIB=1]
+>>         [00:00] RESERVED
+>
+>
+> These two patches look good to me.
+>
+> I think we need to take both patches through the Tegra tree, since if the
+> Tegra DTs start referencing the new pingroup, the driver must already know
+> about it or it'll error out. So, I hope for an ack from Linus.
+>
+> Of course, this only applies if you're sending patches to board .dts files
+> to use the new feature for 3.18; if not, we can apply the pinctrl driver
+> through the pinctrl tree instead, and wait until 3.19 to use the new
+> pingroup. I assume you'll want to use the new feature soon though:-)
 
-----------------------------------------------------------------
+I don't have any board .dts patches ready for upstream consumption
+quite yet. Feel free to use whichever path to mainline you see fit.
 
-The following changes since commit 52addcf9d6669fa439387610bc65c92fa0980cef:
-
-  Linux 3.17-rc2
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git tegra-for-3.18-defconfig
-
-for you to fetch changes up to b82daf87a82fc2261f86f48d1bd0706da9e4a675:
-
-  ARM: tegra: enable Atmel touchpad in defconfig
-
-----------------------------------------------------------------
-
-Mikko Perttunen (1):
-      ARM: tegra: Add options for Tegra AHCI support to tegra_defconfig
-
-Stephen Warren (1):
-      ARM: tegra: enable Atmel touchpad in defconfig
-
- arch/arm/configs/tegra_defconfig | 4 ++++
- 1 file changed, 4 insertions(+)
+Sean
