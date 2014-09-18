@@ -1,48 +1,51 @@
 From: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v3 1/2] pinctrl: tegra: Add MIPI pad control
-Date: Thu, 18 Sep 2014 14:56:46 -0400
-Message-ID: <CAOw6vbJimj8QfQSSgurQdX5rtwB78bJzsHdd7su6ORJ_H988yw@mail.gmail.com>
-References: <54088B53.6040802@wwwdotorg.org> <1410292726-9179-1-git-send-email-seanpaul@chromium.org>
- <54107770.708@wwwdotorg.org>
+Subject: Re: [PATCH v2 1/4] clk: tegra: Move mipi-cal initialization into clk-tegra1[12]4.c
+Date: Thu, 18 Sep 2014 14:59:53 -0400
+Message-ID: <CAOw6vb+pyD9fk63rQHV5S3ar2hrWKb-HRf6ZP8odxbvz7FJ+Vw@mail.gmail.com>
+References: <1410360725-4286-1-git-send-email-seanpaul@chromium.org>
+ <1410360725-4286-2-git-send-email-seanpaul@chromium.org> <541079A8.9080304@wwwdotorg.org>
+ <20140918112621.GK26779@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <54107770.708-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20140918112621.GK26779-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, davidriley-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Sep 10, 2014 at 12:08 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 09/09/2014 01:58 PM, Sean Paul wrote:
+On Thu, Sep 18, 2014 at 7:26 AM, Peter De Schrijver
+<pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> On Wed, Sep 10, 2014 at 06:17:44PM +0200, Stephen Warren wrote:
+>> On 09/10/2014 08:52 AM, Sean Paul wrote:
+>> > This patch moves the mipi-cal gate registration down into the SoC
+>> > specific files to reflect the different in parent between them.
+>> >
+>> > Without this change, MIPI calibration will fail on K1 devices if
+>> > the 72MHz clock is off.
 >>
->> This patch adds MIPI CSI/DSIB pad control mux register
->> from the APB misc block to tegra pinctrl.
->>
->> Without writing to this register, the dsib pads are
->> muxed as csi, and cannot be used.
->>
->> The register is not yet documented in the TRM, here is
->> the description:
->>
->> 70000820: APB_MISC_GP_MIPI_PAD_CTRL_0
->>         [31:02] RESERVED
->>         [01:01] DSIB_MODE       [CSI=0,DSIB=1]
->>         [00:00] RESERVED
+>> This isn't a problem with this patch per se, but I notice that what's
+>> removed from clk-tegra-periph.c is data in a table, whereas open-coded
+>> calls are added to clk-tegra*.c. It'd be nice if the open-coded calls in
+>> clk-tegra*.c could be converted to a table (simply with SoC-specific
+>> data) and processed by the same function. Peter, would that make sense?
 >
+> Maybe yes. I will look into this. For this patch, it would make more sense
+> to keep the entry in clk-tegra-periph.c as it can be used by both Tegra124
+> and Tegra132.
 >
-> These two patches look good to me.
->
-> I think we need to take both patches through the Tegra tree, since if the
-> Tegra DTs start referencing the new pingroup, the driver must already know
-> about it or it'll error out. So, I hope for an ack from Linus.
->
-> Of course, this only applies if you're sending patches to board .dts files
-> to use the new feature for 3.18; if not, we can apply the pinctrl driver
-> through the pinctrl tree instead, and wait until 3.19 to use the new
-> pingroup. I assume you'll want to use the new feature soon though:-)
 
-I don't have any board .dts patches ready for upstream consumption
-quite yet. Feel free to use whichever path to mainline you see fit.
+How do you suggest we switch the parent based on 124 vs 132 if it
+remains in clk-tegra-periph.c?
 
 Sean
+
+
+
+> Cheers,
+>
+> Peter.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
