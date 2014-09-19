@@ -1,33 +1,43 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 0/3] Introduce of_match_machine() helper
-Date: Fri, 19 Sep 2014 16:12:45 +0300
-Message-ID: <20140919131245.GQ26779@tbergstrom-lnx.Nvidia.com>
-References: <1407452515-2390-1-git-send-email-ttynkkynen@nvidia.com>
- <53FB7642.1000808@wwwdotorg.org>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v3 1/2] pinctrl: tegra: Add MIPI pad control
+Date: Fri, 19 Sep 2014 10:29:07 -0700
+Message-ID: <CACRpkdbasvyc1M6ODpBoyTvri55gqQ=8Hc6Vi71p-r2sV_B5ow@mail.gmail.com>
+References: <54088B53.6040802@wwwdotorg.org>
+	<1410292726-9179-1-git-send-email-seanpaul@chromium.org>
+	<54107770.708@wwwdotorg.org>
+	<CAOw6vbJimj8QfQSSgurQdX5rtwB78bJzsHdd7su6ORJ_H988yw@mail.gmail.com>
+	<541B35B2.9050509@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <53FB7642.1000808-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <541B35B2.9050509-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+Cc: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, davidriley-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Aug 25, 2014 at 07:45:38PM +0200, Stephen Warren wrote:
-> On 08/07/2014 05:01 PM, Tuomas Tynkkynen wrote:
-> > Some mach-specific drivers that don't require their own node in the device tree
-> > (for example drivers/soc/*, cpufreq, cpuidle etc.) want to match on the device
-> > tree root compatible property instead. Instead of open-coding (and forgetting
-> > to call of_node_put on the root node) everywhere, add a helper to the OF core.
-> 
-> Tuomas, I assume there will be a new version of this series to address 
-> the review comments? For now, I'm not intending on applying this.
+On Thu, Sep 18, 2014 at 12:42 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> On 09/18/2014 12:56 PM, Sean Paul wrote:
 
-Given that Tuomas's internship ended, I'm willing to push this patch set
-forward, if there is interest. So are people still interested in this idea
-or should we drop it?
+>> I don't have any board .dts patches ready for upstream consumption
+>> quite yet. Feel free to use whichever path to mainline you see fit.
+>
+> I've actually just sent the Tegra pull requests for 3.18 today. Linus, if
+> you want to take this whole series (or at least patch 1/2) through the
+> pinctrl tree, that would be great.
 
-Thanks,
+I've applied patch 1/2 to the pinctrl tree
 
-Peter.
+> The patches will then already be there
+> when we need them as a basis for any DT patches in the Tegra tree for 3.19.
+>
+> Patch 2,
+> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+I prefer not to take DTS patches through pinctrl, I'll let this go through
+the tegra tree next cycle.
+
+But I take it that I can put your ACK on patch 1/2.
+
+Yours,
+Linus Walleij
