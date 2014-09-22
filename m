@@ -1,21 +1,19 @@
-From: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 Subject: Re: [PATCH 1/2] drm/tegra: Set the dsi lp clk parent and rate
-Date: Mon, 22 Sep 2014 09:28:35 +0200
-Message-ID: <541FCFA3.4080206@samsung.com>
+Date: Mon, 22 Sep 2014 11:00:56 +0200
+Message-ID: <1411376456.2599.1.camel@pengutronix.de>
 References: <1411156429-19797-1-git-send-email-seanpaul@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1411156429-19797-1-git-send-email-seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+In-Reply-To: <1411156429-19797-1-git-send-email-seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+To: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Sean,
-
-On 09/19/2014 09:53 PM, Sean Paul wrote:
+Am Freitag, den 19.09.2014, 15:53 -0400 schrieb Sean Paul:
 > Per NVidia, this clock rate should be around 70MHz in
 > order to properly sample reads on data lane 0. In order
 > to achieve this rate, we need to reparent the clock from
@@ -23,6 +21,19 @@ On 09/19/2014 09:53 PM, Sean Paul wrote:
 > dts bindings and set the parent & rate on init.
 > 
 > Signed-off-by: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+
+NACK
+
+You are pushing SoC integration details into the binding of the device.
+
+You have two reasonable routes to go here: either the clock driver needs
+to be made smarter to reparent the clock in case the required clock rate
+could not be achieved with the current parent or you go the easy route
+and reparent the clock as part of the initial configuration.
+
+Regards,
+Lucas
+
 > ---
 >  .../devicetree/bindings/gpu/nvidia,tegra20-host1x.txt  | 10 ++++++++--
 >  drivers/gpu/drm/tegra/dsi.c                            | 18 ++++++++++++++++++
@@ -40,15 +51,6 @@ On 09/19/2014 09:53 PM, Sean Paul wrote:
 > +  - clock-names: Can include the following entries:
 > +    - lp_parent: The parent clock for lp
 > +  - clocks: Must contain an entry for each optional entry in clock-names.
-
-Have you looked at assigned-clocks, assigned-clock-parents,
-assigned-clock-rates common clock properties, they seems to fit to this
-scenario.
-
-Regards
-Andrzej
-
-
 > +    See ../clocks/clock-bindings.txt for details.
 >  
 >  - sor: serial output resource
@@ -114,4 +116,7 @@ Andrzej
 > +#define DSI_LP_CLK_RATE			(70 * 1000 * 1000)
 > +
 >  #endif
-> 
+
+-- 
+Pengutronix e.K.             | Lucas Stach                 |
+Industrial Linux Solutions   | http://www.pengutronix.de/  |
