@@ -1,12 +1,13 @@
 From: Thierry Reding <thierry.reding@gmail.com>
 Subject: Re: [PATCH 1/2] drm/tegra: Set the dsi lp clk parent and rate
-Date: Mon, 22 Sep 2014 12:07:47 +0200
-Message-ID: <20140922100746.GM1470@ulmo>
+Date: Mon, 22 Sep 2014 12:11:54 +0200
+Message-ID: <20140922101153.GN1470@ulmo>
 References: <1411156429-19797-1-git-send-email-seanpaul@chromium.org>
+ <1411376456.2599.1.camel@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0999733503=="
+Content-Type: multipart/mixed; boundary="===============0169981433=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1411156429-19797-1-git-send-email-seanpaul@chromium.org>
+In-Reply-To: <1411376456.2599.1.camel@pengutronix.de>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -21,52 +22,75 @@ Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.fre
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============0999733503==
+--===============0169981433==
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="hnsKUeImFCk/igEn"
+	protocol="application/pgp-signature"; boundary="Zl+NncWK+U5aSfTo"
 Content-Disposition: inline
 
 
---hnsKUeImFCk/igEn
+--Zl+NncWK+U5aSfTo
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 19, 2014 at 03:53:48PM -0400, Sean Paul wrote:
-> Per NVidia, this clock rate should be around 70MHz in
-> order to properly sample reads on data lane 0.
+On Mon, Sep 22, 2014 at 11:00:56AM +0200, Lucas Stach wrote:
+> Am Freitag, den 19.09.2014, 15:53 -0400 schrieb Sean Paul:
+> > Per NVidia, this clock rate should be around 70MHz in
+> > order to properly sample reads on data lane 0. In order
+> > to achieve this rate, we need to reparent the clock from
+> > clk_m which can only achieve 12MHz. Add parent_lp to the
+> > dts bindings and set the parent & rate on init.
+> >=20
+> > Signed-off-by: Sean Paul <seanpaul@chromium.org>
+>=20
+> NACK
+>=20
+> You are pushing SoC integration details into the binding of the device.
+>=20
+> You have two reasonable routes to go here: either the clock driver needs
+> to be made smarter to reparent the clock in case the required clock rate
+> could not be achieved with the current parent or you go the easy route
+> and reparent the clock as part of the initial configuration.
 
-Can you point out where you get 70 MHz from? I only see the TRM mention
-72 MHz that are needed for calibration.
+Agreed. There doesn't seem to be a case where it would make sense to
+have this configurable per-board. Can you achieve the same effect by
+adding this to the clock initialization table?
 
-Also, what's the effect of doing this? Does it fix an issue that you're
-seeing?
+Oh, I just see that we have this in the Tegra124 clock initialization
+table:
+
+	{TEGRA114_CLK_DSIALP, TEGRA114_CLK_PLL_P, 68000000, 0},
+	{TEGRA114_CLK_DSIBLP, TEGRA114_CLK_PLL_P, 68000000, 0},
+
+Doesn't that work for you already? If not that'd be a bug that should be
+fixed in the clock driver.
 
 Thierry
 
---hnsKUeImFCk/igEn
+--Zl+NncWK+U5aSfTo
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUH/TyAAoJEN0jrNd/PrOh2KcP/j9ZYkY6QpsUNmpOS+XEy3Cx
-UiKwYou96LqzURPuqvyx0ONcJtyG88ChQGJCmHhTKbOitFNBqeHqIrSTwIpSvIAy
-OjRAmBVQOoSMfFXEHg3V/Gq63nP3PYaEZQ9rB+s9pPpKQ2nknqEPdfd2lJmpyqi7
-Y+y+UvUK0FSaPsUrFdDPXuJMtLgd2BfxxQLKovcxK3CRk7puAp+m0UpnO0rn20D3
-Tb7wbrmI68Lx5zXPSWWhu98DHlbSUz8SLP7opfGtF80wnqCq9IiRo62Emws+EKX0
-mL5mCZvGxnPv4wE/xHwc3yElrWQDI/9zsoTgwgzu68PPXpdQ/LfX5Flfdxt3WjCG
-EILyNJc3O8mKTLsZbTfyioW/GI+00YBUObg5pBdaeo5BYtn6mKB5LBKpVdrvkMoX
-R0Ho3Or614/y2rfcD1ut7gOXzeRJujOEREycQOoNDICTgsJrk8wRl8ginoB7XIDQ
-UZVDXBE+4f2US8njGEQkBaRpaOcDwt3XAQSRLQwUwhbZnnsMaw+ktzxt98N7rrvP
-VJ8hc72HRvqO36fCSpC5MycVfMD5MJO3mmYZSXb5S7oWRWioyAuntCBbKWKD+R5L
-bUakTn+9zDB93580SZXyl0gDJ2aybs8EUBPtlY84xhBsdTJ1EFMGigEyrGWVsKgP
-kzllZ6KY5AALP7Sdb0p2
-=6qjI
+iQIcBAEBAgAGBQJUH/XpAAoJEN0jrNd/PrOh1M8P/AxtZOLbNbgA++oJ1E8pGueE
+jH2q86Z/wR9KC7pMDQQBZOObA6q97gWsw1KYRn/wt6hFkPqbwiLcQjxPiqU4byJp
+AUky5JgAqUtpnh8scN7fYYMY5xw6QA9swScpZOJAU5QIBwjhq60BMC3qzUey/1Cw
+iMiaWRyg2rz4BMSLq024JHprbR9Ghl2GeLcIhoziVl6q9PdWix6MGq3ZAlUbqEUt
+RxK4ReS0mEq2/QkjujVRciKJZVm9DdKESAUHH2a5Y/d4Md3ejp/Gq6QtPfxv/4fL
+cVyhksfiTVaCL8LFJ8r7OfWXtu60x5V6a93laHBvek2xK+EGL89R6EN0iHcTyEFL
+qf81RcpcKl5N/nazqzZEzj1RlybeVY2vRg9a/GV04JYwEnWziDbDrO62Is9Szqak
+Bbv0eXpgSojxGGzIXWnY5CXhUzupNq2CESPNXGP3yT5zR5Nbaz4HL7mtCkEXl18A
+Ib3cOKeqOIXj/3xIDCmMPEExwoN3G7mvRVeG4CfOWahoCQKW+b/aDe8UkVCnrzn3
+GBwmqsMrB8ZwzVMGzM0m/TTlFOs6MVuPxgwbm2JrOSTfbQSEsAvTcysVZw0rdYJu
+QWxJ3VLblTALgEA8hv/Ubs8MjFueE0ueI+WfsDp09N1emD2Vbhp1wXdaFUhIMZQ9
+JJEl62DwGffoSR/QwO1j
+=gwge
 -----END PGP SIGNATURE-----
 
---hnsKUeImFCk/igEn--
+--Zl+NncWK+U5aSfTo--
 
---===============0999733503==
+--===============0169981433==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -77,4 +101,4 @@ dri-devel mailing list
 dri-devel@lists.freedesktop.org
 http://lists.freedesktop.org/mailman/listinfo/dri-devel
 
---===============0999733503==--
+--===============0169981433==--
