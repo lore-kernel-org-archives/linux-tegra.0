@@ -1,65 +1,122 @@
-From: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH v5 1/2] usb: rename phy to usb_phy in HCD
-Date: Wed, 24 Sep 2014 22:56:30 +0400
-Message-ID: <542313DE.1080709@cogentembedded.com>
-References: <5072811.p8odmvpxdS@wasted.cogentembedded.com> <2282553.NrZjRxyKlv@wasted.cogentembedded.com> <20140924051138.GA4440@kroah.com>
+From: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+Subject: Re: [PATCH v5 3/4] ARM: tegra: Add thermal trip points for Jetson
+ TK1
+Date: Wed, 24 Sep 2014 22:01:55 +0300
+Message-ID: <54231523.9050502@kapsi.fi>
+References: <1408616242-21009-1-git-send-email-mperttunen@nvidia.com> <1408616242-21009-4-git-send-email-mperttunen@nvidia.com> <20140924183204.GE27076@developer> <54230EA8.7080604@kapsi.fi> <20140924184157.GB7593@developer> <542310EB.7050802@kapsi.fi> <20140924184843.GA15798@developer>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140924051138.GA4440-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Peter.Chen-KZfg59tc24xl57MIdRCFDg@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, yoshihiro.shimoda.uh-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, antoine.tenart-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140924184843.GA15798@developer>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>, rui.zhang@intel.com, swarren@wwwdotorg.org, thierry.reding@gmail.com, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, juha-matti.tilli@iki.fi
 List-Id: linux-tegra@vger.kernel.org
 
-hello.
+On 09/24/2014 09:48 PM, Eduardo Valentin wrote:
+> Hello Mikko,
+>
+> On Wed, Sep 24, 2014 at 09:43:55PM +0300, Mikko Perttunen wrote:
+>> On 09/24/2014 09:41 PM, Eduardo Valentin wrote:
+>>> On Wed, Sep 24, 2014 at 09:34:16PM +0300, Mikko Perttunen wrote:
+>>>> On 09/24/2014 09:32 PM, Eduardo Valentin wrote:
+>>>>> Hello Mikko,
+>>>>>
+>>>>> On Thu, Aug 21, 2014 at 01:17:21PM +0300, Mikko Perttunen wrote:
+>>>>>> This adds critical trip points to the Jetson TK1 device tree.
+>>>>>> The device will do a controlled shutdown when either the CPU, GPU
+>>>>>> or MEM thermal zone reaches 101 degrees Celsius.
+>>>>>>
+>>>>>> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+>>>>>> ---
+>>>>>> v5: added cooling-maps nodes
+>>>>>>
+>>>>>
+>>>>> OK. But no cooling map entry in it. What was the reason again you don't
+>>>>> need/want to add the maps?
+>>>>
+>>>> There is currently no cooling device to map to.
+>>>
+>>> Not even cpufreq cooling? Is CPUfreq operational in Tegra?
+>>
+>> Indeed, it is not currently operational (except on Tegra20). There is a
+>> series for Tegra124 but it needs more work. Not going in during this cycle.
+>>
+>
+> OK. Now I understand. In this case, can you please explain the situation
+> with a TODO comment inside the cooling-maps?
+>
+> The way it is now, looks awkwards.
 
-On 09/24/2014 09:11 AM, Greg KH wrote:
+OK, I will add a comment.
 
->> From: Antoine Tenart <antoine.tenart-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-
->> The USB PHY member of the HCD structure is renamed to 'usb_phy' and
->> modifications are done in all drivers accessing it.
->> This is in preparation to adding the generic PHY support.
-
->> Signed-off-by: Antoine Tenart <antoine.tenart-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
->> [Sergei: added missing 'drivers/usb/misc/lvstest.c' file, resolved rejects
->> caused by patch reordering, updated changelog.]
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
->> Acked-by: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
->> Acked-by: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-
->> ---
->> Changes in version 5:
->> - imported the patch from Antoine Tenart's series;
->> - added missing 'drivers/usb/misc/lvstest.c' file;
->> - resolved rejects caused by patch reordering;
->> - refreshed patch;
->> - updated changelog.
-
->>   drivers/usb/chipidea/host.c   |    2 +-
->>   drivers/usb/core/hcd.c        |   20 ++++++++++----------
->>   drivers/usb/core/hub.c        |    8 ++++----
->>   drivers/usb/host/ehci-fsl.c   |   16 ++++++++--------
->>   drivers/usb/host/ehci-hub.c   |    2 +-
->>   drivers/usb/host/ehci-msm.c   |    4 ++--
->>   drivers/usb/host/ehci-tegra.c |   16 ++++++++--------
->>   drivers/usb/host/ohci-omap.c  |   20 ++++++++++----------
->>   drivers/usb/misc/lvstest.c    |    8 ++++----
->>   include/linux/usb/hcd.h       |    2 +-
->>   10 files changed, 49 insertions(+), 49 deletions(-)
-
-> This doesn't apply to my tree at all anymore,
-
-    Well, I'm seeing only a minor reject in the first file, easily fixable.
-
-> can you refresh it and resend?
-
-    OK, will re-post now.
-
-> thanks,
-
-> greg k-h
-
-WBR, Sergei
+>
+>>>
+>>>>
+>>>> Mikko
+>>>>
+>>>>>
+>>>>>>     arch/arm/boot/dts/tegra124-jetson-tk1.dts | 41 +++++++++++++++++++++++++++++++
+>>>>>>     1 file changed, 41 insertions(+)
+>>>>>>
+>>>>>> diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+>>>>>> index 0cdb5cf..bcdab7f 100644
+>>>>>> --- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+>>>>>> +++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+>>>>>> @@ -1876,4 +1876,45 @@
+>>>>>>     			 <&tegra_car TEGRA124_CLK_EXTERN1>;
+>>>>>>     		clock-names = "pll_a", "pll_a_out0", "mclk";
+>>>>>>     	};
+>>>>>> +
+>>>>>> +	thermal-zones {
+>>>>>> +		cpu {
+>>>>>> +			trips {
+>>>>>> +				trip@0 {
+>>>>>> +					temperature = <101000>;
+>>>>>> +					hysteresis = <0>;
+>>>>>> +					type = "critical";
+>>>>>> +				};
+>>>>>> +			};
+>>>>>> +
+>>>>>> +			cooling-maps {
+>>>>>> +			};
+>>>>>> +		};
+>>>>>> +
+>>>>>> +		mem {
+>>>>>> +			trips {
+>>>>>> +				trip@0 {
+>>>>>> +					temperature = <101000>;
+>>>>>> +					hysteresis = <0>;
+>>>>>> +					type = "critical";
+>>>>>> +				};
+>>>>>> +			};
+>>>>>> +
+>>>>>> +			cooling-maps {
+>>>>>> +			};
+>>>>>> +		};
+>>>>>> +
+>>>>>> +		gpu {
+>>>>>> +			trips {
+>>>>>> +				trip@0 {
+>>>>>> +					temperature = <101000>;
+>>>>>> +					hysteresis = <0>;
+>>>>>> +					type = "critical";
+>>>>>> +				};
+>>>>>> +			};
+>>>>>> +
+>>>>>> +			cooling-maps {
+>>>>>> +			};
+>>>>>> +		};
+>>>>>> +	};
+>>>>>>     };
+>>>>>> --
+>>>>>> 1.8.1.5
+>>>>>>
+>>>>> --
+>>>>> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+>>>>> the body of a message to majordomo@vger.kernel.org
+>>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>>>
+>>>>
+>>
