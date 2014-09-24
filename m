@@ -1,88 +1,75 @@
-From: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-Subject: Re: [PATCH v5 4/4] thermal: Add Tegra SOCTHERM thermal management
- driver
-Date: Wed, 24 Sep 2014 22:32:13 +0300
-Message-ID: <54231C3D.6040900@kapsi.fi>
-References: <1408616242-21009-1-git-send-email-mperttunen@nvidia.com> <1408616242-21009-5-git-send-email-mperttunen@nvidia.com> <20140924191829.GA16529@developer>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH v6 1/2] usb: rename phy to usb_phy in HCD
+Date: Wed, 24 Sep 2014 14:39:42 -0500
+Message-ID: <20140924193942.GR17997@saruman>
+References: <37148636.BU5lT4M4eC@wasted.cogentembedded.com>
+ <2300651.HNvMzB0aUB@wasted.cogentembedded.com>
+ <20140924192806.GO17997@saruman>
+ <54231BFF.5070901@cogentembedded.com>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ffBYM5qgR8HH9Mta"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140924191829.GA16529@developer>
+Content-Disposition: inline
+In-Reply-To: <54231BFF.5070901@cogentembedded.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>
-Cc: rui.zhang@intel.com, swarren@wwwdotorg.org, thierry.reding@gmail.com, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, juha-matti.tilli@iki.fi
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: balbi@ti.com, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, Peter.Chen@freescale.com, stern@rowland.harvard.edu, swarren@wwwdotorg.org, thierry.reding@gmail.com, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-sh@vger.kernel.org, yoshihiro.shimoda.uh@renesas.com, linux-kernel@vger.kernel.org, antoine.tenart@free-electrons.com
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/24/2014 10:18 PM, Eduardo Valentin wrote:
->
-> Mikko,
->
-> On Thu, Aug 21, 2014 at 01:17:22PM +0300, Mikko Perttunen wrote:
->> ...
->> +
->> +static int enable_tsensor(struct tegra_soctherm *tegra,
->> +			  const struct tegra_tsensor *sensor,
->> +			  struct tsensor_shared_calibration shared)
->> +{
->> +	void * __iomem base = tegra->regs + sensor->base;
->
-> I get sparse complaining about this declaration. For the sake of keeping
-> a clean static checks, can you please:
-> -       void * __iomem base = tegra->regs + sensor->base;
-> +       void __iomem * base = tegra->regs + sensor->base;
->
+--ffBYM5qgR8HH9Mta
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sure.
+On Wed, Sep 24, 2014 at 11:31:11PM +0400, Sergei Shtylyov wrote:
+> Hello.
+>=20
+> On 09/24/2014 11:28 PM, Felipe Balbi wrote:
+>=20
+> >>From: Antoine Tenart <antoine.tenart@free-electrons.com>
+>=20
+> >>The USB PHY member of the HCD structure is renamed to 'usb_phy' and
+> >>modifications are done in all drivers accessing it.
+> >>This is in preparation to adding the generic PHY support.
+>=20
+> >>Signed-off-by: Antoine Tenart <antoine.tenart@free-electrons.com>
+> >>[Sergei: added missing 'drivers/usb/misc/lvstest.c' file, resolved reje=
+cts,
+> >>updated changelog.]
+> >>Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> >>Acked-by: Alan Stern <stern@rowland.harvard.edu>
+>=20
+> >Acked-by: Felipe Balbi <balbi@ti.com>
+>=20
+>    Sorry, forgot to collect your ACK from the previous posting. :-/
 
->
-> Can you also please check the remaining sparse errors?
->    CHECK   drivers/thermal/tegra_soctherm.c
->    drivers/thermal/tegra_soctherm.c:260:43: warning: incorrect type in
->    initializer (different address spaces)
->    drivers/thermal/tegra_soctherm.c:260:43:    expected void *[noderef]
->    <asn:2>base
->    drivers/thermal/tegra_soctherm.c:260:43:    got void [noderef]
->    <asn:2>*
->    drivers/thermal/tegra_soctherm.c:271:9: warning: incorrect type in
->    argument 2 (different address spaces)
->    drivers/thermal/tegra_soctherm.c:271:9:    expected void volatile
->    [noderef] <asn:2>*addr
->    drivers/thermal/tegra_soctherm.c:271:9:    got void *
->    drivers/thermal/tegra_soctherm.c:279:9: warning: incorrect type in
->    argument 2 (different address spaces)
->    drivers/thermal/tegra_soctherm.c:279:9:    expected void volatile
->    [noderef] <asn:2>*addr
->    drivers/thermal/tegra_soctherm.c:279:9:    got void *
->    drivers/thermal/tegra_soctherm.c:281:9: warning: incorrect type in
->    argument 2 (different address spaces)
->    drivers/thermal/tegra_soctherm.c:281:9:    expected void volatile
->    [noderef] <asn:2>*addr
->    drivers/thermal/tegra_soctherm.c:281:9:    got void *
->    drivers/thermal/tegra_soctherm.c:347:25: warning: incorrect type in
->    argument 1 (different address spaces)
->    drivers/thermal/tegra_soctherm.c:347:25:    expected void const *ptr
->    drivers/thermal/tegra_soctherm.c:347:25:    got void [noderef]
->    <asn:2>*regs
->    drivers/thermal/tegra_soctherm.c:349:37: warning: incorrect type in
->    argument 1 (different address spaces)
->    drivers/thermal/tegra_soctherm.c:349:37:    expected void const *ptr
->    drivers/thermal/tegra_soctherm.c:349:37:    got void [noderef]
->    <asn:2>*regs
->    drivers/thermal/tegra_soctherm.c:271:9: warning: dereference of
->    noderef expression
->    drivers/thermal/tegra_soctherm.c:279:9: warning: dereference of
->    noderef expression
->    drivers/thermal/tegra_soctherm.c:281:9: warning: dereference of
->    noderef expression
->
+don't worry ;-)
 
-Most of these seem to be caused by the above-mentioned swapping of 
-__iomem and *. The ones on lines 347 and 349 are more peculiar, though. 
-Apparently sparse doesn't like using IS_ERR and PTR_ERR on the void 
-__iomem * pointer returned by devm_ioremap_resource. Looks like this has 
-been discussed before (https://lkml.org/lkml/2013/6/17/216) and sparse 
-should have been patched to ignore this situation, so I'm not sure why 
-it's complaining about it. Anyway, there shouldn't be any issue here.
+--=20
+balbi
 
-Mikko
+--ffBYM5qgR8HH9Mta
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJUIx3+AAoJEIaOsuA1yqREKlQP/ilSdXJbAq8hq/pE2JDK3q+P
+A8zFNo5Kjpz0wuUFg4KaP9s/rPx+aLPdhSTuPTXobe+J1ayYAO5g0JgrDOOQ/BI5
+WF9a64pZuHJjSK5lp8LgjZ5GXCsJyy75SOCAjrsdZD1Zqhoo4g151YlxTcC3ZUCj
+NXtrMzH1uYDEz9p7t6laFus8s+UyVTahEeQyYLiICW72uRIygtiWDZulhwoiSlSi
+IcYfuJmumvgmPnC6J3ym+Muh65TjVzyods3KDT/qbNGpYJkk6yWICb+OS5xGt3mm
+8e5pyRnlCTMH2M1Do5kUwMFNlH29m41iMIypqZZqY0Vi/QfIKZFo2iNPNPHNBNmg
+rSBA6RqDzIeqGcLa6FWPGeFPiTRl/XL4+x4tWaWkGFnedsTY11eX0kC04wPtShQS
+e795+RRL8TOInyStcpN2srnnDzSIhdAcKjM/kdcMAaHv+h6FZTFolm6pQRV9PNbZ
+kl4iO1apq9mUhFURsN6I3xL6S447jTpjN+G0zSZm5kpClc0zuFTjmBQH0bKydrWM
+H1cI1/PjTo2qNrrfKMswur5SwSUZI/PY0lk4jifZqLD314PR3W+fwQYiomzX6veh
+M5D+D5tDy+SPNM9CZ5ms7Uaj1cd8m7TGyjyZ0UqSrc/CBBgJMeDTnfuIIB5Mtc+B
+NuUPT9yX6NpVl45S/NPc
+=aVIp
+-----END PGP SIGNATURE-----
+
+--ffBYM5qgR8HH9Mta--
