@@ -1,371 +1,598 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v6 1/2] usb: rename phy to usb_phy in HCD
-Date: Wed, 24 Sep 2014 23:05:50 +0400
-Message-ID: <2300651.HNvMzB0aUB@wasted.cogentembedded.com>
-References: <37148636.BU5lT4M4eC@wasted.cogentembedded.com>
+From: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v5 4/4] thermal: Add Tegra SOCTHERM thermal management
+ driver
+Date: Wed, 24 Sep 2014 15:18:32 -0400
+Message-ID: <20140924191829.GA16529@developer>
+References: <1408616242-21009-1-git-send-email-mperttunen@nvidia.com>
+ <1408616242-21009-5-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <37148636.BU5lT4M4eC@wasted.cogentembedded.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, Peter.Chen@freescale.com, stern@rowland.harvard.edu, swarren@wwwdotorg.org, thierry.reding@gmail.com, balbi@ti.com, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org
-Cc: linux-sh@vger.kernel.org, yoshihiro.shimoda.uh@renesas.com, linux-kernel@vger.kernel.org, antoine.tenart@free-electrons.com
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1408616242-21009-5-git-send-email-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, juha-matti.tilli-X3B1VOXEql0@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Antoine Tenart <antoine.tenart@free-electrons.com>
 
-The USB PHY member of the HCD structure is renamed to 'usb_phy' and
-modifications are done in all drivers accessing it.
-This is in preparation to adding the generic PHY support.
+Mikko,
 
-Signed-off-by: Antoine Tenart <antoine.tenart@free-electrons.com>
-[Sergei: added missing 'drivers/usb/misc/lvstest.c' file, resolved rejects,
-updated changelog.]
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+On Thu, Aug 21, 2014 at 01:17:22PM +0300, Mikko Perttunen wrote:
+> This adds support for the Tegra SOCTHERM thermal sensing and management
+> system found in the Tegra124 system-on-chip. This initial driver supports
+> temperature polling for four thermal zones.
+> 
+> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> v5:
+> - changed tsample_ate to 480
+> - constified structs
+> - added missing --i
+> - read shifted_ft from TSENSOR8 fuse
+> - use precise divison function when calculating
+>   calibration values
+> 
+>  drivers/thermal/Kconfig          |  10 +
+>  drivers/thermal/Makefile         |   1 +
+>  drivers/thermal/tegra_soctherm.c | 471 +++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 482 insertions(+)
+>  create mode 100644 drivers/thermal/tegra_soctherm.c
+> 
+> diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+> index 693208e..fd9d049 100644
+> --- a/drivers/thermal/Kconfig
+> +++ b/drivers/thermal/Kconfig
+> @@ -175,6 +175,16 @@ config ARMADA_THERMAL
+>  	  Enable this option if you want to have support for thermal management
+>  	  controller present in Armada 370 and Armada XP SoC.
+>  
+> +config TEGRA_SOCTHERM
+> +	tristate "Tegra SOCTHERM thermal management"
+> +	depends on ARCH_TEGRA
+> +	help
+> +	  Enable this option for integrated thermal management support on NVIDIA
+> +	  Tegra124 systems-on-chip. The driver supports four thermal zones
+> +	  (CPU, GPU, MEM, PLLX). Cooling devices can be bound to the thermal
+> +	  zones to manage temperatures. This option is also required for the
+> +	  emergency thermal reset (thermtrip) feature to function.
+> +
+>  config DB8500_CPUFREQ_COOLING
+>  	tristate "DB8500 cpufreq cooling"
+>  	depends on ARCH_U8500
+> diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
+> index 31e232f..f0b94d5 100644
+> --- a/drivers/thermal/Makefile
+> +++ b/drivers/thermal/Makefile
+> @@ -33,3 +33,4 @@ obj-$(CONFIG_INTEL_SOC_DTS_THERMAL)	+= intel_soc_dts_thermal.o
+>  obj-$(CONFIG_TI_SOC_THERMAL)	+= ti-soc-thermal/
+>  obj-$(CONFIG_ACPI_INT3403_THERMAL)	+= int3403_thermal.o
+>  obj-$(CONFIG_ST_THERMAL)	+= st/
+> +obj-$(CONFIG_TEGRA_SOCTHERM)	+= tegra_soctherm.o
+> diff --git a/drivers/thermal/tegra_soctherm.c b/drivers/thermal/tegra_soctherm.c
+> new file mode 100644
+> index 0000000..3742e24
+> --- /dev/null
+> +++ b/drivers/thermal/tegra_soctherm.c
+> @@ -0,0 +1,471 @@
+> +/*
+> + * drivers/thermal/tegra_soctherm.c
+> + *
+> + * Copyright (c) 2014, NVIDIA CORPORATION.  All rights reserved.
+> + *
+> + * Author:
+> + *	Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> + *
+> + * This software is licensed under the terms of the GNU General Public
+> + * License version 2, as published by the Free Software Foundation, and
+> + * may be copied, distributed, and modified under those terms.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + *
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/reset.h>
+> +#include <linux/thermal.h>
+> +#include <linux/delay.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/bitops.h>
+> +#include <soc/tegra/fuse.h>
+> +
+> +#define SENSOR_CONFIG0				0
+> +#define		SENSOR_CONFIG0_STOP		BIT(0)
+> +#define		SENSOR_CONFIG0_TALL_SHIFT	8
+> +#define		SENSOR_CONFIG0_TCALC_OVER	BIT(4)
+> +#define		SENSOR_CONFIG0_OVER		BIT(3)
+> +#define		SENSOR_CONFIG0_CPTR_OVER	BIT(2)
+> +#define SENSOR_CONFIG1				4
+> +#define		SENSOR_CONFIG1_TSAMPLE_SHIFT	0
+> +#define		SENSOR_CONFIG1_TIDDQ_EN_SHIFT	15
+> +#define		SENSOR_CONFIG1_TEN_COUNT_SHIFT	24
+> +#define		SENSOR_CONFIG1_TEMP_ENABLE	BIT(31)
+> +#define SENSOR_CONFIG2				8
+> +#define		SENSOR_CONFIG2_THERMA_SHIFT	16
+> +#define		SENSOR_CONFIG2_THERMB_SHIFT	0
+> +
+> +#define SENSOR_PDIV				0x1c0
+> +#define		SENSOR_PDIV_T124		0x8888
+> +#define SENSOR_HOTSPOT_OFF			0x1c4
+> +#define		SENSOR_HOTSPOT_OFF_T124		0x00060600
+> +#define SENSOR_TEMP1				0x1c8
+> +#define SENSOR_TEMP2				0x1cc
+> +
+> +#define SENSOR_TEMP_MASK			0xffff
+> +#define READBACK_VALUE_MASK			0xff00
+> +#define READBACK_VALUE_SHIFT			8
+> +#define READBACK_ADD_HALF			BIT(7)
+> +#define READBACK_NEGATE				BIT(1)
+> +
+> +#define FUSE_TSENSOR8_CALIB			0x180
+> +#define FUSE_SPARE_REALIGNMENT_REG_0		0x1fc
+> +
+> +#define FUSE_TSENSOR_CALIB_CP_TS_BASE_MASK	0x1fff
+> +#define FUSE_TSENSOR_CALIB_FT_TS_BASE_MASK	(0x1fff << 13)
+> +#define FUSE_TSENSOR_CALIB_FT_TS_BASE_SHIFT	13
+> +
+> +#define FUSE_TSENSOR8_CALIB_CP_TS_BASE_MASK	0x3ff
+> +#define FUSE_TSENSOR8_CALIB_FT_TS_BASE_MASK	(0x7ff << 10)
+> +#define FUSE_TSENSOR8_CALIB_FT_TS_BASE_SHIFT	10
+> +
+> +#define FUSE_SPARE_REALIGNMENT_REG_SHIFT_CP_MASK 0x3f
+> +#define FUSE_SPARE_REALIGNMENT_REG_SHIFT_FT_MASK (0x1f << 21)
+> +#define FUSE_SPARE_REALIGNMENT_REG_SHIFT_FT_SHIFT 21
+> +
+> +#define NOMINAL_CALIB_FT_T124			105
+> +#define NOMINAL_CALIB_CP_T124			25
+> +
+> +struct tegra_tsensor_configuration {
+> +	u32 tall, tsample, tiddq_en, ten_count;
+> +	u32 pdiv, tsample_ate, pdiv_ate;
+> +};
+> +
+> +struct tegra_tsensor {
+> +	u32 base;
+> +	u32 calib_fuse_offset;
+> +	/* Correction values used to modify values read from calibration fuses */
+> +	s32 fuse_corr_alpha, fuse_corr_beta;
+> +};
+> +
+> +struct tegra_thermctl_zone {
+> +	void __iomem *temp_reg;
+> +	int temp_shift;
+> +};
+> +
+> +static const struct tegra_tsensor_configuration t124_tsensor_config = {
+> +	.tall = 16300,
+> +	.tsample = 120,
+> +	.tiddq_en = 1,
+> +	.ten_count = 1,
+> +	.pdiv = 8,
+> +	.tsample_ate = 480,
+> +	.pdiv_ate = 8
+> +};
+> +
+> +static const struct tegra_tsensor t124_tsensors[] = {
+> +	{
+> +		.base = 0xc0,
+> +		.calib_fuse_offset = 0x098,
+> +		.fuse_corr_alpha = 1135400,
+> +		.fuse_corr_beta = -6266900,
+> +	},
+> +	{
+> +		.base = 0xe0,
+> +		.calib_fuse_offset = 0x084,
+> +		.fuse_corr_alpha = 1122220,
+> +		.fuse_corr_beta = -5700700,
+> +	},
+> +	{
+> +		.base = 0x100,
+> +		.calib_fuse_offset = 0x088,
+> +		.fuse_corr_alpha = 1127000,
+> +		.fuse_corr_beta = -6768200,
+> +	},
+> +	{
+> +		.base = 0x120,
+> +		.calib_fuse_offset = 0x12c,
+> +		.fuse_corr_alpha = 1110900,
+> +		.fuse_corr_beta = -6232000,
+> +	},
+> +	{
+> +		.base = 0x140,
+> +		.calib_fuse_offset = 0x158,
+> +		.fuse_corr_alpha = 1122300,
+> +		.fuse_corr_beta = -5936400,
+> +	},
+> +	{
+> +		.base = 0x160,
+> +		.calib_fuse_offset = 0x15c,
+> +		.fuse_corr_alpha = 1145700,
+> +		.fuse_corr_beta = -7124600,
+> +	},
+> +	{
+> +		.base = 0x180,
+> +		.calib_fuse_offset = 0x154,
+> +		.fuse_corr_alpha = 1120100,
+> +		.fuse_corr_beta = -6000500,
+> +	},
+> +	{
+> +		.base = 0x1a0,
+> +		.calib_fuse_offset = 0x160,
+> +		.fuse_corr_alpha = 1106500,
+> +		.fuse_corr_beta = -6729300,
+> +	},
+> +};
+> +
+> +struct tegra_soctherm {
+> +	struct reset_control *reset;
+> +	struct clk *clock_tsensor;
+> +	struct clk *clock_soctherm;
+> +	void __iomem *regs;
+> +
+> +	struct thermal_zone_device *thermctl_tzs[4];
+> +};
+> +
+> +struct tsensor_shared_calibration {
+> +	u32 base_cp, base_ft;
+> +	u32 actual_temp_cp, actual_temp_ft;
+> +};
+> +
+> +static int calculate_shared_calibration(struct tsensor_shared_calibration *r)
+> +{
+> +	u32 val;
+> +	u32 shifted_cp, shifted_ft;
+> +	int err;
+> +
+> +	err = tegra_fuse_readl(FUSE_TSENSOR8_CALIB, &val);
+> +	if (err)
+> +		return err;
+> +	r->base_cp = val & FUSE_TSENSOR8_CALIB_CP_TS_BASE_MASK;
+> +	r->base_ft = (val & FUSE_TSENSOR8_CALIB_FT_TS_BASE_MASK)
+> +		>> FUSE_TSENSOR8_CALIB_FT_TS_BASE_SHIFT;
+> +	val = ((val & FUSE_SPARE_REALIGNMENT_REG_SHIFT_FT_MASK)
+> +		>> FUSE_SPARE_REALIGNMENT_REG_SHIFT_FT_SHIFT);
+> +	shifted_ft = sign_extend32(val, 4);
+> +
+> +	err = tegra_fuse_readl(FUSE_SPARE_REALIGNMENT_REG_0, &val);
+> +	if (err)
+> +		return err;
+> +	shifted_cp = sign_extend32(val, 5);
+> +
+> +	r->actual_temp_cp = 2 * NOMINAL_CALIB_CP_T124 + shifted_cp;
+> +	r->actual_temp_ft = 2 * NOMINAL_CALIB_FT_T124 + shifted_ft;
+> +
+> +	return 0;
+> +}
+> +
+> +static s64 div64_s64_precise(s64 a, s64 b)
+> +{
+> +	s64 r, al;
+> +
+> +	/* Scale up for increased precision division */
+> +	al = a << 16;
+> +
+> +	r = div64_s64(al * 2 + 1, 2 * b);
+> +	return r >> 16;
+> +}
+> +
+> +static int calculate_tsensor_calibration(
+> +	const struct tegra_tsensor *sensor,
+> +	struct tsensor_shared_calibration shared,
+> +	u32 *calib
+> +)
+> +{
+> +	u32 val;
+> +	s32 actual_tsensor_ft, actual_tsensor_cp;
+> +	s32 delta_sens, delta_temp;
+> +	s32 mult, div;
+> +	s16 therma, thermb;
+> +	int err;
+> +
+> +	err = tegra_fuse_readl(sensor->calib_fuse_offset, &val);
+> +	if (err)
+> +		return err;
+> +
+> +	actual_tsensor_cp = (shared.base_cp * 64) + sign_extend32(val, 12);
+> +	val = (val & FUSE_TSENSOR_CALIB_FT_TS_BASE_MASK)
+> +		>> FUSE_TSENSOR_CALIB_FT_TS_BASE_SHIFT;
+> +	actual_tsensor_ft = (shared.base_ft * 32) + sign_extend32(val, 12);
+> +
+> +	delta_sens = actual_tsensor_ft - actual_tsensor_cp;
+> +	delta_temp = shared.actual_temp_ft - shared.actual_temp_cp;
+> +
+> +	mult = t124_tsensor_config.pdiv * t124_tsensor_config.tsample_ate;
+> +	div = t124_tsensor_config.tsample * t124_tsensor_config.pdiv_ate;
+> +
+> +	therma = div64_s64_precise((s64) delta_temp * (1LL << 13) * mult,
+> +		(s64) delta_sens * div);
+> +	thermb = div64_s64_precise(
+> +		((s64) actual_tsensor_ft * shared.actual_temp_cp) -
+> +		((s64) actual_tsensor_cp * shared.actual_temp_ft),
+> +		(s64) delta_sens);
+> +
+> +	therma = div64_s64_precise((s64) therma * sensor->fuse_corr_alpha,
+> +		(s64) 1000000LL);
+> +	thermb = div64_s64_precise((s64) thermb * sensor->fuse_corr_alpha +
+> +		sensor->fuse_corr_beta,
+> +		(s64) 1000000LL);
+> +
+> +	*calib = ((u16)(therma) << SENSOR_CONFIG2_THERMA_SHIFT) |
+> +		((u16)thermb << SENSOR_CONFIG2_THERMB_SHIFT);
+> +
+> +	return 0;
+> +}
+> +
+> +static int enable_tsensor(struct tegra_soctherm *tegra,
+> +			  const struct tegra_tsensor *sensor,
+> +			  struct tsensor_shared_calibration shared)
+> +{
+> +	void * __iomem base = tegra->regs + sensor->base;
 
----
-Changes in version 6:
-- resolved reject, refreshed the patch.
+I get sparse complaining about this declaration. For the sake of keeping
+a clean static checks, can you please:
+-       void * __iomem base = tegra->regs + sensor->base;
++       void __iomem * base = tegra->regs + sensor->base;
 
-Changes in version 5:
-- imported the patch from Antoine Tenart's series;
-- added missing 'drivers/usb/misc/lvstest.c' file;
-- resolved rejects caused by patch reordering;
-- refreshed patch;
-- updated changelog.
 
- drivers/usb/chipidea/host.c   |    2 +-
- drivers/usb/core/hcd.c        |   20 ++++++++++----------
- drivers/usb/core/hub.c        |    8 ++++----
- drivers/usb/host/ehci-fsl.c   |   16 ++++++++--------
- drivers/usb/host/ehci-hub.c   |    2 +-
- drivers/usb/host/ehci-msm.c   |    4 ++--
- drivers/usb/host/ehci-tegra.c |   16 ++++++++--------
- drivers/usb/host/ohci-omap.c  |   20 ++++++++++----------
- drivers/usb/misc/lvstest.c    |    8 ++++----
- include/linux/usb/hcd.h       |    2 +-
- 10 files changed, 49 insertions(+), 49 deletions(-)
+Can you also please check the remaining sparse errors?
+  CHECK   drivers/thermal/tegra_soctherm.c
+  drivers/thermal/tegra_soctherm.c:260:43: warning: incorrect type in
+  initializer (different address spaces)
+  drivers/thermal/tegra_soctherm.c:260:43:    expected void *[noderef]
+  <asn:2>base
+  drivers/thermal/tegra_soctherm.c:260:43:    got void [noderef]
+  <asn:2>*
+  drivers/thermal/tegra_soctherm.c:271:9: warning: incorrect type in
+  argument 2 (different address spaces)
+  drivers/thermal/tegra_soctherm.c:271:9:    expected void volatile
+  [noderef] <asn:2>*addr
+  drivers/thermal/tegra_soctherm.c:271:9:    got void *
+  drivers/thermal/tegra_soctherm.c:279:9: warning: incorrect type in
+  argument 2 (different address spaces)
+  drivers/thermal/tegra_soctherm.c:279:9:    expected void volatile
+  [noderef] <asn:2>*addr
+  drivers/thermal/tegra_soctherm.c:279:9:    got void *
+  drivers/thermal/tegra_soctherm.c:281:9: warning: incorrect type in
+  argument 2 (different address spaces)
+  drivers/thermal/tegra_soctherm.c:281:9:    expected void volatile
+  [noderef] <asn:2>*addr
+  drivers/thermal/tegra_soctherm.c:281:9:    got void *
+  drivers/thermal/tegra_soctherm.c:347:25: warning: incorrect type in
+  argument 1 (different address spaces)
+  drivers/thermal/tegra_soctherm.c:347:25:    expected void const *ptr
+  drivers/thermal/tegra_soctherm.c:347:25:    got void [noderef]
+  <asn:2>*regs
+  drivers/thermal/tegra_soctherm.c:349:37: warning: incorrect type in
+  argument 1 (different address spaces)
+  drivers/thermal/tegra_soctherm.c:349:37:    expected void const *ptr
+  drivers/thermal/tegra_soctherm.c:349:37:    got void [noderef]
+  <asn:2>*regs
+  drivers/thermal/tegra_soctherm.c:271:9: warning: dereference of
+  noderef expression
+  drivers/thermal/tegra_soctherm.c:279:9: warning: dereference of
+  noderef expression
+  drivers/thermal/tegra_soctherm.c:281:9: warning: dereference of
+  noderef expression
 
-Index: usb/drivers/usb/chipidea/host.c
-===================================================================
---- usb.orig/drivers/usb/chipidea/host.c
-+++ usb/drivers/usb/chipidea/host.c
-@@ -59,7 +59,7 @@ static int host_start(struct ci_hdrc *ci
- 	hcd->has_tt = 1;
- 
- 	hcd->power_budget = ci->platdata->power_budget;
--	hcd->phy = ci->transceiver;
-+	hcd->usb_phy = ci->transceiver;
- 	hcd->tpl_support = ci->platdata->tpl_support;
- 
- 	ehci = hcd_to_ehci(hcd);
-Index: usb/drivers/usb/core/hcd.c
-===================================================================
---- usb.orig/drivers/usb/core/hcd.c
-+++ usb/drivers/usb/core/hcd.c
-@@ -2627,7 +2627,7 @@ int usb_add_hcd(struct usb_hcd *hcd,
- 	int retval;
- 	struct usb_device *rhdev;
- 
--	if (IS_ENABLED(CONFIG_USB_PHY) && !hcd->phy) {
-+	if (IS_ENABLED(CONFIG_USB_PHY) && !hcd->usb_phy) {
- 		struct usb_phy *phy = usb_get_phy_dev(hcd->self.controller, 0);
- 
- 		if (IS_ERR(phy)) {
-@@ -2640,7 +2640,7 @@ int usb_add_hcd(struct usb_hcd *hcd,
- 				usb_put_phy(phy);
- 				return retval;
- 			}
--			hcd->phy = phy;
-+			hcd->usb_phy = phy;
- 			hcd->remove_phy = 1;
- 		}
- 	}
-@@ -2788,10 +2788,10 @@ err_allocate_root_hub:
- err_register_bus:
- 	hcd_buffer_destroy(hcd);
- err_remove_phy:
--	if (hcd->remove_phy && hcd->phy) {
--		usb_phy_shutdown(hcd->phy);
--		usb_put_phy(hcd->phy);
--		hcd->phy = NULL;
-+	if (hcd->remove_phy && hcd->usb_phy) {
-+		usb_phy_shutdown(hcd->usb_phy);
-+		usb_put_phy(hcd->usb_phy);
-+		hcd->usb_phy = NULL;
- 	}
- 	return retval;
- }
-@@ -2864,10 +2864,10 @@ void usb_remove_hcd(struct usb_hcd *hcd)
- 
- 	usb_deregister_bus(&hcd->self);
- 	hcd_buffer_destroy(hcd);
--	if (hcd->remove_phy && hcd->phy) {
--		usb_phy_shutdown(hcd->phy);
--		usb_put_phy(hcd->phy);
--		hcd->phy = NULL;
-+	if (hcd->remove_phy && hcd->usb_phy) {
-+		usb_phy_shutdown(hcd->usb_phy);
-+		usb_put_phy(hcd->usb_phy);
-+		hcd->usb_phy = NULL;
- 	}
- 
- 	usb_put_invalidate_rhdev(hcd);
-Index: usb/drivers/usb/core/hub.c
-===================================================================
---- usb.orig/drivers/usb/core/hub.c
-+++ usb/drivers/usb/core/hub.c
-@@ -4467,8 +4467,8 @@ hub_port_init (struct usb_hub *hub, stru
- 	if (retval)
- 		goto fail;
- 
--	if (hcd->phy && !hdev->parent)
--		usb_phy_notify_connect(hcd->phy, udev->speed);
-+	if (hcd->usb_phy && !hdev->parent)
-+		usb_phy_notify_connect(hcd->usb_phy, udev->speed);
- 
- 	/*
- 	 * Some superspeed devices have finished the link training process
-@@ -4626,9 +4626,9 @@ static void hub_port_connect(struct usb_
- 
- 	/* Disconnect any existing devices under this port */
- 	if (udev) {
--		if (hcd->phy && !hdev->parent &&
-+		if (hcd->usb_phy && !hdev->parent &&
- 				!(portstatus & USB_PORT_STAT_CONNECTION))
--			usb_phy_notify_disconnect(hcd->phy, udev->speed);
-+			usb_phy_notify_disconnect(hcd->usb_phy, udev->speed);
- 		usb_disconnect(&port_dev->child);
- 	}
- 
-Index: usb/drivers/usb/host/ehci-fsl.c
-===================================================================
---- usb.orig/drivers/usb/host/ehci-fsl.c
-+++ usb/drivers/usb/host/ehci-fsl.c
-@@ -136,15 +136,15 @@ static int usb_hcd_fsl_probe(const struc
- 	if (pdata->operating_mode == FSL_USB2_DR_OTG) {
- 		struct ehci_hcd *ehci = hcd_to_ehci(hcd);
- 
--		hcd->phy = usb_get_phy(USB_PHY_TYPE_USB2);
-+		hcd->usb_phy = usb_get_phy(USB_PHY_TYPE_USB2);
- 		dev_dbg(&pdev->dev, "hcd=0x%p  ehci=0x%p, phy=0x%p\n",
--			hcd, ehci, hcd->phy);
-+			hcd, ehci, hcd->usb_phy);
- 
--		if (!IS_ERR_OR_NULL(hcd->phy)) {
--			retval = otg_set_host(hcd->phy->otg,
-+		if (!IS_ERR_OR_NULL(hcd->usb_phy)) {
-+			retval = otg_set_host(hcd->usb_phy->otg,
- 					      &ehci_to_hcd(ehci)->self);
- 			if (retval) {
--				usb_put_phy(hcd->phy);
-+				usb_put_phy(hcd->usb_phy);
- 				goto err2;
- 			}
- 		} else {
-@@ -181,9 +181,9 @@ static void usb_hcd_fsl_remove(struct us
- {
- 	struct fsl_usb2_platform_data *pdata = dev_get_platdata(&pdev->dev);
- 
--	if (!IS_ERR_OR_NULL(hcd->phy)) {
--		otg_set_host(hcd->phy->otg, NULL);
--		usb_put_phy(hcd->phy);
-+	if (!IS_ERR_OR_NULL(hcd->usb_phy)) {
-+		otg_set_host(hcd->usb_phy->otg, NULL);
-+		usb_put_phy(hcd->usb_phy);
- 	}
- 
- 	usb_remove_hcd(hcd);
-Index: usb/drivers/usb/host/ehci-hub.c
-===================================================================
---- usb.orig/drivers/usb/host/ehci-hub.c
-+++ usb/drivers/usb/host/ehci-hub.c
-@@ -922,7 +922,7 @@ int ehci_hub_control(
- #ifdef CONFIG_USB_OTG
- 			if ((hcd->self.otg_port == (wIndex + 1))
- 			    && hcd->self.b_hnp_enable) {
--				otg_start_hnp(hcd->phy->otg);
-+				otg_start_hnp(hcd->usb_phy->otg);
- 				break;
- 			}
- #endif
-Index: usb/drivers/usb/host/ehci-msm.c
-===================================================================
---- usb.orig/drivers/usb/host/ehci-msm.c
-+++ usb/drivers/usb/host/ehci-msm.c
-@@ -124,7 +124,7 @@ static int ehci_msm_probe(struct platfor
- 		goto put_hcd;
- 	}
- 
--	hcd->phy = phy;
-+	hcd->usb_phy = phy;
- 	device_init_wakeup(&pdev->dev, 1);
- 	/*
- 	 * OTG device parent of HCD takes care of putting
-@@ -151,7 +151,7 @@ static int ehci_msm_remove(struct platfo
- 	pm_runtime_disable(&pdev->dev);
- 	pm_runtime_set_suspended(&pdev->dev);
- 
--	otg_set_host(hcd->phy->otg, NULL);
-+	otg_set_host(hcd->usb_phy->otg, NULL);
- 
- 	/* FIXME: need to call usb_remove_hcd() here? */
- 
-Index: usb/drivers/usb/host/ehci-tegra.c
-===================================================================
---- usb.orig/drivers/usb/host/ehci-tegra.c
-+++ usb/drivers/usb/host/ehci-tegra.c
-@@ -206,7 +206,7 @@ static int tegra_ehci_hub_control(
- 		if (tegra->port_resuming && !(temp & PORT_SUSPEND)) {
- 			/* Resume completed, re-enable disconnect detection */
- 			tegra->port_resuming = 0;
--			tegra_usb_phy_postresume(hcd->phy);
-+			tegra_usb_phy_postresume(hcd->usb_phy);
- 		}
- 	}
- 
-@@ -259,7 +259,7 @@ static int tegra_ehci_hub_control(
- 			goto done;
- 
- 		/* Disable disconnect detection during port resume */
--		tegra_usb_phy_preresume(hcd->phy);
-+		tegra_usb_phy_preresume(hcd->usb_phy);
- 
- 		ehci->reset_done[wIndex-1] = jiffies + msecs_to_jiffies(25);
- 
-@@ -454,7 +454,7 @@ static int tegra_ehci_probe(struct platf
- 		err = PTR_ERR(u_phy);
- 		goto cleanup_clk_en;
- 	}
--	hcd->phy = u_phy;
-+	hcd->usb_phy = u_phy;
- 
- 	tegra->needs_double_reset = of_property_read_bool(pdev->dev.of_node,
- 		"nvidia,needs-double-reset");
-@@ -475,7 +475,7 @@ static int tegra_ehci_probe(struct platf
- 	ehci->caps = hcd->regs + 0x100;
- 	ehci->has_hostpc = soc_config->has_hostpc;
- 
--	err = usb_phy_init(hcd->phy);
-+	err = usb_phy_init(hcd->usb_phy);
- 	if (err) {
- 		dev_err(&pdev->dev, "Failed to initialize phy\n");
- 		goto cleanup_clk_en;
-@@ -490,7 +490,7 @@ static int tegra_ehci_probe(struct platf
- 	}
- 	u_phy->otg->host = hcd_to_bus(hcd);
- 
--	err = usb_phy_set_suspend(hcd->phy, 0);
-+	err = usb_phy_set_suspend(hcd->usb_phy, 0);
- 	if (err) {
- 		dev_err(&pdev->dev, "Failed to power on the phy\n");
- 		goto cleanup_phy;
-@@ -517,7 +517,7 @@ static int tegra_ehci_probe(struct platf
- cleanup_otg_set_host:
- 	otg_set_host(u_phy->otg, NULL);
- cleanup_phy:
--	usb_phy_shutdown(hcd->phy);
-+	usb_phy_shutdown(hcd->usb_phy);
- cleanup_clk_en:
- 	clk_disable_unprepare(tegra->clk);
- cleanup_hcd_create:
-@@ -531,9 +531,9 @@ static int tegra_ehci_remove(struct plat
- 	struct tegra_ehci_hcd *tegra =
- 		(struct tegra_ehci_hcd *)hcd_to_ehci(hcd)->priv;
- 
--	otg_set_host(hcd->phy->otg, NULL);
-+	otg_set_host(hcd->usb_phy->otg, NULL);
- 
--	usb_phy_shutdown(hcd->phy);
-+	usb_phy_shutdown(hcd->usb_phy);
- 	usb_remove_hcd(hcd);
- 
- 	clk_disable_unprepare(tegra->clk);
-Index: usb/drivers/usb/host/ohci-omap.c
-===================================================================
---- usb.orig/drivers/usb/host/ohci-omap.c
-+++ usb/drivers/usb/host/ohci-omap.c
-@@ -180,10 +180,10 @@ static void start_hnp(struct ohci_hcd *o
- 	unsigned long	flags;
- 	u32 l;
- 
--	otg_start_hnp(hcd->phy->otg);
-+	otg_start_hnp(hcd->usb_phy->otg);
- 
- 	local_irq_save(flags);
--	hcd->phy->state = OTG_STATE_A_SUSPEND;
-+	hcd->usb_phy->state = OTG_STATE_A_SUSPEND;
- 	writel (RH_PS_PSS, &ohci->regs->roothub.portstatus [port]);
- 	l = omap_readl(OTG_CTRL);
- 	l &= ~OTG_A_BUSREQ;
-@@ -220,14 +220,14 @@ static int ohci_omap_reset(struct usb_hc
- 
- #ifdef	CONFIG_USB_OTG
- 	if (need_transceiver) {
--		hcd->phy = usb_get_phy(USB_PHY_TYPE_USB2);
--		if (!IS_ERR_OR_NULL(hcd->phy)) {
--			int	status = otg_set_host(hcd->phy->otg,
-+		hcd->usb_phy = usb_get_phy(USB_PHY_TYPE_USB2);
-+		if (!IS_ERR_OR_NULL(hcd->usb_phy)) {
-+			int	status = otg_set_host(hcd->usb_phy->otg,
- 						&ohci_to_hcd(ohci)->self);
- 			dev_dbg(hcd->self.controller, "init %s phy, status %d\n",
--					hcd->phy->label, status);
-+					hcd->usb_phy->label, status);
- 			if (status) {
--				usb_put_phy(hcd->phy);
-+				usb_put_phy(hcd->usb_phy);
- 				return status;
- 			}
- 		} else {
-@@ -399,9 +399,9 @@ usb_hcd_omap_remove (struct usb_hcd *hcd
- 	dev_dbg(hcd->self.controller, "stopping USB Controller\n");
- 	usb_remove_hcd(hcd);
- 	omap_ohci_clock_power(0);
--	if (!IS_ERR_OR_NULL(hcd->phy)) {
--		(void) otg_set_host(hcd->phy->otg, 0);
--		usb_put_phy(hcd->phy);
-+	if (!IS_ERR_OR_NULL(hcd->usb_phy)) {
-+		(void) otg_set_host(hcd->usb_phy->otg, 0);
-+		usb_put_phy(hcd->usb_phy);
- 	}
- 	if (machine_is_omap_osk())
- 		gpio_free(9);
-Index: usb/drivers/usb/misc/lvstest.c
-===================================================================
---- usb.orig/drivers/usb/misc/lvstest.c
-+++ usb/drivers/usb/misc/lvstest.c
-@@ -333,13 +333,13 @@ static void lvs_rh_work(struct work_stru
- 					USB_PORT_STAT_CONNECTION) {
- 				lvs->present = true;
- 				lvs->portnum = i;
--				if (hcd->phy)
--					usb_phy_notify_connect(hcd->phy,
-+				if (hcd->usb_phy)
-+					usb_phy_notify_connect(hcd->usb_phy,
- 							USB_SPEED_SUPER);
- 			} else {
- 				lvs->present = false;
--				if (hcd->phy)
--					usb_phy_notify_disconnect(hcd->phy,
-+				if (hcd->usb_phy)
-+					usb_phy_notify_disconnect(hcd->usb_phy,
- 							USB_SPEED_SUPER);
- 			}
- 			break;
-Index: usb/include/linux/usb/hcd.h
-===================================================================
---- usb.orig/include/linux/usb/hcd.h
-+++ usb/include/linux/usb/hcd.h
-@@ -106,7 +106,7 @@ struct usb_hcd {
- 	 * OTG and some Host controllers need software interaction with phys;
- 	 * other external phys should be software-transparent
- 	 */
--	struct usb_phy	*phy;
-+	struct usb_phy		*usb_phy;
- 
- 	/* Flags that need to be manipulated atomically because they can
- 	 * change while the host controller is running.  Always use
-
+> +	unsigned int val;
+> +	u32 calib;
+> +	int err;
+> +
+> +	err = calculate_tsensor_calibration(sensor, shared, &calib);
+> +	if (err)
+> +		return err;
+> +
+> +	val = 0;
+> +	val |= t124_tsensor_config.tall << SENSOR_CONFIG0_TALL_SHIFT;
+> +	writel(val, base + SENSOR_CONFIG0);
+> +
+> +	val = 0;
+> +	val |= (t124_tsensor_config.tsample - 1) <<
+> +		SENSOR_CONFIG1_TSAMPLE_SHIFT;
+> +	val |= t124_tsensor_config.tiddq_en << SENSOR_CONFIG1_TIDDQ_EN_SHIFT;
+> +	val |= t124_tsensor_config.ten_count << SENSOR_CONFIG1_TEN_COUNT_SHIFT;
+> +	val |= SENSOR_CONFIG1_TEMP_ENABLE;
+> +	writel(val, base + SENSOR_CONFIG1);
+> +
+> +	writel(calib, base + SENSOR_CONFIG2);
+> +
+> +	return 0;
+> +}
+> +
+> +/* Translate from soctherm readback format to millicelsius.
+> + * The soctherm readback format in bits is as follows:
+> + *   TTTTTTTT H______N
+> + * where T's contain the temperature in Celsius,
+> + * H denotes an addition of 0.5 Celsius and N denotes negation
+> + * of the final value.
+> + */
+> +static inline long translate_temp(u16 val)
+> +{
+> +	long t;
+> +
+> +	t = ((val & READBACK_VALUE_MASK) >> READBACK_VALUE_SHIFT) * 1000;
+> +	if (val & READBACK_ADD_HALF)
+> +		t += 500;
+> +	if (val & READBACK_NEGATE)
+> +		t *= -1;
+> +
+> +	return t;
+> +}
+> +
+> +static int tegra_thermctl_get_temp(void *data, long *out_temp)
+> +{
+> +	struct tegra_thermctl_zone *zone = data;
+> +	u32 val;
+> +
+> +	val = (readl(zone->temp_reg) >> zone->temp_shift) & SENSOR_TEMP_MASK;
+> +	*out_temp = translate_temp(val);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id tegra_soctherm_of_match[] = {
+> +	{ .compatible = "nvidia,tegra124-soctherm" },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, tegra_soctherm_of_match);
+> +
+> +static const int thermctl_temp_offsets[] = {
+> +	SENSOR_TEMP1, SENSOR_TEMP2, SENSOR_TEMP1, SENSOR_TEMP2
+> +};
+> +
+> +static const int thermctl_temp_shifts[] = {
+> +	16, 16, 0, 0
+> +};
+> +
+> +static int tegra_soctherm_probe(struct platform_device *pdev)
+> +{
+> +	struct tegra_soctherm *tegra;
+> +	struct thermal_zone_device *tz;
+> +	struct tsensor_shared_calibration shared_calib;
+> +	int i;
+> +	int err = 0;
+> +
+> +	const struct tegra_tsensor *tsensors = t124_tsensors;
+> +
+> +	tegra = devm_kzalloc(&pdev->dev, sizeof(*tegra), GFP_KERNEL);
+> +	if (!tegra)
+> +		return -ENOMEM;
+> +
+> +	tegra->regs = devm_ioremap_resource(&pdev->dev,
+> +		platform_get_resource(pdev, IORESOURCE_MEM, 0));
+> +	if (IS_ERR(tegra->regs)) {
+> +		dev_err(&pdev->dev, "can't get registers");
+> +		return PTR_ERR(tegra->regs);
+> +	}
+> +
+> +	tegra->reset = devm_reset_control_get(&pdev->dev, "soctherm");
+> +	if (IS_ERR(tegra->reset)) {
+> +		dev_err(&pdev->dev, "can't get soctherm reset\n");
+> +		return PTR_ERR(tegra->reset);
+> +	}
+> +
+> +	tegra->clock_tsensor = devm_clk_get(&pdev->dev, "tsensor");
+> +	if (IS_ERR(tegra->clock_tsensor)) {
+> +		dev_err(&pdev->dev, "can't get clock tsensor\n");
+> +		return PTR_ERR(tegra->clock_tsensor);
+> +	}
+> +
+> +	tegra->clock_soctherm = devm_clk_get(&pdev->dev, "soctherm");
+> +	if (IS_ERR(tegra->clock_soctherm)) {
+> +		dev_err(&pdev->dev, "can't get clock soctherm\n");
+> +		return PTR_ERR(tegra->clock_soctherm);
+> +	}
+> +
+> +	reset_control_assert(tegra->reset);
+> +
+> +	err = clk_prepare_enable(tegra->clock_soctherm);
+> +	if (err) {
+> +		reset_control_deassert(tegra->reset);
+> +		return err;
+> +	}
+> +
+> +	err = clk_prepare_enable(tegra->clock_tsensor);
+> +	if (err) {
+> +		clk_disable_unprepare(tegra->clock_soctherm);
+> +		reset_control_deassert(tegra->reset);
+> +		return err;
+> +	}
+> +
+> +	reset_control_deassert(tegra->reset);
+> +
+> +	/* Initialize raw sensors */
+> +
+> +	err = calculate_shared_calibration(&shared_calib);
+> +	if (err)
+> +		goto disable_clocks;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(t124_tsensors); ++i) {
+> +		err = enable_tsensor(tegra, tsensors + i, shared_calib);
+> +		if (err)
+> +			goto disable_clocks;
+> +	}
+> +
+> +	writel(SENSOR_PDIV_T124, tegra->regs + SENSOR_PDIV);
+> +	writel(SENSOR_HOTSPOT_OFF_T124, tegra->regs + SENSOR_HOTSPOT_OFF);
+> +
+> +	/* Initialize thermctl sensors */
+> +
+> +	for (i = 0; i < ARRAY_SIZE(tegra->thermctl_tzs); ++i) {
+> +		struct tegra_thermctl_zone *zone =
+> +			devm_kzalloc(&pdev->dev, sizeof(*zone), GFP_KERNEL);
+> +		if (!zone) {
+> +			err = -ENOMEM;
+> +			--i;
+> +			goto unregister_tzs;
+> +		}
+> +
+> +		zone->temp_reg = tegra->regs + thermctl_temp_offsets[i];
+> +		zone->temp_shift = thermctl_temp_shifts[i];
+> +
+> +		tz = thermal_zone_of_sensor_register(
+> +			&pdev->dev, i, zone, tegra_thermctl_get_temp, NULL);
+> +		if (IS_ERR(tz)) {
+> +			err = PTR_ERR(tz);
+> +			dev_err(&pdev->dev, "failed to register sensor: %d\n",
+> +				err);
+> +			--i;
+> +			goto unregister_tzs;
+> +		}
+> +
+> +		tegra->thermctl_tzs[i] = tz;
+> +	}
+> +
+> +	return 0;
+> +
+> +unregister_tzs:
+> +	for (; i >= 0; i--)
+> +		thermal_zone_of_sensor_unregister(&pdev->dev,
+> +						  tegra->thermctl_tzs[i]);
+> +
+> +disable_clocks:
+> +	clk_disable_unprepare(tegra->clock_tsensor);
+> +	clk_disable_unprepare(tegra->clock_soctherm);
+> +
+> +	return err;
+> +}
+> +
+> +static int tegra_soctherm_remove(struct platform_device *pdev)
+> +{
+> +	struct tegra_soctherm *tegra = platform_get_drvdata(pdev);
+> +	int i;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(tegra->thermctl_tzs); ++i) {
+> +		thermal_zone_of_sensor_unregister(&pdev->dev,
+> +						  tegra->thermctl_tzs[i]);
+> +	}
+> +
+> +	clk_disable_unprepare(tegra->clock_tsensor);
+> +	clk_disable_unprepare(tegra->clock_soctherm);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct platform_driver tegra_soctherm_driver = {
+> +	.probe = tegra_soctherm_probe,
+> +	.remove = tegra_soctherm_remove,
+> +	.driver = {
+> +		.name = "tegra_soctherm",
+> +		.of_match_table = tegra_soctherm_of_match,
+> +	},
+> +};
+> +module_platform_driver(tegra_soctherm_driver);
+> +
+> +MODULE_AUTHOR("Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
+> +MODULE_DESCRIPTION("Tegra SOCTHERM thermal management driver");
+> +MODULE_LICENSE("GPL v2");
+> -- 
+> 1.8.1.5
+> 
