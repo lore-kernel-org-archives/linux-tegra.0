@@ -1,37 +1,56 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH 0/3] Introduce of_match_machine() helper
-Date: Wed, 24 Sep 2014 10:44:39 +0300
-Message-ID: <20140924074439.GA25537@tbergstrom-lnx.Nvidia.com>
-References: <1407452515-2390-1-git-send-email-ttynkkynen@nvidia.com>
- <53FB7642.1000808@wwwdotorg.org>
- <20140919131245.GQ26779@tbergstrom-lnx.Nvidia.com>
+From: Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v5 1/2] usb: rename phy to usb_phy in HCD
+Date: Tue, 23 Sep 2014 22:11:38 -0700
+Message-ID: <20140924051138.GA4440@kroah.com>
+References: <5072811.p8odmvpxdS@wasted.cogentembedded.com>
+ <2282553.NrZjRxyKlv@wasted.cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20140919131245.GQ26779@tbergstrom-lnx.Nvidia.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Tuomas Tynkkynen <ttynkkynen@nvidia.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+In-Reply-To: <2282553.NrZjRxyKlv@wasted.cogentembedded.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-usb@vger.kernel.org, Peter.Chen@freescale.com, stern@rowland.harvard.edu, swarren@wwwdotorg.org, thierry.reding@gmail.com, balbi@ti.com, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-sh@vger.kernel.org, yoshihiro.shimoda.uh@renesas.com, linux-kernel@vger.kernel.org, antoine.tenart@free-electrons.com
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Sep 19, 2014 at 04:12:45PM +0300, Peter De Schrijver wrote:
-> On Mon, Aug 25, 2014 at 07:45:38PM +0200, Stephen Warren wrote:
-> > On 08/07/2014 05:01 PM, Tuomas Tynkkynen wrote:
-> > > Some mach-specific drivers that don't require their own node in the device tree
-> > > (for example drivers/soc/*, cpufreq, cpuidle etc.) want to match on the device
-> > > tree root compatible property instead. Instead of open-coding (and forgetting
-> > > to call of_node_put on the root node) everywhere, add a helper to the OF core.
-> > 
-> > Tuomas, I assume there will be a new version of this series to address 
-> > the review comments? For now, I'm not intending on applying this.
+On Fri, Sep 05, 2014 at 01:42:09AM +0400, Sergei Shtylyov wrote:
+> From: Antoine Tenart <antoine.tenart@free-electrons.com>
 > 
-> Given that Tuomas's internship ended, I'm willing to push this patch set
-> forward, if there is interest. So are people still interested in this idea
-> or should we drop it?
+> The USB PHY member of the HCD structure is renamed to 'usb_phy' and
+> modifications are done in all drivers accessing it.
+> This is in preparation to adding the generic PHY support.
+> 
+> Signed-off-by: Antoine Tenart <antoine.tenart@free-electrons.com>
+> [Sergei: added missing 'drivers/usb/misc/lvstest.c' file, resolved rejects
+> caused by patch reordering, updated changelog.]
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Acked-by: Alan Stern <stern@rowland.harvard.edu>
+> Acked-by: Felipe Balbi <balbi@ti.com>
+> 
+> ---
+> Changes in version 5:
+> - imported the patch from Antoine Tenart's series;
+> - added missing 'drivers/usb/misc/lvstest.c' file;
+> - resolved rejects caused by patch reordering;
+> - refreshed patch;
+> - updated changelog.
+> 
+>  drivers/usb/chipidea/host.c   |    2 +-
+>  drivers/usb/core/hcd.c        |   20 ++++++++++----------
+>  drivers/usb/core/hub.c        |    8 ++++----
+>  drivers/usb/host/ehci-fsl.c   |   16 ++++++++--------
+>  drivers/usb/host/ehci-hub.c   |    2 +-
+>  drivers/usb/host/ehci-msm.c   |    4 ++--
+>  drivers/usb/host/ehci-tegra.c |   16 ++++++++--------
+>  drivers/usb/host/ohci-omap.c  |   20 ++++++++++----------
+>  drivers/usb/misc/lvstest.c    |    8 ++++----
+>  include/linux/usb/hcd.h       |    2 +-
+>  10 files changed, 49 insertions(+), 49 deletions(-)
 
-Seems there's no interest. I won't bother with this then.
+This doesn't apply to my tree at all anymore, can you refresh it and
+resend?
 
-Cheers,
+thanks,
 
-Peter.
+greg k-h
