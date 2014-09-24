@@ -1,75 +1,32 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH v6 1/2] usb: rename phy to usb_phy in HCD
-Date: Wed, 24 Sep 2014 14:39:42 -0500
-Message-ID: <20140924193942.GR17997@saruman>
-References: <37148636.BU5lT4M4eC@wasted.cogentembedded.com>
- <2300651.HNvMzB0aUB@wasted.cogentembedded.com>
- <20140924192806.GO17997@saruman>
- <54231BFF.5070901@cogentembedded.com>
-Reply-To: <balbi@ti.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v5 1/4] of: Add bindings for nvidia,tegra124-soctherm
+Date: Wed, 24 Sep 2014 13:43:40 -0600
+Message-ID: <54231EEC.1080600@wwwdotorg.org>
+References: <1408616242-21009-1-git-send-email-mperttunen@nvidia.com> <1408616242-21009-2-git-send-email-mperttunen@nvidia.com> <20140924184054.GA7593@developer>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ffBYM5qgR8HH9Mta"
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <54231BFF.5070901@cogentembedded.com>
+In-Reply-To: <20140924184054.GA7593@developer>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: balbi@ti.com, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, Peter.Chen@freescale.com, stern@rowland.harvard.edu, swarren@wwwdotorg.org, thierry.reding@gmail.com, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-sh@vger.kernel.org, yoshihiro.shimoda.uh@renesas.com, linux-kernel@vger.kernel.org, antoine.tenart@free-electrons.com
+To: Eduardo Valentin <edubezval@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>
+Cc: rui.zhang@intel.com, thierry.reding@gmail.com, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, juha-matti.tilli@iki.fi
 List-Id: linux-tegra@vger.kernel.org
 
---ffBYM5qgR8HH9Mta
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 09/24/2014 12:40 PM, Eduardo Valentin wrote:
+> Hello,
+>
+> On Thu, Aug 21, 2014 at 01:17:19PM +0300, Mikko Perttunen wrote:
+>> This adds binding documentation and headers for the Tegra124
+>> SOCTHERM device tree node.
+>>
+>> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+>> Acked-by: Stephen Warren <swarren@nvidia.com>
+>
+> Acked-by: Eduardo Valentin <edubezval@gmail.com>
+>
+> Stephen, are you still queueing this series in your tree?
 
-On Wed, Sep 24, 2014 at 11:31:11PM +0400, Sergei Shtylyov wrote:
-> Hello.
->=20
-> On 09/24/2014 11:28 PM, Felipe Balbi wrote:
->=20
-> >>From: Antoine Tenart <antoine.tenart@free-electrons.com>
->=20
-> >>The USB PHY member of the HCD structure is renamed to 'usb_phy' and
-> >>modifications are done in all drivers accessing it.
-> >>This is in preparation to adding the generic PHY support.
->=20
-> >>Signed-off-by: Antoine Tenart <antoine.tenart@free-electrons.com>
-> >>[Sergei: added missing 'drivers/usb/misc/lvstest.c' file, resolved reje=
-cts,
-> >>updated changelog.]
-> >>Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> >>Acked-by: Alan Stern <stern@rowland.harvard.edu>
->=20
-> >Acked-by: Felipe Balbi <balbi@ti.com>
->=20
->    Sorry, forgot to collect your ACK from the previous posting. :-/
-
-don't worry ;-)
-
---=20
-balbi
-
---ffBYM5qgR8HH9Mta
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJUIx3+AAoJEIaOsuA1yqREKlQP/ilSdXJbAq8hq/pE2JDK3q+P
-A8zFNo5Kjpz0wuUFg4KaP9s/rPx+aLPdhSTuPTXobe+J1ayYAO5g0JgrDOOQ/BI5
-WF9a64pZuHJjSK5lp8LgjZ5GXCsJyy75SOCAjrsdZD1Zqhoo4g151YlxTcC3ZUCj
-NXtrMzH1uYDEz9p7t6laFus8s+UyVTahEeQyYLiICW72uRIygtiWDZulhwoiSlSi
-IcYfuJmumvgmPnC6J3ym+Muh65TjVzyods3KDT/qbNGpYJkk6yWICb+OS5xGt3mm
-8e5pyRnlCTMH2M1Do5kUwMFNlH29m41iMIypqZZqY0Vi/QfIKZFo2iNPNPHNBNmg
-rSBA6RqDzIeqGcLa6FWPGeFPiTRl/XL4+x4tWaWkGFnedsTY11eX0kC04wPtShQS
-e795+RRL8TOInyStcpN2srnnDzSIhdAcKjM/kdcMAaHv+h6FZTFolm6pQRV9PNbZ
-kl4iO1apq9mUhFURsN6I3xL6S447jTpjN+G0zSZm5kpClc0zuFTjmBQH0bKydrWM
-H1cI1/PjTo2qNrrfKMswur5SwSUZI/PY0lk4jifZqLD314PR3W+fwQYiomzX6veh
-M5D+D5tDy+SPNM9CZ5ms7Uaj1cd8m7TGyjyZ0UqSrc/CBBgJMeDTnfuIIB5Mtc+B
-NuUPT9yX6NpVl45S/NPc
-=aVIp
------END PGP SIGNATURE-----
-
---ffBYM5qgR8HH9Mta--
+Yes, I except it makes sense to take this through the Tegra tree. 
+However, it wont' be for 3.18, since I've already sent pull requests for 
+this cycle.
