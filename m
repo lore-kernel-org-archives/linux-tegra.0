@@ -1,98 +1,117 @@
-From: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-Subject: Re: [PATCH v5 4/4] thermal: Add Tegra SOCTHERM thermal management
- driver
-Date: Thu, 25 Sep 2014 10:55:19 +0300
-Message-ID: <5423CA67.1060308@kapsi.fi>
-References: <1408616242-21009-1-git-send-email-mperttunen@nvidia.com> <1408616242-21009-5-git-send-email-mperttunen@nvidia.com> <20140924191829.GA16529@developer> <54231C3D.6040900@kapsi.fi> <20140925055953.GA12423@ulmo>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH v7 2/5] ARM: add AFTR mode support to firmware do_idle
+ method
+Date: Thu, 25 Sep 2014 17:23:32 +0900
+Message-ID: <5423D104.4050809@samsung.com>
+References: <1411561488-1739-1-git-send-email-b.zolnierkie@samsung.com> <1411561488-1739-3-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140925055953.GA12423@ulmo>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Eduardo Valentin <edubezval@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, rui.zhang@intel.com, swarren@wwwdotorg.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, juha-matti.tilli@iki.fi
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <1411561488-1739-3-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, Thierry Reding <treding@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/25/2014 08:59 AM, Thierry Reding wrote:
-> On Wed, Sep 24, 2014 at 10:32:13PM +0300, Mikko Perttunen wrote:
->> On 09/24/2014 10:18 PM, Eduardo Valentin wrote:
->>>
->>> Mikko,
->>>
->>> On Thu, Aug 21, 2014 at 01:17:22PM +0300, Mikko Perttunen wrote:
->>>> ...
->>>> +
->>>> +static int enable_tsensor(struct tegra_soctherm *tegra,
->>>> +			  const struct tegra_tsensor *sensor,
->>>> +			  struct tsensor_shared_calibration shared)
->>>> +{
->>>> +	void * __iomem base = tegra->regs + sensor->base;
->>>
->>> I get sparse complaining about this declaration. For the sake of keeping
->>> a clean static checks, can you please:
->>> -       void * __iomem base = tegra->regs + sensor->base;
->>> +       void __iomem * base = tegra->regs + sensor->base;
->>>
->>
->> Sure.
->>
->>> Can you also please check the remaining sparse errors?
->>>    CHECK   drivers/thermal/tegra_soctherm.c
->>>    drivers/thermal/tegra_soctherm.c:260:43: warning: incorrect type in
->>>    initializer (different address spaces)
->>>    drivers/thermal/tegra_soctherm.c:260:43:    expected void *[noderef]
->>>    <asn:2>base
->>>    drivers/thermal/tegra_soctherm.c:260:43:    got void [noderef]
->>>    <asn:2>*
->>>    drivers/thermal/tegra_soctherm.c:271:9: warning: incorrect type in
->>>    argument 2 (different address spaces)
->>>    drivers/thermal/tegra_soctherm.c:271:9:    expected void volatile
->>>    [noderef] <asn:2>*addr
->>>    drivers/thermal/tegra_soctherm.c:271:9:    got void *
->>>    drivers/thermal/tegra_soctherm.c:279:9: warning: incorrect type in
->>>    argument 2 (different address spaces)
->>>    drivers/thermal/tegra_soctherm.c:279:9:    expected void volatile
->>>    [noderef] <asn:2>*addr
->>>    drivers/thermal/tegra_soctherm.c:279:9:    got void *
->>>    drivers/thermal/tegra_soctherm.c:281:9: warning: incorrect type in
->>>    argument 2 (different address spaces)
->>>    drivers/thermal/tegra_soctherm.c:281:9:    expected void volatile
->>>    [noderef] <asn:2>*addr
->>>    drivers/thermal/tegra_soctherm.c:281:9:    got void *
->>>    drivers/thermal/tegra_soctherm.c:347:25: warning: incorrect type in
->>>    argument 1 (different address spaces)
->>>    drivers/thermal/tegra_soctherm.c:347:25:    expected void const *ptr
->>>    drivers/thermal/tegra_soctherm.c:347:25:    got void [noderef]
->>>    <asn:2>*regs
->>>    drivers/thermal/tegra_soctherm.c:349:37: warning: incorrect type in
->>>    argument 1 (different address spaces)
->>>    drivers/thermal/tegra_soctherm.c:349:37:    expected void const *ptr
->>>    drivers/thermal/tegra_soctherm.c:349:37:    got void [noderef]
->>>    <asn:2>*regs
->>>    drivers/thermal/tegra_soctherm.c:271:9: warning: dereference of
->>>    noderef expression
->>>    drivers/thermal/tegra_soctherm.c:279:9: warning: dereference of
->>>    noderef expression
->>>    drivers/thermal/tegra_soctherm.c:281:9: warning: dereference of
->>>    noderef expression
->>>
->>
->> Most of these seem to be caused by the above-mentioned swapping of __iomem
->> and *. The ones on lines 347 and 349 are more peculiar, though. Apparently
->> sparse doesn't like using IS_ERR and PTR_ERR on the void __iomem * pointer
->> returned by devm_ioremap_resource. Looks like this has been discussed before
->> (https://lkml.org/lkml/2013/6/17/216) and sparse should have been patched to
->> ignore this situation, so I'm not sure why it's complaining about it.
->> Anyway, there shouldn't be any issue here.
+On 09/24/14 21:24, Bartlomiej Zolnierkiewicz wrote:
+> On some platforms (i.e. EXYNOS ones) more than one idle mode is
+> available and we need to distinguish them in firmware do_idle method.
 >
-> If I apply the change suggested by Eduardo above then all of the above
-> warnings go away for me. That's with sparse 0.5.0. According to the
-> email thread above a patch for this was applied in 0.4.5.
+> Add mode parameter to do_idle firmware method and AFTR mode support
+> to EXYNOS do_idle implementation.
+>
+> This change is a preparation for adding secure firmware support to
+> EXYNOS cpuidle driver.
+>
+> This patch shouldn't cause any functionality changes.
+>
+> Signed-off-by: Bartlomiej Zolnierkiewicz<b.zolnierkie@samsung.com>
+> Acked-by: Kyungmin Park<kyungmin.park@samsung.com>
+> ---
+> v7:
+> - fixed build on Tegra
+> - updated summary line
+>
+>   arch/arm/include/asm/firmware.h        |  2 +-
+>   arch/arm/mach-exynos/common.h          |  5 +++++
+>   arch/arm/mach-exynos/firmware.c        | 10 ++++++++--
+>   arch/arm/mach-tegra/cpuidle-tegra114.c |  2 +-
+>   4 files changed, 15 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/arm/include/asm/firmware.h b/arch/arm/include/asm/firmware.h
+> index 5904f59..89aefe1 100644
+> --- a/arch/arm/include/asm/firmware.h
+> +++ b/arch/arm/include/asm/firmware.h
+> @@ -28,7 +28,7 @@ struct firmware_ops {
+>   	/*
+>   	 * Enters CPU idle mode
+>   	 */
+> -	int (*do_idle)(void);
+> +	int (*do_idle)(unsigned long mode);
+>   	/*
+>   	 * Sets boot address of specified physical CPU
+>   	 */
+> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+> index c218200..2d830df 100644
+> --- a/arch/arm/mach-exynos/common.h
+> +++ b/arch/arm/mach-exynos/common.h
+> @@ -119,6 +119,11 @@ extern void __iomem *sysram_base_addr;
+>   extern void __iomem *pmu_base_addr;
+>   void exynos_sysram_init(void);
+>
+> +enum {
+> +	FW_DO_IDLE_SLEEP,
+> +	FW_DO_IDLE_AFTR,
+> +};
+> +
+>   void exynos_firmware_init(void);
+>
+>   extern u32 exynos_get_eint_wake_mask(void);
+> diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+> index f5e626d..e57b7c3 100644
+> --- a/arch/arm/mach-exynos/firmware.c
+> +++ b/arch/arm/mach-exynos/firmware.c
+> @@ -28,9 +28,15 @@
+>   #define EXYNOS_BOOT_ADDR	0x8
+>   #define EXYNOS_BOOT_FLAG	0xc
+>
+> -static int exynos_do_idle(void)
+> +static int exynos_do_idle(unsigned long mode)
+>   {
+> -	exynos_smc(SMC_CMD_SLEEP, 0, 0, 0);
+> +	switch (mode) {
+> +	case FW_DO_IDLE_AFTR:
+> +		exynos_smc(SMC_CMD_CPU0AFTR, 0, 0, 0);
+> +		break;
+> +	case FW_DO_IDLE_SLEEP:
+> +		exynos_smc(SMC_CMD_SLEEP, 0, 0, 0);
+> +	}
+>   	return 0;
+>   }
+>
+> diff --git a/arch/arm/mach-tegra/cpuidle-tegra114.c b/arch/arm/mach-tegra/cpuidle-tegra114.c
+> index e3ebdce..425b6c8 100644
+> --- a/arch/arm/mach-tegra/cpuidle-tegra114.c
+> +++ b/arch/arm/mach-tegra/cpuidle-tegra114.c
+> @@ -49,7 +49,7 @@ static int tegra114_idle_power_down(struct cpuidle_device *dev,
+>   	call_firmware_op(prepare_idle);
+>
+>   	/* Do suspend by ourselves if the firmware does not implement it */
+> -	if (call_firmware_op(do_idle) == -ENOSYS)
+> +	if (call_firmware_op(do_idle, 0) == -ENOSYS)
+>   		cpu_suspend(0, tegra30_sleep_cpu_secondary_finish);
+>
+>   	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_EXIT,&dev->cpu);
 
-Ah, good. I didn't actually run sparse, just checked by eye. Maybe I 
-should have run it.
++ Thierry(using nvidia.com e-mail address)
 
->
-> Thierry
->
+Hi Thierry,
+
+For supporting AFTR mode in call_firmware_op(do_idle), need to modify 
+tegra stuff as you can see. The functionality will be same with before. 
+Is it OK to you? If you have no objection, I'd like to take this series 
+into samsung tree.
+
+Thanks,
+Kukjin
