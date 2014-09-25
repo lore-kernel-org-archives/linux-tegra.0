@@ -1,112 +1,39 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: multi_v7_defconfig: add missing Tegra options
-Date: Thu, 25 Sep 2014 11:38:24 -0600
-Message-ID: <1411666704-7153-1-git-send-email-swarren@wwwdotorg.org>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [GIT PULL 1/3] ARM: tegra: core SoC code changes for 3.18
+Date: Thu, 25 Sep 2014 19:55:46 +0200
+Message-ID: <5666206.hBBQzilaqm@wuerfel>
+References: <1411062692-22338-1-git-send-email-swarren@wwwdotorg.org> <201409251801.18466.arnd@arndb.de> <5424458E.7020603@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5424458E.7020603-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Thursday 25 September 2014 10:40:46 Stephen Warren wrote:
+> 
+> I don't recall the exact commits, but I ended up needing to base one of 
+> the branches on -rc2. So, I then based all the branches on the same 
+> commit. When I create Tegra's for-next, I start with that baseline 
+> branch and merge in each Tegra topic branch. That way, the merges only 
+> bring in exactly what's in that branch, and it's easy to validate the 
+> final result in gitk/similar.
 
-Add all HW-support options from tegra_defconfig that are missing from
-multi_v7_defconfig.
+I see. For us it's actually more helpful if every single topic branch
+is on the oldest possible state.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-I validated that this applies and builds OK on top of:
-arm-soc/for-next b161d35992ed ("Merge branches 'next/defconfig', ...")
-next-20140925
----
- arch/arm/configs/multi_v7_defconfig | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+> I suppose it'd work fine if I start with 
+> the newest base of any branch and then merged the topic branches in; 
+> that would at least restrict the merges to only the contents of the 
+> branch, although it'd create a far more difficult to validate history, 
+> since the different topic branches would be based in different places.
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 8b489446aa1a..387d8e638468 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -77,6 +77,7 @@ CONFIG_PCI=y
- CONFIG_PCI_MSI=y
- CONFIG_PCI_MVEBU=y
- CONFIG_PCI_TEGRA=y
-+CONFIG_PCIEPORTBUS=y
- CONFIG_SMP=y
- CONFIG_NR_CPUS=8
- CONFIG_HIGHPTE=y
-@@ -124,7 +125,10 @@ CONFIG_CMA_SIZE_MBYTES=64
- CONFIG_OMAP_OCP2SCP=y
- CONFIG_MTD=y
- CONFIG_MTD_M25P80=y
-+CONFIG_MTD_SPI_NOR=y
- CONFIG_BLK_DEV_LOOP=y
-+CONFIG_AD525X_DPOT=y
-+CONFIG_AD525X_DPOT_I2C=y
- CONFIG_ICS932S401=y
- CONFIG_APDS9802ALS=y
- CONFIG_ISL29003=y
-@@ -134,9 +138,11 @@ CONFIG_BLK_DEV_SD=y
- CONFIG_BLK_DEV_SR=y
- CONFIG_SCSI_MULTI_LUN=y
- CONFIG_ATA=y
-+CONFIG_SATA_AHCI=y
- CONFIG_SATA_AHCI_PLATFORM=y
- CONFIG_AHCI_ST=y
- CONFIG_AHCI_SUNXI=y
-+CONFIG_AHCI_TEGRA=y
- CONFIG_SATA_HIGHBANK=y
- CONFIG_SATA_MV=y
- CONFIG_NETDEVICES=y
-@@ -162,6 +168,7 @@ CONFIG_USB_NET_SMSC95XX=y
- CONFIG_BRCMFMAC=m
- CONFIG_RT2X00=m
- CONFIG_RT2800USB=m
-+CONFIG_INPUT_JOYDEV=y
- CONFIG_INPUT_EVDEV=y
- CONFIG_KEYBOARD_GPIO=y
- CONFIG_KEYBOARD_TEGRA=y
-@@ -170,6 +177,7 @@ CONFIG_KEYBOARD_ST_KEYSCAN=y
- CONFIG_KEYBOARD_CROS_EC=y
- CONFIG_MOUSE_PS2_ELANTECH=y
- CONFIG_INPUT_TOUCHSCREEN=y
-+CONFIG_TOUCHSCREEN_ATMEL_MXT=y
- CONFIG_TOUCHSCREEN_STMPE=y
- CONFIG_INPUT_MISC=y
- CONFIG_INPUT_MPU3050=y
-@@ -294,6 +302,7 @@ CONFIG_BACKLIGHT_LCD_SUPPORT=y
- CONFIG_BACKLIGHT_CLASS_DEVICE=y
- CONFIG_BACKLIGHT_PWM=y
- CONFIG_FRAMEBUFFER_CONSOLE=y
-+CONFIG_FRAMEBUFFER_CONSOLE_ROTATION=y
- CONFIG_SOUND=y
- CONFIG_SND=y
- CONFIG_SND_SOC=y
-@@ -346,7 +355,18 @@ CONFIG_MMC_DW=y
- CONFIG_MMC_DW_EXYNOS=y
- CONFIG_NEW_LEDS=y
- CONFIG_LEDS_CLASS=y
-+CONFIG_LEDS_GPIO=y
- CONFIG_LEDS_PWM=y
-+CONFIG_LEDS_TRIGGERS=y
-+CONFIG_LEDS_TRIGGER_TIMER=y
-+CONFIG_LEDS_TRIGGER_ONESHOT=y
-+CONFIG_LEDS_TRIGGER_HEARTBEAT=y
-+CONFIG_LEDS_TRIGGER_BACKLIGHT=y
-+CONFIG_LEDS_TRIGGER_CPU=y
-+CONFIG_LEDS_TRIGGER_GPIO=y
-+CONFIG_LEDS_TRIGGER_DEFAULT_ON=y
-+CONFIG_LEDS_TRIGGER_TRANSIENT=y
-+CONFIG_LEDS_TRIGGER_CAMERA=y
- CONFIG_EDAC=y
- CONFIG_EDAC_MM_EDAC=y
- CONFIG_EDAC_HIGHBANK_MC=y
-@@ -386,6 +406,7 @@ CONFIG_MFD_NVEC=y
- CONFIG_KEYBOARD_NVEC=y
- CONFIG_SERIO_NVEC_PS2=y
- CONFIG_NVEC_POWER=y
-+CONFIG_NVEC_PAZ00=y
- CONFIG_QCOM_GSBI=y
- CONFIG_COMMON_CLK_QCOM=y
- CONFIG_MSM_GCC_8660=y
--- 
-1.9.1
+Yes, I fear there is no perfect solution to this. Someone also suggested
+switching around the parent commits during a merge that updates one of
+our branches to a newer base. That would solve the backmerge problem but
+in turn break 'git log --first-parent'.
+
+	Arnd
