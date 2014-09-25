@@ -1,64 +1,40 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [5/5] ARM: tegra: jetson-tk1: enable GK20A GPU
-Date: Thu, 25 Sep 2014 09:48:01 -0600
-Message-ID: <54243931.6050804@wwwdotorg.org>
-References: <1400491450-19223-6-git-send-email-acourbot@nvidia.com> <20140925132717.GA13579@dusk.luon.net>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [GIT PULL 1/3] ARM: tegra: core SoC code changes for 3.18
+Date: Thu, 25 Sep 2014 18:01:18 +0200
+Message-ID: <201409251801.18466.arnd@arndb.de>
+References: <1411062692-22338-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140925132717.GA13579@dusk.luon.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sjoerd Simons <sjoerd@luon.net>, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Ben Skeggs <bskeggs@redhat.com>, Thierry Reding <thierry.reding@gmail.com>, nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1411062692-22338-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/25/2014 07:27 AM, Sjoerd Simons wrote:
-> Playing a bit with todays linux-next on my jetson, it seems this patch is
-> still required for enabling the GPU. Is there anything blocking it (firmware
-> not available yet in liux-firmware?)
+On Thursday 18 September 2014, Stephen Warren wrote:
+> the primary change here gets its address information from DT rather than
+> iomap.h. This removes one more user of iomap.h, and will help allow the
+> code to move to a location that can be shared between arch/arm and
+> arch/arm64.
+> 
+> An unused header file was also removed.
+> 
 
-I think initially I was waiting for the DRM patch "drm/nouvea: support 
-for probing platform devices" to be applied, but it looks like that's 
-been applied already, so only patches 4 and 5 in this series are still 
-outstanding.
+Pulled all three into the respective soc, dt and defconfig branches.
 
-Alex, wasn't there also some issue where the VPR register had to be 
-programmed, and if it wasn't there'd be a hang when the GPU registers 
-were touched? If we've added code to Nouveau/tegradrm to detect that and 
-avoid the problem, then I guess we can commit these last two patches for 
-3.19. A resend after the 3.18 merge window might help.
+The defconfig branch was based on -rc2 rather than -rc1, which is mildly
+annoying since it means we are backmerging commits from upstream, please
+try to avoid that in the future, or describe why it was done if you
+had a good reason.
 
-> On Mon, May 19, 2014 at 06:24:10PM +0900, Alexandre Courbot wrote:
->> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
->> ---
->>   arch/arm/boot/dts/tegra124-jetson-tk1.dts | 8 +++++++-
->>   1 file changed, 7 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
->> index e31fb61a81d3..15a194d1277f 100644
->> --- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
->> +++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
->> @@ -30,6 +30,12 @@
->>   		};
->>   	};
->>
->> +	gpu@0,57000000 {
->> +		status = "okay";
->> +
->> +		vdd-supply = <&vdd_gpu>;
->> +	};
->> +
->>   	pinmux: pinmux@0,70000868 {
->>   		pinctrl-names = "default";
->>   		pinctrl-0 = <&state_default>;
->> @@ -1505,7 +1511,7 @@
->>   					regulator-always-on;
->>   				};
->>
->> -				sd6 {
->> +				vdd_gpu: sd6 {
->>   					regulator-name = "+VDD_GPU_AP";
->>   					regulator-min-microvolt = <650000>;
->>   					regulator-max-microvolt = <1200000>;
->
+Also I noticed that your defconfig changes enable things in the tegra
+defconfig that are not part of multi_v7_defconfig. Could you create
+another patch to enable everything you need in terms of Tegra hardware
+support in multi_v7_defconfig as well, preferably as loadable modules?
+
+Thanks!
+
+	Arnd
