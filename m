@@ -1,125 +1,122 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Thierry Reding <thierry.reding@gmail.com>
 Subject: Re: [5/5] ARM: tegra: jetson-tk1: enable GK20A GPU
-Date: Fri, 26 Sep 2014 11:59:29 +0200
-Message-ID: <20140926095928.GJ31106@ulmo>
+Date: Fri, 26 Sep 2014 12:01:03 +0200
+Message-ID: <20140926100052.GK31106@ulmo>
 References: <1400491450-19223-6-git-send-email-acourbot@nvidia.com>
  <20140925132717.GA13579@dusk.luon.net>
  <54243931.6050804@wwwdotorg.org> <20140925164109.GA30382@ulmo>
- <542459C5.9060505@wwwdotorg.org>
+ <1411668631.24948.9.camel@luon.net>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0241855966=="
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <542459C5.9060505-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Sjoerd Simons <sjoerd-FGvqe4uplSY@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/mixed; boundary="===============2081317446=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1411668631.24948.9.camel@luon.net>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Sjoerd Simons <sjoerd@luon.net>
+Cc: gnurou@gmail.com, Stephen Warren <swarren@wwwdotorg.org>, nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============0241855966==
+--===============2081317446==
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="wRokNccIwvMzawGl"
+	protocol="application/pgp-signature"; boundary="8SdtHY/0P4yzaavF"
 Content-Disposition: inline
 
 
---wRokNccIwvMzawGl
+--8SdtHY/0P4yzaavF
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 25, 2014 at 12:07:01PM -0600, Stephen Warren wrote:
-> On 09/25/2014 10:41 AM, Thierry Reding wrote:
-> >On Thu, Sep 25, 2014 at 09:48:01AM -0600, Stephen Warren wrote:
-> >>On 09/25/2014 07:27 AM, Sjoerd Simons wrote:
-> >>>Playing a bit with todays linux-next on my jetson, it seems this patch=
- is
-> >>>still required for enabling the GPU. Is there anything blocking it (fi=
-rmware
-> >>>not available yet in liux-firmware?)
-> >>
-> >>I think initially I was waiting for the DRM patch "drm/nouvea: support =
-for
-> >>probing platform devices" to be applied, but it looks like that's been
-> >>applied already, so only patches 4 and 5 in this series are still
-> >>outstanding.
-> >>
-> >>Alex, wasn't there also some issue where the VPR register had to be
-> >>programmed, and if it wasn't there'd be a hang when the GPU registers w=
-ere
-> >>touched? If we've added code to Nouveau/tegradrm to detect that and avo=
-id
-> >>the problem, then I guess we can commit these last two patches for 3.19=
-=2E A
-> >>resend after the 3.18 merge window might help.
-> >
-> >A patch that programs VPR was merged into U-Boot (though I don't think
-> >it's made it into master yet). I'm not sure we can reasonably check for
-> >that in Nouveau, given that the register is somewhere completely
-> >unrelated. In fact I think the U-Boot patch was triggered by some
-> >discussion about how to solve this and it was decided that it shouldn't
-> >be done in the kernel, but U-Boot should set it up.
-> >
-> >That said, perhaps one solution would be to make U-Boot enable the gk20a
-> >device if it's set up the VPR and disable it otherwise?
+On Thu, Sep 25, 2014 at 08:10:31PM +0200, Sjoerd Simons wrote:
+> On Thu, 2014-09-25 at 18:41 +0200, Thierry Reding wrote:
+> > On Thu, Sep 25, 2014 at 09:48:01AM -0600, Stephen Warren wrote:
+> > > On 09/25/2014 07:27 AM, Sjoerd Simons wrote:
+> > > >Playing a bit with todays linux-next on my jetson, it seems this pat=
+ch is
+> > > >still required for enabling the GPU. Is there anything blocking it (=
+firmware
+> > > >not available yet in liux-firmware?)
+> > >=20
+> > > I think initially I was waiting for the DRM patch "drm/nouvea: suppor=
+t for
+> > > probing platform devices" to be applied, but it looks like that's been
+> > > applied already, so only patches 4 and 5 in this series are still
+> > > outstanding.
+> > >=20
+> > > Alex, wasn't there also some issue where the VPR register had to be
+> > > programmed, and if it wasn't there'd be a hang when the GPU registers=
+ were
+> > > touched? If we've added code to Nouveau/tegradrm to detect that and a=
+void
+> > > the problem, then I guess we can commit these last two patches for 3.=
+19. A
+> > > resend after the 3.18 merge window might help.
+> >=20
+> > A patch that programs VPR was merged into U-Boot (though I don't think
+> > it's made it into master yet).
 >=20
-> For that to work, we'd need the DT to say status=3D"disabled" by default =
-for
-> the GPU, and for the fixed U-Boot (and indeed every other bootloader...) =
-to
-> enable the GPU node. This would allow people with old versions of U-Boot =
-(or
-> other bootloaders) to continue to boot. This means bootloaders would only
-> have to set status=3D"okay", but never have to set status=3D"disabled", w=
-hich at
-> least simplifies them a tiny bit.
+> Assuming you're talking about "ARM: tegra: Disable VPR",that has landed
+> in u-boot master and released as part of v2014.10-rc2 [0]
 
-Sounds like a reasonable requirement on bootloaders to me. If it's clear
-that the device will not work without an initialized VPR region, part of
-the "boot protocol" should be for the bootloader to tell the kernel when
-it's safe to enable the GPU.
+Oh, good.
+
+> >  I'm not sure we can reasonably check for
+> > that in Nouveau, given that the register is somewhere completely
+> > unrelated. In fact I think the U-Boot patch was triggered by some
+> > discussion about how to solve this and it was decided that it shouldn't
+> > be done in the kernel, but U-Boot should set it up.
+> >=20
+> > That said, perhaps one solution would be to make U-Boot enable the gk20a
+> > device if it's set up the VPR and disable it otherwise?
+>=20
+> I guess in that case the vdd-supply should still be added to the dts
+> with u-boot toggling the status field of the node?
+
+Yes, if that's what we decide on then this patch should be modified to
+remove the status =3D "okay" line.
 
 Thierry
 
---wRokNccIwvMzawGl
+--8SdtHY/0P4yzaavF
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUJTkAAAoJEN0jrNd/PrOhLDMP/j2bvIxUrl4tn8PZWxxaypQ4
-cnMqIBWk1qulgTjtAvPcpb2PAODIK0cr1ZiyVWNBkICZ5nGLM8dlY5SsvKVCamaH
-2Khq5e/O8YqV+48e+mpoKB9erNr7V/p7U+6zN9/k9xk9cCLCQOwvC85dsViQfGB3
-e0VJj9wkwnaep6kfZBnY6NLQAVuSgepNaQdCswigY0eH8tFq16ugqYmvhpe89FYX
-JWYMMjMhsMclQ7Hic0tnyjH5qMgB/T/aT0b/6l5jw7Hx7KoeZ5InumYbrMSTIJPn
-bHNiQZcqTfv1A9nz0nEls/VXoiTKOJPPbw7jyqZf7NMP/6rmkPXJsxnBCuTTaWuy
-OiZs1vY2TUee7zopktkbanaQaYxOvkol83a1IVhjFZ0n2BOWEwGMr8mA30cYwfRl
-tCkz7AiI92dqCj5lRTzEJU0OH/hYi7dSfbhMR20kDSxyLjgfjkZYTm6qboXR6nHN
-hgx/hbmVG3vc/wMOxTeJKfNsAtO7AoKvjMPnX2IGotCnvIHAl+XFMcFemp7lcTZ8
-aQZQxfDFTmTdp8oIV8buKcSKa6RIFOcipd4d1nSXdiSgnPTMChF7z0s3JGylzcZr
-m/Pg/k1NgKuqERNbSri6TjQPGL7F+2pXw8v33VqSTZ2A8e7ZVeqIIjlFGSs3GOd1
-x4dfRN73arFv0jKCsTmd
-=VG5A
+iQIcBAEBAgAGBQJUJTlUAAoJEN0jrNd/PrOhW8UP/1Fw3jyTPEPzb8Ek92frb80+
+NS38EG3/8XJSCBtTB+6eVwrgpezPQbEGE/X7Uw+SAnQzqsOv4/R6qz9riJDwRXx5
+bjbCq77qPUlKJVe0b1mctDvZzuWHtVrexF/ohkt6BVz4DNvtV+MktyTTAuKR33x6
+e7r/xNDgDXHt++bym6r5s2G6Wm0gGQfyCsn8EP/rOGENE+mEhA61tLdTlzzXxpPq
+vOkNDDIGNflzYmy5j8i5OsDhJCC91zf0032pFZcyCxZKk2J/0ZRnfEDrLtvrJ1Gr
+60pnjjeqARknW+3UjkBZP65oRDrA0IHWosmAKuaK41glq4B2LvzOdTOqI4eoD6xE
+M6xUwWqgAJ1gZH6h6Xa8vREsAHCWn+BETSk26GtHefL+4ARoZ5ReQc6hLLV3m8AU
+MTDgxYe6yoW/U1D9Fvb8TZkbnHP87Vnf+PEOY4HiDwSTRoZMVogcMqw9CzMAIFUs
+yw6xddlVnFc1Bz6T+KNzCVOeDLnuszE2wj91EXqfMzjCpKzIjeag+xLcYO5kRmtB
+P+Xr6Eq6vTbRX5bvTXEluOHlmPhshDvkHEybaIPQjoZON/N+wcoj6yEbMnNX0cLH
+cfHOUkLgC0UMybB5afgm/n99pPU8vpkiTA3Cyw9aSWNaZ4BYmV6peB0NccGWURY/
+MLLwOaGtnHs6bd4FwUCM
+=rgSB
 -----END PGP SIGNATURE-----
 
---wRokNccIwvMzawGl--
+--8SdtHY/0P4yzaavF--
 
---===============0241855966==
+--===============2081317446==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
 _______________________________________________
-Nouveau mailing list
-Nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-http://lists.freedesktop.org/mailman/listinfo/nouveau
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
 
---===============0241855966==--
+--===============2081317446==--
