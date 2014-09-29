@@ -1,52 +1,56 @@
-From: Vidya Sagar <vidyas@nvidia.com>
-Subject: RE: [PATCH v1] ARM: tegra: Fix sd4 regulator in Jetson TK1 device
- tree
-Date: Mon, 29 Sep 2014 10:25:03 +0000
-Message-ID: <1862760b05184b95948b5e4952db010d@bgmail103.nvidia.com>
-References: <1411408675-32315-1-git-send-email-vidyas@nvidia.com>
- <5420731E.6040104@wwwdotorg.org>
+From: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+Subject: Re: [PATCH v6 4/4] thermal: Add Tegra SOCTHERM thermal management
+ driver
+Date: Mon, 29 Sep 2014 16:37:54 +0300
+Message-ID: <542960B2.1010200@kapsi.fi>
+References: <1411724593-4037-1-git-send-email-cyndis@kapsi.fi> <1411724593-4037-5-git-send-email-cyndis@kapsi.fi> <20140926114533.GN31106@ulmo> <5425CC6F.2020309@kapsi.fi> <20140929082904.GF12506@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5420731E.6040104@wwwdotorg.org>
-Content-Language: en-US
+In-Reply-To: <20140929082904.GF12506@ulmo>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Krishna Thota <kthota@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Mikko Perttunen <cyndis@kapsi.fi>, edubezval@gmail.com, swarren@wwwdotorg.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, juha-matti.tilli@iki.fi, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+On 09/29/2014 11:29 AM, Thierry Reding wrote:
+> On Fri, Sep 26, 2014 at 11:28:31PM +0300, Mikko Perttunen wrote:
+>> On 09/26/2014 02:45 PM, Thierry Reding wrote:
+> [...]
+>>> I think a more idiomatic way to write this would be:
+>>>
+>>> static int
+>>> calculate_tsensor_calibration(const struct tegra_tsensor *sensor,
+>>> 			      struct tsensor_shared_calibration shared,
+>>> 			      u32 *calib)
+>>
+>> If I do that, it will go over the 80 character limit by quite a few
+>> characters, which is why I didn't use that style. Personally I'm fine with
+>> either style.
+>
+> The above doesn't exceed the 80 character limit. Putting the return
+> value and the static keyword on a separate line is a pretty common way
+> to reduce line length.
 
-> -----Original Message-----
-> From: Stephen Warren [mailto:swarren@wwwdotorg.org]
-> Sent: Tuesday, September 23, 2014 12:36 AM
-> To: Vidya Sagar
-> Cc: thierry.reding@gmail.com; Laxman Dewangan; Krishna Thota; linux-
-> tegra@vger.kernel.org; linux@arm.linux.org.uk; linux-
-> kernel@vger.kernel.org
-> Subject: Re: [PATCH v1] ARM: tegra: Fix sd4 regulator in Jetson TK1 device
-> tree
-> 
-> On 09/22/2014 11:57 AM, Vidya Sagar wrote:
-> > sd4 is an always on regulator which is turned on at boot time.
-> > It is externally controller through gpio. This change reflects the
-> > same in Jetson TK1 device tree
-> 
-> In the schematics, the "Power Sequencing" timing diagram says "S/W
-> controlled" for SD4/+1.05V_RUN. I also don't see an "ENABLE1" pin on the
-> AS3722, which would be required for ...
-> 
-> > +					ams,ext-control = <1>;
-> 
-> ... to be valid.
-> 
-> What's the source of information behind this change?
-> 
-> What symptoms does this patch correct?
+Good point, I didn't think of doing that. I usually never use the above 
+style, but clearly here it is the best choice.
 
-I'm seeing one issue when I add support for PCIe suspend/resume functionality.
-The issue is that, when regulator_bulk_diable() is called, disabling one of the power rails (which is deriving its voltage from SD4) of PCIe is failing.
-The reason being, I2C controller is getting power gated before power rail disable is called.
-Hence SD4 is made dependent on ENABLE1, which is nothing but the deep sleep signal coming from Tegra,
-So eventually, SD4 will be powered off when system enters into deep-sleep state.
-Source of information is from downstream kernel 
+>
+>>>
+>>> While at it, perhaps make shared a const * instead of passing it in by
+>>> value?
+>>
+>> That is possible, but I'm not sure what the difference would be. Is there a
+>> style rule forbidding by-value compound types? (Also if I change the style,
+>> it would go over 80 characters by even more.)
+>
+> No it doesn't. The below fits within 80 characters per line just fine:
+>
+> static int
+> calculate_tsensor_calibration(const struct tegra_tsensor *sensor,
+> 			      const struct tsensor_shared_calibration *shared,
+> 			      u32 *calib)
+>
+> Thierry
+>
