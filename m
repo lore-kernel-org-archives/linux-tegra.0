@@ -1,37 +1,103 @@
-From: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH] clk: tegra124: Add init data for dsi lp clocks
-Date: Wed,  1 Oct 2014 12:40:41 -0400
-Message-ID: <1412181642-19415-1-git-send-email-seanpaul@chromium.org>
+From: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH v1] ARM: tegra: Fix sd4 regulator in Jetson TK1 device
+ tree
+Date: Wed, 1 Oct 2014 17:13:33 +0000
+Message-ID: <96955607a8414f75bb4110ebef5daa37@bgmail103.nvidia.com>
+References: <1411408675-32315-1-git-send-email-vidyas@nvidia.com>
+ <5420731E.6040104@wwwdotorg.org>
+ <1862760b05184b95948b5e4952db010d@bgmail103.nvidia.com>
+ <54297E7E.1030306@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <54297E7E.1030306-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Krishna Thota <kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Set the parent of the dsi lp clocks to pll_p and the rate
-to 68MHz. The default parent is clk_m and rate is 12MHz, this
-is too slow to receive data from the peripheral.
 
-Per NVidia HW engineers, the optimal rate is 70MHz, but 68MHz
-will suffice.
 
-Signed-off-by: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
----
- drivers/clk/tegra/clk-tegra124.c | 2 ++
- 1 file changed, 2 insertions(+)
+> -----Original Message-----
+> From: Stephen Warren [mailto:swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org]
+> Sent: Monday, September 29, 2014 9:15 PM
+> To: Vidya Sagar
+> Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org; Laxman Dewangan; Krishna Thota; linux-
+> tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org; linux-
+> kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Subject: Re: [PATCH v1] ARM: tegra: Fix sd4 regulator in Jetson TK1 device
+> tree
+> 
+> On 09/29/2014 04:25 AM, Vidya Sagar wrote:
+> >
+> >> -----Original Message-----
+> >> From: Stephen Warren [mailto:swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org]
+> >> Sent: Tuesday, September 23, 2014 12:36 AM
+> >> To: Vidya Sagar
+> >> Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org; Laxman Dewangan; Krishna Thota; linux-
+> >> tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org; linux-
+> >> kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> >> Subject: Re: [PATCH v1] ARM: tegra: Fix sd4 regulator in Jetson TK1
+> >> device tree
+> >>
+> >> On 09/22/2014 11:57 AM, Vidya Sagar wrote:
+> >>> sd4 is an always on regulator which is turned on at boot time.
+> >>> It is externally controller through gpio. This change reflects the
+> >>> same in Jetson TK1 device tree
+> >>
+> >> In the schematics, the "Power Sequencing" timing diagram says "S/W
+> >> controlled" for SD4/+1.05V_RUN. I also don't see an "ENABLE1" pin on
+> >> the AS3722, which would be required for ...
+> 
+> Can you please comment on this aspect of the issue?
+> 
+> >>> +					ams,ext-control = <1>;
+> >>
+> >> ... to be valid.
+> >>
+> >> What's the source of information behind this change?
+> >>
+> >> What symptoms does this patch correct?
+> >
+> > I'm seeing one issue when I add support for PCIe suspend/resume
+> functionality.
+> > The issue is that, when regulator_bulk_diable() is called, disabling one of
+> the power rails (which is deriving its voltage from SD4) of PCIe is failing.
+> > The reason being, I2C controller is getting power gated
+> 
+> Why is the fix being applied to SD4 if the issue is with a power rail derived
+> from SD4? Shouldn't any fix be applied directly to the problematic rail rather
+> than some parent rail?
+> 
+> Since the I2C controller is part of the SoC and we don't have power domain
+> support yet, the only way the I2C controller can get power gated is when the
+> SoC as a whole is turned off.
+> 
+>  > before power rail disable is called.
+> 
+> ... so without making SD4 dependant on ext-control, since no SW can be
+> running at this point, the only way SD4 could get turned off is that the PMIC
+> turns it off itself at the appropriate point in the system power sequence
+> based on its OTP programming, or the board HW is already set up to turn off
+> SD4 at the appropriate time somehow. Is that not happening?
+> That would imply incorrect PMIC programming wouldn't it?
+> 
 
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index 9525c68..ffa1488 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -1355,6 +1355,8 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{TEGRA124_CLK_I2S4, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0},
- 	{TEGRA124_CLK_VDE, TEGRA124_CLK_PLL_P, 0, 0},
- 	{TEGRA124_CLK_HOST1X, TEGRA124_CLK_PLL_P, 136000000, 1},
-+	{TEGRA124_CLK_DSIALP, TEGRA124_CLK_PLL_P, 68000000, 0},
-+	{TEGRA124_CLK_DSIBLP, TEGRA124_CLK_PLL_P, 68000000, 0},
- 	{TEGRA124_CLK_SCLK, TEGRA124_CLK_PLL_P_OUT2, 102000000, 1},
- 	{TEGRA124_CLK_DFLL_SOC, TEGRA124_CLK_PLL_P, 51000000, 1},
- 	{TEGRA124_CLK_DFLL_REF, TEGRA124_CLK_PLL_P, 51000000, 1},
--- 
-2.1.1
+After some debugging, found that the I2C driver's suspend is getting called before the suspend
+of PCIe is called (BTW, PCie has suspend_noirq..!) Hence, when PCIe driver wants to disable regulators
+it fails because of I2C write failure, which is expected given I2C is already suspended.
+Hence, SD4 is made dependent on ENABLE1 input which is the sleep signal from Tegra.
+
+> > Hence SD4 is made dependent on ENABLE1, which is nothing but the deep
+> > sleep signal coming from Tegra, So eventually, SD4 will be powered off
+> when system enters into deep-sleep state.
+> 
+> This sounds like a workaround that happens to make the system do what you
+> want rather than a root-cause fix.
+> 
+> > Source of information is from downstream kernel
+> 
+> We need to use HW schematics and other primary data to determine the
+> correct approach.
