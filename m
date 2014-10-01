@@ -1,20 +1,20 @@
 From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v3.17-rc6
-Date: Wed, 1 Oct 2014 11:11:05 -0700
-Message-ID: <542C43B9.5070303@nvidia.com>
+Subject: Tegra baseline test results for v3.17-rc7
+Date: Wed, 1 Oct 2014 11:29:01 -0700
+Message-ID: <542C47ED.9050502@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v3.17-rc6.
+Here are some basic Tegra test results for Linux v3.17-rc7.
 Logs and other details at:
 
-     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.17-rc6/20141001103541/
+     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.17-rc7/20141001111649/
 
 
 Test summary
@@ -33,14 +33,14 @@ Boot to userspace: tegra_defconfig:
 
 
 vmlinux object size
-(delta in bytes from test_v3.17-rc5 (9e82bf014195d6f0054982c463575cdce24292be)):
+(delta in bytes from test_v3.17-rc6 (0f33be009b89d2268e94194dc4fd01a7851b6d51)):
     text     data      bss    total  kernel
-    +113     +192        0     +305  multi_v7_defconfig
-     +21     +192        0     +213  tegra_defconfig
+    +703        0        0     +703  multi_v7_defconfig
+    +175        0        0     +175  tegra_defconfig
 
 
 Boot-time memory difference
-(delta in bytes from test_v3.17-rc5 (9e82bf014195d6f0054982c463575cdce24292be))
+(delta in bytes from test_v3.17-rc6 (0f33be009b89d2268e94194dc4fd01a7851b6d51))
      avail    rsrvd     high    freed                board              kconfig                  dtb
          .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
          .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
