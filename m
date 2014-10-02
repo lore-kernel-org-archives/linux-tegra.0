@@ -1,24 +1,38 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/2] ARM: tegra: Enable the mic-detect gpio on Acer Chromebook
- 13
-Date: Thu, 02 Oct 2014 12:46:38 -0600
-Message-ID: <542D9D8E.7080307@wwwdotorg.org>
-References: <1412268212-3458-1-git-send-email-dgreid@chromium.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH 1/2] MAINTAINERS: add Alex Courbot for Tegra
+Date: Thu,  2 Oct 2014 13:20:58 -0600
+Message-ID: <1412277659-1940-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1412268212-3458-1-git-send-email-dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/02/2014 10:43 AM, Dylan Reid wrote:
-> Enables the gpio-base mic detection on the Acer Chromebook 13.  This
-> gpio is set by the jack-detection chip when it notices either of the
-> TRRS type headsets with a microphone.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-(I assume this one patch will go through the Tegra tree, and the other 
-through the ASoC tree)
+I'd like to propose Alex Courbot as an additional Tegra maintainer.
+He's been working on a variety of Tegra-related code for a while, and
+is now officially tasked with working on upstream support.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Alex, I assume this is the email address you'd like to use? If not, let
+me know and I'll respin.
+
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 37054306dc9f..f3ab9f1eaf86 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9008,6 +9008,7 @@ F:	drivers/media/rc/ttusbir.c
+ TEGRA ARCHITECTURE SUPPORT
+ M:	Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+ M:	Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
++M:	Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+ L:	linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+ Q:	http://patchwork.ozlabs.org/project/linux-tegra/list/
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git
+-- 
+1.9.1
