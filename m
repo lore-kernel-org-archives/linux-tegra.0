@@ -1,91 +1,69 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: Move AHB Kconfig to drivers/amba
-Date: Thu, 2 Oct 2014 14:54:51 +0200
-Message-ID: <20141002125450.GA9916@ulmo>
-References: <1406643934-16301-1-git-send-email-thierry.reding@gmail.com>
- <53D7C9EE.60503@wwwdotorg.org>
- <53FB7288.9050002@wwwdotorg.org>
- <5408BF77.1020007@wwwdotorg.org>
- <20141002105103.GA13906@ulmo>
- <20141002110805.GT5182@n2100.arm.linux.org.uk>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: Re: [PATCH v3 0/4] Allow xHCI drivers to be built as separate modules
+Date: Thu, 02 Oct 2014 19:31:03 +0300
+Message-ID: <542D7DC7.90300@linux.intel.com>
+References: <1408467712-27497-1-git-send-email-abrestic@chromium.org> <CAL1qeaFwGYgzL=n0My4eBQMhvtNQfHpU5d1tif0twtYyjw5yqg@mail.gmail.com> <540F0E53.4050106@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="n8g4imXOkfNTN/H1"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20141002110805.GT5182-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <540F0E53.4050106@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Bresticker <abrestic@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Mathias Nyman <mathias.nyman@intel.com>, Alan Stern <stern@rowland.harvard.edu>, Julius Werner <jwerner@chromium.org>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 09/09/2014 05:27 PM, Mathias Nyman wrote:
+> On 09/03/2014 10:51 PM, Andrew Bresticker wrote:
+>> Mathias,
+>>
+>> On Tue, Aug 19, 2014 at 10:01 AM, Andrew Bresticker
+>> <abrestic@chromium.org> wrote:
+>>> It was suggested in the review of the Tegra xHCI driver [1] that we
+>>> allow xHCI drivers to be built as individual modules (like EHCI) instead
+>>> of building them all into the single xhci-hcd module as they are today.
+>>>
+>>> Patches 1-3 prepare for making the xHCI PCI and platform drivers able
+>>> to be built as individual modules and patch 4 actually creates the 3
+>>> separate modules (core, platform, PCI).
+>>>
+>>> Based on 3.17-rc1.
+>>>
+>>> Changes from v2:
+>>>  - fixed typo in xhci_register_plat
+>>>  - exported another symbol needed by xhci-pci module
+>>> Changes from v1:
+>>>  - rebased on changes introduced by xhci-rcar driver
+>>>
+>>> [1] http://patchwork.ozlabs.org/patch/361265/
+>>>
+>>> Andrew Bresticker (4):
+>>>   xhci: Introduce xhci_init_driver()
+>>>   xhci: Check for XHCI_COMP_MODE_QUIRK when disabling D3cold
+>>>   xhci: Export symbols used by host-controller drivers
+>>>   xhci: Allow xHCI drivers to be built as separate modules
+>>
+>> Any thoughts/comments on this series?
+>>
+>>
+> 
+> Sorry about the delay.
+> When I start looking at this I always get interrupted by some fire that needs to be put out.
+> 
+> I still need some more time to go through it
+> 
+> -Mathias
+> 
+> --
+>
 
---n8g4imXOkfNTN/H1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ok, finally found the time to look through it. Sorry about the long wait
 
-On Thu, Oct 02, 2014 at 12:08:05PM +0100, Russell King - ARM Linux wrote:
-> On Thu, Oct 02, 2014 at 12:51:04PM +0200, Thierry Reding wrote:
-> > On Thu, Sep 04, 2014 at 01:37:27PM -0600, Stephen Warren wrote:
-> > > On 08/25/2014 11:29 AM, Stephen Warren wrote:
-> > > >On 07/29/2014 10:21 AM, Stephen Warren wrote:
-> > > >>On 07/29/2014 08:25 AM, Thierry Reding wrote:
-> > > >>>From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > >>>
-> > > >>>This will allow the Kconfig option to be shared among 32-bit and 6=
-4-bit
-> > > >>>ARM.
-> > > >>
-> > > >>This seems fine to me. I'd expect to apply it for 3.18, provided I =
-get
-> > > >>an ack from Russell as drivers/amba maintainer (hence CCing him wit=
-hout
-> > > >>trimming the quote).
-> > > >
-> > > >Russell,
-> > > >
-> > > >Are you OK with this patch? If so, if you could ack it so I can apply
-> > > >it, that would be great.
-> > >=20
-> > > Russell?
-> >=20
-> > Russell,
-> >=20
-> > Can I have your Acked-by on this or would you prefer it to be submitted
-> > to the patch tracker? Would the patch tracker be the correct place also
-> > for non-ARM core patches?
->=20
-> I just had to go digging for the original patch, as I've been missing
-> this.
->=20
-> I think this is fine, though if we're going to have drivers/amba/Kconfig,
-> we should also move the ARM_AMBA Kconfig option there too.  Note that it
-> currently appears in both arch/arm/Kconfig and arch/arm64/Kconfig.
+The whole series look good, and its now more in line with how ehci does things (like using *hci_init_driver())
 
-Okay, let me turn that into a prequel patch for this one.
+Series still apply nicely on usb-next.
 
-Thierry
+Greg, any chance this still can get to your usb-next and to the 3.18 merge window?
+Tegra developers seem eager to get it in, and I feel bad for not reviewing it earlier. 
 
---n8g4imXOkfNTN/H1
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJULUsaAAoJEN0jrNd/PrOhCjMQAK9374uM2gZO3NiDGcxxvO1R
-GkUVc49zwu7NfMWQEOxjrNwFjOXkLuri4mQENJ6ecWYCp60pn0loEGaHvdcLyxW6
-R7qLtu2my6LPOjmuPZTS8czse3eJf8Y+D+hk8axhOB0m2/t9NuCr5Mm/Ecn+6pm4
-pujhfnE5LahzUkp+AYgAcvfnYbCyePT/NrBs3NA/pZR4Dn5gkP7jzYK4Ehd8t9Sk
-TxjrdRIR4odtibY8oNOwrKNQ8ubod1mGGMsawTcVgXGk9301fNIHQI0kYfMrEgug
-IEUUZH8njJJ0W8f4606mcGN2HvlFc70sBV5vUIZ9PQ81dNE36uskqh3RRChgbjXp
-E5GitQqt4GXPRBZY1vAdgFWgF3heyunkH5Ukd+6A+J9C+YxlT0k+mG35yrIAZHq1
-Kwy9MG1oZMUMTePpXLOqv7oXMCWQcsRU3k43EZQ6pSGp0bxmOy8oDFGl3fMUW9t4
-plc8dIOfntqfRIetHB4LsqJqC59IJdSgz4iWZZvGGFkbhITFKZaCvLKEuPWwY9w5
-6Y9y4jn/lSGvj0ryZEBvsr5IuJDY1bbwDuGVEQ4eSiQn0yDE+3TBm8A7HO4MkGmd
-zrGHP9VEQH5Hu6WmJtZuQSDrf5vnLQA/jQFhjSZojCILUtMaHNKGgYyEblLjVDrq
-kOGQHxIXgqBLNLfCPDTH
-=XKlE
------END PGP SIGNATURE-----
-
---n8g4imXOkfNTN/H1--
+-Mathias
