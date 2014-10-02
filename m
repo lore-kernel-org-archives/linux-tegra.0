@@ -1,52 +1,67 @@
-From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: Move AHB Kconfig to drivers/amba
-Date: Thu, 2 Oct 2014 12:08:05 +0100
-Message-ID: <20141002110805.GT5182@n2100.arm.linux.org.uk>
-References: <1406643934-16301-1-git-send-email-thierry.reding@gmail.com> <53D7C9EE.60503@wwwdotorg.org> <53FB7288.9050002@wwwdotorg.org> <5408BF77.1020007@wwwdotorg.org> <20141002105103.GA13906@ulmo>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 2/4] host1x: MIPI: Preserve the contents of
+ MIPI_CAL_CTRL
+Date: Thu, 2 Oct 2014 14:17:43 +0200
+Message-ID: <20141002121742.GB13906@ulmo>
+References: <1410360725-4286-1-git-send-email-seanpaul@chromium.org>
+ <1410360725-4286-3-git-send-email-seanpaul@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="8P1HSweYDcXXzwPJ"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20141002105103.GA13906@ulmo>
+In-Reply-To: <1410360725-4286-3-git-send-email-seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Oct 02, 2014 at 12:51:04PM +0200, Thierry Reding wrote:
-> On Thu, Sep 04, 2014 at 01:37:27PM -0600, Stephen Warren wrote:
-> > On 08/25/2014 11:29 AM, Stephen Warren wrote:
-> > >On 07/29/2014 10:21 AM, Stephen Warren wrote:
-> > >>On 07/29/2014 08:25 AM, Thierry Reding wrote:
-> > >>>From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > >>>
-> > >>>This will allow the Kconfig option to be shared among 32-bit and 64-bit
-> > >>>ARM.
-> > >>
-> > >>This seems fine to me. I'd expect to apply it for 3.18, provided I get
-> > >>an ack from Russell as drivers/amba maintainer (hence CCing him without
-> > >>trimming the quote).
-> > >
-> > >Russell,
-> > >
-> > >Are you OK with this patch? If so, if you could ack it so I can apply
-> > >it, that would be great.
-> > 
-> > Russell?
-> 
-> Russell,
-> 
-> Can I have your Acked-by on this or would you prefer it to be submitted
-> to the patch tracker? Would the patch tracker be the correct place also
-> for non-ARM core patches?
 
-I just had to go digging for the original patch, as I've been missing
-this.
+--8P1HSweYDcXXzwPJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I think this is fine, though if we're going to have drivers/amba/Kconfig,
-we should also move the ARM_AMBA Kconfig option there too.  Note that it
-currently appears in both arch/arm/Kconfig and arch/arm64/Kconfig.
+On Wed, Sep 10, 2014 at 10:52:03AM -0400, Sean Paul wrote:
+> By paving the CTRL reg value, the current code changes
+> MIPI_CAL_PRESCALE ("Auto-cal calibration step prescale")
+> from 1us to 0.1us (val=3D0). In the description for phy's noise
+> filter (MIPI_CAL_NOISE_FLT), the TRM states that if the value
+> of the prescale is 0 (or 0.1us), the filter should be set
+> between 2-5. However, the current code sets it to 0.
+>=20
+> For now, let's keep the prescale and filter values as-is, which
+> is most likely the power-on-reset values of 0x2 and 0xa, respectively.
+>=20
+> Signed-off-by: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> ---
+> Changes in v2:
+> 	- Improved the commit description
 
--- 
-FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
-according to speedtest.net.
+Applied, thanks. I did reformat the commit description to take advantage
+of the full 72 columns.
+
+Thierry
+
+--8P1HSweYDcXXzwPJ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJULUJmAAoJEN0jrNd/PrOhDsoP/RuI5liRwhZdVV8Pt5/h5+FS
+Mn1fqkUgCidnkY3SkavpEtHBQ9B3m4c5m1vuGa6iQqe0+DbUBeYYaNpIy+1sr9Yc
+FbJ+JYq/UGM7Kx8j5UJcZ37kWo0x4U/GgPX80aRbHBk5fT3KzK+BObUjEvH+oYJw
+mQPfEuCUc08Cz3M26VSoziV4uqsu4xAm8Xkw06YA9k+N8ms0+qq93s2l8PafkESR
+9su6tPbh/nt6lnkxnR9fVP0Y+rUP80eXjbaaCJJcJqyQbpdYV9+ujo5suq/bQkxn
+k6xailIspWMOZ8gWPCQ4a++elH3VtnLXQGAuJZ3oDeslbGe9Opt+9KdycaXJqucI
+m5DaLU5owOIaqVHWEkW29h1qlPVrhl2+2AWHM32z4Ou3pgsmkcvafaj/drduKNL8
+nUUaKyIHMXEFn8AM8KZOGbahQ+pKZlK2WTckgqaKmAF1rlTqTfy5Slttn426/pTb
+7ecu1QraVe88oiriMj8KvhZV4+WTSDGlHx3P8d47z0w9rjKIy6I/3QxDgy1QPbR4
+8itDyxhe+QaA+wc5GWMq/hTt668rfj9NdY5GjfyrtJKpDdZW0skKbFfC9fISBGh0
+kYhdsvKYislolXG+EdP6AirZRZcITGaJIa4x2cpb1Q1q/GuqCnplNsW+D45VYrb7
+AoHGgJKEsEN9AMSMvCBR
+=gZ74
+-----END PGP SIGNATURE-----
+
+--8P1HSweYDcXXzwPJ--
