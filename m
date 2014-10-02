@@ -1,76 +1,113 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v3 0/4] Allow xHCI drivers to be built as separate modules
-Date: Thu, 2 Oct 2014 09:23:57 -0700
-Message-ID: <20141002162357.GA32555@kroah.com>
-References: <1408467712-27497-1-git-send-email-abrestic@chromium.org>
- <CAL1qeaFwGYgzL=n0My4eBQMhvtNQfHpU5d1tif0twtYyjw5yqg@mail.gmail.com>
- <540F0E53.4050106@linux.intel.com>
- <542D7DC7.90300@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <542D7DC7.90300@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mathias Nyman <mathias.nyman@linux.intel.com>
-Cc: Andrew Bresticker <abrestic@chromium.org>, Mathias Nyman <mathias.nyman@intel.com>, Alan Stern <stern@rowland.harvard.edu>, Julius Werner <jwerner@chromium.org>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
+From: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: [PATCH 1/2] ASoC: tegra: add mic detect gpio to tegra_max98090
+Date: Thu,  2 Oct 2014 09:42:44 -0700
+Message-ID: <1412268164-3333-1-git-send-email-dgreid@chromium.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Oct 02, 2014 at 07:31:03PM +0300, Mathias Nyman wrote:
-> On 09/09/2014 05:27 PM, Mathias Nyman wrote:
-> > On 09/03/2014 10:51 PM, Andrew Bresticker wrote:
-> >> Mathias,
-> >>
-> >> On Tue, Aug 19, 2014 at 10:01 AM, Andrew Bresticker
-> >> <abrestic@chromium.org> wrote:
-> >>> It was suggested in the review of the Tegra xHCI driver [1] that we
-> >>> allow xHCI drivers to be built as individual modules (like EHCI) instead
-> >>> of building them all into the single xhci-hcd module as they are today.
-> >>>
-> >>> Patches 1-3 prepare for making the xHCI PCI and platform drivers able
-> >>> to be built as individual modules and patch 4 actually creates the 3
-> >>> separate modules (core, platform, PCI).
-> >>>
-> >>> Based on 3.17-rc1.
-> >>>
-> >>> Changes from v2:
-> >>>  - fixed typo in xhci_register_plat
-> >>>  - exported another symbol needed by xhci-pci module
-> >>> Changes from v1:
-> >>>  - rebased on changes introduced by xhci-rcar driver
-> >>>
-> >>> [1] http://patchwork.ozlabs.org/patch/361265/
-> >>>
-> >>> Andrew Bresticker (4):
-> >>>   xhci: Introduce xhci_init_driver()
-> >>>   xhci: Check for XHCI_COMP_MODE_QUIRK when disabling D3cold
-> >>>   xhci: Export symbols used by host-controller drivers
-> >>>   xhci: Allow xHCI drivers to be built as separate modules
-> >>
-> >> Any thoughts/comments on this series?
-> >>
-> >>
-> > 
-> > Sorry about the delay.
-> > When I start looking at this I always get interrupted by some fire that needs to be put out.
-> > 
-> > I still need some more time to go through it
-> > 
-> > -Mathias
-> > 
-> > --
-> >
-> 
-> Ok, finally found the time to look through it. Sorry about the long wait
-> 
-> The whole series look good, and its now more in line with how ehci does things (like using *hci_init_driver())
-> 
-> Series still apply nicely on usb-next.
-> 
-> Greg, any chance this still can get to your usb-next and to the 3.18 merge window?
-> Tegra developers seem eager to get it in, and I feel bad for not reviewing it earlier. 
+Add an optional mic detect gpio property.  If specified in device tree
+there will be a mic jack created for the given gpio.  This will be
+used by the Tegra-based Chromebooks.
 
-They aren't in my patch queue anymore, so please send them, with your
-signed-off-by, and I will try to get them in.
+Signed-off-by: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+---
+ .../bindings/sound/nvidia,tegra-audio-max98090.txt |  1 +
+ sound/soc/tegra/tegra_max98090.c                   | 40 ++++++++++++++++++++++
+ 2 files changed, 41 insertions(+)
 
-greg k-h
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max98090.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max98090.txt
+index 9c7c55c..c949abc 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max98090.txt
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max98090.txt
+@@ -25,6 +25,7 @@ Required properties:
+ 
+ Optional properties:
+ - nvidia,hp-det-gpios : The GPIO that detect headphones are plugged in
++- nvidia,mic-det-gpios : The GPIO that detect microphones are plugged in
+ 
+ Example:
+ 
+diff --git a/sound/soc/tegra/tegra_max98090.c b/sound/soc/tegra/tegra_max98090.c
+index b86cd99..01921d7 100644
+--- a/sound/soc/tegra/tegra_max98090.c
++++ b/sound/soc/tegra/tegra_max98090.c
+@@ -42,6 +42,7 @@
+ struct tegra_max98090 {
+ 	struct tegra_asoc_utils_data util_data;
+ 	int gpio_hp_det;
++	int gpio_mic_det;
+ };
+ 
+ static int tegra_max98090_asoc_hw_params(struct snd_pcm_substream *substream,
+@@ -112,6 +113,22 @@ static struct snd_soc_jack_gpio tegra_max98090_hp_jack_gpio = {
+ 	.invert = 1,
+ };
+ 
++static struct snd_soc_jack tegra_max98090_mic_jack;
++
++static struct snd_soc_jack_pin tegra_max98090_mic_jack_pins[] = {
++	{
++		.pin = "Mic Jack",
++		.mask = SND_JACK_MICROPHONE,
++	},
++};
++
++static struct snd_soc_jack_gpio tegra_max98090_mic_jack_gpio = {
++	.name = "Mic detection",
++	.report = SND_JACK_MICROPHONE,
++	.debounce_time = 150,
++	.invert = 1,
++};
++
+ static const struct snd_soc_dapm_widget tegra_max98090_dapm_widgets[] = {
+ 	SND_SOC_DAPM_HP("Headphones", NULL),
+ 	SND_SOC_DAPM_SPK("Speakers", NULL),
+@@ -141,6 +158,19 @@ static int tegra_max98090_asoc_init(struct snd_soc_pcm_runtime *rtd)
+ 					&tegra_max98090_hp_jack_gpio);
+ 	}
+ 
++	if (gpio_is_valid(machine->gpio_mic_det)) {
++		snd_soc_jack_new(codec, "Mic Jack", SND_JACK_MICROPHONE,
++				 &tegra_max98090_mic_jack);
++		snd_soc_jack_add_pins(&tegra_max98090_mic_jack,
++				      ARRAY_SIZE(tegra_max98090_mic_jack_pins),
++				      tegra_max98090_mic_jack_pins);
++
++		tegra_max98090_mic_jack_gpio.gpio = machine->gpio_mic_det;
++		snd_soc_jack_add_gpios(&tegra_max98090_mic_jack,
++				       1,
++				       &tegra_max98090_mic_jack_gpio);
++	}
++
+ 	return 0;
+ }
+ 
+@@ -153,6 +183,11 @@ static int tegra_max98090_card_remove(struct snd_soc_card *card)
+ 					&tegra_max98090_hp_jack_gpio);
+ 	}
+ 
++	if (gpio_is_valid(machine->gpio_mic_det)) {
++		snd_soc_jack_free_gpios(&tegra_max98090_mic_jack, 1,
++					&tegra_max98090_mic_jack_gpio);
++	}
++
+ 	return 0;
+ }
+ 
+@@ -201,6 +236,11 @@ static int tegra_max98090_probe(struct platform_device *pdev)
+ 	if (machine->gpio_hp_det == -EPROBE_DEFER)
+ 		return -EPROBE_DEFER;
+ 
++	machine->gpio_mic_det =
++			of_get_named_gpio(np, "nvidia,mic-det-gpios", 0);
++	if (machine->gpio_mic_det == -EPROBE_DEFER)
++		return -EPROBE_DEFER;
++
+ 	ret = snd_soc_of_parse_card_name(card, "nvidia,model");
+ 	if (ret)
+ 		goto err;
+-- 
+2.1.2.330.g565301e
