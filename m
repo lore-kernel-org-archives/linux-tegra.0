@@ -1,43 +1,54 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/2] MAINTAINERS: add Alex Courbot for Tegra
-Date: Fri, 3 Oct 2014 11:13:42 +0900
-Message-ID: <542E0656.8050203@nvidia.com>
-References: <1412277659-1940-1-git-send-email-swarren@wwwdotorg.org>
+From: Patrick Georgi <patrick-U1IrdZU7gScKt1dFYRw6Gg@public.gmane.org>
+Subject: Re: [PATCH 4/5] set: check seek success
+Date: Fri, 03 Oct 2014 08:54:15 +0200
+Message-ID: <542E4817.1000604@georgi-clan.de>
+References: <1412237788-20611-1-git-send-email-patrick@georgi-clan.de> <1412237788-20611-4-git-send-email-patrick@georgi-clan.de> <542DD8A7.7040705@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="wHxLaSb0JNdxchxVjjCHD4XsibfT4HDmN"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1412277659-1940-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <542DD8A7.7040705-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/03/2014 04:20 AM, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> I'd like to propose Alex Courbot as an additional Tegra maintainer.
-> He's been working on a variety of Tegra-related code for a while, and
-> is now officially tasked with working on upstream support.
->
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Alex, I assume this is the email address you'd like to use? If not, let
-> me know and I'll respin.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--wHxLaSb0JNdxchxVjjCHD4XsibfT4HDmN
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: quoted-printable
 
-Is the NVIDIA mail server still messing with whitespaces in patches, 
-making it impossible to apply them sometimes? If so, then it is probably 
-better to use my GMail account, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org - otherwise, the 
-nvidia.com address is fine.
+Am 03.10.2014 um 00:58 schrieb Stephen Warren:
+> fseek is supposed to return the current offset, or -1 on error. I=20
+The man page on my system disagrees: "Upon successful completion, fgetpos=
+(), fseek(), fsetpos() return 0, and ftell() returns the current offset. =
+  Otherwise,  -1  is  returned and errno is set to indicate the error."
 
-In any case, let's use my full name to avoid confusion:
 
-Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Patrick
 
-or
 
-Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+--wHxLaSb0JNdxchxVjjCHD4XsibfT4HDmN
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
-Thanks!
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Acked-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+iQIcBAEBCAAGBQJULkgbAAoJEJ8j+sKG17wlE7MQAKzlOp2nF8qc7YUkXg4lXev5
+oe/ubvE5X68XDrSkAg8GSZzp3XLBDVlBumD1TqrP28iqyCCWau+mGAPOpM5gWpCb
+Zh2qqWckkhYztwVXfDl7lLyYvOsRSpf3/vssfo/kOVd4bV22Fwb5VgaIdtfwJoi9
+1ZGHDQEhUnHjc8zHI6ilXjFuqIzr9Ii+dwcMaHAyMKTENBalQtsdlRouOKEHFjQn
+9ubJBO2GTB3gJ/jzpem4Y+NrlWKkZ1u23Yn1VBYP8fkzDc5pumyKgTGrbFRrPoty
+k1EY+EcEjKOmKfpGX+iKaq06iaVLxsmNJhfBwiXAlbkfsbV5P+spaKKgAuQeJyaU
+I/KzItS0i+CV6uMuGyyF+8JNzn4csLyoO5U/+2ZX+MY/LkUi+62OwM0oCMdVFmZL
+pr/94JTKWKr6RPpr/sO9q/PG91/U68O7M12WL1mg9fvJovK1FsoUpvaWgWDJHCnF
+agRlpdGgi4ZFie2bXQcR67/WrmD7tvHRNu3o4ODYfwvDKRsRuJeRn8UL68wblgfw
+MZSyG/rcKruxHK7mLKlnfCZ5EHngxF/EFTcuoAUiPucD/fPWoogATrs7zx10E99p
+Le+31Qelf8018eslO7huF9DfPPhbtn5lgB/eVsaH8nhvKjshTOpPojAToxHZQPIs
+hIr7MDW/E9kvWCJ9uxtg
+=ObhR
+-----END PGP SIGNATURE-----
+
+--wHxLaSb0JNdxchxVjjCHD4XsibfT4HDmN--
