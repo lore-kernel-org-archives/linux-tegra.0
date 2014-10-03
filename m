@@ -1,69 +1,41 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH V2 2/2] MAINTAINERS: condense some Tegra related entries
-Date: Fri,  3 Oct 2014 09:50:33 -0600
-Message-ID: <1412351433-4003-2-git-send-email-swarren@wwwdotorg.org>
-References: <1412351433-4003-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1412351433-4003-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v5 3/4] ARM: tegra: Add thermal trip points for Jetson TK1
+Date: Fri, 3 Oct 2014 21:57:24 +0200
+Message-ID: <20141003195723.GA6074@amd>
+References: <1408616242-21009-1-git-send-email-mperttunen@nvidia.com>
+ <1408616242-21009-4-git-send-email-mperttunen@nvidia.com>
+ <20140924183204.GE27076@developer>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20140924183204.GE27076@developer>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>, rui.zhang@intel.com, swarren@wwwdotorg.org, thierry.reding@gmail.com, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, juha-matti.tilli@iki.fi
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Wed 2014-09-24 14:32:06, Eduardo Valentin wrote:
+> Hello Mikko,
+> 
+> On Thu, Aug 21, 2014 at 01:17:21PM +0300, Mikko Perttunen wrote:
+> > This adds critical trip points to the Jetson TK1 device tree.
+> > The device will do a controlled shutdown when either the CPU, GPU
+> > or MEM thermal zone reaches 101 degrees Celsius.
 
-There's little point having specific entries in MAINTAINERS for Tegra
-drivers that are already covered by the top-level Tegra architecture
-support entry, and maintained by people listed there. Remove the
-duplicates.
+> > +			trips {
+> > +				trip@0 {
+> > +					temperature = <101000>;
+> > +					hysteresis = <0>;
+> > +					type = "critical";
+> > +				};
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-v2: No change
----
- MAINTAINERS | 15 ---------------
- 1 file changed, 15 deletions(-)
+Would it be still time to switch to some more reasonable unit, like
+degrees celsius? milicelsius is a bit of overkill.. ACPI uses
+deciCelsius, but .. celsius should be enough.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2210990fc3c6..22a8f753bb58 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9015,11 +9015,6 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git
- S:	Supported
- N:	[^a-z]tegra
- 
--TEGRA ASOC DRIVER
--M:	Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
--S:	Supported
--F:	sound/soc/tegra/
--
- TEGRA CLOCK DRIVER
- M:	Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
- M:	Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-@@ -9031,11 +9026,6 @@ M:	Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
- S:	Supported
- F:	drivers/dma/tegra20-apb-dma.c
- 
--TEGRA GPIO DRIVER
--M:	Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
--S:	Supported
--F:	drivers/gpio/gpio-tegra.c
--
- TEGRA I2C DRIVER
- M:	Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
- S:	Supported
-@@ -9052,11 +9042,6 @@ M:	Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
- S:	Supported
- F:	drivers/input/keyboard/tegra-kbc.c
- 
--TEGRA PINCTRL DRIVER
--M:	Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
--S:	Supported
--F:	drivers/pinctrl/pinctrl-tegra*
--
- TEGRA PWM DRIVER
- M:	Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
- S:	Supported
+								Pavel
+
 -- 
-1.9.1
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
