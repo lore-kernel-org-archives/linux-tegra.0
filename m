@@ -1,54 +1,45 @@
-From: Patrick Georgi <patrick-U1IrdZU7gScKt1dFYRw6Gg@public.gmane.org>
-Subject: Re: [PATCH 4/5] set: check seek success
-Date: Fri, 03 Oct 2014 08:54:15 +0200
-Message-ID: <542E4817.1000604@georgi-clan.de>
-References: <1412237788-20611-1-git-send-email-patrick@georgi-clan.de> <1412237788-20611-4-git-send-email-patrick@georgi-clan.de> <542DD8A7.7040705@wwwdotorg.org>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/2] ASoC: tegra: add mic detect gpio to tegra_max98090
+Date: Fri, 3 Oct 2014 11:21:54 +0100
+Message-ID: <20141003102154.GG4273@sirena.org.uk>
+References: <1412268164-3333-1-git-send-email-dgreid@chromium.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="wHxLaSb0JNdxchxVjjCHD4XsibfT4HDmN"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="OMIeU0UG8ajn+69Z"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <542DD8A7.7040705-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1412268164-3333-1-git-send-email-dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---wHxLaSb0JNdxchxVjjCHD4XsibfT4HDmN
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: quoted-printable
 
-Am 03.10.2014 um 00:58 schrieb Stephen Warren:
-> fseek is supposed to return the current offset, or -1 on error. I=20
-The man page on my system disagrees: "Upon successful completion, fgetpos=
-(), fseek(), fsetpos() return 0, and ftell() returns the current offset. =
-  Otherwise,  -1  is  returned and errno is set to indicate the error."
+--OMIeU0UG8ajn+69Z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Thu, Oct 02, 2014 at 09:42:44AM -0700, Dylan Reid wrote:
+> Add an optional mic detect gpio property.  If specified in device tree
+> there will be a mic jack created for the given gpio.  This will be
+> used by the Tegra-based Chromebooks.
 
-Patrick
+Applied, thanks.
 
-
---wHxLaSb0JNdxchxVjjCHD4XsibfT4HDmN
+--OMIeU0UG8ajn+69Z
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Version: GnuPG v2
 
-iQIcBAEBCAAGBQJULkgbAAoJEJ8j+sKG17wlE7MQAKzlOp2nF8qc7YUkXg4lXev5
-oe/ubvE5X68XDrSkAg8GSZzp3XLBDVlBumD1TqrP28iqyCCWau+mGAPOpM5gWpCb
-Zh2qqWckkhYztwVXfDl7lLyYvOsRSpf3/vssfo/kOVd4bV22Fwb5VgaIdtfwJoi9
-1ZGHDQEhUnHjc8zHI6ilXjFuqIzr9Ii+dwcMaHAyMKTENBalQtsdlRouOKEHFjQn
-9ubJBO2GTB3gJ/jzpem4Y+NrlWKkZ1u23Yn1VBYP8fkzDc5pumyKgTGrbFRrPoty
-k1EY+EcEjKOmKfpGX+iKaq06iaVLxsmNJhfBwiXAlbkfsbV5P+spaKKgAuQeJyaU
-I/KzItS0i+CV6uMuGyyF+8JNzn4csLyoO5U/+2ZX+MY/LkUi+62OwM0oCMdVFmZL
-pr/94JTKWKr6RPpr/sO9q/PG91/U68O7M12WL1mg9fvJovK1FsoUpvaWgWDJHCnF
-agRlpdGgi4ZFie2bXQcR67/WrmD7tvHRNu3o4ODYfwvDKRsRuJeRn8UL68wblgfw
-MZSyG/rcKruxHK7mLKlnfCZ5EHngxF/EFTcuoAUiPucD/fPWoogATrs7zx10E99p
-Le+31Qelf8018eslO7huF9DfPPhbtn5lgB/eVsaH8nhvKjshTOpPojAToxHZQPIs
-hIr7MDW/E9kvWCJ9uxtg
-=ObhR
+iQEcBAEBAgAGBQJULnjBAAoJECTWi3JdVIfQ3W0H/2BFMnez/Oq1QXHlflDRDpY3
+XxSxQttxK1kktnNpujIyVlvfFgYwUPBXWdd0xTuPEot0Au5Ew+D7vkieOI7QcLcn
+JpU2tT4sjQaoaDnHnbHDer5vYTjdwxoxkmGtb+OGEU4XEoggtULhiHNYTFwO93uT
+yp2d+pYK3Vs9IkEodJJnrwsxoYO75jpRgxLt60N+/VG/qLzwvr1qX54Qj1rC3y6c
+2kCm0flYyBkVvQaaTEwr1EMssP1ZyrsouM0INiokVDykfO55htzAgz308BjGX9Ms
+PoE4Dn7pmZs8HTm1AEkTP2AWtvFoK6cNBxqCPiRgQr3Kmzme0E39qjWD8cLa+wc=
+=QtGY
 -----END PGP SIGNATURE-----
 
---wHxLaSb0JNdxchxVjjCHD4XsibfT4HDmN--
+--OMIeU0UG8ajn+69Z--
