@@ -1,41 +1,38 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v5 3/4] ARM: tegra: Add thermal trip points for Jetson TK1
-Date: Fri, 3 Oct 2014 21:57:24 +0200
-Message-ID: <20141003195723.GA6074@amd>
-References: <1408616242-21009-1-git-send-email-mperttunen@nvidia.com>
- <1408616242-21009-4-git-send-email-mperttunen@nvidia.com>
- <20140924183204.GE27076@developer>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140924183204.GE27076@developer>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>, rui.zhang@intel.com, swarren@wwwdotorg.org, thierry.reding@gmail.com, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, juha-matti.tilli@iki.fi
+From: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
+Subject: [PATCH v3 0/3] ASoC/ARM: tegra: apalis/colibri t30: sgtl5000 audio
+Date: Sat,  4 Oct 2014 02:15:42 +0200
+Message-ID: <cover.1412381377.git.marcel@ziswiler.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stefan-XLVq0VzYD2Y@public.gmane.org, Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>, Fabio Estevam <festevam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed 2014-09-24 14:32:06, Eduardo Valentin wrote:
-> Hello Mikko,
-> 
-> On Thu, Aug 21, 2014 at 01:17:21PM +0300, Mikko Perttunen wrote:
-> > This adds critical trip points to the Jetson TK1 device tree.
-> > The device will do a controlled shutdown when either the CPU, GPU
-> > or MEM thermal zone reaches 101 degrees Celsius.
+This series adds/integrates Freescale SGTL5000 analogue audio codec
+support.
 
-> > +			trips {
-> > +				trip@0 {
-> > +					temperature = <101000>;
-> > +					hysteresis = <0>;
-> > +					type = "critical";
-> > +				};
+Changes in v3:
+- Revert to not using simple-audio-card being incompatible with tegra.
+- Rebased to for-next.
 
-Would it be still time to switch to some more reasonable unit, like
-degrees celsius? milicelsius is a bit of overkill.. ACPI uses
-deciCelsius, but .. celsius should be enough.
+Changes in v2:
+- Using simple-audio-card as suggested by Fabio.
 
-								Pavel
+Marcel Ziswiler (3):
+  ASoC: tegra: add tegra sgtl5000 machine driver
+  ARM: tegra: apalis/colibri t30: integrate audio support
+  ARM: tegra: enable sgtl5000 audio
+
+ .../bindings/sound/nvidia,tegra-audio-sgtl5000.txt |  45 +++++
+ arch/arm/boot/dts/tegra30-apalis.dtsi              |  49 +++++
+ arch/arm/boot/dts/tegra30-colibri.dtsi             |  49 +++++
+ arch/arm/configs/tegra_defconfig                   |   1 +
+ sound/soc/tegra/Kconfig                            |  10 +
+ sound/soc/tegra/Makefile                           |   2 +
+ sound/soc/tegra/tegra_sgtl5000.c                   | 216 +++++++++++++++++++++
+ 7 files changed, 372 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-sgtl5000.txt
+ create mode 100644 sound/soc/tegra/tegra_sgtl5000.c
 
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+1.9.3
