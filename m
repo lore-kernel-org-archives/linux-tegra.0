@@ -1,54 +1,72 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v1] PCI: tegra: Enable root port specific features
-Date: Tue, 07 Oct 2014 08:44:05 -0700
-Message-ID: <54340A45.4050005@wwwdotorg.org>
-References: <1412677678-12011-1-git-send-email-vidyas@nvidia.com>
+From: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>
+Subject: Re: [PATCH 06/44] gpio-poweroff: Drop reference to pm_power_off from
+ devicetree bindings
+Date: Tue, 7 Oct 2014 17:50:44 +0200
+Message-ID: <20141007155044.GA19005@lunn.ch>
+References: <1412659726-29957-1-git-send-email-linux@roeck-us.net>
+ <1412659726-29957-7-git-send-email-linux@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1412677678-12011-1-git-send-email-vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org
-Cc: kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-efi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1412659726-29957-7-git-send-email-linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Sender: linux-efi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-m32r-ja-rQhvJZKUsGBRYuoOT4C5/9i2O/JbrIOy@public.gmane.org, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, linux-efi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ia64-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-xtensa-PjhNF2WwrV/0Sa2dR60CXw@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-s390-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lguest-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-c6x-dev-jPsnJVOj+W6hPH1hqNUYSQ@public.gmane.org, linux-hexagon-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-acpi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, xen-devel-GuqFBffKawtpuQazS67q72D2FQJk+8+b@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, user-mode-linux-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, adi-buildroot-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-m68k-cunTk1MwBs8S/qaLPR03pWD2FQJk+8+b@public.gmane.org, linux-am33-list-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, openipmi-developer-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-metag-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-parisc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-cris-kernel-VrBV9hrLPhE@public.gmane.org, Rob
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/07/2014 03:27 AM, Vidya Sagar wrote:
-> Enables root port to advertise its ASPM-L1 capability
->  resulting in possible link entry to L1 when an ASPM-L1 capable
->  device is connected
-> Enables per-controller & per-TMS clock clamping by default
-> Enabling above features result in more power saving
+On Mon, Oct 06, 2014 at 10:28:08PM -0700, Guenter Roeck wrote:
+> pm_power_off is an implementation detail. Replace it with a more generic
+> description of the driver's functionality.
 > 
-> It also avoids PM message truncation by waiting for DLLP to finish
-> before entering into L1 or L2
+> Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
+> Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+> Signed-off-by: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+
+Acked-by: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>
+
+Thanks
+	Andrew
+> ---
+>  Documentation/devicetree/bindings/gpio/gpio-poweroff.txt | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> Also, it adds helper functions to access root port registers
-
-> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-
-> @@ -1870,8 +1920,10 @@ static int tegra_pcie_enable(struct tegra_pcie *pcie)
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-poweroff.txt b/Documentation/devicetree/bindings/gpio/gpio-poweroff.txt
+> index d4eab92..c95a1a6 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio-poweroff.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-poweroff.txt
+> @@ -2,12 +2,12 @@ Driver a GPIO line that can be used to turn the power off.
 >  
->  		tegra_pcie_port_enable(port);
+>  The driver supports both level triggered and edge triggered power off.
+>  At driver load time, the driver will request the given gpio line and
+> -install a pm_power_off handler. If the optional properties 'input' is
+> -not found, the GPIO line will be driven in the inactive
+> +install a handler to power off the system. If the optional properties
+> +'input' is not found, the GPIO line will be driven in the inactive
+>  state. Otherwise its configured as an input.
 >  
-> -		if (tegra_pcie_port_check_link(port))
-> +		if (tegra_pcie_port_check_link(port)) {
-> +			tegra_pcie_enable_rp_features(port);
->  			continue;
-> +		}
+> -When the pm_power_off is called, the gpio is configured as an output,
+> -and drive active, so triggering a level triggered power off
+> +When the the poweroff handler is called, the gpio is configured as an
+> +output, and drive active, so triggering a level triggered power off
+>  condition. This will also cause an inactive->active edge condition, so
+>  triggering positive edge triggered power off. After a delay of 100ms,
+>  the GPIO is set to inactive, thus causing an active->inactive edge,
+> @@ -24,7 +24,7 @@ Required properties:
 >  
->  		dev_info(pcie->dev, "link %u down, ignoring\n", port->index);
-
-Wouldn't it be better to have the error case inside the if block; most
-error-handling is that way. For example:
-
-if (!tegra_pcie_port_check_link(port)) {
-	dev_info(pcie->dev, "link %u down, ignoring\n", port->index);
-	tegra_pcie_port_disable(port);
-	tegra_pcie_port_free(port);
-	continue;
-}
-
-tegra_pcie_enable_rp_features(port);
-... any other "good case" code (of which there admittedly is none at
-present)
+>  Optional properties:
+>  - input : Initially configure the GPIO line as an input. Only reconfigure
+> -  it to an output when the pm_power_off function is called. If this optional
+> +  it to an output when the poweroff handler is called. If this optional
+>    property is not specified, the GPIO is initialized as an output in its
+>    inactive state.
+>  
+> -- 
+> 1.9.1
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
