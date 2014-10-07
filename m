@@ -1,83 +1,68 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v3 1/3] ASoC: tegra: add tegra sgtl5000
-	machine driver
-Date: Tue, 7 Oct 2014 18:54:02 +0100
-Message-ID: <20141007175402.GT4609@sirena.org.uk>
-References: <cover.1412381377.git.marcel@ziswiler.com>
- <74ea4fe20e653d2da555c8d7dd1478746bccd529.1412381377.git.marcel@ziswiler.com>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============6502297671497960065=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <74ea4fe20e653d2da555c8d7dd1478746bccd529.1412381377.git.marcel@ziswiler.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Marcel Ziswiler <marcel@ziswiler.com>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux@arm.linux.org.uk, Stephen Warren <swarren@wwwdotorg.org>, Liam Girdwood <lgirdwood@gmail.com>, stefan@agner.ch, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Fabio Estevam <festevam@gmail.com>, linux-arm-kernel@lists.infradead.org
+From: Romain Perier <romain.perier-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [RFC PATCH v2 1/4] regulator: Add helper function to get "poweroff-source" property
+Date: Tue,  7 Oct 2014 19:45:01 +0000
+Message-ID: <1412711104-15902-1-git-send-email-romain.perier@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Several drivers create their own devicetree property when they register
+poweroff capabilities. This is for example the case for mfd, regulator
+or power drivers which define "vendor,system-power-controller" property.
+This patch adds support for a standard property "poweroff-source"
+which marks the device as able to shutdown the system.
 
---===============6502297671497960065==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Z1gw0Ba8VHj8Ap4r"
-Content-Disposition: inline
+Signed-off-by: Romain Perier <romain.perier-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/regulator/of_regulator.c       | 12 ++++++++++++
+ include/linux/regulator/of_regulator.h |  6 ++++++
+ 2 files changed, 18 insertions(+)
 
-
---Z1gw0Ba8VHj8Ap4r
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sat, Oct 04, 2014 at 02:15:43AM +0200, Marcel Ziswiler wrote:
-> This binding and driver describe/support playback to headphones, and
-> capture from line-in and microphone.
->=20
-> This driver is useful for the Toradex Apalis T30 and Colibri T30 modules.
->=20
-> Signed-off-by: Marcel Ziswiler <marcel@ziswiler.com>
-> Reviewed-by: Stephen Warren <swarren@nvidia.com>
-> ---
-> Changes in v3:
-> - Revert to not using simple-audio-card being incompatible with tegra.
-> - Rebased to for-next.
-
-I can't help but think that't there's still room for a Tegra simple card
-here, there doesn't seem to be anything particularly CODEC specific
-about the driver here - it *could* use simple-card were it not for the
-CPU side.  This also seems like a specific example of the same problem
-we see with supporting DPCM in simple-card, we need a way for CPUs to
-be able to say that they need some general setup that covers the CPU
-internal configuration.
-
---Z1gw0Ba8VHj8Ap4r
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUNCi5AAoJECTWi3JdVIfQEAQH/i4sms+iNsBEGLCrkZmdPBR+
-NdQBJrohsOUj0V4xeOOspSVUlM3PeR2PDEh7QxNInRnFRmi8+r8cqmgX49AOhFr5
-vk3s+aIJY+vjhpctHG3uzwKvJC/4pdem+oV1qdgjSTs1EmZIMpiilRzavx/Etugu
-ZYfVxeC7xNVsaYnBhIVSC+7mF4vDRaf+cPpfAGls7VkkuEw4X8eFs5hwKLMctY+r
-RBxeiqQ6Qh7++Esj6nJE4Z9wFpxePhKnN4hfjcoka21U6oSfBaQkdp8VVEExEY8E
-ms9B4g+ErcvtPJVoBnLaWXTcO9eXc5Dr49PmqDyvaUn5Q5tFcIEsvGqjBre63vg=
-=ZNY2
------END PGP SIGNATURE-----
-
---Z1gw0Ba8VHj8Ap4r--
-
---===============6502297671497960065==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============6502297671497960065==--
+diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
+index 7a51814..8b898e6 100644
+--- a/drivers/regulator/of_regulator.c
++++ b/drivers/regulator/of_regulator.c
+@@ -240,3 +240,15 @@ struct regulator_init_data *regulator_of_get_init_data(struct device *dev,
+ 
+ 	return init_data;
+ }
++
++/**
++ * is_system_poweroff_source - Tells if poweroff-source is found for device_node
++ * @np: Pointer to the given device_node
++ *
++ * return true if present false otherwise
++ */
++bool is_system_poweroff_source(const struct device_node *np)
++{
++	return of_property_read_bool(np, "poweroff-source");
++}
++EXPORT_SYMBOL_GPL(is_system_poweroff_source);
+diff --git a/include/linux/regulator/of_regulator.h b/include/linux/regulator/of_regulator.h
+index f921796..9d8fbb2 100644
+--- a/include/linux/regulator/of_regulator.h
++++ b/include/linux/regulator/of_regulator.h
+@@ -20,6 +20,7 @@ extern struct regulator_init_data
+ extern int of_regulator_match(struct device *dev, struct device_node *node,
+ 			      struct of_regulator_match *matches,
+ 			      unsigned int num_matches);
++extern bool is_system_poweroff_source(const struct device_node *np);
+ #else
+ static inline struct regulator_init_data
+ 	*of_get_regulator_init_data(struct device *dev,
+@@ -35,6 +36,11 @@ static inline int of_regulator_match(struct device *dev,
+ {
+ 	return 0;
+ }
++
++static inline bool is_system_poweroff_source(const struct device_node *np)
++{
++	return false;
++}
+ #endif /* CONFIG_OF */
+ 
+ #endif /* __LINUX_OF_REG_H */
+-- 
+1.9.1
