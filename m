@@ -1,31 +1,54 @@
-From: Richard Weinberger <richard@nod.at>
-Subject: Re: [PATCH 08/44] kernel: Move pm_power_off to common code
-Date: Tue, 07 Oct 2014 15:58:47 +0200
-Message-ID: <5433F197.8040801@nod.at>
-References: <1412659726-29957-1-git-send-email-linux@roeck-us.net>
- <1412659726-29957-9-git-send-email-linux@roeck-us.net>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v1] PCI: tegra: Enable root port specific features
+Date: Tue, 07 Oct 2014 08:44:05 -0700
+Message-ID: <54340A45.4050005@wwwdotorg.org>
+References: <1412677678-12011-1-git-send-email-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <1412659726-29957-9-git-send-email-linux@roeck-us.net>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org
-Cc: Jonas Bonn <jonas@southpole.se>, linux-mips@linux-mips.org, linux-efi@vger.kernel.org, linux-ia64@vger.kernel.org, Steven Miao <realmz6@gmail.com>, linux-xtensa@linux-xtensa.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, David Howells <dhowells@redhat.com>, Max Filippov <jcmvbkbc@gmail.com>, Paul Mackerras <paulus@samba.org>, Ralf Baechle <ralf@linux-mips.org>, Pavel Machek <pavel@ucw.cz>, "H. Peter Anvin" <hpa@zytor.com>, Guan Xuetao <gxt@mprc.pku.edu.cn>, Thomas Gleixner <tglx@linutronix.de>, Lennox Wu <lennox.wu@gmail.com>, Hans-Christian Egtvedt <egtvedt@samfundet.no>, devel@driverdev.osuosl.org, linux-s390@vger.kernel.org, Jesper Nilsson <jesper.nilsson@axis.com>, lguest@lists.ozlabs.org, Russell King <linux@arm.linux.org.uk>, linux-c6x-dev@linux-c6x.org, Len Brown <len.brown@intel.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1412677678-12011-1-git-send-email-vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org
+Cc: kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Am 07.10.2014 07:28, schrieb Guenter Roeck:
->  arch/um/kernel/reboot.c            |  2 --
+On 10/07/2014 03:27 AM, Vidya Sagar wrote:
+> Enables root port to advertise its ASPM-L1 capability
+>  resulting in possible link entry to L1 when an ASPM-L1 capable
+>  device is connected
+> Enables per-controller & per-TMS clock clamping by default
+> Enabling above features result in more power saving
+> 
+> It also avoids PM message truncation by waiting for DLLP to finish
+> before entering into L1 or L2
+> 
+> Also, it adds helper functions to access root port registers
 
-Acked-by: Richard Weinberger <richard@nod.at>
+> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
 
-Thanks,
-//richard
+> @@ -1870,8 +1920,10 @@ static int tegra_pcie_enable(struct tegra_pcie *pcie)
+>  
+>  		tegra_pcie_port_enable(port);
+>  
+> -		if (tegra_pcie_port_check_link(port))
+> +		if (tegra_pcie_port_check_link(port)) {
+> +			tegra_pcie_enable_rp_features(port);
+>  			continue;
+> +		}
+>  
+>  		dev_info(pcie->dev, "link %u down, ignoring\n", port->index);
+
+Wouldn't it be better to have the error case inside the if block; most
+error-handling is that way. For example:
+
+if (!tegra_pcie_port_check_link(port)) {
+	dev_info(pcie->dev, "link %u down, ignoring\n", port->index);
+	tegra_pcie_port_disable(port);
+	tegra_pcie_port_free(port);
+	continue;
+}
+
+tegra_pcie_enable_rp_features(port);
+... any other "good case" code (of which there admittedly is none at
+present)
