@@ -1,73 +1,41 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH] ARM: tegra: Re-add removed SoC id macro to tegra_resume()
-Date: Wed, 8 Oct 2014 14:04:32 -0500
-Message-ID: <20141008190432.GN22688@saruman>
-References: <1412794450-9060-1-git-send-email-digetx@gmail.com>
- <20141008190147.GM22688@saruman>
-Reply-To: <balbi@ti.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="rFUhhEVnhEf/dYhU"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20141008190147.GM22688@saruman>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Felipe Balbi <balbi@ti.com>
-Cc: Dmitry Osipenko <digetx@gmail.com>, swarren@wwwdotorg.org, josephl@nvidia.com, thierry.reding@gmail.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH V2] ARM: tegra: Re-add removed SoC id macro to tegra_resume()
+Date: Wed,  8 Oct 2014 23:24:15 +0400
+Message-ID: <1412796255-10589-1-git-send-email-digetx@gmail.com>
+References: <20141008190432.GN22688@saruman>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20141008190432.GN22688@saruman>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
---rFUhhEVnhEf/dYhU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Commit d127e9c5c5bc1ee22a7b1fe804397cddd132f756 ("ARM: tegra: make tegra_resume
+can work with current and later chips") removed tegra_get_soc_id macro leaving
+used cpu register unassigned and as result causing execution of unintended code
+on tegra20. Fix it by re-adding macro.
 
-On Wed, Oct 08, 2014 at 02:01:47PM -0500, Felipe Balbi wrote:
-> Hi,
->=20
-> On Wed, Oct 08, 2014 at 10:54:10PM +0400, Dmitry Osipenko wrote:
-> > Commit d127e9c5c5bc1ee22a7b1fe804397cddd132f756 ("ARM: tegra: make tegr=
-a_resume
-> > can work with current and later chips") removed tegra_get_soc_id macro =
-leaving
-> > used cpu register unassigned and as result causing execution of uninten=
-ded code
-> > on tegra20. Fix it by re-adding macro.
->=20
-> you should add:
->=20
-> Fixes: d127e9c (ARM: tegra: make tegra_resume can work with current and l=
-ater chips)
-> Cc: <stable@vger.kernel.org> # v3.13+
->=20
-> here. With that:
->=20
-> Reviewed-by: Felipe Balbi <balbi@ti.com>
+Fixes: d127e9c (ARM: tegra: make tegra_resume can work with current and later chips)
+Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org> # v3.13+
+Reviewed-by: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+V2: added Cc's for lakml and stable, added "Reviewed-by:" Felipe Balbi
 
-oh, and you should probably Cc lakml.
+ arch/arm/mach-tegra/reset-handler.S | 1 +
+ 1 file changed, 1 insertion(+)
 
---=20
-balbi
-
---rFUhhEVnhEf/dYhU
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJUNYrAAAoJEIaOsuA1yqRE7yQP/jNlli0FpeW2bQ5TT6bbLpBE
-97rW/Vy446PnVjQDokp1P3VTjFrcQcc8/toHSLbmyXHItVVrrUFLK+bpSWHu+21X
-27Bll0VnxH+MY476PnfMxNx3fQXWOGX9cdpojrpsFyqUp0B92ilj8f8M0iGUWP2w
-+67twlYP4viMfliQwNu2n7E0WI/i+vGyQEaWf+4ZX6qrMOhq8V0b/FCO+bOmllAZ
-1w4kfh53Ful06UPfHPGvkLzy860GwznZQrBzSmETDlG82tELomTlWf7agoCsOX5U
-rhQYCbZlRNj7XmDYf4t0Kvrs0isu83Y7cakOVK3fCctM03dQGNjlKgGW4kjhFW8M
-olFiNHtBY8TvuMTkY5Sdh93rCs1NaoRWD6gUNtKdXFeCrKy6J7VPrwa6NAqhEhXW
-99MdJOThpmD8srYa1dngJpwX6xmjPG83jYxwam8ahUFD7/k1V81j9sid8ImjAcNF
-81IUbrk60fCaz/KMVIlleK3mDuJ9L9pqz3c33CpQzhpvqCY0BWwDy6fWEl9taQs4
-jkh2+Q5ymtgeN/3xunYjX3rWBOPvYaHz8mmkFnF9gO+3OiMMDcslk9JKu6Z490Pm
-ucpxp+Wn1JoHm+lnDgHKF15YNKSrWgl02EaPUz43/AXAz5PlHnRQOipeRKx7l4c2
-fwWd4wTBe8yA/vitXrHT
-=AUyT
------END PGP SIGNATURE-----
-
---rFUhhEVnhEf/dYhU--
+diff --git a/arch/arm/mach-tegra/reset-handler.S b/arch/arm/mach-tegra/reset-handler.S
+index 7b2baab..71be4af 100644
+--- a/arch/arm/mach-tegra/reset-handler.S
++++ b/arch/arm/mach-tegra/reset-handler.S
+@@ -51,6 +51,7 @@ ENTRY(tegra_resume)
+  THUMB(	it	ne )
+ 	bne	cpu_resume			@ no
+ 
++	tegra_get_soc_id TEGRA_APB_MISC_BASE, r6
+ 	/* Are we on Tegra20? */
+ 	cmp	r6, #TEGRA20
+ 	beq	1f				@ Yes
+-- 
+2.1.1
