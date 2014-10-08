@@ -1,170 +1,92 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Thierry Reding <thierry.reding@gmail.com>
 Subject: Re: [PATCH v1] PCI: tegra: Enable root port specific features
-Date: Wed, 8 Oct 2014 09:44:05 +0200
-Message-ID: <20141008074404.GC4999@ulmo>
+Date: Wed, 8 Oct 2014 09:45:03 +0200
+Message-ID: <20141008074502.GD4999@ulmo>
 References: <1412677678-12011-1-git-send-email-vidyas@nvidia.com>
+ <54340A45.4050005@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="+xNpyl7Qekk2NvDX"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="9UV9rz0O2dU/yYYn"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1412677678-12011-1-git-send-email-vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <54340A45.4050005@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Vidya Sagar <vidyas@nvidia.com>, bhelgaas@google.com, kthota@nvidia.com, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---+xNpyl7Qekk2NvDX
+--9UV9rz0O2dU/yYYn
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 07, 2014 at 03:57:58PM +0530, Vidya Sagar wrote:
-> Enables root port to advertise its ASPM-L1 capability
->  resulting in possible link entry to L1 when an ASPM-L1 capable
->  device is connected
-> Enables per-controller & per-TMS clock clamping by default
-> Enabling above features result in more power saving
+On Tue, Oct 07, 2014 at 08:44:05AM -0700, Stephen Warren wrote:
+> On 10/07/2014 03:27 AM, Vidya Sagar wrote:
+> > Enables root port to advertise its ASPM-L1 capability
+> >  resulting in possible link entry to L1 when an ASPM-L1 capable
+> >  device is connected
+> > Enables per-controller & per-TMS clock clamping by default
+> > Enabling above features result in more power saving
+> >=20
+> > It also avoids PM message truncation by waiting for DLLP to finish
+> > before entering into L1 or L2
+> >=20
+> > Also, it adds helper functions to access root port registers
 >=20
-> It also avoids PM message truncation by waiting for DLLP to finish
-> before entering into L1 or L2
+> > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
 >=20
-> Also, it adds helper functions to access root port registers
+> > @@ -1870,8 +1920,10 @@ static int tegra_pcie_enable(struct tegra_pcie *=
+pcie)
+> > =20
+> >  		tegra_pcie_port_enable(port);
+> > =20
+> > -		if (tegra_pcie_port_check_link(port))
+> > +		if (tegra_pcie_port_check_link(port)) {
+> > +			tegra_pcie_enable_rp_features(port);
+> >  			continue;
+> > +		}
+> > =20
+> >  		dev_info(pcie->dev, "link %u down, ignoring\n", port->index);
 >=20
-> Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/pci/host/pci-tegra.c | 54 ++++++++++++++++++++++++++++++++++++++=
-+++++-
->  1 file changed, 53 insertions(+), 1 deletion(-)
+> Wouldn't it be better to have the error case inside the if block; most
+> error-handling is that way. For example:
 >=20
-> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> index 3d43874..b192a47 100644
-> --- a/drivers/pci/host/pci-tegra.c
-> +++ b/drivers/pci/host/pci-tegra.c
-> @@ -237,6 +237,18 @@
->  		(0xf  << PADS_REFCLK_CFG_DRVI_SHIFT)     \
->  	)
-> =20
-> +#define NV_PCIE2_RP_VEND_XP1			0x00000F04
-> +#define NV_PCIE2_RP_VEND_XP_LINK_PVT_CTL_L1_ASPM_SUPPORT	(1 << 21)
-> +
-> +#define NV_PCIE2_RP_VEND_XP_BIST		0x00000F4C
-> +#define PCIE2_RP_VEND_XP_BIST_GOTO_L1_L2_AFTER_DLLP_DONE	(1 << 28)
-> +
-> +#define NV_PCIE2_RP_PRIV_MISC			0x00000FE0
-> +#define PCIE2_RP_PRIV_MISC_CTLR_CLK_CLAMP_THRESHOLD	(0xF << 16)
-> +#define PCIE2_RP_PRIV_MISC_CTLR_CLK_CLAMP_ENABLE	(1 << 23)
-> +#define PCIE2_RP_PRIV_MISC_TMS_CLK_CLAMP_THRESHOLD	(0xF << 24)
-> +#define PCIE2_RP_PRIV_MISC_TMS_CLK_CLAMP_ENABLE		(1 << 31)
+> if (!tegra_pcie_port_check_link(port)) {
+> 	dev_info(pcie->dev, "link %u down, ignoring\n", port->index);
+> 	tegra_pcie_port_disable(port);
+> 	tegra_pcie_port_free(port);
+> 	continue;
+> }
+>=20
+> tegra_pcie_enable_rp_features(port);
+> ... any other "good case" code (of which there admittedly is none at
+> present)
 
-These seem to be part of the same set as the RP_PRIV_* registers already
-defined earlier in the file. In fact NV_PCIE2_RP_PRIV_MISC is defined as
-RP_PRIV_MISC above already. Please move them there and drop the useless
-NV_PCIE2_ and PCIE2_ prefixes.
-
->  struct tegra_msi {
->  	struct msi_chip chip;
->  	DECLARE_BITMAP(used, INT_PCI_MSI_NR);
-> @@ -346,6 +358,18 @@ static inline u32 pads_readl(struct tegra_pcie *pcie=
-, unsigned long offset)
->  	return readl(pcie->pads + offset);
->  }
-> =20
-> +static inline void rp_writel(struct tegra_pcie_port *port, u32 value,
-> +							 unsigned long offset)
-> +{
-> +	writel(value, offset + port->base);
-> +}
-> +
-> +static inline unsigned int rp_readl(struct tegra_pcie_port *port,
-
-readl() returns u32 and so should rp_readl().
-
-> +							unsigned long offset)
-> +{
-> +	return readl(offset + port->base);
-> +}
-
-I don't see much use in these, but if you really want to add them,
-please also replace any of the open-coded occurrences of this. Also
-please fix the alignment of function arguments on subsequent lines.
-They should align with the first argument on the first line.
-
-> +/* Enable various features of root port */
-
-This comment is useless. It's a rewording of the function name. Either
-leave it out or describe what kind of features are being enabled. Since
-you already do that with comments in the function body, I'd suggest to
-just drop this comment out.
-
-> +static void tegra_pcie_enable_rp_features(struct tegra_pcie_port *port)
-
-I think a better name would be tegra_pcie_port_enable_features() so that
-the name more accurately reflects what "object" the function operates
-on.
-
-> +{
-> +	unsigned int data;
-
-Should be u32 and a more common name as used in this driver is "value".
-
-> +
-> +	/* Power mangagement settings */
-
-"management". Though I'm not sure why this comment is here. My best
-guess is that you want to group features. Comments are terrible for
-grouping code. Perhaps since everything in this function is related to
-power management a better name would be tegra_pcie_port_enable_pm().
-That gives you grouping for free.
-
-> +	/* Enable clock clamping by default */
-> +	data =3D rp_readl(port, NV_PCIE2_RP_PRIV_MISC);
-> +	data |=3D PCIE2_RP_PRIV_MISC_CTLR_CLK_CLAMP_THRESHOLD |
-> +		PCIE2_RP_PRIV_MISC_CTLR_CLK_CLAMP_ENABLE |
-> +		PCIE2_RP_PRIV_MISC_TMS_CLK_CLAMP_THRESHOLD |
-> +		PCIE2_RP_PRIV_MISC_TMS_CLK_CLAMP_ENABLE;
-> +	rp_writel(port, data, NV_PCIE2_RP_PRIV_MISC);
-> +
-> +	/* Enable rootport to advertise its ASPM - L1 capability */
-
-"root port"
-
-> +	data =3D rp_readl(port, NV_PCIE2_RP_VEND_XP1);
-> +	data |=3D NV_PCIE2_RP_VEND_XP_LINK_PVT_CTL_L1_ASPM_SUPPORT;
-> +	rp_writel(port, data, NV_PCIE2_RP_VEND_XP1);
-> +
-> +	/* LTSSM : wait for DLLP to finish before entering L1 or L2/L3 */
-> +	/* to avoid truncating PM messages resulting in receiver errors */
-
-Proper style for block comments is:
-
-	/*
-	 * LTSSM: ...
-	 * ... errors
-	 */
+Yes, that's a little more idiomatic. I think it could be a separate
+cleanup patch, though.
 
 Thierry
 
---+xNpyl7Qekk2NvDX
+--9UV9rz0O2dU/yYYn
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUNOtEAAoJEN0jrNd/PrOhinsQAIh+nVCpowYrtwKp9BFipdqy
-WpGe59eVPsJk0xCynYw4sExbYtgEk+nxUiPsxRoKMtIThMVO2IJi1NluH2PKonIj
-+vLtoa35iz9BK6DQR+2+blTgaKhJfr9snP+mDmNqQjKwRH3SuCFV9p2cyTt9qswv
-wjyWmytyX0qVKknfI1beuRjwaYmGCNW77S8vhJlsVEzahVqrDi8Dqojfw8x1eqtM
-ZEqWyceJJkIODy8m5TApiEVhOr55PATFZK2N2OWpZmcwkJXuz3HxAitKam8XTAKp
-AMpUcD4BoALKv2CHKG6cRD3zANo+iQ2NiZxpDegdmHOENLBK/M5jEo62v9i8FucG
-nEKOh004cLE7vvJrtnxBhGZ0fC3BB1+7yma45sx2Bx6G2ycwblWedTMDnu2XQ2PV
-MQIjauIvi3LgvuOTCYUvWCQHT1oD9PmkeQnFsOEVuZJHDfcf4OdSPagB56pE0H+w
-Kc8zIr3/d5xizPrDcI9xMzugK9mVls8wDYwu72gkT5UkAYRIO25e6i/qK9D18LKn
-z9OTzj7hydeGOLVnOqpS+ZgYyvIiOnvpfGrUI3WmROSu0EX7n9uSv/tbE9Zteh3o
-Fr+xPQPuuc2l2DsnkTYeuE2R85lJcmPleaNeIF8dX2ThdSrdq56QN5Jc1i5kcgeR
-SCZ0R6Rwxyx3LYZx4G+W
-=nPr3
+iQIcBAEBAgAGBQJUNOt+AAoJEN0jrNd/PrOhmewP/RBXhTBw5sHJGT30binD1OK+
+wLbDQhnNCVoPw2WF20+ceD4Iy4hBghkjA2C2hpDxTUs4nMVqI7zvjDg9ZE3adSYH
+kNoKma7hZIJNkCwtwtb/aRqSKmdff3kMFmXUMv2e1KoM3uQMvYSAwiDXfS/P+jZg
+dhQCnIcWcOom5VOXmO4xn7IW1m1QQyClJH8U72S45SOYB/Yo1POlbX4jQnQu6CKY
+j+Unk2hxQ3H8Slrz7ObRNOWa4UioaJHrXa2h10yqlTQiwWvfFZjC7jtN9CY+5Hla
+NlTFQP96Ujta3lykL4j4oKsIRv9jXknvNwTN3rjf2riP322PR0d4Iz20k3ksSA/L
+DrHi/vFRLgsxi7j1mQPr/BQQmAJw+SETZXasDl6zFv0im27eHr69Rcg/N1NjzMR/
+XC50Xlx6rNAaEITKMB2Snk5rJw+yh7iaK8qZqwes/Cytz9ozfKsuCKB8GcrXH/uu
+c1DxABnaGgkKHfKzUWw+8vTq8OYY1cG76s/2Jn9u3ME9fFGhMqUvyiex1DOPwXVM
+dnKkgBAtIDkEsbRdLI9/Jd7tmw0HnPPwY/kmbKnxp+qBUPcsPJZuoPVhZ03N2jO4
+XG4B4E+MuU8vPXvuddex3IILrb62Qxv/tjDFOcMp1kSjA/hZ76QmHob+23aylQbm
+k6JjuNXwePm1ArA2mKCj
+=l9qc
 -----END PGP SIGNATURE-----
 
---+xNpyl7Qekk2NvDX--
+--9UV9rz0O2dU/yYYn--
