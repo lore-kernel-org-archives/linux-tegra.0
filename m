@@ -1,42 +1,125 @@
-From: =?gbk?B?WHVldGFvIEd1YW4g?= <gxt@pku.edu.cn>
-Subject: =?utf-8?Q?=E5=9B=9E=E5=A4=8D=EF=BC=9A_[PATCH_08/44]_kernel:_Mov?=
- =?utf-8?Q?e_pm=5Fpower=5Foff_to_common_code?=
-Date: Wed, 8 Oct 2014 19:06:32 +0800 (CST)
-Message-ID: <218135571.28324.1412766392198.JavaMail.root@bj-mail03.pku.edu.cn>
-References: <1412659726-29957-9-git-send-email-linux@roeck-us.net>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 1/4] clk: tegra: Move mipi-cal initialization into
+ clk-tegra1[12]4.c
+Date: Wed, 8 Oct 2014 18:10:19 +0300
+Message-ID: <20141008151019.GB4809@tbergstrom-lnx.Nvidia.com>
+References: <1410360725-4286-1-git-send-email-seanpaul@chromium.org>
+ <1410360725-4286-2-git-send-email-seanpaul@chromium.org>
+ <541079A8.9080304@wwwdotorg.org>
+ <20140918112621.GK26779@tbergstrom-lnx.Nvidia.com>
+ <CAOw6vb+pyD9fk63rQHV5S3ar2hrWKb-HRf6ZP8odxbvz7FJ+Vw@mail.gmail.com>
+ <20140919112802.GO26779@tbergstrom-lnx.Nvidia.com>
+ <CAOw6vbLxNXSw3xfLZk4KKXGSJhbrHR9LEAPJ3hKHZMCN6WeV0w@mail.gmail.com>
+ <CAOw6vbKozeDR+2KCTwhwRoNY7+k=FB96Vc7sHXKy4SFYMVEeHQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-mips-bounce@linux-mips.org>
-In-Reply-To: <1412659726-29957-9-git-send-email-linux@roeck-us.net>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-kernel@vger.kernel.org, adi-buildroot-devel@lists.sourceforge.net, devel@driverdev.osuosl.org, devicetree@vger.kernel.org, lguest@lists.ozlabs.org, linux-acpi@vger.kernel.org, linux-alpha@vger.kernel.org, linux-am33-list@redhat.com, linux-cris-kernel@axis.com, linux-efi@vger.kernel.org, linux-hexagon@vger.kernel.org, linux-m32r-ja@ml.linux-m32r.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org, linux-xtensa@linux-xtensa.org, openipmi-developer@lists.sourceforge.net, user-mode-linux-devel@lists.sourceforge.net, linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org, linux-ia64@vger.kernel.org, linux-m68k@vger.kernel.org, linux-metag@vger.kernel.org, linux-mips@linux-mips.org, linux-parisc@vger.kernel.org, linux-pm@vg
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CAOw6vbKozeDR+2KCTwhwRoNY7+k=FB96Vc7sHXKy4SFYMVEeHQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, Oct 07, 2014 at 01:07:29PM -0700, Sean Paul wrote:
+> On Wed, Oct 1, 2014 at 11:38 AM, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+> > On Fri, Sep 19, 2014 at 7:28 AM, Peter De Schrijver
+> > <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> >> On Thu, Sep 18, 2014 at 08:59:53PM +0200, Sean Paul wrote:
+> >>> On Thu, Sep 18, 2014 at 7:26 AM, Peter De Schrijver
+> >>> <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> >>> > On Wed, Sep 10, 2014 at 06:17:44PM +0200, Stephen Warren wrote:
+> >>> >> On 09/10/2014 08:52 AM, Sean Paul wrote:
+> >>> >> > This patch moves the mipi-cal gate registration down into the SoC
+> >>> >> > specific files to reflect the different in parent between them.
+> >>> >> >
+> >>> >> > Without this change, MIPI calibration will fail on K1 devices if
+> >>> >> > the 72MHz clock is off.
+> >>> >>
+> >>> >> This isn't a problem with this patch per se, but I notice that what's
+> >>> >> removed from clk-tegra-periph.c is data in a table, whereas open-coded
+> >>> >> calls are added to clk-tegra*.c. It'd be nice if the open-coded calls in
+> >>> >> clk-tegra*.c could be converted to a table (simply with SoC-specific
+> >>> >> data) and processed by the same function. Peter, would that make sense?
+> >>> >
+> >>> > Maybe yes. I will look into this. For this patch, it would make more sense
+> >>> > to keep the entry in clk-tegra-periph.c as it can be used by both Tegra124
+> >>> > and Tegra132.
+> >>> >
+> >>>
+> >>> How do you suggest we switch the parent based on 124 vs 132 if it
+> >>> remains in clk-tegra-periph.c?
+> >>>
+> >>
+> >> I would change the parent of mipi-cal in clk-tegra-periph.c to clk72mhz and
+> >> use a different mechanism for Tegra114.
+> >>
+> >
+> > Hi Peter,
+> > Sorry for the delay, I'm just getting back to this now.
+> >
+> > I'm still unclear on how you propose we alter mipi-cal in tegra114.
+> > AFAICT, we can't re-parent it since it's a gate clock. Can you please
+> > be a little more specific (and forgive my ignorance wrt this driver,
+> > it's still new to me)?
+> >
+> 
+> Ping. Can I get some advice on this?
+> 
 
------ Guenter Roeck <linux@roeck-us.net> =E5=86=99=E9=81=93=EF=BC=9A
-> pm_power_off is defined for all architectures. Move it to common code=
-=2E
->=20
-> Have all architectures call do_kernel_poweroff instead of pm_power_of=
-f.
-> Some architectures point pm_power_off to machine_power_off. For those=
-,
-> call do_kernel_poweroff from machine_power_off instead.
->=20
+Sorry about the late reply. But you could do something like:
 
-=46or UniCore32 part,
 
-Acked-by: Xuetao Guan <gxt@mprc.pku.edu.cn>
+diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+index 37f32c4..a9a3b69 100644
+--- a/drivers/clk/tegra/clk-tegra-periph.c
++++ b/drivers/clk/tegra/clk-tegra-periph.c
+@@ -524,7 +524,7 @@ static struct tegra_periph_init_data gate_clks[] = {
+ 	GATE("hda2hdmi", "clk_m", 128, TEGRA_PERIPH_ON_APB, tegra_clk_hda2hdmi, 0),
+ 	GATE("bsea", "clk_m", 62, 0, tegra_clk_bsea, 0),
+ 	GATE("bsev", "clk_m", 63, 0, tegra_clk_bsev, 0),
+-	GATE("mipi-cal", "clk_m", 56, 0, tegra_clk_mipi_cal, 0),
++	GATE("mipi-cal", "clk72mhz", 56, 0, tegra_clk_mipi_cal, 0),
+ 	GATE("usbd", "clk_m", 22, 0, tegra_clk_usbd, 0),
+ 	GATE("usb2", "clk_m", 58, 0, tegra_clk_usb2, 0),
+ 	GATE("usb3", "clk_m", 59, 0, tegra_clk_usb3, 0),
+diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+index f760f31..8b44a8f 100644
+--- a/drivers/clk/tegra/clk-tegra114.c
++++ b/drivers/clk/tegra/clk-tegra114.c
+@@ -720,7 +720,6 @@ static struct tegra_clk tegra114_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_csi] = { .dt_id = TEGRA114_CLK_CSI, .present = true },
+ 	[tegra_clk_i2c2] = { .dt_id = TEGRA114_CLK_I2C2, .present = true },
+ 	[tegra_clk_uartc] = { .dt_id = TEGRA114_CLK_UARTC, .present = true },
+-	[tegra_clk_mipi_cal] = { .dt_id = TEGRA114_CLK_MIPI_CAL, .present = true },
+ 	[tegra_clk_emc] = { .dt_id = TEGRA114_CLK_EMC, .present = true },
+ 	[tegra_clk_usb2] = { .dt_id = TEGRA114_CLK_USB2, .present = true },
+ 	[tegra_clk_usb3] = { .dt_id = TEGRA114_CLK_USB3, .present = true },
+@@ -1230,6 +1229,11 @@ static __init void tegra114_periph_clk_init(void __iomem *clk_base,
+ 			       clk_base + CLK_SOURCE_EMC,
+ 			       29, 3, 0, NULL);
+ 
++	clk = tegra_clk_register_periph_gate("mipi-cal", "clk_m", 0, clk_base,
++					CLK_SET_RATE_PARENT, 56,
++					periph_clk_enb_refcnt);
++	clks[TEGRA114_CLK_MIPI_CAL] = clk;
++
+ 	for (i = 0; i < ARRAY_SIZE(tegra_periph_clk_list); i++) {
+ 		data = &tegra_periph_clk_list[i];
+ 		clk = tegra_clk_register_periph(data->name,
 
-Thanks
-Xuetao
+The advantage would be that this also solves the problem for Tegra132 and
+hopefully for future chips. So Tegra114 would be the odd ball out which is
+handled manually.
+
+> I've also got 2 other outstanding tegra clock patches that have not
+> received a response:
+> - clk: tegra124: Add init data for dsi lp clocks
+> - clk/tegra: Fix mux typo, s/pll_m/clk_m/
+> 
+
+I will have a look.
+
+Cheers,
+
+Peter.
