@@ -1,52 +1,32 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: tegra: venice2: add GK20A GPU DT node
-Date: Thu, 9 Oct 2014 17:05:44 +0900
-Message-ID: <CAAVeFuLwE5L1y1syGZySB1G2XfS_-ZmNWscr01Y4jA+0d_rQKA@mail.gmail.com>
-References: <1412835112-7209-1-git-send-email-acourbot@nvidia.com>
- <20141009074326.GA1010@ulmo> <54363DE8.9030102@nvidia.com> <20141009080016.GA1203@ulmo>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH] drm/exynos: fix vblank handling during dpms off
+Date: Thu, 9 Oct 2014 09:52:58 +0100
+Message-ID: <20141009085258.GI5182@n2100.arm.linux.org.uk>
+References: <542B9A0E.7020206@samsung.com> <1412151287-12845-1-git-send-email-a.hajda@samsung.com> <542D13CC.5000304@samsung.com> <542D2E7C.1020904@samsung.com> <542D3C96.7000400@samsung.com> <54362066.9000504@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20141009080016.GA1203@ulmo>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <54362066.9000504@nvidia.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Thierry Reding <treding@nvidia.com>, linux-samsung-soc@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Oct 9, 2014 at 5:00 PM, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Thu, Oct 09, 2014 at 04:48:56PM +0900, Alexandre Courbot wrote:
->> On 10/09/2014 04:43 PM, Thierry Reding wrote:
->> >* PGP Signed by an unknown key
->> >
->> >On Thu, Oct 09, 2014 at 03:11:51PM +0900, Alexandre Courbot wrote:
->> >>From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> >>
->> >>Add the device-tree node for the GK20A GPU and leave it disabled by
->> >>default. It is the responsability of the bootloader to enable it if the
->> >>VPR registers have been programmed such as the GPU can operate.
->> >>
->> >>Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> >>Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> >>---
->> >>  arch/arm/boot/dts/tegra124-venice2.dts | 8 +++++++-
->> >>  1 file changed, 7 insertions(+), 1 deletion(-)
->> >
->> >Are you going to send the corresponding patches for U-Boot to update
->> >the status property if it's initialized VPR?
->>
->> Yes. But maybe I should wait until upstream Nouveau actually works properly
->> for that? Right now it will probe successfully, but will crash as soon as
->> the GPU is used because there still are memory coherency problems.
->
-> I think the same really goes for these patches. Applying these will make
-> the node available to U-Boot, so technically some future U-Boot version
-> could modify a kernel DTB and boot a version where nouveau didn't yet
-> work out-of-the-box.
->
-> There's also still the issue about firmware loading and so on, so maybe
-> holding off on applying these patches until gk20a is fully enabled is a
-> good idea. Normally I guess this would be done by not adding the kernel
-> driver until it's expected to be at least usable to some degree, but I
-> guess it is a bit late for that now.
+On Thu, Oct 09, 2014 at 02:43:02PM +0900, Alexandre Courbot wrote:
+> But there might be another issue, which is that calls to  
+> drm_vblank_get() will return -EINVAL if invoked between drm_blank_off  
+> and drm_blank_on. Is this really the desired behavior? Can it at least  
+> happen? If so, how are drivers supposed to react to this situation?
 
-I'm fine with that too. Dropping these patches fow now.
+I've not yet seen the commit which causes this problem, but I hope
+that drm_wait_vblank() isn't affected by this.  In current mainline,
+drm_vblank_get() is used inside drm_wait_vblank(), which is called as
+a result of userspace calling DRM_IOCTL_WAIT_VBLANK.
+
+So, what is the effect of this change on user applications making use
+of the vblank wait ioctl - and is that change intended?
+
+-- 
+FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
+according to speedtest.net.
