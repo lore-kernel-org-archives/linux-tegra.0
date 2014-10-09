@@ -1,47 +1,59 @@
-From: Pavel Machek <pavel@denx.de>
-Subject: Re: [PATCH 08/44] kernel: Move pm_power_off to common code
-Date: Thu, 9 Oct 2014 22:24:19 +0200
-Message-ID: <20141009202419.GA16885@amd>
-References: <1412659726-29957-1-git-send-email-linux@roeck-us.net>
- <1412659726-29957-9-git-send-email-linux@roeck-us.net>
- <20141009103847.GC6787@amd> <54368A30.9070101@roeck-us.net>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V2] ARM: tegra: Re-add removed SoC id macro to tegra_resume()
+Date: Fri, 10 Oct 2014 02:10:03 +0400
+Message-ID: <543707BB.1040603@gmail.com>
+References: <20141008190432.GN22688@saruman> <1412796255-10589-1-git-send-email-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-Content-Disposition: inline
-In-Reply-To: <54368A30.9070101@roeck-us.net>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-m32r-ja@ml.linux-m32r.org, linux-mips@linux-mips.org, linux-efi@vger.kernel.org, linux-ia64@vger.kernel.org, Steven Miao <realmz6@gmail.com>, linux-xtensa@linux-xtensa.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, David Howells <dhowells@redhat.com>, Max Filippov <jcmvbkbc@gmail.com>, Paul Mackerras <paulus@samba.org>, Ralf Baechle <ralf@linux-mips.org>, "H. Peter Anvin" <hpa@zytor.com>, Guan Xuetao <gxt@mprc.pku.edu.cn>, Thomas Gleixner <tglx@linutronix.de>, Lennox Wu <lennox.wu@gmail.com>, Hans-Christian Egtvedt <egtvedt@samfundet.no>, devel@driverdev.osuosl.org, linux-s390@vger.kernel.org, Jesper Nilsson <jesper.nilsson@axis.com>, lguest@lists.ozlabs.org, Russell King <linux@arm.linux.org.uk>, linux-c6x-dev@linux-c6x.org, Len Brown <len.brown@intel.com>, "David S. Miller" <davem@d>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1412796255-10589-1-git-send-email-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi!
+08.10.2014 23:24, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> Commit d127e9c5c5bc1ee22a7b1fe804397cddd132f756 ("ARM: tegra: make te=
+gra_resume
+> can work with current and later chips") removed tegra_get_soc_id macr=
+o leaving
+> used cpu register unassigned and as result causing execution of unint=
+ended code
+> on tegra20. Fix it by re-adding macro.
+>=20
+> Fixes: d127e9c (ARM: tegra: make tegra_resume can work with current a=
+nd later chips)
+> Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org> # v3.13+
+> Reviewed-by: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+> V2: added Cc's for lakml and stable, added "Reviewed-by:" Felipe Balb=
+i
+>=20
+>  arch/arm/mach-tegra/reset-handler.S | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/arch/arm/mach-tegra/reset-handler.S b/arch/arm/mach-tegr=
+a/reset-handler.S
+> index 7b2baab..71be4af 100644
+> --- a/arch/arm/mach-tegra/reset-handler.S
+> +++ b/arch/arm/mach-tegra/reset-handler.S
+> @@ -51,6 +51,7 @@ ENTRY(tegra_resume)
+>   THUMB(	it	ne )
+>  	bne	cpu_resume			@ no
+> =20
+> +	tegra_get_soc_id TEGRA_APB_MISC_BASE, r6
+>  	/* Are we on Tegra20? */
+>  	cmp	r6, #TEGRA20
+>  	beq	1f				@ Yes
+>=20
+Ugh, I just noticed that r6 is expected to be SoC id func argument. It =
+was bug
+in my emulator that blinded me, so please drop that patch.
+But, seems tegra20_lp1_reset() doesn't set r6, at least for now I don't=
+ see
+where. I'll check it on real hw and send patch if needed.
 
-> >>@@ -184,6 +179,8 @@ machine_halt(void)
-> >>  void
-> >>  machine_power_off(void)
-> >>  {
-> >>+	do_kernel_poweroff();
-> >>+
-> >
-> >poweroff -> power_off for consistency.
-> >
-> Dunno; matter of personal preference. I started with that, but ultimately went
-> with poweroff to distinguish poweroff handler functions from existing code,
-> specifically kernel_power_off().
-
-That works for you, but once it is merged, it is ugly/confusing typo.
-									Pavel
-
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+--=20
+Dmitry
