@@ -1,45 +1,46 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH V3] ARM: tegra: Re-add removed SoC id macro to tegra_resume()
-Date: Fri, 10 Oct 2014 17:24:47 +0400
-Message-ID: <1412947487-24287-1-git-send-email-digetx@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH 08/44] kernel: Move pm_power_off to common code
+Date: Fri, 10 Oct 2014 09:53:52 -0700
+Message-ID: <54380F20.3060800@roeck-us.net>
+References: <1412659726-29957-1-git-send-email-linux@roeck-us.net> <1412659726-29957-9-git-send-email-linux@roeck-us.net> <20141009103847.GC6787@amd> <54368A30.9070101@roeck-us.net> <20141009202419.GA16885@amd>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <20141009202419.GA16885@amd>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Pavel Machek <pavel@denx.de>
+Cc: linux-kernel@vger.kernel.org, adi-buildroot-devel@lists.sourceforge.net, devel@driverdev.osuosl.org, devicetree@vger.kernel.org, lguest@lists.ozlabs.org, linux-acpi@vger.kernel.org, linux-alpha@vger.kernel.org, linux-am33-list@redhat.com, linux-cris-kernel@axis.com, linux-efi@vger.kernel.org, linux-hexagon@vger.kernel.org, linux-m32r-ja@ml.linux-m32r.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org, linux-xtensa@linux-xtensa.org, openipmi-developer@lists.sourceforge.net, user-mode-linux-devel@lists.sourceforge.net, linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org, linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org, linux-metag@vger.kernel.org, linux-mips@linux-mips.org, linux-parisc@vger.kernel.orglinux-
 List-Id: linux-tegra@vger.kernel.org
 
-Commit d127e9c ("ARM: tegra: make tegra_resume can work with current and later
-chips") removed tegra_get_soc_id macro leaving used cpu register corrupted after
-branching to v7_invalidate_l1() and as result causing execution of unintended
-code on tegra20. Possibly it was expected that r6 would be SoC id func argument
-since common cpu reset handler is setting r6 before branching to tegra_resume(),
-but neither tegra20_lp1_reset() nor tegra30_lp1_reset() aren't setting r6
-register before jumping to resume function. Fix it by re-adding macro.
+On 10/09/2014 01:24 PM, Pavel Machek wrote:
+> Hi!
+>
+>>>> @@ -184,6 +179,8 @@ machine_halt(void)
+>>>>   void
+>>>>   machine_power_off(void)
+>>>>   {
+>>>> +	do_kernel_poweroff();
+>>>> +
+>>>
+>>> poweroff -> power_off for consistency.
+>>>
+>> Dunno; matter of personal preference. I started with that, but ultimately went
+>> with poweroff to distinguish poweroff handler functions from existing code,
+>> specifically kernel_power_off().
+>
+> That works for you, but once it is merged, it is ugly/confusing typo.
+> 									Pavel
+>
 
-Fixes: d127e9c (ARM: tegra: make tegra_resume can work with current and later chips)
-Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org> # v3.13+
-Reviewed-by: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
-V2: added Cc's for lakml and stable, added "Reviewed-by:" Felipe Balbi
-V3: changed commit description, tested on real hw
+Ok, no problem, I'll change it.
 
-PS: It wasn't a bug in my emulator :)
-
- arch/arm/mach-tegra/reset-handler.S | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/mach-tegra/reset-handler.S b/arch/arm/mach-tegra/reset-handler.S
-index 7b2baab..71be4af 100644
---- a/arch/arm/mach-tegra/reset-handler.S
-+++ b/arch/arm/mach-tegra/reset-handler.S
-@@ -51,6 +51,7 @@ ENTRY(tegra_resume)
-  THUMB(	it	ne )
- 	bne	cpu_resume			@ no
- 
-+	tegra_get_soc_id TEGRA_APB_MISC_BASE, r6
- 	/* Are we on Tegra20? */
- 	cmp	r6, #TEGRA20
- 	beq	1f				@ Yes
--- 
-2.1.1
+Guenter
