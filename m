@@ -1,72 +1,97 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: tegra: venice2: add GK20A GPU DT node
-Date: Fri, 10 Oct 2014 09:01:42 +0200
-Message-ID: <20141010070140.GA29675@ulmo.nvidia.com>
-References: <1412835112-7209-1-git-send-email-acourbot@nvidia.com>
- <54376A45.6070707@wwwdotorg.org>
+From: Grant Likely <grant.likely@linaro.org>
+Subject: Re: [RFC PATCH v2 1/4] regulator: Add helper function to get
+ "poweroff-source" property
+Date: Fri, 10 Oct 2014 12:47:08 +0100
+Message-ID: <CACxGe6vmBSgGpJgJ51Ki5KbQO65GDw3kSGSxnswYMfE8OGj9gw@mail.gmail.com>
+References: <1412711104-15902-1-git-send-email-romain.perier@gmail.com> <CABgxDoL2cztT6Y0oodtk4Q4jaDc1Rtx_RokxC+f0XykSojrdyg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="UlVJffcvxoiEqYs2"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <54376A45.6070707-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <CABgxDoL2cztT6Y0oodtk4Q4jaDc1Rtx_RokxC+f0XykSojrdyg@mail.gmail.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: PERIER Romain <romain.perier@gmail.com>
+Cc: devicetree <devicetree@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, "sameo@linux.intel.com" <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, robh <robh@kernel.org>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Anton Vorontsov <anton@enomsg.org>, Laxman Dewangan <ldewangan@nvidia.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, Oct 7, 2014 at 8:43 PM, PERIER Romain <romain.perier@gmail.com> wrote:
+> This is not the final location, I have no idea exactly where I might
+> put this helper function. This is why I ask you your opinion (and
+> also, this is why that's a proposal)
+>
+> 2014-10-07 21:45 GMT+02:00 Romain Perier <romain.perier@gmail.com>:
+>> Several drivers create their own devicetree property when they register
+>> poweroff capabilities. This is for example the case for mfd, regulator
+>> or power drivers which define "vendor,system-power-controller" property.
+>> This patch adds support for a standard property "poweroff-source"
+>> which marks the device as able to shutdown the system.
+>>
+>> Signed-off-by: Romain Perier <romain.perier@gmail.com>
+>> ---
+>>  drivers/regulator/of_regulator.c       | 12 ++++++++++++
+>>  include/linux/regulator/of_regulator.h |  6 ++++++
+>>  2 files changed, 18 insertions(+)
+>>
+>> diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
+>> index 7a51814..8b898e6 100644
+>> --- a/drivers/regulator/of_regulator.c
+>> +++ b/drivers/regulator/of_regulator.c
+>> @@ -240,3 +240,15 @@ struct regulator_init_data *regulator_of_get_init_data(struct device *dev,
+>>
+>>         return init_data;
+>>  }
+>> +
+>> +/**
+>> + * is_system_poweroff_source - Tells if poweroff-source is found for device_node
+>> + * @np: Pointer to the given device_node
+>> + *
+>> + * return true if present false otherwise
+>> + */
+>> +bool is_system_poweroff_source(const struct device_node *np)
+>> +{
+>> +       return of_property_read_bool(np, "poweroff-source");
+>> +}
+>> +EXPORT_SYMBOL_GPL(is_system_poweroff_source);
 
---UlVJffcvxoiEqYs2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Romain,
 
-On Thu, Oct 09, 2014 at 10:10:29PM -0700, Stephen Warren wrote:
-> On 10/08/2014 11:11 PM, Alexandre Courbot wrote:
-> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >=20
-> > Add the device-tree node for the GK20A GPU and leave it disabled by
-> > default. It is the responsability of the bootloader to enable it if the
-> > VPR registers have been programmed such as the GPU can operate.
->=20
-> > diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts=
-/tegra124-venice2.dts
->=20
-> > +	gpu@0,57000000 {
-> > +		status =3D "disabled";
->=20
-> status=3D"disabled" usually goes into tegra124.dtsi. A board would only
-> override status to "okay" if necessary, and include any board specific
-> properties ...
+This is an extremely simple wrapper. It may be best to simply make it
+a static inline. It is also generic enough that I don't have a problem
+with it living in include/linux/of.h; but of_regulator.h would be fine
+too.
 
-True. I guess this is somewhat redundant here since the .dtsi file
-already sets it to "disabled". Given how it is rather unusual for a
-board's DTS file to not enable a node I think there would be some
-advantage in keeping this explicitly to avoid confusion. Alternatively
-perhaps a comment in the DTS file about why this isn't enabled by
-default would be a good replacement.
+Since this is a device tree specific function (it doesn't work with
+ACPI or platform_data), you should prefix the function name with of_
 
-Thierry
+g.
 
---UlVJffcvxoiEqYs2
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJUN4RUAAoJEN0jrNd/PrOhZsgP/iE/Xqhzo+/I6KaRGGltk0st
-5qPWxNB6iSAaQUxxbbgCv37US8OY0aG2tpBXWwJZtpL24ST40ljPZ0m3Sa5UEUAq
-D0OQzJ144RzT9pW5weMfds7qd6afuBWrWnmZsvs85fpL5UXKfcsCSa+CfnZoWfxu
-PsyXZEGCeuxvd6Nv/QPfbzkler0Mmv3dVFNPYno/QPtMxDH4ztYJEieMiW6Q1u5z
-aTEEY4HOOYazTrRcE8+FGCwYWWgc2fRBET3oLTfL5SiPYR2JjFBvYC1ZE+QTjMXz
-r28vujlnvki5ht1viiI4gk3G5favAcJ6CvIKC0p7ponUadcDaF3yR5zuxNejndhw
-lfkvjl+8Aey4B1oYw+7+cLgwcK6kDdqQFJf1TAe7HxJywjqKSAJ5i51zn/6b7Z0m
-p2NMUli6aYzkMmz5dRmqzso5tWiyWNIcAcrIapjYwQg52Ii6kkrDfBEpi7aDt9kP
-I01w+gNDZAXTh7R67XOdWgRJqBQ4WQGN/5xZ3jxoQ1r+trjP0b/Lxp78xQrOJgQ7
-Oy/SOvFUAzxOTtSuOnzgJuKxWD67ciX3BMCUIZ+LWsq+Qyb9GgJicShfYGscSnEA
-2XTK6rMbhmdFnfo7ZNQXHomrzlFnqxLwGSZH6gRksJREotl9M4Be5gYVv7p0BGnz
-YgYIJwIB9jXsQNYePYBz
-=210x
------END PGP SIGNATURE-----
-
---UlVJffcvxoiEqYs2--
+What I'm more concerned about is the semantics of the property. What
+do the generic code paths gain by standardizing this property? Is it
+expected that
+>> diff --git a/include/linux/regulator/of_regulator.h b/include/linux/regulator/of_regulator.h
+>> index f921796..9d8fbb2 100644
+>> --- a/include/linux/regulator/of_regulator.h
+>> +++ b/include/linux/regulator/of_regulator.h
+>> @@ -20,6 +20,7 @@ extern struct regulator_init_data
+>>  extern int of_regulator_match(struct device *dev, struct device_node *node,
+>>                               struct of_regulator_match *matches,
+>>                               unsigned int num_matches);
+>> +extern bool is_system_poweroff_source(const struct device_node *np);
+>>  #else
+>>  static inline struct regulator_init_data
+>>         *of_get_regulator_init_data(struct device *dev,
+>> @@ -35,6 +36,11 @@ static inline int of_regulator_match(struct device *dev,
+>>  {
+>>         return 0;
+>>  }
+>> +
+>> +static inline bool is_system_poweroff_source(const struct device_node *np)
+>> +{
+>> +       return false;
+>> +}
+>>  #endif /* CONFIG_OF */
+>>
+>>  #endif /* __LINUX_OF_REG_H */
+>> --
+>> 1.9.1
+>>
