@@ -1,110 +1,59 @@
-From: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2] PCI: tegra: Enable root port specific features
-Date: Fri, 10 Oct 2014 10:45:35 +0530
-Message-ID: <1412918135-11686-1-git-send-email-vidyas@nvidia.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: Re: [REPOST PATCH v4 1/2] PM / QoS: Add PM_QOS_MEMORY_BANDWIDTH class
+Date: Fri, 10 Oct 2014 08:59:22 +0200
+Message-ID: <CAAObsKBuDRQy7=zLkmRj9O+Ka0K_z-ejXCyzwttEXmQVkXn2hw@mail.gmail.com>
+References: <1409759373-22696-1-git-send-email-tomeu.vizoso@collabora.com>
+ <1960419.9oqpSxvdev@vostro.rjw.lan> <CAAObsKC0PcfBTJv8zZYUiys4NxvS=JMd3jjedUam5oZ4tNLwhA@mail.gmail.com>
+ <2373913.b8GhYem2Rt@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <2373913.b8GhYem2Rt@vostro.rjw.lan>
+Sender: linux-pm-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, linux-pm@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Enables root port to advertise its ASPM-L1 capability
-resulting in possible link entry to L1 when an ASPM-L1 capable
-device is connected
-Enables per-controller & per-TMS clock clamping by default
-Enabling above features result in more power saving
+On 26 September 2014 01:51, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> On Wednesday, September 24, 2014 03:31:55 PM Tomeu Vizoso wrote:
+>> On 24 September 2014 15:32, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>> > On Wednesday, September 24, 2014 10:42:13 AM Tomeu Vizoso wrote:
+>> >> On 14 September 2014 19:06, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>> >> > On Friday, September 12, 2014 11:11:25 AM Tomeu Vizoso wrote:
+>> >> >> On 3 September 2014 17:49, Tomeu Vizoso <tomeu.vizoso@collabora.com> wrote:
+>> >> >> > Also adds a class type PM_QOS_SUM that aggregates the values by summing them.
+>> >> >> >
+>> >> >> > It can be used by memory controllers to calculate the optimum clock frequency
+>> >> >> > based on the bandwidth needs of the different memory clients.
+>> >> >> >
+>> >> >> > Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+>> >> >> > Acked-by: Pavel Machek <pavel@ucw.cz>
+>> >> >>
+>> >> >> Hi Rafael,
+>> >> >>
+>> >> >> will you take this one for 3.18?
+>> >> >
+>> >> > Quite likely, but I'm traveling now, so I'll do that after I'm back home
+>> >> > in a few days.  I'll write to you if there are any problems.
+>> >>
+>> >> Don't want to be annoying, but thought I might ping you just in case
+>> >> this fell through the cracks.
+>> >
+>> > No, it didn't.
+>> >
+>> > I'm wondering about patch [2/2], though.  I'm assuming that you'll push you
+>> > later through the Tegra DRM driver, right?
+>>
+>> Yes, that was Stephen's suggestion:
+>>
+>> https://lkml.org/lkml/2014/8/25/439
+>
+> OK, patch [1/2] queued up for 3.18, thanks!
 
-It also avoids PM message truncation by waiting for DLLP to finish
-before entering into L1 or L2
+Hi Rafael,
 
-Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-v2:
- Removed rp_read() & rp_write() as they seem to be redundant
- Moved port disable code under error condition i.e. it the link
-  is down, corresponding port will be disabled
+I don't see this one in linux-next yet.
 
- drivers/pci/host/pci-tegra.c | 50 +++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 45 insertions(+), 5 deletions(-)
+Regards,
 
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 3d43874..7f32b07 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -237,6 +237,18 @@
- 		(0xf  << PADS_REFCLK_CFG_DRVI_SHIFT)     \
- 	)
- 
-+#define NV_PCIE2_RP_VEND_XP1			0x00000F04
-+#define NV_PCIE2_RP_VEND_XP_LINK_PVT_CTL_L1_ASPM_SUPPORT	(1 << 21)
-+
-+#define NV_PCIE2_RP_VEND_XP_BIST		0x00000F4C
-+#define PCIE2_RP_VEND_XP_BIST_GOTO_L1_L2_AFTER_DLLP_DONE	(1 << 28)
-+
-+#define NV_PCIE2_RP_PRIV_MISC			0x00000FE0
-+#define PCIE2_RP_PRIV_MISC_CTLR_CLK_CLAMP_THRESHOLD	(0xF << 16)
-+#define PCIE2_RP_PRIV_MISC_CTLR_CLK_CLAMP_ENABLE	(1 << 23)
-+#define PCIE2_RP_PRIV_MISC_TMS_CLK_CLAMP_THRESHOLD	(0xF << 24)
-+#define PCIE2_RP_PRIV_MISC_TMS_CLK_CLAMP_ENABLE		(1 << 31)
-+
- struct tegra_msi {
- 	struct msi_chip chip;
- 	DECLARE_BITMAP(used, INT_PCI_MSI_NR);
-@@ -1859,6 +1871,32 @@ retry:
- 	return false;
- }
- 
-+/* Enable various features of root port */
-+static void tegra_pcie_enable_rp_features(struct tegra_pcie_port *port)
-+{
-+	unsigned int data;
-+
-+	/* Power mangagement settings */
-+	/* Enable clock clamping by default */
-+	data = readl(port->base + NV_PCIE2_RP_PRIV_MISC);
-+	data |= PCIE2_RP_PRIV_MISC_CTLR_CLK_CLAMP_THRESHOLD |
-+		PCIE2_RP_PRIV_MISC_CTLR_CLK_CLAMP_ENABLE |
-+		PCIE2_RP_PRIV_MISC_TMS_CLK_CLAMP_THRESHOLD |
-+		PCIE2_RP_PRIV_MISC_TMS_CLK_CLAMP_ENABLE;
-+	writel(data, port->base + NV_PCIE2_RP_PRIV_MISC);
-+
-+	/* Enable rootport to advertise its ASPM - L1 capability */
-+	data = readl(port->base + NV_PCIE2_RP_VEND_XP1);
-+	data |= NV_PCIE2_RP_VEND_XP_LINK_PVT_CTL_L1_ASPM_SUPPORT;
-+	writel(data, port->base + NV_PCIE2_RP_VEND_XP1);
-+
-+	/* LTSSM : wait for DLLP to finish before entering L1 or L2/L3 */
-+	/* to avoid truncating PM messages resulting in receiver errors */
-+	data = readl(port->base + NV_PCIE2_RP_VEND_XP_BIST);
-+	data |= PCIE2_RP_VEND_XP_BIST_GOTO_L1_L2_AFTER_DLLP_DONE;
-+	writel(data, port->base + NV_PCIE2_RP_VEND_XP_BIST);
-+}
-+
- static int tegra_pcie_enable(struct tegra_pcie *pcie)
- {
- 	struct tegra_pcie_port *port, *tmp;
-@@ -1870,13 +1908,15 @@ static int tegra_pcie_enable(struct tegra_pcie *pcie)
- 
- 		tegra_pcie_port_enable(port);
- 
--		if (tegra_pcie_port_check_link(port))
-+		if (!tegra_pcie_port_check_link(port)) {
-+			dev_info(pcie->dev, "link %u down, ignoring\n",
-+				port->index);
-+			tegra_pcie_port_disable(port);
-+			tegra_pcie_port_free(port);
- 			continue;
-+		}
- 
--		dev_info(pcie->dev, "link %u down, ignoring\n", port->index);
--
--		tegra_pcie_port_disable(port);
--		tegra_pcie_port_free(port);
-+		tegra_pcie_enable_rp_features(port);
- 	}
- 
- 	memset(&hw, 0, sizeof(hw));
--- 
-1.8.1.5
+Tomeu
