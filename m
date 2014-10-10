@@ -1,34 +1,110 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: tegra: venice2: add GK20A GPU DT node
-Date: Thu, 09 Oct 2014 22:10:29 -0700
-Message-ID: <54376A45.6070707@wwwdotorg.org>
-References: <1412835112-7209-1-git-send-email-acourbot@nvidia.com>
+From: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2] PCI: tegra: Enable root port specific features
+Date: Fri, 10 Oct 2014 10:45:35 +0530
+Message-ID: <1412918135-11686-1-git-send-email-vidyas@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1412835112-7209-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/08/2014 11:11 PM, Alexandre Courbot wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Add the device-tree node for the GK20A GPU and leave it disabled by
-> default. It is the responsability of the bootloader to enable it if the
-> VPR registers have been programmed such as the GPU can operate.
+Enables root port to advertise its ASPM-L1 capability
+resulting in possible link entry to L1 when an ASPM-L1 capable
+device is connected
+Enables per-controller & per-TMS clock clamping by default
+Enabling above features result in more power saving
 
-> diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
+It also avoids PM message truncation by waiting for DLLP to finish
+before entering into L1 or L2
 
-> +	gpu@0,57000000 {
-> +		status = "disabled";
+Signed-off-by: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+v2:
+ Removed rp_read() & rp_write() as they seem to be redundant
+ Moved port disable code under error condition i.e. it the link
+  is down, corresponding port will be disabled
 
-status="disabled" usually goes into tegra124.dtsi. A board would only
-override status to "okay" if necessary, and include any board specific
-properties ...
+ drivers/pci/host/pci-tegra.c | 50 +++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 45 insertions(+), 5 deletions(-)
 
-> +		vdd-supply = <&vdd_gpu>;
-
-... such as that.
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index 3d43874..7f32b07 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -237,6 +237,18 @@
+ 		(0xf  << PADS_REFCLK_CFG_DRVI_SHIFT)     \
+ 	)
+ 
++#define NV_PCIE2_RP_VEND_XP1			0x00000F04
++#define NV_PCIE2_RP_VEND_XP_LINK_PVT_CTL_L1_ASPM_SUPPORT	(1 << 21)
++
++#define NV_PCIE2_RP_VEND_XP_BIST		0x00000F4C
++#define PCIE2_RP_VEND_XP_BIST_GOTO_L1_L2_AFTER_DLLP_DONE	(1 << 28)
++
++#define NV_PCIE2_RP_PRIV_MISC			0x00000FE0
++#define PCIE2_RP_PRIV_MISC_CTLR_CLK_CLAMP_THRESHOLD	(0xF << 16)
++#define PCIE2_RP_PRIV_MISC_CTLR_CLK_CLAMP_ENABLE	(1 << 23)
++#define PCIE2_RP_PRIV_MISC_TMS_CLK_CLAMP_THRESHOLD	(0xF << 24)
++#define PCIE2_RP_PRIV_MISC_TMS_CLK_CLAMP_ENABLE		(1 << 31)
++
+ struct tegra_msi {
+ 	struct msi_chip chip;
+ 	DECLARE_BITMAP(used, INT_PCI_MSI_NR);
+@@ -1859,6 +1871,32 @@ retry:
+ 	return false;
+ }
+ 
++/* Enable various features of root port */
++static void tegra_pcie_enable_rp_features(struct tegra_pcie_port *port)
++{
++	unsigned int data;
++
++	/* Power mangagement settings */
++	/* Enable clock clamping by default */
++	data = readl(port->base + NV_PCIE2_RP_PRIV_MISC);
++	data |= PCIE2_RP_PRIV_MISC_CTLR_CLK_CLAMP_THRESHOLD |
++		PCIE2_RP_PRIV_MISC_CTLR_CLK_CLAMP_ENABLE |
++		PCIE2_RP_PRIV_MISC_TMS_CLK_CLAMP_THRESHOLD |
++		PCIE2_RP_PRIV_MISC_TMS_CLK_CLAMP_ENABLE;
++	writel(data, port->base + NV_PCIE2_RP_PRIV_MISC);
++
++	/* Enable rootport to advertise its ASPM - L1 capability */
++	data = readl(port->base + NV_PCIE2_RP_VEND_XP1);
++	data |= NV_PCIE2_RP_VEND_XP_LINK_PVT_CTL_L1_ASPM_SUPPORT;
++	writel(data, port->base + NV_PCIE2_RP_VEND_XP1);
++
++	/* LTSSM : wait for DLLP to finish before entering L1 or L2/L3 */
++	/* to avoid truncating PM messages resulting in receiver errors */
++	data = readl(port->base + NV_PCIE2_RP_VEND_XP_BIST);
++	data |= PCIE2_RP_VEND_XP_BIST_GOTO_L1_L2_AFTER_DLLP_DONE;
++	writel(data, port->base + NV_PCIE2_RP_VEND_XP_BIST);
++}
++
+ static int tegra_pcie_enable(struct tegra_pcie *pcie)
+ {
+ 	struct tegra_pcie_port *port, *tmp;
+@@ -1870,13 +1908,15 @@ static int tegra_pcie_enable(struct tegra_pcie *pcie)
+ 
+ 		tegra_pcie_port_enable(port);
+ 
+-		if (tegra_pcie_port_check_link(port))
++		if (!tegra_pcie_port_check_link(port)) {
++			dev_info(pcie->dev, "link %u down, ignoring\n",
++				port->index);
++			tegra_pcie_port_disable(port);
++			tegra_pcie_port_free(port);
+ 			continue;
++		}
+ 
+-		dev_info(pcie->dev, "link %u down, ignoring\n", port->index);
+-
+-		tegra_pcie_port_disable(port);
+-		tegra_pcie_port_free(port);
++		tegra_pcie_enable_rp_features(port);
+ 	}
+ 
+ 	memset(&hw, 0, sizeof(hw));
+-- 
+1.8.1.5
