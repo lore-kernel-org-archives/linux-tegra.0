@@ -1,82 +1,72 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [PATCH 10/10] memory: tegra: Add debugfs entry for getting and setting the EMC rate
-Date: Fri, 10 Oct 2014 14:47:01 +0200
-Message-ID: <1412945262-6068-11-git-send-email-tomeu.vizoso@collabora.com>
+From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Subject: [PATCH 04/10] of: Add Tegra124 EMC bindings
+Date: Fri, 10 Oct 2014 14:46:55 +0200
+Message-ID: <1412945262-6068-5-git-send-email-tomeu.vizoso@collabora.com>
 References: <1412945262-6068-1-git-send-email-tomeu.vizoso@collabora.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1412945262-6068-1-git-send-email-tomeu.vizoso@collabora.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@nvidia.com>
-Cc: Rhyland Klein <rklein@nvidia.com>, Mikko Perttunen <mikko.perttunen@kapsi.fi>, Thierry Reding <treding@nvidia.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1412945262-6068-1-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Will be very useful when tuning memory scaling.
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Add binding documentation for the nvidia,tegra124-emc device tree node.
+
+Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 ---
- drivers/memory/tegra/tegra124-emc.c | 36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ .../bindings/memory-controllers/tegra-emc.txt      | 41 ++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt
 
-diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
-index e70ca55..ed36534 100644
---- a/drivers/memory/tegra/tegra124-emc.c
-+++ b/drivers/memory/tegra/tegra124-emc.c
-@@ -20,6 +20,7 @@
- #include <linux/clk-provider.h>
- #include <linux/clk.h>
- #include <linux/clkdev.h>
-+#include <linux/debugfs.h>
- #include <linux/delay.h>
- #include <linux/module.h>
- #include <linux/of_address.h>
-@@ -1034,6 +1035,39 @@ void tegra_emc_complete_timing_change(unsigned long rate)
- 	emc_complete_timing_change(emc_instance, emc_instance->timings + i);
- }
- 
-+/* * * * * * * * * * * * * * * * * * * * * * * * * *
-+ * Debugfs entry                                   *
-+ * * * * * * * * * * * * * * * * * * * * * * * * * */
+diff --git a/Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt b/Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt
+new file mode 100644
+index 0000000..6282c6b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt
+@@ -0,0 +1,41 @@
++Tegra124 SoC EMC controller
 +
-+static int emc_debug_rate_get(void *data, u64 *rate)
-+{
-+	struct clk *c = data;
++Required properties :
++- compatible : "nvidia,tegra124-emc".
++- reg : Should contain 1 entry:
++  - EMC register set
 +
-+	*rate = clk_get_rate(c);
++The node should contain a "timings@i" subnode for each supported RAM type
++  (see field RAM_CODE in register PMC_STRAPPING_OPT_A)
++Required properties for "timings@i" nodes :
++- nvidia,ram-code : Should contain the value of RAM_CODE this timing set
++  is used for.
 +
-+	return 0;
-+}
-+
-+static int emc_debug_rate_set(void *data, u64 rate)
-+{
-+	struct clk *c = data;
-+
-+	return clk_set_rate(c, rate);
-+}
-+
-+DEFINE_SIMPLE_ATTRIBUTE(emc_debug_rate_fops, emc_debug_rate_get,
-+			emc_debug_rate_set, "%lld\n");
-+
-+void emc_debugfs_init(void)
-+{
-+	struct dentry *d;
-+
-+	d = debugfs_create_file("emc_rate", S_IRUGO | S_IWUSR, NULL, clk_get_sys("tegra-clk-debug", "emc"),
-+				&emc_debug_rate_fops);
-+	if (!d)
-+		pr_warn("failed to create debugfs entries\n");
-+}
-+
- static int tegra_emc_probe(struct platform_device *pdev)
- {
- 	struct tegra_emc *tegra;
-@@ -1111,6 +1145,8 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 
- 	emc_instance = tegra;
- 
-+	emc_debugfs_init();
-+
- 	return 0;
- };
- 
++Each "timings@i" node should contain "timing@j" subnodes. One "timing@j"
++  node should exist for each supported EMC clock rate.
++Required properties for "timing@j" nodes :
++- clock-frequency : Should contain the memory clock rate.
++- nvidia,parent-clock-frequency : Should contain the rate of the EMC
++  clock's parent clock.
++- clocks : Must contain an entry for each entry in clock-names.
++  See ../clocks/clock-bindings.txt for details.
++- clock-names : Must include the following entries:
++  - emc-parent : EMC's parent clock.
++- The following properties contain EMC timing characterization values:
++  - nvidia,emc-zcal-cnt-long
++  - nvidia,emc-auto-cal-interval
++  - nvidia,emc-ctt-term-ctrl
++  - nvidia,emc-cfg
++  - nvidia,emc-cfg-2
++  - nvidia,emc-sel-dpd-ctrl
++  - nvidia,emc-cfg-dig-dll
++  - nvidia,emc-bgbias-ctl0
++  - nvidia,emc-auto-cal-config
++  - nvidia,emc-auto-cal-config2
++  - nvidia,emc-auto-cal-config3
++  - nvidia,emc-mode-reset
++  - nvidia,emc-mode-1
++  - nvidia,emc-mode-2
++  - nvidia,emc-mode-4
++- nvidia,emc-configuration : EMC timing characterization data written to
++                             EMC registers.
 -- 
 1.9.3
