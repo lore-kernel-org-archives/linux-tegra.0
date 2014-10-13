@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 03/14] gpu: host1x: Fix typo in comment
-Date: Mon, 13 Oct 2014 12:21:44 +0200
-Message-ID: <1413195715-4719-3-git-send-email-thierry.reding@gmail.com>
+Subject: [PATCH 05/14] gpu: host1x: Make gather offsets unsigned
+Date: Mon, 13 Oct 2014 12:21:46 +0200
+Message-ID: <1413195715-4719-5-git-send-email-thierry.reding@gmail.com>
 References: <1413195715-4719-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,23 +23,27 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
+Use the u32 type for the offset in the host1x_job_gather structure for
+consistentcy with other structures. Negative offsets don't make sense in
+this context.
+
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/gpu/host1x/hw/cdma_hw.c | 2 +-
+ drivers/gpu/host1x/job.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/host1x/hw/cdma_hw.c b/drivers/gpu/host1x/hw/cdma_hw.c
-index a1197c40a454..072d8209c06c 100644
---- a/drivers/gpu/host1x/hw/cdma_hw.c
-+++ b/drivers/gpu/host1x/hw/cdma_hw.c
-@@ -26,7 +26,7 @@
- #include "../debug.h"
+diff --git a/drivers/gpu/host1x/job.h b/drivers/gpu/host1x/job.h
+index 33a697d6dcef..8b3c15df0660 100644
+--- a/drivers/gpu/host1x/job.h
++++ b/drivers/gpu/host1x/job.h
+@@ -23,7 +23,7 @@ struct host1x_job_gather {
+ 	u32 words;
+ 	dma_addr_t base;
+ 	struct host1x_bo *bo;
+-	int offset;
++	u32 offset;
+ 	bool handled;
+ };
  
- /*
-- * Put the restart at the end of pushbuffer memor
-+ * Put the restart at the end of pushbuffer memory
-  */
- static void push_buffer_init(struct push_buffer *pb)
- {
 -- 
 2.1.2
