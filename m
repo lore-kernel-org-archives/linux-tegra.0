@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 05/14] gpu: host1x: Make gather offsets unsigned
-Date: Mon, 13 Oct 2014 12:21:46 +0200
-Message-ID: <1413195715-4719-5-git-send-email-thierry.reding@gmail.com>
+Subject: [PATCH 04/14] gpu: host1x: Print address/offset pairs consistently
+Date: Mon, 13 Oct 2014 12:21:45 +0200
+Message-ID: <1413195715-4719-4-git-send-email-thierry.reding@gmail.com>
 References: <1413195715-4719-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,27 +23,44 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Use the u32 type for the offset in the host1x_job_gather structure for
-consistentcy with other structures. Negative offsets don't make sense in
-this context.
+Consistently use a format of %pad+%#x to print address/offset in debug
+messages.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/gpu/host1x/job.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/host1x/hw/cdma_hw.c  | 4 ++--
+ drivers/gpu/host1x/hw/debug_hw.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/host1x/job.h b/drivers/gpu/host1x/job.h
-index 33a697d6dcef..8b3c15df0660 100644
---- a/drivers/gpu/host1x/job.h
-+++ b/drivers/gpu/host1x/job.h
-@@ -23,7 +23,7 @@ struct host1x_job_gather {
- 	u32 words;
- 	dma_addr_t base;
- 	struct host1x_bo *bo;
--	int offset;
-+	u32 offset;
- 	bool handled;
- };
+diff --git a/drivers/gpu/host1x/hw/cdma_hw.c b/drivers/gpu/host1x/hw/cdma_hw.c
+index 072d8209c06c..305ea8f3382d 100644
+--- a/drivers/gpu/host1x/hw/cdma_hw.c
++++ b/drivers/gpu/host1x/hw/cdma_hw.c
+@@ -54,8 +54,8 @@ static void cdma_timeout_cpu_incr(struct host1x_cdma *cdma, u32 getptr,
+ 		u32 *p = (u32 *)(pb->mapped + getptr);
+ 		*(p++) = HOST1X_OPCODE_NOP;
+ 		*(p++) = HOST1X_OPCODE_NOP;
+-		dev_dbg(host1x->dev, "%s: NOP at %#llx\n", __func__,
+-			(u64)pb->phys + getptr);
++		dev_dbg(host1x->dev, "%s: NOP at %pad+%#x\n", __func__,
++			&pb->phys, getptr);
+ 		getptr = (getptr + 8) & (pb->size_bytes - 1);
+ 	}
+ 	wmb();
+diff --git a/drivers/gpu/host1x/hw/debug_hw.c b/drivers/gpu/host1x/hw/debug_hw.c
+index f72c873eff81..791de9351eeb 100644
+--- a/drivers/gpu/host1x/hw/debug_hw.c
++++ b/drivers/gpu/host1x/hw/debug_hw.c
+@@ -163,8 +163,8 @@ static void show_channel_gathers(struct output *o, struct host1x_cdma *cdma)
+ 				continue;
+ 			}
  
+-			host1x_debug_output(o, "    GATHER at %#llx+%04x, %d words\n",
+-					    (u64)g->base, g->offset, g->words);
++			host1x_debug_output(o, "    GATHER at %pad+%#x, %d words\n",
++					    &g->base, g->offset, g->words);
+ 
+ 			show_gather(o, g->base + g->offset, g->words, cdma,
+ 				    g->base, mapped);
 -- 
 2.1.2
