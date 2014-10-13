@@ -1,66 +1,71 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 04/14] gpu: host1x: Print address/offset pairs consistently
-Date: Mon, 13 Oct 2014 12:21:45 +0200
-Message-ID: <1413195715-4719-4-git-send-email-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 06/14] gpu: host1x: mipi: Registers are 32 bits wide
+Date: Mon, 13 Oct 2014 12:21:47 +0200
+Message-ID: <1413195715-4719-6-git-send-email-thierry.reding@gmail.com>
 References: <1413195715-4719-1-git-send-email-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1413195715-4719-1-git-send-email-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-tegra@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1413195715-4719-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Consistently use a format of %pad+%#x to print address/offset in debug
-messages.
+On 64-bit platforms an unsigned long would be 64 bit and cause
+unnecessary casting when being passed to writel() or returned from
+readl(). Make register values 32 bits wide to avoid that.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/host1x/hw/cdma_hw.c  | 4 ++--
- drivers/gpu/host1x/hw/debug_hw.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpu/host1x/mipi.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/host1x/hw/cdma_hw.c b/drivers/gpu/host1x/hw/cdma_hw.c
-index 072d8209c06c..305ea8f3382d 100644
---- a/drivers/gpu/host1x/hw/cdma_hw.c
-+++ b/drivers/gpu/host1x/hw/cdma_hw.c
-@@ -54,8 +54,8 @@ static void cdma_timeout_cpu_incr(struct host1x_cdma *cdma, u32 getptr,
- 		u32 *p = (u32 *)(pb->mapped + getptr);
- 		*(p++) = HOST1X_OPCODE_NOP;
- 		*(p++) = HOST1X_OPCODE_NOP;
--		dev_dbg(host1x->dev, "%s: NOP at %#llx\n", __func__,
--			(u64)pb->phys + getptr);
-+		dev_dbg(host1x->dev, "%s: NOP at %pad+%#x\n", __func__,
-+			&pb->phys, getptr);
- 		getptr = (getptr + 8) & (pb->size_bytes - 1);
- 	}
- 	wmb();
-diff --git a/drivers/gpu/host1x/hw/debug_hw.c b/drivers/gpu/host1x/hw/debug_hw.c
-index f72c873eff81..791de9351eeb 100644
---- a/drivers/gpu/host1x/hw/debug_hw.c
-+++ b/drivers/gpu/host1x/hw/debug_hw.c
-@@ -163,8 +163,8 @@ static void show_channel_gathers(struct output *o, struct host1x_cdma *cdma)
- 				continue;
- 			}
+diff --git a/drivers/gpu/host1x/mipi.c b/drivers/gpu/host1x/mipi.c
+index 9882ea122024..a3e215a0116f 100644
+--- a/drivers/gpu/host1x/mipi.c
++++ b/drivers/gpu/host1x/mipi.c
+@@ -90,16 +90,16 @@ struct tegra_mipi_device {
+ 	unsigned long pads;
+ };
  
--			host1x_debug_output(o, "    GATHER at %#llx+%04x, %d words\n",
--					    (u64)g->base, g->offset, g->words);
-+			host1x_debug_output(o, "    GATHER at %pad+%#x, %d words\n",
-+					    &g->base, g->offset, g->words);
+-static inline unsigned long tegra_mipi_readl(struct tegra_mipi *mipi,
+-					     unsigned long reg)
++static inline u32 tegra_mipi_readl(struct tegra_mipi *mipi,
++				   unsigned long offset)
+ {
+-	return readl(mipi->regs + (reg << 2));
++	return readl(mipi->regs + (offset << 2));
+ }
  
- 			show_gather(o, g->base + g->offset, g->words, cdma,
- 				    g->base, mapped);
+-static inline void tegra_mipi_writel(struct tegra_mipi *mipi,
+-				     unsigned long value, unsigned long reg)
++static inline void tegra_mipi_writel(struct tegra_mipi *mipi, u32 value,
++				     unsigned long offset)
+ {
+-	writel(value, mipi->regs + (reg << 2));
++	writel(value, mipi->regs + (offset << 2));
+ }
+ 
+ struct tegra_mipi_device *tegra_mipi_request(struct device *device)
+@@ -161,7 +161,7 @@ EXPORT_SYMBOL(tegra_mipi_free);
+ static int tegra_mipi_wait(struct tegra_mipi *mipi)
+ {
+ 	unsigned long timeout = jiffies + msecs_to_jiffies(250);
+-	unsigned long value;
++	u32 value;
+ 
+ 	while (time_before(jiffies, timeout)) {
+ 		value = tegra_mipi_readl(mipi, MIPI_CAL_STATUS);
+@@ -177,8 +177,8 @@ static int tegra_mipi_wait(struct tegra_mipi *mipi)
+ 
+ int tegra_mipi_calibrate(struct tegra_mipi_device *device)
+ {
+-	unsigned long value;
+ 	unsigned int i;
++	u32 value;
+ 	int err;
+ 
+ 	err = clk_enable(device->mipi->clk);
 -- 
 2.1.2
