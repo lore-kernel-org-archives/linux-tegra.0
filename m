@@ -1,7 +1,8 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 12/14] drm/tegra: dsi: Make FIFO depths host parameters
-Date: Mon, 13 Oct 2014 12:21:53 +0200
-Message-ID: <1413195715-4719-12-git-send-email-thierry.reding@gmail.com>
+Subject: [PATCH 14/14] drm/tegra: dsi: Set up PHY_TIMING & BTA_TIMING
+ registers earlier
+Date: Mon, 13 Oct 2014 12:21:55 +0200
+Message-ID: <1413195715-4719-14-git-send-email-thierry.reding@gmail.com>
 References: <1413195715-4719-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,58 +22,54 @@ To: dri-devel@lists.freedesktop.org
 Cc: linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+From: Sean Paul <seanpaul@chromium.org>
 
-Rather than hardcoding them as macros, make the host and video FIFO
-depths parameters so that they can be more easily adjusted if a new
-generation of the Tegra SoC changes them.
+Make sure the DSI PHY_TIMING and BTA_TIMING registers are initialized
+when the clocks are set up as opposed to when the output is enabled.
+This makes sure that the PHY timings are properly set up when the panel
+is prepared and that DCS commands sent at that time use the appropriate
+timings.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
 ---
- drivers/gpu/drm/tegra/dsi.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/tegra/dsi.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
-index f7874458926a..584b771d8b2f 100644
+index b7b205496e8c..0adc7804e261 100644
 --- a/drivers/gpu/drm/tegra/dsi.c
 +++ b/drivers/gpu/drm/tegra/dsi.c
-@@ -26,9 +26,6 @@
- #include "dsi.h"
- #include "mipi-phy.h"
+@@ -389,6 +389,9 @@ static int tegra_dsi_set_phy_timing(struct tegra_dsi *dsi)
+ 		DSI_TIMING_FIELD(timing.tago, period, 1);
+ 	tegra_dsi_writel(dsi, value, DSI_BTA_TIMING);
  
--#define DSI_VIDEO_FIFO_DEPTH (1920 / 4)
--#define DSI_HOST_FIFO_DEPTH 64
--
- struct tegra_dsi {
- 	struct host1x_client client;
- 	struct tegra_output output;
-@@ -54,6 +51,9 @@ struct tegra_dsi {
- 
- 	struct regulator *vdd;
- 	bool enabled;
++	if (dsi->slave)
++		return tegra_dsi_set_phy_timing(dsi->slave);
 +
-+	unsigned int video_fifo_depth;
-+	unsigned int host_fifo_depth;
- };
+ 	return 0;
+ }
  
- static inline struct tegra_dsi *
-@@ -467,7 +467,7 @@ static int tegra_output_dsi_enable(struct tegra_output *output)
- 		DSI_CONTROL_SOURCE(dc->pipe);
+@@ -536,10 +539,6 @@ static int tegra_dsi_configure(struct tegra_dsi *dsi, unsigned int pipe,
+ 	value &= ~DSI_CONTROL_HOST_ENABLE;
  	tegra_dsi_writel(dsi, value, DSI_CONTROL);
  
--	tegra_dsi_writel(dsi, DSI_VIDEO_FIFO_DEPTH, DSI_MAX_THRESHOLD);
-+	tegra_dsi_writel(dsi, dsi->video_fifo_depth, DSI_MAX_THRESHOLD);
+-	err = tegra_dsi_set_phy_timing(dsi);
+-	if (err < 0)
+-		return err;
+-
+ 	for (i = 0; i < NUM_PKT_SEQ; i++)
+ 		tegra_dsi_writel(dsi, pkt_seq[i], DSI_PKT_SEQ_0_LO + i);
  
- 	value = DSI_HOST_CONTROL_HS | DSI_HOST_CONTROL_CS |
- 		DSI_HOST_CONTROL_ECC;
-@@ -843,6 +843,8 @@ static int tegra_dsi_probe(struct platform_device *pdev)
- 		return -ENOMEM;
+@@ -860,6 +859,10 @@ static int tegra_output_dsi_setup_clock(struct tegra_output *output,
+ 	 */
+ 	tegra_dsi_set_timeout(dsi, bclk, vrefresh);
  
- 	dsi->output.dev = dsi->dev = &pdev->dev;
-+	dsi->video_fifo_depth = 1920;
-+	dsi->host_fifo_depth = 64;
++	err = tegra_dsi_set_phy_timing(dsi);
++	if (err < 0)
++		return err;
++
+ 	return 0;
+ }
  
- 	err = tegra_output_probe(&dsi->output);
- 	if (err < 0)
 -- 
 2.1.2
