@@ -1,73 +1,116 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 2/2] clocksource: tegra: Register watchdog device
-Date: Tue, 14 Oct 2014 12:42:19 +0200
-Message-ID: <20141014104218.GG18993@ulmo>
-References: <1413201922-4210-1-git-send-email-thierry.reding@gmail.com>
- <1413201922-4210-2-git-send-email-thierry.reding@gmail.com>
- <543C00E2.2090806@roeck-us.net>
+From: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>
+Subject: Re: [PATCH 04/10] of: Add Tegra124 EMC bindings
+Date: Tue, 14 Oct 2014 16:36:45 +0300
+Message-ID: <543D26ED.6040201@kapsi.fi>
+References: <1412945262-6068-1-git-send-email-tomeu.vizoso@collabora.com> <1412945262-6068-5-git-send-email-tomeu.vizoso@collabora.com> <20141010131417.GA6004@leverpostej>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="AGZzQgpsuUlWC1xT"
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <543C00E2.2090806-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+In-Reply-To: <20141010131417.GA6004@leverpostej>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Cc: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 10/10/2014 04:14 PM, Mark Rutland wrote:
+> On Fri, Oct 10, 2014 at 01:46:55PM +0100, Tomeu Vizoso wrote:
+>> From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>
+>> Add binding documentation for the nvidia,tegra124-emc device tree node.
+>>
+>> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+>> ---
+>>   .../bindings/memory-controllers/tegra-emc.txt      | 41 ++++++++++++++++++++++
+>>   1 file changed, 41 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt b/Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt
+>> new file mode 100644
+>> index 0000000..6282c6b
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt
+>> @@ -0,0 +1,41 @@
+>> +Tegra124 SoC EMC controller
+>> +
+>> +Required properties :
+>> +- compatible : "nvidia,tegra124-emc".
+>> +- reg : Should contain 1 entry:
+>> +  - EMC register set
+>> +
+>> +The node should contain a "timings@i" subnode for each supported RAM type
+>> +  (see field RAM_CODE in register PMC_STRAPPING_OPT_A)
+>> +Required properties for "timings@i" nodes :
+>> +- nvidia,ram-code : Should contain the value of RAM_CODE this timing set
+>> +  is used for.
+>> +
+>> +Each "timings@i" node should contain "timing@j" subnodes. One "timing@j"
+>> +  node should exist for each supported EMC clock rate.
+>
+> What do the i and j correspond to?
 
---AGZzQgpsuUlWC1xT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Arbitrary integers, preferably starting from 0 and increasing, similar 
+as with regulator@i etc. Each set of `j's is independent. (Actually, 
+these values are never used anywhere for anything).
 
-On Mon, Oct 13, 2014 at 09:42:10AM -0700, Guenter Roeck wrote:
-> On 10/13/2014 05:05 AM, Thierry Reding wrote:
-> >From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >
-> >The watchdog timer is part of the timer controller block on Tegra. In
-> >order to avoid access to the same registers from two drivers, register
-> >the watchdog device from the clocksource driver.
-> >
-> >Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> Does that really make sense ?
->=20
-> A couple of callbacks into the clock driver to implement register accesses
-> might be a better approach.
+>
+>> +Required properties for "timing@j" nodes :
+>> +- clock-frequency : Should contain the memory clock rate.
+>> +- nvidia,parent-clock-frequency : Should contain the rate of the EMC
+>> +  clock's parent clock.
+>
+> Why are both of these properties necessary?
+>
+> What is the relationship between the two?
 
-I guess that would be a valid approach as well. It has the downside of
-requiring the addition of at least two globally visible symbols to the
-kernel. It also means that we'd need to somehow pass around a struct
-device for diagnostic messages and so on. Dealing with all of that seems
-like much more of a burden than this.
+There is a certain set of memory timings specified by the hardware 
+manufacturer for each board type. Each memory timing contains the memory 
+rate, parent clock and parent clock frequency and many other values 
+which you mention later.
 
-Also if you look at the diffstat this approach allows us to get rid of
-80 lines of code. Adding a custom mechanism to share the register space
-would be more likely to result in a positive diffstat.
+>
+>> +- clocks : Must contain an entry for each entry in clock-names.
+>> +  See ../clocks/clock-bindings.txt for details.
+>> +- clock-names : Must include the following entries:
+>> +  - emc-parent : EMC's parent clock.
+>
+> Surely the clocks are a property of the EMC, and not the individual
+> timings?
 
-Thierry
+The required parent for each timing is specified by the manufacturer.
 
---AGZzQgpsuUlWC1xT
-Content-Type: application/pgp-signature
+>
+>> +- The following properties contain EMC timing characterization values:
+>> +  - nvidia,emc-zcal-cnt-long
+>> +  - nvidia,emc-auto-cal-interval
+>> +  - nvidia,emc-ctt-term-ctrl
+>> +  - nvidia,emc-cfg
+>> +  - nvidia,emc-cfg-2
+>> +  - nvidia,emc-sel-dpd-ctrl
+>> +  - nvidia,emc-cfg-dig-dll
+>> +  - nvidia,emc-bgbias-ctl0
+>> +  - nvidia,emc-auto-cal-config
+>> +  - nvidia,emc-auto-cal-config2
+>> +  - nvidia,emc-auto-cal-config3
+>> +  - nvidia,emc-mode-reset
+>> +  - nvidia,emc-mode-1
+>> +  - nvidia,emc-mode-2
+>> +  - nvidia,emc-mode-4
+>> +- nvidia,emc-configuration : EMC timing characterization data written to
+>> +                             EMC registers.
+>
+> I have no idea what any of these are. Perhaps these make sense, but I
+> cannot tell.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Magic values specified by the manufacturer. There is some sparse 
+documentation in the Tegra TRM.
 
-iQIcBAEBAgAGBQJUPP4KAAoJEN0jrNd/PrOhcbQP/0X9TngYYVU84Yr20761X/oL
-3/fwr5r3quRwmikOOqhxzTSRvHJS9nfcq1oMTI3nQ8tvlGahGKZ5bDdhfJHQHt3d
-mw2DF4l1YwuIqlyhkeqSs3QZy8zudOcb+NWrFhTy5HuXZ9aRfpUFaS5Tcl0fGm+X
-oQsjCdmfKy6IC7p+end2Cj/XxL0En1PsmrfCr2rYj0djfj/LfjIPLjvWvKBGhJrW
-ojTp2mhNaSrSoDSl3XGQXOz+SJyoB7p6lrErp8EKjDddWoyaOrjptz6JMtug+P1/
-pxK7ij2dadm7+1qIKbwFkdxfM1QZrUbcub8ge6v6GsXFy4PsFJlaZ+Qem8drY4Zb
-Qj0sU/Z/+9hpoGS1FiPPCb9/FzmO/tRYAj44FqzfkTTmprPbv8hKkY59jrFAwRW1
-uvApOyrU7oSa6fR3RfhLMJJQ8BNECUdB+Q1CzMIaRrkCAVw1bFy9aQCxRuWQJ8AZ
-9NBA1RUDUyLuj3mL5dGMSNNYYv/RnsfY+xQxLoz929Indg8Ctw4LEl1hyBKA1tR4
-IagPanX+tTUlj+PrdoeRM/7cm+6fV2mUD+s5MfKVmLVqzOVBsx/ucmsA6B1JQE2O
-25EgU/LuiFgFj/O4sv/qdtrPIiD2ku5+hv+G7/1C5V/N25loQ7jm9Oaq0wvaBLyw
-7AX45LERBfS/5kepfAy6
-=xjyA
------END PGP SIGNATURE-----
+TL;DR: The whole EMC sequence is rather magical and complicated so we 
+stick to manufacturer-specified values rather than trying guess on our 
+own. (Although this patch already calculates some stuff that's safe to 
+calculate and that is manually specified by the downstream NVIDIA kernel.)
 
---AGZzQgpsuUlWC1xT--
+>
+> Mark.
+>
