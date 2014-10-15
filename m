@@ -1,40 +1,151 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [pinmux scripts PATCH 2/4] Board CSV import: Put full CSV filename
- in data structure
-Date: Wed, 15 Oct 2014 13:20:43 -0600
-Message-ID: <543EC90B.4070705@wwwdotorg.org>
-References: <1413306680-27330-1-git-send-email-swarren@wwwdotorg.org> <1413306680-27330-2-git-send-email-swarren@wwwdotorg.org>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH v4 05/12] memory: Add NVIDIA Tegra memory controller support
+Date: Wed, 15 Oct 2014 15:05:36 -0700
+Message-ID: <CAOesGMjMcqa_wE7rfA42QyvF7yxAkgjEN+-0UVMuErnjHr4zkA@mail.gmail.com>
+References: <1413196434-5292-1-git-send-email-thierry.reding@gmail.com>
+	<1413196434-5292-5-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1413306680-27330-2-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1413196434-5292-5-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/14/2014 11:11 AM, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> Putting the whole filename in to the data structure allows us to keep
-> different CSV files in different directories. This will allow explicit
-> separation of public and private CSV files.
->
-> The per-board data is also modified to be a dictionary so that additional
-> fields can be stored in the future.
+Hi,
 
-I have applied this series.
+On Mon, Oct 13, 2014 at 3:33 AM, Thierry Reding
+<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+[...]
+> diff --git a/drivers/memory/tegra/tegra-mc.c b/drivers/memory/tegra/tegra-mc.c
+> new file mode 100644
+> index 000000000000..0f0c8be096d0
+> --- /dev/null
+> +++ b/drivers/memory/tegra/tegra-mc.c
+> @@ -0,0 +1,1061 @@
+> +/*
+> + * Copyright (C) 2014 NVIDIA CORPORATION.  All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/io.h>
+> +#include <linux/iommu.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
 
->   supported_boards = {
-> -    'jetson-tk1': 'T124_customer_pinmux_PM375_30Apr2014_v2.csv', # worksheet PM375Beaver_Configuration
-> -    'norrin': 'PM370_T124_customer_pinmux_1.1.csv', # worksheet Customer_Configuration
-> -    'venice2': 'Venice2_T124_customer_pinmux_based_on_P4_rev47_2013-07-12.csv', # worksheet Customer_Configuration
-> +    'jetson-tk1': {
-> +        # T124_customer_pinmux_PM375_30Apr2014_v2.xlsm worksheet PM375Beaver_Configuration
-> +        # T124_customer_pinmux.xlsm worksheet Jetson TK1 Configuration
-> +        # Jetson_TK1_customer_pinmux_release.xlsm worksheet Jetson TK1 Configuration
-> +        'filename': 'csv/jetson-tk1.csv', # worksheet PM375Beaver_Configuration
+You need a linux/mm.h in here (on 64-bit).
 
-I removed that stale comment on the filename: line, and added a note at 
-the end of all the comments in this data structure re: which files use 
-0- vs. 1-based rsvd numbering.
+> +#include <linux/of.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+
+
+[...]
+
+
+> diff --git a/drivers/memory/tegra/tegra124-mc.c b/drivers/memory/tegra/tegra124-mc.c
+> new file mode 100644
+> index 000000000000..db31c96fc288
+> --- /dev/null
+> +++ b/drivers/memory/tegra/tegra124-mc.c
+
+[...]
+
+
+> @@ -0,0 +1,1028 @@
+> +/*
+> + * Copyright (C) 2014 NVIDIA CORPORATION.  All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <linux/of.h>
+> +#include <linux/mm.h>
+> +
+> +#include <asm/cacheflush.h>
+> +
+> +#include <dt-bindings/memory/tegra124-mc.h>
+> +
+> +#include "tegra-mc.h"
+> +
+> +static const struct tegra_mc_client tegra124_mc_clients[] = {
+> +       {
+> +               .id = 0x00,
+> +               .name = "ptcr",
+> +               .swgroup = TEGRA_SWGROUP_PTC,
+> +       }, {
+> +               .id = 0x01,
+> +               .name = "display0a",
+> +               .swgroup = TEGRA_SWGROUP_DC,
+> +               .smmu = {
+> +                       .reg = 0x228,
+> +                       .bit = 1,
+> +               },
+> +               .latency = {
+> +                       .reg = 0x2e8,
+> +                       .shift = 0,
+> +                       .mask = 0xff,
+> +                       .def = 0xc2,
+> +               },
+> +       }, {
+
+These are very verbose tables. Having a macro for the initializers
+could help density a lot.
+
+
+
+> +#ifdef CONFIG_ARCH_TEGRA_132_SOC
+> +static void tegra132_flush_dcache(struct page *page, unsigned long offset,
+> +                                 size_t size)
+> +{
+> +       void *virt = page_address(page) + offset;
+> +
+> +       __flush_dcache_area(virt, size);
+> +}
+> +
+> +static const struct tegra_smmu_ops tegra132_smmu_ops = {
+> +       .flush_dcache = tegra132_flush_dcache,
+> +};
+> +
+> +static const struct tegra_smmu_soc tegra132_smmu_soc = {
+> +       .groups = tegra124_smmu_groups,
+> +       .num_groups = ARRAY_SIZE(tegra124_smmu_groups),
+> +       .clients = tegra124_mc_clients,
+> +       .num_clients = ARRAY_SIZE(tegra124_mc_clients),
+> +       .swgroups = tegra124_swgroups,
+> +       .num_swgroups = ARRAY_SIZE(tegra124_swgroups),
+> +       .supports_round_robin_arbitration = true,
+> +       .supports_request_limit = true,
+> +       .num_address_bits = 34,
+> +       .num_asids = 128,
+> +       .ops = &tegra132_smmu_ops,
+> +};
+> +
+> +const struct tegra_mc_soc tegra132_mc_soc = {
+> +       .clients = tegra124_mc_clients,
+> +       .num_clients = ARRAY_SIZE(tegra124_mc_clients),
+> +       .atom_size = 32,
+> +       .smmu = &tegra132_smmu_soc,
+> +};
+> +#endif /* CONFIG_ARCH_TEGRA_132_SOC */
+
+
+This won't compile -- several of the tegra132_smmu_soc members are no
+longer valid. In particular:
+
+groups
+num_groups
+supports_round_robin_arbitration
+supports_request_limit
+
+
+-Olof
