@@ -1,63 +1,34 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 39/53] dmaengine: tegra20: Split device_control
-Date: Thu, 16 Oct 2014 12:17:38 +0200
-Message-ID: <1413454672-27400-40-git-send-email-maxime.ripard@free-electrons.com>
-References: <1413454672-27400-1-git-send-email-maxime.ripard@free-electrons.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1413454672-27400-1-git-send-email-maxime.ripard@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: dmaengine@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, =?UTF-8?q?Antoine=20T=C3=A9nart?= <antoine@free-electrons.com>, lars@metafoo.de, Russell King <linux@arm.linux.org.uk>, Maxime Ripard <maxime.ripard@free-electrons.com>, Laxman Dewangan <ldewangan@nvidia.com>, Dan Williams <dan.j.williams@intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org
+From: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Subject: re: drm/tegra: Add hardware cursor support
+Date: Fri, 17 Oct 2014 14:31:23 +0300
+Message-ID: <20141017113123.GA24962@mwanda>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Split the device_control callback of the NVidia Tegra20 APB DMA driver to make
-use of the newly introduced callbacks, that will eventually be used to retrieve
-slave capabilities.
+Hello Thierry Reding,
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/dma/tegra20-apb-dma.c | 22 ++--------------------
- 1 file changed, 2 insertions(+), 20 deletions(-)
+The patch e687651bc1ed: "drm/tegra: Add hardware cursor support" from
+Dec 20, 2013, leads to the following static checker warning:
 
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 16efa603ff65..dea6b78080aa 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -827,25 +827,6 @@ static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
- 	return ret;
- }
- 
--static int tegra_dma_device_control(struct dma_chan *dc, enum dma_ctrl_cmd cmd,
--			unsigned long arg)
--{
--	switch (cmd) {
--	case DMA_SLAVE_CONFIG:
--		return tegra_dma_slave_config(dc,
--				(struct dma_slave_config *)arg);
--
--	case DMA_TERMINATE_ALL:
--		tegra_dma_terminate_all(dc);
--		return 0;
--
--	default:
--		break;
--	}
--
--	return -ENXIO;
--}
--
- static inline int get_bus_width(struct tegra_dma_channel *tdc,
- 		enum dma_slave_buswidth slave_bw)
- {
-@@ -1443,7 +1424,8 @@ static int tegra_dma_probe(struct platform_device *pdev)
- 					tegra_dma_free_chan_resources;
- 	tdma->dma_dev.device_prep_slave_sg = tegra_dma_prep_slave_sg;
- 	tdma->dma_dev.device_prep_dma_cyclic = tegra_dma_prep_dma_cyclic;
--	tdma->dma_dev.device_control = tegra_dma_device_control;
-+	tdma->dma_dev.device_config = tegra_dma_slave_config;
-+	tdma->dma_dev.device_terminate_all = tegra_dma_terminate_all;
- 	tdma->dma_dev.device_tx_status = tegra_dma_tx_status;
- 	tdma->dma_dev.device_issue_pending = tegra_dma_issue_pending;
- 
--- 
-2.1.1
+	drivers/gpu/drm/tegra/dc.c:597 tegra_dc_cursor_set2()
+	warn: mask and shift to zero
+
+drivers/gpu/drm/tegra/dc.c
+   594          if (bo) {
+   595                  unsigned long addr = (bo->paddr & 0xfffffc00) >> 10;
+   596  #ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
+   597                  unsigned long high = (bo->paddr & 0xfffffffc) >> 32;
+                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+I'm not sure what the correct mask is.
+
+   598  #endif
+   599  
+
+regards,
+dan carpenter
