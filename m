@@ -1,39 +1,34 @@
-From: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>
-Subject: Re: [PATCH v2 02/12] of: Document long-ram-code property in nvidia,tegra20-apbmisc
-Date: Wed, 22 Oct 2014 10:39:15 +0300
-Message-ID: <54475F23.7050900@kapsi.fi>
-References: <1413902788-7727-1-git-send-email-tomeu.vizoso@collabora.com> <1413902788-7727-3-git-send-email-tomeu.vizoso@collabora.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Romain Perier <romain.perier-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v1 1/5] mfd: tps65910: Convert ti,system-power-controller DT property to poweroff-source
+Date: Wed, 22 Oct 2014 15:26:23 +0000
+Message-ID: <1413991587-11110-1-git-send-email-romain.perier@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1413902788-7727-3-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org
+Cc: lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/21/2014 05:45 PM, Tomeu Vizoso wrote:
-> Needed to properly decode the ram code register.
->
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-> ---
->   Documentation/devicetree/bindings/misc/nvidia,tegra20-apbmisc.txt | 3 +++
->   1 file changed, 3 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/misc/nvidia,tegra20-apbmisc.txt b/Documentation/devicetree/bindings/misc/nvidia,tegra20-apbmisc.txt
-> index b97b8be..e2562ed 100644
-> --- a/Documentation/devicetree/bindings/misc/nvidia,tegra20-apbmisc.txt
-> +++ b/Documentation/devicetree/bindings/misc/nvidia,tegra20-apbmisc.txt
-> @@ -11,3 +11,6 @@ Required properties:
->          The second entry gives the physical address and length of the
->          registers indicating the strapping options.
->
-> +Optional properties:
-> +- nvidia,long-ram-code: boolean that tells whether the ram code is long (4 bit)
-> +			or short (2 bit). If not present, false.
->
+No longer use custom property to define poweroff capability, use the standard
+DT property instead.
 
-I think just "If present, the RAM code is long (4 bit). If not, short (2 
-bit)" would be clearer, as the booleanness of this property is not 
-really present in the device tree file.
+Signed-off-by: Romain Perier <romain.perier-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/mfd/tps65910.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/mfd/tps65910.c b/drivers/mfd/tps65910.c
+index 7612d89..b8dca8a 100644
+--- a/drivers/mfd/tps65910.c
++++ b/drivers/mfd/tps65910.c
+@@ -423,8 +423,7 @@ static struct tps65910_board *tps65910_parse_dt(struct i2c_client *client,
+ 
+ 	board_info->irq = client->irq;
+ 	board_info->irq_base = -1;
+-	board_info->pm_off = of_property_read_bool(np,
+-			"ti,system-power-controller");
++	board_info->pm_off = of_system_has_poweroff_source(np);
+ 
+ 	return board_info;
+ }
+-- 
+1.9.1
