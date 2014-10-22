@@ -1,45 +1,39 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: tegra: Read and use the GPIO flags of the
- headphone detect
-Date: Tue, 21 Oct 2014 22:23:45 +0100
-Message-ID: <20141021212345.GA2344@sirena.org.uk>
-References: <1413905609-23268-1-git-send-email-alban.bedel@avionic-design.de>
+From: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>
+Subject: Re: [PATCH v2 02/12] of: Document long-ram-code property in nvidia,tegra20-apbmisc
+Date: Wed, 22 Oct 2014 10:39:15 +0300
+Message-ID: <54475F23.7050900@kapsi.fi>
+References: <1413902788-7727-1-git-send-email-tomeu.vizoso@collabora.com> <1413902788-7727-3-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="jI8keyz6grp/JLjh"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1413905609-23268-1-git-send-email-alban.bedel@avionic-design.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alban Bedel <alban.bedel@avionic-design.de>
-Cc: linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>, alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1413902788-7727-3-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 10/21/2014 05:45 PM, Tomeu Vizoso wrote:
+> Needed to properly decode the ram code register.
+>
+> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+> ---
+>   Documentation/devicetree/bindings/misc/nvidia,tegra20-apbmisc.txt | 3 +++
+>   1 file changed, 3 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/misc/nvidia,tegra20-apbmisc.txt b/Documentation/devicetree/bindings/misc/nvidia,tegra20-apbmisc.txt
+> index b97b8be..e2562ed 100644
+> --- a/Documentation/devicetree/bindings/misc/nvidia,tegra20-apbmisc.txt
+> +++ b/Documentation/devicetree/bindings/misc/nvidia,tegra20-apbmisc.txt
+> @@ -11,3 +11,6 @@ Required properties:
+>          The second entry gives the physical address and length of the
+>          registers indicating the strapping options.
+>
+> +Optional properties:
+> +- nvidia,long-ram-code: boolean that tells whether the ram code is long (4 bit)
+> +			or short (2 bit). If not present, false.
+>
 
---jI8keyz6grp/JLjh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Oct 21, 2014 at 05:33:29PM +0200, Alban Bedel wrote:
-> The headphone detect was hardcoded to low-active, use the flags from
-> DT to allow high-active as well.
-
-Applied, thanks.
-
---jI8keyz6grp/JLjh
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJURs7gAAoJECTWi3JdVIfQUkUH/2IVWvsdByMd4o1ne4x77BcC
-+v5EfPMf4n1f7+aEZ99QRru5hsmVeysQbYZhbJlFwi24t4XKfCOFBgz7CuiZnchd
-odpOnGdaJ/aQkcMypb9TJpACDTwDReGCBDx1/5s6xD51jmjAv5UMk+qJLaYnoaD9
-B3FLIb8GqwifkeIwT0AzPgvq97zuTf11WnvB8i8kcMhts5h9h9+J5WE1zYNZKMwr
-hNkUGUUyUlQ/yP6TGWXeNt1sBEiaAHO91QfXC8oW7SXZ/yGtQnhwvbxQkI/ATcUv
-E5ra8szxLvD6dcqoGZuhlqc6qxoEnrBofuDYEFS8Hfz5vHJHxfa0sK4ZdqoDN3M=
-=3Ejy
------END PGP SIGNATURE-----
-
---jI8keyz6grp/JLjh--
+I think just "If present, the RAM code is long (4 bit). If not, short (2 
+bit)" would be clearer, as the booleanness of this property is not 
+really present in the device tree file.
