@@ -1,42 +1,33 @@
-From: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v4] PCI: tegra: add PM-ops support
-Date: Wed, 22 Oct 2014 17:09:36 -0600
-Message-ID: <20141022230936.GB4795@google.com>
-References: <1413193803-21718-1-git-send-email-vidyas@nvidia.com>
+From: PERIER Romain <romain.perier-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v1 1/5] mfd: tps65910: Convert ti,system-power-controller
+ DT property to poweroff-source
+Date: Thu, 23 Oct 2014 09:30:12 +0200
+Message-ID: <CABgxDoJSLrAOMMA7=ZGd4F6z7_FkojCdjUNi52wbocZk7yJowQ@mail.gmail.com>
+References: <1413991587-11110-1-git-send-email-romain.perier@gmail.com>
+	<CABgxDoKus_D=ooCz3TqyXP9CTJUgbZVxQSsw4ZgBx1oYaTefbw@mail.gmail.com>
+	<20141022155058.GN4939@x1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1413193803-21718-1-git-send-email-vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20141022155058.GN4939@x1>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: "sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org" <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, "pawel.moll" <pawel.moll-5wv7dgnIgG8@public.gmane.org>, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, galak <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, swarren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "thierry.reding" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, gnurou <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Oct 13, 2014 at 03:20:03PM +0530, Vidya Sagar wrote:
-> adds support for suspend_noirq and resume_noirq hooks
-> of PM framework. Enables powergating of PCIe partition during
-> suspend.
-> It also separates allocation part from
-> tegra_pcie_enable_msi() to make a new API tegra_pcie_alloc_msi()
-> to avoid passing extra param in the original API
+2014-10-22 17:50 GMT+02:00 Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>:
+> On Wed, 22 Oct 2014, PERIER Romain wrote:
+>
+>> This is related to the following subject "[RFC v3 PATCH 1/5] of: Add
+>> standard property for poweroff capability" and depends on the
+>> corresponding patch.
+>
+> Then it should be sent in the same patch-set.
+>
+> There's nothing I can do with this patch as is.
+>
 
-This sounds like it should be two separate patches (a changelog that says
-"It also ..." is a good clue).
+Even if this patch is already commited and present in "linux-next" ?
+(or in Mark Brown's regulator tree)
 
-Maybe even three patches -- the additions in tegra_pcie_power_off() look
-like they are separable from the dev_pm_ops addition, because
-tegra_pcie_power_off() is already present and used even before you add
-dev_pm_ops.
-
-Generally, my advice is that if you *can* separate it, you should do so.
-It's very easy to squash things back together, and separating things makes
-errors more obvious and bisection more useful.
-
-> -static int tegra_pcie_enable(struct tegra_pcie *pcie)
-> +static int tegra_pcie_check_ports(struct tegra_pcie *pcie)
-
-"check_ports" is a not really a very good function name because it doesn't
-give any clues about what we're checking or what return value to expect.
-
-Bjorn
+Romain
