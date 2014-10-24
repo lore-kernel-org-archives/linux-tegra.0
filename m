@@ -1,23 +1,39 @@
-From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: Tegra baseline test results for v3.18-rc1
-Date: Mon, 20 Oct 2014 17:48:01 +0000 (UTC)
-Message-ID: <alpine.DEB.2.02.1410201747290.4472@utopia.booyaka.com>
-References: <alpine.DEB.2.02.1410201415580.4472@utopia.booyaka.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH v1 1/5] mfd: tps65910: Convert ti,system-power-controller
+ DT property to poweroff-source
+Date: Fri, 24 Oct 2014 11:11:30 +0900
+Message-ID: <CAAVeFuLccYzU6aHUjGu-oUZoXaZ0dgRiiCHy5QoOvJgKypm=ug@mail.gmail.com>
+References: <1413991587-11110-1-git-send-email-romain.perier@gmail.com>
+ <20141023081230.GK32045@tbergstrom-lnx.Nvidia.com> <CABgxDoKm5kKKCTD1njAerUrM24iVcGRDuhJ7b4qBVPqKBC4ftQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <alpine.DEB.2.02.1410201415580.4472-rwI8Ez+7Ko+d5PgPZx9QOdBPR1lH4CV8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CABgxDoKm5kKKCTD1njAerUrM24iVcGRDuhJ7b4qBVPqKBC4ftQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: PERIER Romain <romain.perier@gmail.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, "sameo@linux.intel.com" <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, "pawel.moll" <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, ijc+devicetree <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Grant Likely <grant.likely@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Mark Brown <broonie@kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 20 Oct 2014, Paul Walmsley wrote:
+On Thu, Oct 23, 2014 at 6:39 PM, PERIER Romain <romain.perier@gmail.com> wrote:
+> Hi Peter,
+>
+> 2014-10-23 10:12 GMT+02:00 Peter De Schrijver <pdeschrijver@nvidia.com>:
+>> This breaks DT ABI stability right? An existing device tree using ti,system-power-controller won't work anymore after this patch right? I don't think that's acceptable.
+>>
+>
+> This is why I converted all dts which use "ti,system-power-controller"
+> and tps65910/tps65911 to the new property (everything is in the
+> patches serie). However, with an existing dtb it will no longer work,
+> yes.
+> What do you suggest ? keep these two properties in the driver ? :/
+>
+> I mean, this is a standardization, so all the corresponding dts must
+> be updated and rebuilt... Like when you change something in a
+> dt-binding, you should update and rebuilt the dts... I Don't compute.
 
-> The 64MiB decrease in highmem is a bit mysterious.  Am thinking that it is 
-> probably PCIe-related [...]
+DT ABI stability rule: any DTB that worked with kernel x must also
+work with kernel x+1. It seems like this patch would break that rule.
 
-It's highmem-related - the CMA area now allocates from highmem.
-
-
-- Paul
+It's ok to manage new properties and to deprecate the use of older
+ones if it makes sense (and in this case it seems like it does). But
+the old property must still be handled for compatibility reasons.
