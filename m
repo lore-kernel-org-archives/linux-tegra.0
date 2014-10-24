@@ -1,39 +1,48 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v1 1/5] mfd: tps65910: Convert ti,system-power-controller
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH v1 1/5] mfd: tps65910: Convert ti, system-power-controller
  DT property to poweroff-source
-Date: Fri, 24 Oct 2014 11:11:30 +0900
-Message-ID: <CAAVeFuLccYzU6aHUjGu-oUZoXaZ0dgRiiCHy5QoOvJgKypm=ug@mail.gmail.com>
+Date: Fri, 24 Oct 2014 11:02:40 +0300
+Message-ID: <20141024080240.GN32045@tbergstrom-lnx.Nvidia.com>
 References: <1413991587-11110-1-git-send-email-romain.perier@gmail.com>
- <20141023081230.GK32045@tbergstrom-lnx.Nvidia.com> <CABgxDoKm5kKKCTD1njAerUrM24iVcGRDuhJ7b4qBVPqKBC4ftQ@mail.gmail.com>
+ <20141023081230.GK32045@tbergstrom-lnx.Nvidia.com>
+ <CABgxDoKm5kKKCTD1njAerUrM24iVcGRDuhJ7b4qBVPqKBC4ftQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
 In-Reply-To: <CABgxDoKm5kKKCTD1njAerUrM24iVcGRDuhJ7b4qBVPqKBC4ftQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: PERIER Romain <romain.perier@gmail.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, "sameo@linux.intel.com" <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, "pawel.moll" <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, ijc+devicetree <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Grant Likely <grant.likely@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Mark Brown <broonie@kernel.org>
+Cc: mark.rutland@arm.com, Alexandre Courbot <gnurou@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, "sameo@linux.intel.com" <sameo@linux.intel.com>, "pawel.moll" <pawel.moll@arm.com>, ijc+devicetree <ijc+devicetree@hellion.org.uk>, Mark Brown <broonie@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, robh+dt@kernel.org, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Lee Jones <lee.jones@linaro.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Oct 23, 2014 at 6:39 PM, PERIER Romain <romain.perier@gmail.com> wrote:
+On Thu, Oct 23, 2014 at 11:39:34AM +0200, PERIER Romain wrote:
 > Hi Peter,
->
+> 
 > 2014-10-23 10:12 GMT+02:00 Peter De Schrijver <pdeschrijver@nvidia.com>:
->> This breaks DT ABI stability right? An existing device tree using ti,system-power-controller won't work anymore after this patch right? I don't think that's acceptable.
->>
->
+> > This breaks DT ABI stability right? An existing device tree using ti,system-power-controller won't work anymore after this patch right? I don't think that's acceptable.
+> >
+> 
 > This is why I converted all dts which use "ti,system-power-controller"
 > and tps65910/tps65911 to the new property (everything is in the
 > patches serie). However, with an existing dtb it will no longer work,
 > yes.
 > What do you suggest ? keep these two properties in the driver ? :/
->
-> I mean, this is a standardization, so all the corresponding dts must
-> be updated and rebuilt... Like when you change something in a
-> dt-binding, you should update and rebuilt the dts... I Don't compute.
+> 
 
-DT ABI stability rule: any DTB that worked with kernel x must also
-work with kernel x+1. It seems like this patch would break that rule.
+Yes. Existing DTs should work with new kernels. So there's no other choice
+than leaving support for the existing property in place. Obviously DTs for new
+boards can use the new standardized property.
 
-It's ok to manage new properties and to deprecate the use of older
-ones if it makes sense (and in this case it seems like it does). But
-the old property must still be handled for compatibility reasons.
+Cheers,
+
+Peter.
