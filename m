@@ -1,42 +1,71 @@
-From: Romain Perier <romain.perier@gmail.com>
-Subject: Re: [PATCH v1 1/5] mfd: tps65910: Convert ti,system-power-controller
- DT property to poweroff-source
-Date: Fri, 24 Oct 2014 11:04:18 +0200
-Message-ID: <CABgxDoLT7puSr11Xw3D7diGRXj15oktfd7=ATTvjmf2MKKYp0A@mail.gmail.com>
-References: <1413991587-11110-1-git-send-email-romain.perier@gmail.com>
-	<20141023081230.GK32045@tbergstrom-lnx.Nvidia.com>
-	<CABgxDoKm5kKKCTD1njAerUrM24iVcGRDuhJ7b4qBVPqKBC4ftQ@mail.gmail.com>
-	<20141024080240.GN32045@tbergstrom-lnx.Nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20141024080240.GN32045@tbergstrom-lnx.Nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: "sameo@linux.intel.com" <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, robh+dt@kernel.org, "pawel.moll" <pawel.moll@arm.com>, mark.rutland@arm.com, ijc+devicetree <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Mark Brown <broonie@kernel.org>
+From: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>
+Subject: [PATCH v5 07/16] clk: tegra: Save/restore CCLKG_BURST_POLICY on suspend
+Date: Fri, 24 Oct 2014 17:39:14 +0300
+Message-ID: <1414161563-16812-8-git-send-email-mikko.perttunen@kapsi.fi>
+References: <1414161563-16812-1-git-send-email-mikko.perttunen@kapsi.fi>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1414161563-16812-1-git-send-email-mikko.perttunen-/1wQRMveznE@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Cc: mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, tuomas.tynkkynen-X3B1VOXEql0@public.gmane.org, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Okay, will do these changes.
+From: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-2014-10-24 10:02 GMT+02:00 Peter De Schrijver <pdeschrijver@nvidia.com>:
-> On Thu, Oct 23, 2014 at 11:39:34AM +0200, PERIER Romain wrote:
->> Hi Peter,
->>
->> 2014-10-23 10:12 GMT+02:00 Peter De Schrijver <pdeschrijver@nvidia.com>:
->> > This breaks DT ABI stability right? An existing device tree using ti,system-power-controller won't work anymore after this patch right? I don't think that's acceptable.
->> >
->>
->> This is why I converted all dts which use "ti,system-power-controller"
->> and tps65910/tps65911 to the new property (everything is in the
->> patches serie). However, with an existing dtb it will no longer work,
->> yes.
->> What do you suggest ? keep these two properties in the driver ? :/
->>
->
-> Yes. Existing DTs should work with new kernels. So there's no other choice
-> than leaving support for the existing property in place. Obviously DTs for new
-> boards can use the new standardized property.
->
-> Cheers,
->
-> Peter.
+Save and restore this register since the LP1 restore assembly routines
+fiddle with it. Otherwise the CPU would keep running on PLLX after
+resume from suspend even when DFLL was the original clocksource.
+
+Signed-off-by: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>
+---
+ drivers/clk/tegra/clk-tegra124.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+index 7c3cef7..daedbcf 100644
+--- a/drivers/clk/tegra/clk-tegra124.c
++++ b/drivers/clk/tegra/clk-tegra124.c
+@@ -89,6 +89,8 @@
+ #define PMC_PLLM_WB0_OVERRIDE 0x1dc
+ #define PMC_PLLM_WB0_OVERRIDE_2 0x2b0
+ 
++#define CCLKG_BURST_POLICY 0x368
++
+ #define UTMIP_PLL_CFG2 0x488
+ #define UTMIP_PLL_CFG2_STABLE_COUNT(x) (((x) & 0xffff) << 6)
+ #define UTMIP_PLL_CFG2_ACTIVE_DLY_COUNT(x) (((x) & 0x3f) << 18)
+@@ -121,6 +123,8 @@
+ #ifdef CONFIG_PM_SLEEP
+ static struct cpu_clk_suspend_context {
+ 	u32 clk_csite_src;
++	u32 cclkg_burst;
++	u32 cclkg_divider;
+ } tegra124_cpu_clk_sctx;
+ #endif
+ 
+@@ -1326,12 +1330,22 @@ static void tegra124_cpu_clock_suspend(void)
+ 	tegra124_cpu_clk_sctx.clk_csite_src =
+ 				readl(clk_base + CLK_SOURCE_CSITE);
+ 	writel(3 << 30, clk_base + CLK_SOURCE_CSITE);
++
++	tegra124_cpu_clk_sctx.cclkg_burst =
++				readl(clk_base + CCLKG_BURST_POLICY);
++	tegra124_cpu_clk_sctx.cclkg_divider =
++				readl(clk_base + CCLKG_BURST_POLICY + 4);
+ }
+ 
+ static void tegra124_cpu_clock_resume(void)
+ {
+ 	writel(tegra124_cpu_clk_sctx.clk_csite_src,
+ 				clk_base + CLK_SOURCE_CSITE);
++
++	writel(tegra124_cpu_clk_sctx.cclkg_burst,
++					clk_base + CCLKG_BURST_POLICY);
++	writel(tegra124_cpu_clk_sctx.cclkg_divider,
++					clk_base + CCLKG_BURST_POLICY + 4);
+ }
+ #endif
+ 
+-- 
+2.1.0
