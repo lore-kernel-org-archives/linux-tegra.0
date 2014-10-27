@@ -1,45 +1,130 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 3/3] gk20a: use NOUVEAU_BO_GART as VRAM domain
-Date: Mon, 27 Oct 2014 19:34:59 +0900
-Message-ID: <1414406099-21129-4-git-send-email-acourbot@nvidia.com>
-References: <1414406099-21129-1-git-send-email-acourbot@nvidia.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH v3 33/47] staging: nvec: Register with kernel power-off handler
+Date: Mon, 27 Oct 2014 08:55:40 -0700
+Message-ID: <1414425354-10359-34-git-send-email-linux@roeck-us.net>
+References: <1414425354-10359-1-git-send-email-linux@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <1414406099-21129-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, mesa-dev-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <1414425354-10359-1-git-send-email-linux@roeck-us.net>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: linux-kernel@vger.kernel.org
+Cc: devel@driverdev.osuosl.org, linux-pm@vger.kernel.org, Julian Andres Klode <jak@jak-linux.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <linux@roeck-us.net>, linux-tegra@vger.kernel.org, ac100@lists.launchpad.net
 List-Id: linux-tegra@vger.kernel.org
 
-R0syMEEgZG9lcyBub3QgaGF2ZSBkZWRpY2F0ZWQgVlJBTSwgdGhlcmVmb3JlIGFsbG9jYXRpbmcg
-aW4gVlJBTSBjYW4gYmUKc3ViLW9wdGltYWwgYW5kIHNvbWV0aW1lcyBldmVuIGhhcm1mdWwuIFNl
-dCBpdHMgVlJBTSBkb21haW4gdG8KTk9VVkVBVV9CT19HQVJUIHNvIGFsbCBvYmplY3RzIGFyZSBh
-bGxvY2F0ZWQgaW4gc3lzdGVtIG1lbW9yeS4KClNpZ25lZC1vZmYtYnk6IEFsZXhhbmRyZSBDb3Vy
-Ym90IDxhY291cmJvdEBudmlkaWEuY29tPgotLS0KIHNyYy9nYWxsaXVtL2RyaXZlcnMvbm91dmVh
-dS9udmMwL252YzBfc2NyZWVuLmMgfCAxMCArKysrKysrKysrCiAxIGZpbGUgY2hhbmdlZCwgMTAg
-aW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL3NyYy9nYWxsaXVtL2RyaXZlcnMvbm91dmVhdS9u
-dmMwL252YzBfc2NyZWVuLmMgYi9zcmMvZ2FsbGl1bS9kcml2ZXJzL25vdXZlYXUvbnZjMC9udmMw
-X3NjcmVlbi5jCmluZGV4IGFjNTgyM2U0YThkNS4uYWQxNDNjZDlhMTQwIDEwMDY0NAotLS0gYS9z
-cmMvZ2FsbGl1bS9kcml2ZXJzL25vdXZlYXUvbnZjMC9udmMwX3NjcmVlbi5jCisrKyBiL3NyYy9n
-YWxsaXVtL2RyaXZlcnMvbm91dmVhdS9udmMwL252YzBfc2NyZWVuLmMKQEAgLTYyMCw2ICs2MjAs
-MTYgQEAgbnZjMF9zY3JlZW5fY3JlYXRlKHN0cnVjdCBub3V2ZWF1X2RldmljZSAqZGV2KQogICAg
-ICAgcmV0dXJuIE5VTEw7CiAgICBwc2NyZWVuID0gJnNjcmVlbi0+YmFzZS5iYXNlOwogCisgICAv
-KiBSZWNvZ25pemUgY2hpcHNldHMgd2l0aCBubyBWUkFNICovCisgICBzd2l0Y2ggKGRldi0+Y2hp
-cHNldCkgeworICAgLyogR0syMEEgKi8KKyAgIGNhc2UgMHhlYToKKyAgICAgIHNjcmVlbi0+YmFz
-ZS52cmFtX2RvbWFpbiA9IE5PVVZFQVVfQk9fR0FSVDsKKyAgICAgIGJyZWFrOworICAgZGVmYXVs
-dDoKKyAgICAgIGJyZWFrOworICAgfQorCiAgICByZXQgPSBub3V2ZWF1X3NjcmVlbl9pbml0KCZz
-Y3JlZW4tPmJhc2UsIGRldik7CiAgICBpZiAocmV0KSB7CiAgICAgICBudmMwX3NjcmVlbl9kZXN0
-cm95KHBzY3JlZW4pOwotLSAKMi4xLjIKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCk5vdXZlYXUgbWFpbGluZyBsaXN0Ck5vdXZlYXVAbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9u
-b3V2ZWF1Cg==
+Register with kernel power-off handler instead of setting pm_power_off
+directly. Register with default priority since we don't know any better.
+
+Cc: Julian Andres Klode <jak@jak-linux.org>
+Cc: Marc Dietrich <marvin24@gmx.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+v3:
+- Replace poweroff in all newly introduced variables and in text
+  with power_off or power-off as appropriate
+- Replace POWEROFF_PRIORITY_xxx with POWER_OFF_PRIORITY_xxx
+v2:
+- Use define to specify poweroff handler priority
+- Use dev_warn instead of dev_err
+
+ drivers/staging/nvec/nvec.c | 24 +++++++++++++++---------
+ drivers/staging/nvec/nvec.h |  2 ++
+ 2 files changed, 17 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index a93208a..3c94e29 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -33,6 +33,7 @@
+ #include <linux/mfd/core.h>
+ #include <linux/mutex.h>
+ #include <linux/notifier.h>
++#include <linux/pm.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ #include <linux/workqueue.h>
+@@ -80,8 +81,6 @@ enum nvec_sleep_subcmds {
+ #define LID_SWITCH BIT(1)
+ #define PWR_BUTTON BIT(15)
+ 
+-static struct nvec_chip *nvec_power_handle;
+-
+ static const struct mfd_cell nvec_devices[] = {
+ 	{
+ 		.name = "nvec-kbd",
+@@ -759,12 +758,17 @@ static void nvec_disable_i2c_slave(struct nvec_chip *nvec)
+ }
+ #endif
+ 
+-static void nvec_power_off(void)
++static int nvec_power_off(struct notifier_block *this, unsigned long unused1,
++			  void *unused2)
+ {
++	struct nvec_chip *nvec = container_of(this, struct nvec_chip,
++					      power_off_nb);
+ 	char ap_pwr_down[] = { NVEC_SLEEP, AP_PWR_DOWN };
+ 
+-	nvec_toggle_global_events(nvec_power_handle, false);
+-	nvec_write_async(nvec_power_handle, ap_pwr_down, 2);
++	nvec_toggle_global_events(nvec, false);
++	nvec_write_async(nvec, ap_pwr_down, 2);
++
++	return NOTIFY_DONE;
+ }
+ 
+ /*
+@@ -878,8 +882,11 @@ static int tegra_nvec_probe(struct platform_device *pdev)
+ 	nvec->nvec_status_notifier.notifier_call = nvec_status_notifier;
+ 	nvec_register_notifier(nvec, &nvec->nvec_status_notifier, 0);
+ 
+-	nvec_power_handle = nvec;
+-	pm_power_off = nvec_power_off;
++	nvec->power_off_nb.notifier_call = nvec_power_off;
++	nvec->power_off_nb.priority = POWER_OFF_PRIORITY_DEFAULT;
++	ret = register_power_off_handler(&nvec->power_off_nb);
++	if (ret)
++		dev_warn(nvec->dev, "Failed to register power-off handler\n");
+ 
+ 	/* Get Firmware Version */
+ 	msg = nvec_write_sync(nvec, get_firmware_version, 2);
+@@ -914,13 +921,12 @@ static int tegra_nvec_remove(struct platform_device *pdev)
+ {
+ 	struct nvec_chip *nvec = platform_get_drvdata(pdev);
+ 
++	unregister_power_off_handler(&nvec->power_off_nb);
+ 	nvec_toggle_global_events(nvec, false);
+ 	mfd_remove_devices(nvec->dev);
+ 	nvec_unregister_notifier(nvec, &nvec->nvec_status_notifier);
+ 	cancel_work_sync(&nvec->rx_work);
+ 	cancel_work_sync(&nvec->tx_work);
+-	/* FIXME: needs check wether nvec is responsible for power off */
+-	pm_power_off = NULL;
+ 
+ 	return 0;
+ }
+diff --git a/drivers/staging/nvec/nvec.h b/drivers/staging/nvec/nvec.h
+index e271375..59e7375 100644
+--- a/drivers/staging/nvec/nvec.h
++++ b/drivers/staging/nvec/nvec.h
+@@ -163,6 +163,8 @@ struct nvec_chip {
+ 	struct nvec_msg *last_sync_msg;
+ 
+ 	int state;
++
++	struct notifier_block power_off_nb;
+ };
+ 
+ extern int nvec_write_async(struct nvec_chip *nvec, const unsigned char *data,
+-- 
+1.9.1
