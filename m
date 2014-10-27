@@ -1,90 +1,50 @@
 From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v5 4/4] drm: synchronize BOs when required
-Date: Mon, 27 Oct 2014 18:49:19 +0900
-Message-ID: <1414403359-22332-5-git-send-email-acourbot@nvidia.com>
-References: <1414403359-22332-1-git-send-email-acourbot@nvidia.com>
+Subject: [PATCH 0/3] nouveau: support for custom VRAM domains
+Date: Mon, 27 Oct 2014 19:34:56 +0900
+Message-ID: <1414406099-21129-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <1414403359-22332-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, David Herrmann <dh.herrmann-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Maarten Lankhorst <maarten.lankhorst-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
-Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>
+Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, mesa-dev-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gYXJjaGl0ZWN0dXJlcyBmb3Igd2hpY2ggYWNjZXNzIHRvIEdQVSBtZW1vcnkgaXMgbm9uLWNv
-aGVyZW50LApjYWNoZXMgbmVlZCB0byBiZSBmbHVzaGVkIGFuZCBpbnZhbGlkYXRlZCBleHBsaWNp
-dGx5IHdoZW4gQk8gY29udHJvbApjaGFuZ2VzIGJldHdlZW4gQ1BVIGFuZCBHUFUuCgpUaGlzIHBh
-dGNoIGFkZHMgYnVmZmVyIHN5bmNocm9uaXphdGlvbiBmdW5jdGlvbnMgd2hpY2ggaW52b2tlcyB0
-aGUKY29ycmVjdCBBUEkgKFBDSSBvciBETUEpIHRvIGVuc3VyZSBzeW5jaHJvbml6YXRpb24gaXMg
-ZWZmZWN0aXZlLgoKQmFzZWQgb24gdGhlIFRUTSBETUEgY2FjaGUgaGVscGVyIHBhdGNoZXMgYnkg
-THVjYXMgU3RhY2guCgpTaWduZWQtb2ZmLWJ5OiBMdWNhcyBTdGFjaCA8ZGV2QGx5bnhleWUuZGU+
-ClNpZ25lZC1vZmYtYnk6IEFsZXhhbmRyZSBDb3VyYm90IDxhY291cmJvdEBudmlkaWEuY29tPgot
-LS0KIGRybS9ub3V2ZWF1X2JvLmMgIHwgNDIgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrCiBkcm0vbm91dmVhdV9iby5oICB8ICAyICsrCiBkcm0vbm91dmVhdV9nZW0u
-YyB8IDEyICsrKysrKysrKysrKwogMyBmaWxlcyBjaGFuZ2VkLCA1NiBpbnNlcnRpb25zKCspCgpk
-aWZmIC0tZ2l0IGEvZHJtL25vdXZlYXVfYm8uYyBiL2RybS9ub3V2ZWF1X2JvLmMKaW5kZXggZWQ5
-YTY5NDZmNmQ2Li5kMmE0NzY4ZTNlZmQgMTAwNjQ0Ci0tLSBhL2RybS9ub3V2ZWF1X2JvLmMKKysr
-IGIvZHJtL25vdXZlYXVfYm8uYwpAQCAtNDI2LDYgKzQyNiw0NiBAQCBub3V2ZWF1X2JvX3VubWFw
-KHN0cnVjdCBub3V2ZWF1X2JvICpudmJvKQogCQl0dG1fYm9fa3VubWFwKCZudmJvLT5rbWFwKTsK
-IH0KIAordm9pZAorbm91dmVhdV9ib19zeW5jX2Zvcl9kZXZpY2Uoc3RydWN0IG5vdXZlYXVfYm8g
-Km52Ym8pCit7CisJc3RydWN0IG5vdXZlYXVfZHJtICpkcm0gPSBub3V2ZWF1X2JkZXYobnZiby0+
-Ym8uYmRldik7CisJc3RydWN0IG5vdXZlYXVfZGV2aWNlICpkZXZpY2UgPSBudmttX2RldmljZSgm
-ZHJtLT5kZXZpY2UpOworCXN0cnVjdCB0dG1fZG1hX3R0ICp0dG1fZG1hID0gKHN0cnVjdCB0dG1f
-ZG1hX3R0ICopbnZiby0+Ym8udHRtOworCWludCBpOworCisJaWYgKCF0dG1fZG1hKQorCQlyZXR1
-cm47CisKKwkvKiBEb24ndCB3YXN0ZSB0aW1lIGxvb3BpbmcgaWYgdGhlIG9iamVjdCBpcyBjb2hl
-cmVudCAqLworCWlmIChudmJvLT5mb3JjZV9jb2hlcmVudCkKKwkJcmV0dXJuOworCisJZm9yIChp
-ID0gMDsgaSA8IHR0bV9kbWEtPnR0bS5udW1fcGFnZXM7IGkrKykKKwkJZG1hX3N5bmNfc2luZ2xl
-X2Zvcl9kZXZpY2UobnZfZGV2aWNlX2Jhc2UoZGV2aWNlKSwKKwkJCXR0bV9kbWEtPmRtYV9hZGRy
-ZXNzW2ldLCBQQUdFX1NJWkUsIERNQV9UT19ERVZJQ0UpOworfQorCit2b2lkCitub3V2ZWF1X2Jv
-X3N5bmNfZm9yX2NwdShzdHJ1Y3Qgbm91dmVhdV9ibyAqbnZibykKK3sKKwlzdHJ1Y3Qgbm91dmVh
-dV9kcm0gKmRybSA9IG5vdXZlYXVfYmRldihudmJvLT5iby5iZGV2KTsKKwlzdHJ1Y3Qgbm91dmVh
-dV9kZXZpY2UgKmRldmljZSA9IG52a21fZGV2aWNlKCZkcm0tPmRldmljZSk7CisJc3RydWN0IHR0
-bV9kbWFfdHQgKnR0bV9kbWEgPSAoc3RydWN0IHR0bV9kbWFfdHQgKiludmJvLT5iby50dG07CisJ
-aW50IGk7CisKKwlpZiAoIXR0bV9kbWEpCisJCXJldHVybjsKKworCS8qIERvbid0IHdhc3RlIHRp
-bWUgbG9vcGluZyBpZiB0aGUgb2JqZWN0IGlzIGNvaGVyZW50ICovCisJaWYgKG52Ym8tPmZvcmNl
-X2NvaGVyZW50KQorCQlyZXR1cm47CisKKwlmb3IgKGkgPSAwOyBpIDwgdHRtX2RtYS0+dHRtLm51
-bV9wYWdlczsgaSsrKQorCQlkbWFfc3luY19zaW5nbGVfZm9yX2NwdShudl9kZXZpY2VfYmFzZShk
-ZXZpY2UpLAorCQkJdHRtX2RtYS0+ZG1hX2FkZHJlc3NbaV0sIFBBR0VfU0laRSwgRE1BX0ZST01f
-REVWSUNFKTsKK30KKwogaW50CiBub3V2ZWF1X2JvX3ZhbGlkYXRlKHN0cnVjdCBub3V2ZWF1X2Jv
-ICpudmJvLCBib29sIGludGVycnVwdGlibGUsCiAJCSAgICBib29sIG5vX3dhaXRfZ3B1KQpAQCAt
-NDM3LDYgKzQ3Nyw4IEBAIG5vdXZlYXVfYm9fdmFsaWRhdGUoc3RydWN0IG5vdXZlYXVfYm8gKm52
-Ym8sIGJvb2wgaW50ZXJydXB0aWJsZSwKIAlpZiAocmV0KQogCQlyZXR1cm4gcmV0OwogCisJbm91
-dmVhdV9ib19zeW5jX2Zvcl9kZXZpY2UobnZibyk7CisKIAlyZXR1cm4gMDsKIH0KIApkaWZmIC0t
-Z2l0IGEvZHJtL25vdXZlYXVfYm8uaCBiL2RybS9ub3V2ZWF1X2JvLmgKaW5kZXggMGY4YmJkNDhh
-MGI5Li5jODI3ZjIzM2U0MWQgMTAwNjQ0Ci0tLSBhL2RybS9ub3V2ZWF1X2JvLmgKKysrIGIvZHJt
-L25vdXZlYXVfYm8uaApAQCAtODUsNiArODUsOCBAQCB2b2lkIG5vdXZlYXVfYm9fd3IzMihzdHJ1
-Y3Qgbm91dmVhdV9ibyAqLCB1bnNpZ25lZCBpbmRleCwgdTMyIHZhbCk7CiB2b2lkIG5vdXZlYXVf
-Ym9fZmVuY2Uoc3RydWN0IG5vdXZlYXVfYm8gKiwgc3RydWN0IG5vdXZlYXVfZmVuY2UgKiwgYm9v
-bCBleGNsdXNpdmUpOwogaW50ICBub3V2ZWF1X2JvX3ZhbGlkYXRlKHN0cnVjdCBub3V2ZWF1X2Jv
-ICosIGJvb2wgaW50ZXJydXB0aWJsZSwKIAkJCSBib29sIG5vX3dhaXRfZ3B1KTsKK3ZvaWQgbm91
-dmVhdV9ib19zeW5jX2Zvcl9kZXZpY2Uoc3RydWN0IG5vdXZlYXVfYm8gKm52Ym8pOwordm9pZCBu
-b3V2ZWF1X2JvX3N5bmNfZm9yX2NwdShzdHJ1Y3Qgbm91dmVhdV9ibyAqbnZibyk7CiAKIHN0cnVj
-dCBub3V2ZWF1X3ZtYSAqCiBub3V2ZWF1X2JvX3ZtYV9maW5kKHN0cnVjdCBub3V2ZWF1X2JvICos
-IHN0cnVjdCBub3V2ZWF1X3ZtICopOwpkaWZmIC0tZ2l0IGEvZHJtL25vdXZlYXVfZ2VtLmMgYi9k
-cm0vbm91dmVhdV9nZW0uYwppbmRleCAzNjk1MWVlNGIxNTcuLjQyYzM0YmFiYzJlNSAxMDA2NDQK
-LS0tIGEvZHJtL25vdXZlYXVfZ2VtLmMKKysrIGIvZHJtL25vdXZlYXVfZ2VtLmMKQEAgLTg2Nyw2
-ICs4NjcsNyBAQCBub3V2ZWF1X2dlbV9pb2N0bF9jcHVfcHJlcChzdHJ1Y3QgZHJtX2RldmljZSAq
-ZGV2LCB2b2lkICpkYXRhLAogCQllbHNlCiAJCQlyZXQgPSBscmV0OwogCX0KKwlub3V2ZWF1X2Jv
-X3N5bmNfZm9yX2NwdShudmJvKTsKIAlkcm1fZ2VtX29iamVjdF91bnJlZmVyZW5jZV91bmxvY2tl
-ZChnZW0pOwogCiAJcmV0dXJuIHJldDsKQEAgLTg3Niw2ICs4NzcsMTcgQEAgaW50CiBub3V2ZWF1
-X2dlbV9pb2N0bF9jcHVfZmluaShzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCB2b2lkICpkYXRhLAog
-CQkJICAgc3RydWN0IGRybV9maWxlICpmaWxlX3ByaXYpCiB7CisJc3RydWN0IGRybV9ub3V2ZWF1
-X2dlbV9jcHVfZmluaSAqcmVxID0gZGF0YTsKKwlzdHJ1Y3QgZHJtX2dlbV9vYmplY3QgKmdlbTsK
-KwlzdHJ1Y3Qgbm91dmVhdV9ibyAqbnZibzsKKworCWdlbSA9IGRybV9nZW1fb2JqZWN0X2xvb2t1
-cChkZXYsIGZpbGVfcHJpdiwgcmVxLT5oYW5kbGUpOworCWlmICghZ2VtKQorCQlyZXR1cm4gLUVO
-T0VOVDsKKwludmJvID0gbm91dmVhdV9nZW1fb2JqZWN0KGdlbSk7CisKKwlub3V2ZWF1X2JvX3N5
-bmNfZm9yX2RldmljZShudmJvKTsKKwlkcm1fZ2VtX29iamVjdF91bnJlZmVyZW5jZV91bmxvY2tl
-ZChnZW0pOwogCXJldHVybiAwOwogfQogCi0tIAoyLjEuMgoKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBtYWlsaW5nIGxpc3QKTm91dmVhdUBs
-aXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL25vdXZlYXUK
+This series is to allow NVIDIA chips with shared memory to operate more
+efficiently (and to operate at all once we disable VRAM from the kernel
+driver) by allowing nouveau_screen to specify a domain to use for objects
+originally allocated into VRAM. If the domain is not overridden, the default
+NOUVEAU_BO_VRAM is used. A NV_VRAM_DOMAIN() macro is then introduced to be
+used in place of NOUVEAU_BO_VRAM when allocating objects, so the right
+domain for the chip is used.
+
+Doing so greatly simplifies the equation of memory management on shared-
+memory devices, since we don't have to simulate non-existent VRAM memory.
+In that respect it seems to be the right thing to do, and all things taken
+is not very intrusive.
+
+Tested on GK20A with Wayland and several EGL clients running, and working
+fine.
+
+Alexandre Courbot (3):
+  nouveau: support for custom VRAM domains
+  nvc0: use NV_VRAM_DOMAIN() macro
+  gk20a: use NOUVEAU_BO_GART as VRAM domain
+
+ src/gallium/drivers/nouveau/nouveau_buffer.c       |  6 ++----
+ src/gallium/drivers/nouveau/nouveau_screen.c       |  6 ++++++
+ src/gallium/drivers/nouveau/nouveau_screen.h       |  4 ++++
+ src/gallium/drivers/nouveau/nv50/nv50_miptree.c    |  4 ++--
+ src/gallium/drivers/nouveau/nvc0/nvc0_compute.c    |  2 +-
+ src/gallium/drivers/nouveau/nvc0/nvc0_context.c    |  4 ++--
+ src/gallium/drivers/nouveau/nvc0/nvc0_miptree.c    |  2 +-
+ src/gallium/drivers/nouveau/nvc0/nvc0_program.c    |  8 ++++----
+ src/gallium/drivers/nouveau/nvc0/nvc0_screen.c     | 22 ++++++++++++++++------
+ .../drivers/nouveau/nvc0/nvc0_shader_state.c       |  2 +-
+ .../drivers/nouveau/nvc0/nvc0_state_validate.c     |  2 +-
+ src/gallium/drivers/nouveau/nvc0/nvc0_tex.c        |  2 +-
+ src/gallium/drivers/nouveau/nvc0/nve4_compute.c    |  2 +-
+ 13 files changed, 42 insertions(+), 24 deletions(-)
+
+-- 
+2.1.2
