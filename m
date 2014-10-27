@@ -1,58 +1,127 @@
-From: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: Re: [PATCH v2 06/10] mfd: tps65910: Use the standard DT property
- system-power-controller
-Date: Mon, 27 Oct 2014 17:35:49 +0100
-Message-ID: <1414427749.2421.5.camel@pengutronix.de>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH v1 01/10] of: Rename "poweroff-source" property to
+ "system-power-controller"
+Date: Mon, 27 Oct 2014 11:38:40 -0500
+Message-ID: <20141027163840.GA14253@saruman>
 References: <1414427215-14380-1-git-send-email-romain.perier@gmail.com>
-	 <1414427215-14380-6-git-send-email-romain.perier@gmail.com>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1414427215-14380-6-git-send-email-romain.perier-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Romain Perier <romain.perier-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="cWoXeonUoKmBZSoM"
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1414427215-14380-1-git-send-email-romain.perier@gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Romain Perier <romain.perier@gmail.com>
+Cc: heiko@sntech.de, devicetree@vger.kernel.org, broonie@kernel.org, lgirdwood@gmail.com, linux-kernel@vger.kernel.org, grant.likely@linaro.org, robh@kernel.org, mark.rutland@arm.com, johan@kernel.org, linux-pm@vger.kernel.org, linux@roeck-us.net, lee.jones@linaro.org, balbi@ti.com, robh+dt@kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Am Montag, den 27.10.2014, 16:26 +0000 schrieb Romain Perier:
-> No longer use custom property to define poweroff capability, use the standard
-> DT property instead.
-> 
-> Signed-off-by: Romain Perier <romain.perier-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+--cWoXeonUoKmBZSoM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Oct 27, 2014 at 04:26:46PM +0000, Romain Perier wrote:
+> As discussed on the mailing list, it makes more sense to rename this prop=
+erty
+> to "system-power-controller". Problem being that the word "source" usuall=
+y tends
+> to be used for inputs and that is out of control of the OS. The poweroff
+> capability is an output which simply turns the system-power off. Also, th=
+is
+> property might be used by drivers which power-off the system and power ba=
+ck on
+> subsequent RTC alarms. This seems to suggest to remove "poweroff" from the
+> property name and to choose "system-power-controller" as the more generic=
+ name.
+> This patchs adds the required renaming changes and defines an helper func=
+tion
+> which is compatible with both properties, the old one prefixed by a vendo=
+r name
+> and the new one without any prefix.
+>=20
+> Signed-off-by: Romain Perier <romain.perier@gmail.com>
 > ---
->  drivers/mfd/tps65910.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mfd/tps65910.c b/drivers/mfd/tps65910.c
-> index 7612d89..a7faff2 100644
-> --- a/drivers/mfd/tps65910.c
-> +++ b/drivers/mfd/tps65910.c
-> @@ -423,8 +423,7 @@ static struct tps65910_board *tps65910_parse_dt(struct i2c_client *client,
->  
->  	board_info->irq = client->irq;
->  	board_info->irq_base = -1;
-> -	board_info->pm_off = of_property_read_bool(np,
-> -			"ti,system-power-controller");
-> +	board_info->pm_off = of_is_system_power_controller();
->  
->  	return board_info;
+>  include/linux/of.h | 27 +++++++++++++++++++++++----
+>  1 file changed, 23 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/include/linux/of.h b/include/linux/of.h
+> index 27b3ba1..c1ed2a5 100644
+> --- a/include/linux/of.h
+> +++ b/include/linux/of.h
+> @@ -867,14 +867,33 @@ static inline int of_changeset_update_property(stru=
+ct of_changeset *ocs,
+>  extern int of_resolve_phandles(struct device_node *tree);
+> =20
+>  /**
+> - * of_system_has_poweroff_source - Tells if poweroff-source is found for=
+ device_node
+> + * of_is_system_power_controller - Tells if the property for controlling=
+ system
+> + * power is found in device_node.
+>   * @np: Pointer to the given device_node
+>   *
+>   * return true if present false otherwise
+>   */
+> -static inline bool of_system_has_poweroff_source(const struct device_nod=
+e *np)
+> -{
+> -	return of_property_read_bool(np, "poweroff-source");
+> +static inline bool of_is_system_power_controller(const struct device_nod=
+e *np)
+> +{
+> +	struct property *pp;
+> +	unsigned long flags;
+> +	char *sep;
+> +	bool found =3D false;
+> +
+> +	raw_spin_lock_irqsave(&devtree_lock, flags);
+> +	for_each_property_of_node(np, pp) {
+> +		if (of_prop_cmp(pp->name, "system-power-controller") =3D=3D 0) {
+> +			found =3D true;
+> +			break;
+> +		}
+> +		sep =3D strchr(pp->name, ',');
+> +		if (sep && sep - pp->name && of_prop_cmp(sep + 1, "system-power-contro=
+ller") =3D=3D 0) {
+> +			found =3D true;
+> +			break;
+> +		}
+> +	}
+> +	raw_spin_unlock_irqrestore(&devtree_lock, flags);
+> +	return found;
 >  }
-You are breaking compatibility with older DTs here. This is not
-acceptable.
+> =20
+>  #endif /* _LINUX_OF_H */
 
-You may change all in-tree DTs to use the new property and also patch
-the driver to understand it, but you must make sure that the driver
-still understands the old, custom property. And especially in this case
-it isn't really hard to do.
+I think you still need to support poweroff-source since it has been
+released on a stable kernel. Perhaps add a warning message telling users
+it's deprecated and asking them to switch over to
+system-power-controller ? Still, simply removing it isn't very nice.
 
-Regards,
-Lucas
--- 
-Pengutronix e.K.             | Lucas Stach                 |
-Industrial Linux Solutions   | http://www.pengutronix.de/  |
+--=20
+balbi
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--cWoXeonUoKmBZSoM
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJUTnUQAAoJEIaOsuA1yqREykcP/17WeGaNRLnzPysmdrRd0aG2
+Uuj4lMvYp8V4vxXQKDBuywISe/JgiqiS3KTSb6qbqmfObpqdRbTmPxaPoC0VpaKT
+Cd2x/fDqfiDF+Q9Ask5TD4FajTUzEU4V7S/Xhprjyv4+8Hc+uIoLJFwMs3TTlhhB
+P55JZXo0BjtTg/WU1l2kVo3CZ592GYyqBlwlG5i1klyAn+5qX/hGTu8PZc+8yhOW
+lXevpzblHj6bcgosK0zFQ73RUTGc767kxEV6tS9CucHWjU/Ib2M5d0zo9RIEQDMf
+wvNHVCy51JHzEcYDOKMdShv/q/kG5tgrnmPhEomOIDvY1edIos8204xMq0AI75yw
+6KM+FZp1TixmIFPruBeipF/kTdowknRzDd8ZpAT9uwPNwOUkAzFf6v6XtuB97I3k
+zTsVWaa1F+ao2Mhd2ZCBJJgIJ8RvBB2m4wcQ3q8oq9K77XWrnXSnjPcNVLNbuYZB
+tEQRBcO3eSkAgMsRZrRjdk9nkDx8GVNn2nnxDGDKZbIYTEyLqDT6I1Bn9PsdGxR2
+b889nBP4gKuqfNTd2zXJexSZqt2uB7q9iVmzL/nz5r7hEk2rc7Y2Tygye/VusVtr
+fHoqjqblMYiBIV0R5iawJonC1seTpyKweOYKEFiyNy92keStoTxSCIb6cnu9yl9h
+UlEC6LfKctEgnvCZZXif
+=PLaD
+-----END PGP SIGNATURE-----
+
+--cWoXeonUoKmBZSoM--
