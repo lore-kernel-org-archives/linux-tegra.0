@@ -1,130 +1,71 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH v3 33/47] staging: nvec: Register with kernel power-off handler
-Date: Mon, 27 Oct 2014 08:55:40 -0700
-Message-ID: <1414425354-10359-34-git-send-email-linux@roeck-us.net>
-References: <1414425354-10359-1-git-send-email-linux@roeck-us.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <1414425354-10359-1-git-send-email-linux@roeck-us.net>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: linux-kernel@vger.kernel.org
-Cc: devel@driverdev.osuosl.org, linux-pm@vger.kernel.org, Julian Andres Klode <jak@jak-linux.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <linux@roeck-us.net>, linux-tegra@vger.kernel.org, ac100@lists.launchpad.net
+From: Romain Perier <romain.perier@gmail.com>
+Subject: [PATCH v1 01/10] of: Rename "poweroff-source" property to "system-power-controller"
+Date: Mon, 27 Oct 2014 16:26:46 +0000
+Message-ID: <1414427215-14380-1-git-send-email-romain.perier@gmail.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: heiko@sntech.de
+Cc: devicetree@vger.kernel.org, broonie@kernel.org, lgirdwood@gmail.com, linux-kernel@vger.kernel.org, grant.likely@linaro.org, robh@kernel.org, mark.rutland@arm.com, johan@kernel.org, linux-pm@vger.kernel.org, linux@roeck-us.net, lee.jones@linaro.org, balbi@ti.com, robh+dt@kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Register with kernel power-off handler instead of setting pm_power_off
-directly. Register with default priority since we don't know any better.
+As discussed on the mailing list, it makes more sense to rename this property
+to "system-power-controller". Problem being that the word "source" usually tends
+to be used for inputs and that is out of control of the OS. The poweroff
+capability is an output which simply turns the system-power off. Also, this
+property might be used by drivers which power-off the system and power back on
+subsequent RTC alarms. This seems to suggest to remove "poweroff" from the
+property name and to choose "system-power-controller" as the more generic name.
+This patchs adds the required renaming changes and defines an helper function
+which is compatible with both properties, the old one prefixed by a vendor name
+and the new one without any prefix.
 
-Cc: Julian Andres Klode <jak@jak-linux.org>
-Cc: Marc Dietrich <marvin24@gmx.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Romain Perier <romain.perier@gmail.com>
 ---
-v3:
-- Replace poweroff in all newly introduced variables and in text
-  with power_off or power-off as appropriate
-- Replace POWEROFF_PRIORITY_xxx with POWER_OFF_PRIORITY_xxx
-v2:
-- Use define to specify poweroff handler priority
-- Use dev_warn instead of dev_err
+ include/linux/of.h | 27 +++++++++++++++++++++++----
+ 1 file changed, 23 insertions(+), 4 deletions(-)
 
- drivers/staging/nvec/nvec.c | 24 +++++++++++++++---------
- drivers/staging/nvec/nvec.h |  2 ++
- 2 files changed, 17 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-index a93208a..3c94e29 100644
---- a/drivers/staging/nvec/nvec.c
-+++ b/drivers/staging/nvec/nvec.c
-@@ -33,6 +33,7 @@
- #include <linux/mfd/core.h>
- #include <linux/mutex.h>
- #include <linux/notifier.h>
-+#include <linux/pm.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- #include <linux/workqueue.h>
-@@ -80,8 +81,6 @@ enum nvec_sleep_subcmds {
- #define LID_SWITCH BIT(1)
- #define PWR_BUTTON BIT(15)
+diff --git a/include/linux/of.h b/include/linux/of.h
+index 27b3ba1..c1ed2a5 100644
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -867,14 +867,33 @@ static inline int of_changeset_update_property(struct of_changeset *ocs,
+ extern int of_resolve_phandles(struct device_node *tree);
  
--static struct nvec_chip *nvec_power_handle;
--
- static const struct mfd_cell nvec_devices[] = {
- 	{
- 		.name = "nvec-kbd",
-@@ -759,12 +758,17 @@ static void nvec_disable_i2c_slave(struct nvec_chip *nvec)
- }
- #endif
- 
--static void nvec_power_off(void)
-+static int nvec_power_off(struct notifier_block *this, unsigned long unused1,
-+			  void *unused2)
- {
-+	struct nvec_chip *nvec = container_of(this, struct nvec_chip,
-+					      power_off_nb);
- 	char ap_pwr_down[] = { NVEC_SLEEP, AP_PWR_DOWN };
- 
--	nvec_toggle_global_events(nvec_power_handle, false);
--	nvec_write_async(nvec_power_handle, ap_pwr_down, 2);
-+	nvec_toggle_global_events(nvec, false);
-+	nvec_write_async(nvec, ap_pwr_down, 2);
+ /**
+- * of_system_has_poweroff_source - Tells if poweroff-source is found for device_node
++ * of_is_system_power_controller - Tells if the property for controlling system
++ * power is found in device_node.
+  * @np: Pointer to the given device_node
+  *
+  * return true if present false otherwise
+  */
+-static inline bool of_system_has_poweroff_source(const struct device_node *np)
+-{
+-	return of_property_read_bool(np, "poweroff-source");
++static inline bool of_is_system_power_controller(const struct device_node *np)
++{
++	struct property *pp;
++	unsigned long flags;
++	char *sep;
++	bool found = false;
 +
-+	return NOTIFY_DONE;
++	raw_spin_lock_irqsave(&devtree_lock, flags);
++	for_each_property_of_node(np, pp) {
++		if (of_prop_cmp(pp->name, "system-power-controller") == 0) {
++			found = true;
++			break;
++		}
++		sep = strchr(pp->name, ',');
++		if (sep && sep - pp->name && of_prop_cmp(sep + 1, "system-power-controller") == 0) {
++			found = true;
++			break;
++		}
++	}
++	raw_spin_unlock_irqrestore(&devtree_lock, flags);
++	return found;
  }
  
- /*
-@@ -878,8 +882,11 @@ static int tegra_nvec_probe(struct platform_device *pdev)
- 	nvec->nvec_status_notifier.notifier_call = nvec_status_notifier;
- 	nvec_register_notifier(nvec, &nvec->nvec_status_notifier, 0);
- 
--	nvec_power_handle = nvec;
--	pm_power_off = nvec_power_off;
-+	nvec->power_off_nb.notifier_call = nvec_power_off;
-+	nvec->power_off_nb.priority = POWER_OFF_PRIORITY_DEFAULT;
-+	ret = register_power_off_handler(&nvec->power_off_nb);
-+	if (ret)
-+		dev_warn(nvec->dev, "Failed to register power-off handler\n");
- 
- 	/* Get Firmware Version */
- 	msg = nvec_write_sync(nvec, get_firmware_version, 2);
-@@ -914,13 +921,12 @@ static int tegra_nvec_remove(struct platform_device *pdev)
- {
- 	struct nvec_chip *nvec = platform_get_drvdata(pdev);
- 
-+	unregister_power_off_handler(&nvec->power_off_nb);
- 	nvec_toggle_global_events(nvec, false);
- 	mfd_remove_devices(nvec->dev);
- 	nvec_unregister_notifier(nvec, &nvec->nvec_status_notifier);
- 	cancel_work_sync(&nvec->rx_work);
- 	cancel_work_sync(&nvec->tx_work);
--	/* FIXME: needs check wether nvec is responsible for power off */
--	pm_power_off = NULL;
- 
- 	return 0;
- }
-diff --git a/drivers/staging/nvec/nvec.h b/drivers/staging/nvec/nvec.h
-index e271375..59e7375 100644
---- a/drivers/staging/nvec/nvec.h
-+++ b/drivers/staging/nvec/nvec.h
-@@ -163,6 +163,8 @@ struct nvec_chip {
- 	struct nvec_msg *last_sync_msg;
- 
- 	int state;
-+
-+	struct notifier_block power_off_nb;
- };
- 
- extern int nvec_write_async(struct nvec_chip *nvec, const unsigned char *data,
+ #endif /* _LINUX_OF_H */
 -- 
 1.9.1
+
