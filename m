@@ -1,47 +1,50 @@
 From: Romain Perier <romain.perier@gmail.com>
-Subject: Re: [PATCH v2 07/10] ARM: dts: tegra: Use standard power-off property
- in tps65911 for tegra30 apalis
-Date: Tue, 28 Oct 2014 07:47:21 +0100
-Message-ID: <CABgxDo+k8sRBjHdh_6dkizuXR0oxydvjBh3JHsi-x5sP96BMfA@mail.gmail.com>
+Subject: Re: [PATCH v1 02/10] dt-bindings: Document the standard property "system-power-controller"
+Date: Tue, 28 Oct 2014 08:25:55 +0100
+Message-ID: <CABgxDo+goYskzGB5uCTkteOs5=6+vRbYCABMh8D_3qZxQC0thA@mail.gmail.com>
 References: <1414427215-14380-1-git-send-email-romain.perier@gmail.com>
-	<1414427215-14380-7-git-send-email-romain.perier@gmail.com>
-	<20141027164214.GF14253@saruman>
-	<CAAVeFuL2MvbC9U-8fM=QPhkvnaMRZ8kep9WpD8hhU4m4cGWjLw@mail.gmail.com>
+	<1414427215-14380-2-git-send-email-romain.perier@gmail.com>
+	<20141027163918.GB14253@saruman>
+	<20141027172636.GZ18557@sirena.org.uk>
+	<20141027173025.GA16005@saruman>
+	<20141027175725.GB18557@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAAVeFuL2MvbC9U-8fM=QPhkvnaMRZ8kep9WpD8hhU4m4cGWjLw@mail.gmail.com>
+In-Reply-To: <20141027175725.GB18557@sirena.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Felipe Balbi <balbi@ti.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, robh <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Johan Hovold <johan@kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Guenter Roeck <linux@roeck-us.net>, Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Felipe Balbi <balbi@ti.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, devicetree <devicetree@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, robh <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Johan Hovold <johan@kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Guenter Roeck <linux@roeck-us.net>, Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, "pawel.moll" <pawel.moll@arm.com>, ijc+devicetree <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.or>
 List-Id: linux-tegra@vger.kernel.org
 
-The old property is supported. See "[PATCH v1 1/10]" ^^
-(of_is_system_power_controller supports both properties...)
+If this is possible, that's probably better to drop all these patches
+(including poweroff-source) from "next", in this way it will be
+possible to re-do things properly from scratch (with the new name).
 
-2014-10-28 5:34 GMT+01:00 Alexandre Courbot <gnurou@gmail.com>:
-> On Tue, Oct 28, 2014 at 1:42 AM, Felipe Balbi <balbi@ti.com> wrote:
->> On Mon, Oct 27, 2014 at 04:26:52PM +0000, Romain Perier wrote:
->>> Signed-off-by: Romain Perier <romain.perier@gmail.com>
->>> ---
->>>  arch/arm/boot/dts/tegra30-apalis.dtsi | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
->>> index a5446cb..ced4436 100644
->>> --- a/arch/arm/boot/dts/tegra30-apalis.dtsi
->>> +++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
->>> @@ -412,7 +412,7 @@
->>>                       #interrupt-cells = <2>;
->>>                       interrupt-controller;
->>>
->>> -                     ti,system-power-controller;
->>> +                     system-power-controller;
->>
->> this board is broken until this patch is applied.
+If you have a look at linux-next the property "poweroff-source" is
+already used by tps910 AND act8865, I don't like that (it is not used
+yet by dts files). I mean, I don't really want to support
+"vendor,system-power-controller", "system-power-controller" and
+"poweroff-source" from "of_has_system_power_source" and do a lot of
+unclean commits in order to don't break compatibility. Just keep
+things simple.
+
+What do you think ?
+
+
+2014-10-27 18:57 GMT+01:00 Mark Brown <broonie@kernel.org>:
+> On Mon, Oct 27, 2014 at 12:30:25PM -0500, Felipe Balbi wrote:
+>> On Mon, Oct 27, 2014 at 05:26:36PM +0000, Mark Brown wrote:
 >
-> It should not. Supporting a new property in the tps65911 is fine, but
-> the old property must keep being supported to preserve DT
-> compatibility. If a change removing support for
-> "ti,system-power-controller" has landed in -next, then it should be
-> removed.
+>> > Given that poweroff-source hasn't made it into a released kernel yet we
+>> > can probably just kill it off completely can't we?
+>
+>> please do, then we will never have that commit in Linus' tree to give us
+>> nightmares.
+>
+> Well, the commit isn't a particularly big deal (and got cross-merged
+> into another tree already) - if it's convenient to rebase it out we
+> probably should but it's also not the end of the world either so long as
+> it doesn't appear in a release.  Worst case people adopt it based on the
+> list discussions and we check for two properties which also isn't that
+> bad.
