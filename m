@@ -1,104 +1,121 @@
-From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH RESEND V4 8/9] ARM: tegra: jetson-tk1: Add xHCI support
-Date: Tue, 28 Oct 2014 15:27:55 -0700
-Message-ID: <1414535277-15645-9-git-send-email-abrestic@chromium.org>
-References: <1414535277-15645-1-git-send-email-abrestic@chromium.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1414535277-15645-1-git-send-email-abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Andrew Bresticker <abrestic@chromium.org>
+Subject: [PATCH RESEND V4 0/9] Tegra xHCI support
+Date: Tue, 28 Oct 2014 15:27:47 -0700
+Message-ID: <1414535277-15645-1-git-send-email-abrestic@chromium.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-usb@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Mathias Nyman <mathias.nyman@intel.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Andrew Bresticker <abrestic@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Jassi Brar <jassisinghbrar@gmail.com>, linux-kernel@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>, Rob Herring <robh+dt@kernel.org>, Alan Stern <stern@rowland.harvard.edu>, linux-arm-kernel@lists.infradead.org, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-tegra@vger.kernel.org
 
-Assign USB ports previously owned by the EHCI controllers to the xHCI
-controller.  There is a mini-PCIe USB port (UTMI port 1) and a USB A
-connector (UTMI port 2, USB3 port 0).  PCIe lane 0 is used for USB3
-port 0.
+This series adds support for xHCI on NVIDIA Tegra SoCs.  This includes:
+ - patches 1 and 2: adding a driver for the mailbox used to communicate
+   with the xHCI controller's firmware,
+ - patches 3 and 4: extending the XUSB pad controller driver to support
+   the USB PHY types (UTMI, HSIC, and USB3),
+ - patches 5 and 6: adding a xHCI host-controller driver, and
+ - patches 7, 8, and 9: updating the relevant DT files.
 
-Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
+The PHY and host drivers have compile-time dependencies on the mailbox
+driver, and the host driver has compile-time dependencies on the PHY
+driver.  It is probably best if these all get merged through the Tegra
+tree.  This series still needs ACKs from the relevant maintainers for
+the mailbox and xHCI host drivers and their device-tree bindings.
+
+Tested on Venice2, Jetson TK1, and Big with a variety of USB2.0 and
+USB3.0 memory sticks and ethernet dongles using controller firmware
+recently posted by Andrew Chew [0].
+
+Based on v3.18-rc2.  All other dependencies (xHCI modules and mailbox
+series) have been merged.
+
+Notes:
+ - HSIC support is mostly untested and I think there are still some issues
+   to work out there.  I do have a Tegra124 board with a HSIC hub so I'll
+   try to sort those out later.
+ - The XUSB padctl driver doesn't play nice with the existing Tegra USB2.0
+   PHY driver, so all ports should be assigned to the XHCI controller.
+
+Based on work by:
+  a lot of people, but from what I can tell from the L4T tree [1], the
+  original authors of the Tegra xHCI driver are:
+    Ajay Gupta <ajayg@nvidia.com>
+    Bharath Yadav <byadav@nvidia.com>
+
 Changes from v3:
- - Assigned otg-0 to XUSB to avoid USB2.0 flakiness.
-Changes from v2:
- - Updated VBUS power supply names.
-Changes from v1:
- - Updated USB power supplies.
----
- arch/arm/boot/dts/tegra124-jetson-tk1.dts | 46 +++++++++++++++++--------------
- 1 file changed, 26 insertions(+), 20 deletions(-)
+ - Fixed USB2.0 flakiness on Jetson-TK1.
+ - Switched to 32-bit DMA mask for host.
+ - Addressed Stephen's review comments.
 
-diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-index 029c9a02..0dc1553 100644
---- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-+++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-@@ -1686,15 +1686,40 @@
- 		target-12v-supply = <&vdd_12v0_sata>;
- 	};
- 
-+	usb@0,70090000 {
-+		status = "okay";
-+		phys = <&padctl TEGRA_XUSB_PADCTL_UTMI_P1>, /* mini-PCIe USB */
-+		       <&padctl TEGRA_XUSB_PADCTL_UTMI_P2>, /* USB A */
-+		       <&padctl TEGRA_XUSB_PADCTL_USB3_P0>; /* USB A */
-+		phy-names = "utmi-1", "utmi-2", "usb3-0";
-+		avddio-pex-supply = <&vdd_1v05_run>;
-+		dvddio-pex-supply = <&vdd_1v05_run>;
-+		avdd-usb-supply = <&vdd_3v3_lp0>;
-+		avdd-pll-utmip-supply = <&vddio_1v8>;
-+		avdd-pll-erefe-supply = <&avdd_1v05_run>;
-+		avdd-pex-pll-supply = <&vdd_1v05_run>;
-+		hvdd-pex-supply = <&vdd_3v3_lp0>;
-+		hvdd-pex-plle-supply = <&vdd_3v3_lp0>;
-+	};
-+
- 	padctl@0,7009f000 {
- 		pinctrl-0 = <&padctl_default>;
- 		pinctrl-names = "default";
- 
-+		vbus-2-supply = <&vdd_usb3_vbus>;
-+		nvidia,usb3-port-0-lane = <TEGRA_XUSB_PADCTL_PIN_PCIE_0>;
-+
- 		padctl_default: pinmux {
-+			otg {
-+				nvidia,lanes = "otg-0", "otg-1", "otg-2";
-+				nvidia,function = "xusb";
-+			};
-+
- 			usb3 {
--				nvidia,lanes = "pcie-0", "pcie-1";
-+				nvidia,lanes = "pcie-0";
- 				nvidia,function = "usb3";
- 				nvidia,iddq = <0>;
-+				nvidia,usb2-port-num = <2>;
- 			};
- 
- 			pcie {
-@@ -1735,25 +1760,6 @@
- 		};
- 	};
- 
--	/* mini-PCIe USB */
--	usb@0,7d004000 {
--		status = "okay";
--	};
--
--	usb-phy@0,7d004000 {
--		status = "okay";
--	};
--
--	/* USB A connector */
--	usb@0,7d008000 {
--		status = "okay";
--	};
--
--	usb-phy@0,7d008000 {
--		status = "okay";
--		vbus-supply = <&vdd_usb3_vbus>;
--	};
--
- 	clocks {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
+Chagnes from v2:
+ - Dropped mailbox channel specifier.  The mailbox driver allocates virtual
+   channels backed by the single physical channel.
+ - Added support for HS_CURR_LEVEL adjustment pinconfig property, which
+   will be required for the Blaze board.
+ - Addressed Stephen's review comments.
+
+Changes from v1:
+ - Converted mailbox driver to use the common mailbox framework.
+ - Fixed up host driver so that it can now be built and used as a module.
+ - Addressed Stephen's review comments.
+ - Misc. cleanups.
+
+Changes from RFC:
+ - Dropped Tegra114 support.
+ - Split out mailbox into separate driver.
+ - Stopped using child xhci-plat device in xHCI host-controller driver.
+ - Added PHY support to Thierry's XUSB padctl driver instead of in a separate
+   USB PHY driver.
+ - Added Jetson TK1 support.
+ - Misc. cleanups.
+
+[0] https://patchwork.ozlabs.org/patch/400110/
+[1] git://nv-tegra.nvidia.com/linux-3.10.git
+
+Andrew Bresticker (9):
+  of: Add NVIDIA Tegra XUSB mailbox binding
+  mailbox: Add NVIDIA Tegra XUSB mailbox driver
+  of: Update Tegra XUSB pad controller binding for USB
+  pinctrl: tegra-xusb: Add USB PHY support
+  of: Add NVIDIA Tegra xHCI controller binding
+  usb: xhci: Add NVIDIA Tegra xHCI host-controller driver
+  ARM: tegra: Add Tegra124 XUSB mailbox and xHCI controller
+  ARM: tegra: jetson-tk1: Add xHCI support
+  ARM: tegra: venice2: Add xHCI support
+
+ .../bindings/mailbox/nvidia,tegra124-xusb-mbox.txt |   32 +
+ .../pinctrl/nvidia,tegra124-xusb-padctl.txt        |   56 +-
+ .../bindings/usb/nvidia,tegra124-xhci.txt          |  104 ++
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts          |   46 +-
+ arch/arm/boot/dts/tegra124-venice2.dts             |   79 +-
+ arch/arm/boot/dts/tegra124.dtsi                    |   41 +
+ drivers/mailbox/Kconfig                            |    3 +
+ drivers/mailbox/Makefile                           |    2 +
+ drivers/mailbox/tegra-xusb-mailbox.c               |  290 +++++
+ drivers/pinctrl/Kconfig                            |    1 +
+ drivers/pinctrl/pinctrl-tegra-xusb.c               | 1233 +++++++++++++++++++-
+ drivers/usb/host/Kconfig                           |    9 +
+ drivers/usb/host/Makefile                          |    1 +
+ drivers/usb/host/xhci-tegra.c                      |  907 ++++++++++++++
+ include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h   |   20 +
+ include/soc/tegra/xusb.h                           |   53 +
+ 16 files changed, 2797 insertions(+), 80 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/nvidia,tegra124-xusb-mbox.txt
+ create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra124-xhci.txt
+ create mode 100644 drivers/mailbox/tegra-xusb-mailbox.c
+ create mode 100644 drivers/usb/host/xhci-tegra.c
+ create mode 100644 include/soc/tegra/xusb.h
+
 -- 
 2.1.0.rc2.206.gedb03e5
