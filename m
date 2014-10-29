@@ -1,323 +1,275 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH RESEND V4 6/9] usb: xhci: Add NVIDIA Tegra xHCI
- host-controller driver
-Date: Wed, 29 Oct 2014 11:49:29 +0100
-Message-ID: <20141029104927.GC28356@ulmo.nvidia.com>
+Subject: Re: [PATCH RESEND V4 2/9] mailbox: Add NVIDIA Tegra XUSB mailbox
+ driver
+Date: Wed, 29 Oct 2014 12:34:18 +0100
+Message-ID: <20141029113415.GD28356@ulmo.nvidia.com>
 References: <1414535277-15645-1-git-send-email-abrestic@chromium.org>
- <1414535277-15645-7-git-send-email-abrestic@chromium.org>
+ <1414535277-15645-3-git-send-email-abrestic@chromium.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="3siQDZowHQqNOShm"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="XvKFcGCOAo53UbWW"
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1414535277-15645-7-git-send-email-abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1414535277-15645-3-git-send-email-abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---3siQDZowHQqNOShm
+--XvKFcGCOAo53UbWW
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 28, 2014 at 03:27:53PM -0700, Andrew Bresticker wrote:
+On Tue, Oct 28, 2014 at 03:27:49PM -0700, Andrew Bresticker wrote:
 [...]
-> diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+> diff --git a/drivers/mailbox/tegra-xusb-mailbox.c b/drivers/mailbox/tegra=
+-xusb-mailbox.c
 [...]
-> +#define TEGRA_XHCI_NUM_SUPPLIES 8
-> +static const char *tegra_xhci_supply_names[TEGRA_XHCI_NUM_SUPPLIES] = {
-> +	"avddio-pex",
-> +	"dvddio-pex",
-> +	"avdd-usb",
-> +	"avdd-pll-utmip",
-> +	"avdd-pll-erefe",
-> +	"avdd-pex-pll",
-> +	"hvdd-pex",
-> +	"hvdd-pex-plle",
-> +};
+> +struct tegra_xusb_mbox {
+> +	struct mbox_controller mbox;
+> +	int irq;
 
-This could be in a per-SoC structure since it's likely to change in a
-future SoC. That could be done later on when it really becomes relevant,
-though.
+It seems like this is unused outside of tegra_xusb_mbox_probe()
 
+> +static int tegra_xusb_mbox_send_data(struct mbox_chan *chan, void *data)
+> +{
+> +	struct tegra_xusb_mbox *mbox =3D dev_get_drvdata(chan->mbox->dev);
+
+In my opinion, container_of(chan->mbox, struct tegra_xusb_mbox, mbox)
+would be a slightly more idiomatic way to do this.
+
+> +	struct tegra_xusb_mbox_msg *msg =3D data;
+> +	unsigned long flags;
+> +	u32 reg, owner;
 > +
-> +static const struct {
-> +	const char *name;
-> +	int num;
+> +	dev_dbg(mbox->mbox.dev, "TX message 0x%x:0x%x\n", msg->cmd, msg->data);
+
+%#x saves you a character in the format string above.
+
+> +static int tegra_xusb_mbox_startup(struct mbox_chan *chan)
+> +{
+> +	struct tegra_xusb_mbox *mbox =3D dev_get_drvdata(chan->mbox->dev);
+> +	int idx =3D chan - mbox->mbox.chans;
 
 unsigned?
 
-> +} tegra_xhci_phy_types[] = {
-> +	{
-> +		.name = "usb3",
-> +		.num = TEGRA_XUSB_USB3_PHYS,
-> +	}, {
-> +		.name = "utmi",
-> +		.num = TEGRA_XUSB_UTMI_PHYS,
-> +	}, {
-> +		.name = "hsic",
-> +		.num = TEGRA_XUSB_HSIC_PHYS,
-> +	},
-> +};
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&mbox->lock, flags);
+> +	mbox->vchan_allocated[idx] =3D true;
+> +	spin_unlock_irqrestore(&mbox->lock, flags);
 
-Should these constants perhaps be in a per-SoC structure like
-tegra_xhci_soc_config rather than defined in a global header?
+The struct mbox_chan has a con_priv field, perhaps that can be used to
+store virtual channel private data instead of keeping the extra
+vchan_allocated field in the controller private context? That way you
+don't wouldn't have to compute an index and use it to index the field
+in the controller private context.
 
-> +static int tegra_xhci_load_firmware(struct tegra_xhci_hcd *tegra)
+In this particular case I don't think you even need that field, since a
+channel is requested when the mbox_chan.cl field in non-NULL.
+
+> +static struct mbox_chan_ops tegra_xusb_mbox_chan_ops =3D {
+
+I think this really ought to be static const. That would currently still
+throw a warning because the core doesn't mark the mbox_controller.ops
+field const, but I think it really should. Now also seems like a good
+time to make that change because there don't seem to be any users yet.
+
+> +static irqreturn_t tegra_xusb_mbox_irq(int irq, void *p)
 > +{
-[...]
-> +	/* Start Falcon CPU. */
-> +	csb_writel(tegra, CPUCTL_STARTCPU, XUSB_FALC_CPUCTL);
-> +	usleep_range(1000, 2000);
-> +
-> +	fw_time = le32_to_cpu(cfg_tbl->fwimg_created_time);
-> +	time_to_tm(fw_time, 0, &fw_tm);
-> +	dev_info(dev,
-> +		 "Firmware timestamp: %ld-%02d-%02d %02d:%02d:%02d UTC, "
-> +		 "Falcon state 0x%x\n", fw_tm.tm_year + 1900,
-> +		 fw_tm.tm_mon + 1, fw_tm.tm_mday, fw_tm.tm_hour,
-> +		 fw_tm.tm_min, fw_tm.tm_sec,
-> +		 csb_readl(tegra, XUSB_FALC_CPUCTL));
-> +
-> +	/* Make sure Falcon CPU is now running. */
-> +	if (csb_readl(tegra, XUSB_FALC_CPUCTL) == CPUCTL_STATE_HALTED)
-> +		return -EIO;
+> +	struct tegra_xusb_mbox *mbox =3D (struct tegra_xusb_mbox *)p;
 
-It seems somewhat strange to output the dev_info() message when in fact
-it could be that the Falcon wasn't successfully booted. Also is it
-guaranteed that the Falcon will always be up after 1 ms? Perhaps better
-would be to use a timed loop?
+There's no need for the explicit cast here.
 
-> +static int tegra_xhci_set_ss_clk(struct tegra_xhci_hcd *tegra,
-> +				 unsigned long rate)
-> +{
-> +	unsigned long new_parent_rate, old_parent_rate;
-> +	int ret, div;
-> +	struct clk *clk = tegra->ss_src_clk;
+> +	struct tegra_xusb_mbox_msg msg;
+> +	int i;
+
+unsigned?
+
+> +	u32 reg;
 > +
-> +	if (clk_get_rate(clk) == rate)
-> +		return 0;
+> +	spin_lock(&mbox->lock);
 > +
-> +	switch (rate) {
-> +	case TEGRA_XHCI_SS_CLK_HIGH_SPEED:
-> +		/*
-> +		 * Reparent to PLLU_480M. Set divider first to avoid
-> +		 * overclocking.
-> +		 */
-> +		old_parent_rate = clk_get_rate(clk_get_parent(clk));
-> +		new_parent_rate = clk_get_rate(tegra->pll_u_480m);
-> +		div = new_parent_rate / rate;
-> +		ret = clk_set_rate(clk, old_parent_rate / div);
-> +		if (ret)
-> +			return ret;
-> +		ret = clk_set_parent(clk, tegra->pll_u_480m);
-> +		if (ret)
-> +			return ret;
-> +		/*
-> +		 * The rate should already be correct, but set it again just
-> +		 * to be sure.
-> +		 */
-> +		ret = clk_set_rate(clk, rate);
-> +		if (ret)
-> +			return ret;
-> +		break;
-> +	case TEGRA_XHCI_SS_CLK_LOW_SPEED:
-> +		/* Reparent to CLK_M */
-> +		ret = clk_set_parent(clk, tegra->clk_m);
-> +		if (ret)
-> +			return ret;
-> +		ret = clk_set_rate(clk, rate);
-> +		if (ret)
-> +			return ret;
-> +		break;
-> +	default:
-> +		dev_err(tegra->dev, "Invalid SS rate: %lu\n", rate);
-> +		return -EINVAL;
+> +	/* Clear mbox interrupts */
+> +	reg =3D mbox_readl(mbox, XUSB_CFG_ARU_SMI_INTR);
+> +	if (reg & MBOX_SMI_INTR_FW_HANG)
+> +		dev_err(mbox->mbox.dev, "Controller firmware hang\n");
+> +	mbox_writel(mbox, reg, XUSB_CFG_ARU_SMI_INTR);
+> +
+> +	reg =3D mbox_readl(mbox, XUSB_CFG_ARU_MBOX_DATA_OUT);
+> +	mbox_unpack_msg(reg, &msg);
+> +
+> +	/*
+> +	 * Set the mailbox back to idle.  The recipient of the message is
+> +	 * responsible for sending an ACK/NAK, if necessary.
+> +	 */
+> +	reg =3D mbox_readl(mbox, XUSB_CFG_ARU_MBOX_CMD);
+> +	reg &=3D ~MBOX_DEST_SMI;
+> +	mbox_writel(mbox, reg, XUSB_CFG_ARU_MBOX_CMD);
+> +	mbox_writel(mbox, MBOX_OWNER_NONE, XUSB_CFG_ARU_MBOX_OWNER);
+> +
+> +	dev_dbg(mbox->mbox.dev, "RX message 0x%x:0x%x\n", msg.cmd, msg.data);
+
+Again 0x%x -> %#x to save characters.
+
+> +	for (i =3D 0; i < ARRAY_SIZE(mbox->vchan_allocated); i++) {
+> +		if (mbox->vchan_allocated[i])
+> +			mbox_chan_received_data(&mbox->mbox.chans[i], &msg);
 > +	}
-> +
-> +	if (clk_get_rate(clk) != rate) {
-> +		dev_err(tegra->dev, "SS clock doesn't match requested rate\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
 
-So this is why you need pllu_480m and clk_m clocks. I would've thought
-it nice to use something like the assigned-clocks properties to take
-care of this, but it seems like this may actually be required to be
-updated dynamically at runtime, so a fixed property is not going to be
-an option.
+It seems like the only reason why you need to explicitly check for an
+allocated channel is that mbox_chan_received_data() would otherwise
+crash. Are mailbox drivers really supposed to keep track of whether a
+channel has been requested by a client? Isn't that something that should
+be done in the core?
 
-> +static int tegra_xhci_clk_enable(struct tegra_xhci_hcd *tegra)
+> +static struct mbox_chan *tegra_xusb_mbox_of_xlate(struct mbox_controller=
+ *ctlr,
+> +					const struct of_phandle_args *sp)
 > +{
-> +	clk_prepare_enable(tegra->pll_e);
-> +	clk_prepare_enable(tegra->host_clk);
-> +	clk_prepare_enable(tegra->ss_clk);
-> +	clk_prepare_enable(tegra->falc_clk);
-> +	clk_prepare_enable(tegra->fs_src_clk);
-> +	clk_prepare_enable(tegra->hs_src_clk);
+> +	struct tegra_xusb_mbox *mbox =3D dev_get_drvdata(ctlr->dev);
 
-You should error-check these.
+container_of()?
 
-> +static int tegra_xhci_phy_enable(struct tegra_xhci_hcd *tegra)
+> +	struct mbox_chan *chan =3D NULL;
+> +	unsigned long flags;
+> +	int i;
+
+unsigned?
+
+> +static struct of_device_id tegra_xusb_mbox_of_match[] =3D {
+
+static const, please.
+
+> +static int tegra_xusb_mbox_probe(struct platform_device *pdev)
 > +{
+> +	struct tegra_xusb_mbox *mbox;
+> +	struct resource *res;
 > +	int ret;
-> +	int i;
-
-I prefer unsigned when the value can't be negative as in this case.
-
 > +
-> +	for (i = 0; i < ARRAY_SIZE(tegra->phys); i++) {
-> +		ret = phy_init(tegra->phys[i]);
-> +		if (ret)
-> +			goto disable_phy;
-> +		ret = phy_power_on(tegra->phys[i]);
-> +		if (ret) {
-> +			phy_exit(tegra->phys[i]);
-> +			goto disable_phy;
-> +		}
-> +	}
-
-Perhaps a phy_init_and_power_on() helper would be useful. Nothing that
-needs to be done as part of this patch, though.
-
-> +
-> +	return 0;
-> +disable_phy:
-> +	for (i = i - 1; i >= 0; i--) {
-> +		phy_power_off(tegra->phys[i]);
-> +		phy_exit(tegra->phys[i]);
-
-You could write this as:
-
-	for (i = i; i > 0; i--) {
-		phy_power_off(tegra->phys[i - 1]);
-		...
-	}
-
-for the unsigned case. But I guess this would be a reasonable exception
-to let i be signed.
-
-> +static void tegra_xhci_phy_disable(struct tegra_xhci_hcd *tegra)
-> +{
-> +	int i;
-
-There's no reason for it to be signed here, though.
-
-> +
-> +	for (i = 0; i < ARRAY_SIZE(tegra->phys); i++) {
-> +		phy_power_off(tegra->phys[i]);
-> +		phy_exit(tegra->phys[i]);
-> +	}
-> +}
-> +
-> +static bool is_host_mbox_message(u32 cmd)
-> +{
-> +	switch (cmd) {
-> +	case MBOX_CMD_INC_SSPI_CLOCK:
-> +	case MBOX_CMD_DEC_SSPI_CLOCK:
-> +	case MBOX_CMD_INC_FALC_CLOCK:
-> +	case MBOX_CMD_DEC_FALC_CLOCK:
-> +	case MBOX_CMD_SET_BW:
-> +		return true;
-> +	default:
-> +		return false;
-> +	}
-> +}
-> +
-> +static void tegra_xhci_mbox_work(struct work_struct *work)
-> +{
-> +	struct tegra_xhci_hcd *tegra = container_of(work, struct tegra_xhci_hcd,
-> +						    mbox_req_work);
-
-There's only a single instance of this, but it might still be useful to
-wrap it in a static inline for readability.
-
-> +	/*
-> +	 * Set the xHCI pointer before xhci_plat_setup() (aka hcd_driver.reset)
-
-I don't think this driver calls xhci_plat_setup() (anymore?).
-
-> +	 * is called by usb_add_hcd().
-> +	 */
-> +	*((struct xhci_hcd **) xhci->shared_hcd->hcd_priv) = xhci;
-
-This makes me a little uneasy. Perhaps this should be an XHCI wrapper to
-make it look less like you're doing something you shouldn't.
-
-> +static int tegra_xhci_probe(struct platform_device *pdev)
-> +{
-> +	struct tegra_xhci_hcd *tegra;
-> +	struct usb_hcd *hcd;
-> +	struct resource	*res;
-
-There's a tab between resource and *res which should be a space.
-
-> +	struct phy *phy;
-> +	const struct of_device_id *match;
-> +	int ret, i, j, k;
-> +
-> +	BUILD_BUG_ON(sizeof(struct tegra_xhci_fw_cfgtbl) != 256);
-> +
-> +	tegra = devm_kzalloc(&pdev->dev, sizeof(*tegra), GFP_KERNEL);
-> +	if (!tegra)
+> +	mbox =3D devm_kzalloc(&pdev->dev, sizeof(*mbox), GFP_KERNEL);
+> +	if (!mbox)
 > +		return -ENOMEM;
-> +	tegra->dev = &pdev->dev;
-> +	platform_set_drvdata(pdev, tegra);
+> +	platform_set_drvdata(pdev, mbox);
+> +	spin_lock_init(&mbox->lock);
 > +
-> +	match = of_match_device(tegra_xhci_of_match, &pdev->dev);
-> +	if (!match) {
-> +		dev_err(&pdev->dev, "No device match found\n");
+> +	mbox->mbox.dev =3D &pdev->dev;
+> +	mbox->mbox.chans =3D devm_kcalloc(&pdev->dev, TEGRA_XUSB_MBOX_NUM_CHANS,
+> +					sizeof(*mbox->mbox.chans), GFP_KERNEL);
+> +	if (!mbox->mbox.chans)
+> +		return -ENOMEM;
+> +	mbox->mbox.num_chans =3D TEGRA_XUSB_MBOX_NUM_CHANS;
+> +	mbox->mbox.ops =3D &tegra_xusb_mbox_chan_ops;
+> +	mbox->mbox.txdone_poll =3D true;
+> +	mbox->mbox.txpoll_period =3D 0; /* no need to actually poll */
+
+Does the core perhaps need special handling for this? It seems like
+poll_txdone() will always rearm the timer used to do the polling,
+irrespective of whether the transfer is actually done or not. Maybe
+something like this patch would be more correct in handling this:
+
+diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
+index afcb430508ec..85691a7d8ca6 100644
+--- a/drivers/mailbox/mailbox.c
++++ b/drivers/mailbox/mailbox.c
+@@ -117,10 +117,11 @@ static void poll_txdone(unsigned long data)
+ 		struct mbox_chan *chan =3D &mbox->chans[i];
+=20
+ 		if (chan->active_req && chan->cl) {
+-			resched =3D true;
+ 			txdone =3D chan->mbox->ops->last_tx_done(chan);
+ 			if (txdone)
+ 				tx_tick(chan, 0);
++			else
++				resched =3D true;
+ 		}
+ 	}
+=20
+
+The comment "no need to actually poll" isn't really appropriate in the
+context of txpoll_period =3D 0.
+
+> +	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	if (!res)
 > +		return -ENODEV;
-> +	}
+> +	mbox->regs =3D devm_ioremap(&pdev->dev, res->start, resource_size(res));
+> +	if (!mbox->regs)
+> +		return -ENOMEM;
 
-I don't think this can happen. If there's no match in the table then
-this function shouldn't have been called in the first place.
+This doesn't look right. Upon closer inspection, the reason why you
+don't use devm_request_resource() is because these registers are shared
+with the XHCI controller.
 
-> +	tegra->soc_config = match->data;
+Perhaps a better design would be for the XHCI driver to expose the
+mailbox rather than split it off into a separate driver.
+
+> +static struct platform_driver tegra_xusb_mbox_driver =3D {
+> +	.probe	=3D tegra_xusb_mbox_probe,
+> +	.remove	=3D tegra_xusb_mbox_remove,
+> +	.driver	=3D {
+> +		.name =3D "tegra-xusb-mbox",
+> +		.of_match_table =3D of_match_ptr(tegra_xusb_mbox_of_match),
+> +	},
+
+This uses tabs and spaces inconsistently for padding. I prefer a single
+space on either side of the '=3D' like you've done for the fields of
+=2Edriver above.
+
+> diff --git a/include/soc/tegra/xusb.h b/include/soc/tegra/xusb.h
+> new file mode 100644
+> index 0000000..cfe211d
+> --- /dev/null
+> +++ b/include/soc/tegra/xusb.h
+
+Perhaps this should really be named xusb-mbox.h?
+
+> @@ -0,0 +1,46 @@
+> +/*
+> + * Copyright (C) 2014 NVIDIA Corporation
+> + * Copyright (C) 2014 Google, Inc.
+> + *
+> + * This program is free software; you can redistribute it and/or modify =
+it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + */
 > +
-> +	/*
-> +	 * Right now device-tree probed devices don't get dma_mask set.
-> +	 * Since shared usb code relies on it, set it here for now.
-> +	 * Once we have dma capability bindings this can go away.
-> +	 */
-> +	ret = dma_coerce_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
-> +	if (ret)
-> +		return ret;
+> +#ifndef __SOC_TEGRA_XUSB_H__
+> +#define __SOC_TEGRA_XUSB_H__
+> +
+> +/* Two virtual channels: host + phy */
+> +#define TEGRA_XUSB_MBOX_NUM_CHANS 2
 
-I think that's no longer necessary. of_dma_configure() should take care
-of this now.
-
-> +	k = 0;
-> +	for (i = 0; i < ARRAY_SIZE(tegra_xhci_phy_types); i++) {
-
-I think a more idiomatic way to write this would be:
-
-	for (i = 0, k = 0; ...)
+I don't think this belongs in this public header. Who is going to need
+this besides the XUSB mailbox driver?
 
 Thierry
 
---3siQDZowHQqNOShm
+--XvKFcGCOAo53UbWW
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUUMY3AAoJEN0jrNd/PrOhkCoP/3gWDrt+JS30sKG+a2/dBOac
-9/JR/m9gMKFNiQmrmle1eSXEXd0o5MgIUT94Ai9H22wrLEHrUg8XM7D1isH8jDbP
-5mXxwRHelaV0ZoSpqaynDN2z/wxUvqb7uBTd19vB3Tw2aTvfQbWDH5NLr3lbdXaU
-UprNzyJN676PX8C5jJqZsBUP74LFhfYdlX9l3wqsgVp16ihXel8ELbUn6TVBP01B
-uzXwWQOcihr1ug3p5BuSZSC2Ry64Pn4HBCVfYKZp9mFKr+t9+gbIs5purhy6v1SH
-Pvs1dizhDt16WDJBFhybh2JouEK3zQja6T2aadksKbC8AJNTWi7RN2Jmeb8slKJO
-rLwrHvedtK1Qefzf/3DGA+KnsDNTzm/0sDIaBMEjzzagXQIPDKLxOK+4ytWTtpGR
-cF8ZnIl/cO5SkFReGJ9h8bMiOgRl2zpOR27a5TrT4emSCAyuR3IahePTDUUYja1M
-kng7Zy0daIpR7DYq4SGVe+QOueuU2eSmKb+u6UBHP8qQfOj2oqwdXywYu5BL+cGI
-t1gCmc1vBeOMB3cZBA+mNb2X/xBR25HDpj3PnsdBu7Mgs4d5KShTTL1uUmrz5yP5
-kF2GmZrAnJ1ZJK5fl2oj+PI0a/geebaWVTOhNksOwDgLkBDTNu9ws9HEBwL/3Zck
-Jb+khmtKjXZF4gK07M7W
-=j9fz
+iQIcBAEBAgAGBQJUUNC3AAoJEN0jrNd/PrOhAdAQAJy0hXZtYFZHrucZGpNfDyYV
+evtZYHavk2E6PGJAu1IUs1UbIdyWB2lhrAN/rFLoXYdmd6Fy9icF3NuDPAxceINV
+BNsdenhxd86kU/MCI9vW+r4wNRWnFW3n2Fkhuiu/1Il3VdGN1yu+y7nCojKnbWfG
+pGszZnDLI2i/R99xa1KmtCyEr4DJ1gM0g91/96uvA9zBYe0FMiEtD1cSDxLdpbfD
+3UYv8/m+O9MjrQQP1f4R5/MhknCG+57bf+m9rbAlhLDfmVjh1mjjc+NQ3yD3ewdV
+c+iiD6AWpCR8NJdCqFdynlqsAEM169uafui0TE/8K+bUdC3qct+m3ud8yaYxaqQm
+JRdHzjGSHm8aTWX/e10eUMLOxUsfuwsDEKQWZB8F16fiTPO+3dvX4D7pZVJ1BKQI
+JtIh5OuLtJFf4s1/3hooAV/0TT+ZRk67ViWE3ZtMxKP3R4WRpGxBQyuE15xNYgxY
+miY+YGHa/FjRAKbKKlJl4lf2LTCH5yObZQGKth3kVtMdiwAEH+fV0icj2eQdyZAp
+7w4xadqTFaLsPEPYA573U5sZwJivyzeSLyVfeFfQeQ/Qzak2y4Dor1WBtyfqYJm5
+3vUHTjGyToaEb/DzS2jfnTw/1T27eCdHCSmY6SyWqbN02ecoiG4CGH/9Gfse4FsK
+16hi+ZZoh/4Fh2jqx5KS
+=qWJc
 -----END PGP SIGNATURE-----
 
---3siQDZowHQqNOShm--
+--XvKFcGCOAo53UbWW--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
