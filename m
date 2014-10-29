@@ -1,137 +1,90 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Thierry Reding <thierry.reding@gmail.com>
 Subject: Re: [PATCH RESEND V4 5/9] of: Add NVIDIA Tegra xHCI controller
  binding
-Date: Wed, 29 Oct 2014 10:43:40 +0100
-Message-ID: <20141029094338.GA28356@ulmo.nvidia.com>
+Date: Wed, 29 Oct 2014 10:58:10 +0100
+Message-ID: <20141029095808.GB28356@ulmo.nvidia.com>
 References: <1414535277-15645-1-git-send-email-abrestic@chromium.org>
  <1414535277-15645-6-git-send-email-abrestic@chromium.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="qMm9M+Fa2AknHoGS"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="/NkBOFFp2J2Af1nK"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1414535277-15645-6-git-send-email-abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1414535277-15645-6-git-send-email-abrestic@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Bresticker <abrestic@chromium.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, linux-tegra@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Jassi Brar <jassisinghbrar@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman <mathias.nyman@intel.com>, Grant Likely <grant.likely@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Arnd Bergmann <arnd@arndb.de>, Kishon Vijay Abraham I <kishon@ti.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---qMm9M+Fa2AknHoGS
+--/NkBOFFp2J2Af1nK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 28, 2014 at 03:27:50PM -0700, Andrew Bresticker wrote:
+On Tue, Oct 28, 2014 at 03:27:52PM -0700, Andrew Bresticker wrote:
 [...]
-> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xu=
-sb-padctl.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-x=
-usb-padctl.txt
+> diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra124-xhci.txt b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xhci.txt
 [...]
+> +    - pll_u_480m
+> +    - clk_m
+> +    - pll_e
+
+What are these used for? I guess I'll see when I get to the driver
+patch.
+
 > +Optional properties:
-> +-------------------
-> +- vbus-{0,1,2}-supply: VBUS regulator for the corresponding UTMI pad.
-> +- vddio-hsic-supply: VDDIO regulator for the HSIC pads.
-> +- nvidia,usb3-port-{0,1}-lane: PCIe/SATA lane to which the corresponding=
- USB3
-> +  port is mapped.  See <dt-bindings/pinctrl/pinctrl-tegra-xusb.h> for th=
-e list
-> +  of valid values.
+> +--------------------
+> + - phys: Must contain an entry for each entry in phy-names.
+> +   See ../phy/phy-bindings.txt for details.
+> + - phy-names: Should include an entry for each PHY used by the controller.
+> +   May be a subset of the following:
+> +    - utmi-{0,1,2}
+> +    - hsic-{0,1}
+> +    - usb3-{0,1}
+> + - avddio-pex-supply: PCIe/USB3 analog logic power supply.  Must supply 1.05V.
+> + - dvddio-pex-supply: PCIe/USB3 digital logic power supply.  Must supply 1.05V.
+> + - avdd-usb-supply: USB controller power supply.  Must supply 3.3V.
+> + - avdd-pll-utmip-supply: UTMI PLL power supply.  Must supply 1.8V.
+> + - avdd-pll-erefe-supply: PLLE reference PLL power supply.  Must supply 1.05V.
+> + - avdd-pex-pll-supply: PCIe/USB3 PLL power supply.  Must supply 1.05V.
+> + - hvdd-pex-supply: High-voltage PCIe/USB3 power supply.  Must supply 3.3V.
+> + - hvdd-pex-plle-supply: High-voltage PLLE power supply.  Must supply 3.3V.
 
-I dislike how we now need to provide a list of all pins in the header
-file, where previously we used strings for this. This could become very
-ugly if the set of pins changes in future generations of this IP block.
+I think the name for this in the documentation is HVDD_PEX_PLL_E, which
+would translate to hvdd-pex-pll-e. At least that's how we named this
+supply for PCIe.
 
-Could we instead derive this from the pinmux nodes? For example you have
-this in the example below:
+Alternatively it seems like there are aliases for the USB 3.0 related
+supplies:
 
-	usb3p0 {
-		nvidia,lanes =3D "pcie-0";
-		...
-	};
+	avdd-pex-pll -> avdd-usb-ss-pll
+	hvdd-pex -> hvdd-usb-ss
+	hvdd-pex-pll-e -> hvdd-usb-ss-pll-e
 
-Perhaps what we need is to either key off the node name or add another
-property, such as:
-
-	nvidia,usb3-port =3D <0>;
-
-This would match the nvidia,usb2-port property that you've added below.
-
->  Lane muxing:
->  ------------
-> @@ -50,6 +62,17 @@ Optional properties:
->    pin or group should be assigned to. Valid values for function names are
->    listed below.
->  - nvidia,iddq: Enables IDDQ mode of the lane. (0: no, 1: yes)
-> +- nvidia,usb2-port-num: USB2 port (0, 1, or 2) to which the lane is mapp=
-ed.
-
-I'd leave away the -num suffix since it is implied that it's a number.
-
-> +- nvidia,hsic-strobe-trim: HSIC strobe trimmer value.
-> +- nvidia,hsic-rx-strobe-trim: HSIC RX strobe trimmer value.
-> +- nvidia,hsic-rx-data-trim: HSIC RX data trimmer value.
-> +- nvidia,hsic-tx-rtune-n: HSIC TX RTUNEN value.
-> +- nvidia,hsic-tx-rtune-p: HSIC TX RTUNEP value.
-> +- nvidia,hsic-tx-slew-n: HSIC TX SLEWN value.
-> +- nvidia,hsic-tx-slew-p: HSIC TX SLEWP value.
-
-It would be useful for these to provide a range of valid values. I also
-see that there are other registers that contain values for tuning. I
-take it that the ones you've included here are the only ones that need
-to be overridden on hardware you've tested this on? That should be fine,
-we can always add new ones if necessary.
-
-> +- nvidia,hsic-auto-term: Enables HSIC AUTO_TERM. (0: no, 1: yes)
-> +- nvidia,otg-hs-curr-level-offset: Offset to be applied to the pad's fus=
-ed
-> +  HS_CURR_LEVEL value.
-> =20
->  Note that not all of these properties are valid for all lanes. Lanes can=
- be
->  divided into three groups:
-> @@ -58,18 +81,21 @@ divided into three groups:
-> =20
->      Valid functions for this group are: "snps", "xusb", "uart", "rsvd".
-> =20
-> -    The nvidia,iddq property does not apply to this group.
-> +    The nvidia,otg-hs-curr-level-offset property only applies.
-
-The wording is confusing here in my opinion. Maybe better: "Only the ...
-property applies."?
-
->    - ulpi-0, hsic-0, hsic-1:
-> =20
->      Valid functions for this group are: "snps", "xusb".
-> =20
-> -    The nvidia,iddq property does not apply to this group.
-> +    The nvidia,hsic-* properties apply only to the pins hsic-{0,1} when
-> +    the function is xusb.
-
-I assume that hsic-* properties also only apply to the hsic-* pins?
-That's not clear from the above sentence.
+So perhaps these could be used for the XHCI driver instead? Also, should
+these supplies not be mandatory?
 
 Thierry
 
---qMm9M+Fa2AknHoGS
+--/NkBOFFp2J2Af1nK
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUULbKAAoJEN0jrNd/PrOh3n4QAKhd76oJnVJUt4H0zD0Dmf5T
-WLLg/4LXsTsJZ5TJ1TSq7hniC/Zg7rA8gjEvFiT1K21sxJpOD9GYemFCG/MxkBgY
-5kviYsft0Cvg/5cKP5TMEu+ptRfeykd8pmUBzFTz5eqgI/E02CWRgAvFKhjDoVF/
-nutz4k/48ibBT4wbNjZXdKduBp8JXzcdXVetpMTpZuOKKMtTMl+kCuQh0mR+UY8R
-N+57esfoLWDZAepvD2DWX5FZhwexY4YeoTgDNG8Drxm3JltpbC3xtfFHcaZlGgA+
-vzWYU2HrlGaXO8XFLOmON2qIQ9dMtdiJgOSIHKr2MTp+7VSxZeT6v67i142a/+5l
-eb2dl/VuDrSs85mQNfEx/oFOt18xcJibmnfGMoy4O8bT8R6NH6FuxmyTj3zHR46X
-L8Jbi0s2Ts+1ByDzID3XnpV6KSWZZ8Fs3Q2XB0dZzlF7qrzYCwvbcxQFYLGTipuK
-CMHwJogIPTmXBVTAzQysZiXLxrwrv1IMHW3gnnLP4iYv0YBZIgxNzml27fYQ3e8H
-Nq1maVwwP/BrkwqFMm+sAE1UWjiTrok8TmQesPGZkYAb9qEHSAe5F3os8Iklcjzr
-ndBmPDdUyqfys+ny0T1TqGyswD0juosHYUID1mt+B2RRQDtjqzXjbhI4+j8HoU+N
-mpuSPJ8jVbvRkYlET69M
-=jthM
+iQIcBAEBAgAGBQJUULowAAoJEN0jrNd/PrOhqSMP/A0WZ+IQ9+HY4U3HiMecg0T8
+E7rTjP8DAVngvBKDocb7p94tR+yLT6kEPoYlCicOCF7Rw6sAtiqbHCZTiQGWbsZl
+nuwMAOlo0lSBC08tTTcxoRwcqquCIgQQZADz+olX+M7MCZam9fFVLyPBpfR0ZNag
+cJRxcI3842GfAzeavjMcaPCrSPVUgimnFgBR9oMZq74YPstX5E1aaRY+LEW6fn0z
+1SfjU9X5voXFNZzZ0aE62MbAzmWrdxCPoEL6urryphBDlnaRHN9ig4m4xwAz1+8E
+QnpKAQ3T7a2KEyl8fRTMUhKR0odXrywjPD8JikuxzwY3xQp5qunMaT749KH5avj8
+siCbCagu+2e5jFGVi4yFVeQ6XD884nDxqxjF3nu/3Lh7hkBXtlvTGSQQkw7pAmwq
+vAh3jhL7ia0/hiARPLf6KozRTEXDASsqxsDDHZ4EPZCuBSbWsTjxFegdGbGfoWC4
+25xhdgkz3w/3juOmThUXKxm02t9/xA8pU6f9KoVyiJ9dOyQBbDw7nTbpOqU1cezM
+0CTJO95MpFKQlde0AOoMU61WCFOTmZoMQfL8TzpN9+JZjaLzpVDDpb43FPwtuOuP
+0KOxx6ljxlNqW3iGBKvlqYduGD5o2d4EhqG9SBq+2ZXpzJ9vTawJ92po7jGW4NP1
+mYcrQhMVfJzQETqE2olp
+=YV82
 -----END PGP SIGNATURE-----
 
---qMm9M+Fa2AknHoGS--
+--/NkBOFFp2J2Af1nK--
