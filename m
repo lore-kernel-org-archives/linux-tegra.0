@@ -1,57 +1,99 @@
-From: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>
-Subject: Re: [PATCH 3/3] gk20a: use NOUVEAU_BO_GART as VRAM domain
-Date: Wed, 29 Oct 2014 11:29:56 -0400
-Message-ID: <CAKb7UvhMw9pfDsvoGae2A+n9qJNBV5Vnxm4bn5tbK09GDcP_Dw@mail.gmail.com>
-References: <1414406099-21129-1-git-send-email-acourbot@nvidia.com>
- <1414406099-21129-4-git-send-email-acourbot@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <1414406099-21129-4-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "mesa-dev-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <mesa-dev-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: [PATCH v3 00/13] Tegra124 EMC (external memory controller) support
+Date: Wed, 29 Oct 2014 17:22:18 +0100
+Message-ID: <1414599796-30597-1-git-send-email-tomeu.vizoso@collabora.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-tegra@vger.kernel.org
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Arnd Bergmann <arnd@arndb.de>, Bharat Bhushan <bharat.bhushan@freescale.com>, devicetree@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ivan Khoronzhuk <ivan.khoronzhuk@ti.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>, Nicolas Ferre <nicolas.ferre@atmel.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prabhakar Kushwaha <prabhakar@freescale.com>, Scott Wood <scottwood@freescale.com>, Stephen Warren <swarren@nvidia.com>, Thierry Reding <treding@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gTW9uLCBPY3QgMjcsIDIwMTQgYXQgNjozNCBBTSwgQWxleGFuZHJlIENvdXJib3QgPGFjb3Vy
-Ym90QG52aWRpYS5jb20+IHdyb3RlOgo+IEdLMjBBIGRvZXMgbm90IGhhdmUgZGVkaWNhdGVkIFZS
-QU0sIHRoZXJlZm9yZSBhbGxvY2F0aW5nIGluIFZSQU0gY2FuIGJlCj4gc3ViLW9wdGltYWwgYW5k
-IHNvbWV0aW1lcyBldmVuIGhhcm1mdWwuIFNldCBpdHMgVlJBTSBkb21haW4gdG8KPiBOT1VWRUFV
-X0JPX0dBUlQgc28gYWxsIG9iamVjdHMgYXJlIGFsbG9jYXRlZCBpbiBzeXN0ZW0gbWVtb3J5Lgo+
-Cj4gU2lnbmVkLW9mZi1ieTogQWxleGFuZHJlIENvdXJib3QgPGFjb3VyYm90QG52aWRpYS5jb20+
-Cj4gLS0tCj4gIHNyYy9nYWxsaXVtL2RyaXZlcnMvbm91dmVhdS9udmMwL252YzBfc2NyZWVuLmMg
-fCAxMCArKysrKysrKysrCj4gIDEgZmlsZSBjaGFuZ2VkLCAxMCBpbnNlcnRpb25zKCspCj4KPiBk
-aWZmIC0tZ2l0IGEvc3JjL2dhbGxpdW0vZHJpdmVycy9ub3V2ZWF1L252YzAvbnZjMF9zY3JlZW4u
-YyBiL3NyYy9nYWxsaXVtL2RyaXZlcnMvbm91dmVhdS9udmMwL252YzBfc2NyZWVuLmMKPiBpbmRl
-eCBhYzU4MjNlNGE4ZDUuLmFkMTQzY2Q5YTE0MCAxMDA2NDQKPiAtLS0gYS9zcmMvZ2FsbGl1bS9k
-cml2ZXJzL25vdXZlYXUvbnZjMC9udmMwX3NjcmVlbi5jCj4gKysrIGIvc3JjL2dhbGxpdW0vZHJp
-dmVycy9ub3V2ZWF1L252YzAvbnZjMF9zY3JlZW4uYwo+IEBAIC02MjAsNiArNjIwLDE2IEBAIG52
-YzBfc2NyZWVuX2NyZWF0ZShzdHJ1Y3Qgbm91dmVhdV9kZXZpY2UgKmRldikKPiAgICAgICAgcmV0
-dXJuIE5VTEw7Cj4gICAgIHBzY3JlZW4gPSAmc2NyZWVuLT5iYXNlLmJhc2U7Cj4KPiArICAgLyog
-UmVjb2duaXplIGNoaXBzZXRzIHdpdGggbm8gVlJBTSAqLwo+ICsgICBzd2l0Y2ggKGRldi0+Y2hp
-cHNldCkgewo+ICsgICAvKiBHSzIwQSAqLwo+ICsgICBjYXNlIDB4ZWE6Cj4gKyAgICAgIHNjcmVl
-bi0+YmFzZS52cmFtX2RvbWFpbiA9IE5PVVZFQVVfQk9fR0FSVDsKCkkgdGhpbmsgeW91IGFsc28g
-d2FudCB0byBzZXQgdmlkbWVtX2JpbmRpbmdzID0gMC4uLiBhbHRob3VnaApwb3RlbnRpYWxseSBh
-ZnRlciB0aGUgfD0gdGhhdCdzIGRvbmUgYmVsb3cuIEFsdGhvdWdoIEkgZ3Vlc3MgdGhhdApjb25z
-dGJ1ZiArIGNvbW1hbmQgYXJncyBidWYgbmVlZCB0byBiZSB8PSdkIGludG8gdGhlIHN5c21lbV9i
-aW5kaW5ncwpmb3IgdGhpcyB0byB3b3JrIG91dCB3ZWxsLiBUaGF0IHNhaWQsIHdlIGRvbid0IHJl
-YWxseSBoYW5kbGUgZXhwbGljaXQKbWlncmF0aW9uIHdlbGwgcmlnaHQgbm93LCBhbmQgdGhvc2Ug
-UElQRV9CSU5EXyogYXJlICppbmNyZWRpYmx5KgptaXNsZWFkaW5nIGFuZCBkb24ndCBhY3R1YWxs
-eSBuZWNlc3NhcmlseSByZWZsZWN0IHRoZSBjdXJyZW50IHVzYWdlLgpbSSBoYXZlIHNvbWUgcGF0
-Y2hlcyB0byBpbXByb3ZlIHRoZSBzaXR1YXRpb24sIGJ1dCB5b3UgZG9uJ3QgcmVhbGx5CmhhdmUg
-dG8gd29ycnkgYWJvdXQgdGhhdC5dCgo+ICsgICAgICBicmVhazsKPiArICAgZGVmYXVsdDoKPiAr
-ICAgICAgYnJlYWs7Cj4gKyAgIH0KPiArCj4gICAgIHJldCA9IG5vdXZlYXVfc2NyZWVuX2luaXQo
-JnNjcmVlbi0+YmFzZSwgZGV2KTsKPiAgICAgaWYgKHJldCkgewo+ICAgICAgICBudmMwX3NjcmVl
-bl9kZXN0cm95KHBzY3JlZW4pOwo+IC0tCj4gMi4xLjIKPgpfX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fXwpOb3V2ZWF1IG1haWxpbmcgbGlzdApOb3V2ZWF1QGxp
-c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
-bGlzdGluZm8vbm91dmVhdQo=
+Hello,
+
+in this v3 you can find these changes:
+
+* Have the EMC clock use the emc_lock when writing to the register it shares with the MC clock
+
+* Clarify the wording of the new property added to nvidia,tegra20-apbmisc, as suggested by Mikko
+
+* On Tegra124, have the EMC clock be the parent of the MC clock
+
+It depends on Thierry's MC patches at [0] and a branch can be found at [1]. So
+far it has been tested only on a Jetson TK1.
+
+Patch 1: Removes the old EMC clock, that was unused and not functional
+
+Patch 2: Documents bindings for the new long-ram-code property
+
+Patch 3: Adds API for reading the ram code
+
+Patches 4 to 6: Document OF additions
+
+Patch 7: Adds EMC node to Tegra124 DT
+
+Patch 8: Adds timings for Jetson TK1 board
+
+Patch 9: Adds functions to the MC driver so the EMC driver can stay within its
+own registers
+
+Patch 10: Adds the actual EMC driver, making use of the new MC API
+
+Patch 11: Adds EMC clock driver, making use of API provided by the EMC driver
+
+Patch 12: Adds debugfs entry for getting and setting the EMC rate
+
+Patch 13: On Tegra124, have the EMC clock be the parent of the MC clock
+
+Regards,
+
+Tomeu
+
+[0] https://github.com/thierryreding/linux/commits/staging/iommu
+[1] http://cgit.collabora.com/git/user/tomeu/linux.git/log/?h=emc-v3
+
+Mikko Perttunen (9):
+  clk: tegra124: Remove old emc clock
+  soc/tegra: Add ram code reader helper
+  of: Add Tegra124 EMC bindings
+  ARM: tegra: Add EMC to Tegra124 device tree
+  ARM: tegra: Add EMC timings to Jetson TK1 device tree
+  memory: tegra: Add API needed by the EMC driver
+  memory: tegra: Add EMC (external memory controller) driver
+  clk: tegra: Add EMC clock driver
+  memory: tegra: Add debugfs entry for getting and setting the EMC rate
+
+Tomeu Vizoso (4):
+  of: Document long-ram-code property in nvidia,tegra20-apbmisc
+  of: document new emc-timings subnode in nvidia,tegra124-car
+  of: Document timings subnode of nvidia,tegra-mc
+  clk: tegra: Set the EMC clock as the parent of the MC clock
+
+ .../bindings/clock/nvidia,tegra124-car.txt         |   46 +-
+ .../memory-controllers/nvidia,tegra-mc.txt         |   46 +-
+ .../bindings/memory-controllers/tegra-emc.txt      |  118 +
+ .../bindings/misc/nvidia,tegra20-apbmisc.txt       |    2 +
+ arch/arm/boot/dts/tegra124-jetson-tk1-emc.dtsi     | 2412 ++++++++++++++++++++
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts          |    2 +
+ arch/arm/boot/dts/tegra124.dtsi                    |    7 +
+ drivers/clk/tegra/Makefile                         |    2 +-
+ drivers/clk/tegra/clk-divider.c                    |    2 +-
+ drivers/clk/tegra/clk-emc.c                        |  470 ++++
+ drivers/clk/tegra/clk-tegra124.c                   |   18 +-
+ drivers/clk/tegra/clk.h                            |    2 +
+ drivers/memory/Kconfig                             |   10 +
+ drivers/memory/Makefile                            |    1 -
+ drivers/memory/tegra/Makefile                      |    1 +
+ drivers/memory/tegra/tegra-mc.c                    |  172 ++
+ drivers/memory/tegra/tegra124-emc.c                | 1169 ++++++++++
+ drivers/soc/tegra/fuse/tegra-apbmisc.c             |   19 +
+ include/soc/tegra/fuse.h                           |    1 +
+ include/soc/tegra/memory.h                         |   19 +
+ 20 files changed, 4498 insertions(+), 21 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt
+ create mode 100644 arch/arm/boot/dts/tegra124-jetson-tk1-emc.dtsi
+ create mode 100644 drivers/clk/tegra/clk-emc.c
+ create mode 100644 drivers/memory/tegra/tegra124-emc.c
+ create mode 100644 include/soc/tegra/memory.h
+
+-- 
+1.9.3
