@@ -1,43 +1,57 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [PATCH 3/3] ARM: tegra: Add Tegra124 ACTMON support
-Date: Wed, 29 Oct 2014 15:50:13 +0100
-Message-ID: <1414594232-15684-4-git-send-email-tomeu.vizoso@collabora.com>
-References: <1414594232-15684-1-git-send-email-tomeu.vizoso@collabora.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1414594232-15684-1-git-send-email-tomeu.vizoso@collabora.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+From: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>
+Subject: Re: [PATCH 3/3] gk20a: use NOUVEAU_BO_GART as VRAM domain
+Date: Wed, 29 Oct 2014 11:29:56 -0400
+Message-ID: <CAKb7UvhMw9pfDsvoGae2A+n9qJNBV5Vnxm4bn5tbK09GDcP_Dw@mail.gmail.com>
+References: <1414406099-21129-1-git-send-email-acourbot@nvidia.com>
+ <1414406099-21129-4-git-send-email-acourbot@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <1414406099-21129-4-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "mesa-dev-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <mesa-dev-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add device node for the ACTMON block to the Tegra124 device tree.
-
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
----
- arch/arm/boot/dts/tegra124.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index b1ec35e..8bce1b3 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -213,6 +213,17 @@
- 		reg = <0x0 0x60007000 0x0 0x1000>;
- 	};
- 
-+	actmon@0,6000c800 {
-+		compatible = "nvidia,tegra124-actmon";
-+		reg = <0x0 0x6000c800 0x0 0x400>;
-+		interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA124_CLK_ACTMON>,
-+			 <&tegra_car TEGRA124_CLK_EMC>;
-+		clock-names = "actmon", "emc";
-+		resets = <&tegra_car 119>;
-+		reset-names = "actmon";
-+	};
-+
- 	gpio: gpio@0,6000d000 {
- 		compatible = "nvidia,tegra124-gpio", "nvidia,tegra30-gpio";
- 		reg = <0x0 0x6000d000 0x0 0x1000>;
--- 
-1.9.3
+T24gTW9uLCBPY3QgMjcsIDIwMTQgYXQgNjozNCBBTSwgQWxleGFuZHJlIENvdXJib3QgPGFjb3Vy
+Ym90QG52aWRpYS5jb20+IHdyb3RlOgo+IEdLMjBBIGRvZXMgbm90IGhhdmUgZGVkaWNhdGVkIFZS
+QU0sIHRoZXJlZm9yZSBhbGxvY2F0aW5nIGluIFZSQU0gY2FuIGJlCj4gc3ViLW9wdGltYWwgYW5k
+IHNvbWV0aW1lcyBldmVuIGhhcm1mdWwuIFNldCBpdHMgVlJBTSBkb21haW4gdG8KPiBOT1VWRUFV
+X0JPX0dBUlQgc28gYWxsIG9iamVjdHMgYXJlIGFsbG9jYXRlZCBpbiBzeXN0ZW0gbWVtb3J5Lgo+
+Cj4gU2lnbmVkLW9mZi1ieTogQWxleGFuZHJlIENvdXJib3QgPGFjb3VyYm90QG52aWRpYS5jb20+
+Cj4gLS0tCj4gIHNyYy9nYWxsaXVtL2RyaXZlcnMvbm91dmVhdS9udmMwL252YzBfc2NyZWVuLmMg
+fCAxMCArKysrKysrKysrCj4gIDEgZmlsZSBjaGFuZ2VkLCAxMCBpbnNlcnRpb25zKCspCj4KPiBk
+aWZmIC0tZ2l0IGEvc3JjL2dhbGxpdW0vZHJpdmVycy9ub3V2ZWF1L252YzAvbnZjMF9zY3JlZW4u
+YyBiL3NyYy9nYWxsaXVtL2RyaXZlcnMvbm91dmVhdS9udmMwL252YzBfc2NyZWVuLmMKPiBpbmRl
+eCBhYzU4MjNlNGE4ZDUuLmFkMTQzY2Q5YTE0MCAxMDA2NDQKPiAtLS0gYS9zcmMvZ2FsbGl1bS9k
+cml2ZXJzL25vdXZlYXUvbnZjMC9udmMwX3NjcmVlbi5jCj4gKysrIGIvc3JjL2dhbGxpdW0vZHJp
+dmVycy9ub3V2ZWF1L252YzAvbnZjMF9zY3JlZW4uYwo+IEBAIC02MjAsNiArNjIwLDE2IEBAIG52
+YzBfc2NyZWVuX2NyZWF0ZShzdHJ1Y3Qgbm91dmVhdV9kZXZpY2UgKmRldikKPiAgICAgICAgcmV0
+dXJuIE5VTEw7Cj4gICAgIHBzY3JlZW4gPSAmc2NyZWVuLT5iYXNlLmJhc2U7Cj4KPiArICAgLyog
+UmVjb2duaXplIGNoaXBzZXRzIHdpdGggbm8gVlJBTSAqLwo+ICsgICBzd2l0Y2ggKGRldi0+Y2hp
+cHNldCkgewo+ICsgICAvKiBHSzIwQSAqLwo+ICsgICBjYXNlIDB4ZWE6Cj4gKyAgICAgIHNjcmVl
+bi0+YmFzZS52cmFtX2RvbWFpbiA9IE5PVVZFQVVfQk9fR0FSVDsKCkkgdGhpbmsgeW91IGFsc28g
+d2FudCB0byBzZXQgdmlkbWVtX2JpbmRpbmdzID0gMC4uLiBhbHRob3VnaApwb3RlbnRpYWxseSBh
+ZnRlciB0aGUgfD0gdGhhdCdzIGRvbmUgYmVsb3cuIEFsdGhvdWdoIEkgZ3Vlc3MgdGhhdApjb25z
+dGJ1ZiArIGNvbW1hbmQgYXJncyBidWYgbmVlZCB0byBiZSB8PSdkIGludG8gdGhlIHN5c21lbV9i
+aW5kaW5ncwpmb3IgdGhpcyB0byB3b3JrIG91dCB3ZWxsLiBUaGF0IHNhaWQsIHdlIGRvbid0IHJl
+YWxseSBoYW5kbGUgZXhwbGljaXQKbWlncmF0aW9uIHdlbGwgcmlnaHQgbm93LCBhbmQgdGhvc2Ug
+UElQRV9CSU5EXyogYXJlICppbmNyZWRpYmx5KgptaXNsZWFkaW5nIGFuZCBkb24ndCBhY3R1YWxs
+eSBuZWNlc3NhcmlseSByZWZsZWN0IHRoZSBjdXJyZW50IHVzYWdlLgpbSSBoYXZlIHNvbWUgcGF0
+Y2hlcyB0byBpbXByb3ZlIHRoZSBzaXR1YXRpb24sIGJ1dCB5b3UgZG9uJ3QgcmVhbGx5CmhhdmUg
+dG8gd29ycnkgYWJvdXQgdGhhdC5dCgo+ICsgICAgICBicmVhazsKPiArICAgZGVmYXVsdDoKPiAr
+ICAgICAgYnJlYWs7Cj4gKyAgIH0KPiArCj4gICAgIHJldCA9IG5vdXZlYXVfc2NyZWVuX2luaXQo
+JnNjcmVlbi0+YmFzZSwgZGV2KTsKPiAgICAgaWYgKHJldCkgewo+ICAgICAgICBudmMwX3NjcmVl
+bl9kZXN0cm95KHBzY3JlZW4pOwo+IC0tCj4gMi4xLjIKPgpfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwpOb3V2ZWF1IG1haWxpbmcgbGlzdApOb3V2ZWF1QGxp
+c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
+bGlzdGluZm8vbm91dmVhdQo=
