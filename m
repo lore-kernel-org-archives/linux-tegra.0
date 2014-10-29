@@ -1,55 +1,113 @@
-From: Andrew Bresticker <abrestic@chromium.org>
-Subject: Re: [PATCH RESEND V4 5/9] of: Add NVIDIA Tegra xHCI controller binding
-Date: Wed, 29 Oct 2014 09:37:14 -0700
-Message-ID: <CAL1qeaEf0mTQfMgnY8jHGDBvbQ7ivtzAQRWaE9K24TJ86hWYMg@mail.gmail.com>
+From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH RESEND V4 2/9] mailbox: Add NVIDIA Tegra XUSB mailbox driver
+Date: Wed, 29 Oct 2014 11:02:36 -0700
+Message-ID: <CAL1qeaG2DFyfsPa2wgDqOkYTbnJ-tXoiV48AF9EaSCf1QCtOyQ@mail.gmail.com>
 References: <1414535277-15645-1-git-send-email-abrestic@chromium.org>
-	<1414535277-15645-6-git-send-email-abrestic@chromium.org>
-	<20141029094338.GA28356@ulmo.nvidia.com>
+	<1414535277-15645-3-git-send-email-abrestic@chromium.org>
+	<20141029113415.GD28356@ulmo.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20141029094338.GA28356@ulmo.nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Jassi Brar <jassisinghbrar@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman <mathias.nyman@intel.com>, Grant Likely <grant.likely@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Arnd Bergmann <arnd@arndb.de>, Kishon Vijay Abraham I <kishon@ti.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-usb@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20141029113415.GD28356-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Oct 29, 2014 at 2:43 AM, Thierry Reding
-<thierry.reding@gmail.com> wrote:
-> On Tue, Oct 28, 2014 at 03:27:50PM -0700, Andrew Bresticker wrote:
-> [...]
->> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt
-> [...]
->> +Optional properties:
->> +-------------------
->> +- vbus-{0,1,2}-supply: VBUS regulator for the corresponding UTMI pad.
->> +- vddio-hsic-supply: VDDIO regulator for the HSIC pads.
->> +- nvidia,usb3-port-{0,1}-lane: PCIe/SATA lane to which the corresponding USB3
->> +  port is mapped.  See <dt-bindings/pinctrl/pinctrl-tegra-xusb.h> for the list
->> +  of valid values.
+>> +     for (i = 0; i < ARRAY_SIZE(mbox->vchan_allocated); i++) {
+>> +             if (mbox->vchan_allocated[i])
+>> +                     mbox_chan_received_data(&mbox->mbox.chans[i], &msg);
+>> +     }
 >
-> I dislike how we now need to provide a list of all pins in the header
-> file, where previously we used strings for this. This could become very
-> ugly if the set of pins changes in future generations of this IP block.
->
-> Could we instead derive this from the pinmux nodes? For example you have
-> this in the example below:
->
->         usb3p0 {
->                 nvidia,lanes = "pcie-0";
->                 ...
->         };
->
-> Perhaps what we need is to either key off the node name or add another
-> property, such as:
->
->         nvidia,usb3-port = <0>;
->
-> This would match the nvidia,usb2-port property that you've added below.
+> It seems like the only reason why you need to explicitly check for an
+> allocated channel is that mbox_chan_received_data() would otherwise
+> crash. Are mailbox drivers really supposed to keep track of whether a
+> channel has been requested by a client? Isn't that something that should
+> be done in the core?
 
-That is actually how I described the USB3 port to SS lane mapping
-originally, but in review of an earlier version of this series,
-Stephen suggested that I make it a separate, not pinconfig property
-since it wasn't a value written directly to the hardware.  I'm fine
-with changing it back as the pinconfig property makes more sense to me
-as well.
+Yeah, I'd agree that this is something that should be handled by the core.
+
+>> +static int tegra_xusb_mbox_probe(struct platform_device *pdev)
+>> +{
+>> +     struct tegra_xusb_mbox *mbox;
+>> +     struct resource *res;
+>> +     int ret;
+>> +
+>> +     mbox = devm_kzalloc(&pdev->dev, sizeof(*mbox), GFP_KERNEL);
+>> +     if (!mbox)
+>> +             return -ENOMEM;
+>> +     platform_set_drvdata(pdev, mbox);
+>> +     spin_lock_init(&mbox->lock);
+>> +
+>> +     mbox->mbox.dev = &pdev->dev;
+>> +     mbox->mbox.chans = devm_kcalloc(&pdev->dev, TEGRA_XUSB_MBOX_NUM_CHANS,
+>> +                                     sizeof(*mbox->mbox.chans), GFP_KERNEL);
+>> +     if (!mbox->mbox.chans)
+>> +             return -ENOMEM;
+>> +     mbox->mbox.num_chans = TEGRA_XUSB_MBOX_NUM_CHANS;
+>> +     mbox->mbox.ops = &tegra_xusb_mbox_chan_ops;
+>> +     mbox->mbox.txdone_poll = true;
+>> +     mbox->mbox.txpoll_period = 0; /* no need to actually poll */
+>
+> Does the core perhaps need special handling for this? It seems like
+> poll_txdone() will always rearm the timer used to do the polling,
+> irrespective of whether the transfer is actually done or not.
+
+Yeah, that doesn't seem quite right...
+
+> Maybe something like this patch would be more correct in handling
+> this:
+>
+> diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
+> index afcb430508ec..85691a7d8ca6 100644
+> --- a/drivers/mailbox/mailbox.c
+> +++ b/drivers/mailbox/mailbox.c
+> @@ -117,10 +117,11 @@ static void poll_txdone(unsigned long data)
+>                 struct mbox_chan *chan = &mbox->chans[i];
+>
+>                 if (chan->active_req && chan->cl) {
+> -                       resched = true;
+>                         txdone = chan->mbox->ops->last_tx_done(chan);
+>                         if (txdone)
+>                                 tx_tick(chan, 0);
+> +                       else
+> +                               resched = true;
+>                 }
+>         }
+
+... but we still need to re-arm the timer if tx_tick() submits another
+message.  Perhaps the better thing to do is to have msg_submit() arm
+the timer.
+
+>> +     res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> +     if (!res)
+>> +             return -ENODEV;
+>> +     mbox->regs = devm_ioremap(&pdev->dev, res->start, resource_size(res));
+>> +     if (!mbox->regs)
+>> +             return -ENOMEM;
+>
+> This doesn't look right. Upon closer inspection, the reason why you
+> don't use devm_request_resource() is because these registers are shared
+> with the XHCI controller.
+>
+> Perhaps a better design would be for the XHCI driver to expose the
+> mailbox rather than split it off into a separate driver.
+
+Well that's what I had originally, but then it was suggested I make it
+a separate driver.
+
+Stephen also brought this up during review and suggested that some
+sort of MFD would be the best way to structure this, but was fine with
+the way I have it now.  I can move this driver around (again) if you
+feel that strongly about it...
+
+>> diff --git a/include/soc/tegra/xusb.h b/include/soc/tegra/xusb.h
+>> new file mode 100644
+>> index 0000000..cfe211d
+>> --- /dev/null
+>> +++ b/include/soc/tegra/xusb.h
+>
+> Perhaps this should really be named xusb-mbox.h?
+
+I'd prefer to leave it as xusb.h so that any other XUSB-related
+definitions can be left here.
