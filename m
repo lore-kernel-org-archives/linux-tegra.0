@@ -1,81 +1,43 @@
 From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [PATCH v3 03/13] soc/tegra: Add ram code reader helper
-Date: Wed, 29 Oct 2014 17:22:21 +0100
-Message-ID: <1414599796-30597-4-git-send-email-tomeu.vizoso@collabora.com>
+Subject: [PATCH v3 07/13] ARM: tegra: Add EMC to Tegra124 device tree
+Date: Wed, 29 Oct 2014 17:22:25 +0100
+Message-ID: <1414599796-30597-8-git-send-email-tomeu.vizoso@collabora.com>
 References: <1414599796-30597-1-git-send-email-tomeu.vizoso@collabora.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1414599796-30597-1-git-send-email-tomeu.vizoso@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-tegra@vger.kernel.org
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Mikko Perttunen <mperttunen@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Mikko Perttunen <mperttunen@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 From: Mikko Perttunen <mperttunen@nvidia.com>
 
-Needed for the EMC and MC drivers to know what timings from the DT to use.
+This adds a node for the EMC memory controller. It is always enabled, but only
+provides read-only functionality without board-specific timing tables.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
 ---
- drivers/soc/tegra/fuse/tegra-apbmisc.c | 19 +++++++++++++++++++
- include/soc/tegra/fuse.h               |  1 +
- 2 files changed, 20 insertions(+)
+ arch/arm/boot/dts/tegra124.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/soc/tegra/fuse/tegra-apbmisc.c b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-index 3bf5aba..e580892 100644
---- a/drivers/soc/tegra/fuse/tegra-apbmisc.c
-+++ b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-@@ -28,8 +28,13 @@
- #define APBMISC_SIZE	0x64
- #define FUSE_SKU_INFO	0x10
+diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+index 0ee30f6..97c9f8b 100644
+--- a/arch/arm/boot/dts/tegra124.dtsi
++++ b/arch/arm/boot/dts/tegra124.dtsi
+@@ -567,6 +567,13 @@
+ 		#iommu-cells = <1>;
+ 	};
  
-+#define PMC_STRAPPING_OPT_A_RAM_CODE_MASK_LONG	(0xf << 4)
-+#define PMC_STRAPPING_OPT_A_RAM_CODE_MASK_SHORT	(0x3 << 4)
-+#define PMC_STRAPPING_OPT_A_RAM_CODE_SHIFT	4
++	emc@0,7001b000 {
++		compatible = "nvidia,tegra124-emc";
++		reg = <0x0 0x7001b000 0x0 0x1000>;
 +
- static void __iomem *apbmisc_base;
- static void __iomem *strapping_base;
-+static bool          long_ram_code;
- 
- u32 tegra_read_chipid(void)
- {
-@@ -54,6 +59,18 @@ u32 tegra_read_straps(void)
- 		return 0;
- }
- 
-+u32 tegra_read_ram_code(void)
-+{
-+	u32 straps = tegra_read_straps();
++		nvidia,memory-controller = <&mc>;
++	};
 +
-+	if (long_ram_code)
-+		straps &= PMC_STRAPPING_OPT_A_RAM_CODE_MASK_LONG;
-+	else
-+		straps &= PMC_STRAPPING_OPT_A_RAM_CODE_MASK_SHORT;
-+
-+	return straps >> PMC_STRAPPING_OPT_A_RAM_CODE_SHIFT;
-+}
-+
- static const struct of_device_id apbmisc_match[] __initconst = {
- 	{ .compatible = "nvidia,tegra20-apbmisc", },
- 	{},
-@@ -112,4 +129,6 @@ void __init tegra_init_apbmisc(void)
- 	strapping_base = of_iomap(np, 1);
- 	if (!strapping_base)
- 		pr_err("ioremap tegra strapping_base failed\n");
-+
-+	long_ram_code = of_property_read_bool(np, "nvidia,long-ram-code");
- }
-diff --git a/include/soc/tegra/fuse.h b/include/soc/tegra/fuse.h
-index 8e12494..4ad6fd9 100644
---- a/include/soc/tegra/fuse.h
-+++ b/include/soc/tegra/fuse.h
-@@ -55,6 +55,7 @@ struct tegra_sku_info {
- };
- 
- u32 tegra_read_straps(void);
-+u32 tegra_read_ram_code(void);
- u32 tegra_read_chipid(void);
- int tegra_fuse_readl(unsigned long offset, u32 *value);
+ 	sata@0,70020000 {
+ 		compatible = "nvidia,tegra124-ahci";
  
 -- 
 1.9.3
