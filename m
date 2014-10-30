@@ -1,141 +1,35 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH RESEND V4 2/9] mailbox: Add NVIDIA Tegra XUSB mailbox
- driver
-Date: Thu, 30 Oct 2014 14:22:40 +0100
-Message-ID: <20141030132239.GC19386@ulmo>
-References: <1414535277-15645-1-git-send-email-abrestic@chromium.org>
- <1414535277-15645-3-git-send-email-abrestic@chromium.org>
- <20141029113415.GD28356@ulmo.nvidia.com>
- <CAL1qeaG2DFyfsPa2wgDqOkYTbnJ-tXoiV48AF9EaSCf1QCtOyQ@mail.gmail.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v4 05/12] memory: Add NVIDIA Tegra memory controller support
+Date: Thu, 30 Oct 2014 22:35:07 +0900
+Message-ID: <54523E8B.7000900@nvidia.com>
+References: <1413196434-5292-1-git-send-email-thierry.reding@gmail.com> <1413196434-5292-5-git-send-email-thierry.reding@gmail.com> <54520CFE.9060907@nvidia.com> <5452107D.8080207@nvidia.com> <54521181.8080005@nvidia.com> <54521B22.6070708@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="UFHRwCdBEJvubb2X"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAL1qeaG2DFyfsPa2wgDqOkYTbnJ-tXoiV48AF9EaSCf1QCtOyQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Bresticker <abrestic@chromium.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Jassi Brar <jassisinghbrar@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman <mathias.nyman@intel.com>, Grant Likely <grant.likely@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Arnd Bergmann <arnd@arndb.de>, Kishon Vijay Abraham I <kishon@ti.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-usb@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <54521B22.6070708-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?windows-1252?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 10/30/2014 08:04 PM, Terje Bergstr=F6m wrote:
+> On 30.10.2014 12:22, Alexandre Courbot wrote:
+>> So should I understand that the GPU group is for addresses without b=
+it
+>> 34 set (hence forcibly disabled) while GPUB is used when that bit is
+>> set? Or is it something else?
+>
+> That's exactly correct. And only GPUB can be programmed to be SMMU
+> translated.
 
---UFHRwCdBEJvubb2X
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Great, thanks for confirming!
 
-On Wed, Oct 29, 2014 at 11:02:36AM -0700, Andrew Bresticker wrote:
-[...]
-> > Maybe something like this patch would be more correct in handling
-> > this:
-> >
-> > diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
-> > index afcb430508ec..85691a7d8ca6 100644
-> > --- a/drivers/mailbox/mailbox.c
-> > +++ b/drivers/mailbox/mailbox.c
-> > @@ -117,10 +117,11 @@ static void poll_txdone(unsigned long data)
-> >                 struct mbox_chan *chan =3D &mbox->chans[i];
-> >
-> >                 if (chan->active_req && chan->cl) {
-> > -                       resched =3D true;
-> >                         txdone =3D chan->mbox->ops->last_tx_done(chan);
-> >                         if (txdone)
-> >                                 tx_tick(chan, 0);
-> > +                       else
-> > +                               resched =3D true;
-> >                 }
-> >         }
->=20
-> ... but we still need to re-arm the timer if tx_tick() submits another
-> message.  Perhaps the better thing to do is to have msg_submit() arm
-> the timer.
-
-I think we need both. If the last transmission isn't done yet we still
-want to keep polling. And we also want to poll if a new message is sent
-subsequently.
-
-Perhaps it would be as easy as moving the poll handling code from
-mbox_send_message() (if (chan->txdone_method =3D=3D TXDONE_BY_POLL)) into
-msg_submit()? That has the additional advantage of being able to omit
-the polling when an error happens during the mbox' .send_data().
-
-> >> +     res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> >> +     if (!res)
-> >> +             return -ENODEV;
-> >> +     mbox->regs =3D devm_ioremap(&pdev->dev, res->start, resource_siz=
-e(res));
-> >> +     if (!mbox->regs)
-> >> +             return -ENOMEM;
-> >
-> > This doesn't look right. Upon closer inspection, the reason why you
-> > don't use devm_request_resource() is because these registers are shared
-> > with the XHCI controller.
-> >
-> > Perhaps a better design would be for the XHCI driver to expose the
-> > mailbox rather than split it off into a separate driver.
->=20
-> Well that's what I had originally, but then it was suggested I make it
-> a separate driver.
->=20
-> Stephen also brought this up during review and suggested that some
-> sort of MFD would be the best way to structure this, but was fine with
-> the way I have it now.  I can move this driver around (again) if you
-> feel that strongly about it...
-
-We've had this discussion only recently about the memory controller
-driver. It used to be that there were separate drivers for the memory
-controller part and the IOMMU part. But that resulted in hilarious DT
-bindings. Granted, most of the issues had to do with unfortunate inter-
-leaving of register regions, but generally I think there's nothing wrong
-with exposing multiple interfaces from a single driver.
-
-The downside of course is that you have to choose which subsystem is the
-primary one and then get it merged via that tree. There's also a problem
-in that the driver is now in a different directory than the others, so a
-subsystem-wide change may not notice the "out-of-place" driver. But I
-think we have pretty good tools to help with this type of thing.
-
-Also, managing all the resources (regulators, clocks, resets, ...) that
-a hardware block requires is much easier to do in a single driver than
-spread over several. MFD could be an option somewhere halfway between
-the two but also has some downsides. Most importantly it isn't going to
-scale in the long run.
-
-> >> diff --git a/include/soc/tegra/xusb.h b/include/soc/tegra/xusb.h
-> >> new file mode 100644
-> >> index 0000000..cfe211d
-> >> --- /dev/null
-> >> +++ b/include/soc/tegra/xusb.h
-> >
-> > Perhaps this should really be named xusb-mbox.h?
->=20
-> I'd prefer to leave it as xusb.h so that any other XUSB-related
-> definitions can be left here.
-
-Okay, that makes sense given that the mbox really is part of the larger
-XUSB block.
-
-Thierry
-
---UFHRwCdBEJvubb2X
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJUUjufAAoJEN0jrNd/PrOh9+MQAJ34A1WmGFbkp9i+fSy1vxj2
-YLCYfpKpaGdcBHorAwrbvF4bLpCw+tuzuFyN6nyIof5stLW1v71laG3L/VVvUvv9
-V0Hw55J3h0MUqicqX6Xxf1CrZ32h9llBwtO2Rsrn0Fu+hDZD//qhxUTozJqfgX9X
-6W364/0TBUDKX/AzkT8mc5isfIZZzFaSSWs5eLFW23fvcm6Vakw/a0WpDGi87ydF
-VmCrVqqSicWINn1wDuezUXJzp0uvrDZvfuJiINlof84MWgT/iAkXYW/D/9s5caSz
-VMozDX9LOc9as6Yl2wXugU50uRdz8+mkzYzfnATZBEsa+xdDvZ1f4dS0PCMpYLRV
-tVCdHJ7LeEey8TouLRte6zRYeLCWlix2weLGAC903EQlnnANhWcRIm/s9jOr5fEG
-bnjvH2k16h1WNwQ7vBHeqXEzRkVz1TqmTPASCmuw9mvrobkvOJ/ahLrHG9jMXwT0
-XPJuUHSaylYMkUp93TtPhPxhvIgyVLDt9EMyISIO4IrxUCP5yRnziGX1PonHDP2W
-HnDZyemGYaxLGg413tswuZsOkJqDdJ7EDB3uNPwBEVPmzR0vN/JVAty3/aLE0f+s
-JF5lmtjEuficDy5g62NJh+8Zyn3zOoK3eB0/Hsd/s3v2PIBzjWt3XTf+Me+Kd1x2
-LpirIX4NNT/hHO4jEzgn
-=+U1C
------END PGP SIGNATURE-----
-
---UFHRwCdBEJvubb2X--
+Thierry, how do you want to address this? We could change the register=20
+for the GPU group, or (maybe preferable if we want to reflect the actua=
+l=20
+hardware state) add the GPUB group. I don't know if that would be easy=20
+though since we would have the problem of the gpusrd and gpuswr clients=
+=20
+ownership (seems like they would belong to both groups?)
