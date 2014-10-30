@@ -1,41 +1,103 @@
-From: =?windows-1252?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v4 05/12] memory: Add NVIDIA Tegra memory controller
-	support
-Date: Thu, 30 Oct 2014 15:47:59 +0200
-Message-ID: <5452418F.8080005@nvidia.com>
-References: <1413196434-5292-1-git-send-email-thierry.reding@gmail.com>
-	<1413196434-5292-5-git-send-email-thierry.reding@gmail.com>
-	<54520CFE.9060907@nvidia.com> <5452107D.8080207@nvidia.com>
-	<54521181.8080005@nvidia.com> <54521B22.6070708@nvidia.com>
-	<54523E8B.7000900@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH RESEND V4 5/9] of: Add NVIDIA Tegra xHCI controller
+ binding
+Date: Thu, 30 Oct 2014 14:55:02 +0100
+Message-ID: <20141030135500.GC19802@ulmo.nvidia.com>
+References: <1414535277-15645-1-git-send-email-abrestic@chromium.org>
+ <1414535277-15645-6-git-send-email-abrestic@chromium.org>
+ <20141029094338.GA28356@ulmo.nvidia.com>
+ <CAL1qeaEf0mTQfMgnY8jHGDBvbQ7ivtzAQRWaE9K24TJ86hWYMg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <54523E8B.7000900-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ABTtc+pdwF7KHXCz"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAL1qeaEf0mTQfMgnY8jHGDBvbQ7ivtzAQRWaE9K24TJ86hWYMg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Bresticker <abrestic@chromium.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Jassi Brar <jassisinghbrar@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman <mathias.nyman@intel.com>, Grant Likely <grant.likely@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Arnd Bergmann <arnd@arndb.de>, Kishon Vijay Abraham I <kishon@ti.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-usb@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 30.10.2014 15:35, Alexandre Courbot wrote:
-> Great, thanks for confirming!
-> 
-> Thierry, how do you want to address this? We could change the register
-> for the GPU group, or (maybe preferable if we want to reflect the actual
-> hardware state) add the GPUB group. I don't know if that would be easy
-> though since we would have the problem of the gpusrd and gpuswr clients
-> ownership (seems like they would belong to both groups?)
 
-gpusrd and gpuswr are client IDs for GPU reads and writes on MC. GPU and
-GPUB are SW group IDs for SMMU. There's no 1:1 or hierarchical mapping.
+--ABTtc+pdwF7KHXCz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Terje
+On Wed, Oct 29, 2014 at 09:37:14AM -0700, Andrew Bresticker wrote:
+> On Wed, Oct 29, 2014 at 2:43 AM, Thierry Reding
+> <thierry.reding@gmail.com> wrote:
+> > On Tue, Oct 28, 2014 at 03:27:50PM -0700, Andrew Bresticker wrote:
+> > [...]
+> >> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124=
+-xusb-padctl.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra12=
+4-xusb-padctl.txt
+> > [...]
+> >> +Optional properties:
+> >> +-------------------
+> >> +- vbus-{0,1,2}-supply: VBUS regulator for the corresponding UTMI pad.
+> >> +- vddio-hsic-supply: VDDIO regulator for the HSIC pads.
+> >> +- nvidia,usb3-port-{0,1}-lane: PCIe/SATA lane to which the correspond=
+ing USB3
+> >> +  port is mapped.  See <dt-bindings/pinctrl/pinctrl-tegra-xusb.h> for=
+ the list
+> >> +  of valid values.
+> >
+> > I dislike how we now need to provide a list of all pins in the header
+> > file, where previously we used strings for this. This could become very
+> > ugly if the set of pins changes in future generations of this IP block.
+> >
+> > Could we instead derive this from the pinmux nodes? For example you have
+> > this in the example below:
+> >
+> >         usb3p0 {
+> >                 nvidia,lanes =3D "pcie-0";
+> >                 ...
+> >         };
+> >
+> > Perhaps what we need is to either key off the node name or add another
+> > property, such as:
+> >
+> >         nvidia,usb3-port =3D <0>;
+> >
+> > This would match the nvidia,usb2-port property that you've added below.
+>=20
+> That is actually how I described the USB3 port to SS lane mapping
+> originally, but in review of an earlier version of this series,
+> Stephen suggested that I make it a separate, not pinconfig property
+> since it wasn't a value written directly to the hardware.  I'm fine
+> with changing it back as the pinconfig property makes more sense to me
+> as well.
+
+Hmm... I had considered it a mux option of the specific lane. If the
+function is usb3, it'd still need to be muxed to one of the ports. So
+it's additional information associated with the usb3 function.
+
+I did look through the driver changes and can't really make out which
+part of the code actually performs this assignment. Can you point me to
+it?
+
+Thierry
+
+--ABTtc+pdwF7KHXCz
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUUkM0AAoJEN0jrNd/PrOhMS8P/i/lGqgEusOrtNYyZhrYikX9
+/3mOb4M3tfpY5A9yt5sWZrnTXRa+Yg0mDg3ct5I9uPcO231miVdCI+X3VmLXtMzx
+7JKA7xfdO530WaEbjJWZQnocm8Ofy2bVmwgy2beWJoMyKOE22+Ibe1pRs/Ew27B/
+QiCAzvJY0AA+GoKbfwUIRblg3vRUc9iqMf8Za6RvHfgM0xzRRz68KgYneDaoW/lV
+DKSXu+pPXxVzCU4EAu+jqA5Vusj96S3dPdZp05Jk3jEyLKswlveb5xZgWzZkssVN
+Cvjjknlde6pPlvtRsm/3eT1XdF719A2+8l5FL1Dixv2ZatsXx3IW210tHrTg0D6Q
+hSpBMGbLBF4TMlbDOaVQplgVDCKIMQSpk8F6rSxFK0kO8qQ4EbMlt+u4Cqi6xQXi
+hAyBc4gdq0NWmq+EU0YvaPgn5B+o4Ohsxaqa4maikEXlbL0hf6TlrIRkLQx/VDGD
+LliNkRszMrRhaPiSr+6VHdREtWWd/YjFzplbNW22R1Bd6iSbPj8E8LBcKHvUzb/T
+MixEf8JmYyaB7xJ9ok+ObSTIytxsedEt1pXXVdKHoA4dZVW7DTSH0cnA4xvHFiuC
+zpkK7P1fpGu+UOIz/KrT05xXt37g/vba0PIfYwe2BB0GS16rtlj77GFBBx35alvi
+TvZ/tempujyTIThhNrOa
+=+NwF
+-----END PGP SIGNATURE-----
+
+--ABTtc+pdwF7KHXCz--
