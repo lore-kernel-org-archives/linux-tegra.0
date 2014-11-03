@@ -1,58 +1,87 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-Subject: nv u-boot for spring (was: building nv-uboot for nyan-big.)
-Date: Mon, 03 Nov 2014 14:05:12 +0100
-Message-ID: <54577D88.2070002@suse.de>
-References: <54575BFE.2010108@synkhronix.com>
+From: Lucas Stach <dev@lynxeye.de>
+Subject: [PATCH] ARM: tegra: add serial aliases to Tegra124 DT
+Date: Mon,  3 Nov 2014 23:20:04 +0100
+Message-ID: <1415053204-30114-1-git-send-email-dev@lynxeye.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <54575BFE.2010108@synkhronix.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: "S.J.R. van Schaik" <stephan@synkhronix.com>
-Cc: Dylan Reid <dgreid@chromium.org>, linux-tegra@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Dear Stephan,
+Provides consistent numbering of consoles across boards.
 
-Am 03.11.2014 um 11:42 schrieb S.J.R. van Schaik:
-> [...] I have done some research to figure out how to build
-> a working nv u-boot binary, and working instructions can be found on =
-the
-> linux-exynos wiki [1]. However, when I tried to apply them to the sno=
-w
-> and spring boards, by selecting a different branch and a different
-> u-boot configuration, those attempts were of no success. [...]
-[...]
-> The u-boot.bin binary seems to build fine. However, the problem is si=
-milar
-> to the snow and spring boards, where I can't seem to build the DTB-fi=
-les.
+Signed-off-by: Lucas Stach <dev@lynxeye.de>
+---
+These aliases are already present in the base DTs for all
+other Tegra SoCs.
+---
+ arch/arm/boot/dts/tegra124.dtsi | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-You didn't ask me. ;) My Spring branch with patches is located here:
-https://github.com/afaerber/u-boot/commits/spring
-
-=46or my convenience I changed the sources to default to the right devi=
-ce
-tree, and I manually inlined exynos-periph-id.dtsi.
-
-If you need further info on my build steps, I can look them up in my
-scripts (on another machine) - I mainly derived them from the official
-instructions for Snow on the Chromium Wiki. I'm pretty sure I did not
-mess with the EC firmware at all.
-
-But whatever workarounds exist, the Chromium folks should really be
-working on upstreaming U-Boot support for all those Chromebooks, that
-usually sanitizes the build process as a side-effect, resulting in less
-user questions. :) For Snow I believe that to be done.
-
-Regards,
-Andreas
-
-> 1. http://linux-exynos.org/wiki/ARM_Chromebook/Building_u-boot#Buildi=
-ng_U-Boot_for_Peach_Pi.2FPit
-
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
-=BCrnberg
+diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+index 478c555..9b53649 100644
+--- a/arch/arm/boot/dts/tegra124.dtsi
++++ b/arch/arm/boot/dts/tegra124.dtsi
+@@ -12,6 +12,13 @@
+ 	#address-cells = <2>;
+ 	#size-cells = <2>;
+ 
++	aliases {
++		serial0 = &uarta;
++		serial1 = &uartb;
++		serial2 = &uartc;
++		serial3 = &uartd;
++	};
++
+ 	pcie-controller@0,01003000 {
+ 		compatible = "nvidia,tegra124-pcie";
+ 		device_type = "pci";
+@@ -286,7 +293,7 @@
+ 	 * the APB DMA based serial driver, the comptible is
+ 	 * "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart".
+ 	 */
+-	serial@0,70006000 {
++	uarta: serial@0,70006000 {
+ 		compatible = "nvidia,tegra124-uart", "nvidia,tegra20-uart";
+ 		reg = <0x0 0x70006000 0x0 0x40>;
+ 		reg-shift = <2>;
+@@ -299,7 +306,7 @@
+ 		status = "disabled";
+ 	};
+ 
+-	serial@0,70006040 {
++	uartb: serial@0,70006040 {
+ 		compatible = "nvidia,tegra124-uart", "nvidia,tegra20-uart";
+ 		reg = <0x0 0x70006040 0x0 0x40>;
+ 		reg-shift = <2>;
+@@ -312,7 +319,7 @@
+ 		status = "disabled";
+ 	};
+ 
+-	serial@0,70006200 {
++	uartc: serial@0,70006200 {
+ 		compatible = "nvidia,tegra124-uart", "nvidia,tegra20-uart";
+ 		reg = <0x0 0x70006200 0x0 0x40>;
+ 		reg-shift = <2>;
+@@ -325,7 +332,7 @@
+ 		status = "disabled";
+ 	};
+ 
+-	serial@0,70006300 {
++	uartd: serial@0,70006300 {
+ 		compatible = "nvidia,tegra124-uart", "nvidia,tegra20-uart";
+ 		reg = <0x0 0x70006300 0x0 0x40>;
+ 		reg-shift = <2>;
+-- 
+1.9.3
