@@ -1,87 +1,67 @@
-From: Lucas Stach <dev@lynxeye.de>
-Subject: [PATCH] ARM: tegra: add serial aliases to Tegra124 DT
-Date: Mon,  3 Nov 2014 23:20:04 +0100
-Message-ID: <1415053204-30114-1-git-send-email-dev@lynxeye.de>
+From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: nv u-boot for spring (was: building nv-uboot for nyan-big.)
+Date: Tue, 4 Nov 2014 10:39:00 -0800
+Message-ID: <CAL1qeaFzYRZHdsgZdwN5LV+OaSAPXgTQ+BRTWdsEurj22qC4Yg@mail.gmail.com>
+References: <54575BFE.2010108@synkhronix.com>
+	<54577D88.2070002@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <54577D88.2070002-l3A5Bk7waGM@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>
+Cc: "S.J.R. van Schaik" <stephan-zGZ7W/ttz6xN8Ch2cx6nig@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Julius Werner <jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Provides consistent numbering of consoles across boards.
+Stephan, Andreas,
 
-Signed-off-by: Lucas Stach <dev@lynxeye.de>
----
-These aliases are already present in the base DTs for all
-other Tegra SoCs.
----
- arch/arm/boot/dts/tegra124.dtsi | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+On Mon, Nov 3, 2014 at 5:05 AM, Andreas F=C3=A4rber <afaerber-l3A5Bk7waGM@public.gmane.org> =
+wrote:
+> Dear Stephan,
+>
+> Am 03.11.2014 um 11:42 schrieb S.J.R. van Schaik:
+>> [...] I have done some research to figure out how to build
+>> a working nv u-boot binary, and working instructions can be found on=
+ the
+>> linux-exynos wiki [1]. However, when I tried to apply them to the sn=
+ow
+>> and spring boards, by selecting a different branch and a different
+>> u-boot configuration, those attempts were of no success. [...]
+> [...]
+>> The u-boot.bin binary seems to build fine. However, the problem is s=
+imilar
+>> to the snow and spring boards, where I can't seem to build the DTB-f=
+iles.
+>
+> You didn't ask me. ;) My Spring branch with patches is located here:
+> https://github.com/afaerber/u-boot/commits/spring
+>
+> For my convenience I changed the sources to default to the right devi=
+ce
+> tree, and I manually inlined exynos-periph-id.dtsi.
+>
+> If you need further info on my build steps, I can look them up in my
+> scripts (on another machine) - I mainly derived them from the officia=
+l
+> instructions for Snow on the Chromium Wiki. I'm pretty sure I did not
+> mess with the EC firmware at all.
+>
+> But whatever workarounds exist, the Chromium folks should really be
+> working on upstreaming U-Boot support for all those Chromebooks, that
+> usually sanitizes the build process as a side-effect, resulting in le=
+ss
+> user questions. :) For Snow I believe that to be done.
 
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index 478c555..9b53649 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -12,6 +12,13 @@
- 	#address-cells = <2>;
- 	#size-cells = <2>;
- 
-+	aliases {
-+		serial0 = &uarta;
-+		serial1 = &uartb;
-+		serial2 = &uartc;
-+		serial3 = &uartd;
-+	};
-+
- 	pcie-controller@0,01003000 {
- 		compatible = "nvidia,tegra124-pcie";
- 		device_type = "pci";
-@@ -286,7 +293,7 @@
- 	 * the APB DMA based serial driver, the comptible is
- 	 * "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart".
- 	 */
--	serial@0,70006000 {
-+	uarta: serial@0,70006000 {
- 		compatible = "nvidia,tegra124-uart", "nvidia,tegra20-uart";
- 		reg = <0x0 0x70006000 0x0 0x40>;
- 		reg-shift = <2>;
-@@ -299,7 +306,7 @@
- 		status = "disabled";
- 	};
- 
--	serial@0,70006040 {
-+	uartb: serial@0,70006040 {
- 		compatible = "nvidia,tegra124-uart", "nvidia,tegra20-uart";
- 		reg = <0x0 0x70006040 0x0 0x40>;
- 		reg-shift = <2>;
-@@ -312,7 +319,7 @@
- 		status = "disabled";
- 	};
- 
--	serial@0,70006200 {
-+	uartc: serial@0,70006200 {
- 		compatible = "nvidia,tegra124-uart", "nvidia,tegra20-uart";
- 		reg = <0x0 0x70006200 0x0 0x40>;
- 		reg-shift = <2>;
-@@ -325,7 +332,7 @@
- 		status = "disabled";
- 	};
- 
--	serial@0,70006300 {
-+	uartd: serial@0,70006300 {
- 		compatible = "nvidia,tegra124-uart", "nvidia,tegra20-uart";
- 		reg = <0x0 0x70006300 0x0 0x40>;
- 		reg-shift = <2>;
--- 
-1.9.3
+Unlike the Exynos Chromebooks, the Tegra Chromebooks do not use U-Boot
+as their firmware/bootloader - they instead use Coreboot (firmware)
+and Depthcharge (bootloader) like the x86 Chromebooks.  You can,
+however, update your firmware with U-Boot as a legacy mode (Ctrl+L at
+the dev screen) payload - I've added Julius who can provide more
+detail about this process.
+
+Note that we do not maintain U-Boot support for these devices, but
+they are very similar to Venice2 which is well-supported upstream.  I
+can't guarantee that a Venice2 U-Boot payload will "just work" though.
+
+-Andrew
