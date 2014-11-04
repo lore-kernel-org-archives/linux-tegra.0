@@ -1,67 +1,131 @@
 From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: nv u-boot for spring (was: building nv-uboot for nyan-big.)
-Date: Tue, 4 Nov 2014 10:39:00 -0800
-Message-ID: <CAL1qeaFzYRZHdsgZdwN5LV+OaSAPXgTQ+BRTWdsEurj22qC4Yg@mail.gmail.com>
-References: <54575BFE.2010108@synkhronix.com>
-	<54577D88.2070002@suse.de>
+Subject: Re: [PATCH RESEND V4 5/9] of: Add NVIDIA Tegra xHCI controller binding
+Date: Tue, 4 Nov 2014 12:44:52 -0800
+Message-ID: <CAL1qeaEbQoXFgYjtxVvAwULC6P_9xrb56_=-HjKOmUBaLVUh2w@mail.gmail.com>
+References: <1414535277-15645-1-git-send-email-abrestic@chromium.org>
+	<1414535277-15645-6-git-send-email-abrestic@chromium.org>
+	<20141029094338.GA28356@ulmo.nvidia.com>
+	<CAL1qeaEf0mTQfMgnY8jHGDBvbQ7ivtzAQRWaE9K24TJ86hWYMg@mail.gmail.com>
+	<20141030135500.GC19802@ulmo.nvidia.com>
+	<CAL1qeaG701hKtcUL5a67b=X38hbcYunUOUBziZMpxemvhhAayA@mail.gmail.com>
+	<20141030172432.GA8944@ulmo.nvidia.com>
+	<CAL1qeaEbRkOQApyjkpwxBd3mGkQ3JuXNiar1MbBd844NWe5h9g@mail.gmail.com>
+	<20141031113249.GD10778@ulmo.nvidia.com>
+	<CAL1qeaFcyoSUbVdgUdWZ6RtRiuj0X1H-ohXCsckwF8=VPw8jRA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <54577D88.2070002-l3A5Bk7waGM@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>
-Cc: "S.J.R. van Schaik" <stephan-zGZ7W/ttz6xN8Ch2cx6nig@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Julius Werner <jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAL1qeaFcyoSUbVdgUdWZ6RtRiuj0X1H-ohXCsckwF8=VPw8jRA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Stephan, Andreas,
+On Fri, Oct 31, 2014 at 9:41 AM, Andrew Bresticker
+<abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+> On Fri, Oct 31, 2014 at 4:32 AM, Thierry Reding
+> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>> On Thu, Oct 30, 2014 at 10:26:47AM -0700, Andrew Bresticker wrote:
+>>> On Thu, Oct 30, 2014 at 10:24 AM, Thierry Reding
+>>> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>>> > On Thu, Oct 30, 2014 at 10:19:21AM -0700, Andrew Bresticker wrote:
+>>> >> On Thu, Oct 30, 2014 at 6:55 AM, Thierry Reding
+>>> >> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>>> >> > On Wed, Oct 29, 2014 at 09:37:14AM -0700, Andrew Bresticker wrote:
+>>> >> >> On Wed, Oct 29, 2014 at 2:43 AM, Thierry Reding
+>>> >> >> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>>> >> >> > On Tue, Oct 28, 2014 at 03:27:50PM -0700, Andrew Bresticker wrote:
+>>> >> >> > [...]
+>>> >> >> >> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt
+>>> >> >> > [...]
+>>> >> >> >> +Optional properties:
+>>> >> >> >> +-------------------
+>>> >> >> >> +- vbus-{0,1,2}-supply: VBUS regulator for the corresponding UTMI pad.
+>>> >> >> >> +- vddio-hsic-supply: VDDIO regulator for the HSIC pads.
+>>> >> >> >> +- nvidia,usb3-port-{0,1}-lane: PCIe/SATA lane to which the corresponding USB3
+>>> >> >> >> +  port is mapped.  See <dt-bindings/pinctrl/pinctrl-tegra-xusb.h> for the list
+>>> >> >> >> +  of valid values.
+>>> >> >> >
+>>> >> >> > I dislike how we now need to provide a list of all pins in the header
+>>> >> >> > file, where previously we used strings for this. This could become very
+>>> >> >> > ugly if the set of pins changes in future generations of this IP block.
+>>> >> >> >
+>>> >> >> > Could we instead derive this from the pinmux nodes? For example you have
+>>> >> >> > this in the example below:
+>>> >> >> >
+>>> >> >> >         usb3p0 {
+>>> >> >> >                 nvidia,lanes = "pcie-0";
+>>> >> >> >                 ...
+>>> >> >> >         };
+>>> >> >> >
+>>> >> >> > Perhaps what we need is to either key off the node name or add another
+>>> >> >> > property, such as:
+>>> >> >> >
+>>> >> >> >         nvidia,usb3-port = <0>;
+>>> >> >> >
+>>> >> >> > This would match the nvidia,usb2-port property that you've added below.
+>>> >> >>
+>>> >> >> That is actually how I described the USB3 port to SS lane mapping
+>>> >> >> originally, but in review of an earlier version of this series,
+>>> >> >> Stephen suggested that I make it a separate, not pinconfig property
+>>> >> >> since it wasn't a value written directly to the hardware.  I'm fine
+>>> >> >> with changing it back as the pinconfig property makes more sense to me
+>>> >> >> as well.
+>>> >> >
+>>> >> > Hmm... I had considered it a mux option of the specific lane. If the
+>>> >> > function is usb3, it'd still need to be muxed to one of the ports. So
+>>> >> > it's additional information associated with the usb3 function.
+>>> >> >
+>>> >> > I did look through the driver changes and can't really make out which
+>>> >> > part of the code actually performs this assignment. Can you point me to
+>>> >> > it?
+>>> >>
+>>> >> There's not really an assignment.  The property is used to map between
+>>> >> a lane (e.g. PCIe-0 or SATA) and the USB3.0 port it's mapped to.  For
+>>> >> an example of where it's used, take a look at usb3_phy_power_on().
+>>> >> There are certain per-lane registers which need to be programmed in
+>>> >> addition to the per-USB3.0 port pad registers.  This mapping is used
+>>> >> to determine which lane needs to be programmed.
+>>> >
+>>> > Are you saying the mapping of lane to USB port is fixed? That is, PCIe-0
+>>> > lane is always used for USB port X and SATA always for USB port Y?
+>>>
+>>> No, sorry if that was unclear, it's not fixed - it's a board specific
+>>> property.
+>>
+>> Okay, but there's no register that contains the mapping of the port to a
+>> lane, similar to what's done for the functions, right?
+>
+> Correct.
+>
+>> I mean the driver only uses the lane to find out which register to write.
+>> Doesn't that imply that two lanes (or more) could be mapped to the same
+>> USB 3.0 port?
+>
+> I guess?  Not sure how that would work in hardware to have two
+> SuperSpeed lanes wired up to a single port.
+>
+>> I'm not sure I'm being clear here, so let me try another way. In order
+>> to establish a mapping between USB port and lane, I would've expected
+>> one of the following to happen:
+>>
+>>         - A value derived from the lane number is written to a register
+>>           belonging to a given port.
+>>
+>>         - A value derived from the port number is written to a register
+>>           belonging to a given lane.
+>>
+>> I can't see the code do either of the above, which to me implies that
+>> there's a fixed mapping between lanes and ports. What am I missing?
+>
+> It's fixed in that it's not a software-modifiable property.  It's
+> describing an electrical connection between lane and port.  For
+> example, it's possible that one board has PCIe lane 1 wired up to
+> SuperSpeed port 1 and on another board for the SATA lane to be wired
+> up to SuperSpeed port 1.  Does that make sense?
 
-On Mon, Nov 3, 2014 at 5:05 AM, Andreas F=C3=A4rber <afaerber-l3A5Bk7waGM@public.gmane.org> =
-wrote:
-> Dear Stephan,
->
-> Am 03.11.2014 um 11:42 schrieb S.J.R. van Schaik:
->> [...] I have done some research to figure out how to build
->> a working nv u-boot binary, and working instructions can be found on=
- the
->> linux-exynos wiki [1]. However, when I tried to apply them to the sn=
-ow
->> and spring boards, by selecting a different branch and a different
->> u-boot configuration, those attempts were of no success. [...]
-> [...]
->> The u-boot.bin binary seems to build fine. However, the problem is s=
-imilar
->> to the snow and spring boards, where I can't seem to build the DTB-f=
-iles.
->
-> You didn't ask me. ;) My Spring branch with patches is located here:
-> https://github.com/afaerber/u-boot/commits/spring
->
-> For my convenience I changed the sources to default to the right devi=
-ce
-> tree, and I manually inlined exynos-periph-id.dtsi.
->
-> If you need further info on my build steps, I can look them up in my
-> scripts (on another machine) - I mainly derived them from the officia=
-l
-> instructions for Snow on the Chromium Wiki. I'm pretty sure I did not
-> mess with the EC firmware at all.
->
-> But whatever workarounds exist, the Chromium folks should really be
-> working on upstreaming U-Boot support for all those Chromebooks, that
-> usually sanitizes the build process as a side-effect, resulting in le=
-ss
-> user questions. :) For Snow I believe that to be done.
-
-Unlike the Exynos Chromebooks, the Tegra Chromebooks do not use U-Boot
-as their firmware/bootloader - they instead use Coreboot (firmware)
-and Depthcharge (bootloader) like the x86 Chromebooks.  You can,
-however, update your firmware with U-Boot as a legacy mode (Ctrl+L at
-the dev screen) payload - I've added Julius who can provide more
-detail about this process.
-
-Note that we do not maintain U-Boot support for these devices, but
-they are very similar to Venice2 which is well-supported upstream.  I
-can't guarantee that a Venice2 U-Boot payload will "just work" though.
-
--Andrew
+So what's the verdict here?
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
