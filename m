@@ -1,49 +1,86 @@
-From: Julius Werner <jwerner@chromium.org>
-Subject: Re: nv u-boot for spring (was: building nv-uboot for nyan-big.)
-Date: Tue, 4 Nov 2014 14:28:09 -0800
-Message-ID: <CAODwPW_kqV=FVUG6GvV74211juBVCkA8RxrfXZoncRieRn+FZw@mail.gmail.com>
-References: <54575BFE.2010108@synkhronix.com>
-	<54577D88.2070002@suse.de>
-	<CAL1qeaFzYRZHdsgZdwN5LV+OaSAPXgTQ+BRTWdsEurj22qC4Yg@mail.gmail.com>
-	<CAODwPW_ZbCMEwdtuu9gMD_HLQWynC6ZQjno6xVxFMOBuxRzd+A@mail.gmail.com>
+From: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: boot regression with AHCI on jetson-tk1
+Date: Tue, 4 Nov 2014 21:34:14 -0800
+Message-ID: <20141105053414.GA24124@nvidia.com>
+References: <1411724593-4037-1-git-send-email-cyndis@kapsi.fi>
+ <1411724593-4037-3-git-send-email-cyndis@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <CAODwPW_ZbCMEwdtuu9gMD_HLQWynC6ZQjno6xVxFMOBuxRzd+A@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Julius Werner <jwerner@chromium.org>
-Cc: Andrew Bresticker <abrestic@chromium.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, "S.J.R. van Schaik" <stephan@synkhronix.com>, Dylan Reid <dgreid@chromium.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1411724593-4037-3-git-send-email-cyndis-/1wQRMveznE@public.gmane.org>
+Content-Disposition: inline
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-...and once more with text/plain. Thanks for always forgetting my
-settings, GMail. -.-
+I tried booting 3.18-rc3 on jetson-tk1 and I'm seeing a hang during
+boot right before user space normally comes up.  I bisected the
+regression back to this commit which just turns on AHCI.  I don't have
+any SATA device connected to the board.
 
-On Tue, Nov 4, 2014 at 2:26 PM, Julius Werner <jwerner@chromium.org> wrote:
->>
->> Unlike the Exynos Chromebooks, the Tegra Chromebooks do not use U-Boot
->> as their firmware/bootloader - they instead use Coreboot (firmware)
->> and Depthcharge (bootloader) like the x86 Chromebooks.  You can,
->> however, update your firmware with U-Boot as a legacy mode (Ctrl+L at
->> the dev screen) payload - I've added Julius who can provide more
->> detail about this process.
->
->
-> The Tegra Chromebooks (Nyan_Big/Acer and Nyan_Blaze/HP) contain the same "legacy mode" feature as x86 Chromebooks... it essentially just loads and jumps to an unverified binary in the RW_LEGACY section of the firmware flash image (1MB starting at 0x300000 for Tegra, visible via "dump_fmap -h image.bin" in a ChromiumOS developer chroot). However, we did not ship any software in that part of the image (unlike most x86 Chromebooks which ship with SeaBIOS) so you will have to build it yourself.
->
-> The format used to wrap the blob is a Coreboot File System (CBFS) containing a single file named "payload". You can convert an ELF binary into such a CBFS blob with the cbfstool program bundled with ChromiumOS or upstream coreboot:
->
-> # All CBFS images need to have a "bootblock", but since this is not a booting image we just need some empty bytes
-> truncate -s 64 bootblock.dummy
-> # -s should specify the size of RW_LEGACY on your Chromebook
-> cbfstool legacy.bin create -s $((1 * 1024 * 1024)) -B bootblock.dummy -m arm
-> cbfstool legacy.bin add-payload -f your_firmware.elf -n payload -c lzma
-> # ...and now do the following on your Chromebook in developer mode to overwrite the legacy section
-> flashrom -w -i RW_LEGACY:legacy.bin
->
-> The legacy section is not write-protected and not checked by the verified boot mechanism, so you do *not* need to open your Chromebook and remove the write-protect screw for this.
->
-> I don't know about the state of the upstream "venice2" U-Boot. I do know that the ChromiumOS U-Boot repository has a version for nyan_big and nyan_blaze that will kinda run but has a bunch of issues (I think EC communication and MMC were wonky, and display had never been added at all). It is probably the best place to start. Remember that this will run after coreboot has already initialized most of the system, which may be unexpected for a U-Boot that intended to run right after power-on reset (you may or may not want to skip the SPL in that case). For U-Boot, there is also an additional complexity that it requires a device tree appended to the final raw binary, but cbfstool expects to receive an ELF file... we have a small script in src/third_party/chromiumos-overlay/sys-boot/chromeos-b
- ootimage/files/build_cb_legacy_uboot.sh to resolve that with some objcopies.
->
-> We would be very happy if anyone wants to dig into U-Boot and get it working to a point where people could boot ordinary Linux distributions with it on those Chromebooks. We meant to do it ourselves but ran out of time at the end of the project. Let me know if you have any issues getting the legacy firmware mechanism itself to work (that part at least is considered a supported feature).
+
+commit 91816a7fe5a671b826d5288ed7b42e92117a8fe8
+Author: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Date:   Wed Jul 16 11:54:23 2014 +0300
+
+    ARM: tegra: Add options for Tegra AHCI support to tegra_defconfig
+    
+    This adds ATA, SATA_AHCI and AHCI_TEGRA support to tegra_defconfig
+    so that the SATA support will be automatically enabled.
+    
+    Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+    Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+diff --git a/arch/arm/configs/tegra_defconfig
+b/arch/arm/configs/tegra_defconfig
+index 285c433..2b8be48 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -102,6 +102,9 @@ CONFIG_BLK_DEV_SD=y
+ CONFIG_BLK_DEV_SR=y
+ CONFIG_SCSI_MULTI_LUN=y
+ # CONFIG_SCSI_LOWLEVEL is not set
++CONFIG_ATA=y
++CONFIG_SATA_AHCI=y
++CONFIG_AHCI_TEGRA=y
+ CONFIG_NETDEVICES=y
+ CONFIG_DUMMY=y
+ CONFIG_IGB=y
+
+
+
+Here's where it hangs, always at the same place:
+
+...
+[    2.370671] +1.35V_LP0(sd2): supplied by +5V_SYS
+[    2.375732] +1.35V_LP0(sd3): 1350 mV 
+[    2.379522] +1.35V_LP0(sd3): supplied by +5V_SYS
+[    2.384551] +1.05V_RUN: 1050 mV 
+[    2.387918] +1.05V_RUN: supplied by +5V_SYS
+[    2.392482] +1.8V_VDDIO: 1800 mV 
+[    2.395944] +1.8V_VDDIO: supplied by +5V_SYS
+[    2.401498] +VDD_GPU_AP: 650 <--> 1200 mV at 1000 mV 3500 mA 
+[    2.407734] +1.05V_RUN_AVDD: 1050 mV at 300 mA 
+[    2.412400] +1.05V_RUN_AVDD: supplied by +1.35V_LP0(sd2)
+[    2.418329] +1.8V_RUN_CAM: 1800 mV at 150 mA 
+[    2.422838] +1.8V_RUN_CAM: supplied by +3.3V_RUN
+[    2.428665] +1.2V_GEN_AVDD: 1200 mV at 150 mA 
+[    2.433268] +1.2V_GEN_AVDD: supplied by +1.8V_VDDIO
+[    2.439489] +1.05V_LP0_VDD_RTC: 1000 mV at 150 mA 
+[    2.444426] +1.05V_LP0_VDD_RTC: supplied by +3.3V_SYS
+[    2.450185] +2.8V_RUN_CAM: 2800 mV at 150 mA 
+[    2.454711] +2.8V_RUN_CAM: supplied by +3.3V_SYS
+[    2.460022] +1.2V_RUN_CAM_FRONT: 1200 mV at 150 mA 
+[    2.465079] +1.2V_RUN_CAM_FRONT: supplied by +1.8V_VDDIO
+[    2.470958] +VDDIO_SDMMC3: 1800 <--> 3300 mV at 150 mA 
+[    2.476354] +VDDIO_SDMMC3: supplied by +3.3V_RUN
+[    2.481675] +1.05V_RUN_CAM_REAR: 1050 mV at 150 mA 
+[    2.486721] +1.05V_RUN_CAM_REAR: supplied by +1.8V_VDDIO
+[    2.492904] +3.3V_RUN_TOUCH: 2800 mV at 150 mA 
+[    2.497608] +3.3V_RUN_TOUCH: supplied by +5V_SYS
+[    2.502933] +2.8V_RUN_CAM_AF: 2800 mV at 150 mA 
+[    2.507724] +2.8V_RUN_CAM_AF: supplied by +5V_SYS
+[    2.513126] +1.8V_RUN_VPP_FUSE: 1800 mV at 150 mA 
+[    2.518101] +1.8V_RUN_VPP_FUSE: supplied by +3.3V_RUN
+*hang*
