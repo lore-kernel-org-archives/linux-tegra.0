@@ -1,86 +1,104 @@
-From: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: boot regression with AHCI on jetson-tk1
-Date: Tue, 4 Nov 2014 21:34:14 -0800
-Message-ID: <20141105053414.GA24124@nvidia.com>
-References: <1411724593-4037-1-git-send-email-cyndis@kapsi.fi>
- <1411724593-4037-3-git-send-email-cyndis@kapsi.fi>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC 09/10] drm/tegra: Add IOMMU support
+Date: Wed, 5 Nov 2014 10:50:05 +0100
+Message-ID: <20141105095003.GA12458@ulmo.nvidia.com>
+References: <1403815790-8548-1-git-send-email-thierry.reding@gmail.com>
+	<1403815790-8548-10-git-send-email-thierry.reding@gmail.com>
+	<CAOw6vbJy6oy7cibH4f332UM=kS56KUMcnYdUTG0pEYXyQkFDoQ@mail.gmail.com>
+	<CAOw6vbLFLrqWYB-4N50G7oucgMD+xd+QtdcMSzX4z7xRiU-vPQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1411724593-4037-3-git-send-email-cyndis-/1wQRMveznE@public.gmane.org>
-Content-Disposition: inline
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============5277356299868273657=="
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <CAOw6vbLFLrqWYB-4N50G7oucgMD+xd+QtdcMSzX4z7xRiU-vPQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Sean Paul <seanpaul-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, =?utf-8?B?U3TDqXBoYW5l?= Marchesin <marcheu-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Rhyland Klein <rklein@nvidia>
 List-Id: linux-tegra@vger.kernel.org
 
-I tried booting 3.18-rc3 on jetson-tk1 and I'm seeing a hang during
-boot right before user space normally comes up.  I bisected the
-regression back to this commit which just turns on AHCI.  I don't have
-any SATA device connected to the board.
+
+--===============5277356299868273657==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="HlL+5n6rz5pIUxbD"
+Content-Disposition: inline
 
 
-commit 91816a7fe5a671b826d5288ed7b42e92117a8fe8
-Author: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Date:   Wed Jul 16 11:54:23 2014 +0300
+--HlL+5n6rz5pIUxbD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-    ARM: tegra: Add options for Tegra AHCI support to tegra_defconfig
-    
-    This adds ATA, SATA_AHCI and AHCI_TEGRA support to tegra_defconfig
-    so that the SATA support will be automatically enabled.
-    
-    Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-    Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Wed, Oct 01, 2014 at 11:54:11AM -0400, Sean Paul wrote:
+> On Tue, Sep 30, 2014 at 2:48 PM, Sean Paul <seanpaul-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org> wrote:
+> > On Thu, Jun 26, 2014 at 4:49 PM, Thierry Reding <thierry.reding@gmail.c=
+om> wrote:
+> >> diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
+[...]
+> >>  static void tegra_bo_destroy(struct drm_device *drm, struct tegra_bo =
+*bo)
+> >>  {
+> >> -       dma_free_writecombine(drm->dev, bo->gem.size, bo->vaddr, bo->p=
+addr);
+> >> +       if (!bo->pages)
+> >> +               dma_free_writecombine(drm->dev, bo->gem.size, bo->vadd=
+r,
+> >> +                                     bo->paddr);
+>=20
+> One more thing. If tegra_bo_alloc fails, we'll have bo->vaddr =3D=3D NULL
+> and bo->paddr =3D=3D ~0 here, which causes a crash.
+>=20
+> I posted https://lkml.org/lkml/2014/9/30/659 to check for the error
+> condition in the mm code, but it seems like reviewer consensus is to
+> check for this before calling free.
+>=20
+> As such, we'll need to make sure bo->vaddr !=3D NULL before calling
+> dma_free_writecombine to avoid this situation.
+>=20
+> Would you prefer I send a patch up to fix this separately, or would
+> you like to roll this into your next version?
 
-diff --git a/arch/arm/configs/tegra_defconfig
-b/arch/arm/configs/tegra_defconfig
-index 285c433..2b8be48 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -102,6 +102,9 @@ CONFIG_BLK_DEV_SD=y
- CONFIG_BLK_DEV_SR=y
- CONFIG_SCSI_MULTI_LUN=y
- # CONFIG_SCSI_LOWLEVEL is not set
-+CONFIG_ATA=y
-+CONFIG_SATA_AHCI=y
-+CONFIG_AHCI_TEGRA=y
- CONFIG_NETDEVICES=y
- CONFIG_DUMMY=y
- CONFIG_IGB=y
+I've rolled this check into my series because I touch that area of code
+anyway.
+
+Thanks for bringing it up.
+
+Thierry
+
+--HlL+5n6rz5pIUxbD
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUWfLLAAoJEN0jrNd/PrOhGdMP/jgzGHvv3uBF15GkJMhy8wdT
+5DdyMqhvriyDDD3JykETF/i2O++tGUIGzZH4fZNwtJE/UGRASu8Qxiuk7e8MecFv
+lxEWpRCUiVsDs8HC4Aw2E9s8pKKZ9a9PBTuLcxCoqUj5sIK/ds35Fmnuzsx2usft
+H5cQ6Yu4ASajJL3bsTjX9+9BWh5okF6NvfnVqu3xF5QwB8MeJaSg2WIZf9FSLOc5
+/TtunrbukX8HjJXygQcNZMYOM8cxhzcBrDGerHhXGPMNRVnprbXDkdN4CrRvHhcu
+0kI0ig5DVqYJL2UJfFZodoTHy2fnskvf1QTZRxLtEBcqdR3YN885mKEP0F0Dvdw+
+F2SFtj3HB2NwF7fX5omWwYWUa6FwOGbScXApGXQYH6nSvrSfvYfBopOTj9cfsoHb
+LCQm1qxQJEIz0B83AYqi7EJ5UsPdaHo7xWOKAPsyYUUD0Gjttv49ICZAH92xyr2G
+L1l2SbV6dXctvupjfszn5pkzpH2x2lvUyIooaEbDxr+LFUl+mDZ0RiEYG+hq2GGT
+ht2nOR74nr80bq3PhyT/WfPBsm7k2BCTKVk2G/0ozNV8MVD//k8FvmSTXIr7Cgah
+tDxrwz8Rg63AIDCbHSgkGERmXAhCCiJa+V2fzXNziRsdVlyBGLs3y8pK3j2Z0U0A
+m70Q9GfLzPbbYQ5KpMoe
+=bxPN
+-----END PGP SIGNATURE-----
+
+--HlL+5n6rz5pIUxbD--
+
+--===============5277356299868273657==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 
-
-Here's where it hangs, always at the same place:
-
-...
-[    2.370671] +1.35V_LP0(sd2): supplied by +5V_SYS
-[    2.375732] +1.35V_LP0(sd3): 1350 mV 
-[    2.379522] +1.35V_LP0(sd3): supplied by +5V_SYS
-[    2.384551] +1.05V_RUN: 1050 mV 
-[    2.387918] +1.05V_RUN: supplied by +5V_SYS
-[    2.392482] +1.8V_VDDIO: 1800 mV 
-[    2.395944] +1.8V_VDDIO: supplied by +5V_SYS
-[    2.401498] +VDD_GPU_AP: 650 <--> 1200 mV at 1000 mV 3500 mA 
-[    2.407734] +1.05V_RUN_AVDD: 1050 mV at 300 mA 
-[    2.412400] +1.05V_RUN_AVDD: supplied by +1.35V_LP0(sd2)
-[    2.418329] +1.8V_RUN_CAM: 1800 mV at 150 mA 
-[    2.422838] +1.8V_RUN_CAM: supplied by +3.3V_RUN
-[    2.428665] +1.2V_GEN_AVDD: 1200 mV at 150 mA 
-[    2.433268] +1.2V_GEN_AVDD: supplied by +1.8V_VDDIO
-[    2.439489] +1.05V_LP0_VDD_RTC: 1000 mV at 150 mA 
-[    2.444426] +1.05V_LP0_VDD_RTC: supplied by +3.3V_SYS
-[    2.450185] +2.8V_RUN_CAM: 2800 mV at 150 mA 
-[    2.454711] +2.8V_RUN_CAM: supplied by +3.3V_SYS
-[    2.460022] +1.2V_RUN_CAM_FRONT: 1200 mV at 150 mA 
-[    2.465079] +1.2V_RUN_CAM_FRONT: supplied by +1.8V_VDDIO
-[    2.470958] +VDDIO_SDMMC3: 1800 <--> 3300 mV at 150 mA 
-[    2.476354] +VDDIO_SDMMC3: supplied by +3.3V_RUN
-[    2.481675] +1.05V_RUN_CAM_REAR: 1050 mV at 150 mA 
-[    2.486721] +1.05V_RUN_CAM_REAR: supplied by +1.8V_VDDIO
-[    2.492904] +3.3V_RUN_TOUCH: 2800 mV at 150 mA 
-[    2.497608] +3.3V_RUN_TOUCH: supplied by +5V_SYS
-[    2.502933] +2.8V_RUN_CAM_AF: 2800 mV at 150 mA 
-[    2.507724] +2.8V_RUN_CAM_AF: supplied by +5V_SYS
-[    2.513126] +1.8V_RUN_VPP_FUSE: 1800 mV at 150 mA 
-[    2.518101] +1.8V_RUN_VPP_FUSE: supplied by +3.3V_RUN
-*hang*
+--===============5277356299868273657==--
