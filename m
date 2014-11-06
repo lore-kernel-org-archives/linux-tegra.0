@@ -1,59 +1,114 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: add serial aliases to Tegra124 DT
-Date: Thu, 6 Nov 2014 15:42:21 +0100
-Message-ID: <20141106144219.GD12260@ulmo>
-References: <1415053204-30114-1-git-send-email-dev@lynxeye.de>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH v3 04/13] of: document new emc-timings subnode in nvidia,tegra124-car
+Date: Thu, 6 Nov 2014 09:12:13 -0600
+Message-ID: <CAL_JsqKYSF3JVrXH_dkqRXQrgUU3igzvoK1C2k1Caz-4UuHX6Q@mail.gmail.com>
+References: <1414599796-30597-1-git-send-email-tomeu.vizoso@collabora.com>
+ <1414599796-30597-5-git-send-email-tomeu.vizoso@collabora.com> <545B172C.4060105@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ffoCPvUAPMgSXi6H"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1415053204-30114-1-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <545B172C.4060105@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Thu, Nov 6, 2014 at 12:37 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+> On 10/30/2014 01:22 AM, Tomeu Vizoso wrote:
+>>
+>> The EMC clock needs some extra information for changing its rate.
+>>
+>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+>> ---
+>>   .../bindings/clock/nvidia,tegra124-car.txt         | 46
+>> +++++++++++++++++++++-
+>>   1 file changed, 44 insertions(+), 2 deletions(-)
+>>
+>> diff --git
+>> a/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
+>> b/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
+>> index ded5d62..42e0588 100644
+>> --- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
+>> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
+>> @@ -19,12 +19,35 @@ Required properties :
+>>     In clock consumers, this cell represents the bit number in the CAR's
+>>     array of CLK_RST_CONTROLLER_RST_DEVICES_* registers.
+>>
+>> +The node should contain a "emc-timings" subnode for each supported RAM
+>> type (see
+>> +field RAM_CODE in register PMC_STRAPPING_OPT_A), with its unit address
+>> being its
+>> +RAM_CODE.
+>> +
+>> +Required properties for "emc-timings" nodes :
+>> +- nvidia,ram-code : Should contain the value of RAM_CODE this timing set
+>> +  is used for.
+>> +
+>> +Each "emc-timings" node should contain a "timing" subnode for every
+>> supported
+>> +EMC clock rate. The "timing" subnodes should have the clock rate in Hz as
+>> their
+>> +unit address.
+>
+>
+> This seems to be a quite liberal use of unit addresses (same in the next
+> patch) - is this allowed by DT?
 
---ffoCPvUAPMgSXi6H
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+No, unit address should match a reg property.
 
-On Mon, Nov 03, 2014 at 11:20:04PM +0100, Lucas Stach wrote:
-> Provides consistent numbering of consoles across boards.
->=20
-> Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-> ---
-> These aliases are already present in the base DTs for all
-> other Tegra SoCs.
-> ---
->  arch/arm/boot/dts/tegra124.dtsi | 15 +++++++++++----
->  1 file changed, 11 insertions(+), 4 deletions(-)
+>> +
+>> +Required properties for "timing" nodes :
+>> +- clock-frequency : Should contain the memory clock rate to which this
+>> timing
+>> +relates.
+>> +- nvidia,parent-clock-frequency : Should contain the rate at which the
+>> current
+>> +parent of the EMC clock should be running at this timing.
+>> +- clocks : Must contain an entry for each entry in clock-names.
+>> +  See ../clocks/clock-bindings.txt for details.
+>> +- clock-names : Must include the following entries:
+>> +  - emc-parent : the clock that should be the parent of the EMC clock at
+>> this
+>> +timing.
+>> +
+>>   Example SoC include file:
+>>
+>>   / {
+>> -       tegra_car: clock {
+>> +       tegra_car: clock@0,60006000 {
 
-Applied to the for-3.19/dt branch, thanks.
+The comma here is wrong. Commas should be used when you have something
+like PCI bus:dev:func for addressing.
 
-Thierry
+>>                 compatible = "nvidia,tegra124-car";
+>> -               reg = <0x60006000 0x1000>;
+>> +               reg = <0x0 0x60006000 0x0 0x1000>;
 
---ffoCPvUAPMgSXi6H
-Content-Type: application/pgp-signature
+The number of cell's is really irrelevant to the example.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+>>                 #clock-cells = <1>;
+>>                 #reset-cells = <1>;
+>>         };
+>> @@ -60,4 +83,23 @@ Example board file:
+>>         &tegra_car {
+>>                 clocks = <&clk_32k> <&osc>;
+>>         };
+>> +
+>> +       clock@0,60006000 {
+>> +               emc-timings@3 {
+>> +                       nvidia,ram-code = <3>;
+>> +
+>> +                       timing@12750000 {
+>> +                               clock-frequency = <12750000>;
+>> +                               nvidia,parent-clock-frequency =
+>> <408000000>;
+>> +                               clocks = <&tegra_car TEGRA124_CLK_PLL_P>;
+>> +                               clock-names = "emc-parent";
 
-iQIcBAEBAgAGBQJUW4jLAAoJEN0jrNd/PrOhLHEQALzty5rXSp6s6XoCAbiarnoG
-O8DHJ/SYmAQtZbv1CKg5r+A/fx3i5OU0XedDHblk387PYBT78mZcNm5fAj4jptZF
-KlfByZn8fxWSjT8TrUqYf3GAHIt5CplrQ3yrVijZA0En5eNTq146XzKCiGMWig3J
-QBXO101/ULqkxQz9PgO1hWc2tE6Bkz5/laJxYnWx/lxEQFfUR23EWGPa/AbtH/Fw
-4Cbs3NMGmaNuPlLYv/9rK0PEAe5HwregcpAEknQu8i2gUmKXe2tL3DwUZttVZLIY
-6muyzm8U+hVQ33BQd8vLN0cXDRJ8WnmJSJJNGwuhvaJkeekzD1rau3ep2ofAYoy0
-JTxnywcydHja0QbUXi+M6fTGenviSYSjnXNoalQfFM8Dx0UH3s7hvxkstmx5lb1J
-Djtx93R3MGuiTdKJ0+nXP8dauXh2AQKus84qykFscKZPxERJ66yhsdi1odheqwza
-yKvlLZIvz58d5N1902R8BgdopmsxaWQASoqyaEkSxqIs4QBJ5wTJWjKHfmRgxPUT
-VR432CHJvhS2PrvHi+B1FXl8qlZkZxl3fv7R/KSXrhHEmJNe7szthANSyS5l1yWg
-i9HdqJNLrQyxBGEm+GTH5zRtHPOeLKIATVyohZ22/b9M9WV5GhJAopVheJ7sav1y
-l+M1JhwjkjCujdjDWwoW
-=LZA1
------END PGP SIGNATURE-----
+Why do you need both clocks and hardcoded values? clock-frequency is
+the desired freq you want to set TEGRA124_CLK_PLL_P to?
 
---ffoCPvUAPMgSXi6H--
+The clocks property really belongs as part of the memory controller
+node or a memory device node.
+
+Rob
