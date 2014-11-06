@@ -1,108 +1,130 @@
 From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: Re: [PATCH v3 03/13] soc/tegra: Add ram code reader helper
-Date: Thu, 6 Nov 2014 10:07:41 +0100
-Message-ID: <CAAObsKCCXdmxuzCVpE6P4M3KLV+MyN-xaVUU40hhY2fv6u_2Pw@mail.gmail.com>
+Subject: Re: [PATCH v3 04/13] of: document new emc-timings subnode in nvidia,tegra124-car
+Date: Thu, 6 Nov 2014 10:11:00 +0100
+Message-ID: <CAAObsKBe8kigKfEs_ER+1X5fqLw3dZD69XHicEn4cVuQTyoFAw@mail.gmail.com>
 References: <1414599796-30597-1-git-send-email-tomeu.vizoso@collabora.com>
- <1414599796-30597-4-git-send-email-tomeu.vizoso@collabora.com> <545B062E.2040508@nvidia.com>
+ <1414599796-30597-5-git-send-email-tomeu.vizoso@collabora.com> <545B172C.4060105@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <545B062E.2040508-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <545B172C.4060105-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 6 November 2014 06:25, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+On 6 November 2014 07:37, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 > On 10/30/2014 01:22 AM, Tomeu Vizoso wrote:
 >>
->> From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> The EMC clock needs some extra information for changing its rate.
 >>
->> Needed for the EMC and MC drivers to know what timings from the DT to use.
->>
->> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 >> ---
->>   drivers/soc/tegra/fuse/tegra-apbmisc.c | 19 +++++++++++++++++++
->>   include/soc/tegra/fuse.h               |  1 +
->>   2 files changed, 20 insertions(+)
+>>   .../bindings/clock/nvidia,tegra124-car.txt         | 46
+>> +++++++++++++++++++++-
+>>   1 file changed, 44 insertions(+), 2 deletions(-)
 >>
->> diff --git a/drivers/soc/tegra/fuse/tegra-apbmisc.c
->> b/drivers/soc/tegra/fuse/tegra-apbmisc.c
->> index 3bf5aba..e580892 100644
->> --- a/drivers/soc/tegra/fuse/tegra-apbmisc.c
->> +++ b/drivers/soc/tegra/fuse/tegra-apbmisc.c
->> @@ -28,8 +28,13 @@
->>   #define APBMISC_SIZE  0x64
->>   #define FUSE_SKU_INFO 0x10
+>> diff --git
+>> a/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
+>> b/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
+>> index ded5d62..42e0588 100644
+>> --- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
+>> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
+>> @@ -19,12 +19,35 @@ Required properties :
+>>     In clock consumers, this cell represents the bit number in the CAR's
+>>     array of CLK_RST_CONTROLLER_RST_DEVICES_* registers.
 >>
->> +#define PMC_STRAPPING_OPT_A_RAM_CODE_MASK_LONG (0xf << 4)
->> +#define PMC_STRAPPING_OPT_A_RAM_CODE_MASK_SHORT        (0x3 << 4)
+>> +The node should contain a "emc-timings" subnode for each supported RAM
+>> type (see
+>> +field RAM_CODE in register PMC_STRAPPING_OPT_A), with its unit address
+>> being its
+>> +RAM_CODE.
+>> +
+>> +Required properties for "emc-timings" nodes :
+>> +- nvidia,ram-code : Should contain the value of RAM_CODE this timing set
+>> +  is used for.
+>> +
+>> +Each "emc-timings" node should contain a "timing" subnode for every
+>> supported
+>> +EMC clock rate. The "timing" subnodes should have the clock rate in Hz as
+>> their
+>> +unit address.
 >
 >
-> Shouldn't these two shifts also use PMC_STRAPPING_OPT_A_RAM_CODE_SHIFT
-> defined right after?
+> This seems to be a quite liberal use of unit addresses (same in the next
+> patch) - is this allowed by DT?
 
-Good point.
+Well, it's not that different from using the register address. I think
+it helps with readability more than an arbitrary index.
+
+>> +
+>> +Required properties for "timing" nodes :
+>> +- clock-frequency : Should contain the memory clock rate to which this
+>> timing
+>> +relates.
+>> +- nvidia,parent-clock-frequency : Should contain the rate at which the
+>> current
+>> +parent of the EMC clock should be running at this timing.
+>> +- clocks : Must contain an entry for each entry in clock-names.
+>> +  See ../clocks/clock-bindings.txt for details.
+>> +- clock-names : Must include the following entries:
+>> +  - emc-parent : the clock that should be the parent of the EMC clock at
+>> this
+>> +timing.
+>> +
+>>   Example SoC include file:
+>>
+>>   / {
+>> -       tegra_car: clock {
+>> +       tegra_car: clock@0,60006000 {
+>>                 compatible = "nvidia,tegra124-car";
+>> -               reg = <0x60006000 0x1000>;
+>> +               reg = <0x0 0x60006000 0x0 0x1000>;
+>>                 #clock-cells = <1>;
+>>                 #reset-cells = <1>;
+>>         };
+>> @@ -60,4 +83,23 @@ Example board file:
+>>         &tegra_car {
+>>                 clocks = <&clk_32k> <&osc>;
+>>         };
+>> +
+>> +       clock@0,60006000 {
+>> +               emc-timings@3 {
+>> +                       nvidia,ram-code = <3>;
+>> +
+>> +                       timing@12750000 {
+>> +                               clock-frequency = <12750000>;
+>> +                               nvidia,parent-clock-frequency =
+>> <408000000>;
+>> +                               clocks = <&tegra_car TEGRA124_CLK_PLL_P>;
+>> +                               clock-names = "emc-parent";
+>> +                       };
+>> +                       timing@20400000 {
+>> +                               clock-frequency = <20400000>;
+>> +                               nvidia,parent-clock-frequency =
+>> <408000000>;
+>> +                               clocks = <&tegra_car TEGRA124_CLK_PLL_P>;
+>> +                               clock-names = "emc-parent";
+>> +                       };
+>> +               };
+>> +       };
+>
+>
+> At first it seems confusing to see a top-level node without a compatible
+> property, until you realize it has already been defined before.
+>
+> In patch 05, you put "Example board file:" above a similar node, which is
+> enough to lift that ambiguity - could you do the same here?
+
+Oh, actually it was already in the file. I took this idea from here
+for patch 05.
 
 Thanks,
 
 Tomeu
 
->> +#define PMC_STRAPPING_OPT_A_RAM_CODE_SHIFT     4
->> +
->>   static void __iomem *apbmisc_base;
->>   static void __iomem *strapping_base;
->> +static bool          long_ram_code;
->>
->>   u32 tegra_read_chipid(void)
->>   {
->> @@ -54,6 +59,18 @@ u32 tegra_read_straps(void)
->>                 return 0;
->>   }
->>
->> +u32 tegra_read_ram_code(void)
->> +{
->> +       u32 straps = tegra_read_straps();
->> +
->> +       if (long_ram_code)
->> +               straps &= PMC_STRAPPING_OPT_A_RAM_CODE_MASK_LONG;
->> +       else
->> +               straps &= PMC_STRAPPING_OPT_A_RAM_CODE_MASK_SHORT;
->> +
->> +       return straps >> PMC_STRAPPING_OPT_A_RAM_CODE_SHIFT;
->
->
-> ... this is what triggered my remark above, since it seems like you want to
-> return the ram_code field.
->
->> +}
->> +
->>   static const struct of_device_id apbmisc_match[] __initconst = {
->>         { .compatible = "nvidia,tegra20-apbmisc", },
->>         {},
->> @@ -112,4 +129,6 @@ void __init tegra_init_apbmisc(void)
->>         strapping_base = of_iomap(np, 1);
->>         if (!strapping_base)
->>                 pr_err("ioremap tegra strapping_base failed\n");
->> +
->> +       long_ram_code = of_property_read_bool(np, "nvidia,long-ram-code");
->>   }
->> diff --git a/include/soc/tegra/fuse.h b/include/soc/tegra/fuse.h
->> index 8e12494..4ad6fd9 100644
->> --- a/include/soc/tegra/fuse.h
->> +++ b/include/soc/tegra/fuse.h
->> @@ -55,6 +55,7 @@ struct tegra_sku_info {
->>   };
->>
->>   u32 tegra_read_straps(void);
->> +u32 tegra_read_ram_code(void);
->>   u32 tegra_read_chipid(void);
->>   int tegra_fuse_readl(unsigned long offset, u32 *value);
->>
->>
->
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
 > the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
