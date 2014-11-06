@@ -1,133 +1,60 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH v5 33/48] staging: nvec: Register with kernel power-off handler
-Date: Thu,  6 Nov 2014 08:43:17 -0800
-Message-ID: <1415292213-28652-34-git-send-email-linux@roeck-us.net>
-References: <1415292213-28652-1-git-send-email-linux@roeck-us.net>
+From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber-l3A5Bk7waGM@public.gmane.org>
+Subject: Re: [PATCH] documentation: pinctrl bindings: Fix trivial typo 'abitrary'
+Date: Thu, 06 Nov 2014 18:31:58 +0100
+Message-ID: <545BB08E.8070607@suse.de>
+References: <1415288331-785-1-git-send-email-soren.brinkmann@xilinx.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <1415292213-28652-1-git-send-email-linux@roeck-us.net>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: linux-kernel@vger.kernel.org
-Cc: devel@driverdev.osuosl.org, linux-pm@vger.kernel.org, Julian Andres Klode <jak@jak-linux.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <linux@roeck-us.net>, linux-tegra@vger.kernel.org, ac100@lists.launchpad.net
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1415288331-785-1-git-send-email-soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Soren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+Cc: Jiri Kosina <trivial-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Register with kernel power-off handler instead of setting pm_power_off
-directly. Register with default priority since we don't know any better.
+Am 06.11.2014 um 16:38 schrieb Soren Brinkmann:
+> A misspelled 'arbitrary' propagated to quite a few locations in the D=
+T
+> binding documentation for pin-controllers. Fixing by:
+>   git grep abitrary | cut -f1 -d: | xargs sed -i 's/abitrary/arbitrar=
+y/'
+>=20
+> Reported-by: Andreas F=C3=A4rber <afaerber-l3A5Bk7waGM@public.gmane.org>
+> Signed-off-by: Soren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+> ---
+>  Documentation/devicetree/bindings/pinctrl/img,tz1090-pdc-pinctrl.txt=
+ | 2 +-
+>  Documentation/devicetree/bindings/pinctrl/img,tz1090-pinctrl.txt    =
+ | 2 +-
+>  Documentation/devicetree/bindings/pinctrl/lantiq,falcon-pinumx.txt  =
+ | 2 +-
+>  Documentation/devicetree/bindings/pinctrl/lantiq,xway-pinumx.txt    =
+ | 2 +-
+>  Documentation/devicetree/bindings/pinctrl/nvidia,tegra20-pinmux.txt =
+ | 2 +-
+>  Documentation/devicetree/bindings/pinctrl/pinctrl-sirf.txt          =
+ | 2 +-
+>  Documentation/devicetree/bindings/pinctrl/pinctrl_spear.txt         =
+ | 2 +-
+>  Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.txt  =
+ | 2 +-
+>  Documentation/devicetree/bindings/pinctrl/qcom,apq8084-pinctrl.txt  =
+ | 2 +-
+>  Documentation/devicetree/bindings/pinctrl/qcom,ipq8064-pinctrl.txt  =
+ | 2 +-
+>  Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.txt  =
+ | 2 +-
+>  Documentation/devicetree/bindings/pinctrl/qcom,msm8974-pinctrl.txt  =
+ | 2 +-
+>  12 files changed, 12 insertions(+), 12 deletions(-)
 
-Cc: Julian Andres Klode <jak@jak-linux.org>
-Cc: Marc Dietrich <marvin24@gmx.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
----
-v5:
-- Rebase to v3.18-rc3
-v4:
-- Do not use notifiers but internal functions and data structures to manage
-  the list of power-off handlers. Drop unused parameters from callbacks, and
-  make the power-off function type void
-v3:
-- Replace poweroff in all newly introduced variables and in text
-  with power_off or power-off as appropriate
-- Replace POWEROFF_PRIORITY_xxx with POWER_OFF_PRIORITY_xxx
-v2:
-- Use define to specify poweroff handler priority
-- Use dev_warn instead of dev_err
+Reviewed-by: Andreas F=C3=A4rber <afaerber-l3A5Bk7waGM@public.gmane.org>
 
- drivers/staging/nvec/nvec.c | 21 ++++++++++++---------
- drivers/staging/nvec/nvec.h |  2 ++
- 2 files changed, 14 insertions(+), 9 deletions(-)
+Thanks,
+Andreas
 
-diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-index a93208a..acf2ea6 100644
---- a/drivers/staging/nvec/nvec.c
-+++ b/drivers/staging/nvec/nvec.c
-@@ -33,6 +33,7 @@
- #include <linux/mfd/core.h>
- #include <linux/mutex.h>
- #include <linux/notifier.h>
-+#include <linux/pm.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- #include <linux/workqueue.h>
-@@ -80,8 +81,6 @@ enum nvec_sleep_subcmds {
- #define LID_SWITCH BIT(1)
- #define PWR_BUTTON BIT(15)
- 
--static struct nvec_chip *nvec_power_handle;
--
- static const struct mfd_cell nvec_devices[] = {
- 	{
- 		.name = "nvec-kbd",
-@@ -759,12 +758,14 @@ static void nvec_disable_i2c_slave(struct nvec_chip *nvec)
- }
- #endif
- 
--static void nvec_power_off(void)
-+static void nvec_power_off(struct power_off_handler_block *this)
- {
-+	struct nvec_chip *nvec = container_of(this, struct nvec_chip,
-+					      power_off_hb);
- 	char ap_pwr_down[] = { NVEC_SLEEP, AP_PWR_DOWN };
- 
--	nvec_toggle_global_events(nvec_power_handle, false);
--	nvec_write_async(nvec_power_handle, ap_pwr_down, 2);
-+	nvec_toggle_global_events(nvec, false);
-+	nvec_write_async(nvec, ap_pwr_down, 2);
- }
- 
- /*
-@@ -878,8 +879,11 @@ static int tegra_nvec_probe(struct platform_device *pdev)
- 	nvec->nvec_status_notifier.notifier_call = nvec_status_notifier;
- 	nvec_register_notifier(nvec, &nvec->nvec_status_notifier, 0);
- 
--	nvec_power_handle = nvec;
--	pm_power_off = nvec_power_off;
-+	nvec->power_off_hb.handler = nvec_power_off;
-+	nvec->power_off_hb.priority = POWER_OFF_PRIORITY_DEFAULT;
-+	ret = register_power_off_handler(&nvec->power_off_hb);
-+	if (ret)
-+		dev_warn(nvec->dev, "Failed to register power-off handler\n");
- 
- 	/* Get Firmware Version */
- 	msg = nvec_write_sync(nvec, get_firmware_version, 2);
-@@ -914,13 +918,12 @@ static int tegra_nvec_remove(struct platform_device *pdev)
- {
- 	struct nvec_chip *nvec = platform_get_drvdata(pdev);
- 
-+	unregister_power_off_handler(&nvec->power_off_hb);
- 	nvec_toggle_global_events(nvec, false);
- 	mfd_remove_devices(nvec->dev);
- 	nvec_unregister_notifier(nvec, &nvec->nvec_status_notifier);
- 	cancel_work_sync(&nvec->rx_work);
- 	cancel_work_sync(&nvec->tx_work);
--	/* FIXME: needs check wether nvec is responsible for power off */
--	pm_power_off = NULL;
- 
- 	return 0;
- }
-diff --git a/drivers/staging/nvec/nvec.h b/drivers/staging/nvec/nvec.h
-index e271375..d4145da 100644
---- a/drivers/staging/nvec/nvec.h
-+++ b/drivers/staging/nvec/nvec.h
-@@ -163,6 +163,8 @@ struct nvec_chip {
- 	struct nvec_msg *last_sync_msg;
- 
- 	int state;
-+
-+	struct power_off_handler_block power_off_hb;
- };
- 
- extern int nvec_write_async(struct nvec_chip *nvec, const unsigned char *data,
--- 
-1.9.1
+--=20
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 21284 AG N=C3=
+=BCrnberg
