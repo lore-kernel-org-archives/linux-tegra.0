@@ -1,114 +1,327 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH v3 04/13] of: document new emc-timings subnode in nvidia,tegra124-car
-Date: Thu, 6 Nov 2014 09:12:13 -0600
-Message-ID: <CAL_JsqKYSF3JVrXH_dkqRXQrgUU3igzvoK1C2k1Caz-4UuHX6Q@mail.gmail.com>
-References: <1414599796-30597-1-git-send-email-tomeu.vizoso@collabora.com>
- <1414599796-30597-5-git-send-email-tomeu.vizoso@collabora.com> <545B172C.4060105@nvidia.com>
+From: Soren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] documentation: pinctrl bindings: Fix trivial typo 'abitrary'
+Date: Thu,  6 Nov 2014 07:38:51 -0800
+Message-ID: <1415288331-785-1-git-send-email-soren.brinkmann@xilinx.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <545B172C.4060105@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jiri Kosina <trivial-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>, Soren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Nov 6, 2014 at 12:37 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
-> On 10/30/2014 01:22 AM, Tomeu Vizoso wrote:
->>
->> The EMC clock needs some extra information for changing its rate.
->>
->> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
->> ---
->>   .../bindings/clock/nvidia,tegra124-car.txt         | 46
->> +++++++++++++++++++++-
->>   1 file changed, 44 insertions(+), 2 deletions(-)
->>
->> diff --git
->> a/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
->> b/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
->> index ded5d62..42e0588 100644
->> --- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
->> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
->> @@ -19,12 +19,35 @@ Required properties :
->>     In clock consumers, this cell represents the bit number in the CAR's
->>     array of CLK_RST_CONTROLLER_RST_DEVICES_* registers.
->>
->> +The node should contain a "emc-timings" subnode for each supported RAM
->> type (see
->> +field RAM_CODE in register PMC_STRAPPING_OPT_A), with its unit address
->> being its
->> +RAM_CODE.
->> +
->> +Required properties for "emc-timings" nodes :
->> +- nvidia,ram-code : Should contain the value of RAM_CODE this timing set
->> +  is used for.
->> +
->> +Each "emc-timings" node should contain a "timing" subnode for every
->> supported
->> +EMC clock rate. The "timing" subnodes should have the clock rate in Hz as
->> their
->> +unit address.
->
->
-> This seems to be a quite liberal use of unit addresses (same in the next
-> patch) - is this allowed by DT?
+A misspelled 'arbitrary' propagated to quite a few locations in the DT
+binding documentation for pin-controllers. Fixing by:
+  git grep abitrary | cut -f1 -d: | xargs sed -i 's/abitrary/arbitrary/=
+'
 
-No, unit address should match a reg property.
+Reported-by: Andreas F=C3=A4rber <afaerber-l3A5Bk7waGM@public.gmane.org>
+Signed-off-by: Soren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+---
+ Documentation/devicetree/bindings/pinctrl/img,tz1090-pdc-pinctrl.txt |=
+ 2 +-
+ Documentation/devicetree/bindings/pinctrl/img,tz1090-pinctrl.txt     |=
+ 2 +-
+ Documentation/devicetree/bindings/pinctrl/lantiq,falcon-pinumx.txt   |=
+ 2 +-
+ Documentation/devicetree/bindings/pinctrl/lantiq,xway-pinumx.txt     |=
+ 2 +-
+ Documentation/devicetree/bindings/pinctrl/nvidia,tegra20-pinmux.txt  |=
+ 2 +-
+ Documentation/devicetree/bindings/pinctrl/pinctrl-sirf.txt           |=
+ 2 +-
+ Documentation/devicetree/bindings/pinctrl/pinctrl_spear.txt          |=
+ 2 +-
+ Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.txt   |=
+ 2 +-
+ Documentation/devicetree/bindings/pinctrl/qcom,apq8084-pinctrl.txt   |=
+ 2 +-
+ Documentation/devicetree/bindings/pinctrl/qcom,ipq8064-pinctrl.txt   |=
+ 2 +-
+ Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.txt   |=
+ 2 +-
+ Documentation/devicetree/bindings/pinctrl/qcom,msm8974-pinctrl.txt   |=
+ 2 +-
+ 12 files changed, 12 insertions(+), 12 deletions(-)
 
->> +
->> +Required properties for "timing" nodes :
->> +- clock-frequency : Should contain the memory clock rate to which this
->> timing
->> +relates.
->> +- nvidia,parent-clock-frequency : Should contain the rate at which the
->> current
->> +parent of the EMC clock should be running at this timing.
->> +- clocks : Must contain an entry for each entry in clock-names.
->> +  See ../clocks/clock-bindings.txt for details.
->> +- clock-names : Must include the following entries:
->> +  - emc-parent : the clock that should be the parent of the EMC clock at
->> this
->> +timing.
->> +
->>   Example SoC include file:
->>
->>   / {
->> -       tegra_car: clock {
->> +       tegra_car: clock@0,60006000 {
+diff --git a/Documentation/devicetree/bindings/pinctrl/img,tz1090-pdc-p=
+inctrl.txt b/Documentation/devicetree/bindings/pinctrl/img,tz1090-pdc-p=
+inctrl.txt
+index a186181c402b..51b943cc9770 100644
+--- a/Documentation/devicetree/bindings/pinctrl/img,tz1090-pdc-pinctrl.=
+txt
++++ b/Documentation/devicetree/bindings/pinctrl/img,tz1090-pdc-pinctrl.=
+txt
+@@ -9,7 +9,7 @@ Please refer to pinctrl-bindings.txt in this directory =
+for details of the
+ common pinctrl bindings used by client devices, including the meaning =
+of the
+ phrase "pin configuration node".
+=20
+-TZ1090-PDC's pin configuration nodes act as a container for an abitrar=
+y number
++TZ1090-PDC's pin configuration nodes act as a container for an arbitra=
+ry number
+ of subnodes. Each of these subnodes represents some desired configurat=
+ion for a
+ pin, a group, or a list of pins or groups. This configuration can incl=
+ude the
+ mux function to select on those pin(s)/group(s), and various pin confi=
+guration
+diff --git a/Documentation/devicetree/bindings/pinctrl/img,tz1090-pinct=
+rl.txt b/Documentation/devicetree/bindings/pinctrl/img,tz1090-pinctrl.t=
+xt
+index 4b27c99f7f9d..49d0e6050940 100644
+--- a/Documentation/devicetree/bindings/pinctrl/img,tz1090-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/img,tz1090-pinctrl.txt
+@@ -9,7 +9,7 @@ Please refer to pinctrl-bindings.txt in this directory =
+for details of the
+ common pinctrl bindings used by client devices, including the meaning =
+of the
+ phrase "pin configuration node".
+=20
+-TZ1090's pin configuration nodes act as a container for an abitrary nu=
+mber of
++TZ1090's pin configuration nodes act as a container for an arbitrary n=
+umber of
+ subnodes. Each of these subnodes represents some desired configuration=
+ for a
+ pin, a group, or a list of pins or groups. This configuration can incl=
+ude the
+ mux function to select on those pin(s)/group(s), and various pin confi=
+guration
+diff --git a/Documentation/devicetree/bindings/pinctrl/lantiq,falcon-pi=
+numx.txt b/Documentation/devicetree/bindings/pinctrl/lantiq,falcon-pinu=
+mx.txt
+index daa768956069..ac4da9fe07bd 100644
+--- a/Documentation/devicetree/bindings/pinctrl/lantiq,falcon-pinumx.tx=
+t
++++ b/Documentation/devicetree/bindings/pinctrl/lantiq,falcon-pinumx.tx=
+t
+@@ -9,7 +9,7 @@ Please refer to pinctrl-bindings.txt in this directory =
+for details of the
+ common pinctrl bindings used by client devices, including the meaning =
+of the
+ phrase "pin configuration node".
+=20
+-Lantiq's pin configuration nodes act as a container for an abitrary nu=
+mber of
++Lantiq's pin configuration nodes act as a container for an arbitrary n=
+umber of
+ subnodes. Each of these subnodes represents some desired configuration=
+ for a
+ pin, a group, or a list of pins or groups. This configuration can incl=
+ude the
+ mux function to select on those group(s), and two pin configuration pa=
+rameters:
+diff --git a/Documentation/devicetree/bindings/pinctrl/lantiq,xway-pinu=
+mx.txt b/Documentation/devicetree/bindings/pinctrl/lantiq,xway-pinumx.t=
+xt
+index b5469db1d7ad..e89b4677567d 100644
+--- a/Documentation/devicetree/bindings/pinctrl/lantiq,xway-pinumx.txt
++++ b/Documentation/devicetree/bindings/pinctrl/lantiq,xway-pinumx.txt
+@@ -9,7 +9,7 @@ Please refer to pinctrl-bindings.txt in this directory =
+for details of the
+ common pinctrl bindings used by client devices, including the meaning =
+of the
+ phrase "pin configuration node".
+=20
+-Lantiq's pin configuration nodes act as a container for an abitrary nu=
+mber of
++Lantiq's pin configuration nodes act as a container for an arbitrary n=
+umber of
+ subnodes. Each of these subnodes represents some desired configuration=
+ for a
+ pin, a group, or a list of pins or groups. This configuration can incl=
+ude the
+ mux function to select on those group(s), and two pin configuration pa=
+rameters:
+diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra20-p=
+inmux.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra20-pi=
+nmux.txt
+index 61e73cde9ae9..3c8ce28baad6 100644
+--- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra20-pinmux.t=
+xt
++++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra20-pinmux.t=
+xt
+@@ -9,7 +9,7 @@ Please refer to pinctrl-bindings.txt in this directory =
+for details of the
+ common pinctrl bindings used by client devices, including the meaning =
+of the
+ phrase "pin configuration node".
+=20
+-Tegra's pin configuration nodes act as a container for an abitrary num=
+ber of
++Tegra's pin configuration nodes act as a container for an arbitrary nu=
+mber of
+ subnodes. Each of these subnodes represents some desired configuration=
+ for a
+ pin, a group, or a list of pins or groups. This configuration can incl=
+ude the
+ mux function to select on those pin(s)/group(s), and various pin confi=
+guration
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-sirf.txt=
+ b/Documentation/devicetree/bindings/pinctrl/pinctrl-sirf.txt
+index c596a6ad3285..5f55be59d914 100644
+--- a/Documentation/devicetree/bindings/pinctrl/pinctrl-sirf.txt
++++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-sirf.txt
+@@ -13,7 +13,7 @@ Optional properties:
+ Please refer to pinctrl-bindings.txt in this directory for details of =
+the common
+ pinctrl bindings used by client devices.
+=20
+-SiRFprimaII's pinmux nodes act as a container for an abitrary number o=
+f subnodes.
++SiRFprimaII's pinmux nodes act as a container for an arbitrary number =
+of subnodes.
+ Each of these subnodes represents some desired configuration for a gro=
+up of pins.
+=20
+ Required subnode-properties:
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl_spear.tx=
+t b/Documentation/devicetree/bindings/pinctrl/pinctrl_spear.txt
+index b4480d5c3aca..458615596946 100644
+--- a/Documentation/devicetree/bindings/pinctrl/pinctrl_spear.txt
++++ b/Documentation/devicetree/bindings/pinctrl/pinctrl_spear.txt
+@@ -32,7 +32,7 @@ Required properties:
+ Please refer to pinctrl-bindings.txt in this directory for details of =
+the common
+ pinctrl bindings used by client devices.
+=20
+-SPEAr's pinmux nodes act as a container for an abitrary number of subn=
+odes. Each
++SPEAr's pinmux nodes act as a container for an arbitrary number of sub=
+nodes. Each
+ of these subnodes represents muxing for a pin, a group, or a list of p=
+ins or
+ groups.
+=20
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pin=
+ctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinct=
+rl.txt
+index 2fb90b37aa09..a7bde64798c7 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.tx=
+t
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.tx=
+t
+@@ -18,7 +18,7 @@ Please refer to pinctrl-bindings.txt in this director=
+y for details of the
+ common pinctrl bindings used by client devices, including the meaning =
+of the
+ phrase "pin configuration node".
+=20
+-Qualcomm's pin configuration nodes act as a container for an abitrary =
+number of
++Qualcomm's pin configuration nodes act as a container for an arbitrary=
+ number of
+ subnodes. Each of these subnodes represents some desired configuration=
+ for a
+ pin, a group, or a list of pins or groups. This configuration can incl=
+ude the
+ mux function to select on those pin(s)/group(s), and various pin confi=
+guration
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,apq8084-pin=
+ctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,apq8084-pinct=
+rl.txt
+index ffafa1990a30..c4ea61ac56f2 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,apq8084-pinctrl.tx=
+t
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,apq8084-pinctrl.tx=
+t
+@@ -47,7 +47,7 @@ Please refer to pinctrl-bindings.txt in this director=
+y for details of the
+ common pinctrl bindings used by client devices, including the meaning =
+of the
+ phrase "pin configuration node".
+=20
+-The pin configuration nodes act as a container for an abitrary number =
+of
++The pin configuration nodes act as a container for an arbitrary number=
+ of
+ subnodes. Each of these subnodes represents some desired configuration=
+ for a
+ pin, a group, or a list of pins or groups. This configuration can incl=
+ude the
+ mux function to select on those pin(s)/group(s), and various pin confi=
+guration
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,ipq8064-pin=
+ctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,ipq8064-pinct=
+rl.txt
+index e33e4dcdce79..6e88e91feb11 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,ipq8064-pinctrl.tx=
+t
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,ipq8064-pinctrl.tx=
+t
+@@ -18,7 +18,7 @@ Please refer to pinctrl-bindings.txt in this director=
+y for details of the
+ common pinctrl bindings used by client devices, including the meaning =
+of the
+ phrase "pin configuration node".
+=20
+-Qualcomm's pin configuration nodes act as a container for an abitrary =
+number of
++Qualcomm's pin configuration nodes act as a container for an arbitrary=
+ number of
+ subnodes. Each of these subnodes represents some desired configuration=
+ for a
+ pin, a group, or a list of pins or groups. This configuration can incl=
+ude the
+ mux function to select on those pin(s)/group(s), and various pin confi=
+guration
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pin=
+ctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pinct=
+rl.txt
+index 93b7de91b9f6..eb8d8aa41f20 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.tx=
+t
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.tx=
+t
+@@ -47,7 +47,7 @@ Please refer to pinctrl-bindings.txt in this director=
+y for details of the
+ common pinctrl bindings used by client devices, including the meaning =
+of the
+ phrase "pin configuration node".
+=20
+-The pin configuration nodes act as a container for an abitrary number =
+of
++The pin configuration nodes act as a container for an arbitrary number=
+ of
+ subnodes. Each of these subnodes represents some desired configuration=
+ for a
+ pin, a group, or a list of pins or groups. This configuration can incl=
+ude the
+ mux function to select on those pin(s)/group(s), and various pin confi=
+guration
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8974-pin=
+ctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,msm8974-pinct=
+rl.txt
+index d2ea80dc43eb..e4d6a9d20f7d 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,msm8974-pinctrl.tx=
+t
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8974-pinctrl.tx=
+t
+@@ -18,7 +18,7 @@ Please refer to pinctrl-bindings.txt in this director=
+y for details of the
+ common pinctrl bindings used by client devices, including the meaning =
+of the
+ phrase "pin configuration node".
+=20
+-Qualcomm's pin configuration nodes act as a container for an abitrary =
+number of
++Qualcomm's pin configuration nodes act as a container for an arbitrary=
+ number of
+ subnodes. Each of these subnodes represents some desired configuration=
+ for a
+ pin, a group, or a list of pins or groups. This configuration can incl=
+ude the
+ mux function to select on those pin(s)/group(s), and various pin confi=
+guration
+--=20
+2.1.3.1.ge241007
 
-The comma here is wrong. Commas should be used when you have something
-like PCI bus:dev:func for addressing.
-
->>                 compatible = "nvidia,tegra124-car";
->> -               reg = <0x60006000 0x1000>;
->> +               reg = <0x0 0x60006000 0x0 0x1000>;
-
-The number of cell's is really irrelevant to the example.
-
->>                 #clock-cells = <1>;
->>                 #reset-cells = <1>;
->>         };
->> @@ -60,4 +83,23 @@ Example board file:
->>         &tegra_car {
->>                 clocks = <&clk_32k> <&osc>;
->>         };
->> +
->> +       clock@0,60006000 {
->> +               emc-timings@3 {
->> +                       nvidia,ram-code = <3>;
->> +
->> +                       timing@12750000 {
->> +                               clock-frequency = <12750000>;
->> +                               nvidia,parent-clock-frequency =
->> <408000000>;
->> +                               clocks = <&tegra_car TEGRA124_CLK_PLL_P>;
->> +                               clock-names = "emc-parent";
-
-Why do you need both clocks and hardcoded values? clock-frequency is
-the desired freq you want to set TEGRA124_CLK_PLL_P to?
-
-The clocks property really belongs as part of the memory controller
-node or a memory device node.
-
-Rob
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
