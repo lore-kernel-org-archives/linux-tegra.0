@@ -1,327 +1,133 @@
-From: Soren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] documentation: pinctrl bindings: Fix trivial typo 'abitrary'
-Date: Thu,  6 Nov 2014 07:38:51 -0800
-Message-ID: <1415288331-785-1-git-send-email-soren.brinkmann@xilinx.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH v5 33/48] staging: nvec: Register with kernel power-off handler
+Date: Thu,  6 Nov 2014 08:43:17 -0800
+Message-ID: <1415292213-28652-34-git-send-email-linux@roeck-us.net>
+References: <1415292213-28652-1-git-send-email-linux@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jiri Kosina <trivial-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>, Soren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <1415292213-28652-1-git-send-email-linux@roeck-us.net>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: linux-kernel@vger.kernel.org
+Cc: devel@driverdev.osuosl.org, linux-pm@vger.kernel.org, Julian Andres Klode <jak@jak-linux.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <linux@roeck-us.net>, linux-tegra@vger.kernel.org, ac100@lists.launchpad.net
 List-Id: linux-tegra@vger.kernel.org
 
-A misspelled 'arbitrary' propagated to quite a few locations in the DT
-binding documentation for pin-controllers. Fixing by:
-  git grep abitrary | cut -f1 -d: | xargs sed -i 's/abitrary/arbitrary/=
-'
+Register with kernel power-off handler instead of setting pm_power_off
+directly. Register with default priority since we don't know any better.
 
-Reported-by: Andreas F=C3=A4rber <afaerber-l3A5Bk7waGM@public.gmane.org>
-Signed-off-by: Soren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+Cc: Julian Andres Klode <jak@jak-linux.org>
+Cc: Marc Dietrich <marvin24@gmx.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 ---
- Documentation/devicetree/bindings/pinctrl/img,tz1090-pdc-pinctrl.txt |=
- 2 +-
- Documentation/devicetree/bindings/pinctrl/img,tz1090-pinctrl.txt     |=
- 2 +-
- Documentation/devicetree/bindings/pinctrl/lantiq,falcon-pinumx.txt   |=
- 2 +-
- Documentation/devicetree/bindings/pinctrl/lantiq,xway-pinumx.txt     |=
- 2 +-
- Documentation/devicetree/bindings/pinctrl/nvidia,tegra20-pinmux.txt  |=
- 2 +-
- Documentation/devicetree/bindings/pinctrl/pinctrl-sirf.txt           |=
- 2 +-
- Documentation/devicetree/bindings/pinctrl/pinctrl_spear.txt          |=
- 2 +-
- Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.txt   |=
- 2 +-
- Documentation/devicetree/bindings/pinctrl/qcom,apq8084-pinctrl.txt   |=
- 2 +-
- Documentation/devicetree/bindings/pinctrl/qcom,ipq8064-pinctrl.txt   |=
- 2 +-
- Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.txt   |=
- 2 +-
- Documentation/devicetree/bindings/pinctrl/qcom,msm8974-pinctrl.txt   |=
- 2 +-
- 12 files changed, 12 insertions(+), 12 deletions(-)
+v5:
+- Rebase to v3.18-rc3
+v4:
+- Do not use notifiers but internal functions and data structures to manage
+  the list of power-off handlers. Drop unused parameters from callbacks, and
+  make the power-off function type void
+v3:
+- Replace poweroff in all newly introduced variables and in text
+  with power_off or power-off as appropriate
+- Replace POWEROFF_PRIORITY_xxx with POWER_OFF_PRIORITY_xxx
+v2:
+- Use define to specify poweroff handler priority
+- Use dev_warn instead of dev_err
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/img,tz1090-pdc-p=
-inctrl.txt b/Documentation/devicetree/bindings/pinctrl/img,tz1090-pdc-p=
-inctrl.txt
-index a186181c402b..51b943cc9770 100644
---- a/Documentation/devicetree/bindings/pinctrl/img,tz1090-pdc-pinctrl.=
-txt
-+++ b/Documentation/devicetree/bindings/pinctrl/img,tz1090-pdc-pinctrl.=
-txt
-@@ -9,7 +9,7 @@ Please refer to pinctrl-bindings.txt in this directory =
-for details of the
- common pinctrl bindings used by client devices, including the meaning =
-of the
- phrase "pin configuration node".
-=20
--TZ1090-PDC's pin configuration nodes act as a container for an abitrar=
-y number
-+TZ1090-PDC's pin configuration nodes act as a container for an arbitra=
-ry number
- of subnodes. Each of these subnodes represents some desired configurat=
-ion for a
- pin, a group, or a list of pins or groups. This configuration can incl=
-ude the
- mux function to select on those pin(s)/group(s), and various pin confi=
-guration
-diff --git a/Documentation/devicetree/bindings/pinctrl/img,tz1090-pinct=
-rl.txt b/Documentation/devicetree/bindings/pinctrl/img,tz1090-pinctrl.t=
-xt
-index 4b27c99f7f9d..49d0e6050940 100644
---- a/Documentation/devicetree/bindings/pinctrl/img,tz1090-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/img,tz1090-pinctrl.txt
-@@ -9,7 +9,7 @@ Please refer to pinctrl-bindings.txt in this directory =
-for details of the
- common pinctrl bindings used by client devices, including the meaning =
-of the
- phrase "pin configuration node".
-=20
--TZ1090's pin configuration nodes act as a container for an abitrary nu=
-mber of
-+TZ1090's pin configuration nodes act as a container for an arbitrary n=
-umber of
- subnodes. Each of these subnodes represents some desired configuration=
- for a
- pin, a group, or a list of pins or groups. This configuration can incl=
-ude the
- mux function to select on those pin(s)/group(s), and various pin confi=
-guration
-diff --git a/Documentation/devicetree/bindings/pinctrl/lantiq,falcon-pi=
-numx.txt b/Documentation/devicetree/bindings/pinctrl/lantiq,falcon-pinu=
-mx.txt
-index daa768956069..ac4da9fe07bd 100644
---- a/Documentation/devicetree/bindings/pinctrl/lantiq,falcon-pinumx.tx=
-t
-+++ b/Documentation/devicetree/bindings/pinctrl/lantiq,falcon-pinumx.tx=
-t
-@@ -9,7 +9,7 @@ Please refer to pinctrl-bindings.txt in this directory =
-for details of the
- common pinctrl bindings used by client devices, including the meaning =
-of the
- phrase "pin configuration node".
-=20
--Lantiq's pin configuration nodes act as a container for an abitrary nu=
-mber of
-+Lantiq's pin configuration nodes act as a container for an arbitrary n=
-umber of
- subnodes. Each of these subnodes represents some desired configuration=
- for a
- pin, a group, or a list of pins or groups. This configuration can incl=
-ude the
- mux function to select on those group(s), and two pin configuration pa=
-rameters:
-diff --git a/Documentation/devicetree/bindings/pinctrl/lantiq,xway-pinu=
-mx.txt b/Documentation/devicetree/bindings/pinctrl/lantiq,xway-pinumx.t=
-xt
-index b5469db1d7ad..e89b4677567d 100644
---- a/Documentation/devicetree/bindings/pinctrl/lantiq,xway-pinumx.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/lantiq,xway-pinumx.txt
-@@ -9,7 +9,7 @@ Please refer to pinctrl-bindings.txt in this directory =
-for details of the
- common pinctrl bindings used by client devices, including the meaning =
-of the
- phrase "pin configuration node".
-=20
--Lantiq's pin configuration nodes act as a container for an abitrary nu=
-mber of
-+Lantiq's pin configuration nodes act as a container for an arbitrary n=
-umber of
- subnodes. Each of these subnodes represents some desired configuration=
- for a
- pin, a group, or a list of pins or groups. This configuration can incl=
-ude the
- mux function to select on those group(s), and two pin configuration pa=
-rameters:
-diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra20-p=
-inmux.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra20-pi=
-nmux.txt
-index 61e73cde9ae9..3c8ce28baad6 100644
---- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra20-pinmux.t=
-xt
-+++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra20-pinmux.t=
-xt
-@@ -9,7 +9,7 @@ Please refer to pinctrl-bindings.txt in this directory =
-for details of the
- common pinctrl bindings used by client devices, including the meaning =
-of the
- phrase "pin configuration node".
-=20
--Tegra's pin configuration nodes act as a container for an abitrary num=
-ber of
-+Tegra's pin configuration nodes act as a container for an arbitrary nu=
-mber of
- subnodes. Each of these subnodes represents some desired configuration=
- for a
- pin, a group, or a list of pins or groups. This configuration can incl=
-ude the
- mux function to select on those pin(s)/group(s), and various pin confi=
-guration
-diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-sirf.txt=
- b/Documentation/devicetree/bindings/pinctrl/pinctrl-sirf.txt
-index c596a6ad3285..5f55be59d914 100644
---- a/Documentation/devicetree/bindings/pinctrl/pinctrl-sirf.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-sirf.txt
-@@ -13,7 +13,7 @@ Optional properties:
- Please refer to pinctrl-bindings.txt in this directory for details of =
-the common
- pinctrl bindings used by client devices.
-=20
--SiRFprimaII's pinmux nodes act as a container for an abitrary number o=
-f subnodes.
-+SiRFprimaII's pinmux nodes act as a container for an arbitrary number =
-of subnodes.
- Each of these subnodes represents some desired configuration for a gro=
-up of pins.
-=20
- Required subnode-properties:
-diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl_spear.tx=
-t b/Documentation/devicetree/bindings/pinctrl/pinctrl_spear.txt
-index b4480d5c3aca..458615596946 100644
---- a/Documentation/devicetree/bindings/pinctrl/pinctrl_spear.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/pinctrl_spear.txt
-@@ -32,7 +32,7 @@ Required properties:
- Please refer to pinctrl-bindings.txt in this directory for details of =
-the common
- pinctrl bindings used by client devices.
-=20
--SPEAr's pinmux nodes act as a container for an abitrary number of subn=
-odes. Each
-+SPEAr's pinmux nodes act as a container for an arbitrary number of sub=
-nodes. Each
- of these subnodes represents muxing for a pin, a group, or a list of p=
-ins or
- groups.
-=20
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pin=
-ctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinct=
-rl.txt
-index 2fb90b37aa09..a7bde64798c7 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.tx=
-t
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.tx=
-t
-@@ -18,7 +18,7 @@ Please refer to pinctrl-bindings.txt in this director=
-y for details of the
- common pinctrl bindings used by client devices, including the meaning =
-of the
- phrase "pin configuration node".
-=20
--Qualcomm's pin configuration nodes act as a container for an abitrary =
-number of
-+Qualcomm's pin configuration nodes act as a container for an arbitrary=
- number of
- subnodes. Each of these subnodes represents some desired configuration=
- for a
- pin, a group, or a list of pins or groups. This configuration can incl=
-ude the
- mux function to select on those pin(s)/group(s), and various pin confi=
-guration
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,apq8084-pin=
-ctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,apq8084-pinct=
-rl.txt
-index ffafa1990a30..c4ea61ac56f2 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,apq8084-pinctrl.tx=
-t
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,apq8084-pinctrl.tx=
-t
-@@ -47,7 +47,7 @@ Please refer to pinctrl-bindings.txt in this director=
-y for details of the
- common pinctrl bindings used by client devices, including the meaning =
-of the
- phrase "pin configuration node".
-=20
--The pin configuration nodes act as a container for an abitrary number =
-of
-+The pin configuration nodes act as a container for an arbitrary number=
- of
- subnodes. Each of these subnodes represents some desired configuration=
- for a
- pin, a group, or a list of pins or groups. This configuration can incl=
-ude the
- mux function to select on those pin(s)/group(s), and various pin confi=
-guration
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,ipq8064-pin=
-ctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,ipq8064-pinct=
-rl.txt
-index e33e4dcdce79..6e88e91feb11 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,ipq8064-pinctrl.tx=
-t
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,ipq8064-pinctrl.tx=
-t
-@@ -18,7 +18,7 @@ Please refer to pinctrl-bindings.txt in this director=
-y for details of the
- common pinctrl bindings used by client devices, including the meaning =
-of the
- phrase "pin configuration node".
-=20
--Qualcomm's pin configuration nodes act as a container for an abitrary =
-number of
-+Qualcomm's pin configuration nodes act as a container for an arbitrary=
- number of
- subnodes. Each of these subnodes represents some desired configuration=
- for a
- pin, a group, or a list of pins or groups. This configuration can incl=
-ude the
- mux function to select on those pin(s)/group(s), and various pin confi=
-guration
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pin=
-ctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pinct=
-rl.txt
-index 93b7de91b9f6..eb8d8aa41f20 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.tx=
-t
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.tx=
-t
-@@ -47,7 +47,7 @@ Please refer to pinctrl-bindings.txt in this director=
-y for details of the
- common pinctrl bindings used by client devices, including the meaning =
-of the
- phrase "pin configuration node".
-=20
--The pin configuration nodes act as a container for an abitrary number =
-of
-+The pin configuration nodes act as a container for an arbitrary number=
- of
- subnodes. Each of these subnodes represents some desired configuration=
- for a
- pin, a group, or a list of pins or groups. This configuration can incl=
-ude the
- mux function to select on those pin(s)/group(s), and various pin confi=
-guration
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8974-pin=
-ctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,msm8974-pinct=
-rl.txt
-index d2ea80dc43eb..e4d6a9d20f7d 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,msm8974-pinctrl.tx=
-t
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8974-pinctrl.tx=
-t
-@@ -18,7 +18,7 @@ Please refer to pinctrl-bindings.txt in this director=
-y for details of the
- common pinctrl bindings used by client devices, including the meaning =
-of the
- phrase "pin configuration node".
-=20
--Qualcomm's pin configuration nodes act as a container for an abitrary =
-number of
-+Qualcomm's pin configuration nodes act as a container for an arbitrary=
- number of
- subnodes. Each of these subnodes represents some desired configuration=
- for a
- pin, a group, or a list of pins or groups. This configuration can incl=
-ude the
- mux function to select on those pin(s)/group(s), and various pin confi=
-guration
---=20
-2.1.3.1.ge241007
+ drivers/staging/nvec/nvec.c | 21 ++++++++++++---------
+ drivers/staging/nvec/nvec.h |  2 ++
+ 2 files changed, 14 insertions(+), 9 deletions(-)
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index a93208a..acf2ea6 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -33,6 +33,7 @@
+ #include <linux/mfd/core.h>
+ #include <linux/mutex.h>
+ #include <linux/notifier.h>
++#include <linux/pm.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ #include <linux/workqueue.h>
+@@ -80,8 +81,6 @@ enum nvec_sleep_subcmds {
+ #define LID_SWITCH BIT(1)
+ #define PWR_BUTTON BIT(15)
+ 
+-static struct nvec_chip *nvec_power_handle;
+-
+ static const struct mfd_cell nvec_devices[] = {
+ 	{
+ 		.name = "nvec-kbd",
+@@ -759,12 +758,14 @@ static void nvec_disable_i2c_slave(struct nvec_chip *nvec)
+ }
+ #endif
+ 
+-static void nvec_power_off(void)
++static void nvec_power_off(struct power_off_handler_block *this)
+ {
++	struct nvec_chip *nvec = container_of(this, struct nvec_chip,
++					      power_off_hb);
+ 	char ap_pwr_down[] = { NVEC_SLEEP, AP_PWR_DOWN };
+ 
+-	nvec_toggle_global_events(nvec_power_handle, false);
+-	nvec_write_async(nvec_power_handle, ap_pwr_down, 2);
++	nvec_toggle_global_events(nvec, false);
++	nvec_write_async(nvec, ap_pwr_down, 2);
+ }
+ 
+ /*
+@@ -878,8 +879,11 @@ static int tegra_nvec_probe(struct platform_device *pdev)
+ 	nvec->nvec_status_notifier.notifier_call = nvec_status_notifier;
+ 	nvec_register_notifier(nvec, &nvec->nvec_status_notifier, 0);
+ 
+-	nvec_power_handle = nvec;
+-	pm_power_off = nvec_power_off;
++	nvec->power_off_hb.handler = nvec_power_off;
++	nvec->power_off_hb.priority = POWER_OFF_PRIORITY_DEFAULT;
++	ret = register_power_off_handler(&nvec->power_off_hb);
++	if (ret)
++		dev_warn(nvec->dev, "Failed to register power-off handler\n");
+ 
+ 	/* Get Firmware Version */
+ 	msg = nvec_write_sync(nvec, get_firmware_version, 2);
+@@ -914,13 +918,12 @@ static int tegra_nvec_remove(struct platform_device *pdev)
+ {
+ 	struct nvec_chip *nvec = platform_get_drvdata(pdev);
+ 
++	unregister_power_off_handler(&nvec->power_off_hb);
+ 	nvec_toggle_global_events(nvec, false);
+ 	mfd_remove_devices(nvec->dev);
+ 	nvec_unregister_notifier(nvec, &nvec->nvec_status_notifier);
+ 	cancel_work_sync(&nvec->rx_work);
+ 	cancel_work_sync(&nvec->tx_work);
+-	/* FIXME: needs check wether nvec is responsible for power off */
+-	pm_power_off = NULL;
+ 
+ 	return 0;
+ }
+diff --git a/drivers/staging/nvec/nvec.h b/drivers/staging/nvec/nvec.h
+index e271375..d4145da 100644
+--- a/drivers/staging/nvec/nvec.h
++++ b/drivers/staging/nvec/nvec.h
+@@ -163,6 +163,8 @@ struct nvec_chip {
+ 	struct nvec_msg *last_sync_msg;
+ 
+ 	int state;
++
++	struct power_off_handler_block power_off_hb;
+ };
+ 
+ extern int nvec_write_async(struct nvec_chip *nvec, const unsigned char *data,
+-- 
+1.9.1
