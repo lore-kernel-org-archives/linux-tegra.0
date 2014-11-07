@@ -1,67 +1,56 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 2/2] arm: dts: tegra124: Add APB_MISC_GP as a mipi pad
- control bank
-Date: Fri, 7 Nov 2014 13:35:14 +0100
-Message-ID: <20141107123511.GB11084@ulmo.nvidia.com>
-References: <54088B53.6040802@wwwdotorg.org>
- <1410292726-9179-1-git-send-email-seanpaul@chromium.org>
- <1410292726-9179-2-git-send-email-seanpaul@chromium.org>
+From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Subject: Re: [PATCH 0/3] Add support for Tegra Activity Monitor
+Date: Fri, 07 Nov 2014 13:35:19 +0100
+Message-ID: <545CBC87.7050404@collabora.com>
+References: <1414594232-15684-1-git-send-email-tomeu.vizoso@collabora.com> <545C8BCC.3090908@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="FkmkrVfFsRoUs1wW"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1410292726-9179-2-git-send-email-seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+In-Reply-To: <545C8BCC.3090908-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, davidriley-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 11/07/2014 10:07 AM, Alexandre Courbot wrote:
+> On 10/29/2014 11:50 PM, Tomeu Vizoso wrote:
+>> Hello,
+>>
+>> these patches implement support for setting the rate of the EMC clock based on
+>> stats collected from the ACTMON, a piece of hw in the Tegra124 that counts
+>> memory accesses (among others).
+>>
+>> It depends on the following in-flight patches:
+>>
+>> * MC driver: http://thread.gmane.org/gmane.linux.ports.tegra/19623
+>> * EMC driver: http://thread.gmane.org/gmane.linux.ports.arm.kernel/365125
+>> * CPUFreq driver: http://thread.gmane.org/gmane.linux.kernel/1812962
+>>
+>> I have pushed a branch here for testing:
+> 
+> I am not too familiar with DVFS, but after going through this series it 
+> really seems to me that this could use devfreq. In its current form this 
+> driver mixes control and policy and lacks flexibility, preventing e.g. 
+> to switch to a performance or power-saving profile. Could you study the 
+> feasibility of using devfreq for this?
 
---FkmkrVfFsRoUs1wW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yeah, I started writing a devfreq driver, but then I looked in more
+detail to the downstream driver and realized that most of the
+functionality that devfreq provides overlaps with the hw.
 
-On Tue, Sep 09, 2014 at 03:58:46PM -0400, Sean Paul wrote:
-> This patch adds the APB_MISC_GP_MIPI_PAD_CTRL_0 as a pinctrl
-> bank so the new mipi pad control group can be muxed between CSI
-> and DSI_B.
->=20
-> Signed-off-by: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-> ---
-> Changes in v2:
-> 	- Added patch
->=20
-> Changes in v3:
-> 	- Changed comment
->=20
->  arch/arm/boot/dts/tegra124.dtsi | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+The ACTMON can be configured to fire an interrupt when a set of
+thresholds are crossed, similar to the simple-ondemand governor but a
+bit more sophisticated. The only functionality of the governors that
+isn't covered by the ACTMON hw is determining the new frequency after a
+threshold has been crossed, but if we want to retain the flexibility of
+the downstream solution, we would need to write a new governor anyway.
 
-Applied to the for-3.19/dt branch.
+I realize that it would be cool to reuse the code in devfreq, but being
+able to let the hw sample the counters, calculating averages and
+checking if a threshold has been crossed without the cpu having to
+intervene gives this SoC quite an edge when compared to its competitors.
 
-Thierry
+Regards,
 
---FkmkrVfFsRoUs1wW
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJUXLx/AAoJEN0jrNd/PrOhaE8P/3qPPFGvIGyXRcnRhdasnwPZ
-5JjWcDAn/Wdlm5NALUut3MCuogF8xZwbFbggSTOfnfjMrMu/PFZB8yYVN5NcIvmS
-uuFUg7v+Ch97o3MTEqEPOWHZjzk7K/V6vq3jhM6FXxW594RLtW1VwDd3inRdy7ex
-Xw5+0iYC+taDMrPg8fQC3cZuFL72iGhjqGZCQXAHhJ0Jfi9aIG3LUAaTT+ABPtEr
-XFxOgX7Choirj96MD+N7aEngHEUHca4PGsb+41yQDLqvjozBVhVDaKdK6JLsKefb
-Mtyrh2R3bi1dVvMIB8LHHRQjqn6AO5/Fp0kQlYSTfUsUWA/7F8bmnphZJKAE4uT7
-p4a4WA9YajXf+OaEj0IIKoauk8v2g+r32XSy8EvaSZgd81yFrgRZSj0HGQ9bLmfH
-9UIe4NmVivQxiPYQfxw5QO3e2eulImzlXr5OFdtN/nagSrXPJaE8pRI58m5sLzcS
-8KbPzV7N415Ob1vFdmzSuj+RsJSaPi4vLwIOxK7aHQX6gVM2qlZIb519flIUSxNV
-7QokgjrBu1XuRt2XGtGiPK/kEZhThvUuIE1QW5Qn56dMay6UUDdfWTAZliRse/9S
-GJunD0aRCBtzxe3C6l+NZ5JuNn+4tlesQL/1KOqjPE9xIux3hVS+2S3RRR1LykOH
-JVigyqc/BrWWk7ScMliu
-=jTX8
------END PGP SIGNATURE-----
-
---FkmkrVfFsRoUs1wW--
+Tomeu
