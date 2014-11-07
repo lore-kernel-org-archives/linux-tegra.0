@@ -1,608 +1,125 @@
-From: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v7 4/4] thermal: Add Tegra SOCTHERM thermal management
- driver
-Date: Fri, 7 Nov 2014 11:54:06 -0400
-Message-ID: <20141107155227.GF10180@developer>
-References: <1411724593-4037-5-git-send-email-cyndis@kapsi.fi>
- <1412000251-1571-1-git-send-email-mikko.perttunen@kapsi.fi>
- <543E46DF.8060705@kapsi.fi>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v6 00/12] NVIDIA Tegra memory controller and IOMMU support
+Date: Fri,  7 Nov 2014 17:00:51 +0100
+Message-ID: <1415376063-17205-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ahP6B03r4gLOj5uD"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <543E46DF.8060705-/1wQRMveznE@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, juha-matti.tilli-X3B1VOXEql0@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, David Riley <davidriley-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
---ahP6B03r4gLOj5uD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is the sixth installment in the Tegra IOMMU and memory controller
+support series. This version addresses the final outstanding comments from
+Olof about using proper Kconfig symbols to track the dependencies. It also
+splits up the driver into one part that implements the memory controller
+only and a second part that implements the SMMU. This plays nicely with
+the new Kconfig options introduced.
 
-Terve Mikko,
+Patch 1 is a preparatory patch that exposes the memory controller clock.
 
-On Wed, Oct 15, 2014 at 01:05:19PM +0300, Mikko Perttunen wrote:
-> Eduardo: ping
->=20
+Patches 2 and 3 is a pair of precursory patches needed to make this all
+work on 64-bit ARM in the future.
 
+The device tree binding for the Tegra memory controller is added in patch
+4 and patch 5 is the bulk of the series that move the existing memory
+controller and IOMMU drivers into the new unified driver that supports
+Tegra30, Tegra114 and Tegra124.
 
-I had no objections with the driver at this point. Neither with the DT
-part. I decided to include it in my -linus queue, which means, it will
-hopefully be queued in the next major merge windown (v3.19).
+Patches 6, 7 and 8 add the DT nodes for the memory controller/IOMMU on
+Tegra30, Tegra114 and Tegra124.
 
-I also merged it to my -next branch, for linux-next testing.
+IOMMU support is enabled for the display controllers in patches 9, 10 and
+11. This will allow the display controllers to have their memory accesses
+translated by the SMMU, which will enable non-contiguous buffers to be
+used for scan-out.
 
+Finally patch 12 also adds support for Tegra132. It is kept separate because
+none of the other Tegra132 patches have been merged yet, but I've included
+it here for completeness.
 
-> Cheers,
-> Mikko
->=20
-> On 09/29/2014 05:17 PM, Mikko Perttunen wrote:
-> > From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Because the patches are rather intertwined, I'd like to merge them all via
+the Tegra tree. For that I'll need Acked-bys from Mike, Russell and Joerg
+on patches 1, 2 and 3, and 5, respectively.
 
-BTW, this nvidia address is bouncing. I noticed because my automated
-'I applied it on queue xyz' notification message has returned.
+Thierry
 
-> >
-> > This adds support for the Tegra SOCTHERM thermal sensing and management
-> > system found in the Tegra124 system-on-chip. This initial driver suppor=
-ts
-> > temperature polling for four thermal zones.
-> >
-> > Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> > v7: bunch of style fixes
-> >
-> >   drivers/thermal/Kconfig          |  10 +
-> >   drivers/thermal/Makefile         |   1 +
-> >   drivers/thermal/tegra_soctherm.c | 473 ++++++++++++++++++++++++++++++=
-+++++++++
-> >   3 files changed, 484 insertions(+)
-> >   create mode 100644 drivers/thermal/tegra_soctherm.c
-> >
-> > diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-> > index 693208e..fd9d049 100644
-> > --- a/drivers/thermal/Kconfig
-> > +++ b/drivers/thermal/Kconfig
-> > @@ -175,6 +175,16 @@ config ARMADA_THERMAL
-> >   	  Enable this option if you want to have support for thermal managem=
-ent
-> >   	  controller present in Armada 370 and Armada XP SoC.
-> >
-> > +config TEGRA_SOCTHERM
-> > +	tristate "Tegra SOCTHERM thermal management"
-> > +	depends on ARCH_TEGRA
-> > +	help
-> > +	  Enable this option for integrated thermal management support on NVI=
-DIA
-> > +	  Tegra124 systems-on-chip. The driver supports four thermal zones
-> > +	  (CPU, GPU, MEM, PLLX). Cooling devices can be bound to the thermal
-> > +	  zones to manage temperatures. This option is also required for the
-> > +	  emergency thermal reset (thermtrip) feature to function.
-> > +
-> >   config DB8500_CPUFREQ_COOLING
-> >   	tristate "DB8500 cpufreq cooling"
-> >   	depends on ARCH_U8500
-> > diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
-> > index 31e232f..f0b94d5 100644
-> > --- a/drivers/thermal/Makefile
-> > +++ b/drivers/thermal/Makefile
-> > @@ -33,3 +33,4 @@ obj-$(CONFIG_INTEL_SOC_DTS_THERMAL)	+=3D intel_soc_dt=
-s_thermal.o
-> >   obj-$(CONFIG_TI_SOC_THERMAL)	+=3D ti-soc-thermal/
-> >   obj-$(CONFIG_ACPI_INT3403_THERMAL)	+=3D int3403_thermal.o
-> >   obj-$(CONFIG_ST_THERMAL)	+=3D st/
-> > +obj-$(CONFIG_TEGRA_SOCTHERM)	+=3D tegra_soctherm.o
-> > diff --git a/drivers/thermal/tegra_soctherm.c b/drivers/thermal/tegra_s=
-octherm.c
-> > new file mode 100644
-> > index 0000000..70f7e9e
-> > --- /dev/null
-> > +++ b/drivers/thermal/tegra_soctherm.c
-> > @@ -0,0 +1,473 @@
-> > +/*
-> > + * Copyright (c) 2014, NVIDIA CORPORATION.  All rights reserved.
-> > + *
-> > + * Author:
-> > + *	Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > + *
+Thierry Reding (12):
+  clk: tegra: Implement memory-controller clock
+  amba: Add Kconfig file
+  ARM: tegra: Move AHB Kconfig to drivers/amba
+  of: Add NVIDIA Tegra memory controller binding
+  memory: Add NVIDIA Tegra memory controller support
+  ARM: tegra: Add memory controller support for Tegra30
+  ARM: tegra: Add memory controller support for Tegra114
+  ARM: tegra: Add memory controller support for Tegra124
+  ARM: tegra: Enable IOMMU for display controllers on Tegra30
+  ARM: tegra: Enable IOMMU for display controllers on Tegra114
+  ARM: tegra: Enable IOMMU for display controllers on Tegra124
+  memory: tegra: Add Tegra132 support
 
-Might be time to send a patch on top of my -linus queue to update the
-above with a valid email address.
+ .../memory-controllers/nvidia,tegra-mc.txt         |   36 +
+ arch/arm/Kconfig                                   |    3 -
+ arch/arm/boot/dts/tegra114.dtsi                    |   23 +-
+ arch/arm/boot/dts/tegra124.dtsi                    |   16 +
+ arch/arm/boot/dts/tegra30.dtsi                     |   25 +-
+ arch/arm/mach-tegra/Kconfig                        |    9 +-
+ arch/arm64/Kconfig                                 |    3 -
+ drivers/Kconfig                                    |    2 +
+ drivers/amba/Kconfig                               |   14 +
+ drivers/clk/tegra/clk-divider.c                    |   13 +
+ drivers/clk/tegra/clk-tegra114.c                   |    7 +-
+ drivers/clk/tegra/clk-tegra124.c                   |    7 +-
+ drivers/clk/tegra/clk-tegra20.c                    |    8 +-
+ drivers/clk/tegra/clk-tegra30.c                    |    7 +-
+ drivers/clk/tegra/clk.h                            |    2 +
+ drivers/iommu/Makefile                             |    1 -
+ drivers/iommu/tegra-smmu.c                         | 1295 --------------------
+ drivers/memory/Kconfig                             |   12 +-
+ drivers/memory/Makefile                            |    3 +-
+ drivers/memory/tegra/Kconfig                       |   16 +
+ drivers/memory/tegra/Makefile                      |    9 +
+ drivers/memory/tegra/mc.c                          |  303 +++++
+ drivers/memory/tegra/mc.h                          |  129 ++
+ drivers/memory/tegra/smmu.c                        |  716 +++++++++++
+ drivers/memory/tegra/tegra114.c                    |  948 ++++++++++++++
+ drivers/memory/tegra/tegra124.c                    | 1028 ++++++++++++++++
+ drivers/memory/tegra/tegra30.c                     |  970 +++++++++++++++
+ drivers/memory/tegra30-mc.c                        |  378 ------
+ include/dt-bindings/clock/tegra114-car.h           |    2 +-
+ include/dt-bindings/clock/tegra124-car.h           |    2 +-
+ include/dt-bindings/clock/tegra20-car.h            |    2 +-
+ include/dt-bindings/memory/tegra114-mc.h           |   25 +
+ include/dt-bindings/memory/tegra124-mc.h           |   31 +
+ include/dt-bindings/memory/tegra30-mc.h            |   24 +
+ 34 files changed, 4340 insertions(+), 1729 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra-mc.txt
+ create mode 100644 drivers/amba/Kconfig
+ delete mode 100644 drivers/iommu/tegra-smmu.c
+ create mode 100644 drivers/memory/tegra/Kconfig
+ create mode 100644 drivers/memory/tegra/Makefile
+ create mode 100644 drivers/memory/tegra/mc.c
+ create mode 100644 drivers/memory/tegra/mc.h
+ create mode 100644 drivers/memory/tegra/smmu.c
+ create mode 100644 drivers/memory/tegra/tegra114.c
+ create mode 100644 drivers/memory/tegra/tegra124.c
+ create mode 100644 drivers/memory/tegra/tegra30.c
+ delete mode 100644 drivers/memory/tegra30-mc.c
+ create mode 100644 include/dt-bindings/memory/tegra114-mc.h
+ create mode 100644 include/dt-bindings/memory/tegra124-mc.h
+ create mode 100644 include/dt-bindings/memory/tegra30-mc.h
 
-Thanks,
-
-> > + * This software is licensed under the terms of the GNU General Public
-> > + * License version 2, as published by the Free Software Foundation, and
-> > + * may be copied, distributed, and modified under those terms.
-> > + *
-> > + * This program is distributed in the hope that it will be useful,
-> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> > + * GNU General Public License for more details.
-> > + *
-> > + */
-> > +
-> > +#include <linux/bitops.h>
-> > +#include <linux/clk.h>
-> > +#include <linux/delay.h>
-> > +#include <linux/err.h>
-> > +#include <linux/interrupt.h>
-> > +#include <linux/io.h>
-> > +#include <linux/module.h>
-> > +#include <linux/of.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/reset.h>
-> > +#include <linux/thermal.h>
-> > +
-> > +#include <soc/tegra/fuse.h>
-> > +
-> > +#define SENSOR_CONFIG0				0
-> > +#define SENSOR_CONFIG0_STOP			BIT(0)
-> > +#define SENSOR_CONFIG0_TALL_SHIFT		8
-> > +#define SENSOR_CONFIG0_TCALC_OVER		BIT(4)
-> > +#define SENSOR_CONFIG0_OVER			BIT(3)
-> > +#define SENSOR_CONFIG0_CPTR_OVER		BIT(2)
-> > +
-> > +#define SENSOR_CONFIG1				4
-> > +#define SENSOR_CONFIG1_TSAMPLE_SHIFT		0
-> > +#define SENSOR_CONFIG1_TIDDQ_EN_SHIFT		15
-> > +#define SENSOR_CONFIG1_TEN_COUNT_SHIFT		24
-> > +#define SENSOR_CONFIG1_TEMP_ENABLE		BIT(31)
-> > +
-> > +#define SENSOR_CONFIG2				8
-> > +#define SENSOR_CONFIG2_THERMA_SHIFT		16
-> > +#define SENSOR_CONFIG2_THERMB_SHIFT		0
-> > +
-> > +#define SENSOR_PDIV				0x1c0
-> > +#define SENSOR_PDIV_T124			0x8888
-> > +#define SENSOR_HOTSPOT_OFF			0x1c4
-> > +#define SENSOR_HOTSPOT_OFF_T124			0x00060600
-> > +#define SENSOR_TEMP1				0x1c8
-> > +#define SENSOR_TEMP2				0x1cc
-> > +
-> > +#define SENSOR_TEMP_MASK			0xffff
-> > +#define READBACK_VALUE_MASK			0xff00
-> > +#define READBACK_VALUE_SHIFT			8
-> > +#define READBACK_ADD_HALF			BIT(7)
-> > +#define READBACK_NEGATE				BIT(1)
-> > +
-> > +#define FUSE_TSENSOR8_CALIB			0x180
-> > +#define FUSE_SPARE_REALIGNMENT_REG_0		0x1fc
-> > +
-> > +#define FUSE_TSENSOR_CALIB_CP_TS_BASE_MASK	0x1fff
-> > +#define FUSE_TSENSOR_CALIB_FT_TS_BASE_MASK	(0x1fff << 13)
-> > +#define FUSE_TSENSOR_CALIB_FT_TS_BASE_SHIFT	13
-> > +
-> > +#define FUSE_TSENSOR8_CALIB_CP_TS_BASE_MASK	0x3ff
-> > +#define FUSE_TSENSOR8_CALIB_FT_TS_BASE_MASK	(0x7ff << 10)
-> > +#define FUSE_TSENSOR8_CALIB_FT_TS_BASE_SHIFT	10
-> > +
-> > +#define FUSE_SPARE_REALIGNMENT_REG_SHIFT_CP_MASK 0x3f
-> > +#define FUSE_SPARE_REALIGNMENT_REG_SHIFT_FT_MASK (0x1f << 21)
-> > +#define FUSE_SPARE_REALIGNMENT_REG_SHIFT_FT_SHIFT 21
-> > +
-> > +#define NOMINAL_CALIB_FT_T124			105
-> > +#define NOMINAL_CALIB_CP_T124			25
-> > +
-> > +struct tegra_tsensor_configuration {
-> > +	u32 tall, tsample, tiddq_en, ten_count, pdiv, tsample_ate, pdiv_ate;
-> > +};
-> > +
-> > +struct tegra_tsensor {
-> > +	const struct tegra_tsensor_configuration *config;
-> > +	u32 base, calib_fuse_offset;
-> > +	/* Correction values used to modify values read from calibration fuse=
-s */
-> > +	s32 fuse_corr_alpha, fuse_corr_beta;
-> > +};
-> > +
-> > +struct tegra_thermctl_zone {
-> > +	void __iomem *reg;
-> > +	unsigned int shift;
-> > +};
-> > +
-> > +static const struct tegra_tsensor_configuration t124_tsensor_config =
-=3D {
-> > +	.tall =3D 16300,
-> > +	.tsample =3D 120,
-> > +	.tiddq_en =3D 1,
-> > +	.ten_count =3D 1,
-> > +	.pdiv =3D 8,
-> > +	.tsample_ate =3D 480,
-> > +	.pdiv_ate =3D 8
-> > +};
-> > +
-> > +static const struct tegra_tsensor t124_tsensors[] =3D {
-> > +	{
-> > +		.config =3D &t124_tsensor_config,
-> > +		.base =3D 0xc0,
-> > +		.calib_fuse_offset =3D 0x098,
-> > +		.fuse_corr_alpha =3D 1135400,
-> > +		.fuse_corr_beta =3D -6266900,
-> > +	},
-> > +	{
-> > +		.config =3D &t124_tsensor_config,
-> > +		.base =3D 0xe0,
-> > +		.calib_fuse_offset =3D 0x084,
-> > +		.fuse_corr_alpha =3D 1122220,
-> > +		.fuse_corr_beta =3D -5700700,
-> > +	},
-> > +	{
-> > +		.config =3D &t124_tsensor_config,
-> > +		.base =3D 0x100,
-> > +		.calib_fuse_offset =3D 0x088,
-> > +		.fuse_corr_alpha =3D 1127000,
-> > +		.fuse_corr_beta =3D -6768200,
-> > +	},
-> > +	{
-> > +		.config =3D &t124_tsensor_config,
-> > +		.base =3D 0x120,
-> > +		.calib_fuse_offset =3D 0x12c,
-> > +		.fuse_corr_alpha =3D 1110900,
-> > +		.fuse_corr_beta =3D -6232000,
-> > +	},
-> > +	{
-> > +		.config =3D &t124_tsensor_config,
-> > +		.base =3D 0x140,
-> > +		.calib_fuse_offset =3D 0x158,
-> > +		.fuse_corr_alpha =3D 1122300,
-> > +		.fuse_corr_beta =3D -5936400,
-> > +	},
-> > +	{
-> > +		.config =3D &t124_tsensor_config,
-> > +		.base =3D 0x160,
-> > +		.calib_fuse_offset =3D 0x15c,
-> > +		.fuse_corr_alpha =3D 1145700,
-> > +		.fuse_corr_beta =3D -7124600,
-> > +	},
-> > +	{
-> > +		.config =3D &t124_tsensor_config,
-> > +		.base =3D 0x180,
-> > +		.calib_fuse_offset =3D 0x154,
-> > +		.fuse_corr_alpha =3D 1120100,
-> > +		.fuse_corr_beta =3D -6000500,
-> > +	},
-> > +	{
-> > +		.config =3D &t124_tsensor_config,
-> > +		.base =3D 0x1a0,
-> > +		.calib_fuse_offset =3D 0x160,
-> > +		.fuse_corr_alpha =3D 1106500,
-> > +		.fuse_corr_beta =3D -6729300,
-> > +	},
-> > +};
-> > +
-> > +struct tegra_soctherm {
-> > +	struct reset_control *reset;
-> > +	struct clk *clock_tsensor;
-> > +	struct clk *clock_soctherm;
-> > +	void __iomem *regs;
-> > +
-> > +	struct thermal_zone_device *thermctl_tzs[4];
-> > +};
-> > +
-> > +struct tsensor_shared_calibration {
-> > +	u32 base_cp, base_ft;
-> > +	u32 actual_temp_cp, actual_temp_ft;
-> > +};
-> > +
-> > +static int calculate_shared_calibration(struct tsensor_shared_calibrat=
-ion *r)
-> > +{
-> > +	u32 val, shifted_cp, shifted_ft;
-> > +	int err;
-> > +
-> > +	err =3D tegra_fuse_readl(FUSE_TSENSOR8_CALIB, &val);
-> > +	if (err)
-> > +		return err;
-> > +	r->base_cp =3D val & FUSE_TSENSOR8_CALIB_CP_TS_BASE_MASK;
-> > +	r->base_ft =3D (val & FUSE_TSENSOR8_CALIB_FT_TS_BASE_MASK)
-> > +		>> FUSE_TSENSOR8_CALIB_FT_TS_BASE_SHIFT;
-> > +	val =3D ((val & FUSE_SPARE_REALIGNMENT_REG_SHIFT_FT_MASK)
-> > +		>> FUSE_SPARE_REALIGNMENT_REG_SHIFT_FT_SHIFT);
-> > +	shifted_ft =3D sign_extend32(val, 4);
-> > +
-> > +	err =3D tegra_fuse_readl(FUSE_SPARE_REALIGNMENT_REG_0, &val);
-> > +	if (err)
-> > +		return err;
-> > +	shifted_cp =3D sign_extend32(val, 5);
-> > +
-> > +	r->actual_temp_cp =3D 2 * NOMINAL_CALIB_CP_T124 + shifted_cp;
-> > +	r->actual_temp_ft =3D 2 * NOMINAL_CALIB_FT_T124 + shifted_ft;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static s64 div64_s64_precise(s64 a, s64 b)
-> > +{
-> > +	s64 r, al;
-> > +
-> > +	/* Scale up for increased precision division */
-> > +	al =3D a << 16;
-> > +
-> > +	r =3D div64_s64(al * 2 + 1, 2 * b);
-> > +	return r >> 16;
-> > +}
-> > +
-> > +static int
-> > +calculate_tsensor_calibration(const struct tegra_tsensor *sensor,
-> > +			      const struct tsensor_shared_calibration *shared,
-> > +			      u32 *calib)
-> > +{
-> > +	u32 val;
-> > +	s32 actual_tsensor_ft, actual_tsensor_cp, delta_sens, delta_temp,
-> > +	    mult, div;
-> > +	s16 therma, thermb;
-> > +	s64 tmp;
-> > +	int err;
-> > +
-> > +	err =3D tegra_fuse_readl(sensor->calib_fuse_offset, &val);
-> > +	if (err)
-> > +		return err;
-> > +
-> > +	actual_tsensor_cp =3D (shared->base_cp * 64) + sign_extend32(val, 12);
-> > +	val =3D (val & FUSE_TSENSOR_CALIB_FT_TS_BASE_MASK)
-> > +		>> FUSE_TSENSOR_CALIB_FT_TS_BASE_SHIFT;
-> > +	actual_tsensor_ft =3D (shared->base_ft * 32) + sign_extend32(val, 12);
-> > +
-> > +	delta_sens =3D actual_tsensor_ft - actual_tsensor_cp;
-> > +	delta_temp =3D shared->actual_temp_ft - shared->actual_temp_cp;
-> > +
-> > +	mult =3D sensor->config->pdiv * sensor->config->tsample_ate;
-> > +	div =3D sensor->config->tsample * sensor->config->pdiv_ate;
-> > +
-> > +	therma =3D div64_s64_precise((s64) delta_temp * (1LL << 13) * mult,
-> > +				   (s64) delta_sens * div);
-> > +
-> > +	tmp =3D (s64)actual_tsensor_ft * shared->actual_temp_cp -
-> > +	      (s64)actual_tsensor_cp * shared->actual_temp_ft;
-> > +	thermb =3D div64_s64_precise(tmp, (s64)delta_sens);
-> > +
-> > +	therma =3D div64_s64_precise((s64)therma * sensor->fuse_corr_alpha,
-> > +				   (s64)1000000LL);
-> > +	thermb =3D div64_s64_precise((s64)thermb * sensor->fuse_corr_alpha +
-> > +				   sensor->fuse_corr_beta, (s64)1000000LL);
-> > +
-> > +	*calib =3D ((u16)therma << SENSOR_CONFIG2_THERMA_SHIFT) |
-> > +		 ((u16)thermb << SENSOR_CONFIG2_THERMB_SHIFT);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int enable_tsensor(struct tegra_soctherm *tegra,
-> > +			  const struct tegra_tsensor *sensor,
-> > +			  const struct tsensor_shared_calibration *shared)
-> > +{
-> > +	void __iomem *base =3D tegra->regs + sensor->base;
-> > +	unsigned int val;
-> > +	u32 calib;
-> > +	int err;
-> > +
-> > +	err =3D calculate_tsensor_calibration(sensor, shared, &calib);
-> > +	if (err)
-> > +		return err;
-> > +
-> > +	val =3D sensor->config->tall << SENSOR_CONFIG0_TALL_SHIFT;
-> > +	writel(val, base + SENSOR_CONFIG0);
-> > +
-> > +	val  =3D (sensor->config->tsample - 1) << SENSOR_CONFIG1_TSAMPLE_SHIF=
-T;
-> > +	val |=3D sensor->config->tiddq_en << SENSOR_CONFIG1_TIDDQ_EN_SHIFT;
-> > +	val |=3D sensor->config->ten_count << SENSOR_CONFIG1_TEN_COUNT_SHIFT;
-> > +	val |=3D SENSOR_CONFIG1_TEMP_ENABLE;
-> > +	writel(val, base + SENSOR_CONFIG1);
-> > +
-> > +	writel(calib, base + SENSOR_CONFIG2);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +/*
-> > + * Translate from soctherm readback format to millicelsius.
-> > + * The soctherm readback format in bits is as follows:
-> > + *   TTTTTTTT H______N
-> > + * where T's contain the temperature in Celsius,
-> > + * H denotes an addition of 0.5 Celsius and N denotes negation
-> > + * of the final value.
-> > + */
-> > +static long translate_temp(u16 val)
-> > +{
-> > +	long t;
-> > +
-> > +	t =3D ((val & READBACK_VALUE_MASK) >> READBACK_VALUE_SHIFT) * 1000;
-> > +	if (val & READBACK_ADD_HALF)
-> > +		t +=3D 500;
-> > +	if (val & READBACK_NEGATE)
-> > +		t *=3D -1;
-> > +
-> > +	return t;
-> > +}
-> > +
-> > +static int tegra_thermctl_get_temp(void *data, long *out_temp)
-> > +{
-> > +	struct tegra_thermctl_zone *zone =3D data;
-> > +	u32 val;
-> > +
-> > +	val =3D (readl(zone->reg) >> zone->shift) & SENSOR_TEMP_MASK;
-> > +	*out_temp =3D translate_temp(val);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static const struct of_device_id tegra_soctherm_of_match[] =3D {
-> > +	{ .compatible =3D "nvidia,tegra124-soctherm" },
-> > +	{ },
-> > +};
-> > +MODULE_DEVICE_TABLE(of, tegra_soctherm_of_match);
-> > +
-> > +struct thermctl_zone_desc {
-> > +	unsigned int offset;
-> > +	unsigned int shift;
-> > +};
-> > +
-> > +static const struct thermctl_zone_desc t124_thermctl_temp_zones[] =3D {
-> > +	{ SENSOR_TEMP1, 16 },
-> > +	{ SENSOR_TEMP2, 16 },
-> > +	{ SENSOR_TEMP1, 0 },
-> > +	{ SENSOR_TEMP2, 0 }
-> > +};
-> > +
-> > +static int tegra_soctherm_probe(struct platform_device *pdev)
-> > +{
-> > +	struct tegra_soctherm *tegra;
-> > +	struct thermal_zone_device *tz;
-> > +	struct tsensor_shared_calibration shared_calib;
-> > +	struct resource *res;
-> > +	unsigned int i;
-> > +	int err;
-> > +
-> > +	const struct tegra_tsensor *tsensors =3D t124_tsensors;
-> > +
-> > +	tegra =3D devm_kzalloc(&pdev->dev, sizeof(*tegra), GFP_KERNEL);
-> > +	if (!tegra)
-> > +		return -ENOMEM;
-> > +
-> > +	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > +	tegra->regs =3D devm_ioremap_resource(&pdev->dev, res);
-> > +	if (IS_ERR(tegra->regs))
-> > +		return PTR_ERR(tegra->regs);
-> > +
-> > +	tegra->reset =3D devm_reset_control_get(&pdev->dev, "soctherm");
-> > +	if (IS_ERR(tegra->reset)) {
-> > +		dev_err(&pdev->dev, "can't get soctherm reset\n");
-> > +		return PTR_ERR(tegra->reset);
-> > +	}
-> > +
-> > +	tegra->clock_tsensor =3D devm_clk_get(&pdev->dev, "tsensor");
-> > +	if (IS_ERR(tegra->clock_tsensor)) {
-> > +		dev_err(&pdev->dev, "can't get tsensor clock\n");
-> > +		return PTR_ERR(tegra->clock_tsensor);
-> > +	}
-> > +
-> > +	tegra->clock_soctherm =3D devm_clk_get(&pdev->dev, "soctherm");
-> > +	if (IS_ERR(tegra->clock_soctherm)) {
-> > +		dev_err(&pdev->dev, "can't get soctherm clock\n");
-> > +		return PTR_ERR(tegra->clock_soctherm);
-> > +	}
-> > +
-> > +	reset_control_assert(tegra->reset);
-> > +
-> > +	err =3D clk_prepare_enable(tegra->clock_soctherm);
-> > +	if (err)
-> > +		return err;
-> > +
-> > +	err =3D clk_prepare_enable(tegra->clock_tsensor);
-> > +	if (err) {
-> > +		clk_disable_unprepare(tegra->clock_soctherm);
-> > +		return err;
-> > +	}
-> > +
-> > +	reset_control_deassert(tegra->reset);
-> > +
-> > +	/* Initialize raw sensors */
-> > +
-> > +	err =3D calculate_shared_calibration(&shared_calib);
-> > +	if (err)
-> > +		goto disable_clocks;
-> > +
-> > +	for (i =3D 0; i < ARRAY_SIZE(t124_tsensors); ++i) {
-> > +		err =3D enable_tsensor(tegra, tsensors + i, &shared_calib);
-> > +		if (err)
-> > +			goto disable_clocks;
-> > +	}
-> > +
-> > +	writel(SENSOR_PDIV_T124, tegra->regs + SENSOR_PDIV);
-> > +	writel(SENSOR_HOTSPOT_OFF_T124, tegra->regs + SENSOR_HOTSPOT_OFF);
-> > +
-> > +	/* Initialize thermctl sensors */
-> > +
-> > +	for (i =3D 0; i < ARRAY_SIZE(tegra->thermctl_tzs); ++i) {
-> > +		struct tegra_thermctl_zone *zone =3D
-> > +			devm_kzalloc(&pdev->dev, sizeof(*zone), GFP_KERNEL);
-> > +		if (!zone) {
-> > +			err =3D -ENOMEM;
-> > +			goto unregister_tzs;
-> > +		}
-> > +
-> > +		zone->reg =3D tegra->regs + t124_thermctl_temp_zones[i].offset;
-> > +		zone->shift =3D t124_thermctl_temp_zones[i].shift;
-> > +
-> > +		tz =3D thermal_zone_of_sensor_register(&pdev->dev, i, zone,
-> > +						     tegra_thermctl_get_temp,
-> > +						     NULL);
-> > +		if (IS_ERR(tz)) {
-> > +			err =3D PTR_ERR(tz);
-> > +			dev_err(&pdev->dev, "failed to register sensor: %d\n",
-> > +				err);
-> > +			goto unregister_tzs;
-> > +		}
-> > +
-> > +		tegra->thermctl_tzs[i] =3D tz;
-> > +	}
-> > +
-> > +	return 0;
-> > +
-> > +unregister_tzs:
-> > +	while (i--)
-> > +		thermal_zone_of_sensor_unregister(&pdev->dev,
-> > +						  tegra->thermctl_tzs[i]);
-> > +
-> > +disable_clocks:
-> > +	clk_disable_unprepare(tegra->clock_tsensor);
-> > +	clk_disable_unprepare(tegra->clock_soctherm);
-> > +
-> > +	return err;
-> > +}
-> > +
-> > +static int tegra_soctherm_remove(struct platform_device *pdev)
-> > +{
-> > +	struct tegra_soctherm *tegra =3D platform_get_drvdata(pdev);
-> > +	unsigned int i;
-> > +
-> > +	for (i =3D 0; i < ARRAY_SIZE(tegra->thermctl_tzs); ++i) {
-> > +		thermal_zone_of_sensor_unregister(&pdev->dev,
-> > +						  tegra->thermctl_tzs[i]);
-> > +	}
-> > +
-> > +	clk_disable_unprepare(tegra->clock_tsensor);
-> > +	clk_disable_unprepare(tegra->clock_soctherm);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static struct platform_driver tegra_soctherm_driver =3D {
-> > +	.probe =3D tegra_soctherm_probe,
-> > +	.remove =3D tegra_soctherm_remove,
-> > +	.driver =3D {
-> > +		.name =3D "tegra-soctherm",
-> > +		.of_match_table =3D tegra_soctherm_of_match,
-> > +	},
-> > +};
-> > +module_platform_driver(tegra_soctherm_driver);
-> > +
-> > +MODULE_AUTHOR("Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
-> > +MODULE_DESCRIPTION("NVIDIA Tegra SOCTHERM thermal management driver");
-> > +MODULE_LICENSE("GPL v2");
-> >
->=20
-
---ahP6B03r4gLOj5uD
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUXOsNAAoJEMLUO4d9pOJWXlcH+QEKoA8/4lJaEALHMTmXMVzE
-5VtTB8rSqiH2ecdwQ/WsM20SIAXhQEfqshVwJDfy9hfwddJOyTqJyt1E6wu3N2jS
-N+xOD6hqac+CVoLFrPb7qbFFIPoPNcsedAh1b77ffzCM+820rC8z+UeO0PM/5Ee/
-3wL+4ZsVVtvil9gvmbva+IVc00+XVVc+VEZGCO/CDGP7I7Ng88XEL8bkW0g7pQZX
-RQaOGnmoqB7rMYe/hD5XJWpXJaZIeut2pFx70QHIgvMh3Dv4ZVFoB4EF6GfwpI3l
-f0/mpnpBGGwT1E+bEJtO3R5w9609nyml+b5vT31yD+T/2/Gij8q1dkTwFTbuS/8=
-=96Om
------END PGP SIGNATURE-----
-
---ahP6B03r4gLOj5uD--
+-- 
+2.1.3
