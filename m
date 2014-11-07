@@ -1,128 +1,274 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: Re: [PATCH v3 04/13] of: document new emc-timings subnode in nvidia,tegra124-car
-Date: Fri, 7 Nov 2014 14:31:19 +0900
-Message-ID: <545C5927.3010001@nvidia.com>
-References: <1414599796-30597-1-git-send-email-tomeu.vizoso@collabora.com> <1414599796-30597-5-git-send-email-tomeu.vizoso@collabora.com> <545B172C.4060105@nvidia.com> <CAL_JsqKYSF3JVrXH_dkqRXQrgUU3igzvoK1C2k1Caz-4UuHX6Q@mail.gmail.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v3 11/13] clk: tegra: Add EMC clock driver
+Date: Fri, 7 Nov 2014 14:34:54 +0900
+Message-ID: <CAAVeFu+xVgqB3aRrLTmki7hoXkk3ZDo28DJexMn_2fWr162M9Q@mail.gmail.com>
+References: <1414599796-30597-1-git-send-email-tomeu.vizoso@collabora.com>
+ <1414599796-30597-12-git-send-email-tomeu.vizoso@collabora.com>
+ <545B2B89.8010801@nvidia.com> <545B5E58.4040404@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAL_JsqKYSF3JVrXH_dkqRXQrgUU3igzvoK1C2k1Caz-4UuHX6Q@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <545B5E58.4040404-/1wQRMveznE@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>
+Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/07/2014 12:12 AM, Rob Herring wrote:
-> On Thu, Nov 6, 2014 at 12:37 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+On Thu, Nov 6, 2014 at 8:41 PM, Mikko Perttunen
+<mikko.perttunen-/1wQRMveznE@public.gmane.org> wrote:
+> On 11/06/2014 10:04 AM, Alexandre Courbot wrote:
+>>
 >> On 10/30/2014 01:22 AM, Tomeu Vizoso wrote:
 >>>
->>> The EMC clock needs some extra information for changing its rate.
+>>> From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >>>
->>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+>>> The driver is currently only tested on Tegra124 Jetson TK1, but should
+>>> work with other Tegra124 boards, provided that correct EMC tables are
+>>> provided through the device tree. Older chip models have differing
+>>> timing change sequences, so they are not currently supported.
+>>>
+>>> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+>>>
 >>> ---
->>>    .../bindings/clock/nvidia,tegra124-car.txt         | 46
->>> +++++++++++++++++++++-
->>>    1 file changed, 44 insertions(+), 2 deletions(-)
 >>>
->>> diff --git
->>> a/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
->>> b/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
->>> index ded5d62..42e0588 100644
->>> --- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
->>> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
->>> @@ -19,12 +19,35 @@ Required properties :
->>>      In clock consumers, this cell represents the bit number in the CAR's
->>>      array of CLK_RST_CONTROLLER_RST_DEVICES_* registers.
+>>> v3:    * Add some locking to protect the registers that are shared
+>>> with the MC
+>>>       clock
 >>>
->>> +The node should contain a "emc-timings" subnode for each supported RAM
->>> type (see
->>> +field RAM_CODE in register PMC_STRAPPING_OPT_A), with its unit address
->>> being its
->>> +RAM_CODE.
+>>> v2:    * Make sure that the clock is properly registered
+>>>     * Bail out early from attempts to set the same rate
+>>> ---
+>>>   drivers/clk/tegra/Makefile       |   2 +-
+>>>   drivers/clk/tegra/clk-emc.c      | 470
+>>> +++++++++++++++++++++++++++++++++++++++
+>>>   drivers/clk/tegra/clk-tegra124.c |   4 +-
+>>>   drivers/clk/tegra/clk.h          |   2 +
+>>>   4 files changed, 476 insertions(+), 2 deletions(-)
+>>>   create mode 100644 drivers/clk/tegra/clk-emc.c
+>>>
+>>> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+>>> index f7dfb72..240e5b4 100644
+>>> --- a/drivers/clk/tegra/Makefile
+>>> +++ b/drivers/clk/tegra/Makefile
+>>> @@ -14,4 +14,4 @@ obj-y                    += clk-tegra-super-gen4.o
+>>>   obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
+>>>   obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
+>>>   obj-$(CONFIG_ARCH_TEGRA_114_SOC)    += clk-tegra114.o
+>>> -obj-$(CONFIG_ARCH_TEGRA_124_SOC)    += clk-tegra124.o
+>>> +obj-$(CONFIG_ARCH_TEGRA_124_SOC)    += clk-tegra124.o clk-emc.o
+>>> diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
+>>> new file mode 100644
+>>> index 0000000..182a059
+>>> --- /dev/null
+>>> +++ b/drivers/clk/tegra/clk-emc.c
+>>> @@ -0,0 +1,470 @@
+>>> +/*
+>>> + * drivers/clk/tegra/clk-emc.c
+>>> + *
+>>> + * Copyright (c) 2014, NVIDIA CORPORATION.  All rights reserved.
+>>> + *
+>>> + * Author:
+>>> + *    Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>> + *
+>>> + * This software is licensed under the terms of the GNU General Public
+>>> + * License version 2, as published by the Free Software Foundation, and
+>>> + * may be copied, distributed, and modified under those terms.
+>>> + *
+>>> + * This program is distributed in the hope that it will be useful,
+>>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>>> + * GNU General Public License for more details.
+>>> + *
+>>> + */
 >>> +
->>> +Required properties for "emc-timings" nodes :
->>> +- nvidia,ram-code : Should contain the value of RAM_CODE this timing set
->>> +  is used for.
+>>> +#include <linux/clk-provider.h>
+>>> +#include <linux/clk.h>
+>>> +#include <linux/clkdev.h>
+>>> +#include <linux/delay.h>
+>>> +#include <linux/module.h>
+>>> +#include <linux/of_address.h>
+>>> +#include <linux/of_platform.h>
+>>> +#include <linux/platform_device.h>
+>>> +#include <linux/sort.h>
+>>> +#include <linux/string.h>
 >>> +
->>> +Each "emc-timings" node should contain a "timing" subnode for every
->>> supported
->>> +EMC clock rate. The "timing" subnodes should have the clock rate in Hz as
->>> their
->>> +unit address.
+>>> +#include <soc/tegra/fuse.h>
+>>> +#include <soc/tegra/memory.h>
+>>> +
+>>> +#define CLK_SOURCE_EMC 0x19c
+>>> +
+>>> +#define CLK_SOURCE_EMC_EMC_2X_CLK_DIVISOR_SHIFT 0
+>>> +#define CLK_SOURCE_EMC_EMC_2X_CLK_DIVISOR_MASK 0xff
+>>> +#define CLK_SOURCE_EMC_EMC_2X_CLK_DIVISOR(x) (((x) &
+>>> CLK_SOURCE_EMC_EMC_2X_CLK_DIVISOR_MASK) << \
+>>> +                          CLK_SOURCE_EMC_EMC_2X_CLK_DIVISOR_SHIFT)
+>>> +
+>>> +#define CLK_SOURCE_EMC_EMC_2X_CLK_SRC_SHIFT 29
+>>> +#define CLK_SOURCE_EMC_EMC_2X_CLK_SRC_MASK 0x7
+>>> +#define CLK_SOURCE_EMC_EMC_2X_CLK_SRC(x) (((x) &
+>>> CLK_SOURCE_EMC_EMC_2X_CLK_SRC_MASK) << \
+>>> +                      CLK_SOURCE_EMC_EMC_2X_CLK_SRC_SHIFT)
+>>> +
+>>> +const char *emc_parent_clk_names[] = {
+>>> +    "pll_m", "pll_c", "pll_p", "clk_m", "pll_m_ud",
+>>> +    "pll_c2", "pll_c3", "pll_c_ud"
+>>> +};
+>>> +
+>>> +/* List of clock sources for various parents the EMC clock can have.
+>>> + * When we change the timing to a timing with a parent that has the same
+>>> + * clock source as the current parent, we must first change to a backup
+>>> + * timing that has a different clock source.
+>>> + */
 >>
 >>
->> This seems to be a quite liberal use of unit addresses (same in the next
->> patch) - is this allowed by DT?
->
-> No, unit address should match a reg property.
-
-Mmm, would you have any suggestion as to how this can be fixed? Right 
-now what I can think of is either to replace the "clock-frequency" 
-property by "reg" (which would be confusing), or to use a different 
-naming scheme, e.g. timing-12750000. IIUC the naming is not essential 
-for properly parsing these nodes, so maybe the second solution is the 
-way to go?
-
->
+>> Nit: comment style throughout this file.
+>>
 >>> +
->>> +Required properties for "timing" nodes :
->>> +- clock-frequency : Should contain the memory clock rate to which this
->>> timing
->>> +relates.
->>> +- nvidia,parent-clock-frequency : Should contain the rate at which the
->>> current
->>> +parent of the EMC clock should be running at this timing.
->>> +- clocks : Must contain an entry for each entry in clock-names.
->>> +  See ../clocks/clock-bindings.txt for details.
->>> +- clock-names : Must include the following entries:
->>> +  - emc-parent : the clock that should be the parent of the EMC clock at
->>> this
->>> +timing.
+>>> +#define EMC_SRC_PLL_M 0
+>>> +#define EMC_SRC_PLL_C 1
+>>> +#define EMC_SRC_PLL_P 2
+>>> +#define EMC_SRC_CLK_M 3
+>>> +#define EMC_SRC_PLL_C2 4
+>>> +#define EMC_SRC_PLL_C3 5
+>>> +const char emc_parent_clk_sources[] = {
+>>> +    EMC_SRC_PLL_M, EMC_SRC_PLL_C, EMC_SRC_PLL_P, EMC_SRC_CLK_M,
+>>> +    EMC_SRC_PLL_M, EMC_SRC_PLL_C2, EMC_SRC_PLL_C3, EMC_SRC_PLL_C
+>>> +};
 >>> +
->>>    Example SoC include file:
->>>
->>>    / {
->>> -       tegra_car: clock {
->>> +       tegra_car: clock@0,60006000 {
->
-> The comma here is wrong. Commas should be used when you have something
-> like PCI bus:dev:func for addressing.
->
->>>                  compatible = "nvidia,tegra124-car";
->>> -               reg = <0x60006000 0x1000>;
->>> +               reg = <0x0 0x60006000 0x0 0x1000>;
->
-> The number of cell's is really irrelevant to the example.
->
->>>                  #clock-cells = <1>;
->>>                  #reset-cells = <1>;
->>>          };
->>> @@ -60,4 +83,23 @@ Example board file:
->>>          &tegra_car {
->>>                  clocks = <&clk_32k> <&osc>;
->>>          };
+>>> +struct emc_timing {
+>>> +    unsigned long rate, parent_rate;
+>>> +    u8 parent_index;
+>>> +    struct clk *parent;
+>>> +    u32 ram_code;
+>>> +};
 >>> +
->>> +       clock@0,60006000 {
->>> +               emc-timings@3 {
->>> +                       nvidia,ram-code = <3>;
+>>> +struct tegra_emc {
+>>> +    struct clk_hw hw;
+>>> +    void __iomem *clk_regs;
+>>> +    struct clk *prev_parent;
+>>> +    bool changing_timing;
 >>> +
->>> +                       timing@12750000 {
->>> +                               clock-frequency = <12750000>;
->>> +                               nvidia,parent-clock-frequency =
->>> <408000000>;
->>> +                               clocks = <&tegra_car TEGRA124_CLK_PLL_P>;
->>> +                               clock-names = "emc-parent";
+>>> +    int num_timings;
+>>> +    struct emc_timing *timings;
+>>> +    spinlock_t *lock;
+>>> +};
+>>> +
+>>> +/* * * * * * * * * * * * * * * * * * * * * * * * * *
+>>> + * Common clock framework callback implementations *
+>>> + * * * * * * * * * * * * * * * * * * * * * * * * * */
+>>> +
+>>> +unsigned long emc_recalc_rate(struct clk_hw *hw, unsigned long
+>>> parent_rate)
+>>
+>>
+>> Shouldn't this function be static? Also applies to other functions in
+>> this file.
+>>
+>>> +{
+>>> +    struct tegra_emc *tegra = container_of(hw, struct tegra_emc, hw);
+>>> +    u32 val, div;
+>>> +
+>>> +    /* CCF wrongly assumes that the parent won't change during set_rate,
+>>> +     * so get the parent rate explicitly.
+>>> +     */
+>>> +    parent_rate = __clk_get_rate(__clk_get_parent(hw->clk));
+>>> +
+>>> +    val = readl(tegra->clk_regs + CLK_SOURCE_EMC);
+>>> +    div = val & CLK_SOURCE_EMC_EMC_2X_CLK_DIVISOR_MASK;
+>>> +
+>>> +    return parent_rate / (div + 2) * 2;
+>>> +}
+>>> +
+>>> +/* Rounds up unless no higher rate exists, in which case down. This
+>>> way is
+>>> + * safer since things have EMC rate floors. Also don't touch parent_rate
+>>> + * since we don't want the CCF to play with our parent clocks.
+>>> + */
+>>> +long emc_round_rate(struct clk_hw *hw, unsigned long rate,
+>>> +            unsigned long *parent_rate)
+>>> +{
+>>> +    struct tegra_emc *tegra = container_of(hw, struct tegra_emc, hw);
+>>> +    u8 ram_code = tegra_read_ram_code();
+>>> +    struct emc_timing *timing;
+>>> +    int i;
+>>> +
+>>> +    /* Returning the original rate will lead to a more sensible error
+>>> +     * message when emc_set_rate fails.
+>>> +     */
+>>> +    if (tegra->num_timings == 0)
+>>> +        return rate;
+>>> +
+>>> +    for (i = 0; i < tegra->num_timings; ++i) {
+>>> +        timing = tegra->timings + i;
+>>> +        if (timing->ram_code != ram_code)
+>>> +            continue;
+>>> +
+>>> +        if (timing->rate >= rate)
+>>> +            return timing->rate;
+>>> +    }
+>>> +
+>>> +    return tegra->timings[tegra->num_timings - 1].rate;
+>>> +}
+>>> +
+>>> +u8 emc_get_parent(struct clk_hw *hw)
+>>> +{
+>>> +    struct tegra_emc *tegra = container_of(hw, struct tegra_emc, hw);
+>>> +    u32 val;
+>>> +
+>>> +    val = readl(tegra->clk_regs + CLK_SOURCE_EMC);
+>>> +
+>>> +    return (val >> CLK_SOURCE_EMC_EMC_2X_CLK_SRC_SHIFT)
+>>> +        & CLK_SOURCE_EMC_EMC_2X_CLK_SRC_MASK;
+>>> +}
+>>> +
+>>> +static int emc_set_timing(struct tegra_emc *tegra, struct emc_timing
+>>> *timing)
+>>> +{
+>>> +    int err;
+>>> +    u8 div;
+>>> +    u32 car_value;
+>>> +    unsigned long flags = 0;
+>>> +
+>>> +    pr_debug("going to rate %ld prate %ld p %s\n",
+>>> +        timing->rate, timing->parent_rate,
+>>> +        __clk_get_name(timing->parent));
+>>> +
+>>> +    if (emc_get_parent(&tegra->hw) == timing->parent_index &&
+>>> +        clk_get_rate(timing->parent) != timing->parent_rate) {
+>>> +        BUG();
+>>> +        return -EINVAL;
+>>> +    }
+>>> +
+>>> +    tegra->changing_timing = true;
+>>> +
+>>> +    err = clk_set_rate(timing->parent, timing->parent_rate);
+>>> +    if (err) {
+>>> +        pr_err("cannot change parent %s rate to %ld: %d\n",
+>>> +               __clk_get_name(timing->parent),
+>>> +               timing->parent_rate, err);
+>>> +
+>>> +        return err;
+>>> +    }
+>>> +
+>>> +    err = clk_prepare_enable(timing->parent);
+>>> +    if (err) {
+>>> +        pr_err("cannot enable parent clock: %d\n", err);
+>>> +        return err;
+>>> +    }
+>>> +
+>>> +    div = timing->parent_rate / (timing->rate / 2) - 2;
+>>> +
+>>> +    tegra_emc_prepare_timing_change(timing->rate);
+>>
+>>
+>> Since there is no locking whatsoever in the EMC driver, I wonder if this
+>> function should be called after the spinlock is acquired to ensure it
+>> cannot be called twice?
 >
-> Why do you need both clocks and hardcoded values? clock-frequency is
-> the desired freq you want to set TEGRA124_CLK_PLL_P to?
-
-That would be nvidia,parent-clock-frequency IIUC, while clock-frequency 
-is the resulting EMC clock.
-
 >
-> The clocks property really belongs as part of the memory controller
-> node or a memory device node.
+> This is the only place tegra_emc_{prepare,complete}_timing_change are
+> called, and it is only called from emc_set_rate, so I would think CCF's
+> locking should take care of that.
 
-I would tend to agree here. Tomeu, does it make sense to move these 
-properties to the EMC driver instead?
+Ok, in that case I'm happy. Thanks for confirming.
