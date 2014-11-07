@@ -1,56 +1,73 @@
 From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: Re: [PATCH 0/3] Add support for Tegra Activity Monitor
-Date: Fri, 07 Nov 2014 13:35:19 +0100
-Message-ID: <545CBC87.7050404@collabora.com>
-References: <1414594232-15684-1-git-send-email-tomeu.vizoso@collabora.com> <545C8BCC.3090908@nvidia.com>
+Subject: Re: [PATCH v3 04/13] of: document new emc-timings subnode in nvidia,tegra124-car
+Date: Fri, 07 Nov 2014 14:03:51 +0100
+Message-ID: <545CC337.4020409@collabora.com>
+References: <1414599796-30597-1-git-send-email-tomeu.vizoso@collabora.com> <1414599796-30597-5-git-send-email-tomeu.vizoso@collabora.com> <545B172C.4060105@nvidia.com> <CAL_JsqKYSF3JVrXH_dkqRXQrgUU3igzvoK1C2k1Caz-4UuHX6Q@mail.gmail.com> <545C5927.3010001@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <545C8BCC.3090908-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <545C5927.3010001-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/07/2014 10:07 AM, Alexandre Courbot wrote:
-> On 10/29/2014 11:50 PM, Tomeu Vizoso wrote:
->> Hello,
+On 11/07/2014 06:31 AM, Alexandre Courbot wrote:
+> On 11/07/2014 12:12 AM, Rob Herring wrote:
+>> On Thu, Nov 6, 2014 at 12:37 AM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>>> On 10/30/2014 01:22 AM, Tomeu Vizoso wrote:
+>>>>
+>>>> The EMC clock needs some extra information for changing its rate.
+>>>>
+>>>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+>>>> ---
+>>>>    .../bindings/clock/nvidia,tegra124-car.txt         | 46
+>>>> +++++++++++++++++++++-
+>>>>    1 file changed, 44 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git
+>>>> a/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
+>>>> b/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
+>>>> index ded5d62..42e0588 100644
+>>>> --- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
+>>>> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
+>>>> @@ -19,12 +19,35 @@ Required properties :
+>>>>      In clock consumers, this cell represents the bit number in the CAR's
+>>>>      array of CLK_RST_CONTROLLER_RST_DEVICES_* registers.
+>>>>
+>>>> +The node should contain a "emc-timings" subnode for each supported RAM
+>>>> type (see
+>>>> +field RAM_CODE in register PMC_STRAPPING_OPT_A), with its unit address
+>>>> being its
+>>>> +RAM_CODE.
+>>>> +
+>>>> +Required properties for "emc-timings" nodes :
+>>>> +- nvidia,ram-code : Should contain the value of RAM_CODE this timing set
+>>>> +  is used for.
+>>>> +
+>>>> +Each "emc-timings" node should contain a "timing" subnode for every
+>>>> supported
+>>>> +EMC clock rate. The "timing" subnodes should have the clock rate in Hz as
+>>>> their
+>>>> +unit address.
+>>>
+>>>
+>>> This seems to be a quite liberal use of unit addresses (same in the next
+>>> patch) - is this allowed by DT?
 >>
->> these patches implement support for setting the rate of the EMC clock based on
->> stats collected from the ACTMON, a piece of hw in the Tegra124 that counts
->> memory accesses (among others).
->>
->> It depends on the following in-flight patches:
->>
->> * MC driver: http://thread.gmane.org/gmane.linux.ports.tegra/19623
->> * EMC driver: http://thread.gmane.org/gmane.linux.ports.arm.kernel/365125
->> * CPUFreq driver: http://thread.gmane.org/gmane.linux.kernel/1812962
->>
->> I have pushed a branch here for testing:
+>> No, unit address should match a reg property.
 > 
-> I am not too familiar with DVFS, but after going through this series it 
-> really seems to me that this could use devfreq. In its current form this 
-> driver mixes control and policy and lacks flexibility, preventing e.g. 
-> to switch to a performance or power-saving profile. Could you study the 
-> feasibility of using devfreq for this?
+> Mmm, would you have any suggestion as to how this can be fixed? Right 
+> now what I can think of is either to replace the "clock-frequency" 
+> property by "reg" (which would be confusing), or to use a different 
+> naming scheme, e.g. timing-12750000. IIUC the naming is not essential 
+> for properly parsing these nodes, so maybe the second solution is the 
+> way to go?
 
-Yeah, I started writing a devfreq driver, but then I looked in more
-detail to the downstream driver and realized that most of the
-functionality that devfreq provides overlaps with the hw.
+Yeah, there seems to be a precedent for embedding the frequency in the
+node name in the TI DTs, e.g.: virt_12000000_ck.
 
-The ACTMON can be configured to fire an interrupt when a set of
-thresholds are crossed, similar to the simple-ondemand governor but a
-bit more sophisticated. The only functionality of the governors that
-isn't covered by the ACTMON hw is determining the new frequency after a
-threshold has been crossed, but if we want to retain the flexibility of
-the downstream solution, we would need to write a new governor anyway.
-
-I realize that it would be cool to reuse the code in devfreq, but being
-able to let the hw sample the counters, calculating averages and
-checking if a threshold has been crossed without the cpu having to
-intervene gives this SoC quite an edge when compared to its competitors.
-
-Regards,
+Thanks,
 
 Tomeu
