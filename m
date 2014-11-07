@@ -1,56 +1,128 @@
-From: Anatol Pomozov <anatol.pomozov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] clocksource: tegra: Port tegra20 clocksource to arm64
-Date: Thu, 6 Nov 2014 20:26:18 -0800
-Message-ID: <CAOMFOmVdpbP1v5xFF80mxq4z2Yjs+aZuW=89ArtwvgAX8MVQtQ@mail.gmail.com>
-References: <1415319715-21757-1-git-send-email-anatol.pomozov@gmail.com>
-	<545C47BC.4050207@nvidia.com>
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: Re: [PATCH v3 04/13] of: document new emc-timings subnode in nvidia,tegra124-car
+Date: Fri, 7 Nov 2014 14:31:19 +0900
+Message-ID: <545C5927.3010001@nvidia.com>
+References: <1414599796-30597-1-git-send-email-tomeu.vizoso@collabora.com> <1414599796-30597-5-git-send-email-tomeu.vizoso@collabora.com> <545B172C.4060105@nvidia.com> <CAL_JsqKYSF3JVrXH_dkqRXQrgUU3igzvoK1C2k1Caz-4UuHX6Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <545C47BC.4050207-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAL_JsqKYSF3JVrXH_dkqRXQrgUU3igzvoK1C2k1Caz-4UuHX6Q@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robherring2@gmail.com>
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi
-
-On Thu, Nov 6, 2014 at 8:17 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> On 11/06/2014 05:21 PM, Anatol Pomozov wrote:
->> register_persistent_clock() are in different headers in arm/arm64
+On 11/07/2014 12:12 AM, Rob Herring wrote:
+> On Thu, Nov 6, 2014 at 12:37 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+>> On 10/30/2014 01:22 AM, Tomeu Vizoso wrote:
+>>>
+>>> The EMC clock needs some extra information for changing its rate.
+>>>
+>>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+>>> ---
+>>>    .../bindings/clock/nvidia,tegra124-car.txt         | 46
+>>> +++++++++++++++++++++-
+>>>    1 file changed, 44 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git
+>>> a/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
+>>> b/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
+>>> index ded5d62..42e0588 100644
+>>> --- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
+>>> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
+>>> @@ -19,12 +19,35 @@ Required properties :
+>>>      In clock consumers, this cell represents the bit number in the CAR's
+>>>      array of CLK_RST_CONTROLLER_RST_DEVICES_* registers.
+>>>
+>>> +The node should contain a "emc-timings" subnode for each supported RAM
+>>> type (see
+>>> +field RAM_CODE in register PMC_STRAPPING_OPT_A), with its unit address
+>>> being its
+>>> +RAM_CODE.
+>>> +
+>>> +Required properties for "emc-timings" nodes :
+>>> +- nvidia,ram-code : Should contain the value of RAM_CODE this timing set
+>>> +  is used for.
+>>> +
+>>> +Each "emc-timings" node should contain a "timing" subnode for every
+>>> supported
+>>> +EMC clock rate. The "timing" subnodes should have the clock rate in Hz as
+>>> their
+>>> +unit address.
 >>
->> Tested: Compiled the driver on 64bit platform and make sure that
->> it works
+>>
+>> This seems to be a quite liberal use of unit addresses (same in the next
+>> patch) - is this allowed by DT?
 >
-> I assume "it works" refers to "it compiles" not "it executes successfully"?
+> No, unit address should match a reg property.
 
-It execute successfully, at least on 3.14 + bunch of backported
-changes. I tested it on chromiumos 3.14 kernel and 64bit tegra board.
+Mmm, would you have any suggestion as to how this can be fixed? Right 
+now what I can think of is either to replace the "clock-frequency" 
+property by "reg" (which would be confusing), or to use a different 
+naming scheme, e.g. timing-12750000. IIUC the naming is not essential 
+for properly parsing these nodes, so maybe the second solution is the 
+way to go?
 
-> I think it'd be better to make the same APIs available on arm and arm64,
-> or even across all architectures.
 >
->> Signed-off-by: Anatol Pomozov <anatol.pomozov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> ---
->>  drivers/clocksource/tegra20_timer.c | 4 ++++
->>  1 file changed, 4 insertions(+)
->>
->> diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
->> index d2616ef..e0123c7 100644
->> --- a/drivers/clocksource/tegra20_timer.c
->> +++ b/drivers/clocksource/tegra20_timer.c
->> @@ -29,8 +29,12 @@
->>  #include <linux/sched_clock.h>
->>  #include <linux/delay.h>
->>
->> +#ifdef CONFIG_ARM64
->> +#include <asm/time.h>
->> +#else
->>  #include <asm/mach/time.h>
->>  #include <asm/smp_twd.h>
->> +#endif
->>
->>  #define RTC_SECONDS            0x08
->>  #define RTC_SHADOW_SECONDS     0x0c
->>
+>>> +
+>>> +Required properties for "timing" nodes :
+>>> +- clock-frequency : Should contain the memory clock rate to which this
+>>> timing
+>>> +relates.
+>>> +- nvidia,parent-clock-frequency : Should contain the rate at which the
+>>> current
+>>> +parent of the EMC clock should be running at this timing.
+>>> +- clocks : Must contain an entry for each entry in clock-names.
+>>> +  See ../clocks/clock-bindings.txt for details.
+>>> +- clock-names : Must include the following entries:
+>>> +  - emc-parent : the clock that should be the parent of the EMC clock at
+>>> this
+>>> +timing.
+>>> +
+>>>    Example SoC include file:
+>>>
+>>>    / {
+>>> -       tegra_car: clock {
+>>> +       tegra_car: clock@0,60006000 {
 >
+> The comma here is wrong. Commas should be used when you have something
+> like PCI bus:dev:func for addressing.
+>
+>>>                  compatible = "nvidia,tegra124-car";
+>>> -               reg = <0x60006000 0x1000>;
+>>> +               reg = <0x0 0x60006000 0x0 0x1000>;
+>
+> The number of cell's is really irrelevant to the example.
+>
+>>>                  #clock-cells = <1>;
+>>>                  #reset-cells = <1>;
+>>>          };
+>>> @@ -60,4 +83,23 @@ Example board file:
+>>>          &tegra_car {
+>>>                  clocks = <&clk_32k> <&osc>;
+>>>          };
+>>> +
+>>> +       clock@0,60006000 {
+>>> +               emc-timings@3 {
+>>> +                       nvidia,ram-code = <3>;
+>>> +
+>>> +                       timing@12750000 {
+>>> +                               clock-frequency = <12750000>;
+>>> +                               nvidia,parent-clock-frequency =
+>>> <408000000>;
+>>> +                               clocks = <&tegra_car TEGRA124_CLK_PLL_P>;
+>>> +                               clock-names = "emc-parent";
+>
+> Why do you need both clocks and hardcoded values? clock-frequency is
+> the desired freq you want to set TEGRA124_CLK_PLL_P to?
+
+That would be nvidia,parent-clock-frequency IIUC, while clock-frequency 
+is the resulting EMC clock.
+
+>
+> The clocks property really belongs as part of the memory controller
+> node or a memory device node.
+
+I would tend to agree here. Tomeu, does it make sense to move these 
+properties to the EMC driver instead?
