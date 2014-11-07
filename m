@@ -1,184 +1,67 @@
-From: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-Subject: Re: [PATCH v3 04/13] of: document new emc-timings subnode in nvidia,tegra124-car
-Date: Fri, 07 Nov 2014 13:35:14 +0200
-Message-ID: <545CAE72.4000308@kapsi.fi>
-References: <1414599796-30597-1-git-send-email-tomeu.vizoso@collabora.com> <1414599796-30597-5-git-send-email-tomeu.vizoso@collabora.com> <545B172C.4060105@nvidia.com> <CAL_JsqKYSF3JVrXH_dkqRXQrgUU3igzvoK1C2k1Caz-4UuHX6Q@mail.gmail.com> <545C5927.3010001@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v3 2/2] arm: dts: tegra124: Add APB_MISC_GP as a mipi pad
+ control bank
+Date: Fri, 7 Nov 2014 13:35:14 +0100
+Message-ID: <20141107123511.GB11084@ulmo.nvidia.com>
+References: <54088B53.6040802@wwwdotorg.org>
+ <1410292726-9179-1-git-send-email-seanpaul@chromium.org>
+ <1410292726-9179-2-git-send-email-seanpaul@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <545C5927.3010001@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>, Rob Herring <robherring2@gmail.com>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="FkmkrVfFsRoUs1wW"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1410292726-9179-2-git-send-email-seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, davidriley-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-To better facilitate discussion, here's an outline of how the driver works:
 
-emc_set_rate (CAR) gets called
-   The current timing (= rate,parent pair) is checked along with the
-     target timing.
-   If the target timing has the same clock source (~parent, see
-     emc_parent_clk_sources in the clk driver), find a timing with a
-     different clock source. This is to prevent a situation where we
-     have switched to a new parent rate but the EMC has not yet been
-     reprogrammed. This new timing is called a backup timing.
-   If a backup timing was required, switch to it (using this same
-     procedure).
-   Set the rate of the new parent to the required rate and enable it. It
-     is important to use the correct parent for each timing, since in
-     addition to the rate requirements, there are jitter requirements.
-     The specified timings have been verified by a hardware team.
-   Call tegra_emc_prepare_timing_change. This does assorted things to
-     prepare the EMC block for a timing change and also tells the MC
-     driver to prepare for it.
-   Prepare the value that will be written to CLK_SOURCE_EMC in the CAR
-     block. This value contains the divisor to get from the parent rate
-     to the EMC rate and specifies the parent clock to use.
-   Write the value. This must be done in a single write, as it starts a
-     state machine that uses the written value.
-   Call tegra_emc_complete_timing_change. This will lead the state
-     machine to completion.
-   Tell CCF that our parent is now the specified one.
-   Disable the old parent.
+--FkmkrVfFsRoUs1wW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Note that information about the parent is only needed within the CAR 
-driver and not in EMC or MC.
-Those drivers only need to map the EMC rate to a set of configuration 
-values.
+On Tue, Sep 09, 2014 at 03:58:46PM -0400, Sean Paul wrote:
+> This patch adds the APB_MISC_GP_MIPI_PAD_CTRL_0 as a pinctrl
+> bank so the new mipi pad control group can be muxed between CSI
+> and DSI_B.
+>=20
+> Signed-off-by: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> ---
+> Changes in v2:
+> 	- Added patch
+>=20
+> Changes in v3:
+> 	- Changed comment
+>=20
+>  arch/arm/boot/dts/tegra124.dtsi | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
-If the parent clock information is moved under the EMC node, we have 
-some options:
-a) Add API to EMC that the CAR driver can use to query the parent 
-information.
-b) Add API to CAR that the EMC driver can use to write the rate and 
-parent information.
-c) Other?
+Applied to the for-3.19/dt branch.
 
-Cheers,
-Mikko.
+Thierry
 
-On 11/07/2014 07:31 AM, Alexandre Courbot wrote:
-> On 11/07/2014 12:12 AM, Rob Herring wrote:
->> On Thu, Nov 6, 2014 at 12:37 AM, Alexandre Courbot
->> <acourbot@nvidia.com> wrote:
->>> On 10/30/2014 01:22 AM, Tomeu Vizoso wrote:
->>>>
->>>> The EMC clock needs some extra information for changing its rate.
->>>>
->>>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
->>>> ---
->>>>    .../bindings/clock/nvidia,tegra124-car.txt         | 46
->>>> +++++++++++++++++++++-
->>>>    1 file changed, 44 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git
->>>> a/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
->>>> b/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
->>>> index ded5d62..42e0588 100644
->>>> --- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
->>>> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
->>>> @@ -19,12 +19,35 @@ Required properties :
->>>>      In clock consumers, this cell represents the bit number in the
->>>> CAR's
->>>>      array of CLK_RST_CONTROLLER_RST_DEVICES_* registers.
->>>>
->>>> +The node should contain a "emc-timings" subnode for each supported RAM
->>>> type (see
->>>> +field RAM_CODE in register PMC_STRAPPING_OPT_A), with its unit address
->>>> being its
->>>> +RAM_CODE.
->>>> +
->>>> +Required properties for "emc-timings" nodes :
->>>> +- nvidia,ram-code : Should contain the value of RAM_CODE this
->>>> timing set
->>>> +  is used for.
->>>> +
->>>> +Each "emc-timings" node should contain a "timing" subnode for every
->>>> supported
->>>> +EMC clock rate. The "timing" subnodes should have the clock rate in
->>>> Hz as
->>>> their
->>>> +unit address.
->>>
->>>
->>> This seems to be a quite liberal use of unit addresses (same in the next
->>> patch) - is this allowed by DT?
->>
->> No, unit address should match a reg property.
->
-> Mmm, would you have any suggestion as to how this can be fixed? Right
-> now what I can think of is either to replace the "clock-frequency"
-> property by "reg" (which would be confusing), or to use a different
-> naming scheme, e.g. timing-12750000. IIUC the naming is not essential
-> for properly parsing these nodes, so maybe the second solution is the
-> way to go?
->
->>
->>>> +
->>>> +Required properties for "timing" nodes :
->>>> +- clock-frequency : Should contain the memory clock rate to which this
->>>> timing
->>>> +relates.
->>>> +- nvidia,parent-clock-frequency : Should contain the rate at which the
->>>> current
->>>> +parent of the EMC clock should be running at this timing.
->>>> +- clocks : Must contain an entry for each entry in clock-names.
->>>> +  See ../clocks/clock-bindings.txt for details.
->>>> +- clock-names : Must include the following entries:
->>>> +  - emc-parent : the clock that should be the parent of the EMC
->>>> clock at
->>>> this
->>>> +timing.
->>>> +
->>>>    Example SoC include file:
->>>>
->>>>    / {
->>>> -       tegra_car: clock {
->>>> +       tegra_car: clock@0,60006000 {
->>
->> The comma here is wrong. Commas should be used when you have something
->> like PCI bus:dev:func for addressing.
->>
->>>>                  compatible = "nvidia,tegra124-car";
->>>> -               reg = <0x60006000 0x1000>;
->>>> +               reg = <0x0 0x60006000 0x0 0x1000>;
->>
->> The number of cell's is really irrelevant to the example.
->>
->>>>                  #clock-cells = <1>;
->>>>                  #reset-cells = <1>;
->>>>          };
->>>> @@ -60,4 +83,23 @@ Example board file:
->>>>          &tegra_car {
->>>>                  clocks = <&clk_32k> <&osc>;
->>>>          };
->>>> +
->>>> +       clock@0,60006000 {
->>>> +               emc-timings@3 {
->>>> +                       nvidia,ram-code = <3>;
->>>> +
->>>> +                       timing@12750000 {
->>>> +                               clock-frequency = <12750000>;
->>>> +                               nvidia,parent-clock-frequency =
->>>> <408000000>;
->>>> +                               clocks = <&tegra_car
->>>> TEGRA124_CLK_PLL_P>;
->>>> +                               clock-names = "emc-parent";
->>
->> Why do you need both clocks and hardcoded values? clock-frequency is
->> the desired freq you want to set TEGRA124_CLK_PLL_P to?
->
-> That would be nvidia,parent-clock-frequency IIUC, while clock-frequency
-> is the resulting EMC clock.
->
->>
->> The clocks property really belongs as part of the memory controller
->> node or a memory device node.
->
-> I would tend to agree here. Tomeu, does it make sense to move these
-> properties to the EMC driver instead?
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--FkmkrVfFsRoUs1wW
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUXLx/AAoJEN0jrNd/PrOhaE8P/3qPPFGvIGyXRcnRhdasnwPZ
+5JjWcDAn/Wdlm5NALUut3MCuogF8xZwbFbggSTOfnfjMrMu/PFZB8yYVN5NcIvmS
+uuFUg7v+Ch97o3MTEqEPOWHZjzk7K/V6vq3jhM6FXxW594RLtW1VwDd3inRdy7ex
+Xw5+0iYC+taDMrPg8fQC3cZuFL72iGhjqGZCQXAHhJ0Jfi9aIG3LUAaTT+ABPtEr
+XFxOgX7Choirj96MD+N7aEngHEUHca4PGsb+41yQDLqvjozBVhVDaKdK6JLsKefb
+Mtyrh2R3bi1dVvMIB8LHHRQjqn6AO5/Fp0kQlYSTfUsUWA/7F8bmnphZJKAE4uT7
+p4a4WA9YajXf+OaEj0IIKoauk8v2g+r32XSy8EvaSZgd81yFrgRZSj0HGQ9bLmfH
+9UIe4NmVivQxiPYQfxw5QO3e2eulImzlXr5OFdtN/nagSrXPJaE8pRI58m5sLzcS
+8KbPzV7N415Ob1vFdmzSuj+RsJSaPi4vLwIOxK7aHQX6gVM2qlZIb519flIUSxNV
+7QokgjrBu1XuRt2XGtGiPK/kEZhThvUuIE1QW5Qn56dMay6UUDdfWTAZliRse/9S
+GJunD0aRCBtzxe3C6l+NZ5JuNn+4tlesQL/1KOqjPE9xIux3hVS+2S3RRR1LykOH
+JVigyqc/BrWWk7ScMliu
+=jTX8
+-----END PGP SIGNATURE-----
+
+--FkmkrVfFsRoUs1wW--
