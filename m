@@ -1,68 +1,132 @@
-From: Patrick Georgi <patrick-U1IrdZU7gScKt1dFYRw6Gg@public.gmane.org>
-Subject: Re: [PATCH 4/5 v2] set: check seek success
-Date: Sun, 09 Nov 2014 08:57:07 +0100
-Message-ID: <545F1E53.8080301@georgi-clan.de>
-References: <1412237788-20611-1-git-send-email-patrick@georgi-clan.de> <545E95B1.5030703@georgi-clan.de> <14992150720.2771.879d79c6f3490faa837fa11cb97f42bf@gmail.com>
+From: Marc Dietrich <Marc.Dietrich-wkdnK3oF/XPYtB+G+YtuwQgYPMzSbZxj@public.gmane.org>
+Subject: Re: [PATCH v5 33/48] staging: nvec: Register with kernel power-off handler
+Date: Sun, 09 Nov 2014 22:41:26 +0100
+Message-ID: <5008744.rVN94atT9b@ax5200p>
+References: <1415292213-28652-1-git-send-email-linux@roeck-us.net> <1415292213-28652-34-git-send-email-linux@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="gqhwJgFxDme7ABiAC7uwrcdViB9QFf8Tb"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <14992150720.2771.879d79c6f3490faa837fa11cb97f42bf-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1415292213-28652-34-git-send-email-linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---gqhwJgFxDme7ABiAC7uwrcdViB9QFf8Tb
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: quoted-printable
+Am Donnerstag 06 November 2014, 08:43:17 schrieb Guenter Roeck:
+> Register with kernel power-off handler instead of setting pm_power_off
+> directly. Register with default priority since we don't know any better.
+> 
+> Cc: Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>
+> Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+> Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+> Acked-by: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+> Signed-off-by: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org
 
+ok, this version (V5) actually switches the device off in contrast to the 
+first implementation. Somehow I have to find out why it works at all without 
+irqs.
 
+Acked-by: Marc Dietrich <mavin24-Mmb7MZpHnFY@public.gmane.org>
 
-Am 09.11.2014 um 02:04 schrieb Thierry Reding:
-> On November 8, 2014 11:22:54 PM Patrick Georgi <patrick-U1IrdZU7gScKt1dFYRw6Gg@public.gmane.org>=
- wrote:
->> This could silently fail which leads to surprising behaviour.
->>
->> Found-by: Coverity Scan
->> Signed-off-by: Patrick Georgi <patrick-U1IrdZU7gScKt1dFYRw6Gg@public.gmane.org>
->> ---
->>  src/set.c | 6 +++++-
->>  1 file changed, 5 insertions(+), 1 deletion(-)
->=20
-> This clearly isn't a patch against the Linux kernel, so it'd be good to=
-
-> clarify what repository it should be applied to so people don't have
-> to guess.
-Oops, I'm sorry. This is for https://github.com/NVIDIA/cbootimage
-
-
-Thanks,
-Patrick
-
-
---gqhwJgFxDme7ABiAC7uwrcdViB9QFf8Tb
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBCAAGBQJUXx5TAAoJECaARpXRYUjyTs0QAJ347jJobFBdt9bvyQB4ZtmD
-vt6HkfIs7Sli5WQhbtD3e1FYk6jNR7H2NqZBBZKp4Et41j2NldCf3aQkwfGQYLW2
-FITNxW7NBC2TQiflWI/bw0NGGzNjFRm0UbhFjK3vCOXipq9JBEL0ysN6U6M2CbHN
-w7RaQIzbsSri+lX7rQMcUTGlDcB+LDJchy0Itcnib/3J6vOtk66I5ZvueGIKt/qH
-DH1pMYCqdVv4p6FcDFWE1jgrdOEF8kpTREE9RTUhyOIDiy3KXTqCd7Dg7Y8jhwfW
-T8Nv/0TLbd61naFgDY6Ri+vDWHBtBmRW67CCekkhuXuX9eF1wfN1fHQqLH1ps5ye
-IGa8AfjUmZjOWFlTcAIUifTSRw8beMEfclLIK26K4fAwEaK8F6/iNMWdSTX1zJXB
-qg1HHEIElASlWlgeFO2P0VV7WpmuOeT9D7sZDlhRoWuCFdLqLLxyDq0aD+f7TX7q
-ft+QIUTyeusEM5mjynmx6VavhxhcnBmcrRus4lhJSGo4fQ5XBrc8vV84zvfQ2xQj
-A+Jwy34aPyq8xKL126ONiPBjKNcTq4QRdvcxGEDZzRx4O7yDzDLVAdl7ILTScOdl
-41zTxWs9BZwUDycAneaFjpRKjp9woIvv0pszvmhCxOSfBzwM1YWlanMm/07CqnMd
-KS5iMsvKv9yOLmy/8tiQ
-=nR28
------END PGP SIGNATURE-----
-
---gqhwJgFxDme7ABiAC7uwrcdViB9QFf8Tb--
+> ---
+> v5:
+> - Rebase to v3.18-rc3
+> v4:
+> - Do not use notifiers but internal functions and data structures to manage
+>   the list of power-off handlers. Drop unused parameters from callbacks, and
+> make the power-off function type void
+> v3:
+> - Replace poweroff in all newly introduced variables and in text
+>   with power_off or power-off as appropriate
+> - Replace POWEROFF_PRIORITY_xxx with POWER_OFF_PRIORITY_xxx
+> v2:
+> - Use define to specify poweroff handler priority
+> - Use dev_warn instead of dev_err
+> 
+>  drivers/staging/nvec/nvec.c | 21 ++++++++++++---------
+>  drivers/staging/nvec/nvec.h |  2 ++
+>  2 files changed, 14 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+> index a93208a..acf2ea6 100644
+> --- a/drivers/staging/nvec/nvec.c
+> +++ b/drivers/staging/nvec/nvec.c
+> @@ -33,6 +33,7 @@
+>  #include <linux/mfd/core.h>
+>  #include <linux/mutex.h>
+>  #include <linux/notifier.h>
+> +#include <linux/pm.h>
+>  #include <linux/slab.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/workqueue.h>
+> @@ -80,8 +81,6 @@ enum nvec_sleep_subcmds {
+>  #define LID_SWITCH BIT(1)
+>  #define PWR_BUTTON BIT(15)
+> 
+> -static struct nvec_chip *nvec_power_handle;
+> -
+>  static const struct mfd_cell nvec_devices[] = {
+>  	{
+>  		.name = "nvec-kbd",
+> @@ -759,12 +758,14 @@ static void nvec_disable_i2c_slave(struct nvec_chip
+> *nvec) }
+>  #endif
+> 
+> -static void nvec_power_off(void)
+> +static void nvec_power_off(struct power_off_handler_block *this)
+>  {
+> +	struct nvec_chip *nvec = container_of(this, struct nvec_chip,
+> +					      power_off_hb);
+>  	char ap_pwr_down[] = { NVEC_SLEEP, AP_PWR_DOWN };
+> 
+> -	nvec_toggle_global_events(nvec_power_handle, false);
+> -	nvec_write_async(nvec_power_handle, ap_pwr_down, 2);
+> +	nvec_toggle_global_events(nvec, false);
+> +	nvec_write_async(nvec, ap_pwr_down, 2);
+>  }
+> 
+>  /*
+> @@ -878,8 +879,11 @@ static int tegra_nvec_probe(struct platform_device
+> *pdev) nvec->nvec_status_notifier.notifier_call = nvec_status_notifier;
+> nvec_register_notifier(nvec, &nvec->nvec_status_notifier, 0);
+> 
+> -	nvec_power_handle = nvec;
+> -	pm_power_off = nvec_power_off;
+> +	nvec->power_off_hb.handler = nvec_power_off;
+> +	nvec->power_off_hb.priority = POWER_OFF_PRIORITY_DEFAULT;
+> +	ret = register_power_off_handler(&nvec->power_off_hb);
+> +	if (ret)
+> +		dev_warn(nvec->dev, "Failed to register power-off handler\n");
+> 
+>  	/* Get Firmware Version */
+>  	msg = nvec_write_sync(nvec, get_firmware_version, 2);
+> @@ -914,13 +918,12 @@ static int tegra_nvec_remove(struct platform_device
+> *pdev) {
+>  	struct nvec_chip *nvec = platform_get_drvdata(pdev);
+> 
+> +	unregister_power_off_handler(&nvec->power_off_hb);
+>  	nvec_toggle_global_events(nvec, false);
+>  	mfd_remove_devices(nvec->dev);
+>  	nvec_unregister_notifier(nvec, &nvec->nvec_status_notifier);
+>  	cancel_work_sync(&nvec->rx_work);
+>  	cancel_work_sync(&nvec->tx_work);
+> -	/* FIXME: needs check wether nvec is responsible for power off */
+> -	pm_power_off = NULL;
+> 
+>  	return 0;
+>  }
+> diff --git a/drivers/staging/nvec/nvec.h b/drivers/staging/nvec/nvec.h
+> index e271375..d4145da 100644
+> --- a/drivers/staging/nvec/nvec.h
+> +++ b/drivers/staging/nvec/nvec.h
+> @@ -163,6 +163,8 @@ struct nvec_chip {
+>  	struct nvec_msg *last_sync_msg;
+> 
+>  	int state;
+> +
+> +	struct power_off_handler_block power_off_hb;
+>  };
+> 
+>  extern int nvec_write_async(struct nvec_chip *nvec, const unsigned char
+> *data,
