@@ -1,7 +1,7 @@
 From: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-Subject: [PATCH v4 REPOST 1/5] of: Add descriptions of thermtrip properties to Tegra PMC bindings
-Date: Mon, 10 Nov 2014 15:12:13 +0200
-Message-ID: <1415625137-4791-2-git-send-email-mikko.perttunen@kapsi.fi>
+Subject: [PATCH v4 REPOST 3/5] ARM: tegra124: Add I2C controller ids to device tree
+Date: Mon, 10 Nov 2014 15:12:15 +0200
+Message-ID: <1415625137-4791-4-git-send-email-mikko.perttunen@kapsi.fi>
 References: <1415625137-4791-1-git-send-email-mikko.perttunen@kapsi.fi>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1415625137-4791-1-git-send-email-mikko.perttunen@kapsi.fi>
@@ -12,58 +12,69 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Mikko Perttunen <mperttunen@nvidia.com>
 
-Hardware-triggered thermal reset requires configuring the I2C
-reset procedure. This configuration is read from the device tree,
-so document the relevant properties in the binding documentation.
+I2C controller ids are required when programming hardware blocks
+that send messages to devices connected to an I2C bus, such as
+when the PMC sends a poweroff message to the PMIC. Add ids
+to all I2C controllers in Tegra124.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 Reviewed-by: Wei Ni <wni@nvidia.com>
 Tested-by: Wei Ni <wni@nvidia.com>
 ---
- .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 24 ++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ arch/arm/boot/dts/tegra124.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-index 68ac65f..dc13fb0 100644
---- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-@@ -47,6 +47,21 @@ Required properties when nvidia,suspend-mode=<0>:
-   sleep mode, the warm boot code will restore some PLLs, clocks and then
-   bring up CPU0 for resuming the system.
+diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+index 41f8b27..0f09e93 100644
+--- a/arch/arm/boot/dts/tegra124.dtsi
++++ b/arch/arm/boot/dts/tegra124.dtsi
+@@ -361,6 +361,7 @@
+ 		reset-names = "i2c";
+ 		dmas = <&apbdma 21>, <&apbdma 21>;
+ 		dma-names = "rx", "tx";
++		nvidia,controller-id = <0>;
+ 		status = "disabled";
+ 	};
  
-+Hardware-triggered thermal reset:
-+On Tegra30, Tegra114 and Tegra124, if the 'i2c-thermtrip' subnode exists,
-+hardware-triggered thermal reset will be enabled.
-+
-+Required properties for hardware-triggered thermal reset (inside 'i2c-thermtrip'):
-+- nvidia,i2c-bus : Phandle to I2C bus containing the PMU
-+- nvidia,bus-addr : Bus address of the PMU on the I2C bus
-+- nvidia,reg-addr : I2C register address to write poweroff command to
-+- nvidia,reg-data : Poweroff command to write to PMU
-+
-+Optional properties for hardware-triggered thermal reset (inside 'i2c-thermtrip'):
-+- nvidia,pinmux-id : Pinmux used by the hardware when issuing poweroff command.
-+                     Defaults to 0. Valid values are described in section 12.5.2
-+                     "Pinmux Support" of the Tegra4 Technical Reference Manual.
-+
- Example:
+@@ -376,6 +377,7 @@
+ 		reset-names = "i2c";
+ 		dmas = <&apbdma 22>, <&apbdma 22>;
+ 		dma-names = "rx", "tx";
++		nvidia,controller-id = <1>;
+ 		status = "disabled";
+ 	};
  
- / SoC dts including file
-@@ -69,6 +84,15 @@ pmc@7000f400 {
- / Tegra board dts file
- {
- 	...
-+	pmc@7000f400 {
-+		i2c-thermtrip {
-+			nvidia,i2c-bus = <&pmic_bus>;
-+			nvidia,bus-addr = <0x40>;
-+			nvidia,reg-addr = <0x36>;
-+			nvidia,reg-data = <0x2>;
-+		};
-+	};
-+	...
- 	clocks {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
+@@ -391,6 +393,7 @@
+ 		reset-names = "i2c";
+ 		dmas = <&apbdma 23>, <&apbdma 23>;
+ 		dma-names = "rx", "tx";
++		nvidia,controller-id = <2>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -406,6 +409,7 @@
+ 		reset-names = "i2c";
+ 		dmas = <&apbdma 26>, <&apbdma 26>;
+ 		dma-names = "rx", "tx";
++		nvidia,controller-id = <3>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -421,6 +425,7 @@
+ 		reset-names = "i2c";
+ 		dmas = <&apbdma 24>, <&apbdma 24>;
+ 		dma-names = "rx", "tx";
++		nvidia,controller-id = <4>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -436,6 +441,7 @@
+ 		reset-names = "i2c";
+ 		dmas = <&apbdma 30>, <&apbdma 30>;
+ 		dma-names = "rx", "tx";
++		nvidia,controller-id = <5>;
+ 		status = "disabled";
+ 	};
+ 
 -- 
 2.1.3
