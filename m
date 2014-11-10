@@ -1,61 +1,41 @@
-From: Ilia Mirkin <imirkin@alum.mit.edu>
-Subject: Re: [PATCH 3/3] gk20a: use NOUVEAU_BO_GART as VRAM domain
-Date: Mon, 10 Nov 2014 13:53:23 -0500
-Message-ID: <CAKb7Uvh=kfibXHFORHs2CrmsAsvqL=QK9eKYUWVJqsFccBM7uw@mail.gmail.com>
-References: <1414406099-21129-1-git-send-email-acourbot@nvidia.com>
- <1414406099-21129-4-git-send-email-acourbot@nvidia.com>
- <CAKb7UvhMw9pfDsvoGae2A+n9qJNBV5Vnxm4bn5tbK09GDcP_Dw@mail.gmail.com>
- <5459FABA.2020009@nvidia.com>
+From: Anatol Pomozov <anatol.pomozov@gmail.com>
+Subject: Re: [PATCH] timekeeping: Move persistent clock registration code from
+ ARM to kernel
+Date: Mon, 10 Nov 2014 11:26:20 -0800
+Message-ID: <CAOMFOmXpAm5iKCLFyorTW+n9YmgZMmrDGGe736tJX8C6BYQv-A@mail.gmail.com>
+References: <1415388855-35074-1-git-send-email-anatol.pomozov@gmail.com>
+	<20141110095325.GC12126@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <mesa-dev-bounces@lists.freedesktop.org>
-In-Reply-To: <5459FABA.2020009@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/mesa-dev>,
- <mailto:mesa-dev-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/mesa-dev>
-List-Post: <mailto:mesa-dev@lists.freedesktop.org>
-List-Help: <mailto:mesa-dev-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/mesa-dev>,
- <mailto:mesa-dev-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: mesa-dev-bounces@lists.freedesktop.org
-Sender: "mesa-dev" <mesa-dev-bounces@lists.freedesktop.org>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, Alexandre Courbot <gnurou@gmail.com>, "mesa-dev@lists.freedesktop.org" <mesa-dev@lists.freedesktop.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20141110095325.GC12126@ulmo>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux@arm.linux.org.uk, "tglx@linutronix.de" <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Tony Lindgren <tony@atomide.com>, Mark Rutland <mark.rutland@arm.com>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gV2VkLCBOb3YgNSwgMjAxNCBhdCA1OjIzIEFNLCBBbGV4YW5kcmUgQ291cmJvdCA8YWNvdXJi
-b3RAbnZpZGlhLmNvbT4gd3JvdGU6Cj4gT24gMTAvMzAvMjAxNCAxMjoyOSBBTSwgSWxpYSBNaXJr
-aW4gd3JvdGU6Cj4+Cj4+IE9uIE1vbiwgT2N0IDI3LCAyMDE0IGF0IDY6MzQgQU0sIEFsZXhhbmRy
-ZSBDb3VyYm90IDxhY291cmJvdEBudmlkaWEuY29tPgo+PiB3cm90ZToKPj4+Cj4+PiBHSzIwQSBk
-b2VzIG5vdCBoYXZlIGRlZGljYXRlZCBWUkFNLCB0aGVyZWZvcmUgYWxsb2NhdGluZyBpbiBWUkFN
-IGNhbiBiZQo+Pj4gc3ViLW9wdGltYWwgYW5kIHNvbWV0aW1lcyBldmVuIGhhcm1mdWwuIFNldCBp
-dHMgVlJBTSBkb21haW4gdG8KPj4+IE5PVVZFQVVfQk9fR0FSVCBzbyBhbGwgb2JqZWN0cyBhcmUg
-YWxsb2NhdGVkIGluIHN5c3RlbSBtZW1vcnkuCj4+Pgo+Pj4gU2lnbmVkLW9mZi1ieTogQWxleGFu
-ZHJlIENvdXJib3QgPGFjb3VyYm90QG52aWRpYS5jb20+Cj4+PiAtLS0KPj4+ICAgc3JjL2dhbGxp
-dW0vZHJpdmVycy9ub3V2ZWF1L252YzAvbnZjMF9zY3JlZW4uYyB8IDEwICsrKysrKysrKysKPj4+
-ICAgMSBmaWxlIGNoYW5nZWQsIDEwIGluc2VydGlvbnMoKykKPj4+Cj4+PiBkaWZmIC0tZ2l0IGEv
-c3JjL2dhbGxpdW0vZHJpdmVycy9ub3V2ZWF1L252YzAvbnZjMF9zY3JlZW4uYwo+Pj4gYi9zcmMv
-Z2FsbGl1bS9kcml2ZXJzL25vdXZlYXUvbnZjMC9udmMwX3NjcmVlbi5jCj4+PiBpbmRleCBhYzU4
-MjNlNGE4ZDUuLmFkMTQzY2Q5YTE0MCAxMDA2NDQKPj4+IC0tLSBhL3NyYy9nYWxsaXVtL2RyaXZl
-cnMvbm91dmVhdS9udmMwL252YzBfc2NyZWVuLmMKPj4+ICsrKyBiL3NyYy9nYWxsaXVtL2RyaXZl
-cnMvbm91dmVhdS9udmMwL252YzBfc2NyZWVuLmMKPj4+IEBAIC02MjAsNiArNjIwLDE2IEBAIG52
-YzBfc2NyZWVuX2NyZWF0ZShzdHJ1Y3Qgbm91dmVhdV9kZXZpY2UgKmRldikKPj4+ICAgICAgICAg
-cmV0dXJuIE5VTEw7Cj4+PiAgICAgIHBzY3JlZW4gPSAmc2NyZWVuLT5iYXNlLmJhc2U7Cj4+Pgo+
-Pj4gKyAgIC8qIFJlY29nbml6ZSBjaGlwc2V0cyB3aXRoIG5vIFZSQU0gKi8KPj4+ICsgICBzd2l0
-Y2ggKGRldi0+Y2hpcHNldCkgewo+Pj4gKyAgIC8qIEdLMjBBICovCj4+PiArICAgY2FzZSAweGVh
-Ogo+Pj4gKyAgICAgIHNjcmVlbi0+YmFzZS52cmFtX2RvbWFpbiA9IE5PVVZFQVVfQk9fR0FSVDsK
-Pj4KPj4KPj4gSSB0aGluayB5b3UgYWxzbyB3YW50IHRvIHNldCB2aWRtZW1fYmluZGluZ3MgPSAw
-Li4uIGFsdGhvdWdoCj4+IHBvdGVudGlhbGx5IGFmdGVyIHRoZSB8PSB0aGF0J3MgZG9uZSBiZWxv
-dy4gQWx0aG91Z2ggSSBndWVzcyB0aGF0Cj4+IGNvbnN0YnVmICsgY29tbWFuZCBhcmdzIGJ1ZiBu
-ZWVkIHRvIGJlIHw9J2QgaW50byB0aGUgc3lzbWVtX2JpbmRpbmdzCj4+IGZvciB0aGlzIHRvIHdv
-cmsgb3V0IHdlbGwuCj4KPgo+IFRoYW5rcyBmb3IgcG9pbnRpbmcgdGhpcyBvdXQgOyBJIGRpZG4n
-dCBrbm93IGFib3V0IHZpZG1lbV9iaW5kaW5ncyB0byBiZQo+IGhvbmVzdC4gV2lsbCB1cGRhdGUg
-YW5kIHJlc2VuZC4KPgo+IEFwYXJ0IGZyb20gdGhpcyBkZXRhaWwsIGFyZSB5b3Ugb2sgd2l0aCB0
-aGUgY2hhbmdlcyBicm91Z2h0IGJ5IHRoZXNlCj4gcGF0Y2hlcz8KCkknbSBub3QgYWdhaW5zdCB0
-aGVtLi4uIEkgZG8gd29uZGVyIGEgYml0IGlmIHRoZXJlIGlzbid0IHNvbWUgYmV0dGVyCndheSBv
-ZiBkb2luZyB0aGlzLCBidXQgaW4gdGhlIGFic2VuY2Ugb2Ygc3VjaCBhIHdheSwgdGhpcyBzZWVt
-cyBmaW5lLgoKICAtaWxpYQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwptZXNhLWRldiBtYWlsaW5nIGxpc3QKbWVzYS1kZXZAbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9tZXNhLWRl
-dgo=
+Hi
+
+On Mon, Nov 10, 2014 at 1:53 AM, Thierry Reding
+<thierry.reding@gmail.com> wrote:
+> On Fri, Nov 07, 2014 at 11:34:15AM -0800, Anatol Pomozov wrote:
+>> ARM timekeeping functionality allows to register persistent/boot clock dynamically.
+>> This code is arch-independent and can be useful on other plaforms as well.
+>>
+>> As a byproduct of this change, tegra20_timer becomes ARM64 compatible.
+>>
+>> Tested: backported the change to chromeos-3.14 kernel ran on tegra 64bit
+>> board, made sure high-resolution clock works.
+>
+> Using this on an upstream kernel doesn't work, though, because 64-bit
+> ARM doesn't implement struct delay_timer which the driver needs since
+> v3.17.
+>
+> But I suppose the delay timer infrastructure could be moved into the
+> core similar to the persistent and boot clock as this patch does.
+
+Thanks. It makes sense, I will send it in a separate patch, once this
+one will be reviewed. On our kernel I haven't seen this issue as we
+still use 3.14.
+
+In fact none of arch/arm/lib/delay.c code seems ARM32 related.
