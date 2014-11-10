@@ -1,60 +1,65 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v6 00/12] NVIDIA Tegra memory controller and IOMMU support
-Date: Mon, 10 Nov 2014 18:53:30 +0900
-Message-ID: <54608B1A.3010001@nvidia.com>
-References: <1415376063-17205-1-git-send-email-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1415376063-17205-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, David Riley <davidriley-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+Subject: [PATCH v5 12/16] cpufreq: tegra: Rename tegra-cpufreq to tegra20-cpufreq
+Date: Mon, 10 Nov 2014 13:40:19 +0200
+Message-ID: <1415619619-2765-1-git-send-email-mikko.perttunen@kapsi.fi>
+References: <CAKohpo=Kdh2vuvSoQBLdWfZJn3xDezpNBjqM389u45_BdizPXQ@mail.gmail.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CAKohpo=Kdh2vuvSoQBLdWfZJn3xDezpNBjqM389u45_BdizPXQ@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: viresh.kumar@linaro.org
+Cc: swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, pdeschrijver@nvidia.com, rjw@rjwysocki.net, mturquette@linaro.org, pwalmsley@nvidia.com, vinceh@nvidia.com, pgaikwad@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, tuomas.tynkkynen@iki.fi, Tuomas Tynkkynen <ttynkkynen@nvidia.com>, Mikko Perttunen <mikko.perttunen@kapsi.fi>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/08/2014 01:00 AM, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> This is the sixth installment in the Tegra IOMMU and memory controller
-> support series. This version addresses the final outstanding comments from
-> Olof about using proper Kconfig symbols to track the dependencies. It also
-> splits up the driver into one part that implements the memory controller
-> only and a second part that implements the SMMU. This plays nicely with
-> the new Kconfig options introduced.
->
-> Patch 1 is a preparatory patch that exposes the memory controller clock.
->
-> Patches 2 and 3 is a pair of precursory patches needed to make this all
-> work on 64-bit ARM in the future.
->
-> The device tree binding for the Tegra memory controller is added in patch
-> 4 and patch 5 is the bulk of the series that move the existing memory
-> controller and IOMMU drivers into the new unified driver that supports
-> Tegra30, Tegra114 and Tegra124.
->
-> Patches 6, 7 and 8 add the DT nodes for the memory controller/IOMMU on
-> Tegra30, Tegra114 and Tegra124.
->
-> IOMMU support is enabled for the display controllers in patches 9, 10 and
-> 11. This will allow the display controllers to have their memory accesses
-> translated by the SMMU, which will enable non-contiguous buffers to be
-> used for scan-out.
->
-> Finally patch 12 also adds support for Tegra132. It is kept separate because
-> none of the other Tegra132 patches have been merged yet, but I've included
-> it here for completeness.
->
-> Because the patches are rather intertwined, I'd like to merge them all via
-> the Tegra tree. For that I'll need Acked-bys from Mike, Russell and Joerg
-> on patches 1, 2 and 3, and 5, respectively.
+From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
 
-FWIW,
+The Tegra124 will use a different driver for frequency scaling, so
+rename the old driver (which handles only Tegra20) appropriately.
 
-Tested-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Signed-off-by: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+---
+Sorry, I was not aware of those options.
 
-Works nicely with both the display and GPU clients, which allows us to 
-remove the need for CMA on Tegra.
+ drivers/cpufreq/Kconfig.arm                            | 6 +++---
+ drivers/cpufreq/Makefile                               | 2 +-
+ drivers/cpufreq/{tegra-cpufreq.c => tegra20-cpufreq.c} | 0
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+ rename drivers/cpufreq/{tegra-cpufreq.c => tegra20-cpufreq.c} (100%)
 
-Thanks,
-Alex.
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+index 83a75dc..22419f4 100644
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -241,9 +241,9 @@ config ARM_SPEAR_CPUFREQ
+ 	help
+ 	  This adds the CPUFreq driver support for SPEAr SOCs.
+ 
+-config ARM_TEGRA_CPUFREQ
+-	bool "TEGRA CPUFreq support"
++config ARM_TEGRA20_CPUFREQ
++	bool "Tegra20 CPUFreq support"
+ 	depends on ARCH_TEGRA
+ 	default y
+ 	help
+-	  This adds the CPUFreq driver support for TEGRA SOCs.
++	  This adds the CPUFreq driver support for Tegra20 SOCs.
+diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+index 40c53dc..0d3ec1c 100644
+--- a/drivers/cpufreq/Makefile
++++ b/drivers/cpufreq/Makefile
+@@ -75,7 +75,7 @@ obj-$(CONFIG_ARM_S5PV210_CPUFREQ)	+= s5pv210-cpufreq.o
+ obj-$(CONFIG_ARM_SA1100_CPUFREQ)	+= sa1100-cpufreq.o
+ obj-$(CONFIG_ARM_SA1110_CPUFREQ)	+= sa1110-cpufreq.o
+ obj-$(CONFIG_ARM_SPEAR_CPUFREQ)		+= spear-cpufreq.o
+-obj-$(CONFIG_ARM_TEGRA_CPUFREQ)		+= tegra-cpufreq.o
++obj-$(CONFIG_ARM_TEGRA20_CPUFREQ)	+= tegra20-cpufreq.o
+ obj-$(CONFIG_ARM_VEXPRESS_SPC_CPUFREQ)	+= vexpress-spc-cpufreq.o
+ 
+ ##################################################################################
+diff --git a/drivers/cpufreq/tegra-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
+similarity index 100%
+rename from drivers/cpufreq/tegra-cpufreq.c
+rename to drivers/cpufreq/tegra20-cpufreq.c
+-- 
+2.1.3
+
