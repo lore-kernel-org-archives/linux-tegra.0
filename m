@@ -1,65 +1,53 @@
-From: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-Subject: [PATCH v5 12/16] cpufreq: tegra: Rename tegra-cpufreq to tegra20-cpufreq
-Date: Mon, 10 Nov 2014 13:40:19 +0200
-Message-ID: <1415619619-2765-1-git-send-email-mikko.perttunen@kapsi.fi>
-References: <CAKohpo=Kdh2vuvSoQBLdWfZJn3xDezpNBjqM389u45_BdizPXQ@mail.gmail.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CAKohpo=Kdh2vuvSoQBLdWfZJn3xDezpNBjqM389u45_BdizPXQ@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: viresh.kumar@linaro.org
-Cc: swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, pdeschrijver@nvidia.com, rjw@rjwysocki.net, mturquette@linaro.org, pwalmsley@nvidia.com, vinceh@nvidia.com, pgaikwad@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, tuomas.tynkkynen@iki.fi, Tuomas Tynkkynen <ttynkkynen@nvidia.com>, Mikko Perttunen <mikko.perttunen@kapsi.fi>
+From: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>
+Subject: [PATCH v4 REPOST 2/5] of: Add nvidia,controller-id property to Tegra I2C bindings
+Date: Mon, 10 Nov 2014 15:12:14 +0200
+Message-ID: <1415625137-4791-3-git-send-email-mikko.perttunen@kapsi.fi>
+References: <1415625137-4791-1-git-send-email-mikko.perttunen@kapsi.fi>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1415625137-4791-1-git-send-email-mikko.perttunen-/1wQRMveznE@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The Tegra124 will use a different driver for frequency scaling, so
-rename the old driver (which handles only Tegra20) appropriately.
+Sometimes, hardware blocks want to issue requests to devices
+connected to I2C buses by itself. In such case, the bus the
+target device resides on must be configured into a register.
+For this purpose, each I2C controller has a defined ID known
+by the hardware. Add a property for these IDs to the device tree
+bindings, so that drivers can know what ID to write to a hardware
+register when configuring a block that sends I2C messages autonomously.
 
-Signed-off-by: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
-Signed-off-by: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Reviewed-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Tested-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-Sorry, I was not aware of those options.
+ Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.txt | 5 +++++
+ 1 file changed, 5 insertions(+)
 
- drivers/cpufreq/Kconfig.arm                            | 6 +++---
- drivers/cpufreq/Makefile                               | 2 +-
- drivers/cpufreq/{tegra-cpufreq.c => tegra20-cpufreq.c} | 0
- 3 files changed, 4 insertions(+), 4 deletions(-)
- rename drivers/cpufreq/{tegra-cpufreq.c => tegra20-cpufreq.c} (100%)
-
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index 83a75dc..22419f4 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -241,9 +241,9 @@ config ARM_SPEAR_CPUFREQ
- 	help
- 	  This adds the CPUFreq driver support for SPEAr SOCs.
+diff --git a/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.txt b/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.txt
+index 87507e9..e9e5994 100644
+--- a/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.txt
++++ b/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.txt
+@@ -57,6 +57,10 @@ Required properties:
+   - rx
+   - tx
  
--config ARM_TEGRA_CPUFREQ
--	bool "TEGRA CPUFreq support"
-+config ARM_TEGRA20_CPUFREQ
-+	bool "Tegra20 CPUFreq support"
- 	depends on ARCH_TEGRA
- 	default y
- 	help
--	  This adds the CPUFreq driver support for TEGRA SOCs.
-+	  This adds the CPUFreq driver support for Tegra20 SOCs.
-diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-index 40c53dc..0d3ec1c 100644
---- a/drivers/cpufreq/Makefile
-+++ b/drivers/cpufreq/Makefile
-@@ -75,7 +75,7 @@ obj-$(CONFIG_ARM_S5PV210_CPUFREQ)	+= s5pv210-cpufreq.o
- obj-$(CONFIG_ARM_SA1100_CPUFREQ)	+= sa1100-cpufreq.o
- obj-$(CONFIG_ARM_SA1110_CPUFREQ)	+= sa1110-cpufreq.o
- obj-$(CONFIG_ARM_SPEAR_CPUFREQ)		+= spear-cpufreq.o
--obj-$(CONFIG_ARM_TEGRA_CPUFREQ)		+= tegra-cpufreq.o
-+obj-$(CONFIG_ARM_TEGRA20_CPUFREQ)	+= tegra20-cpufreq.o
- obj-$(CONFIG_ARM_VEXPRESS_SPC_CPUFREQ)	+= vexpress-spc-cpufreq.o
++Optional properties:
++- nvidia,controller-id: ID of controller when referred to in
++                        hardware registers.
++
+ Example:
  
- ##################################################################################
-diff --git a/drivers/cpufreq/tegra-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
-similarity index 100%
-rename from drivers/cpufreq/tegra-cpufreq.c
-rename to drivers/cpufreq/tegra20-cpufreq.c
+ 	i2c@7000c000 {
+@@ -71,5 +75,6 @@ Example:
+ 		reset-names = "i2c";
+ 		dmas = <&apbdma 16>, <&apbdma 16>;
+ 		dma-names = "rx", "tx";
++		nvidia,controller-id = <0>;
+ 		status = "disabled";
+ 	};
 -- 
 2.1.3
-
