@@ -1,44 +1,61 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 4/5 v2] set: check seek success
-Date: Mon, 10 Nov 2014 09:31:55 -0700
-Message-ID: <5460E87B.1040209@wwwdotorg.org>
-References: <1412237788-20611-1-git-send-email-patrick@georgi-clan.de> <545E95B1.5030703@georgi-clan.de> <20141110085102.GA12126@ulmo>
+From: Ilia Mirkin <imirkin@alum.mit.edu>
+Subject: Re: [PATCH 3/3] gk20a: use NOUVEAU_BO_GART as VRAM domain
+Date: Mon, 10 Nov 2014 13:53:23 -0500
+Message-ID: <CAKb7Uvh=kfibXHFORHs2CrmsAsvqL=QK9eKYUWVJqsFccBM7uw@mail.gmail.com>
+References: <1414406099-21129-1-git-send-email-acourbot@nvidia.com>
+ <1414406099-21129-4-git-send-email-acourbot@nvidia.com>
+ <CAKb7UvhMw9pfDsvoGae2A+n9qJNBV5Vnxm4bn5tbK09GDcP_Dw@mail.gmail.com>
+ <5459FABA.2020009@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20141110085102.GA12126@ulmo>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Patrick Georgi <patrick-U1IrdZU7gScKt1dFYRw6Gg@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <mesa-dev-bounces@lists.freedesktop.org>
+In-Reply-To: <5459FABA.2020009@nvidia.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/mesa-dev>,
+ <mailto:mesa-dev-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/mesa-dev>
+List-Post: <mailto:mesa-dev@lists.freedesktop.org>
+List-Help: <mailto:mesa-dev-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/mesa-dev>,
+ <mailto:mesa-dev-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: mesa-dev-bounces@lists.freedesktop.org
+Sender: "mesa-dev" <mesa-dev-bounces@lists.freedesktop.org>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, Alexandre Courbot <gnurou@gmail.com>, "mesa-dev@lists.freedesktop.org" <mesa-dev@lists.freedesktop.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/10/2014 01:51 AM, Thierry Reding wrote:
-> On Sat, Nov 08, 2014 at 11:14:09PM +0100, Patrick Georgi wrote:
->> This could silently fail which leads to surprising behaviour.
->>
->> Found-by: Coverity Scan
->> Signed-off-by: Patrick Georgi <patrick-U1IrdZU7gScKt1dFYRw6Gg@public.gmane.org>
->> ---
->>   src/set.c | 6 +++++-
->>   1 file changed, 5 insertions(+), 1 deletion(-)
->>
->> diff --git a/src/set.c b/src/set.c
->> index ff32b53..907d640 100644
->> --- a/src/set.c
->> +++ b/src/set.c
->> @@ -59,7 +59,11 @@ read_from_image(char	*filename,
->>   		return result;
->>   	}
->>
->> -	fseek(fp, offset, SEEK_SET);
->> +	if (fseek(fp, offset, SEEK_SET) == -1) {
->> +		printf("Error: Couldn't seek to %s(%d)\n", filename, offset);
->
-> offset is unsigned, so the format specifier should be %u. I also wonder
-> whether it would be good to output errno along with the message (or the
-> string representation thereof) to increase the information content. But
-> given that none of the other error messages have that it could be a
-> separate patch.
-
-Using perror() might be useful?
+T24gV2VkLCBOb3YgNSwgMjAxNCBhdCA1OjIzIEFNLCBBbGV4YW5kcmUgQ291cmJvdCA8YWNvdXJi
+b3RAbnZpZGlhLmNvbT4gd3JvdGU6Cj4gT24gMTAvMzAvMjAxNCAxMjoyOSBBTSwgSWxpYSBNaXJr
+aW4gd3JvdGU6Cj4+Cj4+IE9uIE1vbiwgT2N0IDI3LCAyMDE0IGF0IDY6MzQgQU0sIEFsZXhhbmRy
+ZSBDb3VyYm90IDxhY291cmJvdEBudmlkaWEuY29tPgo+PiB3cm90ZToKPj4+Cj4+PiBHSzIwQSBk
+b2VzIG5vdCBoYXZlIGRlZGljYXRlZCBWUkFNLCB0aGVyZWZvcmUgYWxsb2NhdGluZyBpbiBWUkFN
+IGNhbiBiZQo+Pj4gc3ViLW9wdGltYWwgYW5kIHNvbWV0aW1lcyBldmVuIGhhcm1mdWwuIFNldCBp
+dHMgVlJBTSBkb21haW4gdG8KPj4+IE5PVVZFQVVfQk9fR0FSVCBzbyBhbGwgb2JqZWN0cyBhcmUg
+YWxsb2NhdGVkIGluIHN5c3RlbSBtZW1vcnkuCj4+Pgo+Pj4gU2lnbmVkLW9mZi1ieTogQWxleGFu
+ZHJlIENvdXJib3QgPGFjb3VyYm90QG52aWRpYS5jb20+Cj4+PiAtLS0KPj4+ICAgc3JjL2dhbGxp
+dW0vZHJpdmVycy9ub3V2ZWF1L252YzAvbnZjMF9zY3JlZW4uYyB8IDEwICsrKysrKysrKysKPj4+
+ICAgMSBmaWxlIGNoYW5nZWQsIDEwIGluc2VydGlvbnMoKykKPj4+Cj4+PiBkaWZmIC0tZ2l0IGEv
+c3JjL2dhbGxpdW0vZHJpdmVycy9ub3V2ZWF1L252YzAvbnZjMF9zY3JlZW4uYwo+Pj4gYi9zcmMv
+Z2FsbGl1bS9kcml2ZXJzL25vdXZlYXUvbnZjMC9udmMwX3NjcmVlbi5jCj4+PiBpbmRleCBhYzU4
+MjNlNGE4ZDUuLmFkMTQzY2Q5YTE0MCAxMDA2NDQKPj4+IC0tLSBhL3NyYy9nYWxsaXVtL2RyaXZl
+cnMvbm91dmVhdS9udmMwL252YzBfc2NyZWVuLmMKPj4+ICsrKyBiL3NyYy9nYWxsaXVtL2RyaXZl
+cnMvbm91dmVhdS9udmMwL252YzBfc2NyZWVuLmMKPj4+IEBAIC02MjAsNiArNjIwLDE2IEBAIG52
+YzBfc2NyZWVuX2NyZWF0ZShzdHJ1Y3Qgbm91dmVhdV9kZXZpY2UgKmRldikKPj4+ICAgICAgICAg
+cmV0dXJuIE5VTEw7Cj4+PiAgICAgIHBzY3JlZW4gPSAmc2NyZWVuLT5iYXNlLmJhc2U7Cj4+Pgo+
+Pj4gKyAgIC8qIFJlY29nbml6ZSBjaGlwc2V0cyB3aXRoIG5vIFZSQU0gKi8KPj4+ICsgICBzd2l0
+Y2ggKGRldi0+Y2hpcHNldCkgewo+Pj4gKyAgIC8qIEdLMjBBICovCj4+PiArICAgY2FzZSAweGVh
+Ogo+Pj4gKyAgICAgIHNjcmVlbi0+YmFzZS52cmFtX2RvbWFpbiA9IE5PVVZFQVVfQk9fR0FSVDsK
+Pj4KPj4KPj4gSSB0aGluayB5b3UgYWxzbyB3YW50IHRvIHNldCB2aWRtZW1fYmluZGluZ3MgPSAw
+Li4uIGFsdGhvdWdoCj4+IHBvdGVudGlhbGx5IGFmdGVyIHRoZSB8PSB0aGF0J3MgZG9uZSBiZWxv
+dy4gQWx0aG91Z2ggSSBndWVzcyB0aGF0Cj4+IGNvbnN0YnVmICsgY29tbWFuZCBhcmdzIGJ1ZiBu
+ZWVkIHRvIGJlIHw9J2QgaW50byB0aGUgc3lzbWVtX2JpbmRpbmdzCj4+IGZvciB0aGlzIHRvIHdv
+cmsgb3V0IHdlbGwuCj4KPgo+IFRoYW5rcyBmb3IgcG9pbnRpbmcgdGhpcyBvdXQgOyBJIGRpZG4n
+dCBrbm93IGFib3V0IHZpZG1lbV9iaW5kaW5ncyB0byBiZQo+IGhvbmVzdC4gV2lsbCB1cGRhdGUg
+YW5kIHJlc2VuZC4KPgo+IEFwYXJ0IGZyb20gdGhpcyBkZXRhaWwsIGFyZSB5b3Ugb2sgd2l0aCB0
+aGUgY2hhbmdlcyBicm91Z2h0IGJ5IHRoZXNlCj4gcGF0Y2hlcz8KCkknbSBub3QgYWdhaW5zdCB0
+aGVtLi4uIEkgZG8gd29uZGVyIGEgYml0IGlmIHRoZXJlIGlzbid0IHNvbWUgYmV0dGVyCndheSBv
+ZiBkb2luZyB0aGlzLCBidXQgaW4gdGhlIGFic2VuY2Ugb2Ygc3VjaCBhIHdheSwgdGhpcyBzZWVt
+cyBmaW5lLgoKICAtaWxpYQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwptZXNhLWRldiBtYWlsaW5nIGxpc3QKbWVzYS1kZXZAbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9tZXNhLWRl
+dgo=
