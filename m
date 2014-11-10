@@ -1,450 +1,64 @@
-From: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>
-Subject: [PATCH v4 REPOST 5/5] ARM: tegra: Add thermal reset (thermtrip) support to PMC
-Date: Mon, 10 Nov 2014 15:12:17 +0200
-Message-ID: <1415625137-4791-6-git-send-email-mikko.perttunen@kapsi.fi>
-References: <1415625137-4791-1-git-send-email-mikko.perttunen@kapsi.fi>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 05/12] soc/tegra: Add efuse driver for Tegra
+Date: Mon, 10 Nov 2014 16:10:11 +0100
+Message-ID: <20141110151009.GA13447@ulmo>
+References: <1405080971-7609-1-git-send-email-thierry.reding@gmail.com>
+ <1405080971-7609-6-git-send-email-thierry.reding@gmail.com>
+ <20141019031241.GA18880@tiger>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="rwEMma7ioTxnRzrJ"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1415625137-4791-1-git-send-email-mikko.perttunen-/1wQRMveznE@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20141019031241.GA18880@tiger>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-This adds a device tree controlled option to enable PMC-based
-thermal reset in overheating situations. Thermtrip is supported on
-Tegra30, Tegra114 and Tegra124. The thermal reset only works when
-the thermal sensors are calibrated, so a soctherm driver is also
-required.
+--rwEMma7ioTxnRzrJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The thermtrip event is triggered by the soctherm block, and all
-soctherm sensors default to showing a temperature of zero Celsius
-before they are initialized. Because of this, it is safe to initialize
-thermtrip and soctherm in any order.
+On Sun, Oct 19, 2014 at 11:12:45AM +0800, Shawn Guo wrote:
+> On Fri, Jul 11, 2014 at 02:16:04PM +0200, Thierry Reding wrote:
+> > diff --git a/drivers/misc/fuse/Makefile b/drivers/misc/fuse/Makefile
+> > new file mode 100644
+> > index 000000000000..0679c4febc89
+> > --- /dev/null
+> > +++ b/drivers/misc/fuse/Makefile
+> > @@ -0,0 +1 @@
+> > +obj-$(CONFIG_ARCH_TEGRA)	+=3D tegra/
+>=20
+> I just happened to notice this change on linux-next introduced by this
+> patch?  It's a leftover from early version of the patch, I guess?
 
-Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Reviewed-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Tested-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/soc/tegra/pmc.c | 379 +++++++++++++++++++++++++++++++-----------------
- 1 file changed, 247 insertions(+), 132 deletions(-)
+Indeed so. I've sent out a patch to fix this.
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index a2c0ceb..de514fe 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -83,11 +83,28 @@
- 
- #define GPU_RG_CNTRL			0x2d4
- 
-+#define PMC_SENSOR_CTRL			0x1b0
-+#define PMC_SENSOR_CTRL_SCRATCH_WRITE	(1 << 2)
-+#define PMC_SENSOR_CTRL_ENABLE_RST	(1 << 1)
-+
-+#define PMC_SCRATCH54			0x258
-+#define PMC_SCRATCH54_DATA_SHIFT	8
-+#define PMC_SCRATCH54_ADDR_SHIFT	0
-+
-+#define PMC_SCRATCH55			0x25c
-+#define PMC_SCRATCH55_RESET_TEGRA	(1 << 31)
-+#define PMC_SCRATCH55_CNTRL_ID_SHIFT	27
-+#define PMC_SCRATCH55_PINMUX_SHIFT	24
-+#define PMC_SCRATCH55_16BITOP		(1 << 15)
-+#define PMC_SCRATCH55_CHECKSUM_SHIFT	16
-+#define PMC_SCRATCH55_I2CSLV1_SHIFT	0
-+
- struct tegra_pmc_soc {
- 	unsigned int num_powergates;
- 	const char *const *powergates;
- 	unsigned int num_cpu_powergates;
- 	const u8 *cpu_powergates;
-+	bool has_tsense_reset;
- };
- 
- /**
-@@ -606,6 +623,234 @@ void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
- }
- #endif
- 
-+static const char * const tegra20_powergates[] = {
-+	[TEGRA_POWERGATE_CPU] = "cpu",
-+	[TEGRA_POWERGATE_3D] = "3d",
-+	[TEGRA_POWERGATE_VENC] = "venc",
-+	[TEGRA_POWERGATE_VDEC] = "vdec",
-+	[TEGRA_POWERGATE_PCIE] = "pcie",
-+	[TEGRA_POWERGATE_L2] = "l2",
-+	[TEGRA_POWERGATE_MPE] = "mpe",
-+};
-+
-+static const struct tegra_pmc_soc tegra20_pmc_soc = {
-+	.num_powergates = ARRAY_SIZE(tegra20_powergates),
-+	.powergates = tegra20_powergates,
-+	.num_cpu_powergates = 0,
-+	.cpu_powergates = NULL,
-+};
-+
-+static const char * const tegra30_powergates[] = {
-+	[TEGRA_POWERGATE_CPU] = "cpu0",
-+	[TEGRA_POWERGATE_3D] = "3d0",
-+	[TEGRA_POWERGATE_VENC] = "venc",
-+	[TEGRA_POWERGATE_VDEC] = "vdec",
-+	[TEGRA_POWERGATE_PCIE] = "pcie",
-+	[TEGRA_POWERGATE_L2] = "l2",
-+	[TEGRA_POWERGATE_MPE] = "mpe",
-+	[TEGRA_POWERGATE_HEG] = "heg",
-+	[TEGRA_POWERGATE_SATA] = "sata",
-+	[TEGRA_POWERGATE_CPU1] = "cpu1",
-+	[TEGRA_POWERGATE_CPU2] = "cpu2",
-+	[TEGRA_POWERGATE_CPU3] = "cpu3",
-+	[TEGRA_POWERGATE_CELP] = "celp",
-+	[TEGRA_POWERGATE_3D1] = "3d1",
-+};
-+
-+static const u8 tegra30_cpu_powergates[] = {
-+	TEGRA_POWERGATE_CPU,
-+	TEGRA_POWERGATE_CPU1,
-+	TEGRA_POWERGATE_CPU2,
-+	TEGRA_POWERGATE_CPU3,
-+};
-+
-+static const struct tegra_pmc_soc tegra30_pmc_soc = {
-+	.num_powergates = ARRAY_SIZE(tegra30_powergates),
-+	.powergates = tegra30_powergates,
-+	.num_cpu_powergates = ARRAY_SIZE(tegra30_cpu_powergates),
-+	.cpu_powergates = tegra30_cpu_powergates,
-+	.has_tsense_reset = true,
-+};
-+
-+static const char * const tegra114_powergates[] = {
-+	[TEGRA_POWERGATE_CPU] = "crail",
-+	[TEGRA_POWERGATE_3D] = "3d",
-+	[TEGRA_POWERGATE_VENC] = "venc",
-+	[TEGRA_POWERGATE_VDEC] = "vdec",
-+	[TEGRA_POWERGATE_MPE] = "mpe",
-+	[TEGRA_POWERGATE_HEG] = "heg",
-+	[TEGRA_POWERGATE_CPU1] = "cpu1",
-+	[TEGRA_POWERGATE_CPU2] = "cpu2",
-+	[TEGRA_POWERGATE_CPU3] = "cpu3",
-+	[TEGRA_POWERGATE_CELP] = "celp",
-+	[TEGRA_POWERGATE_CPU0] = "cpu0",
-+	[TEGRA_POWERGATE_C0NC] = "c0nc",
-+	[TEGRA_POWERGATE_C1NC] = "c1nc",
-+	[TEGRA_POWERGATE_DIS] = "dis",
-+	[TEGRA_POWERGATE_DISB] = "disb",
-+	[TEGRA_POWERGATE_XUSBA] = "xusba",
-+	[TEGRA_POWERGATE_XUSBB] = "xusbb",
-+	[TEGRA_POWERGATE_XUSBC] = "xusbc",
-+};
-+
-+static const u8 tegra114_cpu_powergates[] = {
-+	TEGRA_POWERGATE_CPU0,
-+	TEGRA_POWERGATE_CPU1,
-+	TEGRA_POWERGATE_CPU2,
-+	TEGRA_POWERGATE_CPU3,
-+};
-+
-+static const struct tegra_pmc_soc tegra114_pmc_soc = {
-+	.num_powergates = ARRAY_SIZE(tegra114_powergates),
-+	.powergates = tegra114_powergates,
-+	.num_cpu_powergates = ARRAY_SIZE(tegra114_cpu_powergates),
-+	.cpu_powergates = tegra114_cpu_powergates,
-+	.has_tsense_reset = true,
-+};
-+
-+static const char * const tegra124_powergates[] = {
-+	[TEGRA_POWERGATE_CPU] = "crail",
-+	[TEGRA_POWERGATE_3D] = "3d",
-+	[TEGRA_POWERGATE_VENC] = "venc",
-+	[TEGRA_POWERGATE_PCIE] = "pcie",
-+	[TEGRA_POWERGATE_VDEC] = "vdec",
-+	[TEGRA_POWERGATE_L2] = "l2",
-+	[TEGRA_POWERGATE_MPE] = "mpe",
-+	[TEGRA_POWERGATE_HEG] = "heg",
-+	[TEGRA_POWERGATE_SATA] = "sata",
-+	[TEGRA_POWERGATE_CPU1] = "cpu1",
-+	[TEGRA_POWERGATE_CPU2] = "cpu2",
-+	[TEGRA_POWERGATE_CPU3] = "cpu3",
-+	[TEGRA_POWERGATE_CELP] = "celp",
-+	[TEGRA_POWERGATE_CPU0] = "cpu0",
-+	[TEGRA_POWERGATE_C0NC] = "c0nc",
-+	[TEGRA_POWERGATE_C1NC] = "c1nc",
-+	[TEGRA_POWERGATE_SOR] = "sor",
-+	[TEGRA_POWERGATE_DIS] = "dis",
-+	[TEGRA_POWERGATE_DISB] = "disb",
-+	[TEGRA_POWERGATE_XUSBA] = "xusba",
-+	[TEGRA_POWERGATE_XUSBB] = "xusbb",
-+	[TEGRA_POWERGATE_XUSBC] = "xusbc",
-+	[TEGRA_POWERGATE_VIC] = "vic",
-+	[TEGRA_POWERGATE_IRAM] = "iram",
-+};
-+
-+static const u8 tegra124_cpu_powergates[] = {
-+	TEGRA_POWERGATE_CPU0,
-+	TEGRA_POWERGATE_CPU1,
-+	TEGRA_POWERGATE_CPU2,
-+	TEGRA_POWERGATE_CPU3,
-+};
-+
-+static const struct tegra_pmc_soc tegra124_pmc_soc = {
-+	.num_powergates = ARRAY_SIZE(tegra124_powergates),
-+	.powergates = tegra124_powergates,
-+	.num_cpu_powergates = ARRAY_SIZE(tegra124_cpu_powergates),
-+	.cpu_powergates = tegra124_cpu_powergates,
-+	.has_tsense_reset = true,
-+};
-+
-+static const struct of_device_id tegra_pmc_match[] = {
-+	{ .compatible = "nvidia,tegra124-pmc", .data = &tegra124_pmc_soc },
-+	{ .compatible = "nvidia,tegra114-pmc", .data = &tegra114_pmc_soc },
-+	{ .compatible = "nvidia,tegra30-pmc", .data = &tegra30_pmc_soc },
-+	{ .compatible = "nvidia,tegra20-pmc", .data = &tegra20_pmc_soc },
-+	{ }
-+};
-+
-+void tegra_pmc_init_tsense_reset(struct device *dev)
-+{
-+	u32 pmu_i2c_addr, i2c_ctrl_id, reg_addr, reg_data, pinmux;
-+	u32 value, checksum;
-+	struct device_node *np = dev->of_node;
-+	struct device_node *i2c_np, *tt_np;
-+	const struct of_device_id *match = of_match_node(tegra_pmc_match, np);
-+	const struct tegra_pmc_soc *data = match->data;
-+
-+	if (!data->has_tsense_reset)
-+		return;
-+
-+	tt_np = of_find_node_by_name(np, "i2c-thermtrip");
-+	if (!tt_np) {
-+		dev_warn(dev, "no i2c-thermtrip node found, disabling emergency thermal reset\n");
-+		return;
-+	}
-+
-+	i2c_np = of_parse_phandle(tt_np, "nvidia,i2c-bus", 0);
-+	if (!i2c_np) {
-+		dev_err(dev, "I2C bus reference missing, disabling emergency thermal reset\n");
-+		goto put_tt;
-+	}
-+
-+	if (of_property_read_u32(i2c_np, "nvidia,controller-id", &i2c_ctrl_id)) {
-+		dev_err(dev, "I2C bus controller id missing, disabling emergency thermal reset\n");
-+		goto put_i2c;
-+	}
-+
-+	of_node_put(i2c_np);
-+
-+	if (of_property_read_u32(tt_np, "nvidia,bus-addr", &pmu_i2c_addr)) {
-+		dev_err(dev, "nvidia,bus-addr missing, disabling emergency thermal reset\n");
-+		goto put_tt;
-+	}
-+
-+	if (of_property_read_u32(tt_np, "nvidia,reg-addr", &reg_addr)) {
-+		dev_err(dev, "nvidia,reg-addr missing, disabling emergency thermal reset\n");
-+		goto put_tt;
-+	}
-+
-+	if (of_property_read_u32(tt_np, "nvidia,reg-data", &reg_data)) {
-+		dev_err(dev, "nvidia,reg-data missing, disabling emergency thermal reset\n");
-+		goto put_tt;
-+	}
-+
-+	if (of_property_read_u32(tt_np, "nvidia,pinmux-id", &pinmux))
-+		pinmux = 0;
-+
-+	of_node_put(tt_np);
-+
-+	value = tegra_pmc_readl(PMC_SENSOR_CTRL);
-+	value |= PMC_SENSOR_CTRL_SCRATCH_WRITE;
-+	tegra_pmc_writel(value, PMC_SENSOR_CTRL);
-+
-+	value = (reg_data << PMC_SCRATCH54_DATA_SHIFT) |
-+	      (reg_addr << PMC_SCRATCH54_ADDR_SHIFT);
-+	tegra_pmc_writel(value, PMC_SCRATCH54);
-+
-+	value = 0;
-+	value |= PMC_SCRATCH55_RESET_TEGRA;
-+	value |= i2c_ctrl_id << PMC_SCRATCH55_CNTRL_ID_SHIFT;
-+	value |= pinmux << PMC_SCRATCH55_PINMUX_SHIFT;
-+	value |= pmu_i2c_addr << PMC_SCRATCH55_I2CSLV1_SHIFT;
-+
-+	/* Calculate checksum of SCRATCH54, SCRATCH55 fields.
-+	 * Bits 23:16 will contain the checksum and are currently zero,
-+	 * so they are not added.
-+	 */
-+	checksum = reg_addr + reg_data + (value & 0xff) + ((value >> 8) & 0xff)
-+		+ ((value >> 24) & 0xff);
-+	checksum &= 0xff;
-+	checksum = 0x100 - checksum;
-+
-+	value |= checksum << PMC_SCRATCH55_CHECKSUM_SHIFT;
-+
-+	tegra_pmc_writel(value, PMC_SCRATCH55);
-+
-+	value = tegra_pmc_readl(PMC_SENSOR_CTRL);
-+	value |= PMC_SENSOR_CTRL_ENABLE_RST;
-+	tegra_pmc_writel(value, PMC_SENSOR_CTRL);
-+
-+	dev_info(dev, "PMC emergency thermal reset enabled\n");
-+
-+	return;
-+
-+put_i2c:
-+	of_node_put(i2c_np);
-+
-+put_tt:
-+	of_node_put(tt_np);
-+}
-+
- static int tegra_pmc_parse_dt(struct tegra_pmc *pmc, struct device_node *np)
- {
- 	u32 value, values[2];
-@@ -730,6 +975,8 @@ static int tegra_pmc_probe(struct platform_device *pdev)
- 
- 	tegra_pmc_init(pmc);
- 
-+	tegra_pmc_init_tsense_reset(&pdev->dev);
-+
- 	if (IS_ENABLED(CONFIG_DEBUG_FS)) {
- 		err = tegra_powergate_debugfs_init();
- 		if (err < 0)
-@@ -757,138 +1004,6 @@ static int tegra_pmc_resume(struct device *dev)
- 
- static SIMPLE_DEV_PM_OPS(tegra_pmc_pm_ops, tegra_pmc_suspend, tegra_pmc_resume);
- 
--static const char * const tegra20_powergates[] = {
--	[TEGRA_POWERGATE_CPU] = "cpu",
--	[TEGRA_POWERGATE_3D] = "3d",
--	[TEGRA_POWERGATE_VENC] = "venc",
--	[TEGRA_POWERGATE_VDEC] = "vdec",
--	[TEGRA_POWERGATE_PCIE] = "pcie",
--	[TEGRA_POWERGATE_L2] = "l2",
--	[TEGRA_POWERGATE_MPE] = "mpe",
--};
--
--static const struct tegra_pmc_soc tegra20_pmc_soc = {
--	.num_powergates = ARRAY_SIZE(tegra20_powergates),
--	.powergates = tegra20_powergates,
--	.num_cpu_powergates = 0,
--	.cpu_powergates = NULL,
--};
--
--static const char * const tegra30_powergates[] = {
--	[TEGRA_POWERGATE_CPU] = "cpu0",
--	[TEGRA_POWERGATE_3D] = "3d0",
--	[TEGRA_POWERGATE_VENC] = "venc",
--	[TEGRA_POWERGATE_VDEC] = "vdec",
--	[TEGRA_POWERGATE_PCIE] = "pcie",
--	[TEGRA_POWERGATE_L2] = "l2",
--	[TEGRA_POWERGATE_MPE] = "mpe",
--	[TEGRA_POWERGATE_HEG] = "heg",
--	[TEGRA_POWERGATE_SATA] = "sata",
--	[TEGRA_POWERGATE_CPU1] = "cpu1",
--	[TEGRA_POWERGATE_CPU2] = "cpu2",
--	[TEGRA_POWERGATE_CPU3] = "cpu3",
--	[TEGRA_POWERGATE_CELP] = "celp",
--	[TEGRA_POWERGATE_3D1] = "3d1",
--};
--
--static const u8 tegra30_cpu_powergates[] = {
--	TEGRA_POWERGATE_CPU,
--	TEGRA_POWERGATE_CPU1,
--	TEGRA_POWERGATE_CPU2,
--	TEGRA_POWERGATE_CPU3,
--};
--
--static const struct tegra_pmc_soc tegra30_pmc_soc = {
--	.num_powergates = ARRAY_SIZE(tegra30_powergates),
--	.powergates = tegra30_powergates,
--	.num_cpu_powergates = ARRAY_SIZE(tegra30_cpu_powergates),
--	.cpu_powergates = tegra30_cpu_powergates,
--};
--
--static const char * const tegra114_powergates[] = {
--	[TEGRA_POWERGATE_CPU] = "crail",
--	[TEGRA_POWERGATE_3D] = "3d",
--	[TEGRA_POWERGATE_VENC] = "venc",
--	[TEGRA_POWERGATE_VDEC] = "vdec",
--	[TEGRA_POWERGATE_MPE] = "mpe",
--	[TEGRA_POWERGATE_HEG] = "heg",
--	[TEGRA_POWERGATE_CPU1] = "cpu1",
--	[TEGRA_POWERGATE_CPU2] = "cpu2",
--	[TEGRA_POWERGATE_CPU3] = "cpu3",
--	[TEGRA_POWERGATE_CELP] = "celp",
--	[TEGRA_POWERGATE_CPU0] = "cpu0",
--	[TEGRA_POWERGATE_C0NC] = "c0nc",
--	[TEGRA_POWERGATE_C1NC] = "c1nc",
--	[TEGRA_POWERGATE_DIS] = "dis",
--	[TEGRA_POWERGATE_DISB] = "disb",
--	[TEGRA_POWERGATE_XUSBA] = "xusba",
--	[TEGRA_POWERGATE_XUSBB] = "xusbb",
--	[TEGRA_POWERGATE_XUSBC] = "xusbc",
--};
--
--static const u8 tegra114_cpu_powergates[] = {
--	TEGRA_POWERGATE_CPU0,
--	TEGRA_POWERGATE_CPU1,
--	TEGRA_POWERGATE_CPU2,
--	TEGRA_POWERGATE_CPU3,
--};
--
--static const struct tegra_pmc_soc tegra114_pmc_soc = {
--	.num_powergates = ARRAY_SIZE(tegra114_powergates),
--	.powergates = tegra114_powergates,
--	.num_cpu_powergates = ARRAY_SIZE(tegra114_cpu_powergates),
--	.cpu_powergates = tegra114_cpu_powergates,
--};
--
--static const char * const tegra124_powergates[] = {
--	[TEGRA_POWERGATE_CPU] = "crail",
--	[TEGRA_POWERGATE_3D] = "3d",
--	[TEGRA_POWERGATE_VENC] = "venc",
--	[TEGRA_POWERGATE_PCIE] = "pcie",
--	[TEGRA_POWERGATE_VDEC] = "vdec",
--	[TEGRA_POWERGATE_L2] = "l2",
--	[TEGRA_POWERGATE_MPE] = "mpe",
--	[TEGRA_POWERGATE_HEG] = "heg",
--	[TEGRA_POWERGATE_SATA] = "sata",
--	[TEGRA_POWERGATE_CPU1] = "cpu1",
--	[TEGRA_POWERGATE_CPU2] = "cpu2",
--	[TEGRA_POWERGATE_CPU3] = "cpu3",
--	[TEGRA_POWERGATE_CELP] = "celp",
--	[TEGRA_POWERGATE_CPU0] = "cpu0",
--	[TEGRA_POWERGATE_C0NC] = "c0nc",
--	[TEGRA_POWERGATE_C1NC] = "c1nc",
--	[TEGRA_POWERGATE_SOR] = "sor",
--	[TEGRA_POWERGATE_DIS] = "dis",
--	[TEGRA_POWERGATE_DISB] = "disb",
--	[TEGRA_POWERGATE_XUSBA] = "xusba",
--	[TEGRA_POWERGATE_XUSBB] = "xusbb",
--	[TEGRA_POWERGATE_XUSBC] = "xusbc",
--	[TEGRA_POWERGATE_VIC] = "vic",
--	[TEGRA_POWERGATE_IRAM] = "iram",
--};
--
--static const u8 tegra124_cpu_powergates[] = {
--	TEGRA_POWERGATE_CPU0,
--	TEGRA_POWERGATE_CPU1,
--	TEGRA_POWERGATE_CPU2,
--	TEGRA_POWERGATE_CPU3,
--};
--
--static const struct tegra_pmc_soc tegra124_pmc_soc = {
--	.num_powergates = ARRAY_SIZE(tegra124_powergates),
--	.powergates = tegra124_powergates,
--	.num_cpu_powergates = ARRAY_SIZE(tegra124_cpu_powergates),
--	.cpu_powergates = tegra124_cpu_powergates,
--};
--
--static const struct of_device_id tegra_pmc_match[] = {
--	{ .compatible = "nvidia,tegra124-pmc", .data = &tegra124_pmc_soc },
--	{ .compatible = "nvidia,tegra114-pmc", .data = &tegra114_pmc_soc },
--	{ .compatible = "nvidia,tegra30-pmc", .data = &tegra30_pmc_soc },
--	{ .compatible = "nvidia,tegra20-pmc", .data = &tegra20_pmc_soc },
--	{ }
--};
--
- static struct platform_driver tegra_pmc_driver = {
- 	.driver = {
- 		.name = "tegra-pmc",
--- 
-2.1.3
+Thanks,
+Thierry
+
+--rwEMma7ioTxnRzrJ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUYNVRAAoJEN0jrNd/PrOhK7UP/22Ui1YTJK7lK7+t0SrLcIAM
+tTGEsub/0Wr2kbv+thQh+gjb4t6tIGepBoUHe7p6Pc0sFN00HD02SPQzJyIC2GuZ
+dCqGXR1jzMB+UMGMcN9QAwh6uzsnES2Xow0iEyV2QnsrEMcPDyy9L635PUHpn7Ax
+3t+w5tq814FQAw2/Lrv9dPi/BJJtGcic/DN99sGD4wcJeyubFXHNKqKvwVqCGsgM
+yx69crKiBI6WtPJ+Gta2E1yd3r3ACXSlR+G9nKFOe8R7nQiUhdATKmZTkyGAp6lr
+nqmsIBDIi8XxMutgHMhDdN0t3kWyA54bKMrTVoHs2/IbTKIkNI+/vHwXNVFb65oW
+7xnpr4sHDyRq0DOETPb5JjyyXnvsKVpZSRgyxzmi7eiJ/CQDhpqgSFsH1mou6H+T
+qRRsJU0Tzr823FZJgvBUYBKamhDLRDZFUiJZUc7d4bQ9tFZtkXGaSf9WdLryuvrP
+1mYMWGrBPXpKxVOYimGxQXYVM5dxxdNCzRqpjnskDJjXGN3B+rjToelhvd1h9Bsw
+JzVmD9nlLVYLcNgitgzKpkigSYlrcLsy8Om7Vs4/Twtdo9SdZ9sw35pTtWnlBpC5
+wd4yCtJTA5HvYJtaQTPGJhXnELREySoqjtJ3eSdX/6FT2kCHoBD1dq+GLeWpnaL8
+nmEuFfc5TEjcJuBVZoHf
+=DElb
+-----END PGP SIGNATURE-----
+
+--rwEMma7ioTxnRzrJ--
