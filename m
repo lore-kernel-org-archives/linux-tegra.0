@@ -1,33 +1,76 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v5 12/16] cpufreq: tegra: Rename tegra-cpufreq to tegra20-cpufreq
-Date: Mon, 10 Nov 2014 10:22:15 +0530
-Message-ID: <CAKohpo=Kdh2vuvSoQBLdWfZJn3xDezpNBjqM389u45_BdizPXQ@mail.gmail.com>
-References: <1414161563-16812-1-git-send-email-mikko.perttunen@kapsi.fi>
-	<1414161563-16812-13-git-send-email-mikko.perttunen@kapsi.fi>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 4/5 v2] set: check seek success
+Date: Mon, 10 Nov 2014 09:51:03 +0100
+Message-ID: <20141110085102.GA12126@ulmo>
+References: <1412237788-20611-1-git-send-email-patrick@georgi-clan.de>
+ <545E95B1.5030703@georgi-clan.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1414161563-16812-13-git-send-email-mikko.perttunen@kapsi.fi>
-Sender: linux-pm-owner@vger.kernel.org
-To: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Mike Turquette <mturquette@linaro.org>, Paul Walmsley <pwalmsley@nvidia.com>, Vince Hsu <vinceh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="+QahgC5+KEYLbs62"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <545E95B1.5030703-U1IrdZU7gScKt1dFYRw6Gg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Patrick Georgi <patrick-U1IrdZU7gScKt1dFYRw6Gg@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 24 October 2014 20:09, Mikko Perttunen <mikko.perttunen@kapsi.fi> wrote:
-> From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
->
-> The Tegra124 will use a different driver for frequency scaling, so
-> rename the old driver (which handles only Tegra20) appropriately.
->
-> Signed-off-by: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
-> Signed-off-by: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-> ---
->  drivers/cpufreq/Kconfig.arm       |   6 +-
->  drivers/cpufreq/Makefile          |   2 +-
->  drivers/cpufreq/tegra-cpufreq.c   | 218 --------------------------------------
->  drivers/cpufreq/tegra20-cpufreq.c | 218 ++++++++++++++++++++++++++++++++++++++
->  4 files changed, 222 insertions(+), 222 deletions(-)
->  delete mode 100644 drivers/cpufreq/tegra-cpufreq.c
->  create mode 100644 drivers/cpufreq/tegra20-cpufreq.c
 
-Its just not readable enough.. You should have used: git format-patch -C -M
+--+QahgC5+KEYLbs62
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sat, Nov 08, 2014 at 11:14:09PM +0100, Patrick Georgi wrote:
+> This could silently fail which leads to surprising behaviour.
+>=20
+> Found-by: Coverity Scan
+> Signed-off-by: Patrick Georgi <patrick-U1IrdZU7gScKt1dFYRw6Gg@public.gmane.org>
+> ---
+>  src/set.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/src/set.c b/src/set.c
+> index ff32b53..907d640 100644
+> --- a/src/set.c
+> +++ b/src/set.c
+> @@ -59,7 +59,11 @@ read_from_image(char	*filename,
+>  		return result;
+>  	}
+> =20
+> -	fseek(fp, offset, SEEK_SET);
+> +	if (fseek(fp, offset, SEEK_SET) =3D=3D -1) {
+> +		printf("Error: Couldn't seek to %s(%d)\n", filename, offset);
+
+offset is unsigned, so the format specifier should be %u. I also wonder
+whether it would be good to output errno along with the message (or the
+string representation thereof) to increase the information content. But
+given that none of the other error messages have that it could be a
+separate patch.
+
+With the %d -> %u for the format specifier, this is:
+
+Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+--+QahgC5+KEYLbs62
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUYHx2AAoJEN0jrNd/PrOhuKsQAIcYhC10SJ0nw6tXIGUIH4h4
+soo7VOTcA0vEDJIN5d6AQoJftmnuBN3yA7h0Skd82NHgD8XvsKZZ5A/4URVJ/WN2
+NHNhbcj1qJ+LxdPeqkKucRwdW2Jqb37TSGv2ZBydKt6kW2RjUr9wb825l3/gNWCv
+leKih5MRcn7FfAz69vsqat1DUpdhGIwL+LAc3M+lyMbtkhSAR1PmeTBWLI9oApkf
+8KZlA5r64RbkLWBOiNc8W/T3iOFIx0VZ+4aP3RgFIMOJo3ITBCB4P7/CNtATate9
+N4irSlRMyRmn2oYDUejMjqn0xXTwBg+z8l34BOQIc/gsYYwnwTJzeuUiAdLDpBZi
+PCHzZEO/SzGjPiVlYHvdTnJi//WVwGOsGarXKKFPSdHLxaqWtrJz+9iLitKW1gC7
+Bi/R3Bs0VszNDYTwlAekp9PyyYHhjsl4BYuMJ5hLbnTURKXGfDm9dngGfhKcnCRV
+Vpw6UMqRi1Bpyf6VY14klWYrrg1XtST1U4XGqjp9tzLNXnVtG8AAkOUC09K70KWW
+HAx1xS0u36Jz5pvKDb3lqxUlWlITy/9WqSqcMqERLLpdxcTqKYCCBQopfskYDrey
+OpKnsJdWq/AYbZr3IM/Cx6raFCDw0P3CKH5ivnIfwKIZLxBALzkhkrz60edlnKGC
+OCH4e++1lNFGdu7yf8Vm
+=JhCz
+-----END PGP SIGNATURE-----
+
+--+QahgC5+KEYLbs62--
