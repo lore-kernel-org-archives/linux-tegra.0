@@ -1,89 +1,67 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: Re: [PATCH 0/3] Add support for Tegra Activity Monitor
-Date: Tue, 11 Nov 2014 09:40:49 +0100
-Message-ID: <CAAObsKB9xxS5C7VsP9cBGYDB5ArhbLM0nKEPk8yqWX=iwqcj7A@mail.gmail.com>
-References: <1414594232-15684-1-git-send-email-tomeu.vizoso@collabora.com>
- <545C8BCC.3090908@nvidia.com> <545CBC87.7050404@collabora.com> <546190BA.7050502@nvidia.com>
+From: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: Re: serial: of-serial: fetch line number from DT
+Date: Tue, 11 Nov 2014 11:37:39 +0100
+Message-ID: <1415702259.2815.1.camel@pengutronix.de>
+References: <CAOesGMjzs=dThDv6S8Xvo+ym-XECaQhTQ8NV6t46fQZ1LoJnHw@mail.gmail.com>
+	 <54613065.1090300@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <546190BA.7050502@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Stephen Warren <swarren@nvidia.com>, Thierry Reding <treding@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <54613065.1090300-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11 November 2014 05:29, Alexandre Courbot <acourbot@nvidia.com> wrote:
-> On 11/07/2014 09:35 PM, Tomeu Vizoso wrote:
->>
->> On 11/07/2014 10:07 AM, Alexandre Courbot wrote:
->>>
->>> On 10/29/2014 11:50 PM, Tomeu Vizoso wrote:
->>>>
->>>> Hello,
->>>>
->>>> these patches implement support for setting the rate of the EMC clock
->>>> based on
->>>> stats collected from the ACTMON, a piece of hw in the Tegra124 that
->>>> counts
->>>> memory accesses (among others).
->>>>
->>>> It depends on the following in-flight patches:
->>>>
->>>> * MC driver: http://thread.gmane.org/gmane.linux.ports.tegra/19623
->>>> * EMC driver:
->>>> http://thread.gmane.org/gmane.linux.ports.arm.kernel/365125
->>>> * CPUFreq driver: http://thread.gmane.org/gmane.linux.kernel/1812962
->>>>
->>>> I have pushed a branch here for testing:
->>>
->>>
->>> I am not too familiar with DVFS, but after going through this series it
->>> really seems to me that this could use devfreq. In its current form this
->>> driver mixes control and policy and lacks flexibility, preventing e.g.
->>> to switch to a performance or power-saving profile. Could you study the
->>> feasibility of using devfreq for this?
->>
->>
->> Yeah, I started writing a devfreq driver, but then I looked in more
->> detail to the downstream driver and realized that most of the
->> functionality that devfreq provides overlaps with the hw.
->>
->> The ACTMON can be configured to fire an interrupt when a set of
->> thresholds are crossed, similar to the simple-ondemand governor but a
->> bit more sophisticated.
->
->
-> I think (after a quick look at devfreq's source) that you can avoid polling
-> altogether if you set polling_ms to 0 in your devfreq_dev_profile instance.
-> Then it is up to you to call update_devfreq() from your custom governor
-> whenever it sees fit.
->
-> ACTMON support seems to overlap between being a governor (which reacts to
-> ACTMON interrupts and calls update_devfreq() when needed) and part of a
-> devfreq_dev_profile (get_dev_status() needs to use the actmon counters). If
-> we keep your current design where the driver simply controls a clock, you
-> could have the ACTMON driver obtain that clock, register its governor,
-> create a non-polling devfreq_dev_profile that controls that clock, and just
-> call devfreq_add_device() with both. Then we will have the benefit of being
-> able to use ACTMON as well as the performance and powersave governors on
-> EMC, and switch policies dynamically.
->
-> Another benefit is that you will have a placeholder in the governor to
-> implement suspend/resume for the ACTMON IP, in case this becomes necessary
-> in the future.
->
-> Do you think that would work? Apart from the polling which doesn't seem to
-> be an issue, have you seen any other redundancy between devfreq and ACTMON?
+Am Montag, den 10.11.2014, 14:38 -0700 schrieb Stephen Warren:
+> On 11/10/2014 02:34 PM, Olof Johansson wrote:
+> > Greg,
+> >
+> > This commit:
+> >
+> > commit 1bd8324535ec1ff44aef55c0e40b9e7d56b310fb
+> > Author: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+> > Date:   Mon Nov 3 23:16:54 2014 +0100
+> >
+> >      serial: of-serial: fetch line number from DT
+> ...
+> > Broke a whole lot of tegra boards in last night's -next here. In
+> > particular, I've been looking at tegra20-seaboard, which now doesn't
+> > boot with console any more.
+> >
+> > http://arm-soc.lixom.net/bootlogs/next/next-20141110/
+> >
+> > Unfortunately, tegra has for a long time been specifying the aliases
+> > as a fixed 1:1 mapping, but most environments rely on ttyS0 being the
+> > first _activated_ serial port. That's obviously going to break things
+> > here. :(
+> ...
+> > Stephen: I suppose the best way to handle this on tegra is to specify
+> > the aliases per-board instead of in the soc dtsi today.
+> 
+> IIRC, there was a deliberate request to name the Tegra UARTs after the 
+> SoC ports rather than board ports, so that it'd be obvious to people 
+> which port was which. I'm not sure if we can change the aliases in the 
+> Tegra DTs now that people may have got used to them?
+> 
+First off: sorry for breaking stuff.
 
-I don't think there's any obstacle to having this as a devfreq driver,
-it's just that it won't use much/any functionality of it so I don't
-really see the point.
+The point of this patch was exactly to have a common naming scheme
+between bootloader and and kernel. The aliases provide this in a broadly
+recognized way.
+Relying on the fact that ttyS0 maps to the debug UART seems extremely
+fragile and the fact that this patch broke this assumption actually
+proves this.
 
-I think it will be better if I send a version of the driver that uses
-the devfreq framework, so we can better compare (and maybe I will
-change my opinion).
+IMHO it is a bug in U-Boot that it doesn't look at the aliases when it
+builds the console= kernel parameter. But I recognize the problem that
+this change introduces a non-backward compatible break between firmware
+and kernel and I don't yet see a nice solution for this.
 
 Regards,
+Lucas
 
-Tomeu
+-- 
+Pengutronix e.K.             | Lucas Stach                 |
+Industrial Linux Solutions   | http://www.pengutronix.de/  |
