@@ -1,59 +1,72 @@
-From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: Re: serial: of-serial: fetch line number from DT
-Date: Tue, 11 Nov 2014 14:24:07 +0900
-Message-ID: <20141111052407.GB24727@kroah.com>
-References: <CAOesGMjzs=dThDv6S8Xvo+ym-XECaQhTQ8NV6t46fQZ1LoJnHw@mail.gmail.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v4 REPOST 1/5] of: Add descriptions of thermtrip properties
+ to Tegra PMC bindings
+Date: Tue, 11 Nov 2014 15:37:43 +0900
+Message-ID: <5461AEB7.70507@nvidia.com>
+References: <1415625137-4791-1-git-send-email-mikko.perttunen@kapsi.fi> <1415625137-4791-2-git-send-email-mikko.perttunen@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAOesGMjzs=dThDv6S8Xvo+ym-XECaQhTQ8NV6t46fQZ1LoJnHw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <1415625137-4791-2-git-send-email-mikko.perttunen-/1wQRMveznE@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Nov 10, 2014 at 01:34:19PM -0800, Olof Johansson wrote:
-> Greg,
-> 
-> This commit:
-> 
-> commit 1bd8324535ec1ff44aef55c0e40b9e7d56b310fb
-> Author: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-> Date:   Mon Nov 3 23:16:54 2014 +0100
-> 
->     serial: of-serial: fetch line number from DT
-> 
->     The general agreed way to specify a fixed line number
->     for a serial console is to provide a "serial" alias
->     in the devicetree. Start parsing this property in
->     of_serial.
-> 
->     Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
->     Signed-off-by: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-> 
-> 
-> Broke a whole lot of tegra boards in last night's -next here. In
-> particular, I've been looking at tegra20-seaboard, which now doesn't
-> boot with console any more.
-> 
-> http://arm-soc.lixom.net/bootlogs/next/next-20141110/
-> 
-> Unfortunately, tegra has for a long time been specifying the aliases
-> as a fixed 1:1 mapping, but most environments rely on ttyS0 being the
-> first _activated_ serial port. That's obviously going to break things
-> here. :(
-> 
-> Greg, can you please revert until we get the tegra-side fixes in for
-> this, or we're in for a pretty lousy time w.r.t. bisecting problems
-> across the two mergepoints?
-> 
-> Stephen: I suppose the best way to handle this on tegra is to specify
-> the aliases per-board instead of in the soc dtsi today.
-> 
-> Apologies for not replying to the patch directly -- it was only ever
-> posted to linux-serial and I don't seem to be subscribed.
+On 11/10/2014 10:12 PM, Mikko Perttunen wrote:
+> From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> Hardware-triggered thermal reset requires configuring the I2C
+> reset procedure. This configuration is read from the device tree,
+> so document the relevant properties in the binding documentation.
+>
+> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Reviewed-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Tested-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>   .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 24 ++++++++++++++++++++++
+>   1 file changed, 24 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+> index 68ac65f..dc13fb0 100644
+> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+> @@ -47,6 +47,21 @@ Required properties when nvidia,suspend-mode=<0>:
+>     sleep mode, the warm boot code will restore some PLLs, clocks and then
+>     bring up CPU0 for resuming the system.
+>
+> +Hardware-triggered thermal reset:
+> +On Tegra30, Tegra114 and Tegra124, if the 'i2c-thermtrip' subnode exists,
+> +hardware-triggered thermal reset will be enabled.
+> +
+> +Required properties for hardware-triggered thermal reset (inside 'i2c-thermtrip'):
+> +- nvidia,i2c-bus : Phandle to I2C bus containing the PMU
+> +- nvidia,bus-addr : Bus address of the PMU on the I2C bus
+> +- nvidia,reg-addr : I2C register address to write poweroff command to
+> +- nvidia,reg-data : Poweroff command to write to PMU
 
-Now reverted, sorry for the problems.
+This binding is taking two different routes to provide values to the driver:
 
-greg k-h
+1) It uses a phandle for i2c-bus (which must then be provided by another 
+binding implemented in the two following patches)
+
+2) It uses direct values for bus-addr, reg-addr and reg-data.
+
+Do we need to use both approaches? bus-addr could just as well be 
+obtained through a phandle to the i2c device and reading its reg 
+property. From this phandle you could also go back up to the bus, making 
+the i2c-bus property unnecessary. reg-addr and reg-data cannot be 
+specified that way, obviously.
+
+Actually I think I'd prefer to see i2c-bus become an integer property 
+instead of a phandle, because at the end of the day it is a value field 
+of a particular register and the reference is only used to retrieve that 
+value. It is not like we are actually going to call functions on the bus 
+instance or change its state. And for the single purpose of retrieving 
+that value, this binding requires the addition of a new property on the 
+bus node that will probably never be used for something else.
+
+We can also imagine that some design may not have a PMIC device in the 
+DT but still want to use the thermal reset feature. In this case, it is 
+again preferable to use direct values.
