@@ -1,91 +1,59 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 0/3] Add support for Tegra Activity Monitor
-Date: Tue, 11 Nov 2014 13:29:46 +0900
-Message-ID: <546190BA.7050502@nvidia.com>
-References: <1414594232-15684-1-git-send-email-tomeu.vizoso@collabora.com> <545C8BCC.3090908@nvidia.com> <545CBC87.7050404@collabora.com>
+From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Subject: Re: serial: of-serial: fetch line number from DT
+Date: Tue, 11 Nov 2014 14:24:07 +0900
+Message-ID: <20141111052407.GB24727@kroah.com>
+References: <CAOesGMjzs=dThDv6S8Xvo+ym-XECaQhTQ8NV6t46fQZ1LoJnHw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <545CBC87.7050404-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CAOesGMjzs=dThDv6S8Xvo+ym-XECaQhTQ8NV6t46fQZ1LoJnHw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/07/2014 09:35 PM, Tomeu Vizoso wrote:
-> On 11/07/2014 10:07 AM, Alexandre Courbot wrote:
->> On 10/29/2014 11:50 PM, Tomeu Vizoso wrote:
->>> Hello,
->>>
->>> these patches implement support for setting the rate of the EMC clock based on
->>> stats collected from the ACTMON, a piece of hw in the Tegra124 that counts
->>> memory accesses (among others).
->>>
->>> It depends on the following in-flight patches:
->>>
->>> * MC driver: http://thread.gmane.org/gmane.linux.ports.tegra/19623
->>> * EMC driver: http://thread.gmane.org/gmane.linux.ports.arm.kernel/365125
->>> * CPUFreq driver: http://thread.gmane.org/gmane.linux.kernel/1812962
->>>
->>> I have pushed a branch here for testing:
->>
->> I am not too familiar with DVFS, but after going through this series it
->> really seems to me that this could use devfreq. In its current form this
->> driver mixes control and policy and lacks flexibility, preventing e.g.
->> to switch to a performance or power-saving profile. Could you study the
->> feasibility of using devfreq for this?
->
-> Yeah, I started writing a devfreq driver, but then I looked in more
-> detail to the downstream driver and realized that most of the
-> functionality that devfreq provides overlaps with the hw.
->
-> The ACTMON can be configured to fire an interrupt when a set of
-> thresholds are crossed, similar to the simple-ondemand governor but a
-> bit more sophisticated.
+On Mon, Nov 10, 2014 at 01:34:19PM -0800, Olof Johansson wrote:
+> Greg,
+> 
+> This commit:
+> 
+> commit 1bd8324535ec1ff44aef55c0e40b9e7d56b310fb
+> Author: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+> Date:   Mon Nov 3 23:16:54 2014 +0100
+> 
+>     serial: of-serial: fetch line number from DT
+> 
+>     The general agreed way to specify a fixed line number
+>     for a serial console is to provide a "serial" alias
+>     in the devicetree. Start parsing this property in
+>     of_serial.
+> 
+>     Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+>     Signed-off-by: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+> 
+> 
+> Broke a whole lot of tegra boards in last night's -next here. In
+> particular, I've been looking at tegra20-seaboard, which now doesn't
+> boot with console any more.
+> 
+> http://arm-soc.lixom.net/bootlogs/next/next-20141110/
+> 
+> Unfortunately, tegra has for a long time been specifying the aliases
+> as a fixed 1:1 mapping, but most environments rely on ttyS0 being the
+> first _activated_ serial port. That's obviously going to break things
+> here. :(
+> 
+> Greg, can you please revert until we get the tegra-side fixes in for
+> this, or we're in for a pretty lousy time w.r.t. bisecting problems
+> across the two mergepoints?
+> 
+> Stephen: I suppose the best way to handle this on tegra is to specify
+> the aliases per-board instead of in the soc dtsi today.
+> 
+> Apologies for not replying to the patch directly -- it was only ever
+> posted to linux-serial and I don't seem to be subscribed.
 
-I think (after a quick look at devfreq's source) that you can avoid 
-polling altogether if you set polling_ms to 0 in your 
-devfreq_dev_profile instance. Then it is up to you to call 
-update_devfreq() from your custom governor whenever it sees fit.
+Now reverted, sorry for the problems.
 
-ACTMON support seems to overlap between being a governor (which reacts 
-to ACTMON interrupts and calls update_devfreq() when needed) and part of 
-a devfreq_dev_profile (get_dev_status() needs to use the actmon 
-counters). If we keep your current design where the driver simply 
-controls a clock, you could have the ACTMON driver obtain that clock, 
-register its governor, create a non-polling devfreq_dev_profile that 
-controls that clock, and just call devfreq_add_device() with both. Then 
-we will have the benefit of being able to use ACTMON as well as the 
-performance and powersave governors on EMC, and switch policies dynamically.
-
-Another benefit is that you will have a placeholder in the governor to 
-implement suspend/resume for the ACTMON IP, in case this becomes 
-necessary in the future.
-
-Do you think that would work? Apart from the polling which doesn't seem 
-to be an issue, have you seen any other redundancy between devfreq and 
-ACTMON?
-
-> The only functionality of the governors that
-> isn't covered by the ACTMON hw is determining the new frequency after a
-> threshold has been crossed, but if we want to retain the flexibility of
-> the downstream solution, we would need to write a new governor anyway.
-
-Yes, and that's fine. Actually if the parameters of the ACTMON governor 
-could be fine-tuned via sysfs, that would just be perfect.
-
-> I realize that it would be cool to reuse the code in devfreq, but being
-> able to let the hw sample the counters, calculating averages and
-> checking if a threshold has been crossed without the cpu having to
-> intervene gives this SoC quite an edge when compared to its competitors.
-
-AFAICT we can keep that edge while getting the benefit of using a common 
-framework. Also I expect quite some resistance against the merge of this 
-driver if it is not using devfreq. You probably can tell us better 
-whether it is fit or not, but can you examine my points above and let us 
-know what you think? After a quick look, it actually looks quite 
-exploitable for our use-case.
-
-Cheers,
-Alex.
+greg k-h
