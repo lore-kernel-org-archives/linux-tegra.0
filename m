@@ -1,67 +1,64 @@
-From: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 Subject: Re: serial: of-serial: fetch line number from DT
-Date: Tue, 11 Nov 2014 11:37:39 +0100
-Message-ID: <1415702259.2815.1.camel@pengutronix.de>
+Date: Tue, 11 Nov 2014 08:51:18 -0800
+Message-ID: <CAOesGMhe8orqL6wSiouQvdM8y4N44p12n7M1opraSkAP=3ZB+A@mail.gmail.com>
 References: <CAOesGMjzs=dThDv6S8Xvo+ym-XECaQhTQ8NV6t46fQZ1LoJnHw@mail.gmail.com>
-	 <54613065.1090300@wwwdotorg.org>
+	<20141111052407.GB24727@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <54613065.1090300-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20141111052407.GB24727-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Am Montag, den 10.11.2014, 14:38 -0700 schrieb Stephen Warren:
-> On 11/10/2014 02:34 PM, Olof Johansson wrote:
-> > Greg,
-> >
-> > This commit:
-> >
-> > commit 1bd8324535ec1ff44aef55c0e40b9e7d56b310fb
-> > Author: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-> > Date:   Mon Nov 3 23:16:54 2014 +0100
-> >
-> >      serial: of-serial: fetch line number from DT
-> ...
-> > Broke a whole lot of tegra boards in last night's -next here. In
-> > particular, I've been looking at tegra20-seaboard, which now doesn't
-> > boot with console any more.
-> >
-> > http://arm-soc.lixom.net/bootlogs/next/next-20141110/
-> >
-> > Unfortunately, tegra has for a long time been specifying the aliases
-> > as a fixed 1:1 mapping, but most environments rely on ttyS0 being the
-> > first _activated_ serial port. That's obviously going to break things
-> > here. :(
-> ...
-> > Stephen: I suppose the best way to handle this on tegra is to specify
-> > the aliases per-board instead of in the soc dtsi today.
-> 
-> IIRC, there was a deliberate request to name the Tegra UARTs after the 
-> SoC ports rather than board ports, so that it'd be obvious to people 
-> which port was which. I'm not sure if we can change the aliases in the 
-> Tegra DTs now that people may have got used to them?
-> 
-First off: sorry for breaking stuff.
+On Mon, Nov 10, 2014 at 9:24 PM, Greg Kroah-Hartman
+<gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org> wrote:
+> On Mon, Nov 10, 2014 at 01:34:19PM -0800, Olof Johansson wrote:
+>> Greg,
+>>
+>> This commit:
+>>
+>> commit 1bd8324535ec1ff44aef55c0e40b9e7d56b310fb
+>> Author: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+>> Date:   Mon Nov 3 23:16:54 2014 +0100
+>>
+>>     serial: of-serial: fetch line number from DT
+>>
+>>     The general agreed way to specify a fixed line number
+>>     for a serial console is to provide a "serial" alias
+>>     in the devicetree. Start parsing this property in
+>>     of_serial.
+>>
+>>     Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+>>     Signed-off-by: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+>>
+>>
+>> Broke a whole lot of tegra boards in last night's -next here. In
+>> particular, I've been looking at tegra20-seaboard, which now doesn't
+>> boot with console any more.
+>>
+>> http://arm-soc.lixom.net/bootlogs/next/next-20141110/
+>>
+>> Unfortunately, tegra has for a long time been specifying the aliases
+>> as a fixed 1:1 mapping, but most environments rely on ttyS0 being the
+>> first _activated_ serial port. That's obviously going to break things
+>> here. :(
+>>
+>> Greg, can you please revert until we get the tegra-side fixes in for
+>> this, or we're in for a pretty lousy time w.r.t. bisecting problems
+>> across the two mergepoints?
+>>
+>> Stephen: I suppose the best way to handle this on tegra is to specify
+>> the aliases per-board instead of in the soc dtsi today.
+>>
+>> Apologies for not replying to the patch directly -- it was only ever
+>> posted to linux-serial and I don't seem to be subscribed.
+>
+> Now reverted, sorry for the problems.
 
-The point of this patch was exactly to have a common naming scheme
-between bootloader and and kernel. The aliases provide this in a broadly
-recognized way.
-Relying on the fact that ttyS0 maps to the debug UART seems extremely
-fragile and the fact that this patch broke this assumption actually
-proves this.
+No worries, it's what linux-next is for. Thanks for the revert!
 
-IMHO it is a bug in U-Boot that it doesn't look at the aliases when it
-builds the console= kernel parameter. But I recognize the problem that
-this change introduces a non-backward compatible break between firmware
-and kernel and I don't yet see a nice solution for this.
 
-Regards,
-Lucas
-
--- 
-Pengutronix e.K.             | Lucas Stach                 |
-Industrial Linux Solutions   | http://www.pengutronix.de/  |
+-Olof
