@@ -1,66 +1,105 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: dts: tegra: move serial aliases to per-board
-Date: Tue, 11 Nov 2014 16:39:54 -0700
-Message-ID: <54629E4A.7050201@wwwdotorg.org>
-References: <1415738970-7963-1-git-send-email-olof@lixom.net>	<54627C1F.9050200@wwwdotorg.org> <CAOesGMh_8Ft=DKqm=e0fQdREC4aLmAAp3N0QyNsqWn2_rCbmnA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Subject: [PATCH v4 00/13] Tegra124 EMC (external memory controller) support
+Date: Wed, 12 Nov 2014 08:56:23 +0100
+Message-ID: <1415779051-26410-1-git-send-email-tomeu.vizoso@collabora.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAOesGMh_8Ft=DKqm=e0fQdREC4aLmAAp3N0QyNsqWn2_rCbmnA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, gregkh-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, mikko.perttunen-/1wQRMveznE@public.gmane.org, acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/11/2014 03:45 PM, Olof Johansson wrote:
-> [again in plain text mode. Sigh]
->
->
-> On Tue, Nov 11, 2014 at 1:14 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->> On 11/11/2014 01:49 PM, Olof Johansson wrote:
->>>
->>> There are general changes pending to make the /aliases/serial* entries
->>> number the serial ports on the system. On tegra, so far the ports have
->>> been
->>> just numbered dynamically as they are configured so that makes them
->>> change.
->>>
->>> To avoid this, add specific aliases per board to keep the old numbers.
->>> This
->>> allows us to change the numbering by default on future SoCs while keeping
->>> the
->>> numbering on existing boards.
->>
->>
->> This change seems mostly OK to me. FWIW though, I had suggested this
->> approach when the UART aliases were first added, and Laxman disagreed with
->> it. See commit b6551bb933f9 "ARM: tegra: dts: add aliases and DMA requestor
->> for serial controller", and its discussion:
->> https://lkml.org/lkml/2012/12/25/4. I've CC'd Laxman in case he still
->> objects.
->>
->>> Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
->>> ---
->>>
->>> Stephen/Thierry/Alex, as noticed this week we really should try to get
->>> this in before the 3.19 merge window so that the global aliases change
->>> can happen there without regression.
->>
->>
->> How did we resolve the issue that patch causes with old DTs; namely that it
->> causes a change in behaviour for those old DTs? On IRC, I'd wondered whether
->> we should set a flag so the kernel ignored aliases for boards containing
->> currently upstreamed Tegra SoCs so that issue wouldn't occur. If we did
->> that, we wouldn't need this patch.
->
-> Another way could be to remove aliases from the kernel side during
-> booting if they're found. Anyway, feel free to send a patch to do that
-> if that's your preference.
+Hello,
 
-That would work too.
+in this v4 you can find these changes:
 
-I'll let Thierry make the call re: whether it's important to support old 
-DTs with the current aliase content without a change in device names 
-when booted on a newer kernel. If not, as I mentioned, I'm fine with 
-this patch.
+* Adapt to changes in the latest version of Thierry's IOMMU series
+
+* OF bindings don't specify any unit-address or naming for the timings and timing subnodes. This is
+in line with how the display timings are specified.
+
+* Misc improvements on error handling and reporting
+
+* Misc style fixes
+
+* Adds a bit more information on the registers that need to be specified for each timing, and points
+to the TRM for more details.
+
+It depends on Thierry's MC patches at [0] and a branch can be found at [1]. So
+far it has been tested only on a Jetson TK1.
+
+Patch 1: Removes the old EMC clock, that was unused and not functional
+
+Patch 2: Documents bindings for the new long-ram-code property
+
+Patch 3: Adds API for reading the ram code
+
+Patches 4 to 6: Document OF additions
+
+Patch 7: Adds EMC node to Tegra124 DT
+
+Patch 8: Adds timings for Jetson TK1 board
+
+Patch 9: Adds functions to the MC driver so the EMC driver can stay within its
+own registers
+
+Patch 10: Adds the actual EMC driver, making use of the new MC API
+
+Patch 11: Adds EMC clock driver, making use of API provided by the EMC driver
+
+Patch 12: Adds debugfs entry for getting and setting the EMC rate
+
+Patch 13: On Tegra124, have the EMC clock be the parent of the MC clock
+
+Regards,
+
+Tomeu
+
+[0] https://github.com/thierryreding/linux/commits/staging/iommu
+[1] http://cgit.collabora.com/git/user/tomeu/linux.git/log/?h=emc-v4
+
+Mikko Perttunen (9):
+  clk: tegra124: Remove old emc clock
+  soc/tegra: Add ram code reader helper
+  of: Add Tegra124 EMC bindings
+  ARM: tegra: Add EMC to Tegra124 device tree
+  ARM: tegra: Add EMC timings to Jetson TK1 device tree
+  memory: tegra: Add API needed by the EMC driver
+  memory: tegra: Add EMC (external memory controller) driver
+  clk: tegra: Add EMC clock driver
+  memory: tegra: Add debugfs entry for getting and setting the EMC rate
+
+Tomeu Vizoso (4):
+  of: Document long-ram-code property in nvidia,tegra20-apbmisc
+  of: document new emc-timings subnode in nvidia,tegra124-car
+  of: Document timings subnode of nvidia,tegra-mc
+  clk: tegra: Set the EMC clock as the parent of the MC clock
+
+ .../bindings/clock/nvidia,tegra124-car.txt         |   44 +-
+ .../memory-controllers/nvidia,tegra-mc.txt         |   84 +-
+ .../bindings/memory-controllers/tegra-emc.txt      |  376 +++
+ .../bindings/misc/nvidia,tegra20-apbmisc.txt       |    2 +
+ arch/arm/boot/dts/tegra124-jetson-tk1-emc.dtsi     | 2412 ++++++++++++++++++++
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts          |    2 +
+ arch/arm/boot/dts/tegra124.dtsi                    |    7 +
+ drivers/clk/tegra/Makefile                         |    2 +-
+ drivers/clk/tegra/clk-emc.c                        |  468 ++++
+ drivers/clk/tegra/clk-tegra124.c                   |   18 +-
+ drivers/clk/tegra/clk.h                            |    2 +
+ drivers/memory/tegra/Kconfig                       |   10 +
+ drivers/memory/tegra/Makefile                      |    2 +
+ drivers/memory/tegra/mc.c                          |  130 ++
+ drivers/memory/tegra/mc.h                          |   12 +
+ drivers/memory/tegra/tegra124-emc.c                | 1157 ++++++++++
+ drivers/memory/tegra/tegra124.c                    |   44 +
+ drivers/soc/tegra/fuse/tegra-apbmisc.c             |   19 +
+ include/soc/tegra/fuse.h                           |    1 +
+ include/soc/tegra/memory.h                         |   19 +
+ 20 files changed, 4793 insertions(+), 18 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt
+ create mode 100644 arch/arm/boot/dts/tegra124-jetson-tk1-emc.dtsi
+ create mode 100644 drivers/clk/tegra/clk-emc.c
+ create mode 100644 drivers/memory/tegra/tegra124-emc.c
+ create mode 100644 include/soc/tegra/memory.h
+
+-- 
+1.9.3
