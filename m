@@ -1,52 +1,60 @@
-From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: [PATCH v4 13/13] clk: tegra: Set the EMC clock as the parent of the MC clock
-Date: Wed, 12 Nov 2014 08:56:36 +0100
-Message-ID: <1415779051-26410-14-git-send-email-tomeu.vizoso@collabora.com>
-References: <1415779051-26410-1-git-send-email-tomeu.vizoso@collabora.com>
+From: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: Re: [PATCH] ARM: dts: tegra: move serial aliases to per-board
+Date: Wed, 12 Nov 2014 11:46:57 +0100
+Message-ID: <1415789217.2876.1.camel@pengutronix.de>
+References: <1415738970-7963-1-git-send-email-olof@lixom.net>
+	 <54627C1F.9050200@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1415779051-26410-1-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+In-Reply-To: <54627C1F.9050200-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, mikko.perttunen-/1wQRMveznE@public.gmane.org, acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, gregkh-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tegra124, as we now have a proper driver for the EMC.
+Am Dienstag, den 11.11.2014, 14:14 -0700 schrieb Stephen Warren:
+> On 11/11/2014 01:49 PM, Olof Johansson wrote:
+> > There are general changes pending to make the /aliases/serial* entries
+> > number the serial ports on the system. On tegra, so far the ports have been
+> > just numbered dynamically as they are configured so that makes them change.
+> >
+> > To avoid this, add specific aliases per board to keep the old numbers. This
+> > allows us to change the numbering by default on future SoCs while keeping the
+> > numbering on existing boards.
+> 
+> This change seems mostly OK to me. FWIW though, I had suggested this 
+> approach when the UART aliases were first added, and Laxman disagreed 
+> with it. See commit b6551bb933f9 "ARM: tegra: dts: add aliases and DMA 
+> requestor for serial controller", and its discussion: 
+> https://lkml.org/lkml/2012/12/25/4. I've CC'd Laxman in case he still 
+> objects.
+> 
+> > Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+> > ---
+> >
+> > Stephen/Thierry/Alex, as noticed this week we really should try to get
+> > this in before the 3.19 merge window so that the global aliases change
+> > can happen there without regression.
+> 
+> How did we resolve the issue that patch causes with old DTs; namely that 
+> it causes a change in behaviour for those old DTs? On IRC, I'd wondered 
+> whether we should set a flag so the kernel ignored aliases for boards 
+> containing currently upstreamed Tegra SoCs so that issue wouldn't occur. 
+> If we did that, we wouldn't need this patch.
+> 
+I don't think this is a workable solution. With bootloaders that
+understand the aliases (like Barebox) this will lead to an incoherent
+behavior between kernel and bootloader.
 
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
----
- drivers/clk/tegra/clk-tegra124.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
+Either we don't have any aliases at all, or we respect them in both
+kernel and firmware in the same way. I think this change is the only
+sane solution to not change behavior on old bootloaders, while providing
+a fixed numbering for the serial ports.
 
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index d56d1e2..0ac43d6 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -150,11 +150,6 @@ static const char *mux_plld_out0_plld2_out0[] = {
- };
- #define mux_plld_out0_plld2_out0_idx NULL
- 
--static const char *mux_pllmcp_clkm[] = {
--	"pll_m", "pll_c", "pll_p", "clk_m", "pll_m_ud", "pll_c2", "pll_c3",
--};
--#define mux_pllmcp_clkm_idx NULL
--
- static struct div_nmp pllxc_nmp = {
- 	.divm_shift = 0,
- 	.divm_width = 8,
-@@ -1123,13 +1118,7 @@ static __init void tegra124_periph_clk_init(void __iomem *clk_base,
- 			       clk_base + PLLD2_BASE, 25, 1, 0, &pll_d2_lock);
- 	clks[TEGRA124_CLK_DSIB_MUX] = clk;
- 
--	/* emc mux */
--	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
--			       ARRAY_SIZE(mux_pllmcp_clkm), 0,
--			       clk_base + CLK_SOURCE_EMC,
--			       29, 3, 0, &emc_lock);
--
--	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
-+	clk = tegra_clk_register_mc("mc", "emc", clk_base + CLK_SOURCE_EMC,
- 				    &emc_lock);
- 	clks[TEGRA124_CLK_MC] = clk;
- 
+Regards,
+Lucas
 -- 
-1.9.3
+Pengutronix e.K.             | Lucas Stach                 |
+Industrial Linux Solutions   | http://www.pengutronix.de/  |
