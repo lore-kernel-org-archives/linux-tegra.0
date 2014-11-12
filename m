@@ -1,40 +1,35 @@
 From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [PATCH v4 01/13] clk: tegra124: Remove old emc clock
-Date: Wed, 12 Nov 2014 08:56:24 +0100
-Message-ID: <1415779051-26410-2-git-send-email-tomeu.vizoso@collabora.com>
+Subject: [PATCH v4 02/13] of: Document long-ram-code property in nvidia,tegra20-apbmisc
+Date: Wed, 12 Nov 2014 08:56:25 +0100
+Message-ID: <1415779051-26410-3-git-send-email-tomeu.vizoso@collabora.com>
 References: <1415779051-26410-1-git-send-email-tomeu.vizoso@collabora.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1415779051-26410-1-git-send-email-tomeu.vizoso@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-tegra@vger.kernel.org
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, mikko.perttunen@kapsi.fi, acourbot@nvidia.com, Mikko Perttunen <mperttunen@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, mikko.perttunen@kapsi.fi, acourbot@nvidia.com, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Mikko Perttunen <mperttunen@nvidia.com>
+Needed to properly decode the ram code register.
 
-This clock has never been able to do anything.
-
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
 
 ---
 
-v2:	* Don't remove emc_mux as it's being used by the MC clock now
+v3:	* Clarify wording as suggested by Mikko
 ---
- drivers/clk/tegra/clk-tegra124.c | 1 -
- 1 file changed, 1 deletion(-)
+ Documentation/devicetree/bindings/misc/nvidia,tegra20-apbmisc.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index f5f9bac..07ec882 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -790,7 +790,6 @@ static struct tegra_clk tegra124_clks[tegra_clk_max] __initdata = {
- 	[tegra_clk_i2c2] = { .dt_id = TEGRA124_CLK_I2C2, .present = true },
- 	[tegra_clk_uartc] = { .dt_id = TEGRA124_CLK_UARTC, .present = true },
- 	[tegra_clk_mipi_cal] = { .dt_id = TEGRA124_CLK_MIPI_CAL, .present = true },
--	[tegra_clk_emc] = { .dt_id = TEGRA124_CLK_EMC, .present = true },
- 	[tegra_clk_usb2] = { .dt_id = TEGRA124_CLK_USB2, .present = true },
- 	[tegra_clk_usb3] = { .dt_id = TEGRA124_CLK_USB3, .present = true },
- 	[tegra_clk_vde_8] = { .dt_id = TEGRA124_CLK_VDE, .present = true },
+diff --git a/Documentation/devicetree/bindings/misc/nvidia,tegra20-apbmisc.txt b/Documentation/devicetree/bindings/misc/nvidia,tegra20-apbmisc.txt
+index b97b8be..d034ff8 100644
+--- a/Documentation/devicetree/bindings/misc/nvidia,tegra20-apbmisc.txt
++++ b/Documentation/devicetree/bindings/misc/nvidia,tegra20-apbmisc.txt
+@@ -11,3 +11,5 @@ Required properties:
+        The second entry gives the physical address and length of the
+        registers indicating the strapping options.
+ 
++Optional properties:
++- nvidia,long-ram-code: If present, the RAM code is long (4 bit). If not, short (2 bit).
 -- 
 1.9.3
