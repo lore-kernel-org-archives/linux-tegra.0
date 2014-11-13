@@ -1,77 +1,115 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v7 00/12] NVIDIA Tegra memory controller and IOMMU support
-Date: Thu, 13 Nov 2014 12:16:55 +0100
-Message-ID: <20141113111653.GA23422@ulmo>
-References: <1415871157-21968-1-git-send-email-thierry.reding@gmail.com>
- <1550140.Lb4KHPOqX1@wuerfel>
+Subject: Re: [PATCH] ARM: dts: tegra: move serial aliases to per-board
+Date: Thu, 13 Nov 2014 12:27:07 +0100
+Message-ID: <20141113112706.GC23422@ulmo>
+References: <1415738970-7963-1-git-send-email-olof@lixom.net>
+ <20141112122017.GC30821@ulmo.nvidia.com>
+ <CAOesGMjmVJuaiFZf6msFtsGiQn6TOPatZ7V3p-KfaPqpXnrYmA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="bg08WKrSYDhXBjb5"
+	protocol="application/pgp-signature"; boundary="pAwQNkOnpTn9IO2O"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1550140.Lb4KHPOqX1@wuerfel>
+In-Reply-To: <CAOesGMjmVJuaiFZf6msFtsGiQn6TOPatZ7V3p-KfaPqpXnrYmA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, David Riley <davidriley-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, gregkh-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---bg08WKrSYDhXBjb5
+--pAwQNkOnpTn9IO2O
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 13, 2014 at 11:12:20AM +0100, Arnd Bergmann wrote:
-> On Thursday 13 November 2014 10:32:25 Thierry Reding wrote:
-> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >=20
-> > This is the sixth installment in the Tegra IOMMU and memory controller
-> > support series. This version addresses the final outstanding comments f=
-rom
-> > Olof about using proper Kconfig symbols to track the dependencies. It a=
-lso
-> > splits up the driver into one part that implements the memory controller
-> > only and a second part that implements the SMMU. This plays nicely with
-> > the new Kconfig options introduced.
-> >=20
-> > Patch 1 is a preparatory patch that exposes the memory controller clock.
-> >=20
-> > Patches 2 and 3 is a pair of precursory patches needed to make this all
-> > work on 64-bit ARM in the future.
-> >=20
-> > The device tree binding for the Tegra memory controller is added in pat=
-ch
-> > 4 and patch 5 is the bulk of the series that move the existing memory
-> > controller and IOMMU drivers into the new unified driver that supports
-> > Tegra30, Tegra114 and Tegra124.
+On Wed, Nov 12, 2014 at 09:07:20AM -0800, Olof Johansson wrote:
+> Hi Thierry,
 >=20
-> I just noticed that patch 5 has never made it into my inbox in any of the
-> submissions. Did it get filtered by the mailing list?
+>=20
+>=20
+> On Wed, Nov 12, 2014 at 4:20 AM, Thierry Reding
+> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> > On Tue, Nov 11, 2014 at 12:49:30PM -0800, Olof Johansson wrote:
+> >> There are general changes pending to make the /aliases/serial* entries
+> >> number the serial ports on the system. On tegra, so far the ports have=
+ been
+> >> just numbered dynamically as they are configured so that makes them ch=
+ange.
+> >>
+> >> To avoid this, add specific aliases per board to keep the old numbers.=
+ This
+> >> allows us to change the numbering by default on future SoCs while keep=
+ing the
+> >> numbering on existing boards.
+> >>
+> >> Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+> >> ---
+> >>
+> >> Stephen/Thierry/Alex, as noticed this week we really should try to get
+> >> this in before the 3.19 merge window so that the global aliases change
+> >> can happen there without regression.
+> >>
+> >> If you have more fixes queued up, feel free to add this to the next pu=
+ll
+> >> request. If not, a review and ack would be appreciated.
+> >>
+> >>  arch/arm/boot/dts/tegra114-dalmore.dts        |    1 +
+> >>  arch/arm/boot/dts/tegra114-roth.dts           |    4 ++++
+> >>  arch/arm/boot/dts/tegra114-tn7.dts            |    4 ++++
+> >>  arch/arm/boot/dts/tegra114.dtsi               |    7 -------
+> >>  arch/arm/boot/dts/tegra124-jetson-tk1.dts     |    1 +
+> >>  arch/arm/boot/dts/tegra124-nyan-big.dts       |    1 +
+> >>  arch/arm/boot/dts/tegra124-venice2.dts        |    1 +
+> >>  arch/arm/boot/dts/tegra124.dtsi               |    7 -------
+> >>  arch/arm/boot/dts/tegra20-harmony.dts         |    1 +
+> >>  arch/arm/boot/dts/tegra20-iris-512.dts        |    5 +++++
+> >>  arch/arm/boot/dts/tegra20-medcom-wide.dts     |    4 ++++
+> >>  arch/arm/boot/dts/tegra20-paz00.dts           |    2 ++
+> >>  arch/arm/boot/dts/tegra20-seaboard.dts        |    1 +
+> >>  arch/arm/boot/dts/tegra20-tamonten.dtsi       |    1 +
+> >>  arch/arm/boot/dts/tegra20-trimslice.dts       |    1 +
+> >>  arch/arm/boot/dts/tegra20-ventana.dts         |    1 +
+> >>  arch/arm/boot/dts/tegra20-whistler.dts        |    1 +
+> >>  arch/arm/boot/dts/tegra20.dtsi                |    8 --------
+> >>  arch/arm/boot/dts/tegra30-apalis-eval.dts     |    4 ++++
+> >>  arch/arm/boot/dts/tegra30-beaver.dts          |    1 +
+> >>  arch/arm/boot/dts/tegra30-cardhu.dtsi         |    2 ++
+> >>  arch/arm/boot/dts/tegra30-colibri-eval-v3.dts |    3 +++
+> >>  arch/arm/boot/dts/tegra30.dtsi                |    8 --------
+> >>  23 files changed, 39 insertions(+), 30 deletions(-)
+> >
+> > I have applied this to the for-3.19/dt branch.
+>=20
+> Maybe I wasn't entirely clear -- I was proposing to include this in
+> the next batch of fixes for 3.18 so that the aliases processing code
+> can go in for 3.19. If we hold this until the merge window we run the
+> risk of having largeish parts of the merge window unbisectable (more
+> than if we merge this as part of the next/dt contents).
 
-Yes, linux-arm-kernel says it needs moderator approval. Do you want me
-to bounce it to you directly?
+Alex sent out two patches today that should go into 3.18, so let me
+prepare a pull request include those and your patch.
 
 Thierry
 
---bg08WKrSYDhXBjb5
+--pAwQNkOnpTn9IO2O
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUZJMlAAoJEN0jrNd/PrOhR0QQAKrQVWBXZMgesUqVDlLy3gYY
-gTUxUOIMiwXD0z/iB6h7TBbesY+fN1YQDZGHlmMBXqn5uLCQ7tLV5tyyrRdNQDFp
-xLKvOXeNYwftAKRTNBVvOPWwRM4lDyUILEOdJLcCoqBZLHArj0XN/Cuw4aiTvCZX
-3fYOwUSFx0sCfi702rjhtYY1/rb95FL1g7ZKpUGehYL4SGSRcm59eyhZPnE75SC6
-3t88a0Lfe/jIre6/+dPFvOy52rdGE9zMQ1JgrrZ9va3qVsEaeArqjfGNyLa0EZS+
-QX+fHpVFqNBWFnJTX6FDwbDAt3w4tp28Ws1QEn50fZ7piGczsaP9Z3sPxVboLcIq
-DxWIxP/6biiSkndYugrtq3u4IGwm9JtpEMoswbpudnV6utaUZRLmSsjtHjxCeZJL
-RYAaP4W/gv4NN/s/1cvWBgj1QoNQbKjTxjdPm8bUhbAyy3/E6lQkaTY3LwKolHoT
-t6AEmL5JhoANpbIc+SbQr8G+bqiYaPVOFNkPYvlB/S9BE2i7VW3C4l4BL8T5YdWn
-YSyPCwfm99g1PRyVGC7t1RlmftVrvp0BMRA20PoM7XNur9pYNU24OHVFP+Tr2o2v
-oNq0hpE+g2wHgja2Yr17MStYu3zTVAAlfC/QpxY57+T5Zz20g787Zy30DK4dkR4U
-f8bBkdrw6G9+c1d2iy4J
-=3G+h
+iQIcBAEBAgAGBQJUZJWKAAoJEN0jrNd/PrOhw0UP/joUlwvdWbrpyImPDifXe7kH
+Fu1XVj7CNgxE9QE3PgFY1BcW29NZ+QBPlgWyKZ50BXTlQDkgAcmW0/16nqScUOCm
+NVAupEvP1+wEPrsXV9QJWkDKUADTljozvHt8IbTwpjzlxGJz0VwIeQfooPptsxth
+iKDQyGvOIUMeKbZQ+DIsokymtmLMSIiGw9Kc6cfC6dF/rbhP/BJtWBCdCeQuqZKf
+3Zz0lLN/vazCquXG+mc26nQVZ4xPPLq45omNq6No7YHVbYfFECBzjExR1jkPZBdY
+lfLVUE4KCDjVIoymNGlvLD3sCDUfCbAMtsCGfRe6vfAP+pg3q8yYXvmxmJ9feE4Y
+qmWfP2MC5h1kpTM/sPj8MLllak0OR/K5oM1D8rkBBO5QTKPr5i6YOpFTcBrR7+gV
+Dt1PbjgKq11CJ94pqdr15028qbt2vx0+QQ8Uh/YcxxZGWjxwUAneC2uTdz5CWExa
+Dd5jqjWgzLqsi3BgbOrNJMOvl7HWhgbVtBIQjtGL/DBag719tK6QlHDEtW4PsU/T
+UFjrK7Hg/A+C19QVv3ZHYKVajFh0nZ+r0Qx7o3lnlJkcXo4wI0RrobTw0qkb5xb9
+wWRXtQkLPlcHIRq2KqlQuUzdL48YTdqBgMEmJt88NwLu6k+m4In4QYV0bvpCJwAS
+oiEATliDEMdMt7UyVc66
+=K5s3
 -----END PGP SIGNATURE-----
 
---bg08WKrSYDhXBjb5--
+--pAwQNkOnpTn9IO2O--
