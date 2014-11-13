@@ -1,127 +1,80 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] ARM: dts: tegra: move serial aliases to per-board
-Date: Thu, 13 Nov 2014 17:17:40 +0100
-Message-ID: <20141113161738.GB3613@ulmo>
-References: <1415738970-7963-1-git-send-email-olof@lixom.net>
- <20141112122017.GC30821@ulmo.nvidia.com>
- <CAOesGMjmVJuaiFZf6msFtsGiQn6TOPatZ7V3p-KfaPqpXnrYmA@mail.gmail.com>
- <20141113112706.GC23422@ulmo>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="PmA2V3Z32TCmWXqI"
+From: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 0/8] thermal:cpu cooling:fix: Provide thermal core fixes with
+ deferred probe for several drivers
+Date: Thu, 13 Nov 2014 18:02:37 +0100
+Message-ID: <1415898165-27406-1-git-send-email-l.majewski@samsung.com>
+References: <1411547232-21493-1-git-send-email-l.majewski@samsung.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20141113112706.GC23422@ulmo>
+In-reply-to: <1411547232-21493-1-git-send-email-l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, gregkh-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org
+To: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Zhang Rui <rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Ezequiel Garcia <ezequiel.garcia-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Kuninori Morimoto <kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>, Linux PM list <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Vincenzo Frascino <vincenzo.frascino-qxv4g6HH51o@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Lukasz Majewski <l.majewski-AM3owJQeAb5mR6Xm/wNWPw@public.gmane.org>, Nobuhiro Iwamatsu <iwamatsu-+mkmVskJBflAfugRpC6u6w@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Presented fixes are a response for problem described below:
+http://thread.gmane.org/gmane.linux.kernel/1793821/match=thermal+core+fix+initialize+max_state+variable+0
 
---PmA2V3Z32TCmWXqI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In short - it turned out that two trivial fixes (included in this patch set)
+require support for deferred probe in thermal drivers.
 
-On Thu, Nov 13, 2014 at 12:27:07PM +0100, Thierry Reding wrote:
-> On Wed, Nov 12, 2014 at 09:07:20AM -0800, Olof Johansson wrote:
-> > Hi Thierry,
-> >=20
-> >=20
-> >=20
-> > On Wed, Nov 12, 2014 at 4:20 AM, Thierry Reding
-> > <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> > > On Tue, Nov 11, 2014 at 12:49:30PM -0800, Olof Johansson wrote:
-> > >> There are general changes pending to make the /aliases/serial* entri=
-es
-> > >> number the serial ports on the system. On tegra, so far the ports ha=
-ve been
-> > >> just numbered dynamically as they are configured so that makes them =
-change.
-> > >>
-> > >> To avoid this, add specific aliases per board to keep the old number=
-s. This
-> > >> allows us to change the numbering by default on future SoCs while ke=
-eping the
-> > >> numbering on existing boards.
-> > >>
-> > >> Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-> > >> ---
-> > >>
-> > >> Stephen/Thierry/Alex, as noticed this week we really should try to g=
-et
-> > >> this in before the 3.19 merge window so that the global aliases chan=
-ge
-> > >> can happen there without regression.
-> > >>
-> > >> If you have more fixes queued up, feel free to add this to the next =
-pull
-> > >> request. If not, a review and ack would be appreciated.
-> > >>
-> > >>  arch/arm/boot/dts/tegra114-dalmore.dts        |    1 +
-> > >>  arch/arm/boot/dts/tegra114-roth.dts           |    4 ++++
-> > >>  arch/arm/boot/dts/tegra114-tn7.dts            |    4 ++++
-> > >>  arch/arm/boot/dts/tegra114.dtsi               |    7 -------
-> > >>  arch/arm/boot/dts/tegra124-jetson-tk1.dts     |    1 +
-> > >>  arch/arm/boot/dts/tegra124-nyan-big.dts       |    1 +
-> > >>  arch/arm/boot/dts/tegra124-venice2.dts        |    1 +
-> > >>  arch/arm/boot/dts/tegra124.dtsi               |    7 -------
-> > >>  arch/arm/boot/dts/tegra20-harmony.dts         |    1 +
-> > >>  arch/arm/boot/dts/tegra20-iris-512.dts        |    5 +++++
-> > >>  arch/arm/boot/dts/tegra20-medcom-wide.dts     |    4 ++++
-> > >>  arch/arm/boot/dts/tegra20-paz00.dts           |    2 ++
-> > >>  arch/arm/boot/dts/tegra20-seaboard.dts        |    1 +
-> > >>  arch/arm/boot/dts/tegra20-tamonten.dtsi       |    1 +
-> > >>  arch/arm/boot/dts/tegra20-trimslice.dts       |    1 +
-> > >>  arch/arm/boot/dts/tegra20-ventana.dts         |    1 +
-> > >>  arch/arm/boot/dts/tegra20-whistler.dts        |    1 +
-> > >>  arch/arm/boot/dts/tegra20.dtsi                |    8 --------
-> > >>  arch/arm/boot/dts/tegra30-apalis-eval.dts     |    4 ++++
-> > >>  arch/arm/boot/dts/tegra30-beaver.dts          |    1 +
-> > >>  arch/arm/boot/dts/tegra30-cardhu.dtsi         |    2 ++
-> > >>  arch/arm/boot/dts/tegra30-colibri-eval-v3.dts |    3 +++
-> > >>  arch/arm/boot/dts/tegra30.dtsi                |    8 --------
-> > >>  23 files changed, 39 insertions(+), 30 deletions(-)
-> > >
-> > > I have applied this to the for-3.19/dt branch.
-> >=20
-> > Maybe I wasn't entirely clear -- I was proposing to include this in
-> > the next batch of fixes for 3.18 so that the aliases processing code
-> > can go in for 3.19. If we hold this until the merge window we run the
-> > risk of having largeish parts of the merge window unbisectable (more
-> > than if we merge this as part of the next/dt contents).
->=20
-> Alex sent out two patches today that should go into 3.18, so let me
-> prepare a pull request include those and your patch.
+This situation shows up when CPU frequency reduction is used as a thermal cooling
+device for a thermal zone.
+It happens that during initialization, the call to thermal probe will be executed
+before cpufreq probe (it can be observed at ./drivers/Makefile).
+In such a situation thermal will not be properly configured until cpufreq policy
+is setup.
 
-In addition to the three patches I had to pull in a partial version of
-Lucas' patch to add the DT labels on Tegra124 that your patch references
-in the aliases node.
+In the current code (without included fixes) there is a time window in which thermal
+can try to use not configured cpufreq and possibly crash the system.
 
-I've sent out a pull request, let me know if that doesn't match what you
-had expected.
 
-Thierry
+Proposed solution was based on the code already available in the imx_thermal.c file.
 
---PmA2V3Z32TCmWXqI
-Content-Type: application/pgp-signature
+/db8500_thermal.c:                      -> NOT NEEDED
+/intel_powerclamp.c:                    -> NOT NEEDED - INTEL (x86)
+/intel_powerclamp.c:                    -> NOT NEEDED - INTEL (x86)
+/ti-soc-thermal/ti-bandgap.c:           -> FIXED  [omap2plus_defconfig]
+/dove_thermal.c:                        -> NOT NEEDED - CPU_COOLING NOT AVAILABLE
+                                                        [dove_defconfig]
+/spear_thermal.c:                       -> FIXED  [spear3xx_defconfig]
+/samsung/exynos_tmu.c:                  -> NOT NEEDED (nasty hack - will be reworked in later patches)
+/imx_thermal.c:                         -> OK (deferred probe already in place)
+/int340x_thermal/int3402_thermal.c:     -> NOT NEEDED - ACPI x86 - Intel specific
+/int340x_thermal/int3400_thermal.c:     -> NOT NEEDED - ACPI x86 - Intel specific
+/tegra_soctherm.c:                      -> FIXED  [tegra_defconfig]
+/kirkwood_thermal.c:                    -> FIXED  [multi_v5_defconfig]
+/armada_thermal.c:                      -> FIXED  [multi_v7_defconfig]
+/rcar_thermal.c:                        -> FIXED  [shmobile_defconfig]
+/db8500_cpufreq_cooling.c:              -> OK (deferred probe already in place) [multi_v7_defconfig]
+/st/st_thermal_syscfg.c:                -> NOT NEEDED (Those two are enabled by e.g. ARMADA)
+/st/st_thermal_memmap.c:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUZNmiAAoJEN0jrNd/PrOhNMYQAKnmz9+gEbvNMXBt/W7plgWB
-Pv3nOwBS7TmzE325fNRHBufjVIOJLNiB+ZxU8aTiRrX0qjXrTZGRbct901FAEAKV
-U2pCdgYOVMJtpDAxh495vUOpgYxQHv7sfst+UQAlIFEAEO0WL2tObn8AMU1UxGiF
-jKRv8kPYxZuKONPtAOPJqYUiOM8fM7EL+tMGNhn2R2tMLXrrMFrAfErD1jABvc5/
-QvGzXJI7+7loUQ3BNaKbFX2F7ncHALJwsoVRREJPi1b+mlCj+CbXc9jokdvn2J6h
-4YYDt7ASZolRWU6lC4iljmLRJ6WvjGdAQVtllTEXeUW3VAoG7XPtWBAek9dh0vmQ
-zgbKLm8JDrFcfeJdzJY844D1U6X0o+8fJBi50MLwFbwtHsSJg3oPr/sNEyjDHn4M
-qlrgRoZDq9WulUHXRxLzdYm3ebdFb2qBhjIn9nFuL0a0YGr7YaiaJkY67h16eFVq
-EmncRJAWz3kh5CvF+KsoLc/i0fBZnmH6khPVcxbfedcWjbi4F4bi8MkvgzHMg93j
-UlYjC5VyhzxUaeddOZCixHZdDHN5iimPRdXTRqzhaJC4ytPcuh6Wm4m/DJR9iKAr
-+7DxB4OTMrGhqvTX/jv5AIlioj8XL/PMUbubRE0STpuTJbeQB0+viqFTAaqBna/W
-2rzP7G2nKXKuyaKhT586
-=gSy5
------END PGP SIGNATURE-----
+I only possess Exynos boards and Beagle Bone Black, so I'd be grateful for
+testing proposed solution on other boards. The posted code is compile tested.
 
---PmA2V3Z32TCmWXqI--
+This code applies on Eduardo's ti-soc-thermal-next tree:
+SHA1: 208a97042d66d9bfbcfab0d4a00c9fe317bb73d3
+
+Lukasz Majewski (8):
+  thermal:cpu cooling:armada: Provide deferred probing for armada driver
+  thermal:cpu cooling:kirkwood: Provide deferred probing for kirkwood
+    driver
+  thermal:cpu cooling:rcar: Provide deferred probing for rcar driver
+  thermal:cpu cooling:spear: Provide deferred probing for spear driver
+  thermal:cpu cooling:tegra: Provide deferred probing for tegra driver
+  thermal:cpu cooling:ti: Provide deferred probing for ti drivers
+  thermal:core:fix: Initialize the max_state variable to 0
+  thermal:core:fix: Check return code of the ->get_max_state() callback
+
+ drivers/thermal/armada_thermal.c            | 7 +++++++
+ drivers/thermal/kirkwood_thermal.c          | 7 +++++++
+ drivers/thermal/rcar_thermal.c              | 7 +++++++
+ drivers/thermal/spear_thermal.c             | 7 +++++++
+ drivers/thermal/tegra_soctherm.c            | 7 +++++++
+ drivers/thermal/thermal_core.c              | 8 +++++---
+ drivers/thermal/ti-soc-thermal/ti-bandgap.c | 7 +++++++
+ 7 files changed, 47 insertions(+), 3 deletions(-)
+
+-- 
+2.0.0.rc2
