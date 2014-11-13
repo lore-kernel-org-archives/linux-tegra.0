@@ -1,47 +1,27 @@
-From: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/2] PCI: tegra: Do not build on 64-bit ARM
-Date: Thu, 13 Nov 2014 12:04:48 -0700
-Message-ID: <20141113190448.GA14500@google.com>
-References: <1415800418-22957-1-git-send-email-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: [PATCH 0/2] Tegra PCI multiplatform fixes
+Date: Thu, 13 Nov 2014 20:37:35 +0100
+Message-ID: <1415907457-3147-1-git-send-email-l.stach@pengutronix.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1415800418-22957-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Nov 12, 2014 at 02:53:37PM +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> 32-bit and 64-bit ARM use very different infrastructure to register a
-> PCI host bridge. The Tegra PCIe host controller driver currently only
-> supports the 32-bit ARM infrastructure, so prevent it from being built
-> on 64-bit ARM where it will break.
-> 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Two of the registered fixups in the Tegra PCI driver
+would be executed unconditionally and potentially
+harm PCI support on other platforms than Tegra when
+running a multiplatform kernel.
 
-I applied both of these to pci/host-tegra for v3.19, thanks!
+I've tested that this doesn't alter PCI behavior on both
+T30 Beaver and T124 Jetson-TK1.
 
-> ---
->  drivers/pci/host/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/host/Kconfig b/drivers/pci/host/Kconfig
-> index 3dc25fad490c..9c56137e5e5e 100644
-> --- a/drivers/pci/host/Kconfig
-> +++ b/drivers/pci/host/Kconfig
-> @@ -32,7 +32,7 @@ config PCI_IMX6
->  
->  config PCI_TEGRA
->  	bool "NVIDIA Tegra PCIe controller"
-> -	depends on ARCH_TEGRA
-> +	depends on ARCH_TEGRA && !ARM64
->  
->  config PCI_RCAR_GEN2
->  	bool "Renesas R-Car Gen2 Internal PCI controller"
-> -- 
-> 2.1.3
-> 
+Lucas Stach (2):
+  PCI: tegra: apply relaxed ordering fixup only on Tegra
+  PCI: tegra: remove bogus bridge setup fixup
+
+ drivers/pci/host/pci-tegra.c | 39 +++++++++++++++++++++++++--------------
+ 1 file changed, 25 insertions(+), 14 deletions(-)
+
+-- 
+2.1.1
