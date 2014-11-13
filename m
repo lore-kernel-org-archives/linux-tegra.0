@@ -1,47 +1,63 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH v7 00/12] NVIDIA Tegra memory controller and IOMMU support
-Date: Thu, 13 Nov 2014 11:12:20 +0100
-Message-ID: <1550140.Lb4KHPOqX1@wuerfel>
-References: <1415871157-21968-1-git-send-email-thierry.reding@gmail.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 3/3] gk20a: use NOUVEAU_BO_GART as VRAM domain
+Date: Thu, 13 Nov 2014 19:23:06 +0900
+Message-ID: <5464868A.6050009@nvidia.com>
+References: <1414406099-21129-1-git-send-email-acourbot@nvidia.com>	<1414406099-21129-4-git-send-email-acourbot@nvidia.com> <CAKb7UvhMw9pfDsvoGae2A+n9qJNBV5Vnxm4bn5tbK09GDcP_Dw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1415871157-21968-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, David Riley <davidriley-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAKb7UvhMw9pfDsvoGae2A+n9qJNBV5Vnxm4bn5tbK09GDcP_Dw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>
+Cc: "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "mesa-dev-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <mesa-dev-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday 13 November 2014 10:32:25 Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> This is the sixth installment in the Tegra IOMMU and memory controller
-> support series. This version addresses the final outstanding comments from
-> Olof about using proper Kconfig symbols to track the dependencies. It also
-> splits up the driver into one part that implements the memory controller
-> only and a second part that implements the SMMU. This plays nicely with
-> the new Kconfig options introduced.
-> 
-> Patch 1 is a preparatory patch that exposes the memory controller clock.
-> 
-> Patches 2 and 3 is a pair of precursory patches needed to make this all
-> work on 64-bit ARM in the future.
-> 
-> The device tree binding for the Tegra memory controller is added in patch
-> 4 and patch 5 is the bulk of the series that move the existing memory
-> controller and IOMMU drivers into the new unified driver that supports
-> Tegra30, Tegra114 and Tegra124.
+On 10/30/2014 12:29 AM, Ilia Mirkin wrote:
+> On Mon, Oct 27, 2014 at 6:34 AM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> GK20A does not have dedicated VRAM, therefore allocating in VRAM can be
+>> sub-optimal and sometimes even harmful. Set its VRAM domain to
+>> NOUVEAU_BO_GART so all objects are allocated in system memory.
+>>
+>> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>   src/gallium/drivers/nouveau/nvc0/nvc0_screen.c | 10 ++++++++++
+>>   1 file changed, 10 insertions(+)
+>>
+>> diff --git a/src/gallium/drivers/nouveau/nvc0/nvc0_screen.c b/src/gallium/drivers/nouveau/nvc0/nvc0_screen.c
+>> index ac5823e4a8d5..ad143cd9a140 100644
+>> --- a/src/gallium/drivers/nouveau/nvc0/nvc0_screen.c
+>> +++ b/src/gallium/drivers/nouveau/nvc0/nvc0_screen.c
+>> @@ -620,6 +620,16 @@ nvc0_screen_create(struct nouveau_device *dev)
+>>         return NULL;
+>>      pscreen = &screen->base.base;
+>>
+>> +   /* Recognize chipsets with no VRAM */
+>> +   switch (dev->chipset) {
+>> +   /* GK20A */
+>> +   case 0xea:
+>> +      screen->base.vram_domain = NOUVEAU_BO_GART;
+>
+> I think you also want to set vidmem_bindings = 0... although
+> potentially after the |= that's done below. Although I guess that
+> constbuf + command args buf need to be |='d into the sysmem_bindings
+> for this to work out well. That said, we don't really handle explicit
+> migration well right now, and those PIPE_BIND_* are *incredibly*
+> misleading and don't actually necessarily reflect the current usage.
+> [I have some patches to improve the situation, but you don't really
+> have to worry about that.]
 
-I just noticed that patch 5 has never made it into my inbox in any of the
-submissions. Did it get filtered by the mailing list?
+In the light of that it could be that the vram_domain member I am 
+introducing is completely useless - if we set NV_VRAM_DOMAIN to be the 
+following:
 
-	Arnd
+#define NV_VRAM_DOMAIN(screen) ((screen)->vidmem_bindings == 0 ? 
+NOUVEAU_BO_GART : NOUVEAU_BO_VRAM)
+
+then I suspect we can just live without it. I tested quickly and it 
+seems to work. Ilia, do you agree? Or could we imagine having GPUs with 
+VRAM for which none of the PIPE_BIND_* targets should reside in VRAM?
+
+Also thinking, prior to setting vidmem_bindings to 0, shouldn't we also 
+do a "sysmem_bindings |= vidmem_bindings" to make sure all the set 
+bindings are tracked somewhere?
