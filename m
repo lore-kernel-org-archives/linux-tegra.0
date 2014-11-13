@@ -1,48 +1,47 @@
-From: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 8/8] thermal:core:fix: Check return code of the
- ->get_max_state() callback
-Date: Thu, 13 Nov 2014 18:02:45 +0100
-Message-ID: <1415898165-27406-9-git-send-email-l.majewski@samsung.com>
-References: <1411547232-21493-1-git-send-email-l.majewski@samsung.com>
- <1415898165-27406-1-git-send-email-l.majewski@samsung.com>
+From: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/2] PCI: tegra: Do not build on 64-bit ARM
+Date: Thu, 13 Nov 2014 12:04:48 -0700
+Message-ID: <20141113190448.GA14500@google.com>
+References: <1415800418-22957-1-git-send-email-thierry.reding@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1415898165-27406-1-git-send-email-l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1415800418-22957-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Zhang Rui <rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Ezequiel Garcia <ezequiel.garcia-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Kuninori Morimoto <kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>, Linux PM list <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Vincenzo Frascino <vincenzo.frascino-qxv4g6HH51o@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Lukasz Majewski <l.majewski-AM3owJQeAb5mR6Xm/wNWPw@public.gmane.org>, Nobuhiro Iwamatsu <iwamatsu-+mkmVskJBflAfugRpC6u6w@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Without this check it was possible to execute cooling device binding code
-even when wrong max cooling state was read.
+On Wed, Nov 12, 2014 at 02:53:37PM +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> 32-bit and 64-bit ARM use very different infrastructure to register a
+> PCI host bridge. The Tegra PCIe host controller driver currently only
+> supports the 32-bit ARM infrastructure, so prevent it from being built
+> on 64-bit ARM where it will break.
+> 
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Signed-off-by: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- drivers/thermal/thermal_core.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+I applied both of these to pci/host-tegra for v3.19, thanks!
 
-diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-index 413daa4..c1ddef1 100644
---- a/drivers/thermal/thermal_core.c
-+++ b/drivers/thermal/thermal_core.c
-@@ -928,7 +928,7 @@ int thermal_zone_bind_cooling_device(struct thermal_zone_device *tz,
- 	struct thermal_zone_device *pos1;
- 	struct thermal_cooling_device *pos2;
- 	unsigned long max_state = 0;
--	int result;
-+	int result, ret;
- 
- 	if (trip >= tz->trips || (trip < 0 && trip != THERMAL_TRIPS_NONE))
- 		return -EINVAL;
-@@ -945,7 +945,9 @@ int thermal_zone_bind_cooling_device(struct thermal_zone_device *tz,
- 	if (tz != pos1 || cdev != pos2)
- 		return -EINVAL;
- 
--	cdev->ops->get_max_state(cdev, &max_state);
-+	ret = cdev->ops->get_max_state(cdev, &max_state);
-+	if (ret)
-+		return ret;
- 
- 	/* lower default 0, upper default max_state */
- 	lower = lower == THERMAL_NO_LIMIT ? 0 : lower;
--- 
-2.0.0.rc2
+> ---
+>  drivers/pci/host/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/host/Kconfig b/drivers/pci/host/Kconfig
+> index 3dc25fad490c..9c56137e5e5e 100644
+> --- a/drivers/pci/host/Kconfig
+> +++ b/drivers/pci/host/Kconfig
+> @@ -32,7 +32,7 @@ config PCI_IMX6
+>  
+>  config PCI_TEGRA
+>  	bool "NVIDIA Tegra PCIe controller"
+> -	depends on ARCH_TEGRA
+> +	depends on ARCH_TEGRA && !ARM64
+>  
+>  config PCI_RCAR_GEN2
+>  	bool "Renesas R-Car Gen2 Internal PCI controller"
+> -- 
+> 2.1.3
+> 
