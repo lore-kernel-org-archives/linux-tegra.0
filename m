@@ -1,55 +1,55 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v7 11/12] ARM: tegra: Enable IOMMU for display controllers on Tegra124
-Date: Thu, 13 Nov 2014 10:32:36 +0100
-Message-ID: <1415871157-21968-12-git-send-email-thierry.reding@gmail.com>
-References: <1415871157-21968-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1415871157-21968-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, David Riley <davidriley-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: Re: [PATCH v4 05/13] of: Document timings subnode of nvidia,tegra-mc
+Date: Thu, 13 Nov 2014 10:33:43 +0100
+Message-ID: <CAAObsKDqTa8ozgeXryPdw-uU-VBnp5w5=xojBHO=0Nryd_W6cw@mail.gmail.com>
+References: <1415779051-26410-1-git-send-email-tomeu.vizoso@collabora.com>
+ <1415779051-26410-6-git-send-email-tomeu.vizoso@collabora.com> <20141112142202.GB26488@ulmo>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20141112142202.GB26488@ulmo>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Mikko Perttunen <mikko.perttunen@kapsi.fi>, Alexandre Courbot <acourbot@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 12 November 2014 15:22, Thierry Reding <thierry.reding@gmail.com> wrote:
+> On Wed, Nov 12, 2014 at 08:56:28AM +0100, Tomeu Vizoso wrote:
+> [...]
+>> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra-mc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra-mc.txt
+> [...]
+>> +Example board file:
+>> +
+>> +/ {
+>> +     memory-controller@0,70019000 {
+>> +             emc-timings-3 {
+>> +                     nvidia,ram-code = <3>;
+>
+> I guess the alternative would be to keep the old names and simply use
+> the reg property instead of nvidia,ram-code to be compliant with best
+> practices in DT:
+>
+>                 emc-timings@3 {
+>                         reg = <3>;
+>
+>> +
+>> +                     timing-12750000 {
+>> +                             clock-frequency = <12750000>;
+>
+> And:
+>
+>                         timing@12750000 {
+>                                 reg = <12750000>;
+>
+> But I haven't been following this series too closely so far, so maybe
+> that had already been rejected.
 
-Add iommus properties to the device tree nodes for the two display
-controllers found on Tegra124. This will allow the display controllers
-to map physically non-contiguous buffers to I/O virtual contiguous
-address spaces so that they can be used for scan-out.
+It has been mentioned already, but I think nobody has shown any strong
+opinions on it. I personally like how it is now as it matches how it's
+already done for display-timings.
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra124.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+Regards,
 
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index 29b60074bafa..4be06c6ea0c8 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -1,5 +1,6 @@
- #include <dt-bindings/clock/tegra124-car.h>
- #include <dt-bindings/gpio/tegra-gpio.h>
-+#include <dt-bindings/memory/tegra124-mc.h>
- #include <dt-bindings/pinctrl/pinctrl-tegra.h>
- #include <dt-bindings/pinctrl/pinctrl-tegra-xusb.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-@@ -103,6 +104,8 @@
- 			resets = <&tegra_car 27>;
- 			reset-names = "dc";
- 
-+			iommus = <&mc TEGRA_SWGROUP_DC>;
-+
- 			nvidia,head = <0>;
- 		};
- 
-@@ -116,6 +119,8 @@
- 			resets = <&tegra_car 26>;
- 			reset-names = "dc";
- 
-+			iommus = <&mc TEGRA_SWGROUP_DCB>;
-+
- 			nvidia,head = <1>;
- 		};
- 
--- 
-2.1.3
+Tomeu
+
+> Thierry
