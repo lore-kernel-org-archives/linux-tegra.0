@@ -1,38 +1,50 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: dts: tegra: move serial aliases to per-board
-Date: Wed, 12 Nov 2014 11:14:40 -0700
-Message-ID: <5463A390.2040609@wwwdotorg.org>
-References: <1415738970-7963-1-git-send-email-olof@lixom.net> <20141112122017.GC30821@ulmo.nvidia.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/2] ARM: tegra: Remove eMMC vmmc property for roth/tn7
+Date: Thu, 13 Nov 2014 13:59:02 +0900
+Message-ID: <1415854743-11670-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20141112122017.GC30821-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, gregkh-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/12/2014 05:20 AM, Thierry Reding wrote:
-> On Tue, Nov 11, 2014 at 12:49:30PM -0800, Olof Johansson wrote:
->> There are general changes pending to make the /aliases/serial* entries
->> number the serial ports on the system. On tegra, so far the ports have been
->> just numbered dynamically as they are configured so that makes them change.
->>
->> To avoid this, add specific aliases per board to keep the old numbers. This
->> allows us to change the numbering by default on future SoCs while keeping the
->> numbering on existing boards.
-...
-> I have applied this to the for-3.19/dt branch. So for anything that is
-> post Tegra124 the new rule shall be to add aliases to the SoC .dtsi and
-> then use consistent numbering of UART ports across boards?
->
-> The alternative is to remain consistent with what this patch does, which
-> would be to make the serial port numbering a property of the board. That
-> doesn't sound too bad to me either since it'll hide all the unused ports
-> on a given board.
+This property was wrong and broke eMMC since commit 52221610d. Align the
+eMMC properties to those of other Tegra boards.
 
-For new SoCs, I think board-specific aliases would make most sense. That 
-would be consistent with this patch. The only question I had was for 
-existing SoCs, should we make the switch this patch does, or leave the 
-aliases inactive there? New SoCs should use more sensible aliases.
+Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Stephen, Thierry, could we merge these two guys for 3.18? Roth and TN7
+are effectively broken until these fixes are in. Thanks!
+
+ arch/arm/boot/dts/tegra114-roth.dts | 1 -
+ arch/arm/boot/dts/tegra114-tn7.dts  | 1 -
+ 2 files changed, 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra114-roth.dts b/arch/arm/boot/dts/tegra114-roth.dts
+index c7c6825f11fb..1f6eaba92f67 100644
+--- a/arch/arm/boot/dts/tegra114-roth.dts
++++ b/arch/arm/boot/dts/tegra114-roth.dts
+@@ -971,7 +971,6 @@
+ 	sdhci@78000600 {
+ 		status = "okay";
+ 		bus-width = <8>;
+-		vmmc-supply = <&vdd_1v8>;
+ 		non-removable;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra114-tn7.dts b/arch/arm/boot/dts/tegra114-tn7.dts
+index 963662145635..3c3e2afc537d 100644
+--- a/arch/arm/boot/dts/tegra114-tn7.dts
++++ b/arch/arm/boot/dts/tegra114-tn7.dts
+@@ -240,7 +240,6 @@
+ 	sdhci@78000600 {
+ 		status = "okay";
+ 		bus-width = <8>;
+-		vmmc-supply = <&vdd_1v8>;
+ 		non-removable;
+ 	};
+ 
+-- 
+2.1.3
