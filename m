@@ -1,91 +1,44 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH 5/8] thermal:cpu cooling:tegra: Provide deferred probing
- for tegra driver
-Date: Fri, 14 Nov 2014 12:24:37 +0100
-Message-ID: <20141114122437.6742ea68@amdc2363>
-References: <1411547232-21493-1-git-send-email-l.majewski@samsung.com>
- <1415898165-27406-1-git-send-email-l.majewski@samsung.com>
- <1415898165-27406-6-git-send-email-l.majewski@samsung.com>
- <5465DDC5.6090301@kapsi.fi>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <5465DDC5.6090301@kapsi.fi>
-Sender: linux-pm-owner@vger.kernel.org
-To: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-Cc: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linux PM list <linux-pm@vger.kernel.org>, Vincenzo Frascino <vincenzo.frascino@st.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Nobuhiro Iwamatsu <iwamatsu@nigauri.org>, Mikko Perttunen <mperttunen@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>
+Subject: [PATCH v5 2/3] ARM: tegra: Add PMC thermtrip programming to Jetson TK1 device tree
+Date: Fri, 14 Nov 2014 13:50:36 +0200
+Message-ID: <1415965837-29331-3-git-send-email-mikko.perttunen@kapsi.fi>
+References: <1415965837-29331-1-git-send-email-mikko.perttunen@kapsi.fi>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1415965837-29331-1-git-send-email-mikko.perttunen-/1wQRMveznE@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Mikko,
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-> Tested-by: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+This adds the required information to reset the board during an overheating
+situation to the Jetson TK1 device tree. The thermal reset is handled by the
+PMC by sending an I2C message to the PMIC. The entries specify the I2C
+message to be sent.
 
-Thanks for testing.
+Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-> 
-> One potential issue I can see is that if the cpufreq driver fails to 
-> probe then you'll never get the thermal driver either. For example, 
-> Tegra124 currently has no cpufreq driver, so if CONFIG_CPU_THERMAL
-> was enabled, then the soctherm driver would never be able to probe.
-
-Yes, this is a potential issue. However, this option in tegra_defconfig
-is by default disabled when thermal is enabled.
-
-> But I don't really have a solution for this either.
-
-Ok. I see.
-
-> 
-> Cheers,
-> Mikko
-> 
-> On 11/13/2014 07:02 PM, Lukasz Majewski wrote:
-> > When CPU freq is used as a thermal zone cooling device, one needs
-> > to wait until cpufreq subsystem is properly initialized.
-> >
-> > This code is similar to the one already available in imx_thermal.c
-> > file.
-> >
-> > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> > ---
-> >   drivers/thermal/tegra_soctherm.c | 7 +++++++
-> >   1 file changed, 7 insertions(+)
-> >
-> > diff --git a/drivers/thermal/tegra_soctherm.c
-> > b/drivers/thermal/tegra_soctherm.c index 70f7e9e..9c5aaa4 100644
-> > --- a/drivers/thermal/tegra_soctherm.c
-> > +++ b/drivers/thermal/tegra_soctherm.c
-> > @@ -26,6 +26,7 @@
-> >   #include <linux/platform_device.h>
-> >   #include <linux/reset.h>
-> >   #include <linux/thermal.h>
-> > +#include <linux/cpufreq.h>
-> >
-> >   #include <soc/tegra/fuse.h>
-> >
-> > @@ -346,6 +347,12 @@ static int tegra_soctherm_probe(struct
-> > platform_device *pdev)
-> >
-> >   	const struct tegra_tsensor *tsensors = t124_tsensors;
-> >
-> > +#ifdef CONFIG_CPU_THERMAL
-> > +	if (!cpufreq_get_current_driver()) {
-> > +		dev_dbg(&pdev->dev, "no cpufreq driver!");
-> > +		return -EPROBE_DEFER;
-> > +	}
-> > +#endif
-> >   	tegra = devm_kzalloc(&pdev->dev, sizeof(*tegra),
-> > GFP_KERNEL); if (!tegra)
-> >   		return -ENOMEM;
-> >
-> 
-
-
-
+diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+index f46a789..be36bb4 100644
+--- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
++++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+@@ -1672,6 +1672,13 @@
+ 		nvidia,core-pwr-off-time = <61036>;
+ 		nvidia,core-power-req-active-high;
+ 		nvidia,sys-clock-req-active-high;
++
++		i2c-thermtrip {
++			nvidia,i2c-controller-id = <4>;
++			nvidia,bus-addr = <0x40>;
++			nvidia,reg-addr = <0x36>;
++			nvidia,reg-data = <0x2>;
++		};
+ 	};
+ 
+ 	/* Serial ATA */
 -- 
-Best regards,
-
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+2.1.3
