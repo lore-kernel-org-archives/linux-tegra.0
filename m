@@ -1,90 +1,88 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3] of: replace Asahi Kasei Corp venter prefix
-Date: Fri, 14 Nov 2014 17:38:58 +0900
-Message-ID: <5465BFA2.9050706@nvidia.com>
-References: <5398AB07.4040304@wwwdotorg.org>	<87sinbdk44.wl%kuninori.morimoto.gx@renesas.com>	<878ulzx6hr.wl%kuninori.morimoto.gx@gmail.com>	<20140922130026.GK3290@leverpostej>	<CAMuHMdX22z97SbGS1HDiYfJ1PXxyEN2S8D7w4sr+4bUwD+mJZw@mail.gmail.com>	<20140922132743.GM3290@leverpostej>	<87y4rfhmgl.wl%kuninori.morimoto.gx@renesas.com>	<1415845309.4269.6.camel@perches.com>	<20141113025105.GA16652@verge.net.au>	<87vbmjhj00.wl%kuninori.morimoto.gx@renesas.com>	<20141113110740.GE3815@sirena.org.uk> <87k32yd0bd.wl%kuninori.morimoto.gx@renesas.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v7 01/12] clk: tegra: Implement memory-controller clock
+Date: Fri, 14 Nov 2014 10:14:48 +0100
+Message-ID: <20141114091447.GA3810@ulmo>
+References: <1415871157-21968-1-git-send-email-thierry.reding@gmail.com>
+	<1415871157-21968-2-git-send-email-thierry.reding@gmail.com>
+	<20141114015356.25314.26550@quantum>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <87k32yd0bd.wl%kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kuninori Morimoto <kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Kuninori Morimoto <kuninori.morimoto.gx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ALSA Development Mailing List <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, Linux-sh list <linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Magnus <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/mixed; boundary="===============9204001904539124189=="
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20141114015356.25314.26550@quantum>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, David Riley <davidriley-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/14/2014 10:43 AM, Kuninori Morimoto wrote:
-> From: Kuninori Morimoto <kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
->
-> Current vendor-prefixes.txt already has
-> "ak" prefix for Asahi Kasei Corp by
-> ae8c4209af2cec065fef15d200a42a04130799f7
-> (of: Add vendor prefix for Asahi Kasei Corp.)
->
-> It went through the appropriate review process.
-> But, almost all Asahi Kasei chip drivers are
-> using "asahi-kasei" prefix today.
-> (arch/arm/boot/dts/tegra20-seaboard.dts only is
-> using "ak,ak8975", but there are instances of
-> "asahi-kasei,ak8975" in other dts files.
-> And drivers/iio/magnetometer/ak8975.c
-> doesn't support "ak,ak8975")
-> So, we made a mistake there.
->
-> In addition, checkpatch.pl reports WARNING
-> if it is using "asahi-kasei" prerfix in DT file.
-> (DT compatible string vendor "asahi-kasei" appears un-documented)
->
-> Marking it deprecated and warning with checkpatch
-> is certainly preferable.
-> So, this patch replace "ak" to "asahi-kasei" in
-> vendor-prefixes.txt. (and fixup tegra20-seaboard)
->
-> OTOH, Asahi Kasei is usually referred to as "AKM",
-> but this patch doesn't care about it.
-> Because no DT is using that today.
->
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
-> ---
->   .../devicetree/bindings/vendor-prefixes.txt        |    2 +-
->   arch/arm/boot/dts/tegra20-seaboard.dts             |    2 +-
->   2 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-> index 723999d..ddcb4cd 100644
-> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-> @@ -9,7 +9,6 @@ ad	Avionic Design GmbH
->   adapteva	Adapteva, Inc.
->   adi	Analog Devices, Inc.
->   aeroflexgaisler	Aeroflex Gaisler AB
-> -ak	Asahi Kasei Corp.
->   allwinner	Allwinner Technology Co., Ltd.
->   altr	Altera Corp.
->   amcc	Applied Micro Circuits Corporation (APM, formally AMCC)
-> @@ -20,6 +19,7 @@ amstaos	AMS-Taos Inc.
->   apm	Applied Micro Circuits Corporation (APM)
->   arm	ARM Ltd.
->   armadeus	ARMadeus Systems SARL
-> +asahi-kasei	Asahi Kasei Corp.
->   atmel	Atmel Corporation
->   auo	AU Optronics Corporation
->   avago	Avago Technologies
-> diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
-> index a1d4bf9..7f5cf80 100644
-> --- a/arch/arm/boot/dts/tegra20-seaboard.dts
-> +++ b/arch/arm/boot/dts/tegra20-seaboard.dts
-> @@ -405,7 +405,7 @@
->   		clock-frequency = <400000>;
->
->   		magnetometer@c {
-> -			compatible = "ak,ak8975";
-> +			compatible = "asahi-kasei,ak8975";
 
-Mmm. So does this mean this device was never probed because the driver 
-did not recognize its compatible property? I cannot find "ak,ak8975" 
-anywhere else in the kernel.
+--===============9204001904539124189==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ZGiS0Q5IWpPtfppv"
+Content-Disposition: inline
 
-If so,
 
-Acked-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+--ZGiS0Q5IWpPtfppv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Nov 13, 2014 at 05:53:56PM -0800, Mike Turquette wrote:
+> Quoting Thierry Reding (2014-11-13 01:32:26)
+> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >=20
+> > The memory controller clock runs either at half or the same frequency as
+> > the EMC clock.
+> >=20
+> > Reviewed-By: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> > Mike, as I said in the cover letter there are tight dependencies betwee=
+n the
+> > patches in this series, so I'd like to get your Acked-by on this one so=
+ I can
+> > take it through the Tegra tree along with the others.
+>=20
+> Acked-by: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+
+Thanks Mike,
+Thierry
+
+--ZGiS0Q5IWpPtfppv
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUZcgHAAoJEN0jrNd/PrOhMHYP/0TBFjBUpKHSZWMvC6KPfReq
+oNBl+ovjOmHqTwzT6LOFIg3psalvBXaeOJJJD2ptVZ+6O9ybxWJwKOEpQvdpB+GU
+gnt/gtCxlViU3yOyYPDGgFNcaE9+2lVNRZtCfIsk+77BiX4+VmTT92kkEo49viBL
+FsMEL2TAXQaNeihrDkFvUy+H5ZFfinSyRefYLoz5zS8sZurzMxDqJYE0j8/PwZcV
+C8by1XpvzPPGswU3Dl2J2LtslW/OP0aKMEWPu2PmKJ0A/f0NhwDJj2xu2nfakahe
+1N5qhlyPzqXU/eRAX8/fg04Q3t+a+hBUkKd0WjdxUmYeqfjPb6JQsZOhQsY3k0Zx
+mKGuHJ4v+kmrAZqYUmhaGV06Po8F8NkWfqE8nXL6p2nEhl/tWq9eycL4GzOpeSxZ
+/M9Mx5mU3DIYEXsv8J3g8B5/jRoslVHGg9sUBE8e9fupa7HfVrGGvn1+lqtNyEa4
+AiCPr1OQPNlB8Kd5nHjcK8gv5cd9G3rUEvNKa85p5Uawj9HC3vFzs7dBJvs8P49z
+btJHyuRjKGRob8UqBixNmub38O1D4wAvrd0PV8esMSJS8RN+Y3XXj8TDTLVo8r8W
+q/OrZgg1jexW6QYo/OHNLoIL6nZClZehi7Xgy1pbQfQ5IX/54WsMwsa/Na0+weBI
+jvCbOBzqFQFtg9KQXrs4
+=aXHN
+-----END PGP SIGNATURE-----
+
+--ZGiS0Q5IWpPtfppv--
+
+--===============9204001904539124189==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============9204001904539124189==--
