@@ -1,70 +1,120 @@
-From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v7 05/12] memory: Add NVIDIA Tegra memory controller
-	support
-Date: Mon, 17 Nov 2014 14:47:07 +0100
-Message-ID: <20141117134707.GA3762@8bytes.org>
-References: <1415871157-21968-1-git-send-email-thierry.reding@gmail.com>
-	<1415871157-21968-6-git-send-email-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1415871157-21968-6-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, David Riley <davidriley-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: [PATCH V5 00/12] Tegra xHCI support
+Date: Mon, 17 Nov 2014 14:41:30 -0800
+Message-ID: <1416264102-1323-1-git-send-email-abrestic@chromium.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Nov 13, 2014 at 10:32:30AM +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> The memory controller on NVIDIA Tegra exposes various knobs that can be
-> used to tune the behaviour of the clients attached to it.
-> 
-> Currently this driver sets up the latency allowance registers to the HW
-> defaults. Eventually an API should be exported by this driver (via a
-> custom API or a generic subsystem) to allow clients to register latency
-> requirements.
-> 
-> This driver also registers an IOMMU (SMMU) that's implemented by the
-> memory controller. It is supported on Tegra30, Tegra114 and Tegra124
-> currently. Tegra20 has a GART instead.
-> 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Hi Joerg,
-> 
-> As I mentioned in the cover-letter, I would like to take this whole series
-> through the Tegra tree to simplify dependency handling. Can I have your
-> Acked-by on this patch?
+This series adds support for xHCI on NVIDIA Tegra SoCs.  This includes:
+ - patches 1, 2, and 3: minor cleanups for mailbox framework and xHCI,
+ - patches 4 and 5: adding a driver for the mailbox used to communicate
+   with the xHCI controller's firmware,
+ - patches 6 and 7: extending the XUSB pad controller driver to support
+   the USB PHY types (UTMI, HSIC, and USB3),
+ - patches 8 and 9: adding a xHCI host-controller driver, and
+ - patches 10, 11, and 12: updating the relevant DT files.
 
-Sure!
+The mailbox driver (patch 5) has a compile-time dependency on patch 2 and
+a run-time dependency on patch 3.  Both the PHY (patch 7) and host (patch 9)
+drivers have compile-time dependencies on the mailbox driver.  The host
+driver also has a run-time dependency on patch 1.  Because of this, this
+entire series should probably go through the Tegra tree.  Patches 11 and 12
+should probably not be merged until the controller firmware [0] lands in
+linux-firmware since they disable the EHCI controllers.
 
->  drivers/iommu/Kconfig                    |   12 +-
->  drivers/iommu/tegra-smmu.c               | 1601 ++++++++++--------------------
->  drivers/memory/Kconfig                   |   12 +-
->  drivers/memory/Makefile                  |    3 +-
->  drivers/memory/tegra/Kconfig             |    7 +
->  drivers/memory/tegra/Makefile            |    7 +
->  drivers/memory/tegra/mc.c                |  301 ++++++
->  drivers/memory/tegra/mc.h                |   53 +
->  drivers/memory/tegra/tegra114.c          |  948 ++++++++++++++++++
->  drivers/memory/tegra/tegra124.c          |  995 +++++++++++++++++++
->  drivers/memory/tegra/tegra30.c           |  970 ++++++++++++++++++
->  drivers/memory/tegra30-mc.c              |  377 -------
->  include/dt-bindings/memory/tegra114-mc.h |   25 +
->  include/dt-bindings/memory/tegra124-mc.h |   31 +
->  include/dt-bindings/memory/tegra30-mc.h  |   24 +
->  include/soc/tegra/mc.h                   |  107 ++
->  16 files changed, 3992 insertions(+), 1481 deletions(-)
+Tested on Venice2, Jetson TK1, and Big with a variety of USB2.0 and
+USB3.0 memory sticks and ethernet dongles.  This has also been tested,
+with additional out-of-tree patches, on a Tegra132-based board.
 
-Acked-by: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>
+Based on v3.18-rc5.  A branch with the entire series is available at:
+  https://github.com/abrestic/linux/commits/tegra-xhci-v5
+
+Notes:
+ - HSIC support is mostly untested and I think there are still some issues
+   to work out there.  I do have a Tegra124 board with a HSIC hub so I'll
+   try to sort those out later.
+ - The XUSB padctl driver doesn't play nice with the existing Tegra USB2.0
+   PHY driver, so all ports should be assigned to the XHCI controller.
+
+Based on work by:
+  a lot of people, but from what I can tell from the L4T tree [1], the
+  original authors of the Tegra xHCI driver are:
+    Ajay Gupta <ajayg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+    Bharath Yadav <byadav-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Changes from v4:
+ - Made USB support optional in padctl driver.
+ - Made usb3-port a pinconfig property again.
+ - Cleaned up mbox_request_channel() error handling and allowed it to defer
+   probing (patch 3).
+ - Minor xHCI (patch 1) and mailbox framework (patch 2) cleanups suggested
+   by Thierry.
+ - Addressed Thierry's review comments.
+
+Changes from v3:
+ - Fixed USB2.0 flakiness on Jetson-TK1.
+ - Switched to 32-bit DMA mask for host.
+ - Addressed Stephen's review comments.
+
+Chagnes from v2:
+ - Dropped mailbox channel specifier.  The mailbox driver allocates virtual
+   channels backed by the single physical channel.
+ - Added support for HS_CURR_LEVEL adjustment pinconfig property, which
+   will be required for the Blaze board.
+ - Addressed Stephen's review comments.
+
+Changes from v1:
+ - Converted mailbox driver to use the common mailbox framework.
+ - Fixed up host driver so that it can now be built and used as a module.
+ - Addressed Stephen's review comments.
+ - Misc. cleanups.
+
+Andrew Bresticker (11):
+  xhci: Set shared HCD's hcd_priv in xhci_gen_setup
+  mailbox: Make struct mbox_controller's ops field const
+  of: Add NVIDIA Tegra XUSB mailbox binding
+  mailbox: Add NVIDIA Tegra XUSB mailbox driver
+  of: Update Tegra XUSB pad controller binding for USB
+  pinctrl: tegra-xusb: Add USB PHY support
+  of: Add NVIDIA Tegra xHCI controller binding
+  usb: xhci: Add NVIDIA Tegra xHCI host-controller driver
+  ARM: tegra: Add Tegra124 XUSB mailbox and xHCI controller
+  ARM: tegra: jetson-tk1: Add xHCI support
+  ARM: tegra: venice2: Add xHCI support
+
+Benson Leung (1):
+  mailbox: Fix up error handling in mbox_request_channel()
+
+ .../bindings/mailbox/nvidia,tegra124-xusb-mbox.txt |   32 +
+ .../pinctrl/nvidia,tegra124-xusb-padctl.txt        |   63 +-
+ .../bindings/usb/nvidia,tegra124-xhci.txt          |  104 ++
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts          |   46 +-
+ arch/arm/boot/dts/tegra124-venice2.dts             |   79 +-
+ arch/arm/boot/dts/tegra124.dtsi                    |   41 +
+ drivers/mailbox/Kconfig                            |    3 +
+ drivers/mailbox/Makefile                           |    2 +
+ drivers/mailbox/mailbox.c                          |   11 +-
+ drivers/mailbox/tegra-xusb-mailbox.c               |  280 +++++
+ drivers/pinctrl/Kconfig                            |    1 +
+ drivers/pinctrl/pinctrl-tegra-xusb.c               | 1262 +++++++++++++++++++-
+ drivers/usb/host/Kconfig                           |    9 +
+ drivers/usb/host/Makefile                          |    1 +
+ drivers/usb/host/xhci-pci.c                        |    5 -
+ drivers/usb/host/xhci-plat.c                       |    5 -
+ drivers/usb/host/xhci-tegra.c                      |  930 +++++++++++++++
+ drivers/usb/host/xhci.c                            |    6 +-
+ include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h   |    7 +
+ include/linux/mailbox_controller.h                 |    2 +-
+ include/soc/tegra/xusb.h                           |   50 +
+ 21 files changed, 2852 insertions(+), 87 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/nvidia,tegra124-xusb-mbox.txt
+ create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra124-xhci.txt
+ create mode 100644 drivers/mailbox/tegra-xusb-mailbox.c
+ create mode 100644 drivers/usb/host/xhci-tegra.c
+ create mode 100644 include/soc/tegra/xusb.h
+
+-- 
+2.1.0.rc2.206.gedb03e5
