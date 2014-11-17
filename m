@@ -1,131 +1,111 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH V5 01/12] xhci: Set shared HCD's hcd_priv in
- xhci_gen_setup
-Date: Mon, 17 Nov 2014 17:04:30 -0600
-Message-ID: <20141117230430.GA9716@saruman>
+From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH V5 09/12] usb: xhci: Add NVIDIA Tegra xHCI
+ host-controller driver
+Date: Mon, 17 Nov 2014 17:12:40 -0600
+Message-ID: <20141117231240.GB9716@saruman>
 References: <1416264102-1323-1-git-send-email-abrestic@chromium.org>
- <1416264102-1323-2-git-send-email-abrestic@chromium.org>
-Reply-To: <balbi@ti.com>
+ <1416264102-1323-10-git-send-email-abrestic@chromium.org>
+Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="IJpNTDwzlM2Ie8A6"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="+pHx0qQiF2pBVqBT"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1416264102-1323-2-git-send-email-abrestic@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Bresticker <abrestic@chromium.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Jassi Brar <jassisinghbrar@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman <mathias.nyman@intel.com>, Grant Likely <grant.likely@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kishon Vijay Abraham I <kishon@ti.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org
+In-Reply-To: <1416264102-1323-10-git-send-email-abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
---IJpNTDwzlM2Ie8A6
+--+pHx0qQiF2pBVqBT
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 17, 2014 at 02:41:31PM -0800, Andrew Bresticker wrote:
-> xhci_gen_setup() sets the hcd_priv field for the primary HCD, but not
-> for the shared HCD, requiring xHCI host-controller drivers to set it
-> between usb_create_shared_hcd() and usb_add_hcd().  There's no reason
-> xhci_gen_setup() can't set the shared HCD's hcd_priv as well, so move
-> that bit out of the host-controller drivers and into xhci_gen_setup().
->=20
-> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+Hi,
 
-Reviewed-by: Felipe Balbi <balbi@ti.com>
+On Mon, Nov 17, 2014 at 02:41:39PM -0800, Andrew Bresticker wrote:
+> diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
+> index a3ca137..e2415d3 100644
+> --- a/drivers/usb/host/Kconfig
+> +++ b/drivers/usb/host/Kconfig
+> @@ -50,6 +50,15 @@ config USB_XHCI_RCAR
+>  	  Say 'Y' to enable the support for the xHCI host controller
+>  	  found in Renesas R-Car ARM SoCs.
+> =20
+> +config USB_XHCI_TEGRA
+> +	tristate "xHCI support for NVIDIA Tegra SoCs"
+> +	depends on ARCH_TEGRA
 
-> ---
-> New for v5.
-> Peviously posted here: https://lkml.org/lkml/2014/10/30/726
-> ---
->  drivers/usb/host/xhci-pci.c  | 5 -----
->  drivers/usb/host/xhci-plat.c | 5 -----
->  drivers/usb/host/xhci.c      | 6 +++---
->  3 files changed, 3 insertions(+), 13 deletions(-)
->=20
-> diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
-> index 9a69b1f..31025e4 100644
-> --- a/drivers/usb/host/xhci-pci.c
-> +++ b/drivers/usb/host/xhci-pci.c
-> @@ -221,11 +221,6 @@ static int xhci_pci_probe(struct pci_dev *dev, const=
- struct pci_device_id *id)
->  		goto dealloc_usb2_hcd;
->  	}
-> =20
-> -	/* Set the xHCI pointer before xhci_pci_setup() (aka hcd_driver.reset)
-> -	 * is called by usb_add_hcd().
-> -	 */
-> -	*((struct xhci_hcd **) xhci->shared_hcd->hcd_priv) =3D xhci;
-> -
->  	retval =3D usb_add_hcd(xhci->shared_hcd, dev->irq,
->  			IRQF_SHARED);
->  	if (retval)
-> diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-> index 3d78b0c..5bc33bc 100644
-> --- a/drivers/usb/host/xhci-plat.c
-> +++ b/drivers/usb/host/xhci-plat.c
-> @@ -149,11 +149,6 @@ static int xhci_plat_probe(struct platform_device *p=
-dev)
->  	if ((node && of_property_read_bool(node, "usb3-lpm-capable")) ||
->  			(pdata && pdata->usb3_lpm_capable))
->  		xhci->quirks |=3D XHCI_LPM_SUPPORT;
-> -	/*
-> -	 * Set the xHCI pointer before xhci_plat_setup() (aka hcd_driver.reset)
-> -	 * is called by usb_add_hcd().
-> -	 */
-> -	*((struct xhci_hcd **) xhci->shared_hcd->hcd_priv) =3D xhci;
-> =20
->  	if (HCC_MAX_PSA(xhci->hcc_params) >=3D 4)
->  		xhci->shared_hcd->can_do_streams =3D 1;
-> diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-> index 2a5d45b..ae05471 100644
-> --- a/drivers/usb/host/xhci.c
-> +++ b/drivers/usb/host/xhci.c
-> @@ -4843,9 +4843,9 @@ int xhci_gen_setup(struct usb_hcd *hcd, xhci_get_qu=
-irks_t get_quirks)
->  		 */
->  		hcd->has_tt =3D 1;
->  	} else {
-> -		/* xHCI private pointer was set in xhci_pci_probe for the second
-> -		 * registered roothub.
-> -		 */
-> +		xhci =3D hcd_to_xhci(hcd->primary_hcd);
-> +		*((struct xhci_hcd **) hcd->hcd_priv) =3D xhci;
+it would be nice if you could still leave || COMPILE_TEST here.
+
+[snip]
+
+> +static const struct {
+> +	const char *name;
+> +	unsigned int num;
+> +} tegra_xhci_phy_types[] =3D {
+> +	{
+> +		.name =3D "usb3",
+> +		.num =3D TEGRA_XUSB_USB3_PHYS,
+> +	}, {
+> +		.name =3D "utmi",
+> +		.num =3D TEGRA_XUSB_UTMI_PHYS,
+> +	}, {
+> +		.name =3D "hsic",
+> +		.num =3D TEGRA_XUSB_HSIC_PHYS,
+> +	},
+
+these should be using the generic PHY subsystem (drivers/phy).
+
+> +static int tegra_xhci_load_firmware(struct tegra_xhci_hcd *tegra)
+> +{
+> +	struct device *dev =3D tegra->dev;
+> +	struct tegra_xhci_fw_cfgtbl *cfg_tbl;
+> +	struct tm fw_tm;
+> +	u32 val, code_tag_blocks, code_size_blocks;
+> +	u64 fw_base;
+> +	time_t fw_time;
+> +	unsigned long timeout;
 > +
->  		return 0;
->  	}
-> =20
-> --=20
-> 2.1.0.rc2.206.gedb03e5
->=20
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+> +	if (csb_readl(tegra, XUSB_CSB_MP_ILOAD_BASE_LO) !=3D 0) {
+> +		dev_info(dev, "Firmware already loaded, Falcon state 0x%x\n",
+> +			 csb_readl(tegra, XUSB_FALC_CPUCTL));
+> +		return 0;
+> +	}
+
+won't this prevent rmmod && insmod from succeeding ? Maybe not, as you
+return 0 anyway, but if the firmware side craps out, it might be useful
+to reload the firmware and reset that block. I wonder if this prevents
+that.
 
 --=20
 balbi
 
---IJpNTDwzlM2Ie8A6
+--+pHx0qQiF2pBVqBT
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBAgAGBQJUan7+AAoJEIaOsuA1yqREciQP/ixPr72oNv2rCgUKGo6cMCIm
-Qed6uRREzuOpRBY4CKqquLC9lgBAIGdzkh5nIckwaQmTcU4FqRbTaBrMqdg0rWbZ
-A7r1zWLkNG5L4oSdlgW8+LPueJt6LyQyxThm+AjB2blBUQG6cbKkq1P1MUUEB32G
-JrGu5O3IN139meNjTLJU8UxsVqpJ1gibwI5/g11jtpTOGPg9jYRxiFr3v5YmEuZn
-ZFlAFbNh+2Vsft4a1NGVcbN5wORGWzkexe3xMJM9wfFViXeDgx7f0CXupOftSggD
-gFwwKBQ9mH9pbqNKY4ppoQ6zm1/JuLsGYGw5ljaEV7YBBWGPjtAr0MTFUNgTxmPD
-tfpEi62fvTZiJ3H6j3bXD1FRvxIsMj4bySlZMsH5T8CmhShFZsX/E9GxBJq7WSAx
-n8C6OwhP3P8DeBBw/JmOvk9HJPSWp3GBdcA4GBAs2wKarsRyOeTVESG/F6kJ3Ot/
-2LEsWm4qDmoH6zEGaxlsXo94qLddU/Kz/regVnRqsGRs5wgJ6Y48bFu7NiYpkdLD
-ymcp1YV03FInCoyevFdqdwPC9Uck13cwPTiOoTSyEL6ZFmF1eOMQYTBaFEIuLxn4
-4czLcWTv87KYroyr/acIOrk6vBOMcvDHhnU2FbmBw/8CZvPWxwMP6dElyR0wO4yG
-eunPuSIjVPVfaAXRAxK+
-=VJo1
+iQIcBAEBAgAGBQJUaoDoAAoJEIaOsuA1yqRElRgQAJKk/NuTmI0mubXByFWmOAuZ
+DGmBNyp5oXUMm44gqgWiSyNBFrl53GT6ZvPgzSXGn/YJxS5vmHVgAvUSknux6WX6
+QdYbI3/pdOtY9bQfqbVhGD/U9xgiLe66rzljUpOwmWx1NOHDMwB2SJF3hJvQQrnR
+Y6p0FW6a1lB9BylO9y8G6aAtgDT0xGY52wUsJZAQ5FI2J2VbQwZJOCAanNBiz+K4
+EZHG3H6xx1FkGXPWGWQ8o5NDtDRUU4Dgwm0HmDFoPmLfLuRruIphODXzFZMYbVoI
+LFOybuVgxBSsoVOJz/l+RPK6ubYrsXYAJlsErls0rOvBXKogKgbod6gHC9azwO65
+xHtefaj26D3nfEkDeW2VJyP5EELyMSCfNfmxjIGMtttWzBVosfyNQ9gaql2DCF4Q
+t+fs900h2sIqzcJrcw5C/TOkuuxyvYn+qrox7JcKTbeK1jiMjaCgaQKK+RHFMc80
+LqYi9EtGQoeAj0Rl9iIHew8fiSgrNUs6fi+j3WLbep1G53t0Z8Q7a6iyR71X5Ubq
+sajpkQ6L+Nmn5g7otSfOSoaFrDs6SyHhtmORUVRCZtnC0HDr7ImgmSITQWVG3qRg
+KU5IFU0nmCGyzZYKCk6KDVPXXrJshT9VpwbZCVX53yA8xNOz31FK05Z/LPyGWPO5
+BOs2HqNQU6D73XXfepfC
+=AqsM
 -----END PGP SIGNATURE-----
 
---IJpNTDwzlM2Ie8A6--
+--+pHx0qQiF2pBVqBT--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
