@@ -1,52 +1,77 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH v4] of: replace Asahi Kasei Corp venter prefix
-Date: Mon, 17 Nov 2014 13:26:15 +0300
-Message-ID: <5469CD47.3040409@cogentembedded.com>
-References: <878ulzx6hr.wl%kuninori.morimoto.gx@gmail.com>	<20140922130026.GK3290@leverpostej>	<CAMuHMdX22z97SbGS1HDiYfJ1PXxyEN2S8D7w4sr+4bUwD+mJZw@mail.gmail.com>	<20140922132743.GM3290@leverpostej>	<87y4rfhmgl.wl%kuninori.morimoto.gx@renesas.com>	<1415845309.4269.6.camel@perches.com>	<20141113025105.GA16652@verge.net.au>	<87vbmjhj00.wl%kuninori.morimoto.gx@renesas.com>	<20141113110740.GE3815@sirena.org.uk>	<87k32yd0bd.wl%kuninori.morimoto.gx@renesas.com>	<20141114093554.GC3810@ulmo> <87y4ra8xac.wl%kuninori.morimoto.gx@renesas.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V3] ARM: tegra: Re-add removed SoC id macro to
+ tegra_resume()
+Date: Mon, 17 Nov 2014 12:07:16 +0100
+Message-ID: <20141117110715.GB25699@ulmo>
+References: <1412947487-24287-1-git-send-email-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <87y4ra8xac.wl%kuninori.morimoto.gx@renesas.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Rob Herring <robh@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, ALSA Development Mailing List <alsa-devel@alsa-project.org>, linux-tegra@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Linux-sh list <linux-sh@vger.kernel.org>, Magnus <magnus.damm@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Olof Johansson <olof@lixom.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Simon Horman <horms@verge.net.au>, Geert Uytterhoeven <geert@linux-m68k.org>, Joe Perches <joe@perches.com>, Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>, linux-arm-kernel@lists.infradead.org, "grant.likely@linaro.org" <grant.likely@linaro.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="LpQ9ahxlCli8rRTG"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1412947487-24287-1-git-send-email-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hello.
 
-On 11/17/2014 3:51 AM, Kuninori Morimoto wrote:
+--LpQ9ahxlCli8rRTG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+On Fri, Oct 10, 2014 at 05:24:47PM +0400, Dmitry Osipenko wrote:
+> Commit d127e9c ("ARM: tegra: make tegra_resume can work with current and =
+later
+> chips") removed tegra_get_soc_id macro leaving used cpu register corrupte=
+d after
+> branching to v7_invalidate_l1() and as result causing execution of uninte=
+nded
+> code on tegra20. Possibly it was expected that r6 would be SoC id func ar=
+gument
+> since common cpu reset handler is setting r6 before branching to tegra_re=
+sume(),
+> but neither tegra20_lp1_reset() nor tegra30_lp1_reset() aren't setting r6
+> register before jumping to resume function. Fix it by re-adding macro.
+>=20
+> Fixes: d127e9c (ARM: tegra: make tegra_resume can work with current and l=
+ater chips)
+> Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org> # v3.13+
+> Reviewed-by: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+> V2: added Cc's for lakml and stable, added "Reviewed-by:" Felipe Balbi
+> V3: changed commit description, tested on real hw
+>=20
+> PS: It wasn't a bug in my emulator :)
+>=20
+>  arch/arm/mach-tegra/reset-handler.S | 1 +
+>  1 file changed, 1 insertion(+)
 
-    s/venter/vendor/ in the subject. Sorry for a late comment.
+Applied, thanks.
 
-> Current vendor-prefixes.txt already has "ak" prefix for Asahi Kasei Corp
-> by ae8c4209af2c(of: Add vendor prefix for Asahi Kasei Corp.)
+Thierry
 
-> It went through the appropriate review process. But, almost all
-> Asahi Kasei chip drivers are using "asahi-kasei" prefix today.
-> (arch/arm/boot/dts/tegra20-seaboard.dts only is using "ak,ak8975",
->   but there are instances of "asahi-kasei,ak8975" in other dts files.
->   And drivers/iio/magnetometer/ak8975.c doesn't support "ak,ak8975")
-> So, we made a mistake there.
+--LpQ9ahxlCli8rRTG
+Content-Type: application/pgp-signature
 
-> In addition, checkpatch.pl reports WARNING if it is using "asahi-kasei"
-> prerfix in DT file.
-> (DT compatible string vendor "asahi-kasei" appears un-documented)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-> Marking it deprecated and warning with checkpatch is certainly
-> preferable. So, this patch replace "ak" to "asahi-kasei" in
-> vendor-prefixes.txt. (and fixup tegra20-seaboard)
+iQIcBAEBAgAGBQJUadbjAAoJEN0jrNd/PrOhgvYP/0gMw+NlLHzSQa8IZ71mIFM3
+i+vvvprPeQuYUogtVduFyaL2zbcJndzxOGu2kc4JMm1fqnffRMj6b9Bn0o5fj4vO
+WZ3jvhtDG2ZPVS9WpKcCIzctgQ/zg6eBZdY3PA/aL8GiZY8H3EqdF5+/xym2fk+N
+IPi24x3TWo2oyD2w14568nDYrO5N53Q1e8AXkLh7zqQLWmO/VPz7PmgUJepbMyIt
+2/iesaOhLrUIYxBmcA7JWdaOJsgusvHu5JIEpPDij7aevJUUby0Pe2HNwQeY2BCb
+rSBLphMH04LLZVBcUUleLXUSgq8xzug5JF/j/UJsQ9fAuYWvHmIjygP3ggxLvANj
+gTQdGFbBadDfZBLbWCuGSH9J/7ZQ8zD9tjabwu164UhS6W5rZWmCDXx+JdIf9KeX
+Jt+zxJH6HL0Wcp7IeQBggkWabM/xXeEJ0ziDJYjjTgYRMg3Y1HSqWhONQk0HPluY
+7gsb+XCw8mfLJv18/a8yhr0sVs0ujY2soLEXVKOlpbEo9xZ97xBFPTTBnVSTr0gg
+OLuekBxQeVDOpgcmp/XFzSyFYgy65eZLmNYdnK02HfleiMqP78p0BBB1GytESVJ8
+X43uD4Df++zY+xYjTnVJtNWtPpANO4H4TGDvBao5E7GJF0yt+iMvzr9pQUB7lgiI
+VWC1RE1VWEFAhHeyhCOt
+=GAtz
+-----END PGP SIGNATURE-----
 
-> OTOH, Asahi Kasei is usually referred to as "AKM", but this patch
-> doesn't care about it. Because no DT is using that today.
-
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-
-    One normally places ACKs after his own sign-off.
-
-WBR, Sergei
-
+--LpQ9ahxlCli8rRTG--
