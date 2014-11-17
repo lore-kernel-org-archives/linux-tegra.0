@@ -1,58 +1,70 @@
-From: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-Subject: Re: [PATCH 5/8] thermal:cpu cooling:tegra: Provide deferred probing
- for tegra driver
-Date: Mon, 17 Nov 2014 15:24:08 +0200
-Message-ID: <5469F6F8.3060102@kapsi.fi>
-References: <1411547232-21493-1-git-send-email-l.majewski@samsung.com> <1415898165-27406-1-git-send-email-l.majewski@samsung.com> <1415898165-27406-6-git-send-email-l.majewski@samsung.com> <5465DDC5.6090301@kapsi.fi> <20141117114341.GF25699@ulmo> <5469EF4C.1050007@kapsi.fi> <20141117130856.GB18767@ulmo>
+From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v7 05/12] memory: Add NVIDIA Tegra memory controller
+	support
+Date: Mon, 17 Nov 2014 14:47:07 +0100
+Message-ID: <20141117134707.GA3762@8bytes.org>
+References: <1415871157-21968-1-git-send-email-thierry.reding@gmail.com>
+	<1415871157-21968-6-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20141117130856.GB18767@ulmo>
-Sender: linux-pm-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Lukasz Majewski <l.majewski@samsung.com>, Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linux PM list <linux-pm@vger.kernel.org>, Vincenzo Frascino <vincenzo.frascino@st.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Nobuhiro Iwamatsu <iwamatsu@nigauri.org>, Mikko Perttunen <mperttunen@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1415871157-21968-6-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, David Riley <davidriley-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/17/2014 03:08 PM, Thierry Reding wrote:
-> On Mon, Nov 17, 2014 at 02:51:24PM +0200, Mikko Perttunen wrote:
->> On 11/17/2014 01:43 PM, Thierry Reding wrote:
->>> On Fri, Nov 14, 2014 at 12:47:33PM +0200, Mikko Perttunen wrote:
->>>> Tested-by: Mikko Perttunen <mikko.perttunen@kapsi.fi>
->>>>
->>>> One potential issue I can see is that if the cpufreq driver fails to probe
->>>> then you'll never get the thermal driver either. For example, Tegra124
->>>> currently has no cpufreq driver, so if CONFIG_CPU_THERMAL was enabled, then
->>>> the soctherm driver would never be able to probe. But I don't really have a
->>>> solution for this either.
->>>
->>> It doesn't seem like there's any code whatsoever to deal with cpufreq
->>> within the soctherm driver, so deferring probe based on something we're
->>> not using anyway seems rather useless.
->>>
->>> Thierry
->>>
->>
->> My understanding is that there needs to be no code inside soctherm to handle
->> it, as the cpufreq driver (cpufreq-dt) will register a cooling device that
->> will then be bound to the soctherm sensors using the of-thermal device tree
->> properties. At this moment, however, we don't have that cpufreq driver so
->> this patch is still useless for Tegra.
->
-> But if the cpufreq driver will automatically do this already, why do we
-> even need to check for it in the soctherm driver?
->
-> Thierry
->
+On Thu, Nov 13, 2014 at 10:32:30AM +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> The memory controller on NVIDIA Tegra exposes various knobs that can be
+> used to tune the behaviour of the clients attached to it.
+> 
+> Currently this driver sets up the latency allowance registers to the HW
+> defaults. Eventually an API should be exported by this driver (via a
+> custom API or a generic subsystem) to allow clients to register latency
+> requirements.
+> 
+> This driver also registers an IOMMU (SMMU) that's implemented by the
+> memory controller. It is supported on Tegra30, Tegra114 and Tegra124
+> currently. Tegra20 has a GART instead.
+> 
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> Hi Joerg,
+> 
+> As I mentioned in the cover-letter, I would like to take this whole series
+> through the Tegra tree to simplify dependency handling. Can I have your
+> Acked-by on this patch?
 
-Indeed, we shouldn't. Unless I am mistaken, the issue is then that the 
-cpufreq cooling device calls thermal_cooling_device_register before 
-being ready to handle callbacks, which clearly would be an issue in the 
-cpufreq driver.
+Sure!
 
-The thermal core seems to able to handle registrations of thermal zones 
-and cooling devices in any order; AFAICT it defers binding the tz<->cdev 
-mapping until both have registered themselves to the thermal core.
+>  drivers/iommu/Kconfig                    |   12 +-
+>  drivers/iommu/tegra-smmu.c               | 1601 ++++++++++--------------------
+>  drivers/memory/Kconfig                   |   12 +-
+>  drivers/memory/Makefile                  |    3 +-
+>  drivers/memory/tegra/Kconfig             |    7 +
+>  drivers/memory/tegra/Makefile            |    7 +
+>  drivers/memory/tegra/mc.c                |  301 ++++++
+>  drivers/memory/tegra/mc.h                |   53 +
+>  drivers/memory/tegra/tegra114.c          |  948 ++++++++++++++++++
+>  drivers/memory/tegra/tegra124.c          |  995 +++++++++++++++++++
+>  drivers/memory/tegra/tegra30.c           |  970 ++++++++++++++++++
+>  drivers/memory/tegra30-mc.c              |  377 -------
+>  include/dt-bindings/memory/tegra114-mc.h |   25 +
+>  include/dt-bindings/memory/tegra124-mc.h |   31 +
+>  include/dt-bindings/memory/tegra30-mc.h  |   24 +
+>  include/soc/tegra/mc.h                   |  107 ++
+>  16 files changed, 3992 insertions(+), 1481 deletions(-)
 
-Mikko
-
+Acked-by: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>
