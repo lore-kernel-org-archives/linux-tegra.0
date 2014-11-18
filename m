@@ -1,52 +1,155 @@
-From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: [PATCH v5 14/14] clk: tegra: Set the EMC clock as the parent of the MC clock
-Date: Tue, 18 Nov 2014 13:13:16 +0100
-Message-ID: <1416312860-4446-15-git-send-email-tomeu.vizoso@collabora.com>
-References: <1416312860-4446-1-git-send-email-tomeu.vizoso@collabora.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1416312860-4446-1-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, mikko.perttunen-/1wQRMveznE@public.gmane.org, acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCH 1/1] thermal: of: improve of-thermal sensor registration
+ API
+Date: Tue, 18 Nov 2014 08:50:31 -0400
+Message-ID: <20141118125029.GA15239@developer>
+References: <1416264255-10083-1-git-send-email-edubezval@gmail.com>
+ <1416269103-14149-1-git-send-email-edubezval@gmail.com>
+ <20141118083857.18e07130@amdc2363>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="AqsLC8rIMeq19msA"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20141118083857.18e07130@amdc2363>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Linux PM <linux-pm@vger.kernel.org>, Caesar Wang <caesar.wang@rock-chips.com>, Wei Ni <wni@nvidia.com>, Mikko Perttunen <mikko.perttunen@kapsi.fi>, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, Grant Likely <grant.likely@linaro.org>, Guenter Roeck <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.de>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, lm-sensors@lm-sensors.org, Rob Herring <robh+dt@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Zhang Rui <rui.zhang@intel.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tegra124, as we now have a proper driver for the EMC.
 
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
----
- drivers/clk/tegra/clk-tegra124.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
+--AqsLC8rIMeq19msA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index d56d1e2..0ac43d6 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -150,11 +150,6 @@ static const char *mux_plld_out0_plld2_out0[] = {
- };
- #define mux_plld_out0_plld2_out0_idx NULL
- 
--static const char *mux_pllmcp_clkm[] = {
--	"pll_m", "pll_c", "pll_p", "clk_m", "pll_m_ud", "pll_c2", "pll_c3",
--};
--#define mux_pllmcp_clkm_idx NULL
--
- static struct div_nmp pllxc_nmp = {
- 	.divm_shift = 0,
- 	.divm_width = 8,
-@@ -1123,13 +1118,7 @@ static __init void tegra124_periph_clk_init(void __iomem *clk_base,
- 			       clk_base + PLLD2_BASE, 25, 1, 0, &pll_d2_lock);
- 	clks[TEGRA124_CLK_DSIB_MUX] = clk;
- 
--	/* emc mux */
--	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
--			       ARRAY_SIZE(mux_pllmcp_clkm), 0,
--			       clk_base + CLK_SOURCE_EMC,
--			       29, 3, 0, &emc_lock);
--
--	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
-+	clk = tegra_clk_register_mc("mc", "emc", clk_base + CLK_SOURCE_EMC,
- 				    &emc_lock);
- 	clks[TEGRA124_CLK_MC] = clk;
- 
--- 
-1.9.3
+
+Hey Lukasz,
+
+On Tue, Nov 18, 2014 at 08:38:57AM +0100, Lukasz Majewski wrote:
+> Hi Eduardo,
+>=20
+> In the mail topic we have PATCH 1/1 but I think that it should be PATCH
+> v3 1/1.
+>=20
+
+Yeah, sent it without checking that. Fixing in V4, no issues.
+
+<big cut>
+
+> > @@ -107,10 +106,7 @@ static int of_thermal_get_temp(struct
+> > thermal_zone_device *tz, {
+> >  	struct __thermal_zone *data =3D tz->devdata;
+> > =20
+> > -	if (!data->get_temp)
+> > -		return -EINVAL;
+>=20
+> To be consistent, I think that we should keep the above check [1].=20
+>=20
+> 	if (!data->ops->get_temp)
+> 		return -EINVAL;
+>=20
+> The same check is done with get_trend callback.
+>=20
+
+OK. I agree, and disagree, :-). Now that you mention here, I will resend
+with your request applied. The reasoning is to, yes, keep the
+consistency. However, not to be the same as .get_trend, but in fact, to
+keep same behavior as the code as it is currently. The thing is
+=2Eget_temp is required field, while .get_trend is not. So, checking for
+required fields in the registration makes more sense than checking it
+only when the field is needed.
+
+However, as I mentioned, to keep the same behavior, before and after the
+patch, it makes sense we keep the checks as they are. I will send v4
+with this amendment.
+
+
+> > -
+> > -	return data->get_temp(data->sensor_data, temp);
+> > +	return data->ops->get_temp(data->sensor_data, temp);
+> >  }
+> > =20
+> >  static int of_thermal_get_trend(struct thermal_zone_device *tz, int
+> > trip, @@ -120,10 +116,10 @@ static int of_thermal_get_trend(struct
+> > thermal_zone_device *tz, int trip, long dev_trend;
+> >  	int r;
+> > =20
+> > -	if (!data->get_trend)
+> > +	if (!data->ops->get_trend)
+> >  		return -EINVAL;
+> > =20
+> > -	r =3D data->get_trend(data->sensor_data, &dev_trend);
+> > +	r =3D data->ops->get_trend(data->sensor_data, &dev_trend);
+> >  	if (r)
+> >  		return r;
+> > =20
+> > @@ -324,8 +320,7 @@ static struct thermal_zone_device_ops
+> > of_thermal_ops =3D { static struct thermal_zone_device *
+> >  thermal_zone_of_add_sensor(struct device_node *zone,
+> >  			   struct device_node *sensor, void *data,
+> > -			   int (*get_temp)(void *, long *),
+> > -			   int (*get_trend)(void *, long *))
+> > +			   const struct thermal_zone_of_device_ops
+> > *ops) {
+> >  	struct thermal_zone_device *tzd;
+> >  	struct __thermal_zone *tz;
+> > @@ -336,9 +331,11 @@ thermal_zone_of_add_sensor(struct device_node
+> > *zone,=20
+> >  	tz =3D tzd->devdata;
+> > =20
+> > +	if (!(ops && ops->get_temp))
+> > +		return ERR_PTR(-EINVAL);
+>=20
+> IMHO, here we should only check:
+> 	if (!ops)
+> 		return ERR_PTR(-EINVAL);
+>=20
+> 	And check if specific callbacks are available in other
+> 	functions (like [1])
+>=20
+
+
+OK. For the sake of this change only, I agree. However, I might be
+sending patches on top of this one to keep the checks of required fields in=
+ the
+registration itself.
+
+
+Cheers,
+> >  }
+>=20
+> Despite this minor comments, feel free to add :-)
+>=20
+> Reviewed-by: Lukasz Majewski <l.majewski@samsung.com>
+
+OK. Thanks.
+
+>=20
+> --=20
+> Best regards,
+>=20
+> Lukasz Majewski
+>=20
+> Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+
+
+Eduardo Valentin
+
+--AqsLC8rIMeq19msA
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUa0CMAAoJEMLUO4d9pOJWdEgH/jM2BxYeN9sJi6SgxDrnfpsf
+XvPh75erC/6x9B5vCNN/RM0jQm+oucjdPAljDq+jeBqXxXV/jQH1mFXt4Eyg6rjQ
+GwbzvdVXQVjVbrGPQAzd2dtOFrh49pOyO3GnHO8gXftWnYbD3XSDugj9K+EVw/RD
++Agq3sTIGaX6AHbf7uNb9vJk0osI557JPoQpP/GB+qFeeFLeB/eVrZPTWfZxaPj5
+iO5Y3UydcBijEnCTX/sR9MbWKoaDg/IZlwn4TkD6xVfcMoc187xtox9BUY53P2eo
+8wz+DXU64zJ6E7aYfhbzBjovOCzE9Qfc6M+9cTXDi0cwnS5AB3fxY8ebwBamWwg=
+=SARx
+-----END PGP SIGNATURE-----
+
+--AqsLC8rIMeq19msA--
