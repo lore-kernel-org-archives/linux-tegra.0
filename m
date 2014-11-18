@@ -1,47 +1,111 @@
-From: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH] serial: tegra: clean up tty-flag assignments
-Date: Tue, 18 Nov 2014 11:18:02 +0100
-Message-ID: <1416305882-8713-1-git-send-email-johan@kernel.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Subject: [PATCH v5 00/14] Tegra124 EMC (external memory controller) support
+Date: Tue, 18 Nov 2014 13:13:02 +0100
+Message-ID: <1416312860-4446-1-git-send-email-tomeu.vizoso@collabora.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, mikko.perttunen-/1wQRMveznE@public.gmane.org, acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The tty break and error flags are not bit masks so do not to use bitwise
-OR when assigning them.
+Hello,
 
-Note that there is no functional change due to the if-else construct and
-flag having been initialised to zero (TTY_NORMAL).
+in this v5 you can find these changes:
 
-Signed-off-by: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
----
- drivers/tty/serial/serial-tegra.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+* Update EMC data to V5.0.17 version of the DVFS tables
 
-diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
-index 53d7c31ce098..0b615d8b968a 100644
---- a/drivers/tty/serial/serial-tegra.c
-+++ b/drivers/tty/serial/serial-tegra.c
-@@ -319,16 +319,16 @@ static char tegra_uart_decode_rx_error(struct tegra_uart_port *tup,
- 	if (unlikely(lsr & TEGRA_UART_LSR_ANY)) {
- 		if (lsr & UART_LSR_OE) {
- 			/* Overrrun error */
--			flag |= TTY_OVERRUN;
-+			flag = TTY_OVERRUN;
- 			tup->uport.icount.overrun++;
- 			dev_err(tup->uport.dev, "Got overrun errors\n");
- 		} else if (lsr & UART_LSR_PE) {
- 			/* Parity error */
--			flag |= TTY_PARITY;
-+			flag = TTY_PARITY;
- 			tup->uport.icount.parity++;
- 			dev_err(tup->uport.dev, "Got Parity errors\n");
- 		} else if (lsr & UART_LSR_FE) {
--			flag |= TTY_FRAME;
-+			flag = TTY_FRAME;
- 			tup->uport.icount.frame++;
- 			dev_err(tup->uport.dev, "Got frame errors\n");
- 		} else if (lsr & UART_LSR_BI) {
+* Add struct tegra_emc as a parameter in the EMC API, removing the need for a
+global pointer.
+
+* Also add a reference to the EMC driver to the CAR node, for the EMC clock to
+use when calling the EMC API.
+
+There's an outstanding issue with frequencies lower than 102MHz, as the MC IP
+complains of EMEM arbitration errors when at those frequencies. Any suggestions
+welcome.
+
+It depends on Thierry's MC patches at [0] and a branch can be found at [1]. So
+far it has been tested only on a Jetson TK1.
+
+Patch 1: Removes the old EMC clock, that was unused and not functional
+
+Patch 2: Documents bindings for the new long-ram-code property
+
+Patch 3: Adds API for reading the ram code
+
+Patches 4 to 7: Document OF additions
+
+Patch 8: Adds EMC node to Tegra124 DT
+
+Patch 9: Adds timings for Jetson TK1 board
+
+Patch 10: Adds functions to the MC driver so the EMC driver can stay within its
+own registers
+
+Patch 11: Adds the actual EMC driver, making use of the new MC API
+
+Patch 12: Adds EMC clock driver, making use of API provided by the EMC driver
+
+Patch 13: Adds debugfs entry for getting and setting the EMC rate
+
+Patch 14: On Tegra124, have the EMC clock be the parent of the MC clock
+
+Regards,
+
+Tomeu
+
+[0] https://github.com/thierryreding/linux/commits/staging/iommu
+[1] http://cgit.collabora.com/git/user/tomeu/linux.git/log/?h=emc-v5
+
+Mikko Perttunen (9):
+  clk: tegra124: Remove old emc clock
+  soc/tegra: Add ram code reader helper
+  of: Add Tegra124 EMC bindings
+  ARM: tegra: Add EMC to Tegra124 device tree
+  ARM: tegra: Add EMC timings to Jetson TK1 device tree
+  memory: tegra: Add API needed by the EMC driver
+  memory: tegra: Add EMC (external memory controller) driver
+  clk: tegra: Add EMC clock driver
+  memory: tegra: Add debugfs entry for getting and setting the EMC rate
+
+Tomeu Vizoso (5):
+  of: Document long-ram-code property in nvidia,tegra20-apbmisc
+  of: document new emc-timings subnode in nvidia,tegra124-car
+  of: Document timings subnode of nvidia,tegra-mc
+  of: document external-memory-controller property in tegra124-car
+  clk: tegra: Set the EMC clock as the parent of the MC clock
+
+ .../bindings/clock/nvidia,tegra124-car.txt         |   44 +-
+ .../memory-controllers/nvidia,tegra-mc.txt         |   84 +-
+ .../bindings/memory-controllers/tegra-emc.txt      |  379 +++
+ .../bindings/misc/nvidia,tegra20-apbmisc.txt       |    2 +
+ arch/arm/boot/dts/tegra124-jetson-tk1-emc.dtsi     | 2469 ++++++++++++++++++++
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts          |    2 +
+ arch/arm/boot/dts/tegra124.dtsi                    |    8 +
+ drivers/clk/tegra/Makefile                         |    2 +-
+ drivers/clk/tegra/clk-emc.c                        |  532 +++++
+ drivers/clk/tegra/clk-tegra124.c                   |   18 +-
+ drivers/clk/tegra/clk.h                            |    3 +
+ drivers/memory/tegra/Kconfig                       |   11 +
+ drivers/memory/tegra/Makefile                      |    2 +
+ drivers/memory/tegra/mc.c                          |  136 ++
+ drivers/memory/tegra/tegra124-emc.c                | 1164 +++++++++
+ drivers/memory/tegra/tegra124.c                    |   44 +
+ drivers/soc/tegra/fuse/tegra-apbmisc.c             |   19 +
+ include/soc/tegra/emc.h                            |   19 +
+ include/soc/tegra/fuse.h                           |    1 +
+ include/soc/tegra/mc.h                             |   14 +-
+ 20 files changed, 4934 insertions(+), 19 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt
+ create mode 100644 arch/arm/boot/dts/tegra124-jetson-tk1-emc.dtsi
+ create mode 100644 drivers/clk/tegra/clk-emc.c
+ create mode 100644 drivers/memory/tegra/tegra124-emc.c
+ create mode 100644 include/soc/tegra/emc.h
+
 -- 
-2.0.4
+1.9.3
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
