@@ -1,58 +1,47 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: [PATCH v2] thermal:core:fix: Check return code of the
- ->get_max_state() callback
-Date: Tue, 18 Nov 2014 11:16:30 +0100
-Message-ID: <1416305790-27746-1-git-send-email-l.majewski@samsung.com>
-References: <1415898165-27406-1-git-send-email-l.majewski@samsung.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1415898165-27406-1-git-send-email-l.majewski@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>
-Cc: Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linux PM list <linux-pm@vger.kernel.org>, Vincenzo Frascino <vincenzo.frascino@st.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Nobuhiro Iwamatsu <iwamatsu@nigauri.org>, Mikko Perttunen <mperttunen@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Lukasz Majewski <l.majewski@samsung.com>
+From: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: [PATCH] serial: tegra: clean up tty-flag assignments
+Date: Tue, 18 Nov 2014 11:18:02 +0100
+Message-ID: <1416305882-8713-1-git-send-email-johan@kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The return code from ->get_max_state() callback was not checked during
-binding cooling device to thermal zone device.
+The tty break and error flags are not bit masks so do not to use bitwise
+OR when assigning them.
 
-Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
----
-Changes for v2:
-- It turned out that patches from 1 to 6 from v1 are not needed, since
-  they either already solve the problem (like imx_thermal.c) or not use
-  cpufreq as a thermal cooling device.
-- The patch 7 from v1 is also not needed since this patch on error exits
-  this function without using max_state variable.
-- In thermal driver probe the cpufreq_cooling_register() method presence
-  is crucial to evaluate if the thermal driver needs any actions with 
-  -EPROBE_DEFER.
----
- drivers/thermal/thermal_core.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Note that there is no functional change due to the if-else construct and
+flag having been initialised to zero (TTY_NORMAL).
 
-diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-index 43b9070..8567929 100644
---- a/drivers/thermal/thermal_core.c
-+++ b/drivers/thermal/thermal_core.c
-@@ -928,7 +928,7 @@ int thermal_zone_bind_cooling_device(struct thermal_zone_device *tz,
- 	struct thermal_zone_device *pos1;
- 	struct thermal_cooling_device *pos2;
- 	unsigned long max_state;
--	int result;
-+	int result, ret;
- 
- 	if (trip >= tz->trips || (trip < 0 && trip != THERMAL_TRIPS_NONE))
- 		return -EINVAL;
-@@ -945,7 +945,9 @@ int thermal_zone_bind_cooling_device(struct thermal_zone_device *tz,
- 	if (tz != pos1 || cdev != pos2)
- 		return -EINVAL;
- 
--	cdev->ops->get_max_state(cdev, &max_state);
-+	ret = cdev->ops->get_max_state(cdev, &max_state);
-+	if (ret)
-+		return ret;
- 
- 	/* lower default 0, upper default max_state */
- 	lower = lower == THERMAL_NO_LIMIT ? 0 : lower;
+Signed-off-by: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+---
+ drivers/tty/serial/serial-tegra.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
+index 53d7c31ce098..0b615d8b968a 100644
+--- a/drivers/tty/serial/serial-tegra.c
++++ b/drivers/tty/serial/serial-tegra.c
+@@ -319,16 +319,16 @@ static char tegra_uart_decode_rx_error(struct tegra_uart_port *tup,
+ 	if (unlikely(lsr & TEGRA_UART_LSR_ANY)) {
+ 		if (lsr & UART_LSR_OE) {
+ 			/* Overrrun error */
+-			flag |= TTY_OVERRUN;
++			flag = TTY_OVERRUN;
+ 			tup->uport.icount.overrun++;
+ 			dev_err(tup->uport.dev, "Got overrun errors\n");
+ 		} else if (lsr & UART_LSR_PE) {
+ 			/* Parity error */
+-			flag |= TTY_PARITY;
++			flag = TTY_PARITY;
+ 			tup->uport.icount.parity++;
+ 			dev_err(tup->uport.dev, "Got Parity errors\n");
+ 		} else if (lsr & UART_LSR_FE) {
+-			flag |= TTY_FRAME;
++			flag = TTY_FRAME;
+ 			tup->uport.icount.frame++;
+ 			dev_err(tup->uport.dev, "Got frame errors\n");
+ 		} else if (lsr & UART_LSR_BI) {
 -- 
-2.0.0.rc2
-
+2.0.4
