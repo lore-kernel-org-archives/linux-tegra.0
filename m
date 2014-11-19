@@ -1,81 +1,90 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [PATCH] cpufreq: Ref the policy object sooner
-Date: Wed, 19 Nov 2014 14:21:31 +0100
-Message-ID: <1416403291-7722-1-git-send-email-tomeu.vizoso@collabora.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: linux-tegra@vger.kernel.org
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCHv4 1/1] thermal: of: improve of-thermal sensor
+ registration API
+Date: Wed, 19 Nov 2014 08:03:22 -0400
+Message-ID: <20141119120320.GA10180@developer>
+References: <1416321575-18348-1-git-send-email-edubezval@gmail.com>
+ <1416321575-18348-2-git-send-email-edubezval@gmail.com>
+ <20141119092139.1965e44e@amdc2363>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="YiEDa0DAkWCtVeE4"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20141119092139.1965e44e@amdc2363>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Linux PM <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Caesar Wang <caesar.wang-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Jean Delvare <jdelvare-l3A5Bk7waGM@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Zhang Rui <rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Do it before it's assigned to cpufreq_cpu_data, otherwise we can get
-this warning when a driver tries to get the cpu frequency during
-initialization:
 
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 64 at include/linux/kref.h:47 kobject_get+0x64/0x70()
-Modules linked in:
-CPU: 1 PID: 64 Comm: irq/77-tegra-ac Not tainted 3.18.0-rc4-next-20141114ccu-00050-g3eff942 #326
-[<c0016fac>] (unwind_backtrace) from [<c001272c>] (show_stack+0x10/0x14)
-[<c001272c>] (show_stack) from [<c06085d8>] (dump_stack+0x98/0xd8)
-[<c06085d8>] (dump_stack) from [<c002892c>] (warn_slowpath_common+0x84/0xb4)
-[<c002892c>] (warn_slowpath_common) from [<c00289f8>] (warn_slowpath_null+0x1c/0x24)
-[<c00289f8>] (warn_slowpath_null) from [<c0220290>] (kobject_get+0x64/0x70)
-[<c0220290>] (kobject_get) from [<c03e944c>] (cpufreq_cpu_get+0x88/0xc8)
-[<c03e944c>] (cpufreq_cpu_get) from [<c03e9500>] (cpufreq_get+0xc/0x64)
-[<c03e9500>] (cpufreq_get) from [<c0285288>] (actmon_thread_isr+0x134/0x198)
-[<c0285288>] (actmon_thread_isr) from [<c0069008>] (irq_thread_fn+0x1c/0x40)
-[<c0069008>] (irq_thread_fn) from [<c0069324>] (irq_thread+0x134/0x174)
-[<c0069324>] (irq_thread) from [<c0040290>] (kthread+0xdc/0xf4)
-[<c0040290>] (kthread) from [<c000f4b8>] (ret_from_fork+0x14/0x3c)
----[ end trace b7bd64a81b340c59 ]---
+--YiEDa0DAkWCtVeE4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
----
- drivers/cpufreq/cpufreq.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index 4473eba..954cb2f 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -898,12 +898,6 @@ static int cpufreq_add_dev_interface(struct cpufreq_policy *policy,
- 	struct freq_attr **drv_attr;
- 	int ret = 0;
- 
--	/* prepare interface data */
--	ret = kobject_init_and_add(&policy->kobj, &ktype_cpufreq,
--				   &dev->kobj, "cpufreq");
--	if (ret)
--		return ret;
--
- 	/* set up files for this cpu device */
- 	drv_attr = cpufreq_driver->attr;
- 	while ((drv_attr) && (*drv_attr)) {
-@@ -1211,6 +1205,15 @@ static int __cpufreq_add_dev(struct device *dev, struct subsys_interface *sif)
- 	}
- 
- 	down_write(&policy->rwsem);
-+
-+	/* prepare interface data */
-+	ret = kobject_init_and_add(&policy->kobj, &ktype_cpufreq,
-+				   &dev->kobj, "cpufreq");
-+	if (ret) {
-+		pr_err("%s: failed to init policy->kobj: %d\n", __func__, ret);
-+		goto err_init_policy_kobj;
-+	}
-+
- 	write_lock_irqsave(&cpufreq_driver_lock, flags);
- 	for_each_cpu(j, policy->cpus)
- 		per_cpu(cpufreq_cpu_data, j) = policy;
-@@ -1301,6 +1304,7 @@ err_get_freq:
- 		per_cpu(cpufreq_cpu_data, j) = NULL;
- 	write_unlock_irqrestore(&cpufreq_driver_lock, flags);
- 
-+err_init_policy_kobj:
- 	up_write(&policy->rwsem);
- 
- 	if (cpufreq_driver->exit)
--- 
-1.9.3
+Hey Lukasz,
 
+On Wed, Nov 19, 2014 at 09:21:39AM +0100, Lukasz Majewski wrote:
+> Hi Eduardo,
+>=20
+
+<big cut>=20
+
+> >  }
+>=20
+> On which branch should I apply this patch?
+>=20
+
+This is based in my -linus branch. That means I will send this for the
+next major window, not rc. The branch -fixes of thermal-soc include
+patches for rc windows.
+
+> I've tried to apply this patch on top of newest linux-soc-thermal/next:
+> git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.=
+git
+> branch: next
+> SHA1:4027494124fd88e5d51127eebba315de5d8d57c8
+>=20
+> Unfortunately, it conflicts with:
+> "thermal: fix multiple disbalanced device node counters"
+> c2aad93c Vladimir Zapolskiy
+
+The -next branch is intended to contain patches for linux-next testing.
+I include the content of -linus and -fixes together to be tested in
+linux-next.
+
+However, as this patch has not been merged yet into -linus, I haven't
+rebuilt my -next branch.
+
+>=20
+>=20
+> --=20
+> Best regards,
+>=20
+> Lukasz Majewski
+>=20
+> Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+
+--YiEDa0DAkWCtVeE4
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUbIb8AAoJEMLUO4d9pOJWkwgIAJVX3QS2UiIRUV9KeE20LzYW
+cMcbbGVEbqn6Vib/XW9zarPN5djBUTmXU+qTUM6Z4794uRME53/rXtUaCwbocKtZ
+fTjHnVMDHWQ//LDdXkwSgrfhbG8iYklo8MD4T6Er3Joec3BMv1JCo/GcM9n1d2Nr
+1dm6CiKWIbLKAim+3kZhCQmEFLXIWB5lH9ZAPTCLfn9jXN156UHPUc5tKij01S9D
+hIzhFFJ2mx7oQpiW3Ecj2Pq7zxHsvGTibi5RlWA3RcBTqYA3rAi50DTF0HWXvtCq
+ydWgShJxpTGd/oKjyvyEd+6u9PstW8mxFpQ4zG3zcNFlLWMy7HwO85hVBlTfGXc=
+=qst+
+-----END PGP SIGNATURE-----
+
+--YiEDa0DAkWCtVeE4--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
