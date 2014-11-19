@@ -1,98 +1,141 @@
-From: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-Subject: Re: [PATCHv4 1/1] thermal: of: improve of-thermal sensor registration
- API
-Date: Wed, 19 Nov 2014 17:43:20 +0200
-Message-ID: <546CBA98.1040607@kapsi.fi>
-References: <1416321575-18348-1-git-send-email-edubezval@gmail.com> <1416321575-18348-2-git-send-email-edubezval@gmail.com> <546CBA3C.9020709@kapsi.fi>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <546CBA3C.9020709@kapsi.fi>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>, Linux PM <linux-pm@vger.kernel.org>
-Cc: Caesar Wang <caesar.wang@rock-chips.com>, Wei Ni <wni@nvidia.com>, Lukasz Majewski <l.majewski@samsung.com>, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, Grant Likely <grant.likely@linaro.org>, Guenter Roeck <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.de>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, lm-sensors@lm-sensors.org, Rob Herring <robh+dt@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Zhang Rui <rui.zhang@intel.com>
+From: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: [PATCH] drm/tegra: Select root window for event dispatch
+Date: Wed, 19 Nov 2014 13:04:49 -0500
+Message-ID: <1416420289-4112-1-git-send-email-seanpaul@chromium.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: marcheu-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/19/2014 05:41 PM, Mikko Perttunen wrote:
-> On 11/18/2014 04:39 PM, Eduardo Valentin wrote:
->> Different drivers request API extensions in of-thermal. For this reason,
->> additional callbacks are required to fit the new drivers needs.
->>
->> The current API implementation expects the registering sensor driver
->> to provide a get_temp and get_trend callbacks as function parameters.
->> As the amount of callbacks is growing, this patch changes the existing
->> implementation to use a .ops field to hold all the of thermal callbacks
->> to sensor drivers.
->>
->> This patch also changes the existing of-thermal users to fit the new
->> API design. No functional change is introduced in this patch.
->>
->> Cc: Alexandre Courbot <gnurou@gmail.com>
->> Cc: devicetree@vger.kernel.org
->> Cc: Grant Likely <grant.likely@linaro.org>
->> Cc: Guenter Roeck <linux@roeck-us.net>
->> Cc: Jean Delvare <jdelvare@suse.de>
->> Cc: linux-kernel@vger.kernel.org
->> Cc: linux-pm@vger.kernel.org
->> Cc: linux-tegra@vger.kernel.org
->> Cc: lm-sensors@lm-sensors.org
->> Cc: Rob Herring <robh+dt@kernel.org>
->> Cc: Stephen Warren <swarren@wwwdotorg.org>
->> Cc: Thierry Reding <thierry.reding@gmail.com>
->> Cc: Zhang Rui <rui.zhang@intel.com>
->> Reviewed-by: Lukasz Majewski <l.majewski@samsung.com>
->> Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
->> ---
->>   drivers/hwmon/lm75.c                               |  9 +++--
->>   drivers/hwmon/ntc_thermistor.c                     |  6 +++-
->>   drivers/hwmon/tmp102.c                             |  6 +++-
->>   drivers/thermal/of-thermal.c                       | 40
->> ++++++++++------------
->>   drivers/thermal/tegra_soctherm.c                   |  7 ++--
->>   drivers/thermal/ti-soc-thermal/ti-thermal-common.c |  8 +++--
->>   include/linux/thermal.h                            | 24 +++++++++----
->>   7 files changed, 63 insertions(+), 37 deletions(-)
->> ---
->> Difference from V3:
->>    - Keep the same behavior regarding callback checks.
->>      Change in behavior may be sent in a separate patch.
->> Difference from V2:
->>    - Fix wrong assignment in tegra driver.
->> Difference from V1:
->>    - Fix error handling when .get_trend is not provided.
->>
->> @@ -356,8 +356,8 @@ thermal_zone_of_add_sensor(struct device_node *zone,
->>    *             than one sensors
->>    * @data: a private pointer (owned by the caller) that will be passed
->>    *        back, when a temperature reading is needed.
->> - * @get_temp: a pointer to a function that reads the sensor temperature.
->> - * @get_trend: a pointer to a function that reads the sensor
->> temperature trend.
->> + * @ops: struct thermal_zone_of_device *. Must contain at least
->> .get_trend and
->> + *       .get_temp.
->
-> This comment seems to be incorrect, as .get_trend is optional.
+In finish pageflip, the driver was not selecting the root
+window when dispatching events. This exposed a race where
+a plane update would change the window selection and cause
+tegra_dc_finish_page_flip to check the wrong base address.
 
-Also, the parameter is of type struct thermal_zone_of_device_ops *, not 
-just thermal_zone_of_device.
+This patch also protects access to the window selection register
+as well as the registers affected by it.
 
->
->>    *
->>    * This function will search the list of thermal zones described in
->> device
->>    * tree and look for the zone that refer to the sensor device
->> pointed by
->
-> With that minor one fixed,
->
-> Tested-by: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-> Reviewed-by: Mikko Perttunen <mikko.perttunen@kapsi.fi>
->
-> Cheers,
-> Mikko
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+---
+ drivers/gpu/drm/tegra/dc.c | 20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index b957908..a3b41ea 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -168,7 +168,7 @@ static int tegra_dc_setup_window(struct tegra_dc *dc, unsigned int index,
+ 				 const struct tegra_dc_window *window)
+ {
+ 	unsigned h_offset, v_offset, h_size, v_size, h_dda, v_dda, bpp;
+-	unsigned long value;
++	unsigned long value, flags;
+ 	bool yuv, planar;
+ 
+ 	/*
+@@ -181,6 +181,8 @@ static int tegra_dc_setup_window(struct tegra_dc *dc, unsigned int index,
+ 	else
+ 		bpp = planar ? 1 : 2;
+ 
++	spin_lock_irqsave(&dc->lock, flags);
++
+ 	value = WINDOW_A_SELECT << index;
+ 	tegra_dc_writel(dc, value, DC_CMD_DISPLAY_WINDOW_HEADER);
+ 
+@@ -273,6 +275,7 @@ static int tegra_dc_setup_window(struct tegra_dc *dc, unsigned int index,
+ 
+ 		case TEGRA_BO_TILING_MODE_BLOCK:
+ 			DRM_ERROR("hardware doesn't support block linear mode\n");
++			spin_unlock_irqrestore(&dc->lock, flags);
+ 			return -EINVAL;
+ 		}
+ 
+@@ -330,6 +333,7 @@ static int tegra_dc_setup_window(struct tegra_dc *dc, unsigned int index,
+ 	}
+ 
+ 	tegra_dc_window_commit(dc, index);
++	spin_unlock_irqrestore(&dc->lock, flags);
+ 
+ 	return 0;
+ }
+@@ -339,10 +343,12 @@ static int tegra_window_plane_disable(struct drm_plane *plane)
+ 	struct tegra_dc *dc = to_tegra_dc(plane->crtc);
+ 	struct tegra_plane *p = to_tegra_plane(plane);
+ 	u32 value;
++	unsigned long flags;
+ 
+ 	if (!plane->crtc)
+ 		return 0;
+ 
++	spin_lock_irqsave(&dc->lock, flags);
+ 	value = WINDOW_A_SELECT << p->index;
+ 	tegra_dc_writel(dc, value, DC_CMD_DISPLAY_WINDOW_HEADER);
+ 
+@@ -351,6 +357,7 @@ static int tegra_window_plane_disable(struct drm_plane *plane)
+ 	tegra_dc_writel(dc, value, DC_WIN_WIN_OPTIONS);
+ 
+ 	tegra_dc_window_commit(dc, p->index);
++	spin_unlock_irqrestore(&dc->lock, flags);
+ 
+ 	return 0;
+ }
+@@ -700,13 +707,14 @@ static int tegra_dc_set_base(struct tegra_dc *dc, int x, int y,
+ 	unsigned int h_offset = 0, v_offset = 0;
+ 	struct tegra_bo_tiling tiling;
+ 	unsigned int format, swap;
+-	unsigned long value;
++	unsigned long value, flags;
+ 	int err;
+ 
+ 	err = tegra_fb_get_tiling(fb, &tiling);
+ 	if (err < 0)
+ 		return err;
+ 
++	spin_lock_irqsave(&dc->lock, flags);
+ 	tegra_dc_writel(dc, WINDOW_A_SELECT, DC_CMD_DISPLAY_WINDOW_HEADER);
+ 
+ 	value = fb->offsets[0] + y * fb->pitches[0] +
+@@ -752,6 +760,7 @@ static int tegra_dc_set_base(struct tegra_dc *dc, int x, int y,
+ 
+ 		case TEGRA_BO_TILING_MODE_BLOCK:
+ 			DRM_ERROR("hardware doesn't support block linear mode\n");
++			spin_unlock_irqrestore(&dc->lock, flags);
+ 			return -EINVAL;
+ 		}
+ 
+@@ -777,6 +786,7 @@ static int tegra_dc_set_base(struct tegra_dc *dc, int x, int y,
+ 	value = GENERAL_ACT_REQ | WIN_A_ACT_REQ;
+ 	tegra_dc_writel(dc, value << 8, DC_CMD_STATE_CONTROL);
+ 	tegra_dc_writel(dc, value, DC_CMD_STATE_CONTROL);
++	spin_unlock_irqrestore(&dc->lock, flags);
+ 
+ 	return 0;
+ }
+@@ -790,7 +800,6 @@ void tegra_dc_enable_vblank(struct tegra_dc *dc)
+ 	value = tegra_dc_readl(dc, DC_CMD_INT_MASK);
+ 	value |= VBLANK_INT;
+ 	tegra_dc_writel(dc, value, DC_CMD_INT_MASK);
+-
+ 	spin_unlock_irqrestore(&dc->lock, flags);
+ }
+ 
+@@ -819,11 +828,16 @@ static void tegra_dc_finish_page_flip(struct tegra_dc *dc)
+ 
+ 	bo = tegra_fb_get_plane(crtc->primary->fb, 0);
+ 
++	spin_lock_irqsave(&dc->lock, flags);
++
+ 	/* check if new start address has been latched */
++	tegra_dc_writel(dc, WINDOW_A_SELECT, DC_CMD_DISPLAY_WINDOW_HEADER);
+ 	tegra_dc_writel(dc, READ_MUX, DC_CMD_STATE_ACCESS);
+ 	base = tegra_dc_readl(dc, DC_WINBUF_START_ADDR);
+ 	tegra_dc_writel(dc, 0, DC_CMD_STATE_ACCESS);
+ 
++	spin_unlock_irqrestore(&dc->lock, flags);
++
+ 	if (base == bo->paddr + crtc->primary->fb->offsets[0]) {
+ 		spin_lock_irqsave(&drm->event_lock, flags);
+ 		drm_send_vblank_event(drm, dc->pipe, dc->event);
+-- 
+2.1.1
