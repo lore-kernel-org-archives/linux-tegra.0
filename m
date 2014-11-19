@@ -1,101 +1,84 @@
-From: Nikolaus Schulz <nikolaus.schulz@avionic-design.de>
-Subject: Re: [PATCH v5 12/14] clk: tegra: Add EMC clock driver
-Date: Wed, 19 Nov 2014 16:29:53 +0100
-Message-ID: <20141119152941.GA26442@avionic-0071.adnet.avionic-design.de>
-References: <1416312860-4446-1-git-send-email-tomeu.vizoso@collabora.com>
- <1416312860-4446-13-git-send-email-tomeu.vizoso@collabora.com>
+From: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+Subject: Re: [PATCHv4 1/1] thermal: of: improve of-thermal sensor registration
+ API
+Date: Wed, 19 Nov 2014 17:41:48 +0200
+Message-ID: <546CBA3C.9020709@kapsi.fi>
+References: <1416321575-18348-1-git-send-email-edubezval@gmail.com> <1416321575-18348-2-git-send-email-edubezval@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1416312860-4446-13-git-send-email-tomeu.vizoso@collabora.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: linux-tegra@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, mikko.perttunen@kapsi.fi, acourbot@nvidia.com, Mikko Perttunen <mperttunen@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1416321575-18348-2-git-send-email-edubezval@gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>, Linux PM <linux-pm@vger.kernel.org>
+Cc: Caesar Wang <caesar.wang@rock-chips.com>, Wei Ni <wni@nvidia.com>, Lukasz Majewski <l.majewski@samsung.com>, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, Grant Likely <grant.likely@linaro.org>, Guenter Roeck <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.de>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, lm-sensors@lm-sensors.org, Rob Herring <robh+dt@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Zhang Rui <rui.zhang@intel.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Nov 18, 2014 at 01:13:14PM +0100, Tomeu Vizoso wrote:
-> From: Mikko Perttunen <mperttunen@nvidia.com>
-> 
-> The driver is currently only tested on Tegra124 Jetson TK1, but should
-> work with other Tegra124 boards, provided that correct EMC tables are
-> provided through the device tree. Older chip models have differing
-> timing change sequences, so they are not currently supported.
-> 
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-> 
+On 11/18/2014 04:39 PM, Eduardo Valentin wrote:
+> Different drivers request API extensions in of-thermal. For this reason,
+> additional callbacks are required to fit the new drivers needs.
+>
+> The current API implementation expects the registering sensor driver
+> to provide a get_temp and get_trend callbacks as function parameters.
+> As the amount of callbacks is growing, this patch changes the existing
+> implementation to use a .ops field to hold all the of thermal callbacks
+> to sensor drivers.
+>
+> This patch also changes the existing of-thermal users to fit the new
+> API design. No functional change is introduced in this patch.
+>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: devicetree@vger.kernel.org
+> Cc: Grant Likely <grant.likely@linaro.org>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Cc: Jean Delvare <jdelvare@suse.de>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-pm@vger.kernel.org
+> Cc: linux-tegra@vger.kernel.org
+> Cc: lm-sensors@lm-sensors.org
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Stephen Warren <swarren@wwwdotorg.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Zhang Rui <rui.zhang@intel.com>
+> Reviewed-by: Lukasz Majewski <l.majewski@samsung.com>
+> Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
 > ---
-> 
-> v5:	* Get a pointer to the EMC driver at runtime, to be used when
-> 	  calling the EMC API.
-> 	* Misc. style fixes
-> 	* Fix logic for rounding down to a high rate
-> 
-> v4:	* Adapt to changes in the OF bindings
-> 	* Improve error handling
-> 	* Fix comment style
-> 	* Make static a few more functions
-> 
-> v3:	* Add some locking to protect the registers that are shared with the MC
-> 	  clock
-> 
-> v2:	* Make sure that the clock is properly registered
-> 	* Bail out early from attempts to set the same rate
+>   drivers/hwmon/lm75.c                               |  9 +++--
+>   drivers/hwmon/ntc_thermistor.c                     |  6 +++-
+>   drivers/hwmon/tmp102.c                             |  6 +++-
+>   drivers/thermal/of-thermal.c                       | 40 ++++++++++------------
+>   drivers/thermal/tegra_soctherm.c                   |  7 ++--
+>   drivers/thermal/ti-soc-thermal/ti-thermal-common.c |  8 +++--
+>   include/linux/thermal.h                            | 24 +++++++++----
+>   7 files changed, 63 insertions(+), 37 deletions(-)
 > ---
-> diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
-> new file mode 100644
-> index 0000000..399d945
-> --- /dev/null
-> +++ b/drivers/clk/tegra/clk-emc.c
-> @@ -0,0 +1,532 @@
-> +/*
-> + * Rounds up unless no higher rate exists, in which case down. This way is
-> + * safer since things have EMC rate floors. Also don't touch parent_rate
-> + * since we don't want the CCF to play with our parent clocks.
-> + */
-> +static long emc_round_rate(struct clk_hw *hw, unsigned long rate,
-> +		    unsigned long *parent_rate)
-> +{
-> +	struct tegra_clk_emc *tegra;
-> +	u8 ram_code = tegra_read_ram_code();
-> +	struct emc_timing *timing;
-> +	int i;
-> +
-> +	tegra = container_of(hw, struct tegra_clk_emc, hw);
-> +
-> +	for (i = 0; i < tegra->num_timings; i++) {
-> +		timing = tegra->timings + i;
-> +		if (timing->ram_code != ram_code)
-> +			continue;
-> +
-> +		if (timing->rate >= rate)
-> +			return timing->rate;
-> +	}
-> +
-> +	for (i = tegra->num_timings - 1; i >= 0; i--) {
-> +		timing = tegra->timings + i;
-> +		if (timing->ram_code != ram_code)
-> +			continue;
-> +
-> +		return timing->rate;
-> +	}
+> Difference from V3:
+>    - Keep the same behavior regarding callback checks.
+>      Change in behavior may be sent in a separate patch.
+> Difference from V2:
+>    - Fix wrong assignment in tegra driver.
+> Difference from V1:
+>    - Fix error handling when .get_trend is not provided.
+>
+> @@ -356,8 +356,8 @@ thermal_zone_of_add_sensor(struct device_node *zone,
+>    *             than one sensors
+>    * @data: a private pointer (owned by the caller) that will be passed
+>    *        back, when a temperature reading is needed.
+> - * @get_temp: a pointer to a function that reads the sensor temperature.
+> - * @get_trend: a pointer to a function that reads the sensor temperature trend.
+> + * @ops: struct thermal_zone_of_device *. Must contain at least .get_trend and
+> + *       .get_temp.
 
-While this is technically not wrong, it could be simplified to something
-like
+This comment seems to be incorrect, as .get_trend is optional.
 
-        struct emc_timing *timing = NULL;
+>    *
+>    * This function will search the list of thermal zones described in device
+>    * tree and look for the zone that refer to the sensor device pointed by
 
-        for (i = 0; i < tegra->num_timings; i++) {
-                if (tegra->timings[i].ram_code != ram_code)
-                        continue;
-                timing = tegra->timings + i;
-                if (timing->rate >= rate)
-                        return timing->rate;
-        }
-        if (timing)
-                return timing->rate;
+With that minor one fixed,
 
-> +
-> +	return __clk_get_rate(hw->clk);
-> +}
+Tested-by: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+Reviewed-by: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+
+Cheers,
+Mikko
