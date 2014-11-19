@@ -1,65 +1,54 @@
-From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v5 14/14] clk: tegra: Set the EMC clock as the parent of the MC
- clock
-Date: Tue, 18 Nov 2014 13:35:00 -0800
-Message-ID: <20141118213500.25314.17794@quantum>
-References: <1416312860-4446-1-git-send-email-tomeu.vizoso@collabora.com>
- <1416312860-4446-15-git-send-email-tomeu.vizoso@collabora.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2 0/3] nouveau: support for custom VRAM domains
+Date: Wed, 19 Nov 2014 14:41:42 +0900
+Message-ID: <1416375705-14068-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1416312860-4446-15-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, mikko.perttunen-/1wQRMveznE@public.gmane.org, acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>
+Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, mesa-dev-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Tomeu Vizoso (2014-11-18 04:13:16)
-> On Tegra124, as we now have a proper driver for the EMC.
-> 
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+This series is to allow NVIDIA chips with shared memory to operate more
+efficiently (and to operate at all once we disable VRAM from the kernel
+driver) by allowing nouveau_screen to specify a domain to use for objects
+originally allocated into VRAM. If the domain is not overridden, the default
+NOUVEAU_BO_VRAM is used. A NV_VRAM_DOMAIN() macro is then introduced to be
+used in place of NOUVEAU_BO_VRAM when allocating objects, so the right
+domain for the chip is used.
 
-Looks good to me.
+Doing so greatly simplifies the equation of memory management on shared-
+memory devices, since we don't have to simulate non-existent VRAM memory.
+In that respect it seems to be the right thing to do, and all things taken
+is not very intrusive.
 
-Regards,
-Mike
+Tested on GK20A with Wayland and several EGL clients running, and working
+fine.
 
-> ---
->  drivers/clk/tegra/clk-tegra124.c | 13 +------------
->  1 file changed, 1 insertion(+), 12 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-> index d56d1e2..0ac43d6 100644
-> --- a/drivers/clk/tegra/clk-tegra124.c
-> +++ b/drivers/clk/tegra/clk-tegra124.c
-> @@ -150,11 +150,6 @@ static const char *mux_plld_out0_plld2_out0[] = {
->  };
->  #define mux_plld_out0_plld2_out0_idx NULL
->  
-> -static const char *mux_pllmcp_clkm[] = {
-> -       "pll_m", "pll_c", "pll_p", "clk_m", "pll_m_ud", "pll_c2", "pll_c3",
-> -};
-> -#define mux_pllmcp_clkm_idx NULL
-> -
->  static struct div_nmp pllxc_nmp = {
->         .divm_shift = 0,
->         .divm_width = 8,
-> @@ -1123,13 +1118,7 @@ static __init void tegra124_periph_clk_init(void __iomem *clk_base,
->                                clk_base + PLLD2_BASE, 25, 1, 0, &pll_d2_lock);
->         clks[TEGRA124_CLK_DSIB_MUX] = clk;
->  
-> -       /* emc mux */
-> -       clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
-> -                              ARRAY_SIZE(mux_pllmcp_clkm), 0,
-> -                              clk_base + CLK_SOURCE_EMC,
-> -                              29, 3, 0, &emc_lock);
-> -
-> -       clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
-> +       clk = tegra_clk_register_mc("mc", "emc", clk_base + CLK_SOURCE_EMC,
->                                     &emc_lock);
->         clks[TEGRA124_CLK_MC] = clk;
->  
-> -- 
-> 1.9.3
-> 
+Changes since v1:
+- When using GART as the VRAM domain, move all vidmem bindings to sysmem and
+  set vidmem_bindings to 0.
+
+Alexandre Courbot (3):
+  nouveau: support for custom VRAM domains
+  nvc0: use NV_VRAM_DOMAIN() macro
+  gk20a: use NOUVEAU_BO_GART as VRAM domain
+
+ src/gallium/drivers/nouveau/nouveau_buffer.c       |  6 ++---
+ src/gallium/drivers/nouveau/nouveau_screen.c       |  6 +++++
+ src/gallium/drivers/nouveau/nouveau_screen.h       |  4 ++++
+ src/gallium/drivers/nouveau/nv50/nv50_miptree.c    |  4 ++--
+ src/gallium/drivers/nouveau/nvc0/nvc0_compute.c    |  2 +-
+ src/gallium/drivers/nouveau/nvc0/nvc0_context.c    |  4 ++--
+ src/gallium/drivers/nouveau/nvc0/nvc0_miptree.c    |  2 +-
+ src/gallium/drivers/nouveau/nvc0/nvc0_program.c    |  8 +++----
+ src/gallium/drivers/nouveau/nvc0/nvc0_screen.c     | 27 +++++++++++++++++-----
+ .../drivers/nouveau/nvc0/nvc0_shader_state.c       |  2 +-
+ .../drivers/nouveau/nvc0/nvc0_state_validate.c     |  2 +-
+ src/gallium/drivers/nouveau/nvc0/nvc0_tex.c        |  2 +-
+ src/gallium/drivers/nouveau/nvc0/nve4_compute.c    |  2 +-
+ 13 files changed, 47 insertions(+), 24 deletions(-)
+
+-- 
+2.1.3
