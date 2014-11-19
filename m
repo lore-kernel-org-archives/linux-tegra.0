@@ -1,79 +1,30 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: Re: [PATCH v2 2/3] nvc0: use NV_VRAM_DOMAIN() macro
-Date: Wed, 19 Nov 2014 14:59:42 +0900
-Message-ID: <546C31CE.1030106@nvidia.com>
-References: <1416375705-14068-1-git-send-email-acourbot@nvidia.com>	<1416375705-14068-3-git-send-email-acourbot@nvidia.com>
- <CAKb7Uvhm5AzYXpPft_ZCjCJDKfk7myLg3ywhuA+HugeEN0fRxw@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCHv4 1/1] thermal: of: improve of-thermal sensor registration API
+Date: Wed, 19 Nov 2014 17:06:24 +0900
+Message-ID: <CAAVeFu+aUdpV_hj50TAZDO_5JgRmPH2RtJuP7Qozx4RNEzO-6A@mail.gmail.com>
+References: <1416321575-18348-1-git-send-email-edubezval@gmail.com> <1416321575-18348-2-git-send-email-edubezval@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <mesa-dev-bounces@lists.freedesktop.org>
-In-Reply-To: <CAKb7Uvhm5AzYXpPft_ZCjCJDKfk7myLg3ywhuA+HugeEN0fRxw@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/mesa-dev>,
- <mailto:mesa-dev-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/mesa-dev>
-List-Post: <mailto:mesa-dev@lists.freedesktop.org>
-List-Help: <mailto:mesa-dev-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/mesa-dev>,
- <mailto:mesa-dev-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: mesa-dev-bounces@lists.freedesktop.org
-Sender: "mesa-dev" <mesa-dev-bounces@lists.freedesktop.org>
-To: Ilia Mirkin <imirkin@alum.mit.edu>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, Alexandre Courbot <gnurou@gmail.com>, "mesa-dev@lists.freedesktop.org" <mesa-dev@lists.freedesktop.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1416321575-18348-2-git-send-email-edubezval@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: Linux PM <linux-pm@vger.kernel.org>, Caesar Wang <caesar.wang@rock-chips.com>, Wei Ni <wni@nvidia.com>, Lukasz Majewski <l.majewski@samsung.com>, Mikko Perttunen <mikko.perttunen@kapsi.fi>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Guenter Roeck <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.de>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, lm-sensors@lm-sensors.org, Rob Herring <robh+dt@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Zhang Rui <rui.zhang@intel.com>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMTEvMTkvMjAxNCAwMjo0OSBQTSwgSWxpYSBNaXJraW4gd3JvdGU6Cj4gT24gV2VkLCBOb3Yg
-MTksIDIwMTQgYXQgMTI6NDEgQU0sIEFsZXhhbmRyZSBDb3VyYm90IDxhY291cmJvdEBudmlkaWEu
-Y29tPiB3cm90ZToKPj4gVXNlIHRoZSBuZXdseS1pbnRyb2R1Y2VkIE5WX1ZSQU1fRE9NQUlOKCkg
-bWFjcm8gdG8gc3VwcG9ydCBhbHRlcm5hdGl2ZQo+PiBWUkFNIGRvbWFpbnMgZm9yIGNoaXBzIHRo
-YXQgZG8gbm90IHVzZSBkZWRpY2F0ZWQgdmlkZW8gbWVtb3J5Lgo+Pgo+PiBTaWduZWQtb2ZmLWJ5
-OiBBbGV4YW5kcmUgQ291cmJvdCA8YWNvdXJib3RAbnZpZGlhLmNvbT4KPj4gLS0tCj4+ICAgc3Jj
-L2dhbGxpdW0vZHJpdmVycy9ub3V2ZWF1L25vdXZlYXVfYnVmZmVyLmMgICAgICAgICAgIHwgIDYg
-KystLS0tCj4+ICAgc3JjL2dhbGxpdW0vZHJpdmVycy9ub3V2ZWF1L252NTAvbnY1MF9taXB0cmVl
-LmMgICAgICAgIHwgIDQgKystLQo+PiAgIHNyYy9nYWxsaXVtL2RyaXZlcnMvbm91dmVhdS9udmMw
-L252YzBfY29tcHV0ZS5jICAgICAgICB8ICAyICstCj4+ICAgc3JjL2dhbGxpdW0vZHJpdmVycy9u
-b3V2ZWF1L252YzAvbnZjMF9jb250ZXh0LmMgICAgICAgIHwgIDQgKystLQo+PiAgIHNyYy9nYWxs
-aXVtL2RyaXZlcnMvbm91dmVhdS9udmMwL252YzBfbWlwdHJlZS5jICAgICAgICB8ICAyICstCj4+
-ICAgc3JjL2dhbGxpdW0vZHJpdmVycy9ub3V2ZWF1L252YzAvbnZjMF9wcm9ncmFtLmMgICAgICAg
-IHwgIDggKysrKy0tLS0KPj4gICBzcmMvZ2FsbGl1bS9kcml2ZXJzL25vdXZlYXUvbnZjMC9udmMw
-X3NjcmVlbi5jICAgICAgICAgfCAxMiArKysrKystLS0tLS0KPj4gICBzcmMvZ2FsbGl1bS9kcml2
-ZXJzL25vdXZlYXUvbnZjMC9udmMwX3NoYWRlcl9zdGF0ZS5jICAgfCAgMiArLQo+PiAgIHNyYy9n
-YWxsaXVtL2RyaXZlcnMvbm91dmVhdS9udmMwL252YzBfc3RhdGVfdmFsaWRhdGUuYyB8ICAyICst
-Cj4+ICAgc3JjL2dhbGxpdW0vZHJpdmVycy9ub3V2ZWF1L252YzAvbnZjMF90ZXguYyAgICAgICAg
-ICAgIHwgIDIgKy0KPj4gICBzcmMvZ2FsbGl1bS9kcml2ZXJzL25vdXZlYXUvbnZjMC9udmU0X2Nv
-bXB1dGUuYyAgICAgICAgfCAgMiArLQo+PiAgIDExIGZpbGVzIGNoYW5nZWQsIDIyIGluc2VydGlv
-bnMoKyksIDI0IGRlbGV0aW9ucygtKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvc3JjL2dhbGxpdW0vZHJp
-dmVycy9ub3V2ZWF1L25vdXZlYXVfYnVmZmVyLmMgYi9zcmMvZ2FsbGl1bS9kcml2ZXJzL25vdXZl
-YXUvbm91dmVhdV9idWZmZXIuYwo+PiBpbmRleCA0OWZmMTAwYzRlY2UuLjRjMjE2OTFlZTY3MSAx
-MDA2NDQKPj4gLS0tIGEvc3JjL2dhbGxpdW0vZHJpdmVycy9ub3V2ZWF1L25vdXZlYXVfYnVmZmVy
-LmMKPj4gKysrIGIvc3JjL2dhbGxpdW0vZHJpdmVycy9ub3V2ZWF1L25vdXZlYXVfYnVmZmVyLmMK
-Pj4gQEAgLTY1OCwxMyArNjU4LDExIEBAIG5vdXZlYXVfYnVmZmVyX2NyZWF0ZShzdHJ1Y3QgcGlw
-ZV9zY3JlZW4gKnBzY3JlZW4sCj4+ICAgICAgICAgc3dpdGNoIChidWZmZXItPmJhc2UudXNhZ2Up
-IHsKPj4gICAgICAgICBjYXNlIFBJUEVfVVNBR0VfREVGQVVMVDoKPj4gICAgICAgICBjYXNlIFBJ
-UEVfVVNBR0VfSU1NVVRBQkxFOgo+PiAtICAgICAgICAgYnVmZmVyLT5kb21haW4gPSBOT1VWRUFV
-X0JPX1ZSQU07Cj4+IC0gICAgICAgICBicmVhazsKPj4gICAgICAgICBjYXNlIFBJUEVfVVNBR0Vf
-RFlOQU1JQzoKPj4gICAgICAgICAgICAvKiBGb3IgbW9zdCBhcHBzLCB3ZSdkIGhhdmUgdG8gZG8g
-c3RhZ2luZyB0cmFuc2ZlcnMgdG8gYXZvaWQgc3luYwo+PiAgICAgICAgICAgICAqIHdpdGggdGhp
-cyB1c2FnZSwgYW5kIEdBUlQgLT4gR0FSVCBjb3BpZXMgd291bGQgYmUgc3Vib3B0aW1hbC4KPj4g
-ICAgICAgICAgICAgKi8KPj4gLSAgICAgICAgIGJ1ZmZlci0+ZG9tYWluID0gTk9VVkVBVV9CT19W
-UkFNOwo+PiArICAgICAgICAgYnVmZmVyLT5kb21haW4gPSBOVl9WUkFNX0RPTUFJTihzY3JlZW4p
-Owo+PiAgICAgICAgICAgIGJyZWFrOwo+PiAgICAgICAgIGNhc2UgUElQRV9VU0FHRV9TVEFHSU5H
-Ogo+PiAgICAgICAgIGNhc2UgUElQRV9VU0FHRV9TVFJFQU06Cj4+IEBAIC02NzYsNyArNjc0LDcg
-QEAgbm91dmVhdV9idWZmZXJfY3JlYXRlKHN0cnVjdCBwaXBlX3NjcmVlbiAqcHNjcmVlbiwKPj4g
-ICAgICAgICB9Cj4+ICAgICAgfSBlbHNlIHsKPj4gICAgICAgICBpZiAoYnVmZmVyLT5iYXNlLmJp
-bmQgJiBzY3JlZW4tPnZpZG1lbV9iaW5kaW5ncykKPj4gLSAgICAgICAgIGJ1ZmZlci0+ZG9tYWlu
-ID0gTk9VVkVBVV9CT19WUkFNOwo+PiArICAgICAgICAgYnVmZmVyLT5kb21haW4gPSBOVl9WUkFN
-X0RPTUFJTihzY3JlZW4pOwo+PiAgICAgICAgIGVsc2UKPj4gICAgICAgICBpZiAoYnVmZmVyLT5i
-YXNlLmJpbmQgJiBzY3JlZW4tPnN5c21lbV9iaW5kaW5ncykKPj4gICAgICAgICAgICBidWZmZXIt
-PmRvbWFpbiA9IE5PVVZFQVVfQk9fR0FSVDsKPgo+IEJvdGggb2YgdGhlc2UgY2hhbmdlcyBzaG91
-bGQgYmUgdW5uZWNlc3NhcnkgaWYgdmlkbWVtX2JpbmRpbmdzIGlzCj4gY2xlYXJlZCBvdXQsIHJp
-Z2h0PwoKRm9yIG91ciBwYXJ0aWN1bGFyIGNhc2UgKHZyYW1fZG9tYWluID09IE5PVVZFQVVfQk9f
-R0FSVCksIHRoYXQncyAKY29ycmVjdC4gSG93ZXZlciBOVl9WUkFNX0RPTUFJTiBjb3VsZCBiZSBh
-IGFueSBjb21iaW5hdGlvbiBvZiAKTk9VVkVBVV9CT18qLCBzbyB3ZSBjYW4gaW1hZ2luZSBhIGZ1
-dHVyZSBzY2VuYXJpbyB3aGVyZSAKKGJ1ZmZlci0+YmFzZS5iaW5kICYgc2NyZWVuLT52aWRtZW1f
-YmluZGluZ3MpID09IDEgYnV0IE5WX1ZSQU1fRE9NQUlOKCkgCndpbGwgcmV0dXJuIHNvbWV0aGlu
-ZyBkaWZmZXJlbnQgZnJvbSBOT1VWRUFVX0JPX1ZSQU0uIEZvciB0aGlzIHJlYXNvbiBpdCAKc2Vl
-bXMgY29uc2lzdGVudCB0byB1c2UgdGhpcyBtYWNybyBoZXJlIGFzIHdlbGwuCl9fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCm1lc2EtZGV2IG1haWxpbmcgbGlz
-dAptZXNhLWRldkBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9w
-Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL21lc2EtZGV2Cg==
+On Tue, Nov 18, 2014 at 11:39 PM, Eduardo Valentin <edubezval@gmail.com> wrote:
+> Different drivers request API extensions in of-thermal. For this reason,
+> additional callbacks are required to fit the new drivers needs.
+>
+> The current API implementation expects the registering sensor driver
+> to provide a get_temp and get_trend callbacks as function parameters.
+> As the amount of callbacks is growing, this patch changes the existing
+> implementation to use a .ops field to hold all the of thermal callbacks
+> to sensor drivers.
+>
+> This patch also changes the existing of-thermal users to fit the new
+> API design. No functional change is introduced in this patch.
+
+A good idea even if no ops were to be added!
+
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
