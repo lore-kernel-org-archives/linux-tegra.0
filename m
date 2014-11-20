@@ -1,141 +1,100 @@
-From: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH] drm/tegra: Select root window for event dispatch
-Date: Wed, 19 Nov 2014 13:04:49 -0500
-Message-ID: <1416420289-4112-1-git-send-email-seanpaul@chromium.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: marcheu-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH] cpufreq: Ref the policy object sooner
+Date: Thu, 20 Nov 2014 10:10:09 +0530
+Message-ID: <CAKohponxpSoUXHc9S-y_zgo=T44-6Ayk4vRbW=jRHqQRsdbrGQ@mail.gmail.com>
+References: <1416403291-7722-1-git-send-email-tomeu.vizoso@collabora.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1416403291-7722-1-git-send-email-tomeu.vizoso@collabora.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-In finish pageflip, the driver was not selecting the root
-window when dispatching events. This exposed a race where
-a plane update would change the window selection and cause
-tegra_dc_finish_page_flip to check the wrong base address.
+On 19 November 2014 18:51, Tomeu Vizoso <tomeu.vizoso@collabora.com> wrote:
+> Do it before it's assigned to cpufreq_cpu_data, otherwise we can get
+> this warning when a driver tries to get the cpu frequency during
+> initialization:
+>
+> ------------[ cut here ]------------
+> WARNING: CPU: 1 PID: 64 at include/linux/kref.h:47 kobject_get+0x64/0x70()
+> Modules linked in:
+> CPU: 1 PID: 64 Comm: irq/77-tegra-ac Not tainted 3.18.0-rc4-next-20141114ccu-00050-g3eff942 #326
+> [<c0016fac>] (unwind_backtrace) from [<c001272c>] (show_stack+0x10/0x14)
+> [<c001272c>] (show_stack) from [<c06085d8>] (dump_stack+0x98/0xd8)
+> [<c06085d8>] (dump_stack) from [<c002892c>] (warn_slowpath_common+0x84/0xb4)
+> [<c002892c>] (warn_slowpath_common) from [<c00289f8>] (warn_slowpath_null+0x1c/0x24)
+> [<c00289f8>] (warn_slowpath_null) from [<c0220290>] (kobject_get+0x64/0x70)
+> [<c0220290>] (kobject_get) from [<c03e944c>] (cpufreq_cpu_get+0x88/0xc8)
+> [<c03e944c>] (cpufreq_cpu_get) from [<c03e9500>] (cpufreq_get+0xc/0x64)
+> [<c03e9500>] (cpufreq_get) from [<c0285288>] (actmon_thread_isr+0x134/0x198)
+> [<c0285288>] (actmon_thread_isr) from [<c0069008>] (irq_thread_fn+0x1c/0x40)
+> [<c0069008>] (irq_thread_fn) from [<c0069324>] (irq_thread+0x134/0x174)
+> [<c0069324>] (irq_thread) from [<c0040290>] (kthread+0xdc/0xf4)
+> [<c0040290>] (kthread) from [<c000f4b8>] (ret_from_fork+0x14/0x3c)
+> ---[ end trace b7bd64a81b340c59 ]---
+>
+> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> ---
+>  drivers/cpufreq/cpufreq.c | 16 ++++++++++------
+>  1 file changed, 10 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> index 4473eba..954cb2f 100644
+> --- a/drivers/cpufreq/cpufreq.c
+> +++ b/drivers/cpufreq/cpufreq.c
+> @@ -898,12 +898,6 @@ static int cpufreq_add_dev_interface(struct cpufreq_policy *policy,
+>         struct freq_attr **drv_attr;
+>         int ret = 0;
+>
+> -       /* prepare interface data */
+> -       ret = kobject_init_and_add(&policy->kobj, &ktype_cpufreq,
+> -                                  &dev->kobj, "cpufreq");
+> -       if (ret)
+> -               return ret;
+> -
+>         /* set up files for this cpu device */
+>         drv_attr = cpufreq_driver->attr;
+>         while ((drv_attr) && (*drv_attr)) {
+> @@ -1211,6 +1205,15 @@ static int __cpufreq_add_dev(struct device *dev, struct subsys_interface *sif)
+>         }
+>
+>         down_write(&policy->rwsem);
+> +
+> +       /* prepare interface data */
+> +       ret = kobject_init_and_add(&policy->kobj, &ktype_cpufreq,
+> +                                  &dev->kobj, "cpufreq");
 
-This patch also protects access to the window selection register
-as well as the registers affected by it.
+This should be done only when (!recover_policy) and so you can merge
+it with the 'if' block just above down_write. Actually you can move down_write()
+a little bit up as well, just after ->init()
 
-Signed-off-by: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
----
- drivers/gpu/drm/tegra/dc.c | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
+> +       if (ret) {
+> +               pr_err("%s: failed to init policy->kobj: %d\n", __func__, ret);
+> +               goto err_init_policy_kobj;
+> +       }
+> +
+>         write_lock_irqsave(&cpufreq_driver_lock, flags);
+>         for_each_cpu(j, policy->cpus)
+>                 per_cpu(cpufreq_cpu_data, j) = policy;
+> @@ -1301,6 +1304,7 @@ err_get_freq:
+>                 per_cpu(cpufreq_cpu_data, j) = NULL;
+>         write_unlock_irqrestore(&cpufreq_driver_lock, flags);
+>
+> +err_init_policy_kobj:
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index b957908..a3b41ea 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -168,7 +168,7 @@ static int tegra_dc_setup_window(struct tegra_dc *dc, unsigned int index,
- 				 const struct tegra_dc_window *window)
- {
- 	unsigned h_offset, v_offset, h_size, v_size, h_dda, v_dda, bpp;
--	unsigned long value;
-+	unsigned long value, flags;
- 	bool yuv, planar;
- 
- 	/*
-@@ -181,6 +181,8 @@ static int tegra_dc_setup_window(struct tegra_dc *dc, unsigned int index,
- 	else
- 		bpp = planar ? 1 : 2;
- 
-+	spin_lock_irqsave(&dc->lock, flags);
-+
- 	value = WINDOW_A_SELECT << index;
- 	tegra_dc_writel(dc, value, DC_CMD_DISPLAY_WINDOW_HEADER);
- 
-@@ -273,6 +275,7 @@ static int tegra_dc_setup_window(struct tegra_dc *dc, unsigned int index,
- 
- 		case TEGRA_BO_TILING_MODE_BLOCK:
- 			DRM_ERROR("hardware doesn't support block linear mode\n");
-+			spin_unlock_irqrestore(&dc->lock, flags);
- 			return -EINVAL;
- 		}
- 
-@@ -330,6 +333,7 @@ static int tegra_dc_setup_window(struct tegra_dc *dc, unsigned int index,
- 	}
- 
- 	tegra_dc_window_commit(dc, index);
-+	spin_unlock_irqrestore(&dc->lock, flags);
- 
- 	return 0;
- }
-@@ -339,10 +343,12 @@ static int tegra_window_plane_disable(struct drm_plane *plane)
- 	struct tegra_dc *dc = to_tegra_dc(plane->crtc);
- 	struct tegra_plane *p = to_tegra_plane(plane);
- 	u32 value;
-+	unsigned long flags;
- 
- 	if (!plane->crtc)
- 		return 0;
- 
-+	spin_lock_irqsave(&dc->lock, flags);
- 	value = WINDOW_A_SELECT << p->index;
- 	tegra_dc_writel(dc, value, DC_CMD_DISPLAY_WINDOW_HEADER);
- 
-@@ -351,6 +357,7 @@ static int tegra_window_plane_disable(struct drm_plane *plane)
- 	tegra_dc_writel(dc, value, DC_WIN_WIN_OPTIONS);
- 
- 	tegra_dc_window_commit(dc, p->index);
-+	spin_unlock_irqrestore(&dc->lock, flags);
- 
- 	return 0;
- }
-@@ -700,13 +707,14 @@ static int tegra_dc_set_base(struct tegra_dc *dc, int x, int y,
- 	unsigned int h_offset = 0, v_offset = 0;
- 	struct tegra_bo_tiling tiling;
- 	unsigned int format, swap;
--	unsigned long value;
-+	unsigned long value, flags;
- 	int err;
- 
- 	err = tegra_fb_get_tiling(fb, &tiling);
- 	if (err < 0)
- 		return err;
- 
-+	spin_lock_irqsave(&dc->lock, flags);
- 	tegra_dc_writel(dc, WINDOW_A_SELECT, DC_CMD_DISPLAY_WINDOW_HEADER);
- 
- 	value = fb->offsets[0] + y * fb->pitches[0] +
-@@ -752,6 +760,7 @@ static int tegra_dc_set_base(struct tegra_dc *dc, int x, int y,
- 
- 		case TEGRA_BO_TILING_MODE_BLOCK:
- 			DRM_ERROR("hardware doesn't support block linear mode\n");
-+			spin_unlock_irqrestore(&dc->lock, flags);
- 			return -EINVAL;
- 		}
- 
-@@ -777,6 +786,7 @@ static int tegra_dc_set_base(struct tegra_dc *dc, int x, int y,
- 	value = GENERAL_ACT_REQ | WIN_A_ACT_REQ;
- 	tegra_dc_writel(dc, value << 8, DC_CMD_STATE_CONTROL);
- 	tegra_dc_writel(dc, value, DC_CMD_STATE_CONTROL);
-+	spin_unlock_irqrestore(&dc->lock, flags);
- 
- 	return 0;
- }
-@@ -790,7 +800,6 @@ void tegra_dc_enable_vblank(struct tegra_dc *dc)
- 	value = tegra_dc_readl(dc, DC_CMD_INT_MASK);
- 	value |= VBLANK_INT;
- 	tegra_dc_writel(dc, value, DC_CMD_INT_MASK);
--
- 	spin_unlock_irqrestore(&dc->lock, flags);
- }
- 
-@@ -819,11 +828,16 @@ static void tegra_dc_finish_page_flip(struct tegra_dc *dc)
- 
- 	bo = tegra_fb_get_plane(crtc->primary->fb, 0);
- 
-+	spin_lock_irqsave(&dc->lock, flags);
-+
- 	/* check if new start address has been latched */
-+	tegra_dc_writel(dc, WINDOW_A_SELECT, DC_CMD_DISPLAY_WINDOW_HEADER);
- 	tegra_dc_writel(dc, READ_MUX, DC_CMD_STATE_ACCESS);
- 	base = tegra_dc_readl(dc, DC_WINBUF_START_ADDR);
- 	tegra_dc_writel(dc, 0, DC_CMD_STATE_ACCESS);
- 
-+	spin_unlock_irqrestore(&dc->lock, flags);
-+
- 	if (base == bo->paddr + crtc->primary->fb->offsets[0]) {
- 		spin_lock_irqsave(&drm->event_lock, flags);
- 		drm_send_vblank_event(drm, dc->pipe, dc->event);
--- 
-2.1.1
+Oh, that's not enough and you need to get the relevant bits out from
+the add_dev_interface() routine as well:
+
+err_out_kobj_put:
+kobject_put(&policy->kobj);
+wait_for_completion(&policy->kobj_unregister);
+
+
+>         up_write(&policy->rwsem);
+>
+>         if (cpufreq_driver->exit)
+> --
+> 1.9.3
+>
