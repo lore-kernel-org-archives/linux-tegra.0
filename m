@@ -1,13 +1,11 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 2/4] ARM: tegra: Device tree changes for v3.19
-Date: Fri, 21 Nov 2014 12:53:50 +0100
-Message-ID: <1416570832-6220-2-git-send-email-thierry.reding@gmail.com>
-References: <1416570832-6220-1-git-send-email-thierry.reding@gmail.com>
+Subject: [GIT PULL 1/4] ARM: tegra: IOMMU support for v3.19
+Date: Fri, 21 Nov 2014 12:53:49 +0100
+Message-ID: <1416570832-6220-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1416570832-6220-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -20,57 +18,39 @@ The following changes since commit f114040e3ea6e07372334ade75d1ee0775c355e1:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-3.19-dt
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-3.19-iommu
 
-for you to fetch changes up to aa900abe483dd66e0a6a577c55084e1e63ac6f48:
+for you to fetch changes up to a2257374a4bdc936896262382530921b4953c4cd:
 
-  ARM: tegra: Enable IOMMU for display controllers on Tegra124 (2014-11-21 10:53:16 +0100)
+  memory: Add NVIDIA Tegra memory controller support (2014-11-21 10:14:36 +0100)
 
-Note that this pulls in the for-3.19/iommu branch (tegra-for-3.19-iommu
-tag) to resolve the dependency between the IOMMU driver addition and the
-DT changes that include dt-bindings/memory/tegra*-mc.h headers.
+While preparing these pull requests I noticed that there will be two
+tiny conflicts in drivers/memory/tegra-smmu.c between this pull request
+and Joerg's IOMMU tree (iommu_ops.map_sg) as well as the driver core
+tree (device_driver.owner). They are fairly trivial to resolve so I
+didn't see a reason to delay this any further, but if this causes any
+problems please let me know if there's anything I can do to help sort
+them out.
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-ARM: tegra: Device tree changes for v3.19
+ARM: tegra: IOMMU support for v3.19
 
-The bulk of these changes add memory controller nodes for Tegra30,
-Tegra114 and Tegra124. The memory controller implements an IOMMU that
-the display controllers are attached to. This allows them to scan out
-physically non-contiguous framebuffers and removes one of the primary
-users of CMA.
-
-The only other change adds a new MIPI pad control bank to the pin
-controller on Tegra124. The corresponding driver patch for this went
-into v3.18 as:
-
-        3ccc11f6b82c pinctrl: tegra: Add MIPI pad control
+This adds the driver pieces required for IOMMU support on Tegra30,
+Tegra114 and Tegra124.
 
 ----------------------------------------------------------------
-Sean Paul (1):
-      ARM: tegra: Add APB_MISC_GP as a MIPI pad control bank
-
-Thierry Reding (12):
+Thierry Reding (5):
       clk: tegra: Implement memory-controller clock
       amba: Add Kconfig file
       ARM: tegra: Move AHB Kconfig to drivers/amba
       of: Add NVIDIA Tegra memory controller binding
       memory: Add NVIDIA Tegra memory controller support
-      Merge branch 'for-3.19/iommu' into for-3.19/dt
-      ARM: tegra: Add memory controller support for Tegra30
-      ARM: tegra: Add memory controller support for Tegra114
-      ARM: tegra: Add memory controller support for Tegra124
-      ARM: tegra: Enable IOMMU for display controllers on Tegra30
-      ARM: tegra: Enable IOMMU for display controllers on Tegra114
-      ARM: tegra: Enable IOMMU for display controllers on Tegra124
 
  .../memory-controllers/nvidia,tegra-mc.txt         |   36 +
  arch/arm/Kconfig                                   |    3 -
- arch/arm/boot/dts/tegra114.dtsi                    |   23 +-
- arch/arm/boot/dts/tegra124.dtsi                    |   19 +-
- arch/arm/boot/dts/tegra30.dtsi                     |   25 +-
  arch/arm/mach-tegra/Kconfig                        |    9 +-
  arch/arm64/Kconfig                                 |    3 -
  drivers/Kconfig                                    |    2 +
@@ -100,7 +80,7 @@ Thierry Reding (12):
  include/dt-bindings/memory/tegra124-mc.h           |   31 +
  include/dt-bindings/memory/tegra30-mc.h            |   24 +
  include/soc/tegra/mc.h                             |  107 ++
- 34 files changed, 4131 insertions(+), 1528 deletions(-)
+ 31 files changed, 4088 insertions(+), 1504 deletions(-)
  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra-mc.txt
  create mode 100644 drivers/amba/Kconfig
  create mode 100644 drivers/memory/tegra/Kconfig
