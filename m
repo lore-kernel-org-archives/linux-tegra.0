@@ -1,134 +1,226 @@
-From: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2] thermal:core:fix: Check return code of the
- ->get_max_state() callback
-Date: Fri, 21 Nov 2014 14:08:28 -0400
-Message-ID: <20141121180826.GA3331@developer>
-References: <1415898165-27406-1-git-send-email-l.majewski@samsung.com>
- <1416305790-27746-1-git-send-email-l.majewski@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="a8Wt8u1KmwUX3Y2C"
+From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: [PATCH] Add support for Nyan
+Date: Sun, 23 Nov 2014 08:40:51 -0700
+Message-ID: <1416757251-4588-1-git-send-email-sjg@chromium.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1416305790-27746-1-git-send-email-l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Zhang Rui <rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Ezequiel Garcia <ezequiel.garcia-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Kuninori Morimoto <kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>, Linux PM list <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Vincenzo Frascino <vincenzo.frascino-qxv4g6HH51o@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Lukasz Majewski <l.majewski-AM3owJQeAb5mR6Xm/wNWPw@public.gmane.org>, Nobuhiro Iwamatsu <iwamatsu-+mkmVskJBflAfugRpC6u6w@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Add support for Tegra124 Nyan. Pinmux is based on norrin with a single
+change for the reset GPIO.
 
---a8Wt8u1KmwUX3Y2C
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+---
 
+ configs/nyan.board | 198 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 198 insertions(+)
+ create mode 100644 configs/nyan.board
 
-Lukasz,
-
-On Tue, Nov 18, 2014 at 11:16:30AM +0100, Lukasz Majewski wrote:
-> The return code from ->get_max_state() callback was not checked during
-> binding cooling device to thermal zone device.
->=20
-> Signed-off-by: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
-> Changes for v2:
-> - It turned out that patches from 1 to 6 from v1 are not needed, since
->   they either already solve the problem (like imx_thermal.c) or not use
->   cpufreq as a thermal cooling device.
-> - The patch 7 from v1 is also not needed since this patch on error exits
->   this function without using max_state variable.
-> - In thermal driver probe the cpufreq_cooling_register() method presence
->   is crucial to evaluate if the thermal driver needs any actions with=20
->   -EPROBE_DEFER.
-
-Have you tried this patch with of-thermal based systems?
-
-The above proposal works if the thermal driver is dealing with loading
-cpu_cooling. But for of-thermal based drivers, the idea is to leave to
-cpufreq code to load it.=20
-
-As an example, I am taking the ti-soc-thermal, but we already have other
-of-thermal based drivers. Booting with this patch ti-soc-thermal
-(of-based boot) loads fine, but the cpu_cooling never gets bound to the
-thermal zone.
-
-The thing is that the bind may happen before cpufreq-dt code loads the
-cpufreq driver, and when cpu_cooling is checking what is the max freq,
-by using cpufreq table, it won't be able to do it, as there is no table.
-
-While, without the patch, it will use wrong in the binding, but after
-it gets bound, and cpufreq loads, the max will be used correctly.
-
-And in this case, the system still works besides this bug. The reasoning
-is because the max state comes from DT (2) and lower and upper wont be
-equal to THERMAL_NO_LIMIT. Then, the following check will use the
-parameter, instead of max_state:
-
-        cdev->ops->get_max_state(cdev, &max_state);
-
-	/* lower default 0, upper default max_state */
-	lower =3D lower =3D=3D THERMAL_NO_LIMIT ? 0 : lower;
-	upper =3D upper =3D=3D THERMAL_NO_LIMIT ?
-				max_state : upper;
-
-In summary, introducing this patch, although it fix a problem, will
-introduce regressions, in of-thermal based drivers.
-
-I believe, to have this fix, you need to provide a way to have probing
-deferring also in cpu_cooling. That needs also the change in the cpufreq
-driver, as I mentioned in the other thread.
-
-Cheers,
-
-> ---
->  drivers/thermal/thermal_core.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_cor=
-e.c
-> index 43b9070..8567929 100644
-> --- a/drivers/thermal/thermal_core.c
-> +++ b/drivers/thermal/thermal_core.c
-> @@ -928,7 +928,7 @@ int thermal_zone_bind_cooling_device(struct thermal_z=
-one_device *tz,
->  	struct thermal_zone_device *pos1;
->  	struct thermal_cooling_device *pos2;
->  	unsigned long max_state;
-> -	int result;
-> +	int result, ret;
-> =20
->  	if (trip >=3D tz->trips || (trip < 0 && trip !=3D THERMAL_TRIPS_NONE))
->  		return -EINVAL;
-> @@ -945,7 +945,9 @@ int thermal_zone_bind_cooling_device(struct thermal_z=
-one_device *tz,
->  	if (tz !=3D pos1 || cdev !=3D pos2)
->  		return -EINVAL;
-> =20
-> -	cdev->ops->get_max_state(cdev, &max_state);
-> +	ret =3D cdev->ops->get_max_state(cdev, &max_state);
-> +	if (ret)
-> +		return ret;
-> =20
->  	/* lower default 0, upper default max_state */
->  	lower =3D lower =3D=3D THERMAL_NO_LIMIT ? 0 : lower;
-> --=20
-> 2.0.0.rc2
->=20
-
---a8Wt8u1KmwUX3Y2C
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUb3+RAAoJEMLUO4d9pOJWltoH/3EpKRfWaTs1Ygt4XnRLDAiJ
-1kt/tiOHZcNx5A9E/QIMmR4MGZ4KZ93UbLiWjIe2vU/63xpJjSFkd7Gr9u6bfrl8
-BJCvt85Tsk9cflmAZzZsLJPDgRB8vJNx6usSj8HQ/R8ggZTK8Ef8lU7nHvy0krSK
-iub1UHAjMkaFvo38mPSnsdDOj6ToxIvv04wl8RVG9BZzUSEzjy+aQSknwc6sHMkI
-6G6yowKQ7N0c0xeWW7uSpA55sK2eB1bjqnWV1Vi3f0InRvYS5gihAZN46B3bqznf
-jATFi200E690ELIUROqffNQevOaqaLde7DQUsAM1IyzFGbYAqI5eSYdrkXj1E0g=
-=11im
------END PGP SIGNATURE-----
-
---a8Wt8u1KmwUX3Y2C--
+diff --git a/configs/nyan.board b/configs/nyan.board
+new file mode 100644
+index 0000000..7da5b4d
+--- /dev/null
++++ b/configs/nyan.board
+@@ -0,0 +1,198 @@
++soc = 'tegra124'
++
++pins = (
++    #pin,                      mux,           gpio_init, pull,   tri,   e_inp, od,    rcv_sel
++    ('dap_mclk1_pw4',          'extperiph1',  None,      'none', False, False, False, False),
++    ('dap_mclk1_req_pee2',     'rsvd4',       None,      'down', True,  False, False, False),
++    ('dap1_din_pn1',           'rsvd4',       None,      'down', True,  False, False, False),
++    ('dap1_dout_pn2',          'i2s0',        None,      'down', True,  False, False, False),
++    ('dap1_fs_pn0',            'rsvd4',       None,      'down', True,  False, False, False),
++    ('dap1_sclk_pn3',          'rsvd4',       None,      'down', True,  False, False, False),
++    ('dap2_din_pa4',           'i2s1',        None,      'none', False, True,  False, False),
++    ('dap2_dout_pa5',          'i2s1',        None,      'none', False, True,  False, False),
++    ('dap2_fs_pa2',            'i2s1',        None,      'none', False, True,  False, False),
++    ('dap2_sclk_pa3',          'i2s1',        None,      'none', False, True,  False, False),
++    ('gpio_x4_aud_px4',        None,          'in',      'none', False, True,  False, False),
++    ('gpio_x5_aud_px5',        'rsvd4',       None,      'down', True,  False, False, False),
++    ('gpio_x6_aud_px6',        'gmi',         None,      'down', True,  False, False, False),
++    ('gpio_x7_aud_px7',        None,          'out0',    'none', False, False, False, False),
++    ('gpio_w2_aud_pw2',        'rsvd2',       None,      'down', True,  False, False, False),
++    ('gpio_w3_aud_pw3',        None,          'in',      'none', False, True,  False, False),
++    ('dvfs_pwm_px0',           'cldvfs',      None,      'none', False, False, False, False),
++    ('gpio_x1_aud_px1',        None,          'in',      'none', False, True,  False, False),
++    ('dvfs_clk_px2',           'cldvfs',      None,      'none', False, False, False, False),
++    ('gpio_x3_aud_px3',        'rsvd4',       None,      'down', True,  False, False, False),
++    ('dap3_din_pp1',           'i2s2',        None,      'down', True,  False, False, False),
++    ('dap3_dout_pp2',          None,          'out0',    'none', False, False, False, False),
++    ('dap3_fs_pp0',            'i2s2',        None,      'down', True,  False, False, False),
++    ('dap3_sclk_pp3',          'rsvd3',       None,      'down', True,  False, False, False),
++    ('pv0',                    None,          'in',      'none', False, True,  False, False),
++    ('pv1',                    'rsvd1',       None,      'down', True,  False, False, False),
++    ('ulpi_clk_py0',           'spi1',        None,      'none', False, False, False, False),
++    ('ulpi_data0_po1',         'ulpi',        None,      'down', True,  False, False, False),
++    ('ulpi_data1_po2',         'ulpi',        None,      'down', True,  False, False, False),
++    ('ulpi_data2_po3',         'ulpi',        None,      'down', True,  False, False, False),
++    ('ulpi_data3_po4',         'ulpi',        None,      'down', True,  False, False, False),
++    ('ulpi_data4_po5',         'ulpi',        None,      'down', True,  False, False, False),
++    ('ulpi_data5_po6',         'ulpi',        None,      'down', True,  False, False, False),
++    ('ulpi_data6_po7',         'ulpi',        None,      'down', True,  False, False, False),
++    ('ulpi_data7_po0',         'ulpi',        None,      'down', True,  False, False, False),
++    ('ulpi_dir_py1',           'spi1',        None,      'none', False, True,  False, False),
++    ('ulpi_nxt_py2',           'spi1',        None,      'none', False, False, False, False),
++    ('ulpi_stp_py3',           'spi1',        None,      'none', False, False, False, False),
++    ('cam_i2c_scl_pbb1',       'rsvd3',       None,      'down', True,  False, False, False),
++    ('cam_i2c_sda_pbb2',       'rsvd3',       None,      'down', True,  False, False, False),
++    ('cam_mclk_pcc0',          'vi',          None,      'down', True,  False, False, False),
++    ('pbb0',                   'vgp6',        None,      'down', True,  False, False, False),
++    ('pbb3',                   'vgp3',        None,      'down', True,  False, False, False),
++    ('pbb4',                   'vgp4',        None,      'down', True,  False, False, False),
++    ('pbb5',                   'rsvd3',       None,      'down', True,  False, False, False),
++    ('pbb6',                   'rsvd2',       None,      'down', True,  False, False, False),
++    ('pbb7',                   'rsvd2',       None,      'down', True,  False, False, False),
++    ('pcc1',                   'rsvd2',       None,      'down', True,  False, False, False),
++    ('pcc2',                   'rsvd2',       None,      'down', True,  False, False, False),
++    ('gen2_i2c_scl_pt5',       'i2c2',        None,      'none', False, True,  True,  False),
++    ('gen2_i2c_sda_pt6',       'i2c2',        None,      'none', False, True,  True,  False),
++    ('pj7',                    None,          'in',      'none', False, True,  False, False),
++    ('pb0',                    'rsvd2',       None,      'down', True,  False, False, False),
++    ('pb1',                    'rsvd2',       None,      'down', True,  False, False, False),
++    ('pk7',                    None,          'in',      'none', False, True,  False, False),
++    ('pg0',                    None,          'in',      'none', False, True,  False, False),
++    ('pg1',                    None,          'in',      'none', False, True,  False, False),
++    ('ph2',                    None,          'in',      'none', False, True,  False, False),
++    ('ph3',                    'gmi',         None,      'down', True,  False, False, False),
++    ('ph4',                    None,          'in',      'none', False, True,  False, False),
++    ('ph5',                    'rsvd2',       None,      'down', True,  False, False, False),
++    ('ph6',                    None,          'in',      'none', False, True,  False, False),
++    ('ph7',                    None,          'out1',    'none', False, False, False, False),
++    ('pg2',                    None,          'in',      'none', False, True,  False, False),
++    ('pg3',                    None,          'in',      'none', False, True,  False, False),
++    ('pg4',                    'spi4',        None,      'none', False, False, False, False),
++    ('pg5',                    'spi4',        None,      'none', False, False, False, False),
++    ('pg6',                    'spi4',        None,      'none', False, False, False, False),
++    ('pg7',                    'spi4',        None,      'none', False, True,  False, False),
++    ('ph0',                    'gmi',         None,      'down', True,  False, False, False),
++    ('ph1',                    'pwm1',        None,      'none', False, False, False, False),
++    ('pk0',                    'rsvd1',       None,      'down', True,  False, False, False),
++    ('pk1',                    None,          'out0',    'none', False, False, False, False),
++    ('pj0',                    None,          'in',      'up',   False, True,  False, False),
++    ('pj2',                    'rsvd1',       None,      'down', True,  False, False, False),
++    ('pk3',                    'gmi',         None,      'down', True,  False, False, False),
++    ('pk4',                    None,          'out0',    'up',   False, False, False, False),
++    ('pk2',                    None,          'in',      'none', False, True,  False, False),
++    ('pi3',                    'spi4',        None,      'none', False, False, False, False),
++    ('pi6',                    None,          'in',      'none', False, True,  False, False),
++    ('pi2',                    'rsvd4',       None,      'down', True,  False, False, False),
++    ('pi5',                    None,          'out1',    'up',   False, False, False, False),
++    ('pi1',                    None,          'in',      'none', False, True,  False, False),
++    ('pi4',                    'gmi',         None,      'down', True,  False, False, False),
++    ('pi7',                    None,          'in',      'none', False, True,  False, False),
++    ('pc7',                    None,          'in',      'none', False, True,  False, False),
++    ('pi0',                    None,          'in',      'none', False, True,  False, False),
++    ('pex_l0_clkreq_n_pdd2',   'rsvd2',       None,      'down', True,  False, False, False),
++    ('pex_l0_rst_n_pdd1',      'rsvd2',       None,      'down', True,  False, False, False),
++    ('pex_l1_clkreq_n_pdd6',   'rsvd2',       None,      'down', True,  False, False, False),
++    ('pex_l1_rst_n_pdd5',      'rsvd2',       None,      'down', True,  False, False, False),
++    ('pex_wake_n_pdd3',        'rsvd2',       None,      'down', True,  False, False, False),
++    ('usb_vbus_en2_pff1',      'rsvd2',       None,      'down', True,  False, False, False),
++    ('pff2',                   'rsvd2',       None,      'down', True,  False, False, False),
++    ('clk2_out_pw5',           'rsvd2',       None,      'down', True,  False, False, False),
++    ('clk2_req_pcc5',          'rsvd2',       None,      'down', True,  False, False, False),
++    ('sdmmc1_wp_n_pv3',        'sdmmc1',      None,      'down', True,  False, False, False),
++    ('sdmmc1_clk_pz0',         'sdmmc1',      None,      'none', False, True,  False, False),
++    ('sdmmc1_cmd_pz1',         'sdmmc1',      None,      'up',   False, True,  False, False),
++    ('sdmmc1_dat0_py7',        'sdmmc1',      None,      'up',   False, True,  False, False),
++    ('sdmmc1_dat1_py6',        'sdmmc1',      None,      'up',   False, True,  False, False),
++    ('sdmmc1_dat2_py5',        'sdmmc1',      None,      'up',   False, True,  False, False),
++    ('sdmmc1_dat3_py4',        'sdmmc1',      None,      'up',   False, True,  False, False),
++    ('sdmmc3_clk_pa6',         'sdmmc3',      None,      'none', False, False, False, False),
++    ('sdmmc3_cmd_pa7',         'sdmmc3',      None,      'up',   False, True,  False, False),
++    ('sdmmc3_dat0_pb7',        'sdmmc3',      None,      'up',   False, True,  False, False),
++    ('sdmmc3_dat1_pb6',        'sdmmc3',      None,      'up',   False, True,  False, False),
++    ('sdmmc3_dat2_pb5',        'sdmmc3',      None,      'up',   False, True,  False, False),
++    ('sdmmc3_dat3_pb4',        'sdmmc3',      None,      'up',   False, True,  False, False),
++    ('sdmmc3_clk_lb_out_pee4', 'sdmmc3',      None,      'none', False, False, False, False),
++    ('sdmmc3_clk_lb_in_pee5',  'sdmmc3',      None,      'up',   False, True,  False, False),
++    ('sdmmc4_clk_pcc4',        'sdmmc4',      None,      'none', False, True,  False, False),
++    ('sdmmc4_cmd_pt7',         'sdmmc4',      None,      'none', False, True,  False, False),
++    ('sdmmc4_dat0_paa0',       'sdmmc4',      None,      'up',   False, True,  False, False),
++    ('sdmmc4_dat1_paa1',       'sdmmc4',      None,      'up',   False, True,  False, False),
++    ('sdmmc4_dat2_paa2',       'sdmmc4',      None,      'up',   False, True,  False, False),
++    ('sdmmc4_dat3_paa3',       'sdmmc4',      None,      'up',   False, True,  False, False),
++    ('sdmmc4_dat4_paa4',       'sdmmc4',      None,      'up',   False, True,  False, False),
++    ('sdmmc4_dat5_paa5',       'sdmmc4',      None,      'up',   False, True,  False, False),
++    ('sdmmc4_dat6_paa6',       'sdmmc4',      None,      'up',   False, True,  False, False),
++    ('sdmmc4_dat7_paa7',       'sdmmc4',      None,      'up',   False, True,  False, False),
++    ('kb_col0_pq0',            None,          'in',      'none', False, True,  False, False),
++    ('kb_col1_pq1',            'rsvd2',       None,      'down', True,  False, False, False),
++    ('kb_col2_pq2',            None,          'in',      'none', False, True,  False, False),
++    ('kb_col3_pq3',            None,          'in',      'none', False, True,  False, False),
++    ('kb_col4_pq4',            'sdmmc3',      None,      'up',   False, True,  False, False),
++    ('kb_col5_pq5',            'rsvd2',       None,      'down', True,  False, False, False),
++    ('kb_col6_pq6',            None,          'in',      'none', False, True,  False, False),
++    ('kb_col7_pq7',            None,          'in',      'none', False, True,  False, False),
++    ('kb_row0_pr0',            None,          'out0',    'none', False, False, False, False),
++    ('kb_row1_pr1',            None,          'in',      'none', False, True,  False, False),
++    ('kb_row10_ps2',           'uarta',       None,      'none', False, True,  False, False),
++    ('kb_row11_ps3',           None,          'out0',    'none', False, False, False, False),
++    ('kb_row12_ps4',           None,          'out0',    'none', False, False, False, False),
++    ('kb_row13_ps5',           'rsvd2',       None,      'down', True,  False, False, False),
++    ('kb_row14_ps6',           'rsvd2',       None,      'down', True,  False, False, False),
++    ('kb_row15_ps7',           None,          'in',      'none', False, True,  False, False),
++    ('kb_row16_pt0',           'rsvd2',       None,      'down', True,  False, False, False),
++    ('kb_row17_pt1',           None,          'in',      'none', False, True,  False, False),
++    ('kb_row2_pr2',            'rsvd2',       None,      'down', True,  False, False, False),
++    ('kb_row3_pr3',            'kbc',         None,      'down', True,  False, False, False),
++    ('kb_row4_pr4',            None,          'in',      'none', False, True,  False, False),
++    ('kb_row5_pr5',            'rsvd3',       None,      'down', True,  False, False, False),
++    ('kb_row6_pr6',            'kbc',         None,      'down', True,  False, False, False),
++    ('kb_row7_pr7',            None,          'in',      'none', False, True,  False, False),
++    ('kb_row8_ps0',            'rsvd2',       None,      'down', True,  False, False, False),
++    ('kb_row9_ps1',            'uarta',       None,      'down', False, False, False, False),
++    ('sdmmc3_cd_n_pv2',        'sdmmc3',      None,      'up',   False, True,  False, False),
++    ('clk_32k_out_pa0',        None,          'in',      'none', False, True,  False, False),
++    ('pwr_i2c_scl_pz6',        'i2cpwr',      None,      'none', False, True,  True,  False),
++    ('pwr_i2c_sda_pz7',        'i2cpwr',      None,      'none', False, True,  True,  False),
++    ('jtag_rtck',              'rtck',        None,      'none', False, False, False, False),
++    ('clk_32k_in',             'clk',         None,      'none', False, True,  False, False),
++    ('core_pwr_req',           'pwron',       None,      'none', False, False, False, False),
++    ('cpu_pwr_req',            'cpu',         None,      'none', False, False, False, False),
++    ('pwr_int_n',              'pmi',         None,      'none', False, True,  False, False),
++    ('reset_out_n',            'reset_out_n', None,      'none', False, False, False, False),
++    ('clk3_out_pee0',          'rsvd2',       None,      'down', True,  False, False, False),
++    ('clk3_req_pee1',          'rsvd2',       None,      'down', True,  False, False, False),
++    ('dap4_din_pp5',           'rsvd3',       None,      'down', True,  False, False, False),
++    ('dap4_dout_pp6',          'rsvd4',       None,      'down', True,  False, False, False),
++    ('dap4_fs_pp4',            'rsvd4',       None,      'down', True,  False, False, False),
++    ('dap4_sclk_pp7',          'rsvd3',       None,      'down', True,  False, False, False),
++    ('gen1_i2c_scl_pc4',       'i2c1',        None,      'none', False, True,  True,  False),
++    ('gen1_i2c_sda_pc5',       'i2c1',        None,      'none', False, True,  True,  False),
++    ('pu0',                    'rsvd4',       None,      'down', True,  False, False, False),
++    ('pu1',                    'rsvd1',       None,      'down', True,  False, False, False),
++    ('pu2',                    'rsvd1',       None,      'down', True,  False, False, False),
++    ('pu3',                    'gmi',         None,      'down', True,  False, False, False),
++    ('pu4',                    None,          'in',      'none', False, True,  False, False),
++    ('pu5',                    None,          'in',      'up',   False, True,  False, False),
++    ('pu6',                    None,          'in',      'up',   False, True,  False, False),
++    ('uart2_cts_n_pj5',        'gmi',         None,      'down', True,  False, False, False),
++    ('uart2_rts_n_pj6',        'gmi',         None,      'down', True,  False, False, False),
++    ('uart2_rxd_pc3',          'irda',        None,      'down', True,  False, False, False),
++    ('uart2_txd_pc2',          'irda',        None,      'down', True,  False, False, False),
++    ('uart3_cts_n_pa1',        'gmi',         None,      'down', True,  False, False, False),
++    ('uart3_rts_n_pc0',        'gmi',         None,      'down', True,  False, False, False),
++    ('uart3_rxd_pw7',          'rsvd2',       None,      'down', True,  False, False, False),
++    ('uart3_txd_pw6',          'rsvd2',       None,      'down', True,  False, False, False),
++    ('owr',                    'rsvd2',       None,      'down', True,  False, False, False),
++    ('hdmi_cec_pee3',          'cec',         None,      'none', False, True,  True,  False),
++    ('hdmi_int_pn7',           None,          'in',      'down', False, True,  False, False),
++    ('ddc_scl_pv4',            'i2c4',        None,      'none', False, True,  False, False),
++    ('ddc_sda_pv5',            'i2c4',        None,      'none', False, True,  False, False),
++    ('spdif_out_pk5',          'rsvd2',       None,      'down', True,  False, False, False),
++    ('spdif_in_pk6',           None,          'out0',    'down', False, False, False, False),
++    ('usb_vbus_en0_pn4',       'usb',         None,      'none', False, True,  True,  False),
++    ('usb_vbus_en1_pn5',       'usb',         None,      'none', False, True,  True,  False),
++    ('dp_hpd_pff0',            'dp',          None,      'up',   False, True,  False, False),
++)
++
++drive_groups = (
++)
+-- 
+2.1.0.rc2.206.gedb03e5
