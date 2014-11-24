@@ -1,26 +1,54 @@
-From: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2] thermal:core:fix: Check return code of the
- ->get_max_state() callback
-Date: Mon, 24 Nov 2014 16:30:40 +0530
-Message-ID: <CAKohpok3pTEk05L7t+o6BYoODnBboAegg1o9dAj8=VOk8G7odQ@mail.gmail.com>
-References: <1415898165-27406-1-git-send-email-l.majewski@samsung.com>
-	<1416305790-27746-1-git-send-email-l.majewski@samsung.com>
-	<20141121180826.GA3331@developer>
-	<20141124113854.36975fb2@amdc2363>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Subject: [PATCH v2 0/3] Add support for Tegra Activity Monitor
+Date: Mon, 24 Nov 2014 13:28:15 +0100
+Message-ID: <1416832111-367-1-git-send-email-tomeu.vizoso@collabora.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20141124113854.36975fb2@amdc2363>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Zhang Rui <rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Ezequiel Garcia <ezequiel.garcia-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Kuninori Morimoto <kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>, Linux PM list <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Vincenzo Frascino <vincenzo.frascino-qxv4g6HH51o@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Lukasz Majewski <l.majewski-AM3owJQeAb5mR6Xm/wNWPw@public.gmane.org>, Nobuhiro Iwamatsu <iwamatsu-+mkmVskJBflAfugRpC6u6w@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 24 November 2014 at 16:08, Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> As I look into the cpufreq-dt.c driver - in the cpufreq_init()
-> function, the call to of_cpufreq_cooling_register() is performed just
-> before cpufreq_table_validate_and_show().
-> It looks like a mistake in the cpufreq-dt.c code.
+Hello,
 
-Yes. Just fixed it up and sent a patch. Please provide your
-tested-by's..
+in this v2 I have made the driver use devfreq. It works just as fine as the
+previous revision, but it's almost 200 lines more of code for not that much
+gain.
+
+Though I don't see much point in using devfreq, I think it's probably better
+than an ad-hoc driver because in the future I hope that devfreq will gain
+functionality that will be of use (PM_QOS_MEMORY_BANDWIDTH support, for
+example).
+
+These patches implement support for setting the rate of the EMC clock based on
+stats collected from the ACTMON, a piece of hw in the Tegra124 that counts
+memory accesses (among others).
+
+It depends on the following in-flight patches:
+
+* EMC driver: http://thread.gmane.org/gmane.linux.drivers.devicetree/99304
+* CPUFreq driver: http://thread.gmane.org/gmane.linux.kernel/1812962
+
+I have pushed a branch here for testing:
+
+http://cgit.collabora.com/git/user/tomeu/linux.git/log/?h=actmon-v2
+
+Regards,
+
+Tomeu
+
+Tomeu Vizoso (3):
+  of: Add binding for NVIDIA Tegra ACTMON node
+  PM / devfreq: tegra: add devfreq driver for Tegra Activity Monitor
+  ARM: tegra: Add Tegra124 ACTMON support
+
+ .../devicetree/bindings/arm/tegra/actmon.txt       |  38 ++
+ arch/arm/boot/dts/tegra124.dtsi                    |  23 +
+ drivers/devfreq/Kconfig                            |  10 +
+ drivers/devfreq/Makefile                           |   1 +
+ drivers/devfreq/tegra-devfreq.c                    | 718 +++++++++++++++++++++
+ 5 files changed, 790 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/tegra/actmon.txt
+ create mode 100644 drivers/devfreq/tegra-devfreq.c
+
+-- 
+1.9.3
