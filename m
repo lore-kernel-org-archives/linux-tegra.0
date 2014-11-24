@@ -1,31 +1,58 @@
-From: Andrew Bresticker <abrestic-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Subject: Re: [PATCH] Add support for Nyan
-Date: Mon, 24 Nov 2014 11:07:58 -0800
-Message-ID: <CAL1qeaG6cvKsrwtLnqWYYzdbe4jhGqGxi-DRxftWGYsHWE+T5A@mail.gmail.com>
-References: <1416757251-4588-1-git-send-email-sjg@chromium.org>
-	<547365FB.7010408@wwwdotorg.org>
+Date: Mon, 24 Nov 2014 12:31:49 -0700
+Message-ID: <547387A5.2060500@wwwdotorg.org>
+References: <1416757251-4588-1-git-send-email-sjg@chromium.org>	<547365FB.7010408@wwwdotorg.org> <CAL1qeaG6cvKsrwtLnqWYYzdbe4jhGqGxi-DRxftWGYsHWE+T5A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <547365FB.7010408-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <CAL1qeaG6cvKsrwtLnqWYYzdbe4jhGqGxi-DRxftWGYsHWE+T5A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Andrew Bresticker <abrestic-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Nov 24, 2014 at 9:08 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 11/23/2014 08:40 AM, Simon Glass wrote:
+On 11/24/2014 12:07 PM, Andrew Bresticker wrote:
+> On Mon, Nov 24, 2014 at 9:08 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>> On 11/23/2014 08:40 AM, Simon Glass wrote:
+>>>
+>>> Add support for Tegra124 Nyan. Pinmux is based on norrin with a single
+>>> change for the reset GPIO.
 >>
->> Add support for Tegra124 Nyan. Pinmux is based on norrin with a single
->> change for the reset GPIO.
+>> Allen, can you please confirm the reset GPIO setting for Norrin in the
+>> pinmux patch you sent? It seems as if the two boards truly are this
+>> identical, the reset pin would be too.
 >
-> Allen, can you please confirm the reset GPIO setting for Norrin in the
-> pinmux patch you sent? It seems as if the two boards truly are this
-> identical, the reset pin would be too.
+> Well Nyan and Norrin *are* identical - they're different names for the
+> same board.
 
-Well Nyan and Norrin *are* identical - they're different names for the
-same board.  It seems from the other patches though that this is for
-Big (in which case the name of the config file should reflect that).
-Either way, the reset GPIO (PI5) is configured the same across all
-Nyan-based boards (Nyan/Norrin, Big, Blaze, Kitty) and I believe what
-Simon has here is correct.
+Oh. It's a bit of an epic fail to have multiple names for the exact same 
+thing:-(
+
+When you say Nyan, are you talking about Nyan the family of boards (of 
+which Big is one member), or do you consider Nyan to be a single board? 
+Olof previously told me that Nyan was a family, of which Big was a 
+member. So, I'm not sure if Norrin is another name for the family, or 
+another name for a specific member.
+
+> It seems from the other patches though that this is for
+> Big (in which case the name of the config file should reflect that).
+
+Yes. All of the kernel, U-Boot, and tegra-pinmux-scripts (and 
+tegra-uboot-flasher if relevant) should use the exact same name for the 
+board. If what's currently known as Norrin in tegra-pinmux-scripts 
+should actually be called Nyan or Nyan-big, we should rename it.
+
+> Either way, the reset GPIO (PI5) is configured the same across all
+> Nyan-based boards (Nyan/Norrin, Big, Blaze, Kitty) and I believe what
+> Simon has here is correct.
+
+If the entire pinmux identical across all of those boards too, or does 
+it just happen that's true for this one pin?
+
+Hopefully Allen can comment on why the current Norrin values in 
+tegra-pinmux-scripts differ then. I do recall that Venice2 had a similar 
+issue, where the spreadsheet was actually wrong and SW had been fixed 
+without updating the spreadsheet (grrr...) Perhaps the situation here is 
+that simple too.
