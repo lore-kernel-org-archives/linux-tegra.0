@@ -1,59 +1,45 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [PATCH v2 3/3] ARM: tegra: Add Tegra124 ACTMON support
-Date: Mon, 24 Nov 2014 13:28:18 +0100
-Message-ID: <1416832111-367-4-git-send-email-tomeu.vizoso@collabora.com>
-References: <1416832111-367-1-git-send-email-tomeu.vizoso@collabora.com>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [PATCH v2] thermal:core:fix: Check return code of the
+ ->get_max_state() callback
+Date: Mon, 24 Nov 2014 15:24:49 +0100
+Message-ID: <20141124152449.595d5d34@amdc2363>
+References: <1415898165-27406-1-git-send-email-l.majewski@samsung.com>
+ <1416305790-27746-1-git-send-email-l.majewski@samsung.com>
+ <20141121180826.GA3331@developer> <20141124113854.36975fb2@amdc2363>
+ <CAKohpok3pTEk05L7t+o6BYoODnBboAegg1o9dAj8=VOk8G7odQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1416832111-367-1-git-send-email-tomeu.vizoso@collabora.com>
+In-reply-to: <CAKohpok3pTEk05L7t+o6BYoODnBboAegg1o9dAj8=VOk8G7odQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-pm@vger.kernel.org
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linux PM list <linux-pm@vger.kernel.org>, Vincenzo Frascino <vincenzo.frascino@st.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Nobuhiro Iwamatsu <iwamatsu@nigauri.org>, Mikko Perttunen <mperttunen@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add device node for the ACTMON block to the Tegra124 device tree.
+Hi Viresh,
 
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> On 24 November 2014 at 16:08, Lukasz Majewski
+> <l.majewski@samsung.com> wrote:
+> > As I look into the cpufreq-dt.c driver - in the cpufreq_init()
+> > function, the call to of_cpufreq_cooling_register() is performed
+> > just before cpufreq_table_validate_and_show().
+> > It looks like a mistake in the cpufreq-dt.c code.
+> 
+> Yes. Just fixed it up and sent a patch. Please provide your
+> tested-by's..
 
----
+Thanks for your prompt response. I don't have board which uses both
+of-thermal.c and cpufreq-dt.c (exynos uses old approach for cpufreq).
 
-v2:     * Add operating-points property
----
- arch/arm/boot/dts/tegra124.dtsi | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+I think that Eduardo may have some boards for testing.
 
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index dfc476b..8b19f4c 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -215,6 +215,29 @@
- 		reg = <0x0 0x60007000 0x0 0x1000>;
- 	};
- 
-+	actmon@0,6000c800 {
-+		compatible = "nvidia,tegra124-actmon";
-+		reg = <0x0 0x6000c800 0x0 0x400>;
-+		interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA124_CLK_ACTMON>,
-+			 <&tegra_car TEGRA124_CLK_EMC>;
-+		clock-names = "actmon", "emc";
-+		resets = <&tegra_car 119>;
-+		reset-names = "actmon";
-+		operating-points = <
-+			/* KHz	uV */
-+			/* TODO: Add more points below 102 MHz */
-+			102000	800000
-+			204000	800000
-+			300000	820000
-+			396000	850000
-+			528000	880000
-+			600000	910000
-+			792000	980000
-+			924000	1010000
-+		>;
-+	};
-+
- 	gpio: gpio@0,6000d000 {
- 		compatible = "nvidia,tegra124-gpio", "nvidia,tegra30-gpio";
- 		reg = <0x0 0x6000d000 0x0 0x1000>;
+Regarding the patch:
+Reviewed-by: Lukasz Majewski <l.majewski@samsung.com>
+
 -- 
-1.9.3
+Best regards,
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
