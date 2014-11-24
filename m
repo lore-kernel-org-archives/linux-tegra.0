@@ -1,82 +1,72 @@
-From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH] Add support for Nyan
-Date: Mon, 24 Nov 2014 13:13:48 -0800
-Message-ID: <CAL1qeaGD9J+p=JoTPX5GuSmcZ2YnqbWExL-o5XuVfCZKdS0Bgw@mail.gmail.com>
-References: <1416757251-4588-1-git-send-email-sjg@chromium.org>
-	<547365FB.7010408@wwwdotorg.org>
-	<CAL1qeaG6cvKsrwtLnqWYYzdbe4jhGqGxi-DRxftWGYsHWE+T5A@mail.gmail.com>
-	<547387A5.2060500@wwwdotorg.org>
+From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Subject: Re: serial: of-serial: fetch line number from DT
+Date: Mon, 24 Nov 2014 22:41:39 +0100
+Message-ID: <1416865299.2180.1.camel@lynxeye.de>
+References: <CAOesGMjzs=dThDv6S8Xvo+ym-XECaQhTQ8NV6t46fQZ1LoJnHw@mail.gmail.com>
+	 <20141111052407.GB24727@kroah.com>
+	 <CAOesGMhe8orqL6wSiouQvdM8y4N44p12n7M1opraSkAP=3ZB+A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <547387A5.2060500-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <CAOesGMhe8orqL6wSiouQvdM8y4N44p12n7M1opraSkAP=3ZB+A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Nov 24, 2014 at 11:31 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 11/24/2014 12:07 PM, Andrew Bresticker wrote:
->>
->> On Mon, Nov 24, 2014 at 9:08 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
->> wrote:
->>>
->>> On 11/23/2014 08:40 AM, Simon Glass wrote:
->>>>
->>>>
->>>> Add support for Tegra124 Nyan. Pinmux is based on norrin with a single
->>>> change for the reset GPIO.
->>>
->>>
->>> Allen, can you please confirm the reset GPIO setting for Norrin in the
->>> pinmux patch you sent? It seems as if the two boards truly are this
->>> identical, the reset pin would be too.
->>
->>
->> Well Nyan and Norrin *are* identical - they're different names for the
->> same board.
->
->
-> Oh. It's a bit of an epic fail to have multiple names for the exact same
-> thing:-(
->
-> When you say Nyan, are you talking about Nyan the family of boards (of which
-> Big is one member), or do you consider Nyan to be a single board? Olof
-> previously told me that Nyan was a family, of which Big was a member. So,
-> I'm not sure if Norrin is another name for the family, or another name for a
-> specific member.
+Hi Greg,
 
-When I said Nyan above, I meant the actual Nyan board (which is also
-known as Norrin).  The Nyan family of boards is composed of Nyan (aka
-Norrin), Big (Acer Chromebook, which I believe this patch is referring
-to), Blaze, and Kitty.
+Am Dienstag, den 11.11.2014, 08:51 -0800 schrieb Olof Johansson:
+> On Mon, Nov 10, 2014 at 9:24 PM, Greg Kroah-Hartman
+> <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org> wrote:
+> > On Mon, Nov 10, 2014 at 01:34:19PM -0800, Olof Johansson wrote:
+> >> Greg,
+> >>
+> >> This commit:
+> >>
+> >> commit 1bd8324535ec1ff44aef55c0e40b9e7d56b310fb
+> >> Author: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+> >> Date:   Mon Nov 3 23:16:54 2014 +0100
+> >>
+> >>     serial: of-serial: fetch line number from DT
+> >>
+> >>     The general agreed way to specify a fixed line number
+> >>     for a serial console is to provide a "serial" alias
+> >>     in the devicetree. Start parsing this property in
+> >>     of_serial.
+> >>
+> >>     Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+> >>     Signed-off-by: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+> >>
+> >>
+> >> Broke a whole lot of tegra boards in last night's -next here. In
+> >> particular, I've been looking at tegra20-seaboard, which now doesn't
+> >> boot with console any more.
+> >>
+> >> http://arm-soc.lixom.net/bootlogs/next/next-20141110/
+> >>
+> >> Unfortunately, tegra has for a long time been specifying the aliases
+> >> as a fixed 1:1 mapping, but most environments rely on ttyS0 being the
+> >> first _activated_ serial port. That's obviously going to break things
+> >> here. :(
+> >>
+> >> Greg, can you please revert until we get the tegra-side fixes in for
+> >> this, or we're in for a pretty lousy time w.r.t. bisecting problems
+> >> across the two mergepoints?
+> >>
+> >> Stephen: I suppose the best way to handle this on tegra is to specify
+> >> the aliases per-board instead of in the soc dtsi today.
+> >>
+> >> Apologies for not replying to the patch directly -- it was only ever
+> >> posted to linux-serial and I don't seem to be subscribed.
+> >
+> > Now reverted, sorry for the problems.
+> 
+> No worries, it's what linux-next is for. Thanks for the revert!
+> 
+As 3.18-rc6 now landed the fix to avoid the regression on Tegra would
+you please consider reapplying this patch?
 
->> It seems from the other patches though that this is for
->> Big (in which case the name of the config file should reflect that).
->
->
-> Yes. All of the kernel, U-Boot, and tegra-pinmux-scripts (and
-> tegra-uboot-flasher if relevant) should use the exact same name for the
-> board. If what's currently known as Norrin in tegra-pinmux-scripts should
-> actually be called Nyan or Nyan-big, we should rename it.
-
-No, the Norrin one is fine (other than the possible error Simon
-mentioned).  Calling it Nyan would be fine too.
-
-The file in this patch should be called Big or Nyan-Big, since it is
-for the Acer Chromebook.
-
->> Either way, the reset GPIO (PI5) is configured the same across all
->> Nyan-based boards (Nyan/Norrin, Big, Blaze, Kitty) and I believe what
->> Simon has here is correct.
->
->
-> If the entire pinmux identical across all of those boards too, or does it
-> just happen that's true for this one pin?
-
-There are slight pinmux differences between the boards.  The only one
-I'm aware of between Nyan (Norrin) and Nyan-Big is that the sense of
-the SD write-protect GPIO (Q4) is reversed.  I don't think that the
-matters for this config file though, so technically they could share
-it.  Perhaps it's best to keep them separate though since they are
-separate boards.
+Regards,
+Lucas
