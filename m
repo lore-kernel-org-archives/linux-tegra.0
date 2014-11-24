@@ -1,72 +1,58 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: Re: serial: of-serial: fetch line number from DT
-Date: Mon, 24 Nov 2014 22:41:39 +0100
-Message-ID: <1416865299.2180.1.camel@lynxeye.de>
-References: <CAOesGMjzs=dThDv6S8Xvo+ym-XECaQhTQ8NV6t46fQZ1LoJnHw@mail.gmail.com>
-	 <20141111052407.GB24727@kroah.com>
-	 <CAOesGMhe8orqL6wSiouQvdM8y4N44p12n7M1opraSkAP=3ZB+A@mail.gmail.com>
+From: Paul Walmsley <pwalmsley@nvidia.com>
+Subject: Tegra baseline test results for v3.18-rc6
+Date: Mon, 24 Nov 2014 14:49:58 -0700
+Message-ID: <5473A806.6020302@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAOesGMhe8orqL6wSiouQvdM8y4N44p12n7M1opraSkAP=3ZB+A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, kernel-build-reports@lists.linaro.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Greg,
+Here are some basic Tegra test results for Linux v3.18-rc6.
+Logs and other details at:
 
-Am Dienstag, den 11.11.2014, 08:51 -0800 schrieb Olof Johansson:
-> On Mon, Nov 10, 2014 at 9:24 PM, Greg Kroah-Hartman
-> <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org> wrote:
-> > On Mon, Nov 10, 2014 at 01:34:19PM -0800, Olof Johansson wrote:
-> >> Greg,
-> >>
-> >> This commit:
-> >>
-> >> commit 1bd8324535ec1ff44aef55c0e40b9e7d56b310fb
-> >> Author: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-> >> Date:   Mon Nov 3 23:16:54 2014 +0100
-> >>
-> >>     serial: of-serial: fetch line number from DT
-> >>
-> >>     The general agreed way to specify a fixed line number
-> >>     for a serial console is to provide a "serial" alias
-> >>     in the devicetree. Start parsing this property in
-> >>     of_serial.
-> >>
-> >>     Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-> >>     Signed-off-by: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-> >>
-> >>
-> >> Broke a whole lot of tegra boards in last night's -next here. In
-> >> particular, I've been looking at tegra20-seaboard, which now doesn't
-> >> boot with console any more.
-> >>
-> >> http://arm-soc.lixom.net/bootlogs/next/next-20141110/
-> >>
-> >> Unfortunately, tegra has for a long time been specifying the aliases
-> >> as a fixed 1:1 mapping, but most environments rely on ttyS0 being the
-> >> first _activated_ serial port. That's obviously going to break things
-> >> here. :(
-> >>
-> >> Greg, can you please revert until we get the tegra-side fixes in for
-> >> this, or we're in for a pretty lousy time w.r.t. bisecting problems
-> >> across the two mergepoints?
-> >>
-> >> Stephen: I suppose the best way to handle this on tegra is to specify
-> >> the aliases per-board instead of in the soc dtsi today.
-> >>
-> >> Apologies for not replying to the patch directly -- it was only ever
-> >> posted to linux-serial and I don't seem to be subscribed.
-> >
-> > Now reverted, sorry for the problems.
-> 
-> No worries, it's what linux-next is for. Thanks for the revert!
-> 
-As 3.18-rc6 now landed the fix to avoid the regression on Tegra would
-you please consider reapplying this patch?
+     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.18-rc6/20141123160102/
 
-Regards,
-Lucas
+
+Test summary
+------------
+
+Build: zImage:
+     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Boot to userspace: multi_v7_defconfig:
+     Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+     Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v3.18-rc5 (fc14f9c1272f62c3e8d01300f52467c0d9af50f9)):
+    text     data      bss    total  kernel
+   +9544     +192        0    +9736  multi_v7_defconfig
+    +468      -16        0     +452  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v3.18-rc5 (fc14f9c1272f62c3e8d01300f52467c0d9af50f9))
+     avail    rsrvd     high    freed                board              kconfig                  dtb
+       -8k       8k        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+         .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+       -8k       8k        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+         .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+       -8k       8k        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+         .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
