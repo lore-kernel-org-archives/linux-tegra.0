@@ -1,115 +1,86 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH 1/2] staging: android: ion: Deletion of unnecessary checks
- before two function calls
-Date: Sun, 23 Nov 2014 19:39:23 +0100
-Message-ID: <547229DB.8030606@users.sourceforge.net>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <54722893.6020301@users.sourceforge.net>
+From: Jassi Brar <jaswinder.singh-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V5 05/12] mailbox: Add NVIDIA Tegra XUSB mailbox driver
+Date: Mon, 24 Nov 2014 14:04:49 +0530
+Message-ID: <CAJe_ZhdTvZZqERttAM_o6U6MZCOjk=oXpWFPf8W=DdW1j=Nx=g@mail.gmail.com>
+References: <1416264102-1323-1-git-send-email-abrestic@chromium.org>
+	<1416264102-1323-6-git-send-email-abrestic@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <54722893.6020301@users.sourceforge.net>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, devel@driverdev.osuosl.org, linux-tegra@vger.kernel.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1416264102-1323-6-git-send-email-abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Devicetree List <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, lkml <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>Kumar Gala <g>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 23 Nov 2014 18:48:15 +0100
+On 18 November 2014 at 04:11, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
 
-The functions ion_heap_destroy() and vfree() perform also input
-parameter validation. Thus the test around the call is not needed.
+> +
+> +static int tegra_xusb_mbox_send_data(struct mbox_chan *chan, void *data)
+> +{
+> +       struct tegra_xusb_mbox *mbox = to_tegra_mbox(chan->mbox);
+> +       struct tegra_xusb_mbox_msg *msg = data;
+> +       unsigned long flags;
+> +       u32 reg, owner;
+> +
+> +       dev_dbg(mbox->mbox.dev, "TX message %#x:%#x\n", msg->cmd, msg->data);
+> +
+> +       /* ACK/NAK must be sent with the controller as the mailbox owner */
+> +       if (msg->cmd == MBOX_CMD_ACK || msg->cmd == MBOX_CMD_NAK)
+> +               owner = MBOX_OWNER_FW;
+> +       else
+> +               owner = MBOX_OWNER_SW;
+> +
+> +       spin_lock_irqsave(&mbox->lock, flags);
+> +
+> +       /* Acquire mailbox */
+> +       if (mbox_readl(mbox, XUSB_CFG_ARU_MBOX_OWNER) != MBOX_OWNER_NONE) {
+> +               dev_err(mbox->mbox.dev, "Mailbox not idle\n");
+> +               goto busy;
+> +       }
+> +       mbox_writel(mbox, owner, XUSB_CFG_ARU_MBOX_OWNER);
+> +       if (mbox_readl(mbox, XUSB_CFG_ARU_MBOX_OWNER) != owner) {
+> +               dev_err(mbox->mbox.dev, "Failed to acquire mailbox");
+> +               goto busy;
+> +       }
+> +
+> +       mbox_writel(mbox, mbox_pack_msg(msg), XUSB_CFG_ARU_MBOX_DATA_IN);
+> +       reg = mbox_readl(mbox, XUSB_CFG_ARU_MBOX_CMD);
+> +       reg |= MBOX_INT_EN | MBOX_DEST_FALC;
+> +       mbox_writel(mbox, reg, XUSB_CFG_ARU_MBOX_CMD);
+> +
+> +       spin_unlock_irqrestore(&mbox->lock, flags);
+> +
+> +       return 0;
+> +busy:
+> +       spin_unlock_irqrestore(&mbox->lock, flags);
+> +       return -EBUSY;
+> +}
+> +
+> +static int tegra_xusb_mbox_startup(struct mbox_chan *chan)
+> +{
+> +       return 0;
+> +}
+> +
+> +static void tegra_xusb_mbox_shutdown(struct mbox_chan *chan)
+> +{
+> +}
+> +
+> +static bool tegra_xusb_mbox_last_tx_done(struct mbox_chan *chan)
+> +{
+> +       /*
+> +        * Transmissions are assumed to be completed as soon as they are
+> +        * written to the mailbox.
+> +        */
+> +       return true;
+>
+In .send_data() you you mark the channel busy by setting the
+XUSB_CFG_ARU_MBOX_OWNER to !MBOX_OWNER_NONE, which remains so until
+you get an IRQ. So maybe you should check for the OWNER_NONE flag in
+.last_tx_done()?
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/staging/android/ion/ion.c              | 6 ++----
- drivers/staging/android/ion/ion_dummy_driver.c | 6 ++----
- drivers/staging/android/ion/tegra/tegra_ion.c  | 6 ++----
- 3 files changed, 6 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
-index 2703609..df12cc3 100644
---- a/drivers/staging/android/ion/ion.c
-+++ b/drivers/staging/android/ion/ion.c
-@@ -263,8 +263,7 @@ err:
- 	heap->ops->unmap_dma(heap, buffer);
- 	heap->ops->free(buffer);
- err1:
--	if (buffer->pages)
--		vfree(buffer->pages);
-+	vfree(buffer->pages);
- err2:
- 	kfree(buffer);
- 	return ERR_PTR(ret);
-@@ -276,8 +275,7 @@ void ion_buffer_destroy(struct ion_buffer *buffer)
- 		buffer->heap->ops->unmap_kernel(buffer->heap, buffer);
- 	buffer->heap->ops->unmap_dma(buffer->heap, buffer);
- 	buffer->heap->ops->free(buffer);
--	if (buffer->pages)
--		vfree(buffer->pages);
-+	vfree(buffer->pages);
- 	kfree(buffer);
- }
- 
-diff --git a/drivers/staging/android/ion/ion_dummy_driver.c b/drivers/staging/android/ion/ion_dummy_driver.c
-index 3a45e79..d06bf52 100644
---- a/drivers/staging/android/ion/ion_dummy_driver.c
-+++ b/drivers/staging/android/ion/ion_dummy_driver.c
-@@ -112,10 +112,8 @@ static int __init ion_dummy_init(void)
- 	}
- 	return 0;
- err:
--	for (i = 0; i < dummy_ion_pdata.nr; i++) {
--		if (heaps[i])
--			ion_heap_destroy(heaps[i]);
--	}
-+	for (i = 0; i < dummy_ion_pdata.nr; ++i)
-+		ion_heap_destroy(heaps[i]);
- 	kfree(heaps);
- 
- 	if (carveout_ptr) {
-diff --git a/drivers/staging/android/ion/tegra/tegra_ion.c b/drivers/staging/android/ion/tegra/tegra_ion.c
-index 11c7cce..5b8ef0e 100644
---- a/drivers/staging/android/ion/tegra/tegra_ion.c
-+++ b/drivers/staging/android/ion/tegra/tegra_ion.c
-@@ -54,10 +54,8 @@ static int tegra_ion_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, idev);
- 	return 0;
- err:
--	for (i = 0; i < num_heaps; i++) {
--		if (heaps[i])
--			ion_heap_destroy(heaps[i]);
--	}
-+	for (i = 0; i < num_heaps; ++i)
-+		ion_heap_destroy(heaps[i]);
- 	return err;
- }
- 
--- 
-2.1.3
+-Jassi
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
