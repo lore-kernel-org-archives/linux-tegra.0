@@ -1,58 +1,69 @@
-From: Paul Walmsley <pwalmsley@nvidia.com>
-Subject: Tegra baseline test results for v3.18-rc6
-Date: Mon, 24 Nov 2014 14:49:58 -0700
-Message-ID: <5473A806.6020302@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] Add support for Nyan
+Date: Mon, 24 Nov 2014 14:53:55 -0700
+Message-ID: <5473A8F3.4030202@wwwdotorg.org>
+References: <1416757251-4588-1-git-send-email-sjg@chromium.org>	<547365FB.7010408@wwwdotorg.org>	<CAL1qeaG6cvKsrwtLnqWYYzdbe4jhGqGxi-DRxftWGYsHWE+T5A@mail.gmail.com>	<547387A5.2060500@wwwdotorg.org> <CAL1qeaGD9J+p=JoTPX5GuSmcZ2YnqbWExL-o5XuVfCZKdS0Bgw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, kernel-build-reports@lists.linaro.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAL1qeaGD9J+p=JoTPX5GuSmcZ2YnqbWExL-o5XuVfCZKdS0Bgw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v3.18-rc6.
-Logs and other details at:
+On 11/24/2014 02:13 PM, Andrew Bresticker wrote:
+> On Mon, Nov 24, 2014 at 11:31 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>> On 11/24/2014 12:07 PM, Andrew Bresticker wrote:
+>>>
+>>> On Mon, Nov 24, 2014 at 9:08 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+>>> wrote:
+>>>>
+>>>> On 11/23/2014 08:40 AM, Simon Glass wrote:
+>>>>>
+>>>>>
+>>>>> Add support for Tegra124 Nyan. Pinmux is based on norrin with a single
+>>>>> change for the reset GPIO.
+>>>>
+>>>>
+>>>> Allen, can you please confirm the reset GPIO setting for Norrin in the
+>>>> pinmux patch you sent? It seems as if the two boards truly are this
+>>>> identical, the reset pin would be too.
+>>>
+>>>
+>>> Well Nyan and Norrin *are* identical - they're different names for the
+>>> same board.
+>>
+>>
+>> Oh. It's a bit of an epic fail to have multiple names for the exact same
+>> thing:-(
+>>
+>> When you say Nyan, are you talking about Nyan the family of boards (of which
+>> Big is one member), or do you consider Nyan to be a single board? Olof
+>> previously told me that Nyan was a family, of which Big was a member. So,
+>> I'm not sure if Norrin is another name for the family, or another name for a
+>> specific member.
+>
+> When I said Nyan above, I meant the actual Nyan board (which is also
+> known as Norrin).  The Nyan family of boards is composed of Nyan (aka
+> Norrin), Big (Acer Chromebook, which I believe this patch is referring
+> to), Blaze, and Kitty.
+>
+>>> It seems from the other patches though that this is for
+>>> Big (in which case the name of the config file should reflect that).
+>>
+>>
+>> Yes. All of the kernel, U-Boot, and tegra-pinmux-scripts (and
+>> tegra-uboot-flasher if relevant) should use the exact same name for the
+>> board. If what's currently known as Norrin in tegra-pinmux-scripts should
+>> actually be called Nyan or Nyan-big, we should rename it.
+>
+> No, the Norrin one is fine (other than the possible error Simon
+> mentioned).  Calling it Nyan would be fine too.
+>
+> The file in this patch should be called Big or Nyan-Big, since it is
+> for the Acer Chromebook.
 
-     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.18-rc6/20141123160102/
-
-
-Test summary
-------------
-
-Build: zImage:
-     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
-
-Boot to userspace: multi_v7_defconfig:
-     Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-     Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra30-beaver
-
-
-vmlinux object size
-(delta in bytes from test_v3.18-rc5 (fc14f9c1272f62c3e8d01300f52467c0d9af50f9)):
-    text     data      bss    total  kernel
-   +9544     +192        0    +9736  multi_v7_defconfig
-    +468      -16        0     +452  tegra_defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v3.18-rc5 (fc14f9c1272f62c3e8d01300f52467c0d9af50f9))
-     avail    rsrvd     high    freed                board              kconfig                  dtb
-       -8k       8k        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-         .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-       -8k       8k        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-         .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-       -8k       8k        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-         .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+Please let's call it nyan-big not just big, since the DT file in the 
+kernel is nyan-big not just nyan.
