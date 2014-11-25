@@ -1,24 +1,33 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v2] thermal:core:fix: Check return code of the
- ->get_max_state() callback
-Date: Tue, 25 Nov 2014 16:16:24 +0530
-Message-ID: <CAKohpomfdVdpnrg9zS-9a8M9pK7c3P=VTckSQ8v8wjqayO-HMQ@mail.gmail.com>
-References: <1415898165-27406-1-git-send-email-l.majewski@samsung.com>
-	<1416305790-27746-1-git-send-email-l.majewski@samsung.com>
-	<20141121180826.GA3331@developer>
-	<20141124113854.36975fb2@amdc2363>
-	<CAKohpok3pTEk05L7t+o6BYoODnBboAegg1o9dAj8=VOk8G7odQ@mail.gmail.com>
-	<20141124152449.595d5d34@amdc2363>
+From: Jassi Brar <jaswinder.singh-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V6 00/12] Tegra xHCI support
+Date: Tue, 25 Nov 2014 19:02:22 +0530
+Message-ID: <CAJe_Zhcz=WOLy0_98xRj6=i2+5MFeXQGPmYJhnpy1NfUEPJ-0w@mail.gmail.com>
+References: <1416874644-12070-1-git-send-email-abrestic@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20141124152449.595d5d34@amdc2363>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linux PM list <linux-pm@vger.kernel.org>, Vincenzo Frascino <vincenzo.frascino@st.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Nobuhiro Iwamatsu <iwamatsu@nigauri.org>, Mikko Perttunen <mperttunen@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1416874644-12070-1-git-send-email-abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Devicetree List <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, lkml <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kumar Gala <galak@codeau>
 List-Id: linux-tegra@vger.kernel.org
 
-On 24 November 2014 at 19:54, Lukasz Majewski <l.majewski@samsung.com> wrote:
-> Reviewed-by: Lukasz Majewski <l.majewski@samsung.com>
+On 25 November 2014 at 05:47, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+> This series adds support for xHCI on NVIDIA Tegra SoCs.  This includes:
+>  - patches 1, 2, and 3: minor cleanups for mailbox framework and xHCI,
+>  - patches 4 and 5: adding a driver for the mailbox used to communicate
+>    with the xHCI controller's firmware,
+>  - patches 6 and 7: extending the XUSB pad controller driver to support
+>    the USB PHY types (UTMI, HSIC, and USB3),
+>  - patches 8 and 9: adding a xHCI host-controller driver, and
+>  - patches 10, 11, and 12: updating the relevant DT files.
+>
+> The mailbox driver (patch 5) has a compile-time dependency on patch 2 and
+> a run-time dependency on patch 3.  Both the PHY (patch 7) and host (patch 9)
+> drivers have compile-time dependencies on the mailbox driver.  The host
+> driver also has a run-time dependency on patch 1.  Because of this, this
+> entire series should probably go through the Tegra tree.
+>
+Why shouldn't I pick 2 & 3 at least?
 
-Would be better if you send it as reply to that one.
+-Jassi
