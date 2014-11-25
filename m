@@ -1,92 +1,107 @@
 From: Andrew Bresticker <abrestic@chromium.org>
-Subject: [PATCH V6 01/12] xhci: Set shared HCD's hcd_priv in xhci_gen_setup
-Date: Mon, 24 Nov 2014 16:17:13 -0800
-Message-ID: <1416874644-12070-2-git-send-email-abrestic@chromium.org>
+Subject: [PATCH V6 10/12] ARM: tegra: jetson-tk1: Add xHCI support
+Date: Mon, 24 Nov 2014 16:17:22 -0800
+Message-ID: <1416874644-12070-11-git-send-email-abrestic@chromium.org>
 References: <1416874644-12070-1-git-send-email-abrestic@chromium.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1416874644-12070-1-git-send-email-abrestic@chromium.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-usb@vger.kernel.org, Mathias Nyman <mathias.nyman@intel.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Andrew Bresticker <abrestic@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Jassi Brar <jassisinghbrar@gmail.com>, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Kishon Vijay Abraham I <kishon@ti.com>, Olof Johansson <olof@lixom.net>, Rob Herring <robh+dt@kernel.org>, Alan Stern <stern@rowland.harvard.edu>, linux-arm-kernel@lists.infradead.org, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: Andrew Bresticker <abrestic@chromium.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Jassi Brar <jassisinghbrar@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman <mathias.nyman@intel.com>, Grant Likely <grant.likely@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kishon Vijay Abraham I <kishon@ti.com>, Felipe Balbi <balbi@ti.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-xhci_gen_setup() sets the hcd_priv field for the primary HCD, but not
-for the shared HCD, requiring xHCI host-controller drivers to set it
-between usb_create_shared_hcd() and usb_add_hcd().  There's no reason
-xhci_gen_setup() can't set the shared HCD's hcd_priv as well, so move
-that bit out of the host-controller drivers and into xhci_gen_setup().
+Assign USB ports previously owned by the EHCI controllers to the xHCI
+controller.  There is a mini-PCIe USB port (UTMI port 1) and a USB A
+connector (UTMI port 2, USB3 port 0).  PCIe lane 0 is used for USB3
+port 0.
 
 Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-Reviewed-by: Felipe Balbi <balbi@ti.com>
+Reviewed-by: Stephen Warren <swarren@nvidia.com>
 ---
 No changes from v5.
-New for v5.
-Peviously posted here: https://lkml.org/lkml/2014/10/30/726
+Changes from v4:
+ - Updated regulator and pinconfig properties.
+Changes from v3:
+ - Assigned otg-0 to XUSB to avoid USB2.0 flakiness.
+Changes from v2:
+ - Updated VBUS power supply names.
+Changes from v1:
+ - Updated USB power supplies.
 ---
- drivers/usb/host/xhci-pci.c  | 5 -----
- drivers/usb/host/xhci-plat.c | 5 -----
- drivers/usb/host/xhci.c      | 6 +++---
- 3 files changed, 3 insertions(+), 13 deletions(-)
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts | 46 +++++++++++++++++--------------
+ 1 file changed, 26 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
-index 9a69b1f..31025e4 100644
---- a/drivers/usb/host/xhci-pci.c
-+++ b/drivers/usb/host/xhci-pci.c
-@@ -221,11 +221,6 @@ static int xhci_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
- 		goto dealloc_usb2_hcd;
- 	}
+diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+index 51b373f..be93710 100644
+--- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
++++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+@@ -1687,15 +1687,40 @@
+ 		target-12v-supply = <&vdd_12v0_sata>;
+ 	};
  
--	/* Set the xHCI pointer before xhci_pci_setup() (aka hcd_driver.reset)
--	 * is called by usb_add_hcd().
--	 */
--	*((struct xhci_hcd **) xhci->shared_hcd->hcd_priv) = xhci;
--
- 	retval = usb_add_hcd(xhci->shared_hcd, dev->irq,
- 			IRQF_SHARED);
- 	if (retval)
-diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-index 3d78b0c..5bc33bc 100644
---- a/drivers/usb/host/xhci-plat.c
-+++ b/drivers/usb/host/xhci-plat.c
-@@ -149,11 +149,6 @@ static int xhci_plat_probe(struct platform_device *pdev)
- 	if ((node && of_property_read_bool(node, "usb3-lpm-capable")) ||
- 			(pdata && pdata->usb3_lpm_capable))
- 		xhci->quirks |= XHCI_LPM_SUPPORT;
--	/*
--	 * Set the xHCI pointer before xhci_plat_setup() (aka hcd_driver.reset)
--	 * is called by usb_add_hcd().
--	 */
--	*((struct xhci_hcd **) xhci->shared_hcd->hcd_priv) = xhci;
- 
- 	if (HCC_MAX_PSA(xhci->hcc_params) >= 4)
- 		xhci->shared_hcd->can_do_streams = 1;
-diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-index 2a5d45b..ae05471 100644
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -4843,9 +4843,9 @@ int xhci_gen_setup(struct usb_hcd *hcd, xhci_get_quirks_t get_quirks)
- 		 */
- 		hcd->has_tt = 1;
- 	} else {
--		/* xHCI private pointer was set in xhci_pci_probe for the second
--		 * registered roothub.
--		 */
-+		xhci = hcd_to_xhci(hcd->primary_hcd);
-+		*((struct xhci_hcd **) hcd->hcd_priv) = xhci;
++	usb@0,70090000 {
++		status = "okay";
++		phys = <&padctl TEGRA_XUSB_PADCTL_UTMI_P1>, /* mini-PCIe USB */
++		       <&padctl TEGRA_XUSB_PADCTL_UTMI_P2>, /* USB A */
++		       <&padctl TEGRA_XUSB_PADCTL_USB3_P0>; /* USB A */
++		phy-names = "utmi-1", "utmi-2", "usb3-0";
++		avddio-pex-supply = <&vdd_1v05_run>;
++		dvddio-pex-supply = <&vdd_1v05_run>;
++		avdd-usb-supply = <&vdd_3v3_lp0>;
++		avdd-pll-utmip-supply = <&vddio_1v8>;
++		avdd-pll-erefe-supply = <&avdd_1v05_run>;
++		avdd-usb-ss-pll-supply = <&vdd_1v05_run>;
++		hvdd-usb-ss-supply = <&vdd_3v3_lp0>;
++		hvdd-usb-ss-pll-e-supply = <&vdd_3v3_lp0>;
++	};
 +
- 		return 0;
- 	}
+ 	padctl@0,7009f000 {
+ 		pinctrl-0 = <&padctl_default>;
+ 		pinctrl-names = "default";
  
++		vbus-2-supply = <&vdd_usb3_vbus>;
++
+ 		padctl_default: pinmux {
++			otg {
++				nvidia,lanes = "otg-0", "otg-1", "otg-2";
++				nvidia,function = "xusb";
++			};
++
+ 			usb3 {
+-				nvidia,lanes = "pcie-0", "pcie-1";
++				nvidia,lanes = "pcie-0";
+ 				nvidia,function = "usb3";
+ 				nvidia,iddq = <0>;
++				nvidia,usb2-port = <2>;
++				nvidia,usb3-port = <0>;
+ 			};
+ 
+ 			pcie {
+@@ -1736,25 +1761,6 @@
+ 		};
+ 	};
+ 
+-	/* mini-PCIe USB */
+-	usb@0,7d004000 {
+-		status = "okay";
+-	};
+-
+-	usb-phy@0,7d004000 {
+-		status = "okay";
+-	};
+-
+-	/* USB A connector */
+-	usb@0,7d008000 {
+-		status = "okay";
+-	};
+-
+-	usb-phy@0,7d008000 {
+-		status = "okay";
+-		vbus-supply = <&vdd_usb3_vbus>;
+-	};
+-
+ 	clocks {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
 -- 
 2.1.0.rc2.206.gedb03e5
