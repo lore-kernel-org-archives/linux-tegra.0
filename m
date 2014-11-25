@@ -1,35 +1,41 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: Re: [PATCH v2 2/3] PM / devfreq: tegra: add devfreq driver for Tegra
- Activity Monitor
-Date: Tue, 25 Nov 2014 07:07:33 +0000 (GMT)
-Message-ID: <715439136.113681416899252854.JavaMail.weblogic@epmlwas08c>
-Reply-To: myungjoo.ham@samsung.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-Return-path: <linux-pm-owner@vger.kernel.org>
-MIME-version: 1.0
-Sender: linux-pm-owner@vger.kernel.org
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Subject: [PATCH resend] serial: of-serial: fetch line number from DT
+Date: Tue, 25 Nov 2014 09:26:56 +0100
+Message-ID: <1416904016-5567-1-git-send-email-dev@lynxeye.de>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-PiBUaGUgQUNUTU9OIGJsb2NrIGNhbiBtb25pdG9yIHNldmVyYWwgY291bnRlcnMsIHByb3ZpZGlu
-ZyBhdmVyYWdpbmcgYW5kIGZpcmluZw0KPiBpbnRlcnJ1cHRzIGJhc2VkIG9uIHdhdGVybWFya2lu
-ZyBjb25maWd1cmF0aW9uLiBUaGlzIGltcGxlbWVudGF0aW9uIG1vbml0b3JzDQo+IHRoZSBNQ0FM
-TCBhbmQgTUNDUFUgY291bnRlcnMgdG8gY2hvb3NlIGFuIGFwcHJvcHJpYXRlIGZyZXF1ZW5jeSBm
-b3IgdGhlDQo+IGV4dGVybmFsIG1lbW9yeSBjbG9jay4NCj4gDQo+IFRoaXMgcGF0Y2ggaXMgYmFz
-ZWQgb24gd29yayBieSBBbGV4IEZyaWQgPGFmcmlkQG52aWRpYS5jb20+IGFuZCBNaWtrbw0KPiBQ
-ZXJ0dHVuZW4gPG1pa2tvLnBlcnR0dW5lbkBrYXBzaS5maT4uDQo+IA0KPiBTaWduZWQtb2ZmLWJ5
-OiBUb21ldSBWaXpvc28gPHRvbWV1LnZpem9zb0Bjb2xsYWJvcmEuY29tPg0KDQpTaWduZWQtb2Zm
-LWJ5OiBNeXVuZ0pvbyBIYW0gPG15dW5nam9vLmhhbUBzYW1zdW5nLmNvbT4NCg0KSG93IGFyZSB5
-b3UgZ29pbmcgdG8gaW50ZWdyYXRlIG90aGVyIHR3byBwYXRjaGVzPw0KTWF5IEkganVzdCBnbyBh
-aGVhZCB3aXRoIHRoaXMgcGF0Y2ggb25seT8NCg0KDQpDaGVlcnMsDQpNeXVuZ0pvby4NCg0KPiAN
-Cj4gLS0tDQo+IA0KPiB2MjoJKiBVc2UgZGV2ZnJlcQ0KPiAtLS0NCj4gIGRyaXZlcnMvZGV2ZnJl
-cS9LY29uZmlnICAgICAgICAgfCAgMTAgKw0KPiAgZHJpdmVycy9kZXZmcmVxL01ha2VmaWxlICAg
-ICAgICB8ICAgMSArDQo+ICBkcml2ZXJzL2RldmZyZXEvdGVncmEtZGV2ZnJlcS5jIHwgNzE4ICsr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4gIDMgZmlsZXMgY2hhbmdl
-ZCwgNzI5IGluc2VydGlvbnMoKykNCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2RldmZy
-ZXEvdGVncmEtZGV2ZnJlcS5jDQo+IA0K
+The general agreed way to specify a fixed line number
+for a serial console is to provide a "serial" alias
+in the devicetree. Start parsing this property in
+of_serial.
 
+Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Acked-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+---
+As 3.16-rc6 landed the fix to avoid the regression that this patch
+was causing on Tegra it should be safe to reapply it.
+---
+ drivers/tty/serial/of_serial.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
+diff --git a/drivers/tty/serial/of_serial.c b/drivers/tty/serial/of_serial.c
+index 8bc2563..920a831 100644
+--- a/drivers/tty/serial/of_serial.c
++++ b/drivers/tty/serial/of_serial.c
+@@ -101,6 +101,10 @@ static int of_platform_serial_setup(struct platform_device *ofdev,
+ 	if (of_property_read_u32(np, "fifo-size", &prop) == 0)
+ 		port->fifosize = prop;
+ 
++	/* Check for a fixed line number */
++	if ((ret = of_alias_get_id(np, "serial")) >= 0)
++		port->line = ret;
++
+ 	port->irq = irq_of_parse_and_map(np, 0);
+ 	port->iotype = UPIO_MEM;
+ 	if (of_property_read_u32(np, "reg-io-width", &prop) == 0) {
+-- 
+2.1.0
