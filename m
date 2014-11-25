@@ -1,49 +1,138 @@
 From: Andrew Bresticker <abrestic@chromium.org>
-Subject: [PATCH V6 02/12] mailbox: Make struct mbox_controller's ops field
- const
-Date: Mon, 24 Nov 2014 16:17:14 -0800
-Message-ID: <1416874644-12070-3-git-send-email-abrestic@chromium.org>
+Subject: [PATCH V6 12/12] ARM: tegra: venice2: Add xHCI support
+Date: Mon, 24 Nov 2014 16:17:24 -0800
+Message-ID: <1416874644-12070-13-git-send-email-abrestic@chromium.org>
 References: <1416874644-12070-1-git-send-email-abrestic@chromium.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1416874644-12070-1-git-send-email-abrestic@chromium.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-usb@vger.kernel.org, Mathias Nyman <mathias.nyman@intel.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Andrew Bresticker <abrestic@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Jassi Brar <jassisinghbrar@gmail.com>, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Kishon Vijay Abraham I <kishon@ti.com>, Olof Johansson <olof@lixom.net>, Rob Herring <robh+dt@kernel.org>, Alan Stern <stern@rowland.harvard.edu>, linux-arm-kernel@lists.infradead.org, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: Andrew Bresticker <abrestic@chromium.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Jassi Brar <jassisinghbrar@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman <mathias.nyman@intel.com>, Grant Likely <grant.likely@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kishon Vijay Abraham I <kishon@ti.com>, Felipe Balbi <balbi@ti.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The mailbox controller's channel ops ought to be read-only.
+Assign ports previously owned by the EHCI controllers to the xHCI
+controller.  There are two external USB ports (UTMI ports 0/2 and
+USB3 ports 0/1) and an internal USB port (UTMI port 1).  PCIe lanes
+0 and 1 are used by the USB3 ports.
 
 Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+Reviewed-by: Stephen Warren <swarren@nvidia.com>
 ---
 No changes from v5.
-New for v5.
+Changes from v4:
+ - Updated regulator and pinconfig properties.
+No changes from v3.
+Changes from v2:
+ - Updated VBUS power supply names.
+Changes from v1:
+ - Updated USB power supplies.
 ---
- include/linux/mailbox_controller.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/tegra124-venice2.dts | 79 ++++++++++++++++++++++------------
+ 1 file changed, 51 insertions(+), 28 deletions(-)
 
-diff --git a/include/linux/mailbox_controller.h b/include/linux/mailbox_controller.h
-index d4cf96f..68c4245 100644
---- a/include/linux/mailbox_controller.h
-+++ b/include/linux/mailbox_controller.h
-@@ -72,7 +72,7 @@ struct mbox_chan_ops {
-  */
- struct mbox_controller {
- 	struct device *dev;
--	struct mbox_chan_ops *ops;
-+	const struct mbox_chan_ops *ops;
- 	struct mbox_chan *chans;
- 	int num_chans;
- 	bool txdone_irq;
+diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
+index 5c3f781..abe59f7 100644
+--- a/arch/arm/boot/dts/tegra124-venice2.dts
++++ b/arch/arm/boot/dts/tegra124-venice2.dts
+@@ -745,7 +745,7 @@
+ 					regulator-always-on;
+ 				};
+ 
+-				ldo0 {
++				avdd_1v05_run: ldo0 {
+ 					regulator-name = "+1.05V_RUN_AVDD";
+ 					regulator-min-microvolt = <1050000>;
+ 					regulator-max-microvolt = <1050000>;
+@@ -887,6 +887,56 @@
+ 		status = "okay";
+ 	};
+ 
++	usb@0,70090000 {
++		status = "okay";
++		phys = <&padctl TEGRA_XUSB_PADCTL_UTMI_P0>, /* 1st USB A */
++		       <&padctl TEGRA_XUSB_PADCTL_UTMI_P1>, /* Internal USB */
++		       <&padctl TEGRA_XUSB_PADCTL_UTMI_P2>, /* 2nd USB A */
++		       <&padctl TEGRA_XUSB_PADCTL_USB3_P0>, /* 1st USB A */
++		       <&padctl TEGRA_XUSB_PADCTL_USB3_P1>; /* 2nd USB A */
++		phy-names = "utmi-0", "utmi-1", "utmi-2", "usb3-0", "usb3-1";
++		avddio-pex-supply = <&vdd_1v05_run>;
++		dvddio-pex-supply = <&vdd_1v05_run>;
++		avdd-usb-supply = <&vdd_3v3_lp0>;
++		avdd-pll-utmip-supply = <&vddio_1v8>;
++		avdd-pll-erefe-supply = <&avdd_1v05_run>;
++		avdd-usb-ss-pll-supply = <&vdd_1v05_run>;
++		hvdd-usb-ss-supply = <&vdd_3v3_lp0>;
++		hvdd-usb-ss-pll-e-supply = <&vdd_3v3_lp0>;
++	};
++
++	padctl@0,7009f000 {
++		pinctrl-0 = <&padctl_default>;
++		pinctrl-names = "default";
++
++		vbus-0-supply = <&vdd_usb1_vbus>;
++		vbus-1-supply = <&vdd_run_cam>;
++		vbus-2-supply = <&vdd_usb3_vbus>;
++
++		padctl_default: pinmux {
++			otg {
++				nvidia,lanes = "otg-0", "otg-1", "otg-2";
++				nvidia,function = "xusb";
++			};
++
++			usb3p0 {
++				nvidia,lanes = "pcie-0";
++				nvidia,function = "usb3";
++				nvidia,iddq = <0>;
++				nvidia,usb2-port = <0>;
++				nvidia,usb3-port = <0>;
++			};
++
++			usb3p1 {
++				nvidia,lanes = "pcie-1";
++				nvidia,function = "usb3";
++				nvidia,iddq = <0>;
++				nvidia,usb2-port = <2>;
++				nvidia,usb3-port = <1>;
++			};
++		};
++	};
++
+ 	sdhci@0,700b0400 {
+ 		cd-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_HIGH>;
+ 		power-gpios = <&gpio TEGRA_GPIO(R, 0) GPIO_ACTIVE_HIGH>;
+@@ -907,33 +957,6 @@
+ 		};
+ 	};
+ 
+-	usb@0,7d000000 {
+-		status = "okay";
+-	};
+-
+-	usb-phy@0,7d000000 {
+-		status = "okay";
+-		vbus-supply = <&vdd_usb1_vbus>;
+-	};
+-
+-	usb@0,7d004000 {
+-		status = "okay";
+-	};
+-
+-	usb-phy@0,7d004000 {
+-		status = "okay";
+-		vbus-supply = <&vdd_run_cam>;
+-	};
+-
+-	usb@0,7d008000 {
+-		status = "okay";
+-	};
+-
+-	usb-phy@0,7d008000 {
+-		status = "okay";
+-		vbus-supply = <&vdd_usb3_vbus>;
+-	};
+-
+ 	backlight: backlight {
+ 		compatible = "pwm-backlight";
+ 
 -- 
 2.1.0.rc2.206.gedb03e5
