@@ -1,84 +1,126 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: serial: of-serial: fetch line number from DT
-Date: Mon, 24 Nov 2014 13:58:24 -0800
-Message-ID: <CAOesGMhfAdG0JnPSiw_TW5-dYAnic6ZwWVKFVqB_GBxgDRFuGg@mail.gmail.com>
-References: <CAOesGMjzs=dThDv6S8Xvo+ym-XECaQhTQ8NV6t46fQZ1LoJnHw@mail.gmail.com>
-	<20141111052407.GB24727@kroah.com>
-	<CAOesGMhe8orqL6wSiouQvdM8y4N44p12n7M1opraSkAP=3ZB+A@mail.gmail.com>
-	<1416865299.2180.1.camel@lynxeye.de>
-	<20141124215725.GA19228@kroah.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: [PATCH V6 00/12] Tegra xHCI support
+Date: Mon, 24 Nov 2014 16:17:12 -0800
+Message-ID: <1416874644-12070-1-git-send-email-abrestic@chromium.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20141124215725.GA19228-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Nov 24, 2014 at 1:57 PM, Greg Kroah-Hartman
-<gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org> wrote:
-> On Mon, Nov 24, 2014 at 10:41:39PM +0100, Lucas Stach wrote:
->> Hi Greg,
->>
->> Am Dienstag, den 11.11.2014, 08:51 -0800 schrieb Olof Johansson:
->> > On Mon, Nov 10, 2014 at 9:24 PM, Greg Kroah-Hartman
->> > <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org> wrote:
->> > > On Mon, Nov 10, 2014 at 01:34:19PM -0800, Olof Johansson wrote:
->> > >> Greg,
->> > >>
->> > >> This commit:
->> > >>
->> > >> commit 1bd8324535ec1ff44aef55c0e40b9e7d56b310fb
->> > >> Author: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
->> > >> Date:   Mon Nov 3 23:16:54 2014 +0100
->> > >>
->> > >>     serial: of-serial: fetch line number from DT
->> > >>
->> > >>     The general agreed way to specify a fixed line number
->> > >>     for a serial console is to provide a "serial" alias
->> > >>     in the devicetree. Start parsing this property in
->> > >>     of_serial.
->> > >>
->> > >>     Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
->> > >>     Signed-off-by: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
->> > >>
->> > >>
->> > >> Broke a whole lot of tegra boards in last night's -next here. In
->> > >> particular, I've been looking at tegra20-seaboard, which now doesn't
->> > >> boot with console any more.
->> > >>
->> > >> http://arm-soc.lixom.net/bootlogs/next/next-20141110/
->> > >>
->> > >> Unfortunately, tegra has for a long time been specifying the aliases
->> > >> as a fixed 1:1 mapping, but most environments rely on ttyS0 being the
->> > >> first _activated_ serial port. That's obviously going to break things
->> > >> here. :(
->> > >>
->> > >> Greg, can you please revert until we get the tegra-side fixes in for
->> > >> this, or we're in for a pretty lousy time w.r.t. bisecting problems
->> > >> across the two mergepoints?
->> > >>
->> > >> Stephen: I suppose the best way to handle this on tegra is to specify
->> > >> the aliases per-board instead of in the soc dtsi today.
->> > >>
->> > >> Apologies for not replying to the patch directly -- it was only ever
->> > >> posted to linux-serial and I don't seem to be subscribed.
->> > >
->> > > Now reverted, sorry for the problems.
->> >
->> > No worries, it's what linux-next is for. Thanks for the revert!
->> >
->> As 3.18-rc6 now landed the fix to avoid the regression on Tegra would
->> you please consider reapplying this patch?
->
-> What patch?  Please resend it, AND, get everyone to agree that it's not
-> going to break anything.
+This series adds support for xHCI on NVIDIA Tegra SoCs.  This includes:
+ - patches 1, 2, and 3: minor cleanups for mailbox framework and xHCI,
+ - patches 4 and 5: adding a driver for the mailbox used to communicate
+   with the xHCI controller's firmware,
+ - patches 6 and 7: extending the XUSB pad controller driver to support
+   the USB PHY types (UTMI, HSIC, and USB3),
+ - patches 8 and 9: adding a xHCI host-controller driver, and
+ - patches 10, 11, and 12: updating the relevant DT files.
 
-I'm OK with it going in now, since as mentioned above the tegra DTS
-changes that resolved the issue have gone in as of -rc6.
+The mailbox driver (patch 5) has a compile-time dependency on patch 2 and
+a run-time dependency on patch 3.  Both the PHY (patch 7) and host (patch 9)
+drivers have compile-time dependencies on the mailbox driver.  The host
+driver also has a run-time dependency on patch 1.  Because of this, this
+entire series should probably go through the Tegra tree.  Patches 11 and 12
+should probably not be merged until the controller firmware [0] lands in
+linux-firmware since they disable the EHCI controllers.
 
-Lucas, feel free to add my ack when you resend your patch.
+Tested on Venice2, Jetson TK1, and Big with a variety of USB2.0 and
+USB3.0 memory sticks and ethernet dongles.  This has also been tested,
+with additional out-of-tree patches, on a Tegra132-based board.
 
+Based on v3.18-rc6.  A branch with the entire series is available at:
+  https://github.com/abrestic/linux/tree/tegra-xhci-v6
 
--Olof
+Notes:
+ - HSIC support is mostly untested and I think there are still some issues
+   to work out there.  I do have a Tegra124 board with a HSIC hub so I'll
+   try to sort those out later.
+ - The XUSB padctl driver doesn't play nice with the existing Tegra USB2.0
+   PHY driver, so all ports should be assigned to the XHCI controller.
+
+Based on work by:
+  a lot of people, but from what I can tell from the L4T tree [1], the
+  original authors of the Tegra xHCI driver are:
+    Ajay Gupta <ajayg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+    Bharath Yadav <byadav-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+[0] https://patchwork.ozlabs.org/patch/400110/
+[1] git://nv-tegra.nvidia.com/linux-3.10.git
+
+Changes from v5:
+ - Addressed review comments from Jassi and Felipe.
+
+Changes from v4:
+ - Made USB support optional in padctl driver.
+ - Made usb3-port a pinconfig property again.
+ - Cleaned up mbox_request_channel() error handling and allowed it to defer
+   probing (patch 3).
+ - Minor xHCI (patch 1) and mailbox framework (patch 2) cleanups suggested
+   by Thierry.
+ - Addressed Thierry's review comments.
+
+Changes from v3:
+ - Fixed USB2.0 flakiness on Jetson-TK1.
+ - Switched to 32-bit DMA mask for host.
+ - Addressed Stephen's review comments.
+
+Chagnes from v2:
+ - Dropped mailbox channel specifier.  The mailbox driver allocates virtual
+   channels backed by the single physical channel.
+ - Added support for HS_CURR_LEVEL adjustment pinconfig property, which
+   will be required for the Blaze board.
+ - Addressed Stephen's review comments.
+
+Changes from v1:
+ - Converted mailbox driver to use the common mailbox framework.
+ - Fixed up host driver so that it can now be built and used as a module.
+ - Addressed Stephen's review comments.
+ - Misc. cleanups.
+
+Andrew Bresticker (11):
+  xhci: Set shared HCD's hcd_priv in xhci_gen_setup
+  mailbox: Make struct mbox_controller's ops field const
+  of: Add NVIDIA Tegra XUSB mailbox binding
+  mailbox: Add NVIDIA Tegra XUSB mailbox driver
+  of: Update Tegra XUSB pad controller binding for USB
+  pinctrl: tegra-xusb: Add USB PHY support
+  of: Add NVIDIA Tegra xHCI controller binding
+  usb: xhci: Add NVIDIA Tegra xHCI host-controller driver
+  ARM: tegra: jetson-tk1: Add xHCI support
+  ARM: tegra: Add Tegra124 XUSB mailbox and xHCI controller
+  ARM: tegra: venice2: Add xHCI support
+
+Benson Leung (1):
+  mailbox: Fix up error handling in mbox_request_channel()
+
+ .../bindings/mailbox/nvidia,tegra124-xusb-mbox.txt |   32 +
+ .../pinctrl/nvidia,tegra124-xusb-padctl.txt        |   63 +-
+ .../bindings/usb/nvidia,tegra124-xhci.txt          |  104 ++
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts          |   46 +-
+ arch/arm/boot/dts/tegra124-venice2.dts             |   79 +-
+ arch/arm/boot/dts/tegra124.dtsi                    |   41 +
+ drivers/mailbox/Kconfig                            |    3 +
+ drivers/mailbox/Makefile                           |    2 +
+ drivers/mailbox/mailbox.c                          |   11 +-
+ drivers/mailbox/tegra-xusb-mailbox.c               |  278 +++++
+ drivers/pinctrl/Kconfig                            |    1 +
+ drivers/pinctrl/pinctrl-tegra-xusb.c               | 1262 +++++++++++++++++++-
+ drivers/usb/host/Kconfig                           |   10 +
+ drivers/usb/host/Makefile                          |    1 +
+ drivers/usb/host/xhci-pci.c                        |    5 -
+ drivers/usb/host/xhci-plat.c                       |    5 -
+ drivers/usb/host/xhci-tegra.c                      |  931 +++++++++++++++
+ drivers/usb/host/xhci.c                            |    6 +-
+ include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h   |    7 +
+ include/linux/mailbox_controller.h                 |    2 +-
+ include/soc/tegra/xusb.h                           |   50 +
+ 21 files changed, 2852 insertions(+), 87 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/nvidia,tegra124-xusb-mbox.txt
+ create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra124-xhci.txt
+ create mode 100644 drivers/mailbox/tegra-xusb-mailbox.c
+ create mode 100644 drivers/usb/host/xhci-tegra.c
+ create mode 100644 include/soc/tegra/xusb.h
+
+-- 
+2.1.0.rc2.206.gedb03e5
