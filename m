@@ -1,57 +1,42 @@
-From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: Re: [PATCH v2 2/3] PM / devfreq: tegra: add devfreq driver for Tegra
- Activity Monitor
-Date: Tue, 25 Nov 2014 09:56:34 +0100
-Message-ID: <CAAObsKDYuEhX_mJ-ae0w6+zVPx26QCotb6StGY5U1JBPttPa4A@mail.gmail.com>
-References: <715439136.113681416899252854.JavaMail.weblogic@epmlwas08c>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Re: Re: [PATCH v2 2/3] PM / devfreq: tegra: add devfreq driver for
+ Tegra Activity Monitor
+Date: Tue, 25 Nov 2014 09:06:59 +0000 (GMT)
+Message-ID: <12372901.124221416906419323.JavaMail.weblogic@epmlwas08c>
+Reply-To: myungjoo.ham@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <715439136.113681416899252854.JavaMail.weblogic@epmlwas08c>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, =?UTF-8?B?67CV6rK966+8?= <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+Return-path: <linux-pm-owner@vger.kernel.org>
+MIME-version: 1.0
+Sender: linux-pm-owner@vger.kernel.org
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 25 November 2014 at 08:07, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->> The ACTMON block can monitor several counters, providing averaging and firing
->> interrupts based on watermarking configuration. This implementation monitors
->> the MCALL and MCCPU counters to choose an appropriate frequency for the
->> external memory clock.
->>
->> This patch is based on work by Alex Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> and Mikko
->> Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>.
->>
->> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
->
-> Signed-off-by: MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->
-> How are you going to integrate other two patches?
+PiBPbiAyNSBOb3ZlbWJlciAyMDE0IGF0IDA4OjA3LCBNeXVuZ0pvbyBIYW0gPG15dW5nam9vLmhh
+bUBzYW1zdW5nLmNvbT4gd3JvdGU6DQo+ID4+IFRoZSBBQ1RNT04gYmxvY2sgY2FuIG1vbml0b3Ig
+c2V2ZXJhbCBjb3VudGVycywgcHJvdmlkaW5nIGF2ZXJhZ2luZyBhbmQgZmlyaW5nDQo+ID4+IGlu
+dGVycnVwdHMgYmFzZWQgb24gd2F0ZXJtYXJraW5nIGNvbmZpZ3VyYXRpb24uIFRoaXMgaW1wbGVt
+ZW50YXRpb24gbW9uaXRvcnMNCj4gPj4gdGhlIE1DQUxMIGFuZCBNQ0NQVSBjb3VudGVycyB0byBj
+aG9vc2UgYW4gYXBwcm9wcmlhdGUgZnJlcXVlbmN5IGZvciB0aGUNCj4gPj4gZXh0ZXJuYWwgbWVt
+b3J5IGNsb2NrLg0KPiA+Pg0KPiA+PiBUaGlzIHBhdGNoIGlzIGJhc2VkIG9uIHdvcmsgYnkgQWxl
+eCBGcmlkIDxhZnJpZEBudmlkaWEuY29tPiBhbmQgTWlra28NCj4gPj4gUGVydHR1bmVuIDxtaWtr
+by5wZXJ0dHVuZW5Aa2Fwc2kuZmk+Lg0KPiA+Pg0KPiA+PiBTaWduZWQtb2ZmLWJ5OiBUb21ldSBW
+aXpvc28gPHRvbWV1LnZpem9zb0Bjb2xsYWJvcmEuY29tPg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1i
+eTogTXl1bmdKb28gSGFtIDxteXVuZ2pvby5oYW1Ac2Ftc3VuZy5jb20+DQo+ID4NCj4gPiBIb3cg
+YXJlIHlvdSBnb2luZyB0byBpbnRlZ3JhdGUgb3RoZXIgdHdvIHBhdGNoZXM/DQo+IA0KPiBJIHRo
+aW5rIHRoZXkgc2hvdWxkIGdvIHRocm91Z2ggdGhlIFRlZ3JhIHRyZWUuDQo+IA0KPiA+IE1heSBJ
+IGp1c3QgZ28gYWhlYWQgd2l0aCB0aGlzIHBhdGNoIG9ubHk/DQo+IA0KPiBZZXMsIEkgdGhpbmsg
+dGhhdCB3b3VsZCBiZSBmaW5lIGFzIHRoZSBvdGhlciBwYXRjaGVzIGFyZW4ndCBhY3R1YWwNCj4g
+YnVpbGQgb3IgcnVudGltZSBkZXBlbmRlbmNpZXMuIFRoaXMgZHJpdmVyIHNob3VsZG4ndCBjYXVz
+ZSBwcm9ibGVtcw0KPiBlaXRoZXIgaWYgaXQncyByYW4gd2l0aG91dCB0aGUgRU1DIGFuZCBDUFVG
+cmVxIHBhdGNoZXMgKHRob3VnaCB3b24ndA0KPiBiZSBmdWxseSBmdW5jdGlvbmFsLCBvZiBjb3Vy
+c2UpLg0KDQpPaywgdGhlbiwgYXMgbG9uZyBhcyB0aGUgb3RoZXIgdHdvIHBhdGNoZXMgKGZvciBE
+VCBzdXBwb3J0KSBnZXQNCkFDS2VkIChzZWVtcyBmYWlybHkgc3RyYWlnaHRmb3J3YXJkIGFzIHdl
+bGwpIG9yIFNpZ25lZC1vZmYgYnkNCmNvcnJlc3BvbmRpbmcgdHJlZSBtYWludGFpbmVycywgSSBm
+ZWVsIGZpbmUgdG8NCnNlbmQgdGhpcyBwYXRjaCBhbG9uZyB3aXRoIHRoZSBuZXh0IHB1bGwgcmVx
+dWVzdC4NCg0KVGhhbmsgeW91Lg0KDQpDaGVlcnMsDQpNeXVuZ0pvbw0KDQo+IA0KPiBSZWdhcmRz
+LA0KPiANCj4gVG9tZXUNCj4gDQo+ID4gQ2hlZXJzLA0KPiA+IE15dW5nSm9vLg0KPiA+DQo+IA0K
 
-I think they should go through the Tegra tree.
 
-> May I just go ahead with this patch only?
-
-Yes, I think that would be fine as the other patches aren't actual
-build or runtime dependencies. This driver shouldn't cause problems
-either if it's ran without the EMC and CPUFreq patches (though won't
-be fully functional, of course).
-
-Regards,
-
-Tomeu
-
-> Cheers,
-> MyungJoo.
->
->>
->> ---
->>
->> v2:   * Use devfreq
->> ---
->>  drivers/devfreq/Kconfig         |  10 +
->>  drivers/devfreq/Makefile        |   1 +
->>  drivers/devfreq/tegra-devfreq.c | 718 ++++++++++++++++++++++++++++++++++++++++
->>  3 files changed, 729 insertions(+)
->>  create mode 100644 drivers/devfreq/tegra-devfreq.c
->>
