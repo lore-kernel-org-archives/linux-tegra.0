@@ -1,41 +1,57 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: [PATCH resend] serial: of-serial: fetch line number from DT
-Date: Tue, 25 Nov 2014 09:26:56 +0100
-Message-ID: <1416904016-5567-1-git-send-email-dev@lynxeye.de>
+From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Subject: Re: [PATCH v2 2/3] PM / devfreq: tegra: add devfreq driver for Tegra
+ Activity Monitor
+Date: Tue, 25 Nov 2014 09:56:34 +0100
+Message-ID: <CAAObsKDYuEhX_mJ-ae0w6+zVPx26QCotb6StGY5U1JBPttPa4A@mail.gmail.com>
+References: <715439136.113681416899252854.JavaMail.weblogic@epmlwas08c>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <715439136.113681416899252854.JavaMail.weblogic@epmlwas08c>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, =?UTF-8?B?67CV6rK966+8?= <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The general agreed way to specify a fixed line number
-for a serial console is to provide a "serial" alias
-in the devicetree. Start parsing this property in
-of_serial.
+On 25 November 2014 at 08:07, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>> The ACTMON block can monitor several counters, providing averaging and firing
+>> interrupts based on watermarking configuration. This implementation monitors
+>> the MCALL and MCCPU counters to choose an appropriate frequency for the
+>> external memory clock.
+>>
+>> This patch is based on work by Alex Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> and Mikko
+>> Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>.
+>>
+>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+>
+> Signed-off-by: MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>
+> How are you going to integrate other two patches?
 
-Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Acked-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
----
-As 3.16-rc6 landed the fix to avoid the regression that this patch
-was causing on Tegra it should be safe to reapply it.
----
- drivers/tty/serial/of_serial.c | 4 ++++
- 1 file changed, 4 insertions(+)
+I think they should go through the Tegra tree.
 
-diff --git a/drivers/tty/serial/of_serial.c b/drivers/tty/serial/of_serial.c
-index 8bc2563..920a831 100644
---- a/drivers/tty/serial/of_serial.c
-+++ b/drivers/tty/serial/of_serial.c
-@@ -101,6 +101,10 @@ static int of_platform_serial_setup(struct platform_device *ofdev,
- 	if (of_property_read_u32(np, "fifo-size", &prop) == 0)
- 		port->fifosize = prop;
- 
-+	/* Check for a fixed line number */
-+	if ((ret = of_alias_get_id(np, "serial")) >= 0)
-+		port->line = ret;
-+
- 	port->irq = irq_of_parse_and_map(np, 0);
- 	port->iotype = UPIO_MEM;
- 	if (of_property_read_u32(np, "reg-io-width", &prop) == 0) {
--- 
-2.1.0
+> May I just go ahead with this patch only?
+
+Yes, I think that would be fine as the other patches aren't actual
+build or runtime dependencies. This driver shouldn't cause problems
+either if it's ran without the EMC and CPUFreq patches (though won't
+be fully functional, of course).
+
+Regards,
+
+Tomeu
+
+> Cheers,
+> MyungJoo.
+>
+>>
+>> ---
+>>
+>> v2:   * Use devfreq
+>> ---
+>>  drivers/devfreq/Kconfig         |  10 +
+>>  drivers/devfreq/Makefile        |   1 +
+>>  drivers/devfreq/tegra-devfreq.c | 718 ++++++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 729 insertions(+)
+>>  create mode 100644 drivers/devfreq/tegra-devfreq.c
+>>
