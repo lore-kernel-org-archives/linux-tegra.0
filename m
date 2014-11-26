@@ -1,39 +1,63 @@
 From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH V6 00/12] Tegra xHCI support
-Date: Wed, 26 Nov 2014 11:31:17 -0800
-Message-ID: <CAL1qeaHkJhJ52jxJLic8Ey6TwA2TxLydeV995OA=Mpi8rjgnLA@mail.gmail.com>
+Subject: Re: [PATCH V6 07/12] pinctrl: tegra-xusb: Add USB PHY support
+Date: Wed, 26 Nov 2014 11:41:58 -0800
+Message-ID: <CAL1qeaHZCh1AomPTQGKN-ytx7EyW8Gncb64S1ikGk0eB16maRA@mail.gmail.com>
 References: <1416874644-12070-1-git-send-email-abrestic@chromium.org>
-	<CAJe_Zhcz=WOLy0_98xRj6=i2+5MFeXQGPmYJhnpy1NfUEPJ-0w@mail.gmail.com>
+	<1416874644-12070-8-git-send-email-abrestic@chromium.org>
+	<547488EB.2040507@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAJe_Zhcz=WOLy0_98xRj6=i2+5MFeXQGPmYJhnpy1NfUEPJ-0w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jassi Brar <jaswinder.singh-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Devicetree List <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, lkml <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kumar Gala <galak@codeau>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <547488EB.2040507-l0cyMroinI0@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>"linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <li>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Nov 25, 2014 at 5:32 AM, Jassi Brar <jaswinder.singh-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> On 25 November 2014 at 05:47, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
->> This series adds support for xHCI on NVIDIA Tegra SoCs.  This includes:
->>  - patches 1, 2, and 3: minor cleanups for mailbox framework and xHCI,
->>  - patches 4 and 5: adding a driver for the mailbox used to communicate
->>    with the xHCI controller's firmware,
->>  - patches 6 and 7: extending the XUSB pad controller driver to support
->>    the USB PHY types (UTMI, HSIC, and USB3),
->>  - patches 8 and 9: adding a xHCI host-controller driver, and
->>  - patches 10, 11, and 12: updating the relevant DT files.
+On Tue, Nov 25, 2014 at 5:49 AM, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org> wrote:
+> Hi,
+>
+> On Tuesday 25 November 2014 05:47 AM, Andrew Bresticker wrote:
+>> In addition to the PCIe and SATA PHYs, the XUSB pad controller also
+>> supports 3 UTMI, 2 HSIC, and 2 USB3 PHYs.  Each USB3 PHY uses a single
+>> PCIe or SATA lane and is mapped to one of the three UTMI ports.
 >>
->> The mailbox driver (patch 5) has a compile-time dependency on patch 2 and
->> a run-time dependency on patch 3.  Both the PHY (patch 7) and host (patch 9)
->> drivers have compile-time dependencies on the mailbox driver.  The host
->> driver also has a run-time dependency on patch 1.  Because of this, this
->> entire series should probably go through the Tegra tree.
+>> The xHCI controller will also send messages intended for the PHY driver,
+>> so request and listen for messages on the mailbox's PHY channel.
 >>
-> Why shouldn't I pick 2 & 3 at least?
+>> Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>> Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>> Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>> No changes from v5.
+>> Changes from v4:
+>>  - Disabled USB support on missing mailbox channel instead of failing
+>>    to probe.
+>>  - Made usb3-port a pinconfig property.
+>>  - Addressed review comments from Thierry.
+>> No changes from v3.
+>> Changes from v2:
+>>  - Added support for nvidia,otg-hs-curr-level-offset property.
+>>  - Moved mailbox request handling to workqueue.
+>>  - Added filtering out of non-PHY mailbox messages.
+>>  - Dropped "-otg" from VBUS supplies.
+>> Changes from v1:
+>>  - Updated to use common mailbox API.
+>>  - Added SATA PHY enable sequence for USB3 ports using the SATA lane.
+>>  - Made USB3 port-to-lane mappins a top-level binding rather than a pinconfig
+>>    binding.
+>> ---
+>>  drivers/pinctrl/Kconfig              |    1 +
+>>  drivers/pinctrl/pinctrl-tegra-xusb.c | 1262 +++++++++++++++++++++++++++++++++-
+>>  include/soc/tegra/xusb.h             |    7 +
+>>  3 files changed, 1254 insertions(+), 16 deletions(-)
+>
+> The devm_phy_create() API has changed (see linux-phy next) and the patch that
+> modified the existing devm_phy_create() in pinctrl-tegra-xusb.c has also been
+> merged in linux-phy tree.
 
-I don't see why not.  Because of the PHY API change I'm going to have
-to re-spin the series and at this point 3.19 is looking pretty
-unlikely.  Maybe we could get a Tegra maintainer's ACK for patches 4
-and 5 so that you could take them through your tree as well for 3.19?
-(Stephen, Thierry, Alex?)
+Ok, I'll rebase on top of that.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
