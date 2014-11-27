@@ -1,20 +1,20 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+From: Marc Zyngier <marc.zyngier@arm.com>
 Subject: Re: [PATCH v2] PCI: tegra: Use physical range for I/O mapping
-Date: Thu, 27 Nov 2014 10:12:47 +0100
-Message-ID: <2095645.ggFcdgUqAP@wuerfel>
+Date: Thu, 27 Nov 2014 09:20:36 +0000
+Message-ID: <5476ECE4.9060508@arm.com>
 References: <1417078449-9556-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1417078449-9556-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <1417078449-9556-1-git-send-email-thierry.reding@gmail.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Liviu Dudau <Liviu.Dudau@arm.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday 27 November 2014 09:54:09 Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 27/11/14 08:54, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 > 
 > Commit 0b0b0893d49b ("of/pci: Fix the conversion of IO ranges into IO
 > resources") changed how I/O resources are parsed from DT. Rather than
@@ -39,8 +39,14 @@ On Thursday 27 November 2014 09:54:09 Thierry Reding wrote:
 > mapping.
 > 
 > Fixes: 0b0b0893d49b ("of/pci: Fix the conversion of IO ranges into IO resources")
-> Reported-by: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
-> Suggested-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Reported-by: Marc Zyngier <marc.zyngier@arm.com>
+> Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 
-Reviewed-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Just gave it a go, and it works just fine here. Thanks!
+
+Tested-by: Marc Zyngier <marc.zyngier@arm.com>
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
