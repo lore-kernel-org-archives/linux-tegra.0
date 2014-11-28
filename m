@@ -1,40 +1,79 @@
 From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [RESEND V2 PATCH 1/3] soc/tegra: fuse: export tegra_sku_info for module use
-Date: Fri, 28 Nov 2014 19:12:58 +0800
-Message-ID: <1417173180-21726-1-git-send-email-vinceh@nvidia.com>
+Subject: [RESEND PATCH nouveau 2/3] volt: allow non-bios voltage
+	scaling
+Date: Fri, 28 Nov 2014 19:12:59 +0800
+Message-ID: <1417173180-21726-2-git-send-email-vinceh@nvidia.com>
+References: <1417173180-21726-1-git-send-email-vinceh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <1417173180-21726-1-git-send-email-vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, martin.peres-GANU6spQydw@public.gmane.org
-Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Some Tegra drivers might be complied as kernel modules, and
-they need the fuse information for initialization. One
-example is the GK20A Nouveau driver. It needs the GPU speedo
-value to calculate frequency-voltage table. So export
-the tegra_sku_info.
-
-Signed-off-by: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-
-v2: add more description why we need this patch
-
- drivers/soc/tegra/fuse/fuse-tegra.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
-index 11a5043959dc..011a3363c265 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-@@ -31,6 +31,7 @@
- static u32 (*fuse_readl)(const unsigned int offset);
- static int fuse_size;
- struct tegra_sku_info tegra_sku_info;
-+EXPORT_SYMBOL(tegra_sku_info);
- 
- static const char *tegra_revision_name[TEGRA_REVISION_MAX] = {
- 	[TEGRA_REVISION_UNKNOWN] = "unknown",
--- 
-1.9.1
+U2lnbmVkLW9mZi1ieTogVmluY2UgSHN1IDx2aW5jZWhAbnZpZGlhLmNvbT4KLS0tCgpSZXNlbmQg
+dGhpcyBwYXRjaCB3aXRoIHRoZSBmdXNlIGNoYW5nZSBhbmQgcHJvcGVyIHBhdGNoIHByZWZpeApw
+ZXIgVGhpZXJyeSdzIHJlcXVlc3QuCgogbnZrbS9zdWJkZXYvdm9sdC9iYXNlLmMgfCA2NyArKysr
+KysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiAxIGZpbGUgY2hh
+bmdlZCwgMzggaW5zZXJ0aW9ucygrKSwgMjkgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvbnZr
+bS9zdWJkZXYvdm9sdC9iYXNlLmMgYi9udmttL3N1YmRldi92b2x0L2Jhc2UuYwppbmRleCAzMjc5
+NGE5OTkxMDYuLjI2Y2NkOGRmMTkzZiAxMDA2NDQKLS0tIGEvbnZrbS9zdWJkZXYvdm9sdC9iYXNl
+LmMKKysrIGIvbnZrbS9zdWJkZXYvdm9sdC9iYXNlLmMKQEAgLTEwMSw2ICsxMDEsNDEgQEAgbm91
+dmVhdV92b2x0X3NldF9pZChzdHJ1Y3Qgbm91dmVhdV92b2x0ICp2b2x0LCB1OCBpZCwgaW50IGNv
+bmRpdGlvbikKIAlyZXR1cm4gcmV0OwogfQogCitzdGF0aWMgdm9pZCBub3V2ZWF1X3ZvbHRfcGFy
+c2VfYmlvcyhzdHJ1Y3Qgbm91dmVhdV9iaW9zICpiaW9zLAorCQlzdHJ1Y3Qgbm91dmVhdV92b2x0
+ICp2b2x0KQoreworCXN0cnVjdCBudmJpb3Nfdm9sdF9lbnRyeSBpdmlkOworCXN0cnVjdCBudmJp
+b3Nfdm9sdCBpbmZvOworCXU4ICB2ZXIsIGhkciwgY250LCBsZW47CisJdTE2IGRhdGE7CisJaW50
+IGk7CisKKwlkYXRhID0gbnZiaW9zX3ZvbHRfcGFyc2UoYmlvcywgJnZlciwgJmhkciwgJmNudCwg
+JmxlbiwgJmluZm8pOworCWlmIChkYXRhICYmIGluZm8udmlkbWFzayAmJiBpbmZvLmJhc2UgJiYg
+aW5mby5zdGVwKSB7CisJCWZvciAoaSA9IDA7IGkgPCBpbmZvLnZpZG1hc2sgKyAxOyBpKyspIHsK
+KwkJCWlmIChpbmZvLmJhc2UgPj0gaW5mby5taW4gJiYKKwkJCQlpbmZvLmJhc2UgPD0gaW5mby5t
+YXgpIHsKKwkJCQl2b2x0LT52aWRbdm9sdC0+dmlkX25yXS51diA9IGluZm8uYmFzZTsKKwkJCQl2
+b2x0LT52aWRbdm9sdC0+dmlkX25yXS52aWQgPSBpOworCQkJCXZvbHQtPnZpZF9ucisrOworCQkJ
+fQorCQkJaW5mby5iYXNlICs9IGluZm8uc3RlcDsKKwkJfQorCQl2b2x0LT52aWRfbWFzayA9IGlu
+Zm8udmlkbWFzazsKKwl9IGVsc2UgaWYgKGRhdGEgJiYgaW5mby52aWRtYXNrKSB7CisJCWZvciAo
+aSA9IDA7IGkgPCBjbnQ7IGkrKykgeworCQkJZGF0YSA9IG52Ymlvc192b2x0X2VudHJ5X3BhcnNl
+KGJpb3MsIGksICZ2ZXIsICZoZHIsCisJCQkJCQkJICAmaXZpZCk7CisJCQlpZiAoZGF0YSkgewor
+CQkJCXZvbHQtPnZpZFt2b2x0LT52aWRfbnJdLnV2ID0gaXZpZC52b2x0YWdlOworCQkJCXZvbHQt
+PnZpZFt2b2x0LT52aWRfbnJdLnZpZCA9IGl2aWQudmlkOworCQkJCXZvbHQtPnZpZF9ucisrOwor
+CQkJfQorCQl9CisJCXZvbHQtPnZpZF9tYXNrID0gaW5mby52aWRtYXNrOworCX0KK30KKwogaW50
+CiBfbm91dmVhdV92b2x0X2luaXQoc3RydWN0IG5vdXZlYXVfb2JqZWN0ICpvYmplY3QpCiB7CkBA
+IC0xMzYsMTAgKzE3MSw2IEBAIG5vdXZlYXVfdm9sdF9jcmVhdGVfKHN0cnVjdCBub3V2ZWF1X29i
+amVjdCAqcGFyZW50LAogewogCXN0cnVjdCBub3V2ZWF1X2Jpb3MgKmJpb3MgPSBub3V2ZWF1X2Jp
+b3MocGFyZW50KTsKIAlzdHJ1Y3Qgbm91dmVhdV92b2x0ICp2b2x0OwotCXN0cnVjdCBudmJpb3Nf
+dm9sdF9lbnRyeSBpdmlkOwotCXN0cnVjdCBudmJpb3Nfdm9sdCBpbmZvOwotCXU4ICB2ZXIsIGhk
+ciwgY250LCBsZW47Ci0JdTE2IGRhdGE7CiAJaW50IHJldCwgaTsKIAogCXJldCA9IG5vdXZlYXVf
+c3ViZGV2X2NyZWF0ZV8ocGFyZW50LCBlbmdpbmUsIG9jbGFzcywgMCwgIlZPTFQiLApAQCAtMTUy
+LDMxICsxODMsOSBAQCBub3V2ZWF1X3ZvbHRfY3JlYXRlXyhzdHJ1Y3Qgbm91dmVhdV9vYmplY3Qg
+KnBhcmVudCwKIAl2b2x0LT5zZXQgPSBub3V2ZWF1X3ZvbHRfc2V0OwogCXZvbHQtPnNldF9pZCA9
+IG5vdXZlYXVfdm9sdF9zZXRfaWQ7CiAKLQlkYXRhID0gbnZiaW9zX3ZvbHRfcGFyc2UoYmlvcywg
+JnZlciwgJmhkciwgJmNudCwgJmxlbiwgJmluZm8pOwotCWlmIChkYXRhICYmIGluZm8udmlkbWFz
+ayAmJiBpbmZvLmJhc2UgJiYgaW5mby5zdGVwKSB7Ci0JCWZvciAoaSA9IDA7IGkgPCBpbmZvLnZp
+ZG1hc2sgKyAxOyBpKyspIHsKLQkJCWlmIChpbmZvLmJhc2UgPj0gaW5mby5taW4gJiYKLQkJCSAg
+ICBpbmZvLmJhc2UgPD0gaW5mby5tYXgpIHsKLQkJCQl2b2x0LT52aWRbdm9sdC0+dmlkX25yXS51
+diA9IGluZm8uYmFzZTsKLQkJCQl2b2x0LT52aWRbdm9sdC0+dmlkX25yXS52aWQgPSBpOwotCQkJ
+CXZvbHQtPnZpZF9ucisrOwotCQkJfQotCQkJaW5mby5iYXNlICs9IGluZm8uc3RlcDsKLQkJfQot
+CQl2b2x0LT52aWRfbWFzayA9IGluZm8udmlkbWFzazsKLQl9IGVsc2UKLQlpZiAoZGF0YSAmJiBp
+bmZvLnZpZG1hc2spIHsKLQkJZm9yIChpID0gMDsgaSA8IGNudDsgaSsrKSB7Ci0JCQlkYXRhID0g
+bnZiaW9zX3ZvbHRfZW50cnlfcGFyc2UoYmlvcywgaSwgJnZlciwgJmhkciwKLQkJCQkJCSAgICAg
+ICZpdmlkKTsKLQkJCWlmIChkYXRhKSB7Ci0JCQkJdm9sdC0+dmlkW3ZvbHQtPnZpZF9ucl0udXYg
+PSBpdmlkLnZvbHRhZ2U7Ci0JCQkJdm9sdC0+dmlkW3ZvbHQtPnZpZF9ucl0udmlkID0gaXZpZC52
+aWQ7Ci0JCQkJdm9sdC0+dmlkX25yKys7Ci0JCQl9Ci0JCX0KLQkJdm9sdC0+dmlkX21hc2sgPSBp
+bmZvLnZpZG1hc2s7Ci0JfQorCS8qIEFzc3VtaW5nIHRoZSBub24tYmlvcyBkZXZpY2Ugc2hvdWxk
+IGJ1aWxkIHRoZSB2b2x0YWdlIHRhYmxlIGxhdGVyICovCisJaWYgKGJpb3MpCisJCW5vdXZlYXVf
+dm9sdF9wYXJzZV9iaW9zKGJpb3MsIHZvbHQpOwogCiAJaWYgKHZvbHQtPnZpZF9ucikgewogCQlm
+b3IgKGkgPSAwOyBpIDwgdm9sdC0+dmlkX25yOyBpKyspIHsKLS0gCjEuOS4xCgpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpOb3V2ZWF1IG1haWxpbmcgbGlz
+dApOb3V2ZWF1QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnL21haWxtYW4vbGlzdGluZm8vbm91dmVhdQo=
