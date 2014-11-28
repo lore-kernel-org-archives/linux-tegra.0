@@ -1,43 +1,81 @@
 From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [GIT PULL 4/4] ARM: tegra: Core code changes for v3.19
-Date: Fri, 28 Nov 2014 22:49:57 +0100
-Message-ID: <201411282249.58149.arnd@arndb.de>
-References: <1416570832-6220-1-git-send-email-thierry.reding@gmail.com> <1416570832-6220-4-git-send-email-thierry.reding@gmail.com>
+Subject: Re: [GIT PULL v2 1/4] ARM: tegra: IOMMU support for v3.19
+Date: Fri, 28 Nov 2014 23:20:19 +0100
+Message-ID: <201411282320.19546.arnd@arndb.de>
+References: <1416570832-6220-1-git-send-email-thierry.reding@gmail.com> <1416993053-3630-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
   charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1416570832-6220-4-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1416993053-3630-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 21 November 2014, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
+On Wednesday 26 November 2014, Thierry Reding wrote:
 > Hi ARM SoC maintainers,
 > 
-> The following changes since commit f114040e3ea6e07372334ade75d1ee0775c355e1:
+> The following changes since commit 0690cbd2e55a72a8eae557c389d1a136ed9fa142:
 > 
->   Linux 3.18-rc1 (2014-10-19 18:08:38 -0700)
+>   powerpc/iommu: Rename iommu_[un]map_sg functions (2014-11-18 11:30:01 +0100)
 > 
 > are available in the git repository at:
 > 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-3.19-soc
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-3.19-iommu-rebased
 > 
-> for you to fetch changes up to e4a680099a6e97ecdbb81081cff9e4a489a4dc44:
+> for you to fetch changes up to 37d21f8918f2aa2289036cc778ee188951e53288:
 > 
->   ARM: tegra: Re-add removed SoC id macro to tegra_resume() (2014-11-17 11:43:21 +0100)
+>   memory: Add NVIDIA Tegra memory controller support (2014-11-26 09:45:02 +0100)
+> 
+> Here's a version of the pull request rebased on top of Joerg's core
+> branch from the IOMMU tree. It has the advantage of having resolved
+> the merge conflicts and the disadvantage of pulling in v3.18-rc3.
 > 
 
-Hmm, I guess this should have been part of 3.18, but I just sent out
-a pull request for fixes today, and it may have been the last time.
+Hi Thierry,
 
-Pulled into next/fixes-non-critical now. I see that there is a stable
-tag on it, which means that it will find its way into 3.18.x, but it's
-really the wrong way to send a patch for the following merge window when
-there is a stable tag on it.
+sorry for taking my time on this, I had some concerns when I first
+looked at the memory controller driver and binding (after I got your
+pull request), and wanted to be sure everything is fine before I merge
+it.
+
+Pulling in v3.18-rc3 is not a problem, since the next/soc branch is
+already based on -rc3 (you can see that yourself if you check out the
+branch from the arm-soc tree), and I'm absolutely fine with merging
+either v1 or v2 of this, the conflict seems harmless, and so does 
+pulling in the dependency.
+
+The extra attention for the binding is because the base iommu binding
+is still very new and gives some options to driver authors, and I want
+to make sure we are setting a good example for others to look at.
+My problem is mainly lack of understanding for your hardware requirements,
+so hopefully you can clarify this all and I can just merge it, or we
+find an easy way to change the code if I have stumbled on a problem.
+
+My main question is about the relation between 'swgroup' and 'id'
+settings. What do the two things mean respectively, does your driver
+define how they get combined, or is each master hardcoded to both?
+
+I generally dislike having SoC-specific lookup tables in drivers for
+things that could be fully described in DT, so I really want to understand
+why you added those tables.
+
+The .smmu.reg and .smmu.bit settings seem to directly correlate to the
+.id value in the table, so I'm assuming you could derive one from the
+other if it was advantagous. The name is only used for debugging purposes
+and we could also leave it out if we had a way to kill off the other fields
+of the table.
+
+In the comment you mention that the latency allowance is set up to the
+hardware defaults, so I guess in the current version this is not required,
+but the .la.reg/shift/mask fields can't be determined from the other
+fields. This means in order to implement the extension for changing the
+setting in the future, you'd have to add some other way of communicating
+it without the table, right?
+
+Back to the swgroup/id fields: if you need both, would it make sense
+to have #iommu-cells = <2> and pass both from the dma master device?
 
 	Arnd
