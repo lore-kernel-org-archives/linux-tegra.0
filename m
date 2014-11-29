@@ -1,81 +1,35 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [GIT PULL v2 1/4] ARM: tegra: IOMMU support for v3.19
-Date: Fri, 28 Nov 2014 23:20:19 +0100
-Message-ID: <201411282320.19546.arnd@arndb.de>
-References: <1416570832-6220-1-git-send-email-thierry.reding@gmail.com> <1416993053-3630-1-git-send-email-thierry.reding@gmail.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RESEND V2 PATCH 1/3] soc/tegra: fuse: export
+ tegra_sku_info for module use
+Date: Sat, 29 Nov 2014 16:30:28 +0900
+Message-ID: <CAAVeFuLfqhN87fOxc9sd09rzd4jSLkLs21ZGS1aV8NTo_uwpkQ@mail.gmail.com>
+References: <1417173180-21726-1-git-send-email-vinceh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1416993053-3630-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <1417173180-21726-1-git-send-email-vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 26 November 2014, Thierry Reding wrote:
-> Hi ARM SoC maintainers,
-> 
-> The following changes since commit 0690cbd2e55a72a8eae557c389d1a136ed9fa142:
-> 
->   powerpc/iommu: Rename iommu_[un]map_sg functions (2014-11-18 11:30:01 +0100)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-3.19-iommu-rebased
-> 
-> for you to fetch changes up to 37d21f8918f2aa2289036cc778ee188951e53288:
-> 
->   memory: Add NVIDIA Tegra memory controller support (2014-11-26 09:45:02 +0100)
-> 
-> Here's a version of the pull request rebased on top of Joerg's core
-> branch from the IOMMU tree. It has the advantage of having resolved
-> the merge conflicts and the disadvantage of pulling in v3.18-rc3.
-> 
-
-Hi Thierry,
-
-sorry for taking my time on this, I had some concerns when I first
-looked at the memory controller driver and binding (after I got your
-pull request), and wanted to be sure everything is fine before I merge
-it.
-
-Pulling in v3.18-rc3 is not a problem, since the next/soc branch is
-already based on -rc3 (you can see that yourself if you check out the
-branch from the arm-soc tree), and I'm absolutely fine with merging
-either v1 or v2 of this, the conflict seems harmless, and so does 
-pulling in the dependency.
-
-The extra attention for the binding is because the base iommu binding
-is still very new and gives some options to driver authors, and I want
-to make sure we are setting a good example for others to look at.
-My problem is mainly lack of understanding for your hardware requirements,
-so hopefully you can clarify this all and I can just merge it, or we
-find an easy way to change the code if I have stumbled on a problem.
-
-My main question is about the relation between 'swgroup' and 'id'
-settings. What do the two things mean respectively, does your driver
-define how they get combined, or is each master hardcoded to both?
-
-I generally dislike having SoC-specific lookup tables in drivers for
-things that could be fully described in DT, so I really want to understand
-why you added those tables.
-
-The .smmu.reg and .smmu.bit settings seem to directly correlate to the
-.id value in the table, so I'm assuming you could derive one from the
-other if it was advantagous. The name is only used for debugging purposes
-and we could also leave it out if we had a way to kill off the other fields
-of the table.
-
-In the comment you mention that the latency allowance is set up to the
-hardware defaults, so I guess in the current version this is not required,
-but the .la.reg/shift/mask fields can't be determined from the other
-fields. This means in order to implement the extension for changing the
-setting in the future, you'd have to add some other way of communicating
-it without the table, right?
-
-Back to the swgroup/id fields: if you need both, would it make sense
-to have #iommu-cells = <2> and pass both from the dma master device?
-
-	Arnd
+T24gRnJpLCBOb3YgMjgsIDIwMTQgYXQgODoxMiBQTSwgVmluY2UgSHN1IDx2aW5jZWhAbnZpZGlh
+LmNvbT4gd3JvdGU6Cj4gU29tZSBUZWdyYSBkcml2ZXJzIG1pZ2h0IGJlIGNvbXBsaWVkIGFzIGtl
+cm5lbCBtb2R1bGVzLCBhbmQKPiB0aGV5IG5lZWQgdGhlIGZ1c2UgaW5mb3JtYXRpb24gZm9yIGlu
+aXRpYWxpemF0aW9uLiBPbmUKPiBleGFtcGxlIGlzIHRoZSBHSzIwQSBOb3V2ZWF1IGRyaXZlci4g
+SXQgbmVlZHMgdGhlIEdQVSBzcGVlZG8KPiB2YWx1ZSB0byBjYWxjdWxhdGUgZnJlcXVlbmN5LXZv
+bHRhZ2UgdGFibGUuIFNvIGV4cG9ydAo+IHRoZSB0ZWdyYV9za3VfaW5mby4KCkFja2VkLWJ5OiBB
+bGV4YW5kcmUgQ291cmJvdCA8YWNvdXJib3RAbnZpZGlhLmNvbT4KClRoaXMgaXMgcmVxdWlyZWQg
+Zm9yIHNldHRpbmcgdGhlIG9wdGltYWwgR1BVIHZvbHRhZ2UgaW4gTm91dmVhdS4KX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBtYWlsaW5nIGxp
+c3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9w
+Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL25vdXZlYXUK
