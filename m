@@ -1,82 +1,82 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RESEND V2 PATCH 1/3] soc/tegra: fuse: export tegra_sku_info for
- module use
-Date: Mon, 1 Dec 2014 11:01:01 +0100
-Message-ID: <20141201100100.GB20174@ulmo>
-References: <1417173180-21726-1-git-send-email-vinceh@nvidia.com>
+Subject: Re: [GIT PULL 4/4] ARM: tegra: Core code changes for v3.19
+Date: Mon, 1 Dec 2014 14:19:43 +0100
+Message-ID: <20141201131942.GA11943@ulmo.nvidia.com>
+References: <1416570832-6220-1-git-send-email-thierry.reding@gmail.com>
+ <1416570832-6220-4-git-send-email-thierry.reding@gmail.com>
+ <201411282249.58149.arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="l76fUT7nc3MelDdI"
+	protocol="application/pgp-signature"; boundary="xHFwDpU9dbj6ez1V"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1417173180-21726-1-git-send-email-vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <201411282249.58149.arnd-r2nGTMty4D4@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, martin.peres-GANU6spQydw@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---l76fUT7nc3MelDdI
+--xHFwDpU9dbj6ez1V
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-I think the subject doesn't need "for module use" because that's
-implicit in exporting a symbol.
-
-On Fri, Nov 28, 2014 at 07:12:58PM +0800, Vince Hsu wrote:
-> Some Tegra drivers might be complied as kernel modules, and
-
-"compiled"
-
-> they need the fuse information for initialization. One
-> example is the GK20A Nouveau driver. It needs the GPU speedo
-> value to calculate frequency-voltage table. So export
-> the tegra_sku_info.
-
-Also please wrap the commit message at around 72 characters. If you make
-the lines too short it becomes almost as difficult to readable as if
-they're too long.
-
-Other than these small nitpicks this looks like a reasonable change to
-me.
-
+On Fri, Nov 28, 2014 at 10:49:57PM +0100, Arnd Bergmann wrote:
+> On Friday 21 November 2014, Thierry Reding wrote:
+> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >=20
+> > Hi ARM SoC maintainers,
+> >=20
+> > The following changes since commit f114040e3ea6e07372334ade75d1ee0775c3=
+55e1:
+> >=20
+> >   Linux 3.18-rc1 (2014-10-19 18:08:38 -0700)
+> >=20
+> > are available in the git repository at:
+> >=20
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/te=
+gra-for-3.19-soc
+> >=20
+> > for you to fetch changes up to e4a680099a6e97ecdbb81081cff9e4a489a4dc44:
+> >=20
+> >   ARM: tegra: Re-add removed SoC id macro to tegra_resume() (2014-11-17=
+ 11:43:21 +0100)
+> >=20
 >=20
-> Signed-off-by: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
+> Hmm, I guess this should have been part of 3.18, but I just sent out
+> a pull request for fixes today, and it may have been the last time.
 >=20
-> v2: add more description why we need this patch
->=20
->  drivers/soc/tegra/fuse/fuse-tegra.c | 1 +
->  1 file changed, 1 insertion(+)
+> Pulled into next/fixes-non-critical now. I see that there is a stable
+> tag on it, which means that it will find its way into 3.18.x, but it's
+> really the wrong way to send a patch for the following merge window when
+> there is a stable tag on it.
 
-Ben, patch 3/3 has a dependency on this one. Would you prefer to merge
-this as part of the Nouveau tree or do you want me to provide a stable
-branch that you can pull in to resolve the dependency?
+It didn't seem quite critical enough for it to get it into 3.18, but
+perhaps it should still have gone that route. I'll try to be more
+careful next time around.
 
-In case of the former:
+Thierry
 
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
---l76fUT7nc3MelDdI
+--xHFwDpU9dbj6ez1V
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUfDxcAAoJEN0jrNd/PrOh68MP/0Ju1GABQnZL6rdowR+rqnX/
-lgaibyR9GtynKJkK2fwwaIj0W5m1wjdhcYLfy1GlC3P7DBll+EYdIlRSU6l6eowK
-oheIh4quxcMBmleYjgNNV6af9gJu9eCo9v52gYB55vuwVtcknliewVmgII64LK14
-p+x14cIrxYgtZqqllAWHoYWJf0AdpUDaM5cxbjqk/j+r+9fkSFKz+sooAxKU70Y6
-+ySxK3+bi5MRTxpwVJ9RHRCNckgH1sTU0UaENn5x2Ze/LE0OkuqM1/k4ZP5dVKDj
-ZWAd4KQ+O37C+1wWD5OCw9Q5LknyG7na5o+eFAgvuVmRW36YbEiiLhN4NSVMYvH/
-9atUogCjJ44k4zM3K1fEJGZ8bVOS0J90K6/oc5oz51HxC5imt370TryRjrQKds/u
-NGvU9p0fNiznSxg55gSfBCaOU88JwUpNxPdbd4Qz6RMrizms7fnBb2pqCrIcj084
-4oTox3dyWeLkFEIAmgDCBA+LmeSAZ95XbdnzqkQbKIKMD/Bm2Z3f8mzXg5l+zNQ7
-wxIaiP+YDi1SGxPU9MdsVQzD7folegHz2gFhi0ym7xC+K0D6TlMamyIHuUFyxT/w
-9Hj147/qxTJURmmqH9e9L+lKE+B4P4twSzbkcidVsJLrXA5BzM2JIleicVXUZiOY
-A0nEceRvSjL/LN1wnHKw
-=z4iy
+iQIcBAEBAgAGBQJUfGrtAAoJEN0jrNd/PrOhJrsP/174lgqzUyL2EDEtSCphFyYy
+N8wDM95U+tXqKfBFzQdFbWRdhIXWpsaQe2rTJwbu+Ny9xIBwF+6ycA0quqsoXPgK
+5EhEYIsR4rixIa0ljM1Pbl83VBhrEE7/weypnNhu3C1zXE1WPs+u0kdB8cmQJeOG
+7u/aWNLQ3WYqBvtXjEou0SGxHpldyDDj0ZX27azqh+6JsSVPlZk1bDAdoCEVphN+
+c/FUfaHjjc1+nBZnx7wrR8AvQjeTD2cmZhE2Dj8c4MsIJlJRAq3uXX8gWl+BluG0
+3a5zXHfJEv6MLTozzCk3KrQZXzmKgFemmbyC0x93LgaJkGlwzcNfGliNNI2cODMk
+cEyS0hB+3bs+Aaneby977tOopHy1KSFgrvElT2Fo81h0T9q/9QZ3MV23fXjZ1E09
+wOKuESUyIQCEH3D+KRdpH/ZGZWsxp4mFPe+05xqJebkRot5gbsmgw4C+bU0r8Wko
+MoXoKE6BV+xIgQa6WP6sg4CFLMpSeTbugRDwzUpyr+9/A9fSj8vdT7AFBM3YE17Q
+zVZqW83uT/NopcW/bxkJZpFFGx4OPd8Pc0So4ezpUpJEPjsFWjYRdaksrFicNqCO
+0rXVmdLmrZFS2FE7SvVcNeZxLCf8UBforrKF0nJO+S2vLDfm3Cah8ya7iVFn2D/w
+/m41640l8vy/fP8RcYFk
+=LWe4
 -----END PGP SIGNATURE-----
 
---l76fUT7nc3MelDdI--
+--xHFwDpU9dbj6ez1V--
