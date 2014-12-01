@@ -1,34 +1,82 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 2/2] volt: add support for GK20A
-Date: Mon, 1 Dec 2014 18:09:06 +0900
-Message-ID: <CAAVeFuK=DMBQo67v47axZoziyPiVzMv=NY5gqO+y3+xQgdpNEQ@mail.gmail.com>
-References: <1417163329-19427-1-git-send-email-vinceh@nvidia.com>
- <1417163329-19427-2-git-send-email-vinceh@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RESEND V2 PATCH 1/3] soc/tegra: fuse: export tegra_sku_info for
+ module use
+Date: Mon, 1 Dec 2014 11:01:01 +0100
+Message-ID: <20141201100100.GB20174@ulmo>
+References: <1417173180-21726-1-git-send-email-vinceh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <1417163329-19427-2-git-send-email-vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="l76fUT7nc3MelDdI"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1417173180-21726-1-git-send-email-vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, martin.peres-GANU6spQydw@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gRnJpLCBOb3YgMjgsIDIwMTQgYXQgNToyOCBQTSwgVmluY2UgSHN1IDx2aW5jZWhAbnZpZGlh
-LmNvbT4gd3JvdGU6Cj4gVGhlIHZvbHRhZ2UgdmFsdWUgYXJlIGNhbGN1bGF0ZWQgYnkgdGhlIGhh
-cmR3YXJlIGNoYXJhY3Rlcml6ZWQKPiByZXN1bHQuCgpUaGlzIGxvb2tzIGdvb2QgdG8gbWUsIHNv
-IGlmIHdlIGFncmVlIGFib3V0IHRoZSBsb2NhdGlvbiBvZiB0aGUgdGFibGVzCnBsZWFzZSBjb25z
-aWRlciB0aGlzIHBhdGNoCgpSZXZpZXdlZC1ieTogQWxleGFuZHJlIENvdXJib3QgPGFjb3VyYm90
-QG52aWRpYS5jb20+CgpCZXdhcmUgdGhhdCBpdCBkZXBlbmRzIG9uIGEgVGVncmEgcGF0Y2ggdGhh
-dCBzaG91bGQgYmUgbWVyZ2VkIGJlZm9yZSB0aGlzIG9uZS4KX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBtYWlsaW5nIGxpc3QKTm91dmVhdUBs
-aXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL25vdXZlYXUK
+
+--l76fUT7nc3MelDdI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+I think the subject doesn't need "for module use" because that's
+implicit in exporting a symbol.
+
+On Fri, Nov 28, 2014 at 07:12:58PM +0800, Vince Hsu wrote:
+> Some Tegra drivers might be complied as kernel modules, and
+
+"compiled"
+
+> they need the fuse information for initialization. One
+> example is the GK20A Nouveau driver. It needs the GPU speedo
+> value to calculate frequency-voltage table. So export
+> the tegra_sku_info.
+
+Also please wrap the commit message at around 72 characters. If you make
+the lines too short it becomes almost as difficult to readable as if
+they're too long.
+
+Other than these small nitpicks this looks like a reasonable change to
+me.
+
+>=20
+> Signed-off-by: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>=20
+> v2: add more description why we need this patch
+>=20
+>  drivers/soc/tegra/fuse/fuse-tegra.c | 1 +
+>  1 file changed, 1 insertion(+)
+
+Ben, patch 3/3 has a dependency on this one. Would you prefer to merge
+this as part of the Nouveau tree or do you want me to provide a stable
+branch that you can pull in to resolve the dependency?
+
+In case of the former:
+
+Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+--l76fUT7nc3MelDdI
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUfDxcAAoJEN0jrNd/PrOh68MP/0Ju1GABQnZL6rdowR+rqnX/
+lgaibyR9GtynKJkK2fwwaIj0W5m1wjdhcYLfy1GlC3P7DBll+EYdIlRSU6l6eowK
+oheIh4quxcMBmleYjgNNV6af9gJu9eCo9v52gYB55vuwVtcknliewVmgII64LK14
+p+x14cIrxYgtZqqllAWHoYWJf0AdpUDaM5cxbjqk/j+r+9fkSFKz+sooAxKU70Y6
++ySxK3+bi5MRTxpwVJ9RHRCNckgH1sTU0UaENn5x2Ze/LE0OkuqM1/k4ZP5dVKDj
+ZWAd4KQ+O37C+1wWD5OCw9Q5LknyG7na5o+eFAgvuVmRW36YbEiiLhN4NSVMYvH/
+9atUogCjJ44k4zM3K1fEJGZ8bVOS0J90K6/oc5oz51HxC5imt370TryRjrQKds/u
+NGvU9p0fNiznSxg55gSfBCaOU88JwUpNxPdbd4Qz6RMrizms7fnBb2pqCrIcj084
+4oTox3dyWeLkFEIAmgDCBA+LmeSAZ95XbdnzqkQbKIKMD/Bm2Z3f8mzXg5l+zNQ7
+wxIaiP+YDi1SGxPU9MdsVQzD7folegHz2gFhi0ym7xC+K0D6TlMamyIHuUFyxT/w
+9Hj147/qxTJURmmqH9e9L+lKE+B4P4twSzbkcidVsJLrXA5BzM2JIleicVXUZiOY
+A0nEceRvSjL/LN1wnHKw
+=z4iy
+-----END PGP SIGNATURE-----
+
+--l76fUT7nc3MelDdI--
