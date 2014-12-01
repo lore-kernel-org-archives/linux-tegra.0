@@ -1,82 +1,43 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [GIT PULL 4/4] ARM: tegra: Core code changes for v3.19
-Date: Mon, 1 Dec 2014 14:19:43 +0100
-Message-ID: <20141201131942.GA11943@ulmo.nvidia.com>
-References: <1416570832-6220-1-git-send-email-thierry.reding@gmail.com>
- <1416570832-6220-4-git-send-email-thierry.reding@gmail.com>
- <201411282249.58149.arnd@arndb.de>
+From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [V3 PATCH 1/3] soc/tegra: fuse: export tegra_sku_info
+Date: Mon, 1 Dec 2014 21:43:27 +0800
+Message-ID: <1417441409-4733-1-git-send-email-vinceh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="xHFwDpU9dbj6ez1V"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <201411282249.58149.arnd-r2nGTMty4D4@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, martin.peres-GANU6spQydw@public.gmane.org, seven-FA6nBp6kBxZzu6KWmfFNGwC/G2K4zDHf@public.gmane.org, tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
---xHFwDpU9dbj6ez1V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Nov 28, 2014 at 10:49:57PM +0100, Arnd Bergmann wrote:
-> On Friday 21 November 2014, Thierry Reding wrote:
-> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >=20
-> > Hi ARM SoC maintainers,
-> >=20
-> > The following changes since commit f114040e3ea6e07372334ade75d1ee0775c3=
-55e1:
-> >=20
-> >   Linux 3.18-rc1 (2014-10-19 18:08:38 -0700)
-> >=20
-> > are available in the git repository at:
-> >=20
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/te=
-gra-for-3.19-soc
-> >=20
-> > for you to fetch changes up to e4a680099a6e97ecdbb81081cff9e4a489a4dc44:
-> >=20
-> >   ARM: tegra: Re-add removed SoC id macro to tegra_resume() (2014-11-17=
- 11:43:21 +0100)
-> >=20
->=20
-> Hmm, I guess this should have been part of 3.18, but I just sent out
-> a pull request for fixes today, and it may have been the last time.
->=20
-> Pulled into next/fixes-non-critical now. I see that there is a stable
-> tag on it, which means that it will find its way into 3.18.x, but it's
-> really the wrong way to send a patch for the following merge window when
-> there is a stable tag on it.
-
-It didn't seem quite critical enough for it to get it into 3.18, but
-perhaps it should still have gone that route. I'll try to be more
-careful next time around.
-
-Thierry
-
---xHFwDpU9dbj6ez1V
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJUfGrtAAoJEN0jrNd/PrOhJrsP/174lgqzUyL2EDEtSCphFyYy
-N8wDM95U+tXqKfBFzQdFbWRdhIXWpsaQe2rTJwbu+Ny9xIBwF+6ycA0quqsoXPgK
-5EhEYIsR4rixIa0ljM1Pbl83VBhrEE7/weypnNhu3C1zXE1WPs+u0kdB8cmQJeOG
-7u/aWNLQ3WYqBvtXjEou0SGxHpldyDDj0ZX27azqh+6JsSVPlZk1bDAdoCEVphN+
-c/FUfaHjjc1+nBZnx7wrR8AvQjeTD2cmZhE2Dj8c4MsIJlJRAq3uXX8gWl+BluG0
-3a5zXHfJEv6MLTozzCk3KrQZXzmKgFemmbyC0x93LgaJkGlwzcNfGliNNI2cODMk
-cEyS0hB+3bs+Aaneby977tOopHy1KSFgrvElT2Fo81h0T9q/9QZ3MV23fXjZ1E09
-wOKuESUyIQCEH3D+KRdpH/ZGZWsxp4mFPe+05xqJebkRot5gbsmgw4C+bU0r8Wko
-MoXoKE6BV+xIgQa6WP6sg4CFLMpSeTbugRDwzUpyr+9/A9fSj8vdT7AFBM3YE17Q
-zVZqW83uT/NopcW/bxkJZpFFGx4OPd8Pc0So4ezpUpJEPjsFWjYRdaksrFicNqCO
-0rXVmdLmrZFS2FE7SvVcNeZxLCf8UBforrKF0nJO+S2vLDfm3Cah8ya7iVFn2D/w
-/m41640l8vy/fP8RcYFk
-=LWe4
------END PGP SIGNATURE-----
-
---xHFwDpU9dbj6ez1V--
+U29tZSBUZWdyYSBkcml2ZXJzIG1pZ2h0IGJlIGNvbXBpbGVkIGFzIGtlcm5lbCBtb2R1bGVzLCBh
+bmQgdGhleSBuZWVkIHRoZQpmdXNlIGluZm9ybWF0aW9uIGZvciBpbml0aWFsaXphdGlvbi4gT25l
+IGV4YW1wbGUgaXMgdGhlIEdLMjBBIE5vdXZlYXUKZHJpdmVyLiBJdCBuZWVkcyB0aGUgR1BVIHNw
+ZWVkbyB2YWx1ZSB0byBjYWxjdWxhdGUgZnJlcXVlbmN5LXZvbHRhZ2UKdGFibGUuIFNvIGV4cG9y
+dCB0aGUgdGVncmFfc2t1X2luZm8uCgpTaWduZWQtb2ZmLWJ5OiBWaW5jZSBIc3UgPHZpbmNlaEBu
+dmlkaWEuY29tPgpBY2tlZC1ieTogQWxleGFuZHJlIENvdXJib3QgPGFjb3VyYm90QG52aWRpYS5j
+b20+CkFja2VkLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgotLS0KCnYz
+OiBmaXggc3ViamVjdCBhbmQgdHlwbywgYWRkIHJldmlld2VycycgQWNrZWQtYnkKCnYyOiBhZGQg
+bW9yZSBkZXNjcmlwdGlvbiB3aHkgd2UgbmVlZCB0aGlzIHBhdGNoCgogZHJpdmVycy9zb2MvdGVn
+cmEvZnVzZS9mdXNlLXRlZ3JhLmMgfCAxICsKIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigr
+KQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvc29jL3RlZ3JhL2Z1c2UvZnVzZS10ZWdyYS5jIGIvZHJp
+dmVycy9zb2MvdGVncmEvZnVzZS9mdXNlLXRlZ3JhLmMKaW5kZXggMTFhNTA0Mzk1OWRjLi4wMTFh
+MzM2M2MyNjUgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvc29jL3RlZ3JhL2Z1c2UvZnVzZS10ZWdyYS5j
+CisrKyBiL2RyaXZlcnMvc29jL3RlZ3JhL2Z1c2UvZnVzZS10ZWdyYS5jCkBAIC0zMSw2ICszMSw3
+IEBACiBzdGF0aWMgdTMyICgqZnVzZV9yZWFkbCkoY29uc3QgdW5zaWduZWQgaW50IG9mZnNldCk7
+CiBzdGF0aWMgaW50IGZ1c2Vfc2l6ZTsKIHN0cnVjdCB0ZWdyYV9za3VfaW5mbyB0ZWdyYV9za3Vf
+aW5mbzsKK0VYUE9SVF9TWU1CT0wodGVncmFfc2t1X2luZm8pOwogCiBzdGF0aWMgY29uc3QgY2hh
+ciAqdGVncmFfcmV2aXNpb25fbmFtZVtURUdSQV9SRVZJU0lPTl9NQVhdID0gewogCVtURUdSQV9S
+RVZJU0lPTl9VTktOT1dOXSA9ICJ1bmtub3duIiwKLS0gCjEuOS4xCgpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpOb3V2ZWF1IG1haWxpbmcgbGlzdApOb3V2
+ZWF1QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
+aWxtYW4vbGlzdGluZm8vbm91dmVhdQo=
