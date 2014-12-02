@@ -1,43 +1,83 @@
 From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [V3 PATCH 1/4] soc/tegra: fuse: export tegra_sku_info
-Date: Tue, 2 Dec 2014 12:50:32 +0800
-Message-ID: <1417495835-5556-1-git-send-email-vinceh@nvidia.com>
+Subject: [V3 PATCH nouveau 2/4] volt: allow non-bios voltage
+	scaling
+Date: Tue, 2 Dec 2014 12:50:33 +0800
+Message-ID: <1417495835-5556-2-git-send-email-vinceh@nvidia.com>
+References: <1417495835-5556-1-git-send-email-vinceh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <1417495835-5556-1-git-send-email-vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, martin.peres-GANU6spQydw@public.gmane.org, seven-FA6nBp6kBxZzu6KWmfFNGwC/G2K4zDHf@public.gmane.org, tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Some Tegra drivers might be compiled as kernel modules, and they need the
-fuse information for initialization. One example is the GK20A Nouveau
-driver. It needs the GPU speedo value to calculate frequency-voltage
-table. So export the tegra_sku_info.
-
-Signed-off-by: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-
-v3: fix subject and typo, add reviewers' Acked-by
-
-v2: add more description why we need this patch
-
- drivers/soc/tegra/fuse/fuse-tegra.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
-index 11a5043959dc..011a3363c265 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-@@ -31,6 +31,7 @@
- static u32 (*fuse_readl)(const unsigned int offset);
- static int fuse_size;
- struct tegra_sku_info tegra_sku_info;
-+EXPORT_SYMBOL(tegra_sku_info);
- 
- static const char *tegra_revision_name[TEGRA_REVISION_MAX] = {
- 	[TEGRA_REVISION_UNKNOWN] = "unknown",
--- 
-1.9.1
+TW92ZSB0aGUgdmJpb3MgcGFyc2luZyBvdXQgb2YgaW5pdCgpIGFuZCBjYWxsIGl0IGNvbmRpdGlv
+bmFsbHkgaWYgdGhlCnBsYXRmb3JtIGhhcyBhIHZiaW9zLiBOb24tdmJpb3MgcGxhdGZvcm1zIGNh
+biB1c2UgdGhlIGN0b3IoKSB0byBpbml0IHRoZQpkYXRhIHN0cnVjdHVyZXMuCgpTaWduZWQtb2Zm
+LWJ5OiBWaW5jZSBIc3UgPHZpbmNlaEBudmlkaWEuY29tPgpBY2tlZC1ieTogQWxleGFuZHJlIENv
+dXJib3QgPGFjb3VyYm90QG52aWRpYS5jb20+CkFja2VkLWJ5OiBNYXJ0aW4gUGVyZXMgPG1hcnRp
+bi5wZXJlc0BmcmVlLmZyPiAKLS0tCgp2Mzogc3RlYWwgTWFydGluJ3MgY29tbWl0IG1lc3NhZ2Ug
+YW5kIGFkZCBoaXMgQWNrZWQtYnkKCnYyOiBhZGQgQWxleCdzIEFja2VkLWJ5CgogbnZrbS9zdWJk
+ZXYvdm9sdC9iYXNlLmMgfCA2NyArKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgMzggaW5zZXJ0aW9ucygrKSwgMjkgZGVsZXRp
+b25zKC0pCgpkaWZmIC0tZ2l0IGEvbnZrbS9zdWJkZXYvdm9sdC9iYXNlLmMgYi9udmttL3N1YmRl
+di92b2x0L2Jhc2UuYwppbmRleCAzMjc5NGE5OTkxMDYuLjI2Y2NkOGRmMTkzZiAxMDA2NDQKLS0t
+IGEvbnZrbS9zdWJkZXYvdm9sdC9iYXNlLmMKKysrIGIvbnZrbS9zdWJkZXYvdm9sdC9iYXNlLmMK
+QEAgLTEwMSw2ICsxMDEsNDEgQEAgbm91dmVhdV92b2x0X3NldF9pZChzdHJ1Y3Qgbm91dmVhdV92
+b2x0ICp2b2x0LCB1OCBpZCwgaW50IGNvbmRpdGlvbikKIAlyZXR1cm4gcmV0OwogfQogCitzdGF0
+aWMgdm9pZCBub3V2ZWF1X3ZvbHRfcGFyc2VfYmlvcyhzdHJ1Y3Qgbm91dmVhdV9iaW9zICpiaW9z
+LAorCQlzdHJ1Y3Qgbm91dmVhdV92b2x0ICp2b2x0KQoreworCXN0cnVjdCBudmJpb3Nfdm9sdF9l
+bnRyeSBpdmlkOworCXN0cnVjdCBudmJpb3Nfdm9sdCBpbmZvOworCXU4ICB2ZXIsIGhkciwgY250
+LCBsZW47CisJdTE2IGRhdGE7CisJaW50IGk7CisKKwlkYXRhID0gbnZiaW9zX3ZvbHRfcGFyc2Uo
+YmlvcywgJnZlciwgJmhkciwgJmNudCwgJmxlbiwgJmluZm8pOworCWlmIChkYXRhICYmIGluZm8u
+dmlkbWFzayAmJiBpbmZvLmJhc2UgJiYgaW5mby5zdGVwKSB7CisJCWZvciAoaSA9IDA7IGkgPCBp
+bmZvLnZpZG1hc2sgKyAxOyBpKyspIHsKKwkJCWlmIChpbmZvLmJhc2UgPj0gaW5mby5taW4gJiYK
+KwkJCQlpbmZvLmJhc2UgPD0gaW5mby5tYXgpIHsKKwkJCQl2b2x0LT52aWRbdm9sdC0+dmlkX25y
+XS51diA9IGluZm8uYmFzZTsKKwkJCQl2b2x0LT52aWRbdm9sdC0+dmlkX25yXS52aWQgPSBpOwor
+CQkJCXZvbHQtPnZpZF9ucisrOworCQkJfQorCQkJaW5mby5iYXNlICs9IGluZm8uc3RlcDsKKwkJ
+fQorCQl2b2x0LT52aWRfbWFzayA9IGluZm8udmlkbWFzazsKKwl9IGVsc2UgaWYgKGRhdGEgJiYg
+aW5mby52aWRtYXNrKSB7CisJCWZvciAoaSA9IDA7IGkgPCBjbnQ7IGkrKykgeworCQkJZGF0YSA9
+IG52Ymlvc192b2x0X2VudHJ5X3BhcnNlKGJpb3MsIGksICZ2ZXIsICZoZHIsCisJCQkJCQkJICAm
+aXZpZCk7CisJCQlpZiAoZGF0YSkgeworCQkJCXZvbHQtPnZpZFt2b2x0LT52aWRfbnJdLnV2ID0g
+aXZpZC52b2x0YWdlOworCQkJCXZvbHQtPnZpZFt2b2x0LT52aWRfbnJdLnZpZCA9IGl2aWQudmlk
+OworCQkJCXZvbHQtPnZpZF9ucisrOworCQkJfQorCQl9CisJCXZvbHQtPnZpZF9tYXNrID0gaW5m
+by52aWRtYXNrOworCX0KK30KKwogaW50CiBfbm91dmVhdV92b2x0X2luaXQoc3RydWN0IG5vdXZl
+YXVfb2JqZWN0ICpvYmplY3QpCiB7CkBAIC0xMzYsMTAgKzE3MSw2IEBAIG5vdXZlYXVfdm9sdF9j
+cmVhdGVfKHN0cnVjdCBub3V2ZWF1X29iamVjdCAqcGFyZW50LAogewogCXN0cnVjdCBub3V2ZWF1
+X2Jpb3MgKmJpb3MgPSBub3V2ZWF1X2Jpb3MocGFyZW50KTsKIAlzdHJ1Y3Qgbm91dmVhdV92b2x0
+ICp2b2x0OwotCXN0cnVjdCBudmJpb3Nfdm9sdF9lbnRyeSBpdmlkOwotCXN0cnVjdCBudmJpb3Nf
+dm9sdCBpbmZvOwotCXU4ICB2ZXIsIGhkciwgY250LCBsZW47Ci0JdTE2IGRhdGE7CiAJaW50IHJl
+dCwgaTsKIAogCXJldCA9IG5vdXZlYXVfc3ViZGV2X2NyZWF0ZV8ocGFyZW50LCBlbmdpbmUsIG9j
+bGFzcywgMCwgIlZPTFQiLApAQCAtMTUyLDMxICsxODMsOSBAQCBub3V2ZWF1X3ZvbHRfY3JlYXRl
+XyhzdHJ1Y3Qgbm91dmVhdV9vYmplY3QgKnBhcmVudCwKIAl2b2x0LT5zZXQgPSBub3V2ZWF1X3Zv
+bHRfc2V0OwogCXZvbHQtPnNldF9pZCA9IG5vdXZlYXVfdm9sdF9zZXRfaWQ7CiAKLQlkYXRhID0g
+bnZiaW9zX3ZvbHRfcGFyc2UoYmlvcywgJnZlciwgJmhkciwgJmNudCwgJmxlbiwgJmluZm8pOwot
+CWlmIChkYXRhICYmIGluZm8udmlkbWFzayAmJiBpbmZvLmJhc2UgJiYgaW5mby5zdGVwKSB7Ci0J
+CWZvciAoaSA9IDA7IGkgPCBpbmZvLnZpZG1hc2sgKyAxOyBpKyspIHsKLQkJCWlmIChpbmZvLmJh
+c2UgPj0gaW5mby5taW4gJiYKLQkJCSAgICBpbmZvLmJhc2UgPD0gaW5mby5tYXgpIHsKLQkJCQl2
+b2x0LT52aWRbdm9sdC0+dmlkX25yXS51diA9IGluZm8uYmFzZTsKLQkJCQl2b2x0LT52aWRbdm9s
+dC0+dmlkX25yXS52aWQgPSBpOwotCQkJCXZvbHQtPnZpZF9ucisrOwotCQkJfQotCQkJaW5mby5i
+YXNlICs9IGluZm8uc3RlcDsKLQkJfQotCQl2b2x0LT52aWRfbWFzayA9IGluZm8udmlkbWFzazsK
+LQl9IGVsc2UKLQlpZiAoZGF0YSAmJiBpbmZvLnZpZG1hc2spIHsKLQkJZm9yIChpID0gMDsgaSA8
+IGNudDsgaSsrKSB7Ci0JCQlkYXRhID0gbnZiaW9zX3ZvbHRfZW50cnlfcGFyc2UoYmlvcywgaSwg
+JnZlciwgJmhkciwKLQkJCQkJCSAgICAgICZpdmlkKTsKLQkJCWlmIChkYXRhKSB7Ci0JCQkJdm9s
+dC0+dmlkW3ZvbHQtPnZpZF9ucl0udXYgPSBpdmlkLnZvbHRhZ2U7Ci0JCQkJdm9sdC0+dmlkW3Zv
+bHQtPnZpZF9ucl0udmlkID0gaXZpZC52aWQ7Ci0JCQkJdm9sdC0+dmlkX25yKys7Ci0JCQl9Ci0J
+CX0KLQkJdm9sdC0+dmlkX21hc2sgPSBpbmZvLnZpZG1hc2s7Ci0JfQorCS8qIEFzc3VtaW5nIHRo
+ZSBub24tYmlvcyBkZXZpY2Ugc2hvdWxkIGJ1aWxkIHRoZSB2b2x0YWdlIHRhYmxlIGxhdGVyICov
+CisJaWYgKGJpb3MpCisJCW5vdXZlYXVfdm9sdF9wYXJzZV9iaW9zKGJpb3MsIHZvbHQpOwogCiAJ
+aWYgKHZvbHQtPnZpZF9ucikgewogCQlmb3IgKGkgPSAwOyBpIDwgdm9sdC0+dmlkX25yOyBpKysp
+IHsKLS0gCjEuOS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpOb3V2ZWF1IG1haWxpbmcgbGlzdApOb3V2ZWF1QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
+dHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vbm91dmVhdQo=
