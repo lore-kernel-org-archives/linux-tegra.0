@@ -1,470 +1,282 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2 2/3] PM / devfreq: tegra: add devfreq driver for Tegra
- Activity Monitor
-Date: Tue, 2 Dec 2014 12:15:02 +0100
-Message-ID: <20141202111501.GE6135@ulmo>
-References: <1416832111-367-1-git-send-email-tomeu.vizoso@collabora.com>
- <1416832111-367-3-git-send-email-tomeu.vizoso@collabora.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [GIT PULL v2 1/4] ARM: tegra: IOMMU support for v3.19
+Date: Tue, 2 Dec 2014 12:51:24 +0100
+Message-ID: <20141202115123.GF6135@ulmo>
+References: <1416570832-6220-1-git-send-email-thierry.reding@gmail.com>
+ <201411282320.19546.arnd@arndb.de>
+ <20141201150552.GB11943@ulmo.nvidia.com>
+ <2735208.aqBxNpBLAO@wuerfel>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Lb0e7rgc7IsuDeGj"
-Return-path: <linux-pm-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="OzxllxdKGCiKxUZM"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1416832111-367-3-git-send-email-tomeu.vizoso@collabora.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: linux-pm@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
+In-Reply-To: <2735208.aqBxNpBLAO@wuerfel>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---Lb0e7rgc7IsuDeGj
+--OzxllxdKGCiKxUZM
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 24, 2014 at 01:28:17PM +0100, Tomeu Vizoso wrote:
-> The ACTMON block can monitor several counters, providing averaging and fi=
-ring
-> interrupts based on watermarking configuration. This implementation monit=
-ors
-> the MCALL and MCCPU counters to choose an appropriate frequency for the
-> external memory clock.
+On Mon, Dec 01, 2014 at 06:55:01PM +0100, Arnd Bergmann wrote:
+> On Monday 01 December 2014 16:05:54 Thierry Reding wrote:
+> > On Fri, Nov 28, 2014 at 11:20:19PM +0100, Arnd Bergmann wrote:
+> > > On Wednesday 26 November 2014, Thierry Reding wrote:
+> > > > Hi ARM SoC maintainers,
+> > > >=20
+> > > > The following changes since commit 0690cbd2e55a72a8eae557c389d1a136=
+ed9fa142:
+> > > >=20
+> > > >   powerpc/iommu: Rename iommu_[un]map_sg functions (2014-11-18 11:3=
+0:01 +0100)
+> > > >=20
+> > > > are available in the git repository at:
+> > > >=20
+> > > >   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tag=
+s/tegra-for-3.19-iommu-rebased
+> > > >=20
+> > > > for you to fetch changes up to 37d21f8918f2aa2289036cc778ee188951e5=
+3288:
+> > > >=20
+> > > >   memory: Add NVIDIA Tegra memory controller support (2014-11-26 09=
+:45:02 +0100)
+> > > >=20
+> > > > Here's a version of the pull request rebased on top of Joerg's core
+> > > > branch from the IOMMU tree. It has the advantage of having resolved
+> > > > the merge conflicts and the disadvantage of pulling in v3.18-rc3.
+> > > >=20
+> > >=20
+> > > Hi Thierry,
+> > >=20
+> > > sorry for taking my time on this, I had some concerns when I first
+> > > looked at the memory controller driver and binding (after I got your
+> > > pull request), and wanted to be sure everything is fine before I merge
+> > > it.
+> > >=20
+> > > Pulling in v3.18-rc3 is not a problem, since the next/soc branch is
+> > > already based on -rc3 (you can see that yourself if you check out the
+> > > branch from the arm-soc tree), and I'm absolutely fine with merging
+> > > either v1 or v2 of this, the conflict seems harmless, and so does=20
+> > > pulling in the dependency.
+> > >=20
+> > > The extra attention for the binding is because the base iommu binding
+> > > is still very new and gives some options to driver authors, and I want
+> > > to make sure we are setting a good example for others to look at.
+> > > My problem is mainly lack of understanding for your hardware requirem=
+ents,
+> > > so hopefully you can clarify this all and I can just merge it, or we
+> > > find an easy way to change the code if I have stumbled on a problem.
+> > >=20
+> > > My main question is about the relation between 'swgroup' and 'id'
+> > > settings. What do the two things mean respectively, does your driver
+> > > define how they get combined, or is each master hardcoded to both?
+> >=20
+> > An ID refers to the client ID. Each client ID represents one requester
+> > and a set of IDs makes up one SWGROUP. For example there are two display
+> > controllers, each being three clients, yet there's only two SWGROUPs for
+> > them:
+> >=20
+> > 	SWGROUP dc: - display0a
+> > 	            - display0b
+> > 	            - display0c
+> >=20
+> > 	SWGROUP dcb: - display0ab
+> > 	             - display0bb
+> > 	             - display0cb
+> >=20
+> > Each SWGROUP can be assigned a separate address space. That is, an
+> > address space for SWGROUP dc will apply for all clients in that group.
+> > However it can be additionally specified for which clients in a group
+> > IOMMU address translation should be enabled. Theoretically one could
+> > enable translation only for display0a and display0b, but not for
+> > display0c. I don't immediately see when that would be desirable, hence
+> > the driver always enables translation for all clients in a group.
 >=20
-> This patch is based on work by Alex Frid <afrid@nvidia.com> and Mikko
-> Perttunen <mikko.perttunen@kapsi.fi>.
+> Ok, I see. So specifying both SWGROUP and ID in DT would let you do
+> that, but you don't think anybody ever wants it.
+
+Correct. I don't think it makes sense and it'd require significant work
+in a driver to know which buffers need translation and which don't. In
+fact I don't think you could make that work with the current frameworks
+because both the IOMMU and DMA APIs operate at a struct device level. A
+client could therefore not be distinguished from another.
+
+> > > I generally dislike having SoC-specific lookup tables in drivers for
+> > > things that could be fully described in DT, so I really want to under=
+stand
+> > > why you added those tables.
+> >=20
+> > What exactly is your concern with these tables? Is it the size? Roughly
+> > these are 3.5 KiB of .rodata per SoC generation. If that's too much I
+> > think I could perhaps get that down to something like half of it using
+> > bitfields (reg could be 11 bits, bit/shift could be 5, so that both fit
+> > into a single u16 instead of 2 u32). That'll probably increase code size
+> > a little to extract these fields, but that may be a suitable tradeoff.
 >=20
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> I'm not too worried about the size. My concern is mainly the fact that
+> you have to add a new file for each new SoC, which is not necessary if
+> we can find a way to make the binding generic enough to cover any variant.
+
+There's nothing generic about this. The way how you control the various
+groups might be the same, but the set of groups and clients varies per
+generation. The tables not only allow us to have simple parameterized
+code to handle the various generations, it also gives us a way to
+specify which groups and clients are valid for a given generation and
+sanity check the DT content.
+
+> It's less of an issue for the particular implementation from NVIDIA,
+> since you have a relatively low number of SoC designs coming out,
+> compared to some of the other vendors, and in particular compared to
+> the ARM SMMU that will be shared across many vendors. I definitely
+> would not want to see per-SoC files for each chip that contains an
+> ARM SMMU, and I also would like to see IOMMU drivers in general being
+> implemented in a similar fashion, and your driver sets an example that
+> others should better not copy IMHO ;-)
+
+Actually I disagree. I think this sets exactly the right example. Since
+none of these associations are configurable or change from board to
+board, everything is implied by the compatible property. Adding this
+data to DT would therefore be completely redundant.
+
+Moving the data to DT would also mean that we would be adding a table of
+registers to the DT. There used to be a time when there was concensus at
+least that that was a really bad idea. Has that changed in the last few
+years?
+
+I do agree that it makes sense not to have these tables for completely
+generic IOMMUs like the ARM SMMU, though, but like you said, those are
+generic because they are designed to be used in a variety of SoCs. The
+Tegra SMMU is very tightly coupled with each specific SoC generation.
+
+> > > The .smmu.reg and .smmu.bit settings seem to directly correlate to the
+> > > .id value in the table, so I'm assuming you could derive one from the
+> > > other if it was advantagous.
+> >=20
+> > This could be done using something like this:
+> >=20
+> > 	unsigned int reg =3D 0x228 + (id / 32) * 4;
+> > 	unsigned int bit =3D id % 32;
+> >=20
+> > However there are a couple of entries that are special, notable the PTC
+> > and MPCORE clients. Those have a SWGROUP but none of these enable bits,
+> > so I can't immediately think of a way to do that nicely. We'd probably
+> > have to hard-code checks for that, making it somewhat brittle. Having
+> > this all in a simple lookup table makes this really straightforward and
+> > easy to verify for correctness by comparing the table to internal files
+> > that specify these registers.
 >=20
-> ---
+> I see.
 >=20
-> v2:	* Use devfreq
-> ---
->  drivers/devfreq/Kconfig         |  10 +
->  drivers/devfreq/Makefile        |   1 +
->  drivers/devfreq/tegra-devfreq.c | 718 ++++++++++++++++++++++++++++++++++=
-++++++
->  3 files changed, 729 insertions(+)
->  create mode 100644 drivers/devfreq/tegra-devfreq.c
+> > > The name is only used for debugging purposes and we could also leave
+> > > it out if we had a way to kill off the other fields of the table.
+> >=20
+> > The name is also used in error messages to clarify where an error comes
+> > from. That's been very essential in tracking down various issues in some
+> > drivers (DRM primarily).
 >=20
-> diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
-> index faf4e70..4aab799 100644
-> --- a/drivers/devfreq/Kconfig
-> +++ b/drivers/devfreq/Kconfig
-> @@ -87,4 +87,14 @@ config ARM_EXYNOS5_BUS_DEVFREQ
->  	  It reads PPMU counters of memory controllers and adjusts the
->  	  operating frequencies and voltages with OPP support.
-> =20
-> +config ARM_TEGRA_DEVFREQ
-> +       tristate "Tegra DEVFREQ Driver"
-> +       depends on ARCH_TEGRA_124_SOC
+> Couldn't you print the DT path of the DMA master to provide the
+> same information?
 
-I think ACTMON exists at least on Tegra30 and Tegra114 as well and it
-would be surprising if it didn't exist on Tegra132, so perhaps make this
-dependency simply ARCH_TEGRA?
+To do that I would need to keep a mapping of struct device_node * to
+client ID. And it would only give me a single name even for devices with
+multiple clients.
 
-> +       select DEVFREQ_GOV_SIMPLE_ONDEMAND
-> +       select PM_OPP
-> +       help
-> +         This adds the DEVFREQ driver for the Tegra family of SoCs.
-> +         It reads ACTMON counters of memory controllers and adjusts the
-> +         operating frequencies and voltages with OPP support.
-> +
->  endif # PM_DEVFREQ
-> diff --git a/drivers/devfreq/Makefile b/drivers/devfreq/Makefile
-> index 16138c9..0ea991f 100644
-> --- a/drivers/devfreq/Makefile
-> +++ b/drivers/devfreq/Makefile
-> @@ -7,3 +7,4 @@ obj-$(CONFIG_DEVFREQ_GOV_USERSPACE)	+=3D governor_userspa=
-ce.o
->  # DEVFREQ Drivers
->  obj-$(CONFIG_ARM_EXYNOS4_BUS_DEVFREQ)	+=3D exynos/
->  obj-$(CONFIG_ARM_EXYNOS5_BUS_DEVFREQ)	+=3D exynos/
-> +obj-$(CONFIG_ARM_TEGRA_DEVFREQ)		+=3D tegra-devfreq.o
-> diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devf=
-req.c
-> new file mode 100644
-> index 0000000..3479096
-> --- /dev/null
-> +++ b/drivers/devfreq/tegra-devfreq.c
-> @@ -0,0 +1,718 @@
-> +/*
-> + * A devfreq driver for NVIDIA Tegra SoCs
-> + *
-> + * Copyright (c) 2014 NVIDIA CORPORATION. All rights reserved.
-> + * Copyright (C) 2014 Google, Inc
-> + *
-> + * This program is free software; you can redistribute it and/or modify =
-it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License =
-for
-> + * more details.
-> + *
-> + * You should have received a copy of the GNU General Public License
-> + * along with this program. If not, see <http://www.gnu.org/licenses/>.
-> + *
-> + */
-> +
-[...]
-> +/* activity counter is incremented every 256 memory transactions, and ea=
-ch
+Going back to the DRM example I gave earlier, it's been extremely
+valuable for the memory controller to spit out the exact name of the
+faulting client, because it immediately indicates whether there's
+something wrong with the root window (window A) or one of the overlays
+(window B or C).
 
-Proper block-comments should be:
+> > > In the comment you mention that the latency allowance is set up to the
+> > > hardware defaults, so I guess in the current version this is not requ=
+ired,
+> > > but the .la.reg/shift/mask fields can't be determined from the other
+> > > fields. This means in order to implement the extension for changing t=
+he
+> > > setting in the future, you'd have to add some other way of communicat=
+ing
+> > > it without the table, right?
+> >=20
+> > Right, there is no programmatic way to derive the latency allowance data
+> > from the ID. They're more or less randomly spread across the registers.
+> >=20
+> > Note that there are other knobs in the memory controller associated with
+> > the memory clients, though they aren't in use (yet). Having this kind of
+> > table gives us a very nice way of collecting the per-client data in one
+> > location and then use that for register programming.
+>=20
+> So what does "lacency allowance" actually mean, and why do you need to
+> access this field from Linux? I'm not too familiar with memory controller
+> concepts, so I'm sorry if this is an RTFM question.
 
-	/*
-	 * activity counter...
-	 * ...
-	 */
+Essentially this is an input to the memory controller's arbitration unit
+and sets an upper bound on the latency of outstanding requests. Under
+memory bandwidth pressure this allows the memory controller to give
+priority to requests from clients with lower latency tolerance. Display
+for example would usually have a fairly low tolerance because stalling
+requests for too long will cause the pixel data FIFO to underrun and
+cause visual artifacts.
 
-Also it's a sentence, therefore should start with a capital 'A'.
+So to make this work the goal is for memory clients to register their
+bandwidth needs with some central entity that uses it along with the
+memory client's FIFO depth to compute the value for the latency
+allowance register. The unit for this value is an internal tick from the
+memory controller, in turn based on the EMC frequency. Therefore this is
+usually only computed once for a given configuration and can remain the
+same across EMC frequency changes.
 
-> + * transaction takes 4 EMC clocks for Tegra124; So the COUNT_WEIGHT is
-> + * 4 * 256 =3D 1024.
-> + */
-> +#define ACTMON_COUNT_WEIGHT					0x400
-> +
-> +/*
-> + * ACTMON_AVERAGE_WINDOW_LOG2: default value for @DEV_CTRL_K_VAL, which
-> + * translates to 2 ^ (K_VAL + 1). ex: 2 ^ (6 + 1) =3D 128
-> + */
-> +#define ACTMON_AVERAGE_WINDOW_LOG2			6
-> +#define ACTMON_SAMPLING_PERIOD				12 /* ms */
-> +#define ACTMON_DEFAULT_AVG_BAND				6  /* 1/10 of % */
-> +
-> +#define KHZ							1000
-> +
-> +/* Assume that the bus is saturated if the utilization is 25% */
-> +#define BUS_SATURATION_RATIO					25
-[...]
-> +static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
-> +					  struct tegra_devfreq_device *dev)
-> +{
-> +	u32 val;
-> +
-> +	dev->avg_band_freq =3D tegra->max_freq * ACTMON_DEFAULT_AVG_BAND / KHZ;
-> +	dev->target_freq =3D tegra->cur_freq;
-> +
-> +	dev->avg_count =3D tegra->cur_freq * ACTMON_SAMPLING_PERIOD;
-> +	writel(dev->avg_count, dev->regs + ACTMON_DEV_INIT_AVG);
-> +
-> +	tegra_devfreq_update_avg_wmark(dev);
-> +	tegra_devfreq_update_wmark(tegra, dev);
-> +
-> +	writel(ACTMON_COUNT_WEIGHT, dev->regs + ACTMON_DEV_COUNT_WEIGHT);
-> +	writel(ACTMON_INTR_STATUS_CLEAR, dev->regs + ACTMON_DEV_INTR_STATUS);
-> +
-> +	val =3D 0;
+There are patches in the works to add support for EMC frequency scaling
+and also latency allowance programming.
 
-You could initialize this to 0 and then save this one line.
+> > > Back to the swgroup/id fields: if you need both, would it make sense
+> > > to have #iommu-cells =3D <2> and pass both from the dma master device?
+> >=20
+> > I think they are really orthogonal settings. Client IDs have nothing to
+> > do with the IOMMU specifically. The IOMMU is primarily concerned with
+> > the SWGROUP. The driver only makes sure that IOVA translation is enabled
+> > for each client in a SWGROUP.
+>=20
+> Hmm, where are they actually needed both at the same time then? IOW,
+> why can't the IOMMU driver just deal with the SWGROUP and ignore the
+> table with the ID and LA values, leaving that to the memory controller
+> driver?
 
-> +	val |=3D ACTMON_DEV_CTRL_ENB_PERIODIC |
-> +	       ACTMON_DEV_CTRL_AVG_ABOVE_WMARK_EN |
-> +	       ACTMON_DEV_CTRL_AVG_BELOW_WMARK_EN;
-> +	val |=3D (ACTMON_AVERAGE_WINDOW_LOG2 - 1)
-> +		<< ACTMON_DEV_CTRL_K_VAL_SHIFT;
-> +	val |=3D (ACTMON_BELOW_WMARK_WINDOW - 1)
-> +		<< ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_NUM_SHIFT;
-> +	val |=3D (ACTMON_ABOVE_WMARK_WINDOW - 1)
-> +		<< ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_NUM_SHIFT;
-> +	val |=3D ACTMON_DEV_CTRL_CONSECUTIVE_BELOW_WMARK_EN |
-> +	       ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN;
-> +
-> +	writel(val, dev->regs + ACTMON_DEV_CTRL);
-> +
-> +	actmon_write_barrier(tegra);
-> +
-> +	val =3D readl(dev->regs + ACTMON_DEV_CTRL);
-> +	val |=3D ACTMON_DEV_CTRL_ENB;
-> +	writel(val, dev->regs + ACTMON_DEV_CTRL);
-> +
-> +	actmon_write_barrier(tegra);
-> +}
-> +
-> +static int tegra_devfreq_suspend(struct device *dev)
-> +{
-> +	struct platform_device *pdev;
-> +	struct tegra_devfreq *tegra;
-> +	struct tegra_devfreq_device *actmon_dev;
-> +	unsigned int i;
-> +	u32 val;
-> +
-> +	pdev =3D container_of(dev, struct platform_device, dev);
-> +	tegra =3D platform_get_drvdata(pdev);
+The IOMMU driver still needs the list of clients so that it can enable
+translation for each of the clients pertaining to a given group. That
+is, if display controller A requests IOVA translation this maps to
+TEGRA_SWGROUP_DC, but internally in order for the translation to
+actually happen we also need to enable IOVA translation for each of the
+clients in that group.
 
-This is equivalent to just:
-
-	struct tegra_devfreq *tegra =3D dev_get_drvdata(dev);
-
-which you can then simply put at the top of the local variable
-declarations.
-
-> +
-> +	for (i =3D 0; i < ARRAY_SIZE(tegra->devices); i++) {
-> +		actmon_dev =3D &tegra->devices[i];
-> +
-> +		val =3D readl(actmon_dev->regs + ACTMON_DEV_CTRL);
-> +		val &=3D ~ACTMON_DEV_CTRL_ENB;
-> +		writel(val, actmon_dev->regs + ACTMON_DEV_CTRL);
-> +
-> +		writel(ACTMON_INTR_STATUS_CLEAR,
-> +		       actmon_dev->regs + ACTMON_DEV_INTR_STATUS);
-
-Why do you need to clear pending interrupts on suspend? Isn't this going
-to cause pending ones to be missed upon resume?
-
-> +
-> +		actmon_write_barrier(tegra);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int tegra_devfreq_resume(struct device *dev)
-> +{
-> +	struct platform_device *pdev;
-> +	struct tegra_devfreq *tegra;
-> +	struct tegra_devfreq_device *actmon_dev;
-> +	unsigned int i;
-> +
-> +	pdev =3D container_of(dev, struct platform_device, dev);
-> +	tegra =3D platform_get_drvdata(pdev);
-
-Same here. And in a few other places as well.
-
-> +
-> +	for (i =3D 0; i < ARRAY_SIZE(tegra->devices); i++) {
-> +		actmon_dev =3D &tegra->devices[i];
-> +
-> +		tegra_actmon_configure_device(tegra, actmon_dev);
-> +	}
-> +
-> +	return 0;
-> +}
-
-You'll want to protect the tegra_devfreq_{suspend,resume}() with an
-#ifdef CONFIG_PM_SLEEP to avoid potential build warnings (in randconfig
-builds for example).
-
-These are also somewhat oddly placed. Perhaps move them below
-tegra_devfreq_remove() for more natural ordering?
-
-> +static int tegra_devfreq_probe(struct platform_device *pdev)
-> +{
-> +	struct tegra_devfreq *tegra;
-> +	struct tegra_devfreq_device *dev;
-> +	struct resource *res;
-> +	unsigned long max_freq;
-> +	unsigned int i;
-> +	int irq;
-> +	int err;
-> +
-> +	tegra =3D devm_kzalloc(&pdev->dev, sizeof(*tegra), GFP_KERNEL);
-> +	if (!tegra)
-> +		return -ENOMEM;
-> +
-> +	spin_lock_init(&tegra->lock);
-> +
-> +	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	if (!res) {
-> +		dev_err(&pdev->dev, "Failed to get regs resource\n");
-> +		return -ENODEV;
-> +	}
-
-No need for this check, devm_ioremap_resource() does it for you.
-
-> +
-> +	tegra->regs =3D devm_ioremap_resource(&pdev->dev, res);
-> +	if (IS_ERR(tegra->regs)) {
-> +		dev_err(&pdev->dev, "Failed to get IO memory\n");
-
-No need for the error message either.
-
-> +		return PTR_ERR(tegra->regs);
-> +	}
-> +
-> +	tegra->reset =3D devm_reset_control_get(&pdev->dev, "actmon");
-> +	if (IS_ERR(tegra->reset)) {
-> +		dev_err(&pdev->dev, "Failed to get reset\n");
-> +		return PTR_ERR(tegra->reset);
-> +	}
-> +
-> +	tegra->clock =3D devm_clk_get(&pdev->dev, "actmon");
-> +	if (IS_ERR(tegra->clock)) {
-> +		dev_err(&pdev->dev, "Failed to get actmon clock\n");
-> +		return PTR_ERR(tegra->clock);
-> +	}
-> +
-> +	tegra->emc_clock =3D devm_clk_get(&pdev->dev, "emc");
-> +	if (IS_ERR(tegra->emc_clock)) {
-> +		dev_err(&pdev->dev, "Failed to get emc clock\n");
-> +		return PTR_ERR(tegra->emc_clock);
-> +	}
-> +
-> +	err =3D of_init_opp_table(&pdev->dev);
-> +	if (err) {
-> +		dev_err(&pdev->dev, "Failed to init operating point table\n");
-> +		return err;
-> +	}
-> +
-> +	tegra->rate_change_nb.notifier_call =3D tegra_actmon_rate_notify_cb;
-> +	err =3D clk_notifier_register(tegra->emc_clock, &tegra->rate_change_nb);
-> +	if (err) {
-> +		dev_err(&pdev->dev,
-> +			"Failed to register rate change notifier\n");
-> +		return err;
-> +	}
-> +
-> +	reset_control_assert(tegra->reset);
-> +
-> +	err =3D clk_prepare_enable(tegra->clock);
-> +	if (err) {
-> +		reset_control_deassert(tegra->reset);
-
-I'm not so sure if it makes much sense to deassert reset when the driver
-fails to probe.
-
-> +		return err;
-> +	}
-> +
-> +	reset_control_deassert(tegra->reset);
-> +
-> +	max_freq =3D clk_round_rate(tegra->emc_clock, ULONG_MAX);
-> +	tegra->max_freq =3D max_freq / KHZ;
-> +
-> +	clk_set_rate(tegra->emc_clock, max_freq);
-> +
-> +	tegra->cur_freq =3D clk_get_rate(tegra->emc_clock) / KHZ;
-> +
-> +	writel(ACTMON_SAMPLING_PERIOD - 1,
-> +	       tegra->regs + ACTMON_GLB_PERIOD_CTRL);
-> +
-> +	for (i =3D 0; i < ARRAY_SIZE(actmon_device_configs); i++) {
-> +		dev =3D tegra->devices + i;
-> +		dev->config =3D actmon_device_configs + i;
-> +		dev->regs =3D tegra->regs + dev->config->offset;
-> +
-> +		tegra_actmon_configure_device(tegra, tegra->devices + i);
-
-The second parameter can simply be "dev" here, can't it?
-
-> +	}
-> +
-> +	err =3D devfreq_add_governor(&tegra_devfreq_governor);
-> +	if (err) {
-> +		dev_err(&pdev->dev, "Failed to add governor\n");
-> +		return err;
-> +	}
-> +
-> +	tegra_devfreq_profile.initial_freq =3D clk_get_rate(tegra->emc_clock);
-> +	tegra->devfreq =3D devm_devfreq_add_device(&pdev->dev,
-> +						 &tegra_devfreq_profile,
-> +						 "tegra",
-> +						 NULL);
-> +
-> +	irq =3D platform_get_irq(pdev, 0);
-> +	err =3D devm_request_threaded_irq(&pdev->dev, irq, actmon_isr,
-> +					actmon_thread_isr, IRQF_SHARED,
-> +					"tegra-devfreq", tegra);
-> +	if (err) {
-> +		dev_err(&pdev->dev, "Interrupt request failed\n");
-> +		return err;
-> +	}
-> +
-> +	platform_set_drvdata(pdev, tegra);
-> +
-> +	return 0;
-> +}
-> +
-> +static int tegra_devfreq_remove(struct platform_device *pdev)
-> +{
-> +	struct tegra_devfreq *tegra =3D platform_get_drvdata(pdev);
-> +
-> +	clk_notifier_unregister(tegra->emc_clock, &tegra->rate_change_nb);
-> +
-> +	clk_disable_unprepare(tegra->clock);
-> +
-> +	return 0;
-> +}
-
-You'll need to be wary about using devm_request_threaded_irq(). You have
-to make sure that the interrupt handler isn't accessing any data that
-could be freed via the devres mechanism before the IRQ is freed. Given
-that devres frees resources in the opposite order than they were
-allocated, and given that you request the interrupt last it /should be/
-safe.
-
-Then again you do disable and unprepare the clock, so if you were to
-access registers from the interrupt handler (called after clock disable
-and before IRQ free) you could possibly cause a hang.
-
-Often the simplest is to just explicitly call devm_free_irq() in your
-=2Eremove().
-
-> +static SIMPLE_DEV_PM_OPS(tegra_devfreq_pm_ops,
-> +			 tegra_devfreq_suspend,
-> +			 tegra_devfreq_resume);
-> +
-> +static struct of_device_id tegra_devfreq_of_match[] =3D {
-> +	{ .compatible =3D "nvidia,tegra124-actmon" },
-> +	{ },
-> +};
-> +
-> +static struct platform_driver tegra_devfreq_driver =3D {
-> +	.probe	=3D tegra_devfreq_probe,
-> +	.remove	=3D tegra_devfreq_remove,
-> +	.driver =3D {
-> +		.name		=3D "tegra-devfreq",
-> +		.owner		=3D THIS_MODULE,
-
-No need for this with module_platform_driver().
-
-> +		.of_match_table =3D tegra_devfreq_of_match,
-> +		.pm		=3D &tegra_devfreq_pm_ops,
-
-Also you use tabs and spaces inconsistently here. I'd just get rid of
-any attempt to align these and simply use a single space on either side
-of the '=3D'.
-
-> +	},
-> +};
-> +module_platform_driver(tegra_devfreq_driver);
-> +
-> +MODULE_LICENSE("GPL");
-
-According to the header comment this should be "GPL v2".
-
-> +MODULE_DESCRIPTION("Tegra devfreq driver");
-> +MODULE_AUTHOR("Tomeu Vizoso <tomeu.vizoso@collabora.com>");
-> +MODULE_DEVICE_TABLE(of, tegra_devfreq_of_match);
-
-I think it's more common to have this immediately below the OF match
-table.
+Note that we do share the memory clients table between the MC and the
+IOMMU drivers, so there's not actually any duplication there.
 
 Thierry
 
---Lb0e7rgc7IsuDeGj
+--OzxllxdKGCiKxUZM
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUfZ81AAoJEN0jrNd/PrOhHCQP/RVroDKTQQHJw1dxjqii37qN
-kxasM9rt/J5xnzq2f3PQWXv3fenkmC567FuyDHFD3tV5Zs0FeaWpZLM2f5ElqYMF
-3fwNW1hfljrflOcJaahQHsPDoEDRZr4Vn4h6I+gFB3e62dc9Yd8j3E7n6kGBiC28
-0dqFUWfnPUBcqwfLHBXoFHe9G3SsGYjLvOxWLB9/9ZznmUDnYzDl4xudD2H0jgTk
-0niWyEVa+JKTHx5NVOeAI+opvraFE+BqC4nf2QPBMg9ooiF3Tq3mymQl7cCqqzjJ
-InmYyqYYgqT1o92KfHyuV7Mup8akwuPxQ/rhgffrxsl+Kmn13cD0kkkf+Yb/7aUH
-c0bFpI+Uhy4P1jwgGfC1n5J+Zdq7Tut5GHk8txdlZPCiLPSeK+osQjxKjo/lf8lV
-EMIUxtXB7IVIRSBjZ9Xqr/pCCrU/gQry6DaxuckXoXulOtMeT3jIt700RN0lHpLL
-qTtP6u/jZdGsRF4BNUg/7kY/0QCoWXIc9MGNqFrcn+95uiPkb7ILTRhJ2V7Bfn7F
-PpB1KdRZvvMEZ1o6qiFUd0FfIXfso9pMwIHpn7XM6y8kakIa0v5mVYHW8koru+Aa
-w7JTmtXH/DcrHNJPvuBBFSUKdi2OEvLKY8v2xi90WhoKrOiFJTvmX21FeRZZiCiJ
-c6KSZ6XF9Atd6meVCX0l
-=I9qC
+iQIcBAEBAgAGBQJUfae7AAoJEN0jrNd/PrOh8qYQAJ5+ggkYXVqeSTyzHegK4OZI
+qmN0vKjehNLenQFwp2v+IPlBp1XPpeKut08Q0ij+N9PffwoVbBrTb2ipakmE3wIi
+SUZch7tHiqI+pMj8vETOMW6/ewwiPqSRfQfgKTw+H39QV46uZWf5sY1yOMiBGHLa
+43q6qsCcSMDFwxslvh1Kp64PvbAE/TzmLnzuXOjJ/tN+qR8XQEvkoR7Pg5fjSCF0
+p8CUhWhdplNsbIgnm9dfcNY3xRDAjtU30anukEdD9O+uxPMm0n23vo18luj+VDO7
+8ishlnwUZZ0JaoH2NEPAcqGIaq/dvk43+FKKsONgIRUQoUgXP3w3U5LFaKaf+TxF
+wjBCrS5MAsqu35KnkXPOQtfNkH5R7rk42emTAVoVbRkJOrQClZ5r/z+Yn8mDkL/2
+OlvbzfZpa+Qvh1DdvZc1ZopMHvfZEfxi/R8An6ftLKGc/zmvj3R2VukCh2XoyJck
+lJ1m0JABHTFFrDI1Ze/mSZO4XceKjjefg2TpyNsR4R0D3rnlx4mBx4u5Ry0Y0ZyC
+szSgOihgc6LIROSTUiC0W+4LRjpANZ2CZ5Vw1Px4dN6i+7MTmaThwBvckJ+73jRy
+S+UU75nhfLf8kalXAUDAcJX17ecT5WL+h12wXZfILYPcOSyY3j+ZynTwUBfQwFEY
+zhRCs5sw2EuQidr0by0u
+=4uGc
 -----END PGP SIGNATURE-----
 
---Lb0e7rgc7IsuDeGj--
+--OzxllxdKGCiKxUZM--
