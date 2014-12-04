@@ -1,229 +1,214 @@
-From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH v2] Add support for Nyan-big
-Date: Thu,  4 Dec 2014 06:31:51 -0700
-Message-ID: <1417699911-17901-1-git-send-email-sjg@chromium.org>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [GIT PULL v2 1/4] ARM: tegra: IOMMU support for v3.19
+Date: Thu, 04 Dec 2014 14:36:18 +0100
+Message-ID: <2157417.mTprjOdEjk@wuerfel>
+References: <1416570832-6220-1-git-send-email-thierry.reding@gmail.com> <2735208.aqBxNpBLAO@wuerfel> <20141202115123.GF6135@ulmo>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20141202115123.GF6135@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add support for Tegra124 Nyan-big. Pinmux is based on norrin with a single
-change for the reset GPIO.
+On Tuesday 02 December 2014 12:51:24 Thierry Reding wrote:
+> On Mon, Dec 01, 2014 at 06:55:01PM +0100, Arnd Bergmann wrote:
+> > On Monday 01 December 2014 16:05:54 Thierry Reding wrote:
+> > > On Fri, Nov 28, 2014 at 11:20:19PM +0100, Arnd Bergmann wrote:
+> > > > On Wednesday 26 November 2014, Thierry Reding wrote:
+> > > An ID refers to the client ID. Each client ID represents one requester
+> > > and a set of IDs makes up one SWGROUP. For example there are two display
+> > > controllers, each being three clients, yet there's only two SWGROUPs for
+> > > them:
+> > > 
+> > > 	SWGROUP dc: - display0a
+> > > 	            - display0b
+> > > 	            - display0c
+> > > 
+> > > 	SWGROUP dcb: - display0ab
+> > > 	             - display0bb
+> > > 	             - display0cb
+> > > 
+> > > Each SWGROUP can be assigned a separate address space. That is, an
+> > > address space for SWGROUP dc will apply for all clients in that group.
+> > > However it can be additionally specified for which clients in a group
+> > > IOMMU address translation should be enabled. Theoretically one could
+> > > enable translation only for display0a and display0b, but not for
+> > > display0c. I don't immediately see when that would be desirable, hence
+> > > the driver always enables translation for all clients in a group.
+> > 
+> > Ok, I see. So specifying both SWGROUP and ID in DT would let you do
+> > that, but you don't think anybody ever wants it.
+> 
+> Correct. I don't think it makes sense and it'd require significant work
+> in a driver to know which buffers need translation and which don't. In
+> fact I don't think you could make that work with the current frameworks
+> because both the IOMMU and DMA APIs operate at a struct device level. A
+> client could therefore not be distinguished from another.
 
-Signed-off-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
----
+I was assuming that you'd have one 'struct device' per client in all
+cases, so you'd have a unique association between a swgroup/id tuple
+and the device pointer that you pass into the dma-mapping and IOMMU APIs.
 
-Changes in v2:
-- Rename from Nyan to Nyan-big
+> > It's less of an issue for the particular implementation from NVIDIA,
+> > since you have a relatively low number of SoC designs coming out,
+> > compared to some of the other vendors, and in particular compared to
+> > the ARM SMMU that will be shared across many vendors. I definitely
+> > would not want to see per-SoC files for each chip that contains an
+> > ARM SMMU, and I also would like to see IOMMU drivers in general being
+> > implemented in a similar fashion, and your driver sets an example that
+> > others should better not copy IMHO ;-)
+> 
+> Actually I disagree. I think this sets exactly the right example. Since
+> none of these associations are configurable or change from board to
+> board, everything is implied by the compatible property. Adding this
+> data to DT would therefore be completely redundant.
+> 
+> Moving the data to DT would also mean that we would be adding a table of
+> registers to the DT. There used to be a time when there was concensus at
+> least that that was a really bad idea. Has that changed in the last few
+> years?
 
- configs/nyan-big.board | 198 +++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 198 insertions(+)
- create mode 100644 configs/nyan-big.board
+I wasn't thinking of adding the entire table to the IOMMU node, that would
+indeed achieve nothing compare to having the table in the driver source.
 
-diff --git a/configs/nyan-big.board b/configs/nyan-big.board
-new file mode 100644
-index 0000000..7da5b4d
---- /dev/null
-+++ b/configs/nyan-big.board
-@@ -0,0 +1,198 @@
-+soc = 'tegra124'
-+
-+pins = (
-+    #pin,                      mux,           gpio_init, pull,   tri,   e_inp, od,    rcv_sel
-+    ('dap_mclk1_pw4',          'extperiph1',  None,      'none', False, False, False, False),
-+    ('dap_mclk1_req_pee2',     'rsvd4',       None,      'down', True,  False, False, False),
-+    ('dap1_din_pn1',           'rsvd4',       None,      'down', True,  False, False, False),
-+    ('dap1_dout_pn2',          'i2s0',        None,      'down', True,  False, False, False),
-+    ('dap1_fs_pn0',            'rsvd4',       None,      'down', True,  False, False, False),
-+    ('dap1_sclk_pn3',          'rsvd4',       None,      'down', True,  False, False, False),
-+    ('dap2_din_pa4',           'i2s1',        None,      'none', False, True,  False, False),
-+    ('dap2_dout_pa5',          'i2s1',        None,      'none', False, True,  False, False),
-+    ('dap2_fs_pa2',            'i2s1',        None,      'none', False, True,  False, False),
-+    ('dap2_sclk_pa3',          'i2s1',        None,      'none', False, True,  False, False),
-+    ('gpio_x4_aud_px4',        None,          'in',      'none', False, True,  False, False),
-+    ('gpio_x5_aud_px5',        'rsvd4',       None,      'down', True,  False, False, False),
-+    ('gpio_x6_aud_px6',        'gmi',         None,      'down', True,  False, False, False),
-+    ('gpio_x7_aud_px7',        None,          'out0',    'none', False, False, False, False),
-+    ('gpio_w2_aud_pw2',        'rsvd2',       None,      'down', True,  False, False, False),
-+    ('gpio_w3_aud_pw3',        None,          'in',      'none', False, True,  False, False),
-+    ('dvfs_pwm_px0',           'cldvfs',      None,      'none', False, False, False, False),
-+    ('gpio_x1_aud_px1',        None,          'in',      'none', False, True,  False, False),
-+    ('dvfs_clk_px2',           'cldvfs',      None,      'none', False, False, False, False),
-+    ('gpio_x3_aud_px3',        'rsvd4',       None,      'down', True,  False, False, False),
-+    ('dap3_din_pp1',           'i2s2',        None,      'down', True,  False, False, False),
-+    ('dap3_dout_pp2',          None,          'out0',    'none', False, False, False, False),
-+    ('dap3_fs_pp0',            'i2s2',        None,      'down', True,  False, False, False),
-+    ('dap3_sclk_pp3',          'rsvd3',       None,      'down', True,  False, False, False),
-+    ('pv0',                    None,          'in',      'none', False, True,  False, False),
-+    ('pv1',                    'rsvd1',       None,      'down', True,  False, False, False),
-+    ('ulpi_clk_py0',           'spi1',        None,      'none', False, False, False, False),
-+    ('ulpi_data0_po1',         'ulpi',        None,      'down', True,  False, False, False),
-+    ('ulpi_data1_po2',         'ulpi',        None,      'down', True,  False, False, False),
-+    ('ulpi_data2_po3',         'ulpi',        None,      'down', True,  False, False, False),
-+    ('ulpi_data3_po4',         'ulpi',        None,      'down', True,  False, False, False),
-+    ('ulpi_data4_po5',         'ulpi',        None,      'down', True,  False, False, False),
-+    ('ulpi_data5_po6',         'ulpi',        None,      'down', True,  False, False, False),
-+    ('ulpi_data6_po7',         'ulpi',        None,      'down', True,  False, False, False),
-+    ('ulpi_data7_po0',         'ulpi',        None,      'down', True,  False, False, False),
-+    ('ulpi_dir_py1',           'spi1',        None,      'none', False, True,  False, False),
-+    ('ulpi_nxt_py2',           'spi1',        None,      'none', False, False, False, False),
-+    ('ulpi_stp_py3',           'spi1',        None,      'none', False, False, False, False),
-+    ('cam_i2c_scl_pbb1',       'rsvd3',       None,      'down', True,  False, False, False),
-+    ('cam_i2c_sda_pbb2',       'rsvd3',       None,      'down', True,  False, False, False),
-+    ('cam_mclk_pcc0',          'vi',          None,      'down', True,  False, False, False),
-+    ('pbb0',                   'vgp6',        None,      'down', True,  False, False, False),
-+    ('pbb3',                   'vgp3',        None,      'down', True,  False, False, False),
-+    ('pbb4',                   'vgp4',        None,      'down', True,  False, False, False),
-+    ('pbb5',                   'rsvd3',       None,      'down', True,  False, False, False),
-+    ('pbb6',                   'rsvd2',       None,      'down', True,  False, False, False),
-+    ('pbb7',                   'rsvd2',       None,      'down', True,  False, False, False),
-+    ('pcc1',                   'rsvd2',       None,      'down', True,  False, False, False),
-+    ('pcc2',                   'rsvd2',       None,      'down', True,  False, False, False),
-+    ('gen2_i2c_scl_pt5',       'i2c2',        None,      'none', False, True,  True,  False),
-+    ('gen2_i2c_sda_pt6',       'i2c2',        None,      'none', False, True,  True,  False),
-+    ('pj7',                    None,          'in',      'none', False, True,  False, False),
-+    ('pb0',                    'rsvd2',       None,      'down', True,  False, False, False),
-+    ('pb1',                    'rsvd2',       None,      'down', True,  False, False, False),
-+    ('pk7',                    None,          'in',      'none', False, True,  False, False),
-+    ('pg0',                    None,          'in',      'none', False, True,  False, False),
-+    ('pg1',                    None,          'in',      'none', False, True,  False, False),
-+    ('ph2',                    None,          'in',      'none', False, True,  False, False),
-+    ('ph3',                    'gmi',         None,      'down', True,  False, False, False),
-+    ('ph4',                    None,          'in',      'none', False, True,  False, False),
-+    ('ph5',                    'rsvd2',       None,      'down', True,  False, False, False),
-+    ('ph6',                    None,          'in',      'none', False, True,  False, False),
-+    ('ph7',                    None,          'out1',    'none', False, False, False, False),
-+    ('pg2',                    None,          'in',      'none', False, True,  False, False),
-+    ('pg3',                    None,          'in',      'none', False, True,  False, False),
-+    ('pg4',                    'spi4',        None,      'none', False, False, False, False),
-+    ('pg5',                    'spi4',        None,      'none', False, False, False, False),
-+    ('pg6',                    'spi4',        None,      'none', False, False, False, False),
-+    ('pg7',                    'spi4',        None,      'none', False, True,  False, False),
-+    ('ph0',                    'gmi',         None,      'down', True,  False, False, False),
-+    ('ph1',                    'pwm1',        None,      'none', False, False, False, False),
-+    ('pk0',                    'rsvd1',       None,      'down', True,  False, False, False),
-+    ('pk1',                    None,          'out0',    'none', False, False, False, False),
-+    ('pj0',                    None,          'in',      'up',   False, True,  False, False),
-+    ('pj2',                    'rsvd1',       None,      'down', True,  False, False, False),
-+    ('pk3',                    'gmi',         None,      'down', True,  False, False, False),
-+    ('pk4',                    None,          'out0',    'up',   False, False, False, False),
-+    ('pk2',                    None,          'in',      'none', False, True,  False, False),
-+    ('pi3',                    'spi4',        None,      'none', False, False, False, False),
-+    ('pi6',                    None,          'in',      'none', False, True,  False, False),
-+    ('pi2',                    'rsvd4',       None,      'down', True,  False, False, False),
-+    ('pi5',                    None,          'out1',    'up',   False, False, False, False),
-+    ('pi1',                    None,          'in',      'none', False, True,  False, False),
-+    ('pi4',                    'gmi',         None,      'down', True,  False, False, False),
-+    ('pi7',                    None,          'in',      'none', False, True,  False, False),
-+    ('pc7',                    None,          'in',      'none', False, True,  False, False),
-+    ('pi0',                    None,          'in',      'none', False, True,  False, False),
-+    ('pex_l0_clkreq_n_pdd2',   'rsvd2',       None,      'down', True,  False, False, False),
-+    ('pex_l0_rst_n_pdd1',      'rsvd2',       None,      'down', True,  False, False, False),
-+    ('pex_l1_clkreq_n_pdd6',   'rsvd2',       None,      'down', True,  False, False, False),
-+    ('pex_l1_rst_n_pdd5',      'rsvd2',       None,      'down', True,  False, False, False),
-+    ('pex_wake_n_pdd3',        'rsvd2',       None,      'down', True,  False, False, False),
-+    ('usb_vbus_en2_pff1',      'rsvd2',       None,      'down', True,  False, False, False),
-+    ('pff2',                   'rsvd2',       None,      'down', True,  False, False, False),
-+    ('clk2_out_pw5',           'rsvd2',       None,      'down', True,  False, False, False),
-+    ('clk2_req_pcc5',          'rsvd2',       None,      'down', True,  False, False, False),
-+    ('sdmmc1_wp_n_pv3',        'sdmmc1',      None,      'down', True,  False, False, False),
-+    ('sdmmc1_clk_pz0',         'sdmmc1',      None,      'none', False, True,  False, False),
-+    ('sdmmc1_cmd_pz1',         'sdmmc1',      None,      'up',   False, True,  False, False),
-+    ('sdmmc1_dat0_py7',        'sdmmc1',      None,      'up',   False, True,  False, False),
-+    ('sdmmc1_dat1_py6',        'sdmmc1',      None,      'up',   False, True,  False, False),
-+    ('sdmmc1_dat2_py5',        'sdmmc1',      None,      'up',   False, True,  False, False),
-+    ('sdmmc1_dat3_py4',        'sdmmc1',      None,      'up',   False, True,  False, False),
-+    ('sdmmc3_clk_pa6',         'sdmmc3',      None,      'none', False, False, False, False),
-+    ('sdmmc3_cmd_pa7',         'sdmmc3',      None,      'up',   False, True,  False, False),
-+    ('sdmmc3_dat0_pb7',        'sdmmc3',      None,      'up',   False, True,  False, False),
-+    ('sdmmc3_dat1_pb6',        'sdmmc3',      None,      'up',   False, True,  False, False),
-+    ('sdmmc3_dat2_pb5',        'sdmmc3',      None,      'up',   False, True,  False, False),
-+    ('sdmmc3_dat3_pb4',        'sdmmc3',      None,      'up',   False, True,  False, False),
-+    ('sdmmc3_clk_lb_out_pee4', 'sdmmc3',      None,      'none', False, False, False, False),
-+    ('sdmmc3_clk_lb_in_pee5',  'sdmmc3',      None,      'up',   False, True,  False, False),
-+    ('sdmmc4_clk_pcc4',        'sdmmc4',      None,      'none', False, True,  False, False),
-+    ('sdmmc4_cmd_pt7',         'sdmmc4',      None,      'none', False, True,  False, False),
-+    ('sdmmc4_dat0_paa0',       'sdmmc4',      None,      'up',   False, True,  False, False),
-+    ('sdmmc4_dat1_paa1',       'sdmmc4',      None,      'up',   False, True,  False, False),
-+    ('sdmmc4_dat2_paa2',       'sdmmc4',      None,      'up',   False, True,  False, False),
-+    ('sdmmc4_dat3_paa3',       'sdmmc4',      None,      'up',   False, True,  False, False),
-+    ('sdmmc4_dat4_paa4',       'sdmmc4',      None,      'up',   False, True,  False, False),
-+    ('sdmmc4_dat5_paa5',       'sdmmc4',      None,      'up',   False, True,  False, False),
-+    ('sdmmc4_dat6_paa6',       'sdmmc4',      None,      'up',   False, True,  False, False),
-+    ('sdmmc4_dat7_paa7',       'sdmmc4',      None,      'up',   False, True,  False, False),
-+    ('kb_col0_pq0',            None,          'in',      'none', False, True,  False, False),
-+    ('kb_col1_pq1',            'rsvd2',       None,      'down', True,  False, False, False),
-+    ('kb_col2_pq2',            None,          'in',      'none', False, True,  False, False),
-+    ('kb_col3_pq3',            None,          'in',      'none', False, True,  False, False),
-+    ('kb_col4_pq4',            'sdmmc3',      None,      'up',   False, True,  False, False),
-+    ('kb_col5_pq5',            'rsvd2',       None,      'down', True,  False, False, False),
-+    ('kb_col6_pq6',            None,          'in',      'none', False, True,  False, False),
-+    ('kb_col7_pq7',            None,          'in',      'none', False, True,  False, False),
-+    ('kb_row0_pr0',            None,          'out0',    'none', False, False, False, False),
-+    ('kb_row1_pr1',            None,          'in',      'none', False, True,  False, False),
-+    ('kb_row10_ps2',           'uarta',       None,      'none', False, True,  False, False),
-+    ('kb_row11_ps3',           None,          'out0',    'none', False, False, False, False),
-+    ('kb_row12_ps4',           None,          'out0',    'none', False, False, False, False),
-+    ('kb_row13_ps5',           'rsvd2',       None,      'down', True,  False, False, False),
-+    ('kb_row14_ps6',           'rsvd2',       None,      'down', True,  False, False, False),
-+    ('kb_row15_ps7',           None,          'in',      'none', False, True,  False, False),
-+    ('kb_row16_pt0',           'rsvd2',       None,      'down', True,  False, False, False),
-+    ('kb_row17_pt1',           None,          'in',      'none', False, True,  False, False),
-+    ('kb_row2_pr2',            'rsvd2',       None,      'down', True,  False, False, False),
-+    ('kb_row3_pr3',            'kbc',         None,      'down', True,  False, False, False),
-+    ('kb_row4_pr4',            None,          'in',      'none', False, True,  False, False),
-+    ('kb_row5_pr5',            'rsvd3',       None,      'down', True,  False, False, False),
-+    ('kb_row6_pr6',            'kbc',         None,      'down', True,  False, False, False),
-+    ('kb_row7_pr7',            None,          'in',      'none', False, True,  False, False),
-+    ('kb_row8_ps0',            'rsvd2',       None,      'down', True,  False, False, False),
-+    ('kb_row9_ps1',            'uarta',       None,      'down', False, False, False, False),
-+    ('sdmmc3_cd_n_pv2',        'sdmmc3',      None,      'up',   False, True,  False, False),
-+    ('clk_32k_out_pa0',        None,          'in',      'none', False, True,  False, False),
-+    ('pwr_i2c_scl_pz6',        'i2cpwr',      None,      'none', False, True,  True,  False),
-+    ('pwr_i2c_sda_pz7',        'i2cpwr',      None,      'none', False, True,  True,  False),
-+    ('jtag_rtck',              'rtck',        None,      'none', False, False, False, False),
-+    ('clk_32k_in',             'clk',         None,      'none', False, True,  False, False),
-+    ('core_pwr_req',           'pwron',       None,      'none', False, False, False, False),
-+    ('cpu_pwr_req',            'cpu',         None,      'none', False, False, False, False),
-+    ('pwr_int_n',              'pmi',         None,      'none', False, True,  False, False),
-+    ('reset_out_n',            'reset_out_n', None,      'none', False, False, False, False),
-+    ('clk3_out_pee0',          'rsvd2',       None,      'down', True,  False, False, False),
-+    ('clk3_req_pee1',          'rsvd2',       None,      'down', True,  False, False, False),
-+    ('dap4_din_pp5',           'rsvd3',       None,      'down', True,  False, False, False),
-+    ('dap4_dout_pp6',          'rsvd4',       None,      'down', True,  False, False, False),
-+    ('dap4_fs_pp4',            'rsvd4',       None,      'down', True,  False, False, False),
-+    ('dap4_sclk_pp7',          'rsvd3',       None,      'down', True,  False, False, False),
-+    ('gen1_i2c_scl_pc4',       'i2c1',        None,      'none', False, True,  True,  False),
-+    ('gen1_i2c_sda_pc5',       'i2c1',        None,      'none', False, True,  True,  False),
-+    ('pu0',                    'rsvd4',       None,      'down', True,  False, False, False),
-+    ('pu1',                    'rsvd1',       None,      'down', True,  False, False, False),
-+    ('pu2',                    'rsvd1',       None,      'down', True,  False, False, False),
-+    ('pu3',                    'gmi',         None,      'down', True,  False, False, False),
-+    ('pu4',                    None,          'in',      'none', False, True,  False, False),
-+    ('pu5',                    None,          'in',      'up',   False, True,  False, False),
-+    ('pu6',                    None,          'in',      'up',   False, True,  False, False),
-+    ('uart2_cts_n_pj5',        'gmi',         None,      'down', True,  False, False, False),
-+    ('uart2_rts_n_pj6',        'gmi',         None,      'down', True,  False, False, False),
-+    ('uart2_rxd_pc3',          'irda',        None,      'down', True,  False, False, False),
-+    ('uart2_txd_pc2',          'irda',        None,      'down', True,  False, False, False),
-+    ('uart3_cts_n_pa1',        'gmi',         None,      'down', True,  False, False, False),
-+    ('uart3_rts_n_pc0',        'gmi',         None,      'down', True,  False, False, False),
-+    ('uart3_rxd_pw7',          'rsvd2',       None,      'down', True,  False, False, False),
-+    ('uart3_txd_pw6',          'rsvd2',       None,      'down', True,  False, False, False),
-+    ('owr',                    'rsvd2',       None,      'down', True,  False, False, False),
-+    ('hdmi_cec_pee3',          'cec',         None,      'none', False, True,  True,  False),
-+    ('hdmi_int_pn7',           None,          'in',      'down', False, True,  False, False),
-+    ('ddc_scl_pv4',            'i2c4',        None,      'none', False, True,  False, False),
-+    ('ddc_sda_pv5',            'i2c4',        None,      'none', False, True,  False, False),
-+    ('spdif_out_pk5',          'rsvd2',       None,      'down', True,  False, False, False),
-+    ('spdif_in_pk6',           None,          'out0',    'down', False, False, False, False),
-+    ('usb_vbus_en0_pn4',       'usb',         None,      'none', False, True,  True,  False),
-+    ('usb_vbus_en1_pn5',       'usb',         None,      'none', False, True,  True,  False),
-+    ('dp_hpd_pff0',            'dp',          None,      'up',   False, True,  False, False),
-+)
-+
-+drive_groups = (
-+)
--- 
-2.2.0.rc0.207.ga3a616c
+What I was trying to get at was whether you could make it work without
+a table whatsoever, by doing the DT IOMMU reference on the ID level rather
+than the more coarse SWGROUP level, and doing the memory controller
+settings (latency allowance) separately from that.
+
+> > > > The name is only used for debugging purposes and we could also leave
+> > > > it out if we had a way to kill off the other fields of the table.
+> > > 
+> > > The name is also used in error messages to clarify where an error comes
+> > > from. That's been very essential in tracking down various issues in some
+> > > drivers (DRM primarily).
+> > 
+> > Couldn't you print the DT path of the DMA master to provide the
+> > same information?
+> 
+> To do that I would need to keep a mapping of struct device_node * to
+> client ID. And it would only give me a single name even for devices with
+> multiple clients.
+
+As above, my expectation was to have a separate device node per client.
+
+> Going back to the DRM example I gave earlier, it's been extremely
+> valuable for the memory controller to spit out the exact name of the
+> faulting client, because it immediately indicates whether there's
+> something wrong with the root window (window A) or one of the overlays
+> (window B or C).
+
+I'm not entirely buying this. You can clearly print the number and
+have the person debugging the driver manually look up the ID in a table,
+even if you don't have a separate struct device per ID. Obviously
+printing a cleartext identifier is a bit nicer, but you wouldn't
+add the table just for this purpose, just like we don't have tables
+to map irq/gpio/dma/... numbers to strings in general.
+
+> > > > In the comment you mention that the latency allowance is set up to the
+> > > > hardware defaults, so I guess in the current version this is not required,
+> > > > but the .la.reg/shift/mask fields can't be determined from the other
+> > > > fields. This means in order to implement the extension for changing the
+> > > > setting in the future, you'd have to add some other way of communicating
+> > > > it without the table, right?
+> > > 
+> > > Right, there is no programmatic way to derive the latency allowance data
+> > > from the ID. They're more or less randomly spread across the registers.
+> > > 
+> > > Note that there are other knobs in the memory controller associated with
+> > > the memory clients, though they aren't in use (yet). Having this kind of
+> > > table gives us a very nice way of collecting the per-client data in one
+> > > location and then use that for register programming.
+> > 
+> > So what does "lacency allowance" actually mean, and why do you need to
+> > access this field from Linux? I'm not too familiar with memory controller
+> > concepts, so I'm sorry if this is an RTFM question.
+> 
+> Essentially this is an input to the memory controller's arbitration unit
+> and sets an upper bound on the latency of outstanding requests. Under
+> memory bandwidth pressure this allows the memory controller to give
+> priority to requests from clients with lower latency tolerance. Display
+> for example would usually have a fairly low tolerance because stalling
+> requests for too long will cause the pixel data FIFO to underrun and
+> cause visual artifacts.
+> 
+> So to make this work the goal is for memory clients to register their
+> bandwidth needs with some central entity that uses it along with the
+> memory client's FIFO depth to compute the value for the latency
+> allowance register. The unit for this value is an internal tick from the
+> memory controller, in turn based on the EMC frequency. Therefore this is
+> usually only computed once for a given configuration and can remain the
+> same across EMC frequency changes.
+> 
+> There are patches in the works to add support for EMC frequency scaling
+> and also latency allowance programming.
+
+Ok, I see. The part that I'm missing here is how the client driver
+knows its number, as you write that we don't have a device node per
+client. Do you have a particular binding in mind already?
+
+> > > > Back to the swgroup/id fields: if you need both, would it make sense
+> > > > to have #iommu-cells = <2> and pass both from the dma master device?
+> > > 
+> > > I think they are really orthogonal settings. Client IDs have nothing to
+> > > do with the IOMMU specifically. The IOMMU is primarily concerned with
+> > > the SWGROUP. The driver only makes sure that IOVA translation is enabled
+> > > for each client in a SWGROUP.
+> > 
+> > Hmm, where are they actually needed both at the same time then? IOW,
+> > why can't the IOMMU driver just deal with the SWGROUP and ignore the
+> > table with the ID and LA values, leaving that to the memory controller
+> > driver?
+> 
+> The IOMMU driver still needs the list of clients so that it can enable
+> translation for each of the clients pertaining to a given group. That
+> is, if display controller A requests IOVA translation this maps to
+> TEGRA_SWGROUP_DC, but internally in order for the translation to
+> actually happen we also need to enable IOVA translation for each of the
+> clients in that group.
+> 
+> Note that we do share the memory clients table between the MC and the
+> IOMMU drivers, so there's not actually any duplication there.
+
+This again comes down to the question of whether you have one device
+node per client or one device node per group, so let's focus on that
+question and then make a decision based on that. The other discussion
+points are at this stage not important, so if you can convince me that
+doing one node per group is better than one node per id, I'd be happy
+to take your patches (with a summary of the discussion added to the
+merge commit).
+
+The IOMMU core explictly understands the concept of IOMMU groups that
+share a translation between multiple clients, and this would seem like
+the best fit for the hardware you describe, but evidently you came to
+a different conclusion, as you have more knowledge of the details behind
+it. I can see that most groups have only one ID, but there are a few
+that have up to four clients:
+
+$ git show 37d21f8918f2aa2289036cc778ee188951e53288 | grep swgroup | uniq -c  | grep -v reg.= | grep -v 1 | sort | uniq -c
+      1       2 +               .swgroup = TEGRA_SWGROUP_A9AVP,
+      1       2 +               .swgroup = TEGRA_SWGROUP_EMUCIF,
+      2       2 +               .swgroup = TEGRA_SWGROUP_G2,
+      1       2 +               .swgroup = TEGRA_SWGROUP_GPU,
+      3       2 +               .swgroup = TEGRA_SWGROUP_HC,
+      2       2 +               .swgroup = TEGRA_SWGROUP_NV,
+      6       2 +               .swgroup = TEGRA_SWGROUP_PPCS,
+      2       2 +               .swgroup = TEGRA_SWGROUP_TSEC,
+      1       2 +               .swgroup = TEGRA_SWGROUP_VIC,
+      2       2 +               .swgroup = TEGRA_SWGROUP_XUSB_DEV,
+      2       2 +               .swgroup = TEGRA_SWGROUP_XUSB_HOST,
+      2       3 +               .swgroup = TEGRA_SWGROUP_EPP,
+      1       3 +               .swgroup = TEGRA_SWGROUP_ISP2,
+      1       3 +               .swgroup = TEGRA_SWGROUP_ISP2B,
+      1       3 +               .swgroup = TEGRA_SWGROUP_MPE,
+      1       4 +               .swgroup = TEGRA_SWGROUP_NV,
+      6       4 +               .swgroup = TEGRA_SWGROUP_VDE,
+      2       4 +               .swgroup = TEGRA_SWGROUP_VI,
+
+Are all of these devices where you'd naturally describe each
+group as a single device node in DT?
+
+	Arnd
