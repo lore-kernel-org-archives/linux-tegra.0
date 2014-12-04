@@ -1,39 +1,44 @@
 From: James Thomas <james.thomas-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
-Subject: Re: [flasher PATCH] Set bootdelay to 0
-Date: Thu, 04 Dec 2014 11:50:41 +0000
-Message-ID: <54804A91.9080102@codethink.co.uk>
-References: <1417024626-6616-1-git-send-email-james.thomas@codethink.co.uk> <1417024626-6616-2-git-send-email-james.thomas@codethink.co.uk> <547CADF7.8030506@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Subject: [flasher PATCH V2] Add a --post-flash-cmd command line argument
+Date: Thu,  4 Dec 2014 11:53:59 +0000
+Message-ID: <1417694039-13060-1-git-send-email-james.thomas@codethink.co.uk>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <547CADF7.8030506-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/12/14 18:05, Stephen Warren wrote:
-> On 11/26/2014 10:57 AM, James Thomas wrote:
->> On 32-bit systems fdtput writes 0xfffffffe as 0x7fffffff, which takes
->> some time to complete.
->>
->> Setting this to 0 accomplishes the same goal
-> 
-> A value of 0 doesn't mean the same thing. 0 means that bootdelay is enabled,
-> just with an immediate timeout, whereas -2 means that bootdelay is disabled
-> completely, so that boot can't be interrupted. The difference is that when
-> bootdelay is 0, the user can still press a key before the boot delay check, and
-> break into the boot process. This would make the flasher less reliable.
+This allows a user to specify the u-boot command to run after flashing
+is complete (e.g 'ums 0 mmc 0'), defaults to 'reset' if not set
 
-Ah, right, that makes sense, thanks for the feedback
-> 
-> Can you explain why the correct value doesn't get into the DTB? It seems better
-> to fix that bug in fdtput instead. Or perhaps there's a bug in the command-line
-> arguments to fdtput that should be fixed?
+Signed-off-by: James Thomas <james.thomas-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
+---
+ tegra-uboot-flasher | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Command-line argument should have been the first thing I checked, I think we
-need to use -t x (hex) here instead of int. Now works correctly on 32-bit and
-64-bit (i'll resubmit)
-
-Thanks
-James
+diff --git a/tegra-uboot-flasher b/tegra-uboot-flasher
+index b71f967..39a077a 100755
+--- a/tegra-uboot-flasher
++++ b/tegra-uboot-flasher
+@@ -218,7 +218,10 @@ def func_flash():
+         bootcmd += 'echo >>> Flashing OK, rebooting... ; '
+         # To update the bootloader, reset.
+         # If wanting to run installer, set installer_args.configname in environment, 'run bootcmd'
+-        bootcmd += 'reset'
++        if args.post_flash_cmd:
++            bootcmd += args.post_flash_cmd
++        else:
++            bootcmd += 'reset'
+         print 'bootcmd:', bootcmd
+         cmd = ['fdtput', '-p', '-t', 's', u_boot_dtb_runflash, '/config', 'bootcmd', bootcmd]
+         run(workdir, cmd)
+@@ -307,6 +310,8 @@ parser_flash.add_argument('--env', type=str, nargs=2, action='append',
+     metavar=("VAR", "VALUE"),
+     help='Set a U-Boot environment variable after flashing. This option ' +
+         'may be given multiple times')
++parser_flash.add_argument('--post-flash-cmd', type=str,
++    help='The U-Boot command to run after flashing, defaults to \'reset\'')
+ 
+ parser_exec = subparsers.add_parser('exec',
+     help='Download and execute an unmodified bootloader binary, named ' +
+-- 
+1.9.3
