@@ -1,87 +1,102 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [GIT PULL v2 1/4] ARM: tegra: IOMMU support for v3.19
-Date: Thu, 04 Dec 2014 16:03:49 +0100
-Message-ID: <3327156.hTO1VnvNbE@wuerfel>
-References: <1416570832-6220-1-git-send-email-thierry.reding@gmail.com> <2157417.mTprjOdEjk@wuerfel> <20141204144354.GA31464@ulmo.nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [GIT PULL v3 1/4] ARM: tegra: IOMMU support for v3.19
+Date: Thu,  4 Dec 2014 16:45:49 +0100
+Message-ID: <1417707950-7633-1-git-send-email-thierry.reding@gmail.com>
+References: <1416570832-6220-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20141204144354.GA31464-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+In-Reply-To: <1416570832-6220-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday 04 December 2014 15:43:56 Thierry Reding wrote:
-> We discussed this on IRC and come to the conclusion that this approach
-> (encoding the table in the driver) was indeed the best for this
-> particular type of setup. For the record I'll try to explain the same
-> here and provide more details.
+Hi ARM SoC maintainers,
 
-Yes, thanks a lot!
+The following changes since commit 0690cbd2e55a72a8eae557c389d1a136ed9fa142:
 
-> > I was assuming that you'd have one 'struct device' per client in all
-> > cases, so you'd have a unique association between a swgroup/id tuple
-> > and the device pointer that you pass into the dma-mapping and IOMMU APIs.
-> 
-> The majority of devices have two clients: one for read transactions,
-> another for write transactions. These are typically named <module>r and
-> <module>w, respectively. But each such module is a single device and
-> represented by a single device tree node.
-> 
-> The display controllers are somewhat exceptional in that they only read
-> data, so there are no write clients. But they also have a couple of
-> clients, one for each display window (or overlay). Like you said, this
-> looks really like each client is a unidirectional special-purpose DMA
-> master.
-> 
-> Some examples:
-> 
-> 	HDA: 2 clients: hdar and hdaw
-> 	SATA: 2 clients: satar and satar
-> 	DC: 6 clients: display{0a,0b,0c,hc,t,d}
-> 	DCB: 4 clients: display{0ab,0bb,0cb,hcb}
-> 
-> Each of those is a single IP block, and each has a SWGROUP that contains
-> the set of all the memory clients.
+  powerpc/iommu: Rename iommu_[un]map_sg functions (2014-11-18 11:30:01 +0100)
 
-Yep
+are available in the git repository at:
 
-> > > There are patches in the works to add support for EMC frequency scaling
-> > > and also latency allowance programming.
-> > 
-> > Ok, I see. The part that I'm missing here is how the client driver
-> > knows its number, as you write that we don't have a device node per
-> > client. Do you have a particular binding in mind already?
-> 
-> I was thinking that each device tree node would get an additional
-> property, maybe something like the below. I'm not sure if it makes sense
-> to turn this into a generic binding, given that this is likely to be
-> implemented fairly differently on other SoCs, or perhaps other SoCs
-> don't even have an equivalent of it.
-> 
-> 	mc: memory-controller@70019000 {
-> 		compatible = "nvidia,tegra124-mc";
-> 		...
-> 
-> 		#nvidia,memory-client-cells = <1>;
-> 	};
-> 
-> 	dc@54200000 {
-> 		compatible = "nvidia,tegra124-dc";
-> 
-> 		...
-> 
-> 		nvidia,memory-client = <&mc 1 &mc 3 &mc 5 &mc 16 &mc 90 &mc 115>;
-> 	};
-> 
-> Maybe we'd even need something like nvidia,memory-client-names so that
-> drivers can determine for which specific clients to set the latency
-> allowance.
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-3.19-iommu
 
-Yes. We'd have to discuss the binding with some of the other SoC maintainers
-to see if they might have a use for this too, but this certainly makes
-sense.
+for you to fetch changes up to 8918465163171322c77a19d5258a95f56d89d2e4:
 
-	Arnd
+  memory: Add NVIDIA Tegra memory controller support (2014-12-04 16:11:47 +0100)
+
+Here's a version of the pull request rebased on top of Joerg's core
+branch from the IOMMU tree. It has the advantage of having resolved
+the merge conflicts and the disadvantage of pulling in v3.18-rc3.
+It also contains an updated commit description with some details
+that ensued from a discussion regarding the DT binding as well as
+the memory-client to SWGROUP mapping tables.
+
+This pull request also contains fixes for a build error reported by the
+0-day builder as well as a couple of issues in the IOMMU domain detach
+path that I've found since v2 while doing extensive driver unload and
+reload stress testing.
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+ARM: tegra: IOMMU support for v3.19
+
+This adds the driver pieces required for IOMMU support on Tegra30,
+Tegra114 and Tegra124.
+
+----------------------------------------------------------------
+Thierry Reding (6):
+      Merge branch 'core' of git://git.kernel.org/.../joro/iommu
+      clk: tegra: Implement memory-controller clock
+      amba: Add Kconfig file
+      ARM: tegra: Move AHB Kconfig to drivers/amba
+      of: Add NVIDIA Tegra memory controller binding
+      memory: Add NVIDIA Tegra memory controller support
+
+ .../memory-controllers/nvidia,tegra-mc.txt         |   36 +
+ arch/arm/Kconfig                                   |    3 -
+ arch/arm/mach-tegra/Kconfig                        |    9 +-
+ arch/arm64/Kconfig                                 |    3 -
+ drivers/Kconfig                                    |    2 +
+ drivers/amba/Kconfig                               |   14 +
+ drivers/clk/tegra/clk-divider.c                    |   13 +
+ drivers/clk/tegra/clk-tegra114.c                   |    7 +-
+ drivers/clk/tegra/clk-tegra124.c                   |    7 +-
+ drivers/clk/tegra/clk-tegra20.c                    |    8 +-
+ drivers/clk/tegra/clk-tegra30.c                    |    7 +-
+ drivers/clk/tegra/clk.h                            |    2 +
+ drivers/iommu/Kconfig                              |   12 +-
+ drivers/iommu/tegra-smmu.c                         | 1610 +++++++-------------
+ drivers/memory/Kconfig                             |   12 +-
+ drivers/memory/Makefile                            |    3 +-
+ drivers/memory/tegra/Kconfig                       |    7 +
+ drivers/memory/tegra/Makefile                      |    7 +
+ drivers/memory/tegra/mc.c                          |  301 ++++
+ drivers/memory/tegra/mc.h                          |   40 +
+ drivers/memory/tegra/tegra114.c                    |  948 ++++++++++++
+ drivers/memory/tegra/tegra124.c                    |  995 ++++++++++++
+ drivers/memory/tegra/tegra30.c                     |  970 ++++++++++++
+ drivers/memory/tegra30-mc.c                        |  378 -----
+ include/dt-bindings/clock/tegra114-car.h           |    2 +-
+ include/dt-bindings/clock/tegra124-car.h           |    2 +-
+ include/dt-bindings/clock/tegra20-car.h            |    2 +-
+ include/dt-bindings/memory/tegra114-mc.h           |   25 +
+ include/dt-bindings/memory/tegra124-mc.h           |   31 +
+ include/dt-bindings/memory/tegra30-mc.h            |   24 +
+ include/soc/tegra/mc.h                             |  107 ++
+ 31 files changed, 4084 insertions(+), 1503 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra-mc.txt
+ create mode 100644 drivers/amba/Kconfig
+ create mode 100644 drivers/memory/tegra/Kconfig
+ create mode 100644 drivers/memory/tegra/Makefile
+ create mode 100644 drivers/memory/tegra/mc.c
+ create mode 100644 drivers/memory/tegra/mc.h
+ create mode 100644 drivers/memory/tegra/tegra114.c
+ create mode 100644 drivers/memory/tegra/tegra124.c
+ create mode 100644 drivers/memory/tegra/tegra30.c
+ delete mode 100644 drivers/memory/tegra30-mc.c
+ create mode 100644 include/dt-bindings/memory/tegra114-mc.h
+ create mode 100644 include/dt-bindings/memory/tegra124-mc.h
+ create mode 100644 include/dt-bindings/memory/tegra30-mc.h
+ create mode 100644 include/soc/tegra/mc.h
