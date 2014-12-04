@@ -1,65 +1,60 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL v3 2/4] ARM: tegra: Device tree changes for v3.19
-Date: Thu,  4 Dec 2014 16:45:50 +0100
-Message-ID: <1417707950-7633-2-git-send-email-thierry.reding@gmail.com>
-References: <1417707950-7633-1-git-send-email-thierry.reding@gmail.com>
+From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Subject: [PATCH v3 0/3] Add support for Tegra Activity Monitor
+Date: Thu,  4 Dec 2014 17:14:40 +0100
+Message-ID: <1417709696-29281-1-git-send-email-tomeu.vizoso@collabora.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1417707950-7633-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi ARM SoC maintainers,
+Hello,
 
-The following changes since commit 8918465163171322c77a19d5258a95f56d89d2e4:
+this v3 addresses the comments that the devfreq implementation got, namely:
 
-  memory: Add NVIDIA Tegra memory controller support (2014-12-04 16:11:47 +0100)
+* Address misc. style issues found by Thierry and Alexander
+* Added helpers for register i/o
+* Further documented the structs
+* Enable the ACTMON after the IRQ handler has been installed
+* Disable the ACTMON before removing the IRQ handler
+* Add governor in a subsys initcall
 
-are available in the git repository at:
+There's an open question on whether some functionality currently in this
+devfreq driver should be moved into the devfreq framework, but without knowing
+of other SoC family that would benefit from it, I'm reticent. It would be
+great to hear from the devfreq maintainers if they have any plans regarding
+this, or if they have any suggestion.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-3.19-dt
+These patches implement support for setting the rate of the EMC clock based on
+stats collected from the ACTMON, a piece of hw in the Tegra124 that counts
+memory accesses (among others).
 
-for you to fetch changes up to 5b605d4426e1dc38b6572bd42c151ad247359e3a:
+It depends on the following in-flight patches:
 
-  ARM: tegra: Enable IOMMU for display controllers on Tegra124 (2014-12-04 16:16:15 +0100)
+* EMC driver: http://thread.gmane.org/gmane.linux.drivers.devicetree/99304
+* CPUFreq driver: http://thread.gmane.org/gmane.linux.kernel/1812962
 
-Note that this pulls in the for-3.19/iommu branch (tegra-for-3.19-iommu
-tag) to resolve the dependency between the IOMMU driver addition and the
-DT changes that include dt-bindings/memory/tegra*-mc.h headers.
+I have pushed a branch here for testing:
 
-Thanks,
-Thierry
+http://cgit.collabora.com/git/user/tomeu/linux.git/log/?h=actmon-v3
 
-----------------------------------------------------------------
-ARM: tegra: Device tree changes for v3.19
+Regards,
 
-The bulk of these changes add memory controller nodes for Tegra30,
-Tegra114 and Tegra124. The memory controller implements an IOMMU that
-the display controllers are attached to. This allows them to scan out
-physically non-contiguous framebuffers and removes one of the primary
-users of CMA.
+Tomeu
 
-The only other change adds a new MIPI pad control bank to the pin
-controller on Tegra124. The corresponding driver patch for this went
-into v3.18 as:
+Tomeu Vizoso (3):
+  of: Add binding for NVIDIA Tegra ACTMON node
+  PM / devfreq: tegra: add devfreq driver for Tegra Activity Monitor
+  ARM: tegra: Add Tegra124 ACTMON support
 
-        3ccc11f6b82c pinctrl: tegra: Add MIPI pad control
+ .../devicetree/bindings/arm/tegra/actmon.txt       |  38 +
+ arch/arm/boot/dts/tegra124.dtsi                    |  23 +
+ drivers/devfreq/Kconfig                            |   9 +
+ drivers/devfreq/Makefile                           |   1 +
+ drivers/devfreq/tegra-actmon-devfreq.c             | 777 +++++++++++++++++++++
+ 5 files changed, 848 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/tegra/actmon.txt
+ create mode 100644 drivers/devfreq/tegra-actmon-devfreq.c
 
-----------------------------------------------------------------
-Sean Paul (1):
-      ARM: tegra: Add APB_MISC_GP as a MIPI pad control bank
-
-Thierry Reding (7):
-      Merge branch 'for-3.19/iommu' into for-3.19/dt
-      ARM: tegra: Add memory controller support for Tegra30
-      ARM: tegra: Add memory controller support for Tegra114
-      ARM: tegra: Add memory controller support for Tegra124
-      ARM: tegra: Enable IOMMU for display controllers on Tegra30
-      ARM: tegra: Enable IOMMU for display controllers on Tegra114
-      ARM: tegra: Enable IOMMU for display controllers on Tegra124
-
- arch/arm/boot/dts/tegra114.dtsi | 23 ++++++++++++++---------
- arch/arm/boot/dts/tegra124.dtsi | 19 ++++++++++++++++++-
- arch/arm/boot/dts/tegra30.dtsi  | 25 +++++++++++--------------
- 3 files changed, 43 insertions(+), 24 deletions(-)
+-- 
+1.9.3
