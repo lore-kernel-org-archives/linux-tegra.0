@@ -1,32 +1,70 @@
-From: James Thomas <james.thomas-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
-Subject: [flasher PATCH] Use hex (x) type argument for fdtput when writing bootdelay
-Date: Thu,  4 Dec 2014 12:02:43 +0000
-Message-ID: <1417694563-17844-1-git-send-email-james.thomas@codethink.co.uk>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [patch] drm/tegra: checking IS_ERR() instead of NULL
+Date: Thu, 4 Dec 2014 14:23:51 +0100
+Message-ID: <20141204132349.GD7262@ulmo.nvidia.com>
+References: <20141204110035.GC22643@mwanda>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="tEFtbjk+mNEviIIX"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20141204110035.GC22643@mwanda>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Cc: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This ensures the correct value (-2) is set on both 32-bit and 64-bit
-systems
 
-Signed-off-by: James Thomas <james.thomas-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
----
- tegra-uboot-flasher | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--tEFtbjk+mNEviIIX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/tegra-uboot-flasher b/tegra-uboot-flasher
-index b71f967..69f9262 100755
---- a/tegra-uboot-flasher
-+++ b/tegra-uboot-flasher
-@@ -195,7 +195,7 @@ def func_flash():
-         cp(u_boot_dtb, u_boot_dtb_runflash)
- 
-         # 0xfffffffe==-2; never delay or interrupt
--        cmd = ['fdtput', '-p', '-t', 'i', u_boot_dtb_runflash, '/config', 'bootdelay', '0xfffffffe']
-+        cmd = ['fdtput', '-p', '-t', 'x', u_boot_dtb_runflash, '/config', 'bootdelay', '0xfffffffe']
-         run(workdir, cmd)
- 
-         bootcmd = ''
--- 
-1.9.3
+On Thu, Dec 04, 2014 at 02:00:35PM +0300, Dan Carpenter wrote:
+> iommu_domain_alloc() returns NULL on error, it never returns error
+> pointers.
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+>=20
+> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+> index e549afe..fa16048 100644
+> --- a/drivers/gpu/drm/tegra/drm.c
+> +++ b/drivers/gpu/drm/tegra/drm.c
+> @@ -36,8 +36,8 @@ static int tegra_drm_load(struct drm_device *drm, unsig=
+ned long flags)
+> =20
+>  	if (iommu_present(&platform_bus_type)) {
+>  		tegra->domain =3D iommu_domain_alloc(&platform_bus_type);
+> -		if (IS_ERR(tegra->domain)) {
+> -			err =3D PTR_ERR(tegra->domain);
+> +		if (!tegra->domain) {
+> +			err =3D -ENOMEM;
+>  			goto free;
+>  		}
+
+Oh, good catch. Applied, thanks.
+
+Thierry
+
+--tEFtbjk+mNEviIIX
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUgGBlAAoJEN0jrNd/PrOhJoMP/RiW9TqVWts7mH2Su9X5tqpc
+/icgohd0Lct6coP6vgRhy8cw1YkTsa62KxSXZTcmPNNju0IIZTwRNpkyD6lMb9jJ
+bQWNDFQKT9cFK5pmWQ2i5Bdq5nKpbgwsx7PLUbeByLD3HWd+yNWFD8rmlmRiYLoc
+b9neVx7x1RklQt23SF/tNXM1gtiikPUxHnZeO+R30SoTR96qDKU4OnihlhImdgTx
+DCT5dRj1Zovsp1+pAQr6Y7PtoLLefADDlvgdm46dqrhra6ELWZKDnyESIVsDbrfz
+Teq4xQrjmd9cMf/Ow74kS7H+MQYD588fGFAUZgGjGuY1FwLQMF8IocNzDVswX9gb
+R2jdpf6sJWyp2S9Nu6l6xDQ1pxe7Glay3JLSI3wUUK9ZkAnj7udi/T9frUBtNqzs
+d/6qq5e8/yvBkTQ0eTRKddEiuwzH/LpZuZ1zwEXPjLWjgMaBIXekMRodSEKuyHaC
+zpAu8HPEUH+nh/K3TUIlsQXsf5jjZ8+spSYApD4OHkLK+Q5+OPlcoQSqAlYglIbp
+21AhFFXiE0fwPFamJadwMXglniqCiSGMj38PUQppMJLeGN+wuxi4enlq68G1Is84
+HpHRXWgazxlDZGM/uLRgH5pLS7/aoY37zjIdl1vDVV7XG+4t/ON7xjxA4JBYPoma
+umYpU3f06EsTlRoosp0+
+=kpLq
+-----END PGP SIGNATURE-----
+
+--tEFtbjk+mNEviIIX--
