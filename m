@@ -1,250 +1,172 @@
 From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] memory: Add NVIDIA SMMU suspend/resume support
-Date: Mon, 8 Dec 2014 14:20:56 +0800
-Message-ID: <1418019656-6893-1-git-send-email-markz@nvidia.com>
+Subject: [PATCH] drm/tegra: dsi: Add suspend/resume support
+Date: Mon, 8 Dec 2014 14:40:50 +0800
+Message-ID: <1418020850-7664-1-git-send-email-markz@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org
-Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch adds suspend/resume support for NVIDIA SMMU.
-This patch is created on top of Thierry Reding's patch set:
-
-"[PATCH v7 00/12] NVIDIA Tegra memory controller and IOMMU support"
+This patch adds the suspend/resume support for Tegra drm
+driver by calling the corresponding DPMS functions.
 
 Signed-off-by: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/iommu/tegra-smmu.c | 79 +++++++++++++++++++++++++++++++++++++++++++++-
- drivers/memory/tegra/mc.c  | 21 ++++++++++++
- drivers/memory/tegra/mc.h  |  4 +++
- 3 files changed, 103 insertions(+), 1 deletion(-)
+Hi,
 
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 0909e0bae9ec..ab38805055a4 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -17,6 +17,8 @@
- #include <soc/tegra/ahb.h>
- #include <soc/tegra/mc.h>
- 
-+struct tegra_smmu_as;
-+
- struct tegra_smmu {
- 	void __iomem *regs;
- 	struct device *dev;
-@@ -25,9 +27,10 @@ struct tegra_smmu {
- 	const struct tegra_smmu_soc *soc;
- 
- 	unsigned long *asids;
-+	struct tegra_smmu_as **as;
- 	struct mutex lock;
- 
--	struct list_head list;
-+	struct list_head swgroup_asid_list;
+This patch hooks DSI driver's suspend/resume to implement the whole
+display system's suspend/resume. I know this is a super ugly way,
+but as we all know, Tegra DRM driver doesn't have a dedicate drm device
+so honestly I didn't find a better way to do that.
+
+Thanks,
+Mark
+
+ drivers/gpu/drm/tegra/dsi.c | 96 ++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 90 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
+index 33f67fd601c6..25cd0d93f392 100644
+--- a/drivers/gpu/drm/tegra/dsi.c
++++ b/drivers/gpu/drm/tegra/dsi.c
+@@ -61,6 +61,9 @@ struct tegra_dsi {
+ 	struct tegra_dsi *slave;
  };
  
- struct tegra_smmu_as {
-@@ -40,6 +43,12 @@ struct tegra_smmu_as {
- 	u32 attr;
- };
- 
-+struct tegra_smmu_swgroup_asid {
-+	struct list_head list;
-+	unsigned swgroup_id;
-+	unsigned asid;
-+};
++static int tegra_dsi_pad_calibrate(struct tegra_dsi *);
++static int tegra_dsi_ganged_setup(struct tegra_dsi *dsi);
 +
- static inline void smmu_writel(struct tegra_smmu *smmu, u32 value,
- 			       unsigned long offset)
+ static inline struct tegra_dsi *
+ host1x_client_to_dsi(struct host1x_client *client)
  {
-@@ -376,6 +385,7 @@ static int tegra_smmu_as_prepare(struct tegra_smmu *smmu,
- 	as->smmu = smmu;
- 	as->use_count++;
+@@ -805,6 +808,20 @@ static int tegra_output_dsi_setup_clock(struct tegra_output *output,
  
-+	smmu->as[as->id] = as;
- 	return 0;
- }
+ 	lanes = tegra_dsi_get_lanes(dsi);
  
-@@ -386,6 +396,7 @@ static void tegra_smmu_as_unprepare(struct tegra_smmu *smmu,
- 		return;
- 
- 	tegra_smmu_free_asid(smmu, as->id);
-+	smmu->as[as->id] = NULL;
- 	as->smmu = NULL;
- }
- 
-@@ -398,6 +409,7 @@ static int tegra_smmu_attach_dev(struct iommu_domain *domain,
- 	struct of_phandle_args args;
- 	unsigned int index = 0;
- 	int err = 0;
-+	struct tegra_smmu_swgroup_asid *sa = NULL;
- 
- 	while (!of_parse_phandle_with_args(np, "iommus", "#iommu-cells", index,
- 					   &args)) {
-@@ -411,6 +423,14 @@ static int tegra_smmu_attach_dev(struct iommu_domain *domain,
- 			return err;
- 
- 		tegra_smmu_enable(smmu, swgroup, as->id);
-+
-+		sa = kzalloc(sizeof(struct tegra_smmu_swgroup_asid),
-+				GFP_KERNEL);
-+		INIT_LIST_HEAD(&sa->list);
-+		sa->swgroup_id = swgroup;
-+		sa->asid = as->id;
-+		list_add_tail(&sa->list, &smmu->swgroup_asid_list);
-+
- 		index++;
- 	}
- 
-@@ -427,6 +447,7 @@ static void tegra_smmu_detach_dev(struct iommu_domain *domain, struct device *de
- 	struct tegra_smmu *smmu = as->smmu;
- 	struct of_phandle_args args;
- 	unsigned int index = 0;
-+	struct tegra_smmu_swgroup_asid *sa = NULL;
- 
- 	while (of_parse_phandle_with_args(np, "iommus", "#iommu-cells", index,
- 					  &args)) {
-@@ -435,6 +456,13 @@ static void tegra_smmu_detach_dev(struct iommu_domain *domain, struct device *de
- 		if (args.np != smmu->dev->of_node)
- 			continue;
- 
-+		list_for_each_entry(sa, &smmu->swgroup_asid_list, list) {
-+			if (sa->asid == as->id && sa->swgroup_id == swgroup)
-+				break;
++	err = tegra_dsi_pad_calibrate(dsi);
++	if (err < 0) {
++		dev_err(dsi->dev, "MIPI calibration failed: %d\n", err);
++		return err;
++	}
++	if (dsi->slave) {
++		err = tegra_dsi_pad_calibrate(dsi->slave);
++		if (err < 0) {
++			dev_err(dsi->slave->dev,
++				"MIPI calibration failed: %d\n", err);
++			return err;
 +		}
-+		list_del(&sa->list);
-+		kfree(sa);
-+
- 		tegra_smmu_disable(smmu, swgroup, as->id);
- 		tegra_smmu_as_unprepare(smmu, as);
- 		index++;
-@@ -651,6 +679,48 @@ static void tegra_smmu_ahb_enable(void)
- 	}
- }
- 
-+void tegra_smmu_resume(struct tegra_smmu *smmu)
-+{
-+	struct tegra_smmu_as *as = NULL;
-+	unsigned int bit;
-+	u32 value;
-+	struct tegra_smmu_swgroup_asid *sa = NULL;
-+
-+	for_each_set_bit(bit, smmu->asids, smmu->soc->num_asids) {
-+		as = smmu->as[bit];
-+		smmu->soc->ops->flush_dcache(as->pd, 0, SMMU_SIZE_PD);
-+
-+		smmu_writel(smmu, as->id & 0x7f, SMMU_PTB_ASID);
-+		value = SMMU_PTB_DATA_VALUE(as->pd, as->attr);
-+		smmu_writel(smmu, value, SMMU_PTB_DATA);
 +	}
 +
-+	list_for_each_entry(sa, &smmu->swgroup_asid_list, list)
-+		tegra_smmu_enable(smmu, sa->swgroup_id, sa->asid);
-+
-+	value = SMMU_PTC_CONFIG_ENABLE | SMMU_PTC_CONFIG_INDEX_MAP(0x3f);
-+
-+	if (smmu->soc->supports_request_limit)
-+		value |= SMMU_PTC_CONFIG_REQ_LIMIT(8);
-+
-+	smmu_writel(smmu, value, SMMU_PTC_CONFIG);
-+
-+	value = SMMU_TLB_CONFIG_HIT_UNDER_MISS |
-+		SMMU_TLB_CONFIG_ACTIVE_LINES(0x20);
-+
-+	if (smmu->soc->supports_round_robin_arbitration)
-+		value |= SMMU_TLB_CONFIG_ROUND_ROBIN_ARBITRATION;
-+
-+	smmu_writel(smmu, value, SMMU_TLB_CONFIG);
-+
-+	smmu_flush_ptc(smmu, NULL, 0);
-+	smmu_flush_tlb(smmu);
-+	smmu_writel(smmu, SMMU_CONFIG_ENABLE, SMMU_CONFIG);
-+	smmu_flush(smmu);
-+
-+	tegra_smmu_ahb_enable();
-+}
-+
- struct tegra_smmu *tegra_smmu_probe(struct device *dev,
- 				    const struct tegra_smmu_soc *soc,
- 				    struct tegra_mc *mc)
-@@ -684,7 +754,14 @@ struct tegra_smmu *tegra_smmu_probe(struct device *dev,
- 	if (!smmu->asids)
- 		return ERR_PTR(-ENOMEM);
+ 	err = tegra_dsi_get_muldiv(dsi->format, &mul, &div);
+ 	if (err < 0)
+ 		return err;
+@@ -833,6 +850,13 @@ static int tegra_output_dsi_setup_clock(struct tegra_output *output,
+ 		dev_err(dsi->dev, "failed to set parent clock: %d\n", err);
+ 		return err;
+ 	}
++	if (dsi->slave) {
++		err = tegra_dsi_ganged_setup(dsi);
++		if (err < 0) {
++			dev_err(dsi->dev, "DSI ganged setup failed: %d\n", err);
++			return err;
++		}
++	}
  
-+	smmu->as = devm_kzalloc(dev,
-+				sizeof(struct tegra_smmu_as *) * soc->num_asids,
-+				GFP_KERNEL);
-+	if (!smmu->as)
-+		return ERR_PTR(-ENOMEM);
-+
- 	mutex_init(&smmu->lock);
-+	INIT_LIST_HEAD(&smmu->swgroup_asid_list);
+ 	err = clk_set_rate(dsi->clk_parent, plld);
+ 	if (err < 0) {
+@@ -1470,12 +1494,6 @@ static int tegra_dsi_probe(struct platform_device *pdev)
+ 		goto disable_vdd;
+ 	}
  
- 	smmu->regs = mc->regs;
- 	smmu->soc = soc;
-diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-index 9b7c1645fd59..aa0c59ccd33a 100644
---- a/drivers/memory/tegra/mc.c
-+++ b/drivers/memory/tegra/mc.c
-@@ -283,6 +283,23 @@ static int tegra_mc_probe(struct platform_device *pdev)
+-	err = tegra_dsi_pad_calibrate(dsi);
+-	if (err < 0) {
+-		dev_err(dsi->dev, "MIPI calibration failed: %d\n", err);
+-		goto mipi_free;
+-	}
+-
+ 	dsi->host.ops = &tegra_dsi_host_ops;
+ 	dsi->host.dev = &pdev->dev;
+ 
+@@ -1544,6 +1562,67 @@ static int tegra_dsi_remove(struct platform_device *pdev)
  	return 0;
  }
  
 +#ifdef CONFIG_PM
-+static int tegra_mc_suspend(struct platform_device *pdev, pm_message_t state)
++static int tegra_dsi_suspend(struct platform_device *pdev, pm_message_t state)
 +{
++	struct tegra_dsi *dsi = platform_get_drvdata(pdev);
++	struct tegra_drm *tegra = dev_get_drvdata(dsi->client.parent);
++	struct drm_connector *connector;
++
++	if (dsi->master) {
++		regulator_disable(dsi->vdd);
++		return 0;
++	}
++
++	drm_modeset_lock_all(tegra->drm);
++	list_for_each_entry(connector, &tegra->drm->mode_config.connector_list,
++			    head) {
++		int old_dpms = connector->dpms;
++
++		if (connector->funcs->dpms)
++			connector->funcs->dpms(connector, DRM_MODE_DPMS_OFF);
++
++		/* Set the old mode back to the connector for resume */
++		connector->dpms = old_dpms;
++	}
++	drm_modeset_unlock_all(tegra->drm);
++
++	regulator_disable(dsi->vdd);
++
 +	return 0;
 +}
 +
-+static int tegra_mc_resume(struct platform_device *pdev)
++static int tegra_dsi_resume(struct platform_device *pdev)
 +{
-+	struct tegra_mc *mc = platform_get_drvdata(pdev);
++	struct tegra_dsi *dsi = platform_get_drvdata(pdev);
++	struct tegra_drm *tegra = dev_get_drvdata(dsi->client.parent);
++	struct drm_connector *connector;
++	int err = 0;
 +
-+	if (IS_ENABLED(CONFIG_TEGRA_IOMMU_SMMU))
-+		tegra_smmu_resume(mc->smmu);
++	err = regulator_enable(dsi->vdd);
++	if (err < 0) {
++		dev_err(&pdev->dev, "Enable DSI vdd failed: %d\n", err);
++		return err;
++	}
++
++	if (dsi->master)
++		return 0;
++
++	drm_modeset_lock_all(tegra->drm);
++	list_for_each_entry(connector, &tegra->drm->mode_config.connector_list,
++			    head) {
++		if (connector->funcs->dpms)
++			connector->funcs->dpms(connector, connector->dpms);
++	}
++	drm_modeset_unlock_all(tegra->drm);
++
++	drm_helper_resume_force_mode(tegra->drm);
 +
 +	return 0;
 +}
 +#endif
 +
- static struct platform_driver tegra_mc_driver = {
- 	.driver = {
- 		.name = "tegra-mc",
-@@ -291,6 +308,10 @@ static struct platform_driver tegra_mc_driver = {
++
+ static const struct of_device_id tegra_dsi_of_match[] = {
+ 	{ .compatible = "nvidia,tegra114-dsi", },
+ 	{ },
+@@ -1557,4 +1636,9 @@ struct platform_driver tegra_dsi_driver = {
  	},
- 	.prevent_deferred_probe = true,
- 	.probe = tegra_mc_probe,
+ 	.probe = tegra_dsi_probe,
+ 	.remove = tegra_dsi_remove,
 +#ifdef CONFIG_PM
-+	.suspend = tegra_mc_suspend,
-+	.resume = tegra_mc_resume,
++	.suspend = tegra_dsi_suspend,
++	.resume = tegra_dsi_resume,
 +#endif
++
  };
- 
- static int tegra_mc_init(void)
-diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
-index f714c309b960..cbf538b3f995 100644
---- a/drivers/memory/tegra/mc.h
-+++ b/drivers/memory/tegra/mc.h
-@@ -29,6 +29,7 @@ static inline void mc_writel(struct tegra_mc *mc, u32 value,
- struct tegra_smmu *tegra_smmu_probe(struct device *dev,
- 				    const struct tegra_smmu_soc *soc,
- 				    struct tegra_mc *mc);
-+void tegra_smmu_resume(struct tegra_smmu *smmu);
- #else
- static inline struct tegra_smmu *
- tegra_smmu_probe(struct device *dev, const struct tegra_smmu_soc *soc,
-@@ -36,6 +37,9 @@ tegra_smmu_probe(struct device *dev, const struct tegra_smmu_soc *soc,
- {
- 	return NULL;
- }
-+void tegra_smmu_resume(struct tegra_smmu *smmu)
-+{
-+}
- #endif
- 
- #ifdef CONFIG_ARCH_TEGRA_3x_SOC
 -- 
 1.8.1.5
