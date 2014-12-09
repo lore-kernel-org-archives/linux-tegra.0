@@ -1,324 +1,117 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC RESEND 2/3] PM / devfreq: Add watermark simple governor
-Date: Tue, 9 Dec 2014 16:18:48 +0900
-Message-ID: <CAAVeFuLZsbmzjOZw3Y2KnPCQvGuN2P-Ax4ZqHT4QTi-=RM=gcQ@mail.gmail.com>
-References: <1417786892-477-1-git-send-email-amerilainen@nvidia.com> <1417786892-477-3-git-send-email-amerilainen@nvidia.com>
+From: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: Re: [PATCH 1/2] PCI: tegra: apply relaxed ordering fixup only on
+ Tegra
+Date: Tue, 09 Dec 2014 11:28:17 +0100
+Message-ID: <1418120897.2741.1.camel@pengutronix.de>
+References: <1415907457-3147-1-git-send-email-l.stach@pengutronix.de>
+	 <1415907457-3147-2-git-send-email-l.stach@pengutronix.de>
+	 <CAAVeFu+sYnhMEmDSPvinbP-BQQnqAu6rpEVgaLx25Y3UtGVUwQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1417786892-477-3-git-send-email-amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <CAAVeFu+sYnhMEmDSPvinbP-BQQnqAu6rpEVgaLx25Y3UtGVUwQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, srasal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Dec 5, 2014 at 10:41 PM, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> From: Shridhar Rasal <srasal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> This patch adds a new devfreq governor, watermark simple. The
-> governor decides next frequency naively by selecting the previous
-> frequency in the frequency table if we received low watermark
-> - or the next frequency in case we received high watermark.
->
-> Signed-off-by: Shridhar Rasal <srasal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Signed-off-by: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/devfreq/Kconfig                 |   7 +
->  drivers/devfreq/Makefile                |   1 +
->  drivers/devfreq/governor_wmark_simple.c | 245 ++++++++++++++++++++++++++++++++
->  3 files changed, 253 insertions(+)
->  create mode 100644 drivers/devfreq/governor_wmark_simple.c
->
-> diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
-> index faf4e70c42e0..37710d999ffe 100644
-> --- a/drivers/devfreq/Kconfig
-> +++ b/drivers/devfreq/Kconfig
-> @@ -63,6 +63,13 @@ config DEVFREQ_GOV_USERSPACE
->           Otherwise, the governor does not change the frequnecy
->           given at the initialization.
->
-> +config DEVFREQ_GOV_WMARK_SIMPLE
-> +       tristate "Simple Watermark"
-> +       help
-> +         Sets the frequency based on monitor watermark events.
-> +         This governor returns the next frequency from frequency table
-> +         based on type watermark event.
-> +
->  comment "DEVFREQ Drivers"
->
->  config ARM_EXYNOS4_BUS_DEVFREQ
-> diff --git a/drivers/devfreq/Makefile b/drivers/devfreq/Makefile
-> index 16138c9e0d58..92024eeb73b6 100644
-> --- a/drivers/devfreq/Makefile
-> +++ b/drivers/devfreq/Makefile
-> @@ -3,6 +3,7 @@ obj-$(CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND)       += governor_simpleondemand.o
->  obj-$(CONFIG_DEVFREQ_GOV_PERFORMANCE)  += governor_performance.o
->  obj-$(CONFIG_DEVFREQ_GOV_POWERSAVE)    += governor_powersave.o
->  obj-$(CONFIG_DEVFREQ_GOV_USERSPACE)    += governor_userspace.o
-> +obj-$(CONFIG_DEVFREQ_GOV_WMARK_SIMPLE) += governor_wmark_simple.o
->
->  # DEVFREQ Drivers
->  obj-$(CONFIG_ARM_EXYNOS4_BUS_DEVFREQ)  += exynos/
-> diff --git a/drivers/devfreq/governor_wmark_simple.c b/drivers/devfreq/governor_wmark_simple.c
-> new file mode 100644
-> index 000000000000..bd14adcc84cb
-> --- /dev/null
-> +++ b/drivers/devfreq/governor_wmark_simple.c
-> @@ -0,0 +1,245 @@
-> +/*
-> + * Copyright (c) 2014, NVIDIA CORPORATION.  All rights reserved.
-> + *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> + * more details.
-> + *
-> + * You should have received a copy of the GNU General Public License
-> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-> + */
-> +
-> +#include <linux/devfreq.h>
-> +#include <linux/debugfs.h>
-> +#include <linux/types.h>
-> +#include <linux/slab.h>
-> +#include <linux/device.h>
-> +#include <linux/notifier.h>
-> +#include <linux/platform_device.h>
-> +
-> +#include "governor.h"
-> +
-> +struct wmark_gov_info {
-> +       /* probed from the devfreq */
-> +       unsigned int            *freqlist;
-> +       int                     freq_count;
-> +
-> +       /* algorithm parameters */
-> +       unsigned int            p_high_wmark;
-> +       unsigned int            p_low_wmark;
-> +
-> +       /* dynamically changing data */
-> +       enum watermark_type     event;
+Am Dienstag, den 09.12.2014, 12:23 +0900 schrieb Alexandre Courbot:
+> Hi Lucas,
+> 
+> Apologies for taking so long to come back to this. The patch looks ok
+> to me, just a minor comment about the Tegra PCI detection:
+> 
+> On Fri, Nov 14, 2014 at 4:37 AM, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
+> > The fixup to enable relaxed ordering on all PCI devices was
+> > executed unconditionally if the Tegra PCI host driver was
+> > built into the kernel. This doesn't play nice with a
+> > multiplatform kernel executed on other platforms which
+> > may not need this fixup.
+> >
+> > Make sure to only apply the fixup if the root port is
+> > a Tegra.
+> >
+> > Signed-off-by: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+> > ---
+> >  drivers/pci/host/pci-tegra.c | 26 +++++++++++++++++++++++++-
+> >  1 file changed, 25 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+> > index 3d43874319be..d5a14f22ebb8 100644
+> > --- a/drivers/pci/host/pci-tegra.c
+> > +++ b/drivers/pci/host/pci-tegra.c
+> > @@ -647,10 +647,34 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0bf1, tegra_pcie_fixup_class);
+> >  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1c, tegra_pcie_fixup_class);
+> >  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1d, tegra_pcie_fixup_class);
+> >
+> > +static int tegra_pcie_root_is_tegra(struct pci_dev *dev)
+> > +{
+> > +       struct pci_bus *bus = dev->bus;
+> > +       struct pci_dev *root_bridge;
+> > +
+> > +       /* walk up the PCIe hierarchy to the first level below the root bus */
+> > +       while (bus->parent && bus->parent->self)
+> > +               bus = bus->parent;
+> > +
+> > +       /*
+> > +        * If there is no bridge on the bus the passed device is the root
+> > +        * bridge itself.
+> > +        */
+> > +       root_bridge = bus->self ? bus->self : dev;
+> > +       if (root_bridge->vendor == PCI_VENDOR_ID_NVIDIA &&
+> > +           (root_bridge->device == 0x0bf0 || root_bridge->device == 0x0bf1 ||
+> > +            root_bridge->device == 0x0e1c || root_bridge->device == 0x0e1d ||
+> > +            root_bridge->device == 0x0e12 || root_bridge->device == 0x0e13))
+> > +               return 1;
+> 
+> I am not very familiar with PCI so sorry if these are stupid
+> questions, but where do these device IDs come from? Are they needed at
+> all, e.g. can't you just test against root_bridge->vendor ==
+> PCI_VENDOR_ID_NVIDIA to detect a NVIDIA root? Is the list susceptible
+> to increase as new chips get released? If that's the case, how can we
+> make sure we won't forget to update it?
+> 
 
-I would rename this to last_event for clarity.
+The device IDs are assigned by NVIDIA HW for the different Tegra PCI
+generation/link width combinations. Note that the K1 TRM is wrong as it
+still lists the T30 device IDs, instead of the ones used on K1.
 
-> +       unsigned int            last_request;
+While we technically could test only against vendor==nvidia I don't
+think it is entirely safe. As this is a PCI fixup it will get executed
+on every device running a kernel including this PCI host bridge driver. 
 
-last_freq might be a more appropriate name here.
+So only testing for the vendor assumes that every ARM device with a PCI
+host bridge built by NVIDIA will be a Tegra. Do you think this is a
+reasonable assertion? I'm on the fence here.
+ 
+> If you need to test against the device ID, it might be more legible
+> (and easier to update) if you use a switch case, e.g:
+> 
+>     if (root_bridge->vendor != PCI_VENDOR_ID_NVIDIA)
+>         return 0;
+>     switch (root_bridge->device) {
+>     case 0x0bf0:
+>     case 0x0bf1:
+>     case 0x0e1c:
+>     case 0x0e1d:
+>     case 0x0e12:
+>     case 0x0e12:
+>         return 1;
+>     default:
+>         return 0;
+>     }
+> 
+Right, this looks nicer and easier to extend. I'll have to think about
+if we need the device IDs at all and respin accordingly.
 
-> +
-> +       /* common data */
-> +       struct devfreq          *df;
+> Otherwise I have not noticed any problem using this patch.
+> 
+> Tested-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Unless I missed something this member is only set once in
-devfreq_watermark_start() and never touched afterwards.
+Thanks,
+Lucas
 
-> +       struct platform_device  *pdev;
-
-Same with this one.
-
-> +       struct dentry           *debugdir;
-> +};
-> +
-> +static unsigned long freqlist_up(struct wmark_gov_info *wmarkinfo,
-> +                                unsigned long curr_freq)
-> +{
-> +       int i, pos;
-> +
-> +       for (i = 0; i < wmarkinfo->freq_count; i++)
-> +               if (wmarkinfo->freqlist[i] > curr_freq)
-> +                       break;
-> +
-> +       pos = min(wmarkinfo->freq_count - 1, i);
-> +
-> +       return wmarkinfo->freqlist[pos];
-> +}
-> +
-> +static unsigned int freqlist_down(struct wmark_gov_info *wmarkinfo,
-> +                                 unsigned long curr_freq)
-> +{
-> +       int i, pos;
-> +
-> +       for (i = wmarkinfo->freq_count - 1; i >= 0; i--)
-> +               if (wmarkinfo->freqlist[i] < curr_freq)
-> +                       break;
-> +
-> +       pos = max(0, i);
-> +       return wmarkinfo->freqlist[pos];
-> +}
-> +
-> +static int devfreq_watermark_target_freq(struct devfreq *df,
-> +                                        unsigned long *freq)
-> +{
-> +       struct wmark_gov_info *wmarkinfo = df->data;
-> +       struct devfreq_dev_status dev_stat;
-> +       int err;
-> +
-> +       err = df->profile->get_dev_status(df->dev.parent, &dev_stat);
-> +       if (err < 0)
-> +               return err;
-> +
-> +       switch (wmarkinfo->event) {
-> +       case HIGH_WATERMARK_EVENT:
-> +               *freq = freqlist_up(wmarkinfo, dev_stat.current_frequency);
-> +
-> +               /* always enable low watermark */
-> +               df->profile->set_low_wmark(df->dev.parent,
-> +                                          wmarkinfo->p_low_wmark);
-> +
-> +               /* disable high watermark if no change */
-> +               if (*freq == wmarkinfo->last_request)
-> +                       df->profile->set_high_wmark(df->dev.parent, 1000);
-> +               break;
-> +       case LOW_WATERMARK_EVENT:
-> +               *freq = freqlist_down(wmarkinfo, dev_stat.current_frequency);
-> +
-> +               /* always enable high watermark */
-> +               df->profile->set_high_wmark(df->dev.parent,
-> +                                           wmarkinfo->p_high_wmark);
-> +
-> +               /* disable low watermark if no change */
-> +               if (*freq == wmarkinfo->last_request)
-> +                       df->profile->set_low_wmark(df->dev.parent, 0);
-> +               break;
-> +       default:
-> +               break;
-> +       }
-> +
-> +       /* Mark that you handled event */
-
-s/you/we
-
-> +       wmarkinfo->event = NO_WATERMARK_EVENT;
-> +       wmarkinfo->last_request = *freq;
-> +
-> +       return 0;
-> +}
-> +
-> +static void devfreq_watermark_debug_start(struct devfreq *df)
-> +{
-> +       struct wmark_gov_info *wmarkinfo = df->data;
-> +       char dirname[128];
-> +
-> +       snprintf(dirname, sizeof(dirname), "%s_scaling",
-> +               to_platform_device(df->dev.parent)->name);
-> +
-> +       if (!wmarkinfo)
-> +               return;
-> +
-> +       wmarkinfo->debugdir = debugfs_create_dir(dirname, NULL);
-> +       if (!wmarkinfo->debugdir)
-> +               return;
-> +
-> +       debugfs_create_u32("low_wmark", S_IRUGO | S_IWUSR,
-> +                          wmarkinfo->debugdir, &wmarkinfo->p_low_wmark);
-> +       debugfs_create_u32("high_wmark", S_IRUGO | S_IWUSR,
-> +                          wmarkinfo->debugdir, &wmarkinfo->p_high_wmark);
-
-Shouldn't we call set_low_wmark() and set_high_wmark() when these
-values are changed so the hardware reacts to the new values?
-
-> +}
-> +
-> +static void devfreq_watermark_debug_stop(struct devfreq *df)
-> +{
-> +       struct wmark_gov_info *wmarkinfo = df->data;
-> +
-> +       debugfs_remove_recursive(wmarkinfo->debugdir);
-> +}
-> +
-> +static int devfreq_watermark_start(struct devfreq *df)
-> +{
-> +       struct wmark_gov_info *wmarkinfo;
-> +       struct platform_device *pdev = to_platform_device(df->dev.parent);
-> +
-> +       if (!df->profile->freq_table) {
-> +               dev_err(&pdev->dev, "Frequency table missing\n");
-> +               return -EINVAL;
-
-This error is not propagated by devfreq_watermark_event_handler(). It
-definitely should be.
-
-Also you will want to fail if d->profile->max_state == 0, otherwise
-funny things will happen when a watermark is reached.
-
-> +       }
-> +
-> +       wmarkinfo = kzalloc(sizeof(struct wmark_gov_info), GFP_KERNEL);
-
-This memory is never freed.
-
-> +       if (!wmarkinfo)
-> +               return -ENOMEM;
-> +
-> +       df->data = (void *)wmarkinfo;
-> +       wmarkinfo->freqlist = df->profile->freq_table;
-> +       wmarkinfo->freq_count = df->profile->max_state;
-
-Contrary to what its comment says, freq_table is not optional anymore
-and only used for statistics if one intents to use a watermark
-governor. It should probably be updated to reflect this.
-
-> +       wmarkinfo->event = NO_WATERMARK_EVENT;
-> +       wmarkinfo->df = df;
-> +       wmarkinfo->pdev = pdev;
-> +       wmarkinfo->p_low_wmark = 100;
-> +       wmarkinfo->p_high_wmark = 600;
-> +
-> +       devfreq_watermark_debug_start(df);
-> +
-> +       return 0;
-> +}
-> +
-> +static int devfreq_watermark_event_handler(struct devfreq *df,
-> +                                          unsigned int event,
-> +                                          void *wmark_type)
-> +{
-> +       int ret = 0;
-> +       struct wmark_gov_info *wmarkinfo = df->data;
-> +       enum watermark_type *type = wmark_type;
-> +
-> +       switch (event) {
-> +       case DEVFREQ_GOV_START:
-> +               devfreq_watermark_start(df);
-
-This function does not really start anything - it prepares df to be
-used with this governor. Maybe call it devfreq_watermark_init()
-instead? Then you could have a devfreq_watermark_fini() function
-called when we stop the governor that frees the memory previously
-allocated.
-
-Also I think you want to call try_module_get(THIS_MODULE) here to
-prevent the governor module from being removed it if is used by
-someone.
-
-> +               wmarkinfo = df->data;
-> +               if (df->profile->set_low_wmark)
-> +                       df->profile->set_low_wmark(df->dev.parent,
-> +                                                  wmarkinfo->p_low_wmark);
-> +               if (df->profile->set_high_wmark)
-> +                       df->profile->set_high_wmark(df->dev.parent,
-> +                                                   wmarkinfo->p_high_wmark);
-
-Isn't it an error if one (or both) of these functions is missing? For
-we will never receive any event. Not sure about this.
-
-> +               break;
-> +       case DEVFREQ_GOV_STOP:
-> +               devfreq_watermark_debug_stop(df);
-
-As said above, have a devfreq_watermark_fini() (or any other name)
-here that frees the kzalloc'd memory and calls
-devfreq_watermark_debug_stop(). Also you should probably call
-module_put(THIS_MODULE).
-
-> +               break;
-> +       case DEVFREQ_GOV_SUSPEND:
-> +               devfreq_monitor_suspend(df);
-
-Shouldn't we call set_low_wmark() and set_high_wmark() to prevent the
-hardware from firing interrupts after devfreq_monitor_suspend() is
-called?
+-- 
+Pengutronix e.K.             | Lucas Stach                 |
+Industrial Linux Solutions   | http://www.pengutronix.de/  |
