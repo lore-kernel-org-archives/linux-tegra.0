@@ -1,117 +1,159 @@
-From: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: Re: [PATCH 1/2] PCI: tegra: apply relaxed ordering fixup only on
- Tegra
-Date: Tue, 09 Dec 2014 11:28:17 +0100
-Message-ID: <1418120897.2741.1.camel@pengutronix.de>
-References: <1415907457-3147-1-git-send-email-l.stach@pengutronix.de>
-	 <1415907457-3147-2-git-send-email-l.stach@pengutronix.de>
-	 <CAAVeFu+sYnhMEmDSPvinbP-BQQnqAu6rpEVgaLx25Y3UtGVUwQ@mail.gmail.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC RESEND 0/3] Add watermark support to devfreq
+Date: Tue, 9 Dec 2014 22:11:16 +0900
+Message-ID: <CAAVeFu+ZK_RpHqVQbbqJQV_8NWD3ShHMpNw0RmfFVK0Nykt+oQ@mail.gmail.com>
+References: <1555621726.710701418024675477.JavaMail.weblogic@epmlwas04c> <5485DADF.7020109@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAVeFu+sYnhMEmDSPvinbP-BQQnqAu6rpEVgaLx25Y3UtGVUwQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <5485DADF.7020109-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, =?UTF-8?B?67CV6rK966+8?= <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org" <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, "javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org" <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "srasal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <srasal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Am Dienstag, den 09.12.2014, 12:23 +0900 schrieb Alexandre Courbot:
-> Hi Lucas,
-> 
-> Apologies for taking so long to come back to this. The patch looks ok
-> to me, just a minor comment about the Tegra PCI detection:
-> 
-> On Fri, Nov 14, 2014 at 4:37 AM, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
-> > The fixup to enable relaxed ordering on all PCI devices was
-> > executed unconditionally if the Tegra PCI host driver was
-> > built into the kernel. This doesn't play nice with a
-> > multiplatform kernel executed on other platforms which
-> > may not need this fixup.
-> >
-> > Make sure to only apply the fixup if the root port is
-> > a Tegra.
-> >
-> > Signed-off-by: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-> > ---
-> >  drivers/pci/host/pci-tegra.c | 26 +++++++++++++++++++++++++-
-> >  1 file changed, 25 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> > index 3d43874319be..d5a14f22ebb8 100644
-> > --- a/drivers/pci/host/pci-tegra.c
-> > +++ b/drivers/pci/host/pci-tegra.c
-> > @@ -647,10 +647,34 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0bf1, tegra_pcie_fixup_class);
-> >  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1c, tegra_pcie_fixup_class);
-> >  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1d, tegra_pcie_fixup_class);
-> >
-> > +static int tegra_pcie_root_is_tegra(struct pci_dev *dev)
-> > +{
-> > +       struct pci_bus *bus = dev->bus;
-> > +       struct pci_dev *root_bridge;
-> > +
-> > +       /* walk up the PCIe hierarchy to the first level below the root bus */
-> > +       while (bus->parent && bus->parent->self)
-> > +               bus = bus->parent;
-> > +
-> > +       /*
-> > +        * If there is no bridge on the bus the passed device is the root
-> > +        * bridge itself.
-> > +        */
-> > +       root_bridge = bus->self ? bus->self : dev;
-> > +       if (root_bridge->vendor == PCI_VENDOR_ID_NVIDIA &&
-> > +           (root_bridge->device == 0x0bf0 || root_bridge->device == 0x0bf1 ||
-> > +            root_bridge->device == 0x0e1c || root_bridge->device == 0x0e1d ||
-> > +            root_bridge->device == 0x0e12 || root_bridge->device == 0x0e13))
-> > +               return 1;
-> 
-> I am not very familiar with PCI so sorry if these are stupid
-> questions, but where do these device IDs come from? Are they needed at
-> all, e.g. can't you just test against root_bridge->vendor ==
-> PCI_VENDOR_ID_NVIDIA to detect a NVIDIA root? Is the list susceptible
-> to increase as new chips get released? If that's the case, how can we
-> make sure we won't forget to update it?
-> 
+On Tue, Dec 9, 2014 at 2:07 AM, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> Hi MyungJoo,
+>
+> Thank for your answer, see my answers inline.
+>
+> On 12/08/2014 09:44 AM, MyungJoo Ham wrote:
+>>
+>> Please let me start with somewhat naive high-level question:
+>>    What do you mean by watermark in this context?
+>
+>
+> Sorry for poor choice of naming. "Load threshold interrupt" might be more
+> appropriate. The idea of the series here is to add an ability to program
+> hardware to give interrupts when the current load value goes above (or
+> below) certain threshold(s). I will revisit the naming.
 
-The device IDs are assigned by NVIDIA HW for the different Tegra PCI
-generation/link width combinations. Note that the K1 TRM is wrong as it
-still lists the T30 device IDs, instead of the ones used on K1.
+I personally like the watermark naming and think it is a pretty good
+analogy to what this series is doing, but your call.
 
-While we technically could test only against vendor==nvidia I don't
-think it is entirely safe. As this is a PCI fixup it will get executed
-on every device running a kernel including this PCI host bridge driver. 
+>
+>> Other itching points include:
+>> - devfreq_watermark_event() was declared but has never been used.
+>>      Who is supposed to call this function?
+>
+>
+> The device profile is responsible to call this function from an interrupt
+> handler. I will document this.
+>
+>> - Is enum watermark_type supposed to be used out of /drivers/devfreq/* ?
+>
+>
+> Yes, the idea is to use the enumerations for informing the type of the
+> event. I.e. from interrupt handler we might call:
+>   devfreq_watermark_event(devfreq, ACTMON_INTR_BELOW_WMARK);
+>
+>> - Could you please watermark-specific interfaces (set_high/low_wmark) into
+>>      its own public header file? (e.g.,
+>> /include/linux/devfreq/governor_wmark.h)
+>>    I think we can create another (governor_simpleondemand.h) in there as
+>> well
+>>      in order to have threshold values configured by device drivers.
+>>    Adding governor-specific configurations into devfreq.h seems not
+>>      appropriate especially when we expect that we may need many different
+>>      governors.
 
-So only testing for the vendor assumes that every ARM device with a PCI
-host bridge built by NVIDIA will be a Tegra. Do you think this is a
-reasonable assertion? I'm on the fence here.
- 
-> If you need to test against the device ID, it might be more legible
-> (and easier to update) if you use a switch case, e.g:
-> 
->     if (root_bridge->vendor != PCI_VENDOR_ID_NVIDIA)
->         return 0;
->     switch (root_bridge->device) {
->     case 0x0bf0:
->     case 0x0bf1:
->     case 0x0e1c:
->     case 0x0e1d:
->     case 0x0e12:
->     case 0x0e12:
->         return 1;
->     default:
->         return 0;
->     }
-> 
-Right, this looks nicer and easier to extend. I'll have to think about
-if we need the device IDs at all and respin accordingly.
+Considering that watermarking is a pretty common technique for the
+kind of work that devfreq is attempting to cover (implementing
+event-driven frequency scaling vs. polling-driven as current devfreq
+does), doesn't it make sense to turn it into a core devfreq feature? I
+don't think devfreq can be that easily extended and doing so might
+make things messier than they are.
 
-> Otherwise I have not noticed any problem using this patch.
-> 
-> Tested-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+>
+> I am not convinced that creating two separate interfaces is better than
+> extending a single centralised interface. Let us first consider the
+> compatibility...:
+>
+> First, in trivial case the device driver does not implement the threshold
+> feature. Obviously we cannot use threshold based governor for scaling but
+> all existing polling based governors will work as earlier.
+>
+> Second, let us assume that we have a device that supports threshold
+> interrupts and the driver has implemented the required set_h/l_wmark
+> interrupts and calls devfreq_watermark_event() when we get an interrupt.
+> This device can therefore use wmark_simple and wmark_active governors. In
+> addition to the wmark governors, we may choose to use a polling based
+> governor. With current approach the polling governor simply ignores the
+> events and leaves the thresholds "as is".
+>
+> In short, I would not be concerned on compatibility. From governor side it
+> should be ok to ignore an event. In addition, it is ok from governor
+> initialization to fail in case the device driver does not implement all
+> required features.
+>
+>
+> I am also afraid that initialisation makes two-communication-paths approach
+> tricky. In code you likely could have..:
+>   devfreq_add_device(dev, &pdata->devfreq, "wmark_simple", &extra_fns);
+>
+> .. but what happens if we wish to change the governor on the fly through
+> sysfs? In worst case this is targeting to a governor that requires its own
+> data field in initialisation.
+>
+>>
+>>    OR..
+>>
+>>    This seems that you can keep set_h/l_wmark functions exposed to
+>>      drivers/devfreq/* only. Therefore, having
+>> /drivers/devfreq/governor_wmark.h
+>>      should be sufficient as well, which should be more neat than the
+>> above.
+>>    The callbacks are to be defined by the devfreq drivers, aren't they?
+>
+>
+> set_h/l_wmark callbacks should be implemented by the device profiles (the
+> device drivers themselves) for setting the thresholds on hardware. These are
+> not devfreq/governor private functions but something that should be
+> implemented inside the device driver.
+>
+>>
+>> - The event name, "DEVFREQ_GOV_WMARK", defined in governor.h, seems to be
+>>      more appropriate if it is named "DEVFREQ_GOV_INTERNAL" as we won't
+>> need
+>>      to define event names for each govornor's internal needs.
+>>
+>>    OR.. for more generality,
+>>      we may define a macro like:
+>>
+>> #define DEVFREQ_GOV_INTERNAL(value)     ((0x1 << 31) | (value))
+>> #define GET_DEVFREQ_GOV_INTERNAL(event) ((event) & ~(0x1 << 31))
+>
+>
+> This should work.
+>
+>>
+>> - In general, I would love to see governors with minimal intervention on
+>>      the framework core/main code, especially when it is not beneficial to
+>>      other governors. Unlike cpufreq, we may contain many different types
+>> of
+>>      devices in devfreq, which has the potential to accompany many
+>> different
+>>      governors.
+>>
+>
+> I would like to see is that we could easily take advantage of hardware
+> features and not let framework limit us too much. :-)
+>
+> For example, Tomeu has been working on ACTMON driver that measures memory
+> transfers (please refer to "Add support for Tegra Activity Monitor" series).
+> This hardware block is capable of generating interrupts based on activity
+> and hence by factoring the series properly, we could use the same governor
+> from the series in different places easily. Without proper interfacing
+> everyone ends up duplicating the code.
 
-Thanks,
-Lucas
+Indeed. Watermarking support would make the ACTMON driver simpler and
+easier to integrate with all the governors that devfreq currently has.
+Without core support for it, it could only interact properly with its
+own, dedicated governor.
 
--- 
-Pengutronix e.K.             | Lucas Stach                 |
-Industrial Linux Solutions   | http://www.pengutronix.de/  |
+MyungJoo, the issue of having this feature in the core vs. having it
+as a devfreq "extension" aside, do you agree with the core idea? An
+informl ack for the idea would allow us to start leveraging this for
+the ACTMON driver. With a concrete user it will make it easier for
+everyone to understand how the pieces should fit together.
