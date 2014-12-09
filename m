@@ -1,137 +1,123 @@
-From: Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH] drm/tegra: dsi: Add suspend/resume support
-Date: Tue, 9 Dec 2014 14:29:44 -0500
-Message-ID: <CAOw6vbKegB8cgmqgRit+XdvYNtdEXy3Pcv5=1bYSCJv4v1F2AQ@mail.gmail.com>
-References: <1418020850-7664-1-git-send-email-markz@nvidia.com>
+From: Paul Walmsley <paul@pwsan.com>
+Subject: [PATCH] clocksource: tegra: wrap arch/arm-specific sections in
+ CONFIG_ARM
+Date: Tue, 9 Dec 2014 22:07:18 +0000 (UTC)
+Message-ID: <alpine.DEB.2.02.1412092201200.31750@utopia.booyaka.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1418020850-7664-1-git-send-email-markz@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Mark Zhang <markz@nvidia.com>
-Cc: gnurou@gmail.com, tbergstrom@nvidia.com, Stephen Warren <swarren@wwwdotorg.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-tegra@vger.kernel.org, Allen Martin <amartin@nvidia.com>, Stephen Warren <swarren@nvidia.com>, Thierry Reding <treding@nvidia.com>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gU3VuLCBEZWMgNywgMjAxNCBhdCAxMDo0MCBQTSwgTWFyayBaaGFuZyA8bWFya3pAbnZpZGlh
-LmNvbT4gd3JvdGU6Cj4gVGhpcyBwYXRjaCBhZGRzIHRoZSBzdXNwZW5kL3Jlc3VtZSBzdXBwb3J0
-IGZvciBUZWdyYSBkcm0KPiBkcml2ZXIgYnkgY2FsbGluZyB0aGUgY29ycmVzcG9uZGluZyBEUE1T
-IGZ1bmN0aW9ucy4KPgo+IFNpZ25lZC1vZmYtYnk6IE1hcmsgWmhhbmcgPG1hcmt6QG52aWRpYS5j
-b20+Cj4gLS0tCj4gSGksCj4KPiBUaGlzIHBhdGNoIGhvb2tzIERTSSBkcml2ZXIncyBzdXNwZW5k
-L3Jlc3VtZSB0byBpbXBsZW1lbnQgdGhlIHdob2xlCj4gZGlzcGxheSBzeXN0ZW0ncyBzdXNwZW5k
-L3Jlc3VtZS4gSSBrbm93IHRoaXMgaXMgYSBzdXBlciB1Z2x5IHdheSwKPiBidXQgYXMgd2UgYWxs
-IGtub3csIFRlZ3JhIERSTSBkcml2ZXIgZG9lc24ndCBoYXZlIGEgZGVkaWNhdGUgZHJtIGRldmlj
-ZQo+IHNvIGhvbmVzdGx5IEkgZGlkbid0IGZpbmQgYSBiZXR0ZXIgd2F5IHRvIGRvIHRoYXQuCj4K
-PiBUaGFua3MsCj4gTWFyawo+CgpIaSBNYXJrLApUaGFua3MgZm9yIHBvc3RpbmcgdGhpcy4gSSd2
-ZSByZXByb2R1Y2VkIG15IEdlcnJpdCBjb21tZW50cyBmcm9tIHRoZQpDck9TIHRyZWUgYmVsb3cg
-Zm9yIHRoZSBiZW5lZml0IG9mIG90aGVycy4KCj4gIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kc2ku
-YyB8IDk2ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tLQo+ICAx
-IGZpbGUgY2hhbmdlZCwgOTAgaW5zZXJ0aW9ucygrKSwgNiBkZWxldGlvbnMoLSkKPgo+IGRpZmYg
-LS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHNpLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVn
-cmEvZHNpLmMKPiBpbmRleCAzM2Y2N2ZkNjAxYzYuLjI1Y2QwZDkzZjM5MiAxMDA2NDQKPiAtLS0g
-YS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHNpLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVn
-cmEvZHNpLmMKPiBAQCAtNjEsNiArNjEsOSBAQCBzdHJ1Y3QgdGVncmFfZHNpIHsKPiAgICAgICAg
-IHN0cnVjdCB0ZWdyYV9kc2kgKnNsYXZlOwo+ICB9Owo+Cj4gK3N0YXRpYyBpbnQgdGVncmFfZHNp
-X3BhZF9jYWxpYnJhdGUoc3RydWN0IHRlZ3JhX2RzaSAqKTsKPiArc3RhdGljIGludCB0ZWdyYV9k
-c2lfZ2FuZ2VkX3NldHVwKHN0cnVjdCB0ZWdyYV9kc2kgKmRzaSk7Cj4gKwo+ICBzdGF0aWMgaW5s
-aW5lIHN0cnVjdCB0ZWdyYV9kc2kgKgo+ICBob3N0MXhfY2xpZW50X3RvX2RzaShzdHJ1Y3QgaG9z
-dDF4X2NsaWVudCAqY2xpZW50KQo+ICB7Cj4gQEAgLTgwNSw2ICs4MDgsMjAgQEAgc3RhdGljIGlu
-dCB0ZWdyYV9vdXRwdXRfZHNpX3NldHVwX2Nsb2NrKHN0cnVjdCB0ZWdyYV9vdXRwdXQgKm91dHB1
-dCwKPgo+ICAgICAgICAgbGFuZXMgPSB0ZWdyYV9kc2lfZ2V0X2xhbmVzKGRzaSk7Cj4KPiArICAg
-ICAgIGVyciA9IHRlZ3JhX2RzaV9wYWRfY2FsaWJyYXRlKGRzaSk7Cj4gKyAgICAgICBpZiAoZXJy
-IDwgMCkgewo+ICsgICAgICAgICAgICAgICBkZXZfZXJyKGRzaS0+ZGV2LCAiTUlQSSBjYWxpYnJh
-dGlvbiBmYWlsZWQ6ICVkXG4iLCBlcnIpOwo+ICsgICAgICAgICAgICAgICByZXR1cm4gZXJyOwo+
-ICsgICAgICAgfQo+ICsgICAgICAgaWYgKGRzaS0+c2xhdmUpIHsKPiArICAgICAgICAgICAgICAg
-ZXJyID0gdGVncmFfZHNpX3BhZF9jYWxpYnJhdGUoZHNpLT5zbGF2ZSk7Cj4gKyAgICAgICAgICAg
-ICAgIGlmIChlcnIgPCAwKSB7Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgZGV2X2Vycihkc2kt
-PnNsYXZlLT5kZXYsCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiTUlQSSBjYWxp
-YnJhdGlvbiBmYWlsZWQ6ICVkXG4iLCBlcnIpOwo+ICsgICAgICAgICAgICAgICAgICAgICAgIHJl
-dHVybiBlcnI7Cj4gKyAgICAgICAgICAgICAgIH0KPiArICAgICAgIH0KCk1vdmUgdGhpcyBkdXBs
-aWNhdGUgY2FsbCBpbnRvIHRlZ3JhX2RzaV9wYWRfY2FsaWJyYXRlKCkgdG8gYmUKY29uc2lzdGVu
-dCB3aXRoIHRoZSBvdGhlciBmdW5jdGlvbnMgaW4gdGhpcyBmaWxlIChlZzoKdGVncmFfZHNpX3Nl
-dF90aW1lb3V0KS4KCj4gKwo+ICAgICAgICAgZXJyID0gdGVncmFfZHNpX2dldF9tdWxkaXYoZHNp
-LT5mb3JtYXQsICZtdWwsICZkaXYpOwo+ICAgICAgICAgaWYgKGVyciA8IDApCj4gICAgICAgICAg
-ICAgICAgIHJldHVybiBlcnI7Cj4gQEAgLTgzMyw2ICs4NTAsMTMgQEAgc3RhdGljIGludCB0ZWdy
-YV9vdXRwdXRfZHNpX3NldHVwX2Nsb2NrKHN0cnVjdCB0ZWdyYV9vdXRwdXQgKm91dHB1dCwKPiAg
-ICAgICAgICAgICAgICAgZGV2X2Vycihkc2ktPmRldiwgImZhaWxlZCB0byBzZXQgcGFyZW50IGNs
-b2NrOiAlZFxuIiwgZXJyKTsKPiAgICAgICAgICAgICAgICAgcmV0dXJuIGVycjsKPiAgICAgICAg
-IH0KPiArICAgICAgIGlmIChkc2ktPnNsYXZlKSB7Cj4gKyAgICAgICAgICAgICAgIGVyciA9IHRl
-Z3JhX2RzaV9nYW5nZWRfc2V0dXAoZHNpKTsKPiArICAgICAgICAgICAgICAgaWYgKGVyciA8IDAp
-IHsKPiArICAgICAgICAgICAgICAgICAgICAgICBkZXZfZXJyKGRzaS0+ZGV2LCAiRFNJIGdhbmdl
-ZCBzZXR1cCBmYWlsZWQ6ICVkXG4iLCBlcnIpOwo+ICsgICAgICAgICAgICAgICAgICAgICAgIHJl
-dHVybiBlcnI7Cj4gKyAgICAgICAgICAgICAgIH0KPiArICAgICAgIH0KCkkgdGhpbmsgdGhpcyBi
-ZWxvbmdzIGluIC0+ZW5hYmxlKCkgaW5zdGVhZCBvZiBoZXJlLgoKPgo+ICAgICAgICAgZXJyID0g
-Y2xrX3NldF9yYXRlKGRzaS0+Y2xrX3BhcmVudCwgcGxsZCk7Cj4gICAgICAgICBpZiAoZXJyIDwg
-MCkgewo+IEBAIC0xNDcwLDEyICsxNDk0LDYgQEAgc3RhdGljIGludCB0ZWdyYV9kc2lfcHJvYmUo
-c3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKPiAgICAgICAgICAgICAgICAgZ290byBkaXNh
-YmxlX3ZkZDsKPiAgICAgICAgIH0KPgo+IC0gICAgICAgZXJyID0gdGVncmFfZHNpX3BhZF9jYWxp
-YnJhdGUoZHNpKTsKPiAtICAgICAgIGlmIChlcnIgPCAwKSB7Cj4gLSAgICAgICAgICAgICAgIGRl
-dl9lcnIoZHNpLT5kZXYsICJNSVBJIGNhbGlicmF0aW9uIGZhaWxlZDogJWRcbiIsIGVycik7Cj4g
-LSAgICAgICAgICAgICAgIGdvdG8gbWlwaV9mcmVlOwo+IC0gICAgICAgfQo+IC0KPiAgICAgICAg
-IGRzaS0+aG9zdC5vcHMgPSAmdGVncmFfZHNpX2hvc3Rfb3BzOwo+ICAgICAgICAgZHNpLT5ob3N0
-LmRldiA9ICZwZGV2LT5kZXY7Cj4KPiBAQCAtMTU0NCw2ICsxNTYyLDY3IEBAIHN0YXRpYyBpbnQg
-dGVncmFfZHNpX3JlbW92ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ICAgICAgICAg
-cmV0dXJuIDA7Cj4gIH0KPgo+ICsjaWZkZWYgQ09ORklHX1BNCj4gK3N0YXRpYyBpbnQgdGVncmFf
-ZHNpX3N1c3BlbmQoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldiwgcG1fbWVzc2FnZV90IHN0
-YXRlKQo+ICt7Cj4gKyAgICAgICBzdHJ1Y3QgdGVncmFfZHNpICpkc2kgPSBwbGF0Zm9ybV9nZXRf
-ZHJ2ZGF0YShwZGV2KTsKPiArICAgICAgIHN0cnVjdCB0ZWdyYV9kcm0gKnRlZ3JhID0gZGV2X2dl
-dF9kcnZkYXRhKGRzaS0+Y2xpZW50LnBhcmVudCk7Cj4gKyAgICAgICBzdHJ1Y3QgZHJtX2Nvbm5l
-Y3RvciAqY29ubmVjdG9yOwo+ICsKPiArICAgICAgIGlmIChkc2ktPm1hc3Rlcikgewo+ICsgICAg
-ICAgICAgICAgICByZWd1bGF0b3JfZGlzYWJsZShkc2ktPnZkZCk7Cj4gKyAgICAgICAgICAgICAg
-IHJldHVybiAwOwo+ICsgICAgICAgfQo+ICsKPiArICAgICAgIGRybV9tb2Rlc2V0X2xvY2tfYWxs
-KHRlZ3JhLT5kcm0pOwo+ICsgICAgICAgbGlzdF9mb3JfZWFjaF9lbnRyeShjb25uZWN0b3IsICZ0
-ZWdyYS0+ZHJtLT5tb2RlX2NvbmZpZy5jb25uZWN0b3JfbGlzdCwKPiArICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgaGVhZCkgewo+ICsgICAgICAgICAgICAgICBpbnQgb2xkX2RwbXMgPSBjb25u
-ZWN0b3ItPmRwbXM7Cj4gKwo+ICsgICAgICAgICAgICAgICBpZiAoY29ubmVjdG9yLT5mdW5jcy0+
-ZHBtcykKPiArICAgICAgICAgICAgICAgICAgICAgICBjb25uZWN0b3ItPmZ1bmNzLT5kcG1zKGNv
-bm5lY3RvciwgRFJNX01PREVfRFBNU19PRkYpOwo+ICsKPiArICAgICAgICAgICAgICAgLyogU2V0
-IHRoZSBvbGQgbW9kZSBiYWNrIHRvIHRoZSBjb25uZWN0b3IgZm9yIHJlc3VtZSAqLwo+ICsgICAg
-ICAgICAgICAgICBjb25uZWN0b3ItPmRwbXMgPSBvbGRfZHBtczsKPiArICAgICAgIH0KPiArICAg
-ICAgIGRybV9tb2Rlc2V0X3VubG9ja19hbGwodGVncmEtPmRybSk7Cj4gKwo+ICsgICAgICAgcmVn
-dWxhdG9yX2Rpc2FibGUoZHNpLT52ZGQpOwo+ICsKPiArICAgICAgIHJldHVybiAwOwo+ICt9Cj4g
-Kwo+ICtzdGF0aWMgaW50IHRlZ3JhX2RzaV9yZXN1bWUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAq
-cGRldikKPiArewo+ICsgICAgICAgc3RydWN0IHRlZ3JhX2RzaSAqZHNpID0gcGxhdGZvcm1fZ2V0
-X2RydmRhdGEocGRldik7Cj4gKyAgICAgICBzdHJ1Y3QgdGVncmFfZHJtICp0ZWdyYSA9IGRldl9n
-ZXRfZHJ2ZGF0YShkc2ktPmNsaWVudC5wYXJlbnQpOwo+ICsgICAgICAgc3RydWN0IGRybV9jb25u
-ZWN0b3IgKmNvbm5lY3RvcjsKPiArICAgICAgIGludCBlcnIgPSAwOwo+ICsKPiArICAgICAgIGVy
-ciA9IHJlZ3VsYXRvcl9lbmFibGUoZHNpLT52ZGQpOwo+ICsgICAgICAgaWYgKGVyciA8IDApIHsK
-PiArICAgICAgICAgICAgICAgZGV2X2VycigmcGRldi0+ZGV2LCAiRW5hYmxlIERTSSB2ZGQgZmFp
-bGVkOiAlZFxuIiwgZXJyKTsKPiArICAgICAgICAgICAgICAgcmV0dXJuIGVycjsKPiArICAgICAg
-IH0KPiArCj4gKyAgICAgICBpZiAoZHNpLT5tYXN0ZXIpCj4gKyAgICAgICAgICAgICAgIHJldHVy
-biAwOwo+ICsKPiArICAgICAgIGRybV9tb2Rlc2V0X2xvY2tfYWxsKHRlZ3JhLT5kcm0pOwo+ICsg
-ICAgICAgbGlzdF9mb3JfZWFjaF9lbnRyeShjb25uZWN0b3IsICZ0ZWdyYS0+ZHJtLT5tb2RlX2Nv
-bmZpZy5jb25uZWN0b3JfbGlzdCwKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgaGVhZCkg
-ewo+ICsgICAgICAgICAgICAgICBpZiAoY29ubmVjdG9yLT5mdW5jcy0+ZHBtcykKPiArICAgICAg
-ICAgICAgICAgICAgICAgICBjb25uZWN0b3ItPmZ1bmNzLT5kcG1zKGNvbm5lY3RvciwgY29ubmVj
-dG9yLT5kcG1zKTsKPiArICAgICAgIH0KPiArICAgICAgIGRybV9tb2Rlc2V0X3VubG9ja19hbGwo
-dGVncmEtPmRybSk7Cj4gKwo+ICsgICAgICAgZHJtX2hlbHBlcl9yZXN1bWVfZm9yY2VfbW9kZSh0
-ZWdyYS0+ZHJtKTsKPiArCj4gKyAgICAgICByZXR1cm4gMDsKPiArfQo+ICsjZW5kaWYKClNvIHRo
-aXMgaXMgdGhlIHRyaWNreSBjaHVuaywgaXQgZGVmaW5pdGVseSBkb2VzIG5vdCBiZWxvbmcgaGVy
-ZS4gSQp0aGluayBpdCBtYWtlcyBtb3N0IHNlbnNlIGZvciB0aGlzIHRvIGxpdmUgaW4gZHJtLmMs
-IGhvd2V2ZXIKaG9zdDF4X2RyaXZlciBkb2Vzbid0IGhhdmUgc3VzcGVuZC9yZXN1bWUgaG9va3Mu
-CgpJIHN1c3BlY3QgdGhlIGNvcnJlY3QgdGhpbmcgdG8gZG8gaGVyZSBpcyB0byBhZGQgdGhlbSB0
-bwpob3N0MXhfZHJpdmVyLCBidXQgSSdtIG5vdCBzdXJlIGhvdyBtdWNoIGVmZm9ydCBpcyBpbnZv
-bHZlZCBpbiBkb2luZwp0aGF0LgoKU2VhbgoKPiArCj4gKwo+ICBzdGF0aWMgY29uc3Qgc3RydWN0
-IG9mX2RldmljZV9pZCB0ZWdyYV9kc2lfb2ZfbWF0Y2hbXSA9IHsKPiAgICAgICAgIHsgLmNvbXBh
-dGlibGUgPSAibnZpZGlhLHRlZ3JhMTE0LWRzaSIsIH0sCj4gICAgICAgICB7IH0sCj4gQEAgLTE1
-NTcsNCArMTYzNiw5IEBAIHN0cnVjdCBwbGF0Zm9ybV9kcml2ZXIgdGVncmFfZHNpX2RyaXZlciA9
-IHsKPiAgICAgICAgIH0sCj4gICAgICAgICAucHJvYmUgPSB0ZWdyYV9kc2lfcHJvYmUsCj4gICAg
-ICAgICAucmVtb3ZlID0gdGVncmFfZHNpX3JlbW92ZSwKPiArI2lmZGVmIENPTkZJR19QTQo+ICsg
-ICAgICAgLnN1c3BlbmQgPSB0ZWdyYV9kc2lfc3VzcGVuZCwKPiArICAgICAgIC5yZXN1bWUgPSB0
-ZWdyYV9kc2lfcmVzdW1lLAo+ICsjZW5kaWYKPiArCj4gIH07Cj4gLS0KPiAxLjguMS41Cj4KPiAt
-LQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNj
-cmliZSBsaW51eC1rZXJuZWwiIGluCj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9t
-b0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5r
-ZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwKPiBQbGVhc2UgcmVhZCB0aGUgRkFRIGF0ICBo
-dHRwOi8vd3d3LnR1eC5vcmcvbGttbC8KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9kcmktZGV2ZWwK
+
+Like several of the other files in drivers/clocksource,
+tegra20_timer.c contains code that can only compile when CONFIG_ARM is
+enabled.  This causes obvious problems when trying to compile this
+code for NVIDIA ARM64-based SoCs, such as Tegra132.  The same timer IP
+blocks exist, so it seems appropriate to provide support for them.
+
+So until we figure out a better way to partition this code, wrap the
+delay_timer and persistent_clock support code with preprocessor tests
+for CONFIG_ARM.  (The delay_timer code should not be needed at all on
+ARM64 due to the presence of the ARMv8 architected timer.  The
+persistent_clock support code could become important once power
+management modes are implemented that turn off the CPU complex.)
+
+Signed-off-by: Paul Walmsley <paul@pwsan.com>
+Signed-off-by: Paul Walmsley <pwalmsley@nvidia.com>
+Cc: Allen Martin <amartin@nvidia.com>
+Cc: Stephen Warren <swarren@nvidia.com>
+Cc: Thierry Reding <treding@nvidia.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+---
+Applies against next-20141209.
+Intended for v3.20.
+Boot-tested on Tegra124 Jetson TK1 on next-20141209.
+Also boot-tested on Tegra132 Norrin FFD on next-20141209 + extra, 
+unrelated patches.
+
+ drivers/clocksource/tegra20_timer.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
+index d2616ef16770..83a8f5c9e139 100644
+--- a/drivers/clocksource/tegra20_timer.c
++++ b/drivers/clocksource/tegra20_timer.c
+@@ -29,8 +29,10 @@
+ #include <linux/sched_clock.h>
+ #include <linux/delay.h>
+ 
++#ifdef CONFIG_ARM
+ #include <asm/mach/time.h>
+ #include <asm/smp_twd.h>
++#endif
+ 
+ #define RTC_SECONDS            0x08
+ #define RTC_SHADOW_SECONDS     0x0c
+@@ -49,12 +51,14 @@
+ #define TIMER_PCR 0x4
+ 
+ static void __iomem *timer_reg_base;
++#ifdef CONFIG_ARM
+ static void __iomem *rtc_base;
+ 
+ static struct timespec persistent_ts;
+ static u64 persistent_ms, last_persistent_ms;
+ 
+ static struct delay_timer tegra_delay_timer;
++#endif
+ 
+ #define timer_writel(value, reg) \
+ 	__raw_writel(value, timer_reg_base + (reg))
+@@ -106,6 +110,7 @@ static u64 notrace tegra_read_sched_clock(void)
+ 	return timer_readl(TIMERUS_CNTR_1US);
+ }
+ 
++#ifdef CONFIG_ARM
+ /*
+  * tegra_rtc_read - Reads the Tegra RTC registers
+  * Care must be taken that this funciton is not called while the
+@@ -146,6 +151,8 @@ static unsigned long tegra_delay_timer_read_counter_long(void)
+ {
+ 	return readl(timer_reg_base + TIMERUS_CNTR_1US);
+ }
++#endif /* CONFIG_ARM */
++
+ 
+ static irqreturn_t tegra_timer_interrupt(int irq, void *dev_id)
+ {
+@@ -214,10 +221,12 @@ static void __init tegra20_init_timer(struct device_node *np)
+ 		BUG();
+ 	}
+ 
++#ifdef CONFIG_ARM
+ 	tegra_delay_timer.read_current_timer =
+ 			tegra_delay_timer_read_counter_long;
+ 	tegra_delay_timer.freq = 1000000;
+ 	register_current_timer_delay(&tegra_delay_timer);
++#endif
+ 
+ 	ret = setup_irq(tegra_timer_irq.irq, &tegra_timer_irq);
+ 	if (ret) {
+@@ -232,6 +241,7 @@ static void __init tegra20_init_timer(struct device_node *np)
+ }
+ CLOCKSOURCE_OF_DECLARE(tegra20_timer, "nvidia,tegra20-timer", tegra20_init_timer);
+ 
++#ifdef CONFIG_ARM
+ static void __init tegra20_init_rtc(struct device_node *np)
+ {
+ 	struct clk *clk;
+@@ -255,6 +265,7 @@ static void __init tegra20_init_rtc(struct device_node *np)
+ 	register_persistent_clock(NULL, tegra_read_persistent_clock);
+ }
+ CLOCKSOURCE_OF_DECLARE(tegra20_rtc, "nvidia,tegra20-rtc", tegra20_init_rtc);
++#endif /* CONFIG_ARM */
+ 
+ #ifdef CONFIG_PM
+ static u32 usec_config;
+-- 
+2.1.3
