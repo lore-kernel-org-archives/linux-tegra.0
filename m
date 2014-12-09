@@ -1,50 +1,22 @@
-From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v3.18
-Date: Mon, 8 Dec 2014 15:51:20 -0700
-Message-ID: <54862B68.8070106@nvidia.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 2/2] PCI: tegra: remove bogus bridge setup fixup
+Date: Tue, 9 Dec 2014 12:17:47 +0900
+Message-ID: <CAAVeFuJ95scnwB9iW_A-uNqVghC4sKfvL2zj=pJJoSze6D4U9Q@mail.gmail.com>
+References: <1415907457-3147-1-git-send-email-l.stach@pengutronix.de> <1415907457-3147-3-git-send-email-l.stach@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1415907457-3147-3-git-send-email-l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v3.18.
-Logs and other details at:
+On Fri, Nov 14, 2014 at 4:37 AM, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
+> The bridge setup is already done by generic code
+> while scanning the buses. Do not duplicate (or potentially
+> alter) this setup as a fixup.
 
-     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.18/20141208122141/
+Jetson seems to be happy with this change.
 
-
-Test summary
-------------
-
-Build: zImage:
-     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
-
-Boot to userspace: multi_v7_defconfig:
-     Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-     Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra30-beaver
-
-
-vmlinux object size
-(delta in bytes from test_v3.18-rc7 (009d0431c3914de64666bec0d350e54fdd59df6a)):
-    text     data      bss    total  kernel
-     -87      -16        0     -103  multi_v7_defconfig
-    -119       -8        0     -127  tegra_defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v3.18-rc7 (009d0431c3914de64666bec0d350e54fdd59df6a))
-     avail    rsrvd     high    freed                board              kconfig                  dtb
-         .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-         .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-         .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-         .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-         .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-         .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+Tested-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
