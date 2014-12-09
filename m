@@ -1,88 +1,91 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH 1/2] PCI: tegra: apply relaxed ordering fixup only on
- Tegra
-Date: Tue, 9 Dec 2014 15:31:17 -0700
-Message-ID: <20141209223117.GA6692@google.com>
-References: <1415907457-3147-1-git-send-email-l.stach@pengutronix.de>
- <1415907457-3147-2-git-send-email-l.stach@pengutronix.de>
+From: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] soc: tegra: pmc: restrict compilation of suspend-related
+ support to ARM
+Date: Tue, 9 Dec 2014 22:36:50 +0000 (UTC)
+Message-ID: <alpine.DEB.2.02.1412092224050.31750@utopia.booyaka.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pci-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1415907457-3147-2-git-send-email-l.stach@pengutronix.de>
-Sender: linux-pci-owner@vger.kernel.org
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Nov 13, 2014 at 08:37:36PM +0100, Lucas Stach wrote:
-> The fixup to enable relaxed ordering on all PCI devices was
-> executed unconditionally if the Tegra PCI host driver was
-> built into the kernel. This doesn't play nice with a
-> multiplatform kernel executed on other platforms which
-> may not need this fixup.
-> 
-> Make sure to only apply the fixup if the root port is
-> a Tegra.
-> 
-> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> ---
->  drivers/pci/host/pci-tegra.c | 26 +++++++++++++++++++++++++-
->  1 file changed, 25 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> index 3d43874319be..d5a14f22ebb8 100644
-> --- a/drivers/pci/host/pci-tegra.c
-> +++ b/drivers/pci/host/pci-tegra.c
-> @@ -647,10 +647,34 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0bf1, tegra_pcie_fixup_class);
->  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1c, tegra_pcie_fixup_class);
->  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1d, tegra_pcie_fixup_class);
->  
-> +static int tegra_pcie_root_is_tegra(struct pci_dev *dev)
-> +{
-> +	struct pci_bus *bus = dev->bus;
-> +	struct pci_dev *root_bridge;
-> +
-> +	/* walk up the PCIe hierarchy to the first level below the root bus */
-> +	while (bus->parent && bus->parent->self)
-> +		bus = bus->parent;
-> +
-> +	/*
-> +	 * If there is no bridge on the bus the passed device is the root
-> +	 * bridge itself.
-> +	 */
-> +	root_bridge = bus->self ? bus->self : dev;
-> +	if (root_bridge->vendor == PCI_VENDOR_ID_NVIDIA &&
-> +	    (root_bridge->device == 0x0bf0 || root_bridge->device == 0x0bf1 ||
-> +	     root_bridge->device == 0x0e1c || root_bridge->device == 0x0e1d ||
-> +	     root_bridge->device == 0x0e12 || root_bridge->device == 0x0e13))
 
-This looks like a good fix.  Can you rework it slightly to:
+Tegra SoCs with 64-bit ARM support don't currently support deep CPU
+low-power states in mainline Linux.  When this support is added in the
+future, it will probably look rather different from the existing
+32-bit ARM support, since the ARM64 maintainers' strong preference is
+to use PSCI to implement it.
 
-  - Use "root_port" instead of "root_bridge" to match the spec terminology.
-    When people say "root bridge," they usually mean a host bridge, which
-    is not a PCI device.
+So, for the time being, prevent the CPU suspend-related code and data
+in the Tegra PMC driver from compiling on ARM64.
 
-  - Is it feasible to factor out the hierarchy traversal into something
-    like a separate pcie_root_port(pci_dev *) interface?  I think that
-    might be useful other places as well.
+Signed-off-by: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+Signed-off-by: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+Applies on next-20141209.
+Intended for v3.20.
+Boot-tested on Tegra124 Jetson TK1 on next-20141209.
+Also boot-tested on Tegra132 Norrin FFD on next-20141209 + some unrelated 
+patches.
 
-Bjorn
+ drivers/soc/tegra/pmc.c | 7 +++++--
+ include/soc/tegra/pm.h  | 2 +-
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
-> +		return 1;
-> +
-> +	return 0;
-> +}
->  /* Tegra PCIE requires relaxed ordering */
->  static void tegra_pcie_relax_enable(struct pci_dev *dev)
->  {
-> -	pcie_capability_set_word(dev, PCI_EXP_DEVCTL, PCI_EXP_DEVCTL_RELAX_EN);
-> +	if (tegra_pcie_root_is_tegra(dev))
-> +		pcie_capability_set_word(dev, PCI_EXP_DEVCTL,
-> +					 PCI_EXP_DEVCTL_RELAX_EN);
->  }
->  DECLARE_PCI_FIXUP_FINAL(PCI_ANY_ID, PCI_ANY_ID, tegra_pcie_relax_enable);
->  
-> -- 
-> 2.1.1
-> 
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index a2c0ceb95f8f..4bdc654bd747 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -739,7 +739,7 @@ static int tegra_pmc_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-#ifdef CONFIG_PM_SLEEP
++#if defined(CONFIG_PM_SLEEP) && defined(CONFIG_ARM)
+ static int tegra_pmc_suspend(struct device *dev)
+ {
+ 	tegra_pmc_writel(virt_to_phys(tegra_resume), PMC_SCRATCH41);
+@@ -753,10 +753,11 @@ static int tegra_pmc_resume(struct device *dev)
+ 
+ 	return 0;
+ }
+-#endif
+ 
+ static SIMPLE_DEV_PM_OPS(tegra_pmc_pm_ops, tegra_pmc_suspend, tegra_pmc_resume);
+ 
++#endif
++
+ static const char * const tegra20_powergates[] = {
+ 	[TEGRA_POWERGATE_CPU] = "cpu",
+ 	[TEGRA_POWERGATE_3D] = "3d",
+@@ -894,7 +895,9 @@ static struct platform_driver tegra_pmc_driver = {
+ 		.name = "tegra-pmc",
+ 		.suppress_bind_attrs = true,
+ 		.of_match_table = tegra_pmc_match,
++#if defined(CONFIG_PM_SLEEP) && defined(CONFIG_ARM)
+ 		.pm = &tegra_pmc_pm_ops,
++#endif
+ 	},
+ 	.probe = tegra_pmc_probe,
+ };
+diff --git a/include/soc/tegra/pm.h b/include/soc/tegra/pm.h
+index 30fe2078a547..03909101d4e7 100644
+--- a/include/soc/tegra/pm.h
++++ b/include/soc/tegra/pm.h
+@@ -17,7 +17,7 @@ enum tegra_suspend_mode {
+ 	TEGRA_MAX_SUSPEND_MODE,
+ };
+ 
+-#ifdef CONFIG_PM_SLEEP
++#if defined(CONFIG_PM_SLEEP) && defined(CONFIG_ARM)
+ enum tegra_suspend_mode
+ tegra_pm_validate_suspend_mode(enum tegra_suspend_mode mode);
+ 
+-- 
+2.1.3
