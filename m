@@ -1,89 +1,40 @@
 From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/2] PCI: tegra: apply relaxed ordering fixup only on Tegra
-Date: Tue, 9 Dec 2014 12:23:36 +0900
-Message-ID: <CAAVeFu+sYnhMEmDSPvinbP-BQQnqAu6rpEVgaLx25Y3UtGVUwQ@mail.gmail.com>
-References: <1415907457-3147-1-git-send-email-l.stach@pengutronix.de> <1415907457-3147-2-git-send-email-l.stach@pengutronix.de>
+Subject: Re: [PATCH v3 3/3] ARM: tegra: Add Tegra124 ACTMON support
+Date: Tue, 9 Dec 2014 14:33:39 +0900
+Message-ID: <CAAVeFu+UZyzF6c+MMnXFAKUbDcw6aan13Sg88c9-YbUsbXYKnw@mail.gmail.com>
+References: <1417709696-29281-1-git-send-email-tomeu.vizoso@collabora.com> <1417709696-29281-4-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1415907457-3147-2-git-send-email-l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+In-Reply-To: <1417709696-29281-4-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Cc: "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Lucas,
-
-Apologies for taking so long to come back to this. The patch looks ok
-to me, just a minor comment about the Tegra PCI detection:
-
-On Fri, Nov 14, 2014 at 4:37 AM, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
-> The fixup to enable relaxed ordering on all PCI devices was
-> executed unconditionally if the Tegra PCI host driver was
-> built into the kernel. This doesn't play nice with a
-> multiplatform kernel executed on other platforms which
-> may not need this fixup.
+On Fri, Dec 5, 2014 at 1:14 AM, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org> wrote:
+> Add device node for the ACTMON block to the Tegra124 device tree.
 >
-> Make sure to only apply the fixup if the root port is
-> a Tegra.
+> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 >
-> Signed-off-by: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 > ---
->  drivers/pci/host/pci-tegra.c | 26 +++++++++++++++++++++++++-
->  1 file changed, 25 insertions(+), 1 deletion(-)
 >
-> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> index 3d43874319be..d5a14f22ebb8 100644
-> --- a/drivers/pci/host/pci-tegra.c
-> +++ b/drivers/pci/host/pci-tegra.c
-> @@ -647,10 +647,34 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0bf1, tegra_pcie_fixup_class);
->  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1c, tegra_pcie_fixup_class);
->  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1d, tegra_pcie_fixup_class);
+> v3:     * Address misc. style issues found by Thierry and Alexander
+>         * Added helpers for register i/o
+>         * Further documented the structs
+>         * Enable the ACTMON after the IRQ handler has been installed
+>         * Disable the ACTMON before removing the IRQ handler
+>         * Add governor in a subsys initcall
 >
-> +static int tegra_pcie_root_is_tegra(struct pci_dev *dev)
-> +{
-> +       struct pci_bus *bus = dev->bus;
-> +       struct pci_dev *root_bridge;
-> +
-> +       /* walk up the PCIe hierarchy to the first level below the root bus */
-> +       while (bus->parent && bus->parent->self)
-> +               bus = bus->parent;
-> +
-> +       /*
-> +        * If there is no bridge on the bus the passed device is the root
-> +        * bridge itself.
-> +        */
-> +       root_bridge = bus->self ? bus->self : dev;
-> +       if (root_bridge->vendor == PCI_VENDOR_ID_NVIDIA &&
-> +           (root_bridge->device == 0x0bf0 || root_bridge->device == 0x0bf1 ||
-> +            root_bridge->device == 0x0e1c || root_bridge->device == 0x0e1d ||
-> +            root_bridge->device == 0x0e12 || root_bridge->device == 0x0e13))
-> +               return 1;
+> v2:     * Add operating-points property
+> ---
+>  arch/arm/boot/dts/tegra124.dtsi        |  23 +
+>  drivers/devfreq/Kconfig                |   7 +-
+>  drivers/devfreq/Makefile               |   2 +-
+>  drivers/devfreq/tegra-actmon-devfreq.c | 777 +++++++++++++++++++++++++++++++++
+>  drivers/devfreq/tegra-devfreq.c        | 718 ------------------------------
 
-I am not very familiar with PCI so sorry if these are stupid
-questions, but where do these device IDs come from? Are they needed at
-all, e.g. can't you just test against root_bridge->vendor ==
-PCI_VENDOR_ID_NVIDIA to detect a NVIDIA root? Is the list susceptible
-to increase as new chips get released? If that's the case, how can we
-make sure we won't forget to update it?
-
-If you need to test against the device ID, it might be more legible
-(and easier to update) if you use a switch case, e.g:
-
-    if (root_bridge->vendor != PCI_VENDOR_ID_NVIDIA)
-        return 0;
-    switch (root_bridge->device) {
-    case 0x0bf0:
-    case 0x0bf1:
-    case 0x0e1c:
-    case 0x0e1d:
-    case 0x0e12:
-    case 0x0e12:
-        return 1;
-    default:
-        return 0;
-    }
-
-Otherwise I have not noticed any problem using this patch.
-
-Tested-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In patch 2/3 you create tegra-devfreq.c, to apparently move it to
+tegra-actmon-devfreq.c and (seemingly) add somemore lines to it. This
+makes things difficult to review, and I am almost sure this is a
+naming mistake - could you fix this and resend?
