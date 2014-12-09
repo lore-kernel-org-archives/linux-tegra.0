@@ -1,123 +1,88 @@
-From: Paul Walmsley <paul@pwsan.com>
-Subject: [PATCH] clocksource: tegra: wrap arch/arm-specific sections in
- CONFIG_ARM
-Date: Tue, 9 Dec 2014 22:07:18 +0000 (UTC)
-Message-ID: <alpine.DEB.2.02.1412092201200.31750@utopia.booyaka.com>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH 1/2] PCI: tegra: apply relaxed ordering fixup only on
+ Tegra
+Date: Tue, 9 Dec 2014 15:31:17 -0700
+Message-ID: <20141209223117.GA6692@google.com>
+References: <1415907457-3147-1-git-send-email-l.stach@pengutronix.de>
+ <1415907457-3147-2-git-send-email-l.stach@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-tegra@vger.kernel.org, Allen Martin <amartin@nvidia.com>, Stephen Warren <swarren@nvidia.com>, Thierry Reding <treding@nvidia.com>, Alexandre Courbot <gnurou@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1415907457-3147-2-git-send-email-l.stach@pengutronix.de>
+Sender: linux-pci-owner@vger.kernel.org
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Thu, Nov 13, 2014 at 08:37:36PM +0100, Lucas Stach wrote:
+> The fixup to enable relaxed ordering on all PCI devices was
+> executed unconditionally if the Tegra PCI host driver was
+> built into the kernel. This doesn't play nice with a
+> multiplatform kernel executed on other platforms which
+> may not need this fixup.
+> 
+> Make sure to only apply the fixup if the root port is
+> a Tegra.
+> 
+> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> ---
+>  drivers/pci/host/pci-tegra.c | 26 +++++++++++++++++++++++++-
+>  1 file changed, 25 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+> index 3d43874319be..d5a14f22ebb8 100644
+> --- a/drivers/pci/host/pci-tegra.c
+> +++ b/drivers/pci/host/pci-tegra.c
+> @@ -647,10 +647,34 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0bf1, tegra_pcie_fixup_class);
+>  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1c, tegra_pcie_fixup_class);
+>  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1d, tegra_pcie_fixup_class);
+>  
+> +static int tegra_pcie_root_is_tegra(struct pci_dev *dev)
+> +{
+> +	struct pci_bus *bus = dev->bus;
+> +	struct pci_dev *root_bridge;
+> +
+> +	/* walk up the PCIe hierarchy to the first level below the root bus */
+> +	while (bus->parent && bus->parent->self)
+> +		bus = bus->parent;
+> +
+> +	/*
+> +	 * If there is no bridge on the bus the passed device is the root
+> +	 * bridge itself.
+> +	 */
+> +	root_bridge = bus->self ? bus->self : dev;
+> +	if (root_bridge->vendor == PCI_VENDOR_ID_NVIDIA &&
+> +	    (root_bridge->device == 0x0bf0 || root_bridge->device == 0x0bf1 ||
+> +	     root_bridge->device == 0x0e1c || root_bridge->device == 0x0e1d ||
+> +	     root_bridge->device == 0x0e12 || root_bridge->device == 0x0e13))
 
-Like several of the other files in drivers/clocksource,
-tegra20_timer.c contains code that can only compile when CONFIG_ARM is
-enabled.  This causes obvious problems when trying to compile this
-code for NVIDIA ARM64-based SoCs, such as Tegra132.  The same timer IP
-blocks exist, so it seems appropriate to provide support for them.
+This looks like a good fix.  Can you rework it slightly to:
 
-So until we figure out a better way to partition this code, wrap the
-delay_timer and persistent_clock support code with preprocessor tests
-for CONFIG_ARM.  (The delay_timer code should not be needed at all on
-ARM64 due to the presence of the ARMv8 architected timer.  The
-persistent_clock support code could become important once power
-management modes are implemented that turn off the CPU complex.)
+  - Use "root_port" instead of "root_bridge" to match the spec terminology.
+    When people say "root bridge," they usually mean a host bridge, which
+    is not a PCI device.
 
-Signed-off-by: Paul Walmsley <paul@pwsan.com>
-Signed-off-by: Paul Walmsley <pwalmsley@nvidia.com>
-Cc: Allen Martin <amartin@nvidia.com>
-Cc: Stephen Warren <swarren@nvidia.com>
-Cc: Thierry Reding <treding@nvidia.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Alexandre Courbot <gnurou@gmail.com>
----
-Applies against next-20141209.
-Intended for v3.20.
-Boot-tested on Tegra124 Jetson TK1 on next-20141209.
-Also boot-tested on Tegra132 Norrin FFD on next-20141209 + extra, 
-unrelated patches.
+  - Is it feasible to factor out the hierarchy traversal into something
+    like a separate pcie_root_port(pci_dev *) interface?  I think that
+    might be useful other places as well.
 
- drivers/clocksource/tegra20_timer.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Bjorn
 
-diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
-index d2616ef16770..83a8f5c9e139 100644
---- a/drivers/clocksource/tegra20_timer.c
-+++ b/drivers/clocksource/tegra20_timer.c
-@@ -29,8 +29,10 @@
- #include <linux/sched_clock.h>
- #include <linux/delay.h>
- 
-+#ifdef CONFIG_ARM
- #include <asm/mach/time.h>
- #include <asm/smp_twd.h>
-+#endif
- 
- #define RTC_SECONDS            0x08
- #define RTC_SHADOW_SECONDS     0x0c
-@@ -49,12 +51,14 @@
- #define TIMER_PCR 0x4
- 
- static void __iomem *timer_reg_base;
-+#ifdef CONFIG_ARM
- static void __iomem *rtc_base;
- 
- static struct timespec persistent_ts;
- static u64 persistent_ms, last_persistent_ms;
- 
- static struct delay_timer tegra_delay_timer;
-+#endif
- 
- #define timer_writel(value, reg) \
- 	__raw_writel(value, timer_reg_base + (reg))
-@@ -106,6 +110,7 @@ static u64 notrace tegra_read_sched_clock(void)
- 	return timer_readl(TIMERUS_CNTR_1US);
- }
- 
-+#ifdef CONFIG_ARM
- /*
-  * tegra_rtc_read - Reads the Tegra RTC registers
-  * Care must be taken that this funciton is not called while the
-@@ -146,6 +151,8 @@ static unsigned long tegra_delay_timer_read_counter_long(void)
- {
- 	return readl(timer_reg_base + TIMERUS_CNTR_1US);
- }
-+#endif /* CONFIG_ARM */
-+
- 
- static irqreturn_t tegra_timer_interrupt(int irq, void *dev_id)
- {
-@@ -214,10 +221,12 @@ static void __init tegra20_init_timer(struct device_node *np)
- 		BUG();
- 	}
- 
-+#ifdef CONFIG_ARM
- 	tegra_delay_timer.read_current_timer =
- 			tegra_delay_timer_read_counter_long;
- 	tegra_delay_timer.freq = 1000000;
- 	register_current_timer_delay(&tegra_delay_timer);
-+#endif
- 
- 	ret = setup_irq(tegra_timer_irq.irq, &tegra_timer_irq);
- 	if (ret) {
-@@ -232,6 +241,7 @@ static void __init tegra20_init_timer(struct device_node *np)
- }
- CLOCKSOURCE_OF_DECLARE(tegra20_timer, "nvidia,tegra20-timer", tegra20_init_timer);
- 
-+#ifdef CONFIG_ARM
- static void __init tegra20_init_rtc(struct device_node *np)
- {
- 	struct clk *clk;
-@@ -255,6 +265,7 @@ static void __init tegra20_init_rtc(struct device_node *np)
- 	register_persistent_clock(NULL, tegra_read_persistent_clock);
- }
- CLOCKSOURCE_OF_DECLARE(tegra20_rtc, "nvidia,tegra20-rtc", tegra20_init_rtc);
-+#endif /* CONFIG_ARM */
- 
- #ifdef CONFIG_PM
- static u32 usec_config;
--- 
-2.1.3
+> +		return 1;
+> +
+> +	return 0;
+> +}
+>  /* Tegra PCIE requires relaxed ordering */
+>  static void tegra_pcie_relax_enable(struct pci_dev *dev)
+>  {
+> -	pcie_capability_set_word(dev, PCI_EXP_DEVCTL, PCI_EXP_DEVCTL_RELAX_EN);
+> +	if (tegra_pcie_root_is_tegra(dev))
+> +		pcie_capability_set_word(dev, PCI_EXP_DEVCTL,
+> +					 PCI_EXP_DEVCTL_RELAX_EN);
+>  }
+>  DECLARE_PCI_FIXUP_FINAL(PCI_ANY_ID, PCI_ANY_ID, tegra_pcie_relax_enable);
+>  
+> -- 
+> 2.1.1
+> 
