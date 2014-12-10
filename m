@@ -1,131 +1,107 @@
-From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] drm/tegra: dsi: Add suspend/resume support
-Date: Wed, 10 Dec 2014 10:08:57 +0800
-Message-ID: <5487AB39.1050706@nvidia.com>
-References: <1418020850-7664-1-git-send-email-markz@nvidia.com> <CAOw6vbKegB8cgmqgRit+XdvYNtdEXy3Pcv5=1bYSCJv4v1F2AQ@mail.gmail.com>
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] clocksource: tegra: wrap arch/arm-specific sections in
+ CONFIG_ARM
+Date: Wed, 10 Dec 2014 12:14:27 +0100
+Message-ID: <20141210111425.GD15287@ulmo.nvidia.com>
+References: <alpine.DEB.2.02.1412092201200.31750@utopia.booyaka.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="AbQceqfdZEv+FvjW"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAOw6vbKegB8cgmqgRit+XdvYNtdEXy3Pcv5=1bYSCJv4v1F2AQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <alpine.DEB.2.02.1412092201200.31750-rwI8Ez+7Ko+d5PgPZx9QOdBPR1lH4CV8@public.gmane.org>
+Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Dave Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/10/2014 03:29 AM, Sean Paul wrote:
-> On Sun, Dec 7, 2014 at 10:40 PM, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->> This patch adds the suspend/resume support for Tegra drm
->> driver by calling the corresponding DPMS functions.
-[...]
->> +       if (dsi->slave) {
->> +               err = tegra_dsi_pad_calibrate(dsi->slave);
->> +               if (err < 0) {
->> +                       dev_err(dsi->slave->dev,
->> +                               "MIPI calibration failed: %d\n", err);
->> +                       return err;
->> +               }
->> +       }
-> 
-> Move this duplicate call into tegra_dsi_pad_calibrate() to be
-> consistent with the other functions in this file (eg:
-> tegra_dsi_set_timeout).
-> 
+--AbQceqfdZEv+FvjW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yeah, will do.
+On Tue, Dec 09, 2014 at 10:07:18PM +0000, Paul Walmsley wrote:
+>=20
+> Like several of the other files in drivers/clocksource,
+> tegra20_timer.c contains code that can only compile when CONFIG_ARM is
+> enabled.  This causes obvious problems when trying to compile this
+> code for NVIDIA ARM64-based SoCs, such as Tegra132.  The same timer IP
+> blocks exist, so it seems appropriate to provide support for them.
+>=20
+> So until we figure out a better way to partition this code, wrap the
+> delay_timer and persistent_clock support code with preprocessor tests
+> for CONFIG_ARM.  (The delay_timer code should not be needed at all on
+> ARM64 due to the presence of the ARMv8 architected timer.  The
+> persistent_clock support code could become important once power
+> management modes are implemented that turn off the CPU complex.)
+>=20
+> Signed-off-by: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+> Signed-off-by: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Cc: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Cc: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+> Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+> Applies against next-20141209.
+> Intended for v3.20.
+> Boot-tested on Tegra124 Jetson TK1 on next-20141209.
+> Also boot-tested on Tegra132 Norrin FFD on next-20141209 + extra,=20
+> unrelated patches.
+>=20
+>  drivers/clocksource/tegra20_timer.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
 
->> +
->>         err = tegra_dsi_get_muldiv(dsi->format, &mul, &div);
->>         if (err < 0)
->>                 return err;
->> @@ -833,6 +850,13 @@ static int tegra_output_dsi_setup_clock(struct tegra_output *output,
->>                 dev_err(dsi->dev, "failed to set parent clock: %d\n", err);
->>                 return err;
->>         }
->> +       if (dsi->slave) {
->> +               err = tegra_dsi_ganged_setup(dsi);
->> +               if (err < 0) {
->> +                       dev_err(dsi->dev, "DSI ganged setup failed: %d\n", err);
->> +                       return err;
->> +               }
->> +       }
-> 
-> I think this belongs in ->enable() instead of here.
-> 
+You might want to read the following thread:
 
-Actually "tegra_dsi_ganged_setup" is not needed any more. This function
-ensures that DSIA & DSIB use the same PLL in ganged mode. But if you
-read the Tegra124/Tegra132 TRM, you'll find there is no way to select
-the clock source for DSIB. I.E, DSIB always uses the same clock source
-with DSIA. Besides, PLLD is the only clock source for DSIA. I.E,
-"clk_get_parent"/"clk_set_parent" doesn't make sense for dsia & dsib
-clock now.
+	https://lkml.org/lkml/2014/11/7/605
 
-I've posted a patch(in tegra clock driver) to fix this:
+I haven't gotten around to look at this in detail, but it seems like we
+may not need to register the RTC early here at all. If that's really the
+case we can just get rid of this hackery and do everything within the
+RTC driver rather than duplicate some of that code here.
 
-http://article.gmane.org/gmane.linux.ports.tegra/20313
+On 32-bit ARM, Tegra114 and Tegra124 also support the architected timer,
+so the only remaining issue would be for Tegra20 and Tegra30 hardware.
+But I also seem to remember that on most boards the Tegra RTC can't be
+used properly because it doesn't have a battery. So while it may still
+work while the board is powered it is not very useful as RTC. Or for
+timekeeping across suspend/resume for that matter. The majority of
+boards seem to have a PMIC with an integrated RTC and will use that
+instead.
 
-And the corresponding changes in dsi driver will arrive soon.
+Otherwise this looks good to me to get things going on 64-bit ARM while
+we iron out the other issues. Can I assume that you plan on sending in
+patches that enable 64-bit ARM Tegra in the 3.20 timeframe? If so it
+might be best to take this patch through the Tegra tree, provided that
+Daniel and Thomas have no objections, to make sure we don't have
+intermittent build breakage depending on the order in which the trees
+get pulled into linux-next and Linus' tree. Even more so because there
+are a couple of other, similar patches which makes a stable branches
+oriented approach to resolving these dependencies somewhat impractical.
 
->>
->>         err = clk_set_rate(dsi->clk_parent, plld);
->>         if (err < 0) {
-[...]
->> +
->> +       drm_modeset_lock_all(tegra->drm);
->> +       list_for_each_entry(connector, &tegra->drm->mode_config.connector_list,
->> +                           head) {
->> +               if (connector->funcs->dpms)
->> +                       connector->funcs->dpms(connector, connector->dpms);
->> +       }
->> +       drm_modeset_unlock_all(tegra->drm);
->> +
->> +       drm_helper_resume_force_mode(tegra->drm);
->> +
->> +       return 0;
->> +}
->> +#endif
-> 
-> So this is the tricky chunk, it definitely does not belong here. I
-> think it makes most sense for this to live in drm.c, however
-> host1x_driver doesn't have suspend/resume hooks.
-> 
+Thierry
 
-Agree. drm.c is the best place for putting this.
+--AbQceqfdZEv+FvjW
+Content-Type: application/pgp-signature
 
-> I suspect the correct thing to do here is to add them to
-> host1x_driver, but I'm not sure how much effort is involved in doing
-> that.
-> 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-I thought about this before. If we do it in host1x driver, IIUC, it
-means that when host1x starts suspending, it will suspend all host1x
-client devices, right? Honestly I feel this is not a good thing despite
-I can't tell what's the problem in this right now...
+iQIcBAEBAgAGBQJUiCsRAAoJEN0jrNd/PrOhbvAP/RhKBAkkIYwSJ+gvoyM404bR
+qn+Dveanx8vm/vzcFapkuW1y8SXLt+NCIPAzUTpbHRtcbcCVjJBoboezytoO7neQ
+sVanYevihKjayZ2xHtWoDD4O44adrX6mp7Bq+ZBzF/ofCmD03Jw7keM3L/Ek3WwP
+EBCaa8qWb7NZSR5PSI2Hh2geNatof5bWkf439WxvfaC2CFD1sHorJslIWj1HwbdO
+7vS+fwtk0N6FjSJCgMZIl6DelYC5RW6Kl3sGHG4M5ZgOUEgGJEjI8kxfCnaTGskj
+B3ccoDt6jrapHH/xZNgFAJLDDBmllzPJk2nZeQcjaV5KjwGBJZNGRrMp/xZ2p12N
+YFO1WtHaC2SDbEEvnEMvy7yndcHeUYq3eYePkbcKXOlFJQGxDoFlkeOPDkM9vSIP
+Vou/Cqn6BS8G8/jXaBE05HZDCPKD00WXDajnXLUAbBs5L/giAP+ceITY4AfpQrbl
+bro05jGGZIsclzQTN1LV8KaYIenJ72Zn2iFe9F5WBfxPUJ8GKpkvqeL2sgEAa9+r
+U4a5E9EHB0pUnhKiGBB+0ZSopcp/Z3h5KAIZCjhJW7SwpwKQl/QdP2PQ6c/nltv2
+/Yv/QjbVufVERd2E9/S3rVNBZ+L+2GaNs2DqdGdOXaJoF1eVbhlKHhCaXc359W1X
+ydHvnTRKP0imV0mfq7ya
+=FmiT
+-----END PGP SIGNATURE-----
 
-Mark
-> Sean
-> 
->> +
->> +
->>  static const struct of_device_id tegra_dsi_of_match[] = {
->>         { .compatible = "nvidia,tegra114-dsi", },
->>         { },
->> @@ -1557,4 +1636,9 @@ struct platform_driver tegra_dsi_driver = {
->>         },
->>         .probe = tegra_dsi_probe,
->>         .remove = tegra_dsi_remove,
->> +#ifdef CONFIG_PM
->> +       .suspend = tegra_dsi_suspend,
->> +       .resume = tegra_dsi_resume,
->> +#endif
->> +
->>  };
->> --
->> 1.8.1.5
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
->> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->> Please read the FAQ at  http://www.tux.org/lkml/
+--AbQceqfdZEv+FvjW--
