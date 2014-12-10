@@ -1,91 +1,131 @@
-From: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] soc: tegra: pmc: restrict compilation of suspend-related
- support to ARM
-Date: Tue, 9 Dec 2014 22:36:50 +0000 (UTC)
-Message-ID: <alpine.DEB.2.02.1412092224050.31750@utopia.booyaka.com>
+From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] drm/tegra: dsi: Add suspend/resume support
+Date: Wed, 10 Dec 2014 10:08:57 +0800
+Message-ID: <5487AB39.1050706@nvidia.com>
+References: <1418020850-7664-1-git-send-email-markz@nvidia.com> <CAOw6vbKegB8cgmqgRit+XdvYNtdEXy3Pcv5=1bYSCJv4v1F2AQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAOw6vbKegB8cgmqgRit+XdvYNtdEXy3Pcv5=1bYSCJv4v1F2AQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Dave Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 12/10/2014 03:29 AM, Sean Paul wrote:
+> On Sun, Dec 7, 2014 at 10:40 PM, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> This patch adds the suspend/resume support for Tegra drm
+>> driver by calling the corresponding DPMS functions.
+[...]
+>> +       if (dsi->slave) {
+>> +               err = tegra_dsi_pad_calibrate(dsi->slave);
+>> +               if (err < 0) {
+>> +                       dev_err(dsi->slave->dev,
+>> +                               "MIPI calibration failed: %d\n", err);
+>> +                       return err;
+>> +               }
+>> +       }
+> 
+> Move this duplicate call into tegra_dsi_pad_calibrate() to be
+> consistent with the other functions in this file (eg:
+> tegra_dsi_set_timeout).
+> 
 
-Tegra SoCs with 64-bit ARM support don't currently support deep CPU
-low-power states in mainline Linux.  When this support is added in the
-future, it will probably look rather different from the existing
-32-bit ARM support, since the ARM64 maintainers' strong preference is
-to use PSCI to implement it.
+Yeah, will do.
 
-So, for the time being, prevent the CPU suspend-related code and data
-in the Tegra PMC driver from compiling on ARM64.
+>> +
+>>         err = tegra_dsi_get_muldiv(dsi->format, &mul, &div);
+>>         if (err < 0)
+>>                 return err;
+>> @@ -833,6 +850,13 @@ static int tegra_output_dsi_setup_clock(struct tegra_output *output,
+>>                 dev_err(dsi->dev, "failed to set parent clock: %d\n", err);
+>>                 return err;
+>>         }
+>> +       if (dsi->slave) {
+>> +               err = tegra_dsi_ganged_setup(dsi);
+>> +               if (err < 0) {
+>> +                       dev_err(dsi->dev, "DSI ganged setup failed: %d\n", err);
+>> +                       return err;
+>> +               }
+>> +       }
+> 
+> I think this belongs in ->enable() instead of here.
+> 
 
-Signed-off-by: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
-Signed-off-by: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
-Applies on next-20141209.
-Intended for v3.20.
-Boot-tested on Tegra124 Jetson TK1 on next-20141209.
-Also boot-tested on Tegra132 Norrin FFD on next-20141209 + some unrelated 
-patches.
+Actually "tegra_dsi_ganged_setup" is not needed any more. This function
+ensures that DSIA & DSIB use the same PLL in ganged mode. But if you
+read the Tegra124/Tegra132 TRM, you'll find there is no way to select
+the clock source for DSIB. I.E, DSIB always uses the same clock source
+with DSIA. Besides, PLLD is the only clock source for DSIA. I.E,
+"clk_get_parent"/"clk_set_parent" doesn't make sense for dsia & dsib
+clock now.
 
- drivers/soc/tegra/pmc.c | 7 +++++--
- include/soc/tegra/pm.h  | 2 +-
- 2 files changed, 6 insertions(+), 3 deletions(-)
+I've posted a patch(in tegra clock driver) to fix this:
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index a2c0ceb95f8f..4bdc654bd747 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -739,7 +739,7 @@ static int tegra_pmc_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--#ifdef CONFIG_PM_SLEEP
-+#if defined(CONFIG_PM_SLEEP) && defined(CONFIG_ARM)
- static int tegra_pmc_suspend(struct device *dev)
- {
- 	tegra_pmc_writel(virt_to_phys(tegra_resume), PMC_SCRATCH41);
-@@ -753,10 +753,11 @@ static int tegra_pmc_resume(struct device *dev)
- 
- 	return 0;
- }
--#endif
- 
- static SIMPLE_DEV_PM_OPS(tegra_pmc_pm_ops, tegra_pmc_suspend, tegra_pmc_resume);
- 
-+#endif
-+
- static const char * const tegra20_powergates[] = {
- 	[TEGRA_POWERGATE_CPU] = "cpu",
- 	[TEGRA_POWERGATE_3D] = "3d",
-@@ -894,7 +895,9 @@ static struct platform_driver tegra_pmc_driver = {
- 		.name = "tegra-pmc",
- 		.suppress_bind_attrs = true,
- 		.of_match_table = tegra_pmc_match,
-+#if defined(CONFIG_PM_SLEEP) && defined(CONFIG_ARM)
- 		.pm = &tegra_pmc_pm_ops,
-+#endif
- 	},
- 	.probe = tegra_pmc_probe,
- };
-diff --git a/include/soc/tegra/pm.h b/include/soc/tegra/pm.h
-index 30fe2078a547..03909101d4e7 100644
---- a/include/soc/tegra/pm.h
-+++ b/include/soc/tegra/pm.h
-@@ -17,7 +17,7 @@ enum tegra_suspend_mode {
- 	TEGRA_MAX_SUSPEND_MODE,
- };
- 
--#ifdef CONFIG_PM_SLEEP
-+#if defined(CONFIG_PM_SLEEP) && defined(CONFIG_ARM)
- enum tegra_suspend_mode
- tegra_pm_validate_suspend_mode(enum tegra_suspend_mode mode);
- 
--- 
-2.1.3
+http://article.gmane.org/gmane.linux.ports.tegra/20313
+
+And the corresponding changes in dsi driver will arrive soon.
+
+>>
+>>         err = clk_set_rate(dsi->clk_parent, plld);
+>>         if (err < 0) {
+[...]
+>> +
+>> +       drm_modeset_lock_all(tegra->drm);
+>> +       list_for_each_entry(connector, &tegra->drm->mode_config.connector_list,
+>> +                           head) {
+>> +               if (connector->funcs->dpms)
+>> +                       connector->funcs->dpms(connector, connector->dpms);
+>> +       }
+>> +       drm_modeset_unlock_all(tegra->drm);
+>> +
+>> +       drm_helper_resume_force_mode(tegra->drm);
+>> +
+>> +       return 0;
+>> +}
+>> +#endif
+> 
+> So this is the tricky chunk, it definitely does not belong here. I
+> think it makes most sense for this to live in drm.c, however
+> host1x_driver doesn't have suspend/resume hooks.
+> 
+
+Agree. drm.c is the best place for putting this.
+
+> I suspect the correct thing to do here is to add them to
+> host1x_driver, but I'm not sure how much effort is involved in doing
+> that.
+> 
+
+I thought about this before. If we do it in host1x driver, IIUC, it
+means that when host1x starts suspending, it will suspend all host1x
+client devices, right? Honestly I feel this is not a good thing despite
+I can't tell what's the problem in this right now...
+
+Mark
+> Sean
+> 
+>> +
+>> +
+>>  static const struct of_device_id tegra_dsi_of_match[] = {
+>>         { .compatible = "nvidia,tegra114-dsi", },
+>>         { },
+>> @@ -1557,4 +1636,9 @@ struct platform_driver tegra_dsi_driver = {
+>>         },
+>>         .probe = tegra_dsi_probe,
+>>         .remove = tegra_dsi_remove,
+>> +#ifdef CONFIG_PM
+>> +       .suspend = tegra_dsi_suspend,
+>> +       .resume = tegra_dsi_resume,
+>> +#endif
+>> +
+>>  };
+>> --
+>> 1.8.1.5
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+>> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> Please read the FAQ at  http://www.tux.org/lkml/
