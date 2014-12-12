@@ -1,116 +1,103 @@
-From: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] clocksource: tegra: wrap arch/arm-specific sections in
- CONFIG_ARM
-Date: Fri, 12 Dec 2014 02:13:31 +0000 (UTC)
-Message-ID: <alpine.DEB.2.02.1412112206120.29716@utopia.booyaka.com>
-References: <alpine.DEB.2.02.1412092201200.31750@utopia.booyaka.com> <20141210111425.GD15287@ulmo.nvidia.com>
+From: Paul Walmsley <pwalmsley@nvidia.com>
+Subject: Re: [PATCH] soc: tegra: pmc: restrict compilation of suspend-related
+ support to ARM
+Date: Fri, 12 Dec 2014 03:04:37 +0000 (UTC)
+Message-ID: <alpine.DEB.2.02.1412120257430.29716@utopia.booyaka.com>
+References: <alpine.DEB.2.02.1412092224050.31750@utopia.booyaka.com> <20141210112322.GE15287@ulmo.nvidia.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20141210111425.GD15287-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20141210112322.GE15287@ulmo.nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <treding@nvidia.com>
+Cc: linux-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, Paul Walmsley <pwalmsley@nvidia.com>, Allen Martin <amartin@nvidia.com>, Stephen Warren <swarren@nvidia.com>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
-
-+ lakml
 
 Hello Thierry
 
 On Wed, 10 Dec 2014, Thierry Reding wrote:
 
-> On Tue, Dec 09, 2014 at 10:07:18PM +0000, Paul Walmsley wrote:
+> On Tue, Dec 09, 2014 at 10:36:50PM +0000, Paul Walmsley wrote:
 > > 
-> > Like several of the other files in drivers/clocksource,
-> > tegra20_timer.c contains code that can only compile when CONFIG_ARM is
-> > enabled.  This causes obvious problems when trying to compile this
-> > code for NVIDIA ARM64-based SoCs, such as Tegra132.  The same timer IP
-> > blocks exist, so it seems appropriate to provide support for them.
+> > Tegra SoCs with 64-bit ARM support don't currently support deep CPU
+> > low-power states in mainline Linux.  When this support is added in the
+> > future, it will probably look rather different from the existing
+> > 32-bit ARM support, since the ARM64 maintainers' strong preference is
+> > to use PSCI to implement it.
 > > 
-> > So until we figure out a better way to partition this code, wrap the
-> > delay_timer and persistent_clock support code with preprocessor tests
-> > for CONFIG_ARM.  (The delay_timer code should not be needed at all on
-> > ARM64 due to the presence of the ARMv8 architected timer.  The
-> > persistent_clock support code could become important once power
-> > management modes are implemented that turn off the CPU complex.)
+> > So, for the time being, prevent the CPU suspend-related code and data
+> > in the Tegra PMC driver from compiling on ARM64.
 > > 
-> > Signed-off-by: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
-> > Signed-off-by: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > Cc: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > Cc: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> > Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
-> > Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> > Signed-off-by: Paul Walmsley <paul@pwsan.com>
+> > Signed-off-by: Paul Walmsley <pwalmsley@nvidia.com>
+> > Cc: Thierry Reding <treding@nvidia.com>
+> > Cc: Allen Martin <amartin@nvidia.com>
+> > Cc: Stephen Warren <swarren@nvidia.com>
+> > Cc: Alexandre Courbot <gnurou@gmail.com>
 > > ---
-> > Applies against next-20141209.
+> > Applies on next-20141209.
 > > Intended for v3.20.
 > > Boot-tested on Tegra124 Jetson TK1 on next-20141209.
-> > Also boot-tested on Tegra132 Norrin FFD on next-20141209 + extra, 
-> > unrelated patches.
+> > Also boot-tested on Tegra132 Norrin FFD on next-20141209 + some unrelated 
+> > patches.
 > > 
-> >  drivers/clocksource/tegra20_timer.c | 11 +++++++++++
-> >  1 file changed, 11 insertions(+)
+> >  drivers/soc/tegra/pmc.c | 7 +++++--
+> >  include/soc/tegra/pm.h  | 2 +-
+> >  2 files changed, 6 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> > index a2c0ceb95f8f..4bdc654bd747 100644
+> > --- a/drivers/soc/tegra/pmc.c
+> > +++ b/drivers/soc/tegra/pmc.c
+> > @@ -739,7 +739,7 @@ static int tegra_pmc_probe(struct platform_device *pdev)
+> >  	return 0;
+> >  }
+> >  
+> > -#ifdef CONFIG_PM_SLEEP
+> > +#if defined(CONFIG_PM_SLEEP) && defined(CONFIG_ARM)
 > 
-> You might want to read the following thread:
+> I would slightly prefer having this as separate #ifdef lines to make it
+> clearer that we're special-casing 32-bit ARM.
+
+That's fine, I'll update that when the patch is reposted against 
+v3.19-rc1.
+
+> >  static int tegra_pmc_suspend(struct device *dev)
+> >  {
+> >  	tegra_pmc_writel(virt_to_phys(tegra_resume), PMC_SCRATCH41);
+> > @@ -753,10 +753,11 @@ static int tegra_pmc_resume(struct device *dev)
+> >  
+> >  	return 0;
+> >  }
+> > -#endif
+> >  
+> >  static SIMPLE_DEV_PM_OPS(tegra_pmc_pm_ops, tegra_pmc_suspend, tegra_pmc_resume);
+> >  
+> > +#endif
 > 
-> 	https://lkml.org/lkml/2014/11/7/605
+> I don't think this is necessary, SIMPLE_DEV_PM_OPS will not use the
+> supend or resume hooks if PM_SLEEP is disabled. 
 
-Thanks for the link, I hadn't seen that discussion.
+PM_SLEEP is enabled by default for the ARM64 defconfig, and I don't plan 
+to patch that out.
 
-> I haven't gotten around to look at this in detail, but it seems like we
-> may not need to register the RTC early here at all. If that's really the
-> case we can just get rid of this hackery and do everything within the
-> RTC driver rather than duplicate some of that code here.
+> > diff --git a/include/soc/tegra/pm.h b/include/soc/tegra/pm.h
+> > index 30fe2078a547..03909101d4e7 100644
+> > --- a/include/soc/tegra/pm.h
+> > +++ b/include/soc/tegra/pm.h
+> > @@ -17,7 +17,7 @@ enum tegra_suspend_mode {
+> >  	TEGRA_MAX_SUSPEND_MODE,
+> >  };
+> >  
+> > -#ifdef CONFIG_PM_SLEEP
+> > +#if defined(CONFIG_PM_SLEEP) && defined(CONFIG_ARM)
+> 
+> Similarly to the above, I'd prefer this to be two separate lines. That
+> also has the advantage that if we do add code for suspend/resume on 64
+> bit ARM later on we don't need to untangle the conditional again.
 
-I'd suggest that we keep that project separate from just getting this file 
-to compile on ARM64.
+I'm fine to change it, although it seems rather unlikely that this will be 
+a significant issue.
 
-Broadly speaking, I agree that tegra20_timer.c needs to be cleaned up; it 
-should not mix code for two distinct IP blocks into one driver.
-
-> On 32-bit ARM, Tegra114 and Tegra124 also support the architected timer,
-> so the only remaining issue would be for Tegra20 and Tegra30 hardware.
-
-I believe on most NVIDIA chips (and probably most ARM SoCs) the ARM 
-architected timer is only usable as a clockevent timer when the CPU 
-doesn't enter deep low power states.  So the architected timer won't be 
-enough.
-
-> But I also seem to remember that on most boards the Tegra RTC can't be
-> used properly because it doesn't have a battery. So while it may still
-> work while the board is powered it is not very useful as RTC. Or for
-> timekeeping across suspend/resume for that matter. The majority of
-> boards seem to have a PMIC with an integrated RTC and will use that
-> instead.
-
-From my point of view, the Tegra RTC IP block's primary use case is to 
-provide an always-on clockevent to wake the system from SC7 (aka LP0 
-idle)[1].  In SC7, the ARM architected timer comparator logic and Tegra 
-TMR IP blocks will be power-gated, and thus can't wake the system.
-
-PMIC RTC timers are generally a bad fit for this purpose, since they tend 
-to be low-resolution (+/- 1 second) and slow to program (via some slow 
-serial bus).  They are good for keeping calendars, though...
-
-> Otherwise this looks good to me to get things going on 64-bit ARM while
-> we iron out the other issues. Can I assume that you plan on sending in
-> patches that enable 64-bit ARM Tegra in the 3.20 timeframe? If so it
-> might be best to take this patch through the Tegra tree, provided that
-> Daniel and Thomas have no objections, to make sure we don't have
-> intermittent build breakage depending on the order in which the trees
-> get pulled into linux-next and Linus' tree. Even more so because there
-> are a couple of other, similar patches which makes a stable branches
-> oriented approach to resolving these dependencies somewhat impractical.
-
-Given the rather small number of mainline T132 users, I'll probably just 
-send these patches up via their corresponding trees and let them merge via 
-their respective maintainers.  That keeps the risk of merge conflicts low. 
-At this point I don't think there will be any significant dependency 
-problems.
 
 - Paul
-
-1. Section 11.0 "Real-time Clock" of the _NVIDIA Tegra K1 Mobile Processor
-   Technical Reference Manual v03p (DP-06905-001_v03p)_, 
-   https://developer.nvidia.com/tegra-k1-technical-reference-manual
