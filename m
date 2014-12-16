@@ -1,54 +1,46 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [cbootimage PATCH] cbootimage: Add 'b' (binary) flag when using
- fopen to open a binary file.
-Date: Mon, 15 Dec 2014 15:05:45 -0700
-Message-ID: <548F5B39.8070601@wwwdotorg.org>
-References: <000f01d017bf$61e0cfe0$25a26fa0$@notabs.org> <548F1A1B.5020708@wwwdotorg.org> <000b01d018ac$6c9b8f40$45d2adc0$@notabs.org>
+From: Arnaud Ebalard <arno@natisbad.org>
+Subject: [PATCHv1 7/7] arm: dts: tegra: update isl29028 compatible string to use isil vendor prefix
+Date: Tue, 16 Dec 2014 01:24:41 +0100
+Message-ID: <a58c1c15cd35098fc4c69355f5fee4d3a6ae75c6.1418688043.git.arno@natisbad.org>
+References: <cover.1418688042.git.arno@natisbad.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <000b01d018ac$6c9b8f40$45d2adc0$@notabs.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Scott Duplichan <scott-CDj6QYrFEYEdnm+yROfE0A@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <cover.1418688042.git.arno@natisbad.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>
+Cc: Alessandro Zummo <a.zummo@towertech.it>, Peter Huewe <peter.huewe@infineon.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Darshana Padmadas <darshanapadmadas@gmail.com>, Grant Likely <grant.likely@linaro.org>, linux-doc@vger.kernel.org, Rob Landley <rob@landley.net>, rtc-linux@googlegroups.com, Jason Cooper <jason@lakedaemon.net>, Guenter Roeck <linux@roeck-us.net>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/15/2014 02:16 PM, Scott Duplichan wrote:
-> Stephen Warren [mailto:swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org] wrote:
->
-> ]Sent: Monday, December 15, 2014 11:28 AM
-> ]To: Scott Duplichan
-> ]Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> ]Subject: Re: [cbootimage PATCH] cbootimage: Add 'b' (binary) flag when using fopen to open a binary file.
-> ]
-> ]On 12/14/2014 09:59 AM, Scott Duplichan wrote:
-> ]> Add 'b' (binary) flag when using fopen to open a binary file.
-> ]> This keeps Windows from expanding \n to \r\n and interpreting
-> ]> <ctrl>z as end of file. The change is to support a Windows
-> ]> hosted coreboot build environment.
-> ]
-> ]This seems fine; I'll apply it in just a second.
->
-> Hello Stephen,
->
-> Thanks a lot for applying the patch.
->
-> ]It seems worth being explicit on all fopens re: b-vs-t. To that end,
-> ]perhaps you could update the following too?
-> ]
-> ]> ./src/cbootimage.c:161:	context->config_file = fopen(argv[optind++], "r");
-> ]> ./src/cbootimage.c:218:	context.raw_file = fopen(context.output_image_filename, "w+");
-> ]> ./src/data_layout.c:1049:	fp = fopen(context->input_image_filename, "r");
->
-> I thought about this too. Microsoft defines a 't' flag for text mode.
-> So if fopen is called with flags "rt", the Microsoft libraries  will
-> understand it as read, text mode. But the 't' flag is not part of C99
-> or posix. C99 explicitly states "r" is "open text file for reading"
-> and "rb" as "open binary file for reading". Though the 't' flag will
-> probably be harmlessly ignored by non-Microsoft libraries, it is probably
-> best to avoid it since it is Microsoft-specific. I think the only time the
-> 't' flag is needed is if the Microsoft function _set_fmode has been used
-> to change the default open mode from text to binary.
 
-Indeed you're right.
+"isil" and "isl" prefixes are used at various locations inside the kernel
+to reference Intersil corporation. This patch is part of a series fixing
+those locations were "isl" is used in compatible strings to use the now
+expected "isil" prefix instead (NASDAQ symbol for Intersil and most used
+version).
+
+Note: isl29028 is an I2C device so the patch does not in fact currently
+depend on the introduction of "isil"-based compatible string in isl29028
+driver because I2C core does not check the prefix yet.
+
+Signed-off-by: Arnaud Ebalard <arno@natisbad.org>
+---
+ arch/arm/boot/dts/tegra30-cardhu.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+index cbf5a1ae0ca7..a1b682ea01bd 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
++++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+@@ -189,7 +189,7 @@
+ 
+ 		/* ALS and Proximity sensor */
+ 		isl29028@44 {
+-			compatible = "isl,isl29028";
++			compatible = "isil,isl29028";
+ 			reg = <0x44>;
+ 			interrupt-parent = <&gpio>;
+ 			interrupts = <TEGRA_GPIO(L, 0) IRQ_TYPE_LEVEL_HIGH>;
+-- 
+2.1.1
+
