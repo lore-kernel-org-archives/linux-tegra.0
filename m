@@ -1,23 +1,77 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] ARM: dts: tegra20: fix GR3D, DSI unit and reg base addresses
-Date: Wed, 17 Dec 2014 17:13:25 +0900
-Message-ID: <CAAVeFuLPs8f1ZFT4JHTar1NRmb6rvYDv2i=pp-8LBwKEFw0sjA@mail.gmail.com>
-References: <1418397559-19646-1-git-send-email-digetx@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [GIT PULL] drm/tegra: Fixes for v3.19-rc1
+Date: Wed, 17 Dec 2014 15:07:11 +0100
+Message-ID: <1418825231-24233-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1418397559-19646-1-git-send-email-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stable <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dave Airlie <airlied@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, Dec 13, 2014 at 12:19 AM, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> Commit 58ecb23f64ee ("ARM: tegra: add missing unit addresses to DT") added
-> unit address and changed reg base for GR3D and DSI host1x modules, but these
-> addresses belongs to GR2D and TVO modules respectively. Fix it by changing
-> modules unit and reg base addresses to proper ones.
-
-Checked with the TRM, you are absolutely correct.
-
-Reviewed-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+VGhlIGZvbGxvd2luZyBjaGFuZ2VzIHNpbmNlIGNvbW1pdCA0ZTBjZDY4MTE1NjIwYmMzMjM2ZmY0
+ZTU4ZTRjMDczOTQ4NjI5YjQxOgoKICBkcm06IHN0aTogZml4IG1vZHVsZSBjb21waWxhdGlvbiBp
+c3N1ZSAoMjAxNC0xMi0xNSAxNzowNzo1NyArMTAwMCkKCmFyZSBhdmFpbGFibGUgaW4gdGhlIGdp
+dCByZXBvc2l0b3J5IGF0OgoKICBnaXQ6Ly9wZW9wbGUuZnJlZWRlc2t0b3Aub3JnL350YWdyL2xp
+bnV4IHRhZ3MvZHJtL3RlZ3JhL2Zvci0zLjE5LXJjMS1maXhlcwoKZm9yIHlvdSB0byBmZXRjaCBj
+aGFuZ2VzIHVwIHRvIDkzMzk2ZDBmOWMwMjc2NTRlYjA5MTUxZDJlMjJmZTc4YTM5ZmVlZGI6Cgog
+IGRybS90ZWdyYTogZGM6IFNlbGVjdCByb290IHdpbmRvdyBmb3IgZXZlbnQgZGlzcGF0Y2ggKDIw
+MTQtMTItMTcgMTQ6Mjc6MzkgKzAxMDApCgpUaGFua3MsClRoaWVycnkKCi0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KZHJtL3Rl
+Z3JhOiBGaXhlcyBmb3IgdjMuMTktcmMxCgpUaGlzIGlzIGEgc2V0IG9mIGZpeGVzIGZvciB0d28g
+cmVncmVzc2lvbnMgYW5kIG9uZSBidWcgaW4gdGhlIElPTU1VCm1hcHBpbmcgY29kZS4gSXQgdHVy
+bnMgb3V0IHRoYXQgYWxsIG9mIHRoZXNlIGlzc3VlcyB0dXJuIHVwIHByaW1hcmlseQpvbiBUZWdy
+YTMwIGhhcmR3YXJlLiBUaGUgSU9NTVUgbWFwcGluZyBidWcgb25seSBtYW5pZmVzdHMgb24gYnVm
+ZmVycwp0aGF0IGFyZW4ndCBtdWx0aXBsZXMgb2YgdGhlIHBhZ2Ugc2l6ZS4gSSBoYXBwZW5lZCB0
+byBiZSB0ZXN0aW5nIEhETUkKd2l0aCAxMDgwcCB3aGlsZSB3cml0aW5nIHRoZSBjb2RlIGFuZCBm
+cmFtZWJ1ZmZlcnMgZm9yIHRoYXQgaGFwcGVuIHRvCmZpdCBleGFjdGx5IHdpdGhpbiAyMDI1IHBh
+Z2VzIG9mIDQgS2lCIGVhY2guCgpPbmUgb2YgdGhlIHJlZ3Jlc3Npb25zIGlzIGNhdXNlZCBieSB0
+aGUgSU9NTVUgY29kZSBhbGxvY2F0aW5nIHBhZ2VzIGZyb20Kc2htZW0gd2hpY2ggY2FuIGhhdmUg
+YXNzb2NpYXRlZCBjYWNoZSBsaW5lcy4gSWYgdGhlIHBhZ2VzIGFyZW4ndCBmbHVzaGVkCnRoZW4g
+dGhlc2UgY2FjaGUgbGluZXMgbWF5IGJlIGZsdXNoZWQgbGF0ZXIgb24gYW5kIGNhdXNlIGZyYW1l
+YnVmZmVyCmNvcnJ1cHRpb24uIEknbSBub3Qgc3VyZSB3aHkgSSBkaWRuJ3Qgc2VlIHRoaXMgYmVm
+b3JlLiBQZXJoYXBzIHRoZSBib2FyZAp0aGF0IEkgd2FzIHVzaW5nIGhhZCBlbm91Z2ggUkFNIHNv
+IHRoYXQgdGhlIHBhZ2VzIHNobWVtIHdvdWxkIGhhbmQgb3V0CmhhZCBhIGJldHRlciBjaGFuY2Ug
+b2YgYmVpbmcgdW51c2VkLiBPciBtYXliZSBJIGRpZG4ndCBsb29rIHRvbyBjbG9zZWx5LgpUaGUg
+Zml4IGZvciB0aGlzIGlzIHRvIGZha2UgdXAgYW4gU0cgdGFibGUgc28gdGhhdCBpdCBjYW4gYmUg
+cGFzc2VkIHRvCnRoZSBETUEgQVBJLiBJZGVhbGx5IHRoaXMgd291bGQgdXNlIGRybV9jbGZsdXNo
+XyooKSwgYnV0IGltcGxlbWVudGluZwp0aGF0IGZvciBBUk0gY2F1c2VzIERSTSB0byBmYWlsIHRv
+IGJ1aWxkIGFzIGEgbW9kdWxlIHNpbmNlIHNvbWUgb2YgdGhlCmxvdy1sZXZlbCBjYWNoZSBtYWlu
+dGVuYW5jZSBmdW5jdGlvbnMgYXJlbid0IGV4cG9ydGVkLiBIb3BlZnVsbHkgd2UgY2FuCmdldCBh
+IHN1aXRhYmxlIEFQSSBleHBvcnRlZCBvbiBBUk0gZm9yIHRoZSBuZXh0IHJlbGVhc2UuCgpUaGUg
+c2Vjb25kIHJlZ3Jlc3Npb24gaXMgY2F1c2VkIGJ5IGEgbWlzbWF0Y2ggYmV0d2VlbiB0aGUgaGFy
+ZHdhcmUgcGlwZQpudW1iZXIgYW5kIHRoZSBDUlRDJ3MgRFJNIGluZGV4LiBUaGVzZSB3ZXJlIHVz
+ZWQgaW5jb25zaXN0ZW50bHksIHdoaWNoCmNvdWxkIGNhdXNlIG9uZSBjb2RlIGxvY2F0aW9uIHRv
+IGNhbGwgZHJtX3ZibGFua19nZXQoKSB3aXRoIGEgZGlmZmVyZW50CnBpcGUgdGhhbiB0aGUgY29y
+cmVzcG9uZGluZyBkcm1fdmJsYW5rX3B1dCgpLCB0aGVyZWJ5IGNhdXNpbmcgdGhlCnJlZmVyZW5j
+ZSBjb3VudCB0byBiZWNvbWUgdW5iYWxhbmNlZC4gQWxleGFuZHJlIGFsc28gcmVwb3J0ZWQgYSBw
+b3NzaWJsZQpyYWNlIGNvbmRpdGlvbiByZWxhdGVkIHRvIHRoaXMsIHdoaWNoIHRoaXMgc2VyaWVz
+IGFsc28gZml4ZXMuCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tClNlYW4gUGF1bCAoMSk6CiAgICAgIGRybS90ZWdyYTogZGM6
+IFNlbGVjdCByb290IHdpbmRvdyBmb3IgZXZlbnQgZGlzcGF0Y2gKClRoaWVycnkgUmVkaW5nICg3
+KToKICAgICAgZHJtL2lycTogQWRkIGRybV9jcnRjX3NlbmRfdmJsYW5rX2V2ZW50KCkKICAgICAg
+ZHJtL2lycTogQWRkIGRybV9jcnRjX2hhbmRsZV92YmxhbmsoKQogICAgICBkcm0vaXJxOiBBZGQg
+ZHJtX2NydGNfdmJsYW5rX2NvdW50KCkKICAgICAgZHJtL3RlZ3JhOiBkYzogQ29uc2lzdGVudGx5
+IHVzZSB0aGUgc2FtZSBwaXBlCiAgICAgIGRybS90ZWdyYTogZGM6IEZpeCBhIHBvdGVudGlhbCBy
+YWNlIG9uIHBhZ2UtZmxpcCBjb21wbGV0aW9uCiAgICAgIGRybS90ZWdyYTogZ2VtOiBGbHVzaCBi
+dWZmZXIgb2JqZWN0cyB1cG9uIGFsbG9jYXRpb24KICAgICAgZHJtL3RlZ3JhOiBnZW06IFVzZSB0
+aGUgcHJvcGVyIHNpemUgZm9yIEdFTSBvYmplY3RzCgogZHJpdmVycy9ncHUvZHJtL2RybV9pcnEu
+YyAgIHwgNjAgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCiBk
+cml2ZXJzL2dwdS9kcm0vdGVncmEvZGMuYyAgfCA0OCArKysrKysrKysrKysrKysrKysrKysrKysr
+KystLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYyB8IDE2ICsrKysrKystLS0t
+LQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dlbS5jIHwgNTIgKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrLS0tLS0tLS0tCiBpbmNsdWRlL2RybS9kcm1QLmggICAgICAgICAgfCAgNCArKysK
+IDUgZmlsZXMgY2hhbmdlZCwgMTUwIGluc2VydGlvbnMoKyksIDMwIGRlbGV0aW9ucygtKQpfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
+bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZy
+ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
