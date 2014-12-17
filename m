@@ -1,11 +1,12 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL] drm/tegra: Fixes for v3.19-rc1
-Date: Wed, 17 Dec 2014 15:07:11 +0100
-Message-ID: <1418825231-24233-1-git-send-email-thierry.reding@gmail.com>
+Subject: Re: [PATCH] drm/tegra: Select root window for event dispatch
+Date: Wed, 17 Dec 2014 15:35:41 +0100
+Message-ID: <20141217143539.GA16029@ulmo.nvidia.com>
+References: <1416420289-4112-1-git-send-email-seanpaul@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============0144946596=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1416420289-4112-1-git-send-email-seanpaul@chromium.org>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -15,63 +16,87 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dave Airlie <airlied@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Sean Paul <seanpaul@chromium.org>
+Cc: linux-tegra@vger.kernel.org, marcheu@chromium.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-VGhlIGZvbGxvd2luZyBjaGFuZ2VzIHNpbmNlIGNvbW1pdCA0ZTBjZDY4MTE1NjIwYmMzMjM2ZmY0
-ZTU4ZTRjMDczOTQ4NjI5YjQxOgoKICBkcm06IHN0aTogZml4IG1vZHVsZSBjb21waWxhdGlvbiBp
-c3N1ZSAoMjAxNC0xMi0xNSAxNzowNzo1NyArMTAwMCkKCmFyZSBhdmFpbGFibGUgaW4gdGhlIGdp
-dCByZXBvc2l0b3J5IGF0OgoKICBnaXQ6Ly9wZW9wbGUuZnJlZWRlc2t0b3Aub3JnL350YWdyL2xp
-bnV4IHRhZ3MvZHJtL3RlZ3JhL2Zvci0zLjE5LXJjMS1maXhlcwoKZm9yIHlvdSB0byBmZXRjaCBj
-aGFuZ2VzIHVwIHRvIDkzMzk2ZDBmOWMwMjc2NTRlYjA5MTUxZDJlMjJmZTc4YTM5ZmVlZGI6Cgog
-IGRybS90ZWdyYTogZGM6IFNlbGVjdCByb290IHdpbmRvdyBmb3IgZXZlbnQgZGlzcGF0Y2ggKDIw
-MTQtMTItMTcgMTQ6Mjc6MzkgKzAxMDApCgpUaGFua3MsClRoaWVycnkKCi0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KZHJtL3Rl
-Z3JhOiBGaXhlcyBmb3IgdjMuMTktcmMxCgpUaGlzIGlzIGEgc2V0IG9mIGZpeGVzIGZvciB0d28g
-cmVncmVzc2lvbnMgYW5kIG9uZSBidWcgaW4gdGhlIElPTU1VCm1hcHBpbmcgY29kZS4gSXQgdHVy
-bnMgb3V0IHRoYXQgYWxsIG9mIHRoZXNlIGlzc3VlcyB0dXJuIHVwIHByaW1hcmlseQpvbiBUZWdy
-YTMwIGhhcmR3YXJlLiBUaGUgSU9NTVUgbWFwcGluZyBidWcgb25seSBtYW5pZmVzdHMgb24gYnVm
-ZmVycwp0aGF0IGFyZW4ndCBtdWx0aXBsZXMgb2YgdGhlIHBhZ2Ugc2l6ZS4gSSBoYXBwZW5lZCB0
-byBiZSB0ZXN0aW5nIEhETUkKd2l0aCAxMDgwcCB3aGlsZSB3cml0aW5nIHRoZSBjb2RlIGFuZCBm
-cmFtZWJ1ZmZlcnMgZm9yIHRoYXQgaGFwcGVuIHRvCmZpdCBleGFjdGx5IHdpdGhpbiAyMDI1IHBh
-Z2VzIG9mIDQgS2lCIGVhY2guCgpPbmUgb2YgdGhlIHJlZ3Jlc3Npb25zIGlzIGNhdXNlZCBieSB0
-aGUgSU9NTVUgY29kZSBhbGxvY2F0aW5nIHBhZ2VzIGZyb20Kc2htZW0gd2hpY2ggY2FuIGhhdmUg
-YXNzb2NpYXRlZCBjYWNoZSBsaW5lcy4gSWYgdGhlIHBhZ2VzIGFyZW4ndCBmbHVzaGVkCnRoZW4g
-dGhlc2UgY2FjaGUgbGluZXMgbWF5IGJlIGZsdXNoZWQgbGF0ZXIgb24gYW5kIGNhdXNlIGZyYW1l
-YnVmZmVyCmNvcnJ1cHRpb24uIEknbSBub3Qgc3VyZSB3aHkgSSBkaWRuJ3Qgc2VlIHRoaXMgYmVm
-b3JlLiBQZXJoYXBzIHRoZSBib2FyZAp0aGF0IEkgd2FzIHVzaW5nIGhhZCBlbm91Z2ggUkFNIHNv
-IHRoYXQgdGhlIHBhZ2VzIHNobWVtIHdvdWxkIGhhbmQgb3V0CmhhZCBhIGJldHRlciBjaGFuY2Ug
-b2YgYmVpbmcgdW51c2VkLiBPciBtYXliZSBJIGRpZG4ndCBsb29rIHRvbyBjbG9zZWx5LgpUaGUg
-Zml4IGZvciB0aGlzIGlzIHRvIGZha2UgdXAgYW4gU0cgdGFibGUgc28gdGhhdCBpdCBjYW4gYmUg
-cGFzc2VkIHRvCnRoZSBETUEgQVBJLiBJZGVhbGx5IHRoaXMgd291bGQgdXNlIGRybV9jbGZsdXNo
-XyooKSwgYnV0IGltcGxlbWVudGluZwp0aGF0IGZvciBBUk0gY2F1c2VzIERSTSB0byBmYWlsIHRv
-IGJ1aWxkIGFzIGEgbW9kdWxlIHNpbmNlIHNvbWUgb2YgdGhlCmxvdy1sZXZlbCBjYWNoZSBtYWlu
-dGVuYW5jZSBmdW5jdGlvbnMgYXJlbid0IGV4cG9ydGVkLiBIb3BlZnVsbHkgd2UgY2FuCmdldCBh
-IHN1aXRhYmxlIEFQSSBleHBvcnRlZCBvbiBBUk0gZm9yIHRoZSBuZXh0IHJlbGVhc2UuCgpUaGUg
-c2Vjb25kIHJlZ3Jlc3Npb24gaXMgY2F1c2VkIGJ5IGEgbWlzbWF0Y2ggYmV0d2VlbiB0aGUgaGFy
-ZHdhcmUgcGlwZQpudW1iZXIgYW5kIHRoZSBDUlRDJ3MgRFJNIGluZGV4LiBUaGVzZSB3ZXJlIHVz
-ZWQgaW5jb25zaXN0ZW50bHksIHdoaWNoCmNvdWxkIGNhdXNlIG9uZSBjb2RlIGxvY2F0aW9uIHRv
-IGNhbGwgZHJtX3ZibGFua19nZXQoKSB3aXRoIGEgZGlmZmVyZW50CnBpcGUgdGhhbiB0aGUgY29y
-cmVzcG9uZGluZyBkcm1fdmJsYW5rX3B1dCgpLCB0aGVyZWJ5IGNhdXNpbmcgdGhlCnJlZmVyZW5j
-ZSBjb3VudCB0byBiZWNvbWUgdW5iYWxhbmNlZC4gQWxleGFuZHJlIGFsc28gcmVwb3J0ZWQgYSBw
-b3NzaWJsZQpyYWNlIGNvbmRpdGlvbiByZWxhdGVkIHRvIHRoaXMsIHdoaWNoIHRoaXMgc2VyaWVz
-IGFsc28gZml4ZXMuCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tClNlYW4gUGF1bCAoMSk6CiAgICAgIGRybS90ZWdyYTogZGM6
-IFNlbGVjdCByb290IHdpbmRvdyBmb3IgZXZlbnQgZGlzcGF0Y2gKClRoaWVycnkgUmVkaW5nICg3
-KToKICAgICAgZHJtL2lycTogQWRkIGRybV9jcnRjX3NlbmRfdmJsYW5rX2V2ZW50KCkKICAgICAg
-ZHJtL2lycTogQWRkIGRybV9jcnRjX2hhbmRsZV92YmxhbmsoKQogICAgICBkcm0vaXJxOiBBZGQg
-ZHJtX2NydGNfdmJsYW5rX2NvdW50KCkKICAgICAgZHJtL3RlZ3JhOiBkYzogQ29uc2lzdGVudGx5
-IHVzZSB0aGUgc2FtZSBwaXBlCiAgICAgIGRybS90ZWdyYTogZGM6IEZpeCBhIHBvdGVudGlhbCBy
-YWNlIG9uIHBhZ2UtZmxpcCBjb21wbGV0aW9uCiAgICAgIGRybS90ZWdyYTogZ2VtOiBGbHVzaCBi
-dWZmZXIgb2JqZWN0cyB1cG9uIGFsbG9jYXRpb24KICAgICAgZHJtL3RlZ3JhOiBnZW06IFVzZSB0
-aGUgcHJvcGVyIHNpemUgZm9yIEdFTSBvYmplY3RzCgogZHJpdmVycy9ncHUvZHJtL2RybV9pcnEu
-YyAgIHwgNjAgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCiBk
-cml2ZXJzL2dwdS9kcm0vdGVncmEvZGMuYyAgfCA0OCArKysrKysrKysrKysrKysrKysrKysrKysr
-KystLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYyB8IDE2ICsrKysrKystLS0t
-LQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dlbS5jIHwgNTIgKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrLS0tLS0tLS0tCiBpbmNsdWRlL2RybS9kcm1QLmggICAgICAgICAgfCAgNCArKysK
-IDUgZmlsZXMgY2hhbmdlZCwgMTUwIGluc2VydGlvbnMoKyksIDMwIGRlbGV0aW9ucygtKQpfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
-bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZy
-ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+
+--===============0144946596==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="EVF5PPMfhYS0aIcm"
+Content-Disposition: inline
+
+
+--EVF5PPMfhYS0aIcm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Nov 19, 2014 at 01:04:49PM -0500, Sean Paul wrote:
+> In finish pageflip, the driver was not selecting the root
+> window when dispatching events. This exposed a race where
+> a plane update would change the window selection and cause
+> tegra_dc_finish_page_flip to check the wrong base address.
+>=20
+> This patch also protects access to the window selection register
+> as well as the registers affected by it.
+>=20
+> Signed-off-by: Sean Paul <seanpaul@chromium.org>
+> ---
+>  drivers/gpu/drm/tegra/dc.c | 20 +++++++++++++++++---
+>  1 file changed, 17 insertions(+), 3 deletions(-)
+
+I had hoped to be done with the conversion to atomic modesetting by now
+at which point this patch would become significantly different. But I've
+applied it to the fixes branch now and rebased the atomic modesetting
+patches on top since it'll take a while longer for those to be ready.
+
+Note also that we should be able to get rid of this spinlock by using
+the per-window registers directly. As I understand it the window select
+register is the legacy way of programming windows. There is also a
+flattened address space available for them. According to the TRM these
+are located at:
+
+	0x0a00: window A
+	0x0c00: window B
+	0x0e00: window C
+
+Supporting that would require a larger rewrite, but I think it'd be a
+good idea to do that at some point to avoid the spinlock.
+
+Thierry
+
+--EVF5PPMfhYS0aIcm
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUkZS7AAoJEN0jrNd/PrOhLzUQALd6lBW+eGIBwq33ERjtusw8
+4kTV+YkGONrqj+9G6k86CSB6HHxE4P9oZzRfYo1d3hbp2M6oRiWarKsNKH+CoGyb
+/jJetJ9HwUCtwviTt+OWOzd2l25r1CF+JMYB2b76pyVxybYq7s79wgZS0/jMIN+l
+dlDOz9p8GYgIL4TS72VZQOqtdYMZ8s/K4G+lwEZNVydEPSVL38zU1z3nFi+PzuOU
+mkQher4W1qXKIBW8TnokNNd9M3764hQ/Z6sAk1MvwuopZwHAJif5xgvsk0WffoSl
+TMPzfaOCCFLeJ+xtWi50JLqQI5bvqNgSgAvAxyJG14y4pYxDj6m76clfERMeUIqT
+ClZPNR/Y9OHlBmq+Q0MAJiGXTep4OAGRD5mYig7CJ2XVf2GExfowKlhodgJdEwIx
+oeWHeTIZtFeR2xrBSbtke5eVEXW778aS4ibrXRqMicoYhDtoPzSjzfPDesxVU0d1
+8x9Wu0MZbbSwqRUogXGFZ3heIuVpumFWJfeGjausYk7ZOxl3IJt9eeIRBwBvEfFe
+Fjo/MPFml1lag0O73vbnSK+Jdjz+eGbgewfOpZskB1ga0QdkArk3N7ZJGusfudfo
+NP+lUHH5HgestZ6R23I3jTD/BdtpecKILvBk9sYlBN7Zbludy6YDWp1gjc378TFB
+yitb7WBG6TyBfC+pAeq9
+=/pqO
+-----END PGP SIGNATURE-----
+
+--EVF5PPMfhYS0aIcm--
+
+--===============0144946596==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
+cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+
+--===============0144946596==--
