@@ -1,46 +1,55 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH tegra-uboot-scripts] Add option --zimage to specify zImage filename
-Date: Fri, 19 Dec 2014 15:40:28 +0900
-Message-ID: <1418971228-24068-1-git-send-email-acourbot@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH 1/5] gpu: host1x: Call ->remove() only when a device is bound
+Date: Fri, 19 Dec 2014 16:24:54 +0100
+Message-ID: <1419002698-4963-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-tegra@vger.kernel.org, Mark Zhang <markz@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-It may be desirable to use a different zImage filename for systems that
-contain different kernel images. Add a --zimage option that allows to
-specify a custom zImage filename.
-
-Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- gen-uboot-script.py | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/gen-uboot-script.py b/gen-uboot-script.py
-index 48d43d10f22f..e11dbf15553c 100755
---- a/gen-uboot-script.py
-+++ b/gen-uboot-script.py
-@@ -36,6 +36,9 @@ parser.add_argument('--type', choices=['disk', 'net'], default='disk',
- parser.add_argument('-o', dest='outfile', default='boot.scr',
-     help='output filename; defaults to boot.scr')
- 
-+parser.add_argument('--zimage', default='zImage',
-+    help='zImage filename to load; defaults to "zImage"')
-+
- parser.add_argument('--initrd',
-     help='initrd filename to load; defaults to no initrd')
- 
-@@ -117,7 +120,7 @@ if not args.dtbdir:
- elif not args.dtbdir.endswith('/'):
-     args.dtbdir += '/'
- 
--f.write(load + ' ${kernel_addr_r} ' + prefix + 'zImage\n')
-+f.write(load + ' ${kernel_addr_r} ' + prefix + args.zimage + '\n')
- 
- if args.initrd:
-     f.write(load + ' ${ramdisk_addr_r} ' + prefix + args.initrd + '\n')
--- 
-2.1.3
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KCldoZW4gYSBkcml2ZXIn
+cyAtPnByb2JlKCkgZnVuY3Rpb24gZmFpbHMsIHRoZSBob3N0MXggYnVzIG11c3Qgbm90IGNhbGwK
+aXRzIC0+cmVtb3ZlKCkgZnVuY3Rpb24gYmVjYXVzZSB0aGUgZHJpdmVyIHdpbGwgYWxyZWFkeSBo
+YXZlIGNsZWFuZWQgdXAKaW4gdGhlIGVycm9yIGhhbmRsaW5nIHBhdGggaW4gLT5wcm9iZSgpLgoK
+U2lnbmVkLW9mZi1ieTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KLS0tCiBk
+cml2ZXJzL2dwdS9ob3N0MXgvYnVzLmMgfCA5ICsrKysrKystLQogaW5jbHVkZS9saW51eC9ob3N0
+MXguaCAgIHwgMiArKwogMiBmaWxlcyBjaGFuZ2VkLCA5IGluc2VydGlvbnMoKyksIDIgZGVsZXRp
+b25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvaG9zdDF4L2J1cy5jIGIvZHJpdmVycy9n
+cHUvaG9zdDF4L2J1cy5jCmluZGV4IGFhZjU0ODU5YWRiMC4uZTQxODJlNjhlMjljIDEwMDY0NAot
+LS0gYS9kcml2ZXJzL2dwdS9ob3N0MXgvYnVzLmMKKysrIGIvZHJpdmVycy9ncHUvaG9zdDF4L2J1
+cy5jCkBAIC0xMTYsNyArMTE2LDEwIEBAIHN0YXRpYyB2b2lkIGhvc3QxeF9zdWJkZXZfcmVnaXN0
+ZXIoc3RydWN0IGhvc3QxeF9kZXZpY2UgKmRldmljZSwKIAlpZiAobGlzdF9lbXB0eSgmZGV2aWNl
+LT5zdWJkZXZzKSkgewogCQllcnIgPSBkZXZpY2UtPmRyaXZlci0+cHJvYmUoZGV2aWNlKTsKIAkJ
+aWYgKGVyciA8IDApCi0JCQlkZXZfZXJyKCZkZXZpY2UtPmRldiwgInByb2JlIGZhaWxlZDogJWRc
+biIsIGVycik7CisJCQlkZXZfZXJyKCZkZXZpY2UtPmRldiwgInByb2JlIGZhaWxlZCBmb3IgJXBz
+OiAlZFxuIiwKKwkJCQlkZXZpY2UtPmRyaXZlciwgZXJyKTsKKwkJZWxzZQorCQkJZGV2aWNlLT5i
+b3VuZCA9IHRydWU7CiAJfQogfQogCkBAIC0xMzAsMTAgKzEzMywxMiBAQCBzdGF0aWMgdm9pZCBf
+X2hvc3QxeF9zdWJkZXZfdW5yZWdpc3RlcihzdHJ1Y3QgaG9zdDF4X2RldmljZSAqZGV2aWNlLAog
+CSAqIElmIGFsbCBzdWJkZXZpY2VzIGhhdmUgYmVlbiBhY3RpdmF0ZWQsIHdlJ3JlIGFib3V0IHRv
+IHJlbW92ZSB0aGUKIAkgKiBmaXJzdCBhY3RpdmUgc3ViZGV2aWNlLCBzbyB1bmxvYWQgdGhlIGRy
+aXZlciBmaXJzdC4KIAkgKi8KLQlpZiAobGlzdF9lbXB0eSgmZGV2aWNlLT5zdWJkZXZzKSkgewor
+CWlmIChsaXN0X2VtcHR5KCZkZXZpY2UtPnN1YmRldnMpICYmIGRldmljZS0+Ym91bmQpIHsKIAkJ
+ZXJyID0gZGV2aWNlLT5kcml2ZXItPnJlbW92ZShkZXZpY2UpOwogCQlpZiAoZXJyIDwgMCkKIAkJ
+CWRldl9lcnIoJmRldmljZS0+ZGV2LCAicmVtb3ZlIGZhaWxlZDogJWRcbiIsIGVycik7CisKKwkJ
+ZGV2aWNlLT5ib3VuZCA9IGZhbHNlOwogCX0KIAogCS8qCmRpZmYgLS1naXQgYS9pbmNsdWRlL2xp
+bnV4L2hvc3QxeC5oIGIvaW5jbHVkZS9saW51eC9ob3N0MXguaAppbmRleCBiYjk4NDBmZDFlMTgu
+Ljc4OTBiNTUzZDEyZSAxMDA2NDQKLS0tIGEvaW5jbHVkZS9saW51eC9ob3N0MXguaAorKysgYi9p
+bmNsdWRlL2xpbnV4L2hvc3QxeC5oCkBAIC0yNzIsNiArMjcyLDggQEAgc3RydWN0IGhvc3QxeF9k
+ZXZpY2UgewogCiAJc3RydWN0IG11dGV4IGNsaWVudHNfbG9jazsKIAlzdHJ1Y3QgbGlzdF9oZWFk
+IGNsaWVudHM7CisKKwlib29sIGJvdW5kOwogfTsKIAogc3RhdGljIGlubGluZSBzdHJ1Y3QgaG9z
+dDF4X2RldmljZSAqdG9faG9zdDF4X2RldmljZShzdHJ1Y3QgZGV2aWNlICpkZXYpCi0tIAoyLjEu
+MwoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRl
+dmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9s
+aXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
