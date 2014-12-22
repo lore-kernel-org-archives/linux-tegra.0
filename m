@@ -1,125 +1,31 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] ARM: tegra: Use PMC scratch register 40 for tegra_resume() location store
-Date: Mon, 22 Dec 2014 01:52:33 +0300
-Message-ID: <1419202392-1159-1-git-send-email-digetx@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>, Stefano Stabellini <stefano.stabellini-mvvWK6WmYclDPfheJLI6IQ@public.gmane.org>, Christoffer Dall <christoffer.dall-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH] ARM: tegra: Use PMC scratch register 40 for tegra_resume()
+ location store
+Date: Mon, 22 Dec 2014 09:17:45 -0700
+Message-ID: <54984429.8040905@wwwdotorg.org>
+References: <1419202392-1159-1-git-send-email-digetx@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <1419202392-1159-1-git-send-email-digetx@gmail.com>
+Sender: stable-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Joseph Lo <josephl@nvidia.com>
+Cc: stable@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Haojian Zhuang <haojian.zhuang@gmail.com>, Sekhar Nori <nsekhar@ti.com>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Christoffer Dall <christoffer.dall@linaro.org>, Shawn Guo <shawn.guo@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Commit 7232398abc6a ("ARM: tegra: Convert PMC to a driver") changed tegra_resume()
-location storing from late to early and as result broke suspend on tegra20.
-PMC scratch register 41 was used by tegra lp1 suspend core code for storing
-physical memory address of common resume function and in the same time used by
-tegra20 cpuidle driver for storing cpu1 "resettable" status, so it implied
-strict order of scratch register use. Fix it by using scratch 40 instead of 41
-for tegra_resume() location store.
+On 12/21/2014 03:52 PM, Dmitry Osipenko wrote:
+> Commit 7232398abc6a ("ARM: tegra: Convert PMC to a driver") changed tegra_resume()
+> location storing from late to early and as result broke suspend on tegra20.
+> PMC scratch register 41 was used by tegra lp1 suspend core code for storing
+> physical memory address of common resume function and in the same time used by
+> tegra20 cpuidle driver for storing cpu1 "resettable" status, so it implied
+> strict order of scratch register use. Fix it by using scratch 40 instead of 41
+> for tegra_resume() location store.
 
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Fixes: 7232398abc6a (ARM: tegra: Convert PMC to a driver)
-Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org> # v3.17+
----
-I see 2 other solutions:
-
-1) Replace PMC driver PM ops with syscore
-2) Move tegra_resume() storing back to tegra arch suspend code
-
-For me originally proposed solution looks best, but I'm not aware of any special
-use of scratch 40 outside kernel and bootloader, so please let me know if there
-is any issue with it. It works just fine on my tablet.
-
- arch/arm/mach-tegra/sleep-tegra20.S | 4 ++--
- arch/arm/mach-tegra/sleep-tegra30.S | 4 ++--
- arch/arm/mach-tegra/sleep.h         | 1 +
- drivers/soc/tegra/pmc.c             | 6 +++---
- 4 files changed, 8 insertions(+), 7 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/sleep-tegra20.S b/arch/arm/mach-tegra/sleep-tegra20.S
-index be4bc5f..3574785 100644
---- a/arch/arm/mach-tegra/sleep-tegra20.S
-+++ b/arch/arm/mach-tegra/sleep-tegra20.S
-@@ -327,7 +327,7 @@ tegra20_iram_start:
-  * system clock running on the same PLL that it suspended at), and
-  * jumps to tegra_resume to restore virtual addressing and PLLX.
-  * The physical address of tegra_resume expected to be stored in
-- * PMC_SCRATCH41.
-+ * PMC_SCRATCH40.
-  *
-  * NOTE: THIS *MUST* BE RELOCATED TO TEGRA_IRAM_LPx_RESUME_AREA.
-  */
-@@ -401,7 +401,7 @@ exit_selfrefresh_loop:
- 	str	r1, [r0, #EMC_REQ_CTRL]
- 
- 	mov32	r0, TEGRA_PMC_BASE
--	ldr	r0, [r0, #PMC_SCRATCH41]
-+	ldr	r0, [r0, #PMC_SCRATCH40]
- 	ret	r0			@ jump to tegra_resume
- ENDPROC(tegra20_lp1_reset)
- 
-diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
-index 5d8d13a..234959c 100644
---- a/arch/arm/mach-tegra/sleep-tegra30.S
-+++ b/arch/arm/mach-tegra/sleep-tegra30.S
-@@ -314,7 +314,7 @@ tegra30_iram_start:
-  * system clock running on the same PLL that it suspended at), and
-  * jumps to tegra_resume to restore virtual addressing.
-  * The physical address of tegra_resume expected to be stored in
-- * PMC_SCRATCH41.
-+ * PMC_SCRATCH40.
-  *
-  * NOTE: THIS *MUST* BE RELOCATED TO TEGRA_IRAM_LPx_RESUME_AREA.
-  */
-@@ -529,7 +529,7 @@ zcal_done:
- __no_dual_emc_chanl:
- 
- 	mov32	r0, TEGRA_PMC_BASE
--	ldr	r0, [r0, #PMC_SCRATCH41]
-+	ldr	r0, [r0, #PMC_SCRATCH40]
- 	ret	r0			@ jump to tegra_resume
- ENDPROC(tegra30_lp1_reset)
- 
-diff --git a/arch/arm/mach-tegra/sleep.h b/arch/arm/mach-tegra/sleep.h
-index 92d46ec..23c42d0 100644
---- a/arch/arm/mach-tegra/sleep.h
-+++ b/arch/arm/mach-tegra/sleep.h
-@@ -33,6 +33,7 @@
- #define PMC_SCRATCH37	0x130
- #define PMC_SCRATCH38	0x134
- #define PMC_SCRATCH39	0x138
-+#define PMC_SCRATCH40	0x13C
- #define PMC_SCRATCH41	0x140
- 
- #ifdef CONFIG_ARCH_TEGRA_2x_SOC
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index a2c0ceb..51bfdeb 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -68,7 +68,7 @@
- #define PMC_CPUPWRGOOD_TIMER		0xc8
- #define PMC_CPUPWROFF_TIMER		0xcc
- 
--#define PMC_SCRATCH41			0x140
-+#define PMC_SCRATCH40			0x13C
- 
- #define IO_DPD_REQ			0x1b8
- #define  IO_DPD_REQ_CODE_IDLE		(0 << 30)
-@@ -742,14 +742,14 @@ static int tegra_pmc_probe(struct platform_device *pdev)
- #ifdef CONFIG_PM_SLEEP
- static int tegra_pmc_suspend(struct device *dev)
- {
--	tegra_pmc_writel(virt_to_phys(tegra_resume), PMC_SCRATCH41);
-+	tegra_pmc_writel(virt_to_phys(tegra_resume), PMC_SCRATCH40);
- 
- 	return 0;
- }
- 
- static int tegra_pmc_resume(struct device *dev)
- {
--	tegra_pmc_writel(0x0, PMC_SCRATCH41);
-+	tegra_pmc_writel(0x0, PMC_SCRATCH40);
- 
- 	return 0;
- }
--- 
-2.2.0
+You likely can't simply change the PMC scratch register usage 
+arbitrarily; specific registers are designated for specific purposes, 
+and code outside the Linux kernel (bootloaders, LP0 resume code, secure 
+monitors, etc.) may depend on those specific values being in those 
+registers. Without significant research, I'd suggest not changing the 
+PMC scratch register usage.
