@@ -1,67 +1,74 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: Use PMC scratch register 40 for tegra_resume()
- location store
-Date: Mon, 22 Dec 2014 11:00:16 -0700
-Message-ID: <54985C30.7020605@wwwdotorg.org>
-References: <1419202392-1159-1-git-send-email-digetx@gmail.com> <54984429.8040905@wwwdotorg.org> <5498549B.8070101@gmail.com>
+From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 4/5] gpu: host1x: Provide a proper struct bus_type
+Date: Tue, 23 Dec 2014 15:30:20 +0800
+Message-ID: <54991A0C.4050203@nvidia.com>
+References: <1419002698-4963-1-git-send-email-thierry.reding@gmail.com> <1419002698-4963-4-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5498549B.8070101-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1419002698-4963-4-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>, Stefano Stabellini <stefano.stabellini-mvvWK6WmYclDPfheJLI6IQ@public.gmane.org>, Christoffer Dall <christoffer.dall-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/22/2014 10:27 AM, Dmitry Osipenko wrote:
-> 22.12.2014 19:17, Stephen Warren =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> On 12/21/2014 03:52 PM, Dmitry Osipenko wrote:
->>> Commit 7232398abc6a ("ARM: tegra: Convert PMC to a driver") changed
->>> tegra_resume()
->>> location storing from late to early and as result broke suspend on =
-tegra20.
->>> PMC scratch register 41 was used by tegra lp1 suspend core code for=
- storing
->>> physical memory address of common resume function and in the same t=
-ime used by
->>> tegra20 cpuidle driver for storing cpu1 "resettable" status, so it =
-implied
->>> strict order of scratch register use. Fix it by using scratch 40 in=
-stead of 41
->>> for tegra_resume() location store.
->>
->> You likely can't simply change the PMC scratch register usage arbitr=
-arily;
->> specific registers are designated for specific purposes, and code ou=
-tside the
->> Linux kernel (bootloaders, LP0 resume code, secure monitors, etc.) m=
-ay depend on
->> those specific values being in those registers. Without significant =
-research,
->> I'd suggest not changing the PMC scratch register usage.
->
-> Sure, that's why I asked to verify if scratch register 40 is in use i=
-n the
-> comment after commit message.
+On 12/19/2014 11:24 PM, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Previously the struct bus_type exported by the host1x infrastructure was
+> only a very basic skeleton. Turn that implementation into a more full-
+> fledged bus to support proper probe ordering and power management.
+> 
+> Note that the bus infrastructure needs to be available before any of the
+> drivers can be registered, so the bus needs to be registered before the
+> host1x module. Otherwise drivers could be registered before the module
+> is loaded and trigger a BUG_ON() in driver_register(). To ensure the bus
+> infrastructure is always there, always build the code into the kernel
+> when enabled and register it with a postcore initcall.
+> 
 
-Sorry, I didn't notice that.
+So this means there is no chance that host1x can be built as a kernel
+module, right? I'm fine with that, just asking.
 
-> I've checked that u-boot doesn't use it (since
-> upstream kernel doesn't care about any other bootloader), but no idea=
- about
-> secure monitor. It's definitely safer to avoid changing scratch regs =
-usage, I
-> thought that proposed solution would be best from the pure code point=
- of view.
-> So, I'm considering your answer as a rejection of the patch (please, =
-let me know
-> if I'm wrong) and will prepare another one. Btw, it would be nice to =
-have
-> scratch registers usage publicly documented somewhere (on "Tegra Publ=
-ic
-> Application Notes" webpage for example), if it's possible, of course.
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+[...]
+> diff --git a/drivers/gpu/host1x/Makefile b/drivers/gpu/host1x/Makefile
+> index c1189f004441..a3e667a1b6f5 100644
+> --- a/drivers/gpu/host1x/Makefile
+> +++ b/drivers/gpu/host1x/Makefile
+> @@ -1,5 +1,4 @@
+>  host1x-y = \
+> -	bus.o \
+>  	syncpt.o \
+>  	dev.o \
+>  	intr.o \
+> @@ -13,3 +12,5 @@ host1x-y = \
+>  	hw/host1x04.o
+>  
+>  obj-$(CONFIG_TEGRA_HOST1X) += host1x.o
+> +
+> +obj-y += bus.o
 
-At this stage in Tegra20 development, I think it'd be best to avoid=20
-changing any scratch register usage if at all possible.
+I didn't get it, why we need to do this?
+
+> diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
+> index 0b52f0ea8871..28630a5e9397 100644
+> --- a/drivers/gpu/host1x/bus.c
+> +++ b/drivers/gpu/host1x/bus.c
+> @@ -72,13 +72,14 @@ static void host1x_subdev_del(struct host1x_subdev *subdev)
+[...]
+>  
+>  static inline struct host1x_device *to_host1x_device(struct device *dev)
+> 
+
+The change looks good to me. Just one thing I feel not comfortable:
+"struct host1x_device" is not a real device, it represents the drm
+device actually. The real tegra host1x device is represented by "struct
+host1x". But the name "host1x_device" makes people confusing, I mean, it
+will make people thinking it's the real "tegra host1x" device then bring
+the reading difficulty. Why don't we change this to something like
+"drm_device" or "tegra_drm_device"?
+
+Mark
