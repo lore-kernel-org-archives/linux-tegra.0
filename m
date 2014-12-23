@@ -1,107 +1,101 @@
-From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH nouveau 08/11] instmem: add dummy support for GK20A
-Date: Tue, 23 Dec 2014 18:40:01 +0800
-Message-ID: <1419331204-26679-9-git-send-email-vinceh@nvidia.com>
-References: <1419331204-26679-1-git-send-email-vinceh@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <1419331204-26679-1-git-send-email-vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, martin.peres-GANU6spQydw@public.gmane.org, seven-FA6nBp6kBxZzu6KWmfFNGwC/G2K4zDHf@public.gmane.org, samuel.pitoiset-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH] soc: tegra: pmc: Use syscore PM ops
+Date: Tue, 23 Dec 2014 19:15:37 +0300
+Message-ID: <1419351358-6201-1-git-send-email-digetx@gmail.com>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: digetx@gmail.com, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
+Cc: stable@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-VGhpcyBpcyBhIHdvcmthcm91bmQgdG8gYXZvaWQgdGhlIGluc3RtZW0gYmFja3VwL3Jlc3RvcmUg
-ZHVyaW5nIHRoZSBzdXNwZW5kCmFuZCByZXN1bWUgcHJvY2VzcyBpbiBudjUwIGluc3RlbWVtIGRy
-aXZlci4KClNpZ25lZC1vZmYtYnk6IFZpbmNlIEhzdSA8dmluY2VoQG52aWRpYS5jb20+Ci0tLQog
-ZHJtL0tidWlsZCAgICAgICAgICAgICAgICAgICAgfCAgMSArCiBudmttL2VuZ2luZS9kZXZpY2Uv
-bnZlMC5jICAgICB8ICAyICstCiBudmttL2luY2x1ZGUvc3ViZGV2L2luc3RtZW0uaCB8ICAxICsK
-IG52a20vc3ViZGV2L2luc3RtZW0vZ2syMGEuYyAgIHwgNzAgKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKwogNCBmaWxlcyBjaGFuZ2VkLCA3MyBpbnNlcnRpb25zKCsp
-LCAxIGRlbGV0aW9uKC0pCiBjcmVhdGUgbW9kZSAxMDA2NDQgbnZrbS9zdWJkZXYvaW5zdG1lbS9n
-azIwYS5jCgpkaWZmIC0tZ2l0IGEvZHJtL0tidWlsZCBiL2RybS9LYnVpbGQKaW5kZXggNjQ2MWUz
-NTY1YWZlLi5lYTQwY2Q2NTNjN2MgMTAwNjQ0Ci0tLSBhL2RybS9LYnVpbGQKKysrIGIvZHJtL0ti
-dWlsZApAQCAtMTc2LDYgKzE3Niw3IEBAIG5vdXZlYXUteSArPSBjb3JlL3N1YmRldi9pbnN0bWVt
-L2Jhc2Uubwogbm91dmVhdS15ICs9IGNvcmUvc3ViZGV2L2luc3RtZW0vbnYwNC5vCiBub3V2ZWF1
-LXkgKz0gY29yZS9zdWJkZXYvaW5zdG1lbS9udjQwLm8KIG5vdXZlYXUteSArPSBjb3JlL3N1YmRl
-di9pbnN0bWVtL252NTAubworbm91dmVhdS15ICs9IGNvcmUvc3ViZGV2L2luc3RtZW0vZ2syMGEu
-bwogbm91dmVhdS15ICs9IGNvcmUvc3ViZGV2L2x0Yy9iYXNlLm8KIG5vdXZlYXUteSArPSBjb3Jl
-L3N1YmRldi9sdGMvZ2YxMDAubwogbm91dmVhdS15ICs9IGNvcmUvc3ViZGV2L2x0Yy9nazEwNC5v
-CmRpZmYgLS1naXQgYS9udmttL2VuZ2luZS9kZXZpY2UvbnZlMC5jIGIvbnZrbS9lbmdpbmUvZGV2
-aWNlL252ZTAuYwppbmRleCA3MzI5MjI2OTA2NTMuLmZjYmRjNTI1OWM3YyAxMDA2NDQKLS0tIGEv
-bnZrbS9lbmdpbmUvZGV2aWNlL252ZTAuYworKysgYi9udmttL2VuZ2luZS9kZXZpY2UvbnZlMC5j
-CkBAIC0xNzAsNyArMTcwLDcgQEAgbnZlMF9pZGVudGlmeShzdHJ1Y3Qgbm91dmVhdV9kZXZpY2Ug
-KmRldmljZSkKIAkJZGV2aWNlLT5vY2xhc3NbTlZERVZfU1VCREVWX0ZCICAgICBdID0gIGdrMjBh
-X2ZiX29jbGFzczsKIAkJZGV2aWNlLT5vY2xhc3NbTlZERVZfU1VCREVWX0xUQyAgICBdID0gIGdr
-MTA0X2x0Y19vY2xhc3M7CiAJCWRldmljZS0+b2NsYXNzW05WREVWX1NVQkRFVl9JQlVTICAgXSA9
-ICZnazIwYV9pYnVzX29jbGFzczsKLQkJZGV2aWNlLT5vY2xhc3NbTlZERVZfU1VCREVWX0lOU1RN
-RU1dID0gbnY1MF9pbnN0bWVtX29jbGFzczsKKwkJZGV2aWNlLT5vY2xhc3NbTlZERVZfU1VCREVW
-X0lOU1RNRU1dID0gZ2syMGFfaW5zdG1lbV9vY2xhc3M7CiAJCWRldmljZS0+b2NsYXNzW05WREVW
-X1NVQkRFVl9WTSAgICAgXSA9ICZudmMwX3ZtbWdyX29jbGFzczsKIAkJZGV2aWNlLT5vY2xhc3Nb
-TlZERVZfU1VCREVWX0JBUiAgICBdID0gJmdrMjBhX2Jhcl9vY2xhc3M7CiAJCWRldmljZS0+b2Ns
-YXNzW05WREVWX0VOR0lORV9ETUFPQkogXSA9ICBudmQwX2RtYWVuZ19vY2xhc3M7CmRpZmYgLS1n
-aXQgYS9udmttL2luY2x1ZGUvc3ViZGV2L2luc3RtZW0uaCBiL252a20vaW5jbHVkZS9zdWJkZXYv
-aW5zdG1lbS5oCmluZGV4IGMxZGYyNmYzMjMwYy4uNjI2NDY2MGJlZGNlIDEwMDY0NAotLS0gYS9u
-dmttL2luY2x1ZGUvc3ViZGV2L2luc3RtZW0uaAorKysgYi9udmttL2luY2x1ZGUvc3ViZGV2L2lu
-c3RtZW0uaApAQCAtNDgsNSArNDgsNiBAQCBub3V2ZWF1X2luc3RtZW0odm9pZCAqb2JqKQogZXh0
-ZXJuIHN0cnVjdCBub3V2ZWF1X29jbGFzcyAqbnYwNF9pbnN0bWVtX29jbGFzczsKIGV4dGVybiBz
-dHJ1Y3Qgbm91dmVhdV9vY2xhc3MgKm52NDBfaW5zdG1lbV9vY2xhc3M7CiBleHRlcm4gc3RydWN0
-IG5vdXZlYXVfb2NsYXNzICpudjUwX2luc3RtZW1fb2NsYXNzOworZXh0ZXJuIHN0cnVjdCBub3V2
-ZWF1X29jbGFzcyAqZ2syMGFfaW5zdG1lbV9vY2xhc3M7CiAKICNlbmRpZgpkaWZmIC0tZ2l0IGEv
-bnZrbS9zdWJkZXYvaW5zdG1lbS9nazIwYS5jIGIvbnZrbS9zdWJkZXYvaW5zdG1lbS9nazIwYS5j
-Cm5ldyBmaWxlIG1vZGUgMTAwNjQ0CmluZGV4IDAwMDAwMDAwMDAwMC4uNWUwNzJkNmU3NDNmCi0t
-LSAvZGV2L251bGwKKysrIGIvbnZrbS9zdWJkZXYvaW5zdG1lbS9nazIwYS5jCkBAIC0wLDAgKzEs
-NzAgQEAKKy8qCisgKiBDb3B5cmlnaHQgKGMpIDIwMTQsIE5WSURJQSBDT1JQT1JBVElPTi4gQWxs
-IHJpZ2h0cyByZXNlcnZlZC4KKyAqCisgKiBQZXJtaXNzaW9uIGlzIGhlcmVieSBncmFudGVkLCBm
-cmVlIG9mIGNoYXJnZSwgdG8gYW55IHBlcnNvbiBvYnRhaW5pbmcgYQorICogY29weSBvZiB0aGlz
-IHNvZnR3YXJlIGFuZCBhc3NvY2lhdGVkIGRvY3VtZW50YXRpb24gZmlsZXMgKHRoZSAiU29mdHdh
-cmUiKSwKKyAqIHRvIGRlYWwgaW4gdGhlIFNvZnR3YXJlIHdpdGhvdXQgcmVzdHJpY3Rpb24sIGlu
-Y2x1ZGluZyB3aXRob3V0IGxpbWl0YXRpb24KKyAqIHRoZSByaWdodHMgdG8gdXNlLCBjb3B5LCBt
-b2RpZnksIG1lcmdlLCBwdWJsaXNoLCBkaXN0cmlidXRlLCBzdWJsaWNlbnNlLAorICogYW5kL29y
-IHNlbGwgY29waWVzIG9mIHRoZSBTb2Z0d2FyZSwgYW5kIHRvIHBlcm1pdCBwZXJzb25zIHRvIHdo
-b20gdGhlCisgKiBTb2Z0d2FyZSBpcyBmdXJuaXNoZWQgdG8gZG8gc28sIHN1YmplY3QgdG8gdGhl
-IGZvbGxvd2luZyBjb25kaXRpb25zOgorICoKKyAqIFRoZSBhYm92ZSBjb3B5cmlnaHQgbm90aWNl
-IGFuZCB0aGlzIHBlcm1pc3Npb24gbm90aWNlIHNoYWxsIGJlIGluY2x1ZGVkIGluCisgKiBhbGwg
-Y29waWVzIG9yIHN1YnN0YW50aWFsIHBvcnRpb25zIG9mIHRoZSBTb2Z0d2FyZS4KKyAqCisgKiBU
-SEUgU09GVFdBUkUgSVMgUFJPVklERUQgIkFTIElTIiwgV0lUSE9VVCBXQVJSQU5UWSBPRiBBTlkg
-S0lORCwgRVhQUkVTUyBPUgorICogSU1QTElFRCwgSU5DTFVESU5HIEJVVCBOT1QgTElNSVRFRCBU
-TyBUSEUgV0FSUkFOVElFUyBPRiBNRVJDSEFOVEFCSUxJVFksCisgKiBGSVRORVNTIEZPUiBBIFBB
-UlRJQ1VMQVIgUFVSUE9TRSBBTkQgTk9OSU5GUklOR0VNRU5ULiAgSU4gTk8gRVZFTlQgU0hBTEwK
-KyAqIFRIRSBBVVRIT1JTIE9SIENPUFlSSUdIVCBIT0xERVJTIEJFIExJQUJMRSBGT1IgQU5ZIENM
-QUlNLCBEQU1BR0VTIE9SIE9USEVSCisgKiBMSUFCSUxJVFksIFdIRVRIRVIgSU4gQU4gQUNUSU9O
-IE9GIENPTlRSQUNULCBUT1JUIE9SIE9USEVSV0lTRSwgQVJJU0lORworICogRlJPTSwgT1VUIE9G
-IE9SIElOIENPTk5FQ1RJT04gV0lUSCBUSEUgU09GVFdBUkUgT1IgVEhFIFVTRSBPUiBPVEhFUgor
-ICogREVBTElOR1MgSU4gVEhFIFNPRlRXQVJFLgorICoKKyAqLworCisjaW5jbHVkZSAibnY1MC5o
-IgorI2luY2x1ZGUgInByaXYuaCIKKworc3RhdGljIGludAorZ2syMGFfaW5zdG1lbV9maW5pKHN0
-cnVjdCBub3V2ZWF1X29iamVjdCAqb2JqZWN0LCBib29sIHN1c3BlbmQpCit7CisJc3RydWN0IG5v
-dXZlYXVfaW5zdG1lbSAqaW1lbSA9ICh2b2lkICopb2JqZWN0OworCisJcmV0dXJuIG5vdXZlYXVf
-c3ViZGV2X2ZpbmkoJmltZW0tPmJhc2UsIHN1c3BlbmQpOworfQorCitzdGF0aWMgaW50CitnazIw
-YV9pbnN0bWVtX2luaXQoc3RydWN0IG5vdXZlYXVfb2JqZWN0ICpvYmplY3QpCit7CisJc3RydWN0
-IG5vdXZlYXVfaW5zdG1lbSAqaW1lbSA9ICh2b2lkICopb2JqZWN0OworCisJcmV0dXJuIG5vdXZl
-YXVfc3ViZGV2X2luaXQoJmltZW0tPmJhc2UpOworfQorCitzdGF0aWMgaW50CitnazIwYV9pbnN0
-bWVtX2N0b3Ioc3RydWN0IG5vdXZlYXVfb2JqZWN0ICpwYXJlbnQsIHN0cnVjdCBub3V2ZWF1X29i
-amVjdCAqZW5naW5lLAorCQkgIHN0cnVjdCBub3V2ZWF1X29jbGFzcyAqb2NsYXNzLCB2b2lkICpk
-YXRhLCB1MzIgc2l6ZSwKKwkJICBzdHJ1Y3Qgbm91dmVhdV9vYmplY3QgKipwb2JqZWN0KQorewor
-CXN0cnVjdCBudjUwX2luc3RtZW1fcHJpdiAqcHJpdjsKKwlpbnQgcmV0OworCisJcmV0ID0gbm91
-dmVhdV9pbnN0bWVtX2NyZWF0ZShwYXJlbnQsIGVuZ2luZSwgb2NsYXNzLCAmcHJpdik7CisJKnBv
-YmplY3QgPSBudl9vYmplY3QocHJpdik7CisJaWYgKHJldCkKKwkJcmV0dXJuIHJldDsKKworCXNw
-aW5fbG9ja19pbml0KCZwcml2LT5sb2NrKTsKKwlyZXR1cm4gMDsKK30KKworc3RydWN0IG5vdXZl
-YXVfb2NsYXNzICoKK2drMjBhX2luc3RtZW1fb2NsYXNzID0gJihzdHJ1Y3Qgbm91dmVhdV9pbnN0
-bWVtX2ltcGwpIHsKKwkuYmFzZS5oYW5kbGUgPSBOVl9TVUJERVYoSU5TVE1FTSwgMHg1MCksCisJ
-LmJhc2Uub2Z1bmNzID0gJihzdHJ1Y3Qgbm91dmVhdV9vZnVuY3MpIHsKKwkJLmN0b3IgPSBnazIw
-YV9pbnN0bWVtX2N0b3IsCisJCS5kdG9yID0gX25vdXZlYXVfaW5zdG1lbV9kdG9yLAorCQkuaW5p
-dCA9IGdrMjBhX2luc3RtZW1faW5pdCwKKwkJLmZpbmkgPSBnazIwYV9pbnN0bWVtX2ZpbmksCisJ
-fSwKKwkuaW5zdG9iaiA9ICZudjUwX2luc3RvYmpfb2NsYXNzLmJhc2UsCit9LmJhc2U7Ci0tIAox
-LjkuMQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91
-dmVhdSBtYWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xp
-c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL25vdXZlYXUK
+Commit 7232398abc6a ("ARM: tegra: Convert PMC to a driver") changed tegra_resume()
+location storing from late to early and as result broke suspend on Tegra20.
+PMC scratch register 41 is used by tegra LP1 resume code for retrieving stored
+physical memory address of common resume function and in the same time used by
+Tegra20 cpuidle driver for storing cpu1 "resettable" status, it implies strict
+order of scratch register use. Fix it by making PMC driver use syscore PM ops to
+ensure that tegra_resume() location is stored after cpuidle driver suspend and
+before resume respectively.
+
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Fixes: 7232398abc6a (ARM: tegra: Convert PMC to a driver)
+Cc: <stable@vger.kernel.org> # v3.17+
+---
+ drivers/soc/tegra/pmc.c | 37 +++++++++++++++++++------------------
+ 1 file changed, 19 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index a2c0ceb..4ebd94a 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -33,6 +33,7 @@
+ #include <linux/reset.h>
+ #include <linux/seq_file.h>
+ #include <linux/spinlock.h>
++#include <linux/syscore_ops.h>
+ 
+ #include <soc/tegra/common.h>
+ #include <soc/tegra/fuse.h>
+@@ -703,6 +704,23 @@ static void tegra_pmc_init(struct tegra_pmc *pmc)
+ 	tegra_pmc_writel(value, PMC_CNTRL);
+ }
+ 
++static int tegra_pmc_suspend(void)
++{
++	tegra_pmc_writel(virt_to_phys(tegra_resume), PMC_SCRATCH41);
++
++	return 0;
++}
++
++static void tegra_pmc_resume(void)
++{
++	tegra_pmc_writel(0x0, PMC_SCRATCH41);
++}
++
++static struct syscore_ops tegra_pmc_syscore_ops = {
++	.suspend = tegra_pmc_suspend,
++	.resume = tegra_pmc_resume,
++};
++
+ static int tegra_pmc_probe(struct platform_device *pdev)
+ {
+ 	void __iomem *base = pmc->base;
+@@ -736,27 +754,11 @@ static int tegra_pmc_probe(struct platform_device *pdev)
+ 			return err;
+ 	}
+ 
+-	return 0;
+-}
+-
+-#ifdef CONFIG_PM_SLEEP
+-static int tegra_pmc_suspend(struct device *dev)
+-{
+-	tegra_pmc_writel(virt_to_phys(tegra_resume), PMC_SCRATCH41);
++	register_syscore_ops(&tegra_pmc_syscore_ops);
+ 
+ 	return 0;
+ }
+ 
+-static int tegra_pmc_resume(struct device *dev)
+-{
+-	tegra_pmc_writel(0x0, PMC_SCRATCH41);
+-
+-	return 0;
+-}
+-#endif
+-
+-static SIMPLE_DEV_PM_OPS(tegra_pmc_pm_ops, tegra_pmc_suspend, tegra_pmc_resume);
+-
+ static const char * const tegra20_powergates[] = {
+ 	[TEGRA_POWERGATE_CPU] = "cpu",
+ 	[TEGRA_POWERGATE_3D] = "3d",
+@@ -894,7 +896,6 @@ static struct platform_driver tegra_pmc_driver = {
+ 		.name = "tegra-pmc",
+ 		.suppress_bind_attrs = true,
+ 		.of_match_table = tegra_pmc_match,
+-		.pm = &tegra_pmc_pm_ops,
+ 	},
+ 	.probe = tegra_pmc_probe,
+ };
+-- 
+2.2.0
