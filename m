@@ -1,90 +1,40 @@
-From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH nouveau 09/11] drm: export some variable and
- functions to resue the PM functions
-Date: Tue, 30 Dec 2014 11:18:34 +0800
-Message-ID: <54A2198A.4000707@nvidia.com>
+From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Subject: Re: [PATCH 1/11] ARM: tegra: add function to control the GPU rail
+ clamp
+Date: Tue, 30 Dec 2014 17:42:32 +0100
+Message-ID: <1419957752.4082.2.camel@lynxeye.de>
 References: <1419331204-26679-1-git-send-email-vinceh@nvidia.com>
- <1419331204-26679-10-git-send-email-vinceh@nvidia.com>
- <54A20F4D.4040100@gmail.com>
+			 <1419331204-26679-2-git-send-email-vinceh@nvidia.com>
+		 <1419426990.2179.7.camel@lynxeye.de> <549B7638.2010405@nvidia.com>
+	 <1419539683.2165.6.camel@lynxeye.de> <54A0C148.6030400@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <54A20F4D.4040100-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Emil Velikov <emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, martin.peres-GANU6spQydw@public.gmane.org, seven-FA6nBp6kBxZzu6KWmfFNGwC/G2K4zDHf@public.gmane.org, samuel.pitoiset-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <54A0C148.6030400-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, martin.peres-GANU6spQydw@public.gmane.org, seven-FA6nBp6kBxZzu6KWmfFNGwC/G2K4zDHf@public.gmane.org, samuel.pitoiset-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgRW1pbCwKCk9uIDEyLzMwLzIwMTQgMTA6MzQgQU0sIEVtaWwgVmVsaWtvdiB3cm90ZToKPiBP
-biAyMy8xMi8xNCAxMDo0MCwgVmluY2UgSHN1IHdyb3RlOgo+PiBUaGlzIHBhdGNoIGFkZHMgc29t
-ZSBjaGVja3MgaW4gdGhlIHN1c3BlbmQvcmVzdW1lIGZ1bmN0aW9ucyB0byBkaXN0aW5ndWlzaAo+
-PiB0aGUgZEdQVSBhbmQgbW9iaWxlIEdQVSBhbmQgZXhwb3J0cyBzb21lIHZhcmlhYmxlcy9mdW5j
-dGlvbnMgc28gdGhhdCB0aGUKPj4gbm91dmVhdSBwbGF0Zm9ybSBkZXZpY2UgY2FuIHJldXNlIHRo
-ZW0uCj4+Cj4gSGkgVmluY2UsCj4KPiBBZmFpdSBvbmUgbmVlZHMgdG8gZXhwb3J0IGEgc3ltYm9s
-IGFzIGl0J3MgdXNlZCBieSBhbm90aGVyIG1vZHVsZSBvcgo+IHN1YnN5c3RlbS4gV2l0aCB0aGUg
-Zm9sbG93IHVwIHR3byBwYXRjaGVzIHlvdSBhcmUgbm90IGRvaW5nIGVpdGhlciBvbmUsCj4gc28g
-SSdkIGFzc3VtZSB0aGF0IHlvdSBjYW4ganVzdCBvbWl0IHRoZSBFWFBPUlRfKiBjaGFuZ2VzLgpU
-aGUgbm91dmVhdSBwbGF0Zm9ybSBkZXZpY2UgZHJpdmVyIGlzIGJ1aWx0IGFzIGFub3RoZXIgbW9k
-dWxlIC0gCm5vdXZlYXVfcGxhdGZvcm0ua28uIDopCgpUaGFua3MsClZpbmNlCgo+Cj4gSSBjb3Vs
-ZCBiZSB3cm9uZyB0aG91Z2ggOi0pCj4KPiBDaGVlcnMKPiBFbWlsCj4KPgo+PiBTaWduZWQtb2Zm
-LWJ5OiBWaW5jZSBIc3UgPHZpbmNlaEBudmlkaWEuY29tPgo+PiAtLS0KPj4gICBkcm0vbm91dmVh
-dV9kcm0uYyB8IDE2ICsrKysrKysrKysrLS0tLS0KPj4gICBkcm0vbm91dmVhdV9kcm0uaCB8ICAy
-ICsrCj4+ICAgMiBmaWxlcyBjaGFuZ2VkLCAxMyBpbnNlcnRpb25zKCspLCA1IGRlbGV0aW9ucygt
-KQo+Pgo+PiBkaWZmIC0tZ2l0IGEvZHJtL25vdXZlYXVfZHJtLmMgYi9kcm0vbm91dmVhdV9kcm0u
-Ywo+PiBpbmRleCBhZmI5M2JiNzJmOTcuLjBlZDk5ZWY4MDIxMSAxMDA2NDQKPj4gLS0tIGEvZHJt
-L25vdXZlYXVfZHJtLmMKPj4gKysrIGIvZHJtL25vdXZlYXVfZHJtLmMKPj4gQEAgLTcyLDYgKzcy
-LDcgQEAgbW9kdWxlX3BhcmFtX25hbWVkKG1vZGVzZXQsIG5vdXZlYXVfbW9kZXNldCwgaW50LCAw
-NDAwKTsKPj4gICAKPj4gICBNT0RVTEVfUEFSTV9ERVNDKHJ1bnBtLCAiZGlzYWJsZSAoMCksIGZv
-cmNlIGVuYWJsZSAoMSksIG9wdGltdXMgb25seSBkZWZhdWx0ICgtMSkiKTsKPj4gICBpbnQgbm91
-dmVhdV9ydW50aW1lX3BtID0gLTE7Cj4+ICtFWFBPUlRfU1lNQk9MKG5vdXZlYXVfcnVudGltZV9w
-bSk7Cj4+ICAgbW9kdWxlX3BhcmFtX25hbWVkKHJ1bnBtLCBub3V2ZWF1X3J1bnRpbWVfcG0sIGlu
-dCwgMDQwMCk7Cj4+ICAgCj4+ICAgc3RhdGljIHN0cnVjdCBkcm1fZHJpdmVyIGRyaXZlcl9zdHVi
-Owo+PiBAQCAtNTQzLDcgKzU0NCw3IEBAIG5vdXZlYXVfZHJtX3JlbW92ZShzdHJ1Y3QgcGNpX2Rl
-diAqcGRldikKPj4gICAJbm91dmVhdV9kcm1fZGV2aWNlX3JlbW92ZShkZXYpOwo+PiAgIH0KPj4g
-ICAKPj4gLXN0YXRpYyBpbnQKPj4gK2ludAo+PiAgIG5vdXZlYXVfZG9fc3VzcGVuZChzdHJ1Y3Qg
-ZHJtX2RldmljZSAqZGV2LCBib29sIHJ1bnRpbWUpCj4+ICAgewo+PiAgIAlzdHJ1Y3Qgbm91dmVh
-dV9kcm0gKmRybSA9IG5vdXZlYXVfZHJtKGRldik7Cj4+IEBAIC01NTksOCArNTYwLDEwIEBAIG5v
-dXZlYXVfZG9fc3VzcGVuZChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBib29sIHJ1bnRpbWUpCj4+
-ICAgCQkJcmV0dXJuIHJldDsKPj4gICAJfQo+PiAgIAo+PiAtCU5WX0lORk8oZHJtLCAiZXZpY3Rp
-bmcgYnVmZmVycy4uLlxuIik7Cj4+IC0JdHRtX2JvX2V2aWN0X21tKCZkcm0tPnR0bS5iZGV2LCBU
-VE1fUExfVlJBTSk7Cj4+ICsJaWYgKGRldi0+cGRldikgewo+PiArCQlOVl9JTkZPKGRybSwgImV2
-aWN0aW5nIGJ1ZmZlcnMuLi5cbiIpOwo+PiArCQl0dG1fYm9fZXZpY3RfbW0oJmRybS0+dHRtLmJk
-ZXYsIFRUTV9QTF9WUkFNKTsKPj4gKwl9Cj4+ICAgCj4+ICAgCU5WX0lORk8oZHJtLCAid2FpdGlu
-ZyBmb3Iga2VybmVsIGNoYW5uZWxzIHRvIGdvIGlkbGUuLi5cbiIpOwo+PiAgIAlpZiAoZHJtLT5j
-ZWNoYW4pIHsKPj4gQEAgLTYxMiw4ICs2MTUsOSBAQCBmYWlsX2Rpc3BsYXk6Cj4+ICAgCX0KPj4g
-ICAJcmV0dXJuIHJldDsKPj4gICB9Cj4+ICtFWFBPUlRfU1lNQk9MKG5vdXZlYXVfZG9fc3VzcGVu
-ZCk7Cj4+ICAgCj4+IC1zdGF0aWMgaW50Cj4+ICtpbnQKPj4gICBub3V2ZWF1X2RvX3Jlc3VtZShz
-dHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBib29sIHJ1bnRpbWUpCj4+ICAgewo+PiAgIAlzdHJ1Y3Qg
-bm91dmVhdV9kcm0gKmRybSA9IG5vdXZlYXVfZHJtKGRldik7Cj4+IEBAIC02MzUsNyArNjM5LDgg
-QEAgbm91dmVhdV9kb19yZXN1bWUoc3RydWN0IGRybV9kZXZpY2UgKmRldiwgYm9vbCBydW50aW1l
-KQo+PiAgIAkJbnZpZl9jbGllbnRfcmVzdW1lKCZjbGktPmJhc2UpOwo+PiAgIAl9Cj4+ICAgCj4+
-IC0Jbm91dmVhdV9ydW5fdmJpb3NfaW5pdChkZXYpOwo+PiArCWlmIChkZXYtPnBkZXYpCj4+ICsJ
-CW5vdXZlYXVfcnVuX3ZiaW9zX2luaXQoZGV2KTsKPj4gICAKPj4gICAJaWYgKGRldi0+bW9kZV9j
-b25maWcubnVtX2NydGMpIHsKPj4gICAJCU5WX0lORk8oZHJtLCAicmVzdW1pbmcgZGlzcGxheS4u
-LlxuIik7Cj4+IEBAIC02NDYsNiArNjUxLDcgQEAgbm91dmVhdV9kb19yZXN1bWUoc3RydWN0IGRy
-bV9kZXZpY2UgKmRldiwgYm9vbCBydW50aW1lKQo+PiAgIAo+PiAgIAlyZXR1cm4gMDsKPj4gICB9
-Cj4+ICtFWFBPUlRfU1lNQk9MKG5vdXZlYXVfZG9fcmVzdW1lKTsKPj4gICAKPj4gICBpbnQKPj4g
-ICBub3V2ZWF1X3Btb3BzX3N1c3BlbmQoc3RydWN0IGRldmljZSAqZGV2KQo+PiBkaWZmIC0tZ2l0
-IGEvZHJtL25vdXZlYXVfZHJtLmggYi9kcm0vbm91dmVhdV9kcm0uaAo+PiBpbmRleCA4YWUzNmYy
-NjVmYjguLjg5N2QyOTVkZDFlMyAxMDA2NDQKPj4gLS0tIGEvZHJtL25vdXZlYXVfZHJtLmgKPj4g
-KysrIGIvZHJtL25vdXZlYXVfZHJtLmgKPj4gQEAgLTE3Nyw2ICsxNzcsOCBAQCBub3V2ZWF1X2Ry
-bShzdHJ1Y3QgZHJtX2RldmljZSAqZGV2KQo+PiAgIAo+PiAgIGludCBub3V2ZWF1X3Btb3BzX3N1
-c3BlbmQoc3RydWN0IGRldmljZSAqKTsKPj4gICBpbnQgbm91dmVhdV9wbW9wc19yZXN1bWUoc3Ry
-dWN0IGRldmljZSAqKTsKPj4gK2ludCBub3V2ZWF1X2RvX3N1c3BlbmQoc3RydWN0IGRybV9kZXZp
-Y2UgKmRldiwgYm9vbCBydW50aW1lKTsKPj4gK2ludCBub3V2ZWF1X2RvX3Jlc3VtZShzdHJ1Y3Qg
-ZHJtX2RldmljZSAqZGV2LCBib29sIHJ1bnRpbWUpOwo+PiAgIAo+PiAgICNkZWZpbmUgbm91dmVh
-dV9wbGF0Zm9ybV9kZXZpY2VfY3JlYXRlKHAsIHUpICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICBcCj4+ICAgCW5vdXZlYXVfcGxhdGZvcm1fZGV2aWNlX2NyZWF0ZV8ocCwgc2l6ZW9m
-KCoqdSksICh2b2lkICoqKXUpCj4+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpOb3V2ZWF1IG1haWxpbmcgbGlzdApOb3V2ZWF1QGxpc3RzLmZyZWVkZXNr
-dG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vbm91
-dmVhdQo=
+Am Montag, den 29.12.2014, 10:49 +0800 schrieb Vince Hsu:
+
+[...]
+
+> >> That's a read fence to assure the post of the previous writes through
+> >> Tegra interconnect. (copy-paster from
+> >> https://android.googlesource.com/kernel/tegra.git/+/28b107dcb3aa122de8e94e48af548140d519298f)
+> > I see what it does, the question is more about why this is needed.
+> > What is the Tegra interconnect? According to the TRM the Tegra contains
+> > some standard AXI <-> AHB <-> APB bridges. That a read is needed to
+> > assure the write is posted to the APB bus seems to imply that there is
+> > some write buffering in one of those bridges. Can we get this documented
+> > somewhere?
+> The TRM does mention a read after the write. Check the section 32.2.2.3.
+> 
+Unfortunately this doesn't seem to be included in the public TRM. It
+would be nice if this could be documented either in the next version of
+the TRM or as a public Appnote.
+
+Thanks,
+Lucas
