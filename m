@@ -1,53 +1,61 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v5 12/14] clk: tegra: Add EMC clock driver
-Date: Fri, 2 Jan 2015 18:27:50 +0200
-Message-ID: <20150102162750.GA10073@tbergstrom-lnx.Nvidia.com>
-References: <1416312860-4446-1-git-send-email-tomeu.vizoso@collabora.com>
- <1416312860-4446-13-git-send-email-tomeu.vizoso@collabora.com>
+From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Subject: Re: Tegra 2 T20 NAND Flash Support
+Date: Sat, 03 Jan 2015 20:50:24 +0100
+Message-ID: <1420314624.2169.6.camel@lynxeye.de>
+References: <538E6FB5.5020806@ziswiler.com> <1401866283.2173.3.camel@tellur>
+	 <538EC96A.4050702@ziswiler.com> <20140604144134.GH28484@ulmo>
+	 <1401903129.9454.2.camel@tellur>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1416312860-4446-13-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+In-Reply-To: <1401903129.9454.2.camel@tellur>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, mikko.perttunen-/1wQRMveznE@public.gmane.org, acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Nov 18, 2014 at 01:13:14PM +0100, Tomeu Vizoso wrote:
-> From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Am Mittwoch, den 04.06.2014, 19:32 +0200 schrieb Lucas Stach:
+> Am Mittwoch, den 04.06.2014, 16:41 +0200 schrieb Thierry Reding:
+> > On Wed, Jun 04, 2014 at 09:23:22AM +0200, Marcel Ziswiler wrote:
+> > > On 06/04/2014 09:18 AM, Lucas Stach wrote:
+> > > >I took the Linux Tegra NAND driver from Thierry and cleaned it up quite
+> > > >a bit. It now works with both ONFI and non-ONFI NAND, at least for
+> > > >reading. Writing doesn't quite work yet and I've got side-tracked with
+> > > >other stuff.
+> > > >
+> > > >If you are interested in moving this forward I can put up my WIP patches
+> > > >to some public location.
+> > > 
+> > > Sounds great, yes. That would be perfect, thanks.
+> > > 
+> > > We even once got an universal NAND test infrastructure from Micron based on
+> > > a re-worked Colibri T20 which we could use to validate it with various NAND
+> > > flash parts.
+> > 
+> > Excellent, I would've had a hard time digging up those patches. It's
+> > really been quite a while.
+> > 
+> I've put up a rebased version of the patches at
 > 
-> The driver is currently only tested on Tegra124 Jetson TK1, but should
-> work with other Tegra124 boards, provided that correct EMC tables are
-> provided through the device tree. Older chip models have differing
-> timing change sequences, so they are not currently supported.
+> git://git.pengutronix.de/git/lst/linux.git tegra-nand
 > 
-> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-> 
-> ---
-> 
-> v5:	* Get a pointer to the EMC driver at runtime, to be used when
-> 	  calling the EMC API.
-> 	* Misc. style fixes
-> 	* Fix logic for rounding down to a high rate
-> 
-> v4:	* Adapt to changes in the OF bindings
-> 	* Improve error handling
-> 	* Fix comment style
-> 	* Make static a few more functions
-> 
-> v3:	* Add some locking to protect the registers that are shared with the MC
-> 	  clock
-> 
-> v2:	* Make sure that the clock is properly registered
-> 	* Bail out early from attempts to set the same rate
+For those still interested:
+I've continued to work on this for the last few days and pushed a new
+version of my WIP to the above location.
 
-Thierry,
+It is now in a state where the in-kernel mtd tests seem to be happy with
+it. Also creating/using a filesystem on top of the mtdblock device seems
+to work properly.
 
-How do you want to merge this series? The clock tree part depends on
-tegra_read_ram_code which is introduced earlier in this series.
+I still need to validate that anything using the OOB areas is working
+properly. The last missing feature is BCH ECC support, but that should
+be easy to add.
 
-Cheers,
+I don't know if it still needs some performance tuning. 5MB/s write and
+12,5MB/s read on a Colibri T20 seem pretty slow me, but I have nothing
+to compare with ATM.
+Marcel could you maybe dig out some benchmarks with L4T?
 
-Peter.
+Regards,
+Lucas
