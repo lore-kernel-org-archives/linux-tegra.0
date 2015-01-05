@@ -1,92 +1,63 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v5 12/14] clk: tegra: Add EMC clock driver
-Date: Mon, 5 Jan 2015 14:59:13 +0100
-Message-ID: <20150105135912.GB12010@ulmo.nvidia.com>
-References: <1416312860-4446-1-git-send-email-tomeu.vizoso@collabora.com>
- <1416312860-4446-13-git-send-email-tomeu.vizoso@collabora.com>
- <20150102162750.GA10073@tbergstrom-lnx.Nvidia.com>
+From: Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org>
+Subject: Re: [PATCH] usb: host: ehci-tegra: request deferred probe when
+ failing to get phy
+Date: Mon, 5 Jan 2015 15:12:58 +0100
+Message-ID: <CAAObsKDYSVp_W5Qz_43Lyd=nqfQJPw=ttN1-7ENRX19n79gHnA@mail.gmail.com>
+References: <1419416190-4321-1-git-send-email-vinceh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="JYK4vJDZwFMowpUq"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150102162750.GA10073@tbergstrom-lnx.Nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-tegra@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, mikko.perttunen@kapsi.fi, acourbot@nvidia.com, Mikko Perttunen <mperttunen@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1419416190-4321-1-git-send-email-vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 24 December 2014 at 11:16, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> The commit 1290a958d48e ("usb: phy: propagate __of_usb_find_phy()'s error on
+> failure") changed the condition to return -EPROBE_DEFER to host driver.
+> Originally the Tegra host driver depended on the returned -EPROBE_DEFER to
+> get the phy device later when booting. Now we have to do that explicitly.
 
---JYK4vJDZwFMowpUq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+With this patch, USB works again on this nyan-blaze board.
 
-On Fri, Jan 02, 2015 at 06:27:50PM +0200, Peter De Schrijver wrote:
-> On Tue, Nov 18, 2014 at 01:13:14PM +0100, Tomeu Vizoso wrote:
-> > From: Mikko Perttunen <mperttunen@nvidia.com>
-> >=20
-> > The driver is currently only tested on Tegra124 Jetson TK1, but should
-> > work with other Tegra124 boards, provided that correct EMC tables are
-> > provided through the device tree. Older chip models have differing
-> > timing change sequences, so they are not currently supported.
-> >=20
-> > Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> > Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-> >=20
-> > ---
-> >=20
-> > v5:	* Get a pointer to the EMC driver at runtime, to be used when
-> > 	  calling the EMC API.
-> > 	* Misc. style fixes
-> > 	* Fix logic for rounding down to a high rate
-> >=20
-> > v4:	* Adapt to changes in the OF bindings
-> > 	* Improve error handling
-> > 	* Fix comment style
-> > 	* Make static a few more functions
-> >=20
-> > v3:	* Add some locking to protect the registers that are shared with th=
-e MC
-> > 	  clock
-> >=20
-> > v2:	* Make sure that the clock is properly registered
-> > 	* Bail out early from attempts to set the same rate
->=20
-> Thierry,
->=20
-> How do you want to merge this series? The clock tree part depends on
-> tegra_read_ram_code which is introduced earlier in this series.
+Tested-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 
-I guess the easiest would be to take this all into the Tegra tree. Apart
-=66rom patches 1, 12 and 14 everything would go via that anyway. I'll also
-take some time this week to give the series some review, I don't think I
-have looked at this code at all yet.
+Thanks,
 
-Mike, you "looks good to me"'d patches 1, 12 and 14, does that translate
-to an Acked-by?
+Tomeu
 
-Thierry
-
---JYK4vJDZwFMowpUq
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJUqpiwAAoJEN0jrNd/PrOhuisP/1VhdBHOa0g2GCKTUZHAe7oo
-VBGsyGXdjkvtoUUw1BRLyyZzhXavHuJ/FAmIHoSYTnU8E/97eeI9PsAXJlIh+mwu
-+YkuqGyzmxBH3o1isO68U3OQboOb6sXUmCTUJ6O3zAjJxY2UdY2C+8NmBihHw3uv
-KhVuRe6p0I+Alodh4MZSvbpDZhPWoyYna415J/Lo0Lku0e/XwmWwpNa7MBuLkL/X
-eAf209Vj8kZ/IHmge2g4CTDwDl/nq0Jtk9erANYrwZdi3IhKa/g07ZBZIM0yhS9U
-fLMXIiCmY4S0N5hKMsnjI6v6YrUf9DDnk7JtyRjKvQMFeXjfsZLPpeIG/Ze692Rd
-GNqRg7ydKjb98+ELhZxFpWyLNNA6xXuw1/4EHyT8oPHfBV5p1owGY8ZDzD7esAUY
-wgpSHbXYsl4OfmNM1TjlYGfIIwVpyum5ES+y/C7/RLZBWExDFwY2oSVTCWAoQ6BE
-uEfm/EZPJg7qlg9JeDy+jNnsL1mCqHSwF6YFyc0bIXiOZT2cTBz3ozfVGeSwChQi
-fH7xZlXwNsjrPV9P9bmooLU5ukQdEUsGgcuNpqLSa500fRy72EFoL8Kg6LB7vq7P
-hXasfy2r1Tpx5Kmbtlm0xfA4WOjMkq1/Lo6AwI7u5hL77ccYXXzJyzvatXGek9AQ
-q8AdPMjDj6qnAQWz7y8W
-=FTEm
------END PGP SIGNATURE-----
-
---JYK4vJDZwFMowpUq--
+> Signed-off-by: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> Hi,
+>
+> This fixes a regression found on 3.19-rc1. The USB host can't be probed and
+> the USB failed on Jetson TK1.
+>
+> Thanks,
+> Vince
+>
+>
+>  drivers/usb/host/ehci-tegra.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
+> index 19a9af1b4d74..ff9af29b4e9f 100644
+> --- a/drivers/usb/host/ehci-tegra.c
+> +++ b/drivers/usb/host/ehci-tegra.c
+> @@ -451,7 +451,7 @@ static int tegra_ehci_probe(struct platform_device *pdev)
+>
+>         u_phy = devm_usb_get_phy_by_phandle(&pdev->dev, "nvidia,phy", 0);
+>         if (IS_ERR(u_phy)) {
+> -               err = PTR_ERR(u_phy);
+> +               err = -EPROBE_DEFER;
+>                 goto cleanup_clk_en;
+>         }
+>         hcd->usb_phy = u_phy;
+> --
+> 1.9.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
