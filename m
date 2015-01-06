@@ -1,110 +1,242 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/11] ARM: tegra: add function to control the GPU rail
- clamp
-Date: Tue, 6 Jan 2015 12:15:40 +0100
-Message-ID: <20150106111538.GB31830@ulmo.nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH nouveau 06/11] platform: complete the power up/down
+ sequence
+Date: Tue, 6 Jan 2015 12:36:28 +0100
+Message-ID: <20150106113626.GC31830@ulmo.nvidia.com>
 References: <1419331204-26679-1-git-send-email-vinceh@nvidia.com>
- <1419331204-26679-2-git-send-email-vinceh@nvidia.com>
- <1419426990.2179.7.camel@lynxeye.de>
- <549B7638.2010405@nvidia.com>
- <20150105150932.GG12010@ulmo.nvidia.com>
- <54AB445D.7010303@nvidia.com>
+ <1419331204-26679-7-git-send-email-vinceh@nvidia.com>
+ <1419427385.2179.13.camel@lynxeye.de>
+ <549B79B2.6010301@nvidia.com>
+ <20150105152552.GH12010@ulmo.nvidia.com>
+ <54ABAC09.4080306@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="4SFOXa2GPu3tIq4H"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="wxDdMuZNg1r63Hyj"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <54AB445D.7010303-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, martin.peres-GANU6spQydw@public.gmane.org, seven-FA6nBp6kBxZzu6KWmfFNGwC/G2K4zDHf@public.gmane.org, samuel.pitoiset-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <54ABAC09.4080306@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vince Hsu <vinceh@nvidia.com>
+Cc: Lucas Stach <dev@lynxeye.de>, swarren@wwwdotorg.org, gnurou@gmail.com, bskeggs@redhat.com, martin.peres@free.fr, seven@nimrod-online.com, samuel.pitoiset@gmail.com, nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---4SFOXa2GPu3tIq4H
+--wxDdMuZNg1r63Hyj
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 06, 2015 at 10:11:41AM +0800, Vince Hsu wrote:
+On Tue, Jan 06, 2015 at 05:34:01PM +0800, Vince Hsu wrote:
 >=20
-> On 01/05/2015 11:09 PM, Thierry Reding wrote:
+> On 01/05/2015 11:25 PM, Thierry Reding wrote:
 > >* PGP Signed by an unknown key
 > >
-> >On Thu, Dec 25, 2014 at 10:28:08AM +0800, Vince Hsu wrote:
-> >>On 12/24/2014 09:16 PM, Lucas Stach wrote:
+> >On Thu, Dec 25, 2014 at 10:42:58AM +0800, Vince Hsu wrote:
+> >>On 12/24/2014 09:23 PM, Lucas Stach wrote:
 > >>>Am Dienstag, den 23.12.2014, 18:39 +0800 schrieb Vince Hsu:
-> >>>>The Tegra124 and later Tegra SoCs have a sepatate rail gating register
-> >>>>to enable/disable the clamp. The original function
-> >>>>tegra_powergate_remove_clamping() is not sufficient for the enable
-> >>>>function. So add a new function which is dedicated to the GPU rail
-> >>>>gating. Also don't refer to the powergate ID since the GPU ID makes no
-> >>>>sense here.
+> >>>>This patch adds some missing pieces of the rail gaing/ungating sequen=
+ce that
+> >>>>can improve the stability in theory.
 > >>>>
-> >>>>Signed-off-by: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >>>To be honest I don't see the point of this patch.
-> >>>You are bloating the PMC interface by introducing another exported
-> >>>function that does nothing different than what the current function
-> >>>already does.
+> >>>>Signed-off-by: Vince Hsu <vinceh@nvidia.com>
+> >>>>---
+> >>>>  drm/nouveau_platform.c | 42 +++++++++++++++++++++++++++++++++++++++=
++++
+> >>>>  drm/nouveau_platform.h |  3 +++
+> >>>>  2 files changed, 45 insertions(+)
+> >>>>
+> >>>>diff --git a/drm/nouveau_platform.c b/drm/nouveau_platform.c
+> >>>>index 68788b17a45c..527fe2358fc9 100644
+> >>>>--- a/drm/nouveau_platform.c
+> >>>>+++ b/drm/nouveau_platform.c
+> >>>>@@ -25,9 +25,11 @@
+> >>>>  #include <linux/module.h>
+> >>>>  #include <linux/platform_device.h>
+> >>>>  #include <linux/of.h>
+> >>>>+#include <linux/of_platform.h>
+> >>>>  #include <linux/reset.h>
+> >>>>  #include <linux/regulator/consumer.h>
+> >>>>  #include <soc/tegra/fuse.h>
+> >>>>+#include <soc/tegra/mc.h>
+> >>>>  #include <soc/tegra/pmc.h>
+> >>>>  #include "nouveau_drm.h"
+> >>>>@@ -61,6 +63,9 @@ static int nouveau_platform_power_up(struct nouveau=
+_platform_gpu *gpu)
+> >>>>  	reset_control_deassert(gpu->rst);
+> >>>>  	udelay(10);
+> >>>>+	tegra_mc_flush(gpu->mc, gpu->swgroup, false);
+> >>>>+	udelay(10);
+> >>>>+
+> >>>>  	return 0;
+> >>>>  err_clamp:
+> >>>>@@ -77,6 +82,14 @@ static int nouveau_platform_power_down(struct nouv=
+eau_platform_gpu *gpu)
+> >>>>  {
+> >>>>  	int err;
+> >>>>+	tegra_mc_flush(gpu->mc, gpu->swgroup, true);
+> >>>>+	udelay(10);
+> >>>>+
+> >>>>+	err =3D tegra_powergate_gpu_set_clamping(true);
+> >>>>+	if (err)
+> >>>>+		return err;
+> >>>>+	udelay(10);
+> >>>>+
+> >>>>  	reset_control_assert(gpu->rst);
+> >>>>  	udelay(10);
+> >>>>@@ -91,6 +104,31 @@ static int nouveau_platform_power_down(struct nou=
+veau_platform_gpu *gpu)
+> >>>>  	return 0;
+> >>>>  }
+> >>>>+static int nouveau_platform_get_mc(struct device *dev,
+> >>>>+		struct tegra_mc **mc, unsigned int *swgroup)
+> >>>Uhm, no. If this is needed this has to be a Tegra MC function and not
+> >>>burried into nouveau code. You are using knowledge about the internal
+> >>>workings of the MC driver here.
 > >>>
-> >>>If you need a way to assert the clamp I would have expected you to
-> >>>introduce a common function to do this for all power partitions.
-> >>I thought about adding an tegra_powergate_assert_clamping(), but that
-> >>doesn't make sense to all the power partitions except GPU. Note the
-> >>difference in TRM. Any suggestion for the common function?
-> >I don't think extending the powergate API is useful at this point. We've
-> >long had an open TODO item to replace this with a generic API. I did
-> >some prototyping a while ago to use generic power domains for this, that
-> >way all the details and dependencies between the partitions could be
-> >properly modeled.
+> >>>Also this should probably only take the Dt node pointer as argument and
+> >>>return a something like a tegra_mc_client struct that contains both the
+> >>>MC device pointer and the swgroup so you can pass that to
+> >>>tegra_mc_flush().
+> >>Good idea. I will have something as below in V2 if there is no other
+> >>comments for this.
+> >>
+> >>tegra_mc_client *tegra_mc_find_client(struct device_node *node)
+> >>{
+> >>     ...
+> >>     ret =3D of_parse_phandle_with_args(node, "nvidia,memory-client", .=
+=2E.)
+> >>     ...
+> >>}
+> >>
+> >>There were some discussion about this few weeks ago. I'm not sure wheth=
+er we
+> >>have some conclusion/implementation though. Thierry?
+> >>
+> >>http://lists.infradead.org/pipermail/linux-arm-kernel/2014-December/308=
+703.html
+> >I don't think client is a good fit here. Flushing is done per SWGROUP
+> >(on all clients of the SWGROUP). So I think we'll want something like:
 > >
-> >Can you take a look at my staging/powergate branch here:
+> >	gpu@0,57000000 {
+> >		...
+> >		nvidia,swgroup =3D <&mc TEGRA_SWGROUP_GPU>;
+> >		...
+> >	};
 > >
-> >	https://github.com/thierryreding/linux/commits/staging/powergate
+> >In the DT and return a struct tegra_mc_swgroup along the lines of:
 > >
-> >and see if you can use that instead? The idea is to completely hide the
-> >details of power partitions from drivers and use runtime PM instead.
-> You generic power domains work is exactly what we want for powergate
-> eventually. :) I recall we used your prototyping in somewhere internal tr=
-ee.
-> We have to add more to complete it though, e.g. power domain dependency, =
-mc
-> flush, and clamping register difference like this patch does.
+> >	struct tegra_mc_client {
+> >		unsigned int id;
+> >		unsigned int swgroup;
+> >
+> >		struct list_head list;
+> >	};
+> >
+> >	struct tegra_mc_swgroup {
+> >		struct list_head clients;
+> >		unsigned int id;
+> >	};
+> >
+> >Where tegra_mc_swgroup.clients is a list of struct tegra_mc_client
+> >structures, each representing a memory client pertaining to the
+> >SWGROUP.
+> Based on your suggestion above, I created a struct tegra_mc_swgroup:
 >=20
-> But I have a question here. Since the GK20A is not powered on/off by the =
-PMC
-> except the clamping control, and GK20A has its own power rail, do we real=
-ly
-> want to hide the power sequence in the generic powergate code? We still h=
-ave
-> to control the voltage level in the GK20A driver through the regulator
-> framework. It seems weird to me if we put the regulator_{enable|disable}
-> somewhere other than the GK20A driver.
+> struct tegra_mc_swgroup {
+>     unsigned int id;
+>     struct tegra_mc *mc;
+>     struct list_head head;
+>     struct list_head clients;
+> };
+>=20
+> And added the list head in the struct tegra_mc_soc.
+>=20
+> struct tegra_mc_soc {
+>     struct tegra_mc_client *clients;
+>     unsigned int num_clients;
+>=20
+>     struct tegra_mc_hr *hr_clients;
+>     unsigned int num_hr_clients;
 
-I think we want both. The power domain to control the power partition
-and the regulator in the gk20a driver for the voltage control.
+Why do you still need these?
+
+>     struct list_head swgroups;
+
+This doesn't belong in struct tegra_mc_soc because that's meant to be
+static information about the specific variant of the memory-controller.
+Put it in struct tegra_mc instead.
+
+> ...
+>=20
+> Created one function to build the swgroup list.
+>=20
+> static int tegra_mc_build_swgroup(struct tegra_mc *mc)
+> {
+>     int i;
+>=20
+>     for (i =3D 0; i < mc->soc->num_clients; i++) {
+>         struct tegra_mc_swgroup *sg;
+>         bool found =3D false;
+>=20
+>         list_for_each_entry(sg, &mc->soc->swgroups, head) {
+>             if (sg->id =3D=3D mc->soc->clients[i].swgroup) {
+>                 found =3D true;
+>                 break;
+>             }
+>         }
+
+Can't you use your new tegra_mc_find_swgroup() function here? That way
+you could turn it into something slightly more readable:
+
+	unsigned int swgroup =3D mc->soc->clients[i].swgroup;
+	struct tegra_mc_swgroup *group;
+
+	group =3D tegra_mc_find_swgroup(mc, swgroup);
+	if (!group) {
+		/* allocates and adds to mc->swgroups */
+		group =3D tegra_mc_add_swgroup(mc, swgroup);
+		if (!group)
+			return -ENOMEM;
+	}
+
+	list_add_tail(&group->list, &mc->swgroups);
+
+where tegra_mc_add_swgroup() is something like this:
+
+	group =3D devm_kzalloc(mc->dev, sizeof(*group), GFP_KERNEL);
+	if (!group)
+		return NULL;
+
+	INIT_LIST_HEAD(&group->clients);
+	group->mc =3D mc;
+	group->id =3D id;
+
+I don't like very much how this duplicates information that is already
+available in tegra_mc_soc, but I can't think of a better way to couple
+the SWGROUP ID with the struct tegra_mc *, so I think we'll have to
+proceed with something like the above.
 
 Thierry
 
---4SFOXa2GPu3tIq4H
+--wxDdMuZNg1r63Hyj
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUq8PaAAoJEN0jrNd/PrOhz0MP/1MgOKcz9Jo5DcFOCfC9muPc
-BKcPvF+LI4YWBp4l/qKHik+CnYosK1QKAr/1D8AJ4ijyJaBiMIxn62TeKlXRJh6R
-K2xZYKBC8cRP8U/omAarKkxsqmzp2jYuFsAc6qbRoysGtnvUGpvERRZv3nbPMqjt
-giEy5XM1sctOu5+xk5gYmbnSXLIknr1jHKl10wpVfvfiFMWnIQXsL+DKBuxpbjPF
-gYGF10gu91M0/NZdoBGxkrp2P/vFxIwcm7dLdTHbZ3mqXoOj5kyIaPkV/UfHjOp8
-AF6iNV0THh+eQhYjLHwklrOQtSuOlxq1wim0f2QbCFCmadeS8SUEW1h/qRBa4O+A
-s/Q/IwOsmPMlpnGcz3TFcQmmZB8ZgEe5fdKFv6epPZbS1EQqbUIjruMsP3NgAtuy
-erK3VB0OsUjgF11U3QBJdackXmDighCmav8nBg8tX44DbGvmJY/IxV3QVeOFhvqj
-FjlOA19Nw+LqIAdz1vMdu7qhV7ED8FKXZwZaONHKGKjRYRZy/uC6oh4CTtn161nv
-RfRdYmjidmDZd8hh6aTGT0M0Akd3U9GAYnJruTxvbw4ALzeRn2yqFxtR5L1uBgor
-+Tj0iteB2JIlGVgcvXhkrySWR3K31TUktwVcNG/oZIQkgADV0/sVpQuk704dH0Bm
-VbLFTg1XXcbuthOtbZWM
-=4+is
+iQIcBAEBAgAGBQJUq8i6AAoJEN0jrNd/PrOhaX4P/j4vAmLwv2hSDrP90cWpuZqb
++VME9sAkdr4uK29fkcEIh8a2MOPXKmiHRL4QoFDtNagZwGHGn32VQ/B3jdCMHCwK
+IcqJwFrSvx+OaLBdj7tB587xUbI2EStCd6Hrfiy698pdshtujByybpvFDooEFwa9
+AivBmxSuP3UO+PyQR9kKEL2L0kvyxR1vKcQYgLCx9rfnpfrE6G+dsZ2WZ5rJGMiC
+1FLv5Y0IMQXgybagds2+6oDeJl+4mCTgFqcOSDrP53gut9CBY4fZZJ+1YNS2vpA+
+AXFdidgmp0SXB0+vb1aZceZ1NaA0CSYlocZWpyg+GEcNP7rVXPq+LLupUHze+/Iq
+RUkQVGz1TwYV2tIM2z5nWm3eLqslVKD+PzGRph0PWhuQ7qaRBYF2TQ/TtJm94+L5
+QcaTbGIxyXjIy05zJG+HrWQzGhbFt8RWn0w0sdGb/Ao5ONxJlmOICM7gvoFxL4nd
+kdKFHr9mng2nSnt6MZSIEgPCWHLeDBQi24WhDXh9i0jPe6p0vMiRn9VnsYSo5PSr
+U8tXRpnr+N8E192OSjr9jocueOI1VdPIV25VhBw730FQAsAPYpVCsPY8oEVzkHUH
+Y4hUHLZkHLPotimLVUgYYVyVxbf5Hc8RSJrdIR4Vd64kUs+YDrSUriedrx1F7ZbO
+S03wCDO0wRQyw1kQ8nd5
+=6N0V
 -----END PGP SIGNATURE-----
 
---4SFOXa2GPu3tIq4H--
+--wxDdMuZNg1r63Hyj--
