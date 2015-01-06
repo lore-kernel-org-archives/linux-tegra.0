@@ -1,49 +1,43 @@
-From: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-Subject: Re: [PATCH v5 3/3] ARM: tegra: Add thermal reset (thermtrip) support
- to PMC
-Date: Tue, 06 Jan 2015 17:56:21 +0200
-Message-ID: <54AC05A5.5040401@kapsi.fi>
-References: <1420541578-27968-1-git-send-email-mikko.perttunen@kapsi.fi> <1420541578-27968-4-git-send-email-mikko.perttunen@kapsi.fi> <20150106151427.GQ31830@ulmo.nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/4] ARM: tegra: rely on bootloader pinmux programming
+ on nyan-big
+Date: Tue, 06 Jan 2015 10:09:04 -0700
+Message-ID: <54AC16B0.5050703@wwwdotorg.org>
+References: <1420540653-14816-1-git-send-email-tomeu.vizoso@collabora.com> <1420540653-14816-2-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150106151427.GQ31830@ulmo.nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: swarren@wwwdotorg.org, gnurou@gmail.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, wni@nvidia.com, Mikko Perttunen <mperttunen@nvidia.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1420540653-14816-2-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/06/2015 05:14 PM, Thierry Reding wrote:
-> On Tue, Jan 06, 2015 at 12:52:58PM +0200, Mikko Perttunen wrote:
->> From: Mikko Perttunen <mperttunen@nvidia.com>
->>
->> This adds a device tree controlled option to enable PMC-based
->> thermal reset in overheating situations. Thermtrip is supported on
->> Tegra30, Tegra114 and Tegra124. The thermal reset only works when
->> the thermal sensors are calibrated, so a soctherm driver is also
->> required.
->>
->> The thermtrip event is triggered by the soctherm block, and all
->> soctherm sensors default to showing a temperature of zero Celsius
->> before they are initialized. Because of this, it is safe to initialize
->> thermtrip and soctherm in any order.
->>
->> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
->> ---
->>   drivers/soc/tegra/pmc.c | 107 ++++++++++++++++++++++++++++++++++++++++++++++++
->>   1 file changed, 107 insertions(+)
+On 01/06/2015 03:37 AM, Tomeu Vizoso wrote:
+> Following 6dbaff2b, the kernel expects that the bootloader has correctly
+> programmed the Tegra pinmux.
 >
-> This looks good to me. I'm not sure if I asked before, but can this be
-> tested? Can we somehow trick thermtrip into reporting a temperature that
-> would trigger this?
->
-> Thierry
->
+> DTs for the Jetson and the Venice2 had been updated already but this one
+> was left behind.
 
-Yep, you can find a program here: 
-https://gist.github.com/cyndis/66126c9c176b5f94a76f
+So this setup is true for NVIDIA-controlled development/reference boards 
+where we've ensured that the bootloader sets up 100% of the pinmux.
 
-It sets the thermtrip threshold to zero degrees.
+However, I know that Coreboot on this board doesn't set up everything in 
+the pinmux, and since it's in r/o flash never will. As such, I'm not 
+sure this change is safe for this board. That is, unless you want to 
+force upstream kernels to be booted via a chain-loaded path: Coreboot 
+(r/o) -> U-Boot (r/w with full pinmux setup) -> kernel.
 
-Mikko
+> Have tested this with the stock vendor firmware (coreboot) and have found no
+> issues.
+
+There are presumably a bunch of features which aren't yet supported 
+upstream, and hence you couldn't test though? That means we might find 
+that parts of the pinmux aren't yet programmed but need to be to enable 
+those features.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
