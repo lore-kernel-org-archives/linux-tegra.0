@@ -1,70 +1,76 @@
-From: Vince Hsu <vinceh@nvidia.com>
-Subject: Re: [Nouveau] [PATCH nouveau 09/11] drm: export some variable and
- functions to resue the PM functions
-Date: Tue, 6 Jan 2015 20:27:06 +0800
-Message-ID: <54ABD49A.6080501@nvidia.com>
-References: <1419331204-26679-1-git-send-email-vinceh@nvidia.com> <1419331204-26679-10-git-send-email-vinceh@nvidia.com> <54A20F4D.4040100@gmail.com> <54A2198A.4000707@nvidia.com> <20150105153252.GI12010@ulmo.nvidia.com> <CAAVeFuK-SgUbtHADX4-pXN5_ayzvEd+1KxJOBcRe2tmDfHaLEA@mail.gmail.com> <20150106114953.GD31830@ulmo.nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] dmaengine: tegra: add slave capabilities reporting
+Date: Tue, 6 Jan 2015 13:56:18 +0100
+Message-ID: <20150106125617.GE31830@ulmo.nvidia.com>
+References: <alpine.DEB.2.02.1501060640220.28771@utopia.booyaka.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="//IivP0gvsAy3Can"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150106114953.GD31830@ulmo.nvidia.com>
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.02.1501060640220.28771@utopia.booyaka.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Emil Velikov <emil.l.velikov@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Ben Skeggs <bskeggs@redhat.com>, Martin Peres <martin.peres@free.fr>, Roy Spliet <seven@nimrod-online.com>, samuel.pitoiset@gmail.com, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Paul Walmsley <paul@pwsan.com>
+Cc: Vinod Koul <vinod.koul@intel.com>, Paul Walmsley <pwalmsley@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Dan Williams <dan.j.williams@intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 01/06/2015 07:49 PM, Thierry Reding wrote:
-> * PGP Signed by an unknown key
->
-> On Mon, Jan 05, 2015 at 08:50:18PM +0100, Alexandre Courbot wrote:
->> On Mon, Jan 5, 2015 at 4:32 PM, Thierry Reding <thierry.reding@gmail.com> wrote:
->>> On Tue, Dec 30, 2014 at 11:18:34AM +0800, Vince Hsu wrote:
->>>> Hi Emil,
->>>>
->>>> On 12/30/2014 10:34 AM, Emil Velikov wrote:
->>>>> On 23/12/14 10:40, Vince Hsu wrote:
->>>>>> This patch adds some checks in the suspend/resume functions to distinguish
->>>>>> the dGPU and mobile GPU and exports some variables/functions so that the
->>>>>> nouveau platform device can reuse them.
->>>>>>
->>>>> Hi Vince,
->>>>>
->>>>> Afaiu one needs to export a symbol as it's used by another module or
->>>>> subsystem. With the follow up two patches you are not doing either one,
->>>>> so I'd assume that you can just omit the EXPORT_* changes.
->>>> The nouveau platform device driver is built as another module -
->>>> nouveau_platform.ko. :)
->>> I'd like to hear the opinion of the nouveau people and Alex, but I'd
->>> very much prefer if nouveau_platform.o was simply linked into the
->>> nouveau.ko module. I don't see any good reason to keep it separate.
->> Yep, I agree. The decision to host platform support in a separate
->> module looks misleaded if it results in additional exports that we
->> would otherwise avoid. IIUC I did this to be able to use the module
->> convenience macros to register the platform driver.
->>
->>> Something like the attached patch (untested) ought to do it.
->> This patch alone won't be enough for the reason I mentioned above.
->> However, if Vince doesn't mind handling the platform driver
->> registration manually in nouveau_drm_init/nouveau_drm_exit, I agree
->> this would be the way to go.
-> If we do the conversion to generic power domains, the only Tegra-
-> specific API remaining will be the access to the fuse registers for the
-> speedo value. At that point we wouldn't need the ARCH_TEGRA dependency
-> any longer and could always build the platform driver along with the PCI
-> driver.
-Do we really want the platform driver always built with the PCI driver even
-there is no dependency between them. Actually I have some patches to
-build the platform driver with !CONFIG_PCI and would like to post them maybe
-later.
+--//IivP0gvsAy3Can
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Vince
+On Tue, Jan 06, 2015 at 06:44:56AM +0000, Paul Walmsley wrote:
+>=20
+> After commit ecc19d17868be9c9f8f00ed928791533c420f3e0 ("dmaengine: Add
+> a warning for drivers not using the generic slave caps retrieval"),
+> the Tegra APB DMA driver causes this warning during boot:
+>=20
+> WARNING: CPU: 0 PID: 1 at drivers/dma/dmaengine.c:830 dma_async_device_re=
+gister+0x294/0x538()
+> this driver doesn't support generic slave capabilities reporting
+>=20
+> Fix by setting the appropriate reporting structure fields that are
+> passed to dma_async_device_register().
+>=20
+> Signed-off-by: Paul Walmsley <paul@pwsan.com>
+> Cc: Paul Walmsley <pwalmsley@nvidia.com>
+> Cc: Laxman Dewangan <ldewangan@nvidia.com>
+> Cc: Vinod Koul <vinod.koul@intel.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Stephen Warren <swarren@wwwdotorg.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> ---
+> Applies on next-20150105.  Boot-tested on Tegra132 Norrin FFD
+> (with a few unrelated patches not yet in mainline to get the board to=20
+> boot)
 
->
-> I guess we could do that even now if we simply #ifdef the various Tegra-
-> specific parts. That in turn would have the advantage that we don't need
-> to #ifdef the driver registration code. And it would help separate
-> things in case anybody wanted to use one of the SoC GPUs in a non-Tegra
-> SoC.
+Tested also on the Jetson TK1 and it fixes the same warning there:
+
+Tested-by: Thierry Reding <treding@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--//IivP0gvsAy3Can
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUq9txAAoJEN0jrNd/PrOhbAwP/ROKNrxF/6CykfvEbKzroMvo
+EzOmLHErWJveQzvLM8aWNtn/QkOSiN/uwuGFoozBrVCG5aP16xqHb7kiK06sk35V
+0A3YK935+x4fR/CccVbWd9ry6W00NfutswEKfLDJBENtHwW2/UjcvLHreOTXfcnp
+Oj+cvUqh869Vwk6TC3i+NbXaXg9lsxE4UJTIJNHvKiR171aYksEgRlbtoqMI7YdX
+BrOWzcDNkzumluU91zZEJhPmn0T8Hjig1nR0BkKKKR7FkhN7rVymB5UPzu5YBqnF
++2/gYNFzo3/fngXM/cGnEMQs7Zdh93cmn9aEqy2DpDgrBSEz8GBX+hGuEaGle3pM
+h0iy9WfVY2sr8lwqTn+igq7WZ2jHOhwV2wQ9ybushPr0bYZrsqgM8hhYl9k/FdRR
+t85Hn5tHR0jc1OEZKqte96uXkmvM3vNYvx9XhzM63LqklH8hG4HY2zQ607jFavPG
++uJhF/7g0NdIFTwmRvv6zovg7h8IcSLT9Kbj1WNKIPRJ9kzYQMq0P+Nplqy10M5c
+7eCJINPsuWwEP6Gisl7KSDvezimAbSDoKWiTNvjl/a2aYpN6gDSPaXQuMV7putPZ
+9H6WAv7zjlHYDCn5Z2hXcjHrbD3dr5Mm73BAxPb36cy6RS9clLAPGNjcsoYtLW0C
+FcTNiKwO95gGCVWt2Jd3
+=jwGI
+-----END PGP SIGNATURE-----
+
+--//IivP0gvsAy3Can--
