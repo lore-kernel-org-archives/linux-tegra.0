@@ -1,136 +1,349 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 2/11] memory: tegra: add mc flush support
-Date: Tue, 6 Jan 2015 15:18:22 +0100
-Message-ID: <20150106141821.GJ31830@ulmo.nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH nouveau 06/11] platform: complete the power
+ up/down sequence
+Date: Tue, 6 Jan 2015 15:24:15 +0100
+Message-ID: <20150106142412.GL31830@ulmo.nvidia.com>
 References: <1419331204-26679-1-git-send-email-vinceh@nvidia.com>
- <1419331204-26679-3-git-send-email-vinceh@nvidia.com>
+ <1419331204-26679-7-git-send-email-vinceh@nvidia.com>
+ <1419427385.2179.13.camel@lynxeye.de> <549B79B2.6010301@nvidia.com>
+ <20150105152552.GH12010@ulmo.nvidia.com>
+ <54ABAC09.4080306@nvidia.com>
+ <20150106113626.GC31830@ulmo.nvidia.com>
+ <54ABD14D.30003@nvidia.com>
+ <20150106135551.GI31830@ulmo.nvidia.com>
+ <20150106141948.GA18598@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="JsihDCElWRmQcbOr"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1419331204-26679-3-git-send-email-vinceh@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vince Hsu <vinceh@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: gnurou@gmail.com, bskeggs@redhat.com, martin.peres@free.fr, seven@nimrod-online.com, samuel.pitoiset@gmail.com, nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============0494434204=="
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <20150106141948.GA18598-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, seven-FA6nBp6kBxZzu6KWmfFNGwC/G2K4zDHf@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---JsihDCElWRmQcbOr
+--===============0494434204==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="FnOKg9Ah4tDwTfQS"
+Content-Disposition: inline
+
+
+--FnOKg9Ah4tDwTfQS
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 23, 2014 at 06:39:55PM +0800, Vince Hsu wrote:
-> The flush operation of memory clients is needed for various IP blocks in
-> the Tegra SoCs to perform a clean reset.
+On Tue, Jan 06, 2015 at 10:19:49PM +0800, Vince Hsu wrote:
+> On 02:55:52PM Jan 06, Thierry Reding wrote:
+> > * PGP Signed by an unknown key
+> >=20
+> > On Tue, Jan 06, 2015 at 08:13:01PM +0800, Vince Hsu wrote:
+> > >=20
+> > > On 01/06/2015 07:36 PM, Thierry Reding wrote:
+> > > >> Old Signed by an unknown key
+> > > >
+> > > >On Tue, Jan 06, 2015 at 05:34:01PM +0800, Vince Hsu wrote:
+> > > >>On 01/05/2015 11:25 PM, Thierry Reding wrote:
+> > > >>>>Old Signed by an unknown key
+> > > >>>On Thu, Dec 25, 2014 at 10:42:58AM +0800, Vince Hsu wrote:
+> > > >>>>On 12/24/2014 09:23 PM, Lucas Stach wrote:
+> > > >>>>>Am Dienstag, den 23.12.2014, 18:39 +0800 schrieb Vince Hsu:
+> > > >>>>>>This patch adds some missing pieces of the rail gaing/ungating =
+sequence that
+> > > >>>>>>can improve the stability in theory.
+> > > >>>>>>
+> > > >>>>>>Signed-off-by: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > > >>>>>>---
+> > > >>>>>>  drm/nouveau_platform.c | 42 +++++++++++++++++++++++++++++++++=
++++++++++
+> > > >>>>>>  drm/nouveau_platform.h |  3 +++
+> > > >>>>>>  2 files changed, 45 insertions(+)
+> > > >>>>>>
+> > > >>>>>>diff --git a/drm/nouveau_platform.c b/drm/nouveau_platform.c
+> > > >>>>>>index 68788b17a45c..527fe2358fc9 100644
+> > > >>>>>>--- a/drm/nouveau_platform.c
+> > > >>>>>>+++ b/drm/nouveau_platform.c
+> > > >>>>>>@@ -25,9 +25,11 @@
+> > > >>>>>>  #include <linux/module.h>
+> > > >>>>>>  #include <linux/platform_device.h>
+> > > >>>>>>  #include <linux/of.h>
+> > > >>>>>>+#include <linux/of_platform.h>
+> > > >>>>>>  #include <linux/reset.h>
+> > > >>>>>>  #include <linux/regulator/consumer.h>
+> > > >>>>>>  #include <soc/tegra/fuse.h>
+> > > >>>>>>+#include <soc/tegra/mc.h>
+> > > >>>>>>  #include <soc/tegra/pmc.h>
+> > > >>>>>>  #include "nouveau_drm.h"
+> > > >>>>>>@@ -61,6 +63,9 @@ static int nouveau_platform_power_up(struct n=
+ouveau_platform_gpu *gpu)
+> > > >>>>>>  	reset_control_deassert(gpu->rst);
+> > > >>>>>>  	udelay(10);
+> > > >>>>>>+	tegra_mc_flush(gpu->mc, gpu->swgroup, false);
+> > > >>>>>>+	udelay(10);
+> > > >>>>>>+
+> > > >>>>>>  	return 0;
+> > > >>>>>>  err_clamp:
+> > > >>>>>>@@ -77,6 +82,14 @@ static int nouveau_platform_power_down(struc=
+t nouveau_platform_gpu *gpu)
+> > > >>>>>>  {
+> > > >>>>>>  	int err;
+> > > >>>>>>+	tegra_mc_flush(gpu->mc, gpu->swgroup, true);
+> > > >>>>>>+	udelay(10);
+> > > >>>>>>+
+> > > >>>>>>+	err =3D tegra_powergate_gpu_set_clamping(true);
+> > > >>>>>>+	if (err)
+> > > >>>>>>+		return err;
+> > > >>>>>>+	udelay(10);
+> > > >>>>>>+
+> > > >>>>>>  	reset_control_assert(gpu->rst);
+> > > >>>>>>  	udelay(10);
+> > > >>>>>>@@ -91,6 +104,31 @@ static int nouveau_platform_power_down(stru=
+ct nouveau_platform_gpu *gpu)
+> > > >>>>>>  	return 0;
+> > > >>>>>>  }
+> > > >>>>>>+static int nouveau_platform_get_mc(struct device *dev,
+> > > >>>>>>+		struct tegra_mc **mc, unsigned int *swgroup)
+> > > >>>>>Uhm, no. If this is needed this has to be a Tegra MC function an=
+d not
+> > > >>>>>burried into nouveau code. You are using knowledge about the int=
+ernal
+> > > >>>>>workings of the MC driver here.
+> > > >>>>>
+> > > >>>>>Also this should probably only take the Dt node pointer as argum=
+ent and
+> > > >>>>>return a something like a tegra_mc_client struct that contains b=
+oth the
+> > > >>>>>MC device pointer and the swgroup so you can pass that to
+> > > >>>>>tegra_mc_flush().
+> > > >>>>Good idea. I will have something as below in V2 if there is no ot=
+her
+> > > >>>>comments for this.
+> > > >>>>
+> > > >>>>tegra_mc_client *tegra_mc_find_client(struct device_node *node)
+> > > >>>>{
+> > > >>>>     ...
+> > > >>>>     ret =3D of_parse_phandle_with_args(node, "nvidia,memory-clie=
+nt", ...)
+> > > >>>>     ...
+> > > >>>>}
+> > > >>>>
+> > > >>>>There were some discussion about this few weeks ago. I'm not sure=
+ whether we
+> > > >>>>have some conclusion/implementation though. Thierry?
+> > > >>>>
+> > > >>>>http://lists.infradead.org/pipermail/linux-arm-kernel/2014-Decemb=
+er/308703.html
+> > > >>>I don't think client is a good fit here. Flushing is done per SWGR=
+OUP
+> > > >>>(on all clients of the SWGROUP). So I think we'll want something l=
+ike:
+> > > >>>
+> > > >>>	gpu@0,57000000 {
+> > > >>>		...
+> > > >>>		nvidia,swgroup =3D <&mc TEGRA_SWGROUP_GPU>;
+> > > >>>		...
+> > > >>>	};
+> > > >>>
+> > > >>>In the DT and return a struct tegra_mc_swgroup along the lines of:
+> > > >>>
+> > > >>>	struct tegra_mc_client {
+> > > >>>		unsigned int id;
+> > > >>>		unsigned int swgroup;
+> > > >>>
+> > > >>>		struct list_head list;
+> > > >>>	};
+> > > >>>
+> > > >>>	struct tegra_mc_swgroup {
+> > > >>>		struct list_head clients;
+> > > >>>		unsigned int id;
+> > > >>>	};
+> > > >>>
+> > > >>>Where tegra_mc_swgroup.clients is a list of struct tegra_mc_client
+> > > >>>structures, each representing a memory client pertaining to the
+> > > >>>SWGROUP.
+> > > >>Based on your suggestion above, I created a struct tegra_mc_swgroup:
+> > > >>
+> > > >>struct tegra_mc_swgroup {
+> > > >>     unsigned int id;
+> > > >>     struct tegra_mc *mc;
+> > > >>     struct list_head head;
+> > > >>     struct list_head clients;
+> > > >>};
+> > > >>
+> > > >>And added the list head in the struct tegra_mc_soc.
+> > > >>
+> > > >>struct tegra_mc_soc {
+> > > >>     struct tegra_mc_client *clients;
+> > > >>     unsigned int num_clients;
+> > > >>
+> > > >>     struct tegra_mc_hr *hr_clients;
+> > > >>     unsigned int num_hr_clients;
+> > > >Why do you still need these?
+> > > This part is added in "[PATCH 2/11] memory: tegra: add mc flush suppo=
+rt" and
+> > > "[PATCH 3/11] memory: tegra: add flush operation for Tegra124 memory
+> > > clients"
+> > > for the hotreset registers.
+> >=20
+> > Right. Perhaps calling this structure tegra_mc_hotreset and the
+> > variables *_hotresets would be a good idea to clarify that they aren't
+> > actually per-client but per-SWGROUP.
+> Okay.
 >=20
-> Signed-off-by: Vince Hsu <vinceh@nvidia.com>
-> ---
->  drivers/memory/tegra/mc.c | 21 +++++++++++++++++++++
->  include/soc/tegra/mc.h    | 23 ++++++++++++++++++++++-
->  2 files changed, 43 insertions(+), 1 deletion(-)
+> >=20
+> > > >>Created one function to build the swgroup list.
+> > > >>
+> > > >>static int tegra_mc_build_swgroup(struct tegra_mc *mc)
+> > > >>{
+> > > >>     int i;
+> > > >>
+> > > >>     for (i =3D 0; i < mc->soc->num_clients; i++) {
+> > > >>         struct tegra_mc_swgroup *sg;
+> > > >>         bool found =3D false;
+> > > >>
+> > > >>         list_for_each_entry(sg, &mc->soc->swgroups, head) {
+> > > >>             if (sg->id =3D=3D mc->soc->clients[i].swgroup) {
+> > > >>                 found =3D true;
+> > > >>                 break;
+> > > >>             }
+> > > >>         }
+> > > >Can't you use your new tegra_mc_find_swgroup() function here? That w=
+ay
+> > > >you could turn it into something slightly more readable:
+> > > The tegra_mc_build_swgroup() is called during driver probe, and after=
+ that
+> > > the swgroup list is established and then the tegra_mc_find_swgroup() =
+can
+> > > work.
+> >=20
+> > But you can reuse tegra_mc_find_swgroup() instead of open-coding it to
+> > search the partial list. The code will be exactly the same, won't it?
+> That depends on how you define the tegra_mc_find_swgroup().
 >=20
-> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-> index fe3c44e7e1d1..a2928b4b26fe 100644
-> --- a/drivers/memory/tegra/mc.c
-> +++ b/drivers/memory/tegra/mc.c
-> @@ -62,6 +62,27 @@ static const struct of_device_id tegra_mc_of_match[] =
-=3D {
->  };
->  MODULE_DEVICE_TABLE(of, tegra_mc_of_match);
-> =20
-> +int tegra_mc_flush(struct tegra_mc *mc, unsigned int swgroup, bool enabl=
-e)
-> +{
-> +	int i;
-> +	const struct tegra_mc_hr *client;
-> +
-> +	if (!mc || !mc->soc->hr_clients ||
-> +			!mc->soc->ops || !mc->soc->ops->flush)
-> +		return -EINVAL;;
-> +
-> +	client =3D mc->soc->hr_clients;
-> +
-> +	for (i =3D 0; i < mc->soc->num_hr_clients; i++, client++) {
-> +		if (swgroup =3D=3D client->swgroup) {
-> +			return mc->soc->ops->flush(mc, client, enable);
-> +		}
-> +	}
-> +
-> +	return -EINVAL;
-> +}
-> +EXPORT_SYMBOL(tegra_mc_flush);
+> >=20
+> > > >	unsigned int swgroup =3D mc->soc->clients[i].swgroup;
+> > > >	struct tegra_mc_swgroup *group;
+> > > >
+> > > >	group =3D tegra_mc_find_swgroup(mc, swgroup);
+> > > The tegra_mc_find_swgroup() is expected to be called outside the mc d=
+river
+> > > and
+> > > can only take the device node as argument because other drivers do no=
+t have
+> > > the mc instance information unless they call tegra_mc_find_swgroup() =
+or
+> > > tegra_mc_find_client().
+> >=20
+> > You can do that by making a low-level function that works on the struct
+> > tegra_mc * and an unsigned int swgroup which is only used internally and
+> > then wrap a public function around it that deals with looking up the
+> > struct tegra_mc * and SWGROUP ID.
+> Now the tegra_mc_find_swgroup() looks like below:
+>=20
+> struct tegra_mc_swgroup *tegra_mc_find_swgroup(struct device_node *node) =
+         =20
+> {                                                                        =
+         =20
+>     struct of_phandle_args args;                                         =
+         =20
+>     struct platform_device *pdev;                                        =
+         =20
+>     struct tegra_mc *mc;                                                 =
+         =20
+>     struct tegra_mc_swgroup *sg;                                         =
+         =20
+>     int ret;                                                             =
+         =20
+>                                                                          =
+         =20
+>     ret =3D of_parse_phandle_with_fixed_args(node, "nvidia,swgroup",     =
+           =20
+>                 1, 0, &args);                                            =
+         =20
+>     if (ret)                                                             =
+         =20
+>         return ERR_PTR(ret);                                             =
+         =20
+>                                                                          =
+         =20
+>     pdev =3D of_find_device_by_node(args.np);                            =
+           =20
+>     if (!pdev)                                                           =
+         =20
+>         return NULL;                                                     =
+         =20
+>                                                                          =
+         =20
+>     mc =3D platform_get_drvdata(pdev);                                   =
+           =20
+>     if (!mc)                                                             =
+         =20
+>         return NULL;                                                     =
+         =20
+>                                                                          =
+         =20
+>     list_for_each_entry(sg, &mc->soc->swgroups, head) {=20
+>         if (sg->id =3D=3D args.args[0])                                  =
+             =20
+>             return sg;                                                   =
+         =20
+>     }                                                                    =
+         =20
+>                                                                          =
+         =20
+>     return NULL;                                                         =
+         =20
+> }                                                                        =
+         =20
+> EXPORT_SYMBOL(tegra_mc_find_swgroup);    =20
+>=20
+> I will add a find_swgroup() as internal funcion and add the add_swgroup()
+> per your suggestion. And keep the tegra_mc_find_swgroup() public. Is that
+> okay for you?
 
-Like Lucas already mentioned in response to another patch, having a
-boolean "enable" argument is suboptimal here. Now according to
-documentation the proper reset sequence for clients is something like
-this:
-
-	1) set the FLUSH_ENABLE bit for the client
-	2) poll the FLUSH_DONE bit for the client
-	3) assert reset to the client using the CAR
-	4) deassert reset to the client using the CAR
-	5) clear the FLUSH_ENABLE bit for the client
-
-This is really inconvenient because we can't flush the client using a
-single operation. So I think we'll need two functions here, something
-like: tegra_mc_flush_enable/disable(), or tegra_mc_flush_{,de}assert().
-Or maybe even: tegra_mc_reset_{,de}assert() to mirror the reset
-controller API. I suppose we could even export it using the reset
-controller framework.
-
-Doing so would allow us to have power domain DT nodes like this:
-
-	pmc@0,7000e400 {
-		power-domains {
-			...
-
-			gpu {
-				resets =3D <&tegra_car 184>,
-					 <&mc TEGRA_SWGROUP_GPU>;
-				reset-names =3D "module", "client";
-			};
-
-			...
-		};
-	};
-
-The PMC driver could then grab the "module" and "client" resets and do
-something like this:
-
-	reset_control_assert(powergate->rst_client);
-	reset_control_assert(powergate->rst_module);
-	reset_control_deassert(powergate->rst_module);
-	reset_control_deassert(powergate->rst_client);
-
-Optionally the above could be extended with a reset_control_status()-
-loop. Alternatively reset_control_assert() would block until the
-FLUSH_DONE bit is set.
-
-Stephen, Peter, any thoughts on the above?
+Sounds good.
 
 Thierry
 
---JsihDCElWRmQcbOr
+--FnOKg9Ah4tDwTfQS
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUq+6tAAoJEN0jrNd/PrOhB/kP/2Aw0TEJzxlWt8h14bn0gjPZ
-n0OukPqC+aiYjYfrly/EW8xxo7hL3DAza9YqATtjfk3rKivt/meK9XGo3SlfyPA5
-TaeMZ4M1lhCrUmFcpFGytoCo2eHYbkUXJUkx1YO/Lo57z8XQ0nmAR8MQstGPbirj
-HUrA1PRHMvK3EYmUsrWP6GWmeGXByab/XkjG6EBKAmfyuFHL21yyBDksFJ7BCTfM
-jkrZmb8AykDISBNLI4yKc1XTz9nIauRpnjYTMBUxzd/f7mhlNNGoiLcd86jBir4s
-rUWWzRCoJK9wCFj/mhj3mnbdmUL7ObqjKzcDBtakzzc5yInSieQ2EHZI7HnBMf4F
-ZawwL3dLh+RRT8sQInchV4i4WDbPdVGL17SPGvdwkGTBne9ouqLep5UQB4s6qDCZ
-sR8+ZK3RkFCkRQakbp8N+AyVVhb8Uk9aKXetVamc2ZZC0Ebf6lcbar2gA5Zqz5Uk
-OXw6onPkQ1ljTwbitEwY8RAiIogJ86UyZpxI377lXY8kVEoUKEko9I+kvQgoX/p9
-UkbxIlIX3Zm1uKef2Q4sIJERFZ3RtLLvgcjmBPZ8wPB7jb083XJ7hUmd4lbrJxon
-NoQvaU/VzOVZODBF6ViEBxT1Niq+8zfXzJpEicPmTQ0NWgbuVQfCw+4UGpmPeeqq
-TBNCEmhrz2LJIphc6WoS
-=LQP1
+iQIcBAEBAgAGBQJUq/AMAAoJEN0jrNd/PrOhuA8P/1XB25whGgQCrH/dk5qtd6n1
+Yz6uXruqXwn+gbGevp/jFgOD8kYKTNQnHsWkn5pBvtkXyD23g1vTvF6yju+imKDG
+0DTllMg1tnNYg58QnBzl7du8Cpij91hKsSbow3vcKtlaeexYQDG9HfTik5yRj75z
+F5v6LpJDCuTaTmv/kaTpdH5ckzAEyGBF0GkaAVu4kjRovAD3UTv259u2dr2ebogq
+tXoA2dg7iNwSDplizSRMng+rLu8OUrp+9cl0fvTSjgz3Q+EvntfPUmT9Utf2GvDh
+YO5tiRDK9zcaQ31qXxn9kT8SK1Hbyzf7RECjXAnLn2RbL2s73CnKDS4dCJj88LUs
+0F/1JF5VwKyAiVzv1EwPXwjE9I7E/yQvR3pF0AIVYiDKMWLwx/vwNAfRwDAVEJjd
+ufU8pN9n3JGkrSuKpsW2ZSGeYU1NsUF7iEg4KFh9Tf+ahXd7U0yf0rJeD6tIflHd
+4ZWamHUW88/heDTNA5eopHK/gBJOdPt92+wxj6KxdwUDUXaLfsVAQSUgliL6kDnv
+Qx1QaoFtCPYddPt/3PwQmFYz3cEofp1TzV8k81FtfiABLZhPXmIeCKSu/Pix/73o
+9MIqHrXdbf0Y0AsC6MhtWUQhYViaMzw4xQDMcULxm5YI+/wo8XdRhrAL8Wtfw5UD
+UlxnfEkY8A5ELeRrKDkd
+=jacZ
 -----END PGP SIGNATURE-----
 
---JsihDCElWRmQcbOr--
+--FnOKg9Ah4tDwTfQS--
+
+--===============0494434204==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBt
+YWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZy
+ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL25vdXZlYXUK
+
+--===============0494434204==--
