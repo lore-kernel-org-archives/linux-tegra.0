@@ -1,171 +1,144 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [Nouveau] [PATCH nouveau 09/11] drm: export some variable and
- functions to resue the PM functions
-Date: Tue, 6 Jan 2015 16:35:28 +0100
-Message-ID: <20150106153526.GS31830@ulmo.nvidia.com>
-References: <54A20F4D.4040100@gmail.com>
- <54A2198A.4000707@nvidia.com>
- <20150105153252.GI12010@ulmo.nvidia.com>
- <CAAVeFuK-SgUbtHADX4-pXN5_ayzvEd+1KxJOBcRe2tmDfHaLEA@mail.gmail.com>
- <20150106114953.GD31830@ulmo.nvidia.com>
- <54ABD49A.6080501@nvidia.com>
- <20150106143729.GN31830@ulmo.nvidia.com>
- <CAKb7UvgomyQkiwfGTdyuU-muE-_pPxOSmeXh9uQ6-ri0HHxLrQ@mail.gmail.com>
- <20150106145054.GO31830@ulmo.nvidia.com>
- <CAKb7Uvh6ttvssYqe+3Qqq+RvckoBmYAKv2XY2w7hBFNwi93rew@mail.gmail.com>
+From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 3/11] memory: tegra: add flush operation for
+ Tegra124 memory clients
+Date: Tue, 6 Jan 2015 23:53:13 +0800
+Message-ID: <20150106155312.GA20547@nvidia.com>
+References: <1419331204-26679-1-git-send-email-vinceh@nvidia.com>
+ <1419331204-26679-4-git-send-email-vinceh@nvidia.com>
+ <20150106142958.GM31830@ulmo.nvidia.com> <20150106150744.GB18598@nvidia.com>
+ <20150106152750.GR31830@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="U7F658e60E1K4csu"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <20150106152750.GR31830-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <CAKb7Uvh6ttvssYqe+3Qqq+RvckoBmYAKv2XY2w7hBFNwi93rew@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ilia Mirkin <imirkin@alum.mit.edu>
-Cc: Vince Hsu <vinceh@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, Emil Velikov <emil.l.velikov@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ben Skeggs <bskeggs@redhat.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Roy Spliet <seven@nimrod-online.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, seven-FA6nBp6kBxZzu6KWmfFNGwC/G2K4zDHf@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
---U7F658e60E1K4csu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Jan 06, 2015 at 10:03:36AM -0500, Ilia Mirkin wrote:
-> On Tue, Jan 6, 2015 at 9:50 AM, Thierry Reding <thierry.reding@gmail.com>=
- wrote:
-> > On Tue, Jan 06, 2015 at 09:44:01AM -0500, Ilia Mirkin wrote:
-> >> On Tue, Jan 6, 2015 at 9:37 AM, Thierry Reding <thierry.reding@gmail.c=
-om> wrote:
-> >> > On Tue, Jan 06, 2015 at 08:27:06PM +0800, Vince Hsu wrote:
-> >> >>
-> >> >> On 01/06/2015 07:49 PM, Thierry Reding wrote:
-> >> >> >* PGP Signed by an unknown key
-> >> >> >
-> >> >> >On Mon, Jan 05, 2015 at 08:50:18PM +0100, Alexandre Courbot wrote:
-> >> >> >>On Mon, Jan 5, 2015 at 4:32 PM, Thierry Reding <thierry.reding@gm=
-ail.com> wrote:
-> >> >> >>>On Tue, Dec 30, 2014 at 11:18:34AM +0800, Vince Hsu wrote:
-> >> >> >>>>Hi Emil,
-> >> >> >>>>
-> >> >> >>>>On 12/30/2014 10:34 AM, Emil Velikov wrote:
-> >> >> >>>>>On 23/12/14 10:40, Vince Hsu wrote:
-> >> >> >>>>>>This patch adds some checks in the suspend/resume functions t=
-o distinguish
-> >> >> >>>>>>the dGPU and mobile GPU and exports some variables/functions =
-so that the
-> >> >> >>>>>>nouveau platform device can reuse them.
-> >> >> >>>>>>
-> >> >> >>>>>Hi Vince,
-> >> >> >>>>>
-> >> >> >>>>>Afaiu one needs to export a symbol as it's used by another mod=
-ule or
-> >> >> >>>>>subsystem. With the follow up two patches you are not doing ei=
-ther one,
-> >> >> >>>>>so I'd assume that you can just omit the EXPORT_* changes.
-> >> >> >>>>The nouveau platform device driver is built as another module -
-> >> >> >>>>nouveau_platform.ko. :)
-> >> >> >>>I'd like to hear the opinion of the nouveau people and Alex, but=
- I'd
-> >> >> >>>very much prefer if nouveau_platform.o was simply linked into the
-> >> >> >>>nouveau.ko module. I don't see any good reason to keep it separa=
-te.
-> >> >> >>Yep, I agree. The decision to host platform support in a separate
-> >> >> >>module looks misleaded if it results in additional exports that we
-> >> >> >>would otherwise avoid. IIUC I did this to be able to use the modu=
-le
-> >> >> >>convenience macros to register the platform driver.
-> >> >> >>
-> >> >> >>>Something like the attached patch (untested) ought to do it.
-> >> >> >>This patch alone won't be enough for the reason I mentioned above.
-> >> >> >>However, if Vince doesn't mind handling the platform driver
-> >> >> >>registration manually in nouveau_drm_init/nouveau_drm_exit, I agr=
-ee
-> >> >> >>this would be the way to go.
-> >> >> >If we do the conversion to generic power domains, the only Tegra-
-> >> >> >specific API remaining will be the access to the fuse registers fo=
-r the
-> >> >> >speedo value. At that point we wouldn't need the ARCH_TEGRA depend=
-ency
-> >> >> >any longer and could always build the platform driver along with t=
-he PCI
-> >> >> >driver.
-> >> >> Do we really want the platform driver always built with the PCI dri=
-ver even
-> >> >> there is no dependency between them. Actually I have some patches to
-> >> >> build the platform driver with !CONFIG_PCI and would like to post t=
-hem maybe
-> >> >> later.
-> >> >
-> >> > I do see some advantage in making Nouveau build with !CONFIG_PCI bec=
-ause
-> >> > it allows building the driver for an SoC without PCI. But I think al=
-ways
-> >> > compiling whatever is available won't hurt. Nouveau itself is rather=
- big
-> >> > (~1 MiB of text and ~120 KiB of data) whereas the platform code weig=
-hs
-> >> > in at around 1.5 KiB of text and 108 B of data. I suspect that the P=
-CI
-> >> > glue is equally negligible.
-> >>
-> >> The much bigger reductions in size would be from getting rid of all
-> >> the stuff that's not used at all on a GK20A, like all the firmware,
-> >> and a whole bunch of logic. I had a series that split things up into
-> >> nv04/nv50/nvc0 categories. I believe it was considered undesirable due
-> >> to increased build complexity. (It wasn't a nice modularized
-> >> separation but rather just a compile-time setting.) Shouldn't be too
-> >> hard to regenerate though.
-> >
-> > Would you happen to remember the amount of savings for enabling only
-> > nvc0? I'm not overly concerned with the module being 1 MiB on Tegra,
-> > though. Most boards tend to have 2 GiB+ of memory these days and the
-> > kernel footprint is pretty big without Nouveau anyway.
->=20
-> Well, nvc0 is a big one since that's where all the firmware lives,
-> which is a big chunk of it, and you don't actually end up using any of
-> it. (And even if you did, it'd be just one of the firmware files, not
-> all of them).
->=20
-> Here was the patch: http://permalink.gmane.org/gmane.comp.video.dri.devel=
-/102457
->=20
-> Looks like nvc0 only was:
->=20
-> NVC0: 878726 bytes
->    text    data     bss     dec     hex filename
->  360593  140327      80  501000   7a508 drivers/gpu/drm/nouveau/nouveau.ko
->=20
-> compared to the combo package:
->=20
-> NV04 + NV50 + NVC0: 1343482 bytes
->    text    data     bss     dec     hex filename
->  579171  184264     480  763915   ba80b drivers/gpu/drm/nouveau/nouveau.ko
-
-That's a pretty significant improvement. And the patch doesn't look too
-bad either. But like I said, I'm not a big fan of reducing binary size
-at the expense of code complexity, so I won't loose any sleep over it.
-
-Thierry
-
---U7F658e60E1K4csu
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJUrAC+AAoJEN0jrNd/PrOh7xkP/jk153h0DJYUg1hDXeh0xhKz
-vwoBt/wZMKt0V10tspr10V4HiRe1u+oRwQ9aUzHTVHHM2nLLjm/ZR6hpLBuVJqvp
-1Fd45meYq5KOwStxF6msgjhwrVSXL7OwBQvVwYXwwNFUm1e+cfnPA/qaynXyLOgh
-zrYaBbjD5T0BOlq/38lkS0i6fnjwyhOgAPuX+Wm+MBlPUs2e+sR+IZYzTnhA1gRI
-EO7DGA6z63YOpZwhTu/aQ13hPAQjRnDiblhVyyBX41nAfTIipBiwo37761qM+lXb
-qFRJoTU710E15LDk8szUdKsVkr4XwnlcBcnrae2kbnBmXt85L7QlX+H+l1osJbOm
-VwbgD7+3lUIVFtfWLFCDzvZicTBEN+RFXCtqrZ+rvZlB1b0grCs4CjFn6fH0M9e8
-7aZchHKB6CORiZzSbmTrGSsuGq5vC9WOQD3FvYxj4DdlTRMYQuTOdKye2G0yeLMK
-AWw8hUi2Jt0iM1IpARnrY8+XvTi+83IQN50p1s+nQOJHcVZtRhG99vVydU5PykP2
-UVVBHaiZgIE0BkMYJR5WlbrkwLsUQExYRd1du6p1ba29J0hJn4l4GJskCHEpsByf
-H63Mae+BH9l3vPbG+m8zjXPccc++ls+mSwb9Nc79jDjT9wgL4S6zxsiznvudSFH0
-jXn5cD90FwFaWYXz8T/9
-=5/Il
------END PGP SIGNATURE-----
-
---U7F658e60E1K4csu--
+T24gMDQ6Mjc6NTJQTSBKYW4gMDYsIFRoaWVycnkgUmVkaW5nIHdyb3RlOgo+ICogUEdQIFNpZ25l
+ZCBieSBhbiB1bmtub3duIGtleQo+IAo+IE9uIFR1ZSwgSmFuIDA2LCAyMDE1IGF0IDExOjA3OjQ1
+UE0gKzA4MDAsIFZpbmNlIEhzdSB3cm90ZToKPiA+IE9uIDAzOjMwOjAwUE0gSmFuIDA2LCBUaGll
+cnJ5IFJlZGluZyB3cm90ZToKPiA+ID4gPiBPbGQgU2lnbmVkIGJ5IGFuIHVua25vd24ga2V5Cj4g
+PiA+IAo+ID4gPiBPbiBUdWUsIERlYyAyMywgMjAxNCBhdCAwNjozOTo1NlBNICswODAwLCBWaW5j
+ZSBIc3Ugd3JvdGU6Cj4gPiA+ID4gU2lnbmVkLW9mZi1ieTogVmluY2UgSHN1IDx2aW5jZWhAbnZp
+ZGlhLmNvbT4KPiA+ID4gPiAtLS0KPiA+ID4gPiAgZHJpdmVycy9tZW1vcnkvdGVncmEvdGVncmEx
+MjQuYyB8IDgyICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCj4gPiA+
+ID4gIDEgZmlsZSBjaGFuZ2VkLCA4MiBpbnNlcnRpb25zKCspCj4gPiA+ID4gCj4gPiA+ID4gZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvbWVtb3J5L3RlZ3JhL3RlZ3JhMTI0LmMgYi9kcml2ZXJzL21lbW9y
+eS90ZWdyYS90ZWdyYTEyNC5jCj4gPiA+ID4gaW5kZXggMjc4ZDQwYjg1NGMxLi4wMzY5MzU3NDNh
+MGEgMTAwNjQ0Cj4gPiA+ID4gLS0tIGEvZHJpdmVycy9tZW1vcnkvdGVncmEvdGVncmExMjQuYwo+
+ID4gPiA+ICsrKyBiL2RyaXZlcnMvbWVtb3J5L3RlZ3JhL3RlZ3JhMTI0LmMKPiA+ID4gPiBAQCAt
+Niw2ICs2LDcgQEAKPiA+ID4gPiAgICogcHVibGlzaGVkIGJ5IHRoZSBGcmVlIFNvZnR3YXJlIEZv
+dW5kYXRpb24uCj4gPiA+ID4gICAqLwo+ID4gPiA+ICAKPiA+ID4gPiArI2luY2x1ZGUgPGxpbnV4
+L2RlbGF5Lmg+Cj4gPiA+ID4gICNpbmNsdWRlIDxsaW51eC9vZi5oPgo+ID4gPiA+ICAjaW5jbHVk
+ZSA8bGludXgvbW0uaD4KPiA+ID4gPiAgCj4gPiA+ID4gQEAgLTk1OSw3ICs5NjAsODUgQEAgc3Rh
+dGljIGNvbnN0IHN0cnVjdCB0ZWdyYV9zbW11X3N3Z3JvdXAgdGVncmExMjRfc3dncm91cHNbXSA9
+IHsKPiA+ID4gPiAgCXsgLnN3Z3JvdXAgPSBURUdSQV9TV0dST1VQX1ZJLCAgICAgICAgLnJlZyA9
+IDB4MjgwIH0sCj4gPiA+ID4gIH07Cj4gPiA+ID4gIAo+ID4gPiA+ICtzdGF0aWMgY29uc3Qgc3Ry
+dWN0IHRlZ3JhX21jX2hyIHRlZ3JhMTI0X21jX2hyW10gPSB7Cj4gPiA+ID4gKwl7VEVHUkFfU1dH
+Uk9VUF9BRkksICAgICAgICAweDIwMCwgMHgyMDAsICAwfSwKPiA+ID4gPiArCXtURUdSQV9TV0dS
+T1VQX0FWUEMsICAgICAgIDB4MjAwLCAweDIwMCwgIDF9LAo+ID4gPiA+ICsJe1RFR1JBX1NXR1JP
+VVBfREMsICAgICAgICAgMHgyMDAsIDB4MjAwLCAgMn0sCj4gPiA+ID4gKwl7VEVHUkFfU1dHUk9V
+UF9EQ0IsICAgICAgICAweDIwMCwgMHgyMDAsICAzfSwKPiA+ID4gPiArCXtURUdSQV9TV0dST1VQ
+X0hDLCAgICAgICAgIDB4MjAwLCAweDIwMCwgIDZ9LAo+ID4gPiA+ICsJe1RFR1JBX1NXR1JPVVBf
+SERBLCAgICAgICAgMHgyMDAsIDB4MjAwLCAgN30sCj4gPiA+ID4gKwl7VEVHUkFfU1dHUk9VUF9J
+U1AyLCAgICAgICAweDIwMCwgMHgyMDAsICA4fSwKPiA+ID4gPiArCXtURUdSQV9TV0dST1VQX01Q
+Q09SRSwgICAgIDB4MjAwLCAweDIwMCwgIDl9LAo+ID4gPiA+ICsJe1RFR1JBX1NXR1JPVVBfTVBD
+T1JFTFAsICAgMHgyMDAsIDB4MjAwLCAxMH0sCj4gPiA+ID4gKwl7VEVHUkFfU1dHUk9VUF9NU0VO
+QywgICAgICAweDIwMCwgMHgyMDAsIDExfSwKPiA+ID4gPiArCXtURUdSQV9TV0dST1VQX1BQQ1Ms
+ICAgICAgIDB4MjAwLCAweDIwMCwgMTR9LAo+ID4gPiA+ICsJe1RFR1JBX1NXR1JPVVBfU0FUQSwg
+ICAgICAgMHgyMDAsIDB4MjAwLCAxNX0sCj4gPiA+ID4gKwl7VEVHUkFfU1dHUk9VUF9WREUsICAg
+ICAgICAweDIwMCwgMHgyMDAsIDE2fSwKPiA+ID4gPiArCXtURUdSQV9TV0dST1VQX1ZJLCAgICAg
+ICAgIDB4MjAwLCAweDIwMCwgMTd9LAo+ID4gPiA+ICsJe1RFR1JBX1NXR1JPVVBfVklDLCAgICAg
+ICAgMHgyMDAsIDB4MjAwLCAxOH0sCj4gPiA+ID4gKwl7VEVHUkFfU1dHUk9VUF9YVVNCX0hPU1Qs
+ICAweDIwMCwgMHgyMDAsIDE5fSwKPiA+ID4gPiArCXtURUdSQV9TV0dST1VQX1hVU0JfREVWLCAg
+IDB4MjAwLCAweDIwMCwgMjB9LAo+ID4gPiA+ICsJe1RFR1JBX1NXR1JPVVBfVFNFQywgICAgICAg
+MHgyMDAsIDB4MjAwLCAyMn0sCj4gPiA+ID4gKwl7VEVHUkFfU1dHUk9VUF9TRE1NQzFBLCAgICAw
+eDIwMCwgMHgyMDAsIDI5fSwKPiA+ID4gPiArCXtURUdSQV9TV0dST1VQX1NETU1DMkEsICAgIDB4
+MjAwLCAweDIwMCwgMzB9LAo+ID4gPiA+ICsJe1RFR1JBX1NXR1JPVVBfU0RNTUMzQSwgICAgMHgy
+MDAsIDB4MjAwLCAzMX0sCj4gPiA+IAo+ID4gPiBUaGUgZG9jdW1lbnRhdGlvbiB0aGF0IEkgaGF2
+ZSBzYXlzIHRoYXQgdGhlIHN0YXR1cyByZWdpc3RlciBmb3IgdGhlc2UgaXMKPiA+ID4gMHgyMDQu
+Cj4gPiBPb3BzLiBUaGFua3MgZm9yIGNhdGNoaW5nIHRoaXMuIFdpbGwgZml4Lgo+ID4gCj4gPiA+
+IAo+ID4gPiA+ICsJe1RFR1JBX1NXR1JPVVBfU0RNTUM0QSwgICAgMHg5NzAsIDB4OTc0LCAgMH0s
+Cj4gPiA+ID4gKwl7VEVHUkFfU1dHUk9VUF9JU1AyQiwgICAgICAweDk3MCwgMHg5NzQsICAxfSwK
+PiA+ID4gPiArCXtURUdSQV9TV0dST1VQX0dQVSwgICAgICAgIDB4OTcwLCAweDk3NCwgIDJ9LAo+
+ID4gPiA+ICt9Owo+ID4gPiA+ICsKPiA+ID4gPiAgI2lmZGVmIENPTkZJR19BUkNIX1RFR1JBXzEy
+NF9TT0MKPiA+ID4gPiArCj4gPiA+ID4gK3N0YXRpYyBib29sIHRlZ3JhMTI0X3N0YWJsZV9ob3Ry
+ZXNldF9jaGVjayhzdHJ1Y3QgdGVncmFfbWMgKm1jLAo+ID4gPiA+ICsJCXUzMiByZWcsIHUzMiAq
+c3RhdCkKPiA+ID4gPiArewo+ID4gPiA+ICsJaW50IGk7Cj4gPiA+ID4gKwl1MzIgY3VyX3N0YXQ7
+Cj4gPiA+ID4gKwl1MzIgcHJ2X3N0YXQ7Cj4gPiA+ID4gKwo+ID4gPiA+ICsJcHJ2X3N0YXQgPSBt
+Y19yZWFkbChtYywgcmVnKTsKPiA+ID4gPiArCWZvciAoaSA9IDA7IGkgPCA1OyBpKyspIHsKPiA+
+ID4gPiArCQljdXJfc3RhdCA9IG1jX3JlYWRsKG1jLCByZWcpOwo+ID4gPiA+ICsJCWlmIChjdXJf
+c3RhdCAhPSBwcnZfc3RhdCkKPiA+ID4gPiArCQkJcmV0dXJuIGZhbHNlOwo+ID4gPiA+ICsJfQo+
+ID4gPiAKPiA+ID4gV2h5IHRoaXMgbG9vcD8gVGhlIGZ1bmN0aW9uIGlzIGFscmVhZHkgY2FsbGVk
+IGluIGEgcG9sbGluZyBsb29wIGJlbG93Lgo+ID4gPiBBbHNvIHdoeSBjb21wYXJlIHRvIHRoZSBw
+cmV2aW91cyB2YWx1ZSBvZiB0aGUgcmVnaXN0ZXI/IElzbid0IHRoZSBvbmx5Cj4gPiA+IHRoaW5n
+IHdlJ3JlIGludGVyZXN0ZWQgaW4gdGhlIHZhbHVlIG9mIHRoZSBzcGVjaWZpYyBiaXQ/Cj4gPiBJ
+IHJlY2FsbCBpdCdzIGR1ZSB0byBhIEhXIGJ1ZyB0aGF0IHRoZXJlIG1pZ2h0IGJlIGEgZ2l0Y2gg
+aWYgd2UgcHJvZ3JhbQo+ID4gdGhlIGN0cmwgcmVnIGFuZCB0aGVuIHJlYWQgdGhlIHN0YXR1cyBy
+ZWcgaW4gYSBzaG9ydCB3aW5kb3cuIFRoaXMgZnVuY3Rpb24KPiA+IGlzIHRvIG1ha2Ugc3VyZSB3
+ZSBoYXZlIGEgc3RhYmxlIHN0YXR1cy4KPiAKPiBUaGlzIHdhcnJhbnRzIGEgY29tbWVudCwgdGhl
+bi4KT2theS4KCj4gCj4gPiA+ID4gKwkqc3RhdCA9IGN1cl9zdGF0Owo+ID4gPiA+ICsJcmV0dXJu
+IHRydWU7Cj4gPiA+ID4gK30KPiA+ID4gPiArCj4gPiA+ID4gK3N0YXRpYyBpbnQgdGVncmExMjRf
+bWNfZmx1c2goc3RydWN0IHRlZ3JhX21jICptYywKPiA+ID4gPiArCQljb25zdCBzdHJ1Y3QgdGVn
+cmFfbWNfaHIgKmhyX2NsaWVudCwgYm9vbCBlbmFibGUpCj4gPiA+ID4gK3sKPiA+ID4gPiArCXUz
+MiB2YWw7Cj4gPiA+ID4gKwo+ID4gPiA+ICsJaWYgKCFtYyB8fCAhaHJfY2xpZW50KQo+ID4gPiA+
+ICsJCXJldHVybiAtRUlOVkFMOwo+ID4gPiA+ICsKPiA+ID4gPiArCXZhbCA9IG1jX3JlYWRsKG1j
+LCBocl9jbGllbnQtPmN0cmwpOwo+ID4gPiA+ICsJaWYgKGVuYWJsZSkKPiA+ID4gPiArCQl2YWwg
+fD0gQklUKGhyX2NsaWVudC0+Yml0KTsKPiA+ID4gPiArCWVsc2UKPiA+ID4gPiArCQl2YWwgJj0g
+fkJJVChocl9jbGllbnQtPmJpdCk7Cj4gPiA+ID4gKwltY193cml0ZWwobWMsIHZhbCwgaHJfY2xp
+ZW50LT5jdHJsKTsKPiA+ID4gPiArCW1jX3JlYWRsKG1jLCBocl9jbGllbnQtPmN0cmwpOwo+ID4g
+PiA+ICsKPiA+ID4gPiArCS8qIHBvbGwgdGlsbCB0aGUgZmx1c2ggaXMgZG9uZSAqLwo+ID4gPiA+
+ICsJaWYgKGVuYWJsZSkgewo+ID4gPiA+ICsJCWRvIHsKPiA+ID4gPiArCQkJdWRlbGF5KDEwKTsK
+PiA+ID4gCj4gPiA+IFRoaXMgc2hvdWxkIHByb2JhYmx5IGJlIHVzbGVlcF9yYW5nZSgxMCwgMjAp
+IG9yIHNvbWV0aGluZy4KPiA+IE1heWJlIG5vLiBXZSBtaWdodCBuZWVkIHNvbWUgc3BpbiBsb2Nr
+IGhlcmUgdG8gZW5zdXJlIG9ubHkgb25lIGZsdXNoaW5nCj4gPiBvcGVyYXRpb24gcmVxdWVzdGVk
+IGFuZCBubyByYWNlIGNvdWxkIGhhcHBlbi4KPiAKPiBXZSBzaG91bGQgdXNlIGEgbXV0ZXgsIHRo
+ZW4uIFRoZXJlJ3Mgbm8gc2F5aW5nIGhvdyBsb25nIHRoaXMgd2lsbCB0YWtlCj4gYW5kIGJ1c3kt
+bG9vcGluZyBpbmRlZmluaXRlbHkgaXMgYSBiYWQgaWRlYS4gVGhvdWdoIGl0IHNlZW1zIHRvIG1l
+IGxpa2UKPiB3ZSBkb24ndCBuZWVkIHRvIGxvY2sgYXJvdW5kIHRoZSBwb2xsaW5nIGxvb3AgaGVy
+ZSBzaW5jZSB3ZSdyZSBtZXJlbHkKPiByZWFkaW5nIGEgc3RhdHVzIHJlZ2lzdGVyLiBXZSB3b3Vs
+ZCBvbmx5IG5lZWQgdG8gbG9jayBhcm91bmQgYWNjZXNzZXMgdG8KPiB0aGUgY29udHJvbCByZWdp
+c3RlciB0byBtYWtlIHN1cmUgdHdvIHByb2Nlc3NlcyBjYW4ndCBzdGVwIG9uIGVhY2gKPiBvdGhl
+cnMncyB0b2VzLgpXZSBjYW4gdXNlIG1ldHV4IGRlZmluaXRlbHkuIElmIHR3byBwcm9jZXNzZXMg
+dG91Y2ggdGhlIGN0cmwgcmVnaXN0ZXJzCnNlcXVlbnRpYWxseSBhbmQgcG9sbCB0aGUgc3RhdHVz
+IHJlZ2lzdGVyIGluIHBhcmFsbGVsLCB3ZSBkb250JyBrbm93IHdoZXRoZXIKdGhlIGdsaXRjaCBp
+cyBjYXVzZWQgYnkgdGhlIEhXIGJ1ZyBvciB0aGUgY29uY3VycmVudCBjdHJsIHJlZ2lzdGVyIHBy
+b2dyYW1taW5nPwpXZSBzaG91bGQgbG9jayB0aGUgc3RhdHVzIGNoZWNraW5nIGFzIHdlbGwuCgo+
+IAo+ID4gPiBXb3VsZCBpdCBiZSBkaWZmaWN1bHQgdG8gaW1wbGVtZW50IHRoaXMgZm9yIFRlZ3Jh
+MzAgYW5kIFRlZ3JhMTE0Pwo+ID4gTm8uIEJ1dCBJIGhhdmUgdG8gY2hlY2sgdGhlIGRldGFpbCBp
+biBUZWdyYTMwIGFuZCBUZWdyYTExNC4gQW5kIHRoZSBiaWdnZXN0Cj4gPiBwcm9ibGVtIGlzIEkg
+ZG9uJ3QgaGF2ZSB0aGUgYm9hcmRzIHRvIHRlc3QuCj4gCj4gSSBjYW4gaGVscCB3aXRoIHRlc3Rp
+bmcuIFRob3VnaCB0aGF0IHJhaXNlcyB0aGUgcXVlc3Rpb24gb2YgaG93IHRoaXMgY2FuCj4gYmUg
+dGVzdGVkLiBJdCBzZWVtcyBsaWtlIHRoaXMgZmVhdHVyZSBpcyB1c2VkIHRvIG1ha2Ugc3VyZSB0
+aGF0IGFsbAo+IG91dHN0YW5kaW5nIG1lbW9yeSByZXF1ZXN0cyBmcm9tIGNsaWVudHMgYXJlIGZs
+dXNoZWQgYmVmb3JlIHJlc2V0dGluZyBhCj4gbW9kdWxlLiBUeXBpY2FsbHkgTGludXggYXNzdW1l
+cyB0aGF0IGRldmljZXMgZG8gdGhhdCBhbnl3YXksIHNvIGlmIGEKPiBkZXZpY2UgaXMgc3VzcGVu
+ZGVkIG9yIHNodXQgZG93biwgdGhlIGNvcnJlc3BvbmRpbmcgZnVuY3Rpb24gc2hvdWxkCj4gZW5z
+dXJlIHRoYXQgYWxsIG91dHN0YW5kaW5nIHRyYW5zZmVycyBoYXZlIGJlZW4gY2FuY2VsbGVkIGFu
+ZCBhcmUKPiBmbHVzaGVkLgpUaGUgZmx1c2hpbmcgb3BlcmF0aW9uIGNhbiBiZSByZXF1ZXN0ZWQg
+YnkgcnVudGltZSBQTSBpZiB0aGUgZGV2aWNlIHN1cHBvcnRzCml0LgoKPiAKPiBBbHNvIHdlJ3Zl
+IG1hbmFnZWQganVzdCBmaW5lIHNvIGZhciwgc28gSSdtIGJlZ2lubmluZyB0byB3b25kZXIgd2hl
+dGhlcgo+IHdlIGFjdHVhbGx5IG5lZWQgdGhpcyBmZWF0dXJlIG9uIExpbnV4LiBJZiBub3QsIGhv
+dyBkbyB3ZSB0ZXN0IHRoYXQgdGhpcwo+IGlzIGluZGVlZCBkb2luZyB3aGF0IGl0IHNob3VsZD8g
+SG93IHRvIHRyaWdnZXIgYSBjb25kaXRpb24gdGhhdCByZXF1aXJlcwo+IGZsdXNoaW5nIGFuZCBo
+b3cgZG8gd2UgZGV0ZXJtaW5lIHRoYXQgZmx1c2hpbmcgYWN0dWFsbHkgZml4ZXMgdGhpbmdzPwpT
+b3JyeSB0aGF0IEkgY2FuJ3QgYW5zd2VyIGhvdyB0byB0ZXN0IGl0IGJlY2F1c2UgSSdtIG5vdCBh
+IG1jIGV4cGVydC4KV2hhdCBJIGNhbiBkbyBpcyB0ZXN0aW5nIHRoZSBwb3dlciB1cC9vZmYgc2Vx
+dWVuY2UgYSBsb3Qgb2YgdGltZSBhbmQgY2hlY2sgaWYKdGhlIGRldmljZSBjYW4gc3RpbGwgd29y
+ayBub3JtYWxseS4gV2UgbmVlZCB0aGlzIGZlYXR1cmUgYmVjYXVzZSB0aGUgVFJNCnJlcXVpcmVz
+IHNvPwoKVGhhbmtzLApWaW5jZQoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCk5vdXZlYXUgbWFpbGluZyBsaXN0Ck5vdXZlYXVAbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9ub3V2
+ZWF1Cg==
