@@ -1,191 +1,171 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 3/11] memory: tegra: add flush operation for Tegra124
- memory clients
-Date: Tue, 6 Jan 2015 16:27:52 +0100
-Message-ID: <20150106152750.GR31830@ulmo.nvidia.com>
-References: <1419331204-26679-1-git-send-email-vinceh@nvidia.com>
- <1419331204-26679-4-git-send-email-vinceh@nvidia.com>
- <20150106142958.GM31830@ulmo.nvidia.com>
- <20150106150744.GB18598@nvidia.com>
+Subject: Re: [Nouveau] [PATCH nouveau 09/11] drm: export some variable and
+ functions to resue the PM functions
+Date: Tue, 6 Jan 2015 16:35:28 +0100
+Message-ID: <20150106153526.GS31830@ulmo.nvidia.com>
+References: <54A20F4D.4040100@gmail.com>
+ <54A2198A.4000707@nvidia.com>
+ <20150105153252.GI12010@ulmo.nvidia.com>
+ <CAAVeFuK-SgUbtHADX4-pXN5_ayzvEd+1KxJOBcRe2tmDfHaLEA@mail.gmail.com>
+ <20150106114953.GD31830@ulmo.nvidia.com>
+ <54ABD49A.6080501@nvidia.com>
+ <20150106143729.GN31830@ulmo.nvidia.com>
+ <CAKb7UvgomyQkiwfGTdyuU-muE-_pPxOSmeXh9uQ6-ri0HHxLrQ@mail.gmail.com>
+ <20150106145054.GO31830@ulmo.nvidia.com>
+ <CAKb7Uvh6ttvssYqe+3Qqq+RvckoBmYAKv2XY2w7hBFNwi93rew@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="MI2pJyvBeFc4alSb"
+	protocol="application/pgp-signature"; boundary="U7F658e60E1K4csu"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20150106150744.GB18598@nvidia.com>
+In-Reply-To: <CAKb7Uvh6ttvssYqe+3Qqq+RvckoBmYAKv2XY2w7hBFNwi93rew@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vince Hsu <vinceh@nvidia.com>
-Cc: swarren@wwwdotorg.org, gnurou@gmail.com, bskeggs@redhat.com, martin.peres@free.fr, seven@nimrod-online.com, samuel.pitoiset@gmail.com, nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ilia Mirkin <imirkin@alum.mit.edu>
+Cc: Vince Hsu <vinceh@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, Emil Velikov <emil.l.velikov@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ben Skeggs <bskeggs@redhat.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Roy Spliet <seven@nimrod-online.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
---MI2pJyvBeFc4alSb
+--U7F658e60E1K4csu
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 06, 2015 at 11:07:45PM +0800, Vince Hsu wrote:
-> On 03:30:00PM Jan 06, Thierry Reding wrote:
-> > * PGP Signed by an unknown key
-> >=20
-> > On Tue, Dec 23, 2014 at 06:39:56PM +0800, Vince Hsu wrote:
-> > > Signed-off-by: Vince Hsu <vinceh@nvidia.com>
-> > > ---
-> > >  drivers/memory/tegra/tegra124.c | 82 +++++++++++++++++++++++++++++++=
-++++++++++
-> > >  1 file changed, 82 insertions(+)
-> > >=20
-> > > diff --git a/drivers/memory/tegra/tegra124.c b/drivers/memory/tegra/t=
-egra124.c
-> > > index 278d40b854c1..036935743a0a 100644
-> > > --- a/drivers/memory/tegra/tegra124.c
-> > > +++ b/drivers/memory/tegra/tegra124.c
-> > > @@ -6,6 +6,7 @@
-> > >   * published by the Free Software Foundation.
-> > >   */
-> > > =20
-> > > +#include <linux/delay.h>
-> > >  #include <linux/of.h>
-> > >  #include <linux/mm.h>
-> > > =20
-> > > @@ -959,7 +960,85 @@ static const struct tegra_smmu_swgroup tegra124_=
-swgroups[] =3D {
-> > >  	{ .swgroup =3D TEGRA_SWGROUP_VI,        .reg =3D 0x280 },
-> > >  };
-> > > =20
-> > > +static const struct tegra_mc_hr tegra124_mc_hr[] =3D {
-> > > +	{TEGRA_SWGROUP_AFI,        0x200, 0x200,  0},
-> > > +	{TEGRA_SWGROUP_AVPC,       0x200, 0x200,  1},
-> > > +	{TEGRA_SWGROUP_DC,         0x200, 0x200,  2},
-> > > +	{TEGRA_SWGROUP_DCB,        0x200, 0x200,  3},
-> > > +	{TEGRA_SWGROUP_HC,         0x200, 0x200,  6},
-> > > +	{TEGRA_SWGROUP_HDA,        0x200, 0x200,  7},
-> > > +	{TEGRA_SWGROUP_ISP2,       0x200, 0x200,  8},
-> > > +	{TEGRA_SWGROUP_MPCORE,     0x200, 0x200,  9},
-> > > +	{TEGRA_SWGROUP_MPCORELP,   0x200, 0x200, 10},
-> > > +	{TEGRA_SWGROUP_MSENC,      0x200, 0x200, 11},
-> > > +	{TEGRA_SWGROUP_PPCS,       0x200, 0x200, 14},
-> > > +	{TEGRA_SWGROUP_SATA,       0x200, 0x200, 15},
-> > > +	{TEGRA_SWGROUP_VDE,        0x200, 0x200, 16},
-> > > +	{TEGRA_SWGROUP_VI,         0x200, 0x200, 17},
-> > > +	{TEGRA_SWGROUP_VIC,        0x200, 0x200, 18},
-> > > +	{TEGRA_SWGROUP_XUSB_HOST,  0x200, 0x200, 19},
-> > > +	{TEGRA_SWGROUP_XUSB_DEV,   0x200, 0x200, 20},
-> > > +	{TEGRA_SWGROUP_TSEC,       0x200, 0x200, 22},
-> > > +	{TEGRA_SWGROUP_SDMMC1A,    0x200, 0x200, 29},
-> > > +	{TEGRA_SWGROUP_SDMMC2A,    0x200, 0x200, 30},
-> > > +	{TEGRA_SWGROUP_SDMMC3A,    0x200, 0x200, 31},
-> >=20
-> > The documentation that I have says that the status register for these is
-> > 0x204.
-> Oops. Thanks for catching this. Will fix.
+On Tue, Jan 06, 2015 at 10:03:36AM -0500, Ilia Mirkin wrote:
+> On Tue, Jan 6, 2015 at 9:50 AM, Thierry Reding <thierry.reding@gmail.com>=
+ wrote:
+> > On Tue, Jan 06, 2015 at 09:44:01AM -0500, Ilia Mirkin wrote:
+> >> On Tue, Jan 6, 2015 at 9:37 AM, Thierry Reding <thierry.reding@gmail.c=
+om> wrote:
+> >> > On Tue, Jan 06, 2015 at 08:27:06PM +0800, Vince Hsu wrote:
+> >> >>
+> >> >> On 01/06/2015 07:49 PM, Thierry Reding wrote:
+> >> >> >* PGP Signed by an unknown key
+> >> >> >
+> >> >> >On Mon, Jan 05, 2015 at 08:50:18PM +0100, Alexandre Courbot wrote:
+> >> >> >>On Mon, Jan 5, 2015 at 4:32 PM, Thierry Reding <thierry.reding@gm=
+ail.com> wrote:
+> >> >> >>>On Tue, Dec 30, 2014 at 11:18:34AM +0800, Vince Hsu wrote:
+> >> >> >>>>Hi Emil,
+> >> >> >>>>
+> >> >> >>>>On 12/30/2014 10:34 AM, Emil Velikov wrote:
+> >> >> >>>>>On 23/12/14 10:40, Vince Hsu wrote:
+> >> >> >>>>>>This patch adds some checks in the suspend/resume functions t=
+o distinguish
+> >> >> >>>>>>the dGPU and mobile GPU and exports some variables/functions =
+so that the
+> >> >> >>>>>>nouveau platform device can reuse them.
+> >> >> >>>>>>
+> >> >> >>>>>Hi Vince,
+> >> >> >>>>>
+> >> >> >>>>>Afaiu one needs to export a symbol as it's used by another mod=
+ule or
+> >> >> >>>>>subsystem. With the follow up two patches you are not doing ei=
+ther one,
+> >> >> >>>>>so I'd assume that you can just omit the EXPORT_* changes.
+> >> >> >>>>The nouveau platform device driver is built as another module -
+> >> >> >>>>nouveau_platform.ko. :)
+> >> >> >>>I'd like to hear the opinion of the nouveau people and Alex, but=
+ I'd
+> >> >> >>>very much prefer if nouveau_platform.o was simply linked into the
+> >> >> >>>nouveau.ko module. I don't see any good reason to keep it separa=
+te.
+> >> >> >>Yep, I agree. The decision to host platform support in a separate
+> >> >> >>module looks misleaded if it results in additional exports that we
+> >> >> >>would otherwise avoid. IIUC I did this to be able to use the modu=
+le
+> >> >> >>convenience macros to register the platform driver.
+> >> >> >>
+> >> >> >>>Something like the attached patch (untested) ought to do it.
+> >> >> >>This patch alone won't be enough for the reason I mentioned above.
+> >> >> >>However, if Vince doesn't mind handling the platform driver
+> >> >> >>registration manually in nouveau_drm_init/nouveau_drm_exit, I agr=
+ee
+> >> >> >>this would be the way to go.
+> >> >> >If we do the conversion to generic power domains, the only Tegra-
+> >> >> >specific API remaining will be the access to the fuse registers fo=
+r the
+> >> >> >speedo value. At that point we wouldn't need the ARCH_TEGRA depend=
+ency
+> >> >> >any longer and could always build the platform driver along with t=
+he PCI
+> >> >> >driver.
+> >> >> Do we really want the platform driver always built with the PCI dri=
+ver even
+> >> >> there is no dependency between them. Actually I have some patches to
+> >> >> build the platform driver with !CONFIG_PCI and would like to post t=
+hem maybe
+> >> >> later.
+> >> >
+> >> > I do see some advantage in making Nouveau build with !CONFIG_PCI bec=
+ause
+> >> > it allows building the driver for an SoC without PCI. But I think al=
+ways
+> >> > compiling whatever is available won't hurt. Nouveau itself is rather=
+ big
+> >> > (~1 MiB of text and ~120 KiB of data) whereas the platform code weig=
+hs
+> >> > in at around 1.5 KiB of text and 108 B of data. I suspect that the P=
+CI
+> >> > glue is equally negligible.
+> >>
+> >> The much bigger reductions in size would be from getting rid of all
+> >> the stuff that's not used at all on a GK20A, like all the firmware,
+> >> and a whole bunch of logic. I had a series that split things up into
+> >> nv04/nv50/nvc0 categories. I believe it was considered undesirable due
+> >> to increased build complexity. (It wasn't a nice modularized
+> >> separation but rather just a compile-time setting.) Shouldn't be too
+> >> hard to regenerate though.
+> >
+> > Would you happen to remember the amount of savings for enabling only
+> > nvc0? I'm not overly concerned with the module being 1 MiB on Tegra,
+> > though. Most boards tend to have 2 GiB+ of memory these days and the
+> > kernel footprint is pretty big without Nouveau anyway.
 >=20
-> >=20
-> > > +	{TEGRA_SWGROUP_SDMMC4A,    0x970, 0x974,  0},
-> > > +	{TEGRA_SWGROUP_ISP2B,      0x970, 0x974,  1},
-> > > +	{TEGRA_SWGROUP_GPU,        0x970, 0x974,  2},
-> > > +};
-> > > +
-> > >  #ifdef CONFIG_ARCH_TEGRA_124_SOC
-> > > +
-> > > +static bool tegra124_stable_hotreset_check(struct tegra_mc *mc,
-> > > +		u32 reg, u32 *stat)
-> > > +{
-> > > +	int i;
-> > > +	u32 cur_stat;
-> > > +	u32 prv_stat;
-> > > +
-> > > +	prv_stat =3D mc_readl(mc, reg);
-> > > +	for (i =3D 0; i < 5; i++) {
-> > > +		cur_stat =3D mc_readl(mc, reg);
-> > > +		if (cur_stat !=3D prv_stat)
-> > > +			return false;
-> > > +	}
-> >=20
-> > Why this loop? The function is already called in a polling loop below.
-> > Also why compare to the previous value of the register? Isn't the only
-> > thing we're interested in the value of the specific bit?
-> I recall it's due to a HW bug that there might be a gitch if we program
-> the ctrl reg and then read the status reg in a short window. This function
-> is to make sure we have a stable status.
+> Well, nvc0 is a big one since that's where all the firmware lives,
+> which is a big chunk of it, and you don't actually end up using any of
+> it. (And even if you did, it'd be just one of the firmware files, not
+> all of them).
+>=20
+> Here was the patch: http://permalink.gmane.org/gmane.comp.video.dri.devel=
+/102457
+>=20
+> Looks like nvc0 only was:
+>=20
+> NVC0: 878726 bytes
+>    text    data     bss     dec     hex filename
+>  360593  140327      80  501000   7a508 drivers/gpu/drm/nouveau/nouveau.ko
+>=20
+> compared to the combo package:
+>=20
+> NV04 + NV50 + NVC0: 1343482 bytes
+>    text    data     bss     dec     hex filename
+>  579171  184264     480  763915   ba80b drivers/gpu/drm/nouveau/nouveau.ko
 
-This warrants a comment, then.
-
-> > > +	*stat =3D cur_stat;
-> > > +	return true;
-> > > +}
-> > > +
-> > > +static int tegra124_mc_flush(struct tegra_mc *mc,
-> > > +		const struct tegra_mc_hr *hr_client, bool enable)
-> > > +{
-> > > +	u32 val;
-> > > +
-> > > +	if (!mc || !hr_client)
-> > > +		return -EINVAL;
-> > > +
-> > > +	val =3D mc_readl(mc, hr_client->ctrl);
-> > > +	if (enable)
-> > > +		val |=3D BIT(hr_client->bit);
-> > > +	else
-> > > +		val &=3D ~BIT(hr_client->bit);
-> > > +	mc_writel(mc, val, hr_client->ctrl);
-> > > +	mc_readl(mc, hr_client->ctrl);
-> > > +
-> > > +	/* poll till the flush is done */
-> > > +	if (enable) {
-> > > +		do {
-> > > +			udelay(10);
-> >=20
-> > This should probably be usleep_range(10, 20) or something.
-> Maybe no. We might need some spin lock here to ensure only one flushing
-> operation requested and no race could happen.
-
-We should use a mutex, then. There's no saying how long this will take
-and busy-looping indefinitely is a bad idea. Though it seems to me like
-we don't need to lock around the polling loop here since we're merely
-reading a status register. We would only need to lock around accesses to
-the control register to make sure two processes can't step on each
-others's toes.
-
-> > Would it be difficult to implement this for Tegra30 and Tegra114?
-> No. But I have to check the detail in Tegra30 and Tegra114. And the bigge=
-st
-> problem is I don't have the boards to test.
-
-I can help with testing. Though that raises the question of how this can
-be tested. It seems like this feature is used to make sure that all
-outstanding memory requests from clients are flushed before resetting a
-module. Typically Linux assumes that devices do that anyway, so if a
-device is suspended or shut down, the corresponding function should
-ensure that all outstanding transfers have been cancelled and are
-flushed.
-
-Also we've managed just fine so far, so I'm beginning to wonder whether
-we actually need this feature on Linux. If not, how do we test that this
-is indeed doing what it should? How to trigger a condition that requires
-flushing and how do we determine that flushing actually fixes things?
+That's a pretty significant improvement. And the patch doesn't look too
+bad either. But like I said, I'm not a big fan of reducing binary size
+at the expense of code complexity, so I won't loose any sleep over it.
 
 Thierry
 
---MI2pJyvBeFc4alSb
+--U7F658e60E1K4csu
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUq/72AAoJEN0jrNd/PrOh97QQALQCdJcwHsrUUtffNCSbSSP0
-44kH8Fx+6K6XVSoEQYeN4cTDXScMW7ckcFQ22R5SprRMuvNYGjjnxdn0/VtfOgyv
-nTKuKn5ClUTGyWDH2XVSLB+Vqc/XSg/W6isqI5fYTSMYopZUuyU6XoCa46amScBR
-Pj4EWuJAdkeCr09kIOCC5rp+8H8hk2nKcRmphoeXnjS5L6uVUZlF6zdImhJvoGkx
-ZYmKAx53LI9Yee2xBKNSp4Ao4+aoEPz2HXlnJNQCugw6zNgBbvPKztLkMdNsPd6r
-UcFRqQ05imgPQsguIShHJL3WWzbssyGLy+rjNhzFASnOMG2K1v4C4DCQbLLo7HU3
-SX6J/hLgd3UYl2OTg676nr1xbZk0DEmvA9ZwI10zW6gas0TXlVjAPE0m3l6o07fX
-l6XDNROdOkZzO+VsQTKGThy4yqwo58V4F/s7V/1Gi9y8ZRk96IjiryVkJDOOR/EU
-MNepD17bcaNJkhkm3vEX4n9dFkREJR+TUPYAtMnzCr9/jUj4nfEqg/Ias7FILA7a
-H8eoUBvXPohM7mKDYviKeDejOXGKZJRg38LXAnUvrCTKc5KQFbhFn+BaNlfbn6fq
-Oic/aLSvPqQnWqI9U6eqdv1PIuIHLdvHaa4gwGHCMAHDzxHEga0mJFmiYxKQtm8+
-5Afk4ldCn3jiftT0uYUp
-=a2ej
+iQIcBAEBAgAGBQJUrAC+AAoJEN0jrNd/PrOh7xkP/jk153h0DJYUg1hDXeh0xhKz
+vwoBt/wZMKt0V10tspr10V4HiRe1u+oRwQ9aUzHTVHHM2nLLjm/ZR6hpLBuVJqvp
+1Fd45meYq5KOwStxF6msgjhwrVSXL7OwBQvVwYXwwNFUm1e+cfnPA/qaynXyLOgh
+zrYaBbjD5T0BOlq/38lkS0i6fnjwyhOgAPuX+Wm+MBlPUs2e+sR+IZYzTnhA1gRI
+EO7DGA6z63YOpZwhTu/aQ13hPAQjRnDiblhVyyBX41nAfTIipBiwo37761qM+lXb
+qFRJoTU710E15LDk8szUdKsVkr4XwnlcBcnrae2kbnBmXt85L7QlX+H+l1osJbOm
+VwbgD7+3lUIVFtfWLFCDzvZicTBEN+RFXCtqrZ+rvZlB1b0grCs4CjFn6fH0M9e8
+7aZchHKB6CORiZzSbmTrGSsuGq5vC9WOQD3FvYxj4DdlTRMYQuTOdKye2G0yeLMK
+AWw8hUi2Jt0iM1IpARnrY8+XvTi+83IQN50p1s+nQOJHcVZtRhG99vVydU5PykP2
+UVVBHaiZgIE0BkMYJR5WlbrkwLsUQExYRd1du6p1ba29J0hJn4l4GJskCHEpsByf
+H63Mae+BH9l3vPbG+m8zjXPccc++ls+mSwb9Nc79jDjT9wgL4S6zxsiznvudSFH0
+jXn5cD90FwFaWYXz8T/9
+=5/Il
 -----END PGP SIGNATURE-----
 
---MI2pJyvBeFc4alSb--
+--U7F658e60E1K4csu--
