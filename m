@@ -1,61 +1,50 @@
-From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH nouveau 09/11] drm: export some variable and
- functions to resue the PM functions
-Date: Tue, 6 Jan 2015 17:36:43 +0800
-Message-ID: <54ABACAB.4070209@nvidia.com>
-References: <1419331204-26679-1-git-send-email-vinceh@nvidia.com>
- <1419331204-26679-10-git-send-email-vinceh@nvidia.com>
- <54A20F4D.4040100@gmail.com> <54A2198A.4000707@nvidia.com>
- <20150105153252.GI12010@ulmo.nvidia.com>
- <CAAVeFuK-SgUbtHADX4-pXN5_ayzvEd+1KxJOBcRe2tmDfHaLEA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <CAAVeFuK-SgUbtHADX4-pXN5_ayzvEd+1KxJOBcRe2tmDfHaLEA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Emil Velikov <emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Roy Spliet <seven-FA6nBp6kBxZzu6KWmfFNGwC/G2K4zDHf@public.gmane.org>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: [PATCH 4/4] ARM: tegra: remove wp-gpios from the generic nyan dtsi
+Date: Tue,  6 Jan 2015 11:37:29 +0100
+Message-ID: <1420540653-14816-5-git-send-email-tomeu.vizoso@collabora.com>
+References: <1420540653-14816-1-git-send-email-tomeu.vizoso@collabora.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1420540653-14816-1-git-send-email-tomeu.vizoso@collabora.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-tegra@vger.kernel.org
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMDEvMDYvMjAxNSAwMzo1MCBBTSwgQWxleGFuZHJlIENvdXJib3Qgd3JvdGU6Cj4gT24gTW9u
-LCBKYW4gNSwgMjAxNSBhdCA0OjMyIFBNLCBUaGllcnJ5IFJlZGluZyA8dGhpZXJyeS5yZWRpbmdA
-Z21haWwuY29tPiB3cm90ZToKPj4gT24gVHVlLCBEZWMgMzAsIDIwMTQgYXQgMTE6MTg6MzRBTSAr
-MDgwMCwgVmluY2UgSHN1IHdyb3RlOgo+Pj4gSGkgRW1pbCwKPj4+Cj4+PiBPbiAxMi8zMC8yMDE0
-IDEwOjM0IEFNLCBFbWlsIFZlbGlrb3Ygd3JvdGU6Cj4+Pj4gT24gMjMvMTIvMTQgMTA6NDAsIFZp
-bmNlIEhzdSB3cm90ZToKPj4+Pj4gVGhpcyBwYXRjaCBhZGRzIHNvbWUgY2hlY2tzIGluIHRoZSBz
-dXNwZW5kL3Jlc3VtZSBmdW5jdGlvbnMgdG8gZGlzdGluZ3Vpc2gKPj4+Pj4gdGhlIGRHUFUgYW5k
-IG1vYmlsZSBHUFUgYW5kIGV4cG9ydHMgc29tZSB2YXJpYWJsZXMvZnVuY3Rpb25zIHNvIHRoYXQg
-dGhlCj4+Pj4+IG5vdXZlYXUgcGxhdGZvcm0gZGV2aWNlIGNhbiByZXVzZSB0aGVtLgo+Pj4+Pgo+
-Pj4+IEhpIFZpbmNlLAo+Pj4+Cj4+Pj4gQWZhaXUgb25lIG5lZWRzIHRvIGV4cG9ydCBhIHN5bWJv
-bCBhcyBpdCdzIHVzZWQgYnkgYW5vdGhlciBtb2R1bGUgb3IKPj4+PiBzdWJzeXN0ZW0uIFdpdGgg
-dGhlIGZvbGxvdyB1cCB0d28gcGF0Y2hlcyB5b3UgYXJlIG5vdCBkb2luZyBlaXRoZXIgb25lLAo+
-Pj4+IHNvIEknZCBhc3N1bWUgdGhhdCB5b3UgY2FuIGp1c3Qgb21pdCB0aGUgRVhQT1JUXyogY2hh
-bmdlcy4KPj4+IFRoZSBub3V2ZWF1IHBsYXRmb3JtIGRldmljZSBkcml2ZXIgaXMgYnVpbHQgYXMg
-YW5vdGhlciBtb2R1bGUgLQo+Pj4gbm91dmVhdV9wbGF0Zm9ybS5rby4gOikKPj4gSSdkIGxpa2Ug
-dG8gaGVhciB0aGUgb3BpbmlvbiBvZiB0aGUgbm91dmVhdSBwZW9wbGUgYW5kIEFsZXgsIGJ1dCBJ
-J2QKPj4gdmVyeSBtdWNoIHByZWZlciBpZiBub3V2ZWF1X3BsYXRmb3JtLm8gd2FzIHNpbXBseSBs
-aW5rZWQgaW50byB0aGUKPj4gbm91dmVhdS5rbyBtb2R1bGUuIEkgZG9uJ3Qgc2VlIGFueSBnb29k
-IHJlYXNvbiB0byBrZWVwIGl0IHNlcGFyYXRlLgo+IFllcCwgSSBhZ3JlZS4gVGhlIGRlY2lzaW9u
-IHRvIGhvc3QgcGxhdGZvcm0gc3VwcG9ydCBpbiBhIHNlcGFyYXRlCj4gbW9kdWxlIGxvb2tzIG1p
-c2xlYWRlZCBpZiBpdCByZXN1bHRzIGluIGFkZGl0aW9uYWwgZXhwb3J0cyB0aGF0IHdlCj4gd291
-bGQgb3RoZXJ3aXNlIGF2b2lkLiBJSVVDIEkgZGlkIHRoaXMgdG8gYmUgYWJsZSB0byB1c2UgdGhl
-IG1vZHVsZQo+IGNvbnZlbmllbmNlIG1hY3JvcyB0byByZWdpc3RlciB0aGUgcGxhdGZvcm0gZHJp
-dmVyLgo+Cj4+IFNvbWV0aGluZyBsaWtlIHRoZSBhdHRhY2hlZCBwYXRjaCAodW50ZXN0ZWQpIG91
-Z2h0IHRvIGRvIGl0Lgo+IFRoaXMgcGF0Y2ggYWxvbmUgd29uJ3QgYmUgZW5vdWdoIGZvciB0aGUg
-cmVhc29uIEkgbWVudGlvbmVkIGFib3ZlLgo+IEhvd2V2ZXIsIGlmIFZpbmNlIGRvZXNuJ3QgbWlu
-ZCBoYW5kbGluZyB0aGUgcGxhdGZvcm0gZHJpdmVyCj4gcmVnaXN0cmF0aW9uIG1hbnVhbGx5IGlu
-IG5vdXZlYXVfZHJtX2luaXQvbm91dmVhdV9kcm1fZXhpdCwgSSBhZ3JlZQo+IHRoaXMgd291bGQg
-YmUgdGhlIHdheSB0byBnby4KSSBkZWZpbml0ZWx5IGRvbid0IG1pbmQuIDopIFdpbGwgZml4IGlu
-IG5leHQgdmVyc2lvbiBiYXNlZCBvbiB5b3UgZ3V5cycgCnN1Z2dlc3Rpb25zLgoKVGhhbmtzLApW
-aW5jZQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91
-dmVhdSBtYWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xp
-c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL25vdXZlYXUK
+As the nyan-blaze has a micro-sd slot, as opposed to nyan-big, which has a full SD
+slot.
+
+Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+---
+ arch/arm/boot/dts/tegra124-nyan-big.dts | 4 ++++
+ arch/arm/boot/dts/tegra124-nyan.dtsi    | 1 -
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts b/arch/arm/boot/dts/tegra124-nyan-big.dts
+index 2041077..598c090 100644
+--- a/arch/arm/boot/dts/tegra124-nyan-big.dts
++++ b/arch/arm/boot/dts/tegra124-nyan-big.dts
+@@ -6,6 +6,10 @@
+ 	model = "Acer Chromebook 13 CB5-311";
+ 	compatible = "google,nyan-big", "google,nyan", "nvidia,tegra124";
+ 
++	sdhci@0,700b0400 { /* SD Card on this bus */
++		wp-gpios = <&gpio TEGRA_GPIO(Q, 4) GPIO_ACTIVE_LOW>;
++	};
++
+ 	sound {
+ 		nvidia,model = "Acer Chromebook 13 CB5-311";
+ 	};
+diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi b/arch/arm/boot/dts/tegra124-nyan.dtsi
+index 4c68658..12d757e 100644
+--- a/arch/arm/boot/dts/tegra124-nyan.dtsi
++++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
+@@ -820,7 +820,6 @@
+ 		status = "okay";
+ 		cd-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_LOW>;
+ 		power-gpios = <&gpio TEGRA_GPIO(R, 0) GPIO_ACTIVE_HIGH>;
+-		wp-gpios = <&gpio TEGRA_GPIO(Q, 4) GPIO_ACTIVE_LOW>;
+ 		bus-width = <4>;
+ 		no-1-8-v;
+ 		vqmmc-supply = <&vddio_sdmmc3>;
+-- 
+1.9.3
