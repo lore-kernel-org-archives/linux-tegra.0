@@ -1,144 +1,49 @@
-From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 3/11] memory: tegra: add flush operation for
- Tegra124 memory clients
-Date: Tue, 6 Jan 2015 23:53:13 +0800
-Message-ID: <20150106155312.GA20547@nvidia.com>
-References: <1419331204-26679-1-git-send-email-vinceh@nvidia.com>
- <1419331204-26679-4-git-send-email-vinceh@nvidia.com>
- <20150106142958.GM31830@ulmo.nvidia.com> <20150106150744.GB18598@nvidia.com>
- <20150106152750.GR31830@ulmo.nvidia.com>
+From: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+Subject: Re: [PATCH v5 3/3] ARM: tegra: Add thermal reset (thermtrip) support
+ to PMC
+Date: Tue, 06 Jan 2015 17:56:21 +0200
+Message-ID: <54AC05A5.5040401@kapsi.fi>
+References: <1420541578-27968-1-git-send-email-mikko.perttunen@kapsi.fi> <1420541578-27968-4-git-send-email-mikko.perttunen@kapsi.fi> <20150106151427.GQ31830@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <20150106152750.GR31830-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
-Content-Disposition: inline
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, seven-FA6nBp6kBxZzu6KWmfFNGwC/G2K4zDHf@public.gmane.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150106151427.GQ31830@ulmo.nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: swarren@wwwdotorg.org, gnurou@gmail.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, wni@nvidia.com, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMDQ6Mjc6NTJQTSBKYW4gMDYsIFRoaWVycnkgUmVkaW5nIHdyb3RlOgo+ICogUEdQIFNpZ25l
-ZCBieSBhbiB1bmtub3duIGtleQo+IAo+IE9uIFR1ZSwgSmFuIDA2LCAyMDE1IGF0IDExOjA3OjQ1
-UE0gKzA4MDAsIFZpbmNlIEhzdSB3cm90ZToKPiA+IE9uIDAzOjMwOjAwUE0gSmFuIDA2LCBUaGll
-cnJ5IFJlZGluZyB3cm90ZToKPiA+ID4gPiBPbGQgU2lnbmVkIGJ5IGFuIHVua25vd24ga2V5Cj4g
-PiA+IAo+ID4gPiBPbiBUdWUsIERlYyAyMywgMjAxNCBhdCAwNjozOTo1NlBNICswODAwLCBWaW5j
-ZSBIc3Ugd3JvdGU6Cj4gPiA+ID4gU2lnbmVkLW9mZi1ieTogVmluY2UgSHN1IDx2aW5jZWhAbnZp
-ZGlhLmNvbT4KPiA+ID4gPiAtLS0KPiA+ID4gPiAgZHJpdmVycy9tZW1vcnkvdGVncmEvdGVncmEx
-MjQuYyB8IDgyICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCj4gPiA+
-ID4gIDEgZmlsZSBjaGFuZ2VkLCA4MiBpbnNlcnRpb25zKCspCj4gPiA+ID4gCj4gPiA+ID4gZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvbWVtb3J5L3RlZ3JhL3RlZ3JhMTI0LmMgYi9kcml2ZXJzL21lbW9y
-eS90ZWdyYS90ZWdyYTEyNC5jCj4gPiA+ID4gaW5kZXggMjc4ZDQwYjg1NGMxLi4wMzY5MzU3NDNh
-MGEgMTAwNjQ0Cj4gPiA+ID4gLS0tIGEvZHJpdmVycy9tZW1vcnkvdGVncmEvdGVncmExMjQuYwo+
-ID4gPiA+ICsrKyBiL2RyaXZlcnMvbWVtb3J5L3RlZ3JhL3RlZ3JhMTI0LmMKPiA+ID4gPiBAQCAt
-Niw2ICs2LDcgQEAKPiA+ID4gPiAgICogcHVibGlzaGVkIGJ5IHRoZSBGcmVlIFNvZnR3YXJlIEZv
-dW5kYXRpb24uCj4gPiA+ID4gICAqLwo+ID4gPiA+ICAKPiA+ID4gPiArI2luY2x1ZGUgPGxpbnV4
-L2RlbGF5Lmg+Cj4gPiA+ID4gICNpbmNsdWRlIDxsaW51eC9vZi5oPgo+ID4gPiA+ICAjaW5jbHVk
-ZSA8bGludXgvbW0uaD4KPiA+ID4gPiAgCj4gPiA+ID4gQEAgLTk1OSw3ICs5NjAsODUgQEAgc3Rh
-dGljIGNvbnN0IHN0cnVjdCB0ZWdyYV9zbW11X3N3Z3JvdXAgdGVncmExMjRfc3dncm91cHNbXSA9
-IHsKPiA+ID4gPiAgCXsgLnN3Z3JvdXAgPSBURUdSQV9TV0dST1VQX1ZJLCAgICAgICAgLnJlZyA9
-IDB4MjgwIH0sCj4gPiA+ID4gIH07Cj4gPiA+ID4gIAo+ID4gPiA+ICtzdGF0aWMgY29uc3Qgc3Ry
-dWN0IHRlZ3JhX21jX2hyIHRlZ3JhMTI0X21jX2hyW10gPSB7Cj4gPiA+ID4gKwl7VEVHUkFfU1dH
-Uk9VUF9BRkksICAgICAgICAweDIwMCwgMHgyMDAsICAwfSwKPiA+ID4gPiArCXtURUdSQV9TV0dS
-T1VQX0FWUEMsICAgICAgIDB4MjAwLCAweDIwMCwgIDF9LAo+ID4gPiA+ICsJe1RFR1JBX1NXR1JP
-VVBfREMsICAgICAgICAgMHgyMDAsIDB4MjAwLCAgMn0sCj4gPiA+ID4gKwl7VEVHUkFfU1dHUk9V
-UF9EQ0IsICAgICAgICAweDIwMCwgMHgyMDAsICAzfSwKPiA+ID4gPiArCXtURUdSQV9TV0dST1VQ
-X0hDLCAgICAgICAgIDB4MjAwLCAweDIwMCwgIDZ9LAo+ID4gPiA+ICsJe1RFR1JBX1NXR1JPVVBf
-SERBLCAgICAgICAgMHgyMDAsIDB4MjAwLCAgN30sCj4gPiA+ID4gKwl7VEVHUkFfU1dHUk9VUF9J
-U1AyLCAgICAgICAweDIwMCwgMHgyMDAsICA4fSwKPiA+ID4gPiArCXtURUdSQV9TV0dST1VQX01Q
-Q09SRSwgICAgIDB4MjAwLCAweDIwMCwgIDl9LAo+ID4gPiA+ICsJe1RFR1JBX1NXR1JPVVBfTVBD
-T1JFTFAsICAgMHgyMDAsIDB4MjAwLCAxMH0sCj4gPiA+ID4gKwl7VEVHUkFfU1dHUk9VUF9NU0VO
-QywgICAgICAweDIwMCwgMHgyMDAsIDExfSwKPiA+ID4gPiArCXtURUdSQV9TV0dST1VQX1BQQ1Ms
-ICAgICAgIDB4MjAwLCAweDIwMCwgMTR9LAo+ID4gPiA+ICsJe1RFR1JBX1NXR1JPVVBfU0FUQSwg
-ICAgICAgMHgyMDAsIDB4MjAwLCAxNX0sCj4gPiA+ID4gKwl7VEVHUkFfU1dHUk9VUF9WREUsICAg
-ICAgICAweDIwMCwgMHgyMDAsIDE2fSwKPiA+ID4gPiArCXtURUdSQV9TV0dST1VQX1ZJLCAgICAg
-ICAgIDB4MjAwLCAweDIwMCwgMTd9LAo+ID4gPiA+ICsJe1RFR1JBX1NXR1JPVVBfVklDLCAgICAg
-ICAgMHgyMDAsIDB4MjAwLCAxOH0sCj4gPiA+ID4gKwl7VEVHUkFfU1dHUk9VUF9YVVNCX0hPU1Qs
-ICAweDIwMCwgMHgyMDAsIDE5fSwKPiA+ID4gPiArCXtURUdSQV9TV0dST1VQX1hVU0JfREVWLCAg
-IDB4MjAwLCAweDIwMCwgMjB9LAo+ID4gPiA+ICsJe1RFR1JBX1NXR1JPVVBfVFNFQywgICAgICAg
-MHgyMDAsIDB4MjAwLCAyMn0sCj4gPiA+ID4gKwl7VEVHUkFfU1dHUk9VUF9TRE1NQzFBLCAgICAw
-eDIwMCwgMHgyMDAsIDI5fSwKPiA+ID4gPiArCXtURUdSQV9TV0dST1VQX1NETU1DMkEsICAgIDB4
-MjAwLCAweDIwMCwgMzB9LAo+ID4gPiA+ICsJe1RFR1JBX1NXR1JPVVBfU0RNTUMzQSwgICAgMHgy
-MDAsIDB4MjAwLCAzMX0sCj4gPiA+IAo+ID4gPiBUaGUgZG9jdW1lbnRhdGlvbiB0aGF0IEkgaGF2
-ZSBzYXlzIHRoYXQgdGhlIHN0YXR1cyByZWdpc3RlciBmb3IgdGhlc2UgaXMKPiA+ID4gMHgyMDQu
-Cj4gPiBPb3BzLiBUaGFua3MgZm9yIGNhdGNoaW5nIHRoaXMuIFdpbGwgZml4Lgo+ID4gCj4gPiA+
-IAo+ID4gPiA+ICsJe1RFR1JBX1NXR1JPVVBfU0RNTUM0QSwgICAgMHg5NzAsIDB4OTc0LCAgMH0s
-Cj4gPiA+ID4gKwl7VEVHUkFfU1dHUk9VUF9JU1AyQiwgICAgICAweDk3MCwgMHg5NzQsICAxfSwK
-PiA+ID4gPiArCXtURUdSQV9TV0dST1VQX0dQVSwgICAgICAgIDB4OTcwLCAweDk3NCwgIDJ9LAo+
-ID4gPiA+ICt9Owo+ID4gPiA+ICsKPiA+ID4gPiAgI2lmZGVmIENPTkZJR19BUkNIX1RFR1JBXzEy
-NF9TT0MKPiA+ID4gPiArCj4gPiA+ID4gK3N0YXRpYyBib29sIHRlZ3JhMTI0X3N0YWJsZV9ob3Ry
-ZXNldF9jaGVjayhzdHJ1Y3QgdGVncmFfbWMgKm1jLAo+ID4gPiA+ICsJCXUzMiByZWcsIHUzMiAq
-c3RhdCkKPiA+ID4gPiArewo+ID4gPiA+ICsJaW50IGk7Cj4gPiA+ID4gKwl1MzIgY3VyX3N0YXQ7
-Cj4gPiA+ID4gKwl1MzIgcHJ2X3N0YXQ7Cj4gPiA+ID4gKwo+ID4gPiA+ICsJcHJ2X3N0YXQgPSBt
-Y19yZWFkbChtYywgcmVnKTsKPiA+ID4gPiArCWZvciAoaSA9IDA7IGkgPCA1OyBpKyspIHsKPiA+
-ID4gPiArCQljdXJfc3RhdCA9IG1jX3JlYWRsKG1jLCByZWcpOwo+ID4gPiA+ICsJCWlmIChjdXJf
-c3RhdCAhPSBwcnZfc3RhdCkKPiA+ID4gPiArCQkJcmV0dXJuIGZhbHNlOwo+ID4gPiA+ICsJfQo+
-ID4gPiAKPiA+ID4gV2h5IHRoaXMgbG9vcD8gVGhlIGZ1bmN0aW9uIGlzIGFscmVhZHkgY2FsbGVk
-IGluIGEgcG9sbGluZyBsb29wIGJlbG93Lgo+ID4gPiBBbHNvIHdoeSBjb21wYXJlIHRvIHRoZSBw
-cmV2aW91cyB2YWx1ZSBvZiB0aGUgcmVnaXN0ZXI/IElzbid0IHRoZSBvbmx5Cj4gPiA+IHRoaW5n
-IHdlJ3JlIGludGVyZXN0ZWQgaW4gdGhlIHZhbHVlIG9mIHRoZSBzcGVjaWZpYyBiaXQ/Cj4gPiBJ
-IHJlY2FsbCBpdCdzIGR1ZSB0byBhIEhXIGJ1ZyB0aGF0IHRoZXJlIG1pZ2h0IGJlIGEgZ2l0Y2gg
-aWYgd2UgcHJvZ3JhbQo+ID4gdGhlIGN0cmwgcmVnIGFuZCB0aGVuIHJlYWQgdGhlIHN0YXR1cyBy
-ZWcgaW4gYSBzaG9ydCB3aW5kb3cuIFRoaXMgZnVuY3Rpb24KPiA+IGlzIHRvIG1ha2Ugc3VyZSB3
-ZSBoYXZlIGEgc3RhYmxlIHN0YXR1cy4KPiAKPiBUaGlzIHdhcnJhbnRzIGEgY29tbWVudCwgdGhl
-bi4KT2theS4KCj4gCj4gPiA+ID4gKwkqc3RhdCA9IGN1cl9zdGF0Owo+ID4gPiA+ICsJcmV0dXJu
-IHRydWU7Cj4gPiA+ID4gK30KPiA+ID4gPiArCj4gPiA+ID4gK3N0YXRpYyBpbnQgdGVncmExMjRf
-bWNfZmx1c2goc3RydWN0IHRlZ3JhX21jICptYywKPiA+ID4gPiArCQljb25zdCBzdHJ1Y3QgdGVn
-cmFfbWNfaHIgKmhyX2NsaWVudCwgYm9vbCBlbmFibGUpCj4gPiA+ID4gK3sKPiA+ID4gPiArCXUz
-MiB2YWw7Cj4gPiA+ID4gKwo+ID4gPiA+ICsJaWYgKCFtYyB8fCAhaHJfY2xpZW50KQo+ID4gPiA+
-ICsJCXJldHVybiAtRUlOVkFMOwo+ID4gPiA+ICsKPiA+ID4gPiArCXZhbCA9IG1jX3JlYWRsKG1j
-LCBocl9jbGllbnQtPmN0cmwpOwo+ID4gPiA+ICsJaWYgKGVuYWJsZSkKPiA+ID4gPiArCQl2YWwg
-fD0gQklUKGhyX2NsaWVudC0+Yml0KTsKPiA+ID4gPiArCWVsc2UKPiA+ID4gPiArCQl2YWwgJj0g
-fkJJVChocl9jbGllbnQtPmJpdCk7Cj4gPiA+ID4gKwltY193cml0ZWwobWMsIHZhbCwgaHJfY2xp
-ZW50LT5jdHJsKTsKPiA+ID4gPiArCW1jX3JlYWRsKG1jLCBocl9jbGllbnQtPmN0cmwpOwo+ID4g
-PiA+ICsKPiA+ID4gPiArCS8qIHBvbGwgdGlsbCB0aGUgZmx1c2ggaXMgZG9uZSAqLwo+ID4gPiA+
-ICsJaWYgKGVuYWJsZSkgewo+ID4gPiA+ICsJCWRvIHsKPiA+ID4gPiArCQkJdWRlbGF5KDEwKTsK
-PiA+ID4gCj4gPiA+IFRoaXMgc2hvdWxkIHByb2JhYmx5IGJlIHVzbGVlcF9yYW5nZSgxMCwgMjAp
-IG9yIHNvbWV0aGluZy4KPiA+IE1heWJlIG5vLiBXZSBtaWdodCBuZWVkIHNvbWUgc3BpbiBsb2Nr
-IGhlcmUgdG8gZW5zdXJlIG9ubHkgb25lIGZsdXNoaW5nCj4gPiBvcGVyYXRpb24gcmVxdWVzdGVk
-IGFuZCBubyByYWNlIGNvdWxkIGhhcHBlbi4KPiAKPiBXZSBzaG91bGQgdXNlIGEgbXV0ZXgsIHRo
-ZW4uIFRoZXJlJ3Mgbm8gc2F5aW5nIGhvdyBsb25nIHRoaXMgd2lsbCB0YWtlCj4gYW5kIGJ1c3kt
-bG9vcGluZyBpbmRlZmluaXRlbHkgaXMgYSBiYWQgaWRlYS4gVGhvdWdoIGl0IHNlZW1zIHRvIG1l
-IGxpa2UKPiB3ZSBkb24ndCBuZWVkIHRvIGxvY2sgYXJvdW5kIHRoZSBwb2xsaW5nIGxvb3AgaGVy
-ZSBzaW5jZSB3ZSdyZSBtZXJlbHkKPiByZWFkaW5nIGEgc3RhdHVzIHJlZ2lzdGVyLiBXZSB3b3Vs
-ZCBvbmx5IG5lZWQgdG8gbG9jayBhcm91bmQgYWNjZXNzZXMgdG8KPiB0aGUgY29udHJvbCByZWdp
-c3RlciB0byBtYWtlIHN1cmUgdHdvIHByb2Nlc3NlcyBjYW4ndCBzdGVwIG9uIGVhY2gKPiBvdGhl
-cnMncyB0b2VzLgpXZSBjYW4gdXNlIG1ldHV4IGRlZmluaXRlbHkuIElmIHR3byBwcm9jZXNzZXMg
-dG91Y2ggdGhlIGN0cmwgcmVnaXN0ZXJzCnNlcXVlbnRpYWxseSBhbmQgcG9sbCB0aGUgc3RhdHVz
-IHJlZ2lzdGVyIGluIHBhcmFsbGVsLCB3ZSBkb250JyBrbm93IHdoZXRoZXIKdGhlIGdsaXRjaCBp
-cyBjYXVzZWQgYnkgdGhlIEhXIGJ1ZyBvciB0aGUgY29uY3VycmVudCBjdHJsIHJlZ2lzdGVyIHBy
-b2dyYW1taW5nPwpXZSBzaG91bGQgbG9jayB0aGUgc3RhdHVzIGNoZWNraW5nIGFzIHdlbGwuCgo+
-IAo+ID4gPiBXb3VsZCBpdCBiZSBkaWZmaWN1bHQgdG8gaW1wbGVtZW50IHRoaXMgZm9yIFRlZ3Jh
-MzAgYW5kIFRlZ3JhMTE0Pwo+ID4gTm8uIEJ1dCBJIGhhdmUgdG8gY2hlY2sgdGhlIGRldGFpbCBp
-biBUZWdyYTMwIGFuZCBUZWdyYTExNC4gQW5kIHRoZSBiaWdnZXN0Cj4gPiBwcm9ibGVtIGlzIEkg
-ZG9uJ3QgaGF2ZSB0aGUgYm9hcmRzIHRvIHRlc3QuCj4gCj4gSSBjYW4gaGVscCB3aXRoIHRlc3Rp
-bmcuIFRob3VnaCB0aGF0IHJhaXNlcyB0aGUgcXVlc3Rpb24gb2YgaG93IHRoaXMgY2FuCj4gYmUg
-dGVzdGVkLiBJdCBzZWVtcyBsaWtlIHRoaXMgZmVhdHVyZSBpcyB1c2VkIHRvIG1ha2Ugc3VyZSB0
-aGF0IGFsbAo+IG91dHN0YW5kaW5nIG1lbW9yeSByZXF1ZXN0cyBmcm9tIGNsaWVudHMgYXJlIGZs
-dXNoZWQgYmVmb3JlIHJlc2V0dGluZyBhCj4gbW9kdWxlLiBUeXBpY2FsbHkgTGludXggYXNzdW1l
-cyB0aGF0IGRldmljZXMgZG8gdGhhdCBhbnl3YXksIHNvIGlmIGEKPiBkZXZpY2UgaXMgc3VzcGVu
-ZGVkIG9yIHNodXQgZG93biwgdGhlIGNvcnJlc3BvbmRpbmcgZnVuY3Rpb24gc2hvdWxkCj4gZW5z
-dXJlIHRoYXQgYWxsIG91dHN0YW5kaW5nIHRyYW5zZmVycyBoYXZlIGJlZW4gY2FuY2VsbGVkIGFu
-ZCBhcmUKPiBmbHVzaGVkLgpUaGUgZmx1c2hpbmcgb3BlcmF0aW9uIGNhbiBiZSByZXF1ZXN0ZWQg
-YnkgcnVudGltZSBQTSBpZiB0aGUgZGV2aWNlIHN1cHBvcnRzCml0LgoKPiAKPiBBbHNvIHdlJ3Zl
-IG1hbmFnZWQganVzdCBmaW5lIHNvIGZhciwgc28gSSdtIGJlZ2lubmluZyB0byB3b25kZXIgd2hl
-dGhlcgo+IHdlIGFjdHVhbGx5IG5lZWQgdGhpcyBmZWF0dXJlIG9uIExpbnV4LiBJZiBub3QsIGhv
-dyBkbyB3ZSB0ZXN0IHRoYXQgdGhpcwo+IGlzIGluZGVlZCBkb2luZyB3aGF0IGl0IHNob3VsZD8g
-SG93IHRvIHRyaWdnZXIgYSBjb25kaXRpb24gdGhhdCByZXF1aXJlcwo+IGZsdXNoaW5nIGFuZCBo
-b3cgZG8gd2UgZGV0ZXJtaW5lIHRoYXQgZmx1c2hpbmcgYWN0dWFsbHkgZml4ZXMgdGhpbmdzPwpT
-b3JyeSB0aGF0IEkgY2FuJ3QgYW5zd2VyIGhvdyB0byB0ZXN0IGl0IGJlY2F1c2UgSSdtIG5vdCBh
-IG1jIGV4cGVydC4KV2hhdCBJIGNhbiBkbyBpcyB0ZXN0aW5nIHRoZSBwb3dlciB1cC9vZmYgc2Vx
-dWVuY2UgYSBsb3Qgb2YgdGltZSBhbmQgY2hlY2sgaWYKdGhlIGRldmljZSBjYW4gc3RpbGwgd29y
-ayBub3JtYWxseS4gV2UgbmVlZCB0aGlzIGZlYXR1cmUgYmVjYXVzZSB0aGUgVFJNCnJlcXVpcmVz
-IHNvPwoKVGhhbmtzLApWaW5jZQoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCk5vdXZlYXUgbWFpbGluZyBsaXN0Ck5vdXZlYXVAbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9ub3V2
-ZWF1Cg==
+On 01/06/2015 05:14 PM, Thierry Reding wrote:
+> On Tue, Jan 06, 2015 at 12:52:58PM +0200, Mikko Perttunen wrote:
+>> From: Mikko Perttunen <mperttunen@nvidia.com>
+>>
+>> This adds a device tree controlled option to enable PMC-based
+>> thermal reset in overheating situations. Thermtrip is supported on
+>> Tegra30, Tegra114 and Tegra124. The thermal reset only works when
+>> the thermal sensors are calibrated, so a soctherm driver is also
+>> required.
+>>
+>> The thermtrip event is triggered by the soctherm block, and all
+>> soctherm sensors default to showing a temperature of zero Celsius
+>> before they are initialized. Because of this, it is safe to initialize
+>> thermtrip and soctherm in any order.
+>>
+>> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+>> ---
+>>   drivers/soc/tegra/pmc.c | 107 ++++++++++++++++++++++++++++++++++++++++++++++++
+>>   1 file changed, 107 insertions(+)
+>
+> This looks good to me. I'm not sure if I asked before, but can this be
+> tested? Can we somehow trick thermtrip into reporting a temperature that
+> would trigger this?
+>
+> Thierry
+>
+
+Yep, you can find a program here: 
+https://gist.github.com/cyndis/66126c9c176b5f94a76f
+
+It sets the thermtrip threshold to zero degrees.
+
+Mikko
