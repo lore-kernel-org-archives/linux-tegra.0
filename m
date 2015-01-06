@@ -1,117 +1,136 @@
-From: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>
-Subject: Re: [PATCH nouveau 09/11] drm: export some variable and
- functions to resue the PM functions
-Date: Tue, 6 Jan 2015 10:03:36 -0500
-Message-ID: <CAKb7Uvh6ttvssYqe+3Qqq+RvckoBmYAKv2XY2w7hBFNwi93rew@mail.gmail.com>
+From: Vince Hsu <vinceh@nvidia.com>
+Subject: Re: [PATCH 3/11] memory: tegra: add flush operation for Tegra124
+ memory clients
+Date: Tue, 6 Jan 2015 23:07:45 +0800
+Message-ID: <20150106150744.GB18598@nvidia.com>
 References: <1419331204-26679-1-git-send-email-vinceh@nvidia.com>
- <1419331204-26679-10-git-send-email-vinceh@nvidia.com>
- <54A20F4D.4040100@gmail.com> <54A2198A.4000707@nvidia.com>
- <20150105153252.GI12010@ulmo.nvidia.com>
- <CAAVeFuK-SgUbtHADX4-pXN5_ayzvEd+1KxJOBcRe2tmDfHaLEA@mail.gmail.com>
- <20150106114953.GD31830@ulmo.nvidia.com>
- <54ABD49A.6080501@nvidia.com>
- <20150106143729.GN31830@ulmo.nvidia.com>
- <CAKb7UvgomyQkiwfGTdyuU-muE-_pPxOSmeXh9uQ6-ri0HHxLrQ@mail.gmail.com>
- <20150106145054.GO31830@ulmo.nvidia.com>
+ <1419331204-26679-4-git-send-email-vinceh@nvidia.com>
+ <20150106142958.GM31830@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <20150106145054.GO31830-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Emil Velikov <emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Roy Spliet <seven-FA6nBp6kBxZzu6KWmfFNGwC/G2K4zDHf@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150106142958.GM31830@ulmo.nvidia.com>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: swarren@wwwdotorg.org, gnurou@gmail.com, bskeggs@redhat.com, martin.peres@free.fr, seven@nimrod-online.com, samuel.pitoiset@gmail.com, nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCBKYW4gNiwgMjAxNSBhdCA5OjUwIEFNLCBUaGllcnJ5IFJlZGluZyA8dGhpZXJyeS5y
-ZWRpbmdAZ21haWwuY29tPiB3cm90ZToKPiBPbiBUdWUsIEphbiAwNiwgMjAxNSBhdCAwOTo0NDow
-MUFNIC0wNTAwLCBJbGlhIE1pcmtpbiB3cm90ZToKPj4gT24gVHVlLCBKYW4gNiwgMjAxNSBhdCA5
-OjM3IEFNLCBUaGllcnJ5IFJlZGluZyA8dGhpZXJyeS5yZWRpbmdAZ21haWwuY29tPiB3cm90ZToK
-Pj4gPiBPbiBUdWUsIEphbiAwNiwgMjAxNSBhdCAwODoyNzowNlBNICswODAwLCBWaW5jZSBIc3Ug
-d3JvdGU6Cj4+ID4+Cj4+ID4+IE9uIDAxLzA2LzIwMTUgMDc6NDkgUE0sIFRoaWVycnkgUmVkaW5n
-IHdyb3RlOgo+PiA+PiA+KiBQR1AgU2lnbmVkIGJ5IGFuIHVua25vd24ga2V5Cj4+ID4+ID4KPj4g
-Pj4gPk9uIE1vbiwgSmFuIDA1LCAyMDE1IGF0IDA4OjUwOjE4UE0gKzAxMDAsIEFsZXhhbmRyZSBD
-b3VyYm90IHdyb3RlOgo+PiA+PiA+Pk9uIE1vbiwgSmFuIDUsIDIwMTUgYXQgNDozMiBQTSwgVGhp
-ZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5nQGdtYWlsLmNvbT4gd3JvdGU6Cj4+ID4+ID4+Pk9u
-IFR1ZSwgRGVjIDMwLCAyMDE0IGF0IDExOjE4OjM0QU0gKzA4MDAsIFZpbmNlIEhzdSB3cm90ZToK
-Pj4gPj4gPj4+PkhpIEVtaWwsCj4+ID4+ID4+Pj4KPj4gPj4gPj4+Pk9uIDEyLzMwLzIwMTQgMTA6
-MzQgQU0sIEVtaWwgVmVsaWtvdiB3cm90ZToKPj4gPj4gPj4+Pj5PbiAyMy8xMi8xNCAxMDo0MCwg
-VmluY2UgSHN1IHdyb3RlOgo+PiA+PiA+Pj4+Pj5UaGlzIHBhdGNoIGFkZHMgc29tZSBjaGVja3Mg
-aW4gdGhlIHN1c3BlbmQvcmVzdW1lIGZ1bmN0aW9ucyB0byBkaXN0aW5ndWlzaAo+PiA+PiA+Pj4+
-Pj50aGUgZEdQVSBhbmQgbW9iaWxlIEdQVSBhbmQgZXhwb3J0cyBzb21lIHZhcmlhYmxlcy9mdW5j
-dGlvbnMgc28gdGhhdCB0aGUKPj4gPj4gPj4+Pj4+bm91dmVhdSBwbGF0Zm9ybSBkZXZpY2UgY2Fu
-IHJldXNlIHRoZW0uCj4+ID4+ID4+Pj4+Pgo+PiA+PiA+Pj4+PkhpIFZpbmNlLAo+PiA+PiA+Pj4+
-Pgo+PiA+PiA+Pj4+PkFmYWl1IG9uZSBuZWVkcyB0byBleHBvcnQgYSBzeW1ib2wgYXMgaXQncyB1
-c2VkIGJ5IGFub3RoZXIgbW9kdWxlIG9yCj4+ID4+ID4+Pj4+c3Vic3lzdGVtLiBXaXRoIHRoZSBm
-b2xsb3cgdXAgdHdvIHBhdGNoZXMgeW91IGFyZSBub3QgZG9pbmcgZWl0aGVyIG9uZSwKPj4gPj4g
-Pj4+Pj5zbyBJJ2QgYXNzdW1lIHRoYXQgeW91IGNhbiBqdXN0IG9taXQgdGhlIEVYUE9SVF8qIGNo
-YW5nZXMuCj4+ID4+ID4+Pj5UaGUgbm91dmVhdSBwbGF0Zm9ybSBkZXZpY2UgZHJpdmVyIGlzIGJ1
-aWx0IGFzIGFub3RoZXIgbW9kdWxlIC0KPj4gPj4gPj4+Pm5vdXZlYXVfcGxhdGZvcm0ua28uIDop
-Cj4+ID4+ID4+PkknZCBsaWtlIHRvIGhlYXIgdGhlIG9waW5pb24gb2YgdGhlIG5vdXZlYXUgcGVv
-cGxlIGFuZCBBbGV4LCBidXQgSSdkCj4+ID4+ID4+PnZlcnkgbXVjaCBwcmVmZXIgaWYgbm91dmVh
-dV9wbGF0Zm9ybS5vIHdhcyBzaW1wbHkgbGlua2VkIGludG8gdGhlCj4+ID4+ID4+Pm5vdXZlYXUu
-a28gbW9kdWxlLiBJIGRvbid0IHNlZSBhbnkgZ29vZCByZWFzb24gdG8ga2VlcCBpdCBzZXBhcmF0
-ZS4KPj4gPj4gPj5ZZXAsIEkgYWdyZWUuIFRoZSBkZWNpc2lvbiB0byBob3N0IHBsYXRmb3JtIHN1
-cHBvcnQgaW4gYSBzZXBhcmF0ZQo+PiA+PiA+Pm1vZHVsZSBsb29rcyBtaXNsZWFkZWQgaWYgaXQg
-cmVzdWx0cyBpbiBhZGRpdGlvbmFsIGV4cG9ydHMgdGhhdCB3ZQo+PiA+PiA+PndvdWxkIG90aGVy
-d2lzZSBhdm9pZC4gSUlVQyBJIGRpZCB0aGlzIHRvIGJlIGFibGUgdG8gdXNlIHRoZSBtb2R1bGUK
-Pj4gPj4gPj5jb252ZW5pZW5jZSBtYWNyb3MgdG8gcmVnaXN0ZXIgdGhlIHBsYXRmb3JtIGRyaXZl
-ci4KPj4gPj4gPj4KPj4gPj4gPj4+U29tZXRoaW5nIGxpa2UgdGhlIGF0dGFjaGVkIHBhdGNoICh1
-bnRlc3RlZCkgb3VnaHQgdG8gZG8gaXQuCj4+ID4+ID4+VGhpcyBwYXRjaCBhbG9uZSB3b24ndCBi
-ZSBlbm91Z2ggZm9yIHRoZSByZWFzb24gSSBtZW50aW9uZWQgYWJvdmUuCj4+ID4+ID4+SG93ZXZl
-ciwgaWYgVmluY2UgZG9lc24ndCBtaW5kIGhhbmRsaW5nIHRoZSBwbGF0Zm9ybSBkcml2ZXIKPj4g
-Pj4gPj5yZWdpc3RyYXRpb24gbWFudWFsbHkgaW4gbm91dmVhdV9kcm1faW5pdC9ub3V2ZWF1X2Ry
-bV9leGl0LCBJIGFncmVlCj4+ID4+ID4+dGhpcyB3b3VsZCBiZSB0aGUgd2F5IHRvIGdvLgo+PiA+
-PiA+SWYgd2UgZG8gdGhlIGNvbnZlcnNpb24gdG8gZ2VuZXJpYyBwb3dlciBkb21haW5zLCB0aGUg
-b25seSBUZWdyYS0KPj4gPj4gPnNwZWNpZmljIEFQSSByZW1haW5pbmcgd2lsbCBiZSB0aGUgYWNj
-ZXNzIHRvIHRoZSBmdXNlIHJlZ2lzdGVycyBmb3IgdGhlCj4+ID4+ID5zcGVlZG8gdmFsdWUuIEF0
-IHRoYXQgcG9pbnQgd2Ugd291bGRuJ3QgbmVlZCB0aGUgQVJDSF9URUdSQSBkZXBlbmRlbmN5Cj4+
-ID4+ID5hbnkgbG9uZ2VyIGFuZCBjb3VsZCBhbHdheXMgYnVpbGQgdGhlIHBsYXRmb3JtIGRyaXZl
-ciBhbG9uZyB3aXRoIHRoZSBQQ0kKPj4gPj4gPmRyaXZlci4KPj4gPj4gRG8gd2UgcmVhbGx5IHdh
-bnQgdGhlIHBsYXRmb3JtIGRyaXZlciBhbHdheXMgYnVpbHQgd2l0aCB0aGUgUENJIGRyaXZlciBl
-dmVuCj4+ID4+IHRoZXJlIGlzIG5vIGRlcGVuZGVuY3kgYmV0d2VlbiB0aGVtLiBBY3R1YWxseSBJ
-IGhhdmUgc29tZSBwYXRjaGVzIHRvCj4+ID4+IGJ1aWxkIHRoZSBwbGF0Zm9ybSBkcml2ZXIgd2l0
-aCAhQ09ORklHX1BDSSBhbmQgd291bGQgbGlrZSB0byBwb3N0IHRoZW0gbWF5YmUKPj4gPj4gbGF0
-ZXIuCj4+ID4KPj4gPiBJIGRvIHNlZSBzb21lIGFkdmFudGFnZSBpbiBtYWtpbmcgTm91dmVhdSBi
-dWlsZCB3aXRoICFDT05GSUdfUENJIGJlY2F1c2UKPj4gPiBpdCBhbGxvd3MgYnVpbGRpbmcgdGhl
-IGRyaXZlciBmb3IgYW4gU29DIHdpdGhvdXQgUENJLiBCdXQgSSB0aGluayBhbHdheXMKPj4gPiBj
-b21waWxpbmcgd2hhdGV2ZXIgaXMgYXZhaWxhYmxlIHdvbid0IGh1cnQuIE5vdXZlYXUgaXRzZWxm
-IGlzIHJhdGhlciBiaWcKPj4gPiAofjEgTWlCIG9mIHRleHQgYW5kIH4xMjAgS2lCIG9mIGRhdGEp
-IHdoZXJlYXMgdGhlIHBsYXRmb3JtIGNvZGUgd2VpZ2hzCj4+ID4gaW4gYXQgYXJvdW5kIDEuNSBL
-aUIgb2YgdGV4dCBhbmQgMTA4IEIgb2YgZGF0YS4gSSBzdXNwZWN0IHRoYXQgdGhlIFBDSQo+PiA+
-IGdsdWUgaXMgZXF1YWxseSBuZWdsaWdpYmxlLgo+Pgo+PiBUaGUgbXVjaCBiaWdnZXIgcmVkdWN0
-aW9ucyBpbiBzaXplIHdvdWxkIGJlIGZyb20gZ2V0dGluZyByaWQgb2YgYWxsCj4+IHRoZSBzdHVm
-ZiB0aGF0J3Mgbm90IHVzZWQgYXQgYWxsIG9uIGEgR0syMEEsIGxpa2UgYWxsIHRoZSBmaXJtd2Fy
-ZSwKPj4gYW5kIGEgd2hvbGUgYnVuY2ggb2YgbG9naWMuIEkgaGFkIGEgc2VyaWVzIHRoYXQgc3Bs
-aXQgdGhpbmdzIHVwIGludG8KPj4gbnYwNC9udjUwL252YzAgY2F0ZWdvcmllcy4gSSBiZWxpZXZl
-IGl0IHdhcyBjb25zaWRlcmVkIHVuZGVzaXJhYmxlIGR1ZQo+PiB0byBpbmNyZWFzZWQgYnVpbGQg
-Y29tcGxleGl0eS4gKEl0IHdhc24ndCBhIG5pY2UgbW9kdWxhcml6ZWQKPj4gc2VwYXJhdGlvbiBi
-dXQgcmF0aGVyIGp1c3QgYSBjb21waWxlLXRpbWUgc2V0dGluZy4pIFNob3VsZG4ndCBiZSB0b28K
-Pj4gaGFyZCB0byByZWdlbmVyYXRlIHRob3VnaC4KPgo+IFdvdWxkIHlvdSBoYXBwZW4gdG8gcmVt
-ZW1iZXIgdGhlIGFtb3VudCBvZiBzYXZpbmdzIGZvciBlbmFibGluZyBvbmx5Cj4gbnZjMD8gSSdt
-IG5vdCBvdmVybHkgY29uY2VybmVkIHdpdGggdGhlIG1vZHVsZSBiZWluZyAxIE1pQiBvbiBUZWdy
-YSwKPiB0aG91Z2guIE1vc3QgYm9hcmRzIHRlbmQgdG8gaGF2ZSAyIEdpQisgb2YgbWVtb3J5IHRo
-ZXNlIGRheXMgYW5kIHRoZQo+IGtlcm5lbCBmb290cHJpbnQgaXMgcHJldHR5IGJpZyB3aXRob3V0
-IE5vdXZlYXUgYW55d2F5LgoKV2VsbCwgbnZjMCBpcyBhIGJpZyBvbmUgc2luY2UgdGhhdCdzIHdo
-ZXJlIGFsbCB0aGUgZmlybXdhcmUgbGl2ZXMsCndoaWNoIGlzIGEgYmlnIGNodW5rIG9mIGl0LCBh
-bmQgeW91IGRvbid0IGFjdHVhbGx5IGVuZCB1cCB1c2luZyBhbnkgb2YKaXQuIChBbmQgZXZlbiBp
-ZiB5b3UgZGlkLCBpdCdkIGJlIGp1c3Qgb25lIG9mIHRoZSBmaXJtd2FyZSBmaWxlcywgbm90CmFs
-bCBvZiB0aGVtKS4KCkhlcmUgd2FzIHRoZSBwYXRjaDogaHR0cDovL3Blcm1hbGluay5nbWFuZS5v
-cmcvZ21hbmUuY29tcC52aWRlby5kcmkuZGV2ZWwvMTAyNDU3CgpMb29rcyBsaWtlIG52YzAgb25s
-eSB3YXM6CgpOVkMwOiA4Nzg3MjYgYnl0ZXMKICAgdGV4dCAgICBkYXRhICAgICBic3MgICAgIGRl
-YyAgICAgaGV4IGZpbGVuYW1lCiAzNjA1OTMgIDE0MDMyNyAgICAgIDgwICA1MDEwMDAgICA3YTUw
-OCBkcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9ub3V2ZWF1LmtvCgpjb21wYXJlZCB0byB0aGUgY29t
-Ym8gcGFja2FnZToKCk5WMDQgKyBOVjUwICsgTlZDMDogMTM0MzQ4MiBieXRlcwogICB0ZXh0ICAg
-IGRhdGEgICAgIGJzcyAgICAgZGVjICAgICBoZXggZmlsZW5hbWUKIDU3OTE3MSAgMTg0MjY0ICAg
-ICA0ODAgIDc2MzkxNSAgIGJhODBiIGRyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L25vdXZlYXUua28K
-CiAgLWlsaWEKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
-Tm91dmVhdSBtYWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDov
-L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL25vdXZlYXUK
+On 03:30:00PM Jan 06, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Tue, Dec 23, 2014 at 06:39:56PM +0800, Vince Hsu wrote:
+> > Signed-off-by: Vince Hsu <vinceh@nvidia.com>
+> > ---
+> >  drivers/memory/tegra/tegra124.c | 82 +++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 82 insertions(+)
+> > 
+> > diff --git a/drivers/memory/tegra/tegra124.c b/drivers/memory/tegra/tegra124.c
+> > index 278d40b854c1..036935743a0a 100644
+> > --- a/drivers/memory/tegra/tegra124.c
+> > +++ b/drivers/memory/tegra/tegra124.c
+> > @@ -6,6 +6,7 @@
+> >   * published by the Free Software Foundation.
+> >   */
+> >  
+> > +#include <linux/delay.h>
+> >  #include <linux/of.h>
+> >  #include <linux/mm.h>
+> >  
+> > @@ -959,7 +960,85 @@ static const struct tegra_smmu_swgroup tegra124_swgroups[] = {
+> >  	{ .swgroup = TEGRA_SWGROUP_VI,        .reg = 0x280 },
+> >  };
+> >  
+> > +static const struct tegra_mc_hr tegra124_mc_hr[] = {
+> > +	{TEGRA_SWGROUP_AFI,        0x200, 0x200,  0},
+> > +	{TEGRA_SWGROUP_AVPC,       0x200, 0x200,  1},
+> > +	{TEGRA_SWGROUP_DC,         0x200, 0x200,  2},
+> > +	{TEGRA_SWGROUP_DCB,        0x200, 0x200,  3},
+> > +	{TEGRA_SWGROUP_HC,         0x200, 0x200,  6},
+> > +	{TEGRA_SWGROUP_HDA,        0x200, 0x200,  7},
+> > +	{TEGRA_SWGROUP_ISP2,       0x200, 0x200,  8},
+> > +	{TEGRA_SWGROUP_MPCORE,     0x200, 0x200,  9},
+> > +	{TEGRA_SWGROUP_MPCORELP,   0x200, 0x200, 10},
+> > +	{TEGRA_SWGROUP_MSENC,      0x200, 0x200, 11},
+> > +	{TEGRA_SWGROUP_PPCS,       0x200, 0x200, 14},
+> > +	{TEGRA_SWGROUP_SATA,       0x200, 0x200, 15},
+> > +	{TEGRA_SWGROUP_VDE,        0x200, 0x200, 16},
+> > +	{TEGRA_SWGROUP_VI,         0x200, 0x200, 17},
+> > +	{TEGRA_SWGROUP_VIC,        0x200, 0x200, 18},
+> > +	{TEGRA_SWGROUP_XUSB_HOST,  0x200, 0x200, 19},
+> > +	{TEGRA_SWGROUP_XUSB_DEV,   0x200, 0x200, 20},
+> > +	{TEGRA_SWGROUP_TSEC,       0x200, 0x200, 22},
+> > +	{TEGRA_SWGROUP_SDMMC1A,    0x200, 0x200, 29},
+> > +	{TEGRA_SWGROUP_SDMMC2A,    0x200, 0x200, 30},
+> > +	{TEGRA_SWGROUP_SDMMC3A,    0x200, 0x200, 31},
+> 
+> The documentation that I have says that the status register for these is
+> 0x204.
+Oops. Thanks for catching this. Will fix.
+
+> 
+> > +	{TEGRA_SWGROUP_SDMMC4A,    0x970, 0x974,  0},
+> > +	{TEGRA_SWGROUP_ISP2B,      0x970, 0x974,  1},
+> > +	{TEGRA_SWGROUP_GPU,        0x970, 0x974,  2},
+> > +};
+> > +
+> >  #ifdef CONFIG_ARCH_TEGRA_124_SOC
+> > +
+> > +static bool tegra124_stable_hotreset_check(struct tegra_mc *mc,
+> > +		u32 reg, u32 *stat)
+> > +{
+> > +	int i;
+> > +	u32 cur_stat;
+> > +	u32 prv_stat;
+> > +
+> > +	prv_stat = mc_readl(mc, reg);
+> > +	for (i = 0; i < 5; i++) {
+> > +		cur_stat = mc_readl(mc, reg);
+> > +		if (cur_stat != prv_stat)
+> > +			return false;
+> > +	}
+> 
+> Why this loop? The function is already called in a polling loop below.
+> Also why compare to the previous value of the register? Isn't the only
+> thing we're interested in the value of the specific bit?
+I recall it's due to a HW bug that there might be a gitch if we program
+the ctrl reg and then read the status reg in a short window. This function
+is to make sure we have a stable status.
+
+> 
+> > +	*stat = cur_stat;
+> > +	return true;
+> > +}
+> > +
+> > +static int tegra124_mc_flush(struct tegra_mc *mc,
+> > +		const struct tegra_mc_hr *hr_client, bool enable)
+> > +{
+> > +	u32 val;
+> > +
+> > +	if (!mc || !hr_client)
+> > +		return -EINVAL;
+> > +
+> > +	val = mc_readl(mc, hr_client->ctrl);
+> > +	if (enable)
+> > +		val |= BIT(hr_client->bit);
+> > +	else
+> > +		val &= ~BIT(hr_client->bit);
+> > +	mc_writel(mc, val, hr_client->ctrl);
+> > +	mc_readl(mc, hr_client->ctrl);
+> > +
+> > +	/* poll till the flush is done */
+> > +	if (enable) {
+> > +		do {
+> > +			udelay(10);
+> 
+> This should probably be usleep_range(10, 20) or something.
+Maybe no. We might need some spin lock here to ensure only one flushing
+operation requested and no race could happen.
+
+> 
+> Would it be difficult to implement this for Tegra30 and Tegra114?
+No. But I have to check the detail in Tegra30 and Tegra114. And the biggest
+problem is I don't have the boards to test.
+
+Thanks,
+Vince
