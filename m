@@ -1,68 +1,135 @@
-From: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] dmaengine: tegra: add slave capabilities reporting
-Date: Tue, 6 Jan 2015 06:44:56 +0000 (UTC)
-Message-ID: <alpine.DEB.2.02.1501060640220.28771@utopia.booyaka.com>
+From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH nouveau 06/11] platform: complete the power
+	up/down sequence
+Date: Tue, 6 Jan 2015 17:34:01 +0800
+Message-ID: <54ABAC09.4080306@nvidia.com>
+References: <1419331204-26679-1-git-send-email-vinceh@nvidia.com>
+ <1419331204-26679-7-git-send-email-vinceh@nvidia.com>
+ <1419427385.2179.13.camel@lynxeye.de> <549B79B2.6010301@nvidia.com>
+ <20150105152552.GH12010@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <20150105152552.GH12010-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, seven-FA6nBp6kBxZzu6KWmfFNGwC/G2K4zDHf@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-After commit ecc19d17868be9c9f8f00ed928791533c420f3e0 ("dmaengine: Add
-a warning for drivers not using the generic slave caps retrieval"),
-the Tegra APB DMA driver causes this warning during boot:
-
-WARNING: CPU: 0 PID: 1 at drivers/dma/dmaengine.c:830 dma_async_device_register+0x294/0x538()
-this driver doesn't support generic slave capabilities reporting
-
-Fix by setting the appropriate reporting structure fields that are
-passed to dma_async_device_register().
-
-Signed-off-by: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
-Cc: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
-Applies on next-20150105.  Boot-tested on Tegra132 Norrin FFD
-(with a few unrelated patches not yet in mainline to get the board to 
-boot)
-
- drivers/dma/tegra20-apb-dma.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 5695fb8..eaf585e 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1425,6 +1425,21 @@ static int tegra_dma_probe(struct platform_device *pdev)
- 					tegra_dma_free_chan_resources;
- 	tdma->dma_dev.device_prep_slave_sg = tegra_dma_prep_slave_sg;
- 	tdma->dma_dev.device_prep_dma_cyclic = tegra_dma_prep_dma_cyclic;
-+	tdma->dma_dev.src_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_1_BYTE) |
-+		BIT(DMA_SLAVE_BUSWIDTH_2_BYTES) |
-+		BIT(DMA_SLAVE_BUSWIDTH_4_BYTES) |
-+		BIT(DMA_SLAVE_BUSWIDTH_8_BYTES);
-+	tdma->dma_dev.dst_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_1_BYTE) |
-+		BIT(DMA_SLAVE_BUSWIDTH_2_BYTES) |
-+		BIT(DMA_SLAVE_BUSWIDTH_4_BYTES) |
-+		BIT(DMA_SLAVE_BUSWIDTH_8_BYTES);
-+	tdma->dma_dev.directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV);
-+	/*
-+	 * XXX The hardware appears to support
-+	 * DMA_RESIDUE_GRANULARITY_BURST-level reporting, but it's
-+	 * only used by this driver during tegra_dma_terminate_all()
-+	 */
-+	tdma->dma_dev.residue_granularity = DMA_RESIDUE_GRANULARITY_SEGMENT;
- 	tdma->dma_dev.device_config = tegra_dma_slave_config;
- 	tdma->dma_dev.device_terminate_all = tegra_dma_terminate_all;
- 	tdma->dma_dev.device_tx_status = tegra_dma_tx_status;
--- 
-2.0.0.GIT
+Ck9uIDAxLzA1LzIwMTUgMTE6MjUgUE0sIFRoaWVycnkgUmVkaW5nIHdyb3RlOgo+ICogUEdQIFNp
+Z25lZCBieSBhbiB1bmtub3duIGtleQo+Cj4gT24gVGh1LCBEZWMgMjUsIDIwMTQgYXQgMTA6NDI6
+NThBTSArMDgwMCwgVmluY2UgSHN1IHdyb3RlOgo+PiBPbiAxMi8yNC8yMDE0IDA5OjIzIFBNLCBM
+dWNhcyBTdGFjaCB3cm90ZToKPj4+IEFtIERpZW5zdGFnLCBkZW4gMjMuMTIuMjAxNCwgMTg6Mzkg
+KzA4MDAgc2NocmllYiBWaW5jZSBIc3U6Cj4+Pj4gVGhpcyBwYXRjaCBhZGRzIHNvbWUgbWlzc2lu
+ZyBwaWVjZXMgb2YgdGhlIHJhaWwgZ2FpbmcvdW5nYXRpbmcgc2VxdWVuY2UgdGhhdAo+Pj4+IGNh
+biBpbXByb3ZlIHRoZSBzdGFiaWxpdHkgaW4gdGhlb3J5Lgo+Pj4+Cj4+Pj4gU2lnbmVkLW9mZi1i
+eTogVmluY2UgSHN1IDx2aW5jZWhAbnZpZGlhLmNvbT4KPj4+PiAtLS0KPj4+PiAgIGRybS9ub3V2
+ZWF1X3BsYXRmb3JtLmMgfCA0MiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysKPj4+PiAgIGRybS9ub3V2ZWF1X3BsYXRmb3JtLmggfCAgMyArKysKPj4+PiAgIDIgZmls
+ZXMgY2hhbmdlZCwgNDUgaW5zZXJ0aW9ucygrKQo+Pj4+Cj4+Pj4gZGlmZiAtLWdpdCBhL2RybS9u
+b3V2ZWF1X3BsYXRmb3JtLmMgYi9kcm0vbm91dmVhdV9wbGF0Zm9ybS5jCj4+Pj4gaW5kZXggNjg3
+ODhiMTdhNDVjLi41MjdmZTIzNThmYzkgMTAwNjQ0Cj4+Pj4gLS0tIGEvZHJtL25vdXZlYXVfcGxh
+dGZvcm0uYwo+Pj4+ICsrKyBiL2RybS9ub3V2ZWF1X3BsYXRmb3JtLmMKPj4+PiBAQCAtMjUsOSAr
+MjUsMTEgQEAKPj4+PiAgICNpbmNsdWRlIDxsaW51eC9tb2R1bGUuaD4KPj4+PiAgICNpbmNsdWRl
+IDxsaW51eC9wbGF0Zm9ybV9kZXZpY2UuaD4KPj4+PiAgICNpbmNsdWRlIDxsaW51eC9vZi5oPgo+
+Pj4+ICsjaW5jbHVkZSA8bGludXgvb2ZfcGxhdGZvcm0uaD4KPj4+PiAgICNpbmNsdWRlIDxsaW51
+eC9yZXNldC5oPgo+Pj4+ICAgI2luY2x1ZGUgPGxpbnV4L3JlZ3VsYXRvci9jb25zdW1lci5oPgo+
+Pj4+ICAgI2luY2x1ZGUgPHNvYy90ZWdyYS9mdXNlLmg+Cj4+Pj4gKyNpbmNsdWRlIDxzb2MvdGVn
+cmEvbWMuaD4KPj4+PiAgICNpbmNsdWRlIDxzb2MvdGVncmEvcG1jLmg+Cj4+Pj4gICAjaW5jbHVk
+ZSAibm91dmVhdV9kcm0uaCIKPj4+PiBAQCAtNjEsNiArNjMsOSBAQCBzdGF0aWMgaW50IG5vdXZl
+YXVfcGxhdGZvcm1fcG93ZXJfdXAoc3RydWN0IG5vdXZlYXVfcGxhdGZvcm1fZ3B1ICpncHUpCj4+
+Pj4gICAJcmVzZXRfY29udHJvbF9kZWFzc2VydChncHUtPnJzdCk7Cj4+Pj4gICAJdWRlbGF5KDEw
+KTsKPj4+PiArCXRlZ3JhX21jX2ZsdXNoKGdwdS0+bWMsIGdwdS0+c3dncm91cCwgZmFsc2UpOwo+
+Pj4+ICsJdWRlbGF5KDEwKTsKPj4+PiArCj4+Pj4gICAJcmV0dXJuIDA7Cj4+Pj4gICBlcnJfY2xh
+bXA6Cj4+Pj4gQEAgLTc3LDYgKzgyLDE0IEBAIHN0YXRpYyBpbnQgbm91dmVhdV9wbGF0Zm9ybV9w
+b3dlcl9kb3duKHN0cnVjdCBub3V2ZWF1X3BsYXRmb3JtX2dwdSAqZ3B1KQo+Pj4+ICAgewo+Pj4+
+ICAgCWludCBlcnI7Cj4+Pj4gKwl0ZWdyYV9tY19mbHVzaChncHUtPm1jLCBncHUtPnN3Z3JvdXAs
+IHRydWUpOwo+Pj4+ICsJdWRlbGF5KDEwKTsKPj4+PiArCj4+Pj4gKwllcnIgPSB0ZWdyYV9wb3dl
+cmdhdGVfZ3B1X3NldF9jbGFtcGluZyh0cnVlKTsKPj4+PiArCWlmIChlcnIpCj4+Pj4gKwkJcmV0
+dXJuIGVycjsKPj4+PiArCXVkZWxheSgxMCk7Cj4+Pj4gKwo+Pj4+ICAgCXJlc2V0X2NvbnRyb2xf
+YXNzZXJ0KGdwdS0+cnN0KTsKPj4+PiAgIAl1ZGVsYXkoMTApOwo+Pj4+IEBAIC05MSw2ICsxMDQs
+MzEgQEAgc3RhdGljIGludCBub3V2ZWF1X3BsYXRmb3JtX3Bvd2VyX2Rvd24oc3RydWN0IG5vdXZl
+YXVfcGxhdGZvcm1fZ3B1ICpncHUpCj4+Pj4gICAJcmV0dXJuIDA7Cj4+Pj4gICB9Cj4+Pj4gK3N0
+YXRpYyBpbnQgbm91dmVhdV9wbGF0Zm9ybV9nZXRfbWMoc3RydWN0IGRldmljZSAqZGV2LAo+Pj4+
+ICsJCXN0cnVjdCB0ZWdyYV9tYyAqKm1jLCB1bnNpZ25lZCBpbnQgKnN3Z3JvdXApCj4+PiBVaG0s
+IG5vLiBJZiB0aGlzIGlzIG5lZWRlZCB0aGlzIGhhcyB0byBiZSBhIFRlZ3JhIE1DIGZ1bmN0aW9u
+IGFuZCBub3QKPj4+IGJ1cnJpZWQgaW50byBub3V2ZWF1IGNvZGUuIFlvdSBhcmUgdXNpbmcga25v
+d2xlZGdlIGFib3V0IHRoZSBpbnRlcm5hbAo+Pj4gd29ya2luZ3Mgb2YgdGhlIE1DIGRyaXZlciBo
+ZXJlLgo+Pj4KPj4+IEFsc28gdGhpcyBzaG91bGQgcHJvYmFibHkgb25seSB0YWtlIHRoZSBEdCBu
+b2RlIHBvaW50ZXIgYXMgYXJndW1lbnQgYW5kCj4+PiByZXR1cm4gYSBzb21ldGhpbmcgbGlrZSBh
+IHRlZ3JhX21jX2NsaWVudCBzdHJ1Y3QgdGhhdCBjb250YWlucyBib3RoIHRoZQo+Pj4gTUMgZGV2
+aWNlIHBvaW50ZXIgYW5kIHRoZSBzd2dyb3VwIHNvIHlvdSBjYW4gcGFzcyB0aGF0IHRvCj4+PiB0
+ZWdyYV9tY19mbHVzaCgpLgo+PiBHb29kIGlkZWEuIEkgd2lsbCBoYXZlIHNvbWV0aGluZyBhcyBi
+ZWxvdyBpbiBWMiBpZiB0aGVyZSBpcyBubyBvdGhlcgo+PiBjb21tZW50cyBmb3IgdGhpcy4KPj4K
+Pj4gdGVncmFfbWNfY2xpZW50ICp0ZWdyYV9tY19maW5kX2NsaWVudChzdHJ1Y3QgZGV2aWNlX25v
+ZGUgKm5vZGUpCj4+IHsKPj4gICAgICAuLi4KPj4gICAgICByZXQgPSBvZl9wYXJzZV9waGFuZGxl
+X3dpdGhfYXJncyhub2RlLCAibnZpZGlhLG1lbW9yeS1jbGllbnQiLCAuLi4pCj4+ICAgICAgLi4u
+Cj4+IH0KPj4KPj4gVGhlcmUgd2VyZSBzb21lIGRpc2N1c3Npb24gYWJvdXQgdGhpcyBmZXcgd2Vl
+a3MgYWdvLiBJJ20gbm90IHN1cmUgd2hldGhlciB3ZQo+PiBoYXZlIHNvbWUgY29uY2x1c2lvbi9p
+bXBsZW1lbnRhdGlvbiB0aG91Z2guIFRoaWVycnk/Cj4+Cj4+IGh0dHA6Ly9saXN0cy5pbmZyYWRl
+YWQub3JnL3BpcGVybWFpbC9saW51eC1hcm0ta2VybmVsLzIwMTQtRGVjZW1iZXIvMzA4NzAzLmh0
+bWwKPiBJIGRvbid0IHRoaW5rIGNsaWVudCBpcyBhIGdvb2QgZml0IGhlcmUuIEZsdXNoaW5nIGlz
+IGRvbmUgcGVyIFNXR1JPVVAKPiAob24gYWxsIGNsaWVudHMgb2YgdGhlIFNXR1JPVVApLiBTbyBJ
+IHRoaW5rIHdlJ2xsIHdhbnQgc29tZXRoaW5nIGxpa2U6Cj4KPiAJZ3B1QDAsNTcwMDAwMDAgewo+
+IAkJLi4uCj4gCQludmlkaWEsc3dncm91cCA9IDwmbWMgVEVHUkFfU1dHUk9VUF9HUFU+Owo+IAkJ
+Li4uCj4gCX07Cj4KPiBJbiB0aGUgRFQgYW5kIHJldHVybiBhIHN0cnVjdCB0ZWdyYV9tY19zd2dy
+b3VwIGFsb25nIHRoZSBsaW5lcyBvZjoKPgo+IAlzdHJ1Y3QgdGVncmFfbWNfY2xpZW50IHsKPiAJ
+CXVuc2lnbmVkIGludCBpZDsKPiAJCXVuc2lnbmVkIGludCBzd2dyb3VwOwo+Cj4gCQlzdHJ1Y3Qg
+bGlzdF9oZWFkIGxpc3Q7Cj4gCX07Cj4KPiAJc3RydWN0IHRlZ3JhX21jX3N3Z3JvdXAgewo+IAkJ
+c3RydWN0IGxpc3RfaGVhZCBjbGllbnRzOwo+IAkJdW5zaWduZWQgaW50IGlkOwo+IAl9Owo+Cj4g
+V2hlcmUgdGVncmFfbWNfc3dncm91cC5jbGllbnRzIGlzIGEgbGlzdCBvZiBzdHJ1Y3QgdGVncmFf
+bWNfY2xpZW50Cj4gc3RydWN0dXJlcywgZWFjaCByZXByZXNlbnRpbmcgYSBtZW1vcnkgY2xpZW50
+IHBlcnRhaW5pbmcgdG8gdGhlCj4gU1dHUk9VUC4KQmFzZWQgb24geW91ciBzdWdnZXN0aW9uIGFi
+b3ZlLCBJIGNyZWF0ZWQgYSBzdHJ1Y3QgdGVncmFfbWNfc3dncm91cDoKCnN0cnVjdCB0ZWdyYV9t
+Y19zd2dyb3VwIHsKICAgICB1bnNpZ25lZCBpbnQgaWQ7CiAgICAgc3RydWN0IHRlZ3JhX21jICpt
+YzsKICAgICBzdHJ1Y3QgbGlzdF9oZWFkIGhlYWQ7CiAgICAgc3RydWN0IGxpc3RfaGVhZCBjbGll
+bnRzOwp9OwoKQW5kIGFkZGVkIHRoZSBsaXN0IGhlYWQgaW4gdGhlIHN0cnVjdCB0ZWdyYV9tY19z
+b2MuCgpzdHJ1Y3QgdGVncmFfbWNfc29jIHsKICAgICBzdHJ1Y3QgdGVncmFfbWNfY2xpZW50ICpj
+bGllbnRzOwogICAgIHVuc2lnbmVkIGludCBudW1fY2xpZW50czsKCiAgICAgc3RydWN0IHRlZ3Jh
+X21jX2hyICpocl9jbGllbnRzOwogICAgIHVuc2lnbmVkIGludCBudW1faHJfY2xpZW50czsKCiAg
+ICAgc3RydWN0IGxpc3RfaGVhZCBzd2dyb3VwczsKLi4uCgpDcmVhdGVkIG9uZSBmdW5jdGlvbiB0
+byBidWlsZCB0aGUgc3dncm91cCBsaXN0LgoKc3RhdGljIGludCB0ZWdyYV9tY19idWlsZF9zd2dy
+b3VwKHN0cnVjdCB0ZWdyYV9tYyAqbWMpCnsKICAgICBpbnQgaTsKCiAgICAgZm9yIChpID0gMDsg
+aSA8IG1jLT5zb2MtPm51bV9jbGllbnRzOyBpKyspIHsKICAgICAgICAgc3RydWN0IHRlZ3JhX21j
+X3N3Z3JvdXAgKnNnOwogICAgICAgICBib29sIGZvdW5kID0gZmFsc2U7CgogICAgICAgICBsaXN0
+X2Zvcl9lYWNoX2VudHJ5KHNnLCAmbWMtPnNvYy0+c3dncm91cHMsIGhlYWQpIHsKICAgICAgICAg
+ICAgIGlmIChzZy0+aWQgPT0gbWMtPnNvYy0+Y2xpZW50c1tpXS5zd2dyb3VwKSB7CiAgICAgICAg
+ICAgICAgICAgZm91bmQgPSB0cnVlOwogICAgICAgICAgICAgICAgIGJyZWFrOwogICAgICAgICAg
+ICAgfQogICAgICAgICB9CgogICAgICAgICBpZiAoIWZvdW5kKSB7CiAgICAgICAgICAgICBzZyA9
+IGRldm1fa3phbGxvYyhtYy0+ZGV2LCBzaXplb2YoKnNnKSwgR0ZQX0tFUk5FTCk7CiAgICAgICAg
+ICAgICBpZiAoIXNnKQogICAgICAgICAgICAgICAgIHJldHVybiAtRU5PTUVNOwoKICAgICAgICAg
+ICAgIHNnLT5pZCA9IG1jLT5zb2MtPmNsaWVudHNbaV0uc3dncm91cDsKICAgICAgICAgICAgIHNn
+LT5tYyA9IG1jOwogICAgICAgICAgICAgbGlzdF9hZGRfdGFpbCgmc2ctPmhlYWQsICZtYy0+c29j
+LT5zd2dyb3Vwcyk7CiAgICAgICAgICAgICBJTklUX0xJU1RfSEVBRCgmc2ctPmNsaWVudHMpOwog
+ICAgICAgICB9CgogICAgICAgICBsaXN0X2FkZF90YWlsKCZtYy0+c29jLT5jbGllbnRzW2ldLmhl
+YWQsICZzZy0+Y2xpZW50cyk7CiAgICAgfQoKICAgICByZXR1cm4gMDsKfQoKPgo+IFdlIHByb2Jh
+Ymx5IGRvbid0IHdhbnQgdG8gZXhwb3NlIHRoZXNlIHN0cnVjdHVyZXMgcHVibGljbHksIGFuIG9w
+YXF1ZQo+IHR5cGUgc2hvdWxkIGJlIGVub3VnaC4gVGhlbiB5b3UgY2FuIHVzZSBmdW5jdGlvbnMg
+bGlrZToKPgo+IAlzdHJ1Y3QgdGVncmFfbWNfc3dncm91cCAqdGVncmFfbWNfZmluZF9zd2dyb3Vw
+KHN0cnVjdCBkZXZpY2Vfbm9kZSAqbm9kZSk7CkFuZCB0aGVuIEkgY2FuIHVzZSB0aGUgdGVncmFf
+ZmluZF9zd2dyb3VwKCkgaW4gR0syMEEgZHJpdmVyIHRvIGdldCB0aGUgCnN3Z3JvdXAKYW5kIGZs
+dXNoIHRoZSBtZW1vcnkgY2xpZW50cyBieSB0ZWdyYV9tY19mbHVzaChzd2dyb3VwKS4KCk9uZSBw
+cm9ibGVtIGlzIHRoYXQgdGhlIG1jX3NvYyBhbmQgbWNfY2xpZW50cyBhcmUgYXJlIGRlZmluZWQg
+YXMgY29uc3QuIApUbyBidWlsZAp0aGUgc3dncm91cCBsaXN0IGR5bmFtaWNhbGx5LCBJIGhhdmUg
+dG8gZGlzY2FyZCB0aGUgY29uc3QuIEkgZ3Vlc3MgeW91IAp3b24ndCBsaWtlIHRoYXQuIDooCgpU
+aGFua3MsClZpbmNlCgo+IEF0IHNvbWUgcG9pbnQgd2UgbWF5IGV2ZW4gbmVlZCBzb21ldGhpbmcg
+bGlrZToKPgo+IAlzdHJ1Y3QgdGVncmFfbWNfY2xpZW50ICp0ZWdyYV9tY19maW5kX2NsaWVudChz
+dHJ1Y3QgZGV2aWNlX25vZGUgKm5vZGUsCj4gCQkJCQkJICAgICBjb25zdCBjaGFyICpuYW1lKTsK
+Pgo+IEFuZCBEVCBjb250ZW50IGxpa2UgdGhpczoKPgo+IAlncHVAMCw1NzAwMDAwMCB7Cj4gCQku
+Li4KPiAJCW52aWRpYSxtZW1vcnktY2xpZW50cyA9IDwmbWMgMHg1OD4sIDwmbWMgMHg1OT47Cj4g
+CQludmlkaWEsbWVtb3J5LWNsaWVudC1uYW1lcyA9ICJyZWFkIiwgIndyaXRlIjsKPiAJCS4uLgo+
+IAl9Owo+Cj4gVGhpcyBjb3VsZCBiZSB1c2VmdWwgZm9yIGxhdGVuY3kgYWxsb3dhbmNlIHByb2dy
+YW1taW5nLCBidXQgd2UgY2FuIGNyb3NzCj4gdGhhdCBicmlkZ2Ugd2hlbiB3ZSBjb21lIHRvIGl0
+Lgo+Cj4gVGhpZXJyeQo+Cj4gKiBVbmtub3duIEtleQo+ICogMHg3RjNFQjNBMQoKX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBtYWlsaW5nIGxp
+c3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9w
+Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL25vdXZlYXUK
