@@ -1,58 +1,59 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [PATCH 1/4] ARM: tegra: rely on bootloader pinmux programming on
- nyan-big
-Date: Tue,  6 Jan 2015 11:37:26 +0100
-Message-ID: <1420540653-14816-2-git-send-email-tomeu.vizoso@collabora.com>
+From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Subject: [PATCH 3/4] ARM: tegra: Add DTS for the nyan-blaze board
+Date: Tue,  6 Jan 2015 11:37:28 +0100
+Message-ID: <1420540653-14816-4-git-send-email-tomeu.vizoso@collabora.com>
 References: <1420540653-14816-1-git-send-email-tomeu.vizoso@collabora.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1420540653-14816-1-git-send-email-tomeu.vizoso@collabora.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-tegra@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Russell King <linux@arm.linux.org.uk>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1420540653-14816-1-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Following 6dbaff2b, the kernel expects that the bootloader has correctly
-programmed the Tegra pinmux.
+It's commercial name is HP Chromebook 14 and is substantially similar to
+the Acer Chromebook 13 (nyan-big).
 
-DTs for the Jetson and the Venice2 had been updated already but this one
-was left behind.
-
-Have tested this with the stock vendor firmware (coreboot) and have found no
-issues.
-
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra124-nyan-big.dts | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/Makefile                |  1 +
+ arch/arm/boot/dts/tegra124-nyan-blaze.dts | 12 ++++++++++++
+ 2 files changed, 13 insertions(+)
+ create mode 100644 arch/arm/boot/dts/tegra124-nyan-blaze.dts
 
-diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts b/arch/arm/boot/dts/tegra124-nyan-big.dts
-index 53181d3..4752572 100644
---- a/arch/arm/boot/dts/tegra124-nyan-big.dts
-+++ b/arch/arm/boot/dts/tegra124-nyan-big.dts
-@@ -44,10 +44,10 @@
- 	};
- 
- 	pinmux@0,70000868 {
--		pinctrl-names = "default";
--		pinctrl-0 = <&pinmux_default>;
-+		pinctrl-names = "boot";
-+		pinctrl-0 = <&pinmux_boot>;
- 
--		pinmux_default: common {
-+		pinmux_boot: common {
- 			dap_mclk1_pw4 {
- 				nvidia,pins = "dap_mclk1_pw4";
- 				nvidia,function = "extperiph1";
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 91bd5bd..7c9d83b 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -497,6 +497,7 @@ dtb-$(CONFIG_ARCH_TEGRA) += tegra20-harmony.dtb \
+ 	tegra114-tn7.dtb \
+ 	tegra124-jetson-tk1.dtb \
+ 	tegra124-nyan-big.dtb \
++	tegra124-nyan-blaze.dtb \
+ 	tegra124-venice2.dtb
+ dtb-$(CONFIG_ARCH_U300) += ste-u300.dtb
+ dtb-$(CONFIG_ARCH_U8500) += ste-snowball.dtb \
+diff --git a/arch/arm/boot/dts/tegra124-nyan-blaze.dts b/arch/arm/boot/dts/tegra124-nyan-blaze.dts
+new file mode 100644
+index 0000000..69fe66f
+--- /dev/null
++++ b/arch/arm/boot/dts/tegra124-nyan-blaze.dts
+@@ -0,0 +1,12 @@
++/dts-v1/;
++
++#include "tegra124-nyan.dtsi"
++
++/ {
++	model = "HP Chromebook 14";
++	compatible = "google,nyan-blaze", "google,nyan", "nvidia,tegra124";
++
++	sound {
++		nvidia,model = "HP Chromebook 14";
++	};
++};
 -- 
 1.9.3
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
