@@ -1,58 +1,52 @@
-From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: Re: [PATCH 1/4] ARM: tegra: rely on bootloader pinmux programming on nyan-big
-Date: Wed, 7 Jan 2015 09:06:30 +0100
-Message-ID: <CAAObsKB1gMcLZ=n8Mc6JSLQHn5-6VWOhERLgYTdi6nit6yCj5w@mail.gmail.com>
-References: <1420540653-14816-1-git-send-email-tomeu.vizoso@collabora.com>
- <1420540653-14816-2-git-send-email-tomeu.vizoso@collabora.com> <54AC16B0.5050703@wwwdotorg.org>
+From: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 0/2] arm64: first set of Kconfig patches for Tegra132 support
+Date: Wed, 07 Jan 2015 01:17:29 -0700
+Message-ID: <20150107081638.14381.42444.stgit@dusk.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <54AC16B0.5050703-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 6 January 2015 at 18:09, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 01/06/2015 03:37 AM, Tomeu Vizoso wrote:
->>
->> Following 6dbaff2b, the kernel expects that the bootloader has correctly
->> programmed the Tegra pinmux.
->>
->> DTs for the Jetson and the Venice2 had been updated already but this one
->> was left behind.
->
->
-> So this setup is true for NVIDIA-controlled development/reference boards
-> where we've ensured that the bootloader sets up 100% of the pinmux.
->
-> However, I know that Coreboot on this board doesn't set up everything in the
-> pinmux, and since it's in r/o flash never will. As such, I'm not sure this
-> change is safe for this board. That is, unless you want to force upstream
-> kernels to be booted via a chain-loaded path: Coreboot (r/o) -> U-Boot (r/w
-> with full pinmux setup) -> kernel.
->
->> Have tested this with the stock vendor firmware (coreboot) and have found
->> no
->> issues.
->
->
-> There are presumably a bunch of features which aren't yet supported
-> upstream, and hence you couldn't test though? That means we might find that
-> parts of the pinmux aren't yet programmed but need to be to enable those
-> features.
+Hi Catalin & Will,
 
-Sure, there's no chance that my testing could have been extensive enough.
+These patches start the ARM64 Kconfig and defconfig changes to
+support the Tegra132 (aka Tegra K1 64-bit) SoC and the NVIDIA
+Norrin64 FFD board.
 
-Following Andrew's feedback, I will be looking at getting the pinmux
-programming right in the DTs.
+Tegra132 support is made conditional on CONFIG_BROKEN, since
+there are some patches pending for other maintainers to fix
+compilation when CONFIG_ARCH_TEGRA is set during an ARM64 build.
+Once those patches have been merged, a subsequent patch will be
+sent to remove the CONFIG_BROKEN dependency and to make a few other
+defconfig changes that are dependent on CONFIG_ARCH_TEGRA.
 
-Thanks,
+These patches apply on the arm64 fixes/core branch, commit
+5d96e0cba263.  They have been boot-tested on QEMU 2.2.0 AArch64,
+and (after other patches have been applied) have been boot-tested
+on the Tegra132 Norrin64 FFD board.
 
-Tomeu
+A signed tag containing these patches is available at:
 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+git://git.kernel.org/pub/scm/linux/kernel/git/pjw/tegra-pending tags/arm64-tegra132-kconfig-a-20150107
+
+
+- Paul
+
+---
+
+Paul Walmsley (2):
+      arm64: Kconfig: add basic support for the Tegra SoC family and the Tegra132 SoC
+      arm64: defconfig: add some Kconfig entries used by Tegra132 Norrin FFD board
+
+
+ arch/arm64/Kconfig           |   29 +++++++++++++++++++++++
+ arch/arm64/configs/defconfig |   52 ++++++++++++++++++++++++++++++++++--------
+ 2 files changed, 71 insertions(+), 10 deletions(-)
+
+   text	   data	    bss	    dec	    hex	filename
+7173728	 449984	 199064	 7822776 775db8	vmlinux.old
+9435086	 626104	 220208	10281398 9ce1b6	vmlinux
