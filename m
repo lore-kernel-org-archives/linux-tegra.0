@@ -1,92 +1,77 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH 1/11] ARM: tegra: add function to control the GPU rail
- clamp
-Date: Wed, 7 Jan 2015 16:12:54 +0200
-Message-ID: <20150107141254.GS10073@tbergstrom-lnx.Nvidia.com>
-References: <1419331204-26679-1-git-send-email-vinceh@nvidia.com>
- <1419331204-26679-2-git-send-email-vinceh@nvidia.com>
- <1419426990.2179.7.camel@lynxeye.de>
- <549B7638.2010405@nvidia.com>
- <20150105150932.GG12010@ulmo.nvidia.com>
- <20150107101900.GP10073@tbergstrom-lnx.Nvidia.com>
- <54AD0F37.5080609@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/2] arm64: Kconfig: add basic support for the Tegra SoC
+ family and the Tegra132 SoC
+Date: Wed, 7 Jan 2015 15:20:06 +0100
+Message-ID: <20150107142005.GA1621@ulmo>
+References: <20150107081638.14381.42444.stgit@dusk.lan>
+ <20150107081729.14381.47835.stgit@dusk.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="gKMricLos+KVdGMg"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <54AD0F37.5080609@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vince Hsu <vinceh@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Lucas Stach <dev@lynxeye.de>, swarren@wwwdotorg.org, gnurou@gmail.com, bskeggs@redhat.com, martin.peres@free.fr, seven@nimrod-online.com, samuel.pitoiset@gmail.com, nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20150107081729.14381.47835.stgit-orwA252wQtA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jan 07, 2015 at 06:49:27PM +0800, Vince Hsu wrote:
-> 
-> On 01/07/2015 06:19 PM, Peter De Schrijver wrote:
-> >On Mon, Jan 05, 2015 at 04:09:33PM +0100, Thierry Reding wrote:
-> >>* PGP Signed by an unknown key
-> >>
-> >>On Thu, Dec 25, 2014 at 10:28:08AM +0800, Vince Hsu wrote:
-> >>>On 12/24/2014 09:16 PM, Lucas Stach wrote:
-> >>>>Am Dienstag, den 23.12.2014, 18:39 +0800 schrieb Vince Hsu:
-> >>>>>The Tegra124 and later Tegra SoCs have a sepatate rail gating register
-> >>>>>to enable/disable the clamp. The original function
-> >>>>>tegra_powergate_remove_clamping() is not sufficient for the enable
-> >>>>>function. So add a new function which is dedicated to the GPU rail
-> >>>>>gating. Also don't refer to the powergate ID since the GPU ID makes no
-> >>>>>sense here.
-> >>>>>
-> >>>>>Signed-off-by: Vince Hsu <vinceh@nvidia.com>
-> >>>>To be honest I don't see the point of this patch.
-> >>>>You are bloating the PMC interface by introducing another exported
-> >>>>function that does nothing different than what the current function
-> >>>>already does.
-> >>>>
-> >>>>If you need a way to assert the clamp I would have expected you to
-> >>>>introduce a common function to do this for all power partitions.
-> >>>I thought about adding an tegra_powergate_assert_clamping(), but that
-> >>>doesn't make sense to all the power partitions except GPU. Note the
-> >>>difference in TRM. Any suggestion for the common function?
-> >>I don't think extending the powergate API is useful at this point. We've
-> >>long had an open TODO item to replace this with a generic API. I did
-> >>some prototyping a while ago to use generic power domains for this, that
-> >>way all the details and dependencies between the partitions could be
-> >>properly modeled.
-> >>
-> >>Can you take a look at my staging/powergate branch here:
-> >>
-> >>	https://github.com/thierryreding/linux/commits/staging/powergate
-> >>
-> >>and see if you can use that instead? The idea is to completely hide the
-> >>details of power partitions from drivers and use runtime PM instead.
-> >>
-> >>Also adding Peter whom I had discussed this with earlier. Can we finally
-> >>get this converted? I'd rather not keep complicating this custom API to
-> >>avoid making the conversion even more difficult.
-> >Conceptually I fully agree that we should use runtime PM and powerdomains.
-> >However I don't think the implementation you mentioned is correct. The resets
-> >of all modules in a domain need to be asserted and the memory clients need to
-> >be flushed. All this needs to be done with module clocks enabled (resets are
-> >synchronous).  Then all module clocks need to be disabled and then the
-> >partition can be powergated. After ungating, the module resets need to be
-> >deasserted and the FLUSH bit cleared with clocks enabled.
-> Yeah. I plan to have the information of all the clock client of the
-> partitions and
-> the memory clients be defined statically in c source, e.g. pmc-tegra124.c.
-> All modules can declare which domain they belong to in DT. One domain can
-> be really power gated only when no module is awake. Note the clock
-> clients of
-> one domain might not equal to the clocks of the module. The reset is
-> not either.
-> So I don't get the clock and reset from module. How do you think?
-> 
 
-I think it's indeed better to have a direct reference to the required clocks
-to powergate/ungate a domain. As you said, there is no easy way to derive the
-required clocks from the DT module declarations. My suggestion would be to
-have powerdomain definitions in DT and for each domain have references to
-the required clocks and resets.
+--gKMricLos+KVdGMg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cheers,
+On Wed, Jan 07, 2015 at 01:17:33AM -0700, Paul Walmsley wrote:
+> Add basic Kbuild support for the Tegra SoC family, and specifically,
+> the Tegra132 SoC.  Tegra132 pairs the NVIDIA Denver CPU complex with
+> the SoC integration of Tegra124 - hence the use of ARCH_TEGRA and the
+> Tegra124 pinctrl option.
+>=20
+> For the time being, Tegra ARM64 support is added with a dependency on
+> CONFIG_BROKEN.  This is temporary and can be removed when the
+> following two patches for compilation failures have been merged:
+>=20
+> "soc: tegra: pmc: restrict compilation of suspend-related support to ARM"
+> https://git.kernel.org/cgit/linux/kernel/git/pjw/tegra-dev.git/commit/?id=
+=3D053decbf3900d4e8fee799f9a29cf8d905b2fcb1
 
-Peter.
+I think you said you were going to respin this on top of v3.19-rc1, but
+the above doesn't seem to be rebased yet. Given that the only comments
+were bikeshed from my part, do you have any objections to me taking the
+patch and apply the bikeshed myself?
+
+> "clocksource: tegra: wrap arch/arm-specific sections in CONFIG_ARM"
+> https://git.kernel.org/cgit/linux/kernel/git/pjw/tegra-dev.git/commit/?id=
+=3D220aa7fcc74a1a089916be6cb34b0e326f31841f
+
+I don't think I've seen any comments other than mine on this patch.
+Given that this patch depends on the above to get rid of the BROKEN
+dependency, it might still be preferable to take both via the Tegra
+tree. Otherwise we probably have to wait until v3.21 before we can
+apply this.
+
+Thierry
+
+--gKMricLos+KVdGMg
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUrUCVAAoJEN0jrNd/PrOhGe0P/2tJjPTRQ39s+2nm/vDOwLhu
+L9gw2ipkHSyrHhliQozJSWgZzU79Oqb8OgpBjJRFYDB3KLxpctc8dvryyerhETOA
+Qa2BSb4wNbOfbswM8u3f8sKCVzRUhqvwFn/rVaucY/Wu9MAx/W8ST49RnTixsPDe
+Stasb87jr+Q1j2hy70huyltDOqqAJcit1kCIX8Xl++qFJc1niBi9u5qSIfOQeoFN
+uYy2H10+A0RIzupLjIru/VG4Jk1/BS09ssikSrKU7NNDnLYUVVJDzxqkwQLJkpTc
+2SY8xeR6KGWBCrlnr6jAzgcTKpZzIdSvBQcDqEDmBgc5YMJVC94daWhPQTPMrBur
+/LpVs3EPhi4e+mMcqsezG+FTUkJhB5gCkbvGub1sO/IPDYrxcSh0T04ld9ylE25b
+m/BCYPp2PesEzzRKvg5bILKTbevnr5ObCLXXrQOfluUMqgR6RAu8E78PjSwuoUKD
+35F6DHZ9WXXA2oPGUE673geIrAHmSfNjqATnF+7meiM6hU5yM28S14i4ZriphNxG
+tIk9xw/GnALq7+6dMYt1/Xw20r3iLKM1kehL1qxlj+HowzMNA5f89ki//JfWPw56
+PyhMSZlhLS8VTyC0M4CO/HCQj2rxf/DlrmCge4NvTE41vdt0tFhFhFUjJp6zJJe+
+2HlmZO8iMbs7Ei87FoBH
+=oDaT
+-----END PGP SIGNATURE-----
+
+--gKMricLos+KVdGMg--
