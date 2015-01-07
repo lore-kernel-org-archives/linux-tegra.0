@@ -1,45 +1,45 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [patch] drm/tegra: bad irqsave/restore in tegra_dc_finish_page_flip()
-Date: Wed, 7 Jan 2015 14:01:26 +0300
-Message-ID: <20150107110126.GA14864@mwanda>
+From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH 0/2] arm64: first set of Kconfig patches for Tegra132
+ support
+Date: Wed, 7 Jan 2015 11:07:38 +0000
+Message-ID: <20150107110738.GF7485@arm.com>
+References: <20150107081638.14381.42444.stgit@dusk.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@linaro.org>
+In-Reply-To: <20150107081638.14381.42444.stgit-orwA252wQtA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+Cc: Catalin Marinas <Catalin.Marinas-5wv7dgnIgG8@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-V2UgY2FuJ3Qgc2F2ZSB0d28gdmFsdWVzIHRvIHRoZSBJUlEgZmxhZ3MgYXQgdGhlIHNhbWUgdGlt
-ZSBzbyB0aGUgSVJRcwphcmUgbm90IGVuYWJsZWQgYXQgdGhlIGVuZC4gIFRoaXMga2luZCBvZiBi
-dWcgaXMgZWFzeSB0byBtaXNzIGluIHRlc3RpbmcKaWYgdGhlIGZ1bmN0aW9uIGlzIG5vcm1hbGx5
-IGNhbGxlZCB3aXRoIElSUXMgZGlzYWJsZWQgc28gd2Ugd291bGRuJ3QKZW5hYmxlIElSUXMgYW55
-d2F5LgoKU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRlciA8ZGFuLmNhcnBlbnRlckBvcmFjbGUu
-Y29tPgoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kYy5jIGIvZHJpdmVycy9n
-cHUvZHJtL3RlZ3JhL2RjLmMKaW5kZXggYWUyNmNjMC4uYzc0NjE2MSAxMDA2NDQKLS0tIGEvZHJp
-dmVycy9ncHUvZHJtL3RlZ3JhL2RjLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RjLmMK
-QEAgLTgzOCw3ICs4MzgsNyBAQCBzdGF0aWMgdm9pZCB0ZWdyYV9kY19maW5pc2hfcGFnZV9mbGlw
-KHN0cnVjdCB0ZWdyYV9kYyAqZGMpCiAKIAlibyA9IHRlZ3JhX2ZiX2dldF9wbGFuZShjcnRjLT5w
-cmltYXJ5LT5mYiwgMCk7CiAKLQlzcGluX2xvY2tfaXJxc2F2ZSgmZGMtPmxvY2ssIGZsYWdzKTsK
-KwlzcGluX2xvY2soJmRjLT5sb2NrKTsKIAogCS8qIGNoZWNrIGlmIG5ldyBzdGFydCBhZGRyZXNz
-IGhhcyBiZWVuIGxhdGNoZWQgKi8KIAl0ZWdyYV9kY193cml0ZWwoZGMsIFdJTkRPV19BX1NFTEVD
-VCwgRENfQ01EX0RJU1BMQVlfV0lORE9XX0hFQURFUik7CkBAIC04NDYsNyArODQ2LDcgQEAgc3Rh
-dGljIHZvaWQgdGVncmFfZGNfZmluaXNoX3BhZ2VfZmxpcChzdHJ1Y3QgdGVncmFfZGMgKmRjKQog
-CWJhc2UgPSB0ZWdyYV9kY19yZWFkbChkYywgRENfV0lOQlVGX1NUQVJUX0FERFIpOwogCXRlZ3Jh
-X2RjX3dyaXRlbChkYywgMCwgRENfQ01EX1NUQVRFX0FDQ0VTUyk7CiAKLQlzcGluX3VubG9ja19p
-cnFyZXN0b3JlKCZkYy0+bG9jaywgZmxhZ3MpOworCXNwaW5fdW5sb2NrKCZkYy0+bG9jayk7CiAK
-IAlpZiAoYmFzZSA9PSBiby0+cGFkZHIgKyBjcnRjLT5wcmltYXJ5LT5mYi0+b2Zmc2V0c1swXSkg
-ewogCQlkcm1fY3J0Y19zZW5kX3ZibGFua19ldmVudChjcnRjLCBkYy0+ZXZlbnQpOwpfX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
-ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVk
-ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Wed, Jan 07, 2015 at 08:17:29AM +0000, Paul Walmsley wrote:
+> Hi Catalin & Will,
+
+Hi Paul,
+
+> These patches start the ARM64 Kconfig and defconfig changes to
+> support the Tegra132 (aka Tegra K1 64-bit) SoC and the NVIDIA
+> Norrin64 FFD board.
+> 
+> Tegra132 support is made conditional on CONFIG_BROKEN, since
+> there are some patches pending for other maintainers to fix
+> compilation when CONFIG_ARCH_TEGRA is set during an ARM64 build.
+> Once those patches have been merged, a subsequent patch will be
+> sent to remove the CONFIG_BROKEN dependency and to make a few other
+> defconfig changes that are dependent on CONFIG_ARCH_TEGRA.
+> 
+> These patches apply on the arm64 fixes/core branch, commit
+> 5d96e0cba263.  They have been boot-tested on QEMU 2.2.0 AArch64,
+> and (after other patches have been applied) have been boot-tested
+> on the Tegra132 Norrin64 FFD board.
+
+Whilst I'm happy to take the second patch for 3.20 (getting those
+dependencies building and keeping them building is a Good Thing), can we
+hold off on the first patch until it's not broken? Having an unconditional
+depends on BROKEN isn't really that useful.
+
+Cheers,
+
+Will
