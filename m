@@ -1,61 +1,64 @@
-From: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH 0/2] arm64: first set of Kconfig patches for Tegra132
- support
-Date: Wed, 7 Jan 2015 15:09:40 +0000
-Message-ID: <20150107150939.GD2199@e104818-lin.cambridge.arm.com>
-References: <20150107081638.14381.42444.stgit@dusk.lan>
- <20150107110738.GF7485@arm.com>
- <20150107142520.GB1621@ulmo>
- <20150107145423.GM7485@arm.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: Regenerate defconfig based on v3.19-rc1
+Date: Wed, 7 Jan 2015 16:18:47 +0100
+Message-ID: <20150107151843.GA2912@ulmo>
+References: <1420550407-4059-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="rwEMma7ioTxnRzrJ"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20150107145423.GM7485-5wv7dgnIgG8@public.gmane.org>
+In-Reply-To: <1420550407-4059-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jan 07, 2015 at 02:54:23PM +0000, Will Deacon wrote:
-> On Wed, Jan 07, 2015 at 02:25:21PM +0000, Thierry Reding wrote:
-> > On Wed, Jan 07, 2015 at 11:07:38AM +0000, Will Deacon wrote:
-> > > On Wed, Jan 07, 2015 at 08:17:29AM +0000, Paul Walmsley wrote:
-> > > > These patches start the ARM64 Kconfig and defconfig changes to
-> > > > support the Tegra132 (aka Tegra K1 64-bit) SoC and the NVIDIA
-> > > > Norrin64 FFD board.
-> > > > 
-> > > > Tegra132 support is made conditional on CONFIG_BROKEN, since
-> > > > there are some patches pending for other maintainers to fix
-> > > > compilation when CONFIG_ARCH_TEGRA is set during an ARM64 build.
-> > > > Once those patches have been merged, a subsequent patch will be
-> > > > sent to remove the CONFIG_BROKEN dependency and to make a few other
-> > > > defconfig changes that are dependent on CONFIG_ARCH_TEGRA.
-> > > > 
-> > > > These patches apply on the arm64 fixes/core branch, commit
-> > > > 5d96e0cba263.  They have been boot-tested on QEMU 2.2.0 AArch64,
-> > > > and (after other patches have been applied) have been boot-tested
-> > > > on the Tegra132 Norrin64 FFD board.
-> > > 
-> > > Whilst I'm happy to take the second patch for 3.20 (getting those
-> > > dependencies building and keeping them building is a Good Thing), can we
-> > > hold off on the first patch until it's not broken? Having an unconditional
-> > > depends on BROKEN isn't really that useful.
-> > 
-> > The two patches that require the BROKEN dependency are fairly trivial,
-> > so I don't think it would be a stretch to merge them for 3.20. But they
-> > apply to different trees (one to the clocksource tree, the other to the
-> > Tegra tree).
-> > 
-> > How do you usually handle the ARM64 patches? Do you manually pick up the
-> > patches that touch arch/arm64 or would you prefer for me to collect them
-> > in a pull request?
-> 
-> Either is fine; if it's a large series then a pull request tends to work
-> better. Catalin is handling the 3.20 merge window (we take it in turns).
 
-Indeed, for 2-3 patches, I just cherry-pick them (but not before cursing
-the email system for corrupting the patches).
+--rwEMma7ioTxnRzrJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Catalin
+On Tue, Jan 06, 2015 at 02:20:07PM +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>=20
+> Removes the following entries from the default configuration:
+>=20
+> - PM: enabled by default (via PM_SLEEP -> SUSPEND)
+> - RESOURCE_COUNTERS: removed
+>=20
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> I intend to apply this to the for-3.20/defconfig branch if nobody
+> objects.
+>=20
+>  arch/arm/configs/tegra_defconfig | 2 --
+>  1 file changed, 2 deletions(-)
+
+I've applied this to the for-3.20/defconfig branch.
+
+Thierry
+
+--rwEMma7ioTxnRzrJ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUrU5TAAoJEN0jrNd/PrOhYYwP/jbSHud/lE1A1yNME69PC1sR
+7ekseMIl6TdJJFURfrNDjoM1yEZFlq77GhpBdu8N3Ao7Aq1fO1a7diqqsNpztenn
+ieGs728IhxGD3aWHGQcCoAfu5MpVVP5ASiybYqnUrQIsyqD2Zk7z4DGwi04laovO
+yPaJRd39G4GZDc/2CsmTnYOMpSKVbluVDzcikf93HZOPKIGqOos53umPdWDuSdUK
+OmH1QBLQPzZRPM71Vup5Vkwkdhvoxk7hdPjgM0J3lTsMfvH1tTPtPn9IHIkm7sRZ
+WqMeOOVwUBRfUpGkovxnvGiNATgWTzmS6UZA7tSOOvJk10xeJG9KOSGqm9OE/kxM
+uemMXmcONaVHulP2axt5j29xkdMITVtM5a8F3oK4P3nLK36erF1YBDr5Nuw8U5iD
+JychyPjKy153Gruv1iARtSfU3rt9jNPFjw0UMt0jDIyhjf9Hvj/2v66opAyIlcyh
+fEHjoMc3TMeOe7J8Uj1VAvispqYd6jtty3+sKXeHlXzgqUF39XQzj/nt+f+HGBoI
+4tMKffIlpDDKYqbBscne0KRfZRspC3WoGRtHk/uxchNR/33TzUDe1uXV9MfPQNxv
+enXbUgvNzH60YlySte0/dnBXMEVW1tVosIUB2iFbkTPuFF4G8Mt+aKoHhfXcgfYO
+6yhCYL6anVTbFev0rpoV
+=KJeN
+-----END PGP SIGNATURE-----
+
+--rwEMma7ioTxnRzrJ--
