@@ -1,88 +1,114 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] clocksource: tegra: wrap arch/arm-specific sections in
- CONFIG_ARM
-Date: Wed, 7 Jan 2015 15:29:26 +0100
-Message-ID: <20150107142923.GC1621@ulmo>
-References: <alpine.DEB.2.02.1412092201200.31750@utopia.booyaka.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 0/2] arm64: first set of Kconfig patches for Tegra132
+ support
+Date: Wed, 7 Jan 2015 15:25:21 +0100
+Message-ID: <20150107142520.GB1621@ulmo>
+References: <20150107081638.14381.42444.stgit@dusk.lan>
+ <20150107110738.GF7485@arm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="tqI+Z3u+9OQ7kwn0"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.02.1412092201200.31750-rwI8Ez+7Ko+d5PgPZx9QOdBPR1lH4CV8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
-Cc: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============2884227519793655042=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20150107110738.GF7485@arm.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Will Deacon <will.deacon@arm.com>
+Cc: Mark Rutland <Mark.Rutland@arm.com>, Paul Walmsley <paul@pwsan.com>, Catalin Marinas <Catalin.Marinas@arm.com>, Paul Walmsley <pwalmsley@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---tqI+Z3u+9OQ7kwn0
+--===============2884227519793655042==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="1LKvkjL3sHcu1TtY"
+Content-Disposition: inline
+
+
+--1LKvkjL3sHcu1TtY
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 09, 2014 at 10:07:18PM +0000, Paul Walmsley wrote:
+On Wed, Jan 07, 2015 at 11:07:38AM +0000, Will Deacon wrote:
+> On Wed, Jan 07, 2015 at 08:17:29AM +0000, Paul Walmsley wrote:
+> > Hi Catalin & Will,
 >=20
-> Like several of the other files in drivers/clocksource,
-> tegra20_timer.c contains code that can only compile when CONFIG_ARM is
-> enabled.  This causes obvious problems when trying to compile this
-> code for NVIDIA ARM64-based SoCs, such as Tegra132.  The same timer IP
-> blocks exist, so it seems appropriate to provide support for them.
+> Hi Paul,
 >=20
-> So until we figure out a better way to partition this code, wrap the
-> delay_timer and persistent_clock support code with preprocessor tests
-> for CONFIG_ARM.  (The delay_timer code should not be needed at all on
-> ARM64 due to the presence of the ARMv8 architected timer.  The
-> persistent_clock support code could become important once power
-> management modes are implemented that turn off the CPU complex.)
+> > These patches start the ARM64 Kconfig and defconfig changes to
+> > support the Tegra132 (aka Tegra K1 64-bit) SoC and the NVIDIA
+> > Norrin64 FFD board.
+> >=20
+> > Tegra132 support is made conditional on CONFIG_BROKEN, since
+> > there are some patches pending for other maintainers to fix
+> > compilation when CONFIG_ARCH_TEGRA is set during an ARM64 build.
+> > Once those patches have been merged, a subsequent patch will be
+> > sent to remove the CONFIG_BROKEN dependency and to make a few other
+> > defconfig changes that are dependent on CONFIG_ARCH_TEGRA.
+> >=20
+> > These patches apply on the arm64 fixes/core branch, commit
+> > 5d96e0cba263.  They have been boot-tested on QEMU 2.2.0 AArch64,
+> > and (after other patches have been applied) have been boot-tested
+> > on the Tegra132 Norrin64 FFD board.
 >=20
-> Signed-off-by: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
-> Signed-off-by: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Cc: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Cc: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
-> Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
-> Applies against next-20141209.
-> Intended for v3.20.
-> Boot-tested on Tegra124 Jetson TK1 on next-20141209.
-> Also boot-tested on Tegra132 Norrin FFD on next-20141209 + extra,=20
-> unrelated patches.
->=20
->  drivers/clocksource/tegra20_timer.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+> Whilst I'm happy to take the second patch for 3.20 (getting those
+> dependencies building and keeping them building is a Good Thing), can we
+> hold off on the first patch until it's not broken? Having an unconditional
+> depends on BROKEN isn't really that useful.
 
-Daniel, Thomas,
+The two patches that require the BROKEN dependency are fairly trivial,
+so I don't think it would be a stretch to merge them for 3.20. But they
+apply to different trees (one to the clocksource tree, the other to the
+Tegra tree).
 
-This patch is a build dependency for 64-bit Tegra support that I'd like
-to merge for v3.20. Would you be willing to give your Acked-by on this
-so that I can take it into the same tree along with some other
-dependencies and the patches that enable the 64-bit build?
+How do you usually handle the ARM64 patches? Do you manually pick up the
+patches that touch arch/arm64 or would you prefer for me to collect them
+in a pull request?
 
-Thanks,
+Either way I could probably provide a stable branch for you to pull into
+the arm64 tree to resolve the build dependencies provided that Daniel or
+Thomas will ack the clocksource patch.
+
 Thierry
 
---tqI+Z3u+9OQ7kwn0
+--1LKvkjL3sHcu1TtY
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUrULDAAoJEN0jrNd/PrOhtNQP/RMd3e3U8SxcubIYD4Sg6Psq
-+1/RQoi7V+TOeEP+Xvj0TviwDJ8MvdB1pUYA7y9UaVPm8VlL6pI6eLETGJXkJjA5
-SPwU5LUb6yM9ORD9fNE2kXQSI3Qghb3XNxmgabeu9yIrZgZtQgpwRw4nVOFOPezh
-u4lTu7yuwjZoehox/bydU/Uj1bTWOHmUu9w7TaSp9ee2FBjJ5iPTBQMe3riHF66a
-tUE/iZ/+5FIVpz1IaB2tleiWlx9yBAG+Aq5Rvoj5yqGIkD1SAfQspG/0hl2m9jhm
-9BTDp0ICJZIzifUCIi9/mujcSEM6In81zj82cKBYRTechzUbgrdcSklfFGb34RwK
-1lrjI8VdStx4z6TfiFL9k6TOqkyBvgeB0hjo7AzG7xFljGlU1rBAl2b4e8BV5VdP
-9/eNK/RxLrRRqs0vr2S63sWsHNkA8S49bA+j7J1p1W3OQNy1PGKW7gCVl3n/EY4B
-/wvEGSpPBd3Osp06TrbjGDXP2k5oz6cc5IxrcPuVDv/IMEIC2XToM2QAvxWdsZhi
-03zIkXFz9JbZonlx105VQectk102iel9xwmKhJILaytu12RCva//8wRqhLHxv7kT
-ACBd/Gq9FuELcui0tx/aou43FjbdLma+gE6CRk9CCzZzN2p6RVALTRpZBfeiDw5z
-L+1paZDCqDZWY1VPqHVD
-=lWvM
+iQIcBAEBAgAGBQJUrUHQAAoJEN0jrNd/PrOhq/AP/RR3m53eS6FrSHHzWjOuwKnZ
+EPKv3IZotcKf8X/CiQ2WYKpoYID2k3JVz/NEeKQ7EMIaRhzCRwGdRfBtaVpuyZfX
+FDHaXDdylm5Hd7lTUR+QHVz8mSJ8BUCJoPxU0XDVjIsbG+36SJMfylzOiHUT6n7I
+hNAOpsgM6qBRa5/+ndeQhnqNpA8PIObBwRafEkOkmwNFE9Lej08dgoK4amWqQtO0
+o56c3wB89Ycfsc2BXqwpWSnH7POrMlwD1lg72+7LtcBYGFaK0bMG7FmICt/8P97N
+01VdZ+eR02W/nvcGdFAOftMoi9ZGkTqlkKVTL0yajUjc+NRI3FNjO/RG5gxuCEHU
+Tt6+SNzF97rljKlG1Dm4bY+4tmJGYpxIiD6e2Nmv33lejOadE9R/ZsJWxqzc+siZ
+H7Z4mqyrESYOvxrpKKrRUx9tmhZHdv3sczJWSykZOwwYTsGy0umRiPcSFzqGhRFo
+scRTtv9V+v+RV+UCOuLL83OWPcI20uv6UW2fWrU/Mce/7uAsSu5ReBGKqBzmgCNK
+cC67bNMJlba5fpPK/cS4Ig0VVZ+ra0u6DbGADg3PtILdS8U+HAN5rEXvFO6v74/c
+V/MDmL2gto71jbNbOR5FuvK9JJCZK+o2PZ20d8mtB0NgcbwbpSRc4LiefD0QmZFI
+4/tKklsDF2uKAFRVFafM
+=MXO1
 -----END PGP SIGNATURE-----
 
---tqI+Z3u+9OQ7kwn0--
+--1LKvkjL3sHcu1TtY--
+
+
+--===============2884227519793655042==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============2884227519793655042==--
