@@ -1,247 +1,128 @@
-From: Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org>
-Subject: Re: [PATCH v2] Add support for Nyan-big
-Date: Wed, 7 Jan 2015 14:02:24 +0100
-Message-ID: <CAAObsKAE6GKWNqp_3g0f=pc-b6WzBcAzDhD=TtfrtgwQfHVAQA@mail.gmail.com>
-References: <1417699911-17901-1-git-send-email-sjg@chromium.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 1/11] ARM: tegra: add function to control the GPU rail
+ clamp
+Date: Wed, 7 Jan 2015 14:27:10 +0100
+Message-ID: <20150107132709.GA6988@ulmo>
+References: <1419331204-26679-1-git-send-email-vinceh@nvidia.com>
+ <1419331204-26679-2-git-send-email-vinceh@nvidia.com>
+ <1419426990.2179.7.camel@lynxeye.de>
+ <549B7638.2010405@nvidia.com>
+ <20150105150932.GG12010@ulmo.nvidia.com>
+ <20150107101900.GP10073@tbergstrom-lnx.Nvidia.com>
+ <54AD0F37.5080609@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1417699911-17901-1-git-send-email-sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="BOKacYhQ+x31HxR3"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <54AD0F37.5080609@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vince Hsu <vinceh@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Lucas Stach <dev@lynxeye.de>, swarren@wwwdotorg.org, gnurou@gmail.com, bskeggs@redhat.com, martin.peres@free.fr, seven@nimrod-online.com, samuel.pitoiset@gmail.com, nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 4 December 2014 at 14:31, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
-> Add support for Tegra124 Nyan-big. Pinmux is based on norrin with a single
-> change for the reset GPIO.
 
-Hi Simon,
+--BOKacYhQ+x31HxR3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-do you have a similar patch for the blaze?
+On Wed, Jan 07, 2015 at 06:49:27PM +0800, Vince Hsu wrote:
+>=20
+> On 01/07/2015 06:19 PM, Peter De Schrijver wrote:
+> >On Mon, Jan 05, 2015 at 04:09:33PM +0100, Thierry Reding wrote:
+> >>* PGP Signed by an unknown key
+> >>
+> >>On Thu, Dec 25, 2014 at 10:28:08AM +0800, Vince Hsu wrote:
+> >>>On 12/24/2014 09:16 PM, Lucas Stach wrote:
+> >>>>Am Dienstag, den 23.12.2014, 18:39 +0800 schrieb Vince Hsu:
+> >>>>>The Tegra124 and later Tegra SoCs have a sepatate rail gating regist=
+er
+> >>>>>to enable/disable the clamp. The original function
+> >>>>>tegra_powergate_remove_clamping() is not sufficient for the enable
+> >>>>>function. So add a new function which is dedicated to the GPU rail
+> >>>>>gating. Also don't refer to the powergate ID since the GPU ID makes =
+no
+> >>>>>sense here.
+> >>>>>
+> >>>>>Signed-off-by: Vince Hsu <vinceh@nvidia.com>
+> >>>>To be honest I don't see the point of this patch.
+> >>>>You are bloating the PMC interface by introducing another exported
+> >>>>function that does nothing different than what the current function
+> >>>>already does.
+> >>>>
+> >>>>If you need a way to assert the clamp I would have expected you to
+> >>>>introduce a common function to do this for all power partitions.
+> >>>I thought about adding an tegra_powergate_assert_clamping(), but that
+> >>>doesn't make sense to all the power partitions except GPU. Note the
+> >>>difference in TRM. Any suggestion for the common function?
+> >>I don't think extending the powergate API is useful at this point. We've
+> >>long had an open TODO item to replace this with a generic API. I did
+> >>some prototyping a while ago to use generic power domains for this, that
+> >>way all the details and dependencies between the partitions could be
+> >>properly modeled.
+> >>
+> >>Can you take a look at my staging/powergate branch here:
+> >>
+> >>	https://github.com/thierryreding/linux/commits/staging/powergate
+> >>
+> >>and see if you can use that instead? The idea is to completely hide the
+> >>details of power partitions from drivers and use runtime PM instead.
+> >>
+> >>Also adding Peter whom I had discussed this with earlier. Can we finally
+> >>get this converted? I'd rather not keep complicating this custom API to
+> >>avoid making the conversion even more difficult.
+> >Conceptually I fully agree that we should use runtime PM and powerdomain=
+s.
+> >However I don't think the implementation you mentioned is correct. The r=
+esets
+> >of all modules in a domain need to be asserted and the memory clients ne=
+ed to
+> >be flushed. All this needs to be done with module clocks enabled (resets=
+ are
+> >synchronous).  Then all module clocks need to be disabled and then the
+> >partition can be powergated. After ungating, the module resets need to be
+> >deasserted and the FLUSH bit cleared with clocks enabled.
+> Yeah. I plan to have the information of all the clock client of the
+> partitions and
+> the memory clients be defined statically in c source, e.g. pmc-tegra124.c.
+> All modules can declare which domain they belong to in DT. One domain can
+> be really power gated only when no module is awake. Note the clock clients
+> of
+> one domain might not equal to the clocks of the module. The reset is not
+> either.
+> So I don't get the clock and reset from module. How do you think?
 
-Thanks,
+This whole situation is quite messy. The above sequence basically means
+that drivers can't reset hardware modules because otherwise they might
+race with the power domain code. It also means that we can't powergate
+modules on demand because they might be in the same power domain as one
+other module that's still busy.
 
-Tomeu
+How would we handle a situation where a hardware module hangs and we can
+only get it back via a reset?
 
-> Signed-off-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-> ---
->
-> Changes in v2:
-> - Rename from Nyan to Nyan-big
->
->  configs/nyan-big.board | 198 +++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 198 insertions(+)
->  create mode 100644 configs/nyan-big.board
->
-> diff --git a/configs/nyan-big.board b/configs/nyan-big.board
-> new file mode 100644
-> index 0000000..7da5b4d
-> --- /dev/null
-> +++ b/configs/nyan-big.board
-> @@ -0,0 +1,198 @@
-> +soc = 'tegra124'
-> +
-> +pins = (
-> +    #pin,                      mux,           gpio_init, pull,   tri,   e_inp, od,    rcv_sel
-> +    ('dap_mclk1_pw4',          'extperiph1',  None,      'none', False, False, False, False),
-> +    ('dap_mclk1_req_pee2',     'rsvd4',       None,      'down', True,  False, False, False),
-> +    ('dap1_din_pn1',           'rsvd4',       None,      'down', True,  False, False, False),
-> +    ('dap1_dout_pn2',          'i2s0',        None,      'down', True,  False, False, False),
-> +    ('dap1_fs_pn0',            'rsvd4',       None,      'down', True,  False, False, False),
-> +    ('dap1_sclk_pn3',          'rsvd4',       None,      'down', True,  False, False, False),
-> +    ('dap2_din_pa4',           'i2s1',        None,      'none', False, True,  False, False),
-> +    ('dap2_dout_pa5',          'i2s1',        None,      'none', False, True,  False, False),
-> +    ('dap2_fs_pa2',            'i2s1',        None,      'none', False, True,  False, False),
-> +    ('dap2_sclk_pa3',          'i2s1',        None,      'none', False, True,  False, False),
-> +    ('gpio_x4_aud_px4',        None,          'in',      'none', False, True,  False, False),
-> +    ('gpio_x5_aud_px5',        'rsvd4',       None,      'down', True,  False, False, False),
-> +    ('gpio_x6_aud_px6',        'gmi',         None,      'down', True,  False, False, False),
-> +    ('gpio_x7_aud_px7',        None,          'out0',    'none', False, False, False, False),
-> +    ('gpio_w2_aud_pw2',        'rsvd2',       None,      'down', True,  False, False, False),
-> +    ('gpio_w3_aud_pw3',        None,          'in',      'none', False, True,  False, False),
-> +    ('dvfs_pwm_px0',           'cldvfs',      None,      'none', False, False, False, False),
-> +    ('gpio_x1_aud_px1',        None,          'in',      'none', False, True,  False, False),
-> +    ('dvfs_clk_px2',           'cldvfs',      None,      'none', False, False, False, False),
-> +    ('gpio_x3_aud_px3',        'rsvd4',       None,      'down', True,  False, False, False),
-> +    ('dap3_din_pp1',           'i2s2',        None,      'down', True,  False, False, False),
-> +    ('dap3_dout_pp2',          None,          'out0',    'none', False, False, False, False),
-> +    ('dap3_fs_pp0',            'i2s2',        None,      'down', True,  False, False, False),
-> +    ('dap3_sclk_pp3',          'rsvd3',       None,      'down', True,  False, False, False),
-> +    ('pv0',                    None,          'in',      'none', False, True,  False, False),
-> +    ('pv1',                    'rsvd1',       None,      'down', True,  False, False, False),
-> +    ('ulpi_clk_py0',           'spi1',        None,      'none', False, False, False, False),
-> +    ('ulpi_data0_po1',         'ulpi',        None,      'down', True,  False, False, False),
-> +    ('ulpi_data1_po2',         'ulpi',        None,      'down', True,  False, False, False),
-> +    ('ulpi_data2_po3',         'ulpi',        None,      'down', True,  False, False, False),
-> +    ('ulpi_data3_po4',         'ulpi',        None,      'down', True,  False, False, False),
-> +    ('ulpi_data4_po5',         'ulpi',        None,      'down', True,  False, False, False),
-> +    ('ulpi_data5_po6',         'ulpi',        None,      'down', True,  False, False, False),
-> +    ('ulpi_data6_po7',         'ulpi',        None,      'down', True,  False, False, False),
-> +    ('ulpi_data7_po0',         'ulpi',        None,      'down', True,  False, False, False),
-> +    ('ulpi_dir_py1',           'spi1',        None,      'none', False, True,  False, False),
-> +    ('ulpi_nxt_py2',           'spi1',        None,      'none', False, False, False, False),
-> +    ('ulpi_stp_py3',           'spi1',        None,      'none', False, False, False, False),
-> +    ('cam_i2c_scl_pbb1',       'rsvd3',       None,      'down', True,  False, False, False),
-> +    ('cam_i2c_sda_pbb2',       'rsvd3',       None,      'down', True,  False, False, False),
-> +    ('cam_mclk_pcc0',          'vi',          None,      'down', True,  False, False, False),
-> +    ('pbb0',                   'vgp6',        None,      'down', True,  False, False, False),
-> +    ('pbb3',                   'vgp3',        None,      'down', True,  False, False, False),
-> +    ('pbb4',                   'vgp4',        None,      'down', True,  False, False, False),
-> +    ('pbb5',                   'rsvd3',       None,      'down', True,  False, False, False),
-> +    ('pbb6',                   'rsvd2',       None,      'down', True,  False, False, False),
-> +    ('pbb7',                   'rsvd2',       None,      'down', True,  False, False, False),
-> +    ('pcc1',                   'rsvd2',       None,      'down', True,  False, False, False),
-> +    ('pcc2',                   'rsvd2',       None,      'down', True,  False, False, False),
-> +    ('gen2_i2c_scl_pt5',       'i2c2',        None,      'none', False, True,  True,  False),
-> +    ('gen2_i2c_sda_pt6',       'i2c2',        None,      'none', False, True,  True,  False),
-> +    ('pj7',                    None,          'in',      'none', False, True,  False, False),
-> +    ('pb0',                    'rsvd2',       None,      'down', True,  False, False, False),
-> +    ('pb1',                    'rsvd2',       None,      'down', True,  False, False, False),
-> +    ('pk7',                    None,          'in',      'none', False, True,  False, False),
-> +    ('pg0',                    None,          'in',      'none', False, True,  False, False),
-> +    ('pg1',                    None,          'in',      'none', False, True,  False, False),
-> +    ('ph2',                    None,          'in',      'none', False, True,  False, False),
-> +    ('ph3',                    'gmi',         None,      'down', True,  False, False, False),
-> +    ('ph4',                    None,          'in',      'none', False, True,  False, False),
-> +    ('ph5',                    'rsvd2',       None,      'down', True,  False, False, False),
-> +    ('ph6',                    None,          'in',      'none', False, True,  False, False),
-> +    ('ph7',                    None,          'out1',    'none', False, False, False, False),
-> +    ('pg2',                    None,          'in',      'none', False, True,  False, False),
-> +    ('pg3',                    None,          'in',      'none', False, True,  False, False),
-> +    ('pg4',                    'spi4',        None,      'none', False, False, False, False),
-> +    ('pg5',                    'spi4',        None,      'none', False, False, False, False),
-> +    ('pg6',                    'spi4',        None,      'none', False, False, False, False),
-> +    ('pg7',                    'spi4',        None,      'none', False, True,  False, False),
-> +    ('ph0',                    'gmi',         None,      'down', True,  False, False, False),
-> +    ('ph1',                    'pwm1',        None,      'none', False, False, False, False),
-> +    ('pk0',                    'rsvd1',       None,      'down', True,  False, False, False),
-> +    ('pk1',                    None,          'out0',    'none', False, False, False, False),
-> +    ('pj0',                    None,          'in',      'up',   False, True,  False, False),
-> +    ('pj2',                    'rsvd1',       None,      'down', True,  False, False, False),
-> +    ('pk3',                    'gmi',         None,      'down', True,  False, False, False),
-> +    ('pk4',                    None,          'out0',    'up',   False, False, False, False),
-> +    ('pk2',                    None,          'in',      'none', False, True,  False, False),
-> +    ('pi3',                    'spi4',        None,      'none', False, False, False, False),
-> +    ('pi6',                    None,          'in',      'none', False, True,  False, False),
-> +    ('pi2',                    'rsvd4',       None,      'down', True,  False, False, False),
-> +    ('pi5',                    None,          'out1',    'up',   False, False, False, False),
-> +    ('pi1',                    None,          'in',      'none', False, True,  False, False),
-> +    ('pi4',                    'gmi',         None,      'down', True,  False, False, False),
-> +    ('pi7',                    None,          'in',      'none', False, True,  False, False),
-> +    ('pc7',                    None,          'in',      'none', False, True,  False, False),
-> +    ('pi0',                    None,          'in',      'none', False, True,  False, False),
-> +    ('pex_l0_clkreq_n_pdd2',   'rsvd2',       None,      'down', True,  False, False, False),
-> +    ('pex_l0_rst_n_pdd1',      'rsvd2',       None,      'down', True,  False, False, False),
-> +    ('pex_l1_clkreq_n_pdd6',   'rsvd2',       None,      'down', True,  False, False, False),
-> +    ('pex_l1_rst_n_pdd5',      'rsvd2',       None,      'down', True,  False, False, False),
-> +    ('pex_wake_n_pdd3',        'rsvd2',       None,      'down', True,  False, False, False),
-> +    ('usb_vbus_en2_pff1',      'rsvd2',       None,      'down', True,  False, False, False),
-> +    ('pff2',                   'rsvd2',       None,      'down', True,  False, False, False),
-> +    ('clk2_out_pw5',           'rsvd2',       None,      'down', True,  False, False, False),
-> +    ('clk2_req_pcc5',          'rsvd2',       None,      'down', True,  False, False, False),
-> +    ('sdmmc1_wp_n_pv3',        'sdmmc1',      None,      'down', True,  False, False, False),
-> +    ('sdmmc1_clk_pz0',         'sdmmc1',      None,      'none', False, True,  False, False),
-> +    ('sdmmc1_cmd_pz1',         'sdmmc1',      None,      'up',   False, True,  False, False),
-> +    ('sdmmc1_dat0_py7',        'sdmmc1',      None,      'up',   False, True,  False, False),
-> +    ('sdmmc1_dat1_py6',        'sdmmc1',      None,      'up',   False, True,  False, False),
-> +    ('sdmmc1_dat2_py5',        'sdmmc1',      None,      'up',   False, True,  False, False),
-> +    ('sdmmc1_dat3_py4',        'sdmmc1',      None,      'up',   False, True,  False, False),
-> +    ('sdmmc3_clk_pa6',         'sdmmc3',      None,      'none', False, False, False, False),
-> +    ('sdmmc3_cmd_pa7',         'sdmmc3',      None,      'up',   False, True,  False, False),
-> +    ('sdmmc3_dat0_pb7',        'sdmmc3',      None,      'up',   False, True,  False, False),
-> +    ('sdmmc3_dat1_pb6',        'sdmmc3',      None,      'up',   False, True,  False, False),
-> +    ('sdmmc3_dat2_pb5',        'sdmmc3',      None,      'up',   False, True,  False, False),
-> +    ('sdmmc3_dat3_pb4',        'sdmmc3',      None,      'up',   False, True,  False, False),
-> +    ('sdmmc3_clk_lb_out_pee4', 'sdmmc3',      None,      'none', False, False, False, False),
-> +    ('sdmmc3_clk_lb_in_pee5',  'sdmmc3',      None,      'up',   False, True,  False, False),
-> +    ('sdmmc4_clk_pcc4',        'sdmmc4',      None,      'none', False, True,  False, False),
-> +    ('sdmmc4_cmd_pt7',         'sdmmc4',      None,      'none', False, True,  False, False),
-> +    ('sdmmc4_dat0_paa0',       'sdmmc4',      None,      'up',   False, True,  False, False),
-> +    ('sdmmc4_dat1_paa1',       'sdmmc4',      None,      'up',   False, True,  False, False),
-> +    ('sdmmc4_dat2_paa2',       'sdmmc4',      None,      'up',   False, True,  False, False),
-> +    ('sdmmc4_dat3_paa3',       'sdmmc4',      None,      'up',   False, True,  False, False),
-> +    ('sdmmc4_dat4_paa4',       'sdmmc4',      None,      'up',   False, True,  False, False),
-> +    ('sdmmc4_dat5_paa5',       'sdmmc4',      None,      'up',   False, True,  False, False),
-> +    ('sdmmc4_dat6_paa6',       'sdmmc4',      None,      'up',   False, True,  False, False),
-> +    ('sdmmc4_dat7_paa7',       'sdmmc4',      None,      'up',   False, True,  False, False),
-> +    ('kb_col0_pq0',            None,          'in',      'none', False, True,  False, False),
-> +    ('kb_col1_pq1',            'rsvd2',       None,      'down', True,  False, False, False),
-> +    ('kb_col2_pq2',            None,          'in',      'none', False, True,  False, False),
-> +    ('kb_col3_pq3',            None,          'in',      'none', False, True,  False, False),
-> +    ('kb_col4_pq4',            'sdmmc3',      None,      'up',   False, True,  False, False),
-> +    ('kb_col5_pq5',            'rsvd2',       None,      'down', True,  False, False, False),
-> +    ('kb_col6_pq6',            None,          'in',      'none', False, True,  False, False),
-> +    ('kb_col7_pq7',            None,          'in',      'none', False, True,  False, False),
-> +    ('kb_row0_pr0',            None,          'out0',    'none', False, False, False, False),
-> +    ('kb_row1_pr1',            None,          'in',      'none', False, True,  False, False),
-> +    ('kb_row10_ps2',           'uarta',       None,      'none', False, True,  False, False),
-> +    ('kb_row11_ps3',           None,          'out0',    'none', False, False, False, False),
-> +    ('kb_row12_ps4',           None,          'out0',    'none', False, False, False, False),
-> +    ('kb_row13_ps5',           'rsvd2',       None,      'down', True,  False, False, False),
-> +    ('kb_row14_ps6',           'rsvd2',       None,      'down', True,  False, False, False),
-> +    ('kb_row15_ps7',           None,          'in',      'none', False, True,  False, False),
-> +    ('kb_row16_pt0',           'rsvd2',       None,      'down', True,  False, False, False),
-> +    ('kb_row17_pt1',           None,          'in',      'none', False, True,  False, False),
-> +    ('kb_row2_pr2',            'rsvd2',       None,      'down', True,  False, False, False),
-> +    ('kb_row3_pr3',            'kbc',         None,      'down', True,  False, False, False),
-> +    ('kb_row4_pr4',            None,          'in',      'none', False, True,  False, False),
-> +    ('kb_row5_pr5',            'rsvd3',       None,      'down', True,  False, False, False),
-> +    ('kb_row6_pr6',            'kbc',         None,      'down', True,  False, False, False),
-> +    ('kb_row7_pr7',            None,          'in',      'none', False, True,  False, False),
-> +    ('kb_row8_ps0',            'rsvd2',       None,      'down', True,  False, False, False),
-> +    ('kb_row9_ps1',            'uarta',       None,      'down', False, False, False, False),
-> +    ('sdmmc3_cd_n_pv2',        'sdmmc3',      None,      'up',   False, True,  False, False),
-> +    ('clk_32k_out_pa0',        None,          'in',      'none', False, True,  False, False),
-> +    ('pwr_i2c_scl_pz6',        'i2cpwr',      None,      'none', False, True,  True,  False),
-> +    ('pwr_i2c_sda_pz7',        'i2cpwr',      None,      'none', False, True,  True,  False),
-> +    ('jtag_rtck',              'rtck',        None,      'none', False, False, False, False),
-> +    ('clk_32k_in',             'clk',         None,      'none', False, True,  False, False),
-> +    ('core_pwr_req',           'pwron',       None,      'none', False, False, False, False),
-> +    ('cpu_pwr_req',            'cpu',         None,      'none', False, False, False, False),
-> +    ('pwr_int_n',              'pmi',         None,      'none', False, True,  False, False),
-> +    ('reset_out_n',            'reset_out_n', None,      'none', False, False, False, False),
-> +    ('clk3_out_pee0',          'rsvd2',       None,      'down', True,  False, False, False),
-> +    ('clk3_req_pee1',          'rsvd2',       None,      'down', True,  False, False, False),
-> +    ('dap4_din_pp5',           'rsvd3',       None,      'down', True,  False, False, False),
-> +    ('dap4_dout_pp6',          'rsvd4',       None,      'down', True,  False, False, False),
-> +    ('dap4_fs_pp4',            'rsvd4',       None,      'down', True,  False, False, False),
-> +    ('dap4_sclk_pp7',          'rsvd3',       None,      'down', True,  False, False, False),
-> +    ('gen1_i2c_scl_pc4',       'i2c1',        None,      'none', False, True,  True,  False),
-> +    ('gen1_i2c_sda_pc5',       'i2c1',        None,      'none', False, True,  True,  False),
-> +    ('pu0',                    'rsvd4',       None,      'down', True,  False, False, False),
-> +    ('pu1',                    'rsvd1',       None,      'down', True,  False, False, False),
-> +    ('pu2',                    'rsvd1',       None,      'down', True,  False, False, False),
-> +    ('pu3',                    'gmi',         None,      'down', True,  False, False, False),
-> +    ('pu4',                    None,          'in',      'none', False, True,  False, False),
-> +    ('pu5',                    None,          'in',      'up',   False, True,  False, False),
-> +    ('pu6',                    None,          'in',      'up',   False, True,  False, False),
-> +    ('uart2_cts_n_pj5',        'gmi',         None,      'down', True,  False, False, False),
-> +    ('uart2_rts_n_pj6',        'gmi',         None,      'down', True,  False, False, False),
-> +    ('uart2_rxd_pc3',          'irda',        None,      'down', True,  False, False, False),
-> +    ('uart2_txd_pc2',          'irda',        None,      'down', True,  False, False, False),
-> +    ('uart3_cts_n_pa1',        'gmi',         None,      'down', True,  False, False, False),
-> +    ('uart3_rts_n_pc0',        'gmi',         None,      'down', True,  False, False, False),
-> +    ('uart3_rxd_pw7',          'rsvd2',       None,      'down', True,  False, False, False),
-> +    ('uart3_txd_pw6',          'rsvd2',       None,      'down', True,  False, False, False),
-> +    ('owr',                    'rsvd2',       None,      'down', True,  False, False, False),
-> +    ('hdmi_cec_pee3',          'cec',         None,      'none', False, True,  True,  False),
-> +    ('hdmi_int_pn7',           None,          'in',      'down', False, True,  False, False),
-> +    ('ddc_scl_pv4',            'i2c4',        None,      'none', False, True,  False, False),
-> +    ('ddc_sda_pv5',            'i2c4',        None,      'none', False, True,  False, False),
-> +    ('spdif_out_pk5',          'rsvd2',       None,      'down', True,  False, False, False),
-> +    ('spdif_in_pk6',           None,          'out0',    'down', False, False, False, False),
-> +    ('usb_vbus_en0_pn4',       'usb',         None,      'none', False, True,  True,  False),
-> +    ('usb_vbus_en1_pn5',       'usb',         None,      'none', False, True,  True,  False),
-> +    ('dp_hpd_pff0',            'dp',          None,      'up',   False, True,  False, False),
-> +)
-> +
-> +drive_groups = (
-> +)
-> --
-> 2.2.0.rc0.207.ga3a616c
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thierry
+
+--BOKacYhQ+x31HxR3
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUrTQtAAoJEN0jrNd/PrOh/9EQAKf/mZULHAs26/RBtIWdumbx
+jVoe375Cmd/TwmcD0lpIaXep5OnDxid9cMRTNebJydKkTlp9QzNKWbMUdA0gX/Oz
+ZqlkmlIKW60p1exFGPkuw0dXoB3aF5odXXtEopJv3QrbNzg8YUEQ+3IxPIAWn4iR
+AwU1xi9GZpgEE5igMrRRAipBS+S02nDj2TRi4NPWu5ZvY/NL9cQatIhT7uEJCNzP
+qC2lwkreXrLzYqKpCCqKo41XNL7Oi9HaUPUbWDZ1PUtYa0ZUkpa+tPJzFWf/3scD
+VsgRks1WhJ9NyuONIZ1Fdithh0J0m0FFIt62CPrCnM/yGP4fezeHU7mdNysuvQmJ
+WZX0TqPH17rLUwasthq2wvNzzWDx8DHQ7A8T469JE/qFNEB9eJZzzIx/ulyRiLJ5
+g1rwZ57hZCOcxZR3F16uuUSGBQ/oxYY1S1DQzRDNT0D3SD7WPMyXQAA8F/VSrKp1
+zlfS+g1m4FawJ9cWjJCy5yMqlqbmSPBsEQ4jTrGEhHR1j9IIzJIcOBqwbHjFDqHT
+4M9/p4FRuk9VRerWKSLnUR4IoWhpqkEPNNJ7gmXLW3JLSGL538Swr2wAbwT+J35n
+io2YjUfsctcysDAWSW9WfeInv9SX73MbqMLHzNPuKQbYARm180qJTWe2KrtSSYlv
+LZ5n2w2iqYiO5nLk4e3t
+=4j+5
+-----END PGP SIGNATURE-----
+
+--BOKacYhQ+x31HxR3--
