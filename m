@@ -1,73 +1,86 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH 1/11] ARM: tegra: add function to control the GPU rail
- clamp
-Date: Wed, 7 Jan 2015 12:19:00 +0200
-Message-ID: <20150107101900.GP10073@tbergstrom-lnx.Nvidia.com>
+From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/11] ARM: tegra: add function to control the
+ GPU rail clamp
+Date: Wed, 7 Jan 2015 18:49:27 +0800
+Message-ID: <54AD0F37.5080609@nvidia.com>
 References: <1419331204-26679-1-git-send-email-vinceh@nvidia.com>
  <1419331204-26679-2-git-send-email-vinceh@nvidia.com>
- <1419426990.2179.7.camel@lynxeye.de>
- <549B7638.2010405@nvidia.com>
+ <1419426990.2179.7.camel@lynxeye.de> <549B7638.2010405@nvidia.com>
  <20150105150932.GG12010@ulmo.nvidia.com>
+ <20150107101900.GP10073@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150105150932.GG12010@ulmo.nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Vince Hsu <vinceh@nvidia.com>, Lucas Stach <dev@lynxeye.de>, swarren@wwwdotorg.org, gnurou@gmail.com, bskeggs@redhat.com, martin.peres@free.fr, seven@nimrod-online.com, samuel.pitoiset@gmail.com, nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <20150107101900.GP10073-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, seven-FA6nBp6kBxZzu6KWmfFNGwC/G2K4zDHf@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jan 05, 2015 at 04:09:33PM +0100, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Thu, Dec 25, 2014 at 10:28:08AM +0800, Vince Hsu wrote:
-> > On 12/24/2014 09:16 PM, Lucas Stach wrote:
-> > >Am Dienstag, den 23.12.2014, 18:39 +0800 schrieb Vince Hsu:
-> > >>The Tegra124 and later Tegra SoCs have a sepatate rail gating register
-> > >>to enable/disable the clamp. The original function
-> > >>tegra_powergate_remove_clamping() is not sufficient for the enable
-> > >>function. So add a new function which is dedicated to the GPU rail
-> > >>gating. Also don't refer to the powergate ID since the GPU ID makes no
-> > >>sense here.
-> > >>
-> > >>Signed-off-by: Vince Hsu <vinceh@nvidia.com>
-> > >To be honest I don't see the point of this patch.
-> > >You are bloating the PMC interface by introducing another exported
-> > >function that does nothing different than what the current function
-> > >already does.
-> > >
-> > >If you need a way to assert the clamp I would have expected you to
-> > >introduce a common function to do this for all power partitions.
-> > I thought about adding an tegra_powergate_assert_clamping(), but that
-> > doesn't make sense to all the power partitions except GPU. Note the
-> > difference in TRM. Any suggestion for the common function?
-> 
-> I don't think extending the powergate API is useful at this point. We've
-> long had an open TODO item to replace this with a generic API. I did
-> some prototyping a while ago to use generic power domains for this, that
-> way all the details and dependencies between the partitions could be
-> properly modeled.
-> 
-> Can you take a look at my staging/powergate branch here:
-> 
-> 	https://github.com/thierryreding/linux/commits/staging/powergate
-> 
-> and see if you can use that instead? The idea is to completely hide the
-> details of power partitions from drivers and use runtime PM instead.
-> 
-> Also adding Peter whom I had discussed this with earlier. Can we finally
-> get this converted? I'd rather not keep complicating this custom API to
-> avoid making the conversion even more difficult.
-
-Conceptually I fully agree that we should use runtime PM and powerdomains.
-However I don't think the implementation you mentioned is correct. The resets 
-of all modules in a domain need to be asserted and the memory clients need to
-be flushed. All this needs to be done with module clocks enabled (resets are
-synchronous).  Then all module clocks need to be disabled and then the
-partition can be powergated. After ungating, the module resets need to be
-deasserted and the FLUSH bit cleared with clocks enabled.
-
-Cheers,
-
-Peter.
+Ck9uIDAxLzA3LzIwMTUgMDY6MTkgUE0sIFBldGVyIERlIFNjaHJpanZlciB3cm90ZToKPiBPbiBN
+b24sIEphbiAwNSwgMjAxNSBhdCAwNDowOTozM1BNICswMTAwLCBUaGllcnJ5IFJlZGluZyB3cm90
+ZToKPj4gKiBQR1AgU2lnbmVkIGJ5IGFuIHVua25vd24ga2V5Cj4+Cj4+IE9uIFRodSwgRGVjIDI1
+LCAyMDE0IGF0IDEwOjI4OjA4QU0gKzA4MDAsIFZpbmNlIEhzdSB3cm90ZToKPj4+IE9uIDEyLzI0
+LzIwMTQgMDk6MTYgUE0sIEx1Y2FzIFN0YWNoIHdyb3RlOgo+Pj4+IEFtIERpZW5zdGFnLCBkZW4g
+MjMuMTIuMjAxNCwgMTg6MzkgKzA4MDAgc2NocmllYiBWaW5jZSBIc3U6Cj4+Pj4+IFRoZSBUZWdy
+YTEyNCBhbmQgbGF0ZXIgVGVncmEgU29DcyBoYXZlIGEgc2VwYXRhdGUgcmFpbCBnYXRpbmcgcmVn
+aXN0ZXIKPj4+Pj4gdG8gZW5hYmxlL2Rpc2FibGUgdGhlIGNsYW1wLiBUaGUgb3JpZ2luYWwgZnVu
+Y3Rpb24KPj4+Pj4gdGVncmFfcG93ZXJnYXRlX3JlbW92ZV9jbGFtcGluZygpIGlzIG5vdCBzdWZm
+aWNpZW50IGZvciB0aGUgZW5hYmxlCj4+Pj4+IGZ1bmN0aW9uLiBTbyBhZGQgYSBuZXcgZnVuY3Rp
+b24gd2hpY2ggaXMgZGVkaWNhdGVkIHRvIHRoZSBHUFUgcmFpbAo+Pj4+PiBnYXRpbmcuIEFsc28g
+ZG9uJ3QgcmVmZXIgdG8gdGhlIHBvd2VyZ2F0ZSBJRCBzaW5jZSB0aGUgR1BVIElEIG1ha2VzIG5v
+Cj4+Pj4+IHNlbnNlIGhlcmUuCj4+Pj4+Cj4+Pj4+IFNpZ25lZC1vZmYtYnk6IFZpbmNlIEhzdSA8
+dmluY2VoQG52aWRpYS5jb20+Cj4+Pj4gVG8gYmUgaG9uZXN0IEkgZG9uJ3Qgc2VlIHRoZSBwb2lu
+dCBvZiB0aGlzIHBhdGNoLgo+Pj4+IFlvdSBhcmUgYmxvYXRpbmcgdGhlIFBNQyBpbnRlcmZhY2Ug
+YnkgaW50cm9kdWNpbmcgYW5vdGhlciBleHBvcnRlZAo+Pj4+IGZ1bmN0aW9uIHRoYXQgZG9lcyBu
+b3RoaW5nIGRpZmZlcmVudCB0aGFuIHdoYXQgdGhlIGN1cnJlbnQgZnVuY3Rpb24KPj4+PiBhbHJl
+YWR5IGRvZXMuCj4+Pj4KPj4+PiBJZiB5b3UgbmVlZCBhIHdheSB0byBhc3NlcnQgdGhlIGNsYW1w
+IEkgd291bGQgaGF2ZSBleHBlY3RlZCB5b3UgdG8KPj4+PiBpbnRyb2R1Y2UgYSBjb21tb24gZnVu
+Y3Rpb24gdG8gZG8gdGhpcyBmb3IgYWxsIHBvd2VyIHBhcnRpdGlvbnMuCj4+PiBJIHRob3VnaHQg
+YWJvdXQgYWRkaW5nIGFuIHRlZ3JhX3Bvd2VyZ2F0ZV9hc3NlcnRfY2xhbXBpbmcoKSwgYnV0IHRo
+YXQKPj4+IGRvZXNuJ3QgbWFrZSBzZW5zZSB0byBhbGwgdGhlIHBvd2VyIHBhcnRpdGlvbnMgZXhj
+ZXB0IEdQVS4gTm90ZSB0aGUKPj4+IGRpZmZlcmVuY2UgaW4gVFJNLiBBbnkgc3VnZ2VzdGlvbiBm
+b3IgdGhlIGNvbW1vbiBmdW5jdGlvbj8KPj4gSSBkb24ndCB0aGluayBleHRlbmRpbmcgdGhlIHBv
+d2VyZ2F0ZSBBUEkgaXMgdXNlZnVsIGF0IHRoaXMgcG9pbnQuIFdlJ3ZlCj4+IGxvbmcgaGFkIGFu
+IG9wZW4gVE9ETyBpdGVtIHRvIHJlcGxhY2UgdGhpcyB3aXRoIGEgZ2VuZXJpYyBBUEkuIEkgZGlk
+Cj4+IHNvbWUgcHJvdG90eXBpbmcgYSB3aGlsZSBhZ28gdG8gdXNlIGdlbmVyaWMgcG93ZXIgZG9t
+YWlucyBmb3IgdGhpcywgdGhhdAo+PiB3YXkgYWxsIHRoZSBkZXRhaWxzIGFuZCBkZXBlbmRlbmNp
+ZXMgYmV0d2VlbiB0aGUgcGFydGl0aW9ucyBjb3VsZCBiZQo+PiBwcm9wZXJseSBtb2RlbGVkLgo+
+Pgo+PiBDYW4geW91IHRha2UgYSBsb29rIGF0IG15IHN0YWdpbmcvcG93ZXJnYXRlIGJyYW5jaCBo
+ZXJlOgo+Pgo+PiAJaHR0cHM6Ly9naXRodWIuY29tL3RoaWVycnlyZWRpbmcvbGludXgvY29tbWl0
+cy9zdGFnaW5nL3Bvd2VyZ2F0ZQo+Pgo+PiBhbmQgc2VlIGlmIHlvdSBjYW4gdXNlIHRoYXQgaW5z
+dGVhZD8gVGhlIGlkZWEgaXMgdG8gY29tcGxldGVseSBoaWRlIHRoZQo+PiBkZXRhaWxzIG9mIHBv
+d2VyIHBhcnRpdGlvbnMgZnJvbSBkcml2ZXJzIGFuZCB1c2UgcnVudGltZSBQTSBpbnN0ZWFkLgo+
+Pgo+PiBBbHNvIGFkZGluZyBQZXRlciB3aG9tIEkgaGFkIGRpc2N1c3NlZCB0aGlzIHdpdGggZWFy
+bGllci4gQ2FuIHdlIGZpbmFsbHkKPj4gZ2V0IHRoaXMgY29udmVydGVkPyBJJ2QgcmF0aGVyIG5v
+dCBrZWVwIGNvbXBsaWNhdGluZyB0aGlzIGN1c3RvbSBBUEkgdG8KPj4gYXZvaWQgbWFraW5nIHRo
+ZSBjb252ZXJzaW9uIGV2ZW4gbW9yZSBkaWZmaWN1bHQuCj4gQ29uY2VwdHVhbGx5IEkgZnVsbHkg
+YWdyZWUgdGhhdCB3ZSBzaG91bGQgdXNlIHJ1bnRpbWUgUE0gYW5kIHBvd2VyZG9tYWlucy4KPiBI
+b3dldmVyIEkgZG9uJ3QgdGhpbmsgdGhlIGltcGxlbWVudGF0aW9uIHlvdSBtZW50aW9uZWQgaXMg
+Y29ycmVjdC4gVGhlIHJlc2V0cwo+IG9mIGFsbCBtb2R1bGVzIGluIGEgZG9tYWluIG5lZWQgdG8g
+YmUgYXNzZXJ0ZWQgYW5kIHRoZSBtZW1vcnkgY2xpZW50cyBuZWVkIHRvCj4gYmUgZmx1c2hlZC4g
+QWxsIHRoaXMgbmVlZHMgdG8gYmUgZG9uZSB3aXRoIG1vZHVsZSBjbG9ja3MgZW5hYmxlZCAocmVz
+ZXRzIGFyZQo+IHN5bmNocm9ub3VzKS4gIFRoZW4gYWxsIG1vZHVsZSBjbG9ja3MgbmVlZCB0byBi
+ZSBkaXNhYmxlZCBhbmQgdGhlbiB0aGUKPiBwYXJ0aXRpb24gY2FuIGJlIHBvd2VyZ2F0ZWQuIEFm
+dGVyIHVuZ2F0aW5nLCB0aGUgbW9kdWxlIHJlc2V0cyBuZWVkIHRvIGJlCj4gZGVhc3NlcnRlZCBh
+bmQgdGhlIEZMVVNIIGJpdCBjbGVhcmVkIHdpdGggY2xvY2tzIGVuYWJsZWQuClllYWguIEkgcGxh
+biB0byBoYXZlIHRoZSBpbmZvcm1hdGlvbiBvZiBhbGwgdGhlIGNsb2NrIGNsaWVudCBvZiB0aGUg
+CnBhcnRpdGlvbnMgYW5kCnRoZSBtZW1vcnkgY2xpZW50cyBiZSBkZWZpbmVkIHN0YXRpY2FsbHkg
+aW4gYyBzb3VyY2UsIGUuZy4gcG1jLXRlZ3JhMTI0LmMuCkFsbCBtb2R1bGVzIGNhbiBkZWNsYXJl
+IHdoaWNoIGRvbWFpbiB0aGV5IGJlbG9uZyB0byBpbiBEVC4gT25lIGRvbWFpbiBjYW4KYmUgcmVh
+bGx5IHBvd2VyIGdhdGVkIG9ubHkgd2hlbiBubyBtb2R1bGUgaXMgYXdha2UuIE5vdGUgdGhlIGNs
+b2NrIApjbGllbnRzIG9mCm9uZSBkb21haW4gbWlnaHQgbm90IGVxdWFsIHRvIHRoZSBjbG9ja3Mg
+b2YgdGhlIG1vZHVsZS4gVGhlIHJlc2V0IGlzIG5vdCAKZWl0aGVyLgpTbyBJIGRvbid0IGdldCB0
+aGUgY2xvY2sgYW5kIHJlc2V0IGZyb20gbW9kdWxlLiBIb3cgZG8geW91IHRoaW5rPwoKVGhhbmtz
+LApWaW5jZQoKCgoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCk5vdXZlYXUgbWFpbGluZyBsaXN0Ck5vdXZlYXVAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
+dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9ub3V2ZWF1Cg==
