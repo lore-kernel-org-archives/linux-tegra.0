@@ -1,79 +1,63 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] soc: tegra: pmc: restrict compilation of suspend-related
- support to ARM
-Date: Wed, 7 Jan 2015 15:33:57 +0100
-Message-ID: <20150107143354.GD1621@ulmo>
-References: <alpine.DEB.2.02.1412092224050.31750@utopia.booyaka.com>
+Subject: Re: [PATCH] ARM: dts: tegra20: fix GR3D, DSI unit and reg base
+ addresses
+Date: Wed, 7 Jan 2015 15:40:42 +0100
+Message-ID: <20150107144041.GE1621@ulmo>
+References: <1418397559-19646-1-git-send-email-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="NtwzykIc2mflq5ck"
+	protocol="application/pgp-signature"; boundary="84ND8YJRMFlzkrP4"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.02.1412092224050.31750-rwI8Ez+7Ko+d5PgPZx9QOdBPR1lH4CV8@public.gmane.org>
+In-Reply-To: <1418397559-19646-1-git-send-email-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---NtwzykIc2mflq5ck
+--84ND8YJRMFlzkrP4
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 09, 2014 at 10:36:50PM +0000, Paul Walmsley wrote:
+On Fri, Dec 12, 2014 at 06:19:19PM +0300, Dmitry Osipenko wrote:
+> Commit 58ecb23f64ee ("ARM: tegra: add missing unit addresses to DT") added
+> unit address and changed reg base for GR3D and DSI host1x modules, but th=
+ese
+> addresses belongs to GR2D and TVO modules respectively. Fix it by changing
+> modules unit and reg base addresses to proper ones.
 >=20
-> Tegra SoCs with 64-bit ARM support don't currently support deep CPU
-> low-power states in mainline Linux.  When this support is added in the
-> future, it will probably look rather different from the existing
-> 32-bit ARM support, since the ARM64 maintainers' strong preference is
-> to use PSCI to implement it.
->=20
-> So, for the time being, prevent the CPU suspend-related code and data
-> in the Tegra PMC driver from compiling on ARM64.
->=20
-> Signed-off-by: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
-> Signed-off-by: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Cc: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Fixes: 58ecb23f64ee (ARM: tegra: add missing unit addresses to DT)
+> Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org> # v3.13+
 > ---
-> Applies on next-20141209.
-> Intended for v3.20.
-> Boot-tested on Tegra124 Jetson TK1 on next-20141209.
-> Also boot-tested on Tegra132 Norrin FFD on next-20141209 + some unrelated=
-=20
-> patches.
->=20
->  drivers/soc/tegra/pmc.c | 7 +++++--
->  include/soc/tegra/pm.h  | 2 +-
->  2 files changed, 6 insertions(+), 3 deletions(-)
+>  arch/arm/boot/dts/tegra20.dtsi | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 
-On second thought, I decided to apply this as-is.
+Applied, thanks.
 
-Thanks,
 Thierry
 
---NtwzykIc2mflq5ck
+--84ND8YJRMFlzkrP4
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUrUPSAAoJEN0jrNd/PrOhplYQAKG6ilQmepYnpQtlvejJX9F2
-hBc/c+QAf9xGU8QZIYKMPG2IrjrLjYI7BxoE1vbYfsJs14v/xcT52YNIqmvKa236
-OXk6a784FLRn/BuSgr0TIrEEHAFCv1UpQPKHYRA3ZmTtTWAgPyE3kA4zN3/v4VQ6
-HhrJ3DKyK9H7tYBUqMolRFUSVcTRNRMsF/jR9qY0VP808R9XcSVEeZadZnabmZET
-amfsWWrX4njtjjtGiIU3wB/Td/JXc8xHCZgNdovkQdZfXYyeNBnOt7lDCo47GXoY
-XbVd44Ei0C450x/yYGnt3B15UjQtPPpeD5lEOsBYKIO87lLXq1qcUI544Dhh7mpI
-3kDoDOw0ETbvHmsvzQLZ5nZpz3X60DJ39qtAsxrpkOn6+QeZKvElPssknJV0NQQl
-0JUFERpEFTXHtn/he2xKYrUqBVnTHIcAr8/mWjIge3EG+k0oCObxiI0ShQjpWkCQ
-1y5hU+kcKNLA5cP4NfqUxNjR7bFcCEqDunsCSo7bkx4a+JdFWU625TWiL4isVJLr
-My6nAA7fW+7sEQVc8rqYVERNmGRtXcfFQfAa3aQFN977P/b+ERzQaoo+TII4GznU
-UJ3rNur4nYMPzA+QTxZVQFkYgn9NmLhbAusiKKU6aBhhPbzD4eWbH8q/waTdpKjH
-JpluUi6xHl95E6bgFEw/
-=degI
+iQIcBAEBAgAGBQJUrUVpAAoJEN0jrNd/PrOhdDwP/jfeCTVNYT7ZzmmuHp9XA7Va
+YCOFCqX/fCjWhas7XmJbjIesTBf3GhuabfkcCR8XBCRhPcUxyHrCP9WLZonB3D66
+Kt64zUr94ygkdA9kpQeE54L77zVoRlE8BpSyCIyntID+o5itBQFyDG0PJk0RtBvB
+I8ntvqtML40ADc+6Lqehv47c5iPNfYkl+QqcrAC+4ch2ZxoFnN3OFvgYJbTkktH6
+K1pU93GT49b0NlMT7e6kLrDtJv/i36uURLsmZdtVXX2yIAcCraFN8idv6qSKMp6+
+/07TQqDDU0L/xPrwBF2M3ffzaqzH19CSOdyTcsxzJXnHN833GkT9LMR4NiXorvpf
+OBk804clSbDJXJdg5joWfwERkdUocVrp3zzD70tDiEM4/wQS3ju2TtJ45oV+Vmie
++i2niBylKQKwZiwu1t1eOKqAkJW+JQODQgA9+Z1WUntpJbcHQ3iBNjqfKpw06Z+7
+FmnZnobAAED3xVmvWti9OhZfDdcTnnZ3uV9wQHbV6wdXdSUrmoL3uxSC2ymfJBkO
+Kl2F4PZW2OsqAr8D4VBErzXGj8QhjHKjhueeigO7J98amB8iSwpobZ5LHAGTAGit
+KkUj4A2fXBu5nfrnUeoi3c/wuIGcslh5f/Umo3NP7+VU0koYym1g+oB7UQ2T5+wO
+ZnG9hoSgQ0gJp5bi57HA
+=Msuw
 -----END PGP SIGNATURE-----
 
---NtwzykIc2mflq5ck--
+--84ND8YJRMFlzkrP4--
