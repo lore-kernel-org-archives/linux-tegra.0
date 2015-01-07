@@ -1,128 +1,204 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 1/11] ARM: tegra: add function to control the GPU rail
- clamp
-Date: Wed, 7 Jan 2015 14:27:10 +0100
-Message-ID: <20150107132709.GA6988@ulmo>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 2/11] memory: tegra: add mc flush support
+Date: Wed, 7 Jan 2015 14:34:14 +0100
+Message-ID: <20150107133413.GB6988@ulmo>
 References: <1419331204-26679-1-git-send-email-vinceh@nvidia.com>
- <1419331204-26679-2-git-send-email-vinceh@nvidia.com>
- <1419426990.2179.7.camel@lynxeye.de>
- <549B7638.2010405@nvidia.com>
- <20150105150932.GG12010@ulmo.nvidia.com>
- <20150107101900.GP10073@tbergstrom-lnx.Nvidia.com>
- <54AD0F37.5080609@nvidia.com>
+ <1419331204-26679-3-git-send-email-vinceh@nvidia.com>
+ <20150106141821.GJ31830@ulmo.nvidia.com>
+ <20150107100804.GO10073@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="BOKacYhQ+x31HxR3"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <54AD0F37.5080609@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vince Hsu <vinceh@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Lucas Stach <dev@lynxeye.de>, swarren@wwwdotorg.org, gnurou@gmail.com, bskeggs@redhat.com, martin.peres@free.fr, seven@nimrod-online.com, samuel.pitoiset@gmail.com, nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============1836719389=="
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <20150107100804.GO10073-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, seven-FA6nBp6kBxZzu6KWmfFNGwC/G2K4zDHf@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---BOKacYhQ+x31HxR3
+--===============1836719389==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="3uo+9/B/ebqu+fSQ"
+Content-Disposition: inline
+
+
+--3uo+9/B/ebqu+fSQ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 07, 2015 at 06:49:27PM +0800, Vince Hsu wrote:
+On Wed, Jan 07, 2015 at 12:08:05PM +0200, Peter De Schrijver wrote:
+> On Tue, Jan 06, 2015 at 03:18:22PM +0100, Thierry Reding wrote:
+> > * PGP Signed by an unknown key
+> >=20
+> > On Tue, Dec 23, 2014 at 06:39:55PM +0800, Vince Hsu wrote:
+> > > The flush operation of memory clients is needed for various IP blocks=
+ in
+> > > the Tegra SoCs to perform a clean reset.
+> > >=20
+> > > Signed-off-by: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > > ---
+> > >  drivers/memory/tegra/mc.c | 21 +++++++++++++++++++++
+> > >  include/soc/tegra/mc.h    | 23 ++++++++++++++++++++++-
+> > >  2 files changed, 43 insertions(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+> > > index fe3c44e7e1d1..a2928b4b26fe 100644
+> > > --- a/drivers/memory/tegra/mc.c
+> > > +++ b/drivers/memory/tegra/mc.c
+> > > @@ -62,6 +62,27 @@ static const struct of_device_id tegra_mc_of_match=
+[] =3D {
+> > >  };
+> > >  MODULE_DEVICE_TABLE(of, tegra_mc_of_match);
+> > > =20
+> > > +int tegra_mc_flush(struct tegra_mc *mc, unsigned int swgroup, bool e=
+nable)
+> > > +{
+> > > +	int i;
+> > > +	const struct tegra_mc_hr *client;
+> > > +
+> > > +	if (!mc || !mc->soc->hr_clients ||
+> > > +			!mc->soc->ops || !mc->soc->ops->flush)
+> > > +		return -EINVAL;;
+> > > +
+> > > +	client =3D mc->soc->hr_clients;
+> > > +
+> > > +	for (i =3D 0; i < mc->soc->num_hr_clients; i++, client++) {
+> > > +		if (swgroup =3D=3D client->swgroup) {
+> > > +			return mc->soc->ops->flush(mc, client, enable);
+> > > +		}
+> > > +	}
+> > > +
+> > > +	return -EINVAL;
+> > > +}
+> > > +EXPORT_SYMBOL(tegra_mc_flush);
+> >=20
+> > Like Lucas already mentioned in response to another patch, having a
+> > boolean "enable" argument is suboptimal here. Now according to
+> > documentation the proper reset sequence for clients is something like
+> > this:
+> >=20
+> > 	1) set the FLUSH_ENABLE bit for the client
+> > 	2) poll the FLUSH_DONE bit for the client
+> > 	3) assert reset to the client using the CAR
+> > 	4) deassert reset to the client using the CAR
+> > 	5) clear the FLUSH_ENABLE bit for the client
+> >=20
 >=20
-> On 01/07/2015 06:19 PM, Peter De Schrijver wrote:
-> >On Mon, Jan 05, 2015 at 04:09:33PM +0100, Thierry Reding wrote:
-> >>* PGP Signed by an unknown key
-> >>
-> >>On Thu, Dec 25, 2014 at 10:28:08AM +0800, Vince Hsu wrote:
-> >>>On 12/24/2014 09:16 PM, Lucas Stach wrote:
-> >>>>Am Dienstag, den 23.12.2014, 18:39 +0800 schrieb Vince Hsu:
-> >>>>>The Tegra124 and later Tegra SoCs have a sepatate rail gating regist=
-er
-> >>>>>to enable/disable the clamp. The original function
-> >>>>>tegra_powergate_remove_clamping() is not sufficient for the enable
-> >>>>>function. So add a new function which is dedicated to the GPU rail
-> >>>>>gating. Also don't refer to the powergate ID since the GPU ID makes =
-no
-> >>>>>sense here.
-> >>>>>
-> >>>>>Signed-off-by: Vince Hsu <vinceh@nvidia.com>
-> >>>>To be honest I don't see the point of this patch.
-> >>>>You are bloating the PMC interface by introducing another exported
-> >>>>function that does nothing different than what the current function
-> >>>>already does.
-> >>>>
-> >>>>If you need a way to assert the clamp I would have expected you to
-> >>>>introduce a common function to do this for all power partitions.
-> >>>I thought about adding an tegra_powergate_assert_clamping(), but that
-> >>>doesn't make sense to all the power partitions except GPU. Note the
-> >>>difference in TRM. Any suggestion for the common function?
-> >>I don't think extending the powergate API is useful at this point. We've
-> >>long had an open TODO item to replace this with a generic API. I did
-> >>some prototyping a while ago to use generic power domains for this, that
-> >>way all the details and dependencies between the partitions could be
-> >>properly modeled.
-> >>
-> >>Can you take a look at my staging/powergate branch here:
-> >>
-> >>	https://github.com/thierryreding/linux/commits/staging/powergate
-> >>
-> >>and see if you can use that instead? The idea is to completely hide the
-> >>details of power partitions from drivers and use runtime PM instead.
-> >>
-> >>Also adding Peter whom I had discussed this with earlier. Can we finally
-> >>get this converted? I'd rather not keep complicating this custom API to
-> >>avoid making the conversion even more difficult.
-> >Conceptually I fully agree that we should use runtime PM and powerdomain=
-s.
-> >However I don't think the implementation you mentioned is correct. The r=
-esets
-> >of all modules in a domain need to be asserted and the memory clients ne=
-ed to
-> >be flushed. All this needs to be done with module clocks enabled (resets=
- are
-> >synchronous).  Then all module clocks need to be disabled and then the
-> >partition can be powergated. After ungating, the module resets need to be
-> >deasserted and the FLUSH bit cleared with clocks enabled.
-> Yeah. I plan to have the information of all the clock client of the
-> partitions and
-> the memory clients be defined statically in c source, e.g. pmc-tegra124.c.
-> All modules can declare which domain they belong to in DT. One domain can
-> be really power gated only when no module is awake. Note the clock clients
-> of
-> one domain might not equal to the clocks of the module. The reset is not
-> either.
-> So I don't get the clock and reset from module. How do you think?
+> Do we ever need to do this outside a powergating or railgating sequence?
 
-This whole situation is quite messy. The above sequence basically means
-that drivers can't reset hardware modules because otherwise they might
-race with the power domain code. It also means that we can't powergate
-modules on demand because they might be in the same power domain as one
-other module that's still busy.
+I don't think so. I worry a little that we may encounter situations
+where the driver itself wants to reset the hardware module via the CAR,
+though I think if we made sure that any driver resets would only happen
+with a runtime PM reference held it should be safe.
 
-How would we handle a situation where a hardware module hangs and we can
-only get it back via a reset?
+Furthermore there's the issue of keeping backwards-compatibility. There
+are some drivers that actually do this kind of reset today, so they need
+to be carefully audited before conversion.
+
+And we need to conditionalize the manual powergate sequences that are
+currently used by the various drivers so that they don't happen when
+power domains are initialized.
+
+> > This is really inconvenient because we can't flush the client using a
+> > single operation. So I think we'll need two functions here, something
+> > like: tegra_mc_flush_enable/disable(), or tegra_mc_flush_{,de}assert().
+> > Or maybe even: tegra_mc_reset_{,de}assert() to mirror the reset
+> > controller API. I suppose we could even export it using the reset
+> > controller framework.
+> >=20
+> > Doing so would allow us to have power domain DT nodes like this:
+> >=20
+> > 	pmc@0,7000e400 {
+> > 		power-domains {
+> > 			...
+> >=20
+> > 			gpu {
+> > 				resets =3D <&tegra_car 184>,
+> > 					 <&mc TEGRA_SWGROUP_GPU>;
+> > 				reset-names =3D "module", "client";
+> > 			};
+> >=20
+> > 			...
+> > 		};
+> > 	};
+> >=20
+> > The PMC driver could then grab the "module" and "client" resets and do
+> > something like this:
+> >=20
+> > 	reset_control_assert(powergate->rst_client);
+> > 	reset_control_assert(powergate->rst_module);
+> > 	reset_control_deassert(powergate->rst_module);
+> > 	reset_control_deassert(powergate->rst_client);
+> >=20
+> > Optionally the above could be extended with a reset_control_status()-
+> > loop. Alternatively reset_control_assert() would block until the
+> > FLUSH_DONE bit is set.
+> >=20
+>=20
+> I think the reset_control_assert should wait for the FLUSH_DONE bit to be=
+ set
+> because only then all outstanding memory transactions for the client are
+> completed so you can't realistically claim the reset has been asserted be=
+fore
+> the bit is set. Then you could also expose a single reset which handles b=
+oth
+> the memory client and the module reset in CAR? Ie:
+>=20
+> reset_control_assert(powergate->rst_module); would set FLUSH_ENABLE for t=
+he
+> memory client, wait for the FLUSH_DONE bit and then assert the CAR reset.
+> reset_control_deassert(powergate->rst_module); would deassert the CAR res=
+et
+> and then clear the FLUSH_ENABLE bit. Or is there a usecase to control them
+> individually?
+
+I suppose that would be possible, but it'd mean that we need to access
+registers across driver boundaries (the CAR driver would need to write
+the memory controller's registers or vice versa). Doing this with
+separate reset controls allows the drivers to be nicely separated.
 
 Thierry
 
---BOKacYhQ+x31HxR3
+--3uo+9/B/ebqu+fSQ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUrTQtAAoJEN0jrNd/PrOh/9EQAKf/mZULHAs26/RBtIWdumbx
-jVoe375Cmd/TwmcD0lpIaXep5OnDxid9cMRTNebJydKkTlp9QzNKWbMUdA0gX/Oz
-ZqlkmlIKW60p1exFGPkuw0dXoB3aF5odXXtEopJv3QrbNzg8YUEQ+3IxPIAWn4iR
-AwU1xi9GZpgEE5igMrRRAipBS+S02nDj2TRi4NPWu5ZvY/NL9cQatIhT7uEJCNzP
-qC2lwkreXrLzYqKpCCqKo41XNL7Oi9HaUPUbWDZ1PUtYa0ZUkpa+tPJzFWf/3scD
-VsgRks1WhJ9NyuONIZ1Fdithh0J0m0FFIt62CPrCnM/yGP4fezeHU7mdNysuvQmJ
-WZX0TqPH17rLUwasthq2wvNzzWDx8DHQ7A8T469JE/qFNEB9eJZzzIx/ulyRiLJ5
-g1rwZ57hZCOcxZR3F16uuUSGBQ/oxYY1S1DQzRDNT0D3SD7WPMyXQAA8F/VSrKp1
-zlfS+g1m4FawJ9cWjJCy5yMqlqbmSPBsEQ4jTrGEhHR1j9IIzJIcOBqwbHjFDqHT
-4M9/p4FRuk9VRerWKSLnUR4IoWhpqkEPNNJ7gmXLW3JLSGL538Swr2wAbwT+J35n
-io2YjUfsctcysDAWSW9WfeInv9SX73MbqMLHzNPuKQbYARm180qJTWe2KrtSSYlv
-LZ5n2w2iqYiO5nLk4e3t
-=4j+5
+iQIcBAEBAgAGBQJUrTXVAAoJEN0jrNd/PrOhro0P/1MVKOt81IZLSj54jGlCQldj
+mVXIEhufcgL1Byrd3r83ap7jMsw+G9V1zqaJRB6zh1qHZgVuGIdhvNcIaakRzw8m
+iu8DQy2YZiY915RidxwkFgVyRoUid536s4By1MB0wKKf1WlxyC/H97ox8R41/UnN
+jf4qWqU4iAMTctzHwyPQ1DNyiO+SQheBpHBPZeXeV2qODzUBCCMJz1OnuFzKNj0e
+qFpQZxKnc0guupqmjBK2l8qKxOKbwytoFtGIHNvcJ4tzbiodNZUoLpSH/9ITXbI3
+ATyEVEGD+ou4bez7J4IEkm2Y78p0irsWZeskcLpJmJQ0v5RilxbczAvxvH6FGyOk
+bifWwguxkeZ1cPaDInz8INwa3XiJfwEzuAkk8yOWlFUVoV8C99Cp67wJEthExWm5
++Tvt93if0AxJJKr5Z407JChVI/alLYsE5vujYnX1YukUjn/+eyVmX7XGTU1im4zx
+FhwDVQde/G01pRmpAYWmgbcVkGXX0Hjou++F4x99TeL07A/w/omO34ozwPm9KnOP
+8ZIqmF8kILf9UY7BRqH/9a/1pwIlskVQz56cLLSpMiMjdH87DeDCj0gyI6yep/6O
+BcwDmuEZAJJck9j6l5yGg2WWJEgU9soCrmGe/VoQV0ntJqF5C9PgBp9LGJC0L3Uf
+fxkmZRYqZPiG4RWFFyak
+=WyPW
 -----END PGP SIGNATURE-----
 
---BOKacYhQ+x31HxR3--
+--3uo+9/B/ebqu+fSQ--
+
+--===============1836719389==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBt
+YWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZy
+ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL25vdXZlYXUK
+
+--===============1836719389==--
