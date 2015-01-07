@@ -1,58 +1,92 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/11] ARM: tegra: add function to control the
- GPU rail clamp
-Date: Wed, 7 Jan 2015 16:08:52 +0200
-Message-ID: <20150107140852.GR10073@tbergstrom-lnx.Nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH 1/11] ARM: tegra: add function to control the GPU rail
+ clamp
+Date: Wed, 7 Jan 2015 16:12:54 +0200
+Message-ID: <20150107141254.GS10073@tbergstrom-lnx.Nvidia.com>
 References: <1419331204-26679-1-git-send-email-vinceh@nvidia.com>
  <1419331204-26679-2-git-send-email-vinceh@nvidia.com>
- <1419426990.2179.7.camel@lynxeye.de> <549B7638.2010405@nvidia.com>
+ <1419426990.2179.7.camel@lynxeye.de>
+ <549B7638.2010405@nvidia.com>
  <20150105150932.GG12010@ulmo.nvidia.com>
  <20150107101900.GP10073@tbergstrom-lnx.Nvidia.com>
- <54AD0F37.5080609@nvidia.com> <20150107132709.GA6988@ulmo>
+ <54AD0F37.5080609@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20150107132709.GA6988@ulmo>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, seven-FA6nBp6kBxZzu6KWmfFNGwC/G2K4zDHf@public.gmane.org
+In-Reply-To: <54AD0F37.5080609@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vince Hsu <vinceh@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Lucas Stach <dev@lynxeye.de>, swarren@wwwdotorg.org, gnurou@gmail.com, bskeggs@redhat.com, martin.peres@free.fr, seven@nimrod-online.com, samuel.pitoiset@gmail.com, nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gV2VkLCBKYW4gMDcsIDIwMTUgYXQgMDI6Mjc6MTBQTSArMDEwMCwgVGhpZXJyeSBSZWRpbmcg
-d3JvdGU6Cgo+ID4gWWVhaC4gSSBwbGFuIHRvIGhhdmUgdGhlIGluZm9ybWF0aW9uIG9mIGFsbCB0
-aGUgY2xvY2sgY2xpZW50IG9mIHRoZQo+ID4gcGFydGl0aW9ucyBhbmQKPiA+IHRoZSBtZW1vcnkg
-Y2xpZW50cyBiZSBkZWZpbmVkIHN0YXRpY2FsbHkgaW4gYyBzb3VyY2UsIGUuZy4gcG1jLXRlZ3Jh
-MTI0LmMuCj4gPiBBbGwgbW9kdWxlcyBjYW4gZGVjbGFyZSB3aGljaCBkb21haW4gdGhleSBiZWxv
-bmcgdG8gaW4gRFQuIE9uZSBkb21haW4gY2FuCj4gPiBiZSByZWFsbHkgcG93ZXIgZ2F0ZWQgb25s
-eSB3aGVuIG5vIG1vZHVsZSBpcyBhd2FrZS4gTm90ZSB0aGUgY2xvY2sgY2xpZW50cwo+ID4gb2YK
-PiA+IG9uZSBkb21haW4gbWlnaHQgbm90IGVxdWFsIHRvIHRoZSBjbG9ja3Mgb2YgdGhlIG1vZHVs
-ZS4gVGhlIHJlc2V0IGlzIG5vdAo+ID4gZWl0aGVyLgo+ID4gU28gSSBkb24ndCBnZXQgdGhlIGNs
-b2NrIGFuZCByZXNldCBmcm9tIG1vZHVsZS4gSG93IGRvIHlvdSB0aGluaz8KPiAKPiBUaGlzIHdo
-b2xlIHNpdHVhdGlvbiBpcyBxdWl0ZSBtZXNzeS4gVGhlIGFib3ZlIHNlcXVlbmNlIGJhc2ljYWxs
-eSBtZWFucwo+IHRoYXQgZHJpdmVycyBjYW4ndCByZXNldCBoYXJkd2FyZSBtb2R1bGVzIGJlY2F1
-c2Ugb3RoZXJ3aXNlIHRoZXkgbWlnaHQKPiByYWNlIHdpdGggdGhlIHBvd2VyIGRvbWFpbiBjb2Rl
-LiBJdCBhbHNvIG1lYW5zIHRoYXQgd2UgY2FuJ3QgcG93ZXJnYXRlCgpUaGUgcG93ZXJkb21haW4g
-ZnJhbWV3b3JrIHdvbid0IGNhbGwgYW55IHBvd2VyZ2F0aW5nIG1ldGhvZCBhcyBsb25nIGFzIGEK
-bW9kdWxlIGluIHRoZSBkb21haW4gaXMgc3RpbGwgYWN0aXZlLiBTbyBhcyBsb25nIGFzIGRyaXZl
-cnMgZG9uJ3QgdHJ5IHRvCnJlc2V0IHRoZSBodyB3aXRob3V0IGhhdmluZyBkb25lIGEgcG1fcnVu
-dGltZV9nZXQoKSwgd2Ugc2hvdWxkbid0IGhhdmUgc3VjaAphIHJhY2U/Cgo+IG1vZHVsZXMgb24g
-ZGVtYW5kIGJlY2F1c2UgdGhleSBtaWdodCBiZSBpbiB0aGUgc2FtZSBwb3dlciBkb21haW4gYXMg
-b25lCj4gb3RoZXIgbW9kdWxlIHRoYXQncyBzdGlsbCBidXN5Lgo+IAoKVGhlIHBvd2VyZG9tYWlu
-IGZyYW1ld29yayBrZWVwcyB0cmFjayBvZiB3aGljaCBtb2R1bGVzIGFyZSBhY3RpdmUgKGJ5IGhv
-b2tpbmcKaW50byBydW50aW1lIHBtKSBhbmQgd29uJ3QgdHJ5IHRvIHNodXRkb3duIGEgZG9tYWlu
-IHVubGVzcyBhbGwgbW9kdWxlcyBhcmUKaW5hY3RpdmUuCgo+IEhvdyB3b3VsZCB3ZSBoYW5kbGUg
-YSBzaXR1YXRpb24gd2hlcmUgYSBoYXJkd2FyZSBtb2R1bGUgaGFuZ3MgYW5kIHdlIGNhbgo+IG9u
-bHkgZ2V0IGl0IGJhY2sgdmlhIGEgcmVzZXQ/Cj4gCgpDaGVlcnMsCgpQZXRlci4KX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBtYWlsaW5nIGxp
-c3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9w
-Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL25vdXZlYXUK
+On Wed, Jan 07, 2015 at 06:49:27PM +0800, Vince Hsu wrote:
+> 
+> On 01/07/2015 06:19 PM, Peter De Schrijver wrote:
+> >On Mon, Jan 05, 2015 at 04:09:33PM +0100, Thierry Reding wrote:
+> >>* PGP Signed by an unknown key
+> >>
+> >>On Thu, Dec 25, 2014 at 10:28:08AM +0800, Vince Hsu wrote:
+> >>>On 12/24/2014 09:16 PM, Lucas Stach wrote:
+> >>>>Am Dienstag, den 23.12.2014, 18:39 +0800 schrieb Vince Hsu:
+> >>>>>The Tegra124 and later Tegra SoCs have a sepatate rail gating register
+> >>>>>to enable/disable the clamp. The original function
+> >>>>>tegra_powergate_remove_clamping() is not sufficient for the enable
+> >>>>>function. So add a new function which is dedicated to the GPU rail
+> >>>>>gating. Also don't refer to the powergate ID since the GPU ID makes no
+> >>>>>sense here.
+> >>>>>
+> >>>>>Signed-off-by: Vince Hsu <vinceh@nvidia.com>
+> >>>>To be honest I don't see the point of this patch.
+> >>>>You are bloating the PMC interface by introducing another exported
+> >>>>function that does nothing different than what the current function
+> >>>>already does.
+> >>>>
+> >>>>If you need a way to assert the clamp I would have expected you to
+> >>>>introduce a common function to do this for all power partitions.
+> >>>I thought about adding an tegra_powergate_assert_clamping(), but that
+> >>>doesn't make sense to all the power partitions except GPU. Note the
+> >>>difference in TRM. Any suggestion for the common function?
+> >>I don't think extending the powergate API is useful at this point. We've
+> >>long had an open TODO item to replace this with a generic API. I did
+> >>some prototyping a while ago to use generic power domains for this, that
+> >>way all the details and dependencies between the partitions could be
+> >>properly modeled.
+> >>
+> >>Can you take a look at my staging/powergate branch here:
+> >>
+> >>	https://github.com/thierryreding/linux/commits/staging/powergate
+> >>
+> >>and see if you can use that instead? The idea is to completely hide the
+> >>details of power partitions from drivers and use runtime PM instead.
+> >>
+> >>Also adding Peter whom I had discussed this with earlier. Can we finally
+> >>get this converted? I'd rather not keep complicating this custom API to
+> >>avoid making the conversion even more difficult.
+> >Conceptually I fully agree that we should use runtime PM and powerdomains.
+> >However I don't think the implementation you mentioned is correct. The resets
+> >of all modules in a domain need to be asserted and the memory clients need to
+> >be flushed. All this needs to be done with module clocks enabled (resets are
+> >synchronous).  Then all module clocks need to be disabled and then the
+> >partition can be powergated. After ungating, the module resets need to be
+> >deasserted and the FLUSH bit cleared with clocks enabled.
+> Yeah. I plan to have the information of all the clock client of the
+> partitions and
+> the memory clients be defined statically in c source, e.g. pmc-tegra124.c.
+> All modules can declare which domain they belong to in DT. One domain can
+> be really power gated only when no module is awake. Note the clock
+> clients of
+> one domain might not equal to the clocks of the module. The reset is
+> not either.
+> So I don't get the clock and reset from module. How do you think?
+> 
+
+I think it's indeed better to have a direct reference to the required clocks
+to powergate/ungate a domain. As you said, there is no easy way to derive the
+required clocks from the DT module declarations. My suggestion would be to
+have powerdomain definitions in DT and for each domain have references to
+the required clocks and resets.
+
+Cheers,
+
+Peter.
