@@ -1,58 +1,58 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [patch] drm/tegra: bad irqsave/restore in
- tegra_dc_finish_page_flip()
-Date: Wed, 7 Jan 2015 14:46:45 +0100
-Message-ID: <20150107134644.GD6988@ulmo>
-References: <20150107110126.GA14864@mwanda>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/11] ARM: tegra: add function to control the
+ GPU rail clamp
+Date: Wed, 7 Jan 2015 16:08:52 +0200
+Message-ID: <20150107140852.GR10073@tbergstrom-lnx.Nvidia.com>
+References: <1419331204-26679-1-git-send-email-vinceh@nvidia.com>
+ <1419331204-26679-2-git-send-email-vinceh@nvidia.com>
+ <1419426990.2179.7.camel@lynxeye.de> <549B7638.2010405@nvidia.com>
+ <20150105150932.GG12010@ulmo.nvidia.com>
+ <20150107101900.GP10073@tbergstrom-lnx.Nvidia.com>
+ <54AD0F37.5080609@nvidia.com> <20150107132709.GA6988@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="OROCMA9jn6tkzFBc"
-Return-path: <kernel-janitors-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20150107110126.GA14864@mwanda>
-Sender: kernel-janitors-owner@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <20150107132709.GA6988@ulmo>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, seven-FA6nBp6kBxZzu6KWmfFNGwC/G2K4zDHf@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
---OROCMA9jn6tkzFBc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Jan 07, 2015 at 02:01:26PM +0300, Dan Carpenter wrote:
-> We can't save two values to the IRQ flags at the same time so the IRQs
-> are not enabled at the end.  This kind of bug is easy to miss in testing
-> if the function is normally called with IRQs disabled so we wouldn't
-> enable IRQs anyway.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Good catch, applied.
-
-Thanks,
-Thierry
-
---OROCMA9jn6tkzFBc
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJUrTjEAAoJEN0jrNd/PrOhoFcP/02GScwL5lLhP5gUhEwKIuUx
-D82uVtOX62sq8BsXyd0nFqc2gT1XNE8LKe3h8WBvXY2Bw517PU4xMv9dGGl+EmvS
-ufLmT9g4vZSf7iNxcC/eOZJq7DBZSshjfMIyvzpjDmUETCbN7v+BdV+sqiq3dCaX
-G0KVHc79wKvvAeIn9TiZnYBt9A7Qt31Y0YmwihVPL46hQxsuKnYvmxFJf9NeNUS7
-4KvndK4P4NqOcWuCMbhpqM+fyE90mgtsTLrO4FuBPXAr2xR6e2yVW3HDnqHTf4N+
-1B/SmFeQVi0wsbAVYvJe10mLyIqAtRtqvxKGVPfxP+h66MX9senGVLmR1F9RfBhx
-HSNqhZrLy9Z738qMPrH9TAycGPGx+9yucNTWAqPj3/tIn42xog8Cqh+xsvtOxeAo
-8vcCS/tpK/8CHsk9DVMskfM+Dgi5uOlgJtpagjSIHrEJWb68GkTuNVBtAcoUy8H3
-NzrCAHGaaKTZ9OLYFvMyivD4mNbSbYnSwn8Ss/52lQN2ASA21AMxJozft8XTqhtP
-Bc8uAik2al+8drSracHTgsWw3eqQd1mw/sC82EeQSJT1PZyTuqSxC0g6enOxCz86
-Y3RglXrzd8uFRQ5q9MeHcWjTULL8INPLYW9iqsDTFUhrBaUbS0DNGI8l4Zdc0VOt
-WIE1+qy7VlFUut9hWfjQ
-=5ijO
------END PGP SIGNATURE-----
-
---OROCMA9jn6tkzFBc--
+T24gV2VkLCBKYW4gMDcsIDIwMTUgYXQgMDI6Mjc6MTBQTSArMDEwMCwgVGhpZXJyeSBSZWRpbmcg
+d3JvdGU6Cgo+ID4gWWVhaC4gSSBwbGFuIHRvIGhhdmUgdGhlIGluZm9ybWF0aW9uIG9mIGFsbCB0
+aGUgY2xvY2sgY2xpZW50IG9mIHRoZQo+ID4gcGFydGl0aW9ucyBhbmQKPiA+IHRoZSBtZW1vcnkg
+Y2xpZW50cyBiZSBkZWZpbmVkIHN0YXRpY2FsbHkgaW4gYyBzb3VyY2UsIGUuZy4gcG1jLXRlZ3Jh
+MTI0LmMuCj4gPiBBbGwgbW9kdWxlcyBjYW4gZGVjbGFyZSB3aGljaCBkb21haW4gdGhleSBiZWxv
+bmcgdG8gaW4gRFQuIE9uZSBkb21haW4gY2FuCj4gPiBiZSByZWFsbHkgcG93ZXIgZ2F0ZWQgb25s
+eSB3aGVuIG5vIG1vZHVsZSBpcyBhd2FrZS4gTm90ZSB0aGUgY2xvY2sgY2xpZW50cwo+ID4gb2YK
+PiA+IG9uZSBkb21haW4gbWlnaHQgbm90IGVxdWFsIHRvIHRoZSBjbG9ja3Mgb2YgdGhlIG1vZHVs
+ZS4gVGhlIHJlc2V0IGlzIG5vdAo+ID4gZWl0aGVyLgo+ID4gU28gSSBkb24ndCBnZXQgdGhlIGNs
+b2NrIGFuZCByZXNldCBmcm9tIG1vZHVsZS4gSG93IGRvIHlvdSB0aGluaz8KPiAKPiBUaGlzIHdo
+b2xlIHNpdHVhdGlvbiBpcyBxdWl0ZSBtZXNzeS4gVGhlIGFib3ZlIHNlcXVlbmNlIGJhc2ljYWxs
+eSBtZWFucwo+IHRoYXQgZHJpdmVycyBjYW4ndCByZXNldCBoYXJkd2FyZSBtb2R1bGVzIGJlY2F1
+c2Ugb3RoZXJ3aXNlIHRoZXkgbWlnaHQKPiByYWNlIHdpdGggdGhlIHBvd2VyIGRvbWFpbiBjb2Rl
+LiBJdCBhbHNvIG1lYW5zIHRoYXQgd2UgY2FuJ3QgcG93ZXJnYXRlCgpUaGUgcG93ZXJkb21haW4g
+ZnJhbWV3b3JrIHdvbid0IGNhbGwgYW55IHBvd2VyZ2F0aW5nIG1ldGhvZCBhcyBsb25nIGFzIGEK
+bW9kdWxlIGluIHRoZSBkb21haW4gaXMgc3RpbGwgYWN0aXZlLiBTbyBhcyBsb25nIGFzIGRyaXZl
+cnMgZG9uJ3QgdHJ5IHRvCnJlc2V0IHRoZSBodyB3aXRob3V0IGhhdmluZyBkb25lIGEgcG1fcnVu
+dGltZV9nZXQoKSwgd2Ugc2hvdWxkbid0IGhhdmUgc3VjaAphIHJhY2U/Cgo+IG1vZHVsZXMgb24g
+ZGVtYW5kIGJlY2F1c2UgdGhleSBtaWdodCBiZSBpbiB0aGUgc2FtZSBwb3dlciBkb21haW4gYXMg
+b25lCj4gb3RoZXIgbW9kdWxlIHRoYXQncyBzdGlsbCBidXN5Lgo+IAoKVGhlIHBvd2VyZG9tYWlu
+IGZyYW1ld29yayBrZWVwcyB0cmFjayBvZiB3aGljaCBtb2R1bGVzIGFyZSBhY3RpdmUgKGJ5IGhv
+b2tpbmcKaW50byBydW50aW1lIHBtKSBhbmQgd29uJ3QgdHJ5IHRvIHNodXRkb3duIGEgZG9tYWlu
+IHVubGVzcyBhbGwgbW9kdWxlcyBhcmUKaW5hY3RpdmUuCgo+IEhvdyB3b3VsZCB3ZSBoYW5kbGUg
+YSBzaXR1YXRpb24gd2hlcmUgYSBoYXJkd2FyZSBtb2R1bGUgaGFuZ3MgYW5kIHdlIGNhbgo+IG9u
+bHkgZ2V0IGl0IGJhY2sgdmlhIGEgcmVzZXQ/Cj4gCgpDaGVlcnMsCgpQZXRlci4KX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBtYWlsaW5nIGxp
+c3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9w
+Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL25vdXZlYXUK
