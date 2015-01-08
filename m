@@ -1,108 +1,94 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH] ARM: tegra: Use PMC scratch register 40 for
- tegra_resume() location store
-Date: Thu, 8 Jan 2015 14:37:09 +0200
-Message-ID: <20150108123709.GX10073@tbergstrom-lnx.Nvidia.com>
-References: <1419202392-1159-1-git-send-email-digetx@gmail.com>
- <54984429.8040905@wwwdotorg.org>
- <5498549B.8070101@gmail.com>
- <54985C30.7020605@wwwdotorg.org>
- <20150108105742.GI1987@ulmo.nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/11] ARM: tegra: add function to control the
+ GPU rail clamp
+Date: Thu, 8 Jan 2015 14:41:22 +0200
+Message-ID: <20150108124122.GY10073@tbergstrom-lnx.Nvidia.com>
+References: <1419426990.2179.7.camel@lynxeye.de> <549B7638.2010405@nvidia.com>
+ <20150105150932.GG12010@ulmo.nvidia.com>
+ <20150107101900.GP10073@tbergstrom-lnx.Nvidia.com>
+ <54AD0F37.5080609@nvidia.com>
+ <20150107141254.GS10073@tbergstrom-lnx.Nvidia.com>
+ <20150107141938.GA7392@nvidia.com> <20150107151206.GG1621@ulmo>
+ <20150108093205.GV10073@tbergstrom-lnx.Nvidia.com>
+ <20150108114153.GL1987@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20150108105742.GI1987@ulmo.nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, linux-arm-kernel@lists.infradead.org, Alexandre Courbot <gnurou@gmail.com>, Russell King <linux@arm.linux.org.uk>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org, Haojian Zhuang <haojian.zhuang@gmail.com>, stable@vger.kernel.org, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, Shawn Guo <shawn.guo@linaro.org>, Christoffer Dall <christoffer.dall@linaro.org>
+In-Reply-To: <20150108114153.GL1987-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, seven-FA6nBp6kBxZzu6KWmfFNGwC/G2K4zDHf@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jan 08, 2015 at 11:57:43AM +0100, Thierry Reding wrote:
-> * PGP Signed by an unknown key
->=20
-> On Mon, Dec 22, 2014 at 11:00:16AM -0700, Stephen Warren wrote:
-> > On 12/22/2014 10:27 AM, Dmitry Osipenko wrote:
-> > >22.12.2014 19:17, Stephen Warren =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > >>On 12/21/2014 03:52 PM, Dmitry Osipenko wrote:
-> > >>>Commit 7232398abc6a ("ARM: tegra: Convert PMC to a driver") chan=
-ged
-> > >>>tegra_resume()
-> > >>>location storing from late to early and as result broke suspend =
-on tegra20.
-> > >>>PMC scratch register 41 was used by tegra lp1 suspend core code =
-for storing
-> > >>>physical memory address of common resume function and in the sam=
-e time used by
-> > >>>tegra20 cpuidle driver for storing cpu1 "resettable" status, so =
-it implied
-> > >>>strict order of scratch register use. Fix it by using scratch 40=
- instead of 41
-> > >>>for tegra_resume() location store.
-> > >>
-> > >>You likely can't simply change the PMC scratch register usage arb=
-itrarily;
-> > >>specific registers are designated for specific purposes, and code=
- outside the
-> > >>Linux kernel (bootloaders, LP0 resume code, secure monitors, etc.=
-) may depend on
-> > >>those specific values being in those registers. Without significa=
-nt research,
-> > >>I'd suggest not changing the PMC scratch register usage.
-> > >
-> > >Sure, that's why I asked to verify if scratch register 40 is in us=
-e in the
-> > >comment after commit message.
-> >=20
-> > Sorry, I didn't notice that.
-> >=20
-> > >I've checked that u-boot doesn't use it (since
-> > >upstream kernel doesn't care about any other bootloader), but no i=
-dea about
-> > >secure monitor. It's definitely safer to avoid changing scratch re=
-gs usage, I
-> > >thought that proposed solution would be best from the pure code po=
-int of view.
-> > >So, I'm considering your answer as a rejection of the patch (pleas=
-e, let me know
-> > >if I'm wrong) and will prepare another one. Btw, it would be nice =
-to have
-> > >scratch registers usage publicly documented somewhere (on "Tegra P=
-ublic
-> > >Application Notes" webpage for example), if it's possible, of cour=
-se.
-> >=20
-> > At this stage in Tegra20 development, I think it'd be best to avoid=
- changing
-> > any scratch register usage if at all possible.
->=20
-> Sorry, I had completely missed this discussion. When looking at the c=
-ode
-> it doesn't look like this particular "resettable" status needs to be
-> stored in a PMC scratch register. It can't be stored in RAM because t=
-hat
-> goes into self-refresh as part of LP1, but how about just putting it
-> into IRAM? That stays on in both LP1 and LP2, so should be suitable f=
-or
-> this use-case. It would make the code slightly more complex but using=
- a
-> single scratch register for multiple purposes sounds brittle and easy=
- to
-> break (as evidenced by the offending commit).
->=20
-> Otherwise it would seem that PMC_SCRATCH40 is only used to store EMC
-> configuration data across LP0 suspend/resume, so I wouldn't think it'=
-d
-> cause problems if we used that instead of PMC_SCRATCH41 to store the
-> "resettable" state.
->=20
-
-No. Usually the scratch registers for EMC config data are setup once by=
- the
-bootloader and never touched by the kernel after that. So I would not
-recommend reusing those registers for different purposes.
-
-Cheers,
-
-Peter.
+T24gVGh1LCBKYW4gMDgsIDIwMTUgYXQgMTI6NDE6NTRQTSArMDEwMCwgVGhpZXJyeSBSZWRpbmcg
+d3JvdGU6Cj4gKiBQR1AgU2lnbmVkIGJ5IGFuIHVua25vd24ga2V5Cj4gCj4gT24gVGh1LCBKYW4g
+MDgsIDIwMTUgYXQgMTE6MzI6MDZBTSArMDIwMCwgUGV0ZXIgRGUgU2NocmlqdmVyIHdyb3RlOgo+
+ID4gPiA+IEFuZCBzcGVjaWZ5IHRoZSBkZXBlbmRlbmNpZXMgYmV0d2VlbiBkb21haW5zIGluIERU
+Pwo+ID4gPiAKPiA+ID4gSSB0aGluayB0aGUgZGVwZW5kZW5jaWVzIGNvdWxkIGJlIGluIHRoZSBk
+cml2ZXIuIE9mIGNvdXJzZSB0aGUgcG93ZXIKPiA+ID4gZG9tYWlucyBhcmUgcGVyLVNvQyBkYXRh
+LCBzbyByZWFsbHkgc2hvdWxkbid0IGJlIGluIHRoZSBEVFMgZWl0aGVyICh0aGUKPiA+ID4gZGF0
+YSBpcyBhbGwgaW1wbGllZCBieSB0aGUgY29tcGF0aWJsZSB2YWx1ZSkgYnV0IHRoZXJlJ3Mgbm8g
+Z29vZCB3YXkgdG8KPiA+ID4gZ2V0IGF0IHRoZSBjbG9ja3MgYW5kIHJlc2V0cyB3aXRob3V0IERU
+LCBzbyBJIHRoaW5rIHRoYXQncyBhIHJlYXNvbmFibGUKPiA+ID4gdHJhZGUtb2ZmLgo+ID4gPiAK
+PiA+ID4gSXQgc2VlbXMgdG8gbWUgbGlrZSB0aGVyZSBhcmUgb25seSB0d28gZGVwZW5kZW5jaWVz
+Ogo+ID4gPiAKPiA+ID4gCURJUyBhbmQgRElTQiBkZXBlbmQgb24gU09SCj4gPiA+IAlWRSBkZXBl
+bmRzIG9uIERJUwo+ID4gPiAKPiA+ID4gVGhhdCdzIGFjY29yZGluZyB0byA1LjYuNiAiUHJvZ3Jh
+bW1pbmcgR3VpZGUgZm9yIFBvd2VyIEdhdGluZyBhbmQKPiA+ID4gVW5nYXRpbmciIG9mIHRoZSBU
+ZWdyYSBLMSBUUk0uIEl0IGFsc28gc2VlbXMgbGlrZSBhIGJ1bmNoIG9mIG1vZHVsZXMgYXJlCj4g
+PiA+IHBhcnQgb2Ygc2VlbWluZ2x5IHVucmVsYXRlZCBkb21haW5zLiBFc3BlY2lhbGx5IFNPUiBz
+ZWVtcyB0byBjb3ZlciBhCj4gPiA+IGxhcmdlIHJhbmdlIG9mIG1vZHVsZXMgKE1JUEktQ0FMLCBE
+UEFVWCwgU09SLCBIRE1JLCBEU0ksIERTSUIgYW5kCj4gPiA+IEhEQTJIRE1JKS4KPiA+ID4gCj4g
+PiA+IEdpdmVuIHRoYXQgd2UgbWF5IHdhbnQgdG8gbW9yZSBmaW5lLWdyYWluZWRseSBjb250cm9s
+IGNsb2NrcyB0byBzYXZlCj4gPiA+IHBvd2VyLCBkb24ndCB3ZSBuZWVkIHRvIGNvbnRyb2wgY2xv
+Y2tzIGFuZCByZXNldHMgd2l0aGluIHRoZSBkcml2ZXJzPyBJCj4gPiA+IHRoaW5rIHRoZSBydW50
+aW1lIFBNIGZyYW1ld29yayBtYWtlcyBzdXJlIHRvIGNhbGwgdGhpcyBpbiB0aGUgcmlnaHQKPiA+
+ID4gb3JkZXIsIHNvIGZvciBzdXNwZW5kLCB0aGUgc2VxdWVuY2Ugd291bGQgYmU6Cj4gPiA+IAo+
+ID4gPiAJMSkgZGV2aWNlLT5zdXNwZW5kCj4gPiA+IAkyKSBkb21haW4tPnN1c3BlbmQKPiA+ID4g
+Cj4gPiA+IGFuZCBmb3IgcmVzdW1lOgo+ID4gPiAKPiA+ID4gCTEpIGRvbWFpbi0+cmVzdW1lCj4g
+PiA+IAkyKSBkZXZpY2UtPnJlc3VtZQo+ID4gPiAKPiA+ID4gQnV0IHRoZW4gd2UncmUgYmFjayB0
+byBzcXVhcmUgb25lLCBuYW1lbHkgdGhhdCB0aGUgTUMgZmx1c2ggZG9lc24ndCB3b3JrCj4gPiA+
+IHByb3Blcmx5LCBzaW5jZSBpdCBuZWVkcyB0byBiZSBpbXBsZW1lbnRlZCBpbiBkb21haW4tPnN1
+c3BlbmQuIERvZXMgdGhhdAo+ID4gPiBtZWFuIHdlIGNhbid0IGNsb2NrLWdhdGUgbW9kdWxlcz8g
+SW4gb3JkZXIgdG8gZW5zdXJlIGEgcHJvcGVyIHBvd2VyZ2F0ZQo+ID4gPiBzZXF1ZW5jZSwgdGhl
+IGRvbWFpbiBjb2RlIHdvdWxkIG5lZWQgdG8gY2xrX2VuYWJsZSgpIHRoZSBtb2R1bGUgY2xvY2sg
+dG8KPiA+ID4gbWFrZSBzdXJlIGl0IHN0YXlzIG9uIGR1cmluZyB0aGUgcmVzZXQgc2VxdWVuY2Uu
+IEJ1dCBpZiB0aGUgZG9tYWluIGNvZGUKPiA+ID4gaGFzIGEgcmVmZXJlbmNlIHRvIHRoZSBjbG9j
+aywgdGhlbiB0aGUgZHJpdmVyIGNhbid0IGNsb2NrLWdhdGUgdGhlCj4gPiA+IG1vZHVsZSBhbnlt
+b3JlIGJ5IGNhbGxpbmcgY2xrX2Rpc2FibGUoKS4KPiA+ID4gCj4gPiA+IEFtIEkgbWlzc2luZyBz
+b21ldGhpbmc/Cj4gPiA+IAo+ID4gCj4gPiBUaGVyZSdzIGEgZGlmZmVyZW5jZSBiZXR3ZWVuIGhh
+dmluZyBhIHJlZmVyZW5jZSBhbmQgYWN0dWFsbHkgZW5hYmxpbmcgdGhlCj4gPiBjbG9jay4KPiAK
+PiBNeSBwb2ludCB3YXMgdGhhdCBhcyBsb25nIGFzIGFueW9uZSB3YXMga2VlcGluZyBhIHJlZmVy
+ZW5jZSB0aGUgY2xvY2sKPiBjb3VsZG4ndCBpbiBmYWN0IGJlIHR1cm5lZCBvZmYuCj4gCj4gPiB0
+aGUgZG9tYWluIHBvd2VyZ2F0ZSBtZXRob2Qgd2lsbCBvbmx5IGJlIGNhbGxlZCB3aGVuIHRoZSBj
+bG9ja3Mgb2YKPiA+IGFsbCBtb2R1bGVzIGluIHRoZSBkb21haW4gYXJlIG9mZi4KPiAKPiBObywg
+dGhlIHBvd2VyIGRvbWFpbiB3aWxsIGJlIGRpc2FibGVkIHdoZW4gYWxsIGRldmljZXMgaW4gdGhl
+IGRvbWFpbiBhcmUKPiBpZGxlLgo+IAo+ID4gU28gdGhlIHBvd2VyZ2F0ZSBtZXRob2QgY2FuIHRo
+ZW4gdHVybiB0aGVtIG9uIGFnYWluLCBkbyB0aGUgbW9kdWxlCj4gPiByZXNldHMgYW5kIGNsaWVu
+dCBmbHVzaGVzIGFuZCB0aGVuIGRpc2FibGUgdGhlbSBhZ2Fpbi4gU2FtZSBmb3IKPiA+IHVuZ2F0
+ZS4gU28gSSBkb24ndCBzZWUgYSBwcm9ibGVtIGhlcmU/Cj4gCj4gSSB0aGluayB0aGF0IGNvdWxk
+IHdvcmssIGJ1dCB3ZSdkIG5lZWQgdG8gbWFrZSBzdXJlIHRoYXQgZHJpdmVycyB0aGF0Cj4gdXNl
+IHJ1bnRpbWUgUE0gYW5kIGFyZSBjb25uZWN0ZWQgdG8gYSBwb3dlciBkb21haW4gZW5hYmxlIGNs
+b2NrcyBvbmx5Cj4gYWZ0ZXIgdGFraW5nIGEgcnVudGltZSBQTSByZWZlcmVuY2UgYW5kIGRpc2Fi
+bGUgdGhlIGNsb2NrcyBiZWZvcmUgdGhleQo+IHJlbGVhc2UgdGhhdCByZWZlcmVuY2UuCj4gCj4g
+U28gdG8gc2ltcGxpZnkgdGhpbmdzLCBtYXliZSBhbGwgY2xvY2sgaGFuZGxpbmcgZm9yIGRyaXZl
+cnMgc2hvdWxkIGJlCj4gbW92ZWQgaW50byBydW50aW1lIFBNIG9wZXJhdGlvbnMsIGFuZCB3aGVu
+ZXZlciB0aGUgZHJpdmVyIG5lZWRzIHRoZQo+IGNsb2NrIGVuYWJsZWQgaXQgdGFrZXMgYSBydW50
+aW1lIFBNIHJlZmVyZW5jZS4gVGhhdCB3b3VsZCBlbnN1cmUgdGhhdAo+IGNsb2NrcyBhcmVuJ3Qg
+YWNjaWRlbnRhbGx5IGxlZnQgb24uCgpZZXMuIFRoYXQncyBleGFjdGx5IHdoYXQgbmVlZHMgdG8g
+aGFwcGVuIChhcGFydCBmcm9tIHNvbWUgc3BlY2lhbCBjYXNlcyB3aGVyZQp0aGUgZHJpdmVyIGFs
+c28gY29udHJvbHMgc29tZSBjbG9ja3MgZm9yIHRoZSBleHRlcm5hbCBzaWduYWxzIGxpa2UgZGlz
+cGxheS4KdGhvc2UgY2xvY2tzIG1vc3QgbGlrZWx5IHN0aWxsIG5lZWQgdG8gYmUgaGFuZGxlZCBi
+eSB0aGUgZHJpdmVycykuCgpDaGVlcnMsCgpQZXRlci4KX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBtYWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0
+cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
+c3RpbmZvL25vdXZlYXUK
