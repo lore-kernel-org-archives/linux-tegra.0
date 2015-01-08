@@ -1,107 +1,118 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/2] arm64: Kconfig: add basic support for the Tegra SoC
- family and the Tegra132 SoC
-Date: Thu, 8 Jan 2015 11:55:31 +0100
-Message-ID: <20150108105529.GH1987@ulmo.nvidia.com>
-References: <20150107081638.14381.42444.stgit@dusk.lan>
- <20150107081729.14381.47835.stgit@dusk.lan>
- <20150107142005.GA1621@ulmo>
- <54AE5DD0.6020409@nvidia.com>
+Subject: Re: [PATCH] ARM: tegra: Use PMC scratch register 40 for
+ tegra_resume() location store
+Date: Thu, 8 Jan 2015 11:57:43 +0100
+Message-ID: <20150108105742.GI1987@ulmo.nvidia.com>
+References: <1419202392-1159-1-git-send-email-digetx@gmail.com>
+ <54984429.8040905@wwwdotorg.org>
+ <5498549B.8070101@gmail.com>
+ <54985C30.7020605@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="X1xGqyAVbSpAWs5A"
+	protocol="application/pgp-signature"; boundary="CNK/L7dwKXQ4Ub8J"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <54AE5DD0.6020409-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <54985C30.7020605-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>, Stefano Stabellini <stefano.stabellini-mvvWK6WmYclDPfheJLI6IQ@public.gmane.org>, Christoffer Dall <christoffer.dall-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---X1xGqyAVbSpAWs5A
-Content-Type: text/plain; charset=us-ascii
+--CNK/L7dwKXQ4Ub8J
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 08, 2015 at 03:37:04AM -0700, Paul Walmsley wrote:
-> Hi Thierry,
->=20
-> On 01/07/2015 07:20 AM, Thierry Reding wrote:
-> >* PGP Signed by an unknown key
+On Mon, Dec 22, 2014 at 11:00:16AM -0700, Stephen Warren wrote:
+> On 12/22/2014 10:27 AM, Dmitry Osipenko wrote:
+> >22.12.2014 19:17, Stephen Warren =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >>On 12/21/2014 03:52 PM, Dmitry Osipenko wrote:
+> >>>Commit 7232398abc6a ("ARM: tegra: Convert PMC to a driver") changed
+> >>>tegra_resume()
+> >>>location storing from late to early and as result broke suspend on teg=
+ra20.
+> >>>PMC scratch register 41 was used by tegra lp1 suspend core code for st=
+oring
+> >>>physical memory address of common resume function and in the same time=
+ used by
+> >>>tegra20 cpuidle driver for storing cpu1 "resettable" status, so it imp=
+lied
+> >>>strict order of scratch register use. Fix it by using scratch 40 inste=
+ad of 41
+> >>>for tegra_resume() location store.
+> >>
+> >>You likely can't simply change the PMC scratch register usage arbitrari=
+ly;
+> >>specific registers are designated for specific purposes, and code outsi=
+de the
+> >>Linux kernel (bootloaders, LP0 resume code, secure monitors, etc.) may =
+depend on
+> >>those specific values being in those registers. Without significant res=
+earch,
+> >>I'd suggest not changing the PMC scratch register usage.
 > >
-> >On Wed, Jan 07, 2015 at 01:17:33AM -0700, Paul Walmsley wrote:
-> >>Add basic Kbuild support for the Tegra SoC family, and specifically,
-> >>the Tegra132 SoC.  Tegra132 pairs the NVIDIA Denver CPU complex with
-> >>the SoC integration of Tegra124 - hence the use of ARCH_TEGRA and the
-> >>Tegra124 pinctrl option.
-> >>
-> >>For the time being, Tegra ARM64 support is added with a dependency on
-> >>CONFIG_BROKEN.  This is temporary and can be removed when the
-> >>following two patches for compilation failures have been merged:
-> >>
-> >>"soc: tegra: pmc: restrict compilation of suspend-related support to AR=
-M"
-> >>https://git.kernel.org/cgit/linux/kernel/git/pjw/tegra-dev.git/commit/?=
-id=3D053decbf3900d4e8fee799f9a29cf8d905b2fcb1
-> >I think you said you were going to respin this on top of v3.19-rc1, but
-> >the above doesn't seem to be rebased yet. Given that the only comments
-> >were bikeshed from my part, do you have any objections to me taking the
-> >patch and apply the bikeshed myself?
+> >Sure, that's why I asked to verify if scratch register 40 is in use in t=
+he
+> >comment after commit message.
 >=20
-> Sorry about that.  I am indeed on the hook for that.   I got distracted w=
-ith
-> some other patches and haven't yet reposted that one :-(
-> I will do that later today.  If you would prefer to do it yourself, that's
-> fine too.
-
-I ended up applying your patch as is. Retrospectively my comments had
-been a little too much on the pedantic side.
-
-> >>"clocksource: tegra: wrap arch/arm-specific sections in CONFIG_ARM"
-> >>https://git.kernel.org/cgit/linux/kernel/git/pjw/tegra-dev.git/commit/?=
-id=3D220aa7fcc74a1a089916be6cb34b0e326f31841f
-> >I don't think I've seen any comments other than mine on this patch.
-> >Given that this patch depends on the above to get rid of the BROKEN
-> >dependency, it might still be preferable to take both via the Tegra
-> >tree. Otherwise we probably have to wait until v3.21 before we can
-> >apply this.
+> Sorry, I didn't notice that.
 >=20
-> I'm fine with them going in through you if you have a strong preference f=
-or
-> that approach.   Generally my preference is for patches to go in through =
-the
-> direct maintainer's tree to minimize the risk and hassle of merge conflic=
-ts.
-> But if you'll take care of that side of it, it doesn't matter too much to=
- me
-> :-)   We just need to pick up acks from the direct maintainers, I guess?
+> >I've checked that u-boot doesn't use it (since
+> >upstream kernel doesn't care about any other bootloader), but no idea ab=
+out
+> >secure monitor. It's definitely safer to avoid changing scratch regs usa=
+ge, I
+> >thought that proposed solution would be best from the pure code point of=
+ view.
+> >So, I'm considering your answer as a rejection of the patch (please, let=
+ me know
+> >if I'm wrong) and will prepare another one. Btw, it would be nice to have
+> >scratch registers usage publicly documented somewhere (on "Tegra Public
+> >Application Notes" webpage for example), if it's possible, of course.
+>=20
+> At this stage in Tegra20 development, I think it'd be best to avoid chang=
+ing
+> any scratch register usage if at all possible.
 
-Yes, we really just need an ack from either Daniel or Thomas on the
-clocksource patch. I don't think that driver has a lot of potential for
-merge conflicts.
+Sorry, I had completely missed this discussion. When looking at the code
+it doesn't look like this particular "resettable" status needs to be
+stored in a PMC scratch register. It can't be stored in RAM because that
+goes into self-refresh as part of LP1, but how about just putting it
+into IRAM? That stays on in both LP1 and LP2, so should be suitable for
+this use-case. It would make the code slightly more complex but using a
+single scratch register for multiple purposes sounds brittle and easy to
+break (as evidenced by the offending commit).
+
+Otherwise it would seem that PMC_SCRATCH40 is only used to store EMC
+configuration data across LP0 suspend/resume, so I wouldn't think it'd
+cause problems if we used that instead of PMC_SCRATCH41 to store the
+"resettable" state.
+
+Changing the storage location for tegra_resume() isn't such a good idea
+since that's a documented use of PMC_SCRATCH41.
 
 Thierry
 
---X1xGqyAVbSpAWs5A
+--CNK/L7dwKXQ4Ub8J
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUrmIhAAoJEN0jrNd/PrOhQPcQAJHcaqr/bpUsDxN3rYdr+iha
-9Rd0DzPxDBJk2pYi0gS8jtC85oLvSm8yfBGTn4mLquaFdy55+EH9whKj9JIKegqc
-AwCFiUth5TLP46Mr91ZD3s4uGOvjP1KoDlecTUOv4kdXTccJ+gsbsDQYPpzl4vzp
-1pIxgmVCde1I8FQ1hIZrNiHrZqdw2ncuPP8iGChXmtZm/5WuK9uJuu3ZqbnWXPzT
-WhVXv1YY16mHyWLVSThYS0akKOkVqtucctpEJe/3EHkdvJNsiyBfPWisZOVKke3w
-zYCeggfJLesvBpV+5cdImS9jU7k8rGvsQ2yI+psFSKqynuCnW2fC0rXut169VMCZ
-o+BOyFuqjR0emSzfHyPGzAAMOW+C/A9zYevbviCo1Cmfbvi3qkQb2ODq3z/P1IWF
-X2/7KG0aN4CR9dwQHzl32W4vaUVjGPsA9bi0zQBjWaKGzNxYJtLA4ruZ2YefGwwl
-wTi01z2K/x9rQ19GQv0oT7wg3oMYVpQXOrmzKmhvblip2eb6T8yjHVjh0FJA+u9f
-PeMxU+SSKdW8P3/P44MsnlnNB4sriNZoVQVRgcYGTukmDvgQGTVhQ/ZYE9BLxrTM
-kkjVANYsrsiaBbATi2YVKfEok3t17Va3WhsvXruTwDAHOhg/KeJNQkHeM+3oRroX
-OxcykxsFyjkPqaRoFtgU
-=W3Gc
+iQIcBAEBAgAGBQJUrmKmAAoJEN0jrNd/PrOhma4P/2v+xR+E6QNCNmgN3Gg/2fDW
+VSMv8fCkceMfohbXzHbbCbkAScyAPLfJMvelISLFTQ1bV01phI64R5BRLSIYZrbz
+h/H9VK5jVDUtmSka8GYL/XM18DD9jafsLcrObul/2bIB1ajkAM6U2OD1vGUkfmaI
+30yFYJL9A6zjmyFXU7yc92pFniV3dsW3ZvnZBuB3Whw6KsBo1pXfO7l2AudfwVqO
+okILYAfJiQF7lzPuhNdTgHce4dq8DLQR+QdvFeR6S6Pt2U6Kz/gRpVG1h2yF+KYm
+R2VovwRWhGfv65Yk2gou0ki7HumlGQQVB05zmCmePSFptjFE92NzWdKb1xLJH6Uo
+O1aN7uat9BBhTpWwOa6tklqsxyG8ipiRmzkLXSSXrxoF8u9kTYIOwQFNlcQAI5k6
+5V3AJW8xXv2lBbNHE3LELJDlbK5xOdnQLT2iteJzfjCRDPUUcQZWb2IH7mCO0ewL
+QR5RdNwkM4fUT66iwEaaqGo9kXlaWhk5obf1/YjtGaHMB/iRvmFClB5hDzn2am2D
+XGhjUdlx6m+cxjRaOBuaCArp6CDhO5V6k2d64DSEcXgkHJJvP8s9OW8oz9JlcR5e
+Q1OVcE+OdV4kTBMafzvJvi0QUv4eukAFzhv+PF3jMvvPm+pAOPoMfpfnluh/P/0q
+MGnzVNFMjDqPEphn7Mxd
+=QfS9
 -----END PGP SIGNATURE-----
 
---X1xGqyAVbSpAWs5A--
+--CNK/L7dwKXQ4Ub8J--
