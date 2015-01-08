@@ -1,77 +1,96 @@
-From: Vince Hsu <vinceh@nvidia.com>
-Subject: Re: [PATCH 1/11] ARM: tegra: add function to control the GPU rail
- clamp
-Date: Thu, 8 Jan 2015 12:25:18 +0800
-Message-ID: <54AE06AE.8080603@nvidia.com>
-References: <1419331204-26679-1-git-send-email-vinceh@nvidia.com> <1419331204-26679-2-git-send-email-vinceh@nvidia.com> <1419426990.2179.7.camel@lynxeye.de> <549B7638.2010405@nvidia.com> <20150105150932.GG12010@ulmo.nvidia.com> <20150107101900.GP10073@tbergstrom-lnx.Nvidia.com> <54AD0F37.5080609@nvidia.com> <20150107132709.GA6988@ulmo> <20150107140852.GR10073@tbergstrom-lnx.Nvidia.com> <20150107142828.GB7392@nvidia.com> <20150107144805.GF1621@ulmo>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH] soc/tegra: pmc: Add Tegra132 support
+Date: Thu,  8 Jan 2015 08:20:57 +0100
+Message-ID: <1420701657-32543-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150107144805.GF1621@ulmo>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Lucas Stach <dev@lynxeye.de>, swarren@wwwdotorg.org, gnurou@gmail.com, bskeggs@redhat.com, martin.peres@free.fr, seven@nimrod-online.com, samuel.pitoiset@gmail.com, nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-tegra@vger.kernel.org
+Cc: Alexandre Courbot <gnurou@gmail.com>, Paul Walmsley <paul@pwsan.com>, linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Stephen Warren <swarren@wwwdotorg.org>
 List-Id: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding@nvidia.com>
 
-On 01/07/2015 10:48 PM, Thierry Reding wrote:
-> * PGP Signed by an unknown key
->
-> On Wed, Jan 07, 2015 at 10:28:29PM +0800, Vince Hsu wrote:
->> On 04:08:52PM Jan 07, Peter De Schrijver wrote:
->>> On Wed, Jan 07, 2015 at 02:27:10PM +0100, Thierry Reding wrote:
->>>
->>>>> Yeah. I plan to have the information of all the clock client of the
->>>>> partitions and
->>>>> the memory clients be defined statically in c source, e.g. pmc-tegra124.c.
->>>>> All modules can declare which domain they belong to in DT. One domain can
->>>>> be really power gated only when no module is awake. Note the clock clients
->>>>> of
->>>>> one domain might not equal to the clocks of the module. The reset is not
->>>>> either.
->>>>> So I don't get the clock and reset from module. How do you think?
->>>> This whole situation is quite messy. The above sequence basically means
->>>> that drivers can't reset hardware modules because otherwise they might
->>>> race with the power domain code. It also means that we can't powergate
->>> The powerdomain framework won't call any powergating method as long as a
->>> module in the domain is still active. So as long as drivers don't try to
->>> reset the hw without having done a pm_runtime_get(), we shouldn't have such
->>> a race?
->> Agree. And as long as the driver has the correct reset procedure, that should
->> be fine to occur between power ungating and gating sequences.
->>
->>>> modules on demand because they might be in the same power domain as one
->>>> other module that's still busy.
->>>>
->>> The powerdomain framework keeps track of which modules are active (by hooking
->>> into runtime pm) and won't try to shutdown a domain unless all modules are
->>> inactive.
->> Yeah. By the way, that means we should start supporting runtime pm for all
->> the modules to use generic power domain.
-> Indeed, that'll be a prerequisite before we can merge power domain
-> support. I do have a couple of local patches that add very rudimentary
-> runtime PM for various drivers. For starters we could probably just do
-> the
->
-> 	pm_runtime_enable(...);
-> 	pm_runtime_get_sync(...)
->
-> in the ->probe() and
->
-> 	pm_runtime_put_sync(...);
-> 	pm_runtime_disable(...);
->
-> in the ->remove() callbacks for those drivers. That's by no means
-> optimal but should get us pretty close to what we do now and still
-> support the generic power domains.
-Cool. Could you send me the patches?
+Tegra132 uses the same GPU as Tegra124 and the same special-case is
+needed to remove clamps. However Tegra132 has a separate chip ID, so in
+order to avoid having to extend the list of chip IDs for the special
+case, add a feature flag to the SoC data.
 
-Thanks,
-Vince
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/soc/tegra/pmc.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
->
-> Thierry
->
-> * Unknown Key
-> * 0x7F3EB3A1
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 4bdc654bd747..0f096e76574a 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -88,6 +88,8 @@ struct tegra_pmc_soc {
+ 	const char *const *powergates;
+ 	unsigned int num_cpu_powergates;
+ 	const u8 *cpu_powergates;
++
++	bool has_gpu_clamps;
+ };
+ 
+ /**
+@@ -225,11 +227,11 @@ int tegra_powergate_remove_clamping(int id)
+ 		return -EINVAL;
+ 
+ 	/*
+-	 * The Tegra124 GPU has a separate register (with different semantics)
+-	 * to remove clamps.
++	 * On Tegra124 and later, the clamps for the GPU are controlled by a
++	 * separate register (with different semantics).
+ 	 */
+-	if (tegra_get_chip_id() == TEGRA124) {
+-		if (id == TEGRA_POWERGATE_3D) {
++	if (id == TEGRA_POWERGATE_3D) {
++		if (pmc->soc->has_gpu_clamps) {
+ 			tegra_pmc_writel(0, GPU_RG_CNTRL);
+ 			return 0;
+ 		}
+@@ -773,6 +775,7 @@ static const struct tegra_pmc_soc tegra20_pmc_soc = {
+ 	.powergates = tegra20_powergates,
+ 	.num_cpu_powergates = 0,
+ 	.cpu_powergates = NULL,
++	.has_gpu_clamps = false,
+ };
+ 
+ static const char * const tegra30_powergates[] = {
+@@ -804,6 +807,7 @@ static const struct tegra_pmc_soc tegra30_pmc_soc = {
+ 	.powergates = tegra30_powergates,
+ 	.num_cpu_powergates = ARRAY_SIZE(tegra30_cpu_powergates),
+ 	.cpu_powergates = tegra30_cpu_powergates,
++	.has_gpu_clamps = false,
+ };
+ 
+ static const char * const tegra114_powergates[] = {
+@@ -839,6 +843,7 @@ static const struct tegra_pmc_soc tegra114_pmc_soc = {
+ 	.powergates = tegra114_powergates,
+ 	.num_cpu_powergates = ARRAY_SIZE(tegra114_cpu_powergates),
+ 	.cpu_powergates = tegra114_cpu_powergates,
++	.has_gpu_clamps = false,
+ };
+ 
+ static const char * const tegra124_powergates[] = {
+@@ -880,6 +885,7 @@ static const struct tegra_pmc_soc tegra124_pmc_soc = {
+ 	.powergates = tegra124_powergates,
+ 	.num_cpu_powergates = ARRAY_SIZE(tegra124_cpu_powergates),
+ 	.cpu_powergates = tegra124_cpu_powergates,
++	.has_gpu_clamps = true,
+ };
+ 
+ static const struct of_device_id tegra_pmc_match[] = {
+-- 
+2.1.3
