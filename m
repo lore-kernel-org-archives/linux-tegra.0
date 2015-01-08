@@ -1,65 +1,77 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v2 3/3] soc/tegra: fuse: Add Tegra132 support
-Date: Thu,  8 Jan 2015 09:55:08 +0100
-Message-ID: <1420707308-6974-1-git-send-email-thierry.reding@gmail.com>
-References: <1420701887-1465-3-git-send-email-thierry.reding@gmail.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH 1/11] ARM: tegra: add function to control the GPU rail
+ clamp
+Date: Thu, 8 Jan 2015 11:32:06 +0200
+Message-ID: <20150108093205.GV10073@tbergstrom-lnx.Nvidia.com>
+References: <1419331204-26679-1-git-send-email-vinceh@nvidia.com>
+ <1419331204-26679-2-git-send-email-vinceh@nvidia.com>
+ <1419426990.2179.7.camel@lynxeye.de>
+ <549B7638.2010405@nvidia.com>
+ <20150105150932.GG12010@ulmo.nvidia.com>
+ <20150107101900.GP10073@tbergstrom-lnx.Nvidia.com>
+ <54AD0F37.5080609@nvidia.com>
+ <20150107141254.GS10073@tbergstrom-lnx.Nvidia.com>
+ <20150107141938.GA7392@nvidia.com>
+ <20150107151206.GG1621@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1420701887-1465-3-git-send-email-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-tegra@vger.kernel.org
-Cc: Alexandre Courbot <gnurou@gmail.com>, Paul Walmsley <paul@pwsan.com>, Vince Hsu <vinceh@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20150107151206.GG1621@ulmo>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Vince Hsu <vinceh@nvidia.com>, Lucas Stach <dev@lynxeye.de>, swarren@wwwdotorg.org, gnurou@gmail.com, bskeggs@redhat.com, martin.peres@free.fr, seven@nimrod-online.com, samuel.pitoiset@gmail.com, nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+> > And specify the dependencies between domains in DT?
+> 
+> I think the dependencies could be in the driver. Of course the power
+> domains are per-SoC data, so really shouldn't be in the DTS either (the
+> data is all implied by the compatible value) but there's no good way to
+> get at the clocks and resets without DT, so I think that's a reasonable
+> trade-off.
+> 
+> It seems to me like there are only two dependencies:
+> 
+> 	DIS and DISB depend on SOR
+> 	VE depends on DIS
+> 
+> That's according to 5.6.6 "Programming Guide for Power Gating and
+> Ungating" of the Tegra K1 TRM. It also seems like a bunch of modules are
+> part of seemingly unrelated domains. Especially SOR seems to cover a
+> large range of modules (MIPI-CAL, DPAUX, SOR, HDMI, DSI, DSIB and
+> HDA2HDMI).
+> 
+> Given that we may want to more fine-grainedly control clocks to save
+> power, don't we need to control clocks and resets within the drivers? I
+> think the runtime PM framework makes sure to call this in the right
+> order, so for suspend, the sequence would be:
+> 
+> 	1) device->suspend
+> 	2) domain->suspend
+> 
+> and for resume:
+> 
+> 	1) domain->resume
+> 	2) device->resume
+> 
+> But then we're back to square one, namely that the MC flush doesn't work
+> properly, since it needs to be implemented in domain->suspend. Does that
+> mean we can't clock-gate modules? In order to ensure a proper powergate
+> sequence, the domain code would need to clk_enable() the module clock to
+> make sure it stays on during the reset sequence. But if the domain code
+> has a reference to the clock, then the driver can't clock-gate the
+> module anymore by calling clk_disable().
+> 
+> Am I missing something?
+> 
 
-Tegra132 is very similar to Tegra124 from a peripheral point of view and
-uses the same fuse controller.
+There's a difference between having a reference and actually enabling the
+clock. the domain powergate method will only be called when the clocks of
+all modules in the domain are off. So the powergate method can then turn them
+on again, do the module resets and client flushes and then disable them
+again. Same for ungate. So I don't see a problem here?
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
-Changes in v2:
-- add missing break in Tegra132 case for legacy fuse init (Vince Hsu)
+Cheers,
 
- drivers/soc/tegra/fuse/fuse-tegra.c   | 1 +
- drivers/soc/tegra/fuse/fuse-tegra30.c | 3 +++
- 2 files changed, 4 insertions(+)
-
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
-index 011a3363c265..c0d660f1aaac 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-@@ -81,6 +81,7 @@ static const struct of_device_id car_match[] __initconst = {
- 	{ .compatible = "nvidia,tegra30-car", },
- 	{ .compatible = "nvidia,tegra114-car", },
- 	{ .compatible = "nvidia,tegra124-car", },
-+	{ .compatible = "nvidia,tegra132-car", },
- 	{},
- };
- 
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra30.c b/drivers/soc/tegra/fuse/fuse-tegra30.c
-index d1a4290cda5c..9e3679594259 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra30.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra30.c
-@@ -184,6 +184,9 @@ static void __init legacy_fuse_init(void)
- 	case TEGRA124:
- 		fuse_info = &tegra124_info;
- 		break;
-+	case TEGRA132:
-+		fuse_info = &tegra124_info;
-+		break;
- 	default:
- 		return;
- 	}
--- 
-2.1.3
+Peter.
