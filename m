@@ -1,50 +1,70 @@
-From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v3.19-rc3
-Date: Thu, 8 Jan 2015 03:51:22 -0700
-Message-ID: <54AE612A.6020607@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] soc: tegra: pmc: restrict compilation of suspend-related
+ support to ARM
+Date: Thu, 8 Jan 2015 11:58:19 +0100
+Message-ID: <20150108105818.GJ1987@ulmo.nvidia.com>
+References: <alpine.DEB.2.02.1412092224050.31750@utopia.booyaka.com>
+ <20150107143354.GD1621@ulmo>
+ <54AD4FB7.20600@gmail.com>
+ <20150108084929.GA1987@ulmo.nvidia.com>
+ <54AE5117.5020905@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="cDtQGJ/EJIRf/Cpq"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <54AE5117.5020905@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Paul Walmsley <paul@pwsan.com>, linux-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, Paul Walmsley <pwalmsley@nvidia.com>, Thierry Reding <treding@nvidia.com>, Allen Martin <amartin@nvidia.com>, Stephen Warren <swarren@nvidia.com>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v3.19-rc3.
-Logs and other details at:
 
-     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.19-rc3/20150108022533/
+--cDtQGJ/EJIRf/Cpq
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Jan 08, 2015 at 12:42:47PM +0300, Dmitry Osipenko wrote:
+> 08.01.2015 11:49, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > I don't like changing this back to syscore_ops since it makes things
+> > less easier to follow. I also don't think that using PMC_SCRATCH41 for
+> > two different purposes is a good thing. There are a couple of
+> > suggestions in my reply to your original patch. Could you investigate
+> > whether any of those can be used to fix this instead?
+> >=20
+> > Thierry
+> >=20
+>=20
+> I haven't received your reply. Double checked gmail inbox and mailing lis=
+ts -
+> nothing. It may just not propagated yet if you sent it today, otherwise c=
+an you
+> please re-send it?
 
-Test summary
-------------
+For some reason it hadn't gone out. Should be now, though.
 
-Build: zImage:
-     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+Thierry
 
-Boot to userspace: multi_v7_defconfig:
-     Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra30-beaver
+--cDtQGJ/EJIRf/Cpq
+Content-Type: application/pgp-signature
 
-Boot to userspace: tegra_defconfig:
-     Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra30-beaver
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
+iQIcBAEBAgAGBQJUrmLKAAoJEN0jrNd/PrOhEF0QAKZL9VnhGGzkZckDNq79lE0X
+vyWDrdH2FuJ6SEhMFHkNGthGkIjTgTpS8SskRHlobvbhCpw+0p5OBYtp5z44lEx0
+wizJyUBvpFQjnMLaUu8hdmUVr7BWiM2L0bGCe0mvjOgejWw6nK8sj7ZSnk469My3
+N/CaPLOD3FvMMETSPlcw6s5qPnJvMXYS8hLzslzdRKEMlA8vk/8bA10KJmoHJgGu
+bV0LMDMbc+HVeyEfzE5WWBnZj41aksOArDtu6VX+GkT8UUbWSOewM0ewnBfXoFg7
+R2jjKVoECgL8txfrlonOo/bey/bTzfv2kZtox+kNKvTi8AuI9vglaL8FXoWT6bpx
+IKJlXHZoeYFgaS8lYsEtuOPsi7wJHTOVwAPPT/EyzVqxVxJ/fqfnFDe//RexKovN
+yXxaVu+WbTEWZZ0fSfdN+1KonnHc1XX37xCYEQisX5dgddz9ki9hDmaxAD+gPfFv
+pT82ZabPLNXCP7juwAN18dFsgx2yUOm6KClxMAK6WDQfV+kOMKDPOScxUSdgHblS
+CaSv2s5+V8uJ5A5zO1kbL2vPRnhDAPiYw56+vH8kn16YrcMzcNM+a3ZE1g6hEcmE
+H6sfoXdASTNid8+OeB8LWLp6e4RjpXRxFjEd/KUr3MZEXm0Y+Z5ZGaFtRACb8lxx
+Ej5RWFnWbChmpD+htSb1
+=6piv
+-----END PGP SIGNATURE-----
 
-vmlinux object size
-(delta in bytes from test_v3.19-rc2 (b7392d2247cfe6771f95d256374f1a8e6a6f48d6)):
-    text     data      bss    total  kernel
-  +10783     +464        0   +11247  multi_v7_defconfig
-   +4844      +72        0    +4916  tegra_defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v3.19-rc2 (b7392d2247cfe6771f95d256374f1a8e6a6f48d6))
-     avail    rsrvd     high    freed                board              kconfig                  dtb
-      -12k      12k        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-       -8k       8k        .       4k tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-      -12k      12k        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-       -8k       8k        .       4k  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-      -12k      12k        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-       -8k       8k        .       4k       tegra30-beaver      tegra_defconfig       tegra30-beaver
+--cDtQGJ/EJIRf/Cpq--
