@@ -1,20 +1,19 @@
 From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v3.19-rc1
-Date: Thu, 8 Jan 2015 03:18:46 -0700
-Message-ID: <54AE5986.6030806@nvidia.com>
+Subject: Tegra baseline test results for v3.19-rc2
+Date: Thu, 8 Jan 2015 03:26:43 -0700
+Message-ID: <54AE5B63.9010407@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v3.19-rc1.
+Here are some basic Tegra test results for Linux v3.19-rc2.
 Logs and other details at:
 
-     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.19-rc1/20150108014100/
+     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.19-rc2/20150108021603/
 
 
 Test summary
@@ -33,21 +32,18 @@ Boot to userspace: tegra_defconfig:
 
 
 vmlinux object size
-(delta in bytes from test_v3.18 (b2776bf7149bddd1f4161f14f79520f17fc1d71d)):
+(delta in bytes from test_v3.19-rc1 (97bf6af1f928216fd6c5a66e8a57bfa95a659672)):
     text     data      bss    total  kernel
-+882219   +15760    -2432  +895547  multi_v7_defconfig
-+149737    +2872   -12344  +140265  tegra_defconfig
+   +1240       +8        0    +1248  multi_v7_defconfig
+    +752        0        0     +752  tegra_defconfig
 
 
 Boot-time memory difference
-(delta in bytes from test_v3.18 (b2776bf7149bddd1f4161f14f79520f17fc1d71d))
+(delta in bytes from test_v3.19-rc1 (97bf6af1f928216fd6c5a66e8a57bfa95a659672))
      avail    rsrvd     high    freed                board              kconfig                  dtb
-     -872k     872k        .      40k tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-     -140k     140k        .      16k tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-     -876k     876k        .      40k  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-     -144k     144k        .      16k  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-     -868k     868k        .      40k       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-     -136k     136k        .      16k       tegra30-beaver      tegra_defconfig       tegra30-beaver
-
-
-The kernel boot-time memory report line changed.  Now it breaks CMA-reserved memory out into a separate quantity.  It's been lumped back in with reserved memory in this report.
+         .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+         .        .        .      -4k tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+         .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+         .        .        .      -4k  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+         .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+         .        .        .      -4k       tegra30-beaver      tegra_defconfig       tegra30-beaver
