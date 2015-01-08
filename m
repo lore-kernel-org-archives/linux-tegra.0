@@ -1,59 +1,113 @@
-From: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v2] Add support for Nyan-big
-Date: Thu, 8 Jan 2015 14:33:18 -0800
-Message-ID: <CAEUnVG5pAWuOK5Sq4MQ3Xg-K14nQV-NKNSq2xkAQFkmiDFmjNg@mail.gmail.com>
-References: <1417699911-17901-1-git-send-email-sjg@chromium.org>
- <CAAObsKAE6GKWNqp_3g0f=pc-b6WzBcAzDhD=TtfrtgwQfHVAQA@mail.gmail.com>
- <CAPnjgZ2MSt6JJNf_8PDG-NtXhmg3reiUqQaBUMLNfR4Hbc37yA@mail.gmail.com> <CAAObsKCBKT0_K+FWrfDBJPfVuJecjo9_arJx8Xok3ictKcv9=w@mail.gmail.com>
+From: Paul Walmsley <paul@pwsan.com>
+Subject: Re: [PATCH] soc/tegra: pmc: Add Tegra132 support
+Date: Thu, 8 Jan 2015 22:34:35 +0000 (UTC)
+Message-ID: <alpine.DEB.2.02.1501082232280.28771@utopia.booyaka.com>
+References: <1420701657-32543-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAObsKCBKT0_K+FWrfDBJPfVuJecjo9_arJx8Xok3ictKcv9=w@mail.gmail.com>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org>
-Cc: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1420701657-32543-1-git-send-email-thierry.reding@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Stephen Warren <swarren@wwwdotorg.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jan 7, 2015 at 11:54 PM, Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org> wrote:
-> On 7 January 2015 at 17:27, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
->> Hi Tomeu,
->>
->> On 7 January 2015 at 06:02, Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org> wrote:
->>>
->>> On 4 December 2014 at 14:31, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
->>> > Add support for Tegra124 Nyan-big. Pinmux is based on norrin with a single
->>> > change for the reset GPIO.
->>>
->>> Hi Simon,
->>>
->>> do you have a similar patch for the blaze?
->>>
->>> Thanks,
->>>
->>> Tomeu
->>
->> No I don't sorry. I suppose it is similar but I'm not sure who did the
->> pinmux for it.
->
-> I have found some non-trivial differences when comparing the pinmux
-> programming for the two boards in the chromeos kernel, that's why I
-> would prefer if we had the complete data in tegra-pinmux-scripts.
+On Thu, 8 Jan 2015, Thierry Reding wrote:
 
-The differences between Big and Blaze are small.  Four pins I think.
-What differences were you seeing?
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Tegra132 uses the same GPU as Tegra124 and the same special-case is
+> needed to remove clamps. However Tegra132 has a separate chip ID, so in
+> order to avoid having to extend the list of chip IDs for the special
+> case, add a feature flag to the SoC data.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 
->
-> Dylan, Rhyland, git-blame points to both of you, do you have the
-> spreadsheet for the blaze or know who could have it?
+Reviewed-by: Paul Walmsley <pwalmsley@nvidia.com>
 
-We didn't derive the pinmux from a spreadsheet for Big or Blaze.  Big
-was so similar to Norrin that the few changes were made manually.
+Nit: not sure I would call it a special-case; to me it's more of an 
+evolutionary change due to the radically different GPU in T124 & T132.
 
-Thanks for looking at this!
 
-Dylan
+- Paul
 
->
-> Thanks,
->
-> Tomeu
+> ---
+>  drivers/soc/tegra/pmc.c | 14 ++++++++++----
+>  1 file changed, 10 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index 4bdc654bd747..0f096e76574a 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -88,6 +88,8 @@ struct tegra_pmc_soc {
+>  	const char *const *powergates;
+>  	unsigned int num_cpu_powergates;
+>  	const u8 *cpu_powergates;
+> +
+> +	bool has_gpu_clamps;
+>  };
+>  
+>  /**
+> @@ -225,11 +227,11 @@ int tegra_powergate_remove_clamping(int id)
+>  		return -EINVAL;
+>  
+>  	/*
+> -	 * The Tegra124 GPU has a separate register (with different semantics)
+> -	 * to remove clamps.
+> +	 * On Tegra124 and later, the clamps for the GPU are controlled by a
+> +	 * separate register (with different semantics).
+>  	 */
+> -	if (tegra_get_chip_id() == TEGRA124) {
+> -		if (id == TEGRA_POWERGATE_3D) {
+> +	if (id == TEGRA_POWERGATE_3D) {
+> +		if (pmc->soc->has_gpu_clamps) {
+>  			tegra_pmc_writel(0, GPU_RG_CNTRL);
+>  			return 0;
+>  		}
+> @@ -773,6 +775,7 @@ static const struct tegra_pmc_soc tegra20_pmc_soc = {
+>  	.powergates = tegra20_powergates,
+>  	.num_cpu_powergates = 0,
+>  	.cpu_powergates = NULL,
+> +	.has_gpu_clamps = false,
+>  };
+>  
+>  static const char * const tegra30_powergates[] = {
+> @@ -804,6 +807,7 @@ static const struct tegra_pmc_soc tegra30_pmc_soc = {
+>  	.powergates = tegra30_powergates,
+>  	.num_cpu_powergates = ARRAY_SIZE(tegra30_cpu_powergates),
+>  	.cpu_powergates = tegra30_cpu_powergates,
+> +	.has_gpu_clamps = false,
+>  };
+>  
+>  static const char * const tegra114_powergates[] = {
+> @@ -839,6 +843,7 @@ static const struct tegra_pmc_soc tegra114_pmc_soc = {
+>  	.powergates = tegra114_powergates,
+>  	.num_cpu_powergates = ARRAY_SIZE(tegra114_cpu_powergates),
+>  	.cpu_powergates = tegra114_cpu_powergates,
+> +	.has_gpu_clamps = false,
+>  };
+>  
+>  static const char * const tegra124_powergates[] = {
+> @@ -880,6 +885,7 @@ static const struct tegra_pmc_soc tegra124_pmc_soc = {
+>  	.powergates = tegra124_powergates,
+>  	.num_cpu_powergates = ARRAY_SIZE(tegra124_cpu_powergates),
+>  	.cpu_powergates = tegra124_cpu_powergates,
+> +	.has_gpu_clamps = true,
+>  };
+>  
+>  static const struct of_device_id tegra_pmc_match[] = {
+> -- 
+> 2.1.3
+> 
+
+
+- Paul
