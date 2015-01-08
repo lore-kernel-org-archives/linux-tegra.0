@@ -1,158 +1,77 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH] clocksource: tegra: wrap arch/arm-specific sections in
  CONFIG_ARM
-Date: Thu, 08 Jan 2015 15:21:58 +0100
-Message-ID: <54AE9286.1090800@linaro.org>
+Date: Thu, 8 Jan 2015 16:48:39 +0100
+Message-ID: <20150108154837.GA1608@ulmo.nvidia.com>
 References: <alpine.DEB.2.02.1412092201200.31750@utopia.booyaka.com>
+ <54AE9286.1090800@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <alpine.DEB.2.02.1412092201200.31750@utopia.booyaka.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Walmsley <paul@pwsan.com>, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-tegra@vger.kernel.org, Allen Martin <amartin@nvidia.com>, Stephen Warren <swarren@nvidia.com>, Thierry Reding <treding@nvidia.com>, Alexandre Courbot <gnurou@gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="BXVAT5kNtrzKuDFl"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <54AE9286.1090800-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Content-Disposition: inline
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/09/2014 11:07 PM, Paul Walmsley wrote:
->
-> Like several of the other files in drivers/clocksource,
-> tegra20_timer.c contains code that can only compile when CONFIG_ARM i=
-s
-> enabled.  This causes obvious problems when trying to compile this
-> code for NVIDIA ARM64-based SoCs, such as Tegra132.  The same timer I=
-P
-> blocks exist, so it seems appropriate to provide support for them.
->
-> So until we figure out a better way to partition this code, wrap the
-> delay_timer and persistent_clock support code with preprocessor tests
-> for CONFIG_ARM.  (The delay_timer code should not be needed at all on
-> ARM64 due to the presence of the ARMv8 architected timer.  The
-> persistent_clock support code could become important once power
-> management modes are implemented that turn off the CPU complex.)
+--BXVAT5kNtrzKuDFl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Well actually putting #ifdef macros in the C code should be avoided if=20
-possible.
+On Thu, Jan 08, 2015 at 03:21:58PM +0100, Daniel Lezcano wrote:
+> On 12/09/2014 11:07 PM, Paul Walmsley wrote:
+> >
+> >Like several of the other files in drivers/clocksource,
+> >tegra20_timer.c contains code that can only compile when CONFIG_ARM is
+> >enabled.  This causes obvious problems when trying to compile this
+> >code for NVIDIA ARM64-based SoCs, such as Tegra132.  The same timer IP
+> >blocks exist, so it seems appropriate to provide support for them.
+> >
+> >So until we figure out a better way to partition this code, wrap the
+> >delay_timer and persistent_clock support code with preprocessor tests
+> >for CONFIG_ARM.  (The delay_timer code should not be needed at all on
+> >ARM64 due to the presence of the ARMv8 architected timer.  The
+> >persistent_clock support code could become important once power
+> >management modes are implemented that turn off the CPU complex.)
+>=20
+> Well actually putting #ifdef macros in the C code should be avoided if
+> possible.
+>=20
+> May be you can replace those macros by:
+>=20
+> if (IS_ENABLED(CONFIG_ARM64)) {
+> 	...
+> }
+>=20
+> ?
 
-May be you can replace those macros by:
+Unfortunately we can't. Some of the symbols in this file are only
+defined in headers specific to ARM and not available on ARM64.
 
-if (IS_ENABLED(CONFIG_ARM64)) {
-	...
-}
+Thierry
 
-?
+--BXVAT5kNtrzKuDFl
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
+iQIcBAEBAgAGBQJUrqbVAAoJEN0jrNd/PrOhK6kP/RHXBVdtLPXfGpRU+JLTVgZH
+kqD4GVu7fg1U+2k4fRhlwc6B8tR/ElT5tBJgbDZ4KVR6oOYOFqziPs6KiHjnwG38
+2AB7XuvXVy69zSc4DBxSa3CTeXNc+dsvS/zKYBzhSNtFGj/+8j26h0tPNHn3kOdP
+9k+dEQclVYOrEsVJ2XkBGhqKqHxVx+LxeI3hBAmZKnv/tnzV/3QhBoSOZFjUFn4X
+NpbdYWtqAcnqKQUsDA5Z4MpYvYyOWdsbAG95dfJPP1R3V/oX8T0OO0wyhlSkArgX
+X65aJiYQACVEJG+neys9HEknb5taZRjSuHAR+1eqMDmX8bbMzURvPpep5vxA1XrF
+OlWB4+IiFyHKUc/MSOnRAzb1EpOQIdv7fwiTRWC7nbsK9b+8ZC77cj4JUNHmkZZn
+m1MdvgWKQxC5xIPKbSnC9zXg15EA17QZef2VnRSalBbo5G9H4S0eSShBPXnAO+dB
+PGhPHjYR7yH0/DS+/bsH7ZUBmBRHW8GO2bwCrtNJrhdixdcuHWdoFgNmf8hjcrJB
+EX+TdPBE5SLebdvR378qfOXQe/2pKlFunL6t3RdLmbHQe8KWcgNpD+3NumTLoV9U
+XuPoJms5InCaZJbuM6Ei53YTvAiocldxmA/SxAIiJP9GPtmGYNjyXFKsablF/uWb
+zjZ9Gb3VUosD10JtPlOR
+=uUAa
+-----END PGP SIGNATURE-----
 
-> Signed-off-by: Paul Walmsley <paul@pwsan.com>
-> Signed-off-by: Paul Walmsley <pwalmsley@nvidia.com>
-> Cc: Allen Martin <amartin@nvidia.com>
-> Cc: Stephen Warren <swarren@nvidia.com>
-> Cc: Thierry Reding <treding@nvidia.com>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> ---
-> Applies against next-20141209.
-> Intended for v3.20.
-> Boot-tested on Tegra124 Jetson TK1 on next-20141209.
-> Also boot-tested on Tegra132 Norrin FFD on next-20141209 + extra,
-> unrelated patches.
->
->   drivers/clocksource/tegra20_timer.c | 11 +++++++++++
->   1 file changed, 11 insertions(+)
->
-> diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksourc=
-e/tegra20_timer.c
-> index d2616ef16770..83a8f5c9e139 100644
-> --- a/drivers/clocksource/tegra20_timer.c
-> +++ b/drivers/clocksource/tegra20_timer.c
-> @@ -29,8 +29,10 @@
->   #include <linux/sched_clock.h>
->   #include <linux/delay.h>
->
-> +#ifdef CONFIG_ARM
->   #include <asm/mach/time.h>
->   #include <asm/smp_twd.h>
-> +#endif
->
->   #define RTC_SECONDS            0x08
->   #define RTC_SHADOW_SECONDS     0x0c
-> @@ -49,12 +51,14 @@
->   #define TIMER_PCR 0x4
->
->   static void __iomem *timer_reg_base;
-> +#ifdef CONFIG_ARM
->   static void __iomem *rtc_base;
->
->   static struct timespec persistent_ts;
->   static u64 persistent_ms, last_persistent_ms;
->
->   static struct delay_timer tegra_delay_timer;
-> +#endif
->
->   #define timer_writel(value, reg) \
->   	__raw_writel(value, timer_reg_base + (reg))
-> @@ -106,6 +110,7 @@ static u64 notrace tegra_read_sched_clock(void)
->   	return timer_readl(TIMERUS_CNTR_1US);
->   }
->
-> +#ifdef CONFIG_ARM
->   /*
->    * tegra_rtc_read - Reads the Tegra RTC registers
->    * Care must be taken that this funciton is not called while the
-> @@ -146,6 +151,8 @@ static unsigned long tegra_delay_timer_read_count=
-er_long(void)
->   {
->   	return readl(timer_reg_base + TIMERUS_CNTR_1US);
->   }
-> +#endif /* CONFIG_ARM */
-> +
->
->   static irqreturn_t tegra_timer_interrupt(int irq, void *dev_id)
->   {
-> @@ -214,10 +221,12 @@ static void __init tegra20_init_timer(struct de=
-vice_node *np)
->   		BUG();
->   	}
->
-> +#ifdef CONFIG_ARM
->   	tegra_delay_timer.read_current_timer =3D
->   			tegra_delay_timer_read_counter_long;
->   	tegra_delay_timer.freq =3D 1000000;
->   	register_current_timer_delay(&tegra_delay_timer);
-> +#endif
->
->   	ret =3D setup_irq(tegra_timer_irq.irq, &tegra_timer_irq);
->   	if (ret) {
-> @@ -232,6 +241,7 @@ static void __init tegra20_init_timer(struct devi=
-ce_node *np)
->   }
->   CLOCKSOURCE_OF_DECLARE(tegra20_timer, "nvidia,tegra20-timer", tegra=
-20_init_timer);
->
-> +#ifdef CONFIG_ARM
->   static void __init tegra20_init_rtc(struct device_node *np)
->   {
->   	struct clk *clk;
-> @@ -255,6 +265,7 @@ static void __init tegra20_init_rtc(struct device=
-_node *np)
->   	register_persistent_clock(NULL, tegra_read_persistent_clock);
->   }
->   CLOCKSOURCE_OF_DECLARE(tegra20_rtc, "nvidia,tegra20-rtc", tegra20_i=
-nit_rtc);
-> +#endif /* CONFIG_ARM */
->
->   #ifdef CONFIG_PM
->   static u32 usec_config;
->
-
-
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+--BXVAT5kNtrzKuDFl--
