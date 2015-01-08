@@ -1,35 +1,53 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] soc: tegra: pmc: restrict compilation of suspend-related
- support to ARM
-Date: Thu, 08 Jan 2015 12:42:47 +0300
-Message-ID: <54AE5117.5020905@gmail.com>
-References: <alpine.DEB.2.02.1412092224050.31750@utopia.booyaka.com> <20150107143354.GD1621@ulmo> <54AD4FB7.20600@gmail.com> <20150108084929.GA1987@ulmo.nvidia.com>
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v3.19-rc1
+Date: Thu, 8 Jan 2015 03:18:46 -0700
+Message-ID: <54AE5986.6030806@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150108084929.GA1987-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, linux-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-08.01.2015 11:49, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> I don't like changing this back to syscore_ops since it makes things
-> less easier to follow. I also don't think that using PMC_SCRATCH41 fo=
-r
-> two different purposes is a good thing. There are a couple of
-> suggestions in my reply to your original patch. Could you investigate
-> whether any of those can be used to fix this instead?
->=20
-> Thierry
->=20
+Here are some basic Tegra test results for Linux v3.19-rc1.
+Logs and other details at:
 
-I haven't received your reply. Double checked gmail inbox and mailing l=
-ists -
-nothing. It may just not propagated yet if you sent it today, otherwise=
- can you
-please re-send it?
+     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.19-rc1/20150108014100/
 
---=20
-Dmitry
+
+Test summary
+------------
+
+Build: zImage:
+     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Boot to userspace: multi_v7_defconfig:
+     Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+     Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v3.18 (b2776bf7149bddd1f4161f14f79520f17fc1d71d)):
+    text     data      bss    total  kernel
++882219   +15760    -2432  +895547  multi_v7_defconfig
++149737    +2872   -12344  +140265  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v3.18 (b2776bf7149bddd1f4161f14f79520f17fc1d71d))
+     avail    rsrvd     high    freed                board              kconfig                  dtb
+     -872k     872k        .      40k tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+     -140k     140k        .      16k tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+     -876k     876k        .      40k  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+     -144k     144k        .      16k  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+     -868k     868k        .      40k       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+     -136k     136k        .      16k       tegra30-beaver      tegra_defconfig       tegra30-beaver
+
+
+The kernel boot-time memory report line changed.  Now it breaks CMA-reserved memory out into a separate quantity.  It's been lumped back in with reserved memory in this report.
