@@ -1,67 +1,148 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/4] ARM: tegra: rely on bootloader pinmux programming
- on nyan-big
-Date: Wed, 07 Jan 2015 10:15:56 -0700
-Message-ID: <54AD69CC.7010902@wwwdotorg.org>
-References: <1420540653-14816-1-git-send-email-tomeu.vizoso@collabora.com> <1420540653-14816-2-git-send-email-tomeu.vizoso@collabora.com> <54AC16B0.5050703@wwwdotorg.org> <CAAObsKB1gMcLZ=n8Mc6JSLQHn5-6VWOhERLgYTdi6nit6yCj5w@mail.gmail.com>
+From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/11] ARM: tegra: add function to control the
+ GPU rail clamp
+Date: Thu, 8 Jan 2015 12:23:47 +0800
+Message-ID: <54AE0653.9020002@nvidia.com>
+References: <1419331204-26679-1-git-send-email-vinceh@nvidia.com>
+ <1419331204-26679-2-git-send-email-vinceh@nvidia.com>
+ <1419426990.2179.7.camel@lynxeye.de> <549B7638.2010405@nvidia.com>
+ <20150105150932.GG12010@ulmo.nvidia.com>
+ <20150107101900.GP10073@tbergstrom-lnx.Nvidia.com>
+ <54AD0F37.5080609@nvidia.com>
+ <20150107141254.GS10073@tbergstrom-lnx.Nvidia.com>
+ <20150107141938.GA7392@nvidia.com> <20150107151206.GG1621@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAObsKB1gMcLZ=n8Mc6JSLQHn5-6VWOhERLgYTdi6nit6yCj5w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <20150107151206.GG1621@ulmo>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, seven-FA6nBp6kBxZzu6KWmfFNGwC/G2K4zDHf@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/07/2015 01:06 AM, Tomeu Vizoso wrote:
-> On 6 January 2015 at 18:09, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->> On 01/06/2015 03:37 AM, Tomeu Vizoso wrote:
->>>
->>> Following 6dbaff2b, the kernel expects that the bootloader has correctly
->>> programmed the Tegra pinmux.
->>>
->>> DTs for the Jetson and the Venice2 had been updated already but this one
->>> was left behind.
->>
->>
->> So this setup is true for NVIDIA-controlled development/reference boards
->> where we've ensured that the bootloader sets up 100% of the pinmux.
->>
->> However, I know that Coreboot on this board doesn't set up everything in the
->> pinmux, and since it's in r/o flash never will. As such, I'm not sure this
->> change is safe for this board. That is, unless you want to force upstream
->> kernels to be booted via a chain-loaded path: Coreboot (r/o) -> U-Boot (r/w
->> with full pinmux setup) -> kernel.
->>
->>> Have tested this with the stock vendor firmware (coreboot) and have found
->>> no
->>> issues.
->>
->>
->> There are presumably a bunch of features which aren't yet supported
->> upstream, and hence you couldn't test though? That means we might find that
->> parts of the pinmux aren't yet programmed but need to be to enable those
->> features.
->
-> Sure, there's no chance that my testing could have been extensive enough.
->
-> Following Andrew's feedback, I will be looking at getting the pinmux
-> programming right in the DTs.
-
-As an FYI, the way this typically works (for NVIDIA reference boards, 
-and many/most customer boards) is that NVIDIA syseng publishes an Excel 
-spreadsheet that can be edited to define the board's pinmux, and which 
-performs some error checks. This spreadsheet can directly generate (via 
-Excel macros/...) pinmux data tables and/or DT files for our 
-product/internal/downstream Android and L4T kernels. For recent SoCs, 
-the tegra-pinmux-scripts project[1] can take a CSV representation of the 
-spreadsheet and generate both a U-Boot header file (for upstream or L4T; 
-they're the same) and upstream Linux kernel DT files that represent the 
-pinmux.
-
-So, your best bet is to see if such a spreadsheet exists for these 
-platforms, and import it into tegra-pinmux-scripts. That will save a lot 
-of work if the spreadsheet exists (and is up-to-date).
-
-[1] https://github.com/NVIDIA/tegra-pinmux-scripts
+Ck9uIDAxLzA3LzIwMTUgMTE6MTIgUE0sIFRoaWVycnkgUmVkaW5nIHdyb3RlOgo+ICogUEdQIFNp
+Z25lZCBieSBhbiB1bmtub3duIGtleQo+Cj4gT24gV2VkLCBKYW4gMDcsIDIwMTUgYXQgMTA6MTk6
+NTJQTSArMDgwMCwgVmluY2UgSHN1IHdyb3RlOgo+PiBPbiAwNDoxMjo1NFBNIEphbiAwNywgUGV0
+ZXIgRGUgU2NocmlqdmVyIHdyb3RlOgo+Pj4gT24gV2VkLCBKYW4gMDcsIDIwMTUgYXQgMDY6NDk6
+MjdQTSArMDgwMCwgVmluY2UgSHN1IHdyb3RlOgo+Pj4+IE9uIDAxLzA3LzIwMTUgMDY6MTkgUE0s
+IFBldGVyIERlIFNjaHJpanZlciB3cm90ZToKPj4+Pj4gT24gTW9uLCBKYW4gMDUsIDIwMTUgYXQg
+MDQ6MDk6MzNQTSArMDEwMCwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4+Pj4+Pj4gT2xkIFNpZ25l
+ZCBieSBhbiB1bmtub3duIGtleQo+Pj4+Pj4gT24gVGh1LCBEZWMgMjUsIDIwMTQgYXQgMTA6Mjg6
+MDhBTSArMDgwMCwgVmluY2UgSHN1IHdyb3RlOgo+Pj4+Pj4+IE9uIDEyLzI0LzIwMTQgMDk6MTYg
+UE0sIEx1Y2FzIFN0YWNoIHdyb3RlOgo+Pj4+Pj4+PiBBbSBEaWVuc3RhZywgZGVuIDIzLjEyLjIw
+MTQsIDE4OjM5ICswODAwIHNjaHJpZWIgVmluY2UgSHN1Ogo+Pj4+Pj4+Pj4gVGhlIFRlZ3JhMTI0
+IGFuZCBsYXRlciBUZWdyYSBTb0NzIGhhdmUgYSBzZXBhdGF0ZSByYWlsIGdhdGluZyByZWdpc3Rl
+cgo+Pj4+Pj4+Pj4gdG8gZW5hYmxlL2Rpc2FibGUgdGhlIGNsYW1wLiBUaGUgb3JpZ2luYWwgZnVu
+Y3Rpb24KPj4+Pj4+Pj4+IHRlZ3JhX3Bvd2VyZ2F0ZV9yZW1vdmVfY2xhbXBpbmcoKSBpcyBub3Qg
+c3VmZmljaWVudCBmb3IgdGhlIGVuYWJsZQo+Pj4+Pj4+Pj4gZnVuY3Rpb24uIFNvIGFkZCBhIG5l
+dyBmdW5jdGlvbiB3aGljaCBpcyBkZWRpY2F0ZWQgdG8gdGhlIEdQVSByYWlsCj4+Pj4+Pj4+PiBn
+YXRpbmcuIEFsc28gZG9uJ3QgcmVmZXIgdG8gdGhlIHBvd2VyZ2F0ZSBJRCBzaW5jZSB0aGUgR1BV
+IElEIG1ha2VzIG5vCj4+Pj4+Pj4+PiBzZW5zZSBoZXJlLgo+Pj4+Pj4+Pj4KPj4+Pj4+Pj4+IFNp
+Z25lZC1vZmYtYnk6IFZpbmNlIEhzdSA8dmluY2VoQG52aWRpYS5jb20+Cj4+Pj4+Pj4+IFRvIGJl
+IGhvbmVzdCBJIGRvbid0IHNlZSB0aGUgcG9pbnQgb2YgdGhpcyBwYXRjaC4KPj4+Pj4+Pj4gWW91
+IGFyZSBibG9hdGluZyB0aGUgUE1DIGludGVyZmFjZSBieSBpbnRyb2R1Y2luZyBhbm90aGVyIGV4
+cG9ydGVkCj4+Pj4+Pj4+IGZ1bmN0aW9uIHRoYXQgZG9lcyBub3RoaW5nIGRpZmZlcmVudCB0aGFu
+IHdoYXQgdGhlIGN1cnJlbnQgZnVuY3Rpb24KPj4+Pj4+Pj4gYWxyZWFkeSBkb2VzLgo+Pj4+Pj4+
+Pgo+Pj4+Pj4+PiBJZiB5b3UgbmVlZCBhIHdheSB0byBhc3NlcnQgdGhlIGNsYW1wIEkgd291bGQg
+aGF2ZSBleHBlY3RlZCB5b3UgdG8KPj4+Pj4+Pj4gaW50cm9kdWNlIGEgY29tbW9uIGZ1bmN0aW9u
+IHRvIGRvIHRoaXMgZm9yIGFsbCBwb3dlciBwYXJ0aXRpb25zLgo+Pj4+Pj4+IEkgdGhvdWdodCBh
+Ym91dCBhZGRpbmcgYW4gdGVncmFfcG93ZXJnYXRlX2Fzc2VydF9jbGFtcGluZygpLCBidXQgdGhh
+dAo+Pj4+Pj4+IGRvZXNuJ3QgbWFrZSBzZW5zZSB0byBhbGwgdGhlIHBvd2VyIHBhcnRpdGlvbnMg
+ZXhjZXB0IEdQVS4gTm90ZSB0aGUKPj4+Pj4+PiBkaWZmZXJlbmNlIGluIFRSTS4gQW55IHN1Z2dl
+c3Rpb24gZm9yIHRoZSBjb21tb24gZnVuY3Rpb24/Cj4+Pj4+PiBJIGRvbid0IHRoaW5rIGV4dGVu
+ZGluZyB0aGUgcG93ZXJnYXRlIEFQSSBpcyB1c2VmdWwgYXQgdGhpcyBwb2ludC4gV2UndmUKPj4+
+Pj4+IGxvbmcgaGFkIGFuIG9wZW4gVE9ETyBpdGVtIHRvIHJlcGxhY2UgdGhpcyB3aXRoIGEgZ2Vu
+ZXJpYyBBUEkuIEkgZGlkCj4+Pj4+PiBzb21lIHByb3RvdHlwaW5nIGEgd2hpbGUgYWdvIHRvIHVz
+ZSBnZW5lcmljIHBvd2VyIGRvbWFpbnMgZm9yIHRoaXMsIHRoYXQKPj4+Pj4+IHdheSBhbGwgdGhl
+IGRldGFpbHMgYW5kIGRlcGVuZGVuY2llcyBiZXR3ZWVuIHRoZSBwYXJ0aXRpb25zIGNvdWxkIGJl
+Cj4+Pj4+PiBwcm9wZXJseSBtb2RlbGVkLgo+Pj4+Pj4KPj4+Pj4+IENhbiB5b3UgdGFrZSBhIGxv
+b2sgYXQgbXkgc3RhZ2luZy9wb3dlcmdhdGUgYnJhbmNoIGhlcmU6Cj4+Pj4+Pgo+Pj4+Pj4gCWh0
+dHBzOi8vZ2l0aHViLmNvbS90aGllcnJ5cmVkaW5nL2xpbnV4L2NvbW1pdHMvc3RhZ2luZy9wb3dl
+cmdhdGUKPj4+Pj4+Cj4+Pj4+PiBhbmQgc2VlIGlmIHlvdSBjYW4gdXNlIHRoYXQgaW5zdGVhZD8g
+VGhlIGlkZWEgaXMgdG8gY29tcGxldGVseSBoaWRlIHRoZQo+Pj4+Pj4gZGV0YWlscyBvZiBwb3dl
+ciBwYXJ0aXRpb25zIGZyb20gZHJpdmVycyBhbmQgdXNlIHJ1bnRpbWUgUE0gaW5zdGVhZC4KPj4+
+Pj4+Cj4+Pj4+PiBBbHNvIGFkZGluZyBQZXRlciB3aG9tIEkgaGFkIGRpc2N1c3NlZCB0aGlzIHdp
+dGggZWFybGllci4gQ2FuIHdlIGZpbmFsbHkKPj4+Pj4+IGdldCB0aGlzIGNvbnZlcnRlZD8gSSdk
+IHJhdGhlciBub3Qga2VlcCBjb21wbGljYXRpbmcgdGhpcyBjdXN0b20gQVBJIHRvCj4+Pj4+PiBh
+dm9pZCBtYWtpbmcgdGhlIGNvbnZlcnNpb24gZXZlbiBtb3JlIGRpZmZpY3VsdC4KPj4+Pj4gQ29u
+Y2VwdHVhbGx5IEkgZnVsbHkgYWdyZWUgdGhhdCB3ZSBzaG91bGQgdXNlIHJ1bnRpbWUgUE0gYW5k
+IHBvd2VyZG9tYWlucy4KPj4+Pj4gSG93ZXZlciBJIGRvbid0IHRoaW5rIHRoZSBpbXBsZW1lbnRh
+dGlvbiB5b3UgbWVudGlvbmVkIGlzIGNvcnJlY3QuIFRoZSByZXNldHMKPj4+Pj4gb2YgYWxsIG1v
+ZHVsZXMgaW4gYSBkb21haW4gbmVlZCB0byBiZSBhc3NlcnRlZCBhbmQgdGhlIG1lbW9yeSBjbGll
+bnRzIG5lZWQgdG8KPj4+Pj4gYmUgZmx1c2hlZC4gQWxsIHRoaXMgbmVlZHMgdG8gYmUgZG9uZSB3
+aXRoIG1vZHVsZSBjbG9ja3MgZW5hYmxlZCAocmVzZXRzIGFyZQo+Pj4+PiBzeW5jaHJvbm91cyku
+ICBUaGVuIGFsbCBtb2R1bGUgY2xvY2tzIG5lZWQgdG8gYmUgZGlzYWJsZWQgYW5kIHRoZW4gdGhl
+Cj4+Pj4+IHBhcnRpdGlvbiBjYW4gYmUgcG93ZXJnYXRlZC4gQWZ0ZXIgdW5nYXRpbmcsIHRoZSBt
+b2R1bGUgcmVzZXRzIG5lZWQgdG8gYmUKPj4+Pj4gZGVhc3NlcnRlZCBhbmQgdGhlIEZMVVNIIGJp
+dCBjbGVhcmVkIHdpdGggY2xvY2tzIGVuYWJsZWQuCj4+Pj4gWWVhaC4gSSBwbGFuIHRvIGhhdmUg
+dGhlIGluZm9ybWF0aW9uIG9mIGFsbCB0aGUgY2xvY2sgY2xpZW50IG9mIHRoZQo+Pj4+IHBhcnRp
+dGlvbnMgYW5kCj4+Pj4gdGhlIG1lbW9yeSBjbGllbnRzIGJlIGRlZmluZWQgc3RhdGljYWxseSBp
+biBjIHNvdXJjZSwgZS5nLiBwbWMtdGVncmExMjQuYy4KPj4+PiBBbGwgbW9kdWxlcyBjYW4gZGVj
+bGFyZSB3aGljaCBkb21haW4gdGhleSBiZWxvbmcgdG8gaW4gRFQuIE9uZSBkb21haW4gY2FuCj4+
+Pj4gYmUgcmVhbGx5IHBvd2VyIGdhdGVkIG9ubHkgd2hlbiBubyBtb2R1bGUgaXMgYXdha2UuIE5v
+dGUgdGhlIGNsb2NrCj4+Pj4gY2xpZW50cyBvZgo+Pj4+IG9uZSBkb21haW4gbWlnaHQgbm90IGVx
+dWFsIHRvIHRoZSBjbG9ja3Mgb2YgdGhlIG1vZHVsZS4gVGhlIHJlc2V0IGlzCj4+Pj4gbm90IGVp
+dGhlci4KPj4+PiBTbyBJIGRvbid0IGdldCB0aGUgY2xvY2sgYW5kIHJlc2V0IGZyb20gbW9kdWxl
+LiBIb3cgZG8geW91IHRoaW5rPwo+Pj4+Cj4+PiBJIHRoaW5rIGl0J3MgaW5kZWVkIGJldHRlciB0
+byBoYXZlIGEgZGlyZWN0IHJlZmVyZW5jZSB0byB0aGUgcmVxdWlyZWQgY2xvY2tzCj4+PiB0byBw
+b3dlcmdhdGUvdW5nYXRlIGEgZG9tYWluLiBBcyB5b3Ugc2FpZCwgdGhlcmUgaXMgbm8gZWFzeSB3
+YXkgdG8gZGVyaXZlIHRoZQo+Pj4gcmVxdWlyZWQgY2xvY2tzIGZyb20gdGhlIERUIG1vZHVsZSBk
+ZWNsYXJhdGlvbnMuIE15IHN1Z2dlc3Rpb24gd291bGQgYmUgdG8KPj4+IGhhdmUgcG93ZXJkb21h
+aW4gZGVmaW5pdGlvbnMgaW4gRFQgYW5kIGZvciBlYWNoIGRvbWFpbiBoYXZlIHJlZmVyZW5jZXMg
+dG8KPj4+IHRoZSByZXF1aXJlZCBjbG9ja3MgYW5kIHJlc2V0cy4KPj4+Cj4+IEFuZCBzcGVjaWZ5
+IHRoZSBkZXBlbmRlbmNpZXMgYmV0d2VlbiBkb21haW5zIGluIERUPwo+IEkgdGhpbmsgdGhlIGRl
+cGVuZGVuY2llcyBjb3VsZCBiZSBpbiB0aGUgZHJpdmVyLiBPZiBjb3Vyc2UgdGhlIHBvd2VyCj4g
+ZG9tYWlucyBhcmUgcGVyLVNvQyBkYXRhLCBzbyByZWFsbHkgc2hvdWxkbid0IGJlIGluIHRoZSBE
+VFMgZWl0aGVyICh0aGUKPiBkYXRhIGlzIGFsbCBpbXBsaWVkIGJ5IHRoZSBjb21wYXRpYmxlIHZh
+bHVlKSBidXQgdGhlcmUncyBubyBnb29kIHdheSB0bwo+IGdldCBhdCB0aGUgY2xvY2tzIGFuZCBy
+ZXNldHMgd2l0aG91dCBEVCwgc28gSSB0aGluayB0aGF0J3MgYSByZWFzb25hYmxlCj4gdHJhZGUt
+b2ZmLgo+Cj4gSXQgc2VlbXMgdG8gbWUgbGlrZSB0aGVyZSBhcmUgb25seSB0d28gZGVwZW5kZW5j
+aWVzOgo+Cj4gCURJUyBhbmQgRElTQiBkZXBlbmQgb24gU09SCj4gCVZFIGRlcGVuZHMgb24gRElT
+Cj4KPiBUaGF0J3MgYWNjb3JkaW5nIHRvIDUuNi42ICJQcm9ncmFtbWluZyBHdWlkZSBmb3IgUG93
+ZXIgR2F0aW5nIGFuZAo+IFVuZ2F0aW5nIiBvZiB0aGUgVGVncmEgSzEgVFJNLiBJdCBhbHNvIHNl
+ZW1zIGxpa2UgYSBidW5jaCBvZiBtb2R1bGVzIGFyZQo+IHBhcnQgb2Ygc2VlbWluZ2x5IHVucmVs
+YXRlZCBkb21haW5zLiBFc3BlY2lhbGx5IFNPUiBzZWVtcyB0byBjb3ZlciBhCj4gbGFyZ2UgcmFu
+Z2Ugb2YgbW9kdWxlcyAoTUlQSS1DQUwsIERQQVVYLCBTT1IsIEhETUksIERTSSwgRFNJQiBhbmQK
+PiBIREEySERNSSkuCj4KPiBHaXZlbiB0aGF0IHdlIG1heSB3YW50IHRvIG1vcmUgZmluZS1ncmFp
+bmVkbHkgY29udHJvbCBjbG9ja3MgdG8gc2F2ZQo+IHBvd2VyLCBkb24ndCB3ZSBuZWVkIHRvIGNv
+bnRyb2wgY2xvY2tzIGFuZCByZXNldHMgd2l0aGluIHRoZSBkcml2ZXJzPyBJCj4gdGhpbmsgdGhl
+IHJ1bnRpbWUgUE0gZnJhbWV3b3JrIG1ha2VzIHN1cmUgdG8gY2FsbCB0aGlzIGluIHRoZSByaWdo
+dAo+IG9yZGVyLCBzbyBmb3Igc3VzcGVuZCwgdGhlIHNlcXVlbmNlIHdvdWxkIGJlOgpXZSBuZWVk
+IHRvIGNvbnRyb2wgY2xvY2tzIGFuZCByZXNldHMgd2l0aGluIHRoZSBkcml2ZXJzLiBJIGJlbGll
+dmUgdGhlCnBvd2VyZ2F0ZSBzZXF1ZW5jZSBpcyBqdXN0IHRvIHByb3ZpZGUgYSBjbGVhbiBoYXJk
+d2FyZSBzdGF0ZS4gVGhlCmRyaXZlciBjYW4gZG8gd2hhdGV2ZXIgaXQgd2FudHMgdG8gdGhlIGNs
+b2NrcyBhbmQgcmVzZXQgYXMgbG9uZyBhcwp0aGF0J3MgY29ycmVjdCBwcm9jZWR1cmUuCgo+Cj4g
+CTEpIGRldmljZS0+c3VzcGVuZAo+IAkyKSBkb21haW4tPnN1c3BlbmQKPgo+IGFuZCBmb3IgcmVz
+dW1lOgo+Cj4gCTEpIGRvbWFpbi0+cmVzdW1lCj4gCTIpIGRldmljZS0+cmVzdW1lCj4KPiBCdXQg
+dGhlbiB3ZSdyZSBiYWNrIHRvIHNxdWFyZSBvbmUsIG5hbWVseSB0aGF0IHRoZSBNQyBmbHVzaCBk
+b2Vzbid0IHdvcmsKPiBwcm9wZXJseSwgc2luY2UgaXQgbmVlZHMgdG8gYmUgaW1wbGVtZW50ZWQg
+aW4gZG9tYWluLT5zdXNwZW5kLiBEb2VzIHRoYXQKPiBtZWFuIHdlIGNhbid0IGNsb2NrLWdhdGUg
+bW9kdWxlcz8gSW4gb3JkZXIgdG8gZW5zdXJlIGEgcHJvcGVyIHBvd2VyZ2F0ZQo+IHNlcXVlbmNl
+LCB0aGUgZG9tYWluIGNvZGUgd291bGQgbmVlZCB0byBjbGtfZW5hYmxlKCkgdGhlIG1vZHVsZSBj
+bG9jayB0bwo+IG1ha2Ugc3VyZSBpdCBzdGF5cyBvbiBkdXJpbmcgdGhlIHJlc2V0IHNlcXVlbmNl
+LiBCdXQgaWYgdGhlIGRvbWFpbiBjb2RlCj4gaGFzIGEgcmVmZXJlbmNlIHRvIHRoZSBjbG9jaywg
+dGhlbiB0aGUgZHJpdmVyIGNhbid0IGNsb2NrLWdhdGUgdGhlCj4gbW9kdWxlIGFueW1vcmUgYnkg
+Y2FsbGluZyBjbGtfZGlzYWJsZSgpLgpUaGUgbW9kdWxlIGNhbiBkZWZpbml0ZWx5IGZsdXNoIGl0
+cyBtZW1vcnkgY2xpZW50IHdoZW4gdGhlIGRyaXZlciB3YW50cwp0byByZXNldCB0aGUgbW9kdWxl
+LgoKZS5nLgpUaGUgVkVOQyBkb21haW4gbmVlZHMgdG8gZmx1c2ggc3dncm91cCBJU1AsIElTUEIs
+IFZJIGZvciBkb21haW4gZ2F0aW5nLgpUaGUgSVNQIG1vZHVsZSBvbmx5IG5lZWRzIHRvIGZsdXNo
+IHN3Z3JvdXAgSVNQIHdoZW4gcmVzZXQuCgpUaGF0IG1lYW5zIHdlIGhhdmUgdG8gZGVmaW5lICJu
+dmlkaWEsc3dncm91cCA9IDwmcG1jIElTUD4iIGZvciBib3RoCm9mIHRoZSBkb21haW4gVkVOQyBh
+bmQgbW9kdWxlIElTUC4KCkJlc2lkZXMgdGhhdCBsYXN0IHN0ZXAgaW4gdGhlIHVuLXBvd2VyZ2F0
+aW5nIHNlcXVlbmNlIGlzIGRpc2FibGluZyBhbGwKdGhlIG1vZHVsZSBjbG9ja3MuIFRoZSBtb2R1
+bGUgZHJpdmVyIGhhcyB0byBlbmFibGUgaXQncyBtb2R1bGUgY2xvY2sKbGF0ZXIgaWYgbmVlZCBi
+ZS4gU28gdGhlcmUgaXMgbm8gY2xvY2sgcmVmZXJlbmNlIHByb2JsZW0uCgpUaGFua3MsClZpbmNl
+Cgo+Cj4gQW0gSSBtaXNzaW5nIHNvbWV0aGluZz8KPgo+IFRoaWVycnkKPgo+ICogVW5rbm93biBL
+ZXkKPiAqIDB4N0YzRUIzQTEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fCk5vdXZlYXUgbWFpbGluZyBsaXN0Ck5vdXZlYXVAbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9ub3V2ZWF1
+Cg==
