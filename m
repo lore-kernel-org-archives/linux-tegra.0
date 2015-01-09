@@ -1,12 +1,13 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] ARM: tegra: Fix unit address for Cortex-A9 TWD timer
-Date: Fri, 9 Jan 2015 11:46:33 +0100
-Message-ID: <20150109104632.GH27845@ulmo>
-References: <1420719873-9820-1-git-send-email-thierry.reding@gmail.com>
+Subject: [PATCH v3 3/3] soc/tegra: fuse: Add Tegra132 support
+Date: Fri,  9 Jan 2015 11:49:33 +0100
+Message-ID: <1420800573-16385-1-git-send-email-thierry.reding@gmail.com>
+References: <1420707308-6974-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0655706930618802186=="
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1420719873-9820-1-git-send-email-thierry.reding@gmail.com>
+In-Reply-To: <1420707308-6974-1-git-send-email-thierry.reding@gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -17,70 +18,49 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-tegra@vger.kernel.org
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org, Stephen Warren <swarren@wwwdotorg.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Paul Walmsley <paul@pwsan.com>, Vince Hsu <vinceh@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding@nvidia.com>
 
---===============0655706930618802186==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="/Gk0KcsbyUMelFU1"
-Content-Disposition: inline
+Tegra132 is very similar to Tegra124 from a peripheral point of view and
+uses the same fuse controller.
 
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+Changes in v3:
+- collapse TEGRA124 and TEGRA132 cases into a single one (Alex Courbot)
 
---/Gk0KcsbyUMelFU1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Changes in v2:
+- add missing break in Tegra132 case for legacy fuse init (Vince Hsu)
+---
+ drivers/soc/tegra/fuse/fuse-tegra.c   | 1 +
+ drivers/soc/tegra/fuse/fuse-tegra30.c | 1 +
+ 2 files changed, 2 insertions(+)
 
-On Thu, Jan 08, 2015 at 01:24:33PM +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
->=20
-> The Cortex-A9 TWD timer has registers at address 0x50040600, but the
-> unit address was 50004600, most likely a typo.
->=20
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  arch/arm/boot/dts/tegra20.dtsi | 2 +-
->  arch/arm/boot/dts/tegra30.dtsi | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-
-I've applied this to the for-3.20/dt branch.
-
-Thierry
-
---/Gk0KcsbyUMelFU1
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJUr7GIAAoJEN0jrNd/PrOhf4MQAJXfPT+qJvWSyJVAkrMC0tU7
-Mbn6+x3N+wNnaSfirpgcieM8xkcNf/xAw07zYimnLNtIKustFiP6ror93zcEhTIM
-lDVCbax9Au0epx50eKmCLx6r+0S7Sn6cOjFHmdrWx1PijfLstPuY8lMqd4JUfpi+
-NU3IN/keofjANmZQ/Vy7I3KrVk5joK40RLwPjD0gPhvf7hB957jlveYEBcZkGns6
-kXWa8Ln32juz/KFyKf1rjgc+8VZznTfwk1xv1E282cbln7pbICnTXIcxL8XG0axV
-cRZEz73ExEugZq2ICcuZ5LnroTSzPONDNb5dkDv+/+lcf2l5TfQzIyikCCyGlyv9
-Fxp4qjn1HSBSJcTWHmFpTgkVvljMyAvakzfas4QuCFcxTkqTo2wjX1LZWnrZwJb+
-D4/nHh1rMu4UaWny2FLqkiweLslP3OTPCC++nlPvcezpnL8KaT2BCSXZ3BpcLbup
-vSpIY8dq2xHxcAoGvRFsWWOwviIzuUOW+SGrc40xOllh18k+1f5+uzpZEhAwcVmR
-6h8IWkVPkV7zJbBW3belRPk0qVzeza/ewpvxxOXAnIw7uXRuAP095/ma1DGPjiDs
-VDeHzMDPVPh/AGQQ/AJOYrw1wcGToyjR+Yz6wpYksgpebJY10Nc0ZTFcFY9/TP1b
-WsWbkl1VNp3gnnHS6CMu
-=hv9N
------END PGP SIGNATURE-----
-
---/Gk0KcsbyUMelFU1--
-
-
---===============0655706930618802186==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============0655706930618802186==--
+diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
+index 011a3363c265..c0d660f1aaac 100644
+--- a/drivers/soc/tegra/fuse/fuse-tegra.c
++++ b/drivers/soc/tegra/fuse/fuse-tegra.c
+@@ -81,6 +81,7 @@ static const struct of_device_id car_match[] __initconst = {
+ 	{ .compatible = "nvidia,tegra30-car", },
+ 	{ .compatible = "nvidia,tegra114-car", },
+ 	{ .compatible = "nvidia,tegra124-car", },
++	{ .compatible = "nvidia,tegra132-car", },
+ 	{},
+ };
+ 
+diff --git a/drivers/soc/tegra/fuse/fuse-tegra30.c b/drivers/soc/tegra/fuse/fuse-tegra30.c
+index d1a4290cda5c..4d2f71bf65c5 100644
+--- a/drivers/soc/tegra/fuse/fuse-tegra30.c
++++ b/drivers/soc/tegra/fuse/fuse-tegra30.c
+@@ -182,6 +182,7 @@ static void __init legacy_fuse_init(void)
+ 		fuse_info = &tegra114_info;
+ 		break;
+ 	case TEGRA124:
++	case TEGRA132:
+ 		fuse_info = &tegra124_info;
+ 		break;
+ 	default:
+-- 
+2.1.3
