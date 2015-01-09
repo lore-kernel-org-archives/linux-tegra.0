@@ -1,10 +1,9 @@
-From: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+From: Thierry Reding <thierry.reding@gmail.com>
 Subject: Re: [PATCH] timekeeping: Move persistent clock registration code
  from ARM to kernel
-Date: Fri, 9 Jan 2015 13:59:07 +0000
-Message-ID: <20150109135907.GF12942@leverpostej>
-References: <1415388855-35074-1-git-send-email-anatol.pomozov@gmail.com>
- <20141110095325.GC12126@ulmo>
+Date: Fri, 9 Jan 2015 15:09:04 +0100
+Message-ID: <20150109140902.GA7526@ulmo.nvidia.com>
+References: <20141110095325.GC12126@ulmo>
  <CAOMFOmXpAm5iKCLFyorTW+n9YmgZMmrDGGe736tJX8C6BYQv-A@mail.gmail.com>
  <alpine.DEB.2.11.1411132334400.3935@nanos>
  <CAOMFOmVziftM=pWGG-L9J-E6AHYAK7k9bmBcpS1adPboLciX9g@mail.gmail.com>
@@ -13,61 +12,103 @@ References: <1415388855-35074-1-git-send-email-anatol.pomozov@gmail.com>
  <alpine.DEB.2.11.1411150154280.3909@nanos>
  <alpine.DEB.2.11.1411150212210.3909@nanos>
  <20150109094913.GB27845@ulmo>
+ <20150109135907.GF12942@leverpostej>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ew6BAiZeqk4r7MaW"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20150109094913.GB27845@ulmo>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Anatol Pomozov <anatol.pomozov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, John Stultz <john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, marc.zyngier-5wv7dgnIgG8@public.gmane.org
+In-Reply-To: <20150109135907.GF12942@leverpostej>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Anatol Pomozov <anatol.pomozov@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Russell King <linux@arm.linux.org.uk>, LKML <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Tony Lindgren <tony@atomide.com>, John Stultz <john.stultz@linaro.org>, Paul Walmsley <paul@pwsan.com>, marc.zyngier@arm.com
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jan 09, 2015 at 09:49:14AM +0000, Thierry Reding wrote:
-> On Sat, Nov 15, 2014 at 02:38:00AM +0100, Thomas Gleixner wrote:
-> > On Sat, 15 Nov 2014, Thomas Gleixner wrote:
-> > > On Fri, 14 Nov 2014, Anatol Pomozov wrote:
-> > > > On Fri, Nov 14, 2014 at 4:18 PM, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org> wrote:
-> > > > >> So what I suppose to do with my patch? If it does not work could
-> > > > >> anyone provide patch that removes ARM arch dependency from
-> > > > >> tegra20_timer.c?
-> > > > >
-> > > > > Huch? You want other people to solve your problems?
-> > > > 
-> > > > This is not the point. I provided patch that fixes the issue. Other
-> > > > people said that they have ideas how to do it different (and better)
-> > > > way. So I am asking to share these ideas represented as a patch.
-> > > 
-> > > That's not the way it works.
-> > > 
-> > > You sent a patch to solve an problem which you are facing.
-> > > 
-> > > Now the people who review the patch think that there is a better
-> > > approach than moving code from arm/ to the timekeeping core code.
-> > > 
-> > > So it's up to you to come up with a patch which solves the problem in
-> > > the right way.
-> > 
-> > And just for the record this whole thing is just hilarious.
-> > 
-> > ARM64 selects ARM_ARCH_TIMER which registers the architected timer as
-> > the primary clocksource.
-> > 
-> > Now that timer has the following flag set:
-> > 
-> >     CLOCK_SOURCE_SUSPEND_NONSTOP
-> > 
-> > And that flag causes the core timekeeping code to use the clocksource
-> > to figure out the time which the machine spent in suspend.
-> 
-> As I understand it the architected timer will be turned off along with
-> the rest of the CPU complex on Tegra. I'm not sure if that's specific to
-> Tegra or something that other SoCs may do as well.
 
-That doesn't sound right to me: the architecture specifies that the
-system counter must be implemented in an always-on power domain.
+--ew6BAiZeqk4r7MaW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Note that that only applies to the counter, not the timers (as the
-comparators can be turned off with the CPUs).
+On Fri, Jan 09, 2015 at 01:59:07PM +0000, Mark Rutland wrote:
+> On Fri, Jan 09, 2015 at 09:49:14AM +0000, Thierry Reding wrote:
+> > On Sat, Nov 15, 2014 at 02:38:00AM +0100, Thomas Gleixner wrote:
+> > > On Sat, 15 Nov 2014, Thomas Gleixner wrote:
+> > > > On Fri, 14 Nov 2014, Anatol Pomozov wrote:
+> > > > > On Fri, Nov 14, 2014 at 4:18 PM, Thomas Gleixner <tglx@linutronix=
+=2Ede> wrote:
+> > > > > >> So what I suppose to do with my patch? If it does not work cou=
+ld
+> > > > > >> anyone provide patch that removes ARM arch dependency from
+> > > > > >> tegra20_timer.c?
+> > > > > >
+> > > > > > Huch? You want other people to solve your problems?
+> > > > >=20
+> > > > > This is not the point. I provided patch that fixes the issue. Oth=
+er
+> > > > > people said that they have ideas how to do it different (and bett=
+er)
+> > > > > way. So I am asking to share these ideas represented as a patch.
+> > > >=20
+> > > > That's not the way it works.
+> > > >=20
+> > > > You sent a patch to solve an problem which you are facing.
+> > > >=20
+> > > > Now the people who review the patch think that there is a better
+> > > > approach than moving code from arm/ to the timekeeping core code.
+> > > >=20
+> > > > So it's up to you to come up with a patch which solves the problem =
+in
+> > > > the right way.
+> > >=20
+> > > And just for the record this whole thing is just hilarious.
+> > >=20
+> > > ARM64 selects ARM_ARCH_TIMER which registers the architected timer as
+> > > the primary clocksource.
+> > >=20
+> > > Now that timer has the following flag set:
+> > >=20
+> > >     CLOCK_SOURCE_SUSPEND_NONSTOP
+> > >=20
+> > > And that flag causes the core timekeeping code to use the clocksource
+> > > to figure out the time which the machine spent in suspend.
+> >=20
+> > As I understand it the architected timer will be turned off along with
+> > the rest of the CPU complex on Tegra. I'm not sure if that's specific to
+> > Tegra or something that other SoCs may do as well.
+>=20
+> That doesn't sound right to me: the architecture specifies that the
+> system counter must be implemented in an always-on power domain.
+>=20
+> Note that that only applies to the counter, not the timers (as the
+> comparators can be turned off with the CPUs).
 
-Mark.
+I'll let Paul comment on this, since I don't know the intimate details.
+Of course if the system counter is indeed active across suspend/resume
+then it doesn't seem like we'd need the Tegra timer at all on 64-bit.
+Unless of course if we use it for something else.
+
+Thierry
+
+--ew6BAiZeqk4r7MaW
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUr+D+AAoJEN0jrNd/PrOhmx8QALdxEZj6dRHdO0uIdaRYLH+P
+xlRpN+ClAhVje3e+++oFoJ18Zw+RYuR2b5riBn07PULG9qxpvCnSg77rCZziSEzZ
+RXTYplY27VB+VFwOsmeVPS28c3YxXAPNJxpDZM1ibnzF2htg9gKNoDBiepV63BKv
+eSRf212/Fgc09z/Yyr7LaVFdFElOySNh5717S3m8x8MLkLQnMloorZy1qlnp4DGm
+KV3m9QLUcnFfCJXna4YHzTAIaWfipX0CmXC+vWH15nZtexdV+yJXSJAx1Ak1vSpY
+3RtSJ3asLoSVqfNFEZtvI9cgNMoXTsg4hpNnmjO9zsv7RTMgWSR5XwqYJIhkU6HF
+opiP5EPeaG5ZTBbVOL6gw8XSCQsbJyOYRjDQRa4V/H83CcJQa2MnAWtizURGXcZx
+ln2/ML2C5z8ILQOee/wRH7F8jmHrjktC3PFns0ffFlihZEt/K7+5kxT0KeHxQF+q
+auYCirqgeul6pqcBpperZ6bI15shDMyZldeEup7eT6Mwn2NOApGLd+m7QQHF3kQj
+lRpS+gfurwZ5FaK1tIjGejebB+L9vJcuTirKGSbF2sABC7eVyat6m8h4fj7EhTa8
+TGyEhWWcji2LmMglTIk4NZ9lGPrCWKBU+HpSGDT9HVjElfnHjV0EERP4Yt8icC1T
+nuYNUxQNoi2wAJHNd5Mo
+=5LVO
+-----END PGP SIGNATURE-----
+
+--ew6BAiZeqk4r7MaW--
