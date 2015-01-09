@@ -1,61 +1,86 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v5 1/3] of: Add binding for NVIDIA Tegra ACTMON node
-Date: Fri, 9 Jan 2015 19:44:16 +0900
-Message-ID: <CAAVeFu+E-7YooJ=9jVXe48wb_hQi3qFmuo=mB_OzKcSEhRbX+g@mail.gmail.com>
-References: <1418719298-25314-1-git-send-email-tomeu.vizoso@collabora.com> <1418719298-25314-2-git-send-email-tomeu.vizoso@collabora.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] ARM: tegra: Fix unit address for Cortex-A9 TWD timer
+Date: Fri, 9 Jan 2015 11:46:33 +0100
+Message-ID: <20150109104632.GH27845@ulmo>
+References: <1420719873-9820-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1418719298-25314-2-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Cc: "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============0655706930618802186=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1420719873-9820-1-git-send-email-thierry.reding@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-tegra@vger.kernel.org
+Cc: Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org, Stephen Warren <swarren@wwwdotorg.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Dec 16, 2014 at 5:41 PM, Tomeu Vizoso
-<tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org> wrote:
-> This block gathers statistics about various counters and can be configured to
-> fire interrupts when thresholds are crossed.
->
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
->
+
+--===============0655706930618802186==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="/Gk0KcsbyUMelFU1"
+Content-Disposition: inline
+
+
+--/Gk0KcsbyUMelFU1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Jan 08, 2015 at 01:24:33PM +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+>=20
+> The Cortex-A9 TWD timer has registers at address 0x50040600, but the
+> unit address was 50004600, most likely a typo.
+>=20
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->
-> v2:     * Add operating-points property
-> ---
->  .../devicetree/bindings/arm/tegra/actmon.txt       | 38 ++++++++++++++++++++++
->  1 file changed, 38 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/tegra/actmon.txt
->
-> diff --git a/Documentation/devicetree/bindings/arm/tegra/actmon.txt b/Documentation/devicetree/bindings/arm/tegra/actmon.txt
-> new file mode 100644
-> index 0000000..b4069df
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/tegra/actmon.txt
-> @@ -0,0 +1,38 @@
-> +Tegra124 Activity Monitor driver
+>  arch/arm/boot/dts/tegra20.dtsi | 2 +-
+>  arch/arm/boot/dts/tegra30.dtsi | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 
-Device Tree describes hardware and is supposed to be
-driver-independant, so that "driver" qualifier sounds weird to me -
-maybe remove it?
+I've applied this to the for-3.20/dt branch.
 
-> +
-> +Required properties:
-> +
-> +- compatible: should be "nvidia,tegra124-actmon"
-> +- reg: offset and length of the register set for the device
-> +- interrupts: standard interrupt property
-> +- clocks: Must contain a phandle and clock specifier pair for each entry in clock-names. See ../clock/clock-bindings.txt for details.
+Thierry
 
-Mmm, shouldn't this line be wrapper at character 80? Same throughout this file.
+--/Gk0KcsbyUMelFU1
+Content-Type: application/pgp-signature
 
-Also from this file the correct patch to clock-bindings.txt is
-../../clock/clock-bindings.txt (same for reset.txt later).
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Otherwise,
+iQIcBAEBAgAGBQJUr7GIAAoJEN0jrNd/PrOhf4MQAJXfPT+qJvWSyJVAkrMC0tU7
+Mbn6+x3N+wNnaSfirpgcieM8xkcNf/xAw07zYimnLNtIKustFiP6ror93zcEhTIM
+lDVCbax9Au0epx50eKmCLx6r+0S7Sn6cOjFHmdrWx1PijfLstPuY8lMqd4JUfpi+
+NU3IN/keofjANmZQ/Vy7I3KrVk5joK40RLwPjD0gPhvf7hB957jlveYEBcZkGns6
+kXWa8Ln32juz/KFyKf1rjgc+8VZznTfwk1xv1E282cbln7pbICnTXIcxL8XG0axV
+cRZEz73ExEugZq2ICcuZ5LnroTSzPONDNb5dkDv+/+lcf2l5TfQzIyikCCyGlyv9
+Fxp4qjn1HSBSJcTWHmFpTgkVvljMyAvakzfas4QuCFcxTkqTo2wjX1LZWnrZwJb+
+D4/nHh1rMu4UaWny2FLqkiweLslP3OTPCC++nlPvcezpnL8KaT2BCSXZ3BpcLbup
+vSpIY8dq2xHxcAoGvRFsWWOwviIzuUOW+SGrc40xOllh18k+1f5+uzpZEhAwcVmR
+6h8IWkVPkV7zJbBW3belRPk0qVzeza/ewpvxxOXAnIw7uXRuAP095/ma1DGPjiDs
+VDeHzMDPVPh/AGQQ/AJOYrw1wcGToyjR+Yz6wpYksgpebJY10Nc0ZTFcFY9/TP1b
+WsWbkl1VNp3gnnHS6CMu
+=hv9N
+-----END PGP SIGNATURE-----
 
-Reviewed-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--/Gk0KcsbyUMelFU1--
+
+
+--===============0655706930618802186==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============0655706930618802186==--
