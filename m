@@ -1,50 +1,66 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFT PATCH 1/2] i2c: tegra: update CONFIG_LOAD for new conifiguration
-Date: Thu, 9 Jul 2015 11:10:24 +0530
-Message-ID: <559E0948.1050004@nvidia.com>
-References: <1435661667-11554-1-git-send-email-ldewangan@nvidia.com> <559D89D8.50500@wwwdotorg.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: Re: [PATCH] IOMMU-Tegra: gart: Delete an unnecessary check before the
+ function call "vfree"
+Date: Fri, 9 Jan 2015 07:58:16 +0100
+Message-ID: <559E1B88.5030005@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <54D3A1A9.9040709@users.sourceforge.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <559D89D8.50500-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org
-Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, andrewc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chaitanya Bandi <bandik-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <kernel-janitors-owner@vger.kernel.org>
+In-Reply-To: <54D3A1A9.9040709@users.sourceforge.net>
+Sender: kernel-janitors-owner@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>, Hiroshi Doyu <hdoyu@nvidia.com>, =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 List-Id: linux-tegra@vger.kernel.org
 
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 5 Feb 2015 17:54:16 +0100
+> 
+> The vfree() function performs also input parameter validation.
+> Thus the test around the call is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/iommu/tegra-gart.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
+> index f722a0c..07a795a 100644
+> --- a/drivers/iommu/tegra-gart.c
+> +++ b/drivers/iommu/tegra-gart.c
+> @@ -404,8 +404,7 @@ static int tegra_gart_remove(struct platform_device *pdev)
+>  	struct gart_device *gart = platform_get_drvdata(pdev);
+>  
+>  	writel(0, gart->regs + GART_CONFIG);
+> -	if (gart->savedata)
+> -		vfree(gart->savedata);
+> +	vfree(gart->savedata);
+>  	gart_handle = NULL;
+>  	return 0;
+>  }
+> 
 
-On Thursday 09 July 2015 02:06 AM, Stephen Warren wrote:
-> On 06/30/2015 04:54 AM, Laxman Dewangan wrote:
->>
->>
->> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> Signed-off-by: Chaitanya Bandi <bandik-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> I'm not sure why Chaitanya's S-o-b is there and listed last if he's 
-> not the patch author. If he wrote the patch, he should be the git 
-> author and his S-o-b should be first. If he didn't and you simply 
-> based this patch on work by Chaitanya, then his S-o-b probably 
-> shouldn't be present, and yours would be last since you're submitting 
-> the patch.
+Would you like to integrate this update suggestion
+into another source code repository?
 
-The patch I created is based on Chaitanya's work, edited on his work to 
-match with mainline.
-
->
->> ---
->> Stephen/Andrew,
->> I need help on testing this on other platform. I tested this on T210.
->
-> I'm puzzled how this was tested on T210, since it isn't supported 
-> upstream yet.
-
-We tested this as:
-- K318 kernel release + i2c subsystem from linux-next in downstream boards.
-- Chrome-OS team on smaug with their tree.
-
-
-> The series,
-> Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Thanks for testing.
+Regards,
+Markus
