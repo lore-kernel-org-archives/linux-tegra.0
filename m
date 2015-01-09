@@ -1,161 +1,100 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] ARM: tegra: Use PMC scratch register 40 for
- tegra_resume() location store
-Date: Fri, 9 Jan 2015 10:51:35 +0100
-Message-ID: <20150109095134.GC27845@ulmo>
-References: <1419202392-1159-1-git-send-email-digetx@gmail.com>
- <54984429.8040905@wwwdotorg.org> <5498549B.8070101@gmail.com>
- <54985C30.7020605@wwwdotorg.org>
- <20150108105742.GI1987@ulmo.nvidia.com>
- <20150108123709.GX10073@tbergstrom-lnx.Nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH RFC V3 2/3] mxs: add driver for ocotp in i.MX23 and i.MX28
+Date: Fri, 9 Jan 2015 11:02:07 +0100
+Message-ID: <20150109100206.GE27845@ulmo>
+References: <1413628372-2809-1-git-send-email-stefan.wahren@i2se.com>
+ <2223659.OW08fe0cS1@wuerfel>
+ <1003885907.22061.1415301932743.JavaMail.open-xchange@oxbsltgw00.schlund.de>
+ <6087001.lBonPVHV5K@wuerfel>
+ <54AE8D45.7050805@imgtec.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0718432712155227838=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20150108123709.GX10073@tbergstrom-lnx.Nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Russell King <linux@arm.linux.org.uk>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Christoffer Dall <christoffer.dall@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org, Haojian Zhuang <haojian.zhuang@gmail.com>, stable@vger.kernel.org, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, Shawn Guo <shawn.guo@linaro.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ZInfyf7laFu/Kiw7"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <54AE8D45.7050805-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ezequiel Garcia <ezequiel.garcia-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>, mhei-Z/Lg1yOAjpkb1SvskN2V4Q@public.gmane.org, shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, festevam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, James Hartley <james.hartley-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Naidu Tellapati <Naidu.Tellapati-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============0718432712155227838==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="L6iaP+gRLNZHKoI4"
-Content-Disposition: inline
-
-
---L6iaP+gRLNZHKoI4
-Content-Type: text/plain; charset=utf-8
+--ZInfyf7laFu/Kiw7
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 08, 2015 at 02:37:09PM +0200, Peter De Schrijver wrote:
-> On Thu, Jan 08, 2015 at 11:57:43AM +0100, Thierry Reding wrote:
-> > * PGP Signed by an unknown key
+On Thu, Jan 08, 2015 at 10:59:33AM -0300, Ezequiel Garcia wrote:
+> Hi Stefan, Arnd,
+>=20
+> (I'm trimming the Cc list and adding Thierry and Maxime to the loop):
+>=20
+> On 11/06/2014 04:47 PM, Arnd Bergmann wrote:
+> [..]
+> >>
+> >> i don't have a answer to this question, but how about changing fsl_oco=
+tp driver
+> >> to driver/soc/mxs/fuse with a similiar binary interface like the tegra=
+ ones.
+> >>
+> >> Does it make sense to you?
 > >=20
-> > On Mon, Dec 22, 2014 at 11:00:16AM -0700, Stephen Warren wrote:
-> > > On 12/22/2014 10:27 AM, Dmitry Osipenko wrote:
-> > > >22.12.2014 19:17, Stephen Warren =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > > >>On 12/21/2014 03:52 PM, Dmitry Osipenko wrote:
-> > > >>>Commit 7232398abc6a ("ARM: tegra: Convert PMC to a driver") changed
-> > > >>>tegra_resume()
-> > > >>>location storing from late to early and as result broke suspend on=
- tegra20.
-> > > >>>PMC scratch register 41 was used by tegra lp1 suspend core code fo=
-r storing
-> > > >>>physical memory address of common resume function and in the same =
-time used by
-> > > >>>tegra20 cpuidle driver for storing cpu1 "resettable" status, so it=
- implied
-> > > >>>strict order of scratch register use. Fix it by using scratch 40 i=
-nstead of 41
-> > > >>>for tegra_resume() location store.
-> > > >>
-> > > >>You likely can't simply change the PMC scratch register usage arbit=
-rarily;
-> > > >>specific registers are designated for specific purposes, and code o=
-utside the
-> > > >>Linux kernel (bootloaders, LP0 resume code, secure monitors, etc.) =
-may depend on
-> > > >>those specific values being in those registers. Without significant=
- research,
-> > > >>I'd suggest not changing the PMC scratch register usage.
-> > > >
-> > > >Sure, that's why I asked to verify if scratch register 40 is in use =
-in the
-> > > >comment after commit message.
-> > >=20
-> > > Sorry, I didn't notice that.
-> > >=20
-> > > >I've checked that u-boot doesn't use it (since
-> > > >upstream kernel doesn't care about any other bootloader), but no ide=
-a about
-> > > >secure monitor. It's definitely safer to avoid changing scratch regs=
- usage, I
-> > > >thought that proposed solution would be best from the pure code poin=
-t of view.
-> > > >So, I'm considering your answer as a rejection of the patch (please,=
- let me know
-> > > >if I'm wrong) and will prepare another one. Btw, it would be nice to=
- have
-> > > >scratch registers usage publicly documented somewhere (on "Tegra Pub=
-lic
-> > > >Application Notes" webpage for example), if it's possible, of course.
-> > >=20
-> > > At this stage in Tegra20 development, I think it'd be best to avoid c=
-hanging
-> > > any scratch register usage if at all possible.
-> >=20
-> > Sorry, I had completely missed this discussion. When looking at the code
-> > it doesn't look like this particular "resettable" status needs to be
-> > stored in a PMC scratch register. It can't be stored in RAM because that
-> > goes into self-refresh as part of LP1, but how about just putting it
-> > into IRAM? That stays on in both LP1 and LP2, so should be suitable for
-> > this use-case. It would make the code slightly more complex but using a
-> > single scratch register for multiple purposes sounds brittle and easy to
-> > break (as evidenced by the offending commit).
-> >=20
-> > Otherwise it would seem that PMC_SCRATCH40 is only used to store EMC
-> > configuration data across LP0 suspend/resume, so I wouldn't think it'd
-> > cause problems if we used that instead of PMC_SCRATCH41 to store the
-> > "resettable" state.
+> > I haven't looked at the drivers, so I don't know if the tegra interface
+> > is any better or worse than the others. Changing everyone to have the s=
+ame
+> > interface is definitely a good idea, but of course only if the unified
+> > interface is a good one ;-)
 > >=20
 >=20
-> No. Usually the scratch registers for EMC config data are setup once by t=
-he
-> bootloader and never touched by the kernel after that. So I would not
-> recommend reusing those registers for different purposes.
+> I'm in the process of finding a suitable upstream path for a new eFuse dr=
+iver
+> for fuses used on Imagination Technologies SoCs.
+>=20
+> This was our last proposal, which follows Tegra's work:
+>=20
+> http://www.spinics.net/lists/devicetree/msg59246.html
+>=20
+> However, Arnd was reluctant to take yet another efuse driver under driver=
+s/soc
+> and proposed instead to try to find a unified API. We've had numerous fuse
+> drivers (tegra, sunxi, imx and img) appearing, so his concern certainly m=
+akes
+> sense.
+>=20
+> I've talked to Arnd on IRC and we agreed to create a new directory
+> drivers/efuse. As a first step we would just move the tegra driver,
+> and add the new drivers (img on my side, and possibly mxs on Stefan's).
+> Perhaps we would also pull the sunxi_sid driver as well.
+>=20
+> Having the drivers together would allow us to come up with a unified API
+> as follow up work.
+>=20
+> How does this sound? If you have no objections to this, I can go ahead and
+> try to prepare some RFCs.
 
-Right, I misread the code in the downstream kernel. Though it's not the
-bootloader that does it (at least on Tegra20), but some early code in
-the kernel.
-
-IRAM sounds like a good candidate still. Or do you know of anything that
-would exclude IRAM as storage location for this data?
+No objections from me. Adding Peter and linux-tegra for visibility.
 
 Thierry
 
---L6iaP+gRLNZHKoI4
+--ZInfyf7laFu/Kiw7
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUr6SmAAoJEN0jrNd/PrOhxXgP+waskskvbs0ofYeYrnkPG4df
-MF9kVm2KgrEFyOnS4TsIvi26KUqjLHBzNm/e2UdouzmdUj6tB56sUzxBAHb3/2ZB
-b0AKsTSuSQrA5QhHxE+7h9KL1wElO4I7W9yAhZoi2ALSzMIThzTD7VS+kQw6vHYQ
-ENaqOg9c6K29N/dfULVFCoU3cOl7o1796wcZ4M4M23s5arUyoybqfSSoh3gE2Ugt
-gs/h+pfCJJU7vNsH/WGWyQMlCVs5bQU/z0AdCnCTOPmQ8HFKP7vc2YM6IrvJcTgd
-C7PMXXJfdV4TnnPIWL8S1XpMflqFF/CpjPR1jzbSuTJOSvj7Mmn7FtKe785qtvHF
-KOSb4SkE6wBZS8bJJOXxh55uZ+31jjB13lOjMlGMsCZCVn3VHLwhlxjA4X6xIJCp
-XBuDz9h79qlmBzc4v+tPAA0vAMTukpI/UvpG1d9j4chqGAytqY8e6hN5QHad/k64
-IwFGTWuXjL02JeNg7sfNqCBKPYBE/up/75n59rHHtEjZP+YnNrmajlyOksP4nzhw
-VIrYu9E/3i0Oa/Mgg1W38We411p0quVIploBrH80cUAtUedKlE8nba4LGn97xXQP
-yXYfaxUuuXyuNRSr9YCkBl3EZ2hZw+W9V6e0MQyCc+qPZEf44rBrs76/3lBxwPQP
-zVJDk37yHcAAUrgNIdK5
-=BAQA
+iQIcBAEBAgAGBQJUr6ceAAoJEN0jrNd/PrOhjLUQAKwyQ/6g6FpUywRJX0Xyit+G
+QDhofo8nDA5myoDOgw+o+19A5v05gXLaxKxe1cW7ge1mPLSD3kn+gHdKM2wC2Tam
+ircaEVfRan3uE1wIWko5kB17Lx2NdpoBAgHTKlrgF18MmzlcWbnvxi+x6YVC+hdI
+h42KB6STtHSvZvVZMoQHe+JcsoJIjOWiXQRTo645mf62AYMbZEiwvGxsq5WnJJSA
+ej7XAVVBDqYhqF70D0RS4zUVOj34vA8tVhBksXj89Jx1FH+Sv2LZGfi7lY+megfl
+w6PrX0Dh8CPJ8nmmjULGFG3zPKmAE8Zj9vQyDFO8mwTEWd2VOeK+Uv9u8tY8O2Y0
+0QLBBBCy2P/s6X5DJxXZ1C763gzYp27yLevXegzjKORRFDPkcUzqWExU1x+wiKGS
+d3nb0O7TwXT11zR2XKg42RMJjU9IoP2rwPH/pfuZYNN26zFltHo/TqHGoB7fAiKl
+Nmvfba8Tdox3bZN2gEB7Y/lDnaLm5sIqhN3NnaxoMLFWduclXF5oXDZy0Vjc/P+d
+Ab59nrWTVGLlrRoiZTjfWtJBlIhx+pc09+wQIAvJth4fUZKE4f8ufzRBKdBXWPtZ
+YWW9+rb7HEkDkL13pNlXpFzw37UGwDv8MSycSbdJn0Q3W+ba4h7ndoI+XuEFQEAQ
+oJztMSdrCSIcgJtIzwJt
+=w2AH
 -----END PGP SIGNATURE-----
 
---L6iaP+gRLNZHKoI4--
-
-
---===============0718432712155227838==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============0718432712155227838==--
+--ZInfyf7laFu/Kiw7--
