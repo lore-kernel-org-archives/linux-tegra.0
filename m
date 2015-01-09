@@ -1,91 +1,131 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v2] soc/tegra: pmc: Add Tegra132 support
-Date: Fri,  9 Jan 2015 11:15:33 +0100
-Message-ID: <1420798533-4036-1-git-send-email-thierry.reding@gmail.com>
-References: <1420701657-32543-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1420701657-32543-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH] ARM: tegra: Use PMC scratch register 40 for
+ tegra_resume() location store
+Date: Fri, 9 Jan 2015 12:29:22 +0200
+Message-ID: <20150109102922.GC10073@tbergstrom-lnx.Nvidia.com>
+References: <1419202392-1159-1-git-send-email-digetx@gmail.com>
+ <54984429.8040905@wwwdotorg.org>
+ <5498549B.8070101@gmail.com>
+ <54985C30.7020605@wwwdotorg.org>
+ <20150108105742.GI1987@ulmo.nvidia.com>
+ <20150108123709.GX10073@tbergstrom-lnx.Nvidia.com>
+ <20150109095134.GC27845@ulmo>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20150109095134.GC27845@ulmo>
+Sender: stable-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, linux-arm-kernel@lists.infradead.org, Alexandre Courbot <gnurou@gmail.com>, Russell King <linux@arm.linux.org.uk>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org, Haojian Zhuang <haojian.zhuang@gmail.com>, stable@vger.kernel.org, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, Shawn Guo <shawn.guo@linaro.org>, Christoffer Dall <christoffer.dall@linaro.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Fri, Jan 09, 2015 at 10:51:35AM +0100, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+>=20
+> On Thu, Jan 08, 2015 at 02:37:09PM +0200, Peter De Schrijver wrote:
+> > On Thu, Jan 08, 2015 at 11:57:43AM +0100, Thierry Reding wrote:
+> > > > Old Signed by an unknown key
+> > >=20
+> > > On Mon, Dec 22, 2014 at 11:00:16AM -0700, Stephen Warren wrote:
+> > > > On 12/22/2014 10:27 AM, Dmitry Osipenko wrote:
+> > > > >22.12.2014 19:17, Stephen Warren =D0=BF=D0=B8=D1=88=D0=B5=D1=82=
+:
+> > > > >>On 12/21/2014 03:52 PM, Dmitry Osipenko wrote:
+> > > > >>>Commit 7232398abc6a ("ARM: tegra: Convert PMC to a driver") =
+changed
+> > > > >>>tegra_resume()
+> > > > >>>location storing from late to early and as result broke susp=
+end on tegra20.
+> > > > >>>PMC scratch register 41 was used by tegra lp1 suspend core c=
+ode for storing
+> > > > >>>physical memory address of common resume function and in the=
+ same time used by
+> > > > >>>tegra20 cpuidle driver for storing cpu1 "resettable" status,=
+ so it implied
+> > > > >>>strict order of scratch register use. Fix it by using scratc=
+h 40 instead of 41
+> > > > >>>for tegra_resume() location store.
+> > > > >>
+> > > > >>You likely can't simply change the PMC scratch register usage=
+ arbitrarily;
+> > > > >>specific registers are designated for specific purposes, and =
+code outside the
+> > > > >>Linux kernel (bootloaders, LP0 resume code, secure monitors, =
+etc.) may depend on
+> > > > >>those specific values being in those registers. Without signi=
+ficant research,
+> > > > >>I'd suggest not changing the PMC scratch register usage.
+> > > > >
+> > > > >Sure, that's why I asked to verify if scratch register 40 is i=
+n use in the
+> > > > >comment after commit message.
+> > > >=20
+> > > > Sorry, I didn't notice that.
+> > > >=20
+> > > > >I've checked that u-boot doesn't use it (since
+> > > > >upstream kernel doesn't care about any other bootloader), but =
+no idea about
+> > > > >secure monitor. It's definitely safer to avoid changing scratc=
+h regs usage, I
+> > > > >thought that proposed solution would be best from the pure cod=
+e point of view.
+> > > > >So, I'm considering your answer as a rejection of the patch (p=
+lease, let me know
+> > > > >if I'm wrong) and will prepare another one. Btw, it would be n=
+ice to have
+> > > > >scratch registers usage publicly documented somewhere (on "Teg=
+ra Public
+> > > > >Application Notes" webpage for example), if it's possible, of =
+course.
+> > > >=20
+> > > > At this stage in Tegra20 development, I think it'd be best to a=
+void changing
+> > > > any scratch register usage if at all possible.
+> > >=20
+> > > Sorry, I had completely missed this discussion. When looking at t=
+he code
+> > > it doesn't look like this particular "resettable" status needs to=
+ be
+> > > stored in a PMC scratch register. It can't be stored in RAM becau=
+se that
+> > > goes into self-refresh as part of LP1, but how about just putting=
+ it
+> > > into IRAM? That stays on in both LP1 and LP2, so should be suitab=
+le for
+> > > this use-case. It would make the code slightly more complex but u=
+sing a
+> > > single scratch register for multiple purposes sounds brittle and =
+easy to
+> > > break (as evidenced by the offending commit).
+> > >=20
+> > > Otherwise it would seem that PMC_SCRATCH40 is only used to store =
+EMC
+> > > configuration data across LP0 suspend/resume, so I wouldn't think=
+ it'd
+> > > cause problems if we used that instead of PMC_SCRATCH41 to store =
+the
+> > > "resettable" state.
+> > >=20
+> >=20
+> > No. Usually the scratch registers for EMC config data are setup onc=
+e by the
+> > bootloader and never touched by the kernel after that. So I would n=
+ot
+> > recommend reusing those registers for different purposes.
+>=20
+> Right, I misread the code in the downstream kernel. Though it's not t=
+he
+> bootloader that does it (at least on Tegra20), but some early code in
+> the kernel.
+>=20
+> IRAM sounds like a good candidate still. Or do you know of anything t=
+hat
+> would exclude IRAM as storage location for this data?
 
-Tegra132 uses the same GPU as Tegra124 and therefore requires the same
-method to remove clamps. However Tegra132 has a separate chip ID, so in
-order to avoid having to extend the list of chip IDs for the special
-case, add a feature flag to the SoC data.
+No. I can't think of a reason this flag could not be in IRAM.
 
-Reviewed-by: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Changes in v2:
-- reword the commit message to be less misleading (Paul Walmsley)
+Cheers,
 
- drivers/soc/tegra/pmc.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 4bdc654bd747..0f096e76574a 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -88,6 +88,8 @@ struct tegra_pmc_soc {
- 	const char *const *powergates;
- 	unsigned int num_cpu_powergates;
- 	const u8 *cpu_powergates;
-+
-+	bool has_gpu_clamps;
- };
- 
- /**
-@@ -225,11 +227,11 @@ int tegra_powergate_remove_clamping(int id)
- 		return -EINVAL;
- 
- 	/*
--	 * The Tegra124 GPU has a separate register (with different semantics)
--	 * to remove clamps.
-+	 * On Tegra124 and later, the clamps for the GPU are controlled by a
-+	 * separate register (with different semantics).
- 	 */
--	if (tegra_get_chip_id() == TEGRA124) {
--		if (id == TEGRA_POWERGATE_3D) {
-+	if (id == TEGRA_POWERGATE_3D) {
-+		if (pmc->soc->has_gpu_clamps) {
- 			tegra_pmc_writel(0, GPU_RG_CNTRL);
- 			return 0;
- 		}
-@@ -773,6 +775,7 @@ static const struct tegra_pmc_soc tegra20_pmc_soc = {
- 	.powergates = tegra20_powergates,
- 	.num_cpu_powergates = 0,
- 	.cpu_powergates = NULL,
-+	.has_gpu_clamps = false,
- };
- 
- static const char * const tegra30_powergates[] = {
-@@ -804,6 +807,7 @@ static const struct tegra_pmc_soc tegra30_pmc_soc = {
- 	.powergates = tegra30_powergates,
- 	.num_cpu_powergates = ARRAY_SIZE(tegra30_cpu_powergates),
- 	.cpu_powergates = tegra30_cpu_powergates,
-+	.has_gpu_clamps = false,
- };
- 
- static const char * const tegra114_powergates[] = {
-@@ -839,6 +843,7 @@ static const struct tegra_pmc_soc tegra114_pmc_soc = {
- 	.powergates = tegra114_powergates,
- 	.num_cpu_powergates = ARRAY_SIZE(tegra114_cpu_powergates),
- 	.cpu_powergates = tegra114_cpu_powergates,
-+	.has_gpu_clamps = false,
- };
- 
- static const char * const tegra124_powergates[] = {
-@@ -880,6 +885,7 @@ static const struct tegra_pmc_soc tegra124_pmc_soc = {
- 	.powergates = tegra124_powergates,
- 	.num_cpu_powergates = ARRAY_SIZE(tegra124_cpu_powergates),
- 	.cpu_powergates = tegra124_cpu_powergates,
-+	.has_gpu_clamps = true,
- };
- 
- static const struct of_device_id tegra_pmc_match[] = {
--- 
-2.1.3
+Peter.
