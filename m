@@ -1,71 +1,95 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCHv2 8/8] arm: dts: tegra: update isl29028 compatible string
- to use isil vendor prefix
-Date: Fri, 9 Jan 2015 12:06:36 +0100
-Message-ID: <20150109110635.GA16465@ulmo>
-References: <cover.1418763328.git.arno@natisbad.org>
- <8cfd0ac11713262036dca415e59e56508fb07c3c.1418763328.git.arno@natisbad.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 4/4] clk: tegra: Add support for the Tegra132 CAR IP block
+Date: Fri, 9 Jan 2015 12:19:55 +0100
+Message-ID: <20150109111954.GB16465@ulmo>
+References: <20141216203813.22980.2301.stgit@chromeos-P9X79>
+ <20141216203829.22980.64446.stgit@chromeos-P9X79>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="k+w/mQv8wyuph6w0"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="5/uDoXvLw7AC5HRs"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <8cfd0ac11713262036dca415e59e56508fb07c3c.1418763328.git.arno-LkuqDEemtHBg9hUCZPvPmw@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnaud Ebalard <arno-LkuqDEemtHBg9hUCZPvPmw@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <uwe-rXY34ruvC2xidJT2blvkqNi2O/JbrIOy@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Darshana Padmadas <darshanapadmadas-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20141216203829.22980.64446.stgit@chromeos-P9X79>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Walmsley <paul@pwsan.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Bill Huang <bilhuang@nvidia.com>, Stephen Boyd <sboyd@codeaurora.org>, Allen Martin <amartin@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---k+w/mQv8wyuph6w0
+--5/uDoXvLw7AC5HRs
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 16, 2014 at 10:21:16PM +0100, Arnaud Ebalard wrote:
+On Tue, Dec 16, 2014 at 12:38:29PM -0800, Paul Walmsley wrote:
+> From: Paul Walmsley <pwalmsley@nvidia.com>
 >=20
-> "isil" and "isl" prefixes are used at various locations inside the kernel
-> to reference Intersil corporation. This patch is part of a series fixing
-> those locations were "isl" is used in compatible strings to use the now
-> expected "isil" prefix instead (NASDAQ symbol for Intersil and most used
-> version).
+> Tegra132 CAR supports almost the same clocks as Tegra124 CAR. This
+> patch mostly deals with the small differences.
 >=20
-> Note: isl29028 is an I2C device so the patch does not in fact currently
-> depend on the introduction of "isil"-based compatible string in isl29028
-> driver because I2C core does not check the prefix yet.
+> Since Tegra132 contains many of the same PLL clock sources used on
+> Tegra114 and Tegra124, enable them in drivers/clk/tegra/clk-pll.c when
+> the kernel is configured to include Tegra132 support.
 >=20
-> Signed-off-by: Arnaud Ebalard <arno-LkuqDEemtHBg9hUCZPvPmw@public.gmane.org>
-> ---
->  arch/arm/boot/dts/tegra30-cardhu.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> This patch is based on several patches from others:
+>=20
+> 1. a  patch from Peter De Schrijver:
+>=20
+> http://lkml.iu.edu/hypermail/linux/kernel/1407.1/06094.html
+>=20
+> 2. a patch from Bill Huang ("clk: tegra: enable cclk_g at boot on
+> Tegra132"), and
+>=20
+> 3. a patch from Allen Martin ("clk: Enable tegra clock driver for
+> tegra132").
 
-Applied to the for-3.20/dt branch, thanks.
+Doesn't this technically require Signed-off-bys from each of the above,
+then?
+
+> diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-teg=
+ra124.c
+[...]
+> +/**
+> + * tegra124_132_clock_init_pre - clock initialization preamble for T124/=
+T132
+> + * @np: struct device_node * of the DT node for the SoC CAR IP block
+> + *
+> + * Register most of the clocks controlled by the CAR IP block, along
+> + * with a few clocks controlled by the PMC IP block.  Everything in
+> + * this function should be common to Tegra124 and Tegra132.  XXX The
+> + * PMC clock initialization should probably be moved to PMC-specific
+> + * driver code.  No return value.
+> + */
+> +static void __init tegra124_132_clock_init_pre(struct device_node *np)
+
+I would've personally named this tegra124_clock_init_pre(). In the past
+we've named these functions after the first chip that needed them and if
+later chips remained compatible they would simply use the one from an
+earlier chip. That's consistent with the naming of compatible strings
+and doesn't require changes to the function names if yet another SoC
+generation were to need the same functionality.
 
 Thierry
 
---k+w/mQv8wyuph6w0
+--5/uDoXvLw7AC5HRs
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUr7Y7AAoJEN0jrNd/PrOhnW0P/R2pYDuyjTnDWbxozxWaDi1E
-XG/usI9KHue49Hza0EhXvmyf6OjhaP620nO/JzFe6LKaNF+TJ9Yy4wG+5oL+6w6w
-23QiDkwXLQ3sHFsFrsE7AIYs8/uqh8HZ4VBHAisnD3MW1yCLSOJ/UzBVAHBaCeLs
-Jv68f1PpevXgUilB8jlpGjaT4FOaJIFqmyKTV2JuKGOfLhYby6X/F8LA2GWc1BD/
-lZluW0WeJ18LUhYPkJ9bKJfmSX0TZ0nB3tnOuSplqzzrMgy8g4A82hTGjEUPdpY7
-kNN0KzQSQIzNQ3YKPUwxg8oQqeZH2iaG/Y1lbXpwVPWdW2UD5fFjmIOhS8I3G/ao
-eVSjVgxyRgbwfXjsNhOSXZHE4JRMYzMvuvX3CbO/dMhif7q9Y6YOD2RN6TMrr4AY
-8SHP9AYs4cO/FoOcFoC92aXVngdZttmKrZytesy/HjwR5uh+Q70LMKUehzi+G3YJ
-Rluhc0hzx1vjPrQ88b/l7PLiGx9AOy9ADydSIJlT71lUHFTIlIdpxK/Rtb1oVJtA
-HXYnhqRos+iLevUI/9b47X5GVszhMTqlmGrrrHeYJAqRqvqaNIqpvvHyB+4qqWH8
-gOifM2sjw+vfA9611Ox9nkgK+O/PSutfnlfQDon7PfAXTvSs0qLKxmVWlg+Ak6gE
-JvWqtl2F94048lGmtnv3
-=xthr
+iQIcBAEBAgAGBQJUr7laAAoJEN0jrNd/PrOhNFQP/3RosVxdWzeuXBcBue1zU6BO
+c8RTiqR8xMbzZ6qkG6AD8h+scS+rM7myFTK6l4+/+Hdy+ffVJ9/gNsmLbsm36omS
+604X68lA+0mwCjiwZBkgMGHRj6Ex1nIREJIyqa3E3h0zQb60oh1FCBPX34Bym014
+Ua46kIafV8yq3W/XXljV7qs3D37BWl4fIUXNXXrKSqQdVxz0E5NEhnAi2+xSbawm
+lsqvtvkmXMhfXMrIGWhevpTF4tN90f+7w3/cPnv+wVwoEa9x1vtBIBHXHk5qnt1A
+ziFz7DmKlC6CM7bY15Q05OKSzzWqQUbQzZMTiUKj7BNfHxMAPL+fiEBiRgO8+W4Y
+lGRHm+Id2N7y41KWf3H4tZo2x8zwgecq24Fte3RvqlNxu61jFyR0wp2hPG/FRKxn
+L9vjFUpmmzB2dPNjHd8b6ktX2SkX2h1EAcdhEIiGfoWrMzroEo9bRVfLI7SyCcY+
+HwF1W3eLgYVdJu2vInSbGzc2maLcYQ8LOpLYi1mFg639kLdgLTbVDZgyty7KrXdE
+U5w1EyeGR//WGSKOOjJVRwCBtVh6iyBa+MnNobRSmbiJvRlG8FqFGXb2dCOS5d6W
+FKQ7uBZdvxkbg3tCsVANt4Q34X4epWjy7+PBiB7Tec5/WS9ouQNy7i+r54u3GFQz
+tcTMOE2IConCBjacex3y
+=uk6Z
 -----END PGP SIGNATURE-----
 
---k+w/mQv8wyuph6w0--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--5/uDoXvLw7AC5HRs--
