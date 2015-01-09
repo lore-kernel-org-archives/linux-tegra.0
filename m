@@ -1,47 +1,35 @@
-From: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
-Subject: Re: [Linux-kernel] [PATCH 3/4] ARM: tegra: enable big-endian support
-Date: Fri, 09 Jan 2015 17:14:00 +0000
-Message-ID: <54B00C58.3070303@codethink.co.uk>
-References: <1420817231-8346-1-git-send-email-bob.mottram@codethink.co.uk> <1420817231-8346-4-git-send-email-bob.mottram@codethink.co.uk> <54AFF7E6.9030308@gmail.com> <54B0017E.2060509@codethink.co.uk> <54B0028C.8050802@gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH tegra-pinmux-scripts 2/2] add support for Beaver board
+Date: Fri, 09 Jan 2015 10:16:19 -0700
+Message-ID: <54B00CE3.1060309@wwwdotorg.org>
+References: <1420494447-18510-1-git-send-email-dev@lynxeye.de> <1420494447-18510-2-git-send-email-dev@lynxeye.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <54B0028C.8050802-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1420494447-18510-2-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bob Mottram <bob.mottram-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-kernel-81qHHgoATdFT9dQujB1mzip2UmYkHbXO@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/01/15 16:32, Dmitry Osipenko wrote:
-> 09.01.2015 19:27, Bob Mottram =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> On 09/01/15 15:46, Dmitry Osipenko wrote:
->>> What about suspend/cpuidle? Won't it make sense to set BE mode in r=
-eset handler?
->>
->> I did try adding:
->>
->>     ARM_BE8(setend    be)
->>
->> to the entry point within reset-handler.S, but to no avail. There ar=
-e
->> definitely problems with suspend, which currently I can work around =
-by
->> turning off ARCH_SUSPEND_POSSIBLE. More investigation is going to be
->> needed to get the sleep/suspend working.
->>
->=20
-> Yeah, just noticed that it mentioned in cover letter.
+On 01/05/2015 02:47 PM, Lucas Stach wrote:
+> This leaves some pins unconfigured, but is all I could work out
+> from the existing U-Boot and Kernel code/DTs.
 
-I had a look through the code and it was not easy to work out what
-was going on so skipped over it. We decided to leave it out of the
-initial submission as we can get a workable system without suspend.
+I've applied the series. I added a note to the top of beaver.board:
 
-The suspend/resume code does make accesses to registers, and all
-these will need to be found and have the correct endian conversion
-done (stores will be in big-endian but the hardware registers stay
-little endian)
+> # Note that this data was reverse-engineered from current upstream SW; it is
+> # not a complete error-checked NVIDIA-supplied data set. That doesn't mean
+> # anything is wrong with the data, simply that it was not generated using the
+> # normal flow for NVIDIA reference boards (auto-generation from spreadsheets
+> # supplied by NVIDIA syseng).
 
---=20
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
+I hope that's OK.
+
+One thing that might be worth doing: Boot the system you have, test that 
+everything works, then fill in all the missing pins/values based on the 
+actual register settings in HW (and cross-check the others with what's 
+already in this file). At least that would eliminate the warnings from 
+./board-to-*.py re: some pins being unconfigured, without changing 
+anything about the way the pinmux ends up being programmed.
