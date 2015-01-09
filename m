@@ -1,66 +1,71 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v3 3/3] soc/tegra: fuse: Add Tegra132 support
-Date: Fri,  9 Jan 2015 11:49:33 +0100
-Message-ID: <1420800573-16385-1-git-send-email-thierry.reding@gmail.com>
-References: <1420707308-6974-1-git-send-email-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCHv2 8/8] arm: dts: tegra: update isl29028 compatible string
+ to use isil vendor prefix
+Date: Fri, 9 Jan 2015 12:06:36 +0100
+Message-ID: <20150109110635.GA16465@ulmo>
+References: <cover.1418763328.git.arno@natisbad.org>
+ <8cfd0ac11713262036dca415e59e56508fb07c3c.1418763328.git.arno@natisbad.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1420707308-6974-1-git-send-email-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-tegra@vger.kernel.org
-Cc: Alexandre Courbot <gnurou@gmail.com>, Paul Walmsley <paul@pwsan.com>, Vince Hsu <vinceh@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="k+w/mQv8wyuph6w0"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <8cfd0ac11713262036dca415e59e56508fb07c3c.1418763328.git.arno-LkuqDEemtHBg9hUCZPvPmw@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnaud Ebalard <arno-LkuqDEemtHBg9hUCZPvPmw@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <uwe-rXY34ruvC2xidJT2blvkqNi2O/JbrIOy@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Darshana Padmadas <darshanapadmadas-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
 
-Tegra132 is very similar to Tegra124 from a peripheral point of view and
-uses the same fuse controller.
+--k+w/mQv8wyuph6w0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
-Changes in v3:
-- collapse TEGRA124 and TEGRA132 cases into a single one (Alex Courbot)
+On Tue, Dec 16, 2014 at 10:21:16PM +0100, Arnaud Ebalard wrote:
+>=20
+> "isil" and "isl" prefixes are used at various locations inside the kernel
+> to reference Intersil corporation. This patch is part of a series fixing
+> those locations were "isl" is used in compatible strings to use the now
+> expected "isil" prefix instead (NASDAQ symbol for Intersil and most used
+> version).
+>=20
+> Note: isl29028 is an I2C device so the patch does not in fact currently
+> depend on the introduction of "isil"-based compatible string in isl29028
+> driver because I2C core does not check the prefix yet.
+>=20
+> Signed-off-by: Arnaud Ebalard <arno-LkuqDEemtHBg9hUCZPvPmw@public.gmane.org>
+> ---
+>  arch/arm/boot/dts/tegra30-cardhu.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes in v2:
-- add missing break in Tegra132 case for legacy fuse init (Vince Hsu)
----
- drivers/soc/tegra/fuse/fuse-tegra.c   | 1 +
- drivers/soc/tegra/fuse/fuse-tegra30.c | 1 +
- 2 files changed, 2 insertions(+)
+Applied to the for-3.20/dt branch, thanks.
 
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
-index 011a3363c265..c0d660f1aaac 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-@@ -81,6 +81,7 @@ static const struct of_device_id car_match[] __initconst = {
- 	{ .compatible = "nvidia,tegra30-car", },
- 	{ .compatible = "nvidia,tegra114-car", },
- 	{ .compatible = "nvidia,tegra124-car", },
-+	{ .compatible = "nvidia,tegra132-car", },
- 	{},
- };
- 
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra30.c b/drivers/soc/tegra/fuse/fuse-tegra30.c
-index d1a4290cda5c..4d2f71bf65c5 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra30.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra30.c
-@@ -182,6 +182,7 @@ static void __init legacy_fuse_init(void)
- 		fuse_info = &tegra114_info;
- 		break;
- 	case TEGRA124:
-+	case TEGRA132:
- 		fuse_info = &tegra124_info;
- 		break;
- 	default:
--- 
-2.1.3
+Thierry
+
+--k+w/mQv8wyuph6w0
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUr7Y7AAoJEN0jrNd/PrOhnW0P/R2pYDuyjTnDWbxozxWaDi1E
+XG/usI9KHue49Hza0EhXvmyf6OjhaP620nO/JzFe6LKaNF+TJ9Yy4wG+5oL+6w6w
+23QiDkwXLQ3sHFsFrsE7AIYs8/uqh8HZ4VBHAisnD3MW1yCLSOJ/UzBVAHBaCeLs
+Jv68f1PpevXgUilB8jlpGjaT4FOaJIFqmyKTV2JuKGOfLhYby6X/F8LA2GWc1BD/
+lZluW0WeJ18LUhYPkJ9bKJfmSX0TZ0nB3tnOuSplqzzrMgy8g4A82hTGjEUPdpY7
+kNN0KzQSQIzNQ3YKPUwxg8oQqeZH2iaG/Y1lbXpwVPWdW2UD5fFjmIOhS8I3G/ao
+eVSjVgxyRgbwfXjsNhOSXZHE4JRMYzMvuvX3CbO/dMhif7q9Y6YOD2RN6TMrr4AY
+8SHP9AYs4cO/FoOcFoC92aXVngdZttmKrZytesy/HjwR5uh+Q70LMKUehzi+G3YJ
+Rluhc0hzx1vjPrQ88b/l7PLiGx9AOy9ADydSIJlT71lUHFTIlIdpxK/Rtb1oVJtA
+HXYnhqRos+iLevUI/9b47X5GVszhMTqlmGrrrHeYJAqRqvqaNIqpvvHyB+4qqWH8
+gOifM2sjw+vfA9611Ox9nkgK+O/PSutfnlfQDon7PfAXTvSs0qLKxmVWlg+Ak6gE
+JvWqtl2F94048lGmtnv3
+=xthr
+-----END PGP SIGNATURE-----
+
+--k+w/mQv8wyuph6w0--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
