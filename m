@@ -1,100 +1,101 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH RFC V3 2/3] mxs: add driver for ocotp in i.MX23 and i.MX28
-Date: Fri, 9 Jan 2015 11:02:07 +0100
-Message-ID: <20150109100206.GE27845@ulmo>
-References: <1413628372-2809-1-git-send-email-stefan.wahren@i2se.com>
- <2223659.OW08fe0cS1@wuerfel>
- <1003885907.22061.1415301932743.JavaMail.open-xchange@oxbsltgw00.schlund.de>
- <6087001.lBonPVHV5K@wuerfel>
- <54AE8D45.7050805@imgtec.com>
+Subject: Re: [PATCH v2 3/3] soc/tegra: fuse: Add Tegra132 support
+Date: Fri, 9 Jan 2015 11:05:12 +0100
+Message-ID: <20150109100510.GF27845@ulmo>
+References: <1420701887-1465-3-git-send-email-thierry.reding@gmail.com>
+ <1420707308-6974-1-git-send-email-thierry.reding@gmail.com>
+ <CAAVeFuKbnquF0iBp4L8Sv4tp-F3YevKjaSkVtyT2LJnDDvXCbg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ZInfyf7laFu/Kiw7"
+	protocol="application/pgp-signature"; boundary="9ADF8FXzFeE7X4jE"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <54AE8D45.7050805-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <CAAVeFuKbnquF0iBp4L8Sv4tp-F3YevKjaSkVtyT2LJnDDvXCbg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ezequiel Garcia <ezequiel.garcia-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>
-Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>, mhei-Z/Lg1yOAjpkb1SvskN2V4Q@public.gmane.org, shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, festevam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, James Hartley <james.hartley-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Naidu Tellapati <Naidu.Tellapati-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---ZInfyf7laFu/Kiw7
+--9ADF8FXzFeE7X4jE
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 08, 2015 at 10:59:33AM -0300, Ezequiel Garcia wrote:
-> Hi Stefan, Arnd,
+On Fri, Jan 09, 2015 at 12:49:25PM +0900, Alexandre Courbot wrote:
+> On Thu, Jan 8, 2015 at 5:55 PM, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>=
+ wrote:
+> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >
+> > Tegra132 is very similar to Tegra124 from a peripheral point of view and
+> > uses the same fuse controller.
+> >
+> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> > Changes in v2:
+> > - add missing break in Tegra132 case for legacy fuse init (Vince Hsu)
+> >
+> >  drivers/soc/tegra/fuse/fuse-tegra.c   | 1 +
+> >  drivers/soc/tegra/fuse/fuse-tegra30.c | 3 +++
+> >  2 files changed, 4 insertions(+)
+> >
+> > diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fu=
+se/fuse-tegra.c
+> > index 011a3363c265..c0d660f1aaac 100644
+> > --- a/drivers/soc/tegra/fuse/fuse-tegra.c
+> > +++ b/drivers/soc/tegra/fuse/fuse-tegra.c
+> > @@ -81,6 +81,7 @@ static const struct of_device_id car_match[] __initco=
+nst =3D {
+> >         { .compatible =3D "nvidia,tegra30-car", },
+> >         { .compatible =3D "nvidia,tegra114-car", },
+> >         { .compatible =3D "nvidia,tegra124-car", },
+> > +       { .compatible =3D "nvidia,tegra132-car", },
+> >         {},
+> >  };
+> >
+> > diff --git a/drivers/soc/tegra/fuse/fuse-tegra30.c b/drivers/soc/tegra/=
+fuse/fuse-tegra30.c
+> > index d1a4290cda5c..9e3679594259 100644
+> > --- a/drivers/soc/tegra/fuse/fuse-tegra30.c
+> > +++ b/drivers/soc/tegra/fuse/fuse-tegra30.c
+> > @@ -184,6 +184,9 @@ static void __init legacy_fuse_init(void)
+> >         case TEGRA124:
+> >                 fuse_info =3D &tegra124_info;
+> >                 break;
+> > +       case TEGRA132:
+> > +               fuse_info =3D &tegra124_info;
+> > +               break;
 >=20
-> (I'm trimming the Cc list and adding Thierry and Maxime to the loop):
+> Nit, but why not
 >=20
-> On 11/06/2014 04:47 PM, Arnd Bergmann wrote:
-> [..]
-> >>
-> >> i don't have a answer to this question, but how about changing fsl_oco=
-tp driver
-> >> to driver/soc/mxs/fuse with a similiar binary interface like the tegra=
- ones.
-> >>
-> >> Does it make sense to you?
-> >=20
-> > I haven't looked at the drivers, so I don't know if the tegra interface
-> > is any better or worse than the others. Changing everyone to have the s=
-ame
-> > interface is definitely a good idea, but of course only if the unified
-> > interface is a good one ;-)
-> >=20
->=20
-> I'm in the process of finding a suitable upstream path for a new eFuse dr=
-iver
-> for fuses used on Imagination Technologies SoCs.
->=20
-> This was our last proposal, which follows Tegra's work:
->=20
-> http://www.spinics.net/lists/devicetree/msg59246.html
->=20
-> However, Arnd was reluctant to take yet another efuse driver under driver=
-s/soc
-> and proposed instead to try to find a unified API. We've had numerous fuse
-> drivers (tegra, sunxi, imx and img) appearing, so his concern certainly m=
-akes
-> sense.
->=20
-> I've talked to Arnd on IRC and we agreed to create a new directory
-> drivers/efuse. As a first step we would just move the tegra driver,
-> and add the new drivers (img on my side, and possibly mxs on Stefan's).
-> Perhaps we would also pull the sunxi_sid driver as well.
->=20
-> Having the drivers together would allow us to come up with a unified API
-> as follow up work.
->=20
-> How does this sound? If you have no objections to this, I can go ahead and
-> try to prepare some RFCs.
+>         case TEGRA124:
+> +       case TEGRA132:
+>                 fuse_info =3D &tegra124_info;
+>                 break;
 
-No objections from me. Adding Peter and linux-tegra for visibility.
+Yes, that's even better.
 
 Thierry
 
---ZInfyf7laFu/Kiw7
+--9ADF8FXzFeE7X4jE
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUr6ceAAoJEN0jrNd/PrOhjLUQAKwyQ/6g6FpUywRJX0Xyit+G
-QDhofo8nDA5myoDOgw+o+19A5v05gXLaxKxe1cW7ge1mPLSD3kn+gHdKM2wC2Tam
-ircaEVfRan3uE1wIWko5kB17Lx2NdpoBAgHTKlrgF18MmzlcWbnvxi+x6YVC+hdI
-h42KB6STtHSvZvVZMoQHe+JcsoJIjOWiXQRTo645mf62AYMbZEiwvGxsq5WnJJSA
-ej7XAVVBDqYhqF70D0RS4zUVOj34vA8tVhBksXj89Jx1FH+Sv2LZGfi7lY+megfl
-w6PrX0Dh8CPJ8nmmjULGFG3zPKmAE8Zj9vQyDFO8mwTEWd2VOeK+Uv9u8tY8O2Y0
-0QLBBBCy2P/s6X5DJxXZ1C763gzYp27yLevXegzjKORRFDPkcUzqWExU1x+wiKGS
-d3nb0O7TwXT11zR2XKg42RMJjU9IoP2rwPH/pfuZYNN26zFltHo/TqHGoB7fAiKl
-Nmvfba8Tdox3bZN2gEB7Y/lDnaLm5sIqhN3NnaxoMLFWduclXF5oXDZy0Vjc/P+d
-Ab59nrWTVGLlrRoiZTjfWtJBlIhx+pc09+wQIAvJth4fUZKE4f8ufzRBKdBXWPtZ
-YWW9+rb7HEkDkL13pNlXpFzw37UGwDv8MSycSbdJn0Q3W+ba4h7ndoI+XuEFQEAQ
-oJztMSdrCSIcgJtIzwJt
-=w2AH
+iQIcBAEBAgAGBQJUr6fWAAoJEN0jrNd/PrOhZTgP/16zmYUnYvEQajHzxIqDhPbQ
+NVBWHCZgHKpHUggBCH82g2+u7pKzfcv6TY2MC+FEe7SWI9Izups3VmoRdfooO1Ic
+TWD1aZpBihjfwKNXQUws7bZC7qdSzxM14aaOBGxFhiXz3c1gKIgQ6a5GOyMnDWXb
+tPUCsZ9aZjUCMJU7s7ysLhg/kQlMDCEZhszGrtQ0xS4q6I0ZvP7QvcN+olZWodQt
+dI8EQOe5pEWLJ1r5mZ9wNkgtbJONJgDw4hnlpIOTu+tJUqMmR9cbmfg3S3vNweLg
+gwZDQwwmUSObI23/q7xJfVDXjkuWHUfq1xHxrKwW5IY/9Rollm6igNoyMvbZjaYu
+NcULRlcTb9I+e8APprYZIi3M6Std6G5kjgRV56SZo6RJ0aeaIJJg96Pr0tOd1idm
+2YAODXl+C6kDoqQSq8jVDWN52TMPMU0LGEZcB6HWkqAAVarhpULiAFdb1CBsNuf+
+omZz9GvvdEayziB+ZTAyhOI/9z5rLirePKa/lvrMpue8i7OsDrQvN5KphQSyJnAT
+a/WiPMO33vsNu0njTs1wax2u/seILM8GR+rA9Li1YJN51F9AF88ynmyJuirz68xz
+acdNmGTdEhGOjElxXdR9266ROtPJDyb2cvqL7Yrah464YYZJCtRJDFIlqDsiY3Za
+E/jskYzf/Y1lLMNZbQbx
+=lKgv
 -----END PGP SIGNATURE-----
 
---ZInfyf7laFu/Kiw7--
+--9ADF8FXzFeE7X4jE--
