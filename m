@@ -1,51 +1,59 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v5][resend v4] of: replace Asahi Kasei Corp vendor prefix
-Date: Fri, 9 Jan 2015 16:04:49 +0000
-Message-ID: <20150109160449.GG2634@sirena.org.uk>
-References: <878ulzx6hr.wl%kuninori.morimoto.gx@gmail.com>
- <871tn4uv0j.wl%kuninori.morimoto.gx@renesas.com>
- <CAL_Jsq+GjM+3M63amyh3Rvijkz7Lch_cdUt9vScc9wZeOubOPA@mail.gmail.com>
- <5363275.ZK3ulH6EUO@wuerfel>
+From: Bob Mottram <bob.mottram-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
+Subject: Re: [PATCH 3/4] ARM: tegra: enable big-endian support
+Date: Fri, 09 Jan 2015 16:27:42 +0000
+Message-ID: <54B0017E.2060509@codethink.co.uk>
+References: <1420817231-8346-1-git-send-email-bob.mottram@codethink.co.uk> <1420817231-8346-4-git-send-email-bob.mottram@codethink.co.uk> <54AFF7E6.9030308@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Wa3xFDkrbo+Lac6I"
-Return-path: <linux-sh-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5363275.ZK3ulH6EUO@wuerfel>
-Sender: linux-sh-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Simon Horman <horms@verge.net.au>, ALSA Development Mailing List <alsa-devel@alsa-project.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, SH-Linux <linux-sh@vger.kernel.org>, Magnus Damm <magnus.damm@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Olof Johansson <olof@lixom.net>, Simon Horman <horms+renesas@verge.net.au>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>
+ protocol="application/pgp-signature";
+ boundary="PTaB3HPSgXophbnXMGNGdvfVjk7QsQsnq"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <54AFF7E6.9030308-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-kernel-81qHHgoATdFT9dQujB1mzip2UmYkHbXO@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--PTaB3HPSgXophbnXMGNGdvfVjk7QsQsnq
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
---Wa3xFDkrbo+Lac6I
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 09/01/15 15:46, Dmitry Osipenko wrote:
+> What about suspend/cpuidle? Won't it make sense to set BE mode in reset=
+ handler?
 
-On Fri, Jan 09, 2015 at 02:55:40PM +0100, Arnd Bergmann wrote:
+I did try adding:
 
-> It's an i2c device, so it won't break, based on the implementation
-> we use in the kernel that ignores the vendor part when the part number
-> matches the i2c driver name.
+    ARM_BE8(setend    be)
 
-Plus this update is actually changing the board DT file have the ID
-which we've always had in the driver, the driver has always used the new
-string and never the ak, based one that the device tree is registering.
+to the entry point within reset-handler.S, but to no avail. There are
+definitely problems with suspend, which currently I can work around by
+turning off ARCH_SUSPEND_POSSIBLE. More investigation is going to be
+needed to get the sleep/suspend working.
 
---Wa3xFDkrbo+Lac6I
+
+--PTaB3HPSgXophbnXMGNGdvfVjk7QsQsnq
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Version: GnuPG v1
 
-iQEcBAEBAgAGBQJUr/wgAAoJECTWi3JdVIfQ+nMH/Rulo4/Hc9qtxPbaFs+Rvvtb
-6BlpNHZzOskKWRqBDvu2Uy45o6ymjLP8jO5iC2C3C1IlN6NEn/7e6XngwnAFUIRb
-7ai38qiqZJWnRd8BZp0YBIL2eDBVC0GHvllGoXGdp/+8aVBQnkmm8Ixc6z77JREX
-i1VKyZMBiWlM+Zjucxn+n9jKKr8bYkyaTpK3h64axDmlg9JYmAqOPPANvvm+6QMj
-SgVaymyzHWJb5Wm2ePecLdkjdNdBcn7EVp/cw9RoHFpZSBNAcpEX2yOP4+AzCI1S
-uo4SrEaUXxde1VDtleJ3A5FTFAar1VjXsRQeb3QjBnvuD00Y4TZH1RHkVtmm1wU=
-=lkgW
+iQIcBAEBAgAGBQJUsAF+AAoJELpo8mEI3J+Hk2oQALjHdEddLe1UzIKUoy2CSOZk
+LOUzzBunXlIFVH7+W1bg5B7j4g+PWoI3GBCDQVbI7ApmnLARBBNfkK46Y0sQRFed
+SjcSaW3mVwzHQX1ChvR2hJ/P65r9zymmB85dmj78lcMegI/6KAX3/5+y9z57eDtT
+prHZUJaJj9ia4+nPUHl2xoBDoWBpVibj1CcpjuEi2o1p9a+x39wLCy4RNKCDH7PV
+v90ASN24rAYfyWa7sMoSLPinRpzyb1rtbrGXOuo+JctLMuL9ju1SfH1W+l1FAQ56
+U1Wn7QoTw+JpTBQZljyqK6npGyog1UxOSD2vYDQ+bO5pjzSvn5/Y+qKgQKpPH+d8
+EKpKiHACZ3vp8WDAh/xioEzBL9Br7S6A94G6K7m1QY03xAUyz6kSn+tRGcvXaIN1
+Bf3xG0neTfCgi7OrU9ZRA/7PxUeg+QgxnRQuVoLPE+OT7b5ZnTKm+Ia0ytQYbm+K
+GI8603U/d5vMhtFPUmk83UOZuNFLZ1h0QmPmrcRxNcJGI+jTQ/jJOnAuVpeRdaO0
+3GoDkNuMdxBYZRpdFvzZWoJTNOo9t72oz+1GTFotbSRDNhHX0Qji4P0PX54/Rn9g
+UdPLI1//+yBH9WVbUXz3Q4VVBLDEsQpcHE45PYXfvVXUeYtuCJF//8Eq5h00pH9O
+/bhrXXsOMKD90X8iaxCm
+=dgJK
 -----END PGP SIGNATURE-----
 
---Wa3xFDkrbo+Lac6I--
+--PTaB3HPSgXophbnXMGNGdvfVjk7QsQsnq--
