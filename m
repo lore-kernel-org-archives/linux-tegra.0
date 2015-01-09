@@ -1,105 +1,214 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2 2/2] PCI: tegra: apply relaxed ordering fixup only on
- Tegra
-Date: Fri, 9 Jan 2015 12:58:54 +0100
-Message-ID: <20150109115853.GI16465@ulmo>
-References: <1418929903-8506-1-git-send-email-l.stach@pengutronix.de>
- <1418929903-8506-2-git-send-email-l.stach@pengutronix.de>
- <20150109113213.GE16465@ulmo>
- <1420803918.16381.9.camel@pengutronix.de>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] clocksource: tegra: wrap arch/arm-specific sections in
+ CONFIG_ARM
+Date: Fri, 9 Jan 2015 13:21:26 +0100
+Message-ID: <20150109122120.GJ16465@ulmo>
+References: <alpine.DEB.2.02.1412092201200.31750@utopia.booyaka.com>
+ <54AEB719.5060103@linaro.org>
+ <alpine.DEB.2.02.1501090135280.28771@utopia.booyaka.com>
+ <54AF91CC.2090007@linaro.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="wjoFZxbW4tu+iR6v"
-Return-path: <linux-pci-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="6TC23+W66xmFESAX"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1420803918.16381.9.camel@pengutronix.de>
-Sender: linux-pci-owner@vger.kernel.org
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
+In-Reply-To: <54AF91CC.2090007-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---wjoFZxbW4tu+iR6v
+--6TC23+W66xmFESAX
+Content-Type: multipart/mixed; boundary="KZLWU/9q3evlN4nQ"
+Content-Disposition: inline
+
+
+--KZLWU/9q3evlN4nQ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 09, 2015 at 12:45:18PM +0100, Lucas Stach wrote:
-> Am Freitag, den 09.01.2015, 12:32 +0100 schrieb Thierry Reding:
-> > On Thu, Dec 18, 2014 at 08:11:43PM +0100, Lucas Stach wrote:
-> > > The fixup to enable relaxed ordering on all PCI devices was
-> > > executed unconditionally if the Tegra PCI host driver was
-> > > built into the kernel. This doesn't play nice with a
-> > > multiplatform kernel executed on other platforms which
-> > > may not need this fixup.
-> > >=20
-> > > Make sure to only apply the fixup if the root port is
-> > > a Tegra.
-> > >=20
-> > > Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> > > ---
-> > > v2:
-> > > - split out PCI hierarchy walk
-> > > - separate code from data by moving PCI IDs into own structure
-> > > ---
-> > >  drivers/pci/host/pci-tegra.c | 34 +++++++++++++++++++++++++++++++++-
-> > >  1 file changed, 33 insertions(+), 1 deletion(-)
-> > >=20
-> > > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegr=
-a.c
-> > > index 333a57afacc4..b77f417e1a3c 100644
-> > > --- a/drivers/pci/host/pci-tegra.c
-> > > +++ b/drivers/pci/host/pci-tegra.c
-> > > @@ -635,10 +635,42 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0=
-x0bf1, tegra_pcie_fixup_class);
-> > >  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1c, tegra_pcie_fix=
-up_class);
-> > >  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1d, tegra_pcie_fix=
-up_class);
-> > > =20
-> > > +static const struct pci_device_id tegra_rootport_ids[] =3D {
-> > > +	{
-> > > +		/* Tegra20 4 lane root port */
-> > > +		.vendor =3D PCI_VENDOR_ID_NVIDIA, .device =3D 0x0bf0,
-> > > +		.subvendor =3D PCI_ANY_ID, .subdevice =3D PCI_ANY_ID
-> > > +	}, {
-> > > +		/* Tegra20 2 lane root port */
-> > > +		.vendor =3D PCI_VENDOR_ID_NVIDIA, .device =3D 0x0bf1,
-> > > +		.subvendor =3D PCI_ANY_ID, .subdevice =3D PCI_ANY_ID
-> >=20
-> > The number of lanes is configurable, so I'm not sure exactly what this
-> > comment is supposed to indicate. Are you saying that port 0 has 0x0bf0
-> > and port 1 has 0x0bf1 as device IDs.
-> >=20
+On Fri, Jan 09, 2015 at 09:31:08AM +0100, Daniel Lezcano wrote:
+> On 01/09/2015 03:09 AM, Paul Walmsley wrote:
+> >Hello Daniel
+> >
+> >On Thu, 8 Jan 2015, Daniel Lezcano wrote:
+> >
+> >>On 12/09/2014 11:07 PM, Paul Walmsley wrote:
+> >>>
+> >>>Like several of the other files in drivers/clocksource,
+> >>>tegra20_timer.c contains code that can only compile when CONFIG_ARM is
+> >>>enabled.  This causes obvious problems when trying to compile this
+> >>>code for NVIDIA ARM64-based SoCs, such as Tegra132.  The same timer IP
+> >>>blocks exist, so it seems appropriate to provide support for them.
+> >>>
+> >>>So until we figure out a better way to partition this code, wrap the
+> >>>delay_timer and persistent_clock support code with preprocessor tests
+> >>>for CONFIG_ARM.
+> >>>
+> >>>  (The delay_timer code should not be needed at all on
+> >>>ARM64 due to the presence of the ARMv8 architected timer.  The
+> >>>persistent_clock support code could become important once power
+> >>>management modes are implemented that turn off the CPU complex.)
+> >>
+> >>IIUC, the cpuidle driver is not yet ready, right ?
+> >>
+> >>If it is the case, this driver is not needed yet, no ?
+> >
+> >The point of the patch is to allow the hardware drivers selected by
+> >CONFIG_ARCH_TEGRA to build for an arm64 kernel, just as they build for
+> >32-bit ARM.
+> >
+> >There's nothing CPUIdle-specific about the patch - that is, this timer c=
+an
+> >be selected as a clockevent and clocksource provider without the use of
+> >CPUIdle - although low-power PM idle is likely to be a primary use-case.
 >=20
-> No, the device ID of the root port is dependent on the number of lanes
-> configured for the specific port. So if you have a 4x1 configuration you
-> will get to see a single device with ID 0x0bf0, in a 2x2 configuration
-> you will see 2 devices with ID 0x0bf1.
+> What I meant is this timer is not needed for the moment.
+>=20
+> >>Perhaps you can rework a bit this driver in the meantime to have a bett=
+er fix
+> >>than disabling the code with macros ?
+> >
+> >I'm happy to do that, but it would be nice to get the driver compiling
+> >first for ARM64 :-)
+> >
+> >>Otherwise, please try at least to group the code into a minimal set of =
+macros.
+> >
+> >So, would it be accurate to say that you would prefer a patch that chang=
+es
+> >more lines of code, but minimizes preprocessor directives, to the current
+> >patch?
+>=20
+> Yes at least an attempt to factor out a bit the driver. Those #ifdef are
+> like #if 0, which is a quick fix. I am not strongly against this patch, b=
+ut
+> it would be nice to take the opportunity to reorganize it a bit.
 
-Okay, that's interesting to know. My ack remains valid in that case:
+How about we do something like the attached patch instead for now. That
+avoids any #ifdef'ery and still we don't attempt (and fail) to build the
+driver on 64-bit ARM.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+With that applied we can incrementally make the changes to untangle the
+ARM-specific parts and when the driver can build on 64-bit ARM we simply
+select TEGRA_TIMER via Kconfig.
 
---wjoFZxbW4tu+iR6v
+Thierry
+
+--KZLWU/9q3evlN4nQ
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: inline; filename="0001-clocksource-Build-Tegra-timer-on-32-bit-ARM-only.patch"
+Content-Transfer-Encoding: quoted-printable
+
+=46rom dccf6b8e0dcf5695eb29a8749406472e578b972e Mon Sep 17 00:00:00 2001
+=46rom: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Date: Mon, 7 Jul 2014 15:26:30 +0200
+Subject: [PATCH] clocksource: Build Tegra timer on 32-bit ARM only
+
+Instead of directly using the ARCH_TEGRA Kconfig symbol to enable this
+driver, add a new, non-user-visible Kconfig symbol (TEGRA_TIMER) which
+can be selected by the various SoCs.
+
+This is useful to disable building the driver on Tegra132 (64-bit ARM)
+where it doesn't currently compile but also isn't needed (yet).
+
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/Kconfig  | 4 ++++
+ drivers/clocksource/Kconfig  | 3 +++
+ drivers/clocksource/Makefile | 2 +-
+ 3 files changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
+index f87684e600c7..667a48e2f7d4 100644
+--- a/arch/arm/mach-tegra/Kconfig
++++ b/arch/arm/mach-tegra/Kconfig
+@@ -29,6 +29,7 @@ config ARCH_TEGRA_2x_SOC
+ 	select PINCTRL_TEGRA20
+ 	select PL310_ERRATA_727915 if CACHE_L2X0
+ 	select PL310_ERRATA_769419 if CACHE_L2X0
++	select TEGRA_TIMER
+ 	help
+ 	  Support for NVIDIA Tegra AP20 and T20 processors, based on the
+ 	  ARM CortexA9MP CPU and the ARM PL310 L2 cache controller
+@@ -39,6 +40,7 @@ config ARCH_TEGRA_3x_SOC
+ 	select ARM_ERRATA_764369 if SMP
+ 	select PINCTRL_TEGRA30
+ 	select PL310_ERRATA_769419 if CACHE_L2X0
++	select TEGRA_TIMER
+ 	help
+ 	  Support for NVIDIA Tegra T30 processor family, based on the
+ 	  ARM CortexA9MP CPU and the ARM PL310 L2 cache controller
+@@ -49,6 +51,7 @@ config ARCH_TEGRA_114_SOC
+ 	select ARM_L1_CACHE_SHIFT_6
+ 	select HAVE_ARM_ARCH_TIMER
+ 	select PINCTRL_TEGRA114
++	select TEGRA_TIMER
+ 	help
+ 	  Support for NVIDIA Tegra T114 processor family, based on the
+ 	  ARM CortexA15MP CPU
+@@ -58,6 +61,7 @@ config ARCH_TEGRA_124_SOC
+ 	select ARM_L1_CACHE_SHIFT_6
+ 	select HAVE_ARM_ARCH_TIMER
+ 	select PINCTRL_TEGRA124
++	select TEGRA_TIMER
+ 	help
+ 	  Support for NVIDIA Tegra T124 processor family, based on the
+ 	  ARM CortexA15MP CPU
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index fc01ec27d3c8..c062b6105d49 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -47,6 +47,9 @@ config SUN5I_HSTIMER
+ 	select CLKSRC_MMIO
+ 	bool
+=20
++config TEGRA_TIMER
++	bool
++
+ config VT8500_TIMER
+ 	bool
+=20
+diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
+index 94d90b24b56b..ba9ebd868ec5 100644
+--- a/drivers/clocksource/Makefile
++++ b/drivers/clocksource/Makefile
+@@ -27,7 +27,7 @@ obj-$(CONFIG_ARCH_U300)		+=3D timer-u300.o
+ obj-$(CONFIG_SUN4I_TIMER)	+=3D sun4i_timer.o
+ obj-$(CONFIG_SUN5I_HSTIMER)	+=3D timer-sun5i.o
+ obj-$(CONFIG_MESON6_TIMER)	+=3D meson6_timer.o
+-obj-$(CONFIG_ARCH_TEGRA)	+=3D tegra20_timer.o
++obj-$(CONFIG_TEGRA_TIMER)	+=3D tegra20_timer.o
+ obj-$(CONFIG_VT8500_TIMER)	+=3D vt8500_timer.o
+ obj-$(CONFIG_ARCH_NSPIRE)	+=3D zevio-timer.o
+ obj-$(CONFIG_ARCH_BCM_MOBILE)	+=3D bcm_kona_timer.o
+--=20
+2.1.3
+
+
+--KZLWU/9q3evlN4nQ--
+
+--6TC23+W66xmFESAX
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUr8J9AAoJEN0jrNd/PrOhQPoP/jow147LxL7KeIg7QanmTSZk
-DbmSvCZxpGXh5BWUVnIS1i0c7EE61dMJd92WtWo0kfDEsTF9v0nhBOl7b0kXORsf
-9YrSR/Kp4pBApxeYZZo9wQzZLtY5KlxCJ+v2M8JY4McnQQcBk8cVafCaI5juviQn
-e5rgIHsz7Y2xe3njp9Uef68WR/2okabQLYNe6Mtq6hORo/qkq/7YrVRaMnw9asfX
-+2fU+9W5gOSU0iw34e4T313Ro7TL2/3/szozWccb8aTgiO8SBTRUfSPa/eQoUCb8
-t2ARN08mGyHF1NqTyT/QEol4TPeM5Sbv/FmJct2SEVMlMAjnDu5OCJtj0Ao2YRn2
-A0Fcv51pWz9eQahEZJMPKTphC4HeDFltVJp/azpo0mo0r+x8qzsKFiqgpmk2xgls
-0E5/NskaC4bNkUuda+ft9uy276bD3CptfkcF/qO5H17+tCJqHnlHQ1ZpJH19v+w7
-SWAhIeUpYU3L98/aq63XU/YQNhnA4C2e0uG7HfMPdzp0O9XK2IjHbDzV2OtaeHpG
-TBsMPyNgOR7y+gEZmLLqeEm1N02H2AU05vxDwLJaWbKDFRRiadRgC5jmfTw0BJs+
-JoMnhGxenlD6w4U8KQL6B6GvNBe3ZStmDtl1g9YCCoWGrb6NMRHTr52SAsv/IIT9
-bF5BuAJs9SjOdkfOvWnq
-=MqNn
+iQIcBAEBAgAGBQJUr8fAAAoJEN0jrNd/PrOh+WkP+gNTk5TJNTIDre4Mp0yv2SHv
+g5ndaRh+IqpfJLonJijrhZs0z2t7xVI0z+N1sGHIyARXgDc1U4lPxIjSBpFakA8L
+OICfqn7TP8F7/luTZC5L/X3tLr0g2GS8ZgETliMZ7SuO7cD6M1lC+E9lOValRxug
+gRBcUxLMNBKRtcUb5TP+/sN04XHBYS4KEngi/ExhcSdQtsdqa1hlhZTWYRbgr+Z4
+KSEmjUckETeIm2HMOvMvAHDXdZM3iQ60/czNgfsJ1dHh4PIcWDchPpCQrvXhPVtD
+fksyLYWUtmOS6xCOgmbTm28gchqlW+R4wErKDQCdlpntn2zZHLJCFrXvtLjO4UsH
+ktOZkctdMAVrptV5z1bbPrrfSlMd20BFpEGB6u0PxsnNbYPnFWo4FAXX5BlEURjg
+JU1ZyIpKX3M93xUpanWKqY1hY/TTWl5QlPxthN59HRZ5f4nRuowT60+WVG25SCVI
+nbZiU9bVX2gleobtf+iZOggIzDhaA8VapOJVHoIVIp1Ec4Tyap1buzHFLThrqCKJ
+VaJpqgo8eZrYqjlEqbZlUIgovEgCqWQS3gLaeiHCcyYce7gdRve0Ygxw1Wc/rL/S
+Xao1ZuwEiMyGUk/K5xFclGzuhucAf5JsO/nzYho5cXqLz5EYV2HHQXwAIm6A1mRs
+MmUUTGFQZmhbJkxejy5Y
+=c6An
 -----END PGP SIGNATURE-----
 
---wjoFZxbW4tu+iR6v--
+--6TC23+W66xmFESAX--
