@@ -1,108 +1,130 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH] timekeeping: Move persistent clock registration code
- from ARM to kernel
-Date: Fri, 09 Jan 2015 14:30:14 +0100
-Message-ID: <54AFD7E6.5040607@linaro.org>
-References: <1415388855-35074-1-git-send-email-anatol.pomozov@gmail.com>	<20141110095325.GC12126@ulmo>	<CAOMFOmXpAm5iKCLFyorTW+n9YmgZMmrDGGe736tJX8C6BYQv-A@mail.gmail.com>	<alpine.DEB.2.11.1411132334400.3935@nanos>	<CAOMFOmVziftM=pWGG-L9J-E6AHYAK7k9bmBcpS1adPboLciX9g@mail.gmail.com>	<alpine.DEB.2.11.1411150115390.3909@nanos> <CAOMFOmV5=tes6Ak1eUKb2qircp8ba6jt6v-bg66Kp_-jYk9m2w@mail.gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] clocksource: tegra: wrap arch/arm-specific sections in
+ CONFIG_ARM
+Date: Fri, 9 Jan 2015 14:33:51 +0100
+Message-ID: <20150109133349.GA27876@ulmo>
+References: <alpine.DEB.2.02.1412092201200.31750@utopia.booyaka.com>
+ <54AEB719.5060103@linaro.org>
+ <alpine.DEB.2.02.1501090135280.28771@utopia.booyaka.com>
+ <54AF91CC.2090007@linaro.org>
+ <20150109122120.GJ16465@ulmo>
+ <54AFD688.5000304@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAOMFOmV5=tes6Ak1eUKb2qircp8ba6jt6v-bg66Kp_-jYk9m2w@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Anatol Pomozov <anatol.pomozov@gmail.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Russell King <linux@arm.linux.org.uk>, LKML <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Tony Lindgren <tony@atomide.com>, Mark Rutland <mark.rutland@arm.com>, John Stultz <john.stultz@linaro.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="9amGYk9869ThD9tj"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <54AFD688.5000304-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/15/2014 01:51 AM, Anatol Pomozov wrote:
-> Hi
->
-> On Fri, Nov 14, 2014 at 4:18 PM, Thomas Gleixner <tglx@linutronix.de>=
- wrote:
->> On Fri, 14 Nov 2014, Anatol Pomozov wrote:
->>> On Thu, Nov 13, 2014 at 2:46 PM, Thomas Gleixner <tglx@linutronix.d=
-e> wrote:
->>>> On Mon, 10 Nov 2014, Anatol Pomozov wrote:
->>>>> On Mon, Nov 10, 2014 at 1:53 AM, Thierry Reding
->>>>> <thierry.reding@gmail.com> wrote:
->>>>>> On Fri, Nov 07, 2014 at 11:34:15AM -0800, Anatol Pomozov wrote:
->>>>>>> ARM timekeeping functionality allows to register persistent/boo=
-t clock dynamically.
->>>>>>> This code is arch-independent and can be useful on other plafor=
-ms as well.
->>>>>>>
->>>>>>> As a byproduct of this change, tegra20_timer becomes ARM64 comp=
-atible.
->>>>>>>
->>>>>>> Tested: backported the change to chromeos-3.14 kernel ran on te=
-gra 64bit
->>>>>>> board, made sure high-resolution clock works.
->>>>>>
->>>>>> Using this on an upstream kernel doesn't work, though, because 6=
-4-bit
->>>>>> ARM doesn't implement struct delay_timer which the driver needs =
-since
->>>>>> v3.17.
->>>>>>
->>>>>> But I suppose the delay timer infrastructure could be moved into=
- the
->>>>>> core similar to the persistent and boot clock as this patch does=
-=2E
->>>>>
->>>>> Thanks. It makes sense, I will send it in a separate patch, once =
-this
->>>>> one will be reviewed. On our kernel I haven't seen this issue as =
-we
->>>>> still use 3.14.
->>>>
->>>> That's why you should test/compile your stuff on latest greatest a=
-nd
->>>> not on a year old conglomorate of unknown provenance. :)
->>>
->>> Unfortunately it is not possible to test this patch with upstream.
->>> There is no ARM64 bit support for Tegra yet. I am trying to
->>> cleanup/upstream my ChromeOS patches and this clock patch in
->>> particular makes one small step towards this goal. Also Thierry
->>> mentioned that he works on full ARM64 Tegra support and it is reall=
-y
->>> exciting!
->>
->> Everything is exciting, but it does not change the fact, that this
->> patch cannot work on current upstream.
->
-> Could you please be more specific what exactly does not work? Are you
-> talking about delay timer? But my patch does not touch any delay time=
-r
-> code. I can compile tegra_timer for ARM. And this code is not usable
-> on arm64 anyway because whole Tegra is not ported yet. Somebody shoul=
-d
-> make additional changes to upstream tegra20_timer.c code. I might try
-> to do it later when Tegra will be ported.
->
->>> So what I suppose to do with my patch? If it does not work could
->>> anyone provide patch that removes ARM arch dependency from
->>> tegra20_timer.c?
->>
->> Huch? You want other people to solve your problems?
->
-> This is not the point. I provided patch that fixes the issue. Other
-> people said that they have ideas how to do it different (and better)
-> way. So I am asking to share these ideas represented as a patch.
 
-I think your issue is solved [1] ... for the moment.
+--9amGYk9869ThD9tj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks
-   -- Daniel
+On Fri, Jan 09, 2015 at 02:24:24PM +0100, Daniel Lezcano wrote:
+> On 01/09/2015 01:21 PM, Thierry Reding wrote:
+> >On Fri, Jan 09, 2015 at 09:31:08AM +0100, Daniel Lezcano wrote:
+> >>On 01/09/2015 03:09 AM, Paul Walmsley wrote:
+> >>>Hello Daniel
+> >>>
+> >>>On Thu, 8 Jan 2015, Daniel Lezcano wrote:
+> >>>
+> >>>>On 12/09/2014 11:07 PM, Paul Walmsley wrote:
+> >>>>>
+> >>>>>Like several of the other files in drivers/clocksource,
+> >>>>>tegra20_timer.c contains code that can only compile when CONFIG_ARM =
+is
+> >>>>>enabled.  This causes obvious problems when trying to compile this
+> >>>>>code for NVIDIA ARM64-based SoCs, such as Tegra132.  The same timer =
+IP
+> >>>>>blocks exist, so it seems appropriate to provide support for them.
+> >>>>>
+> >>>>>So until we figure out a better way to partition this code, wrap the
+> >>>>>delay_timer and persistent_clock support code with preprocessor tests
+> >>>>>for CONFIG_ARM.
+> >>>>>
+> >>>>>  (The delay_timer code should not be needed at all on
+> >>>>>ARM64 due to the presence of the ARMv8 architected timer.  The
+> >>>>>persistent_clock support code could become important once power
+> >>>>>management modes are implemented that turn off the CPU complex.)
+> >>>>
+> >>>>IIUC, the cpuidle driver is not yet ready, right ?
+> >>>>
+> >>>>If it is the case, this driver is not needed yet, no ?
+> >>>
+> >>>The point of the patch is to allow the hardware drivers selected by
+> >>>CONFIG_ARCH_TEGRA to build for an arm64 kernel, just as they build for
+> >>>32-bit ARM.
+> >>>
+> >>>There's nothing CPUIdle-specific about the patch - that is, this timer=
+ can
+> >>>be selected as a clockevent and clocksource provider without the use of
+> >>>CPUIdle - although low-power PM idle is likely to be a primary use-cas=
+e.
+> >>
+> >>What I meant is this timer is not needed for the moment.
+> >>
+> >>>>Perhaps you can rework a bit this driver in the meantime to have a be=
+tter fix
+> >>>>than disabling the code with macros ?
+> >>>
+> >>>I'm happy to do that, but it would be nice to get the driver compiling
+> >>>first for ARM64 :-)
+> >>>
+> >>>>Otherwise, please try at least to group the code into a minimal set o=
+f macros.
+> >>>
+> >>>So, would it be accurate to say that you would prefer a patch that cha=
+nges
+> >>>more lines of code, but minimizes preprocessor directives, to the curr=
+ent
+> >>>patch?
+> >>
+> >>Yes at least an attempt to factor out a bit the driver. Those #ifdef are
+> >>like #if 0, which is a quick fix. I am not strongly against this patch,=
+ but
+> >>it would be nice to take the opportunity to reorganize it a bit.
+> >
+> >How about we do something like the attached patch instead for now. That
+> >avoids any #ifdef'ery and still we don't attempt (and fail) to build the
+> >driver on 64-bit ARM.
+> >
+> >With that applied we can incrementally make the changes to untangle the
+> >ARM-specific parts and when the driver can build on 64-bit ARM we simply
+> >select TEGRA_TIMER via Kconfig.
+>=20
+> Yes, that is exactly what I was thinking about after sending the previous
+> email. And by this way, you also fixed the Kconfig option selection logic.
 
-[1] https://lkml.org/lkml/2015/1/9/264
+Great. Will you give your Acked-by so that I can take that patch through
+the Tegra tree to resolve the build dependency?
 
+Thierry
 
+--9amGYk9869ThD9tj
+Content-Type: application/pgp-signature
 
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+iQIcBAEBAgAGBQJUr9i9AAoJEN0jrNd/PrOhlW0QAJ35JLPzCG6l4zNkyZk04T+u
+T51N6gToQk+BoeuEsLGsnI1KclFXTsrXIhvVhcd8mFLz4UGZB2GHfSOP2FV2WGqy
+V1PLBkI06l4P/a933nT7NY89LZgjwx/tc0kOG5H7Vp2DBmaaEICPN3y69FHpKwZt
+70Uax1obJGtqwoeLmI0YIJZBXL9SRt7nt9LH/awJVNlpjFD3EIysX2W0BYLfmGcS
+ceG8qnDZF/4doN57QbjhdmS0EWPNTGqmv2eCroH6oN8Pqkic8Fk7QsAfQEnBVI7o
+pW49v7ZpX0ta4GdTK/AUiI5/H9yEJhoQQNVRV5cHMsDCmu2mhSgpP7H8g2LS2YZo
+y33xpEsPpRiTh8Hkt9bRUhezsz9CKdxh3Jh/NOzIA0iLItxr9HaFBoKjpIavlMN+
+9AX4RZNzjUUkLb9w5ZVHqm6LsnoPTwU2CtRJNKKpw0hryyMPXO7hbCxcDEolWswp
+/dpO59R7+JssZlQXd3lbtBSqpIfo21I5cE7ro+P+jPQk+XeXzwgBXqyZa0+/6JRZ
+UhhkCicEythsJYRrm4mgUHHUAvbs7i+E+tYlcKpyynflnD1vYofBx0Bmv919nR56
+dwg9mG4cX9zu755McUoolXHSU+4pSRakJvtdxBfSNEfl03X7UaOWOK0PYBPY4I/v
+ayJShYr2edXPPwA2Y/I7
+=i8VH
+-----END PGP SIGNATURE-----
+
+--9amGYk9869ThD9tj--
