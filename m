@@ -1,51 +1,93 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] clk: tegra: Fix order of arguments in WARN
-Date: Fri, 9 Jan 2015 12:39:34 +0100
-Message-ID: <20150109113933.GG16465@ulmo>
-References: <1412061720-10402-1-git-send-email-tomeu.vizoso@collabora.com>
+From: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: Re: [PATCH v2 2/2] PCI: tegra: apply relaxed ordering fixup only on
+ Tegra
+Date: Fri, 09 Jan 2015 12:45:18 +0100
+Message-ID: <1420803918.16381.9.camel@pengutronix.de>
+References: <1418929903-8506-1-git-send-email-l.stach@pengutronix.de>
+	 <1418929903-8506-2-git-send-email-l.stach@pengutronix.de>
+	 <20150109113213.GE16465@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="DNUSDXU7R7AVVM8C"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1412061720-10402-1-git-send-email-tomeu.vizoso@collabora.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150109113213.GE16465@ulmo>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Am Freitag, den 09.01.2015, 12:32 +0100 schrieb Thierry Reding:
+> On Thu, Dec 18, 2014 at 08:11:43PM +0100, Lucas Stach wrote:
+> > The fixup to enable relaxed ordering on all PCI devices was
+> > executed unconditionally if the Tegra PCI host driver was
+> > built into the kernel. This doesn't play nice with a
+> > multiplatform kernel executed on other platforms which
+> > may not need this fixup.
+> > 
+> > Make sure to only apply the fixup if the root port is
+> > a Tegra.
+> > 
+> > Signed-off-by: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+> > ---
+> > v2:
+> > - split out PCI hierarchy walk
+> > - separate code from data by moving PCI IDs into own structure
+> > ---
+> >  drivers/pci/host/pci-tegra.c | 34 +++++++++++++++++++++++++++++++++-
+> >  1 file changed, 33 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+> > index 333a57afacc4..b77f417e1a3c 100644
+> > --- a/drivers/pci/host/pci-tegra.c
+> > +++ b/drivers/pci/host/pci-tegra.c
+> > @@ -635,10 +635,42 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0bf1, tegra_pcie_fixup_class);
+> >  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1c, tegra_pcie_fixup_class);
+> >  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1d, tegra_pcie_fixup_class);
+> >  
+> > +static const struct pci_device_id tegra_rootport_ids[] = {
+> > +	{
+> > +		/* Tegra20 4 lane root port */
+> > +		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0bf0,
+> > +		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
+> > +	}, {
+> > +		/* Tegra20 2 lane root port */
+> > +		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0bf1,
+> > +		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
+> 
+> The number of lanes is configurable, so I'm not sure exactly what this
+> comment is supposed to indicate. Are you saying that port 0 has 0x0bf0
+> and port 1 has 0x0bf1 as device IDs.
+> 
 
---DNUSDXU7R7AVVM8C
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+No, the device ID of the root port is dependent on the number of lanes
+configured for the specific port. So if you have a 4x1 configuration you
+will get to see a single device with ID 0x0bf0, in a 2x2 configuration
+you will see 2 devices with ID 0x0bf1.
 
-On Tue, Sep 30, 2014 at 09:22:00AM +0200, Tomeu Vizoso wrote:
-> As previously the names of the present clock and its parent were swapped.
->=20
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---DNUSDXU7R7AVVM8C
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJUr731AAoJEN0jrNd/PrOh6ggP/0t9tGBdQV9faj1NFaVhslJw
-v8OFPF7J4eGfhuNJOgPC1nkBSuBrage5CG7rKV2sBp4pY1qUF7CbId8wSPpcnOCE
-TJlxc7H0YLRMTGLtwovDdS3Xc/v/78SqSKjgSyMqBrAwGNK6eN7y0cEgjPSZYHqa
-Vu0TkO1mxRbPB96FJQ1Xq05GbTK1hjaIgm6+VJWU+GzMZBn/9P2JwYdWk5vdC9DK
-cil2bcWvXq8jXt9uITtphS/lB4xGFLwM9sujX1TrG/on3XgHoioXZttZbsN3hZWt
-EPO/Av8ZmINDFKG+d1yJ/h/1tAkz/VErXq58kqhyXtFGTqoUMsX0Rz826laAonKg
-KXeZBr/MS9naRYNW/Z8NnuQ+Oz82k168UXWkPQqfOK9ZR+noemrBiG38EGadX/3t
-0TgqzXC1p9djyxW+ThB6xWBTiJqBc+2VPV6fGGDhBbVIuXiGrgP4lkttSjdDmijR
-gcgZfkg9omcaWv5RFBRNga30XY8d3PhHXdSl1W+YPtf6KLFLUcYTHgbm709r3vGf
-xsDveonfCd4QTWYJ8OiswjOCpGW05tCQRi1r2Hw1FmqV0NX6wc3gtuu6sJATknh/
-x/wmPM60d7UMGj+kpTf2mVe6SkImIDmMQLQoyHY6qWAT20nq+Wvwp4eg7Ifo7cfG
-9uMciCg4YCKNjo7tT8jJ
-=hDQ9
------END PGP SIGNATURE-----
-
---DNUSDXU7R7AVVM8C--
+> > +	}, {
+> > +		/* Tegra30 4 lane root port */
+> > +		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0e1c,
+> > +		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
+> > +	}, {
+> > +		/* Tegra30 2 lane root port */
+> > +		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0e1d,
+> > +		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
+> 
+> Tegra30 has three ports, so does this second entry (0x0e1d) apply to
+> ports 1 and 2, whereas the previous entry (0x0e1c) applies only to port
+> 0?
+> 
+> > +	}, {
+> > +		/* Tegra124 4 lane root port */
+> > +		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0e12,
+> > +		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
+> > +	}, {
+> > +		/* Tegra124 1 lane root port */
+> > +		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0e13,
+> > +		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
+> 
+> Or perhaps what this signifies is that the first port is actually a
+> different device because it supports up to 4 lanes, whereas the others
+> support up to 2 lanes (or only 1 on Tegra124)? In that case:
+> 
+> Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
