@@ -1,93 +1,69 @@
-From: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: Re: [PATCH v2 2/2] PCI: tegra: apply relaxed ordering fixup only on
- Tegra
-Date: Fri, 09 Jan 2015 12:45:18 +0100
-Message-ID: <1420803918.16381.9.camel@pengutronix.de>
-References: <1418929903-8506-1-git-send-email-l.stach@pengutronix.de>
-	 <1418929903-8506-2-git-send-email-l.stach@pengutronix.de>
-	 <20150109113213.GE16465@ulmo>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v2] memory: Add NVIDIA SMMU suspend/resume support
+Date: Fri, 9 Jan 2015 12:57:07 +0100
+Message-ID: <20150109115706.GH16465@ulmo>
+References: <1419383441-18242-1-git-send-email-markz@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150109113213.GE16465@ulmo>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="FLPM4o+7JoHGki3m"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1419383441-18242-1-git-send-email-markz@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Zhang <markz@nvidia.com>
+Cc: gnurou@gmail.com, hdoyu@nvidia.com, joro@8bytes.org, swarren@wwwdotorg.org, olof@lixom.net, iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Am Freitag, den 09.01.2015, 12:32 +0100 schrieb Thierry Reding:
-> On Thu, Dec 18, 2014 at 08:11:43PM +0100, Lucas Stach wrote:
-> > The fixup to enable relaxed ordering on all PCI devices was
-> > executed unconditionally if the Tegra PCI host driver was
-> > built into the kernel. This doesn't play nice with a
-> > multiplatform kernel executed on other platforms which
-> > may not need this fixup.
-> > 
-> > Make sure to only apply the fixup if the root port is
-> > a Tegra.
-> > 
-> > Signed-off-by: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-> > ---
-> > v2:
-> > - split out PCI hierarchy walk
-> > - separate code from data by moving PCI IDs into own structure
-> > ---
-> >  drivers/pci/host/pci-tegra.c | 34 +++++++++++++++++++++++++++++++++-
-> >  1 file changed, 33 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> > index 333a57afacc4..b77f417e1a3c 100644
-> > --- a/drivers/pci/host/pci-tegra.c
-> > +++ b/drivers/pci/host/pci-tegra.c
-> > @@ -635,10 +635,42 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0bf1, tegra_pcie_fixup_class);
-> >  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1c, tegra_pcie_fixup_class);
-> >  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1d, tegra_pcie_fixup_class);
-> >  
-> > +static const struct pci_device_id tegra_rootport_ids[] = {
-> > +	{
-> > +		/* Tegra20 4 lane root port */
-> > +		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0bf0,
-> > +		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
-> > +	}, {
-> > +		/* Tegra20 2 lane root port */
-> > +		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0bf1,
-> > +		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
-> 
-> The number of lanes is configurable, so I'm not sure exactly what this
-> comment is supposed to indicate. Are you saying that port 0 has 0x0bf0
-> and port 1 has 0x0bf1 as device IDs.
-> 
 
-No, the device ID of the root port is dependent on the number of lanes
-configured for the specific port. So if you have a 4x1 configuration you
-will get to see a single device with ID 0x0bf0, in a 2x2 configuration
-you will see 2 devices with ID 0x0bf1.
+--FLPM4o+7JoHGki3m
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > +	}, {
-> > +		/* Tegra30 4 lane root port */
-> > +		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0e1c,
-> > +		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
-> > +	}, {
-> > +		/* Tegra30 2 lane root port */
-> > +		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0e1d,
-> > +		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
-> 
-> Tegra30 has three ports, so does this second entry (0x0e1d) apply to
-> ports 1 and 2, whereas the previous entry (0x0e1c) applies only to port
-> 0?
-> 
-> > +	}, {
-> > +		/* Tegra124 4 lane root port */
-> > +		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0e12,
-> > +		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
-> > +	}, {
-> > +		/* Tegra124 1 lane root port */
-> > +		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0e13,
-> > +		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
-> 
-> Or perhaps what this signifies is that the first port is actually a
-> different device because it supports up to 4 lanes, whereas the others
-> support up to 2 lanes (or only 1 on Tegra124)? In that case:
-> 
-> Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Wed, Dec 24, 2014 at 09:10:41AM +0800, Mark Zhang wrote:
+> This patch adds suspend/resume support for NVIDIA SMMU.
+>=20
+> Signed-off-by: Mark Zhang <markz@nvidia.com>
+> ---
+> Hi Alex/Olof/Thierry/Hiroshi,
+>=20
+> This patch is created on top of Thierry Reding's patch set:
+> "[PATCH v7 00/12] NVIDIA Tegra memory controller and IOMMU support"
+>=20
+> Changes since v1:
+> - Remove the list which saves "tegra_smmu_swgroup_asid" instances
+> - Save all ASID registers when suspend then restore them when resume
+>=20
+>  drivers/iommu/tegra-smmu.c | 71 ++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  drivers/memory/tegra/mc.c  | 24 ++++++++++++++++
+>  drivers/memory/tegra/mc.h  |  8 ++++++
+>  3 files changed, 103 insertions(+)
+
+We only need this for LP0, right? As such I'm reluctant to apply this
+since we can't test it upstream.
+
+Thierry
+
+--FLPM4o+7JoHGki3m
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUr8ISAAoJEN0jrNd/PrOhUNkQALuuRoHzgAV8zFYpErc9hbzV
+7BmtHAZ3UAlhYJEPL/wp/XgbYiJorGuCJafnX38mepxayiC/U9/tAnAQ4rrVMUWW
+1PwSGA4PdO9cyUVQiGPJjxKkB+Fb+K9Da/azlF+jT9e4I9yBrOeNYuhUgHZgGdkJ
+2wmhMGm50YsEThqeX1519VCotWGjyw2BTkv3O/TT0Y6hWnGz+Nu/wrbyKvTH3ola
+GbrDunOIzlqpszfIas3bHSiuXiYDAJGjAUgFv9uR5ObQc4xJJv32xJ+9+II71pG+
+kmxpRmZfAnXfPlPjKMGfHBkhzPR1tjke0kDOz/lwQNtlKFxhUYaBdlBoSyUhIiDD
+NSmc76Agg2p4cgED3SWg0yGTUjZsGo/k6tUVyYYQU/wJur4sPr++LK4PKhvzeufC
+VSyNHdEPjmtTsLOZNZx59vla52zhmA+dR9IoAmzychdsRB3fknzEB3x9KUdqkDo2
+GpafEwtRzvM0eIckzORNqhkWAJENKSk1Ap39bcfhOn1WzvgsVhjpOxRoH2H2MgN7
+uiC8w+ziL/lEQeY5wdTsV6KRFX5JsJJMg+avpyWI09XdO17NJs3/iEHd+UV7pdli
+jNvmXRL6v+kwI5BHwOulj6qAYiStL0CT2eEPwW2NYBQ3XoZrHFqUrl/7lzNpAEUt
+9FBisJfO2PYYPJGXyvLX
+=4ze6
+-----END PGP SIGNATURE-----
+
+--FLPM4o+7JoHGki3m--
