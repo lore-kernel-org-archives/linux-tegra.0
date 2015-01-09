@@ -1,113 +1,93 @@
 From: Paul Walmsley <paul@pwsan.com>
-Subject: Re: [PATCH] soc/tegra: pmc: Add Tegra132 support
-Date: Thu, 8 Jan 2015 22:34:35 +0000 (UTC)
-Message-ID: <alpine.DEB.2.02.1501082232280.28771@utopia.booyaka.com>
-References: <1420701657-32543-1-git-send-email-thierry.reding@gmail.com>
+Subject: Re: [PATCH] clocksource: tegra: wrap arch/arm-specific sections in
+ CONFIG_ARM
+Date: Fri, 9 Jan 2015 02:09:25 +0000 (UTC)
+Message-ID: <alpine.DEB.2.02.1501090135280.28771@utopia.booyaka.com>
+References: <alpine.DEB.2.02.1412092201200.31750@utopia.booyaka.com> <54AEB719.5060103@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1420701657-32543-1-git-send-email-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Stephen Warren <swarren@wwwdotorg.org>
+Content-Type: TEXT/PLAIN; CHARSET=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <54AEB719.5060103@linaro.org>
+Content-ID: <alpine.DEB.2.02.1501090143282.28771@utopia.booyaka.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-tegra@vger.kernel.org, Allen Martin <amartin@nvidia.com>, Stephen Warren <swarren@nvidia.com>, Thierry Reding <treding@nvidia.com>, Alexandre Courbot <gnurou@gmail.com>, pwalmsley@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 8 Jan 2015, Thierry Reding wrote:
+Hello Daniel
 
-> From: Thierry Reding <treding@nvidia.com>
+On Thu, 8 Jan 2015, Daniel Lezcano wrote:
+
+> On 12/09/2014 11:07 PM, Paul Walmsley wrote:
+> > 
+> > Like several of the other files in drivers/clocksource,
+> > tegra20_timer.c contains code that can only compile when CONFIG_ARM is
+> > enabled.  This causes obvious problems when trying to compile this
+> > code for NVIDIA ARM64-based SoCs, such as Tegra132.  The same timer IP
+> > blocks exist, so it seems appropriate to provide support for them.
+> > 
+> > So until we figure out a better way to partition this code, wrap the
+> > delay_timer and persistent_clock support code with preprocessor tests
+> > for CONFIG_ARM.
+> >
+> >  (The delay_timer code should not be needed at all on
+> > ARM64 due to the presence of the ARMv8 architected timer.  The
+> > persistent_clock support code could become important once power
+> > management modes are implemented that turn off the CPU complex.)
 > 
-> Tegra132 uses the same GPU as Tegra124 and the same special-case is
-> needed to remove clamps. However Tegra132 has a separate chip ID, so in
-> order to avoid having to extend the list of chip IDs for the special
-> case, add a feature flag to the SoC data.
+> IIUC, the cpuidle driver is not yet ready, right ?
 > 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> If it is the case, this driver is not needed yet, no ?
 
-Reviewed-by: Paul Walmsley <pwalmsley@nvidia.com>
+The point of the patch is to allow the hardware drivers selected by 
+CONFIG_ARCH_TEGRA to build for an arm64 kernel, just as they build for 
+32-bit ARM.  
 
-Nit: not sure I would call it a special-case; to me it's more of an 
-evolutionary change due to the radically different GPU in T124 & T132.
+There's nothing CPUIdle-specific about the patch - that is, this timer can 
+be selected as a clockevent and clocksource provider without the use of 
+CPUIdle - although low-power PM idle is likely to be a primary use-case.
 
+> Perhaps you can rework a bit this driver in the meantime to have a better fix
+> than disabling the code with macros ?
 
-- Paul
+I'm happy to do that, but it would be nice to get the driver compiling 
+first for ARM64 :-)
 
-> ---
->  drivers/soc/tegra/pmc.c | 14 ++++++++++----
->  1 file changed, 10 insertions(+), 4 deletions(-)
+> Otherwise, please try at least to group the code into a minimal set of macros.
+
+So, would it be accurate to say that you would prefer a patch that changes 
+more lines of code, but minimizes preprocessor directives, to the current 
+patch?
+
+> One comment below.
+
+> > diff --git a/drivers/clocksource/tegra20_timer.c
+> > b/drivers/clocksource/tegra20_timer.c
+> > index d2616ef16770..83a8f5c9e139 100644
+> > --- a/drivers/clocksource/tegra20_timer.c
+> > +++ b/drivers/clocksource/tegra20_timer.c
+> > @@ -29,8 +29,10 @@
+> >   #include <linux/sched_clock.h>
+> >   #include <linux/delay.h>
+> > 
+> > +#ifdef CONFIG_ARM
+> >   #include <asm/mach/time.h>
+> >   #include <asm/smp_twd.h>
 > 
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index 4bdc654bd747..0f096e76574a 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -88,6 +88,8 @@ struct tegra_pmc_soc {
->  	const char *const *powergates;
->  	unsigned int num_cpu_powergates;
->  	const u8 *cpu_powergates;
-> +
-> +	bool has_gpu_clamps;
->  };
->  
->  /**
-> @@ -225,11 +227,11 @@ int tegra_powergate_remove_clamping(int id)
->  		return -EINVAL;
->  
->  	/*
-> -	 * The Tegra124 GPU has a separate register (with different semantics)
-> -	 * to remove clamps.
-> +	 * On Tegra124 and later, the clamps for the GPU are controlled by a
-> +	 * separate register (with different semantics).
->  	 */
-> -	if (tegra_get_chip_id() == TEGRA124) {
-> -		if (id == TEGRA_POWERGATE_3D) {
-> +	if (id == TEGRA_POWERGATE_3D) {
-> +		if (pmc->soc->has_gpu_clamps) {
->  			tegra_pmc_writel(0, GPU_RG_CNTRL);
->  			return 0;
->  		}
-> @@ -773,6 +775,7 @@ static const struct tegra_pmc_soc tegra20_pmc_soc = {
->  	.powergates = tegra20_powergates,
->  	.num_cpu_powergates = 0,
->  	.cpu_powergates = NULL,
-> +	.has_gpu_clamps = false,
->  };
->  
->  static const char * const tegra30_powergates[] = {
-> @@ -804,6 +807,7 @@ static const struct tegra_pmc_soc tegra30_pmc_soc = {
->  	.powergates = tegra30_powergates,
->  	.num_cpu_powergates = ARRAY_SIZE(tegra30_cpu_powergates),
->  	.cpu_powergates = tegra30_cpu_powergates,
-> +	.has_gpu_clamps = false,
->  };
->  
->  static const char * const tegra114_powergates[] = {
-> @@ -839,6 +843,7 @@ static const struct tegra_pmc_soc tegra114_pmc_soc = {
->  	.powergates = tegra114_powergates,
->  	.num_cpu_powergates = ARRAY_SIZE(tegra114_cpu_powergates),
->  	.cpu_powergates = tegra114_cpu_powergates,
-> +	.has_gpu_clamps = false,
->  };
->  
->  static const char * const tegra124_powergates[] = {
-> @@ -880,6 +885,7 @@ static const struct tegra_pmc_soc tegra124_pmc_soc = {
->  	.powergates = tegra124_powergates,
->  	.num_cpu_powergates = ARRAY_SIZE(tegra124_cpu_powergates),
->  	.cpu_powergates = tegra124_cpu_powergates,
-> +	.has_gpu_clamps = true,
->  };
->  
->  static const struct of_device_id tegra_pmc_match[] = {
-> -- 
-> 2.1.3
+> Is smp_twd.h really needed ?
 > 
+> > +#endif
+
+No, it can be removed.  
+
+Would you be willing to ack or merge a revision of this patch with 
+
+1. the #include <asm/smp_twd.h> removed
+
+2. a larger number of changed lines, in order to minimize the number of 
+new #ifdefs?
+
+
 
 
 - Paul
