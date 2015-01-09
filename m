@@ -1,52 +1,51 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] treewide: Convert clockevents_notify to use int cpu
-Date: Fri, 9 Jan 2015 12:34:56 +0100
-Message-ID: <20150109113452.GF16465@ulmo>
-References: <1418254133.18092.22.camel@perches.com>
+Subject: Re: [PATCH] clk: tegra: Fix order of arguments in WARN
+Date: Fri, 9 Jan 2015 12:39:34 +0100
+Message-ID: <20150109113933.GG16465@ulmo>
+References: <1412061720-10402-1-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="DEueqSqTbz/jWVG1"
-Return-path: <linux-acpi-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="DNUSDXU7R7AVVM8C"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1418254133.18092.22.camel@perches.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Joe Perches <joe@perches.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Andrew Morton <akpm@linux-foundation.org>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, xen-devel@lists.xenproject.org, linux-acpi@vger.kernel.org, linux-pm <linux-pm@vger.kernel.org>
+In-Reply-To: <1412061720-10402-1-git-send-email-tomeu.vizoso@collabora.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---DEueqSqTbz/jWVG1
+--DNUSDXU7R7AVVM8C
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 10, 2014 at 03:28:53PM -0800, Joe Perches wrote:
-[...]
->  arch/arm/mach-tegra/cpuidle-tegra114.c |  4 ++--
->  arch/arm/mach-tegra/cpuidle-tegra20.c  |  8 ++++----
->  arch/arm/mach-tegra/cpuidle-tegra30.c  |  8 ++++----
-[...]
+On Tue, Sep 30, 2014 at 09:22:00AM +0200, Tomeu Vizoso wrote:
+> As previously the names of the present clock and its parent were swapped.
+>=20
+> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---DEueqSqTbz/jWVG1
+--DNUSDXU7R7AVVM8C
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUr7zcAAoJEN0jrNd/PrOhrsAP/iWqYSubPYR6Plip5QDe/QoP
-9bcbtfr5b+PsC/H1evIRrWKNo5E68ZZNJpA4FfPSGs1NAqqfl0/7fG1s6j2E38dG
-UWwLGFQ/tzRJht0SzbehEIef8ZZ0w2Y9dmVoriQoQq0FjHJqbG3zf2tsPFkztIvI
-+zaOSc/FHTH6lN2fjqbySFT6+NF32Hx4IoO4pKrp2upqMh7LiWaAt6h6RE8Xb84o
-3eu0Ooyqc8g1vHmZu4vGB7eQsHHF3l3DBEdKLrnXaJXd92RlzQFy/rhoN2A+rClr
-kadKPbfH8HV4ENG1l5j2fPhzx/rsZMI1KLgKssm1xbGF8tPUromdroL3VuayI+y8
-WEO2LoXUb3RH5zh6QarQvZyCPzDba5s33sk8Z03NoazTtp1ldAE29UAORrzfdEFq
-YCDExJsxFZwYT1bkTvlMKjeL22SAh3LKiJuTCerqGvRZkAwVZnmdsTmnxjcotWRC
-SZvIJjoAbkanqyUZN7Jrz6Txl37ZPET6dZxFcqLXDoiPfAJ3H3rYVp8d6fSejcH5
-N2x8wGwwkWLQScxRVRv0aQsERpT6UHfYyADVBMPIKz2OhRXoy0nCSdFtB7KsY43r
-FxeOEM9JQvuuIiH/NsoNR19613E7pboA00siPF8QPyIE93JB9rSIQgqkK4SbbnL0
-Iumq7l9GgNhbA6mm931L
-=XFHi
+iQIcBAEBAgAGBQJUr731AAoJEN0jrNd/PrOh6ggP/0t9tGBdQV9faj1NFaVhslJw
+v8OFPF7J4eGfhuNJOgPC1nkBSuBrage5CG7rKV2sBp4pY1qUF7CbId8wSPpcnOCE
+TJlxc7H0YLRMTGLtwovDdS3Xc/v/78SqSKjgSyMqBrAwGNK6eN7y0cEgjPSZYHqa
+Vu0TkO1mxRbPB96FJQ1Xq05GbTK1hjaIgm6+VJWU+GzMZBn/9P2JwYdWk5vdC9DK
+cil2bcWvXq8jXt9uITtphS/lB4xGFLwM9sujX1TrG/on3XgHoioXZttZbsN3hZWt
+EPO/Av8ZmINDFKG+d1yJ/h/1tAkz/VErXq58kqhyXtFGTqoUMsX0Rz826laAonKg
+KXeZBr/MS9naRYNW/Z8NnuQ+Oz82k168UXWkPQqfOK9ZR+noemrBiG38EGadX/3t
+0TgqzXC1p9djyxW+ThB6xWBTiJqBc+2VPV6fGGDhBbVIuXiGrgP4lkttSjdDmijR
+gcgZfkg9omcaWv5RFBRNga30XY8d3PhHXdSl1W+YPtf6KLFLUcYTHgbm709r3vGf
+xsDveonfCd4QTWYJ8OiswjOCpGW05tCQRi1r2Hw1FmqV0NX6wc3gtuu6sJATknh/
+x/wmPM60d7UMGj+kpTf2mVe6SkImIDmMQLQoyHY6qWAT20nq+Wvwp4eg7Ifo7cfG
+9uMciCg4YCKNjo7tT8jJ
+=hDQ9
 -----END PGP SIGNATURE-----
 
---DEueqSqTbz/jWVG1--
+--DNUSDXU7R7AVVM8C--
