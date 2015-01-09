@@ -1,69 +1,105 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2] memory: Add NVIDIA SMMU suspend/resume support
-Date: Fri, 9 Jan 2015 12:57:07 +0100
-Message-ID: <20150109115706.GH16465@ulmo>
-References: <1419383441-18242-1-git-send-email-markz@nvidia.com>
+Subject: Re: [PATCH v2 2/2] PCI: tegra: apply relaxed ordering fixup only on
+ Tegra
+Date: Fri, 9 Jan 2015 12:58:54 +0100
+Message-ID: <20150109115853.GI16465@ulmo>
+References: <1418929903-8506-1-git-send-email-l.stach@pengutronix.de>
+ <1418929903-8506-2-git-send-email-l.stach@pengutronix.de>
+ <20150109113213.GE16465@ulmo>
+ <1420803918.16381.9.camel@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="FLPM4o+7JoHGki3m"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="wjoFZxbW4tu+iR6v"
+Return-path: <linux-pci-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1419383441-18242-1-git-send-email-markz@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Zhang <markz@nvidia.com>
-Cc: gnurou@gmail.com, hdoyu@nvidia.com, joro@8bytes.org, swarren@wwwdotorg.org, olof@lixom.net, iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1420803918.16381.9.camel@pengutronix.de>
+Sender: linux-pci-owner@vger.kernel.org
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---FLPM4o+7JoHGki3m
+--wjoFZxbW4tu+iR6v
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 24, 2014 at 09:10:41AM +0800, Mark Zhang wrote:
-> This patch adds suspend/resume support for NVIDIA SMMU.
+On Fri, Jan 09, 2015 at 12:45:18PM +0100, Lucas Stach wrote:
+> Am Freitag, den 09.01.2015, 12:32 +0100 schrieb Thierry Reding:
+> > On Thu, Dec 18, 2014 at 08:11:43PM +0100, Lucas Stach wrote:
+> > > The fixup to enable relaxed ordering on all PCI devices was
+> > > executed unconditionally if the Tegra PCI host driver was
+> > > built into the kernel. This doesn't play nice with a
+> > > multiplatform kernel executed on other platforms which
+> > > may not need this fixup.
+> > >=20
+> > > Make sure to only apply the fixup if the root port is
+> > > a Tegra.
+> > >=20
+> > > Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> > > ---
+> > > v2:
+> > > - split out PCI hierarchy walk
+> > > - separate code from data by moving PCI IDs into own structure
+> > > ---
+> > >  drivers/pci/host/pci-tegra.c | 34 +++++++++++++++++++++++++++++++++-
+> > >  1 file changed, 33 insertions(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegr=
+a.c
+> > > index 333a57afacc4..b77f417e1a3c 100644
+> > > --- a/drivers/pci/host/pci-tegra.c
+> > > +++ b/drivers/pci/host/pci-tegra.c
+> > > @@ -635,10 +635,42 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0=
+x0bf1, tegra_pcie_fixup_class);
+> > >  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1c, tegra_pcie_fix=
+up_class);
+> > >  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1d, tegra_pcie_fix=
+up_class);
+> > > =20
+> > > +static const struct pci_device_id tegra_rootport_ids[] =3D {
+> > > +	{
+> > > +		/* Tegra20 4 lane root port */
+> > > +		.vendor =3D PCI_VENDOR_ID_NVIDIA, .device =3D 0x0bf0,
+> > > +		.subvendor =3D PCI_ANY_ID, .subdevice =3D PCI_ANY_ID
+> > > +	}, {
+> > > +		/* Tegra20 2 lane root port */
+> > > +		.vendor =3D PCI_VENDOR_ID_NVIDIA, .device =3D 0x0bf1,
+> > > +		.subvendor =3D PCI_ANY_ID, .subdevice =3D PCI_ANY_ID
+> >=20
+> > The number of lanes is configurable, so I'm not sure exactly what this
+> > comment is supposed to indicate. Are you saying that port 0 has 0x0bf0
+> > and port 1 has 0x0bf1 as device IDs.
+> >=20
 >=20
-> Signed-off-by: Mark Zhang <markz@nvidia.com>
-> ---
-> Hi Alex/Olof/Thierry/Hiroshi,
->=20
-> This patch is created on top of Thierry Reding's patch set:
-> "[PATCH v7 00/12] NVIDIA Tegra memory controller and IOMMU support"
->=20
-> Changes since v1:
-> - Remove the list which saves "tegra_smmu_swgroup_asid" instances
-> - Save all ASID registers when suspend then restore them when resume
->=20
->  drivers/iommu/tegra-smmu.c | 71 ++++++++++++++++++++++++++++++++++++++++=
-++++++
->  drivers/memory/tegra/mc.c  | 24 ++++++++++++++++
->  drivers/memory/tegra/mc.h  |  8 ++++++
->  3 files changed, 103 insertions(+)
+> No, the device ID of the root port is dependent on the number of lanes
+> configured for the specific port. So if you have a 4x1 configuration you
+> will get to see a single device with ID 0x0bf0, in a 2x2 configuration
+> you will see 2 devices with ID 0x0bf1.
 
-We only need this for LP0, right? As such I'm reluctant to apply this
-since we can't test it upstream.
+Okay, that's interesting to know. My ack remains valid in that case:
 
-Thierry
+Acked-by: Thierry Reding <treding@nvidia.com>
 
---FLPM4o+7JoHGki3m
+--wjoFZxbW4tu+iR6v
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUr8ISAAoJEN0jrNd/PrOhUNkQALuuRoHzgAV8zFYpErc9hbzV
-7BmtHAZ3UAlhYJEPL/wp/XgbYiJorGuCJafnX38mepxayiC/U9/tAnAQ4rrVMUWW
-1PwSGA4PdO9cyUVQiGPJjxKkB+Fb+K9Da/azlF+jT9e4I9yBrOeNYuhUgHZgGdkJ
-2wmhMGm50YsEThqeX1519VCotWGjyw2BTkv3O/TT0Y6hWnGz+Nu/wrbyKvTH3ola
-GbrDunOIzlqpszfIas3bHSiuXiYDAJGjAUgFv9uR5ObQc4xJJv32xJ+9+II71pG+
-kmxpRmZfAnXfPlPjKMGfHBkhzPR1tjke0kDOz/lwQNtlKFxhUYaBdlBoSyUhIiDD
-NSmc76Agg2p4cgED3SWg0yGTUjZsGo/k6tUVyYYQU/wJur4sPr++LK4PKhvzeufC
-VSyNHdEPjmtTsLOZNZx59vla52zhmA+dR9IoAmzychdsRB3fknzEB3x9KUdqkDo2
-GpafEwtRzvM0eIckzORNqhkWAJENKSk1Ap39bcfhOn1WzvgsVhjpOxRoH2H2MgN7
-uiC8w+ziL/lEQeY5wdTsV6KRFX5JsJJMg+avpyWI09XdO17NJs3/iEHd+UV7pdli
-jNvmXRL6v+kwI5BHwOulj6qAYiStL0CT2eEPwW2NYBQ3XoZrHFqUrl/7lzNpAEUt
-9FBisJfO2PYYPJGXyvLX
-=4ze6
+iQIcBAEBAgAGBQJUr8J9AAoJEN0jrNd/PrOhQPoP/jow147LxL7KeIg7QanmTSZk
+DbmSvCZxpGXh5BWUVnIS1i0c7EE61dMJd92WtWo0kfDEsTF9v0nhBOl7b0kXORsf
+9YrSR/Kp4pBApxeYZZo9wQzZLtY5KlxCJ+v2M8JY4McnQQcBk8cVafCaI5juviQn
+e5rgIHsz7Y2xe3njp9Uef68WR/2okabQLYNe6Mtq6hORo/qkq/7YrVRaMnw9asfX
++2fU+9W5gOSU0iw34e4T313Ro7TL2/3/szozWccb8aTgiO8SBTRUfSPa/eQoUCb8
+t2ARN08mGyHF1NqTyT/QEol4TPeM5Sbv/FmJct2SEVMlMAjnDu5OCJtj0Ao2YRn2
+A0Fcv51pWz9eQahEZJMPKTphC4HeDFltVJp/azpo0mo0r+x8qzsKFiqgpmk2xgls
+0E5/NskaC4bNkUuda+ft9uy276bD3CptfkcF/qO5H17+tCJqHnlHQ1ZpJH19v+w7
+SWAhIeUpYU3L98/aq63XU/YQNhnA4C2e0uG7HfMPdzp0O9XK2IjHbDzV2OtaeHpG
+TBsMPyNgOR7y+gEZmLLqeEm1N02H2AU05vxDwLJaWbKDFRRiadRgC5jmfTw0BJs+
+JoMnhGxenlD6w4U8KQL6B6GvNBe3ZStmDtl1g9YCCoWGrb6NMRHTr52SAsv/IIT9
+bF5BuAJs9SjOdkfOvWnq
+=MqNn
 -----END PGP SIGNATURE-----
 
---FLPM4o+7JoHGki3m--
+--wjoFZxbW4tu+iR6v--
