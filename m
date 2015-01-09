@@ -1,74 +1,73 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v5][resend v4] of: replace Asahi Kasei Corp
-	vendor prefix
-Date: Fri, 09 Jan 2015 14:55:40 +0100
-Message-ID: <5363275.ZK3ulH6EUO@wuerfel>
-References: <878ulzx6hr.wl%kuninori.morimoto.gx@gmail.com>
- <871tn4uv0j.wl%kuninori.morimoto.gx@renesas.com>
- <CAL_Jsq+GjM+3M63amyh3Rvijkz7Lch_cdUt9vScc9wZeOubOPA@mail.gmail.com>
+From: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH] timekeeping: Move persistent clock registration code
+ from ARM to kernel
+Date: Fri, 9 Jan 2015 13:59:07 +0000
+Message-ID: <20150109135907.GF12942@leverpostej>
+References: <1415388855-35074-1-git-send-email-anatol.pomozov@gmail.com>
+ <20141110095325.GC12126@ulmo>
+ <CAOMFOmXpAm5iKCLFyorTW+n9YmgZMmrDGGe736tJX8C6BYQv-A@mail.gmail.com>
+ <alpine.DEB.2.11.1411132334400.3935@nanos>
+ <CAOMFOmVziftM=pWGG-L9J-E6AHYAK7k9bmBcpS1adPboLciX9g@mail.gmail.com>
+ <alpine.DEB.2.11.1411150115390.3909@nanos>
+ <CAOMFOmV5=tes6Ak1eUKb2qircp8ba6jt6v-bg66Kp_-jYk9m2w@mail.gmail.com>
+ <alpine.DEB.2.11.1411150154280.3909@nanos>
+ <alpine.DEB.2.11.1411150212210.3909@nanos>
+ <20150109094913.GB27845@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <CAL_Jsq+GjM+3M63amyh3Rvijkz7Lch_cdUt9vScc9wZeOubOPA@mail.gmail.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Rob Herring <robh@kernel.org>, ALSA Development Mailing List <alsa-devel@alsa-project.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>, Mark Brown <broonie@kernel.org>, SH-Linux <linux-sh@vger.kernel.org>, Magnus Damm <magnus.damm@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Simon Horman <horms@verge.net.au>, Geert Uytterhoeven <geert@linux-m68k.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Simon Horman <horms+renesas@verge.net.au>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20150109094913.GB27845@ulmo>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Anatol Pomozov <anatol.pomozov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, John Stultz <john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, marc.zyngier-5wv7dgnIgG8@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 09 January 2015 07:46:16 Rob Herring wrote:
-> On Fri, Jan 9, 2015 at 4:07 AM, Kuninori Morimoto
-> <kuninori.morimoto.gx@renesas.com> wrote:
-> >
-> > Hi Stephen
-> >
-> > Thank you for your feedback
-> >
-> >> > I'm sending this "of: replace Asahi Kasei Corp vendor prefix" during
-> >> > half-year (since Jun 2014) , many times. But, no-one care it.
-> >> > I don't know who is the best maintainer.
-> >> >  - Stephen : because it has Tegra ?
-> >> >  - Olof    : because it has Tegra (= ARM) ?
-> >> >  - Arnd    : because it has Tegra (= ARM) ?
-> >> >  - Matthias: because it has Tegra (= ARM SoC) ?
-> >> >  - Rob     : because DT ?
-> >> >  - Andrew  : Last chance ?
-> >> >
-> >> > But, could you please care this patch ?
-> >> > I will re-send it again
-> >>
-> >> It doesn't seem to be ack'd by any of the DT maintainers. Retro-actively
-> >> changing a DT vendor name would need that, I think.
-> >
-> > Rob ?
-> > I had sent this patch to him since half-years ago, many times...
-> > Or other maintainer ?
-> >
-> >> Thierry and Alex (both Tegra maintainers) appear to have ack'd it, so it
-> >> seems they expect it to go through some tree other than Tegra. Weren't
-> >> there a bunch of related patches along with this (e.g. updating relevant
-> >> drivers to support both prefixes?) so it was expected this patch would
-> >> be applied together with them?
-> >
-> > I guess they expected it goes to DT branch (?)
-> > This is only 1 patch. it doesn't have related patch-set
+On Fri, Jan 09, 2015 at 09:49:14AM +0000, Thierry Reding wrote:
+> On Sat, Nov 15, 2014 at 02:38:00AM +0100, Thomas Gleixner wrote:
+> > On Sat, 15 Nov 2014, Thomas Gleixner wrote:
+> > > On Fri, 14 Nov 2014, Anatol Pomozov wrote:
+> > > > On Fri, Nov 14, 2014 at 4:18 PM, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org> wrote:
+> > > > >> So what I suppose to do with my patch? If it does not work could
+> > > > >> anyone provide patch that removes ARM arch dependency from
+> > > > >> tegra20_timer.c?
+> > > > >
+> > > > > Huch? You want other people to solve your problems?
+> > > > 
+> > > > This is not the point. I provided patch that fixes the issue. Other
+> > > > people said that they have ideas how to do it different (and better)
+> > > > way. So I am asking to share these ideas represented as a patch.
+> > > 
+> > > That's not the way it works.
+> > > 
+> > > You sent a patch to solve an problem which you are facing.
+> > > 
+> > > Now the people who review the patch think that there is a better
+> > > approach than moving code from arm/ to the timekeeping core code.
+> > > 
+> > > So it's up to you to come up with a patch which solves the problem in
+> > > the right way.
+> > 
+> > And just for the record this whole thing is just hilarious.
+> > 
+> > ARM64 selects ARM_ARCH_TIMER which registers the architected timer as
+> > the primary clocksource.
+> > 
+> > Now that timer has the following flag set:
+> > 
+> >     CLOCK_SOURCE_SUSPEND_NONSTOP
+> > 
+> > And that flag causes the core timekeeping code to use the clocksource
+> > to figure out the time which the machine spent in suspend.
 > 
-> It is in my queue. If the users of it are fine with breaking things,
-> who am I to argue with them.
+> As I understand it the architected timer will be turned off along with
+> the rest of the CPU complex on Tegra. I'm not sure if that's specific to
+> Tegra or something that other SoCs may do as well.
 
-It's an i2c device, so it won't break, based on the implementation
-we use in the kernel that ignores the vendor part when the part number
-matches the i2c driver name.
+That doesn't sound right to me: the architecture specifies that the
+system counter must be implemented in an always-on power domain.
 
-I also don't think we need to worry about any non-Linux operating
-systems on this board that might share the same dts file.
+Note that that only applies to the counter, not the timers (as the
+comparators can be turned off with the CPUs).
 
-	Arnd
+Mark.
