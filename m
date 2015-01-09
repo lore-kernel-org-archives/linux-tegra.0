@@ -1,98 +1,161 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] timekeeping: Move persistent clock registration code
- from ARM to kernel
-Date: Fri, 9 Jan 2015 10:49:14 +0100
-Message-ID: <20150109094913.GB27845@ulmo>
-References: <1415388855-35074-1-git-send-email-anatol.pomozov@gmail.com>
- <20141110095325.GC12126@ulmo>
- <CAOMFOmXpAm5iKCLFyorTW+n9YmgZMmrDGGe736tJX8C6BYQv-A@mail.gmail.com>
- <alpine.DEB.2.11.1411132334400.3935@nanos>
- <CAOMFOmVziftM=pWGG-L9J-E6AHYAK7k9bmBcpS1adPboLciX9g@mail.gmail.com>
- <alpine.DEB.2.11.1411150115390.3909@nanos>
- <CAOMFOmV5=tes6Ak1eUKb2qircp8ba6jt6v-bg66Kp_-jYk9m2w@mail.gmail.com>
- <alpine.DEB.2.11.1411150154280.3909@nanos>
- <alpine.DEB.2.11.1411150212210.3909@nanos>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] ARM: tegra: Use PMC scratch register 40 for
+ tegra_resume() location store
+Date: Fri, 9 Jan 2015 10:51:35 +0100
+Message-ID: <20150109095134.GC27845@ulmo>
+References: <1419202392-1159-1-git-send-email-digetx@gmail.com>
+ <54984429.8040905@wwwdotorg.org> <5498549B.8070101@gmail.com>
+ <54985C30.7020605@wwwdotorg.org>
+ <20150108105742.GI1987@ulmo.nvidia.com>
+ <20150108123709.GX10073@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="z6Eq5LdranGa6ru8"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.11.1411150212210.3909@nanos>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
-Cc: Anatol Pomozov <anatol.pomozov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, John Stultz <john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============0718432712155227838=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20150108123709.GX10073@tbergstrom-lnx.Nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Russell King <linux@arm.linux.org.uk>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Christoffer Dall <christoffer.dall@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org, Haojian Zhuang <haojian.zhuang@gmail.com>, stable@vger.kernel.org, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, Shawn Guo <shawn.guo@linaro.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---z6Eq5LdranGa6ru8
-Content-Type: text/plain; charset=us-ascii
+--===============0718432712155227838==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="L6iaP+gRLNZHKoI4"
+Content-Disposition: inline
+
+
+--L6iaP+gRLNZHKoI4
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 15, 2014 at 02:38:00AM +0100, Thomas Gleixner wrote:
-> On Sat, 15 Nov 2014, Thomas Gleixner wrote:
-> > On Fri, 14 Nov 2014, Anatol Pomozov wrote:
-> > > On Fri, Nov 14, 2014 at 4:18 PM, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>=
- wrote:
-> > > >> So what I suppose to do with my patch? If it does not work could
-> > > >> anyone provide patch that removes ARM arch dependency from
-> > > >> tegra20_timer.c?
+On Thu, Jan 08, 2015 at 02:37:09PM +0200, Peter De Schrijver wrote:
+> On Thu, Jan 08, 2015 at 11:57:43AM +0100, Thierry Reding wrote:
+> > * PGP Signed by an unknown key
+> >=20
+> > On Mon, Dec 22, 2014 at 11:00:16AM -0700, Stephen Warren wrote:
+> > > On 12/22/2014 10:27 AM, Dmitry Osipenko wrote:
+> > > >22.12.2014 19:17, Stephen Warren =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > > >>On 12/21/2014 03:52 PM, Dmitry Osipenko wrote:
+> > > >>>Commit 7232398abc6a ("ARM: tegra: Convert PMC to a driver") changed
+> > > >>>tegra_resume()
+> > > >>>location storing from late to early and as result broke suspend on=
+ tegra20.
+> > > >>>PMC scratch register 41 was used by tegra lp1 suspend core code fo=
+r storing
+> > > >>>physical memory address of common resume function and in the same =
+time used by
+> > > >>>tegra20 cpuidle driver for storing cpu1 "resettable" status, so it=
+ implied
+> > > >>>strict order of scratch register use. Fix it by using scratch 40 i=
+nstead of 41
+> > > >>>for tegra_resume() location store.
+> > > >>
+> > > >>You likely can't simply change the PMC scratch register usage arbit=
+rarily;
+> > > >>specific registers are designated for specific purposes, and code o=
+utside the
+> > > >>Linux kernel (bootloaders, LP0 resume code, secure monitors, etc.) =
+may depend on
+> > > >>those specific values being in those registers. Without significant=
+ research,
+> > > >>I'd suggest not changing the PMC scratch register usage.
 > > > >
-> > > > Huch? You want other people to solve your problems?
+> > > >Sure, that's why I asked to verify if scratch register 40 is in use =
+in the
+> > > >comment after commit message.
 > > >=20
-> > > This is not the point. I provided patch that fixes the issue. Other
-> > > people said that they have ideas how to do it different (and better)
-> > > way. So I am asking to share these ideas represented as a patch.
+> > > Sorry, I didn't notice that.
+> > >=20
+> > > >I've checked that u-boot doesn't use it (since
+> > > >upstream kernel doesn't care about any other bootloader), but no ide=
+a about
+> > > >secure monitor. It's definitely safer to avoid changing scratch regs=
+ usage, I
+> > > >thought that proposed solution would be best from the pure code poin=
+t of view.
+> > > >So, I'm considering your answer as a rejection of the patch (please,=
+ let me know
+> > > >if I'm wrong) and will prepare another one. Btw, it would be nice to=
+ have
+> > > >scratch registers usage publicly documented somewhere (on "Tegra Pub=
+lic
+> > > >Application Notes" webpage for example), if it's possible, of course.
+> > >=20
+> > > At this stage in Tegra20 development, I think it'd be best to avoid c=
+hanging
+> > > any scratch register usage if at all possible.
 > >=20
-> > That's not the way it works.
+> > Sorry, I had completely missed this discussion. When looking at the code
+> > it doesn't look like this particular "resettable" status needs to be
+> > stored in a PMC scratch register. It can't be stored in RAM because that
+> > goes into self-refresh as part of LP1, but how about just putting it
+> > into IRAM? That stays on in both LP1 and LP2, so should be suitable for
+> > this use-case. It would make the code slightly more complex but using a
+> > single scratch register for multiple purposes sounds brittle and easy to
+> > break (as evidenced by the offending commit).
 > >=20
-> > You sent a patch to solve an problem which you are facing.
+> > Otherwise it would seem that PMC_SCRATCH40 is only used to store EMC
+> > configuration data across LP0 suspend/resume, so I wouldn't think it'd
+> > cause problems if we used that instead of PMC_SCRATCH41 to store the
+> > "resettable" state.
 > >=20
-> > Now the people who review the patch think that there is a better
-> > approach than moving code from arm/ to the timekeeping core code.
-> >=20
-> > So it's up to you to come up with a patch which solves the problem in
-> > the right way.
 >=20
-> And just for the record this whole thing is just hilarious.
->=20
-> ARM64 selects ARM_ARCH_TIMER which registers the architected timer as
-> the primary clocksource.
->=20
-> Now that timer has the following flag set:
->=20
->     CLOCK_SOURCE_SUSPEND_NONSTOP
->=20
-> And that flag causes the core timekeeping code to use the clocksource
-> to figure out the time which the machine spent in suspend.
+> No. Usually the scratch registers for EMC config data are setup once by t=
+he
+> bootloader and never touched by the kernel after that. So I would not
+> recommend reusing those registers for different purposes.
 
-As I understand it the architected timer will be turned off along with
-the rest of the CPU complex on Tegra. I'm not sure if that's specific to
-Tegra or something that other SoCs may do as well.
+Right, I misread the code in the downstream kernel. Though it's not the
+bootloader that does it (at least on Tegra20), but some early code in
+the kernel.
 
-Cc'ing Paul who's more familiar with the details.
+IRAM sounds like a good candidate still. Or do you know of anything that
+would exclude IRAM as storage location for this data?
 
 Thierry
 
---z6Eq5LdranGa6ru8
+--L6iaP+gRLNZHKoI4
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUr6QZAAoJEN0jrNd/PrOh8b4QAKk1T/OmshnEPpXYuzDRjfj4
-szabobtW+o0t17bRZCOybVhj4hgGQNcUTrv9ukPWAPClrLWfnnD5E07CwEd8IbcQ
-qon4NBtzorzo0Q2N9n5oRsYVOKmeg5lRuhvblsXZnlFlv6t28Fc/9bO7ysze5Uch
-hPABsTZtRnADI4VJ8D2ijXWhOwnjuN8uTAawfe4I5kuKzOKLMC1auzyfovGhpUCE
-EKYMdb5PazXUnyJ7dWI2fFDK5QhUusTxHaVzDzgLhAJf/Q2FajZaliFr6nrf139X
-pIwZwqANNXtsSxFIvZI08jQFzzKxy4qzdtqleII6bjoA+so9Nupl46hNrTedrAsJ
-DY+1mn3z1a0AEo3QezqYMSkjLkinjvyW6YUmxUPFWJM4RrLa5BYyhVSTTnpCYb4G
-c3bad6axkRidnmEOTDp+K5htNKQnXYtApgYivD3LJDK7ZnYGXQdK7WljkFUQuGgP
-yUQboMxU2z36hUJWKaaoRooKDfnMaNXJH8JeBK2K/r+rKA79D4qUqOTVDc4QDigK
-ZgjgWvTJCPYmDMg7ma3nJfLUBo+lkt0PbVX1U6SfOhsoBBv58NQYORnw0jDRWuCr
-tloJhCc1KkiDzgeCx8HPLwPs7a/lWFd763lfYq2BlG3X3Xs6+3cmbZWE+saAAuzf
-3WHXykTzV2+2G7NCwue+
-=2rps
+iQIcBAEBAgAGBQJUr6SmAAoJEN0jrNd/PrOhxXgP+waskskvbs0ofYeYrnkPG4df
+MF9kVm2KgrEFyOnS4TsIvi26KUqjLHBzNm/e2UdouzmdUj6tB56sUzxBAHb3/2ZB
+b0AKsTSuSQrA5QhHxE+7h9KL1wElO4I7W9yAhZoi2ALSzMIThzTD7VS+kQw6vHYQ
+ENaqOg9c6K29N/dfULVFCoU3cOl7o1796wcZ4M4M23s5arUyoybqfSSoh3gE2Ugt
+gs/h+pfCJJU7vNsH/WGWyQMlCVs5bQU/z0AdCnCTOPmQ8HFKP7vc2YM6IrvJcTgd
+C7PMXXJfdV4TnnPIWL8S1XpMflqFF/CpjPR1jzbSuTJOSvj7Mmn7FtKe785qtvHF
+KOSb4SkE6wBZS8bJJOXxh55uZ+31jjB13lOjMlGMsCZCVn3VHLwhlxjA4X6xIJCp
+XBuDz9h79qlmBzc4v+tPAA0vAMTukpI/UvpG1d9j4chqGAytqY8e6hN5QHad/k64
+IwFGTWuXjL02JeNg7sfNqCBKPYBE/up/75n59rHHtEjZP+YnNrmajlyOksP4nzhw
+VIrYu9E/3i0Oa/Mgg1W38We411p0quVIploBrH80cUAtUedKlE8nba4LGn97xXQP
+yXYfaxUuuXyuNRSr9YCkBl3EZ2hZw+W9V6e0MQyCc+qPZEf44rBrs76/3lBxwPQP
+zVJDk37yHcAAUrgNIdK5
+=BAQA
 -----END PGP SIGNATURE-----
 
---z6Eq5LdranGa6ru8--
+--L6iaP+gRLNZHKoI4--
+
+
+--===============0718432712155227838==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============0718432712155227838==--
