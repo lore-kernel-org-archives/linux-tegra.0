@@ -1,50 +1,44 @@
 From: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] timekeeping: Move persistent clock registration code
- from ARM to kernel
-Date: Fri, 9 Jan 2015 19:48:42 +0000 (UTC)
-Message-ID: <alpine.DEB.2.02.1501091709400.28771@utopia.booyaka.com>
-References: <20141110095325.GC12126@ulmo> <CAOMFOmXpAm5iKCLFyorTW+n9YmgZMmrDGGe736tJX8C6BYQv-A@mail.gmail.com> <alpine.DEB.2.11.1411132334400.3935@nanos> <CAOMFOmVziftM=pWGG-L9J-E6AHYAK7k9bmBcpS1adPboLciX9g@mail.gmail.com> <alpine.DEB.2.11.1411150115390.3909@nanos>
- <CAOMFOmV5=tes6Ak1eUKb2qircp8ba6jt6v-bg66Kp_-jYk9m2w@mail.gmail.com> <alpine.DEB.2.11.1411150154280.3909@nanos> <alpine.DEB.2.11.1411150212210.3909@nanos> <20150109094913.GB27845@ulmo> <20150109135907.GF12942@leverpostej>
- <20150109140902.GA7526@ulmo.nvidia.com>
+Subject: Re: [PATCH] soc/tegra: pmc: Add Tegra132 support
+Date: Fri, 9 Jan 2015 20:02:57 +0000 (UTC)
+Message-ID: <alpine.DEB.2.02.1501092002430.28771@utopia.booyaka.com>
+References: <1420701657-32543-1-git-send-email-thierry.reding@gmail.com> <alpine.DEB.2.02.1501082232280.28771@utopia.booyaka.com> <20150109101252.GG27845@ulmo>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150109140902.GA7526-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+In-Reply-To: <20150109101252.GG27845@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Anatol Pomozov <anatol.pomozov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, John Stultz <john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, marc.zyngier-5wv7dgnIgG8@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
-
-Hi
 
 On Fri, 9 Jan 2015, Thierry Reding wrote:
 
-> On Fri, Jan 09, 2015 at 01:59:07PM +0000, Mark Rutland wrote:
-> > On Fri, Jan 09, 2015 at 09:49:14AM +0000, Thierry Reding wrote:
-> >
-> > > As I understand it the architected timer will be turned off along with
-> > > the rest of the CPU complex on Tegra. I'm not sure if that's specific to
-> > > Tegra or something that other SoCs may do as well.
+> On Thu, Jan 08, 2015 at 10:34:35PM +0000, Paul Walmsley wrote:
+> > On Thu, 8 Jan 2015, Thierry Reding wrote:
 > > 
-> > That doesn't sound right to me: the architecture specifies that the
-> > system counter must be implemented in an always-on power domain.
+> > > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > > 
+> > > Tegra132 uses the same GPU as Tegra124 and the same special-case is
+> > > needed to remove clamps. However Tegra132 has a separate chip ID, so in
+> > > order to avoid having to extend the list of chip IDs for the special
+> > > case, add a feature flag to the SoC data.
+> > > 
+> > > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > > 
-> > Note that that only applies to the counter, not the timers (as the
-> > comparators can be turned off with the CPUs).
+> > Reviewed-by: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > 
+> > Nit: not sure I would call it a special-case; to me it's more of an 
+> > evolutionary change due to the radically different GPU in T124 & T132.
 > 
-> I'll let Paul comment on this, since I don't know the intimate details.
+> I reworded the commit message slightly, so it says:
+> 
+> 	Tegra132 uses the same GPU as Tegra124 and therefore requires the same
+> 	method to remove clamps. ...
+> 
+> I hope that's less misleading.
 
-I believe Mark's comments are accurate.
-
-In Linux terms, when deep CPU power management states are in use, the ARM 
-architected "timer" is useful as a clocksource, but useless as a wakeup 
-source (a clockevent device).
-
-Regarding clocksources, my personal view is that the SoC timer IP 
-blocks should be exposed as a clocksource option if the timer IP blocks 
-are present in the hardware.  That written, I would expect that most 
-production implementations will use the ARM architected "timer" as the 
-clocksource.
+Looks good to me,
 
 
 - Paul
