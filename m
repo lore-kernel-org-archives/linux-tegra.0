@@ -1,176 +1,55 @@
-From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH 1/4] mtd: nand: add NVIDIA Tegra NAND Flash controller
- driver
-Date: Sat, 10 Jan 2015 19:20:25 +0100
-Message-ID: <20150110192025.78c763e9@bbrezillon>
-References: <1420403960-26626-1-git-send-email-dev@lynxeye.de>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 14/16] pci/host: tegra: convert to use generic config
+ accesses
+Date: Mon, 12 Jan 2015 11:07:37 +0100
+Message-ID: <20150112100736.GC27700@ulmo>
+References: <1420857290-8373-1-git-send-email-robh@kernel.org>
+ <1420857290-8373-15-git-send-email-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1420403960-26626-1-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Cc: Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="kfjH4zxOES6UT95V"
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1420857290-8373-15-git-send-email-robh@kernel.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sun,  4 Jan 2015 21:39:17 +0100
-Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org> wrote:
 
-> Add support for the NAND flash controller found on NVIDIA
-> Tegra 2/3 SoCs. This is a largely reworked version of the driver
-> started by Thierry.
-> 
-> Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-> Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-> ---
-> I've tested this driver with the in-kernel mtd-tests and some
-> realworld workloads on a Colibri T20 module.
-> ---
->  .../bindings/mtd/nvidia,tegra20-nand.txt           |  30 +
->  MAINTAINERS                                        |   6 +
->  drivers/mtd/nand/Kconfig                           |   6 +
->  drivers/mtd/nand/Makefile                          |   1 +
->  drivers/mtd/nand/tegra_nand.c                      | 794 +++++++++++++++++++++
->  5 files changed, 837 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
->  create mode 100644 drivers/mtd/nand/tegra_nand.c
-> 
+--kfjH4zxOES6UT95V
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-[...]
+On Fri, Jan 09, 2015 at 08:34:48PM -0600, Rob Herring wrote:
+> Convert the tegra host PCI driver to use the generic config access
 
-> +
-> +static const char * const part_probes[] = {
-> +	"cmdlinepart", "ofpart", NULL };
+Nit: s/tegra/Tegra/
 
-Where is part_probe referenced in this driver ?
+Other than than looks like great cleanup:
 
-> +
-> +static int tegra_nand_probe(struct platform_device *pdev)
-> +{
-> +	struct tegra_nand *nand;
-> +	struct nand_chip *chip;
-> +	struct mtd_info *mtd;
-> +	struct resource *res;
-> +	unsigned long value;
-> +	int err = 0;
-> +
-> +	nand = devm_kzalloc(&pdev->dev, sizeof(*nand), GFP_KERNEL);
-> +	if (!nand)
-> +		return -ENOMEM;
-> +
-> +	nand->dev = &pdev->dev;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	nand->regs = devm_ioremap_resource(&pdev->dev, res);
-> +	if (IS_ERR(nand->regs))
-> +		return PTR_ERR(nand->regs);
-> +
-> +	nand->irq  = platform_get_irq(pdev, 0);
-> +	err = devm_request_irq(&pdev->dev, nand->irq, tegra_nand_irq, 0,
-> +			       dev_name(&pdev->dev), nand);
-> +	if (err)
-> +		return err;
-> +
-> +	nand->rst = devm_reset_control_get(&pdev->dev, "nand");
-> +	if (IS_ERR(nand->rst))
-> +		return PTR_ERR(nand->rst);
-> +
-> +	nand->clk = devm_clk_get(&pdev->dev, "nand");
-> +	if (IS_ERR(nand->clk))
-> +		return PTR_ERR(nand->clk);
-> +
-> +	err = tegra_nand_parse_dt(pdev->dev.of_node, nand);
-> +	if (err)
-> +		return err;
-> +
-> +	err = clk_prepare_enable(nand->clk);
-> +	if (err)
-> +		return err;
-> +
-> +	reset_control_assert(nand->rst);
-> +	udelay(2);
-> +	reset_control_deassert(nand->rst);
-> +
-> +	if (gpio_is_valid(nand->wp_gpio)) {
-> +		err = devm_gpio_request_one(&pdev->dev, nand->wp_gpio,
-> +				GPIOF_OUT_INIT_HIGH, "tegra-nand-wp");
-> +		if (err)
-> +			return err;
-> +	}
-> +
-> +	value = HWSTATUS_RDSTATUS_MASK(1) | HWSTATUS_RDSTATUS_VALUE(0) |
-> +		HWSTATUS_RBSY_MASK(NAND_STATUS_READY) |
-> +		HWSTATUS_RBSY_VALUE(NAND_STATUS_READY);
-> +	writel(NAND_CMD_STATUS, nand->regs + HWSTATUS_CMD);
-> +	writel(value, nand->regs + HWSTATUS_MASK);
-> +
-> +	init_completion(&nand->command_complete);
-> +	init_completion(&nand->dma_complete);
-> +
-> +	mtd = &nand->mtd;
-> +	mtd->name = dev_name(&pdev->dev);
-> +	mtd->owner = THIS_MODULE;
-> +	mtd->priv = &nand->chip;
-> +
-> +	mtd->type = MTD_NANDFLASH;
-> +	mtd->flags = MTD_CAP_NANDFLASH;
-> +
-> +	/* clear interrupts */
-> +	value = readl(nand->regs + ISR);
-> +	writel(value, nand->regs + ISR);
-> +
-> +	writel(DMA_CTRL_IS_DONE, nand->regs + DMA_CTRL);
-> +
-> +	/* enable interrupts */
-> +	value = IER_UND | IER_OVR | IER_CMD_DONE | IER_ECC_ERR | IER_GIE;
-> +	writel(value, nand->regs + IER);
-> +
-> +	chip = &nand->chip;
-> +	chip->cmdfunc = tegra_nand_command;
-> +	chip->select_chip = tegra_nand_select_chip;
-> +	chip->read_byte = tegra_nand_read_byte;
-> +	chip->read_buf = tegra_nand_read_buf;
-> +	chip->write_buf = tegra_nand_write_buf;
-> +
-> +	tegra_nand_setup_timing(nand, 0);
-> +
-> +	err = nand_scan_ident(mtd, 1, NULL);
-> +	if (err)
-> +		return err;
-> +
-> +	nand->data_buf = dmam_alloc_coherent(&pdev->dev, mtd->writesize,
-> +					    &nand->data_dma, GFP_KERNEL);
-> +	if (!nand->data_buf)
-> +		return -ENOMEM;
-> +
-> +	nand->oob_buf = dmam_alloc_coherent(&pdev->dev, mtd->oobsize,
-> +					    &nand->oob_dma, GFP_KERNEL);
-> +	if (!nand->oob_buf)
-> +		return -ENOMEM;
-> +
-> +	chip->ecc.mode = NAND_ECC_HW;
-> +	chip->ecc.size = 512;
-> +	chip->ecc.bytes = mtd->oobsize;
-> +	chip->ecc.read_page = tegra_nand_read_page;
-> +	chip->ecc.write_page = tegra_nand_write_page;
+Tested-by: Thierry Reding <treding@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Just a nit, but I would rename those read/write_page functions into
-tegra_nand_hwecc_xxx_page to clearly state that HW ECC is involved
-here.
+--kfjH4zxOES6UT95V
+Content-Type: application/pgp-signature
 
-> +
-> +	value = CFG_HW_ECC | CFG_ECC_SEL | CFG_ERR_COR | CFG_PIPE_EN |
-> +		CFG_TVAL_8 | CFG_SKIP_SPARE | CFG_SKIP_SPARE_SIZE_4;
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Can you move the CFG_HW_ECC flags setting into tegra_nand_read_page
-(setting them at entry and clearing them at exit).
-This is really important to be able to access the NAND in raw mode
-(i.e. without involving ECC), and you seem to force HW ECC for
-all accesses, which means ecc.read/write_page_raw are probably not
-working correctly.
+iQIcBAEBAgAGBQJUs5zoAAoJEN0jrNd/PrOhr/EP/RfVHHkmufGskRLDlXyvRQlE
+ni4KIF1JuZdSg+9ZvHXmT+bEFZAiheAtamIR31jMHMADXmI/R8Jupr0sCjzYzCVa
+1CNJ9NfeGrCpskbyaXl8YoJmKUJD5X+A6PhLZ65yIZzIAhiwaIrFTBpH3kuk6Mma
+ecfxEy37EXFyPhB0qL89I36zePn/tqAFH4b33DtCNF+DWcSRm+SmWeY7/5FU62Dn
+kEHbhmT7RuXtC1U9Ie77gFUUr0Bc5C+iU1b5yLqYccDn6yvjo4dDM0sXxcxmLxHK
+TE0FJCxvsr1aDn8E6ZGN1VR2Y4lXfC5jyZaUNSlx73y9P2scGt69PHBOgFn7z6S6
+FmNlhDSHRGT/FpELFaM5ki8atvShCIwUmMstcu4OKPHQJbUaIz6VDDNNYnzvUX+9
+riXQTQdxTrZwltat1fjpQAxQ4MzbSXlLWuzabw7iKLDy21LnSdFiXC7I7hvwfcjV
+abrtZcdgJOF9afydq/OrV3cV18ad+ZgGkZg8Iedo/GZNKj24zMbK8B9H5kQxGxWc
+cYC4WB4Ehrh7Su2xMpe7naJp46+K3miOZIqy15RgX/d9yAKnmWVn2lIBHuxoS43l
+6HMX6aXm/kiwp072Bpwc6NTBlRQEuNxACNVpU21QcndPkfnUAWtWZ7LBPu0uGkXh
+3OqPPOL0AT4MI6bQSbdq
+=ivJr
+-----END PGP SIGNATURE-----
 
--- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+--kfjH4zxOES6UT95V--
