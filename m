@@ -1,60 +1,50 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [Linux-kernel] [PATCH 3/4] ARM: tegra: enable big-endian support
-Date: Mon, 12 Jan 2015 21:04:09 +0300
-Message-ID: <54B40C99.4020907@gmail.com>
-References: <1420817231-8346-1-git-send-email-bob.mottram@codethink.co.uk> <1420817231-8346-4-git-send-email-bob.mottram@codethink.co.uk> <54AFF7E6.9030308@gmail.com> <54B0017E.2060509@codethink.co.uk> <54B0028C.8050802@gmail.com> <54B00C58.3070303@codethink.co.uk>
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v3.19-rc4
+Date: Mon, 12 Jan 2015 15:09:09 -0700
+Message-ID: <54B44605.1010200@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <54B00C58.3070303-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, Bob Mottram <bob.mottram-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-kernel-81qHHgoATdFT9dQujB1mzip2UmYkHbXO@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-09.01.2015 20:14, Ben Dooks =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> On 09/01/15 16:32, Dmitry Osipenko wrote:
->> 09.01.2015 19:27, Bob Mottram =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>> On 09/01/15 15:46, Dmitry Osipenko wrote:
->>>> What about suspend/cpuidle? Won't it make sense to set BE mode in =
-reset handler?
->>>
->>> I did try adding:
->>>
->>>      ARM_BE8(setend    be)
->>>
->>> to the entry point within reset-handler.S, but to no avail. There a=
-re
->>> definitely problems with suspend, which currently I can work around=
- by
->>> turning off ARCH_SUSPEND_POSSIBLE. More investigation is going to b=
-e
->>> needed to get the sleep/suspend working.
->>>
->>
->> Yeah, just noticed that it mentioned in cover letter.
->
-> I had a look through the code and it was not easy to work out what
-> was going on so skipped over it. We decided to leave it out of the
-> initial submission as we can get a workable system without suspend.
->
-> The suspend/resume code does make accesses to registers, and all
-> these will need to be found and have the correct endian conversion
-> done (stores will be in big-endian but the hardware registers stay
-> little endian)
->
-I fixed cpuidle and suspend for tegra2, it involved fixing reset handle=
-r, sleep=20
-and l2 cache resume asm code. Also fixed tegra timer and i2c drivers in=
- order to=20
-get booting. Unfortunately I don't have tegra3 hw nor support for it in=
- QEMU,=20
-however cpuidle should work I suppose. I'll post patches later.
+Here are some basic Tegra test results for Linux v3.19-rc4.
+Logs and other details at:
 
-https://dl.dropboxusercontent.com/u/3913472/IMG_20150112_202034.jpg
+     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.19-rc4/20150111130104/
 
 
---=20
-Dmitry
+Test summary
+------------
+
+Build: zImage:
+     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Boot to userspace: multi_v7_defconfig:
+     Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+     Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v3.19-rc3 (b1940cd21c0f4abdce101253e860feff547291b0)):
+    text     data      bss    total  kernel
+    +880     +120        0    +1000  multi_v7_defconfig
+    +448        0        0     +448  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v3.19-rc3 (b1940cd21c0f4abdce101253e860feff547291b0))
+     avail    rsrvd     high    freed                board              kconfig                  dtb
+         .        .        .      -4k tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+         .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+         .        .        .      -4k  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+         .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+         .        .        .      -4k       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+         .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
