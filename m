@@ -1,84 +1,99 @@
-From: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: [PATCH v3 2/2] PCI: tegra: apply relaxed ordering fixup only on Tegra
-Date: Tue, 13 Jan 2015 20:57:28 +0100
-Message-ID: <1421179048-25370-2-git-send-email-l.stach@pengutronix.de>
-References: <1421179048-25370-1-git-send-email-l.stach@pengutronix.de>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1421179048-25370-1-git-send-email-l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v5][resend] of: replace Asahi Kasei Corp vendor prefix
+Date: Tue, 13 Jan 2015 14:03:50 -0600
+Message-ID: <CAL_Jsq+=oG5XaR+VKv_eWU+=DtpywUmZbyAfaC18ECaTbhHk5A@mail.gmail.com>
+References: <878ulzx6hr.wl%kuninori.morimoto.gx@gmail.com> <20140922130026.GK3290@leverpostej>
+ <CAMuHMdX22z97SbGS1HDiYfJ1PXxyEN2S8D7w4sr+4bUwD+mJZw@mail.gmail.com>
+ <20140922132743.GM3290@leverpostej> <87y4rfhmgl.wl%kuninori.morimoto.gx@renesas.com>
+ <1415845309.4269.6.camel@perches.com> <20141113025105.GA16652@verge.net.au>
+ <87vbmjhj00.wl%kuninori.morimoto.gx@renesas.com> <20141113110740.GE3815@sirena.org.uk>
+ <87k32yd0bd.wl%kuninori.morimoto.gx@renesas.com> <20141114093554.GC3810@ulmo>
+ <87y4ra8xac.wl%kuninori.morimoto.gx@renesas.com> <5469CD47.3040409@cogentembedded.com>
+ <877fytxsde.wl%kuninori.morimoto.gx@renesas.com> <87egsob2cl.wl%kuninori.morimoto.gx@renesas.com>
+ <5478603D.1080404@cogentembedded.com> <87d282sl6w.wl%kuninori.morimoto.gx@renesas.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <87d282sl6w.wl%kuninori.morimoto.gx@renesas.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Heiko Stuebner <heiko@sntech.de>, Shawn Guo <shawn.guo@freescale.com>, Florian Vaussard <florian.vaussard@epfl.ch>, Mark Brown <broonie@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, ALSA Development Mailing List <alsa-devel@alsa-project.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Linux-sh list <linux-sh@vger.kernel.org>, Magnus <magnus.damm@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Olof Johansson <olof@lixom.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Simon Horman <horms@verge.net.au>, Geert Uytterhoeven <geert@linux-m68k.org>, Joe Perches <joe@perches.com>, Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>, linux-arm-kern
 List-Id: linux-tegra@vger.kernel.org
 
-The fixup to enable relaxed ordering on all PCI devices was
-executed unconditionally if the Tegra PCI host driver was
-built into the kernel. This doesn't play nice with a
-multiplatform kernel executed on other platforms which
-may not need this fixup.
+On Mon, Dec 1, 2014 at 10:57 PM, Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>
+> Current vendor-prefixes.txt already has "ak" prefix for Asahi Kasei Corp
+> by ae8c4209af2c(of: Add vendor prefix for Asahi Kasei Corp.)
+>
+> It went through the appropriate review process. But, almost all
+> Asahi Kasei chip drivers are using "asahi-kasei" prefix today.
+> (arch/arm/boot/dts/tegra20-seaboard.dts only is using "ak,ak8975",
+>  but there are instances of "asahi-kasei,ak8975" in other dts files.
+>  And drivers/iio/magnetometer/ak8975.c doesn't support "ak,ak8975" prefix)
+> So, we made a mistake there.
+>
+> In addition, checkpatch.pl reports WARNING if it is using "asahi-kasei"
+> prerfix in DT file.
+> (DT compatible string vendor "asahi-kasei" appears un-documented)
+>
+> Marking it deprecated and warning with checkpatch is certainly
+> preferable. So, this patch replace "ak" to "asahi-kasei" in
+> vendor-prefixes.txt. (and fixup tegra20-seaboard)
+>
+> OTOH, Asahi Kasei is usually referred to as "AKM", but this patch
+> doesn't care about it. Because no DT is using that today.
+>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
 
-Make sure to only apply the fixup if the root port is
-a Tegra.
+Applied for 3.20. Thanks.
 
-Signed-off-by: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-v2:
-- split out PCI hierarchy walk
-- separate code from data by moving PCI IDs into own structure
-v3:
-- fixup for helper rename
-- applied Thierry's ACK
----
- drivers/pci/host/pci-tegra.c | 34 +++++++++++++++++++++++++++++++++-
- 1 file changed, 33 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 6f9c29fa70e7..e87d79559723 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -635,10 +635,42 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0bf1, tegra_pcie_fixup_class);
- DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1c, tegra_pcie_fixup_class);
- DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1d, tegra_pcie_fixup_class);
- 
-+static const struct pci_device_id tegra_rootport_ids[] = {
-+	{
-+		/* Tegra20 4 lane root port */
-+		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0bf0,
-+		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
-+	}, {
-+		/* Tegra20 2 lane root port */
-+		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0bf1,
-+		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
-+	}, {
-+		/* Tegra30 4 lane root port */
-+		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0e1c,
-+		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
-+	}, {
-+		/* Tegra30 2 lane root port */
-+		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0e1d,
-+		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
-+	}, {
-+		/* Tegra124 4 lane root port */
-+		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0e12,
-+		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
-+	}, {
-+		/* Tegra124 1 lane root port */
-+		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0e13,
-+		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
-+	}, {
-+		/* sentinel */
-+	}
-+};
-+
- /* Tegra PCIE requires relaxed ordering */
- static void tegra_pcie_relax_enable(struct pci_dev *dev)
- {
--	pcie_capability_set_word(dev, PCI_EXP_DEVCTL, PCI_EXP_DEVCTL_RELAX_EN);
-+	if (pci_match_id(tegra_rootport_ids, pci_find_root_port(dev)))
-+		pcie_capability_set_word(dev, PCI_EXP_DEVCTL,
-+					 PCI_EXP_DEVCTL_RELAX_EN);
- }
- DECLARE_PCI_FIXUP_FINAL(PCI_ANY_ID, PCI_ANY_ID, tegra_pcie_relax_enable);
- 
--- 
-2.1.4
+> ---
+> v4 -> v5
+>
+>  - venter -> vendor on Subject
+>  - fixup Acked-by ordering
+>
+>  .../devicetree/bindings/vendor-prefixes.txt        |    2 +-
+>  arch/arm/boot/dts/tegra20-seaboard.dts             |    2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> index 723999d..ddcb4cd 100644
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> @@ -9,7 +9,6 @@ ad      Avionic Design GmbH
+>  adapteva       Adapteva, Inc.
+>  adi    Analog Devices, Inc.
+>  aeroflexgaisler        Aeroflex Gaisler AB
+> -ak     Asahi Kasei Corp.
+>  allwinner      Allwinner Technology Co., Ltd.
+>  altr   Altera Corp.
+>  amcc   Applied Micro Circuits Corporation (APM, formally AMCC)
+> @@ -20,6 +19,7 @@ amstaos       AMS-Taos Inc.
+>  apm    Applied Micro Circuits Corporation (APM)
+>  arm    ARM Ltd.
+>  armadeus       ARMadeus Systems SARL
+> +asahi-kasei    Asahi Kasei Corp.
+>  atmel  Atmel Corporation
+>  auo    AU Optronics Corporation
+>  avago  Avago Technologies
+> diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
+> index a1d4bf9..7f5cf80 100644
+> --- a/arch/arm/boot/dts/tegra20-seaboard.dts
+> +++ b/arch/arm/boot/dts/tegra20-seaboard.dts
+> @@ -405,7 +405,7 @@
+>                 clock-frequency = <400000>;
+>
+>                 magnetometer@c {
+> -                       compatible = "ak,ak8975";
+> +                       compatible = "asahi-kasei,ak8975";
+>                         reg = <0xc>;
+>                         interrupt-parent = <&gpio>;
+>                         interrupts = <TEGRA_GPIO(N, 5) IRQ_TYPE_LEVEL_HIGH>;
+> --
+> 1.7.9.5
+>
