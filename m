@@ -1,31 +1,64 @@
-From: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] dmaengine: tegra: add slave capabilities reporting
-Date: Wed, 14 Jan 2015 00:01:44 +0530
-Message-ID: <20150113183144.GJ15411@intel.com>
-References: <alpine.DEB.2.02.1501060640220.28771@utopia.booyaka.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.02.1501060640220.28771-rwI8Ez+7Ko+d5PgPZx9QOdBPR1lH4CV8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
-Cc: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Lucas Stach <l.stach@pengutronix.de>
+Subject: [PATCH v3 1/2] PCI: add helper function to find root port for device
+Date: Tue, 13 Jan 2015 20:57:27 +0100
+Message-ID: <1421179048-25370-1-git-send-email-l.stach@pengutronix.de>
+Return-path: <linux-pci-owner@vger.kernel.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jan 06, 2015 at 06:44:56AM +0000, Paul Walmsley wrote:
-> 
-> After commit ecc19d17868be9c9f8f00ed928791533c420f3e0 ("dmaengine: Add
-> a warning for drivers not using the generic slave caps retrieval"),
-> the Tegra APB DMA driver causes this warning during boot:
-> 
-> WARNING: CPU: 0 PID: 1 at drivers/dma/dmaengine.c:830 dma_async_device_register+0x294/0x538()
-> this driver doesn't support generic slave capabilities reporting
-> 
-> Fix by setting the appropriate reporting structure fields that are
-> passed to dma_async_device_register().
-> 
-Applied, thanks
+This adds a simple way to get the root port a given device
+is connected to.
 
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+---
+v2: new patch in v2
+v3: rename to pci_find_rootport to fit better with other API
+---
+ drivers/pci/search.c | 20 ++++++++++++++++++++
+ include/linux/pci.h  |  1 +
+ 2 files changed, 21 insertions(+)
+
+diff --git a/drivers/pci/search.c b/drivers/pci/search.c
+index a20ce7d5e2a7..7254f126096d 100644
+--- a/drivers/pci/search.c
++++ b/drivers/pci/search.c
+@@ -384,3 +384,23 @@ int pci_dev_present(const struct pci_device_id *ids)
+ 	return 0;
+ }
+ EXPORT_SYMBOL(pci_dev_present);
++
++/**
++ * pci_find_root_port - Returns the root port the given device is connected to.
++ * @dev: PCI device for which the root port should be found.
++ */
++struct pci_dev *pci_find_root_port(struct pci_dev *dev)
++{
++	struct pci_bus *bus = dev->bus;
++
++	/* If there is no bridge on the bus the passed device is a root port. */
++	if (!bus->self)
++		return dev;
++
++	/* Walk up the PCI hierarchy to the first level below the root. */
++	while (bus->parent && bus->parent->self)
++		bus = bus->parent;
++
++	return bus->self;
++}
++EXPORT_SYMBOL(pci_find_root_port);
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 360a966a97a5..f4321c5ba653 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -844,6 +844,7 @@ static inline struct pci_dev *pci_get_bus_and_slot(unsigned int bus,
+ }
+ struct pci_dev *pci_get_class(unsigned int class, struct pci_dev *from);
+ int pci_dev_present(const struct pci_device_id *ids);
++struct pci_dev *pci_find_root_port(struct pci_dev *dev);
+ 
+ int pci_bus_read_config_byte(struct pci_bus *bus, unsigned int devfn,
+ 			     int where, u8 *val);
 -- 
-~Vinod
+2.1.4
