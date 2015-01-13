@@ -1,50 +1,65 @@
-From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v3.19-rc4
-Date: Mon, 12 Jan 2015 15:09:09 -0700
-Message-ID: <54B44605.1010200@nvidia.com>
+From: Peter Robinson <pbrobinson@gmail.com>
+Subject: [PATCH] drivers/rtc/rtc-em3027.c: add device tree support
+Date: Tue, 13 Jan 2015 01:57:53 +0000
+Message-ID: <1421114273-16368-1-git-send-email-pbrobinson@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Mike Rapoport <mike@compulab.co.il>, Alessandro Zummo <a.zummo@towertech.it>, Grant Likely <grant.likely@linaro.org>, linux-arm-kernel@lists.infradead.org, arm@kernel.org, linux-tegra@kernel.org, rtc-linux@googlegroups.com
+Cc: Peter Robinson <pbrobinson@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v3.19-rc4.
-Logs and other details at:
+Set the of_match_table for this driver so that devices can be described
+in the device tree. This device is used in the Trimslice and is already
+defined in the Trimslice device tree.
 
-     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.19-rc4/20150111130104/
+Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
+---
+ drivers/rtc/rtc-em3027.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-
-Test summary
-------------
-
-Build: zImage:
-     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
-
-Boot to userspace: multi_v7_defconfig:
-     Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-     Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra30-beaver
-
-
-vmlinux object size
-(delta in bytes from test_v3.19-rc3 (b1940cd21c0f4abdce101253e860feff547291b0)):
-    text     data      bss    total  kernel
-    +880     +120        0    +1000  multi_v7_defconfig
-    +448        0        0     +448  tegra_defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v3.19-rc3 (b1940cd21c0f4abdce101253e860feff547291b0))
-     avail    rsrvd     high    freed                board              kconfig                  dtb
-         .        .        .      -4k tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-         .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-         .        .        .      -4k  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-         .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-         .        .        .      -4k       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-         .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+diff --git a/drivers/rtc/rtc-em3027.c b/drivers/rtc/rtc-em3027.c
+index fccf366..4f4930a 100644
+--- a/drivers/rtc/rtc-em3027.c
++++ b/drivers/rtc/rtc-em3027.c
+@@ -15,6 +15,7 @@
+ #include <linux/rtc.h>
+ #include <linux/bcd.h>
+ #include <linux/module.h>
++#include <linux/of.h>
+ 
+ /* Registers */
+ #define EM3027_REG_ON_OFF_CTRL	0x00
+@@ -135,10 +136,20 @@ static struct i2c_device_id em3027_id[] = {
+ 	{ "em3027", 0 },
+ 	{ }
+ };
++MODULE_DEVICE_TABLE(i2c, em3027_id);
++
++#ifdef CONFIG_OF
++static const struct of_device_id em3027_of_match[] = {
++	{ .compatible = "emmicro,em3027", },
++	{}
++};
++MODULE_DEVICE_TABLE(of, em3027_of_match);
++#endif
+ 
+ static struct i2c_driver em3027_driver = {
+ 	.driver = {
+ 		   .name = "rtc-em3027",
++		   .of_match_table = of_match_ptr(em3027_of_match),
+ 	},
+ 	.probe = &em3027_probe,
+ 	.id_table = em3027_id,
+-- 
+2.1.0
