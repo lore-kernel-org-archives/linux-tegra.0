@@ -1,7 +1,7 @@
 From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [RFC PATCH 1/9] reset: add of_reset_control_get_by_index()
-Date: Wed, 14 Jan 2015 14:19:24 +0800
-Message-ID: <1421216372-8025-2-git-send-email-vinceh@nvidia.com>
+Subject: [RFC PATCH 3/9] memory: tegra: add flush operation for Tegra124 memory clients
+Date: Wed, 14 Jan 2015 14:19:26 +0800
+Message-ID: <1421216372-8025-4-git-send-email-vinceh@nvidia.com>
 References: <1421216372-8025-1-git-send-email-vinceh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,113 +12,150 @@ To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pdeschrijver-DDmLM1+
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add of_reset_control_get_by_index() to allow the dirvers to get reset device
-without knowing its name.
-
 Signed-off-by: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/reset/core.c  | 47 ++++++++++++++++++++++++++++++++---------------
- include/linux/reset.h |  9 +++++++++
- 2 files changed, 41 insertions(+), 15 deletions(-)
+ drivers/memory/tegra/tegra124.c | 108 +++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 107 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-index 7955e00d04d4..25a0da1654f8 100644
---- a/drivers/reset/core.c
-+++ b/drivers/reset/core.c
-@@ -140,28 +140,15 @@ int reset_control_status(struct reset_control *rstc)
- }
- EXPORT_SYMBOL_GPL(reset_control_status);
+diff --git a/drivers/memory/tegra/tegra124.c b/drivers/memory/tegra/tegra124.c
+index 278d40b854c1..cce255d3df5c 100644
+--- a/drivers/memory/tegra/tegra124.c
++++ b/drivers/memory/tegra/tegra124.c
+@@ -6,6 +6,8 @@
+  * published by the Free Software Foundation.
+  */
  
--/**
-- * of_reset_control_get - Lookup and obtain a reference to a reset controller.
-- * @node: device to be reset by the controller
-- * @id: reset line name
-- *
-- * Returns a struct reset_control or IS_ERR() condition containing errno.
-- *
-- * Use of id names is optional.
-- */
--struct reset_control *of_reset_control_get(struct device_node *node,
--					   const char *id)
-+struct reset_control *__of_reset_control_get(struct device_node *node,
-+						int index)
++#include <linux/delay.h>
++#include <linux/device.h>
+ #include <linux/of.h>
+ #include <linux/mm.h>
+ 
+@@ -15,7 +17,7 @@
+ 
+ #include "mc.h"
+ 
+-static const struct tegra_mc_client tegra124_mc_clients[] = {
++static struct tegra_mc_client tegra124_mc_clients[] = {
+ 	{
+ 		.id = 0x00,
+ 		.name = "ptcr",
+@@ -959,7 +961,108 @@ static const struct tegra_smmu_swgroup tegra124_swgroups[] = {
+ 	{ .swgroup = TEGRA_SWGROUP_VI,        .reg = 0x280 },
+ };
+ 
++static struct tegra_mc_hotreset tegra124_mc_hotreset[] = {
++	{TEGRA_SWGROUP_AFI,        0x200, 0x204,  0},
++	{TEGRA_SWGROUP_AVPC,       0x200, 0x204,  1},
++	{TEGRA_SWGROUP_DC,         0x200, 0x204,  2},
++	{TEGRA_SWGROUP_DCB,        0x200, 0x204,  3},
++	{TEGRA_SWGROUP_HC,         0x200, 0x204,  6},
++	{TEGRA_SWGROUP_HDA,        0x200, 0x204,  7},
++	{TEGRA_SWGROUP_ISP2,       0x200, 0x204,  8},
++	{TEGRA_SWGROUP_MPCORE,     0x200, 0x204,  9},
++	{TEGRA_SWGROUP_MPCORELP,   0x200, 0x204, 10},
++	{TEGRA_SWGROUP_MSENC,      0x200, 0x204, 11},
++	{TEGRA_SWGROUP_PPCS,       0x200, 0x204, 14},
++	{TEGRA_SWGROUP_SATA,       0x200, 0x204, 15},
++	{TEGRA_SWGROUP_VDE,        0x200, 0x204, 16},
++	{TEGRA_SWGROUP_VI,         0x200, 0x204, 17},
++	{TEGRA_SWGROUP_VIC,        0x200, 0x204, 18},
++	{TEGRA_SWGROUP_XUSB_HOST,  0x200, 0x204, 19},
++	{TEGRA_SWGROUP_XUSB_DEV,   0x200, 0x204, 20},
++	{TEGRA_SWGROUP_TSEC,       0x200, 0x204, 22},
++	{TEGRA_SWGROUP_SDMMC1A,    0x200, 0x204, 29},
++	{TEGRA_SWGROUP_SDMMC2A,    0x200, 0x204, 30},
++	{TEGRA_SWGROUP_SDMMC3A,    0x200, 0x204, 31},
++	{TEGRA_SWGROUP_SDMMC4A,    0x970, 0x974,  0},
++	{TEGRA_SWGROUP_ISP2B,      0x970, 0x974,  1},
++	{TEGRA_SWGROUP_GPU,        0x970, 0x974,  2},
++};
++
+ #ifdef CONFIG_ARCH_TEGRA_124_SOC
++
++static bool tegra124_stable_hotreset_check(struct tegra_mc *mc,
++		u32 reg, u32 *stat)
++{
++	int i;
++	u32 cur_stat;
++	u32 prv_stat;
++
++	/*
++	 * There might be a glitch seen with the status register if we program
++	 * the control register and then read the status register in a short
++	 * window due to a HW bug. So here we poll for a stable status read.
++	 */
++	prv_stat = mc_readl(mc, reg);
++	for (i = 0; i < 5; i++) {
++		cur_stat = mc_readl(mc, reg);
++		if (cur_stat != prv_stat)
++			return false;
++	}
++	*stat = cur_stat;
++	return true;
++}
++
++static int tegra124_mc_flush(struct tegra_mc *mc,
++		const struct tegra_mc_hotreset *hotreset)
++{
++	u32 val;
++
++	if (!mc || !hotreset)
++		return -EINVAL;
++
++	/* XXX add mutex */
++
++	val = mc_readl(mc, hotreset->ctrl);
++	val |= BIT(hotreset->bit);
++	mc_writel(mc, val, hotreset->ctrl);
++	mc_readl(mc, hotreset->ctrl);
++
++	/* poll till the flush is done */
++	do {
++		udelay(10);
++		val = 0;
++		if (!tegra124_stable_hotreset_check(mc, hotreset->status, &val))
++			continue;
++	} while (!(val & BIT(hotreset->bit)));
++
++	dev_dbg(mc->dev, "%s bit %d\n", __func__, hotreset->bit);
++	return 0;
++}
++
++static int tegra124_mc_flush_done(struct tegra_mc *mc,
++		const struct tegra_mc_hotreset *hotreset)
++{
++	u32 val;
++
++	if (!mc || !hotreset)
++		return -EINVAL;
++
++	/* XXX add mutex */
++
++	val = mc_readl(mc, hotreset->ctrl);
++	val &= ~BIT(hotreset->bit);
++	mc_writel(mc, val, hotreset->ctrl);
++	mc_readl(mc, hotreset->ctrl);
++
++	dev_dbg(mc->dev, "%s bit %d\n", __func__, hotreset->bit);
++	return 0;
++}
++
++static const struct tegra_mc_ops tegra124_mc_ops = {
++	.flush = tegra124_mc_flush,
++	.flush_done = tegra124_mc_flush_done,
++};
++
+ static void tegra124_flush_dcache(struct page *page, unsigned long offset,
+ 				  size_t size)
  {
- 	struct reset_control *rstc = ERR_PTR(-EPROBE_DEFER);
- 	struct reset_controller_dev *r, *rcdev;
- 	struct of_phandle_args args;
--	int index = 0;
- 	int rstc_id;
- 	int ret;
- 
--	if (id)
--		index = of_property_match_string(node,
--						 "reset-names", id);
- 	ret = of_parse_phandle_with_args(node, "resets", "#reset-cells",
- 					 index, &args);
- 	if (ret)
-@@ -202,6 +189,36 @@ struct reset_control *of_reset_control_get(struct device_node *node,
- 
- 	return rstc;
- }
-+
-+struct reset_control *of_reset_control_get_by_index(struct device_node *node,
-+					   int index)
-+{
-+	if (!node)
-+		return ERR_PTR(-EINVAL);
-+
-+	return __of_reset_control_get(node, index);
-+}
-+EXPORT_SYMBOL_GPL(of_reset_control_get_by_index);
-+
-+/**
-+ * of_reset_control_get - Lookup and obtain a reference to a reset controller.
-+ * @node: device to be reset by the controller
-+ * @id: reset line name
-+ *
-+ * Returns a struct reset_control or IS_ERR() condition containing errno.
-+ *
-+ * Use of id names is optional.
-+ */
-+struct reset_control *of_reset_control_get(struct device_node *node,
-+					   const char *id)
-+{
-+	int index = 0;
-+
-+	if (id)
-+		index = of_property_match_string(node,
-+						 "reset-names", id);
-+	return __of_reset_control_get(node, index);
-+}
- EXPORT_SYMBOL_GPL(of_reset_control_get);
- 
- /**
-diff --git a/include/linux/reset.h b/include/linux/reset.h
-index da5602bd77d7..f29fc88c4868 100644
---- a/include/linux/reset.h
-+++ b/include/linux/reset.h
-@@ -38,6 +38,9 @@ static inline struct reset_control *devm_reset_control_get_optional(
- struct reset_control *of_reset_control_get(struct device_node *node,
- 					   const char *id);
- 
-+struct reset_control *of_reset_control_get_by_index(
-+					struct device_node *node, int index);
-+
- #else
- 
- static inline int reset_control_reset(struct reset_control *rstc)
-@@ -92,6 +95,12 @@ static inline struct reset_control *of_reset_control_get(
- 	return ERR_PTR(-ENOSYS);
- }
- 
-+struct reset_control *of_reset_control_get_by_index(
-+				struct device_node *node, int index)
-+{
-+	return ERR_PTR(-ENOSYS);
-+}
-+
- #endif /* CONFIG_RESET_CONTROLLER */
- 
- #endif
+@@ -991,5 +1094,8 @@ const struct tegra_mc_soc tegra124_mc_soc = {
+ 	.num_address_bits = 34,
+ 	.atom_size = 32,
+ 	.smmu = &tegra124_smmu_soc,
++	.hotresets = tegra124_mc_hotreset,
++	.num_hotresets = ARRAY_SIZE(tegra124_mc_hotreset),
++	.ops = &tegra124_mc_ops,
+ };
+ #endif /* CONFIG_ARCH_TEGRA_124_SOC */
 -- 
 1.9.1
