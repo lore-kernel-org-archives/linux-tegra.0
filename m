@@ -1,41 +1,594 @@
 From: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [tegrarcm PATCH 0/2] Add T132 support
-Date: Tue, 13 Jan 2015 16:20:00 -0800
-Message-ID: <1421194802-28198-1-git-send-email-jimmzhang@nvidia.com>
+Subject: [tegrarcm PATCH 2/2] tegrarcm: Add support for loading MTS
+Date: Tue, 13 Jan 2015 16:20:02 -0800
+Message-ID: <1421194802-28198-3-git-send-email-jimmzhang@nvidia.com>
+References: <1421194802-28198-1-git-send-email-jimmzhang@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1421194802-28198-1-git-send-email-jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Allen originally started T132 supporting patches under branch dev/amartin/t132-dev.
-Recently I added more changes on top of his works. Since Allen is tied with other
-project, I was assigned to update and upstream all Allen's patches as well as my
-changes.
+From: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Allen Martin (2):
-  tegrarcm: Add Tegra132 support
-  tegrarcm: Add support for loading MTS
+The Denver CPU in Tegra132 requires microcode to be loaded before CPU
+initialization.  There are two microcode files required, "preboot" MTS
+and MTS proper.  Add support for loading MTS from either the binary
+versions checked in or from the command line.
 
- src/Makefile.am                       |   15 +-
- src/bin2h.sh                          |    9 +
- src/main.c                            |  256 +-
- src/miniloader/tegra132-miniloader.h  | 5259 +++++++++++++++++++++++++++++++++
- src/miniloader/tegra132-mts.h         |   13 +
- src/miniloader/tegra132-preboot-mts.h |   13 +
- src/nv3p.c                            |   19 +
- src/nv3p.h                            |   12 +
- src/rcm.h                             |    1 +
- src/tegrarcm.1.in                     |   11 +-
- src/usb.c                             |    3 +-
- src/usb.h                             |    1 +
- 12 files changed, 5597 insertions(+), 15 deletions(-)
+Signed-off-by: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ src/Makefile.am                       |  14 +-
+ src/bin2h.sh                          |   9 ++
+ src/main.c                            | 241 ++++++++++++++++++++++++++++++++--
+ src/miniloader/tegra132-mts.h         |  13 ++
+ src/miniloader/tegra132-preboot-mts.h |  13 ++
+ src/nv3p.c                            |  19 +++
+ src/nv3p.h                            |   9 ++
+ src/rcm.h                             |   1 +
+ src/tegrarcm.1.in                     |   7 +
+ 9 files changed, 314 insertions(+), 12 deletions(-)
  create mode 100755 src/bin2h.sh
- create mode 100644 src/miniloader/tegra132-miniloader.h
  create mode 100644 src/miniloader/tegra132-mts.h
  create mode 100644 src/miniloader/tegra132-preboot-mts.h
 
+diff --git a/src/Makefile.am b/src/Makefile.am
+index d0d45cad4fee..0e9ff1bbd7f3 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -1,6 +1,14 @@
+ AM_CFLAGS = -Wall -std=c99
+ AM_CPPFLAGS = -isystem /usr/include/$(CRYPTOLIB) $(LIBUSB_CFLAGS)
+ 
++MTS_FIRMWARE_DIR ?= ../../mts-firmware
++
++miniloader/mts_si.h: $(MTS_FIRMWARE_DIR)/mts_si bin2h.sh
++	./bin2h.sh $< $@
++
++miniloader/mts_preboot_si.h: $(MTS_FIRMWARE_DIR)/mts_preboot_si bin2h.sh
++	./bin2h.sh $< $@
++
+ bin_PROGRAMS = tegrarcm
+ tegrarcm_SOURCES = \
+ 	main.c \
+@@ -19,7 +27,11 @@ tegrarcm_SOURCES = \
+ 	miniloader/tegra114-miniloader.h \
+ 	miniloader/tegra124-miniloader.h \
+ 	miniloader/tegra132-miniloader.h \
+-	usb.h
++	miniloader/tegra132-preboot-mts.h \
++	miniloader/tegra132-mts.h \
++	usb.h \
++	$(MTS_FIRMWARE_DIR)/mts_si \
++	$(MTS_FIRMWARE_DIR)/mts_preboot_si
+ 
+ man_MANS = tegrarcm.1
+ 
+diff --git a/src/bin2h.sh b/src/bin2h.sh
+new file mode 100755
+index 000000000000..99cd0ec4b472
+--- /dev/null
++++ b/src/bin2h.sh
+@@ -0,0 +1,9 @@
++#!/bin/sh
++
++in_file="$1"
++out_file="$2"
++echo "Generating ${out_file} from ${in_file}..."
++rm -f "${out_file}"
++od -A n -t x1 -w16 -v "${in_file}" | sed 's/ /,0x/g' | sed 's/^,//' | sed 's/$/,/' \
++	>> "${out_file}"
++
+diff --git a/src/main.c b/src/main.c
+index 24d3bf81191f..667c5df8f2d1 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -63,16 +63,26 @@
+ // tegra132 miniloader
+ #include "miniloader/tegra132-miniloader.h"
+ 
++// tegra132 preboot mts
++#include "miniloader/tegra132-preboot-mts.h"
++
++// tegra132 mts
++#include "miniloader/tegra132-mts.h"
++
+ static int initialize_rcm(uint16_t devid, usb_device_t *usb);
+ static int initialize_miniloader(uint16_t devid, usb_device_t *usb, char *mlfile, uint32_t mlentry);
++static int initialize_preboot(usb_device_t *usb, char *pbfile, uint32_t pbentry);
+ static int wait_status(nv3p_handle_t h3p);
+ static int send_file(nv3p_handle_t h3p, const char *filename);
+-static int download_miniloader(usb_device_t *usb, uint8_t *miniloader,
+-			       uint32_t size, uint32_t entry);
++static int send_buf(nv3p_handle_t h3p, uint8_t *buf, uint64_t total);
++static int download_binary(uint32_t cmd, usb_device_t *usb,
++			   uint8_t *miniloader, uint32_t size, uint32_t entry);
+ static void dump_platform_info(nv3p_platform_info_t *info);
+ static int download_bct(nv3p_handle_t h3p, char *filename);
+ static int download_bootloader(nv3p_handle_t h3p, char *filename,
+ 			       uint32_t entry, uint32_t loadaddr);
++static int download_mts(nv3p_handle_t h3p, char *filename,
++			uint32_t loadaddr, uint16_t devid);
+ static int read_bct(nv3p_handle_t h3p, char *filename);
+ 
+ enum cmdline_opts {
+@@ -84,6 +94,10 @@ enum cmdline_opts {
+ 	OPT_VERSION,
+ 	OPT_MINILOADER,
+ 	OPT_MINIENTRY,
++	OPT_PREBOOT,
++	OPT_PREBOOTENTRY,
++	OPT_MTS,
++	OPT_MTSENTRY,
+ 	OPT_END,
+ };
+ 
+@@ -117,6 +131,16 @@ static void usage(char *progname)
+ 	fprintf(stderr, "\t\tminiloader\n");
+ 	fprintf(stderr, "\t--miniloader_entry=<mlentry>\n");
+ 	fprintf(stderr, "\t\tSpecify the entry point for the miniloader\n");
++	fprintf(stderr, "\t--preboot=pbfile\n");
++	fprintf(stderr, "\t\tRead the preboot mts ucode from file instead of using built-in\n");
++	fprintf(stderr, "\t\tpreboot mts\n");
++	fprintf(stderr, "\t--preboot_entry=<pbentry>\n");
++	fprintf(stderr, "\t\tSpecify the entry point for the preboot mts ucode\n");
++	fprintf(stderr, "\t--mts=mtsfile\n");
++	fprintf(stderr, "\t\tRead the mts ucode from file instead of using built-in\n");
++	fprintf(stderr, "\t\tmts\n");
++	fprintf(stderr, "\t--mts_entry=<mtsentry>\n");
++	fprintf(stderr, "\t\tSpecify the entry point for the mts ucode\n");
+ 	fprintf(stderr, "\n");
+ }
+ 
+@@ -139,6 +163,10 @@ int main(int argc, char **argv)
+ 	int do_read = 0;
+ 	char *mlfile = NULL;
+ 	uint32_t mlentry = 0;
++	char *pbfile = NULL;
++	uint32_t pbentry = 0;
++	char *mtsfile = NULL;
++	uint32_t mtsentry = 0;
+ 
+ 	static struct option long_options[] = {
+ 		[OPT_BCT]        = {"bct", 1, 0, 0},
+@@ -149,6 +177,10 @@ int main(int argc, char **argv)
+ 		[OPT_VERSION]    = {"version", 0, 0, 0},
+ 		[OPT_MINILOADER] = {"miniloader", 1, 0, 0},
+ 		[OPT_MINIENTRY]  = {"miniloader_entry", 1, 0, 0},
++		[OPT_PREBOOT]    = {"preboot", 1, 0, 0},
++		[OPT_PREBOOTENTRY] = {"preboot_entry", 1, 0, 0},
++		[OPT_MTS]        = {"mts", 1, 0, 0},
++		[OPT_MTSENTRY]   = {"mts_entry", 1, 0, 0},
+ 		[OPT_END]        = {0, 0, 0, 0}
+ 	};
+ 
+@@ -184,6 +216,18 @@ int main(int argc, char **argv)
+ 			case OPT_MINIENTRY:
+ 				mlentry = strtoul(optarg, NULL, 0);
+ 				break;
++			case OPT_PREBOOT:
++				pbfile = optarg;
++				break;
++			case OPT_PREBOOTENTRY:
++				pbentry = strtoul(optarg, NULL, 0);
++				break;
++			case OPT_MTS:
++				mtsfile = optarg;
++				break;
++			case OPT_MTSENTRY:
++				mtsentry = strtoul(optarg, NULL, 0);
++				break;
+ 			case OPT_HELP:
+ 			default:
+ 				usage(argv[0]);
+@@ -255,6 +299,13 @@ int main(int argc, char **argv)
+ 		if (ret2)
+ 			error(1, errno, "error initializing RCM protocol");
+ 
++		// download the mts ucode
++		if ((devid & 0xff) == USB_DEVID_NVIDIA_TEGRA132) {
++			ret2 = initialize_preboot(usb, pbfile, pbentry);
++			if (ret2)
++				error(1, errno, "error initializing preboot mts");
++		}
++
+ 		// download the miniloader to start nv3p
+ 		ret2 = initialize_miniloader(devid, usb, mlfile, mlentry);
+ 		if (ret2)
+@@ -304,11 +355,18 @@ int main(int argc, char **argv)
+ 		error(1, ret, "error downloading bct: %s", bctfile);
+ 	}
+ 
++	// download mts
++	ret = download_mts(h3p, mtsfile, mtsentry, devid);
++	if (ret)
++		error(1, ret, "error downloading mts: %s", mtsfile);
++
++
+ 	// download the bootloader
+ 	ret = download_bootloader(h3p, blfile, entryaddr, loadaddr);
+ 	if (ret)
+ 		error(1, ret, "error downloading bootloader: %s", blfile);
+ 
++
+ 	nv3p_close(h3p);
+ 	usb_close(usb);
+ 
+@@ -377,6 +435,56 @@ static int initialize_rcm(uint16_t devid, usb_device_t *usb)
+ 	return 0;
+ }
+ 
++static int initialize_preboot(usb_device_t *usb, char *pbfile, uint32_t pbentry)
++{
++	int fd;
++	struct stat sb;
++	int ret;
++	uint8_t *preboot;
++	uint32_t pb_size;
++	uint32_t pb_entry;
++
++	// use prebuilt preboot mts if not loading from a file
++	if (pbfile) {
++		fd = open(pbfile, O_RDONLY, 0);
++		if (fd < 0) {
++			dprintf("error opening %s for reading\n", pbfile);
++			return errno;
++		}
++		ret = fstat(fd, &sb);
++		if (ret) {
++			dprintf("error on fstat of %s\n", pbfile);
++			return ret;
++		}
++		pb_size = sb.st_size;
++		preboot = (uint8_t *)malloc(pb_size);
++		if (!preboot) {
++			dprintf("error allocating %d bytes for preboot mts\n", pb_size);
++			return errno;
++		}
++		if (read(fd, preboot, pb_size) != pb_size) {
++			dprintf("error reading from preboot mts file");
++			return errno;
++		}
++		pb_entry = pbentry;
++	} else {
++		preboot = preboot_mts_tegra132;
++		pb_size = sizeof(preboot_mts_tegra132);
++		pb_entry = TEGRA132_PREBOOT_MTS_ENTRY;
++	}
++	printf("downloading preboot mts to target at address 0x%x (%d bytes)...\n",
++	       pb_entry, pb_size);
++	ret = download_binary(RCM_CMD_DL_MTS, usb, preboot,
++			      pb_size, pb_entry);
++	if (ret) {
++		fprintf(stderr, "Error downloading preboot mts\n");
++		return ret;
++	}
++	printf("preboot mts downloaded successfully\n");
++
++	return 0;
++}
++
+ static int initialize_miniloader(uint16_t devid, usb_device_t *usb, char *mlfile, uint32_t mlentry)
+ {
+ 	int fd;
+@@ -437,8 +545,8 @@ static int initialize_miniloader(uint16_t devid, usb_device_t *usb, char *mlfile
+ 	}
+ 	printf("downloading miniloader to target at address 0x%x (%d bytes)...\n",
+ 		miniloader_entry, miniloader_size);
+-	ret = download_miniloader(usb, miniloader, miniloader_size,
+-				  miniloader_entry);
++	ret = download_binary(RCM_CMD_DL_MINILOADER, usb, miniloader,
++			      miniloader_size, miniloader_entry);
+ 	if (ret) {
+ 		fprintf(stderr, "Error downloading miniloader\n");
+ 		return ret;
+@@ -486,6 +594,44 @@ fail:
+ 
+ 
+ /*
++* send_buf: send data present in buffer to nv3p server
++*/
++static int send_buf(nv3p_handle_t h3p, uint8_t *buf, uint64_t total)
++{
++	int ret = 0;
++	uint32_t size;
++	uint64_t count;
++	char *spinner = "-\\|/";
++	int spin_idx = 0;
++
++#define NVFLASH_DOWNLOAD_CHUNK (1024 * 64)
++
++	printf("sending data:\n");
++
++	count = 0;
++	while(count != total) {
++		size = (uint32_t)MIN(total - count, NVFLASH_DOWNLOAD_CHUNK);
++
++		ret = nv3p_data_send(h3p, buf, size);
++		if (ret)
++			goto fail;
++
++		count += size;
++		buf += size;
++
++		printf("\r%c %" PRIu64 "/%" PRIu64" bytes sent", spinner[spin_idx],
++		       count, total);
++		spin_idx = (spin_idx + 1) % 4;
++	}
++	printf("\ndata sent successfully\n");
++
++#undef NVFLASH_DOWNLOAD_CHUNK
++
++fail:
++	return ret;
++}
++
++/*
+ * send_file: send data present in file "filename" to nv3p server.
+ */
+ static int send_file(nv3p_handle_t h3p, const char *filename)
+@@ -561,29 +707,35 @@ fail:
+ }
+ 
+ 
+-static int download_miniloader(usb_device_t *usb, uint8_t *miniloader,
+-			       uint32_t size, uint32_t entry)
++static int download_binary(uint32_t cmd, usb_device_t *usb,
++			   uint8_t *binary, uint32_t size, uint32_t entry)
+ {
+ 	uint8_t *msg_buff;
+ 	int ret;
+ 	uint32_t status;
+ 	int actual_len;
+ 
+-	// download the miniloader to the bootrom
+-	rcm_create_msg(RCM_CMD_DL_MINILOADER,
+-		       (uint8_t *)&entry, sizeof(entry), miniloader, size,
++	// create download message
++	rcm_create_msg(cmd,
++		       (uint8_t *)&entry, sizeof(entry), binary, size,
+ 		       &msg_buff);
+ 	ret = usb_write(usb, msg_buff, rcm_get_msg_len(msg_buff));
+-	if (ret)
++	if (ret) {
++		dprintf("error sending %x command to target\n", cmd);
+ 		goto fail;
++	}
+ 	ret = usb_read(usb, (uint8_t *)&status, sizeof(status), &actual_len);
+-	if (ret)
++	if (ret) {
++		dprintf("error reading status from target\n");
+ 		goto fail;
++	}
+ 	if (actual_len < sizeof(status)) {
++		dprintf("short read of status\n");
+ 		ret = EIO;
+ 		goto fail;
+ 	}
+ 	if (status != 0) {
++		dprintf("got bad status: %x\n", status);
+ 		ret = EIO;
+ 		goto fail;
+ 	}
+@@ -807,3 +959,70 @@ static int download_bootloader(nv3p_handle_t h3p, char *filename,
+ 
+ 	return 0;
+ }
++
++static int download_mts(nv3p_handle_t h3p, char *filename,
++			uint32_t loadaddr, uint16_t devid)
++{
++	int ret;
++	nv3p_cmd_dl_mts_t arg;
++	int fd;
++	struct stat sb;
++	uint8_t *buf;
++
++	if (filename) {
++		fd = open(filename, O_RDONLY, 0);
++		if (fd < 0) {
++			dprintf("error opening %s for reading\n", filename);
++			return errno;
++		}
++
++		ret = fstat(fd, &sb);
++		if (ret) {
++			dprintf("error on fstat of %s\n", filename);
++			return ret;
++		}
++		close(fd);
++
++		arg.length = sb.st_size;
++		arg.address = loadaddr;
++	} else {
++		if ((devid & 0xff) == USB_DEVID_NVIDIA_TEGRA132) {
++			arg.length = sizeof(mts_tegra132);
++			arg.address = TEGRA132_MTS_ENTRY;
++			buf = mts_tegra132;
++		} else {
++			fprintf(stderr, "unknown tegra device: 0x%x\n", devid);
++			return ENODEV;
++		}
++
++	}
++
++	ret = nv3p_cmd_send(h3p, NV3P_CMD_DL_MTS, (uint8_t *)&arg);
++	if (ret) {
++		dprintf("error sending 3p mts download command\n");
++		return ret;
++	}
++
++	if (filename) {
++		// send the mts file
++		ret = send_file(h3p, filename);
++		if (ret) {
++			dprintf("error downloading mts\n");
++			return ret;
++		}
++	} else {
++		ret = send_buf(h3p, buf, arg.length);
++		if (ret) {
++			dprintf("error downloading mts\n");
++			return ret;
++		}
++	}
++
++	ret = wait_status(h3p);
++	if (ret) {
++		dprintf("error waiting for status on mts dl\n");
++		return ret;
++	}
++
++	return 0;
++}
+diff --git a/src/miniloader/tegra132-mts.h b/src/miniloader/tegra132-mts.h
+new file mode 100644
+index 000000000000..6cc6d91aca92
+--- /dev/null
++++ b/src/miniloader/tegra132-mts.h
+@@ -0,0 +1,13 @@
++/*
++ * Copyright (c) 2014 NVIDIA CORPORATION.  All Rights Reserved.
++ *
++ * NVIDIA CORPORATION and its licensors retain all intellectual property
++ * and proprietary rights in and to this software, related documentation
++ * and any modifications thereto.  Any use, reproduction, disclosure or
++ * distribution of this software and related documentation without an express
++ * license agreement from NVIDIA CORPORATION is strictly prohibited.
++ */
++#define TEGRA132_MTS_ENTRY 0x82000000
++uint8_t mts_tegra132[] = {
++#include "mts_si.h"
++};
+diff --git a/src/miniloader/tegra132-preboot-mts.h b/src/miniloader/tegra132-preboot-mts.h
+new file mode 100644
+index 000000000000..8b4a42b8d09a
+--- /dev/null
++++ b/src/miniloader/tegra132-preboot-mts.h
+@@ -0,0 +1,13 @@
++/*
++ * Copyright (c) 2014 NVIDIA CORPORATION.  All Rights Reserved.
++ *
++ * NVIDIA CORPORATION and its licensors retain all intellectual property
++ * and proprietary rights in and to this software, related documentation
++ * and any modifications thereto.  Any use, reproduction, disclosure or
++ * distribution of this software and related documentation without an express
++ * license agreement from NVIDIA CORPORATION is strictly prohibited.
++ */
++#define TEGRA132_PREBOOT_MTS_ENTRY 0x4000f000
++uint8_t preboot_mts_tegra132[] = {
++#include "mts_preboot_si.h"
++};
+diff --git a/src/nv3p.c b/src/nv3p.c
+index b2dff4286422..616485f4ce30 100644
+--- a/src/nv3p.c
++++ b/src/nv3p.c
+@@ -52,6 +52,7 @@
+ /*   NV3P_CMD_DL_BCT                 */
+ /*   NV3P_CMD_DL_BL                  */
+ /*   NV3P_CMD_STATUS                 */
++/*   NV3P_CMD_DL_MTS                 */
+ /*-----------------------------------*/
+ /* command arguments                 */
+ /*                 .                 */
+@@ -346,6 +347,16 @@ static void nv3p_write_cmd(nv3p_handle_t h3p, uint32_t command, void *args,
+ 		WRITE32(tmp, a->entry);
+ 		break;
+ 	}
++	case NV3P_CMD_DL_MTS:
++	{
++		nv3p_cmd_dl_mts_t *a = (nv3p_cmd_dl_mts_t *)args;
++		*length = sizeof(nv3p_cmd_dl_mts_t);
++		WRITE32(tmp, *length);
++		WRITE32(tmp, command);
++		WRITE32(tmp, a->length);
++		WRITE32(tmp, a->address);
++		break;
++	}
+ 	default:
+ 		dprintf("bad command: 0x%x\n", command);
+ 		break;
+@@ -423,6 +434,7 @@ static int nv3p_get_cmd_return(nv3p_handle_t h3p, uint32_t command, void *args)
+ 		break;
+ 	case NV3P_CMD_DL_BCT:
+ 	case NV3P_CMD_DL_BL:
++	case NV3P_CMD_DL_MTS:
+ 		break;
+ 	default:
+ 		dprintf("unknown command: 0x%x\n", command);
+@@ -659,6 +671,13 @@ static int nv3p_get_args(nv3p_handle_t h3p, uint32_t command, void **args,
+ 		READ32(tmp, a->entry);
+ 		break;
+ 	}
++	case NV3P_CMD_DL_MTS:
++	{
++		nv3p_cmd_dl_mts_t *a = (nv3p_cmd_dl_mts_t *)buf;
++		READ32(tmp, a->length);
++		READ32(tmp, a->address);
++		break;
++	}
+ 	default:
+ 		dprintf("unknown command: 0x%x\n", command);
+ 		return EINVAL;
+diff --git a/src/nv3p.h b/src/nv3p.h
+index 6ee3ef3393a7..fd63f2824cbf 100644
+--- a/src/nv3p.h
++++ b/src/nv3p.h
+@@ -43,6 +43,7 @@
+ #define NV3P_CMD_DL_BCT                  0x04
+ #define NV3P_CMD_DL_BL                   0x06
+ #define NV3P_CMD_STATUS                  0x0a
++#define NV3P_CMD_DL_MTS                  0x33
+ 
+ // nack codes
+ #define NV3P_NACK_SUCCESS                0x1
+@@ -188,6 +189,14 @@ typedef struct {
+ 	uint32_t entry; // Execution entry point
+ } nv3p_cmd_dl_bl_t;
+ 
++/*
++ * nv3p_cmd_dl_mts_t: downloads the mts ucode.
++ */
++typedef struct {
++	uint32_t length;
++	uint32_t address; // Load address
++} nv3p_cmd_dl_mts_t;
++
+ int nv3p_open(nv3p_handle_t *h3p, usb_device_t *usb);
+ void nv3p_close(nv3p_handle_t h3p);
+ int nv3p_cmd_send(nv3p_handle_t h3p, uint32_t command, void *args);
+diff --git a/src/rcm.h b/src/rcm.h
+index ab4bea2d8752..7a66045e245d 100644
+--- a/src/rcm.h
++++ b/src/rcm.h
+@@ -47,6 +47,7 @@
+ #define RCM_CMD_QUERY_BR_VERSION   0x5
+ #define RCM_CMD_QUERY_RCM_VERSION  0x6
+ #define RCM_CMD_QUERY_BD_VERSION   0x7
++#define RCM_CMD_DL_MTS             0xb
+ 
+ // AES block size in bytes
+ #define RCM_AES_BLOCK_SIZE      (128 / 8)
+diff --git a/src/tegrarcm.1.in b/src/tegrarcm.1.in
+index e0c2cc38d656..23e484e1a4cd 100644
+--- a/src/tegrarcm.1.in
++++ b/src/tegrarcm.1.in
+@@ -81,6 +81,13 @@ built-in one.
+ .TP
+ .B \-\-miniloader_entry \fImlentry\fP
+ Specify the entry address of the miniloader.
++.TP
++.B \-\-preboot \fIpbfile\fP
++Read the preboot mts ucode from the specified file instead of using the
++built-in one.
++.TP
++.B \-\-preboot_entry \fIpbentry\fP
++Specify the entry address of the preboot mts ucode.
+ 
+ .SH EXAMPLES
+ To download u-boot firmware to a Tegra20 seaboard:
 -- 
 1.8.1.5
