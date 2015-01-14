@@ -1,7 +1,7 @@
 From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [RFC PATCH 7/9] drm/tegra: dc: remove the power sequence from driver
-Date: Wed, 14 Jan 2015 14:19:30 +0800
-Message-ID: <1421216372-8025-8-git-send-email-vinceh@nvidia.com>
+Subject: [RFC PATCH 8/9] PCI: tegra: remove the power sequence from driver
+Date: Wed, 14 Jan 2015 14:19:31 +0800
+Message-ID: <1421216372-8025-9-git-send-email-vinceh@nvidia.com>
 References: <1421216372-8025-1-git-send-email-vinceh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,108 +17,51 @@ duplicated power sequence here.
 
 Signed-off-by: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/dc.c | 46 +++++++++++-----------------------------------
- 1 file changed, 11 insertions(+), 35 deletions(-)
+ drivers/pci/host/pci-tegra.c | 20 --------------------
+ 1 file changed, 20 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index ae26cc054fff..078373336977 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -25,7 +25,6 @@ struct tegra_dc_soc_info {
- 	bool supports_cursor;
- 	bool supports_block_linear;
- 	unsigned int pitch_align;
--	bool has_powergate;
- };
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index 6f9c29fa70e7..22ef3cd61aa8 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -980,12 +980,6 @@ static void tegra_pcie_power_off(struct tegra_pcie *pcie)
+ 	if (err < 0)
+ 		dev_warn(pcie->dev, "failed to power off PHY: %d\n", err);
  
- struct tegra_plane {
-@@ -1575,7 +1574,6 @@ static const struct tegra_dc_soc_info tegra20_dc_soc_info = {
- 	.supports_cursor = false,
- 	.supports_block_linear = false,
- 	.pitch_align = 8,
--	.has_powergate = false,
- };
- 
- static const struct tegra_dc_soc_info tegra30_dc_soc_info = {
-@@ -1583,7 +1581,6 @@ static const struct tegra_dc_soc_info tegra30_dc_soc_info = {
- 	.supports_cursor = false,
- 	.supports_block_linear = false,
- 	.pitch_align = 8,
--	.has_powergate = false,
- };
- 
- static const struct tegra_dc_soc_info tegra114_dc_soc_info = {
-@@ -1591,7 +1588,6 @@ static const struct tegra_dc_soc_info tegra114_dc_soc_info = {
- 	.supports_cursor = false,
- 	.supports_block_linear = false,
- 	.pitch_align = 64,
--	.has_powergate = true,
- };
- 
- static const struct tegra_dc_soc_info tegra124_dc_soc_info = {
-@@ -1599,7 +1595,6 @@ static const struct tegra_dc_soc_info tegra124_dc_soc_info = {
- 	.supports_cursor = true,
- 	.supports_block_linear = true,
- 	.pitch_align = 64,
--	.has_powergate = true,
- };
- 
- static const struct of_device_id tegra_dc_of_match[] = {
-@@ -1692,33 +1687,18 @@ static int tegra_dc_probe(struct platform_device *pdev)
- 		return PTR_ERR(dc->rst);
- 	}
- 
--	if (dc->soc->has_powergate) {
--		if (dc->pipe == 0)
--			dc->powergate = TEGRA_POWERGATE_DIS;
--		else
--			dc->powergate = TEGRA_POWERGATE_DISB;
+-	reset_control_assert(pcie->pcie_xrst);
+-	reset_control_assert(pcie->afi_rst);
+-	reset_control_assert(pcie->pex_rst);
 -
--		err = tegra_powergate_sequence_power_up(dc->powergate, dc->clk,
--							dc->rst);
--		if (err < 0) {
--			dev_err(&pdev->dev, "failed to power partition: %d\n",
--				err);
--			return err;
--		}
--	} else {
--		err = clk_prepare_enable(dc->clk);
--		if (err < 0) {
--			dev_err(&pdev->dev, "failed to enable clock: %d\n",
--				err);
--			return err;
--		}
-+	err = clk_prepare_enable(dc->clk);
-+	if (err < 0) {
-+		dev_err(&pdev->dev, "failed to enable clock: %d\n",
-+			err);
-+		return err;
-+	}
- 
--		err = reset_control_deassert(dc->rst);
--		if (err < 0) {
--			dev_err(&pdev->dev, "failed to deassert reset: %d\n",
--				err);
--			return err;
--		}
-+	err = reset_control_deassert(dc->rst);
-+	if (err < 0) {
-+		dev_err(&pdev->dev, "failed to deassert reset: %d\n",
-+			err);
-+		return err;
- 	}
- 
- 	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-@@ -1773,10 +1753,6 @@ static int tegra_dc_remove(struct platform_device *pdev)
- 	}
- 
- 	reset_control_assert(dc->rst);
+-	tegra_powergate_power_off(TEGRA_POWERGATE_PCIE);
 -
--	if (dc->soc->has_powergate)
--		tegra_powergate_power_off(dc->powergate);
--
- 	clk_disable_unprepare(dc->clk);
+ 	err = regulator_bulk_disable(pcie->num_supplies, pcie->supplies);
+ 	if (err < 0)
+ 		dev_warn(pcie->dev, "failed to disable regulators: %d\n", err);
+@@ -996,25 +990,11 @@ static int tegra_pcie_power_on(struct tegra_pcie *pcie)
+ 	const struct tegra_pcie_soc_data *soc = pcie->soc_data;
+ 	int err;
  
- 	return 0;
+-	reset_control_assert(pcie->pcie_xrst);
+-	reset_control_assert(pcie->afi_rst);
+-	reset_control_assert(pcie->pex_rst);
+-
+-	tegra_powergate_power_off(TEGRA_POWERGATE_PCIE);
+-
+ 	/* enable regulators */
+ 	err = regulator_bulk_enable(pcie->num_supplies, pcie->supplies);
+ 	if (err < 0)
+ 		dev_err(pcie->dev, "failed to enable regulators: %d\n", err);
+ 
+-	err = tegra_powergate_sequence_power_up(TEGRA_POWERGATE_PCIE,
+-						pcie->pex_clk,
+-						pcie->pex_rst);
+-	if (err) {
+-		dev_err(pcie->dev, "powerup sequence failed: %d\n", err);
+-		return err;
+-	}
+-
+ 	reset_control_deassert(pcie->afi_rst);
+ 
+ 	err = clk_prepare_enable(pcie->afi_clk);
 -- 
 1.9.1
