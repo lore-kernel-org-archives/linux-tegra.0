@@ -1,60 +1,45 @@
-From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [RFC PATCH 9/9] ata: ahci_tegra: remove power sequence from driver
-Date: Wed, 14 Jan 2015 14:19:32 +0800
-Message-ID: <1421216372-8025-10-git-send-email-vinceh@nvidia.com>
-References: <1421216372-8025-1-git-send-email-vinceh@nvidia.com>
+From: Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: tegra: add Acer Chromebook 13 device tree
+Date: Wed, 14 Jan 2015 08:02:25 +0100
+Message-ID: <CAAObsKBo13fEy72EQe3V409fEEYpw0kQss5UgaOhk=GOVEEeYg@mail.gmail.com>
+References: <1407894967-18300-1-git-send-email-dgreid@chromium.org>
+ <CAAObsKCbJLwEHeiv3DbCwsiVSZ0VDGzU84+ipPKJQZajx+KiuQ@mail.gmail.com> <CAEUnVG727F16K2kMWCrPHXTZgpc_4gnCBkF=Aa_zaJiSMviy=g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1421216372-8025-1-git-send-email-vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <CAEUnVG727F16K2kMWCrPHXTZgpc_4gnCBkF=Aa_zaJiSMviy=g@mail.gmail.com>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-We have the generic PM domain support for Tegra SoCs now. So remove the
-duplicated sequence here.
+On 14 January 2015 at 01:32, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+> On Tue, Jan 13, 2015 at 9:49 AM, Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org> wrote:
+>> On 13 August 2014 at 03:56, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+>>> The Acer Chromebook 13, codenamed "Big", contains an NVIDIA tegra124
+>>> processor and is similar to the Venice2 reference platform.
+>>>
+>>> The keyboard, USB 2, audio, HDMI, sdcard and emmc have been tested
+>>> and work on the 1366x768 models.  I haven't tried on the HD systems
+>>> yet.
+>>
+>> Hi Dylan,
+>>
+>> do you have any notes on how you tested audio? I have been fiddling a
+>> bit with amixer but haven't been able to get any sound from the
+>> speakers nor the headphones.
+>
+> I don't have any notes, and it's been a while since I tried it.  To
+> the best of my knowledge, I loaded the UCM config from the ChromeOS
+> tree manually with alsaucm, then enabled/disabled headphones from
+> there.
+>
+> https://chromium.googlesource.com/chromiumos/third_party/adhd/+/master/ucm-config/nyan/NVIDIA%20Tegra%20Venice2/
+>
+> The important stuff is all in the enable sequence of HiFi.conf
+>
+> Let me know if that helps.
 
-Signed-off-by: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/ata/ahci_tegra.c | 11 -----------
- 1 file changed, 11 deletions(-)
+Thanks, it does work fine now. Will submit that conf file upstream.
 
-diff --git a/drivers/ata/ahci_tegra.c b/drivers/ata/ahci_tegra.c
-index 032904402c95..8db4aebcda4e 100644
---- a/drivers/ata/ahci_tegra.c
-+++ b/drivers/ata/ahci_tegra.c
-@@ -118,12 +118,6 @@ static int tegra_ahci_power_on(struct ahci_host_priv *hpriv)
- 	if (ret)
- 		return ret;
- 
--	ret = tegra_powergate_sequence_power_up(TEGRA_POWERGATE_SATA,
--						tegra->sata_clk,
--						tegra->sata_rst);
--	if (ret)
--		goto disable_regulators;
--
- 	reset_control_assert(tegra->sata_oob_rst);
- 	reset_control_assert(tegra->sata_cold_rst);
- 
-@@ -138,10 +132,6 @@ static int tegra_ahci_power_on(struct ahci_host_priv *hpriv)
- 
- disable_power:
- 	clk_disable_unprepare(tegra->sata_clk);
--
--	tegra_powergate_power_off(TEGRA_POWERGATE_SATA);
--
--disable_regulators:
- 	regulator_bulk_disable(ARRAY_SIZE(tegra->supplies), tegra->supplies);
- 
- 	return ret;
-@@ -158,7 +148,6 @@ static void tegra_ahci_power_off(struct ahci_host_priv *hpriv)
- 	reset_control_assert(tegra->sata_cold_rst);
- 
- 	clk_disable_unprepare(tegra->sata_clk);
--	tegra_powergate_power_off(TEGRA_POWERGATE_SATA);
- 
- 	regulator_bulk_disable(ARRAY_SIZE(tegra->supplies), tegra->supplies);
- }
--- 
-1.9.1
+Tomeu
