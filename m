@@ -1,45 +1,157 @@
-From: Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: tegra: add Acer Chromebook 13 device tree
-Date: Wed, 14 Jan 2015 08:02:25 +0100
-Message-ID: <CAAObsKBo13fEy72EQe3V409fEEYpw0kQss5UgaOhk=GOVEEeYg@mail.gmail.com>
-References: <1407894967-18300-1-git-send-email-dgreid@chromium.org>
- <CAAObsKCbJLwEHeiv3DbCwsiVSZ0VDGzU84+ipPKJQZajx+KiuQ@mail.gmail.com> <CAEUnVG727F16K2kMWCrPHXTZgpc_4gnCBkF=Aa_zaJiSMviy=g@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Subject: [PATCH] conf/ucm: GoogleNyan: Add configuration
+Date: Wed, 14 Jan 2015 17:57:18 +0100
+Message-ID: <1421254638-14599-1-git-send-email-tomeu.vizoso@collabora.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAEUnVG727F16K2kMWCrPHXTZgpc_4gnCBkF=Aa_zaJiSMviy=g@mail.gmail.com>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+To: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 14 January 2015 at 01:32, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
-> On Tue, Jan 13, 2015 at 9:49 AM, Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org> wrote:
->> On 13 August 2014 at 03:56, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
->>> The Acer Chromebook 13, codenamed "Big", contains an NVIDIA tegra124
->>> processor and is similar to the Venice2 reference platform.
->>>
->>> The keyboard, USB 2, audio, HDMI, sdcard and emmc have been tested
->>> and work on the 1366x768 models.  I haven't tried on the HD systems
->>> yet.
->>
->> Hi Dylan,
->>
->> do you have any notes on how you tested audio? I have been fiddling a
->> bit with amixer but haven't been able to get any sound from the
->> speakers nor the headphones.
->
-> I don't have any notes, and it's been a while since I tried it.  To
-> the best of my knowledge, I loaded the UCM config from the ChromeOS
-> tree manually with alsaucm, then enabled/disabled headphones from
-> there.
->
-> https://chromium.googlesource.com/chromiumos/third_party/adhd/+/master/ucm-config/nyan/NVIDIA%20Tegra%20Venice2/
->
-> The important stuff is all in the enable sequence of HiFi.conf
->
-> Let me know if that helps.
+Taken from the ChromeOS sources, this configuration should apply to all
+Nyan boards from Google, so far HP Chromebook 14 (nyan-blaze) and Acer
+Chromebook 13 (nyan-big).
 
-Thanks, it does work fine now. Will submit that conf file upstream.
+Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+---
+ configure.ac                            |  1 +
+ src/conf/ucm/GoogleNyan/GoogleNyan.conf |  5 ++
+ src/conf/ucm/GoogleNyan/HiFi.conf       | 83 +++++++++++++++++++++++++++++++++
+ src/conf/ucm/GoogleNyan/Makefile.am     |  4 ++
+ src/conf/ucm/Makefile.am                |  2 +-
+ 5 files changed, 94 insertions(+), 1 deletion(-)
+ create mode 100644 src/conf/ucm/GoogleNyan/GoogleNyan.conf
+ create mode 100644 src/conf/ucm/GoogleNyan/HiFi.conf
+ create mode 100644 src/conf/ucm/GoogleNyan/Makefile.am
 
-Tomeu
+diff --git a/configure.ac b/configure.ac
+index 734163c..916280b 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -654,6 +654,7 @@ AC_OUTPUT(Makefile doc/Makefile doc/pictures/Makefile doc/doxygen.cfg \
+ 	  src/conf/ucm/SDP4430/Makefile \
+ 	  src/conf/ucm/tegraalc5632/Makefile \
+ 	  src/conf/ucm/PAZ00/Makefile \
++	  src/conf/ucm/GoogleNyan/Makefile \
+ 	  modules/Makefile modules/mixer/Makefile modules/mixer/simple/Makefile \
+ 	  alsalisp/Makefile aserver/Makefile \
+ 	  test/Makefile test/lsb/Makefile \
+diff --git a/src/conf/ucm/GoogleNyan/GoogleNyan.conf b/src/conf/ucm/GoogleNyan/GoogleNyan.conf
+new file mode 100644
+index 0000000..ebd0dd9
+--- /dev/null
++++ b/src/conf/ucm/GoogleNyan/GoogleNyan.conf
+@@ -0,0 +1,5 @@
++    Comment "Nyan internal card"
++    SectionUseCase."HiFi" {
++    File "HiFi.conf"
++    Comment "Default"
++    }
+diff --git a/src/conf/ucm/GoogleNyan/HiFi.conf b/src/conf/ucm/GoogleNyan/HiFi.conf
+new file mode 100644
+index 0000000..cb624e7
+--- /dev/null
++++ b/src/conf/ucm/GoogleNyan/HiFi.conf
+@@ -0,0 +1,83 @@
++    SectionVerb {
++    Value {
++    OutputDspName "speaker_eq"
++    }
++    EnableSequence [
++    cdev "hw:GoogleNyan"
++    cset "name='Left Speaker Mixer Left DAC Switch' on"
++    cset "name='Right Speaker Mixer Right DAC Switch' on"
++    cset "name='Headphone Left Switch' on"
++    cset "name='Headphone Right Switch' on"
++    cset "name='Digital EQ 3 Band Switch' off"
++    cset "name='Digital EQ 5 Band Switch' off"
++    cset "name='Digital EQ 7 Band Switch' off"
++    cset "name='Biquad Switch' off"
++    cset "name='Filter Mode' Music"
++    cset "name='ADC Oversampling Rate' 0"
++    cset "name='DMIC Mux' DMIC"
++    cset "name='MIC2 Mux' IN34"
++    cset "name='Right ADC Mixer MIC2 Switch' on"
++    cset "name='Left ADC Mixer MIC2 Switch' on"
++    cset "name='MIC2 Volume' 10"
++    cset "name='MIC2 Boost Volume' 0"
++    cset "name='Mic Jack Switch' off"
++    cset "name='Int Mic Switch' on"
++    cset "name='ADCR Boost Volume' 4"
++    cset "name='ADCL Boost Volume' 4"
++    cset "name='ADCR Volume' 11"
++    cset "name='ADCL Volume' 11"
++    cset "name='Left Speaker Mixer Left DAC Switch' on"
++    cset "name='Right Speaker Mixer Right DAC Switch' on"
++    cset "name='Speaker Left Mixer Volume' 2"
++    cset "name='Speaker Right Mixer Volume' 2"
++    cset "name='Record Path DC Blocking' on"
++    cset "name='Playback Path DC Blocking' on"
++    cset "name='Headphone Left Switch' on"
++    cset "name='Headphone Right Switch' on"
++    cset "name='HP Left Out Switch' off"
++    cset "name='HP Right Out Switch' off"
++    cset "name='Speaker Left Switch' on"
++    cset "name='Speaker Right Switch' on"
++    cset "name='Speakers Switch' on"
++    ]
++    DisableSequence [
++    ]
++    }
++    SectionDevice."Headphone".0 {
++    Value {
++    JackName "Google Nyan Headphone Jack"
++    OutputDspName ""
++    }
++    EnableSequence [
++    cdev "hw:GoogleNyan"
++    cset "name='Speakers Switch' off"
++    cset "name='HP Left Out Switch' on"
++    cset "name='HP Right Out Switch' on"
++    ]
++    DisableSequence [
++    cdev "hw:GoogleNyan"
++    cset "name='HP Left Out Switch' off"
++    cset "name='HP Right Out Switch' off"
++    cset "name='Speakers Switch' on"
++    ]
++    }
++    SectionDevice."Mic".0 {
++    Value {
++    JackName "Google Nyan Mic Jack"
++    CaptureControl "MIC2"
++    }
++    EnableSequence [
++    cdev "hw:GoogleNyan"
++    cset "name='Int Mic Switch' off"
++    cset "name='DMIC Mux' ADC"
++    cset "name='Mic Jack Switch' on"
++    cset "name='Record Path DC Blocking' on"
++    ]
++    DisableSequence [
++    cdev "hw:GoogleNyan"
++    cset "name='Mic Jack Switch' off"
++    cset "name='DMIC Mux' DMIC"
++    cset "name='Int Mic Switch' on"
++    cset "name='Record Path DC Blocking' off"
++    ]
++    }
+diff --git a/src/conf/ucm/GoogleNyan/Makefile.am b/src/conf/ucm/GoogleNyan/Makefile.am
+new file mode 100644
+index 0000000..47c7fc9
+--- /dev/null
++++ b/src/conf/ucm/GoogleNyan/Makefile.am
+@@ -0,0 +1,4 @@
++alsaconfigdir = @ALSA_CONFIG_DIR@
++ucmdir = $(alsaconfigdir)/ucm/GoogleNyan
++ucm_DATA = GoogleNyan.conf HiFi.conf
++EXTRA_DIST = $(ucm_DATA)
+diff --git a/src/conf/ucm/Makefile.am b/src/conf/ucm/Makefile.am
+index bde89df..14fc7ae 100644
+--- a/src/conf/ucm/Makefile.am
++++ b/src/conf/ucm/Makefile.am
+@@ -1 +1 @@
+-SUBDIRS=DAISY-I2S PandaBoard PandaBoardES SDP4430 tegraalc5632 PAZ00
++SUBDIRS=DAISY-I2S PandaBoard PandaBoardES SDP4430 tegraalc5632 PAZ00 GoogleNyan
+-- 
+1.9.3
