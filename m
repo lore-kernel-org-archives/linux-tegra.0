@@ -1,52 +1,63 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 00/11] Improvements to Tegra-based Chromebook support
-Date: Thu, 15 Jan 2015 17:14:01 +0000
-Message-ID: <20150115171401.GA2782@sirena.org.uk>
-References: <1421338359-27467-1-git-send-email-tomeu.vizoso@collabora.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: tegra: add Acer Chromebook 13 device tree
+Date: Thu, 15 Jan 2015 10:18:32 -0700
+Message-ID: <54B7F668.70102@wwwdotorg.org>
+References: <1407894967-18300-1-git-send-email-dgreid@chromium.org> <CAAObsKCbJLwEHeiv3DbCwsiVSZ0VDGzU84+ipPKJQZajx+KiuQ@mail.gmail.com> <CAEUnVG727F16K2kMWCrPHXTZgpc_4gnCBkF=Aa_zaJiSMviy=g@mail.gmail.com> <CAAObsKBo13fEy72EQe3V409fEEYpw0kQss5UgaOhk=GOVEEeYg@mail.gmail.com> <20150115075006.GA30799@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="oyUTqETQ0mS9luUI"
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1421338359-27467-1-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+In-Reply-To: <20150115075006.GA30799@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org>
+Cc: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 01/15/2015 12:50 AM, Thierry Reding wrote:
+> On Wed, Jan 14, 2015 at 08:02:25AM +0100, Tomeu Vizoso wrote:
+>> On 14 January 2015 at 01:32, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+>>> On Tue, Jan 13, 2015 at 9:49 AM, Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org> wrote:
+>>>> On 13 August 2014 at 03:56, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+>>>>> The Acer Chromebook 13, codenamed "Big", contains an NVIDIA tegra124
+>>>>> processor and is similar to the Venice2 reference platform.
+>>>>>
+>>>>> The keyboard, USB 2, audio, HDMI, sdcard and emmc have been tested
+>>>>> and work on the 1366x768 models.  I haven't tried on the HD systems
+>>>>> yet.
+>>>>
+>>>> Hi Dylan,
+>>>>
+>>>> do you have any notes on how you tested audio? I have been fiddling a
+>>>> bit with amixer but haven't been able to get any sound from the
+>>>> speakers nor the headphones.
+>>>
+>>> I don't have any notes, and it's been a while since I tried it.  To
+>>> the best of my knowledge, I loaded the UCM config from the ChromeOS
+>>> tree manually with alsaucm, then enabled/disabled headphones from
+>>> there.
+>>>
+>>> https://chromium.googlesource.com/chromiumos/third_party/adhd/+/master/ucm-config/nyan/NVIDIA%20Tegra%20Venice2/
+>>>
+>>> The important stuff is all in the enable sequence of HiFi.conf
+>>>
+>>> Let me know if that helps.
+>>
+>> Thanks, it does work fine now. Will submit that conf file upstream.
+>
+> Out of curiosity, where is "upstream" for UCM configuration files? It'd
+> be interesting to collect files for other Tegra boards there. I find it
+> rather tedious figuring out time and time again what control needs to be
+> toggled to enable a certain output.
+>
+> Stephen, since you undoubtedly have the most experience with upstream
+> audio, do you happen to know if we have something like that for the
+> other upstream-supported boards?
 
---oyUTqETQ0mS9luUI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I typically rely on the disto restoring settings from asound.state 
+during boot, and saving them from HW during shutdown. I then put that 
+asound.state on any filesystems I create.
 
-On Thu, Jan 15, 2015 at 05:12:12PM +0100, Tomeu Vizoso wrote:
-
-Please fix your mailer to word wrap within paragraphs so your mails are
-more legible, I've reflowed.
-
-> this started as adding support for the Nyan Blaze, but the Big is so
-> similar to it that I thought it would be better to have both in the
-> same series.
-
-This seems like a series of unrelated patch series rather than a single
-one and so should probably have been sent as such, they're all
-independent of each other.  I'd probably have sent each of the things
-you list in paragraphs here separately.
-
---oyUTqETQ0mS9luUI
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJUt/VYAAoJECTWi3JdVIfQ3xYH/A79KoUlK7IThA0X5Hv3cqHo
-jB8iPapcxl/Jy0weKoErpVHBv3qQDkfVE1QLLZQb2k23ZBXggQn/cKr06begLIsk
-ijWuIJf4LhSV4uT0uZHBMapsqFt8l1o3j4Z3ZltZyEMOAHu4WzPFjiviQhxESVZv
-eyyeU+6dFu71XUduvDWlhUzwwFLXJThuJaEk0wSUxW/cjtgpEMFy6OGp+Fagq90K
-zxElBgGG0C3qd066rINuv7wscRPAytUHQT92828LpMU+8RyA6YMBQHTdsQDnj4TI
-BR1Ck6XDbbhzZRRvapCkR9Noy3eelAj1GyB3DtqccHWjBPVaJiZv9ilQspCAnU0=
-=frf8
------END PGP SIGNATURE-----
-
---oyUTqETQ0mS9luUI--
+Adding UCM configurations sounds like it'd be a better alternative, 
+presuming there's some automatic way for the distro to correlate the HW 
+name to the UCM file name and automatically apply it during boot or 
+audio startup.
