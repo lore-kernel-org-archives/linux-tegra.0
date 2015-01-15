@@ -1,174 +1,66 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH] ARM: tegra: Store tegra_resume() address in IRAM
-Date: Thu, 15 Jan 2015 13:58:58 +0300
-Message-ID: <1421319545-23920-3-git-send-email-digetx@gmail.com>
-References: <1421319545-23920-1-git-send-email-digetx@gmail.com>
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <1421319545-23920-1-git-send-email-digetx@gmail.com>
-Sender: stable-owner@vger.kernel.org
-To: digetx@gmail.com, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+From: Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: tegra: add Acer Chromebook 13 device tree
+Date: Thu, 15 Jan 2015 13:18:22 +0100
+Message-ID: <CAAObsKAZ9ME5PpfLDx31OiXoxhTkUQ2fAOq0Co0dV37mmQE7WA@mail.gmail.com>
+References: <1407894967-18300-1-git-send-email-dgreid@chromium.org>
+ <CAAObsKCbJLwEHeiv3DbCwsiVSZ0VDGzU84+ipPKJQZajx+KiuQ@mail.gmail.com>
+ <CAEUnVG727F16K2kMWCrPHXTZgpc_4gnCBkF=Aa_zaJiSMviy=g@mail.gmail.com>
+ <CAAObsKBo13fEy72EQe3V409fEEYpw0kQss5UgaOhk=GOVEEeYg@mail.gmail.com> <20150115075006.GA30799@ulmo>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150115075006.GA30799@ulmo>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Commit 7232398abc6a ("ARM: tegra: Convert PMC to a driver") changed tegra_resume()
-location storing from late to early and, as a result, broke suspend on Tegra20.
-PMC scratch register 41 is used by tegra LP1 resume code for retrieving stored
-physical memory address of common resume function and in the same time used by
-tegra20_cpu_shutdown() (shared by Tegra20 cpuidle driver and platform SMP code),
-which is storing CPU1 "resettable" status. It implies strict order of scratch
-register usage, otherwise resume function address is lost on Tegra20 after
-disabling non-boot CPU's on suspend. Fix it by storing tegra_resume() physical
-address in IRAM instead of PMC scratch register.
+On 15 January 2015 at 08:50, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Wed, Jan 14, 2015 at 08:02:25AM +0100, Tomeu Vizoso wrote:
+>> On 14 January 2015 at 01:32, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+>> > On Tue, Jan 13, 2015 at 9:49 AM, Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org> wrote:
+>> >> On 13 August 2014 at 03:56, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+>> >>> The Acer Chromebook 13, codenamed "Big", contains an NVIDIA tegra124
+>> >>> processor and is similar to the Venice2 reference platform.
+>> >>>
+>> >>> The keyboard, USB 2, audio, HDMI, sdcard and emmc have been tested
+>> >>> and work on the 1366x768 models.  I haven't tried on the HD systems
+>> >>> yet.
+>> >>
+>> >> Hi Dylan,
+>> >>
+>> >> do you have any notes on how you tested audio? I have been fiddling a
+>> >> bit with amixer but haven't been able to get any sound from the
+>> >> speakers nor the headphones.
+>> >
+>> > I don't have any notes, and it's been a while since I tried it.  To
+>> > the best of my knowledge, I loaded the UCM config from the ChromeOS
+>> > tree manually with alsaucm, then enabled/disabled headphones from
+>> > there.
+>> >
+>> > https://chromium.googlesource.com/chromiumos/third_party/adhd/+/master/ucm-config/nyan/NVIDIA%20Tegra%20Venice2/
+>> >
+>> > The important stuff is all in the enable sequence of HiFi.conf
+>> >
+>> > Let me know if that helps.
+>>
+>> Thanks, it does work fine now. Will submit that conf file upstream.
+>
+> Out of curiosity, where is "upstream" for UCM configuration files? It'd
+> be interesting to collect files for other Tegra boards there. I find it
+> rather tedious figuring out time and time again what control needs to be
+> toggled to enable a certain output.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Fixes: 7232398abc6a (ARM: tegra: Convert PMC to a driver)
-Cc: <stable@vger.kernel.org> # v3.17+
----
- arch/arm/mach-tegra/pm.c            |  3 +++
- arch/arm/mach-tegra/reset-handler.S |  4 ++++
- arch/arm/mach-tegra/reset.h         |  4 ++++
- arch/arm/mach-tegra/sleep-tegra20.S |  7 ++++---
- arch/arm/mach-tegra/sleep-tegra30.S |  7 ++++---
- drivers/soc/tegra/pmc.c             | 19 -------------------
- 6 files changed, 19 insertions(+), 25 deletions(-)
+This is the best we have right now, TTBOMK.
 
-diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
-index b0f48a3..f11e129 100644
---- a/arch/arm/mach-tegra/pm.c
-+++ b/arch/arm/mach-tegra/pm.c
-@@ -395,6 +395,9 @@ void __init tegra_init_suspend(void)
- 		break;
- 	}
- 
-+	/* Store common resume function physical address in IRAM */
-+	writel_relaxed(virt_to_phys(tegra_resume), tegra_resume_func_phys_addr);
-+
- 	suspend_set_ops(&tegra_suspend_ops);
- }
- #endif
-diff --git a/arch/arm/mach-tegra/reset-handler.S b/arch/arm/mach-tegra/reset-handler.S
-index 7b2baab..659557b 100644
---- a/arch/arm/mach-tegra/reset-handler.S
-+++ b/arch/arm/mach-tegra/reset-handler.S
-@@ -280,6 +280,10 @@ __tegra_cpu_reset_handler_data:
- 	.rept	TEGRA_RESET_DATA_SIZE
- 	.long	0
- 	.endr
-+	.globl	__tegra_resume_func_addr_offset
-+	.equ	__tegra_resume_func_addr_offset, \
-+					. - __tegra_cpu_reset_handler_start
-+	.long	0
- 	.align L1_CACHE_SHIFT
- 
- ENTRY(__tegra_cpu_reset_handler_end)
-diff --git a/arch/arm/mach-tegra/reset.h b/arch/arm/mach-tegra/reset.h
-index 76a9343..1b43f19 100644
---- a/arch/arm/mach-tegra/reset.h
-+++ b/arch/arm/mach-tegra/reset.h
-@@ -36,6 +36,7 @@ extern unsigned long __tegra_cpu_reset_handler_data[TEGRA_RESET_DATA_SIZE];
- void __tegra_cpu_reset_handler_start(void);
- void __tegra_cpu_reset_handler(void);
- void __tegra_cpu_reset_handler_end(void);
-+void __tegra_resume_func_addr_offset(void);
- void tegra_secondary_startup(void);
- 
- #ifdef CONFIG_PM_SLEEP
-@@ -47,6 +48,9 @@ void tegra_secondary_startup(void);
- 	(IO_ADDRESS(TEGRA_IRAM_BASE + TEGRA_IRAM_RESET_HANDLER_OFFSET + \
- 	((u32)&__tegra_cpu_reset_handler_data[TEGRA_RESET_MASK_LP2] - \
- 	 (u32)__tegra_cpu_reset_handler_start)))
-+#define tegra_resume_func_phys_addr \
-+	(IO_ADDRESS(TEGRA_IRAM_BASE + TEGRA_IRAM_RESET_HANDLER_OFFSET + \
-+	 (u32)__tegra_resume_func_addr_offset))
- #endif
- 
- #define tegra_cpu_reset_handler_offset \
-diff --git a/arch/arm/mach-tegra/sleep-tegra20.S b/arch/arm/mach-tegra/sleep-tegra20.S
-index be4bc5f..bea484f8 100644
---- a/arch/arm/mach-tegra/sleep-tegra20.S
-+++ b/arch/arm/mach-tegra/sleep-tegra20.S
-@@ -327,7 +327,7 @@ tegra20_iram_start:
-  * system clock running on the same PLL that it suspended at), and
-  * jumps to tegra_resume to restore virtual addressing and PLLX.
-  * The physical address of tegra_resume expected to be stored in
-- * PMC_SCRATCH41.
-+ * IRAM reset handler area.
-  *
-  * NOTE: THIS *MUST* BE RELOCATED TO TEGRA_IRAM_LPx_RESUME_AREA.
-  */
-@@ -400,8 +400,9 @@ exit_selfrefresh_loop:
- 	mov	r1, #0			@ unstall all transactions
- 	str	r1, [r0, #EMC_REQ_CTRL]
- 
--	mov32	r0, TEGRA_PMC_BASE
--	ldr	r0, [r0, #PMC_SCRATCH41]
-+	mov32	r0, TEGRA_IRAM_BASE + TEGRA_IRAM_RESET_HANDLER_OFFSET
-+	ldr 	r1, =__tegra_resume_func_addr_offset
-+	ldr	r0, [r0, r1]
- 	ret	r0			@ jump to tegra_resume
- ENDPROC(tegra20_lp1_reset)
- 
-diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
-index 5d8d13a..b05f22c 100644
---- a/arch/arm/mach-tegra/sleep-tegra30.S
-+++ b/arch/arm/mach-tegra/sleep-tegra30.S
-@@ -314,7 +314,7 @@ tegra30_iram_start:
-  * system clock running on the same PLL that it suspended at), and
-  * jumps to tegra_resume to restore virtual addressing.
-  * The physical address of tegra_resume expected to be stored in
-- * PMC_SCRATCH41.
-+ * IRAM reset handler area.
-  *
-  * NOTE: THIS *MUST* BE RELOCATED TO TEGRA_IRAM_LPx_RESUME_AREA.
-  */
-@@ -528,8 +528,9 @@ zcal_done:
- 	bne	exit_self_refresh
- __no_dual_emc_chanl:
- 
--	mov32	r0, TEGRA_PMC_BASE
--	ldr	r0, [r0, #PMC_SCRATCH41]
-+	mov32	r0, TEGRA_IRAM_BASE + TEGRA_IRAM_RESET_HANDLER_OFFSET
-+	ldr 	r1, =__tegra_resume_func_addr_offset
-+	ldr	r0, [r0, r1]
- 	ret	r0			@ jump to tegra_resume
- ENDPROC(tegra30_lp1_reset)
- 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index a2c0ceb..b87ead2 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -739,24 +739,6 @@ static int tegra_pmc_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--#ifdef CONFIG_PM_SLEEP
--static int tegra_pmc_suspend(struct device *dev)
--{
--	tegra_pmc_writel(virt_to_phys(tegra_resume), PMC_SCRATCH41);
--
--	return 0;
--}
--
--static int tegra_pmc_resume(struct device *dev)
--{
--	tegra_pmc_writel(0x0, PMC_SCRATCH41);
--
--	return 0;
--}
--#endif
--
--static SIMPLE_DEV_PM_OPS(tegra_pmc_pm_ops, tegra_pmc_suspend, tegra_pmc_resume);
--
- static const char * const tegra20_powergates[] = {
- 	[TEGRA_POWERGATE_CPU] = "cpu",
- 	[TEGRA_POWERGATE_3D] = "3d",
-@@ -894,7 +876,6 @@ static struct platform_driver tegra_pmc_driver = {
- 		.name = "tegra-pmc",
- 		.suppress_bind_attrs = true,
- 		.of_match_table = tegra_pmc_match,
--		.pm = &tegra_pmc_pm_ops,
- 	},
- 	.probe = tegra_pmc_probe,
- };
--- 
-2.2.1
+http://git.alsa-project.org/?p=alsa-lib.git;a=tree;f=src/conf/ucm
+
+Regards,
+
+Tomeu
+
+> Stephen, since you undoubtedly have the most experience with upstream
+> audio, do you happen to know if we have something like that for the
+> other upstream-supported boards?
+>
+> Thierry
