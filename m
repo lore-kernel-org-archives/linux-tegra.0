@@ -1,178 +1,99 @@
-From: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH] conf/ucm: GoogleNyan: Add configuration
-Date: Wed, 14 Jan 2015 09:41:20 -0800
-Message-ID: <CAEUnVG7=8vf+VQh6j5SO-ZUD7R7FoFUcf4Tk4Y1s8VY1sT8SnA@mail.gmail.com>
-References: <1421254638-14599-1-git-send-email-tomeu.vizoso@collabora.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] drm: merge nouveau_platform.ko into nouveau.ko
+Date: Thu, 15 Jan 2015 15:29:56 +0900
+Message-ID: <1421303396-11867-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1421254638-14599-1-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Cc: "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jan 14, 2015 at 8:57 AM, Tomeu Vizoso
-<tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org> wrote:
-> Taken from the ChromeOS sources, this configuration should apply to all
-> Nyan boards from Google, so far HP Chromebook 14 (nyan-blaze) and Acer
-> Chromebook 13 (nyan-big).
-
-Thanks for posting this Tomeu.
-
->
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-> ---
->  configure.ac                            |  1 +
->  src/conf/ucm/GoogleNyan/GoogleNyan.conf |  5 ++
->  src/conf/ucm/GoogleNyan/HiFi.conf       | 83 +++++++++++++++++++++++++++++++++
->  src/conf/ucm/GoogleNyan/Makefile.am     |  4 ++
->  src/conf/ucm/Makefile.am                |  2 +-
->  5 files changed, 94 insertions(+), 1 deletion(-)
->  create mode 100644 src/conf/ucm/GoogleNyan/GoogleNyan.conf
->  create mode 100644 src/conf/ucm/GoogleNyan/HiFi.conf
->  create mode 100644 src/conf/ucm/GoogleNyan/Makefile.am
->
-> diff --git a/configure.ac b/configure.ac
-> index 734163c..916280b 100644
-> --- a/configure.ac
-> +++ b/configure.ac
-> @@ -654,6 +654,7 @@ AC_OUTPUT(Makefile doc/Makefile doc/pictures/Makefile doc/doxygen.cfg \
->           src/conf/ucm/SDP4430/Makefile \
->           src/conf/ucm/tegraalc5632/Makefile \
->           src/conf/ucm/PAZ00/Makefile \
-> +         src/conf/ucm/GoogleNyan/Makefile \
->           modules/Makefile modules/mixer/Makefile modules/mixer/simple/Makefile \
->           alsalisp/Makefile aserver/Makefile \
->           test/Makefile test/lsb/Makefile \
-> diff --git a/src/conf/ucm/GoogleNyan/GoogleNyan.conf b/src/conf/ucm/GoogleNyan/GoogleNyan.conf
-> new file mode 100644
-> index 0000000..ebd0dd9
-> --- /dev/null
-> +++ b/src/conf/ucm/GoogleNyan/GoogleNyan.conf
-> @@ -0,0 +1,5 @@
-> +    Comment "Nyan internal card"
-> +    SectionUseCase."HiFi" {
-> +    File "HiFi.conf"
-> +    Comment "Default"
-> +    }
-> diff --git a/src/conf/ucm/GoogleNyan/HiFi.conf b/src/conf/ucm/GoogleNyan/HiFi.conf
-> new file mode 100644
-> index 0000000..cb624e7
-> --- /dev/null
-> +++ b/src/conf/ucm/GoogleNyan/HiFi.conf
-> @@ -0,0 +1,83 @@
-> +    SectionVerb {
-> +    Value {
-> +    OutputDspName "speaker_eq"
-
-These values are a Chrome-only  addition.  I'm not sure what the
-normal process for defining a value here is, but we haven't gone
-through it.
-The JackName below is rather useful for matching a device to a Jack,
-but it's not standard outside of ChromeOS
-
-> +    }
-> +    EnableSequence [
-> +    cdev "hw:GoogleNyan"
-> +    cset "name='Left Speaker Mixer Left DAC Switch' on"
-> +    cset "name='Right Speaker Mixer Right DAC Switch' on"
-> +    cset "name='Headphone Left Switch' on"
-> +    cset "name='Headphone Right Switch' on"
-> +    cset "name='Digital EQ 3 Band Switch' off"
-> +    cset "name='Digital EQ 5 Band Switch' off"
-> +    cset "name='Digital EQ 7 Band Switch' off"
-> +    cset "name='Biquad Switch' off"
-> +    cset "name='Filter Mode' Music"
-> +    cset "name='ADC Oversampling Rate' 0"
-> +    cset "name='DMIC Mux' DMIC"
-> +    cset "name='MIC2 Mux' IN34"
-> +    cset "name='Right ADC Mixer MIC2 Switch' on"
-> +    cset "name='Left ADC Mixer MIC2 Switch' on"
-> +    cset "name='MIC2 Volume' 10"
-> +    cset "name='MIC2 Boost Volume' 0"
-> +    cset "name='Mic Jack Switch' off"
-> +    cset "name='Int Mic Switch' on"
-> +    cset "name='ADCR Boost Volume' 4"
-> +    cset "name='ADCL Boost Volume' 4"
-> +    cset "name='ADCR Volume' 11"
-> +    cset "name='ADCL Volume' 11"
-> +    cset "name='Left Speaker Mixer Left DAC Switch' on"
-> +    cset "name='Right Speaker Mixer Right DAC Switch' on"
-> +    cset "name='Speaker Left Mixer Volume' 2"
-> +    cset "name='Speaker Right Mixer Volume' 2"
-> +    cset "name='Record Path DC Blocking' on"
-> +    cset "name='Playback Path DC Blocking' on"
-> +    cset "name='Headphone Left Switch' on"
-> +    cset "name='Headphone Right Switch' on"
-> +    cset "name='HP Left Out Switch' off"
-> +    cset "name='HP Right Out Switch' off"
-> +    cset "name='Speaker Left Switch' on"
-> +    cset "name='Speaker Right Switch' on"
-> +    cset "name='Speakers Switch' on"
-> +    ]
-> +    DisableSequence [
-> +    ]
-> +    }
-> +    SectionDevice."Headphone".0 {
-> +    Value {
-> +    JackName "Google Nyan Headphone Jack"
-> +    OutputDspName ""
-> +    }
-> +    EnableSequence [
-> +    cdev "hw:GoogleNyan"
-> +    cset "name='Speakers Switch' off"
-> +    cset "name='HP Left Out Switch' on"
-> +    cset "name='HP Right Out Switch' on"
-> +    ]
-> +    DisableSequence [
-> +    cdev "hw:GoogleNyan"
-> +    cset "name='HP Left Out Switch' off"
-> +    cset "name='HP Right Out Switch' off"
-> +    cset "name='Speakers Switch' on"
-> +    ]
-> +    }
-> +    SectionDevice."Mic".0 {
-> +    Value {
-> +    JackName "Google Nyan Mic Jack"
-> +    CaptureControl "MIC2"
-> +    }
-> +    EnableSequence [
-> +    cdev "hw:GoogleNyan"
-> +    cset "name='Int Mic Switch' off"
-> +    cset "name='DMIC Mux' ADC"
-> +    cset "name='Mic Jack Switch' on"
-> +    cset "name='Record Path DC Blocking' on"
-> +    ]
-> +    DisableSequence [
-> +    cdev "hw:GoogleNyan"
-> +    cset "name='Mic Jack Switch' off"
-> +    cset "name='DMIC Mux' DMIC"
-> +    cset "name='Int Mic Switch' on"
-> +    cset "name='Record Path DC Blocking' off"
-> +    ]
-> +    }
-> diff --git a/src/conf/ucm/GoogleNyan/Makefile.am b/src/conf/ucm/GoogleNyan/Makefile.am
-> new file mode 100644
-> index 0000000..47c7fc9
-> --- /dev/null
-> +++ b/src/conf/ucm/GoogleNyan/Makefile.am
-> @@ -0,0 +1,4 @@
-> +alsaconfigdir = @ALSA_CONFIG_DIR@
-> +ucmdir = $(alsaconfigdir)/ucm/GoogleNyan
-> +ucm_DATA = GoogleNyan.conf HiFi.conf
-> +EXTRA_DIST = $(ucm_DATA)
-> diff --git a/src/conf/ucm/Makefile.am b/src/conf/ucm/Makefile.am
-> index bde89df..14fc7ae 100644
-> --- a/src/conf/ucm/Makefile.am
-> +++ b/src/conf/ucm/Makefile.am
-> @@ -1 +1 @@
-> -SUBDIRS=DAISY-I2S PandaBoard PandaBoardES SDP4430 tegraalc5632 PAZ00
-> +SUBDIRS=DAISY-I2S PandaBoard PandaBoardES SDP4430 tegraalc5632 PAZ00 GoogleNyan
-> --
-> 1.9.3
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+SGF2aW5nIHRoZSB0d28gbW9kdWxlcyBzZXBhcmF0ZWQgY2F1c2VzIHZhcmlvdXMgdW5uZWVkZWQg
+Y29tcGxpY2F0aW9ucywKaW5jbHVkaW5nIGhhdmluZyB0byBleHBvcnQgc3ltYm9scyBhY2Nlc3Nl
+ZCBiZXR3ZWVuIHRoZSBtb2R1bGVzLiBNYWtlCnRoaW5ncyBzaW1wbGVyIGJ5IGNvbXBpbGluZyBw
+bGF0Zm9ybSBkZXZpY2Ugc3VwcG9ydCBpbnRvIG5vdXZlYXUua28uClBsYXRmb3JtIGRldmljZSBz
+dXBwb3J0IHJlbWFpbnMgb3B0aW9uYWwgYW5kIGlzIG9ubHkgY29tcGlsZWQgb24gVGVncmEuCgpT
+aWduZWQtb2ZmLWJ5OiBBbGV4YW5kcmUgQ291cmJvdCA8YWNvdXJib3RAbnZpZGlhLmNvbT4KLS0t
+ClZpbmNlLCB3aXRoIHRoaXMgeW91IHdvbid0IGhhdmUgdG8gZXhwb3J0IG5ldyBmdW5jdGlvbnMg
+Zm9yIFBNLiBJIGVuZGVkCnVwIHdyaXRpbmcgaXQgbXlzZWxmIGJlY2F1c2UgSSBoaXQgdGhlIHNh
+bWUgaXNzdWUgKG52X2RldmljZSgpIHdvdWxkIG5vdwpuZWVkIHRvIGJlIGV4cG9ydGVkIG9uIEJl
+bidzIG1hc3RlciBicmFuY2gpLgoKQmUgY2FyZWZ1bCB0aGF0IHdoZW4gY29tcGlsaW5nIGFnYWlu
+c3QgYSBrZXJuZWwsIENPTkZJR19OT1VWRUFVX1BMQVRGT1JNX0RSSVZFUgpub3cgKm11c3QqIGJl
+IGVxdWFsIHRvICd5Jy4gSXQgaXMgJ20nIGN1cnJlbnRseSwgc28geW91IHdpbGwgbmVlZCB0byBj
+aGFuZ2UgaXQKZnJvbSB0cmlzdGF0ZSB0byBib29sIGluIHRoZSBrZXJuZWwncyBLY29uZmlnLiBG
+b3IgdGhpcyByZWFzb24gaXQgbWlnaHQgYmUgZ29vZAp0byBnZXQgdGhpcyBwYXRjaCBpbnRvIC1u
+ZXh0IHF1aWNrbHkuCgogZHJtL0tidWlsZCAgICAgICAgICAgICB8ICAzICstLQogZHJtL0tjb25m
+aWcgICAgICAgICAgICB8ICAyICstCiBkcm0vbm91dmVhdV9kcm0uYyAgICAgIHwgMTEgKysrKysr
+KysrLS0KIGRybS9ub3V2ZWF1X3BsYXRmb3JtLmMgfCAgNiAtLS0tLS0KIGRybS9ub3V2ZWF1X3Bs
+YXRmb3JtLmggfCAgMyArKysKIDUgZmlsZXMgY2hhbmdlZCwgMTQgaW5zZXJ0aW9ucygrKSwgMTEg
+ZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJtL0tidWlsZCBiL2RybS9LYnVpbGQKaW5kZXgg
+YmE2YjY2MGQzMzE2Li4xZmViZjZlYzBiNjkgMTAwNjQ0Ci0tLSBhL2RybS9LYnVpbGQKKysrIGIv
+ZHJtL0tidWlsZApAQCAtMzk0LDggKzM5NCw3IEBAIG5vdXZlYXUtJChDT05GSUdfQUNQSSkgKz0g
+bm91dmVhdV9hY3BpLm8KIGVuZGlmCiBub3V2ZWF1LSQoQ09ORklHX0RSTV9OT1VWRUFVX0JBQ0tM
+SUdIVCkgKz0gbm91dmVhdV9iYWNrbGlnaHQubwogbm91dmVhdS0kKENPTkZJR19ERUJVR19GUykg
+Kz0gbm91dmVhdV9kZWJ1Z2ZzLm8KK25vdXZlYXUtJChDT05GSUdfTk9VVkVBVV9QTEFURk9STV9E
+UklWRVIpICs9IG5vdXZlYXVfcGxhdGZvcm0ubwogCiBvYmotJChDT05GSUdfRFJNX05PVVZFQVUp
+Kz0gbm91dmVhdS5vCiAKLSMgcGxhdGZvcm0gZHJpdmVyCi1vYmotJChDT05GSUdfTk9VVkVBVV9Q
+TEFURk9STV9EUklWRVIpICs9IG5vdXZlYXVfcGxhdGZvcm0ubwpkaWZmIC0tZ2l0IGEvZHJtL0tj
+b25maWcgYi9kcm0vS2NvbmZpZwppbmRleCA0MGFmYzY5YTM3NzguLjVhYjEzZTc5MzlkYiAxMDA2
+NDQKLS0tIGEvZHJtL0tjb25maWcKKysrIGIvZHJtL0tjb25maWcKQEAgLTI2LDcgKzI2LDcgQEAg
+Y29uZmlnIERSTV9OT1VWRUFVCiAJICBDaG9vc2UgdGhpcyBvcHRpb24gZm9yIG9wZW4tc291cmNl
+IE5WSURJQSBzdXBwb3J0LgogCiBjb25maWcgTk9VVkVBVV9QTEFURk9STV9EUklWRVIKLQl0cmlz
+dGF0ZSAiTm91dmVhdSAoTlZJRElBKSBTb0MgR1BVcyIKKwlib29sICJOb3V2ZWF1IChOVklESUEp
+IFNvQyBHUFVzIgogCWRlcGVuZHMgb24gRFJNX05PVVZFQVUgJiYgQVJDSF9URUdSQQogCWRlZmF1
+bHQgeQogCWhlbHAKZGlmZiAtLWdpdCBhL2RybS9ub3V2ZWF1X2RybS5jIGIvZHJtL25vdXZlYXVf
+ZHJtLmMKaW5kZXggNjU5MTBlM2FlZDBjLi4xMTE4ZWZhNTY4MTcgMTAwNjQ0Ci0tLSBhL2RybS9u
+b3V2ZWF1X2RybS5jCisrKyBiL2RybS9ub3V2ZWF1X2RybS5jCkBAIC01Miw2ICs1Miw3IEBACiAj
+aW5jbHVkZSAibm91dmVhdV9kZWJ1Z2ZzLmgiCiAjaW5jbHVkZSAibm91dmVhdV91c2lmLmgiCiAj
+aW5jbHVkZSAibm91dmVhdV9jb25uZWN0b3IuaCIKKyNpbmNsdWRlICJub3V2ZWF1X3BsYXRmb3Jt
+LmgiCiAKIE1PRFVMRV9QQVJNX0RFU0MoY29uZmlnLCAib3B0aW9uIHN0cmluZyB0byBwYXNzIHRv
+IGRyaXZlciBjb3JlIik7CiBzdGF0aWMgY2hhciAqbm91dmVhdV9jb25maWc7CkBAIC01MzMsNyAr
+NTM0LDYgQEAgbm91dmVhdV9kcm1fZGV2aWNlX3JlbW92ZShzdHJ1Y3QgZHJtX2RldmljZSAqZGV2
+KQogCW5vdXZlYXVfb2JqZWN0X3JlZihOVUxMLCAmZGV2aWNlKTsKIAlub3V2ZWF1X29iamVjdF9k
+ZWJ1ZygpOwogfQotRVhQT1JUX1NZTUJPTChub3V2ZWF1X2RybV9kZXZpY2VfcmVtb3ZlKTsKIAog
+c3RhdGljIHZvaWQKIG5vdXZlYXVfZHJtX3JlbW92ZShzdHJ1Y3QgcGNpX2RldiAqcGRldikKQEAg
+LTEwODMsNyArMTA4Myw2IEBAIGVycl9mcmVlOgogCiAJcmV0dXJuIEVSUl9QVFIoZXJyKTsKIH0K
+LUVYUE9SVF9TWU1CT0wobm91dmVhdV9wbGF0Zm9ybV9kZXZpY2VfY3JlYXRlXyk7CiAKIHN0YXRp
+YyBpbnQgX19pbml0CiBub3V2ZWF1X2RybV9pbml0KHZvaWQpCkBAIC0xMTA1LDYgKzExMDQsMTAg
+QEAgbm91dmVhdV9kcm1faW5pdCh2b2lkKQogCWlmICghbm91dmVhdV9tb2Rlc2V0KQogCQlyZXR1
+cm4gMDsKIAorI2lmZGVmIENPTkZJR19OT1VWRUFVX1BMQVRGT1JNX0RSSVZFUgorCXBsYXRmb3Jt
+X2RyaXZlcl9yZWdpc3Rlcigmbm91dmVhdV9wbGF0Zm9ybV9kcml2ZXIpOworI2VuZGlmCisKIAlu
+b3V2ZWF1X3JlZ2lzdGVyX2RzbV9oYW5kbGVyKCk7CiAJcmV0dXJuIGRybV9wY2lfaW5pdCgmZHJp
+dmVyX3BjaSwgJm5vdXZlYXVfZHJtX3BjaV9kcml2ZXIpOwogfQpAQCAtMTExNyw2ICsxMTIwLDEw
+IEBAIG5vdXZlYXVfZHJtX2V4aXQodm9pZCkKIAogCWRybV9wY2lfZXhpdCgmZHJpdmVyX3BjaSwg
+Jm5vdXZlYXVfZHJtX3BjaV9kcml2ZXIpOwogCW5vdXZlYXVfdW5yZWdpc3Rlcl9kc21faGFuZGxl
+cigpOworCisjaWZkZWYgQ09ORklHX05PVVZFQVVfUExBVEZPUk1fRFJJVkVSCisJcGxhdGZvcm1f
+ZHJpdmVyX3VucmVnaXN0ZXIoJm5vdXZlYXVfcGxhdGZvcm1fZHJpdmVyKTsKKyNlbmRpZgogfQog
+CiBtb2R1bGVfaW5pdChub3V2ZWF1X2RybV9pbml0KTsKZGlmZiAtLWdpdCBhL2RybS9ub3V2ZWF1
+X3BsYXRmb3JtLmMgYi9kcm0vbm91dmVhdV9wbGF0Zm9ybS5jCmluZGV4IGIzMDdiYmVkZDRjNC4u
+MzRkNzhiMjg4Zjk3IDEwMDY0NAotLS0gYS9kcm0vbm91dmVhdV9wbGF0Zm9ybS5jCisrKyBiL2Ry
+bS9ub3V2ZWF1X3BsYXRmb3JtLmMKQEAgLTE3Nyw5ICsxNzcsMyBAQCBzdHJ1Y3QgcGxhdGZvcm1f
+ZHJpdmVyIG5vdXZlYXVfcGxhdGZvcm1fZHJpdmVyID0gewogCS5wcm9iZSA9IG5vdXZlYXVfcGxh
+dGZvcm1fcHJvYmUsCiAJLnJlbW92ZSA9IG5vdXZlYXVfcGxhdGZvcm1fcmVtb3ZlLAogfTsKLQot
+bW9kdWxlX3BsYXRmb3JtX2RyaXZlcihub3V2ZWF1X3BsYXRmb3JtX2RyaXZlcik7Ci0KLU1PRFVM
+RV9BVVRIT1IoRFJJVkVSX0FVVEhPUik7Ci1NT0RVTEVfREVTQ1JJUFRJT04oRFJJVkVSX0RFU0Mp
+OwotTU9EVUxFX0xJQ0VOU0UoIkdQTCBhbmQgYWRkaXRpb25hbCByaWdodHMiKTsKZGlmZiAtLWdp
+dCBhL2RybS9ub3V2ZWF1X3BsYXRmb3JtLmggYi9kcm0vbm91dmVhdV9wbGF0Zm9ybS5oCmluZGV4
+IDU4YzI4YjU2NTNkNS4uY2EyMmM1MjUzMjlhIDEwMDY0NAotLS0gYS9kcm0vbm91dmVhdV9wbGF0
+Zm9ybS5oCisrKyBiL2RybS9ub3V2ZWF1X3BsYXRmb3JtLmgKQEAgLTI4LDYgKzI4LDcgQEAKIHN0
+cnVjdCByZXNldF9jb250cm9sOwogc3RydWN0IGNsazsKIHN0cnVjdCByZWd1bGF0b3I7CitzdHJ1
+Y3QgcGxhdGZvcm1fZHJpdmVyOwogCiBzdHJ1Y3Qgbm91dmVhdV9wbGF0Zm9ybV9ncHUgewogCXN0
+cnVjdCByZXNldF9jb250cm9sICpyc3Q7CkBAIC00OCw0ICs0OSw2IEBAIHN0cnVjdCBub3V2ZWF1
+X3BsYXRmb3JtX2RldmljZSB7CiAjZGVmaW5lIG52X2RldmljZV90b19wbGF0Zm9ybShkKSAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXAogCWNvbnRhaW5lcl9v
+ZihkLCBzdHJ1Y3Qgbm91dmVhdV9wbGF0Zm9ybV9kZXZpY2UsIGRldmljZSkKIAorZXh0ZXJuIHN0
+cnVjdCBwbGF0Zm9ybV9kcml2ZXIgbm91dmVhdV9wbGF0Zm9ybV9kcml2ZXI7CisKICNlbmRpZgot
+LSAKMi4yLjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+Ck5vdXZlYXUgbWFpbGluZyBsaXN0Ck5vdXZlYXVAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6
+Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9ub3V2ZWF1Cg==
