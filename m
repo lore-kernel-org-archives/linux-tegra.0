@@ -1,58 +1,280 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 10/11] ASoC: tegra: Add a control for the headphone
- switch
-Date: Thu, 15 Jan 2015 17:09:57 +0000
-Message-ID: <20150115170957.GD3043@sirena.org.uk>
-References: <1421338359-27467-1-git-send-email-tomeu.vizoso@collabora.com>
- <1421338359-27467-11-git-send-email-tomeu.vizoso@collabora.com>
- <20150115162057.GC3043@sirena.org.uk>
- <CAAObsKBKZsvLo9OjzcHiPEPq1iUeog0Bm-jzvxLrkt2X=N5djw@mail.gmail.com>
+From: Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org>
+Subject: Re: [PATCH v2] Add support for Nyan-big
+Date: Thu, 15 Jan 2015 18:11:08 +0100
+Message-ID: <CAAObsKAt=nuj0Gzg0g61q5x=U45FhEu7KyBnVp=2p0y1AraLRg@mail.gmail.com>
+References: <1417699911-17901-1-git-send-email-sjg@chromium.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="+Xnt6BZa+I2KmHWw"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAAObsKBKZsvLo9OjzcHiPEPq1iUeog0Bm-jzvxLrkt2X=N5djw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <1417699911-17901-1-git-send-email-sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+I have seen that coreboot configures these ones differently:
 
---+Xnt6BZa+I2KmHWw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+-    ('sdmmc3_clk_pa6',         'sdmmc3',      None,      'none',
+False, False, False, False),
++    ('sdmmc3_clk_pa6',         'sdmmc3',      None,      'none',
+False, True,  False, False),
+-    ('sdmmc3_clk_lb_out_pee4', 'sdmmc3',      None,      'none',
+False, False, False, False),
++    ('sdmmc3_clk_lb_out_pee4', 'sdmmc3',      None,      'down',
+False, True,  False, False),
+-    ('sdmmc4_cmd_pt7',         'sdmmc4',      None,      'none',
+False, True,  False, False),
++    ('sdmmc4_cmd_pt7',         'sdmmc4',      None,      'up',
+False, True,  False, False),
+-    ('dp_hpd_pff0',            'dp',          None,      'up',
+False, True,  False, False),
++    ('dp_hpd_pff0',            'dp',          None,      'none',
+False, True,  False, False),
 
-On Thu, Jan 15, 2015 at 06:02:51PM +0100, Tomeu Vizoso wrote:
-> On 15 January 2015 at 17:20, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-> > On Thu, Jan 15, 2015 at 05:12:22PM +0100, Tomeu Vizoso wrote:
-> >> To be used by userspace when the headphones jack is plugged in.
+May be good to have them match?
 
-> > I'm missing patches 1-9 of this series, what's going on there?
+Besides, I have collected these differences between blaze and big,
+could you check with what you know?
 
-> Sorry, no idea. They have reached lkml though:
+-    ('usb_vbus_en2_pff1',      'rsvd2',       None,      'down',
+True,  False, False, False),
++    ('usb_vbus_en2_pff1',      'usb',         None,      'up',
+False, True,  False, False),
+-    ('usb_vbus_en0_pn4',       'usb',         None,      'none',
+False, True,  True,  False),
+-    ('usb_vbus_en1_pn5',       'usb',         None,      'none',
+False, True,  True,  False),
++    ('usb_vbus_en0_pn4',       'usb',         None,      'up',
+False, True,  False, False),
++    ('usb_vbus_en1_pn5',       'usb',         None,      'up',
+False, True,  False, False),
 
-> https://lkml.org/lkml/2015/1/15/473
+Thanks,
 
-What's going wrong there is that you didn't CC me on either them or the
-cover letter - you should always make sure that everyone is at least
-getting the cover letter so they know what's going on.  Never assume
-anyone is going to see anything on the list.
+Tomeu
 
---+Xnt6BZa+I2KmHWw
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJUt/RkAAoJECTWi3JdVIfQA+gH/1KOociYTanGd0y/0grS2qKZ
-tROqSwXDCqvvENcy0pL+/XTGGucMNr0KRE3KHHtY5yXsouUq54heZsnM/moaiDf/
-fJVuleDfo6xWqTuzQj3ScwQF9aNr1FkN/V/Osqc4vTzi83BLOXCr031SUou0tW01
-EGI0691qY+AtOW7o9NVZqd/OLGbQHuQ0dqIFeXhjzYymd+aWUv33sf7Z97BR/GJX
-SFEfSa7FaS3eEsgxgsbFroV3nbXrk6rhE07PiYdGvu23VwsvqIPZ1s1wz1IjEhdP
-g7JyIzIqfdjDAnC0NMr3Y3xtzbs5Qv2Xe1euDrglbe4ovrOPpA663GGxClCnwKQ=
-=f8dJ
------END PGP SIGNATURE-----
-
---+Xnt6BZa+I2KmHWw--
+On 4 December 2014 at 14:31, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+> Add support for Tegra124 Nyan-big. Pinmux is based on norrin with a single
+> change for the reset GPIO.
+>
+> Signed-off-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> ---
+>
+> Changes in v2:
+> - Rename from Nyan to Nyan-big
+>
+>  configs/nyan-big.board | 198 +++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 198 insertions(+)
+>  create mode 100644 configs/nyan-big.board
+>
+> diff --git a/configs/nyan-big.board b/configs/nyan-big.board
+> new file mode 100644
+> index 0000000..7da5b4d
+> --- /dev/null
+> +++ b/configs/nyan-big.board
+> @@ -0,0 +1,198 @@
+> +soc = 'tegra124'
+> +
+> +pins = (
+> +    #pin,                      mux,           gpio_init, pull,   tri,   e_inp, od,    rcv_sel
+> +    ('dap_mclk1_pw4',          'extperiph1',  None,      'none', False, False, False, False),
+> +    ('dap_mclk1_req_pee2',     'rsvd4',       None,      'down', True,  False, False, False),
+> +    ('dap1_din_pn1',           'rsvd4',       None,      'down', True,  False, False, False),
+> +    ('dap1_dout_pn2',          'i2s0',        None,      'down', True,  False, False, False),
+> +    ('dap1_fs_pn0',            'rsvd4',       None,      'down', True,  False, False, False),
+> +    ('dap1_sclk_pn3',          'rsvd4',       None,      'down', True,  False, False, False),
+> +    ('dap2_din_pa4',           'i2s1',        None,      'none', False, True,  False, False),
+> +    ('dap2_dout_pa5',          'i2s1',        None,      'none', False, True,  False, False),
+> +    ('dap2_fs_pa2',            'i2s1',        None,      'none', False, True,  False, False),
+> +    ('dap2_sclk_pa3',          'i2s1',        None,      'none', False, True,  False, False),
+> +    ('gpio_x4_aud_px4',        None,          'in',      'none', False, True,  False, False),
+> +    ('gpio_x5_aud_px5',        'rsvd4',       None,      'down', True,  False, False, False),
+> +    ('gpio_x6_aud_px6',        'gmi',         None,      'down', True,  False, False, False),
+> +    ('gpio_x7_aud_px7',        None,          'out0',    'none', False, False, False, False),
+> +    ('gpio_w2_aud_pw2',        'rsvd2',       None,      'down', True,  False, False, False),
+> +    ('gpio_w3_aud_pw3',        None,          'in',      'none', False, True,  False, False),
+> +    ('dvfs_pwm_px0',           'cldvfs',      None,      'none', False, False, False, False),
+> +    ('gpio_x1_aud_px1',        None,          'in',      'none', False, True,  False, False),
+> +    ('dvfs_clk_px2',           'cldvfs',      None,      'none', False, False, False, False),
+> +    ('gpio_x3_aud_px3',        'rsvd4',       None,      'down', True,  False, False, False),
+> +    ('dap3_din_pp1',           'i2s2',        None,      'down', True,  False, False, False),
+> +    ('dap3_dout_pp2',          None,          'out0',    'none', False, False, False, False),
+> +    ('dap3_fs_pp0',            'i2s2',        None,      'down', True,  False, False, False),
+> +    ('dap3_sclk_pp3',          'rsvd3',       None,      'down', True,  False, False, False),
+> +    ('pv0',                    None,          'in',      'none', False, True,  False, False),
+> +    ('pv1',                    'rsvd1',       None,      'down', True,  False, False, False),
+> +    ('ulpi_clk_py0',           'spi1',        None,      'none', False, False, False, False),
+> +    ('ulpi_data0_po1',         'ulpi',        None,      'down', True,  False, False, False),
+> +    ('ulpi_data1_po2',         'ulpi',        None,      'down', True,  False, False, False),
+> +    ('ulpi_data2_po3',         'ulpi',        None,      'down', True,  False, False, False),
+> +    ('ulpi_data3_po4',         'ulpi',        None,      'down', True,  False, False, False),
+> +    ('ulpi_data4_po5',         'ulpi',        None,      'down', True,  False, False, False),
+> +    ('ulpi_data5_po6',         'ulpi',        None,      'down', True,  False, False, False),
+> +    ('ulpi_data6_po7',         'ulpi',        None,      'down', True,  False, False, False),
+> +    ('ulpi_data7_po0',         'ulpi',        None,      'down', True,  False, False, False),
+> +    ('ulpi_dir_py1',           'spi1',        None,      'none', False, True,  False, False),
+> +    ('ulpi_nxt_py2',           'spi1',        None,      'none', False, False, False, False),
+> +    ('ulpi_stp_py3',           'spi1',        None,      'none', False, False, False, False),
+> +    ('cam_i2c_scl_pbb1',       'rsvd3',       None,      'down', True,  False, False, False),
+> +    ('cam_i2c_sda_pbb2',       'rsvd3',       None,      'down', True,  False, False, False),
+> +    ('cam_mclk_pcc0',          'vi',          None,      'down', True,  False, False, False),
+> +    ('pbb0',                   'vgp6',        None,      'down', True,  False, False, False),
+> +    ('pbb3',                   'vgp3',        None,      'down', True,  False, False, False),
+> +    ('pbb4',                   'vgp4',        None,      'down', True,  False, False, False),
+> +    ('pbb5',                   'rsvd3',       None,      'down', True,  False, False, False),
+> +    ('pbb6',                   'rsvd2',       None,      'down', True,  False, False, False),
+> +    ('pbb7',                   'rsvd2',       None,      'down', True,  False, False, False),
+> +    ('pcc1',                   'rsvd2',       None,      'down', True,  False, False, False),
+> +    ('pcc2',                   'rsvd2',       None,      'down', True,  False, False, False),
+> +    ('gen2_i2c_scl_pt5',       'i2c2',        None,      'none', False, True,  True,  False),
+> +    ('gen2_i2c_sda_pt6',       'i2c2',        None,      'none', False, True,  True,  False),
+> +    ('pj7',                    None,          'in',      'none', False, True,  False, False),
+> +    ('pb0',                    'rsvd2',       None,      'down', True,  False, False, False),
+> +    ('pb1',                    'rsvd2',       None,      'down', True,  False, False, False),
+> +    ('pk7',                    None,          'in',      'none', False, True,  False, False),
+> +    ('pg0',                    None,          'in',      'none', False, True,  False, False),
+> +    ('pg1',                    None,          'in',      'none', False, True,  False, False),
+> +    ('ph2',                    None,          'in',      'none', False, True,  False, False),
+> +    ('ph3',                    'gmi',         None,      'down', True,  False, False, False),
+> +    ('ph4',                    None,          'in',      'none', False, True,  False, False),
+> +    ('ph5',                    'rsvd2',       None,      'down', True,  False, False, False),
+> +    ('ph6',                    None,          'in',      'none', False, True,  False, False),
+> +    ('ph7',                    None,          'out1',    'none', False, False, False, False),
+> +    ('pg2',                    None,          'in',      'none', False, True,  False, False),
+> +    ('pg3',                    None,          'in',      'none', False, True,  False, False),
+> +    ('pg4',                    'spi4',        None,      'none', False, False, False, False),
+> +    ('pg5',                    'spi4',        None,      'none', False, False, False, False),
+> +    ('pg6',                    'spi4',        None,      'none', False, False, False, False),
+> +    ('pg7',                    'spi4',        None,      'none', False, True,  False, False),
+> +    ('ph0',                    'gmi',         None,      'down', True,  False, False, False),
+> +    ('ph1',                    'pwm1',        None,      'none', False, False, False, False),
+> +    ('pk0',                    'rsvd1',       None,      'down', True,  False, False, False),
+> +    ('pk1',                    None,          'out0',    'none', False, False, False, False),
+> +    ('pj0',                    None,          'in',      'up',   False, True,  False, False),
+> +    ('pj2',                    'rsvd1',       None,      'down', True,  False, False, False),
+> +    ('pk3',                    'gmi',         None,      'down', True,  False, False, False),
+> +    ('pk4',                    None,          'out0',    'up',   False, False, False, False),
+> +    ('pk2',                    None,          'in',      'none', False, True,  False, False),
+> +    ('pi3',                    'spi4',        None,      'none', False, False, False, False),
+> +    ('pi6',                    None,          'in',      'none', False, True,  False, False),
+> +    ('pi2',                    'rsvd4',       None,      'down', True,  False, False, False),
+> +    ('pi5',                    None,          'out1',    'up',   False, False, False, False),
+> +    ('pi1',                    None,          'in',      'none', False, True,  False, False),
+> +    ('pi4',                    'gmi',         None,      'down', True,  False, False, False),
+> +    ('pi7',                    None,          'in',      'none', False, True,  False, False),
+> +    ('pc7',                    None,          'in',      'none', False, True,  False, False),
+> +    ('pi0',                    None,          'in',      'none', False, True,  False, False),
+> +    ('pex_l0_clkreq_n_pdd2',   'rsvd2',       None,      'down', True,  False, False, False),
+> +    ('pex_l0_rst_n_pdd1',      'rsvd2',       None,      'down', True,  False, False, False),
+> +    ('pex_l1_clkreq_n_pdd6',   'rsvd2',       None,      'down', True,  False, False, False),
+> +    ('pex_l1_rst_n_pdd5',      'rsvd2',       None,      'down', True,  False, False, False),
+> +    ('pex_wake_n_pdd3',        'rsvd2',       None,      'down', True,  False, False, False),
+> +    ('usb_vbus_en2_pff1',      'rsvd2',       None,      'down', True,  False, False, False),
+> +    ('pff2',                   'rsvd2',       None,      'down', True,  False, False, False),
+> +    ('clk2_out_pw5',           'rsvd2',       None,      'down', True,  False, False, False),
+> +    ('clk2_req_pcc5',          'rsvd2',       None,      'down', True,  False, False, False),
+> +    ('sdmmc1_wp_n_pv3',        'sdmmc1',      None,      'down', True,  False, False, False),
+> +    ('sdmmc1_clk_pz0',         'sdmmc1',      None,      'none', False, True,  False, False),
+> +    ('sdmmc1_cmd_pz1',         'sdmmc1',      None,      'up',   False, True,  False, False),
+> +    ('sdmmc1_dat0_py7',        'sdmmc1',      None,      'up',   False, True,  False, False),
+> +    ('sdmmc1_dat1_py6',        'sdmmc1',      None,      'up',   False, True,  False, False),
+> +    ('sdmmc1_dat2_py5',        'sdmmc1',      None,      'up',   False, True,  False, False),
+> +    ('sdmmc1_dat3_py4',        'sdmmc1',      None,      'up',   False, True,  False, False),
+> +    ('sdmmc3_clk_pa6',         'sdmmc3',      None,      'none', False, False, False, False),
+> +    ('sdmmc3_cmd_pa7',         'sdmmc3',      None,      'up',   False, True,  False, False),
+> +    ('sdmmc3_dat0_pb7',        'sdmmc3',      None,      'up',   False, True,  False, False),
+> +    ('sdmmc3_dat1_pb6',        'sdmmc3',      None,      'up',   False, True,  False, False),
+> +    ('sdmmc3_dat2_pb5',        'sdmmc3',      None,      'up',   False, True,  False, False),
+> +    ('sdmmc3_dat3_pb4',        'sdmmc3',      None,      'up',   False, True,  False, False),
+> +    ('sdmmc3_clk_lb_out_pee4', 'sdmmc3',      None,      'none', False, False, False, False),
+> +    ('sdmmc3_clk_lb_in_pee5',  'sdmmc3',      None,      'up',   False, True,  False, False),
+> +    ('sdmmc4_clk_pcc4',        'sdmmc4',      None,      'none', False, True,  False, False),
+> +    ('sdmmc4_cmd_pt7',         'sdmmc4',      None,      'none', False, True,  False, False),
+> +    ('sdmmc4_dat0_paa0',       'sdmmc4',      None,      'up',   False, True,  False, False),
+> +    ('sdmmc4_dat1_paa1',       'sdmmc4',      None,      'up',   False, True,  False, False),
+> +    ('sdmmc4_dat2_paa2',       'sdmmc4',      None,      'up',   False, True,  False, False),
+> +    ('sdmmc4_dat3_paa3',       'sdmmc4',      None,      'up',   False, True,  False, False),
+> +    ('sdmmc4_dat4_paa4',       'sdmmc4',      None,      'up',   False, True,  False, False),
+> +    ('sdmmc4_dat5_paa5',       'sdmmc4',      None,      'up',   False, True,  False, False),
+> +    ('sdmmc4_dat6_paa6',       'sdmmc4',      None,      'up',   False, True,  False, False),
+> +    ('sdmmc4_dat7_paa7',       'sdmmc4',      None,      'up',   False, True,  False, False),
+> +    ('kb_col0_pq0',            None,          'in',      'none', False, True,  False, False),
+> +    ('kb_col1_pq1',            'rsvd2',       None,      'down', True,  False, False, False),
+> +    ('kb_col2_pq2',            None,          'in',      'none', False, True,  False, False),
+> +    ('kb_col3_pq3',            None,          'in',      'none', False, True,  False, False),
+> +    ('kb_col4_pq4',            'sdmmc3',      None,      'up',   False, True,  False, False),
+> +    ('kb_col5_pq5',            'rsvd2',       None,      'down', True,  False, False, False),
+> +    ('kb_col6_pq6',            None,          'in',      'none', False, True,  False, False),
+> +    ('kb_col7_pq7',            None,          'in',      'none', False, True,  False, False),
+> +    ('kb_row0_pr0',            None,          'out0',    'none', False, False, False, False),
+> +    ('kb_row1_pr1',            None,          'in',      'none', False, True,  False, False),
+> +    ('kb_row10_ps2',           'uarta',       None,      'none', False, True,  False, False),
+> +    ('kb_row11_ps3',           None,          'out0',    'none', False, False, False, False),
+> +    ('kb_row12_ps4',           None,          'out0',    'none', False, False, False, False),
+> +    ('kb_row13_ps5',           'rsvd2',       None,      'down', True,  False, False, False),
+> +    ('kb_row14_ps6',           'rsvd2',       None,      'down', True,  False, False, False),
+> +    ('kb_row15_ps7',           None,          'in',      'none', False, True,  False, False),
+> +    ('kb_row16_pt0',           'rsvd2',       None,      'down', True,  False, False, False),
+> +    ('kb_row17_pt1',           None,          'in',      'none', False, True,  False, False),
+> +    ('kb_row2_pr2',            'rsvd2',       None,      'down', True,  False, False, False),
+> +    ('kb_row3_pr3',            'kbc',         None,      'down', True,  False, False, False),
+> +    ('kb_row4_pr4',            None,          'in',      'none', False, True,  False, False),
+> +    ('kb_row5_pr5',            'rsvd3',       None,      'down', True,  False, False, False),
+> +    ('kb_row6_pr6',            'kbc',         None,      'down', True,  False, False, False),
+> +    ('kb_row7_pr7',            None,          'in',      'none', False, True,  False, False),
+> +    ('kb_row8_ps0',            'rsvd2',       None,      'down', True,  False, False, False),
+> +    ('kb_row9_ps1',            'uarta',       None,      'down', False, False, False, False),
+> +    ('sdmmc3_cd_n_pv2',        'sdmmc3',      None,      'up',   False, True,  False, False),
+> +    ('clk_32k_out_pa0',        None,          'in',      'none', False, True,  False, False),
+> +    ('pwr_i2c_scl_pz6',        'i2cpwr',      None,      'none', False, True,  True,  False),
+> +    ('pwr_i2c_sda_pz7',        'i2cpwr',      None,      'none', False, True,  True,  False),
+> +    ('jtag_rtck',              'rtck',        None,      'none', False, False, False, False),
+> +    ('clk_32k_in',             'clk',         None,      'none', False, True,  False, False),
+> +    ('core_pwr_req',           'pwron',       None,      'none', False, False, False, False),
+> +    ('cpu_pwr_req',            'cpu',         None,      'none', False, False, False, False),
+> +    ('pwr_int_n',              'pmi',         None,      'none', False, True,  False, False),
+> +    ('reset_out_n',            'reset_out_n', None,      'none', False, False, False, False),
+> +    ('clk3_out_pee0',          'rsvd2',       None,      'down', True,  False, False, False),
+> +    ('clk3_req_pee1',          'rsvd2',       None,      'down', True,  False, False, False),
+> +    ('dap4_din_pp5',           'rsvd3',       None,      'down', True,  False, False, False),
+> +    ('dap4_dout_pp6',          'rsvd4',       None,      'down', True,  False, False, False),
+> +    ('dap4_fs_pp4',            'rsvd4',       None,      'down', True,  False, False, False),
+> +    ('dap4_sclk_pp7',          'rsvd3',       None,      'down', True,  False, False, False),
+> +    ('gen1_i2c_scl_pc4',       'i2c1',        None,      'none', False, True,  True,  False),
+> +    ('gen1_i2c_sda_pc5',       'i2c1',        None,      'none', False, True,  True,  False),
+> +    ('pu0',                    'rsvd4',       None,      'down', True,  False, False, False),
+> +    ('pu1',                    'rsvd1',       None,      'down', True,  False, False, False),
+> +    ('pu2',                    'rsvd1',       None,      'down', True,  False, False, False),
+> +    ('pu3',                    'gmi',         None,      'down', True,  False, False, False),
+> +    ('pu4',                    None,          'in',      'none', False, True,  False, False),
+> +    ('pu5',                    None,          'in',      'up',   False, True,  False, False),
+> +    ('pu6',                    None,          'in',      'up',   False, True,  False, False),
+> +    ('uart2_cts_n_pj5',        'gmi',         None,      'down', True,  False, False, False),
+> +    ('uart2_rts_n_pj6',        'gmi',         None,      'down', True,  False, False, False),
+> +    ('uart2_rxd_pc3',          'irda',        None,      'down', True,  False, False, False),
+> +    ('uart2_txd_pc2',          'irda',        None,      'down', True,  False, False, False),
+> +    ('uart3_cts_n_pa1',        'gmi',         None,      'down', True,  False, False, False),
+> +    ('uart3_rts_n_pc0',        'gmi',         None,      'down', True,  False, False, False),
+> +    ('uart3_rxd_pw7',          'rsvd2',       None,      'down', True,  False, False, False),
+> +    ('uart3_txd_pw6',          'rsvd2',       None,      'down', True,  False, False, False),
+> +    ('owr',                    'rsvd2',       None,      'down', True,  False, False, False),
+> +    ('hdmi_cec_pee3',          'cec',         None,      'none', False, True,  True,  False),
+> +    ('hdmi_int_pn7',           None,          'in',      'down', False, True,  False, False),
+> +    ('ddc_scl_pv4',            'i2c4',        None,      'none', False, True,  False, False),
+> +    ('ddc_sda_pv5',            'i2c4',        None,      'none', False, True,  False, False),
+> +    ('spdif_out_pk5',          'rsvd2',       None,      'down', True,  False, False, False),
+> +    ('spdif_in_pk6',           None,          'out0',    'down', False, False, False, False),
+> +    ('usb_vbus_en0_pn4',       'usb',         None,      'none', False, True,  True,  False),
+> +    ('usb_vbus_en1_pn5',       'usb',         None,      'none', False, True,  True,  False),
+> +    ('dp_hpd_pff0',            'dp',          None,      'up',   False, True,  False, False),
+> +)
+> +
+> +drive_groups = (
+> +)
+> --
+> 2.2.0.rc0.207.ga3a616c
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
