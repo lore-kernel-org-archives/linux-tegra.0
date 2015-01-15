@@ -1,63 +1,51 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: tegra: add Acer Chromebook 13 device tree
-Date: Thu, 15 Jan 2015 10:18:32 -0700
-Message-ID: <54B7F668.70102@wwwdotorg.org>
-References: <1407894967-18300-1-git-send-email-dgreid@chromium.org> <CAAObsKCbJLwEHeiv3DbCwsiVSZ0VDGzU84+ipPKJQZajx+KiuQ@mail.gmail.com> <CAEUnVG727F16K2kMWCrPHXTZgpc_4gnCBkF=Aa_zaJiSMviy=g@mail.gmail.com> <CAAObsKBo13fEy72EQe3V409fEEYpw0kQss5UgaOhk=GOVEEeYg@mail.gmail.com> <20150115075006.GA30799@ulmo>
+Subject: Re: [PATCH v2 03/11] ARM: tegra: Set the sound card model that alsaucm
+ expects
+Date: Thu, 15 Jan 2015 10:22:31 -0700
+Message-ID: <54B7F757.5060002@wwwdotorg.org>
+References: <1421338359-27467-1-git-send-email-tomeu.vizoso@collabora.com> <1421338359-27467-4-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150115075006.GA30799@ulmo>
+In-Reply-To: <1421338359-27467-4-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org>
-Cc: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/15/2015 12:50 AM, Thierry Reding wrote:
-> On Wed, Jan 14, 2015 at 08:02:25AM +0100, Tomeu Vizoso wrote:
->> On 14 January 2015 at 01:32, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
->>> On Tue, Jan 13, 2015 at 9:49 AM, Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org> wrote:
->>>> On 13 August 2014 at 03:56, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
->>>>> The Acer Chromebook 13, codenamed "Big", contains an NVIDIA tegra124
->>>>> processor and is similar to the Venice2 reference platform.
->>>>>
->>>>> The keyboard, USB 2, audio, HDMI, sdcard and emmc have been tested
->>>>> and work on the 1366x768 models.  I haven't tried on the HD systems
->>>>> yet.
->>>>
->>>> Hi Dylan,
->>>>
->>>> do you have any notes on how you tested audio? I have been fiddling a
->>>> bit with amixer but haven't been able to get any sound from the
->>>> speakers nor the headphones.
->>>
->>> I don't have any notes, and it's been a while since I tried it.  To
->>> the best of my knowledge, I loaded the UCM config from the ChromeOS
->>> tree manually with alsaucm, then enabled/disabled headphones from
->>> there.
->>>
->>> https://chromium.googlesource.com/chromiumos/third_party/adhd/+/master/ucm-config/nyan/NVIDIA%20Tegra%20Venice2/
->>>
->>> The important stuff is all in the enable sequence of HiFi.conf
->>>
->>> Let me know if that helps.
->>
->> Thanks, it does work fine now. Will submit that conf file upstream.
+On 01/15/2015 09:12 AM, Tomeu Vizoso wrote:
+> Patches are on its way to add a config file to alsaucm for the Nyan
+> boards. Use the same card ID that alsaucm will expect.
 >
-> Out of curiosity, where is "upstream" for UCM configuration files? It'd
-> be interesting to collect files for other Tegra boards there. I find it
-> rather tedious figuring out time and time again what control needs to be
-> toggled to enable a certain output.
+> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+> ---
+>   arch/arm/boot/dts/tegra124-nyan-big.dts | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 >
-> Stephen, since you undoubtedly have the most experience with upstream
-> audio, do you happen to know if we have something like that for the
-> other upstream-supported boards?
+> diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts b/arch/arm/boot/dts/tegra124-nyan-big.dts
+> index 43e58a4..9a9cffe 100644
+> --- a/arch/arm/boot/dts/tegra124-nyan-big.dts
+> +++ b/arch/arm/boot/dts/tegra124-nyan-big.dts
+> @@ -1976,9 +1976,9 @@
+>   	};
+>
+>   	sound {
+> -		compatible = "nvidia,tegra-audio-max98090-nyan-big",
+> +		compatible = "nvidia,tegra-audio-max98090-nyan",
+>   			     "nvidia,tegra-audio-max98090";
 
-I typically rely on the disto restoring settings from asound.state 
-during boot, and saving them from HW during shutdown. I then put that 
-asound.state on any filesystems I create.
+If all the boards that are derived from Nyan truly have identical audio 
+HW (or at least any differences can be described by this binding), then 
+it seems fine to add "nvidia,tegra-audio-max98090-nyan" to the 
+compatible value.
 
-Adding UCM configurations sounds like it'd be a better alternative, 
-presuming there's some automatic way for the distro to correlate the HW 
-name to the UCM file name and automatically apply it during boot or 
-audio startup.
+However, I don't see a reason to remove the board-specific compatible 
+value "nvidia,tegra-audio-max98090-nyan-big"; we should always include 
+all the values that are relevant.
+
+> -		nvidia,model = "Acer Chromebook 13";
+> +		nvidia,model = "GoogleNyan";
+
+Why not just name the UCM config file after the ASoC card name that's 
+already in use? Perhaps it's not likely to be unique enough though:-(
