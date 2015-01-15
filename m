@@ -1,56 +1,90 @@
-From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] drm: merge nouveau_platform.ko into nouveau.ko
-Date: Thu, 15 Jan 2015 15:00:10 +0800
-Message-ID: <54B7657A.2000609@nvidia.com>
-References: <1421303396-11867-1-git-send-email-acourbot@nvidia.com>
- <CACAvsv6zHMizeA-r2qnngUaMXnorNfOXg6+998UWA4GzfFBOSA@mail.gmail.com>
- <CAAVeFu+=-FQSGiL0Wqt2of1nYHd8qnXBw2jFUB6Z8+_p3kOr4w@mail.gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: tegra: add Acer Chromebook 13 device tree
+Date: Thu, 15 Jan 2015 08:50:07 +0100
+Message-ID: <20150115075006.GA30799@ulmo>
+References: <1407894967-18300-1-git-send-email-dgreid@chromium.org>
+ <CAAObsKCbJLwEHeiv3DbCwsiVSZ0VDGzU84+ipPKJQZajx+KiuQ@mail.gmail.com>
+ <CAEUnVG727F16K2kMWCrPHXTZgpc_4gnCBkF=Aa_zaJiSMviy=g@mail.gmail.com>
+ <CAAObsKBo13fEy72EQe3V409fEEYpw0kQss5UgaOhk=GOVEEeYg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <CAAVeFu+=-FQSGiL0Wqt2of1nYHd8qnXBw2jFUB6Z8+_p3kOr4w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="gKMricLos+KVdGMg"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CAAObsKBo13fEy72EQe3V409fEEYpw0kQss5UgaOhk=GOVEEeYg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Ck9uIDAxLzE1LzIwMTUgMDI6NDMgUE0sIEFsZXhhbmRyZSBDb3VyYm90IHdyb3RlOgo+IE9uIFRo
-dSwgSmFuIDE1LCAyMDE1IGF0IDM6MzkgUE0sIEJlbiBTa2VnZ3MgPHNrZWdnc2JAZ21haWwuY29t
-PiB3cm90ZToKPj4gT24gVGh1LCBKYW4gMTUsIDIwMTUgYXQgNDoyOSBQTSwgQWxleGFuZHJlIENv
-dXJib3QgPGFjb3VyYm90QG52aWRpYS5jb20+IHdyb3RlOgo+Pj4gSGF2aW5nIHRoZSB0d28gbW9k
-dWxlcyBzZXBhcmF0ZWQgY2F1c2VzIHZhcmlvdXMgdW5uZWVkZWQgY29tcGxpY2F0aW9ucywKPj4+
-IGluY2x1ZGluZyBoYXZpbmcgdG8gZXhwb3J0IHN5bWJvbHMgYWNjZXNzZWQgYmV0d2VlbiB0aGUg
-bW9kdWxlcy4gTWFrZQo+Pj4gdGhpbmdzIHNpbXBsZXIgYnkgY29tcGlsaW5nIHBsYXRmb3JtIGRl
-dmljZSBzdXBwb3J0IGludG8gbm91dmVhdS5rby4KPj4+IFBsYXRmb3JtIGRldmljZSBzdXBwb3J0
-IHJlbWFpbnMgb3B0aW9uYWwgYW5kIGlzIG9ubHkgY29tcGlsZWQgb24gVGVncmEuCj4+Pgo+Pj4g
-U2lnbmVkLW9mZi1ieTogQWxleGFuZHJlIENvdXJib3QgPGFjb3VyYm90QG52aWRpYS5jb20+Cj4+
-PiAtLS0KPj4+IFZpbmNlLCB3aXRoIHRoaXMgeW91IHdvbid0IGhhdmUgdG8gZXhwb3J0IG5ldyBm
-dW5jdGlvbnMgZm9yIFBNLiBJIGVuZGVkCj4+PiB1cCB3cml0aW5nIGl0IG15c2VsZiBiZWNhdXNl
-IEkgaGl0IHRoZSBzYW1lIGlzc3VlIChudl9kZXZpY2UoKSB3b3VsZCBub3cKPj4+IG5lZWQgdG8g
-YmUgZXhwb3J0ZWQgb24gQmVuJ3MgbWFzdGVyIGJyYW5jaCkuCj4+Pgo+Pj4gQmUgY2FyZWZ1bCB0
-aGF0IHdoZW4gY29tcGlsaW5nIGFnYWluc3QgYSBrZXJuZWwsIENPTkZJR19OT1VWRUFVX1BMQVRG
-T1JNX0RSSVZFUgo+Pj4gbm93ICptdXN0KiBiZSBlcXVhbCB0byAneScuIEl0IGlzICdtJyBjdXJy
-ZW50bHksIHNvIHlvdSB3aWxsIG5lZWQgdG8gY2hhbmdlIGl0Cj4+PiBmcm9tIHRyaXN0YXRlIHRv
-IGJvb2wgaW4gdGhlIGtlcm5lbCdzIEtjb25maWcuIEZvciB0aGlzIHJlYXNvbiBpdCBtaWdodCBi
-ZSBnb29kCj4+PiB0byBnZXQgdGhpcyBwYXRjaCBpbnRvIC1uZXh0IHF1aWNrbHkuCj4+IEkndmUg
-Z290IGEgaHVnZSBjaHVuayBvZiBjaHVybiAoZmluYWxseSBmaW5pc2hlZCB0aGUgInJlbmFtZSB0
-byBudmlkaWEKPj4gbmFtZXMgZm9yIHN0dWZmIiB0aGluZykgcGVuZGluZyB0b28gd2hpY2ggSSB3
-YW50IHRvIGdldCB0byBEYXZlIChBU0FQLAo+PiBzZXBhcmF0ZWx5IGZyb20gbXkgb3RoZXIgcGVu
-ZGluZyB3b3JrKSB0byBhdm9pZCBoYXZpbmcgdG8ga2VlcCBmaXhpbmcKPj4gY29uZmxpY3RzIGlu
-IHRoZSBtZWFudGltZSA6KQo+Pgo+PiBTbywgaWYgeW91IGd1eXMgYm90aCBhZ3JlZSBvbiB0aGUg
-cGF0Y2gsIEknbGwgc2VuZCBpdCBhbG9uZyBlYXJseSB3aXRoIHRob3NlLgo+IFRoYXQgd291bGQg
-YmUganVzdCBwZXJmZWN0Lgo+Cj4gVmluY2UsIGRvIHlvdSBoYXZlIGFueXRoaW5nIGFnYWluc3Qg
-dGhpcyBwYXRjaD8KT2YgY291cnNlIG5vdC4gSSBqdXN0IHRlc3RlZCBpdCBhbmQgaXQgd29ya2Vk
-IGFzIGdvb2QgYXMgZXhwZWN0ZWQuIApUaGFua3MgZm9yIHNlbmRpbmcgdGhpcy4KClZpbmNlCgoK
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBt
-YWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZy
-ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL25vdXZlYXUK
+
+--gKMricLos+KVdGMg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Jan 14, 2015 at 08:02:25AM +0100, Tomeu Vizoso wrote:
+> On 14 January 2015 at 01:32, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+> > On Tue, Jan 13, 2015 at 9:49 AM, Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org> w=
+rote:
+> >> On 13 August 2014 at 03:56, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+> >>> The Acer Chromebook 13, codenamed "Big", contains an NVIDIA tegra124
+> >>> processor and is similar to the Venice2 reference platform.
+> >>>
+> >>> The keyboard, USB 2, audio, HDMI, sdcard and emmc have been tested
+> >>> and work on the 1366x768 models.  I haven't tried on the HD systems
+> >>> yet.
+> >>
+> >> Hi Dylan,
+> >>
+> >> do you have any notes on how you tested audio? I have been fiddling a
+> >> bit with amixer but haven't been able to get any sound from the
+> >> speakers nor the headphones.
+> >
+> > I don't have any notes, and it's been a while since I tried it.  To
+> > the best of my knowledge, I loaded the UCM config from the ChromeOS
+> > tree manually with alsaucm, then enabled/disabled headphones from
+> > there.
+> >
+> > https://chromium.googlesource.com/chromiumos/third_party/adhd/+/master/=
+ucm-config/nyan/NVIDIA%20Tegra%20Venice2/
+> >
+> > The important stuff is all in the enable sequence of HiFi.conf
+> >
+> > Let me know if that helps.
+>=20
+> Thanks, it does work fine now. Will submit that conf file upstream.
+
+Out of curiosity, where is "upstream" for UCM configuration files? It'd
+be interesting to collect files for other Tegra boards there. I find it
+rather tedious figuring out time and time again what control needs to be
+toggled to enable a certain output.
+
+Stephen, since you undoubtedly have the most experience with upstream
+audio, do you happen to know if we have something like that for the
+other upstream-supported boards?
+
+Thierry
+
+--gKMricLos+KVdGMg
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUt3EuAAoJEN0jrNd/PrOhAqAP/0bP1JLWcdoJOuDY/tttxyUR
+KCXoTJxON83BcK82YKRKm8XuhF1DjMBsvWEy34qPvC79BYYllK9GROg8lC+PxG/C
+BXaVBTEkECywWyC3EUFg9pW/fGhBCe5iK6/3y165jDnZaQjiFeSZh8n7ob10piNM
++YK5M20LiUEmJ44q45CKJy+3rFTTC5n0MJFmDB7oICzQZ//JT16NvIZ7gV7wJ7P9
+GcDxoKF7dgIyaI/J42fSl2bpgvbigzK+K1MzzzsVyFmVHen6ejzclUk/X5oH4CLc
+/9s5WKB8KQn2f6M+sx+OmPgyygRjvd/UX6pg7zhnkOF+lAc+wW16dgsfrmFUUr9Q
+id1LUnqSHF7XSXaa3HRWEOeVi6Ne30Ssue+ZQ3VsX4NUA3gqI7jBP3NvyYYfv046
+mYHP/9ezQ6x9/GcajkPoiemaCzJ4b148H548Wm5Rhm6gPsSPh2EdZ2a5/iwXe2pm
+pRr6xITgOKjAwImNhpcBx2Vuc/AmWtYvijgFu1HN8FjXs6nVPVz9UKGYOipTU1A/
+4EHBWZnh25i1qmE8pSNDUNQy3SdZn/8/kYjvSvbZl9nszWYiWlrO/b7p9kN44yS9
+XNpEhvOjQHO4/dOE9raT4bNbNglW4E238WLN01SYDIx0ZezOwmmTjUu/mseNDq6j
+LYnD/Y0NrpeLU/xHOt30
+=jWXE
+-----END PGP SIGNATURE-----
+
+--gKMricLos+KVdGMg--
