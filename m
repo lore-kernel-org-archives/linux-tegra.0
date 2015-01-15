@@ -1,41 +1,56 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [Nouveau] [PATCH] drm: merge nouveau_platform.ko into nouveau.ko
-Date: Thu, 15 Jan 2015 15:43:08 +0900
-Message-ID: <CAAVeFu+=-FQSGiL0Wqt2of1nYHd8qnXBw2jFUB6Z8+_p3kOr4w@mail.gmail.com>
-References: <1421303396-11867-1-git-send-email-acourbot@nvidia.com> <CACAvsv6zHMizeA-r2qnngUaMXnorNfOXg6+998UWA4GzfFBOSA@mail.gmail.com>
+From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] drm: merge nouveau_platform.ko into nouveau.ko
+Date: Thu, 15 Jan 2015 15:00:10 +0800
+Message-ID: <54B7657A.2000609@nvidia.com>
+References: <1421303396-11867-1-git-send-email-acourbot@nvidia.com>
+ <CACAvsv6zHMizeA-r2qnngUaMXnorNfOXg6+998UWA4GzfFBOSA@mail.gmail.com>
+ <CAAVeFu+=-FQSGiL0Wqt2of1nYHd8qnXBw2jFUB6Z8+_p3kOr4w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACAvsv6zHMizeA-r2qnngUaMXnorNfOXg6+998UWA4GzfFBOSA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <CAAVeFu+=-FQSGiL0Wqt2of1nYHd8qnXBw2jFUB6Z8+_p3kOr4w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jan 15, 2015 at 3:39 PM, Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Thu, Jan 15, 2015 at 4:29 PM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->> Having the two modules separated causes various unneeded complications,
->> including having to export symbols accessed between the modules. Make
->> things simpler by compiling platform device support into nouveau.ko.
->> Platform device support remains optional and is only compiled on Tegra.
->>
->> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->> Vince, with this you won't have to export new functions for PM. I ended
->> up writing it myself because I hit the same issue (nv_device() would now
->> need to be exported on Ben's master branch).
->>
->> Be careful that when compiling against a kernel, CONFIG_NOUVEAU_PLATFORM_DRIVER
->> now *must* be equal to 'y'. It is 'm' currently, so you will need to change it
->> from tristate to bool in the kernel's Kconfig. For this reason it might be good
->> to get this patch into -next quickly.
-> I've got a huge chunk of churn (finally finished the "rename to nvidia
-> names for stuff" thing) pending too which I want to get to Dave (ASAP,
-> separately from my other pending work) to avoid having to keep fixing
-> conflicts in the meantime :)
->
-> So, if you guys both agree on the patch, I'll send it along early with those.
-
-That would be just perfect.
-
-Vince, do you have anything against this patch?
+Ck9uIDAxLzE1LzIwMTUgMDI6NDMgUE0sIEFsZXhhbmRyZSBDb3VyYm90IHdyb3RlOgo+IE9uIFRo
+dSwgSmFuIDE1LCAyMDE1IGF0IDM6MzkgUE0sIEJlbiBTa2VnZ3MgPHNrZWdnc2JAZ21haWwuY29t
+PiB3cm90ZToKPj4gT24gVGh1LCBKYW4gMTUsIDIwMTUgYXQgNDoyOSBQTSwgQWxleGFuZHJlIENv
+dXJib3QgPGFjb3VyYm90QG52aWRpYS5jb20+IHdyb3RlOgo+Pj4gSGF2aW5nIHRoZSB0d28gbW9k
+dWxlcyBzZXBhcmF0ZWQgY2F1c2VzIHZhcmlvdXMgdW5uZWVkZWQgY29tcGxpY2F0aW9ucywKPj4+
+IGluY2x1ZGluZyBoYXZpbmcgdG8gZXhwb3J0IHN5bWJvbHMgYWNjZXNzZWQgYmV0d2VlbiB0aGUg
+bW9kdWxlcy4gTWFrZQo+Pj4gdGhpbmdzIHNpbXBsZXIgYnkgY29tcGlsaW5nIHBsYXRmb3JtIGRl
+dmljZSBzdXBwb3J0IGludG8gbm91dmVhdS5rby4KPj4+IFBsYXRmb3JtIGRldmljZSBzdXBwb3J0
+IHJlbWFpbnMgb3B0aW9uYWwgYW5kIGlzIG9ubHkgY29tcGlsZWQgb24gVGVncmEuCj4+Pgo+Pj4g
+U2lnbmVkLW9mZi1ieTogQWxleGFuZHJlIENvdXJib3QgPGFjb3VyYm90QG52aWRpYS5jb20+Cj4+
+PiAtLS0KPj4+IFZpbmNlLCB3aXRoIHRoaXMgeW91IHdvbid0IGhhdmUgdG8gZXhwb3J0IG5ldyBm
+dW5jdGlvbnMgZm9yIFBNLiBJIGVuZGVkCj4+PiB1cCB3cml0aW5nIGl0IG15c2VsZiBiZWNhdXNl
+IEkgaGl0IHRoZSBzYW1lIGlzc3VlIChudl9kZXZpY2UoKSB3b3VsZCBub3cKPj4+IG5lZWQgdG8g
+YmUgZXhwb3J0ZWQgb24gQmVuJ3MgbWFzdGVyIGJyYW5jaCkuCj4+Pgo+Pj4gQmUgY2FyZWZ1bCB0
+aGF0IHdoZW4gY29tcGlsaW5nIGFnYWluc3QgYSBrZXJuZWwsIENPTkZJR19OT1VWRUFVX1BMQVRG
+T1JNX0RSSVZFUgo+Pj4gbm93ICptdXN0KiBiZSBlcXVhbCB0byAneScuIEl0IGlzICdtJyBjdXJy
+ZW50bHksIHNvIHlvdSB3aWxsIG5lZWQgdG8gY2hhbmdlIGl0Cj4+PiBmcm9tIHRyaXN0YXRlIHRv
+IGJvb2wgaW4gdGhlIGtlcm5lbCdzIEtjb25maWcuIEZvciB0aGlzIHJlYXNvbiBpdCBtaWdodCBi
+ZSBnb29kCj4+PiB0byBnZXQgdGhpcyBwYXRjaCBpbnRvIC1uZXh0IHF1aWNrbHkuCj4+IEkndmUg
+Z290IGEgaHVnZSBjaHVuayBvZiBjaHVybiAoZmluYWxseSBmaW5pc2hlZCB0aGUgInJlbmFtZSB0
+byBudmlkaWEKPj4gbmFtZXMgZm9yIHN0dWZmIiB0aGluZykgcGVuZGluZyB0b28gd2hpY2ggSSB3
+YW50IHRvIGdldCB0byBEYXZlIChBU0FQLAo+PiBzZXBhcmF0ZWx5IGZyb20gbXkgb3RoZXIgcGVu
+ZGluZyB3b3JrKSB0byBhdm9pZCBoYXZpbmcgdG8ga2VlcCBmaXhpbmcKPj4gY29uZmxpY3RzIGlu
+IHRoZSBtZWFudGltZSA6KQo+Pgo+PiBTbywgaWYgeW91IGd1eXMgYm90aCBhZ3JlZSBvbiB0aGUg
+cGF0Y2gsIEknbGwgc2VuZCBpdCBhbG9uZyBlYXJseSB3aXRoIHRob3NlLgo+IFRoYXQgd291bGQg
+YmUganVzdCBwZXJmZWN0Lgo+Cj4gVmluY2UsIGRvIHlvdSBoYXZlIGFueXRoaW5nIGFnYWluc3Qg
+dGhpcyBwYXRjaD8KT2YgY291cnNlIG5vdC4gSSBqdXN0IHRlc3RlZCBpdCBhbmQgaXQgd29ya2Vk
+IGFzIGdvb2QgYXMgZXhwZWN0ZWQuIApUaGFua3MgZm9yIHNlbmRpbmcgdGhpcy4KClZpbmNlCgoK
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBt
+YWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZy
+ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL25vdXZlYXUK
