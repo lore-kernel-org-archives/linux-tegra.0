@@ -1,64 +1,50 @@
 From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [PATCH v2 11/11] ASoC: tegra: add sink for the
-	internal mic to tegra_max98090
-Date: Thu, 15 Jan 2015 17:12:23 +0100
-Message-ID: <1421338359-27467-12-git-send-email-tomeu.vizoso@collabora.com>
+Subject: [PATCH v2 03/11] ARM: tegra: Set the sound card model that alsaucm
+ expects
+Date: Thu, 15 Jan 2015 17:12:15 +0100
+Message-ID: <1421338359-27467-4-git-send-email-tomeu.vizoso@collabora.com>
 References: <1421338359-27467-1-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1421338359-27467-1-git-send-email-tomeu.vizoso@collabora.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-tegra@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>, Stephen Warren <swarren@wwwdotorg.org>, Dylan Reid <dgreid@chromium.org>, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Simon Glass <sjg@chromium.org>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Kumar Gala <galak@codeaurora.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Simon Glass <sjg@chromium.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, Dylan Reid <dgreid@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-This is used in the Tegra-based Chromebooks.
+Patches are on its way to add a config file to alsaucm for the Nyan
+boards. Use the same card ID that alsaucm will expect.
 
 Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
 ---
- Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max98090.txt | 1 +
- sound/soc/tegra/tegra_max98090.c                                        | 2 ++
- 2 files changed, 3 insertions(+)
+ arch/arm/boot/dts/tegra124-nyan-big.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max98090.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max98090.txt
-index c949abc..c3495be 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max98090.txt
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max98090.txt
-@@ -18,6 +18,7 @@ Required properties:
-   * Headphones
-   * Speakers
-   * Mic Jack
-+  * Int Mic
+diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts b/arch/arm/boot/dts/tegra124-nyan-big.dts
+index 43e58a4..9a9cffe 100644
+--- a/arch/arm/boot/dts/tegra124-nyan-big.dts
++++ b/arch/arm/boot/dts/tegra124-nyan-big.dts
+@@ -1976,9 +1976,9 @@
+ 	};
  
- - nvidia,i2s-controller : The phandle of the Tegra I2S controller that's
-   connected to the CODEC.
-diff --git a/sound/soc/tegra/tegra_max98090.c b/sound/soc/tegra/tegra_max98090.c
-index 8df71a4..29ea87c 100644
---- a/sound/soc/tegra/tegra_max98090.c
-+++ b/sound/soc/tegra/tegra_max98090.c
-@@ -133,11 +133,13 @@ static const struct snd_soc_dapm_widget tegra_max98090_dapm_widgets[] = {
- 	SND_SOC_DAPM_HP("Headphones", NULL),
- 	SND_SOC_DAPM_SPK("Speakers", NULL),
- 	SND_SOC_DAPM_MIC("Mic Jack", NULL),
-+	SND_SOC_DAPM_MIC("Int Mic", NULL),
- };
+ 	sound {
+-		compatible = "nvidia,tegra-audio-max98090-nyan-big",
++		compatible = "nvidia,tegra-audio-max98090-nyan",
+ 			     "nvidia,tegra-audio-max98090";
+-		nvidia,model = "Acer Chromebook 13";
++		nvidia,model = "GoogleNyan";
  
- static const struct snd_kcontrol_new tegra_max98090_controls[] = {
- 	SOC_DAPM_PIN_SWITCH("Headphones"),
- 	SOC_DAPM_PIN_SWITCH("Speakers"),
-+	SOC_DAPM_PIN_SWITCH("Int Mic"),
- };
- 
- static int tegra_max98090_asoc_init(struct snd_soc_pcm_runtime *rtd)
+ 		nvidia,audio-routing =
+ 			"Headphones", "HPR",
 -- 
 1.9.3
