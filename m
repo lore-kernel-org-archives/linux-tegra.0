@@ -1,113 +1,143 @@
-From: Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org>
-Subject: Re: [PATCH v2] Add support for Nyan-big
-Date: Fri, 16 Jan 2015 17:00:26 +0100
-Message-ID: <CAAObsKAEKXVrE5iR9C5fXymse2D7u-41u8QKwC9eQEGTTXWxEw@mail.gmail.com>
-References: <1417699911-17901-1-git-send-email-sjg@chromium.org>
- <CAAObsKAt=nuj0Gzg0g61q5x=U45FhEu7KyBnVp=2p0y1AraLRg@mail.gmail.com> <CAL1qeaFccsVt8mDEfsOPDfhy1OOTkq5pkPCt-T6mhradAFF1yA@mail.gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] soc: tegra: Add Tegra132 SoC to the DT list of Tegra SoCs
+Date: Fri, 16 Jan 2015 18:09:28 +0100
+Message-ID: <20150116170926.GA17763@ulmo.nvidia.com>
+References: <alpine.DEB.2.02.1501161137351.9776@utopia.booyaka.com>
+ <20150116150749.GA32155@leverpostej>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="17pEHd4RhPHOinZp"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAL1qeaFccsVt8mDEfsOPDfhy1OOTkq5pkPCt-T6mhradAFF1yA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20150116150749.GA32155@leverpostej>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+To: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Cc: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 15 January 2015 at 19:35, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
-> Hi Tomeu,
->
-> On Thu, Jan 15, 2015 at 9:11 AM, Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org> wrote:
->> I have seen that coreboot configures these ones differently:
->>
->> -    ('sdmmc3_clk_pa6',         'sdmmc3',      None,      'none',
->> False, False, False, False),
->> +    ('sdmmc3_clk_pa6',         'sdmmc3',      None,      'none',
->> False, True,  False, False),
->> -    ('sdmmc3_clk_lb_out_pee4', 'sdmmc3',      None,      'none',
->> False, False, False, False),
->> +    ('sdmmc3_clk_lb_out_pee4', 'sdmmc3',      None,      'down',
->> False, True,  False, False),
->> -    ('sdmmc4_cmd_pt7',         'sdmmc4',      None,      'none',
->> False, True,  False, False),
->> +    ('sdmmc4_cmd_pt7',         'sdmmc4',      None,      'up',
->> False, True,  False, False),
->> -    ('dp_hpd_pff0',            'dp',          None,      'up',
->> False, True,  False, False),
->> +    ('dp_hpd_pff0',            'dp',          None,      'none',
->> False, True,  False, False),
->>
->> May be good to have them match?
->
-> I believe these should all be the same between Norrin (Nyan), Big, and
-> Blaze, so I'd go with whatever is in the Norrin pinmux config (which I
-> believe is what Simon's patch is based on).
 
-Even dp_hpd? In my testing I need to have pullup on big and with no
-pull on blaze for the panel to work. I'm very weak in reading
-schematics, but I see what I think is a pullup resistor in Big, and
-none in Blaze.
+--17pEHd4RhPHOinZp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->> Besides, I have collected these differences between blaze and big,
->> could you check with what you know?
->
-> These are the differences you've collected between blaze and big from
-> the schematic or... ?
+On Fri, Jan 16, 2015 at 03:07:49PM +0000, Mark Rutland wrote:
+> Hi Paul,
+>=20
+> /me opens a delicious can of Lumbricus terrestris
+>=20
+> My comments below aren't so much about this patch alone, but more about
+> the entire strategy with drivers/soc and the kind of code living there.
+>=20
+> On Fri, Jan 16, 2015 at 11:39:13AM +0000, Paul Walmsley wrote:
+> >=20
+> > Add "nvidia,tegra132" as a compatible string that denotes a Tegra SoC.
+> >=20
+> > Signed-off-by: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+> > Cc: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+> > Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> > Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> > ---
+> >  drivers/soc/tegra/common.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >=20
+> > diff --git a/drivers/soc/tegra/common.c b/drivers/soc/tegra/common.c
+> > index a71cb74..a952986 100644
+> > --- a/drivers/soc/tegra/common.c
+> > +++ b/drivers/soc/tegra/common.c
+> > @@ -15,6 +15,7 @@ static const struct of_device_id tegra_machine_match[=
+] =3D {
+> >  	{ .compatible =3D "nvidia,tegra30", },
+> >  	{ .compatible =3D "nvidia,tegra114", },
+> >  	{ .compatible =3D "nvidia,tegra124", },
+> > +	{ .compatible =3D "nvidia,tegra132", },
+> >  	{ }
+> >  };
+>=20
+> I'm rather worried by this.
+>=20
+> The only user of this table is soc_is_tegra(), which seems to guard
+> several probe paths in drivers which are DT driven. Given that, I don't
+> see why this is necessary at all, because the presence of the
+> appropriate nodes should be sufficient to handle the early return from
+> an initcall.
 
-Mainly from the ChromeOS sources, but I have checked in the schematics.
+We need this to preserve backward-compatibility. There are some
+instances where any device tree nodes that could be used to guard the
+code execution were only added after the fact. So in order to keep
+systems with an old DTB running we need to continue running with hard
+coded physical addresses.
 
->> -    ('usb_vbus_en2_pff1',      'rsvd2',       None,      'down',
->> True,  False, False, False),
->> +    ('usb_vbus_en2_pff1',      'usb',         None,      'up',
->> False, True,  False, False),
->
-> usb_vbus_en2 is not connected on all Nyan-based boards, so I would
-> just use whatever the Norrin config uses.
+> More worryingly, if soc_is_tegra() returns true but the node isn't
+> found, the drivers decide to do things. If tegra_pmc_early_init passes
+> soc_is_tegra() (because we happened to match "nvidia,tegra132"), but
+> doesn't find a DTB entry for the pmc, it then pokes an assumed
+> hard-coded physical address.
 
-Agreed.
+And that's (currently) safe. It at least makes sure that breakage (if
+any) is restricted to Tegra boards. There are other occurrences where
+drivers don't even bother checking for this at all and simply use an
+initcall to unconditionally create a platform device which then goes
+and tries to access physical addresses on *every* board in a multi-
+platform kernel.
 
->> -    ('usb_vbus_en0_pn4',       'usb',         None,      'none',
->> False, True,  True,  False),
->> -    ('usb_vbus_en1_pn5',       'usb',         None,      'none',
->> False, True,  True,  False),
->> +    ('usb_vbus_en0_pn4',       'usb',         None,      'up',
->> False, True,  False, False),
->> +    ('usb_vbus_en1_pn5',       'usb',         None,      'up',
->> False, True,  False, False),
->
-> I would expect these to be like Venice2/Norrin: input enabled,
-> open-drain, no pull.
+> Assuming things because of the _lack_ of a node has been a major pain
+> point on 32-bit as DTBs advanced and code was changed, resulting in boot
+> breaking or DTB compatibility breaking over time as old and new kernels
+> made conflicting assumptions.
 
-What I have found is that coreboot configures them to be pullup for
-both boards, and that in my testing the usb ports are enabled in that
-case in both boards. If they have no pull, they work on big but don't
-on blaze. The DTs in the ChromeOS kernel also configure those pins to
-be pull up. And from my limited understanding of the schematics I
-have, both lines have pullup resistors in both boards.
+So what are you saying? We can't support 64-bit ARM because we need to
+keep backwards-compatibility with old DTBs and weren't smart enough to
+see this through all the way three years ago?
 
-So in summary, I think that we should make this change to the pinmux
-definition that Simon sent:
+> I don't want to see arm64 kernels making assumptions in that manner (nor
+> would I like to see it in new code for 32-bit ARM); it always leads to
+> boot breakage, and it's completely avoidable. The only thing we can know
+> is what is described in the DTB.
 
--    ('usb_vbus_en0_pn4',       'usb',         None,      'none',
-False, True,  True,  False),
--    ('usb_vbus_en1_pn5',       'usb',         None,      'none',
-False, True,  True,  False),
-+    ('usb_vbus_en0_pn4',       'usb',         None,      'up',
-False, True,  False, False),
-+    ('usb_vbus_en1_pn5',       'usb',         None,      'up',
-False, True,  False, False),
+I guess we could always make this conditional on 32-bit ARM. Or we could
+decide that we don't care about DTB backwards-compatibility anymore. In
+fact we're quite likely going to break it soon anyway because of Marc's
+gic_arch_extn rework, so might as well start with a clean plate after
+that...
 
-And that the Blaze should have this change, respective to Big:
+> So NAK to this addition while soc_is_tegra is in use in that way, and
+> NAK to any DTS patches adding any of the strings that would cause
+> soc_is_tegra to return true on arm64.
+>=20
+> There's also the worrying pattern of initcalls that look for particular
+> compatible strings -- why can't these use the existing DT probing
+> infrastructure rather than rolling their own? It would be nice to not
+> accumulate initcalls that only make sense on one platform.
 
--    ('dp_hpd_pff0',            'dp',          None,      'up',
-False, True,  False, False),
-+    ('dp_hpd_pff0',            'dp',          None,      'none',
-False, True,  False, False),
+You make it sound like the "existing DT probing infrastructure" is in
+any way different from initcalls. Furthermore it's typically associated
+with a specific subsystem or class of devices, so adding custom OF init
+tables for a driver that's used on a single platform doesn't strike me
+as something that people would be willing to merge.
 
-Does it make sense?
+Thierry
 
-Thanks,
+--17pEHd4RhPHOinZp
+Content-Type: application/pgp-signature
 
-Tomeu
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-> Thanks,
-> Andrew
+iQIcBAEBAgAGBQJUuUXGAAoJEN0jrNd/PrOhV6sP/3Wemy02nkH9g/q3Hd2hh1Ca
+q5Ls6f/d8+vzgSF9fRJszPty5T7fQkDCjCdXPgwGu8ab/DvNOwA2Qd8Ca8OeTRLU
+xEsZq+7c/zw8LvfH024Rhl8oBIaaqijqPnZQDaPzMD6VEFABFNcktwBeJI1lhhGN
+z2ggm8b/3cPDW2RAaXZ0rKzcZEbWGx9ghGL/5FjkY8YLePBVB5+3dvo/0bkcG/yc
+/zC+FwWLeHo4FN/g+aET4STcL1XI8bERd9BvT/SPrTgmNNCMyTyhcNL6ROsJTAii
+fcGKObZc8u7C5bs69FOUQPCgo7+iubsG6F8/pUIilThBszmv8YaD1QOU0QfUhjKM
+OSuKVibMZVckPJgreUUuYExxvp50ZtXVs5MxgmSMlBK8gaMUKMhTvc3sOwYy6DFA
+cr5UNBnXzCRJC4tsu2yTdvLgZ42EMRB0oV6u3yq85dXNfJ8YOwuTGNsnVybcvtjC
+Fw+FOIkAAikO3M9xJ+87fz5XwBwRg/ilWa0gyNBgNJGxiNRHiIDI/77UQKX9GGLh
+ZtuEIcLe2/fX6/mf6tFqeWtz+5Dh7qSES9FCBI6Dt3lWv6CcjD9trreNpLlEkqMC
+DyfPUG3I0C67aVXxLCp7p8V6ZC/zBgcD+yrzTW8eV+PhdQHjdFW37MNKpGaLtcwB
++0acAZw97HsQL4u6+YEG
+=ZI7H
+-----END PGP SIGNATURE-----
+
+--17pEHd4RhPHOinZp--
