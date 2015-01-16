@@ -1,42 +1,53 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [patch] drm/tegra: gem: oops in error handling
-Date: Fri, 16 Jan 2015 13:43:42 +0300
-Message-ID: <20150116104342.GA4860@mwanda>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [patch] drm/tegra: gem: oops in error handling
+Date: Fri, 16 Jan 2015 12:12:24 +0100
+Message-ID: <20150116111222.GB4885@ulmo.nvidia.com>
+References: <20150116104342.GA4860@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="/NkBOFFp2J2Af1nK"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+In-Reply-To: <20150116104342.GA4860@mwanda>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Cc: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-a2ZyZWUoRVJSX1BUUigtRU5PTUVNKSkgd2lsbCBub3Qgd29yayB2ZXJ5IHdlbGwuCgpTaWduZWQt
-b2ZmLWJ5OiBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVudGVyQG9yYWNsZS5jb20+CgpkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dlbS5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3Jh
-L2dlbS5jCmluZGV4IDg3NzdiN2YuLjI4MjE1ZTQgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2Ry
-bS90ZWdyYS9nZW0uYworKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZ2VtLmMKQEAgLTI0NCwx
-MCArMjQ0LDggQEAgc3RhdGljIGludCB0ZWdyYV9ib19nZXRfcGFnZXMoc3RydWN0IGRybV9kZXZp
-Y2UgKmRybSwgc3RydWN0IHRlZ3JhX2JvICpibykKIAlmb3JfZWFjaF9zZyhzZ3QtPnNnbCwgcywg
-c2d0LT5uZW50cywgaSkKIAkJc2dfZG1hX2FkZHJlc3MocykgPSBzZ19waHlzKHMpOwogCi0JaWYg
-KGRtYV9tYXBfc2coZHJtLT5kZXYsIHNndC0+c2dsLCBzZ3QtPm5lbnRzLCBETUFfVE9fREVWSUNF
-KSA9PSAwKSB7Ci0JCXNndCA9IEVSUl9QVFIoLUVOT01FTSk7CisJaWYgKGRtYV9tYXBfc2coZHJt
-LT5kZXYsIHNndC0+c2dsLCBzZ3QtPm5lbnRzLCBETUFfVE9fREVWSUNFKSA9PSAwKQogCQlnb3Rv
-IHJlbGVhc2Vfc2d0OwotCX0KIAogCWJvLT5zZ3QgPSBzZ3Q7CiAKQEAgLTI1Niw2ICsyNTQsNyBA
-QCBzdGF0aWMgaW50IHRlZ3JhX2JvX2dldF9wYWdlcyhzdHJ1Y3QgZHJtX2RldmljZSAqZHJtLCBz
-dHJ1Y3QgdGVncmFfYm8gKmJvKQogcmVsZWFzZV9zZ3Q6CiAJc2dfZnJlZV90YWJsZShzZ3QpOwog
-CWtmcmVlKHNndCk7CisJc2d0ID0gRVJSX1BUUigtRU5PTUVNKTsKIHB1dF9wYWdlczoKIAlkcm1f
-Z2VtX3B1dF9wYWdlcygmYm8tPmdlbSwgYm8tPnBhZ2VzLCBmYWxzZSwgZmFsc2UpOwogCXJldHVy
-biBQVFJfRVJSKHNndCk7Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
-dmVsCg==
+
+--/NkBOFFp2J2Af1nK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Jan 16, 2015 at 01:43:42PM +0300, Dan Carpenter wrote:
+> kfree(ERR_PTR(-ENOMEM)) will not work very well.
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+
+Applied, thanks.
+
+Thierry
+
+--/NkBOFFp2J2Af1nK
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUuPIWAAoJEN0jrNd/PrOhY+EP/RodiJ4aN2oiUR51X2RBwbk5
+epU+SxyG9PQ/qh3g47X7o3b1kUIoHtvxD7vKFupUrLqthCahtLY5lDqWJ6xGlMNs
+fohToLy7/Hs/eQWNorw/ccZYXpxy3VkhKFY+5wOfx/Ix+jbn5saZQbvNXtiF2mpR
+RK9xyoI/vHGGklD/QVp8XxwpOkHosbQ3NeQWlYdbLqeACKOKbaydC0L/EmHNWBKJ
+u7ywBlBpeIA/toXn+zz0Hips38aOv/NnTMTNYrIYQ1qckUYPPrQ1glBaUR6MafvI
+MrslwYqSG6aFxbQ5kRCb0x+/pV+kzKJOLv7AlyQkOyGvWYUar16ECCYR6xaUMjaT
+0dhR6OGQflY50rhWBZlN4G6J7aceseHvCLeb6Nx9NuxEG5TodL9p9p+a+DaJXWG9
+DTuCvlNywucldesDNTQeiVZItLGV5AC8Rz40LD0FyHEJvw0yOisX0UQG865qTUX3
+iLNZR0nBcvmuICjyMNz5f2dCC9Madbkin1zInJag4PuhYhGmjarKK1l/HaYHDQF7
+8eKhr9CVuMSGqyS13NrlIDLrF3mkBP4/seHk64CAIPQ/2dA446i+3Cw4JdQhHrl8
+s+CbXeVbuaAFsBcK5wXZs1U8wrV8V3sUkcKLbv33SVWkoAOtuDBjZCrNZQoGzZW4
+Bsn9erIc8nHWDfl1Q7lm
+=JSzl
+-----END PGP SIGNATURE-----
+
+--/NkBOFFp2J2Af1nK--
