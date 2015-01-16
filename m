@@ -1,142 +1,72 @@
-From: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH] soc: tegra: Add Tegra132 SoC to the DT list of Tegra SoCs
-Date: Fri, 16 Jan 2015 17:30:05 +0000
-Message-ID: <20150116173005.GH32155@leverpostej>
-References: <alpine.DEB.2.02.1501161137351.9776@utopia.booyaka.com>
- <20150116150749.GA32155@leverpostej>
- <20150116170926.GA17763@ulmo.nvidia.com>
+From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v2] Add support for Nyan-big
+Date: Fri, 16 Jan 2015 10:06:40 -0800
+Message-ID: <CAL1qeaFgr5rTGfFKV4-8aSD6pTNQc48OV4Y=GquFa8AXcnLjgw@mail.gmail.com>
+References: <1417699911-17901-1-git-send-email-sjg@chromium.org>
+	<CAAObsKAt=nuj0Gzg0g61q5x=U45FhEu7KyBnVp=2p0y1AraLRg@mail.gmail.com>
+	<CAL1qeaFccsVt8mDEfsOPDfhy1OOTkq5pkPCt-T6mhradAFF1yA@mail.gmail.com>
+	<CAAObsKAEKXVrE5iR9C5fXymse2D7u-41u8QKwC9eQEGTTXWxEw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20150116170926.GA17763-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+In-Reply-To: <CAAObsKAEKXVrE5iR9C5fXymse2D7u-41u8QKwC9eQEGTTXWxEw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Catalin Marinas <Catalin.Marinas-5wv7dgnIgG8@public.gmane.org>
+To: Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org>
+Cc: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jan 16, 2015 at 05:09:28PM +0000, Thierry Reding wrote:
-> On Fri, Jan 16, 2015 at 03:07:49PM +0000, Mark Rutland wrote:
-> > Hi Paul,
-> > 
-> > /me opens a delicious can of Lumbricus terrestris
-> > 
-> > My comments below aren't so much about this patch alone, but more about
-> > the entire strategy with drivers/soc and the kind of code living there.
-> > 
-> > On Fri, Jan 16, 2015 at 11:39:13AM +0000, Paul Walmsley wrote:
-> > > 
-> > > Add "nvidia,tegra132" as a compatible string that denotes a Tegra SoC.
-> > > 
-> > > Signed-off-by: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
-> > > Cc: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-> > > Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> > > Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> > > ---
-> > >  drivers/soc/tegra/common.c | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > > 
-> > > diff --git a/drivers/soc/tegra/common.c b/drivers/soc/tegra/common.c
-> > > index a71cb74..a952986 100644
-> > > --- a/drivers/soc/tegra/common.c
-> > > +++ b/drivers/soc/tegra/common.c
-> > > @@ -15,6 +15,7 @@ static const struct of_device_id tegra_machine_match[] = {
-> > >  	{ .compatible = "nvidia,tegra30", },
-> > >  	{ .compatible = "nvidia,tegra114", },
-> > >  	{ .compatible = "nvidia,tegra124", },
-> > > +	{ .compatible = "nvidia,tegra132", },
-> > >  	{ }
-> > >  };
-> > 
-> > I'm rather worried by this.
-> > 
-> > The only user of this table is soc_is_tegra(), which seems to guard
-> > several probe paths in drivers which are DT driven. Given that, I don't
-> > see why this is necessary at all, because the presence of the
-> > appropriate nodes should be sufficient to handle the early return from
-> > an initcall.
-> 
-> We need this to preserve backward-compatibility. There are some
-> instances where any device tree nodes that could be used to guard the
-> code execution were only added after the fact. So in order to keep
-> systems with an old DTB running we need to continue running with hard
-> coded physical addresses.
+On Fri, Jan 16, 2015 at 8:00 AM, Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org> wrote:
+> On 15 January 2015 at 19:35, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+>> Hi Tomeu,
+>>
+>> On Thu, Jan 15, 2015 at 9:11 AM, Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org> wrote:
+>>> I have seen that coreboot configures these ones differently:
+>>>
+>>> -    ('sdmmc3_clk_pa6',         'sdmmc3',      None,      'none',
+>>> False, False, False, False),
+>>> +    ('sdmmc3_clk_pa6',         'sdmmc3',      None,      'none',
+>>> False, True,  False, False),
+>>> -    ('sdmmc3_clk_lb_out_pee4', 'sdmmc3',      None,      'none',
+>>> False, False, False, False),
+>>> +    ('sdmmc3_clk_lb_out_pee4', 'sdmmc3',      None,      'down',
+>>> False, True,  False, False),
+>>> -    ('sdmmc4_cmd_pt7',         'sdmmc4',      None,      'none',
+>>> False, True,  False, False),
+>>> +    ('sdmmc4_cmd_pt7',         'sdmmc4',      None,      'up',
+>>> False, True,  False, False),
+>>> -    ('dp_hpd_pff0',            'dp',          None,      'up',
+>>> False, True,  False, False),
+>>> +    ('dp_hpd_pff0',            'dp',          None,      'none',
+>>> False, True,  False, False),
+>>>
+>>> May be good to have them match?
+>>
+>> I believe these should all be the same between Norrin (Nyan), Big, and
+>> Blaze, so I'd go with whatever is in the Norrin pinmux config (which I
+>> believe is what Simon's patch is based on).
+>
+> Even dp_hpd? In my testing I need to have pullup on big and with no
+> pull on blaze for the panel to work. I'm very weak in reading
+> schematics, but I see what I think is a pullup resistor in Big, and
+> none in Blaze.
 
-Except that you don't need them for arm64 systems, becuase we don't yet
-have that legacy for arm64...
+Maybe I'm missing something, but I don't see any difference between
+Big and Blaze with respect to dp_hpd.  Coreboot also configures them
+both with no pull.  I'll have to look into this more...
 
-> > More worryingly, if soc_is_tegra() returns true but the node isn't
-> > found, the drivers decide to do things. If tegra_pmc_early_init passes
-> > soc_is_tegra() (because we happened to match "nvidia,tegra132"), but
-> > doesn't find a DTB entry for the pmc, it then pokes an assumed
-> > hard-coded physical address.
-> 
-> And that's (currently) safe. It at least makes sure that breakage (if
-> any) is restricted to Tegra boards. There are other occurrences where
-> drivers don't even bother checking for this at all and simply use an
-> initcall to unconditionally create a platform device which then goes
-> and tries to access physical addresses on *every* board in a multi-
-> platform kernel.
+> So in summary, I think that we should make this change to the pinmux
+> definition that Simon sent:
+>
+> -    ('usb_vbus_en0_pn4',       'usb',         None,      'none',
+> False, True,  True,  False),
+> -    ('usb_vbus_en1_pn5',       'usb',         None,      'none',
+> False, True,  True,  False),
+> +    ('usb_vbus_en0_pn4',       'usb',         None,      'up',
+> False, True,  False, False),
+> +    ('usb_vbus_en1_pn5',       'usb',         None,      'up',
+> False, True,  False, False),
 
-So doing the wrong thing on a subset of boards is fine because it's not
-all boards?
-
-Imagine I make a typo in a DT for a 64-bit system, and suddnely hit
-youre legacy code. Things happen to work, because I don't botehr reading
-the splat in dmesg for whatever reason.
-
-Later we do some cleanup of the existing legacy, for whatever reason,
-and we get rid of this particular path for arm64.
-
-Suddenly my board won't boot, and to fix that we have to reintroduce
-legacy support code only because said legacy support was enabled where
-it should never have been in the first place. Another OS trying to
-target/use these DTBs has barely any chance of success.
-
-> > Assuming things because of the _lack_ of a node has been a major pain
-> > point on 32-bit as DTBs advanced and code was changed, resulting in boot
-> > breaking or DTB compatibility breaking over time as old and new kernels
-> > made conflicting assumptions.
-> 
-> So what are you saying? We can't support 64-bit ARM because we need to
-> keep backwards-compatibility with old DTBs and weren't smart enough to
-> see this through all the way three years ago?
-
-No. I'm saying that the workarounds we have in place for legacy DTBs
-should be constrained to those cases where legacy DTBs actually exist.
-There is no reason for that legacy to carry across to 64-bit.
-
-> > I don't want to see arm64 kernels making assumptions in that manner (nor
-> > would I like to see it in new code for 32-bit ARM); it always leads to
-> > boot breakage, and it's completely avoidable. The only thing we can know
-> > is what is described in the DTB.
-> 
-> I guess we could always make this conditional on 32-bit ARM. Or we could
-> decide that we don't care about DTB backwards-compatibility anymore. In
-> fact we're quite likely going to break it soon anyway because of Marc's
-> gic_arch_extn rework, so might as well start with a clean plate after
-> that...
-
-At the very least I think the soc_is_tegra stuff needs to be constrained
-to fallback paths that can only possibly run on 32-bit.
-
-> > So NAK to this addition while soc_is_tegra is in use in that way, and
-> > NAK to any DTS patches adding any of the strings that would cause
-> > soc_is_tegra to return true on arm64.
-> > 
-> > There's also the worrying pattern of initcalls that look for particular
-> > compatible strings -- why can't these use the existing DT probing
-> > infrastructure rather than rolling their own? It would be nice to not
-> > accumulate initcalls that only make sense on one platform.
-> 
-> You make it sound like the "existing DT probing infrastructure" is in
-> any way different from initcalls. Furthermore it's typically associated
-> with a specific subsystem or class of devices, so adding custom OF init
-> tables for a driver that's used on a single platform doesn't strike me
-> as something that people would be willing to merge.
-
-Fair point. 
-
-Thanks,
-Mark.
+Yes.  It ends up not mattering what the pull is when using a mainline
+DTS since they use a fixed regulator to drive these pins high, but
+you're right, the most correct thing for VBUS is input enabled with
+pull-up.
