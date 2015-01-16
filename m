@@ -1,85 +1,42 @@
-From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: Re: [PATCH v2 03/11] ARM: tegra: Set the sound card model that
- alsaucm expects
-Date: Fri, 16 Jan 2015 10:01:27 +0100
-Message-ID: <CAAObsKBKnU_wBaxNFN-buz71qL-te4s6bqrrnxao_N-TwBVkAQ@mail.gmail.com>
-References: <1421338359-27467-1-git-send-email-tomeu.vizoso@collabora.com>
- <1421338359-27467-4-git-send-email-tomeu.vizoso@collabora.com>
- <54B7F757.5060002@wwwdotorg.org> <CAAObsKCad9O_=TUQrF7fVbBvjDTmfJsLPgr+EasCyhvY+xhdHg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [patch] drm/tegra: gem: oops in error handling
+Date: Fri, 16 Jan 2015 13:43:42 +0300
+Message-ID: <20150116104342.GA4860@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAObsKCad9O_=TUQrF7fVbBvjDTmfJsLPgr+EasCyhvY+xhdHg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 16 January 2015 at 09:50, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org> wrote:
-> On 15 January 2015 at 18:22, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->> On 01/15/2015 09:12 AM, Tomeu Vizoso wrote:
->>>
->>> Patches are on its way to add a config file to alsaucm for the Nyan
->>> boards. Use the same card ID that alsaucm will expect.
->>>
->>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
->>> ---
->>>   arch/arm/boot/dts/tegra124-nyan-big.dts | 4 ++--
->>>   1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts
->>> b/arch/arm/boot/dts/tegra124-nyan-big.dts
->>> index 43e58a4..9a9cffe 100644
->>> --- a/arch/arm/boot/dts/tegra124-nyan-big.dts
->>> +++ b/arch/arm/boot/dts/tegra124-nyan-big.dts
->>> @@ -1976,9 +1976,9 @@
->>>         };
->>>
->>>         sound {
->>> -               compatible = "nvidia,tegra-audio-max98090-nyan-big",
->>> +               compatible = "nvidia,tegra-audio-max98090-nyan",
->>>                              "nvidia,tegra-audio-max98090";
->>
->>
->> If all the boards that are derived from Nyan truly have identical audio HW
->> (or at least any differences can be described by this binding), then it
->> seems fine to add "nvidia,tegra-audio-max98090-nyan" to the compatible
->> value.
->
->
->
->> However, I don't see a reason to remove the board-specific compatible value
->> "nvidia,tegra-audio-max98090-nyan-big"; we should always include all the
->> values that are relevant.
->
-> Ok.
-
-Oh, actually, my intention was to move the whole sound node to the
-nyan dtsi, as there isn't anything specific to the blaze regarding
-sound.
-
-Regards,
-
-Tomeu
-
->>> -               nvidia,model = "Acer Chromebook 13";
->>> +               nvidia,model = "GoogleNyan";
->>
->>
->> Why not just name the UCM config file after the ASoC card name that's
->> already in use? Perhaps it's not likely to be unique enough though:-(
->
-> Yeah, that would be A13, which isn't terribly useful.
->
-> Regards,
->
-> Tomeu
->
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
->> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+a2ZyZWUoRVJSX1BUUigtRU5PTUVNKSkgd2lsbCBub3Qgd29yayB2ZXJ5IHdlbGwuCgpTaWduZWQt
+b2ZmLWJ5OiBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVudGVyQG9yYWNsZS5jb20+CgpkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dlbS5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3Jh
+L2dlbS5jCmluZGV4IDg3NzdiN2YuLjI4MjE1ZTQgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2Ry
+bS90ZWdyYS9nZW0uYworKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZ2VtLmMKQEAgLTI0NCwx
+MCArMjQ0LDggQEAgc3RhdGljIGludCB0ZWdyYV9ib19nZXRfcGFnZXMoc3RydWN0IGRybV9kZXZp
+Y2UgKmRybSwgc3RydWN0IHRlZ3JhX2JvICpibykKIAlmb3JfZWFjaF9zZyhzZ3QtPnNnbCwgcywg
+c2d0LT5uZW50cywgaSkKIAkJc2dfZG1hX2FkZHJlc3MocykgPSBzZ19waHlzKHMpOwogCi0JaWYg
+KGRtYV9tYXBfc2coZHJtLT5kZXYsIHNndC0+c2dsLCBzZ3QtPm5lbnRzLCBETUFfVE9fREVWSUNF
+KSA9PSAwKSB7Ci0JCXNndCA9IEVSUl9QVFIoLUVOT01FTSk7CisJaWYgKGRtYV9tYXBfc2coZHJt
+LT5kZXYsIHNndC0+c2dsLCBzZ3QtPm5lbnRzLCBETUFfVE9fREVWSUNFKSA9PSAwKQogCQlnb3Rv
+IHJlbGVhc2Vfc2d0OwotCX0KIAogCWJvLT5zZ3QgPSBzZ3Q7CiAKQEAgLTI1Niw2ICsyNTQsNyBA
+QCBzdGF0aWMgaW50IHRlZ3JhX2JvX2dldF9wYWdlcyhzdHJ1Y3QgZHJtX2RldmljZSAqZHJtLCBz
+dHJ1Y3QgdGVncmFfYm8gKmJvKQogcmVsZWFzZV9zZ3Q6CiAJc2dfZnJlZV90YWJsZShzZ3QpOwog
+CWtmcmVlKHNndCk7CisJc2d0ID0gRVJSX1BUUigtRU5PTUVNKTsKIHB1dF9wYWdlczoKIAlkcm1f
+Z2VtX3B1dF9wYWdlcygmYm8tPmdlbSwgYm8tPnBhZ2VzLCBmYWxzZSwgZmFsc2UpOwogCXJldHVy
+biBQVFJfRVJSKHNndCk7Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
+Lm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
+dmVsCg==
