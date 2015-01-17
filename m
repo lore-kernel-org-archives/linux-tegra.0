@@ -1,49 +1,45 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] gpu: host1x: Store physical address to all bufs
-Date: Sat, 17 Jan 2015 04:43:15 +0300
-Message-ID: <54B9BE33.8010907@gmail.com>
+From: David Ung <davidu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH] gpu: host1x: Store physical address to all bufs
+Date: Sat, 17 Jan 2015 06:27:13 +0000
+Message-ID: <29d8da45d5264e9ca894689b509d68e3@HQMAIL102.nvidia.com>
 References: <1421456866-31670-1-git-send-email-davidu@nvidia.com>
+ <54B9BE33.8010907@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1421456866-31670-1-git-send-email-davidu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <54B9BE33.8010907-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: David Ung <davidu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, airlied-cv59FeDIM0c@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: 'Dmitry Osipenko' <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "airlied-cv59FeDIM0c@public.gmane.org" <airlied-cv59FeDIM0c@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-17.01.2015 04:07, David Ung =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> From: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> Signed-off-by: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->   drivers/gpu/host1x/job.c | 7 +++++--
->   1 file changed, 5 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
-> index 63bd63f..7f3cfff 100644
-> --- a/drivers/gpu/host1x/job.c
-> +++ b/drivers/gpu/host1x/job.c
-> @@ -538,9 +538,12 @@ int host1x_job_pin(struct host1x_job *job, struc=
-t device *dev)
->
->   		g->base =3D job->gather_addr_phys[i];
->
-> -		for (j =3D i + 1; j < job->num_gathers; j++)
-> -			if (job->gathers[j].bo =3D=3D g->bo)
-> +		for (j =3D i + 1; j < job->num_gathers; j++) {
-> +			if (job->gathers[j].bo =3D=3D g->bo) {
->   				job->gathers[j].handled =3D true;
-> +				job->gathers[j].base =3D g->base;
-> +			}
-> +		}
->
->   		err =3D do_relocs(job, g->bo);
->   		if (err)
->
-No commit description? Is it bugfix or optimization...
-
---=20
-Dmitry
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogRG1pdHJ5IE9zaXBlbmtv
+IFttYWlsdG86ZGlnZXR4QGdtYWlsLmNvbV0NCj4gU2VudDogRnJpZGF5LCBKYW51YXJ5IDE2LCAy
+MDE1IDU6NDMgUE0NCj4gVG86IERhdmlkIFVuZzsgYWlybGllZEBsaW51eC5pZQ0KPiBDYzogbGlu
+dXgtdGVncmFAdmdlci5rZXJuZWwub3JnOyB0aGllcnJ5LnJlZGluZ0BnbWFpbC5jb207IFRlcmpl
+DQo+IEJlcmdzdHJvbTsgc3dhcnJlbkB3d3dkb3Rvcmcub3JnOyBBcnRvIE1lcmlsYWluZW4NCj4g
+U3ViamVjdDogUmU6IFtQQVRDSF0gZ3B1OiBob3N0MXg6IFN0b3JlIHBoeXNpY2FsIGFkZHJlc3Mg
+dG8gYWxsIGJ1ZnMNCj4gDQo+IDE3LjAxLjIwMTUgMDQ6MDcsIERhdmlkIFVuZyDQv9C40YjQtdGC
+Og0KPiA+IEZyb206IEFydG8gTWVyaWxhaW5lbiA8YW1lcmlsYWluZW5AbnZpZGlhLmNvbT4NCj4g
+Pg0KPiA+IFNpZ25lZC1vZmYtYnk6IEFydG8gTWVyaWxhaW5lbiA8YW1lcmlsYWluZW5AbnZpZGlh
+LmNvbT4NCj4gPiAtLS0NCj4gPiAgIGRyaXZlcnMvZ3B1L2hvc3QxeC9qb2IuYyB8IDcgKysrKyst
+LQ0KPiA+ICAgMSBmaWxlIGNoYW5nZWQsIDUgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkN
+Cj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9ob3N0MXgvam9iLmMgYi9kcml2ZXJz
+L2dwdS9ob3N0MXgvam9iLmMgaW5kZXgNCj4gPiA2M2JkNjNmLi43ZjNjZmZmIDEwMDY0NA0KPiA+
+IC0tLSBhL2RyaXZlcnMvZ3B1L2hvc3QxeC9qb2IuYw0KPiA+ICsrKyBiL2RyaXZlcnMvZ3B1L2hv
+c3QxeC9qb2IuYw0KPiA+IEBAIC01MzgsOSArNTM4LDEyIEBAIGludCBob3N0MXhfam9iX3Bpbihz
+dHJ1Y3QgaG9zdDF4X2pvYiAqam9iLCBzdHJ1Y3QNCj4gPiBkZXZpY2UgKmRldikNCj4gPg0KPiA+
+ICAgCQlnLT5iYXNlID0gam9iLT5nYXRoZXJfYWRkcl9waHlzW2ldOw0KPiA+DQo+ID4gLQkJZm9y
+IChqID0gaSArIDE7IGogPCBqb2ItPm51bV9nYXRoZXJzOyBqKyspDQo+ID4gLQkJCWlmIChqb2It
+PmdhdGhlcnNbal0uYm8gPT0gZy0+Ym8pDQo+ID4gKwkJZm9yIChqID0gaSArIDE7IGogPCBqb2It
+Pm51bV9nYXRoZXJzOyBqKyspIHsNCj4gPiArCQkJaWYgKGpvYi0+Z2F0aGVyc1tqXS5ibyA9PSBn
+LT5ibykgew0KPiA+ICAgCQkJCWpvYi0+Z2F0aGVyc1tqXS5oYW5kbGVkID0gdHJ1ZTsNCj4gPiAr
+CQkJCWpvYi0+Z2F0aGVyc1tqXS5iYXNlID0gZy0+YmFzZTsNCj4gPiArCQkJfQ0KPiA+ICsJCX0N
+Cj4gPg0KPiA+ICAgCQllcnIgPSBkb19yZWxvY3Moam9iLCBnLT5ibyk7DQo+ID4gICAJCWlmIChl
+cnIpDQo+ID4NCj4gTm8gY29tbWl0IGRlc2NyaXB0aW9uPyBJcyBpdCBidWdmaXggb3Igb3B0aW1p
+emF0aW9uLi4uDQoNClNvcnJ5IHRoaXMgaXMgYWN0dWFsbHkgYSBwYXJ0IG9mIHRoZSBzZXJpZXMg
+b2YgcGF0Y2hlcyB0aGF0IGFkZHMgb3RoZXIgaG9zdDF4IGNsaWVudHMuICBTbyBpdHMgbW9yZSBs
+aWtlIGEgZmVhdHVyZXMgcGF0Y2guDQpJIHNoYWxsIHBvc3QgdGhpcyBhcyBwYXJ0IG9mIGEgc2Vy
+aWVzLCBzbyBwbGVhc2UgaWdub3JlIHRoaXMgZm9yIG5vdy4NCg0KRGF2aWQNCg==
