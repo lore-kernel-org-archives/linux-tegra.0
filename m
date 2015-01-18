@@ -1,45 +1,78 @@
-From: David Ung <davidu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH] gpu: host1x: Store physical address to all bufs
-Date: Sat, 17 Jan 2015 06:27:13 +0000
-Message-ID: <29d8da45d5264e9ca894689b509d68e3@HQMAIL102.nvidia.com>
-References: <1421456866-31670-1-git-send-email-davidu@nvidia.com>
- <54B9BE33.8010907@gmail.com>
+From: Misha Komarovsky <zombah-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: Tegra baseline test results for v3.19-rc4
+Date: Sun, 18 Jan 2015 16:45:35 +0400
+Message-ID: <CANLc0-aWQPhETG0NiNOg6qMnoZO+kPX83kroMW1vsYRW8-Spaw@mail.gmail.com>
+References: <54B44605.1010200@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <54B9BE33.8010907-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <54B44605.1010200-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Dmitry Osipenko' <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "airlied-cv59FeDIM0c@public.gmane.org" <airlied-cv59FeDIM0c@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogRG1pdHJ5IE9zaXBlbmtv
-IFttYWlsdG86ZGlnZXR4QGdtYWlsLmNvbV0NCj4gU2VudDogRnJpZGF5LCBKYW51YXJ5IDE2LCAy
-MDE1IDU6NDMgUE0NCj4gVG86IERhdmlkIFVuZzsgYWlybGllZEBsaW51eC5pZQ0KPiBDYzogbGlu
-dXgtdGVncmFAdmdlci5rZXJuZWwub3JnOyB0aGllcnJ5LnJlZGluZ0BnbWFpbC5jb207IFRlcmpl
-DQo+IEJlcmdzdHJvbTsgc3dhcnJlbkB3d3dkb3Rvcmcub3JnOyBBcnRvIE1lcmlsYWluZW4NCj4g
-U3ViamVjdDogUmU6IFtQQVRDSF0gZ3B1OiBob3N0MXg6IFN0b3JlIHBoeXNpY2FsIGFkZHJlc3Mg
-dG8gYWxsIGJ1ZnMNCj4gDQo+IDE3LjAxLjIwMTUgMDQ6MDcsIERhdmlkIFVuZyDQv9C40YjQtdGC
-Og0KPiA+IEZyb206IEFydG8gTWVyaWxhaW5lbiA8YW1lcmlsYWluZW5AbnZpZGlhLmNvbT4NCj4g
-Pg0KPiA+IFNpZ25lZC1vZmYtYnk6IEFydG8gTWVyaWxhaW5lbiA8YW1lcmlsYWluZW5AbnZpZGlh
-LmNvbT4NCj4gPiAtLS0NCj4gPiAgIGRyaXZlcnMvZ3B1L2hvc3QxeC9qb2IuYyB8IDcgKysrKyst
-LQ0KPiA+ICAgMSBmaWxlIGNoYW5nZWQsIDUgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkN
-Cj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9ob3N0MXgvam9iLmMgYi9kcml2ZXJz
-L2dwdS9ob3N0MXgvam9iLmMgaW5kZXgNCj4gPiA2M2JkNjNmLi43ZjNjZmZmIDEwMDY0NA0KPiA+
-IC0tLSBhL2RyaXZlcnMvZ3B1L2hvc3QxeC9qb2IuYw0KPiA+ICsrKyBiL2RyaXZlcnMvZ3B1L2hv
-c3QxeC9qb2IuYw0KPiA+IEBAIC01MzgsOSArNTM4LDEyIEBAIGludCBob3N0MXhfam9iX3Bpbihz
-dHJ1Y3QgaG9zdDF4X2pvYiAqam9iLCBzdHJ1Y3QNCj4gPiBkZXZpY2UgKmRldikNCj4gPg0KPiA+
-ICAgCQlnLT5iYXNlID0gam9iLT5nYXRoZXJfYWRkcl9waHlzW2ldOw0KPiA+DQo+ID4gLQkJZm9y
-IChqID0gaSArIDE7IGogPCBqb2ItPm51bV9nYXRoZXJzOyBqKyspDQo+ID4gLQkJCWlmIChqb2It
-PmdhdGhlcnNbal0uYm8gPT0gZy0+Ym8pDQo+ID4gKwkJZm9yIChqID0gaSArIDE7IGogPCBqb2It
-Pm51bV9nYXRoZXJzOyBqKyspIHsNCj4gPiArCQkJaWYgKGpvYi0+Z2F0aGVyc1tqXS5ibyA9PSBn
-LT5ibykgew0KPiA+ICAgCQkJCWpvYi0+Z2F0aGVyc1tqXS5oYW5kbGVkID0gdHJ1ZTsNCj4gPiAr
-CQkJCWpvYi0+Z2F0aGVyc1tqXS5iYXNlID0gZy0+YmFzZTsNCj4gPiArCQkJfQ0KPiA+ICsJCX0N
-Cj4gPg0KPiA+ICAgCQllcnIgPSBkb19yZWxvY3Moam9iLCBnLT5ibyk7DQo+ID4gICAJCWlmIChl
-cnIpDQo+ID4NCj4gTm8gY29tbWl0IGRlc2NyaXB0aW9uPyBJcyBpdCBidWdmaXggb3Igb3B0aW1p
-emF0aW9uLi4uDQoNClNvcnJ5IHRoaXMgaXMgYWN0dWFsbHkgYSBwYXJ0IG9mIHRoZSBzZXJpZXMg
-b2YgcGF0Y2hlcyB0aGF0IGFkZHMgb3RoZXIgaG9zdDF4IGNsaWVudHMuICBTbyBpdHMgbW9yZSBs
-aWtlIGEgZmVhdHVyZXMgcGF0Y2guDQpJIHNoYWxsIHBvc3QgdGhpcyBhcyBwYXJ0IG9mIGEgc2Vy
-aWVzLCBzbyBwbGVhc2UgaWdub3JlIHRoaXMgZm9yIG5vdy4NCg0KRGF2aWQNCg==
+Hello Paul,
+Is it possible to include any tegra20 target to your baseline tests?
+3.19 introduced couple boot stoppers for me with tegra_defcofig on
+tegra20-paz00 hardware.
+
+On Tue, Jan 13, 2015 at 1:09 AM, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> Here are some basic Tegra test results for Linux v3.19-rc4.
+> Logs and other details at:
+>
+>     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.19-rc4/20150111130104/
+>
+>
+> Test summary
+> ------------
+>
+> Build: zImage:
+>     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+>
+> Boot to userspace: multi_v7_defconfig:
+>     Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
+>                    tegra30-beaver
+>
+> Boot to userspace: tegra_defconfig:
+>     Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
+>                    tegra30-beaver
+>
+>
+> vmlinux object size
+> (delta in bytes from test_v3.19-rc3
+> (b1940cd21c0f4abdce101253e860feff547291b0)):
+>    text     data      bss    total  kernel
+>    +880     +120        0    +1000  multi_v7_defconfig
+>    +448        0        0     +448  tegra_defconfig
+>
+>
+> Boot-time memory difference
+> (delta in bytes from test_v3.19-rc3
+> (b1940cd21c0f4abdce101253e860feff547291b0))
+>     avail    rsrvd     high    freed                board
+> kconfig                  dtb
+>         .        .        .      -4k tegra114-dalmore-a04
+> multi_v7_defconfig     tegra114-dalmore
+>         .        .        .        . tegra114-dalmore-a04
+> tegra_defconfig     tegra114-dalmore
+>         .        .        .      -4k  tegra124-jetson-tk1
+> multi_v7_defconfig  tegra124-jetson-tk1
+>         .        .        .        .  tegra124-jetson-tk1
+> tegra_defconfig  tegra124-jetson-tk1
+>         .        .        .      -4k       tegra30-beaver
+> multi_v7_defconfig       tegra30-beaver
+>         .        .        .        .       tegra30-beaver
+> tegra_defconfig       tegra30-beaver
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+Best Regards,
+Misha Komarovskiy
+zombahatgmaildotcom
