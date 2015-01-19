@@ -1,50 +1,40 @@
-From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v3.19-rc5
-Date: Sun, 18 Jan 2015 19:24:54 -0700
-Message-ID: <54BC6AF6.6010407@nvidia.com>
+From: Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: tegra: add Acer Chromebook 13 device tree
+Date: Mon, 19 Jan 2015 10:01:49 +0100
+Message-ID: <CAAObsKA9EgdmqAe8JxJ=8nKJy6MsenHv8cpDO6fBiutBtgEpGw@mail.gmail.com>
+References: <1407894967-18300-1-git-send-email-dgreid@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1407894967-18300-1-git-send-email-dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+To: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v3.19-rc5.
-Logs and other details at:
+On 13 August 2014 at 03:56, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+> The Acer Chromebook 13, codenamed "Big", contains an NVIDIA tegra124
+> processor and is similar to the Venice2 reference platform.
+>
+> The keyboard, USB 2, audio, HDMI, sdcard and emmc have been tested
+> and work on the 1366x768 models.  I haven't tried on the HD systems
+> yet.
+>
+> WiFi does not yet work, it needs at least some PMIC changes to enable
+> the 32k clock.
+>
+> The elan trackpad is not yet functional but hopefully will be soon as
+> there are patches under review.
+>
+> There is also an issue on reboot because the TPM isn't reset.  It will
+> cause the stock firmware to enter recovery mode.  This can be worked
+> around by an EC-reset, press refresh and power at the same time.
 
-     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.19-rc5/20150118174923/
+Hi Dylan,
 
+do you have any more information regarding this problem that could
+save me some investigation?
 
-Test summary
-------------
+Thanks,
 
-Build: zImage:
-     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
-
-Boot to userspace: multi_v7_defconfig:
-     Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-     Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra30-beaver
-
-
-vmlinux object size
-(delta in bytes from test_v3.19-rc4 (eaa27f34e91a14cdceed26ed6c6793ec1d186115)):
-    text     data      bss    total  kernel
-   +1808     +416        0    +2224  multi_v7_defconfig
-   +1188      +96        0    +1284  tegra_defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v3.19-rc4 (eaa27f34e91a14cdceed26ed6c6793ec1d186115))
-     avail    rsrvd     high    freed                board              kconfig                  dtb
-       -8k       8k        .       8k tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-         .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-       -8k       8k        .       8k  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-         .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-       -8k       8k        .       8k       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-         .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+Tomeu
