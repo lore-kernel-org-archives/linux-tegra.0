@@ -1,72 +1,59 @@
 From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [Linux-kernel] [PATCH 3/4] ARM: tegra: enable big-endian support
-Date: Mon, 19 Jan 2015 18:08:29 +0300
-Message-ID: <54BD1DED.9020308@gmail.com>
-References: <1420817231-8346-1-git-send-email-bob.mottram@codethink.co.uk> <1420817231-8346-4-git-send-email-bob.mottram@codethink.co.uk> <54AFF7E6.9030308@gmail.com> <54B0017E.2060509@codethink.co.uk> <54B0028C.8050802@gmail.com> <54B00C58.3070303@codethink.co.uk> <54B40C99.4020907@gmail.com> <54BD141F.7070803@codethink.co.uk>
+Subject: Re: [PATCH] ARM: tegra20: Store CPU "resettable" status in IRAM
+Date: Mon, 19 Jan 2015 18:14:30 +0300
+Message-ID: <54BD1F56.1010209@gmail.com>
+References: <1421319545-23920-1-git-send-email-digetx@gmail.com> <1421319545-23920-2-git-send-email-digetx@gmail.com> <20150119141224.GF23778@ulmo.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8;
 	format=flowed
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <54BD141F.7070803-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
+In-Reply-To: <20150119141224.GF23778-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bob Mottram <bob.mottram-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-kernel-81qHHgoATdFT9dQujB1mzip2UmYkHbXO@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-19.01.2015 17:26, Bob Mottram =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> On 12/01/15 18:04, Dmitry Osipenko wrote:
->> 09.01.2015 20:14, Ben Dooks =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>> On 09/01/15 16:32, Dmitry Osipenko wrote:
->>>> 09.01.2015 19:27, Bob Mottram =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>> On 09/01/15 15:46, Dmitry Osipenko wrote:
->>>>>> What about suspend/cpuidle? Won't it make sense to set BE mode i=
-n
->>>>>> reset handler?
->>>>>
->>>>> I did try adding:
->>>>>
->>>>>       ARM_BE8(setend    be)
->>>>>
->>>>> to the entry point within reset-handler.S, but to no avail. There=
- are
->>>>> definitely problems with suspend, which currently I can work arou=
-nd by
->>>>> turning off ARCH_SUSPEND_POSSIBLE. More investigation is going to=
- be
->>>>> needed to get the sleep/suspend working.
->>>>>
->>>>
->>>> Yeah, just noticed that it mentioned in cover letter.
->>>
->>> I had a look through the code and it was not easy to work out what
->>> was going on so skipped over it. We decided to leave it out of the
->>> initial submission as we can get a workable system without suspend.
->>>
->>> The suspend/resume code does make accesses to registers, and all
->>> these will need to be found and have the correct endian conversion
->>> done (stores will be in big-endian but the hardware registers stay
->>> little endian)
->>>
->> I fixed cpuidle and suspend for tegra2, it involved fixing reset
->> handler, sleep and l2 cache resume asm code. Also fixed tegra timer =
-and
->> i2c drivers in order to get booting. Unfortunately I don't have tegr=
-a3
->> hw nor support for it in QEMU, however cpuidle should work I suppose=
-=2E
->> I'll post patches later.
+19.01.2015 17:12, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> On Thu, Jan 15, 2015 at 01:58:57PM +0300, Dmitry Osipenko wrote:
+>> Commit 7232398abc6a ("ARM: tegra: Convert PMC to a driver") changed =
+tegra_resume()
+>> location storing from late to early and, as a result, broke suspend =
+on Tegra20.
+>> PMC scratch register 41 is used by tegra LP1 resume code for retriev=
+ing stored
+>> physical memory address of common resume function and in the same ti=
+me used by
+>> tegra20_cpu_shutdown() (shared by Tegra20 cpuidle driver and platfor=
+m SMP code),
+>> which is storing CPU1 "resettable" status. It implies strict order o=
+f scratch
+>> register usage, otherwise resume function address is lost on Tegra20=
+ after
+>> disabling non-boot CPU's on suspend. Fix it by storing "resettable" =
+status in
+>> IRAM instead of PMC scratch register.
 >>
->> https://dl.dropboxusercontent.com/u/3913472/IMG_20150112_202034.jpg
+>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> Fixes: 7232398abc6a (ARM: tegra: Convert PMC to a driver)
+>> Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org> # v3.17+
+>> ---
+>>   arch/arm/mach-tegra/cpuidle-tegra20.c |  5 ++---
+>>   arch/arm/mach-tegra/reset-handler.S   | 10 +++++++---
+>>   arch/arm/mach-tegra/reset.h           |  4 ++++
+>>   arch/arm/mach-tegra/sleep-tegra20.S   | 37 ++++++++++++++++++++---=
+------------
+>>   arch/arm/mach-tegra/sleep.h           |  4 ++++
+>>   5 files changed, 38 insertions(+), 22 deletions(-)
 >
-> Nice. Do you have a patch for those fixes?
+> I'm leaning towards applying this. Stephen, Alex, Peter: any objectio=
+ns?
 >
-Sorry for delay. I have patches locally, need to prepare them. I think =
-some arch=20
-code needs to be cleaned first, so it might be some more work. Planning=
- to send=20
-this week.
-
+> Thierry
+>
+Btw, I'm preparing cleanup for cpuidle and hotplug code. So this asm "u=
+gliness"=20
+should go away.
 
 --=20
 Dmitry
