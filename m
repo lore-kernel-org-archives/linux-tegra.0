@@ -1,96 +1,48 @@
-From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: Re: [PATCH v2 03/11] ARM: tegra: Set the sound card model that
- alsaucm expects
-Date: Mon, 19 Jan 2015 18:11:14 +0100
-Message-ID: <CAAObsKBm5mesGqrLQnveKQMy__uEOU1vcLGptnKxqHjV-T9C0g@mail.gmail.com>
-References: <1421338359-27467-1-git-send-email-tomeu.vizoso@collabora.com>
- <1421338359-27467-4-git-send-email-tomeu.vizoso@collabora.com>
- <54B7F757.5060002@wwwdotorg.org> <CAAObsKCad9O_=TUQrF7fVbBvjDTmfJsLPgr+EasCyhvY+xhdHg@mail.gmail.com>
- <CAAObsKBKnU_wBaxNFN-buz71qL-te4s6bqrrnxao_N-TwBVkAQ@mail.gmail.com> <54BD3A75.80009@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra20: Store CPU "resettable" status in IRAM
+Date: Mon, 19 Jan 2015 10:26:22 -0700
+Message-ID: <54BD3E3E.2040801@wwwdotorg.org>
+References: <1421319545-23920-1-git-send-email-digetx@gmail.com> <1421319545-23920-2-git-send-email-digetx@gmail.com> <20150119141224.GF23778@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <54BD3A75.80009-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20150119141224.GF23778-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 19 January 2015 at 18:10, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 01/16/2015 02:01 AM, Tomeu Vizoso wrote:
+On 01/19/2015 07:12 AM, Thierry Reding wrote:
+> On Thu, Jan 15, 2015 at 01:58:57PM +0300, Dmitry Osipenko wrote:
+>> Commit 7232398abc6a ("ARM: tegra: Convert PMC to a driver") changed tegra_resume()
+>> location storing from late to early and, as a result, broke suspend on Tegra20.
+>> PMC scratch register 41 is used by tegra LP1 resume code for retrieving stored
+>> physical memory address of common resume function and in the same time used by
+>> tegra20_cpu_shutdown() (shared by Tegra20 cpuidle driver and platform SMP code),
+>> which is storing CPU1 "resettable" status. It implies strict order of scratch
+>> register usage, otherwise resume function address is lost on Tegra20 after
+>> disabling non-boot CPU's on suspend. Fix it by storing "resettable" status in
+>> IRAM instead of PMC scratch register.
 >>
->> On 16 January 2015 at 09:50, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
->> wrote:
->>>
->>> On 15 January 2015 at 18:22, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
->>> wrote:
->>>>
->>>> On 01/15/2015 09:12 AM, Tomeu Vizoso wrote:
->>>>>
->>>>>
->>>>> Patches are on its way to add a config file to alsaucm for the Nyan
->>>>> boards. Use the same card ID that alsaucm will expect.
->>>>>
->>>>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
->>>>> ---
->>>>>    arch/arm/boot/dts/tegra124-nyan-big.dts | 4 ++--
->>>>>    1 file changed, 2 insertions(+), 2 deletions(-)
->>>>>
->>>>> diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts
->>>>> b/arch/arm/boot/dts/tegra124-nyan-big.dts
->>>>> index 43e58a4..9a9cffe 100644
->>>>> --- a/arch/arm/boot/dts/tegra124-nyan-big.dts
->>>>> +++ b/arch/arm/boot/dts/tegra124-nyan-big.dts
->>>>> @@ -1976,9 +1976,9 @@
->>>>>          };
->>>>>
->>>>>          sound {
->>>>> -               compatible = "nvidia,tegra-audio-max98090-nyan-big",
->>>>> +               compatible = "nvidia,tegra-audio-max98090-nyan",
->>>>>                               "nvidia,tegra-audio-max98090";
->>>>
->>>>
->>>>
->>>> If all the boards that are derived from Nyan truly have identical audio
->>>> HW
->>>> (or at least any differences can be described by this binding), then it
->>>> seems fine to add "nvidia,tegra-audio-max98090-nyan" to the compatible
->>>> value.
->>>
->>>
->>>
->>>
->>>> However, I don't see a reason to remove the board-specific compatible
->>>> value
->>>> "nvidia,tegra-audio-max98090-nyan-big"; we should always include all the
->>>> values that are relevant.
->>>
->>>
->>> Ok.
->>
->>
->> Oh, actually, my intention was to move the whole sound node to the
->> nyan dtsi, as there isn't anything specific to the blaze regarding
->> sound.
+>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> Fixes: 7232398abc6a (ARM: tegra: Convert PMC to a driver)
+>> Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org> # v3.17+
+>> ---
+>>   arch/arm/mach-tegra/cpuidle-tegra20.c |  5 ++---
+>>   arch/arm/mach-tegra/reset-handler.S   | 10 +++++++---
+>>   arch/arm/mach-tegra/reset.h           |  4 ++++
+>>   arch/arm/mach-tegra/sleep-tegra20.S   | 37 ++++++++++++++++++++---------------
+>>   arch/arm/mach-tegra/sleep.h           |  4 ++++
+>>   5 files changed, 38 insertions(+), 22 deletions(-)
 >
->
-> There are zero differences between the sound circuits of the boards? If so,
-> that sounds fine. I suppose if we do need to apply a quirk to one board but
-> not the other, we can always fall back on the top-level compatible value if
-> we absolutely have to.
+> I'm leaning towards applying this. Stephen, Alex, Peter: any objections?
 
-Yeah, this is what Dylan said in other thread:
+Hopefully this works out. I suppose it's unlikely anyone will be running 
+code on the AVP upstrem, so any potential conflict with AVP's usage of 
+IRAM isn't likely to occur.
 
-"ChromeOS uses one config for both.  The only audio difference between
-these two boards is the speakers, that isn't represented in UCM, so
-one config file is fine."
-
-Regards,
-
-Tomeu
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+__tegra20_cpu1_resettable_status_offset has a lot of _ at the start. 
+Should the symbol be named more normally? I guess at least it's 
+consistent with the existing very "underscory" 
+__tegra_cpu_reset_handler_start.
