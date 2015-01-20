@@ -1,127 +1,48 @@
-From: Mike Turquette <mturquette@linaro.org>
+From: Rob Clark <robdclark@gmail.com>
 Subject: Re: [PATCH 01/36] clk: Introduce clk_try_parent()
-Date: Tue, 20 Jan 2015 10:02:47 -0800
-Message-ID: <20150120180247.22722.92597@quantum>
+Date: Tue, 20 Jan 2015 13:16:16 -0500
+Message-ID: <CAF6AEGsPGCAHxqqRR7wWGxbiuS1HwTxF8fMb=VaL8T_qj85=TQ@mail.gmail.com>
 References: <1421750935-4023-1-git-send-email-thierry.reding@gmail.com>
  <1421750935-4023-2-git-send-email-thierry.reding@gmail.com>
+ <20150120180247.22722.92597@quantum>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1421750935-4023-2-git-send-email-thierry.reding@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, dri-devel@lists.freedesktop.org
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Stephen Boyd <sboyd@codeaurora.org>
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20150120180247.22722.92597@quantum>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Mike Turquette <mturquette@linaro.org>
+Cc: Russell King <linux@arm.linux.org.uk>, Stephen Boyd <sboyd@codeaurora.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Thierry Reding (2015-01-20 02:48:20)
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> This new function is similar to clk_set_parent(), except that it doesn't
-> actually change the parent. It merely checks that the given parent clock
-> can be a parent for the given clock.
-> 
-> A situation where this is useful is to check that a particular setup is
-> valid before switching to it. One specific use-case for this is atomic
-> modesetting in the DRM framework where setting a mode is divided into a
-> check phase where a given configuration is validated before applying
-> changes to the hardware.
-
-Can you describe why this was needed for your atomic modesetting work?
-What problem did you hit in the driver that required this new check?
-
-Thanks,
-Mike
-
-> 
-> Cc: Russell King <linux@arm.linux.org.uk>
-> Cc: Mike Turquette <mturquette@linaro.org>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  drivers/clk/clk.c   | 36 ++++++++++++++++++++++++++++++++++++
->  include/linux/clk.h | 14 ++++++++++++++
->  2 files changed, 50 insertions(+)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index af06b7377d37..297910815dea 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1672,6 +1672,42 @@ void __clk_reparent(struct clk *clk, struct clk *new_parent)
->  }
->  
->  /**
-> + * clk_try_parent - check if a clock can be the parent clock source of another
-> + * @clk: clock source
-> + * @parent: parent clock source
-> + *
-> + * This is like clk_set_parent(), except that it only checks that parent can
-> + * be the parent clock source for clock.
-> + *
-> + * Returns success (0) or negative errno.
-> + */
-> +int clk_try_parent(struct clk *clk, struct clk *parent)
-> +{
-> +       int err = 0;
-> +
-> +       if (!clk || !parent)
-> +               return -EINVAL;
-> +
-> +       if ((clk->num_parents > 1) && !clk->ops->set_parent)
-> +               return -ENOSYS;
-> +
-> +       clk_prepare_lock();
-> +
-> +       if (clk->parent == parent)
-> +               goto unlock;
-> +
-> +       err = clk_fetch_parent_index(clk, parent);
-> +       if (err > 0)
-> +               err = 0;
-> +
-> +unlock:
-> +       clk_prepare_unlock();
-> +
-> +       return err;
-> +}
-> +EXPORT_SYMBOL_GPL(clk_try_parent);
-> +
-> +/**
->   * clk_set_parent - switch the parent of a mux clk
->   * @clk: the mux clk whose input we are switching
->   * @parent: the new input to clk
-> diff --git a/include/linux/clk.h b/include/linux/clk.h
-> index fb1ac65f127c..94da8c68a515 100644
-> --- a/include/linux/clk.h
-> +++ b/include/linux/clk.h
-> @@ -328,6 +328,15 @@ long clk_round_rate(struct clk *clk, unsigned long rate);
->  int clk_set_rate(struct clk *clk, unsigned long rate);
->  
->  /**
-> + * clk_try_parent - check if a clock can be the parent clock source of another
-> + * @clk: clock source
-> + * @parent: parent clock source
-> + *
-> + * Returns success (0) or negative errno.
-> + */
-> +int clk_try_parent(struct clk *clk, struct clk *parent);
-> +
-> +/**
->   * clk_set_parent - set the parent clock source for this clock
->   * @clk: clock source
->   * @parent: parent clock source
-> @@ -400,6 +409,11 @@ static inline long clk_round_rate(struct clk *clk, unsigned long rate)
->         return 0;
->  }
->  
-> +static inline int clk_try_parent(struct clk *clk, struct clk *parent)
-> +{
-> +       return 0;
-> +}
-> +
->  static inline int clk_set_parent(struct clk *clk, struct clk *parent)
->  {
->         return 0;
-> -- 
-> 2.1.3
-> 
+T24gVHVlLCBKYW4gMjAsIDIwMTUgYXQgMTowMiBQTSwgTWlrZSBUdXJxdWV0dGUgPG10dXJxdWV0
+dGVAbGluYXJvLm9yZz4gd3JvdGU6Cj4gUXVvdGluZyBUaGllcnJ5IFJlZGluZyAoMjAxNS0wMS0y
+MCAwMjo0ODoyMCkKPj4gRnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4K
+Pj4KPj4gVGhpcyBuZXcgZnVuY3Rpb24gaXMgc2ltaWxhciB0byBjbGtfc2V0X3BhcmVudCgpLCBl
+eGNlcHQgdGhhdCBpdCBkb2Vzbid0Cj4+IGFjdHVhbGx5IGNoYW5nZSB0aGUgcGFyZW50LiBJdCBt
+ZXJlbHkgY2hlY2tzIHRoYXQgdGhlIGdpdmVuIHBhcmVudCBjbG9jawo+PiBjYW4gYmUgYSBwYXJl
+bnQgZm9yIHRoZSBnaXZlbiBjbG9jay4KPj4KPj4gQSBzaXR1YXRpb24gd2hlcmUgdGhpcyBpcyB1
+c2VmdWwgaXMgdG8gY2hlY2sgdGhhdCBhIHBhcnRpY3VsYXIgc2V0dXAgaXMKPj4gdmFsaWQgYmVm
+b3JlIHN3aXRjaGluZyB0byBpdC4gT25lIHNwZWNpZmljIHVzZS1jYXNlIGZvciB0aGlzIGlzIGF0
+b21pYwo+PiBtb2Rlc2V0dGluZyBpbiB0aGUgRFJNIGZyYW1ld29yayB3aGVyZSBzZXR0aW5nIGEg
+bW9kZSBpcyBkaXZpZGVkIGludG8gYQo+PiBjaGVjayBwaGFzZSB3aGVyZSBhIGdpdmVuIGNvbmZp
+Z3VyYXRpb24gaXMgdmFsaWRhdGVkIGJlZm9yZSBhcHBseWluZwo+PiBjaGFuZ2VzIHRvIHRoZSBo
+YXJkd2FyZS4KPgo+IENhbiB5b3UgZGVzY3JpYmUgd2h5IHRoaXMgd2FzIG5lZWRlZCBmb3IgeW91
+ciBhdG9taWMgbW9kZXNldHRpbmcgd29yaz8KPiBXaGF0IHByb2JsZW0gZGlkIHlvdSBoaXQgaW4g
+dGhlIGRyaXZlciB0aGF0IHJlcXVpcmVkIHRoaXMgbmV3IGNoZWNrPwoKSW4gcGFydGljdWxhciwg
+Zm9yIGFuIGFzeW5jIGF0b21pYyB1cGRhdGUsIHdlIG5lZWQgdG8gZG8gZXZlcnl0aGluZwp0aGF0
+IG1heSBwb3RlbnRpYWxseSBmYWlsIHVwIGZyb250IGJlZm9yZSByZXR1cm5pbmcgdG8gdXNlcnNw
+YWNlLgpBZGRpdGlvbmFsbHkgdGhlcmUgaXMgYSAndGVzdG9ubHknIGZsYWcgc28gdGhhdCB1c2Vy
+c3BhY2UgY2FuIGFzayBpZiBhCnBhcnRpY3VsYXIgZGlzcGxheSBjb25maWd1cmF0aW9uIGlzIHBv
+c3NpYmxlLgoKQlIsCi1SCgo+IFRoYW5rcywKPiBNaWtlCj4KX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
+ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
+bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
