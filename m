@@ -1,101 +1,69 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 00/36] drm/tegra: Atomic mode-setting conversion
-Date: Tue, 20 Jan 2015 11:48:19 +0100
-Message-ID: <1421750935-4023-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH 04/36] drm/atomic: Add ->atomic_check() to encoder helpers
+Date: Tue, 20 Jan 2015 11:48:23 +0100
+Message-ID: <1421750935-4023-5-git-send-email-thierry.reding@gmail.com>
+References: <1421750935-4023-1-git-send-email-thierry.reding@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1421750935-4023-1-git-send-email-thierry.reding@gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-This series converts the Tegra DRM driver to atomic mode-setting. The
-size of the is somewhat misleading, because a bunch of preparatory work
-is included.
-
-The first patch adds a new function to the clk API that allows checking
-that setting a parent clock can succeed. This is needed to make sure an
-atomic state can be applied before actually making any changes to the
-hardware.
-
-Patch 2 makes the plane's ->atomic_update() callback mandatory because
-there is no use-case in which it makes sense to omit it.
-
-Patches 3 and 4 add additional callbacks for planes and encoders, which
-are needed by subsequent patches.
-
-Patch 5 adds a helper to obtain the state of the CRTC that a plane is
-being attached to. This is non-trivial, so a new helper is warranted.
-
-Patches 6 to 21 are preparatory work and cleanup needed to simplify the
-atomic mode-setting transition.
-
-Patches 22 to 32 are the actual conversion to atomic mode-setting. This
-is followed-up by patch 33 removing now unused code. Patches 34 and 35
-use the ->atomic_check() callbacks to store data that can be reused at
-the commit stage to avoid having to recompute it. Finally patch 36 can
-now move some duplicate code from the output drivers to the display
-controller.
-
-Thierry
-
-Thierry Reding (36):
-  clk: Introduce clk_try_parent()
-  drm/plane: Make ->atomic_update() mandatory
-  drm/plane: Add optional ->atomic_disable() callback
-  drm/atomic: Add ->atomic_check() to encoder helpers
-  drm/atomic: Add drm_atomic_plane_get_crtc_state()
-  drm/tegra: Use tegra_commit_dc() in output drivers
-  drm/tegra: Stop CRTC at CRTC disable time
-  drm/tegra: dc: Wait for idle when disabled
-  drm/tegra: Move tegra_drm_mode_funcs to the core
-  drm/tegra: dc: No longer disable planes at CRTC disable
-  drm/tegra: Convert output midlayer to helpers
-  drm/tegra: output: Make ->setup_clock() optional
-  drm/tegra: Add tegra_dc_setup_clock() helper
-  drm/tegra: rgb: Demidlayer
-  drm/tegra: hdmi: Demidlayer
-  drm/tegra: dsi: Demidlayer
-  drm/tegra: sor: Demidlayer
-  drm/tegra: debugfs cleanup cannot fail
-  drm/tegra: Remove remnants of the output midlayer
-  drm/tegra: Output cleanup functions cannot fail
-  drm/tegra: dc: Do not needlessly deassert reset
-  drm/tegra: Atomic conversion, phase 1
-  drm/tegra: Atomic conversion, phase 2
-  drm/tegra: Atomic conversion, phase 3, step 1
-  drm/tegra: dc: Store clock setup in atomic state
-  drm/tegra: rgb: Implement ->atomic_check()
-  drm/tegra: dsi: Implement ->atomic_check()
-  drm/tegra: hdmi: Implement ->atomic_check()
-  drm/tegra: sor: Implement ->atomic_check()
-  drm/tegra: dc: Use atomic clock state in modeset
-  drm/tegra: Atomic conversion, phase 3, step 2
-  drm/tegra: Atomic conversion, phase 3, step 3
-  drm/tegra: Remove unused ->mode_fixup() callbacks
-  drm/tegra: Track active planes in CRTC state
-  drm/tegra: Track tiling and format in plane state
-  drm/tegra: dc: Unify enabling the display controller
-
- drivers/clk/clk.c                   |   36 ++
- drivers/gpu/drm/drm_atomic_helper.c |   34 +-
- drivers/gpu/drm/drm_plane_helper.c  |   10 +-
- drivers/gpu/drm/tegra/dc.c          |  916 +++++++++++++++++------------
- drivers/gpu/drm/tegra/drm.c         |  105 +++-
- drivers/gpu/drm/tegra/drm.h         |   91 +--
- drivers/gpu/drm/tegra/dsi.c         |  516 ++++++++--------
- drivers/gpu/drm/tegra/fb.c          |   25 +-
- drivers/gpu/drm/tegra/hdmi.c        |  291 +++++----
- drivers/gpu/drm/tegra/output.c      |  156 +----
- drivers/gpu/drm/tegra/rgb.c         |  218 +++----
- drivers/gpu/drm/tegra/sor.c         | 1105 ++++++++++++++++++-----------------
- include/drm/drm_atomic.h            |   21 +
- include/drm/drm_atomic_helper.h     |   37 ++
- include/drm/drm_crtc_helper.h       |    6 +
- include/drm/drm_plane_helper.h      |    3 +
- include/linux/clk.h                 |   14 +
- 17 files changed, 1963 insertions(+), 1621 deletions(-)
-
--- 
-2.1.3
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClRoaXMgY2FsbGJhY2sg
+Y2FuIGJlIHVzZWQgaW5zdGVhZCBvZiB0aGUgbGVnYWN5IC0+bW9kZV9maXh1cCgpIGFuZCBpcwpw
+YXNzZWQgdGhlIENSVEMgYW5kIGNvbm5lY3RvciBzdGF0ZXMuIEl0IGNhbiB0aHVzIHVzZSB0aGVz
+ZSBzdGF0ZXMgdG8KdmFsaWRhdGUgdGhlIG1vZGVzZXQgYW5kIGNhY2hlIHZhbHVlcyBpbiB0aGUg
+c3RhdGUgdG8gYmUgdXNlZCBkdXJpbmcKdGhlIGFjdHVhbCBtb2Rlc2V0LgoKU2lnbmVkLW9mZi1i
+eTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9k
+cm0vZHJtX2F0b21pY19oZWxwZXIuYyB8IDIzICsrKysrKysrKysrKysrKystLS0tLS0tCiBpbmNs
+dWRlL2RybS9kcm1fY3J0Y19oZWxwZXIuaCAgICAgICB8ICA2ICsrKysrKwogMiBmaWxlcyBjaGFu
+Z2VkLCAyMiBpbnNlcnRpb25zKCspLCA3IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvZ3B1L2RybS9kcm1fYXRvbWljX2hlbHBlci5jIGIvZHJpdmVycy9ncHUvZHJtL2RybV9hdG9t
+aWNfaGVscGVyLmMKaW5kZXggMWNiMDQ0MDJjZDczLi5iODM3ZDE0OGQ4ODAgMTAwNjQ0Ci0tLSBh
+L2RyaXZlcnMvZ3B1L2RybS9kcm1fYXRvbWljX2hlbHBlci5jCisrKyBiL2RyaXZlcnMvZ3B1L2Ry
+bS9kcm1fYXRvbWljX2hlbHBlci5jCkBAIC0yOTcsMTMgKzI5NywyMiBAQCBtb2RlX2ZpeHVwKHN0
+cnVjdCBkcm1fYXRvbWljX3N0YXRlICpzdGF0ZSkKIAkJCX0KIAkJfQogCi0KLQkJcmV0ID0gZnVu
+Y3MtPm1vZGVfZml4dXAoZW5jb2RlciwgJmNydGNfc3RhdGUtPm1vZGUsCi0JCQkJCSZjcnRjX3N0
+YXRlLT5hZGp1c3RlZF9tb2RlKTsKLQkJaWYgKCFyZXQpIHsKLQkJCURSTV9ERUJVR19LTVMoIltF
+TkNPREVSOiVkOiVzXSBmaXh1cCBmYWlsZWRcbiIsCi0JCQkJICAgICAgZW5jb2Rlci0+YmFzZS5p
+ZCwgZW5jb2Rlci0+bmFtZSk7Ci0JCQlyZXR1cm4gLUVJTlZBTDsKKwkJaWYgKGZ1bmNzLT5hdG9t
+aWNfY2hlY2spIHsKKwkJCXJldCA9IGZ1bmNzLT5hdG9taWNfY2hlY2soZW5jb2RlciwgY3J0Y19z
+dGF0ZSwKKwkJCQkJCSAgY29ubl9zdGF0ZSk7CisJCQlpZiAocmV0KSB7CisJCQkJRFJNX0RFQlVH
+X0tNUygiW0VOQ09ERVI6JWQ6JXNdIGNoZWNrIGZhaWxlZFxuIiwKKwkJCQkJICAgICAgZW5jb2Rl
+ci0+YmFzZS5pZCwgZW5jb2Rlci0+bmFtZSk7CisJCQkJcmV0dXJuIHJldDsKKwkJCX0KKwkJfSBl
+bHNlIHsKKwkJCXJldCA9IGZ1bmNzLT5tb2RlX2ZpeHVwKGVuY29kZXIsICZjcnRjX3N0YXRlLT5t
+b2RlLAorCQkJCQkJJmNydGNfc3RhdGUtPmFkanVzdGVkX21vZGUpOworCQkJaWYgKCFyZXQpIHsK
+KwkJCQlEUk1fREVCVUdfS01TKCJbRU5DT0RFUjolZDolc10gZml4dXAgZmFpbGVkXG4iLAorCQkJ
+CQkgICAgICBlbmNvZGVyLT5iYXNlLmlkLCBlbmNvZGVyLT5uYW1lKTsKKwkJCQlyZXR1cm4gLUVJ
+TlZBTDsKKwkJCX0KIAkJfQogCX0KIApkaWZmIC0tZ2l0IGEvaW5jbHVkZS9kcm0vZHJtX2NydGNf
+aGVscGVyLmggYi9pbmNsdWRlL2RybS9kcm1fY3J0Y19oZWxwZXIuaAppbmRleCBlNzY4MjhkODFh
+OGIuLjU4MTBjMDI3YWNkYyAxMDA2NDQKLS0tIGEvaW5jbHVkZS9kcm0vZHJtX2NydGNfaGVscGVy
+LmgKKysrIGIvaW5jbHVkZS9kcm0vZHJtX2NydGNfaGVscGVyLmgKQEAgLTExNSw2ICsxMTUsNyBA
+QCBzdHJ1Y3QgZHJtX2NydGNfaGVscGVyX2Z1bmNzIHsKICAqIEBnZXRfY3J0YzogcmV0dXJuIENS
+VEMgdGhhdCB0aGUgZW5jb2RlciBpcyBjdXJyZW50bHkgYXR0YWNoZWQgdG8KICAqIEBkZXRlY3Q6
+IGNvbm5lY3Rpb24gc3RhdHVzIGRldGVjdGlvbgogICogQGRpc2FibGU6IGRpc2FibGUgZW5jb2Rl
+ciB3aGVuIG5vdCBpbiB1c2UgKG92ZXJyaWRlcyBEUE1TIG9mZikKKyAqIEBhdG9taWNfY2hlY2s6
+IGNoZWNrIGZvciB2YWxpZGl0eSBvZiBhbiBhdG9taWMgdXBkYXRlCiAgKgogICogVGhlIGhlbHBl
+ciBvcGVyYXRpb25zIGFyZSBjYWxsZWQgYnkgdGhlIG1pZC1sYXllciBDUlRDIGhlbHBlci4KICAq
+LwpAQCAtMTM3LDYgKzEzOCwxMSBAQCBzdHJ1Y3QgZHJtX2VuY29kZXJfaGVscGVyX2Z1bmNzIHsK
+IAkJCQkJICAgIHN0cnVjdCBkcm1fY29ubmVjdG9yICpjb25uZWN0b3IpOwogCS8qIGRpc2FibGUg
+ZW5jb2RlciB3aGVuIG5vdCBpbiB1c2UgLSBtb3JlIGV4cGxpY2l0IHRoYW4gZHBtcyBvZmYgKi8K
+IAl2b2lkICgqZGlzYWJsZSkoc3RydWN0IGRybV9lbmNvZGVyICplbmNvZGVyKTsKKworCS8qIGF0
+b21pYyBoZWxwZXJzICovCisJaW50ICgqYXRvbWljX2NoZWNrKShzdHJ1Y3QgZHJtX2VuY29kZXIg
+KmVuY29kZXIsCisJCQkgICAgc3RydWN0IGRybV9jcnRjX3N0YXRlICpjcnRjX3N0YXRlLAorCQkJ
+ICAgIHN0cnVjdCBkcm1fY29ubmVjdG9yX3N0YXRlICpjb25uX3N0YXRlKTsKIH07CiAKIC8qKgot
+LSAKMi4xLjMKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+CmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
+dHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
