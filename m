@@ -1,65 +1,103 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH] ARM: tegra20: Store CPU "resettable" status in IRAM
-Date: Tue, 20 Jan 2015 19:55:04 +0300
-Message-ID: <54BE8868.2080101@gmail.com>
-References: <1421319545-23920-1-git-send-email-digetx@gmail.com> <1421319545-23920-2-git-send-email-digetx@gmail.com> <20150119141224.GF23778@ulmo.nvidia.com> <54BD3E3E.2040801@wwwdotorg.org> <54BD41D3.7030703@gmail.com> <54BD42D0.3020107@wwwdotorg.org> <54BD4626.70902@gmail.com> <54BD4C42.6090407@gmail.com>
+From: Dylan Reid <dgreid@chromium.org>
+Subject: Re: [PATCH v2 03/11] ARM: tegra: Set the sound card model that
+ alsaucm expects
+Date: Tue, 20 Jan 2015 09:01:34 -0800
+Message-ID: <CAEUnVG4R6NH3EAM9qBaxzC+T26qWeiEm=iZtFQKyrQTcvfzicg@mail.gmail.com>
+References: <1421338359-27467-1-git-send-email-tomeu.vizoso@collabora.com>
+ <1421338359-27467-4-git-send-email-tomeu.vizoso@collabora.com>
+ <54B7F757.5060002@wwwdotorg.org> <CAAObsKCad9O_=TUQrF7fVbBvjDTmfJsLPgr+EasCyhvY+xhdHg@mail.gmail.com>
+ <CAAObsKBKnU_wBaxNFN-buz71qL-te4s6bqrrnxao_N-TwBVkAQ@mail.gmail.com>
+ <54BD3A75.80009@wwwdotorg.org> <CAAObsKBm5mesGqrLQnveKQMy__uEOU1vcLGptnKxqHjV-T9C0g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <54BD4C42.6090407@gmail.com>
-Sender: stable-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAAObsKBm5mesGqrLQnveKQMy__uEOU1vcLGptnKxqHjV-T9C0g@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Simon Glass <sjg@chromium.org>, Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-19.01.2015 21:26, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> 19.01.2015 21:00, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> 19.01.2015 20:45, Stephen Warren =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>> On 01/19/2015 10:41 AM, Dmitry Osipenko wrote:
->>>> 19.01.2015 20:26, Stephen Warren =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>> Hopefully this works out. I suppose it's unlikely anyone will be
->>>>> running code on
->>>>> the AVP upstrem, so any potential conflict with AVP's usage of IR=
-AM
->>>>> isn't likely
->>>>> to occur.
+On Mon, Jan 19, 2015 at 9:11 AM, Tomeu Vizoso
+<tomeu.vizoso@collabora.com> wrote:
+> On 19 January 2015 at 18:10, Stephen Warren <swarren@wwwdotorg.org> wrote:
+>> On 01/16/2015 02:01 AM, Tomeu Vizoso wrote:
+>>>
+>>> On 16 January 2015 at 09:50, Tomeu Vizoso <tomeu.vizoso@collabora.com>
+>>> wrote:
+>>>>
+>>>> On 15 January 2015 at 18:22, Stephen Warren <swarren@wwwdotorg.org>
+>>>> wrote:
 >>>>>
->>>> I don't see how it can conflict with AVP code. First KB of IRAM is
->>>> reserved for reset handler. Am I missing something?
+>>>>> On 01/15/2015 09:12 AM, Tomeu Vizoso wrote:
+>>>>>>
+>>>>>>
+>>>>>> Patches are on its way to add a config file to alsaucm for the Nyan
+>>>>>> boards. Use the same card ID that alsaucm will expect.
+>>>>>>
+>>>>>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+>>>>>> ---
+>>>>>>    arch/arm/boot/dts/tegra124-nyan-big.dts | 4 ++--
+>>>>>>    1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>>>
+>>>>>> diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts
+>>>>>> b/arch/arm/boot/dts/tegra124-nyan-big.dts
+>>>>>> index 43e58a4..9a9cffe 100644
+>>>>>> --- a/arch/arm/boot/dts/tegra124-nyan-big.dts
+>>>>>> +++ b/arch/arm/boot/dts/tegra124-nyan-big.dts
+>>>>>> @@ -1976,9 +1976,9 @@
+>>>>>>          };
+>>>>>>
+>>>>>>          sound {
+>>>>>> -               compatible = "nvidia,tegra-audio-max98090-nyan-big",
+>>>>>> +               compatible = "nvidia,tegra-audio-max98090-nyan",
+>>>>>>                               "nvidia,tegra-audio-max98090";
+>>>>>
+>>>>>
+>>>>>
+>>>>> If all the boards that are derived from Nyan truly have identical audio
+>>>>> HW
+>>>>> (or at least any differences can be described by this binding), then it
+>>>>> seems fine to add "nvidia,tegra-audio-max98090-nyan" to the compatible
+>>>>> value.
 >>>>
->>>>  From reset.h:
 >>>>
->>>> /* The first 1K of IRAM is permanently reserved for the CPU reset
->>>> handler */
+>>>>
+>>>>
+>>>>> However, I don't see a reason to remove the board-specific compatible
+>>>>> value
+>>>>> "nvidia,tegra-audio-max98090-nyan-big"; we should always include all the
+>>>>> values that are relevant.
+>>>>
+>>>>
+>>>> Ok.
 >>>
->>> I believe "CPU" in that context means AVP CPU. Still, I may not be =
-correct, and
->>> to be honest it's likely not too well defined even if that comment =
-seems
->>> clear-cut.
 >>>
->> Hmm... Suddenly I recalled that LP2 was always disabled in downstrea=
-m kernel. I
->> remember that I tried it once (couple years ago) and it didn't work,=
- however I
->> presume it was just broken. Now I don't feel good with it.
+>>> Oh, actually, my intention was to move the whole sound node to the
+>>> nyan dtsi, as there isn't anything specific to the blaze regarding
+>>> sound.
 >>
-> Can't generic RAM be used for "resettable" status? Or it will be too =
-slow?...
+>>
+>> There are zero differences between the sound circuits of the boards? If so,
+>> that sounds fine. I suppose if we do need to apply a quirk to one board but
+>> not the other, we can always fall back on the top-level compatible value if
+>> we absolutely have to.
 >
-> CPU1 always come up after CPU0, so RAM is already init'ed. Given that=
- CPU0 can't
-> be halted with running CPU1, I suppose CPU1 can't be booted first, ri=
-ght? Anyway
-> it's not the case for linux.
+> Yeah, this is what Dylan said in other thread:
 >
-Correcting myself:
+> "ChromeOS uses one config for both.  The only audio difference between
+> these two boards is the speakers, that isn't represented in UCM, so
+> one config file is fine."
 
-Well, it's meaningless in case if LP2 cpuidle can't co-exist with AVP f=
-irmware.=20
-Isn't possible verify it?
+Correct, they share the same headset chip and codec, they are both
+wired up the same.
 
---=20
-Dmitry
+>
+> Regards,
+>
+> Tomeu
+>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> Please read the FAQ at  http://www.tux.org/lkml/
