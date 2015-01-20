@@ -1,58 +1,41 @@
-From: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
-Subject: Re: [Ct173-kernel-internal] [PATCH 0/4] ARM: tegra: Support for big-endian
- (version 3)
-Date: Tue, 20 Jan 2015 11:45:05 +0000
-Message-ID: <54BE3FC1.5010107@codethink.co.uk>
-References: <1420817231-8346-1-git-send-email-bob.mottram@codethink.co.uk> <54BE2E77.9050909@codethink.co.uk> <54BE3DD2.1060204@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <54BE3DD2.1060204-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bob Mottram <bob.mottram-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, ct173-kernel-internal-81qHHgoATdFT9dQujB1mzip2UmYkHbXO@public.gmane.org
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH 1/2] i2c: tegra: Maintain CPU endianness
+Date: Tue, 20 Jan 2015 15:22:25 +0300
+Message-ID: <1421756555-20266-1-git-send-email-digetx@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: digetx@gmail.com, Wolfram Sang <wsa@the-dreams.de>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Ben Dooks <ben.dooks@codethink.co.uk>, Bob Mottram <bob.mottram@codethink.co.uk>, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 20/01/15 11:36, Dmitry Osipenko wrote:
-> 20.01.2015 13:31, Ben Dooks =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> On 09/01/15 15:27, Bob Mottram wrote:
->>> During testing of big-endian on a Jetson TK1 with baserock, the
->>> following
->>> issues were found and fixed. Note that to get the system running wi=
-th
->>> big-endian you will need to disable ARCH_SUSPEND_POSSIBLE within
->>> arch/arm/Kconfig.
->>>
->>> Bob Mottram (4):
->>>    ARM: tegra: Add a separate big-endian configuration
->>>    ARM: gpio: tegra: Maintain endianness
->>>    ARM: tegra: enable big-endian support
->>>    ARM: tegra: fix big-endian issue with irq code
->>
->> Is it possible to get the tegra core patches applied? These seem to =
-work
->> enough to get a system running and once the PM fixes are in there sh=
-ould
->> be no problems running big-endian tegra?
->>
-> I don't think it's enough. Upstream kernel doesn't accept half workin=
-g
-> solutions. It's not only PM that needs fixing, but i2c, timer, reset
-> handler and possibly more. You are enabling big-endian across all teg=
-ra
-> generations, but tegra2 won't boot at all for example. Patches must b=
-e
-> tested on all hw before applying. And nit: big-endian should be enabl=
-ed
-> after all dependencies resolved.
+Support CPU BE mode by adding endianness conversion for memcpy interactions.
 
-Ok, we hadn't found any issue with the reset. I thought we had the
-timer fix in this series. Most of the other drivers didn't use
-any __raw code so we're reasonably confident they will work.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/i2c/busses/i2c-tegra.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-I didn't see any issues with the i2c from visual inspection, what's
-wrong with it in big endian?
-
---=20
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 28b87e6..e0d3ef1 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -286,6 +286,7 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev *i2c_dev)
+ 	if (rx_fifo_avail > 0 && buf_remaining > 0) {
+ 		BUG_ON(buf_remaining > 3);
+ 		val = i2c_readl(i2c_dev, I2C_RX_FIFO);
++		val = cpu_to_le32(val);
+ 		memcpy(buf, &val, buf_remaining);
+ 		buf_remaining = 0;
+ 		rx_fifo_avail--;
+@@ -343,7 +344,9 @@ static int tegra_i2c_fill_tx_fifo(struct tegra_i2c_dev *i2c_dev)
+ 	 */
+ 	if (tx_fifo_avail > 0 && buf_remaining > 0) {
+ 		BUG_ON(buf_remaining > 3);
++		val = 0;
+ 		memcpy(&val, buf, buf_remaining);
++		val = cpu_to_le32(val);
+ 
+ 		/* Again update before writing to FIFO to make sure isr sees. */
+ 		i2c_dev->msg_buf_remaining = 0;
+-- 
+2.2.1
