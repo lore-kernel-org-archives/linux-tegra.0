@@ -1,103 +1,127 @@
-From: Dylan Reid <dgreid@chromium.org>
-Subject: Re: [PATCH v2 03/11] ARM: tegra: Set the sound card model that
- alsaucm expects
-Date: Tue, 20 Jan 2015 09:01:34 -0800
-Message-ID: <CAEUnVG4R6NH3EAM9qBaxzC+T26qWeiEm=iZtFQKyrQTcvfzicg@mail.gmail.com>
-References: <1421338359-27467-1-git-send-email-tomeu.vizoso@collabora.com>
- <1421338359-27467-4-git-send-email-tomeu.vizoso@collabora.com>
- <54B7F757.5060002@wwwdotorg.org> <CAAObsKCad9O_=TUQrF7fVbBvjDTmfJsLPgr+EasCyhvY+xhdHg@mail.gmail.com>
- <CAAObsKBKnU_wBaxNFN-buz71qL-te4s6bqrrnxao_N-TwBVkAQ@mail.gmail.com>
- <54BD3A75.80009@wwwdotorg.org> <CAAObsKBm5mesGqrLQnveKQMy__uEOU1vcLGptnKxqHjV-T9C0g@mail.gmail.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH 01/36] clk: Introduce clk_try_parent()
+Date: Tue, 20 Jan 2015 10:02:47 -0800
+Message-ID: <20150120180247.22722.92597@quantum>
+References: <1421750935-4023-1-git-send-email-thierry.reding@gmail.com>
+ <1421750935-4023-2-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAAObsKBm5mesGqrLQnveKQMy__uEOU1vcLGptnKxqHjV-T9C0g@mail.gmail.com>
+In-Reply-To: <1421750935-4023-2-git-send-email-thierry.reding@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Simon Glass <sjg@chromium.org>, Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>, dri-devel@lists.freedesktop.org
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Stephen Boyd <sboyd@codeaurora.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jan 19, 2015 at 9:11 AM, Tomeu Vizoso
-<tomeu.vizoso@collabora.com> wrote:
-> On 19 January 2015 at 18:10, Stephen Warren <swarren@wwwdotorg.org> wrote:
->> On 01/16/2015 02:01 AM, Tomeu Vizoso wrote:
->>>
->>> On 16 January 2015 at 09:50, Tomeu Vizoso <tomeu.vizoso@collabora.com>
->>> wrote:
->>>>
->>>> On 15 January 2015 at 18:22, Stephen Warren <swarren@wwwdotorg.org>
->>>> wrote:
->>>>>
->>>>> On 01/15/2015 09:12 AM, Tomeu Vizoso wrote:
->>>>>>
->>>>>>
->>>>>> Patches are on its way to add a config file to alsaucm for the Nyan
->>>>>> boards. Use the same card ID that alsaucm will expect.
->>>>>>
->>>>>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
->>>>>> ---
->>>>>>    arch/arm/boot/dts/tegra124-nyan-big.dts | 4 ++--
->>>>>>    1 file changed, 2 insertions(+), 2 deletions(-)
->>>>>>
->>>>>> diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts
->>>>>> b/arch/arm/boot/dts/tegra124-nyan-big.dts
->>>>>> index 43e58a4..9a9cffe 100644
->>>>>> --- a/arch/arm/boot/dts/tegra124-nyan-big.dts
->>>>>> +++ b/arch/arm/boot/dts/tegra124-nyan-big.dts
->>>>>> @@ -1976,9 +1976,9 @@
->>>>>>          };
->>>>>>
->>>>>>          sound {
->>>>>> -               compatible = "nvidia,tegra-audio-max98090-nyan-big",
->>>>>> +               compatible = "nvidia,tegra-audio-max98090-nyan",
->>>>>>                               "nvidia,tegra-audio-max98090";
->>>>>
->>>>>
->>>>>
->>>>> If all the boards that are derived from Nyan truly have identical audio
->>>>> HW
->>>>> (or at least any differences can be described by this binding), then it
->>>>> seems fine to add "nvidia,tegra-audio-max98090-nyan" to the compatible
->>>>> value.
->>>>
->>>>
->>>>
->>>>
->>>>> However, I don't see a reason to remove the board-specific compatible
->>>>> value
->>>>> "nvidia,tegra-audio-max98090-nyan-big"; we should always include all the
->>>>> values that are relevant.
->>>>
->>>>
->>>> Ok.
->>>
->>>
->>> Oh, actually, my intention was to move the whole sound node to the
->>> nyan dtsi, as there isn't anything specific to the blaze regarding
->>> sound.
->>
->>
->> There are zero differences between the sound circuits of the boards? If so,
->> that sounds fine. I suppose if we do need to apply a quirk to one board but
->> not the other, we can always fall back on the top-level compatible value if
->> we absolutely have to.
->
-> Yeah, this is what Dylan said in other thread:
->
-> "ChromeOS uses one config for both.  The only audio difference between
-> these two boards is the speakers, that isn't represented in UCM, so
-> one config file is fine."
+Quoting Thierry Reding (2015-01-20 02:48:20)
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> This new function is similar to clk_set_parent(), except that it doesn't
+> actually change the parent. It merely checks that the given parent clock
+> can be a parent for the given clock.
+> 
+> A situation where this is useful is to check that a particular setup is
+> valid before switching to it. One specific use-case for this is atomic
+> modesetting in the DRM framework where setting a mode is divided into a
+> check phase where a given configuration is validated before applying
+> changes to the hardware.
 
-Correct, they share the same headset chip and codec, they are both
-wired up the same.
+Can you describe why this was needed for your atomic modesetting work?
+What problem did you hit in the driver that required this new check?
 
->
-> Regards,
->
-> Tomeu
->
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->> Please read the FAQ at  http://www.tux.org/lkml/
+Thanks,
+Mike
+
+> 
+> Cc: Russell King <linux@arm.linux.org.uk>
+> Cc: Mike Turquette <mturquette@linaro.org>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  drivers/clk/clk.c   | 36 ++++++++++++++++++++++++++++++++++++
+>  include/linux/clk.h | 14 ++++++++++++++
+>  2 files changed, 50 insertions(+)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index af06b7377d37..297910815dea 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1672,6 +1672,42 @@ void __clk_reparent(struct clk *clk, struct clk *new_parent)
+>  }
+>  
+>  /**
+> + * clk_try_parent - check if a clock can be the parent clock source of another
+> + * @clk: clock source
+> + * @parent: parent clock source
+> + *
+> + * This is like clk_set_parent(), except that it only checks that parent can
+> + * be the parent clock source for clock.
+> + *
+> + * Returns success (0) or negative errno.
+> + */
+> +int clk_try_parent(struct clk *clk, struct clk *parent)
+> +{
+> +       int err = 0;
+> +
+> +       if (!clk || !parent)
+> +               return -EINVAL;
+> +
+> +       if ((clk->num_parents > 1) && !clk->ops->set_parent)
+> +               return -ENOSYS;
+> +
+> +       clk_prepare_lock();
+> +
+> +       if (clk->parent == parent)
+> +               goto unlock;
+> +
+> +       err = clk_fetch_parent_index(clk, parent);
+> +       if (err > 0)
+> +               err = 0;
+> +
+> +unlock:
+> +       clk_prepare_unlock();
+> +
+> +       return err;
+> +}
+> +EXPORT_SYMBOL_GPL(clk_try_parent);
+> +
+> +/**
+>   * clk_set_parent - switch the parent of a mux clk
+>   * @clk: the mux clk whose input we are switching
+>   * @parent: the new input to clk
+> diff --git a/include/linux/clk.h b/include/linux/clk.h
+> index fb1ac65f127c..94da8c68a515 100644
+> --- a/include/linux/clk.h
+> +++ b/include/linux/clk.h
+> @@ -328,6 +328,15 @@ long clk_round_rate(struct clk *clk, unsigned long rate);
+>  int clk_set_rate(struct clk *clk, unsigned long rate);
+>  
+>  /**
+> + * clk_try_parent - check if a clock can be the parent clock source of another
+> + * @clk: clock source
+> + * @parent: parent clock source
+> + *
+> + * Returns success (0) or negative errno.
+> + */
+> +int clk_try_parent(struct clk *clk, struct clk *parent);
+> +
+> +/**
+>   * clk_set_parent - set the parent clock source for this clock
+>   * @clk: clock source
+>   * @parent: parent clock source
+> @@ -400,6 +409,11 @@ static inline long clk_round_rate(struct clk *clk, unsigned long rate)
+>         return 0;
+>  }
+>  
+> +static inline int clk_try_parent(struct clk *clk, struct clk *parent)
+> +{
+> +       return 0;
+> +}
+> +
+>  static inline int clk_set_parent(struct clk *clk, struct clk *parent)
+>  {
+>         return 0;
+> -- 
+> 2.1.3
+> 
