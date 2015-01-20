@@ -1,48 +1,97 @@
-From: Rob Clark <robdclark@gmail.com>
+From: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 Subject: Re: [PATCH 01/36] clk: Introduce clk_try_parent()
-Date: Tue, 20 Jan 2015 13:16:16 -0500
-Message-ID: <CAF6AEGsPGCAHxqqRR7wWGxbiuS1HwTxF8fMb=VaL8T_qj85=TQ@mail.gmail.com>
-References: <1421750935-4023-1-git-send-email-thierry.reding@gmail.com>
- <1421750935-4023-2-git-send-email-thierry.reding@gmail.com>
- <20150120180247.22722.92597@quantum>
+Date: Tue, 20 Jan 2015 11:21:24 -0800
+Message-ID: <54BEAAB4.9030803@codeaurora.org>
+References: <1421750935-4023-1-git-send-email-thierry.reding@gmail.com> <1421750935-4023-2-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20150120180247.22722.92597@quantum>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Mike Turquette <mturquette@linaro.org>
-Cc: Russell King <linux@arm.linux.org.uk>, Stephen Boyd <sboyd@codeaurora.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1421750935-4023-2-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCBKYW4gMjAsIDIwMTUgYXQgMTowMiBQTSwgTWlrZSBUdXJxdWV0dGUgPG10dXJxdWV0
-dGVAbGluYXJvLm9yZz4gd3JvdGU6Cj4gUXVvdGluZyBUaGllcnJ5IFJlZGluZyAoMjAxNS0wMS0y
-MCAwMjo0ODoyMCkKPj4gRnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4K
-Pj4KPj4gVGhpcyBuZXcgZnVuY3Rpb24gaXMgc2ltaWxhciB0byBjbGtfc2V0X3BhcmVudCgpLCBl
-eGNlcHQgdGhhdCBpdCBkb2Vzbid0Cj4+IGFjdHVhbGx5IGNoYW5nZSB0aGUgcGFyZW50LiBJdCBt
-ZXJlbHkgY2hlY2tzIHRoYXQgdGhlIGdpdmVuIHBhcmVudCBjbG9jawo+PiBjYW4gYmUgYSBwYXJl
-bnQgZm9yIHRoZSBnaXZlbiBjbG9jay4KPj4KPj4gQSBzaXR1YXRpb24gd2hlcmUgdGhpcyBpcyB1
-c2VmdWwgaXMgdG8gY2hlY2sgdGhhdCBhIHBhcnRpY3VsYXIgc2V0dXAgaXMKPj4gdmFsaWQgYmVm
-b3JlIHN3aXRjaGluZyB0byBpdC4gT25lIHNwZWNpZmljIHVzZS1jYXNlIGZvciB0aGlzIGlzIGF0
-b21pYwo+PiBtb2Rlc2V0dGluZyBpbiB0aGUgRFJNIGZyYW1ld29yayB3aGVyZSBzZXR0aW5nIGEg
-bW9kZSBpcyBkaXZpZGVkIGludG8gYQo+PiBjaGVjayBwaGFzZSB3aGVyZSBhIGdpdmVuIGNvbmZp
-Z3VyYXRpb24gaXMgdmFsaWRhdGVkIGJlZm9yZSBhcHBseWluZwo+PiBjaGFuZ2VzIHRvIHRoZSBo
-YXJkd2FyZS4KPgo+IENhbiB5b3UgZGVzY3JpYmUgd2h5IHRoaXMgd2FzIG5lZWRlZCBmb3IgeW91
-ciBhdG9taWMgbW9kZXNldHRpbmcgd29yaz8KPiBXaGF0IHByb2JsZW0gZGlkIHlvdSBoaXQgaW4g
-dGhlIGRyaXZlciB0aGF0IHJlcXVpcmVkIHRoaXMgbmV3IGNoZWNrPwoKSW4gcGFydGljdWxhciwg
-Zm9yIGFuIGFzeW5jIGF0b21pYyB1cGRhdGUsIHdlIG5lZWQgdG8gZG8gZXZlcnl0aGluZwp0aGF0
-IG1heSBwb3RlbnRpYWxseSBmYWlsIHVwIGZyb250IGJlZm9yZSByZXR1cm5pbmcgdG8gdXNlcnNw
-YWNlLgpBZGRpdGlvbmFsbHkgdGhlcmUgaXMgYSAndGVzdG9ubHknIGZsYWcgc28gdGhhdCB1c2Vy
-c3BhY2UgY2FuIGFzayBpZiBhCnBhcnRpY3VsYXIgZGlzcGxheSBjb25maWd1cmF0aW9uIGlzIHBv
-c3NpYmxlLgoKQlIsCi1SCgo+IFRoYW5rcywKPiBNaWtlCj4KX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
-ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On 01/20/2015 02:48 AM, Thierry Reding wrote:
+>  
+>  /**
+> + * clk_try_parent - check if a clock can be the parent clock source of another
+> + * @clk: clock source
+> + * @parent: parent clock source
+> + *
+> + * This is like clk_set_parent(), except that it only checks that parent can
+> + * be the parent clock source for clock.
+> + *
+> + * Returns success (0) or negative errno.
+> + */
+> +int clk_try_parent(struct clk *clk, struct clk *parent)
+> +{
+> +	int err = 0;
+> +
+> +	if (!clk || !parent)
+> +		return -EINVAL;
+
+NULL clock should be a nop, so return success in either case.
+
+> +
+> +	if ((clk->num_parents > 1) && !clk->ops->set_parent)
+> +		return -ENOSYS;
+
+This suffers from the same problem as discussed in another thread where
+the mux is read-only and the parent is the current parent. That case
+shouldn't fail.
+
+> +
+> +	clk_prepare_lock();
+> +
+> +	if (clk->parent == parent)
+> +		goto unlock;
+> +
+> +	err = clk_fetch_parent_index(clk, parent);
+> +	if (err > 0)
+> +		err = 0;
+> +
+
+Given that we just throw away the index, perhaps we should just loop
+over the parent_names array searching for a name match on the parent's
+name. If we did that this entire function would be lockless too.
+
+> +unlock:
+> +	clk_prepare_unlock();
+> +
+> +	return err;
+> +}
+> +EXPORT_SYMBOL_GPL(clk_try_parent);
+> +
+> +/**
+>   * clk_set_parent - switch the parent of a mux clk
+>   * @clk: the mux clk whose input we are switching
+>   * @parent: the new input to clk
+> diff --git a/include/linux/clk.h b/include/linux/clk.h
+> index fb1ac65f127c..94da8c68a515 100644
+> --- a/include/linux/clk.h
+> +++ b/include/linux/clk.h
+> @@ -328,6 +328,15 @@ long clk_round_rate(struct clk *clk, unsigned long rate);
+>  int clk_set_rate(struct clk *clk, unsigned long rate);
+>  
+>  /**
+> + * clk_try_parent - check if a clock can be the parent clock source of another
+> + * @clk: clock source
+> + * @parent: parent clock source
+> + *
+> + * Returns success (0) or negative errno.
+
+Why not a bool? Do we really care why we can't set the parent in the
+error case?
+
+> + */
+> +int clk_try_parent(struct clk *clk, struct clk *parent);
+
+The name makes me think of mutex_trylock(), so I immediately think this
+tries to set the parent. Perhaps a better name would be
+clk_can_have_parent() or clk_has_parent()?
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
