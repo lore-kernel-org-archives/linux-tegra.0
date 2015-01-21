@@ -1,16 +1,17 @@
 From: Paul Walmsley <paul@pwsan.com>
 Subject: next-20150120 broken on Tegra by "ata: libahci: Allow using multiple
  regulators"
-Date: Wed, 21 Jan 2015 00:00:00 +0000 (UTC)
-Message-ID: <alpine.DEB.2.02.1501202346460.5450@utopia.booyaka.com>
+Date: Wed, 21 Jan 2015 00:03:41 +0000 (UTC)
+Message-ID: <alpine.DEB.2.02.1501210003010.5450@utopia.booyaka.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
 Sender: linux-next-owner@vger.kernel.org
 To: gregory.clement@free-electrons.com
-Cc: hdegoede@redhat.com, tj@kernel.org, treding@nvidia.com, pwalmsley@nvidia.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Cc: hdegoede@redhat.com, tj@kernel.org, treding@nvidia.com, pwalmsley@nvidia.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-ide@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+(linux-ide@ added)
 
 Commit c7d7ddee7e24eedde6149eefbcfbfbc7125b9ff0 ("ata: libahci: Allow
 using multiple regulators") in Linux-next 20150120 causes a panic
