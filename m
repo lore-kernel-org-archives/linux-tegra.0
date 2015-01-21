@@ -1,51 +1,85 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH V2] ARM: l2c: Maintain CPU endianness for early resume function
-Date: Wed, 21 Jan 2015 19:07:19 +0300
-Message-ID: <1421856440-28097-1-git-send-email-digetx@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, Bob Mottram <bob.mottram-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v2] clk: Introduce clk_has_parent()
+Date: Wed, 21 Jan 2015 17:13:00 +0100
+Message-ID: <1421856780-32103-1-git-send-email-thierry.reding@gmail.com>
+References: <1421750935-4023-2-git-send-email-thierry.reding@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1421750935-4023-2-git-send-email-thierry.reding@gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-tegra@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-In big endian CPU mode l2x0_saved_regs structure stores registers values in BE
-format. In order to maintain BE CPU mode, these values and immediate constants
-must be converted back to LE format before writing them to cache controller.
-
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
-V2: no code change, fixed patch numbering, extended mail recipients list
-
- arch/arm/mm/l2c-l2x0-resume.S | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/arch/arm/mm/l2c-l2x0-resume.S b/arch/arm/mm/l2c-l2x0-resume.S
-index fda415e..9f99c7e 100644
---- a/arch/arm/mm/l2c-l2x0-resume.S
-+++ b/arch/arm/mm/l2c-l2x0-resume.S
-@@ -30,6 +30,15 @@ ENTRY(l2c310_early_resume)
- 	teq	r1, #0
- 	reteq	lr
- 
-+	@ Reverse for big endian kernel
-+ARM_BE8(rev	r2, r2)
-+ARM_BE8(rev	r3, r3)
-+ARM_BE8(rev	r4, r4)
-+ARM_BE8(rev	r5, r5)
-+ARM_BE8(rev	r6, r6)
-+ARM_BE8(rev	r7, r7)
-+ARM_BE8(rev	r8, r8)
-+
- 	@ The prefetch and power control registers are revision dependent
- 	@ and can be written whether or not the L2 cache is enabled
- 	ldr	r0, [r1, #L2X0_CACHE_ID]
-@@ -51,6 +60,7 @@ ENTRY(l2c310_early_resume)
- 
- 	str	r2, [r1, #L2X0_AUX_CTRL]
- 	mov	r9, #L2X0_CTRL_EN
-+ARM_BE8(rev	r9, r9)
- 	str	r9, [r1, #L2X0_CTRL]
- 	ret	lr
- ENDPROC(l2c310_early_resume)
--- 
-2.2.1
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClRoaXMgbmV3IGZ1bmN0
+aW9uIGlzIHNpbWlsYXIgdG8gY2xrX3NldF9wYXJlbnQoKSwgZXhjZXB0IHRoYXQgaXQgZG9lc24n
+dAphY3R1YWxseSBjaGFuZ2UgdGhlIHBhcmVudC4gSXQgbWVyZWx5IGNoZWNrcyB0aGF0IHRoZSBn
+aXZlbiBwYXJlbnQgY2xvY2sKY2FuIGJlIGEgcGFyZW50IGZvciB0aGUgZ2l2ZW4gY2xvY2suCgpB
+IHNpdHVhdGlvbiB3aGVyZSB0aGlzIGlzIHVzZWZ1bCBpcyB0byBjaGVjayB0aGF0IGEgcGFydGlj
+dWxhciBzZXR1cCBpcwp2YWxpZCBiZWZvcmUgc3dpdGNoaW5nIHRvIGl0LiBPbmUgc3BlY2lmaWMg
+dXNlLWNhc2UgZm9yIHRoaXMgaXMgYXRvbWljCm1vZGVzZXR0aW5nIGluIHRoZSBEUk0gZnJhbWV3
+b3JrIHdoZXJlIHNldHRpbmcgYSBtb2RlIGlzIGRpdmlkZWQgaW50byBhCmNoZWNrIHBoYXNlIHdo
+ZXJlIGEgZ2l2ZW4gY29uZmlndXJhdGlvbiBpcyB2YWxpZGF0ZWQgYmVmb3JlIGFwcGx5aW5nCmNo
+YW5nZXMgdG8gdGhlIGhhcmR3YXJlLgoKQ2M6IFJ1c3NlbGwgS2luZyA8bGludXhAYXJtLmxpbnV4
+Lm9yZy51az4KQ2M6IE1pa2UgVHVycXVldHRlIDxtdHVycXVldHRlQGxpbmFyby5vcmc+CkNjOiBT
+dGVwaGVuIEJveWQgPHNib3lkQGNvZGVhdXJvcmEub3JnPgpTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5
+IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgotLS0KQ2hhbmdlcyBpbiB2MjoKLSBsb29rdXAg
+cGFyZW50IG5hbWUgaW4gcGFyZW50IG5hbWVzIGFycmF5IGFuZCBtYWtlIGZ1bmN0aW9uIGxvY2ts
+ZXNzCi0gcmVuYW1lIGZ1bmN0aW9uIGZyb20gY2xrX3RyeV9wYXJlbnQoKSB0byBjbGtfaGFzX3Bh
+cmVudCgpCi0gcmV0dXJuIGJvb2xlYW4KCiBkcml2ZXJzL2Nsay9jbGsuYyAgIHwgMzAgKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrCiBpbmNsdWRlL2xpbnV4L2Nsay5oIHwgMTcgKysrKysr
+KysrKysrKysrKysKIDIgZmlsZXMgY2hhbmdlZCwgNDcgaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvY2xrL2Nsay5jIGIvZHJpdmVycy9jbGsvY2xrLmMKaW5kZXggYWYwNmI3Mzc3
+ZDM3Li40NzAyNjYyOTdkZWEgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvY2xrL2Nsay5jCisrKyBiL2Ry
+aXZlcnMvY2xrL2Nsay5jCkBAIC0xNjcyLDYgKzE2NzIsMzYgQEAgdm9pZCBfX2Nsa19yZXBhcmVu
+dChzdHJ1Y3QgY2xrICpjbGssIHN0cnVjdCBjbGsgKm5ld19wYXJlbnQpCiB9CiAKIC8qKgorICog
+Y2xrX2hhc19wYXJlbnQgLSBjaGVjayBpZiBhIGNsb2NrIGlzIGEgcG9zc2libGUgcGFyZW50IGZv
+ciBhbm90aGVyCisgKiBAY2xrOiBjbG9jayBzb3VyY2UKKyAqIEBwYXJlbnQ6IHBhcmVudCBjbG9j
+ayBzb3VyY2UKKyAqCisgKiBUaGlzIGZ1bmN0aW9uIGNhbiBiZSB1c2VkIGluIGRyaXZlcnMgdGhh
+dCBuZWVkIHRvIGNoZWNrIHRoYXQgYSBjbG9jayBjYW4gYmUKKyAqIHRoZSBwYXJlbnQgb2YgYW5v
+dGhlciB3aXRob3V0IGFjdHVhbGx5IGNoYW5naW5nIHRoZSBwYXJlbnQuCisgKgorICogUmV0dXJu
+cyB0cnVlIGlmIEBwYXJlbnQgaXMgYSBwb3NzaWJsZSBwYXJlbnQgZm9yIEBjbGssIGZhbHNlIG90
+aGVyd2lzZS4KKyAqLworYm9vbCBjbGtfaGFzX3BhcmVudChzdHJ1Y3QgY2xrICpjbGssIHN0cnVj
+dCBjbGsgKnBhcmVudCkKK3sKKwl1bnNpZ25lZCBpbnQgaTsKKworCS8qIE5VTEwgY2xvY2tzIHNo
+b3VsZCBiZSBub3BzLCBzbyByZXR1cm4gc3VjY2VzcyBpZiBlaXRoZXIgaXMgTlVMTC4gKi8KKwlp
+ZiAoIWNsayB8fCAhcGFyZW50KQorCQlyZXR1cm4gdHJ1ZTsKKworCS8qIE9wdGltaXplIGZvciB0
+aGUgY2FzZSB3aGVyZSB0aGUgcGFyZW50IGlzIGFscmVhZHkgdGhlIHBhcmVudC4gKi8KKwlpZiAo
+Y2xrLT5wYXJlbnQgPT0gcGFyZW50KQorCQlyZXR1cm4gdHJ1ZTsKKworCWZvciAoaSA9IDA7IGkg
+PCBjbGstPm51bV9wYXJlbnRzOyBpKyspCisJCWlmIChzdHJjbXAoY2xrLT5wYXJlbnRfbmFtZXNb
+aV0sIHBhcmVudC0+bmFtZSkgPT0gMCkKKwkJCXJldHVybiB0cnVlOworCisJcmV0dXJuIGZhbHNl
+OworfQorRVhQT1JUX1NZTUJPTF9HUEwoY2xrX2hhc19wYXJlbnQpOworCisvKioKICAqIGNsa19z
+ZXRfcGFyZW50IC0gc3dpdGNoIHRoZSBwYXJlbnQgb2YgYSBtdXggY2xrCiAgKiBAY2xrOiB0aGUg
+bXV4IGNsayB3aG9zZSBpbnB1dCB3ZSBhcmUgc3dpdGNoaW5nCiAgKiBAcGFyZW50OiB0aGUgbmV3
+IGlucHV0IHRvIGNsawpkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9jbGsuaCBiL2luY2x1ZGUv
+bGludXgvY2xrLmgKaW5kZXggZmIxYWM2NWYxMjdjLi5kZjI4NjczYmUyYTEgMTAwNjQ0Ci0tLSBh
+L2luY2x1ZGUvbGludXgvY2xrLmgKKysrIGIvaW5jbHVkZS9saW51eC9jbGsuaApAQCAtMzI4LDYg
+KzMyOCwxOCBAQCBsb25nIGNsa19yb3VuZF9yYXRlKHN0cnVjdCBjbGsgKmNsaywgdW5zaWduZWQg
+bG9uZyByYXRlKTsKIGludCBjbGtfc2V0X3JhdGUoc3RydWN0IGNsayAqY2xrLCB1bnNpZ25lZCBs
+b25nIHJhdGUpOwogCiAvKioKKyAqIGNsa19oYXNfcGFyZW50IC0gY2hlY2sgaWYgYSBjbG9jayBp
+cyBhIHBvc3NpYmxlIHBhcmVudCBmb3IgYW5vdGhlcgorICogQGNsazogY2xvY2sgc291cmNlCisg
+KiBAcGFyZW50OiBwYXJlbnQgY2xvY2sgc291cmNlCisgKgorICogVGhpcyBmdW5jdGlvbiBjYW4g
+YmUgdXNlZCBpbiBkcml2ZXJzIHRoYXQgbmVlZCB0byBjaGVjayB0aGF0IGEgY2xvY2sgY2FuIGJl
+CisgKiB0aGUgcGFyZW50IG9mIGFub3RoZXIgd2l0aG91dCBhY3R1YWxseSBjaGFuZ2luZyB0aGUg
+cGFyZW50LgorICoKKyAqIFJldHVybnMgdHJ1ZSBpZiBAcGFyZW50IGlzIGEgcG9zc2libGUgcGFy
+ZW50IGZvciBAY2xrLCBmYWxzZSBvdGhlcndpc2UuCisgKi8KK2Jvb2wgY2xrX2hhc19wYXJlbnQo
+c3RydWN0IGNsayAqY2xrLCBzdHJ1Y3QgY2xrICpwYXJlbnQpOworCisvKioKICAqIGNsa19zZXRf
+cGFyZW50IC0gc2V0IHRoZSBwYXJlbnQgY2xvY2sgc291cmNlIGZvciB0aGlzIGNsb2NrCiAgKiBA
+Y2xrOiBjbG9jayBzb3VyY2UKICAqIEBwYXJlbnQ6IHBhcmVudCBjbG9jayBzb3VyY2UKQEAgLTQw
+MCw2ICs0MTIsMTEgQEAgc3RhdGljIGlubGluZSBsb25nIGNsa19yb3VuZF9yYXRlKHN0cnVjdCBj
+bGsgKmNsaywgdW5zaWduZWQgbG9uZyByYXRlKQogCXJldHVybiAwOwogfQogCitzdGF0aWMgaW5s
+aW5lIGJvb2wgY2xrX2hhc19wYXJlbnQoc3RydWN0IGNsayAqY2xrLCBzdHJ1Y3QgY2xrICpwYXJl
+bnQpCit7CisJcmV0dXJuIHRydWU7Cit9CisKIHN0YXRpYyBpbmxpbmUgaW50IGNsa19zZXRfcGFy
+ZW50KHN0cnVjdCBjbGsgKmNsaywgc3RydWN0IGNsayAqcGFyZW50KQogewogCXJldHVybiAwOwot
+LSAKMi4xLjMKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+CmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
+dHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
