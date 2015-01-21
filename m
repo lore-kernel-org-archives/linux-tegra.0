@@ -1,109 +1,124 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 01/36] clk: Introduce clk_try_parent()
-Date: Wed, 21 Jan 2015 16:12:13 +0100
-Message-ID: <20150121151210.GC22884@ulmo.nvidia.com>
-References: <1421750935-4023-1-git-send-email-thierry.reding@gmail.com>
- <1421750935-4023-2-git-send-email-thierry.reding@gmail.com>
- <20150120180247.22722.92597@quantum>
- <CAF6AEGsPGCAHxqqRR7wWGxbiuS1HwTxF8fMb=VaL8T_qj85=TQ@mail.gmail.com>
+From: Thierry Reding <treding@nvidia.com>
+Subject: Re: next-20150120 broken on Tegra by "ata: libahci: Allow using
+ multiple regulators"
+Date: Wed, 21 Jan 2015 16:55:21 +0100
+Message-ID: <20150121155519.GA25166@ulmo.nvidia.com>
+References: <alpine.DEB.2.02.1501210003010.5450@utopia.booyaka.com>
+ <20150121105001.GA9921@ulmo.nvidia.com>
+ <20150121123134.GD8684@htj.dyndns.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0730679367=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAF6AEGsPGCAHxqqRR7wWGxbiuS1HwTxF8fMb=VaL8T_qj85=TQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Rob Clark <robdclark@gmail.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Stephen Boyd <sboyd@codeaurora.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="IrhDeMKUP4DT/M7F"
+Return-path: <linux-next-owner@vger.kernel.org>
+In-Reply-To: <20150121123134.GD8684@htj.dyndns.org>
+Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>
+Cc: Paul Walmsley <paul@pwsan.com>, gregory.clement@free-electrons.com, hdegoede@redhat.com, pwalmsley@nvidia.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-ide@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-
---===============0730679367==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="vOmOzSkFvhd7u8Ms"
+--IrhDeMKUP4DT/M7F
+Content-Type: multipart/mixed; boundary="SLDf9lqlvOQaIe6s"
 Content-Disposition: inline
 
 
---vOmOzSkFvhd7u8Ms
+--SLDf9lqlvOQaIe6s
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 20, 2015 at 01:16:16PM -0500, Rob Clark wrote:
-> On Tue, Jan 20, 2015 at 1:02 PM, Mike Turquette <mturquette@linaro.org> w=
-rote:
-> > Quoting Thierry Reding (2015-01-20 02:48:20)
-> >> From: Thierry Reding <treding@nvidia.com>
-> >>
-> >> This new function is similar to clk_set_parent(), except that it doesn=
-'t
-> >> actually change the parent. It merely checks that the given parent clo=
-ck
-> >> can be a parent for the given clock.
-> >>
-> >> A situation where this is useful is to check that a particular setup is
-> >> valid before switching to it. One specific use-case for this is atomic
-> >> modesetting in the DRM framework where setting a mode is divided into a
-> >> check phase where a given configuration is validated before applying
-> >> changes to the hardware.
-> >
-> > Can you describe why this was needed for your atomic modesetting work?
-> > What problem did you hit in the driver that required this new check?
+On Wed, Jan 21, 2015 at 07:31:34AM -0500, Tejun Heo wrote:
+> On Wed, Jan 21, 2015 at 11:50:03AM +0100, Thierry Reding wrote:
+> > Tejun, preferably the attached patch should be squashed into commit
+> > c7d7ddee7e24 ("ata: libahci: Allow using multiple regulators") to avoid
+> > breaking bisectability. If you don't want to rewrite history, let me
+> > know and I can turn it into a proper patch.
 >=20
-> In particular, for an async atomic update, we need to do everything
-> that may potentially fail up front before returning to userspace.
-> Additionally there is a 'testonly' flag so that userspace can ask if a
-> particular display configuration is possible.
+> Yes, please make it a proper patch.
+>=20
+> Thanks a lot!
 
-One specific use-case where this is needed is if we want to set a mode
-but halfway through the modeset we find out that we can't actually set
-it, then we need to somehow rollback the changes, or be stuck with a
-mode that doesn't work.
-
-Splitting this into two separate stages allows all the checks to be
-performed before making any changes to the hardware. The current mode
-will remain active until the changes are committed. Therefore rollback
-of a partial modeset is not required.
+Attaching the patch.
 
 Thierry
 
---vOmOzSkFvhd7u8Ms
+--SLDf9lqlvOQaIe6s
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: inline; filename="0001-ata-libahci-Fix-devres-cleanup-on-failure.patch"
+Content-Transfer-Encoding: quoted-printable
+
+=46rom a4f78e3ec05f1b2ad86aa44d6bd5394d75a23a06 Mon Sep 17 00:00:00 2001
+=46rom: Thierry Reding <treding@nvidia.com>
+Date: Wed, 21 Jan 2015 11:50:52 +0100
+Subject: [PATCH] ata: libahci: Fix devres cleanup on failure
+
+Commit c7d7ddee7e24 ("ata: libahci: Allow using multiple regulators")
+releases regulators during ahci_platform_put_resources(). That doesn't
+work because the function is run as part of the devres machinery. Such
+resources are torn down in reverse order. Since the array that holds
+pointers to the regulators is allocated using devres after the device
+context to which ahci_platform_put_resources() is attached, the memory
+will be freed before calling ahci_platform_put_resources() and thereby
+causing a use-after-free error.
+
+This commit fixes this by using regular allocations for the array. The
+memory can then be freed after the regulators have been released. This
+conserves the advantages of using the managed API.
+
+Reported-by: Paul Walmsley <paul@pwsan.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/ata/libahci_platform.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/ata/libahci_platform.c b/drivers/ata/libahci_platform.c
+index 73a086664ee7..504d534ccbfe 100644
+--- a/drivers/ata/libahci_platform.c
++++ b/drivers/ata/libahci_platform.c
+@@ -276,6 +276,7 @@ static void ahci_platform_put_resources(struct device *=
+dev, void *res)
+ 		if (hpriv->target_pwrs && hpriv->target_pwrs[c])
+ 			regulator_put(hpriv->target_pwrs[c]);
+=20
++	kfree(hpriv->target_pwrs);
+ }
+=20
+ static int ahci_platform_get_phy(struct ahci_host_priv *hpriv, u32 port,
+@@ -412,7 +413,7 @@ struct ahci_host_priv *ahci_platform_get_resources(stru=
+ct platform_device *pdev)
+ 		goto err_out;
+ 	}
+ 	sz =3D hpriv->nports * sizeof(*hpriv->target_pwrs);
+-	hpriv->target_pwrs =3D devm_kzalloc(dev, sz, GFP_KERNEL);
++	hpriv->target_pwrs =3D kzalloc(sz, GFP_KERNEL);
+ 	if (!hpriv->target_pwrs) {
+ 		rc =3D -ENOMEM;
+ 		goto err_out;
+--=20
+2.1.3
+
+
+--SLDf9lqlvOQaIe6s--
+
+--IrhDeMKUP4DT/M7F
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUv8HKAAoJEN0jrNd/PrOhHdcP/38j2cqjJKnZR6vRUGUskyNe
-eUsykbbVCEtLVG3y2Go21F4+LNsikmjxI2jXM3JdiSLX3iNZBGYkJa8j8hW/flqd
-H5tApR8FqKgZGOaEELmiFU+P476Bm/0e1MkmRMb4DcLPmjHWYef6WYWr+T4omMJa
-fhHCi1PaIATzT88zXqeAV0oTcXxvP1LVKDlk5olk4WYObSvNDohMtxuklcJGhpbO
-F9B+ifs4xxjc9pVvA76bHiVGeHWy3Y7FSlAorhx/bNRgA3EAolBhTKqWXGu3NhLn
-TbfFAD8+4bKTh6ZEM3DIXQt0CTSGnl2MG9CVzqYfl8U2n/Voswwvh1Oh+H+IXKMd
-GXt1RuF7TedeS0bmSBB3+IvC9QI9DWSu7BGwB54W8WUgeOpeMCri5E5Y5Z9nUx2T
-aFHWtFmGLkNVs7w1djBbQKYNzXMaSSDkg/G9SUw65SPPsdZDtCuqK36ur99ElsvJ
-IN4pEBRz+1Etm7Q8vyAkw3cLancjprCmYUvuyIOusAs4q+jukLf0+mj2d4md3JW8
-Q8PPTgEcgNSNhwGn3Urty2MWU/3E+qpn+iISyHu5bQBQpyNgMgr2zf522WpycOne
-bsnf55Kq4r2vZlNKIdSs8/zWQTDIxKbRZb9MAmBHvH4oILnsxsixTVKKYNJody2F
-8qZQNvgMHAURc4yEVN7c
-=GwFs
+iQIcBAEBAgAGBQJUv8vnAAoJEN0jrNd/PrOhEwIQAMLBYpKKV58MUIA2O91w3pdr
+2jYzWy2Dl8iBQOeoYurUIU+MdVt1tqY6ISnaBiSlH+8w2AF7vEo/GbQXUaIiFroW
+/9u/QQLQndO/a40/EdWB4lGs2a3vp8sk+pNDK8LpHbtxfNCdERKgHMyfDpbJWpjC
+XEiGit0dktT7jrqg8JIaQ3veCvp/6iaByvU4pO+wH92krl2us7NXtweyaF5IKNmv
+fliUxmEVXLpM2Jmhogr5UQqS16+nhT6heTK5L7NS69WZd2bOUhYZMPoW4TuwQG6l
+SL7dmKaj5fjsmGufmGiccdcF0UN3s/O5ZIUVm3fCTrdjUEg3jleAK9JPdDRGJdqR
+p8q4crc+4g3V0tWg5bR/PlLu/HY5U/GDvucMqgM/gXYvg5HFNkpIOzGFoD1rl/Is
+VSe9l4uIIZm34kVO/jwaSDdAAMB7PKp7B5YWT7TB81G7H0WnoqwC+vtvj/0iIuJO
+UT3jXArYHxf20snTP6Bvt9zCCk2XWS6qvc0F0he2vm3ICTnqs9U/Fu5bgaqe2GDQ
+Hgx38ScAzp8614ouv0Jjn5vzrEzZVqKHIcH9eZSw8ssirX1QLodT+6DR3sXjxIwy
+WqCLdVHaQlLuyEL4u5mZbhndMUCiPlBnMKk7MrvJeIXi8Z09QbdguR2FwiSlZvDX
+tCmZUCv3I3/zgOR4erVW
+=1neP
 -----END PGP SIGNATURE-----
 
---vOmOzSkFvhd7u8Ms--
-
---===============0730679367==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
-
---===============0730679367==--
+--IrhDeMKUP4DT/M7F--
