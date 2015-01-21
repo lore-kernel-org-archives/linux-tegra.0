@@ -1,29 +1,59 @@
-From: Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: next-20150120 broken on Tegra by "ata: libahci: Allow using
- multiple regulators"
-Date: Wed, 21 Jan 2015 07:31:34 -0500
-Message-ID: <20150121123134.GD8684@htj.dyndns.org>
-References: <alpine.DEB.2.02.1501210003010.5450@utopia.booyaka.com>
- <20150121105001.GA9921@ulmo.nvidia.com>
+From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Subject: Re: [PATCH v2 08/11] mmc: pwrseq_simple: Add support for a delay
+Date: Wed, 21 Jan 2015 14:54:06 +0100
+Message-ID: <54BFAF7E.1030703@collabora.com>
+References: <1421338359-27467-1-git-send-email-tomeu.vizoso@collabora.com>	<1421338359-27467-9-git-send-email-tomeu.vizoso@collabora.com>	<54B7F9FB.7030100@wwwdotorg.org> <CAPDyKFoO6evBoAbEE30XiZg51KsM-sD4viFMvqaDwGoHeVL-6w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20150121105001.GA9921-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+In-Reply-To: <CAPDyKFoO6evBoAbEE30XiZg51KsM-sD4viFMvqaDwGoHeVL-6w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Chris Ball <chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-mmc <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jan 21, 2015 at 11:50:03AM +0100, Thierry Reding wrote:
-> Tejun, preferably the attached patch should be squashed into commit
-> c7d7ddee7e24 ("ata: libahci: Allow using multiple regulators") to avoid
-> breaking bisectability. If you don't want to rewrite history, let me
-> know and I can turn it into a proper patch.
+On 01/21/2015 11:44 AM, Ulf Hansson wrote:
+> On 15 January 2015 at 18:33, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>> On 01/15/2015 09:12 AM, Tomeu Vizoso wrote:
+>>>
+>>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+>>
+>>
+>> Ah, having read the explanation in the next patch, I think ...
+>>
+>>> diff --git a/Documentation/devicetree/bindings/mmc/mmc,pwrseq-simple.txt
+>>> b/Documentation/devicetree/bindings/mmc/mmc,pwrseq-simple.txt
+>>
+>>
+>>> +- delay : delay to wait after driving the reset gpio active [ms].
+>>
+>>
+>> ... delay is the wrong name. reset-pulse-width or reset-pulse-length would
+>> be better. delay sounds like a delay after resetting the device before it
+>> can be accessed.
+> 
+> I agree with Stephen's proposal.
 
-Yes, please make it a proper patch.
+Cool.
 
-Thanks a lot!
+> This patch needs to be rebased and retested on latest version the
+> mmc-pwrseq patches.
 
--- 
-tejun
+Sure.
+
+> Moreover, if you think the patchset which $subject
+> patch is a part of is material for 3.20, I will need to share an
+> immutable branch with the mmc-pwrseq patches for ARM SOC to pull in,
+> tell me if you need that.
+
+I don't think this will make 3.20 as I have other series with higher
+priority and there's quite some work left to do on this one.
+
+Regards,
+
+Tomeu
+
+> Kind regards
+> Uffe
+> 
