@@ -1,98 +1,93 @@
-From: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: Re: [PATCH v2] clk: Introduce clk_has_parent()
-Date: Thu, 22 Jan 2015 12:25:46 -0800
-Message-ID: <20150122202546.GO27202@codeaurora.org>
-References: <1421750935-4023-2-git-send-email-thierry.reding@gmail.com>
- <1421856780-32103-1-git-send-email-thierry.reding@gmail.com>
- <54C04145.1010906@codeaurora.org>
- <20150122073707.GA427@ulmo>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH 00/16] PCI generic configuration space accessors
+Date: Thu, 22 Jan 2015 15:03:44 -0600
+Message-ID: <20150122210344.GE13072@google.com>
+References: <1420857290-8373-1-git-send-email-robh@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-sh-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20150122073707.GA427@ulmo>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+In-Reply-To: <1420857290-8373-1-git-send-email-robh@kernel.org>
+Sender: linux-sh-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-pci@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, David Howells <dhowells@redhat.com>, Greg Ungerer <gerg@uclinux.org>, Koichi Yasutake <yasutake.koichi@jp.panasonic.com>, Krzysztof Halasa <khalasa@piap.pl>, Linus Walleij <linus.walleij@linaro.org>, Michael Ellerman <mpe@ellerman.id.au>, Michal Simek <michal.simek@xilinx.com>, Paul Mackerras <paulus@samba.org>, Ralf Baechle <ralf@linux-mips.org>, Russell King <linux@arm.linux.org.uk>, Simon Horman <horms@verge.net.au>, =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>, Stephen Warren <swarren@wwwdotorg.org>, Tanmay Inamdar <tinamdar@apm.com>, Thierry Reding <thierry.reding@gmail.com>, Will Deacon <will.deacon@arm.com>, cbe-oss-dev@lists.ozlabs.org, linux-am33-list@redhat.com
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/22, Thierry Reding wrote:
-> On Wed, Jan 21, 2015 at 04:16:05PM -0800, Stephen Boyd wrote:
-> > On 01/21/2015 08:13 AM, Thierry Reding wrote:
-> > > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > >
-> > > This new function is similar to clk_set_parent(), except that it doesn't
-> > > actually change the parent. It merely checks that the given parent clock
-> > > can be a parent for the given clock.
-> > >
-> > > A situation where this is useful is to check that a particular setup is
-> > > valid before switching to it. One specific use-case for this is atomic
-> > > modesetting in the DRM framework where setting a mode is divided into a
-> > > check phase where a given configuration is validated before applying
-> > > changes to the hardware.
-> > >
-> > > Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-> > > Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> > > Cc: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-> > > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > ---
-> > 
-> > Reviewed-by: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-> > 
-> > This will slightly conflict with Tomeu's  patches for per-user clock
-> > constraints. It would be best if we can take this through the clk tree
-> > to fix up any conflicts
+On Fri, Jan 09, 2015 at 08:34:34PM -0600, Rob Herring wrote:
+> This series adds common accessor functions for PCI configuration space
+> accesses. This supports most PCI hosts with memory mapped configuration
+> space like ECAM or hosts with memory mapped address/data registers. ECAM
+> is not generically supported by this series, but could be added on top
+> of this. While some hosts have standard address decoding which could be 
+> common as well, the various checks on bus numbers and device numbers are 
+> quite varied. It is unclear how much of that is really necessary or 
+> could be common. 
 > 
-> I had hoped to take this through the drm tree to resolve the build-time.
-> Another possibility would be for me to include the clk tree (or a subset
-> thereof) in my pull-request. That way you can still fix things up in the
-> clock tree if there are any conflicts with other work. We could make
-> that work two ways: this patch gets applied to the clk tree and I pull
-> it, or I provide a stable branch that I base my pull request on and that
-> branch can be pulled into the clk tree.
+> The first 4 patches are preparatory cleanup. Patch 5 introduces the
+> common accessors. The remaining patches convert several PCI host
+> controllers. This is in no way a complete list of host controllers. The
+> conversion of more hosts should be possible. The Designware controller
+> in particular should be able to be converted, but its config space
+> accessors are a mess of override-able functions that I've not gotten my
+> head around.
 > 
-> Yet another alternative would be to split out the clk_has_parent()
-> change from the series and not use it for now. That way we're going to
-> miss this check, but we do that anyway currently and it will only be
-> temporary until v3.21.
+> This series is available here [1].
 > 
-> Perhaps given where we are in the release cycle the latter would make
-> the most sense for now.
+> Rob
+> 
+> [1] git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git pci-config-access
+> 
+> Rob Herring (16):
+>   frv: add struct pci_ops member names to initialization
+>   mips: add struct pci_ops member names to initialization
+>   mn10300: add struct pci_ops member names to initialization
+>   powerpc: add struct pci_ops member names to initialization
+>   pci: introduce common pci config space accessors
+>   ARM: cns3xxx: convert PCI to use generic config accesses
+>   ARM: integrator: convert PCI to use generic config accesses
+>   ARM: sa1100: convert PCI to use generic config accesses
+>   ARM: ks8695: convert PCI to use generic config accesses
+>   powerpc: fsl_pci: convert PCI to use generic config accesses
+>   powerpc: powermac: convert PCI to use generic config accesses
+>   pci/host: generic: convert to use generic config accesses
+>   pci/host: rcar-gen2: convert to use generic config accesses
+>   pci/host: tegra: convert to use generic config accesses
+>   pci/host: xgene: convert to use generic config accesses
+>   pci/host: xilinx: convert to use generic config accesses
+> 
+>  arch/arm/mach-cns3xxx/pcie.c                   |  52 ++----
+>  arch/arm/mach-integrator/pci_v3.c              |  61 +-------
+>  arch/arm/mach-ks8695/pci.c                     |  77 +--------
+>  arch/arm/mach-sa1100/pci-nanoengine.c          |  94 +----------
+>  arch/frv/mb93090-mb00/pci-vdk.c                |   4 +-
+>  arch/mips/pci/pci-bcm1480.c                    |   4 +-
+>  arch/mips/pci/pci-octeon.c                     |   4 +-
+>  arch/mips/pci/pcie-octeon.c                    |  12 +-
+>  arch/mn10300/unit-asb2305/pci.c                |   4 +-
+>  arch/powerpc/platforms/cell/celleb_scc_pciex.c |   4 +-
+>  arch/powerpc/platforms/powermac/pci.c          | 209 +++++--------------------
+>  arch/powerpc/sysdev/fsl_pci.c                  |  46 +-----
+>  drivers/pci/access.c                           |  87 ++++++++++
+>  drivers/pci/host/pci-host-generic.c            |  51 +-----
+>  drivers/pci/host/pci-rcar-gen2.c               |  51 +-----
+>  drivers/pci/host/pci-tegra.c                   |  55 +------
+>  drivers/pci/host/pci-xgene.c                   | 150 ++----------------
+>  drivers/pci/host/pcie-xilinx.c                 |  88 ++---------
+>  include/linux/pci.h                            |  11 ++
+>  19 files changed, 212 insertions(+), 852 deletions(-)
 
-Ok well let's see what Mike wants to do given that he's doing all
-the patch applying right now. I'd think that we could put this
-one patch on a different branch that we can merge into clk-next
-and you can merge into the drm tree. At least that's the typical
-workflow that usually works for everyone.
+Really nice cleanups.  I added these with the acks so far to a pci/config
+branch for v3.20.  I'll update it with more acks if they trickle in.
 
-> 
-> > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> [...]
-> > > +	/* Optimize for the case where the parent is already the parent. */
-> > > +	if (clk->parent == parent)
-> > > +		return true;
-> > 
-> > I worry that we'll need to grab a lock here with Tomeu's patches, but
-> > maybe I'm wrong.
-> 
-> Why would this need a lock? Worst case somebody concurrently changes the
-> parent, in which case will not succeed and fallback to the lookup below.
+You've structured it nicely so I can also just drop individual arch pieces
+if necessary.  The pieces that haven't been acked yet (hint, hint):
 
-I was mostly worried about clk_core going away but we would
-already have a reference on it so you're right, we don't need any
-locks.
+    arch/arm/mach-cns3xxx/pcie.c
+    arch/arm/mach-sa1100/pci-nanoengine.c
+    arch/mn10300/unit-asb2305/pci.c
+    arch/powerpc
 
-> 
-> It's been a while since I last looked at Tomeu's series, but I seem to
-> remember that struct clk was going to be per-user, in which case I guess
-> the code would have to be modified anyway since ->parent and
-> ->parent_names will likely become properties of the clock structure
-> shared by all users (was it struct clk_core?).
-> 
+In addition, nobody has acked the frv and mips parts, but they're trivial
+(they only add struct member names) that I can apply them without worrying.
 
-Yes it will have to be fixed up, hence the comment about slight
-conflicts.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Bjorn
