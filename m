@@ -1,47 +1,96 @@
-From: Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: next-20150120 broken on Tegra by "ata: libahci: Allow using
- multiple regulators"
-Date: Wed, 21 Jan 2015 11:25:23 -0500
-Message-ID: <20150121162523.GE8684@htj.dyndns.org>
-References: <alpine.DEB.2.02.1501210003010.5450@utopia.booyaka.com>
- <20150121105001.GA9921@ulmo.nvidia.com>
- <20150121123134.GD8684@htj.dyndns.org>
- <20150121155519.GA25166@ulmo.nvidia.com>
+From: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Subject: Re: [PATCH v2] clk: Introduce clk_has_parent()
+Date: Wed, 21 Jan 2015 16:16:05 -0800
+Message-ID: <54C04145.1010906@codeaurora.org>
+References: <1421750935-4023-2-git-send-email-thierry.reding@gmail.com> <1421856780-32103-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20150121155519.GA25166-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+In-Reply-To: <1421856780-32103-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jan 21, 2015 at 04:55:21PM +0100, Thierry Reding wrote:
-> From a4f78e3ec05f1b2ad86aa44d6bd5394d75a23a06 Mon Sep 17 00:00:00 2001
+On 01/21/2015 08:13 AM, Thierry Reding wrote:
 > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Date: Wed, 21 Jan 2015 11:50:52 +0100
-> Subject: [PATCH] ata: libahci: Fix devres cleanup on failure
-> 
-> Commit c7d7ddee7e24 ("ata: libahci: Allow using multiple regulators")
-> releases regulators during ahci_platform_put_resources(). That doesn't
-> work because the function is run as part of the devres machinery. Such
-> resources are torn down in reverse order. Since the array that holds
-> pointers to the regulators is allocated using devres after the device
-> context to which ahci_platform_put_resources() is attached, the memory
-> will be freed before calling ahci_platform_put_resources() and thereby
-> causing a use-after-free error.
-> 
-> This commit fixes this by using regular allocations for the array. The
-> memory can then be freed after the regulators have been released. This
-> conserves the advantages of using the managed API.
-> 
-> Reported-by: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+>
+> This new function is similar to clk_set_parent(), except that it doesn't
+> actually change the parent. It merely checks that the given parent clock
+> can be a parent for the given clock.
+>
+> A situation where this is useful is to check that a particular setup is
+> valid before switching to it. One specific use-case for this is atomic
+> modesetting in the DRM framework where setting a mode is divided into a
+> check phase where a given configuration is validated before applying
+> changes to the hardware.
+>
+> Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+> Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Cc: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
 
-Applied to libata/for-3.20.
+Reviewed-by: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 
-Thanks.
+This will slightly conflict with Tomeu's  patches for per-user clock
+constraints. It would be best if we can take this through the clk tree
+to fix up any conflicts
+
+> Changes in v2:
+> - lookup parent name in parent names array and make function lockless
+> - rename function from clk_try_parent() to clk_has_parent()
+> - return boolean
+>
+>  drivers/clk/clk.c   | 30 ++++++++++++++++++++++++++++++
+>  include/linux/clk.h | 17 +++++++++++++++++
+>  2 files changed, 47 insertions(+)
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index af06b7377d37..470266297dea 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1672,6 +1672,36 @@ void __clk_reparent(struct clk *clk, struct clk *new_parent)
+>  }
+>  
+>  /**
+> + * clk_has_parent - check if a clock is a possible parent for another
+> + * @clk: clock source
+> + * @parent: parent clock source
+> + *
+> + * This function can be used in drivers that need to check that a clock can be
+> + * the parent of another without actually changing the parent.
+> + *
+> + * Returns true if @parent is a possible parent for @clk, false otherwise.
+> + */
+> +bool clk_has_parent(struct clk *clk, struct clk *parent)
+> +{
+> +	unsigned int i;
+> +
+> +	/* NULL clocks should be nops, so return success if either is NULL. */
+> +	if (!clk || !parent)
+> +		return true;
+> +
+> +	/* Optimize for the case where the parent is already the parent. */
+> +	if (clk->parent == parent)
+> +		return true;
+
+I worry that we'll need to grab a lock here with Tomeu's patches, but
+maybe I'm wrong.
+
+> +
+> +	for (i = 0; i < clk->num_parents; i++)
+> +		if (strcmp(clk->parent_names[i], parent->name) == 0)
+> +			return true;
+> +
+> +	return false;
+> +}
+> +EXPORT_SYMBOL_GPL(clk_has_parent);
+> +
+> +/**
+
 
 -- 
-tejun
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
