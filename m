@@ -1,207 +1,104 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v2] drm/tegra: Track active planes in CRTC state
-Date: Fri, 23 Jan 2015 10:31:41 +0100
-Message-ID: <1422005501-11222-1-git-send-email-thierry.reding@gmail.com>
-References: <1421750935-4023-35-git-send-email-thierry.reding@gmail.com>
+Subject: Re: [PATCH 05/36] drm/atomic: Add drm_atomic_plane_get_crtc_state()
+Date: Fri, 23 Jan 2015 10:32:20 +0100
+Message-ID: <20150123093219.GB3835@ulmo>
+References: <1421750935-4023-1-git-send-email-thierry.reding@gmail.com>
+ <1421750935-4023-6-git-send-email-thierry.reding@gmail.com>
+ <20150120111011.GX10113@phenom.ffwll.local>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="DBIVS5p969aUjpLe"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1421750935-4023-35-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20150120111011.GX10113-dv86pmgwkMBes7Z6vYuT8azUEOm+Xw19@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Wrap struct drm_crtc_state in a driver-specific structure and add the
-planes field which keeps track of which planes are updated or disabled
-during a modeset. This allows atomic updates of the the display engine
-at ->atomic_flush() time.
+--DBIVS5p969aUjpLe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-v2: open-code getting the state of the CRTC that the plane is being
-    attached to (Daniel Vetter)
+On Tue, Jan 20, 2015 at 12:10:11PM +0100, Daniel Vetter wrote:
+> On Tue, Jan 20, 2015 at 11:48:24AM +0100, Thierry Reding wrote:
+> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >=20
+> > This function is useful to obtain the state of the CRTC that a plane is
+> > being attached to.
+> >=20
+> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> >  include/drm/drm_atomic.h | 21 +++++++++++++++++++++
+> >  1 file changed, 21 insertions(+)
+> >=20
+> > diff --git a/include/drm/drm_atomic.h b/include/drm/drm_atomic.h
+> > index 51168a8b723a..ddca107e5cce 100644
+> > --- a/include/drm/drm_atomic.h
+> > +++ b/include/drm/drm_atomic.h
+> > @@ -75,4 +75,25 @@ int __must_check drm_atomic_check_only(struct drm_at=
+omic_state *state);
+> >  int __must_check drm_atomic_commit(struct drm_atomic_state *state);
+> >  int __must_check drm_atomic_async_commit(struct drm_atomic_state *stat=
+e);
+> > =20
+> > +/**
+> > + * drm_atomic_plane_get_crtc_state - obtain atomic state of the CRTC t=
+hat a
+> > + *     plane is being attached to
+> > + * @state: atomic state of plane
+> > + *
+> > + * Getting the atomic state of the CRTC that a given plane being attac=
+hed to
+> > + * is non-trivial. We need to look at the global atomic state that the=
+ plane
+> > + * state is part of and extract the CRTC state using the CRTC's index.=
+ Using
+> > + * the drm_atomic_get_crtc_state() helper we make sure to acquire the =
+proper
+> > + * locks, too.
+> > + *
+> > + * RETURNS:
+> > + * The atomic state of the CRTC that the plane is being attached to, o=
+r an
+> > + * ERR_PTR()-encoded negative error code on failure.
+> > + */
+> > +static inline struct drm_crtc_state *
+> > +drm_atomic_plane_get_crtc_state(struct drm_plane_state *state)
+> > +{
+> > +	return drm_atomic_get_crtc_state(state->state, state->crtc);
+>=20
+> Hm, imo open-coding this is totally ok. Actually better since state->crtc
+> might be NULL, and hiding that isn't a good idea.
+>=20
+> If you have a atomic_plane_disable hook then ->crtc is guaranteed to be
+> non-NULL in atomic_plane_update, but being explicit here is imo a feature.
+> So nacked from my side.
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/gpu/drm/tegra/dc.c | 72 ++++++++++++++++++++++++++++------------------
- 1 file changed, 44 insertions(+), 28 deletions(-)
+I've dropped this patch and open-coded this call in patch 34/36.
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 5da1b59e7cfd..c283ea4d0095 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -54,6 +54,8 @@ struct tegra_dc_state {
- 	struct clk *clk;
- 	unsigned long pclk;
- 	unsigned int div;
-+
-+	u32 planes;
- };
- 
- static inline struct tegra_dc_state *to_dc_state(struct drm_crtc_state *state)
-@@ -64,20 +66,6 @@ static inline struct tegra_dc_state *to_dc_state(struct drm_crtc_state *state)
- 	return NULL;
- }
- 
--static void tegra_dc_window_commit(struct tegra_dc *dc, unsigned int index)
--{
--	u32 value = WIN_A_ACT_REQ << index;
--
--	tegra_dc_writel(dc, value << 8, DC_CMD_STATE_CONTROL);
--	tegra_dc_writel(dc, value, DC_CMD_STATE_CONTROL);
--}
--
--static void tegra_dc_cursor_commit(struct tegra_dc *dc)
--{
--	tegra_dc_writel(dc, CURSOR_ACT_REQ << 8, DC_CMD_STATE_CONTROL);
--	tegra_dc_writel(dc, CURSOR_ACT_REQ, DC_CMD_STATE_CONTROL);
--}
--
- /*
-  * Reads the active copy of a register. This takes the dc->lock spinlock to
-  * prevent races with the VBLANK processing which also needs access to the
-@@ -395,8 +383,6 @@ static void tegra_dc_setup_window(struct tegra_dc *dc, unsigned int index,
- 		break;
- 	}
- 
--	tegra_dc_window_commit(dc, index);
--
- 	spin_unlock_irqrestore(&dc->lock, flags);
- }
- 
-@@ -439,9 +425,28 @@ static void tegra_plane_cleanup_fb(struct drm_plane *plane,
- {
- }
- 
-+static int tegra_plane_state_add(struct tegra_plane *plane,
-+				 struct drm_plane_state *state)
-+{
-+	struct drm_crtc_state *crtc_state;
-+	struct tegra_dc_state *tegra;
-+
-+	/* Propagate errors from allocation or locking failures. */
-+	crtc_state = drm_atomic_get_crtc_state(state->state, state->crtc);
-+	if (IS_ERR(crtc_state))
-+		return PTR_ERR(crtc_state);
-+
-+	tegra = to_dc_state(crtc_state);
-+
-+	tegra->planes |= WIN_A_ACT_REQ << plane->index;
-+
-+	return 0;
-+}
-+
- static int tegra_plane_atomic_check(struct drm_plane *plane,
- 				    struct drm_plane_state *state)
- {
-+	struct tegra_plane *tegra = to_tegra_plane(plane);
- 	struct tegra_dc *dc = to_tegra_dc(state->crtc);
- 	struct tegra_bo_tiling tiling;
- 	int err;
-@@ -472,6 +477,10 @@ static int tegra_plane_atomic_check(struct drm_plane *plane,
- 		}
- 	}
- 
-+	err = tegra_plane_state_add(tegra, state);
-+	if (err < 0)
-+		return err;
-+
- 	return 0;
- }
- 
-@@ -538,8 +547,6 @@ static void tegra_plane_atomic_disable(struct drm_plane *plane,
- 	value &= ~WIN_ENABLE;
- 	tegra_dc_writel(dc, value, DC_WIN_WIN_OPTIONS);
- 
--	tegra_dc_window_commit(dc, p->index);
--
- 	spin_unlock_irqrestore(&dc->lock, flags);
- }
- 
-@@ -599,6 +606,9 @@ static const u32 tegra_cursor_plane_formats[] = {
- static int tegra_cursor_atomic_check(struct drm_plane *plane,
- 				     struct drm_plane_state *state)
- {
-+	struct tegra_plane *tegra = to_tegra_plane(plane);
-+	int err;
-+
- 	/* no need for further checks if the plane is being disabled */
- 	if (!state->crtc)
- 		return 0;
-@@ -616,6 +626,10 @@ static int tegra_cursor_atomic_check(struct drm_plane *plane,
- 	    state->crtc_w != 128 && state->crtc_w != 256)
- 		return -EINVAL;
- 
-+	err = tegra_plane_state_add(tegra, state);
-+	if (err < 0)
-+		return err;
-+
- 	return 0;
- }
- 
-@@ -680,9 +694,6 @@ static void tegra_cursor_atomic_update(struct drm_plane *plane,
- 	value = (state->crtc_y & 0x3fff) << 16 | (state->crtc_x & 0x3fff);
- 	tegra_dc_writel(dc, value, DC_DISP_CURSOR_POSITION);
- 
--	/* apply changes */
--	tegra_dc_cursor_commit(dc);
--	tegra_dc_commit(dc);
- }
- 
- static void tegra_cursor_atomic_disable(struct drm_plane *plane,
-@@ -700,9 +711,6 @@ static void tegra_cursor_atomic_disable(struct drm_plane *plane,
- 	value = tegra_dc_readl(dc, DC_DISP_DISP_WIN_OPTIONS);
- 	value &= ~CURSOR_ENABLE;
- 	tegra_dc_writel(dc, value, DC_DISP_DISP_WIN_OPTIONS);
--
--	tegra_dc_cursor_commit(dc);
--	tegra_dc_commit(dc);
- }
- 
- static const struct drm_plane_funcs tegra_cursor_plane_funcs = {
-@@ -734,6 +742,13 @@ static struct drm_plane *tegra_dc_cursor_plane_create(struct drm_device *drm,
- 	if (!plane)
- 		return ERR_PTR(-ENOMEM);
- 
-+	/*
-+	 * We'll treat the cursor as an overlay plane with index 6 here so
-+	 * that the update and activation request bits in DC_CMD_STATE_CONTROL
-+	 * match up.
-+	 */
-+	plane->index = 6;
-+
- 	num_formats = ARRAY_SIZE(tegra_cursor_plane_formats);
- 	formats = tegra_cursor_plane_formats;
- 
-@@ -1029,7 +1044,6 @@ static void tegra_crtc_disable(struct drm_crtc *crtc)
- 	}
- 
- 	drm_crtc_vblank_off(crtc);
--	tegra_dc_commit(dc);
- }
- 
- static bool tegra_crtc_mode_fixup(struct drm_crtc *crtc,
-@@ -1202,10 +1216,7 @@ static void tegra_crtc_prepare(struct drm_crtc *crtc)
- 
- static void tegra_crtc_commit(struct drm_crtc *crtc)
- {
--	struct tegra_dc *dc = to_tegra_dc(crtc);
--
- 	drm_crtc_vblank_on(crtc);
--	tegra_dc_commit(dc);
- }
- 
- static int tegra_crtc_atomic_check(struct drm_crtc *crtc,
-@@ -1230,6 +1241,11 @@ static void tegra_crtc_atomic_begin(struct drm_crtc *crtc)
- 
- static void tegra_crtc_atomic_flush(struct drm_crtc *crtc)
- {
-+	struct tegra_dc_state *state = to_dc_state(crtc->state);
-+	struct tegra_dc *dc = to_tegra_dc(crtc);
-+
-+	tegra_dc_writel(dc, state->planes << 8, DC_CMD_STATE_CONTROL);
-+	tegra_dc_writel(dc, state->planes, DC_CMD_STATE_CONTROL);
- }
- 
- static const struct drm_crtc_helper_funcs tegra_crtc_helper_funcs = {
--- 
-2.1.3
+Thierry
+
+--DBIVS5p969aUjpLe
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUwhUjAAoJEN0jrNd/PrOhs44QALOBOZoyw01NOIngLjTZ6uVj
+fY7D/2d53l4tnKS7aWGkrl6uYPseGyo+lO5IjMFY2wONYRdkzkazmozzQoSR/+YF
+mwd5JO2mz9cPSPuj8clIcfLQvQLUA63XTSCj5sF1ZrDA/eikV375KjzFpOZH5H9M
+fKfkFyZLAU6KcV4ya0qc1RFUzPBkff1RcG+FiJpTgaJbBzfwa99NmplStQwwueE0
+sLxrf1pvMk7Rky207ggPxa4acd3jA3D17vrg0FZFnhpQ0kcvh4TF9Ri2TDiv9y1T
++BLrdkyopba+EGPp81/oWRCoeZloPHtSTgu3nCBqU8RkhCHn25WF9CCnU3JbC/dB
+L37izaezkke/cgHxqs++ZJ7JBDZ1+6nWtiFKCjp+kwAtnDL9JRK+17Ao9ulVps0s
+f7DIVUvx+tLWsAvh+CvktF/MmyiyA0/gCVuh4sK4KZodQSbYQ2OEIWdzwc3TXmWK
+m7MM3p+cGpYO65O6DL4HnGwvrzTHG0mpOwuMK8V4EgAcIJn9HP7wWpQSfA54rp7M
+tkwiUa89Mi5NoZmRSxjPPl7s20pc62Fwjsj4c0AQqZGlbDTmfD2p/x/3/tZm+4Oq
+y/Cuv2PE1UsrsrHdVj00EYID6FGn+npTvtoMJBw+7Bn28g48xoSev+VLNVnSGA74
+WGX0pX/HBTKFPiyTosCD
+=ubjt
+-----END PGP SIGNATURE-----
+
+--DBIVS5p969aUjpLe--
