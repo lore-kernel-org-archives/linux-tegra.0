@@ -1,8 +1,10 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 1/4] ARM: tegra: Device tree changes for v3.20
-Date: Fri, 23 Jan 2015 16:59:57 +0100
-Message-ID: <1422028800-759-1-git-send-email-thierry.reding@gmail.com>
+Subject: [GIT PULL 2/4] ARM: tegra: Default configuration changes for v3.20
+Date: Fri, 23 Jan 2015 16:59:58 +0100
+Message-ID: <1422028800-759-2-git-send-email-thierry.reding@gmail.com>
+References: <1422028800-759-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1422028800-759-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
@@ -16,36 +18,24 @@ The following changes since commit 97bf6af1f928216fd6c5a66e8a57bfa95a659672:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-3.20-dt
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-3.20-defconfig
 
-for you to fetch changes up to 62981239a61bfd5306737effc015deba26c0d198:
+for you to fetch changes up to fe07e48964c6f21020eeeb7f83e35a5bf1977a65:
 
-  ARM: tegra: Update isl29028 compatible string to use isil vendor prefix (2015-01-09 13:42:04 +0100)
+  ARM: tegra: Regenerate defconfig based on v3.19-rc1 (2015-01-06 14:10:57 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-ARM: tegra: Device tree changes for v3.20
+ARM: tegra: Default configuration changes for v3.20
 
-A couple of unit addresses fixes in device trees, addition of microphone
-detection on Chromebook 13 and a vendor prefix update.
+This is merely a regeneration of the default configuration to get rid of
+two symbols that are now enabled by default or removed.
 
 ----------------------------------------------------------------
-Arnaud Ebalard (1):
-      ARM: tegra: Update isl29028 compatible string to use isil vendor prefix
-
-Dmitry Osipenko (1):
-      ARM: dts: tegra20: fix GR3D, DSI unit and reg base addresses
-
-Dylan Reid (1):
-      ARM: tegra: Enable the mic-detect gpio on Acer Chromebook 13
-
 Thierry Reding (1):
-      ARM: tegra: Fix unit address for Cortex-A9 TWD timer
+      ARM: tegra: Regenerate defconfig based on v3.19-rc1
 
- arch/arm/boot/dts/tegra124-nyan-big.dts |  2 ++
- arch/arm/boot/dts/tegra20.dtsi          | 10 +++++-----
- arch/arm/boot/dts/tegra30-cardhu.dtsi   |  2 +-
- arch/arm/boot/dts/tegra30.dtsi          |  2 +-
- 4 files changed, 9 insertions(+), 7 deletions(-)
+ arch/arm/configs/tegra_defconfig | 2 --
+ 1 file changed, 2 deletions(-)
