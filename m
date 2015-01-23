@@ -1,131 +1,51 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 5/6] platform: probe IOMMU if present
-Date: Fri, 23 Jan 2015 17:53:57 +0900
-Message-ID: <1422003238-14572-6-git-send-email-acourbot@nvidia.com>
-References: <1422003238-14572-1-git-send-email-acourbot@nvidia.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2] i2c: tegra: Maintain CPU endianness
+Date: Fri, 23 Jan 2015 18:10:58 +0900
+Message-ID: <CAAVeFuLLn8L0s7_19TX+RzSY88T0tno4SRguM2ipBe6yWHrgmw@mail.gmail.com>
+References: <1421950352-26515-1-git-send-email-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <1422003238-14572-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1421950352-26515-1-git-send-email-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, Bob Mottram <bob.mottram-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-VGVncmEgU29DcyBoYXZlIGFuIElPTU1VIHRoYXQgY2FuIGJlIHVzZWQgdG8gcHJlc2VudCBub24t
-Y29udGlndW91cwpwaHlzaWNhbCBtZW1vcnkgYXMgY29udGlndW91cyB0byB0aGUgR1BVIGFuZCBt
-YXhpbWl6ZSB0aGUgdXNlIG9mIGxhcmdlCnBhZ2VzIGluIHRoZSBHUFUgTU1VLCBsZWFkaW5nIHRv
-IHBlcmZvcm1hbmNlIGdhaW5zLiBUaGlzIHBhdGNoIGFkZHMKc3VwcG9ydCBmb3IgcHJvYmluZyBz
-dWNoIGEgSU9NTVUgaWYgcHJlc2VudCBhbmQgbWFrZSBpdHMgcHJvcGVydGllcwphdmFpbGFibGUg
-aW4gdGhlIG5vdXZlYXVfcGxhdGZvcm1fZ3B1IHN0cnVjdHVyZSBzbyBzdWJzeXN0ZW1zIGNhbiB0
-YWtlCmFkdmFudGFnZSBvZiBpdC4KClNpZ25lZC1vZmYtYnk6IEFsZXhhbmRyZSBDb3VyYm90IDxh
-Y291cmJvdEBudmlkaWEuY29tPgotLS0KIGRybS9ub3V2ZWF1L25vdXZlYXVfcGxhdGZvcm0uYyB8
-IDc1ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrLQogZHJtL25vdXZl
-YXUvbm91dmVhdV9wbGF0Zm9ybS5oIHwgMTggKysrKysrKysrKwogbGliL2luY2x1ZGUvbnZpZi9v
-cy5oICAgICAgICAgIHwgMzIgKysrKysrKysrKysrKysrKysrCiAzIGZpbGVzIGNoYW5nZWQsIDEy
-NCBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvZHJtL25vdXZlYXUv
-bm91dmVhdV9wbGF0Zm9ybS5jIGIvZHJtL25vdXZlYXUvbm91dmVhdV9wbGF0Zm9ybS5jCmluZGV4
-IGRjNTkwMGIuLjM2OTE5ODIgMTAwNjQ0Ci0tLSBhL2RybS9ub3V2ZWF1L25vdXZlYXVfcGxhdGZv
-cm0uYworKysgYi9kcm0vbm91dmVhdS9ub3V2ZWF1X3BsYXRmb3JtLmMKQEAgLTI3LDYgKzI3LDcg
-QEAKICNpbmNsdWRlIDxsaW51eC9vZi5oPgogI2luY2x1ZGUgPGxpbnV4L3Jlc2V0Lmg+CiAjaW5j
-bHVkZSA8bGludXgvcmVndWxhdG9yL2NvbnN1bWVyLmg+CisjaW5jbHVkZSA8bGludXgvaW9tbXUu
-aD4KICNpbmNsdWRlIDxzb2MvdGVncmEvZnVzZS5oPgogI2luY2x1ZGUgPHNvYy90ZWdyYS9wbWMu
-aD4KIApAQCAtOTEsNiArOTIsNzEgQEAgc3RhdGljIGludCBub3V2ZWF1X3BsYXRmb3JtX3Bvd2Vy
-X2Rvd24oc3RydWN0IG5vdXZlYXVfcGxhdGZvcm1fZ3B1ICpncHUpCiAJcmV0dXJuIDA7CiB9CiAK
-K3N0YXRpYyB2b2lkIG5vdXZlYXVfcGxhdGZvcm1fcHJvYmVfaW9tbXUoc3RydWN0IGRldmljZSAq
-ZGV2LAorCQkJCQkgc3RydWN0IG5vdXZlYXVfcGxhdGZvcm1fZ3B1ICpncHUpCit7CisJaW50IGVy
-cjsKKwl1bnNpZ25lZCBsb25nIHBnc2l6ZV9iaXRtYXA7CisKKwltdXRleF9pbml0KCZncHUtPmlv
-bW11Lm11dGV4KTsKKworCWlmIChpb21tdV9wcmVzZW50KCZwbGF0Zm9ybV9idXNfdHlwZSkpIHsK
-KwkJZ3B1LT5pb21tdS5kb21haW4gPSBpb21tdV9kb21haW5fYWxsb2MoJnBsYXRmb3JtX2J1c190
-eXBlKTsKKwkJaWYgKElTX0VSUihncHUtPmlvbW11LmRvbWFpbikpCisJCQlnb3RvIGVycm9yOwor
-CisJCS8qCisJCSAqIEEgSU9NTVUgaXMgb25seSB1c2FibGUgaWYgaXQgc3VwcG9ydHMgcGFnZSBz
-aXplcyBzbWFsbGVyCisJCSAqIG9yIGVxdWFsIHRvIHRoZSBzeXN0ZW0ncyBQQUdFX1NJWkUsIHdp
-dGggYSBwcmVmZXJlbmNlIGlmCisJCSAqIGJvdGggYXJlIGVxdWFsLgorCQkgKi8KKwkJcGdzaXpl
-X2JpdG1hcCA9IGdwdS0+aW9tbXUuZG9tYWluLT5vcHMtPnBnc2l6ZV9iaXRtYXA7CisJCWlmIChw
-Z3NpemVfYml0bWFwICYgUEFHRV9TSVpFKSB7CisJCQlncHUtPmlvbW11LnBnc2hpZnQgPSBQQUdF
-X1NISUZUOworCQl9IGVsc2UgeworCQkJZ3B1LT5pb21tdS5wZ3NoaWZ0ID0gZmxzKHBnc2l6ZV9i
-aXRtYXAgJiB+UEFHRV9NQVNLKTsKKwkJCWlmIChncHUtPmlvbW11LnBnc2hpZnQgPT0gMCkgewor
-CQkJCWRldl93YXJuKGRldiwgInVuc3VwcG9ydGVkIElPTU1VIHBhZ2Ugc2l6ZVxuIik7CisJCQkJ
-Z290byBmcmVlX2RvbWFpbjsKKwkJCX0KKwkJCWdwdS0+aW9tbXUucGdzaGlmdCAtPSAxOworCQl9
-CisKKwkJZXJyID0gaW9tbXVfYXR0YWNoX2RldmljZShncHUtPmlvbW11LmRvbWFpbiwgZGV2KTsK
-KwkJaWYgKGVycikKKwkJCWdvdG8gZnJlZV9kb21haW47CisKKwkJZXJyID0gbnZrbV9tbV9pbml0
-KCZncHUtPmlvbW11Ll9tbSwgMCwKKwkJCQkgICAoMVVMTCA8PCA0MCkgPj4gZ3B1LT5pb21tdS5w
-Z3NoaWZ0LCAxKTsKKwkJaWYgKGVycikKKwkJCWdvdG8gZGV0YWNoX2RldmljZTsKKworCQlncHUt
-PmlvbW11Lm1tID0gJmdwdS0+aW9tbXUuX21tOworCX0KKworCXJldHVybjsKKworZGV0YWNoX2Rl
-dmljZToKKwlpb21tdV9kZXRhY2hfZGV2aWNlKGdwdS0+aW9tbXUuZG9tYWluLCBkZXYpOworCitm
-cmVlX2RvbWFpbjoKKwlpb21tdV9kb21haW5fZnJlZShncHUtPmlvbW11LmRvbWFpbik7CisKK2Vy
-cm9yOgorCWdwdS0+aW9tbXUuZG9tYWluID0gTlVMTDsKKwlncHUtPmlvbW11LnBnc2hpZnQgPSAw
-OworCWRldl9lcnIoZGV2LCAiY2Fubm90IGluaXRpYWxpemUgSU9NTVUgTU1cbiIpOworfQorCitz
-dGF0aWMgdm9pZCBub3V2ZWF1X3BsYXRmb3JtX3JlbW92ZV9pb21tdShzdHJ1Y3QgZGV2aWNlICpk
-ZXYsCisJCQkJCSAgc3RydWN0IG5vdXZlYXVfcGxhdGZvcm1fZ3B1ICpncHUpCit7CisJaWYgKGdw
-dS0+aW9tbXUuZG9tYWluKSB7CisJCWlvbW11X2RldGFjaF9kZXZpY2UoZ3B1LT5pb21tdS5kb21h
-aW4sIGRldik7CisJCWlvbW11X2RvbWFpbl9mcmVlKGdwdS0+aW9tbXUuZG9tYWluKTsKKwl9Cit9
-CisKIHN0YXRpYyBpbnQgbm91dmVhdV9wbGF0Zm9ybV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2
-aWNlICpwZGV2KQogewogCXN0cnVjdCBub3V2ZWF1X3BsYXRmb3JtX2dwdSAqZ3B1OwpAQCAtMTE4
-LDYgKzE4NCw4IEBAIHN0YXRpYyBpbnQgbm91dmVhdV9wbGF0Zm9ybV9wcm9iZShzdHJ1Y3QgcGxh
-dGZvcm1fZGV2aWNlICpwZGV2KQogCWlmIChJU19FUlIoZ3B1LT5jbGtfcHdyKSkKIAkJcmV0dXJu
-IFBUUl9FUlIoZ3B1LT5jbGtfcHdyKTsKIAorCW5vdXZlYXVfcGxhdGZvcm1fcHJvYmVfaW9tbXUo
-JnBkZXYtPmRldiwgZ3B1KTsKKwogCWVyciA9IG5vdXZlYXVfcGxhdGZvcm1fcG93ZXJfdXAoZ3B1
-KTsKIAlpZiAoZXJyKQogCQlyZXR1cm4gZXJyOwpAQCAtMTU0LDEwICsyMjIsMTUgQEAgc3RhdGlj
-IGludCBub3V2ZWF1X3BsYXRmb3JtX3JlbW92ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2
-KQogCXN0cnVjdCBub3V2ZWF1X2RybSAqZHJtID0gbm91dmVhdV9kcm0oZHJtX2Rldik7CiAJc3Ry
-dWN0IG52a21fZGV2aWNlICpkZXZpY2UgPSBudnh4X2RldmljZSgmZHJtLT5kZXZpY2UpOwogCXN0
-cnVjdCBub3V2ZWF1X3BsYXRmb3JtX2dwdSAqZ3B1ID0gbnZfZGV2aWNlX3RvX3BsYXRmb3JtKGRl
-dmljZSktPmdwdTsKKwlpbnQgZXJyOwogCiAJbm91dmVhdV9kcm1fZGV2aWNlX3JlbW92ZShkcm1f
-ZGV2KTsKIAotCXJldHVybiBub3V2ZWF1X3BsYXRmb3JtX3Bvd2VyX2Rvd24oZ3B1KTsKKwllcnIg
-PSBub3V2ZWF1X3BsYXRmb3JtX3Bvd2VyX2Rvd24oZ3B1KTsKKworCW5vdXZlYXVfcGxhdGZvcm1f
-cmVtb3ZlX2lvbW11KCZwZGV2LT5kZXYsIGdwdSk7CisKKwlyZXR1cm4gZXJyOwogfQogCiAjaWYg
-SVNfRU5BQkxFRChDT05GSUdfT0YpCmRpZmYgLS1naXQgYS9kcm0vbm91dmVhdS9ub3V2ZWF1X3Bs
-YXRmb3JtLmggYi9kcm0vbm91dmVhdS9ub3V2ZWF1X3BsYXRmb3JtLmgKaW5kZXggMjY4YmI3Mi4u
-MzkyODc0YyAxMDA2NDQKLS0tIGEvZHJtL25vdXZlYXUvbm91dmVhdV9wbGF0Zm9ybS5oCisrKyBi
-L2RybS9ub3V2ZWF1L25vdXZlYXVfcGxhdGZvcm0uaApAQCAtMjQsMTAgKzI0LDEyIEBACiAjZGVm
-aW5lIF9fTk9VVkVBVV9QTEFURk9STV9IX18KIAogI2luY2x1ZGUgImNvcmUvZGV2aWNlLmgiCisj
-aW5jbHVkZSAiY29yZS9tbS5oIgogCiBzdHJ1Y3QgcmVzZXRfY29udHJvbDsKIHN0cnVjdCBjbGs7
-CiBzdHJ1Y3QgcmVndWxhdG9yOworc3RydWN0IGlvbW11X2RvbWFpbjsKIHN0cnVjdCBwbGF0Zm9y
-bV9kcml2ZXI7CiAKIHN0cnVjdCBub3V2ZWF1X3BsYXRmb3JtX2dwdSB7CkBAIC0zNiw2ICszOCwy
-MiBAQCBzdHJ1Y3Qgbm91dmVhdV9wbGF0Zm9ybV9ncHUgewogCXN0cnVjdCBjbGsgKmNsa19wd3I7
-CiAKIAlzdHJ1Y3QgcmVndWxhdG9yICp2ZGQ7CisKKwlzdHJ1Y3QgeworCQkvKgorCQkgKiBQcm90
-ZWN0cyBhY2Nlc3NlcyB0byBtbSBmcm9tIHN1YnN5c3RlbXMKKwkJICovCisJCXN0cnVjdCBtdXRl
-eCBtdXRleDsKKworCQlzdHJ1Y3QgbnZrbV9tbSBfbW07CisJCS8qCisJCSAqIEp1c3QgcG9pbnRz
-IHRvIF9tbS4gV2UgbmVlZCB0aGlzIHRvIGF2b2lkIGVtYmVkZGluZworCQkgKiBzdHJ1Y3QgbnZr
-bV9tbSBpbiBvcy5oCisJCSAqLworCQlzdHJ1Y3QgbnZrbV9tbSAqbW07CisJCXN0cnVjdCBpb21t
-dV9kb21haW4gKmRvbWFpbjsKKwkJdW5zaWduZWQgbG9uZyBwZ3NoaWZ0OworCX0gaW9tbXU7CiB9
-OwogCiBzdHJ1Y3Qgbm91dmVhdV9wbGF0Zm9ybV9kZXZpY2UgewpkaWZmIC0tZ2l0IGEvbGliL2lu
-Y2x1ZGUvbnZpZi9vcy5oIGIvbGliL2luY2x1ZGUvbnZpZi9vcy5oCmluZGV4IGI0ZDMwN2UuLjI3
-NWZhODQgMTAwNjQ0Ci0tLSBhL2xpYi9pbmNsdWRlL252aWYvb3MuaAorKysgYi9saWIvaW5jbHVk
-ZS9udmlmL29zLmgKQEAgLTcxNSw2ICs3MTUsMjkgQEAgZG1hX2ZyZWVfYXR0cnMoc3RydWN0IGRl
-dmljZSAqZGV2LCBzaXplX3Qgc3osIHZvaWQgKnZhZGRyLCBkbWFfYWRkcl90IGJ1cywKIAogCiAv
-KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
-KioqKioqKioqKioqKioqKioqKioqCisgKiBJT01NVQorICoqKioqKioqKioqKioqKioqKioqKioq
-KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqLwor
-c3RydWN0IGlvbW11X2RvbWFpbjsKKworI2RlZmluZSBJT01NVV9SRUFEICAgICAoMSA8PCAwKQor
-I2RlZmluZSBJT01NVV9XUklURSAgICAoMSA8PCAxKQorI2RlZmluZSBJT01NVV9DQUNIRSAgICAo
-MSA8PCAyKSAvKiBETUEgY2FjaGUgY29oZXJlbmN5ICovCisjZGVmaW5lIElPTU1VX05PRVhFQyAg
-ICgxIDw8IDMpCisKK3N0YXRpYyBpbmxpbmUgaW50Citpb21tdV9tYXAoc3RydWN0IGlvbW11X2Rv
-bWFpbiAqZG9tYWluLCB1bnNpZ25lZCBsb25nIGlvdmEsIGRtYV9hZGRyX3QgcGFkZHIsCisJICBz
-aXplX3Qgc2l6ZSwgaW50IHByb3QpCit7CisJcmV0dXJuIDA7Cit9CisKK3N0YXRpYyBpbmxpbmUg
-c2l6ZV90Citpb21tdV91bm1hcChzdHJ1Y3QgaW9tbXVfZG9tYWluICpkb21haW4sIHVuc2lnbmVk
-IGxvbmcgaW92YSwgc2l6ZV90IHNpemUpCit7CisJcmV0dXJuIDA7Cit9CisKKy8qKioqKioqKioq
-KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
-KioqKioqKioqKioKICAqIFBDSQogICoqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
-KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqLwogI2luY2x1ZGUgPHBj
-aWFjY2Vzcy5oPgpAQCAtMTIwOCw5ICsxMjMxLDE4IEBAIHJlZ3VsYXRvcl9nZXRfdm9sdGFnZShz
-dHJ1Y3QgcmVndWxhdG9yICpyZWd1bGF0b3IpCiAgKiBub3V2ZWF1IGRybSBwbGF0Zm9ybSBkZXZp
-Y2UKICAqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
-KioqKioqKioqKioqKioqKioqKioqKioqKi8KIAorc3RydWN0IG52a21fbW07CisKIHN0cnVjdCBu
-b3V2ZWF1X3BsYXRmb3JtX2dwdSB7CiAJc3RydWN0IGNsayAqY2xrOwogCXN0cnVjdCByZWd1bGF0
-b3IgKnZkZDsKKworCXN0cnVjdCB7CisJCXN0cnVjdCBtdXRleCBtdXRleDsKKwkJc3RydWN0IG52
-a21fbW0gKm1tOworCQlzdHJ1Y3QgaW9tbXVfZG9tYWluICpkb21haW47CisJCXVuc2lnbmVkIGxv
-bmcgcGdzaGlmdDsKKwl9IGlvbW11OwogfTsKIAogc3RydWN0IG5vdXZlYXVfcGxhdGZvcm1fZGV2
-aWNlIHsKLS0gCjIuMi4yCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpOb3V2ZWF1IG1haWxpbmcgbGlzdApOb3V2ZWF1QGxpc3RzLmZyZWVkZXNrdG9wLm9y
-ZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vbm91dmVhdQo=
+On Fri, Jan 23, 2015 at 3:12 AM, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> Support CPU BE mode by adding endianness conversion for memcpy interactions.
+>
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+> Changelog:
+> v2: For consistency cpu_to_le32() changed to le32_to_cpu() because
+>     i2c_writel() takes BE value in BE CPU mode and value is in LE format.
+>
+>  drivers/i2c/busses/i2c-tegra.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> index 28b87e6..b5afb9f 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -286,6 +286,7 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev *i2c_dev)
+>         if (rx_fifo_avail > 0 && buf_remaining > 0) {
+>                 BUG_ON(buf_remaining > 3);
+>                 val = i2c_readl(i2c_dev, I2C_RX_FIFO);
+> +               val = cpu_to_le32(val);
+>                 memcpy(buf, &val, buf_remaining);
+>                 buf_remaining = 0;
+>                 rx_fifo_avail--;
+> @@ -343,7 +344,9 @@ static int tegra_i2c_fill_tx_fifo(struct tegra_i2c_dev *i2c_dev)
+>          */
+>         if (tx_fifo_avail > 0 && buf_remaining > 0) {
+>                 BUG_ON(buf_remaining > 3);
+> +               val = 0;
+>                 memcpy(&val, buf, buf_remaining);
+> +               val = le32_to_cpu(val);
+
+Ok, with le32_to_cpu() this makes sense now. memcpying part of an int
+will keep the lowest byte at the lowest address, so this should work
+for little-endian.
+
+Acked-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
