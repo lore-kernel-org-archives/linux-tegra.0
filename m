@@ -1,129 +1,64 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] arm64: dts: Add initial device tree support for Tegra132
-Date: Fri, 23 Jan 2015 10:47:03 -0700
-Message-ID: <54C28917.1070809@wwwdotorg.org>
-References: <alpine.DEB.2.02.1501161139180.9776@utopia.booyaka.com> <20150121161313.GI5044@leverpostej> <alpine.DEB.2.02.1501231038130.5450@utopia.booyaka.com> <54C27D6F.9000006@wwwdotorg.org> <20150123173449.GB10424@leverpostej>
+From: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>
+Subject: Re: [Nouveau] [PATCH 1/6] make RAM device optional
+Date: Fri, 23 Jan 2015 10:27:08 -0800
+Message-ID: <CAKb7Uvj9n4vfPmvxCODyRBZbNoLcvwUkT9HJEpyHxqM1g_t=Lw@mail.gmail.com>
+References: <1422003238-14572-1-git-send-email-acourbot@nvidia.com>
+	<1422003238-14572-2-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150123173449.GB10424@leverpostej>
+In-Reply-To: <1422003238-14572-2-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, "amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Catalin Marinas <Catalin.Marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <Will.Deacon-5wv7dgnIgG8@public.gmane.org>, "pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/23/2015 10:34 AM, Mark Rutland wrote:
-> On Fri, Jan 23, 2015 at 04:57:19PM +0000, Stephen Warren wrote:
->> On 01/23/2015 04:31 AM, Paul Walmsley wrote:
->>> + Arto, Terje for comments on the host1x section
->>> + Stephen Warren for comments on the serial DT data
->>
->>> On Wed, 21 Jan 2015, Mark Rutland wrote:
->>>
->>>> As mentioned in my reply to the DT list patch [1], there are a couple of
->>>> bits I'd like to see cleaned up first, but in the meantime I have some
->>>> comments from my first pass of the dtsi below. Some of these may equally
->>>> apply to existing dts(i) files.
->>>>
->>>> I see a few undocumented compatible strings (at least when comparing
->>>> against mainline). If there are other series or trees I should be
->>>> looking at, any pointers would be appreciated. If not, documentation
->>>> updates would be nice (checkpatch should complain otherwise).
->>
->>>> On Fri, Jan 16, 2015 at 11:45:29AM +0000, Paul Walmsley wrote:
->>>>>
->>>>> Add an initial device tree file for the Tegra132 SoC.  The DT file is
->>>>> based on arch/arm/boot/dts/tegra124.dtsi and
->>>>> arch/arm/boot/dts/tegra114.dtsi, with the following significant
->>>>> changes:
->>>>>
->>>>> - Tegra132 uses a Denver CPU cluster rather than an ARMv7 CPU cluster
->>>>> - Devices are arranged by bus, rather than in a flat topology
->>>>> - No polling delays have been defined for the thermal zones.  I don't
->>>>>     believe that this is a property of the SoC hardware, but rather of a
->>>>>     given use-case.
->>
->>>>> diff --git a/arch/arm64/boot/dts/tegra/tegra132.dtsi b/arch/arm64/boot/dts/tegra/tegra132.dtsi
->>>>> +               /*
->>>>> +                * There are two serial drivers: an 8250 based simple
->>>>> +                * serial driver and an APB DMA based serial driver
->>>>> +                * for higher baudrate and performance. To enable the
->>>>> +                * 8250 based driver, the compatible string is
->>>>> +                * "nvidia,tegra132-uart", "nvidia,tegra124-uart",
->>>>> +                * "nvidia,tegra20-uart" and to enable the APB DMA
->>>>> +                * based serial driver, the compatible string is
->>>>> +                * "nvidia,tegra132-hsuart", "nvidia,tegra124-hsuart",
->>>>> +                * "nvidia,tegra30-hsuart".
->>>>> +                */
->>>>
->>>> Is there any reason to continue with this split?
->>>>
->>>> Surely if the only difference is DMA, the presence of dmas and dma-names
->>>> should be sufficient to get the driver to do the right thing, and if you
->>>> need to disable DMA for debugging that could be a command-line option.
->>
->> I vaguely recall asking for the DMA support to be integrated into the
->> regular 8250 driver instead when the separate DMA-capable driver was
->> first added. I /think/ there was resistance to this because adding lots
->> of different SoC-specific ways to do DMA into the existing 8250 driver
->> would complicate it even more, and hence be unmaintainable.
->>
->> I assume that reasoning is still valid.
->>
->> Perhaps what we need is more fine-grained driver selection, not just
->> based on compatible value. Something like:
->>
->> if compatible == nvidia,tegra20-uart:
->>     if node.has_prop("enable-dma"):
->>       driver = Tegra-specfic DMA capable UART driver
->>     else:
->>       driver = Common 8250 driver
+On Fri, Jan 23, 2015 at 12:53 AM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> Having a RAM device does not make sense for chips like GK20A which have
+> no dedicated video memory. The dummy RAM device that we used so far
+> works as a temporary band-aid, but in the long-term it is desirable for
+> the driver to be able to work without any kind of VRAM.
 >
-> Surely we should assume that if the DMAs are listed (and not disabled)
-> they are usable?
-
-I would assume so, yes.
-
- > I'm not sure I see the point in an additional property
-> to force Linux-internal driver selection in this way.
-
-I think it comes down to whether you want to use DMA for that UART or 
-not. I don't recall the exact reason why this might be important. 
-Perhaps it's one/more of:
-
-- The Tegra-specific DMA-capable driver can't be used for early debug 
-but the core 8250 driver can. I don't know if this is true though.
-
-- There are a limited number of DMA channels on Tegra. If all ports 
-blindly used DMA simply because the dmas property was included, then 
-we'd risk running out of DMA channels for cases where it absolutely had 
-to be used; e.g. a low-volume debug console might prevent a high-volume 
-MODEM or BT UART from using DMA if they probed in the "wrong" order.
-
-Laxman might be able to shed more light on this.
-
-> What happens if we have a driver for a particular string, but fail to
-> probe? Can we fall back to a more generic driver?
-
-At least in this case, I'd assume so, yes.
-
->> Is that something that of_serial.c could/should be enhanced to do? That
->> said, the whole reasoning behind separate compatible properties before
->> was that compatible is supposed to "drive" driver selection. At least,
->> that's what I was told then.
+> This patch adds a few conditionals in places where a RAM device was
+> assumed to be present and allows some more objects to be allocated from
+> the TT domain, allowing Nouveau to handle GPUs for which
+> pfb->ram == NULL.
 >
-> The compatible string is meant to describe the programming interface the
-> device is compatible with. The kernel should then choose the most
-> appropriate driver it knows can handle that HW programming interface.
+> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drm/nouveau/nouveau_display.c         |  9 ++++++++-
+>  drm/nouveau/nouveau_ttm.c             |  3 +++
+>  drm/nouveau/nv84_fence.c              |  7 +++++--
+>  drm/nouveau/nvkm/engine/device/base.c |  9 ++++++---
+>  drm/nouveau/nvkm/subdev/clk/base.c    |  2 +-
+>  drm/nouveau/nvkm/subdev/fb/base.c     | 26 ++++++++++++++++++--------
+>  drm/nouveau/nvkm/subdev/ltc/gf100.c   | 14 ++++++++++----
+>  7 files changed, 51 insertions(+), 19 deletions(-)
 >
-> Considering it as a way to choose the driver is backwards. I'd expect
-> the device node to have both strings (with the DMA capable string first)
-> unless it really doesn't have any DMAs.
+> diff --git a/drm/nouveau/nvkm/subdev/ltc/gf100.c b/drm/nouveau/nvkm/subdev/ltc/gf100.c
+> index 8e7cc62..ceaa104 100644
+> --- a/drm/nouveau/nvkm/subdev/ltc/gf100.c
+> +++ b/drm/nouveau/nvkm/subdev/ltc/gf100.c
+> @@ -170,8 +174,10 @@ gf100_ltc_init_tag_ram(struct nvkm_fb *pfb, struct nvkm_ltc_priv *priv)
+>         tag_size += tag_align;
+>         tag_size  = (tag_size + 0xfff) >> 12; /* round up */
+>
+> -       ret = nvkm_mm_tail(&pfb->vram, 1, 1, tag_size, tag_size, 1,
+> -                          &priv->tag_ram);
+> +       if (pfb->ram)
+> +               ret = nvkm_mm_tail(&pfb->vram, 1, 1, tag_size, tag_size, 1,
+> +                                  &priv->tag_ram);
+> +       ret = -1;
 
-That's a subtly different interpretation of DT compatible usage than was 
-given (I think it was by Mitch Bradley???) when this driver was 
-introduced. In the conversation then, it was asserted that using 
-different compatible values to describe that SW should use a different 
-interface to the HW (non-DMA vs. DMA) was exactly in line with the 
-semantic concept of compatible.
+Was there supposed to be an else somewhere in there?
+
+>         if (ret) {
+>                 priv->num_tags = 0;
+>         } else {
+> --
+> 2.2.2
+>
+> _______________________________________________
+> Nouveau mailing list
+> Nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+> http://lists.freedesktop.org/mailman/listinfo/nouveau
