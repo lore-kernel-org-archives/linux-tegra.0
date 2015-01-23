@@ -1,64 +1,82 @@
-From: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>
-Subject: Re: [Nouveau] [PATCH 1/6] make RAM device optional
-Date: Fri, 23 Jan 2015 10:27:08 -0800
-Message-ID: <CAKb7Uvj9n4vfPmvxCODyRBZbNoLcvwUkT9HJEpyHxqM1g_t=Lw@mail.gmail.com>
-References: <1422003238-14572-1-git-send-email-acourbot@nvidia.com>
-	<1422003238-14572-2-git-send-email-acourbot@nvidia.com>
+From: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v3 1/2] PCI: add helper function to find root port for
+ device
+Date: Fri, 23 Jan 2015 16:34:24 -0600
+Message-ID: <20150123223424.GN29776@google.com>
+References: <1421179048-25370-1-git-send-email-l.stach@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1422003238-14572-2-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1421179048-25370-1-git-send-email-l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jan 23, 2015 at 12:53 AM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> Having a RAM device does not make sense for chips like GK20A which have
-> no dedicated video memory. The dummy RAM device that we used so far
-> works as a temporary band-aid, but in the long-term it is desirable for
-> the driver to be able to work without any kind of VRAM.
->
-> This patch adds a few conditionals in places where a RAM device was
-> assumed to be present and allows some more objects to be allocated from
-> the TT domain, allowing Nouveau to handle GPUs for which
-> pfb->ram == NULL.
->
-> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Tue, Jan 13, 2015 at 08:57:27PM +0100, Lucas Stach wrote:
+> This adds a simple way to get the root port a given device
+> is connected to.
+> 
+> Signed-off-by: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 > ---
->  drm/nouveau/nouveau_display.c         |  9 ++++++++-
->  drm/nouveau/nouveau_ttm.c             |  3 +++
->  drm/nouveau/nv84_fence.c              |  7 +++++--
->  drm/nouveau/nvkm/engine/device/base.c |  9 ++++++---
->  drm/nouveau/nvkm/subdev/clk/base.c    |  2 +-
->  drm/nouveau/nvkm/subdev/fb/base.c     | 26 ++++++++++++++++++--------
->  drm/nouveau/nvkm/subdev/ltc/gf100.c   | 14 ++++++++++----
->  7 files changed, 51 insertions(+), 19 deletions(-)
->
-> diff --git a/drm/nouveau/nvkm/subdev/ltc/gf100.c b/drm/nouveau/nvkm/subdev/ltc/gf100.c
-> index 8e7cc62..ceaa104 100644
-> --- a/drm/nouveau/nvkm/subdev/ltc/gf100.c
-> +++ b/drm/nouveau/nvkm/subdev/ltc/gf100.c
-> @@ -170,8 +174,10 @@ gf100_ltc_init_tag_ram(struct nvkm_fb *pfb, struct nvkm_ltc_priv *priv)
->         tag_size += tag_align;
->         tag_size  = (tag_size + 0xfff) >> 12; /* round up */
->
-> -       ret = nvkm_mm_tail(&pfb->vram, 1, 1, tag_size, tag_size, 1,
-> -                          &priv->tag_ram);
-> +       if (pfb->ram)
-> +               ret = nvkm_mm_tail(&pfb->vram, 1, 1, tag_size, tag_size, 1,
-> +                                  &priv->tag_ram);
-> +       ret = -1;
+> v2: new patch in v2
+> v3: rename to pci_find_rootport to fit better with other API
+> ---
+>  drivers/pci/search.c | 20 ++++++++++++++++++++
+>  include/linux/pci.h  |  1 +
+>  2 files changed, 21 insertions(+)
+> 
+> diff --git a/drivers/pci/search.c b/drivers/pci/search.c
+> index a20ce7d5e2a7..7254f126096d 100644
+> --- a/drivers/pci/search.c
+> +++ b/drivers/pci/search.c
+> @@ -384,3 +384,23 @@ int pci_dev_present(const struct pci_device_id *ids)
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL(pci_dev_present);
+> +
+> +/**
+> + * pci_find_root_port - Returns the root port the given device is connected to.
+> + * @dev: PCI device for which the root port should be found.
+> + */
+> +struct pci_dev *pci_find_root_port(struct pci_dev *dev)
 
-Was there supposed to be an else somewhere in there?
+This seems a little too generic.  There are still PCI (non-PCIe) systems,
+and on those this will return some non-Root Port device, the meaning of
+which is unclear.  I'm happy to put something like this in pci-tegra.c, but
+until there are other potential users and we sort out the PCI/PCIe-ness of
+the interface, I don't really want to make it global and exported.
 
->         if (ret) {
->                 priv->num_tags = 0;
->         } else {
-> --
-> 2.2.2
->
-> _______________________________________________
-> Nouveau mailing list
-> Nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-> http://lists.freedesktop.org/mailman/listinfo/nouveau
+> +{
+> +	struct pci_bus *bus = dev->bus;
+> +
+> +	/* If there is no bridge on the bus the passed device is a root port. */
+
+This assumption is false -- see the comment at pci_is_root_bus().
+
+> +	if (!bus->self)
+> +		return dev;
+> +
+> +	/* Walk up the PCI hierarchy to the first level below the root. */
+> +	while (bus->parent && bus->parent->self)
+> +		bus = bus->parent;
+> +
+> +	return bus->self;
+> +}
+> +EXPORT_SYMBOL(pci_find_root_port);
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 360a966a97a5..f4321c5ba653 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -844,6 +844,7 @@ static inline struct pci_dev *pci_get_bus_and_slot(unsigned int bus,
+>  }
+>  struct pci_dev *pci_get_class(unsigned int class, struct pci_dev *from);
+>  int pci_dev_present(const struct pci_device_id *ids);
+> +struct pci_dev *pci_find_root_port(struct pci_dev *dev);
+>  
+>  int pci_bus_read_config_byte(struct pci_bus *bus, unsigned int devfn,
+>  			     int where, u8 *val);
+> -- 
+> 2.1.4
+> 
