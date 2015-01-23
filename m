@@ -1,52 +1,51 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 2/2] iommu/tegra: gart: Provide default ->map_sg() callback
-Date: Fri, 23 Jan 2015 16:37:52 +0100
-Message-ID: <1422027472-31467-3-git-send-email-thierry.reding@gmail.com>
-References: <1422027472-31467-1-git-send-email-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1422027472-31467-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Subject: [GIT PULL 1/4] ARM: tegra: Device tree changes for v3.20
+Date: Fri, 23 Jan 2015 16:59:57 +0100
+Message-ID: <1422028800-759-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Hi ARM SoC maintainers,
 
-Commit 315786ebbf4a ("iommu: Add iommu_map_sg() function") adds a new
-->map_sg() callback and provides a default implementation that drivers
-can use until they implement a hardware-specific variant. Unfortunately
-the Tegra GART driver was not updated as part of that commit, so that
-iommu_map_sg() calls on a domain provided by the GART cause an oops.
+The following changes since commit 97bf6af1f928216fd6c5a66e8a57bfa95a659672:
 
-Fixes: 315786ebbf4a ("iommu: Add iommu_map_sg() function")
-Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/iommu/tegra-gart.c | 1 +
- 1 file changed, 1 insertion(+)
+  Linux 3.19-rc1 (2014-12-20 17:08:50 -0800)
 
-diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-index 10fc32dabb0a..c48da057dbb1 100644
---- a/drivers/iommu/tegra-gart.c
-+++ b/drivers/iommu/tegra-gart.c
-@@ -315,6 +315,7 @@ static const struct iommu_ops gart_iommu_ops = {
- 	.attach_dev	= gart_iommu_attach_dev,
- 	.detach_dev	= gart_iommu_detach_dev,
- 	.map		= gart_iommu_map,
-+	.map_sg		= default_iommu_map_sg,
- 	.unmap		= gart_iommu_unmap,
- 	.iova_to_phys	= gart_iommu_iova_to_phys,
- 	.pgsize_bitmap	= GART_IOMMU_PGSIZES,
--- 
-2.1.3
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-3.20-dt
+
+for you to fetch changes up to 62981239a61bfd5306737effc015deba26c0d198:
+
+  ARM: tegra: Update isl29028 compatible string to use isil vendor prefix (2015-01-09 13:42:04 +0100)
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+ARM: tegra: Device tree changes for v3.20
+
+A couple of unit addresses fixes in device trees, addition of microphone
+detection on Chromebook 13 and a vendor prefix update.
+
+----------------------------------------------------------------
+Arnaud Ebalard (1):
+      ARM: tegra: Update isl29028 compatible string to use isil vendor prefix
+
+Dmitry Osipenko (1):
+      ARM: dts: tegra20: fix GR3D, DSI unit and reg base addresses
+
+Dylan Reid (1):
+      ARM: tegra: Enable the mic-detect gpio on Acer Chromebook 13
+
+Thierry Reding (1):
+      ARM: tegra: Fix unit address for Cortex-A9 TWD timer
+
+ arch/arm/boot/dts/tegra124-nyan-big.dts |  2 ++
+ arch/arm/boot/dts/tegra20.dtsi          | 10 +++++-----
+ arch/arm/boot/dts/tegra30-cardhu.dtsi   |  2 +-
+ arch/arm/boot/dts/tegra30.dtsi          |  2 +-
+ 4 files changed, 9 insertions(+), 7 deletions(-)
