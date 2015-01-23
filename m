@@ -1,104 +1,132 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 05/36] drm/atomic: Add drm_atomic_plane_get_crtc_state()
-Date: Fri, 23 Jan 2015 10:32:20 +0100
-Message-ID: <20150123093219.GB3835@ulmo>
-References: <1421750935-4023-1-git-send-email-thierry.reding@gmail.com>
- <1421750935-4023-6-git-send-email-thierry.reding@gmail.com>
- <20150120111011.GX10113@phenom.ffwll.local>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v2] clk: Introduce clk_has_parent()
+Date: Fri, 23 Jan 2015 10:34:10 +0100
+Message-ID: <20150123093409.GC3835@ulmo>
+References: <1421750935-4023-2-git-send-email-thierry.reding@gmail.com>
+ <1421856780-32103-1-git-send-email-thierry.reding@gmail.com>
+ <54C04145.1010906@codeaurora.org> <20150122073707.GA427@ulmo>
+ <20150122202546.GO27202@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="DBIVS5p969aUjpLe"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20150120111011.GX10113-dv86pmgwkMBes7Z6vYuT8azUEOm+Xw19@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/mixed; boundary="===============1758257010=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20150122202546.GO27202@codeaurora.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Russell King <linux@arm.linux.org.uk>
 List-Id: linux-tegra@vger.kernel.org
 
 
---DBIVS5p969aUjpLe
+--===============1758257010==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="7gGkHNMELEOhSGF6"
+Content-Disposition: inline
+
+
+--7gGkHNMELEOhSGF6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 20, 2015 at 12:10:11PM +0100, Daniel Vetter wrote:
-> On Tue, Jan 20, 2015 at 11:48:24AM +0100, Thierry Reding wrote:
-> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Thu, Jan 22, 2015 at 12:25:46PM -0800, Stephen Boyd wrote:
+> On 01/22, Thierry Reding wrote:
+> > On Wed, Jan 21, 2015 at 04:16:05PM -0800, Stephen Boyd wrote:
+> > > On 01/21/2015 08:13 AM, Thierry Reding wrote:
+> > > > From: Thierry Reding <treding@nvidia.com>
+> > > >
+> > > > This new function is similar to clk_set_parent(), except that it do=
+esn't
+> > > > actually change the parent. It merely checks that the given parent =
+clock
+> > > > can be a parent for the given clock.
+> > > >
+> > > > A situation where this is useful is to check that a particular setu=
+p is
+> > > > valid before switching to it. One specific use-case for this is ato=
+mic
+> > > > modesetting in the DRM framework where setting a mode is divided in=
+to a
+> > > > check phase where a given configuration is validated before applying
+> > > > changes to the hardware.
+> > > >
+> > > > Cc: Russell King <linux@arm.linux.org.uk>
+> > > > Cc: Mike Turquette <mturquette@linaro.org>
+> > > > Cc: Stephen Boyd <sboyd@codeaurora.org>
+> > > > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > > > ---
+> > >=20
+> > > Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
+> > >=20
+> > > This will slightly conflict with Tomeu's  patches for per-user clock
+> > > constraints. It would be best if we can take this through the clk tree
+> > > to fix up any conflicts
 > >=20
-> > This function is useful to obtain the state of the CRTC that a plane is
-> > being attached to.
+> > I had hoped to take this through the drm tree to resolve the build-time.
+> > Another possibility would be for me to include the clk tree (or a subset
+> > thereof) in my pull-request. That way you can still fix things up in the
+> > clock tree if there are any conflicts with other work. We could make
+> > that work two ways: this patch gets applied to the clk tree and I pull
+> > it, or I provide a stable branch that I base my pull request on and that
+> > branch can be pulled into the clk tree.
 > >=20
-> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >  include/drm/drm_atomic.h | 21 +++++++++++++++++++++
-> >  1 file changed, 21 insertions(+)
+> > Yet another alternative would be to split out the clk_has_parent()
+> > change from the series and not use it for now. That way we're going to
+> > miss this check, but we do that anyway currently and it will only be
+> > temporary until v3.21.
 > >=20
-> > diff --git a/include/drm/drm_atomic.h b/include/drm/drm_atomic.h
-> > index 51168a8b723a..ddca107e5cce 100644
-> > --- a/include/drm/drm_atomic.h
-> > +++ b/include/drm/drm_atomic.h
-> > @@ -75,4 +75,25 @@ int __must_check drm_atomic_check_only(struct drm_at=
-omic_state *state);
-> >  int __must_check drm_atomic_commit(struct drm_atomic_state *state);
-> >  int __must_check drm_atomic_async_commit(struct drm_atomic_state *stat=
-e);
-> > =20
-> > +/**
-> > + * drm_atomic_plane_get_crtc_state - obtain atomic state of the CRTC t=
-hat a
-> > + *     plane is being attached to
-> > + * @state: atomic state of plane
-> > + *
-> > + * Getting the atomic state of the CRTC that a given plane being attac=
-hed to
-> > + * is non-trivial. We need to look at the global atomic state that the=
- plane
-> > + * state is part of and extract the CRTC state using the CRTC's index.=
- Using
-> > + * the drm_atomic_get_crtc_state() helper we make sure to acquire the =
-proper
-> > + * locks, too.
-> > + *
-> > + * RETURNS:
-> > + * The atomic state of the CRTC that the plane is being attached to, o=
-r an
-> > + * ERR_PTR()-encoded negative error code on failure.
-> > + */
-> > +static inline struct drm_crtc_state *
-> > +drm_atomic_plane_get_crtc_state(struct drm_plane_state *state)
-> > +{
-> > +	return drm_atomic_get_crtc_state(state->state, state->crtc);
+> > Perhaps given where we are in the release cycle the latter would make
+> > the most sense for now.
 >=20
-> Hm, imo open-coding this is totally ok. Actually better since state->crtc
-> might be NULL, and hiding that isn't a good idea.
->=20
-> If you have a atomic_plane_disable hook then ->crtc is guaranteed to be
-> non-NULL in atomic_plane_update, but being explicit here is imo a feature.
-> So nacked from my side.
+> Ok well let's see what Mike wants to do given that he's doing all
+> the patch applying right now. I'd think that we could put this
+> one patch on a different branch that we can merge into clk-next
+> and you can merge into the drm tree. At least that's the typical
+> workflow that usually works for everyone.
 
-I've dropped this patch and open-coded this call in patch 34/36.
+I will be sending out a pull request today, so I'm not going to include
+this patch or the dependent patch. I'll pick it up again after the merge
+window and see if I need to rebase it on top of Tomeu's work.
 
 Thierry
 
---DBIVS5p969aUjpLe
+--7gGkHNMELEOhSGF6
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUwhUjAAoJEN0jrNd/PrOhs44QALOBOZoyw01NOIngLjTZ6uVj
-fY7D/2d53l4tnKS7aWGkrl6uYPseGyo+lO5IjMFY2wONYRdkzkazmozzQoSR/+YF
-mwd5JO2mz9cPSPuj8clIcfLQvQLUA63XTSCj5sF1ZrDA/eikV375KjzFpOZH5H9M
-fKfkFyZLAU6KcV4ya0qc1RFUzPBkff1RcG+FiJpTgaJbBzfwa99NmplStQwwueE0
-sLxrf1pvMk7Rky207ggPxa4acd3jA3D17vrg0FZFnhpQ0kcvh4TF9Ri2TDiv9y1T
-+BLrdkyopba+EGPp81/oWRCoeZloPHtSTgu3nCBqU8RkhCHn25WF9CCnU3JbC/dB
-L37izaezkke/cgHxqs++ZJ7JBDZ1+6nWtiFKCjp+kwAtnDL9JRK+17Ao9ulVps0s
-f7DIVUvx+tLWsAvh+CvktF/MmyiyA0/gCVuh4sK4KZodQSbYQ2OEIWdzwc3TXmWK
-m7MM3p+cGpYO65O6DL4HnGwvrzTHG0mpOwuMK8V4EgAcIJn9HP7wWpQSfA54rp7M
-tkwiUa89Mi5NoZmRSxjPPl7s20pc62Fwjsj4c0AQqZGlbDTmfD2p/x/3/tZm+4Oq
-y/Cuv2PE1UsrsrHdVj00EYID6FGn+npTvtoMJBw+7Bn28g48xoSev+VLNVnSGA74
-WGX0pX/HBTKFPiyTosCD
-=ubjt
+iQIcBAEBAgAGBQJUwhWRAAoJEN0jrNd/PrOhHqEP/RTXBemkkP5+B53fNu2Z7sf8
+GQzKOZi9gjLLsRXxz1tc9TeYVe6V7tVEGxxNMERc4HG8ym/zYg4iDw21tUadatSn
+xYpXRj4efwvdSQG3OlWVdBv2sY8H5lFXG40tp6J55EGyiSLARkcElSpE6ikqBMf8
+O6qwZi3hGhS5RtjqcvU2p84yD4ZQ9et2/gV5oz3geXlAIaNEtBkTCdMuMXfTJ7yn
+0x6otsOR6I2XuaxUpSOLURZcg1bf4SZcQQz1F7HEK04h9Pz3alZM7coMZEPVMSoH
+nxiBjjchYUSbnpjwhaEBVcT8s4x1ZkJYELGj3ci8E3P49KitpBA2MzXh+Hn3plG/
+2/3EvBLe7OoEgObbEtCl0A4ZYyl1S64My7oYTHjNdWhj6M4ZVlUtBlWcNdk5cYfo
+JidkG+EmBR25e70k8qxmbonqF0cur7Rw0ZkeTzhVHySYxRd9njdCwuMNMsywwttp
+95iqnjtVC7K6SpSTgkl/PhA3qSS2oWSDxFlLYsGS8yZKmMn/NaJ8tbTZ1ZYe7CkZ
+VssKR/kbfDs981KnjsohkQ3FL7xf240MqZJNqHOUf+hGLQXJBbz+Lew/z8PaDAAL
+gpqU+kGjCcuUAsuW5XYWDU/M6EjiGAMBN44SaodfO1UXDFcTBAPcc9sXH4Gfk684
+S7YQY46Gl0JMSqi162JZ
+=jJ6d
 -----END PGP SIGNATURE-----
 
---DBIVS5p969aUjpLe--
+--7gGkHNMELEOhSGF6--
+
+--===============1758257010==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
+cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+
+--===============1758257010==--
