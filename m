@@ -1,97 +1,34 @@
-From: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3 2/2] PCI: tegra: apply relaxed ordering fixup only on
- Tegra
-Date: Fri, 23 Jan 2015 16:40:32 -0600
-Message-ID: <20150123224032.GO29776@google.com>
-References: <1421179048-25370-1-git-send-email-l.stach@pengutronix.de>
- <1421179048-25370-2-git-send-email-l.stach@pengutronix.de>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [GIT PULL 1/4] ARM: tegra: Device tree changes for v3.20
+Date: Fri, 23 Jan 2015 14:52:16 -0800
+Message-ID: <20150123225216.GR20896@quad.lixom.net>
+References: <1422028800-759-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1421179048-25370-2-git-send-email-l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+In-Reply-To: <1422028800-759-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jan 13, 2015 at 08:57:28PM +0100, Lucas Stach wrote:
-> The fixup to enable relaxed ordering on all PCI devices was
-> executed unconditionally if the Tegra PCI host driver was
-> built into the kernel. This doesn't play nice with a
-> multiplatform kernel executed on other platforms which
-> may not need this fixup.
+On Fri, Jan 23, 2015 at 04:59:57PM +0100, Thierry Reding wrote:
+> Hi ARM SoC maintainers,
 > 
-> Make sure to only apply the fixup if the root port is
-> a Tegra.
+> The following changes since commit 97bf6af1f928216fd6c5a66e8a57bfa95a659672:
 > 
-> Signed-off-by: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-> Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> v2:
-> - split out PCI hierarchy walk
-> - separate code from data by moving PCI IDs into own structure
-> v3:
-> - fixup for helper rename
-> - applied Thierry's ACK
-> ---
->  drivers/pci/host/pci-tegra.c | 34 +++++++++++++++++++++++++++++++++-
->  1 file changed, 33 insertions(+), 1 deletion(-)
+>   Linux 3.19-rc1 (2014-12-20 17:08:50 -0800)
 > 
-> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> index 6f9c29fa70e7..e87d79559723 100644
-> --- a/drivers/pci/host/pci-tegra.c
-> +++ b/drivers/pci/host/pci-tegra.c
-> @@ -635,10 +635,42 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0bf1, tegra_pcie_fixup_class);
->  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1c, tegra_pcie_fixup_class);
->  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1d, tegra_pcie_fixup_class);
->  
-> +static const struct pci_device_id tegra_rootport_ids[] = {
-> +	{
-> +		/* Tegra20 4 lane root port */
-> +		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0bf0,
-> +		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
-> +	}, {
-> +		/* Tegra20 2 lane root port */
-> +		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0bf1,
-> +		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
-> +	}, {
-> +		/* Tegra30 4 lane root port */
-> +		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0e1c,
-> +		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
-> +	}, {
-> +		/* Tegra30 2 lane root port */
-> +		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0e1d,
-> +		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
-> +	}, {
-> +		/* Tegra124 4 lane root port */
-> +		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0e12,
-> +		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
-> +	}, {
-> +		/* Tegra124 1 lane root port */
-> +		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0e13,
-> +		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
-> +	}, {
-> +		/* sentinel */
-> +	}
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-3.20-dt
+> 
+> for you to fetch changes up to 62981239a61bfd5306737effc015deba26c0d198:
+> 
+>   ARM: tegra: Update isl29028 compatible string to use isil vendor prefix (2015-01-09 13:42:04 +0100)
 
-The table is OK and I'll apply it after we resolve the pci_find_root_port()
-thing, but it's unfortunate that we're signing up to the ongoing
-maintenance a table like this requires.  I'm sure you've already tried
-other possibilities and resigned yourself to this one, though.
+Merged, thanks.
 
-> +};
-> +
->  /* Tegra PCIE requires relaxed ordering */
->  static void tegra_pcie_relax_enable(struct pci_dev *dev)
->  {
-> -	pcie_capability_set_word(dev, PCI_EXP_DEVCTL, PCI_EXP_DEVCTL_RELAX_EN);
-> +	if (pci_match_id(tegra_rootport_ids, pci_find_root_port(dev)))
-> +		pcie_capability_set_word(dev, PCI_EXP_DEVCTL,
-> +					 PCI_EXP_DEVCTL_RELAX_EN);
->  }
->  DECLARE_PCI_FIXUP_FINAL(PCI_ANY_ID, PCI_ANY_ID, tegra_pcie_relax_enable);
->  
-> -- 
-> 2.1.4
-> 
+
+-Olof
