@@ -1,173 +1,207 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v4] drm/plane: Add optional ->atomic_disable() callback
-Date: Fri, 23 Jan 2015 10:28:47 +0100
-Message-ID: <1422005327-11124-1-git-send-email-thierry.reding@gmail.com>
-References: <1421750935-4023-4-git-send-email-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1421750935-4023-4-git-send-email-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-tegra@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-kernel@vger.kernel.org
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v2] drm/tegra: Track active planes in CRTC state
+Date: Fri, 23 Jan 2015 10:31:41 +0100
+Message-ID: <1422005501-11222-1-git-send-email-thierry.reding@gmail.com>
+References: <1421750935-4023-35-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1421750935-4023-35-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KCkluIG9yZGVyIHRvIHBy
-ZXZlbnQgZHJpdmVycyBmcm9tIGhhdmluZyB0byBwZXJmb3JtIHRoZSBzYW1lIGNoZWNrcyBvdmVy
-CmFuZCBvdmVyIGFnYWluLCBhZGQgYW4gb3B0aW9uYWwgLT5hdG9taWNfZGlzYWJsZSBjYWxsYmFj
-ayB3aGljaCB0aGUgY29yZQpjYWxscyB1bmRlciB0aGUgcmlnaHQgY2lyY3Vtc3RhbmNlcy4KCnYy
-OiBwYXNzIG9sZCBzdGF0ZSBhbmQgZGV0ZWN0IGVkZ2VzIHRvIGF2b2lkIGNhbGxpbmcgLT5hdG9t
-aWNfZGlzYWJsZSBvbgphbHJlYWR5IGRpc2FibGVkIHBsYW5lcywgcmVtb3ZlIHJlZHVuZGFudCBj
-b21tZW50IChEYW5pZWwgVmV0dGVyKQoKdjM6IHJlbmFtZSBoZWxwZXIgdG8gZHJtX2F0b21pY19w
-bGFuZV9kaXNhYmxpbmcoKSB0byBjbGFyaWZ5IHRoYXQgaXQgaXMKY2hlY2tpbmcgZm9yIHRyYW5z
-aXRpb25zLCBtb3ZlIGhlbHBlciB0byBkcm1fYXRvbWljX2hlbHBlci5oLCBjbGFyaWZ5CmNoZWNr
-IGZvciAhb2xkX3N0YXRlIGFuZCBpdHMgcmVsYXRpb24gdG8gdHJhbnNpdGlvbmFsIGhlbHBlcnMK
-CkhlcmUncyBhbiBleHRyYWN0IGZyb20gc29tZSBkaXNjdXNzaW9uIHJhdGlvbmFsaXppbmcgdGhl
-IGJlaGF2aW91ciAoZm9yCmEgZnVsbCB2ZXJzaW9uLCBzZWUgdGhlIHJlZmVyZW5jZSBiZWxvdyk6
-CgogICAgPiA+IEhtLCB0aGlua2luZyBhYm91dCB0aGlzIHNvbWUgbW9yZSB0aGlzIHdpbGwgcmVz
-dWx0IGluIGEgc2xpZ2h0IGRpZmZlcmVuY2UKICAgID4gPiBpbiBiZWhhdmlvdXIsIGF0IGxlYXN0
-IHdoZW4gZHJpdmVycyBqdXN0IHVzZSB0aGUgaGVscGVyIC0+cmVzZXQgZnVuY3Rpb25zCiAgICA+
-ID4gYnV0IGRvbid0IGRpc2FibGUgZXZlcnl0aGluZzoKICAgID4gPiAtIFdpdGggdHJhbnNpdGlv
-bmFsIGhlbHBlcnMgd2UgYXNzdW1lIHdlIGtub3cgbm90aGluZyBhbmQgY2FsbAogICAgPiA+ICAg
-LT5hdG9taWNfZGlzYWJsZS4KICAgID4gPiAtIFdpdGggYXRvbWljIG9sZF9zdGF0ZS0+Y3J0YyA9
-PSBOVUxMIGluIHRoZSBzYW1lIHNpdHVhdGlvbiByaWdodCBhZnRlcgogICAgPiA+ICAgYm9vdC11
-cCwgYnV0IHdlIGFzc3N1bWUgdGhlIHBsYW5lIGlzIHJlYWxseSBvZmYgYW5kIF9kb250XyBjYWxs
-CiAgICA+ID4gICAtPmF0b21pY19kaXNhYmxlLgogICAgPiA+CiAgICA+ID4gU2hvdWxkIHdlIGlu
-c3RlYWQgY2hlY2sgZm9yIChvbGRfc3RhdGUgJiYgb2xkX3N0YXRlLT5jcnRjKSBhbmQgc3RhdGUg
-dGhhdAogICAgPiA+IGRyaXZlcnMgbmVlZCB0byBtYWtlIHN1cmUgdGhleSBkb24ndCBoYXZlIHN0
-dWZmIGhhbmdpbmcgYXJvdW5kPwogICAgPgogICAgPiBJIGRvbid0IHRoaW5rIHdlIGNhbiBjaGVj
-ayBmb3Igb2xkX3N0YXRlIGJlY2F1c2Ugb3RoZXJ3aXNlIHRoaXMgd2lsbAogICAgPiBhbHdheXMg
-cmV0dXJuIGZhbHNlLCB3aGVyZWFzIHdlIHJlYWxseSB3YW50IGl0IHRvIGZvcmNlLWRpc2FibGUg
-cGxhbmVzCiAgICA+IHRoYXQgY291bGQgYmUgb24gKGxhY2tpbmcgYW55IG1vcmUgYWNjdXJhdGUg
-aW5mb3JtYXRpb24pLiBGb3IKICAgID4gdHJhbnNpdGlvbmFsIGhlbHBlcnMgYW55d2F5LgogICAg
-PgogICAgPiBGb3IgdGhlIGF0b21pYyBoZWxwZXJzLCBvbGRfc3RhdGUgd2lsbCBuZXZlciBiZSBO
-VUxMLCBidXQgSSdkIGFzc3VtZQogICAgPiB0aGF0IHRoZSBkcml2ZXIgd291bGQgcmVjb25zdHJ1
-Y3QgdGhlIGN1cnJlbnQgc3RhdGUgaW4gLT5yZXNldCgpLgoKICAgIEJ5IHRoZSB3YXksIHRoZSBy
-ZWFzb24gZm9yIHdoeSBvbGRfc3RhdGUgY2FuIGJlIE5VTEwgd2l0aCB0cmFuc2l0aW9uYWwKICAg
-IGhlbHBlcnMgaXMgdGhlIG9yZGVyaW5nIG9mIHRoZSBzdGVwcyBpbiB0aGUgYXRvbWljIHRyYW5z
-aXRpb24uIEN1cnJlbnRseQogICAgdGhlIFRlZ3JhIHBhdGNoZXMgZG8gdGhpcyAoYmFzZWQgb24g
-eW91ciBibG9nIHBvc3QgYW5kIHRoZSBFeHlub3MgcHJvdG8tCiAgICB0eXBlKToKCiAgICAgICAg
-MSkgYXRvbWljIGNvbnZlcnNpb24sIHBoYXNlIDE6CiAgICAgICAgICAgLSBpbXBsZW1lbnQgLT5h
-dG9taWNfe2NoZWNrLHVwZGF0ZSxkaXNhYmxlfSgpCiAgICAgICAgICAgLSB1c2UgZHJtX3BsYW5l
-X2hlbHBlcl97dXBkYXRlLGRpc2FibGV9KCkKCiAgICAgICAgMikgYXRvbWljIGNvbnZlcnNpb24s
-IHBoYXNlIDI6CiAgICAgICAgICAgLSBjYWxsIGRybV9tb2RlX2NvbmZpZ19yZXNldCgpIGZyb20g
-LT5sb2FkKCkKICAgICAgICAgICAtIGltcGxlbWVudCAtPnJlc2V0KCkKCiAgICBUaGF0J3Mgb25s
-eSBhIHBhcnRpYWwgbGlzdCBvZiB3aGF0J3MgZG9uZSBpbiB0aGVzZSBzdGVwcywgYnV0IHRoYXQn
-cyB0aGUKICAgIG9ubHkgcmVsZXZhbnQgcGllY2VzIGZvciB3aHkgb2xkX3N0YXRlIGlzIE5VTEwu
-CgogICAgV2hhdCBoYXBwZW5zIGlzIHRoYXQgd2l0aG91dCAtPnJlc2V0KCkgaW1wbGVtZW50ZWQg
-dGhlcmUgd29uJ3QgYmUgYW55CiAgICBpbml0aWFsIHN0YXRlLCBoZW5jZSBwbGFuZS0+c3RhdGUg
-KHRoZSBvbGRfc3RhdGUgaGVyZSkgd2lsbCBiZSBOVUxMIHRoZQogICAgZmlyc3QgdGltZSBhdG9t
-aWMgc3RhdGUgaXMgYXBwbGllZC4KCiAgICBXZSBjb3VsZCBvZiBjb3Vyc2UgcmVvcmRlciB0aGUg
-c2VxdWVuY2Ugc3VjaCB0aGF0IGRyaXZlcnMgYXJlIHJlcXVpcmVkCiAgICB0byBob29rIHVwIC0+
-cmVzZXQoKSBiZWZvcmUgdGhleSBjYW4gKG9yIGF0IHRoZSBzYW1lIGFzIHRoZXkpIGhvb2sgdXAK
-ICAgIHRoZSB0cmFuc2l0aW9uYWwgaGVscGVycy4gV2UgY291bGQgYWRkIGFuIGFwcHJvcHJpYXRl
-IFdBUk5fT04gdG8gdGhpcwogICAgaGVscGVyIHRvIG1ha2UgdGhhdCBtb3JlIG9idmlvdXMuCgog
-ICAgSG93ZXZlciwgdGhhdCB3aWxsIG5vdCBzb2x2ZSB0aGUgcHJvYmxlbSBiZWNhdXNlIGl0IG9u
-bHkgZ2V0cyByaWQgb2YgdGhlCiAgICBzcGVjaWFsIGNhc2UuIFdlIHN0aWxsIGRvbid0IGtub3cg
-d2hldGhlciBvbGRfc3RhdGUtPmNydGMgPT0gTlVMTCBpcyB0aGUKICAgIGN1cnJlbnQgc3RhdGUg
-b3IganVzdCB0aGUgaW5pdGlhbCBkZWZhdWx0LgoKICAgIFNvIG5vIG1hdHRlciB3aGljaCB3YXkg
-d2UgZG8gdGhpcywgSSBkb24ndCBzZWUgYSB3YXkgdG8gZ2V0IGF3YXkgd2l0aG91dAogICAgcmVx
-dWlyaW5nIHNwZWNpZmljIHNlbWFudGljcyBmcm9tIGRyaXZlcnMuIFRoZXkgd291bGQgYmUgdGhh
-dDoKCiAgICAgICAgLSBkcml2ZXJzIHJlY3JlYXRlIHRoZSBjb3JyZWN0IHN0YXRlIGluIC0+cmVz
-ZXQoKSBzbyB0aGF0CiAgICAgICAgICBvbGRfc3RhdGUtPmNydGMgIT0gTlVMTCBpZiB0aGUgcGxh
-bmUgaXMgcmVhbGx5IGVuYWJsZWQKCiAgICBvcgoKICAgICAgICAtIGRyaXZlcnMgaGF2ZSB0byBl
-bnN1cmUgdGhhdCB0aGUgcmVhbCBzdGF0ZSBpbiBmYWN0IG1pcnJvcnMgdGhlCiAgICAgICAgICBp
-bml0aWFsIGRlZmF1bHQgYXMgZW5jb2RlZCBpbiB0aGUgc3RhdGUgKHBsYW5lIGRpc2FibGVkKQoK
-UmVmZXJlbmNlczogaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9hcmNoaXZlcy9kcmktZGV2
-ZWwvMjAxNS1KYW51YXJ5LzA3NTU3OC5odG1sClJldmlld2VkLWJ5OiBEYW5pZWwgVmV0dGVyIDxk
-YW5pZWwudmV0dGVyQGZmd2xsLmNoPgpSZXZpZXdlZC1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0
-YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgpTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5IFJlZGlu
-ZyA8dHJlZGluZ0BudmlkaWEuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9kcm1fYXRvbWljX2hl
-bHBlci5jIHwgIDkgKysrKysrKystCiBkcml2ZXJzL2dwdS9kcm0vZHJtX3BsYW5lX2hlbHBlci5j
-ICB8IDEwICsrKysrKysrKy0KIGluY2x1ZGUvZHJtL2RybV9hdG9taWNfaGVscGVyLmggICAgIHwg
-MzcgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKwogaW5jbHVkZS9kcm0vZHJt
-X3BsYW5lX2hlbHBlci5oICAgICAgfCAgMyArKysKIDQgZmlsZXMgY2hhbmdlZCwgNTcgaW5zZXJ0
-aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZHJt
-X2F0b21pY19oZWxwZXIuYyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fYXRvbWljX2hlbHBlci5jCmlu
-ZGV4IDAxMDY2MWYyMzAzNS4uMWNiMDQ0MDJjZDczIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9k
-cm0vZHJtX2F0b21pY19oZWxwZXIuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pY19o
-ZWxwZXIuYwpAQCAtMTExMyw3ICsxMTEzLDE0IEBAIHZvaWQgZHJtX2F0b21pY19oZWxwZXJfY29t
-bWl0X3BsYW5lcyhzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LAogCiAJCW9sZF9wbGFuZV9zdGF0ZSA9
-IG9sZF9zdGF0ZS0+cGxhbmVfc3RhdGVzW2ldOwogCi0JCWZ1bmNzLT5hdG9taWNfdXBkYXRlKHBs
-YW5lLCBvbGRfcGxhbmVfc3RhdGUpOworCQkvKgorCQkgKiBTcGVjaWFsLWNhc2UgZGlzYWJsaW5n
-IHRoZSBwbGFuZSBpZiBkcml2ZXJzIHN1cHBvcnQgaXQuCisJCSAqLworCQlpZiAoZHJtX2F0b21p
-Y19wbGFuZV9kaXNhYmxpbmcocGxhbmUsIG9sZF9wbGFuZV9zdGF0ZSkgJiYKKwkJICAgIGZ1bmNz
-LT5hdG9taWNfZGlzYWJsZSkKKwkJCWZ1bmNzLT5hdG9taWNfZGlzYWJsZShwbGFuZSwgb2xkX3Bs
-YW5lX3N0YXRlKTsKKwkJZWxzZQorCQkJZnVuY3MtPmF0b21pY191cGRhdGUocGxhbmUsIG9sZF9w
-bGFuZV9zdGF0ZSk7CiAJfQogCiAJZm9yIChpID0gMDsgaSA8IG5jcnRjczsgaSsrKSB7CmRpZmYg
-LS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZHJtX3BsYW5lX2hlbHBlci5jIGIvZHJpdmVycy9ncHUv
-ZHJtL2RybV9wbGFuZV9oZWxwZXIuYwppbmRleCAyZjk2MWMxODAyNzMuLjAyYzFhMGI3NGUwNCAx
-MDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2RybV9wbGFuZV9oZWxwZXIuYworKysgYi9kcml2
-ZXJzL2dwdS9kcm0vZHJtX3BsYW5lX2hlbHBlci5jCkBAIC00NDksNyArNDQ5LDE1IEBAIGludCBk
-cm1fcGxhbmVfaGVscGVyX2NvbW1pdChzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwKIAkJCWNydGNf
-ZnVuY3NbaV0tPmF0b21pY19iZWdpbihjcnRjW2ldKTsKIAl9CiAKLQlwbGFuZV9mdW5jcy0+YXRv
-bWljX3VwZGF0ZShwbGFuZSwgcGxhbmVfc3RhdGUpOworCS8qCisJICogRHJpdmVycyBtYXkgb3B0
-aW9uYWxseSBpbXBsZW1lbnQgdGhlIC0+YXRvbWljX2Rpc2FibGUgY2FsbGJhY2ssIHNvCisJICog
-c3BlY2lhbC1jYXNlIHRoYXQgaGVyZS4KKwkgKi8KKwlpZiAoZHJtX2F0b21pY19wbGFuZV9kaXNh
-YmxpbmcocGxhbmUsIHBsYW5lX3N0YXRlKSAmJgorCSAgICBwbGFuZV9mdW5jcy0+YXRvbWljX2Rp
-c2FibGUpCisJCXBsYW5lX2Z1bmNzLT5hdG9taWNfZGlzYWJsZShwbGFuZSwgcGxhbmVfc3RhdGUp
-OworCWVsc2UKKwkJcGxhbmVfZnVuY3MtPmF0b21pY191cGRhdGUocGxhbmUsIHBsYW5lX3N0YXRl
-KTsKIAogCWZvciAoaSA9IDA7IGkgPCAyOyBpKyspIHsKIAkJaWYgKGNydGNfZnVuY3NbaV0gJiYg
-Y3J0Y19mdW5jc1tpXS0+YXRvbWljX2ZsdXNoKQpkaWZmIC0tZ2l0IGEvaW5jbHVkZS9kcm0vZHJt
-X2F0b21pY19oZWxwZXIuaCBiL2luY2x1ZGUvZHJtL2RybV9hdG9taWNfaGVscGVyLmgKaW5kZXgg
-MjA5NTkxN2ZmOGM3Li5hMGVhNGRlZDNjYjUgMTAwNjQ0Ci0tLSBhL2luY2x1ZGUvZHJtL2RybV9h
-dG9taWNfaGVscGVyLmgKKysrIGIvaW5jbHVkZS9kcm0vZHJtX2F0b21pY19oZWxwZXIuaApAQCAt
-MTI3LDQgKzEyNyw0MSBAQCB2b2lkIGRybV9hdG9taWNfaGVscGVyX2Nvbm5lY3Rvcl9kZXN0cm95
-X3N0YXRlKHN0cnVjdCBkcm1fY29ubmVjdG9yICpjb25uZWN0b3IsCiAjZGVmaW5lIGRybV9hdG9t
-aWNfY3J0Y19zdGF0ZV9mb3JfZWFjaF9wbGFuZShwbGFuZSwgY3J0Y19zdGF0ZSkgXAogCWRybV9m
-b3JfZWFjaF9wbGFuZV9tYXNrKHBsYW5lLCAoY3J0Y19zdGF0ZSktPnN0YXRlLT5kZXYsIChjcnRj
-X3N0YXRlKS0+cGxhbmVfbWFzaykKIAorLyoKKyAqIGRybV9hdG9taWNfcGxhbmVfZGlzYWJsaW5n
-IC0gY2hlY2sgd2hldGhlciBhIHBsYW5lIGlzIGJlaW5nIGRpc2FibGVkCisgKiBAcGxhbmU6IHBs
-YW5lIG9iamVjdAorICogQG9sZF9zdGF0ZTogcHJldmlvdXMgYXRvbWljIHN0YXRlCisgKgorICog
-Q2hlY2tzIHRoZSBhdG9taWMgc3RhdGUgb2YgYSBwbGFuZSB0byBkZXRlcm1pbmUgd2hldGhlciBp
-dCdzIGJlaW5nIGRpc2FibGVkCisgKiBvciBub3QuIFRoaXMgYWxzbyBXQVJOcyBpZiBpdCBkZXRl
-Y3RzIGFuIGludmFsaWQgc3RhdGUgKGJvdGggQ1JUQyBhbmQgRkIKKyAqIG5lZWQgdG8gZWl0aGVy
-IGJvdGggYmUgTlVMTCBvciBib3RoIGJlIG5vbi1OVUxMKS4KKyAqCisgKiBSRVRVUk5TOgorICog
-VHJ1ZSBpZiB0aGUgcGxhbmUgaXMgYmVpbmcgZGlzYWJsZWQsIGZhbHNlIG90aGVyd2lzZS4KKyAq
-Lworc3RhdGljIGlubGluZSBib29sCitkcm1fYXRvbWljX3BsYW5lX2Rpc2FibGluZyhzdHJ1Y3Qg
-ZHJtX3BsYW5lICpwbGFuZSwKKwkJCSAgIHN0cnVjdCBkcm1fcGxhbmVfc3RhdGUgKm9sZF9zdGF0
-ZSkKK3sKKwkvKgorCSAqIFdoZW4gZGlzYWJsaW5nIGEgcGxhbmUsIENSVEMgYW5kIEZCIHNob3Vs
-ZCBhbHdheXMgYmUgTlVMTCB0b2dldGhlci4KKwkgKiBBbnl0aGluZyBlbHNlIHNob3VsZCBiZSBj
-b25zaWRlcmVkIGEgYnVnIGluIHRoZSBhdG9taWMgY29yZSwgc28gd2UKKwkgKiBnZW50bHkgd2Fy
-biBhYm91dCBpdC4KKwkgKi8KKwlXQVJOX09OKChwbGFuZS0+c3RhdGUtPmNydGMgPT0gTlVMTCAm
-JiBwbGFuZS0+c3RhdGUtPmZiICE9IE5VTEwpIHx8CisJCShwbGFuZS0+c3RhdGUtPmNydGMgIT0g
-TlVMTCAmJiBwbGFuZS0+c3RhdGUtPmZiID09IE5VTEwpKTsKKworCS8qCisJICogV2hlbiB1c2lu
-ZyB0aGUgdHJhbnNpdGlvbmFsIGhlbHBlcnMsIG9sZF9zdGF0ZSBtYXkgYmUgTlVMTC4gSWYgc28s
-CisJICogd2Uga25vdyBub3RoaW5nIGFib3V0IHRoZSBjdXJyZW50IHN0YXRlIGFuZCBoYXZlIHRv
-IGFzc3VtZSB0aGF0IGl0CisJICogbWlnaHQgYmUgZW5hYmxlZC4KKwkgKgorCSAqIFdoZW4gdXNp
-bmcgdGhlIGF0b21pYyBoZWxwZXJzLCBvbGRfc3RhdGUgd29uJ3QgYmUgTlVMTC4gVGhlcmVmb3Jl
-CisJICogdGhpcyBjaGVjayBhc3N1bWVzIHRoYXQgZWl0aGVyIHRoZSBkcml2ZXIgd2lsbCBoYXZl
-IHJlY29uc3RydWN0ZWQKKwkgKiB0aGUgY29ycmVjdCBzdGF0ZSBpbiAtPnJlc2V0KCkgb3IgdGhh
-dCB0aGUgZHJpdmVyIHdpbGwgaGF2ZSB0YWtlbgorCSAqIGFwcHJvcHJpYXRlIG1lYXN1cmVzIHRv
-IGRpc2FibGUgYWxsIHBsYW5lcy4KKwkgKi8KKwlyZXR1cm4gKCFvbGRfc3RhdGUgfHwgb2xkX3N0
-YXRlLT5jcnRjKSAmJiAhcGxhbmUtPnN0YXRlLT5jcnRjOworfQorCiAjZW5kaWYgLyogRFJNX0FU
-T01JQ19IRUxQRVJfSF8gKi8KZGlmZiAtLWdpdCBhL2luY2x1ZGUvZHJtL2RybV9wbGFuZV9oZWxw
-ZXIuaCBiL2luY2x1ZGUvZHJtL2RybV9wbGFuZV9oZWxwZXIuaAppbmRleCBhNDQxMzlhYmJkNWUu
-LjI1YjI3ZmZkNzNjOCAxMDA2NDQKLS0tIGEvaW5jbHVkZS9kcm0vZHJtX3BsYW5lX2hlbHBlci5o
-CisrKyBiL2luY2x1ZGUvZHJtL2RybV9wbGFuZV9oZWxwZXIuaApAQCAtNTIsNiArNTIsNyBAQCBp
-bnQgZHJtX2NydGNfaW5pdChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBzdHJ1Y3QgZHJtX2NydGMg
-KmNydGMsCiAgKiBAY2xlYW51cF9mYjogY2xlYW51cCBhIGZyYW1lYnVmZmVyIHdoZW4gaXQncyBu
-byBsb25nZXIgdXNlZCBieSB0aGUgcGxhbmUKICAqIEBhdG9taWNfY2hlY2s6IGNoZWNrIHRoYXQg
-YSBnaXZlbiBhdG9taWMgc3RhdGUgaXMgdmFsaWQgYW5kIGNhbiBiZSBhcHBsaWVkCiAgKiBAYXRv
-bWljX3VwZGF0ZTogYXBwbHkgYW4gYXRvbWljIHN0YXRlIHRvIHRoZSBwbGFuZSAobWFuZGF0b3J5
-KQorICogQGF0b21pY19kaXNhYmxlOiBkaXNhYmxlIHRoZSBwbGFuZQogICoKICAqIFRoZSBoZWxw
-ZXIgb3BlcmF0aW9ucyBhcmUgY2FsbGVkIGJ5IHRoZSBtaWQtbGF5ZXIgQ1JUQyBoZWxwZXIuCiAg
-Ki8KQEAgLTY1LDYgKzY2LDggQEAgc3RydWN0IGRybV9wbGFuZV9oZWxwZXJfZnVuY3MgewogCQkJ
-ICAgIHN0cnVjdCBkcm1fcGxhbmVfc3RhdGUgKnN0YXRlKTsKIAl2b2lkICgqYXRvbWljX3VwZGF0
-ZSkoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsCiAJCQkgICAgICBzdHJ1Y3QgZHJtX3BsYW5lX3N0
-YXRlICpvbGRfc3RhdGUpOworCXZvaWQgKCphdG9taWNfZGlzYWJsZSkoc3RydWN0IGRybV9wbGFu
-ZSAqcGxhbmUsCisJCQkgICAgICAgc3RydWN0IGRybV9wbGFuZV9zdGF0ZSAqb2xkX3N0YXRlKTsK
-IH07CiAKIHN0YXRpYyBpbmxpbmUgdm9pZCBkcm1fcGxhbmVfaGVscGVyX2FkZChzdHJ1Y3QgZHJt
-X3BsYW5lICpwbGFuZSwKLS0gCjIuMS4zCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
-cmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
-bmZvL2RyaS1kZXZlbAo=
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Wrap struct drm_crtc_state in a driver-specific structure and add the
+planes field which keeps track of which planes are updated or disabled
+during a modeset. This allows atomic updates of the the display engine
+at ->atomic_flush() time.
+
+v2: open-code getting the state of the CRTC that the plane is being
+    attached to (Daniel Vetter)
+
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/gpu/drm/tegra/dc.c | 72 ++++++++++++++++++++++++++++------------------
+ 1 file changed, 44 insertions(+), 28 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index 5da1b59e7cfd..c283ea4d0095 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -54,6 +54,8 @@ struct tegra_dc_state {
+ 	struct clk *clk;
+ 	unsigned long pclk;
+ 	unsigned int div;
++
++	u32 planes;
+ };
+ 
+ static inline struct tegra_dc_state *to_dc_state(struct drm_crtc_state *state)
+@@ -64,20 +66,6 @@ static inline struct tegra_dc_state *to_dc_state(struct drm_crtc_state *state)
+ 	return NULL;
+ }
+ 
+-static void tegra_dc_window_commit(struct tegra_dc *dc, unsigned int index)
+-{
+-	u32 value = WIN_A_ACT_REQ << index;
+-
+-	tegra_dc_writel(dc, value << 8, DC_CMD_STATE_CONTROL);
+-	tegra_dc_writel(dc, value, DC_CMD_STATE_CONTROL);
+-}
+-
+-static void tegra_dc_cursor_commit(struct tegra_dc *dc)
+-{
+-	tegra_dc_writel(dc, CURSOR_ACT_REQ << 8, DC_CMD_STATE_CONTROL);
+-	tegra_dc_writel(dc, CURSOR_ACT_REQ, DC_CMD_STATE_CONTROL);
+-}
+-
+ /*
+  * Reads the active copy of a register. This takes the dc->lock spinlock to
+  * prevent races with the VBLANK processing which also needs access to the
+@@ -395,8 +383,6 @@ static void tegra_dc_setup_window(struct tegra_dc *dc, unsigned int index,
+ 		break;
+ 	}
+ 
+-	tegra_dc_window_commit(dc, index);
+-
+ 	spin_unlock_irqrestore(&dc->lock, flags);
+ }
+ 
+@@ -439,9 +425,28 @@ static void tegra_plane_cleanup_fb(struct drm_plane *plane,
+ {
+ }
+ 
++static int tegra_plane_state_add(struct tegra_plane *plane,
++				 struct drm_plane_state *state)
++{
++	struct drm_crtc_state *crtc_state;
++	struct tegra_dc_state *tegra;
++
++	/* Propagate errors from allocation or locking failures. */
++	crtc_state = drm_atomic_get_crtc_state(state->state, state->crtc);
++	if (IS_ERR(crtc_state))
++		return PTR_ERR(crtc_state);
++
++	tegra = to_dc_state(crtc_state);
++
++	tegra->planes |= WIN_A_ACT_REQ << plane->index;
++
++	return 0;
++}
++
+ static int tegra_plane_atomic_check(struct drm_plane *plane,
+ 				    struct drm_plane_state *state)
+ {
++	struct tegra_plane *tegra = to_tegra_plane(plane);
+ 	struct tegra_dc *dc = to_tegra_dc(state->crtc);
+ 	struct tegra_bo_tiling tiling;
+ 	int err;
+@@ -472,6 +477,10 @@ static int tegra_plane_atomic_check(struct drm_plane *plane,
+ 		}
+ 	}
+ 
++	err = tegra_plane_state_add(tegra, state);
++	if (err < 0)
++		return err;
++
+ 	return 0;
+ }
+ 
+@@ -538,8 +547,6 @@ static void tegra_plane_atomic_disable(struct drm_plane *plane,
+ 	value &= ~WIN_ENABLE;
+ 	tegra_dc_writel(dc, value, DC_WIN_WIN_OPTIONS);
+ 
+-	tegra_dc_window_commit(dc, p->index);
+-
+ 	spin_unlock_irqrestore(&dc->lock, flags);
+ }
+ 
+@@ -599,6 +606,9 @@ static const u32 tegra_cursor_plane_formats[] = {
+ static int tegra_cursor_atomic_check(struct drm_plane *plane,
+ 				     struct drm_plane_state *state)
+ {
++	struct tegra_plane *tegra = to_tegra_plane(plane);
++	int err;
++
+ 	/* no need for further checks if the plane is being disabled */
+ 	if (!state->crtc)
+ 		return 0;
+@@ -616,6 +626,10 @@ static int tegra_cursor_atomic_check(struct drm_plane *plane,
+ 	    state->crtc_w != 128 && state->crtc_w != 256)
+ 		return -EINVAL;
+ 
++	err = tegra_plane_state_add(tegra, state);
++	if (err < 0)
++		return err;
++
+ 	return 0;
+ }
+ 
+@@ -680,9 +694,6 @@ static void tegra_cursor_atomic_update(struct drm_plane *plane,
+ 	value = (state->crtc_y & 0x3fff) << 16 | (state->crtc_x & 0x3fff);
+ 	tegra_dc_writel(dc, value, DC_DISP_CURSOR_POSITION);
+ 
+-	/* apply changes */
+-	tegra_dc_cursor_commit(dc);
+-	tegra_dc_commit(dc);
+ }
+ 
+ static void tegra_cursor_atomic_disable(struct drm_plane *plane,
+@@ -700,9 +711,6 @@ static void tegra_cursor_atomic_disable(struct drm_plane *plane,
+ 	value = tegra_dc_readl(dc, DC_DISP_DISP_WIN_OPTIONS);
+ 	value &= ~CURSOR_ENABLE;
+ 	tegra_dc_writel(dc, value, DC_DISP_DISP_WIN_OPTIONS);
+-
+-	tegra_dc_cursor_commit(dc);
+-	tegra_dc_commit(dc);
+ }
+ 
+ static const struct drm_plane_funcs tegra_cursor_plane_funcs = {
+@@ -734,6 +742,13 @@ static struct drm_plane *tegra_dc_cursor_plane_create(struct drm_device *drm,
+ 	if (!plane)
+ 		return ERR_PTR(-ENOMEM);
+ 
++	/*
++	 * We'll treat the cursor as an overlay plane with index 6 here so
++	 * that the update and activation request bits in DC_CMD_STATE_CONTROL
++	 * match up.
++	 */
++	plane->index = 6;
++
+ 	num_formats = ARRAY_SIZE(tegra_cursor_plane_formats);
+ 	formats = tegra_cursor_plane_formats;
+ 
+@@ -1029,7 +1044,6 @@ static void tegra_crtc_disable(struct drm_crtc *crtc)
+ 	}
+ 
+ 	drm_crtc_vblank_off(crtc);
+-	tegra_dc_commit(dc);
+ }
+ 
+ static bool tegra_crtc_mode_fixup(struct drm_crtc *crtc,
+@@ -1202,10 +1216,7 @@ static void tegra_crtc_prepare(struct drm_crtc *crtc)
+ 
+ static void tegra_crtc_commit(struct drm_crtc *crtc)
+ {
+-	struct tegra_dc *dc = to_tegra_dc(crtc);
+-
+ 	drm_crtc_vblank_on(crtc);
+-	tegra_dc_commit(dc);
+ }
+ 
+ static int tegra_crtc_atomic_check(struct drm_crtc *crtc,
+@@ -1230,6 +1241,11 @@ static void tegra_crtc_atomic_begin(struct drm_crtc *crtc)
+ 
+ static void tegra_crtc_atomic_flush(struct drm_crtc *crtc)
+ {
++	struct tegra_dc_state *state = to_dc_state(crtc->state);
++	struct tegra_dc *dc = to_tegra_dc(crtc);
++
++	tegra_dc_writel(dc, state->planes << 8, DC_CMD_STATE_CONTROL);
++	tegra_dc_writel(dc, state->planes, DC_CMD_STATE_CONTROL);
+ }
+ 
+ static const struct drm_crtc_helper_funcs tegra_crtc_helper_funcs = {
+-- 
+2.1.3
