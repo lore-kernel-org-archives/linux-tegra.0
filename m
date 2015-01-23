@@ -1,110 +1,55 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 02/36] drm/plane: Make ->atomic_update() mandatory
-Date: Fri, 23 Jan 2015 10:18:57 +0100
-Message-ID: <20150123091856.GA3835@ulmo>
-References: <1421750935-4023-1-git-send-email-thierry.reding@gmail.com>
- <1421750935-4023-3-git-send-email-thierry.reding@gmail.com>
- <CAF6AEGvObX_YBvw7f+SytnBokpdQopom-sWGoxaPG2k+g1YjTA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0577471110=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAF6AEGvObX_YBvw7f+SytnBokpdQopom-sWGoxaPG2k+g1YjTA@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Rob Clark <robdclark@gmail.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v2] drm/plane: Make ->atomic_update() mandatory
+Date: Fri, 23 Jan 2015 10:26:37 +0100
+Message-ID: <1422005197-10964-1-git-send-email-thierry.reding@gmail.com>
+References: <1421750935-4023-3-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1421750935-4023-3-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
---===============0577471110==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="uAKRQypu60I7Lcqm"
-Content-Disposition: inline
+There is no use-case where it would be useful for drivers not to
+implement this function and the transitional plane helpers already
+require drivers to provide an implementation.
 
+v2: add new requirement to kerneldoc
 
---uAKRQypu60I7Lcqm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/gpu/drm/drm_atomic_helper.c | 2 +-
+ include/drm/drm_plane_helper.h      | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-On Tue, Jan 20, 2015 at 08:51:15AM -0500, Rob Clark wrote:
-> On Tue, Jan 20, 2015 at 5:48 AM, Thierry Reding
-> <thierry.reding@gmail.com> wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >
-> > There is no use-case where it would be useful for drivers not to
-> > implement this function and the transitional plane helpers already
-> > require drivers to provide an implementation.
-> >
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >  drivers/gpu/drm/drm_atomic_helper.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_=
-atomic_helper.c
-> > index d467185f7942..010661f23035 100644
-> > --- a/drivers/gpu/drm/drm_atomic_helper.c
-> > +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> > @@ -1108,7 +1108,7 @@ void drm_atomic_helper_commit_planes(struct drm_d=
-evice *dev,
-> >
-> >                 funcs =3D plane->helper_private;
-> >
-> > -               if (!funcs || !funcs->atomic_update)
-> > +               if (!funcs)
->=20
-> maybe WARN_ON() here.. or drm_universal_plane_init(), or somewhere,
-> for missing mandatory fxns would be a nice thing to avoid explosions
-> under console_lock for first modeset?
-
-WARN_ON() here isn't going to do you any good under console_lock and
-may drivers use drm_universal_plane_init() without having converted to
-atomic mode-setting.
-
-Adding a comment to kerneldoc that it's mandatory is probably the best
-we can do here.
-
-Thierry
-
---uAKRQypu60I7Lcqm
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJUwhIAAAoJEN0jrNd/PrOhWyoQALgplJMyYsD6PWby0qAET1Bw
-/JZ4OUaOyPuhmNiiSjdm7wuBBr+stM++OfNcIO5RgT1gORlg9zkqytnV+81xZ6zh
-WNewyY92QaNH+sOZfMthWpaho224cyvTzlV5sFya4vtQBTmh7Vk4tT5vUpPAGvtv
-TJnc9WCwdRmNVU8wRqaQOItTsTY9umlE6YBxUxd1xZW5zaND86ElFDTQNycpFaY6
-zGx6HBh0abycWjRi2RslhTua7EKsdoUBuJAJRIj5ILbZHxCotxckgbaDxd70wMTz
-YSXV9YWEfc/IlG8eh+2fiOJldivmCe9VVcl2WnnnoHMbqM/8iaEYuSIBKcIsN6vM
-tuQEo/7PsIolngupp6WmWLaFXA0IQG6FM4CbEIytbyMCpZ5N+vIZS35iUkRzI1Mp
-ItB8ugFKCmRS0p0cyGlPGMo49zcgf4fK4w7lbA0rej/RPuSfxomYid7SISCKLsH/
-R1/Dvfv/L0DOj3wROgvtVNlMh0Mfr2+NWdvGckq6uv930KhMajAq1mu1/d4X/nWA
-rwLC8fgNqOXjI42Fs2ndFY9dSgcciX8jmDKTuY7ZR/UtsqoUx5iMJN7s/xifK3za
-CykvrM1YhO/+mATup55QlnuNEFOBgVxBNjtN0t8yyVWUB3DackeIBSrdMwBORQns
-+0YSIQoh+p3X1dc0NRJ+
-=snr2
------END PGP SIGNATURE-----
-
---uAKRQypu60I7Lcqm--
-
---===============0577471110==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
-
---===============0577471110==--
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index d467185f7942..010661f23035 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -1108,7 +1108,7 @@ void drm_atomic_helper_commit_planes(struct drm_device *dev,
+ 
+ 		funcs = plane->helper_private;
+ 
+-		if (!funcs || !funcs->atomic_update)
++		if (!funcs)
+ 			continue;
+ 
+ 		old_plane_state = old_state->plane_states[i];
+diff --git a/include/drm/drm_plane_helper.h b/include/drm/drm_plane_helper.h
+index 0f2230311aa8..a44139abbd5e 100644
+--- a/include/drm/drm_plane_helper.h
++++ b/include/drm/drm_plane_helper.h
+@@ -51,7 +51,7 @@ int drm_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
+  * @prepare_fb: prepare a framebuffer for use by the plane
+  * @cleanup_fb: cleanup a framebuffer when it's no longer used by the plane
+  * @atomic_check: check that a given atomic state is valid and can be applied
+- * @atomic_update: apply an atomic state to the plane
++ * @atomic_update: apply an atomic state to the plane (mandatory)
+  *
+  * The helper operations are called by the mid-layer CRTC helper.
+  */
+-- 
+2.1.3
