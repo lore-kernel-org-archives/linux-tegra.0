@@ -1,124 +1,85 @@
 From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 4/6] instmem/gk20a: use DMA attributes
-Date: Fri, 23 Jan 2015 17:53:56 +0900
-Message-ID: <1422003238-14572-5-git-send-email-acourbot@nvidia.com>
-References: <1422003238-14572-1-git-send-email-acourbot@nvidia.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1422003238-14572-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Subject: [PATCH 0/6] nouveau/gk20a: RAM device removal & IOMMU
+	support
+Date: Fri, 23 Jan 2015 17:53:52 +0900
+Message-ID: <1422003238-14572-1-git-send-email-acourbot@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-instmem for GK20A is allocated using dma_alloc_coherent(), which
-provides us with a coherent CPU mapping that we never use because
-instmem objects are accessed through PRAMIN. Switch to
-dma_alloc_attrs() which gives us the option to dismiss that CPU mapping
-and free up some CPU virtual space.
-
-Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drm/nouveau/nvkm/subdev/instmem/gk20a.c | 24 ++++++++++++++++++++----
- lib/include/nvif/os.h                   | 31 +++++++++++++++++++++++++++++++
- 2 files changed, 51 insertions(+), 4 deletions(-)
-
-diff --git a/drm/nouveau/nvkm/subdev/instmem/gk20a.c b/drm/nouveau/nvkm/subdev/instmem/gk20a.c
-index 6176f50..4c8af6e 100644
---- a/drm/nouveau/nvkm/subdev/instmem/gk20a.c
-+++ b/drm/nouveau/nvkm/subdev/instmem/gk20a.c
-@@ -24,6 +24,10 @@
- #include <core/mm.h>
- #include <core/device.h>
- 
-+#ifdef __KERNEL__
-+#include <linux/dma-attrs.h>
-+#endif
-+
- #include "priv.h"
- 
- struct gk20a_instobj_priv {
-@@ -34,6 +38,7 @@ struct gk20a_instobj_priv {
- 	struct nvkm_mem _mem;
- 	void *cpuaddr;
- 	dma_addr_t handle;
-+	struct dma_attrs attrs;
- 	struct nvkm_mm_node r;
- };
- 
-@@ -91,8 +96,8 @@ gk20a_instobj_dtor(struct nvkm_object *object)
- 	if (unlikely(!node->handle))
- 		return;
- 
--	dma_free_coherent(dev, node->mem->size << PAGE_SHIFT, node->cpuaddr,
--			  node->handle);
-+	dma_free_attrs(dev, node->mem->size << PAGE_SHIFT, node->cpuaddr,
-+		       node->handle, &node->attrs);
- 
- 	nvkm_instobj_destroy(&node->base);
- }
-@@ -126,8 +131,19 @@ gk20a_instobj_ctor(struct nvkm_object *parent, struct nvkm_object *engine,
- 
- 	node->mem = &node->_mem;
- 
--	node->cpuaddr = dma_alloc_coherent(dev, npages << PAGE_SHIFT,
--					   &node->handle, GFP_KERNEL);
-+	init_dma_attrs(&node->attrs);
-+	/*
-+	 * We will access this memory through PRAMIN and thus do not need a
-+	 * consistent CPU pointer
-+	 */
-+	dma_set_attr(DMA_ATTR_NON_CONSISTENT, &node->attrs);
-+	dma_set_attr(DMA_ATTR_WEAK_ORDERING, &node->attrs);
-+	dma_set_attr(DMA_ATTR_WRITE_COMBINE, &node->attrs);
-+	dma_set_attr(DMA_ATTR_NO_KERNEL_MAPPING, &node->attrs);
-+
-+	node->cpuaddr = dma_alloc_attrs(dev, npages << PAGE_SHIFT,
-+					&node->handle, GFP_KERNEL,
-+					&node->attrs);
- 	if (!node->cpuaddr) {
- 		nv_error(priv, "cannot allocate DMA memory\n");
- 		return -ENOMEM;
-diff --git a/lib/include/nvif/os.h b/lib/include/nvif/os.h
-index f6391a5..b4d307e 100644
---- a/lib/include/nvif/os.h
-+++ b/lib/include/nvif/os.h
-@@ -683,6 +683,37 @@ dma_free_coherent(struct device *dev, size_t sz, void *vaddr, dma_addr_t bus)
- {
- }
- 
-+enum dma_attr {
-+	DMA_ATTR_WRITE_BARRIER,
-+	DMA_ATTR_WEAK_ORDERING,
-+	DMA_ATTR_WRITE_COMBINE,
-+	DMA_ATTR_NON_CONSISTENT,
-+	DMA_ATTR_NO_KERNEL_MAPPING,
-+	DMA_ATTR_SKIP_CPU_SYNC,
-+	DMA_ATTR_FORCE_CONTIGUOUS,
-+	DMA_ATTR_MAX,
-+};
-+
-+struct dma_attrs {
-+};
-+
-+static inline void init_dma_attrs(struct dma_attrs *attrs) {}
-+static inline void dma_set_attr(enum dma_attr attr, struct dma_attrs *attrs) {}
-+
-+static inline void *
-+dma_alloc_attrs(struct device *dev, size_t sz, dma_addr_t *hdl, gfp_t gfp,
-+		struct dma_attrs *attrs)
-+{
-+	return NULL;
-+}
-+
-+static inline void
-+dma_free_attrs(struct device *dev, size_t sz, void *vaddr, dma_addr_t bus,
-+	       struct dma_attrs *attrs)
-+{
-+}
-+
-+
- /******************************************************************************
-  * PCI
-  *****************************************************************************/
--- 
-2.2.2
+QSBzZXJpZXMgSSBoYXZlIHdhaXRlZCB0b28gbG9uZyB0byBzdWJtaXQsIGFuZCB0aGUgcmVjZW50
+IHJlZmFjdG9yaW5nIG1hZGUKbWUgcGF5IHRoZSBwcmljZSBvZiBteSBwZXJmZWN0aW9uaXNtLCBz
+byBoZXJlIGFyZSB0aGUgZmVhdHVyZXMgdGhhdCBhcmUgYXQgbGVhc3QKY29tcGxldGVkCgpQYXRj
+aGVzIDEtMyBtYWtlIHRoZSBwcmVzZW5jZSBvZiBhIFJBTSBkZXZpY2Ugb3B0aW9uYWwsIGFuZCBy
+ZW1vdmUgR0syMEEncyBkdW1teQpSQU0gZHJpdmVyIHdlIHdlcmUgdXNpbmcgc28gZmFyLiBPbiBj
+aGlwcyB1c2luZyBzaGFyZWQgbWVtb3J5LCBzdWNoIGEgZGV2aWNlCmNhbiBjb25mdXNlIHRoZSBk
+cml2ZXIgaW50byBtb3Zpbmcgb2JqZWN0cyB3aGVyZSB0aGVyZSBpcyBubyBuZWVkIHRvLCBhbmQg
+Y2FuCnRyaWNrIHVzZXItc3BhY2UgaW50byBiZWxpZXZpbmcgaXQgY2FuIGFsbG9jYXRlICJ2aWRl
+byIgbWVtb3J5IHRoYXQgZG9lcyBub3QKZXhpc3QuIEJ5IG1ha2luZyBpdCBwb3NzaWJsZSB0byBy
+dW4gTm91dmVhdSB3aXRob3V0IGEgUkFNIGRldmljZSBhbmQKc3lzdGVtYXRpY2FsbHkgcmV0dXJu
+aW5nIGVycm9ycyB3aGVuIFZSQU0gYWxsb2NhdGlvbnMgYXJlIGF0dGVtcHRlZCwgd2UgZm9yY2UK
+dXNlci1zcGFjZSB0byBkbyB0aGUgcmlnaHQgdGhpbmcgYW5kIGFsd2F5cyBlbXBsb3kgdGhlIG9w
+dGltYWwgcGF0aC4KCkNvbnRpZ3VvdXMgbWVtb3J5IGFsbG9jYXRpb24gZm9yIEdLMjBBIGlzIG5v
+dyBoYW5kbGVkIGRpcmVjdGx5IGJ5IGEgY3VzdG9tCmluc3RtZW0gZHJpdmVyLgoKVGhlIHJlbWFp
+bmluZyBwYXRjaGVzIGFyZSBub3QgcmVsYXRlZCB0byB0aGUgUkFNIGRldmljZSByZW1vdmFsLCBi
+dXQgc2luY2UKdGhleSB0b3VjaCBjb2RlIHRoYXQgaGFzIGJlZW4gbW92ZWQgYnkgcGF0Y2ggMiBJ
+IHRvb2sgdGhlIGZyZWVkb20gdG8gaW5jbHVkZQp0aGVtIGluIHRoaXMgc2VyaWVzLgoKUGF0Y2gg
+NCBpcyBhIGxpdHRsZSBpbXByb3ZlbWVudCBmb3IgR0syMEEncyBpbnN0bWVtIGltcGxlbWVudGF0
+aW9uLCB3aGljaApzdXBwcmVzc2VzIHRoZSBwZXJtYW5lbnQgYW5kIHVubmVlZGVkIENQVSBtYXBw
+aW5nIGNyZWF0ZWQgYnkgdGhlIERNQSBBUEksIGFuZApmcmVlcyB1cCBzb21lIENQVSB2aXJ0dWFs
+IGFkZHJlc3Mgc3BhY2UuCgpQYXRjaGVzIDUgYW5kIDYgaW1wbGVtZW50IGluaXRpYWwgSU9NTVUg
+c3VwcG9ydCBmb3IgR0syMEEuIE9uIHRvcCBvZiB0aGUgR1BVCk1NVSwgR0syMEEgYWxzbyBoYXMg
+YW4gaW5kZXBlbmRlbnQgSU9NTVUgdGhhdCBzdGFuZHMgYmV0d2VlbiB0aGUgR1BVIGFuZCB0aGUK
+c3lzdGVtIFJBTS4gV2hldGhlciBSQU0gYWNjZXNzZXMgYXJlIHBlcmZvcm1lZCBkaXJlY3RseSBv
+ciB1c2luZyB0aGUgSU9NTVUgaXMKZGV0ZXJtaW5lZCBieSBiaXQgMzQgb2YgZWFjaCBhZGRyZXNz
+LgoKSWYgYSBJT01NVSBpcyBwcmVzZW50LCBHSzIwQSdzIGluc3RtZW0gdGFrZXMgYWR2YW50YWdl
+IG9mIGl0IHRvIG1ha2UgdW5yZWxhdGVkCnBhZ2VzIG9mIG1lbW9yeSBhcHBlYXIgY29udGlndW91
+cyB0byB0aGUgR1BVIGluc3RlYWQgb2YgdXNpbmcgdGhlIERNQSBBUEkuCkFub3RoZXIgYmVuZWZp
+dCBvZiB0aGUgSU9NTVUgaXMgdGhhdCBpdCBjYW4gYmUgdXNlZCBieSBjdXN0b20gVk0gaW1wbGVt
+ZW50YXRpb24KdG8gbWFrZSBHUFUgb2JqZWN0cyBhbGxvY2F0ZWQgdmlhIFRUTSBhcHBlYXIgY29u
+dGlndW91cyBpbiB0aGUgSU9NTVUgc3BhY2UsCmFsbG93aW5nIHVzIHRvIG1heGltaXplIHRoZSB1
+c2Ugb2YgbGFyZ2UgcGFnZXMgYW5kIGltcHJvdmUgcGVyZm9ybWFuY2UsIGJ1dCB0aGF0CnBhcnQg
+d2lsbCBjb21lIG9uY2UgdGhlIGJhc2ljIHN1cHBvcnQgaXMgYWdyZWVkIG9uIGFuZCBtZXJnZWQu
+CgpBbGwgaW4gYWxsIHRoaXMgc2VyaWVzIHNob3VsZCBiZSBsYXJnZWx5IHVuaW50cnVzaXZlIGZv
+ciBub24tVGVncmEgR1BVcywgd2l0aApvbmx5IHBhdGNoIDEgY2hhbmdpbmcgY29tbW9uIGNvZGUg
+cGFydHMsIGluIGEgd2F5IHRoYXQgbG9va3Mgc2FmZS4KCkFsZXhhbmRyZSBDb3VyYm90ICg2KToK
+ICBtYWtlIFJBTSBkZXZpY2Ugb3B0aW9uYWwKICBpbnN0bWVtL2drMjBhOiBtb3ZlIG1lbW9yeSBh
+bGxvY2F0aW9uIHRvIGluc3RtZW0KICBnazIwYTogcmVtb3ZlIFJBTSBkZXZpY2UKICBpbnN0bWVt
+L2drMjBhOiB1c2UgRE1BIGF0dHJpYnV0ZXMKICBwbGF0Zm9ybTogcHJvYmUgSU9NTVUgaWYgcHJl
+c2VudAogIGluc3RtZW0vZ2syMGE6IGFkZCBJT01NVSBzdXBwb3J0CgogZHJtL25vdXZlYXUvaW5j
+bHVkZS9udmttL3N1YmRldi9pbnN0bWVtLmggfCAgIDEgKwogZHJtL25vdXZlYXUvbm91dmVhdV9k
+aXNwbGF5LmMgICAgICAgICAgICAgfCAgIDkgKy0KIGRybS9ub3V2ZWF1L25vdXZlYXVfcGxhdGZv
+cm0uYyAgICAgICAgICAgIHwgIDc1ICsrKystCiBkcm0vbm91dmVhdS9ub3V2ZWF1X3BsYXRmb3Jt
+LmggICAgICAgICAgICB8ICAxOCArKwogZHJtL25vdXZlYXUvbm91dmVhdV90dG0uYyAgICAgICAg
+ICAgICAgICAgfCAgIDMgKwogZHJtL25vdXZlYXUvbnY4NF9mZW5jZS5jICAgICAgICAgICAgICAg
+ICAgfCAgIDcgKy0KIGRybS9ub3V2ZWF1L252a20vZW5naW5lL2RldmljZS9iYXNlLmMgICAgIHwg
+ICA5ICstCiBkcm0vbm91dmVhdS9udmttL2VuZ2luZS9kZXZpY2UvZ2sxMDQuYyAgICB8ICAgMiAr
+LQogZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvY2xrL2Jhc2UuYyAgICAgICAgfCAgIDIgKy0KIGRy
+bS9ub3V2ZWF1L252a20vc3ViZGV2L2ZiL0tidWlsZCAgICAgICAgIHwgICAxIC0KIGRybS9ub3V2
+ZWF1L252a20vc3ViZGV2L2ZiL2Jhc2UuYyAgICAgICAgIHwgIDI2ICstCiBkcm0vbm91dmVhdS9u
+dmttL3N1YmRldi9mYi9nazIwYS5jICAgICAgICB8ICAgMSAtCiBkcm0vbm91dmVhdS9udmttL3N1
+YmRldi9mYi9wcml2LmggICAgICAgICB8ICAgMSAtCiBkcm0vbm91dmVhdS9udmttL3N1YmRldi9m
+Yi9yYW1nazIwYS5jICAgICB8IDE0OSAtLS0tLS0tLS0tCiBkcm0vbm91dmVhdS9udmttL3N1YmRl
+di9pbnN0bWVtL0tidWlsZCAgICB8ICAgMSArCiBkcm0vbm91dmVhdS9udmttL3N1YmRldi9pbnN0
+bWVtL2drMjBhLmMgICB8IDQzOCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysKIGRybS9u
+b3V2ZWF1L252a20vc3ViZGV2L2x0Yy9nZjEwMC5jICAgICAgIHwgIDE0ICstCiBsaWIvaW5jbHVk
+ZS9udmlmL29zLmggICAgICAgICAgICAgICAgICAgICB8ICA2MyArKysrKwogMTggZmlsZXMgY2hh
+bmdlZCwgNjQ3IGluc2VydGlvbnMoKyksIDE3MyBkZWxldGlvbnMoLSkKIGRlbGV0ZSBtb2RlIDEw
+MDY0NCBkcm0vbm91dmVhdS9udmttL3N1YmRldi9mYi9yYW1nazIwYS5jCiBjcmVhdGUgbW9kZSAx
+MDA2NDQgZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvaW5zdG1lbS9nazIwYS5jCgotLSAKMi4yLjIK
+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCk5vdXZlYXUg
+bWFpbGluZyBsaXN0Ck5vdXZlYXVAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5m
+cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9ub3V2ZWF1Cg==
