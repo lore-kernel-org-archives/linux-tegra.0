@@ -1,50 +1,119 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 4/4] arm64: Add initial Tegra support
-Date: Fri, 23 Jan 2015 17:00:00 +0100
-Message-ID: <1422028800-759-4-git-send-email-thierry.reding@gmail.com>
-References: <1422028800-759-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1422028800-759-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] arm64: dts: Add initial device tree support for Tegra132
+Date: Fri, 23 Jan 2015 09:57:19 -0700
+Message-ID: <54C27D6F.9000006@wwwdotorg.org>
+References: <alpine.DEB.2.02.1501161139180.9776@utopia.booyaka.com> <20150121161313.GI5044@leverpostej> <alpine.DEB.2.02.1501231038130.5450@utopia.booyaka.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <alpine.DEB.2.02.1501231038130.5450-rwI8Ez+7Ko+d5PgPZx9QOdBPR1lH4CV8@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Cc: amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Catalin Marinas <Catalin.Marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <Will.Deacon-5wv7dgnIgG8@public.gmane.org>, "pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi ARM SoC maintainers,
+On 01/23/2015 04:31 AM, Paul Walmsley wrote:
+> + Arto, Terje for comments on the host1x section
+> + Stephen Warren for comments on the serial DT data
 
-The following changes since commit 3568df3d31d62b4368830cc6aac868cecdefd187:
+> On Wed, 21 Jan 2015, Mark Rutland wrote:
+>
+>> As mentioned in my reply to the DT list patch [1], there are a couple of
+>> bits I'd like to see cleaned up first, but in the meantime I have some
+>> comments from my first pass of the dtsi below. Some of these may equally
+>> apply to existing dts(i) files.
+>>
+>> I see a few undocumented compatible strings (at least when comparing
+>> against mainline). If there are other series or trees I should be
+>> looking at, any pointers would be appreciated. If not, documentation
+>> updates would be nice (checkpatch should complain otherwise).
 
-  soc: tegra: Add thermal reset (thermtrip) support to PMC (2015-01-23 16:20:49 +0100)
+>> On Fri, Jan 16, 2015 at 11:45:29AM +0000, Paul Walmsley wrote:
+>>>
+>>> Add an initial device tree file for the Tegra132 SoC.  The DT file is
+>>> based on arch/arm/boot/dts/tegra124.dtsi and
+>>> arch/arm/boot/dts/tegra114.dtsi, with the following significant
+>>> changes:
+>>>
+>>> - Tegra132 uses a Denver CPU cluster rather than an ARMv7 CPU cluster
+>>> - Devices are arranged by bus, rather than in a flat topology
+>>> - No polling delays have been defined for the thermal zones.  I don't
+>>>    believe that this is a property of the SoC hardware, but rather of a
+>>>    given use-case.
 
-are available in the git repository at:
+>>> diff --git a/arch/arm64/boot/dts/tegra/tegra132.dtsi b/arch/arm64/boot/dts/tegra/tegra132.dtsi
+>>> +               /*
+>>> +                * There are two serial drivers: an 8250 based simple
+>>> +                * serial driver and an APB DMA based serial driver
+>>> +                * for higher baudrate and performance. To enable the
+>>> +                * 8250 based driver, the compatible string is
+>>> +                * "nvidia,tegra132-uart", "nvidia,tegra124-uart",
+>>> +                * "nvidia,tegra20-uart" and to enable the APB DMA
+>>> +                * based serial driver, the compatible string is
+>>> +                * "nvidia,tegra132-hsuart", "nvidia,tegra124-hsuart",
+>>> +                * "nvidia,tegra30-hsuart".
+>>> +                */
+>>
+>> Is there any reason to continue with this split?
+>>
+>> Surely if the only difference is DMA, the presence of dmas and dma-names
+>> should be sufficient to get the driver to do the right thing, and if you
+>> need to disable DMA for debugging that could be a command-line option.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-3.20-arm64
+I vaguely recall asking for the DMA support to be integrated into the 
+regular 8250 driver instead when the separate DMA-capable driver was 
+first added. I /think/ there was resistance to this because adding lots 
+of different SoC-specific ways to do DMA into the existing 8250 driver 
+would complicate it even more, and hence be unmaintainable.
 
-for you to fetch changes up to d035fdfa27ac124bc8f94c3d7dc82ad069802170:
+I assume that reasoning is still valid.
 
-  arm64: Add Tegra132 support (2015-01-23 16:32:52 +0100)
+Perhaps what we need is more fine-grained driver selection, not just 
+based on compatible value. Something like:
 
-As you can see by the shortlog below this depends on the tegra-for-3.20-soc
-pull request to resolve build time dependencies.
+if compatible == nvidia,tegra20-uart:
+   if node.has_prop("enable-dma"):
+     driver = Tegra-specfic DMA capable UART driver
+   else:
+     driver = Common 8250 driver
 
-Thanks,
-Thierry
+Is that something that of_serial.c could/should be enhanced to do? That 
+said, the whole reasoning behind separate compatible properties before 
+was that compatible is supposed to "drive" driver selection. At least, 
+that's what I was told then.
 
-----------------------------------------------------------------
-arm64: Add initial Tegra support
+>> Does the binding and/or driver support aliases so you can get consistent
+>> numbering? It would be nice to have.
 
-This adds support for the Tegra132 SoC, which is essentially a Tegra124
-with a dual Denver CPU complex instead of the quad-Cortex-A15. There is
-not much here, only the Kconfig entries, but it will allow us to more
-easily get subsequent patches in (many of which have already been sent
-for review).
+I believe either the serial core or serial driver(s) support DT aliases 
+now, yes.
 
-----------------------------------------------------------------
-Paul Walmsley (1):
-      arm64: Add Tegra132 support
+>> Do these UARTs work with earlycon?
 
-Thierry Reding (1):
-      Merge branch 'for-3.20/soc' into for-3.20/arm64
+I do not know.
 
- arch/arm64/Kconfig | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+>> It would be nice to have a /chosen/stdout-path (ideally with rate) so as
+>> to get output consistently without command line options being required.
+>
+> Stephen Warren might be the best person to directly respond to these
+> issues.  This is all legacy DT data from previous Tegra SoCs.
+>
+>>
+>>> +               uarta: serial@0,70006000 {
+>>> +                       compatible = "nvidia,tegra132-uart", "nvidia,tegra124-uart", "nvidia,tegra20-uart";
+>>> +                       reg = <0x0 0x70006000 0x0 0x40>;
+>>> +                       reg-shift = <2>;
+>>> +                       interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
+>>> +                       clocks = <&tegra_car TEGRA124_CLK_UARTA>;
+>>> +                       resets = <&tegra_car 6>;
+>>> +                       reset-names = "serial";
+>>> +                       dmas = <&apbdma 8>, <&apbdma 8>;
+>>> +                       dma-names = "rx", "tx";
+>>> +                       status = "disabled";
+>>> +               };
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
