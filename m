@@ -1,95 +1,59 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/2] i2c: tegra: Maintain CPU endianness
-Date: Fri, 23 Jan 2015 10:45:53 +0100
-Message-ID: <20150123094552.GD3835@ulmo>
-References: <1421756555-20266-1-git-send-email-digetx@gmail.com>
- <20150122074001.GB427@ulmo>
- <CAAVeFuJHST9VOWXe_cZNvLmfGdamuU4HSgdZC6EoQvrsGFt+Fg@mail.gmail.com>
- <54C115D1.10206@gmail.com>
- <54C12010.8040504@gmail.com>
- <54C130EA.2050505@gmail.com>
+Subject: Re: [PATCH] drm/tegra: Fix copypasta in host1x_reloc_copy_from_user
+Date: Fri, 23 Jan 2015 12:24:27 +0100
+Message-ID: <20150123112425.GA15448@ulmo.nvidia.com>
+References: <1421807855-27853-1-git-send-email-davidu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="bjuZg6miEcdLYP6q"
+	protocol="application/pgp-signature"; boundary="qDbXVdCdHGoSgWSk"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <54C130EA.2050505-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1421807855-27853-1-git-send-email-davidu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, Bob Mottram <bob.mottram-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: David Ung <davidu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: airlied-cv59FeDIM0c@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---bjuZg6miEcdLYP6q
-Content-Type: text/plain; charset=utf-8
+--qDbXVdCdHGoSgWSk
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 22, 2015 at 08:18:34PM +0300, Dmitry Osipenko wrote:
-> 22.01.2015 19:06, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >22.01.2015 18:22, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >>22.01.2015 10:55, Alexandre Courbot =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >>>On Thu, Jan 22, 2015 at 4:40 PM, Thierry Reding
-> >>><thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> >>>>
-> >>>>Should this not technically be le32_to_cpu() since the data originates
-> >>>>from the I2C controller?
-> >>
-> >>No, i2c_readl returns value in CPU endianness, so it's correct. But for
-> >>i2c_writel should be used le32_to_cpu(), since it takes value in CPU en=
-dianness.
-> >>It's my overlook, V2 is coming.
-> >>
-> >>>>
-> >>>>Why does this have to be initialized to 0 now?
-> >>>
-> >>>I suspect this is because we are going to memcpy less than 4 bytes
-> >>>into it, but I cannot figure out how that memcpy if guaranteed to
-> >>>produce the expected result for both endiannesses.
-> >>>
-> >>That's correct. Memcpy is working with bytes, so it doesn't care about
-> >>endianness and produces expected result, since I2C message is char arra=
-y.
-> >>
-> >I'll spend some more time reviewing, to see if nullifying should go as s=
-eparate
-> >patch.
-> >
-> Well, I2C_FIFO_STATUS returns 8-bit value. The rest of bits very likely to
-> be RAZ, however I don't see anything on it in documentation. In that case=
- it
-> won't cause any problems with LE value and nullifying is only needed for =
-BE
-> mode.
+On Tue, Jan 20, 2015 at 06:37:35PM -0800, David Ung wrote:
+> Fix copypasta bug for function host1x_reloc_copy_from_user.
+>=20
+> Signed-off-by: David Ung <davidu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/gpu/drm/tegra/drm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-What does I2C_FIFO_STATUS have to do with anything?
-
-My point was more that we already tell hardware how much data is to be
-transferred (via the packet header in tegra_i2c_xfer_msg()), hence the
-hardware shouldn't care whether the FIFO is padded with random data or
-zeros.
+I've applied this with a reworded commit message and added a proper
+Fixes: tag. It should also go to stable because the offending commit was
+merged in v3.17. Yay for not having automated test procedures that could
+have easily caught this...
 
 Thierry
 
---bjuZg6miEcdLYP6q
+--qDbXVdCdHGoSgWSk
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUwhhQAAoJEN0jrNd/PrOhQmIP+gNfs4SsJkc4AZNmiU+XbDl6
-7euJQfIlEAc0Qu0flxIBdCfd+QrfvYuBnWyxpPDWKYIIUVmb7tEzzBrj2xX7Tgbj
-voZuV9p30M7MXq2IC62PH45GOtDA4muW+Ma0j2BUmute6BlhvN1H73WnWxcQyXdw
-SJNn37fAzOCFOiJgbmHS77bJgXydMIl+bXX+MV6T8RHTIB1hZzf6VQMvVrKOzCOU
-3zGRSi+us+iJNd17/fw/DmfN6ihaSI6rj/ZuR7fUwBWBbCFqBJH5bBB7GcJHLacU
-Yaue2r6oUF4zMn2VB45SORM8mGlGkFJEGqepm+35vkVMp8qp78ATAbXQslEA/uUy
-Eri2+MQrs6jl+vq79GxsEUVnY08j13BzY4LozRy0c1nLN5t1sFpi4ZEo/RvK5Ntv
-yt8eA1zvCxXX1zfiwqlgHGSK19lvbt0f4ScBYzDw1pcD8C/W7bDaFAXJQGSnW366
-WD+q4pjzvXzQhwX4kQ/ystq3sB1AuX3TAfD8HTnRdxazNbApNowVp9tOcu0Ecuqt
-pzC0DrAyJ9RmayakzY78XDlKT8qt0y0eMzyenuqqYeuV7ZG7auIVqjZJu2XsTRA9
-FtLa3PmZZny7vtY8iWq0QPApxogOsrWBGTQiSihwoYbYDlwea/IkwW36uDOcii39
-6t4QKjDgIpseKfP2itR5
-=VPuR
+iQIcBAEBAgAGBQJUwi9pAAoJEN0jrNd/PrOhuH0QAK+L4VTwiABiaB4MLnUIO/V+
+exyaume/0riVjLfmjPM8vCk8X6Lil63y6o8lxzEgluo9VfKLpuZ5PgXuESi1PY9k
+0EuhT43kyVu5zOzrInLUX6wcqRQh9vXmQpY4k7IdcAgHSCMWaKQE1qHoxrEUR74d
+5ES38um7oNItDcloHq4OFWTRxX8DwkaltVypEWyRstQNg+j9s7b14AtOK0CNQHEY
+K5HTVj5GcSVZe4GCWpRz3ApzrEygNXLpGN7kgGbsZYzwGWP8GwtLKO2z0hsQfsRn
+K5DLgo9zB2I8SLUS18Wi9UBCjREL0GXLuQ0By3fGdKgrQyFLJBXcmn5g4rKg2K+H
+DLC/3eXLWTUsc4PJFJ73+6Wh0iL6+9Ny/giX58ERh3tkcpJvqNaypn8mDFICsglv
+dwPYOHFmipZOnA8ZkDpj6gG2nC+ZeS3shqe7+eUWov+BrbU9b1Txgz2PlPh3T47m
+FeZxkbv3HffqEG6fFc/c+ZaWph+B/GZqR9te0APGMyEtZHVxuts2OXOEqPWCEgZw
+p9axJohJZ4734wuJBFZrvEryyHGYqzY3sRdc1gkSaIguX/oZTYx7l4mGzJ+eyFdA
+ntX34gKH0gXyXu8IQP6XAcIlTmJKTrnoxOd6N8ShQVSVLG6Qu+aVNOHAThyv7LWI
+VLXa5QQr/6NasSuvQHZH
+=gpX4
 -----END PGP SIGNATURE-----
 
---bjuZg6miEcdLYP6q--
+--qDbXVdCdHGoSgWSk--
