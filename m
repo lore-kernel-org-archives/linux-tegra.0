@@ -1,96 +1,87 @@
-From: Emil Velikov <emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/6] make RAM device optional
-Date: Sat, 24 Jan 2015 03:00:34 +0000
-Message-ID: <CACvgo53aJ5ant2G6u5xV6=V+rG+Vs=muzhQazGvLnDTYjPdpDA@mail.gmail.com>
-References: <1422003238-14572-1-git-send-email-acourbot@nvidia.com>
- <1422003238-14572-2-git-send-email-acourbot@nvidia.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v2] clk: Introduce clk_has_parent()
+Date: Sat, 24 Jan 2015 17:02:41 -0800
+Message-ID: <20150125010241.22722.75005@quantum>
+References: <1421750935-4023-2-git-send-email-thierry.reding@gmail.com>
+ <1421856780-32103-1-git-send-email-thierry.reding@gmail.com>
+ <54C04145.1010906@codeaurora.org> <20150122073707.GA427@ulmo>
+ <20150122202546.GO27202@codeaurora.org> <20150123093409.GC3835@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <1422003238-14572-2-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ML nouveau <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150123093409.GC3835@ulmo>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMjMgSmFudWFyeSAyMDE1IGF0IDA4OjUzLCBBbGV4YW5kcmUgQ291cmJvdCA8YWNvdXJib3RA
-bnZpZGlhLmNvbT4gd3JvdGU6Cj4gSGF2aW5nIGEgUkFNIGRldmljZSBkb2VzIG5vdCBtYWtlIHNl
-bnNlIGZvciBjaGlwcyBsaWtlIEdLMjBBIHdoaWNoIGhhdmUKPiBubyBkZWRpY2F0ZWQgdmlkZW8g
-bWVtb3J5LiBUaGUgZHVtbXkgUkFNIGRldmljZSB0aGF0IHdlIHVzZWQgc28gZmFyCj4gd29ya3Mg
-YXMgYSB0ZW1wb3JhcnkgYmFuZC1haWQsIGJ1dCBpbiB0aGUgbG9uZy10ZXJtIGl0IGlzIGRlc2ly
-YWJsZSBmb3IKPiB0aGUgZHJpdmVyIHRvIGJlIGFibGUgdG8gd29yayB3aXRob3V0IGFueSBraW5k
-IG9mIFZSQU0uCj4KPiBUaGlzIHBhdGNoIGFkZHMgYSBmZXcgY29uZGl0aW9uYWxzIGluIHBsYWNl
-cyB3aGVyZSBhIFJBTSBkZXZpY2Ugd2FzCj4gYXNzdW1lZCB0byBiZSBwcmVzZW50IGFuZCBhbGxv
-d3Mgc29tZSBtb3JlIG9iamVjdHMgdG8gYmUgYWxsb2NhdGVkIGZyb20KPiB0aGUgVFQgZG9tYWlu
-LCBhbGxvd2luZyBOb3V2ZWF1IHRvIGhhbmRsZSBHUFVzIGZvciB3aGljaAo+IHBmYi0+cmFtID09
-IE5VTEwuCj4KSGkgZ3V5cywKClJhdGhlciBzaWxseSBxdWVzdGlvbiBzbyBiZSBnZW50bGUgOi0p
-CtCQIGNvdXBsZSBhbiBleHRyYSBmbGFncyBoYXZlIGNyZXB0IGluLgoKPiBTaWduZWQtb2ZmLWJ5
-OiBBbGV4YW5kcmUgQ291cmJvdCA8YWNvdXJib3RAbnZpZGlhLmNvbT4KPiAtLS0KPiAgZHJtL25v
-dXZlYXUvbm91dmVhdV9kaXNwbGF5LmMgICAgICAgICB8ICA5ICsrKysrKysrLQo+ICBkcm0vbm91
-dmVhdS9ub3V2ZWF1X3R0bS5jICAgICAgICAgICAgIHwgIDMgKysrCj4gIGRybS9ub3V2ZWF1L252
-ODRfZmVuY2UuYyAgICAgICAgICAgICAgfCAgNyArKysrKy0tCj4gIGRybS9ub3V2ZWF1L252a20v
-ZW5naW5lL2RldmljZS9iYXNlLmMgfCAgOSArKysrKystLS0KPiAgZHJtL25vdXZlYXUvbnZrbS9z
-dWJkZXYvY2xrL2Jhc2UuYyAgICB8ICAyICstCj4gIGRybS9ub3V2ZWF1L252a20vc3ViZGV2L2Zi
-L2Jhc2UuYyAgICAgfCAyNiArKysrKysrKysrKysrKysrKystLS0tLS0tLQo+ICBkcm0vbm91dmVh
-dS9udmttL3N1YmRldi9sdGMvZ2YxMDAuYyAgIHwgMTQgKysrKysrKysrKy0tLS0KPiAgNyBmaWxl
-cyBjaGFuZ2VkLCA1MSBpbnNlcnRpb25zKCspLCAxOSBkZWxldGlvbnMoLSkKPgo+IGRpZmYgLS1n
-aXQgYS9kcm0vbm91dmVhdS9ub3V2ZWF1X2Rpc3BsYXkuYyBiL2RybS9ub3V2ZWF1L25vdXZlYXVf
-ZGlzcGxheS5jCj4gaW5kZXggODYwYjBlMi4uYjRmOGVjZSAxMDA2NDQKPiAtLS0gYS9kcm0vbm91
-dmVhdS9ub3V2ZWF1X2Rpc3BsYXkuYwo+ICsrKyBiL2RybS9ub3V2ZWF1L25vdXZlYXVfZGlzcGxh
-eS5jCj4gQEAgLTg2OSwxMyArODY5LDIwIEBAIG5vdXZlYXVfZGlzcGxheV9kdW1iX2NyZWF0ZShz
-dHJ1Y3QgZHJtX2ZpbGUgKmZpbGVfcHJpdiwgc3RydWN0IGRybV9kZXZpY2UgKmRldiwKPiAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IGRybV9tb2RlX2NyZWF0ZV9kdW1iICphcmdz
-KQo+ICB7Cj4gICAgICAgICBzdHJ1Y3Qgbm91dmVhdV9ibyAqYm87Cj4gKyAgICAgICB1aW50MzJf
-dCBkb21haW47Cj4gICAgICAgICBpbnQgcmV0Owo+Cj4gICAgICAgICBhcmdzLT5waXRjaCA9IHJv
-dW5kdXAoYXJncy0+d2lkdGggKiAoYXJncy0+YnBwIC8gOCksIDI1Nik7Cj4gICAgICAgICBhcmdz
-LT5zaXplID0gYXJncy0+cGl0Y2ggKiBhcmdzLT5oZWlnaHQ7Cj4gICAgICAgICBhcmdzLT5zaXpl
-ID0gcm91bmR1cChhcmdzLT5zaXplLCBQQUdFX1NJWkUpOwo+Cj4gLSAgICAgICByZXQgPSBub3V2
-ZWF1X2dlbV9uZXcoZGV2LCBhcmdzLT5zaXplLCAwLCBOT1VWRUFVX0dFTV9ET01BSU5fVlJBTSwg
-MCwgMCwgJmJvKTsKPiArICAgICAgIGlmIChudnh4X2ZiKCZub3V2ZWF1X2RybShkZXYpLT5kZXZp
-Y2UpLT5yYW0pCj4gKyAgICAgICAgICAgICAgIGRvbWFpbiA9IE5PVVZFQVVfR0VNX0RPTUFJTl9W
-UkFNOwo+ICsgICAgICAgZWxzZQo+ICsgICAgICAgICAgICAgICBkb21haW4gPSBOT1VWRUFVX0dF
-TV9ET01BSU5fR0FSVDsKPiArCj4gKyAgICAgICByZXQgPSBub3V2ZWF1X2dlbV9uZXcoZGV2LCBh
-cmdzLT5zaXplLCAwLAo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGRvbWFpbiB8IE5P
-VVZFQVVfR0VNX0RPTUFJTl9NQVBQQUJMRSwgMCwgMCwgJmJvKTsKVGFraW5nIGFib3V0IHRoZSBl
-eHRyYSBOT1VWRUFVX0dFTV9ET01BSU5fTUFQUEFCTEUuCgo+IGRpZmYgLS1naXQgYS9kcm0vbm91
-dmVhdS9ub3V2ZWF1X3R0bS5jIGIvZHJtL25vdXZlYXUvbm91dmVhdV90dG0uYwo+IGluZGV4IDI3
-M2U1MDEuLmEzYzJlOWIgMTAwNjQ0Cj4gLS0tIGEvZHJtL25vdXZlYXUvbm91dmVhdV90dG0uYwo+
-ICsrKyBiL2RybS9ub3V2ZWF1L25vdXZlYXVfdHRtLmMKPiBAQCAtODUsNiArODUsOSBAQCBub3V2
-ZWF1X3ZyYW1fbWFuYWdlcl9uZXcoc3RydWN0IHR0bV9tZW1fdHlwZV9tYW5hZ2VyICptYW4sCj4g
-ICAgICAgICBpZiAobnZiby0+dGlsZV9mbGFncyAmIE5PVVZFQVVfR0VNX1RJTEVfTk9OQ09OVElH
-KQo+ICAgICAgICAgICAgICAgICBzaXplX25jID0gMSA8PCBudmJvLT5wYWdlX3NoaWZ0Owo+Cj4g
-KyAgICAgICBpZiAoIXBmYi0+cmFtKQo+ICsgICAgICAgICAgICAgICByZXR1cm4gLUVOT01FTTsK
-PiArCj4gICAgICAgICByZXQgPSBwZmItPnJhbS0+Z2V0KHBmYiwgbWVtLT5udW1fcGFnZXMgPDwg
-UEFHRV9TSElGVCwKPiAgICAgICAgICAgICAgICAgICAgICAgICAgICBtZW0tPnBhZ2VfYWxpZ25t
-ZW50IDw8IFBBR0VfU0hJRlQsIHNpemVfbmMsCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAg
-KG52Ym8tPnRpbGVfZmxhZ3MgPj4gOCkgJiAweDNmZiwgJm5vZGUpOwo+IGRpZmYgLS1naXQgYS9k
-cm0vbm91dmVhdS9udjg0X2ZlbmNlLmMgYi9kcm0vbm91dmVhdS9udjg0X2ZlbmNlLmMKPiBpbmRl
-eCBiZjQyOWNhLi45NTJiYzQ4IDEwMDY0NAo+IC0tLSBhL2RybS9ub3V2ZWF1L252ODRfZmVuY2Uu
-Ywo+ICsrKyBiL2RybS9ub3V2ZWF1L252ODRfZmVuY2UuYwo+IEBAIC0yMTUsNiArMjE1LDcgQEAg
-bnY4NF9mZW5jZV9jcmVhdGUoc3RydWN0IG5vdXZlYXVfZHJtICpkcm0pCj4gIHsKPiAgICAgICAg
-IHN0cnVjdCBudmttX2ZpZm8gKnBmaWZvID0gbnZ4eF9maWZvKCZkcm0tPmRldmljZSk7Cj4gICAg
-ICAgICBzdHJ1Y3QgbnY4NF9mZW5jZV9wcml2ICpwcml2Owo+ICsgICAgICAgdTMyIGRvbWFpbjsK
-PiAgICAgICAgIGludCByZXQ7Cj4KPiAgICAgICAgIHByaXYgPSBkcm0tPmZlbmNlID0ga3phbGxv
-YyhzaXplb2YoKnByaXYpLCBHRlBfS0VSTkVMKTsKPiBAQCAtMjMxLDEwICsyMzIsMTIgQEAgbnY4
-NF9mZW5jZV9jcmVhdGUoc3RydWN0IG5vdXZlYXVfZHJtICpkcm0pCj4gICAgICAgICBwcml2LT5i
-YXNlLmNvbnRleHRfYmFzZSA9IGZlbmNlX2NvbnRleHRfYWxsb2MocHJpdi0+YmFzZS5jb250ZXh0
-cyk7Cj4gICAgICAgICBwcml2LT5iYXNlLnVldmVudCA9IHRydWU7Cj4KPiArICAgICAgIGRvbWFp
-biA9IG52eHhfZmIoJmRybS0+ZGV2aWNlKS0+cmFtID8gVFRNX1BMX0ZMQUdfVlJBTSA6IFRUTV9Q
-TF9GTEFHX1RUOwo+ICAgICAgICAgcmV0ID0gbm91dmVhdV9ib19uZXcoZHJtLT5kZXYsIDE2ICog
-cHJpdi0+YmFzZS5jb250ZXh0cywgMCwKPiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgIFRU
-TV9QTF9GTEFHX1ZSQU0sIDAsIDAsIE5VTEwsIE5VTEwsICZwcml2LT5ibyk7Cj4gKyAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICBkb21haW4gfCBUVE1fUExfRkxBR19VTkNBQ0hFRCwKQW5kIHRo
-ZSBUVE1fUExfRkxBR19VTkNBQ0hFRCBoZXJlLgoKQXJlIHRob3NlIGludGVudGlvbmFsLCBJIGRv
-bid0IHNlZSBhbnkgaGludHMgYWJvdXQgdGhlbSBpbiB0aGUgY29tbWl0IHN1bW1hcnkgPwoKVGhh
-bmtzCkVtaWwKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
-Tm91dmVhdSBtYWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDov
-L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL25vdXZlYXUK
+Quoting Thierry Reding (2015-01-23 01:34:10)
+> On Thu, Jan 22, 2015 at 12:25:46PM -0800, Stephen Boyd wrote:
+> > On 01/22, Thierry Reding wrote:
+> > > On Wed, Jan 21, 2015 at 04:16:05PM -0800, Stephen Boyd wrote:
+> > > > On 01/21/2015 08:13 AM, Thierry Reding wrote:
+> > > > > From: Thierry Reding <treding@nvidia.com>
+> > > > >
+> > > > > This new function is similar to clk_set_parent(), except that it doesn't
+> > > > > actually change the parent. It merely checks that the given parent clock
+> > > > > can be a parent for the given clock.
+> > > > >
+> > > > > A situation where this is useful is to check that a particular setup is
+> > > > > valid before switching to it. One specific use-case for this is atomic
+> > > > > modesetting in the DRM framework where setting a mode is divided into a
+> > > > > check phase where a given configuration is validated before applying
+> > > > > changes to the hardware.
+> > > > >
+> > > > > Cc: Russell King <linux@arm.linux.org.uk>
+> > > > > Cc: Mike Turquette <mturquette@linaro.org>
+> > > > > Cc: Stephen Boyd <sboyd@codeaurora.org>
+> > > > > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > > > > ---
+> > > > 
+> > > > Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
+> > > > 
+> > > > This will slightly conflict with Tomeu's  patches for per-user clock
+> > > > constraints. It would be best if we can take this through the clk tree
+> > > > to fix up any conflicts
+> > > 
+> > > I had hoped to take this through the drm tree to resolve the build-time.
+> > > Another possibility would be for me to include the clk tree (or a subset
+> > > thereof) in my pull-request. That way you can still fix things up in the
+> > > clock tree if there are any conflicts with other work. We could make
+> > > that work two ways: this patch gets applied to the clk tree and I pull
+> > > it, or I provide a stable branch that I base my pull request on and that
+> > > branch can be pulled into the clk tree.
+> > > 
+> > > Yet another alternative would be to split out the clk_has_parent()
+> > > change from the series and not use it for now. That way we're going to
+> > > miss this check, but we do that anyway currently and it will only be
+> > > temporary until v3.21.
+> > > 
+> > > Perhaps given where we are in the release cycle the latter would make
+> > > the most sense for now.
+> > 
+> > Ok well let's see what Mike wants to do given that he's doing all
+> > the patch applying right now. I'd think that we could put this
+> > one patch on a different branch that we can merge into clk-next
+> > and you can merge into the drm tree. At least that's the typical
+> > workflow that usually works for everyone.
+> 
+> I will be sending out a pull request today, so I'm not going to include
+> this patch or the dependent patch. I'll pick it up again after the merge
+> window and see if I need to rebase it on top of Tomeu's work.
+
+I've created an immutable branch based on 3.19-rc1 with only this patch
+on it and I've merged that branch into the clk tree. Immutable branch:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-has-parent
+
+You can see it merged into the clk tree here:
+
+https://git.kernel.org/cgit/linux/kernel/git/clk/linux.git/commit/?h=clk-next&id=57386798f7db7f09d69f3b44fc66570e6db91bba
+
+Regards,
+Mike
+
+> 
+> Thierry
