@@ -1,58 +1,90 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2 04/11] ARM: tegra: Set spi-max-frequency property to
- flash node
-Date: Tue, 27 Jan 2015 09:48:43 -0700
-Message-ID: <54C7C16B.2080003@wwwdotorg.org>
-References: <1421338359-27467-1-git-send-email-tomeu.vizoso@collabora.com> <1421338359-27467-5-git-send-email-tomeu.vizoso@collabora.com> <54B7F84A.6020906@wwwdotorg.org> <CAAObsKDx_W23OTL2RE4xxgXL-rtp3npkBtx6qMHV1j8ZXmo1rw@mail.gmail.com>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] mmc: tegra: Write xfer_mode, CMD regs in together
+Date: Tue, 27 Jan 2015 12:23:30 -0500
+Message-ID: <1422379410-7127-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAObsKDx_W23OTL2RE4xxgXL-rtp3npkBtx6qMHV1j8ZXmo1rw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, pkunapuli-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/27/2015 04:13 AM, Tomeu Vizoso wrote:
-> On 15 January 2015 at 18:26, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->> On 01/15/2015 09:12 AM, Tomeu Vizoso wrote:
->>>
->>> To silence a warning on Nyan boards.
->>>
->>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
->>> ---
->>>    arch/arm/boot/dts/tegra124-nyan-big.dts | 1 +
->>>    1 file changed, 1 insertion(+)
->>>
->>> diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts
->>> b/arch/arm/boot/dts/tegra124-nyan-big.dts
->>> index 9a9cffe..94c7ba9 100644
->>> --- a/arch/arm/boot/dts/tegra124-nyan-big.dts
->>> +++ b/arch/arm/boot/dts/tegra124-nyan-big.dts
->>> @@ -1660,6 +1660,7 @@
->>>
->>>                  flash@0 {
->>>                          compatible = "winbond,w25q32dw";
->>> +                       spi-max-frequency = <25000000>;
->>
->>
->> This property already exists in the SPI controller. Isn't the max frequency
->> supposed to inherit from there? If so, shouldn't the code not warn when such
->> inheritance happens, i.e. it'd be better to fix the code?
->
-> I don't think it's supposed to fall back to the controller's max freq,
-> as each device has its own maximum frequency that it can support and
-> it's not related to what the master supports.
+From: Pavan Kunapuli <pkunapuli-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-If the controller-specific frequency property isn't ever used, we should 
-remove it. No point carrying cruft that looks like it does something but 
-doesn't.
+If there is a gap between xfer mode and command register writes,
+tegra SDMMC controller can sometimes issue a spurious command before
+the CMD register is written. To avoid this, these two registers need
+to be written together in a single write operation.
 
-Logically, each device's max frequency certainly should be influenced by 
-all of the controller, board, and device max frequency. Those should all 
-impose a cap on the speed used. I'd expect this to be expressed in DT as 
-a single property in each device where the user has calculated that max 
-for the device, with the option to have all the devices fall back to the 
-"default" provided at the controller/bus level if the device imposes a 
-cap that's no lower.
+Signed-off-by: Pavan Kunapuli <pkunapuli-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/mmc/host/sdhci-tegra.c |   31 ++++++++++++++++++++++++++++++-
+ 1 file changed, 30 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 59797106af93..3d34de47e57e 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -41,6 +41,7 @@
+ #define NVQUIRK_DISABLE_SDR50		BIT(3)
+ #define NVQUIRK_DISABLE_SDR104		BIT(4)
+ #define NVQUIRK_DISABLE_DDR50		BIT(5)
++#define NVQUIRK_SHADOW_XFER_MODE_REG	BIT(6)
+ 
+ struct sdhci_tegra_soc_data {
+ 	const struct sdhci_pltfm_data *pdata;
+@@ -67,6 +68,32 @@ static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
+ 	return readw(host->ioaddr + reg);
+ }
+ 
++static void tegra_sdhci_writew(struct sdhci_host *host, u16 val, int reg)
++{
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_tegra *tegra_host = pltfm_host->priv;
++	const struct sdhci_tegra_soc_data *soc_data = tegra_host->soc_data;
++
++	if (soc_data->nvquirks * NVQUIRK_SHADOW_XFER_MODE_REG) {
++		switch (reg) {
++		case SDHCI_TRANSFER_MODE:
++			/*
++			 * Postpone this write, we must do it together with a
++			 * command write that is down below.
++			 */
++			pltfm_host->xfer_mode_shadow = val;
++			return;
++		case SDHCI_COMMAND:
++			writel((val << 16) | pltfm_host->xfer_mode_shadow,
++				host->ioaddr + SDHCI_TRANSFER_MODE);
++			pltfm_host->xfer_mode_shadow = 0;
++			return;
++		}
++	}
++
++	writew(val, host->ioaddr + reg);
++}
++
+ static void tegra_sdhci_writel(struct sdhci_host *host, u32 val, int reg)
+ {
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+@@ -147,6 +174,7 @@ static void tegra_sdhci_set_bus_width(struct sdhci_host *host, int bus_width)
+ static const struct sdhci_ops tegra_sdhci_ops = {
+ 	.get_ro     = tegra_sdhci_get_ro,
+ 	.read_w     = tegra_sdhci_readw,
++	.write_w    = tegra_sdhci_writew,
+ 	.write_l    = tegra_sdhci_writel,
+ 	.set_clock  = sdhci_set_clock,
+ 	.set_bus_width = tegra_sdhci_set_bus_width,
+@@ -201,7 +229,8 @@ static struct sdhci_tegra_soc_data soc_data_tegra114 = {
+ 	.pdata = &sdhci_tegra114_pdata,
+ 	.nvquirks = NVQUIRK_DISABLE_SDR50 |
+ 		    NVQUIRK_DISABLE_DDR50 |
+-		    NVQUIRK_DISABLE_SDR104,
++		    NVQUIRK_DISABLE_SDR104 |
++		    NVQUIRK_SHADOW_XFER_MODE_REG,
+ };
+ 
+ static const struct of_device_id sdhci_tegra_dt_match[] = {
+-- 
+1.7.9.5
