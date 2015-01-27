@@ -1,90 +1,55 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] mmc: tegra: Write xfer_mode, CMD regs in together
-Date: Tue, 27 Jan 2015 12:23:30 -0500
-Message-ID: <1422379410-7127-1-git-send-email-rklein@nvidia.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 2/4] ARM: gpio: tegra: Maintain endianness
+Date: Tue, 27 Jan 2015 21:41:14 +0300
+Message-ID: <54C7DBCA.9000200@gmail.com>
+References: <1420817231-8346-1-git-send-email-bob.mottram@codethink.co.uk> <1420817231-8346-3-git-send-email-bob.mottram@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1420817231-8346-3-git-send-email-bob.mottram-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, pkunapuli-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Bob Mottram <bob.mottram-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, ct173-kernel-internal-81qHHgoATdFT9dQujB1mzip2UmYkHbXO@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Pavan Kunapuli <pkunapuli-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+09.01.2015 18:27, Bob Mottram =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> Replace the _raw-writel with writel_relaxed to fix issue with
+> running tegra in big-endian. Tested on Jetson TK1.
+>
+> Signed-off-by: Bob Mottram <bob.mottram-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
+> ---
+>   drivers/gpio/gpio-tegra.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+> index 1741981..a83e140 100644
+> --- a/drivers/gpio/gpio-tegra.c
+> +++ b/drivers/gpio/gpio-tegra.c
+> @@ -85,12 +85,12 @@ static struct tegra_gpio_bank *tegra_gpio_banks;
+>
+>   static inline void tegra_gpio_writel(u32 val, u32 reg)
+>   {
+> -	__raw_writel(val, regs + reg);
+> +	writel_relaxed(val, regs + reg);
+>   }
+>
+>   static inline u32 tegra_gpio_readl(u32 reg)
+>   {
+> -	return __raw_readl(regs + reg);
+> +	return readl_relaxed(regs + reg);
+>   }
+>
+>   static int tegra_gpio_compose(int bank, int port, int bit)
+> --
+> 2.1.0
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra=
+" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+Tested-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-If there is a gap between xfer mode and command register writes,
-tegra SDMMC controller can sometimes issue a spurious command before
-the CMD register is written. To avoid this, these two registers need
-to be written together in a single write operation.
-
-Signed-off-by: Pavan Kunapuli <pkunapuli-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/mmc/host/sdhci-tegra.c |   31 ++++++++++++++++++++++++++++++-
- 1 file changed, 30 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 59797106af93..3d34de47e57e 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -41,6 +41,7 @@
- #define NVQUIRK_DISABLE_SDR50		BIT(3)
- #define NVQUIRK_DISABLE_SDR104		BIT(4)
- #define NVQUIRK_DISABLE_DDR50		BIT(5)
-+#define NVQUIRK_SHADOW_XFER_MODE_REG	BIT(6)
- 
- struct sdhci_tegra_soc_data {
- 	const struct sdhci_pltfm_data *pdata;
-@@ -67,6 +68,32 @@ static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
- 	return readw(host->ioaddr + reg);
- }
- 
-+static void tegra_sdhci_writew(struct sdhci_host *host, u16 val, int reg)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_tegra *tegra_host = pltfm_host->priv;
-+	const struct sdhci_tegra_soc_data *soc_data = tegra_host->soc_data;
-+
-+	if (soc_data->nvquirks * NVQUIRK_SHADOW_XFER_MODE_REG) {
-+		switch (reg) {
-+		case SDHCI_TRANSFER_MODE:
-+			/*
-+			 * Postpone this write, we must do it together with a
-+			 * command write that is down below.
-+			 */
-+			pltfm_host->xfer_mode_shadow = val;
-+			return;
-+		case SDHCI_COMMAND:
-+			writel((val << 16) | pltfm_host->xfer_mode_shadow,
-+				host->ioaddr + SDHCI_TRANSFER_MODE);
-+			pltfm_host->xfer_mode_shadow = 0;
-+			return;
-+		}
-+	}
-+
-+	writew(val, host->ioaddr + reg);
-+}
-+
- static void tegra_sdhci_writel(struct sdhci_host *host, u32 val, int reg)
- {
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-@@ -147,6 +174,7 @@ static void tegra_sdhci_set_bus_width(struct sdhci_host *host, int bus_width)
- static const struct sdhci_ops tegra_sdhci_ops = {
- 	.get_ro     = tegra_sdhci_get_ro,
- 	.read_w     = tegra_sdhci_readw,
-+	.write_w    = tegra_sdhci_writew,
- 	.write_l    = tegra_sdhci_writel,
- 	.set_clock  = sdhci_set_clock,
- 	.set_bus_width = tegra_sdhci_set_bus_width,
-@@ -201,7 +229,8 @@ static struct sdhci_tegra_soc_data soc_data_tegra114 = {
- 	.pdata = &sdhci_tegra114_pdata,
- 	.nvquirks = NVQUIRK_DISABLE_SDR50 |
- 		    NVQUIRK_DISABLE_DDR50 |
--		    NVQUIRK_DISABLE_SDR104,
-+		    NVQUIRK_DISABLE_SDR104 |
-+		    NVQUIRK_SHADOW_XFER_MODE_REG,
- };
- 
- static const struct of_device_id sdhci_tegra_dt_match[] = {
--- 
-1.7.9.5
+--=20
+Dmitry
