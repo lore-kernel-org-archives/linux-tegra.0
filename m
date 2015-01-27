@@ -1,114 +1,49 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL] drm/tegra: Changes for v3.20-rc1
-Date: Tue, 27 Jan 2015 10:24:12 +0100
-Message-ID: <1422350652-5699-1-git-send-email-thierry.reding@gmail.com>
+From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Subject: Re: [PATCH v2 04/11] ARM: tegra: Set spi-max-frequency property to
+ flash node
+Date: Tue, 27 Jan 2015 12:13:18 +0100
+Message-ID: <CAAObsKDx_W23OTL2RE4xxgXL-rtp3npkBtx6qMHV1j8ZXmo1rw@mail.gmail.com>
+References: <1421338359-27467-1-git-send-email-tomeu.vizoso@collabora.com>
+ <1421338359-27467-5-git-send-email-tomeu.vizoso@collabora.com> <54B7F84A.6020906@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dave Airlie <airlied@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <54B7F84A.6020906-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgRGF2ZSwKClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgMjgxZDFiYmQzNGI3
-MzRlNGYyMmIzMGI2ZjNiNjczZGRhNDZhNzQ3MDoKCiAgTWVyZ2UgcmVtb3RlLXRyYWNraW5nIGJy
-YW5jaCAnb3JpZ2luL21hc3RlcicgaW50byBkcm0tbmV4dCAoMjAxNS0wMS0yMiAxMDo0NDo0MSAr
-MTAwMCkKCmFyZSBhdmFpbGFibGUgaW4gdGhlIGdpdCByZXBvc2l0b3J5IGF0OgoKICBnaXQ6Ly9h
-bm9uZ2l0LmZyZWVkZXNrdG9wLm9yZy90ZWdyYS9saW51eCB0YWdzL2RybS90ZWdyYS9mb3ItMy4y
-MC1yYzEKCmZvciB5b3UgdG8gZmV0Y2ggY2hhbmdlcyB1cCB0byAzMWY0MGY4NjUyNmI3MTAwOTk3
-Mzg1NGMxZGZlNzk5ZWU3MGY3NTg4OgoKICBkcm0vdGVncmE6IFVzZSBjb3JyZWN0IHJlbG9jYXRp
-b24gdGFyZ2V0IG9mZnNldHMgKDIwMTUtMDEtMjcgMTA6MTQ6NTkgKzAxMDApCgpUaGlzIGlzIGVz
-c2VudGlhbGx5IHRoZSBzYW1lIGFzIHRoZSBwdWxsIHJlcXVlc3QgdGhhdCBJIHNlbnQgb3V0IGVh
-cmxpZXIKYnV0IHdpdGggYSBmaXggZm9yIGJ1aWxkaW5nIHRoZSBob3N0MXggYW5kIHRlZ3JhLWRy
-bSBkcml2ZXJzIGFzIG1vZHVsZXMKc3F1YXNoZWQgaW4uCgpUaGFua3MsClRoaWVycnkKCi0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0KZHJtL3RlZ3JhOiBDaGFuZ2VzIGZvciB2My4yMC1yYzEKClRoZSBiaWdnZXN0IHBhcnQgb2Yg
-dGhlc2UgY2hhbmdlcyBpcyB0aGUgY29udmVyc2lvbiB0byBhdG9taWMgbW9kZS0Kc2V0dGluZy4g
-QSBsb3Qgb2YgY2xlYW51cCBhbmQgZGVtaWRsYXllcmluZyB3YXMgcmVxdWlyZWQgYmVmb3JlIHRo
-ZQpjb252ZXJzaW9uLCB3aXRoIHRoZSByZXN1bHQgYmVpbmcgYSB3aG9sZSBsb3Qgb2YgY2hhbmdl
-cy4KCkJlc2lkZXMgdGhlIGF0b21pYyBtb2RlLXNldHRpbmcgc3VwcG9ydCwgdGhlIGhvc3QxeCBi
-dXMgbm93IGhhcyB0aGUKcHJvcGVyIGluZnJhc3RydWN0dXJlIHRvIHN1cHBvcnQgc3VzcGVuZC9y
-ZXN1bWUgZm9yIGNoaWxkIGRldmljZXMuCgpGaW5hbGx5LCBhIGNvdXBsZSBvZiBzbWFsbGVyIGNs
-ZWFudXAgcGF0Y2hlcyByb3VuZCB0aGluZ3Mgb2ZmLgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpEYW4gQ2FycGVudGVyICgz
-KToKICAgICAgZHJtL3RlZ3JhOiBDaGVjayBmb3IgTlVMTCBwb2ludGVyIGluc3RlYWQgb2YgSVNf
-RVJSKCkKICAgICAgZHJtL3RlZ3JhOiBkYzogRml4IGJhZCBpcnFzYXZlL3Jlc3RvcmUgaW4gdGVn
-cmFfZGNfZmluaXNoX3BhZ2VfZmxpcCgpCiAgICAgIGRybS90ZWdyYTogZ2VtOiBvb3BzIGluIGVy
-cm9yIGhhbmRsaW5nCgpEYXZpZCBVbmcgKDIpOgogICAgICBkcm0vdGVncmE6IGRzaTogQWRqdXN0
-IEQtUEhZIHRpbWluZwogICAgICBkcm0vdGVncmE6IFVzZSBjb3JyZWN0IHJlbG9jYXRpb24gdGFy
-Z2V0IG9mZnNldHMKClRoaWVycnkgUmVkaW5nICg0OSk6CiAgICAgIGdwdTogaG9zdDF4OiBDYWxs
-IC0+cmVtb3ZlKCkgb25seSB3aGVuIGEgZGV2aWNlIGlzIGJvdW5kCiAgICAgIGdwdTogaG9zdDF4
-OiBDYWxsIGhvc3QxeF9kZXZpY2VfYWRkKCkgdW5kZXIgbG9jawogICAgICBncHU6IGhvc3QxeDog
-RmFjdG9yIG91dCBfX2hvc3QxeF9kZXZpY2VfZGVsKCkKICAgICAgZ3B1OiBob3N0MXg6IFByb3Zp
-ZGUgYSBwcm9wZXIgc3RydWN0IGJ1c190eXBlCiAgICAgIGRybS90ZWdyYTogZ2VtOiBVc2UgaW9t
-bXVfbWFwX3NnKCkKICAgICAgZHJtL3RlZ3JhOiBSZW1vdmUgcmVkdW5kYW50IHplcm9pbmcgb3V0
-IG9mIG1lbW9yeQogICAgICBkcm0vdGVncmE6IHBsYW5lOiBVc2UgcHJvcGVyIHBvc3NpYmxlX2Ny
-dGNzIG1hc2sKICAgICAgZHJtL3RlZ3JhOiBkYzogSW5pdGlhbGl6ZSBib3JkZXIgY29sb3IKICAg
-ICAgZHJtL3RlZ3JhOiBkYzogRGVzY3JpYmUgcmVnaXN0ZXIgY29waWVzCiAgICAgIGRybS90ZWdy
-YTogZGM6IFJldHVybiBwbGFuYXIgZmxhZyBmb3Igbm9uLVlVViBtb2RlcwogICAgICBkcm0vdGVn
-cmE6IGhkbWk6IFJlZ2lzdGVycyBhcmUgMzItYml0CiAgICAgIGRybS90ZWdyYTogZHNpOiBSZWdp
-c3RlcnMgYXJlIDMyLWJpdAogICAgICBkcm0vdGVncmE6IGRzaTogU29mdC1yZXNldCBjb250cm9s
-bGVyIG9uIC0+ZGlzYWJsZQogICAgICBkcm0vdGVncmE6IGRzaTogUmVzZXQgYWNyb3NzIC0+ZXhp
-dCgpLy0+aW5pdCgpCiAgICAgIGRybS9wbGFuZTogTWFrZSAtPmF0b21pY191cGRhdGUoKSBtYW5k
-YXRvcnkKICAgICAgZHJtL3BsYW5lOiBBZGQgb3B0aW9uYWwgLT5hdG9taWNfZGlzYWJsZSgpIGNh
-bGxiYWNrCiAgICAgIGRybS9hdG9taWM6IEFkZCAtPmF0b21pY19jaGVjaygpIHRvIGVuY29kZXIg
-aGVscGVycwogICAgICBkcm0vdGVncmE6IFVzZSB0ZWdyYV9jb21taXRfZGMoKSBpbiBvdXRwdXQg
-ZHJpdmVycwogICAgICBkcm0vdGVncmE6IFN0b3AgQ1JUQyBhdCBDUlRDIGRpc2FibGUgdGltZQog
-ICAgICBkcm0vdGVncmE6IGRjOiBXYWl0IGZvciBpZGxlIHdoZW4gZGlzYWJsZWQKICAgICAgZHJt
-L3RlZ3JhOiBNb3ZlIHRlZ3JhX2RybV9tb2RlX2Z1bmNzIHRvIHRoZSBjb3JlCiAgICAgIGRybS90
-ZWdyYTogZGM6IE5vIGxvbmdlciBkaXNhYmxlIHBsYW5lcyBhdCBDUlRDIGRpc2FibGUKICAgICAg
-ZHJtL3RlZ3JhOiBDb252ZXJ0IG91dHB1dCBtaWRsYXllciB0byBoZWxwZXJzCiAgICAgIGRybS90
-ZWdyYTogb3V0cHV0OiBNYWtlIC0+c2V0dXBfY2xvY2soKSBvcHRpb25hbAogICAgICBkcm0vdGVn
-cmE6IEFkZCB0ZWdyYV9kY19zZXR1cF9jbG9jaygpIGhlbHBlcgogICAgICBkcm0vdGVncmE6IHJn
-YjogRGVtaWRsYXllcgogICAgICBkcm0vdGVncmE6IGhkbWk6IERlbWlkbGF5ZXIKICAgICAgZHJt
-L3RlZ3JhOiBkc2k6IERlbWlkbGF5ZXIKICAgICAgZHJtL3RlZ3JhOiBzb3I6IERlbWlkbGF5ZXIK
-ICAgICAgZHJtL3RlZ3JhOiBkZWJ1Z2ZzIGNsZWFudXAgY2Fubm90IGZhaWwKICAgICAgZHJtL3Rl
-Z3JhOiBSZW1vdmUgcmVtbmFudHMgb2YgdGhlIG91dHB1dCBtaWRsYXllcgogICAgICBkcm0vdGVn
-cmE6IE91dHB1dCBjbGVhbnVwIGZ1bmN0aW9ucyBjYW5ub3QgZmFpbAogICAgICBkcm0vdGVncmE6
-IGRjOiBEbyBub3QgbmVlZGxlc3NseSBkZWFzc2VydCByZXNldAogICAgICBkcm0vdGVncmE6IEF0
-b21pYyBjb252ZXJzaW9uLCBwaGFzZSAxCiAgICAgIGRybS90ZWdyYTogQXRvbWljIGNvbnZlcnNp
-b24sIHBoYXNlIDIKICAgICAgZHJtL3RlZ3JhOiBBdG9taWMgY29udmVyc2lvbiwgcGhhc2UgMywg
-c3RlcCAxCiAgICAgIGRybS90ZWdyYTogZGM6IFN0b3JlIGNsb2NrIHNldHVwIGluIGF0b21pYyBz
-dGF0ZQogICAgICBkcm0vdGVncmE6IHJnYjogSW1wbGVtZW50IC0+YXRvbWljX2NoZWNrKCkKICAg
-ICAgZHJtL3RlZ3JhOiBkc2k6IEltcGxlbWVudCAtPmF0b21pY19jaGVjaygpCiAgICAgIGRybS90
-ZWdyYTogaGRtaTogSW1wbGVtZW50IC0+YXRvbWljX2NoZWNrKCkKICAgICAgZHJtL3RlZ3JhOiBz
-b3I6IEltcGxlbWVudCAtPmF0b21pY19jaGVjaygpCiAgICAgIGRybS90ZWdyYTogZGM6IFVzZSBh
-dG9taWMgY2xvY2sgc3RhdGUgaW4gbW9kZXNldAogICAgICBkcm0vdGVncmE6IEF0b21pYyBjb252
-ZXJzaW9uLCBwaGFzZSAzLCBzdGVwIDIKICAgICAgZHJtL3RlZ3JhOiBBdG9taWMgY29udmVyc2lv
-biwgcGhhc2UgMywgc3RlcCAzCiAgICAgIGRybS90ZWdyYTogUmVtb3ZlIHVudXNlZCAtPm1vZGVf
-Zml4dXAoKSBjYWxsYmFja3MKICAgICAgZHJtL3RlZ3JhOiBUcmFjayBhY3RpdmUgcGxhbmVzIGlu
-IENSVEMgc3RhdGUKICAgICAgZHJtL3RlZ3JhOiBUcmFjayB0aWxpbmcgYW5kIGZvcm1hdCBpbiBw
-bGFuZSBzdGF0ZQogICAgICBkcm0vdGVncmE6IGRjOiBVbmlmeSBlbmFibGluZyB0aGUgZGlzcGxh
-eSBjb250cm9sbGVyCiAgICAgIGRybS90ZWdyYTogQWRkIG1pbmltYWwgcG93ZXIgbWFuYWdlbWVu
-dAoKIGRyaXZlcnMvZ3B1L01ha2VmaWxlICAgICAgICAgICAgICAgIHwgICAgNSArLQogZHJpdmVy
-cy9ncHUvZHJtL2RybV9hdG9taWNfaGVscGVyLmMgfCAgIDM0ICstCiBkcml2ZXJzL2dwdS9kcm0v
-ZHJtX3BsYW5lX2hlbHBlci5jICB8ICAgMTAgKy0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kYy5j
-ICAgICAgICAgIHwgIDk1NSArKysrKysrKysrKysrKysrKystLS0tLS0tLS0tLS0KIGRyaXZlcnMv
-Z3B1L2RybS90ZWdyYS9kcm0uYyAgICAgICAgIHwgIDE0MCArKysrLQogZHJpdmVycy9ncHUvZHJt
-L3RlZ3JhL2RybS5oICAgICAgICAgfCAgIDkxICstLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2Rz
-aS5jICAgICAgICAgfCAgNTc4ICsrKysrKysrKystLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL3Rl
-Z3JhL2ZiLmMgICAgICAgICAgfCAgIDI1ICstCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZ2VtLmMg
-ICAgICAgICB8ICAgMzkgKy0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9oZG1pLmMgICAgICAgIHwg
-IDMyNyArKysrKy0tLS0tLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL21pcGktcGh5LmMgICAgfCAg
-IDI1ICstCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvb3V0cHV0LmMgICAgICB8ICAxNjggKy0tLS0t
-CiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvcmdiLmMgICAgICAgICB8ICAyMTggKysrLS0tLQogZHJp
-dmVycy9ncHUvZHJtL3RlZ3JhL3Nvci5jICAgICAgICAgfCAxMTA1ICsrKysrKysrKysrKysrKysr
-Ky0tLS0tLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9ob3N0MXgvYnVzLmMgICAgICAgICAgICB8
-ICAyMDEgKysrKy0tLQogZHJpdmVycy9ncHUvaG9zdDF4L2J1cy5oICAgICAgICAgICAgfCAgICA0
-ICstCiBkcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmMgICAgICAgICAgICB8ICAgIDYgKy0KIGluY2x1
-ZGUvZHJtL2RybV9hdG9taWNfaGVscGVyLmggICAgIHwgICAzNyArKwogaW5jbHVkZS9kcm0vZHJt
-X2NydGNfaGVscGVyLmggICAgICAgfCAgICA2ICsKIGluY2x1ZGUvZHJtL2RybV9wbGFuZV9oZWxw
-ZXIuaCAgICAgIHwgICAgNSArLQogaW5jbHVkZS9saW51eC9ob3N0MXguaCAgICAgICAgICAgICAg
-fCAgIDE4ICstCiAyMSBmaWxlcyBjaGFuZ2VkLCAyMTkxIGluc2VydGlvbnMoKyksIDE4MDYgZGVs
-ZXRpb25zKC0pCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-CmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
-dHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On 15 January 2015 at 18:26, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> On 01/15/2015 09:12 AM, Tomeu Vizoso wrote:
+>>
+>> To silence a warning on Nyan boards.
+>>
+>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+>> ---
+>>   arch/arm/boot/dts/tegra124-nyan-big.dts | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts
+>> b/arch/arm/boot/dts/tegra124-nyan-big.dts
+>> index 9a9cffe..94c7ba9 100644
+>> --- a/arch/arm/boot/dts/tegra124-nyan-big.dts
+>> +++ b/arch/arm/boot/dts/tegra124-nyan-big.dts
+>> @@ -1660,6 +1660,7 @@
+>>
+>>                 flash@0 {
+>>                         compatible = "winbond,w25q32dw";
+>> +                       spi-max-frequency = <25000000>;
+>
+>
+> This property already exists in the SPI controller. Isn't the max frequency
+> supposed to inherit from there? If so, shouldn't the code not warn when such
+> inheritance happens, i.e. it'd be better to fix the code?
+
+I don't think it's supposed to fall back to the controller's max freq,
+as each device has its own maximum frequency that it can support and
+it's not related to what the master supports.
+
+Regards,
+
+Tomeu
