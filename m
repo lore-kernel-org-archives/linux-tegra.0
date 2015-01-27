@@ -1,118 +1,114 @@
-From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH 15/15] iommu: Remove domain_init and domain_free iommu_ops
-Date: Tue, 27 Jan 2015 00:51:45 +0100
-Message-ID: <1422316305-19216-16-git-send-email-joro@8bytes.org>
-References: <1422316305-19216-1-git-send-email-joro@8bytes.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [GIT PULL] drm/tegra: Changes for v3.20-rc1
+Date: Tue, 27 Jan 2015 10:24:12 +0100
+Message-ID: <1422350652-5699-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1422316305-19216-1-git-send-email-joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, jroedel-l3A5Bk7waGM@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dave Airlie <airlied@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>
-
-All drivers have been converted to the new domain_alloc and
-domain_free iommu-ops. So remove the old ones and get rid of
-iommu_domain->priv too, as this is no longer needed when the
-struct iommu_domain is embedded in the private structures of
-the iommu drivers.
-
-Signed-off-by: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>
----
- drivers/iommu/iommu.c | 30 ++----------------------------
- include/linux/iommu.h |  3 ---
- 2 files changed, 2 insertions(+), 31 deletions(-)
-
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index ab24d77..e66cc08 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -900,51 +900,25 @@ EXPORT_SYMBOL_GPL(iommu_set_fault_handler);
- 
- struct iommu_domain *iommu_domain_alloc(struct bus_type *bus)
- {
--	const struct iommu_ops *ops;
- 	struct iommu_domain *domain;
- 
- 	if (bus == NULL || bus->iommu_ops == NULL)
- 		return NULL;
- 
--	ops = bus->iommu_ops;
--
--	if (ops->domain_alloc)
--		domain = ops->domain_alloc(IOMMU_DOMAIN_UNMANAGED);
--	else
--		domain = kzalloc(sizeof(*domain), GFP_KERNEL);
--
-+	domain = bus->iommu_ops->domain_alloc(IOMMU_DOMAIN_UNMANAGED);
- 	if (!domain)
- 		return NULL;
- 
- 	domain->ops  = bus->iommu_ops;
- 	domain->type = IOMMU_DOMAIN_UNMANAGED;
- 
--	if (ops->domain_init && domain->ops->domain_init(domain))
--		goto out_free;
--
- 	return domain;
--
--out_free:
--	if (ops->domain_free)
--		ops->domain_free(domain);
--	else
--		kfree(domain);
--
--	return NULL;
- }
- EXPORT_SYMBOL_GPL(iommu_domain_alloc);
- 
- void iommu_domain_free(struct iommu_domain *domain)
- {
--	const struct iommu_ops *ops = domain->ops;
--
--	if (likely(ops->domain_destroy != NULL))
--		ops->domain_destroy(domain);
--
--	if (ops->domain_free)
--		ops->domain_free(domain);
--	else
--		kfree(domain);
-+	domain->ops->domain_free(domain);
- }
- EXPORT_SYMBOL_GPL(iommu_domain_free);
- 
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index 0b67f65..2951dca 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -62,7 +62,6 @@ enum iommu_domain_type {
- struct iommu_domain {
- 	enum iommu_domain_type type;
- 	const struct iommu_ops *ops;
--	void *priv;
- 	iommu_fault_handler_t handler;
- 	void *handler_token;
- 	struct iommu_domain_geometry geometry;
-@@ -122,8 +121,6 @@ enum iommu_attr {
-  */
- struct iommu_ops {
- 	bool (*capable)(enum iommu_cap);
--	int (*domain_init)(struct iommu_domain *domain);
--	void (*domain_destroy)(struct iommu_domain *domain);
- 
- 	/* Domain allocation and freeing by the iommu driver */
- 	struct iommu_domain *(*domain_alloc)(enum iommu_domain_type);
--- 
-1.8.4.5
+SGkgRGF2ZSwKClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgMjgxZDFiYmQzNGI3
+MzRlNGYyMmIzMGI2ZjNiNjczZGRhNDZhNzQ3MDoKCiAgTWVyZ2UgcmVtb3RlLXRyYWNraW5nIGJy
+YW5jaCAnb3JpZ2luL21hc3RlcicgaW50byBkcm0tbmV4dCAoMjAxNS0wMS0yMiAxMDo0NDo0MSAr
+MTAwMCkKCmFyZSBhdmFpbGFibGUgaW4gdGhlIGdpdCByZXBvc2l0b3J5IGF0OgoKICBnaXQ6Ly9h
+bm9uZ2l0LmZyZWVkZXNrdG9wLm9yZy90ZWdyYS9saW51eCB0YWdzL2RybS90ZWdyYS9mb3ItMy4y
+MC1yYzEKCmZvciB5b3UgdG8gZmV0Y2ggY2hhbmdlcyB1cCB0byAzMWY0MGY4NjUyNmI3MTAwOTk3
+Mzg1NGMxZGZlNzk5ZWU3MGY3NTg4OgoKICBkcm0vdGVncmE6IFVzZSBjb3JyZWN0IHJlbG9jYXRp
+b24gdGFyZ2V0IG9mZnNldHMgKDIwMTUtMDEtMjcgMTA6MTQ6NTkgKzAxMDApCgpUaGlzIGlzIGVz
+c2VudGlhbGx5IHRoZSBzYW1lIGFzIHRoZSBwdWxsIHJlcXVlc3QgdGhhdCBJIHNlbnQgb3V0IGVh
+cmxpZXIKYnV0IHdpdGggYSBmaXggZm9yIGJ1aWxkaW5nIHRoZSBob3N0MXggYW5kIHRlZ3JhLWRy
+bSBkcml2ZXJzIGFzIG1vZHVsZXMKc3F1YXNoZWQgaW4uCgpUaGFua3MsClRoaWVycnkKCi0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0KZHJtL3RlZ3JhOiBDaGFuZ2VzIGZvciB2My4yMC1yYzEKClRoZSBiaWdnZXN0IHBhcnQgb2Yg
+dGhlc2UgY2hhbmdlcyBpcyB0aGUgY29udmVyc2lvbiB0byBhdG9taWMgbW9kZS0Kc2V0dGluZy4g
+QSBsb3Qgb2YgY2xlYW51cCBhbmQgZGVtaWRsYXllcmluZyB3YXMgcmVxdWlyZWQgYmVmb3JlIHRo
+ZQpjb252ZXJzaW9uLCB3aXRoIHRoZSByZXN1bHQgYmVpbmcgYSB3aG9sZSBsb3Qgb2YgY2hhbmdl
+cy4KCkJlc2lkZXMgdGhlIGF0b21pYyBtb2RlLXNldHRpbmcgc3VwcG9ydCwgdGhlIGhvc3QxeCBi
+dXMgbm93IGhhcyB0aGUKcHJvcGVyIGluZnJhc3RydWN0dXJlIHRvIHN1cHBvcnQgc3VzcGVuZC9y
+ZXN1bWUgZm9yIGNoaWxkIGRldmljZXMuCgpGaW5hbGx5LCBhIGNvdXBsZSBvZiBzbWFsbGVyIGNs
+ZWFudXAgcGF0Y2hlcyByb3VuZCB0aGluZ3Mgb2ZmLgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpEYW4gQ2FycGVudGVyICgz
+KToKICAgICAgZHJtL3RlZ3JhOiBDaGVjayBmb3IgTlVMTCBwb2ludGVyIGluc3RlYWQgb2YgSVNf
+RVJSKCkKICAgICAgZHJtL3RlZ3JhOiBkYzogRml4IGJhZCBpcnFzYXZlL3Jlc3RvcmUgaW4gdGVn
+cmFfZGNfZmluaXNoX3BhZ2VfZmxpcCgpCiAgICAgIGRybS90ZWdyYTogZ2VtOiBvb3BzIGluIGVy
+cm9yIGhhbmRsaW5nCgpEYXZpZCBVbmcgKDIpOgogICAgICBkcm0vdGVncmE6IGRzaTogQWRqdXN0
+IEQtUEhZIHRpbWluZwogICAgICBkcm0vdGVncmE6IFVzZSBjb3JyZWN0IHJlbG9jYXRpb24gdGFy
+Z2V0IG9mZnNldHMKClRoaWVycnkgUmVkaW5nICg0OSk6CiAgICAgIGdwdTogaG9zdDF4OiBDYWxs
+IC0+cmVtb3ZlKCkgb25seSB3aGVuIGEgZGV2aWNlIGlzIGJvdW5kCiAgICAgIGdwdTogaG9zdDF4
+OiBDYWxsIGhvc3QxeF9kZXZpY2VfYWRkKCkgdW5kZXIgbG9jawogICAgICBncHU6IGhvc3QxeDog
+RmFjdG9yIG91dCBfX2hvc3QxeF9kZXZpY2VfZGVsKCkKICAgICAgZ3B1OiBob3N0MXg6IFByb3Zp
+ZGUgYSBwcm9wZXIgc3RydWN0IGJ1c190eXBlCiAgICAgIGRybS90ZWdyYTogZ2VtOiBVc2UgaW9t
+bXVfbWFwX3NnKCkKICAgICAgZHJtL3RlZ3JhOiBSZW1vdmUgcmVkdW5kYW50IHplcm9pbmcgb3V0
+IG9mIG1lbW9yeQogICAgICBkcm0vdGVncmE6IHBsYW5lOiBVc2UgcHJvcGVyIHBvc3NpYmxlX2Ny
+dGNzIG1hc2sKICAgICAgZHJtL3RlZ3JhOiBkYzogSW5pdGlhbGl6ZSBib3JkZXIgY29sb3IKICAg
+ICAgZHJtL3RlZ3JhOiBkYzogRGVzY3JpYmUgcmVnaXN0ZXIgY29waWVzCiAgICAgIGRybS90ZWdy
+YTogZGM6IFJldHVybiBwbGFuYXIgZmxhZyBmb3Igbm9uLVlVViBtb2RlcwogICAgICBkcm0vdGVn
+cmE6IGhkbWk6IFJlZ2lzdGVycyBhcmUgMzItYml0CiAgICAgIGRybS90ZWdyYTogZHNpOiBSZWdp
+c3RlcnMgYXJlIDMyLWJpdAogICAgICBkcm0vdGVncmE6IGRzaTogU29mdC1yZXNldCBjb250cm9s
+bGVyIG9uIC0+ZGlzYWJsZQogICAgICBkcm0vdGVncmE6IGRzaTogUmVzZXQgYWNyb3NzIC0+ZXhp
+dCgpLy0+aW5pdCgpCiAgICAgIGRybS9wbGFuZTogTWFrZSAtPmF0b21pY191cGRhdGUoKSBtYW5k
+YXRvcnkKICAgICAgZHJtL3BsYW5lOiBBZGQgb3B0aW9uYWwgLT5hdG9taWNfZGlzYWJsZSgpIGNh
+bGxiYWNrCiAgICAgIGRybS9hdG9taWM6IEFkZCAtPmF0b21pY19jaGVjaygpIHRvIGVuY29kZXIg
+aGVscGVycwogICAgICBkcm0vdGVncmE6IFVzZSB0ZWdyYV9jb21taXRfZGMoKSBpbiBvdXRwdXQg
+ZHJpdmVycwogICAgICBkcm0vdGVncmE6IFN0b3AgQ1JUQyBhdCBDUlRDIGRpc2FibGUgdGltZQog
+ICAgICBkcm0vdGVncmE6IGRjOiBXYWl0IGZvciBpZGxlIHdoZW4gZGlzYWJsZWQKICAgICAgZHJt
+L3RlZ3JhOiBNb3ZlIHRlZ3JhX2RybV9tb2RlX2Z1bmNzIHRvIHRoZSBjb3JlCiAgICAgIGRybS90
+ZWdyYTogZGM6IE5vIGxvbmdlciBkaXNhYmxlIHBsYW5lcyBhdCBDUlRDIGRpc2FibGUKICAgICAg
+ZHJtL3RlZ3JhOiBDb252ZXJ0IG91dHB1dCBtaWRsYXllciB0byBoZWxwZXJzCiAgICAgIGRybS90
+ZWdyYTogb3V0cHV0OiBNYWtlIC0+c2V0dXBfY2xvY2soKSBvcHRpb25hbAogICAgICBkcm0vdGVn
+cmE6IEFkZCB0ZWdyYV9kY19zZXR1cF9jbG9jaygpIGhlbHBlcgogICAgICBkcm0vdGVncmE6IHJn
+YjogRGVtaWRsYXllcgogICAgICBkcm0vdGVncmE6IGhkbWk6IERlbWlkbGF5ZXIKICAgICAgZHJt
+L3RlZ3JhOiBkc2k6IERlbWlkbGF5ZXIKICAgICAgZHJtL3RlZ3JhOiBzb3I6IERlbWlkbGF5ZXIK
+ICAgICAgZHJtL3RlZ3JhOiBkZWJ1Z2ZzIGNsZWFudXAgY2Fubm90IGZhaWwKICAgICAgZHJtL3Rl
+Z3JhOiBSZW1vdmUgcmVtbmFudHMgb2YgdGhlIG91dHB1dCBtaWRsYXllcgogICAgICBkcm0vdGVn
+cmE6IE91dHB1dCBjbGVhbnVwIGZ1bmN0aW9ucyBjYW5ub3QgZmFpbAogICAgICBkcm0vdGVncmE6
+IGRjOiBEbyBub3QgbmVlZGxlc3NseSBkZWFzc2VydCByZXNldAogICAgICBkcm0vdGVncmE6IEF0
+b21pYyBjb252ZXJzaW9uLCBwaGFzZSAxCiAgICAgIGRybS90ZWdyYTogQXRvbWljIGNvbnZlcnNp
+b24sIHBoYXNlIDIKICAgICAgZHJtL3RlZ3JhOiBBdG9taWMgY29udmVyc2lvbiwgcGhhc2UgMywg
+c3RlcCAxCiAgICAgIGRybS90ZWdyYTogZGM6IFN0b3JlIGNsb2NrIHNldHVwIGluIGF0b21pYyBz
+dGF0ZQogICAgICBkcm0vdGVncmE6IHJnYjogSW1wbGVtZW50IC0+YXRvbWljX2NoZWNrKCkKICAg
+ICAgZHJtL3RlZ3JhOiBkc2k6IEltcGxlbWVudCAtPmF0b21pY19jaGVjaygpCiAgICAgIGRybS90
+ZWdyYTogaGRtaTogSW1wbGVtZW50IC0+YXRvbWljX2NoZWNrKCkKICAgICAgZHJtL3RlZ3JhOiBz
+b3I6IEltcGxlbWVudCAtPmF0b21pY19jaGVjaygpCiAgICAgIGRybS90ZWdyYTogZGM6IFVzZSBh
+dG9taWMgY2xvY2sgc3RhdGUgaW4gbW9kZXNldAogICAgICBkcm0vdGVncmE6IEF0b21pYyBjb252
+ZXJzaW9uLCBwaGFzZSAzLCBzdGVwIDIKICAgICAgZHJtL3RlZ3JhOiBBdG9taWMgY29udmVyc2lv
+biwgcGhhc2UgMywgc3RlcCAzCiAgICAgIGRybS90ZWdyYTogUmVtb3ZlIHVudXNlZCAtPm1vZGVf
+Zml4dXAoKSBjYWxsYmFja3MKICAgICAgZHJtL3RlZ3JhOiBUcmFjayBhY3RpdmUgcGxhbmVzIGlu
+IENSVEMgc3RhdGUKICAgICAgZHJtL3RlZ3JhOiBUcmFjayB0aWxpbmcgYW5kIGZvcm1hdCBpbiBw
+bGFuZSBzdGF0ZQogICAgICBkcm0vdGVncmE6IGRjOiBVbmlmeSBlbmFibGluZyB0aGUgZGlzcGxh
+eSBjb250cm9sbGVyCiAgICAgIGRybS90ZWdyYTogQWRkIG1pbmltYWwgcG93ZXIgbWFuYWdlbWVu
+dAoKIGRyaXZlcnMvZ3B1L01ha2VmaWxlICAgICAgICAgICAgICAgIHwgICAgNSArLQogZHJpdmVy
+cy9ncHUvZHJtL2RybV9hdG9taWNfaGVscGVyLmMgfCAgIDM0ICstCiBkcml2ZXJzL2dwdS9kcm0v
+ZHJtX3BsYW5lX2hlbHBlci5jICB8ICAgMTAgKy0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kYy5j
+ICAgICAgICAgIHwgIDk1NSArKysrKysrKysrKysrKysrKystLS0tLS0tLS0tLS0KIGRyaXZlcnMv
+Z3B1L2RybS90ZWdyYS9kcm0uYyAgICAgICAgIHwgIDE0MCArKysrLQogZHJpdmVycy9ncHUvZHJt
+L3RlZ3JhL2RybS5oICAgICAgICAgfCAgIDkxICstLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2Rz
+aS5jICAgICAgICAgfCAgNTc4ICsrKysrKysrKystLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL3Rl
+Z3JhL2ZiLmMgICAgICAgICAgfCAgIDI1ICstCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZ2VtLmMg
+ICAgICAgICB8ICAgMzkgKy0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9oZG1pLmMgICAgICAgIHwg
+IDMyNyArKysrKy0tLS0tLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL21pcGktcGh5LmMgICAgfCAg
+IDI1ICstCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvb3V0cHV0LmMgICAgICB8ICAxNjggKy0tLS0t
+CiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvcmdiLmMgICAgICAgICB8ICAyMTggKysrLS0tLQogZHJp
+dmVycy9ncHUvZHJtL3RlZ3JhL3Nvci5jICAgICAgICAgfCAxMTA1ICsrKysrKysrKysrKysrKysr
+Ky0tLS0tLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9ob3N0MXgvYnVzLmMgICAgICAgICAgICB8
+ICAyMDEgKysrKy0tLQogZHJpdmVycy9ncHUvaG9zdDF4L2J1cy5oICAgICAgICAgICAgfCAgICA0
+ICstCiBkcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmMgICAgICAgICAgICB8ICAgIDYgKy0KIGluY2x1
+ZGUvZHJtL2RybV9hdG9taWNfaGVscGVyLmggICAgIHwgICAzNyArKwogaW5jbHVkZS9kcm0vZHJt
+X2NydGNfaGVscGVyLmggICAgICAgfCAgICA2ICsKIGluY2x1ZGUvZHJtL2RybV9wbGFuZV9oZWxw
+ZXIuaCAgICAgIHwgICAgNSArLQogaW5jbHVkZS9saW51eC9ob3N0MXguaCAgICAgICAgICAgICAg
+fCAgIDE4ICstCiAyMSBmaWxlcyBjaGFuZ2VkLCAyMTkxIGluc2VydGlvbnMoKyksIDE4MDYgZGVs
+ZXRpb25zKC0pCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+CmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
+dHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
