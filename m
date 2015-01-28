@@ -1,56 +1,64 @@
-From: Paul Walmsley <paul@pwsan.com>
-Subject: [PATCH 13/24] Documentation: DT bindings: add more chip compatible
- strings for Tegra PMC
-Date: Wed, 28 Jan 2015 16:49:38 -0700
-Message-ID: <20150128234938.20644.51314.stgit@dusk.lan>
+From: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 06/24] Documentation: DT bindings: add more chip compatible
+ strings for Tegra APB_MISC
+Date: Wed, 28 Jan 2015 16:49:37 -0700
+Message-ID: <20150128234937.20644.82091.stgit@dusk.lan>
 References: <20150128234935.20644.89300.stgit@dusk.lan>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150128234935.20644.89300.stgit@dusk.lan>
-Sender: linux-kernel-owner@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Paul Walmsley <pwalmsley@nvidia.com>, Kumar Gala <galak@codeaurora.org>, linux-tegra@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150128234935.20644.89300.stgit-orwA252wQtA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-Add compatible strings for the PMC IP block present on several Tegra
+Add compatible strings for the APB_MISC IP blocks present on several Tegra
 chips.  The primary objective here is to avoid checkpatch warnings,
 per:
 
 http://marc.info/?l=linux-tegra&m=142201349727836&w=2
 
-Signed-off-by: Paul Walmsley <paul@pwsan.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Pawel Moll <pawel.moll@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
-Cc: Kumar Gala <galak@codeaurora.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: Paul Walmsley <pwalmsley@nvidia.com>
-Cc: devicetree@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Cc: Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
+Cc: Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 ---
- .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ .../bindings/misc/nvidia,tegra20-apbmisc.txt       |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-index 68ac65f82a1c..84bb31e7b778 100644
---- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-@@ -6,7 +6,11 @@ modes. It provides power-gating controllers for SoC and CPU power-islands.
- 
+diff --git a/Documentation/devicetree/bindings/misc/nvidia,tegra20-apbmisc.txt b/Documentation/devicetree/bindings/misc/nvidia,tegra20-apbmisc.txt
+index b97b8bef1fe5..2723f3e4e52d 100644
+--- a/Documentation/devicetree/bindings/misc/nvidia,tegra20-apbmisc.txt
++++ b/Documentation/devicetree/bindings/misc/nvidia,tegra20-apbmisc.txt
+@@ -3,9 +3,10 @@ NVIDIA Tegra20/Tegra30/Tegr114/Tegra124 apbmisc block
  Required properties:
- - name : Should be pmc
--- compatible : Should contain "nvidia,tegra<chip>-pmc".
-+- compatible : "nvidia,tegra20-pmc"
-+  "nvidia,tegra30-pmc"
-+  "nvidia,tegra114-pmc"
-+  "nvidia,tegra124-pmc"
-+  "nvidia,tegra132-pmc" (not yet matched by the driver)
- - reg : Offset and length of the register set for the device
- - clocks : Must contain an entry for each entry in clock-names.
-   See ../clocks/clock-bindings.txt for details.
+ - compatible : should be:
+        "nvidia,tegra20-apbmisc"
+-       "nvidia,tegra30-apbmisc"
+-       "nvidia,tegra114-apbmisc"
+-       "nvidia,tegra124-apbmisc"
++       "nvidia,tegra30-apbmisc" (not yet matched in the driver)
++       "nvidia,tegra114-apbmisc" (not yet matched in the driver)
++       "nvidia,tegra124-apbmisc" (not yet matched in the driver)
++       "nvidia,tegra132-apbmisc" (not yet matched in the driver)
+ - reg: Should contain 2 entries: the first entry gives the physical address
+        and length of the registers which contain revision and debug features.
+        The second entry gives the physical address and length of the
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
