@@ -1,53 +1,26 @@
-From: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 07/24] Documentation: DT bindings: add more chip compatible
- strings for Tegra124 pinmux
-Date: Wed, 28 Jan 2015 16:49:37 -0700
-Message-ID: <20150128234937.20644.9760.stgit@dusk.lan>
-References: <20150128234935.20644.89300.stgit@dusk.lan>
+From: Paul Walmsley <paul@pwsan.com>
+Subject: Documentation: DT bindings: update DT binding docs with Tegra chips
+Date: Wed, 28 Jan 2015 16:49:36 -0700
+Message-ID: <20150128234935.20644.89300.stgit@dusk.lan>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150128234935.20644.89300.stgit-orwA252wQtA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-Add a Tegra132 compatible string to the pinmux IP blocks present on
-chips similar to Tegra124.  The primary objective here is to avoid
-checkpatch warnings, per:
+Update some of the DT binding documentation text files, per Mark's
+comments at:
 
 http://marc.info/?l=linux-tegra&m=142201349727836&w=2
 
-Signed-off-by: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
-Cc: Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
----
- .../bindings/pinctrl/nvidia,tegra124-pinmux.txt    |    1 +
- 1 file changed, 1 insertion(+)
+The primary goal with this series is to avoid checkpatch.pl warnings
+and align to the policy that Mark described.  This series also updates
+Documentation/devicetree/bindings/submitting-patches.txt to formally
+document this policy.
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt
-index 189814e7cdc7..4eb7163a2eb8 100644
---- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt
-@@ -7,6 +7,7 @@ a baseline, and only documents the differences between the two bindings.
- 
- Required properties:
- - compatible: "nvidia,tegra124-pinmux"
-+  "nvidia,tegra132-pinmux" (not yet matched in the driver)
- - reg: Should contain a list of base address and size pairs for:
-     -- first entry - the drive strength and pad control registers.
-     -- second entry - the pinmux registers
+These patches apply on next-20150123.
+
+
+- Paul
