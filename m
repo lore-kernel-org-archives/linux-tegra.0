@@ -1,8 +1,8 @@
 From: Paul Walmsley <paul@pwsan.com>
-Subject: [PATCH 10/24] Documentation: DT bindings: add more chip compatible
- strings for Tegra I2C
-Date: Wed, 28 Jan 2015 16:49:37 -0700
-Message-ID: <20150128234937.20644.50547.stgit@dusk.lan>
+Subject: [PATCH 21/24] Documentation: DT bindings: add more chip compatible
+ strings for Tegra I2S
+Date: Wed, 28 Jan 2015 16:49:38 -0700
+Message-ID: <20150128234938.20644.37799.stgit@dusk.lan>
 References: <20150128234935.20644.89300.stgit@dusk.lan>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -10,18 +10,17 @@ Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20150128234935.20644.89300.stgit@dusk.lan>
 Sender: linux-kernel-owner@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, linux-i2c@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Paul Walmsley <pwalmsley@nvidia.com>, Kumar Gala <galak@codeaurora.org>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-Add compatible strings for the I2C IP blocks present on several Tegra
+Add compatible strings for the I2S IP blocks present on several Tegra
 chips.  The primary objective here is to avoid checkpatch warnings,
 per:
 
 http://marc.info/?l=linux-tegra&m=142201349727836&w=2
 
 Signed-off-by: Paul Walmsley <paul@pwsan.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>
 Cc: Rob Herring <robh+dt@kernel.org>
 Cc: Pawel Moll <pawel.moll@arm.com>
 Cc: Mark Rutland <mark.rutland@arm.com>
@@ -30,25 +29,27 @@ Cc: Kumar Gala <galak@codeaurora.org>
 Cc: Stephen Warren <swarren@wwwdotorg.org>
 Cc: Thierry Reding <thierry.reding@gmail.com>
 Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-i2c@vger.kernel.org
+Cc: Paul Walmsley <pwalmsley@nvidia.com>
 Cc: devicetree@vger.kernel.org
 Cc: linux-tegra@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 ---
- .../devicetree/bindings/i2c/nvidia,tegra20-i2c.txt |    3 +++
- 1 file changed, 3 insertions(+)
+ .../bindings/sound/nvidia,tegra30-i2s.txt          |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.txt b/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.txt
-index 87507e9ce6db..8e233d913a78 100644
---- a/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.txt
-+++ b/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.txt
-@@ -2,6 +2,9 @@ NVIDIA Tegra20/Tegra30/Tegra114 I2C controller driver.
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.txt
+index 0c113ffe3814..f46566a09eeb 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.txt
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.txt
+@@ -1,7 +1,10 @@
+ NVIDIA Tegra30 I2S controller
  
  Required properties:
- - compatible : should be:
-+	"nvidia,tegra210-i2c" (not yet matched by the driver)
-+	"nvidia,tegra132-i2c" (not yet matched by the driver)
-+	"nvidia,tegra124-i2c" (not yet matched by the driver)
- 	"nvidia,tegra114-i2c"
- 	"nvidia,tegra30-i2c"
- 	"nvidia,tegra20-i2c"
+-- compatible : "nvidia,tegra30-i2s"
++- compatible : "nvidia,tegra30-i2s",
++  "nvidia,tegra114-i2s" (not yet matched by driver)
++  "nvidia,tegra124-i2s"
++  "nvidia,tegra132-i2s" (not yet matched by driver)
+ - reg : Should contain I2S registers location and length
+ - clocks : Must contain one entry, for the module clock.
+   See ../clocks/clock-bindings.txt for details.
