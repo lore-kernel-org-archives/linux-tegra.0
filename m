@@ -1,52 +1,91 @@
-From: Sumit Semwal <sumit.semwal@linaro.org>
-Subject: Re: [PATCH v3] dma-buf: cleanup dma_buf_export() to make it easily
- extensible
-Date: Wed, 28 Jan 2015 19:00:46 +0530
-Message-ID: <CAO_48GH3CVPeGUfDTuOgGfYmBnc1CvwVc5GYS6O3=275o0SwCw@mail.gmail.com>
-References: <1422449643-7829-1-git-send-email-sumit.semwal@linaro.org>
- <20150128112339.164c55fd@recife.lan>
+From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH 02/15] iommu: Introduce iommu domain types
+Date: Wed, 28 Jan 2015 14:19:34 +0000
+Message-ID: <20150128141934.GP1569@arm.com>
+References: <1422316305-19216-1-git-send-email-joro@8bytes.org>
+	<1422316305-19216-3-git-send-email-joro@8bytes.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20150128112339.164c55fd@recife.lan>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: Linaro Kernel Mailman List <linaro-kernel@lists.linaro.org>, Pawel Osciak <pawel@osciak.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, intel-gfx@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, Linaro MM SIG Mailman List <linaro-mm-sig@lists.linaro.org>, kgene@kernel.org, daniel.vetter@intel.com, linux-tegra@vger.kernel.org, rmk+kernel@arm.linux.org.uk, Marek Szyprowski <m.szyprowski@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1422316305-19216-3-git-send-email-joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "jroedel-l3A5Bk7waGM@public.gmane.org" <jroedel-l3A5Bk7waGM@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgTWF1cm8sCgpPbiAyOCBKYW51YXJ5IDIwMTUgYXQgMTg6NTMsIE1hdXJvIENhcnZhbGhvIENo
-ZWhhYgo8bWNoZWhhYkBvc2cuc2Ftc3VuZy5jb20+IHdyb3RlOgo+IEVtIFdlZCwgMjggSmFuIDIw
-MTUgMTg6MjQ6MDMgKzA1MzAKPiBTdW1pdCBTZW13YWwgPHN1bWl0LnNlbXdhbEBsaW5hcm8ub3Jn
-PiBlc2NyZXZldToKPgo+PiArLyoqCj4+ICsgKiBoZWxwZXIgbWFjcm8gZm9yIGV4cG9ydGVyczsg
-emVyb3MgYW5kIGZpbGxzIGluIG1vc3QgY29tbW9uIHZhbHVlcwo+PiArICovCj4+ICsjZGVmaW5l
-IERFRklORV9ETUFfQlVGX0VYUE9SVF9JTkZPKGEpICAgICAgICBcCj4+ICsgICAgIHN0cnVjdCBk
-bWFfYnVmX2V4cG9ydF9pbmZvIGEgPSB7IC5leHBfbmFtZSA9IEtCVUlMRF9NT0ROQU1FIH0KPj4g
-Kwo+Cj4gSSBzdXNwZWN0IHRoYXQgdGhpcyB3aWxsIGxldCB0aGUgb3RoZXIgZmllbGRzIG5vdCBp
-bml0aWFsaXplZC4KPgo+IFlvdSBsaWtlbHkgbmVlZCB0byBkbzoKPgo+ICNkZWZpbmUgREVGSU5F
-X0RNQV9CVUZfRVhQT1JUX0lORk8oYSkgICBcCj4gICAgICAgICBzdHJ1Y3QgZG1hX2J1Zl9leHBv
-cnRfaW5mbyBhID0geyAgICAgICAgXAo+ICAgICAgICAgLmV4cF9uYW1lID0gS0JVSUxEX01PRE5B
-TUU7ICAgICAgICAgICAgIFwKPiAgICAgICAgIC5maWVsZHMgPSAwOyAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICBcCj4gLi4uCj4gfQpJIHN1c3BlY3RlZCB0aGUgc2FtZSwgYnV0IERhbmllbCBr
-aW5kbHkgcmVmZXJyZWQgdG8gdGhlIEM5OSBzdGFuZGFyZCwKd2hpY2ggc3RhdGVzOgoiIElmIHRo
-ZXJlIGFyZSBmZXdlciBpbml0aWFsaXplcnMgaW4gYSBicmFjZS1lbmNsb3NlZCBsaXN0IHRoYW4g
-dGhlcmUKYXJlIGVsZW1lbnRzIG9yIG1lbWJlcnMKb2YgYW4gYWdncmVnYXRlLCBvciBmZXdlciBj
-aGFyYWN0ZXJzIGluIGEgc3RyaW5nIGxpdGVyYWwgdXNlZCB0bwppbml0aWFsaXplIGFuIGFycmF5
-IG9mIGtub3duCnNpemUgdGhhbiB0aGVyZSBhcmUgZWxlbWVudHMgaW4gdGhlIGFycmF5LCB0aGUg
-cmVtYWluZGVyIG9mIHRoZQphZ2dyZWdhdGUgc2hhbGwgYmUKaW5pdGlhbGl6ZWQgaW1wbGljaXRs
-eSB0aGUgc2FtZSBhcyBvYmplY3RzIHRoYXQgaGF2ZSBzdGF0aWMgc3RvcmFnZSBkdXJhdGlvbi4i
-CgpTbyBJIHRoaW5rIHdlJ3JlIHdlbGwgY292ZXJlZCB0aGVyZT8KPgo+IFJlZ2FyZHMsCj4gTWF1
-cm8KCgoKLS0gClRoYW5rcyBhbmQgcmVnYXJkcywKClN1bWl0IFNlbXdhbApLZXJuZWwgVGVhbSBM
-ZWFkIC0gTGluYXJvIE1vYmlsZSBHcm91cApMaW5hcm8ub3JnIOKUgiBPcGVuIHNvdXJjZSBzb2Z0
-d2FyZSBmb3IgQVJNIFNvQ3MKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
-ZGV2ZWwK
+Hi Joerg,
+
+Thanks for posting this!
+
+On Mon, Jan 26, 2015 at 11:51:32PM +0000, Joerg Roedel wrote:
+> From: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>
+> 
+> This allows to handle domains differently based on their
+> type in the future. An IOMMU driver can implement certain
+> optimizations for DMA-API domains for example.
+> 
+> Signed-off-by: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>
+> ---
+>  drivers/iommu/iommu.c |  5 +++--
+>  include/linux/iommu.h | 11 ++++++++++-
+>  2 files changed, 13 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index 684efc0..ab24d77 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -909,14 +909,15 @@ struct iommu_domain *iommu_domain_alloc(struct bus_type *bus)
+>  	ops = bus->iommu_ops;
+>  
+>  	if (ops->domain_alloc)
+> -		domain = ops->domain_alloc();
+> +		domain = ops->domain_alloc(IOMMU_DOMAIN_UNMANAGED);
+>  	else
+>  		domain = kzalloc(sizeof(*domain), GFP_KERNEL);
+>  
+>  	if (!domain)
+>  		return NULL;
+>  
+> -	domain->ops = bus->iommu_ops;
+> +	domain->ops  = bus->iommu_ops;
+> +	domain->type = IOMMU_DOMAIN_UNMANAGED;
+>  
+>  	if (ops->domain_init && domain->ops->domain_init(domain))
+>  		goto out_free;
+> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> index 69d1d12..0b67f65 100644
+> --- a/include/linux/iommu.h
+> +++ b/include/linux/iommu.h
+> @@ -51,7 +51,16 @@ struct iommu_domain_geometry {
+>  	bool force_aperture;       /* DMA only allowed in mappable range? */
+>  };
+>  
+> +/* This are the possible domain-types */
+> +enum iommu_domain_type {
+> +	IOMMU_DOMAIN_DMA,	/* Domain used for DMA-API */
+> +	IOMMU_DOMAIN_IDENTITY,	/* Identity mapped domain  */
+
+What happens if somebody calls map or unmap on an identity-mapping domain?
+Can we catch that in the IOMMU core before calling the IOMMU driver? That
+also implies we need something extra to parameterise the attributes for
+the mapping (e.g. cacheable, read-only) and also potentially the address
+range.
+
+> +	IOMMU_DOMAIN_UNMANAGED, /* Domain mappings are managed by a third party
+> +				   user (like KVM or VFIO) */
+
+We already have the domain attributes (iommu_attr) to describe features
+of a domain. Is there really a need for this extra type, or can we extend
+the attribute set and allow for domain allocation with attributes?
+
+Will
