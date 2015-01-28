@@ -1,105 +1,96 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] mmc: tegra: Write xfer_mode, CMD regs in together
-Date: Wed, 28 Jan 2015 15:06:27 +0900
-Message-ID: <CAAVeFuJKxY36BpA_dYhNnhH0v8ERaRYK9Be_hQNtG0H898U8EQ@mail.gmail.com>
-References: <1422379410-7127-1-git-send-email-rklein@nvidia.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: Re: [PATCH v2 04/11] ARM: tegra: Set spi-max-frequency property to
+ flash node
+Date: Wed, 28 Jan 2015 11:24:17 +0100
+Message-ID: <CAAObsKC8T7VR6JEY41pDEsuvJzLqwW0CUewW=QB-sSwkP95rfw@mail.gmail.com>
+References: <1421338359-27467-1-git-send-email-tomeu.vizoso@collabora.com>
+ <1421338359-27467-5-git-send-email-tomeu.vizoso@collabora.com>
+ <54B7F84A.6020906@wwwdotorg.org>
+ <CAAObsKDx_W23OTL2RE4xxgXL-rtp3npkBtx6qMHV1j8ZXmo1rw@mail.gmail.com>
+ <54C7C16B.2080003@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1422379410-7127-1-git-send-email-rklein@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Chris Ball <chris@printf.net>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, pkunapuli@nvidia.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <54C7C16B.2080003@wwwdotorg.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Simon Glass <sjg@chromium.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Dylan Reid <dgreid@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jan 28, 2015 at 2:23 AM, Rhyland Klein <rklein@nvidia.com> wrote:
-> From: Pavan Kunapuli <pkunapuli@nvidia.com>
+On 27 January 2015 at 17:48, Stephen Warren <swarren@wwwdotorg.org> wrote:
+> On 01/27/2015 04:13 AM, Tomeu Vizoso wrote:
+>>
+>> On 15 January 2015 at 18:26, Stephen Warren <swarren@wwwdotorg.org> wrote:
+>>>
+>>> On 01/15/2015 09:12 AM, Tomeu Vizoso wrote:
+>>>>
+>>>>
+>>>> To silence a warning on Nyan boards.
+>>>>
+>>>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+>>>> ---
+>>>>    arch/arm/boot/dts/tegra124-nyan-big.dts | 1 +
+>>>>    1 file changed, 1 insertion(+)
+>>>>
+>>>> diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts
+>>>> b/arch/arm/boot/dts/tegra124-nyan-big.dts
+>>>> index 9a9cffe..94c7ba9 100644
+>>>> --- a/arch/arm/boot/dts/tegra124-nyan-big.dts
+>>>> +++ b/arch/arm/boot/dts/tegra124-nyan-big.dts
+>>>> @@ -1660,6 +1660,7 @@
+>>>>
+>>>>                  flash@0 {
+>>>>                          compatible = "winbond,w25q32dw";
+>>>> +                       spi-max-frequency = <25000000>;
+>>>
+>>>
+>>>
+>>> This property already exists in the SPI controller. Isn't the max
+>>> frequency
+>>> supposed to inherit from there? If so, shouldn't the code not warn when
+>>> such
+>>> inheritance happens, i.e. it'd be better to fix the code?
+>>
+>>
+>> I don't think it's supposed to fall back to the controller's max freq,
+>> as each device has its own maximum frequency that it can support and
+>> it's not related to what the master supports.
 >
-> If there is a gap between xfer mode and command register writes,
-> tegra SDMMC controller can sometimes issue a spurious command before
-> the CMD register is written. To avoid this, these two registers need
-> to be written together in a single write operation.
 >
-> Signed-off-by: Pavan Kunapuli <pkunapuli@nvidia.com>
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
-> ---
->  drivers/mmc/host/sdhci-tegra.c |   31 ++++++++++++++++++++++++++++++-
->  1 file changed, 30 insertions(+), 1 deletion(-)
+> If the controller-specific frequency property isn't ever used, we should
+> remove it. No point carrying cruft that looks like it does something but
+> doesn't.
 >
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index 59797106af93..3d34de47e57e 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -41,6 +41,7 @@
->  #define NVQUIRK_DISABLE_SDR50          BIT(3)
->  #define NVQUIRK_DISABLE_SDR104         BIT(4)
->  #define NVQUIRK_DISABLE_DDR50          BIT(5)
-> +#define NVQUIRK_SHADOW_XFER_MODE_REG   BIT(6)
->
->  struct sdhci_tegra_soc_data {
->         const struct sdhci_pltfm_data *pdata;
-> @@ -67,6 +68,32 @@ static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
->         return readw(host->ioaddr + reg);
->  }
->
-> +static void tegra_sdhci_writew(struct sdhci_host *host, u16 val, int reg)
-> +{
-> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +       struct sdhci_tegra *tegra_host = pltfm_host->priv;
-> +       const struct sdhci_tegra_soc_data *soc_data = tegra_host->soc_data;
-> +
-> +       if (soc_data->nvquirks * NVQUIRK_SHADOW_XFER_MODE_REG) {
+> Logically, each device's max frequency certainly should be influenced by all
+> of the controller, board, and device max frequency. Those should all impose
+> a cap on the speed used. I'd expect this to be expressed in DT as a single
+> property in each device where the user has calculated that max for the
+> device, with the option to have all the devices fall back to the "default"
+> provided at the controller/bus level if the device imposes a cap that's no
+> lower.
 
-Isn't the '*' supposed to be a '&' here?
+My understanding is that each device node needs to specify the maximum
+frequency it supports, and the same for each controller.
 
-> +               switch (reg) {
-> +               case SDHCI_TRANSFER_MODE:
-> +                       /*
-> +                        * Postpone this write, we must do it together with a
-> +                        * command write that is down below.
-> +                        */
-> +                       pltfm_host->xfer_mode_shadow = val;
-> +                       return;
-> +               case SDHCI_COMMAND:
-> +                       writel((val << 16) | pltfm_host->xfer_mode_shadow,
-> +                               host->ioaddr + SDHCI_TRANSFER_MODE);
-> +                       pltfm_host->xfer_mode_shadow = 0;
+When configuring the transfer parameters, its frequency will be capped
+by both the device and controller maximum frequencies.
 
-That last line is probably not needed and could actually be harmful -
-if we try to write SDHCI_COMMAND twice in a raw without a write to
-SDHCI_TRANSFER_MODE in between, the zero will overwrite the previous
-value of SDHCI_TRANSFER_MODE.
+So we currently need to specify the maximum frequencies in both device
+and controller nodes, and it sounds like a good idea to me.
 
-> +                       return;
-> +               }
-> +       }
-> +
-> +       writew(val, host->ioaddr + reg);
-> +}
-> +
->  static void tegra_sdhci_writel(struct sdhci_host *host, u32 val, int reg)
->  {
->         struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> @@ -147,6 +174,7 @@ static void tegra_sdhci_set_bus_width(struct sdhci_host *host, int bus_width)
->  static const struct sdhci_ops tegra_sdhci_ops = {
->         .get_ro     = tegra_sdhci_get_ro,
->         .read_w     = tegra_sdhci_readw,
-> +       .write_w    = tegra_sdhci_writew,
->         .write_l    = tegra_sdhci_writel,
->         .set_clock  = sdhci_set_clock,
->         .set_bus_width = tegra_sdhci_set_bus_width,
-> @@ -201,7 +229,8 @@ static struct sdhci_tegra_soc_data soc_data_tegra114 = {
->         .pdata = &sdhci_tegra114_pdata,
->         .nvquirks = NVQUIRK_DISABLE_SDR50 |
->                     NVQUIRK_DISABLE_DDR50 |
-> -                   NVQUIRK_DISABLE_SDR104,
-> +                   NVQUIRK_DISABLE_SDR104 |
-> +                   NVQUIRK_SHADOW_XFER_MODE_REG,
->  };
+I'm probably missing your point. Is it that it should be possible for
+device nodes to leave unspecified their max frequency and that in that
+case the one for the controller should be used instead?
 
-Since this only applies to Tegra114 (?), I wonder whether it would not
-be better to have a dedicated tegra114_sdhci_ops that implements
-tegra_sdhci_writew, and use it only in tegra_sdhci_writew. That way
-you could get rid of the NVQUIRK_SHADOW_XFER_MODE_REG and the test for
-it in tegra_sdhci_writew(), and chips prior to Tegra114 will not have
-to needlessly check for it every time they write a register.
+Regards,
+
+Tomeu
