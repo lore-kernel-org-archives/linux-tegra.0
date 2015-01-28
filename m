@@ -1,8 +1,8 @@
 From: Paul Walmsley <paul@pwsan.com>
-Subject: [PATCH 22/24] Documentation: DT bindings: add more chip compatible
- strings for Tegra EHCI
+Subject: [PATCH 20/24] Documentation: DT bindings: add more chip compatible
+ strings for Tegra AHUB
 Date: Wed, 28 Jan 2015 16:49:38 -0700
-Message-ID: <20150128234938.20644.87931.stgit@dusk.lan>
+Message-ID: <20150128234938.20644.27588.stgit@dusk.lan>
 References: <20150128234935.20644.89300.stgit@dusk.lan>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -14,7 +14,7 @@ Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, P
 List-Id: linux-tegra@vger.kernel.org
 
 
-Add compatible strings for the EHCI IP blocks present on several Tegra
+Add compatible strings for the AHUB IP blocks present on several Tegra
 chips.  The primary objective here is to avoid checkpatch warnings,
 per:
 
@@ -34,24 +34,21 @@ Cc: devicetree@vger.kernel.org
 Cc: linux-tegra@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 ---
- .../bindings/usb/nvidia,tegra20-ehci.txt           |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ .../bindings/sound/nvidia,tegra30-ahub.txt         |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra20-ehci.txt b/Documentation/devicetree/bindings/usb/nvidia,tegra20-ehci.txt
-index 3dc9140e3dfb..5c95962d350a 100644
---- a/Documentation/devicetree/bindings/usb/nvidia,tegra20-ehci.txt
-+++ b/Documentation/devicetree/bindings/usb/nvidia,tegra20-ehci.txt
-@@ -6,7 +6,12 @@ Practice : Universal Serial Bus" with the following modifications
- and additions :
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra30-ahub.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra30-ahub.txt
+index 946e2ac46091..2d93e719e4d6 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra30-ahub.txt
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra30-ahub.txt
+@@ -1,7 +1,9 @@
+ NVIDIA Tegra30 AHUB (Audio Hub)
  
- Required properties :
-- - compatible : Should be "nvidia,tegra20-ehci".
-+ - compatible : "nvidia,tegra20-ehci"
-+   "nvidia,tegra30-ehci"
-+   "nvidia,tegra114-ehci" (not yet matched by the driver)
-+   "nvidia,tegra124-ehci" (not yet matched by the driver)
-+   "nvidia,tegra132-ehci" (not yet matched by the driver)
-+   "nvidia,tegra210-ehci" (not yet matched by the driver)
-  - nvidia,phy : phandle of the PHY that the controller is connected to.
-  - clocks : Must contain one entry, for the module clock.
-    See ../clocks/clock-bindings.txt for details.
+ Required properties:
+-- compatible : "nvidia,tegra30-ahub", "nvidia,tegra114-ahub", etc.
++- compatible : "nvidia,tegra30-ahub", "nvidia,tegra114-ahub",
++  "nvidia,tegra124-ahub"
++  "nvidia,tegra132-ahub" (not yet matched by the driver)
+ - reg : Should contain the register physical address and length for each of
+   the AHUB's register blocks.
+   - Tegra30 requires 2 entries, for the APBIF and AHUB/AUDIO register blocks.
