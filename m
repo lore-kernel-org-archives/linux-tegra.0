@@ -1,77 +1,100 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v3 06/10] ASoC: tegra: Add a control for
- the headphone switch
-Date: Wed, 28 Jan 2015 18:24:02 +0000
-Message-ID: <20150128182402.GD21293@sirena.org.uk>
-References: <1422442278-10405-1-git-send-email-tomeu.vizoso@collabora.com>
- <1422442278-10405-7-git-send-email-tomeu.vizoso@collabora.com>
- <20150128110230.GQ21293@sirena.org.uk>
- <CAEUnVG6tKmdTt455w8g9C2_+XXpKz5=TR7=V8Lo3uJ3DKrOvag@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH] mmc: tegra: Write xfer_mode, CMD regs in together
+Date: Wed, 28 Jan 2015 16:02:22 +0100
+Message-ID: <CAPDyKFqZT5OsLXC2Gn+so2jX5GnCEB+SijRS+9Ra5UPAP55rpg@mail.gmail.com>
+References: <1422379410-7127-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2870836410614839622=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <CAEUnVG6tKmdTt455w8g9C2_+XXpKz5=TR7=V8Lo3uJ3DKrOvag@mail.gmail.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Dylan Reid <dgreid@chromium.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Lars-Peter Clausen <lars@metafoo.de>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Stephen Warren <swarren@wwwdotorg.org>, Andrew Bresticker <abrestic@chromium.org>, Simon Glass <sjg@chromium.org>, Wolfram Sang <wsa@the-dreams.de>, Liam Girdwood <lgirdwood@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.de>, Thierry Reding <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1422379410-7127-1-git-send-email-rklein@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Chris Ball <chris@printf.net>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, pkunapuli@nvidia.com, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
+On 27 January 2015 at 18:23, Rhyland Klein <rklein@nvidia.com> wrote:
+> From: Pavan Kunapuli <pkunapuli@nvidia.com>
+>
+> If there is a gap between xfer mode and command register writes,
+> tegra SDMMC controller can sometimes issue a spurious command before
+> the CMD register is written. To avoid this, these two registers need
+> to be written together in a single write operation.'
 
---===============2870836410614839622==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="CAghj3nbcHapFenH"
-Content-Disposition: inline
+Please repost to linux-mmc.
 
+Kind regards
+Uffe
 
---CAghj3nbcHapFenH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Jan 28, 2015 at 09:46:27AM -0800, Dylan Reid wrote:
-> On Wed, Jan 28, 2015 at 3:02 AM, Mark Brown <broonie@kernel.org> wrote:
-
-> > Why is userspace doing this?  If this is supposed to be associated with
-> > the jack detection I'd expect us to be doing this in kernel.
-
-> This is only related to jack detection in that seeing a jack insert or
-> removal can cause userspace to set or unset it depending on the
-> current policy.
-
-OK, better changelog please then.  Also, to repeat the advice I think I
-gave last time: please don't post large sets of unrelated changes as a
-single series, send logically separate bits separately.
-
---CAghj3nbcHapFenH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJUySlBAAoJECTWi3JdVIfQve8H/jKFLa4LlHC8P8Wi5zAQHGGN
-YgSJwZeknu9+gDqghkvHfMrY6xt3dOWFFjKQsanqqgYGGRqzxDINurbzSd5Sk/IW
-/j2YRfK75rwErqfR/RlgY+2p/TaSzOlvm9/ddNJYwAW5AjE85rHOiYOU8mDPwUyF
-+Xz5hCpdifOE7WRxZ3IOuStQWi0cPZa46OlIV22ZN549FKltsYinBZDYe9J6U0O8
-IKUMXB2znDihV6U1jKj12ZoazT+O/pol3ot55Nk7X67AdiwGRBR1/az9mjAO8h42
-8HSqs/pOnZAA363lSusGm4zmQLUKaIe1xsPxGFhslGdJykZS+Y6l5viJyI08/5A=
-=4Mn4
------END PGP SIGNATURE-----
-
---CAghj3nbcHapFenH--
-
---===============2870836410614839622==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============2870836410614839622==--
+>
+> Signed-off-by: Pavan Kunapuli <pkunapuli@nvidia.com>
+> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> ---
+>  drivers/mmc/host/sdhci-tegra.c |   31 ++++++++++++++++++++++++++++++-
+>  1 file changed, 30 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index 59797106af93..3d34de47e57e 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -41,6 +41,7 @@
+>  #define NVQUIRK_DISABLE_SDR50          BIT(3)
+>  #define NVQUIRK_DISABLE_SDR104         BIT(4)
+>  #define NVQUIRK_DISABLE_DDR50          BIT(5)
+> +#define NVQUIRK_SHADOW_XFER_MODE_REG   BIT(6)
+>
+>  struct sdhci_tegra_soc_data {
+>         const struct sdhci_pltfm_data *pdata;
+> @@ -67,6 +68,32 @@ static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
+>         return readw(host->ioaddr + reg);
+>  }
+>
+> +static void tegra_sdhci_writew(struct sdhci_host *host, u16 val, int reg)
+> +{
+> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +       struct sdhci_tegra *tegra_host = pltfm_host->priv;
+> +       const struct sdhci_tegra_soc_data *soc_data = tegra_host->soc_data;
+> +
+> +       if (soc_data->nvquirks * NVQUIRK_SHADOW_XFER_MODE_REG) {
+> +               switch (reg) {
+> +               case SDHCI_TRANSFER_MODE:
+> +                       /*
+> +                        * Postpone this write, we must do it together with a
+> +                        * command write that is down below.
+> +                        */
+> +                       pltfm_host->xfer_mode_shadow = val;
+> +                       return;
+> +               case SDHCI_COMMAND:
+> +                       writel((val << 16) | pltfm_host->xfer_mode_shadow,
+> +                               host->ioaddr + SDHCI_TRANSFER_MODE);
+> +                       pltfm_host->xfer_mode_shadow = 0;
+> +                       return;
+> +               }
+> +       }
+> +
+> +       writew(val, host->ioaddr + reg);
+> +}
+> +
+>  static void tegra_sdhci_writel(struct sdhci_host *host, u32 val, int reg)
+>  {
+>         struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> @@ -147,6 +174,7 @@ static void tegra_sdhci_set_bus_width(struct sdhci_host *host, int bus_width)
+>  static const struct sdhci_ops tegra_sdhci_ops = {
+>         .get_ro     = tegra_sdhci_get_ro,
+>         .read_w     = tegra_sdhci_readw,
+> +       .write_w    = tegra_sdhci_writew,
+>         .write_l    = tegra_sdhci_writel,
+>         .set_clock  = sdhci_set_clock,
+>         .set_bus_width = tegra_sdhci_set_bus_width,
+> @@ -201,7 +229,8 @@ static struct sdhci_tegra_soc_data soc_data_tegra114 = {
+>         .pdata = &sdhci_tegra114_pdata,
+>         .nvquirks = NVQUIRK_DISABLE_SDR50 |
+>                     NVQUIRK_DISABLE_DDR50 |
+> -                   NVQUIRK_DISABLE_SDR104,
+> +                   NVQUIRK_DISABLE_SDR104 |
+> +                   NVQUIRK_SHADOW_XFER_MODE_REG,
+>  };
+>
+>  static const struct of_device_id sdhci_tegra_dt_match[] = {
+> --
+> 1.7.9.5
+>
