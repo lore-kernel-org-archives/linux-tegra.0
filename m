@@ -1,61 +1,58 @@
-From: Paul Walmsley <paul@pwsan.com>
-Subject: [PATCH 03/24] Documentation: DT bindings: add more chip compatible
- strings for Tegra SOR
+From: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 02/24] Documentation: DT bindings: add more chip compatible
+ strings for Tegra PCIe
 Date: Wed, 28 Jan 2015 16:49:37 -0700
-Message-ID: <20150128234937.20644.39714.stgit@dusk.lan>
+Message-ID: <20150128234937.20644.9400.stgit@dusk.lan>
 References: <20150128234935.20644.89300.stgit@dusk.lan>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20150128234935.20644.89300.stgit@dusk.lan>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Terje =?utf-8?q?Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, linux-tegra@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150128234935.20644.89300.stgit-orwA252wQtA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-CkFkZCBjb21wYXRpYmxlIHN0cmluZ3MgZm9yIHRoZSBTT1IgSVAgYmxvY2tzIHByZXNlbnQgb24g
-c2V2ZXJhbCBUZWdyYQpjaGlwcy4gIFRoZSBwcmltYXJ5IG9iamVjdGl2ZSBoZXJlIGlzIHRvIGF2
-b2lkIGNoZWNrcGF0Y2ggd2FybmluZ3MsCnBlcjoKCmh0dHA6Ly9tYXJjLmluZm8vP2w9bGludXgt
-dGVncmEmbT0xNDIyMDEzNDk3Mjc4MzYmdz0yCgpTaWduZWQtb2ZmLWJ5OiBQYXVsIFdhbG1zbGV5
-IDxwYXVsQHB3c2FuLmNvbT4KQ2M6IFRoaWVycnkgUmVkaW5nIDx0aGllcnJ5LnJlZGluZ0BnbWFp
-bC5jb20+CkNjOiAiVGVyamUgQmVyZ3N0csO2bSIgPHRiZXJnc3Ryb21AbnZpZGlhLmNvbT4KQ2M6
-IFJvYiBIZXJyaW5nIDxyb2JoK2R0QGtlcm5lbC5vcmc+CkNjOiBQYXdlbCBNb2xsIDxwYXdlbC5t
-b2xsQGFybS5jb20+CkNjOiBNYXJrIFJ1dGxhbmQgPG1hcmsucnV0bGFuZEBhcm0uY29tPgpDYzog
-SWFuIENhbXBiZWxsIDxpamMrZGV2aWNldHJlZUBoZWxsaW9uLm9yZy51az4KQ2M6IEt1bWFyIEdh
-bGEgPGdhbGFrQGNvZGVhdXJvcmEub3JnPgpDYzogU3RlcGhlbiBXYXJyZW4gPHN3YXJyZW5Ad3d3
-ZG90b3JnLm9yZz4KQ2M6IEFsZXhhbmRyZSBDb3VyYm90IDxnbnVyb3VAZ21haWwuY29tPgpDYzog
-ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpDYzogbGludXgtdGVncmFAdmdlci5rZXJu
-ZWwub3JnCkNjOiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZwpDYzogbGludXgta2VybmVsQHZn
-ZXIua2VybmVsLm9yZwotLS0KIC4uLi9iaW5kaW5ncy9ncHUvbnZpZGlhLHRlZ3JhMjAtaG9zdDF4
-LnR4dCAgICAgICAgIHwgICAgMiArKwogMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKQoK
-ZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncHUvbnZpZGlh
-LHRlZ3JhMjAtaG9zdDF4LnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9n
-cHUvbnZpZGlhLHRlZ3JhMjAtaG9zdDF4LnR4dAppbmRleCA0YzMyZWYwYjdkYjguLjBlODI4YzAw
-ZTdlNCAxMDA2NDQKLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dwdS9u
-dmlkaWEsdGVncmEyMC1ob3N0MXgudHh0CisrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
-aW5kaW5ncy9ncHUvbnZpZGlhLHRlZ3JhMjAtaG9zdDF4LnR4dApAQCAtMTk4LDYgKzE5OCw3IEBA
-IG9mIHRoZSBmb2xsb3dpbmcgaG9zdDF4IGNsaWVudCBtb2R1bGVzOgogCiAgIFJlcXVpcmVkIHBy
-b3BlcnRpZXM6CiAgIC0gY29tcGF0aWJsZTogIm52aWRpYSx0ZWdyYTEyNC1zb3IiCisgICAgIm52
-aWRpYSx0ZWdyYTEzMi1zb3IiIChub3QgeWV0IG1hdGNoZWQgaW4gdGhlIGRyaXZlcikKICAgLSBy
-ZWc6IFBoeXNpY2FsIGJhc2UgYWRkcmVzcyBhbmQgbGVuZ3RoIG9mIHRoZSBjb250cm9sbGVyJ3Mg
-cmVnaXN0ZXJzLgogICAtIGludGVycnVwdHM6IFRoZSBpbnRlcnJ1cHQgb3V0cHV0cyBmcm9tIHRo
-ZSBjb250cm9sbGVyLgogICAtIGNsb2NrczogTXVzdCBjb250YWluIGFuIGVudHJ5IGZvciBlYWNo
-IGVudHJ5IGluIGNsb2NrLW5hbWVzLgpAQCAtMjIzLDYgKzIyNCw3IEBAIG9mIHRoZSBmb2xsb3dp
-bmcgaG9zdDF4IGNsaWVudCBtb2R1bGVzOgogCiAtIGRwYXV4OiBEaXNwbGF5UG9ydCBBVVggaW50
-ZXJmYWNlCiAgIC0gY29tcGF0aWJsZTogIm52aWRpYSx0ZWdyYTEyNC1kcGF1eCIKKyAgICAibnZp
-ZGlhLHRlZ3JhMTMyLWRwYXV4IiAobm90IHlldCBtYXRjaGVkIGluIHRoZSBkcml2ZXIpCiAgIC0g
-cmVnOiBQaHlzaWNhbCBiYXNlIGFkZHJlc3MgYW5kIGxlbmd0aCBvZiB0aGUgY29udHJvbGxlcidz
-IHJlZ2lzdGVycy4KICAgLSBpbnRlcnJ1cHRzOiBUaGUgaW50ZXJydXB0IG91dHB1dHMgZnJvbSB0
-aGUgY29udHJvbGxlci4KICAgLSBjbG9ja3M6IE11c3QgY29udGFpbiBhbiBlbnRyeSBmb3IgZWFj
-aCBlbnRyeSBpbiBjbG9jay1uYW1lcy4KCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
-cmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
-bmZvL2RyaS1kZXZlbAo=
+
+Add compatible strings for the PCIe IP blocks present on several Tegra
+chips.  The primary objective here is to avoid checkpatch warnings,
+per:
+
+http://marc.info/?l=linux-tegra&m=142201349727836&w=2
+
+Signed-off-by: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Cc: Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
+Cc: Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+---
+ .../bindings/pci/nvidia,tegra20-pcie.txt           |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+index d763e047c6ae..e772884f1c33 100644
+--- a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
++++ b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+@@ -5,6 +5,8 @@ Required properties:
+   - "nvidia,tegra20-pcie"
+   - "nvidia,tegra30-pcie"
+   - "nvidia,tegra124-pcie"
++  - "nvidia,tegra132-pcie" (not yet matched in the driver)
++  - "nvidia,tegra210-pcie" (not yet matched in the driver)
+ - device_type: Must be "pci"
+ - reg: A list of physical base address and length for each set of controller
+   registers. Must contain an entry for each entry in the reg-names property.
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
