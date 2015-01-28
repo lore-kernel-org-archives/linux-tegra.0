@@ -1,100 +1,61 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH] mmc: tegra: Write xfer_mode, CMD regs in together
-Date: Wed, 28 Jan 2015 16:02:22 +0100
-Message-ID: <CAPDyKFqZT5OsLXC2Gn+so2jX5GnCEB+SijRS+9Ra5UPAP55rpg@mail.gmail.com>
-References: <1422379410-7127-1-git-send-email-rklein@nvidia.com>
+From: Paul Walmsley <paul@pwsan.com>
+Subject: [PATCH 03/24] Documentation: DT bindings: add more chip compatible
+ strings for Tegra SOR
+Date: Wed, 28 Jan 2015 16:49:37 -0700
+Message-ID: <20150128234937.20644.39714.stgit@dusk.lan>
+References: <20150128234935.20644.89300.stgit@dusk.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1422379410-7127-1-git-send-email-rklein@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Chris Ball <chris@printf.net>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, pkunapuli@nvidia.com, Alexandre Courbot <gnurou@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20150128234935.20644.89300.stgit@dusk.lan>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Terje =?utf-8?q?Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 27 January 2015 at 18:23, Rhyland Klein <rklein@nvidia.com> wrote:
-> From: Pavan Kunapuli <pkunapuli@nvidia.com>
->
-> If there is a gap between xfer mode and command register writes,
-> tegra SDMMC controller can sometimes issue a spurious command before
-> the CMD register is written. To avoid this, these two registers need
-> to be written together in a single write operation.'
-
-Please repost to linux-mmc.
-
-Kind regards
-Uffe
-
->
-> Signed-off-by: Pavan Kunapuli <pkunapuli@nvidia.com>
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
-> ---
->  drivers/mmc/host/sdhci-tegra.c |   31 ++++++++++++++++++++++++++++++-
->  1 file changed, 30 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index 59797106af93..3d34de47e57e 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -41,6 +41,7 @@
->  #define NVQUIRK_DISABLE_SDR50          BIT(3)
->  #define NVQUIRK_DISABLE_SDR104         BIT(4)
->  #define NVQUIRK_DISABLE_DDR50          BIT(5)
-> +#define NVQUIRK_SHADOW_XFER_MODE_REG   BIT(6)
->
->  struct sdhci_tegra_soc_data {
->         const struct sdhci_pltfm_data *pdata;
-> @@ -67,6 +68,32 @@ static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
->         return readw(host->ioaddr + reg);
->  }
->
-> +static void tegra_sdhci_writew(struct sdhci_host *host, u16 val, int reg)
-> +{
-> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +       struct sdhci_tegra *tegra_host = pltfm_host->priv;
-> +       const struct sdhci_tegra_soc_data *soc_data = tegra_host->soc_data;
-> +
-> +       if (soc_data->nvquirks * NVQUIRK_SHADOW_XFER_MODE_REG) {
-> +               switch (reg) {
-> +               case SDHCI_TRANSFER_MODE:
-> +                       /*
-> +                        * Postpone this write, we must do it together with a
-> +                        * command write that is down below.
-> +                        */
-> +                       pltfm_host->xfer_mode_shadow = val;
-> +                       return;
-> +               case SDHCI_COMMAND:
-> +                       writel((val << 16) | pltfm_host->xfer_mode_shadow,
-> +                               host->ioaddr + SDHCI_TRANSFER_MODE);
-> +                       pltfm_host->xfer_mode_shadow = 0;
-> +                       return;
-> +               }
-> +       }
-> +
-> +       writew(val, host->ioaddr + reg);
-> +}
-> +
->  static void tegra_sdhci_writel(struct sdhci_host *host, u32 val, int reg)
->  {
->         struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> @@ -147,6 +174,7 @@ static void tegra_sdhci_set_bus_width(struct sdhci_host *host, int bus_width)
->  static const struct sdhci_ops tegra_sdhci_ops = {
->         .get_ro     = tegra_sdhci_get_ro,
->         .read_w     = tegra_sdhci_readw,
-> +       .write_w    = tegra_sdhci_writew,
->         .write_l    = tegra_sdhci_writel,
->         .set_clock  = sdhci_set_clock,
->         .set_bus_width = tegra_sdhci_set_bus_width,
-> @@ -201,7 +229,8 @@ static struct sdhci_tegra_soc_data soc_data_tegra114 = {
->         .pdata = &sdhci_tegra114_pdata,
->         .nvquirks = NVQUIRK_DISABLE_SDR50 |
->                     NVQUIRK_DISABLE_DDR50 |
-> -                   NVQUIRK_DISABLE_SDR104,
-> +                   NVQUIRK_DISABLE_SDR104 |
-> +                   NVQUIRK_SHADOW_XFER_MODE_REG,
->  };
->
->  static const struct of_device_id sdhci_tegra_dt_match[] = {
-> --
-> 1.7.9.5
->
+CkFkZCBjb21wYXRpYmxlIHN0cmluZ3MgZm9yIHRoZSBTT1IgSVAgYmxvY2tzIHByZXNlbnQgb24g
+c2V2ZXJhbCBUZWdyYQpjaGlwcy4gIFRoZSBwcmltYXJ5IG9iamVjdGl2ZSBoZXJlIGlzIHRvIGF2
+b2lkIGNoZWNrcGF0Y2ggd2FybmluZ3MsCnBlcjoKCmh0dHA6Ly9tYXJjLmluZm8vP2w9bGludXgt
+dGVncmEmbT0xNDIyMDEzNDk3Mjc4MzYmdz0yCgpTaWduZWQtb2ZmLWJ5OiBQYXVsIFdhbG1zbGV5
+IDxwYXVsQHB3c2FuLmNvbT4KQ2M6IFRoaWVycnkgUmVkaW5nIDx0aGllcnJ5LnJlZGluZ0BnbWFp
+bC5jb20+CkNjOiAiVGVyamUgQmVyZ3N0csO2bSIgPHRiZXJnc3Ryb21AbnZpZGlhLmNvbT4KQ2M6
+IFJvYiBIZXJyaW5nIDxyb2JoK2R0QGtlcm5lbC5vcmc+CkNjOiBQYXdlbCBNb2xsIDxwYXdlbC5t
+b2xsQGFybS5jb20+CkNjOiBNYXJrIFJ1dGxhbmQgPG1hcmsucnV0bGFuZEBhcm0uY29tPgpDYzog
+SWFuIENhbXBiZWxsIDxpamMrZGV2aWNldHJlZUBoZWxsaW9uLm9yZy51az4KQ2M6IEt1bWFyIEdh
+bGEgPGdhbGFrQGNvZGVhdXJvcmEub3JnPgpDYzogU3RlcGhlbiBXYXJyZW4gPHN3YXJyZW5Ad3d3
+ZG90b3JnLm9yZz4KQ2M6IEFsZXhhbmRyZSBDb3VyYm90IDxnbnVyb3VAZ21haWwuY29tPgpDYzog
+ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpDYzogbGludXgtdGVncmFAdmdlci5rZXJu
+ZWwub3JnCkNjOiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZwpDYzogbGludXgta2VybmVsQHZn
+ZXIua2VybmVsLm9yZwotLS0KIC4uLi9iaW5kaW5ncy9ncHUvbnZpZGlhLHRlZ3JhMjAtaG9zdDF4
+LnR4dCAgICAgICAgIHwgICAgMiArKwogMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKQoK
+ZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncHUvbnZpZGlh
+LHRlZ3JhMjAtaG9zdDF4LnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9n
+cHUvbnZpZGlhLHRlZ3JhMjAtaG9zdDF4LnR4dAppbmRleCA0YzMyZWYwYjdkYjguLjBlODI4YzAw
+ZTdlNCAxMDA2NDQKLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dwdS9u
+dmlkaWEsdGVncmEyMC1ob3N0MXgudHh0CisrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
+aW5kaW5ncy9ncHUvbnZpZGlhLHRlZ3JhMjAtaG9zdDF4LnR4dApAQCAtMTk4LDYgKzE5OCw3IEBA
+IG9mIHRoZSBmb2xsb3dpbmcgaG9zdDF4IGNsaWVudCBtb2R1bGVzOgogCiAgIFJlcXVpcmVkIHBy
+b3BlcnRpZXM6CiAgIC0gY29tcGF0aWJsZTogIm52aWRpYSx0ZWdyYTEyNC1zb3IiCisgICAgIm52
+aWRpYSx0ZWdyYTEzMi1zb3IiIChub3QgeWV0IG1hdGNoZWQgaW4gdGhlIGRyaXZlcikKICAgLSBy
+ZWc6IFBoeXNpY2FsIGJhc2UgYWRkcmVzcyBhbmQgbGVuZ3RoIG9mIHRoZSBjb250cm9sbGVyJ3Mg
+cmVnaXN0ZXJzLgogICAtIGludGVycnVwdHM6IFRoZSBpbnRlcnJ1cHQgb3V0cHV0cyBmcm9tIHRo
+ZSBjb250cm9sbGVyLgogICAtIGNsb2NrczogTXVzdCBjb250YWluIGFuIGVudHJ5IGZvciBlYWNo
+IGVudHJ5IGluIGNsb2NrLW5hbWVzLgpAQCAtMjIzLDYgKzIyNCw3IEBAIG9mIHRoZSBmb2xsb3dp
+bmcgaG9zdDF4IGNsaWVudCBtb2R1bGVzOgogCiAtIGRwYXV4OiBEaXNwbGF5UG9ydCBBVVggaW50
+ZXJmYWNlCiAgIC0gY29tcGF0aWJsZTogIm52aWRpYSx0ZWdyYTEyNC1kcGF1eCIKKyAgICAibnZp
+ZGlhLHRlZ3JhMTMyLWRwYXV4IiAobm90IHlldCBtYXRjaGVkIGluIHRoZSBkcml2ZXIpCiAgIC0g
+cmVnOiBQaHlzaWNhbCBiYXNlIGFkZHJlc3MgYW5kIGxlbmd0aCBvZiB0aGUgY29udHJvbGxlcidz
+IHJlZ2lzdGVycy4KICAgLSBpbnRlcnJ1cHRzOiBUaGUgaW50ZXJydXB0IG91dHB1dHMgZnJvbSB0
+aGUgY29udHJvbGxlci4KICAgLSBjbG9ja3M6IE11c3QgY29udGFpbiBhbiBlbnRyeSBmb3IgZWFj
+aCBlbnRyeSBpbiBjbG9jay1uYW1lcy4KCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
+cmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
+bmZvL2RyaS1kZXZlbAo=
