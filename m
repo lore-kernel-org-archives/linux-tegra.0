@@ -1,58 +1,58 @@
-From: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 02/24] Documentation: DT bindings: add more chip compatible
- strings for Tegra PCIe
+From: Paul Walmsley <paul@pwsan.com>
+Subject: [PATCH 04/24] Documentation: DT bindings: add more chip compatible
+ strings for Tegra timers
 Date: Wed, 28 Jan 2015 16:49:37 -0700
-Message-ID: <20150128234937.20644.9400.stgit@dusk.lan>
+Message-ID: <20150128234937.20644.54294.stgit@dusk.lan>
 References: <20150128234935.20644.89300.stgit@dusk.lan>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150128234935.20644.89300.stgit-orwA252wQtA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150128234935.20644.89300.stgit@dusk.lan>
+Sender: linux-kernel-owner@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Paul Walmsley <pwalmsley@nvidia.com>, Kumar Gala <galak@codeaurora.org>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-Add compatible strings for the PCIe IP blocks present on several Tegra
-chips.  The primary objective here is to avoid checkpatch warnings,
-per:
+Add compatible strings for the timer IP blocks present on several
+Tegra chips.  The primary objective here is to avoid checkpatch
+warnings, per:
 
 http://marc.info/?l=linux-tegra&m=142201349727836&w=2
 
-Signed-off-by: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
-Cc: Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+N.B. The nvidia,tegra20-timer compatible string is removed from the
+nvidia,tegra30-timer.txt documentation file because it's already
+mentioned in the nvidia,tegra20-timer.txt documentation file.
+
+Signed-off-by: Paul Walmsley <paul@pwsan.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Pawel Moll <pawel.moll@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+Cc: Kumar Gala <galak@codeaurora.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: Paul Walmsley <pwalmsley@nvidia.com>
+Cc: devicetree@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 ---
- .../bindings/pci/nvidia,tegra20-pcie.txt           |    2 ++
- 1 file changed, 2 insertions(+)
+ .../bindings/timer/nvidia,tegra30-timer.txt        |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
-index d763e047c6ae..e772884f1c33 100644
---- a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
-+++ b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
-@@ -5,6 +5,8 @@ Required properties:
-   - "nvidia,tegra20-pcie"
-   - "nvidia,tegra30-pcie"
-   - "nvidia,tegra124-pcie"
-+  - "nvidia,tegra132-pcie" (not yet matched in the driver)
-+  - "nvidia,tegra210-pcie" (not yet matched in the driver)
- - device_type: Must be "pci"
- - reg: A list of physical base address and length for each set of controller
-   registers. Must contain an entry for each entry in the reg-names property.
-
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra30-timer.txt b/Documentation/devicetree/bindings/timer/nvidia,tegra30-timer.txt
+index b5082a1cf461..bbf38d26605b 100644
+--- a/Documentation/devicetree/bindings/timer/nvidia,tegra30-timer.txt
++++ b/Documentation/devicetree/bindings/timer/nvidia,tegra30-timer.txt
+@@ -6,7 +6,9 @@ trigger a legacy watchdog reset.
+ 
+ Required properties:
+ 
+-- compatible : should be "nvidia,tegra30-timer", "nvidia,tegra20-timer".
++- compatible : "nvidia,tegra30-timer"
++  "nvidia,tegra124-timer" (not yet matched in the driver)
++  "nvidia,tegra132-timer" (not yet matched in the driver)
+ - reg : Specifies base physical address and size of the registers.
+ - interrupts : A list of 6 interrupts; one per each of timer channels 1
+     through 5, and one for the shared interrupt for the remaining channels.
