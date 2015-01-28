@@ -1,12 +1,14 @@
 From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [PATCH v3 00/10] Improvements to Tegra-based
-	Chromebook support
-Date: Wed, 28 Jan 2015 11:50:58 +0100
-Message-ID: <1422442278-10405-1-git-send-email-tomeu.vizoso@collabora.com>
+Subject: [PATCH v3 06/10] ASoC: tegra: Add a control for the
+	headphone switch
+Date: Wed, 28 Jan 2015 11:51:04 +0100
+Message-ID: <1422442278-10405-7-git-send-email-tomeu.vizoso@collabora.com>
+References: <1422442278-10405-1-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1422442278-10405-1-git-send-email-tomeu.vizoso@collabora.com>
 List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -17,50 +19,27 @@ List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
 Errors-To: alsa-devel-bounces@alsa-project.org
 Sender: alsa-devel-bounces@alsa-project.org
 To: linux-kernel@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, alsa-devel@alsa-project.org, Wolfram Sang <wsa@the-dreams.de>, Andrew Bresticker <abrestic@chromium.org>, dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, David Airlie <airlied@linux.ie>, Dylan Reid <dgreid@chromium.org>, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Brown <broonie@kernel.org>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Simon Glass <sjg@chromium.org>, Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>, Takashi Iwai <tiwai@suse.de>, Kumar Gala <galak@codeaurora.org>, Javier
+Cc: Alexandre Courbot <gnurou@gmail.com>, alsa-devel@alsa-project.org, Lars-Peter Clausen <lars@metafoo.de>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Stephen Warren <swarren@wwwdotorg.org>, Andrew Bresticker <abrestic@chromium.org>, Simon Glass <sjg@chromium.org>, Wolfram Sang <wsa@the-dreams.de>, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Dylan Reid <dgreid@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-tegra@vger.kernel.org
 
-djM6CSogQWRkZWQgYmluZGluZ3MgZm9yIHRoZSBMVE4xNDBBVDI5IHBhbmVsCgkqIFJlbW92ZWQg
-dGhlIGRlbGF5IGluIHB3cnNlcSwgYXMgd2hhdCB3YXMgYWN0dWFsbHkgbmVlZGVkIHdhcyB0byBh
-ZGQKCWEgZGVwZW5kZW5jeSBvbiB0aGUgcG93ZXIgc3VwcGxpZXMgb2YgdGhlIGhvc3QKCSogVXNl
-cyB0aGUgcGlubXV4IGZvciB0aGUgQmxhemUgYXMgZ2VuZXJhdGVkIGJ5IHRlZ3JhLXBpbm11eC1z
-Y3JpcHRzCgkqIFVzZXMgdGhlIHBpbm11eCBmb3IgdGhlIEJpZyBhcyBpbiB0aGUgbGFzdCBwYXRj
-aCBmcm9tIFNpbW9uIEdsYXNzCgpIZWxsbywKCnRoaXMgc2VyaWVzIGFkZHMgc3VwcG9ydCBmb3Ig
-dGhlIFRlZ3JhLWJhc2VkIEhQIENocm9tZWJvb2sgMTQgKGFrYSBueWFuCmJsYXplKSwgd2hpY2gg
-aXMgdmVyeSBzaW1pbGFyIHRvIHRoZSBBY2VyIENocm9tZWJvb2sgMTMgKGFrYSBueWFuIGJpZyku
-CkJlY2F1c2UgdGhleSBib3RoIGluY2x1ZGUgdGVncmExMjQtbnlhbi5kdHNpLCBzb21lIGltcHJv
-dmVtZW50cyB0byBCbGF6ZQpzdXBwb3J0IGhhdmUgYWxzbyBiZW5lZml0dGVkIHRoZSBCaWcuIEkg
-aGF2ZSB0ZXN0ZWQgdGhhdCBVU0IyLCB0aGUgcGFuZWxzLApIRE1JLCB0aGUgdHJhY2twYWQsIFdp
-ZmkgYW5kIHNvdW5kIHdvcmsgb24gYm90aC4KClRoZSBEVCBmb3IgdGhlIEJpZyBpbmNsdWRlcyB0
-aGUgcGlubXV4IGNvbmZpZ3VyYXRpb24gYXMgZ2VuZXJhdGVkIGJ5CnRlZ3JhLXBpbm11eC1zY3Jp
-cHRzIHdpdGggU2ltb24ncyBwYXRjaCBhdDoKCmh0dHBzOi8vcGF0Y2h3b3JrLm96bGFicy5vcmcv
-cGF0Y2gvNDE3Nzc5LwoKVGhlc2UgcGF0Y2hlcyBhcmUgYmFzZWQgb24gdG9wIG9mIGxpbnV4LW5l
-eHQgMjAxNTAxMjguCgpodHRwOi8vY2dpdC5jb2xsYWJvcmEuY29tL2dpdC91c2VyL3RvbWV1L2xp
-bnV4LmdpdC9sb2cvP2g9bnlhbi12MwoKUmVnYXJkcywKClRvbWV1CgpTdMOpcGhhbmUgTWFyY2hl
-c2luICgxKToKICBkcm0vcGFuZWw6IGFkZCBzdXBwb3J0IGZvciBTYW1zdW5nIExUTjE0MEFUMjkg
-cGFuZWwKClRvbWV1IFZpem9zbyAoOSk6CiAgQVJNOiB0ZWdyYTogU2V0IHRoZSBzb3VuZCBjYXJk
-IG1vZGVsIHRoYXQgYWxzYXVjbSBleHBlY3RzCiAgQVJNOiB0ZWdyYTogTW92ZSBvdXQgbnlhbi1n
-ZW5lcmljIHBhcnRzIG91dCBmcm9tIHRoZSBueWFuLWJpZyBEVAogIEFSTTogdGVncmE6IEFkZCBE
-VFMgZm9yIHRoZSBueWFuLWJsYXplIGJvYXJkCiAgQVJNOiB0ZWdyYTogQWRkIG5vZGUgZm9yIHRy
-YWNrcGFkIGluIE55YW4gYm9hcmRzCiAgQVNvQzogdGVncmE6IEFkZCBhIGNvbnRyb2wgZm9yIHRo
-ZSBoZWFkcGhvbmUgc3dpdGNoCiAgQVNvQzogdGVncmE6IGFkZCBzaW5rIGZvciB0aGUgaW50ZXJu
-YWwgbWljIHRvIHRlZ3JhX21heDk4MDkwCiAgQVJNOiB0ZWdyYTogVXNlIHB3cnNlcS1zaW1wbGUg
-Zm9yIHRoZSB3aWZpIGluIE55YW4KICBBUk06IHRlZ3JhOiBVc2UgdGhlIGdlbmVyYXRlZCBwaW5t
-dXggZGF0YQogIEFSTTogdGVncmE6IFNldCBzcGktbWF4LWZyZXF1ZW5jeSBwcm9wZXJ0eSB0byBm
-bGFzaCBub2RlCgogLi4uL2JpbmRpbmdzL3BhbmVsL3NhbXN1bmcsbHRuMTQwYXQyOS0zMDEudHh0
-ICAgICAgfCAgICA3ICsKIC4uLi9iaW5kaW5ncy9zb3VuZC9udmlkaWEsdGVncmEtYXVkaW8tbWF4
-OTgwOTAudHh0IHwgICAgMSArCiBhcmNoL2FybS9ib290L2R0cy9NYWtlZmlsZSAgICAgICAgICAg
-ICAgICAgICAgICAgICB8ICAgIDEgKwogYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQtbnlhbi1i
-aWcuZHRzICAgICAgICAgICAgfCAyMTEyICsrKysrKysrKysrLS0tLS0tLS0tCiBhcmNoL2FybS9i
-b290L2R0cy90ZWdyYTEyNC1ueWFuLWJsYXplLmR0cyAgICAgICAgICB8IDEzMjUgKysrKysrKysr
-KysrCiBhcmNoL2FybS9ib290L2R0cy90ZWdyYTEyNC1ueWFuLmR0c2kgICAgICAgICAgICAgICB8
-ICA2OTIgKysrKysrKwogZHJpdmVycy9ncHUvZHJtL3BhbmVsL3BhbmVsLXNpbXBsZS5jICAgICAg
-ICAgICAgICAgfCAgIDI2ICsKIHNvdW5kL3NvYy90ZWdyYS90ZWdyYV9tYXg5ODA5MC5jICAgICAg
-ICAgICAgICAgICAgIHwgICAgMyArCiA4IGZpbGVzIGNoYW5nZWQsIDMyMDYgaW5zZXJ0aW9ucygr
-KSwgOTYxIGRlbGV0aW9ucygtKQogY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2
-aWNldHJlZS9iaW5kaW5ncy9wYW5lbC9zYW1zdW5nLGx0bjE0MGF0MjktMzAxLnR4dAogY3JlYXRl
-IG1vZGUgMTAwNjQ0IGFyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMTI0LW55YW4tYmxhemUuZHRzCiBj
-cmVhdGUgbW9kZSAxMDA2NDQgYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQtbnlhbi5kdHNpCgot
-LSAKMS45LjMKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-CkFsc2EtZGV2ZWwgbWFpbGluZyBsaXN0CkFsc2EtZGV2ZWxAYWxzYS1wcm9qZWN0Lm9yZwpodHRw
-Oi8vbWFpbG1hbi5hbHNhLXByb2plY3Qub3JnL21haWxtYW4vbGlzdGluZm8vYWxzYS1kZXZlbAo=
+To be used by userspace when the headphones jack is plugged in.
+
+Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+---
+ sound/soc/tegra/tegra_max98090.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sound/soc/tegra/tegra_max98090.c b/sound/soc/tegra/tegra_max98090.c
+index af3fb99..8df71a4 100644
+--- a/sound/soc/tegra/tegra_max98090.c
++++ b/sound/soc/tegra/tegra_max98090.c
+@@ -136,6 +136,7 @@ static const struct snd_soc_dapm_widget tegra_max98090_dapm_widgets[] = {
+ };
+ 
+ static const struct snd_kcontrol_new tegra_max98090_controls[] = {
++	SOC_DAPM_PIN_SWITCH("Headphones"),
+ 	SOC_DAPM_PIN_SWITCH("Speakers"),
+ };
+ 
+-- 
+1.9.3
