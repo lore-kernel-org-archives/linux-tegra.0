@@ -1,96 +1,61 @@
-From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v2] Add support for Nyan-big
-Date: Thu, 29 Jan 2015 07:32:07 -0700
-Message-ID: <CAPnjgZ1LhnzEXVm3JL2wMTZXd98QiQjm9Fog4w6YY7rPmZVC7A@mail.gmail.com>
-References: <1417699911-17901-1-git-send-email-sjg@chromium.org>
-	<CAAObsKAt=nuj0Gzg0g61q5x=U45FhEu7KyBnVp=2p0y1AraLRg@mail.gmail.com>
-	<CAL1qeaFccsVt8mDEfsOPDfhy1OOTkq5pkPCt-T6mhradAFF1yA@mail.gmail.com>
-	<CAAObsKAEKXVrE5iR9C5fXymse2D7u-41u8QKwC9eQEGTTXWxEw@mail.gmail.com>
-	<CAL1qeaFgr5rTGfFKV4-8aSD6pTNQc48OV4Y=GquFa8AXcnLjgw@mail.gmail.com>
-	<CAAObsKBzJxWKhh+8YB=LHCoLxK7eph-yrZe4TEEFfiyx7TE6HA@mail.gmail.com>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH 02/24] Documentation: DT bindings: add more chip
+ compatible strings for Tegra PCIe
+Date: Thu, 29 Jan 2015 08:45:37 -0600
+Message-ID: <CAL_JsqKMm=r+57ShskgbtNqnCGF1yKYDSJJFQ7o05keNzh5z+g@mail.gmail.com>
+References: <20150128234935.20644.89300.stgit@dusk.lan> <20150128234937.20644.9400.stgit@dusk.lan>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAObsKBzJxWKhh+8YB=LHCoLxK7eph-yrZe4TEEFfiyx7TE6HA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomeu Vizoso <tomeu.vizoso-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <20150128234937.20644.9400.stgit@dusk.lan>
+Sender: linux-pci-owner@vger.kernel.org
+To: Paul Walmsley <paul@pwsan.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Tomeu,
+On Wed, Jan 28, 2015 at 5:49 PM, Paul Walmsley <paul@pwsan.com> wrote:
+>
+> Add compatible strings for the PCIe IP blocks present on several Tegra
+> chips.  The primary objective here is to avoid checkpatch warnings,
+> per:
+>
+> http://marc.info/?l=linux-tegra&m=142201349727836&w=2
+>
+> Signed-off-by: Paul Walmsley <paul@pwsan.com>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Pawel Moll <pawel.moll@arm.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+> Cc: Kumar Gala <galak@codeaurora.org>
+> Cc: Stephen Warren <swarren@wwwdotorg.org>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: linux-tegra@vger.kernel.org
+> Cc: linux-pci@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  .../bindings/pci/nvidia,tegra20-pcie.txt           |    2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+> index d763e047c6ae..e772884f1c33 100644
+> --- a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+> +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+> @@ -5,6 +5,8 @@ Required properties:
+>    - "nvidia,tegra20-pcie"
+>    - "nvidia,tegra30-pcie"
+>    - "nvidia,tegra124-pcie"
+> +  - "nvidia,tegra132-pcie" (not yet matched in the driver)
+> +  - "nvidia,tegra210-pcie" (not yet matched in the driver)
 
-On 29 January 2015 at 07:22, Tomeu Vizoso <tomeu.vizoso-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On 16 January 2015 at 19:06, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
->> On Fri, Jan 16, 2015 at 8:00 AM, Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org> wrote:
->>> On 15 January 2015 at 19:35, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
->>>> Hi Tomeu,
->>>>
->>>> On Thu, Jan 15, 2015 at 9:11 AM, Tomeu Vizoso <tomeu-XCtybt49RKsYaV1qd6yewg@public.gmane.org> wrote:
->>>>> I have seen that coreboot configures these ones differently:
->>>>>
->>>>> -    ('sdmmc3_clk_pa6',         'sdmmc3',      None,      'none',
->>>>> False, False, False, False),
->>>>> +    ('sdmmc3_clk_pa6',         'sdmmc3',      None,      'none',
->>>>> False, True,  False, False),
->>>>> -    ('sdmmc3_clk_lb_out_pee4', 'sdmmc3',      None,      'none',
->>>>> False, False, False, False),
->>>>> +    ('sdmmc3_clk_lb_out_pee4', 'sdmmc3',      None,      'down',
->>>>> False, True,  False, False),
->>>>> -    ('sdmmc4_cmd_pt7',         'sdmmc4',      None,      'none',
->>>>> False, True,  False, False),
->>>>> +    ('sdmmc4_cmd_pt7',         'sdmmc4',      None,      'up',
->>>>> False, True,  False, False),
->>>>> -    ('dp_hpd_pff0',            'dp',          None,      'up',
->>>>> False, True,  False, False),
->>>>> +    ('dp_hpd_pff0',            'dp',          None,      'none',
->>>>> False, True,  False, False),
->>>>>
->>>>> May be good to have them match?
->>>>
->>>> I believe these should all be the same between Norrin (Nyan), Big, and
->>>> Blaze, so I'd go with whatever is in the Norrin pinmux config (which I
->>>> believe is what Simon's patch is based on).
->>>
->>> Even dp_hpd? In my testing I need to have pullup on big and with no
->>> pull on blaze for the panel to work. I'm very weak in reading
->>> schematics, but I see what I think is a pullup resistor in Big, and
->>> none in Blaze.
->>
->> Maybe I'm missing something, but I don't see any difference between
->> Big and Blaze with respect to dp_hpd.  Coreboot also configures them
->> both with no pull.  I'll have to look into this more...
->
-> Sorry, I think I got confused somewhere there. In my most recent
-> testing, I need dp_hpd to be configured with no pull on big or I get
-> spurious interrupts. That caused problems only sometimes as it only
-> manifested in a race within the drm subsystem.
->
-> Simon, do you mind if I resend your patch to tegra-pinmux-scripts with
-> that pin fixed?
+Whether the driver matches or not is irrelevant to the binding and may
+change over time. Does this mean the driver matches on something else
+or Tegra132 is not yet supported in the driver? If the former, what is
+important is what are the valid combinations of compatible properties
+and that is not captured here. In other words, what is the fallback
+compatible string for each chip?
 
-Please go ahead.
+The same comments apply to the rest of the series.
 
->
-> Thanks,
->
-> Tomeu
->
->>> So in summary, I think that we should make this change to the pinmux
->>> definition that Simon sent:
->>>
->>> -    ('usb_vbus_en0_pn4',       'usb',         None,      'none',
->>> False, True,  True,  False),
->>> -    ('usb_vbus_en1_pn5',       'usb',         None,      'none',
->>> False, True,  True,  False),
->>> +    ('usb_vbus_en0_pn4',       'usb',         None,      'up',
->>> False, True,  False, False),
->>> +    ('usb_vbus_en1_pn5',       'usb',         None,      'up',
->>> False, True,  False, False),
->>
->> Yes.  It ends up not mattering what the pull is when using a mainline
->> DTS since they use a fixed regulator to drive these pins high, but
->> you're right, the most correct thing for VBUS is input enabled with
->> pull-up.
-
-Regards,
-Simon
+Rob
