@@ -1,61 +1,59 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH 02/24] Documentation: DT bindings: add more chip
- compatible strings for Tegra PCIe
-Date: Thu, 29 Jan 2015 08:45:37 -0600
-Message-ID: <CAL_JsqKMm=r+57ShskgbtNqnCGF1yKYDSJJFQ7o05keNzh5z+g@mail.gmail.com>
-References: <20150128234935.20644.89300.stgit@dusk.lan> <20150128234937.20644.9400.stgit@dusk.lan>
+From: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v2] arm64: Kconfig: clean up two no-op Kconfig options from
+ CONFIG_ARCH_TEGRA*
+Date: Thu, 29 Jan 2015 15:42:45 +0000 (UTC)
+Message-ID: <alpine.DEB.2.02.1501291541390.16475@utopia.booyaka.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <20150128234937.20644.9400.stgit@dusk.lan>
-Sender: linux-pci-owner@vger.kernel.org
-To: Paul Walmsley <paul@pwsan.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jan 28, 2015 at 5:49 PM, Paul Walmsley <paul@pwsan.com> wrote:
->
-> Add compatible strings for the PCIe IP blocks present on several Tegra
-> chips.  The primary objective here is to avoid checkpatch warnings,
-> per:
->
-> http://marc.info/?l=linux-tegra&m=142201349727836&w=2
->
-> Signed-off-by: Paul Walmsley <paul@pwsan.com>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Pawel Moll <pawel.moll@arm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
-> Cc: Kumar Gala <galak@codeaurora.org>
-> Cc: Stephen Warren <swarren@wwwdotorg.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: linux-tegra@vger.kernel.org
-> Cc: linux-pci@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  .../bindings/pci/nvidia,tegra20-pcie.txt           |    2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
-> index d763e047c6ae..e772884f1c33 100644
-> --- a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
-> +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
-> @@ -5,6 +5,8 @@ Required properties:
->    - "nvidia,tegra20-pcie"
->    - "nvidia,tegra30-pcie"
->    - "nvidia,tegra124-pcie"
-> +  - "nvidia,tegra132-pcie" (not yet matched in the driver)
-> +  - "nvidia,tegra210-pcie" (not yet matched in the driver)
 
-Whether the driver matches or not is irrelevant to the binding and may
-change over time. Does this mean the driver matches on something else
-or Tegra132 is not yet supported in the driver? If the former, what is
-important is what are the valid combinations of compatible properties
-and that is not captured here. In other words, what is the fallback
-compatible string for each chip?
+Paul Bolle pointed out that commit
+d035fdfa27ac124bc8f94c3d7dc82ad069802170 ("arm64: Add Tegra132
+support") included two Kconfig symbols that are now no-ops:
+USB_ARCH_HAS_EHCI and HAVE_SMP.  So, drop the two symbols.
 
-The same comments apply to the rest of the series.
+This second version corrects a thinko in Paul Bolle's E-mail address.
 
-Rob
+Signed-off-by: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+Cc: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>
+Cc: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Cc: Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>
+---
+
+Boot-tested on NVIDIA Tegra132 Norrin64 FFD with a extra DTS page for the 
+board data (not yet posted upstream).
+
+ arch/arm64/Kconfig | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 3b97e725ebfc..ae18c3d2bb3b 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -180,7 +180,6 @@ config ARCH_TEGRA
+ 	select CLKSRC_OF
+ 	select GENERIC_CLOCKEVENTS
+ 	select HAVE_CLK
+-	select HAVE_SMP
+ 	select PINCTRL
+ 	select RESET_CONTROLLER
+ 	help
+@@ -190,7 +189,6 @@ config ARCH_TEGRA_132_SOC
+ 	bool "NVIDIA Tegra132 SoC"
+ 	depends on ARCH_TEGRA
+ 	select PINCTRL_TEGRA124
+-	select USB_ARCH_HAS_EHCI if USB_SUPPORT
+ 	select USB_ULPI if USB_PHY
+ 	select USB_ULPI_VIEWPORT if USB_PHY
+ 	help
+-- 
+2.1.4
