@@ -1,108 +1,29 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v2] mmc: tegra: Write xfer_mode, CMD regs in together
-Date: Thu, 29 Jan 2015 11:24:52 +0100
-Message-ID: <CAPDyKFrVLPEiVVzpseeUfLCFtS8UWCChkFPT_OftMbAyQLnGBQ@mail.gmail.com>
-References: <1422463516-19557-1-git-send-email-rklein@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 0/4] clk: tegra: add support for the Tegra132 CAR IP
+ block (fwd)
+Date: Thu, 29 Jan 2015 13:18:44 +0200
+Message-ID: <20150129111844.GS31060@tbergstrom-lnx.Nvidia.com>
+References: <alpine.DEB.2.02.1501290921010.19947@utopia.booyaka.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1422463516-19557-1-git-send-email-rklein@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Chris Ball <chris@printf.net>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, pkunapuli@nvidia.com, linux-mmc <linux-mmc@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.02.1501290921010.19947-rwI8Ez+7Ko+d5PgPZx9QOdBPR1lH4CV8@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+Cc: pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 28 January 2015 at 17:45, Rhyland Klein <rklein@nvidia.com> wrote:
-> From: Pavan Kunapuli <pkunapuli@nvidia.com>
->
-> If there is a gap between xfer mode and command register writes,
-> tegra SDMMC controller can sometimes issue a spurious command before
-> the CMD register is written. To avoid this, these two registers need
-> to be written together in a single write operation.
->
-> This is implemented as an NVQUIRK as it applies to T114, T124 and
-> T132.
->
-> Signed-off-by: Pavan Kunapuli <pkunapuli@nvidia.com>
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+On Thu, Jan 29, 2015 at 09:22:25AM +0000, Paul Walmsley wrote:
+> 
+> Hi Peter, Prashant,
+> 
+> Ping.  Any comments on these patches?  Are either of you planning to send 
+> a pull request for these for v3.20?
+> 
 
-Thanks! Applied for next.
+Yes. I plan to by the end of this week, maybe @ fosdem :)
 
-Kind regards
-Uffe
+Cheers,
 
-> ---
-> v2:
->  - Fixed quirk flag check  s/*/&
->  - Removed line clearing xfer_mode_shadow
->  - Added explicit mention of which platforms this applies to in
->    description
->
->  drivers/mmc/host/sdhci-tegra.c |   30 +++++++++++++++++++++++++++++-
->  1 file changed, 29 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index 59797106af93..f3778d58d1cd 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -41,6 +41,7 @@
->  #define NVQUIRK_DISABLE_SDR50          BIT(3)
->  #define NVQUIRK_DISABLE_SDR104         BIT(4)
->  #define NVQUIRK_DISABLE_DDR50          BIT(5)
-> +#define NVQUIRK_SHADOW_XFER_MODE_REG   BIT(6)
->
->  struct sdhci_tegra_soc_data {
->         const struct sdhci_pltfm_data *pdata;
-> @@ -67,6 +68,31 @@ static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
->         return readw(host->ioaddr + reg);
->  }
->
-> +static void tegra_sdhci_writew(struct sdhci_host *host, u16 val, int reg)
-> +{
-> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +       struct sdhci_tegra *tegra_host = pltfm_host->priv;
-> +       const struct sdhci_tegra_soc_data *soc_data = tegra_host->soc_data;
-> +
-> +       if (soc_data->nvquirks & NVQUIRK_SHADOW_XFER_MODE_REG) {
-> +               switch (reg) {
-> +               case SDHCI_TRANSFER_MODE:
-> +                       /*
-> +                        * Postpone this write, we must do it together with a
-> +                        * command write that is down below.
-> +                        */
-> +                       pltfm_host->xfer_mode_shadow = val;
-> +                       return;
-> +               case SDHCI_COMMAND:
-> +                       writel((val << 16) | pltfm_host->xfer_mode_shadow,
-> +                               host->ioaddr + SDHCI_TRANSFER_MODE);
-> +                       return;
-> +               }
-> +       }
-> +
-> +       writew(val, host->ioaddr + reg);
-> +}
-> +
->  static void tegra_sdhci_writel(struct sdhci_host *host, u32 val, int reg)
->  {
->         struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> @@ -147,6 +173,7 @@ static void tegra_sdhci_set_bus_width(struct sdhci_host *host, int bus_width)
->  static const struct sdhci_ops tegra_sdhci_ops = {
->         .get_ro     = tegra_sdhci_get_ro,
->         .read_w     = tegra_sdhci_readw,
-> +       .write_w    = tegra_sdhci_writew,
->         .write_l    = tegra_sdhci_writel,
->         .set_clock  = sdhci_set_clock,
->         .set_bus_width = tegra_sdhci_set_bus_width,
-> @@ -201,7 +228,8 @@ static struct sdhci_tegra_soc_data soc_data_tegra114 = {
->         .pdata = &sdhci_tegra114_pdata,
->         .nvquirks = NVQUIRK_DISABLE_SDR50 |
->                     NVQUIRK_DISABLE_DDR50 |
-> -                   NVQUIRK_DISABLE_SDR104,
-> +                   NVQUIRK_DISABLE_SDR104 |
-> +                   NVQUIRK_SHADOW_XFER_MODE_REG,
->  };
->
->  static const struct of_device_id sdhci_tegra_dt_match[] = {
-> --
-> 1.7.9.5
->
+Peter.
