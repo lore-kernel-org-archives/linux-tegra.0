@@ -1,39 +1,62 @@
-From: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v2] arm64: Kconfig: clean up two no-op Kconfig options
- from CONFIG_ARCH_TEGRA*
-Date: Thu, 29 Jan 2015 16:31:38 +0000
-Message-ID: <20150129163137.GJ8951@e104818-lin.cambridge.arm.com>
-References: <alpine.DEB.2.02.1501291541390.16475@utopia.booyaka.com>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH 02/24] Documentation: DT bindings: add more chip
+ compatible strings for Tegra PCIe
+Date: Thu, 29 Jan 2015 10:44:42 -0600
+Message-ID: <CAL_JsqLE+W+T5YqzdB+DkdBE+HsgySX0yJHzn1y43QDfw4GA9A@mail.gmail.com>
+References: <20150128234935.20644.89300.stgit@dusk.lan> <20150128234937.20644.9400.stgit@dusk.lan>
+ <CAL_JsqKMm=r+57ShskgbtNqnCGF1yKYDSJJFQ7o05keNzh5z+g@mail.gmail.com> <alpine.DEB.2.02.1501291543030.16475@utopia.booyaka.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.02.1501291541390.16475-rwI8Ez+7Ko+d5PgPZx9QOdBPR1lH4CV8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Will Deacon <Will.Deacon-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <alpine.DEB.2.02.1501291543030.16475@utopia.booyaka.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Paul Walmsley <paul@pwsan.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jan 29, 2015 at 03:42:45PM +0000, Paul Walmsley wrote:
-> 
-> Paul Bolle pointed out that commit
-> d035fdfa27ac124bc8f94c3d7dc82ad069802170 ("arm64: Add Tegra132
-> support") included two Kconfig symbols that are now no-ops:
-> USB_ARCH_HAS_EHCI and HAVE_SMP.  So, drop the two symbols.
-> 
-> This second version corrects a thinko in Paul Bolle's E-mail address.
-> 
-> Signed-off-by: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
-> Cc: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Cc: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Cc: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>
-> Cc: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-> Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-> Cc: Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>
+On Thu, Jan 29, 2015 at 9:45 AM, Paul Walmsley <paul@pwsan.com> wrote:
+> Hi Rob
+>
+> On Thu, 29 Jan 2015, Rob Herring wrote:
+>
+>> On Wed, Jan 28, 2015 at 5:49 PM, Paul Walmsley <paul@pwsan.com> wrote:
+>> >
+>> > Add compatible strings for the PCIe IP blocks present on several Tegra
+>> > chips.  The primary objective here is to avoid checkpatch warnings,
+>> > per:
+>> >
 
-The patch looks fine. Cc'ing the arm-soc guys as they have merged the
-original commit.
+[...]
 
--- 
-Catalin
+>> > +  - "nvidia,tegra132-pcie" (not yet matched in the driver)
+>> > +  - "nvidia,tegra210-pcie" (not yet matched in the driver)
+>>
+>> Whether the driver matches or not is irrelevant to the binding and may
+>> change over time. Does this mean the driver matches on something else
+>> or Tegra132 is not yet supported in the driver?
+>
+> It means that the driver currently matches on one of the first three
+> strings that don't carry that annotation.
+>
+>> If the former, what is important is what are the valid combinations of
+>> compatible properties and that is not captured here. In other words,
+>> what is the fallback compatible string for each chip?
+>
+> The intention was to try to be helpful: to document that anyone adding a
+> "nvidia,tegra132-pcie" compatible string would also need to add one of the
+> other strings as a fallback.  Would you like that to be documented in a
+> different way, or removed?
+
+Then you should say something like 'must contain "nvidia,tegra20-pcie"
+and one of: ...'
+
+You can also use nvidia,<chip>-pcie if you want. checkpatch will check
+for that pattern too. Then your documentation can be something like:
+
+Must contain '"nvidia,<chip>-pcie", "nvidia,tegra20-pcie"' where
+<chip> is tegra30, tegra132, ...
+
+We don't enforce that the <chip> part is documented ATM and not likely
+until we have a schema if ever.
+
+Rob
