@@ -1,61 +1,77 @@
-From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 02/15] iommu: Introduce iommu domain types
-Date: Fri, 30 Jan 2015 13:22:34 +0100
-Message-ID: <20150130122233.GA3702@8bytes.org>
-References: <1422316305-19216-1-git-send-email-joro@8bytes.org>
-	<1422316305-19216-3-git-send-email-joro@8bytes.org>
-	<20150128141934.GP1569@arm.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20150128141934.GP1569-5wv7dgnIgG8@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "jroedel-l3A5Bk7waGM@public.gmane.org" <jroedel-l3A5Bk7waGM@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v3 01/20] power_supply: Add driver private data
+Date: Fri, 30 Jan 2015 15:47:39 +0100
+Message-ID: <1422629278-12202-2-git-send-email-k.kozlowski@samsung.com>
+References: <1422629278-12202-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
+In-reply-to: <1422629278-12202-1-git-send-email-k.kozlowski@samsung.com>
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Jiri Kosina <jkosina@suse.cz>, David Herrmann <dh.herrmann@googlemail.com>, Cezary Jackiewicz <cezary.jackiewicz@gmail.com>, Darren Hart <dvhart@infradead.org>, Support Opensource <support.opensource@diasemi.com>, Milo Kim <milo.kim@ti.com>, Julian Andres Klode <jak@jak-linux.org>, Marc Dietrich <marvin24@gmx.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-acpi@vger.kernel.org, linux-input@vger.kernel.org, platform-driver-x86@vger.kernel.org, patches@opensource.wolfsonmicro.com, ac100@lists.launchpad.net, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, Linus Walleij <linus.walleij@linaro.org>, Samuel
+Cc: Thomas Gleixner <tglx@linutronix.de>, Pavel Machek <pavel@ucw.cz>, Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Will,
+Allow drivers to store private data inside power_supply structure for
+later usage in power supply operations.
 
-On Wed, Jan 28, 2015 at 02:19:34PM +0000, Will Deacon wrote:
-> > +/* This are the possible domain-types */
-> > +enum iommu_domain_type {
-> > +	IOMMU_DOMAIN_DMA,	/* Domain used for DMA-API */
-> > +	IOMMU_DOMAIN_IDENTITY,	/* Identity mapped domain  */
-> 
-> What happens if somebody calls map or unmap on an identity-mapping domain?
-> Can we catch that in the IOMMU core before calling the IOMMU driver? That
-> also implies we need something extra to parameterise the attributes for
-> the mapping (e.g. cacheable, read-only) and also potentially the address
-> range.
+Usage of driver private data is necessary to access driver's state
+container object from power supply calls (like get_property()) if struct
+'power_supply' is a stored there as a pointer, for example:
 
-The domain type is only used by the IOMMU drivers to do be able to enter
-special allocation paths (the AMD-Vi driver for example could allocate a
-special internal domain type for IOMMU_DOMAIN_DMA).
-But I think you are right, a couple of the current domain attributes we
-have could be moved here, turning the domain-type into a bit-field. So
-we could have bits for PAGING, CACHABLE, DMA_API and NESTING and build
-the domain types above from those bits.
+struct some_driver_info {
+	struct i2c_client       *client;
+	struct power_supply     *power_supply;
+	...
+}
 
-> > +	IOMMU_DOMAIN_UNMANAGED, /* Domain mappings are managed by a third party
-> > +				   user (like KVM or VFIO) */
-> 
-> We already have the domain attributes (iommu_attr) to describe features
-> of a domain. Is there really a need for this extra type, or can we extend
-> the attribute set and allow for domain allocation with attributes?
+In such case one cannot use container_of() and must store pointer to
+state container as private data.
 
-I don't think that domains attributed will become obsolete with this
-domain-type field. Some of the attributes should stay there for now,
-like all the PAMU specific stuff. But I agree, some could be moved over.
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Reviewed-by: Sebastian Reichel <sre@kernel.org>
+---
+ drivers/power/power_supply_core.c | 6 ++++++
+ include/linux/power_supply.h      | 4 ++++
+ 2 files changed, 10 insertions(+)
 
-	
-	Joerg
+diff --git a/drivers/power/power_supply_core.c b/drivers/power/power_supply_core.c
+index 694e8cddd5c1..84ef3f40e7bf 100644
+--- a/drivers/power/power_supply_core.c
++++ b/drivers/power/power_supply_core.c
+@@ -629,6 +629,12 @@ void power_supply_unregister(struct power_supply *psy)
+ }
+ EXPORT_SYMBOL_GPL(power_supply_unregister);
+ 
++void *power_supply_get_drvdata(struct power_supply *psy)
++{
++	return psy->drv_data;
++}
++EXPORT_SYMBOL_GPL(power_supply_get_drvdata);
++
+ static int __init power_supply_class_init(void)
+ {
+ 	power_supply_class = class_create(THIS_MODULE, "power_supply");
+diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
+index 096dbced02ac..a5743f24e03e 100644
+--- a/include/linux/power_supply.h
++++ b/include/linux/power_supply.h
+@@ -209,6 +209,9 @@ struct power_supply {
+ 	/* For APM emulation, think legacy userspace. */
+ 	int use_for_apm;
+ 
++	/* Driver private data */
++	void *drv_data;
++
+ 	/* private */
+ 	struct device *dev;
+ 	struct work_struct changed_work;
+@@ -281,6 +284,7 @@ extern int power_supply_register_no_ws(struct device *parent,
+ extern void power_supply_unregister(struct power_supply *psy);
+ extern int power_supply_powers(struct power_supply *psy, struct device *dev);
+ 
++extern void *power_supply_get_drvdata(struct power_supply *psy);
+ /* For APM emulation, think legacy userspace. */
+ extern struct class *power_supply_class;
+ 
+-- 
+1.9.1
