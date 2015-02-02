@@ -1,98 +1,103 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 3/3] dt: paz00: define nvec as child of i2c bus
-Date: Mon, 02 Feb 2015 14:20:47 -0700
-Message-ID: <54CFEA2F.8040701@wwwdotorg.org>
-References: <1422516022-27161-1-git-send-email-danindrey@mail.ru> <1422516022-27161-4-git-send-email-danindrey@mail.ru>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: pull request for Tegra clock updates for 3.20
+Date: Mon, 02 Feb 2015 15:15:14 -0800
+Message-ID: <20150202231514.421.5790@quantum>
+References: <20150202151418.GA15776@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1422516022-27161-4-git-send-email-danindrey-JGs/UdohzUI@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20150202151418.GA15776@tbergstrom-lnx.Nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: "mark.rutland@arm.com" <mark.rutland@arm.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/29/2015 12:20 AM, Andrey Danin wrote:
-> NVEC driver was reimplemented to use tegra i2c. Use common i2c bindings
-> for NVEC node.
+Quoting Peter De Schrijver (2015-02-02 07:14:18)
+> Hi Mike,
+> 
+> A few bug fixes and support for Tegra132 clocks.
 
-> diff --git a/Documentation/devicetree/bindings/nvec/nvidia,nvec.txt b/Documentation/devicetree/bindings/nvec/nvidia,nvec.txt
+Hi Peter,
 
-The changes to this file make more sense either as a standalone patch 
-1/4, or as part of the driver changes.
+Pulled into clk-next, but...
 
-> @@ -2,20 +2,5 @@ NVIDIA compliant embedded controller
->
->   Required properties:
->   - compatible : should be "nvidia,nvec".
-> -- reg : the iomem of the i2c slave controller
-> -- interrupts : the interrupt line of the i2c slave controller
-> -- clock-frequency : the frequency of the i2c bus
-> -- gpios : the gpio used for ec request
-> -- slave-addr: the i2c address of the slave controller
-> -- clocks : Must contain an entry for each entry in clock-names.
-> -  See ../clocks/clock-bindings.txt for details.
-> -- clock-names : Must include the following entries:
-> -  Tegra20/Tegra30:
-> -  - div-clk
-> -  - fast-clk
-> -  Tegra114:
-> -  - div-clk
-> -- resets : Must contain an entry for each entry in reset-names.
-> -  See ../reset/reset.txt for details.
-> -- reset-names : Must include the following entries:
-> -  - i2c
-> +- request-gpios : the gpio used for ec request
-> +- reg: the i2c address of the slave controller
+-rc7 is pretty late for sending a PR. Please try to send it out earlier
+if possible next time, but I understand that this happens from time to
+time.
 
-This change breaks ABI.
+Also this PR was based on -rc7, which is clearly ahead of clk-next. In
+fact clk-next is often based on -rc1. While only a minor inconvenience
+for me to merge clk-next into -rc7 before pulling your code, its a bit
+nicer to send the PR against a common baseline like -rc1.
 
-Instead of modifying the definition of the existing compatible value, I 
-think you should introduce a new compatible value to describe the 
-external NVEC chip.
+This will show up in linux-next after a couple of days since it is a bit
+too much churn and I'm trying to make sure the problems in the clk tree
+from the last several days are truly sorted before introducing new code.
 
-> diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+Regards,
+Mike
 
-> -	nvec@7000c500 {
-> -		compatible = "nvidia,nvec";
-> -		reg = <0x7000c500 0x100>;
-> -		interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>;
-> -		#address-cells = <1>;
-> -		#size-cells = <0>;
-> +	i2c@7000c500 {
-> +		status = "okay";
->   		clock-frequency = <80000>;
-> -		request-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_HIGH>;
-> -		slave-addr = <138>;
-> -		clocks = <&tegra_car TEGRA20_CLK_I2C3>,
-> -		         <&tegra_car TEGRA20_CLK_PLL_P_OUT3>;
-> -		clock-names = "div-clk", "fast-clk";
-> -		resets = <&tegra_car 67>;
-> -		reset-names = "i2c";
-> +
-> +		nvec: nvec@45 {
-
-This doesn't feel correct. There's nothing here to indicate that this 
-child device is a slave that is implemented by the host SoC rather than 
-something external attached to the I2C bus.
-
-Perhaps you can get away with this, since the driver for nvidia,nvec 
-only calls I2C APIs suitable for internal slaves rather than external 
-slaves? Even so though, I think the distinction needs to be clearly 
-marked in the DT so that any generic code outside the NVEC driver that 
-parses the DT can determine the difference.
-
-I would recommend the I2C controller having #address-cells=<2> with cell 
-0 being 0==master,1==slave, cell 1 being the I2C address. The I2C driver 
-would need to support #address-cells=<1> for backwards-compatibility.
-
-> +			compatible = "nvidia,nvec";
-> +			request-gpios = <&gpio TEGRA_GPIO(V, 2)
-> +				GPIO_ACTIVE_HIGH>;
-> +			reg = <0x45>;
-
-The order is typically compatible, reg, other properties.
-
-> +		};
->   	};
+> 
+> Thanks,
+> 
+> Peter.
+> 
+> The following changes since commit e36f014edff70fc02b3d3d79cead1d58f289332e:
+> 
+>   Linux 3.19-rc7 (2015-02-01 20:07:21 -0800)
+> 
+> are available in the git repository at:
+> 
+>   git://nv-tegra.nvidia.com/user/pdeschrijver/linux.git tags/tegra-clk-3.20
+> 
+> for you to fetch changes up to b270491eb9a033a1ab6c66e778c9dd3e3a4f7639:
+> 
+>   clk: tegra: Define PLLD_DSI and remove dsia(b)_mux (2015-02-02 16:22:34 +0200)
+> 
+> ----------------------------------------------------------------
+> Tegra clock fixes for 3.20
+> 
+> ----------------------------------------------------------------
+> Andrew Bresticker (1):
+>       clk: tegra: SDMMC controllers are on APB
+> 
+> Mark Zhang (1):
+>       clk: tegra: Define PLLD_DSI and remove dsia(b)_mux
+> 
+> Paul Walmsley (2):
+>       clk: tegra: split Tegra124 clock header file
+>       clk: tegra: Add support for the Tegra132 CAR IP block
+> 
+> Peter De Schrijver (2):
+>       clk: tegra: make tegra_clocks_apply_init_table() arch_initcall
+>       clk: tegra: Update binding doc for Tegra132
+> 
+> Sean Paul (1):
+>       clk: tegra124: Add init data for dsi lp clocks
+> 
+> Tomeu Vizoso (1):
+>       clk: tegra: Fix order of arguments in WARN
+> 
+>  .../bindings/clock/nvidia,tegra124-car.txt         |  10 +-
+>  arch/arm/mach-tegra/tegra.c                        |   2 -
+>  drivers/clk/tegra/Makefile                         |   1 +
+>  drivers/clk/tegra/clk-id.h                         |   2 -
+>  drivers/clk/tegra/clk-pll.c                        |  18 +-
+>  drivers/clk/tegra/clk-tegra-periph.c               |  18 +-
+>  drivers/clk/tegra/clk-tegra114.c                   |  10 +-
+>  drivers/clk/tegra/clk-tegra124.c                   | 168 ++++++++--
+>  drivers/clk/tegra/clk.c                            |   7 +-
+>  include/dt-bindings/clock/tegra124-car-common.h    | 345 +++++++++++++++++++++
+>  include/dt-bindings/clock/tegra124-car.h           | 345 +--------------------
+>  include/linux/clk/tegra.h                          |   2 -
+>  12 files changed, 532 insertions(+), 396 deletions(-)
+>  create mode 100644 include/dt-bindings/clock/tegra124-car-common.h
