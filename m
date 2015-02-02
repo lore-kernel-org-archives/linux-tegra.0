@@ -1,64 +1,54 @@
-From: Nicholas Mc Guire <hofrat-Q945KHDl0DbYtjvyW6yDsg@public.gmane.org>
-Subject: [PATCH 1/2 v3] spi: tegra20-sflash: cleanup wait_for_completion return handling
-Date: Mon,  2 Feb 2015 04:51:52 -0500
-Message-ID: <1422870712-2710-1-git-send-email-hofrat@osadl.org>
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Nicholas Mc Guire <hofrat-Q945KHDl0DbYtjvyW6yDsg@public.gmane.org>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/2 v3] spi: tegra20-sflash: cleanup wait_for_completion
+ return handling
+Date: Mon, 2 Feb 2015 11:40:11 +0000
+Message-ID: <20150202114011.GJ21293@sirena.org.uk>
+References: <1422870712-2710-1-git-send-email-hofrat@osadl.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="qj2xQFWTK7ooCBoA"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1422870712-2710-1-git-send-email-hofrat-Q945KHDl0DbYtjvyW6yDsg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Nicholas Mc Guire <hofrat-Q945KHDl0DbYtjvyW6yDsg@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-return type of wait_for_completion_timeout is unsigned long not int, this
-patch adds an appropriate variable and fixes up the assignment.
-As the string in dev_err already states "timeout" there
-is little point in printing the 0 here.
 
-Signed-off-by: Nicholas Mc Guire <hofrat-Q945KHDl0DbYtjvyW6yDsg@public.gmane.org>
----
+--qj2xQFWTK7ooCBoA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-v2: typo fixed as suggested by Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-v3: merged dev_err into one line as suggested by Laxman Dewangan 
-    <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Mon, Feb 02, 2015 at 04:51:52AM -0500, Nicholas Mc Guire wrote:
+> return type of wait_for_completion_timeout is unsigned long not int, this
+> patch adds an appropriate variable and fixes up the assignment.
+> As the string in dev_err already states "timeout" there
+> is little point in printing the 0 here.
 
-This patch was only compile tested with tegra_defconfig
-(implies CONFIG_SPI_TEGRA20_SFLASH=y)
+This is labelled as patch 1/2 but appears to be sent as a single patch
+and there's several other versions of patches for the Tegra code from
+you at least some of which *do* include two patches.  Please understand
+that the purpose of numbering patches with posted patch series is to
+allow the patches to be sorted within that series.
 
-Patch is against 3.19.0-rc6 -next-20150202
+This is all confusing, I'm going to ignore all of these patches.  Please
+resubmit.
 
- drivers/spi/spi-tegra20-sflash.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+--qj2xQFWTK7ooCBoA
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-diff --git a/drivers/spi/spi-tegra20-sflash.c b/drivers/spi/spi-tegra20-sflash.c
-index b6558bb..c23d3d4 100644
---- a/drivers/spi/spi-tegra20-sflash.c
-+++ b/drivers/spi/spi-tegra20-sflash.c
-@@ -323,6 +323,7 @@ static int tegra_sflash_transfer_one_message(struct spi_master *master,
- 	struct spi_transfer *xfer;
- 	struct spi_device *spi = msg->spi;
- 	int ret;
-+	unsigned long dma_timeout;
- 
- 	msg->status = 0;
- 	msg->actual_length = 0;
-@@ -337,11 +338,10 @@ static int tegra_sflash_transfer_one_message(struct spi_master *master,
- 			goto exit;
- 		}
- 		is_first_msg = false;
--		ret = wait_for_completion_timeout(&tsd->xfer_completion,
-+		dma_timeout = wait_for_completion_timeout(&tsd->xfer_completion,
- 						SPI_DMA_TIMEOUT);
--		if (WARN_ON(ret == 0)) {
--			dev_err(tsd->dev,
--				"spi trasfer timeout, err %d\n", ret);
-+		if (WARN_ON(dma_timeout == 0)) {
-+			dev_err(tsd->dev, "spi transfer timeout\n");
- 			ret = -EIO;
- 			goto exit;
- 		}
--- 
-1.7.10.4
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+iQEcBAEBCAAGBQJUz2IaAAoJECTWi3JdVIfQYBIH/2HqnkjMZMlXbtClfCDyGYu+
+fKWKY6vceuO2jsg0GO5jNRHIq/xxHzXv7wyguiTqdtX5vSpt6t3jLReBmwpv8IBu
+6gUMz73u0GD5kXDxzkq6O6KXi7u5MmsMAdj5SoF4I3wEanS+OL7CiOhNldvFjlwX
+EHHBowc7hYbmbtxoTaIKGzobRXu4PVB2RVxDpf2iAN2G7bcnfUtkqlrfDpVL2UpE
+DEmYxTz/WigflK9gPe8Cr5Ls0bTQy/F/Ff9YNCz+K0Vn6MgqK7LZUTDFnnfPqPRn
+1w5JamxcBtwVzg2Qx6I1tktG5mxUViRVm24pDUtLUF2bIvM4C71lq4V0QFIvsc8=
+=YVQq
+-----END PGP SIGNATURE-----
+
+--qj2xQFWTK7ooCBoA--
