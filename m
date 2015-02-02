@@ -1,41 +1,98 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v3 01/10] ARM: tegra: Set the sound card model that alsaucm
- expects
-Date: Mon, 02 Feb 2015 14:08:36 -0700
-Message-ID: <54CFE754.7000500@wwwdotorg.org>
-References: <1422442278-10405-1-git-send-email-tomeu.vizoso@collabora.com> <1422442278-10405-2-git-send-email-tomeu.vizoso@collabora.com>
+Subject: Re: [PATCH 3/3] dt: paz00: define nvec as child of i2c bus
+Date: Mon, 02 Feb 2015 14:20:47 -0700
+Message-ID: <54CFEA2F.8040701@wwwdotorg.org>
+References: <1422516022-27161-1-git-send-email-danindrey@mail.ru> <1422516022-27161-4-git-send-email-danindrey@mail.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1422442278-10405-2-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+In-Reply-To: <1422516022-27161-4-git-send-email-danindrey-JGs/UdohzUI@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/28/2015 03:50 AM, Tomeu Vizoso wrote:
-> Patches are on its way to add a config file to alsaucm for the Nyan
-> boards. Use the same card ID that alsaucm will expect.
+On 01/29/2015 12:20 AM, Andrey Danin wrote:
+> NVEC driver was reimplemented to use tegra i2c. Use common i2c bindings
+> for NVEC node.
 
-> diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts b/arch/arm/boot/dts/tegra124-nyan-big.dts
+> diff --git a/Documentation/devicetree/bindings/nvec/nvidia,nvec.txt b/Documentation/devicetree/bindings/nvec/nvidia,nvec.txt
 
->   	sound {
-> -		compatible = "nvidia,tegra-audio-max98090-nyan-big",
-> +		compatible = "nvidia,tegra-audio-max98090-nyan",
->   			     "nvidia,tegra-audio-max98090";
+The changes to this file make more sense either as a standalone patch 
+1/4, or as part of the driver changes.
 
-I'm not convinced that removing the board-specific compatible value is a 
-great idea. What if we find we need to distinguish between different 
-boards that use this same binding in the future. That situation is 
-exactly why we have board-/SoC-specific values in compatible even if we 
-don't immediately use them.
+> @@ -2,20 +2,5 @@ NVIDIA compliant embedded controller
+>
+>   Required properties:
+>   - compatible : should be "nvidia,nvec".
+> -- reg : the iomem of the i2c slave controller
+> -- interrupts : the interrupt line of the i2c slave controller
+> -- clock-frequency : the frequency of the i2c bus
+> -- gpios : the gpio used for ec request
+> -- slave-addr: the i2c address of the slave controller
+> -- clocks : Must contain an entry for each entry in clock-names.
+> -  See ../clocks/clock-bindings.txt for details.
+> -- clock-names : Must include the following entries:
+> -  Tegra20/Tegra30:
+> -  - div-clk
+> -  - fast-clk
+> -  Tegra114:
+> -  - div-clk
+> -- resets : Must contain an entry for each entry in reset-names.
+> -  See ../reset/reset.txt for details.
+> -- reset-names : Must include the following entries:
+> -  - i2c
+> +- request-gpios : the gpio used for ec request
+> +- reg: the i2c address of the slave controller
 
-> -		nvidia,model = "Acer Chromebook 13";
-> +		nvidia,model = "GoogleNyan";
+This change breaks ABI.
 
-I believe this also technically breaks ABI, since some user-space tools 
-use the model to look up saved state. Can we not leave this as is, and 
-just have the UCM files know about both names?
+Instead of modifying the definition of the existing compatible value, I 
+think you should introduce a new compatible value to describe the 
+external NVEC chip.
 
-Aside from that, I think the series looks OK at a quick glance.
+> diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+
+> -	nvec@7000c500 {
+> -		compatible = "nvidia,nvec";
+> -		reg = <0x7000c500 0x100>;
+> -		interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>;
+> -		#address-cells = <1>;
+> -		#size-cells = <0>;
+> +	i2c@7000c500 {
+> +		status = "okay";
+>   		clock-frequency = <80000>;
+> -		request-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_HIGH>;
+> -		slave-addr = <138>;
+> -		clocks = <&tegra_car TEGRA20_CLK_I2C3>,
+> -		         <&tegra_car TEGRA20_CLK_PLL_P_OUT3>;
+> -		clock-names = "div-clk", "fast-clk";
+> -		resets = <&tegra_car 67>;
+> -		reset-names = "i2c";
+> +
+> +		nvec: nvec@45 {
+
+This doesn't feel correct. There's nothing here to indicate that this 
+child device is a slave that is implemented by the host SoC rather than 
+something external attached to the I2C bus.
+
+Perhaps you can get away with this, since the driver for nvidia,nvec 
+only calls I2C APIs suitable for internal slaves rather than external 
+slaves? Even so though, I think the distinction needs to be clearly 
+marked in the DT so that any generic code outside the NVEC driver that 
+parses the DT can determine the difference.
+
+I would recommend the I2C controller having #address-cells=<2> with cell 
+0 being 0==master,1==slave, cell 1 being the I2C address. The I2C driver 
+would need to support #address-cells=<1> for backwards-compatibility.
+
+> +			compatible = "nvidia,nvec";
+> +			request-gpios = <&gpio TEGRA_GPIO(V, 2)
+> +				GPIO_ACTIVE_HIGH>;
+> +			reg = <0x45>;
+
+The order is typically compatible, reg, other properties.
+
+> +		};
+>   	};
