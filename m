@@ -1,22 +1,50 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] Warning that occured while compiling the nvec in 3.19.0-rc5+
- is fixed
-Date: Mon, 02 Feb 2015 10:08:51 -0700
-Message-ID: <54CFAF23.6020300@wwwdotorg.org>
-References: <1422705282-17374-1-git-send-email-varsharamt91@gmail.com> <20150131162913.GA23688@kroah.com>
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v3.19-rc7
+Date: Mon, 2 Feb 2015 12:33:19 -0700
+Message-ID: <54CFD0FF.4060008@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150131162913.GA23688-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, varsharamt <varsharamt91-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org, marvin24-Mmb7MZpHnFY@public.gmane.org, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-  On Sat, Jan 31, 2015 at 05:24:42PM +0530, varsharamt wrote:
-> The task was to fix  a warning which was shown while compiling a driver
-> called NVEC. I wrote a brief description about how to enable support for
-> a nVidya complaint embedded controller.
+Here are some basic Tegra test results for Linux v3.19-rc7.
+Logs and other details at:
 
-Please note that NVIDIA is spelled/capitalized as NVIDIA.
+     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.19-rc7/20150201210104/
+
+
+Test summary
+------------
+
+Build: zImage:
+     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Boot to userspace: multi_v7_defconfig:
+     Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+     Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v3.19-rc6 (26bc420b59a38e4e6685a73345a0def461136dce)):
+    text     data      bss    total  kernel
+   -1192       -8        0    -1200  multi_v7_defconfig
+   -1076      +72        0    -1004  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v3.19-rc6 (26bc420b59a38e4e6685a73345a0def461136dce))
+     avail    rsrvd     high    freed                board              kconfig                  dtb
+         .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+         .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+         .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+         .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+         .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+         .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
