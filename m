@@ -1,67 +1,22 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v3 01/10] ARM: tegra: Set the sound card model that alsaucm
- expects
-Date: Tue, 03 Feb 2015 09:35:47 -0700
-Message-ID: <54D0F8E3.3020902@wwwdotorg.org>
-References: <1422442278-10405-1-git-send-email-tomeu.vizoso@collabora.com> <1422442278-10405-2-git-send-email-tomeu.vizoso@collabora.com> <54CFE754.7000500@wwwdotorg.org> <CAAObsKCm-9GOvis=MZ-nyA0N+g_ZuWYUfDSdEcVy5p5ykCmkcQ@mail.gmail.com>
+Subject: Re: [PATCH v3] Add support for Nyan-big
+Date: Tue, 03 Feb 2015 10:22:54 -0700
+Message-ID: <54D103EE.3090407@wwwdotorg.org>
+References: <1422959343-11211-1-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAObsKCm-9GOvis=MZ-nyA0N+g_ZuWYUfDSdEcVy5p5ykCmkcQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <1422959343-11211-1-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/03/2015 06:13 AM, Tomeu Vizoso wrote:
-> On 2 February 2015 at 22:08, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->> On 01/28/2015 03:50 AM, Tomeu Vizoso wrote:
->>>
->>> Patches are on its way to add a config file to alsaucm for the Nyan
->>> boards. Use the same card ID that alsaucm will expect.
->>
->>
->>> diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts
->>> b/arch/arm/boot/dts/tegra124-nyan-big.dts
->>
->>
->>>          sound {
->>> -               compatible = "nvidia,tegra-audio-max98090-nyan-big",
->>> +               compatible = "nvidia,tegra-audio-max98090-nyan",
->>>                               "nvidia,tegra-audio-max98090";
->>
->>
->> I'm not convinced that removing the board-specific compatible value is a
->> great idea. What if we find we need to distinguish between different boards
->> that use this same binding in the future. That situation is exactly why we
->> have board-/SoC-specific values in compatible even if we don't immediately
->> use them.
+On 02/03/2015 03:29 AM, Tomeu Vizoso wrote:
+> From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 >
-> I understand the need of naming each component variant so they can be
-> distinguished in the future, but in this case it's the exact same hw.
+> Add support for Tegra124 Nyan-big. Pinmux is based on norrin with a single
+> change for the reset GPIO.
 
-That's not true. These are two different boards that are derived from 
-the same base design. The intent may be that they are the same, but the 
-whole point of board-specific compatible values is to cover the case 
-where mistakes and exceptions appear later.
-
->>> -               nvidia,model = "Acer Chromebook 13";
->>> +               nvidia,model = "GoogleNyan";
->>
->>
->> I believe this also technically breaks ABI, since some user-space tools use
->> the model to look up saved state. Can we not leave this as is, and just have
->> the UCM files know about both names?
->
-> Well, "A13" isn't a great card id. Given that there's no users yet, I
-> would prefer to take this chance to put a sane value in there. Btw,
-> alsa-lib has now a UCM config for this and it uses the GoogleNyan card
-> id (has been picked up already by OpenSUSE).
-
-"A13" didn't appear anywhere, did it? Perhaps that was a shorthand for 
-"Acer Chromebook 13". Yes, I agree we should use the user-visible model 
-number here; "Acer CB5" or perhaps "Acer CB5-xxx" whatever xxx actually is.
-
-> So in this case, I think it would be good to change the card id now
-> before people start to actually use it.
+I've applied this.
