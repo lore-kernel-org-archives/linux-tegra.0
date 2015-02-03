@@ -1,81 +1,229 @@
-From: Daniel Thompson <daniel.thompson@linaro.org>
-Subject: Re: [PATCH v3] dma-buf: cleanup dma_buf_export() to make it easily
- extensible
-Date: Tue, 03 Feb 2015 09:29:21 +0000
-Message-ID: <54D094F1.50404@linaro.org>
-References: <1422449643-7829-1-git-send-email-sumit.semwal@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1422449643-7829-1-git-send-email-sumit.semwal@linaro.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Sumit Semwal <sumit.semwal@linaro.org>, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, linux-arm-kernel@lists.infradead.org, rmk+kernel@arm.linux.org.uk, airlied@linux.ie, kgene@kernel.org, daniel.vetter@intel.com, thierry.reding@gmail.com, pawel@osciak.com, m.szyprowski@samsung.com, mchehab@osg.samsung.com, gregkh@linuxfoundation.org
-Cc: linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org, linaro-kernel@lists.linaro.org
+From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Subject: [PATCH v3] Add support for Nyan-big
+Date: Tue,  3 Feb 2015 11:29:03 +0100
+Message-ID: <1422959343-11211-1-git-send-email-tomeu.vizoso@collabora.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMjgvMDEvMTUgMTI6NTQsIFN1bWl0IFNlbXdhbCB3cm90ZToKPiBBdCBwcmVzZW50LCBkbWFf
-YnVmX2V4cG9ydCgpIHRha2VzIGEgc2VyaWVzIG9mIHBhcmFtZXRlcnMsIHdoaWNoCj4gbWFrZXMg
-aXQgZGlmZmljdWx0IHRvIGFkZCBhbnkgbmV3IHBhcmFtZXRlcnMgZm9yIGV4cG9ydGVycywgaWYg
-cmVxdWlyZWQuCj4gCj4gTWFrZSBpdCBzaW1wbGVyIGJ5IG1vdmluZyBhbGwgdGhlc2UgcGFyYW1l
-dGVycyBpbnRvIGEgc3RydWN0LCBhbmQgcGFzcwo+IHRoZSBzdHJ1Y3QgKiBhcyBwYXJhbWV0ZXIg
-dG8gZG1hX2J1Zl9leHBvcnQoKS4KPiAKPiBXaGlsZSBhdCBpdCwgdW5pdGUgZG1hX2J1Zl9leHBv
-cnRfbmFtZWQoKSB3aXRoIGRtYV9idWZfZXhwb3J0KCksIGFuZAo+IGNoYW5nZSBhbGwgY2FsbGVy
-cyBhY2NvcmRpbmdseS4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBTdW1pdCBTZW13YWwgPHN1bWl0LnNl
-bXdhbEBsaW5hcm8ub3JnPgoKU29ycnksIGEgZmV3IG1vcmUgY29tbWVudHMuIFNob3VsZCBoYXZl
-IHNlbnQgdGhlc2UgYmVmb3JlIGJ1dCBhdCBsZWFzdAp0aGUgYXJlIGFsbCByZWxhdGVkIG9ubHkg
-dG8gZG9jdW1lbnRhdGlvbi4gT25jZSB0aGF0IGlzIGZpeGVkIHRoZW46ClJldmlld2VkLWJ5OiBE
-YW5pZWwgVGhvbXBzb24gPGRhbmllbC50aG9tcHNvbkBsaW5hcm8ub3JnPgoKCj4gLS0tCj4gdjM6
-IERhbmllbCBUaG9tcHNvbiBjYXVnaHQgdGhlIEM5OSB3YXJuaW5nIGlzc3VlIHcvIHVzaW5nIHsw
-fTsgdXNpbmcKPiAgICAgey5leHBfbmFtZSA9IHh4eH0gaW5zdGVhZC4KPiAKPiB2MjogYWRkIG1h
-Y3JvIHRvIHplcm8gb3V0IGxvY2FsIHN0cnVjdCwgYW5kIGZpbGwgS0JVSUxEX01PRE5BTUUgYnkg
-ZGVmYXVsdAo+IAo+ICBkcml2ZXJzL2RtYS1idWYvZG1hLWJ1Zi5jICAgICAgICAgICAgICAgICAg
-ICAgIHwgNDcgKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL2Fy
-bWFkYS9hcm1hZGFfZ2VtLmMgICAgICAgICAgICB8IDEwICsrKystLQo+ICBkcml2ZXJzL2dwdS9k
-cm0vZHJtX3ByaW1lLmMgICAgICAgICAgICAgICAgICAgIHwgMTIgKysrKy0tLQo+ICBkcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZG1hYnVmLmMgICAgIHwgIDkgKysrLS0KPiAgZHJp
-dmVycy9ncHUvZHJtL2k5MTUvaTkxNV9nZW1fZG1hYnVmLmMgICAgICAgICB8IDEwICsrKystLQo+
-ICBkcml2ZXJzL2dwdS9kcm0vb21hcGRybS9vbWFwX2dlbV9kbWFidWYuYyAgICAgIHwgIDkgKysr
-Ky0KPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dlbS5jICAgICAgICAgICAgICAgICAgICB8IDEw
-ICsrKystLQo+ICBkcml2ZXJzL2dwdS9kcm0vdHRtL3R0bV9vYmplY3QuYyAgICAgICAgICAgICAg
-IHwgIDkgKysrLS0KPiAgZHJpdmVycy9ncHUvZHJtL3VkbC91ZGxfZG1hYnVmLmMgICAgICAgICAg
-ICAgICB8ICA5ICsrKystCj4gIGRyaXZlcnMvbWVkaWEvdjRsMi1jb3JlL3ZpZGVvYnVmMi1kbWEt
-Y29udGlnLmMgfCAgOCArKysrLQo+ICBkcml2ZXJzL21lZGlhL3Y0bDItY29yZS92aWRlb2J1ZjIt
-ZG1hLXNnLmMgICAgIHwgIDggKysrKy0KPiAgZHJpdmVycy9tZWRpYS92NGwyLWNvcmUvdmlkZW9i
-dWYyLXZtYWxsb2MuYyAgICB8ICA4ICsrKystCj4gIGRyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL2lv
-bi9pb24uYyAgICAgICAgICAgICAgfCAgOSArKystLQo+ICBpbmNsdWRlL2xpbnV4L2RtYS1idWYu
-aCAgICAgICAgICAgICAgICAgICAgICAgIHwgMzQgKysrKysrKysrKysrKysrLS0tLQoKRG9jdW1l
-bnRhdGlvbi9kbWEtYnVmLXNoYXJpbmcudHh0IG5lZWRzIHVwZGF0aW5nIGFzIGEgcmVzdWx0IG9m
-IHRoZXNlCmNoYW5nZXMgYnV0IGl0cyBub3QgaW4gdGhlIGRpZmZzdGF0LgoKCj4gIDE0IGZpbGVz
-IGNoYW5nZWQsIDE0MiBpbnNlcnRpb25zKCspLCA1MCBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9kbWEtYnVmL2RtYS1idWYuYyBiL2RyaXZlcnMvZG1hLWJ1Zi9kbWEtYnVm
-LmMKPiBpbmRleCA1YmUyMjVjMmJhOTguLjZkM2RmM2RkOTMxMCAxMDA2NDQKPiAtLS0gYS9kcml2
-ZXJzL2RtYS1idWYvZG1hLWJ1Zi5jCj4gKysrIGIvZHJpdmVycy9kbWEtYnVmL2RtYS1idWYuYwo+
-IEBAIC0yNjUsNyArMjY1LDcgQEAgc3RhdGljIGlubGluZSBpbnQgaXNfZG1hX2J1Zl9maWxlKHN0
-cnVjdCBmaWxlICpmaWxlKQo+ICB9Cj4gIAo+ICAvKioKPiAtICogZG1hX2J1Zl9leHBvcnRfbmFt
-ZWQgLSBDcmVhdGVzIGEgbmV3IGRtYV9idWYsIGFuZCBhc3NvY2lhdGVzIGFuIGFub24gZmlsZQo+
-ICsgKiBkbWFfYnVmX2V4cG9ydCAtIENyZWF0ZXMgYSBuZXcgZG1hX2J1ZiwgYW5kIGFzc29jaWF0
-ZXMgYW4gYW5vbiBmaWxlCj4gICAqIHdpdGggdGhpcyBidWZmZXIsIHNvIGl0IGNhbiBiZSBleHBv
-cnRlZC4KPiAgICogQWxzbyBjb25uZWN0IHRoZSBhbGxvY2F0b3Igc3BlY2lmaWMgZGF0YSBhbmQg
-b3BzIHRvIHRoZSBidWZmZXIuCj4gICAqIEFkZGl0aW9uYWxseSwgcHJvdmlkZSBhIG5hbWUgc3Ry
-aW5nIGZvciBleHBvcnRlcjsgdXNlZnVsIGluIGRlYnVnZ2luZy4KPiBAQCAtMjc3LDMxICsyNzcs
-MzIgQEAgc3RhdGljIGlubGluZSBpbnQgaXNfZG1hX2J1Zl9maWxlKHN0cnVjdCBmaWxlICpmaWxl
-KQo+ICAgKiBAZXhwX25hbWU6CVtpbl0JbmFtZSBvZiB0aGUgZXhwb3J0aW5nIG1vZHVsZSAtIHVz
-ZWZ1bCBmb3IgZGVidWdnaW5nLgo+ICAgKiBAcmVzdjoJW2luXQlyZXNlcnZhdGlvbi1vYmplY3Qs
-IE5VTEwgdG8gYWxsb2NhdGUgZGVmYXVsdCBvbmUuCj4gICAqCj4gKyAqIEFsbCB0aGUgYWJvdmUg
-aW5mbyBjb21lcyBmcm9tIHN0cnVjdCBkbWFfYnVmX2V4cG9ydF9pbmZvLgo+ICsgKgoKSSdtIG5v
-dCBhdCBhbGwgc3VyZSBhYm91dCB0aGlzLiBJdHMgYSBub3ZlbCB0cmljayBidXQgd29uJ3QgdGhp
-cyBtYWtlCnRoZSBIVE1MIGRvY3MgY29tZSBvdXQgbG9va2luZyBhIGJpdCB3ZWlyZD8gSXMgdGhl
-cmUgYW55IHByaW9yIGFydCBmb3IKZG91YmxlLWRvY3VtZW50aW5nIHRoZSBzdHJ1Y3R1cmUgbWVt
-YmVycyBsaWtlIHRoaXM/CgoKRGFuaWVsLgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
-cmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
-bmZvL2RyaS1kZXZlbAo=
+From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+
+Add support for Tegra124 Nyan-big. Pinmux is based on norrin with a single
+change for the reset GPIO.
+
+Signed-off-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+[tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org: remove pull from dp_hpd_pff0]
+Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+---
+ configs/nyan-big.board | 198 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 198 insertions(+)
+ create mode 100644 configs/nyan-big.board
+
+diff --git a/configs/nyan-big.board b/configs/nyan-big.board
+new file mode 100644
+index 0000000..6ebe466
+--- /dev/null
++++ b/configs/nyan-big.board
+@@ -0,0 +1,198 @@
++soc = 'tegra124'
++
++pins = (
++    #pin,                      mux,           gpio_init, pull,   tri,   e_inp, od,    rcv_sel
++    ('dap_mclk1_pw4',          'extperiph1',  None,      'none', False, False, False, False),
++    ('dap_mclk1_req_pee2',     'rsvd4',       None,      'down', True,  False, False, False),
++    ('dap1_din_pn1',           'rsvd4',       None,      'down', True,  False, False, False),
++    ('dap1_dout_pn2',          'i2s0',        None,      'down', True,  False, False, False),
++    ('dap1_fs_pn0',            'rsvd4',       None,      'down', True,  False, False, False),
++    ('dap1_sclk_pn3',          'rsvd4',       None,      'down', True,  False, False, False),
++    ('dap2_din_pa4',           'i2s1',        None,      'none', False, True,  False, False),
++    ('dap2_dout_pa5',          'i2s1',        None,      'none', False, True,  False, False),
++    ('dap2_fs_pa2',            'i2s1',        None,      'none', False, True,  False, False),
++    ('dap2_sclk_pa3',          'i2s1',        None,      'none', False, True,  False, False),
++    ('gpio_x4_aud_px4',        None,          'in',      'none', False, True,  False, False),
++    ('gpio_x5_aud_px5',        'rsvd4',       None,      'down', True,  False, False, False),
++    ('gpio_x6_aud_px6',        'gmi',         None,      'down', True,  False, False, False),
++    ('gpio_x7_aud_px7',        None,          'out0',    'none', False, False, False, False),
++    ('gpio_w2_aud_pw2',        'rsvd2',       None,      'down', True,  False, False, False),
++    ('gpio_w3_aud_pw3',        None,          'in',      'none', False, True,  False, False),
++    ('dvfs_pwm_px0',           'cldvfs',      None,      'none', False, False, False, False),
++    ('gpio_x1_aud_px1',        None,          'in',      'none', False, True,  False, False),
++    ('dvfs_clk_px2',           'cldvfs',      None,      'none', False, False, False, False),
++    ('gpio_x3_aud_px3',        'rsvd4',       None,      'down', True,  False, False, False),
++    ('dap3_din_pp1',           'i2s2',        None,      'down', True,  False, False, False),
++    ('dap3_dout_pp2',          None,          'out0',    'none', False, False, False, False),
++    ('dap3_fs_pp0',            'i2s2',        None,      'down', True,  False, False, False),
++    ('dap3_sclk_pp3',          'rsvd3',       None,      'down', True,  False, False, False),
++    ('pv0',                    None,          'in',      'none', False, True,  False, False),
++    ('pv1',                    'rsvd1',       None,      'down', True,  False, False, False),
++    ('ulpi_clk_py0',           'spi1',        None,      'none', False, False, False, False),
++    ('ulpi_data0_po1',         'ulpi',        None,      'down', True,  False, False, False),
++    ('ulpi_data1_po2',         'ulpi',        None,      'down', True,  False, False, False),
++    ('ulpi_data2_po3',         'ulpi',        None,      'down', True,  False, False, False),
++    ('ulpi_data3_po4',         'ulpi',        None,      'down', True,  False, False, False),
++    ('ulpi_data4_po5',         'ulpi',        None,      'down', True,  False, False, False),
++    ('ulpi_data5_po6',         'ulpi',        None,      'down', True,  False, False, False),
++    ('ulpi_data6_po7',         'ulpi',        None,      'down', True,  False, False, False),
++    ('ulpi_data7_po0',         'ulpi',        None,      'down', True,  False, False, False),
++    ('ulpi_dir_py1',           'spi1',        None,      'none', False, True,  False, False),
++    ('ulpi_nxt_py2',           'spi1',        None,      'none', False, False, False, False),
++    ('ulpi_stp_py3',           'spi1',        None,      'none', False, False, False, False),
++    ('cam_i2c_scl_pbb1',       'rsvd3',       None,      'down', True,  False, False, False),
++    ('cam_i2c_sda_pbb2',       'rsvd3',       None,      'down', True,  False, False, False),
++    ('cam_mclk_pcc0',          'vi',          None,      'down', True,  False, False, False),
++    ('pbb0',                   'vgp6',        None,      'down', True,  False, False, False),
++    ('pbb3',                   'vgp3',        None,      'down', True,  False, False, False),
++    ('pbb4',                   'vgp4',        None,      'down', True,  False, False, False),
++    ('pbb5',                   'rsvd3',       None,      'down', True,  False, False, False),
++    ('pbb6',                   'rsvd2',       None,      'down', True,  False, False, False),
++    ('pbb7',                   'rsvd2',       None,      'down', True,  False, False, False),
++    ('pcc1',                   'rsvd2',       None,      'down', True,  False, False, False),
++    ('pcc2',                   'rsvd2',       None,      'down', True,  False, False, False),
++    ('gen2_i2c_scl_pt5',       'i2c2',        None,      'none', False, True,  True,  False),
++    ('gen2_i2c_sda_pt6',       'i2c2',        None,      'none', False, True,  True,  False),
++    ('pj7',                    None,          'in',      'none', False, True,  False, False),
++    ('pb0',                    'rsvd2',       None,      'down', True,  False, False, False),
++    ('pb1',                    'rsvd2',       None,      'down', True,  False, False, False),
++    ('pk7',                    None,          'in',      'none', False, True,  False, False),
++    ('pg0',                    None,          'in',      'none', False, True,  False, False),
++    ('pg1',                    None,          'in',      'none', False, True,  False, False),
++    ('ph2',                    None,          'in',      'none', False, True,  False, False),
++    ('ph3',                    'gmi',         None,      'down', True,  False, False, False),
++    ('ph4',                    None,          'in',      'none', False, True,  False, False),
++    ('ph5',                    'rsvd2',       None,      'down', True,  False, False, False),
++    ('ph6',                    None,          'in',      'none', False, True,  False, False),
++    ('ph7',                    None,          'out1',    'none', False, False, False, False),
++    ('pg2',                    None,          'in',      'none', False, True,  False, False),
++    ('pg3',                    None,          'in',      'none', False, True,  False, False),
++    ('pg4',                    'spi4',        None,      'none', False, False, False, False),
++    ('pg5',                    'spi4',        None,      'none', False, False, False, False),
++    ('pg6',                    'spi4',        None,      'none', False, False, False, False),
++    ('pg7',                    'spi4',        None,      'none', False, True,  False, False),
++    ('ph0',                    'gmi',         None,      'down', True,  False, False, False),
++    ('ph1',                    'pwm1',        None,      'none', False, False, False, False),
++    ('pk0',                    'rsvd1',       None,      'down', True,  False, False, False),
++    ('pk1',                    None,          'out0',    'none', False, False, False, False),
++    ('pj0',                    None,          'in',      'up',   False, True,  False, False),
++    ('pj2',                    'rsvd1',       None,      'down', True,  False, False, False),
++    ('pk3',                    'gmi',         None,      'down', True,  False, False, False),
++    ('pk4',                    None,          'out0',    'up',   False, False, False, False),
++    ('pk2',                    None,          'in',      'none', False, True,  False, False),
++    ('pi3',                    'spi4',        None,      'none', False, False, False, False),
++    ('pi6',                    None,          'in',      'none', False, True,  False, False),
++    ('pi2',                    'rsvd4',       None,      'down', True,  False, False, False),
++    ('pi5',                    None,          'out1',    'up',   False, False, False, False),
++    ('pi1',                    None,          'in',      'none', False, True,  False, False),
++    ('pi4',                    'gmi',         None,      'down', True,  False, False, False),
++    ('pi7',                    None,          'in',      'none', False, True,  False, False),
++    ('pc7',                    None,          'in',      'none', False, True,  False, False),
++    ('pi0',                    None,          'in',      'none', False, True,  False, False),
++    ('pex_l0_clkreq_n_pdd2',   'rsvd2',       None,      'down', True,  False, False, False),
++    ('pex_l0_rst_n_pdd1',      'rsvd2',       None,      'down', True,  False, False, False),
++    ('pex_l1_clkreq_n_pdd6',   'rsvd2',       None,      'down', True,  False, False, False),
++    ('pex_l1_rst_n_pdd5',      'rsvd2',       None,      'down', True,  False, False, False),
++    ('pex_wake_n_pdd3',        'rsvd2',       None,      'down', True,  False, False, False),
++    ('usb_vbus_en2_pff1',      'rsvd2',       None,      'down', True,  False, False, False),
++    ('pff2',                   'rsvd2',       None,      'down', True,  False, False, False),
++    ('clk2_out_pw5',           'rsvd2',       None,      'down', True,  False, False, False),
++    ('clk2_req_pcc5',          'rsvd2',       None,      'down', True,  False, False, False),
++    ('sdmmc1_wp_n_pv3',        'sdmmc1',      None,      'down', True,  False, False, False),
++    ('sdmmc1_clk_pz0',         'sdmmc1',      None,      'none', False, True,  False, False),
++    ('sdmmc1_cmd_pz1',         'sdmmc1',      None,      'up',   False, True,  False, False),
++    ('sdmmc1_dat0_py7',        'sdmmc1',      None,      'up',   False, True,  False, False),
++    ('sdmmc1_dat1_py6',        'sdmmc1',      None,      'up',   False, True,  False, False),
++    ('sdmmc1_dat2_py5',        'sdmmc1',      None,      'up',   False, True,  False, False),
++    ('sdmmc1_dat3_py4',        'sdmmc1',      None,      'up',   False, True,  False, False),
++    ('sdmmc3_clk_pa6',         'sdmmc3',      None,      'none', False, False, False, False),
++    ('sdmmc3_cmd_pa7',         'sdmmc3',      None,      'up',   False, True,  False, False),
++    ('sdmmc3_dat0_pb7',        'sdmmc3',      None,      'up',   False, True,  False, False),
++    ('sdmmc3_dat1_pb6',        'sdmmc3',      None,      'up',   False, True,  False, False),
++    ('sdmmc3_dat2_pb5',        'sdmmc3',      None,      'up',   False, True,  False, False),
++    ('sdmmc3_dat3_pb4',        'sdmmc3',      None,      'up',   False, True,  False, False),
++    ('sdmmc3_clk_lb_out_pee4', 'sdmmc3',      None,      'none', False, False, False, False),
++    ('sdmmc3_clk_lb_in_pee5',  'sdmmc3',      None,      'up',   False, True,  False, False),
++    ('sdmmc4_clk_pcc4',        'sdmmc4',      None,      'none', False, True,  False, False),
++    ('sdmmc4_cmd_pt7',         'sdmmc4',      None,      'none', False, True,  False, False),
++    ('sdmmc4_dat0_paa0',       'sdmmc4',      None,      'up',   False, True,  False, False),
++    ('sdmmc4_dat1_paa1',       'sdmmc4',      None,      'up',   False, True,  False, False),
++    ('sdmmc4_dat2_paa2',       'sdmmc4',      None,      'up',   False, True,  False, False),
++    ('sdmmc4_dat3_paa3',       'sdmmc4',      None,      'up',   False, True,  False, False),
++    ('sdmmc4_dat4_paa4',       'sdmmc4',      None,      'up',   False, True,  False, False),
++    ('sdmmc4_dat5_paa5',       'sdmmc4',      None,      'up',   False, True,  False, False),
++    ('sdmmc4_dat6_paa6',       'sdmmc4',      None,      'up',   False, True,  False, False),
++    ('sdmmc4_dat7_paa7',       'sdmmc4',      None,      'up',   False, True,  False, False),
++    ('kb_col0_pq0',            None,          'in',      'none', False, True,  False, False),
++    ('kb_col1_pq1',            'rsvd2',       None,      'down', True,  False, False, False),
++    ('kb_col2_pq2',            None,          'in',      'none', False, True,  False, False),
++    ('kb_col3_pq3',            None,          'in',      'none', False, True,  False, False),
++    ('kb_col4_pq4',            'sdmmc3',      None,      'up',   False, True,  False, False),
++    ('kb_col5_pq5',            'rsvd2',       None,      'down', True,  False, False, False),
++    ('kb_col6_pq6',            None,          'in',      'none', False, True,  False, False),
++    ('kb_col7_pq7',            None,          'in',      'none', False, True,  False, False),
++    ('kb_row0_pr0',            None,          'out0',    'none', False, False, False, False),
++    ('kb_row1_pr1',            None,          'in',      'none', False, True,  False, False),
++    ('kb_row10_ps2',           'uarta',       None,      'none', False, True,  False, False),
++    ('kb_row11_ps3',           None,          'out0',    'none', False, False, False, False),
++    ('kb_row12_ps4',           None,          'out0',    'none', False, False, False, False),
++    ('kb_row13_ps5',           'rsvd2',       None,      'down', True,  False, False, False),
++    ('kb_row14_ps6',           'rsvd2',       None,      'down', True,  False, False, False),
++    ('kb_row15_ps7',           None,          'in',      'none', False, True,  False, False),
++    ('kb_row16_pt0',           'rsvd2',       None,      'down', True,  False, False, False),
++    ('kb_row17_pt1',           None,          'in',      'none', False, True,  False, False),
++    ('kb_row2_pr2',            'rsvd2',       None,      'down', True,  False, False, False),
++    ('kb_row3_pr3',            'kbc',         None,      'down', True,  False, False, False),
++    ('kb_row4_pr4',            None,          'in',      'none', False, True,  False, False),
++    ('kb_row5_pr5',            'rsvd3',       None,      'down', True,  False, False, False),
++    ('kb_row6_pr6',            'kbc',         None,      'down', True,  False, False, False),
++    ('kb_row7_pr7',            None,          'in',      'none', False, True,  False, False),
++    ('kb_row8_ps0',            'rsvd2',       None,      'down', True,  False, False, False),
++    ('kb_row9_ps1',            'uarta',       None,      'down', False, False, False, False),
++    ('sdmmc3_cd_n_pv2',        'sdmmc3',      None,      'up',   False, True,  False, False),
++    ('clk_32k_out_pa0',        None,          'in',      'none', False, True,  False, False),
++    ('pwr_i2c_scl_pz6',        'i2cpwr',      None,      'none', False, True,  True,  False),
++    ('pwr_i2c_sda_pz7',        'i2cpwr',      None,      'none', False, True,  True,  False),
++    ('jtag_rtck',              'rtck',        None,      'none', False, False, False, False),
++    ('clk_32k_in',             'clk',         None,      'none', False, True,  False, False),
++    ('core_pwr_req',           'pwron',       None,      'none', False, False, False, False),
++    ('cpu_pwr_req',            'cpu',         None,      'none', False, False, False, False),
++    ('pwr_int_n',              'pmi',         None,      'none', False, True,  False, False),
++    ('reset_out_n',            'reset_out_n', None,      'none', False, False, False, False),
++    ('clk3_out_pee0',          'rsvd2',       None,      'down', True,  False, False, False),
++    ('clk3_req_pee1',          'rsvd2',       None,      'down', True,  False, False, False),
++    ('dap4_din_pp5',           'rsvd3',       None,      'down', True,  False, False, False),
++    ('dap4_dout_pp6',          'rsvd4',       None,      'down', True,  False, False, False),
++    ('dap4_fs_pp4',            'rsvd4',       None,      'down', True,  False, False, False),
++    ('dap4_sclk_pp7',          'rsvd3',       None,      'down', True,  False, False, False),
++    ('gen1_i2c_scl_pc4',       'i2c1',        None,      'none', False, True,  True,  False),
++    ('gen1_i2c_sda_pc5',       'i2c1',        None,      'none', False, True,  True,  False),
++    ('pu0',                    'rsvd4',       None,      'down', True,  False, False, False),
++    ('pu1',                    'rsvd1',       None,      'down', True,  False, False, False),
++    ('pu2',                    'rsvd1',       None,      'down', True,  False, False, False),
++    ('pu3',                    'gmi',         None,      'down', True,  False, False, False),
++    ('pu4',                    None,          'in',      'none', False, True,  False, False),
++    ('pu5',                    None,          'in',      'up',   False, True,  False, False),
++    ('pu6',                    None,          'in',      'up',   False, True,  False, False),
++    ('uart2_cts_n_pj5',        'gmi',         None,      'down', True,  False, False, False),
++    ('uart2_rts_n_pj6',        'gmi',         None,      'down', True,  False, False, False),
++    ('uart2_rxd_pc3',          'irda',        None,      'down', True,  False, False, False),
++    ('uart2_txd_pc2',          'irda',        None,      'down', True,  False, False, False),
++    ('uart3_cts_n_pa1',        'gmi',         None,      'down', True,  False, False, False),
++    ('uart3_rts_n_pc0',        'gmi',         None,      'down', True,  False, False, False),
++    ('uart3_rxd_pw7',          'rsvd2',       None,      'down', True,  False, False, False),
++    ('uart3_txd_pw6',          'rsvd2',       None,      'down', True,  False, False, False),
++    ('owr',                    'rsvd2',       None,      'down', True,  False, False, False),
++    ('hdmi_cec_pee3',          'cec',         None,      'none', False, True,  True,  False),
++    ('hdmi_int_pn7',           None,          'in',      'down', False, True,  False, False),
++    ('ddc_scl_pv4',            'i2c4',        None,      'none', False, True,  False, False),
++    ('ddc_sda_pv5',            'i2c4',        None,      'none', False, True,  False, False),
++    ('spdif_out_pk5',          'rsvd2',       None,      'down', True,  False, False, False),
++    ('spdif_in_pk6',           None,          'out0',    'down', False, False, False, False),
++    ('usb_vbus_en0_pn4',       'usb',         None,      'none', False, True,  True,  False),
++    ('usb_vbus_en1_pn5',       'usb',         None,      'none', False, True,  True,  False),
++    ('dp_hpd_pff0',            'dp',          None,      'none', False, True,  False, False),
++)
++
++drive_groups = (
++)
+-- 
+1.9.3
