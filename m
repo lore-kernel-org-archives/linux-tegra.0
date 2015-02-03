@@ -1,103 +1,81 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: pull request for Tegra clock updates for 3.20
-Date: Mon, 02 Feb 2015 15:15:14 -0800
-Message-ID: <20150202231514.421.5790@quantum>
-References: <20150202151418.GA15776@tbergstrom-lnx.Nvidia.com>
+From: Daniel Thompson <daniel.thompson@linaro.org>
+Subject: Re: [PATCH v3] dma-buf: cleanup dma_buf_export() to make it easily
+ extensible
+Date: Tue, 03 Feb 2015 09:29:21 +0000
+Message-ID: <54D094F1.50404@linaro.org>
+References: <1422449643-7829-1-git-send-email-sumit.semwal@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20150202151418.GA15776@tbergstrom-lnx.Nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: "mark.rutland@arm.com" <mark.rutland@arm.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1422449643-7829-1-git-send-email-sumit.semwal@linaro.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Sumit Semwal <sumit.semwal@linaro.org>, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, linux-arm-kernel@lists.infradead.org, rmk+kernel@arm.linux.org.uk, airlied@linux.ie, kgene@kernel.org, daniel.vetter@intel.com, thierry.reding@gmail.com, pawel@osciak.com, m.szyprowski@samsung.com, mchehab@osg.samsung.com, gregkh@linuxfoundation.org
+Cc: linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org, linaro-kernel@lists.linaro.org
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Peter De Schrijver (2015-02-02 07:14:18)
-> Hi Mike,
-> 
-> A few bug fixes and support for Tegra132 clocks.
-
-Hi Peter,
-
-Pulled into clk-next, but...
-
--rc7 is pretty late for sending a PR. Please try to send it out earlier
-if possible next time, but I understand that this happens from time to
-time.
-
-Also this PR was based on -rc7, which is clearly ahead of clk-next. In
-fact clk-next is often based on -rc1. While only a minor inconvenience
-for me to merge clk-next into -rc7 before pulling your code, its a bit
-nicer to send the PR against a common baseline like -rc1.
-
-This will show up in linux-next after a couple of days since it is a bit
-too much churn and I'm trying to make sure the problems in the clk tree
-from the last several days are truly sorted before introducing new code.
-
-Regards,
-Mike
-
-> 
-> Thanks,
-> 
-> Peter.
-> 
-> The following changes since commit e36f014edff70fc02b3d3d79cead1d58f289332e:
-> 
->   Linux 3.19-rc7 (2015-02-01 20:07:21 -0800)
-> 
-> are available in the git repository at:
-> 
->   git://nv-tegra.nvidia.com/user/pdeschrijver/linux.git tags/tegra-clk-3.20
-> 
-> for you to fetch changes up to b270491eb9a033a1ab6c66e778c9dd3e3a4f7639:
-> 
->   clk: tegra: Define PLLD_DSI and remove dsia(b)_mux (2015-02-02 16:22:34 +0200)
-> 
-> ----------------------------------------------------------------
-> Tegra clock fixes for 3.20
-> 
-> ----------------------------------------------------------------
-> Andrew Bresticker (1):
->       clk: tegra: SDMMC controllers are on APB
-> 
-> Mark Zhang (1):
->       clk: tegra: Define PLLD_DSI and remove dsia(b)_mux
-> 
-> Paul Walmsley (2):
->       clk: tegra: split Tegra124 clock header file
->       clk: tegra: Add support for the Tegra132 CAR IP block
-> 
-> Peter De Schrijver (2):
->       clk: tegra: make tegra_clocks_apply_init_table() arch_initcall
->       clk: tegra: Update binding doc for Tegra132
-> 
-> Sean Paul (1):
->       clk: tegra124: Add init data for dsi lp clocks
-> 
-> Tomeu Vizoso (1):
->       clk: tegra: Fix order of arguments in WARN
-> 
->  .../bindings/clock/nvidia,tegra124-car.txt         |  10 +-
->  arch/arm/mach-tegra/tegra.c                        |   2 -
->  drivers/clk/tegra/Makefile                         |   1 +
->  drivers/clk/tegra/clk-id.h                         |   2 -
->  drivers/clk/tegra/clk-pll.c                        |  18 +-
->  drivers/clk/tegra/clk-tegra-periph.c               |  18 +-
->  drivers/clk/tegra/clk-tegra114.c                   |  10 +-
->  drivers/clk/tegra/clk-tegra124.c                   | 168 ++++++++--
->  drivers/clk/tegra/clk.c                            |   7 +-
->  include/dt-bindings/clock/tegra124-car-common.h    | 345 +++++++++++++++++++++
->  include/dt-bindings/clock/tegra124-car.h           | 345 +--------------------
->  include/linux/clk/tegra.h                          |   2 -
->  12 files changed, 532 insertions(+), 396 deletions(-)
->  create mode 100644 include/dt-bindings/clock/tegra124-car-common.h
+T24gMjgvMDEvMTUgMTI6NTQsIFN1bWl0IFNlbXdhbCB3cm90ZToKPiBBdCBwcmVzZW50LCBkbWFf
+YnVmX2V4cG9ydCgpIHRha2VzIGEgc2VyaWVzIG9mIHBhcmFtZXRlcnMsIHdoaWNoCj4gbWFrZXMg
+aXQgZGlmZmljdWx0IHRvIGFkZCBhbnkgbmV3IHBhcmFtZXRlcnMgZm9yIGV4cG9ydGVycywgaWYg
+cmVxdWlyZWQuCj4gCj4gTWFrZSBpdCBzaW1wbGVyIGJ5IG1vdmluZyBhbGwgdGhlc2UgcGFyYW1l
+dGVycyBpbnRvIGEgc3RydWN0LCBhbmQgcGFzcwo+IHRoZSBzdHJ1Y3QgKiBhcyBwYXJhbWV0ZXIg
+dG8gZG1hX2J1Zl9leHBvcnQoKS4KPiAKPiBXaGlsZSBhdCBpdCwgdW5pdGUgZG1hX2J1Zl9leHBv
+cnRfbmFtZWQoKSB3aXRoIGRtYV9idWZfZXhwb3J0KCksIGFuZAo+IGNoYW5nZSBhbGwgY2FsbGVy
+cyBhY2NvcmRpbmdseS4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBTdW1pdCBTZW13YWwgPHN1bWl0LnNl
+bXdhbEBsaW5hcm8ub3JnPgoKU29ycnksIGEgZmV3IG1vcmUgY29tbWVudHMuIFNob3VsZCBoYXZl
+IHNlbnQgdGhlc2UgYmVmb3JlIGJ1dCBhdCBsZWFzdAp0aGUgYXJlIGFsbCByZWxhdGVkIG9ubHkg
+dG8gZG9jdW1lbnRhdGlvbi4gT25jZSB0aGF0IGlzIGZpeGVkIHRoZW46ClJldmlld2VkLWJ5OiBE
+YW5pZWwgVGhvbXBzb24gPGRhbmllbC50aG9tcHNvbkBsaW5hcm8ub3JnPgoKCj4gLS0tCj4gdjM6
+IERhbmllbCBUaG9tcHNvbiBjYXVnaHQgdGhlIEM5OSB3YXJuaW5nIGlzc3VlIHcvIHVzaW5nIHsw
+fTsgdXNpbmcKPiAgICAgey5leHBfbmFtZSA9IHh4eH0gaW5zdGVhZC4KPiAKPiB2MjogYWRkIG1h
+Y3JvIHRvIHplcm8gb3V0IGxvY2FsIHN0cnVjdCwgYW5kIGZpbGwgS0JVSUxEX01PRE5BTUUgYnkg
+ZGVmYXVsdAo+IAo+ICBkcml2ZXJzL2RtYS1idWYvZG1hLWJ1Zi5jICAgICAgICAgICAgICAgICAg
+ICAgIHwgNDcgKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL2Fy
+bWFkYS9hcm1hZGFfZ2VtLmMgICAgICAgICAgICB8IDEwICsrKystLQo+ICBkcml2ZXJzL2dwdS9k
+cm0vZHJtX3ByaW1lLmMgICAgICAgICAgICAgICAgICAgIHwgMTIgKysrKy0tLQo+ICBkcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZG1hYnVmLmMgICAgIHwgIDkgKysrLS0KPiAgZHJp
+dmVycy9ncHUvZHJtL2k5MTUvaTkxNV9nZW1fZG1hYnVmLmMgICAgICAgICB8IDEwICsrKystLQo+
+ICBkcml2ZXJzL2dwdS9kcm0vb21hcGRybS9vbWFwX2dlbV9kbWFidWYuYyAgICAgIHwgIDkgKysr
+Ky0KPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dlbS5jICAgICAgICAgICAgICAgICAgICB8IDEw
+ICsrKystLQo+ICBkcml2ZXJzL2dwdS9kcm0vdHRtL3R0bV9vYmplY3QuYyAgICAgICAgICAgICAg
+IHwgIDkgKysrLS0KPiAgZHJpdmVycy9ncHUvZHJtL3VkbC91ZGxfZG1hYnVmLmMgICAgICAgICAg
+ICAgICB8ICA5ICsrKystCj4gIGRyaXZlcnMvbWVkaWEvdjRsMi1jb3JlL3ZpZGVvYnVmMi1kbWEt
+Y29udGlnLmMgfCAgOCArKysrLQo+ICBkcml2ZXJzL21lZGlhL3Y0bDItY29yZS92aWRlb2J1ZjIt
+ZG1hLXNnLmMgICAgIHwgIDggKysrKy0KPiAgZHJpdmVycy9tZWRpYS92NGwyLWNvcmUvdmlkZW9i
+dWYyLXZtYWxsb2MuYyAgICB8ICA4ICsrKystCj4gIGRyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL2lv
+bi9pb24uYyAgICAgICAgICAgICAgfCAgOSArKystLQo+ICBpbmNsdWRlL2xpbnV4L2RtYS1idWYu
+aCAgICAgICAgICAgICAgICAgICAgICAgIHwgMzQgKysrKysrKysrKysrKysrLS0tLQoKRG9jdW1l
+bnRhdGlvbi9kbWEtYnVmLXNoYXJpbmcudHh0IG5lZWRzIHVwZGF0aW5nIGFzIGEgcmVzdWx0IG9m
+IHRoZXNlCmNoYW5nZXMgYnV0IGl0cyBub3QgaW4gdGhlIGRpZmZzdGF0LgoKCj4gIDE0IGZpbGVz
+IGNoYW5nZWQsIDE0MiBpbnNlcnRpb25zKCspLCA1MCBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9kbWEtYnVmL2RtYS1idWYuYyBiL2RyaXZlcnMvZG1hLWJ1Zi9kbWEtYnVm
+LmMKPiBpbmRleCA1YmUyMjVjMmJhOTguLjZkM2RmM2RkOTMxMCAxMDA2NDQKPiAtLS0gYS9kcml2
+ZXJzL2RtYS1idWYvZG1hLWJ1Zi5jCj4gKysrIGIvZHJpdmVycy9kbWEtYnVmL2RtYS1idWYuYwo+
+IEBAIC0yNjUsNyArMjY1LDcgQEAgc3RhdGljIGlubGluZSBpbnQgaXNfZG1hX2J1Zl9maWxlKHN0
+cnVjdCBmaWxlICpmaWxlKQo+ICB9Cj4gIAo+ICAvKioKPiAtICogZG1hX2J1Zl9leHBvcnRfbmFt
+ZWQgLSBDcmVhdGVzIGEgbmV3IGRtYV9idWYsIGFuZCBhc3NvY2lhdGVzIGFuIGFub24gZmlsZQo+
+ICsgKiBkbWFfYnVmX2V4cG9ydCAtIENyZWF0ZXMgYSBuZXcgZG1hX2J1ZiwgYW5kIGFzc29jaWF0
+ZXMgYW4gYW5vbiBmaWxlCj4gICAqIHdpdGggdGhpcyBidWZmZXIsIHNvIGl0IGNhbiBiZSBleHBv
+cnRlZC4KPiAgICogQWxzbyBjb25uZWN0IHRoZSBhbGxvY2F0b3Igc3BlY2lmaWMgZGF0YSBhbmQg
+b3BzIHRvIHRoZSBidWZmZXIuCj4gICAqIEFkZGl0aW9uYWxseSwgcHJvdmlkZSBhIG5hbWUgc3Ry
+aW5nIGZvciBleHBvcnRlcjsgdXNlZnVsIGluIGRlYnVnZ2luZy4KPiBAQCAtMjc3LDMxICsyNzcs
+MzIgQEAgc3RhdGljIGlubGluZSBpbnQgaXNfZG1hX2J1Zl9maWxlKHN0cnVjdCBmaWxlICpmaWxl
+KQo+ICAgKiBAZXhwX25hbWU6CVtpbl0JbmFtZSBvZiB0aGUgZXhwb3J0aW5nIG1vZHVsZSAtIHVz
+ZWZ1bCBmb3IgZGVidWdnaW5nLgo+ICAgKiBAcmVzdjoJW2luXQlyZXNlcnZhdGlvbi1vYmplY3Qs
+IE5VTEwgdG8gYWxsb2NhdGUgZGVmYXVsdCBvbmUuCj4gICAqCj4gKyAqIEFsbCB0aGUgYWJvdmUg
+aW5mbyBjb21lcyBmcm9tIHN0cnVjdCBkbWFfYnVmX2V4cG9ydF9pbmZvLgo+ICsgKgoKSSdtIG5v
+dCBhdCBhbGwgc3VyZSBhYm91dCB0aGlzLiBJdHMgYSBub3ZlbCB0cmljayBidXQgd29uJ3QgdGhp
+cyBtYWtlCnRoZSBIVE1MIGRvY3MgY29tZSBvdXQgbG9va2luZyBhIGJpdCB3ZWlyZD8gSXMgdGhl
+cmUgYW55IHByaW9yIGFydCBmb3IKZG91YmxlLWRvY3VtZW50aW5nIHRoZSBzdHJ1Y3R1cmUgbWVt
+YmVycyBsaWtlIHRoaXM/CgoKRGFuaWVsLgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
+cmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
+bmZvL2RyaS1kZXZlbAo=
