@@ -1,41 +1,87 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v3 03/20] power_supply: Add API for safe access of power
- supply function attrs
-Date: Wed, 4 Feb 2015 14:44:56 +0100
-Message-ID: <20150204134456.GA8312@amd>
-References: <1422629278-12202-1-git-send-email-k.kozlowski@samsung.com>
- <1422629278-12202-4-git-send-email-k.kozlowski@samsung.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v3 01/10] ARM: tegra: Set the sound card model that alsaucm
+ expects
+Date: Wed, 04 Feb 2015 09:56:26 -0700
+Message-ID: <54D24F3A.5000206@wwwdotorg.org>
+References: <1422442278-10405-1-git-send-email-tomeu.vizoso@collabora.com> <1422442278-10405-2-git-send-email-tomeu.vizoso@collabora.com> <54CFE754.7000500@wwwdotorg.org> <CAAObsKCm-9GOvis=MZ-nyA0N+g_ZuWYUfDSdEcVy5p5ykCmkcQ@mail.gmail.com> <54D0F8E3.3020902@wwwdotorg.org> <54D1E2B6.4050004@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-input-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1422629278-12202-4-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-input-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Jiri Kosina <jkosina@suse.cz>, David Herrmann <dh.herrmann@googlemail.com>, Cezary Jackiewicz <cezary.jackiewicz@gmail.com>, Darren Hart <dvhart@infradead.org>, Support Opensource <support.opensource@diasemi.com>, Milo Kim <milo.kim@ti.com>, Julian Andres Klode <jak@jak-linux.org>, Marc Dietrich <marvin24@gmx.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-acpi@vger.kernel.org, linux-input@vger.kernel.org, platform-driver-x86@vger.kernel.org, patches@opensource.wolfsonmicro.com, ac100@lists.launchpad.net, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, Linus Walleij <linus.walleij@linaro.org>, Samuel
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <54D1E2B6.4050004-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri 2015-01-30 15:47:41, Krzysztof Kozlowski wrote:
-> Add simple wrappers for accessing power supply's function attributes:
->  - get_property -> power_supply_get_property
->  - set_property -> power_supply_set_property
->  - property_is_writeable -> power_supply_property_is_writeable
->  - external_power_changed -> power_supply_external_power_changed
-> 
-> This API along with atomic usage counter adds a safe way of accessing a
-> power supply from another driver. If power supply is unregistered after
-> obtaining reference to it by some driver, then the API wrappers won't be
-> executed in invalid (freed) context.
-> 
-> Next patch changing the ownership of power supply class is still needed
-> to fully fix race conditions in accessing freed power supply.
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Reviewed-by: Sebastian Reichel <sre@kernel.org>
+On 02/04/2015 02:13 AM, Tomeu Vizoso wrote:
+> On 02/03/2015 05:35 PM, Stephen Warren wrote:
+>> On 02/03/2015 06:13 AM, Tomeu Vizoso wrote:
+>>> On 2 February 2015 at 22:08, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>>>> On 01/28/2015 03:50 AM, Tomeu Vizoso wrote:
+>>>>>
+>>>>> Patches are on its way to add a config file to alsaucm for the Nyan
+>>>>> boards. Use the same card ID that alsaucm will expect.
+>>>>
+>>>>
+>>>>> diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts
+>>>>> b/arch/arm/boot/dts/tegra124-nyan-big.dts
+>>>>
+>>>>
+>>>>>           sound {
+>>>>> -               compatible = "nvidia,tegra-audio-max98090-nyan-big",
+>>>>> +               compatible = "nvidia,tegra-audio-max98090-nyan",
+>>>>>                                "nvidia,tegra-audio-max98090";
+>>>>
+>>>>
+>>>> I'm not convinced that removing the board-specific compatible value is a
+>>>> great idea. What if we find we need to distinguish between different boards
+>>>> that use this same binding in the future. That situation is exactly why we
+>>>> have board-/SoC-specific values in compatible even if we don't immediately
+>>>> use them.
+>>>
+>>> I understand the need of naming each component variant so they can be
+>>> distinguished in the future, but in this case it's the exact same hw.
+>>
+>> That's not true. These are two different boards that are derived from
+>> the same base design. The intent may be that they are the same, but the
+>> whole point of board-specific compatible values is to cover the case
+>> where mistakes and exceptions appear later.
+>
+> Fair enough.
+>
+>>>>> -               nvidia,model = "Acer Chromebook 13";
+>>>>> +               nvidia,model = "GoogleNyan";
+>>>>
+>>>>
+>>>> I believe this also technically breaks ABI, since some user-space tools use
+>>>> the model to look up saved state. Can we not leave this as is, and just have
+>>>> the UCM files know about both names?
+>>>
+>>> Well, "A13" isn't a great card id. Given that there's no users yet, I
+>>> would prefer to take this chance to put a sane value in there. Btw,
+>>> alsa-lib has now a UCM config for this and it uses the GoogleNyan card
+>>> id (has been picked up already by OpenSUSE).
+>>
+>> "A13" didn't appear anywhere, did it? Perhaps that was a shorthand for
+>> "Acer Chromebook 13". Yes, I agree we should use the user-visible model
+>> number here; "Acer CB5" or perhaps "Acer CB5-xxx" whatever xxx actually is.
+>
+> Ok, so we can go with Acer-CB5-311 for the nyan big.
+>
+> Unfortunately there doesn't exist a single product id that corresponds
+> with the nyan blaze, but at least four: K4K83UA, K4K11UA, K4K78UA and
+> K4K23UA. The commercial name of the series that contain a blaze board is
+> "HP Chromebook 14 G3", but that doesn't fit in the card id field (16 byte).
 
-For 1-3: Acked-by: Pavel Machek <pavel@ucw.cz>
+Oh, the 16-byte limit is rather annoying:-( Some of our existing DT 
+files don't fit into that limit.
 
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+> What do you think of using GoogleNyanBig and GoogleNyanBlaze? Or maybe
+> just NyanBig and NyanBlaze? IMO it's more important that the card ids
+> correspond 1-to-1 to the hw than their recognizability, as it's not
+> something that end users will be messing with.
+
+I'm not entirely sure that the user won't ever see those values; don't 
+some X11 GUI tools display them? Still, as you say there isn't too much 
+we can do, so since these names are unique/complete I figure they're OK.
