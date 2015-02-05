@@ -1,87 +1,45 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v3 01/10] ARM: tegra: Set the sound card model that alsaucm
- expects
-Date: Wed, 04 Feb 2015 09:56:26 -0700
-Message-ID: <54D24F3A.5000206@wwwdotorg.org>
-References: <1422442278-10405-1-git-send-email-tomeu.vizoso@collabora.com> <1422442278-10405-2-git-send-email-tomeu.vizoso@collabora.com> <54CFE754.7000500@wwwdotorg.org> <CAAObsKCm-9GOvis=MZ-nyA0N+g_ZuWYUfDSdEcVy5p5ykCmkcQ@mail.gmail.com> <54D0F8E3.3020902@wwwdotorg.org> <54D1E2B6.4050004@collabora.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] GPU-DRM-Tegra: Delete an unnecessary check before the function
+ call "vunmap"
+Date: Thu, 05 Feb 2015 10:20:58 +0100
+Message-ID: <54D335FA.6020101@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <54D1E2B6.4050004-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, =?windows-1252?Q?Terje_Bergstr=F6m?= <tbergstrom@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/04/2015 02:13 AM, Tomeu Vizoso wrote:
-> On 02/03/2015 05:35 PM, Stephen Warren wrote:
->> On 02/03/2015 06:13 AM, Tomeu Vizoso wrote:
->>> On 2 February 2015 at 22:08, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->>>> On 01/28/2015 03:50 AM, Tomeu Vizoso wrote:
->>>>>
->>>>> Patches are on its way to add a config file to alsaucm for the Nyan
->>>>> boards. Use the same card ID that alsaucm will expect.
->>>>
->>>>
->>>>> diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts
->>>>> b/arch/arm/boot/dts/tegra124-nyan-big.dts
->>>>
->>>>
->>>>>           sound {
->>>>> -               compatible = "nvidia,tegra-audio-max98090-nyan-big",
->>>>> +               compatible = "nvidia,tegra-audio-max98090-nyan",
->>>>>                                "nvidia,tegra-audio-max98090";
->>>>
->>>>
->>>> I'm not convinced that removing the board-specific compatible value is a
->>>> great idea. What if we find we need to distinguish between different boards
->>>> that use this same binding in the future. That situation is exactly why we
->>>> have board-/SoC-specific values in compatible even if we don't immediately
->>>> use them.
->>>
->>> I understand the need of naming each component variant so they can be
->>> distinguished in the future, but in this case it's the exact same hw.
->>
->> That's not true. These are two different boards that are derived from
->> the same base design. The intent may be that they are the same, but the
->> whole point of board-specific compatible values is to cover the case
->> where mistakes and exceptions appear later.
->
-> Fair enough.
->
->>>>> -               nvidia,model = "Acer Chromebook 13";
->>>>> +               nvidia,model = "GoogleNyan";
->>>>
->>>>
->>>> I believe this also technically breaks ABI, since some user-space tools use
->>>> the model to look up saved state. Can we not leave this as is, and just have
->>>> the UCM files know about both names?
->>>
->>> Well, "A13" isn't a great card id. Given that there's no users yet, I
->>> would prefer to take this chance to put a sane value in there. Btw,
->>> alsa-lib has now a UCM config for this and it uses the GoogleNyan card
->>> id (has been picked up already by OpenSUSE).
->>
->> "A13" didn't appear anywhere, did it? Perhaps that was a shorthand for
->> "Acer Chromebook 13". Yes, I agree we should use the user-visible model
->> number here; "Acer CB5" or perhaps "Acer CB5-xxx" whatever xxx actually is.
->
-> Ok, so we can go with Acer-CB5-311 for the nyan big.
->
-> Unfortunately there doesn't exist a single product id that corresponds
-> with the nyan blaze, but at least four: K4K83UA, K4K11UA, K4K78UA and
-> K4K23UA. The commercial name of the series that contain a blaze board is
-> "HP Chromebook 14 G3", but that doesn't fit in the card id field (16 byte).
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 5 Feb 2015 10:12:51 +0100
 
-Oh, the 16-byte limit is rather annoying:-( Some of our existing DT 
-files don't fit into that limit.
+The vunmap() function performs also input parameter validation.
+Thus the test around the call is not needed.
 
-> What do you think of using GoogleNyanBig and GoogleNyanBlaze? Or maybe
-> just NyanBig and NyanBlaze? IMO it's more important that the card ids
-> correspond 1-to-1 to the hw than their recognizability, as it's not
-> something that end users will be messing with.
+This issue was detected by using the Coccinelle software.
 
-I'm not entirely sure that the user won't ever see those values; don't 
-some X11 GUI tools display them? Still, as you say there isn't too much 
-we can do, so since these names are unique/complete I figure they're OK.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/tegra/fb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
+index e9c715d..803598e 100644
+--- a/drivers/gpu/drm/tegra/fb.c
++++ b/drivers/gpu/drm/tegra/fb.c
+@@ -66,7 +66,7 @@ static void tegra_fb_destroy(struct drm_framebuffer *framebuffer)
+ 		struct tegra_bo *bo = fb->planes[i];
+ 
+ 		if (bo) {
+-			if (bo->pages && bo->vaddr)
++			if (bo->pages)
+ 				vunmap(bo->vaddr);
+ 
+ 			drm_gem_object_unreference_unlocked(&bo->gem);
+-- 
+2.2.2
