@@ -1,73 +1,36 @@
-From: Kevin Hao <haokexin@gmail.com>
-Subject: [PATCH 3/7] mmc: tegra: use devm help functions to get the clk and gpio
-Date: Fri,  6 Feb 2015 11:15:18 +0800
-Message-ID: <1423192522-6056-4-git-send-email-haokexin@gmail.com>
-References: <1423192522-6056-1-git-send-email-haokexin@gmail.com>
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1423192522-6056-1-git-send-email-haokexin@gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: linux-mmc@vger.kernel.org
-Cc: Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, linux-tegra@vger.kernel.org, Kevin Hao <haokexin@gmail.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v3 20/20] arm: mach-pxa: Decrement the power supply's
+ device reference counter
+Date: Fri, 6 Feb 2015 14:49:53 +0100
+Message-ID: <20150206134953.GA25683@amd>
+References: <1422629278-12202-1-git-send-email-k.kozlowski@samsung.com>
+ <1422629278-12202-21-git-send-email-k.kozlowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1422629278-12202-21-git-send-email-k.kozlowski@samsung.com>
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Jiri Kosina <jkosina@suse.cz>, David Herrmann <dh.herrmann@googlemail.com>, Cezary Jackiewicz <cezary.jackiewicz@gmail.com>, Darren Hart <dvhart@infradead.org>, Support Opensource <support.opensource@diasemi.com>, Milo Kim <milo.kim@ti.com>, Julian Andres Klode <jak@jak-linux.org>, Marc Dietrich <marvin24@gmx.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-acpi@vger.kernel.org, linux-input@vger.kernel.org, platform-driver-x86@vger.kernel.org, patches@opensource.wolfsonmicro.com, ac100@lists.launchpad.net, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, Linus Walleij <linus.walleij@linaro.org>, Samuel
 List-Id: linux-tegra@vger.kernel.org
 
-Simplify the error and remove path.
+On Fri 2015-01-30 15:47:58, Krzysztof Kozlowski wrote:
+> Use power_supply_put() to decrement the power supply's device reference
+> counter.
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Reviewed-by: Sebastian Reichel <sre@kernel.org>
 
-Signed-off-by: Kevin Hao <haokexin@gmail.com>
----
- drivers/mmc/host/sdhci-tegra.c | 13 +++----------
- 1 file changed, 3 insertions(+), 10 deletions(-)
+11,13,20 nothing obviously wrong. But I'm not sure if I studied them
+closely enough to warrant an ACK.
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index f3778d58d1cd..0643f66b4e14 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -286,7 +286,8 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 		goto err_parse_dt;
- 
- 	if (gpio_is_valid(tegra_host->power_gpio)) {
--		rc = gpio_request(tegra_host->power_gpio, "sdhci_power");
-+		rc = devm_gpio_request(&pdev->dev, tegra_host->power_gpio,
-+				       "sdhci_power");
- 		if (rc) {
- 			dev_err(mmc_dev(host->mmc),
- 				"failed to allocate power gpio\n");
-@@ -295,7 +296,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 		gpio_direction_output(tegra_host->power_gpio, 1);
- 	}
- 
--	clk = clk_get(mmc_dev(host->mmc), NULL);
-+	clk = devm_clk_get(mmc_dev(host->mmc), NULL);
- 	if (IS_ERR(clk)) {
- 		dev_err(mmc_dev(host->mmc), "clk err\n");
- 		rc = PTR_ERR(clk);
-@@ -312,10 +313,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 
- err_add_host:
- 	clk_disable_unprepare(pltfm_host->clk);
--	clk_put(pltfm_host->clk);
- err_clk_get:
--	if (gpio_is_valid(tegra_host->power_gpio))
--		gpio_free(tegra_host->power_gpio);
- err_power_req:
- err_parse_dt:
- err_alloc_tegra_host:
-@@ -327,16 +325,11 @@ static int sdhci_tegra_remove(struct platform_device *pdev)
- {
- 	struct sdhci_host *host = platform_get_drvdata(pdev);
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
--	struct sdhci_tegra *tegra_host = pltfm_host->priv;
- 	int dead = (readl(host->ioaddr + SDHCI_INT_STATUS) == 0xffffffff);
- 
- 	sdhci_remove_host(host, dead);
- 
--	if (gpio_is_valid(tegra_host->power_gpio))
--		gpio_free(tegra_host->power_gpio);
--
- 	clk_disable_unprepare(pltfm_host->clk);
--	clk_put(pltfm_host->clk);
- 
- 	sdhci_pltfm_free(pdev);
- 
+It would be good to get this into kernel -- I seen no bad comments,
+and it is not going to improve without merge into mainline.
+
+									Pavel
+									
 -- 
-1.9.3
-
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
