@@ -1,49 +1,134 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v3 04/20] power_supply: sysfs: Use power_supply_*() API for
- accessing function attrs
-Date: Tue, 10 Feb 2015 08:39:19 +0100
-Message-ID: <1423553959.1327.1.camel@AMDC1943>
-References: <1422629278-12202-1-git-send-email-k.kozlowski@samsung.com>
- <1422629278-12202-5-git-send-email-k.kozlowski@samsung.com>
- <70066540.345820.1423508541546.JavaMail.open-xchange@oxbaltgw00.schlund.de>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH] mmc: tegra: Write xfer_mode, CMD regs in together
+Date: Tue, 10 Feb 2015 08:44:53 +0100
+Message-ID: <CAPDyKFoadr-7jmLSPBhhat-o23_FOyrDko1FxKfy4pphKg1Vxg@mail.gmail.com>
+References: <1422379410-7127-1-git-send-email-rklein@nvidia.com>
+	<CAAVeFuJKxY36BpA_dYhNnhH0v8ERaRYK9Be_hQNtG0H898U8EQ@mail.gmail.com>
+	<54C90E97.2010104@nvidia.com>
+	<CAAVeFu+T-b9Nk5ZpDBfoC4a9=SzKV6_1h+kEzHaL8oKPOKfSqA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <70066540.345820.1423508541546.JavaMail.open-xchange-h4m1HHXQYNHZ78VGacPtK8gmgJlYmuWJ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>
-Cc: "H. Peter Anvin" <hpa-YMNOUZJC4hwAvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Support Opensource <support.opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>, Darren Hart <dvhart-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org, Cezary Jackiewicz <cezary.jackiewicz-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, Milo Kim <milo.kim-l0cyMroinI0@public.gmane.org>, David Herrmann <dh.herrmann-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, Len Brown <lenb-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-acpi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ingo Molnar <mingo-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, platform-driver-x86-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sebastian
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAAVeFu+T-b9Nk5ZpDBfoC4a9=SzKV6_1h+kEzHaL8oKPOKfSqA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Chris Ball <chris@printf.net>, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, pkunapuli@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-On pon, 2015-02-09 at 20:02 +0100, Stefan Wahren wrote:
-> Hi Krzysztof,
-> 
-> > Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> hat am 30. Januar 2015 um 15:47
-> > geschrieben:
-> >
-> >
-> > Replace direct calls to power supply function attributes with wrappers.
-> > Wrappers provide safe access in case of unregistering the power
-> > supply (e.g. by removing the driver). Replace:
-> > - get_property -> power_supply_get_property
-> > - set_property -> power_supply_set_property
-> > - property_is_writeable -> power_supply_property_is_writeable
-> >
-> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> > Acked-by: Jonghwa Lee <jonghwa3.lee-Ns6yrYG9TJBBDgjK7y7TUQ@public.gmane.org>
-> 
-> just a nit. It looks like a typo in the mail address which is also in patch 5 -
-> 10.
+On 9 February 2015 at 07:22, Alexandre Courbot <gnurou@gmail.com> wrote:
+> On Thu, Jan 29, 2015 at 1:30 AM, Rhyland Klein <rklein@nvidia.com> wrote:
+>> On 1/28/2015 1:06 AM, Alexandre Courbot wrote:
+>>> On Wed, Jan 28, 2015 at 2:23 AM, Rhyland Klein <rklein@nvidia.com> wrote:
+>>>> From: Pavan Kunapuli <pkunapuli@nvidia.com>
+>>>>
+>>>> If there is a gap between xfer mode and command register writes,
+>>>> tegra SDMMC controller can sometimes issue a spurious command before
+>>>> the CMD register is written. To avoid this, these two registers need
+>>>> to be written together in a single write operation.
+>>>>
+>>>> Signed-off-by: Pavan Kunapuli <pkunapuli@nvidia.com>
+>>>> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+>>>> ---
+>>>>  drivers/mmc/host/sdhci-tegra.c |   31 ++++++++++++++++++++++++++++++-
+>>>>  1 file changed, 30 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+>>>> index 59797106af93..3d34de47e57e 100644
+>>>> --- a/drivers/mmc/host/sdhci-tegra.c
+>>>> +++ b/drivers/mmc/host/sdhci-tegra.c
+>>>> @@ -41,6 +41,7 @@
+>>>>  #define NVQUIRK_DISABLE_SDR50          BIT(3)
+>>>>  #define NVQUIRK_DISABLE_SDR104         BIT(4)
+>>>>  #define NVQUIRK_DISABLE_DDR50          BIT(5)
+>>>> +#define NVQUIRK_SHADOW_XFER_MODE_REG   BIT(6)
+>>>>
+>>>>  struct sdhci_tegra_soc_data {
+>>>>         const struct sdhci_pltfm_data *pdata;
+>>>> @@ -67,6 +68,32 @@ static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
+>>>>         return readw(host->ioaddr + reg);
+>>>>  }
+>>>>
+>>>> +static void tegra_sdhci_writew(struct sdhci_host *host, u16 val, int reg)
+>>>> +{
+>>>> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>>>> +       struct sdhci_tegra *tegra_host = pltfm_host->priv;
+>>>> +       const struct sdhci_tegra_soc_data *soc_data = tegra_host->soc_data;
+>>>> +
+>>>> +       if (soc_data->nvquirks * NVQUIRK_SHADOW_XFER_MODE_REG) {
+>>>
+>>> Isn't the '*' supposed to be a '&' here?
+>>
+>> Yah .. not sure how that happened, but it should be '&' good catch.
+>>
+>>>
+>>>> +               switch (reg) {
+>>>> +               case SDHCI_TRANSFER_MODE:
+>>>> +                       /*
+>>>> +                        * Postpone this write, we must do it together with a
+>>>> +                        * command write that is down below.
+>>>> +                        */
+>>>> +                       pltfm_host->xfer_mode_shadow = val;
+>>>> +                       return;
+>>>> +               case SDHCI_COMMAND:
+>>>> +                       writel((val << 16) | pltfm_host->xfer_mode_shadow,
+>>>> +                               host->ioaddr + SDHCI_TRANSFER_MODE);
+>>>> +                       pltfm_host->xfer_mode_shadow = 0;
+>>>
+>>> That last line is probably not needed and could actually be harmful -
+>>> if we try to write SDHCI_COMMAND twice in a raw without a write to
+>>> SDHCI_TRANSFER_MODE in between, the zero will overwrite the previous
+>>> value of SDHCI_TRANSFER_MODE.
+>>
+>> True, will remove it.
+>>
+>>>
+>>>> +                       return;
+>>>> +               }
+>>>> +       }
+>>>> +
+>>>> +       writew(val, host->ioaddr + reg);
+>>>> +}
+>>>> +
+>>>>  static void tegra_sdhci_writel(struct sdhci_host *host, u32 val, int reg)
+>>>>  {
+>>>>         struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>>>> @@ -147,6 +174,7 @@ static void tegra_sdhci_set_bus_width(struct sdhci_host *host, int bus_width)
+>>>>  static const struct sdhci_ops tegra_sdhci_ops = {
+>>>>         .get_ro     = tegra_sdhci_get_ro,
+>>>>         .read_w     = tegra_sdhci_readw,
+>>>> +       .write_w    = tegra_sdhci_writew,
+>>>>         .write_l    = tegra_sdhci_writel,
+>>>>         .set_clock  = sdhci_set_clock,
+>>>>         .set_bus_width = tegra_sdhci_set_bus_width,
+>>>> @@ -201,7 +229,8 @@ static struct sdhci_tegra_soc_data soc_data_tegra114 = {
+>>>>         .pdata = &sdhci_tegra114_pdata,
+>>>>         .nvquirks = NVQUIRK_DISABLE_SDR50 |
+>>>>                     NVQUIRK_DISABLE_DDR50 |
+>>>> -                   NVQUIRK_DISABLE_SDR104,
+>>>> +                   NVQUIRK_DISABLE_SDR104 |
+>>>> +                   NVQUIRK_SHADOW_XFER_MODE_REG,
+>>>>  };
+>>>
+>>> Since this only applies to Tegra114 (?), I wonder whether it would not
+>>> be better to have a dedicated tegra114_sdhci_ops that implements
+>>> tegra_sdhci_writew, and use it only in tegra_sdhci_writew. That way
+>>> you could get rid of the NVQUIRK_SHADOW_XFER_MODE_REG and the test for
+>>> it in tegra_sdhci_writew(), and chips prior to Tegra114 will not have
+>>> to needlessly check for it every time they write a register.
+>>
+>> The reason I did it this way, is that this doesn't explicitly just apply
+>> to T114. It actually applies to T114, T124 and T132. In that case, I
+>> think it makes sense to keep the QUIRK and I can update the commit
+>> description to reflect that.
+>
+> All the same, I don't see what advantage we have checking for that
+> condition for every single write while we could simply set the right
+> function to use at probe time?
 
-Right, I copied it directly from Jonghwa's response. Thank you for
-noticing it.
+The above seems like a reasonable optimization to do!
 
-> 
-> I applied patch 1 - 14 to my repo with a upcoming power driver (mxs_power) and
-> didn't see any problems with your patches.
+Now, since $subject patch has been applied, I suggest you send a new
+patch addressing this issue.
 
-Great, thanks!
-
-Best regards,
-Krzysztof
+Kind regards
+Uffe
