@@ -1,241 +1,93 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [pinmux PATCH 2/2] Add support for MIPI Pad Ctrl groups on Tegra124
-Date: Wed, 11 Feb 2015 14:04:43 -0700
-Message-ID: <1423688683-13249-2-git-send-email-swarren@wwwdotorg.org>
-References: <1423688683-13249-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1423688683-13249-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v3 20/20] arm: mach-pxa: Decrement the power supply's
+ device reference counter
+Date: Wed, 11 Feb 2015 23:12:33 +0100
+Message-ID: <20150211221233.GD11313@amd>
+References: <1422629278-12202-1-git-send-email-k.kozlowski@samsung.com>
+ <1422629278-12202-21-git-send-email-k.kozlowski@samsung.com>
+ <20150206134953.GA25683@amd>
+ <1423233788.31516.5.camel@AMDC1943>
+ <20150206145904.GA7872@amd>
+ <1423476432.4909.15.camel@AMDC1943>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-input-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1423476432.4909.15.camel@AMDC1943>
+Sender: linux-input-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Jiri Kosina <jkosina@suse.cz>, David Herrmann <dh.herrmann@googlemail.com>, Cezary Jackiewicz <cezary.jackiewicz@gmail.com>, Darren Hart <dvhart@infradead.org>, Support Opensource <support.opensource@diasemi.com>, Milo Kim <milo.kim@ti.com>, Julian Andres Klode <jak@jak-linux.org>, Marc Dietrich <marvin24@gmx.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-acpi@vger.kernel.org, linux-input@vger.kernel.org, platform-driver-x86@vger.kernel.org, patches@opensource.wolfsonmicro.com, ac100@lists.launchpad.net, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, Linus Walleij <linus.walleij@linaro.org>, Samuel
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Mon 2015-02-09 11:07:12, Krzysztof Kozlowski wrote:
+> On pi=C4=85, 2015-02-06 at 15:59 +0100, Pavel Machek wrote:
+> > On Fri 2015-02-06 15:43:08, Krzysztof Kozlowski wrote:
+> > > On pi=C4=85, 2015-02-06 at 14:49 +0100, Pavel Machek wrote:
+> > > > On Fri 2015-01-30 15:47:58, Krzysztof Kozlowski wrote:
+> > > > > Use power_supply_put() to decrement the power supply's device=
+ reference
+> > > > > counter.
+> > > > >=20
+> > > > > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> > > > > Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.=
+com>
+> > > > > Reviewed-by: Sebastian Reichel <sre@kernel.org>
+> > > >=20
+> > > > 11,13,20 nothing obviously wrong. But I'm not sure if I studied=
+ them
+> > > > closely enough to warrant an ACK.
+> > > >=20
+> > > > It would be good to get this into kernel -- I seen no bad comme=
+nts,
+> > > > and it is not going to improve without merge into mainline.
+> > >=20
+> > > Thanks for looking at patchset. It would be really nice if this c=
+ould be
+> > > tested for some time in linux-next. Such testing would help a lot=
+=2E But I
+> > > need acks from various maintainers for that.
+> >=20
+> > Actually, you don't. The various maintainers clearly don't care at
+> > this point. They had enough time. So you select one maintainer you
+> > want to push this through, and you push it.
+> >=20
+> > Someone may complain, so you'll solve the feedback...
+>=20
+> I am thinking also on another way of solving this huge-patch problem:
+> 1. Mark all drivers broken (CONFIG_BROKEN).
+> 2. Introduce change in power_supply_register() API. Broken drivers
+>    will fail to build.
+> 3. Convert broken drivers to new API incrementally (one driver
+>    per patch) marking them also non-broken.
+>=20
+> This would be much easier to review but also this would break
+> build-bisectability for drivers and some platforms using them (like
+> OLPC, compal-laptop, ACPI).
 
-This aligns the output with what's check into the kernel. There are now
-only minor white-space/formatting differences. I'll fix those in the
-kernel soon, when I send patched to add Tegra210 SoC support.
+It is easy enough to review as it is, playing with CONFIG_BROKEN will
+not improve it. Just push the patch...
 
-Cc: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- configs/tegra124.soc            | 30 +++++++++++++++++++
- soc-to-kernel-pinctrl-driver.py | 64 +++++++++++++++++++++++++++++++++++++++++
- tegra_pmx_soc_parser.py         | 33 +++++++++++++++++++++
- 3 files changed, 127 insertions(+)
+> I pushed the patchset here:
+> https://git.linaro.org/people/marek.szyprowski/linux-srpol.git/shortl=
+og/refs/heads/v3.19-next-power-supply-core-ownership
+> (actually this is v4: added acks/reviews and minor issue fixed; merge
+> window has opened so I'll wait with sending this to LKML).
 
-diff --git a/configs/tegra124.soc b/configs/tegra124.soc
-index 1e13bba8943c..09c6e68bb7f5 100644
---- a/configs/tegra124.soc
-+++ b/configs/tegra124.soc
-@@ -203,6 +203,16 @@ pins = (
-     ('owr',          0x3334, 'owr',    'rsvd2', 'rsvd3', 'rsvd4',       False, False, True),
-     ('clk_32k_in',   0x3330, 'clk',    'rsvd2', 'rsvd3', 'rsvd4',       False, False, False),
-     ('jtag_rtck',    0x32b0, 'rtck',   'rsvd2', 'rsvd3', 'rsvd4',       False, False, False),
-+    ('dsi_b_clk_p',  ),
-+    ('dsi_b_clk_n',  ),
-+    ('dsi_b_d0_p',   ),
-+    ('dsi_b_d0_n',   ),
-+    ('dsi_b_d1_p',   ),
-+    ('dsi_b_d1_n',   ),
-+    ('dsi_b_d2_p',   ),
-+    ('dsi_b_d2_n',   ),
-+    ('dsi_b_d3_p',   ),
-+    ('dsi_b_d3_n',   ),
- )
- 
- drive_groups = (
-@@ -524,3 +534,23 @@ drive_group_pins = {
-         'jtag_rtck',
-     ),
- }
-+
-+mipi_pad_ctrl_groups = {
-+    #name,    r,     b, f0,    f1
-+    ('dsi_b', 0x820, 1, 'csi', 'dsi_b'),
-+}
-+
-+mipi_pad_ctrl_group_pins = {
-+    'dsi_b': (
-+        'dsi_b_clk_p',
-+        'dsi_b_clk_n',
-+        'dsi_b_d0_p',
-+        'dsi_b_d0_n',
-+        'dsi_b_d1_p',
-+        'dsi_b_d1_n',
-+        'dsi_b_d2_p',
-+        'dsi_b_d2_n',
-+        'dsi_b_d3_p',
-+        'dsi_b_d3_n',
-+    ),
-+}
-diff --git a/soc-to-kernel-pinctrl-driver.py b/soc-to-kernel-pinctrl-driver.py
-index a6cb59eebd4e..51c5009433b0 100755
---- a/soc-to-kernel-pinctrl-driver.py
-+++ b/soc-to-kernel-pinctrl-driver.py
-@@ -124,6 +124,15 @@ static const unsigned %s_pins[] = {
-         print('\t%s,' % pin.define)
-     print('};');
- 
-+for group in soc.mipi_pad_ctrl_groups_by_reg():
-+    print('''\
-+
-+static const unsigned %s_pins[] = {
-+''' % group.fullname, end='')
-+    for pin in group.gpios_pins:
-+        print('\t%s,' % pin.define)
-+    print('};');
-+
- print('''\
- 
- enum tegra_mux {
-@@ -151,6 +160,12 @@ print('''\
- 
- #define DRV_PINGROUP_REG_A		0x868	/* bank 0 */
- #define PINGROUP_REG_A			0x3000	/* bank 1 */
-+''', end='')
-+
-+if len(soc.mipi_pad_ctrl_groups_by_reg()):
-+    print('#define MIPI_PAD_CTRL_PINGROUP_REG_A	0x820	/* bank 2 */''')
-+
-+print('''\
- 
- #define PINGROUP_REG(r)			((r) - PINGROUP_REG_A)
- 
-@@ -263,6 +278,40 @@ else:
- print('''\
- 	}
- 
-+''', end='')
-+
-+if len(soc.mipi_pad_ctrl_groups_by_reg()):
-+    print('''\
-+#define MIPI_PAD_CTRL_PINGROUP_REG_Y(r)	((r) - MIPI_PAD_CTRL_PINGROUP_REG_A)
-+
-+#define MIPI_PAD_CTRL_PINGROUP(pg_name, r, b, f0, f1)			\\
-+	{								\\
-+		.name = "mipi_pad_ctrl_" #pg_name,			\\
-+		.pins = mipi_pad_ctrl_##pg_name##_pins,			\\
-+		.npins = ARRAY_SIZE(mipi_pad_ctrl_##pg_name##_pins),	\\
-+		.funcs = {						\\
-+			TEGRA_MUX_ ## f0,				\\
-+			TEGRA_MUX_ ## f1,				\\
-+			TEGRA_MUX_RSVD3,				\\
-+			TEGRA_MUX_RSVD4,				\\
-+		},							\\
-+		.mux_reg = MIPI_PAD_CTRL_PINGROUP_REG_Y(r),		\\
-+		.mux_bank = 2,						\\
-+		.mux_bit = b,						\\
-+		.pupd_reg = -1,						\\
-+		.tri_reg = -1,						\\
-+		.einput_bit = -1,					\\
-+		.odrain_bit = -1,					\\
-+		.lock_bit = -1,						\\
-+		.ioreset_bit = -1,					\\
-+		.rcv_sel_bit = -1,					\\
-+		.drv_reg = -1,						\\
-+	}
-+
-+''', end='')
-+
-+
-+print('''\
- static const struct tegra_pingroup %s_groups[] = {
- ''' % soc.name, end='')
- 
-@@ -361,6 +410,21 @@ for drvgroup in f():
-     rows.append(row)
- dump_c_table(None, 'DRV_PINGROUP', rows, col_widths=col_widths, right_justifies=right_justifies)
- 
-+if len(soc.mipi_pad_ctrl_groups_by_reg()):
-+    print()
-+    headings = ('pg_name', 'r', 'b', 'f0', 'f1')
-+    rows = []
-+    for group in soc.mipi_pad_ctrl_groups_by_reg():
-+        row = (
-+            group.name,
-+            '0x%x' % group.reg,
-+            repr(group.bit),
-+            group.f0.upper(),
-+            group.f1.upper(),
-+        )
-+    rows.append(row)
-+    dump_c_table(headings, 'MIPI_PAD_CTRL_PINGROUP', rows )
-+
- socvars = {
-     'author': soc.kernel_author,
-     'soc': soc.name,
-diff --git a/tegra_pmx_soc_parser.py b/tegra_pmx_soc_parser.py
-index 06e4b44341ea..e6335dd87cbe 100644
---- a/tegra_pmx_soc_parser.py
-+++ b/tegra_pmx_soc_parser.py
-@@ -85,6 +85,14 @@ class DriveGroup(ReprDictObj):
-         self.gpios_pins = gpios_pins
-         self.fullname = 'drive_' + self.name
- 
-+class MipiPadCtrlGroup(ReprDictObj):
-+    def __init__(self, data, gpios_pins):
-+        fields = ('name', 'reg', 'bit', 'f0', 'f1')
-+        for i, field in enumerate(fields):
-+            self.__setattr__(field, data[i])
-+        self.gpios_pins = gpios_pins
-+        self.fullname = 'mipi_pad_ctrl_' + self.name
-+
- class Function(ReprDictObj):
-     def __init__(self, name):
-         self.name = name
-@@ -126,6 +134,14 @@ class Soc(TopLevelParsedObj):
-                 gpios_pins.append(gpios_pins_by_name[name])
-             self._drive_groups.append(DriveGroup(drive_group, gpios_pins, self.has_drvtype))
- 
-+        self._mipi_pad_ctrl_groups = []
-+        for group in data.get('mipi_pad_ctrl_groups', []):
-+            names = data['mipi_pad_ctrl_group_pins'][group[0]]
-+            gpios_pins = []
-+            for name in names:
-+                gpios_pins.append(gpios_pins_by_name[name])
-+            self._mipi_pad_ctrl_groups.append(MipiPadCtrlGroup(group, gpios_pins))
-+
-         self._generate_derived_data()
- 
-     def _generate_derived_data(self):
-@@ -143,6 +159,9 @@ class Soc(TopLevelParsedObj):
-         self._drive_groups_by_reg = sorted(self._drive_groups, key=lambda drive_group: drive_group.reg)
-         self._drive_groups_by_alpha = sorted(self._drive_groups, key=lambda drive_group: drive_group.name)
- 
-+        self._mipi_pad_ctrl_groups_by_reg = sorted(self._mipi_pad_ctrl_groups, key=lambda group: group.reg)
-+        self._mipi_pad_ctrl_groups_by_alpha = sorted(self._mipi_pad_ctrl_groups, key=lambda group: group.name)
-+
-         functions = collections.OrderedDict()
-         for pin in self._gpios + self._pins:
-             if not pin.reg:
-@@ -151,6 +170,11 @@ class Soc(TopLevelParsedObj):
-                 if func not in functions:
-                     functions[func] = Function(func)
-                 functions[func]._add_pin(pin)
-+        for group in self._mipi_pad_ctrl_groups:
-+            for func in (group.f0, group.f1):
-+                if func not in functions:
-+                    functions[func] = Function(func)
-+                functions[func]._add_pin(pin)
-         self._functions = functions.values()
-         self._functions_by_alpha = sorted(self._functions, key=lambda f: f.name)
- 
-@@ -201,6 +225,15 @@ class Soc(TopLevelParsedObj):
-     def drive_groups_by_alpha(self):
-         return self._drive_groups_by_alpha
- 
-+    def mipi_pad_ctrl_groups_by_conf_order(self):
-+        return self._mipi_pad_ctrl_groups
-+
-+    def mipi_pad_ctrl_groups_by_reg(self):
-+        return self._mipi_pad_ctrl_groups_by_reg
-+
-+    def mipi_pad_ctrl_groups_by_alpha(self):
-+        return self._mipi_pad_ctrl_groups_by_alpha
-+
-     def functions(self):
-         return self._functions
- 
--- 
-1.9.1
+Great... now you just need one of maintainers to merge it...
+
+POWER SUPPLY CLASS/SUBSYSTEM and DRIVERS
+M:      Sebastian Reichel <sre@kernel.org>
+M:      Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+M:      David Woodhouse <dwmw2@infradead.org>
+									Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses=
+/blog.html
+--
+To unsubscribe from this list: send the line "unsubscribe linux-input" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
