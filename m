@@ -1,231 +1,58 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v2 5/6] platform: probe IOMMU if present
-Date: Wed, 11 Feb 2015 16:21:40 +0900
-Message-ID: <1423639301-27304-6-git-send-email-acourbot@nvidia.com>
+From: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>
+Subject: Re: [Nouveau] [PATCH v2 1/6] make RAM device optional
+Date: Wed, 11 Feb 2015 02:40:08 -0500
+Message-ID: <CAKb7Uvgs3_JYp1wWzFF3rcTDCz2Tgx0h2v_6Xfzoki01RrChmg@mail.gmail.com>
 References: <1423639301-27304-1-git-send-email-acourbot@nvidia.com>
+	<1423639301-27304-2-git-send-email-acourbot@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1423639301-27304-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1423639301-27304-2-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra SoCs have an IOMMU that can be used to present non-contiguous
-physical memory as contiguous to the GPU and maximize the use of large
-pages in the GPU MMU, leading to performance gains. This patch adds
-support for probing such a IOMMU if present and make its properties
-available in the nouveau_platform_gpu structure so subsystems can take
-advantage of it.
+On Wed, Feb 11, 2015 at 2:21 AM, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> @@ -150,7 +151,10 @@ gf100_ltc_init_tag_ram(struct nvkm_fb *pfb, struct nvkm_ltc_priv *priv)
+>         int ret;
+>
+>         /* tags for 1/4 of VRAM should be enough (8192/4 per GiB of VRAM) */
+> -       priv->num_tags = (pfb->ram->size >> 17) / 4;
+> +       if (pfb->ram)
+> +               priv->num_tags = (pfb->ram->size >> 17) / 4;
+> +       else
+> +               priv->num_tags = (1 << 17);
+>         if (priv->num_tags > (1 << 17))
+>                 priv->num_tags = 1 << 17; /* we have 17 bits in PTE */
+>         priv->num_tags = (priv->num_tags + 63) & ~63; /* round up to 64 */
+> @@ -170,8 +174,11 @@ gf100_ltc_init_tag_ram(struct nvkm_fb *pfb, struct nvkm_ltc_priv *priv)
+>         tag_size += tag_align;
+>         tag_size  = (tag_size + 0xfff) >> 12; /* round up */
+>
+> -       ret = nvkm_mm_tail(&pfb->vram, 1, 1, tag_size, tag_size, 1,
+> -                          &priv->tag_ram);
+> +       if (pfb->ram)
+> +               ret = nvkm_mm_tail(&pfb->vram, 1, 1, tag_size, tag_size, 1,
+> +                                  &priv->tag_ram);
+> +       else
+> +               ret = -1;
+>         if (ret) {
+>                 priv->num_tags = 0;
+>         } else {
 
-Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drm/nouveau/nouveau_platform.c | 75 +++++++++++++++++++++++++++++++++++++++++-
- drm/nouveau/nouveau_platform.h | 18 ++++++++++
- lib/include/nvif/os.h          | 32 ++++++++++++++++++
- 3 files changed, 124 insertions(+), 1 deletion(-)
+Seems like you could just avoid a lot of this and just start the
+function out with
 
-diff --git a/drm/nouveau/nouveau_platform.c b/drm/nouveau/nouveau_platform.c
-index dc5900b..3691982 100644
---- a/drm/nouveau/nouveau_platform.c
-+++ b/drm/nouveau/nouveau_platform.c
-@@ -27,6 +27,7 @@
- #include <linux/of.h>
- #include <linux/reset.h>
- #include <linux/regulator/consumer.h>
-+#include <linux/iommu.h>
- #include <soc/tegra/fuse.h>
- #include <soc/tegra/pmc.h>
- 
-@@ -91,6 +92,71 @@ static int nouveau_platform_power_down(struct nouveau_platform_gpu *gpu)
- 	return 0;
- }
- 
-+static void nouveau_platform_probe_iommu(struct device *dev,
-+					 struct nouveau_platform_gpu *gpu)
-+{
-+	int err;
-+	unsigned long pgsize_bitmap;
-+
-+	mutex_init(&gpu->iommu.mutex);
-+
-+	if (iommu_present(&platform_bus_type)) {
-+		gpu->iommu.domain = iommu_domain_alloc(&platform_bus_type);
-+		if (IS_ERR(gpu->iommu.domain))
-+			goto error;
-+
-+		/*
-+		 * A IOMMU is only usable if it supports page sizes smaller
-+		 * or equal to the system's PAGE_SIZE, with a preference if
-+		 * both are equal.
-+		 */
-+		pgsize_bitmap = gpu->iommu.domain->ops->pgsize_bitmap;
-+		if (pgsize_bitmap & PAGE_SIZE) {
-+			gpu->iommu.pgshift = PAGE_SHIFT;
-+		} else {
-+			gpu->iommu.pgshift = fls(pgsize_bitmap & ~PAGE_MASK);
-+			if (gpu->iommu.pgshift == 0) {
-+				dev_warn(dev, "unsupported IOMMU page size\n");
-+				goto free_domain;
-+			}
-+			gpu->iommu.pgshift -= 1;
-+		}
-+
-+		err = iommu_attach_device(gpu->iommu.domain, dev);
-+		if (err)
-+			goto free_domain;
-+
-+		err = nvkm_mm_init(&gpu->iommu._mm, 0,
-+				   (1ULL << 40) >> gpu->iommu.pgshift, 1);
-+		if (err)
-+			goto detach_device;
-+
-+		gpu->iommu.mm = &gpu->iommu._mm;
-+	}
-+
-+	return;
-+
-+detach_device:
-+	iommu_detach_device(gpu->iommu.domain, dev);
-+
-+free_domain:
-+	iommu_domain_free(gpu->iommu.domain);
-+
-+error:
-+	gpu->iommu.domain = NULL;
-+	gpu->iommu.pgshift = 0;
-+	dev_err(dev, "cannot initialize IOMMU MM\n");
-+}
-+
-+static void nouveau_platform_remove_iommu(struct device *dev,
-+					  struct nouveau_platform_gpu *gpu)
-+{
-+	if (gpu->iommu.domain) {
-+		iommu_detach_device(gpu->iommu.domain, dev);
-+		iommu_domain_free(gpu->iommu.domain);
-+	}
-+}
-+
- static int nouveau_platform_probe(struct platform_device *pdev)
- {
- 	struct nouveau_platform_gpu *gpu;
-@@ -118,6 +184,8 @@ static int nouveau_platform_probe(struct platform_device *pdev)
- 	if (IS_ERR(gpu->clk_pwr))
- 		return PTR_ERR(gpu->clk_pwr);
- 
-+	nouveau_platform_probe_iommu(&pdev->dev, gpu);
-+
- 	err = nouveau_platform_power_up(gpu);
- 	if (err)
- 		return err;
-@@ -154,10 +222,15 @@ static int nouveau_platform_remove(struct platform_device *pdev)
- 	struct nouveau_drm *drm = nouveau_drm(drm_dev);
- 	struct nvkm_device *device = nvxx_device(&drm->device);
- 	struct nouveau_platform_gpu *gpu = nv_device_to_platform(device)->gpu;
-+	int err;
- 
- 	nouveau_drm_device_remove(drm_dev);
- 
--	return nouveau_platform_power_down(gpu);
-+	err = nouveau_platform_power_down(gpu);
-+
-+	nouveau_platform_remove_iommu(&pdev->dev, gpu);
-+
-+	return err;
- }
- 
- #if IS_ENABLED(CONFIG_OF)
-diff --git a/drm/nouveau/nouveau_platform.h b/drm/nouveau/nouveau_platform.h
-index 268bb72..392874c 100644
---- a/drm/nouveau/nouveau_platform.h
-+++ b/drm/nouveau/nouveau_platform.h
-@@ -24,10 +24,12 @@
- #define __NOUVEAU_PLATFORM_H__
- 
- #include "core/device.h"
-+#include "core/mm.h"
- 
- struct reset_control;
- struct clk;
- struct regulator;
-+struct iommu_domain;
- struct platform_driver;
- 
- struct nouveau_platform_gpu {
-@@ -36,6 +38,22 @@ struct nouveau_platform_gpu {
- 	struct clk *clk_pwr;
- 
- 	struct regulator *vdd;
-+
-+	struct {
-+		/*
-+		 * Protects accesses to mm from subsystems
-+		 */
-+		struct mutex mutex;
-+
-+		struct nvkm_mm _mm;
-+		/*
-+		 * Just points to _mm. We need this to avoid embedding
-+		 * struct nvkm_mm in os.h
-+		 */
-+		struct nvkm_mm *mm;
-+		struct iommu_domain *domain;
-+		unsigned long pgshift;
-+	} iommu;
- };
- 
- struct nouveau_platform_device {
-diff --git a/lib/include/nvif/os.h b/lib/include/nvif/os.h
-index b4d307e..275fa84 100644
---- a/lib/include/nvif/os.h
-+++ b/lib/include/nvif/os.h
-@@ -715,6 +715,29 @@ dma_free_attrs(struct device *dev, size_t sz, void *vaddr, dma_addr_t bus,
- 
- 
- /******************************************************************************
-+ * IOMMU
-+ *****************************************************************************/
-+struct iommu_domain;
-+
-+#define IOMMU_READ     (1 << 0)
-+#define IOMMU_WRITE    (1 << 1)
-+#define IOMMU_CACHE    (1 << 2) /* DMA cache coherency */
-+#define IOMMU_NOEXEC   (1 << 3)
-+
-+static inline int
-+iommu_map(struct iommu_domain *domain, unsigned long iova, dma_addr_t paddr,
-+	  size_t size, int prot)
-+{
-+	return 0;
-+}
-+
-+static inline size_t
-+iommu_unmap(struct iommu_domain *domain, unsigned long iova, size_t size)
-+{
-+	return 0;
-+}
-+
-+/******************************************************************************
-  * PCI
-  *****************************************************************************/
- #include <pciaccess.h>
-@@ -1208,9 +1231,18 @@ regulator_get_voltage(struct regulator *regulator)
-  * nouveau drm platform device
-  *****************************************************************************/
- 
-+struct nvkm_mm;
-+
- struct nouveau_platform_gpu {
- 	struct clk *clk;
- 	struct regulator *vdd;
-+
-+	struct {
-+		struct mutex mutex;
-+		struct nvkm_mm *mm;
-+		struct iommu_domain *domain;
-+		unsigned long pgshift;
-+	} iommu;
- };
- 
- struct nouveau_platform_device {
--- 
-2.3.0
+if (!pfb->ram) {
+    priv->num_tags = 0; (is that even necessary? the object is
+probably kzalloc'd)
+    ret = nouveau_mm_init(&priv->tags, 0, 0, 1);
+    return ret;
+}
+
+That's essentially what happens, no? Perhaps you could go a step
+further and teach the base code about uninitialized tags mm, but that
+may not be worth it.
+
+  -ilia
