@@ -1,32 +1,39 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] mmc: tegra: Optimize write_w path for tegra114 and later
-Date: Thu, 12 Feb 2015 12:50:22 +0900
-Message-ID: <CAAVeFuKVWGExO2y9cb=icvGmNZWTnYve2w2N25t_ybmSo9MPYg@mail.gmail.com>
-References: <1423677351-31635-1-git-send-email-rklein@nvidia.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: Re: [PATCH v4 02/11] ARM: tegra: Move out nyan-generic parts out
+ from the nyan-big DT
+Date: Thu, 12 Feb 2015 07:18:47 +0100
+Message-ID: <54DC45C7.8020907@collabora.com>
+References: <1423667220-1062-1-git-send-email-tomeu.vizoso@collabora.com>	<1423667220-1062-3-git-send-email-tomeu.vizoso@collabora.com> <CAL1qeaHeB6vikVWquGM7psdKPKc0FVqj5-xuc3PXbJhok1vGoA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1423677351-31635-1-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chris Ball <chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mmc <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAL1qeaHeB6vikVWquGM7psdKPKc0FVqj5-xuc3PXbJhok1vGoA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Bresticker <abrestic@chromium.org>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Simon Glass <sjg@chromium.org>, Dylan Reid <dgreid@chromium.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Feb 12, 2015 at 2:55 AM, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> Setup a different set of sdhci_ops for tegra114 and later so that
-> the write_w callback is only used on tegra114. This allows us to
-> remove the NVQUIRK_SHADOW_XFER_MODE_REG and simply the logic
-> in tegra_sdhci_writew.
->
-> This was suggested by Alexandre Courbot.
+On 02/11/2015 06:26 PM, Andrew Bresticker wrote:
+> Hi Tomeu,
+> 
+> On Wed, Feb 11, 2015 at 7:06 AM, Tomeu Vizoso
+> <tomeu.vizoso@collabora.com> wrote:
+>> In preparation for adding the DT for the nyan-blaze board.
+>>
+>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> 
+> Maybe it's worth pulling the common pinmux bits into nyan.dtsi as well?
 
-There's a tag for that. ;)
+I decided to have them in the leaf DTSs so the whole output from
+tegra-pinmux-scripts can be stuck in there without any extra processing.
 
-Suggested-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+I think this way we can be more certain that the pinmux in the kernel
+isn't diverging from what it should be.
 
->
-> Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Otherwise,
+> Acked-by: Andrew Bresticker <abrestic@chromium.org>
 
-Acked-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Thanks,
 
-Thanks for keeping up with this!
+Tomeu
