@@ -1,34 +1,38 @@
 From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [PATCH v2 3/3] ASoC: tegra: Add control for the Mic Jack pin
-Date: Thu, 12 Feb 2015 09:41:57 +0100
-Message-ID: <1423730523-26266-4-git-send-email-tomeu.vizoso@collabora.com>
-References: <1423730523-26266-1-git-send-email-tomeu.vizoso@collabora.com>
+Subject: [PATCH v5 01/11] ARM: tegra: Change model of sound card in Nyan Big
+Date: Thu, 12 Feb 2015 09:50:55 +0100
+Message-ID: <1423731078-26681-2-git-send-email-tomeu.vizoso@collabora.com>
+References: <1423731078-26681-1-git-send-email-tomeu.vizoso@collabora.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1423730523-26266-1-git-send-email-tomeu.vizoso@collabora.com>
+In-Reply-To: <1423731078-26681-1-git-send-email-tomeu.vizoso@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Dylan Reid <dgreid@chromium.org>, Lars-Peter Clausen <lars@metafoo.de>, alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org
+To: linux-tegra@vger.kernel.org
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Simon Glass <sjg@chromium.org>, Dylan Reid <dgreid@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-So userspace can enable and disable the external microphone.
+Change it from "Acer Chromebook 13" to GoogleNyanBig so it's unique and
+identifiable.
+
+With this change the card id exposed to userspace becomes GoogleNyanBig
+instead of the current A13.
 
 Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Acked-by: Stephen Warren <swarren@nvidia.com>
 ---
- sound/soc/tegra/tegra_max98090.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/tegra124-nyan-big.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/tegra/tegra_max98090.c b/sound/soc/tegra/tegra_max98090.c
-index 29ea87c..1f20c2c 100644
---- a/sound/soc/tegra/tegra_max98090.c
-+++ b/sound/soc/tegra/tegra_max98090.c
-@@ -139,6 +139,7 @@ static const struct snd_soc_dapm_widget tegra_max98090_dapm_widgets[] = {
- static const struct snd_kcontrol_new tegra_max98090_controls[] = {
- 	SOC_DAPM_PIN_SWITCH("Headphones"),
- 	SOC_DAPM_PIN_SWITCH("Speakers"),
-+	SOC_DAPM_PIN_SWITCH("Mic Jack"),
- 	SOC_DAPM_PIN_SWITCH("Int Mic"),
- };
+diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts b/arch/arm/boot/dts/tegra124-nyan-big.dts
+index 004e8e4..e167df2 100644
+--- a/arch/arm/boot/dts/tegra124-nyan-big.dts
++++ b/arch/arm/boot/dts/tegra124-nyan-big.dts
+@@ -1110,7 +1110,7 @@
+ 	sound {
+ 		compatible = "nvidia,tegra-audio-max98090-nyan-big",
+ 			     "nvidia,tegra-audio-max98090";
+-		nvidia,model = "Acer Chromebook 13";
++		nvidia,model = "GoogleNyanBig";
  
+ 		nvidia,audio-routing =
+ 			"Headphones", "HPR",
 -- 
 1.9.3
