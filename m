@@ -1,39 +1,33 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: Re: [PATCH v4 02/11] ARM: tegra: Move out nyan-generic parts out
- from the nyan-big DT
-Date: Thu, 12 Feb 2015 07:18:47 +0100
-Message-ID: <54DC45C7.8020907@collabora.com>
-References: <1423667220-1062-1-git-send-email-tomeu.vizoso@collabora.com>	<1423667220-1062-3-git-send-email-tomeu.vizoso@collabora.com> <CAL1qeaHeB6vikVWquGM7psdKPKc0FVqj5-xuc3PXbJhok1vGoA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAL1qeaHeB6vikVWquGM7psdKPKc0FVqj5-xuc3PXbJhok1vGoA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Bresticker <abrestic@chromium.org>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Simon Glass <sjg@chromium.org>, Dylan Reid <dgreid@chromium.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Subject: [PATCH v2 0/3] Expose more controls from tegra-max98090
+Date: Thu, 12 Feb 2015 09:41:54 +0100
+Message-ID: <1423730523-26266-1-git-send-email-tomeu.vizoso@collabora.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/11/2015 06:26 PM, Andrew Bresticker wrote:
-> Hi Tomeu,
-> 
-> On Wed, Feb 11, 2015 at 7:06 AM, Tomeu Vizoso
-> <tomeu.vizoso@collabora.com> wrote:
->> In preparation for adding the DT for the nyan-blaze board.
->>
->> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-> 
-> Maybe it's worth pulling the common pinmux bits into nyan.dtsi as well?
+v2:	* Added ack tags from Stephen
 
-I decided to have them in the leaf DTSs so the whole output from
-tegra-pinmux-scripts can be stuck in there without any extra processing.
+Hello,
 
-I think this way we can be more certain that the pinmux in the kernel
-isn't diverging from what it should be.
+we need some more controls in userspace so policy can be applied at events
+such as microphone and headphone jacks being plugged in, to be used by
+Tegra-based Chromebooks.
 
-> Otherwise,
-> Acked-by: Andrew Bresticker <abrestic@chromium.org>
-
-Thanks,
+Regards,
 
 Tomeu
+
+Tomeu Vizoso (3):
+  ASoC: tegra: Expose Headphones pin to userspace
+  ASoC: tegra: Add sink for the internal mic to tegra_max98090
+  ASoC: tegra: Add control for the Mic Jack pin
+
+ .../devicetree/bindings/sound/nvidia,tegra-audio-max98090.txt         | 1 +
+ sound/soc/tegra/tegra_max98090.c                                      | 4 ++++
+ 2 files changed, 5 insertions(+)
+
+-- 
+1.9.3
