@@ -1,35 +1,123 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [PATCH v6 02/15] of: Document long-ram-code property in nvidia,tegra20-apbmisc
-Date: Thu, 12 Feb 2015 15:06:18 +0100
-Message-ID: <1423750042-6535-3-git-send-email-tomeu.vizoso@collabora.com>
-References: <1423750042-6535-1-git-send-email-tomeu.vizoso@collabora.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH v7 05/16] clk: tegra: Add DFLL DVCO reset control for
+ Tegra124
+Date: Thu, 12 Feb 2015 16:19:44 +0200
+Message-ID: <20150212141944.GK20811@tbergstrom-lnx.Nvidia.com>
+References: <1420723339-30735-1-git-send-email-mikko.perttunen@kapsi.fi>
+ <1420723339-30735-6-git-send-email-mikko.perttunen@kapsi.fi>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1423750042-6535-1-git-send-email-tomeu.vizoso@collabora.com>
+Content-Disposition: inline
+In-Reply-To: <1420723339-30735-6-git-send-email-mikko.perttunen@kapsi.fi>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-tegra@vger.kernel.org
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Mikko Perttunen <mikko.perttunen@kapsi.fi>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Eduardo Valentin <edubezval@gmail.com>, Paul Walmsley <paul@pwsan.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+Cc: swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, rjw@rjwysocki.net, viresh.kumar@linaro.org, mturquette@linaro.org, pwalmsley@nvidia.com, vinceh@nvidia.com, pgaikwad@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tuomas.tynkkynen@iki.fi, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Needed to properly decode the ram code register.
+On Thu, Jan 08, 2015 at 03:22:08PM +0200, Mikko Perttunen wrote:
+> From: Paul Walmsley <pwalmsley@nvidia.com>
+> 
+> The DVCO present in the DFLL IP block has a separate reset line,
+> exposed via the CAR IP block.  This reset line is asserted upon SoC
+> reset.  Unless something (such as the DFLL driver) deasserts this
+> line, the DVCO will not oscillate, although reads and writes to the
+> DFLL IP block will complete.
+> 
+> Thanks to Aleksandr Frid <afrid@nvidia.com> for identifying this and
+> saving hours of debugging time.
+> 
 
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Should this be done as a reset driver?
 
----
-
-v3:	* Clarify wording as suggested by Mikko
----
- Documentation/devicetree/bindings/misc/nvidia,tegra20-apbmisc.txt | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/misc/nvidia,tegra20-apbmisc.txt b/Documentation/devicetree/bindings/misc/nvidia,tegra20-apbmisc.txt
-index 47b205c..4556359 100644
---- a/Documentation/devicetree/bindings/misc/nvidia,tegra20-apbmisc.txt
-+++ b/Documentation/devicetree/bindings/misc/nvidia,tegra20-apbmisc.txt
-@@ -10,3 +10,5 @@ Required properties:
-        The second entry gives the physical address and length of the
-        registers indicating the strapping options.
- 
-+Optional properties:
-+- nvidia,long-ram-code: If present, the RAM code is long (4 bit). If not, short (2 bit).
--- 
-1.9.3
+> Signed-off-by: Paul Walmsley <pwalmsley@nvidia.com>
+> [ttynkkynen: ported to tegra124 from tegra114]
+> Signed-off-by: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+> Signed-off-by: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+> ---
+>  drivers/clk/tegra/clk-tegra124.c | 47 ++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/tegra/clk.h          |  3 +++
+>  2 files changed, 50 insertions(+)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+> index f5f9bac..623b77f 100644
+> --- a/drivers/clk/tegra/clk-tegra124.c
+> +++ b/drivers/clk/tegra/clk-tegra124.c
+> @@ -31,6 +31,9 @@
+>  #define CLK_SOURCE_CSITE 0x1d4
+>  #define CLK_SOURCE_EMC 0x19c
+>  
+> +#define RST_DFLL_DVCO			0x2f4
+> +#define DVFS_DFLL_RESET_SHIFT		0
+> +
+>  #define PLLC_BASE 0x80
+>  #define PLLC_OUT 0x84
+>  #define PLLC_MISC2 0x88
+> @@ -1399,6 +1402,50 @@ static void __init tegra124_clock_apply_init_table(void)
+>  	tegra_init_from_table(init_table, clks, TEGRA124_CLK_CLK_MAX);
+>  }
+>  
+> +/**
+> + * tegra124_car_barrier - wait for pending writes to the CAR to complete
+> + *
+> + * Wait for any outstanding writes to the CAR MMIO space from this CPU
+> + * to complete before continuing execution.  No return value.
+> + */
+> +static void tegra124_car_barrier(void)
+> +{
+> +	readl_relaxed(clk_base + RST_DFLL_DVCO);
+> +}
+> +
+> +/**
+> + * tegra124_clock_assert_dfll_dvco_reset - assert the DFLL's DVCO reset
+> + *
+> + * Assert the reset line of the DFLL's DVCO.  No return value.
+> + */
+> +void tegra124_clock_assert_dfll_dvco_reset(void)
+> +{
+> +	u32 v;
+> +
+> +	v = readl_relaxed(clk_base + RST_DFLL_DVCO);
+> +	v |= (1 << DVFS_DFLL_RESET_SHIFT);
+> +	writel_relaxed(v, clk_base + RST_DFLL_DVCO);
+> +	tegra124_car_barrier();
+> +}
+> +EXPORT_SYMBOL(tegra124_clock_assert_dfll_dvco_reset);
+> +
+> +/**
+> + * tegra124_clock_deassert_dfll_dvco_reset - deassert the DFLL's DVCO reset
+> + *
+> + * Deassert the reset line of the DFLL's DVCO, allowing the DVCO to
+> + * operate.  No return value.
+> + */
+> +void tegra124_clock_deassert_dfll_dvco_reset(void)
+> +{
+> +	u32 v;
+> +
+> +	v = readl_relaxed(clk_base + RST_DFLL_DVCO);
+> +	v &= ~(1 << DVFS_DFLL_RESET_SHIFT);
+> +	writel_relaxed(v, clk_base + RST_DFLL_DVCO);
+> +	tegra124_car_barrier();
+> +}
+> +EXPORT_SYMBOL(tegra124_clock_deassert_dfll_dvco_reset);
+> +
+>  static void __init tegra124_clock_init(struct device_node *np)
+>  {
+>  	struct device_node *node;
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index 4e458aa..def0ea4 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -629,6 +629,9 @@ void tegra114_clock_tune_cpu_trimmers_init(void);
+>  void tegra114_clock_assert_dfll_dvco_reset(void);
+>  void tegra114_clock_deassert_dfll_dvco_reset(void);
+>  
+> +void tegra124_clock_assert_dfll_dvco_reset(void);
+> +void tegra124_clock_deassert_dfll_dvco_reset(void);
+> +
+>  typedef void (*tegra_clk_apply_init_table_func)(void);
+>  extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
+>  
+> -- 
+> 2.2.1
+> 
