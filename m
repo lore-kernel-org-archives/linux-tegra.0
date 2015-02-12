@@ -1,127 +1,169 @@
 From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC PATCH 1/9] reset: add of_reset_control_get_by_index()
-Date: Thu, 12 Feb 2015 17:56:19 +0900
-Message-ID: <CAAVeFuJDfG7skRgyEt1p+NJ1x=s5rtfkL9JV1DR_Df0E=CGjuA@mail.gmail.com>
-References: <1421216372-8025-1-git-send-email-vinceh@nvidia.com> <1421216372-8025-2-git-send-email-vinceh@nvidia.com>
+Subject: Re: [RFC PATCH 2/9] memory: tegra: add mc flush support
+Date: Thu, 12 Feb 2015 17:56:27 +0900
+Message-ID: <CAAVeFuLx5fr_kQonRZzTgsw-wND==jNwvMs9LkzhWrE0rRQ76w@mail.gmail.com>
+References: <1421216372-8025-1-git-send-email-vinceh@nvidia.com> <1421216372-8025-3-git-send-email-vinceh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1421216372-8025-2-git-send-email-vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1421216372-8025-3-git-send-email-vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 On Wed, Jan 14, 2015 at 3:19 PM, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> Add of_reset_control_get_by_index() to allow the dirvers to get reset device
-
-s/dirvers/drivers
-
-> without knowing its name.
+> The flush operation of memory clients is needed for various IP blocks in
+> the Tegra SoCs to perform a clean reset.
 >
 > Signed-off-by: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  drivers/reset/core.c  | 47 ++++++++++++++++++++++++++++++++---------------
->  include/linux/reset.h |  9 +++++++++
->  2 files changed, 41 insertions(+), 15 deletions(-)
+>  drivers/memory/tegra/mc.c       | 132 ++++++++++++++++++++++++++++++++++++++++
+>  drivers/memory/tegra/tegra114.c |   2 +-
+>  drivers/memory/tegra/tegra30.c  |   2 +-
+>  include/soc/tegra/mc.h          |  41 ++++++++++++-
+>  4 files changed, 173 insertions(+), 4 deletions(-)
 >
-> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-> index 7955e00d04d4..25a0da1654f8 100644
-> --- a/drivers/reset/core.c
-> +++ b/drivers/reset/core.c
-> @@ -140,28 +140,15 @@ int reset_control_status(struct reset_control *rstc)
->  }
->  EXPORT_SYMBOL_GPL(reset_control_status);
+> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+> index fe3c44e7e1d1..35f769f9f1cd 100644
+> --- a/drivers/memory/tegra/mc.c
+> +++ b/drivers/memory/tegra/mc.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+> +#include <linux/of_platform.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/slab.h>
 >
-> -/**
-> - * of_reset_control_get - Lookup and obtain a reference to a reset controller.
-> - * @node: device to be reset by the controller
-> - * @id: reset line name
-> - *
-> - * Returns a struct reset_control or IS_ERR() condition containing errno.
-> - *
-> - * Use of id names is optional.
-> - */
-> -struct reset_control *of_reset_control_get(struct device_node *node,
-> -                                          const char *id)
-> +struct reset_control *__of_reset_control_get(struct device_node *node,
-> +                                               int index)
+> @@ -62,6 +63,130 @@ static const struct of_device_id tegra_mc_of_match[] = {
+>  };
+>  MODULE_DEVICE_TABLE(of, tegra_mc_of_match);
+>
+> +static struct tegra_mc_swgroup *find_swgroup(struct tegra_mc *mc,
+> +               unsigned int swgroup)
+
+Indentation looks a little bit weird here.
+
+> +{
+> +       struct tegra_mc_swgroup *sg;
+> +
+> +       list_for_each_entry(sg, &mc->swgroups, head) {
+> +               if (sg->id == swgroup)
+> +                       return sg;
+> +       }
+> +
+> +       return NULL;
+> +}
+> +
+> +static struct tegra_mc_swgroup *add_swgroup(struct tegra_mc *mc,
+> +       unsigned int swgroup)
+
+Here too. Also even though they are static, these functions should
+probably be prefixed with tegra_mc or something.
+
+> +int tegra_mc_flush(struct tegra_mc_swgroup *sg)
+> +{
+> +       struct tegra_mc *mc;
+> +       const struct tegra_mc_hotreset *client;
+> +       int i;
+> +
+> +       if (!sg || !sg->mc)
+> +               return -EINVAL;;
+> +
+> +       mc = sg->mc;
+> +       if (!mc->soc->ops || !mc->soc->ops->flush)
+> +               return -EINVAL;;
+> +
+> +       client = mc->soc->hotresets;
+> +
+> +       for (i = 0; i < mc->soc->num_hotresets; i++, client++) {
+> +               if (sg->id == client->swgroup)
+> +                       return mc->soc->ops->flush(mc, client);
+> +       }
+> +
+> +       return -EINVAL;
+> +}
+> +EXPORT_SYMBOL(tegra_mc_flush);
+> +
+> +int tegra_mc_flush_done(struct tegra_mc_swgroup *sg)
+> +{
+> +       struct tegra_mc *mc;
+> +       const struct tegra_mc_hotreset *client;
+> +       int i;
+> +
+> +       if (!sg || !sg->mc)
+> +               return -EINVAL;;
+> +
+> +       mc = sg->mc;
+> +       if (!mc->soc->ops || !mc->soc->ops->flush)
+> +               return -EINVAL;;
+> +
+> +       client = mc->soc->hotresets;
+> +
+> +       for (i = 0; i < mc->soc->num_hotresets; i++, client++) {
+> +               if (sg->id == client->swgroup)
+> +                       return mc->soc->ops->flush_done(mc, client);
+> +       }
+> +
+> +       return -EINVAL;
+> +}
+> +EXPORT_SYMBOL(tegra_mc_flush_done);
+
+These functions are identical, excepted for the callback they are
+invoking. Could you merge the common part into a function that returns
+the right client to call the callback on, or ERR_PTR(-EINVAL) in case
+of failure?
+
+> +
+> +static int tegra_mc_build_swgroup(struct tegra_mc *mc)
+> +{
+> +       int i;
+> +
+> +       for (i = 0; i < mc->soc->num_clients; i++) {
+> +               struct tegra_mc_swgroup *sg;
+> +
+> +               sg = find_swgroup(mc, mc->soc->clients[i].swgroup);
+> +
+> +               if (!sg) {
+> +                       sg = add_swgroup(mc,  mc->soc->clients[i].swgroup);
+> +                       if (IS_ERR(sg))
+> +                               return PTR_ERR(sg);
+> +               }
+> +
+> +               list_add_tail(&mc->soc->clients[i].head, &sg->clients);
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+>  static int tegra_mc_setup_latency_allowance(struct tegra_mc *mc)
 >  {
->         struct reset_control *rstc = ERR_PTR(-EPROBE_DEFER);
->         struct reset_controller_dev *r, *rcdev;
->         struct of_phandle_args args;
-> -       int index = 0;
->         int rstc_id;
->         int ret;
+>         unsigned long long tick;
+> @@ -229,6 +354,13 @@ static int tegra_mc_probe(struct platform_device *pdev)
+>         /* length of MC tick in nanoseconds */
+>         mc->tick = 30;
 >
-> -       if (id)
-> -               index = of_property_match_string(node,
-> -                                                "reset-names", id);
->         ret = of_parse_phandle_with_args(node, "resets", "#reset-cells",
->                                          index, &args);
->         if (ret)
-> @@ -202,6 +189,36 @@ struct reset_control *of_reset_control_get(struct device_node *node,
->
->         return rstc;
->  }
+> +       INIT_LIST_HEAD(&mc->swgroups);
+> +       err = tegra_mc_build_swgroup(mc);
+> +       if (err) {
+> +               dev_err(&pdev->dev, "failed to build swgroup: %d\n", err);
+> +               return err;
+> +       }
 > +
-> +struct reset_control *of_reset_control_get_by_index(struct device_node *node,
-> +                                          int index)
-> +{
-> +       if (!node)
-> +               return ERR_PTR(-EINVAL);
-
-Here you are checking node...
-
-> +
-> +       return __of_reset_control_get(node, index);
-> +}
-> +EXPORT_SYMBOL_GPL(of_reset_control_get_by_index);
-> +
-> +/**
-> + * of_reset_control_get - Lookup and obtain a reference to a reset controller.
-> + * @node: device to be reset by the controller
-> + * @id: reset line name
-> + *
-> + * Returns a struct reset_control or IS_ERR() condition containing errno.
-> + *
-> + * Use of id names is optional.
-> + */
-> +struct reset_control *of_reset_control_get(struct device_node *node,
-> +                                          const char *id)
-> +{
-> +       int index = 0;
-> +
-> +       if (id)
-> +               index = of_property_match_string(node,
-> +                                                "reset-names", id);
-> +       return __of_reset_control_get(node, index);
-
-... but not here?
-
-> +}
->  EXPORT_SYMBOL_GPL(of_reset_control_get);
+>         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>         mc->regs = devm_ioremap_resource(&pdev->dev, res);
+>         if (IS_ERR(mc->regs))
+> diff --git a/drivers/memory/tegra/tegra114.c b/drivers/memory/tegra/tegra114.c
+> index 511e9a25c151..92ab5552fcee 100644
+> --- a/drivers/memory/tegra/tegra114.c
+> +++ b/drivers/memory/tegra/tegra114.c
+> @@ -15,7 +15,7 @@
 >
->  /**
-> diff --git a/include/linux/reset.h b/include/linux/reset.h
-> index da5602bd77d7..f29fc88c4868 100644
-> --- a/include/linux/reset.h
-> +++ b/include/linux/reset.h
-> @@ -38,6 +38,9 @@ static inline struct reset_control *devm_reset_control_get_optional(
->  struct reset_control *of_reset_control_get(struct device_node *node,
->                                            const char *id);
+>  #include "mc.h"
 >
-> +struct reset_control *of_reset_control_get_by_index(
-> +                                       struct device_node *node, int index);
-> +
->  #else
->
->  static inline int reset_control_reset(struct reset_control *rstc)
-> @@ -92,6 +95,12 @@ static inline struct reset_control *of_reset_control_get(
->         return ERR_PTR(-ENOSYS);
->  }
->
-> +struct reset_control *of_reset_control_get_by_index(
-> +                               struct device_node *node, int index)
+> -static const struct tegra_mc_client tegra114_mc_clients[] = {
+> +static struct tegra_mc_client tegra114_mc_clients[] = {
 
-Seems like the node argument would fit on the previous line.
+Why is this needed? I cannot see anything in this patch that would
+require dropping the const here.
