@@ -1,33 +1,54 @@
-From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: [PATCH v2 0/3] Expose more controls from tegra-max98090
-Date: Thu, 12 Feb 2015 09:41:54 +0100
-Message-ID: <1423730523-26266-1-git-send-email-tomeu.vizoso@collabora.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: [PATCH v2 2/3] ASoC: tegra: Add sink for the internal mic to tegra_max98090
+Date: Thu, 12 Feb 2015 09:41:56 +0100
+Message-ID: <1423730523-26266-3-git-send-email-tomeu.vizoso@collabora.com>
+References: <1423730523-26266-1-git-send-email-tomeu.vizoso@collabora.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1423730523-26266-1-git-send-email-tomeu.vizoso@collabora.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Dylan Reid <dgreid@chromium.org>, Lars-Peter Clausen <lars@metafoo.de>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org
 List-Id: linux-tegra@vger.kernel.org
 
-v2:	* Added ack tags from Stephen
+Also adds a control for the pin of the internal mic, so userspace can
+apply policy when the state of the external mic jack changes.
 
-Hello,
+Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Acked-by: Stephen Warren <swarren@nvidia.com>
+---
+ Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max98090.txt | 1 +
+ sound/soc/tegra/tegra_max98090.c                                        | 2 ++
+ 2 files changed, 3 insertions(+)
 
-we need some more controls in userspace so policy can be applied at events
-such as microphone and headphone jacks being plugged in, to be used by
-Tegra-based Chromebooks.
-
-Regards,
-
-Tomeu
-
-Tomeu Vizoso (3):
-  ASoC: tegra: Expose Headphones pin to userspace
-  ASoC: tegra: Add sink for the internal mic to tegra_max98090
-  ASoC: tegra: Add control for the Mic Jack pin
-
- .../devicetree/bindings/sound/nvidia,tegra-audio-max98090.txt         | 1 +
- sound/soc/tegra/tegra_max98090.c                                      | 4 ++++
- 2 files changed, 5 insertions(+)
-
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max98090.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max98090.txt
+index c949abc..c3495be 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max98090.txt
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max98090.txt
+@@ -18,6 +18,7 @@ Required properties:
+   * Headphones
+   * Speakers
+   * Mic Jack
++  * Int Mic
+ 
+ - nvidia,i2s-controller : The phandle of the Tegra I2S controller that's
+   connected to the CODEC.
+diff --git a/sound/soc/tegra/tegra_max98090.c b/sound/soc/tegra/tegra_max98090.c
+index 8df71a4..29ea87c 100644
+--- a/sound/soc/tegra/tegra_max98090.c
++++ b/sound/soc/tegra/tegra_max98090.c
+@@ -133,11 +133,13 @@ static const struct snd_soc_dapm_widget tegra_max98090_dapm_widgets[] = {
+ 	SND_SOC_DAPM_HP("Headphones", NULL),
+ 	SND_SOC_DAPM_SPK("Speakers", NULL),
+ 	SND_SOC_DAPM_MIC("Mic Jack", NULL),
++	SND_SOC_DAPM_MIC("Int Mic", NULL),
+ };
+ 
+ static const struct snd_kcontrol_new tegra_max98090_controls[] = {
+ 	SOC_DAPM_PIN_SWITCH("Headphones"),
+ 	SOC_DAPM_PIN_SWITCH("Speakers"),
++	SOC_DAPM_PIN_SWITCH("Int Mic"),
+ };
+ 
+ static int tegra_max98090_asoc_init(struct snd_soc_pcm_runtime *rtd)
 -- 
 1.9.3
