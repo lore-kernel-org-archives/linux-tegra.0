@@ -1,59 +1,128 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: DSI panel not working on -next
-Date: Fri, 13 Feb 2015 19:18:11 +0900
-Message-ID: <54DDCF63.7040208@nvidia.com>
-References: <54DD99B5.2080504@nvidia.com> <20150213095516.GA17888@ulmo.nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v7 01/16] clk: tegra: Add binding for the Tegra124 DFLL
+ clocksource
+Date: Fri, 13 Feb 2015 11:38:27 +0200
+Message-ID: <20150213093827.GM20811@tbergstrom-lnx.Nvidia.com>
+References: <1420723339-30735-1-git-send-email-mikko.perttunen@kapsi.fi>
+ <1420723339-30735-2-git-send-email-mikko.perttunen@kapsi.fi>
+ <20150212224242.GA23500@mithrandir>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150213095516.GA17888-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20150212224242.GA23500@mithrandir>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, tuomas.tynkkynen-X3B1VOXEql0@public.gmane.org, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/13/2015 06:55 PM, Thierry Reding wrote:
-> On Fri, Feb 13, 2015 at 03:29:09PM +0900, Alexandre Courbot wrote:
->> Hi Thierry,
->>
->> I noticed that the DSI panel of SHIELD (tegra114-roth) was not brought up on
->> -next. I have bisected the following commit as introducing that behavior:
->>
->> commit f4c5cf88fbd50e4779042268947b2e2f90c20484
->> Author: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> Date:   Thu Dec 18 15:29:14 2014 +0100
->>
->>      gpu: host1x: Provide a proper struct bus_type
->>
->>
->> With and without this patch, the DSI panel is probed, but the stack trace in
->> the probe() function is different:
->
-> This shouldn't make much of a difference, really, since we're attaching
-> to the panel only during mipi_dsi_host_register() anyway. And the panel
-> device can't exist earlier than that because mipi_dsi_host_register()
-> will instantiate it. Still...
->
->> i.e. with f4c5cf88fbd, the panel is not probed from tegra_dsi_probe()
->> anymore, which means DSI remains without a valid connector:
->>
->> [    1.378513] [drm] Initialized drm 1.1.0 20060810
->> [    1.384564] 54300000.dsi supply avdd-dsi-csi not found, using dummy
->> regulator
->> [    1.396394] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
->> [    1.403021] [drm] No driver support for vblank timestamp query.
->> [    1.409080] drm drm: No connectors reported connected with modes
->> [    1.415128] [drm] Cannot find any crtc or sizes - going 1024x768
->
-> ... the failing log here does indicate that there is no panel, so I'll
-> need to investigate why that's happening.
->
->> Are you aware of this? Does it affect other DSI panels? Does SHIELD's DT
->> need an update of some sort?
->
-> I'm almost certain that I've tested this on at least Dalmore and I don't
-> see any differences that could be causing this. I'll look into it.
+On Thu, Feb 12, 2015 at 11:42:44PM +0100, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Thu, Jan 08, 2015 at 03:22:04PM +0200, Mikko Perttunen wrote:
+> > From: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > 
+> > The DFLL is the main clocksource for the fast CPU cluster on Tegra124
+> > and also provides automatic CPU rail voltage scaling as well. The DFLL
+> > is a separate IP block from the usual Tegra124 clock-and-reset
+> > controller, so it gets its own node in the device tree.
+> > 
+> > Signed-off-by: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > Signed-off-by: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>
+> > ---
+> >  .../bindings/clock/nvidia,tegra124-dfll.txt        | 69 ++++++++++++++++++++++
+> >  1 file changed, 69 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+> > new file mode 100644
+> > index 0000000..54c62ac
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+> > @@ -0,0 +1,69 @@
+> > +NVIDIA Tegra124 DFLL FCPU clocksource
+> > +
+> > +This binding uses the common clock binding:
+> > +Documentation/devicetree/bindings/clock/clock-bindings.txt
+> > +
+> > +The DFLL IP block on Tegra is a root clocksource designed for clocking
+> > +the fast CPU cluster. It consists of a free-running voltage controlled
+> > +oscillator connected to the CPU voltage rail (VDD_CPU), and a closed loop
+> > +control module that will automatically adjust the VDD_CPU voltage by
+> > +communicating with an off-chip PMIC either via an I2C bus or via PWM signals.
+> 
+> How would PWM communication work? The documentation below doesn't
+> describe it, so perhaps either leave that part out until the binding is
+> updated to support it, or maybe make an explicit note that this mode of
+> operation isn't supported yet?
+> 
+> > +Required properties:
+> > +- compatible : should be "nvidia,tegra124-dfll-fcpu"
+> > +- reg : Defines the following set of registers, in the order listed:
+> > +        - registers for the DFLL control logic.
+> > +        - registers for the I2C output logic.
+> > +        - registers for the integrated I2C master controller.
+> > +        - look-up table RAM for voltage register values.
+> 
+> Why do these all need to be separate sets? According to the TRM this is
+> a single IP block with a single register region, why the need to split
+> them apart?
+> 
+> > +- interrupts: Should contain the DFLL block interrupt.
+> > +- clocks: Must contain an entry for each entry in clock-names.
+> > +  See ../clocks/clock-bindings.txt for details.
+> > +- clock-names: Must include the following entries:
+> > +  - soc: Clock source for the DFLL control logic.
+> > +  - ref: The closed loop reference clock
+> > +  - i2c: Clock source for the integrated I2C master.
+> > +- #clock-cells: Must be 0.
+> > +- clock-output-names: Name of the clock output.
+> > +- vdd-cpu-supply: Regulator for the CPU voltage rail that the DFLL
+> > +  hardware will start controlling.
+> 
+> How does the hardware control it? How do we go from regulator phandle to
+> something that the hardware will know how to access?
+> 
+> > +Required properties for the control loop parameters:
+> > +- nvidia,sample-rate: Sample rate of the DFLL control loop.
+> > +- nvidia,droop-ctrl: See the register CL_DVFS_DROOP_CTRL in the TRM.
+> > +- nvidia,force-mode: See the field DFLL_PARAMS_FORCE_MODE in the TRM.
+> > +- nvidia,cf: Numeric value, see the field DFLL_PARAMS_CF_PARAM in the TRM.
+> > +- nvidia,ci: Numeric value, see the field DFLL_PARAMS_CI_PARAM in the TRM.
+> > +- nvidia,cg: Numeric value, see the field DFLL_PARAMS_CG_PARAM in the TRM.
+> > +- nvidia,cg-scale: Boolean value, see the field DFLL_PARAMS_CG_SCALE in the TRM.
+> > +
+> > +Required properties for I2C mode:
+> > +- nvidia,i2c-fs-rate: I2C transfer rate, if using FS mode.
+> 
+> What's FS mode?
+> 
+> > +
+> > +Example:
+> > +
+> > +dfll@0,70110000 {
+> 
+> Perhaps this should be "clock@0,70110000"?
+> 
+> > +        compatible = "nvidia,tegra124-dfll";
+> > +        reg = <0 0x70110000 0 0x100>, /* DFLL control */
+> > +              <0 0x70110000 0 0x100>, /* I2C output control */
+> > +              <0 0x70110100 0 0x100>, /* Integrated I2C controller */
+> > +              <0 0x70110200 0 0x100>; /* Look-up table RAM */
+> > +        interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
+> > +        clocks = <&tegra_car TEGRA124_CLK_DFLL_SOC>,
+> > +                 <&tegra_car TEGRA124_CLK_DFLL_REF>,
+> > +                 <&tegra_car TEGRA124_CLK_I2C5>;
+> 
+> If this controls I2C5 now, should it be documented that we can't use
+> this controller in software while it is in use by DFLL?
 
-Thanks - please don't hesitate to ask me to run some more tests (or just 
-to try and fix it by myself) if this can save you time.
+It doesn't control I2C5. However, I2C5 and the dfll I2C controller control
+the same pins. There is some arbitration logic which prevents both controllers
+driving the pins at the same time. This logic does not have a sw interface.
+However, this logic doesn't work if I2C5 is not clocked. So once the dfll
+is enabled, I2C5 must always be clocked.
+
+Cheers,
+
+Peter.
