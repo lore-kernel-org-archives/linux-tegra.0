@@ -1,390 +1,356 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v3 6/6] instmem/gk20a: add IOMMU support
-Date: Tue, 17 Feb 2015 16:48:04 +0900
-Message-ID: <1424159284-19920-7-git-send-email-acourbot@nvidia.com>
-References: <1424159284-19920-1-git-send-email-acourbot@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [flasher PATCH 1/2] ARM: tegra: import latest Jetson TK1 pinmux
+Date: Tue, 17 Feb 2015 11:56:08 -0700
+Message-ID: <1424199369-10937-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1424159284-19920-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Let GK20A's instmem take advantage of the IOMMU if it is present. Having
-an IOMMU means that instmem is no longer allocated using the DMA API,
-but instead obtained through page_alloc and made contiguous to the GPU
-by IOMMU mappings.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+syseng has revamped the Jetson TK1 pinmux spreadsheet, basing the content
+completely on correct configuration for the board/schematic, rather than
+the previous version which was based on the bare minimum changes relative
+to another reference board.
+
+The new spreadsheet sets TRISTATE for any input-only pins. This only works
+correctly if the global CLAMP bit is not set, so any code importing this
+updated version will need to be adjusted accordingly. Apparently syseng
+have changed their mind since the previous advice that this needed to be
+set:-/
+
+This content comes from Jetson_TK1_customer_pinmux.xlsm (v09) downloaded
+from https://developer.nvidia.com/hardware-design-and-development.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drm/nouveau/nvkm/subdev/instmem/gk20a.c | 272 ++++++++++++++++++++++++++++----
- 1 file changed, 241 insertions(+), 31 deletions(-)
+ configs/jetson-tk1.board      | 240 +++++++++++++++++++++---------------------
+ csv-to-board-tegra124-xlsx.py |   5 +-
+ 2 files changed, 122 insertions(+), 123 deletions(-)
 
-diff --git a/drm/nouveau/nvkm/subdev/instmem/gk20a.c b/drm/nouveau/nvkm/subdev/instmem/gk20a.c
-index 4c8af6e3677c..67a89c7f7934 100644
---- a/drm/nouveau/nvkm/subdev/instmem/gk20a.c
-+++ b/drm/nouveau/nvkm/subdev/instmem/gk20a.c
-@@ -20,12 +20,32 @@
-  * DEALINGS IN THE SOFTWARE.
-  */
+diff --git a/configs/jetson-tk1.board b/configs/jetson-tk1.board
+index f69b89ec0af8..9b029df2f479 100644
+--- a/configs/jetson-tk1.board
++++ b/configs/jetson-tk1.board
+@@ -3,41 +3,41 @@ soc = 'tegra124'
+ pins = (
+     #pin,                      mux,            gpio_init, pull,   tri,   e_inp, od,    rcv_sel
+     ('dap_mclk1_pw4',          'extperiph1',   None,      'none', False, False, False, False),
+-    ('dap_mclk1_req_pee2',     'sata',         None,      'none', False, False, False, False),
+-    ('dap1_din_pn1',           'i2s0',         None,      'down', False, True,  False, False),
++    ('dap_mclk1_req_pee2',     None,           'out1',    'none', False, False, False, False),
++    ('dap1_din_pn1',           'rsvd4',        None,      'down', True,  False, False, False),
+     ('dap1_dout_pn2',          'sata',         None,      'none', False, False, False, False),
+-    ('dap1_fs_pn0',            'i2s0',         None,      'down', False, True,  False, False),
+-    ('dap1_sclk_pn3',          'i2s0',         None,      'down', False, True,  False, False),
+-    ('dap2_din_pa4',           'i2s1',         None,      'none', False, True,  False, False),
+-    ('dap2_dout_pa5',          'i2s1',         None,      'none', False, True,  False, False),
+-    ('dap2_fs_pa2',            'i2s1',         None,      'none', False, True,  False, False),
+-    ('dap2_sclk_pa3',          'i2s1',         None,      'none', False, True,  False, False),
+-    ('gpio_x4_aud_px4',        None,           'out0',    'none', False, False, False, False),
+-    ('gpio_x5_aud_px5',        None,           'in',      'up',   False, True,  False, False),
+-    ('gpio_x6_aud_px6',        None,           'in',      'up',   False, True,  False, False),
++    ('dap1_fs_pn0',            'rsvd4',        None,      'down', True,  False, False, False),
++    ('dap1_sclk_pn3',          'rsvd4',        None,      'down', True,  False, False, False),
++    ('dap2_din_pa4',           'i2s1',         None,      'none', True,  True,  False, False),
++    ('dap2_dout_pa5',          'i2s1',         None,      'none', False, False, False, False),
++    ('dap2_fs_pa2',            'i2s1',         None,      'none', False, False, False, False),
++    ('dap2_sclk_pa3',          'i2s1',         None,      'none', False, False, False, False),
++    ('gpio_x4_aud_px4',        None,           'in',      'none', True,  True,  False, False),
++    ('gpio_x5_aud_px5',        'rsvd4',        None,      'down', True,  False, False, False),
++    ('gpio_x6_aud_px6',        'gmi',          None,      'down', True,  False, False, False),
+     ('gpio_x7_aud_px7',        None,           'out0',    'none', False, False, False, False),
+-    ('gpio_w2_aud_pw2',        None,           'in',      'up',   False, True,  False, False),
+-    ('gpio_w3_aud_pw3',        None,           'in',      'up',   False, True,  False, False),
++    ('gpio_w2_aud_pw2',        'rsvd2',        None,      'down', True,  False, False, False),
++    ('gpio_w3_aud_pw3',        'spi6',         None,      'down', True,  False, False, False),
+     ('dvfs_pwm_px0',           'cldvfs',       None,      'none', False, False, False, False),
+-    ('gpio_x1_aud_px1',        None,           'out0',    'none', False, False, False, False),
++    ('gpio_x1_aud_px1',        None,           'in',      'none', True,  True,  False, False),
+     ('dvfs_clk_px2',           'cldvfs',       None,      'none', False, False, False, False),
+-    ('gpio_x3_aud_px3',        None,           'in',      'up',   False, True,  False, False),
+-    ('dap3_din_pp1',           None,           'out0',    'none', False, False, False, False),
++    ('gpio_x3_aud_px3',        'rsvd4',        None,      'down', True,  False, False, False),
++    ('dap3_din_pp1',           'i2s2',         None,      'down', True,  False, False, False),
+     ('dap3_dout_pp2',          None,           'out0',    'none', False, False, False, False),
+-    ('dap3_fs_pp0',            None,           'out0',    'none', False, False, False, False),
++    ('dap3_fs_pp0',            'i2s2',         None,      'down', True,  False, False, False),
+     ('dap3_sclk_pp3',          'rsvd3',        None,      'down', True,  False, False, False),
+-    ('pv0',                    None,           'in',      'up',   False, True,  False, False),
+-    ('pv1',                    None,           'in',      'up',   False, True,  False, False),
++    ('pv0',                    None,           'in',      'none', True,  True,  False, False),
++    ('pv1',                    None,           'in',      'none', True,  True,  False, False),
+     ('ulpi_clk_py0',           'spi1',         None,      'none', False, False, False, False),
+-    ('ulpi_data0_po1',         None,           'in',      'up',   False, True,  False, False),
+-    ('ulpi_data1_po2',         None,           'in',      'up',   False, True,  False, False),
+-    ('ulpi_data2_po3',         None,           'in',      'up',   False, True,  False, False),
+-    ('ulpi_data3_po4',         None,           'in',      'up',   False, True,  False, False),
+-    ('ulpi_data4_po5',         None,           'in',      'up',   False, True,  False, False),
+-    ('ulpi_data5_po6',         None,           'out0',    'none', False, False, False, False),
+-    ('ulpi_data6_po7',         None,           'in',      'up',   False, True,  False, False),
+-    ('ulpi_data7_po0',         None,           'in',      'up',   False, True,  False, False),
+-    ('ulpi_dir_py1',           'spi1',         None,      'down', False, True,  False, False),
++    ('ulpi_data0_po1',         None,           'in',      'none', True,  True,  False, False),
++    ('ulpi_data1_po2',         'ulpi',         None,      'down', True,  False, False, False),
++    ('ulpi_data2_po3',         'ulpi',         None,      'down', True,  False, False, False),
++    ('ulpi_data3_po4',         None,           'in',      'none', True,  True,  False, False),
++    ('ulpi_data4_po5',         'ulpi',         None,      'down', True,  False, False, False),
++    ('ulpi_data5_po6',         'ulpi',         None,      'down', True,  False, False, False),
++    ('ulpi_data6_po7',         'ulpi',         None,      'down', True,  False, False, False),
++    ('ulpi_data7_po0',         'ulpi',         None,      'down', True,  False, False, False),
++    ('ulpi_dir_py1',           'spi1',         None,      'none', True,  True,  False, False),
+     ('ulpi_nxt_py2',           'spi1',         None,      'none', False, False, False, False),
+     ('ulpi_stp_py3',           'spi1',         None,      'none', False, False, False, False),
+     ('cam_i2c_scl_pbb1',       'i2c3',         None,      'none', False, True,  True,  False),
+@@ -49,63 +49,63 @@ pins = (
+     ('pbb5',                   None,           'out0',    'none', False, False, False, False),
+     ('pbb6',                   None,           'out0',    'none', False, False, False, False),
+     ('pbb7',                   None,           'out0',    'none', False, False, False, False),
+-    ('pcc1',                   None,           'in',      'down', False, True,  False, False),
+-    ('pcc2',                   None,           'in',      'down', False, True,  False, False),
++    ('pcc1',                   None,           'in',      'none', False, True,  False, False),
++    ('pcc2',                   None,           'in',      'none', False, True,  False, False),
+     ('gen2_i2c_scl_pt5',       'i2c2',         None,      'none', False, True,  True,  False),
+     ('gen2_i2c_sda_pt6',       'i2c2',         None,      'none', False, True,  True,  False),
+     ('pj7',                    'uartd',        None,      'none', False, False, False, False),
+-    ('pb0',                    'uartd',        None,      'up',   False, True,  False, False),
+-    ('pb1',                    'uartd',        None,      'up',   False, True,  False, False),
++    ('pb0',                    'uartd',        None,      'up',   True,  True,  False, False),
++    ('pb1',                    'uartd',        None,      'up',   True,  True,  False, False),
+     ('pk7',                    'uartd',        None,      'none', False, False, False, False),
+-    ('pg0',                    None,           'out0',    'none', False, False, False, False),
+-    ('pg1',                    None,           'out0',    'none', False, False, False, False),
++    ('pg0',                    None,           'in',      'none', True,  True,  False, False),
++    ('pg1',                    None,           'in',      'none', True,  True,  False, False),
+     ('ph2',                    None,           'out0',    'none', False, False, False, False),
+-    ('ph3',                    None,           'out0',    'none', False, False, False, False),
+-    ('ph4',                    None,           'in',      'up',   False, True,  False, False),
+-    ('ph5',                    None,           'out0',    'none', False, False, False, False),
+-    ('ph6',                    None,           'in',      'up',   False, True,  False, False),
+-    ('ph7',                    None,           'out0',    'none', False, False, False, False),
+-    ('pg2',                    None,           'in',      'down', False, True,  False, False),
+-    ('pg3',                    None,           'in',      'down', False, True,  False, False),
+-    ('pg4',                    'spi4',         None,      'none', False, False, False, False),
++    ('ph3',                    'gmi',          None,      'down', True,  False, False, False),
++    ('ph4',                    None,           'in',      'none', True,  True,  False, False),
++    ('ph5',                    'rsvd2',        None,      'down', True,  False, False, False),
++    ('ph6',                    'gmi',          None,      'down', True,  False, False, False),
++    ('ph7',                    None,           'in',      'none', False, True,  False, False),
++    ('pg2',                    None,           'in',      'none', True,  True,  False, False),
++    ('pg3',                    None,           'in',      'none', True,  True,  False, False),
++    ('pg4',                    None,           'in',      'none', True,  True,  False, False),
+     ('pg5',                    'spi4',         None,      'none', False, False, False, False),
+     ('pg6',                    'spi4',         None,      'none', False, False, False, False),
+-    ('pg7',                    'spi4',         None,      'none', False, True,  False, False),
++    ('pg7',                    'spi4',         None,      'none', True,  True,  False, False),
+     ('ph0',                    'gmi',          None,      'down', True,  False, False, False),
+     ('ph1',                    'pwm1',         None,      'none', False, False, False, False),
+-    ('pk0',                    'soc',          None,      'up',   False, True,  False, False),
++    ('pk0',                    'rsvd1',        None,      'down', True,  False, False, False),
+     ('pk1',                    None,           'out0',    'none', False, False, False, False),
+-    ('pj0',                    None,           'in',      'up',   False, True,  False, False),
+-    ('pj2',                    None,           'in',      'up',   False, True,  False, False),
+-    ('pk3',                    None,           'in',      'up',   False, True,  False, False),
++    ('pj0',                    None,           'in',      'none', True,  True,  False, False),
++    ('pj2',                    'rsvd1',        None,      'down', True,  False, False, False),
++    ('pk3',                    'gmi',          None,      'down', True,  False, False, False),
+     ('pk4',                    None,           'out0',    'none', False, False, False, False),
+-    ('pk2',                    None,           'in',      'up',   False, True,  False, False),
++    ('pk2',                    None,           'in',      'none', False, True,  False, False),
+     ('pi3',                    'spi4',         None,      'none', False, False, False, False),
+-    ('pi6',                    None,           'in',      'up',   False, True,  False, False),
+-    ('pi2',                    None,           'out0',    'none', False, False, False, False),
+-    ('pi5',                    None,           'in',      'up',   False, True,  False, False),
+-    ('pi1',                    'rsvd1',        None,      'down', True,  False, False, False),
+-    ('pi4',                    None,           'out0',    'none', False, False, False, False),
++    ('pi6',                    None,           'in',      'none', True,  True,  False, False),
++    ('pi2',                    'rsvd4',        None,      'down', True,  False, False, False),
++    ('pi5',                    'rsvd2',        None,      'down', True,  False, False, False),
++    ('pi1',                    None,           'in',      'none', True,  True,  False, False),
++    ('pi4',                    'gmi',          None,      'down', True,  False, False, False),
+     ('pi7',                    'rsvd1',        None,      'down', True,  False, False, False),
+-    ('pc7',                    None,           'in',      'up',   False, True,  False, False),
++    ('pc7',                    'rsvd1',        None,      'down', True,  False, False, False),
+     ('pi0',                    None,           'out0',    'none', False, False, False, False),
+-    ('pex_l0_clkreq_n_pdd2',   'pe0',          None,      'up',   False, True,  False, False),
++    ('pex_l0_clkreq_n_pdd2',   'pe0',          None,      'none', True,  True,  False, False),
+     ('pex_l0_rst_n_pdd1',      'pe0',          None,      'none', False, False, False, False),
+-    ('pex_l1_clkreq_n_pdd6',   'pe1',          None,      'up',   False, True,  False, False),
++    ('pex_l1_clkreq_n_pdd6',   'pe1',          None,      'none', True,  True,  False, False),
+     ('pex_l1_rst_n_pdd5',      'pe1',          None,      'none', False, False, False, False),
+-    ('pex_wake_n_pdd3',        'pe',           None,      'up',   False, True,  False, False),
+-    ('usb_vbus_en2_pff1',      None,           'out0',    'none', False, False, False, False),
+-    ('pff2',                   None,           'in',      'up',   False, True,  False, False),
++    ('pex_wake_n_pdd3',        'pe',           None,      'none', True,  True,  False, False),
++    ('usb_vbus_en2_pff1',      'rsvd2',        None,      'down', True,  False, False, False),
++    ('pff2',                   'rsvd2',        None,      'down', True,  False, False, False),
+     ('clk2_out_pw5',           'extperiph2',   None,      'none', False, False, False, False),
+-    ('clk2_req_pcc5',          None,           'out0',    'none', False, False, False, False),
++    ('clk2_req_pcc5',          'rsvd2',        None,      'down', True,  False, False, False),
+     ('sdmmc1_wp_n_pv3',        'sdmmc1',       None,      'down', True,  False, False, False),
+-    ('sdmmc1_clk_pz0',         'sdmmc1',       None,      'none', False, True,  False, False),
+-    ('sdmmc1_cmd_pz1',         'sdmmc1',       None,      'up',   False, True,  False, False),
+-    ('sdmmc1_dat0_py7',        'sdmmc1',       None,      'up',   False, True,  False, False),
+-    ('sdmmc1_dat1_py6',        'sdmmc1',       None,      'up',   False, True,  False, False),
+-    ('sdmmc1_dat2_py5',        'sdmmc1',       None,      'up',   False, True,  False, False),
+-    ('sdmmc1_dat3_py4',        'sdmmc1',       None,      'up',   False, True,  False, False),
+-    ('sdmmc3_clk_pa6',         'sdmmc3',       None,      'none', False, False, False, False),
++    ('sdmmc1_clk_pz0',         'rsvd3',        None,      'down', True,  False, False, False),
++    ('sdmmc1_cmd_pz1',         'sdmmc1',       None,      'down', True,  False, False, False),
++    ('sdmmc1_dat0_py7',        'rsvd2',        None,      'down', True,  False, False, False),
++    ('sdmmc1_dat1_py6',        'sdmmc1',       None,      'down', True,  False, False, False),
++    ('sdmmc1_dat2_py5',        'sdmmc1',       None,      'down', True,  False, False, False),
++    ('sdmmc1_dat3_py4',        'sdmmc1',       None,      'down', True,  False, False, False),
++    ('sdmmc3_clk_pa6',         'sdmmc3',       None,      'none', False, True,  False, False),
+     ('sdmmc3_cmd_pa7',         'sdmmc3',       None,      'up',   False, True,  False, False),
+     ('sdmmc3_dat0_pb7',        'sdmmc3',       None,      'up',   False, True,  False, False),
+     ('sdmmc3_dat1_pb6',        'sdmmc3',       None,      'up',   False, True,  False, False),
+@@ -123,75 +123,75 @@ pins = (
+     ('sdmmc4_dat5_paa5',       'sdmmc4',       None,      'up',   False, True,  False, False),
+     ('sdmmc4_dat6_paa6',       'sdmmc4',       None,      'up',   False, True,  False, False),
+     ('sdmmc4_dat7_paa7',       'sdmmc4',       None,      'up',   False, True,  False, False),
+-    ('kb_col0_pq0',            None,           'in',      'up',   False, True,  False, False),
+-    ('kb_col1_pq1',            None,           'in',      'up',   False, True,  False, False),
+-    ('kb_col2_pq2',            None,           'in',      'up',   False, True,  False, False),
+-    ('kb_col3_pq3',            'kbc',          None,      'down', True,  False, False, False),
+-    ('kb_col4_pq4',            'sdmmc3',       None,      'up',   False, True,  False, False),
+-    ('kb_col5_pq5',            None,           'in',      'up',   False, True,  False, False),
+-    ('kb_col6_pq6',            None,           'in',      'up',   False, True,  False, False),
+-    ('kb_col7_pq7',            None,           'in',      'up',   False, True,  False, False),
++    ('kb_col0_pq0',            None,           'in',      'up',   True,  True,  False, False),
++    ('kb_col1_pq1',            'rsvd2',        None,      'down', True,  False, False, False),
++    ('kb_col2_pq2',            'rsvd2',        None,      'down', True,  False, False, False),
++    ('kb_col3_pq3',            None,           'in',      'none', True,  True,  False, False),
++    ('kb_col4_pq4',            'sdmmc3',       None,      'up',   True,  True,  False, False),
++    ('kb_col5_pq5',            None,           'in',      'none', True,  True,  False, False),
++    ('kb_col6_pq6',            'rsvd2',        None,      'down', True,  False, False, False),
++    ('kb_col7_pq7',            'rsvd2',        None,      'down', True,  False, False, False),
+     ('kb_row0_pr0',            None,           'out0',    'none', False, False, False, False),
+-    ('kb_row1_pr1',            None,           'out0',    'none', False, False, False, False),
+-    ('kb_row10_ps2',           'rsvd2',        None,      'up',   False, True,  False, False),
+-    ('kb_row11_ps3',           None,           'out0',    'none', False, False, False, False),
+-    ('kb_row12_ps4',           None,           'out0',    'none', False, False, False, False),
+-    ('kb_row13_ps5',           None,           'in',      'up',   False, True,  False, False),
+-    ('kb_row14_ps6',           None,           'out0',    'none', False, False, False, False),
+-    ('kb_row15_ps7',           'soc',          None,      'up',   False, True,  False, False),
++    ('kb_row1_pr1',            'rsvd2',        None,      'down', True,  False, False, False),
++    ('kb_row10_ps2',           'uarta',        None,      'up',   True,  True,  False, False),
++    ('kb_row11_ps3',           'rsvd2',        None,      'down', True,  False, False, False),
++    ('kb_row12_ps4',           'rsvd2',        None,      'down', True,  False, False, False),
++    ('kb_row13_ps5',           'rsvd2',        None,      'down', True,  False, False, False),
++    ('kb_row14_ps6',           'rsvd2',        None,      'down', True,  False, False, False),
++    ('kb_row15_ps7',           None,           'in',      'none', True,  True,  False, False),
+     ('kb_row16_pt0',           None,           'out0',    'none', False, False, False, False),
+-    ('kb_row17_pt1',           None,           'out0',    'none', False, False, False, False),
++    ('kb_row17_pt1',           None,           'in',      'none', True,  True,  False, False),
+     ('kb_row2_pr2',            None,           'out0',    'none', False, False, False, False),
+-    ('kb_row3_pr3',            'sys',          None,      'none', False, False, False, False),
+-    ('kb_row4_pr4',            None,           'in',      'up',   False, True,  False, False),
+-    ('kb_row5_pr5',            None,           'out0',    'none', False, False, False, False),
+-    ('kb_row6_pr6',            'displaya_alt', None,      'down', False, True,  False, False),
+-    ('kb_row7_pr7',            None,           'in',      'up',   False, True,  False, False),
+-    ('kb_row8_ps0',            None,           'in',      'up',   False, True,  False, False),
+-    ('kb_row9_ps1',            'rsvd2',        None,      'none', False, False, False, False),
+-    ('sdmmc3_cd_n_pv2',        'sdmmc3',       None,      'up',   False, True,  False, False),
+-    ('clk_32k_out_pa0',        'soc',          None,      'up',   False, True,  False, False),
++    ('kb_row3_pr3',            'kbc',          None,      'down', True,  False, False, False),
++    ('kb_row4_pr4',            None,           'in',      'none', True,  True,  False, False),
++    ('kb_row5_pr5',            'rsvd3',        None,      'down', True,  False, False, False),
++    ('kb_row6_pr6',            'displaya_alt', None,      'none', True,  True,  False, False),
++    ('kb_row7_pr7',            None,           'in',      'none', True,  True,  False, False),
++    ('kb_row8_ps0',            'rsvd2',        None,      'down', True,  False, False, False),
++    ('kb_row9_ps1',            'uarta',        None,      'none', False, False, False, False),
++    ('sdmmc3_cd_n_pv2',        'sdmmc3',       None,      'up',   True,  True,  False, False),
++    ('clk_32k_out_pa0',        'soc',          None,      'up',   True,  True,  False, False),
+     ('pwr_i2c_scl_pz6',        'i2cpwr',       None,      'none', False, True,  True,  False),
+     ('pwr_i2c_sda_pz7',        'i2cpwr',       None,      'none', False, True,  True,  False),
+     ('jtag_rtck',              'rtck',         None,      'up',   False, False, False, False),
+-    ('clk_32k_in',             'rsvd2',        None,      'none', False, True,  False, False),
++    ('clk_32k_in',             'clk',          None,      'none', True,  True,  False, False),
+     ('core_pwr_req',           'pwron',        None,      'none', False, False, False, False),
+-    ('cpu_pwr_req',            'rsvd2',        None,      'none', False, False, False, False),
+-    ('pwr_int_n',              'pmi',          None,      'up',   False, True,  False, False),
+-    ('reset_out_n',            'reset_out_n',  None,      'none', False, False, False, False),
++    ('cpu_pwr_req',            'cpu',          None,      'none', False, False, False, False),
++    ('pwr_int_n',              'pmi',          None,      'up',   True,  True,  False, False),
++    ('reset_out_n',            'reset_out_n',  None,      'none', False, True,  False, False),
+     ('clk3_out_pee0',          'extperiph3',   None,      'none', False, False, False, False),
+-    ('clk3_req_pee1',          None,           'out0',    'none', False, False, False, False),
+-    ('dap4_din_pp5',           'i2s3',         None,      'down', False, True,  False, False),
+-    ('dap4_dout_pp6',          'i2s3',         None,      'down', False, True,  False, False),
+-    ('dap4_fs_pp4',            'i2s3',         None,      'down', False, True,  False, False),
+-    ('dap4_sclk_pp7',          'i2s3',         None,      'down', False, True,  False, False),
++    ('clk3_req_pee1',          'rsvd2',        None,      'down', True,  False, False, False),
++    ('dap4_din_pp5',           'rsvd3',        None,      'down', True,  False, False, False),
++    ('dap4_dout_pp6',          'rsvd4',        None,      'down', True,  False, False, False),
++    ('dap4_fs_pp4',            'rsvd4',        None,      'down', True,  False, False, False),
++    ('dap4_sclk_pp7',          'rsvd3',        None,      'down', True,  False, False, False),
+     ('gen1_i2c_scl_pc4',       'i2c1',         None,      'none', False, True,  True,  False),
+     ('gen1_i2c_sda_pc5',       'i2c1',         None,      'none', False, True,  True,  False),
+-    ('pu0',                    None,           'out0',    'none', False, False, False, False),
+-    ('pu1',                    None,           'in',      'down', False, True,  False, False),
+-    ('pu2',                    None,           'in',      'down', False, True,  False, False),
+-    ('pu3',                    None,           'out0',    'none', False, False, False, False),
+-    ('pu4',                    None,           'out0',    'none', False, False, False, False),
+-    ('pu5',                    None,           'in',      'up',   False, True,  False, False),
+-    ('pu6',                    None,           'in',      'up',   False, True,  False, False),
+-    ('uart2_cts_n_pj5',        'uartb',        None,      'up',   False, True,  False, False),
++    ('pu0',                    None,           'in',      'none', False, True,  False, False),
++    ('pu1',                    None,           'in',      'none', False, True,  False, False),
++    ('pu2',                    None,           'in',      'none', False, True,  False, False),
++    ('pu3',                    None,           'in',      'none', False, True,  False, False),
++    ('pu4',                    None,           'in',      'none', False, True,  False, False),
++    ('pu5',                    None,           'in',      'none', False, True,  False, False),
++    ('pu6',                    None,           'in',      'none', False, True,  False, False),
++    ('uart2_cts_n_pj5',        'uartb',        None,      'up',   True,  True,  False, False),
+     ('uart2_rts_n_pj6',        'uartb',        None,      'none', False, False, False, False),
+-    ('uart2_rxd_pc3',          'irda',         None,      'up',   False, True,  False, False),
++    ('uart2_rxd_pc3',          'irda',         None,      'up',   True,  True,  False, False),
+     ('uart2_txd_pc2',          'irda',         None,      'none', False, False, False, False),
+-    ('uart3_cts_n_pa1',        'uartc',        None,      'up',   False, True,  False, False),
+-    ('uart3_rts_n_pc0',        'uartc',        None,      'none', False, False, False, False),
+-    ('uart3_rxd_pw7',          'uartc',        None,      'up',   False, True,  False, False),
+-    ('uart3_txd_pw6',          'uartc',        None,      'none', False, False, False, False),
++    ('uart3_cts_n_pa1',        'gmi',          None,      'down', True,  False, False, False),
++    ('uart3_rts_n_pc0',        'gmi',          None,      'down', True,  False, False, False),
++    ('uart3_rxd_pw7',          'rsvd2',        None,      'down', True,  False, False, False),
++    ('uart3_txd_pw6',          'rsvd2',        None,      'down', True,  False, False, False),
+     ('owr',                    'rsvd2',        None,      'down', True,  False, False, False),
+-    ('hdmi_cec_pee3',          'cec',          None,      'none', False, True,  True,  False),
+-    ('hdmi_int_pn7',           None,           'in',      'down', False, True,  False, False),
++    ('hdmi_cec_pee3',          'cec',          None,      'none', False, True,  False, False),
++    ('hdmi_int_pn7',           None,           'in',      'down', True,  True,  False, False),
+     ('ddc_scl_pv4',            'i2c4',         None,      'none', False, True,  False, False),
+     ('ddc_sda_pv5',            'i2c4',         None,      'none', False, True,  False, False),
+-    ('spdif_out_pk5',          None,           'out0',    'none', False, False, False, False),
++    ('spdif_out_pk5',          'rsvd2',        None,      'down', True,  False, False, False),
+     ('spdif_in_pk6',           None,           'out0',    'none', False, False, False, False),
+-    ('usb_vbus_en0_pn4',       'usb',          None,      'up',   False, True,  True,  False),
+-    ('usb_vbus_en1_pn5',       'usb',          None,      'up',   False, True,  True,  False),
+-    ('dp_hpd_pff0',            'dp',           None,      'up',   False, True,  False, False),
++    ('usb_vbus_en0_pn4',       'usb',          None,      'none', False, True,  False, False),
++    ('usb_vbus_en1_pn5',       'usb',          None,      'none', False, True,  False, False),
++    ('dp_hpd_pff0',            'dp',           None,      'none', True,  True,  False, False),
+ )
  
-+/*
-+ * GK20A does not have dedicated video memory, and to accurately represent this
-+ * fact Nouveau will not create a RAM device for it. Therefore its instmem
-+ * implementation must be done directly on top of system memory, while providing
-+ * coherent read and write operations.
-+ *
-+ * Instmem can be allocated through two means:
-+ * 1) If an IOMMU mapping has been probed, the IOMMU API is used to make memory
-+ *    pages contiguous to the GPU. This is the preferred way.
-+ * 2) If no IOMMU mapping is probed, the DMA API is used to allocate physically
-+ *    contiguous memory.
-+ *
-+ * In both cases CPU read and writes are performed using PRAMIN (i.e. using the
-+ * GPU path) to ensure these operations are coherent for the GPU. This allows us
-+ * to use more "relaxed" allocation parameters when using the DMA API, since we
-+ * never need a kernel mapping.
-+ */
-+
- #include <subdev/fb.h>
- #include <core/mm.h>
- #include <core/device.h>
+ drive_groups = (
+diff --git a/csv-to-board-tegra124-xlsx.py b/csv-to-board-tegra124-xlsx.py
+index 56bc917b50c0..54f952472b35 100755
+--- a/csv-to-board-tegra124-xlsx.py
++++ b/csv-to-board-tegra124-xlsx.py
+@@ -46,9 +46,8 @@ if dbg: print(args)
  
- #ifdef __KERNEL__
- #include <linux/dma-attrs.h>
-+#include <linux/iommu.h>
-+#include <nouveau_platform.h>
- #endif
- 
- #include "priv.h"
-@@ -36,18 +56,51 @@ struct gk20a_instobj_priv {
- 	struct nvkm_mem *mem;
- 	/* Pointed by mem */
- 	struct nvkm_mem _mem;
-+};
-+
-+/*
-+ * Used for objects allocated using the DMA API
-+ */
-+struct gk20a_instobj_dma {
-+	struct gk20a_instobj_priv base;
-+
- 	void *cpuaddr;
- 	dma_addr_t handle;
- 	struct dma_attrs attrs;
- 	struct nvkm_mm_node r;
- };
- 
-+/*
-+ * Used for objects flattened using the IOMMU API
-+ */
-+struct gk20a_instobj_iommu {
-+	struct gk20a_instobj_priv base;
-+
-+	/* array of base.mem->size pages */
-+	struct page *pages[];
-+};
-+
- struct gk20a_instmem_priv {
- 	struct nvkm_instmem base;
- 	spinlock_t lock;
- 	u64 addr;
-+
-+	/* Only used if IOMMU if present */
-+	struct mutex *mm_mutex;
-+	struct nvkm_mm *mm;
-+	struct iommu_domain *domain;
-+	unsigned long iommu_pgshift;
- };
- 
-+/*
-+ * Use PRAMIN to read/write data and avoid coherency issues.
-+ * PRAMIN uses the GPU path and ensures data will always be coherent.
-+ *
-+ * A dynamic mapping based solution would be desirable in the future, but
-+ * the issue remains of how to maintain coherency efficiently. On ARM it is
-+ * not easy (if possible at all?) to create uncached temporary mappings.
-+ */
-+
- static u32
- gk20a_instobj_rd32(struct nvkm_object *object, u64 offset)
- {
-@@ -87,50 +140,79 @@ gk20a_instobj_wr32(struct nvkm_object *object, u64 offset, u32 data)
- }
- 
- static void
--gk20a_instobj_dtor(struct nvkm_object *object)
-+gk20a_instobj_dtor_dma(struct gk20a_instobj_priv *_node)
- {
--	struct gk20a_instobj_priv *node = (void *)object;
-+	struct gk20a_instobj_dma *node = (void *)_node;
- 	struct gk20a_instmem_priv *priv = (void *)nvkm_instmem(node);
- 	struct device *dev = nv_device_base(nv_device(priv));
- 
- 	if (unlikely(!node->handle))
- 		return;
- 
--	dma_free_attrs(dev, node->mem->size << PAGE_SHIFT, node->cpuaddr,
-+	dma_free_attrs(dev, _node->mem->size << PAGE_SHIFT, node->cpuaddr,
- 		       node->handle, &node->attrs);
-+}
-+
-+static void
-+gk20a_instobj_dtor_iommu(struct gk20a_instobj_priv *_node)
-+{
-+	struct gk20a_instobj_iommu *node = (void *)_node;
-+	struct gk20a_instmem_priv *priv = (void *)nvkm_instmem(node);
-+	struct nvkm_mm_node *r;
-+	int i;
-+
-+	if (unlikely(list_empty(&_node->mem->regions)))
-+		return;
-+
-+	r = list_first_entry(&_node->mem->regions, struct nvkm_mm_node,
-+			     rl_entry);
-+
-+	/* clear bit 34 to unmap pages */
-+	r->offset &= ~BIT(34 - priv->iommu_pgshift);
-+
-+	/* Unmap pages from GPU address space and free them */
-+	for (i = 0; i < _node->mem->size; i++) {
-+		iommu_unmap(priv->domain,
-+			    (r->offset + i) << priv->iommu_pgshift, PAGE_SIZE);
-+		__free_page(node->pages[i]);
-+	}
-+
-+	/* Release area from GPU address space */
-+	mutex_lock(priv->mm_mutex);
-+	nvkm_mm_free(priv->mm, &r);
-+	mutex_unlock(priv->mm_mutex);
-+}
-+
-+static void
-+gk20a_instobj_dtor(struct nvkm_object *object)
-+{
-+	struct gk20a_instobj_priv *node = (void *)object;
-+	struct gk20a_instmem_priv *priv = (void *)nvkm_instmem(node);
-+
-+	if (priv->domain)
-+		gk20a_instobj_dtor_iommu(node);
-+	else
-+		gk20a_instobj_dtor_dma(node);
- 
- 	nvkm_instobj_destroy(&node->base);
- }
- 
- static int
--gk20a_instobj_ctor(struct nvkm_object *parent, struct nvkm_object *engine,
--		   struct nvkm_oclass *oclass, void *data, u32 _size,
--		   struct nvkm_object **pobject)
-+gk20a_instobj_ctor_dma(struct nvkm_object *parent, struct nvkm_object *engine,
-+		       struct nvkm_oclass *oclass, u32 npages, u32 align,
-+		       struct gk20a_instobj_priv **_node)
- {
--	struct nvkm_instobj_args *args = data;
-+	struct gk20a_instobj_dma *node;
- 	struct gk20a_instmem_priv *priv = (void *)nvkm_instmem(parent);
--	struct device *dev = nv_device_base(nv_device(priv));
--	struct gk20a_instobj_priv *node;
--	u32 size, align;
--	u32 npages;
-+	struct device *dev = nv_device_base(nv_device(parent));
- 	int ret;
- 
--	nv_debug(parent, "%s: size: %x align: %x\n", __func__,
--		 args->size, args->align);
--
--	size  = max((args->size  + 4095) & ~4095, (u32)4096);
--	align = max((args->align + 4095) & ~4095, (u32)4096);
--
--	npages = size >> PAGE_SHIFT;
--
- 	ret = nvkm_instobj_create_(parent, engine, oclass, sizeof(*node),
--				      (void **)&node);
--	*pobject = nv_object(node);
-+				   (void **)&node);
-+	*_node = &node->base;
- 	if (ret)
- 		return ret;
- 
--	node->mem = &node->_mem;
--
- 	init_dma_attrs(&node->attrs);
- 	/*
- 	 * We will access this memory through PRAMIN and thus do not need a
-@@ -154,16 +236,132 @@ gk20a_instobj_ctor(struct nvkm_object *parent, struct nvkm_object *engine,
- 		nv_warn(priv, "memory not aligned as requested: %pad (0x%x)\n",
- 			&node->handle, align);
- 
--	node->mem->offset = node->handle;
-+	/* present memory for being mapped using small pages */
-+	node->r.type = 12;
-+	node->r.offset = node->handle >> 12;
-+	node->r.length = (npages << PAGE_SHIFT) >> 12;
-+
-+	node->base._mem.offset = node->handle;
-+
-+	INIT_LIST_HEAD(&node->base._mem.regions);
-+	list_add_tail(&node->r.rl_entry, &node->base._mem.regions);
-+
-+	return 0;
-+}
-+
-+static int
-+gk20a_instobj_ctor_iommu(struct nvkm_object *parent, struct nvkm_object *engine,
-+			 struct nvkm_oclass *oclass, u32 npages, u32 align,
-+			 struct gk20a_instobj_priv **_node)
-+{
-+	struct gk20a_instobj_iommu *node;
-+	struct gk20a_instmem_priv *priv = (void *)nvkm_instmem(parent);
-+	struct nvkm_mm_node *r;
-+	int ret;
-+	int i;
-+
-+	ret = nvkm_instobj_create_(parent, engine, oclass,
-+				sizeof(*node) + sizeof(node->pages[0]) * npages,
-+				(void **)&node);
-+	*_node = &node->base;
-+	if (ret)
-+		return ret;
-+
-+	/* Allocate backing memory */
-+	for (i = 0; i < npages; i++) {
-+		struct page *p = alloc_page(GFP_KERNEL);
-+
-+		if (p == NULL) {
-+			ret = -ENOMEM;
-+			goto free_pages;
-+		}
-+		node->pages[i] = p;
-+	}
-+
-+	mutex_lock(priv->mm_mutex);
-+	/* Reserve area from GPU address space */
-+	ret = nvkm_mm_head(priv->mm, 0, 1, npages, npages,
-+			   align >> priv->iommu_pgshift, &r);
-+	mutex_unlock(priv->mm_mutex);
-+	if (ret) {
-+		nv_error(priv, "virtual space is full!\n");
-+		goto free_pages;
-+	}
-+
-+	/* Map into GPU address space */
-+	for (i = 0; i < npages; i++) {
-+		struct page *p = node->pages[i];
-+		u32 offset = (r->offset + i) << priv->iommu_pgshift;
-+
-+		ret = iommu_map(priv->domain, offset, page_to_phys(p),
-+				PAGE_SIZE, IOMMU_READ | IOMMU_WRITE);
-+		if (ret < 0) {
-+			nv_error(priv, "IOMMU mapping failure: %d\n", ret);
-+
-+			while (i-- > 0) {
-+				offset -= PAGE_SIZE;
-+				iommu_unmap(priv->domain, offset, PAGE_SIZE);
-+			}
-+			goto release_area;
-+		}
-+	}
-+
-+	/* Bit 34 tells that an address is to be resolved through the IOMMU */
-+	r->offset |= BIT(34 - priv->iommu_pgshift);
-+
-+	node->base._mem.offset = ((u64)r->offset) << priv->iommu_pgshift;
-+
-+	INIT_LIST_HEAD(&node->base._mem.regions);
-+	list_add_tail(&r->rl_entry, &node->base._mem.regions);
-+
-+	return 0;
-+
-+release_area:
-+	mutex_lock(priv->mm_mutex);
-+	nvkm_mm_free(priv->mm, &r);
-+	mutex_unlock(priv->mm_mutex);
-+
-+free_pages:
-+	for (i = 0; i < npages && node->pages[i] != NULL; i++)
-+		__free_page(node->pages[i]);
-+
-+	return ret;
-+}
-+
-+static int
-+gk20a_instobj_ctor(struct nvkm_object *parent, struct nvkm_object *engine,
-+		   struct nvkm_oclass *oclass, void *data, u32 _size,
-+		   struct nvkm_object **pobject)
-+{
-+	struct nvkm_instobj_args *args = data;
-+	struct gk20a_instmem_priv *priv = (void *)nvkm_instmem(parent);
-+	struct gk20a_instobj_priv *node;
-+	u32 size, align;
-+	int ret;
-+
-+	nv_debug(parent, "%s (%s): size: %x align: %x\n", __func__,
-+		 priv->domain ? "IOMMU" : "DMA", args->size, args->align);
-+
-+	/* Round size and align to page bounds */
-+	size = max((args->size  + ~PAGE_MASK) & PAGE_MASK, (u32)PAGE_SIZE);
-+	align = max((args->align + ~PAGE_MASK) & PAGE_MASK, (u32)PAGE_SIZE);
-+
-+	if (priv->domain)
-+		ret = gk20a_instobj_ctor_iommu(parent, engine, oclass,
-+					      size >> PAGE_SHIFT, align, &node);
-+	else
-+		ret = gk20a_instobj_ctor_dma(parent, engine, oclass,
-+					     size >> PAGE_SHIFT, align, &node);
-+	*pobject = nv_object(node);
-+	if (ret)
-+		return ret;
-+
-+	node->mem = &node->_mem;
-+
-+	/* present memory for being mapped using small pages */
- 	node->mem->size = size >> 12;
- 	node->mem->memtype = 0;
- 	node->mem->page_shift = 12;
--	INIT_LIST_HEAD(&node->mem->regions);
--
--	node->r.type = 12;
--	node->r.offset = node->handle >> 12;
--	node->r.length = npages;
--	list_add_tail(&node->r.rl_entry, &node->mem->regions);
- 
- 	node->base.addr = node->mem->offset;
- 	node->base.size = size;
-@@ -202,6 +400,7 @@ gk20a_instmem_ctor(struct nvkm_object *parent, struct nvkm_object *engine,
- 		   struct nvkm_object **pobject)
- {
- 	struct gk20a_instmem_priv *priv;
-+	struct nouveau_platform_device *plat;
- 	int ret;
- 
- 	ret = nvkm_instmem_create(parent, engine, oclass, &priv);
-@@ -211,6 +410,18 @@ gk20a_instmem_ctor(struct nvkm_object *parent, struct nvkm_object *engine,
- 
- 	spin_lock_init(&priv->lock);
- 
-+	plat = nv_device_to_platform(nv_device(parent));
-+	if (plat->gpu->iommu.domain) {
-+		priv->domain = plat->gpu->iommu.domain;
-+		priv->mm = plat->gpu->iommu.mm;
-+		priv->iommu_pgshift = plat->gpu->iommu.pgshift;
-+		priv->mm_mutex = &plat->gpu->iommu.mutex;
-+
-+		nv_info(priv, "using IOMMU\n");
-+	} else {
-+		nv_info(priv, "using DMA API\n");
-+	}
-+
- 	return 0;
- }
- 
-@@ -225,4 +436,3 @@ gk20a_instmem_oclass = &(struct nvkm_instmem_impl) {
- 	},
- 	.instobj = &gk20a_instobj_oclass.base,
- }.base;
--
+ supported_boards = {
+     'jetson-tk1': {
+-        # T124_customer_pinmux_PM375_30Apr2014_v2.xlsm worksheet PM375Beaver_Configuration (0-based rsvd)
+-        # T124_customer_pinmux.xlsm worksheet Jetson TK1 Configuration (1-based rsvd)
+-        # Jetson_TK1_customer_pinmux_release.xlsm worksheet Jetson TK1 Configuration (1-based rsvd)
++        # Jetson_TK1_customer_pinmux.xlsm worksheet Jetson TK1 Configuration (1-based rsvd) from:
++        # https://developer.nvidia.com/hardware-design-and-development
+         'filename': 'csv/jetson-tk1.csv',
+         'rsvd_0based': False,
+     },
 -- 
-2.3.0
+1.9.1
