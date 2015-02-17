@@ -1,47 +1,67 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH v7 05/16] clk: tegra: Add DFLL DVCO reset control for
- Tegra124
-Date: Mon, 16 Feb 2015 11:40:01 +0200
-Message-ID: <20150216094000.GD19839@tbergstrom-lnx.Nvidia.com>
-References: <1420723339-30735-1-git-send-email-mikko.perttunen@kapsi.fi>
- <1420723339-30735-6-git-send-email-mikko.perttunen@kapsi.fi>
- <20150212141944.GK20811@tbergstrom-lnx.Nvidia.com>
- <54DDD447.8000404@kapsi.fi>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 1/6] make RAM device optional
+Date: Tue, 17 Feb 2015 16:22:47 +0900
+Message-ID: <CAAVeFuKKNdb6L4riOr58WnDQbnfA83Yp3jbW_hp6mo_a48e+Pw@mail.gmail.com>
+References: <1423639301-27304-1-git-send-email-acourbot@nvidia.com>
+ <1423639301-27304-2-git-send-email-acourbot@nvidia.com>
+ <CAKb7Uvgs3_JYp1wWzFF3rcTDCz2Tgx0h2v_6Xfzoki01RrChmg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <54DDD447.8000404@kapsi.fi>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-Cc: swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, rjw@rjwysocki.net, viresh.kumar@linaro.org, mturquette@linaro.org, pwalmsley@nvidia.com, vinceh@nvidia.com, pgaikwad@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tuomas.tynkkynen@iki.fi, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <CAKb7Uvgs3_JYp1wWzFF3rcTDCz2Tgx0h2v_6Xfzoki01RrChmg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Feb 13, 2015 at 12:39:03PM +0200, Mikko Perttunen wrote:
-> On 02/12/2015 04:19 PM, Peter De Schrijver wrote:
-> >On Thu, Jan 08, 2015 at 03:22:08PM +0200, Mikko Perttunen wrote:
-> >>From: Paul Walmsley <pwalmsley@nvidia.com>
-> >>
-> >>The DVCO present in the DFLL IP block has a separate reset line,
-> >>exposed via the CAR IP block.  This reset line is asserted upon SoC
-> >>reset.  Unless something (such as the DFLL driver) deasserts this
-> >>line, the DVCO will not oscillate, although reads and writes to the
-> >>DFLL IP block will complete.
-> >>
-> >>Thanks to Aleksandr Frid <afrid@nvidia.com> for identifying this and
-> >>saving hours of debugging time.
-> >>
-> >
-> >Should this be done as a reset driver?
-> 
-> Probably through the already existing CAR reset driver. This reset
-> doesn't fit well with the existing numbering scheme there, though.
-> Perhaps a magic high-valued constant that represents it.
-> 
-
-Indeed. Just like only the lower part of the clock IDs map have a realtion
-with the hardware registers. The rest is just arbitrary numbers.
-
-Cheers,
-
-Peter.
+T24gV2VkLCBGZWIgMTEsIDIwMTUgYXQgNDo0MCBQTSwgSWxpYSBNaXJraW4gPGltaXJraW5AYWx1
+bS5taXQuZWR1PiB3cm90ZToKPgo+IE9uIFdlZCwgRmViIDExLCAyMDE1IGF0IDI6MjEgQU0sIEFs
+ZXhhbmRyZSBDb3VyYm90IDxnbnVyb3VAZ21haWwuY29tPiB3cm90ZToKPiA+IEBAIC0xNTAsNyAr
+MTUxLDEwIEBAIGdmMTAwX2x0Y19pbml0X3RhZ19yYW0oc3RydWN0IG52a21fZmIgKnBmYiwgc3Ry
+dWN0IG52a21fbHRjX3ByaXYgKnByaXYpCj4gPiAgICAgICAgIGludCByZXQ7Cj4gPgo+ID4gICAg
+ICAgICAvKiB0YWdzIGZvciAxLzQgb2YgVlJBTSBzaG91bGQgYmUgZW5vdWdoICg4MTkyLzQgcGVy
+IEdpQiBvZiBWUkFNKSAqLwo+ID4gLSAgICAgICBwcml2LT5udW1fdGFncyA9IChwZmItPnJhbS0+
+c2l6ZSA+PiAxNykgLyA0Owo+ID4gKyAgICAgICBpZiAocGZiLT5yYW0pCj4gPiArICAgICAgICAg
+ICAgICAgcHJpdi0+bnVtX3RhZ3MgPSAocGZiLT5yYW0tPnNpemUgPj4gMTcpIC8gNDsKPiA+ICsg
+ICAgICAgZWxzZQo+ID4gKyAgICAgICAgICAgICAgIHByaXYtPm51bV90YWdzID0gKDEgPDwgMTcp
+Owo+ID4gICAgICAgICBpZiAocHJpdi0+bnVtX3RhZ3MgPiAoMSA8PCAxNykpCj4gPiAgICAgICAg
+ICAgICAgICAgcHJpdi0+bnVtX3RhZ3MgPSAxIDw8IDE3OyAvKiB3ZSBoYXZlIDE3IGJpdHMgaW4g
+UFRFICovCj4gPiAgICAgICAgIHByaXYtPm51bV90YWdzID0gKHByaXYtPm51bV90YWdzICsgNjMp
+ICYgfjYzOyAvKiByb3VuZCB1cCB0byA2NCAqLwo+ID4gQEAgLTE3MCw4ICsxNzQsMTEgQEAgZ2Yx
+MDBfbHRjX2luaXRfdGFnX3JhbShzdHJ1Y3QgbnZrbV9mYiAqcGZiLCBzdHJ1Y3QgbnZrbV9sdGNf
+cHJpdiAqcHJpdikKPiA+ICAgICAgICAgdGFnX3NpemUgKz0gdGFnX2FsaWduOwo+ID4gICAgICAg
+ICB0YWdfc2l6ZSAgPSAodGFnX3NpemUgKyAweGZmZikgPj4gMTI7IC8qIHJvdW5kIHVwICovCj4g
+Pgo+ID4gLSAgICAgICByZXQgPSBudmttX21tX3RhaWwoJnBmYi0+dnJhbSwgMSwgMSwgdGFnX3Np
+emUsIHRhZ19zaXplLCAxLAo+ID4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgJnByaXYtPnRh
+Z19yYW0pOwo+ID4gKyAgICAgICBpZiAocGZiLT5yYW0pCj4gPiArICAgICAgICAgICAgICAgcmV0
+ID0gbnZrbV9tbV90YWlsKCZwZmItPnZyYW0sIDEsIDEsIHRhZ19zaXplLCB0YWdfc2l6ZSwgMSwK
+PiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgJnByaXYtPnRhZ19yYW0pOwo+
+ID4gKyAgICAgICBlbHNlCj4gPiArICAgICAgICAgICAgICAgcmV0ID0gLTE7Cj4gPiAgICAgICAg
+IGlmIChyZXQpIHsKPiA+ICAgICAgICAgICAgICAgICBwcml2LT5udW1fdGFncyA9IDA7Cj4gPiAg
+ICAgICAgIH0gZWxzZSB7Cj4KPiBTZWVtcyBsaWtlIHlvdSBjb3VsZCBqdXN0IGF2b2lkIGEgbG90
+IG9mIHRoaXMgYW5kIGp1c3Qgc3RhcnQgdGhlCj4gZnVuY3Rpb24gb3V0IHdpdGgKPgo+IGlmICgh
+cGZiLT5yYW0pIHsKPiAgICAgcHJpdi0+bnVtX3RhZ3MgPSAwOyAoaXMgdGhhdCBldmVuIG5lY2Vz
+c2FyeT8gdGhlIG9iamVjdCBpcwo+IHByb2JhYmx5IGt6YWxsb2MnZCkKPiAgICAgcmV0ID0gbm91
+dmVhdV9tbV9pbml0KCZwcml2LT50YWdzLCAwLCAwLCAxKTsKPiAgICAgcmV0dXJuIHJldDsKPiB9
+Cj4KPiBUaGF0J3MgZXNzZW50aWFsbHkgd2hhdCBoYXBwZW5zLCBubz8gUGVyaGFwcyB5b3UgY291
+bGQgZ28gYSBzdGVwCj4gZnVydGhlciBhbmQgdGVhY2ggdGhlIGJhc2UgY29kZSBhYm91dCB1bmlu
+aXRpYWxpemVkIHRhZ3MgbW0sIGJ1dCB0aGF0Cj4gbWF5IG5vdCBiZSB3b3J0aCBpdC4KCllvdSdy
+ZSBhYnNvbHV0ZWx5IGNvcnJlY3QgLSBoYWQgSSB0cmllZCB0byB1bmRlcnN0YW5kIHRoZSBjb2Rl
+IGluc3RlYWQKb2Ygd29ya2Fyb3VuZCBteSB3YXkgYXJvdW5kIGl0LCBJIHdvdWxkIGhhdmUgZmln
+dXJlZCB0aGF0IG91dC4KCkFjdHVhbGx5IHRoZSBpbnRlbnRpb24gc2hvdWxkIGJlIHRvIGtlZXAg
+c29tZSBzcGFjZSBmb3IgdGFncyBldmVuIHdoZW4KVlJBTSBpcyBub3QgcHJlc2VudCwgc28gbXkg
+Y29kZSB3YXMgbm90IGV2ZW4gY29ycmVjdCBpbiB0aGF0IHJlc3BlY3QuCldlIGNhbiBrZWVwIGl0
+IGxpa2UgdGhpcyBmb3IgdGhlIHRpbWUgYmVpbmcgdGhvdWdoLCB1bnRpbCBJIGZpZ3VyZSBvdXQK
+aG93IHRoaXMgd29ya3MgZm9yIEdLMjBBLgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwpOb3V2ZWF1IG1haWxpbmcgbGlzdApOb3V2ZWF1QGxpc3RzLmZyZWVk
+ZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
+bm91dmVhdQo=
