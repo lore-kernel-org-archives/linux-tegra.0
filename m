@@ -1,91 +1,86 @@
 From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v3 0/6] nouveau/gk20a: RAM device removal & IOMMU support
-Date: Tue, 17 Feb 2015 16:47:58 +0900
-Message-ID: <1424159284-19920-1-git-send-email-acourbot@nvidia.com>
+Subject: [PATCH v3 4/6] instmem/gk20a: use DMA attributes
+Date: Tue, 17 Feb 2015 16:48:02 +0900
+Message-ID: <1424159284-19920-5-git-send-email-acourbot@nvidia.com>
+References: <1424159284-19920-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <1424159284-19920-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Thanks Ilia for the v2 review! Here is the v3 of this IOMMU support for GK20A
-series.
-
-Changes since v2:
-- Cleaner changes for ltc
-- Fixed typos in gk20a instmem IOMMU comments
-
-Changes since v1:
-- Add missing else condition in ltc
-- Remove extra flags that slipped into nouveau_display.c and nv84_fence.c.
-
-Original cover letter:
-
-Patches 1-3 make the presence of a RAM device optional, and remove GK20A's dummy
-RAM driver we were using so far. On chips using shared memory, such a device
-can confuse the driver into moving objects where there is no need to, and can
-trick user-space into believing it can allocate "video" memory that does not
-exist. By making it possible to run Nouveau without a RAM device and
-systematically returning errors when VRAM allocations are attempted, we force
-user-space to do the right thing and always employ the optimal path.
-
-Contiguous memory allocation for GK20A is now handled directly by a custom
-instmem driver.
-
-The remaining patches are not related to the RAM device removal, but since
-they touch code that has been moved by patch 2 I took the freedom to include
-them in this series.
-
-Patch 4 is a little improvement for GK20A's instmem implementation, which
-suppresses the permanent and unneeded CPU mapping created by the DMA API, and
-frees up some CPU virtual address space.
-
-Patches 5 and 6 implement initial IOMMU support for GK20A. On top of the GPU
-MMU, GK20A also has an independent IOMMU that stands between the GPU and the
-system RAM. Whether RAM accesses are performed directly or using the IOMMU is
-determined by bit 34 of each address.
-
-If a IOMMU is present, GK20A's instmem takes advantage of it to make unrelated
-pages of memory appear contiguous to the GPU instead of using the DMA API.
-Another benefit of the IOMMU is that it can be used by custom VM implementation
-to make GPU objects allocated via TTM appear contiguous in the IOMMU space,
-allowing us to maximize the use of large pages and improve performance, but that
-part will come once the basic support is agreed on and merged.
-
-All in all this series should be largely unintrusive for non-Tegra GPUs, with
-only patch 1 changing common code parts, in a way that looks safe.
-
-Alexandre Courbot (6):
-  make RAM device optional
-  instmem/gk20a: move memory allocation to instmem
-  gk20a: remove RAM device
-  instmem/gk20a: use DMA attributes
-  platform: probe IOMMU if present
-  instmem/gk20a: add IOMMU support
-
- drm/nouveau/include/nvkm/subdev/instmem.h |   1 +
- drm/nouveau/nouveau_display.c             |   8 +-
- drm/nouveau/nouveau_platform.c            |  75 ++++-
- drm/nouveau/nouveau_platform.h            |  18 ++
- drm/nouveau/nouveau_ttm.c                 |   3 +
- drm/nouveau/nv84_fence.c                  |  14 +-
- drm/nouveau/nvkm/engine/device/base.c     |   9 +-
- drm/nouveau/nvkm/engine/device/gk104.c    |   2 +-
- drm/nouveau/nvkm/subdev/clk/base.c        |   2 +-
- drm/nouveau/nvkm/subdev/fb/Kbuild         |   1 -
- drm/nouveau/nvkm/subdev/fb/base.c         |  26 +-
- drm/nouveau/nvkm/subdev/fb/gk20a.c        |   1 -
- drm/nouveau/nvkm/subdev/fb/priv.h         |   1 -
- drm/nouveau/nvkm/subdev/fb/ramgk20a.c     | 149 ----------
- drm/nouveau/nvkm/subdev/instmem/Kbuild    |   1 +
- drm/nouveau/nvkm/subdev/instmem/gk20a.c   | 438 ++++++++++++++++++++++++++++++
- drm/nouveau/nvkm/subdev/ltc/gf100.c       |  10 +-
- lib/include/nvif/os.h                     |  63 +++++
- 18 files changed, 651 insertions(+), 171 deletions(-)
- delete mode 100644 drm/nouveau/nvkm/subdev/fb/ramgk20a.c
- create mode 100644 drm/nouveau/nvkm/subdev/instmem/gk20a.c
-
--- 
-2.3.0
+aW5zdG1lbSBmb3IgR0syMEEgaXMgYWxsb2NhdGVkIHVzaW5nIGRtYV9hbGxvY19jb2hlcmVudCgp
+LCB3aGljaApwcm92aWRlcyB1cyB3aXRoIGEgY29oZXJlbnQgQ1BVIG1hcHBpbmcgdGhhdCB3ZSBu
+ZXZlciB1c2UgYmVjYXVzZQppbnN0bWVtIG9iamVjdHMgYXJlIGFjY2Vzc2VkIHRocm91Z2ggUFJB
+TUlOLiBTd2l0Y2ggdG8KZG1hX2FsbG9jX2F0dHJzKCkgd2hpY2ggZ2l2ZXMgdXMgdGhlIG9wdGlv
+biB0byBkaXNtaXNzIHRoYXQgQ1BVIG1hcHBpbmcKYW5kIGZyZWUgdXAgc29tZSBDUFUgdmlydHVh
+bCBzcGFjZS4KClNpZ25lZC1vZmYtYnk6IEFsZXhhbmRyZSBDb3VyYm90IDxhY291cmJvdEBudmlk
+aWEuY29tPgotLS0KIGRybS9ub3V2ZWF1L252a20vc3ViZGV2L2luc3RtZW0vZ2syMGEuYyB8IDI0
+ICsrKysrKysrKysrKysrKysrKysrLS0tLQogbGliL2luY2x1ZGUvbnZpZi9vcy5oICAgICAgICAg
+ICAgICAgICAgIHwgMzEgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKwogMiBmaWxlcyBj
+aGFuZ2VkLCA1MSBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2Ry
+bS9ub3V2ZWF1L252a20vc3ViZGV2L2luc3RtZW0vZ2syMGEuYyBiL2RybS9ub3V2ZWF1L252a20v
+c3ViZGV2L2luc3RtZW0vZ2syMGEuYwppbmRleCA2MTc2ZjUwNzI0OTYuLjRjOGFmNmUzNjc3YyAx
+MDA2NDQKLS0tIGEvZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvaW5zdG1lbS9nazIwYS5jCisrKyBi
+L2RybS9ub3V2ZWF1L252a20vc3ViZGV2L2luc3RtZW0vZ2syMGEuYwpAQCAtMjQsNiArMjQsMTAg
+QEAKICNpbmNsdWRlIDxjb3JlL21tLmg+CiAjaW5jbHVkZSA8Y29yZS9kZXZpY2UuaD4KIAorI2lm
+ZGVmIF9fS0VSTkVMX18KKyNpbmNsdWRlIDxsaW51eC9kbWEtYXR0cnMuaD4KKyNlbmRpZgorCiAj
+aW5jbHVkZSAicHJpdi5oIgogCiBzdHJ1Y3QgZ2syMGFfaW5zdG9ial9wcml2IHsKQEAgLTM0LDYg
+KzM4LDcgQEAgc3RydWN0IGdrMjBhX2luc3RvYmpfcHJpdiB7CiAJc3RydWN0IG52a21fbWVtIF9t
+ZW07CiAJdm9pZCAqY3B1YWRkcjsKIAlkbWFfYWRkcl90IGhhbmRsZTsKKwlzdHJ1Y3QgZG1hX2F0
+dHJzIGF0dHJzOwogCXN0cnVjdCBudmttX21tX25vZGUgcjsKIH07CiAKQEAgLTkxLDggKzk2LDgg
+QEAgZ2syMGFfaW5zdG9ial9kdG9yKHN0cnVjdCBudmttX29iamVjdCAqb2JqZWN0KQogCWlmICh1
+bmxpa2VseSghbm9kZS0+aGFuZGxlKSkKIAkJcmV0dXJuOwogCi0JZG1hX2ZyZWVfY29oZXJlbnQo
+ZGV2LCBub2RlLT5tZW0tPnNpemUgPDwgUEFHRV9TSElGVCwgbm9kZS0+Y3B1YWRkciwKLQkJCSAg
+bm9kZS0+aGFuZGxlKTsKKwlkbWFfZnJlZV9hdHRycyhkZXYsIG5vZGUtPm1lbS0+c2l6ZSA8PCBQ
+QUdFX1NISUZULCBub2RlLT5jcHVhZGRyLAorCQkgICAgICAgbm9kZS0+aGFuZGxlLCAmbm9kZS0+
+YXR0cnMpOwogCiAJbnZrbV9pbnN0b2JqX2Rlc3Ryb3koJm5vZGUtPmJhc2UpOwogfQpAQCAtMTI2
+LDggKzEzMSwxOSBAQCBnazIwYV9pbnN0b2JqX2N0b3Ioc3RydWN0IG52a21fb2JqZWN0ICpwYXJl
+bnQsIHN0cnVjdCBudmttX29iamVjdCAqZW5naW5lLAogCiAJbm9kZS0+bWVtID0gJm5vZGUtPl9t
+ZW07CiAKLQlub2RlLT5jcHVhZGRyID0gZG1hX2FsbG9jX2NvaGVyZW50KGRldiwgbnBhZ2VzIDw8
+IFBBR0VfU0hJRlQsCi0JCQkJCSAgICZub2RlLT5oYW5kbGUsIEdGUF9LRVJORUwpOworCWluaXRf
+ZG1hX2F0dHJzKCZub2RlLT5hdHRycyk7CisJLyoKKwkgKiBXZSB3aWxsIGFjY2VzcyB0aGlzIG1l
+bW9yeSB0aHJvdWdoIFBSQU1JTiBhbmQgdGh1cyBkbyBub3QgbmVlZCBhCisJICogY29uc2lzdGVu
+dCBDUFUgcG9pbnRlcgorCSAqLworCWRtYV9zZXRfYXR0cihETUFfQVRUUl9OT05fQ09OU0lTVEVO
+VCwgJm5vZGUtPmF0dHJzKTsKKwlkbWFfc2V0X2F0dHIoRE1BX0FUVFJfV0VBS19PUkRFUklORywg
+Jm5vZGUtPmF0dHJzKTsKKwlkbWFfc2V0X2F0dHIoRE1BX0FUVFJfV1JJVEVfQ09NQklORSwgJm5v
+ZGUtPmF0dHJzKTsKKwlkbWFfc2V0X2F0dHIoRE1BX0FUVFJfTk9fS0VSTkVMX01BUFBJTkcsICZu
+b2RlLT5hdHRycyk7CisKKwlub2RlLT5jcHVhZGRyID0gZG1hX2FsbG9jX2F0dHJzKGRldiwgbnBh
+Z2VzIDw8IFBBR0VfU0hJRlQsCisJCQkJCSZub2RlLT5oYW5kbGUsIEdGUF9LRVJORUwsCisJCQkJ
+CSZub2RlLT5hdHRycyk7CiAJaWYgKCFub2RlLT5jcHVhZGRyKSB7CiAJCW52X2Vycm9yKHByaXYs
+ICJjYW5ub3QgYWxsb2NhdGUgRE1BIG1lbW9yeVxuIik7CiAJCXJldHVybiAtRU5PTUVNOwpkaWZm
+IC0tZ2l0IGEvbGliL2luY2x1ZGUvbnZpZi9vcy5oIGIvbGliL2luY2x1ZGUvbnZpZi9vcy5oCmlu
+ZGV4IGY2MzkxYTU4ZmQxMS4uYjRkMzA3ZTNhYzQ0IDEwMDY0NAotLS0gYS9saWIvaW5jbHVkZS9u
+dmlmL29zLmgKKysrIGIvbGliL2luY2x1ZGUvbnZpZi9vcy5oCkBAIC02ODMsNiArNjgzLDM3IEBA
+IGRtYV9mcmVlX2NvaGVyZW50KHN0cnVjdCBkZXZpY2UgKmRldiwgc2l6ZV90IHN6LCB2b2lkICp2
+YWRkciwgZG1hX2FkZHJfdCBidXMpCiB7CiB9CiAKK2VudW0gZG1hX2F0dHIgeworCURNQV9BVFRS
+X1dSSVRFX0JBUlJJRVIsCisJRE1BX0FUVFJfV0VBS19PUkRFUklORywKKwlETUFfQVRUUl9XUklU
+RV9DT01CSU5FLAorCURNQV9BVFRSX05PTl9DT05TSVNURU5ULAorCURNQV9BVFRSX05PX0tFUk5F
+TF9NQVBQSU5HLAorCURNQV9BVFRSX1NLSVBfQ1BVX1NZTkMsCisJRE1BX0FUVFJfRk9SQ0VfQ09O
+VElHVU9VUywKKwlETUFfQVRUUl9NQVgsCit9OworCitzdHJ1Y3QgZG1hX2F0dHJzIHsKK307CisK
+K3N0YXRpYyBpbmxpbmUgdm9pZCBpbml0X2RtYV9hdHRycyhzdHJ1Y3QgZG1hX2F0dHJzICphdHRy
+cykge30KK3N0YXRpYyBpbmxpbmUgdm9pZCBkbWFfc2V0X2F0dHIoZW51bSBkbWFfYXR0ciBhdHRy
+LCBzdHJ1Y3QgZG1hX2F0dHJzICphdHRycykge30KKworc3RhdGljIGlubGluZSB2b2lkICoKK2Rt
+YV9hbGxvY19hdHRycyhzdHJ1Y3QgZGV2aWNlICpkZXYsIHNpemVfdCBzeiwgZG1hX2FkZHJfdCAq
+aGRsLCBnZnBfdCBnZnAsCisJCXN0cnVjdCBkbWFfYXR0cnMgKmF0dHJzKQoreworCXJldHVybiBO
+VUxMOworfQorCitzdGF0aWMgaW5saW5lIHZvaWQKK2RtYV9mcmVlX2F0dHJzKHN0cnVjdCBkZXZp
+Y2UgKmRldiwgc2l6ZV90IHN6LCB2b2lkICp2YWRkciwgZG1hX2FkZHJfdCBidXMsCisJICAgICAg
+IHN0cnVjdCBkbWFfYXR0cnMgKmF0dHJzKQoreworfQorCisKIC8qKioqKioqKioqKioqKioqKioq
+KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
+KioKICAqIFBDSQogICoqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
+KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqLwotLSAKMi4zLjAKCl9fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCk5vdXZlYXUgbWFpbGluZyBsaXN0
+Ck5vdXZlYXVAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9ub3V2ZWF1Cg==
