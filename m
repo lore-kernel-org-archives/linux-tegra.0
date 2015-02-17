@@ -1,135 +1,162 @@
 From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v3 3/6] gk20a: remove RAM device
-Date: Tue, 17 Feb 2015 16:48:01 +0900
-Message-ID: <1424159284-19920-4-git-send-email-acourbot@nvidia.com>
+Subject: [PATCH v3 1/6] make RAM device optional
+Date: Tue, 17 Feb 2015 16:47:59 +0900
+Message-ID: <1424159284-19920-2-git-send-email-acourbot@nvidia.com>
 References: <1424159284-19920-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 In-Reply-To: <1424159284-19920-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Now that Nouveau can operate even when there is no RAM device, remove
-the dummy one used by GK20A.
-
-Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drm/nouveau/nvkm/subdev/fb/Kbuild     |  1 -
- drm/nouveau/nvkm/subdev/fb/gk20a.c    |  1 -
- drm/nouveau/nvkm/subdev/fb/priv.h     |  1 -
- drm/nouveau/nvkm/subdev/fb/ramgk20a.c | 67 -----------------------------------
- 4 files changed, 70 deletions(-)
- delete mode 100644 drm/nouveau/nvkm/subdev/fb/ramgk20a.c
-
-diff --git a/drm/nouveau/nvkm/subdev/fb/Kbuild b/drm/nouveau/nvkm/subdev/fb/Kbuild
-index 904d601e8a50..d6be4c6c5408 100644
---- a/drm/nouveau/nvkm/subdev/fb/Kbuild
-+++ b/drm/nouveau/nvkm/subdev/fb/Kbuild
-@@ -37,7 +37,6 @@ nvkm-y += nvkm/subdev/fb/ramgt215.o
- nvkm-y += nvkm/subdev/fb/rammcp77.o
- nvkm-y += nvkm/subdev/fb/ramgf100.o
- nvkm-y += nvkm/subdev/fb/ramgk104.o
--nvkm-y += nvkm/subdev/fb/ramgk20a.o
- nvkm-y += nvkm/subdev/fb/ramgm107.o
- nvkm-y += nvkm/subdev/fb/sddr2.o
- nvkm-y += nvkm/subdev/fb/sddr3.o
-diff --git a/drm/nouveau/nvkm/subdev/fb/gk20a.c b/drm/nouveau/nvkm/subdev/fb/gk20a.c
-index 6762847c05e8..a5d7857d3898 100644
---- a/drm/nouveau/nvkm/subdev/fb/gk20a.c
-+++ b/drm/nouveau/nvkm/subdev/fb/gk20a.c
-@@ -65,5 +65,4 @@ gk20a_fb_oclass = &(struct nvkm_fb_impl) {
- 		.fini = _nvkm_fb_fini,
- 	},
- 	.memtype = gf100_fb_memtype_valid,
--	.ram = &gk20a_ram_oclass,
- }.base;
-diff --git a/drm/nouveau/nvkm/subdev/fb/priv.h b/drm/nouveau/nvkm/subdev/fb/priv.h
-index d82da02daa1f..485c4b64819a 100644
---- a/drm/nouveau/nvkm/subdev/fb/priv.h
-+++ b/drm/nouveau/nvkm/subdev/fb/priv.h
-@@ -32,7 +32,6 @@ extern struct nvkm_oclass gt215_ram_oclass;
- extern struct nvkm_oclass mcp77_ram_oclass;
- extern struct nvkm_oclass gf100_ram_oclass;
- extern struct nvkm_oclass gk104_ram_oclass;
--extern struct nvkm_oclass gk20a_ram_oclass;
- extern struct nvkm_oclass gm107_ram_oclass;
- 
- int nvkm_sddr2_calc(struct nvkm_ram *ram);
-diff --git a/drm/nouveau/nvkm/subdev/fb/ramgk20a.c b/drm/nouveau/nvkm/subdev/fb/ramgk20a.c
-deleted file mode 100644
-index 60d8e1cead61..000000000000
---- a/drm/nouveau/nvkm/subdev/fb/ramgk20a.c
-+++ /dev/null
-@@ -1,67 +0,0 @@
--/*
-- * Copyright (c) 2014, NVIDIA CORPORATION. All rights reserved.
-- *
-- * Permission is hereby granted, free of charge, to any person obtaining a
-- * copy of this software and associated documentation files (the "Software"),
-- * to deal in the Software without restriction, including without limitation
-- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
-- * and/or sell copies of the Software, and to permit persons to whom the
-- * Software is furnished to do so, subject to the following conditions:
-- *
-- * The above copyright notice and this permission notice shall be included in
-- * all copies or substantial portions of the Software.
-- *
-- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-- * DEALINGS IN THE SOFTWARE.
-- */
--#include "priv.h"
--
--#include <core/device.h>
--
--static void
--gk20a_ram_put(struct nvkm_fb *pfb, struct nvkm_mem **pmem)
--{
--	BUG();
--}
--
--static int
--gk20a_ram_get(struct nvkm_fb *pfb, u64 size, u32 align, u32 ncmin,
--	     u32 memtype, struct nvkm_mem **pmem)
--{
--	BUG();
--}
--
--static int
--gk20a_ram_ctor(struct nvkm_object *parent, struct nvkm_object *engine,
--	       struct nvkm_oclass *oclass, void *data, u32 datasize,
--	       struct nvkm_object **pobject)
--{
--	struct nvkm_ram *ram;
--	int ret;
--
--	ret = nvkm_ram_create(parent, engine, oclass, &ram);
--	*pobject = nv_object(ram);
--	if (ret)
--		return ret;
--	ram->type = NV_MEM_TYPE_STOLEN;
--	ram->size = get_num_physpages() << PAGE_SHIFT;
--
--	ram->get = gk20a_ram_get;
--	ram->put = gk20a_ram_put;
--	return 0;
--}
--
--struct nvkm_oclass
--gk20a_ram_oclass = {
--	.ofuncs = &(struct nvkm_ofuncs) {
--		.ctor = gk20a_ram_ctor,
--		.dtor = _nvkm_ram_dtor,
--		.init = _nvkm_ram_init,
--		.fini = _nvkm_ram_fini,
--	},
--};
--- 
-2.3.0
+SGF2aW5nIGEgUkFNIGRldmljZSBkb2VzIG5vdCBtYWtlIHNlbnNlIGZvciBjaGlwcyBsaWtlIEdL
+MjBBIHdoaWNoIGhhdmUKbm8gZGVkaWNhdGVkIHZpZGVvIG1lbW9yeS4gVGhlIGR1bW15IFJBTSBk
+ZXZpY2UgdGhhdCB3ZSB1c2VkIHNvIGZhcgp3b3JrcyBhcyBhIHRlbXBvcmFyeSBiYW5kLWFpZCwg
+YnV0IGluIHRoZSBsb25nLXRlcm0gaXQgaXMgZGVzaXJhYmxlIGZvcgp0aGUgZHJpdmVyIHRvIGJl
+IGFibGUgdG8gd29yayB3aXRob3V0IGFueSBraW5kIG9mIFZSQU0uCgpUaGlzIHBhdGNoIGFkZHMg
+YSBmZXcgY29uZGl0aW9uYWxzIGluIHBsYWNlcyB3aGVyZSBhIFJBTSBkZXZpY2Ugd2FzCmFzc3Vt
+ZWQgdG8gYmUgcHJlc2VudCBhbmQgYWxsb3dzIHNvbWUgbW9yZSBvYmplY3RzIHRvIGJlIGFsbG9j
+YXRlZCBmcm9tCnRoZSBUVCBkb21haW4sIGFsbG93aW5nIE5vdXZlYXUgdG8gaGFuZGxlIEdQVXMg
+Zm9yIHdoaWNoCnBmYi0+cmFtID09IE5VTEwuCgpTaWduZWQtb2ZmLWJ5OiBBbGV4YW5kcmUgQ291
+cmJvdCA8YWNvdXJib3RAbnZpZGlhLmNvbT4KLS0tCiBkcm0vbm91dmVhdS9ub3V2ZWF1X2Rpc3Bs
+YXkuYyAgICAgICAgIHwgIDggKysrKysrKy0KIGRybS9ub3V2ZWF1L25vdXZlYXVfdHRtLmMgICAg
+ICAgICAgICAgfCAgMyArKysKIGRybS9ub3V2ZWF1L252ODRfZmVuY2UuYyAgICAgICAgICAgICAg
+fCAxNCArKysrKysrKysrKy0tLQogZHJtL25vdXZlYXUvbnZrbS9lbmdpbmUvZGV2aWNlL2Jhc2Uu
+YyB8ICA5ICsrKysrKy0tLQogZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvY2xrL2Jhc2UuYyAgICB8
+ICAyICstCiBkcm0vbm91dmVhdS9udmttL3N1YmRldi9mYi9iYXNlLmMgICAgIHwgMjYgKysrKysr
+KysrKysrKysrKysrLS0tLS0tLS0KIGRybS9ub3V2ZWF1L252a20vc3ViZGV2L2x0Yy9nZjEwMC5j
+ICAgfCAxMCArKysrKysrKystCiA3IGZpbGVzIGNoYW5nZWQsIDU1IGluc2VydGlvbnMoKyksIDE3
+IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RybS9ub3V2ZWF1L25vdXZlYXVfZGlzcGxheS5j
+IGIvZHJtL25vdXZlYXUvbm91dmVhdV9kaXNwbGF5LmMKaW5kZXggODYwYjBlMmQ0MTgxLi42OGVl
+MGFmMjJlZWEgMTAwNjQ0Ci0tLSBhL2RybS9ub3V2ZWF1L25vdXZlYXVfZGlzcGxheS5jCisrKyBi
+L2RybS9ub3V2ZWF1L25vdXZlYXVfZGlzcGxheS5jCkBAIC04NjksMTMgKzg2OSwxOSBAQCBub3V2
+ZWF1X2Rpc3BsYXlfZHVtYl9jcmVhdGUoc3RydWN0IGRybV9maWxlICpmaWxlX3ByaXYsIHN0cnVj
+dCBkcm1fZGV2aWNlICpkZXYsCiAJCQkgICAgc3RydWN0IGRybV9tb2RlX2NyZWF0ZV9kdW1iICph
+cmdzKQogewogCXN0cnVjdCBub3V2ZWF1X2JvICpibzsKKwl1aW50MzJfdCBkb21haW47CiAJaW50
+IHJldDsKIAogCWFyZ3MtPnBpdGNoID0gcm91bmR1cChhcmdzLT53aWR0aCAqIChhcmdzLT5icHAg
+LyA4KSwgMjU2KTsKIAlhcmdzLT5zaXplID0gYXJncy0+cGl0Y2ggKiBhcmdzLT5oZWlnaHQ7CiAJ
+YXJncy0+c2l6ZSA9IHJvdW5kdXAoYXJncy0+c2l6ZSwgUEFHRV9TSVpFKTsKIAotCXJldCA9IG5v
+dXZlYXVfZ2VtX25ldyhkZXYsIGFyZ3MtPnNpemUsIDAsIE5PVVZFQVVfR0VNX0RPTUFJTl9WUkFN
+LCAwLCAwLCAmYm8pOworCWlmIChudnh4X2ZiKCZub3V2ZWF1X2RybShkZXYpLT5kZXZpY2UpLT5y
+YW0pCisJCWRvbWFpbiA9IE5PVVZFQVVfR0VNX0RPTUFJTl9WUkFNOworCWVsc2UKKwkJZG9tYWlu
+ID0gTk9VVkVBVV9HRU1fRE9NQUlOX0dBUlQ7CisKKwlyZXQgPSBub3V2ZWF1X2dlbV9uZXcoZGV2
+LCBhcmdzLT5zaXplLCAwLCBkb21haW4sIDAsIDAsICZibyk7CiAJaWYgKHJldCkKIAkJcmV0dXJu
+IHJldDsKIApkaWZmIC0tZ2l0IGEvZHJtL25vdXZlYXUvbm91dmVhdV90dG0uYyBiL2RybS9ub3V2
+ZWF1L25vdXZlYXVfdHRtLmMKaW5kZXggMjczZTUwMTEwZWMzLi5hM2MyZTliNGQ5MzcgMTAwNjQ0
+Ci0tLSBhL2RybS9ub3V2ZWF1L25vdXZlYXVfdHRtLmMKKysrIGIvZHJtL25vdXZlYXUvbm91dmVh
+dV90dG0uYwpAQCAtODUsNiArODUsOSBAQCBub3V2ZWF1X3ZyYW1fbWFuYWdlcl9uZXcoc3RydWN0
+IHR0bV9tZW1fdHlwZV9tYW5hZ2VyICptYW4sCiAJaWYgKG52Ym8tPnRpbGVfZmxhZ3MgJiBOT1VW
+RUFVX0dFTV9USUxFX05PTkNPTlRJRykKIAkJc2l6ZV9uYyA9IDEgPDwgbnZiby0+cGFnZV9zaGlm
+dDsKIAorCWlmICghcGZiLT5yYW0pCisJCXJldHVybiAtRU5PTUVNOworCiAJcmV0ID0gcGZiLT5y
+YW0tPmdldChwZmIsIG1lbS0+bnVtX3BhZ2VzIDw8IFBBR0VfU0hJRlQsCiAJCQkgICBtZW0tPnBh
+Z2VfYWxpZ25tZW50IDw8IFBBR0VfU0hJRlQsIHNpemVfbmMsCiAJCQkgICAobnZiby0+dGlsZV9m
+bGFncyA+PiA4KSAmIDB4M2ZmLCAmbm9kZSk7CmRpZmYgLS1naXQgYS9kcm0vbm91dmVhdS9udjg0
+X2ZlbmNlLmMgYi9kcm0vbm91dmVhdS9udjg0X2ZlbmNlLmMKaW5kZXggYmY0MjljYWJiYWE4Li5i
+OTgxZjg1ZGU4ODggMTAwNjQ0Ci0tLSBhL2RybS9ub3V2ZWF1L252ODRfZmVuY2UuYworKysgYi9k
+cm0vbm91dmVhdS9udjg0X2ZlbmNlLmMKQEAgLTIxNSw2ICsyMTUsNyBAQCBudjg0X2ZlbmNlX2Ny
+ZWF0ZShzdHJ1Y3Qgbm91dmVhdV9kcm0gKmRybSkKIHsKIAlzdHJ1Y3QgbnZrbV9maWZvICpwZmlm
+byA9IG52eHhfZmlmbygmZHJtLT5kZXZpY2UpOwogCXN0cnVjdCBudjg0X2ZlbmNlX3ByaXYgKnBy
+aXY7CisJdTMyIGRvbWFpbjsKIAlpbnQgcmV0OwogCiAJcHJpdiA9IGRybS0+ZmVuY2UgPSBremFs
+bG9jKHNpemVvZigqcHJpdiksIEdGUF9LRVJORUwpOwpAQCAtMjMxLDEwICsyMzIsMTcgQEAgbnY4
+NF9mZW5jZV9jcmVhdGUoc3RydWN0IG5vdXZlYXVfZHJtICpkcm0pCiAJcHJpdi0+YmFzZS5jb250
+ZXh0X2Jhc2UgPSBmZW5jZV9jb250ZXh0X2FsbG9jKHByaXYtPmJhc2UuY29udGV4dHMpOwogCXBy
+aXYtPmJhc2UudWV2ZW50ID0gdHJ1ZTsKIAotCXJldCA9IG5vdXZlYXVfYm9fbmV3KGRybS0+ZGV2
+LCAxNiAqIHByaXYtPmJhc2UuY29udGV4dHMsIDAsCi0JCQkgICAgIFRUTV9QTF9GTEFHX1ZSQU0s
+IDAsIDAsIE5VTEwsIE5VTEwsICZwcml2LT5ibyk7CisJZG9tYWluID0gbnZ4eF9mYigmZHJtLT5k
+ZXZpY2UpLT5yYW0gPworCQkJIFRUTV9QTF9GTEFHX1ZSQU0gOgorCQkJIC8qCisJCQkgICogZmVu
+Y2VzIGNyZWF0ZWQgaW4gVFQgbXVzdCBiZSBjb2hlcmVudCBvciB3ZSB3aWxsCisJCQkgICogd2Fp
+dCBvbiBvbGQgQ1BVIGNhY2hlIHZhbHVlcyEKKwkJCSAgKi8KKwkJCSBUVE1fUExfRkxBR19UVCB8
+IFRUTV9QTF9GTEFHX1VOQ0FDSEVEOworCXJldCA9IG5vdXZlYXVfYm9fbmV3KGRybS0+ZGV2LCAx
+NiAqIHByaXYtPmJhc2UuY29udGV4dHMsIDAsIGRvbWFpbiwgMCwKKwkJCSAgICAgMCwgTlVMTCwg
+TlVMTCwgJnByaXYtPmJvKTsKIAlpZiAocmV0ID09IDApIHsKLQkJcmV0ID0gbm91dmVhdV9ib19w
+aW4ocHJpdi0+Ym8sIFRUTV9QTF9GTEFHX1ZSQU0sIGZhbHNlKTsKKwkJcmV0ID0gbm91dmVhdV9i
+b19waW4ocHJpdi0+Ym8sIGRvbWFpbiwgZmFsc2UpOwogCQlpZiAocmV0ID09IDApIHsKIAkJCXJl
+dCA9IG5vdXZlYXVfYm9fbWFwKHByaXYtPmJvKTsKIAkJCWlmIChyZXQpCmRpZmYgLS1naXQgYS9k
+cm0vbm91dmVhdS9udmttL2VuZ2luZS9kZXZpY2UvYmFzZS5jIGIvZHJtL25vdXZlYXUvbnZrbS9l
+bmdpbmUvZGV2aWNlL2Jhc2UuYwppbmRleCA2ZWZhOGYzOGZmNTQuLjQ4Zjg1MzdlODNhYyAxMDA2
+NDQKLS0tIGEvZHJtL25vdXZlYXUvbnZrbS9lbmdpbmUvZGV2aWNlL2Jhc2UuYworKysgYi9kcm0v
+bm91dmVhdS9udmttL2VuZ2luZS9kZXZpY2UvYmFzZS5jCkBAIC0xMzksOSArMTM5LDEyIEBAIG52
+a21fZGV2b2JqX2luZm8oc3RydWN0IG52a21fb2JqZWN0ICpvYmplY3QsIHZvaWQgKmRhdGEsIHUz
+MiBzaXplKQogCiAJYXJncy0+djAuY2hpcHNldCAgPSBkZXZpY2UtPmNoaXBzZXQ7CiAJYXJncy0+
+djAucmV2aXNpb24gPSBkZXZpY2UtPmNoaXByZXY7Ci0JaWYgKHBmYikgIGFyZ3MtPnYwLnJhbV9z
+aXplID0gYXJncy0+djAucmFtX3VzZXIgPSBwZmItPnJhbS0+c2l6ZTsKLQllbHNlICAgICAgYXJn
+cy0+djAucmFtX3NpemUgPSBhcmdzLT52MC5yYW1fdXNlciA9IDA7Ci0JaWYgKGltZW0pIGFyZ3Mt
+PnYwLnJhbV91c2VyID0gYXJncy0+djAucmFtX3VzZXIgLSBpbWVtLT5yZXNlcnZlZDsKKwlpZiAo
+cGZiICAmJiBwZmItPnJhbSkKKwkJYXJncy0+djAucmFtX3NpemUgPSBhcmdzLT52MC5yYW1fdXNl
+ciA9IHBmYi0+cmFtLT5zaXplOworCWVsc2UKKwkJYXJncy0+djAucmFtX3NpemUgPSBhcmdzLT52
+MC5yYW1fdXNlciA9IDA7CisJaWYgKGltZW0pCisJCWFyZ3MtPnYwLnJhbV91c2VyID0gYXJncy0+
+djAucmFtX3VzZXIgLSBpbWVtLT5yZXNlcnZlZDsKIAlyZXR1cm4gMDsKIH0KIApkaWZmIC0tZ2l0
+IGEvZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvY2xrL2Jhc2UuYyBiL2RybS9ub3V2ZWF1L252a20v
+c3ViZGV2L2Nsay9iYXNlLmMKaW5kZXggYjI0YTljYzA0YjczLi4zOWE4M2Q4MmUwY2QgMTAwNjQ0
+Ci0tLSBhL2RybS9ub3V2ZWF1L252a20vc3ViZGV2L2Nsay9iYXNlLmMKKysrIGIvZHJtL25vdXZl
+YXUvbnZrbS9zdWJkZXYvY2xrL2Jhc2UuYwpAQCAtMTg0LDcgKzE4NCw3IEBAIG52a21fcHN0YXRl
+X3Byb2coc3RydWN0IG52a21fY2xrICpjbGssIGludCBwc3RhdGVpKQogCW52X2RlYnVnKGNsaywg
+InNldHRpbmcgcGVyZm9ybWFuY2Ugc3RhdGUgJWRcbiIsIHBzdGF0ZWkpOwogCWNsay0+cHN0YXRl
+ID0gcHN0YXRlaTsKIAotCWlmIChwZmItPnJhbS0+Y2FsYykgeworCWlmIChwZmItPnJhbSAmJiBw
+ZmItPnJhbS0+Y2FsYykgewogCQlpbnQga2h6ID0gcHN0YXRlLT5iYXNlLmRvbWFpbltudl9jbGtf
+c3JjX21lbV07CiAJCWRvIHsKIAkJCXJldCA9IHBmYi0+cmFtLT5jYWxjKHBmYiwga2h6KTsKZGlm
+ZiAtLWdpdCBhL2RybS9ub3V2ZWF1L252a20vc3ViZGV2L2ZiL2Jhc2UuYyBiL2RybS9ub3V2ZWF1
+L252a20vc3ViZGV2L2ZiL2Jhc2UuYwppbmRleCAxNjU4OWZhNjEzY2QuLjYxZmRlNDNkYWI3MSAx
+MDA2NDQKLS0tIGEvZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvZmIvYmFzZS5jCisrKyBiL2RybS9u
+b3V2ZWF1L252a20vc3ViZGV2L2ZiL2Jhc2UuYwpAQCAtNTUsOSArNTUsMTEgQEAgX252a21fZmJf
+ZmluaShzdHJ1Y3QgbnZrbV9vYmplY3QgKm9iamVjdCwgYm9vbCBzdXNwZW5kKQogCXN0cnVjdCBu
+dmttX2ZiICpwZmIgPSAodm9pZCAqKW9iamVjdDsKIAlpbnQgcmV0OwogCi0JcmV0ID0gbnZfb2Z1
+bmNzKHBmYi0+cmFtKS0+ZmluaShudl9vYmplY3QocGZiLT5yYW0pLCBzdXNwZW5kKTsKLQlpZiAo
+cmV0ICYmIHN1c3BlbmQpCi0JCXJldHVybiByZXQ7CisJaWYgKHBmYi0+cmFtKSB7CisJCXJldCA9
+IG52X29mdW5jcyhwZmItPnJhbSktPmZpbmkobnZfb2JqZWN0KHBmYi0+cmFtKSwgc3VzcGVuZCk7
+CisJCWlmIChyZXQgJiYgc3VzcGVuZCkKKwkJCXJldHVybiByZXQ7CisJfQogCiAJcmV0dXJuIG52
+a21fc3ViZGV2X2ZpbmkoJnBmYi0+YmFzZSwgc3VzcGVuZCk7CiB9CkBAIC03Miw5ICs3NCwxMSBA
+QCBfbnZrbV9mYl9pbml0KHN0cnVjdCBudmttX29iamVjdCAqb2JqZWN0KQogCWlmIChyZXQpCiAJ
+CXJldHVybiByZXQ7CiAKLQlyZXQgPSBudl9vZnVuY3MocGZiLT5yYW0pLT5pbml0KG52X29iamVj
+dChwZmItPnJhbSkpOwotCWlmIChyZXQpCi0JCXJldHVybiByZXQ7CisJaWYgKHBmYi0+cmFtKSB7
+CisJCXJldCA9IG52X29mdW5jcyhwZmItPnJhbSktPmluaXQobnZfb2JqZWN0KHBmYi0+cmFtKSk7
+CisJCWlmIChyZXQpCisJCQlyZXR1cm4gcmV0OworCX0KIAogCWZvciAoaSA9IDA7IGkgPCBwZmIt
+PnRpbGUucmVnaW9uczsgaSsrKQogCQlwZmItPnRpbGUucHJvZyhwZmIsIGksICZwZmItPnRpbGUu
+cmVnaW9uW2ldKTsKQEAgLTkxLDkgKzk1LDEyIEBAIF9udmttX2ZiX2R0b3Ioc3RydWN0IG52a21f
+b2JqZWN0ICpvYmplY3QpCiAJZm9yIChpID0gMDsgaSA8IHBmYi0+dGlsZS5yZWdpb25zOyBpKysp
+CiAJCXBmYi0+dGlsZS5maW5pKHBmYiwgaSwgJnBmYi0+dGlsZS5yZWdpb25baV0pOwogCW52a21f
+bW1fZmluaSgmcGZiLT50YWdzKTsKLQludmttX21tX2ZpbmkoJnBmYi0+dnJhbSk7CiAKLQludmtt
+X29iamVjdF9yZWYoTlVMTCwgKHN0cnVjdCBudmttX29iamVjdCAqKikmcGZiLT5yYW0pOworCWlm
+IChwZmItPnJhbSkgeworCQludmttX21tX2ZpbmkoJnBmYi0+dnJhbSk7CisJCW52a21fb2JqZWN0
+X3JlZihOVUxMLCAoc3RydWN0IG52a21fb2JqZWN0ICoqKSZwZmItPnJhbSk7CisJfQorCiAJbnZr
+bV9zdWJkZXZfZGVzdHJveSgmcGZiLT5iYXNlKTsKIH0KIApAQCAtMTI3LDYgKzEzNCw5IEBAIG52
+a21fZmJfY3JlYXRlXyhzdHJ1Y3QgbnZrbV9vYmplY3QgKnBhcmVudCwgc3RydWN0IG52a21fb2Jq
+ZWN0ICplbmdpbmUsCiAKIAlwZmItPm1lbXR5cGVfdmFsaWQgPSBpbXBsLT5tZW10eXBlOwogCisJ
+aWYgKCFpbXBsLT5yYW0pCisJCXJldHVybiAwOworCiAJcmV0ID0gbnZrbV9vYmplY3RfY3Rvcihu
+dl9vYmplY3QocGZiKSwgTlVMTCwgaW1wbC0+cmFtLCBOVUxMLCAwLCAmcmFtKTsKIAlpZiAocmV0
+KSB7CiAJCW52X2ZhdGFsKHBmYiwgImVycm9yIGRldGVjdGluZyBtZW1vcnkgY29uZmlndXJhdGlv
+biEhXG4iKTsKZGlmZiAtLWdpdCBhL2RybS9ub3V2ZWF1L252a20vc3ViZGV2L2x0Yy9nZjEwMC5j
+IGIvZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvbHRjL2dmMTAwLmMKaW5kZXggOGU3Y2M2MjAwZDYw
+Li43ZmI1ZWEwMzE0Y2IgMTAwNjQ0Ci0tLSBhL2RybS9ub3V2ZWF1L252a20vc3ViZGV2L2x0Yy9n
+ZjEwMC5jCisrKyBiL2RybS9ub3V2ZWF1L252a20vc3ViZGV2L2x0Yy9nZjEwMC5jCkBAIC0xMzYs
+NyArMTM2LDggQEAgZ2YxMDBfbHRjX2R0b3Ioc3RydWN0IG52a21fb2JqZWN0ICpvYmplY3QpCiAJ
+c3RydWN0IG52a21fbHRjX3ByaXYgKnByaXYgPSAodm9pZCAqKW9iamVjdDsKIAogCW52a21fbW1f
+ZmluaSgmcHJpdi0+dGFncyk7Ci0JbnZrbV9tbV9mcmVlKCZwZmItPnZyYW0sICZwcml2LT50YWdf
+cmFtKTsKKwlpZiAocGZiLT5yYW0pCisJCW52a21fbW1fZnJlZSgmcGZiLT52cmFtLCAmcHJpdi0+
+dGFnX3JhbSk7CiAKIAludmttX2x0Y19kZXN0cm95KHByaXYpOwogfQpAQCAtMTQ5LDYgKzE1MCwx
+MiBAQCBnZjEwMF9sdGNfaW5pdF90YWdfcmFtKHN0cnVjdCBudmttX2ZiICpwZmIsIHN0cnVjdCBu
+dmttX2x0Y19wcml2ICpwcml2KQogCXUzMiB0YWdfc2l6ZSwgdGFnX21hcmdpbiwgdGFnX2FsaWdu
+OwogCWludCByZXQ7CiAKKwkvKiBObyBWUkFNLCBubyB0YWdzIGZvciBub3cuICovCisJaWYgKCFw
+ZmItPnJhbSkgeworCQlwcml2LT5udW1fdGFncyA9IDA7CisJCWdvdG8gbW1faW5pdDsKKwl9CisK
+IAkvKiB0YWdzIGZvciAxLzQgb2YgVlJBTSBzaG91bGQgYmUgZW5vdWdoICg4MTkyLzQgcGVyIEdp
+QiBvZiBWUkFNKSAqLwogCXByaXYtPm51bV90YWdzID0gKHBmYi0+cmFtLT5zaXplID4+IDE3KSAv
+IDQ7CiAJaWYgKHByaXYtPm51bV90YWdzID4gKDEgPDwgMTcpKQpAQCAtMTgzLDYgKzE5MCw3IEBA
+IGdmMTAwX2x0Y19pbml0X3RhZ19yYW0oc3RydWN0IG52a21fZmIgKnBmYiwgc3RydWN0IG52a21f
+bHRjX3ByaXYgKnByaXYpCiAJCXByaXYtPnRhZ19iYXNlID0gdGFnX2Jhc2U7CiAJfQogCittbV9p
+bml0OgogCXJldCA9IG52a21fbW1faW5pdCgmcHJpdi0+dGFncywgMCwgcHJpdi0+bnVtX3RhZ3Ms
+IDEpOwogCXJldHVybiByZXQ7CiB9Ci0tIAoyLjMuMAoKX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBtYWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0
+cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
+c3RpbmZvL25vdXZlYXUK
