@@ -1,79 +1,30 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 4/6] instmem/gk20a: use DMA attributes
-Date: Wed, 18 Feb 2015 16:19:42 +0900
-Message-ID: <CAAVeFuJ31aFNZbQBnkBQFZVJZG8wX7oJiZ0Z-u3K+e8A6mZLpQ@mail.gmail.com>
-References: <1424159284-19920-1-git-send-email-acourbot@nvidia.com>
- <1424159284-19920-5-git-send-email-acourbot@nvidia.com>
- <CACAvsv7ZJWh-x-Mok_pi10x6CW3DHuLYk+883yu4JkNEu0ne=A@mail.gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [flasher PATCH 1/2] ARM: tegra: import latest Jetson TK1 pinmux
+Date: Wed, 18 Feb 2015 13:28:22 -0700
+Message-ID: <54E4F5E6.5010705@wwwdotorg.org>
+References: <1424199369-10937-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <CACAvsv7ZJWh-x-Mok_pi10x6CW3DHuLYk+883yu4JkNEu0ne=A@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1424199369-10937-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gV2VkLCBGZWIgMTgsIDIwMTUgYXQgODowOCBBTSwgQmVuIFNrZWdncyA8c2tlZ2dzYkBnbWFp
-bC5jb20+IHdyb3RlOgo+IE9uIFR1ZSwgRmViIDE3LCAyMDE1IGF0IDU6NDggUE0sIEFsZXhhbmRy
-ZSBDb3VyYm90IDxhY291cmJvdEBudmlkaWEuY29tPiB3cm90ZToKPj4gaW5zdG1lbSBmb3IgR0sy
-MEEgaXMgYWxsb2NhdGVkIHVzaW5nIGRtYV9hbGxvY19jb2hlcmVudCgpLCB3aGljaAo+PiBwcm92
-aWRlcyB1cyB3aXRoIGEgY29oZXJlbnQgQ1BVIG1hcHBpbmcgdGhhdCB3ZSBuZXZlciB1c2UgYmVj
-YXVzZQo+PiBpbnN0bWVtIG9iamVjdHMgYXJlIGFjY2Vzc2VkIHRocm91Z2ggUFJBTUlOLiBTd2l0
-Y2ggdG8KPj4gZG1hX2FsbG9jX2F0dHJzKCkgd2hpY2ggZ2l2ZXMgdXMgdGhlIG9wdGlvbiB0byBk
-aXNtaXNzIHRoYXQgQ1BVIG1hcHBpbmcKPj4gYW5kIGZyZWUgdXAgc29tZSBDUFUgdmlydHVhbCBz
-cGFjZS4KPj4KPj4gU2lnbmVkLW9mZi1ieTogQWxleGFuZHJlIENvdXJib3QgPGFjb3VyYm90QG52
-aWRpYS5jb20+Cj4+IC0tLQo+PiAgZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvaW5zdG1lbS9nazIw
-YS5jIHwgMjQgKysrKysrKysrKysrKysrKysrKystLS0tCj4+ICBsaWIvaW5jbHVkZS9udmlmL29z
-LmggICAgICAgICAgICAgICAgICAgfCAzMSArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-Cj4+ICAyIGZpbGVzIGNoYW5nZWQsIDUxIGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pCj4+
-Cj4+IGRpZmYgLS1naXQgYS9kcm0vbm91dmVhdS9udmttL3N1YmRldi9pbnN0bWVtL2drMjBhLmMg
-Yi9kcm0vbm91dmVhdS9udmttL3N1YmRldi9pbnN0bWVtL2drMjBhLmMKPj4gaW5kZXggNjE3NmY1
-MDcyNDk2Li40YzhhZjZlMzY3N2MgMTAwNjQ0Cj4+IC0tLSBhL2RybS9ub3V2ZWF1L252a20vc3Vi
-ZGV2L2luc3RtZW0vZ2syMGEuYwo+PiArKysgYi9kcm0vbm91dmVhdS9udmttL3N1YmRldi9pbnN0
-bWVtL2drMjBhLmMKPj4gQEAgLTI0LDYgKzI0LDEwIEBACj4+ICAjaW5jbHVkZSA8Y29yZS9tbS5o
-Pgo+PiAgI2luY2x1ZGUgPGNvcmUvZGV2aWNlLmg+Cj4+Cj4+ICsjaWZkZWYgX19LRVJORUxfXwo+
-PiArI2luY2x1ZGUgPGxpbnV4L2RtYS1hdHRycy5oPgo+PiArI2VuZGlmCj4+ICsKPj4gICNpbmNs
-dWRlICJwcml2LmgiCj4+Cj4+ICBzdHJ1Y3QgZ2syMGFfaW5zdG9ial9wcml2IHsKPj4gQEAgLTM0
-LDYgKzM4LDcgQEAgc3RydWN0IGdrMjBhX2luc3RvYmpfcHJpdiB7Cj4+ICAgICAgICAgc3RydWN0
-IG52a21fbWVtIF9tZW07Cj4+ICAgICAgICAgdm9pZCAqY3B1YWRkcjsKPj4gICAgICAgICBkbWFf
-YWRkcl90IGhhbmRsZTsKPj4gKyAgICAgICBzdHJ1Y3QgZG1hX2F0dHJzIGF0dHJzOwo+PiAgICAg
-ICAgIHN0cnVjdCBudmttX21tX25vZGUgcjsKPj4gIH07Cj4+Cj4+IEBAIC05MSw4ICs5Niw4IEBA
-IGdrMjBhX2luc3RvYmpfZHRvcihzdHJ1Y3QgbnZrbV9vYmplY3QgKm9iamVjdCkKPj4gICAgICAg
-ICBpZiAodW5saWtlbHkoIW5vZGUtPmhhbmRsZSkpCj4+ICAgICAgICAgICAgICAgICByZXR1cm47
-Cj4+Cj4+IC0gICAgICAgZG1hX2ZyZWVfY29oZXJlbnQoZGV2LCBub2RlLT5tZW0tPnNpemUgPDwg
-UEFHRV9TSElGVCwgbm9kZS0+Y3B1YWRkciwKPj4gLSAgICAgICAgICAgICAgICAgICAgICAgICBu
-b2RlLT5oYW5kbGUpOwo+PiArICAgICAgIGRtYV9mcmVlX2F0dHJzKGRldiwgbm9kZS0+bWVtLT5z
-aXplIDw8IFBBR0VfU0hJRlQsIG5vZGUtPmNwdWFkZHIsCj4+ICsgICAgICAgICAgICAgICAgICAg
-ICAgbm9kZS0+aGFuZGxlLCAmbm9kZS0+YXR0cnMpOwo+Pgo+PiAgICAgICAgIG52a21faW5zdG9i
-al9kZXN0cm95KCZub2RlLT5iYXNlKTsKPj4gIH0KPj4gQEAgLTEyNiw4ICsxMzEsMTkgQEAgZ2sy
-MGFfaW5zdG9ial9jdG9yKHN0cnVjdCBudmttX29iamVjdCAqcGFyZW50LCBzdHJ1Y3QgbnZrbV9v
-YmplY3QgKmVuZ2luZSwKPj4KPj4gICAgICAgICBub2RlLT5tZW0gPSAmbm9kZS0+X21lbTsKPj4K
-Pj4gLSAgICAgICBub2RlLT5jcHVhZGRyID0gZG1hX2FsbG9jX2NvaGVyZW50KGRldiwgbnBhZ2Vz
-IDw8IFBBR0VfU0hJRlQsCj4+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAmbm9kZS0+aGFuZGxlLCBHRlBfS0VSTkVMKTsKPj4gKyAgICAgICBpbml0X2RtYV9hdHRy
-cygmbm9kZS0+YXR0cnMpOwo+PiArICAgICAgIC8qCj4+ICsgICAgICAgICogV2Ugd2lsbCBhY2Nl
-c3MgdGhpcyBtZW1vcnkgdGhyb3VnaCBQUkFNSU4gYW5kIHRodXMgZG8gbm90IG5lZWQgYQo+PiAr
-ICAgICAgICAqIGNvbnNpc3RlbnQgQ1BVIHBvaW50ZXIKPj4gKyAgICAgICAgKi8KPj4gKyAgICAg
-ICBkbWFfc2V0X2F0dHIoRE1BX0FUVFJfTk9OX0NPTlNJU1RFTlQsICZub2RlLT5hdHRycyk7Cj4+
-ICsgICAgICAgZG1hX3NldF9hdHRyKERNQV9BVFRSX1dFQUtfT1JERVJJTkcsICZub2RlLT5hdHRy
-cyk7Cj4+ICsgICAgICAgZG1hX3NldF9hdHRyKERNQV9BVFRSX1dSSVRFX0NPTUJJTkUsICZub2Rl
-LT5hdHRycyk7Cj4+ICsgICAgICAgZG1hX3NldF9hdHRyKERNQV9BVFRSX05PX0tFUk5FTF9NQVBQ
-SU5HLCAmbm9kZS0+YXR0cnMpOwo+IEkgd29uZGVyLCBpcyBpdCBwb3NzaWJsZSB0byBoYXZlIGEg
-cGVyLXByaXYgdmVyc2lvbiBvZiB0aGlzIGluc3RlYWQgb2YKPiBwZXItb2JqZWN0PyAgVGhlIGtl
-cm5lbCdzIGZ1bmN0aW9uIHByb3RvdHlwZXMgYXJlbid0IG1hcmtlZCBjb25zdCBvcgo+IGFueXRo
-aW5nLCB3aGljaCBnaXZlcyBtZSBzb21lIGRvdWJ0cywgYnV0IGl0J3Mgd29ydGggY2hlY2tpbmcu
-CgpJIGNoZWNrZWQgdGhlIEFSTSBpbXBsZW1lbnRhdGlvbiBvZiB0aGUgRE1BIEFQSSBhbmQgaXQg
-c2VlbXMgdG8gYmUKc2FmZSBpbmRlZWQgLSBJIHdpbGwgZG8gdGhpcy4gVGhhbmtzIQpfX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpOb3V2ZWF1IG1haWxpbmcg
-bGlzdApOb3V2ZWF1QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnL21haWxtYW4vbGlzdGluZm8vbm91dmVhdQo=
+On 02/17/2015 11:56 AM, Stephen Warren wrote:
+> syseng has revamped the Jetson TK1 pinmux spreadsheet, basing the content
+> completely on correct configuration for the board/schematic, rather than
+> the previous version which was based on the bare minimum changes relative
+> to another reference board.
+>
+> The new spreadsheet sets TRISTATE for any input-only pins. This only works
+> correctly if the global CLAMP bit is not set, so any code importing this
+> updated version will need to be adjusted accordingly. Apparently syseng
+> have changed their mind since the previous advice that this needed to be
+> set:-/
+>
+> This content comes from Jetson_TK1_customer_pinmux.xlsm (v09) downloaded
+> from https://developer.nvidia.com/hardware-design-and-development.
+
+I've applied these patches.
