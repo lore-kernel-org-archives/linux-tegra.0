@@ -1,201 +1,137 @@
-From: Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 1/6] make RAM device optional
-Date: Thu, 19 Feb 2015 12:20:03 +1000
-Message-ID: <CACAvsv4uj92K+eCMCq=3+EyrL3JFFH6Mtf9G6nCpb55HhkhFnA@mail.gmail.com>
-References: <1424159284-19920-1-git-send-email-acourbot@nvidia.com>
- <1424159284-19920-2-git-send-email-acourbot@nvidia.com>
- <CACAvsv5mNb3bPzbkVoSCvXKtX195w3c8OX=543V5JHnM=hsN+w@mail.gmail.com>
- <CAAVeFuKxzz7cMeaC7wKno17aErLSbqBYGtQLN=pH1qsK5DgFkQ@mail.gmail.com>
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: DSI panel not working on -next
+Date: Thu, 19 Feb 2015 09:12:26 +0100
+Message-ID: <20150219081225.GA5086@ulmo.nvidia.com>
+References: <54DD99B5.2080504@nvidia.com>
+ <20150213095516.GA17888@ulmo.nvidia.com>
+ <54DDCF63.7040208@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1666868752=="
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <CAAVeFuKxzz7cMeaC7wKno17aErLSbqBYGtQLN=pH1qsK5DgFkQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="fdj2RfSjLxBAspz7"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <54DDCF63.7040208-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
---===============1666868752==
-Content-Type: multipart/alternative; boundary=001a1143254ee05ebc050f679278
-
---001a1143254ee05ebc050f679278
-Content-Type: text/plain; charset=UTF-8
-
-On 18 Feb 2015 17:08, "Alexandre Courbot" <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->
-> On Wed, Feb 18, 2015 at 8:01 AM, Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> > On Tue, Feb 17, 2015 at 5:47 PM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-wrote:
-> >> Having a RAM device does not make sense for chips like GK20A which have
-> >> no dedicated video memory. The dummy RAM device that we used so far
-> >> works as a temporary band-aid, but in the long-term it is desirable for
-> >> the driver to be able to work without any kind of VRAM.
-> >>
-> >> This patch adds a few conditionals in places where a RAM device was
-> >> assumed to be present and allows some more objects to be allocated from
-> >> the TT domain, allowing Nouveau to handle GPUs for which
-> >> pfb->ram == NULL.
-> >>
-> >> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >> ---
-> >>  drm/nouveau/nouveau_display.c         |  8 +++++++-
-> >>  drm/nouveau/nouveau_ttm.c             |  3 +++
-> >>  drm/nouveau/nv84_fence.c              | 14 +++++++++++---
-> >>  drm/nouveau/nvkm/engine/device/base.c |  9 ++++++---
-> >>  drm/nouveau/nvkm/subdev/clk/base.c    |  2 +-
-> >>  drm/nouveau/nvkm/subdev/fb/base.c     | 26 ++++++++++++++++++--------
-> >>  drm/nouveau/nvkm/subdev/ltc/gf100.c   | 10 +++++++++-
-> >>  7 files changed, 55 insertions(+), 17 deletions(-)
-> >>
-> >> diff --git a/drm/nouveau/nouveau_display.c
-b/drm/nouveau/nouveau_display.c
-> >> index 860b0e2d4181..68ee0af22eea 100644
-> >> --- a/drm/nouveau/nouveau_display.c
-> >> +++ b/drm/nouveau/nouveau_display.c
-> >> @@ -869,13 +869,19 @@ nouveau_display_dumb_create(struct drm_file
-*file_priv, struct drm_device *dev,
-> >>                             struct drm_mode_create_dumb *args)
-> >>  {
-> >>         struct nouveau_bo *bo;
-> >> +       uint32_t domain;
-> >>         int ret;
-> >>
-> >>         args->pitch = roundup(args->width * (args->bpp / 8), 256);
-> >>         args->size = args->pitch * args->height;
-> >>         args->size = roundup(args->size, PAGE_SIZE);
-> >>
-> >> -       ret = nouveau_gem_new(dev, args->size, 0,
-NOUVEAU_GEM_DOMAIN_VRAM, 0, 0, &bo);
-> >> +       if (nvxx_fb(&nouveau_drm(dev)->device)->ram)
-> > For these checks in the drm, it's probably better to use
-> > nouveau_drm(dev)->device.info.ram_size.
->
-> I wonder - in other places (e.g. clock, ltc) we don't have access to
-> nouveau_drm, so IIUC we need to rely on pfb->ram there.
-Correct.
-
->Wouldn't it be
-> more confusing to use two different ways to check the presence of VRAM
-> when we could stick to a single one?
-It's best to think of nvkm/ as a separate entity, and it will be at some
-point (drm load on its own, inside a vm), and drm might not be able to
-access it's internal structures.
-
-That's not the case now, so the code is fine as-is for the moment. But it's
-worth keeping in mind.
-
-Thanks,
-Ben.
-
---001a1143254ee05ebc050f679278
-Content-Type: text/html; charset=UTF-8
+--fdj2RfSjLxBAspz7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-<p dir=3D"ltr">On 18 Feb 2015 17:08, &quot;Alexandre Courbot&quot; &lt;<a h=
-ref=3D"mailto:gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org">gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org</a>&gt; wrote:<br>
-&gt;<br>
-&gt; On Wed, Feb 18, 2015 at 8:01 AM, Ben Skeggs &lt;<a href=3D"mailto:skeg=
-gsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org">skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org</a>&gt; wrote:<br>
-&gt; &gt; On Tue, Feb 17, 2015 at 5:47 PM, Alexandre Courbot &lt;<a href=3D=
-"mailto:acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org">acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org</a>&gt; wrote:<br>
-&gt; &gt;&gt; Having a RAM device does not make sense for chips like GK20A =
-which have<br>
-&gt; &gt;&gt; no dedicated video memory. The dummy RAM device that we used =
-so far<br>
-&gt; &gt;&gt; works as a temporary band-aid, but in the long-term it is des=
-irable for<br>
-&gt; &gt;&gt; the driver to be able to work without any kind of VRAM.<br>
-&gt; &gt;&gt;<br>
-&gt; &gt;&gt; This patch adds a few conditionals in places where a RAM devi=
-ce was<br>
-&gt; &gt;&gt; assumed to be present and allows some more objects to be allo=
-cated from<br>
-&gt; &gt;&gt; the TT domain, allowing Nouveau to handle GPUs for which<br>
-&gt; &gt;&gt; pfb-&gt;ram =3D=3D NULL.<br>
-&gt; &gt;&gt;<br>
-&gt; &gt;&gt; Signed-off-by: Alexandre Courbot &lt;<a href=3D"mailto:acourb=
-ot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org">acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org</a>&gt;<br>
-&gt; &gt;&gt; ---<br>
-&gt; &gt;&gt;=C2=A0 drm/nouveau/nouveau_display.c=C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0|=C2=A0 8 +++++++-<br>
-&gt; &gt;&gt;=C2=A0 drm/nouveau/nouveau_ttm.c=C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0|=C2=A0 3 +++<br>
-&gt; &gt;&gt;=C2=A0 drm/nouveau/nv84_fence.c=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 | 14 +++++++++++---<br>
-&gt; &gt;&gt;=C2=A0 drm/nouveau/nvkm/engine/device/base.c |=C2=A0 9 ++++++-=
---<br>
-&gt; &gt;&gt;=C2=A0 drm/nouveau/nvkm/subdev/clk/base.c=C2=A0 =C2=A0 |=C2=A0=
- 2 +-<br>
-&gt; &gt;&gt;=C2=A0 drm/nouveau/nvkm/subdev/fb/base.c=C2=A0 =C2=A0 =C2=A0| =
-26 ++++++++++++++++++--------<br>
-&gt; &gt;&gt;=C2=A0 drm/nouveau/nvkm/subdev/ltc/gf100.c=C2=A0 =C2=A0| 10 ++=
-+++++++-<br>
-&gt; &gt;&gt;=C2=A0 7 files changed, 55 insertions(+), 17 deletions(-)<br>
-&gt; &gt;&gt;<br>
-&gt; &gt;&gt; diff --git a/drm/nouveau/nouveau_display.c b/drm/nouveau/nouv=
-eau_display.c<br>
-&gt; &gt;&gt; index 860b0e2d4181..68ee0af22eea 100644<br>
-&gt; &gt;&gt; --- a/drm/nouveau/nouveau_display.c<br>
-&gt; &gt;&gt; +++ b/drm/nouveau/nouveau_display.c<br>
-&gt; &gt;&gt; @@ -869,13 +869,19 @@ nouveau_display_dumb_create(struct drm_=
-file *file_priv, struct drm_device *dev,<br>
-&gt; &gt;&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0struct drm_mode_create_dumb *args=
-)<br>
-&gt; &gt;&gt;=C2=A0 {<br>
-&gt; &gt;&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0struct nouveau_bo *bo;<br>
-&gt; &gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0uint32_t domain;<br>
-&gt; &gt;&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0int ret;<br>
-&gt; &gt;&gt;<br>
-&gt; &gt;&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0args-&gt;pitch =3D roundup(a=
-rgs-&gt;width * (args-&gt;bpp / 8), 256);<br>
-&gt; &gt;&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0args-&gt;size =3D args-&gt;p=
-itch * args-&gt;height;<br>
-&gt; &gt;&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0args-&gt;size =3D roundup(ar=
-gs-&gt;size, PAGE_SIZE);<br>
-&gt; &gt;&gt;<br>
-&gt; &gt;&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0ret =3D nouveau_gem_new(dev, args=
--&gt;size, 0, NOUVEAU_GEM_DOMAIN_VRAM, 0, 0, &amp;bo);<br>
-&gt; &gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0if (nvxx_fb(&amp;nouveau_drm(dev)=
--&gt;device)-&gt;ram)<br>
-&gt; &gt; For these checks in the drm, it&#39;s probably better to use<br>
-&gt; &gt; nouveau_drm(dev)-&gt;device.info.ram_size.<br>
-&gt;<br>
-&gt; I wonder - in other places (e.g. clock, ltc) we don&#39;t have access =
-to<br>
-&gt; nouveau_drm, so IIUC we need to rely on pfb-&gt;ram there. <br>
-Correct. </p>
-<p dir=3D"ltr">&gt;Wouldn&#39;t it be<br>
-&gt; more confusing to use two different ways to check the presence of VRAM=
-<br>
-&gt; when we could stick to a single one?<br>
-It&#39;s best to think of nvkm/ as a separate entity, and it will be at som=
-e point (drm load on its own, inside a vm), and drm might not be able to ac=
-cess it&#39;s internal structures.</p>
-<p dir=3D"ltr">That&#39;s not the case now, so the code is fine as-is for t=
-he moment. But it&#39;s worth keeping in mind. </p>
-<p dir=3D"ltr">Thanks, <br>
-Ben. <br>
-</p>
+On Fri, Feb 13, 2015 at 07:18:11PM +0900, Alexandre Courbot wrote:
+> On 02/13/2015 06:55 PM, Thierry Reding wrote:
+> >On Fri, Feb 13, 2015 at 03:29:09PM +0900, Alexandre Courbot wrote:
+> >>Hi Thierry,
+> >>
+> >>I noticed that the DSI panel of SHIELD (tegra114-roth) was not brought =
+up on
+> >>-next. I have bisected the following commit as introducing that behavio=
+r:
+> >>
+> >>commit f4c5cf88fbd50e4779042268947b2e2f90c20484
+> >>Author: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >>Date:   Thu Dec 18 15:29:14 2014 +0100
+> >>
+> >>     gpu: host1x: Provide a proper struct bus_type
+> >>
+> >>
+> >>With and without this patch, the DSI panel is probed, but the stack tra=
+ce in
+> >>the probe() function is different:
+> >
+> >This shouldn't make much of a difference, really, since we're attaching
+> >to the panel only during mipi_dsi_host_register() anyway. And the panel
+> >device can't exist earlier than that because mipi_dsi_host_register()
+> >will instantiate it. Still...
+> >
+> >>i.e. with f4c5cf88fbd, the panel is not probed from tegra_dsi_probe()
+> >>anymore, which means DSI remains without a valid connector:
+> >>
+> >>[    1.378513] [drm] Initialized drm 1.1.0 20060810
+> >>[    1.384564] 54300000.dsi supply avdd-dsi-csi not found, using dummy
+> >>regulator
+> >>[    1.396394] [drm] Supports vblank timestamp caching Rev 2 (21.10.201=
+3).
+> >>[    1.403021] [drm] No driver support for vblank timestamp query.
+> >>[    1.409080] drm drm: No connectors reported connected with modes
+> >>[    1.415128] [drm] Cannot find any crtc or sizes - going 1024x768
+> >
+> >... the failing log here does indicate that there is no panel, so I'll
+> >need to investigate why that's happening.
+> >
+> >>Are you aware of this? Does it affect other DSI panels? Does SHIELD's DT
+> >>need an update of some sort?
+> >
+> >I'm almost certain that I've tested this on at least Dalmore and I don't
+> >see any differences that could be causing this. I'll look into it.
+>=20
+> Thanks - please don't hesitate to ask me to run some more tests (or just =
+to
+> try and fix it by myself) if this can save you time.
 
---001a1143254ee05ebc050f679278--
+Let me try to summarize what we discussed on IRC earlier. The root cause
+here is that the panel is probed as part of the mipi_dsi_host_register()
+call. In some cases the panel driver may defer probe itself, therefore
+causing the DSI output to end up with no attached panel. The KMS fbdev
+emulation will then assume a default resolution of 1024x768.
 
---===============1666868752==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
+The panel will at some point successfully probe and attach to the host,
+which should cause things to work normally for anything that's able to
+set a mode by itself. So running modetest or weston should still work,
+even if fbcon doesn't.
 
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBt
-YWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZy
-ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL25vdXZlYXUK
+I see three possible solutions:
 
---===============1666868752==--
+  - Defer in the DSI output's ->probe() if after registering the host
+    there is no panel attached. That should delay the initialization of
+    fbdev until a panel is detected.
+
+    This is somewhat ugly, but I think it would be the easiest fix for
+    the regression until a proper solution is implemented.
+
+  - Modify the driver to cope with "hot-pluggable" panels. This isn't
+    really going to fix the regression because the outcome will be the
+    same. In fact, for DSI panels are already hot-pluggable.
+
+  - Implement a mechanism to tear down and setup from scratch the fbdev
+    when the first output is added. So at driver load time the fbdev
+    code would skip fbdev initialization if no connected output was
+    detected. Once any of the outputs is connected, the native mode of
+    that output can be used to create fbdev. That should be enough to
+    fix the problem for panels that defer probe, but I think an even
+    more generic solution would be to go a step further and completely
+    tear down fbdev when the last connected output goes away and then
+    create it again when any of the outputs is connected again.
+
+    I'm told that it's very difficult to resize fbcon, but I know that
+    at least with the Tegra driver it is properly torn down and set up
+    again during a driver unload/load cycle, so it must be possible to
+    do this more granularly for fbdev only.
+
+Thierry
+
+--fdj2RfSjLxBAspz7
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJU5ZrpAAoJEN0jrNd/PrOhMJsP/2upgFn77VD5nWxs8Efkx5xW
+ubG0pxyzpO0ZoGMMbMVxrrBrJMEEtX8AbykB/Pl9KAcae0MjfCoBBksb5axcRgub
+SrSgO05/EDvsGfmVH95hx+0FImxPHV6ne2cpQVtogR7BgeERExb64vAe3iHXELHw
+UD0jrzG6p2EkfCh91kXEfwBKJisanole1DxpbXpR4lzB5WMb208jxpX02vylplwq
+1+4JDxoioAVbCgW2dx/m6eVaHCrXZoaVVxnd0EJ3UyJ3pM9UxKNC9zVwd2SzRb9K
+i30BAC98xp9MhxK1moSW9SS0aDLbwho1vpt+wcPOOQOxAS166t1KHypBPscOxfbL
+aH9Zxb/zRw9YrySTGsQzXP0wzyia0BDnE65KVj65ElkYhLJswvmjXX6MOJT1tLJl
+ZhXr09bOBx87v3yc+hH5UBpcL2HuY18as2ZjlPm5a9n6gUIIIWcQHRW6qSI1s/V+
+ldoNMJIsobJh3XycZr+f7ldFb0OAjMsmdKIgjEb/wNTbQozjJvK8R0q6b1b3FBa2
+5aC4jtwB0FJL9hv7WhD0ZI6wF/RkEMOd53HghX7wo17s2HHucyG407eh8LKUJbww
+EJ375ZZ3rZDm0SEvtBTVTzuorP23YTsjZw1lPNIKSCRW25HWWb7FQHgu8IdWR4pn
+7oK1DZHiPwhodLJPxHLD
+=eNPR
+-----END PGP SIGNATURE-----
+
+--fdj2RfSjLxBAspz7--
