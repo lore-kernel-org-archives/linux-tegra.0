@@ -1,234 +1,233 @@
 From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v4 6/6] instmem/gk20a: add IOMMU support
-Date: Fri, 20 Feb 2015 18:23:04 +0900
-Message-ID: <1424424184-15001-7-git-send-email-acourbot@nvidia.com>
+Subject: [PATCH v4 5/6] platform: probe IOMMU if present
+Date: Fri, 20 Feb 2015 18:23:03 +0900
+Message-ID: <1424424184-15001-6-git-send-email-acourbot@nvidia.com>
 References: <1424424184-15001-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1424424184-15001-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-TGV0IEdLMjBBJ3MgaW5zdG1lbSB0YWtlIGFkdmFudGFnZSBvZiB0aGUgSU9NTVUgaWYgaXQgaXMg
-cHJlc2VudC4gSGF2aW5nCmFuIElPTU1VIG1lYW5zIHRoYXQgaW5zdG1lbSBpcyBubyBsb25nZXIg
-YWxsb2NhdGVkIHVzaW5nIHRoZSBETUEgQVBJLApidXQgaW5zdGVhZCBvYnRhaW5lZCB0aHJvdWdo
-IHBhZ2VfYWxsb2MgYW5kIG1hZGUgY29udGlndW91cyB0byB0aGUgR1BVCmJ5IElPTU1VIG1hcHBp
-bmdzLgoKU2lnbmVkLW9mZi1ieTogQWxleGFuZHJlIENvdXJib3QgPGFjb3VyYm90QG52aWRpYS5j
-b20+Ci0tLQogZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvaW5zdG1lbS9nazIwYS5jIHwgMjkyICsr
-KysrKysrKysrKysrKysrKysrKysrKysrKy0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgMjUyIGluc2Vy
-dGlvbnMoKyksIDQwIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RybS9ub3V2ZWF1L252a20v
-c3ViZGV2L2luc3RtZW0vZ2syMGEuYyBiL2RybS9ub3V2ZWF1L252a20vc3ViZGV2L2luc3RtZW0v
-Z2syMGEuYwppbmRleCA3MDcwMjFmYjg0ZWUuLmEzMTE5NmI2ZGE4ZiAxMDA2NDQKLS0tIGEvZHJt
-L25vdXZlYXUvbnZrbS9zdWJkZXYvaW5zdG1lbS9nazIwYS5jCisrKyBiL2RybS9ub3V2ZWF1L252
-a20vc3ViZGV2L2luc3RtZW0vZ2syMGEuYwpAQCAtMjAsMTIgKzIwLDMyIEBACiAgKiBERUFMSU5H
-UyBJTiBUSEUgU09GVFdBUkUuCiAgKi8KIAorLyoKKyAqIEdLMjBBIGRvZXMgbm90IGhhdmUgZGVk
-aWNhdGVkIHZpZGVvIG1lbW9yeSwgYW5kIHRvIGFjY3VyYXRlbHkgcmVwcmVzZW50IHRoaXMKKyAq
-IGZhY3QgTm91dmVhdSB3aWxsIG5vdCBjcmVhdGUgYSBSQU0gZGV2aWNlIGZvciBpdC4gVGhlcmVm
-b3JlIGl0cyBpbnN0bWVtCisgKiBpbXBsZW1lbnRhdGlvbiBtdXN0IGJlIGRvbmUgZGlyZWN0bHkg
-b24gdG9wIG9mIHN5c3RlbSBtZW1vcnksIHdoaWxlIHByb3ZpZGluZworICogY29oZXJlbnQgcmVh
-ZCBhbmQgd3JpdGUgb3BlcmF0aW9ucy4KKyAqCisgKiBJbnN0bWVtIGNhbiBiZSBhbGxvY2F0ZWQg
-dGhyb3VnaCB0d28gbWVhbnM6CisgKiAxKSBJZiBhbiBJT01NVSBtYXBwaW5nIGhhcyBiZWVuIHBy
-b2JlZCwgdGhlIElPTU1VIEFQSSBpcyB1c2VkIHRvIG1ha2UgbWVtb3J5CisgKiAgICBwYWdlcyBj
-b250aWd1b3VzIHRvIHRoZSBHUFUuIFRoaXMgaXMgdGhlIHByZWZlcnJlZCB3YXkuCisgKiAyKSBJ
-ZiBubyBJT01NVSBtYXBwaW5nIGlzIHByb2JlZCwgdGhlIERNQSBBUEkgaXMgdXNlZCB0byBhbGxv
-Y2F0ZSBwaHlzaWNhbGx5CisgKiAgICBjb250aWd1b3VzIG1lbW9yeS4KKyAqCisgKiBJbiBib3Ro
-IGNhc2VzIENQVSByZWFkIGFuZCB3cml0ZXMgYXJlIHBlcmZvcm1lZCB1c2luZyBQUkFNSU4gKGku
-ZS4gdXNpbmcgdGhlCisgKiBHUFUgcGF0aCkgdG8gZW5zdXJlIHRoZXNlIG9wZXJhdGlvbnMgYXJl
-IGNvaGVyZW50IGZvciB0aGUgR1BVLiBUaGlzIGFsbG93cyB1cworICogdG8gdXNlIG1vcmUgInJl
-bGF4ZWQiIGFsbG9jYXRpb24gcGFyYW1ldGVycyB3aGVuIHVzaW5nIHRoZSBETUEgQVBJLCBzaW5j
-ZSB3ZQorICogbmV2ZXIgbmVlZCBhIGtlcm5lbCBtYXBwaW5nLgorICovCisKICNpbmNsdWRlIDxz
-dWJkZXYvZmIuaD4KICNpbmNsdWRlIDxjb3JlL21tLmg+CiAjaW5jbHVkZSA8Y29yZS9kZXZpY2Uu
-aD4KIAogI2lmZGVmIF9fS0VSTkVMX18KICNpbmNsdWRlIDxsaW51eC9kbWEtYXR0cnMuaD4KKyNp
-bmNsdWRlIDxsaW51eC9pb21tdS5oPgorI2luY2x1ZGUgPG5vdXZlYXVfcGxhdGZvcm0uaD4KICNl
-bmRpZgogCiAjaW5jbHVkZSAicHJpdi5oIgpAQCAtMzYsMTggKzU2LDUzIEBAIHN0cnVjdCBnazIw
-YV9pbnN0b2JqX3ByaXYgewogCXN0cnVjdCBudmttX21lbSAqbWVtOwogCS8qIFBvaW50ZWQgYnkg
-bWVtICovCiAJc3RydWN0IG52a21fbWVtIF9tZW07Cit9OworCisvKgorICogVXNlZCBmb3Igb2Jq
-ZWN0cyBhbGxvY2F0ZWQgdXNpbmcgdGhlIERNQSBBUEkKKyAqLworc3RydWN0IGdrMjBhX2luc3Rv
-YmpfZG1hIHsKKwlzdHJ1Y3QgZ2syMGFfaW5zdG9ial9wcml2IGJhc2U7CisKIAl2b2lkICpjcHVh
-ZGRyOwogCWRtYV9hZGRyX3QgaGFuZGxlOwogCXN0cnVjdCBudmttX21tX25vZGUgcjsKIH07CiAK
-Ky8qCisgKiBVc2VkIGZvciBvYmplY3RzIGZsYXR0ZW5lZCB1c2luZyB0aGUgSU9NTVUgQVBJCisg
-Ki8KK3N0cnVjdCBnazIwYV9pbnN0b2JqX2lvbW11IHsKKwlzdHJ1Y3QgZ2syMGFfaW5zdG9ial9w
-cml2IGJhc2U7CisKKwkvKiBhcnJheSBvZiBiYXNlLm1lbS0+c2l6ZSBwYWdlcyAqLworCXN0cnVj
-dCBwYWdlICpwYWdlc1tdOworfTsKKwogc3RydWN0IGdrMjBhX2luc3RtZW1fcHJpdiB7CiAJc3Ry
-dWN0IG52a21faW5zdG1lbSBiYXNlOwogCXNwaW5sb2NrX3QgbG9jazsKIAl1NjQgYWRkcjsKKwor
-CS8qIE9ubHkgdXNlZCBpZiBJT01NVSBpZiBwcmVzZW50ICovCisJc3RydWN0IG11dGV4ICptbV9t
-dXRleDsKKwlzdHJ1Y3QgbnZrbV9tbSAqbW07CisJc3RydWN0IGlvbW11X2RvbWFpbiAqZG9tYWlu
-OworCXVuc2lnbmVkIGxvbmcgaW9tbXVfcGdzaGlmdDsKKworCS8qIE9ubHkgdXNlZCBieSBETUEg
-QVBJICovCiAJc3RydWN0IGRtYV9hdHRycyBhdHRyczsKIH07CiAKKy8qCisgKiBVc2UgUFJBTUlO
-IHRvIHJlYWQvd3JpdGUgZGF0YSBhbmQgYXZvaWQgY29oZXJlbmN5IGlzc3Vlcy4KKyAqIFBSQU1J
-TiB1c2VzIHRoZSBHUFUgcGF0aCBhbmQgZW5zdXJlcyBkYXRhIHdpbGwgYWx3YXlzIGJlIGNvaGVy
-ZW50LgorICoKKyAqIEEgZHluYW1pYyBtYXBwaW5nIGJhc2VkIHNvbHV0aW9uIHdvdWxkIGJlIGRl
-c2lyYWJsZSBpbiB0aGUgZnV0dXJlLCBidXQKKyAqIHRoZSBpc3N1ZSByZW1haW5zIG9mIGhvdyB0
-byBtYWludGFpbiBjb2hlcmVuY3kgZWZmaWNpZW50bHkuIE9uIEFSTSBpdCBpcworICogbm90IGVh
-c3kgKGlmIHBvc3NpYmxlIGF0IGFsbD8pIHRvIGNyZWF0ZSB1bmNhY2hlZCB0ZW1wb3JhcnkgbWFw
-cGluZ3MuCisgKi8KKwogc3RhdGljIHUzMgogZ2syMGFfaW5zdG9ial9yZDMyKHN0cnVjdCBudmtt
-X29iamVjdCAqb2JqZWN0LCB1NjQgb2Zmc2V0KQogewpAQCAtODcsNTAgKzE0Miw3OSBAQCBnazIw
-YV9pbnN0b2JqX3dyMzIoc3RydWN0IG52a21fb2JqZWN0ICpvYmplY3QsIHU2NCBvZmZzZXQsIHUz
-MiBkYXRhKQogfQogCiBzdGF0aWMgdm9pZAotZ2syMGFfaW5zdG9ial9kdG9yKHN0cnVjdCBudmtt
-X29iamVjdCAqb2JqZWN0KQorZ2syMGFfaW5zdG9ial9kdG9yX2RtYShzdHJ1Y3QgZ2syMGFfaW5z
-dG9ial9wcml2ICpfbm9kZSkKIHsKLQlzdHJ1Y3QgZ2syMGFfaW5zdG9ial9wcml2ICpub2RlID0g
-KHZvaWQgKilvYmplY3Q7CisJc3RydWN0IGdrMjBhX2luc3RvYmpfZG1hICpub2RlID0gKHZvaWQg
-Kilfbm9kZTsKIAlzdHJ1Y3QgZ2syMGFfaW5zdG1lbV9wcml2ICpwcml2ID0gKHZvaWQgKiludmtt
-X2luc3RtZW0obm9kZSk7CiAJc3RydWN0IGRldmljZSAqZGV2ID0gbnZfZGV2aWNlX2Jhc2UobnZf
-ZGV2aWNlKHByaXYpKTsKIAogCWlmICh1bmxpa2VseSghbm9kZS0+aGFuZGxlKSkKIAkJcmV0dXJu
-OwogCi0JZG1hX2ZyZWVfYXR0cnMoZGV2LCBub2RlLT5tZW0tPnNpemUgPDwgUEFHRV9TSElGVCwg
-bm9kZS0+Y3B1YWRkciwKKwlkbWFfZnJlZV9hdHRycyhkZXYsIF9ub2RlLT5tZW0tPnNpemUgPDwg
-UEFHRV9TSElGVCwgbm9kZS0+Y3B1YWRkciwKIAkJICAgICAgIG5vZGUtPmhhbmRsZSwgJnByaXYt
-PmF0dHJzKTsKK30KKworc3RhdGljIHZvaWQKK2drMjBhX2luc3RvYmpfZHRvcl9pb21tdShzdHJ1
-Y3QgZ2syMGFfaW5zdG9ial9wcml2ICpfbm9kZSkKK3sKKwlzdHJ1Y3QgZ2syMGFfaW5zdG9ial9p
-b21tdSAqbm9kZSA9ICh2b2lkICopX25vZGU7CisJc3RydWN0IGdrMjBhX2luc3RtZW1fcHJpdiAq
-cHJpdiA9ICh2b2lkICopbnZrbV9pbnN0bWVtKG5vZGUpOworCXN0cnVjdCBudmttX21tX25vZGUg
-KnI7CisJaW50IGk7CisKKwlpZiAodW5saWtlbHkobGlzdF9lbXB0eSgmX25vZGUtPm1lbS0+cmVn
-aW9ucykpKQorCQlyZXR1cm47CisKKwlyID0gbGlzdF9maXJzdF9lbnRyeSgmX25vZGUtPm1lbS0+
-cmVnaW9ucywgc3RydWN0IG52a21fbW1fbm9kZSwKKwkJCSAgICAgcmxfZW50cnkpOworCisJLyog
-Y2xlYXIgYml0IDM0IHRvIHVubWFwIHBhZ2VzICovCisJci0+b2Zmc2V0ICY9IH5CSVQoMzQgLSBw
-cml2LT5pb21tdV9wZ3NoaWZ0KTsKKworCS8qIFVubWFwIHBhZ2VzIGZyb20gR1BVIGFkZHJlc3Mg
-c3BhY2UgYW5kIGZyZWUgdGhlbSAqLworCWZvciAoaSA9IDA7IGkgPCBfbm9kZS0+bWVtLT5zaXpl
-OyBpKyspIHsKKwkJaW9tbXVfdW5tYXAocHJpdi0+ZG9tYWluLAorCQkJICAgIChyLT5vZmZzZXQg
-KyBpKSA8PCBwcml2LT5pb21tdV9wZ3NoaWZ0LCBQQUdFX1NJWkUpOworCQlfX2ZyZWVfcGFnZShu
-b2RlLT5wYWdlc1tpXSk7CisJfQorCisJLyogUmVsZWFzZSBhcmVhIGZyb20gR1BVIGFkZHJlc3Mg
-c3BhY2UgKi8KKwltdXRleF9sb2NrKHByaXYtPm1tX211dGV4KTsKKwludmttX21tX2ZyZWUocHJp
-di0+bW0sICZyKTsKKwltdXRleF91bmxvY2socHJpdi0+bW1fbXV0ZXgpOworfQorCitzdGF0aWMg
-dm9pZAorZ2syMGFfaW5zdG9ial9kdG9yKHN0cnVjdCBudmttX29iamVjdCAqb2JqZWN0KQorewor
-CXN0cnVjdCBnazIwYV9pbnN0b2JqX3ByaXYgKm5vZGUgPSAodm9pZCAqKW9iamVjdDsKKwlzdHJ1
-Y3QgZ2syMGFfaW5zdG1lbV9wcml2ICpwcml2ID0gKHZvaWQgKiludmttX2luc3RtZW0obm9kZSk7
-CisKKwlpZiAocHJpdi0+ZG9tYWluKQorCQlnazIwYV9pbnN0b2JqX2R0b3JfaW9tbXUobm9kZSk7
-CisJZWxzZQorCQlnazIwYV9pbnN0b2JqX2R0b3JfZG1hKG5vZGUpOwogCiAJbnZrbV9pbnN0b2Jq
-X2Rlc3Ryb3koJm5vZGUtPmJhc2UpOwogfQogCiBzdGF0aWMgaW50Ci1nazIwYV9pbnN0b2JqX2N0
-b3Ioc3RydWN0IG52a21fb2JqZWN0ICpwYXJlbnQsIHN0cnVjdCBudmttX29iamVjdCAqZW5naW5l
-LAotCQkgICBzdHJ1Y3QgbnZrbV9vY2xhc3MgKm9jbGFzcywgdm9pZCAqZGF0YSwgdTMyIF9zaXpl
-LAotCQkgICBzdHJ1Y3QgbnZrbV9vYmplY3QgKipwb2JqZWN0KQorZ2syMGFfaW5zdG9ial9jdG9y
-X2RtYShzdHJ1Y3QgbnZrbV9vYmplY3QgKnBhcmVudCwgc3RydWN0IG52a21fb2JqZWN0ICplbmdp
-bmUsCisJCSAgICAgICBzdHJ1Y3QgbnZrbV9vY2xhc3MgKm9jbGFzcywgdTMyIG5wYWdlcywgdTMy
-IGFsaWduLAorCQkgICAgICAgc3RydWN0IGdrMjBhX2luc3RvYmpfcHJpdiAqKl9ub2RlKQogewot
-CXN0cnVjdCBudmttX2luc3RvYmpfYXJncyAqYXJncyA9IGRhdGE7CisJc3RydWN0IGdrMjBhX2lu
-c3RvYmpfZG1hICpub2RlOwogCXN0cnVjdCBnazIwYV9pbnN0bWVtX3ByaXYgKnByaXYgPSAodm9p
-ZCAqKW52a21faW5zdG1lbShwYXJlbnQpOwotCXN0cnVjdCBkZXZpY2UgKmRldiA9IG52X2Rldmlj
-ZV9iYXNlKG52X2RldmljZShwcml2KSk7Ci0Jc3RydWN0IGdrMjBhX2luc3RvYmpfcHJpdiAqbm9k
-ZTsKLQl1MzIgc2l6ZSwgYWxpZ247Ci0JdTMyIG5wYWdlczsKKwlzdHJ1Y3QgZGV2aWNlICpkZXYg
-PSBudl9kZXZpY2VfYmFzZShudl9kZXZpY2UocGFyZW50KSk7CiAJaW50IHJldDsKIAotCW52X2Rl
-YnVnKHBhcmVudCwgIiVzOiBzaXplOiAleCBhbGlnbjogJXhcbiIsIF9fZnVuY19fLAotCQkgYXJn
-cy0+c2l6ZSwgYXJncy0+YWxpZ24pOwotCi0Jc2l6ZSAgPSBtYXgoKGFyZ3MtPnNpemUgICsgNDA5
-NSkgJiB+NDA5NSwgKHUzMik0MDk2KTsKLQlhbGlnbiA9IG1heCgoYXJncy0+YWxpZ24gKyA0MDk1
-KSAmIH40MDk1LCAodTMyKTQwOTYpOwotCi0JbnBhZ2VzID0gc2l6ZSA+PiBQQUdFX1NISUZUOwot
-CiAJcmV0ID0gbnZrbV9pbnN0b2JqX2NyZWF0ZV8ocGFyZW50LCBlbmdpbmUsIG9jbGFzcywgc2l6
-ZW9mKCpub2RlKSwKLQkJCQkgICAgICAodm9pZCAqKikmbm9kZSk7Ci0JKnBvYmplY3QgPSBudl9v
-YmplY3Qobm9kZSk7CisJCQkJICAgKHZvaWQgKiopJm5vZGUpOworCSpfbm9kZSA9ICZub2RlLT5i
-YXNlOwogCWlmIChyZXQpCiAJCXJldHVybiByZXQ7CiAKLQlub2RlLT5tZW0gPSAmbm9kZS0+X21l
-bTsKLQogCW5vZGUtPmNwdWFkZHIgPSBkbWFfYWxsb2NfYXR0cnMoZGV2LCBucGFnZXMgPDwgUEFH
-RV9TSElGVCwKIAkJCQkJJm5vZGUtPmhhbmRsZSwgR0ZQX0tFUk5FTCwKIAkJCQkJJnByaXYtPmF0
-dHJzKTsKQEAgLTE0NCwxNiArMjI4LDEzMiBAQCBnazIwYV9pbnN0b2JqX2N0b3Ioc3RydWN0IG52
-a21fb2JqZWN0ICpwYXJlbnQsIHN0cnVjdCBudmttX29iamVjdCAqZW5naW5lLAogCQludl93YXJu
-KHByaXYsICJtZW1vcnkgbm90IGFsaWduZWQgYXMgcmVxdWVzdGVkOiAlcGFkICgweCV4KVxuIiwK
-IAkJCSZub2RlLT5oYW5kbGUsIGFsaWduKTsKIAotCW5vZGUtPm1lbS0+b2Zmc2V0ID0gbm9kZS0+
-aGFuZGxlOworCS8qIHByZXNlbnQgbWVtb3J5IGZvciBiZWluZyBtYXBwZWQgdXNpbmcgc21hbGwg
-cGFnZXMgKi8KKwlub2RlLT5yLnR5cGUgPSAxMjsKKwlub2RlLT5yLm9mZnNldCA9IG5vZGUtPmhh
-bmRsZSA+PiAxMjsKKwlub2RlLT5yLmxlbmd0aCA9IChucGFnZXMgPDwgUEFHRV9TSElGVCkgPj4g
-MTI7CisKKwlub2RlLT5iYXNlLl9tZW0ub2Zmc2V0ID0gbm9kZS0+aGFuZGxlOworCisJSU5JVF9M
-SVNUX0hFQUQoJm5vZGUtPmJhc2UuX21lbS5yZWdpb25zKTsKKwlsaXN0X2FkZF90YWlsKCZub2Rl
-LT5yLnJsX2VudHJ5LCAmbm9kZS0+YmFzZS5fbWVtLnJlZ2lvbnMpOworCisJcmV0dXJuIDA7Cit9
-CisKK3N0YXRpYyBpbnQKK2drMjBhX2luc3RvYmpfY3Rvcl9pb21tdShzdHJ1Y3QgbnZrbV9vYmpl
-Y3QgKnBhcmVudCwgc3RydWN0IG52a21fb2JqZWN0ICplbmdpbmUsCisJCQkgc3RydWN0IG52a21f
-b2NsYXNzICpvY2xhc3MsIHUzMiBucGFnZXMsIHUzMiBhbGlnbiwKKwkJCSBzdHJ1Y3QgZ2syMGFf
-aW5zdG9ial9wcml2ICoqX25vZGUpCit7CisJc3RydWN0IGdrMjBhX2luc3RvYmpfaW9tbXUgKm5v
-ZGU7CisJc3RydWN0IGdrMjBhX2luc3RtZW1fcHJpdiAqcHJpdiA9ICh2b2lkICopbnZrbV9pbnN0
-bWVtKHBhcmVudCk7CisJc3RydWN0IG52a21fbW1fbm9kZSAqcjsKKwlpbnQgcmV0OworCWludCBp
-OworCisJcmV0ID0gbnZrbV9pbnN0b2JqX2NyZWF0ZV8ocGFyZW50LCBlbmdpbmUsIG9jbGFzcywK
-KwkJCQlzaXplb2YoKm5vZGUpICsgc2l6ZW9mKG5vZGUtPnBhZ2VzWzBdKSAqIG5wYWdlcywKKwkJ
-CQkodm9pZCAqKikmbm9kZSk7CisJKl9ub2RlID0gJm5vZGUtPmJhc2U7CisJaWYgKHJldCkKKwkJ
-cmV0dXJuIHJldDsKKworCS8qIEFsbG9jYXRlIGJhY2tpbmcgbWVtb3J5ICovCisJZm9yIChpID0g
-MDsgaSA8IG5wYWdlczsgaSsrKSB7CisJCXN0cnVjdCBwYWdlICpwID0gYWxsb2NfcGFnZShHRlBf
-S0VSTkVMKTsKKworCQlpZiAocCA9PSBOVUxMKSB7CisJCQlyZXQgPSAtRU5PTUVNOworCQkJZ290
-byBmcmVlX3BhZ2VzOworCQl9CisJCW5vZGUtPnBhZ2VzW2ldID0gcDsKKwl9CisKKwltdXRleF9s
-b2NrKHByaXYtPm1tX211dGV4KTsKKwkvKiBSZXNlcnZlIGFyZWEgZnJvbSBHUFUgYWRkcmVzcyBz
-cGFjZSAqLworCXJldCA9IG52a21fbW1faGVhZChwcml2LT5tbSwgMCwgMSwgbnBhZ2VzLCBucGFn
-ZXMsCisJCQkgICBhbGlnbiA+PiBwcml2LT5pb21tdV9wZ3NoaWZ0LCAmcik7CisJbXV0ZXhfdW5s
-b2NrKHByaXYtPm1tX211dGV4KTsKKwlpZiAocmV0KSB7CisJCW52X2Vycm9yKHByaXYsICJ2aXJ0
-dWFsIHNwYWNlIGlzIGZ1bGwhXG4iKTsKKwkJZ290byBmcmVlX3BhZ2VzOworCX0KKworCS8qIE1h
-cCBpbnRvIEdQVSBhZGRyZXNzIHNwYWNlICovCisJZm9yIChpID0gMDsgaSA8IG5wYWdlczsgaSsr
-KSB7CisJCXN0cnVjdCBwYWdlICpwID0gbm9kZS0+cGFnZXNbaV07CisJCXUzMiBvZmZzZXQgPSAo
-ci0+b2Zmc2V0ICsgaSkgPDwgcHJpdi0+aW9tbXVfcGdzaGlmdDsKKworCQlyZXQgPSBpb21tdV9t
-YXAocHJpdi0+ZG9tYWluLCBvZmZzZXQsIHBhZ2VfdG9fcGh5cyhwKSwKKwkJCQlQQUdFX1NJWkUs
-IElPTU1VX1JFQUQgfCBJT01NVV9XUklURSk7CisJCWlmIChyZXQgPCAwKSB7CisJCQludl9lcnJv
-cihwcml2LCAiSU9NTVUgbWFwcGluZyBmYWlsdXJlOiAlZFxuIiwgcmV0KTsKKworCQkJd2hpbGUg
-KGktLSA+IDApIHsKKwkJCQlvZmZzZXQgLT0gUEFHRV9TSVpFOworCQkJCWlvbW11X3VubWFwKHBy
-aXYtPmRvbWFpbiwgb2Zmc2V0LCBQQUdFX1NJWkUpOworCQkJfQorCQkJZ290byByZWxlYXNlX2Fy
-ZWE7CisJCX0KKwl9CisKKwkvKiBCaXQgMzQgdGVsbHMgdGhhdCBhbiBhZGRyZXNzIGlzIHRvIGJl
-IHJlc29sdmVkIHRocm91Z2ggdGhlIElPTU1VICovCisJci0+b2Zmc2V0IHw9IEJJVCgzNCAtIHBy
-aXYtPmlvbW11X3Bnc2hpZnQpOworCisJbm9kZS0+YmFzZS5fbWVtLm9mZnNldCA9ICgodTY0KXIt
-Pm9mZnNldCkgPDwgcHJpdi0+aW9tbXVfcGdzaGlmdDsKKworCUlOSVRfTElTVF9IRUFEKCZub2Rl
-LT5iYXNlLl9tZW0ucmVnaW9ucyk7CisJbGlzdF9hZGRfdGFpbCgmci0+cmxfZW50cnksICZub2Rl
-LT5iYXNlLl9tZW0ucmVnaW9ucyk7CisKKwlyZXR1cm4gMDsKKworcmVsZWFzZV9hcmVhOgorCW11
-dGV4X2xvY2socHJpdi0+bW1fbXV0ZXgpOworCW52a21fbW1fZnJlZShwcml2LT5tbSwgJnIpOwor
-CW11dGV4X3VubG9jayhwcml2LT5tbV9tdXRleCk7CisKK2ZyZWVfcGFnZXM6CisJZm9yIChpID0g
-MDsgaSA8IG5wYWdlcyAmJiBub2RlLT5wYWdlc1tpXSAhPSBOVUxMOyBpKyspCisJCV9fZnJlZV9w
-YWdlKG5vZGUtPnBhZ2VzW2ldKTsKKworCXJldHVybiByZXQ7Cit9CisKK3N0YXRpYyBpbnQKK2dr
-MjBhX2luc3RvYmpfY3RvcihzdHJ1Y3QgbnZrbV9vYmplY3QgKnBhcmVudCwgc3RydWN0IG52a21f
-b2JqZWN0ICplbmdpbmUsCisJCSAgIHN0cnVjdCBudmttX29jbGFzcyAqb2NsYXNzLCB2b2lkICpk
-YXRhLCB1MzIgX3NpemUsCisJCSAgIHN0cnVjdCBudmttX29iamVjdCAqKnBvYmplY3QpCit7CisJ
-c3RydWN0IG52a21faW5zdG9ial9hcmdzICphcmdzID0gZGF0YTsKKwlzdHJ1Y3QgZ2syMGFfaW5z
-dG1lbV9wcml2ICpwcml2ID0gKHZvaWQgKiludmttX2luc3RtZW0ocGFyZW50KTsKKwlzdHJ1Y3Qg
-Z2syMGFfaW5zdG9ial9wcml2ICpub2RlOworCXUzMiBzaXplLCBhbGlnbjsKKwlpbnQgcmV0Owor
-CisJbnZfZGVidWcocGFyZW50LCAiJXMgKCVzKTogc2l6ZTogJXggYWxpZ246ICV4XG4iLCBfX2Z1
-bmNfXywKKwkJIHByaXYtPmRvbWFpbiA/ICJJT01NVSIgOiAiRE1BIiwgYXJncy0+c2l6ZSwgYXJn
-cy0+YWxpZ24pOworCisJLyogUm91bmQgc2l6ZSBhbmQgYWxpZ24gdG8gcGFnZSBib3VuZHMgKi8K
-KwlzaXplID0gbWF4KChhcmdzLT5zaXplICArIH5QQUdFX01BU0spICYgUEFHRV9NQVNLLCAodTMy
-KVBBR0VfU0laRSk7CisJYWxpZ24gPSBtYXgoKGFyZ3MtPmFsaWduICsgflBBR0VfTUFTSykgJiBQ
-QUdFX01BU0ssICh1MzIpUEFHRV9TSVpFKTsKKworCWlmIChwcml2LT5kb21haW4pCisJCXJldCA9
-IGdrMjBhX2luc3RvYmpfY3Rvcl9pb21tdShwYXJlbnQsIGVuZ2luZSwgb2NsYXNzLAorCQkJCQkg
-ICAgICBzaXplID4+IFBBR0VfU0hJRlQsIGFsaWduLCAmbm9kZSk7CisJZWxzZQorCQlyZXQgPSBn
-azIwYV9pbnN0b2JqX2N0b3JfZG1hKHBhcmVudCwgZW5naW5lLCBvY2xhc3MsCisJCQkJCSAgICAg
-c2l6ZSA+PiBQQUdFX1NISUZULCBhbGlnbiwgJm5vZGUpOworCSpwb2JqZWN0ID0gbnZfb2JqZWN0
-KG5vZGUpOworCWlmIChyZXQpCisJCXJldHVybiByZXQ7CisKKwlub2RlLT5tZW0gPSAmbm9kZS0+
-X21lbTsKKworCS8qIHByZXNlbnQgbWVtb3J5IGZvciBiZWluZyBtYXBwZWQgdXNpbmcgc21hbGwg
-cGFnZXMgKi8KIAlub2RlLT5tZW0tPnNpemUgPSBzaXplID4+IDEyOwogCW5vZGUtPm1lbS0+bWVt
-dHlwZSA9IDA7CiAJbm9kZS0+bWVtLT5wYWdlX3NoaWZ0ID0gMTI7Ci0JSU5JVF9MSVNUX0hFQUQo
-Jm5vZGUtPm1lbS0+cmVnaW9ucyk7Ci0KLQlub2RlLT5yLnR5cGUgPSAxMjsKLQlub2RlLT5yLm9m
-ZnNldCA9IG5vZGUtPmhhbmRsZSA+PiAxMjsKLQlub2RlLT5yLmxlbmd0aCA9IG5wYWdlczsKLQls
-aXN0X2FkZF90YWlsKCZub2RlLT5yLnJsX2VudHJ5LCAmbm9kZS0+bWVtLT5yZWdpb25zKTsKIAog
-CW5vZGUtPmJhc2UuYWRkciA9IG5vZGUtPm1lbS0+b2Zmc2V0OwogCW5vZGUtPmJhc2Uuc2l6ZSA9
-IHNpemU7CkBAIC0xOTIsNiArMzkyLDcgQEAgZ2syMGFfaW5zdG1lbV9jdG9yKHN0cnVjdCBudmtt
-X29iamVjdCAqcGFyZW50LCBzdHJ1Y3QgbnZrbV9vYmplY3QgKmVuZ2luZSwKIAkJICAgc3RydWN0
-IG52a21fb2JqZWN0ICoqcG9iamVjdCkKIHsKIAlzdHJ1Y3QgZ2syMGFfaW5zdG1lbV9wcml2ICpw
-cml2OworCXN0cnVjdCBub3V2ZWF1X3BsYXRmb3JtX2RldmljZSAqcGxhdDsKIAlpbnQgcmV0Owog
-CiAJcmV0ID0gbnZrbV9pbnN0bWVtX2NyZWF0ZShwYXJlbnQsIGVuZ2luZSwgb2NsYXNzLCAmcHJp
-dik7CkBAIC0yMDEsMTUgKzQwMiwyNyBAQCBnazIwYV9pbnN0bWVtX2N0b3Ioc3RydWN0IG52a21f
-b2JqZWN0ICpwYXJlbnQsIHN0cnVjdCBudmttX29iamVjdCAqZW5naW5lLAogCiAJc3Bpbl9sb2Nr
-X2luaXQoJnByaXYtPmxvY2spOwogCi0JaW5pdF9kbWFfYXR0cnMoJnByaXYtPmF0dHJzKTsKLQkv
-KgotCSAqIFdlIHdpbGwgYWNjZXNzIGluc3RtZW0gdGhyb3VnaCBQUkFNSU4gYW5kIHRodXMgZG8g
-bm90IG5lZWQgYQotCSAqIGNvbnNpc3RlbnQgQ1BVIHBvaW50ZXIgb3Iga2VybmVsIG1hcHBpbmcK
-LQkgKi8KLQlkbWFfc2V0X2F0dHIoRE1BX0FUVFJfTk9OX0NPTlNJU1RFTlQsICZwcml2LT5hdHRy
-cyk7Ci0JZG1hX3NldF9hdHRyKERNQV9BVFRSX1dFQUtfT1JERVJJTkcsICZwcml2LT5hdHRycyk7
-Ci0JZG1hX3NldF9hdHRyKERNQV9BVFRSX1dSSVRFX0NPTUJJTkUsICZwcml2LT5hdHRycyk7Ci0J
-ZG1hX3NldF9hdHRyKERNQV9BVFRSX05PX0tFUk5FTF9NQVBQSU5HLCAmcHJpdi0+YXR0cnMpOwor
-CXBsYXQgPSBudl9kZXZpY2VfdG9fcGxhdGZvcm0obnZfZGV2aWNlKHBhcmVudCkpOworCWlmIChw
-bGF0LT5ncHUtPmlvbW11LmRvbWFpbikgeworCQlwcml2LT5kb21haW4gPSBwbGF0LT5ncHUtPmlv
-bW11LmRvbWFpbjsKKwkJcHJpdi0+bW0gPSBwbGF0LT5ncHUtPmlvbW11Lm1tOworCQlwcml2LT5p
-b21tdV9wZ3NoaWZ0ID0gcGxhdC0+Z3B1LT5pb21tdS5wZ3NoaWZ0OworCQlwcml2LT5tbV9tdXRl
-eCA9ICZwbGF0LT5ncHUtPmlvbW11Lm11dGV4OworCisJCW52X2luZm8ocHJpdiwgInVzaW5nIElP
-TU1VXG4iKTsKKwl9IGVsc2UgeworCQlpbml0X2RtYV9hdHRycygmcHJpdi0+YXR0cnMpOworCQkv
-KgorCQkgKiBXZSB3aWxsIGFjY2VzcyBpbnN0bWVtIHRocm91Z2ggUFJBTUlOIGFuZCB0aHVzIGRv
-IG5vdCBuZWVkIGEKKwkJICogY29uc2lzdGVudCBDUFUgcG9pbnRlciBvciBrZXJuZWwgbWFwcGlu
-ZworCQkgKi8KKwkJZG1hX3NldF9hdHRyKERNQV9BVFRSX05PTl9DT05TSVNURU5ULCAmcHJpdi0+
-YXR0cnMpOworCQlkbWFfc2V0X2F0dHIoRE1BX0FUVFJfV0VBS19PUkRFUklORywgJnByaXYtPmF0
-dHJzKTsKKwkJZG1hX3NldF9hdHRyKERNQV9BVFRSX1dSSVRFX0NPTUJJTkUsICZwcml2LT5hdHRy
-cyk7CisJCWRtYV9zZXRfYXR0cihETUFfQVRUUl9OT19LRVJORUxfTUFQUElORywgJnByaXYtPmF0
-dHJzKTsKKworCQludl9pbmZvKHByaXYsICJ1c2luZyBETUEgQVBJXG4iKTsKKwl9CiAKIAlyZXR1
-cm4gMDsKIH0KQEAgLTIyNSw0ICs0MzgsMyBAQCBnazIwYV9pbnN0bWVtX29jbGFzcyA9ICYoc3Ry
-dWN0IG52a21faW5zdG1lbV9pbXBsKSB7CiAJfSwKIAkuaW5zdG9iaiA9ICZnazIwYV9pbnN0b2Jq
-X29jbGFzcy5iYXNlLAogfS5iYXNlOwotCi0tIAoyLjMuMAoKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBtYWlsaW5nIGxpc3QKTm91dmVhdUBs
-aXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL25vdXZlYXUK
+Tegra SoCs have an IOMMU that can be used to present non-contiguous
+physical memory as contiguous to the GPU and maximize the use of large
+pages in the GPU MMU, leading to performance gains. This patch adds
+support for probing such a IOMMU if present and make its properties
+available in the nouveau_platform_gpu structure so subsystems can take
+advantage of it.
+
+Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drm/nouveau/nouveau_platform.c | 75 +++++++++++++++++++++++++++++++++++++++++-
+ drm/nouveau/nouveau_platform.h | 18 ++++++++++
+ lib/include/nvif/os.h          | 32 ++++++++++++++++++
+ 3 files changed, 124 insertions(+), 1 deletion(-)
+
+diff --git a/drm/nouveau/nouveau_platform.c b/drm/nouveau/nouveau_platform.c
+index dc5900bf54ff..3691982452a9 100644
+--- a/drm/nouveau/nouveau_platform.c
++++ b/drm/nouveau/nouveau_platform.c
+@@ -27,6 +27,7 @@
+ #include <linux/of.h>
+ #include <linux/reset.h>
+ #include <linux/regulator/consumer.h>
++#include <linux/iommu.h>
+ #include <soc/tegra/fuse.h>
+ #include <soc/tegra/pmc.h>
+ 
+@@ -91,6 +92,71 @@ static int nouveau_platform_power_down(struct nouveau_platform_gpu *gpu)
+ 	return 0;
+ }
+ 
++static void nouveau_platform_probe_iommu(struct device *dev,
++					 struct nouveau_platform_gpu *gpu)
++{
++	int err;
++	unsigned long pgsize_bitmap;
++
++	mutex_init(&gpu->iommu.mutex);
++
++	if (iommu_present(&platform_bus_type)) {
++		gpu->iommu.domain = iommu_domain_alloc(&platform_bus_type);
++		if (IS_ERR(gpu->iommu.domain))
++			goto error;
++
++		/*
++		 * A IOMMU is only usable if it supports page sizes smaller
++		 * or equal to the system's PAGE_SIZE, with a preference if
++		 * both are equal.
++		 */
++		pgsize_bitmap = gpu->iommu.domain->ops->pgsize_bitmap;
++		if (pgsize_bitmap & PAGE_SIZE) {
++			gpu->iommu.pgshift = PAGE_SHIFT;
++		} else {
++			gpu->iommu.pgshift = fls(pgsize_bitmap & ~PAGE_MASK);
++			if (gpu->iommu.pgshift == 0) {
++				dev_warn(dev, "unsupported IOMMU page size\n");
++				goto free_domain;
++			}
++			gpu->iommu.pgshift -= 1;
++		}
++
++		err = iommu_attach_device(gpu->iommu.domain, dev);
++		if (err)
++			goto free_domain;
++
++		err = nvkm_mm_init(&gpu->iommu._mm, 0,
++				   (1ULL << 40) >> gpu->iommu.pgshift, 1);
++		if (err)
++			goto detach_device;
++
++		gpu->iommu.mm = &gpu->iommu._mm;
++	}
++
++	return;
++
++detach_device:
++	iommu_detach_device(gpu->iommu.domain, dev);
++
++free_domain:
++	iommu_domain_free(gpu->iommu.domain);
++
++error:
++	gpu->iommu.domain = NULL;
++	gpu->iommu.pgshift = 0;
++	dev_err(dev, "cannot initialize IOMMU MM\n");
++}
++
++static void nouveau_platform_remove_iommu(struct device *dev,
++					  struct nouveau_platform_gpu *gpu)
++{
++	if (gpu->iommu.domain) {
++		iommu_detach_device(gpu->iommu.domain, dev);
++		iommu_domain_free(gpu->iommu.domain);
++	}
++}
++
+ static int nouveau_platform_probe(struct platform_device *pdev)
+ {
+ 	struct nouveau_platform_gpu *gpu;
+@@ -118,6 +184,8 @@ static int nouveau_platform_probe(struct platform_device *pdev)
+ 	if (IS_ERR(gpu->clk_pwr))
+ 		return PTR_ERR(gpu->clk_pwr);
+ 
++	nouveau_platform_probe_iommu(&pdev->dev, gpu);
++
+ 	err = nouveau_platform_power_up(gpu);
+ 	if (err)
+ 		return err;
+@@ -154,10 +222,15 @@ static int nouveau_platform_remove(struct platform_device *pdev)
+ 	struct nouveau_drm *drm = nouveau_drm(drm_dev);
+ 	struct nvkm_device *device = nvxx_device(&drm->device);
+ 	struct nouveau_platform_gpu *gpu = nv_device_to_platform(device)->gpu;
++	int err;
+ 
+ 	nouveau_drm_device_remove(drm_dev);
+ 
+-	return nouveau_platform_power_down(gpu);
++	err = nouveau_platform_power_down(gpu);
++
++	nouveau_platform_remove_iommu(&pdev->dev, gpu);
++
++	return err;
+ }
+ 
+ #if IS_ENABLED(CONFIG_OF)
+diff --git a/drm/nouveau/nouveau_platform.h b/drm/nouveau/nouveau_platform.h
+index 268bb7213681..392874cf4725 100644
+--- a/drm/nouveau/nouveau_platform.h
++++ b/drm/nouveau/nouveau_platform.h
+@@ -24,10 +24,12 @@
+ #define __NOUVEAU_PLATFORM_H__
+ 
+ #include "core/device.h"
++#include "core/mm.h"
+ 
+ struct reset_control;
+ struct clk;
+ struct regulator;
++struct iommu_domain;
+ struct platform_driver;
+ 
+ struct nouveau_platform_gpu {
+@@ -36,6 +38,22 @@ struct nouveau_platform_gpu {
+ 	struct clk *clk_pwr;
+ 
+ 	struct regulator *vdd;
++
++	struct {
++		/*
++		 * Protects accesses to mm from subsystems
++		 */
++		struct mutex mutex;
++
++		struct nvkm_mm _mm;
++		/*
++		 * Just points to _mm. We need this to avoid embedding
++		 * struct nvkm_mm in os.h
++		 */
++		struct nvkm_mm *mm;
++		struct iommu_domain *domain;
++		unsigned long pgshift;
++	} iommu;
+ };
+ 
+ struct nouveau_platform_device {
+diff --git a/lib/include/nvif/os.h b/lib/include/nvif/os.h
+index b4d307e3ac44..275fa84ad003 100644
+--- a/lib/include/nvif/os.h
++++ b/lib/include/nvif/os.h
+@@ -715,6 +715,29 @@ dma_free_attrs(struct device *dev, size_t sz, void *vaddr, dma_addr_t bus,
+ 
+ 
+ /******************************************************************************
++ * IOMMU
++ *****************************************************************************/
++struct iommu_domain;
++
++#define IOMMU_READ     (1 << 0)
++#define IOMMU_WRITE    (1 << 1)
++#define IOMMU_CACHE    (1 << 2) /* DMA cache coherency */
++#define IOMMU_NOEXEC   (1 << 3)
++
++static inline int
++iommu_map(struct iommu_domain *domain, unsigned long iova, dma_addr_t paddr,
++	  size_t size, int prot)
++{
++	return 0;
++}
++
++static inline size_t
++iommu_unmap(struct iommu_domain *domain, unsigned long iova, size_t size)
++{
++	return 0;
++}
++
++/******************************************************************************
+  * PCI
+  *****************************************************************************/
+ #include <pciaccess.h>
+@@ -1208,9 +1231,18 @@ regulator_get_voltage(struct regulator *regulator)
+  * nouveau drm platform device
+  *****************************************************************************/
+ 
++struct nvkm_mm;
++
+ struct nouveau_platform_gpu {
+ 	struct clk *clk;
+ 	struct regulator *vdd;
++
++	struct {
++		struct mutex mutex;
++		struct nvkm_mm *mm;
++		struct iommu_domain *domain;
++		unsigned long pgshift;
++	} iommu;
+ };
+ 
+ struct nouveau_platform_device {
+-- 
+2.3.0
