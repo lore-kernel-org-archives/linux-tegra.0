@@ -1,45 +1,89 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL] drm/tegra: Fixes for v3.20-rc1
-Date: Thu, 19 Feb 2015 14:33:18 +0100
-Message-ID: <1424352798-6809-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v4 4/6] instmem/gk20a: use DMA attributes
+Date: Fri, 20 Feb 2015 18:23:02 +0900
+Message-ID: <1424424184-15001-5-git-send-email-acourbot@nvidia.com>
+References: <1424424184-15001-1-git-send-email-acourbot@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <1424424184-15001-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Dave,
-
-The following changes since commit 45ee2dbc65cbf6910892c480e6f428be342fa733:
-
-  Merge branch 'drm-next-3.20' of git://people.freedesktop.org/~agd5f/linux into drm-next (2015-02-16 13:55:49 +1000)
-
-are available in the git repository at:
-
-  git://anongit.freedesktop.org/tegra/linux tags/drm/tegra/for-3.20-rc1-fixes
-
-for you to fetch changes up to 07d05cbf60ed8f06c61484d3d85c06c1aa7edf38:
-
-  drm/tegra: dc: Move more code into ->init() (2015-02-19 14:21:51 +0100)
-
-Thanks,
-Thierry
-
-----------------------------------------------------------------
-drm/tegra: Fixes for v3.20-rc1
-
-This fixes a bit of fallout that was caused by the atomic modesetting
-driver conversion and some last-minute changes in the DRM atomic core.
-It also fixes a bug exposed by recent changes in the clock framework
-which results in non-working HDMI.
-
-----------------------------------------------------------------
-Thierry Reding (4):
-      drm/tegra: hdmi: Explicitly set clock rate
-      drm/tegra: dc: Reset state's active_changed field
-      drm/tegra: dc: Wire up CRTC parent of atomic state
-      drm/tegra: dc: Move more code into ->init()
-
- drivers/gpu/drm/tegra/dc.c   | 79 ++++++++++++++++++++++----------------------
- drivers/gpu/drm/tegra/hdmi.c |  8 +++++
- 2 files changed, 48 insertions(+), 39 deletions(-)
+aW5zdG1lbSBmb3IgR0syMEEgaXMgYWxsb2NhdGVkIHVzaW5nIGRtYV9hbGxvY19jb2hlcmVudCgp
+LCB3aGljaApwcm92aWRlcyB1cyB3aXRoIGEgY29oZXJlbnQgQ1BVIG1hcHBpbmcgdGhhdCB3ZSBu
+ZXZlciB1c2UgYmVjYXVzZQppbnN0bWVtIG9iamVjdHMgYXJlIGFjY2Vzc2VkIHRocm91Z2ggUFJB
+TUlOLiBTd2l0Y2ggdG8KZG1hX2FsbG9jX2F0dHJzKCkgd2hpY2ggZ2l2ZXMgdXMgdGhlIG9wdGlv
+biB0byBkaXNtaXNzIHRoYXQgQ1BVIG1hcHBpbmcKYW5kIGZyZWUgdXAgc29tZSBDUFUgdmlydHVh
+bCBzcGFjZS4KClNpZ25lZC1vZmYtYnk6IEFsZXhhbmRyZSBDb3VyYm90IDxhY291cmJvdEBudmlk
+aWEuY29tPgotLS0KIGRybS9ub3V2ZWF1L252a20vc3ViZGV2L2luc3RtZW0vZ2syMGEuYyB8IDI0
+ICsrKysrKysrKysrKysrKysrKysrLS0tLQogbGliL2luY2x1ZGUvbnZpZi9vcy5oICAgICAgICAg
+ICAgICAgICAgIHwgMzEgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKwogMiBmaWxlcyBj
+aGFuZ2VkLCA1MSBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2Ry
+bS9ub3V2ZWF1L252a20vc3ViZGV2L2luc3RtZW0vZ2syMGEuYyBiL2RybS9ub3V2ZWF1L252a20v
+c3ViZGV2L2luc3RtZW0vZ2syMGEuYwppbmRleCA2MTc2ZjUwNzI0OTYuLjcwNzAyMWZiODRlZSAx
+MDA2NDQKLS0tIGEvZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvaW5zdG1lbS9nazIwYS5jCisrKyBi
+L2RybS9ub3V2ZWF1L252a20vc3ViZGV2L2luc3RtZW0vZ2syMGEuYwpAQCAtMjQsNiArMjQsMTAg
+QEAKICNpbmNsdWRlIDxjb3JlL21tLmg+CiAjaW5jbHVkZSA8Y29yZS9kZXZpY2UuaD4KIAorI2lm
+ZGVmIF9fS0VSTkVMX18KKyNpbmNsdWRlIDxsaW51eC9kbWEtYXR0cnMuaD4KKyNlbmRpZgorCiAj
+aW5jbHVkZSAicHJpdi5oIgogCiBzdHJ1Y3QgZ2syMGFfaW5zdG9ial9wcml2IHsKQEAgLTQxLDYg
+KzQ1LDcgQEAgc3RydWN0IGdrMjBhX2luc3RtZW1fcHJpdiB7CiAJc3RydWN0IG52a21faW5zdG1l
+bSBiYXNlOwogCXNwaW5sb2NrX3QgbG9jazsKIAl1NjQgYWRkcjsKKwlzdHJ1Y3QgZG1hX2F0dHJz
+IGF0dHJzOwogfTsKIAogc3RhdGljIHUzMgpAQCAtOTEsOCArOTYsOCBAQCBnazIwYV9pbnN0b2Jq
+X2R0b3Ioc3RydWN0IG52a21fb2JqZWN0ICpvYmplY3QpCiAJaWYgKHVubGlrZWx5KCFub2RlLT5o
+YW5kbGUpKQogCQlyZXR1cm47CiAKLQlkbWFfZnJlZV9jb2hlcmVudChkZXYsIG5vZGUtPm1lbS0+
+c2l6ZSA8PCBQQUdFX1NISUZULCBub2RlLT5jcHVhZGRyLAotCQkJICBub2RlLT5oYW5kbGUpOwor
+CWRtYV9mcmVlX2F0dHJzKGRldiwgbm9kZS0+bWVtLT5zaXplIDw8IFBBR0VfU0hJRlQsIG5vZGUt
+PmNwdWFkZHIsCisJCSAgICAgICBub2RlLT5oYW5kbGUsICZwcml2LT5hdHRycyk7CiAKIAludmtt
+X2luc3RvYmpfZGVzdHJveSgmbm9kZS0+YmFzZSk7CiB9CkBAIC0xMjYsOCArMTMxLDkgQEAgZ2sy
+MGFfaW5zdG9ial9jdG9yKHN0cnVjdCBudmttX29iamVjdCAqcGFyZW50LCBzdHJ1Y3QgbnZrbV9v
+YmplY3QgKmVuZ2luZSwKIAogCW5vZGUtPm1lbSA9ICZub2RlLT5fbWVtOwogCi0Jbm9kZS0+Y3B1
+YWRkciA9IGRtYV9hbGxvY19jb2hlcmVudChkZXYsIG5wYWdlcyA8PCBQQUdFX1NISUZULAotCQkJ
+CQkgICAmbm9kZS0+aGFuZGxlLCBHRlBfS0VSTkVMKTsKKwlub2RlLT5jcHVhZGRyID0gZG1hX2Fs
+bG9jX2F0dHJzKGRldiwgbnBhZ2VzIDw8IFBBR0VfU0hJRlQsCisJCQkJCSZub2RlLT5oYW5kbGUs
+IEdGUF9LRVJORUwsCisJCQkJCSZwcml2LT5hdHRycyk7CiAJaWYgKCFub2RlLT5jcHVhZGRyKSB7
+CiAJCW52X2Vycm9yKHByaXYsICJjYW5ub3QgYWxsb2NhdGUgRE1BIG1lbW9yeVxuIik7CiAJCXJl
+dHVybiAtRU5PTUVNOwpAQCAtMTk1LDYgKzIwMSwxNiBAQCBnazIwYV9pbnN0bWVtX2N0b3Ioc3Ry
+dWN0IG52a21fb2JqZWN0ICpwYXJlbnQsIHN0cnVjdCBudmttX29iamVjdCAqZW5naW5lLAogCiAJ
+c3Bpbl9sb2NrX2luaXQoJnByaXYtPmxvY2spOwogCisJaW5pdF9kbWFfYXR0cnMoJnByaXYtPmF0
+dHJzKTsKKwkvKgorCSAqIFdlIHdpbGwgYWNjZXNzIGluc3RtZW0gdGhyb3VnaCBQUkFNSU4gYW5k
+IHRodXMgZG8gbm90IG5lZWQgYQorCSAqIGNvbnNpc3RlbnQgQ1BVIHBvaW50ZXIgb3Iga2VybmVs
+IG1hcHBpbmcKKwkgKi8KKwlkbWFfc2V0X2F0dHIoRE1BX0FUVFJfTk9OX0NPTlNJU1RFTlQsICZw
+cml2LT5hdHRycyk7CisJZG1hX3NldF9hdHRyKERNQV9BVFRSX1dFQUtfT1JERVJJTkcsICZwcml2
+LT5hdHRycyk7CisJZG1hX3NldF9hdHRyKERNQV9BVFRSX1dSSVRFX0NPTUJJTkUsICZwcml2LT5h
+dHRycyk7CisJZG1hX3NldF9hdHRyKERNQV9BVFRSX05PX0tFUk5FTF9NQVBQSU5HLCAmcHJpdi0+
+YXR0cnMpOworCiAJcmV0dXJuIDA7CiB9CiAKZGlmZiAtLWdpdCBhL2xpYi9pbmNsdWRlL252aWYv
+b3MuaCBiL2xpYi9pbmNsdWRlL252aWYvb3MuaAppbmRleCBmNjM5MWE1OGZkMTEuLmI0ZDMwN2Uz
+YWM0NCAxMDA2NDQKLS0tIGEvbGliL2luY2x1ZGUvbnZpZi9vcy5oCisrKyBiL2xpYi9pbmNsdWRl
+L252aWYvb3MuaApAQCAtNjgzLDYgKzY4MywzNyBAQCBkbWFfZnJlZV9jb2hlcmVudChzdHJ1Y3Qg
+ZGV2aWNlICpkZXYsIHNpemVfdCBzeiwgdm9pZCAqdmFkZHIsIGRtYV9hZGRyX3QgYnVzKQogewog
+fQogCitlbnVtIGRtYV9hdHRyIHsKKwlETUFfQVRUUl9XUklURV9CQVJSSUVSLAorCURNQV9BVFRS
+X1dFQUtfT1JERVJJTkcsCisJRE1BX0FUVFJfV1JJVEVfQ09NQklORSwKKwlETUFfQVRUUl9OT05f
+Q09OU0lTVEVOVCwKKwlETUFfQVRUUl9OT19LRVJORUxfTUFQUElORywKKwlETUFfQVRUUl9TS0lQ
+X0NQVV9TWU5DLAorCURNQV9BVFRSX0ZPUkNFX0NPTlRJR1VPVVMsCisJRE1BX0FUVFJfTUFYLAor
+fTsKKworc3RydWN0IGRtYV9hdHRycyB7Cit9OworCitzdGF0aWMgaW5saW5lIHZvaWQgaW5pdF9k
+bWFfYXR0cnMoc3RydWN0IGRtYV9hdHRycyAqYXR0cnMpIHt9CitzdGF0aWMgaW5saW5lIHZvaWQg
+ZG1hX3NldF9hdHRyKGVudW0gZG1hX2F0dHIgYXR0ciwgc3RydWN0IGRtYV9hdHRycyAqYXR0cnMp
+IHt9CisKK3N0YXRpYyBpbmxpbmUgdm9pZCAqCitkbWFfYWxsb2NfYXR0cnMoc3RydWN0IGRldmlj
+ZSAqZGV2LCBzaXplX3Qgc3osIGRtYV9hZGRyX3QgKmhkbCwgZ2ZwX3QgZ2ZwLAorCQlzdHJ1Y3Qg
+ZG1hX2F0dHJzICphdHRycykKK3sKKwlyZXR1cm4gTlVMTDsKK30KKworc3RhdGljIGlubGluZSB2
+b2lkCitkbWFfZnJlZV9hdHRycyhzdHJ1Y3QgZGV2aWNlICpkZXYsIHNpemVfdCBzeiwgdm9pZCAq
+dmFkZHIsIGRtYV9hZGRyX3QgYnVzLAorCSAgICAgICBzdHJ1Y3QgZG1hX2F0dHJzICphdHRycykK
+K3sKK30KKworCiAvKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
+KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqCiAgKiBQQ0kKICAqKioqKioqKioqKioq
+KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
+KioqKioqKi8KLS0gCjIuMy4wCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fXwpOb3V2ZWF1IG1haWxpbmcgbGlzdApOb3V2ZWF1QGxpc3RzLmZyZWVkZXNrdG9w
+Lm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vbm91dmVh
+dQo=
