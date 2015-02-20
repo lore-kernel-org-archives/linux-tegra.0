@@ -1,163 +1,386 @@
 From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v4 1/6] make RAM device optional
-Date: Fri, 20 Feb 2015 18:22:59 +0900
-Message-ID: <1424424184-15001-2-git-send-email-acourbot@nvidia.com>
+Subject: [PATCH v4 2/6] instmem/gk20a: move memory allocation to instmem
+Date: Fri, 20 Feb 2015 18:23:00 +0900
+Message-ID: <1424424184-15001-3-git-send-email-acourbot@nvidia.com>
 References: <1424424184-15001-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1424424184-15001-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-SGF2aW5nIGEgUkFNIGRldmljZSBkb2VzIG5vdCBtYWtlIHNlbnNlIGZvciBjaGlwcyBsaWtlIEdL
-MjBBIHdoaWNoIGhhdmUKbm8gZGVkaWNhdGVkIHZpZGVvIG1lbW9yeS4gVGhlIGR1bW15IFJBTSBk
-ZXZpY2UgdGhhdCB3ZSB1c2VkIHNvIGZhcgp3b3JrcyBhcyBhIHRlbXBvcmFyeSBiYW5kLWFpZCwg
-YnV0IGluIHRoZSBsb25nZXIgdGVybSBpdCBpcyBkZXNpcmFibGUKZm9yIHRoZSBkcml2ZXIgdG8g
-YmUgYWJsZSB0byB3b3JrIHdpdGhvdXQgYW55IGtpbmQgb2YgVlJBTS4KClRoaXMgcGF0Y2ggYWRk
-cyBhIGZldyBjb25kaXRpb25hbHMgaW4gcGxhY2VzIHdoZXJlIGEgUkFNIGRldmljZSB3YXMKYXNz
-dW1lZCB0byBiZSBwcmVzZW50IGFuZCBhbGxvd3Mgc29tZSBtb3JlIG9iamVjdHMgdG8gYmUgYWxs
-b2NhdGVkIGZyb20KdGhlIFRUIGRvbWFpbiwgYWxsb3dpbmcgTm91dmVhdSB0byBoYW5kbGUgR1BV
-cyBmb3Igd2hpY2gKcGZiLT5yYW0gPT0gTlVMTC4KClNpZ25lZC1vZmYtYnk6IEFsZXhhbmRyZSBD
-b3VyYm90IDxhY291cmJvdEBudmlkaWEuY29tPgotLS0KIGRybS9ub3V2ZWF1L25vdXZlYXVfZGlz
-cGxheS5jICAgICAgICAgfCAgOSArKysrKysrKy0KIGRybS9ub3V2ZWF1L25vdXZlYXVfdHRtLmMg
-ICAgICAgICAgICAgfCAgMyArKysKIGRybS9ub3V2ZWF1L252ODRfZmVuY2UuYyAgICAgICAgICAg
-ICAgfCAxNCArKysrKysrKysrKy0tLQogZHJtL25vdXZlYXUvbnZrbS9lbmdpbmUvZGV2aWNlL2Jh
-c2UuYyB8IDEwICsrKysrKystLS0KIGRybS9ub3V2ZWF1L252a20vc3ViZGV2L2Nsay9iYXNlLmMg
-ICAgfCAgMiArLQogZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvZmIvYmFzZS5jICAgICB8IDI2ICsr
-KysrKysrKysrKysrKysrKy0tLS0tLS0tCiBkcm0vbm91dmVhdS9udmttL3N1YmRldi9sdGMvZ2Yx
-MDAuYyAgIHwgMTAgKysrKysrKysrLQogNyBmaWxlcyBjaGFuZ2VkLCA1NyBpbnNlcnRpb25zKCsp
-LCAxNyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcm0vbm91dmVhdS9ub3V2ZWF1X2Rpc3Bs
-YXkuYyBiL2RybS9ub3V2ZWF1L25vdXZlYXVfZGlzcGxheS5jCmluZGV4IDg2MGIwZTJkNDE4MS4u
-ODY3MGQ5MGNkYzExIDEwMDY0NAotLS0gYS9kcm0vbm91dmVhdS9ub3V2ZWF1X2Rpc3BsYXkuYwor
-KysgYi9kcm0vbm91dmVhdS9ub3V2ZWF1X2Rpc3BsYXkuYwpAQCAtODY5LDEzICs4NjksMjAgQEAg
-bm91dmVhdV9kaXNwbGF5X2R1bWJfY3JlYXRlKHN0cnVjdCBkcm1fZmlsZSAqZmlsZV9wcml2LCBz
-dHJ1Y3QgZHJtX2RldmljZSAqZGV2LAogCQkJICAgIHN0cnVjdCBkcm1fbW9kZV9jcmVhdGVfZHVt
-YiAqYXJncykKIHsKIAlzdHJ1Y3Qgbm91dmVhdV9ibyAqYm87CisJdWludDMyX3QgZG9tYWluOwog
-CWludCByZXQ7CiAKIAlhcmdzLT5waXRjaCA9IHJvdW5kdXAoYXJncy0+d2lkdGggKiAoYXJncy0+
-YnBwIC8gOCksIDI1Nik7CiAJYXJncy0+c2l6ZSA9IGFyZ3MtPnBpdGNoICogYXJncy0+aGVpZ2h0
-OwogCWFyZ3MtPnNpemUgPSByb3VuZHVwKGFyZ3MtPnNpemUsIFBBR0VfU0laRSk7CiAKLQlyZXQg
-PSBub3V2ZWF1X2dlbV9uZXcoZGV2LCBhcmdzLT5zaXplLCAwLCBOT1VWRUFVX0dFTV9ET01BSU5f
-VlJBTSwgMCwgMCwgJmJvKTsKKwkvKiBVc2UgVlJBTSBpZiB0aGVyZSBpcyBhbnkgOyBvdGhlcndp
-c2UgZmFsbGJhY2sgdG8gc3lzdGVtIG1lbW9yeSAqLworCWlmIChub3V2ZWF1X2RybShkZXYpLT5k
-ZXZpY2UuaW5mby5yYW1fc2l6ZSAhPSAwKQorCQlkb21haW4gPSBOT1VWRUFVX0dFTV9ET01BSU5f
-VlJBTTsKKwllbHNlCisJCWRvbWFpbiA9IE5PVVZFQVVfR0VNX0RPTUFJTl9HQVJUOworCisJcmV0
-ID0gbm91dmVhdV9nZW1fbmV3KGRldiwgYXJncy0+c2l6ZSwgMCwgZG9tYWluLCAwLCAwLCAmYm8p
-OwogCWlmIChyZXQpCiAJCXJldHVybiByZXQ7CiAKZGlmZiAtLWdpdCBhL2RybS9ub3V2ZWF1L25v
-dXZlYXVfdHRtLmMgYi9kcm0vbm91dmVhdS9ub3V2ZWF1X3R0bS5jCmluZGV4IDI3M2U1MDExMGVj
-My4uMThmNDQ5NzE1Nzg4IDEwMDY0NAotLS0gYS9kcm0vbm91dmVhdS9ub3V2ZWF1X3R0bS5jCisr
-KyBiL2RybS9ub3V2ZWF1L25vdXZlYXVfdHRtLmMKQEAgLTgyLDYgKzgyLDkgQEAgbm91dmVhdV92
-cmFtX21hbmFnZXJfbmV3KHN0cnVjdCB0dG1fbWVtX3R5cGVfbWFuYWdlciAqbWFuLAogCXUzMiBz
-aXplX25jID0gMDsKIAlpbnQgcmV0OwogCisJaWYgKGRybS0+ZGV2aWNlLmluZm8ucmFtX3NpemUg
-PT0gMCkKKwkJcmV0dXJuIC1FTk9NRU07CisKIAlpZiAobnZiby0+dGlsZV9mbGFncyAmIE5PVVZF
-QVVfR0VNX1RJTEVfTk9OQ09OVElHKQogCQlzaXplX25jID0gMSA8PCBudmJvLT5wYWdlX3NoaWZ0
-OwogCmRpZmYgLS1naXQgYS9kcm0vbm91dmVhdS9udjg0X2ZlbmNlLmMgYi9kcm0vbm91dmVhdS9u
-djg0X2ZlbmNlLmMKaW5kZXggYmY0MjljYWJiYWE4Li5hMDNkYjQzNjg2OTYgMTAwNjQ0Ci0tLSBh
-L2RybS9ub3V2ZWF1L252ODRfZmVuY2UuYworKysgYi9kcm0vbm91dmVhdS9udjg0X2ZlbmNlLmMK
-QEAgLTIxNSw2ICsyMTUsNyBAQCBudjg0X2ZlbmNlX2NyZWF0ZShzdHJ1Y3Qgbm91dmVhdV9kcm0g
-KmRybSkKIHsKIAlzdHJ1Y3QgbnZrbV9maWZvICpwZmlmbyA9IG52eHhfZmlmbygmZHJtLT5kZXZp
-Y2UpOwogCXN0cnVjdCBudjg0X2ZlbmNlX3ByaXYgKnByaXY7CisJdTMyIGRvbWFpbjsKIAlpbnQg
-cmV0OwogCiAJcHJpdiA9IGRybS0+ZmVuY2UgPSBremFsbG9jKHNpemVvZigqcHJpdiksIEdGUF9L
-RVJORUwpOwpAQCAtMjMxLDEwICsyMzIsMTcgQEAgbnY4NF9mZW5jZV9jcmVhdGUoc3RydWN0IG5v
-dXZlYXVfZHJtICpkcm0pCiAJcHJpdi0+YmFzZS5jb250ZXh0X2Jhc2UgPSBmZW5jZV9jb250ZXh0
-X2FsbG9jKHByaXYtPmJhc2UuY29udGV4dHMpOwogCXByaXYtPmJhc2UudWV2ZW50ID0gdHJ1ZTsK
-IAotCXJldCA9IG5vdXZlYXVfYm9fbmV3KGRybS0+ZGV2LCAxNiAqIHByaXYtPmJhc2UuY29udGV4
-dHMsIDAsCi0JCQkgICAgIFRUTV9QTF9GTEFHX1ZSQU0sIDAsIDAsIE5VTEwsIE5VTEwsICZwcml2
-LT5ibyk7CisJLyogVXNlIFZSQU0gaWYgdGhlcmUgaXMgYW55IDsgb3RoZXJ3aXNlIGZhbGxiYWNr
-IHRvIHN5c3RlbSBtZW1vcnkgKi8KKwlkb21haW4gPSBkcm0tPmRldmljZS5pbmZvLnJhbV9zaXpl
-ICE9IDAgPyBUVE1fUExfRkxBR19WUkFNIDoKKwkJCSAvKgorCQkJICAqIGZlbmNlcyBjcmVhdGVk
-IGluIHN5c21lbSBtdXN0IGJlIG5vbi1jYWNoZWQgb3Igd2UKKwkJCSAgKiB3aWxsIGxvc2UgQ1BV
-L0dQVSBjb2hlcmVuY3khCisJCQkgICovCisJCQkgVFRNX1BMX0ZMQUdfVFQgfCBUVE1fUExfRkxB
-R19VTkNBQ0hFRDsKKwlyZXQgPSBub3V2ZWF1X2JvX25ldyhkcm0tPmRldiwgMTYgKiBwcml2LT5i
-YXNlLmNvbnRleHRzLCAwLCBkb21haW4sIDAsCisJCQkgICAgIDAsIE5VTEwsIE5VTEwsICZwcml2
-LT5ibyk7CiAJaWYgKHJldCA9PSAwKSB7Ci0JCXJldCA9IG5vdXZlYXVfYm9fcGluKHByaXYtPmJv
-LCBUVE1fUExfRkxBR19WUkFNLCBmYWxzZSk7CisJCXJldCA9IG5vdXZlYXVfYm9fcGluKHByaXYt
-PmJvLCBkb21haW4sIGZhbHNlKTsKIAkJaWYgKHJldCA9PSAwKSB7CiAJCQlyZXQgPSBub3V2ZWF1
-X2JvX21hcChwcml2LT5ibyk7CiAJCQlpZiAocmV0KQpkaWZmIC0tZ2l0IGEvZHJtL25vdXZlYXUv
-bnZrbS9lbmdpbmUvZGV2aWNlL2Jhc2UuYyBiL2RybS9ub3V2ZWF1L252a20vZW5naW5lL2Rldmlj
-ZS9iYXNlLmMKaW5kZXggNmVmYThmMzhmZjU0Li42M2Q4ZTUyZjRiMjIgMTAwNjQ0Ci0tLSBhL2Ry
-bS9ub3V2ZWF1L252a20vZW5naW5lL2RldmljZS9iYXNlLmMKKysrIGIvZHJtL25vdXZlYXUvbnZr
-bS9lbmdpbmUvZGV2aWNlL2Jhc2UuYwpAQCAtMTM5LDkgKzEzOSwxMyBAQCBudmttX2Rldm9ial9p
-bmZvKHN0cnVjdCBudmttX29iamVjdCAqb2JqZWN0LCB2b2lkICpkYXRhLCB1MzIgc2l6ZSkKIAog
-CWFyZ3MtPnYwLmNoaXBzZXQgID0gZGV2aWNlLT5jaGlwc2V0OwogCWFyZ3MtPnYwLnJldmlzaW9u
-ID0gZGV2aWNlLT5jaGlwcmV2OwotCWlmIChwZmIpICBhcmdzLT52MC5yYW1fc2l6ZSA9IGFyZ3Mt
-PnYwLnJhbV91c2VyID0gcGZiLT5yYW0tPnNpemU7Ci0JZWxzZSAgICAgIGFyZ3MtPnYwLnJhbV9z
-aXplID0gYXJncy0+djAucmFtX3VzZXIgPSAwOwotCWlmIChpbWVtKSBhcmdzLT52MC5yYW1fdXNl
-ciA9IGFyZ3MtPnYwLnJhbV91c2VyIC0gaW1lbS0+cmVzZXJ2ZWQ7CisJaWYgKHBmYiAmJiBwZmIt
-PnJhbSkKKwkJYXJncy0+djAucmFtX3NpemUgPSBhcmdzLT52MC5yYW1fdXNlciA9IHBmYi0+cmFt
-LT5zaXplOworCWVsc2UKKwkJYXJncy0+djAucmFtX3NpemUgPSBhcmdzLT52MC5yYW1fdXNlciA9
-IDA7CisJaWYgKGltZW0gJiYgYXJncy0+djAucmFtX3NpemUgPiAwKQorCQlhcmdzLT52MC5yYW1f
-dXNlciA9IGFyZ3MtPnYwLnJhbV91c2VyIC0gaW1lbS0+cmVzZXJ2ZWQ7CisKIAlyZXR1cm4gMDsK
-IH0KIApkaWZmIC0tZ2l0IGEvZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvY2xrL2Jhc2UuYyBiL2Ry
-bS9ub3V2ZWF1L252a20vc3ViZGV2L2Nsay9iYXNlLmMKaW5kZXggYjI0YTljYzA0YjczLi4zOWE4
-M2Q4MmUwY2QgMTAwNjQ0Ci0tLSBhL2RybS9ub3V2ZWF1L252a20vc3ViZGV2L2Nsay9iYXNlLmMK
-KysrIGIvZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvY2xrL2Jhc2UuYwpAQCAtMTg0LDcgKzE4NCw3
-IEBAIG52a21fcHN0YXRlX3Byb2coc3RydWN0IG52a21fY2xrICpjbGssIGludCBwc3RhdGVpKQog
-CW52X2RlYnVnKGNsaywgInNldHRpbmcgcGVyZm9ybWFuY2Ugc3RhdGUgJWRcbiIsIHBzdGF0ZWkp
-OwogCWNsay0+cHN0YXRlID0gcHN0YXRlaTsKIAotCWlmIChwZmItPnJhbS0+Y2FsYykgeworCWlm
-IChwZmItPnJhbSAmJiBwZmItPnJhbS0+Y2FsYykgewogCQlpbnQga2h6ID0gcHN0YXRlLT5iYXNl
-LmRvbWFpbltudl9jbGtfc3JjX21lbV07CiAJCWRvIHsKIAkJCXJldCA9IHBmYi0+cmFtLT5jYWxj
-KHBmYiwga2h6KTsKZGlmZiAtLWdpdCBhL2RybS9ub3V2ZWF1L252a20vc3ViZGV2L2ZiL2Jhc2Uu
-YyBiL2RybS9ub3V2ZWF1L252a20vc3ViZGV2L2ZiL2Jhc2UuYwppbmRleCAxNjU4OWZhNjEzY2Qu
-LjYxZmRlNDNkYWI3MSAxMDA2NDQKLS0tIGEvZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvZmIvYmFz
-ZS5jCisrKyBiL2RybS9ub3V2ZWF1L252a20vc3ViZGV2L2ZiL2Jhc2UuYwpAQCAtNTUsOSArNTUs
-MTEgQEAgX252a21fZmJfZmluaShzdHJ1Y3QgbnZrbV9vYmplY3QgKm9iamVjdCwgYm9vbCBzdXNw
-ZW5kKQogCXN0cnVjdCBudmttX2ZiICpwZmIgPSAodm9pZCAqKW9iamVjdDsKIAlpbnQgcmV0Owog
-Ci0JcmV0ID0gbnZfb2Z1bmNzKHBmYi0+cmFtKS0+ZmluaShudl9vYmplY3QocGZiLT5yYW0pLCBz
-dXNwZW5kKTsKLQlpZiAocmV0ICYmIHN1c3BlbmQpCi0JCXJldHVybiByZXQ7CisJaWYgKHBmYi0+
-cmFtKSB7CisJCXJldCA9IG52X29mdW5jcyhwZmItPnJhbSktPmZpbmkobnZfb2JqZWN0KHBmYi0+
-cmFtKSwgc3VzcGVuZCk7CisJCWlmIChyZXQgJiYgc3VzcGVuZCkKKwkJCXJldHVybiByZXQ7CisJ
-fQogCiAJcmV0dXJuIG52a21fc3ViZGV2X2ZpbmkoJnBmYi0+YmFzZSwgc3VzcGVuZCk7CiB9CkBA
-IC03Miw5ICs3NCwxMSBAQCBfbnZrbV9mYl9pbml0KHN0cnVjdCBudmttX29iamVjdCAqb2JqZWN0
-KQogCWlmIChyZXQpCiAJCXJldHVybiByZXQ7CiAKLQlyZXQgPSBudl9vZnVuY3MocGZiLT5yYW0p
-LT5pbml0KG52X29iamVjdChwZmItPnJhbSkpOwotCWlmIChyZXQpCi0JCXJldHVybiByZXQ7CisJ
-aWYgKHBmYi0+cmFtKSB7CisJCXJldCA9IG52X29mdW5jcyhwZmItPnJhbSktPmluaXQobnZfb2Jq
-ZWN0KHBmYi0+cmFtKSk7CisJCWlmIChyZXQpCisJCQlyZXR1cm4gcmV0OworCX0KIAogCWZvciAo
-aSA9IDA7IGkgPCBwZmItPnRpbGUucmVnaW9uczsgaSsrKQogCQlwZmItPnRpbGUucHJvZyhwZmIs
-IGksICZwZmItPnRpbGUucmVnaW9uW2ldKTsKQEAgLTkxLDkgKzk1LDEyIEBAIF9udmttX2ZiX2R0
-b3Ioc3RydWN0IG52a21fb2JqZWN0ICpvYmplY3QpCiAJZm9yIChpID0gMDsgaSA8IHBmYi0+dGls
-ZS5yZWdpb25zOyBpKyspCiAJCXBmYi0+dGlsZS5maW5pKHBmYiwgaSwgJnBmYi0+dGlsZS5yZWdp
-b25baV0pOwogCW52a21fbW1fZmluaSgmcGZiLT50YWdzKTsKLQludmttX21tX2ZpbmkoJnBmYi0+
-dnJhbSk7CiAKLQludmttX29iamVjdF9yZWYoTlVMTCwgKHN0cnVjdCBudmttX29iamVjdCAqKikm
-cGZiLT5yYW0pOworCWlmIChwZmItPnJhbSkgeworCQludmttX21tX2ZpbmkoJnBmYi0+dnJhbSk7
-CisJCW52a21fb2JqZWN0X3JlZihOVUxMLCAoc3RydWN0IG52a21fb2JqZWN0ICoqKSZwZmItPnJh
-bSk7CisJfQorCiAJbnZrbV9zdWJkZXZfZGVzdHJveSgmcGZiLT5iYXNlKTsKIH0KIApAQCAtMTI3
-LDYgKzEzNCw5IEBAIG52a21fZmJfY3JlYXRlXyhzdHJ1Y3QgbnZrbV9vYmplY3QgKnBhcmVudCwg
-c3RydWN0IG52a21fb2JqZWN0ICplbmdpbmUsCiAKIAlwZmItPm1lbXR5cGVfdmFsaWQgPSBpbXBs
-LT5tZW10eXBlOwogCisJaWYgKCFpbXBsLT5yYW0pCisJCXJldHVybiAwOworCiAJcmV0ID0gbnZr
-bV9vYmplY3RfY3Rvcihudl9vYmplY3QocGZiKSwgTlVMTCwgaW1wbC0+cmFtLCBOVUxMLCAwLCAm
-cmFtKTsKIAlpZiAocmV0KSB7CiAJCW52X2ZhdGFsKHBmYiwgImVycm9yIGRldGVjdGluZyBtZW1v
-cnkgY29uZmlndXJhdGlvbiEhXG4iKTsKZGlmZiAtLWdpdCBhL2RybS9ub3V2ZWF1L252a20vc3Vi
-ZGV2L2x0Yy9nZjEwMC5jIGIvZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvbHRjL2dmMTAwLmMKaW5k
-ZXggOGU3Y2M2MjAwZDYwLi43ZmI1ZWEwMzE0Y2IgMTAwNjQ0Ci0tLSBhL2RybS9ub3V2ZWF1L252
-a20vc3ViZGV2L2x0Yy9nZjEwMC5jCisrKyBiL2RybS9ub3V2ZWF1L252a20vc3ViZGV2L2x0Yy9n
-ZjEwMC5jCkBAIC0xMzYsNyArMTM2LDggQEAgZ2YxMDBfbHRjX2R0b3Ioc3RydWN0IG52a21fb2Jq
-ZWN0ICpvYmplY3QpCiAJc3RydWN0IG52a21fbHRjX3ByaXYgKnByaXYgPSAodm9pZCAqKW9iamVj
-dDsKIAogCW52a21fbW1fZmluaSgmcHJpdi0+dGFncyk7Ci0JbnZrbV9tbV9mcmVlKCZwZmItPnZy
-YW0sICZwcml2LT50YWdfcmFtKTsKKwlpZiAocGZiLT5yYW0pCisJCW52a21fbW1fZnJlZSgmcGZi
-LT52cmFtLCAmcHJpdi0+dGFnX3JhbSk7CiAKIAludmttX2x0Y19kZXN0cm95KHByaXYpOwogfQpA
-QCAtMTQ5LDYgKzE1MCwxMiBAQCBnZjEwMF9sdGNfaW5pdF90YWdfcmFtKHN0cnVjdCBudmttX2Zi
-ICpwZmIsIHN0cnVjdCBudmttX2x0Y19wcml2ICpwcml2KQogCXUzMiB0YWdfc2l6ZSwgdGFnX21h
-cmdpbiwgdGFnX2FsaWduOwogCWludCByZXQ7CiAKKwkvKiBObyBWUkFNLCBubyB0YWdzIGZvciBu
-b3cuICovCisJaWYgKCFwZmItPnJhbSkgeworCQlwcml2LT5udW1fdGFncyA9IDA7CisJCWdvdG8g
-bW1faW5pdDsKKwl9CisKIAkvKiB0YWdzIGZvciAxLzQgb2YgVlJBTSBzaG91bGQgYmUgZW5vdWdo
-ICg4MTkyLzQgcGVyIEdpQiBvZiBWUkFNKSAqLwogCXByaXYtPm51bV90YWdzID0gKHBmYi0+cmFt
-LT5zaXplID4+IDE3KSAvIDQ7CiAJaWYgKHByaXYtPm51bV90YWdzID4gKDEgPDwgMTcpKQpAQCAt
-MTgzLDYgKzE5MCw3IEBAIGdmMTAwX2x0Y19pbml0X3RhZ19yYW0oc3RydWN0IG52a21fZmIgKnBm
-Yiwgc3RydWN0IG52a21fbHRjX3ByaXYgKnByaXYpCiAJCXByaXYtPnRhZ19iYXNlID0gdGFnX2Jh
-c2U7CiAJfQogCittbV9pbml0OgogCXJldCA9IG52a21fbW1faW5pdCgmcHJpdi0+dGFncywgMCwg
-cHJpdi0+bnVtX3RhZ3MsIDEpOwogCXJldHVybiByZXQ7CiB9Ci0tIAoyLjMuMAoKX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBtYWlsaW5nIGxp
-c3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9w
-Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL25vdXZlYXUK
+GK20A does not have dedicated RAM, thus having a RAM device for it does
+not make sense. Move the contiguous physical memory allocation to
+instmem.
+
+Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drm/nouveau/include/nvkm/subdev/instmem.h |   1 +
+ drm/nouveau/nvkm/engine/device/gk104.c    |   2 +-
+ drm/nouveau/nvkm/subdev/fb/ramgk20a.c     |  86 +-----------
+ drm/nouveau/nvkm/subdev/instmem/Kbuild    |   1 +
+ drm/nouveau/nvkm/subdev/instmem/gk20a.c   | 212 ++++++++++++++++++++++++++++++
+ 5 files changed, 217 insertions(+), 85 deletions(-)
+ create mode 100644 drm/nouveau/nvkm/subdev/instmem/gk20a.c
+
+diff --git a/drm/nouveau/include/nvkm/subdev/instmem.h b/drm/nouveau/include/nvkm/subdev/instmem.h
+index d104c1aac807..1bcb763cfca0 100644
+--- a/drm/nouveau/include/nvkm/subdev/instmem.h
++++ b/drm/nouveau/include/nvkm/subdev/instmem.h
+@@ -45,4 +45,5 @@ nvkm_instmem(void *obj)
+ extern struct nvkm_oclass *nv04_instmem_oclass;
+ extern struct nvkm_oclass *nv40_instmem_oclass;
+ extern struct nvkm_oclass *nv50_instmem_oclass;
++extern struct nvkm_oclass *gk20a_instmem_oclass;
+ #endif
+diff --git a/drm/nouveau/nvkm/engine/device/gk104.c b/drm/nouveau/nvkm/engine/device/gk104.c
+index bf5893458a47..8f266a9a34a6 100644
+--- a/drm/nouveau/nvkm/engine/device/gk104.c
++++ b/drm/nouveau/nvkm/engine/device/gk104.c
+@@ -171,7 +171,7 @@ gk104_identify(struct nvkm_device *device)
+ 		device->oclass[NVDEV_SUBDEV_FB     ] =  gk20a_fb_oclass;
+ 		device->oclass[NVDEV_SUBDEV_LTC    ] =  gk104_ltc_oclass;
+ 		device->oclass[NVDEV_SUBDEV_IBUS   ] = &gk20a_ibus_oclass;
+-		device->oclass[NVDEV_SUBDEV_INSTMEM] = nv50_instmem_oclass;
++		device->oclass[NVDEV_SUBDEV_INSTMEM] = gk20a_instmem_oclass;
+ 		device->oclass[NVDEV_SUBDEV_MMU    ] = &gf100_mmu_oclass;
+ 		device->oclass[NVDEV_SUBDEV_BAR    ] = &gk20a_bar_oclass;
+ 		device->oclass[NVDEV_ENGINE_DMAOBJ ] =  gf110_dmaeng_oclass;
+diff --git a/drm/nouveau/nvkm/subdev/fb/ramgk20a.c b/drm/nouveau/nvkm/subdev/fb/ramgk20a.c
+index 5f30db140b47..60d8e1cead61 100644
+--- a/drm/nouveau/nvkm/subdev/fb/ramgk20a.c
++++ b/drm/nouveau/nvkm/subdev/fb/ramgk20a.c
+@@ -23,99 +23,17 @@
+ 
+ #include <core/device.h>
+ 
+-struct gk20a_mem {
+-	struct nvkm_mem base;
+-	void *cpuaddr;
+-	dma_addr_t handle;
+-};
+-#define to_gk20a_mem(m) container_of(m, struct gk20a_mem, base)
+-
+ static void
+ gk20a_ram_put(struct nvkm_fb *pfb, struct nvkm_mem **pmem)
+ {
+-	struct device *dev = nv_device_base(nv_device(pfb));
+-	struct gk20a_mem *mem = to_gk20a_mem(*pmem);
+-
+-	*pmem = NULL;
+-	if (unlikely(mem == NULL))
+-		return;
+-
+-	if (likely(mem->cpuaddr))
+-		dma_free_coherent(dev, mem->base.size << PAGE_SHIFT,
+-				  mem->cpuaddr, mem->handle);
+-
+-	kfree(mem->base.pages);
+-	kfree(mem);
++	BUG();
+ }
+ 
+ static int
+ gk20a_ram_get(struct nvkm_fb *pfb, u64 size, u32 align, u32 ncmin,
+ 	     u32 memtype, struct nvkm_mem **pmem)
+ {
+-	struct device *dev = nv_device_base(nv_device(pfb));
+-	struct gk20a_mem *mem;
+-	u32 type = memtype & 0xff;
+-	u32 npages, order;
+-	int i;
+-
+-	nv_debug(pfb, "%s: size: %llx align: %x, ncmin: %x\n", __func__, size,
+-		 align, ncmin);
+-
+-	npages = size >> PAGE_SHIFT;
+-	if (npages == 0)
+-		npages = 1;
+-
+-	if (align == 0)
+-		align = PAGE_SIZE;
+-	align >>= PAGE_SHIFT;
+-
+-	/* round alignment to the next power of 2, if needed */
+-	order = fls(align);
+-	if ((align & (align - 1)) == 0)
+-		order--;
+-	align = BIT(order);
+-
+-	/* ensure returned address is correctly aligned */
+-	npages = max(align, npages);
+-
+-	mem = kzalloc(sizeof(*mem), GFP_KERNEL);
+-	if (!mem)
+-		return -ENOMEM;
+-
+-	mem->base.size = npages;
+-	mem->base.memtype = type;
+-
+-	mem->base.pages = kzalloc(sizeof(dma_addr_t) * npages, GFP_KERNEL);
+-	if (!mem->base.pages) {
+-		kfree(mem);
+-		return -ENOMEM;
+-	}
+-
+-	*pmem = &mem->base;
+-
+-	mem->cpuaddr = dma_alloc_coherent(dev, npages << PAGE_SHIFT,
+-					  &mem->handle, GFP_KERNEL);
+-	if (!mem->cpuaddr) {
+-		nv_error(pfb, "%s: cannot allocate memory!\n", __func__);
+-		gk20a_ram_put(pfb, pmem);
+-		return -ENOMEM;
+-	}
+-
+-	align <<= PAGE_SHIFT;
+-
+-	/* alignment check */
+-	if (unlikely(mem->handle & (align - 1)))
+-		nv_warn(pfb, "memory not aligned as requested: %pad (0x%x)\n",
+-			&mem->handle, align);
+-
+-	nv_debug(pfb, "alloc size: 0x%x, align: 0x%x, paddr: %pad, vaddr: %p\n",
+-		 npages << PAGE_SHIFT, align, &mem->handle, mem->cpuaddr);
+-
+-	for (i = 0; i < npages; i++)
+-		mem->base.pages[i] = mem->handle + (PAGE_SIZE * i);
+-
+-	mem->base.offset = (u64)mem->base.pages[0];
+-	return 0;
++	BUG();
+ }
+ 
+ static int
+diff --git a/drm/nouveau/nvkm/subdev/instmem/Kbuild b/drm/nouveau/nvkm/subdev/instmem/Kbuild
+index e6f35abe7879..13bb7fc0a569 100644
+--- a/drm/nouveau/nvkm/subdev/instmem/Kbuild
++++ b/drm/nouveau/nvkm/subdev/instmem/Kbuild
+@@ -2,3 +2,4 @@ nvkm-y += nvkm/subdev/instmem/base.o
+ nvkm-y += nvkm/subdev/instmem/nv04.o
+ nvkm-y += nvkm/subdev/instmem/nv40.o
+ nvkm-y += nvkm/subdev/instmem/nv50.o
++nvkm-y += nvkm/subdev/instmem/gk20a.o
+diff --git a/drm/nouveau/nvkm/subdev/instmem/gk20a.c b/drm/nouveau/nvkm/subdev/instmem/gk20a.c
+new file mode 100644
+index 000000000000..6176f5072496
+--- /dev/null
++++ b/drm/nouveau/nvkm/subdev/instmem/gk20a.c
+@@ -0,0 +1,212 @@
++/*
++ * Copyright (c) 2015, NVIDIA CORPORATION. All rights reserved.
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a
++ * copy of this software and associated documentation files (the "Software"),
++ * to deal in the Software without restriction, including without limitation
++ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
++ * and/or sell copies of the Software, and to permit persons to whom the
++ * Software is furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
++ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
++ * DEALINGS IN THE SOFTWARE.
++ */
++
++#include <subdev/fb.h>
++#include <core/mm.h>
++#include <core/device.h>
++
++#include "priv.h"
++
++struct gk20a_instobj_priv {
++	struct nvkm_instobj base;
++	/* Must be second member here - see nouveau_gpuobj_map_vm() */
++	struct nvkm_mem *mem;
++	/* Pointed by mem */
++	struct nvkm_mem _mem;
++	void *cpuaddr;
++	dma_addr_t handle;
++	struct nvkm_mm_node r;
++};
++
++struct gk20a_instmem_priv {
++	struct nvkm_instmem base;
++	spinlock_t lock;
++	u64 addr;
++};
++
++static u32
++gk20a_instobj_rd32(struct nvkm_object *object, u64 offset)
++{
++	struct gk20a_instmem_priv *priv = (void *)nvkm_instmem(object);
++	struct gk20a_instobj_priv *node = (void *)object;
++	unsigned long flags;
++	u64 base = (node->mem->offset + offset) & 0xffffff00000ULL;
++	u64 addr = (node->mem->offset + offset) & 0x000000fffffULL;
++	u32 data;
++
++	spin_lock_irqsave(&priv->lock, flags);
++	if (unlikely(priv->addr != base)) {
++		nv_wr32(priv, 0x001700, base >> 16);
++		priv->addr = base;
++	}
++	data = nv_rd32(priv, 0x700000 + addr);
++	spin_unlock_irqrestore(&priv->lock, flags);
++	return data;
++}
++
++static void
++gk20a_instobj_wr32(struct nvkm_object *object, u64 offset, u32 data)
++{
++	struct gk20a_instmem_priv *priv = (void *)nvkm_instmem(object);
++	struct gk20a_instobj_priv *node = (void *)object;
++	unsigned long flags;
++	u64 base = (node->mem->offset + offset) & 0xffffff00000ULL;
++	u64 addr = (node->mem->offset + offset) & 0x000000fffffULL;
++
++	spin_lock_irqsave(&priv->lock, flags);
++	if (unlikely(priv->addr != base)) {
++		nv_wr32(priv, 0x001700, base >> 16);
++		priv->addr = base;
++	}
++	nv_wr32(priv, 0x700000 + addr, data);
++	spin_unlock_irqrestore(&priv->lock, flags);
++}
++
++static void
++gk20a_instobj_dtor(struct nvkm_object *object)
++{
++	struct gk20a_instobj_priv *node = (void *)object;
++	struct gk20a_instmem_priv *priv = (void *)nvkm_instmem(node);
++	struct device *dev = nv_device_base(nv_device(priv));
++
++	if (unlikely(!node->handle))
++		return;
++
++	dma_free_coherent(dev, node->mem->size << PAGE_SHIFT, node->cpuaddr,
++			  node->handle);
++
++	nvkm_instobj_destroy(&node->base);
++}
++
++static int
++gk20a_instobj_ctor(struct nvkm_object *parent, struct nvkm_object *engine,
++		   struct nvkm_oclass *oclass, void *data, u32 _size,
++		   struct nvkm_object **pobject)
++{
++	struct nvkm_instobj_args *args = data;
++	struct gk20a_instmem_priv *priv = (void *)nvkm_instmem(parent);
++	struct device *dev = nv_device_base(nv_device(priv));
++	struct gk20a_instobj_priv *node;
++	u32 size, align;
++	u32 npages;
++	int ret;
++
++	nv_debug(parent, "%s: size: %x align: %x\n", __func__,
++		 args->size, args->align);
++
++	size  = max((args->size  + 4095) & ~4095, (u32)4096);
++	align = max((args->align + 4095) & ~4095, (u32)4096);
++
++	npages = size >> PAGE_SHIFT;
++
++	ret = nvkm_instobj_create_(parent, engine, oclass, sizeof(*node),
++				      (void **)&node);
++	*pobject = nv_object(node);
++	if (ret)
++		return ret;
++
++	node->mem = &node->_mem;
++
++	node->cpuaddr = dma_alloc_coherent(dev, npages << PAGE_SHIFT,
++					   &node->handle, GFP_KERNEL);
++	if (!node->cpuaddr) {
++		nv_error(priv, "cannot allocate DMA memory\n");
++		return -ENOMEM;
++	}
++
++	/* alignment check */
++	if (unlikely(node->handle & (align - 1)))
++		nv_warn(priv, "memory not aligned as requested: %pad (0x%x)\n",
++			&node->handle, align);
++
++	node->mem->offset = node->handle;
++	node->mem->size = size >> 12;
++	node->mem->memtype = 0;
++	node->mem->page_shift = 12;
++	INIT_LIST_HEAD(&node->mem->regions);
++
++	node->r.type = 12;
++	node->r.offset = node->handle >> 12;
++	node->r.length = npages;
++	list_add_tail(&node->r.rl_entry, &node->mem->regions);
++
++	node->base.addr = node->mem->offset;
++	node->base.size = size;
++
++	nv_debug(parent, "alloc size: 0x%x, align: 0x%x, gaddr: 0x%llx\n",
++		 size, align, node->mem->offset);
++
++	return 0;
++}
++
++static struct nvkm_instobj_impl
++gk20a_instobj_oclass = {
++	.base.ofuncs = &(struct nvkm_ofuncs) {
++		.ctor = gk20a_instobj_ctor,
++		.dtor = gk20a_instobj_dtor,
++		.init = _nvkm_instobj_init,
++		.fini = _nvkm_instobj_fini,
++		.rd32 = gk20a_instobj_rd32,
++		.wr32 = gk20a_instobj_wr32,
++	},
++};
++
++
++
++static int
++gk20a_instmem_fini(struct nvkm_object *object, bool suspend)
++{
++	struct gk20a_instmem_priv *priv = (void *)object;
++	priv->addr = ~0ULL;
++	return nvkm_instmem_fini(&priv->base, suspend);
++}
++
++static int
++gk20a_instmem_ctor(struct nvkm_object *parent, struct nvkm_object *engine,
++		   struct nvkm_oclass *oclass, void *data, u32 size,
++		   struct nvkm_object **pobject)
++{
++	struct gk20a_instmem_priv *priv;
++	int ret;
++
++	ret = nvkm_instmem_create(parent, engine, oclass, &priv);
++	*pobject = nv_object(priv);
++	if (ret)
++		return ret;
++
++	spin_lock_init(&priv->lock);
++
++	return 0;
++}
++
++struct nvkm_oclass *
++gk20a_instmem_oclass = &(struct nvkm_instmem_impl) {
++	.base.handle = NV_SUBDEV(INSTMEM, 0xea),
++	.base.ofuncs = &(struct nvkm_ofuncs) {
++		.ctor = gk20a_instmem_ctor,
++		.dtor = _nvkm_instmem_dtor,
++		.init = _nvkm_instmem_init,
++		.fini = gk20a_instmem_fini,
++	},
++	.instobj = &gk20a_instobj_oclass.base,
++}.base;
++
+-- 
+2.3.0
