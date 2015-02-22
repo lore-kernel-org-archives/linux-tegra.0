@@ -1,13 +1,16 @@
-From: Joe Perches <joe@perches.com>
-Subject: [PATCH 08/27] rtc: Remove use of seq_printf return value
-Date: Sat, 21 Feb 2015 18:53:35 -0800
-Message-ID: <40093c450fc71dbd261d96316a925d06e49ef535.1424573328.git.joe@perches.com>
+From: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH V2 - 08/27] rtc: Remove use of seq_printf return value
+Date: Sat, 21 Feb 2015 20:02:15 -0800
+Message-ID: <1424577735.20944.6.camel@perches.com>
 References: <cover.1424573328.git.joe@perches.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1424573328.git.joe@perches.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>, Alessandro Zummo <a.zummo@towertech.it>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
-Cc: rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <cover.1424573328.git.joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 The seq_printf return value, because it's frequently misused,
@@ -16,8 +19,11 @@ will eventually be converted to void.
 See: commit 1f33c41c03da ("seq_file: Rename seq_overflow() to
      seq_has_overflowed() and make public")
 
-Signed-off-by: Joe Perches <joe@perches.com>
+Signed-off-by: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
 ---
+
+V2: sigh - Fix : vs ; line termination typo in rtc-tegra
+
  drivers/rtc/rtc-cmos.c   | 36 +++++++++++++++++++-----------------
  drivers/rtc/rtc-ds1305.c |  6 +++---
  drivers/rtc/rtc-mrst.c   | 16 +++++++++-------
@@ -126,9 +132,7 @@ index d948277..b318017 100644
 -	return seq_printf(seq, "name\t\t: %s\n", dev_name(dev));
 +	seq_printf(seq, "name\t\t: %s\n", dev_name(dev));
 +
-+	return 0:
++	return 0;
  }
  
  static irqreturn_t tegra_rtc_irq_handler(int irq, void *data)
--- 
-2.1.2
