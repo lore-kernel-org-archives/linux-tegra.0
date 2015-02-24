@@ -1,11 +1,11 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] Add "submitting patches" section to README
-Date: Tue, 24 Feb 2015 15:26:51 -0700
-Message-ID: <1424816811-25516-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [uboot scripts PATCH] Add "submitting patches" section to README
+Date: Tue, 24 Feb 2015 15:29:54 -0700
+Message-ID: <1424816994-25641-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -14,23 +14,31 @@ This tells users how/where to send patches, etc.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- README.txt | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ README.txt | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
 diff --git a/README.txt b/README.txt
-index 1c423d684f5e..0ca5a939670a 100644
+index 71b143e1fb0b..0fe8d4d54a29 100644
 --- a/README.txt
 +++ b/README.txt
-@@ -5,6 +5,27 @@ Many aspects of many of Tegra's pins can configure via the pinmux and GPIO
- controllers. This project exists to assist with software's handling of the
- configuration of those controllers.
+@@ -1,3 +1,6 @@
++Usage
++=====
++
+ This project provides a script which generates a U-Boot boot script for
+ Tegra devices running upstream U-Boot.
  
+@@ -31,3 +34,24 @@ partition. This may be used to provide the parameter to gen-uboot-script.py's
+ 
+ The standard blkid command may be used to determine a partition's filesystem
+ UUID, for use with gen-uboot-script.py's --fsuuid option.
++
 +Submitting Changes
 +==================
 +
 +To submit patches to this project, please use the following commands:
 +
-+* git format-patch --subject-prefix="pinmux scripts PATCH"
++* git format-patch --subject-prefix="uboot scripts PATCH"
 +
 +  Creates a patch file from your git commit.
 +
@@ -45,9 +53,5 @@ index 1c423d684f5e..0ca5a939670a 100644
 +Patches should be signed off (include a signed-off-by line) to indicate your
 +acceptance of the code's license (see the license header in each file). See
 +http://developercertificate.org/ for details of what signed-off-by implies.
-+
- Data files
- ==========
- 
 -- 
 1.9.1
