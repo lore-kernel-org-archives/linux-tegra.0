@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [tegrarcm PATCH] Add "submitting patches" section to README
-Date: Tue, 24 Feb 2015 15:39:07 -0700
-Message-ID: <1424817547-26046-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [flasher scripts PATCH] Add a README file
+Date: Tue, 24 Feb 2015 15:45:22 -0700
+Message-ID: <1424817922-26230-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
@@ -10,47 +10,33 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-This tells users how/where to send patches, etc.
+A plain README.txt is a more commit name for a README file than the
+existing README-*.txt files. This will help direct users to the correct
+file they need to read.
+
+Also add a section describing how/where to send patches, etc.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- README | 35 +++++++++++++++++++++++++++++++----
- 1 file changed, 31 insertions(+), 4 deletions(-)
+ README-developer.txt | 22 ++++++++++++++++++++++
+ README.txt           |  9 +++++++++
+ 2 files changed, 31 insertions(+)
+ create mode 100644 README.txt
 
-diff --git a/README b/README
-index df1e106ba760..2c6765387a3f 100644
---- a/README
-+++ b/README
-@@ -1,6 +1,6 @@
--tegrarcm
-+Introduction
-+============
- 
--What is it?
- This program is used to send code to a Tegra device in recovery mode.
- It does not supported locked devices with an encrypted boot key, only
- open devices such as the ventana, cardhu, or dalmore reference boards.
-@@ -15,7 +15,9 @@ Platforms supported:
- -Tegra30
- -Tegra114
- 
--How to use:
-+Usage
-+=====
-+
- - Connect a USB cable from your development system to your Tegra
- device.  You will either need a USB A to A cable or A to micro B
- depending on the target board.
-@@ -54,8 +56,33 @@ sending file: u-boot.bin
- - 268314/268314 bytes sent
- u-boot.bin sent successfully
+diff --git a/README-developer.txt b/README-developer.txt
+index e2648c39f796..4372d644b7e5 100644
+--- a/README-developer.txt
++++ b/README-developer.txt
+@@ -62,6 +62,28 @@ repo init -u ... -g default,-notools
+ # Only include the bare minimum
+ repo init -u ... -g default,-notools,-bootloader
  
 +Submitting Changes
 +==================
 +
 +To submit patches to this project, please use the following commands:
 +
-+* git format-patch --subject-prefix="tegrarcm PATCH"
++* git format-patch --subject-prefix="flasher scripts PATCH"
 +
 +  Creates a patch file from your git commit.
 +
@@ -67,14 +53,23 @@ index df1e106ba760..2c6765387a3f 100644
 +file). See http://developercertificate.org/ for details of what signed-off-by
 +implies.
 +
-+Changelog
-+=========
-+
-+Ssee git logs for complete list.
+ Pre-requisites
+ ==============
  
--Changes (see git logs for complete list):
- V1.6 - Added support for ODM secure mode
- V1.5 - Added support for RCM protocol version 40
-      - Added Tegra124 support
+diff --git a/README.txt b/README.txt
+new file mode 100644
+index 000000000000..3bba5c2b9042
+--- /dev/null
++++ b/README.txt
+@@ -0,0 +1,9 @@
++Introduction
++============
++
++If you want to download the source to this tool and compile it, or submit
++changes to this tool, see README-developer.txt.
++
++If you want to use this tool either after having compiled it yourself, or
++after having received a pre-compiled version from someone else (e.g. a
++distribution packager), see README-user.txt
 -- 
 1.9.1
