@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [cbootimage PATCH] Add a README file
-Date: Tue, 24 Feb 2015 15:34:26 -0700
-Message-ID: <1424817266-25784-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [cbootimage-configs PATCH] Add "submitting patches" section to README
+Date: Tue, 24 Feb 2015 15:36:38 -0700
+Message-ID: <1424817398-25898-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
@@ -10,40 +10,45 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-This provides a brief introduction to the project, and information re:
-how to submit patches.
+This tells users how/where to send patches, etc.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- README.txt | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
- create mode 100644 README.txt
+ README.txt | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
 diff --git a/README.txt b/README.txt
-new file mode 100644
-index 000000000000..ce95b5a35ed2
---- /dev/null
+index 9f742cfcd9da..50a20a70aec1 100644
+--- a/README.txt
 +++ b/README.txt
-@@ -0,0 +1,34 @@
+@@ -1,3 +1,6 @@
 +Introduction
 +============
 +
-+This project provides a tool which compiles BCT (Boot Configuration Table)
-+images to place into the boot flash of a Tegra-based device.
+ The cbootimage-configs project contains cbootimage configuration files for
+ many Tegra boards, both those designed by NVIDIA, and various third-parties.
+ 
+@@ -8,6 +11,9 @@ If you wish to use cbootimage with a board that is not yet supported by this
+ project, you might try contacting the vendor of the board to see if they'd be
+ willing to contribute configuration files to this project.
+ 
++Adding Board Support
++====================
 +
-+The tool will either:
-+
-+a) Compile a textual representation of a BCT into a binary image.
-+
-+b) Generate an entire boot image from a previously compiled BCT and a
-+   bootloader binary.
+ If that doesn't work out, you may create the required configuration files
+ using the following process:
+ 
+@@ -74,3 +80,25 @@ Once you have performed these steps, you will have configuration files
+ suitable for your personal use. We don't accept contributions to this project
+ that were derived in this fashion.  We encourage you to contact the vendor
+ and request them to submit their own configuration files.
 +
 +Submitting Changes
 +==================
 +
 +To submit patches to this project, please use the following commands:
 +
-+* git format-patch --subject-prefix="cbootimage PATCH"
++* git format-patch --subject-prefix="cbootimage-configs PATCH"
 +
 +  Creates a patch file from your git commit.
 +
