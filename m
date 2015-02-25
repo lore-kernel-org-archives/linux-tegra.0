@@ -1,59 +1,1124 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [flasher manifest PATCH] Add a README file
-Date: Tue, 24 Feb 2015 15:55:19 -0700
-Message-ID: <1424818519-26763-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH V6 00/12] Tegra xHCI support
+Date: Wed, 25 Feb 2015 17:01:14 +0100
+Message-ID: <20150225160110.GA26610@ulmo>
+References: <1416874644-12070-1-git-send-email-abrestic@chromium.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="/NkBOFFp2J2Af1nK"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1416874644-12070-1-git-send-email-abrestic@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Bresticker <abrestic@chromium.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Jassi Brar <jassisinghbrar@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman <mathias.nyman@intel.com>, Grant Likely <grant.likely@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kishon Vijay Abraham I <kishon@ti.com>, Felipe Balbi <balbi@ti.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-This provides a brief introduction to the project, and information re:
-how to submit patches.
+--/NkBOFFp2J2Af1nK
+Content-Type: multipart/mixed; boundary="qMm9M+Fa2AknHoGS"
+Content-Disposition: inline
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- README.txt | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
- create mode 100644 README.txt
 
-diff --git a/README.txt b/README.txt
-new file mode 100644
-index 000000000000..9b86c55aa3e0
---- /dev/null
-+++ b/README.txt
-@@ -0,0 +1,30 @@
-+Introduction
-+============
+--qMm9M+Fa2AknHoGS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Nov 24, 2014 at 04:17:12PM -0800, Andrew Bresticker wrote:
+> This series adds support for xHCI on NVIDIA Tegra SoCs.  This includes:
+>  - patches 1, 2, and 3: minor cleanups for mailbox framework and xHCI,
+>  - patches 4 and 5: adding a driver for the mailbox used to communicate
+>    with the xHCI controller's firmware,
+>  - patches 6 and 7: extending the XUSB pad controller driver to support
+>    the USB PHY types (UTMI, HSIC, and USB3),
+>  - patches 8 and 9: adding a xHCI host-controller driver, and
+>  - patches 10, 11, and 12: updating the relevant DT files.
+>=20
+> The mailbox driver (patch 5) has a compile-time dependency on patch 2 and
+> a run-time dependency on patch 3.  Both the PHY (patch 7) and host (patch=
+ 9)
+> drivers have compile-time dependencies on the mailbox driver.  The host
+> driver also has a run-time dependency on patch 1.  Because of this, this
+> entire series should probably go through the Tegra tree.  Patches 11 and =
+12
+> should probably not be merged until the controller firmware [0] lands in
+> linux-firmware since they disable the EHCI controllers.
+>=20
+> Tested on Venice2, Jetson TK1, and Big with a variety of USB2.0 and
+> USB3.0 memory sticks and ethernet dongles.  This has also been tested,
+> with additional out-of-tree patches, on a Tegra132-based board.
+>=20
+> Based on v3.18-rc6.  A branch with the entire series is available at:
+>   https://github.com/abrestic/linux/tree/tegra-xhci-v6
+>=20
+> Notes:
+>  - HSIC support is mostly untested and I think there are still some issues
+>    to work out there.  I do have a Tegra124 board with a HSIC hub so I'll
+>    try to sort those out later.
+>  - The XUSB padctl driver doesn't play nice with the existing Tegra USB2.0
+>    PHY driver, so all ports should be assigned to the XHCI controller.
+>=20
+> Based on work by:
+>   a lot of people, but from what I can tell from the L4T tree [1], the
+>   original authors of the Tegra xHCI driver are:
+>     Ajay Gupta <ajayg@nvidia.com>
+>     Bharath Yadav <byadav@nvidia.com>
+>=20
+> [0] https://patchwork.ozlabs.org/patch/400110/
+> [1] git://nv-tegra.nvidia.com/linux-3.10.git
+>=20
+> Changes from v5:
+>  - Addressed review comments from Jassi and Felipe.
+>=20
+> Changes from v4:
+>  - Made USB support optional in padctl driver.
+>  - Made usb3-port a pinconfig property again.
+>  - Cleaned up mbox_request_channel() error handling and allowed it to def=
+er
+>    probing (patch 3).
+>  - Minor xHCI (patch 1) and mailbox framework (patch 2) cleanups suggested
+>    by Thierry.
+>  - Addressed Thierry's review comments.
+>=20
+> Changes from v3:
+>  - Fixed USB2.0 flakiness on Jetson-TK1.
+>  - Switched to 32-bit DMA mask for host.
+>  - Addressed Stephen's review comments.
+>=20
+> Chagnes from v2:
+>  - Dropped mailbox channel specifier.  The mailbox driver allocates virtu=
+al
+>    channels backed by the single physical channel.
+>  - Added support for HS_CURR_LEVEL adjustment pinconfig property, which
+>    will be required for the Blaze board.
+>  - Addressed Stephen's review comments.
+>=20
+> Changes from v1:
+>  - Converted mailbox driver to use the common mailbox framework.
+>  - Fixed up host driver so that it can now be built and used as a module.
+>  - Addressed Stephen's review comments.
+>  - Misc. cleanups.
+>=20
+> Andrew Bresticker (11):
+>   xhci: Set shared HCD's hcd_priv in xhci_gen_setup
+>   mailbox: Make struct mbox_controller's ops field const
+>   of: Add NVIDIA Tegra XUSB mailbox binding
+>   mailbox: Add NVIDIA Tegra XUSB mailbox driver
+>   of: Update Tegra XUSB pad controller binding for USB
+>   pinctrl: tegra-xusb: Add USB PHY support
+>   of: Add NVIDIA Tegra xHCI controller binding
+>   usb: xhci: Add NVIDIA Tegra xHCI host-controller driver
+>   ARM: tegra: jetson-tk1: Add xHCI support
+>   ARM: tegra: Add Tegra124 XUSB mailbox and xHCI controller
+>   ARM: tegra: venice2: Add xHCI support
+>=20
+> Benson Leung (1):
+>   mailbox: Fix up error handling in mbox_request_channel()
+>=20
+>  .../bindings/mailbox/nvidia,tegra124-xusb-mbox.txt |   32 +
+>  .../pinctrl/nvidia,tegra124-xusb-padctl.txt        |   63 +-
+>  .../bindings/usb/nvidia,tegra124-xhci.txt          |  104 ++
+>  arch/arm/boot/dts/tegra124-jetson-tk1.dts          |   46 +-
+>  arch/arm/boot/dts/tegra124-venice2.dts             |   79 +-
+>  arch/arm/boot/dts/tegra124.dtsi                    |   41 +
+>  drivers/mailbox/Kconfig                            |    3 +
+>  drivers/mailbox/Makefile                           |    2 +
+>  drivers/mailbox/mailbox.c                          |   11 +-
+>  drivers/mailbox/tegra-xusb-mailbox.c               |  278 +++++
+>  drivers/pinctrl/Kconfig                            |    1 +
+>  drivers/pinctrl/pinctrl-tegra-xusb.c               | 1262 ++++++++++++++=
++++++-
+>  drivers/usb/host/Kconfig                           |   10 +
+>  drivers/usb/host/Makefile                          |    1 +
+>  drivers/usb/host/xhci-pci.c                        |    5 -
+>  drivers/usb/host/xhci-plat.c                       |    5 -
+>  drivers/usb/host/xhci-tegra.c                      |  931 +++++++++++++++
+>  drivers/usb/host/xhci.c                            |    6 +-
+>  include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h   |    7 +
+>  include/linux/mailbox_controller.h                 |    2 +-
+>  include/soc/tegra/xusb.h                           |   50 +
+>  21 files changed, 2852 insertions(+), 87 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/mailbox/nvidia,tegr=
+a124-xusb-mbox.txt
+>  create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra124=
+-xhci.txt
+>  create mode 100644 drivers/mailbox/tegra-xusb-mailbox.c
+>  create mode 100644 drivers/usb/host/xhci-tegra.c
+>  create mode 100644 include/soc/tegra/xusb.h
+
+Hi Andrew,
+
+Sorry for taking so awfully long to look at this. I've spent some time
+looking at various pieces of documentation and I concluded that
+representing the port assignment as muxing options doesn't seem right
+after all. Instead I've come up with an alternate proposal (attached).
+Could you take a look and see if that sounds reasonable to you?
+
+Thierry
+
+--qMm9M+Fa2AknHoGS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline; filename=patch
+Content-Transfer-Encoding: quoted-printable
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb=
+-padctl.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xus=
+b-padctl.txt
+index 4af09d6235c1..9ca9ca5f85c6 100644
+--- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl=
+=2Etxt
++++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl=
+=2Etxt
+@@ -29,10 +29,26 @@ Required properties:
+   - xusb
+=20
+ Optional properties:
+--------------------
+-- vbus-{0,1,2}-supply: VBUS regulator for the corresponding UTMI pad.
++--------------------
+ - vddio-hsic-supply: VDDIO regulator for the HSIC pads.
+=20
++PHY nodes:
++----------
 +
-+This project provides the manifest files that allow the repo tool to sync the
-+tegra-uboot-flasher tool.
++An optional child node named "phys" can contain nodes describing additional
++properties of each PHY. Only USB3 and UTMI PHYs can be complemented in this
++way, in which case the name of each node must match one of the following:
 +
-+For more details, see the various README files in the flasher scripts project
-+at https://github.com/NVIDIA/tegra-uboot-flasher-scripts.
++  usb3-0, usb3-1, utmi-0, utmi-1, utmi-2
 +
-+Submitting Changes
-+==================
++Required properties for USB3 PHYs:
++- nvidia,lanes: specifies the name of the lane that this USB3 PHY uses
++- nvidia,port: specifies the number of the USB2 port that is used for this
++  USB3 PHY
 +
-+To submit patches to this project, please use the following commands:
++Optional properties for UTMI PHYs:
++- vbus-supply: regulator providing the VBUS voltage for the UTMI pad
 +
-+* git format-patch --subject-prefix="flasher manifest PATCH"
+ Lane muxing:
+ ------------
+=20
+@@ -98,9 +114,7 @@ divided into four groups:
+=20
+     Valid functions for this group are: "pcie", "usb3", "sata", "rsvd".
+=20
+-    Only the nvidia,iddq, nvidia,usb2-port, and nvidia,usb3-port properties
+-    apply. The nvidia,usb2-port and nvidia,usb3-port properties are requir=
+ed
+-    when the function is usb3.
++    Only the nvidia,iddq property applies.
+=20
+ Example:
+ =3D=3D=3D=3D=3D=3D=3D=3D
+@@ -148,7 +162,24 @@ Board file extract:
+ 		pinctrl-0 =3D <&padctl_default>;
+ 		pinctrl-names =3D "default";
+=20
+-		vbus-2-supply =3D <&vdd_usb3_vbus>;
++		phys {
++			usb3-0 {
++				status =3D "okay";
 +
-+  Creates a patch file from your git commit.
++				nvidia,lanes =3D "pcie-0";
++				nvidia,port =3D <2>;
++			};
 +
-+* git send-email --to linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org *.patch
++			utmi-1 {
++				status =3D "okay";
++			};
 +
-+  Sends the patch by email to the Tegra mailing list.
++			utmi-2 {
++				status =3D "okay";
 +
-+Even though the primary upstream repository for this project is hosted on
-+github, contributions aren't accepted via github pull requests. Github pull
-+requests would bypass public code review on the project mailing list.
++				vbus-supply =3D <&vdd_usb3_vbus>;
++			};
++		};
+=20
+ 		padctl_default: pinmux {
+ 			otg {
+@@ -160,8 +191,6 @@ Board file extract:
+ 				nvidia,lanes =3D "pcie-0";
+ 				nvidia,function =3D "usb3";
+ 				nvidia,iddq =3D <0>;
+-				nvidia,usb2-port =3D <2>;
+-				nvidia,usb3-port =3D <0>;
+ 			};
+=20
+ 			pcie {
+diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/=
+tegra124-jetson-tk1.dts
+index 526826b790f8..bd7af1073d4c 100644
+--- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
++++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+@@ -1724,7 +1724,24 @@
+ 		pinctrl-0 =3D <&padctl_default>;
+ 		pinctrl-names =3D "default";
+=20
+-		vbus-2-supply =3D <&vdd_usb3_vbus>;
++		phys {
++			usb3-0 {
++				status =3D "okay";
 +
-+Patches should be signed off (include a signed-off-by line) to indicate your
-+acceptance of the code's license (see COPYING and the license header in each
-+file). See http://developercertificate.org/ for details of what signed-off-by
-+implies.
--- 
-1.9.1
++				nvidia,lanes =3D "pcie-0";
++				nvidia,port =3D <2>;
++			};
++
++			utmi-1 {
++				status =3D "okay";
++			};
++
++			utmi-2 {
++				status =3D "okay";
++
++				vbus-supply =3D <&vdd_usb3_vbus>;
++			};
++		};
+=20
+ 		padctl_default: pinmux {
+ 			otg {
+@@ -1736,8 +1753,6 @@
+ 				nvidia,lanes =3D "pcie-0";
+ 				nvidia,function =3D "usb3";
+ 				nvidia,iddq =3D <0>;
+-				nvidia,usb2-port =3D <2>;
+-				nvidia,usb3-port =3D <0>;
+ 			};
+=20
+ 			pcie {
+diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.d=
+tsi
+index c16c5e932a4c..31c3d0ee6305 100644
+--- a/arch/arm/boot/dts/tegra124.dtsi
++++ b/arch/arm/boot/dts/tegra124.dtsi
+@@ -685,6 +685,28 @@
+ 		mbox-names =3D "xusb";
+=20
+ 		#phy-cells =3D <1>;
++
++		phys {
++			usb3-0 {
++				status =3D "disabled";
++			};
++
++			usb3-1 {
++				status =3D "disabled";
++			};
++
++			utmi-0 {
++				status =3D "disabled";
++			};
++
++			utmi-1 {
++				status =3D "disabled";
++			};
++
++			utmi-2 {
++				status =3D "disabled";
++			};
++		};
+ 	};
+=20
+ 	sdhci@0,700b0000 {
+diff --git a/drivers/pinctrl/pinctrl-tegra-xusb.c b/drivers/pinctrl/pinctrl=
+-tegra-xusb.c
+index cfda6ad6457f..2c1ec538402d 100644
+--- a/drivers/pinctrl/pinctrl-tegra-xusb.c
++++ b/drivers/pinctrl/pinctrl-tegra-xusb.c
+@@ -254,13 +254,25 @@ struct tegra_xusb_fuse_calibration {
+ 	u32 hs_squelch_level;
+ };
+=20
+-struct tegra_xusb_usb3_port {
+-	unsigned int lane;
++struct tegra_xusb_usb3_phy {
++	struct tegra_xusb_padctl *padctl;
+ 	bool context_saved;
+-	u32 tap1_val;
+-	u32 amp_val;
+-	u32 ctle_z_val;
+-	u32 ctle_g_val;
++	unsigned int index;
++	unsigned int lane;
++	unsigned int port;
++
++	u32 tap1;
++	u32 amp;
++	u32 ctle_z;
++	u32 ctle_g;
++};
++
++struct tegra_xusb_utmi_phy {
++	struct tegra_xusb_padctl *padctl;
++	unsigned int index;
++
++	unsigned int hs_curr_level_offset;
++	struct regulator *supply;
+ };
+=20
+ struct tegra_xusb_padctl {
+@@ -284,10 +296,7 @@ struct tegra_xusb_padctl {
+ 	struct mbox_client mbox_client;
+ 	struct mbox_chan *mbox_chan;
+=20
+-	struct tegra_xusb_usb3_port usb3_ports[TEGRA_XUSB_USB3_PHYS];
+ 	unsigned int utmi_enable;
+-	unsigned int hs_curr_level_offset[TEGRA_XUSB_UTMI_PHYS];
+-	struct regulator *vbus[TEGRA_XUSB_UTMI_PHYS];
+ 	struct regulator *vddio_hsic;
+ };
+=20
+@@ -337,19 +346,6 @@ static inline bool lane_is_pcie_or_sata(unsigned int l=
+ane)
+ 	return lane >=3D PIN_PCIE_0 && lane <=3D PIN_SATA_0;
+ }
+=20
+-static int lane_to_usb3_port(struct tegra_xusb_padctl *padctl,
+-			     unsigned int lane)
+-{
+-	unsigned int i;
+-
+-	for (i =3D 0; i < TEGRA_XUSB_USB3_PHYS; i++) {
+-		if (padctl->usb3_ports[i].lane =3D=3D lane)
+-			return i;
+-	}
+-
+-	return -EINVAL;
+-}
+-
+ static int tegra_xusb_padctl_get_groups_count(struct pinctrl_dev *pinctrl)
+ {
+ 	struct tegra_xusb_padctl *padctl =3D pinctrl_dev_get_drvdata(pinctrl);
+@@ -367,8 +363,6 @@ static const char *tegra_xusb_padctl_get_group_name(str=
+uct pinctrl_dev *pinctrl,
+=20
+ enum tegra_xusb_padctl_param {
+ 	TEGRA_XUSB_PADCTL_IDDQ,
+-	TEGRA_XUSB_PADCTL_USB3_PORT,
+-	TEGRA_XUSB_PADCTL_USB2_PORT,
+ 	TEGRA_XUSB_PADCTL_HSIC_STROBE_TRIM,
+ 	TEGRA_XUSB_PADCTL_HSIC_RX_STROBE_TRIM,
+ 	TEGRA_XUSB_PADCTL_HSIC_RX_DATA_TRIM,
+@@ -385,8 +379,6 @@ static const struct tegra_xusb_padctl_property {
+ 	enum tegra_xusb_padctl_param param;
+ } properties[] =3D {
+ 	{ "nvidia,iddq", TEGRA_XUSB_PADCTL_IDDQ },
+-	{ "nvidia,usb3-port", TEGRA_XUSB_PADCTL_USB3_PORT },
+-	{ "nvidia,usb2-port", TEGRA_XUSB_PADCTL_USB2_PORT },
+ 	{ "nvidia,hsic-strobe-trim", TEGRA_XUSB_PADCTL_HSIC_STROBE_TRIM },
+ 	{ "nvidia,hsic-rx-strobe-trim", TEGRA_XUSB_PADCTL_HSIC_RX_STROBE_TRIM },
+ 	{ "nvidia,hsic-rx-data-trim", TEGRA_XUSB_PADCTL_HSIC_RX_DATA_TRIM },
+@@ -604,28 +596,6 @@ static int tegra_xusb_padctl_pinconf_group_get(struct =
+pinctrl_dev *pinctrl,
+ 			value =3D 1;
+ 		break;
+=20
+-	case TEGRA_XUSB_PADCTL_USB3_PORT:
+-		value =3D lane_to_usb3_port(padctl, group);
+-		if (value < 0) {
+-			dev_err(padctl->dev,
+-				"Pin %d not mapped to USB3 port\n", group);
+-			return -EINVAL;
+-		}
+-		break;
+-
+-	case TEGRA_XUSB_PADCTL_USB2_PORT:
+-		port =3D lane_to_usb3_port(padctl, group);
+-		if (port < 0) {
+-			dev_err(padctl->dev,
+-				"Pin %d not mapped to USB3 port\n", group);
+-			return -EINVAL;
+-		}
+-
+-		value =3D padctl_readl(padctl, XUSB_PADCTL_SS_PORT_MAP) >>
+-			XUSB_PADCTL_SS_PORT_MAP_PORTX_SHIFT(port);
+-		value &=3D XUSB_PADCTL_SS_PORT_MAP_PORT_MASK;
+-		break;
+-
+ 	case TEGRA_XUSB_PADCTL_HSIC_STROBE_TRIM:
+ 		if (!lane_is_hsic(group)) {
+ 			dev_err(padctl->dev, "Pin %d not an HSIC\n", group);
+@@ -728,10 +698,15 @@ static int tegra_xusb_padctl_pinconf_group_get(struct=
+ pinctrl_dev *pinctrl,
+ 			dev_err(padctl->dev, "Pin %d is not an OTG pad\n",
+ 				group);
+ 			return -EINVAL;
+-		}
++		} else {
++			unsigned int index =3D group - PIN_OTG_0;
++			struct tegra_xusb_utmi_phy *utmi;
++			struct phy *phy;
+=20
+-		port =3D group - PIN_OTG_0;
+-		value =3D padctl->hs_curr_level_offset[port];
++			phy =3D padctl->phys[TEGRA_XUSB_PADCTL_UTMI_P0 + index];
++			utmi =3D phy_get_drvdata(phy);
++			value =3D utmi->hs_curr_level_offset;
++		}
+ 		break;
+=20
+ 	default:
+@@ -779,50 +754,6 @@ static int tegra_xusb_padctl_pinconf_group_set(struct =
+pinctrl_dev *pinctrl,
+ 			padctl_writel(padctl, regval, lane->offset);
+ 			break;
+=20
+-		case TEGRA_XUSB_PADCTL_USB3_PORT:
+-			if (value >=3D TEGRA_XUSB_USB3_PHYS) {
+-				dev_err(padctl->dev, "Invalid USB3 port: %lu\n",
+-					value);
+-				return -EINVAL;
+-			}
+-			if (!lane_is_pcie_or_sata(group)) {
+-				dev_err(padctl->dev,
+-					"USB3 port not applicable for pin %d\n",
+-					group);
+-				return -EINVAL;
+-			}
+-
+-			padctl->usb3_ports[value].lane =3D group;
+-			break;
+-
+-		case TEGRA_XUSB_PADCTL_USB2_PORT:
+-			if (value >=3D TEGRA_XUSB_UTMI_PHYS) {
+-				dev_err(padctl->dev, "Invalid USB2 port: %lu\n",
+-					value);
+-				return -EINVAL;
+-			}
+-			if (!lane_is_pcie_or_sata(group)) {
+-				dev_err(padctl->dev,
+-					"USB2 port not applicable for pin %d\n",
+-					group);
+-				return -EINVAL;
+-			}
+-			port =3D lane_to_usb3_port(padctl, group);
+-			if (port < 0) {
+-				dev_err(padctl->dev,
+-					"Pin %d not mapped to USB3 port\n",
+-					group);
+-				return -EINVAL;
+-			}
+-
+-			regval =3D padctl_readl(padctl, XUSB_PADCTL_SS_PORT_MAP);
+-			regval &=3D ~(XUSB_PADCTL_SS_PORT_MAP_PORT_MASK <<
+-				    XUSB_PADCTL_SS_PORT_MAP_PORTX_SHIFT(port));
+-			regval |=3D value <<
+-				XUSB_PADCTL_SS_PORT_MAP_PORTX_SHIFT(port);
+-			padctl_writel(padctl, regval, XUSB_PADCTL_SS_PORT_MAP);
+-			break;
+-
+ 		case TEGRA_XUSB_PADCTL_HSIC_STROBE_TRIM:
+ 			if (!lane_is_hsic(group)) {
+ 				dev_err(padctl->dev, "Pin %d not an HSIC\n",
+@@ -972,11 +903,17 @@ static int tegra_xusb_padctl_pinconf_group_set(struct=
+ pinctrl_dev *pinctrl,
+ 				dev_err(padctl->dev,
+ 					"Pin %d is not an OTG pad\n", group);
+ 				return -EINVAL;
+-			}
++			} else {
++				unsigned int index =3D group - PIN_OTG_0;
++				struct tegra_xusb_utmi_phy *utmi;
++				struct phy *phy;
+=20
+-			port =3D group - PIN_OTG_0;
+-			value &=3D XUSB_PADCTL_USB2_OTG_PAD_CTL0_HS_CURR_LEVEL_MASK;
+-			padctl->hs_curr_level_offset[port] =3D value;
++				phy =3D padctl->phys[TEGRA_XUSB_PADCTL_UTMI_P0 + index];
++				utmi =3D phy_get_drvdata(phy);
++
++				value &=3D XUSB_PADCTL_USB2_OTG_PAD_CTL0_HS_CURR_LEVEL_MASK;
++				utmi->hs_curr_level_offset =3D value;
++			}
+ 			break;
+=20
+ 		default:
+@@ -1265,36 +1202,46 @@ static const struct phy_ops sata_phy_ops =3D {
+ 	.owner =3D THIS_MODULE,
+ };
+=20
+-static int usb3_phy_to_port(struct phy *phy)
++static int usb3_phy_init(struct phy *phy)
+ {
+-	struct tegra_xusb_padctl *padctl =3D phy_get_drvdata(phy);
+-	unsigned int i;
++	struct tegra_xusb_usb3_phy *usb =3D phy_get_drvdata(phy);
++	struct tegra_xusb_padctl *padctl =3D usb->padctl;
++	u32 value;
++	int err;
+=20
+-	for (i =3D 0; i < TEGRA_XUSB_USB3_PHYS; i++) {
+-		if (phy =3D=3D padctl->phys[TEGRA_XUSB_PADCTL_USB3_P0 + i])
+-			return i;
+-	}
+-	WARN_ON(1);
++	err =3D tegra_xusb_padctl_enable(padctl);
++	if (err < 0)
++		return err;
+=20
+-	return -EINVAL;
++	value =3D padctl_readl(padctl, XUSB_PADCTL_SS_PORT_MAP);
++	value &=3D ~(XUSB_PADCTL_SS_PORT_MAP_PORT_MASK <<
++		   XUSB_PADCTL_SS_PORT_MAP_PORTX_SHIFT(usb->index));
++	value |=3D usb->port <<
++		 XUSB_PADCTL_SS_PORT_MAP_PORTX_SHIFT(usb->index);
++	padctl_writel(padctl, value, XUSB_PADCTL_SS_PORT_MAP);
++
++	return 0;
+ }
+=20
+-static int usb3_phy_power_on(struct phy *phy)
++static int usb3_phy_exit(struct phy *phy)
+ {
+-	struct tegra_xusb_padctl *padctl =3D phy_get_drvdata(phy);
+-	int port =3D usb3_phy_to_port(phy);
+-	unsigned int lane;
+-	u32 value, offset;
++	struct tegra_xusb_usb3_phy *usb =3D phy_get_drvdata(phy);
++	struct tegra_xusb_padctl *padctl =3D usb->padctl;
++	u32 value;
+=20
+-	if (port < 0)
+-		return port;
++	value =3D padctl_readl(padctl, XUSB_PADCTL_SS_PORT_MAP);
++	value |=3D 0x7 << XUSB_PADCTL_SS_PORT_MAP_PORTX_SHIFT(usb->index);
++	padctl_writel(padctl, value, XUSB_PADCTL_SS_PORT_MAP);
+=20
+-	lane =3D padctl->usb3_ports[port].lane;
+-	if (!lane_is_pcie_or_sata(lane)) {
+-		dev_err(padctl->dev, "USB3 PHY %d mapped to invalid lane: %d\n",
+-			port, lane);
+-		return -EINVAL;
+-	}
++	return tegra_xusb_padctl_disable(padctl);
++}
++
++static int usb3_phy_power_on(struct phy *phy)
++{
++	struct tegra_xusb_usb3_phy *usb =3D phy_get_drvdata(phy);
++	struct tegra_xusb_padctl *padctl =3D usb->padctl;
++	unsigned int port =3D usb->index;
++	u32 value, offset;
+=20
+ 	value =3D padctl_readl(padctl, XUSB_PADCTL_IOPHY_USB3_PADX_CTL2(port));
+ 	value &=3D ~((XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_WANDER_MASK <<
+@@ -1309,34 +1256,34 @@ static int usb3_phy_power_on(struct phy *phy)
+ 		  XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_CDR_CNTL_SHIFT) |
+ 		 (padctl->soc->rx_eq <<
+ 		  XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_SHIFT);
+-	if (padctl->usb3_ports[port].context_saved) {
++	if (usb->context_saved) {
+ 		value &=3D ~((XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_G_MASK <<
+ 			    XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_G_SHIFT) |
+ 			   (XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_Z_MASK <<
+ 			    XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_Z_SHIFT));
+-		value |=3D (padctl->usb3_ports[port].ctle_g_val <<
++		value |=3D (usb->ctle_g <<
+ 			  XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_G_SHIFT) |
+-			 (padctl->usb3_ports[port].ctle_z_val <<
++			 (usb->ctle_z <<
+ 			  XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_Z_SHIFT);
+ 	}
+ 	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_USB3_PADX_CTL2(port));
+=20
+ 	value =3D padctl->soc->dfe_cntl;
+-	if (padctl->usb3_ports[port].context_saved) {
++	if (usb->context_saved) {
+ 		value &=3D ~((XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_TAP_MASK <<
+ 			    XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_TAP_SHIFT) |
+ 			   (XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_AMP_MASK <<
+ 			    XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_AMP_SHIFT));
+-		value |=3D (padctl->usb3_ports[port].tap1_val <<
++		value |=3D (usb->tap1 <<
+ 			  XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_TAP_SHIFT) |
+-			 (padctl->usb3_ports[port].amp_val <<
++			 (usb->amp <<
+ 			  XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_AMP_SHIFT);
+ 	}
+ 	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_USB3_PADX_CTL4(port));
+=20
+-	offset =3D (lane =3D=3D PIN_SATA_0) ?
++	offset =3D (usb->lane =3D=3D PIN_SATA_0) ?
+ 		XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL2 :
+-		XUSB_PADCTL_IOPHY_MISC_PAD_PX_CTL2(lane - PIN_PCIE_0);
++		XUSB_PADCTL_IOPHY_MISC_PAD_PX_CTL2(usb->lane - PIN_PCIE_0);
+ 	value =3D padctl_readl(padctl, offset);
+ 	value &=3D ~(XUSB_PADCTL_IOPHY_MISC_PAD_CTL2_SPARE_IN_MASK <<
+ 		   XUSB_PADCTL_IOPHY_MISC_PAD_CTL2_SPARE_IN_SHIFT);
+@@ -1344,15 +1291,15 @@ static int usb3_phy_power_on(struct phy *phy)
+ 		XUSB_PADCTL_IOPHY_MISC_PAD_CTL2_SPARE_IN_SHIFT;
+ 	padctl_writel(padctl, value, offset);
+=20
+-	offset =3D (lane =3D=3D PIN_SATA_0) ?
++	offset =3D (usb->lane =3D=3D PIN_SATA_0) ?
+ 		XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL5 :
+-		XUSB_PADCTL_IOPHY_MISC_PAD_PX_CTL5(lane - PIN_PCIE_0);
++		XUSB_PADCTL_IOPHY_MISC_PAD_PX_CTL5(usb->lane - PIN_PCIE_0);
+ 	value =3D padctl_readl(padctl, offset);
+ 	value |=3D XUSB_PADCTL_IOPHY_MISC_PAD_CTL5_RX_QEYE_EN;
+ 	padctl_writel(padctl, value, offset);
+=20
+ 	/* Enable SATA PHY when SATA lane is used */
+-	if (lane =3D=3D PIN_SATA_0) {
++	if (usb->lane =3D=3D PIN_SATA_0) {
+ 		value =3D padctl_readl(padctl, XUSB_PADCTL_IOPHY_PLL_S0_CTL1);
+ 		value &=3D ~(XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL0_REFCLK_NDIV_MASK <<
+ 			   XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL0_REFCLK_NDIV_SHIFT);
+@@ -1401,13 +1348,11 @@ static int usb3_phy_power_on(struct phy *phy)
+=20
+ static int usb3_phy_power_off(struct phy *phy)
+ {
+-	struct tegra_xusb_padctl *padctl =3D phy_get_drvdata(phy);
+-	int port =3D usb3_phy_to_port(phy);
++	struct tegra_xusb_usb3_phy *usb =3D phy_get_drvdata(phy);
++	struct tegra_xusb_padctl *padctl =3D usb->padctl;
++	unsigned int port =3D usb->index;
+ 	u32 value;
+=20
+-	if (port < 0)
+-		return port;
+-
+ 	value =3D padctl_readl(padctl, XUSB_PADCTL_ELPG_PROGRAM);
+ 	value |=3D XUSB_PADCTL_ELPG_PROGRAM_SSPX_ELPG_CLAMP_EN_EARLY(port);
+ 	padctl_writel(padctl, value, XUSB_PADCTL_ELPG_PROGRAM);
+@@ -1427,20 +1372,21 @@ static int usb3_phy_power_off(struct phy *phy)
+ 	return 0;
+ }
+=20
+-static int usb3_phy_save_context(struct tegra_xusb_padctl *padctl,
+-				 unsigned int port)
++static int tegra_xusb_usb3_phy_save_context(struct tegra_xusb_padctl *padc=
+tl,
++					    unsigned int port)
+ {
+-	unsigned int lane =3D padctl->usb3_ports[port].lane;
++	struct tegra_xusb_usb3_phy *usb;
+ 	u32 value, offset;
+=20
+ 	if (port >=3D TEGRA_XUSB_USB3_PHYS)
+ 		return -EINVAL;
+=20
+-	padctl->usb3_ports[port].context_saved =3D true;
++	usb =3D phy_get_drvdata(padctl->phys[TEGRA_XUSB_PADCTL_USB3_P0 + port]);
++	usb->context_saved =3D true;
+=20
+-	offset =3D (lane =3D=3D PIN_SATA_0) ?
++	offset =3D (usb->lane =3D=3D PIN_SATA_0) ?
+ 		XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL6 :
+-		XUSB_PADCTL_IOPHY_MISC_PAD_PX_CTL6(lane - PIN_PCIE_0);
++		XUSB_PADCTL_IOPHY_MISC_PAD_PX_CTL6(usb->lane - PIN_PCIE_0);
+=20
+ 	value =3D padctl_readl(padctl, offset);
+ 	value &=3D ~(XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_MASK <<
+@@ -1451,8 +1397,7 @@ static int usb3_phy_save_context(struct tegra_xusb_pa=
+dctl *padctl,
+=20
+ 	value =3D padctl_readl(padctl, offset) >>
+ 		XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SHIFT;
+-	padctl->usb3_ports[port].tap1_val =3D value &
+-		XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_TAP_MASK;
++	usb->tap1 =3D value & XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_TAP_MASK;
+=20
+ 	value =3D padctl_readl(padctl, offset);
+ 	value &=3D ~(XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_MASK <<
+@@ -1463,17 +1408,16 @@ static int usb3_phy_save_context(struct tegra_xusb_=
+padctl *padctl,
+=20
+ 	value =3D padctl_readl(padctl, offset) >>
+ 		XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SHIFT;
+-	padctl->usb3_ports[port].amp_val =3D value &
+-		XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_AMP_MASK;
++	usb->amp =3D value & XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_AMP_MASK;
+=20
+ 	value =3D padctl_readl(padctl, XUSB_PADCTL_IOPHY_USB3_PADX_CTL4(port));
+ 	value &=3D ~((XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_TAP_MASK <<
+ 		    XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_TAP_SHIFT) |
+ 		   (XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_AMP_MASK <<
+ 		    XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_AMP_SHIFT));
+-	value |=3D (padctl->usb3_ports[port].tap1_val <<
++	value |=3D (usb->tap1 <<
+ 		  XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_TAP_SHIFT) |
+-		 (padctl->usb3_ports[port].amp_val <<
++		 (usb->amp <<
+ 		  XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_AMP_SHIFT);
+ 	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_USB3_PADX_CTL4(port));
+=20
+@@ -1493,7 +1437,7 @@ static int usb3_phy_save_context(struct tegra_xusb_pa=
+dctl *padctl,
+=20
+ 	value =3D padctl_readl(padctl, offset) >>
+ 		XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SHIFT;
+-	padctl->usb3_ports[port].ctle_g_val =3D value &
++	usb->ctle_g =3D value &
+ 		XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_G_Z_MASK;
+=20
+ 	value =3D padctl_readl(padctl, offset);
+@@ -1505,7 +1449,7 @@ static int usb3_phy_save_context(struct tegra_xusb_pa=
+dctl *padctl,
+=20
+ 	value =3D padctl_readl(padctl, offset) >>
+ 		XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SHIFT;
+-	padctl->usb3_ports[port].ctle_z_val =3D value &
++	usb->ctle_z =3D value &
+ 		XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_G_Z_MASK;
+=20
+ 	value =3D padctl_readl(padctl, XUSB_PADCTL_IOPHY_USB3_PADX_CTL2(port));
+@@ -1513,9 +1457,9 @@ static int usb3_phy_save_context(struct tegra_xusb_pa=
+dctl *padctl,
+ 		    XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_G_SHIFT) |
+ 		   (XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_Z_MASK <<
+ 		    XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_Z_SHIFT));
+-	value |=3D (padctl->usb3_ports[port].ctle_g_val <<
++	value |=3D (usb->ctle_g <<
+ 		  XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_G_SHIFT) |
+-		 (padctl->usb3_ports[port].ctle_z_val <<
++		 (usb->ctle_z <<
+ 		  XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_Z_SHIFT);
+ 	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_USB3_PADX_CTL2(port));
+=20
+@@ -1523,36 +1467,34 @@ static int usb3_phy_save_context(struct tegra_xusb_=
+padctl *padctl,
+ }
+=20
+ static const struct phy_ops usb3_phy_ops =3D {
+-	.init =3D tegra_xusb_phy_init,
+-	.exit =3D tegra_xusb_phy_exit,
++	.init =3D usb3_phy_init,
++	.exit =3D usb3_phy_exit,
+ 	.power_on =3D usb3_phy_power_on,
+ 	.power_off =3D usb3_phy_power_off,
+ 	.owner =3D THIS_MODULE,
+ };
+=20
+-static int utmi_phy_to_port(struct phy *phy)
++static int utmi_phy_init(struct phy *phy)
+ {
+-	struct tegra_xusb_padctl *padctl =3D phy_get_drvdata(phy);
+-	unsigned int i;
++	struct tegra_xusb_utmi_phy *utmi =3D phy_get_drvdata(phy);
+=20
+-	for (i =3D 0; i < TEGRA_XUSB_UTMI_PHYS; i++) {
+-		if (phy =3D=3D padctl->phys[TEGRA_XUSB_PADCTL_UTMI_P0 + i])
+-			return i;
+-	}
+-	WARN_ON(1);
++	return tegra_xusb_padctl_enable(utmi->padctl);
++}
+=20
+-	return -EINVAL;
++static int utmi_phy_exit(struct phy *phy)
++{
++	struct tegra_xusb_utmi_phy *utmi =3D phy_get_drvdata(phy);
++
++	return tegra_xusb_padctl_disable(utmi->padctl);
+ }
+=20
+ static int utmi_phy_power_on(struct phy *phy)
+ {
+-	struct tegra_xusb_padctl *padctl =3D phy_get_drvdata(phy);
+-	int port =3D utmi_phy_to_port(phy);
+-	int err;
++	struct tegra_xusb_utmi_phy *utmi =3D phy_get_drvdata(phy);
++	struct tegra_xusb_padctl *padctl =3D utmi->padctl;
++	unsigned int port =3D utmi->index;
+ 	u32 value;
+-
+-	if (port < 0)
+-		return port;
++	int err;
+=20
+ 	value =3D padctl_readl(padctl, XUSB_PADCTL_USB2_BIAS_PAD_CTL0);
+ 	value &=3D ~((XUSB_PADCTL_USB2_BIAS_PAD_CTL0_HS_SQUELCH_LEVEL_MASK <<
+@@ -1583,7 +1525,7 @@ static int utmi_phy_power_on(struct phy *phy)
+ 		   XUSB_PADCTL_USB2_OTG_PAD_CTL0_PD2 |
+ 		   XUSB_PADCTL_USB2_OTG_PAD_CTL0_PD_ZI);
+ 	value |=3D (padctl->calib.hs_curr_level[port] +
+-		  padctl->hs_curr_level_offset[port]) <<
++		  utmi->hs_curr_level_offset) <<
+ 		XUSB_PADCTL_USB2_OTG_PAD_CTL0_HS_CURR_LEVEL_SHIFT;
+ 	value |=3D padctl->soc->hs_slew <<
+ 		XUSB_PADCTL_USB2_OTG_PAD_CTL0_HS_SLEW_SHIFT;
+@@ -1605,7 +1547,7 @@ static int utmi_phy_power_on(struct phy *phy)
+ 		  XUSB_PADCTL_USB2_OTG_PAD_CTL1_HS_IREF_CAP_SHIFT);
+ 	padctl_writel(padctl, value, XUSB_PADCTL_USB2_OTG_PADX_CTL1(port));
+=20
+-	err =3D regulator_enable(padctl->vbus[port]);
++	err =3D regulator_enable(utmi->supply);
+ 	if (err)
+ 		return err;
+=20
+@@ -1625,15 +1567,10 @@ out:
+=20
+ static int utmi_phy_power_off(struct phy *phy)
+ {
+-	struct tegra_xusb_padctl *padctl =3D phy_get_drvdata(phy);
+-	int port =3D utmi_phy_to_port(phy);
++	struct tegra_xusb_utmi_phy *utmi =3D phy_get_drvdata(phy);
++	struct tegra_xusb_padctl *padctl =3D utmi->padctl;
+ 	u32 value;
+=20
+-	if (port < 0)
+-		return port;
+-
+-	regulator_disable(padctl->vbus[port]);
+-
+ 	mutex_lock(&padctl->lock);
+=20
+ 	if (WARN_ON(padctl->utmi_enable =3D=3D 0))
+@@ -1647,13 +1584,14 @@ static int utmi_phy_power_off(struct phy *phy)
+ 	padctl_writel(padctl, value, XUSB_PADCTL_USB2_BIAS_PAD_CTL0);
+=20
+ out:
++	regulator_disable(utmi->supply);
+ 	mutex_unlock(&padctl->lock);
+ 	return 0;
+ }
+=20
+ static const struct phy_ops utmi_phy_ops =3D {
+-	.init =3D tegra_xusb_phy_init,
+-	.exit =3D tegra_xusb_phy_exit,
++	.init =3D utmi_phy_init,
++	.exit =3D utmi_phy_exit,
+ 	.power_on =3D utmi_phy_power_on,
+ 	.power_off =3D utmi_phy_power_off,
+ 	.owner =3D THIS_MODULE,
+@@ -1757,7 +1695,7 @@ static void tegra_xusb_phy_mbox_work(struct work_stru=
+ct *work)
+ 	switch (msg->cmd) {
+ 	case MBOX_CMD_SAVE_DFE_CTLE_CTX:
+ 		resp.data =3D msg->data;
+-		if (usb3_phy_save_context(padctl, msg->data) < 0)
++		if (tegra_xusb_usb3_phy_save_context(padctl, msg->data) < 0)
+ 			resp.cmd =3D MBOX_CMD_NAK;
+ 		else
+ 			resp.cmd =3D MBOX_CMD_ACK;
+@@ -2027,34 +1965,189 @@ static int tegra_xusb_read_fuse_calibration(struct=
+ tegra_xusb_padctl *padctl)
+ 	return 0;
+ }
+=20
++static int tegra_xusb_padctl_find_pin_by_name(struct tegra_xusb_padctl *pa=
+dctl,
++					      const char *name)
++{
++	unsigned int i;
++
++	for (i =3D 0; i < padctl->soc->num_pins; i++) {
++		const struct pinctrl_pin_desc *pin =3D &padctl->soc->pins[i];
++
++		if (strcmp(pin->name, name) =3D=3D 0)
++			return pin->number;
++	}
++
++	return -ENODEV;
++}
++
++static struct device_node *
++tegra_xusb_padctl_find_phy_node(struct tegra_xusb_padctl *padctl,
++				const char *type, unsigned int index)
++{
++	struct device_node *np;
++
++	np =3D of_find_node_by_name(padctl->dev->of_node, "phys");
++	if (np) {
++		struct device_node *of_node;
++		char *name;
++
++		name =3D kasprintf(GFP_KERNEL, "%s-%u", type, index);
++		of_node =3D of_find_node_by_name(np, name);
++		kfree(name);
++
++		of_node_put(np);
++		np =3D of_node;
++	}
++
++	return np;
++}
++
++static int tegra_xusb_usb3_phy_parse_dt(struct phy *phy)
++{
++	struct tegra_xusb_usb3_phy *usb =3D phy_get_drvdata(phy);
++	struct device_node *np =3D phy->dev.of_node;
++	const char *lane =3D NULL;
++	u32 value;
++	int err;
++
++	if (!np)
++		return 0;
++
++	/* only a single lane can be mapped to each USB3 port */
++	err =3D of_property_count_strings(np, "nvidia,lanes");
++	if (err < 0 && err !=3D -EINVAL) {
++		dev_err(&phy->dev, "failed to get number of lanes: %d\n", err);
++		return err;
++	}
++
++	if (err > 1)
++		dev_warn(&phy->dev, "found %d lanes, expected 1\n", err);
++
++	err =3D of_property_read_string(np, "nvidia,lanes", &lane);
++	if (err < 0) {
++		dev_err(&phy->dev, "failed to read lanes: %d\n", err);
++		return err;
++	}
++
++	if (lane) {
++		err =3D tegra_xusb_padctl_find_pin_by_name(usb->padctl, lane);
++		if (err < 0) {
++			dev_err(&phy->dev, "unknown pin: %s\n", lane);
++			return err;
++		}
++
++		if (!lane_is_pcie_or_sata(err)) {
++			dev_err(&phy->dev,
++				"USB3 PHY %u mapped to invalid lane %s\n",
++				usb->index, lane);
++			return -EINVAL;
++		}
++
++		usb->lane =3D err;
++	}
++
++	err =3D of_property_read_u32_index(np, "nvidia,port", 0, &value);
++	if (err < 0) {
++		dev_err(&phy->dev, "failed to read port: %d\n", err);
++		return err;
++	}
++
++	usb->port =3D value;
++
++	return 0;
++}
++
++static struct phy *tegra_xusb_usb3_phy_create(struct tegra_xusb_padctl *pa=
+dctl,
++					      unsigned int index)
++{
++	struct tegra_xusb_usb3_phy *usb;
++	struct device_node *np;
++	struct phy *phy;
++	int err;
++
++	/*
++	 * If there is no supplemental configuration in the device tree the
++	 * PHY is unusable. But it is valid to configure only a single PHY,
++	 * hence return NULL instead of an error to mark the PHY as not in
++	 * use. Similarly if the PHY is marked as disabled, don't register
++	 * it.
++	 */
++	np =3D tegra_xusb_padctl_find_phy_node(padctl, "usb3", index);
++	if (!np || !of_device_is_available(np))
++		return NULL;
++
++	phy =3D devm_phy_create(padctl->dev, np, &usb3_phy_ops);
++	if (IS_ERR(phy))
++		return phy;
++
++	usb =3D devm_kzalloc(&phy->dev, sizeof(*usb), GFP_KERNEL);
++	if (!usb)
++		return ERR_PTR(-ENOMEM);
++
++	phy_set_drvdata(phy, usb);
++	usb->padctl =3D padctl;
++	usb->index =3D index;
++
++	err =3D tegra_xusb_usb3_phy_parse_dt(phy);
++	if (err < 0)
++		return ERR_PTR(err);
++
++	return phy;
++}
++
++static struct phy *tegra_xusb_utmi_phy_create(struct tegra_xusb_padctl *pa=
+dctl,
++					      unsigned int index)
++{
++	struct tegra_xusb_utmi_phy *utmi;
++	struct device_node *np;
++	struct phy *phy;
++
++	/*
++	 * UTMI PHYs don't require additional properties, but if the PHY is
++	 * marked as disabled there is no reason to register it.
++	 */
++	np =3D tegra_xusb_padctl_find_phy_node(padctl, "utmi", index);
++	if (np && !of_device_is_available(np))
++		return NULL;
++
++	phy =3D devm_phy_create(padctl->dev, np, &utmi_phy_ops);
++	if (IS_ERR(phy))
++		return ERR_CAST(phy);
++
++	utmi =3D devm_kzalloc(&phy->dev, sizeof(*utmi), GFP_KERNEL);
++	if (!utmi)
++		return ERR_PTR(-ENOMEM);
++
++	phy_set_drvdata(phy, utmi);
++	utmi->padctl =3D padctl;
++	utmi->index =3D index;
++
++	utmi->supply =3D devm_regulator_get(&phy->dev, "vbus");
++	if (IS_ERR(utmi->supply))
++		return ERR_CAST(utmi->supply);
++
++	return phy;
++}
++
+ static int tegra_xusb_setup_usb(struct tegra_xusb_padctl *padctl)
+ {
+ 	struct phy *phy;
+ 	unsigned int i;
+=20
+ 	for (i =3D 0; i < TEGRA_XUSB_USB3_PHYS; i++) {
+-		phy =3D devm_phy_create(padctl->dev, NULL, &usb3_phy_ops);
++		phy =3D tegra_xusb_usb3_phy_create(padctl, i);
+ 		if (IS_ERR(phy))
+ 			return PTR_ERR(phy);
+=20
+ 		padctl->phys[TEGRA_XUSB_PADCTL_USB3_P0 + i] =3D phy;
+-		phy_set_drvdata(phy, padctl);
+ 	}
+=20
+ 	for (i =3D 0; i < TEGRA_XUSB_UTMI_PHYS; i++) {
+-		char reg_name[sizeof("vbus-N")];
+-
+-		sprintf(reg_name, "vbus-%d", i);
+-		padctl->vbus[i] =3D devm_regulator_get(padctl->dev, reg_name);
+-		if (IS_ERR(padctl->vbus[i]))
+-			return PTR_ERR(padctl->vbus[i]);
+-
+-		phy =3D devm_phy_create(padctl->dev, NULL, &utmi_phy_ops);
++		phy =3D tegra_xusb_utmi_phy_create(padctl, i);
+ 		if (IS_ERR(phy))
+ 			return PTR_ERR(phy);
+=20
+ 		padctl->phys[TEGRA_XUSB_PADCTL_UTMI_P0 + i] =3D phy;
+-		phy_set_drvdata(phy, padctl);
+ 	}
+=20
+ 	padctl->vddio_hsic =3D devm_regulator_get(padctl->dev, "vddio-hsic");
+
+--qMm9M+Fa2AknHoGS--
+
+--/NkBOFFp2J2Af1nK
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJU7fHGAAoJEN0jrNd/PrOhp6gP/0sgv+CvJmfPTvVgNIw9XL5O
+R25+DEtnf1DPqjKz04kkR1SpduHfbPeF2qXN1pYkEoKyDMlIGqMunTzZHJ1+Zkpf
+NNYceMgwai1MM15AdPWWCcwkhHB0zKAZwLnt9BZrtRA+D2ObQZSeWxhLjGJl98+A
+quTlafEzq1OIcO1Fj8gL3u1vz58yNSA/bO/WJVpcLVYs+ZPe/3dQa9qvpEdpzQT7
+jTERmjzeS6cuuaqwlZ+w+ArCW54Lp5nhYE1CDuq0xkhGhl2dpNQr15l3Gp+iD/9P
+HNAbiuP+LNxawitZaDlJvy6dolPBNqz/YolB4ko2lbUejM2OFYKDFW6NSrflIBut
+coE2n6RXExnJwvmK693A2VTFG5z1xkX84Rb2AEPmNwIzvd1czNr6WY3ZcyrcCYdG
+nLsKYTja89kY+VKyZZR67sxvEBeTfPmXIoF+qHQmS0BC9/CLmo73BRx7hcP1q87W
+FD7UIIONvWwE63AcFMSI4JK2g3MgBjTICmWWAXobs5CTNG0sLrIMSygnK5nF/YOh
+iAHHG5hhYW8CT1hBdOBPwpeCH8NwhBh7Cs7aTA2x9VDa0rtz8oO9Q57M+Eimn/pB
+z1rSX5syZsn07KAdh3InnjT0KMbijzjCcp1EIw63+vPmWcLtALP9mwm2za12L2Ko
+btk0UOJ+Jt/P9K3AWX5h
+=XoW4
+-----END PGP SIGNATURE-----
+
+--/NkBOFFp2J2Af1nK--
