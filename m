@@ -1,77 +1,44 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: Re: [Nouveau] [PATCH] gem: allow user-space to specify an object
- should be coherent
-Date: Thu, 26 Feb 2015 09:36:55 +0100
-Message-ID: <1424939815.2176.3.camel@lynxeye.de>
-References: <1424922292-20688-1-git-send-email-acourbot@nvidia.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v4 11/20] power_supply: Change ownership from driver to core
+Date: Thu, 26 Feb 2015 10:30:00 +0100
+Message-ID: <1424943000.27971.7.camel@AMDC1943>
+References: <1424692061-30624-1-git-send-email-k.kozlowski@samsung.com>
+ <1424692061-30624-12-git-send-email-k.kozlowski@samsung.com>
+ <20150226004522.GB885@earth>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1424922292-20688-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
+In-reply-to: <20150226004522.GB885@earth>
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: Sebastian Reichel <sre@kernel.org>
+Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Jiri Kosina <jkosina@suse.cz>, David Herrmann <dh.herrmann@googlemail.com>, Cezary Jackiewicz <cezary.jackiewicz@gmail.com>, Darren Hart <dvhart@infradead.org>, Support Opensource <support.opensource@diasemi.com>, Milo Kim <milo.kim@ti.com>, Julian Andres Klode <jak@jak-linux.org>, Marc Dietrich <marvin24@gmx.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-acpi@vger.kernel.org, linux-input@vger.kernel.org, platform-driver-x86@vger.kernel.org, patches@opensource.wolfsonmicro.com, ac100@lists.launchpad.net, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, Linus Walleij <linus.walleij@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Lee
 List-Id: linux-tegra@vger.kernel.org
 
-Am Donnerstag, den 26.02.2015, 12:44 +0900 schrieb Alexandre Courbot:
-> User-space use mappable BOs notably for fences, and expects that a
-> value update by the GPU will be immediatly visible through the
-> user-space mapping.
+On czw, 2015-02-26 at 01:45 +0100, Sebastian Reichel wrote:
+> Hi,
 > 
-> ARM has a property that may prevent this from happening though: memory
-> can be mapped multiple times only if the different mappings share the
-> same caching properties. However all the lowmem memory is already
-> identity-mapped into the kernel with cache enabled, so when user-space
-> requests an uncached mapping, we actually get an "undefined caching
-> policy" one and this has strange side-effects described on Freedesktop
-> bug 86690.
-> 
-> To prevent this from happening, allow user-space to explicitly specify
-> which objects should be coherent, and create such objects with the
-> TTM_PL_FLAG_UNCACHED flag. This will make TTM allocate memory using the
-> DMA API, which will fix the identify mapping and allow us to safely map
-> the objects to user-space uncached.
-> 
-> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> On Mon, Feb 23, 2015 at 12:47:32PM +0100, Krzysztof Kozlowski wrote:
+> > Change the ownership of power_supply structure from each driver
+> > implementing the class to the power supply core.
+> > 
 
-Ok, this is only needed as userspace is skipping the cpu_prep for the
-fence BO reads. As doing this would increase the userspace fence
-overhead a lot, this flag seems to be the right thing to do.
+(...)
 
-Reviewed-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+> 
+> I would like to merge this via the power supply subsystem. Some of
+> the files being patched are not under my maintainence, though. It
+> would be nice if I get an Acked-By from their maintainers.
+> 
+> As far as I can see this patch is currently missing feedback from:
+> 
+> arch/x86/platform/olpc: x86 Maintainers
+> drivers/acpi: Rafael J. Wysocki, Len Brown
+> drivers/hid: Jiri Kosina
+> drivers/platform/x86: Darren Hart
 
-> ---
-> Patches that take advantage of this in Mesa will follow up shortly. I'd
-> to make sure the new flag is ok first before also adding it to libdrm.
-> 
->  drm/nouveau/include/uapi/drm/nouveau_drm.h | 1 +
->  drm/nouveau/nouveau_gem.c                  | 3 +++
->  2 files changed, 4 insertions(+)
-> 
-> diff --git a/drm/nouveau/include/uapi/drm/nouveau_drm.h b/drm/nouveau/include/uapi/drm/nouveau_drm.h
-> index 0d7608dc1a34..5507eead5863 100644
-> --- a/drm/nouveau/include/uapi/drm/nouveau_drm.h
-> +++ b/drm/nouveau/include/uapi/drm/nouveau_drm.h
-> @@ -39,6 +39,7 @@
->  #define NOUVEAU_GEM_DOMAIN_VRAM      (1 << 1)
->  #define NOUVEAU_GEM_DOMAIN_GART      (1 << 2)
->  #define NOUVEAU_GEM_DOMAIN_MAPPABLE  (1 << 3)
-> +#define NOUVEAU_GEM_DOMAIN_COHERENT  (1 << 4)
->  
->  #define NOUVEAU_GEM_TILE_COMP        0x00030000 /* nv50-only */
->  #define NOUVEAU_GEM_TILE_LAYOUT_MASK 0x0000ff00
-> diff --git a/drm/nouveau/nouveau_gem.c b/drm/nouveau/nouveau_gem.c
-> index 7c077fced1d1..0e690bf19fc9 100644
-> --- a/drm/nouveau/nouveau_gem.c
-> +++ b/drm/nouveau/nouveau_gem.c
-> @@ -189,6 +189,9 @@ nouveau_gem_new(struct drm_device *dev, int size, int align, uint32_t domain,
->  	if (!flags || domain & NOUVEAU_GEM_DOMAIN_CPU)
->  		flags |= TTM_PL_FLAG_SYSTEM;
->  
-> +	if (domain & NOUVEAU_GEM_DOMAIN_COHERENT)
-> +		flags |= TTM_PL_FLAG_UNCACHED;
-> +
->  	ret = nouveau_bo_new(dev, size, align, flags, tile_mode,
->  			     tile_flags, NULL, NULL, pnvbo);
->  	if (ret)
+I'll respin with v5 because new power supply driver appeared in your
+tree (DA9150 Charger). However this does not affect other subsystems.
+
+Best regards,
+Krzysztof
