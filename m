@@ -1,72 +1,66 @@
-From: Yijing Wang <wangyijing@huawei.com>
-Subject: [PATCH v3 24/30] PCI/tegra: Remove redundant tegra_pcie_scan_bus()
-Date: Thu, 26 Feb 2015 09:29:41 +0800
-Message-ID: <1424914187-21027-25-git-send-email-wangyijing@huawei.com>
-References: <1424914187-21027-1-git-send-email-wangyijing@huawei.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] gem: allow user-space to specify an object should
+	be coherent
+Date: Thu, 26 Feb 2015 12:44:51 +0900
+Message-ID: <1424922292-20688-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1424914187-21027-1-git-send-email-wangyijing@huawei.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-ia64@vger.kernel.org, linux-pci@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Yijing Wang <wangyijing@huawei.com>, Guan Xuetao <gxt@mprc.pku.edu.cn>, Russell King <linux@arm.linux.org.uk>, x86@kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <marc.zyngier@arm.com>, Rusty Russell <rusty@rustcorp.com.au>, linux-m68k@lists.linux-m68k.org, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Yinghai Lu <yinghai@kernel.org>, linux-arm-kernel@lists.infradead.org, Liviu Dudau <liviu@dudau.co.uk>, Tony Luck <tony.luck@intel.com>, linux-kernel@vger.kernel.org, Jiang Liu <jiang.liu@linux.intel.com>, linux-alpha@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Now pci_scan_root_bus() is almost simliar to
-pci_create_root_bus() + pci_scan_child_bus().
-So we could use common pci_scan_root_bus() in
-pci_common_init_dev() to scan pci busses.
-tegra_pcie_scan_bus() is redundant, remove it.
-
-Signed-off-by: Yijing Wang <wangyijing@huawei.com>
-CC: Thierry Reding <thierry.reding@gmail.com>
-CC: linux-tegra@vger.kernel.org
----
- drivers/pci/host/pci-tegra.c |   16 ----------------
- 1 files changed, 0 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 00e9272..10c0571 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -630,21 +630,6 @@ static int tegra_pcie_map_irq(const struct pci_dev *pdev, u8 slot, u8 pin)
- 	return irq;
- }
- 
--static struct pci_bus *tegra_pcie_scan_bus(int nr, struct pci_sys_data *sys)
--{
--	struct tegra_pcie *pcie = sys_to_pcie(sys);
--	struct pci_bus *bus;
--
--	bus = pci_create_root_bus(pcie->dev, sys->busnr, &tegra_pcie_ops, sys,
--				  &sys->resources);
--	if (!bus)
--		return NULL;
--
--	pci_scan_child_bus(bus);
--
--	return bus;
--}
--
- static irqreturn_t tegra_pcie_isr(int irq, void *arg)
- {
- 	const char *err_msg[] = {
-@@ -1831,7 +1816,6 @@ static int tegra_pcie_enable(struct tegra_pcie *pcie)
- 	hw.private_data = (void **)&pcie;
- 	hw.setup = tegra_pcie_setup;
- 	hw.map_irq = tegra_pcie_map_irq;
--	hw.scan = tegra_pcie_scan_bus;
- 	hw.ops = &tegra_pcie_ops;
- 
- 	pci_common_init_dev(pcie->dev, &hw);
--- 
-1.7.1
+VXNlci1zcGFjZSB1c2UgbWFwcGFibGUgQk9zIG5vdGFibHkgZm9yIGZlbmNlcywgYW5kIGV4cGVj
+dHMgdGhhdCBhCnZhbHVlIHVwZGF0ZSBieSB0aGUgR1BVIHdpbGwgYmUgaW1tZWRpYXRseSB2aXNp
+YmxlIHRocm91Z2ggdGhlCnVzZXItc3BhY2UgbWFwcGluZy4KCkFSTSBoYXMgYSBwcm9wZXJ0eSB0
+aGF0IG1heSBwcmV2ZW50IHRoaXMgZnJvbSBoYXBwZW5pbmcgdGhvdWdoOiBtZW1vcnkKY2FuIGJl
+IG1hcHBlZCBtdWx0aXBsZSB0aW1lcyBvbmx5IGlmIHRoZSBkaWZmZXJlbnQgbWFwcGluZ3Mgc2hh
+cmUgdGhlCnNhbWUgY2FjaGluZyBwcm9wZXJ0aWVzLiBIb3dldmVyIGFsbCB0aGUgbG93bWVtIG1l
+bW9yeSBpcyBhbHJlYWR5CmlkZW50aXR5LW1hcHBlZCBpbnRvIHRoZSBrZXJuZWwgd2l0aCBjYWNo
+ZSBlbmFibGVkLCBzbyB3aGVuIHVzZXItc3BhY2UKcmVxdWVzdHMgYW4gdW5jYWNoZWQgbWFwcGlu
+Zywgd2UgYWN0dWFsbHkgZ2V0IGFuICJ1bmRlZmluZWQgY2FjaGluZwpwb2xpY3kiIG9uZSBhbmQg
+dGhpcyBoYXMgc3RyYW5nZSBzaWRlLWVmZmVjdHMgZGVzY3JpYmVkIG9uIEZyZWVkZXNrdG9wCmJ1
+ZyA4NjY5MC4KClRvIHByZXZlbnQgdGhpcyBmcm9tIGhhcHBlbmluZywgYWxsb3cgdXNlci1zcGFj
+ZSB0byBleHBsaWNpdGx5IHNwZWNpZnkKd2hpY2ggb2JqZWN0cyBzaG91bGQgYmUgY29oZXJlbnQs
+IGFuZCBjcmVhdGUgc3VjaCBvYmplY3RzIHdpdGggdGhlClRUTV9QTF9GTEFHX1VOQ0FDSEVEIGZs
+YWcuIFRoaXMgd2lsbCBtYWtlIFRUTSBhbGxvY2F0ZSBtZW1vcnkgdXNpbmcgdGhlCkRNQSBBUEks
+IHdoaWNoIHdpbGwgZml4IHRoZSBpZGVudGlmeSBtYXBwaW5nIGFuZCBhbGxvdyB1cyB0byBzYWZl
+bHkgbWFwCnRoZSBvYmplY3RzIHRvIHVzZXItc3BhY2UgdW5jYWNoZWQuCgpTaWduZWQtb2ZmLWJ5
+OiBBbGV4YW5kcmUgQ291cmJvdCA8YWNvdXJib3RAbnZpZGlhLmNvbT4KLS0tClBhdGNoZXMgdGhh
+dCB0YWtlIGFkdmFudGFnZSBvZiB0aGlzIGluIE1lc2Egd2lsbCBmb2xsb3cgdXAgc2hvcnRseS4g
+SSdkCnRvIG1ha2Ugc3VyZSB0aGUgbmV3IGZsYWcgaXMgb2sgZmlyc3QgYmVmb3JlIGFsc28gYWRk
+aW5nIGl0IHRvIGxpYmRybS4KCiBkcm0vbm91dmVhdS9pbmNsdWRlL3VhcGkvZHJtL25vdXZlYXVf
+ZHJtLmggfCAxICsKIGRybS9ub3V2ZWF1L25vdXZlYXVfZ2VtLmMgICAgICAgICAgICAgICAgICB8
+IDMgKysrCiAyIGZpbGVzIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL2Ry
+bS9ub3V2ZWF1L2luY2x1ZGUvdWFwaS9kcm0vbm91dmVhdV9kcm0uaCBiL2RybS9ub3V2ZWF1L2lu
+Y2x1ZGUvdWFwaS9kcm0vbm91dmVhdV9kcm0uaAppbmRleCAwZDc2MDhkYzFhMzQuLjU1MDdlZWFk
+NTg2MyAxMDA2NDQKLS0tIGEvZHJtL25vdXZlYXUvaW5jbHVkZS91YXBpL2RybS9ub3V2ZWF1X2Ry
+bS5oCisrKyBiL2RybS9ub3V2ZWF1L2luY2x1ZGUvdWFwaS9kcm0vbm91dmVhdV9kcm0uaApAQCAt
+MzksNiArMzksNyBAQAogI2RlZmluZSBOT1VWRUFVX0dFTV9ET01BSU5fVlJBTSAgICAgICgxIDw8
+IDEpCiAjZGVmaW5lIE5PVVZFQVVfR0VNX0RPTUFJTl9HQVJUICAgICAgKDEgPDwgMikKICNkZWZp
+bmUgTk9VVkVBVV9HRU1fRE9NQUlOX01BUFBBQkxFICAoMSA8PCAzKQorI2RlZmluZSBOT1VWRUFV
+X0dFTV9ET01BSU5fQ09IRVJFTlQgICgxIDw8IDQpCiAKICNkZWZpbmUgTk9VVkVBVV9HRU1fVElM
+RV9DT01QICAgICAgICAweDAwMDMwMDAwIC8qIG52NTAtb25seSAqLwogI2RlZmluZSBOT1VWRUFV
+X0dFTV9USUxFX0xBWU9VVF9NQVNLIDB4MDAwMGZmMDAKZGlmZiAtLWdpdCBhL2RybS9ub3V2ZWF1
+L25vdXZlYXVfZ2VtLmMgYi9kcm0vbm91dmVhdS9ub3V2ZWF1X2dlbS5jCmluZGV4IDdjMDc3ZmNl
+ZDFkMS4uMGU2OTBiZjE5ZmM5IDEwMDY0NAotLS0gYS9kcm0vbm91dmVhdS9ub3V2ZWF1X2dlbS5j
+CisrKyBiL2RybS9ub3V2ZWF1L25vdXZlYXVfZ2VtLmMKQEAgLTE4OSw2ICsxODksOSBAQCBub3V2
+ZWF1X2dlbV9uZXcoc3RydWN0IGRybV9kZXZpY2UgKmRldiwgaW50IHNpemUsIGludCBhbGlnbiwg
+dWludDMyX3QgZG9tYWluLAogCWlmICghZmxhZ3MgfHwgZG9tYWluICYgTk9VVkVBVV9HRU1fRE9N
+QUlOX0NQVSkKIAkJZmxhZ3MgfD0gVFRNX1BMX0ZMQUdfU1lTVEVNOwogCisJaWYgKGRvbWFpbiAm
+IE5PVVZFQVVfR0VNX0RPTUFJTl9DT0hFUkVOVCkKKwkJZmxhZ3MgfD0gVFRNX1BMX0ZMQUdfVU5D
+QUNIRUQ7CisKIAlyZXQgPSBub3V2ZWF1X2JvX25ldyhkZXYsIHNpemUsIGFsaWduLCBmbGFncywg
+dGlsZV9tb2RlLAogCQkJICAgICB0aWxlX2ZsYWdzLCBOVUxMLCBOVUxMLCBwbnZibyk7CiAJaWYg
+KHJldCkKLS0gCjIuMy4wCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwpOb3V2ZWF1IG1haWxpbmcgbGlzdApOb3V2ZWF1QGxpc3RzLmZyZWVkZXNrdG9wLm9y
+ZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vbm91dmVhdQo=
