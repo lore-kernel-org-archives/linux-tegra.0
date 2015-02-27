@@ -1,44 +1,77 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v4 11/20] power_supply: Change ownership from driver to core
-Date: Thu, 26 Feb 2015 10:30:00 +0100
-Message-ID: <1424943000.27971.7.camel@AMDC1943>
-References: <1424692061-30624-1-git-send-email-k.kozlowski@samsung.com>
- <1424692061-30624-12-git-send-email-k.kozlowski@samsung.com>
- <20150226004522.GB885@earth>
+From: David Ung <davidu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH] gpu: host1x: Reduce host1x job allocation size
+Date: Fri, 27 Feb 2015 00:04:57 +0000
+Message-ID: <ecaa2ea9d5784abf94a867d77d0ce369@HQMAIL102.nvidia.com>
+References: <1422066931-31580-1-git-send-email-davidu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-In-reply-to: <20150226004522.GB885@earth>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: Sebastian Reichel <sre@kernel.org>
-Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Jiri Kosina <jkosina@suse.cz>, David Herrmann <dh.herrmann@googlemail.com>, Cezary Jackiewicz <cezary.jackiewicz@gmail.com>, Darren Hart <dvhart@infradead.org>, Support Opensource <support.opensource@diasemi.com>, Milo Kim <milo.kim@ti.com>, Julian Andres Klode <jak@jak-linux.org>, Marc Dietrich <marvin24@gmx.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-acpi@vger.kernel.org, linux-input@vger.kernel.org, platform-driver-x86@vger.kernel.org, patches@opensource.wolfsonmicro.com, ac100@lists.launchpad.net, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, Linus Walleij <linus.walleij@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Lee
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1422066931-31580-1-git-send-email-davidu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: David Ung <davidu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "airlied-cv59FeDIM0c@public.gmane.org" <airlied-cv59FeDIM0c@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On czw, 2015-02-26 at 01:45 +0100, Sebastian Reichel wrote:
-> Hi,
-> 
-> On Mon, Feb 23, 2015 at 12:47:32PM +0100, Krzysztof Kozlowski wrote:
-> > Change the ownership of power_supply structure from each driver
-> > implementing the class to the power supply core.
-> > 
+Ping?
 
-(...)
-
+> -----Original Message-----
+> From: David Ung [mailto:davidu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org]
+> Sent: Friday, January 23, 2015 6:36 PM
+> To: airlied-cv59FeDIM0c@public.gmane.org
+> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org;
+> swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org; Arto Merilainen; David Ung
+> Subject: [PATCH] gpu: host1x: Reduce host1x job allocation size
 > 
-> I would like to merge this via the power supply subsystem. Some of
-> the files being patched are not under my maintainence, though. It
-> would be nice if I get an Acked-By from their maintainers.
+> There is 2 set of num_relocs * sizeof(*) array at the end of host1x job.
+> Only the first is really used and with job->gather_addr_phys pointing
+> somewhere within the 1st set of reloc physical addresses.
+> During pin_job, job->gather_addr_phys array is set indirectly by indexing
+> num_relocs offset of job->reloc_addr_phys.
+> Correct the total job size, explicily set job->gather_addr_phys array in 2nd
+> for loop of pin_job and record its physical address.
 > 
-> As far as I can see this patch is currently missing feedback from:
+> Signed-off-by: David Ung <davidu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/gpu/host1x/job.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
 > 
-> arch/x86/platform/olpc: x86 Maintainers
-> drivers/acpi: Rafael J. Wysocki, Len Brown
-> drivers/hid: Jiri Kosina
-> drivers/platform/x86: Darren Hart
-
-I'll respin with v5 because new power supply driver appeared in your
-tree (DA9150 Charger). However this does not affect other subsystems.
-
-Best regards,
-Krzysztof
+> diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c index
+> 63bd63f..37c67d2 100644
+> --- a/drivers/gpu/host1x/job.c
+> +++ b/drivers/gpu/host1x/job.c
+> @@ -46,8 +46,8 @@ struct host1x_job *host1x_job_alloc(struct
+> host1x_channel *ch,
+>  		(u64)num_unpins * sizeof(struct host1x_job_unpin_data) +
+>  		(u64)num_waitchks * sizeof(struct host1x_waitchk) +
+>  		(u64)num_cmdbufs * sizeof(struct host1x_job_gather) +
+> -		(u64)num_unpins * sizeof(dma_addr_t) +
+> -		(u64)num_unpins * sizeof(u32 *);
+> +		(u64)num_relocs * sizeof(dma_addr_t) +
+> +		(u64)num_cmdbufs * sizeof(dma_addr_t);
+>  	if (total > ULONG_MAX)
+>  		return NULL;
+> 
+> @@ -212,7 +212,8 @@ static unsigned int pin_job(struct host1x_job *job)
+>  		if (!phys_addr)
+>  			goto unpin;
+> 
+> -		job->addr_phys[job->num_unpins] = phys_addr;
+> +		g->base = phys_addr;
+> +		job->gather_addr_phys[i] = phys_addr;
+>  		job->unpins[job->num_unpins].bo = g->bo;
+>  		job->unpins[job->num_unpins].sgt = sgt;
+>  		job->num_unpins++;
+> @@ -536,8 +537,6 @@ int host1x_job_pin(struct host1x_job *job, struct
+> device *dev)
+>  		if (g->handled)
+>  			continue;
+> 
+> -		g->base = job->gather_addr_phys[i];
+> -
+>  		for (j = i + 1; j < job->num_gathers; j++)
+>  			if (job->gathers[j].bo == g->bo)
+>  				job->gathers[j].handled = true;
+> --
+> 1.8.1.5
