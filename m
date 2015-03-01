@@ -1,31 +1,38 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v5 20/20] arm: mach-pxa: Decrement the power supply's
- device reference counter
-Date: Fri, 27 Feb 2015 20:26:59 +0100
-Message-ID: <20150227192659.GA13676@amd>
-References: <1425025201-15926-1-git-send-email-k.kozlowski@samsung.com>
- <1425025201-15926-21-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1425025201-15926-21-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Jiri Kosina <jkosina@suse.cz>, David Herrmann <dh.herrmann@googlemail.com>, Cezary Jackiewicz <cezary.jackiewicz@gmail.com>, Darren Hart <dvhart@infradead.org>, Support Opensource <support.opensource@diasemi.com>, Milo Kim <milo.kim@ti.com>, Julian Andres Klode <jak@jak-linux.org>, Marc Dietrich <marvin24@gmx.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-acpi@vger.kernel.org, linux-input@vger.kernel.org, platform-driver-x86@vger.kernel.org, patches@opensource.wolfsonmicro.com, ac100@lists.launchpad.net, linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org, Linus Walleij <linus.walleij@linaro.org>, Samuel
+From: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+Subject: [PATCH v8 18/18] ARM: tegra: enable Tegra124 cpufreq driver by default
+Date: Sun,  1 Mar 2015 14:44:41 +0200
+Message-ID: <1425213881-5262-19-git-send-email-mikko.perttunen@kapsi.fi>
+References: <1425213881-5262-1-git-send-email-mikko.perttunen@kapsi.fi>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1425213881-5262-1-git-send-email-mikko.perttunen@kapsi.fi>
+Sender: linux-pm-owner@vger.kernel.org
+To: swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, pdeschrijver@nvidia.com, rjw@rjwysocki.net, viresh.kumar@linaro.org
+Cc: mturquette@linaro.org, pwalmsley@nvidia.com, vinceh@nvidia.com, pgaikwad@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tuomas.tynkkynen@iki.fi, Tuomas Tynkkynen <ttynkkynen@nvidia.com>, Mikko Perttunen <mikko.perttunen@kapsi.fi>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri 2015-02-27 09:20:01, Krzysztof Kozlowski wrote:
-> Use power_supply_put() to decrement the power supply's device reference
-> counter.
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Reviewed-by: Sebastian Reichel <sre@kernel.org>
-> Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
+The Tegra124 cpufreq driver depends on CONFIG_CPUFREQ_DT, so
+enable it to get the Tegra driver to build by default.
 
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Signed-off-by: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Signed-off-by: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+---
+ arch/arm/configs/tegra_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index d199eb2..5eb4bad 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -42,6 +42,7 @@ CONFIG_KEXEC=y
+ CONFIG_CPU_FREQ=y
+ CONFIG_CPU_FREQ_STAT_DETAILS=y
+ CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
++CONFIG_CPUFREQ_DT=y
+ CONFIG_CPU_IDLE=y
+ CONFIG_VFP=y
+ CONFIG_NEON=y
+--
+2.3.0
+
