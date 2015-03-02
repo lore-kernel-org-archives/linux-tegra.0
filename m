@@ -1,118 +1,132 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: [PATCH v8 15/18] cpufreq: Add cpufreq driver for Tegra124
-Date: Mon, 02 Mar 2015 09:49:46 +0100
-Message-ID: <1425286186.24292.76.camel@x220>
-References: <1425213881-5262-1-git-send-email-mikko.perttunen@kapsi.fi>
-	 <1425213881-5262-16-git-send-email-mikko.perttunen@kapsi.fi>
+From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC PATCH 1/9] reset: add of_reset_control_get_by_index()
+Date: Mon, 2 Mar 2015 16:52:53 +0800
+Message-ID: <54F424E5.6020606@nvidia.com>
+References: <1421216372-8025-1-git-send-email-vinceh@nvidia.com> <1421216372-8025-2-git-send-email-vinceh@nvidia.com> <CAAVeFuJDfG7skRgyEt1p+NJ1x=s5rtfkL9JV1DR_Df0E=CGjuA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1425213881-5262-16-git-send-email-mikko.perttunen@kapsi.fi>
-Sender: linux-pm-owner@vger.kernel.org
-To: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-Cc: swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, pdeschrijver@nvidia.com, rjw@rjwysocki.net, viresh.kumar@linaro.org, mturquette@linaro.org, pwalmsley@nvidia.com, vinceh@nvidia.com, pgaikwad@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tuomas.tynkkynen@iki.fi, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAAVeFuJDfG7skRgyEt1p+NJ1x=s5rtfkL9JV1DR_Df0E=CGjuA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sun, 2015-03-01 at 14:44 +0200, Mikko Perttunen wrote:
-> --- a/drivers/cpufreq/Kconfig.arm
-> +++ b/drivers/cpufreq/Kconfig.arm
-> @@ -256,6 +256,13 @@ config ARM_TEGRA20_CPUFREQ
->  	help
->  	  This adds the CPUFreq driver support for Tegra20 SOCs.
->  
-> +config ARM_TEGRA124_CPUFREQ
-> +	bool "Tegra124 CPUFreq support"
+Hi,
 
-This adds a bool Kconfig symbol...
+On 02/12/2015 04:56 PM, Alexandre Courbot wrote:
+> On Wed, Jan 14, 2015 at 3:19 PM, Vince Hsu<vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>  wrote:
+>> Add of_reset_control_get_by_index() to allow the dirvers to get reset device
+> s/dirvers/drivers
+>
+>> without knowing its name.
+>>
+>> Signed-off-by: Vince Hsu<vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>   drivers/reset/core.c  | 47 ++++++++++++++++++++++++++++++++---------------
+>>   include/linux/reset.h |  9 +++++++++
+>>   2 files changed, 41 insertions(+), 15 deletions(-)
+>>
+>> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+>> index 7955e00d04d4..25a0da1654f8 100644
+>> --- a/drivers/reset/core.c
+>> +++ b/drivers/reset/core.c
+>> @@ -140,28 +140,15 @@ int reset_control_status(struct reset_control *rstc)
+>>   }
+>>   EXPORT_SYMBOL_GPL(reset_control_status);
+>>
+>> -/**
+>> - * of_reset_control_get - Lookup and obtain a reference to a reset controller.
+>> - * @node: device to be reset by the controller
+>> - * @id: reset line name
+>> - *
+>> - * Returns a struct reset_control or IS_ERR() condition containing errno.
+>> - *
+>> - * Use of id names is optional.
+>> - */
+>> -struct reset_control *of_reset_control_get(struct device_node *node,
+>> -                                          const char *id)
+>> +struct reset_control *__of_reset_control_get(struct device_node *node,
+>> +                                               int index)
+>>   {
+>>          struct reset_control *rstc = ERR_PTR(-EPROBE_DEFER);
+>>          struct reset_controller_dev *r, *rcdev;
+>>          struct of_phandle_args args;
+>> -       int index = 0;
+>>          int rstc_id;
+>>          int ret;
+>>
+>> -       if (id)
+>> -               index = of_property_match_string(node,
+>> -                                                "reset-names", id);
+>>          ret = of_parse_phandle_with_args(node, "resets", "#reset-cells",
+>>                                           index, &args);
+>>          if (ret)
+>> @@ -202,6 +189,36 @@ struct reset_control *of_reset_control_get(struct device_node *node,
+>>
+>>          return rstc;
+>>   }
+>> +
+>> +struct reset_control *of_reset_control_get_by_index(struct device_node *node,
+>> +                                          int index)
+>> +{
+>> +       if (!node)
+>> +               return ERR_PTR(-EINVAL);
+> Here you are checking node...
+Will drop the check here. It's not needed actually.
 
-> +	depends on ARCH_TEGRA && CPUFREQ_DT
-> +	default y
-> +	help
-> +	  This adds the CPUFreq driver support for Tegra124 SOCs.
-> +
->  config ARM_PXA2xx_CPUFREQ
->  	tristate "Intel PXA2xx CPUfreq driver"
->  	depends on PXA27x || PXA25x
-> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-> index 312d9c3..d478b83 100644
-> --- a/drivers/cpufreq/Makefile
-> +++ b/drivers/cpufreq/Makefile
-> @@ -77,6 +77,7 @@ obj-$(CONFIG_ARM_SA1100_CPUFREQ)	+= sa1100-cpufreq.o
->  obj-$(CONFIG_ARM_SA1110_CPUFREQ)	+= sa1110-cpufreq.o
->  obj-$(CONFIG_ARM_SPEAR_CPUFREQ)		+= spear-cpufreq.o
->  obj-$(CONFIG_ARM_TEGRA20_CPUFREQ)	+= tegra20-cpufreq.o
-> +obj-$(CONFIG_ARM_TEGRA124_CPUFREQ)	+= tegra124-cpufreq.o
+>> +
+>> +       return __of_reset_control_get(node, index);
+>> +}
+>> +EXPORT_SYMBOL_GPL(of_reset_control_get_by_index);
+>> +
+>> +/**
+>> + * of_reset_control_get - Lookup and obtain a reference to a reset controller.
+>> + * @node: device to be reset by the controller
+>> + * @id: reset line name
+>> + *
+>> + * Returns a struct reset_control or IS_ERR() condition containing errno.
+>> + *
+>> + * Use of id names is optional.
+>> + */
+>> +struct reset_control *of_reset_control_get(struct device_node *node,
+>> +                                          const char *id)
+>> +{
+>> +       int index = 0;
+>> +
+>> +       if (id)
+>> +               index = of_property_match_string(node,
+>> +                                                "reset-names", id);
+>> +       return __of_reset_control_get(node, index);
+> ... but not here?
+>
+>> +}
+>>   EXPORT_SYMBOL_GPL(of_reset_control_get);
+>>
+>>   /**
+>> diff --git a/include/linux/reset.h b/include/linux/reset.h
+>> index da5602bd77d7..f29fc88c4868 100644
+>> --- a/include/linux/reset.h
+>> +++ b/include/linux/reset.h
+>> @@ -38,6 +38,9 @@ static inline struct reset_control *devm_reset_control_get_optional(
+>>   struct reset_control *of_reset_control_get(struct device_node *node,
+>>                                             const char *id);
+>>
+>> +struct reset_control *of_reset_control_get_by_index(
+>> +                                       struct device_node *node, int index);
+>> +
+>>   #else
+>>
+>>   static inline int reset_control_reset(struct reset_control *rstc)
+>> @@ -92,6 +95,12 @@ static inline struct reset_control *of_reset_control_get(
+>>          return ERR_PTR(-ENOSYS);
+>>   }
+>>
+>> +struct reset_control *of_reset_control_get_by_index(
+>> +                               struct device_node *node, int index)
+> Seems like the node argument would fit on the previous line.
+Indeed.
 
-... so this object will either not be built or be built-in.
-
->  obj-$(CONFIG_ARM_VEXPRESS_SPC_CPUFREQ)	+= vexpress-spc-cpufreq.o
->  
->  ##################################################################################
-> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
-> new file mode 100644
-> index 0000000..45778ce
-> --- /dev/null
-> +++ b/drivers/cpufreq/tegra124-cpufreq.c
-> @@ -0,0 +1,217 @@
-> +/*
-> + * Tegra 124 cpufreq driver
-> + *
-> + * This software is licensed under the terms of the GNU General Public
-> + * License version 2, as published by the Free Software Foundation, and
-> + * may be copied, distributed, and modified under those terms.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
-> +
-> +#include <linux/clk.h>
-> +#include <linux/cpufreq-dt.h>
-> +#include <linux/err.h>
-> +#include <linux/init.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-
-Is linux/module.h needed?
-
-> +#include <linux/of_device.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_opp.h>
-> +#include <linux/regulator/consumer.h>
-> +#include <linux/types.h>
-
-[...]
-
-> +static struct platform_driver tegra124_cpufreq_platdrv = {
-> +	.driver = {
-> +		.name	= "cpufreq-tegra124",
-> +		.owner	= THIS_MODULE,
-
-.owner will always be, in short, NULL.
-
-> +	},
-> +	.probe		= tegra124_cpufreq_probe,
-> +	.remove		= tegra124_cpufreq_remove,
-> +};
-
-[...]
-
-> +module_init(tegra_cpufreq_init);
-
-This might as well be, I think, device_initcall().
-
-> +MODULE_AUTHOR("Tuomas Tynkkynen <ttynkkynen@nvidia.com>");
-> +MODULE_DESCRIPTION("cpufreq driver for NVIDIA Tegra124");
-> +MODULE_LICENSE("GPL v2");
-
-The strings in these macros will always be preprocessed away, because
-this driver cannot become a module.
-
-
-Paul Bolle
-
+Thanks,
+Vince
