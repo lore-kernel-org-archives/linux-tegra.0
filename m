@@ -1,173 +1,154 @@
 From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC PATCH 2/9] memory: tegra: add mc flush support
-Date: Mon, 2 Mar 2015 16:54:33 +0800
-Message-ID: <54F42549.5040202@nvidia.com>
-References: <1421216372-8025-1-git-send-email-vinceh@nvidia.com> <1421216372-8025-3-git-send-email-vinceh@nvidia.com> <CAAVeFuLx5fr_kQonRZzTgsw-wND==jNwvMs9LkzhWrE0rRQ76w@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/9] memory: tegra: add flush operation for Tegra124
+ memory clients
+Date: Mon, 2 Mar 2015 16:54:49 +0800
+Message-ID: <54F42559.7060901@nvidia.com>
+References: <1421216372-8025-1-git-send-email-vinceh@nvidia.com> <1421216372-8025-4-git-send-email-vinceh@nvidia.com> <CAAVeFuLgT+PPUGR68BE=ac97FyjfmtTHCZqvMoHAwNV8x8KP6w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAVeFuLx5fr_kQonRZzTgsw-wND==jNwvMs9LkzhWrE0rRQ76w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <CAAVeFuLgT+PPUGR68BE=ac97FyjfmtTHCZqvMoHAwNV8x8KP6w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi,
 
 On 02/12/2015 04:56 PM, Alexandre Courbot wrote:
 > On Wed, Jan 14, 2015 at 3:19 PM, Vince Hsu<vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>  wrote:
->> The flush operation of memory clients is needed for various IP blocks in
->> the Tegra SoCs to perform a clean reset.
->>
 >> Signed-off-by: Vince Hsu<vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Please have a short commit message even if the subject seems to be
+> self-explanatory.
+Will do.
+
 >> ---
->>   drivers/memory/tegra/mc.c       | 132 ++++++++++++++++++++++++++++++++++++++++
->>   drivers/memory/tegra/tegra114.c |   2 +-
->>   drivers/memory/tegra/tegra30.c  |   2 +-
->>   include/soc/tegra/mc.h          |  41 ++++++++++++-
->>   4 files changed, 173 insertions(+), 4 deletions(-)
+>>   drivers/memory/tegra/tegra124.c | 108 +++++++++++++++++++++++++++++++++++++++-
+>>   1 file changed, 107 insertions(+), 1 deletion(-)
 >>
->> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
->> index fe3c44e7e1d1..35f769f9f1cd 100644
->> --- a/drivers/memory/tegra/mc.c
->> +++ b/drivers/memory/tegra/mc.c
->> @@ -11,6 +11,7 @@
->>   #include <linux/kernel.h>
->>   #include <linux/module.h>
+>> diff --git a/drivers/memory/tegra/tegra124.c b/drivers/memory/tegra/tegra124.c
+>> index 278d40b854c1..cce255d3df5c 100644
+>> --- a/drivers/memory/tegra/tegra124.c
+>> +++ b/drivers/memory/tegra/tegra124.c
+>> @@ -6,6 +6,8 @@
+>>    * published by the Free Software Foundation.
+>>    */
+>>
+>> +#include <linux/delay.h>
+>> +#include <linux/device.h>
 >>   #include <linux/of.h>
->> +#include <linux/of_platform.h>
->>   #include <linux/platform_device.h>
->>   #include <linux/slab.h>
+>>   #include <linux/mm.h>
 >>
->> @@ -62,6 +63,130 @@ static const struct of_device_id tegra_mc_of_match[] = {
->>   };
->>   MODULE_DEVICE_TABLE(of, tegra_mc_of_match);
->>
->> +static struct tegra_mc_swgroup *find_swgroup(struct tegra_mc *mc,
->> +               unsigned int swgroup)
-> Indentation looks a little bit weird here.
->
->> +{
->> +       struct tegra_mc_swgroup *sg;
->> +
->> +       list_for_each_entry(sg, &mc->swgroups, head) {
->> +               if (sg->id == swgroup)
->> +                       return sg;
->> +       }
->> +
->> +       return NULL;
->> +}
->> +
->> +static struct tegra_mc_swgroup *add_swgroup(struct tegra_mc *mc,
->> +       unsigned int swgroup)
-> Here too. Also even though they are static, these functions should
-> probably be prefixed with tegra_mc or something.
-Will fix the indentation and function naming.
-
->> +int tegra_mc_flush(struct tegra_mc_swgroup *sg)
->> +{
->> +       struct tegra_mc *mc;
->> +       const struct tegra_mc_hotreset *client;
->> +       int i;
->> +
->> +       if (!sg || !sg->mc)
->> +               return -EINVAL;;
->> +
->> +       mc = sg->mc;
->> +       if (!mc->soc->ops || !mc->soc->ops->flush)
->> +               return -EINVAL;;
->> +
->> +       client = mc->soc->hotresets;
->> +
->> +       for (i = 0; i < mc->soc->num_hotresets; i++, client++) {
->> +               if (sg->id == client->swgroup)
->> +                       return mc->soc->ops->flush(mc, client);
->> +       }
->> +
->> +       return -EINVAL;
->> +}
->> +EXPORT_SYMBOL(tegra_mc_flush);
->> +
->> +int tegra_mc_flush_done(struct tegra_mc_swgroup *sg)
->> +{
->> +       struct tegra_mc *mc;
->> +       const struct tegra_mc_hotreset *client;
->> +       int i;
->> +
->> +       if (!sg || !sg->mc)
->> +               return -EINVAL;;
->> +
->> +       mc = sg->mc;
->> +       if (!mc->soc->ops || !mc->soc->ops->flush)
->> +               return -EINVAL;;
->> +
->> +       client = mc->soc->hotresets;
->> +
->> +       for (i = 0; i < mc->soc->num_hotresets; i++, client++) {
->> +               if (sg->id == client->swgroup)
->> +                       return mc->soc->ops->flush_done(mc, client);
->> +       }
->> +
->> +       return -EINVAL;
->> +}
->> +EXPORT_SYMBOL(tegra_mc_flush_done);
-> These functions are identical, excepted for the callback they are
-> invoking. Could you merge the common part into a function that returns
-> the right client to call the callback on, or ERR_PTR(-EINVAL) in case
-> of failure?
-I couldn't think of a clever way to do this. Any ideas? :)
-
->> +
->> +static int tegra_mc_build_swgroup(struct tegra_mc *mc)
->> +{
->> +       int i;
->> +
->> +       for (i = 0; i < mc->soc->num_clients; i++) {
->> +               struct tegra_mc_swgroup *sg;
->> +
->> +               sg = find_swgroup(mc, mc->soc->clients[i].swgroup);
->> +
->> +               if (!sg) {
->> +                       sg = add_swgroup(mc,  mc->soc->clients[i].swgroup);
->> +                       if (IS_ERR(sg))
->> +                               return PTR_ERR(sg);
->> +               }
->> +
->> +               list_add_tail(&mc->soc->clients[i].head, &sg->clients);
->> +       }
->> +
->> +       return 0;
->> +}
->> +
->>   static int tegra_mc_setup_latency_allowance(struct tegra_mc *mc)
->>   {
->>          unsigned long long tick;
->> @@ -229,6 +354,13 @@ static int tegra_mc_probe(struct platform_device *pdev)
->>          /* length of MC tick in nanoseconds */
->>          mc->tick = 30;
->>
->> +       INIT_LIST_HEAD(&mc->swgroups);
->> +       err = tegra_mc_build_swgroup(mc);
->> +       if (err) {
->> +               dev_err(&pdev->dev, "failed to build swgroup: %d\n", err);
->> +               return err;
->> +       }
->> +
->>          res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>          mc->regs = devm_ioremap_resource(&pdev->dev, res);
->>          if (IS_ERR(mc->regs))
->> diff --git a/drivers/memory/tegra/tegra114.c b/drivers/memory/tegra/tegra114.c
->> index 511e9a25c151..92ab5552fcee 100644
->> --- a/drivers/memory/tegra/tegra114.c
->> +++ b/drivers/memory/tegra/tegra114.c
->> @@ -15,7 +15,7 @@
+>> @@ -15,7 +17,7 @@
 >>
 >>   #include "mc.h"
 >>
->> -static const struct tegra_mc_client tegra114_mc_clients[] = {
->> +static struct tegra_mc_client tegra114_mc_clients[] = {
-> Why is this needed? I cannot see anything in this patch that would
-> require dropping the const here.
-This patch uses a list in the struct tegra_mc_client to gather swgroup 
-information from
-DT when driver is probed. So the mc client array instance can't be constant.
+>> -static const struct tegra_mc_client tegra124_mc_clients[] = {
+>> +static struct tegra_mc_client tegra124_mc_clients[] = {
+> This const drop also seems out-of-place. If they are needed at all,
+> please have them all done in the same patch, and only when they become
+> needed.
+Will move to the patch #2.
+
+>>          {
+>>                  .id = 0x00,
+>>                  .name = "ptcr",
+>> @@ -959,7 +961,108 @@ static const struct tegra_smmu_swgroup tegra124_swgroups[] = {
+>>          { .swgroup = TEGRA_SWGROUP_VI,        .reg = 0x280 },
+>>   };
+>>
+>> +static struct tegra_mc_hotreset tegra124_mc_hotreset[] = {
+>> +       {TEGRA_SWGROUP_AFI,        0x200, 0x204,  0},
+>> +       {TEGRA_SWGROUP_AVPC,       0x200, 0x204,  1},
+>> +       {TEGRA_SWGROUP_DC,         0x200, 0x204,  2},
+>> +       {TEGRA_SWGROUP_DCB,        0x200, 0x204,  3},
+>> +       {TEGRA_SWGROUP_HC,         0x200, 0x204,  6},
+>> +       {TEGRA_SWGROUP_HDA,        0x200, 0x204,  7},
+>> +       {TEGRA_SWGROUP_ISP2,       0x200, 0x204,  8},
+>> +       {TEGRA_SWGROUP_MPCORE,     0x200, 0x204,  9},
+>> +       {TEGRA_SWGROUP_MPCORELP,   0x200, 0x204, 10},
+>> +       {TEGRA_SWGROUP_MSENC,      0x200, 0x204, 11},
+>> +       {TEGRA_SWGROUP_PPCS,       0x200, 0x204, 14},
+>> +       {TEGRA_SWGROUP_SATA,       0x200, 0x204, 15},
+>> +       {TEGRA_SWGROUP_VDE,        0x200, 0x204, 16},
+>> +       {TEGRA_SWGROUP_VI,         0x200, 0x204, 17},
+>> +       {TEGRA_SWGROUP_VIC,        0x200, 0x204, 18},
+>> +       {TEGRA_SWGROUP_XUSB_HOST,  0x200, 0x204, 19},
+>> +       {TEGRA_SWGROUP_XUSB_DEV,   0x200, 0x204, 20},
+>> +       {TEGRA_SWGROUP_TSEC,       0x200, 0x204, 22},
+>> +       {TEGRA_SWGROUP_SDMMC1A,    0x200, 0x204, 29},
+>> +       {TEGRA_SWGROUP_SDMMC2A,    0x200, 0x204, 30},
+>> +       {TEGRA_SWGROUP_SDMMC3A,    0x200, 0x204, 31},
+>> +       {TEGRA_SWGROUP_SDMMC4A,    0x970, 0x974,  0},
+>> +       {TEGRA_SWGROUP_ISP2B,      0x970, 0x974,  1},
+>> +       {TEGRA_SWGROUP_GPU,        0x970, 0x974,  2},
+>> +};
+>> +
+>>   #ifdef CONFIG_ARCH_TEGRA_124_SOC
+>> +
+>> +static bool tegra124_stable_hotreset_check(struct tegra_mc *mc,
+>> +               u32 reg, u32 *stat)
+>> +{
+>> +       int i;
+>> +       u32 cur_stat;
+>> +       u32 prv_stat;
+>> +
+>> +       /*
+>> +        * There might be a glitch seen with the status register if we program
+>> +        * the control register and then read the status register in a short
+>> +        * window due to a HW bug. So here we poll for a stable status read.
+>> +        */
+>> +       prv_stat = mc_readl(mc, reg);
+>> +       for (i = 0; i < 5; i++) {
+> Why 5 times?
+This is a magic number from downstream. It should be enough to reach a 
+stable state.
+
+>> +               cur_stat = mc_readl(mc, reg);
+>> +               if (cur_stat != prv_stat)
+>> +                       return false;
+>> +       }
+>> +       *stat = cur_stat;
+>> +       return true;
+>> +}
+>> +
+>> +static int tegra124_mc_flush(struct tegra_mc *mc,
+>> +               const struct tegra_mc_hotreset *hotreset)
+>> +{
+>> +       u32 val;
+>> +
+>> +       if (!mc || !hotreset)
+>> +               return -EINVAL;
+>> +
+>> +       /* XXX add mutex */
+> I guess this is a TODO for when this series exists the RFC state. :)
+Oh, yes.
+
+>> +
+>> +       val = mc_readl(mc, hotreset->ctrl);
+>> +       val |= BIT(hotreset->bit);
+>> +       mc_writel(mc, val, hotreset->ctrl);
+>> +       mc_readl(mc, hotreset->ctrl);
+>> +
+>> +       /* poll till the flush is done */
+>> +       do {
+>> +               udelay(10);
+>> +               val = 0;
+>> +               if (!tegra124_stable_hotreset_check(mc, hotreset->status, &val))
+>> +                       continue;
+>> +       } while (!(val & BIT(hotreset->bit)));
+> So here you are waiting for the right bit in hotreset->status to turn
+> to 1. Why is the whole thing with tegra124_stable_hotreset_check()
+> needed? Could it switch from 1 to 0 to 1 again, with the first window
+> at 1 being invalid?
+There is a comment which describes why we have to check this in
+tegra124_stable_hotreset_check().
+
+> In that case isn't there a risk that
+> tegra124_stable_hotreset_check() might do 5 consecutive reads on that
+> invalid state and let us continue before the flush is completed?
+So there is another check in while(). :)
+
+Thanks,
+Vince
