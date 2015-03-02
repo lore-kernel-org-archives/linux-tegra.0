@@ -1,50 +1,26 @@
-From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v4.0-rc1
-Date: Sun, 1 Mar 2015 19:15:40 -0700
-Message-ID: <54F3C7CC.9060501@nvidia.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 3/7] mmc: tegra: use devm help functions to get the clk
+ and gpio
+Date: Mon, 2 Mar 2015 15:46:35 +0900
+Message-ID: <CAAVeFuKUx-4q_B0pXnMp3TdCKGp3XdAy3D0675gLfnuk7n8cQw@mail.gmail.com>
+References: <1425023251-4544-1-git-send-email-haokexin@gmail.com> <1425023251-4544-4-git-send-email-haokexin@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1425023251-4544-4-git-send-email-haokexin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+To: Kevin Hao <haokexin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-mmc <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Chris Ball <chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.0-rc1.
-Logs and other details at:
+On Fri, Feb 27, 2015 at 4:47 PM, Kevin Hao <haokexin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> Simplify the error and remove path.
+>
+> Signed-off-by: Kevin Hao <haokexin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+> v2: No change.
+>
+>  drivers/mmc/host/sdhci-tegra.c | 13 +++----------
+>  1 file changed, 3 insertions(+), 10 deletions(-)
 
-     http://nvt.pwsan.com/pub/linux/testlogs/test_v4.0-rc1/20150227011322/
-
-
-Test summary
-------------
-
-Build: zImage:
-     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
-
-Boot to userspace: multi_v7_defconfig:
-     Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-     Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra30-beaver
-
-
-vmlinux object size
-(delta in bytes from test_v3.19 (bfa76d49576599a4b9f9b7a71f23d73d6dcff735)):
-    text     data      bss    total  kernel
-+251708   -28136    +1408  +224980  multi_v7_defconfig
-+117609   -26896     +720   +91433  tegra_defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v3.19 (bfa76d49576599a4b9f9b7a71f23d73d6dcff735))
-     avail    rsrvd     high    freed                board              kconfig                  dtb
-     -256k     256k        .      16k tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-     -104k     104k        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-     -260k     260k        .      16k  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-     -108k     108k        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-     -256k     256k        .      16k       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-     -104k     104k        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+Acked-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
