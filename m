@@ -1,81 +1,102 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v6 03/15] soc/tegra: Add ram code reader helper
-Date: Mon, 2 Mar 2015 17:46:49 +0900
-Message-ID: <CAAVeFuKLp=rG5oQxg7CjfZk9h2hA5kM0OoxKhyeLxAUcaB-2Eg@mail.gmail.com>
-References: <1423750042-6535-1-git-send-email-tomeu.vizoso@collabora.com> <1423750042-6535-4-git-send-email-tomeu.vizoso@collabora.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v6 06/15] of: Add Tegra124 EMC bindings
+Date: Mon, 2 Mar 2015 17:47:02 +0900
+Message-ID: <CAAVeFuL71-VZxAxzGKdn0SebhYrCkFixOiLwq6Ebbih8B+NiRA@mail.gmail.com>
+References: <1423750042-6535-1-git-send-email-tomeu.vizoso@collabora.com> <1423750042-6535-7-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1423750042-6535-4-git-send-email-tomeu.vizoso@collabora.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Mikko Perttunen <mikko.perttunen@kapsi.fi>, Mikko Perttunen <mperttunen@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1423750042-6535-7-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 On Thu, Feb 12, 2015 at 11:06 PM, Tomeu Vizoso
-<tomeu.vizoso@collabora.com> wrote:
-> From: Mikko Perttunen <mperttunen@nvidia.com>
+<tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org> wrote:
+> From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >
-> Needed for the EMC and MC drivers to know what timings from the DT to use.
+> Add binding documentation for the nvidia,tegra124-emc device tree node.
 >
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 >
 > ---
 >
-> v4: Replace magic number with PMC_STRAPPING_OPT_A_RAM_CODE_SHIFT
+> v5:     * Add a short description for each of the register properties
+>
+> v4:     * Remove mandatory naming of the timings subnode
+>         * Remove constraint on the unit-address of the timings and timing subnodes
+>         * Add some more information about nvidia,emc-configuration
+>         * Make the example complete
+>
+> v2:     * Specify the unit addresses for the timings and timing nodes
 > ---
->  drivers/soc/tegra/fuse/tegra-apbmisc.c | 19 +++++++++++++++++++
->  include/soc/tegra/fuse.h               |  1 +
->  2 files changed, 20 insertions(+)
+>  .../bindings/memory-controllers/tegra-emc.txt      | 379 +++++++++++++++++++++
+>  1 file changed, 379 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt
 >
-> diff --git a/drivers/soc/tegra/fuse/tegra-apbmisc.c b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-> index 3bf5aba..dc96a62 100644
-> --- a/drivers/soc/tegra/fuse/tegra-apbmisc.c
-> +++ b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-> @@ -28,8 +28,13 @@
->  #define APBMISC_SIZE   0x64
->  #define FUSE_SKU_INFO  0x10
->
-> +#define PMC_STRAPPING_OPT_A_RAM_CODE_SHIFT     4
-> +#define PMC_STRAPPING_OPT_A_RAM_CODE_MASK_LONG (0xf << PMC_STRAPPING_OPT_A_RAM_CODE_SHIFT)
-> +#define PMC_STRAPPING_OPT_A_RAM_CODE_MASK_SHORT        (0x3 << PMC_STRAPPING_OPT_A_RAM_CODE_SHIFT)
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt b/Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt
+> new file mode 100644
+> index 0000000..da923b1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt
+> @@ -0,0 +1,379 @@
+> +NVIDIA Tegra124 SoC EMC (external memory controller)
+> +====================================================
+> +
+> +Required properties :
+> +- compatible : Should be "nvidia,tegra124-emc".
+> +- reg : physical base address and length of the controller's registers.
+> +- nvidia,memory-controller : phandle of the MC driver.
+> +
+> +The node should contain a "emc-timings" subnode for each supported RAM type (see field RAM_CODE in
+> +register PMC_STRAPPING_OPT_A), with its unit address being its RAM_CODE.
+> +
+> +Required properties for "emc-timings" nodes :
+> +- nvidia,ram-code : Should contain the value of RAM_CODE this timing set is used for.
+> +
+> +Each "emc-timings" node should contain a "timing" subnode for every supported EMC clock rate. The
+> +"timing" subnodes should have the clock rate in Hz as their unit address.
+> +
+> +Required properties for "timing" nodes :
+> +- clock-frequency : Should contain the memory clock rate in Hz.
+> +- The following properties contain EMC timing characterization values (specified in the board
+> +documentation) :
+> +  - nvidia,emc-auto-cal-config : EMC_AUTO_CAL_CONFIG
+> +  - nvidia,emc-auto-cal-config2 : EMC_AUTO_CAL_CONFIG2
+> +  - nvidia,emc-auto-cal-config3 : EMC_AUTO_CAL_CONFIG3
+> +  - nvidia,emc-auto-cal-interval : EMC_AUTO_CAL_INTERVAL
+> +  - nvidia,emc-bgbias-ctl0 : EMC_BGBIAS_CTL0
+> +  - nvidia,emc-cfg : EMC_CFG
+> +  - nvidia,emc-cfg-2 : EMC_CFG_2
+> +  - nvidia,emc-cfg-dig-dll : EMC_CFG_DIG_DLL
+> +  - nvidia,emc-ctt-term-ctrl : EMC_CTT_TERM_CTRL
+> +  - nvidia,emc-mode-1 : Mode Register 1
+> +  - nvidia,emc-mode-2 : Mode Register 2
+> +  - nvidia,emc-mode-4 : Mode Register 4
+> +  - nvidia,emc-mode-reset : Mode Register 0
+> +  - nvidia,emc-mrs-wait-cnt : EMC_MRS_WAIT_CNT
+> +  - nvidia,emc-sel-dpd-ctrl : EMC_SEL_DPD_CTRL
+> +  - nvidia,emc-xm2dqspadctrl2 : EMC_XM2DQSPADCTRL2
+> +  - nvidia,emc-zcal-cnt-long : EMC_ZCAL_WAIT_CNT
+> +  - nvidia,emc-zcal-interval : EMC_ZCAL_INTERVAL
+> +- nvidia,emc-configuration : EMC timing characterization data. These are the registers (see section
+> +"15.6.2 EMC Registers" in the TRM) whose values need to be specified, according to the board
+> +documentation:
 
-I think you are slightly over 80 chars here.
+I'm a little bit confused by this. On the one hand, some registers are
+defined by dedicated DT properties, and on the other some are simply
+specified in the nvidia,emc-configuration array. I guess the rationale
+for this is to isolate the registers whose value may control the
+driver vs. those that simply needs to be written as-is.
 
-> +
->  static void __iomem *apbmisc_base;
->  static void __iomem *strapping_base;
-> +static bool          long_ram_code;
->
->  u32 tegra_read_chipid(void)
->  {
-> @@ -54,6 +59,18 @@ u32 tegra_read_straps(void)
->                 return 0;
->  }
->
-> +u32 tegra_read_ram_code(void)
-> +{
-> +       u32 straps = tegra_read_straps();
-> +
-> +       if (long_ram_code)
-> +               straps &= PMC_STRAPPING_OPT_A_RAM_CODE_MASK_LONG;
-> +       else
-> +               straps &= PMC_STRAPPING_OPT_A_RAM_CODE_MASK_SHORT;
-> +
-> +       return straps >> PMC_STRAPPING_OPT_A_RAM_CODE_SHIFT;
-> +}
-> +
->  static const struct of_device_id apbmisc_match[] __initconst = {
->         { .compatible = "nvidia,tegra20-apbmisc", },
->         {},
-> @@ -112,4 +129,6 @@ void __init tegra_init_apbmisc(void)
->         strapping_base = of_iomap(np, 1);
->         if (!strapping_base)
->                 pr_err("ioremap tegra strapping_base failed\n");
-> +
-> +       long_ram_code = of_property_read_bool(np, "nvidia,long-ram-code");
+But in this case, why are some registers (like EMC_CFG_DIG_DLL)
+present in both lists, sometimes with different values? In the case of
+EMC_CFG_DIG_DLL, I also see that the read value of
+"nvidia,emc-cfg-dig-dll" seems to never be used anywhere in
+tegra124-emc.c. Should this property exist at all? Note that I have
+only checked this one, there might be others in the same case.
 
-Is this long-ram property chip-dependent? If so, couldn't we just use
-the chip ID or matched compatible string to decide whether the RAM
-code length, instead of having a dedicated property for it?
+Or maybe I completely misunderstood the intent here, in which case,
+please enlighten me. :)
