@@ -1,134 +1,38 @@
-From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC PATCH 2/9] memory: tegra: add mc flush support
-Date: Mon, 2 Mar 2015 19:09:55 +0800
-Message-ID: <54F44503.10703@nvidia.com>
-References: <1421216372-8025-1-git-send-email-vinceh@nvidia.com> <1421216372-8025-3-git-send-email-vinceh@nvidia.com> <CAAVeFuLx5fr_kQonRZzTgsw-wND==jNwvMs9LkzhWrE0rRQ76w@mail.gmail.com> <54F42549.5040202@nvidia.com> <CAAVeFu+1dS-RXOEg0jmUcP907uErpOv687k=4FBJiGfKytMWPA@mail.gmail.com>
+From: Simon Glass <sjg@chromium.org>
+Subject: Re: [PATCH v5 09/11] drm/tegra: Reset the SOR on probe
+Date: Mon, 2 Mar 2015 08:46:40 -0700
+Message-ID: <CAPnjgZ0FWgRymBJ2MrZtJYUp+QJj+AXr3DPoU3NbuYC6BbZrDw@mail.gmail.com>
+References: <1423731078-26681-1-git-send-email-tomeu.vizoso@collabora.com>
+	<1423731078-26681-10-git-send-email-tomeu.vizoso@collabora.com>
+	<CAAVeFuJEWt5tzy2_oLRq_UUA__QEto2NYM_FgC4P5uNk6diOhQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAVeFu+1dS-RXOEg0jmUcP907uErpOv687k=4FBJiGfKytMWPA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAAVeFuJEWt5tzy2_oLRq_UUA__QEto2NYM_FgC4P5uNk6diOhQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Dylan Reid <dgreid@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, David Airlie <airlied@linux.ie>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
 Hi,
 
-On 03/02/2015 05:29 PM, Alexandre Courbot wrote:
-> On Mon, Mar 2, 2015 at 5:54 PM, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->>>> +int tegra_mc_flush(struct tegra_mc_swgroup *sg)
->>>> +{
->>>> +       struct tegra_mc *mc;
->>>> +       const struct tegra_mc_hotreset *client;
->>>> +       int i;
->>>> +
->>>> +       if (!sg || !sg->mc)
->>>> +               return -EINVAL;;
->>>> +
->>>> +       mc = sg->mc;
->>>> +       if (!mc->soc->ops || !mc->soc->ops->flush)
->>>> +               return -EINVAL;;
->>>> +
->>>> +       client = mc->soc->hotresets;
->>>> +
->>>> +       for (i = 0; i < mc->soc->num_hotresets; i++, client++) {
->>>> +               if (sg->id == client->swgroup)
->>>> +                       return mc->soc->ops->flush(mc, client);
->>>> +       }
->>>> +
->>>> +       return -EINVAL;
->>>> +}
->>>> +EXPORT_SYMBOL(tegra_mc_flush);
->>>> +
->>>> +int tegra_mc_flush_done(struct tegra_mc_swgroup *sg)
->>>> +{
->>>> +       struct tegra_mc *mc;
->>>> +       const struct tegra_mc_hotreset *client;
->>>> +       int i;
->>>> +
->>>> +       if (!sg || !sg->mc)
->>>> +               return -EINVAL;;
->>>> +
->>>> +       mc = sg->mc;
->>>> +       if (!mc->soc->ops || !mc->soc->ops->flush)
->>>> +               return -EINVAL;;
->>>> +
->>>> +       client = mc->soc->hotresets;
->>>> +
->>>> +       for (i = 0; i < mc->soc->num_hotresets; i++, client++) {
->>>> +               if (sg->id == client->swgroup)
->>>> +                       return mc->soc->ops->flush_done(mc, client);
->>>> +       }
->>>> +
->>>> +       return -EINVAL;
->>>> +}
->>>> +EXPORT_SYMBOL(tegra_mc_flush_done);
->>> These functions are identical, excepted for the callback they are
->>> invoking. Could you merge the common part into a function that returns
->>> the right client to call the callback on, or ERR_PTR(-EINVAL) in case
->>> of failure?
->> I couldn't think of a clever way to do this. Any ideas? :)
-> How about something like this (warning: might now be that great, untested):
+On 2 March 2015 at 01:41, Alexandre Courbot <gnurou@gmail.com> wrote:
 >
-> /* Have this in your .h and use it in your tegra_mc_ops struct */
-> typedef int (*mc_op)(struct tegra_mc *mc,
->               const struct tegra_mc_hotreset *hotreset)
+> On Thu, Feb 12, 2015 at 5:51 PM, Tomeu Vizoso
+> <tomeu.vizoso@collabora.com> wrote:
+> > As there isn't a way for the firmware on the Nyan chromebooks to hand
+> > over the display to the kernel.
 >
-> static int __tegra_mc_op(struct tegra_mc_swgroup *sg, mc_op op)
-> {
->         struct tegra_mc *mc;
->         const struct tegra_mc_hotreset *client;
->         int i;
+> Could this have a side-effect on models for which the firmware *does*
+> hand over the display to the kernel? E.g. temporary glitch or black
+> screen?
 >
->         mc = sg->mc;
->         client = mc->soc->hotresets;
->
->         for (i = 0; i < mc->soc->num_hotresets; i++, client++) {
->                 if (sg->id == client->swgroup)
->                         return op(mc, client);
->         }
->
->         return -EINVAL;
-> }
->
-> #define tegra_mc_op(sg, op)                                               \
->      ((!sg || !sg->mc || !sg->mc->soc->ops || sg->mc->soc->ops->op) ?  \
->          -EINVAL :                                                 \
->          __tegra_mc_op(sg, sg->mc->soc->ops->op));
->
-> int tegra_mc_flush(struct tegra_mc_swgroup *sg)
-> {
->         return tegra_mc_op(sg, flush);
-> }
-> EXPORT_SYMBOL(tegra_mc_flush);
->
-> int tegra_mc_flush_done(struct tegra_mc_swgroup *sg)
-> {
->         return tegra_mc_op(sg, flush_done);
-> }
-> EXPORT_SYMBOL(tegra_mc_flush_done);
-Thanks for the example! Will use this idea and remove the double 
-semicolon below.
+> This is probably ok though, as such a handing over would need to be
+> documented in the firmware/kernel command line, and could thus be
+> caught to disable that code block if needed.
 
-Thanks,
-Vince
+Is there a general way in which this hand-over is done, e.g. with a
+device tree binding?
 
->
->
-> Actually when writing this code I found two other issues:
->
->>>> +int tegra_mc_flush_done(struct tegra_mc_swgroup *sg)
->>>> +{
->>>> +       struct tegra_mc *mc;
->>>> +       const struct tegra_mc_hotreset *client;
->>>> +       int i;
->>>> +
->>>> +       if (!sg || !sg->mc)
->>>> +               return -EINVAL;;
-> Double ; (also in tegra_mc_flush)
->
->>>> +
->>>> +       mc = sg->mc;
->>>> +       if (!mc->soc->ops || !mc->soc->ops->flush)
-> Should be ops->flush_done?
+Regards,
+Simon
