@@ -1,88 +1,134 @@
-From: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-Subject: Re: [PATCH v6 03/15] soc/tegra: Add ram code reader helper
-Date: Mon, 02 Mar 2015 11:52:11 +0200
-Message-ID: <54F432CB.20800@kapsi.fi>
-References: <1423750042-6535-1-git-send-email-tomeu.vizoso@collabora.com> <1423750042-6535-4-git-send-email-tomeu.vizoso@collabora.com> <CAAVeFuKLp=rG5oQxg7CjfZk9h2hA5kM0OoxKhyeLxAUcaB-2Eg@mail.gmail.com>
+From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC PATCH 2/9] memory: tegra: add mc flush support
+Date: Mon, 2 Mar 2015 19:09:55 +0800
+Message-ID: <54F44503.10703@nvidia.com>
+References: <1421216372-8025-1-git-send-email-vinceh@nvidia.com> <1421216372-8025-3-git-send-email-vinceh@nvidia.com> <CAAVeFuLx5fr_kQonRZzTgsw-wND==jNwvMs9LkzhWrE0rRQ76w@mail.gmail.com> <54F42549.5040202@nvidia.com> <CAAVeFu+1dS-RXOEg0jmUcP907uErpOv687k=4FBJiGfKytMWPA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAAVeFuKLp=rG5oQxg7CjfZk9h2hA5kM0OoxKhyeLxAUcaB-2Eg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Mikko Perttunen <mperttunen@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAAVeFu+1dS-RXOEg0jmUcP907uErpOv687k=4FBJiGfKytMWPA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/02/2015 10:46 AM, Alexandre Courbot wrote:
-> On Thu, Feb 12, 2015 at 11:06 PM, Tomeu Vizoso
-> <tomeu.vizoso@collabora.com> wrote:
->> From: Mikko Perttunen <mperttunen@nvidia.com>
->>
->> Needed for the EMC and MC drivers to know what timings from the DT to use.
->>
->> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
->> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
->>
->> ---
->>
->> v4: Replace magic number with PMC_STRAPPING_OPT_A_RAM_CODE_SHIFT
->> ---
->>   drivers/soc/tegra/fuse/tegra-apbmisc.c | 19 +++++++++++++++++++
->>   include/soc/tegra/fuse.h               |  1 +
->>   2 files changed, 20 insertions(+)
->>
->> diff --git a/drivers/soc/tegra/fuse/tegra-apbmisc.c b/drivers/soc/tegra/fuse/tegra-apbmisc.c
->> index 3bf5aba..dc96a62 100644
->> --- a/drivers/soc/tegra/fuse/tegra-apbmisc.c
->> +++ b/drivers/soc/tegra/fuse/tegra-apbmisc.c
->> @@ -28,8 +28,13 @@
->>   #define APBMISC_SIZE   0x64
->>   #define FUSE_SKU_INFO  0x10
->>
->> +#define PMC_STRAPPING_OPT_A_RAM_CODE_SHIFT     4
->> +#define PMC_STRAPPING_OPT_A_RAM_CODE_MASK_LONG (0xf << PMC_STRAPPING_OPT_A_RAM_CODE_SHIFT)
->> +#define PMC_STRAPPING_OPT_A_RAM_CODE_MASK_SHORT        (0x3 << PMC_STRAPPING_OPT_A_RAM_CODE_SHIFT)
->
-> I think you are slightly over 80 chars here.
->
->> +
->>   static void __iomem *apbmisc_base;
->>   static void __iomem *strapping_base;
->> +static bool          long_ram_code;
->>
->>   u32 tegra_read_chipid(void)
->>   {
->> @@ -54,6 +59,18 @@ u32 tegra_read_straps(void)
->>                  return 0;
->>   }
->>
->> +u32 tegra_read_ram_code(void)
->> +{
->> +       u32 straps = tegra_read_straps();
->> +
->> +       if (long_ram_code)
->> +               straps &= PMC_STRAPPING_OPT_A_RAM_CODE_MASK_LONG;
->> +       else
->> +               straps &= PMC_STRAPPING_OPT_A_RAM_CODE_MASK_SHORT;
->> +
->> +       return straps >> PMC_STRAPPING_OPT_A_RAM_CODE_SHIFT;
->> +}
->> +
->>   static const struct of_device_id apbmisc_match[] __initconst = {
->>          { .compatible = "nvidia,tegra20-apbmisc", },
->>          {},
->> @@ -112,4 +129,6 @@ void __init tegra_init_apbmisc(void)
->>          strapping_base = of_iomap(np, 1);
->>          if (!strapping_base)
->>                  pr_err("ioremap tegra strapping_base failed\n");
->> +
->> +       long_ram_code = of_property_read_bool(np, "nvidia,long-ram-code");
->
-> Is this long-ram property chip-dependent? If so, couldn't we just use
-> the chip ID or matched compatible string to decide whether the RAM
-> code length, instead of having a dedicated property for it?
->
+Hi,
 
-I am under the impression that it is board-specific.
+On 03/02/2015 05:29 PM, Alexandre Courbot wrote:
+> On Mon, Mar 2, 2015 at 5:54 PM, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>>>> +int tegra_mc_flush(struct tegra_mc_swgroup *sg)
+>>>> +{
+>>>> +       struct tegra_mc *mc;
+>>>> +       const struct tegra_mc_hotreset *client;
+>>>> +       int i;
+>>>> +
+>>>> +       if (!sg || !sg->mc)
+>>>> +               return -EINVAL;;
+>>>> +
+>>>> +       mc = sg->mc;
+>>>> +       if (!mc->soc->ops || !mc->soc->ops->flush)
+>>>> +               return -EINVAL;;
+>>>> +
+>>>> +       client = mc->soc->hotresets;
+>>>> +
+>>>> +       for (i = 0; i < mc->soc->num_hotresets; i++, client++) {
+>>>> +               if (sg->id == client->swgroup)
+>>>> +                       return mc->soc->ops->flush(mc, client);
+>>>> +       }
+>>>> +
+>>>> +       return -EINVAL;
+>>>> +}
+>>>> +EXPORT_SYMBOL(tegra_mc_flush);
+>>>> +
+>>>> +int tegra_mc_flush_done(struct tegra_mc_swgroup *sg)
+>>>> +{
+>>>> +       struct tegra_mc *mc;
+>>>> +       const struct tegra_mc_hotreset *client;
+>>>> +       int i;
+>>>> +
+>>>> +       if (!sg || !sg->mc)
+>>>> +               return -EINVAL;;
+>>>> +
+>>>> +       mc = sg->mc;
+>>>> +       if (!mc->soc->ops || !mc->soc->ops->flush)
+>>>> +               return -EINVAL;;
+>>>> +
+>>>> +       client = mc->soc->hotresets;
+>>>> +
+>>>> +       for (i = 0; i < mc->soc->num_hotresets; i++, client++) {
+>>>> +               if (sg->id == client->swgroup)
+>>>> +                       return mc->soc->ops->flush_done(mc, client);
+>>>> +       }
+>>>> +
+>>>> +       return -EINVAL;
+>>>> +}
+>>>> +EXPORT_SYMBOL(tegra_mc_flush_done);
+>>> These functions are identical, excepted for the callback they are
+>>> invoking. Could you merge the common part into a function that returns
+>>> the right client to call the callback on, or ERR_PTR(-EINVAL) in case
+>>> of failure?
+>> I couldn't think of a clever way to do this. Any ideas? :)
+> How about something like this (warning: might now be that great, untested):
+>
+> /* Have this in your .h and use it in your tegra_mc_ops struct */
+> typedef int (*mc_op)(struct tegra_mc *mc,
+>               const struct tegra_mc_hotreset *hotreset)
+>
+> static int __tegra_mc_op(struct tegra_mc_swgroup *sg, mc_op op)
+> {
+>         struct tegra_mc *mc;
+>         const struct tegra_mc_hotreset *client;
+>         int i;
+>
+>         mc = sg->mc;
+>         client = mc->soc->hotresets;
+>
+>         for (i = 0; i < mc->soc->num_hotresets; i++, client++) {
+>                 if (sg->id == client->swgroup)
+>                         return op(mc, client);
+>         }
+>
+>         return -EINVAL;
+> }
+>
+> #define tegra_mc_op(sg, op)                                               \
+>      ((!sg || !sg->mc || !sg->mc->soc->ops || sg->mc->soc->ops->op) ?  \
+>          -EINVAL :                                                 \
+>          __tegra_mc_op(sg, sg->mc->soc->ops->op));
+>
+> int tegra_mc_flush(struct tegra_mc_swgroup *sg)
+> {
+>         return tegra_mc_op(sg, flush);
+> }
+> EXPORT_SYMBOL(tegra_mc_flush);
+>
+> int tegra_mc_flush_done(struct tegra_mc_swgroup *sg)
+> {
+>         return tegra_mc_op(sg, flush_done);
+> }
+> EXPORT_SYMBOL(tegra_mc_flush_done);
+Thanks for the example! Will use this idea and remove the double 
+semicolon below.
 
-Mikko
+Thanks,
+Vince
+
+>
+>
+> Actually when writing this code I found two other issues:
+>
+>>>> +int tegra_mc_flush_done(struct tegra_mc_swgroup *sg)
+>>>> +{
+>>>> +       struct tegra_mc *mc;
+>>>> +       const struct tegra_mc_hotreset *client;
+>>>> +       int i;
+>>>> +
+>>>> +       if (!sg || !sg->mc)
+>>>> +               return -EINVAL;;
+> Double ; (also in tegra_mc_flush)
+>
+>>>> +
+>>>> +       mc = sg->mc;
+>>>> +       if (!mc->soc->ops || !mc->soc->ops->flush)
+> Should be ops->flush_done?
