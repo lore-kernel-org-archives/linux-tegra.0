@@ -1,138 +1,131 @@
 From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC PATCH 3/9] memory: tegra: add flush operation for Tegra124
- memory clients
-Date: Mon, 2 Mar 2015 18:06:57 +0900
-Message-ID: <CAAVeFuKRO_sF21xcmi3q5vMq0RZK0nPMLsugU4zuUJGP35=Zqw@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/9] memory: tegra: add mc flush support
+Date: Mon, 2 Mar 2015 18:29:52 +0900
+Message-ID: <CAAVeFu+1dS-RXOEg0jmUcP907uErpOv687k=4FBJiGfKytMWPA@mail.gmail.com>
 References: <1421216372-8025-1-git-send-email-vinceh@nvidia.com>
- <1421216372-8025-4-git-send-email-vinceh@nvidia.com> <CAAVeFuLgT+PPUGR68BE=ac97FyjfmtTHCZqvMoHAwNV8x8KP6w@mail.gmail.com>
- <54F42559.7060901@nvidia.com>
+ <1421216372-8025-3-git-send-email-vinceh@nvidia.com> <CAAVeFuLx5fr_kQonRZzTgsw-wND==jNwvMs9LkzhWrE0rRQ76w@mail.gmail.com>
+ <54F42549.5040202@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <54F42559.7060901-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <54F42549.5040202-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 On Mon, Mar 2, 2015 at 5:54 PM, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->>>          {
->>>                  .id = 0x00,
->>>                  .name = "ptcr",
->>> @@ -959,7 +961,108 @@ static const struct tegra_smmu_swgroup
->>> tegra124_swgroups[] = {
->>>          { .swgroup = TEGRA_SWGROUP_VI,        .reg = 0x280 },
->>>   };
->>>
->>> +static struct tegra_mc_hotreset tegra124_mc_hotreset[] = {
->>> +       {TEGRA_SWGROUP_AFI,        0x200, 0x204,  0},
->>> +       {TEGRA_SWGROUP_AVPC,       0x200, 0x204,  1},
->>> +       {TEGRA_SWGROUP_DC,         0x200, 0x204,  2},
->>> +       {TEGRA_SWGROUP_DCB,        0x200, 0x204,  3},
->>> +       {TEGRA_SWGROUP_HC,         0x200, 0x204,  6},
->>> +       {TEGRA_SWGROUP_HDA,        0x200, 0x204,  7},
->>> +       {TEGRA_SWGROUP_ISP2,       0x200, 0x204,  8},
->>> +       {TEGRA_SWGROUP_MPCORE,     0x200, 0x204,  9},
->>> +       {TEGRA_SWGROUP_MPCORELP,   0x200, 0x204, 10},
->>> +       {TEGRA_SWGROUP_MSENC,      0x200, 0x204, 11},
->>> +       {TEGRA_SWGROUP_PPCS,       0x200, 0x204, 14},
->>> +       {TEGRA_SWGROUP_SATA,       0x200, 0x204, 15},
->>> +       {TEGRA_SWGROUP_VDE,        0x200, 0x204, 16},
->>> +       {TEGRA_SWGROUP_VI,         0x200, 0x204, 17},
->>> +       {TEGRA_SWGROUP_VIC,        0x200, 0x204, 18},
->>> +       {TEGRA_SWGROUP_XUSB_HOST,  0x200, 0x204, 19},
->>> +       {TEGRA_SWGROUP_XUSB_DEV,   0x200, 0x204, 20},
->>> +       {TEGRA_SWGROUP_TSEC,       0x200, 0x204, 22},
->>> +       {TEGRA_SWGROUP_SDMMC1A,    0x200, 0x204, 29},
->>> +       {TEGRA_SWGROUP_SDMMC2A,    0x200, 0x204, 30},
->>> +       {TEGRA_SWGROUP_SDMMC3A,    0x200, 0x204, 31},
->>> +       {TEGRA_SWGROUP_SDMMC4A,    0x970, 0x974,  0},
->>> +       {TEGRA_SWGROUP_ISP2B,      0x970, 0x974,  1},
->>> +       {TEGRA_SWGROUP_GPU,        0x970, 0x974,  2},
->>> +};
->>> +
->>>   #ifdef CONFIG_ARCH_TEGRA_124_SOC
->>> +
->>> +static bool tegra124_stable_hotreset_check(struct tegra_mc *mc,
->>> +               u32 reg, u32 *stat)
+>>> +int tegra_mc_flush(struct tegra_mc_swgroup *sg)
 >>> +{
+>>> +       struct tegra_mc *mc;
+>>> +       const struct tegra_mc_hotreset *client;
 >>> +       int i;
->>> +       u32 cur_stat;
->>> +       u32 prv_stat;
 >>> +
->>> +       /*
->>> +        * There might be a glitch seen with the status register if we
->>> program
->>> +        * the control register and then read the status register in a
->>> short
->>> +        * window due to a HW bug. So here we poll for a stable status
->>> read.
->>> +        */
->>> +       prv_stat = mc_readl(mc, reg);
->>> +       for (i = 0; i < 5; i++) {
->>
->> Why 5 times?
->
-> This is a magic number from downstream. It should be enough to reach a
-> stable state.
-
-Most people don't like arbitrary numbers without any explanation. And
-sentences like "should be enough" make me nervous. :) Could you try to
-document this number so we at least know why *this* value instead of
-one of the possible other values an integer can take?
-
->
->>> +               cur_stat = mc_readl(mc, reg);
->>> +               if (cur_stat != prv_stat)
->>> +                       return false;
+>>> +       if (!sg || !sg->mc)
+>>> +               return -EINVAL;;
+>>> +
+>>> +       mc = sg->mc;
+>>> +       if (!mc->soc->ops || !mc->soc->ops->flush)
+>>> +               return -EINVAL;;
+>>> +
+>>> +       client = mc->soc->hotresets;
+>>> +
+>>> +       for (i = 0; i < mc->soc->num_hotresets; i++, client++) {
+>>> +               if (sg->id == client->swgroup)
+>>> +                       return mc->soc->ops->flush(mc, client);
 >>> +       }
->>> +       *stat = cur_stat;
->>> +       return true;
+>>> +
+>>> +       return -EINVAL;
 >>> +}
+>>> +EXPORT_SYMBOL(tegra_mc_flush);
 >>> +
->>> +static int tegra124_mc_flush(struct tegra_mc *mc,
->>> +               const struct tegra_mc_hotreset *hotreset)
+>>> +int tegra_mc_flush_done(struct tegra_mc_swgroup *sg)
 >>> +{
->>> +       u32 val;
+>>> +       struct tegra_mc *mc;
+>>> +       const struct tegra_mc_hotreset *client;
+>>> +       int i;
 >>> +
->>> +       if (!mc || !hotreset)
->>> +               return -EINVAL;
+>>> +       if (!sg || !sg->mc)
+>>> +               return -EINVAL;;
 >>> +
->>> +       /* XXX add mutex */
+>>> +       mc = sg->mc;
+>>> +       if (!mc->soc->ops || !mc->soc->ops->flush)
+>>> +               return -EINVAL;;
+>>> +
+>>> +       client = mc->soc->hotresets;
+>>> +
+>>> +       for (i = 0; i < mc->soc->num_hotresets; i++, client++) {
+>>> +               if (sg->id == client->swgroup)
+>>> +                       return mc->soc->ops->flush_done(mc, client);
+>>> +       }
+>>> +
+>>> +       return -EINVAL;
+>>> +}
+>>> +EXPORT_SYMBOL(tegra_mc_flush_done);
 >>
->> I guess this is a TODO for when this series exists the RFC state. :)
+>> These functions are identical, excepted for the callback they are
+>> invoking. Could you merge the common part into a function that returns
+>> the right client to call the callback on, or ERR_PTR(-EINVAL) in case
+>> of failure?
 >
-> Oh, yes.
->
->>> +
->>> +       val = mc_readl(mc, hotreset->ctrl);
->>> +       val |= BIT(hotreset->bit);
->>> +       mc_writel(mc, val, hotreset->ctrl);
->>> +       mc_readl(mc, hotreset->ctrl);
->>> +
->>> +       /* poll till the flush is done */
->>> +       do {
->>> +               udelay(10);
->>> +               val = 0;
->>> +               if (!tegra124_stable_hotreset_check(mc, hotreset->status,
->>> &val))
->>> +                       continue;
->>> +       } while (!(val & BIT(hotreset->bit)));
->>
->> So here you are waiting for the right bit in hotreset->status to turn
->> to 1. Why is the whole thing with tegra124_stable_hotreset_check()
->> needed? Could it switch from 1 to 0 to 1 again, with the first window
->> at 1 being invalid?
->
-> There is a comment which describes why we have to check this in
-> tegra124_stable_hotreset_check().
->
->> In that case isn't there a risk that
->> tegra124_stable_hotreset_check() might do 5 consecutive reads on that
->> invalid state and let us continue before the flush is completed?
->
-> So there is another check in while(). :)
+> I couldn't think of a clever way to do this. Any ideas? :)
 
-Yeah, I guess the issue is reduced to ensuring that 6 consecutive
-identical reads are enough to guarantee that the value of this
-register is stable.
+How about something like this (warning: might now be that great, untested):
+
+/* Have this in your .h and use it in your tegra_mc_ops struct */
+typedef int (*mc_op)(struct tegra_mc *mc,
+             const struct tegra_mc_hotreset *hotreset)
+
+static int __tegra_mc_op(struct tegra_mc_swgroup *sg, mc_op op)
+{
+       struct tegra_mc *mc;
+       const struct tegra_mc_hotreset *client;
+       int i;
+
+       mc = sg->mc;
+       client = mc->soc->hotresets;
+
+       for (i = 0; i < mc->soc->num_hotresets; i++, client++) {
+               if (sg->id == client->swgroup)
+                       return op(mc, client);
+       }
+
+       return -EINVAL;
+}
+
+#define tegra_mc_op(sg, op)                                               \
+    ((!sg || !sg->mc || !sg->mc->soc->ops || sg->mc->soc->ops->op) ?  \
+        -EINVAL :                                                 \
+        __tegra_mc_op(sg, sg->mc->soc->ops->op));
+
+int tegra_mc_flush(struct tegra_mc_swgroup *sg)
+{
+       return tegra_mc_op(sg, flush);
+}
+EXPORT_SYMBOL(tegra_mc_flush);
+
+int tegra_mc_flush_done(struct tegra_mc_swgroup *sg)
+{
+       return tegra_mc_op(sg, flush_done);
+}
+EXPORT_SYMBOL(tegra_mc_flush_done);
+
+
+Actually when writing this code I found two other issues:
+
+>>> +int tegra_mc_flush_done(struct tegra_mc_swgroup *sg)
+>>> +{
+>>> +       struct tegra_mc *mc;
+>>> +       const struct tegra_mc_hotreset *client;
+>>> +       int i;
+>>> +
+>>> +       if (!sg || !sg->mc)
+>>> +               return -EINVAL;;
+
+Double ; (also in tegra_mc_flush)
+
+>>> +
+>>> +       mc = sg->mc;
+>>> +       if (!mc->soc->ops || !mc->soc->ops->flush)
+
+Should be ops->flush_done?
