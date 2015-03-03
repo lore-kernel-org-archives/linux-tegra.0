@@ -1,50 +1,123 @@
-From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: Re: [PATCH v5 09/11] drm/tegra: Reset the SOR on probe
-Date: Tue, 3 Mar 2015 10:34:18 +0100
-Message-ID: <CAAObsKD2FPmH+KZ8cce1pZWM_E859agmU6Q1or8G9J=mRuLtnQ@mail.gmail.com>
-References: <1423731078-26681-1-git-send-email-tomeu.vizoso@collabora.com>
- <1423731078-26681-10-git-send-email-tomeu.vizoso@collabora.com> <CAAVeFuJEWt5tzy2_oLRq_UUA__QEto2NYM_FgC4P5uNk6diOhQ@mail.gmail.com>
+From: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+Subject: Re: [PATCH v8 15/18] cpufreq: Add cpufreq driver for Tegra124
+Date: Tue, 03 Mar 2015 13:33:42 +0200
+Message-ID: <54F59C16.2010401@kapsi.fi>
+References: <1425213881-5262-1-git-send-email-mikko.perttunen@kapsi.fi>	 <1425213881-5262-16-git-send-email-mikko.perttunen@kapsi.fi> <1425286186.24292.76.camel@x220>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAVeFuJEWt5tzy2_oLRq_UUA__QEto2NYM_FgC4P5uNk6diOhQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1425286186.24292.76.camel@x220>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Bolle <pebolle@tiscali.nl>
+Cc: swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, pdeschrijver@nvidia.com, rjw@rjwysocki.net, viresh.kumar@linaro.org, mturquette@linaro.org, pwalmsley@nvidia.com, vinceh@nvidia.com, pgaikwad@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tuomas.tynkkynen@iki.fi, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 2 March 2015 at 09:41, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Thu, Feb 12, 2015 at 5:51 PM, Tomeu Vizoso
-> <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org> wrote:
->> As there isn't a way for the firmware on the Nyan chromebooks to hand
->> over the display to the kernel.
+On 03/02/2015 10:49 AM, Paul Bolle wrote:
+> On Sun, 2015-03-01 at 14:44 +0200, Mikko Perttunen wrote:
+>> --- a/drivers/cpufreq/Kconfig.arm
+>> +++ b/drivers/cpufreq/Kconfig.arm
+>> @@ -256,6 +256,13 @@ config ARM_TEGRA20_CPUFREQ
+>>   	help
+>>   	  This adds the CPUFreq driver support for Tegra20 SOCs.
+>>
+>> +config ARM_TEGRA124_CPUFREQ
+>> +	bool "Tegra124 CPUFreq support"
 >
-> Could this have a side-effect on models for which the firmware *does*
-> hand over the display to the kernel? E.g. temporary glitch or black
-> screen?
+> This adds a bool Kconfig symbol...
 >
-> This is probably ok though, as such a handing over would need to be
-> documented in the firmware/kernel command line, and could thus be
-> caught to disable that code block if needed.
+>> +	depends on ARCH_TEGRA && CPUFREQ_DT
+>> +	default y
+>> +	help
+>> +	  This adds the CPUFreq driver support for Tegra124 SOCs.
+>> +
+>>   config ARM_PXA2xx_CPUFREQ
+>>   	tristate "Intel PXA2xx CPUfreq driver"
+>>   	depends on PXA27x || PXA25x
+>> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+>> index 312d9c3..d478b83 100644
+>> --- a/drivers/cpufreq/Makefile
+>> +++ b/drivers/cpufreq/Makefile
+>> @@ -77,6 +77,7 @@ obj-$(CONFIG_ARM_SA1100_CPUFREQ)	+= sa1100-cpufreq.o
+>>   obj-$(CONFIG_ARM_SA1110_CPUFREQ)	+= sa1110-cpufreq.o
+>>   obj-$(CONFIG_ARM_SPEAR_CPUFREQ)		+= spear-cpufreq.o
+>>   obj-$(CONFIG_ARM_TEGRA20_CPUFREQ)	+= tegra20-cpufreq.o
+>> +obj-$(CONFIG_ARM_TEGRA124_CPUFREQ)	+= tegra124-cpufreq.o
+>
+> ... so this object will either not be built or be built-in.
+>
+>>   obj-$(CONFIG_ARM_VEXPRESS_SPC_CPUFREQ)	+= vexpress-spc-cpufreq.o
+>>
+>>   ##################################################################################
+>> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+>> new file mode 100644
+>> index 0000000..45778ce
+>> --- /dev/null
+>> +++ b/drivers/cpufreq/tegra124-cpufreq.c
+>> @@ -0,0 +1,217 @@
+>> +/*
+>> + * Tegra 124 cpufreq driver
+>> + *
+>> + * This software is licensed under the terms of the GNU General Public
+>> + * License version 2, as published by the Free Software Foundation, and
+>> + * may be copied, distributed, and modified under those terms.
+>> + *
+>> + * This program is distributed in the hope that it will be useful,
+>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> + * GNU General Public License for more details.
+>> + */
+>> +
+>> +#define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
+>> +
+>> +#include <linux/clk.h>
+>> +#include <linux/cpufreq-dt.h>
+>> +#include <linux/err.h>
+>> +#include <linux/init.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/module.h>
+>
+> Is linux/module.h needed?
+>
+>> +#include <linux/of_device.h>
+>> +#include <linux/of.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/pm_opp.h>
+>> +#include <linux/regulator/consumer.h>
+>> +#include <linux/types.h>
+>
+> [...]
+>
+>> +static struct platform_driver tegra124_cpufreq_platdrv = {
+>> +	.driver = {
+>> +		.name	= "cpufreq-tegra124",
+>> +		.owner	= THIS_MODULE,
+>
+> .owner will always be, in short, NULL.
+>
+>> +	},
+>> +	.probe		= tegra124_cpufreq_probe,
+>> +	.remove		= tegra124_cpufreq_remove,
+>> +};
+>
+> [...]
+>
+>> +module_init(tegra_cpufreq_init);
+>
+> This might as well be, I think, device_initcall().
+>
+>> +MODULE_AUTHOR("Tuomas Tynkkynen <ttynkkynen@nvidia.com>");
+>> +MODULE_DESCRIPTION("cpufreq driver for NVIDIA Tegra124");
+>> +MODULE_LICENSE("GPL v2");
+>
+> The strings in these macros will always be preprocessed away, because
+> this driver cannot become a module.
+>
+>
+> Paul Bolle
+>
 
-Hi,
-
-my understanding from talking with Thierry is that the kernel will
-read the current state of the hw as the fw left it, and just carry on
-if it's compatible with the currently-requested mode.
-
-If it's not compatible, then the SOR should better be resetted to get
-it into a known state.
-
-But he's currently rewriting the SOR driver, so I don't know if it
-makes sense to merge this patch.
+Well noticed! I changed the config symbol to be tristate.
 
 Thanks,
-
-Tomeu
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+Mikko Perttunen
