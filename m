@@ -1,57 +1,50 @@
-From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC PATCH 2/9] memory: tegra: add mc flush support
-Date: Tue, 3 Mar 2015 16:59:46 +0800
-Message-ID: <54F57802.6010101@nvidia.com>
-References: <1421216372-8025-1-git-send-email-vinceh@nvidia.com> <1421216372-8025-3-git-send-email-vinceh@nvidia.com> <CAAVeFuLx5fr_kQonRZzTgsw-wND==jNwvMs9LkzhWrE0rRQ76w@mail.gmail.com> <54F42549.5040202@nvidia.com> <CAAVeFu+1dS-RXOEg0jmUcP907uErpOv687k=4FBJiGfKytMWPA@mail.gmail.com> <CAAVeFuJqa-4DqM8W2yXLUS9brfE8VgxT03FEQLSoKh26EddE8w@mail.gmail.com> <54F56C26.1020202@nvidia.com> <CAAVeFuLfJJz92PdkjO1je-Hwz5smbzFKZ9=EipQ0qJTod1Xp2A@mail.gmail.com> <54F56E4E.9070004@nvidia.com> <CAAVeFuK1ZSdBLc5p0xQkcOeGBB2MNtT+k0wg45MdO5bO=YgnnQ@mail.gmail.com>
+From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Subject: Re: [PATCH v5 09/11] drm/tegra: Reset the SOR on probe
+Date: Tue, 3 Mar 2015 10:34:18 +0100
+Message-ID: <CAAObsKD2FPmH+KZ8cce1pZWM_E859agmU6Q1or8G9J=mRuLtnQ@mail.gmail.com>
+References: <1423731078-26681-1-git-send-email-tomeu.vizoso@collabora.com>
+ <1423731078-26681-10-git-send-email-tomeu.vizoso@collabora.com> <CAAVeFuJEWt5tzy2_oLRq_UUA__QEto2NYM_FgC4P5uNk6diOhQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAVeFuK1ZSdBLc5p0xQkcOeGBB2MNtT+k0wg45MdO5bO=YgnnQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <CAAVeFuJEWt5tzy2_oLRq_UUA__QEto2NYM_FgC4P5uNk6diOhQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 2 March 2015 at 09:41, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Thu, Feb 12, 2015 at 5:51 PM, Tomeu Vizoso
+> <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org> wrote:
+>> As there isn't a way for the firmware on the Nyan chromebooks to hand
+>> over the display to the kernel.
+>
+> Could this have a side-effect on models for which the firmware *does*
+> hand over the display to the kernel? E.g. temporary glitch or black
+> screen?
+>
+> This is probably ok though, as such a handing over would need to be
+> documented in the firmware/kernel command line, and could thus be
+> caught to disable that code block if needed.
 
-On 03/03/2015 04:31 PM, Alexandre Courbot wrote:
-> On Tue, Mar 3, 2015 at 5:18 PM, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->> On 03/03/2015 04:14 PM, Alexandre Courbot wrote:
->>> On Tue, Mar 3, 2015 at 5:09 PM, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->>>> On 03/03/2015 04:03 PM, Alexandre Courbot wrote:
->>>>> On Mon, Mar 2, 2015 at 6:29 PM, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>>>> wrote:
->>>>>>>> These functions are identical, excepted for the callback they are
->>>>>>>> invoking. Could you merge the common part into a function that
->>>>>>>> returns
->>>>>>>> the right client to call the callback on, or ERR_PTR(-EINVAL) in case
->>>>>>>> of failure?
->>>>>>> I couldn't think of a clever way to do this. Any ideas? :)
->>>>>> How about something like this (warning: might now be that great,
->>>>>> untested):
->>>>>>
->>>>>> /* Have this in your .h and use it in your tegra_mc_ops struct */
->>>>>> typedef int (*mc_op)(struct tegra_mc *mc,
->>>>>>                 const struct tegra_mc_hotreset *hotreset)
->>>>> This type should be named tegra_mc_op, since the header that defines
->>>>> it is in include/linux.
->>>> Can we just leave it in this C file? I see no reason to place it in some
->>>> other
->>>> header file. :)
->>> Can you also move tegra_mc_ops's definition into the C file? If so I
->>> agree. Otherwise I prefer to make sure that the same type is used
->>> everywhere.
->> No. Let's keep that in the include/soc/tegra/mc.h.
-> Actually, couldn't some of these definitions be moved into
-> drivers/memory/tegra/mc.h? I don't see any reference to e.g. struct
-> tegra_mc_soc outside of drivers/memory/tegra/. These doesn't seem to
-> be a need to make these available to everybody.
-It seems all the definitions were in the 
-drivers/memory/tegra/tegra-mc.h. And
-then due to some reason, Thierry moved them under include/soc/tegra.
-And we do need the struct tegra_mc_soc in the include/soc/tegra/tegra/mc.h
-because struct tegra_mc refers to it and iommu/tegra-smmu.c refers to
-struct tegra_mc.
+Hi,
+
+my understanding from talking with Thierry is that the kernel will
+read the current state of the hw as the fw left it, and just carry on
+if it's compatible with the currently-requested mode.
+
+If it's not compatible, then the SOR should better be resetted to get
+it into a known state.
+
+But he's currently rewriting the SOR driver, so I don't know if it
+makes sense to merge this patch.
 
 Thanks,
-Vince
+
+Tomeu
+
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
