@@ -1,40 +1,40 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 1/4] pinctrl: tegra: driver layout/consistency fixes
-Date: Tue, 03 Mar 2015 13:21:01 -0700
-Message-ID: <54F617AD.6070208@wwwdotorg.org>
-References: <1424811651-18660-1-git-send-email-swarren@wwwdotorg.org>
+From: Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>
+Subject: Re: [PATCH v8 15/18] cpufreq: Add cpufreq driver for Tegra124
+Date: Wed, 04 Mar 2015 09:11:59 +0200
+Message-ID: <54F6B03F.8080703@iki.fi>
+References: <1425213881-5262-1-git-send-email-mikko.perttunen@kapsi.fi>	 <1425213881-5262-16-git-send-email-mikko.perttunen@kapsi.fi> <1425286186.24292.76.camel@x220> <54F59C16.2010401@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1424811651-18660-1-git-send-email-swarren@wwwdotorg.org>
+In-Reply-To: <54F59C16.2010401@kapsi.fi>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
+To: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+Cc: Paul Bolle <pebolle@tiscali.nl>, swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, pdeschrijver@nvidia.com, rjw@rjwysocki.net, viresh.kumar@linaro.org, mturquette@linaro.org, pwalmsley@nvidia.com, vinceh@nvidia.com, pgaikwad@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/24/2015 02:00 PM, Stephen Warren wrote:
-> From: Stephen Warren <swarren@nvidia.com>
->
-> Various non-semantic tweaks and layout/consistency fixes for existing
-> Tegra pinctrl drivers.
->
-> Move the definition of DRV_PINGROUP_REG() before the definition of
-> PINGROUP() so that a future SoC driver can invoke the former from the
-> latter.
->
-> PINGROUP_BIT_Y(n) is just n, so replace it with n.
->
-> Re-wrap the parameters to *PINGROUP().
->
-> Keep various enums sorted in the Tegra124 driver.
->
-> Various white-space consistency fixes.
->
-> These changes aim to update existing drivers to be consistent with future
-> SoC drivers. While we could ignore these tweaks to the existing drivers,
-> I'd like to keep everything as consistent as possible for easy comparison.
-> Besides, I auto-generate the drivers, and maintaining special-cases to
-> keep the differences in place is annoying.
+On 03/03/2015 01:33 PM, Mikko Perttunen wrote:
+> On 03/02/2015 10:49 AM, Paul Bolle wrote:
+>> On Sun, 2015-03-01 at 14:44 +0200, Mikko Perttunen wrote:
+>>
+>> [...]
+>>
+>>> +static struct platform_driver tegra124_cpufreq_platdrv = {
+>>> +    .driver = {
+>>> +        .name    = "cpufreq-tegra124",
+>>> +        .owner    = THIS_MODULE,
+>>
+>> .owner will always be, in short, NULL.
+>>
 
-Linus, does this series look OK?
+Which reminds me: recently there have been cleanups that remove the 
+.owner field assignments (e.g. 30f51f248c1d "cpufreq: drop owner 
+assignment from platform_drivers"), so it can be removed from here as well.
+
+
+>
+> Well noticed! I changed the config symbol to be tristate.
+>
+> Thanks,
+> Mikko Perttunen
+>
