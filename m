@@ -1,40 +1,64 @@
-From: Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>
-Subject: Re: [PATCH v8 15/18] cpufreq: Add cpufreq driver for Tegra124
-Date: Wed, 04 Mar 2015 09:11:59 +0200
-Message-ID: <54F6B03F.8080703@iki.fi>
-References: <1425213881-5262-1-git-send-email-mikko.perttunen@kapsi.fi>	 <1425213881-5262-16-git-send-email-mikko.perttunen@kapsi.fi> <1425286186.24292.76.camel@x220> <54F59C16.2010401@kapsi.fi>
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v4.0-rc2
+Date: Wed, 4 Mar 2015 02:36:06 -0700
+Message-ID: <54F6D206.2070500@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <54F59C16.2010401@kapsi.fi>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-Cc: Paul Bolle <pebolle@tiscali.nl>, swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, pdeschrijver@nvidia.com, rjw@rjwysocki.net, viresh.kumar@linaro.org, mturquette@linaro.org, pwalmsley@nvidia.com, vinceh@nvidia.com, pgaikwad@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/03/2015 01:33 PM, Mikko Perttunen wrote:
-> On 03/02/2015 10:49 AM, Paul Bolle wrote:
->> On Sun, 2015-03-01 at 14:44 +0200, Mikko Perttunen wrote:
->>
->> [...]
->>
->>> +static struct platform_driver tegra124_cpufreq_platdrv = {
->>> +    .driver = {
->>> +        .name    = "cpufreq-tegra124",
->>> +        .owner    = THIS_MODULE,
->>
->> .owner will always be, in short, NULL.
->>
+Here are some basic Tegra test results for Linux v4.0-rc2.
+Logs and other details at:
 
-Which reminds me: recently there have been cleanups that remove the 
-.owner field assignments (e.g. 30f51f248c1d "cpufreq: drop owner 
-assignment from platform_drivers"), so it can be removed from here as well.
+     http://nvt.pwsan.com/pub/linux/testlogs/test_v4.0-rc2/20150304011913/
 
 
->
-> Well noticed! I changed the config symbol to be tristate.
->
-> Thanks,
-> Mikko Perttunen
->
+Test summary
+------------
+
+Build: zImage:
+     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Build: Image:
+     Pass: ( 1/ 1): defconfig
+
+Boot to userspace: defconfig:
+     Pass: ( 1/ 1): qemu-vexpress64
+
+Boot to userspace: multi_v7_defconfig:
+     Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+     Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v4.0-rc1 (c517d838eb7d07bbe9507871fab3931deccff539)):
+    text     data      bss    total  kernel
++495197  +100104    +7232  +602533  multi_v7_defconfig
+    +168        0        0     +168  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v4.0-rc1 (c517d838eb7d07bbe9507871fab3931deccff539))
+     avail    rsrvd     high    freed                board              kconfig                  dtb
+         .        .        .        .      qemu-vexpress64            defconfig           __internal
+     -592k     592k        .      24k tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+         .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+     -592k     592k        .      24k  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+         .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+     -592k     592k        .      24k       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+         .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+
+
+
+An unusually large size increase from an -rc1 to an -rc2 release for multi_v7_defconfig.
+
+Starting with this test report, an ARM64 defconfig kernel will be built and booted
+on QEMU Versatile Express 64.
