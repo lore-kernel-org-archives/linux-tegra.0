@@ -1,7 +1,7 @@
 From: David Ung <davidu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 2/3] gpu: host1x: Remove addr_phys member from host1x_job
-Date: Thu, 5 Mar 2015 17:51:51 -0800
-Message-ID: <1425606712-15986-2-git-send-email-davidu@nvidia.com>
+Subject: [PATCH V2 3/3] gpu: host1x: Record the physical address for gathers
+Date: Thu, 5 Mar 2015 17:51:52 -0800
+Message-ID: <1425606712-15986-3-git-send-email-davidu@nvidia.com>
 References: <1425606712-15986-1-git-send-email-davidu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,63 +12,49 @@ To: airlied-cv59FeDIM0c@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, David Ung <davidu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-We are using addr_phys and gather_addr_phys/reloc_addr_phys interchangeably
-which points to the same set of memory. Using only gather/reloc_addr_phys
-make the code clearer and less error prone.
+The gather's base physical address is recorded during patching of gathers,
+but only the 1st one within the same buffer object has it set, subsequent
+gathers in the same buffer are being skipped.
+This patch records the phys addr during pin_job for all gathers.
 
 Signed-off-by: David Ung <davidu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/host1x/job.c | 11 +++++------
- include/linux/host1x.h   |  1 -
- 2 files changed, 5 insertions(+), 7 deletions(-)
+ drivers/gpu/host1x/job.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
-index 9c11265..7ecbefd 100644
+index 7ecbefd..6b374bc 100644
 --- a/drivers/gpu/host1x/job.c
 +++ b/drivers/gpu/host1x/job.c
-@@ -69,10 +69,9 @@ struct host1x_job *host1x_job_alloc(struct host1x_channel *ch,
- 	mem += num_waitchks * sizeof(struct host1x_waitchk);
- 	job->gathers = num_cmdbufs ? mem : NULL;
- 	mem += num_cmdbufs * sizeof(struct host1x_job_gather);
--	job->addr_phys = num_unpins ? mem : NULL;
--
--	job->reloc_addr_phys = job->addr_phys;
--	job->gather_addr_phys = &job->addr_phys[num_relocs];
-+	job->reloc_addr_phys = num_unpins ? mem : NULL;
-+	mem += num_relocs * sizeof(dma_addr_t);
-+	job->gather_addr_phys = num_unpins ? mem : NULL;
+@@ -202,17 +202,16 @@ static unsigned int pin_job(struct host1x_job *job)
+ 	for (i = 0; i < job->num_gathers; i++) {
+ 		struct host1x_job_gather *g = &job->gathers[i];
+ 		struct sg_table *sgt;
+-		dma_addr_t phys_addr;
  
- 	return job;
- }
-@@ -194,7 +193,7 @@ static unsigned int pin_job(struct host1x_job *job)
- 		if (!phys_addr)
+ 		g->bo = host1x_bo_get(g->bo);
+ 		if (!g->bo)
  			goto unpin;
  
--		job->addr_phys[job->num_unpins] = phys_addr;
-+		job->reloc_addr_phys[i] = phys_addr;
- 		job->unpins[job->num_unpins].bo = reloc->target.bo;
- 		job->unpins[job->num_unpins].sgt = sgt;
- 		job->num_unpins++;
-@@ -213,7 +212,7 @@ static unsigned int pin_job(struct host1x_job *job)
- 		if (!phys_addr)
+-		phys_addr = host1x_bo_pin(g->bo, &sgt);
+-		if (!phys_addr)
++		g->base = host1x_bo_pin(g->bo, &sgt);
++		if (!g->base)
  			goto unpin;
  
--		job->addr_phys[job->num_unpins] = phys_addr;
-+		job->gather_addr_phys[i] = phys_addr;
+-		job->gather_addr_phys[i] = phys_addr;
++		job->gather_addr_phys[i] = g->base;
  		job->unpins[job->num_unpins].bo = g->bo;
  		job->unpins[job->num_unpins].sgt = sgt;
  		job->num_unpins++;
-diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-index bb9840f..a722c4b 100644
---- a/include/linux/host1x.h
-+++ b/include/linux/host1x.h
-@@ -202,7 +202,6 @@ struct host1x_job {
- 	struct host1x_job_unpin_data *unpins;
- 	unsigned int num_unpins;
+@@ -536,8 +535,6 @@ int host1x_job_pin(struct host1x_job *job, struct device *dev)
+ 		if (g->handled)
+ 			continue;
  
--	dma_addr_t *addr_phys;
- 	dma_addr_t *gather_addr_phys;
- 	dma_addr_t *reloc_addr_phys;
- 
+-		g->base = job->gather_addr_phys[i];
+-
+ 		for (j = i + 1; j < job->num_gathers; j++)
+ 			if (job->gathers[j].bo == g->bo)
+ 				job->gathers[j].handled = true;
 -- 
 1.8.1.5
