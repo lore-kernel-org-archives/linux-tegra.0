@@ -1,44 +1,40 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] ASoC: tegra: fix platform_no_drv_owner.cocci warnings
-Date: Thu, 5 Mar 2015 17:08:06 +0000
-Message-ID: <20150305170806.GU21293@sirena.org.uk>
-References: <201503050334.H4jPvCBg%fengguang.wu@intel.com>
- <20150304193739.GA91196@athens.lkp.intel.com>
+From: David Ung <davidu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V2 1/3] gpu: host1x: Reduce host1x job allocation size
+Date: Thu, 5 Mar 2015 17:51:50 -0800
+Message-ID: <1425606712-15986-1-git-send-email-davidu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="1KbtIL0gAKpEK4a6"
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20150304193739.GA91196-2yRetTFTapcuUoWeoHoyuFaTQe2KTcn/@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: kbuild test robot <fengguang.wu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Anatol Pomozov <anatol.pomozov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, kbuild-all-JC7UmRfGjtg@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: airlied-cv59FeDIM0c@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, David Ung <davidu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+There is 2 set of num_relocs * sizeof(*) array at the end of host1x job.
+Only the 1st set is really used and with job->gather_addr_phys pointing
+somewhere within the 1st set of reloc physical addresses.
+This patch removes the 2nd set of unused addresses.
 
---1KbtIL0gAKpEK4a6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: David Ung <davidu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/gpu/host1x/job.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-On Thu, Mar 05, 2015 at 03:37:39AM +0800, kbuild test robot wrote:
-> sound/soc/tegra/tegra_rt5677.c:334:3-8: No need to set .owner here. The core will do it.
-
-Applied, thanks.
-
---1KbtIL0gAKpEK4a6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJU+I11AAoJECTWi3JdVIfQBw4H/2BpV00MMYcng0bQ6YzAgD1K
-KQ8wyxEXT/mbE8AvKJrifLVjx+TEbVIOUI4X4kuE/ZtHrAGDWhQi5sRb/QY3VIld
-KvbjwTuwid/BCFjLnkUHkkhPMLLKhlNg6F8a91Sj+ftcU9bjWjna1fID/uy5FcTg
-EKBRT5pAcbJR+5PYQYGaug2EluwXc8dbLvKmK2pFtNFsXTXnNSMHnt6GBLYP3xdY
-6H5Y9ukEj/D8HVGSu6uj/WDwLqkscMUY0bF9aC3zNvizzT8fiwfRSQ5LaO3WbEz5
-OyRGwfz+asLTOv40JpJSeG2rSuUSPSC9DxchOOlba571HjqwQfMZPRWnJRPtR4Q=
-=FbT6
------END PGP SIGNATURE-----
-
---1KbtIL0gAKpEK4a6--
+diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
+index 63bd63f..9c11265 100644
+--- a/drivers/gpu/host1x/job.c
++++ b/drivers/gpu/host1x/job.c
+@@ -46,8 +46,9 @@ struct host1x_job *host1x_job_alloc(struct host1x_channel *ch,
+ 		(u64)num_unpins * sizeof(struct host1x_job_unpin_data) +
+ 		(u64)num_waitchks * sizeof(struct host1x_waitchk) +
+ 		(u64)num_cmdbufs * sizeof(struct host1x_job_gather) +
+-		(u64)num_unpins * sizeof(dma_addr_t) +
+-		(u64)num_unpins * sizeof(u32 *);
++		(u64)num_relocs * sizeof(dma_addr_t) +
++		(u64)num_cmdbufs * sizeof(dma_addr_t);
++
+ 	if (total > ULONG_MAX)
+ 		return NULL;
+ 
+-- 
+1.8.1.5
