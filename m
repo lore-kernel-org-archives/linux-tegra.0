@@ -1,34 +1,114 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/4] pinctrl: tegra: support nvidia,io-hv DT property
-Date: Sat, 7 Mar 2015 21:10:31 +0100
-Message-ID: <CACRpkdYtUZOjEZYdOJt2NjtDBuo=Brp0babpRZVYdhic+US0Pg@mail.gmail.com>
-References: <1424811651-18660-1-git-send-email-swarren@wwwdotorg.org>
-	<1424811651-18660-3-git-send-email-swarren@wwwdotorg.org>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] soc/tegra: move soc_device_register call out of arch/arm
+Date: Mon, 9 Mar 2015 10:31:41 +0800
+Message-ID: <1425868301-22767-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <1424811651-18660-3-git-send-email-swarren@wwwdotorg.org>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Feb 24, 2015 at 10:00 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+Expending the usage for both Tegra & Tegra64 SoCs.
 
-> From: Stephen Warren <swarren@nvidia.com>
->
-> Both nvidia,io-hv and nvidia,rcv-sel represent the fact that a particular
-> pin's IO buffers are configured to accept "high voltage" input signals.
-> The TRM for different chips names the register field rcv-sel on older
-> SoCs and io_hv on newer SoCs. Add the new naming option into the pinctrl
-> driver so that DT files can use naming consistent with the TRM.
->
-> This new property name will be documented in the patch that adds support
-> for the new SoC.
->
-> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/tegra.c | 31 +------------------------------
+ drivers/soc/tegra/common.c  | 33 +++++++++++++++++++++++++++++++++
+ 2 files changed, 34 insertions(+), 30 deletions(-)
 
-Patch applied.
-
-Yours,
-Linus Walleij
+diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
+index 914341bcef25..95df6a97b956 100644
+--- a/arch/arm/mach-tegra/tegra.c
++++ b/arch/arm/mach-tegra/tegra.c
+@@ -87,36 +87,7 @@ static void __init tegra_dt_init_irq(void)
+ 
+ static void __init tegra_dt_init(void)
+ {
+-	struct soc_device_attribute *soc_dev_attr;
+-	struct soc_device *soc_dev;
+-	struct device *parent = NULL;
+-
+-	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
+-	if (!soc_dev_attr)
+-		goto out;
+-
+-	soc_dev_attr->family = kasprintf(GFP_KERNEL, "Tegra");
+-	soc_dev_attr->revision = kasprintf(GFP_KERNEL, "%d",
+-					   tegra_sku_info.revision);
+-	soc_dev_attr->soc_id = kasprintf(GFP_KERNEL, "%u", tegra_get_chip_id());
+-
+-	soc_dev = soc_device_register(soc_dev_attr);
+-	if (IS_ERR(soc_dev)) {
+-		kfree(soc_dev_attr->family);
+-		kfree(soc_dev_attr->revision);
+-		kfree(soc_dev_attr->soc_id);
+-		kfree(soc_dev_attr);
+-		goto out;
+-	}
+-
+-	parent = soc_device_to_device(soc_dev);
+-
+-	/*
+-	 * Finished with the static registrations now; fill in the missing
+-	 * devices
+-	 */
+-out:
+-	of_platform_populate(NULL, of_default_bus_match_table, NULL, parent);
++	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
+ }
+ 
+ static void __init paz00_init(void)
+diff --git a/drivers/soc/tegra/common.c b/drivers/soc/tegra/common.c
+index a71cb74f3674..caf7d375eeae 100644
+--- a/drivers/soc/tegra/common.c
++++ b/drivers/soc/tegra/common.c
+@@ -7,8 +7,11 @@
+  */
+ 
+ #include <linux/of.h>
++#include <linux/slab.h>
++#include <linux/sys_soc.h>
+ 
+ #include <soc/tegra/common.h>
++#include <soc/tegra/fuse.h>
+ 
+ static const struct of_device_id tegra_machine_match[] = {
+ 	{ .compatible = "nvidia,tegra20", },
+@@ -28,3 +31,33 @@ bool soc_is_tegra(void)
+ 
+ 	return of_match_node(tegra_machine_match, root) != NULL;
+ }
++
++static int __init tegra_soc_init(void)
++{
++	struct soc_device_attribute *soc_dev_attr;
++	struct soc_device *soc_dev;
++
++	if (!soc_is_tegra())
++		return 0;
++
++	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
++	if (!soc_dev_attr)
++		return -ENOMEM;
++
++	soc_dev_attr->family = kasprintf(GFP_KERNEL, "Tegra");
++	soc_dev_attr->revision = kasprintf(GFP_KERNEL, "%d",
++					   tegra_sku_info.revision);
++	soc_dev_attr->soc_id = kasprintf(GFP_KERNEL, "%u", tegra_get_chip_id());
++
++	soc_dev = soc_device_register(soc_dev_attr);
++	if (IS_ERR(soc_dev)) {
++		kfree(soc_dev_attr->family);
++		kfree(soc_dev_attr->revision);
++		kfree(soc_dev_attr->soc_id);
++		kfree(soc_dev_attr);
++		return -ENODEV;
++	}
++
++	return 0;
++}
++device_initcall(tegra_soc_init);
+-- 
+2.3.1
