@@ -1,58 +1,113 @@
-From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v4.0-rc3
-Date: Mon, 9 Mar 2015 03:11:29 -0600
-Message-ID: <54FD63C1.9050603@nvidia.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: Re: [PATCH v6 03/15] soc/tegra: Add ram code reader helper
+Date: Mon, 9 Mar 2015 15:36:54 +0100
+Message-ID: <CAAObsKBq8tv6gXeshweDgRwsEz2hGzhQWCZ=bU_08brNpOmNOw@mail.gmail.com>
+References: <1423750042-6535-1-git-send-email-tomeu.vizoso@collabora.com>
+ <1423750042-6535-4-git-send-email-tomeu.vizoso@collabora.com>
+ <CAAVeFuKLp=rG5oQxg7CjfZk9h2hA5kM0OoxKhyeLxAUcaB-2Eg@mail.gmail.com> <54F432CB.20800@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <54F432CB.20800@kapsi.fi>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Mikko Perttunen <mperttunen@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.0-rc3.
-Logs and other details at:
+On 2 March 2015 at 10:52, Mikko Perttunen <mikko.perttunen@kapsi.fi> wrote:
+> On 03/02/2015 10:46 AM, Alexandre Courbot wrote:
+>>
+>> On Thu, Feb 12, 2015 at 11:06 PM, Tomeu Vizoso
+>> <tomeu.vizoso@collabora.com> wrote:
+>>>
+>>> From: Mikko Perttunen <mperttunen@nvidia.com>
+>>>
+>>> Needed for the EMC and MC drivers to know what timings from the DT to
+>>> use.
+>>>
+>>> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+>>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+>>>
+>>> ---
+>>>
+>>> v4: Replace magic number with PMC_STRAPPING_OPT_A_RAM_CODE_SHIFT
+>>> ---
+>>>   drivers/soc/tegra/fuse/tegra-apbmisc.c | 19 +++++++++++++++++++
+>>>   include/soc/tegra/fuse.h               |  1 +
+>>>   2 files changed, 20 insertions(+)
+>>>
+>>> diff --git a/drivers/soc/tegra/fuse/tegra-apbmisc.c
+>>> b/drivers/soc/tegra/fuse/tegra-apbmisc.c
+>>> index 3bf5aba..dc96a62 100644
+>>> --- a/drivers/soc/tegra/fuse/tegra-apbmisc.c
+>>> +++ b/drivers/soc/tegra/fuse/tegra-apbmisc.c
+>>> @@ -28,8 +28,13 @@
+>>>   #define APBMISC_SIZE   0x64
+>>>   #define FUSE_SKU_INFO  0x10
+>>>
+>>> +#define PMC_STRAPPING_OPT_A_RAM_CODE_SHIFT     4
+>>> +#define PMC_STRAPPING_OPT_A_RAM_CODE_MASK_LONG (0xf <<
+>>> PMC_STRAPPING_OPT_A_RAM_CODE_SHIFT)
+>>> +#define PMC_STRAPPING_OPT_A_RAM_CODE_MASK_SHORT        (0x3 <<
+>>> PMC_STRAPPING_OPT_A_RAM_CODE_SHIFT)
+>>
+>>
+>> I think you are slightly over 80 chars here.
+>>
+>>> +
+>>>   static void __iomem *apbmisc_base;
+>>>   static void __iomem *strapping_base;
+>>> +static bool          long_ram_code;
+>>>
+>>>   u32 tegra_read_chipid(void)
+>>>   {
+>>> @@ -54,6 +59,18 @@ u32 tegra_read_straps(void)
+>>>                  return 0;
+>>>   }
+>>>
+>>> +u32 tegra_read_ram_code(void)
+>>> +{
+>>> +       u32 straps = tegra_read_straps();
+>>> +
+>>> +       if (long_ram_code)
+>>> +               straps &= PMC_STRAPPING_OPT_A_RAM_CODE_MASK_LONG;
+>>> +       else
+>>> +               straps &= PMC_STRAPPING_OPT_A_RAM_CODE_MASK_SHORT;
+>>> +
+>>> +       return straps >> PMC_STRAPPING_OPT_A_RAM_CODE_SHIFT;
+>>> +}
+>>> +
+>>>   static const struct of_device_id apbmisc_match[] __initconst = {
+>>>          { .compatible = "nvidia,tegra20-apbmisc", },
+>>>          {},
+>>> @@ -112,4 +129,6 @@ void __init tegra_init_apbmisc(void)
+>>>          strapping_base = of_iomap(np, 1);
+>>>          if (!strapping_base)
+>>>                  pr_err("ioremap tegra strapping_base failed\n");
+>>> +
+>>> +       long_ram_code = of_property_read_bool(np,
+>>> "nvidia,long-ram-code");
+>>
+>>
+>> Is this long-ram property chip-dependent? If so, couldn't we just use
+>> the chip ID or matched compatible string to decide whether the RAM
+>> code length, instead of having a dedicated property for it?
+>>
+>
+> I am under the impression that it is board-specific.
 
-     http://nvt.pwsan.com/pub/linux/testlogs/test_v4.0-rc3/20150308163103/
+Yeah, some boards with the K1 will use only 2 bits for the ram-code
+and others (notably the nyan chromebooks) will use 4.
 
+Regards,
 
-Test summary
-------------
+Tomeu
 
-Build: zImage:
-     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
-
-Build: Image:
-     Pass: ( 1/ 1): defconfig
-
-Boot to userspace: defconfig:
-     Pass: ( 1/ 1): qemu-vexpress64
-
-Boot to userspace: multi_v7_defconfig:
-     Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-     Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra30-beaver
-
-
-vmlinux object size
-(delta in bytes from test_v4.0-rc2 (13a7a6ac0a11197edcd0f756a035f472b42cdf8b)):
-    text     data      bss    total  kernel
-     -30      +16      +64      +50  defconfig
-   +3638      -80      +64    +3622  multi_v7_defconfig
-   +2590     -112      +64    +2542  tegra_defconfig
-
-
-  Boot-time memory difference
-(delta in bytes from test_v4.0-rc2 (13a7a6ac0a11197edcd0f756a035f472b42cdf8b))
-     avail    rsrvd     high    freed                board              kconfig                  dtb
-         .        .        .        .      qemu-vexpress64            defconfig           __internal
-         .        .        .      -4k tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-         .        .        .      -4k tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-         .        .        .      -4k  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-         .        .        .      -4k  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-         .        .        .      -4k       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-         .        .        .      -4k       tegra30-beaver      tegra_defconfig       tegra30-beaver
+> Mikko
+>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
