@@ -1,8 +1,8 @@
 From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v6 21/22] mfd: ab8500: Decrement the power supply's device
- reference counter
-Date: Tue, 10 Mar 2015 09:27:25 +0100
-Message-ID: <1425976046-20973-22-git-send-email-k.kozlowski__4562.71759835563$1425976149$gmane$org@samsung.com>
+Subject: [PATCH v6 19/22] power_supply: 88pm860x_charger: Decrement the power
+ supply's device reference counter
+Date: Tue, 10 Mar 2015 09:27:23 +0100
+Message-ID: <1425976046-20973-20-git-send-email-k.kozlowski__4328.74302282489$1425976195$gmane$org@samsung.com>
 References: <1425976046-20973-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-reply-to: <1425976046-20973-1-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
@@ -16,33 +16,52 @@ counter.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Acked-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Acked-by: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Reviewed-by: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 ---
- drivers/mfd/ab8500-sysctrl.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/power/88pm860x_charger.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mfd/ab8500-sysctrl.c b/drivers/mfd/ab8500-sysctrl.c
-index d4a4b24be7c6..0d1825696153 100644
---- a/drivers/mfd/ab8500-sysctrl.c
-+++ b/drivers/mfd/ab8500-sysctrl.c
-@@ -51,6 +51,7 @@ static void ab8500_power_off(void)
- 
- 		ret = power_supply_get_property(psy, POWER_SUPPLY_PROP_ONLINE,
- 				&val);
+diff --git a/drivers/power/88pm860x_charger.c b/drivers/power/88pm860x_charger.c
+index a7f32a5b2299..bf822aa00c14 100644
+--- a/drivers/power/88pm860x_charger.c
++++ b/drivers/power/88pm860x_charger.c
+@@ -298,13 +298,18 @@ static int set_charging_fsm(struct pm860x_charger_info *info)
+ 		return -EINVAL;
+ 	ret = power_supply_get_property(psy, POWER_SUPPLY_PROP_VOLTAGE_NOW,
+ 			&data);
+-	if (ret)
++	if (ret) {
 +		power_supply_put(psy);
+ 		return ret;
++	}
+ 	vbatt = data.intval / 1000;
  
- 		if (!ret && val.intval) {
- 			charger_present = true;
-@@ -73,6 +74,7 @@ static void ab8500_power_off(void)
- 			       pss[i]);
- 			machine_restart("charging");
- 		}
+ 	ret = power_supply_get_property(psy, POWER_SUPPLY_PROP_PRESENT, &data);
+-	if (ret)
++	if (ret) {
 +		power_supply_put(psy);
- 	}
+ 		return ret;
++	}
++	power_supply_put(psy);
  
- shutdown:
+ 	mutex_lock(&info->lock);
+ 	info->present = data.intval;
+@@ -447,6 +452,7 @@ static irqreturn_t pm860x_temp_handler(int irq, void *data)
+ 
+ 	set_charging_fsm(info);
+ out:
++	power_supply_put(psy);
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -507,6 +513,7 @@ static irqreturn_t pm860x_done_handler(int irq, void *data)
+ 
+ out:
+ 	mutex_unlock(&info->lock);
++	power_supply_put(psy);
+ 	dev_dbg(info->dev, "%s, Allowed: %d\n", __func__, info->allowed);
+ 	set_charging_fsm(info);
+ 
 -- 
 1.9.1
