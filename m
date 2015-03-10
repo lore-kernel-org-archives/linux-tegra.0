@@ -1,7 +1,8 @@
 From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v6 17/22] x86/olpc/xo1/sci: Use newly added power_supply_put API
-Date: Tue, 10 Mar 2015 09:27:21 +0100
-Message-ID: <1425976046-20973-18-git-send-email-k.kozlowski__37030.1614668735$1425976388$gmane$org@samsung.com>
+Subject: [PATCH v6 22/22] arm: mach-pxa: Decrement the power supply's device
+ reference counter
+Date: Tue, 10 Mar 2015 09:27:26 +0100
+Message-ID: <1425976046-20973-23-git-send-email-k.kozlowski__25709.8488662907$1425976412$gmane$org@samsung.com>
 References: <1425976046-20973-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-reply-to: <1425976046-20973-1-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
@@ -10,37 +11,33 @@ To: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Erem
 Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Replace direct usage of put_device() with new API: power_supply_put().
+Use power_supply_put() to decrement the power supply's device reference
+counter.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Acked-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
 Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Reviewed-by: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Acked-by: Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>
+Acked-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
 ---
- arch/x86/platform/olpc/olpc-xo1-sci.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/mach-pxa/raumfeld.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/platform/olpc/olpc-xo1-sci.c b/arch/x86/platform/olpc/olpc-xo1-sci.c
-index e4ed28bbf79d..7fa8b3b53bc0 100644
---- a/arch/x86/platform/olpc/olpc-xo1-sci.c
-+++ b/arch/x86/platform/olpc/olpc-xo1-sci.c
-@@ -61,7 +61,7 @@ static void battery_status_changed(void)
+diff --git a/arch/arm/mach-pxa/raumfeld.c b/arch/arm/mach-pxa/raumfeld.c
+index a762b23ac830..6dc4f025e674 100644
+--- a/arch/arm/mach-pxa/raumfeld.c
++++ b/arch/arm/mach-pxa/raumfeld.c
+@@ -758,8 +758,10 @@ static void raumfeld_power_signal_charged(void)
+ 	struct power_supply *psy =
+ 		power_supply_get_by_name(raumfeld_power_supplicants[0]);
  
- 	if (psy) {
- 		power_supply_changed(psy);
--		put_device(&psy->dev);
+-	if (psy)
++	if (psy) {
+ 		power_supply_set_battery_charged(psy);
 +		power_supply_put(psy);
- 	}
++	}
  }
  
-@@ -71,7 +71,7 @@ static void ac_status_changed(void)
- 
- 	if (psy) {
- 		power_supply_changed(psy);
--		put_device(&psy->dev);
-+		power_supply_put(psy);
- 	}
- }
- 
+ static int raumfeld_power_resume(void)
 -- 
 1.9.1
