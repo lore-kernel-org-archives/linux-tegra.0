@@ -1,8 +1,8 @@
 From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v6 22/22] arm: mach-pxa: Decrement the power supply's device
- reference counter
-Date: Tue, 10 Mar 2015 09:27:26 +0100
-Message-ID: <1425976046-20973-23-git-send-email-k.kozlowski__25709.8488662907$1425976412$gmane$org@samsung.com>
+Subject: [PATCH v6 12/22] power_supply: charger-manager: Use power_supply_*()
+ API for accessing function attrs
+Date: Tue, 10 Mar 2015 09:27:16 +0100
+Message-ID: <1425976046-20973-13-git-send-email-k.kozlowski__9196.62942546911$1425976413$gmane$org@samsung.com>
 References: <1425976046-20973-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-reply-to: <1425976046-20973-1-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
@@ -11,33 +11,163 @@ To: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Erem
 Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Use power_supply_put() to decrement the power supply's device reference
-counter.
+Replace direct calls to power supply function attributes with wrappers.
+Wrappers provide safe access in case of unregistering the power
+supply (e.g. by removing the driver). Replace:
+ - get_property -> power_supply_get_property
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Jonghwa Lee <jonghwa3.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
 Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Reviewed-by: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Acked-by: Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>
-Acked-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
 ---
- arch/arm/mach-pxa/raumfeld.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/power/charger-manager.c | 37 ++++++++++++++++++++-----------------
+ 1 file changed, 20 insertions(+), 17 deletions(-)
 
-diff --git a/arch/arm/mach-pxa/raumfeld.c b/arch/arm/mach-pxa/raumfeld.c
-index a762b23ac830..6dc4f025e674 100644
---- a/arch/arm/mach-pxa/raumfeld.c
-+++ b/arch/arm/mach-pxa/raumfeld.c
-@@ -758,8 +758,10 @@ static void raumfeld_power_signal_charged(void)
- 	struct power_supply *psy =
- 		power_supply_get_by_name(raumfeld_power_supplicants[0]);
+diff --git a/drivers/power/charger-manager.c b/drivers/power/charger-manager.c
+index df27600880b9..a5b86b60d244 100644
+--- a/drivers/power/charger-manager.c
++++ b/drivers/power/charger-manager.c
+@@ -103,8 +103,8 @@ static bool is_batt_present(struct charger_manager *cm)
+ 		if (!psy)
+ 			break;
  
--	if (psy)
-+	if (psy) {
- 		power_supply_set_battery_charged(psy);
-+		power_supply_put(psy);
-+	}
+-		ret = psy->get_property(psy,
+-				POWER_SUPPLY_PROP_PRESENT, &val);
++		ret = power_supply_get_property(psy, POWER_SUPPLY_PROP_PRESENT,
++				&val);
+ 		if (ret == 0 && val.intval)
+ 			present = true;
+ 		break;
+@@ -118,8 +118,8 @@ static bool is_batt_present(struct charger_manager *cm)
+ 				continue;
+ 			}
+ 
+-			ret = psy->get_property(psy, POWER_SUPPLY_PROP_PRESENT,
+-					&val);
++			ret = power_supply_get_property(psy,
++				POWER_SUPPLY_PROP_PRESENT, &val);
+ 			if (ret == 0 && val.intval) {
+ 				present = true;
+ 				break;
+@@ -155,7 +155,8 @@ static bool is_ext_pwr_online(struct charger_manager *cm)
+ 			continue;
+ 		}
+ 
+-		ret = psy->get_property(psy, POWER_SUPPLY_PROP_ONLINE, &val);
++		ret = power_supply_get_property(psy, POWER_SUPPLY_PROP_ONLINE,
++				&val);
+ 		if (ret == 0 && val.intval) {
+ 			online = true;
+ 			break;
+@@ -183,7 +184,7 @@ static int get_batt_uV(struct charger_manager *cm, int *uV)
+ 	if (!fuel_gauge)
+ 		return -ENODEV;
+ 
+-	ret = fuel_gauge->get_property(fuel_gauge,
++	ret = power_supply_get_property(fuel_gauge,
+ 				POWER_SUPPLY_PROP_VOLTAGE_NOW, &val);
+ 	if (ret)
+ 		return ret;
+@@ -223,7 +224,8 @@ static bool is_charging(struct charger_manager *cm)
+ 		}
+ 
+ 		/* 2. The charger should be online (ext-power) */
+-		ret = psy->get_property(psy, POWER_SUPPLY_PROP_ONLINE, &val);
++		ret = power_supply_get_property(psy, POWER_SUPPLY_PROP_ONLINE,
++				&val);
+ 		if (ret) {
+ 			dev_warn(cm->dev, "Cannot read ONLINE value from %s\n",
+ 				 cm->desc->psy_charger_stat[i]);
+@@ -236,7 +238,8 @@ static bool is_charging(struct charger_manager *cm)
+ 		 * 3. The charger should not be FULL, DISCHARGING,
+ 		 * or NOT_CHARGING.
+ 		 */
+-		ret = psy->get_property(psy, POWER_SUPPLY_PROP_STATUS, &val);
++		ret = power_supply_get_property(psy, POWER_SUPPLY_PROP_STATUS,
++				&val);
+ 		if (ret) {
+ 			dev_warn(cm->dev, "Cannot read STATUS value from %s\n",
+ 				 cm->desc->psy_charger_stat[i]);
+@@ -279,7 +282,7 @@ static bool is_full_charged(struct charger_manager *cm)
+ 		val.intval = 0;
+ 
+ 		/* Not full if capacity of fuel gauge isn't full */
+-		ret = fuel_gauge->get_property(fuel_gauge,
++		ret = power_supply_get_property(fuel_gauge,
+ 				POWER_SUPPLY_PROP_CHARGE_FULL, &val);
+ 		if (!ret && val.intval > desc->fullbatt_full_capacity)
+ 			return true;
+@@ -296,7 +299,7 @@ static bool is_full_charged(struct charger_manager *cm)
+ 	if (desc->fullbatt_soc > 0) {
+ 		val.intval = 0;
+ 
+-		ret = fuel_gauge->get_property(fuel_gauge,
++		ret = power_supply_get_property(fuel_gauge,
+ 				POWER_SUPPLY_PROP_CAPACITY, &val);
+ 		if (!ret && val.intval >= desc->fullbatt_soc)
+ 			return true;
+@@ -580,7 +583,7 @@ static int cm_get_battery_temperature_by_psy(struct charger_manager *cm,
+ 	if (!fuel_gauge)
+ 		return -ENODEV;
+ 
+-	return fuel_gauge->get_property(fuel_gauge,
++	return power_supply_get_property(fuel_gauge,
+ 				POWER_SUPPLY_PROP_TEMP,
+ 				(union power_supply_propval *)temp);
  }
+@@ -900,7 +903,7 @@ static int charger_get_property(struct power_supply *psy,
+ 			ret = -ENODEV;
+ 			break;
+ 		}
+-		ret = fuel_gauge->get_property(fuel_gauge,
++		ret = power_supply_get_property(fuel_gauge,
+ 				POWER_SUPPLY_PROP_CURRENT_NOW, val);
+ 		break;
+ 	case POWER_SUPPLY_PROP_TEMP:
+@@ -919,7 +922,7 @@ static int charger_get_property(struct power_supply *psy,
+ 			break;
+ 		}
  
- static int raumfeld_power_resume(void)
+-		ret = fuel_gauge->get_property(fuel_gauge,
++		ret = power_supply_get_property(fuel_gauge,
+ 					POWER_SUPPLY_PROP_CAPACITY, val);
+ 		if (ret)
+ 			break;
+@@ -975,7 +978,7 @@ static int charger_get_property(struct power_supply *psy,
+ 				break;
+ 			}
+ 
+-			ret = fuel_gauge->get_property(fuel_gauge,
++			ret = power_supply_get_property(fuel_gauge,
+ 						POWER_SUPPLY_PROP_CHARGE_NOW,
+ 						val);
+ 			if (ret) {
+@@ -1424,7 +1427,7 @@ static int cm_init_thermal_data(struct charger_manager *cm,
+ 	int ret;
+ 
+ 	/* Verify whether fuel gauge provides battery temperature */
+-	ret = fuel_gauge->get_property(fuel_gauge,
++	ret = power_supply_get_property(fuel_gauge,
+ 					POWER_SUPPLY_PROP_TEMP, &val);
+ 
+ 	if (!ret) {
+@@ -1718,13 +1721,13 @@ static int charger_manager_probe(struct platform_device *pdev)
+ 	cm->charger_psy.num_properties = psy_default.num_properties;
+ 
+ 	/* Find which optional psy-properties are available */
+-	if (!fuel_gauge->get_property(fuel_gauge,
++	if (!power_supply_get_property(fuel_gauge,
+ 					  POWER_SUPPLY_PROP_CHARGE_NOW, &val)) {
+ 		cm->charger_psy.properties[cm->charger_psy.num_properties] =
+ 				POWER_SUPPLY_PROP_CHARGE_NOW;
+ 		cm->charger_psy.num_properties++;
+ 	}
+-	if (!fuel_gauge->get_property(fuel_gauge,
++	if (!power_supply_get_property(fuel_gauge,
+ 					  POWER_SUPPLY_PROP_CURRENT_NOW,
+ 					  &val)) {
+ 		cm->charger_psy.properties[cm->charger_psy.num_properties] =
 -- 
 1.9.1
