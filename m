@@ -1,7 +1,8 @@
 From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v6 03/22] power_supply: Add driver private data
-Date: Tue, 10 Mar 2015 09:27:07 +0100
-Message-ID: <1425976046-20973-4-git-send-email-k.kozlowski__17585.0695501596$1425976460$gmane$org@samsung.com>
+Subject: [PATCH v6 09/22] mfd: ab8500: Use power_supply_*() API for accessing
+ function attrs
+Date: Tue, 10 Mar 2015 09:27:13 +0100
+Message-ID: <1425976046-20973-10-git-send-email-k.kozlowski__13311.6358927966$1425976464$gmane$org@samsung.com>
 References: <1425976046-20973-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-reply-to: <1425976046-20973-1-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
@@ -10,69 +11,45 @@ To: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Erem
 Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Allow drivers to store private data inside power_supply structure for
-later usage in power supply operations.
-
-Usage of driver private data is necessary to access driver's state
-container object from power supply calls (like get_property()) if struct
-'power_supply' is a stored there as a pointer, for example:
-
-struct some_driver_info {
-	struct i2c_client       *client;
-	struct power_supply     *power_supply;
-	...
-}
-
-In such case one cannot use container_of() and must store pointer to
-state container as private data.
+Replace direct calls to power supply function attributes with wrappers.
+Wrappers provide safe access in case of unregistering the power
+supply (e.g. by removing the driver). Replace:
+ - get_property -> power_supply_get_property
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Jonghwa Lee <jonghwa3.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+Acked-by: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Reviewed-by: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Acked-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
 ---
- drivers/power/power_supply_core.c | 6 ++++++
- include/linux/power_supply.h      | 4 ++++
- 2 files changed, 10 insertions(+)
+ drivers/mfd/ab8500-sysctrl.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/power/power_supply_core.c b/drivers/power/power_supply_core.c
-index 44c810456212..1c0978f961ea 100644
---- a/drivers/power/power_supply_core.c
-+++ b/drivers/power/power_supply_core.c
-@@ -674,6 +674,12 @@ void power_supply_unregister(struct power_supply *psy)
- }
- EXPORT_SYMBOL_GPL(power_supply_unregister);
+diff --git a/drivers/mfd/ab8500-sysctrl.c b/drivers/mfd/ab8500-sysctrl.c
+index cfff0b643f1b..d4a4b24be7c6 100644
+--- a/drivers/mfd/ab8500-sysctrl.c
++++ b/drivers/mfd/ab8500-sysctrl.c
+@@ -49,7 +49,8 @@ static void ab8500_power_off(void)
+ 		if (!psy)
+ 			continue;
  
-+void *power_supply_get_drvdata(struct power_supply *psy)
-+{
-+	return psy->drv_data;
-+}
-+EXPORT_SYMBOL_GPL(power_supply_get_drvdata);
-+
- static int __init power_supply_class_init(void)
- {
- 	power_supply_class = class_create(THIS_MODULE, "power_supply");
-diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
-index f606d6b4bd56..e30d85c0158d 100644
---- a/include/linux/power_supply.h
-+++ b/include/linux/power_supply.h
-@@ -209,6 +209,9 @@ struct power_supply {
- 	/* For APM emulation, think legacy userspace. */
- 	int use_for_apm;
+-		ret = psy->get_property(psy, POWER_SUPPLY_PROP_ONLINE, &val);
++		ret = power_supply_get_property(psy, POWER_SUPPLY_PROP_ONLINE,
++				&val);
  
-+	/* Driver private data */
-+	void *drv_data;
-+
- 	/* private */
- 	struct device *dev;
- 	struct work_struct changed_work;
-@@ -285,6 +288,7 @@ extern int devm_power_supply_register_no_ws(struct device *parent,
- extern void power_supply_unregister(struct power_supply *psy);
- extern int power_supply_powers(struct power_supply *psy, struct device *dev);
- 
-+extern void *power_supply_get_drvdata(struct power_supply *psy);
- /* For APM emulation, think legacy userspace. */
- extern struct class *power_supply_class;
- 
+ 		if (!ret && val.intval) {
+ 			charger_present = true;
+@@ -63,8 +64,8 @@ static void ab8500_power_off(void)
+ 	/* Check if battery is known */
+ 	psy = power_supply_get_by_name("ab8500_btemp");
+ 	if (psy) {
+-		ret = psy->get_property(psy, POWER_SUPPLY_PROP_TECHNOLOGY,
+-					&val);
++		ret = power_supply_get_property(psy,
++				POWER_SUPPLY_PROP_TECHNOLOGY, &val);
+ 		if (!ret && val.intval != POWER_SUPPLY_TECHNOLOGY_UNKNOWN) {
+ 			printk(KERN_INFO
+ 			       "Charger \"%s\" is connected with known battery."
 -- 
 1.9.1
