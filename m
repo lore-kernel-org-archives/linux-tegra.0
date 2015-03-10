@@ -1,8 +1,8 @@
 From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v6 06/22] power_supply: sysfs: Use power_supply_*() API for
+Subject: [PATCH v6 10/22] power_supply: apm_power: Use power_supply_*() API for
  accessing function attrs
-Date: Tue, 10 Mar 2015 09:27:10 +0100
-Message-ID: <1425976046-20973-7-git-send-email-k.kozlowski__34908.0689288259$1425976553$gmane$org@samsung.com>
+Date: Tue, 10 Mar 2015 09:27:14 +0100
+Message-ID: <1425976046-20973-11-git-send-email-k.kozlowski__20781.5650305294$1425976568$gmane$org@samsung.com>
 References: <1425976046-20973-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-reply-to: <1425976046-20973-1-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
@@ -15,8 +15,6 @@ Replace direct calls to power supply function attributes with wrappers.
 Wrappers provide safe access in case of unregistering the power
 supply (e.g. by removing the driver). Replace:
  - get_property -> power_supply_get_property
- - set_property -> power_supply_set_property
- - property_is_writeable -> power_supply_property_is_writeable
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Acked-by: Jonghwa Lee <jonghwa3.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
@@ -24,39 +22,25 @@ Acked-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
 Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Reviewed-by: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 ---
- drivers/power/power_supply_sysfs.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/power/apm_power.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/power/power_supply_sysfs.c b/drivers/power/power_supply_sysfs.c
-index 62653f50a524..f817aab80813 100644
---- a/drivers/power/power_supply_sysfs.c
-+++ b/drivers/power/power_supply_sysfs.c
-@@ -76,7 +76,7 @@ static ssize_t power_supply_show_property(struct device *dev,
- 	if (off == POWER_SUPPLY_PROP_TYPE) {
- 		value.intval = psy->type;
- 	} else {
--		ret = psy->get_property(psy, off, &value);
-+		ret = power_supply_get_property(psy, off, &value);
+diff --git a/drivers/power/apm_power.c b/drivers/power/apm_power.c
+index 39763015b360..2206f9ff6488 100644
+--- a/drivers/power/apm_power.c
++++ b/drivers/power/apm_power.c
+@@ -15,10 +15,10 @@
+ #include <linux/apm-emulation.h>
  
- 		if (ret < 0) {
- 			if (ret == -ENODATA)
-@@ -125,7 +125,7 @@ static ssize_t power_supply_store_property(struct device *dev,
  
- 	value.intval = long_val;
+-#define PSY_PROP(psy, prop, val) (psy->get_property(psy, \
++#define PSY_PROP(psy, prop, val) (power_supply_get_property(psy, \
+ 			 POWER_SUPPLY_PROP_##prop, val))
  
--	ret = psy->set_property(psy, off, &value);
-+	ret = power_supply_set_property(psy, off, &value);
- 	if (ret < 0)
- 		return ret;
+-#define _MPSY_PROP(prop, val) (main_battery->get_property(main_battery, \
++#define _MPSY_PROP(prop, val) (power_supply_get_property(main_battery, \
+ 							 prop, val))
  
-@@ -223,7 +223,7 @@ static umode_t power_supply_attr_is_visible(struct kobject *kobj,
- 
- 		if (property == attrno) {
- 			if (psy->property_is_writeable &&
--			    psy->property_is_writeable(psy, property) > 0)
-+			    power_supply_property_is_writeable(psy, property) > 0)
- 				mode |= S_IWUSR;
- 
- 			return mode;
+ #define MPSY_PROP(prop, val) _MPSY_PROP(POWER_SUPPLY_PROP_##prop, val)
 -- 
 1.9.1
