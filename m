@@ -1,8 +1,7 @@
 From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v6 12/22] power_supply: charger-manager: Use power_supply_*()
- API for accessing function attrs
-Date: Tue, 10 Mar 2015 09:27:16 +0100
-Message-ID: <1425976046-20973-13-git-send-email-k.kozlowski__9196.62942546911$1425976413$gmane$org@samsung.com>
+Subject: [PATCH v6 03/22] power_supply: Add driver private data
+Date: Tue, 10 Mar 2015 09:27:07 +0100
+Message-ID: <1425976046-20973-4-git-send-email-k.kozlowski__17585.0695501596$1425976460$gmane$org@samsung.com>
 References: <1425976046-20973-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-reply-to: <1425976046-20973-1-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
@@ -11,163 +10,69 @@ To: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Erem
 Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Replace direct calls to power supply function attributes with wrappers.
-Wrappers provide safe access in case of unregistering the power
-supply (e.g. by removing the driver). Replace:
- - get_property -> power_supply_get_property
+Allow drivers to store private data inside power_supply structure for
+later usage in power supply operations.
+
+Usage of driver private data is necessary to access driver's state
+container object from power supply calls (like get_property()) if struct
+'power_supply' is a stored there as a pointer, for example:
+
+struct some_driver_info {
+	struct i2c_client       *client;
+	struct power_supply     *power_supply;
+	...
+}
+
+In such case one cannot use container_of() and must store pointer to
+state container as private data.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Acked-by: Jonghwa Lee <jonghwa3.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Acked-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
 Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Reviewed-by: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Acked-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
 ---
- drivers/power/charger-manager.c | 37 ++++++++++++++++++++-----------------
- 1 file changed, 20 insertions(+), 17 deletions(-)
+ drivers/power/power_supply_core.c | 6 ++++++
+ include/linux/power_supply.h      | 4 ++++
+ 2 files changed, 10 insertions(+)
 
-diff --git a/drivers/power/charger-manager.c b/drivers/power/charger-manager.c
-index df27600880b9..a5b86b60d244 100644
---- a/drivers/power/charger-manager.c
-+++ b/drivers/power/charger-manager.c
-@@ -103,8 +103,8 @@ static bool is_batt_present(struct charger_manager *cm)
- 		if (!psy)
- 			break;
- 
--		ret = psy->get_property(psy,
--				POWER_SUPPLY_PROP_PRESENT, &val);
-+		ret = power_supply_get_property(psy, POWER_SUPPLY_PROP_PRESENT,
-+				&val);
- 		if (ret == 0 && val.intval)
- 			present = true;
- 		break;
-@@ -118,8 +118,8 @@ static bool is_batt_present(struct charger_manager *cm)
- 				continue;
- 			}
- 
--			ret = psy->get_property(psy, POWER_SUPPLY_PROP_PRESENT,
--					&val);
-+			ret = power_supply_get_property(psy,
-+				POWER_SUPPLY_PROP_PRESENT, &val);
- 			if (ret == 0 && val.intval) {
- 				present = true;
- 				break;
-@@ -155,7 +155,8 @@ static bool is_ext_pwr_online(struct charger_manager *cm)
- 			continue;
- 		}
- 
--		ret = psy->get_property(psy, POWER_SUPPLY_PROP_ONLINE, &val);
-+		ret = power_supply_get_property(psy, POWER_SUPPLY_PROP_ONLINE,
-+				&val);
- 		if (ret == 0 && val.intval) {
- 			online = true;
- 			break;
-@@ -183,7 +184,7 @@ static int get_batt_uV(struct charger_manager *cm, int *uV)
- 	if (!fuel_gauge)
- 		return -ENODEV;
- 
--	ret = fuel_gauge->get_property(fuel_gauge,
-+	ret = power_supply_get_property(fuel_gauge,
- 				POWER_SUPPLY_PROP_VOLTAGE_NOW, &val);
- 	if (ret)
- 		return ret;
-@@ -223,7 +224,8 @@ static bool is_charging(struct charger_manager *cm)
- 		}
- 
- 		/* 2. The charger should be online (ext-power) */
--		ret = psy->get_property(psy, POWER_SUPPLY_PROP_ONLINE, &val);
-+		ret = power_supply_get_property(psy, POWER_SUPPLY_PROP_ONLINE,
-+				&val);
- 		if (ret) {
- 			dev_warn(cm->dev, "Cannot read ONLINE value from %s\n",
- 				 cm->desc->psy_charger_stat[i]);
-@@ -236,7 +238,8 @@ static bool is_charging(struct charger_manager *cm)
- 		 * 3. The charger should not be FULL, DISCHARGING,
- 		 * or NOT_CHARGING.
- 		 */
--		ret = psy->get_property(psy, POWER_SUPPLY_PROP_STATUS, &val);
-+		ret = power_supply_get_property(psy, POWER_SUPPLY_PROP_STATUS,
-+				&val);
- 		if (ret) {
- 			dev_warn(cm->dev, "Cannot read STATUS value from %s\n",
- 				 cm->desc->psy_charger_stat[i]);
-@@ -279,7 +282,7 @@ static bool is_full_charged(struct charger_manager *cm)
- 		val.intval = 0;
- 
- 		/* Not full if capacity of fuel gauge isn't full */
--		ret = fuel_gauge->get_property(fuel_gauge,
-+		ret = power_supply_get_property(fuel_gauge,
- 				POWER_SUPPLY_PROP_CHARGE_FULL, &val);
- 		if (!ret && val.intval > desc->fullbatt_full_capacity)
- 			return true;
-@@ -296,7 +299,7 @@ static bool is_full_charged(struct charger_manager *cm)
- 	if (desc->fullbatt_soc > 0) {
- 		val.intval = 0;
- 
--		ret = fuel_gauge->get_property(fuel_gauge,
-+		ret = power_supply_get_property(fuel_gauge,
- 				POWER_SUPPLY_PROP_CAPACITY, &val);
- 		if (!ret && val.intval >= desc->fullbatt_soc)
- 			return true;
-@@ -580,7 +583,7 @@ static int cm_get_battery_temperature_by_psy(struct charger_manager *cm,
- 	if (!fuel_gauge)
- 		return -ENODEV;
- 
--	return fuel_gauge->get_property(fuel_gauge,
-+	return power_supply_get_property(fuel_gauge,
- 				POWER_SUPPLY_PROP_TEMP,
- 				(union power_supply_propval *)temp);
+diff --git a/drivers/power/power_supply_core.c b/drivers/power/power_supply_core.c
+index 44c810456212..1c0978f961ea 100644
+--- a/drivers/power/power_supply_core.c
++++ b/drivers/power/power_supply_core.c
+@@ -674,6 +674,12 @@ void power_supply_unregister(struct power_supply *psy)
  }
-@@ -900,7 +903,7 @@ static int charger_get_property(struct power_supply *psy,
- 			ret = -ENODEV;
- 			break;
- 		}
--		ret = fuel_gauge->get_property(fuel_gauge,
-+		ret = power_supply_get_property(fuel_gauge,
- 				POWER_SUPPLY_PROP_CURRENT_NOW, val);
- 		break;
- 	case POWER_SUPPLY_PROP_TEMP:
-@@ -919,7 +922,7 @@ static int charger_get_property(struct power_supply *psy,
- 			break;
- 		}
+ EXPORT_SYMBOL_GPL(power_supply_unregister);
  
--		ret = fuel_gauge->get_property(fuel_gauge,
-+		ret = power_supply_get_property(fuel_gauge,
- 					POWER_SUPPLY_PROP_CAPACITY, val);
- 		if (ret)
- 			break;
-@@ -975,7 +978,7 @@ static int charger_get_property(struct power_supply *psy,
- 				break;
- 			}
++void *power_supply_get_drvdata(struct power_supply *psy)
++{
++	return psy->drv_data;
++}
++EXPORT_SYMBOL_GPL(power_supply_get_drvdata);
++
+ static int __init power_supply_class_init(void)
+ {
+ 	power_supply_class = class_create(THIS_MODULE, "power_supply");
+diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
+index f606d6b4bd56..e30d85c0158d 100644
+--- a/include/linux/power_supply.h
++++ b/include/linux/power_supply.h
+@@ -209,6 +209,9 @@ struct power_supply {
+ 	/* For APM emulation, think legacy userspace. */
+ 	int use_for_apm;
  
--			ret = fuel_gauge->get_property(fuel_gauge,
-+			ret = power_supply_get_property(fuel_gauge,
- 						POWER_SUPPLY_PROP_CHARGE_NOW,
- 						val);
- 			if (ret) {
-@@ -1424,7 +1427,7 @@ static int cm_init_thermal_data(struct charger_manager *cm,
- 	int ret;
++	/* Driver private data */
++	void *drv_data;
++
+ 	/* private */
+ 	struct device *dev;
+ 	struct work_struct changed_work;
+@@ -285,6 +288,7 @@ extern int devm_power_supply_register_no_ws(struct device *parent,
+ extern void power_supply_unregister(struct power_supply *psy);
+ extern int power_supply_powers(struct power_supply *psy, struct device *dev);
  
- 	/* Verify whether fuel gauge provides battery temperature */
--	ret = fuel_gauge->get_property(fuel_gauge,
-+	ret = power_supply_get_property(fuel_gauge,
- 					POWER_SUPPLY_PROP_TEMP, &val);
++extern void *power_supply_get_drvdata(struct power_supply *psy);
+ /* For APM emulation, think legacy userspace. */
+ extern struct class *power_supply_class;
  
- 	if (!ret) {
-@@ -1718,13 +1721,13 @@ static int charger_manager_probe(struct platform_device *pdev)
- 	cm->charger_psy.num_properties = psy_default.num_properties;
- 
- 	/* Find which optional psy-properties are available */
--	if (!fuel_gauge->get_property(fuel_gauge,
-+	if (!power_supply_get_property(fuel_gauge,
- 					  POWER_SUPPLY_PROP_CHARGE_NOW, &val)) {
- 		cm->charger_psy.properties[cm->charger_psy.num_properties] =
- 				POWER_SUPPLY_PROP_CHARGE_NOW;
- 		cm->charger_psy.num_properties++;
- 	}
--	if (!fuel_gauge->get_property(fuel_gauge,
-+	if (!power_supply_get_property(fuel_gauge,
- 					  POWER_SUPPLY_PROP_CURRENT_NOW,
- 					  &val)) {
- 		cm->charger_psy.properties[cm->charger_psy.num_properties] =
 -- 
 1.9.1
