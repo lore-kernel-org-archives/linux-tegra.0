@@ -1,8 +1,8 @@
 From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v6 15/22] power_supply: Increment power supply use counter when
- obtaining references
-Date: Tue, 10 Mar 2015 09:27:19 +0100
-Message-ID: <1425976046-20973-16-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH v6 21/22] mfd: ab8500: Decrement the power supply's device
+ reference counter
+Date: Tue, 10 Mar 2015 09:27:25 +0100
+Message-ID: <1425976046-20973-22-git-send-email-k.kozlowski__4562.71759835563$1425976149$gmane$org@samsung.com>
 References: <1425976046-20973-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-reply-to: <1425976046-20973-1-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
@@ -11,73 +11,38 @@ To: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Erem
 Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Increment the power_supply.use_cnt usage counter on:
- - power_supply_get_by_phandle()
- - power_supply_get_by_name()
-and decrement it on power_supply_put() call.
-
-This helps tracking of valid usage of power supply instance by
-consumers. The usage counter itself also allows safe calling of
-power_supply_get_property-like functions even when driver unregisters
-this power supply.
+Use power_supply_put() to decrement the power supply's device reference
+counter.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
+Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Acked-by: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Reviewed-by: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 ---
- drivers/power/power_supply_core.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+ drivers/mfd/ab8500-sysctrl.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/power/power_supply_core.c b/drivers/power/power_supply_core.c
-index b4ec14683b7f..2ed4a4a6b3c5 100644
---- a/drivers/power/power_supply_core.c
-+++ b/drivers/power/power_supply_core.c
-@@ -349,10 +349,16 @@ static int power_supply_match_device_by_name(struct device *dev, const void *dat
-  */
- struct power_supply *power_supply_get_by_name(const char *name)
- {
-+	struct power_supply *psy = NULL;
- 	struct device *dev = class_find_device(power_supply_class, NULL, name,
- 					power_supply_match_device_by_name);
+diff --git a/drivers/mfd/ab8500-sysctrl.c b/drivers/mfd/ab8500-sysctrl.c
+index d4a4b24be7c6..0d1825696153 100644
+--- a/drivers/mfd/ab8500-sysctrl.c
++++ b/drivers/mfd/ab8500-sysctrl.c
+@@ -51,6 +51,7 @@ static void ab8500_power_off(void)
  
--	return dev ? dev_get_drvdata(dev) : NULL;
-+	if (dev) {
-+		psy = dev_get_drvdata(dev);
-+		atomic_inc(&psy->use_cnt);
-+	}
-+
-+	return psy;
- }
- EXPORT_SYMBOL_GPL(power_supply_get_by_name);
+ 		ret = power_supply_get_property(psy, POWER_SUPPLY_PROP_ONLINE,
+ 				&val);
++		power_supply_put(psy);
  
-@@ -367,6 +373,7 @@ void power_supply_put(struct power_supply *psy)
- {
- 	might_sleep();
+ 		if (!ret && val.intval) {
+ 			charger_present = true;
+@@ -73,6 +74,7 @@ static void ab8500_power_off(void)
+ 			       pss[i]);
+ 			machine_restart("charging");
+ 		}
++		power_supply_put(psy);
+ 	}
  
-+	atomic_dec(&psy->use_cnt);
- 	put_device(&psy->dev);
- }
- EXPORT_SYMBOL_GPL(power_supply_put);
-@@ -393,6 +400,7 @@ struct power_supply *power_supply_get_by_phandle(struct device_node *np,
- 							const char *property)
- {
- 	struct device_node *power_supply_np;
-+	struct power_supply *psy = NULL;
- 	struct device *dev;
- 
- 	power_supply_np = of_parse_phandle(np, property, 0);
-@@ -404,7 +412,12 @@ struct power_supply *power_supply_get_by_phandle(struct device_node *np,
- 
- 	of_node_put(power_supply_np);
- 
--	return dev ? dev_get_drvdata(dev) : NULL;
-+	if (dev) {
-+		psy = dev_get_drvdata(dev);
-+		atomic_inc(&psy->use_cnt);
-+	}
-+
-+	return psy;
- }
- EXPORT_SYMBOL_GPL(power_supply_get_by_phandle);
- #endif /* CONFIG_OF */
+ shutdown:
 -- 
 1.9.1
