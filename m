@@ -1,72 +1,74 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [pinmux scripts PATCH] Update Nyan-Big pinmux from ChromeOS
-Date: Tue, 10 Mar 2015 10:26:45 -0600
-Message-ID: <54FF1B45.4030507@wwwdotorg.org>
-References: <1425672435-19031-1-git-send-email-daniels@collabora.com>	<54FA0EBB.3080208@wwwdotorg.org>	<CAPnjgZ0Uir9PZ1RWKCua0q0R6NMgGotqR7+jAkc_aJd1xTx4ew@mail.gmail.com>	<54FA1231.9000709@wwwdotorg.org> <1425915411.12254.0@mail.collabora.com> <54FDC8F5.6060408@wwwdotorg.org> <loom.20150309T173610-946@post.gmane.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Xunlei Pang <xlpang-KN7UnAbNpbg@public.gmane.org>
+Subject: [PATCH 1/8] time: Add y2038 safe read_boot_clock64()
+Date: Wed, 11 Mar 2015 11:15:08 +0800
+Message-ID: <1426043715-22043-2-git-send-email-xlpang@126.com>
+References: <1426043715-22043-1-git-send-email-xlpang@126.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <loom.20150309T173610-946-eS7Uydv5nfjZ+VzJOa5vwg@public.gmane.org>
+In-Reply-To: <1426043715-22043-1-git-send-email-xlpang-KN7UnAbNpbg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Daniel Stone <daniels-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, John Stultz <john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd.bergmann-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux390-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org, Martin Schwidefsky <schwidefsky-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org>, Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Xunlei Pang <pang.xunlei-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/09/2015 10:40 AM, Daniel Stone wrote:
-> Hi,
->
-> Stephen Warren <swarren@...> writes:
->> On 03/09/2015 09:36 AM, Daniel Stone wrote:
->>> Actually, no, I hadn't. The diff is annoying to produce, as the format
->>> used in chromeos-3.10 is totally different (different pin naming scheme,
->>> aggregation of one entry to multiple nvidia,pins entries),
->>
->> I guess this is roughly what your Perl script does, but in the past I've
->> written one-off scripts to import our downstream DT files into the
->> *.board format that tegra-pinmux-scripts uses, and then diff'd that. The
->> advantage here is that I can then use the output with tegra-pinmux-
-> scripts.
->
-> Fair enough. I came into this hoping to spend rather less time on it than I
-> did. ;)
->
->>> And lastly,
->>> there are a number of entries in nyan-big.config which aren't present in
->>> the downstream config. If these entries are unneeded (presumably unused
->>> ... ?), should they be removed?
->>
->> Typically I'd hope that every pin had an explicit configuration, so that
->> we know we've actively avoided any conflicting settings. Do you have a
->> list of the pins that aren't configured in the ChromeOS kernel but are
->> in the updated tegra-pinmux-scripts config file?
->
-> Sure, I've attached it
+From: Xunlei Pang <pang.xunlei-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
-That's quite a large list. I guess since ChromeOS works without 
-configuring all those missing pins, we should probably not put 
-values/configuration for those pins into tegra-pinmux-scripts. 
-Otherwise, we can't know what values to set for any of those pins. I 
-think missing information is better than present information that might 
-be actively wrong.
+As part of addressing in-kernel y2038 issues, this patch adds
+read_boot_clock64() and replaces all the call sites of read_boot_clock()
+with this function. This is a __weak implementation, which simply
+calls the existing y2038 unsafe read_boot_clock().
 
-That is, unless you want to extract the actual configuration that's 
-programmed into HW from a running system, under the ChromeOS kernel. At 
-least we'd then have a set of data that's 100% aligned with what's 
-actually in use on production systems.
+This allows architecture specific implementations to be converted
+independently, and eventually the y2038 unsafe read_boot_clock()
+can be removed after all its architecture specific implementations
+have been converted to read_boot_clock64().
 
-I wish the ChromeOS boards had had one of the NVIDIA syseng-supplied 
-pinmux spreadsheets created. Then, we'd know exactly how everything was 
-supposed to be configured, or even if there were bugs in the 
-spreadsheet, at least have a single canonical source for the data, and 
-source to fix.
+Suggested-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Signed-off-by: Xunlei Pang <pang.xunlei-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+---
+ include/linux/timekeeping.h |  1 +
+ kernel/time/timekeeping.c   | 11 +++++++++--
+ 2 files changed, 10 insertions(+), 2 deletions(-)
 
->after having done Blaze as well (pushed to the same
-> tree, totally untested in any way; Big at least boots and gives me
-> USB/eMMC/eDP/HDMI). The only difference between the two is that Blaze does
-> have a definition for kb_row11_ps[34]. I've not checked to see if these are
-> actually required / in use, i.e. whether we do need them or if we're just
-> getting lucky with existing/default configuration. I'll do this before I
-> post the final patchset.
-
-It's good the two boards are very similar. At least that corresponds 
-well with them both having been derived from the same reference board.
+diff --git a/include/linux/timekeeping.h b/include/linux/timekeeping.h
+index 3eaae47..d53c522 100644
+--- a/include/linux/timekeeping.h
++++ b/include/linux/timekeeping.h
+@@ -263,6 +263,7 @@ static inline bool has_persistent_clock(void)
+ 
+ extern void read_persistent_clock(struct timespec *ts);
+ extern void read_boot_clock(struct timespec *ts);
++extern void read_boot_clock64(struct timespec64 *ts);
+ extern int update_persistent_clock(struct timespec now);
+ 
+ 
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 91db941..7080c21 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -1072,6 +1072,14 @@ void __weak read_boot_clock(struct timespec *ts)
+ 	ts->tv_nsec = 0;
+ }
+ 
++void __weak read_boot_clock64(struct timespec64 *ts64)
++{
++	struct timespec ts;
++
++	read_boot_clock(&ts);
++	*ts64 = timespec_to_timespec64(ts);
++}
++
+ /*
+  * timekeeping_init - Initializes the clocksource and common timekeeping values
+  */
+@@ -1093,8 +1101,7 @@ void __init timekeeping_init(void)
+ 	} else if (now.tv_sec || now.tv_nsec)
+ 		persistent_clock_exist = true;
+ 
+-	read_boot_clock(&ts);
+-	boot = timespec_to_timespec64(ts);
++	read_boot_clock64(&boot);
+ 	if (!timespec64_valid_strict(&boot)) {
+ 		pr_warn("WARNING: Boot clock returned invalid value!\n"
+ 			"         Check your CMOS/BIOS settings.\n");
+-- 
+1.9.1
