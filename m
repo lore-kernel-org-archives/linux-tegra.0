@@ -1,135 +1,87 @@
 From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [PATCH v7 05/18] of: Document timings subnode of nvidia,tegra-mc
-Date: Wed, 11 Mar 2015 11:34:18 +0100
-Message-ID: <1426070126-26910-6-git-send-email-tomeu.vizoso@collabora.com>
+Subject: [PATCH v7 03/18] soc/tegra: Add ram code reader helper
+Date: Wed, 11 Mar 2015 11:34:16 +0100
+Message-ID: <1426070126-26910-4-git-send-email-tomeu.vizoso@collabora.com>
 References: <1426070126-26910-1-git-send-email-tomeu.vizoso@collabora.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1426070126-26910-1-git-send-email-tomeu.vizoso@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-tegra@vger.kernel.org
-Cc: Mikko Perttunen <mikko.perttunen@kapsi.fi>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Mikko Perttunen <mikko.perttunen@kapsi.fi>, Mikko Perttunen <mperttunen@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The MC driver needs some timing-specific information to program the EMEM during
-a rate change of the EMC clock.
+From: Mikko Perttunen <mperttunen@nvidia.com>
 
+Needed for the EMC and MC drivers to know what timings from the DT to use.
+
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
 
 ---
 
-v4:	* Add more information about nvidia,emem-configuration
-	* Remove mandatory naming of the timings subnode
-	* Remove constraint on the unit-address of the timings and timing subnodes
+v4: Replace magic number with PMC_STRAPPING_OPT_A_RAM_CODE_SHIFT
 ---
- .../memory-controllers/nvidia,tegra-mc.txt         | 84 +++++++++++++++++++++-
- 1 file changed, 82 insertions(+), 2 deletions(-)
+ drivers/soc/tegra/fuse/tegra-apbmisc.c | 21 +++++++++++++++++++++
+ include/soc/tegra/fuse.h               |  1 +
+ 2 files changed, 22 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra-mc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra-mc.txt
-index f3db93c..3338a28 100644
---- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra-mc.txt
-+++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra-mc.txt
-@@ -1,6 +1,9 @@
- NVIDIA Tegra Memory Controller device tree bindings
- ===================================================
+diff --git a/drivers/soc/tegra/fuse/tegra-apbmisc.c b/drivers/soc/tegra/fuse/tegra-apbmisc.c
+index 3bf5aba..974bff1 100644
+--- a/drivers/soc/tegra/fuse/tegra-apbmisc.c
++++ b/drivers/soc/tegra/fuse/tegra-apbmisc.c
+@@ -28,8 +28,15 @@
+ #define APBMISC_SIZE	0x64
+ #define FUSE_SKU_INFO	0x10
  
-+memory-controller node
-+----------------------
++#define PMC_STRAPPING_OPT_A_RAM_CODE_SHIFT	4
++#define PMC_STRAPPING_OPT_A_RAM_CODE_MASK_LONG	\
++	(0xf << PMC_STRAPPING_OPT_A_RAM_CODE_SHIFT)
++#define PMC_STRAPPING_OPT_A_RAM_CODE_MASK_SHORT	\
++	(0x3 << PMC_STRAPPING_OPT_A_RAM_CODE_SHIFT)
 +
- Required properties:
- - compatible: Should be "nvidia,tegra<chip>-mc"
- - reg: Physical base address and length of the controller's registers.
-@@ -15,9 +18,49 @@ Required properties:
- This device implements an IOMMU that complies with the generic IOMMU binding.
- See ../iommu/iommu.txt for details.
+ static void __iomem *apbmisc_base;
+ static void __iomem *strapping_base;
++static bool          long_ram_code;
  
--Example:
----------
-+emc-timings subnode
-+-------------------
-+
-+The node should contain a "emc-timings" subnode for each supported RAM type (see field RAM_CODE in
-+register PMC_STRAPPING_OPT_A).
-+
-+Required properties for "emc-timings" nodes :
-+- nvidia,ram-code : Should contain the value of RAM_CODE this timing set is used for.
-+
-+timing subnode
-+--------------
-+
-+Each "emc-timings" node should contain a subnode for every supported EMC clock rate.
-+
-+Required properties for timing nodes :
-+- clock-frequency : Should contain the memory clock rate in Hz.
-+- nvidia,emem-configuration : Values to be written to the EMEM register block. For the Tegra124 SoC
-+(see section "15.6.1 MC Registers" in the TRM), these are the registers whose values need to be
-+specified, according to the board documentation:
-+
-+	MC_EMEM_ARB_CFG
-+	MC_EMEM_ARB_OUTSTANDING_REQ
-+	MC_EMEM_ARB_TIMING_RCD
-+	MC_EMEM_ARB_TIMING_RP
-+	MC_EMEM_ARB_TIMING_RC
-+	MC_EMEM_ARB_TIMING_RAS
-+	MC_EMEM_ARB_TIMING_FAW
-+	MC_EMEM_ARB_TIMING_RRD
-+	MC_EMEM_ARB_TIMING_RAP2PRE
-+	MC_EMEM_ARB_TIMING_WAP2PRE
-+	MC_EMEM_ARB_TIMING_R2R
-+	MC_EMEM_ARB_TIMING_W2W
-+	MC_EMEM_ARB_TIMING_R2W
-+	MC_EMEM_ARB_TIMING_W2R
-+	MC_EMEM_ARB_DA_TURNS
-+	MC_EMEM_ARB_DA_COVERS
-+	MC_EMEM_ARB_MISC0
-+	MC_EMEM_ARB_MISC1
-+	MC_EMEM_ARB_RING1_THROTTLE
+ u32 tegra_read_chipid(void)
+ {
+@@ -54,6 +61,18 @@ u32 tegra_read_straps(void)
+ 		return 0;
+ }
  
-+Example SoC include file:
++u32 tegra_read_ram_code(void)
++{
++	u32 straps = tegra_read_straps();
 +
-+/ {
- 	mc: memory-controller@0,70019000 {
- 		compatible = "nvidia,tegra124-mc";
- 		reg = <0x0 0x70019000 0x0 0x1000>;
-@@ -34,3 +77,40 @@ Example:
- 		...
- 		iommus = <&mc TEGRA_SWGROUP_SDMMC1A>;
- 	};
-+};
++	if (long_ram_code)
++		straps &= PMC_STRAPPING_OPT_A_RAM_CODE_MASK_LONG;
++	else
++		straps &= PMC_STRAPPING_OPT_A_RAM_CODE_MASK_SHORT;
 +
-+Example board file:
++	return straps >> PMC_STRAPPING_OPT_A_RAM_CODE_SHIFT;
++}
 +
-+/ {
-+	memory-controller@0,70019000 {
-+		emc-timings-3 {
-+			nvidia,ram-code = <3>;
+ static const struct of_device_id apbmisc_match[] __initconst = {
+ 	{ .compatible = "nvidia,tegra20-apbmisc", },
+ 	{},
+@@ -112,4 +131,6 @@ void __init tegra_init_apbmisc(void)
+ 	strapping_base = of_iomap(np, 1);
+ 	if (!strapping_base)
+ 		pr_err("ioremap tegra strapping_base failed\n");
 +
-+			timing-12750000 {
-+				clock-frequency = <12750000>;
-+
-+				nvidia,emem-configuration = <
-+					0x40040001 /* MC_EMEM_ARB_CFG */
-+					0x8000000a /* MC_EMEM_ARB_OUTSTANDING_REQ */
-+					0x00000001 /* MC_EMEM_ARB_TIMING_RCD */
-+					0x00000001 /* MC_EMEM_ARB_TIMING_RP */
-+					0x00000002 /* MC_EMEM_ARB_TIMING_RC */
-+					0x00000000 /* MC_EMEM_ARB_TIMING_RAS */
-+					0x00000002 /* MC_EMEM_ARB_TIMING_FAW */
-+					0x00000001 /* MC_EMEM_ARB_TIMING_RRD */
-+					0x00000002 /* MC_EMEM_ARB_TIMING_RAP2PRE */
-+					0x00000008 /* MC_EMEM_ARB_TIMING_WAP2PRE */
-+					0x00000003 /* MC_EMEM_ARB_TIMING_R2R */
-+					0x00000002 /* MC_EMEM_ARB_TIMING_W2W */
-+					0x00000003 /* MC_EMEM_ARB_TIMING_R2W */
-+					0x00000006 /* MC_EMEM_ARB_TIMING_W2R */
-+					0x06030203 /* MC_EMEM_ARB_DA_TURNS */
-+					0x000a0402 /* MC_EMEM_ARB_DA_COVERS */
-+					0x77e30303 /* MC_EMEM_ARB_MISC0 */
-+					0x70000f03 /* MC_EMEM_ARB_MISC1 */
-+					0x001f0000 /* MC_EMEM_ARB_RING1_THROTTLE */
-+				>;
-+			};
-+		};
-+	};
-+};
++	long_ram_code = of_property_read_bool(np, "nvidia,long-ram-code");
+ }
+diff --git a/include/soc/tegra/fuse.h b/include/soc/tegra/fuse.h
+index b5f7b5f..b019e34 100644
+--- a/include/soc/tegra/fuse.h
++++ b/include/soc/tegra/fuse.h
+@@ -56,6 +56,7 @@ struct tegra_sku_info {
+ };
+ 
+ u32 tegra_read_straps(void);
++u32 tegra_read_ram_code(void);
+ u32 tegra_read_chipid(void);
+ int tegra_fuse_readl(unsigned long offset, u32 *value);
+ 
 -- 
 2.1.0
