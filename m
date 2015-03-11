@@ -1,66 +1,79 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 6/8] ARM: time: Provide read_boot_clock64() and
- read_persistent_clock64()
-Date: Wed, 11 Mar 2015 09:53:58 +0100
-Message-ID: <20150311085357.GC19577@ulmo.nvidia.com>
-References: <1426044277-22170-1-git-send-email-xlpang@126.com>
- <1426044277-22170-2-git-send-email-xlpang@126.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] instmem/gk20a: fix crash during error path
+Date: Wed, 11 Mar 2015 10:01:39 +0100
+Message-ID: <20150311090138.GD19577@ulmo.nvidia.com>
+References: <1425969968-25691-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Fig2xvG2VGoz8o/s"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1426044277-22170-2-git-send-email-xlpang@126.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Xunlei Pang <xlpang@126.com>
-Cc: linux-kernel@vger.kernel.org, rtc-linux@googlegroups.com, Thomas Gleixner <tglx@linutronix.de>, Alessandro Zummo <a.zummo@towertech.it>, John Stultz <john.stultz@linaro.org>, Arnd Bergmann <arnd.bergmann@linaro.org>, linux-omap@vger.kernel.org, Tony Lindgren <tony@atomide.com>, linux-tegra@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, linux390@de.ibm.com, Martin Schwidefsky <schwidefsky@de.ibm.com>, Ralf Baechle <ralf@linux-mips.org>, Arnd Bergmann <arnd@arndb.de>, Xunlei Pang <pang.xunlei@linaro.org>
+Content-Type: multipart/mixed; boundary="===============0945890223=="
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <1425969968-25691-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---Fig2xvG2VGoz8o/s
+--===============0945890223==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="llIrKcgUOe3dCx0c"
+Content-Disposition: inline
+
+
+--llIrKcgUOe3dCx0c
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 11, 2015 at 11:24:35AM +0800, Xunlei Pang wrote:
-> From: Xunlei Pang <pang.xunlei@linaro.org>
->=20
-> As part of addressing "y2038 problem" for in-kernel uses, this
-> patch converts read_boot_clock() to read_boot_clock64() and
-> read_persistent_clock() to read_persistent_clock64() using
-> timespec64 by converting clock_access_fn to use timespec64.
->=20
-> Signed-off-by: Xunlei Pang <pang.xunlei@linaro.org>
-> ---
->  arch/arm/include/asm/mach/time.h    |  3 +--
->  arch/arm/kernel/time.c              |  6 +++---
->  arch/arm/plat-omap/counter_32k.c    | 10 +---------
->  drivers/clocksource/tegra20_timer.c | 10 +---------
->  4 files changed, 6 insertions(+), 23 deletions(-)
+On Tue, Mar 10, 2015 at 03:46:08PM +0900, Alexandre Courbot wrote:
+> If a memory allocation fails when using the DMA allocator,
+> gk20a_instobj_dtor_dma() will be called on the failed instmem object.
+> At this time, node->handle might not be NULL despite the call to
+> dma_alloc_attrs() having failed. node->cpuaddr is the right member to
+> check for such a failure, so use it instead.
 
-For the Tegra part:
+Indeed. The DMA address handle is in fact the very opposite of 0 in the
+failure case (DMA_ERROR_CODE).
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
---Fig2xvG2VGoz8o/s
+--llIrKcgUOe3dCx0c
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJVAAKlAAoJEN0jrNd/PrOhmOIQAKG1KccIgobtNXnI0FEYailH
-6s6NI2k9Le8h0/+//4LTfreJ5FY0HgOtWKC1x+/CvDrOporofJzUEEhI+y2xB5Qb
-FSOCUuGa7efmN6QqG9hzzI7BMjQp2N02N95S8MWTVAmhtG1O55xrH4QMu9Xxmxsb
-q7uADlgyql8mR6ux3YtMuNwDzoXUktD7g9lImLipVOjLUuX1eOhEzr1/dUcbXaro
-TLivSzpcytBrRih6iQe52N25KiBlAmdJzQHwtgyZvhhpioxMW7+kqiF3XrI1pAHO
-5irQUyIaUTa5aWiF7jqePw0fjNvcEQ4DfWfv8z7jYT2U/W7sK4bMpgJUGEXaDlP3
-0MRTlm59Y7guJdLOC7eK291a7DZ59uQqCsoxhOby+EE5/SLNgPvXa2GGeLgQEQBe
-YDVjCe1leeAeTmI2f8TmrFtdbgo5yi0Tj3qN9mdh9uSIq9bqH9U6CXSbgZ3uqDqq
-tQyhzbhJmiB64J4gDhxTXaK+mZITJyXXPqkldQ18SeIlKNpxKWEM8x5RR6Z/vKFn
-Opn9rcm9tlIgKPPtYXe/PAICDr4v4osiyqJ0KmnNVHxtFQPxmUu0heS7IVSRaK2z
-87AdxNUYopiFlcHA9XZKFlrSxUCx4rh0PPlixFkklZ/ANQ2WgBwhX+j55vE6TL6R
-eg3aCiOjPdeiCYER0TN1
-=zTtO
+iQIcBAABCAAGBQJVAARyAAoJEN0jrNd/PrOhL6sQALO4aOdIQ0SBMoLZUSY9UJIF
+h5T209li5yi1/ddk7kPyCpd6Bx5ytBPJkgDgfrLFJiMkTGEFhbFNv6qEnlWJhaGy
+xG9lG2U8s2qgRCgnGRLTJIVAxb8AClj3bba8pA0cxJsIQWV1OomrxYFO0v9wBHcY
+huGuRR62Owv8NEqbAH0/QfxdOBiZN25G3wQVc481+KgLAjvvaX1lHeoVjctt5uUk
+eG56fenyI2LOp8xXJs1I9bBCVJAbTQ/N6cZ3QyYo+ENZCUR6n00paRCV1+y7lEtG
+Y6+oQB69WsVvwaF2z46dOgsQprYGEiJ2bKSgfqa8UjfFQZvL0zmvqsz1WVYkcJpG
+uB9Ib6Xjlm9hxmfq2GKG4fTAzAIONx315wplfbEQNIlTma/g4e5x1N2eJeUKCoe8
+4T9Z3x1185UrxSjSUmBCHR8FyzIqccVZ4KmkblqnQd13TRnFMDk1uaum13aujVSF
+pJi/tJuRecQsvGLHqMQ0jT2ntlgoVOt7WljdyTnkhWAu8wOZeRUzyw/CgQclNExj
+jHUpUxiMg/qbIP8tQjP39vrbhSFwQAZ4CYUjiL8wbL180F97Jo3JCCSCL7Fqpy1U
+tiHrNLupXhNo3zCECi7nIniZQACnxnwpwCymd+Pe2Z6esCFqScTm0qu3THP4HrrL
+qRIqNycyKAsS97D9mhdm
+=ZNwA
 -----END PGP SIGNATURE-----
 
---Fig2xvG2VGoz8o/s--
+--llIrKcgUOe3dCx0c--
+
+--===============0945890223==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBt
+YWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZy
+ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL25vdXZlYXUK
+
+--===============0945890223==--
