@@ -1,111 +1,62 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] soc/tegra: move soc_device_register call out of arch/arm
-Date: Wed, 11 Mar 2015 09:34:28 +0100
-Message-ID: <20150311083424.GA19391@ulmo.nvidia.com>
-References: <1425868301-22767-1-git-send-email-josephl@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 5/8] ARM: tegra: clock: Provide y2038-safe
+ tegra_read_persistent_clock() replacement
+Date: Wed, 11 Mar 2015 09:52:20 +0100
+Message-ID: <20150311085218.GB19577@ulmo.nvidia.com>
+References: <1426044277-22170-1-git-send-email-xlpang@126.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="UlVJffcvxoiEqYs2"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="NDin8bjvE/0mNLFQ"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1425868301-22767-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+In-Reply-To: <1426044277-22170-1-git-send-email-xlpang@126.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Xunlei Pang <xlpang@126.com>
+Cc: linux-kernel@vger.kernel.org, rtc-linux@googlegroups.com, Thomas Gleixner <tglx@linutronix.de>, Alessandro Zummo <a.zummo@towertech.it>, John Stultz <john.stultz@linaro.org>, Arnd Bergmann <arnd.bergmann@linaro.org>, linux-omap@vger.kernel.org, Tony Lindgren <tony@atomide.com>, linux-tegra@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, linux390@de.ibm.com, Martin Schwidefsky <schwidefsky@de.ibm.com>, Ralf Baechle <ralf@linux-mips.org>, Arnd Bergmann <arnd@arndb.de>, Xunlei Pang <pang.xunlei@linaro.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---UlVJffcvxoiEqYs2
+--NDin8bjvE/0mNLFQ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 09, 2015 at 10:31:41AM +0800, Joseph Lo wrote:
-> Expending the usage for both Tegra & Tegra64 SoCs.
+On Wed, Mar 11, 2015 at 11:24:34AM +0800, Xunlei Pang wrote:
+> From: Xunlei Pang <pang.xunlei@linaro.org>
 >=20
-> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> As part of addressing "y2038 problem" for in-kernel uses, this
+> patch adds the y2038-safe tegra_read_persistent_clock64() using
+> timespec64.
+>=20
+> Because we rely on some subsequent changes to convert arm multiarch
+> support, tegra_read_persistent_clock() will be removed then.
+>=20
+> Signed-off-by: Xunlei Pang <pang.xunlei@linaro.org>
 > ---
->  arch/arm/mach-tegra/tegra.c | 31 +------------------------------
->  drivers/soc/tegra/common.c  | 33 +++++++++++++++++++++++++++++++++
->  2 files changed, 34 insertions(+), 30 deletions(-)
->=20
-> diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
-> index 914341bcef25..95df6a97b956 100644
-> --- a/arch/arm/mach-tegra/tegra.c
-> +++ b/arch/arm/mach-tegra/tegra.c
-> @@ -87,36 +87,7 @@ static void __init tegra_dt_init_irq(void)
-> =20
->  static void __init tegra_dt_init(void)
->  {
-> -	struct soc_device_attribute *soc_dev_attr;
-> -	struct soc_device *soc_dev;
-> -	struct device *parent =3D NULL;
-> -
-> -	soc_dev_attr =3D kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
-> -	if (!soc_dev_attr)
-> -		goto out;
-> -
-> -	soc_dev_attr->family =3D kasprintf(GFP_KERNEL, "Tegra");
-> -	soc_dev_attr->revision =3D kasprintf(GFP_KERNEL, "%d",
-> -					   tegra_sku_info.revision);
-> -	soc_dev_attr->soc_id =3D kasprintf(GFP_KERNEL, "%u", tegra_get_chip_id(=
-));
-> -
-> -	soc_dev =3D soc_device_register(soc_dev_attr);
-> -	if (IS_ERR(soc_dev)) {
-> -		kfree(soc_dev_attr->family);
-> -		kfree(soc_dev_attr->revision);
-> -		kfree(soc_dev_attr->soc_id);
-> -		kfree(soc_dev_attr);
-> -		goto out;
-> -	}
-> -
-> -	parent =3D soc_device_to_device(soc_dev);
-> -
-> -	/*
-> -	 * Finished with the static registrations now; fill in the missing
-> -	 * devices
-> -	 */
-> -out:
-> -	of_platform_populate(NULL, of_default_bus_match_table, NULL, parent);
-> +	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
+>  drivers/clocksource/tegra20_timer.c | 21 ++++++++++++++-------
+>  1 file changed, 14 insertions(+), 7 deletions(-)
 
-One of the reasons for adding the soc_device in the first place was so
-that it would be possible to use it as the parent for all devices that
-are instantiated from device tree. You remove that here, and break the
-ABI in the process. Arguably no userspace should be relying on the exact
-path in sysfs, but I'd still like to keep the top-level parent.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Which reminds me of a discussion a while back about introducing a top-
-level driver for the SoC. I'm not sure if anything came of that.
-
-Stephen, do you know if there was a conclusion on that discussion? As
-far as I remember this sparked around the time when we moved drivers to
-drivers/soc and started splitting things up into initcalls. I'm thinking
-that if nothing like that was created yet, perhaps soc_device and
-soc_bus_type would be good candidates to implement this on top of.
-
-Thierry
-
---UlVJffcvxoiEqYs2
+--NDin8bjvE/0mNLFQ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJU//4OAAoJEN0jrNd/PrOh/hYP/3Hl8AhahGIuUfjvAJy7svCO
-ngvTGy6UCCV5ep5zccrgjQZQyhlg+azrZpoamOcCphMcoN9rRX9wIskx5eoK5v8E
-QQMkTE8Jy2RbMR3gZqlRjjh7KhVD7vIkmppy0qVtfTmusrcsvOZUbu5pUCrFGcLc
-97pLcr/hP2EdNiCEEbTxxnbpcn4os5Qln9yfB19hnzvA3yvp2L3UeqhSPjD5iPS3
-giAfhc8GyXvCm70/QfE+We/iZN2eNKzXoPtLVSBSN3VIsBZ55iXotQeijlOK9lpc
-tFhcDGQ8J//t7TVX1kJRlN0MctPZieCjonSE7iitviVSOtR6PScBuaCjZYRhnJ2q
-WpY3ZTpXX0jzMnmxH8XTL99vOV9Xi8XZw2TrV5RQrAkocWnVN5nfSExXRbYOToWn
-okiK8cROOLDQ+wyaw80g4JBeiqdwzmKs1dAvV710lH0RIwbxLcc06+GLOZ/chVRI
-n7FNKFCaRbcwdbJ8ytUC96hysI0x5kIFCEfY0WO2S2XyVUtEHY+i7wiFscxl556v
-VZ4buwN3RxNoonl8gfahrjjGS4ZTONvDR6VeSKxRFLk1ypOsyuCObbxiL3wavZVK
-tV5jKoSj4vcN1pdRN76s7aXDxUC3O4GCTTKTBEu8EqO7t6B0N4sG8ti+GXTslR4n
-/zxM0CexKHMz9x2+8o49
-=GUnx
+iQIcBAABCAAGBQJVAAJCAAoJEN0jrNd/PrOhjfEP/0kAwCDVBYdY0lhoqPZBpKWD
+FADLjCfUVObEYDL3vQmdBan6N0OshCRcKsXIO3SNvaDRlrZb+6/BQGfiZc0wfcIc
+661n7hqYcoiZR8Fwl5TCJCFGBu0RtZv60VktdTRHigFNz60kjJiaDkg6AkoCOKRA
+zbDTWlYWgN6J6HDgmhsrSvt2mmyRAhsF07iiyEQGvZFYf73mp1bUcXqHtPHXSImp
+wIyTtc9jXFnEVVSdWkK+5/rtIe39eaI5qRXo/vIfD6ZMOGJj0nc92NSqxzV5ycoK
+Ygs84OeM8Lw1ag3s3zYw7DImOyliDCzN5a1Qj3P45GmbTImbgcR3Pvf9tno4Zp/f
+ex66Rtbo8AYN6GXna6M43QtQrHRgr3KQOwYhUu+A6DJXClb4kb4Fs5tXrFQUkbN+
+WjXIogIHqp1/zq14u9oSbPZFWZDQUHK3baNTGQrbeVpWAl4aWOZM34Eixvx8En3u
+wOCpD552nGYcYmQHBQKt5wTi/tyA2PW6jgFNmJHZ3CLGM+SW7otYL1XpBF9H4w59
+xH8bN2SDT0a0ojNHL5+UA0H06K0SM9yJvK9TSk59DPGlFYfjzI1td+CCH0D13fHt
+UeYXNL+xdWntw36egkUtZKmwwEFOYYHOsc8dT6nX6H7eaoUxoFWltrXdkkD3iCta
+DmulVxXg3lqOP4z179TL
+=8Bdv
 -----END PGP SIGNATURE-----
 
---UlVJffcvxoiEqYs2--
+--NDin8bjvE/0mNLFQ--
