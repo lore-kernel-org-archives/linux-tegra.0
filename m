@@ -1,54 +1,89 @@
 From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [PATCH v7 12/18] clk: Expose clk_hw_reparent to providers
-Date: Wed, 11 Mar 2015 11:34:25 +0100
-Message-ID: <1426070126-26910-13-git-send-email-tomeu.vizoso@collabora.com>
+Subject: [PATCH v7 04/18] of: document new emc-timings subnode in nvidia,tegra124-car
+Date: Wed, 11 Mar 2015 11:34:17 +0100
+Message-ID: <1426070126-26910-5-git-send-email-tomeu.vizoso@collabora.com>
 References: <1426070126-26910-1-git-send-email-tomeu.vizoso@collabora.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1426070126-26910-1-git-send-email-tomeu.vizoso@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-tegra@vger.kernel.org
-Cc: Mikko Perttunen <mikko.perttunen@kapsi.fi>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org
+Cc: Mikko Perttunen <mikko.perttunen@kapsi.fi>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Paul Walmsley <paul@pwsan.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-To be used by clock implementations for switching to a new parent during
-rate change.
+The EMC clock needs some extra information for changing its rate.
 
 Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
----
- drivers/clk/clk.c            | 8 ++++++++
- include/linux/clk-provider.h | 1 +
- 2 files changed, 9 insertions(+)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index eb01529..f793025 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1968,6 +1968,14 @@ static void clk_core_reparent(struct clk_core *clk,
- 	__clk_recalc_rates(clk, POST_RATE_CHANGE);
- }
+---
+
+v5:	* Remove constraint on the unit-address of the timings and timing subnodes
+
+v4:	* Remove comma from unit-address of CAR node in the example
+	* Simplify reg property value in the example
+---
+ .../bindings/clock/nvidia,tegra124-car.txt         | 42 +++++++++++++++++++++-
+ 1 file changed, 41 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
+index c6620bc..c3891ce 100644
+--- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
++++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
+@@ -21,10 +21,31 @@ Required properties :
+   In clock consumers, this cell represents the bit number in the CAR's
+   array of CLK_RST_CONTROLLER_RST_DEVICES_* registers.
  
-+void clk_hw_reparent(struct clk_hw *hw, struct clk_hw *new_parent)
-+{
-+	if (!hw)
-+		return;
++The node should contain a "emc-timings" subnode for each supported RAM type (see
++field RAM_CODE in register PMC_STRAPPING_OPT_A).
 +
-+	clk_core_reparent(hw->core, !new_parent ? NULL : new_parent->core);
-+}
++Required properties for "emc-timings" nodes :
++- nvidia,ram-code : Should contain the value of RAM_CODE this timing set
++  is used for.
 +
- /**
-  * clk_has_parent - check if a clock is a possible parent for another
-  * @clk: clock source
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 5591ea7..28abf1b 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -589,6 +589,7 @@ long __clk_mux_determine_rate_closest(struct clk_hw *hw, unsigned long rate,
- 			      unsigned long max_rate,
- 			      unsigned long *best_parent_rate,
- 			      struct clk_hw **best_parent_p);
-+void clk_hw_reparent(struct clk_hw *hw, struct clk_hw *new_parent);
++Each "emc-timings" node should contain a "timing" subnode for every supported
++EMC clock rate.
++
++Required properties for "timing" nodes :
++- clock-frequency : Should contain the memory clock rate to which this timing
++relates.
++- nvidia,parent-clock-frequency : Should contain the rate at which the current
++parent of the EMC clock should be running at this timing.
++- clocks : Must contain an entry for each entry in clock-names.
++  See ../clocks/clock-bindings.txt for details.
++- clock-names : Must include the following entries:
++  - emc-parent : the clock that should be the parent of the EMC clock at this
++timing.
++
+ Example SoC include file:
  
- static inline void __clk_hw_set_clk(struct clk_hw *dst, struct clk_hw *src)
- {
+ / {
+-	tegra_car: clock {
++	tegra_car: clock@60006000 {
+ 		compatible = "nvidia,tegra124-car";
+ 		reg = <0x60006000 0x1000>;
+ 		#clock-cells = <1>;
+@@ -62,4 +83,23 @@ Example board file:
+ 	&tegra_car {
+ 		clocks = <&clk_32k> <&osc>;
+ 	};
++
++	clock@60006000 {
++		emc-timings-3 {
++			nvidia,ram-code = <3>;
++
++			timing-12750000 {
++				clock-frequency = <12750000>;
++				nvidia,parent-clock-frequency = <408000000>;
++				clocks = <&tegra_car TEGRA124_CLK_PLL_P>;
++				clock-names = "emc-parent";
++			};
++			timing-20400000 {
++				clock-frequency = <20400000>;
++				nvidia,parent-clock-frequency = <408000000>;
++				clocks = <&tegra_car TEGRA124_CLK_PLL_P>;
++				clock-names = "emc-parent";
++			};
++		};
++	};
+ };
 -- 
 2.1.0
