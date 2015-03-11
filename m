@@ -1,48 +1,84 @@
 From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: [PATCH v7 18/18] memory: tegra: Disable ARBITRATION_EMEM interrupt
-Date: Wed, 11 Mar 2015 11:34:31 +0100
-Message-ID: <1426070126-26910-19-git-send-email-tomeu.vizoso@collabora.com>
+Subject: [PATCH v7 14/18] memory: tegra: Add debugfs entry for getting and setting the EMC rate
+Date: Wed, 11 Mar 2015 11:34:27 +0100
+Message-ID: <1426070126-26910-15-git-send-email-tomeu.vizoso@collabora.com>
 References: <1426070126-26910-1-git-send-email-tomeu.vizoso@collabora.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1426070126-26910-1-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-As this interrupt is just for development purposes, as the TRM says, and
-the sheer amount of interrupts fired can seriously disrupt userspace
-when testing the lower frequencies supported by the EMC.
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-From the TRM:
+Will be very useful when tuning memory scaling.
 
-"There is one performance warning type interrupt: ARBITRATION_EMEM. It
-fires when the MC detects that a request has been pending in the Row
-Sorter long enough to hit the DEADLOCK_PREVENTION_SLACK_THRESHOLD. In
-addition to true performance problems, this interrupt may fire in
-situations such as clock-change where the EMC backpressures pending
-traffic for long periods of time. This interrupt helps developers
-identify and debug performance issues and configuration issues."
-
+Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 ---
- drivers/memory/tegra/mc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/memory/tegra/tegra124-emc.c | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-index 4e3a886..19f6774 100644
---- a/drivers/memory/tegra/mc.c
-+++ b/drivers/memory/tegra/mc.c
-@@ -409,8 +409,8 @@ static int tegra_mc_probe(struct platform_device *pdev)
+diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
+index ffd9604..4157f52 100644
+--- a/drivers/memory/tegra/tegra124-emc.c
++++ b/drivers/memory/tegra/tegra124-emc.c
+@@ -18,6 +18,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/clk.h>
+ #include <linux/clkdev.h>
++#include <linux/debugfs.h>
+ #include <linux/delay.h>
+ #include <linux/module.h>
+ #include <linux/of_address.h>
+@@ -1037,6 +1038,38 @@ static struct device_node *tegra_emc_find_node_by_ram_code(
+ 	return NULL;
+ }
  
- 	value = MC_INT_DECERR_MTS | MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
- 		MC_INT_INVALID_APB_ASID_UPDATE | MC_INT_INVALID_SMMU_PAGE |
--		MC_INT_ARBITRATION_EMEM | MC_INT_SECURITY_VIOLATION |
--		MC_INT_DECERR_EMEM;
-+		MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM;
++/* Debugfs entry */
 +
- 	mc_writel(mc, value, MC_INTMASK);
++static int emc_debug_rate_get(void *data, u64 *rate)
++{
++	struct clk *c = data;
++
++	*rate = clk_get_rate(c);
++
++	return 0;
++}
++
++static int emc_debug_rate_set(void *data, u64 rate)
++{
++	struct clk *c = data;
++
++	return clk_set_rate(c, rate);
++}
++
++DEFINE_SIMPLE_ATTRIBUTE(emc_debug_rate_fops, emc_debug_rate_get,
++			emc_debug_rate_set, "%lld\n");
++
++void emc_debugfs_init(void)
++{
++	struct dentry *d;
++
++	d = debugfs_create_file("emc_rate", S_IRUGO | S_IWUSR, NULL,
++				clk_get_sys("tegra-clk-debug", "emc"),
++				&emc_debug_rate_fops);
++	if (!d)
++		pr_warn("failed to create debugfs entries\n");
++}
++
+ static int tegra_emc_probe(struct platform_device *pdev)
+ {
+ 	struct tegra_emc *tegra;
+@@ -1107,6 +1140,8 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, tegra);
  
+ 
++	emc_debugfs_init();
++
  	return 0;
+ };
+ 
 -- 
 2.1.0
