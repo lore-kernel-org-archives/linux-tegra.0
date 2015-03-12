@@ -1,54 +1,84 @@
 From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [PATCH v8 12/18] clk: Expose clk_hw_reparent to providers
-Date: Thu, 12 Mar 2015 15:48:04 +0100
-Message-ID: <1426171746-26864-13-git-send-email-tomeu.vizoso@collabora.com>
+Subject: [PATCH v8 14/18] memory: tegra: Add debugfs entry for getting and setting the EMC rate
+Date: Thu, 12 Mar 2015 15:48:06 +0100
+Message-ID: <1426171746-26864-15-git-send-email-tomeu.vizoso@collabora.com>
 References: <1426171746-26864-1-git-send-email-tomeu.vizoso@collabora.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1426171746-26864-1-git-send-email-tomeu.vizoso@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-tegra@vger.kernel.org
-Cc: Mikko Perttunen <mikko.perttunen@kapsi.fi>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org
+Cc: Mikko Perttunen <mikko.perttunen@kapsi.fi>, Mikko Perttunen <mperttunen@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-To be used by clock implementations for switching to a new parent during
-rate change.
+From: Mikko Perttunen <mperttunen@nvidia.com>
 
+Will be very useful when tuning memory scaling.
+
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
 ---
- drivers/clk/clk.c            | 8 ++++++++
- include/linux/clk-provider.h | 1 +
- 2 files changed, 9 insertions(+)
+ drivers/memory/tegra/tegra124-emc.c | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index eb01529..f793025 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1968,6 +1968,14 @@ static void clk_core_reparent(struct clk_core *clk,
- 	__clk_recalc_rates(clk, POST_RATE_CHANGE);
+diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
+index 327467b..f61717b 100644
+--- a/drivers/memory/tegra/tegra124-emc.c
++++ b/drivers/memory/tegra/tegra124-emc.c
+@@ -18,6 +18,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/clk.h>
+ #include <linux/clkdev.h>
++#include <linux/debugfs.h>
+ #include <linux/delay.h>
+ #include <linux/of_address.h>
+ #include <linux/of_platform.h>
+@@ -1035,6 +1036,38 @@ static struct device_node *tegra_emc_find_node_by_ram_code(
+ 	return NULL;
  }
  
-+void clk_hw_reparent(struct clk_hw *hw, struct clk_hw *new_parent)
-+{
-+	if (!hw)
-+		return;
++/* Debugfs entry */
 +
-+	clk_core_reparent(hw->core, !new_parent ? NULL : new_parent->core);
++static int emc_debug_rate_get(void *data, u64 *rate)
++{
++	struct clk *c = data;
++
++	*rate = clk_get_rate(c);
++
++	return 0;
 +}
 +
- /**
-  * clk_has_parent - check if a clock is a possible parent for another
-  * @clk: clock source
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 5591ea7..28abf1b 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -589,6 +589,7 @@ long __clk_mux_determine_rate_closest(struct clk_hw *hw, unsigned long rate,
- 			      unsigned long max_rate,
- 			      unsigned long *best_parent_rate,
- 			      struct clk_hw **best_parent_p);
-+void clk_hw_reparent(struct clk_hw *hw, struct clk_hw *new_parent);
- 
- static inline void __clk_hw_set_clk(struct clk_hw *dst, struct clk_hw *src)
++static int emc_debug_rate_set(void *data, u64 rate)
++{
++	struct clk *c = data;
++
++	return clk_set_rate(c, rate);
++}
++
++DEFINE_SIMPLE_ATTRIBUTE(emc_debug_rate_fops, emc_debug_rate_get,
++			emc_debug_rate_set, "%lld\n");
++
++void emc_debugfs_init(void)
++{
++	struct dentry *d;
++
++	d = debugfs_create_file("emc_rate", S_IRUGO | S_IWUSR, NULL,
++				clk_get_sys("tegra-clk-debug", "emc"),
++				&emc_debug_rate_fops);
++	if (!d)
++		pr_warn("failed to create debugfs entries\n");
++}
++
+ static int tegra_emc_probe(struct platform_device *pdev)
  {
+ 	struct tegra_emc *tegra;
+@@ -1105,6 +1138,8 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, tegra);
+ 
+ 
++	emc_debugfs_init();
++
+ 	return 0;
+ };
+ 
 -- 
 2.1.0
