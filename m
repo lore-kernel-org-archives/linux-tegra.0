@@ -1,84 +1,66 @@
 From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [PATCH v8 14/18] memory: tegra: Add debugfs entry for getting and setting the EMC rate
-Date: Thu, 12 Mar 2015 15:48:06 +0100
-Message-ID: <1426171746-26864-15-git-send-email-tomeu.vizoso@collabora.com>
+Subject: [PATCH v8 08/18] ARM: tegra: Add EMC to Tegra124 device tree
+Date: Thu, 12 Mar 2015 15:48:00 +0100
+Message-ID: <1426171746-26864-9-git-send-email-tomeu.vizoso@collabora.com>
 References: <1426171746-26864-1-git-send-email-tomeu.vizoso@collabora.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1426171746-26864-1-git-send-email-tomeu.vizoso@collabora.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-tegra@vger.kernel.org
-Cc: Mikko Perttunen <mikko.perttunen@kapsi.fi>, Mikko Perttunen <mperttunen@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Russell King <linux@arm.linux.org.uk>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>, Mikko Perttunen <mikko.perttunen@kapsi.fi>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 From: Mikko Perttunen <mperttunen@nvidia.com>
 
-Will be very useful when tuning memory scaling.
+This adds a node for the EMC memory controller. It is always enabled, but only
+provides read-only functionality without board-specific timing tables.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
----
- drivers/memory/tegra/tegra124-emc.c | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
 
-diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
-index 327467b..f61717b 100644
---- a/drivers/memory/tegra/tegra124-emc.c
-+++ b/drivers/memory/tegra/tegra124-emc.c
-@@ -18,6 +18,7 @@
- #include <linux/clk-provider.h>
- #include <linux/clk.h>
- #include <linux/clkdev.h>
-+#include <linux/debugfs.h>
- #include <linux/delay.h>
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
-@@ -1035,6 +1036,38 @@ static struct device_node *tegra_emc_find_node_by_ram_code(
- 	return NULL;
- }
+---
+
+v5: Add a phandle to the CAR node that points to the EMC node
+---
+ arch/arm/boot/dts/tegra124.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+index 4be06c6..0fff4fb 100644
+--- a/arch/arm/boot/dts/tegra124.dtsi
++++ b/arch/arm/boot/dts/tegra124.dtsi
+@@ -207,6 +207,7 @@
+ 		reg = <0x0 0x60006000 0x0 0x1000>;
+ 		#clock-cells = <1>;
+ 		#reset-cells = <1>;
++		nvidia,external-memory-controller = <&emc>;
+ 	};
  
-+/* Debugfs entry */
-+
-+static int emc_debug_rate_get(void *data, u64 *rate)
-+{
-+	struct clk *c = data;
-+
-+	*rate = clk_get_rate(c);
-+
-+	return 0;
-+}
-+
-+static int emc_debug_rate_set(void *data, u64 rate)
-+{
-+	struct clk *c = data;
-+
-+	return clk_set_rate(c, rate);
-+}
-+
-+DEFINE_SIMPLE_ATTRIBUTE(emc_debug_rate_fops, emc_debug_rate_get,
-+			emc_debug_rate_set, "%lld\n");
-+
-+void emc_debugfs_init(void)
-+{
-+	struct dentry *d;
-+
-+	d = debugfs_create_file("emc_rate", S_IRUGO | S_IWUSR, NULL,
-+				clk_get_sys("tegra-clk-debug", "emc"),
-+				&emc_debug_rate_fops);
-+	if (!d)
-+		pr_warn("failed to create debugfs entries\n");
-+}
-+
- static int tegra_emc_probe(struct platform_device *pdev)
- {
- 	struct tegra_emc *tegra;
-@@ -1105,6 +1138,8 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, tegra);
+ 	flow-controller@0,60007000 {
+@@ -569,6 +570,13 @@
+ 		#iommu-cells = <1>;
+ 	};
  
- 
-+	emc_debugfs_init();
++	emc: emc@0,7001b000 {
++		compatible = "nvidia,tegra124-emc";
++		reg = <0x0 0x7001b000 0x0 0x1000>;
 +
- 	return 0;
- };
++		nvidia,memory-controller = <&mc>;
++	};
++
+ 	sata@0,70020000 {
+ 		compatible = "nvidia,tegra124-ahci";
  
 -- 
 2.1.0
