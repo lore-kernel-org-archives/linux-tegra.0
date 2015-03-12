@@ -1,7 +1,7 @@
 From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [PATCH v8 16/18] ARM: tegra: Add EMC timings to Nyan Big device tree
-Date: Thu, 12 Mar 2015 15:48:08 +0100
-Message-ID: <1426171746-26864-17-git-send-email-tomeu.vizoso@collabora.com>
+Subject: [PATCH v8 17/18] ARM: tegra: Add EMC timings to Nyan Blaze device tree
+Date: Thu, 12 Mar 2015 15:48:09 +0100
+Message-ID: <1426171746-26864-18-git-send-email-tomeu.vizoso@collabora.com>
 References: <1426171746-26864-1-git-send-email-tomeu.vizoso@collabora.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1426171746-26864-1-git-send-email-tomeu.vizoso@collabora.com>
@@ -10,9 +10,9 @@ To: linux-tegra@vger.kernel.org
 Cc: Mikko Perttunen <mikko.perttunen@kapsi.fi>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This adds a new file, tegra124-nyan-big-emc.dtsi that contains
+This adds a new file, tegra124-nyan-blaze-emc.dtsi that contains
 valid timings for the EMC memory clock. The file is included to the
-main device tree file for the Nyan Big.
+main device tree file for the Nyan Blaze.
 
 The frequency 528MHz is missing because we don't currently have a timing
 configuration that works.
@@ -22,18 +22,22 @@ what could be tested currently, though downstream has timings for more
 ram-codes.
 
 Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
----
- arch/arm/boot/dts/tegra124-nyan-big-emc.dtsi | 2023 ++++++++++++++++++++++++++
- arch/arm/boot/dts/tegra124-nyan-big.dts      |    2 +
- 2 files changed, 2025 insertions(+)
- create mode 100644 arch/arm/boot/dts/tegra124-nyan-big-emc.dtsi
 
-diff --git a/arch/arm/boot/dts/tegra124-nyan-big-emc.dtsi b/arch/arm/boot/dts/tegra124-nyan-big-emc.dtsi
+---
+
+v8:	* Add the include to the right DTS file
+---
+ arch/arm/boot/dts/tegra124-nyan-blaze-emc.dtsi | 2049 ++++++++++++++++++++++++
+ arch/arm/boot/dts/tegra124-nyan-blaze.dts      |    2 +
+ 2 files changed, 2051 insertions(+)
+ create mode 100644 arch/arm/boot/dts/tegra124-nyan-blaze-emc.dtsi
+
+diff --git a/arch/arm/boot/dts/tegra124-nyan-blaze-emc.dtsi b/arch/arm/boot/dts/tegra124-nyan-blaze-emc.dtsi
 new file mode 100644
-index 0000000..1a5748d
+index 0000000..9ecd108
 --- /dev/null
-+++ b/arch/arm/boot/dts/tegra124-nyan-big-emc.dtsi
-@@ -0,0 +1,2023 @@
++++ b/arch/arm/boot/dts/tegra124-nyan-blaze-emc.dtsi
+@@ -0,0 +1,2049 @@
 +/ {
 +	clock@0,60006000 {
 +		emc-timings-1 {
@@ -211,10 +215,10 @@ index 0000000..1a5748d
 +					0x00000000
 +					0x00000000
 +					0x00000000
-+					0x00004000
++					0x0000c000
 +					0x00000000
 +					0x00000000
-+					0x00004000
++					0x0000c000
 +					0x00000000
 +					0x00000000
 +					0x00000000
@@ -253,7 +257,7 @@ index 0000000..1a5748d
 +					0x00000000
 +					0x00000000
 +					0x77ffc081
-+					0x00000303
++					0x00000505
 +					0x81f1f108
 +					0x07070004
 +					0x0000003f
@@ -379,10 +383,10 @@ index 0000000..1a5748d
 +					0x00000000
 +					0x00000000
 +					0x00000000
-+					0x00004000
++					0x0000c000
 +					0x00000000
 +					0x00000000
-+					0x00004000
++					0x0000c000
 +					0x00000000
 +					0x00000000
 +					0x00000000
@@ -421,7 +425,7 @@ index 0000000..1a5748d
 +					0x00000000
 +					0x00000000
 +					0x77ffc081
-+					0x00000303
++					0x00000505
 +					0x81f1f108
 +					0x07070004
 +					0x0000003f
@@ -547,10 +551,10 @@ index 0000000..1a5748d
 +					0x00000000
 +					0x00000000
 +					0x00000000
-+					0x00004000
++					0x0000c000
 +					0x00000000
 +					0x00000000
-+					0x00004000
++					0x0000c000
 +					0x00000000
 +					0x00000000
 +					0x00000000
@@ -589,7 +593,7 @@ index 0000000..1a5748d
 +					0x00000000
 +					0x00000000
 +					0x77ffc081
-+					0x00000303
++					0x00000505
 +					0x81f1f108
 +					0x07070004
 +					0x0000003f
@@ -715,10 +719,10 @@ index 0000000..1a5748d
 +					0x00000000
 +					0x00000000
 +					0x00000000
-+					0x00004000
++					0x0000c000
 +					0x00000000
 +					0x00000000
-+					0x00004000
++					0x0000c000
 +					0x00000000
 +					0x00000000
 +					0x00000000
@@ -757,7 +761,7 @@ index 0000000..1a5748d
 +					0x00000000
 +					0x00000000
 +					0x77ffc081
-+					0x00000303
++					0x00000505
 +					0x81f1f108
 +					0x07070004
 +					0x0000003f
@@ -883,10 +887,10 @@ index 0000000..1a5748d
 +					0x00000000
 +					0x00000000
 +					0x00000000
-+					0x00004000
++					0x0000c000
 +					0x00000000
 +					0x00000000
-+					0x00004000
++					0x0000c000
 +					0x00000000
 +					0x00000000
 +					0x00000000
@@ -925,7 +929,7 @@ index 0000000..1a5748d
 +					0x00000000
 +					0x00000000
 +					0x77ffc081
-+					0x00000303
++					0x00000505
 +					0x81f1f108
 +					0x07070004
 +					0x0000003f
@@ -1051,10 +1055,10 @@ index 0000000..1a5748d
 +					0x00000000
 +					0x00000000
 +					0x00000000
-+					0x00004000
++					0x0000c000
 +					0x00000000
 +					0x00000000
-+					0x00004000
++					0x0000c000
 +					0x00000000
 +					0x00000000
 +					0x00000000
@@ -1081,9 +1085,9 @@ index 0000000..1a5748d
 +					0x00000000
 +					0x00090000
 +					0x00090000
-+					0x00094000
-+					0x00094000
-+					0x00009400
++					0x00090000
++					0x00090000
++					0x00009000
 +					0x00009000
 +					0x00009000
 +					0x00009000
@@ -1093,7 +1097,7 @@ index 0000000..1a5748d
 +					0x00000000
 +					0x00000000
 +					0x77ffc081
-+					0x00000303
++					0x00000505
 +					0x81f1f108
 +					0x07070004
 +					0x0000003f
@@ -1217,11 +1221,11 @@ index 0000000..1a5748d
 +					0x00000000
 +					0x00000000
 +					0x00000000
-+					0x00098000
-+					0x00098000
++					0x00090000
++					0x00090000
 +					0x00000000
-+					0x00098000
-+					0x00098000
++					0x00090000
++					0x00090000
 +					0x00000000
 +					0x00000000
 +					0x00000000
@@ -1261,7 +1265,7 @@ index 0000000..1a5748d
 +					0x00000000
 +					0x00000000
 +					0x77ffc081
-+					0x00000101
++					0x00000202
 +					0x81f1f108
 +					0x07070004
 +					0x00000000
@@ -1385,13 +1389,11 @@ index 0000000..1a5748d
 +					0x00000000
 +					0x00000000
 +					0x00000000
-+					0x00070000
-+					0x00070000
++					0x00068000
++					0x00068000
 +					0x00000000
-+					0x00070000
-+					0x00070000
-+					0x00000000
-+					0x00000000
++					0x00068000
++					0x00068000
 +					0x00000000
 +					0x00000000
 +					0x00000000
@@ -1415,21 +1417,23 @@ index 0000000..1a5748d
 +					0x00000000
 +					0x00000000
 +					0x00000000
-+					0x00048000
-+					0x00048000
-+					0x00048000
-+					0x00048000
-+					0x00004800
-+					0x00004800
-+					0x00004800
-+					0x00004800
++					0x00000000
++					0x00000000
++					0x00058000
++					0x00058000
++					0x00058000
++					0x00058000
++					0x00005800
++					0x00005800
++					0x00005800
++					0x00005800
 +					0x10000280
 +					0x00000000
 +					0x00111111
 +					0x00000000
 +					0x00000000
 +					0x77ffc081
-+					0x00000101
++					0x00000202
 +					0x81f1f108
 +					0x07070004
 +					0x00000000
@@ -1522,7 +1526,7 @@ index 0000000..1a5748d
 +					0x00000000
 +					0x00000006
 +					0x00000006
-+					0x00001249
++					0x00001248
 +					0x00000000
 +					0x00000000
 +					0x00000000
@@ -1553,11 +1557,11 @@ index 0000000..1a5748d
 +					0x00000000
 +					0x00000000
 +					0x00000000
-+					0x00048000
-+					0x00048000
++					0x00040000
++					0x00040000
 +					0x00000000
-+					0x00048000
-+					0x00048000
++					0x00040000
++					0x00040000
 +					0x00000000
 +					0x00000000
 +					0x00000000
@@ -1569,20 +1573,20 @@ index 0000000..1a5748d
 +					0x00000000
 +					0x00000004
 +					0x00000004
-+					0x00000002
++					0x00000001
 +					0x00000005
++					0x00000007
++					0x00000004
 +					0x00000006
-+					0x00000003
-+					0x00000006
-+					0x00000005
++					0x00000007
 +					0x00000004
 +					0x00000004
-+					0x00000002
++					0x00000001
 +					0x00000005
++					0x00000007
++					0x00000004
 +					0x00000006
-+					0x00000003
-+					0x00000006
-+					0x00000005
++					0x00000007
 +					0x0000000e
 +					0x0000000e
 +					0x0000000e
@@ -1597,7 +1601,7 @@ index 0000000..1a5748d
 +					0x00000000
 +					0x00000000
 +					0x77ffc085
-+					0x00000101
++					0x00000202
 +					0x81f1f108
 +					0x07070004
 +					0x00000000
@@ -1614,7 +1618,7 @@ index 0000000..1a5748d
 +					0x00000000
 +					0x00000003
 +					0x000040a0
-+					0x800024aa
++					0x800024a9
 +					0x0000000e
 +				>;
 +			};
@@ -1628,10 +1632,10 @@ index 0000000..1a5748d
 +				nvidia,emc-auto-cal-interval = <0x001fffff>;
 +				nvidia,emc-bgbias-ctl0 = <0x00000000>;
 +				nvidia,emc-cfg = <0x73300000>;
-+				nvidia,emc-cfg-2 = <0x0080089d>;
++				nvidia,emc-cfg-2 = <0x0000089d>;
 +				nvidia,emc-ctt-term-ctrl = <0x00000802>;
 +				nvidia,emc-mode-1 = <0x80100002>;
-+				nvidia,emc-mode-2 = <0x80200418>;
++				nvidia,emc-mode-2 = <0x80200018>;
 +				nvidia,emc-mode-4 = <0x00000000>;
 +				nvidia,emc-mode-reset = <0x80000d71>;
 +				nvidia,emc-mrs-wait-cnt = <0x00f8000c>;
@@ -1692,27 +1696,27 @@ index 0000000..1a5748d
 +					0x00000008
 +					0x00001822
 +					0x00000000
-+					0x80000005
 +					0x00000000
-+					0x104ab198
++					0x00000000
++					0x104ab098
 +					0xe00700b1
 +					0x00008000
-+					0x00000005
-+					0x00000005
-+					0x00000005
-+					0x00000005
-+					0x00000005
-+					0x00000005
-+					0x00000005
-+					0x00000005
-+					0x00000005
-+					0x00000005
-+					0x00000005
-+					0x00000005
-+					0x00000005
-+					0x00000005
-+					0x00000005
-+					0x00000005
++					0x00000008
++					0x00000008
++					0x00000008
++					0x00000008
++					0x00000008
++					0x00000008
++					0x00000008
++					0x00000008
++					0x00000008
++					0x00000008
++					0x00000008
++					0x00000008
++					0x00000008
++					0x00000008
++					0x00000008
++					0x00000008
 +					0x00000000
 +					0x00000000
 +					0x00000000
@@ -1721,11 +1725,11 @@ index 0000000..1a5748d
 +					0x00000000
 +					0x00000000
 +					0x00000000
-+					0x00034000
-+					0x00034000
++					0x0002c000
++					0x0002c000
 +					0x00000000
-+					0x00034000
-+					0x00034000
++					0x0002c000
++					0x0002c000
 +					0x00000000
 +					0x00000000
 +					0x00000000
@@ -1738,48 +1742,48 @@ index 0000000..1a5748d
 +					0x00000008
 +					0x00000008
 +					0x00000005
-+					0x00000009
-+					0x00000009
-+					0x00000007
-+					0x00000009
 +					0x00000008
++					0x0000000a
++					0x00000008
++					0x0000000a
++					0x0000000a
 +					0x00000008
 +					0x00000008
 +					0x00000005
-+					0x00000009
-+					0x00000009
-+					0x00000007
-+					0x00000009
++					0x00000008
++					0x0000000a
 +					0x00000008
 +					0x0000000a
 +					0x0000000a
-+					0x0000000a
-+					0x0000000a
-+					0x0000000a
-+					0x0000000a
-+					0x0000000a
-+					0x0000000a
++					0x0000000e
++					0x0000000e
++					0x0000000e
++					0x0000000e
++					0x0000000e
++					0x0000000e
++					0x0000000e
++					0x0000000e
 +					0x100002a0
 +					0x00000000
 +					0x00111111
 +					0x00000000
 +					0x00000000
 +					0x77ffc085
-+					0x00000101
++					0x00000202
 +					0x81f1f108
 +					0x07070004
 +					0x00000000
 +					0x016eeeee
 +					0x61861820
-+					0x00514514
-+					0x00514514
++					0x00492492
++					0x00492492
 +					0x61861800
 +					0x0606003f
 +					0x00000000
 +					0x00000000
 +					0x00000100
 +					0x00f8000c
-+					0x00000007
++					0x00000000
 +					0x00000004
 +					0x00004080
 +					0x80003012
@@ -2003,6 +2007,32 @@ index 0000000..1a5748d
 +				>;
 +			};
 +
++			timing-528000000 {
++				clock-frequency = <528000000>;
++
++				nvidia,emem-configuration = <
++					0x0f000007
++					0x80000040
++					0x00000002
++					0x00000003
++					0x0000000d
++					0x00000008
++					0x0000000a
++					0x00000001
++					0x00000002
++					0x00000009
++					0x00000002
++					0x00000002
++					0x00000005
++					0x00000006
++					0x06050202
++					0x0010090d
++					0x7428180e
++					0x70000f03
++					0x001f0000
++				>;
++			};
++
 +			timing-600000000 {
 +				clock-frequency = <600000000>;
 +
@@ -2057,18 +2087,18 @@ index 0000000..1a5748d
 +		};
 +	};
 +};
-diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts b/arch/arm/boot/dts/tegra124-nyan-big.dts
-index d34661b..2d21253 100644
---- a/arch/arm/boot/dts/tegra124-nyan-big.dts
-+++ b/arch/arm/boot/dts/tegra124-nyan-big.dts
+diff --git a/arch/arm/boot/dts/tegra124-nyan-blaze.dts b/arch/arm/boot/dts/tegra124-nyan-blaze.dts
+index e6e6b80..0d30c51 100644
+--- a/arch/arm/boot/dts/tegra124-nyan-blaze.dts
++++ b/arch/arm/boot/dts/tegra124-nyan-blaze.dts
 @@ -2,6 +2,8 @@
  
  #include "tegra124-nyan.dtsi"
  
-+#include "tegra124-nyan-big-emc.dtsi"
++#include "tegra124-nyan-blaze-emc.dtsi"
 +
  / {
- 	model = "Acer Chromebook 13 CB5-311";
- 	compatible = "google,nyan-big", "nvidia,tegra124";
+ 	model = "HP Chromebook 14";
+ 	compatible = "google,nyan-blaze", "google,nyan", "nvidia,tegra124";
 -- 
 2.1.0
