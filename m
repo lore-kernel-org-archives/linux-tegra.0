@@ -1,40 +1,44 @@
-From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: [PATCH v8 01/18] clk: tegra124: Remove old emc clock
-Date: Thu, 12 Mar 2015 15:47:53 +0100
-Message-ID: <1426171746-26864-2-git-send-email-tomeu.vizoso@collabora.com>
-References: <1426171746-26864-1-git-send-email-tomeu.vizoso@collabora.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1426171746-26864-1-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH v2 17/17] soc/tegra: remove lagacy powergate APIs
+Date: Thu, 12 Mar 2015 18:18:49 +0200
+Message-ID: <20150312161849.GF6072@tbergstrom-lnx.Nvidia.com>
+References: <1426162518-7405-1-git-send-email-vinceh@nvidia.com>
+ <1426162518-7405-18-git-send-email-vinceh@nvidia.com>
+ <20150312124501.GA632@ulmo>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20150312124501.GA632@ulmo>
+Sender: linux-pm-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Vince Hsu <vinceh@nvidia.com>, swarren@wwwdotorg.org, gnurou@gmail.com, jroedel@suse.de, p.zabel@pengutronix.de, mturquette@linaro.org, pgaikwad@nvidia.com, sboyd@codeaurora.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, tbergstrom@nvidia.com, airlied@linux.ie, bhelgaas@google.com, tj@kernel.org, arnd@arndb.de, robh@kernel.org, will.deacon@arm.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Thu, Mar 12, 2015 at 01:45:02PM +0100, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Thu, Mar 12, 2015 at 08:15:18PM +0800, Vince Hsu wrote:
+> > We switch to generic power domain now. So remove the legacy functions.
+> > 
+> > Signed-off-by: Vince Hsu <vinceh@nvidia.com>
+> > ---
+> >  drivers/soc/tegra/pmc.c | 68 -------------------------------------------------
+> >  include/soc/tegra/pmc.h | 22 ----------------
+> >  2 files changed, 90 deletions(-)
+> 
+> I don't think we can do this. What if somebody updates their kernel but
+> not the DTB? In that case they'll end up with drivers that don't enable
+> power partitions but at the same time the powergate driver won't enable
+> them either because it is missing the corresponding nodes in the DTB.
+> 
+> What we'll have to do is probably keep the code that enables the power
+> partitions and make it conditional on the power domains somehow. Is
+> there a way to determine at runtime whether a device has been attached
+> to a power domain?
 
-This clock has never been able to do anything.
+Or use DT overlays to 'load' a hardcoded overlay for the specific SoC?
 
-Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Cheers,
 
----
-
-v2:	* Don't remove emc_mux as it's being used by the MC clock now
----
- drivers/clk/tegra/clk-tegra124.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index 9a893f2..d370134 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -791,7 +791,6 @@ static struct tegra_clk tegra124_clks[tegra_clk_max] __initdata = {
- 	[tegra_clk_i2c2] = { .dt_id = TEGRA124_CLK_I2C2, .present = true },
- 	[tegra_clk_uartc] = { .dt_id = TEGRA124_CLK_UARTC, .present = true },
- 	[tegra_clk_mipi_cal] = { .dt_id = TEGRA124_CLK_MIPI_CAL, .present = true },
--	[tegra_clk_emc] = { .dt_id = TEGRA124_CLK_EMC, .present = true },
- 	[tegra_clk_usb2] = { .dt_id = TEGRA124_CLK_USB2, .present = true },
- 	[tegra_clk_usb3] = { .dt_id = TEGRA124_CLK_USB3, .present = true },
- 	[tegra_clk_vde_8] = { .dt_id = TEGRA124_CLK_VDE, .present = true },
--- 
-2.1.0
+Peter.
