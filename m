@@ -1,28 +1,98 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Joseph Lo <josephl@nvidia.com>
 Subject: Re: [PATCH] soc/tegra: move soc_device_register call out of arch/arm
-Date: Thu, 12 Mar 2015 08:35:33 +0800
-Message-ID: <5500DF55.3060900@nvidia.com>
-References: <1425868301-22767-1-git-send-email-josephl@nvidia.com> <20150311162205.GK952@pengutronix.de>
+Date: Thu, 12 Mar 2015 08:40:20 +0800
+Message-ID: <5500E074.8050007@nvidia.com>
+References: <1425868301-22767-1-git-send-email-josephl@nvidia.com>
+ <20150311083424.GA19391@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150311162205.GK952-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?windows-1252?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20150311083424.GA19391@ulmo.nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>
+Cc: linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Oops, sorry for typo. Thanks, Uwe.
-
-On 03/12/2015 12:22 AM, Uwe Kleine-K=F6nig wrote:
+On 03/11/2015 04:34 PM, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+>
 > On Mon, Mar 09, 2015 at 10:31:41AM +0800, Joseph Lo wrote:
 >> Expending the usage for both Tegra & Tegra64 SoCs.
-> Expanding? Mabe better: Moving this code to drivers/soc/tegra allows =
-the
-> aarch64 SoCs to use it, too.
+>>
+>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+>> ---
+>>   arch/arm/mach-tegra/tegra.c | 31 +------------------------------
+>>   drivers/soc/tegra/common.c  | 33 +++++++++++++++++++++++++++++++++
+>>   2 files changed, 34 insertions(+), 30 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
+>> index 914341bcef25..95df6a97b956 100644
+>> --- a/arch/arm/mach-tegra/tegra.c
+>> +++ b/arch/arm/mach-tegra/tegra.c
+>> @@ -87,36 +87,7 @@ static void __init tegra_dt_init_irq(void)
+>>
+>>   static void __init tegra_dt_init(void)
+>>   {
+>> -	struct soc_device_attribute *soc_dev_attr;
+>> -	struct soc_device *soc_dev;
+>> -	struct device *parent = NULL;
+>> -
+>> -	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
+>> -	if (!soc_dev_attr)
+>> -		goto out;
+>> -
+>> -	soc_dev_attr->family = kasprintf(GFP_KERNEL, "Tegra");
+>> -	soc_dev_attr->revision = kasprintf(GFP_KERNEL, "%d",
+>> -					   tegra_sku_info.revision);
+>> -	soc_dev_attr->soc_id = kasprintf(GFP_KERNEL, "%u", tegra_get_chip_id());
+>> -
+>> -	soc_dev = soc_device_register(soc_dev_attr);
+>> -	if (IS_ERR(soc_dev)) {
+>> -		kfree(soc_dev_attr->family);
+>> -		kfree(soc_dev_attr->revision);
+>> -		kfree(soc_dev_attr->soc_id);
+>> -		kfree(soc_dev_attr);
+>> -		goto out;
+>> -	}
+>> -
+>> -	parent = soc_device_to_device(soc_dev);
+>> -
+>> -	/*
+>> -	 * Finished with the static registrations now; fill in the missing
+>> -	 * devices
+>> -	 */
+>> -out:
+>> -	of_platform_populate(NULL, of_default_bus_match_table, NULL, parent);
+>> +	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
 >
-> Best regards
-> Uwe
+> One of the reasons for adding the soc_device in the first place was so
+> that it would be possible to use it as the parent for all devices that
+> are instantiated from device tree. You remove that here, and break the
+> ABI in the process. Arguably no userspace should be relying on the exact
+> path in sysfs, but I'd still like to keep the top-level parent.
+>
+That would be a problem if you want to keep the same "ABI" in ARM64 kernel.
+
+> Which reminds me of a discussion a while back about introducing a top-
+> level driver for the SoC. I'm not sure if anything came of that.
+>
+> Stephen, do you know if there was a conclusion on that discussion? As
+> far as I remember this sparked around the time when we moved drivers to
+> drivers/soc and started splitting things up into initcalls. I'm thinking
+> that if nothing like that was created yet, perhaps soc_device and
+> soc_bus_type would be good candidates to implement this on top of.
+>
+> Thierry
+>
+> * Unknown Key
+> * 0x7F3EB3A1
 >
