@@ -1,67 +1,57 @@
-From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: Re: [PATCH v5 12/14] clk: tegra: Add EMC clock driver
-Date: Thu, 12 Mar 2015 10:30:42 +0100
-Message-ID: <CAAObsKBVbKSia=H4sfU0HTywTkwxJzeOmu6R01XBgoetJYFSPA@mail.gmail.com>
-References: <1416312860-4446-1-git-send-email-tomeu.vizoso@collabora.com>
- <1416312860-4446-13-git-send-email-tomeu.vizoso@collabora.com>
- <20150102162750.GA10073@tbergstrom-lnx.Nvidia.com> <20150105135912.GB12010@ulmo.nvidia.com>
+From: Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH v6 17/22] x86/olpc/xo1/sci: Use newly added
+ power_supply_put API
+Date: Thu, 12 Mar 2015 12:20:57 +0100
+Message-ID: <20150312112057.GB8475@gmail.com>
+References: <1425976046-20973-1-git-send-email-k.kozlowski@samsung.com>
+ <1425976046-20973-18-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150105135912.GB12010-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1425976046-20973-18-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Jiri Kosina <jkosina@suse.cz>, David Herrmann <dh.herrmann@googlemail.com>, Cezary Jackiewicz <cezary.jackiewicz@gmail.com>, Darren Hart <dvhart@infradead.org>, Support Opensource <support.opensource@diasemi.com>, Milo Kim <milo.kim@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-arm-kernel@lists.infradead.org, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.orglinux-
 List-Id: linux-tegra@vger.kernel.org
 
-On 5 January 2015 at 14:59, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Fri, Jan 02, 2015 at 06:27:50PM +0200, Peter De Schrijver wrote:
->> On Tue, Nov 18, 2014 at 01:13:14PM +0100, Tomeu Vizoso wrote:
->> > From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> >
->> > The driver is currently only tested on Tegra124 Jetson TK1, but should
->> > work with other Tegra124 boards, provided that correct EMC tables are
->> > provided through the device tree. Older chip models have differing
->> > timing change sequences, so they are not currently supported.
->> >
->> > Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> > Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
->> >
->> > ---
->> >
->> > v5: * Get a pointer to the EMC driver at runtime, to be used when
->> >       calling the EMC API.
->> >     * Misc. style fixes
->> >     * Fix logic for rounding down to a high rate
->> >
->> > v4: * Adapt to changes in the OF bindings
->> >     * Improve error handling
->> >     * Fix comment style
->> >     * Make static a few more functions
->> >
->> > v3: * Add some locking to protect the registers that are shared with the MC
->> >       clock
->> >
->> > v2: * Make sure that the clock is properly registered
->> >     * Bail out early from attempts to set the same rate
->>
->> Thierry,
->>
->> How do you want to merge this series? The clock tree part depends on
->> tegra_read_ram_code which is introduced earlier in this series.
->
-> I guess the easiest would be to take this all into the Tegra tree. Apart
-> from patches 1, 12 and 14 everything would go via that anyway. I'll also
-> take some time this week to give the series some review, I don't think I
-> have looked at this code at all yet.
->
-> Mike, you "looks good to me"'d patches 1, 12 and 14, does that translate
-> to an Acked-by?
 
-Hi Mike,
+* Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
 
-apparently this is ready to go if you can give your Ack.
+> Replace direct usage of put_device() with new API: power_supply_put().
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Acked-by: Pavel Machek <pavel@ucw.cz>
+> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Reviewed-by: Sebastian Reichel <sre@kernel.org>
+> ---
+>  arch/x86/platform/olpc/olpc-xo1-sci.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/platform/olpc/olpc-xo1-sci.c b/arch/x86/platform/olpc/olpc-xo1-sci.c
+> index e4ed28bbf79d..7fa8b3b53bc0 100644
+> --- a/arch/x86/platform/olpc/olpc-xo1-sci.c
+> +++ b/arch/x86/platform/olpc/olpc-xo1-sci.c
+> @@ -61,7 +61,7 @@ static void battery_status_changed(void)
+>  
+>  	if (psy) {
+>  		power_supply_changed(psy);
+> -		put_device(&psy->dev);
+> +		power_supply_put(psy);
+>  	}
+>  }
+>  
+> @@ -71,7 +71,7 @@ static void ac_status_changed(void)
+>  
+>  	if (psy) {
+>  		power_supply_changed(psy);
+> -		put_device(&psy->dev);
+> +		power_supply_put(psy);
+>  	}
+>  }
+
+Acked-by: Ingo Molnar <mingo@kernel.org>
 
 Thanks,
 
-Tomeu
+	Ingo
