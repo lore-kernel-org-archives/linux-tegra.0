@@ -1,69 +1,26 @@
-From: Ilia Mirkin <imirkin@alum.mit.edu>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH] nouveau: add coherent BO attribute
-Date: Fri, 13 Mar 2015 02:36:28 -0400
-Message-ID: <CAKb7Uvg7zNZ9a05QQZfKTwQftsRg0R+TK4rU7zD1LieD_sDi=w@mail.gmail.com>
-References: <1426228051-20298-1-git-send-email-acourbot@nvidia.com>
+Date: Fri, 13 Mar 2015 15:39:46 +0900
+Message-ID: <CAAVeFuL2XFnTGkfOB3hotVdzWxHGaTiSftkk_x-Vv3qNnmEsVA@mail.gmail.com>
+References: <1426228051-20298-1-git-send-email-acourbot@nvidia.com> <CAKb7Uvg7zNZ9a05QQZfKTwQftsRg0R+TK4rU7zD1LieD_sDi=w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1426228051-20298-1-git-send-email-acourbot@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Ben Skeggs <bskeggs@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAKb7Uvg7zNZ9a05QQZfKTwQftsRg0R+TK4rU7zD1LieD_sDi=w@mail.gmail.com>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>
+Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Maarten Lankhorst <maarten.lankhorst-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-RG9lc24ndCB0aGlzIHJlcXVpcmUgYSBrZXJuZWwgdmVyc2lvbiB0aGF0IGhhcyB5b3VyIG90aGVy
-IHBhdGNoPyBXaGF0CmhhcHBlbnMgd2hlbiB0aGlzIHJ1bnMgb24gYW4gb2xkZXIga2VybmVsPyBE
-b2VzIGl0IGdldCBzaWxlbnRseQppZ25vcmVkLCBvciBkb2VzIGl0IGVuZCB1cCBlcnJvcmluZyBv
-dXQ/IElmIGl0IGVycm9ycyBvdXQsIHRoYXQncwpmaW5lLiBPdGhlcndpc2Ugc29tZSBzb3J0IG9m
-IHZlcnNpb24gY2hlY2sgc2hvdWxkIGJlIHB1dCBpbiwgbm8/CgpPbiBGcmksIE1hciAxMywgMjAx
-NSBhdCAyOjI3IEFNLCBBbGV4YW5kcmUgQ291cmJvdCA8YWNvdXJib3RAbnZpZGlhLmNvbT4gd3Jv
-dGU6Cj4gQWRkIGEgZmxhZyBhbGxvd2luZyBOb3V2ZWF1IHRvIHNwZWNpZnkgdGhhdCBhbiBvYmpl
-Y3Qgc2hvdWxkIGJlIGNvaGVyZW50Cj4gYXQgYWxsb2NhdGlvbiB0aW1lLiBUaGlzIGlzIHJlcXVp
-cmVkIGZvciBzb21lIGNsYXNzIG9mIG9iamVjdHMgbGlrZQo+IGZlbmNlcyB3aGljaCBhcmUgcmFu
-ZG9tbHktYWNjZXNzZWQgYnkgYm90aCB0aGUgQ1BVIGFuZCBHUFUuIFRoaXMgZmxhZwo+IGluc3Ry
-dWN0cyB0aGUga2VybmVsIGRyaXZlciB0byBtYWtlIHN1cmUgdGhlIG9iamVjdCByZW1haW5zIGNv
-aGVyZW50Cj4gZXZlbiBvbiBhcmNoaXRlY3R1cmVzIGZvciB3aGljaCBjb2hlcmVuY3kgaXMgbm90
-IGd1YXJhbnRlZWQgYnkgdGhlIGJ1cy4KPgo+IFNpZ25lZC1vZmYtYnk6IEFsZXhhbmRyZSBDb3Vy
-Ym90IDxhY291cmJvdEBudmlkaWEuY29tPgo+IC0tLQo+ICBpbmNsdWRlL2RybS9ub3V2ZWF1X2Ry
-bS5oIHwgMSArCj4gIG5vdXZlYXUvYWJpMTYuYyAgICAgICAgICAgfCAzICsrKwo+ICBub3V2ZWF1
-L25vdXZlYXUuaCAgICAgICAgIHwgMSArCj4gIDMgZmlsZXMgY2hhbmdlZCwgNSBpbnNlcnRpb25z
-KCspCj4KPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9kcm0vbm91dmVhdV9kcm0uaCBiL2luY2x1ZGUv
-ZHJtL25vdXZlYXVfZHJtLmgKPiBpbmRleCBiMThjYWQwMjQxOWIuLjg3YWVmYzVlOWQyZiAxMDA2
-NDQKPiAtLS0gYS9pbmNsdWRlL2RybS9ub3V2ZWF1X2RybS5oCj4gKysrIGIvaW5jbHVkZS9kcm0v
-bm91dmVhdV9kcm0uaAo+IEBAIC05Niw2ICs5Niw3IEBAIHN0cnVjdCBkcm1fbm91dmVhdV9zZXRw
-YXJhbSB7Cj4gICNkZWZpbmUgTk9VVkVBVV9HRU1fRE9NQUlOX1ZSQU0gICAgICAoMSA8PCAxKQo+
-ICAjZGVmaW5lIE5PVVZFQVVfR0VNX0RPTUFJTl9HQVJUICAgICAgKDEgPDwgMikKPiAgI2RlZmlu
-ZSBOT1VWRUFVX0dFTV9ET01BSU5fTUFQUEFCTEUgICgxIDw8IDMpCj4gKyNkZWZpbmUgTk9VVkVB
-VV9HRU1fRE9NQUlOX0NPSEVSRU5UICAoMSA8PCA0KQo+Cj4gICNkZWZpbmUgTk9VVkVBVV9HRU1f
-VElMRV9MQVlPVVRfTUFTSyAweDAwMDBmZjAwCj4gICNkZWZpbmUgTk9VVkVBVV9HRU1fVElMRV8x
-NkJQUCAgICAgICAweDAwMDAwMDAxCj4gZGlmZiAtLWdpdCBhL25vdXZlYXUvYWJpMTYuYyBiL25v
-dXZlYXUvYWJpMTYuYwo+IGluZGV4IGFlMTM4MjFiYzBjYy4uZDJkMWQwZDE5NDJkIDEwMDY0NAo+
-IC0tLSBhL25vdXZlYXUvYWJpMTYuYwo+ICsrKyBiL25vdXZlYXUvYWJpMTYuYwo+IEBAIC0xOTUs
-NiArMTk1LDkgQEAgYWJpMTZfYm9faW5pdChzdHJ1Y3Qgbm91dmVhdV9ibyAqYm8sIHVpbnQzMl90
-IGFsaWdubWVudCwKPiAgICAgICAgIGlmIChiby0+ZmxhZ3MgJiBOT1VWRUFVX0JPX01BUCkKPiAg
-ICAgICAgICAgICAgICAgaW5mby0+ZG9tYWluIHw9IE5PVVZFQVVfR0VNX0RPTUFJTl9NQVBQQUJM
-RTsKPgo+ICsgICAgICAgaWYgKGJvLT5mbGFncyAmIE5PVVZFQVVfQk9fQ09IRVJFTlQpCj4gKyAg
-ICAgICAgICAgICAgIGluZm8tPmRvbWFpbiB8PSBOT1VWRUFVX0dFTV9ET01BSU5fQ09IRVJFTlQ7
-Cj4gKwo+ICAgICAgICAgaWYgKCEoYm8tPmZsYWdzICYgTk9VVkVBVV9CT19DT05USUcpKQo+ICAg
-ICAgICAgICAgICAgICBpbmZvLT50aWxlX2ZsYWdzID0gTk9VVkVBVV9HRU1fVElMRV9OT05DT05U
-SUc7Cj4KPiBkaWZmIC0tZ2l0IGEvbm91dmVhdS9ub3V2ZWF1LmggYi9ub3V2ZWF1L25vdXZlYXUu
-aAo+IGluZGV4IGE1NWUyYjAyMDc3OC4uNGFkZGEwZTM1OTRjIDEwMDY0NAo+IC0tLSBhL25vdXZl
-YXUvbm91dmVhdS5oCj4gKysrIGIvbm91dmVhdS9ub3V2ZWF1LmgKPiBAQCAtMTI3LDYgKzEyNyw3
-IEBAIHVuaW9uIG5vdXZlYXVfYm9fY29uZmlnIHsKPiAgI2RlZmluZSBOT1VWRUFVX0JPX01BUCAg
-ICAgMHg4MDAwMDAwMAo+ICAjZGVmaW5lIE5PVVZFQVVfQk9fQ09OVElHICAweDQwMDAwMDAwCj4g
-ICNkZWZpbmUgTk9VVkVBVV9CT19OT1NOT09QIDB4MjAwMDAwMDAKPiArI2RlZmluZSBOT1VWRUFV
-X0JPX0NPSEVSRU5UIDB4MTAwMDAwMDAKPgo+ICBzdHJ1Y3Qgbm91dmVhdV9ibyB7Cj4gICAgICAg
-ICBzdHJ1Y3Qgbm91dmVhdV9kZXZpY2UgKmRldmljZTsKPiAtLQo+IDIuMy4yCj4KX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
-bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVz
-a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On Fri, Mar 13, 2015 at 3:36 PM, Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org> wrote:
+> Doesn't this require a kernel version that has your other patch? What
+> happens when this runs on an older kernel? Does it get silently
+> ignored, or does it end up erroring out? If it errors out, that's
+> fine. Otherwise some sort of version check should be put in, no?
+
+The corresponding kernel patch is already merged in Ben's tree. If
+running with an older kernel, this flag will be a no-op, which is fine
+since GK20A's GPU (the reason for this patch as you have guessed :))
+is not enabled for these kernels.
+
+I am fine with adding a version check if you think it is necessary.
