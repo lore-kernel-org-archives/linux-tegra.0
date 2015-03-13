@@ -1,39 +1,68 @@
-From: Maarten Lankhorst <maarten.lankhorst@canonical.com>
-Subject: Re: [PATCH] nouveau: add coherent BO attribute
-Date: Fri, 13 Mar 2015 20:33:45 +0100
-Message-ID: <55033B99.4040300@canonical.com>
-References: <1426228051-20298-1-git-send-email-acourbot@nvidia.com>
+From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [RFC 1/2] mmc: read mmc alias from device tree
+Date: Fri, 13 Mar 2015 13:08:55 -0700
+Message-ID: <CAD=FV=VF55LhuALjRSGT7KuzEACnAM0A6ThuPjXBkxEcyWij5A@mail.gmail.com>
+References: <cover.1396384101.git.stefan@agner.ch>
+	<5570bdf5ebb3aaae5a376634ecfbac9c2fd7b9f4.1396384101.git.stefan@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1426228051-20298-1-git-send-email-acourbot@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Alexandre Courbot <acourbot@nvidia.com>, Ilia Mirkin <imirkin@alum.mit.edu>, Ben Skeggs <bskeggs@redhat.com>
-Cc: linux-tegra@vger.kernel.org, nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, gnurou@gmail.com
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5570bdf5ebb3aaae5a376634ecfbac9c2fd7b9f4.1396384101.git.stefan-XLVq0VzYD2Y@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: stefan-XLVq0VzYD2Y@public.gmane.org
+Cc: Chris Ball <chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-SGV5LAoKT3AgMTMtMDMtMTUgb20gMDc6Mjcgc2NocmVlZiBBbGV4YW5kcmUgQ291cmJvdDoKPiBB
-ZGQgYSBmbGFnIGFsbG93aW5nIE5vdXZlYXUgdG8gc3BlY2lmeSB0aGF0IGFuIG9iamVjdCBzaG91
-bGQgYmUgY29oZXJlbnQKPiBhdCBhbGxvY2F0aW9uIHRpbWUuIFRoaXMgaXMgcmVxdWlyZWQgZm9y
-IHNvbWUgY2xhc3Mgb2Ygb2JqZWN0cyBsaWtlCj4gZmVuY2VzIHdoaWNoIGFyZSByYW5kb21seS1h
-Y2Nlc3NlZCBieSBib3RoIHRoZSBDUFUgYW5kIEdQVS4gVGhpcyBmbGFnCj4gaW5zdHJ1Y3RzIHRo
-ZSBrZXJuZWwgZHJpdmVyIHRvIG1ha2Ugc3VyZSB0aGUgb2JqZWN0IHJlbWFpbnMgY29oZXJlbnQK
-PiBldmVuIG9uIGFyY2hpdGVjdHVyZXMgZm9yIHdoaWNoIGNvaGVyZW5jeSBpcyBub3QgZ3VhcmFu
-dGVlZCBieSB0aGUgYnVzLgo+IAo+IFNpZ25lZC1vZmYtYnk6IEFsZXhhbmRyZSBDb3VyYm90IDxh
-Y291cmJvdEBudmlkaWEuY29tPgpJIGRvbid0IHNlZSBhIHByb2JsZW0gd2l0aCB0aGlzIHBhdGNo
-LCBidXQgc2ltaWxhciBwYXRjaGVzIHRvIGludGVsIHRvIGxpYmRybSBoYXZlIGJlZW4gc2hvdCBk
-b3duIHdoZW4gdGhlIGNoYW5nZXMgd2VyZW4ndCBpbiBhbiBvZmZpY2lhbCBrZXJuZWwgeWV0LCBz
-byBJIHRoaW5rIHRoaXMgc2hvdWxkIHdhaXQgdW50aWwgdGhlIGNoYW5nZSBpcyBhdCBsZWFzdCBp
-biBkcm0tbmV4dC4gOy0pCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
-dmVsCg==
+Hi,
+
+On Tue, Apr 1, 2014 at 1:35 PM,  <stefan-XLVq0VzYD2Y@public.gmane.org> wrote:
+> From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+>
+> To get the SD/MMC host device ID, read the alias from the device
+> tree.
+>
+> This is useful in case a SoC has multipe SD/MMC host controllers while
+> the second controller should logically be the first device (e.g. if
+> the second controller is connected to an internal eMMC). Combined
+> with block device numbering using MMC/SD host device ID, this
+> results in predictable name assignment of the internal eMMC block
+> device.
+>
+> Signed-off-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+> ---
+>  drivers/mmc/core/host.c | 24 +++++++++++++++++++-----
+>  1 file changed, 19 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
+> index 49bc403..29f44cf 100644
+> --- a/drivers/mmc/core/host.c
+> +++ b/drivers/mmc/core/host.c
+> @@ -448,8 +448,8 @@ EXPORT_SYMBOL(mmc_of_parse);
+>   */
+>  struct mmc_host *mmc_alloc_host(int extra, struct device *dev)
+>  {
+> -       int err;
+>         struct mmc_host *host;
+> +       int of_id = -1, id = -1;
+>
+>         host = kzalloc(sizeof(struct mmc_host) + extra, GFP_KERNEL);
+>         if (!host)
+> @@ -459,12 +459,26 @@ struct mmc_host *mmc_alloc_host(int extra, struct device *dev)
+>         host->rescan_disable = 1;
+>         idr_preload(GFP_KERNEL);
+>         spin_lock(&mmc_host_lock);
+> -       err = idr_alloc(&mmc_host_idr, host, 0, 0, GFP_NOWAIT);
+> -       if (err >= 0)
+> -               host->index = err;
+> +
+> +       if (dev->of_node)
+> +               of_id = of_alias_get_id(dev->of_node, "mmc");
+
+Not that there's much chance of such an old patch landing, but just in
+case anyone finds this Dmitry points out that this causes a
+"scheduling while atomic".  A fix is to move the "of_alias_get_id" up
+above the spin_lock():
+
+https://chromium-review.googlesource.com/#/c/259916/
+
+-Doug
