@@ -1,26 +1,45 @@
 From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH] nouveau: add coherent BO attribute
-Date: Fri, 13 Mar 2015 15:39:46 +0900
-Message-ID: <CAAVeFuL2XFnTGkfOB3hotVdzWxHGaTiSftkk_x-Vv3qNnmEsVA@mail.gmail.com>
-References: <1426228051-20298-1-git-send-email-acourbot@nvidia.com> <CAKb7Uvg7zNZ9a05QQZfKTwQftsRg0R+TK4rU7zD1LieD_sDi=w@mail.gmail.com>
+Date: Fri, 13 Mar 2015 18:45:24 +0900
+Message-ID: <CAAVeFuJ9POjHEgcVA4od+byJhbnEksYvqavjNUMf6Uj65r-0yQ@mail.gmail.com>
+References: <1426228051-20298-1-git-send-email-acourbot@nvidia.com>
+ <CAKb7Uvg7zNZ9a05QQZfKTwQftsRg0R+TK4rU7zD1LieD_sDi=w@mail.gmail.com>
+ <CAAVeFuL2XFnTGkfOB3hotVdzWxHGaTiSftkk_x-Vv3qNnmEsVA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAKb7Uvg7zNZ9a05QQZfKTwQftsRg0R+TK4rU7zD1LieD_sDi=w@mail.gmail.com>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <CAAVeFuL2XFnTGkfOB3hotVdzWxHGaTiSftkk_x-Vv3qNnmEsVA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 To: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>
-Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Maarten Lankhorst <maarten.lankhorst-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Mar 13, 2015 at 3:36 PM, Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org> wrote:
-> Doesn't this require a kernel version that has your other patch? What
-> happens when this runs on an older kernel? Does it get silently
-> ignored, or does it end up erroring out? If it errors out, that's
-> fine. Otherwise some sort of version check should be put in, no?
-
-The corresponding kernel patch is already merged in Ben's tree. If
-running with an older kernel, this flag will be a no-op, which is fine
-since GK20A's GPU (the reason for this patch as you have guessed :))
-is not enabled for these kernels.
-
-I am fine with adding a version check if you think it is necessary.
+T24gRnJpLCBNYXIgMTMsIDIwMTUgYXQgMzozOSBQTSwgQWxleGFuZHJlIENvdXJib3QgPGdudXJv
+dUBnbWFpbC5jb20+IHdyb3RlOgo+IE9uIEZyaSwgTWFyIDEzLCAyMDE1IGF0IDM6MzYgUE0sIEls
+aWEgTWlya2luIDxpbWlya2luQGFsdW0ubWl0LmVkdT4gd3JvdGU6Cj4+IERvZXNuJ3QgdGhpcyBy
+ZXF1aXJlIGEga2VybmVsIHZlcnNpb24gdGhhdCBoYXMgeW91ciBvdGhlciBwYXRjaD8gV2hhdAo+
+PiBoYXBwZW5zIHdoZW4gdGhpcyBydW5zIG9uIGFuIG9sZGVyIGtlcm5lbD8gRG9lcyBpdCBnZXQg
+c2lsZW50bHkKPj4gaWdub3JlZCwgb3IgZG9lcyBpdCBlbmQgdXAgZXJyb3Jpbmcgb3V0PyBJZiBp
+dCBlcnJvcnMgb3V0LCB0aGF0J3MKPj4gZmluZS4gT3RoZXJ3aXNlIHNvbWUgc29ydCBvZiB2ZXJz
+aW9uIGNoZWNrIHNob3VsZCBiZSBwdXQgaW4sIG5vPwo+Cj4gVGhlIGNvcnJlc3BvbmRpbmcga2Vy
+bmVsIHBhdGNoIGlzIGFscmVhZHkgbWVyZ2VkIGluIEJlbidzIHRyZWUuIElmCj4gcnVubmluZyB3
+aXRoIGFuIG9sZGVyIGtlcm5lbCwgdGhpcyBmbGFnIHdpbGwgYmUgYSBuby1vcCwgd2hpY2ggaXMg
+ZmluZQo+IHNpbmNlIEdLMjBBJ3MgR1BVICh0aGUgcmVhc29uIGZvciB0aGlzIHBhdGNoIGFzIHlv
+dSBoYXZlIGd1ZXNzZWQgOikpCj4gaXMgbm90IGVuYWJsZWQgZm9yIHRoZXNlIGtlcm5lbHMuCj4K
+PiBJIGFtIGZpbmUgd2l0aCBhZGRpbmcgYSB2ZXJzaW9uIGNoZWNrIGlmIHlvdSB0aGluayBpdCBp
+cyBuZWNlc3NhcnkuCgpTbyBhcyBkaXNjdXNzZWQgb24gSVJDLCBJIHdpbGwgY2hlY2sgdGhlIERS
+TSB2ZXJzaW9uIGZyb20gTWVzYS4gVGhpcwpwYXRjaCBzaG91bGQgYmUgZ29vZCB0byBnbyAtIGl0
+IHdpbGwgcmVxdWlyZSBhIHZlcnNpb24gaW5jcmVhc2UgaW4KbGliZHJtIHRob3VnaC4gTGV0IG1l
+IGtub3cgaWYgeW91IHdhbnQgbWUgdG8gc2VuZCBhIHBhdGNoIGZvciB0aGlzCnRvby4KX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBtYWlsaW5n
+IGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNr
+dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL25vdXZlYXUK
