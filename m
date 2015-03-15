@@ -1,94 +1,29 @@
-From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-Subject: [PATCH] pinctrl: tegra: use signed bitfields for optional fields
-Date: Sun, 15 Mar 2015 01:05:52 +0100
-Message-ID: <1426377952-12383-1-git-send-email-stefan@agner.ch>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] nouveau: add coherent BO attribute
+Date: Sun, 15 Mar 2015 17:41:08 +0900
+Message-ID: <550545A4.6060106@nvidia.com>
+References: <1426228051-20298-1-git-send-email-acourbot@nvidia.com> <55033B99.4040300@canonical.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <55033B99.4040300-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stefan-XLVq0VzYD2Y@public.gmane.org
+To: Maarten Lankhorst <maarten.lankhorst-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Optional fields are set to -1 by various preprocessor macros. Make
-sure the struct fields can actually store them.
+On 03/14/2015 04:33 AM, Maarten Lankhorst wrote:
+> Hey,
+>
+> Op 13-03-15 om 07:27 schreef Alexandre Courbot:
+>> Add a flag allowing Nouveau to specify that an object should be coherent
+>> at allocation time. This is required for some class of objects like
+>> fences which are randomly-accessed by both the CPU and GPU. This flag
+>> instructs the kernel driver to make sure the object remains coherent
+>> even on architectures for which coherency is not guaranteed by the bus.
+>>
+>> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> I don't see a problem with this patch, but similar patches to intel to libdrm have been shot down when the changes weren't in an official kernel yet, so I think this should wait until the change is at least in drm-next. ;-)
 
-Signed-off-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
----
-This lead to a lot of warnings when compiling the Tegra pinctrl drivers
-using LLVM/clang:
-
-drivers/pinctrl/pinctrl-tegra124.c:2048:2: warning: implicit truncation from
-'int' to bitfield changes value from -1 to 63 [-Wbitfield-constant-conversion]
-        MIPI_PAD_CTRL_PINGROUP(dsi_b,   0x820, 1, CSI, DSI_B)
-        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/pinctrl/pinctrl-tegra124.c:1807:18: note: expanded from macro
-'MIPI_PAD_CTRL_PINGROUP'
-                .rcv_sel_bit = -1,                                      \
-                               ^~
-
-However, I did not check if this could actually lead to an unintended
-pin configuration...
-
- drivers/pinctrl/pinctrl-tegra.h | 48 ++++++++++++++++++++---------------------
- 1 file changed, 24 insertions(+), 24 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-tegra.h b/drivers/pinctrl/pinctrl-tegra.h
-index 8d94d13..0711ae62 100644
---- a/drivers/pinctrl/pinctrl-tegra.h
-+++ b/drivers/pinctrl/pinctrl-tegra.h
-@@ -135,30 +135,30 @@ struct tegra_pingroup {
- 	s16 pupd_reg;
- 	s16 tri_reg;
- 	s16 drv_reg;
--	u32 mux_bank:2;
--	u32 pupd_bank:2;
--	u32 tri_bank:2;
--	u32 drv_bank:2;
--	u32 mux_bit:6;
--	u32 pupd_bit:6;
--	u32 tri_bit:6;
--	u32 einput_bit:6;
--	u32 odrain_bit:6;
--	u32 lock_bit:6;
--	u32 ioreset_bit:6;
--	u32 rcv_sel_bit:6;
--	u32 hsm_bit:6;
--	u32 schmitt_bit:6;
--	u32 lpmd_bit:6;
--	u32 drvdn_bit:6;
--	u32 drvup_bit:6;
--	u32 slwr_bit:6;
--	u32 slwf_bit:6;
--	u32 drvtype_bit:6;
--	u32 drvdn_width:6;
--	u32 drvup_width:6;
--	u32 slwr_width:6;
--	u32 slwf_width:6;
-+	u8 mux_bank:2;
-+	u8 pupd_bank:2;
-+	u8 tri_bank:2;
-+	u8 drv_bank:2;
-+	s8 mux_bit:6;
-+	s8 pupd_bit:6;
-+	s8 tri_bit:6;
-+	s8 einput_bit:6;
-+	s8 odrain_bit:6;
-+	s8 lock_bit:6;
-+	s8 ioreset_bit:6;
-+	s8 rcv_sel_bit:6;
-+	s8 hsm_bit:6;
-+	s8 schmitt_bit:6;
-+	s8 lpmd_bit:6;
-+	s8 drvdn_bit:6;
-+	s8 drvup_bit:6;
-+	s8 slwr_bit:6;
-+	s8 slwf_bit:6;
-+	s8 drvtype_bit:6;
-+	s8 drvdn_width:6;
-+	s8 drvup_width:6;
-+	s8 slwr_width:6;
-+	s8 slwf_width:6;
- };
- 
- /**
--- 
-2.3.3
+Sounds good. I will ping you again once the kernel change reaches -next.
