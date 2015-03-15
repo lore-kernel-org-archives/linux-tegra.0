@@ -1,58 +1,90 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [PATCH] i2c: tegra: match return type of
- wait_for_completion_timeout
-Date: Sun, 15 Mar 2015 10:17:54 +0100
-Message-ID: <20150315091754.GB3393@katana>
-References: <1425219461-3261-1-git-send-email-hofrat@osadl.org>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 2/2] ARM: l2c: Maintain CPU endianness for early resume
+ function
+Date: Sun, 15 Mar 2015 22:06:11 +0300
+Message-ID: <5505D823.7020501@gmail.com>
+References: <1421757420-20983-1-git-send-email-digetx@gmail.com> <20150311101845.GL19577@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="bCsyhTFzCvuiizWE"
+Content-Type: text/plain; charset=utf-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1425219461-3261-1-git-send-email-hofrat-Q945KHDl0DbYtjvyW6yDsg@public.gmane.org>
+In-Reply-To: <20150311101845.GL19577-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Nicholas Mc Guire <hofrat-Q945KHDl0DbYtjvyW6yDsg@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Bob Mottram <bob.mottram-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+11.03.2015 13:18, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> On Tue, Jan 20, 2015 at 03:36:55PM +0300, Dmitry Osipenko wrote:
+>> In big endian CPU mode l2x0_saved_regs structure stores registers va=
+lues in BE
+>> format. In order to maintain BE CPU mode, these values and immediate=
+ constants
+>> must be converted back to LE format before writing them to cache con=
+troller.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> ---
+>>   arch/arm/mm/l2c-l2x0-resume.S | 10 ++++++++++
+>>   1 file changed, 10 insertions(+)
+>
+> Hi Russell,
+>
+> Did you get a chance yet to review this patch? It's a dependency for
+> enabling big-endian support on Tegra. As such, I wonder if you would =
+be
+> willing to ack it, so that I can take it through the Tegra tree along
+> with the rest of the patches.
+>
+> If you prefer to take it through the ARM tree, that's fine, too. In t=
+hat
+> case would you be able to provide a stable branch that I can merge in=
+to
+> the Tegra tree to resolve the dependency?
+>
+> Thanks,
+> Thierry
+>
+>> diff --git a/arch/arm/mm/l2c-l2x0-resume.S b/arch/arm/mm/l2c-l2x0-re=
+sume.S
+>> index fda415e..9f99c7e 100644
+>> --- a/arch/arm/mm/l2c-l2x0-resume.S
+>> +++ b/arch/arm/mm/l2c-l2x0-resume.S
+>> @@ -30,6 +30,15 @@ ENTRY(l2c310_early_resume)
+>>   	teq	r1, #0
+>>   	reteq	lr
+>>
+>> +	@ Reverse for big endian kernel
+>> +ARM_BE8(rev	r2, r2)
+>> +ARM_BE8(rev	r3, r3)
+>> +ARM_BE8(rev	r4, r4)
+>> +ARM_BE8(rev	r5, r5)
+>> +ARM_BE8(rev	r6, r6)
+>> +ARM_BE8(rev	r7, r7)
+>> +ARM_BE8(rev	r8, r8)
+>> +
+>>   	@ The prefetch and power control registers are revision dependent
+>>   	@ and can be written whether or not the L2 cache is enabled
+>>   	ldr	r0, [r1, #L2X0_CACHE_ID]
+>> @@ -51,6 +60,7 @@ ENTRY(l2c310_early_resume)
+>>
+>>   	str	r2, [r1, #L2X0_AUX_CTRL]
+>>   	mov	r9, #L2X0_CTRL_EN
+>> +ARM_BE8(rev	r9, r9)
+>>   	str	r9, [r1, #L2X0_CTRL]
+>>   	ret	lr
+>>   ENDPROC(l2c310_early_resume)
+>> --
+>> 2.2.1
+>>
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
---bCsyhTFzCvuiizWE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch missed register reverse for "ldr". Please hold it, I'll send=
+ v3.
 
-On Sun, Mar 01, 2015 at 09:17:41AM -0500, Nicholas Mc Guire wrote:
-> return type of wait_for_completion_timeout is unsigned long not int. As r=
-et
-> was only used for wait_for_completion_timeout here it is renamed to time_=
-left
-> the type changed to unsigned long and references fixed up.
->=20
-> Signed-off-by: Nicholas Mc Guire <hofrat-Q945KHDl0DbYtjvyW6yDsg@public.gmane.org>
-
-Applied to for-next, thanks!
-
-
---bCsyhTFzCvuiizWE
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJVBU5CAAoJEBQN5MwUoCm2Cv0P/2n6MRyGdsxsCJ75qgF2KLmw
-7QnL/YXS6db+qB1f9BG0cSisq4WzPXSgTIioEkQBh5fFcTL/5lvF9MmYdGB5qE6n
-T0VeUNgTQFLeUdFnQj+MHDCS4hyjYZItxBf/EJvNOMoFOdxufcy+iXrxCagNlYrD
-YhU6Bt/2c7QllM8HzVMK6vssTuYSqICqmVaDtME6d089N5Q4S8nCksFdogXifXuu
-iElSMmsKvJtqfyhbF39cFwVvXMpLJ+26ceMZU+1nkhUpdlQ+cISf16BbT3MrfKGg
-YyMof6sfZWK2XFJlCh9JpvPcR1pCykakIFbW2//+QEWYIM5oR5zHDrs8eDq0L8gb
-HNLKdRvLJQkKie82cJWrDDcx8/0ssh948KhPR+ryASRIz7ds9p0jMbUeeVFNmxBe
-rB6uef/qKL+OD/6ckuelwi5BEMQYl01NTeVMv5UBDcV+uZI6RxnUmokd0/ey+usz
-QcR9G3LdAbkX7WJPVO8fOdN1cl3vnZTvE+tWezsdOsxSZCtpSGZETRBWyoXMvdi5
-Y9ovkAMB6T8LAk94EOR2RHpy8NowSBCk35zBiyYJbDsLfNCiz9swZPcvM/kooq30
-XmPEEk/18W07Hfet8V6YaYRWk/uY6/WKOBma40qX+/T+Q7ynQbSZCB0Rqk2MZyAj
-YFS3auUeCKRS7XF7fIdM
-=LKET
------END PGP SIGNATURE-----
-
---bCsyhTFzCvuiizWE--
+--=20
+Dmitry
