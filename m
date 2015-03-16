@@ -1,81 +1,31 @@
-From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-Subject: [PATCH v2] pinctrl: tegra: use signed bitfields for optional fields
-Date: Mon, 16 Mar 2015 22:42:34 +0100
-Message-ID: <1426542154-31072-1-git-send-email-stefan@agner.ch>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stefan-XLVq0VzYD2Y@public.gmane.org
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v2] pinctrl: tegra: use signed bitfields for optional
+ fields
+Date: Mon, 16 Mar 2015 16:28:17 -0600
+Message-ID: <55075901.1010100@wwwdotorg.org>
+References: <1426542154-31072-1-git-send-email-stefan@agner.ch>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1426542154-31072-1-git-send-email-stefan@agner.ch>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Stefan Agner <stefan@agner.ch>, linus.walleij@linaro.org
+Cc: thierry.reding@gmail.com, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Walmsley <pwalmsley@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Optional fields are set to -1 by various preprocessor macros. Make
-sure the fields can actually store them.
+On 03/16/2015 03:42 PM, Stefan Agner wrote:
+> Optional fields are set to -1 by various preprocessor macros. Make
+> sure the fields can actually store them.
 
-Signed-off-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
----
-With that, sizes are back to normal:
+This seems fine to me. I suppose there is a small risk that the old code 
+let some invalid configurations pass whereas this new code will reject 
+them and hence not program any later pinmux configurations in the "list" 
+in DT. However, I suspect the risk is quite small and won't be an issue.
 
-   text	   data	    bss	    dec	    hex	filename
-   5406	    180	      1	   5587	   15d3	drivers/pinctrl/pinctrl-tegra-xusb.o
-   5256	     64	      0	   5320	   14c8	drivers/pinctrl/pinctrl-tegra.o
-  18072	   1032	      0	  19104	   4aa0	drivers/pinctrl/pinctrl-tegra114.o
-  19214	   1128	      0	  20342	   4f76	drivers/pinctrl/pinctrl-tegra124.o
-  18352	    876	      0	  19228	   4b1c	drivers/pinctrl/pinctrl-tegra20.o
-  24621	   1068	      0	  25689	   6459	drivers/pinctrl/pinctrl-tegra30.o
+Acked-by: Stephen Warren <swarren@nvidia.com>
 
- drivers/pinctrl/pinctrl-tegra.h | 40 ++++++++++++++++++++--------------------
- 1 file changed, 20 insertions(+), 20 deletions(-)
+I also tested this on Beaver, Dalmore, and Jetson TK1 using Paul 
+Walmsley's automated test system, and saw no issues, so:
 
-diff --git a/drivers/pinctrl/pinctrl-tegra.h b/drivers/pinctrl/pinctrl-tegra.h
-index 8d94d13..b8a82a3 100644
---- a/drivers/pinctrl/pinctrl-tegra.h
-+++ b/drivers/pinctrl/pinctrl-tegra.h
-@@ -139,26 +139,26 @@ struct tegra_pingroup {
- 	u32 pupd_bank:2;
- 	u32 tri_bank:2;
- 	u32 drv_bank:2;
--	u32 mux_bit:6;
--	u32 pupd_bit:6;
--	u32 tri_bit:6;
--	u32 einput_bit:6;
--	u32 odrain_bit:6;
--	u32 lock_bit:6;
--	u32 ioreset_bit:6;
--	u32 rcv_sel_bit:6;
--	u32 hsm_bit:6;
--	u32 schmitt_bit:6;
--	u32 lpmd_bit:6;
--	u32 drvdn_bit:6;
--	u32 drvup_bit:6;
--	u32 slwr_bit:6;
--	u32 slwf_bit:6;
--	u32 drvtype_bit:6;
--	u32 drvdn_width:6;
--	u32 drvup_width:6;
--	u32 slwr_width:6;
--	u32 slwf_width:6;
-+	s32 mux_bit:6;
-+	s32 pupd_bit:6;
-+	s32 tri_bit:6;
-+	s32 einput_bit:6;
-+	s32 odrain_bit:6;
-+	s32 lock_bit:6;
-+	s32 ioreset_bit:6;
-+	s32 rcv_sel_bit:6;
-+	s32 hsm_bit:6;
-+	s32 schmitt_bit:6;
-+	s32 lpmd_bit:6;
-+	s32 drvdn_bit:6;
-+	s32 drvup_bit:6;
-+	s32 slwr_bit:6;
-+	s32 slwf_bit:6;
-+	s32 drvtype_bit:6;
-+	s32 drvdn_width:6;
-+	s32 drvup_width:6;
-+	s32 slwr_width:6;
-+	s32 slwf_width:6;
- };
- 
- /**
--- 
-2.3.3
+Tested-by: Stephen Warren <swarren@nvidia.com>
