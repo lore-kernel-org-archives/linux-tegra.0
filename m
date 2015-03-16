@@ -1,31 +1,36 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v2] pinctrl: tegra: use signed bitfields for optional
- fields
-Date: Mon, 16 Mar 2015 16:28:17 -0600
-Message-ID: <55075901.1010100@wwwdotorg.org>
-References: <1426542154-31072-1-git-send-email-stefan@agner.ch>
+From: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [cbootimage PATCH v1 2/2] Bump to version 1.5
+Date: Mon, 16 Mar 2015 15:51:15 -0700
+Message-ID: <1426546275-6214-3-git-send-email-jimmzhang@nvidia.com>
+References: <1426546275-6214-1-git-send-email-jimmzhang@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <1426542154-31072-1-git-send-email-stefan@agner.ch>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>, linus.walleij@linaro.org
-Cc: thierry.reding@gmail.com, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Walmsley <pwalmsley@nvidia.com>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1426546275-6214-1-git-send-email-jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/16/2015 03:42 PM, Stefan Agner wrote:
-> Optional fields are set to -1 by various preprocessor macros. Make
-> sure the fields can actually store them.
+Create a release that includes Tegra210 support.
 
-This seems fine to me. I suppose there is a small risk that the old code 
-let some invalid configurations pass whereas this new code will reject 
-them and hence not program any later pinmux configurations in the "list" 
-in DT. However, I suspect the risk is quite small and won't be an issue.
+Signed-off-by: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Stephen Warren <swarren@nvidia.com>
-
-I also tested this on Beaver, Dalmore, and Jetson TK1 using Paul 
-Walmsley's automated test system, and saw no issues, so:
-
-Tested-by: Stephen Warren <swarren@nvidia.com>
+diff --git a/configure.ac b/configure.ac
+index cc3999eabead..17264ce8c2d7 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -2,7 +2,7 @@
+ # Process this file with autoconf to produce a configure script.
+ 
+ AC_PREREQ([2.67])
+-AC_INIT([cbootimage], [1.4], [pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org])
++AC_INIT([cbootimage], [1.5], [pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org])
+ AM_INIT_AUTOMAKE
+ AC_CONFIG_SRCDIR([src/cbootimage.c])
+ AC_CONFIG_HEADERS([config.h])
+-- 
+1.8.1.5
