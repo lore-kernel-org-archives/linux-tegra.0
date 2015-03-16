@@ -1,32 +1,50 @@
-From: Peter Korsgaard <peter-+2lRwdCCLRT2eFz/2MeuCQ@public.gmane.org>
-Subject: Re: [PATCH 05/35 linux-next] tty: constify of_device_id array
-Date: Mon, 16 Mar 2015 20:51:34 +0100
-Message-ID: <878uewen5l.fsf@dell.be.48ers.dk>
+From: Fabian Frederick <fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org>
+Subject: [PATCH 30/35 linux-next] devfreq: constify of_device_id array
+Date: Mon, 16 Mar 2015 20:54:40 +0100
+Message-ID: <1426535685-25996-9-git-send-email-fabf@skynet.be>
 References: <1426533469-25458-1-git-send-email-fabf@skynet.be>
-	<1426533469-25458-6-git-send-email-fabf@skynet.be>
-Mime-Version: 1.0
-Content-Type: text/plain
+ <1426535685-25996-1-git-send-email-fabf@skynet.be>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1426533469-25458-6-git-send-email-fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org> (Fabian
-	Frederick's message of "Mon, 16 Mar 2015 20:17:11 +0100")
+In-Reply-To: <1426535685-25996-1-git-send-email-fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Fabian Frederick <fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jiri Slaby <jslaby-AlSwsSmVLrQ@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Barry Song <baohua-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Srinivas Kandagatla <srinivas.kandagatla-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Maxime Coquelin <maxime.coquelin-qxv4g6HH51o@public.gmane.org>, Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>, Peter Korsgaard <jacmet-OfajU3CKLf1/SzgSGea1oA@public.gmane.org>, Timur Tabi <timur-N01EOCouUvQ@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, =?utf-8?Q?S=C3=B6ren?= Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Fabian Frederick <fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org>, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
->>>>> "Fabian" == Fabian Frederick <fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org> writes:
+of_device_id is always used as const.
+(See driver.of_match_table and open firmware functions)
 
- > of_device_id is always used as const.
- > (See driver.of_match_table and open firmware functions)
+Signed-off-by: Fabian Frederick <fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org>
+---
+ drivers/devfreq/event/exynos-ppmu.c | 2 +-
+ drivers/devfreq/tegra-devfreq.c     | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
- > Signed-off-by: Fabian Frederick <fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org>
- > ---
-
-For this:
-
->  drivers/tty/serial/uartlite.c               | 2 +-
-
-Acked-by: Peter Korsgaard <peter-+2lRwdCCLRT2eFz/2MeuCQ@public.gmane.org>
-
+diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
+index ad83473..5afb851 100644
+--- a/drivers/devfreq/event/exynos-ppmu.c
++++ b/drivers/devfreq/event/exynos-ppmu.c
+@@ -354,7 +354,7 @@ static int exynos_ppmu_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static struct of_device_id exynos_ppmu_id_match[] = {
++static const struct of_device_id exynos_ppmu_id_match[] = {
+ 	{ .compatible = "samsung,exynos-ppmu", },
+ 	{ /* sentinel */ },
+ };
+diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devfreq.c
+index 3479096..244d8db 100644
+--- a/drivers/devfreq/tegra-devfreq.c
++++ b/drivers/devfreq/tegra-devfreq.c
+@@ -695,7 +695,7 @@ static SIMPLE_DEV_PM_OPS(tegra_devfreq_pm_ops,
+ 			 tegra_devfreq_suspend,
+ 			 tegra_devfreq_resume);
+ 
+-static struct of_device_id tegra_devfreq_of_match[] = {
++static const struct of_device_id tegra_devfreq_of_match[] = {
+ 	{ .compatible = "nvidia,tegra124-actmon" },
+ 	{ },
+ };
 -- 
-Bye, Peter Korsgaard
+2.1.0
