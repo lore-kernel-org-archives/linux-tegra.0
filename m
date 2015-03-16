@@ -1,245 +1,79 @@
-From: Fabian Frederick <fabf@skynet.be>
-Subject: [PATCH 29/35 linux-next] gpu: constify of_device_id array
-Date: Mon, 16 Mar 2015 20:54:39 +0100
-Message-ID: <1426535685-25996-8-git-send-email-fabf@skynet.be>
-References: <1426533469-25458-1-git-send-email-fabf@skynet.be>
- <1426535685-25996-1-git-send-email-fabf@skynet.be>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1426535685-25996-1-git-send-email-fabf@skynet.be>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Fabian Frederick <fabf@skynet.be>, Russell King <rmk+kernel@arm.linux.org.uk>, David Airlie <airlied@linux.ie>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
+From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+Subject: Re: [PATCH] pinctrl: tegra: use signed bitfields for optional fields
+Date: Mon, 16 Mar 2015 21:17:09 +0100
+Message-ID: <fd76a3659b5096dfa6a5daeecf36ea7c@agner.ch>
+References: <1426377952-12383-1-git-send-email-stefan@agner.ch>
+ <55070C00.5040804@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <55070C00.5040804-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-of_device_id is always used as const.
-(See driver.of_match_table and open firmware functions)
+On 2015-03-16 17:59, Stephen Warren wrote:
+> On 03/14/2015 06:05 PM, Stefan Agner wrote:
+>> Optional fields are set to -1 by various preprocessor macros. Make
+>> sure the struct fields can actually store them.
+> 
+>> diff --git a/drivers/pinctrl/pinctrl-tegra.h b/drivers/pinctrl/pinctrl-tegra.h
+> 
+>> -	u32 mux_bit:6;
+>> -	u32 pupd_bit:6;
+>> -	u32 tri_bit:6;
+> ...
+>> +	s8 mux_bit:6;
+>> +	s8 pupd_bit:6;
+>> +	s8 tri_bit:6;
+> 
+> Could we make these s32s instead? According to the C standard, the
+> type should be a signed or unsigned int, and s32 matches that better
+> than s8 for existing Tegra 32-bit platforms. Equally, for bitfields
+> that don't fit into the remaining space within a container (s8 above),
+> implementations are allowed to either span bitfields across multiple
+> containers, or pad the current container and start the bitfield in the
+> next container. Using the larger s32 as the "container" yields less
+> opportunity for potential padding and thus wasting space.
 
-Signed-off-by: Fabian Frederick <fabf@skynet.be>
----
- drivers/gpu/drm/armada/armada_crtc.c    | 2 +-
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 2 +-
- drivers/gpu/drm/exynos/exynos_hdmi.c    | 2 +-
- drivers/gpu/drm/exynos/exynos_mixer.c   | 2 +-
- drivers/gpu/drm/panel/panel-ld9040.c    | 2 +-
- drivers/gpu/drm/panel/panel-s6e8aa0.c   | 2 +-
- drivers/gpu/drm/sti/sti_dvo.c           | 2 +-
- drivers/gpu/drm/sti/sti_hqvdp.c         | 2 +-
- drivers/gpu/drm/tilcdc/tilcdc_drv.c     | 4 ++--
- drivers/gpu/drm/tilcdc/tilcdc_panel.c   | 2 +-
- drivers/gpu/drm/tilcdc/tilcdc_slave.c   | 4 ++--
- drivers/gpu/drm/tilcdc/tilcdc_tfp410.c  | 4 ++--
- drivers/gpu/host1x/dev.c                | 2 +-
- drivers/gpu/host1x/mipi.c               | 2 +-
- 14 files changed, 17 insertions(+), 17 deletions(-)
+The reason I took the signed byte variant was that it gets filled into
+that type later on. So I thought it would be kind of nice to see that
+fact already in the definition of the struct...
 
-diff --git a/drivers/gpu/drm/armada/armada_crtc.c b/drivers/gpu/drm/armada/armada_crtc.c
-index 42d2ffa..517542f 100644
---- a/drivers/gpu/drm/armada/armada_crtc.c
-+++ b/drivers/gpu/drm/armada/armada_crtc.c
-@@ -1201,7 +1201,7 @@ static int armada_lcd_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--static struct of_device_id armada_lcd_of_match[] = {
-+static const struct of_device_id armada_lcd_of_match[] = {
- 	{
- 		.compatible	= "marvell,dove-lcd",
- 		.data		= &armada510_ops,
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 05fe93d..78afb45 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -330,7 +330,7 @@ static struct exynos_dsi_driver_data exynos5_dsi_driver_data = {
- 	.plltmr_reg = 0x58,
- };
- 
--static struct of_device_id exynos_dsi_of_match[] = {
-+static const struct of_device_id exynos_dsi_of_match[] = {
- 	{ .compatible = "samsung,exynos3250-mipi-dsi",
- 	  .data = &exynos3_dsi_driver_data },
- 	{ .compatible = "samsung,exynos4210-mipi-dsi",
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 229b361..0294402 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -2274,7 +2274,7 @@ err_data:
- 	return NULL;
- }
- 
--static struct of_device_id hdmi_match_types[] = {
-+static const struct of_device_id hdmi_match_types[] = {
- 	{
- 		.compatible = "samsung,exynos5-hdmi",
- 		.data = &exynos5_hdmi_driver_data,
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index 3518bc4..6297105 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -1224,7 +1224,7 @@ static struct platform_device_id mixer_driver_types[] = {
- 	}
- };
- 
--static struct of_device_id mixer_match_types[] = {
-+static const struct of_device_id mixer_match_types[] = {
- 	{
- 		.compatible = "samsung,exynos4210-mixer",
- 		.data	= &exynos4210_mxr_drv_data,
-diff --git a/drivers/gpu/drm/panel/panel-ld9040.c b/drivers/gpu/drm/panel/panel-ld9040.c
-index 08cf2c5..0ab5b69 100644
---- a/drivers/gpu/drm/panel/panel-ld9040.c
-+++ b/drivers/gpu/drm/panel/panel-ld9040.c
-@@ -367,7 +367,7 @@ static int ld9040_remove(struct spi_device *spi)
- 	return 0;
- }
- 
--static struct of_device_id ld9040_of_match[] = {
-+static const struct of_device_id ld9040_of_match[] = {
- 	{ .compatible = "samsung,ld9040" },
- 	{ }
- };
-diff --git a/drivers/gpu/drm/panel/panel-s6e8aa0.c b/drivers/gpu/drm/panel/panel-s6e8aa0.c
-index 144b273..3005110 100644
---- a/drivers/gpu/drm/panel/panel-s6e8aa0.c
-+++ b/drivers/gpu/drm/panel/panel-s6e8aa0.c
-@@ -1041,7 +1041,7 @@ static int s6e8aa0_remove(struct mipi_dsi_device *dsi)
- 	return 0;
- }
- 
--static struct of_device_id s6e8aa0_of_match[] = {
-+static const struct of_device_id s6e8aa0_of_match[] = {
- 	{ .compatible = "samsung,s6e8aa0" },
- 	{ }
- };
-diff --git a/drivers/gpu/drm/sti/sti_dvo.c b/drivers/gpu/drm/sti/sti_dvo.c
-index aeb5070..f619ae2 100644
---- a/drivers/gpu/drm/sti/sti_dvo.c
-+++ b/drivers/gpu/drm/sti/sti_dvo.c
-@@ -537,7 +537,7 @@ static int sti_dvo_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--static struct of_device_id dvo_of_match[] = {
-+static const struct of_device_id dvo_of_match[] = {
- 	{ .compatible = "st,stih407-dvo", },
- 	{ /* end node */ }
- };
-diff --git a/drivers/gpu/drm/sti/sti_hqvdp.c b/drivers/gpu/drm/sti/sti_hqvdp.c
-index b0eb62d..d4324f1 100644
---- a/drivers/gpu/drm/sti/sti_hqvdp.c
-+++ b/drivers/gpu/drm/sti/sti_hqvdp.c
-@@ -1050,7 +1050,7 @@ static int sti_hqvdp_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--static struct of_device_id hqvdp_of_match[] = {
-+static const struct of_device_id hqvdp_of_match[] = {
- 	{ .compatible = "st,stih407-hqvdp", },
- 	{ /* end node */ }
- };
-diff --git a/drivers/gpu/drm/tilcdc/tilcdc_drv.c b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-index 095fca9..5f7e602 100644
---- a/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-+++ b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-@@ -47,7 +47,7 @@ void tilcdc_slave_probedefer(bool defered)
- 	slave_probing = defered;
- }
- 
--static struct of_device_id tilcdc_of_match[];
-+static const struct of_device_id tilcdc_of_match[];
- 
- static struct drm_framebuffer *tilcdc_fb_create(struct drm_device *dev,
- 		struct drm_file *file_priv, struct drm_mode_fb_cmd2 *mode_cmd)
-@@ -634,7 +634,7 @@ static int tilcdc_pdev_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--static struct of_device_id tilcdc_of_match[] = {
-+static const struct of_device_id tilcdc_of_match[] = {
- 		{ .compatible = "ti,am33xx-tilcdc", },
- 		{ },
- };
-diff --git a/drivers/gpu/drm/tilcdc/tilcdc_panel.c b/drivers/gpu/drm/tilcdc/tilcdc_panel.c
-index 7a03158..8a374c7 100644
---- a/drivers/gpu/drm/tilcdc/tilcdc_panel.c
-+++ b/drivers/gpu/drm/tilcdc/tilcdc_panel.c
-@@ -450,7 +450,7 @@ static int panel_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--static struct of_device_id panel_of_match[] = {
-+static const struct of_device_id panel_of_match[] = {
- 		{ .compatible = "ti,tilcdc,panel", },
- 		{ },
- };
-diff --git a/drivers/gpu/drm/tilcdc/tilcdc_slave.c b/drivers/gpu/drm/tilcdc/tilcdc_slave.c
-index 3775fd4..1cab937 100644
---- a/drivers/gpu/drm/tilcdc/tilcdc_slave.c
-+++ b/drivers/gpu/drm/tilcdc/tilcdc_slave.c
-@@ -304,7 +304,7 @@ static const struct tilcdc_module_ops slave_module_ops = {
-  * Device:
-  */
- 
--static struct of_device_id slave_of_match[];
-+static const struct of_device_id slave_of_match[];
- 
- static int slave_probe(struct platform_device *pdev)
- {
-@@ -385,7 +385,7 @@ static int slave_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--static struct of_device_id slave_of_match[] = {
-+static const struct of_device_id slave_of_match[] = {
- 		{ .compatible = "ti,tilcdc,slave", },
- 		{ },
- };
-diff --git a/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c b/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c
-index 354c47c..1bd8e81 100644
---- a/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c
-+++ b/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c
-@@ -304,7 +304,7 @@ static const struct tilcdc_module_ops tfp410_module_ops = {
-  * Device:
-  */
- 
--static struct of_device_id tfp410_of_match[];
-+static const struct of_device_id tfp410_of_match[];
- 
- static int tfp410_probe(struct platform_device *pdev)
- {
-@@ -394,7 +394,7 @@ static int tfp410_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--static struct of_device_id tfp410_of_match[] = {
-+static const struct of_device_id tfp410_of_match[] = {
- 		{ .compatible = "ti,tilcdc,tfp410", },
- 		{ },
- };
-diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-index 53d3d1d..f33fd77 100644
---- a/drivers/gpu/host1x/dev.c
-+++ b/drivers/gpu/host1x/dev.c
-@@ -87,7 +87,7 @@ static const struct host1x_info host1x04_info = {
- 	.sync_offset = 0x2100,
- };
- 
--static struct of_device_id host1x_of_match[] = {
-+static const struct of_device_id host1x_of_match[] = {
- 	{ .compatible = "nvidia,tegra124-host1x", .data = &host1x04_info, },
- 	{ .compatible = "nvidia,tegra114-host1x", .data = &host1x02_info, },
- 	{ .compatible = "nvidia,tegra30-host1x", .data = &host1x01_info, },
-diff --git a/drivers/gpu/host1x/mipi.c b/drivers/gpu/host1x/mipi.c
-index fbc6ee6..ba54db4 100644
---- a/drivers/gpu/host1x/mipi.c
-+++ b/drivers/gpu/host1x/mipi.c
-@@ -277,7 +277,7 @@ static const struct tegra_mipi_soc tegra124_mipi_soc = {
- 	.num_pads = ARRAY_SIZE(tegra124_mipi_pads),
- };
- 
--static struct of_device_id tegra_mipi_of_match[] = {
-+static const struct of_device_id tegra_mipi_of_match[] = {
- 	{ .compatible = "nvidia,tegra114-mipi", .data = &tegra114_mipi_soc },
- 	{ .compatible = "nvidia,tegra124-mipi", .data = &tegra124_mipi_soc },
- 	{ },
--- 
-2.1.0
+But your argument has actual real significance. Will change that.
+
+> Do you observe any increase in the sizes reported by
+> "${CROSS_COMPILE}size pinctrl-tegra*.o" with this patch?
+
+Baseline:
+   5406	    180	      1	   5587	  
+15d3	drivers/pinctrl/pinctrl-tegra-xusb.o
+   5244	     64	      0	   5308	   14bc	drivers/pinctrl/pinctrl-tegra.o
+  18072	   1032	      0	  19104	  
+4aa0	drivers/pinctrl/pinctrl-tegra114.o
+  19214	   1128	      0	  20342	  
+4f76	drivers/pinctrl/pinctrl-tegra124.o
+  18352	    876	      0	  19228	  
+4b1c	drivers/pinctrl/pinctrl-tegra20.o
+  24621	   1068	      0	  25689	  
+6459	drivers/pinctrl/pinctrl-tegra30.o
+
+
+With the patch above...
+   text	   data	    bss	    dec	    hex	filename
+   5406	    180	      1	   5587	  
+15d3	drivers/pinctrl/pinctrl-tegra-xusb.o
+   5252	     64	      0	   5316	   14c4	drivers/pinctrl/pinctrl-tegra.o
+  18932	   1032	      0	  19964	  
+4dfc	drivers/pinctrl/pinctrl-tegra114.o
+  20142	   1128	      0	  21270	  
+5316	drivers/pinctrl/pinctrl-tegra124.o
+  18988	    876	      0	  19864	  
+4d98	drivers/pinctrl/pinctrl-tegra20.o
+  25781	   1068	      0	  26849	  
+68e1	drivers/pinctrl/pinctrl-tegra30.o
+
+--
+Stefan
