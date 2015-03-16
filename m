@@ -1,40 +1,58 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH] pinctrl: tegra: use signed bitfields for optional fields
-Date: Mon, 16 Mar 2015 10:59:44 -0600
-Message-ID: <55070C00.5040804@wwwdotorg.org>
-References: <1426377952-12383-1-git-send-email-stefan@agner.ch>
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v4.0-rc4
+Date: Mon, 16 Mar 2015 11:10:24 -0600
+Message-ID: <55070E80.8010209@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <1426377952-12383-1-git-send-email-stefan@agner.ch>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: linus.walleij@linaro.org, thierry.reding@gmail.com, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/14/2015 06:05 PM, Stefan Agner wrote:
-> Optional fields are set to -1 by various preprocessor macros. Make
-> sure the struct fields can actually store them.
+Here are some basic Tegra test results for Linux v4.0-rc4.
+Logs and other details at:
 
-> diff --git a/drivers/pinctrl/pinctrl-tegra.h b/drivers/pinctrl/pinctrl-tegra.h
+     http://nvt.pwsan.com/pub/linux/testlogs/test_v4.0-rc4/20150315180104/
 
-> -	u32 mux_bit:6;
-> -	u32 pupd_bit:6;
-> -	u32 tri_bit:6;
-...
-> +	s8 mux_bit:6;
-> +	s8 pupd_bit:6;
-> +	s8 tri_bit:6;
 
-Could we make these s32s instead? According to the C standard, the type 
-should be a signed or unsigned int, and s32 matches that better than s8 
-for existing Tegra 32-bit platforms. Equally, for bitfields that don't 
-fit into the remaining space within a container (s8 above), 
-implementations are allowed to either span bitfields across multiple 
-containers, or pad the current container and start the bitfield in the 
-next container. Using the larger s32 as the "container" yields less 
-opportunity for potential padding and thus wasting space.
+Test summary
+------------
 
-Do you observe any increase in the sizes reported by 
-"${CROSS_COMPILE}size pinctrl-tegra*.o" with this patch?
+Build: zImage:
+     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Build: Image:
+     Pass: ( 1/ 1): defconfig
+
+Boot to userspace: defconfig:
+     Pass: ( 1/ 1): qemu-vexpress64
+
+Boot to userspace: multi_v7_defconfig:
+     Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+     Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v4.0-rc3 (9eccca0843205f87c00404b663188b88eb248051)):
+    text     data      bss    total  kernel
+   +1272     -104    +1472    +2640  multi_v7_defconfig
+    +832      +64        0     +896  tegra_defconfig
+   +4148    -3600        0     +548  defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v4.0-rc3 (9eccca0843205f87c00404b663188b88eb248051))
+     avail    rsrvd     high    freed                board              kconfig                  dtb
+         .        .        .        .      qemu-vexpress64            defconfig           __internal
+         .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+         .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+         .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+         .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+         .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+         .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
