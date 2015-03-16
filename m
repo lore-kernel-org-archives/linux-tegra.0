@@ -1,44 +1,81 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH] pinctrl: tegra: use signed bitfields for optional fields
-Date: Mon, 16 Mar 2015 21:30:02 +0100
-Message-ID: <b20f23a75058210e8521f014f130e306@agner.ch>
-References: <1426377952-12383-1-git-send-email-stefan@agner.ch>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1426377952-12383-1-git-send-email-stefan@agner.ch>
-Sender: linux-kernel-owner@vger.kernel.org
-To: swarren@wwwdotorg.org
-Cc: linus.walleij@linaro.org, thierry.reding@gmail.com, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+Subject: [PATCH v2] pinctrl: tegra: use signed bitfields for optional fields
+Date: Mon, 16 Mar 2015 22:42:34 +0100
+Message-ID: <1426542154-31072-1-git-send-email-stefan@agner.ch>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stefan-XLVq0VzYD2Y@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 2015-03-15 01:05, Stefan Agner wrote:
-> Optional fields are set to -1 by various preprocessor macros. Make
-> sure the struct fields can actually store them.
-> 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> ---
-> This lead to a lot of warnings when compiling the Tegra pinctrl drivers
-> using LLVM/clang:
-> 
-> drivers/pinctrl/pinctrl-tegra124.c:2048:2: warning: implicit truncation from
-> 'int' to bitfield changes value from -1 to 63 [-Wbitfield-constant-conversion]
->         MIPI_PAD_CTRL_PINGROUP(dsi_b,   0x820, 1, CSI, DSI_B)
->         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/pinctrl/pinctrl-tegra124.c:1807:18: note: expanded from macro
-> 'MIPI_PAD_CTRL_PINGROUP'
->                 .rcv_sel_bit = -1,                                      \
->                                ^~
-> 
-> However, I did not check if this could actually lead to an unintended
-> pin configuration...
+Optional fields are set to -1 by various preprocessor macros. Make
+sure the fields can actually store them.
 
-Stephen, what do you think about this? While I think the patch  is the
-right thing to do, it could actually introduce nasty regressions (stuff
-which was working due to  "accidentally" wrong pin configuration)...
+Signed-off-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+---
+With that, sizes are back to normal:
 
-I need to admit that I did not actually run a kernel with that patch.
+   text	   data	    bss	    dec	    hex	filename
+   5406	    180	      1	   5587	   15d3	drivers/pinctrl/pinctrl-tegra-xusb.o
+   5256	     64	      0	   5320	   14c8	drivers/pinctrl/pinctrl-tegra.o
+  18072	   1032	      0	  19104	   4aa0	drivers/pinctrl/pinctrl-tegra114.o
+  19214	   1128	      0	  20342	   4f76	drivers/pinctrl/pinctrl-tegra124.o
+  18352	    876	      0	  19228	   4b1c	drivers/pinctrl/pinctrl-tegra20.o
+  24621	   1068	      0	  25689	   6459	drivers/pinctrl/pinctrl-tegra30.o
 
---
-Stefan
+ drivers/pinctrl/pinctrl-tegra.h | 40 ++++++++++++++++++++--------------------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-tegra.h b/drivers/pinctrl/pinctrl-tegra.h
+index 8d94d13..b8a82a3 100644
+--- a/drivers/pinctrl/pinctrl-tegra.h
++++ b/drivers/pinctrl/pinctrl-tegra.h
+@@ -139,26 +139,26 @@ struct tegra_pingroup {
+ 	u32 pupd_bank:2;
+ 	u32 tri_bank:2;
+ 	u32 drv_bank:2;
+-	u32 mux_bit:6;
+-	u32 pupd_bit:6;
+-	u32 tri_bit:6;
+-	u32 einput_bit:6;
+-	u32 odrain_bit:6;
+-	u32 lock_bit:6;
+-	u32 ioreset_bit:6;
+-	u32 rcv_sel_bit:6;
+-	u32 hsm_bit:6;
+-	u32 schmitt_bit:6;
+-	u32 lpmd_bit:6;
+-	u32 drvdn_bit:6;
+-	u32 drvup_bit:6;
+-	u32 slwr_bit:6;
+-	u32 slwf_bit:6;
+-	u32 drvtype_bit:6;
+-	u32 drvdn_width:6;
+-	u32 drvup_width:6;
+-	u32 slwr_width:6;
+-	u32 slwf_width:6;
++	s32 mux_bit:6;
++	s32 pupd_bit:6;
++	s32 tri_bit:6;
++	s32 einput_bit:6;
++	s32 odrain_bit:6;
++	s32 lock_bit:6;
++	s32 ioreset_bit:6;
++	s32 rcv_sel_bit:6;
++	s32 hsm_bit:6;
++	s32 schmitt_bit:6;
++	s32 lpmd_bit:6;
++	s32 drvdn_bit:6;
++	s32 drvup_bit:6;
++	s32 slwr_bit:6;
++	s32 slwf_bit:6;
++	s32 drvtype_bit:6;
++	s32 drvdn_width:6;
++	s32 drvup_width:6;
++	s32 slwr_width:6;
++	s32 slwf_width:6;
+ };
+ 
+ /**
+-- 
+2.3.3
