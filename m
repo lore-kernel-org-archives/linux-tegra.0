@@ -1,41 +1,40 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: Re: [PATCH 30/35 linux-next] devfreq: constify of_device_id array
-Date: Tue, 17 Mar 2015 01:11:51 +0000 (GMT)
-Message-ID: <487895027.183321426554710978.JavaMail.weblogic@epmlwas07d>
-Reply-To: myungjoo.ham@samsung.com
+From: Patrice Chotard <patrice.chotard@st.com>
+Subject: Re: [PATCH 05/35 linux-next] tty: constify of_device_id array
+Date: Tue, 17 Mar 2015 09:10:37 +0100
+Message-ID: <5507E17D.2050701@st.com>
+References: <1426533469-25458-1-git-send-email-fabf@skynet.be>
+ <1426533469-25458-6-git-send-email-fabf@skynet.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-MIME-version: 1.0
-Sender: linux-kernel-owner@vger.kernel.org
-To: Fabian Frederick <fabf@skynet.be>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1426533469-25458-6-git-send-email-fabf@skynet.be>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Fabian Frederick <fabf@skynet.be>, linux-kernel@vger.kernel.org
+Cc: Alexandre Courbot <gnurou@gmail.com>, Barry Song <baohua@kernel.org>, kernel@stlinux.com, Stephen Warren <swarren@wwwdotorg.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linuxppc-dev@lists.ozlabs.org, Timur Tabi <timur@tabi.org>, Michal Simek <michal.simek@xilinx.com>, Thierry Reding <thierry.reding@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>, linux-tegra@vger.kernel.org, Peter Korsgaard <jacmet@sunsite.dk>, Jiri Slaby <jslaby@suse.cz>, =?windows-1252?Q?S=F6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Maxime Coquelin <maxime.coquelin@st.com>
 List-Id: linux-tegra@vger.kernel.org
 
-PiBvZl9kZXZpY2VfaWQgaXMgYWx3YXlzIHVzZWQgYXMgY29uc3QuDQo+IChTZWUgZHJpdmVyLm9m
-X21hdGNoX3RhYmxlIGFuZCBvcGVuIGZpcm13YXJlIGZ1bmN0aW9ucykNCj4gDQo+IFNpZ25lZC1v
-ZmYtYnk6IEZhYmlhbiBGcmVkZXJpY2sgPGZhYmZAc2t5bmV0LmJlPg0KDQpBY2tlZC1ieTogTXl1
-bmdKb28gSGFtIDxteXVuZ2pvby5oYW1Ac2Ftc3VuZy5jb20+DQoNCj4gLS0tDQo+ICBkcml2ZXJz
-L2RldmZyZXEvZXZlbnQvZXh5bm9zLXBwbXUuYyB8IDIgKy0NCj4gIGRyaXZlcnMvZGV2ZnJlcS90
-ZWdyYS1kZXZmcmVxLmMgICAgIHwgMiArLQ0KPiAgMiBmaWxlcyBjaGFuZ2VkLCAyIGluc2VydGlv
-bnMoKyksIDIgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9kZXZmcmVx
-L2V2ZW50L2V4eW5vcy1wcG11LmMgYi9kcml2ZXJzL2RldmZyZXEvZXZlbnQvZXh5bm9zLXBwbXUu
-Yw0KPiBpbmRleCBhZDgzNDczLi41YWZiODUxIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2RldmZy
-ZXEvZXZlbnQvZXh5bm9zLXBwbXUuYw0KPiArKysgYi9kcml2ZXJzL2RldmZyZXEvZXZlbnQvZXh5
-bm9zLXBwbXUuYw0KPiBAQCAtMzU0LDcgKzM1NCw3IEBAIHN0YXRpYyBpbnQgZXh5bm9zX3BwbXVf
-cmVtb3ZlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ICAJcmV0dXJuIDA7DQo+ICB9
-DQo+ICANCj4gLXN0YXRpYyBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIGV4eW5vc19wcG11X2lkX21hdGNo
-W10gPSB7DQo+ICtzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCBleHlub3NfcHBtdV9p
-ZF9tYXRjaFtdID0gew0KPiAgCXsgLmNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3MtcHBtdSIs
-IH0sDQo+ICAJeyAvKiBzZW50aW5lbCAqLyB9LA0KPiAgfTsNCj4gZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvZGV2ZnJlcS90ZWdyYS1kZXZmcmVxLmMgYi9kcml2ZXJzL2RldmZyZXEvdGVncmEtZGV2ZnJl
-cS5jDQo+IGluZGV4IDM0NzkwOTYuLjI0NGQ4ZGIgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvZGV2
-ZnJlcS90ZWdyYS1kZXZmcmVxLmMNCj4gKysrIGIvZHJpdmVycy9kZXZmcmVxL3RlZ3JhLWRldmZy
-ZXEuYw0KPiBAQCAtNjk1LDcgKzY5NSw3IEBAIHN0YXRpYyBTSU1QTEVfREVWX1BNX09QUyh0ZWdy
-YV9kZXZmcmVxX3BtX29wcywNCj4gIAkJCSB0ZWdyYV9kZXZmcmVxX3N1c3BlbmQsDQo+ICAJCQkg
-dGVncmFfZGV2ZnJlcV9yZXN1bWUpOw0KPiAgDQo+IC1zdGF0aWMgc3RydWN0IG9mX2RldmljZV9p
-ZCB0ZWdyYV9kZXZmcmVxX29mX21hdGNoW10gPSB7DQo+ICtzdGF0aWMgY29uc3Qgc3RydWN0IG9m
-X2RldmljZV9pZCB0ZWdyYV9kZXZmcmVxX29mX21hdGNoW10gPSB7DQo+ICAJeyAuY29tcGF0aWJs
-ZSA9ICJudmlkaWEsdGVncmExMjQtYWN0bW9uIiB9LA0KPiAgCXsgfSwNCj4gIH07DQo+IC0tIA0K
-PiAyLjEuMA0KPiANCj4gDQo=
+Hi Fabian
+
+On 03/16/2015 08:17 PM, Fabian Frederick wrote:
+> of_device_id is always used as const.
+> (See driver.of_match_table and open firmware functions)
+>
+> Signed-off-by: Fabian Frederick <fabf@skynet.be>
+> ---
+....
+>   drivers/tty/serial/st-asc.c                 | 2 +-
+>
+For this driver
+
+Acked-by: Patrice Chotard <patrice.chotard@st.com>
+
+Thanks
