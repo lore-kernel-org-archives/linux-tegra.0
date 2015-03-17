@@ -1,69 +1,48 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [PATCH v6 4/8] PM / devfreq: tegra: Use clock rate constraints
-Date: Tue, 17 Mar 2015 10:36:14 +0100
-Message-ID: <1426584991-11110-5-git-send-email-tomeu.vizoso@collabora.com>
-References: <1426584991-11110-1-git-send-email-tomeu.vizoso@collabora.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1426584991-11110-1-git-send-email-tomeu.vizoso@collabora.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-tegra@vger.kernel.org
-Cc: Mikko Perttunen <mikko.perttunen@kapsi.fi>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Subject: Re: [PATCH 2/3] amba: tegra-ahb: use correct base address for future
+ chip support
+Date: Tue, 17 Mar 2015 10:35:03 +0000
+Message-ID: <20150317103503.GT8656@n2100.arm.linux.org.uk>
+References: <20150317083221.32662.14647.stgit@baseline>
+ <20150317083221.32662.7448.stgit@baseline>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20150317083221.32662.7448.stgit@baseline>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Now that we have per-user clocks and the possibility to set constraints
-in a clock, set a floor constraint on the EMC clock.
+On Tue, Mar 17, 2015 at 01:32:21AM -0700, Paul Walmsley wrote:
+>  static inline u32 gizmo_readl(struct tegra_ahb *ahb, u32 offset)
+>  {
+> -	return readl(ahb->regs - 4 + offset);
+> +	return readl(ahb->regs + ahb->offset + offset);
+>  }
+>  
+>  static inline void gizmo_writel(struct tegra_ahb *ahb, u32 value, u32 offset)
+>  {
+> -	writel(value, ahb->regs - 4 + offset);
+> +	writel(value, ahb->regs + ahb->offset + offset);
 
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
----
- drivers/devfreq/tegra-devfreq.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+Rather than storing the offset...
 
-diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devfreq.c
-index c71635a..5a6164c 100644
---- a/drivers/devfreq/tegra-devfreq.c
-+++ b/drivers/devfreq/tegra-devfreq.c
-@@ -497,10 +497,8 @@ static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
- 	rate = dev_pm_opp_get_freq(opp);
- 	rcu_read_unlock();
- 
--	/* TODO: Once we have per-user clk constraints, set a floor */
--	clk_set_rate(tegra->emc_clock, rate);
--
--	/* TODO: Set voltage as well */
-+	clk_set_min_rate(tegra->emc_clock, rate);
-+	clk_set_rate(tegra->emc_clock, 0);
- 
- 	return 0;
- }
-@@ -619,7 +617,6 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
- 	struct tegra_devfreq *tegra;
- 	struct tegra_devfreq_device *dev;
- 	struct resource *res;
--	unsigned long max_freq;
- 	unsigned int i;
- 	int irq;
- 	int err;
-@@ -658,6 +655,8 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
-+	clk_set_rate(tegra->emc_clock, ULONG_MAX);
-+
- 	tegra->rate_change_nb.notifier_call = tegra_actmon_rate_notify_cb;
- 	err = clk_notifier_register(tegra->emc_clock, &tegra->rate_change_nb);
- 	if (err) {
-@@ -677,11 +676,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
- 
- 	reset_control_deassert(tegra->reset);
- 
--	max_freq = clk_round_rate(tegra->emc_clock, ULONG_MAX);
--	tegra->max_freq = max_freq / KHZ;
--
--	clk_set_rate(tegra->emc_clock, max_freq);
--
-+	tegra->max_freq = clk_round_rate(tegra->emc_clock, ULONG_MAX) / KHZ;
- 	tegra->cur_freq = clk_get_rate(tegra->emc_clock) / KHZ;
- 
- 	actmon_writel(tegra, ACTMON_SAMPLING_PERIOD - 1,
+> @@ -262,18 +283,15 @@ static int tegra_ahb_probe(struct platform_device *pdev)
+>  	if (IS_ERR(ahb->regs))
+>  		return PTR_ERR(ahb->regs);
+>  
+> +	ad = of_id->data;
+>  	ahb->dev = &pdev->dev;
+> +	ahb->offset = ad->offset;
+
+What about 
+
+	ahb->regs += ad->offset;
+
+here and avoid the addition and extra loads on every access.
+
 -- 
-2.1.0
+FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
+according to speedtest.net.
