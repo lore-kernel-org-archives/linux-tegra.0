@@ -1,101 +1,87 @@
-From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: Re: [PATCH v6 0/8] Add support for Tegra Activity Monitor
-Date: Wed, 18 Mar 2015 07:27:19 +0100
-Message-ID: <CAAObsKDWuGatDaX2a8AqXDMayd0uJAUCLLdRYUmef1Oh=kvd3g@mail.gmail.com>
-References: <78905871.274971426655422042.JavaMail.weblogic@epmlwas07d>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: Re: [PATCH v6 5/8] PM / devfreq: tegra: remove operating-points
+Date: Wed, 18 Mar 2015 08:25:28 +0100
+Message-ID: <CAAObsKBZndddvouL4RKPLghCad9LCBmvYJTMB83m6wH7O7Hwzw@mail.gmail.com>
+References: <192647817.276191426656237193.JavaMail.weblogic@epmlwas07d>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <78905871.274971426655422042.JavaMail.weblogic@epmlwas07d>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, =?UTF-8?B?67CV6rK966+8?= <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+WeqIh2JisoIxyg@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <192647817.276191426656237193.JavaMail.weblogic@epmlwas07d>
+Sender: linux-kernel-owner@vger.kernel.org
+To: MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Mikko Perttunen <mikko.perttunen@kapsi.fi>, =?UTF-8?B?67CV6rK966+8?= <kyungmin.park@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 18 March 2015 at 06:10, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->> Hello,
+On 18 March 2015 at 06:23, MyungJoo Ham <myungjoo.ham@samsung.com> wrote:
+>> As the DT bindings don't have an operating-points property any more,
+>> build the OPP table from the frequencies supported by the EMC clock.
 >>
->> something happened during the last cycle and an old version of the devfreq
->> driver was merged.
+>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+>> ---
+>>  drivers/devfreq/tegra-devfreq.c | 12 ++++++------
+>>  1 file changed, 6 insertions(+), 6 deletions(-)
 >>
->> This thread contains patches that bring it up to date to the last submitted
->> version and also incorporates the feedback that that version received, plus
->> some other small fixes and improvements that came up during rebase and
->> testing.
+>> diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devfreq.c
+>> index 5a6164c..1de3f8b 100644
+>> --- a/drivers/devfreq/tegra-devfreq.c
+>> +++ b/drivers/devfreq/tegra-devfreq.c
+>> @@ -618,6 +618,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>>       struct tegra_devfreq_device *dev;
+>>       struct resource *res;
+>>       unsigned int i;
+>> +     unsigned long rate;
+>>       int irq;
+>>       int err;
 >>
->> These patches implement support for setting the rate of the EMC clock based on
->> stats collected from the ACTMON, a piece of hw in the Tegra124 that counts
->> memory accesses (among others).
+>> @@ -649,12 +650,6 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>>               return PTR_ERR(tegra->emc_clock);
+>>       }
 >>
->> It depends on the following in-flight patches:
+>> -     err = of_init_opp_table(&pdev->dev);
+>> -     if (err) {
+>> -             dev_err(&pdev->dev, "Failed to init operating point table\n");
+>> -             return err;
+>> -     }
+>> -
+>>       clk_set_rate(tegra->emc_clock, ULONG_MAX);
 >>
->> * EMC driver: http://thread.gmane.org/gmane.linux.kernel/1907035
->> * CPUFreq driver: http://thread.gmane.org/gmane.linux.kernel/1897078
+>>       tegra->rate_change_nb.notifier_call = tegra_actmon_rate_notify_cb;
+>> @@ -691,6 +686,11 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>>               tegra_actmon_configure_device(tegra, dev);
+>>       }
 >>
->> I have pushed a branch here for testing:
->>
->> http://cgit.collabora.com/git/user/tomeu/linux.git/log/?h=actmon-v6
->>
->> Regards,
->>
->> Tomeu
->>
->> Tomeu Vizoso (8):
->>   of: Add binding for NVIDIA Tegra ACTMON node
->>   PM / devfreq: tegra: Update to v5 of the submitted patches
->>   clk: tegra: Have EMC clock implement determine_rate()
->>   PM / devfreq: tegra: Use clock rate constraints
->>   PM / devfreq: tegra: remove operating-points
->>   PM / devfreq: tegra: Set drvdata before enabling the irq
->>   PM / devfreq: tegra: Enable interrupts after resuming the devfreq
->>     monitor
->>   ARM: tegra: Add Tegra124 ACTMON support
+>> +     for (rate = 0; rate <= tegra->max_freq * KHZ; rate++) {
+>> +             rate = clk_round_rate(tegra->emc_clock, rate);
+>> +             dev_pm_opp_add(&pdev->dev, rate, 0);
+>> +     }
+>> +
 >
-> Acked-by: MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> for all PM / devfreq patches (2, 4, 5, 6, 7)
-> And merged in for-rc tree with a little modification.
+> Although I am not going to NACK for the single-time performance of a
+> single device driver for a device that I do not have or fully understand,
+> please note that you may be wasting several billion cycles unless
+> your product is running at MHZ/kHZ level.
+>
+> What is going on with this loop? Do you really have such a virtually-continuous
+> frequency scaling in your product? (Wow.... but in such a case, I don't think
+> OPP is appropriate.)
 
-Thanks. Though that's fine with me, I was wondering if Mikko or
-Alexandre would have any comments on the changes, even if they are
-small regarding what they already reviewed.
-
-> In the patch 2/8, I would like to add "const" in Line 748.
-> Would it be fine with you?
-
-Yes, thanks, that's fine.
+Actually, that loop is expected to only execute as many times as
+frequencies are supported by the clock. This is using knowledge of the
+clock always rounding up when possible, which I think is fine in this
+case.
 
 Regards,
 
 Tomeu
 
-> (You may look at: https://git.kernel.org/cgit/linux/kernel/git/mzx/devfreq.git/log/?h=for-rc )
+>
+> Cheers,
+> MyungJoo
 >
 >
-> The diff after applying all 2/8 to 7/8 will be:
->
-> diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devfreq.c
-> index 0d1edd5..8e633a6 100644
-> --- a/drivers/devfreq/tegra-devfreq.c
-> +++ b/drivers/devfreq/tegra-devfreq.c
-> @@ -740,7 +740,7 @@ static int tegra_devfreq_remove(struct platform_device *pdev)
->         return 0;
->  }
->
-> -static struct of_device_id tegra_devfreq_of_match[] = {
-> +static const struct of_device_id tegra_devfreq_of_match[] = {
->         { .compatible = "nvidia,tegra124-actmon" },
->         { },
->  };
->
->
->>
->>  .../devicetree/bindings/arm/tegra/actmon.txt       |  28 ++
->>  arch/arm/boot/dts/tegra124.dtsi                    |  11 +
->>  drivers/clk/tegra/clk-emc.c                        |  19 +-
->>  drivers/devfreq/tegra-devfreq.c                    | 480 +++++++++++----------
->>  4 files changed, 316 insertions(+), 222 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/arm/tegra/actmon.txt
->>
+>>       irq = platform_get_irq(pdev, 0);
+>>       if (irq <= 0) {
+>>               dev_err(&pdev->dev, "Failed to get IRQ\n");
 >> --
 >> 2.1.0
 >>
