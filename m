@@ -1,40 +1,100 @@
 From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [PATCH v6 01/12] ARM: tegra: Change model of sound card in Nyan Big
-Date: Wed, 18 Mar 2015 10:52:16 +0100
-Message-ID: <1426672363-30667-2-git-send-email-tomeu.vizoso@collabora.com>
+Subject: [PATCH v6 03/12] drm/panel: add support for Samsung LTN140AT29 panel
+Date: Wed, 18 Mar 2015 10:52:18 +0100
+Message-ID: <1426672363-30667-4-git-send-email-tomeu.vizoso@collabora.com>
 References: <1426672363-30667-1-git-send-email-tomeu.vizoso@collabora.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1426672363-30667-1-git-send-email-tomeu.vizoso@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-tegra@vger.kernel.org
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Thierry Reding <thierry.reding@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Change it from "Acer Chromebook 13" to GoogleNyanBig so it's unique and
-identifiable.
+=46rom: St=C3=A9phane Marchesin <marcheu@chromium.org>
 
-With this change the card id exposed to userspace becomes GoogleNyanBig
-instead of the current A13.
+This panel is used by the Nyan Blaze board and supported by the simple-=
+panel
+driver.
 
+Signed-off-by: St=C3=A9phane Marchesin <marcheu@chromium.org>
+[tomeu.vizoso@collabora.com: add device tree binding document]
 Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
 Acked-by: Stephen Warren <swarren@nvidia.com>
 Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
- arch/arm/boot/dts/tegra124-nyan-big.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../bindings/panel/samsung,ltn140at29-301.txt      |  7 ++++++
+ drivers/gpu/drm/panel/panel-simple.c               | 26 ++++++++++++++=
+++++++++
+ 2 files changed, 33 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/panel/samsung,ltn=
+140at29-301.txt
 
-diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts b/arch/arm/boot/dts/tegra124-nyan-big.dts
-index 004e8e4..e167df2 100644
---- a/arch/arm/boot/dts/tegra124-nyan-big.dts
-+++ b/arch/arm/boot/dts/tegra124-nyan-big.dts
-@@ -1110,7 +1110,7 @@
- 	sound {
- 		compatible = "nvidia,tegra-audio-max98090-nyan-big",
- 			     "nvidia,tegra-audio-max98090";
--		nvidia,model = "Acer Chromebook 13";
-+		nvidia,model = "GoogleNyanBig";
- 
- 		nvidia,audio-routing =
- 			"Headphones", "HPR",
--- 
+diff --git a/Documentation/devicetree/bindings/panel/samsung,ltn140at29=
+-301.txt b/Documentation/devicetree/bindings/panel/samsung,ltn140at29-3=
+01.txt
+new file mode 100644
+index 0000000..e7f969d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/panel/samsung,ltn140at29-301.tx=
+t
+@@ -0,0 +1,7 @@
++Samsung Electronics 14" WXGA (1366x768) TFT LCD panel
++
++Required properties:
++- compatible: should be "samsung,ltn140at29-301"
++
++This binding is compatible with the simple-panel binding, which is spe=
+cified
++in simple-panel.txt in this directory.
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/pan=
+el/panel-simple.c
+index 39806c3..2da2285 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -779,6 +779,29 @@ static const struct panel_desc samsung_ltn101nt05 =
+=3D {
+ 	},
+ };
+=20
++static const struct drm_display_mode samsung_ltn140at29_301_mode =3D {
++	.clock =3D 76300,
++	.hdisplay =3D 1366,
++	.hsync_start =3D 1366 + 64,
++	.hsync_end =3D 1366 + 64 + 48,
++	.htotal =3D 1366 + 64 + 48 + 128,
++	.vdisplay =3D 768,
++	.vsync_start =3D 768 + 2,
++	.vsync_end =3D 768 + 2 + 5,
++	.vtotal =3D 768 + 2 + 5 + 17,
++	.vrefresh =3D 60,
++};
++
++static const struct panel_desc samsung_ltn140at29_301 =3D {
++	.modes =3D &samsung_ltn140at29_301_mode,
++	.num_modes =3D 1,
++	.bpc =3D 6,
++	.size =3D {
++		.width =3D 320,
++		.height =3D 187,
++	},
++};
++
+ static const struct of_device_id platform_of_match[] =3D {
+ 	{
+ 		.compatible =3D "auo,b101aw03",
+@@ -841,6 +864,9 @@ static const struct of_device_id platform_of_match[=
+] =3D {
+ 		.compatible =3D "samsung,ltn101nt05",
+ 		.data =3D &samsung_ltn101nt05,
+ 	}, {
++		.compatible =3D "samsung,ltn140at29-301",
++		.data =3D &samsung_ltn140at29_301,
++	}, {
+ 		/* sentinel */
+ 	}
+ };
+--=20
 2.1.0
