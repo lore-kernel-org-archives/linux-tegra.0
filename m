@@ -1,53 +1,37 @@
-From: David Ung <davidu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH V2 1/3] gpu: host1x: Reduce host1x job allocation size
-Date: Wed, 18 Mar 2015 00:53:45 +0000
-Message-ID: <0e36c4295adc4f2daae9715cd0dde87d@HQMAIL102.nvidia.com>
-References: <1425606712-15986-1-git-send-email-davidu@nvidia.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 2/4] ARM: gpio: tegra: Maintain endianness
+Date: Wed, 18 Mar 2015 02:36:29 +0100
+Message-ID: <CACRpkdZ_G3MBZmGZ8nYpmoZUu9+3L2s52E5G_4_SZ54_vzwzow@mail.gmail.com>
+References: <1420817231-8346-1-git-send-email-bob.mottram@codethink.co.uk>
+	<1420817231-8346-3-git-send-email-bob.mottram@codethink.co.uk>
+	<20150311094324.GH19577@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1425606712-15986-1-git-send-email-davidu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <20150311094324.GH19577-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "airlied-cv59FeDIM0c@public.gmane.org" <airlied-cv59FeDIM0c@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Bob Mottram <bob.mottram-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, Alex Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, ct173-kernel-internal-81qHHgoATdFT9dQujB1mzip2UmYkHbXO@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-ping?
+On Wed, Mar 11, 2015 at 10:43 AM, Thierry Reding
+<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Fri, Jan 09, 2015 at 03:27:09PM +0000, Bob Mottram wrote:
+>> Replace the _raw-writel with writel_relaxed to fix issue with
+>> running tegra in big-endian. Tested on Jetson TK1.
+>>
+>> Signed-off-by: Bob Mottram <bob.mottram-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
+>> ---
+>>  drivers/gpio/gpio-tegra.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> Linus, Alex,
+>
+> would you prefer to take this through the GPIO tree or shall I take it
+> into the Tegra tree along with the rest of this series.
 
-________________________________________
-From: David Ung <davidu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sent: Thursday, March 5, 2015 5:51 PM
-To: airlied-cv59FeDIM0c@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org; swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org; Arto Merilainen; Terje Bergstrom; gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org; David Ung
-Subject: [PATCH V2 1/3] gpu: host1x: Reduce host1x job allocation size
+OK take it in the Tegra tree as Alex suggests,
+Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
-There is 2 set of num_relocs * sizeof(*) array at the end of host1x job.
-Only the 1st set is really used and with job->gather_addr_phys pointing
-somewhere within the 1st set of reloc physical addresses.
-This patch removes the 2nd set of unused addresses.
-
-Signed-off-by: David Ung <davidu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/gpu/host1x/job.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
-index 63bd63f..9c11265 100644
---- a/drivers/gpu/host1x/job.c
-+++ b/drivers/gpu/host1x/job.c
-@@ -46,8 +46,9 @@ struct host1x_job *host1x_job_alloc(struct host1x_channel *ch,
-                (u64)num_unpins * sizeof(struct host1x_job_unpin_data) +
-                (u64)num_waitchks * sizeof(struct host1x_waitchk) +
-                (u64)num_cmdbufs * sizeof(struct host1x_job_gather) +
--               (u64)num_unpins * sizeof(dma_addr_t) +
--               (u64)num_unpins * sizeof(u32 *);
-+               (u64)num_relocs * sizeof(dma_addr_t) +
-+               (u64)num_cmdbufs * sizeof(dma_addr_t);
-+
-        if (total > ULONG_MAX)
-                return NULL;
-
---
-1.8.1.5
+Yours,
+Linus Walleij
