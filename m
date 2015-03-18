@@ -1,41 +1,96 @@
-From: MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: Re: [PATCH v6 5/8] PM / devfreq: tegra: remove operating-points
-Date: Wed, 18 Mar 2015 07:43:57 +0000 (GMT)
-Message-ID: <1195991181.289821426664636507.JavaMail.weblogic@epmlwas07d>
-Reply-To: myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: [PATCH v6 00/12] Improvements to Tegra-based Chromebook support
+Date: Wed, 18 Mar 2015 10:52:15 +0100
+Message-ID: <1426672363-30667-1-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-MIME-version: 1.0
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: linux-tegra@vger.kernel.org
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Alexandre Courbot <gnurou@gmail.com>, Asaf Vertz <asaf.vertz@tandemg.com>, Ben Hutchings <ben@decadent.org.uk>, Chris Ball <chris@printf.net>, David Airlie <airlied@linux.ie>, David Riley <davidriley@chromium.org>, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, Ian Campbell <ijc+devicetree@hellion.org.uk>, Johan Rudholm <johan.rudholm@axis.com>, Kumar Gala <galak@codeaurora.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, Lukas Czerner <lczerner@redhat.com>, Mark Rutland <mark.rutland@arm.com>, Mikko Perttunen <mperttunen@nvidia.com>, Paul Walmsley <paul@pwsan.com>, Pawel Moll <pawel.moll@arm.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linu>
 List-Id: linux-tegra@vger.kernel.org
 
-PiBPbiAxOCBNYXJjaCAyMDE1IGF0IDA2OjIzLCBNeXVuZ0pvbyBIYW0gPG15dW5nam9vLmhhbUBz
-YW1zdW5nLmNvbT4gd3JvdGU6DQo+ID4+IEFzIHRoZSBEVCBiaW5kaW5ncyBkb24ndCBoYXZlIGFu
-IG9wZXJhdGluZy1wb2ludHMgcHJvcGVydHkgYW55IG1vcmUsDQo+ID4+IGJ1aWxkIHRoZSBPUFAg
-dGFibGUgZnJvbSB0aGUgZnJlcXVlbmNpZXMgc3VwcG9ydGVkIGJ5IHRoZSBFTUMgY2xvY2suDQo+
-ID4+DQo+ID4+IFNpZ25lZC1vZmYtYnk6IFRvbWV1IFZpem9zbyA8dG9tZXUudml6b3NvQGNvbGxh
-Ym9yYS5jb20+DQo+ID4+IC0tLQ0KW10NCj4gPj4NCj4gPj4gKyAgICAgZm9yIChyYXRlID0gMDsg
-cmF0ZSA8PSB0ZWdyYS0+bWF4X2ZyZXEgKiBLSFo7IHJhdGUrKykgew0KPiA+PiArICAgICAgICAg
-ICAgIHJhdGUgPSBjbGtfcm91bmRfcmF0ZSh0ZWdyYS0+ZW1jX2Nsb2NrLCByYXRlKTsNCj4gPj4g
-KyAgICAgICAgICAgICBkZXZfcG1fb3BwX2FkZCgmcGRldi0+ZGV2LCByYXRlLCAwKTsNCj4gPj4g
-KyAgICAgfQ0KPiA+PiArDQo+ID4NCj4gPiBBbHRob3VnaCBJIGFtIG5vdCBnb2luZyB0byBOQUNL
-IGZvciB0aGUgc2luZ2xlLXRpbWUgcGVyZm9ybWFuY2Ugb2YgYQ0KPiA+IHNpbmdsZSBkZXZpY2Ug
-ZHJpdmVyIGZvciBhIGRldmljZSB0aGF0IEkgZG8gbm90IGhhdmUgb3IgZnVsbHkgdW5kZXJzdGFu
-ZCwNCj4gPiBwbGVhc2Ugbm90ZSB0aGF0IHlvdSBtYXkgYmUgd2FzdGluZyBzZXZlcmFsIGJpbGxp
-b24gY3ljbGVzIHVubGVzcw0KPiA+IHlvdXIgcHJvZHVjdCBpcyBydW5uaW5nIGF0IE1IWi9rSFog
-bGV2ZWwuDQo+ID4NCj4gPiBXaGF0IGlzIGdvaW5nIG9uIHdpdGggdGhpcyBsb29wPyBEbyB5b3Ug
-cmVhbGx5IGhhdmUgc3VjaCBhIHZpcnR1YWxseS1jb250aW51b3VzDQo+ID4gZnJlcXVlbmN5IHNj
-YWxpbmcgaW4geW91ciBwcm9kdWN0PyAoV293Li4uLiBidXQgaW4gc3VjaCBhIGNhc2UsIEkgZG9u
-J3QgdGhpbmsNCj4gPiBPUFAgaXMgYXBwcm9wcmlhdGUuKQ0KPiANCj4gQWN0dWFsbHksIHRoYXQg
-bG9vcCBpcyBleHBlY3RlZCB0byBvbmx5IGV4ZWN1dGUgYXMgbWFueSB0aW1lcyBhcw0KPiBmcmVx
-dWVuY2llcyBhcmUgc3VwcG9ydGVkIGJ5IHRoZSBjbG9jay4gVGhpcyBpcyB1c2luZyBrbm93bGVk
-Z2Ugb2YgdGhlDQo+IGNsb2NrIGFsd2F5cyByb3VuZGluZyB1cCB3aGVuIHBvc3NpYmxlLCB3aGlj
-aCBJIHRoaW5rIGlzIGZpbmUgaW4gdGhpcw0KPiBjYXNlLg0KDQpBaC4gb2suIHlvdSBhcmUgdXNp
-bmcgImNsa19mcmFjX2Rpdl9yb3VuZF9yYXRlIiBvZg0KZHJpdmVycy9jbGsvdGVncmEvY2xrLWRp
-dmlkZXIuYyAoRElWX1JPVU5EX1VQKQ0KDQpHcmVhdC4gVGhhbmtzIGZvciB0aGUgY2xhcmlmaWNh
-dGlvbi4NCg0KDQpDaGVlcnMsDQpNeXVuZ0pvbw0KDQo+IA0KPiBSZWdhcmRzLA0KPiANCj4gVG9t
-ZXUNCj4gDQo=
+v6:	* Added Acked-by and Reviewed-By tags
+	* Rebased on top of 4.0-rc1
+	* Added patch that marks the WiFi card as powered during suspend
+
+v5:	* Moved to use gpio-restart for reboots, had to make tegra_pmc_rest=
+art
+	a notification handler
+
+v4:	* Added support for the system reset GPIO, for proper reboots
+	* Moved out changes to ASOC to their own series, as requested by Mark
+	Brown
+	* Added patch to reset the SOR, to make sure it's in a known state
+	* Changed nvidia,model property of the sound nodes to GoogleNyanBig
+	and GoogleNyanBlaze so they can be told apart in userspace
+
+v3:	* Added bindings for the LTN140AT29 panel
+	* Removed the delay in pwrseq, as what was actually needed was to add
+	a dependency on the power supplies of the host
+	* Uses the pinmux for the Blaze as generated by tegra-pinmux-scripts
+	* Uses the pinmux for the Big as in the last patch from Simon Glass
+
+Hello,
+
+this series adds support for the Tegra-based HP Chromebook 14 (aka nyan
+blaze), which is very similar to the Acer Chromebook 13 (aka nyan big).
+Because they both include tegra124-nyan.dtsi, some improvements to Blaz=
+e
+support have also benefitted the Big. I have tested that USB2, the pane=
+ls,
+HDMI, the trackpad, Wifi and sound work on both.
+
+The leaf DTs contain the whole pinmux configuration as generated by
+tegra-pinmux-scripts. I chose to not put the common configuration in th=
+e
+common dtsi so we can paste the output as is and be sure that the kerne=
+l
+doesn't diverge from the canonical data.
+
+These patches are based on top of 4.0-rc1.
+
+http://cgit.collabora.com/git/user/tomeu/linux.git/log/?h=3Dnyan-v6
+
+Regards,
+
+Tomeu
+
+David Riley (1):
+  soc/tegra: pmc: move to using a restart handler
+
+St=C3=A9phane Marchesin (1):
+  drm/panel: add support for Samsung LTN140AT29 panel
+
+Tomeu Vizoso (10):
+  ARM: tegra: Change model of sound card in Nyan Big
+  ARM: tegra: Move out nyan-generic parts out from the nyan-big DT
+  ARM: tegra: Add DTS for the nyan-blaze board
+  ARM: tegra: Add node for trackpad in Nyan boards
+  ARM: tegra: Use pwrseq-simple for the wifi in Nyan
+  ARM: tegra: Use the generated pinmux data
+  ARM: tegra: Set spi-max-frequency property to flash node
+  drm/tegra: Reset the SOR on probe
+  ARM: tegra: Add gpio-restart node
+  ARM: tegra: The WiFi card is kept powered during suspend
+
+ .../bindings/panel/samsung,ltn140at29-301.txt      |    7 +
+ arch/arm/boot/dts/Makefile                         |    1 +
+ arch/arm/boot/dts/tegra124-nyan-big.dts            | 2119 +++++++++++-=
+--------
+ arch/arm/boot/dts/tegra124-nyan-blaze.dts          | 1332 ++++++++++++
+ arch/arm/boot/dts/tegra124-nyan.dtsi               |  695 +++++++
+ arch/arm/mach-tegra/tegra.c                        |    1 -
+ drivers/gpu/drm/panel/panel-simple.c               |   26 +
+ drivers/gpu/drm/tegra/sor.c                        |   14 +
+ drivers/soc/tegra/pmc.c                            |   31 +-
+ 9 files changed, 3254 insertions(+), 972 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/panel/samsung,ltn=
+140at29-301.txt
+ create mode 100644 arch/arm/boot/dts/tegra124-nyan-blaze.dts
+ create mode 100644 arch/arm/boot/dts/tegra124-nyan.dtsi
+
+--=20
+2.1.0
+
