@@ -1,87 +1,41 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: Re: [PATCH v6 5/8] PM / devfreq: tegra: remove operating-points
-Date: Wed, 18 Mar 2015 08:25:28 +0100
-Message-ID: <CAAObsKBZndddvouL4RKPLghCad9LCBmvYJTMB83m6wH7O7Hwzw@mail.gmail.com>
-References: <192647817.276191426656237193.JavaMail.weblogic@epmlwas07d>
+From: MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: Re: [PATCH v6 5/8] PM / devfreq: tegra: remove operating-points
+Date: Wed, 18 Mar 2015 07:43:57 +0000 (GMT)
+Message-ID: <1195991181.289821426664636507.JavaMail.weblogic@epmlwas07d>
+Reply-To: myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <192647817.276191426656237193.JavaMail.weblogic@epmlwas07d>
-Sender: linux-kernel-owner@vger.kernel.org
-To: MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Mikko Perttunen <mikko.perttunen@kapsi.fi>, =?UTF-8?B?67CV6rK966+8?= <kyungmin.park@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+MIME-version: 1.0
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 18 March 2015 at 06:23, MyungJoo Ham <myungjoo.ham@samsung.com> wrote:
->> As the DT bindings don't have an operating-points property any more,
->> build the OPP table from the frequencies supported by the EMC clock.
->>
->> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
->> ---
->>  drivers/devfreq/tegra-devfreq.c | 12 ++++++------
->>  1 file changed, 6 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devfreq.c
->> index 5a6164c..1de3f8b 100644
->> --- a/drivers/devfreq/tegra-devfreq.c
->> +++ b/drivers/devfreq/tegra-devfreq.c
->> @@ -618,6 +618,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->>       struct tegra_devfreq_device *dev;
->>       struct resource *res;
->>       unsigned int i;
->> +     unsigned long rate;
->>       int irq;
->>       int err;
->>
->> @@ -649,12 +650,6 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->>               return PTR_ERR(tegra->emc_clock);
->>       }
->>
->> -     err = of_init_opp_table(&pdev->dev);
->> -     if (err) {
->> -             dev_err(&pdev->dev, "Failed to init operating point table\n");
->> -             return err;
->> -     }
->> -
->>       clk_set_rate(tegra->emc_clock, ULONG_MAX);
->>
->>       tegra->rate_change_nb.notifier_call = tegra_actmon_rate_notify_cb;
->> @@ -691,6 +686,11 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->>               tegra_actmon_configure_device(tegra, dev);
->>       }
->>
->> +     for (rate = 0; rate <= tegra->max_freq * KHZ; rate++) {
->> +             rate = clk_round_rate(tegra->emc_clock, rate);
->> +             dev_pm_opp_add(&pdev->dev, rate, 0);
->> +     }
->> +
->
-> Although I am not going to NACK for the single-time performance of a
-> single device driver for a device that I do not have or fully understand,
-> please note that you may be wasting several billion cycles unless
-> your product is running at MHZ/kHZ level.
->
-> What is going on with this loop? Do you really have such a virtually-continuous
-> frequency scaling in your product? (Wow.... but in such a case, I don't think
-> OPP is appropriate.)
-
-Actually, that loop is expected to only execute as many times as
-frequencies are supported by the clock. This is using knowledge of the
-clock always rounding up when possible, which I think is fine in this
-case.
-
-Regards,
-
-Tomeu
-
->
-> Cheers,
-> MyungJoo
->
->
->>       irq = platform_get_irq(pdev, 0);
->>       if (irq <= 0) {
->>               dev_err(&pdev->dev, "Failed to get IRQ\n");
->> --
->> 2.1.0
->>
+PiBPbiAxOCBNYXJjaCAyMDE1IGF0IDA2OjIzLCBNeXVuZ0pvbyBIYW0gPG15dW5nam9vLmhhbUBz
+YW1zdW5nLmNvbT4gd3JvdGU6DQo+ID4+IEFzIHRoZSBEVCBiaW5kaW5ncyBkb24ndCBoYXZlIGFu
+IG9wZXJhdGluZy1wb2ludHMgcHJvcGVydHkgYW55IG1vcmUsDQo+ID4+IGJ1aWxkIHRoZSBPUFAg
+dGFibGUgZnJvbSB0aGUgZnJlcXVlbmNpZXMgc3VwcG9ydGVkIGJ5IHRoZSBFTUMgY2xvY2suDQo+
+ID4+DQo+ID4+IFNpZ25lZC1vZmYtYnk6IFRvbWV1IFZpem9zbyA8dG9tZXUudml6b3NvQGNvbGxh
+Ym9yYS5jb20+DQo+ID4+IC0tLQ0KW10NCj4gPj4NCj4gPj4gKyAgICAgZm9yIChyYXRlID0gMDsg
+cmF0ZSA8PSB0ZWdyYS0+bWF4X2ZyZXEgKiBLSFo7IHJhdGUrKykgew0KPiA+PiArICAgICAgICAg
+ICAgIHJhdGUgPSBjbGtfcm91bmRfcmF0ZSh0ZWdyYS0+ZW1jX2Nsb2NrLCByYXRlKTsNCj4gPj4g
+KyAgICAgICAgICAgICBkZXZfcG1fb3BwX2FkZCgmcGRldi0+ZGV2LCByYXRlLCAwKTsNCj4gPj4g
+KyAgICAgfQ0KPiA+PiArDQo+ID4NCj4gPiBBbHRob3VnaCBJIGFtIG5vdCBnb2luZyB0byBOQUNL
+IGZvciB0aGUgc2luZ2xlLXRpbWUgcGVyZm9ybWFuY2Ugb2YgYQ0KPiA+IHNpbmdsZSBkZXZpY2Ug
+ZHJpdmVyIGZvciBhIGRldmljZSB0aGF0IEkgZG8gbm90IGhhdmUgb3IgZnVsbHkgdW5kZXJzdGFu
+ZCwNCj4gPiBwbGVhc2Ugbm90ZSB0aGF0IHlvdSBtYXkgYmUgd2FzdGluZyBzZXZlcmFsIGJpbGxp
+b24gY3ljbGVzIHVubGVzcw0KPiA+IHlvdXIgcHJvZHVjdCBpcyBydW5uaW5nIGF0IE1IWi9rSFog
+bGV2ZWwuDQo+ID4NCj4gPiBXaGF0IGlzIGdvaW5nIG9uIHdpdGggdGhpcyBsb29wPyBEbyB5b3Ug
+cmVhbGx5IGhhdmUgc3VjaCBhIHZpcnR1YWxseS1jb250aW51b3VzDQo+ID4gZnJlcXVlbmN5IHNj
+YWxpbmcgaW4geW91ciBwcm9kdWN0PyAoV293Li4uLiBidXQgaW4gc3VjaCBhIGNhc2UsIEkgZG9u
+J3QgdGhpbmsNCj4gPiBPUFAgaXMgYXBwcm9wcmlhdGUuKQ0KPiANCj4gQWN0dWFsbHksIHRoYXQg
+bG9vcCBpcyBleHBlY3RlZCB0byBvbmx5IGV4ZWN1dGUgYXMgbWFueSB0aW1lcyBhcw0KPiBmcmVx
+dWVuY2llcyBhcmUgc3VwcG9ydGVkIGJ5IHRoZSBjbG9jay4gVGhpcyBpcyB1c2luZyBrbm93bGVk
+Z2Ugb2YgdGhlDQo+IGNsb2NrIGFsd2F5cyByb3VuZGluZyB1cCB3aGVuIHBvc3NpYmxlLCB3aGlj
+aCBJIHRoaW5rIGlzIGZpbmUgaW4gdGhpcw0KPiBjYXNlLg0KDQpBaC4gb2suIHlvdSBhcmUgdXNp
+bmcgImNsa19mcmFjX2Rpdl9yb3VuZF9yYXRlIiBvZg0KZHJpdmVycy9jbGsvdGVncmEvY2xrLWRp
+dmlkZXIuYyAoRElWX1JPVU5EX1VQKQ0KDQpHcmVhdC4gVGhhbmtzIGZvciB0aGUgY2xhcmlmaWNh
+dGlvbi4NCg0KDQpDaGVlcnMsDQpNeXVuZ0pvbw0KDQo+IA0KPiBSZWdhcmRzLA0KPiANCj4gVG9t
+ZXUNCj4gDQo=
