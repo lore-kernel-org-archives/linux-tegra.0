@@ -1,38 +1,38 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [tegrarcm PATCH v1 0/8] Add T132 support
-Date: Thu, 19 Mar 2015 13:46:58 -0600
-Message-ID: <550B27B2.5000908@wwwdotorg.org>
-References: <1426639141-12060-1-git-send-email-jimmzhang@nvidia.com>
+From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: use generated pinmux for Beaver board
+Date: Thu, 19 Mar 2015 20:52:42 +0100
+Message-ID: <1426794762.2212.0.camel@lynxeye.de>
+References: <1420495066-19221-1-git-send-email-dev@lynxeye.de>
+	 <54AB0B68.7050704@wwwdotorg.org> <1420591830.25483.16.camel@lynxeye.de>
+	 <1425323769.2182.0.camel@lynxeye.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1426639141-12060-1-git-send-email-jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1425323769.2182.0.camel-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/17/2015 06:38 PM, Jimmy Zhang wrote:
-> T132 supporting patches were originally started under branch
-> dev/amartin/t132-dev. After further tuning Allen's patches and adding
-> additional changes, t132 supporting tegrarcm is now fully working.
->
-> Allen Martin (6):
->    tegrarcm: Add Tegra132 support
->    tegrarcm: Add support for loading cpu ucode
->    tegrarcm: Get platform info
->    tegrarcm: add support for odmdata command
->    tegrarcm: Better usb debug messages
->    tegrarcm: increase USB timeout
->
-> Jimmy Zhang (2):
->    Tegra132: Fix miniloader issues when downloading u-boot as flasher
->    Tegra132: Fix issue that cpu sometime can't start when downloading
->      u-boot as flasher
-
-I can't see either of those two patches in my email nor the linux-tegra 
-mailing list archives. I also see an extra patch posted that's not in 
-this list:
-
-[tegrarcm PATCH v1 2/8] tegrarcm: Add support for loading MTS
+Am Montag, den 02.03.2015, 20:16 +0100 schrieb Lucas Stach:
+> Am Mittwoch, den 07.01.2015, 01:50 +0100 schrieb Lucas Stach:
+> > Am Montag, den 05.01.2015, 15:08 -0700 schrieb Stephen Warren:
+> > > On 01/05/2015 02:57 PM, Lucas Stach wrote:
+> > > > Replace the current incomplete pinmux setup with a proper one generated
+> > > > using the tegra pinmux scripts.
+> > > 
+> > > I assume this is identical to the existing content, it's just that the 
+> > > node sort order changed to match the auto-generation order?
+> > > 
+> > Yes auto-generation changes the representation of the nodes a bit, but I
+> > made sure to keep the properties of the existing kernel DT pinmux where
+> > they were different from the U-Boot pinmux.
+> > 
+> > > If so,
+> > > Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > 
+> This has not been applied. Could anyone please pick this up, so it
+> doesn't miss yet another merge window?
+> 
+Friendly ping.
