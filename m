@@ -1,20 +1,25 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [cbootimage PATCH v1 2/2] Bump to version 1.5
-Date: Wed, 18 Mar 2015 12:03:21 -0600
-Message-ID: <5509BDE9.9020000@wwwdotorg.org>
-References: <1426546275-6214-1-git-send-email-jimmzhang@nvidia.com> <1426546275-6214-3-git-send-email-jimmzhang@nvidia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2] pinctrl: tegra: use signed bitfields for optional fields
+Date: Thu, 19 Mar 2015 09:21:22 +0100
+Message-ID: <CACRpkdaQnrQWci0feJsG93tdfaGGveZUVtwWdYk745JJRpYjow@mail.gmail.com>
+References: <1426542154-31072-1-git-send-email-stefan@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1426546275-6214-3-git-send-email-jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1426542154-31072-1-git-send-email-stefan@agner.ch>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Stefan Agner <stefan@agner.ch>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/16/2015 04:51 PM, Jimmy Zhang wrote:
-> Create a release that includes Tegra210 support.
+On Mon, Mar 16, 2015 at 10:42 PM, Stefan Agner <stefan@agner.ch> wrote:
 
-This patch seems fine to me, assuming Allen isn't aware of anything else 
-we'd want to throw into a release.
+> Optional fields are set to -1 by various preprocessor macros. Make
+> sure the fields can actually store them.
+>
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+
+Patch applied with Stephen's ACK/Test tags.
+
+Yours,
+Linus Walleij
