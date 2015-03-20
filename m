@@ -1,46 +1,44 @@
 From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 3/3] pmu/gk20a: add some missing statics
-Date: Fri, 20 Mar 2015 19:41:06 +0900
-Message-ID: <1426848066-13700-3-git-send-email-acourbot@nvidia.com>
+Subject: [PATCH 2/3] platform: fix probe error path
+Date: Fri, 20 Mar 2015 19:41:05 +0900
+Message-ID: <1426848066-13700-2-git-send-email-acourbot@nvidia.com>
 References: <1426848066-13700-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1426848066-13700-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-TWFrZSBzdGF0aWMgYSBmZXcgZnVuY3Rpb25zIGFuZCBzdHJ1Y3R1cmVzIHRoYXQgc2hvdWxkIGJl
-LgoKU2lnbmVkLW9mZi1ieTogQWxleGFuZHJlIENvdXJib3QgPGFjb3VyYm90QG52aWRpYS5jb20+
-Ci0tLQogZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvcG11L2drMjBhLmMgfCA3ICsrKystLS0KIDEg
-ZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0
-IGEvZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvcG11L2drMjBhLmMgYi9kcm0vbm91dmVhdS9udmtt
-L3N1YmRldi9wbXUvZ2syMGEuYwppbmRleCBhNDk5MzRiYmU2MzcuLjU5NGY3NDZlNjhmMiAxMDA2
-NDQKLS0tIGEvZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvcG11L2drMjBhLmMKKysrIGIvZHJtL25v
-dXZlYXUvbnZrbS9zdWJkZXYvcG11L2drMjBhLmMKQEAgLTE1OSw3ICsxNTksNyBAQCByZXNjaGVk
-OgogCW52a21fdGltZXJfYWxhcm0ocHJpdiwgMTAwMDAwMDAwLCBhbGFybSk7CiB9CiAKLWludAor
-c3RhdGljIGludAogZ2syMGFfcG11X2Zpbmkoc3RydWN0IG52a21fb2JqZWN0ICpvYmplY3QsIGJv
-b2wgc3VzcGVuZCkKIHsKIAlzdHJ1Y3QgbnZrbV9wbXUgKnBtdSA9ICh2b2lkICopb2JqZWN0OwpA
-QCAtMTcwLDcgKzE3MCw3IEBAIGdrMjBhX3BtdV9maW5pKHN0cnVjdCBudmttX29iamVjdCAqb2Jq
-ZWN0LCBib29sIHN1c3BlbmQpCiAJcmV0dXJuIG52a21fc3ViZGV2X2ZpbmkoJnBtdS0+YmFzZSwg
-c3VzcGVuZCk7CiB9CiAKLWludAorc3RhdGljIGludAogZ2syMGFfcG11X2luaXQoc3RydWN0IG52
-a21fb2JqZWN0ICpvYmplY3QpCiB7CiAJc3RydWN0IG52a21fcG11ICpwbXUgPSAodm9pZCAqKW9i
-amVjdDsKQEAgLTE5Miw3ICsxOTIsOCBAQCBnazIwYV9wbXVfaW5pdChzdHJ1Y3QgbnZrbV9vYmpl
-Y3QgKm9iamVjdCkKIAlyZXR1cm4gcmV0OwogfQogCi1zdHJ1Y3QgZ2syMGFfcG11X2R2ZnNfZGF0
-YSBnazIwYV9kdmZzX2RhdGE9IHsKK3N0YXRpYyBzdHJ1Y3QgZ2syMGFfcG11X2R2ZnNfZGF0YQor
-Z2syMGFfZHZmc19kYXRhPSB7CiAJLnBfbG9hZF90YXJnZXQgPSA3MCwKIAkucF9sb2FkX21heCA9
-IDkwLAogCS5wX3Ntb290aCA9IDEsCi0tIAoyLjMuMwoKX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBtYWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0
-cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
-c3RpbmZvL25vdXZlYXUK
+A "return 0" found its way in the middle of the error path of
+nouveau_platform_probe(), remove it as it will make the kernel crash if
+we try to unload the module afterwards.
+
+While we are at it, also remove the IOMMU domain if it has been created,
+as we should.
+
+Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drm/nouveau/nouveau_platform.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drm/nouveau/nouveau_platform.c b/drm/nouveau/nouveau_platform.c
+index f83aa12ee5c6..775277f1edb0 100644
+--- a/drm/nouveau/nouveau_platform.c
++++ b/drm/nouveau/nouveau_platform.c
+@@ -209,10 +209,9 @@ static int nouveau_platform_probe(struct platform_device *pdev)
+ err_unref:
+ 	drm_dev_unref(drm);
+ 
+-	return 0;
+-
+ power_down:
+ 	nouveau_platform_power_down(gpu);
++	nouveau_platform_remove_iommu(&pdev->dev, gpu);
+ 
+ 	return err;
+ }
+-- 
+2.3.3
