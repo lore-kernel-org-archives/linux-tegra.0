@@ -1,40 +1,70 @@
-From: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
-Subject: amba: tegra-ahb: fix base address and register offsets for future
- chip support
+From: Paul Walmsley <paul@pwsan.com>
+Subject: [PATCH v3 3/3] Documentation: DT bindings: Tegra AHB: require the
+ legacy base address for existing chips
 Date: Fri, 20 Mar 2015 00:11:02 -0600
-Message-ID: <20150320061102.14355.4781.stgit@mcwayne>
+Message-ID: <20150320061102.14355.87959.stgit@mcwayne>
+References: <20150320061102.14355.4781.stgit@mcwayne>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150320061102.14355.4781.stgit@mcwayne>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Paul Walmsley <pwalmsley@nvidia.com>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-kernel@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From a hardware SoC integration point of view, the offsets of the
-Tegra AHB registers that are currently defined in tegra-ahb.c macros
-are all off by four bytes.  Similarly, the starting address of this IP
-block in our existing DT files is also off by four bytes.  This series
-fixes the driver such that the macro offsets are correct, and that the
-driver is backwards-compatible with previous chip DT data, but that future
-chip DT data can use the correct base.  See also
+Per Stephen Warren, note in the Tegra AHB DT binding documentation
+that we specifically deprecate any attempt to use the IP block's
+actual hardware base address, and advocate the use of the legacy
+"off-by-four" address in the 'regs' property, for Tegra chips with
+existing upstream Linux DT files that include a Tegra AHB node.  This
+patch updates the documentation accordingly.
 
-    http://www.spinics.net/lists/arm-kernel/msg394171.html
+Changing the existing kernel DT data isn't under consideration because
+Linux kernel DT data policy is to preserve compatibility between newer
+DT data files and older kernels.  However, this additional step of
+changing the documentation should discourage others from sending
+kernel patches to try to change the legacy kernel DT data.
+Furthermore, for out-of-tree software (such as bootloaders or other
+operating systems) that may rely on Linux kernel DT binding
+documentation as an ABI (but not the Linux kernel DT data itself),
+such a change may allow future convergence with the Linux kernel DT
+data without additional code changes.
 
-This series has been boot-tested on Tegra20 Trimslice, Tegra30
-Beaver, Tegra114 Dalmore, Tegra124 Jetson TK1, Tegra132 Norrin64
-FFD (with a few additional out-of-tree patches, since T132
-support is not yet upstream), and QEMU Versatile Express 64.
-Basic build and boot test logs for T30, T114, T124, and QEMU
-Versatile Express 64 are here:
+Signed-off-by: Paul Walmsley <paul@pwsan.com>
+Cc: Paul Walmsley <pwalmsley@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>
+Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+Cc: Kumar Gala <galak@codeaurora.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Pawel Moll <pawel.moll@arm.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ .../bindings/arm/tegra/nvidia,tegra20-ahb.txt      |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-http://nvt.pwsan.com/pub/pwalmsley-tester/testlogs/test_20150317011136_159e7763d517804c61a673736660a5a35f2ea5f8/20150317011136/
-
-This series is based on next-20150319 and is intended for v4.1.
-
-This third version of the series incorporates feedback from Russell
-King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> and Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>.
-
-
-- Paul
+diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-ahb.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-ahb.txt
+index 067c9790062f..9a4295b54539 100644
+--- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-ahb.txt
++++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-ahb.txt
+@@ -5,9 +5,12 @@ Required properties:
+   Tegra30, must contain "nvidia,tegra30-ahb".  Otherwise, must contain
+   '"nvidia,<chip>-ahb", "nvidia,tegra30-ahb"' where <chip> is tegra124,
+   tegra132, or tegra210.
+-- reg : Should contain 1 register ranges(address and length)
++- reg : Should contain 1 register ranges(address and length).  For
++  Tegra20, Tegra30, and Tegra114 chips, the value must be <0x6000c004
++  0x10c>.  For Tegra124, Tegra132 and Tegra210 chips, the value should
++  be be <0x6000c000 0x150>.
+ 
+-Example:
++Example (for a Tegra20 chip):
+ 	ahb: ahb@6000c004 {
+ 		compatible = "nvidia,tegra20-ahb";
+ 		reg = <0x6000c004 0x10c>; /* AHB Arbitration + Gizmo Controller */
