@@ -1,39 +1,47 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [cbootimage PATCH v1 1/2] Add support for Tegra210
-Date: Fri, 20 Mar 2015 16:48:45 -0600
-Message-ID: <550CA3CD.3070600@wwwdotorg.org>
-References: <1426546275-6214-1-git-send-email-jimmzhang@nvidia.com> <1426546275-6214-2-git-send-email-jimmzhang@nvidia.com> <5509BDC8.6020706@wwwdotorg.org> <578a1e1ae5fc4b409e295f779a4bed52@HQMAIL103.nvidia.com>
+From: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [cbootimage PATCH v2 0/2] Add support for Tegra210
+Date: Fri, 20 Mar 2015 16:10:34 -0700
+Message-ID: <1426893036-14239-1-git-send-email-jimmzhang@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <578a1e1ae5fc4b409e295f779a4bed52-wO81nVYWzR7YuxH7O460wFaTQe2KTcn/@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Allen Martin <AMartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/20/2015 04:27 PM, Jimmy Zhang wrote:
-> Stephen Warren wrote at Wednesday, March 18, 2015 11:03 AM:
->> On 03/16/2015 04:51 PM, Jimmy Zhang wrote:
->>> use option -t 210 or -s tegra210 to specify t210.
+Four t210 specific supporting files are added under src/t210 diretory.
+Comparing T210 bct to T132 bct, the main changes include the size increased
+to 10240 from 8704. The number of boot devices that can be specified in bct
+is reduced from 4 to 1. And many new fileds are added to nvboot_sdram_params.
 
->>> diff --git a/src/cbootimage.c b/src/cbootimage.c
->>
->>> @@ -71,11 +71,11 @@ usage(void)
->>>    	printf("    -gbct                 Generate the new bct file.\n");
->>>    	printf("    -o<ODM_DATA>          Specify the odm_data(in hex).\n");
->>>    	printf("    -t|--tegra NN         Select target device. Must be one of:\n");
->>> -	printf("                          20, 30, 114, 124, 132.\n");
->>> +	printf("                          20, 30, 114, 124, 132, 210.\n");
->>
->> Since the option is deprecated, I think we should only support --soc for
->> Tegra210. I won't mention this in any other places that would need to be
->> updated to fix that.
->>
-> Ok, it can be removed here. But, the place that actually interprets -t option may not worth being changed because
-> both -t and -s run the same code:
+v1: Initial changes
+v2: Fix some minor issues found in v1
+    Removed files src/t210/nvboot_config.h and src/t210/sdram_param.h
+            that were added unintentionally in v1.
+   
+Jimmy Zhang (2):
+  Add support for Tegra210
+  Bump to version 1.5
 
-Ah I see. I wonder if we shouldn't remove the text "This option is 
-deprecated" from the -t option's help text then. If it's that easy to 
-support, there's no really need to deprecate it.
+ configure.ac                       |    2 +-
+ src/Makefile.am                    |   12 +-
+ src/bct_dump.c                     |    1 +
+ src/cbootimage.c                   |    6 +-
+ src/cbootimage.h                   |    6 +-
+ src/data_layout.c                  |    2 +
+ src/parse.c                        |    1 +
+ src/parse.h                        |  390 ++++++
+ src/set.c                          |    6 +
+ src/t210/nvbctlib_t210.c           | 2314 ++++++++++++++++++++++++++++++++++++
+ src/t210/nvboot_bct_t210.h         |  406 +++++++
+ src/t210/nvboot_sdram_param_t210.h |  953 +++++++++++++++
+ src/t210/parse_t210.c              |  741 ++++++++++++
+ 13 files changed, 4833 insertions(+), 7 deletions(-)
+ create mode 100644 src/t210/nvbctlib_t210.c
+ create mode 100644 src/t210/nvboot_bct_t210.h
+ create mode 100644 src/t210/nvboot_sdram_param_t210.h
+ create mode 100644 src/t210/parse_t210.c
+
+-- 
+1.8.1.5
