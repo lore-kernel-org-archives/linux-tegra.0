@@ -1,73 +1,42 @@
-From: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: amba: tegra-ahb: fix base address and register offsets for future
- chip support
-Date: Fri, 20 Mar 2015 06:21:56 +0000 (UTC)
-Message-ID: <alpine.DEB.2.02.1503200616040.23726@utopia.booyaka.com>
-References: <20150320061102.14355.4781.stgit@mcwayne>
+From: Yingjoe Chen <yingjoe.chen@mediatek.com>
+Subject: Re: [PATCH 00/15] iommu: Move domain allocation into drivers
+Date: Fri, 20 Mar 2015 17:24:18 +0800
+Message-ID: <1426843458.23931.17.camel@mtksdaap41>
+References: <1422316305-19216-1-git-send-email-joro@8bytes.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150320061102.14355.4781.stgit@mcwayne>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1422316305-19216-1-git-send-email-joro@8bytes.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Joerg Roedel <joro@8bytes.org>
+Cc: iommu@lists.linux-foundation.org, Alexandre Courbot <gnurou@gmail.com>, linux-samsung-soc@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, Alex Williamson <alex.williamson@redhat.com>, Kukjin Kim <kgene@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, jroedel@suse.de, linux-tegra@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-arm-kernel@lists.infradead.org, Hiroshi Doyu <hdoyu@nvidia.com>, Tomasz Figa <tfiga@chromium.org>, Yong Wu =?UTF-8?Q?=28=E5=90=B4=E5=8B=87=29?= <yong.wu@mediatek.com>, Robin Murphy <robin.murphy@arm.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi folks
-
-On Fri, 20 Mar 2015, Paul Walmsley wrote:
-
-> This series has been boot-tested on Tegra20 Trimslice, Tegra30
-> Beaver, Tegra114 Dalmore, Tegra124 Jetson TK1, Tegra132 Norrin64
-> FFD (with a few additional out-of-tree patches, since T132
-> support is not yet upstream), and QEMU Versatile Express 64.
-> Basic build and boot test logs for T30, T114, T124, and QEMU
-> Versatile Express 64 are here:
+On Tue, 2015-01-27 at 00:51 +0100, Joerg Roedel wrote:
+> From: Joerg Roedel <jroedel@suse.de>
 > 
-> http://nvt.pwsan.com/pub/pwalmsley-tester/testlogs/test_20150317011136_159e7763d517804c61a673736660a5a35f2ea5f8/20150317011136/
+> Hi,
+> 
+> here is patch-set to replace the existing domain_init and
+> domain_destroy iommu-ops with the new domain_alloc and
+> domain_free callbacks
+> 
+> The new callbacks move the allocation of iommu domains into
+> the iommu driver, allowing them to put a generic
+> iommu_domain struct into their own domain struct. This makes
+> domain handling in the drivers more cache efficient and
+> prepares the introduction of default domains in another
+> patch-set.
 
-The above paragraph was accurate for the initial version of this series.  
-But for this third version, the testing is a little different.  Here's 
-what the paragraph should have read:
+Hi Joerg,
 
----
-This series has been boot-tested on Tegra20 Trimslice, Tegra30 Beaver, 
-Tegra114 Dalmore, Tegra124 Jetson TK1, and QEMU Versatile Express 64. 
-Basic build and boot test logs for T20, T30, T114, T124, and QEMU 
-Versatile Express 64 are here:
+What's the status of this patchset?
+While porting MTK IOMMU driver[1], we need to use a global variable
+because we need to do dma_alloc_coherent in our domain_init. I think we
+can remove that global variable if we base on this series.
 
-http://nvt.pwsan.com/pub/pwalmsley-tester/testlogs/test_20150319225643_e8444885428c4257999e632eff35e8e8c8a8b504/20150319225643
----
+Joe.C
 
-The test summary is included below.  
-
-Sorry for the extra noise; I'm still working out some bugs in my NVIDIA 
-patch-posting toolchain, which unfortunately is more complicated than it 
-should be.
-
-The rest of the original message is accurate.
-
-
-- Paul
-
-
-
-Test summary
-------------
-
-Build: zImage:
-    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
-
-Build: Image:
-    Pass: ( 1/ 1): defconfig
-
-Boot to userspace: defconfig:
-    Pass: ( 1/ 1): qemu-vexpress64
-
-Boot to userspace: multi_v7_defconfig:
-    Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra20-trimslice, tegra30-beaver
+[1]
+http://lists.infradead.org/pipermail/linux-arm-kernel/2015-March/328461.html
