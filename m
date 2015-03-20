@@ -1,42 +1,37 @@
-From: Yingjoe Chen <yingjoe.chen@mediatek.com>
-Subject: Re: [PATCH 00/15] iommu: Move domain allocation into drivers
-Date: Fri, 20 Mar 2015 17:24:18 +0800
-Message-ID: <1426843458.23931.17.camel@mtksdaap41>
-References: <1422316305-19216-1-git-send-email-joro@8bytes.org>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/3] platform: release IOMMU's mm upon exit
+Date: Fri, 20 Mar 2015 19:41:04 +0900
+Message-ID: <1426848066-13700-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1422316305-19216-1-git-send-email-joro@8bytes.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Joerg Roedel <joro@8bytes.org>
-Cc: iommu@lists.linux-foundation.org, Alexandre Courbot <gnurou@gmail.com>, linux-samsung-soc@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, Alex Williamson <alex.williamson@redhat.com>, Kukjin Kim <kgene@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, jroedel@suse.de, linux-tegra@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-arm-kernel@lists.infradead.org, Hiroshi Doyu <hdoyu@nvidia.com>, Tomasz Figa <tfiga@chromium.org>, Yong Wu =?UTF-8?Q?=28=E5=90=B4=E5=8B=87=29?= <yong.wu@mediatek.com>, Robin Murphy <robin.murphy@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 2015-01-27 at 00:51 +0100, Joerg Roedel wrote:
-> From: Joerg Roedel <jroedel@suse.de>
-> 
-> Hi,
-> 
-> here is patch-set to replace the existing domain_init and
-> domain_destroy iommu-ops with the new domain_alloc and
-> domain_free callbacks
-> 
-> The new callbacks move the allocation of iommu domains into
-> the iommu driver, allowing them to put a generic
-> iommu_domain struct into their own domain struct. This makes
-> domain handling in the drivers more cache efficient and
-> prepares the introduction of default domains in another
-> patch-set.
-
-Hi Joerg,
-
-What's the status of this patchset?
-While porting MTK IOMMU driver[1], we need to use a global variable
-because we need to do dma_alloc_coherent in our domain_init. I think we
-can remove that global variable if we base on this series.
-
-Joe.C
-
-[1]
-http://lists.infradead.org/pipermail/linux-arm-kernel/2015-March/328461.html
+bnZrbV9tbV9maW5pKCkgd2FzIG5vdCBjYWxsZWQgd2hlbiBleGl0aW5nIHRoZSBkcml2ZXIsIHJl
+c3VsdGluZyBpbiBhCm1lbW9yeSBsZWFrLiBGaXggdGhpcy4KClNpZ25lZC1vZmYtYnk6IEFsZXhh
+bmRyZSBDb3VyYm90IDxhY291cmJvdEBudmlkaWEuY29tPgotLS0KIGRybS9ub3V2ZWF1L25vdXZl
+YXVfcGxhdGZvcm0uYyB8IDEgKwogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspCgpkaWZm
+IC0tZ2l0IGEvZHJtL25vdXZlYXUvbm91dmVhdV9wbGF0Zm9ybS5jIGIvZHJtL25vdXZlYXUvbm91
+dmVhdV9wbGF0Zm9ybS5jCmluZGV4IDM2OTE5ODI0NTJhOS4uZjgzYWExMmVlNWM2IDEwMDY0NAot
+LS0gYS9kcm0vbm91dmVhdS9ub3V2ZWF1X3BsYXRmb3JtLmMKKysrIGIvZHJtL25vdXZlYXUvbm91
+dmVhdV9wbGF0Zm9ybS5jCkBAIC0xNTIsNiArMTUyLDcgQEAgc3RhdGljIHZvaWQgbm91dmVhdV9w
+bGF0Zm9ybV9yZW1vdmVfaW9tbXUoc3RydWN0IGRldmljZSAqZGV2LAogCQkJCQkgIHN0cnVjdCBu
+b3V2ZWF1X3BsYXRmb3JtX2dwdSAqZ3B1KQogewogCWlmIChncHUtPmlvbW11LmRvbWFpbikgewor
+CQludmttX21tX2ZpbmkoJmdwdS0+aW9tbXUuX21tKTsKIAkJaW9tbXVfZGV0YWNoX2RldmljZShn
+cHUtPmlvbW11LmRvbWFpbiwgZGV2KTsKIAkJaW9tbXVfZG9tYWluX2ZyZWUoZ3B1LT5pb21tdS5k
+b21haW4pOwogCX0KLS0gCjIuMy4zCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpOb3V2ZWF1IG1haWxpbmcgbGlzdApOb3V2ZWF1QGxpc3RzLmZyZWVkZXNr
+dG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vbm91
+dmVhdQo=
