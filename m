@@ -1,40 +1,118 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] ARM: trusted_foundations: Maintain CPU endianness
-Date: Fri, 20 Mar 2015 19:41:37 +0300
-Message-ID: <550C4DC1.3090909@gmail.com>
-References: <1426865807-22981-1-git-send-email-digetx@gmail.com> <550C45AB.3070703@wwwdotorg.org>
+From: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: Tegra baseline test results for v3.19-rc4
+Date: Fri, 20 Mar 2015 18:25:44 +0000 (UTC)
+Message-ID: <alpine.DEB.2.02.1503201824180.3475@utopia.booyaka.com>
+References: <54B44605.1010200@nvidia.com> <CANLc0-aWQPhETG0NiNOg6qMnoZO+kPX83kroMW1vsYRW8-Spaw@mail.gmail.com> <54BC6A8B.7020700@nvidia.com> <CANLc0-aBpn_8pFMx+sSFbX35PU1f0SQ+PnuA4zSJRAMxOxzn_A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <550C45AB.3070703-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <CANLc0-aBpn_8pFMx+sSFbX35PU1f0SQ+PnuA4zSJRAMxOxzn_A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Misha Komarovsky <zombah-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-20.03.2015 19:07, Stephen Warren =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> On 03/20/2015 09:36 AM, Dmitry Osipenko wrote:
->> Convert CPU reset vector address to LE to support big-endian kernel.
->
-> Naively this sounds a little odd; the value here is in a CPU register=
- all the
-> time, not in memory, so I'm not sure why endianness is relevant? Pres=
-umably the
-> CPU doesn't end up byte-swapping values in registers when running in =
-BE mode or
-> it takes an SMC? If it does, why don't we need
-> cpu_to_le32(TF_SET_CPU_BOOT_ADDR_SMC) too?
->
-> Sorry if this is a silly question; I haven't followed any of the BE k=
-ernel patches.
+Hi Misha
 
-You absolutely right. I goofed it by replacing 'smc' with 'str' without=
- adding=20
-reg reverse for BE when was testing and then blindly made patch. Please=
- ignore=20
-it and sorry for the noise.
+On Mon, 19 Jan 2015, Misha Komarovsky wrote:
 
---=20
-Dmitry
+> Hello Paul,
+> Thanks for info. Good to know its on your todo list. This will help to
+> notice tegra20 problems earlier.
+> Best Regards,
+> Misha Komarovskiy
+> zombahatgmaildotcom
+
+There's a Tegra20 Trimslice in the testbed now.  The plan is that, 
+starting with v4.0-rc5, boot test results from that board should be 
+visible in the test logs.
+
+thanks for speaking up,
+
+- Paul
+
+> 
+> 
+> 
+> On Mon, Jan 19, 2015 at 5:23 AM, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> > Hi Misha
+> >
+> > Sorry to hear that.  Adding Tegra20 is on my to-do list, but might take a
+> > while.
+> >
+> > - Paul
+> >
+> > On 01/18/2015 05:45 AM, Misha Komarovsky wrote:
+> >>
+> >> Hello Paul,
+> >> Is it possible to include any tegra20 target to your baseline tests?
+> >> 3.19 introduced couple boot stoppers for me with tegra_defcofig on
+> >> tegra20-paz00 hardware.
+> >>
+> >> On Tue, Jan 13, 2015 at 1:09 AM, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >> wrote:
+> >>>
+> >>> Here are some basic Tegra test results for Linux v3.19-rc4.
+> >>> Logs and other details at:
+> >>>
+> >>>
+> >>> http://nvt.pwsan.com/pub/linux/testlogs/test_v3.19-rc4/20150111130104/
+> >>>
+> >>>
+> >>> Test summary
+> >>> ------------
+> >>>
+> >>> Build: zImage:
+> >>>      Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+> >>>
+> >>> Boot to userspace: multi_v7_defconfig:
+> >>>      Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
+> >>>                     tegra30-beaver
+> >>>
+> >>> Boot to userspace: tegra_defconfig:
+> >>>      Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
+> >>>                     tegra30-beaver
+> >>>
+> >>>
+> >>> vmlinux object size
+> >>> (delta in bytes from test_v3.19-rc3
+> >>> (b1940cd21c0f4abdce101253e860feff547291b0)):
+> >>>     text     data      bss    total  kernel
+> >>>     +880     +120        0    +1000  multi_v7_defconfig
+> >>>     +448        0        0     +448  tegra_defconfig
+> >>>
+> >>>
+> >>> Boot-time memory difference
+> >>> (delta in bytes from test_v3.19-rc3
+> >>> (b1940cd21c0f4abdce101253e860feff547291b0))
+> >>>      avail    rsrvd     high    freed                board
+> >>> kconfig                  dtb
+> >>>          .        .        .      -4k tegra114-dalmore-a04
+> >>> multi_v7_defconfig     tegra114-dalmore
+> >>>          .        .        .        . tegra114-dalmore-a04
+> >>> tegra_defconfig     tegra114-dalmore
+> >>>          .        .        .      -4k  tegra124-jetson-tk1
+> >>> multi_v7_defconfig  tegra124-jetson-tk1
+> >>>          .        .        .        .  tegra124-jetson-tk1
+> >>> tegra_defconfig  tegra124-jetson-tk1
+> >>>          .        .        .      -4k       tegra30-beaver
+> >>> multi_v7_defconfig       tegra30-beaver
+> >>>          .        .        .        .       tegra30-beaver
+> >>> tegra_defconfig       tegra30-beaver
+> >>>
+> >>> --
+> >>> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> >>> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> >>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> >>
+> >>
+> >>
+> >
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+
+
+- Paul
