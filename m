@@ -1,100 +1,73 @@
-From: Paul Walmsley <paul@pwsan.com>
-Subject: [PATCH v3 2/3] amba: tegra-ahb: detect and correct bogus base
- address
-Date: Fri, 20 Mar 2015 00:11:02 -0600
-Message-ID: <20150320061102.14355.95682.stgit@mcwayne>
+From: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: amba: tegra-ahb: fix base address and register offsets for future
+ chip support
+Date: Fri, 20 Mar 2015 06:21:56 +0000 (UTC)
+Message-ID: <alpine.DEB.2.02.1503200616040.23726@utopia.booyaka.com>
 References: <20150320061102.14355.4781.stgit@mcwayne>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20150320061102.14355.4781.stgit@mcwayne>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Alexandre Courbot <gnurou@gmail.com>, Paul Walmsley <pwalmsley@nvidia.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Hiroshi DOYU <hdoyu@nvidia.com>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From a hardware SoC integration point of view, the starting address of
-this IP block in the existing Tegra SoC DT files is off by 4 bytes
-from the actual base address.  Since we attempt to make old DT files
-forward-compatible with newer kernels, we cannot fix the IP block base
-address in old DT data. This patch works around the problem by
-detecting the four byte base address offset in the driver code, and
-correcting it if it's detected.  (In general, IP block base addresses
-almost always have a null low byte.)
+Hi folks
 
-Future SoC DT data for Tegra AHB should use the correct Tegra AHB base
-address, in cases where there is no DT data backward compatibility
-requirement.
+On Fri, 20 Mar 2015, Paul Walmsley wrote:
 
-This patch is a revision of the patch originally titled
-"amba: tegra-ahb: use correct base address for future chip support".
-This revision implements changes requested by Russell King:
+> This series has been boot-tested on Tegra20 Trimslice, Tegra30
+> Beaver, Tegra114 Dalmore, Tegra124 Jetson TK1, Tegra132 Norrin64
+> FFD (with a few additional out-of-tree patches, since T132
+> support is not yet upstream), and QEMU Versatile Express 64.
+> Basic build and boot test logs for T30, T114, T124, and QEMU
+> Versatile Express 64 are here:
+> 
+> http://nvt.pwsan.com/pub/pwalmsley-tester/testlogs/test_20150317011136_159e7763d517804c61a673736660a5a35f2ea5f8/20150317011136/
 
-http://marc.info/?l=linux-tegra&m=142658851825062&w=2
-http://marc.info/?l=linux-tegra&m=142658873925178&w=2
+The above paragraph was accurate for the initial version of this series.  
+But for this third version, the testing is a little different.  Here's 
+what the paragraph should have read:
 
-Signed-off-by: Paul Walmsley <paul@pwsan.com>
-Cc: Paul Walmsley <pwalmsley@nvidia.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: Hiroshi DOYU <hdoyu@nvidia.com>
-Cc: Russell King <linux@arm.linux.org.uk>
-Cc: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-kernel@vger.kernel.org
 ---
- drivers/amba/tegra-ahb.c |   23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+This series has been boot-tested on Tegra20 Trimslice, Tegra30 Beaver, 
+Tegra114 Dalmore, Tegra124 Jetson TK1, and QEMU Versatile Express 64. 
+Basic build and boot test logs for T20, T30, T114, T124, and QEMU 
+Versatile Express 64 are here:
 
-diff --git a/drivers/amba/tegra-ahb.c b/drivers/amba/tegra-ahb.c
-index 30759a55efe4..b0b688c481e8 100644
---- a/drivers/amba/tegra-ahb.c
-+++ b/drivers/amba/tegra-ahb.c
-@@ -82,6 +82,16 @@
- 
- #define AHB_ARBITRATION_XBAR_CTRL_SMMU_INIT_DONE BIT(17)
- 
-+/*
-+ * INCORRECT_BASE_ADDR_LOW_BYTE: Legacy kernel DT files for Tegra SoCs
-+ * prior to Tegra124 generally use a physical base address ending in
-+ * 0x4 for the AHB IP block.  According to the TRM, the low byte
-+ * should be 0x0.  During device probing, this macro is used to detect
-+ * whether the passed-in physical address is incorrect, and if so, to
-+ * correct it.
-+ */
-+#define INCORRECT_BASE_ADDR_LOW_BYTE		0x4
-+
- static struct platform_driver tegra_ahb_driver;
- 
- static const u32 tegra_ahb_gizmo[] = {
-@@ -124,12 +134,12 @@ struct tegra_ahb {
- 
- static inline u32 gizmo_readl(struct tegra_ahb *ahb, u32 offset)
- {
--	return readl(ahb->regs - 4 + offset);
-+	return readl(ahb->regs + offset);
- }
- 
- static inline void gizmo_writel(struct tegra_ahb *ahb, u32 value, u32 offset)
- {
--	writel(value, ahb->regs - 4 + offset);
-+	writel(value, ahb->regs + offset);
- }
- 
- #ifdef CONFIG_TEGRA_IOMMU_SMMU
-@@ -258,6 +268,15 @@ static int tegra_ahb_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+
-+	/* Correct the IP block base address if necessary */
-+	if (res &&
-+	    (res->start & INCORRECT_BASE_ADDR_LOW_BYTE) ==
-+	    INCORRECT_BASE_ADDR_LOW_BYTE) {
-+		dev_warn(&pdev->dev, "incorrect AHB base address in DT data - enabling workaround\n");
-+		res->start -= INCORRECT_BASE_ADDR_LOW_BYTE;
-+	}
-+
- 	ahb->regs = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(ahb->regs))
- 		return PTR_ERR(ahb->regs);
+http://nvt.pwsan.com/pub/pwalmsley-tester/testlogs/test_20150319225643_e8444885428c4257999e632eff35e8e8c8a8b504/20150319225643
+---
+
+The test summary is included below.  
+
+Sorry for the extra noise; I'm still working out some bugs in my NVIDIA 
+patch-posting toolchain, which unfortunately is more complicated than it 
+should be.
+
+The rest of the original message is accurate.
+
+
+- Paul
+
+
+
+Test summary
+------------
+
+Build: zImage:
+    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Build: Image:
+    Pass: ( 1/ 1): defconfig
+
+Boot to userspace: defconfig:
+    Pass: ( 1/ 1): qemu-vexpress64
+
+Boot to userspace: multi_v7_defconfig:
+    Pass: ( 3/ 3): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
