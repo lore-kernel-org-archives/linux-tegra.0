@@ -1,185 +1,147 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 3/3] Documentation: DT bindings: Tegra AHB: note base
- address change
-Date: Thu, 19 Mar 2015 16:27:15 -0600
-Message-ID: <550B4D43.4040505@wwwdotorg.org>
-References: <20150317083221.32662.14647.stgit@baseline> <20150317083221.32662.96822.stgit@baseline> <550859A0.9090500@wwwdotorg.org> <alpine.DEB.2.02.1503191528570.9480@utopia.booyaka.com> <550AEEE9.70806@wwwdotorg.org> <alpine.DEB.2.02.1503191617140.9480@utopia.booyaka.com> <550B0B84.6050400@wwwdotorg.org> <alpine.DEB.2.02.1503191758590.9480@utopia.booyaka.com>
+From: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v3 1/3] amba: tegra-ahb: fix register offsets in the macros
+Date: Fri, 20 Mar 2015 00:11:02 -0600
+Message-ID: <20150320061102.14355.19921.stgit@mcwayne>
+References: <20150320061102.14355.4781.stgit@mcwayne>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <alpine.DEB.2.02.1503191758590.9480-rwI8Ez+7Ko+d5PgPZx9QOdBPR1lH4CV8@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150320061102.14355.4781.stgit@mcwayne>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-I guess pretend like I never made the suggestion.
+From a hardware SoC integration point of view, the offsets of the
+Tegra AHB registers that are currently defined in tegra-ahb.c macros
+are all off by four bytes.  Similarly, the starting address of this IP
+block in our existing DT files is also off by four bytes.  Since we
+attempt to make old DT files forward-compatible with newer kernels, we
+cannot fix the IP block base address in old DT data.  However, we can
+fix the offsets in the driver so that they are correct with respect to
+the hardware, which is what this patch does.  And a subsequent patch
+will allow the offset to be removed for DT 'compatible' strings used
+in future DT files for newer Tegra chips that the kernel does not yet
+support.
 
-On 03/19/2015 12:42 PM, Paul Walmsley wrote:
-> On Thu, 19 Mar 2015, Stephen Warren wrote:
->
->> On 03/19/2015 10:34 AM, Paul Walmsley wrote:
->>> On Thu, 19 Mar 2015, Stephen Warren wrote:
->>>
->>>> On 03/19/2015 09:33 AM, Paul Walmsley wrote:
->>>>> On Tue, 17 Mar 2015, Stephen Warren wrote:
->>>>>
->>>>>> On 03/17/2015 02:32 AM, Paul Walmsley wrote:
->>>>>>> For Tegra132 and later chips, we can now use the correct hardware
->>>>>>> base
->>>>>>> address for the Tegra AHB IP block in the DT data.  Update the DT
->>>>>>> binding
->>>>>>> documentation to reflect this change.
->>>>>>
->>>>>>> diff --git
->>>>>>> a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-ahb.txt
->>>>>>> b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-ahb.txt
->>>>>>> index 067c979..7692b4c 100644
->>>>>>> ---
->>>>>>> a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-ahb.txt
->>>>>>> +++
->>>>>>> b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-ahb.txt
->>>>>>> @@ -2,10 +2,15 @@ NVIDIA Tegra AHB
->>>>>>>
->>>>>>>      Required properties:
->>>>>>>      - compatible : For Tegra20, must contain "nvidia,tegra20-ahb".
->>>>>>> For
->>>>>>> -  Tegra30, must contain "nvidia,tegra30-ahb".  Otherwise, must
->>>>>>> contain
->>>>>>> -  '"nvidia,<chip>-ahb", "nvidia,tegra30-ahb"' where <chip> is
->>>>>>> tegra124,
->>>>>>> -  tegra132, or tegra210.
->>>>>>> -- reg : Should contain 1 register ranges(address and length)
->>>>>>> +  Tegra30, must contain "nvidia,tegra30-ahb".  For Tegra114 and
->>>>>>> Tegra124,
->>>>>>> must
->>>>>>> +  contain '"nvidia,<chip>-ahb", "nvidia,tegra30-ahb"' where <chip>
->>>>>>> is
->>>>>>> tegra114
->>>>>>> +  or tegra124.  For Tegra132, the compatible string must contain
->>>>>>> +  "nvidia,tegra132-ahb".
->>>>>>> +
->>>>>>> +- reg : Should contain 1 register ranges(address and length).  On
->>>>>>> Tegra20,
->>>>>>> +  Tegra30, Tegra114, and Tegra124 chips, the low byte of the
->>>>>>> physical
->>>>>>> base
->>>>>>> +  address of the IP block must end in 0x04.  On DT files for later
->>>>>>> chips,
->>>>>>> the
->>>>>>> +  actual hardware base address of the IP block should be used.
->>>>>>
->>>>>> A table-based approach rather than prose might make this more legible?
->>>>>>
->>>>>> - compatible: Must contain the following:
->>>>>>      Tegra20:  "nvidia,tegra20-ahb"
->>>>>>      Tegra30:  "nvidia,tegra30-ahb"
->>>>>>      Tegra114: "nvidia,tegra114-ahb", "nvidia,tegra30-ahb"
->>>>>>      Tegra124: "nvidia,tegra124-ahb", "nvidia,tegra30-ahb"
->>>>>>      Tegra132: "nvidia,tegra132-ahb"
->>>>>>      Tegra210: "nvidia,tegra210-ahb", "nvidia,tegra132-ahb"
->>>>>>
->>>>>> With any luck, we can extend that final item for future chips to be:
->>>>>>
->>>>>>      Tegra210, TegraNNN:
->>>>>>                "nvidia,tegra<chip>-ahb", "nvidia,tegra132-ahb"
->>>>>>
->>>>>> Perhaps we format the 114/124 entry that way too.
->>>>>
->>>>> I think I'm just going to drop this patch, since Russell prefers that
->>>>> the
->>>>> workaround is applied in the driver.
->>>>>
->>>>> With regards to using tables rather than narrative descriptions: perhaps
->>>>> consider a patch to
->>>>> Documentation/devicetree/bindings/submitting-patches.txt ?  I don't know
->>>>> what the DT binding documentation maintainers' future plans are with
->>>>> regards to automated documentation reflow, etc., but submitting a patch
->>>>> there would stimulate at least some coordination on the issue.
->>>>
->>>> I don't think it's appropriate for that file to dictate that, in the same
->>>> way
->>>> that coding style documentation generally doesn't address that kind of
->>>> detail
->>>> regarding code structure.
->>>
->>> We do indeed specify details like this in our documentation guidelines.
->>> Here are two examples:
->>>
->>> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/kernel-doc-nano-HOWTO.txt#n103
->>>
->>> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/CodingStyle#n464
->>
->> Perhaps I phrased my point slightly differently form the core of what I meant.
->>
->> I'm not aware that review feedback can't address topics that are not already
->> addressed by the documentation. Is there such a rule?
->
-> Not that I'm aware of, but I'm not sure that I understand the point you're
-> making.  Care to rephrase to make it more explicit?
->
->> Equally, I think if you want the documentation to address a particular point,
->> it's appropriate for you to submit a patch to the documentation to update it,
->> rather than ask the reviewer to do so before accepting the review feedback.
->
-> I guess my question is this: do you intend that the table-based
-> documentation approach you describe should apply generally to other DT
-> binding documents with similar per-chip support lists?  Or is there
-> something about the Tegra AHB specifically that merits this format?
->
-> If the former was intended -- in other words, you are proposing a policy
-> that should be followed in the general case -- then I would suggest that
-> the documentation policy should be described in a shared DT binding
-> CodingStyle or submitting-patches document, as we do elsewhere in the
-> kernel.
->
-> For example, the guidance could read[*], using your earlier example:
->
-> ---
-> If different values of a DT property are required for different chips
-> or different situations, these should be listed in the binding
-> documentation in the following format:
->
-> - compatible: Must contain the following:
->      Tegra20:  "nvidia,tegra20-ahb"
->      Tegra30:  "nvidia,tegra30-ahb"
->      Tegra114: "nvidia,tegra114-ahb", "nvidia,tegra30-ahb"
-> (etc.)
->
-> Each line in the list should be indented from the start of the section
-> describing the DT property by four spaces.  There should be no blank
-> lines between each list row.
-> ---
->
-> That way, the community can align on a common format for this table-based
-> format.  Any automated parsing tools that read the DT documentation can
-> know what to expect; anyone who disagrees can speak up as the patch is
-> being considered; and the issue no longer needs to be a matter of taste:
-> it can be transformed into a matter of fact.
->
-> Once the documentation format becomes a matter of fact, then patch
-> submitters have clear guidance to follow.  Submitters can get the patches
-> right the first time and avoid wasting their time and reviewers' time.
-> Otherwise, there is the (quite present) risk that 'n' different reviewers
-> of the DT binding documentation could have 'n' different opinions about
-> how the data should be formatted, with each opinion conveying
-> minimal-to-no technical advantage over another.  This just results in a
-> waste of time for everyone, time that is better spent on code.  In my
-> view, every moment I spend reformatting documentation to standards that
-> aren't shared is not only wasted, it's time that's subtracted from my
-> ability to improve our actual upstream code and work on something that's
-> actually useful.
->
->
-> - Paul
->
-> [*] I am neutral about the format or whether a narrative vs. a table
-> approach is best.  Whatever it should be, it should just be common
-> guidance.
->
+Signed-off-by: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+Cc: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/amba/tegra-ahb.c |   63 +++++++++++++++++++++++-----------------------
+ 1 file changed, 32 insertions(+), 31 deletions(-)
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/amba/tegra-ahb.c b/drivers/amba/tegra-ahb.c
+index c6dc3548e5d1..30759a55efe4 100644
+--- a/drivers/amba/tegra-ahb.c
++++ b/drivers/amba/tegra-ahb.c
+@@ -25,49 +25,50 @@
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/io.h>
++#include <linux/of.h>
+ 
+ #include <soc/tegra/ahb.h>
+ 
+ #define DRV_NAME "tegra-ahb"
+ 
+-#define AHB_ARBITRATION_DISABLE		0x00
+-#define AHB_ARBITRATION_PRIORITY_CTRL	0x04
++#define AHB_ARBITRATION_DISABLE		0x04
++#define AHB_ARBITRATION_PRIORITY_CTRL	0x08
+ #define   AHB_PRIORITY_WEIGHT(x)	(((x) & 0x7) << 29)
+ #define   PRIORITY_SELECT_USB BIT(6)
+ #define   PRIORITY_SELECT_USB2 BIT(18)
+ #define   PRIORITY_SELECT_USB3 BIT(17)
+ 
+-#define AHB_GIZMO_AHB_MEM		0x0c
++#define AHB_GIZMO_AHB_MEM		0x10
+ #define   ENB_FAST_REARBITRATE BIT(2)
+ #define   DONT_SPLIT_AHB_WR     BIT(7)
+ 
+-#define AHB_GIZMO_APB_DMA		0x10
+-#define AHB_GIZMO_IDE			0x18
+-#define AHB_GIZMO_USB			0x1c
+-#define AHB_GIZMO_AHB_XBAR_BRIDGE	0x20
+-#define AHB_GIZMO_CPU_AHB_BRIDGE	0x24
+-#define AHB_GIZMO_COP_AHB_BRIDGE	0x28
+-#define AHB_GIZMO_XBAR_APB_CTLR		0x2c
+-#define AHB_GIZMO_VCP_AHB_BRIDGE	0x30
+-#define AHB_GIZMO_NAND			0x3c
+-#define AHB_GIZMO_SDMMC4		0x44
+-#define AHB_GIZMO_XIO			0x48
+-#define AHB_GIZMO_BSEV			0x60
+-#define AHB_GIZMO_BSEA			0x70
+-#define AHB_GIZMO_NOR			0x74
+-#define AHB_GIZMO_USB2			0x78
+-#define AHB_GIZMO_USB3			0x7c
++#define AHB_GIZMO_APB_DMA		0x14
++#define AHB_GIZMO_IDE			0x1c
++#define AHB_GIZMO_USB			0x20
++#define AHB_GIZMO_AHB_XBAR_BRIDGE	0x24
++#define AHB_GIZMO_CPU_AHB_BRIDGE	0x28
++#define AHB_GIZMO_COP_AHB_BRIDGE	0x2c
++#define AHB_GIZMO_XBAR_APB_CTLR		0x30
++#define AHB_GIZMO_VCP_AHB_BRIDGE	0x34
++#define AHB_GIZMO_NAND			0x40
++#define AHB_GIZMO_SDMMC4		0x48
++#define AHB_GIZMO_XIO			0x4c
++#define AHB_GIZMO_BSEV			0x64
++#define AHB_GIZMO_BSEA			0x74
++#define AHB_GIZMO_NOR			0x78
++#define AHB_GIZMO_USB2			0x7c
++#define AHB_GIZMO_USB3			0x80
+ #define   IMMEDIATE	BIT(18)
+ 
+-#define AHB_GIZMO_SDMMC1		0x80
+-#define AHB_GIZMO_SDMMC2		0x84
+-#define AHB_GIZMO_SDMMC3		0x88
+-#define AHB_MEM_PREFETCH_CFG_X		0xd8
+-#define AHB_ARBITRATION_XBAR_CTRL	0xdc
+-#define AHB_MEM_PREFETCH_CFG3		0xe0
+-#define AHB_MEM_PREFETCH_CFG4		0xe4
+-#define AHB_MEM_PREFETCH_CFG1		0xec
+-#define AHB_MEM_PREFETCH_CFG2		0xf0
++#define AHB_GIZMO_SDMMC1		0x84
++#define AHB_GIZMO_SDMMC2		0x88
++#define AHB_GIZMO_SDMMC3		0x8c
++#define AHB_MEM_PREFETCH_CFG_X		0xdc
++#define AHB_ARBITRATION_XBAR_CTRL	0xe0
++#define AHB_MEM_PREFETCH_CFG3		0xe4
++#define AHB_MEM_PREFETCH_CFG4		0xe8
++#define AHB_MEM_PREFETCH_CFG1		0xf0
++#define AHB_MEM_PREFETCH_CFG2		0xf4
+ #define   PREFETCH_ENB	BIT(31)
+ #define   MST_ID(x)	(((x) & 0x1f) << 26)
+ #define   AHBDMA_MST_ID	MST_ID(5)
+@@ -77,7 +78,7 @@
+ #define   ADDR_BNDRY(x)	(((x) & 0xf) << 21)
+ #define   INACTIVITY_TIMEOUT(x)	(((x) & 0xffff) << 0)
+ 
+-#define AHB_ARBITRATION_AHB_MEM_WRQUE_MST_ID	0xf8
++#define AHB_ARBITRATION_AHB_MEM_WRQUE_MST_ID	0xfc
+ 
+ #define AHB_ARBITRATION_XBAR_CTRL_SMMU_INIT_DONE BIT(17)
+ 
+@@ -123,12 +124,12 @@ struct tegra_ahb {
+ 
+ static inline u32 gizmo_readl(struct tegra_ahb *ahb, u32 offset)
+ {
+-	return readl(ahb->regs + offset);
++	return readl(ahb->regs - 4 + offset);
+ }
+ 
+ static inline void gizmo_writel(struct tegra_ahb *ahb, u32 value, u32 offset)
+ {
+-	writel(value, ahb->regs + offset);
++	writel(value, ahb->regs - 4 + offset);
+ }
+ 
+ #ifdef CONFIG_TEGRA_IOMMU_SMMU
