@@ -1,7 +1,7 @@
 From: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [cbootimage PATCH v3 3/3] Bump to version 1.5
-Date: Fri, 20 Mar 2015 17:20:21 -0700
-Message-ID: <1426897221-20307-4-git-send-email-jimmzhang@nvidia.com>
+Subject: [cbootimage PATCH v3 2/3] Remove misleading message "deprecated"
+Date: Fri, 20 Mar 2015 17:20:20 -0700
+Message-ID: <1426897221-20307-3-git-send-email-jimmzhang@nvidia.com>
 References: <1426897221-20307-1-git-send-email-jimmzhang@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,25 +12,26 @@ To: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+A
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Create a release that includes Tegra210 support.
+Since option "-t" is still fully supported, correct the
+help messages.
 
 Signed-off-by: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- configure.ac | 2 +-
+ src/cbootimage.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/configure.ac b/configure.ac
-index cc3999eabead..17264ce8c2d7 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -2,7 +2,7 @@
- # Process this file with autoconf to produce a configure script.
- 
- AC_PREREQ([2.67])
--AC_INIT([cbootimage], [1.4], [pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org])
-+AC_INIT([cbootimage], [1.5], [pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org])
- AM_INIT_AUTOMAKE
- AC_CONFIG_SRCDIR([src/cbootimage.c])
- AC_CONFIG_HEADERS([config.h])
+diff --git a/src/cbootimage.c b/src/cbootimage.c
+index 790d795b8e78..f0516dd256ee 100644
+--- a/src/cbootimage.c
++++ b/src/cbootimage.c
+@@ -72,7 +72,7 @@ usage(void)
+ 	printf("    -o<ODM_DATA>          Specify the odm_data(in hex).\n");
+ 	printf("    -t|--tegra NN         Select target device. Must be one of:\n");
+ 	printf("                          20, 30, 114, 124, 132, 210.\n");
+-	printf("                          Default: 20. This option is deprecated\n");
++	printf("                          Default: 20.\n");
+ 	printf("    -s|--soc tegraNN      Select target device. Must be one of:\n");
+ 	printf("                          tegra20, tegra30, tegra114, tegra124,\n");
+ 	printf("                          tegra132, tegra210.\n");
 -- 
 1.8.1.5
