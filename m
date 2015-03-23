@@ -1,77 +1,53 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 1/2] clk: tegra: Add peripheral registers for bank Y
-Date: Mon, 23 Mar 2015 11:21:38 +0100
-Message-ID: <1427106099-12767-1-git-send-email-thierry.reding@gmail.com>
+Subject: [PATCH] irqchip: tegra: Add Tegra210 support
+Date: Mon, 23 Mar 2015 11:26:19 +0100
+Message-ID: <1427106379-14037-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Tegra210 has an extra bank of peripheral clock registers. Add it to the
-generic peripheral clock code.
+Tegra210 uses the same legacy interrupt controller as older generations
+but it adds a sixth instance.
 
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/clk/tegra/clk.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/irqchip/irq-tegra.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
-index 9ddb7547cb43..8b9b7a27616b 100644
---- a/drivers/clk/tegra/clk.c
-+++ b/drivers/clk/tegra/clk.c
-@@ -30,6 +30,7 @@
- #define CLK_OUT_ENB_V			0x360
- #define CLK_OUT_ENB_W			0x364
- #define CLK_OUT_ENB_X			0x280
-+#define CLK_OUT_ENB_Y			0x298
- #define CLK_OUT_ENB_SET_L		0x320
- #define CLK_OUT_ENB_CLR_L		0x324
- #define CLK_OUT_ENB_SET_H		0x328
-@@ -42,6 +43,8 @@
- #define CLK_OUT_ENB_CLR_W		0x44c
- #define CLK_OUT_ENB_SET_X		0x284
- #define CLK_OUT_ENB_CLR_X		0x288
-+#define CLK_OUT_ENB_SET_Y		0x29c
-+#define CLK_OUT_ENB_CLR_Y		0x2a0
+diff --git a/drivers/irqchip/irq-tegra.c b/drivers/irqchip/irq-tegra.c
+index d919ecf29cf4..51c485d9a877 100644
+--- a/drivers/irqchip/irq-tegra.c
++++ b/drivers/irqchip/irq-tegra.c
+@@ -48,7 +48,7 @@
+ #define ICTLR_COP_IER_CLR	0x38
+ #define ICTLR_COP_IEP_CLASS	0x3c
  
- #define RST_DEVICES_L			0x004
- #define RST_DEVICES_H			0x008
-@@ -50,6 +53,7 @@
- #define RST_DEVICES_V			0x358
- #define RST_DEVICES_W			0x35C
- #define RST_DEVICES_X			0x28C
-+#define RST_DEVICES_Y			0x2a4
- #define RST_DEVICES_SET_L		0x300
- #define RST_DEVICES_CLR_L		0x304
- #define RST_DEVICES_SET_H		0x308
-@@ -62,6 +66,8 @@
- #define RST_DEVICES_CLR_W		0x43c
- #define RST_DEVICES_SET_X		0x290
- #define RST_DEVICES_CLR_X		0x294
-+#define RST_DEVICES_SET_Y		0x2a8
-+#define RST_DEVICES_CLR_Y		0x2ac
+-#define TEGRA_MAX_NUM_ICTLRS	5
++#define TEGRA_MAX_NUM_ICTLRS	6
  
- /* Global data of Tegra CPU CAR ops */
- static struct tegra_cpu_car_ops dummy_car_ops;
-@@ -122,6 +128,14 @@ static struct tegra_clk_periph_regs periph_regs[] = {
- 		.rst_set_reg = RST_DEVICES_SET_X,
- 		.rst_clr_reg = RST_DEVICES_CLR_X,
- 	},
-+	[6] = {
-+		.enb_reg = CLK_OUT_ENB_Y,
-+		.enb_set_reg = CLK_OUT_ENB_SET_Y,
-+		.enb_clr_reg = CLK_OUT_ENB_CLR_Y,
-+		.rst_reg = RST_DEVICES_Y,
-+		.rst_set_reg = RST_DEVICES_SET_Y,
-+		.rst_clr_reg = RST_DEVICES_CLR_Y,
-+	},
+ static unsigned int num_ictlrs;
+ 
+@@ -64,7 +64,12 @@ static const struct tegra_ictlr_soc tegra30_ictlr_soc = {
+ 	.num_ictlrs = 5,
  };
  
- static void __iomem *clk_base;
++static const struct tegra_ictlr_soc tegra210_ictlr_soc = {
++	.num_ictlrs = 6,
++};
++
+ static const struct of_device_id ictlr_matches[] = {
++	{ .compatible = "nvidia,tegra210-ictlr", .data = &tegra210_ictlr_soc },
+ 	{ .compatible = "nvidia,tegra30-ictlr", .data = &tegra30_ictlr_soc },
+ 	{ .compatible = "nvidia,tegra20-ictlr", .data = &tegra20_ictlr_soc },
+ 	{ }
+@@ -369,3 +374,4 @@ out_free:
+ 
+ IRQCHIP_DECLARE(tegra20_ictlr, "nvidia,tegra20-ictlr", tegra_ictlr_init);
+ IRQCHIP_DECLARE(tegra30_ictlr, "nvidia,tegra30-ictlr", tegra_ictlr_init);
++IRQCHIP_DECLARE(tegra210_ictlr, "nvidia,tegra210-ictlr", tegra_ictlr_init);
 -- 
 2.3.2
