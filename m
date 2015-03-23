@@ -1,79 +1,98 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: use generated pinmux for Beaver board
-Date: Mon, 23 Mar 2015 09:59:59 +0100
-Message-ID: <20150323085958.GA11268@ulmo>
-References: <1420495066-19221-1-git-send-email-dev@lynxeye.de>
- <54AB0B68.7050704@wwwdotorg.org>
- <1420591830.25483.16.camel@lynxeye.de>
- <1425323769.2182.0.camel@lynxeye.de>
- <1426794762.2212.0.camel@lynxeye.de>
+Subject: Re: [tegrarcm PATCH v1 1/8] tegrarcm: Add Tegra132 support
+Date: Mon, 23 Mar 2015 10:06:51 +0100
+Message-ID: <20150323090650.GB11268@ulmo>
+References: <1426639141-12060-1-git-send-email-jimmzhang@nvidia.com>
+ <1426639141-12060-2-git-send-email-jimmzhang@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="NzB8fVQJ5HfG6fxh"
+	protocol="application/pgp-signature"; boundary="i0/AhcQY5QxfSsSZ"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1426794762.2212.0.camel-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+In-Reply-To: <1426639141-12060-2-git-send-email-jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---NzB8fVQJ5HfG6fxh
+--i0/AhcQY5QxfSsSZ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 19, 2015 at 08:52:42PM +0100, Lucas Stach wrote:
-> Am Montag, den 02.03.2015, 20:16 +0100 schrieb Lucas Stach:
-> > Am Mittwoch, den 07.01.2015, 01:50 +0100 schrieb Lucas Stach:
-> > > Am Montag, den 05.01.2015, 15:08 -0700 schrieb Stephen Warren:
-> > > > On 01/05/2015 02:57 PM, Lucas Stach wrote:
-> > > > > Replace the current incomplete pinmux setup with a proper one gen=
-erated
-> > > > > using the tegra pinmux scripts.
-> > > >=20
-> > > > I assume this is identical to the existing content, it's just that =
-the=20
-> > > > node sort order changed to match the auto-generation order?
-> > > >=20
-> > > Yes auto-generation changes the representation of the nodes a bit, bu=
-t I
-> > > made sure to keep the properties of the existing kernel DT pinmux whe=
-re
-> > > they were different from the U-Boot pinmux.
-> > >=20
-> > > > If so,
-> > > > Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > >=20
-> > This has not been applied. Could anyone please pick this up, so it
-> > doesn't miss yet another merge window?
-> >=20
-> Friendly ping.
+On Tue, Mar 17, 2015 at 05:38:53PM -0700, Jimmy Zhang wrote:
+> From: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>=20
+> Add Tegra132 USB device id, miniloader, and chip SKU information.
+>=20
+> Signed-off-by: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  src/Makefile.am                      |    1 +
+>  src/main.c                           |   15 +-
+>  src/miniloader/tegra132-miniloader.h | 5259 ++++++++++++++++++++++++++++=
+++++++
+>  src/nv3p.h                           |    3 +
+>  src/tegrarcm.1.in                    |    4 +-
+>  src/usb.c                            |    3 +-
+>  src/usb.h                            |    1 +
+>  7 files changed, 5283 insertions(+), 3 deletions(-)
+>  create mode 100644 src/miniloader/tegra132-miniloader.h
+>=20
+> diff --git a/src/Makefile.am b/src/Makefile.am
+> index 4b548859e075..d0d45cad4fee 100644
+> --- a/src/Makefile.am
+> +++ b/src/Makefile.am
+> @@ -18,6 +18,7 @@ tegrarcm_SOURCES =3D \
+>  	miniloader/tegra30-miniloader.h \
+>  	miniloader/tegra114-miniloader.h \
+>  	miniloader/tegra124-miniloader.h \
+> +	miniloader/tegra132-miniloader.h \
+>  	usb.h
+> =20
+>  man_MANS =3D tegrarcm.1
+> diff --git a/src/main.c b/src/main.c
+> index 50adc14f0b06..24d3bf81191f 100644
+> --- a/src/main.c
+> +++ b/src/main.c
+> @@ -60,6 +60,9 @@
+>  // tegra124 miniloader
+>  #include "miniloader/tegra124-miniloader.h"
+> =20
+> +// tegra132 miniloader
+> +#include "miniloader/tegra132-miniloader.h"
 
-Applied, thanks.
+I'd prefer if we stopped including miniloader (and other) blobs in the
+tegrarcm binary. We already provide the MTS in a separate repository and
+can reference it using command-line options. I think we should do the
+same for the miniloader.
+
+The ordering of patches here is somewhat confusing, too. This patch in
+fact doesn't really add support for Tegra132 because we need MTS for
+that to actually work. A more natural ordering would be to have the MTS
+support go in first, followed by this patch to enable Tegra132 support.
 
 Thierry
 
---NzB8fVQJ5HfG6fxh
+--i0/AhcQY5QxfSsSZ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJVD9YMAAoJEN0jrNd/PrOhf5AP/iSkFVvztDkwF5WdB9ap7L1p
-6LIBX/RV0O2Tvv7rGTbP6azx5o17Z0RZt3OTkO7kw9+QI4+gh3VKfhle9ssoL5+5
-1VIbZTIi1oRwOcG+IbkfZrQPhNgiih5a8LTyzMHD4hFgTSRPlnWX0yNZIsB083CC
-BRNrE53qHqXlN4jkB7qkHt9jtB9GiHh06wcJiWYnv9tSBCMimP/OvcnPQnBruQEO
-vm2lvu4OuPw+vshW0d2DHEHjHAHg8kQYgbLBAVOnD4Mo+eyBIzt1MYnYH8cTARxM
-ZvXnnefcPsPeMDUhUthqQnF8tN13YMzAkyIrxzP6KCqp43DoQDFDiu96y96jreXo
-C/yDOj17mXlXDIDxYc7g6hPeCo5uj6vMxhI3o/yzj+VGdBXjCrWHtPOlPGeLVwRD
-sGdR2r9PPBXGiSdhc8551RclI4bpNQedaj6u3/Pf6hSGxhtb5igQU11fABlEgWkr
-zQOUEZJNejaFmkG9fPLrkjCMDFpPxvr0iMd6HSkCvnc1ZkvrCCbpF6wUBJ8QtuXn
-gMnpz9KSyNbuyOaJUjF17UI8f6I/6rCqbaOOUDs9csPq/5+Pd9drQQVZbQElnpus
-HadmGBCsToM8NDOBQDHVyembrAB1wR1K3hScvIKXqZD9tZU1uNAjKS0zHifNt96l
-XUiaoKz1onyt8Qu/dzvg
-=3AgZ
+iQIcBAABCAAGBQJVD9eqAAoJEN0jrNd/PrOhkH8QAI7FpL13lxglB3XDRpooqGBa
+ASmq+HhM6nWo2wLfb4IoI7jQnBMTrG2gYzJ5+fe2KeuuSFKlGIAPduA3t5IzNexo
+WXkDcjI8qS2jMo60vR0Tk3RmidhHk26rPo7aAHG/a8GZFi2uBGExGfmHqnV0ErWj
+x7DnEmDDA/0neTCKuqWdffN7OfRRFFn1LDO2woxxr2d/GMLYqUHqeItJ0temRWlG
+uDP/QhAlyPKaHqQ8sN3fN3rX67KTpS0hFDxuPe8NJKZfhZa0i7+GJj/sDz3i2742
+c5MkcquSMTwyKIVgBoff8Dd1pO9LpBFsmeoS61TJwn2V1VgtH0SP2gyqmdxh2i7S
+lELmuVLTDGwk/R92yjN+/ez8m5YQnP3fwTruqRw3NesaHIORS3i8ZwGvE//SOv0p
+LvyZ5uX1HOCjUxdWfgRZWNuxt5AOz4/oOxvAVOlwTPKXR097gQQ0Ezl7JwttU+uA
+nvczX8TUC0wVXl2Ovepb+5s97aejLMfsLUClJfN8i5gNYqDEydIM9YFf72a88yPH
+Fn/X+YN967gC6ysZIb1oa1eiFcpySDXldmpmKX6yzGBRzVMldX1atpnZ4x7+9DMj
+9sBOu20HlKWL4YQ6jeHOOoS3CTZcPuuBY3F2/bCJ0wh1LzBZV04rH+p+D35BsAKm
+ysNmuOPkv4x38spY1woZ
+=xJQo
 -----END PGP SIGNATURE-----
 
---NzB8fVQJ5HfG6fxh--
+--i0/AhcQY5QxfSsSZ--
