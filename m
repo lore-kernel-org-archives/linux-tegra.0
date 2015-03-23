@@ -1,75 +1,28 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] soc/tegra: Remove duplicate powergate definitions
-Date: Mon, 23 Mar 2015 11:50:02 +0100
-Message-ID: <1427107802-3266-1-git-send-email-thierry.reding@gmail.com>
+From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 00/15] iommu: Move domain allocation into drivers
+Date: Mon, 23 Mar 2015 12:49:21 +0100
+Message-ID: <20150323114921.GM4441@8bytes.org>
+References: <1422316305-19216-1-git-send-email-joro@8bytes.org>
+ <1426843458.23931.17.camel@mtksdaap41>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1426843458.23931.17.camel@mtksdaap41>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Yingjoe Chen <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Alex Williamson <alex.williamson-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, jroedel-l3A5Bk7waGM@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tomasz Figa <tfiga-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Yong Wu =?utf-8?B?KOWQtOWLhyk=?= <yong.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Hi Yingjoe,
 
-The defines for the powergate partitions are already defined in the DT
-bindings header, so include that rather than duplicating the list in a
-second header file.
+On Fri, Mar 20, 2015 at 05:24:18PM +0800, Yingjoe Chen wrote:
+> What's the status of this patchset?
+> While porting MTK IOMMU driver[1], we need to use a global variable
+> because we need to do dma_alloc_coherent in our domain_init. I think we
+> can remove that global variable if we base on this series.
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- include/soc/tegra/pmc.h | 34 +---------------------------------
- 1 file changed, 1 insertion(+), 33 deletions(-)
+I plan to send out a new version this week.
 
-diff --git a/include/soc/tegra/pmc.h b/include/soc/tegra/pmc.h
-index 75878006174f..c39edb9383f1 100644
---- a/include/soc/tegra/pmc.h
-+++ b/include/soc/tegra/pmc.h
-@@ -21,6 +21,7 @@
- 
- #include <linux/reboot.h>
- 
-+#include <dt-bindings/power/tegra-powergate.h>
- #include <soc/tegra/pm.h>
- 
- struct clk;
-@@ -44,39 +45,6 @@ int tegra_pmc_cpu_remove_clamping(int cpuid);
-  * powergate and I/O rail APIs
-  */
- 
--#define TEGRA_POWERGATE_CPU	0
--#define TEGRA_POWERGATE_3D	1
--#define TEGRA_POWERGATE_VENC	2
--#define TEGRA_POWERGATE_PCIE	3
--#define TEGRA_POWERGATE_VDEC	4
--#define TEGRA_POWERGATE_L2	5
--#define TEGRA_POWERGATE_MPE	6
--#define TEGRA_POWERGATE_HEG	7
--#define TEGRA_POWERGATE_SATA	8
--#define TEGRA_POWERGATE_CPU1	9
--#define TEGRA_POWERGATE_CPU2	10
--#define TEGRA_POWERGATE_CPU3	11
--#define TEGRA_POWERGATE_CELP	12
--#define TEGRA_POWERGATE_3D1	13
--#define TEGRA_POWERGATE_CPU0	14
--#define TEGRA_POWERGATE_C0NC	15
--#define TEGRA_POWERGATE_C1NC	16
--#define TEGRA_POWERGATE_SOR	17
--#define TEGRA_POWERGATE_DIS	18
--#define TEGRA_POWERGATE_DISB	19
--#define TEGRA_POWERGATE_XUSBA	20
--#define TEGRA_POWERGATE_XUSBB	21
--#define TEGRA_POWERGATE_XUSBC	22
--#define TEGRA_POWERGATE_VIC	23
--#define TEGRA_POWERGATE_IRAM	24
--#define TEGRA_POWERGATE_NVDEC	25
--#define TEGRA_POWERGATE_NVJPG	26
--#define TEGRA_POWERGATE_AUD	27
--#define TEGRA_POWERGATE_DFD	28
--#define TEGRA_POWERGATE_VE2	29
--
--#define TEGRA_POWERGATE_3D0	TEGRA_POWERGATE_3D
--
- #define TEGRA_IO_RAIL_CSIA	0
- #define TEGRA_IO_RAIL_CSIB	1
- #define TEGRA_IO_RAIL_DSI	2
--- 
-2.3.2
+
+	Joerg
