@@ -1,99 +1,75 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] soc/tegra: pmc: Add Tegra210 support
-Date: Mon, 23 Mar 2015 11:36:35 +0100
-Message-ID: <1427106995-17265-1-git-send-email-thierry.reding@gmail.com>
+Subject: [PATCH] soc/tegra: Remove duplicate powergate definitions
+Date: Mon, 23 Mar 2015 11:50:02 +0100
+Message-ID: <1427107802-3266-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Tegra210 uses a power management controller that is compatible with
-earlier SoC generations but adds a couple of power partitions for new
-hardware blocks.
+The defines for the powergate partitions are already defined in the DT
+bindings header, so include that rather than duplicating the list in a
+second header file.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/soc/tegra/pmc.c                     | 48 +++++++++++++++++++++++++++++
- include/dt-bindings/power/tegra-powergate.h |  5 +++
- 2 files changed, 53 insertions(+)
+ include/soc/tegra/pmc.h | 34 +---------------------------------
+ 1 file changed, 1 insertion(+), 33 deletions(-)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 7dabb8f812e0..e8914e0fb9d2 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -1223,7 +1223,55 @@ static const struct tegra_pmc_soc tegra124_pmc_soc = {
- 	.has_gpu_clamps = true,
- };
+diff --git a/include/soc/tegra/pmc.h b/include/soc/tegra/pmc.h
+index 75878006174f..c39edb9383f1 100644
+--- a/include/soc/tegra/pmc.h
++++ b/include/soc/tegra/pmc.h
+@@ -21,6 +21,7 @@
  
-+static const char * const tegra210_powergates[] = {
-+	[TEGRA_POWERGATE_CPU] = "crail",
-+	[TEGRA_POWERGATE_3D] = "3d",
-+	[TEGRA_POWERGATE_VENC] = "venc",
-+	[TEGRA_POWERGATE_PCIE] = "pcie",
-+	[TEGRA_POWERGATE_L2] = "l2",
-+	[TEGRA_POWERGATE_MPE] = "mpe",
-+	[TEGRA_POWERGATE_HEG] = "heg",
-+	[TEGRA_POWERGATE_SATA] = "sata",
-+	[TEGRA_POWERGATE_CPU1] = "cpu1",
-+	[TEGRA_POWERGATE_CPU2] = "cpu2",
-+	[TEGRA_POWERGATE_CPU3] = "cpu3",
-+	[TEGRA_POWERGATE_CELP] = "celp",
-+	[TEGRA_POWERGATE_CPU0] = "cpu0",
-+	[TEGRA_POWERGATE_C0NC] = "c0nc",
-+	[TEGRA_POWERGATE_C1NC] = "c1nc",
-+	[TEGRA_POWERGATE_SOR] = "sor",
-+	[TEGRA_POWERGATE_DIS] = "dis",
-+	[TEGRA_POWERGATE_DISB] = "disb",
-+	[TEGRA_POWERGATE_XUSBA] = "xusba",
-+	[TEGRA_POWERGATE_XUSBB] = "xusbb",
-+	[TEGRA_POWERGATE_XUSBC] = "xusbc",
-+	[TEGRA_POWERGATE_VIC] = "vic",
-+	[TEGRA_POWERGATE_IRAM] = "iram",
-+	[TEGRA_POWERGATE_NVDEC] = "nvdec",
-+	[TEGRA_POWERGATE_NVJPG] = "nvjpg",
-+	[TEGRA_POWERGATE_AUD] = "aud",
-+	[TEGRA_POWERGATE_DFD] = "dfd",
-+	[TEGRA_POWERGATE_VE2] = "ve2",
-+};
-+
-+static const u8 tegra210_cpu_powergates[] = {
-+	TEGRA_POWERGATE_CPU0,
-+	TEGRA_POWERGATE_CPU1,
-+	TEGRA_POWERGATE_CPU2,
-+	TEGRA_POWERGATE_CPU3,
-+};
-+
-+static const struct tegra_pmc_soc tegra210_pmc_soc = {
-+	.num_powergates = ARRAY_SIZE(tegra210_powergates),
-+	.powergates = tegra210_powergates,
-+	.num_cpu_powergates = ARRAY_SIZE(tegra210_cpu_powergates),
-+	.cpu_powergates = tegra210_cpu_powergates,
-+	.has_tsense_reset = true,
-+	.has_gpu_clamps = true,
-+};
-+
- static const struct of_device_id tegra_pmc_match[] = {
-+	{ .compatible = "nvidia,tegra210-pmc", .data = &tegra210_pmc_soc },
- 	{ .compatible = "nvidia,tegra132-pmc", .data = &tegra124_pmc_soc },
- 	{ .compatible = "nvidia,tegra124-pmc", .data = &tegra124_pmc_soc },
- 	{ .compatible = "nvidia,tegra114-pmc", .data = &tegra114_pmc_soc },
-diff --git a/include/dt-bindings/power/tegra-powergate.h b/include/dt-bindings/power/tegra-powergate.h
-index b8265167c20e..12b72aa77d6a 100644
---- a/include/dt-bindings/power/tegra-powergate.h
-+++ b/include/dt-bindings/power/tegra-powergate.h
-@@ -26,5 +26,10 @@
- #define TEGRA_POWERGATE_XUSBC	22
- #define TEGRA_POWERGATE_VIC	23
- #define TEGRA_POWERGATE_IRAM	24
-+#define TEGRA_POWERGATE_NVDEC	25
-+#define TEGRA_POWERGATE_NVJPG	26
-+#define TEGRA_POWERGATE_AUD	27
-+#define TEGRA_POWERGATE_DFD	28
-+#define TEGRA_POWERGATE_VE2	29
+ #include <linux/reboot.h>
  
- #endif
++#include <dt-bindings/power/tegra-powergate.h>
+ #include <soc/tegra/pm.h>
+ 
+ struct clk;
+@@ -44,39 +45,6 @@ int tegra_pmc_cpu_remove_clamping(int cpuid);
+  * powergate and I/O rail APIs
+  */
+ 
+-#define TEGRA_POWERGATE_CPU	0
+-#define TEGRA_POWERGATE_3D	1
+-#define TEGRA_POWERGATE_VENC	2
+-#define TEGRA_POWERGATE_PCIE	3
+-#define TEGRA_POWERGATE_VDEC	4
+-#define TEGRA_POWERGATE_L2	5
+-#define TEGRA_POWERGATE_MPE	6
+-#define TEGRA_POWERGATE_HEG	7
+-#define TEGRA_POWERGATE_SATA	8
+-#define TEGRA_POWERGATE_CPU1	9
+-#define TEGRA_POWERGATE_CPU2	10
+-#define TEGRA_POWERGATE_CPU3	11
+-#define TEGRA_POWERGATE_CELP	12
+-#define TEGRA_POWERGATE_3D1	13
+-#define TEGRA_POWERGATE_CPU0	14
+-#define TEGRA_POWERGATE_C0NC	15
+-#define TEGRA_POWERGATE_C1NC	16
+-#define TEGRA_POWERGATE_SOR	17
+-#define TEGRA_POWERGATE_DIS	18
+-#define TEGRA_POWERGATE_DISB	19
+-#define TEGRA_POWERGATE_XUSBA	20
+-#define TEGRA_POWERGATE_XUSBB	21
+-#define TEGRA_POWERGATE_XUSBC	22
+-#define TEGRA_POWERGATE_VIC	23
+-#define TEGRA_POWERGATE_IRAM	24
+-#define TEGRA_POWERGATE_NVDEC	25
+-#define TEGRA_POWERGATE_NVJPG	26
+-#define TEGRA_POWERGATE_AUD	27
+-#define TEGRA_POWERGATE_DFD	28
+-#define TEGRA_POWERGATE_VE2	29
+-
+-#define TEGRA_POWERGATE_3D0	TEGRA_POWERGATE_3D
+-
+ #define TEGRA_IO_RAIL_CSIA	0
+ #define TEGRA_IO_RAIL_CSIB	1
+ #define TEGRA_IO_RAIL_DSI	2
 -- 
 2.3.2
