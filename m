@@ -1,69 +1,125 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v6 03/12] drm/panel: add support for Samsung LTN140AT29
- panel
-Date: Tue, 24 Mar 2015 11:27:09 +0100
-Message-ID: <20150324102708.GC18115@ulmo.nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v6 00/12] Improvements to Tegra-based Chromebook support
+Date: Tue, 24 Mar 2015 11:28:53 +0100
+Message-ID: <20150324102852.GD18115@ulmo.nvidia.com>
 References: <1426672363-30667-1-git-send-email-tomeu.vizoso@collabora.com>
- <1426672363-30667-4-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="V88s5gaDVPzZ0KCq"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="UfEAyuTBtIjiZzX6"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1426672363-30667-4-git-send-email-tomeu.vizoso@collabora.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: linux-tegra@vger.kernel.org, =?utf-8?B?U3TDqXBoYW5l?= Marchesin <marcheu@chromium.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1426672363-30667-1-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Asaf Vertz <asaf.vertz-CtGflUZwD1xBDgjK7y7TUQ@public.gmane.org>, Ben Hutchings <ben-/+tVBieCtBitmTQ+vhA3Yw@public.gmane.org>, Chris Ball <chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, David Riley <davidriley-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Johan Rudholm <johan.rudholm-VrBV9hrLPhE@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Kuninori Morimoto <kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lukas Czerner <lczerner-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Ste
 List-Id: linux-tegra@vger.kernel.org
 
 
---V88s5gaDVPzZ0KCq
+--UfEAyuTBtIjiZzX6
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 18, 2015 at 10:52:18AM +0100, Tomeu Vizoso wrote:
-> From: St=C3=A9phane Marchesin <marcheu@chromium.org>
+On Wed, Mar 18, 2015 at 10:52:15AM +0100, Tomeu Vizoso wrote:
+> v6:	* Added Acked-by and Reviewed-By tags
+> 	* Rebased on top of 4.0-rc1
+> 	* Added patch that marks the WiFi card as powered during suspend
 >=20
-> This panel is used by the Nyan Blaze board and supported by the simple-pa=
-nel
-> driver.
+> v5:	* Moved to use gpio-restart for reboots, had to make tegra_pmc_restart
+> 	a notification handler
 >=20
-> Signed-off-by: St=C3=A9phane Marchesin <marcheu@chromium.org>
-> [tomeu.vizoso@collabora.com: add device tree binding document]
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-> Acked-by: Stephen Warren <swarren@nvidia.com>
-> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
-> ---
->  .../bindings/panel/samsung,ltn140at29-301.txt      |  7 ++++++
->  drivers/gpu/drm/panel/panel-simple.c               | 26 ++++++++++++++++=
-++++++
->  2 files changed, 33 insertions(+)
+> v4:	* Added support for the system reset GPIO, for proper reboots
+> 	* Moved out changes to ASOC to their own series, as requested by Mark
+> 	Brown
+> 	* Added patch to reset the SOR, to make sure it's in a known state
+> 	* Changed nvidia,model property of the sound nodes to GoogleNyanBig
+> 	and GoogleNyanBlaze so they can be told apart in userspace
+>=20
+> v3:	* Added bindings for the LTN140AT29 panel
+> 	* Removed the delay in pwrseq, as what was actually needed was to add
+> 	a dependency on the power supplies of the host
+> 	* Uses the pinmux for the Blaze as generated by tegra-pinmux-scripts
+> 	* Uses the pinmux for the Big as in the last patch from Simon Glass
+>=20
+> Hello,
+>=20
+> this series adds support for the Tegra-based HP Chromebook 14 (aka nyan
+> blaze), which is very similar to the Acer Chromebook 13 (aka nyan big).
+> Because they both include tegra124-nyan.dtsi, some improvements to Blaze
+> support have also benefitted the Big. I have tested that USB2, the panels,
+> HDMI, the trackpad, Wifi and sound work on both.
+>=20
+> The leaf DTs contain the whole pinmux configuration as generated by
+> tegra-pinmux-scripts. I chose to not put the common configuration in the
+> common dtsi so we can paste the output as is and be sure that the kernel
+> doesn't diverge from the canonical data.
+>=20
+> These patches are based on top of 4.0-rc1.
+>=20
+> http://cgit.collabora.com/git/user/tomeu/linux.git/log/?h=3Dnyan-v6
+>=20
+> Regards,
+>=20
+> Tomeu
+>=20
+> David Riley (1):
+>   soc/tegra: pmc: move to using a restart handler
+>=20
+> St=C3=A9phane Marchesin (1):
+>   drm/panel: add support for Samsung LTN140AT29 panel
+>=20
+> Tomeu Vizoso (10):
+>   ARM: tegra: Change model of sound card in Nyan Big
+>   ARM: tegra: Move out nyan-generic parts out from the nyan-big DT
+>   ARM: tegra: Add DTS for the nyan-blaze board
+>   ARM: tegra: Add node for trackpad in Nyan boards
+>   ARM: tegra: Use pwrseq-simple for the wifi in Nyan
+>   ARM: tegra: Use the generated pinmux data
+>   ARM: tegra: Set spi-max-frequency property to flash node
+>   drm/tegra: Reset the SOR on probe
+>   ARM: tegra: Add gpio-restart node
+>   ARM: tegra: The WiFi card is kept powered during suspend
+>=20
+>  .../bindings/panel/samsung,ltn140at29-301.txt      |    7 +
+>  arch/arm/boot/dts/Makefile                         |    1 +
+>  arch/arm/boot/dts/tegra124-nyan-big.dts            | 2119 +++++++++++---=
+------
+>  arch/arm/boot/dts/tegra124-nyan-blaze.dts          | 1332 ++++++++++++
+>  arch/arm/boot/dts/tegra124-nyan.dtsi               |  695 +++++++
+>  arch/arm/mach-tegra/tegra.c                        |    1 -
+>  drivers/gpu/drm/panel/panel-simple.c               |   26 +
+>  drivers/gpu/drm/tegra/sor.c                        |   14 +
+>  drivers/soc/tegra/pmc.c                            |   31 +-
+>  9 files changed, 3254 insertions(+), 972 deletions(-)
 >  create mode 100644 Documentation/devicetree/bindings/panel/samsung,ltn14=
 0at29-301.txt
+>  create mode 100644 arch/arm/boot/dts/tegra124-nyan-blaze.dts
+>  create mode 100644 arch/arm/boot/dts/tegra124-nyan.dtsi
 
-Applied, thanks.
+Patches 1, 2, 4-8, 11 and 12 applied to the for-4.1/dt branch.
+
+Thanks,
 Thierry
 
---V88s5gaDVPzZ0KCq
+--UfEAyuTBtIjiZzX6
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJVETv8AAoJEN0jrNd/PrOh3N0QAJFXOILy5yQWubjFj6FVGkXV
-ZCS+BeTB5+x2mRDnhDqyqU2cQPmcgbC5p5OqZSVW/JBKeKxfyDMVbvctXSeAeHBz
-a7pIdpvJkBzZtX6DZ/1keGgWy/Sj+oKvo1clYtaFinuufIRNyN2HRB8nHoB1NNFx
-kYQRij9vEXNWoKOpILWSo8ZfTFdWxQMXhDB+NJuL3G/ySLHUx6FqIHzLHOd2dCec
-gER8GgQoARtd2uVO7j/Ch3nF4/WLHw8Sr2HinlZUYuJj65okUQ/xufBhmuzQfioU
-hG4yX2dw3cu3I4bC5QuXJjNetdkijMly7EFi90ZxEWADHIap0bCeoXjd+6kqJSzL
-O5Fi5dkUFd+8BHL3ZSgLrdDTP0sXqqd+oFIvb3ML9z/I8JkqpoxeoKquHtldTnub
-X9tr4qP2LzR6TAg0KvrsRszlHHUBu/AIoNK1DJyqXubwl+vkaNqmOdWyYBBmjmIW
-4I5ulKBChMDTGAzcXOZ8RfL4bP6HRnml0MnhvgG/YBNY9rRne3B3eGBBaKkfVIhU
-Askfx5+nly5KphqQSR2p5H8ra0SYL72z+9982Bshkh4yBmCWBlXqIA2xyKEjyICW
-eHhw+AqYD1t9xEeS1EyEbrmdsqdvls90G+P7jNvWeuKGAywd4wMsXKvFucN2PiqY
-86yZuq+GehLSr4aIs6cS
-=VKDr
+iQIcBAABCAAGBQJVETxkAAoJEN0jrNd/PrOhMLEP/09WJ5ziVHEESZeKFUcK2zeC
+YJPB7svtNK1vdd1cxmFEw0nEY4FNvL/13GksgJeetrYDQFzNTxQvKsf4tgOSkA8A
+K8Cyyh1sXLOOwIRCHTpJRQZAyTFkp1qEiX8d8CshiWeKGerPIUbFcUc44dKExtM/
+X9Gv5pUDmEyXbKgPJTL/10OMLi7pCSmB4+ZRUtI9a37TLoy/+4L42C5BYbkVTPYD
+XbekpDVwOQc+siVUCAVulvjpFGPgUccX5NDJv2weldfy+q9+lfQNyfJpOHzsjEdh
+WhCNeZo9h2o+xj/1WhuHHVNtOClHmVyz8y43tLpZ27lOrvlnJEiwCKfxqefFIFvi
+X9LRu64cqwC7lx/bTD5n+QLVMStXAlPCLG3ghLYrWeJTUZhbUHDRG5tc96UKVrpk
+fDQD09zqiGXjPNvkdxCZy4V79jA0KexJtyY1SYZn3SYzbBltItAnZdRjNkwEAtEE
+cEsnSvZgVs8tp58jHO/HT5Mf7fb/iZNZ8InIH3Gd6XQQsYMuPhszEDaMZUnoHyAJ
+t4fnYPYps3cW2r/vbRdR+g5Gn443KBBChDAj4iMubN/aceERPYqOt2pUWrc+hL2y
+sbosMFKSTgsz7x1LCXxY9PTVXaE3m3lywSi3Vo7ArNwd6HLRPxe6rZZJqKqli0bM
+v4M0RLX1Ic6+TonhNCna
+=ACIG
 -----END PGP SIGNATURE-----
 
---V88s5gaDVPzZ0KCq--
+--UfEAyuTBtIjiZzX6--
