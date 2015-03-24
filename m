@@ -1,64 +1,118 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v6 8/8] ARM: tegra: Add Tegra124 ACTMON support
-Date: Tue, 24 Mar 2015 11:32:19 +0100
-Message-ID: <20150324103218.GE18115@ulmo.nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v6 3/8] clk: tegra: Have EMC clock implement
+ determine_rate()
+Date: Tue, 24 Mar 2015 11:38:35 +0100
+Message-ID: <20150324103834.GF18115@ulmo.nvidia.com>
 References: <1426584991-11110-1-git-send-email-tomeu.vizoso@collabora.com>
- <1426584991-11110-9-git-send-email-tomeu.vizoso@collabora.com>
+ <1426584991-11110-4-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="jKBxcB1XkHIR0Eqt"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="HCdXmnRlPgeNBad2"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1426584991-11110-9-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1426584991-11110-4-git-send-email-tomeu.vizoso@collabora.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-tegra@vger.kernel.org, Mikko Perttunen <mikko.perttunen@kapsi.fi>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---jKBxcB1XkHIR0Eqt
+--HCdXmnRlPgeNBad2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 17, 2015 at 10:36:18AM +0100, Tomeu Vizoso wrote:
-> Add device node for the ACTMON block to the Tegra124 device tree.
+On Tue, Mar 17, 2015 at 10:36:13AM +0100, Tomeu Vizoso wrote:
+> instead of round_rate, so we can take rate constraints into account when
+> choosing the best rate.
 >=20
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-> Reviewed-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
+> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
 > ---
->=20
-> v6:	* Remove operating-points property
->=20
-> v2:	* Add operating-points property
-> ---
->  arch/arm/boot/dts/tegra124.dtsi | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+>  drivers/clk/tegra/clk-emc.c | 19 +++++++++++++++----
+>  1 file changed, 15 insertions(+), 4 deletions(-)
 
-Applied, thanks.
+Mike, Stephen,
 
+I'd like to take this into the Tegra tree because other patches depend
+on this (albeit as far as I can tell it's only a runtime dependency).
+This patch also depends on the EMC frequency scaling patches (that Mike
+Acked) that I have in a separate branch. Alternatively I can provide a
+stable branch with my current stash of patches that you can pull into
+the clk tree.
+
+Thanks,
 Thierry
 
---jKBxcB1XkHIR0Eqt
+> diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
+> index 704fff7..615da43 100644
+> --- a/drivers/clk/tegra/clk-emc.c
+> +++ b/drivers/clk/tegra/clk-emc.c
+> @@ -117,8 +117,11 @@ static unsigned long emc_recalc_rate(struct clk_hw *=
+hw,
+>   * safer since things have EMC rate floors. Also don't touch parent_rate
+>   * since we don't want the CCF to play with our parent clocks.
+>   */
+> -static long emc_round_rate(struct clk_hw *hw, unsigned long rate,
+> -		    unsigned long *parent_rate)
+> +static long emc_determine_rate(struct clk_hw *hw, unsigned long rate,
+> +			       unsigned long min_rate,
+> +			       unsigned long max_rate,
+> +			       unsigned long *best_parent_rate,
+> +			       struct clk_hw **best_parent_hw)
+>  {
+>  	struct tegra_clk_emc *tegra;
+>  	u8 ram_code =3D tegra_read_ram_code();
+> @@ -133,7 +136,15 @@ static long emc_round_rate(struct clk_hw *hw, unsign=
+ed long rate,
+> =20
+>                  timing =3D tegra->timings + i;
+> =20
+> -                if (timing->rate >=3D rate)
+> +		if (timing->rate > max_rate) {
+> +			i =3D min(i, 1);
+> +			return tegra->timings[i - 1].rate;
+> +		}
+> +
+> +		if (timing->rate < min_rate)
+> +			continue;
+> +
+> +		if (timing->rate >=3D rate)
+>                          return timing->rate;
+>          }
+> =20
+> @@ -452,7 +463,7 @@ static int load_timings_from_dt(struct tegra_clk_emc =
+*tegra,
+> =20
+>  static const struct clk_ops tegra_clk_emc_ops =3D {
+>  	.recalc_rate =3D emc_recalc_rate,
+> -	.round_rate =3D emc_round_rate,
+> +	.determine_rate =3D emc_determine_rate,
+>  	.set_rate =3D emc_set_rate,
+>  	.get_parent =3D emc_get_parent,
+>  };
+> --=20
+> 2.1.0
+>=20
+
+--HCdXmnRlPgeNBad2
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJVET0yAAoJEN0jrNd/PrOhLYcP/0ny/HqIFX127rQh3w0BPEgL
-8+TpX9Td9cOcIc5lhrs+mSFAQXruYr4YZi3buVh1JUGIv3WmKXhT6a5aJffFt9X3
-N9BU1XKPTpj66SmjKJifHtx4+t+6nGFHxRqeWr5IBQLy0KSq92ROMdMOGxheFObt
-tIgMIZE5m4Jo1g4fRoJ8s7R62RQ+igf4WTIsiNbrz2eF3I3t41erroWGam4sPPF0
-YYi+RKhqrWDVqZfHbtY/y8++4Km5vI77s8xmhNAXYHr0RvC2oP5ki04aCWtfZZvF
-JxBoB1lQYwlOzVQbcgceo7+UEtY6Qv8+EPAE0vy/G9a7t6UlxxTQwq3v76sN5s5u
-PPB8dV0dGybVj4g5fNvRWpNOMUlDUA6XuEv0yisnzKBb1U6mdIJ7Wxrx1p1YGKQh
-ST5S89w9Ok+le6WB8W0jbndeSRO/KN7Ghey60ze8FJqdG1+wM3myHiHDW5DDaxvL
-WrfoSQshR0C7tvQnOZU0Nvi1geWibpjNSW7TsHXdTTk0L67YcDCyk6XQ79h60zVC
-rnLZCRYgFxjkbUk3picBq+mfi1ksyoZiCZ1u1T4338mM73QXCyBgq+HIjYOhxyRr
-kHWR34Z6PX3OCNyRzpfOJ3lTXj2Eh4FKEjynPEetG7BqN75iDcc7mTLJX3+FO7IF
-7176s+OmaCDOs++fdd0C
-=amsA
+iQIcBAABCAAGBQJVET6qAAoJEN0jrNd/PrOh4egP/1FJDUrM7fFtD1EOgcVpIlHf
+WvQvhmmUGFhidvGh+Lw8RReTJKFuDb8tZ2fv7BZsGnIifckEKt39nsdjiSAc3dnt
+S1xv99mWhKgE4uhNwSzyMPvjAEnbMHoZ4kRxyy8k/c2ByxmbGyF3CPtROE9+1lDG
+HhjyNSkZ+SZmDHNPvFUEtkbZ3K50iELIPdXIaLv4VO4R91ae+9PQhElbkzQ1BUOG
+aaAe7SzdGEbnJ156iH671rOS3FLHZqPs2AOBvMhkE6u3pOs6YtqKltIvM60wAbIf
+xuAG22OwseDxhfLjYVOq4BGpgnXZhv88+vuZtHsZRbv/3iKQ0xTKU0U/C6FIksFJ
+pmUqX1ODXzyEDFdlizEgNETcGU9UzXYf1RQB2Q4R0FMREj1ygYOM8ZXA6qnqKsRH
+GcS23eNyIikrt3dKM1FkBnFxINOmOntZtuje+9dUEKsgRo/LHC6H6jPOz+yAftYq
+WnIF7ZbDIRv2k2BUXUpVhU3nz91ohdSrBkZFgYJzMojWc8BPhes9ItAzQZm5K250
+vE+4COt9F1JYdEv7sLAEkAKCUTtdPPYei9lwMw1mG4sAJuqaPRb49m6nsmLNUH5l
+yqlqLQKb01zfKXuOCcRo1ixrJmlPLbC1PG7PuEAx1Fmx/Mu9bKY30XuXbEefO7HJ
+wJRohOgTec+jF1WVCv4W
+=OkE0
 -----END PGP SIGNATURE-----
 
---jKBxcB1XkHIR0Eqt--
+--HCdXmnRlPgeNBad2--
