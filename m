@@ -1,118 +1,66 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v6 3/8] clk: tegra: Have EMC clock implement
- determine_rate()
-Date: Tue, 24 Mar 2015 11:38:35 +0100
-Message-ID: <20150324103834.GF18115@ulmo.nvidia.com>
-References: <1426584991-11110-1-git-send-email-tomeu.vizoso@collabora.com>
- <1426584991-11110-4-git-send-email-tomeu.vizoso@collabora.com>
+Subject: Re: [PATCH v8 24/30] PCI/tegra: Remove redundant
+ tegra_pcie_scan_bus()
+Date: Tue, 24 Mar 2015 13:31:40 +0100
+Message-ID: <20150324123139.GA11625@ulmo.nvidia.com>
+References: <1427168064-8657-1-git-send-email-wangyijing@huawei.com>
+ <1427168064-8657-25-git-send-email-wangyijing@huawei.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="HCdXmnRlPgeNBad2"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="bp/iNruPH9dso1Pn"
+Return-path: <linux-alpha-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1426584991-11110-4-git-send-email-tomeu.vizoso@collabora.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-tegra@vger.kernel.org, Mikko Perttunen <mikko.perttunen@kapsi.fi>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org
+In-Reply-To: <1427168064-8657-25-git-send-email-wangyijing@huawei.com>
+Sender: linux-alpha-owner@vger.kernel.org
+To: Yijing Wang <wangyijing@huawei.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Jiang Liu <jiang.liu@linux.intel.com>, linux-pci@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Rusty Russell <rusty@rustcorp.com.au>, Tony Luck <tony.luck@intel.com>, linux-ia64@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Guan Xuetao <gxt@mprc.pku.edu.cn>, linux-alpha@vger.kernel.org, linux-m68k@lists.linux-m68k.org, Liviu Dudau <liviu@dudau.co.uk>, Arnd Bergmann <arnd@arndb.de>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---HCdXmnRlPgeNBad2
+--bp/iNruPH9dso1Pn
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 17, 2015 at 10:36:13AM +0100, Tomeu Vizoso wrote:
-> instead of round_rate, so we can take rate constraints into account when
-> choosing the best rate.
+On Tue, Mar 24, 2015 at 11:34:18AM +0800, Yijing Wang wrote:
+> Now pci_scan_root_bus() is almost similar to
+> pci_create_root_bus() + pci_scan_child_bus().
+> So we could use common pci_scan_root_bus() in
+> pci_common_init_dev() to scan pci busses.
+> tegra_pcie_scan_bus() is redundant, remove it.
 >=20
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> Signed-off-by: Yijing Wang <wangyijing@huawei.com>
+> CC: Thierry Reding <thierry.reding@gmail.com>
+> CC: linux-tegra@vger.kernel.org
 > ---
->  drivers/clk/tegra/clk-emc.c | 19 +++++++++++++++----
->  1 file changed, 15 insertions(+), 4 deletions(-)
+>  drivers/pci/host/pci-tegra.c |   16 ----------------
+>  1 files changed, 0 insertions(+), 16 deletions(-)
 
-Mike, Stephen,
+Jetson TK1 still boots over NFS root via the onboard PCIe network card
+with this series applied, so:
 
-I'd like to take this into the Tegra tree because other patches depend
-on this (albeit as far as I can tell it's only a runtime dependency).
-This patch also depends on the EMC frequency scaling patches (that Mike
-Acked) that I have in a separate branch. Alternatively I can provide a
-stable branch with my current stash of patches that you can pull into
-the clk tree.
+Tested-by: Thierry Reding <treding@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Thanks,
-Thierry
-
-> diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
-> index 704fff7..615da43 100644
-> --- a/drivers/clk/tegra/clk-emc.c
-> +++ b/drivers/clk/tegra/clk-emc.c
-> @@ -117,8 +117,11 @@ static unsigned long emc_recalc_rate(struct clk_hw *=
-hw,
->   * safer since things have EMC rate floors. Also don't touch parent_rate
->   * since we don't want the CCF to play with our parent clocks.
->   */
-> -static long emc_round_rate(struct clk_hw *hw, unsigned long rate,
-> -		    unsigned long *parent_rate)
-> +static long emc_determine_rate(struct clk_hw *hw, unsigned long rate,
-> +			       unsigned long min_rate,
-> +			       unsigned long max_rate,
-> +			       unsigned long *best_parent_rate,
-> +			       struct clk_hw **best_parent_hw)
->  {
->  	struct tegra_clk_emc *tegra;
->  	u8 ram_code =3D tegra_read_ram_code();
-> @@ -133,7 +136,15 @@ static long emc_round_rate(struct clk_hw *hw, unsign=
-ed long rate,
-> =20
->                  timing =3D tegra->timings + i;
-> =20
-> -                if (timing->rate >=3D rate)
-> +		if (timing->rate > max_rate) {
-> +			i =3D min(i, 1);
-> +			return tegra->timings[i - 1].rate;
-> +		}
-> +
-> +		if (timing->rate < min_rate)
-> +			continue;
-> +
-> +		if (timing->rate >=3D rate)
->                          return timing->rate;
->          }
-> =20
-> @@ -452,7 +463,7 @@ static int load_timings_from_dt(struct tegra_clk_emc =
-*tegra,
-> =20
->  static const struct clk_ops tegra_clk_emc_ops =3D {
->  	.recalc_rate =3D emc_recalc_rate,
-> -	.round_rate =3D emc_round_rate,
-> +	.determine_rate =3D emc_determine_rate,
->  	.set_rate =3D emc_set_rate,
->  	.get_parent =3D emc_get_parent,
->  };
-> --=20
-> 2.1.0
->=20
-
---HCdXmnRlPgeNBad2
+--bp/iNruPH9dso1Pn
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJVET6qAAoJEN0jrNd/PrOh4egP/1FJDUrM7fFtD1EOgcVpIlHf
-WvQvhmmUGFhidvGh+Lw8RReTJKFuDb8tZ2fv7BZsGnIifckEKt39nsdjiSAc3dnt
-S1xv99mWhKgE4uhNwSzyMPvjAEnbMHoZ4kRxyy8k/c2ByxmbGyF3CPtROE9+1lDG
-HhjyNSkZ+SZmDHNPvFUEtkbZ3K50iELIPdXIaLv4VO4R91ae+9PQhElbkzQ1BUOG
-aaAe7SzdGEbnJ156iH671rOS3FLHZqPs2AOBvMhkE6u3pOs6YtqKltIvM60wAbIf
-xuAG22OwseDxhfLjYVOq4BGpgnXZhv88+vuZtHsZRbv/3iKQ0xTKU0U/C6FIksFJ
-pmUqX1ODXzyEDFdlizEgNETcGU9UzXYf1RQB2Q4R0FMREj1ygYOM8ZXA6qnqKsRH
-GcS23eNyIikrt3dKM1FkBnFxINOmOntZtuje+9dUEKsgRo/LHC6H6jPOz+yAftYq
-WnIF7ZbDIRv2k2BUXUpVhU3nz91ohdSrBkZFgYJzMojWc8BPhes9ItAzQZm5K250
-vE+4COt9F1JYdEv7sLAEkAKCUTtdPPYei9lwMw1mG4sAJuqaPRb49m6nsmLNUH5l
-yqlqLQKb01zfKXuOCcRo1ixrJmlPLbC1PG7PuEAx1Fmx/Mu9bKY30XuXbEefO7HJ
-wJRohOgTec+jF1WVCv4W
-=OkE0
+iQIcBAABCAAGBQJVEVknAAoJEN0jrNd/PrOhgSAQAKCC9PfTMZLcgurKsdBmqctU
+7WkCuoKLDv1sbEfF1mzfk8VI/9kROf6bIyKKgvXV2V50p8OHBbJBJmjR5U48/37v
+iDGVlSrSII4+G3Mv/HWx/Dvh1whXYp/TH+SNUPNY1BdSIRmvjmLQ3QYBuC6P3N6W
+kjd5NW5KkgZ0NPORWfXzEabkXIGEjIk8fsB6ILXxBVJMdUxiLA4LyOQAmmuzoviW
+TAsboT7liAJPbiM2mjnYqo6ZdDR7Y8hotXBf8KtIxlzns12VQZl40GdtvZ7zWi4R
+tH3zyYqJuhyg6VjvDMZzKZsmU4hctOQ2sgeYOFn52t8nPIZqJMoLT3nAabgUw+7x
+NNI+oZGD8Wo4XGDXQyiY1ihjObLCD2uDfpKfdwmCRlYFef66rEWW0gImACCCprEc
+9jqQgqZAN9AXX+1OkNyX+Ioiy2v7yicVi/JMHawdEEdszSuG3RuZIQQWku+T2UDy
+WmpI2MdZRUEAJiW1V5rOBibae2uvGEHedkZmOqkjG2NLFqt633FlUg416ucPD+eJ
+VKWNXwsJyqBtGpifsUaFZfSNFsvSZ4gceI+/KD0ZpmhhAXkh+AVoNTa1iZLjq3X9
+q8J1YflS6mHPbE+D37LRDLg47XoHRIf0Ly/9GukoXbowfnP3/Fy1532Zy+1eXyBb
+Lk3IVyxC8BFsZ0j1FZKG
+=0jIA
 -----END PGP SIGNATURE-----
 
---HCdXmnRlPgeNBad2--
+--bp/iNruPH9dso1Pn--
