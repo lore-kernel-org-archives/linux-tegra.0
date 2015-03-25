@@ -1,45 +1,66 @@
-From: Yijing Wang <wangyijing@huawei.com>
-Subject: Re: [PATCH v8 24/30] PCI/tegra: Remove redundant tegra_pcie_scan_bus()
-Date: Wed, 25 Mar 2015 09:22:02 +0800
-Message-ID: <55120DBA.7080105@huawei.com>
-References: <1427168064-8657-1-git-send-email-wangyijing@huawei.com> <1427168064-8657-25-git-send-email-wangyijing@huawei.com> <20150324123139.GA11625@ulmo.nvidia.com>
+From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] drm/panel: sharp: lq101r1sx01: Send cmds to panel from link2
+Date: Wed, 25 Mar 2015 14:48:35 +0800
+Message-ID: <1427266115-31644-1-git-send-email-markz@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-ia64-owner@vger.kernel.org>
-In-Reply-To: <20150324123139.GA11625@ulmo.nvidia.com>
-Sender: linux-ia64-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Jiang Liu <jiang.liu@linux.intel.com>, linux-pci@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Rusty Russell <rusty@rustcorp.com.au>, Tony Luck <tony.luck@intel.com>, linux-ia64@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Guan Xuetao <gxt@mprc.pku.edu.cn>, linux-alpha@vger.kernel.org, linux-m68k@lists.linux-m68k.org, Liviu Dudau <liviu@dudau.co.uk>, Arnd Bergmann <arnd@arndb.de>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-tegra@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 2015/3/24 20:31, Thierry Reding wrote:
-> On Tue, Mar 24, 2015 at 11:34:18AM +0800, Yijing Wang wrote:
->> Now pci_scan_root_bus() is almost similar to
->> pci_create_root_bus() + pci_scan_child_bus().
->> So we could use common pci_scan_root_bus() in
->> pci_common_init_dev() to scan pci busses.
->> tegra_pcie_scan_bus() is redundant, remove it.
->>
->> Signed-off-by: Yijing Wang <wangyijing@huawei.com>
->> CC: Thierry Reding <thierry.reding@gmail.com>
->> CC: linux-tegra@vger.kernel.org
->> ---
->>  drivers/pci/host/pci-tegra.c |   16 ----------------
->>  1 files changed, 0 insertions(+), 16 deletions(-)
-> 
-> Jetson TK1 still boots over NFS root via the onboard PCIe network card
-> with this series applied, so:
-> 
-> Tested-by: Thierry Reding <treding@nvidia.com>
-> Acked-by: Thierry Reding <treding@nvidia.com>
+Sharp lq101r1sx01 panel works as left-right gang mode. So link2
+should send cmds like "exit sleep mode", "set display on"
+to panel as well.
 
-Thanks!
+Signed-off-by: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-> 
-
-
+diff --git a/drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c b/drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c
+index 3cce3ca19601..e7c094dbf2e4 100644
+--- a/drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c
++++ b/drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c
+@@ -193,6 +193,12 @@ static int sharp_panel_prepare(struct drm_panel *panel)
+ 		dev_err(panel->dev, "failed to exit sleep mode: %d\n", err);
+ 		goto poweroff;
+ 	}
++	err = mipi_dsi_dcs_exit_sleep_mode(sharp->link2);
++	if (err < 0) {
++		dev_err(panel->dev, "link2: failed to exit sleep mode: %d\n",
++					err);
++		goto poweroff;
++	}
+ 
+ 	/*
+ 	 * The MIPI DCS specification mandates this delay only between the
+@@ -222,6 +228,12 @@ static int sharp_panel_prepare(struct drm_panel *panel)
+ 		dev_err(panel->dev, "failed to set pixel format: %d\n", err);
+ 		goto poweroff;
+ 	}
++	err = mipi_dsi_dcs_set_pixel_format(sharp->link2, format);
++	if (err < 0) {
++		dev_err(panel->dev, "link2: failed to set pixel format: %d\n",
++					err);
++		goto poweroff;
++	}
+ 
+ 	/*
+ 	 * TODO: The device supports both left-right and even-odd split
+@@ -243,6 +255,12 @@ static int sharp_panel_prepare(struct drm_panel *panel)
+ 		dev_err(panel->dev, "failed to set display on: %d\n", err);
+ 		goto poweroff;
+ 	}
++	err = mipi_dsi_dcs_set_display_on(sharp->link2);
++	if (err < 0) {
++		dev_err(panel->dev, "link2: failed to set display on: %d\n",
++					err);
++		goto poweroff;
++	}
+ 
+ 	sharp->prepared = true;
+ 
 -- 
-Thanks!
-Yijing
-
+2.1.4
