@@ -1,86 +1,68 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [cbootimage PATCH v3 0/3] Add support for Tegra210
-Date: Wed, 25 Mar 2015 09:33:00 +0100
-Message-ID: <20150325083259.GA3794@ulmo.nvidia.com>
-References: <1426897221-20307-1-git-send-email-jimmzhang@nvidia.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Nq2Wo0NMKNjxTN9z"
+From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Subject: [PATCH] drm/tegra: Reset the SOR during initialization
+Date: Wed, 25 Mar 2015 09:59:39 +0100
+Message-ID: <1427273979-394-1-git-send-email-tomeu.vizoso@collabora.com>
+References: <20150324102447.GA18115@ulmo.nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1426897221-20307-1-git-send-email-jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20150324102447.GA18115-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+As there isn't a way for the firmware on the Nyan chromebooks to hand
+over the display to the kernel, and the kernel isn't redoing the whole
+configuration at present.
 
---Nq2Wo0NMKNjxTN9z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+With this patch, the SOR is brought to a known state and we get correct
+display on every boot.
 
-On Fri, Mar 20, 2015 at 05:20:18PM -0700, Jimmy Zhang wrote:
-> Four t210 specific supporting files are added under src/t210 diretory.
-> Comparing T210 bct to T132 bct, the main changes include the size increas=
-ed
-> to 10240 from 8704. The number of boot devices that can be specified in b=
-ct
-> is reduced from 4 to 1. And many new fileds are added to nvboot_sdram_par=
-ams.
->=20
-> v1: Initial changes
-> v2: Fix some minor issues found in v1
->     Removed files src/t210/nvboot_config.h and src/t210/sdram_param.h
->             that were added unintentionally in v1.
-> v3: Remove "deprecated" from help -t option help text.
-> =20
-> Jimmy Zhang (3):
->   Add support for Tegra210
->   Remove misleading message "deprecated"
->   Bump to version 1.5
->=20
->  configure.ac                       |    2 +-
->  src/Makefile.am                    |   12 +-
->  src/bct_dump.c                     |    1 +
->  src/cbootimage.c                   |   10 +-
->  src/cbootimage.h                   |    6 +-
->  src/data_layout.c                  |    2 +
->  src/parse.c                        |    1 +
->  src/parse.h                        |  390 ++++++
->  src/set.c                          |    6 +
->  src/t210/nvbctlib_t210.c           | 2314 ++++++++++++++++++++++++++++++=
-++++++
->  src/t210/nvboot_bct_t210.h         |  406 +++++++
->  src/t210/nvboot_sdram_param_t210.h |  953 +++++++++++++++
->  src/t210/parse_t210.c              |  741 ++++++++++++
->  13 files changed, 4835 insertions(+), 9 deletions(-)
->  create mode 100644 src/t210/nvbctlib_t210.c
->  create mode 100644 src/t210/nvboot_bct_t210.h
->  create mode 100644 src/t210/nvboot_sdram_param_t210.h
->  create mode 100644 src/t210/parse_t210.c
+Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 
-Tested-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
 
---Nq2Wo0NMKNjxTN9z
-Content-Type: application/pgp-signature
+v7:	* Move the reset to the host1x_client_ops.init callback as
+	suggested by Thierry
+	* Reduced the time during which the reset line is asserted from
+	20ms to 2ms
+---
+ drivers/gpu/drm/tegra/sor.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJVEnK4AAoJEN0jrNd/PrOhq5gP/Ajk9NxXTzMAN4SRAq7/SzmF
-/6B4/KvqcRJ6N87qofDaTf+gAF77RPJ9K9JDEWQOjZe/7z5mlwzEMGjzEcEyut4q
-btRqgDRQcskjsqdFRFiwGif0EMblGwwFrNGqbKm8zOHCJ38V5/qaPuCHllKXfV+I
-sp7Bl7EKQbczwD4xNjHvIqe3NNuUHH2LGmGwpxUbuTCBK1KtOiKQpE+Kdx18GXO/
-KdFFLG96BnJDy9Dz3zif20VKY76gshwSzjR3CJQ475UwMtmAyEpLFF3iENvHZleg
-Jmlu3PAscR2VuaDQ97ZFAuIYH5f/88HdwsAXLwOqfEsrS56lGXpzNAWj2Xy468Be
-0jUE8VXLhgknywASB0bTkBksh+He09HNG6qMuV33CLGbd71tFhV8cRxmCpOGGRnM
-dfnimoKLByqZNwoPhlbw8D280K8fZwqmhJ6MPw8764xRaKjG5HlPOLihVCcpvL7L
-v5AGOhLXSL9H9OjEryjDxRtNLGEppWnem9oBRNAHTR5gvxDTHP31JlyYR9gIj397
-wHXWx0WTjlPCRHrCQbqTn/JGFl55rMRKp09Tg5vc6RAlGSd1NmFCLtt4HSEkwxHk
-tzkbr4ZlEy+DOKHVcIBeG3ChUAEev5HtowXq2DOZhqZpP5orkxRyqAHIPkiN0coy
-NvoPoL6i83uCASbhFcne
-=pYU4
------END PGP SIGNATURE-----
-
---Nq2Wo0NMKNjxTN9z--
+diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+index 2afe478..027a25d22 100644
+--- a/drivers/gpu/drm/tegra/sor.c
++++ b/drivers/gpu/drm/tegra/sor.c
+@@ -1354,12 +1354,30 @@ static int tegra_sor_init(struct host1x_client *client)
+ 		}
+ 	}
+ 
++	/*
++	 * XXX: Remove this reset once proper hand-over from firmware to
++	 * kernel is possible.
++	 */
++	err = reset_control_assert(sor->rst);
++	if (err < 0) {
++		dev_err(sor->dev, "failed to assert SOR reset: %d\n", err);
++		return err;
++	}
++
+ 	err = clk_prepare_enable(sor->clk);
+ 	if (err < 0) {
+ 		dev_err(sor->dev, "failed to enable clock: %d\n", err);
+ 		return err;
+ 	}
+ 
++	msleep(2);
++
++	err = reset_control_deassert(sor->rst);
++	if (err < 0) {
++		dev_err(sor->dev, "failed to deassert SOR reset: %d\n", err);
++		return err;
++	}
++
+ 	err = clk_prepare_enable(sor->clk_safe);
+ 	if (err < 0)
+ 		return err;
+-- 
+2.1.0
