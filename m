@@ -1,77 +1,53 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
+From: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: "ARM: multi_v7_defconfig: Enable shmobile platforms" breaks
  Tegra20 multi_v7_defconfig boot
-Date: Wed, 25 Mar 2015 19:46:16 +0100
-Message-ID: <CAMuHMdWO9nqtpsvjUdE6KSbiOTfX=7XnzX1QXt06r3W4Et2rDw@mail.gmail.com>
-References: <alpine.DEB.2.02.1503251740130.13341@utopia.booyaka.com>
-	<CANMBJr7ibVCxQRUG47OT0meNntMjEoVqL7kiEK9DtCfp5NXPgg@mail.gmail.com>
+Date: Wed, 25 Mar 2015 22:00:02 +0000 (UTC)
+Message-ID: <alpine.DEB.2.02.1503252157240.7173@utopia.booyaka.com>
+References: <alpine.DEB.2.02.1503251740130.13341@utopia.booyaka.com> <CANMBJr7ibVCxQRUG47OT0meNntMjEoVqL7kiEK9DtCfp5NXPgg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <CANMBJr7ibVCxQRUG47OT0meNntMjEoVqL7kiEK9DtCfp5NXPgg@mail.gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Paul Walmsley <paul@pwsan.com>, Tyler Baker <tyler.baker@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, Linux-sh list <linux-sh@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, pwalmsley@nvidia.com, linux-tegra@vger.kernel.org, Simon Horman <horms+renesas@verge.net.au>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CANMBJr7ibVCxQRUG47OT0meNntMjEoVqL7kiEK9DtCfp5NXPgg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tyler Baker <tyler.baker-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, horms+renesas-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Paul, Tyler,
+Hi Tyler
 
-On Wed, Mar 25, 2015 at 7:28 PM, Tyler Baker <tyler.baker@linaro.org> wrote:
-> On 25 March 2015 at 11:03, Paul Walmsley <paul@pwsan.com> wrote:
->> Looks like commit 4a3a6f86693922b29cf829c63f652b057f14619e ("ARM:
->> multi_v7_defconfig: Enable shmobile platforms") breaks Tegra20
->> multi_v7_defconfig boot.
->>
->> Boot log before:
->>
->> http://nvt.pwsan.com/pub/pwalmsley-tester/testlogs/test_20150325105514_6af714b069dc278d5d8e1b7afc13568f71d9aba8/20150325105514/boot/tegra20-trimslice/tegra20-trimslice/multi_v7_defconfig_log.txt
->>
->> Boot log after:
->>
->> http://nvt.pwsan.com/pub/pwalmsley-tester/testlogs/test_20150325105350_4a3a6f86693922b29cf829c63f652b057f14619e/20150325105350/boot/tegra20-trimslice/tegra20-trimslice/multi_v7_defconfig_log.txt
+On Wed, 25 Mar 2015, Tyler Baker wrote:
 
-So it just hangs when booting the kernel. Do you have any early debugging
-support (earlycon, DEBUG_LL) for your kernel?
-
->> Any ideas?  Stephen Warren thinks there might be an initcall that might
->> not check to see what kind of device it's running on.
-
-Always possible of course, but it didn't trigger on my boneblack.
-
+> On 25 March 2015 at 11:03, Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org> wrote:
+>
+> > Looks like commit 4a3a6f86693922b29cf829c63f652b057f14619e ("ARM:
+> > multi_v7_defconfig: Enable shmobile platforms") breaks Tegra20
+> > multi_v7_defconfig boot.
+> >
+> > Boot log before:
+> >
+> > http://nvt.pwsan.com/pub/pwalmsley-tester/testlogs/test_20150325105514_6af714b069dc278d5d8e1b7afc13568f71d9aba8/20150325105514/boot/tegra20-trimslice/tegra20-trimslice/multi_v7_defconfig_log.txt
+> >
+> > Boot log after:
+> >
+> > http://nvt.pwsan.com/pub/pwalmsley-tester/testlogs/test_20150325105350_4a3a6f86693922b29cf829c63f652b057f14619e/20150325105350/boot/tegra20-trimslice/tegra20-trimslice/multi_v7_defconfig_log.txt
+> >
+> >
+> > Any ideas?  Stephen Warren thinks there might be an initcall that might
+> > not check to see what kind of device it's running on.
+> 
 > Can you try to shift your kernel load address around a bit? From
 > experience with the boards from kernelci.org we find that as the multi
 > v7 kernel size increases they can clobber memory when they get
 > decompressed.
 
-Kernel size can indeed be an issue. I believe the failure to boot on ape6evm
-from U-Boot mentioned in the commit is caused by that, too.
-Note that the error message only shows up with DEBUG_LL enabled (and
-some manual editing of Kconfig.debug to make that work).
+Thanks, that was it:
 
-I'll try changing the kernel load address on ape6evm, too.
+http://nvt.pwsan.com/pub/pwalmsley-tester/testlogs/test_20150325144058_6af714b069dc278d5d8e1b7afc13568f71d9aba8/20150325144058/boot/tegra20-trimslice/tegra20-trimslice/multi_v7_defconfig_log.txt
 
->> commit 4a3a6f86693922b29cf829c63f652b057f14619e
->> Author: Geert Uytterhoeven <geert+renesas@glider.be>
->> Date:   Tue Feb 24 15:14:45 2015 +0100
->>
->>     ARM: multi_v7_defconfig: Enable shmobile platforms
->>
->>     Enable support for shmobile platforms that became multi-platform aware.
->>     Several non-critical drivers and subsystems are built as modules, to keep
->>     kernel size reasonable.
->>
->>     Tested on:
->>       - r8a73a4/ape6evm:
->>           - U-Boot fails with "Error: unrecognized/unsupported machine ID",
->>           - kexec works.
+Should have guessed when absolutely no debug output was emitted by the 
+board...
 
-Gr{oetje,eeting}s,
+Sorry for the false alarm, Geert!
 
-                        Geert
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+- Paul
