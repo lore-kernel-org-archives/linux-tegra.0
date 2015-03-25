@@ -1,25 +1,63 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [cbootimage PATCH v3 0/3] Add support for Tegra210
-Date: Wed, 25 Mar 2015 08:23:54 -0600
-Message-ID: <5512C4FA.6030201@wwwdotorg.org>
-References: <1426897221-20307-1-git-send-email-jimmzhang@nvidia.com> <20150325083259.GA3794@ulmo.nvidia.com>
+From: Paul Walmsley <paul@pwsan.com>
+Subject: "ARM: multi_v7_defconfig: Enable shmobile platforms" breaks Tegra20
+ multi_v7_defconfig boot
+Date: Wed, 25 Mar 2015 18:03:25 +0000 (UTC)
+Message-ID: <alpine.DEB.2.02.1503251740130.13341@utopia.booyaka.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150325083259.GA3794-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-sh-owner@vger.kernel.org>
+Sender: linux-sh-owner@vger.kernel.org
+To: geert+renesas@glider.be
+Cc: swarren@wwwdotorg.org, pwalmsley@nvidia.com, thierry.reding@gmail.com, horms+renesas@verge.net.au, arnd@arndb.de, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-sh@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/25/2015 02:33 AM, Thierry Reding wrote:
-> On Fri, Mar 20, 2015 at 05:20:18PM -0700, Jimmy Zhang wrote:
->> Four t210 specific supporting files are added under src/t210 diretory.
->> Comparing T210 bct to T132 bct, the main changes include the size increased
->> to 10240 from 8704. The number of boot devices that can be specified in bct
->> is reduced from 4 to 1. And many new fileds are added to nvboot_sdram_params.
->
-> Tested-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Thanks. I've applied the series and pushed, along with the v1.5 tag.
+Hello Geert,
+
+Looks like commit 4a3a6f86693922b29cf829c63f652b057f14619e ("ARM: 
+multi_v7_defconfig: Enable shmobile platforms") breaks Tegra20 
+multi_v7_defconfig boot.  
+
+Boot log before:
+
+http://nvt.pwsan.com/pub/pwalmsley-tester/testlogs/test_20150325105514_6af714b069dc278d5d8e1b7afc13568f71d9aba8/20150325105514/boot/tegra20-trimslice/tegra20-trimslice/multi_v7_defconfig_log.txt
+
+Boot log after:
+
+http://nvt.pwsan.com/pub/pwalmsley-tester/testlogs/test_20150325105350_4a3a6f86693922b29cf829c63f652b057f14619e/20150325105350/boot/tegra20-trimslice/tegra20-trimslice/multi_v7_defconfig_log.txt
+
+
+Any ideas?  Stephen Warren thinks there might be an initcall that might 
+not check to see what kind of device it's running on.
+
+
+- Paul
+
+commit 4a3a6f86693922b29cf829c63f652b057f14619e
+Author: Geert Uytterhoeven <geert+renesas@glider.be>
+Date:   Tue Feb 24 15:14:45 2015 +0100
+
+    ARM: multi_v7_defconfig: Enable shmobile platforms
+    
+    Enable support for shmobile platforms that became multi-platform aware.
+    Several non-critical drivers and subsystems are built as modules, to keep
+    kernel size reasonable.
+    
+    Tested on:
+      - r8a73a4/ape6evm:
+          - U-Boot fails with "Error: unrecognized/unsupported machine ID",
+          - kexec works.
+      - r8a7740/armadillo:
+          - Hermit boot loader fails (larger image, more memory corruption),
+          - kexec works.
+      - r8a7791/koelsch,
+      - sh73a0/kzm9g:
+          - zImage+DTB from U-Boot needs CONFIG_ARM_ATAG_DTB_COMPAT=n,
+          - kexec works.
+      - am335x/boneblack.
+    
+    Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+    Acked-by: Simon Horman <horms+renesas@verge.net.au>
+    Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+
