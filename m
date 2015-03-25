@@ -1,7 +1,7 @@
 From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] drm/panel: sharp: lq101r1sx01: Send cmds to panel from link2
-Date: Wed, 25 Mar 2015 14:48:35 +0800
-Message-ID: <1427266115-31644-1-git-send-email-markz@nvidia.com>
+Subject: [PATCH v2] drm/panel: sharp: lq101r1sx01: Send cmds to panel from link2
+Date: Wed, 25 Mar 2015 14:56:42 +0800
+Message-ID: <1427266602-31905-1-git-send-email-markz@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
@@ -16,14 +16,33 @@ to panel as well.
 
 Signed-off-by: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c | 26 +++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
 diff --git a/drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c b/drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c
-index 3cce3ca19601..e7c094dbf2e4 100644
+index 3cce3ca19601..13e67a0ad3d9 100644
 --- a/drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c
 +++ b/drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c
-@@ -193,6 +193,12 @@ static int sharp_panel_prepare(struct drm_panel *panel)
+@@ -119,10 +119,18 @@ static int sharp_panel_unprepare(struct drm_panel *panel)
+ 	err = mipi_dsi_dcs_set_display_off(sharp->link1);
+ 	if (err < 0)
+ 		dev_err(panel->dev, "failed to set display off: %d\n", err);
++	err = mipi_dsi_dcs_set_display_off(sharp->link2);
++	if (err < 0)
++		dev_err(panel->dev, "link2: failed to set display off: %d\n",
++					err);
+ 
+ 	err = mipi_dsi_dcs_enter_sleep_mode(sharp->link1);
+ 	if (err < 0)
+ 		dev_err(panel->dev, "failed to enter sleep mode: %d\n", err);
++	err = mipi_dsi_dcs_enter_sleep_mode(sharp->link2);
++	if (err < 0)
++		dev_err(panel->dev, "link2: failed to enter sleep mode: %d\n",
++					err);
+ 
+ 	msleep(120);
+ 
+@@ -193,6 +201,12 @@ static int sharp_panel_prepare(struct drm_panel *panel)
  		dev_err(panel->dev, "failed to exit sleep mode: %d\n", err);
  		goto poweroff;
  	}
@@ -36,7 +55,7 @@ index 3cce3ca19601..e7c094dbf2e4 100644
  
  	/*
  	 * The MIPI DCS specification mandates this delay only between the
-@@ -222,6 +228,12 @@ static int sharp_panel_prepare(struct drm_panel *panel)
+@@ -222,6 +236,12 @@ static int sharp_panel_prepare(struct drm_panel *panel)
  		dev_err(panel->dev, "failed to set pixel format: %d\n", err);
  		goto poweroff;
  	}
@@ -49,7 +68,7 @@ index 3cce3ca19601..e7c094dbf2e4 100644
  
  	/*
  	 * TODO: The device supports both left-right and even-odd split
-@@ -243,6 +255,12 @@ static int sharp_panel_prepare(struct drm_panel *panel)
+@@ -243,6 +263,12 @@ static int sharp_panel_prepare(struct drm_panel *panel)
  		dev_err(panel->dev, "failed to set display on: %d\n", err);
  		goto poweroff;
  	}
