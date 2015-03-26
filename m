@@ -1,29 +1,58 @@
-From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2] drm/panel: sharp: lq101r1sx01: Send cmds to panel
- from link2
-Date: Thu, 26 Mar 2015 09:12:25 +0800
-Message-ID: <55135CF9.80100@nvidia.com>
-References: <1427266602-31905-1-git-send-email-markz@nvidia.com> <5512C384.3070803@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: "ARM: multi_v7_defconfig: Enable shmobile platforms" breaks Tegra20
+ multi_v7_defconfig boot
+Date: Wed, 25 Mar 2015 20:36:08 -0600
+Message-ID: <55137098.4030903@wwwdotorg.org>
+References: <alpine.DEB.2.02.1503251740130.13341@utopia.booyaka.com> <CANMBJr7ibVCxQRUG47OT0meNntMjEoVqL7kiEK9DtCfp5NXPgg@mail.gmail.com> <alpine.DEB.2.02.1503252157240.7173@utopia.booyaka.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5512C384.3070803-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <alpine.DEB.2.02.1503252157240.7173-rwI8Ez+7Ko+d5PgPZx9QOdBPR1lH4CV8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+Cc: Tyler Baker <tyler.baker-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, horms+renesas-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-I've talked with Thierry about this. The patch doesn't make sense for
-now. So please ignore it, thanks Stephen/Thierry.
+On 03/25/2015 04:00 PM, Paul Walmsley wrote:
+> Hi Tyler
+> 
+> On Wed, 25 Mar 2015, Tyler Baker wrote:
+> 
+>> On 25 March 2015 at 11:03, Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org> wrote:
+>>
+>>> Looks like commit 4a3a6f86693922b29cf829c63f652b057f14619e ("ARM:
+>>> multi_v7_defconfig: Enable shmobile platforms") breaks Tegra20
+>>> multi_v7_defconfig boot.
+>>>
+>>> Boot log before:
+>>>
+>>> http://nvt.pwsan.com/pub/pwalmsley-tester/testlogs/test_20150325105514_6af714b069dc278d5d8e1b7afc13568f71d9aba8/20150325105514/boot/tegra20-trimslice/tegra20-trimslice/multi_v7_defconfig_log.txt
+>>>
+>>> Boot log after:
+>>>
+>>> http://nvt.pwsan.com/pub/pwalmsley-tester/testlogs/test_20150325105350_4a3a6f86693922b29cf829c63f652b057f14619e/20150325105350/boot/tegra20-trimslice/tegra20-trimslice/multi_v7_defconfig_log.txt
+>>>
+>>>
+>>> Any ideas?  Stephen Warren thinks there might be an initcall that might
+>>> not check to see what kind of device it's running on.
+>>
+>> Can you try to shift your kernel load address around a bit? From
+>> experience with the boards from kernelci.org we find that as the multi
+>> v7 kernel size increases they can clobber memory when they get
+>> decompressed.
+> 
+> Thanks, that was it:
+> 
+> http://nvt.pwsan.com/pub/pwalmsley-tester/testlogs/test_20150325144058_6af714b069dc278d5d8e1b7afc13568f71d9aba8/20150325144058/boot/tegra20-trimslice/tegra20-trimslice/multi_v7_defconfig_log.txt
+> 
+> Should have guessed when absolutely no debug output was emitted by the 
+> board...
+> 
+> Sorry for the false alarm, Geert!
 
-Mark
-On 03/25/2015 10:17 PM, Stephen Warren wrote:
-> On 03/25/2015 12:56 AM, Mark Zhang wrote:
->> Sharp lq101r1sx01 panel works as left-right gang mode. So link2
->> should send cmds like "exit sleep mode", "set display on"
->> to panel as well.
-> 
-> What's the changelog v1->v2?
-> 
-> I expect you should CC the DRM list and maintainer too?
+Interesting. Do the values in U-Boot's default environment work
+correctly ("env default -f -a" will reset the environment to default, in
+case some old values are saved in flash); I put some effort into picking
+them so I really hope they work! ${kernel_addr_r}, ${fdt_addr_r},
+${ramdisk_addr_r}.
