@@ -1,60 +1,122 @@
-From: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] clocksource: tegra: Maintain CPU endianness
-Date: Thu, 26 Mar 2015 10:58:32 +0100
-Message-ID: <5513D848.20400@linaro.org>
-References: <1426693503-6056-1-git-send-email-digetx@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1426693503-6056-1-git-send-email-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Joerg Roedel <joro@8bytes.org>
+Subject: [PATCH 00/16 v2] iommu: Move domain allocation into drivers
+Date: Thu, 26 Mar 2015 13:43:03 +0100
+Message-ID: <1427373799-18662-1-git-send-email-joro@8bytes.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: iommu@lists.linux-foundation.org
+Cc: Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Heiko Stuebner <heiko@sntech.de>, Hiroshi Doyu <hdoyu@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Alex Williamson <alex.williamson@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Yingjoe Chen <yingjoe.chen@mediatek.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, Joerg Roedel <joro@8bytes.org>, jroedel@suse.de
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/18/2015 04:44 PM, Dmitry Osipenko wrote:
-> Support big-endian kernel by using endian-aware register access funct=
-ions.
->
-> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Changes v1-v2:
 
-Stephen, Thierry ?
+	* Rebased to v4.0-rc5
+	* Converted domain-types to a bit-field
 
-Do you ack it ?
+Hi,
 
-Thanks
-   -- Daniel
+here is patch-set to replace the existing domain_init and
+domain_destroy iommu-ops with the new domain_alloc and
+domain_free callbacks
 
-> ---
->   drivers/clocksource/tegra20_timer.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksourc=
-e/tegra20_timer.c
-> index d2616ef..d8a3a4e 100644
-> --- a/drivers/clocksource/tegra20_timer.c
-> +++ b/drivers/clocksource/tegra20_timer.c
-> @@ -57,9 +57,9 @@ static u64 persistent_ms, last_persistent_ms;
->   static struct delay_timer tegra_delay_timer;
->
->   #define timer_writel(value, reg) \
-> -	__raw_writel(value, timer_reg_base + (reg))
-> +	writel_relaxed(value, timer_reg_base + (reg))
->   #define timer_readl(reg) \
-> -	__raw_readl(timer_reg_base + (reg))
-> +	readl_relaxed(timer_reg_base + (reg))
->
->   static int tegra_timer_set_next_event(unsigned long cycles,
->   					 struct clock_event_device *evt)
->
+The new callbacks move the allocation of iommu domains into
+the iommu driver, allowing them to put a generic
+iommu_domain struct into their own domain struct. This makes
+domain handling in the drivers more cache efficient and
+prepares the introduction of default domains in another
+patch-set.
 
+While at it, this patch-set also introduces domain types.
+These are internal to the iommu core code for now, there are
+three of them:
 
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
+	* DMA-API domains
+	* Identity mapped domains
+	* Domains unmanaged by the iommu-core, used for
+	  iommu-api so that the users can create their own
+	  mappings
 
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+The patches have been compile tested for x86, ARM and PPC
+and runtime tested on x86 (Intel VT-d and AMD IOMMU).
+
+Please review.
+
+Thanks,
+
+	Joerg
+
+Joerg Roedel (15):
+  iommu: Introduce domain_alloc and domain_free iommu_ops
+  iommu: Introduce iommu domain types
+  iommu/amd: Make use of domain_alloc and domain_free
+  iommu/vt-d: Make use of domain_alloc and domain_free
+  iommu/omap: Make use of domain_alloc and domain_free
+  iommu/arm-smmu: Make use of domain_alloc and domain_free
+  iommu/exynos: Make use of domain_alloc and domain_free
+  iommu/tegra-smmu: Make use of domain_alloc and domain_free
+  iommu/tegra-gart: Make use of domain_alloc and domain_free
+  iommu/msm: Make use of domain_alloc and domain_free
+  iommu/shmobile: Make use of domain_alloc and domain_free
+  iommu/ipmmu-vmsa: Make use of domain_alloc and domain_free
+  iommu/rockchip: Make use of domain_alloc and domain_free
+  iommu/fsl: Make use of domain_alloc and domain_free
+  iommu: Remove domain_init and domain_free iommu_ops
+
+ drivers/iommu/amd_iommu.c       | 84 +++++++++++++++++++++------------------
+ drivers/iommu/amd_iommu_types.h |  7 ++--
+ drivers/iommu/arm-smmu.c        | 46 +++++++++++++---------
+ drivers/iommu/exynos-iommu.c    | 87 ++++++++++++++++++++++-------------------
+ drivers/iommu/fsl_pamu_domain.c | 60 +++++++++++++++-------------
+ drivers/iommu/fsl_pamu_domain.h |  2 +-
+ drivers/iommu/intel-iommu.c     | 48 +++++++++++++----------
+ drivers/iommu/iommu.c           | 20 ++--------
+ drivers/iommu/ipmmu-vmsa.c      | 43 +++++++++++---------
+ drivers/iommu/msm_iommu.c       | 73 +++++++++++++++++-----------------
+ drivers/iommu/omap-iommu.c      | 49 +++++++++++++----------
+ drivers/iommu/rockchip-iommu.c  | 40 +++++++++++--------
+ drivers/iommu/shmobile-iommu.c  | 40 +++++++++++--------
+ drivers/iommu/tegra-gart.c      | 67 +++++++++++++++++++++----------
+ drivers/iommu/tegra-smmu.c      | 41 ++++++++++---------
+ include/linux/iommu.h           | 17 ++++++--
+ 16 files changed, 407 insertions(+), 317 deletions(-)
+
+-- 
+1.8.4.5
+Joerg Roedel (16):
+  iommu: Introduce domain_alloc and domain_free iommu_ops
+  iommu: Introduce iommu domain types
+  iommu: Only allow iommu_map/unmap for paging domains
+  iommu/amd: Make use of domain_alloc and domain_free
+  iommu/vt-d: Make use of domain_alloc and domain_free
+  iommu/omap: Make use of domain_alloc and domain_free
+  iommu/arm-smmu: Make use of domain_alloc and domain_free
+  iommu/exynos: Make use of domain_alloc and domain_free
+  iommu/tegra-smmu: Make use of domain_alloc and domain_free
+  iommu/tegra-gart: Make use of domain_alloc and domain_free
+  iommu/msm: Make use of domain_alloc and domain_free
+  iommu/shmobile: Make use of domain_alloc and domain_free
+  iommu/ipmmu-vmsa: Make use of domain_alloc and domain_free
+  iommu/rockchip: Make use of domain_alloc and domain_free
+  iommu/fsl: Make use of domain_alloc and domain_free
+  iommu: Remove domain_init and domain_free iommu_ops
+
+ drivers/iommu/amd_iommu.c       | 84 +++++++++++++++++++++------------------
+ drivers/iommu/amd_iommu_types.h |  7 ++--
+ drivers/iommu/arm-smmu.c        | 46 +++++++++++++---------
+ drivers/iommu/exynos-iommu.c    | 87 ++++++++++++++++++++++-------------------
+ drivers/iommu/fsl_pamu_domain.c | 60 +++++++++++++++-------------
+ drivers/iommu/fsl_pamu_domain.h |  2 +-
+ drivers/iommu/intel-iommu.c     | 48 +++++++++++++----------
+ drivers/iommu/iommu.c           | 26 +++++-------
+ drivers/iommu/ipmmu-vmsa.c      | 41 ++++++++++---------
+ drivers/iommu/msm_iommu.c       | 73 +++++++++++++++++-----------------
+ drivers/iommu/omap-iommu.c      | 49 +++++++++++++----------
+ drivers/iommu/rockchip-iommu.c  | 40 +++++++++++--------
+ drivers/iommu/shmobile-iommu.c  | 39 ++++++++++--------
+ drivers/iommu/tegra-gart.c      | 67 +++++++++++++++++++++----------
+ drivers/iommu/tegra-smmu.c      | 41 ++++++++++---------
+ include/linux/iommu.h           | 33 ++++++++++++++--
+ 16 files changed, 427 insertions(+), 316 deletions(-)
+
+-- 
+1.9.1
