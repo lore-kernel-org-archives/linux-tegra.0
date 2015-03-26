@@ -1,54 +1,69 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] clocksource: tegra: Maintain CPU endianness
-Date: Thu, 26 Mar 2015 16:31:15 +0100
-Message-ID: <20150326153114.GA22227@ulmo>
-References: <1426693503-6056-1-git-send-email-digetx@gmail.com>
+From: Paul Walmsley <paul@pwsan.com>
+Subject: Re: "ARM: multi_v7_defconfig: Enable shmobile platforms" breaks
+ Tegra20 multi_v7_defconfig boot
+Date: Thu, 26 Mar 2015 18:35:41 +0000 (UTC)
+Message-ID: <alpine.DEB.2.02.1503261826210.18294@utopia.booyaka.com>
+References: <alpine.DEB.2.02.1503251740130.13341@utopia.booyaka.com> <CANMBJr7ibVCxQRUG47OT0meNntMjEoVqL7kiEK9DtCfp5NXPgg@mail.gmail.com> <alpine.DEB.2.02.1503252157240.7173@utopia.booyaka.com> <55137098.4030903@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="UugvWAfsgieZRqgk"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1426693503-6056-1-git-send-email-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <55137098.4030903@wwwdotorg.org>
+Sender: linux-sh-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Tyler Baker <tyler.baker@linaro.org>, geert+renesas@glider.be, Arnd Bergmann <arnd@arndb.de>, linux-sh@vger.kernel.org, thierry.reding@gmail.com, pwalmsley@nvidia.com, linux-tegra@vger.kernel.org, horms+renesas@verge.net.au, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Wed, 25 Mar 2015, Stephen Warren wrote:
 
---UugvWAfsgieZRqgk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On 03/25/2015 04:00 PM, Paul Walmsley wrote:
+> > On Wed, 25 Mar 2015, Tyler Baker wrote:
+> >> On 25 March 2015 at 11:03, Paul Walmsley <paul@pwsan.com> wrote:
+> >>> Looks like commit 4a3a6f86693922b29cf829c63f652b057f14619e ("ARM:
+> >>> multi_v7_defconfig: Enable shmobile platforms") breaks Tegra20
+> >>> multi_v7_defconfig boot.
+> >>>
+> >>> Boot log before:
+> >>>
+> >>> http://nvt.pwsan.com/pub/pwalmsley-tester/testlogs/test_20150325105514_6af714b069dc278d5d8e1b7afc13568f71d9aba8/20150325105514/boot/tegra20-trimslice/tegra20-trimslice/multi_v7_defconfig_log.txt
+> >>>
+> >>> Boot log after:
+> >>>
+> >>> http://nvt.pwsan.com/pub/pwalmsley-tester/testlogs/test_20150325105350_4a3a6f86693922b29cf829c63f652b057f14619e/20150325105350/boot/tegra20-trimslice/tegra20-trimslice/multi_v7_defconfig_log.txt
+> >>>
+> >>>
+> >>> Any ideas?  Stephen Warren thinks there might be an initcall that might
+> >>> not check to see what kind of device it's running on.
+> >>
+> >> Can you try to shift your kernel load address around a bit? From
+> >> experience with the boards from kernelci.org we find that as the multi
+> >> v7 kernel size increases they can clobber memory when they get
+> >> decompressed.
+> > 
+> > Thanks, that was it:
+> > 
+> > http://nvt.pwsan.com/pub/pwalmsley-tester/testlogs/test_20150325144058_6af714b069dc278d5d8e1b7afc13568f71d9aba8/20150325144058/boot/tegra20-trimslice/tegra20-trimslice/multi_v7_defconfig_log.txt
+> > 
+> > Should have guessed when absolutely no debug output was emitted by the 
+> > board...
+> > 
+> > Sorry for the false alarm, Geert!
+> 
+> Interesting. Do the values in U-Boot's default environment work
+> correctly
 
-On Wed, Mar 18, 2015 at 06:44:49PM +0300, Dmitry Osipenko wrote:
-> Support big-endian kernel by using endian-aware register access functions.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
->  drivers/clocksource/tegra20_timer.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+No idea, I haven't tried.  (The load addresses I used are observable in 
+the boot logs above.)
 
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ("env default -f -a" will reset the environment to default, in
+> case some old values are saved in flash); I put some effort into picking
+> them so I really hope they work! ${kernel_addr_r}, ${fdt_addr_r},
+> ${ramdisk_addr_r}.
 
---UugvWAfsgieZRqgk
-Content-Type: application/pgp-signature
+According to the tegra20-common.h file in the u-boot source here, 
+kernel_addr_r is 0x01000000 and fdt_addr_r is 0x02000000.  If one assumes 
+the problem is that the kernel decompressor is overwriting the DTB, then 
+I suspect they wouldn't work either, since the gap between the addresses 
+is the same as what I used (0x01000000).
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
 
-iQIcBAABCAAGBQJVFCZAAAoJEN0jrNd/PrOhiXUQAIISWyqTE8YUDbRwxtAddSKZ
-24Wjz6HS+8Rx7wfgXLPnYLbxFgKUCAkWP74ZISR2hj5tMVyXoKA6XwWwFxklLzCl
-hsPsuPaoxrELKS2F1IvzGLeycWhDrOmbPDI79cR7x+oJfD08d1edVa82dNbsWudw
-JXVSKTjJsecF8poaQGOpLGEFzfEqLNA5Rg7axtIcWhsXWw2J5XducqSgLEmePO3R
-SDHjl9Qu8n36ZymVtNuHR+IP3hul26MK1pIqBx6iwyr1uQETMw5kRmey8OOPdici
-E6av9YtwunmDUdDoYp2XKEv3cHLCQV5ZsznXqK47mbJc6ocKwoMyhLr84x7E5BDn
-FqTmKSB8Oje/6e34GOLVztMesbzrrAgSJ+X0udFPxbtuyHmluHCrZVGXxz3lU9wB
-kO/vx1+Mr81u3WEZBJSRenuq9V0/zQfXinMDpdr13MiWFECsiQgr36nZcEQYsrpY
-HxNFq0GVl3+K38KGKIm84HV/O5iLSMiiX2DuehYyZ0UQxvQaNRx3lX3Gg2AV/Ykf
-Ju60GjUwR7hjPI43hECEuMWKuVeDslWXVLDfgPxzGNubQFfvfn//SjK2mqZOrsal
-5QaJPSGyS2zjbnA2GSzz82tVUEYhl5r23oLCECI53eG8+CugdJtVVO/+9BaeyQge
-dVFMsp54Qeu1ogXXK/JH
-=f9S8
------END PGP SIGNATURE-----
-
---UugvWAfsgieZRqgk--
+- Paul
