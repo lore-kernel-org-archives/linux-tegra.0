@@ -1,169 +1,127 @@
-From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH 13/16] iommu/ipmmu-vmsa: Make use of domain_alloc and
-	domain_free
-Date: Thu, 26 Mar 2015 13:43:16 +0100
-Message-ID: <1427373799-18662-14-git-send-email-joro@8bytes.org>
+From: Swapna Nannapaneni <sainswapna@gmail.com>
+Subject: Re: [PATCH 02/16] iommu: Introduce iommu domain types
+Date: Thu, 26 Mar 2015 08:52:51 -0400
+Message-ID: <20150326125251.5005382.96732.4883@gmail.com>
 References: <1427373799-18662-1-git-send-email-joro@8bytes.org>
+ <1427373799-18662-3-git-send-email-joro@8bytes.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1427373799-18662-1-git-send-email-joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, jroedel-l3A5Bk7waGM@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Yingjoe Chen <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <1427373799-18662-3-git-send-email-joro@8bytes.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: iommu@lists.linux-foundation.org
+Cc: Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Heiko Stuebner <heiko@sntech.de>, Hiroshi Doyu <hdoyu@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Alex Williamson <alex.williamson@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Yingjoe Chen <yingjoe.chen@mediatek.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, Joerg Roedel <joro@8bytes.org>, jroedel@suse.de
 List-Id: linux-tegra@vger.kernel.org
 
-From: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>
+X
 
-Implement domain_alloc and domain_free iommu-ops as a
-replacement for domain_init/domain_destroy.
+Sent=A0from=A0my=A0BlackBerry=A010=A0smartphone=A0on=A0the=A0TELUS=A0ne=
+twork.
+=A0 Original Message =A0
+=46rom: Joerg Roedel
+Sentuv: Thursday, March 26, 2015 8:51 AM
+To: iommu@lists.linux-foundation.org
+Cc: Will Deacon; Kukjin Kim; David Woodhouse; Heiko Stuebner; Hiroshi D=
+oyu; Stephen Warren; Thierry Reding; Alexandre Courbot; Alex Williamson=
+; Arnd Bergmann; Yingjoe Chen; linux-kernel@vger.kernel.org; linux-arm-=
+kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; linux-ro=
+ckchip@lists.infradead.org; linux-tegra@vger.kernel.org; Joerg Roedel; =
+jroedel@suse.de
+Subject: [PATCH 02/16] iommu: Introduce iommu domain types
 
-Signed-off-by: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>
+=46rom: Joerg Roedel <jroedel@suse.de>
+
+This allows to handle domains differently based on their
+type in the future. An IOMMU driver can implement certain
+optimizations for DMA-API domains for example.
+
+The domain types can be extended later and some of the
+existing domain attributes can be migrated to become domain
+flags.
+
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- drivers/iommu/ipmmu-vmsa.c | 41 +++++++++++++++++++++++------------------
- 1 file changed, 23 insertions(+), 18 deletions(-)
+drivers/iommu/iommu.c | 5 +++--
+include/linux/iommu.h | 27 ++++++++++++++++++++++++++-
+2 files changed, 29 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index 10186ca..274c08d 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -38,7 +38,7 @@ struct ipmmu_vmsa_device {
- 
- struct ipmmu_vmsa_domain {
- 	struct ipmmu_vmsa_device *mmu;
--	struct iommu_domain *io_domain;
-+	struct iommu_domain io_domain;
- 
- 	struct io_pgtable_cfg cfg;
- 	struct io_pgtable_ops *iop;
-@@ -56,6 +56,11 @@ struct ipmmu_vmsa_archdata {
- static DEFINE_SPINLOCK(ipmmu_devices_lock);
- static LIST_HEAD(ipmmu_devices);
- 
-+static struct ipmmu_vmsa_domain *to_vmsa_domain(struct iommu_domain *dom)
-+{
-+	return container_of(dom, struct ipmmu_vmsa_domain, io_domain);
-+}
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index 11de262..4920605 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -909,14 +909,15 @@ struct iommu_domain *iommu_domain_alloc(struct bu=
+s_type *bus)
+ops =3D bus->iommu_ops;
+
+if (ops->domain_alloc)
+-	 domain =3D ops->domain_alloc();
++	 domain =3D ops->domain_alloc(IOMMU_DOMAIN_UNMANAGED);
+else
+domain =3D kzalloc(sizeof(*domain), GFP_KERNEL);
+
+if (!domain)
+return NULL;
+
+-	domain->ops =3D bus->iommu_ops;
++	domain->ops =3D bus->iommu_ops;
++	domain->type =3D IOMMU_DOMAIN_UNMANAGED;
+
+if (ops->domain_init && domain->ops->domain_init(domain))
+goto out_free;
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index 69d1d12..72d03fe 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -51,7 +51,32 @@ struct iommu_domain_geometry {
+bool force_aperture; /* DMA only allowed in mappable range? */
+};
+
++/* Domain feature flags */
++#define __IOMMU_DOMAIN_PAGING	(1U << 0) /* Support for iommu_map/unmap=
+ */
++#define __IOMMU_DOMAIN_DMA_API	(1U << 1) /* Domain for use in DMA-API
++	 implementation */
++#define __IOMMU_DOMAIN_PT	(1U << 2) /* Domain is identity mapped */
 +
- #define TLB_LOOP_TIMEOUT		100	/* 100us */
- 
- /* -----------------------------------------------------------------------------
-@@ -428,7 +433,7 @@ static irqreturn_t ipmmu_domain_irq(struct ipmmu_vmsa_domain *domain)
- 	 * TODO: We need to look up the faulty device based on the I/O VA. Use
- 	 * the IOMMU device for now.
- 	 */
--	if (!report_iommu_fault(domain->io_domain, mmu->dev, iova, 0))
-+	if (!report_iommu_fault(&domain->io_domain, mmu->dev, iova, 0))
- 		return IRQ_HANDLED;
- 
- 	dev_err_ratelimited(mmu->dev,
-@@ -448,7 +453,7 @@ static irqreturn_t ipmmu_irq(int irq, void *dev)
- 		return IRQ_NONE;
- 
- 	io_domain = mmu->mapping->domain;
--	domain = io_domain->priv;
-+	domain = to_vmsa_domain(io_domain);
- 
- 	return ipmmu_domain_irq(domain);
- }
-@@ -457,25 +462,25 @@ static irqreturn_t ipmmu_irq(int irq, void *dev)
-  * IOMMU Operations
-  */
- 
--static int ipmmu_domain_init(struct iommu_domain *io_domain)
-+static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
- {
- 	struct ipmmu_vmsa_domain *domain;
- 
-+	if (type != IOMMU_DOMAIN_UNMANAGED)
-+		return NULL;
++/*
++ * This are the possible domain-types
++ *
++ *	IOMMU_DOMAIN_BLOCKED	- All DMA is blocked, can be used to isolate
++ *	 devices
++ *	IOMMU_DOMAIN_IDENTITY	- DMA addresses are system physical addresses
++ *	IOMMU_DOMAIN_UNMANAGED	- DMA mappings managed by IOMMU-API user, us=
+ed
++ *	 for VMs
++ *	IOMMU_DOMAIN_DMA	- Internally used for DMA-API implementations.
++ *	 This flag allows IOMMU drivers to implement
++ *	 certain optimizations for these domains
++ */
++#define IOMMU_DOMAIN_BLOCKED	(0U)
++#define IOMMU_DOMAIN_IDENTITY	(__IOMMU_DOMAIN_PT)
++#define IOMMU_DOMAIN_UNMANAGED (__IOMMU_DOMAIN_PAGING)
++#define IOMMU_DOMAIN_DMA	(__IOMMU_DOMAIN_PAGING |	\
++	 __IOMMU_DOMAIN_DMA_API)
 +
- 	domain = kzalloc(sizeof(*domain), GFP_KERNEL);
- 	if (!domain)
--		return -ENOMEM;
-+		return NULL;
- 
- 	spin_lock_init(&domain->lock);
- 
--	io_domain->priv = domain;
--	domain->io_domain = io_domain;
--
--	return 0;
-+	return &domain->io_domain;
- }
- 
--static void ipmmu_domain_destroy(struct iommu_domain *io_domain)
-+static void ipmmu_domain_free(struct iommu_domain *io_domain)
- {
--	struct ipmmu_vmsa_domain *domain = io_domain->priv;
-+	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
- 
- 	/*
- 	 * Free the domain resources. We assume that all devices have already
-@@ -491,7 +496,7 @@ static int ipmmu_attach_device(struct iommu_domain *io_domain,
- {
- 	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
- 	struct ipmmu_vmsa_device *mmu = archdata->mmu;
--	struct ipmmu_vmsa_domain *domain = io_domain->priv;
-+	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
- 	unsigned long flags;
- 	unsigned int i;
- 	int ret = 0;
-@@ -532,7 +537,7 @@ static void ipmmu_detach_device(struct iommu_domain *io_domain,
- 				struct device *dev)
- {
- 	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
--	struct ipmmu_vmsa_domain *domain = io_domain->priv;
-+	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
- 	unsigned int i;
- 
- 	for (i = 0; i < archdata->num_utlbs; ++i)
-@@ -546,7 +551,7 @@ static void ipmmu_detach_device(struct iommu_domain *io_domain,
- static int ipmmu_map(struct iommu_domain *io_domain, unsigned long iova,
- 		     phys_addr_t paddr, size_t size, int prot)
- {
--	struct ipmmu_vmsa_domain *domain = io_domain->priv;
-+	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
- 
- 	if (!domain)
- 		return -ENODEV;
-@@ -557,7 +562,7 @@ static int ipmmu_map(struct iommu_domain *io_domain, unsigned long iova,
- static size_t ipmmu_unmap(struct iommu_domain *io_domain, unsigned long iova,
- 			  size_t size)
- {
--	struct ipmmu_vmsa_domain *domain = io_domain->priv;
-+	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
- 
- 	return domain->iop->unmap(domain->iop, iova, size);
- }
-@@ -565,7 +570,7 @@ static size_t ipmmu_unmap(struct iommu_domain *io_domain, unsigned long iova,
- static phys_addr_t ipmmu_iova_to_phys(struct iommu_domain *io_domain,
- 				      dma_addr_t iova)
- {
--	struct ipmmu_vmsa_domain *domain = io_domain->priv;
-+	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
- 
- 	/* TODO: Is locking needed ? */
- 
-@@ -737,8 +742,8 @@ static void ipmmu_remove_device(struct device *dev)
- }
- 
- static const struct iommu_ops ipmmu_ops = {
--	.domain_init = ipmmu_domain_init,
--	.domain_destroy = ipmmu_domain_destroy,
-+	.domain_alloc = ipmmu_domain_alloc,
-+	.domain_free = ipmmu_domain_free,
- 	.attach_dev = ipmmu_attach_device,
- 	.detach_dev = ipmmu_detach_device,
- 	.map = ipmmu_map,
--- 
+struct iommu_domain {
++	unsigned type;
+const struct iommu_ops *ops;
+void *priv;
+iommu_fault_handler_t handler;
+@@ -117,7 +142,7 @@ struct iommu_ops {
+void (*domain_destroy)(struct iommu_domain *domain);
+
+/* Domain allocation and freeing by the iommu driver */
+-	struct iommu_domain *(*domain_alloc)(void);
++	struct iommu_domain *(*domain_alloc)(unsigned iommu_domain_type);
+void (*domain_free)(struct iommu_domain *);
+
+int (*attach_dev)(struct iommu_domain *domain, struct device *dev);
+--=20
 1.9.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-samsung=
+-soc" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at http://vger.kernel.org/majordomo-info.html
