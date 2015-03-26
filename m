@@ -1,58 +1,84 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: "ARM: multi_v7_defconfig: Enable shmobile platforms" breaks Tegra20
- multi_v7_defconfig boot
-Date: Wed, 25 Mar 2015 20:36:08 -0600
-Message-ID: <55137098.4030903@wwwdotorg.org>
-References: <alpine.DEB.2.02.1503251740130.13341@utopia.booyaka.com> <CANMBJr7ibVCxQRUG47OT0meNntMjEoVqL7kiEK9DtCfp5NXPgg@mail.gmail.com> <alpine.DEB.2.02.1503252157240.7173@utopia.booyaka.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] drm/tegra: Reset the SOR during initialization
+Date: Thu, 26 Mar 2015 12:24:25 +0300
+Message-ID: <5513D049.4080700@gmail.com>
+References: <20150324102447.GA18115@ulmo.nvidia.com> <1427273979-394-1-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <alpine.DEB.2.02.1503252157240.7173-rwI8Ez+7Ko+d5PgPZx9QOdBPR1lH4CV8@public.gmane.org>
+In-Reply-To: <1427273979-394-1-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
-Cc: Tyler Baker <tyler.baker-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, horms+renesas-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?VGVyamUgQmVyZ3N0?= =?UTF-8?B?csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/25/2015 04:00 PM, Paul Walmsley wrote:
-> Hi Tyler
-> 
-> On Wed, 25 Mar 2015, Tyler Baker wrote:
-> 
->> On 25 March 2015 at 11:03, Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org> wrote:
->>
->>> Looks like commit 4a3a6f86693922b29cf829c63f652b057f14619e ("ARM:
->>> multi_v7_defconfig: Enable shmobile platforms") breaks Tegra20
->>> multi_v7_defconfig boot.
->>>
->>> Boot log before:
->>>
->>> http://nvt.pwsan.com/pub/pwalmsley-tester/testlogs/test_20150325105514_6af714b069dc278d5d8e1b7afc13568f71d9aba8/20150325105514/boot/tegra20-trimslice/tegra20-trimslice/multi_v7_defconfig_log.txt
->>>
->>> Boot log after:
->>>
->>> http://nvt.pwsan.com/pub/pwalmsley-tester/testlogs/test_20150325105350_4a3a6f86693922b29cf829c63f652b057f14619e/20150325105350/boot/tegra20-trimslice/tegra20-trimslice/multi_v7_defconfig_log.txt
->>>
->>>
->>> Any ideas?  Stephen Warren thinks there might be an initcall that might
->>> not check to see what kind of device it's running on.
->>
->> Can you try to shift your kernel load address around a bit? From
->> experience with the boards from kernelci.org we find that as the multi
->> v7 kernel size increases they can clobber memory when they get
->> decompressed.
-> 
-> Thanks, that was it:
-> 
-> http://nvt.pwsan.com/pub/pwalmsley-tester/testlogs/test_20150325144058_6af714b069dc278d5d8e1b7afc13568f71d9aba8/20150325144058/boot/tegra20-trimslice/tegra20-trimslice/multi_v7_defconfig_log.txt
-> 
-> Should have guessed when absolutely no debug output was emitted by the 
-> board...
-> 
-> Sorry for the false alarm, Geert!
+25.03.2015 11:59, Tomeu Vizoso =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> As there isn't a way for the firmware on the Nyan chromebooks to hand
+> over the display to the kernel, and the kernel isn't redoing the whol=
+e
+> configuration at present.
+>
+> With this patch, the SOR is brought to a known state and we get corre=
+ct
+> display on every boot.
+>
+> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+>
+> ---
+>
+> v7:	* Move the reset to the host1x_client_ops.init callback as
+> 	suggested by Thierry
+> 	* Reduced the time during which the reset line is asserted from
+> 	20ms to 2ms
+> ---
+>   drivers/gpu/drm/tegra/sor.c | 18 ++++++++++++++++++
+>   1 file changed, 18 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.=
+c
+> index 2afe478..027a25d22 100644
+> --- a/drivers/gpu/drm/tegra/sor.c
+> +++ b/drivers/gpu/drm/tegra/sor.c
+> @@ -1354,12 +1354,30 @@ static int tegra_sor_init(struct host1x_clien=
+t *client)
+>   		}
+>   	}
+>
+> +	/*
+> +	 * XXX: Remove this reset once proper hand-over from firmware to
+> +	 * kernel is possible.
+> +	 */
+> +	err =3D reset_control_assert(sor->rst);
+> +	if (err < 0) {
+> +		dev_err(sor->dev, "failed to assert SOR reset: %d\n", err);
+> +		return err;
+> +	}
+> +
+>   	err =3D clk_prepare_enable(sor->clk);
+>   	if (err < 0) {
+>   		dev_err(sor->dev, "failed to enable clock: %d\n", err);
+>   		return err;
+>   	}
+>
+> +	msleep(2);
+> +
+> +	err =3D reset_control_deassert(sor->rst);
+> +	if (err < 0) {
+> +		dev_err(sor->dev, "failed to deassert SOR reset: %d\n", err);
+> +		return err;
+> +	}
+> +
+>   	err =3D clk_prepare_enable(sor->clk_safe);
+>   	if (err < 0)
+>   		return err;
+>
 
-Interesting. Do the values in U-Boot's default environment work
-correctly ("env default -f -a" will reset the environment to default, in
-case some old values are saved in flash); I put some effort into picking
-them so I really hope they work! ${kernel_addr_r}, ${fdt_addr_r},
-${ramdisk_addr_r}.
+According to kernel doc, you should use usleep_range() instead of mslee=
+p().
+
+https://www.kernel.org/doc/Documentation/timers/timers-howto.txt
+
+--=20
+Dmitry
