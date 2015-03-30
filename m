@@ -1,60 +1,69 @@
-From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v4.0-rc6
-Date: Mon, 30 Mar 2015 00:54:50 -0600
-Message-ID: <5518F33A.9020404@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: [PATCH v8] drm/tegra: Reset the SOR during initialization
+Date: Mon, 30 Mar 2015 10:33:03 +0200
+Message-ID: <1427704383-23780-1-git-send-email-tomeu.vizoso@collabora.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-tegra@vger.kernel.org
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.0-rc6.
-Logs and other details at:
+As there isn't a way for the firmware on the Nyan chromebooks to hand
+over the display to the kernel, and the kernel isn't redoing the whole
+configuration at present.
 
-     http://nvt.pwsan.com/pub/linux/testlogs/test_v4.0-rc6/20150329160102/
+With this patch, the SOR is brought to a known state and we get correct
+display on every boot.
 
+Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
 
-Test summary
-------------
+---
 
-Build: zImage:
-     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+v8:	* Use usleep_range instead of msleep as suggested by Dmitry
+	Osipenko
 
-Build: Image:
-     Pass: ( 1/ 1): defconfig
+v7:	* Move the reset to the host1x_client_ops.init callback as
+	suggested by Thierry
+	* Reduced the time during which the reset line is asserted from
+	20ms to 2ms
+---
+ drivers/gpu/drm/tegra/sor.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-Boot to userspace: defconfig:
-     Pass: ( 1/ 1): qemu-vexpress64
-
-Boot to userspace: multi_v7_defconfig:
-     Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra20-trimslice, tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-     Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra20-trimslice, tegra30-beaver
-
-
-vmlinux object size
-(delta in bytes from test_v4.0-rc5 (bc465aa9d045feb0e13b4a8f32cc33c1943f62d6)):
-    text     data      bss    total  kernel
-    +252      -16        0     +236  multi_v7_defconfig
-    +144      -24        0     +120  tegra_defconfig
-  +20712   +12288        0   +33000  defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v4.0-rc5 (bc465aa9d045feb0e13b4a8f32cc33c1943f62d6))
-     avail    rsrvd     high    freed                board              kconfig                  dtb
-         .        .        .        .      qemu-vexpress64            defconfig           __internal
-         .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-         .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-         .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-         .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-         .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
-         .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
-         .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-         .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+index 2afe478..dc51a8e 100644
+--- a/drivers/gpu/drm/tegra/sor.c
++++ b/drivers/gpu/drm/tegra/sor.c
+@@ -1354,12 +1354,30 @@ static int tegra_sor_init(struct host1x_client *client)
+ 		}
+ 	}
+ 
++	/*
++	 * XXX: Remove this reset once proper hand-over from firmware to
++	 * kernel is possible.
++	 */
++	err = reset_control_assert(sor->rst);
++	if (err < 0) {
++		dev_err(sor->dev, "failed to assert SOR reset: %d\n", err);
++		return err;
++	}
++
+ 	err = clk_prepare_enable(sor->clk);
+ 	if (err < 0) {
+ 		dev_err(sor->dev, "failed to enable clock: %d\n", err);
+ 		return err;
+ 	}
+ 
++	usleep_range(1000, 3000);
++
++	err = reset_control_deassert(sor->rst);
++	if (err < 0) {
++		dev_err(sor->dev, "failed to deassert SOR reset: %d\n", err);
++		return err;
++	}
++
+ 	err = clk_prepare_enable(sor->clk_safe);
+ 	if (err < 0)
+ 		return err;
+-- 
+2.1.0
