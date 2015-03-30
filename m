@@ -1,69 +1,111 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [PATCH v8] drm/tegra: Reset the SOR during initialization
-Date: Mon, 30 Mar 2015 10:33:03 +0200
-Message-ID: <1427704383-23780-1-git-send-email-tomeu.vizoso@collabora.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-tegra@vger.kernel.org
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [GIT PULL 1/2] ARM: tegra: Core code changes for v4.1-rc1
+Date: Mon, 30 Mar 2015 12:12:12 +0200
+Message-ID: <1427710333-13472-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-As there isn't a way for the firmware on the Nyan chromebooks to hand
-over the display to the kernel, and the kernel isn't redoing the whole
-configuration at present.
+Hi ARM SoC maintainers,
 
-With this patch, the SOR is brought to a known state and we get correct
-display on every boot.
+The following changes since commit c517d838eb7d07bbe9507871fab3931deccff539:
 
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+  Linux 4.0-rc1 (2015-02-22 18:21:14 -0800)
 
----
+are available in the git repository at:
 
-v8:	* Use usleep_range instead of msleep as suggested by Dmitry
-	Osipenko
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.1-soc
 
-v7:	* Move the reset to the host1x_client_ops.init callback as
-	suggested by Thierry
-	* Reduced the time during which the reset line is asserted from
-	20ms to 2ms
----
- drivers/gpu/drm/tegra/sor.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+for you to fetch changes up to 5a240eff95e89af9648551a7686b0e5a7d0231ab:
 
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index 2afe478..dc51a8e 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -1354,12 +1354,30 @@ static int tegra_sor_init(struct host1x_client *client)
- 		}
- 	}
- 
-+	/*
-+	 * XXX: Remove this reset once proper hand-over from firmware to
-+	 * kernel is possible.
-+	 */
-+	err = reset_control_assert(sor->rst);
-+	if (err < 0) {
-+		dev_err(sor->dev, "failed to assert SOR reset: %d\n", err);
-+		return err;
-+	}
-+
- 	err = clk_prepare_enable(sor->clk);
- 	if (err < 0) {
- 		dev_err(sor->dev, "failed to enable clock: %d\n", err);
- 		return err;
- 	}
- 
-+	usleep_range(1000, 3000);
-+
-+	err = reset_control_deassert(sor->rst);
-+	if (err < 0) {
-+		dev_err(sor->dev, "failed to deassert SOR reset: %d\n", err);
-+		return err;
-+	}
-+
- 	err = clk_prepare_enable(sor->clk_safe);
- 	if (err < 0)
- 		return err;
--- 
-2.1.0
+  memory: tegra: Add SWGROUP names (2015-03-30 11:47:40 +0200)
+
+----------------------------------------------------------------
+ARM: tegra: Core code changes for v4.1-rc1
+
+The biggest chunk of these changes is Mikko and Tomeu's external memory
+controller driver. It allows the frequency of the external memory to be
+changed and also puts the initial pieces into place to enable automatic
+scaling of the EMC frequency.
+
+There are also a couple of improvements such as the move to a restart
+handler to make it easier for boards to override restart behaviour in a
+board-specific way. There are also some preparatory patches to enable
+Tegra to run in big-endian mode.
+
+Finally there's a fix for a regression that was introduced in v3.17,
+causing suspend/resume to break.
+
+----------------------------------------------------------------
+Bob Mottram (1):
+      gpio: tegra: Maintain endianness
+
+David Riley (1):
+      soc/tegra: pmc: move to using a restart handler
+
+Dmitry Osipenko (1):
+      ARM: tegra20: Store CPU "resettable" status in IRAM
+
+Mikko Perttunen (7):
+      soc/tegra: fuse: Add RAM code reader helper
+      of: Add Tegra124 EMC bindings
+      memory: tegra: Add API needed by the EMC driver
+      memory: tegra: Add EMC (external memory controller) driver
+      memory: tegra: Add debugfs entry for getting and setting the EMC rate
+      clk: tegra124: Remove old emc clock
+      clk: tegra: Add EMC clock driver
+
+Nicholas Mc Guire (1):
+      soc/tegra: Watch wait_for_completion_timeout() return type
+
+Thierry Reding (1):
+      memory: tegra: Add SWGROUP names
+
+Tomeu Vizoso (8):
+      of: Document long-ram-code property in nvidia,tegra20-apbmisc
+      of: Document timings subnode of nvidia,tegra-mc
+      memory: tegra: Disable ARBITRATION_EMEM interrupt
+      of: document new emc-timings subnode in nvidia,tegra124-car
+      of: document external-memory-controller property in tegra124-car
+      clk: Expose clk_hw_reparent() to providers
+      clk: tegra: Set the EMC clock as the parent of the MC clock
+      clk: tegra: Have EMC clock implement determine_rate()
+
+ .../bindings/clock/nvidia,tegra124-car.txt         |   44 +-
+ .../memory-controllers/nvidia,tegra-mc.txt         |   84 +-
+ .../bindings/memory-controllers/tegra-emc.txt      |  374 +++++++
+ .../bindings/misc/nvidia,tegra20-apbmisc.txt       |    2 +
+ arch/arm/mach-tegra/cpuidle-tegra20.c              |    5 +-
+ arch/arm/mach-tegra/reset-handler.S                |   10 +-
+ arch/arm/mach-tegra/reset.h                        |    4 +
+ arch/arm/mach-tegra/sleep-tegra20.S                |   37 +-
+ arch/arm/mach-tegra/sleep.h                        |    4 +
+ arch/arm/mach-tegra/tegra.c                        |    1 -
+ drivers/clk/clk.c                                  |    8 +
+ drivers/clk/tegra/Makefile                         |    2 +-
+ drivers/clk/tegra/clk-emc.c                        |  539 ++++++++++
+ drivers/clk/tegra/clk-tegra124.c                   |   18 +-
+ drivers/clk/tegra/clk.h                            |    3 +
+ drivers/gpio/gpio-tegra.c                          |    4 +-
+ drivers/memory/tegra/Kconfig                       |   11 +
+ drivers/memory/tegra/Makefile                      |    2 +
+ drivers/memory/tegra/mc.c                          |  140 ++-
+ drivers/memory/tegra/tegra114.c                    |   32 +-
+ drivers/memory/tegra/tegra124-emc.c                | 1137 ++++++++++++++++++++
+ drivers/memory/tegra/tegra124.c                    |   90 +-
+ drivers/memory/tegra/tegra30.c                     |   32 +-
+ drivers/soc/tegra/fuse/fuse-tegra20.c              |    6 +-
+ drivers/soc/tegra/fuse/tegra-apbmisc.c             |   21 +
+ drivers/soc/tegra/pmc.c                            |   23 +-
+ include/linux/clk-provider.h                       |    1 +
+ include/soc/tegra/emc.h                            |   19 +
+ include/soc/tegra/fuse.h                           |    1 +
+ include/soc/tegra/mc.h                             |   15 +-
+ include/soc/tegra/pmc.h                            |    2 -
+ 31 files changed, 2560 insertions(+), 111 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt
+ create mode 100644 drivers/clk/tegra/clk-emc.c
+ create mode 100644 drivers/memory/tegra/tegra124-emc.c
+ create mode 100644 include/soc/tegra/emc.h
