@@ -1,51 +1,73 @@
-From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH 00/16 v2] iommu: Move domain allocation into drivers
-Date: Mon, 30 Mar 2015 18:43:15 +0100
-Message-ID: <20150330174315.GD15655@arm.com>
-References: <1427373799-18662-1-git-send-email-joro@8bytes.org>
+From: Andrey Danin <danindrey@mail.ru>
+Subject: [PATCH v2 4/4] dt: paz00: define nvec as child of i2c bus
+Date: Mon, 30 Mar 2015 23:00:15 +0300
+Message-ID: <1427745615-5428-5-git-send-email-danindrey@mail.ru>
+References: <1427745615-5428-1-git-send-email-danindrey@mail.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1427373799-18662-1-git-send-email-joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "jroedel-l3A5Bk7waGM@public.gmane.org" <jroedel-l3A5Bk7waGM@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Yingjoe Chen <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1427745615-5428-1-git-send-email-danindrey@mail.ru>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: devicetree@vger.kernel.org, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, ac100@lists.launchpad.net
+Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Wolfram Sang <wsa@the-dreams.de>, Julian Andres Klode <jak@jak-linux.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Marc Dietrich <marvin24@gmx.de>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Andrey Danin <danindrey@mail.ru>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Joerg,
+NVEC driver was reimplemented to use tegra i2c. Use common i2c bindings
+for NVEC node.
 
-On Thu, Mar 26, 2015 at 12:43:03PM +0000, Joerg Roedel wrote:
-> Changes v1-v2:
-> 
-> 	* Rebased to v4.0-rc5
-> 	* Converted domain-types to a bit-field
-> 
-> Hi,
-> 
-> here is patch-set to replace the existing domain_init and
-> domain_destroy iommu-ops with the new domain_alloc and
-> domain_free callbacks
+Signed-off-by: Andrey Danin <danindrey@mail.ru>
+---
+Changes for v2:
+- swap reg and request-gpios properties
+- use nvec-slave instead of nvec to keep ABI compatibility
+- place doc in separate patch
 
-Whilst I'm still a bit worried about the ability of the IOMMU driver to do
-very much in the ->domain_alloc callback (since we don't know which IOMMU
-instance the domain is for), it doesn't leave us any worse off than we
-currently are.
+---
+ arch/arm/boot/dts/tegra20-paz00.dts | 22 +++++++++-------------
+ 1 file changed, 9 insertions(+), 13 deletions(-)
 
-So, for the arm-smmu patch and the core IOMMU changes:
-
-  Acked-by: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-
-Hopefully this doesn't conflict too badly with my outstanding arm-smmu
-pull requests to you, but do shout if you have any trouble.
-
-Will
+diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+index ed7e100..cd5e6ef 100644
+--- a/arch/arm/boot/dts/tegra20-paz00.dts
++++ b/arch/arm/boot/dts/tegra20-paz00.dts
+@@ -288,20 +288,16 @@
+ 		clock-frequency = <100000>;
+ 	};
+ 
+-	nvec@7000c500 {
+-		compatible = "nvidia,nvec";
+-		reg = <0x7000c500 0x100>;
+-		interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
++	i2c@7000c500 {
++		status = "okay";
+ 		clock-frequency = <80000>;
+-		request-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_HIGH>;
+-		slave-addr = <138>;
+-		clocks = <&tegra_car TEGRA20_CLK_I2C3>,
+-		         <&tegra_car TEGRA20_CLK_PLL_P_OUT3>;
+-		clock-names = "div-clk", "fast-clk";
+-		resets = <&tegra_car 67>;
+-		reset-names = "i2c";
++
++		nvec: nvec@45 {
++			compatible = "nvidia,nvec-slave";
++			reg = <0x45>;
++			request-gpios = <&gpio TEGRA_GPIO(V, 2)
++				GPIO_ACTIVE_HIGH>;
++		};
+ 	};
+ 
+ 	i2c@7000d000 {
+-- 
+1.9.1
