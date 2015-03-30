@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 08/11] clk: tegra: Add peripheral registers for bank Y
-Date: Mon, 30 Mar 2015 14:31:10 +0200
-Message-ID: <1427718673-32011-9-git-send-email-thierry.reding@gmail.com>
+Subject: [PATCH 11/11] clk: tegra: Use the proper parent for plld_dsi
+Date: Mon, 30 Mar 2015 14:31:13 +0200
+Message-ID: <1427718673-32011-12-git-send-email-thierry.reding@gmail.com>
 References: <1427718673-32011-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1427718673-32011-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,68 +12,58 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Tegra210 has an extra bank of peripheral clock registers. Add it to the
-generic peripheral clock code.
+The current parent, plld_out0, does not exist. The proper name is
+pll_d_out0. While at it, rename the plld_dsi clock to pll_d_dsi_out to
+be more consistent with other clock names.
 
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Fixes: b270491eb9a0 ("clk: tegra: Define PLLD_DSI and remove dsia(b)_mux")
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/clk/tegra/clk.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/clk/tegra/clk-tegra124.c                | 14 ++++++++------
+ include/dt-bindings/clock/tegra124-car-common.h |  2 +-
+ 2 files changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
-index 7a1df61847fc..41cd87c67be6 100644
---- a/drivers/clk/tegra/clk.c
-+++ b/drivers/clk/tegra/clk.c
-@@ -30,6 +30,7 @@
- #define CLK_OUT_ENB_V			0x360
- #define CLK_OUT_ENB_W			0x364
- #define CLK_OUT_ENB_X			0x280
-+#define CLK_OUT_ENB_Y			0x298
- #define CLK_OUT_ENB_SET_L		0x320
- #define CLK_OUT_ENB_CLR_L		0x324
- #define CLK_OUT_ENB_SET_H		0x328
-@@ -42,6 +43,8 @@
- #define CLK_OUT_ENB_CLR_W		0x44c
- #define CLK_OUT_ENB_SET_X		0x284
- #define CLK_OUT_ENB_CLR_X		0x288
-+#define CLK_OUT_ENB_SET_Y		0x29c
-+#define CLK_OUT_ENB_CLR_Y		0x2a0
+diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+index f1fa29ec7951..11f857cd5f6a 100644
+--- a/drivers/clk/tegra/clk-tegra124.c
++++ b/drivers/clk/tegra/clk-tegra124.c
+@@ -1113,16 +1113,18 @@ static __init void tegra124_periph_clk_init(void __iomem *clk_base,
+ 					1, 2);
+ 	clks[TEGRA124_CLK_XUSB_SS_DIV2] = clk;
  
- #define RST_DEVICES_L			0x004
- #define RST_DEVICES_H			0x008
-@@ -50,6 +53,7 @@
- #define RST_DEVICES_V			0x358
- #define RST_DEVICES_W			0x35C
- #define RST_DEVICES_X			0x28C
-+#define RST_DEVICES_Y			0x2a4
- #define RST_DEVICES_SET_L		0x300
- #define RST_DEVICES_CLR_L		0x304
- #define RST_DEVICES_SET_H		0x308
-@@ -62,6 +66,8 @@
- #define RST_DEVICES_CLR_W		0x43c
- #define RST_DEVICES_SET_X		0x290
- #define RST_DEVICES_CLR_X		0x294
-+#define RST_DEVICES_SET_Y		0x2a8
-+#define RST_DEVICES_CLR_Y		0x2ac
+-	clk = clk_register_gate(NULL, "plld_dsi", "plld_out0", 0,
++	clk = clk_register_gate(NULL, "pll_d_dsi_out", "pll_d_out0", 0,
+ 				clk_base + PLLD_MISC, 30, 0, &pll_d_lock);
+-	clks[TEGRA124_CLK_PLLD_DSI] = clk;
++	clks[TEGRA124_CLK_PLL_D_DSI_OUT] = clk;
  
- /* Global data of Tegra CPU CAR ops */
- static struct tegra_cpu_car_ops dummy_car_ops;
-@@ -122,6 +128,14 @@ static struct tegra_clk_periph_regs periph_regs[] = {
- 		.rst_set_reg = RST_DEVICES_SET_X,
- 		.rst_clr_reg = RST_DEVICES_CLR_X,
- 	},
-+	[6] = {
-+		.enb_reg = CLK_OUT_ENB_Y,
-+		.enb_set_reg = CLK_OUT_ENB_SET_Y,
-+		.enb_clr_reg = CLK_OUT_ENB_CLR_Y,
-+		.rst_reg = RST_DEVICES_Y,
-+		.rst_set_reg = RST_DEVICES_SET_Y,
-+		.rst_clr_reg = RST_DEVICES_CLR_Y,
-+	},
- };
+-	clk = tegra_clk_register_periph_gate("dsia", "plld_dsi", 0, clk_base,
+-					     0, 48, periph_clk_enb_refcnt);
++	clk = tegra_clk_register_periph_gate("dsia", "pll_d_dsi_out", 0,
++					     clk_base, 0, 48,
++					     periph_clk_enb_refcnt);
+ 	clks[TEGRA124_CLK_DSIA] = clk;
  
- static void __iomem *clk_base;
+-	clk = tegra_clk_register_periph_gate("dsib", "plld_dsi", 0, clk_base,
+-					     0, 82, periph_clk_enb_refcnt);
++	clk = tegra_clk_register_periph_gate("dsib", "pll_d_dsi_out", 0,
++					     clk_base, 0, 82,
++					     periph_clk_enb_refcnt);
+ 	clks[TEGRA124_CLK_DSIB] = clk;
+ 
+ 	/* emc mux */
+diff --git a/include/dt-bindings/clock/tegra124-car-common.h b/include/dt-bindings/clock/tegra124-car-common.h
+index ae2eb17a1658..a2156090563f 100644
+--- a/include/dt-bindings/clock/tegra124-car-common.h
++++ b/include/dt-bindings/clock/tegra124-car-common.h
+@@ -297,7 +297,7 @@
+ #define TEGRA124_CLK_PLL_C4 270
+ #define TEGRA124_CLK_PLL_DP 271
+ #define TEGRA124_CLK_PLL_E_MUX 272
+-#define TEGRA124_CLK_PLLD_DSI 273
++#define TEGRA124_CLK_PLL_D_DSI_OUT 273
+ /* 274 */
+ /* 275 */
+ /* 276 */
 -- 
 2.3.2
