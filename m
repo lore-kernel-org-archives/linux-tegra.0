@@ -1,67 +1,86 @@
 From: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: [PATCH v4 1/2] PCI: add helper function to find root port for device
-Date: Mon, 30 Mar 2015 12:55:12 +0200
-Message-ID: <1427712913-13678-1-git-send-email-l.stach@pengutronix.de>
+Subject: [PATCH v4 2/2] PCI: tegra: apply relaxed ordering fixup only on Tegra
+Date: Mon, 30 Mar 2015 12:55:13 +0200
+Message-ID: <1427712913-13678-2-git-send-email-l.stach@pengutronix.de>
+References: <1427712913-13678-1-git-send-email-l.stach@pengutronix.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1427712913-13678-1-git-send-email-l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
 Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This adds a simple way to get the root port a given device
-is connected to.
+The fixup to enable relaxed ordering on all PCI devices was
+executed unconditionally if the Tegra PCI host driver was
+built into the kernel. This doesn't play nice with a
+multiplatform kernel executed on other platforms which
+may not need this fixup.
+
+Make sure to only apply the fixup if the root port is
+a Tegra.
 
 Signed-off-by: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-v2: new patch in v2
-v3: rename to pci_find_rootport to fit better with other API
-v4: - rename to make it obvious that this function is PCIe specific
-    - fixes wrong assumption about what is a root bus in the presence
-      virtual buses
+v2:
+- split out PCI hierarchy walk
+- separate code from data by moving PCI IDs into own structure
+v3:
+- fixup for helper rename
+- applied Thierry's ACK
+v4:
+- fixup for yet another helper rename
 ---
- drivers/pci/search.c | 20 ++++++++++++++++++++
- include/linux/pci.h  |  1 +
- 2 files changed, 21 insertions(+)
+ drivers/pci/host/pci-tegra.c | 34 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 33 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pci/search.c b/drivers/pci/search.c
-index a20ce7d5e2a7..d7c599103ae1 100644
---- a/drivers/pci/search.c
-+++ b/drivers/pci/search.c
-@@ -384,3 +384,23 @@ int pci_dev_present(const struct pci_device_id *ids)
- 	return 0;
- }
- EXPORT_SYMBOL(pci_dev_present);
-+
-+/**
-+ * pcie_find_root_port - Returns the root port the given device is connected to.
-+ * @dev: PCI device for which the root port should be found.
-+ */
-+struct pci_dev *pcie_find_root_port(struct pci_dev *dev)
-+{
-+	struct pci_bus *bus = dev->bus;
-+
-+	/* if this device is located on the root bus, it is a root port */
-+	if (pci_is_root_bus(bus))
-+		return dev;
-+
-+	/* walk up the PCI hierarchy to the first level below the root */
-+	while (bus->parent && bus->parent->parent)
-+		bus = bus->parent;
-+
-+	return bus->self;
-+}
-+EXPORT_SYMBOL(pcie_find_root_port);
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 211e9da8a7d7..308c71081034 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -844,6 +844,7 @@ static inline struct pci_dev *pci_get_bus_and_slot(unsigned int bus,
- }
- struct pci_dev *pci_get_class(unsigned int class, struct pci_dev *from);
- int pci_dev_present(const struct pci_device_id *ids);
-+struct pci_dev *pcie_find_root_port(struct pci_dev *dev);
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index 00e92720d7f7..cc3b1ed77754 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -586,10 +586,42 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0bf1, tegra_pcie_fixup_class);
+ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1c, tegra_pcie_fixup_class);
+ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1d, tegra_pcie_fixup_class);
  
- int pci_bus_read_config_byte(struct pci_bus *bus, unsigned int devfn,
- 			     int where, u8 *val);
++static const struct pci_device_id tegra_rootport_ids[] = {
++	{
++		/* Tegra20 4 lane root port */
++		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0bf0,
++		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
++	}, {
++		/* Tegra20 2 lane root port */
++		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0bf1,
++		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
++	}, {
++		/* Tegra30 4 lane root port */
++		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0e1c,
++		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
++	}, {
++		/* Tegra30 2 lane root port */
++		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0e1d,
++		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
++	}, {
++		/* Tegra124 4 lane root port */
++		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0e12,
++		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
++	}, {
++		/* Tegra124 1 lane root port */
++		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0e13,
++		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
++	}, {
++		/* sentinel */
++	}
++};
++
+ /* Tegra PCIE requires relaxed ordering */
+ static void tegra_pcie_relax_enable(struct pci_dev *dev)
+ {
+-	pcie_capability_set_word(dev, PCI_EXP_DEVCTL, PCI_EXP_DEVCTL_RELAX_EN);
++	if (pci_match_id(tegra_rootport_ids, pcie_find_root_port(dev)))
++		pcie_capability_set_word(dev, PCI_EXP_DEVCTL,
++					 PCI_EXP_DEVCTL_RELAX_EN);
+ }
+ DECLARE_PCI_FIXUP_FINAL(PCI_ANY_ID, PCI_ANY_ID, tegra_pcie_relax_enable);
+ 
 -- 
 2.1.4
