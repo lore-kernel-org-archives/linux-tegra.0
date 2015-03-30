@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 06/11] clk: tegra: Remove needless initializations
-Date: Mon, 30 Mar 2015 14:31:08 +0200
-Message-ID: <1427718673-32011-7-git-send-email-thierry.reding@gmail.com>
+Subject: [PATCH 05/11] clk: tegra: Use consistent indentation
+Date: Mon, 30 Mar 2015 14:31:07 +0200
+Message-ID: <1427718673-32011-6-git-send-email-thierry.reding@gmail.com>
 References: <1427718673-32011-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1427718673-32011-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,45 +12,44 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The ret variable is often explicitly initialized to 0, but there is no
-need to do so in many cases because it will immediately be overwritten
-with the return value from a function.
+Some of the .dev_id entries in the devclks table were oddly indented.
+Make them consistent with the rest of the table.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/clk/tegra/clk-pll.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/tegra/clk-tegra30.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index f9950dda102e..05c6d08a6695 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -981,7 +981,7 @@ static int clk_pllxc_set_rate(struct clk_hw *hw, unsigned long rate,
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
- 	struct tegra_clk_pll_freq_table cfg, old_cfg;
- 	unsigned long flags = 0;
--	int ret = 0;
-+	int ret;
- 
- 	ret = _pll_ramp_calc_pll(hw, &cfg, rate, parent_rate);
- 	if (ret < 0)
-@@ -1005,7 +1005,7 @@ static long clk_pll_ramp_round_rate(struct clk_hw *hw, unsigned long rate,
- 				unsigned long *prate)
- {
- 	struct tegra_clk_pll_freq_table cfg;
--	int ret = 0, p_div;
-+	int ret, p_div;
- 	u64 output_rate = *prate;
- 
- 	ret = _pll_ramp_calc_pll(hw, &cfg, rate, *prate);
-@@ -1073,7 +1073,7 @@ static int clk_pllc_enable(struct clk_hw *hw)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
- 	u32 val;
--	int ret = 0;
-+	int ret;
- 	unsigned long flags = 0;
- 
- 	if (pll->lock)
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 4b9d8bd3d0bf..0659db79d1c5 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -657,16 +657,16 @@ static struct tegra_devclk devclks[] __initdata = {
+ 	{ .con_id = "fuse_burn", .dev_id = "fuse-tegra", .dt_id = TEGRA30_CLK_FUSE_BURN },
+ 	{ .con_id = "apbif", .dev_id = "tegra30-ahub", .dt_id = TEGRA30_CLK_APBIF },
+ 	{ .con_id = "hda2hdmi", .dev_id = "tegra30-hda", .dt_id = TEGRA30_CLK_HDA2HDMI },
+-	{ .dev_id =  "tegra-apbdma", .dt_id = TEGRA30_CLK_APBDMA },
+-	{ .dev_id =  "rtc-tegra", .dt_id = TEGRA30_CLK_RTC },
+-	{ .dev_id =  "timer", .dt_id = TEGRA30_CLK_TIMER },
+-	{ .dev_id =  "tegra-kbc", .dt_id = TEGRA30_CLK_KBC },
+-	{ .dev_id =  "fsl-tegra-udc", .dt_id = TEGRA30_CLK_USBD },
+-	{ .dev_id =  "tegra-ehci.1", .dt_id = TEGRA30_CLK_USB2 },
+-	{ .dev_id =  "tegra-ehci.2", .dt_id = TEGRA30_CLK_USB2 },
+-	{ .dev_id =  "kfuse-tegra", .dt_id = TEGRA30_CLK_KFUSE },
+-	{ .dev_id =  "tegra_sata_cold", .dt_id = TEGRA30_CLK_SATA_COLD },
+-	{ .dev_id =  "dtv", .dt_id = TEGRA30_CLK_DTV },
++	{ .dev_id = "tegra-apbdma", .dt_id = TEGRA30_CLK_APBDMA },
++	{ .dev_id = "rtc-tegra", .dt_id = TEGRA30_CLK_RTC },
++	{ .dev_id = "timer", .dt_id = TEGRA30_CLK_TIMER },
++	{ .dev_id = "tegra-kbc", .dt_id = TEGRA30_CLK_KBC },
++	{ .dev_id = "fsl-tegra-udc", .dt_id = TEGRA30_CLK_USBD },
++	{ .dev_id = "tegra-ehci.1", .dt_id = TEGRA30_CLK_USB2 },
++	{ .dev_id = "tegra-ehci.2", .dt_id = TEGRA30_CLK_USB2 },
++	{ .dev_id = "kfuse-tegra", .dt_id = TEGRA30_CLK_KFUSE },
++	{ .dev_id = "tegra_sata_cold", .dt_id = TEGRA30_CLK_SATA_COLD },
++	{ .dev_id = "dtv", .dt_id = TEGRA30_CLK_DTV },
+ 	{ .dev_id = "tegra30-i2s.0", .dt_id = TEGRA30_CLK_I2S0 },
+ 	{ .dev_id = "tegra30-i2s.1", .dt_id = TEGRA30_CLK_I2S1 },
+ 	{ .dev_id = "tegra30-i2s.2", .dt_id = TEGRA30_CLK_I2S2 },
 -- 
 2.3.2
