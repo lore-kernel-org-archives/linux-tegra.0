@@ -1,62 +1,74 @@
-From: MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v6 2/8] PM / devfreq: tegra: Update to v5 of the submitted
- patches
-Date: Mon, 30 Mar 2015 10:22:56 +0000 (GMT)
-Message-ID: <1040887254.91981427710975821.JavaMail.weblogic@epmlwas08a>
-Reply-To: myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+From: Lucas Stach <l.stach@pengutronix.de>
+Subject: Re: [PATCH v3 1/2] PCI: add helper function to find root port for
+ device
+Date: Mon, 30 Mar 2015 12:36:26 +0200
+Message-ID: <1427711786.3370.3.camel@pengutronix.de>
+References: <1421179048-25370-1-git-send-email-l.stach@pengutronix.de>
+	 <20150123223424.GN29776@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-MIME-version: 1.0
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, Alex Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <20150123223424.GN29776@google.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-PiBTZW5kZXIgOiBUb21ldSBWaXpvc288dG9tZXUudml6b3NvQGNvbGxhYm9yYS5jb20+DQo+IERh
-dGUgOiAyMDE1LTAzLTE3IDE4OjM2IChHTVQrMDk6MDApDQo+IFRpdGxlIDogW1BBVENIIHY2IDIv
-OF0gUE0gLyBkZXZmcmVxOiB0ZWdyYTogVXBkYXRlIHRvIHY1IG9mIHRoZSBzdWJtaXR0ZWQgcGF0
-Y2hlcw0KPiANCj4gVGhlcmUgc2VlbWVkIHRvIGJlIHNvbWUgbWlzY29tbXVuaWNhdGlvbiBhbmQg
-YW4gb2xkIHZlcnNpb24gb2YgdGhlDQo+IHN1Ym1pdHRlZCBwYXRjaGVzIHdhcyBtZXJnZWQuDQo+
-IA0KPiBUaGlzIGNvbW1pdCB1cGRhdGVzIHRoZSBkcml2ZXIgdG8gdjUsIHdoaWNoIGhhZCB0aGlz
-IGNoYW5nZWxvZzoNCj4gDQo+ICogQ2xhcmlmeSB0aGUgdW5pdHMgb2YgYXZnX2RlcGVuZGVuY3lf
-dGhyZXNob2xkDQo+ICogUmVtb3ZlIHVudXNlZCByZWZlcmVuY2VzIHRvIHBsYXRmb3JtX2Rldmlj
-ZQ0KPiAqIEVuYWJsZSBhbmQgZGlzYWJsZSBpbnRlcnJ1cHRzIG9uIGdvdmVybm9yIGV2ZW50cw0K
-PiAqIE1ha2Ugc3VyZSB3ZSBoYW5kbGUgYWxsIGludGVycnVwdHMgZm9yIGFueSBvZiB0aGUgZGV2
-aWNlcyB3ZSBhcmUgc2FtcGxpbmcNCj4gKiBNb3ZlIGxvY2tpbmcgdG8gYmUgcGVyLWFjdG1vbi1k
-ZXZpY2UNCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFRvbWV1IFZpem9zbyANCj4gQ0M6IEFsZXggRnJp
-ZCANCj4gQ0M6IE1pa2tvIFBlcnR0dW5lbiANCj4gLS0tDQo+IGRyaXZlcnMvZGV2ZnJlcS90ZWdy
-YS1kZXZmcmVxLmMgfCA0NTUgKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0t
-LQ0KPiAxIGZpbGUgY2hhbmdlZCwgMjUyIGluc2VydGlvbnMoKyksIDIwMyBkZWxldGlvbnMoLSkN
-Cj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2RldmZyZXEvdGVncmEtZGV2ZnJlcS5jIGIvZHJp
-dmVycy9kZXZmcmVxL3RlZ3JhLWRldmZyZXEuYw0KPiBpbmRleCAzNDc5MDk2Li5jNzE2MzVhIDEw
-MDY0NA0KPiAtLS0gYS9kcml2ZXJzL2RldmZyZXEvdGVncmEtZGV2ZnJlcS5jDQo+ICsrKyBiL2Ry
-aXZlcnMvZGV2ZnJlcS90ZWdyYS1kZXZmcmVxLmMNCltdDQo+IC1zdGF0aWMgc3RydWN0IGRldmZy
-ZXFfZGV2X3Byb2ZpbGUgdGVncmFfZGV2ZnJlcV9wcm9maWxlID0gew0KPiAtIC5wb2xsaW5nX21z
-ID0gMCwNCj4gLSAudGFyZ2V0ID0gdGVncmFfZGV2ZnJlcV90YXJnZXQsDQo+IC0gLmdldF9kZXZf
-c3RhdHVzID0gdGVncmFfZGV2ZnJlcV9nZXRfZGV2X3N0YXR1cywNCj4gLX07DQo+ICtzdGF0aWMg
-aW50IF9faW5pdCB0ZWdyYV9nb3Zlcm5vcl9pbml0KHZvaWQpDQo+ICt7DQo+ICsgcmV0dXJuIGRl
-dmZyZXFfYWRkX2dvdmVybm9yKCZ0ZWdyYV9kZXZmcmVxX2dvdmVybm9yKTsNCj4gK30NCj4gK3N1
-YnN5c19pbml0Y2FsbCh0ZWdyYV9nb3Zlcm5vcl9pbml0KTsNCj4gDQpbXQ0KDQpJdCBsb29rcyBs
-aWtlIHlvdSBuZWVkIHRvIGRpc2FibGUgIm1vZHVsZSIgaW4gdGhlIGNvcnJlc3BvbmRpbmcgS2Nv
-bmZpZy4NCg0KRG8geW91IHdhbnQgdG8gYWRkIGFub3RoZXIgcGF0Y2ggdG8gbWFrZSBpdCBjb21w
-aWxhYmxlIGFzIGEgbW9kdWxlPyBvcg0KZG8geW91IHdhbnQgdG8gbWFrZSBpdCAidHJpc3RhdGUi
-IC0tPiAiYm9vbCI/DQoNCklmIHlvdSB3YW50IHRoZSBsYXR0ZXIsIEkgY2FuIGRvIGl0IGZvciB5
-b3UgYmVmb3JlIEkgc2VuZCBhIHB1bGwgcmVxdWVzdC4NCg0KUGxlYXNlIHJlZmVyIHRvIHRoZSBm
-b2xsb3dpbmc6DQoNCg0KDQptenhAa29oYWt1Oi9ob21lL2tlcm5lbC5vcmcvZGV2ZnJlcSQgbWFr
-ZSBBUkNIPWFybSBtb2R1bGVzDQogIENISyAgICAgaW5jbHVkZS9jb25maWcva2VybmVsLnJlbGVh
-c2UNCiAgQ0hLICAgICBpbmNsdWRlL2dlbmVyYXRlZC91YXBpL2xpbnV4L3ZlcnNpb24uaA0KICBD
-SEsgICAgIGluY2x1ZGUvZ2VuZXJhdGVkL3V0c3JlbGVhc2UuaA0KbWFrZVsxXTogYGluY2x1ZGUv
-Z2VuZXJhdGVkL21hY2gtdHlwZXMuaCcgaXMgdXAgdG8gZGF0ZS4NCiAgQ0FMTCAgICBzY3JpcHRz
-L2NoZWNrc3lzY2FsbHMuc2gNCiAgQ0MgW01dICBkcml2ZXJzL2RldmZyZXEvdGVncmEtZGV2ZnJl
-cS5vDQpkcml2ZXJzL2RldmZyZXEvdGVncmEtZGV2ZnJlcS5jOjc1ODoxOiBlcnJvcjogcmVkZWZp
-bml0aW9uIG9mIOKAmF9faW5pdHRlc3TigJkNCmRyaXZlcnMvZGV2ZnJlcS90ZWdyYS1kZXZmcmVx
-LmM6NjEzOjE6IG5vdGU6IHByZXZpb3VzIGRlZmluaXRpb24gb2Yg4oCYX19pbml0dGVzdOKAmSB3
-YXMgaGVyZQ0KZHJpdmVycy9kZXZmcmVxL3RlZ3JhLWRldmZyZXEuYzo3NTg6MTogZXJyb3I6IHJl
-ZGVmaW5pdGlvbiBvZiDigJhpbml0X21vZHVsZeKAmQ0KZHJpdmVycy9kZXZmcmVxL3RlZ3JhLWRl
-dmZyZXEuYzo2MTM6MTogbm90ZTogcHJldmlvdXMgZGVmaW5pdGlvbiBvZiDigJhpbml0X21vZHVs
-ZeKAmSB3YXMgaGVyZQ0KbWFrZVsyXTogKioqIFtkcml2ZXJzL2RldmZyZXEvdGVncmEtZGV2ZnJl
-cS5vXSBFcnJvciAxDQptYWtlWzFdOiAqKiogW2RyaXZlcnMvZGV2ZnJlcV0gRXJyb3IgMg0KbWFr
-ZTogKioqIFtkcml2ZXJzXSBFcnJvciAyDQptenhAa29oYWt1Oi9ob21lL2tlcm5lbC5vcmcvZGV2
-ZnJlcSQgDQoNCg0KDQpDaGVlcnMsDQpNeXVuZ0pvbw0KDQo=
+Am Freitag, den 23.01.2015, 16:34 -0600 schrieb Bjorn Helgaas:
+> On Tue, Jan 13, 2015 at 08:57:27PM +0100, Lucas Stach wrote:
+> > This adds a simple way to get the root port a given device
+> > is connected to.
+> > 
+> > Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> > ---
+> > v2: new patch in v2
+> > v3: rename to pci_find_rootport to fit better with other API
+> > ---
+> >  drivers/pci/search.c | 20 ++++++++++++++++++++
+> >  include/linux/pci.h  |  1 +
+> >  2 files changed, 21 insertions(+)
+> > 
+> > diff --git a/drivers/pci/search.c b/drivers/pci/search.c
+> > index a20ce7d5e2a7..7254f126096d 100644
+> > --- a/drivers/pci/search.c
+> > +++ b/drivers/pci/search.c
+> > @@ -384,3 +384,23 @@ int pci_dev_present(const struct pci_device_id *ids)
+> >  	return 0;
+> >  }
+> >  EXPORT_SYMBOL(pci_dev_present);
+> > +
+> > +/**
+> > + * pci_find_root_port - Returns the root port the given device is connected to.
+> > + * @dev: PCI device for which the root port should be found.
+> > + */
+> > +struct pci_dev *pci_find_root_port(struct pci_dev *dev)
+> 
+> This seems a little too generic.  There are still PCI (non-PCIe) systems,
+> and on those this will return some non-Root Port device, the meaning of
+> which is unclear.  I'm happy to put something like this in pci-tegra.c, but
+> until there are other potential users and we sort out the PCI/PCIe-ness of
+> the interface, I don't really want to make it global and exported.
+> 
+I moved it out of the Tegra PCIe driver on your request. Also I can
+already see this being useful for the Keystone PCI host driver to
+shorten the MTRS quirk function.
+
+I will rename this to pcie_find_root_port() so it is clear that this is
+PCIe specific, but keep it in the current location.
+
+> > +{
+> > +	struct pci_bus *bus = dev->bus;
+> > +
+> > +	/* If there is no bridge on the bus the passed device is a root port. */
+> 
+> This assumption is false -- see the comment at pci_is_root_bus().
+> 
+Right, will change this.
+
+Regards,
+Lucas
+
+-- 
+Pengutronix e.K.             | Lucas Stach                 |
+Industrial Linux Solutions   | http://www.pengutronix.de/  |
