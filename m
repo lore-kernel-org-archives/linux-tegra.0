@@ -1,86 +1,49 @@
-From: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: [PATCH v4 2/2] PCI: tegra: apply relaxed ordering fixup only on Tegra
-Date: Mon, 30 Mar 2015 12:55:13 +0200
-Message-ID: <1427712913-13678-2-git-send-email-l.stach@pengutronix.de>
-References: <1427712913-13678-1-git-send-email-l.stach@pengutronix.de>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 00/11] clk/tegra: Changes for v4.1-rc1
+Date: Mon, 30 Mar 2015 14:31:02 +0200
+Message-ID: <1427718673-32011-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1427712913-13678-1-git-send-email-l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The fixup to enable relaxed ordering on all PCI devices was
-executed unconditionally if the Tegra PCI host driver was
-built into the kernel. This doesn't play nice with a
-multiplatform kernel executed on other platforms which
-may not need this fixup.
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Make sure to only apply the fixup if the root port is
-a Tegra.
+Hi everyone,
 
-Signed-off-by: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-v2:
-- split out PCI hierarchy walk
-- separate code from data by moving PCI IDs into own structure
-v3:
-- fixup for helper rename
-- applied Thierry's ACK
-v4:
-- fixup for yet another helper rename
----
- drivers/pci/host/pci-tegra.c | 34 +++++++++++++++++++++++++++++++++-
- 1 file changed, 33 insertions(+), 1 deletion(-)
+This series of patches is an accumulation of cleanups and fixes I have
+been carrying around in my local tree for a while now. If there aren't
+any objections I'll send this out as a pull-request to Mike sometime
+soon.
 
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 00e92720d7f7..cc3b1ed77754 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -586,10 +586,42 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0bf1, tegra_pcie_fixup_class);
- DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1c, tegra_pcie_fixup_class);
- DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA, 0x0e1d, tegra_pcie_fixup_class);
- 
-+static const struct pci_device_id tegra_rootport_ids[] = {
-+	{
-+		/* Tegra20 4 lane root port */
-+		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0bf0,
-+		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
-+	}, {
-+		/* Tegra20 2 lane root port */
-+		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0bf1,
-+		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
-+	}, {
-+		/* Tegra30 4 lane root port */
-+		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0e1c,
-+		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
-+	}, {
-+		/* Tegra30 2 lane root port */
-+		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0e1d,
-+		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
-+	}, {
-+		/* Tegra124 4 lane root port */
-+		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0e12,
-+		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
-+	}, {
-+		/* Tegra124 1 lane root port */
-+		.vendor = PCI_VENDOR_ID_NVIDIA, .device = 0x0e13,
-+		.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID
-+	}, {
-+		/* sentinel */
-+	}
-+};
-+
- /* Tegra PCIE requires relaxed ordering */
- static void tegra_pcie_relax_enable(struct pci_dev *dev)
- {
--	pcie_capability_set_word(dev, PCI_EXP_DEVCTL, PCI_EXP_DEVCTL_RELAX_EN);
-+	if (pci_match_id(tegra_rootport_ids, pcie_find_root_port(dev)))
-+		pcie_capability_set_word(dev, PCI_EXP_DEVCTL,
-+					 PCI_EXP_DEVCTL_RELAX_EN);
- }
- DECLARE_PCI_FIXUP_FINAL(PCI_ANY_ID, PCI_ANY_ID, tegra_pcie_relax_enable);
- 
+Thierry
+
+Dylan Reid (1):
+  clk: tegra: Enable HDA to HDMI clocks on Tegra124
+
+Thierry Reding (10):
+  clk: tegra: Fix typo tabel -> table
+  clk: tegra: Fix a bunch of sparse warnings
+  clk: tegra: Various whitespace cleanups
+  clk: tegra: Use consistent indentation
+  clk: tegra: Remove needless initializations
+  clk: tegra: Register the proper number of resets
+  clk: tegra: Add peripheral registers for bank Y
+  clk: tegra: Model oscillator as clock
+  clk: tegra: Use generic tegra_osc_clk_init() on Tegra114
+  clk: tegra: Use the proper parent for plld_dsi
+
+ drivers/clk/tegra/clk-pll.c                     |  7 ++---
+ drivers/clk/tegra/clk-tegra-fixed.c             | 24 +++++++++--------
+ drivers/clk/tegra/clk-tegra-periph.c            |  2 +-
+ drivers/clk/tegra/clk-tegra114.c                | 36 +++----------------------
+ drivers/clk/tegra/clk-tegra124.c                | 22 ++++++++++-----
+ drivers/clk/tegra/clk-tegra30.c                 | 23 ++++++++--------
+ drivers/clk/tegra/clk.c                         | 16 ++++++++++-
+ drivers/clk/tegra/clk.h                         | 10 +++----
+ include/dt-bindings/clock/tegra124-car-common.h |  2 +-
+ 9 files changed, 70 insertions(+), 72 deletions(-)
+
 -- 
-2.1.4
+2.3.2
