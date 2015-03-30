@@ -1,89 +1,62 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 2/2] ARM: tegra: Device tree changes for v4.1-rc1
-Date: Mon, 30 Mar 2015 12:12:13 +0200
-Message-ID: <1427710333-13472-2-git-send-email-thierry.reding@gmail.com>
-References: <1427710333-13472-1-git-send-email-thierry.reding@gmail.com>
+From: MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v6 2/8] PM / devfreq: tegra: Update to v5 of the submitted
+ patches
+Date: Mon, 30 Mar 2015 10:22:56 +0000 (GMT)
+Message-ID: <1040887254.91981427710975821.JavaMail.weblogic@epmlwas08a>
+Reply-To: myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1427710333-13472-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+MIME-version: 1.0
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, Alex Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi ARM SoC maintainers,
-
-The following changes since commit c517d838eb7d07bbe9507871fab3931deccff539:
-
-  Linux 4.0-rc1 (2015-02-22 18:21:14 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.1-dt
-
-for you to fetch changes up to 03650bd2010b117c5c16a75278b0d01def8e9376:
-
-  ARM: tegra: Add EMC timings to Nyan Blaze device tree (2015-03-30 11:43:39 +0200)
-
-----------------------------------------------------------------
-ARM: tegra: Device tree changes for v4.1-rc1
-
-A bunch of changes to improve support on the Nyan Big (Acer Chromebook
-13). These enable the trackpad and make the WiFi card work. Changes to
-the userspace-exposed name of the soundcard are required for a better
-audio experience.
-
-Support for Nyan Blaze (HP Chromebook 14) is added. It is very similar
-to Nyan Big and therefore can enjoys many of the above improvements.
-
-Since the EMC driver can now be used to scale the frequency at which
-external memory is clocked, corresponding EMC frequency tables are added
-for Jetson TK1 and the Nyan boards.
-
-The Jetson TK1, Beaver and Nyan boards now also use generated pinmux
-data, which makes it easier to keep it in sync with the data provided by
-syseng.
-
-----------------------------------------------------------------
-Lucas Stach (1):
-      ARM: tegra: Use generated pinmux for Beaver board
-
-Mikko Perttunen (2):
-      ARM: tegra: Add EMC to Tegra124 device tree
-      ARM: tegra: Add EMC timings to Jetson TK1 device tree
-
-Stephen Warren (1):
-      ARM: tegra: Import latest Jetson TK1 pinmux
-
-Tomeu Vizoso (13):
-      ARM: tegra: Change model of sound card in Nyan Big
-      ARM: tegra: Move generic parts out of the nyan-big DT
-      ARM: tegra: Add DTS for the nyan-blaze board
-      ARM: tegra: Add node for trackpad in Nyan boards
-      ARM: tegra: Use pwrseq-simple for the wifi in Nyan
-      ARM: tegra: Use generated pinmux data for Nyan Big
-      ARM: tegra: nyan: Set maximum frequency for SPI flash
-      ARM: tegra: nyan: Add gpio-restart node
-      ARM: tegra: nyan: The WiFi card is kept powered during suspend
-      of: Add binding for NVIDIA Tegra ACTMON node
-      ARM: tegra: Add Tegra124 ACTMON support
-      ARM: tegra: Add EMC timings to Nyan Big device tree
-      ARM: tegra: Add EMC timings to Nyan Blaze device tree
-
- .../bindings/arm/tegra/nvidia,tegra30-actmon.txt   |   32 +
- arch/arm/boot/dts/Makefile                         |    1 +
- arch/arm/boot/dts/tegra124-jetson-tk1-emc.dtsi     | 2421 ++++++++++++++++++++
- arch/arm/boot/dts/tegra124-jetson-tk1.dts          |  559 +++--
- arch/arm/boot/dts/tegra124-nyan-big-emc.dtsi       | 2023 ++++++++++++++++
- arch/arm/boot/dts/tegra124-nyan-big.dts            | 2121 +++++++++--------
- arch/arm/boot/dts/tegra124-nyan-blaze-emc.dtsi     | 2049 +++++++++++++++++
- arch/arm/boot/dts/tegra124-nyan-blaze.dts          | 1334 +++++++++++
- arch/arm/boot/dts/tegra124-nyan.dtsi               |  695 ++++++
- arch/arm/boot/dts/tegra124.dtsi                    |   19 +
- arch/arm/boot/dts/tegra30-beaver.dts               | 1653 ++++++++++++-
- 11 files changed, 11607 insertions(+), 1300 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra30-actmon.txt
- create mode 100644 arch/arm/boot/dts/tegra124-jetson-tk1-emc.dtsi
- create mode 100644 arch/arm/boot/dts/tegra124-nyan-big-emc.dtsi
- create mode 100644 arch/arm/boot/dts/tegra124-nyan-blaze-emc.dtsi
- create mode 100644 arch/arm/boot/dts/tegra124-nyan-blaze.dts
- create mode 100644 arch/arm/boot/dts/tegra124-nyan.dtsi
+PiBTZW5kZXIgOiBUb21ldSBWaXpvc288dG9tZXUudml6b3NvQGNvbGxhYm9yYS5jb20+DQo+IERh
+dGUgOiAyMDE1LTAzLTE3IDE4OjM2IChHTVQrMDk6MDApDQo+IFRpdGxlIDogW1BBVENIIHY2IDIv
+OF0gUE0gLyBkZXZmcmVxOiB0ZWdyYTogVXBkYXRlIHRvIHY1IG9mIHRoZSBzdWJtaXR0ZWQgcGF0
+Y2hlcw0KPiANCj4gVGhlcmUgc2VlbWVkIHRvIGJlIHNvbWUgbWlzY29tbXVuaWNhdGlvbiBhbmQg
+YW4gb2xkIHZlcnNpb24gb2YgdGhlDQo+IHN1Ym1pdHRlZCBwYXRjaGVzIHdhcyBtZXJnZWQuDQo+
+IA0KPiBUaGlzIGNvbW1pdCB1cGRhdGVzIHRoZSBkcml2ZXIgdG8gdjUsIHdoaWNoIGhhZCB0aGlz
+IGNoYW5nZWxvZzoNCj4gDQo+ICogQ2xhcmlmeSB0aGUgdW5pdHMgb2YgYXZnX2RlcGVuZGVuY3lf
+dGhyZXNob2xkDQo+ICogUmVtb3ZlIHVudXNlZCByZWZlcmVuY2VzIHRvIHBsYXRmb3JtX2Rldmlj
+ZQ0KPiAqIEVuYWJsZSBhbmQgZGlzYWJsZSBpbnRlcnJ1cHRzIG9uIGdvdmVybm9yIGV2ZW50cw0K
+PiAqIE1ha2Ugc3VyZSB3ZSBoYW5kbGUgYWxsIGludGVycnVwdHMgZm9yIGFueSBvZiB0aGUgZGV2
+aWNlcyB3ZSBhcmUgc2FtcGxpbmcNCj4gKiBNb3ZlIGxvY2tpbmcgdG8gYmUgcGVyLWFjdG1vbi1k
+ZXZpY2UNCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFRvbWV1IFZpem9zbyANCj4gQ0M6IEFsZXggRnJp
+ZCANCj4gQ0M6IE1pa2tvIFBlcnR0dW5lbiANCj4gLS0tDQo+IGRyaXZlcnMvZGV2ZnJlcS90ZWdy
+YS1kZXZmcmVxLmMgfCA0NTUgKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0t
+LQ0KPiAxIGZpbGUgY2hhbmdlZCwgMjUyIGluc2VydGlvbnMoKyksIDIwMyBkZWxldGlvbnMoLSkN
+Cj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2RldmZyZXEvdGVncmEtZGV2ZnJlcS5jIGIvZHJp
+dmVycy9kZXZmcmVxL3RlZ3JhLWRldmZyZXEuYw0KPiBpbmRleCAzNDc5MDk2Li5jNzE2MzVhIDEw
+MDY0NA0KPiAtLS0gYS9kcml2ZXJzL2RldmZyZXEvdGVncmEtZGV2ZnJlcS5jDQo+ICsrKyBiL2Ry
+aXZlcnMvZGV2ZnJlcS90ZWdyYS1kZXZmcmVxLmMNCltdDQo+IC1zdGF0aWMgc3RydWN0IGRldmZy
+ZXFfZGV2X3Byb2ZpbGUgdGVncmFfZGV2ZnJlcV9wcm9maWxlID0gew0KPiAtIC5wb2xsaW5nX21z
+ID0gMCwNCj4gLSAudGFyZ2V0ID0gdGVncmFfZGV2ZnJlcV90YXJnZXQsDQo+IC0gLmdldF9kZXZf
+c3RhdHVzID0gdGVncmFfZGV2ZnJlcV9nZXRfZGV2X3N0YXR1cywNCj4gLX07DQo+ICtzdGF0aWMg
+aW50IF9faW5pdCB0ZWdyYV9nb3Zlcm5vcl9pbml0KHZvaWQpDQo+ICt7DQo+ICsgcmV0dXJuIGRl
+dmZyZXFfYWRkX2dvdmVybm9yKCZ0ZWdyYV9kZXZmcmVxX2dvdmVybm9yKTsNCj4gK30NCj4gK3N1
+YnN5c19pbml0Y2FsbCh0ZWdyYV9nb3Zlcm5vcl9pbml0KTsNCj4gDQpbXQ0KDQpJdCBsb29rcyBs
+aWtlIHlvdSBuZWVkIHRvIGRpc2FibGUgIm1vZHVsZSIgaW4gdGhlIGNvcnJlc3BvbmRpbmcgS2Nv
+bmZpZy4NCg0KRG8geW91IHdhbnQgdG8gYWRkIGFub3RoZXIgcGF0Y2ggdG8gbWFrZSBpdCBjb21w
+aWxhYmxlIGFzIGEgbW9kdWxlPyBvcg0KZG8geW91IHdhbnQgdG8gbWFrZSBpdCAidHJpc3RhdGUi
+IC0tPiAiYm9vbCI/DQoNCklmIHlvdSB3YW50IHRoZSBsYXR0ZXIsIEkgY2FuIGRvIGl0IGZvciB5
+b3UgYmVmb3JlIEkgc2VuZCBhIHB1bGwgcmVxdWVzdC4NCg0KUGxlYXNlIHJlZmVyIHRvIHRoZSBm
+b2xsb3dpbmc6DQoNCg0KDQptenhAa29oYWt1Oi9ob21lL2tlcm5lbC5vcmcvZGV2ZnJlcSQgbWFr
+ZSBBUkNIPWFybSBtb2R1bGVzDQogIENISyAgICAgaW5jbHVkZS9jb25maWcva2VybmVsLnJlbGVh
+c2UNCiAgQ0hLICAgICBpbmNsdWRlL2dlbmVyYXRlZC91YXBpL2xpbnV4L3ZlcnNpb24uaA0KICBD
+SEsgICAgIGluY2x1ZGUvZ2VuZXJhdGVkL3V0c3JlbGVhc2UuaA0KbWFrZVsxXTogYGluY2x1ZGUv
+Z2VuZXJhdGVkL21hY2gtdHlwZXMuaCcgaXMgdXAgdG8gZGF0ZS4NCiAgQ0FMTCAgICBzY3JpcHRz
+L2NoZWNrc3lzY2FsbHMuc2gNCiAgQ0MgW01dICBkcml2ZXJzL2RldmZyZXEvdGVncmEtZGV2ZnJl
+cS5vDQpkcml2ZXJzL2RldmZyZXEvdGVncmEtZGV2ZnJlcS5jOjc1ODoxOiBlcnJvcjogcmVkZWZp
+bml0aW9uIG9mIOKAmF9faW5pdHRlc3TigJkNCmRyaXZlcnMvZGV2ZnJlcS90ZWdyYS1kZXZmcmVx
+LmM6NjEzOjE6IG5vdGU6IHByZXZpb3VzIGRlZmluaXRpb24gb2Yg4oCYX19pbml0dGVzdOKAmSB3
+YXMgaGVyZQ0KZHJpdmVycy9kZXZmcmVxL3RlZ3JhLWRldmZyZXEuYzo3NTg6MTogZXJyb3I6IHJl
+ZGVmaW5pdGlvbiBvZiDigJhpbml0X21vZHVsZeKAmQ0KZHJpdmVycy9kZXZmcmVxL3RlZ3JhLWRl
+dmZyZXEuYzo2MTM6MTogbm90ZTogcHJldmlvdXMgZGVmaW5pdGlvbiBvZiDigJhpbml0X21vZHVs
+ZeKAmSB3YXMgaGVyZQ0KbWFrZVsyXTogKioqIFtkcml2ZXJzL2RldmZyZXEvdGVncmEtZGV2ZnJl
+cS5vXSBFcnJvciAxDQptYWtlWzFdOiAqKiogW2RyaXZlcnMvZGV2ZnJlcV0gRXJyb3IgMg0KbWFr
+ZTogKioqIFtkcml2ZXJzXSBFcnJvciAyDQptenhAa29oYWt1Oi9ob21lL2tlcm5lbC5vcmcvZGV2
+ZnJlcSQgDQoNCg0KDQpDaGVlcnMsDQpNeXVuZ0pvbw0KDQo=
