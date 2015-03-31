@@ -1,29 +1,142 @@
-From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/4] iommu/tegra: Setup aperture
-Date: Tue, 31 Mar 2015 15:35:21 +0200
-Message-ID: <20150331133521.GB22683@8bytes.org>
-References: <1427450847-17719-1-git-send-email-thierry.reding@gmail.com>
- <1427450847-17719-2-git-send-email-thierry.reding@gmail.com>
- <20150327101935.GB17976@ulmo.nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 3/3] dt: paz00: define nvec as child of i2c bus
+Date: Tue, 31 Mar 2015 08:09:31 -0600
+Message-ID: <551AAA9B.6070607@wwwdotorg.org>
+References: <1422516022-27161-1-git-send-email-danindrey@mail.ru> <1422516022-27161-4-git-send-email-danindrey@mail.ru> <54CFEA2F.8040701@wwwdotorg.org> <551A415B.4040506@mail.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20150327101935.GB17976-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <551A415B.4040506@mail.ru>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrey Danin <danindrey@mail.ru>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, ac100@lists.launchpad.net, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Marc Dietrich <marvin24@gmx.de>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Mar 27, 2015 at 11:19:36AM +0100, Thierry Reding wrote:
-> I also just realized that this hunk conflicts with the IOMMU domain
-> alloc/free series that you sent out yesterday. Were you planning on
-> merging that series for 4.1? If so I can regenerate these patches on
-> top of your series.
+On 03/31/2015 12:40 AM, Andrey Danin wrote:
+> Hi,
+>
+> Thanks for the review.
+>
+> On 03.02.2015 0:20, Stephen Warren wrote:
+>> On 01/29/2015 12:20 AM, Andrey Danin wrote:
+>>> NVEC driver was reimplemented to use tegra i2c. Use common i2c bindings
+>>> for NVEC node.
+>>
+>>> diff --git a/Documentation/devicetree/bindings/nvec/nvidia,nvec.txt
+>>> b/Documentation/devicetree/bindings/nvec/nvidia,nvec.txt
+>>
+>> The changes to this file make more sense either as a standalone patch
+>> 1/4, or as part of the driver changes.
+>>
+>>> @@ -2,20 +2,5 @@ NVIDIA compliant embedded controller
+>>>
+>>>   Required properties:
+>>>   - compatible : should be "nvidia,nvec".
+>>> -- reg : the iomem of the i2c slave controller
+>>> -- interrupts : the interrupt line of the i2c slave controller
+>>> -- clock-frequency : the frequency of the i2c bus
+>>> -- gpios : the gpio used for ec request
+>>> -- slave-addr: the i2c address of the slave controller
+>>> -- clocks : Must contain an entry for each entry in clock-names.
+>>> -  See ../clocks/clock-bindings.txt for details.
+>>> -- clock-names : Must include the following entries:
+>>> -  Tegra20/Tegra30:
+>>> -  - div-clk
+>>> -  - fast-clk
+>>> -  Tegra114:
+>>> -  - div-clk
+>>> -- resets : Must contain an entry for each entry in reset-names.
+>>> -  See ../reset/reset.txt for details.
+>>> -- reset-names : Must include the following entries:
+>>> -  - i2c
+>>> +- request-gpios : the gpio used for ec request
+>>> +- reg: the i2c address of the slave controller
+>>
+>> This change breaks ABI.
+>>
+>> Instead of modifying the definition of the existing compatible value, I
+>> think you should introduce a new compatible value to describe the
+>> external NVEC chip.
+>
+> I changed compatible value to nvec-slave in v2.
+>>
+>>> diff --git a/arch/arm/boot/dts/tegra20-paz00.dts
+>>> b/arch/arm/boot/dts/tegra20-paz00.dts
+>>
+>>> -    nvec@7000c500 {
+>>> -        compatible = "nvidia,nvec";
+>>> -        reg = <0x7000c500 0x100>;
+>>> -        interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>;
+>>> -        #address-cells = <1>;
+>>> -        #size-cells = <0>;
+>>> +    i2c@7000c500 {
+>>> +        status = "okay";
+>>>           clock-frequency = <80000>;
+>>> -        request-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_HIGH>;
+>>> -        slave-addr = <138>;
+>>> -        clocks = <&tegra_car TEGRA20_CLK_I2C3>,
+>>> -                 <&tegra_car TEGRA20_CLK_PLL_P_OUT3>;
+>>> -        clock-names = "div-clk", "fast-clk";
+>>> -        resets = <&tegra_car 67>;
+>>> -        reset-names = "i2c";
+>>> +
+>>> +        nvec: nvec@45 {
+>>
+>> This doesn't feel correct. There's nothing here to indicate that this
+>> child device is a slave that is implemented by the host SoC rather than
+>> something external attached to the I2C bus.
+>>
+>> Perhaps you can get away with this, since the driver for nvidia,nvec
+>> only calls I2C APIs suitable for internal slaves rather than external
+>> slaves? Even so though, I think the distinction needs to be clearly
+>> marked in the DT so that any generic code outside the NVEC driver that
+>> parses the DT can determine the difference.
+>>
+>> I would recommend the I2C controller having #address-cells=<2> with cell
+>> 0 being 0==master,1==slave, cell 1 being the I2C address. The I2C driver
+>> would need to support #address-cells=<1> for backwards-compatibility.
+>
+> Driver (nvec in this case) can decide what mode should it use according
+> to compatible value. Is it not enough ?
 
-Yes, I just merged the series. But please just base these patches on
-plain v4.0-rc6, so I can put them into a seperate branch. I'll try to
-solve the conflict then by myself.
+No, I don't think so.
 
+The I2C binding model is that each child of an I2C controller represents 
+a device attached to the bus. which SW will communicate with using the 
+I2C controller as master and the device as a slave. If there's no 
+explicit representation of child-vs-slave in the DT, how does the I2C 
+core know whether a particular node is intended to be accessed as a 
+master or slave?
 
-	Joerg
+In other words, without an explicit "communicate with this device" or 
+"implement this device as a slave" flag, how could DT contain:
+
+i2c-controller {
+     ...
+     master@1a {
+         compatible = "foo,device";
+         reg = <0x1a 1>;
+     };
+     slave@1a {
+         compatible = "foo,device-slave";
+         reg = <0x1a 1>;
+     };
+};
+
+where:
+
+- "foo,device" means: instantiate a driver to communicate with a device 
+of this type.
+
+- "foo,device-slave" means: instantiate a driver to act as this I2C device.
+
+Sure it's possible for the drivers for those two nodes to simply use the 
+I2C subsystem's master or slave APIs, but I suspect DT content would 
+confuse the I2C core into thinking that two I2C devices with the same 
+address had been represented in DT, and the I2C core would refuse to 
+instantiate one of them. The solution here is for the reg value to 
+encode a "master" vs. "slave" flag, so the I2C core can allow both a 
+master and a slave for each address.
+
+I'm pretty sure this is the nth time I've explained this.
