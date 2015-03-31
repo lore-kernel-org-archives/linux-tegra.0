@@ -1,112 +1,41 @@
-From: Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>
-Subject: Re: [PATCH 1/3] i2c: tegra: implement slave mode
-Date: Tue, 31 Mar 2015 09:25:38 +0300
-Message-ID: <551A3DE2.90806@mail.ru>
-References: <1422516022-27161-1-git-send-email-danindrey@mail.ru> <1422516022-27161-2-git-send-email-danindrey@mail.ru> <20150129114155.GA9080@katana>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V2 1/3] gpu: host1x: Reduce host1x job allocation size
+Date: Tue, 31 Mar 2015 15:29:45 +0900
+Message-ID: <CAAVeFuLZOJdOtpuSqdRzGa0rK3WZWURz-pn2tXhqTv58J0R_NA@mail.gmail.com>
+References: <1425606712-15986-1-git-send-email-davidu@nvidia.com>
+ <0e36c4295adc4f2daae9715cd0dde87d@HQMAIL102.nvidia.com> <CAAVeFuK4NOrfCcX846rgPdViR6Ur4pSrrVihiV7KP1kRf15kdw@mail.gmail.com>
+ <2253e92cd45c4b33913a45011c4ce823@HQMAIL102.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150129114155.GA9080@katana>
+In-Reply-To: <2253e92cd45c4b33913a45011c4ce823-wO81nVYWzR5xWE4FnwvcdlaTQe2KTcn/@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+To: David Ung <davidu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "airlied-cv59FeDIM0c@public.gmane.org" <airlied-cv59FeDIM0c@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
-
-Sorry for long delay.
-
-And thanks for the quick review. It helped a lot!
-
-On 29.01.2015 14:41, Wolfram Sang wrote:
-> Hi,
+On Tue, Mar 24, 2015 at 4:39 AM, David Ung <davidu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 >
->> Initialization code is based on NVEC driver.
+>> -----Original Message-----
+>> From: Alexandre Courbot [mailto:gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org]
+>> Sent: Monday, March 23, 2015 12:09 AM
+>> To: David Ung
+>> Cc: airlied-cv59FeDIM0c@public.gmane.org; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
+>> thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org; swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org; Arto Merilainen;
+>> Terje Bergstrom
+>> Subject: Re: [PATCH V2 1/3] gpu: host1x: Reduce host1x job allocation size
 >>
->> There is a HW bug in AP20 that was also mentioned in kernel sources
->> for Toshiba AC100.
+>> The series looks ok to me, the only problem I see is that we are lacking
+>> means to thoroughly test host1x patches across all the supported Tegra
+>> chips.
 >>
->> Signed-off-by: Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>
+>> Could you detail what kind of testing this patch series has undergone, and
+>> which chips/boards have been tested?
 >
-> Cool, thanks for the converison. While I usually like to only get the
-> patches which I need to handle, please CC me to all patches next time. I
-> am interested what changes were needed for the user of the slave
-> framework, too.
+> Tested the host1x channel tests for T132 on A44.
+> Also ran Paul's EIMT set up which only tests booting kernel to console for T20/T30/T114/T124 and QEMU
 
-Done. I sent v2 yesterday evening.
->
->> +static bool tegra_i2c_slave_isr(int irq, struct tegra_i2c_dev *i2c_dev)
->> +{
->> +	unsigned long status;
->> +	u8 value;
->> +
->> +	if (!i2c_dev->slave || !i2c_dev->slave->slave_cb)
->> +		return false;
->
-> Can this happen?
+Thierry, what do you think?
 
-Yes. I call slave ISR without any conditions from main ISR routine.
->
->> +	/* i2c master sends data to us */
->> +	if (is_write(status)) {
->> +		i2c_slave_event(i2c_dev->slave, I2C_SLAVE_REQ_WRITE_START,
->> +				NULL);
->
-> Can this HW create an interrupt once the address detection + RW bit are
-> received? Or only if a complete write has been received?
-
-Tegra I2C generates one interrupt per byte (address or data) and one 
-interrupt for stop bit.
->
->> +static int tegra_reg_slave(struct i2c_client *slave)
->> +{
->> +	struct tegra_i2c_dev *i2c_dev = i2c_get_adapdata(slave->adapter);
->> +
->> +	if (i2c_dev->slave)
->> +		return -EBUSY;
->> +
->> +	i2c_dev->slave = slave;
->> +
->> +	tegra_i2c_clock_enable(i2c_dev);
->> +
->> +	reset_control_assert(i2c_dev->rst);
->> +	udelay(2);
->> +	reset_control_deassert(i2c_dev->rst);
->
-> Why do you need a reset when a slave gets registered?
-
-I copied this code from nvec driver. Reset is done during I2C controller 
-initialization. This reset is not needed. Thanks for pointing.
->
->> +
->> +	i2c_writel(i2c_dev, I2C_SL_CNFG_NEWSL, I2C_SL_CNFG);
->> +	i2c_writel(i2c_dev, 0x1E, I2C_SL_DELAY_COUNT);
->
-> What does this magic number mean?
-
-It's a default value. I created a constant for it.
->
->> +
->> +	i2c_writel(i2c_dev, slave->addr, I2C_SL_ADDR1);
->> +	i2c_writel(i2c_dev, 0, I2C_SL_ADDR2);
->
-> Handling 10 bit addresses?
-
-In v2.
->
->> +
->> +	return 0;
->> +}
->> +
->
->>   static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
->> @@ -679,6 +808,7 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
->>   	.has_single_clk_source = false,
->>   	.clk_divisor_hs_mode = 3,
->>   	.clk_divisor_std_fast_mode = 0,
->> +	.slave_read_start_delay = 0,
->
-> No need to init to 0 IMO.
->
-Ok.
+I know we are lacking proper testing infrastructure for host1x, but
+these patches really looks harmless to me.
