@@ -1,113 +1,28 @@
-From: Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>
-Subject: Re: [PATCH 3/3] dt: paz00: define nvec as child of i2c bus
-Date: Tue, 31 Mar 2015 09:40:27 +0300
-Message-ID: <551A415B.4040506@mail.ru>
-References: <1422516022-27161-1-git-send-email-danindrey@mail.ru> <1422516022-27161-4-git-send-email-danindrey@mail.ru> <54CFEA2F.8040701@wwwdotorg.org>
+From: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 01/11] clk: tegra: Fix typo tabel -> table
+Date: Tue, 31 Mar 2015 08:25:15 +0000 (UTC)
+Message-ID: <alpine.DEB.2.02.1503310824350.24011@utopia.booyaka.com>
+References: <1427718673-32011-1-git-send-email-thierry.reding@gmail.com> <1427718673-32011-2-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <54CFEA2F.8040701-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1427718673-32011-2-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+On Mon, 30 Mar 2015, Thierry Reding wrote:
 
-Thanks for the review.
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-On 03.02.2015 0:20, Stephen Warren wrote:
-> On 01/29/2015 12:20 AM, Andrey Danin wrote:
->> NVEC driver was reimplemented to use tegra i2c. Use common i2c bindings
->> for NVEC node.
->
->> diff --git a/Documentation/devicetree/bindings/nvec/nvidia,nvec.txt
->> b/Documentation/devicetree/bindings/nvec/nvidia,nvec.txt
->
-> The changes to this file make more sense either as a standalone patch
-> 1/4, or as part of the driver changes.
->
->> @@ -2,20 +2,5 @@ NVIDIA compliant embedded controller
->>
->>   Required properties:
->>   - compatible : should be "nvidia,nvec".
->> -- reg : the iomem of the i2c slave controller
->> -- interrupts : the interrupt line of the i2c slave controller
->> -- clock-frequency : the frequency of the i2c bus
->> -- gpios : the gpio used for ec request
->> -- slave-addr: the i2c address of the slave controller
->> -- clocks : Must contain an entry for each entry in clock-names.
->> -  See ../clocks/clock-bindings.txt for details.
->> -- clock-names : Must include the following entries:
->> -  Tegra20/Tegra30:
->> -  - div-clk
->> -  - fast-clk
->> -  Tegra114:
->> -  - div-clk
->> -- resets : Must contain an entry for each entry in reset-names.
->> -  See ../reset/reset.txt for details.
->> -- reset-names : Must include the following entries:
->> -  - i2c
->> +- request-gpios : the gpio used for ec request
->> +- reg: the i2c address of the slave controller
->
-> This change breaks ABI.
->
-> Instead of modifying the definition of the existing compatible value, I
-> think you should introduce a new compatible value to describe the
-> external NVEC chip.
+This patch should have a brief commit message.  
 
-I changed compatible value to nvec-slave in v2.
->
->> diff --git a/arch/arm/boot/dts/tegra20-paz00.dts
->> b/arch/arm/boot/dts/tegra20-paz00.dts
->
->> -    nvec@7000c500 {
->> -        compatible = "nvidia,nvec";
->> -        reg = <0x7000c500 0x100>;
->> -        interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>;
->> -        #address-cells = <1>;
->> -        #size-cells = <0>;
->> +    i2c@7000c500 {
->> +        status = "okay";
->>           clock-frequency = <80000>;
->> -        request-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_HIGH>;
->> -        slave-addr = <138>;
->> -        clocks = <&tegra_car TEGRA20_CLK_I2C3>,
->> -                 <&tegra_car TEGRA20_CLK_PLL_P_OUT3>;
->> -        clock-names = "div-clk", "fast-clk";
->> -        resets = <&tegra_car 67>;
->> -        reset-names = "i2c";
->> +
->> +        nvec: nvec@45 {
->
-> This doesn't feel correct. There's nothing here to indicate that this
-> child device is a slave that is implemented by the host SoC rather than
-> something external attached to the I2C bus.
->
-> Perhaps you can get away with this, since the driver for nvidia,nvec
-> only calls I2C APIs suitable for internal slaves rather than external
-> slaves? Even so though, I think the distinction needs to be clearly
-> marked in the DT so that any generic code outside the NVEC driver that
-> parses the DT can determine the difference.
->
-> I would recommend the I2C controller having #address-cells=<2> with cell
-> 0 being 0==master,1==slave, cell 1 being the I2C address. The I2C driver
-> would need to support #address-cells=<1> for backwards-compatibility.
->
-Driver (nvec in this case) can decide what mode should it use according 
-to compatible value. Is it not enough ?
+Once that's added,
 
->> +            compatible = "nvidia,nvec";
->> +            request-gpios = <&gpio TEGRA_GPIO(V, 2)
->> +                GPIO_ACTIVE_HIGH>;
->> +            reg = <0x45>;
->
-> The order is typically compatible, reg, other properties.
+Reviewed-by: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
 
-Ok, thanks.
->
->> +        };
->>       };
->
+
+- Paul
