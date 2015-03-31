@@ -1,89 +1,26 @@
-From: Mylene JOSSERAND <josserand.mylene@gmail.com>
-Subject: [PATCH] mmc: sdhci-tegra: convert to use GPIO descriptors
-Date: Mon, 30 Mar 2015 23:39:25 +0200
-Message-ID: <1427751565-30377-1-git-send-email-josserand.mylene@gmail.com>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Re: [PATCH v2] PM / devfreq: tegra: Register governor on module init
+Date: Tue, 31 Mar 2015 02:16:11 +0000 (GMT)
+Message-ID: <1458120576.121671427768170805.JavaMail.weblogic@epmlwas08a>
+Reply-To: myungjoo.ham@samsung.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
+MIME-version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
-To: ulf.hansson@linaro.org, swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Mylene JOSSERAND <josserand.mylene@gmail.com>
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Modify the driver to handle GPIOs using the descriptor API.
-
-Signed-off-by: Mylene JOSSERAND <josserand.mylene@gmail.com>
----
- drivers/mmc/host/sdhci-tegra.c |   32 ++++++++------------------------
- 1 file changed, 8 insertions(+), 24 deletions(-)
-
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 93834ab..ad28b49 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -20,11 +20,10 @@
- #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
--#include <linux/of_gpio.h>
--#include <linux/gpio.h>
- #include <linux/mmc/card.h>
- #include <linux/mmc/host.h>
- #include <linux/mmc/slot-gpio.h>
-+#include <linux/gpio/consumer.h>
- 
- #include "sdhci-pltfm.h"
- 
-@@ -49,7 +48,7 @@ struct sdhci_tegra_soc_data {
- 
- struct sdhci_tegra {
- 	const struct sdhci_tegra_soc_data *soc_data;
--	int power_gpio;
-+	struct gpio_desc *power_gpio;
- };
- 
- static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
-@@ -246,17 +245,6 @@ static const struct of_device_id sdhci_tegra_dt_match[] = {
- };
- MODULE_DEVICE_TABLE(of, sdhci_tegra_dt_match);
- 
--static int sdhci_tegra_parse_dt(struct device *dev)
--{
--	struct device_node *np = dev->of_node;
--	struct sdhci_host *host = dev_get_drvdata(dev);
--	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
--	struct sdhci_tegra *tegra_host = pltfm_host->priv;
--
--	tegra_host->power_gpio = of_get_named_gpio(np, "power-gpios", 0);
--	return mmc_of_parse(host->mmc);
--}
--
- static int sdhci_tegra_probe(struct platform_device *pdev)
- {
- 	const struct of_device_id *match;
-@@ -286,19 +274,15 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 	tegra_host->soc_data = soc_data;
- 	pltfm_host->priv = tegra_host;
- 
--	rc = sdhci_tegra_parse_dt(&pdev->dev);
-+	rc = mmc_of_parse(host->mmc);
- 	if (rc)
- 		goto err_parse_dt;
- 
--	if (gpio_is_valid(tegra_host->power_gpio)) {
--		rc = devm_gpio_request(&pdev->dev, tegra_host->power_gpio,
--				       "sdhci_power");
--		if (rc) {
--			dev_err(mmc_dev(host->mmc),
--				"failed to allocate power gpio\n");
--			goto err_power_req;
--		}
--		gpio_direction_output(tegra_host->power_gpio, 1);
-+	tegra_host->power_gpio = devm_gpiod_get_optional(&pdev->dev, "power",
-+							 GPIOD_OUT_HIGH);
-+	if (IS_ERR(tegra_host->power_gpio)) {
-+		rc = PTR_ERR(tegra_host->power_gpio);
-+		goto err_power_req;
- 	}
- 
- 	clk = devm_clk_get(mmc_dev(host->mmc), NULL);
--- 
-1.7.10.4
+PiBTZW5kZXIgOiBUb21ldSBWaXpvc288dG9tZXUudml6b3NvQGNvbGxhYm9yYS5jb20+DQo+IERh
+dGUgOiAyMDE1LTAzLTMxIDAwOjMzIChHTVQrMDk6MDApDQo+IFRpdGxlIDogW1BBVENIIHYyXSBQ
+TSAvIGRldmZyZXE6IHRlZ3JhOiBSZWdpc3RlciBnb3Zlcm5vciBvbiBtb2R1bGUgaW5pdA0KPiAN
+Cj4gU28gdGhpcyBkcml2ZXIgYnVpbGRzIGFzIGEgbW9kdWxlLg0KPiANCj4gU2lnbmVkLW9mZi1i
+eTogVG9tZXUgVml6b3NvIDx0b21ldS52aXpvc29AY29sbGFib3JhLmNvbT4NCj4gLS0tDQo+IA0K
+PiB2MjogKiBSZW1vdmUgZ292ZXJub3IgaWYgZHJpdmVyIHJlZ2lzdHJhdGlvbiBmYWlscw0KPiAt
+LS0NCj4gZHJpdmVycy9kZXZmcmVxL3RlZ3JhLWRldmZyZXEuYyB8IDM3ICsrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKy0tLS0tLS0NCj4gMSBmaWxlIGNoYW5nZWQsIDMwIGluc2VydGlvbnMo
+KyksIDcgZGVsZXRpb25zKC0pDQo+IA0KDQpUaGFua3MuIE1lcmdlZC4NCg0KU2lnbmVkLW9mZi1i
+eTogTXl1bmdKb28gSGFtIDxteXVuZ2pvby5oYW1Ac2Ftc3VuZy5jb20+DQoNCg0KQ2hlZXJzLA0K
+TXl1bmdKb28uDQo=
