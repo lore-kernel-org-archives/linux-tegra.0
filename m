@@ -1,192 +1,94 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 3/3] dt: paz00: define nvec as child of i2c bus
-Date: Wed, 01 Apr 2015 11:28:32 -0600
-Message-ID: <551C2AC0.9030304@wwwdotorg.org>
-References: <1422516022-27161-1-git-send-email-danindrey@mail.ru> <1422516022-27161-4-git-send-email-danindrey@mail.ru> <54CFEA2F.8040701@wwwdotorg.org> <551A415B.4040506@mail.ru> <551AAA9B.6070607@wwwdotorg.org> <551AC153.7060103@mail.ru>
+From: Paul Walmsley <pwalmsley@nvidia.com>
+Subject: Re: "ARM: multi_v7_defconfig: Enable shmobile platforms" breaks Tegra20
+ multi_v7_defconfig boot
+Date: Wed, 1 Apr 2015 11:48:42 -0600
+Message-ID: <551C2F7A.7040107@nvidia.com>
+References: <alpine.DEB.2.02.1503251740130.13341@utopia.booyaka.com>
+ <CANMBJr7ibVCxQRUG47OT0meNntMjEoVqL7kiEK9DtCfp5NXPgg@mail.gmail.com>
+ <alpine.DEB.2.02.1503252157240.7173@utopia.booyaka.com>
+ <55137098.4030903@wwwdotorg.org>
+ <alpine.DEB.2.02.1503261826210.18294@utopia.booyaka.com>
+ <5514569E.2030406@wwwdotorg.org> <551C2768.6060209@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <551AC153.7060103-JGs/UdohzUI@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <551C2768.6060209@wwwdotorg.org>
+Sender: linux-sh-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Paul Walmsley <paul@pwsan.com>
+Cc: Tyler Baker <tyler.baker@linaro.org>, geert+renesas@glider.be, Arnd Bergmann <arnd@arndb.de>, linux-sh@vger.kernel.org, thierry.reding@gmail.com, linux-tegra@vger.kernel.org, horms+renesas@verge.net.au, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/31/2015 09:46 AM, Andrey Danin wrote:
-> On 31.03.2015 17:09, Stephen Warren wrote:
->> On 03/31/2015 12:40 AM, Andrey Danin wrote:
->>> Hi,
+On 04/01/2015 11:14 AM, Stephen Warren wrote:
+> On 03/26/2015 12:57 PM, Stephen Warren wrote:
+>> On 03/26/2015 12:35 PM, Paul Walmsley wrote:
+>>> On Wed, 25 Mar 2015, Stephen Warren wrote:
 >>>
->>> Thanks for the review.
->>>
->>> On 03.02.2015 0:20, Stephen Warren wrote:
->>>> On 01/29/2015 12:20 AM, Andrey Danin wrote:
->>>>> NVEC driver was reimplemented to use tegra i2c. Use common i2c
->>>>> bindings
->>>>> for NVEC node.
->>>>
->>>>> diff --git a/Documentation/devicetree/bindings/nvec/nvidia,nvec.txt
->>>>> b/Documentation/devicetree/bindings/nvec/nvidia,nvec.txt
->>>>
->>>> The changes to this file make more sense either as a standalone patch
->>>> 1/4, or as part of the driver changes.
->>>>
->>>>> @@ -2,20 +2,5 @@ NVIDIA compliant embedded controller
+>>>> On 03/25/2015 04:00 PM, Paul Walmsley wrote:
+>>>>> On Wed, 25 Mar 2015, Tyler Baker wrote:
+>>>>>> On 25 March 2015 at 11:03, Paul Walmsley <paul@pwsan.com> wrote:
+>>>>>>> Looks like commit 4a3a6f86693922b29cf829c63f652b057f14619e ("ARM:
+>>>>>>> multi_v7_defconfig: Enable shmobile platforms") breaks Tegra20
+>>>>>>> multi_v7_defconfig boot.
+> ...
+>>>>>> Can you try to shift your kernel load address around a bit? From
+>>>>>> experience with the boards from kernelci.org we find that as the 
+>>>>>> multi
+>>>>>> v7 kernel size increases they can clobber memory when they get
+>>>>>> decompressed.
 >>>>>
->>>>>   Required properties:
->>>>>   - compatible : should be "nvidia,nvec".
->>>>> -- reg : the iomem of the i2c slave controller
->>>>> -- interrupts : the interrupt line of the i2c slave controller
->>>>> -- clock-frequency : the frequency of the i2c bus
->>>>> -- gpios : the gpio used for ec request
->>>>> -- slave-addr: the i2c address of the slave controller
->>>>> -- clocks : Must contain an entry for each entry in clock-names.
->>>>> -  See ../clocks/clock-bindings.txt for details.
->>>>> -- clock-names : Must include the following entries:
->>>>> -  Tegra20/Tegra30:
->>>>> -  - div-clk
->>>>> -  - fast-clk
->>>>> -  Tegra114:
->>>>> -  - div-clk
->>>>> -- resets : Must contain an entry for each entry in reset-names.
->>>>> -  See ../reset/reset.txt for details.
->>>>> -- reset-names : Must include the following entries:
->>>>> -  - i2c
->>>>> +- request-gpios : the gpio used for ec request
->>>>> +- reg: the i2c address of the slave controller
->>>>
->>>> This change breaks ABI.
->>>>
->>>> Instead of modifying the definition of the existing compatible value, I
->>>> think you should introduce a new compatible value to describe the
->>>> external NVEC chip.
+>>>>> Thanks, that was it:
+>>>>>
+>>>>> http://nvt.pwsan.com/pub/pwalmsley-tester/testlogs/test_20150325144058_6af714b069dc278d5d8e1b7afc13568f71d9aba8/20150325144058/boot/tegra20-trimslice/tegra20-trimslice/multi_v7_defconfig_log.txt 
+>>>>>
+> ...
+>>>> Interesting. Do the values in U-Boot's default environment work
+>>>> correctly
 >>>
->>> I changed compatible value to nvec-slave in v2.
->>>>
->>>>> diff --git a/arch/arm/boot/dts/tegra20-paz00.dts
->>>>> b/arch/arm/boot/dts/tegra20-paz00.dts
->>>>
->>>>> -    nvec@7000c500 {
->>>>> -        compatible = "nvidia,nvec";
->>>>> -        reg = <0x7000c500 0x100>;
->>>>> -        interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>;
->>>>> -        #address-cells = <1>;
->>>>> -        #size-cells = <0>;
->>>>> +    i2c@7000c500 {
->>>>> +        status = "okay";
->>>>>           clock-frequency = <80000>;
->>>>> -        request-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_HIGH>;
->>>>> -        slave-addr = <138>;
->>>>> -        clocks = <&tegra_car TEGRA20_CLK_I2C3>,
->>>>> -                 <&tegra_car TEGRA20_CLK_PLL_P_OUT3>;
->>>>> -        clock-names = "div-clk", "fast-clk";
->>>>> -        resets = <&tegra_car 67>;
->>>>> -        reset-names = "i2c";
->>>>> +
->>>>> +        nvec: nvec@45 {
->>>>
->>>> This doesn't feel correct. There's nothing here to indicate that this
->>>> child device is a slave that is implemented by the host SoC rather than
->>>> something external attached to the I2C bus.
->>>>
->>>> Perhaps you can get away with this, since the driver for nvidia,nvec
->>>> only calls I2C APIs suitable for internal slaves rather than external
->>>> slaves? Even so though, I think the distinction needs to be clearly
->>>> marked in the DT so that any generic code outside the NVEC driver that
->>>> parses the DT can determine the difference.
->>>>
->>>> I would recommend the I2C controller having #address-cells=<2> with
->>>> cell
->>>> 0 being 0==master,1==slave, cell 1 being the I2C address. The I2C
->>>> driver
->>>> would need to support #address-cells=<1> for backwards-compatibility.
->>>
->>> Driver (nvec in this case) can decide what mode should it use according
->>> to compatible value. Is it not enough ?
+>>> No idea, I haven't tried.  (The load addresses I used are observable in
+>>> the boot logs above.)
 >>
->> No, I don't think so.
+>> Sure. I was hoping you'd try it out since you already had the setup to
+>> repro the issue.
 >>
->> The I2C binding model is that each child of an I2C controller represents
->> a device attached to the bus. which SW will communicate with using the
->> I2C controller as master and the device as a slave. If there's no
->> explicit representation of child-vs-slave in the DT, how does the I2C
->> core know whether a particular node is intended to be accessed as a
->> master or slave?
+>> It'd be good if your test-bed used the built-in U-Boot variables too, so
+>> we're testing them.
 >
-> Device driver registers itself via slave API. Bus driver calls
-> appropriate callback function when needed.
-> If device driver decides to access hardware via master API, then it can
-> do it.
+> I've reproduced the original problem, and then validated that using 
+> the addresses from U-Boot's default environment (at least with a ToT 
+> U-Boot that I just built) does indeed solve it.
 >
-> Am I missing something ?
+> I'd like to re-iterate that the test bed should be using the values 
+> from U-Boot's environment rather than making up its own. That way:
 >
->>
->> In other words, without an explicit "communicate with this device" or
->> "implement this device as a slave" flag, how could DT contain:
->>
->> i2c-controller {
->>      ...
->>      master@1a {
->>          compatible = "foo,device";
->>          reg = <0x1a 1>;
->>      };
->>      slave@1a {
->>          compatible = "foo,device-slave";
->>          reg = <0x1a 1>;
->>      };
->> };
->>
->> where:
->>
->> - "foo,device" means: instantiate a driver to communicate with a device
->> of this type.
->>
->> - "foo,device-slave" means: instantiate a driver to act as this I2C
->> device.
->>
->> Sure it's possible for the drivers for those two nodes to simply use the
->> I2C subsystem's master or slave APIs, but I suspect DT content would
->> confuse the I2C core into thinking that two I2C devices with the same
->> address had been represented in DT, and the I2C core would refuse to
->> instantiate one of them. The solution here is for the reg value to
->> encode a "master" vs. "slave" flag, so the I2C core can allow both a
->> master and a slave for each address.
+> * The value the test bed uses for the kernel load address likely 
+> overlaps where the kernel decompressor writes to for even slightly 
+> large kernels. This means the decompressor must move itself before 
+> decompressing. IIUC, there's zero guarantee that moving the 
+> decompressor won't overwrite the DTB, since IIUC the decompressor uses 
+> zero knowledge of the DTB location. In other words, if the compressed 
+> kernel is loaded somewhere that's likely to require it to move itself, 
+> there's a real risk of the exact same problem cropping up again in the 
+> future if the kernel happens to overwrite the DTB during relocation.
 >
-> If there is one device, then it must be one node. If there is two
-> devices then it looks incorrect to me to have two devices with the same
-> address. Does I2C allow two devices with same address ?
+> * The values are part of every Tegra U-Boot port (and hopefully for 
+> other SoCs too given any distro using boot.scr with 
+> config_distro_bootcmd.h will expect the variables to exist), so for 
+> future (Tegra) chips you won't have to adjust the test bed if RAM 
+> layout changes.
+>
+> * Those values get testing, so we'll find out if the ever don't work. 
+> We get more test coverage.
 
-One of the nodes is to indicate that the kernel should implement the 
-slave mode device and one is to indicate that the kernel should 
-implement the master mode device. Those two devices/nodes have 
-completely different semantics, so while they share the I2C bus address 
-they don't represent the same thing.
+Sounds reasonable, I'll try to get to this at some point soon.
 
-Admittedly it would be uncommon to do this, since it'd be using the I2C 
-bus in loopback mode. However, I don't see why we should set out to 
-prevent that.
+BTW, it might be worth changing U-boot CONFIG_LOADADDR to point to the 
+value you define for kernel_addr_r.  That would reinforce to folks who 
+aren't using the U-boot scripts that they should use that address for 
+loading their kernel.
 
-> I can imagine this:
-> - we have hardware with I2C device. This device can act as master or as
-> slave
-> - we have device driver, that can work in one, other or both modes.
->
-> If we want to force master or slave mode, we can use flags (for combined
-> mode we can use two nodes, but it looks weird).
-> If we want to let driver decide (preferred mode, arbitration, something
-> else), we can use current rules.
->
->>
->> I'm pretty sure this is the nth time I've explained this.
->
-> Sorry. I don't understand why you still suggest to use flags. We can use
-> existing infrastructure in this case. There is already similar case in
-> arch/arm/boot/dts/r8a7790-lager.dts (see i2c1 and eeprom).
->
-> Do we *really* need this extra rules at this moment ?
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+- Paul
+
+
+- Paul
