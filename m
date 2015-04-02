@@ -1,76 +1,67 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL] drm/tegra: Changes for v4.1-rc1
-Date: Thu,  2 Apr 2015 19:00:44 +0200
-Message-ID: <1427994045-20405-1-git-send-email-thierry.reding@gmail.com>
+Subject: Re: [GIT PULL 1/2] ARM: tegra: Core code changes for v4.1-rc1
+Date: Thu, 2 Apr 2015 19:19:22 +0200
+Message-ID: <20150402171920.GA2677@ulmo.nvidia.com>
+References: <1427710333-13472-1-git-send-email-thierry.reding@gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="2fHTh5uZTiUOsy+g"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1427710333-13472-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Dave,
 
-The following changes since commit 13a7a6ac0a11197edcd0f756a035f472b42cdf8b:
+--2fHTh5uZTiUOsy+g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  Linux 4.0-rc2 (2015-03-03 09:04:59 -0800)
+On Mon, Mar 30, 2015 at 12:12:12PM +0200, Thierry Reding wrote:
+> Hi ARM SoC maintainers,
+>=20
+> The following changes since commit c517d838eb7d07bbe9507871fab3931deccff5=
+39:
+>=20
+>   Linux 4.0-rc1 (2015-02-22 18:21:14 -0800)
+>=20
+> are available in the git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegr=
+a-for-4.1-soc
+>=20
+> for you to fetch changes up to 5a240eff95e89af9648551a7686b0e5a7d0231ab:
+>=20
+>   memory: tegra: Add SWGROUP names (2015-03-30 11:47:40 +0200)
 
-are available in the git repository at:
+Please don't merge this just yet. Mark Brown reported that this causes
+build failures in linux-next and I'm working on a couple of patches to
+fix this.
 
-  git://anongit.freedesktop.org/tegra/linux tags/drm/tegra/for-4.1-rc1
-
-for you to fetch changes up to 535a65db484ff4e4654a037f2ea7e1ff21431b77:
-
-  drm/tegra: sor: Reset during initialization (2015-04-02 18:49:24 +0200)
-
-Thanks,
 Thierry
 
-----------------------------------------------------------------
-drm/tegra: Changes for v4.1-rc1
+--2fHTh5uZTiUOsy+g
+Content-Type: application/pgp-signature
 
-Perhaps the most noteworthy change in this set is the implementation of
-a hardware VBLANK counter using host1x syncpoints. The SOR registers can
-now be dumped via debugfs, which can be useful while debugging. The IOVA
-address space maintained by the driver can also be dumped via debugfs.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Other than than, these changes are mostly cleanup work, such as making
-register names more consistent or removing unused code (that was left
-over after the atomic mode-setting conversion). There's also a fix for
-eDP that makes the driver cope with firmware that already initialized
-the display (such as the firmware on the Tegra-based Chromebooks).
+iQIcBAABCAAGBQJVHXoWAAoJEN0jrNd/PrOhwMcQAIIHLrMO9Di7qnEOvJWf+ALN
+bWN8zUiZuLQPBUItDnhxMBwK+DSWZsEoUGOq7R/+wPCbgv35gjag8zIXb17abgjd
+QF4kGgPF2hA2nYqXxXjLdrrenuuQUHoSTKNjMZpPIKMuIFXSjrm2e7iJXPor9U+B
+Y/8vZAB5UdT4hy/biABZGa0yYfrkBP6cANMEMt1VB3OG5DGylkCO8DDWGm71sYm2
+J2J/B1/J9pFude/Kfz2wcz59xSjwUFqRNgrSNkxcU+W9Rks0kjgveijQdle0DP5s
+lCdzrLgNYLeuAkfCfDxN0jMtBkmsr7Z4IlqJVvt74lk2floDBqAY18YvF+gQpEjd
+LZ1MlfmOROw+/+xWoJXJYuW5kkENPiSKpjcZxvNepWGcTi7rQpkbPMJ+F5GLYQ2G
+rUZ8a72s2zaGl/ipz5+LLcwab9fxztJKaKSTxBDkiw7ALNVLGiUmLYNuOqVz+632
+g3aEHTKD/MvkP6E1SUHo29Z49rKpfBj5JottbRJDEv0VdIRgY7GueJbnKFUuo2V/
+yPosAnPY3Vb8MOggHWEgQvIL+laAg6jDcfroiqQa+lIBa8qw5nvrYuOFvc8YfPQZ
+I4SF6Sa+1BPAQWh4MEF2HH2N2Ly2o/kFkK67N/dSU/ql1vaDmGfieTwGsEFwlEAL
+hR5KR1d52/G9Ta5I6T1X
+=yoLf
+-----END PGP SIGNATURE-----
 
-----------------------------------------------------------------
-Sean Paul (1):
-      drm/tegra: gem: Return 64-bit offset for mmap(2)
-
-Thierry Reding (13):
-      drm/tegra: dc: Check for valid parent clock
-      drm/tegra: Provide debugfs file for the IOVA space
-      drm/tegra: sor: Registers are 32-bit
-      drm/tegra: sor: Dump registers via debugfs
-      gpu: host1x: Export host1x_syncpt_read()
-      drm/tegra: dc: Implement hardware VBLANK counter
-      drm/atomic: Add helpers for state-subclassing drivers
-      drm/tegra: dc: Use base atomic state helpers
-      drm/tegra: dc: Remove unused function
-      drm/tegra: dc: Remove unused callbacks
-      drm/tegra: dc: Document tegra_dc_state_setup_clock()
-      drm/tegra: hdmi: Resets are synchronous
-      drm/tegra: hdmi: Name register fields consistently
-
-Tomeu Vizoso (1):
-      drm/tegra: sor: Reset during initialization
-
- drivers/gpu/drm/drm_atomic_helper.c | 144 ++++++++++++++++++++++---
- drivers/gpu/drm/tegra/dc.c          |  99 ++++++++++--------
- drivers/gpu/drm/tegra/dc.h          |   7 +-
- drivers/gpu/drm/tegra/drm.c         |  18 +++-
- drivers/gpu/drm/tegra/drm.h         |   4 +-
- drivers/gpu/drm/tegra/hdmi.c        |   4 +-
- drivers/gpu/drm/tegra/hdmi.h        |   2 +-
- drivers/gpu/drm/tegra/sor.c         | 202 +++++++++++++++++++++++++++++++++---
- drivers/gpu/host1x/syncpt.c         |   6 ++
- include/drm/drm_atomic_helper.h     |  14 +++
- include/linux/host1x.h              |   1 +
- include/uapi/drm/tegra_drm.h        |   3 +-
- 12 files changed, 421 insertions(+), 83 deletions(-)
+--2fHTh5uZTiUOsy+g--
