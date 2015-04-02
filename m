@@ -1,67 +1,48 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [GIT PULL 1/2] ARM: tegra: Core code changes for v4.1-rc1
-Date: Thu, 2 Apr 2015 19:19:22 +0200
-Message-ID: <20150402171920.GA2677@ulmo.nvidia.com>
-References: <1427710333-13472-1-git-send-email-thierry.reding@gmail.com>
+From: David Ung <davidu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH V2 1/3] gpu: host1x: Reduce host1x job allocation size
+Date: Thu, 2 Apr 2015 23:13:38 +0000
+Message-ID: <4ca2d661eab54c3eb861680ebc24a430@HQMAIL102.nvidia.com>
+References: <1425606712-15986-1-git-send-email-davidu@nvidia.com>
+ <0e36c4295adc4f2daae9715cd0dde87d@HQMAIL102.nvidia.com>
+ <CAAVeFuK4NOrfCcX846rgPdViR6Ur4pSrrVihiV7KP1kRf15kdw@mail.gmail.com>
+ <2253e92cd45c4b33913a45011c4ce823@HQMAIL102.nvidia.com>
+ <CAAVeFuLZOJdOtpuSqdRzGa0rK3WZWURz-pn2tXhqTv58J0R_NA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="2fHTh5uZTiUOsy+g"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1427710333-13472-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <CAAVeFuLZOJdOtpuSqdRzGa0rK3WZWURz-pn2tXhqTv58J0R_NA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: 'Alexandre Courbot' <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "airlied-cv59FeDIM0c@public.gmane.org" <airlied-cv59FeDIM0c@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
---2fHTh5uZTiUOsy+g
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Mar 30, 2015 at 12:12:12PM +0200, Thierry Reding wrote:
-> Hi ARM SoC maintainers,
->=20
-> The following changes since commit c517d838eb7d07bbe9507871fab3931deccff5=
-39:
->=20
->   Linux 4.0-rc1 (2015-02-22 18:21:14 -0800)
->=20
-> are available in the git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegr=
-a-for-4.1-soc
->=20
-> for you to fetch changes up to 5a240eff95e89af9648551a7686b0e5a7d0231ab:
->=20
->   memory: tegra: Add SWGROUP names (2015-03-30 11:47:40 +0200)
-
-Please don't merge this just yet. Mark Brown reported that this causes
-build failures in linux-next and I'm working on a couple of patches to
-fix this.
-
-Thierry
-
---2fHTh5uZTiUOsy+g
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJVHXoWAAoJEN0jrNd/PrOhwMcQAIIHLrMO9Di7qnEOvJWf+ALN
-bWN8zUiZuLQPBUItDnhxMBwK+DSWZsEoUGOq7R/+wPCbgv35gjag8zIXb17abgjd
-QF4kGgPF2hA2nYqXxXjLdrrenuuQUHoSTKNjMZpPIKMuIFXSjrm2e7iJXPor9U+B
-Y/8vZAB5UdT4hy/biABZGa0yYfrkBP6cANMEMt1VB3OG5DGylkCO8DDWGm71sYm2
-J2J/B1/J9pFude/Kfz2wcz59xSjwUFqRNgrSNkxcU+W9Rks0kjgveijQdle0DP5s
-lCdzrLgNYLeuAkfCfDxN0jMtBkmsr7Z4IlqJVvt74lk2floDBqAY18YvF+gQpEjd
-LZ1MlfmOROw+/+xWoJXJYuW5kkENPiSKpjcZxvNepWGcTi7rQpkbPMJ+F5GLYQ2G
-rUZ8a72s2zaGl/ipz5+LLcwab9fxztJKaKSTxBDkiw7ALNVLGiUmLYNuOqVz+632
-g3aEHTKD/MvkP6E1SUHo29Z49rKpfBj5JottbRJDEv0VdIRgY7GueJbnKFUuo2V/
-yPosAnPY3Vb8MOggHWEgQvIL+laAg6jDcfroiqQa+lIBa8qw5nvrYuOFvc8YfPQZ
-I4SF6Sa+1BPAQWh4MEF2HH2N2Ly2o/kFkK67N/dSU/ql1vaDmGfieTwGsEFwlEAL
-hR5KR1d52/G9Ta5I6T1X
-=yoLf
------END PGP SIGNATURE-----
-
---2fHTh5uZTiUOsy+g--
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBBbGV4YW5kcmUgQ291cmJvdCBb
+bWFpbHRvOmdudXJvdUBnbWFpbC5jb21dDQo+IFNlbnQ6IE1vbmRheSwgTWFyY2ggMzAsIDIwMTUg
+MTE6MzAgUE0NCj4gVG86IERhdmlkIFVuZzsgdGhpZXJyeS5yZWRpbmdAZ21haWwuY29tDQo+IENj
+OiBhaXJsaWVkQGxpbnV4LmllOyBsaW51eC10ZWdyYUB2Z2VyLmtlcm5lbC5vcmc7DQo+IHN3YXJy
+ZW5Ad3d3ZG90b3JnLm9yZzsgQXJ0byBNZXJpbGFpbmVuOyBUZXJqZSBCZXJnc3Ryb20NCj4gU3Vi
+amVjdDogUmU6IFtQQVRDSCBWMiAxLzNdIGdwdTogaG9zdDF4OiBSZWR1Y2UgaG9zdDF4IGpvYiBh
+bGxvY2F0aW9uIHNpemUNCj4gDQo+IE9uIFR1ZSwgTWFyIDI0LCAyMDE1IGF0IDQ6MzkgQU0sIERh
+dmlkIFVuZyA8ZGF2aWR1QG52aWRpYS5jb20+IHdyb3RlOg0KPiA+DQo+ID4+IC0tLS0tT3JpZ2lu
+YWwgTWVzc2FnZS0tLS0tDQo+ID4+IEZyb206IEFsZXhhbmRyZSBDb3VyYm90IFttYWlsdG86Z251
+cm91QGdtYWlsLmNvbV0NCj4gPj4gU2VudDogTW9uZGF5LCBNYXJjaCAyMywgMjAxNSAxMjowOSBB
+TQ0KPiA+PiBUbzogRGF2aWQgVW5nDQo+ID4+IENjOiBhaXJsaWVkQGxpbnV4LmllOyBsaW51eC10
+ZWdyYUB2Z2VyLmtlcm5lbC5vcmc7DQo+ID4+IHRoaWVycnkucmVkaW5nQGdtYWlsLmNvbTsgc3dh
+cnJlbkB3d3dkb3Rvcmcub3JnOyBBcnRvIE1lcmlsYWluZW47DQo+ID4+IFRlcmplIEJlcmdzdHJv
+bQ0KPiA+PiBTdWJqZWN0OiBSZTogW1BBVENIIFYyIDEvM10gZ3B1OiBob3N0MXg6IFJlZHVjZSBo
+b3N0MXggam9iIGFsbG9jYXRpb24NCj4gPj4gc2l6ZQ0KPiA+Pg0KPiA+PiBUaGUgc2VyaWVzIGxv
+b2tzIG9rIHRvIG1lLCB0aGUgb25seSBwcm9ibGVtIEkgc2VlIGlzIHRoYXQgd2UgYXJlDQo+ID4+
+IGxhY2tpbmcgbWVhbnMgdG8gdGhvcm91Z2hseSB0ZXN0IGhvc3QxeCBwYXRjaGVzIGFjcm9zcyBh
+bGwgdGhlDQo+ID4+IHN1cHBvcnRlZCBUZWdyYSBjaGlwcy4NCj4gPj4NCj4gPj4gQ291bGQgeW91
+IGRldGFpbCB3aGF0IGtpbmQgb2YgdGVzdGluZyB0aGlzIHBhdGNoIHNlcmllcyBoYXMNCj4gPj4g
+dW5kZXJnb25lLCBhbmQgd2hpY2ggY2hpcHMvYm9hcmRzIGhhdmUgYmVlbiB0ZXN0ZWQ/DQo+ID4N
+Cj4gPiBUZXN0ZWQgdGhlIGhvc3QxeCBjaGFubmVsIHRlc3RzIGZvciBUMTMyIG9uIEE0NC4NCj4g
+PiBBbHNvIHJhbiBQYXVsJ3MgRUlNVCBzZXQgdXAgd2hpY2ggb25seSB0ZXN0cyBib290aW5nIGtl
+cm5lbCB0byBjb25zb2xlDQo+ID4gZm9yIFQyMC9UMzAvVDExNC9UMTI0IGFuZCBRRU1VDQo+IA0K
+PiBUaGllcnJ5LCB3aGF0IGRvIHlvdSB0aGluaz8NCj4gDQo+IEkga25vdyB3ZSBhcmUgbGFja2lu
+ZyBwcm9wZXIgdGVzdGluZyBpbmZyYXN0cnVjdHVyZSBmb3IgaG9zdDF4LCBidXQgdGhlc2UNCj4g
+cGF0Y2hlcyByZWFsbHkgbG9va3MgaGFybWxlc3MgdG8gbWUuDQoNCg0KVGhhbmsgeW91IEFsZXgg
+Zm9yIHRoZSByZXZpZXcuDQpJdCB3b3VsZCBiZSBnb29kIHRvIGhhdmUgY2xvc3VyZSB0byB0aGlz
+IHBhdGNoc2V0LiANCg0KVGhpZXJyeSBwaW5nPw0KDQo=
