@@ -1,46 +1,82 @@
-From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: [PATCH] ARM: tegra: Correct which USB controller has the UTMI pad registers
-Date: Thu,  2 Apr 2015 16:31:59 +0200
-Message-ID: <1427985119-15307-1-git-send-email-tomeu.vizoso@collabora.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 3/3] dt: paz00: define nvec as child of i2c bus
+Date: Thu, 02 Apr 2015 08:50:50 -0600
+Message-ID: <551D574A.7060101@wwwdotorg.org>
+References: <1422516022-27161-1-git-send-email-danindrey@mail.ru> <551AC153.7060103@mail.ru> <551C2AC0.9030304@wwwdotorg.org> <21658630.CslVI5jns9@fb07-iapwap2>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <21658630.CslVI5jns9@fb07-iapwap2>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Cc: Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux I2C <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-It should be the first controller, not the second.
+On 04/02/2015 03:37 AM, Marc Dietrich wrote:
+>
+> Am Mittwoch, 1. April 2015, 11:28:32 schrieb Stephen Warren:
+>> On 03/31/2015 09:46 AM, Andrey Danin wrote:
+>>> On 31.03.2015 17:09, Stephen Warren wrote:
+>>>> On 03/31/2015 12:40 AM, Andrey Danin wrote:
+>>>>> Hi,
+>>>>>
+>>>>> Thanks for the review.
+>>>>>
+>>>>> On 03.02.2015 0:20, Stephen Warren wrote:
+>
+> [ snipped old patch parts ]
+>
+>>>>>>> diff --git a/arch/arm/boot/dts/tegra20-paz00.dts
+>>>>>>> b/arch/arm/boot/dts/tegra20-paz00.dts
+>>>>>>>
+>>>>>>> -    nvec@7000c500 {
+>>>>>>> -        compatible = "nvidia,nvec";
+>>>>>>> -        reg = <0x7000c500 0x100>;
+>>>>>>> -        interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>;
+>>>>>>> -        #address-cells = <1>;
+>>>>>>> -        #size-cells = <0>;
+>>>>>>> +    i2c@7000c500 {
+>>>>>>> +        status = "okay";
+>>>>>>>
+>>>>>>>            clock-frequency = <80000>;
+>>>>>>>
+>>>>>>> -        request-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_HIGH>;
+>>>>>>> -        slave-addr = <138>;
+>>>>>>> -        clocks = <&tegra_car TEGRA20_CLK_I2C3>,
+>>>>>>> -                 <&tegra_car TEGRA20_CLK_PLL_P_OUT3>;
+>>>>>>> -        clock-names = "div-clk", "fast-clk";
+>>>>>>> -        resets = <&tegra_car 67>;
+>>>>>>> -        reset-names = "i2c";
+>>>>>>> +
+>>>>>>> +        nvec: nvec@45 {
+>>>>>>
+>>>>>> This doesn't feel correct. There's nothing here to indicate that this
+>>>>>> child device is a slave that is implemented by the host SoC rather than
+>>>>>> something external attached to the I2C bus.
+>>>>>>
+>>>>>> Perhaps you can get away with this, since the driver for nvidia,nvec
+>>>>>> only calls I2C APIs suitable for internal slaves rather than external
+>>>>>> slaves? Even so though, I think the distinction needs to be clearly
+>>>>>> marked in the DT so that any generic code outside the NVEC driver that
+>>>>>> parses the DT can determine the difference.
+>>>>>>
+>>>>>> I would recommend the I2C controller having #address-cells=<2> with
+>>>>>> cell
+>>>>>> 0 being 0==master,1==slave, cell 1 being the I2C address. The I2C
+>>>>>> driver
+>>>>>> would need to support #address-cells=<1> for backwards-compatibility.
+>
+> Stephen, we haven't used your suggestion because Wolfram disliked the idea in
+> e.g. http://lkml.iu.edu/hypermail/linux/kernel/1409.1/03446.html
 
-This broke USB after 6261b06 ("regulator: Defer lookup of supply to
-regulator_get"), because it changed the order in which the controllers
-were probed.
-
-The fix for this issue was suggested by Mikko Perttunen.
-
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Cc: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>
----
- arch/arm/boot/dts/tegra124.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index cf01c81..cb786a9 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -838,6 +838,7 @@
- 		nvidia,hssquelch-level = <2>;
- 		nvidia,hsdiscon-level = <5>;
- 		nvidia,xcvr-hsslew = <12>;
-+		nvidia,has-utmi-pad-registers;
- 		status = "disabled";
- 	};
- 
-@@ -874,7 +875,6 @@
- 		nvidia,hssquelch-level = <2>;
- 		nvidia,hsdiscon-level = <5>;
- 		nvidia,xcvr-hsslew = <12>;
--		nvidia,has-utmi-pad-registers;
- 		status = "disabled";
- 	};
- 
--- 
-2.3.4
+As you said in the response you linked to, the objection is invalid 
+since it won't break any DTs. The driver for a node is responsible for 
+defining the meaning of its own reg properties. It should be pretty 
+trivial to allow the Tegra I2C controller driver (or indeed any driver 
+at all) to handle either #address-cells=<1> (the current setting) or 
+#address-cells=<2> (a new value which enables adding a new flag cell) or 
+even #address-cells=<1> with some of the upper bits of the reg value 
+used as flags (which would default to 0 in all current DTs, so e.g. 
+using the MSB==1 as a slave flag), all at run-time with complete 
+backwards-compatibility.
