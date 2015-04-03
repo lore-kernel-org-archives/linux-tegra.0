@@ -1,48 +1,171 @@
-From: David Ung <davidu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH V2 1/3] gpu: host1x: Reduce host1x job allocation size
-Date: Thu, 2 Apr 2015 23:13:38 +0000
-Message-ID: <4ca2d661eab54c3eb861680ebc24a430@HQMAIL102.nvidia.com>
-References: <1425606712-15986-1-git-send-email-davidu@nvidia.com>
- <0e36c4295adc4f2daae9715cd0dde87d@HQMAIL102.nvidia.com>
- <CAAVeFuK4NOrfCcX846rgPdViR6Ur4pSrrVihiV7KP1kRf15kdw@mail.gmail.com>
- <2253e92cd45c4b33913a45011c4ce823@HQMAIL102.nvidia.com>
- <CAAVeFuLZOJdOtpuSqdRzGa0rK3WZWURz-pn2tXhqTv58J0R_NA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAVeFuLZOJdOtpuSqdRzGa0rK3WZWURz-pn2tXhqTv58J0R_NA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Alexandre Courbot' <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "airlied-cv59FeDIM0c@public.gmane.org" <airlied-cv59FeDIM0c@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Subject: [PATCH v3] ARM: tegra: Correct which USB controller has the UTMI pad registers
+Date: Fri,  3 Apr 2015 09:21:11 +0200
+Message-ID: <1428045671-2333-1-git-send-email-tomeu.vizoso@collabora.com>
+References: <551D61A5.2010102@kapsi.fi>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <551D61A5.2010102-/1wQRMveznE@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBBbGV4YW5kcmUgQ291cmJvdCBb
-bWFpbHRvOmdudXJvdUBnbWFpbC5jb21dDQo+IFNlbnQ6IE1vbmRheSwgTWFyY2ggMzAsIDIwMTUg
-MTE6MzAgUE0NCj4gVG86IERhdmlkIFVuZzsgdGhpZXJyeS5yZWRpbmdAZ21haWwuY29tDQo+IENj
-OiBhaXJsaWVkQGxpbnV4LmllOyBsaW51eC10ZWdyYUB2Z2VyLmtlcm5lbC5vcmc7DQo+IHN3YXJy
-ZW5Ad3d3ZG90b3JnLm9yZzsgQXJ0byBNZXJpbGFpbmVuOyBUZXJqZSBCZXJnc3Ryb20NCj4gU3Vi
-amVjdDogUmU6IFtQQVRDSCBWMiAxLzNdIGdwdTogaG9zdDF4OiBSZWR1Y2UgaG9zdDF4IGpvYiBh
-bGxvY2F0aW9uIHNpemUNCj4gDQo+IE9uIFR1ZSwgTWFyIDI0LCAyMDE1IGF0IDQ6MzkgQU0sIERh
-dmlkIFVuZyA8ZGF2aWR1QG52aWRpYS5jb20+IHdyb3RlOg0KPiA+DQo+ID4+IC0tLS0tT3JpZ2lu
-YWwgTWVzc2FnZS0tLS0tDQo+ID4+IEZyb206IEFsZXhhbmRyZSBDb3VyYm90IFttYWlsdG86Z251
-cm91QGdtYWlsLmNvbV0NCj4gPj4gU2VudDogTW9uZGF5LCBNYXJjaCAyMywgMjAxNSAxMjowOSBB
-TQ0KPiA+PiBUbzogRGF2aWQgVW5nDQo+ID4+IENjOiBhaXJsaWVkQGxpbnV4LmllOyBsaW51eC10
-ZWdyYUB2Z2VyLmtlcm5lbC5vcmc7DQo+ID4+IHRoaWVycnkucmVkaW5nQGdtYWlsLmNvbTsgc3dh
-cnJlbkB3d3dkb3Rvcmcub3JnOyBBcnRvIE1lcmlsYWluZW47DQo+ID4+IFRlcmplIEJlcmdzdHJv
-bQ0KPiA+PiBTdWJqZWN0OiBSZTogW1BBVENIIFYyIDEvM10gZ3B1OiBob3N0MXg6IFJlZHVjZSBo
-b3N0MXggam9iIGFsbG9jYXRpb24NCj4gPj4gc2l6ZQ0KPiA+Pg0KPiA+PiBUaGUgc2VyaWVzIGxv
-b2tzIG9rIHRvIG1lLCB0aGUgb25seSBwcm9ibGVtIEkgc2VlIGlzIHRoYXQgd2UgYXJlDQo+ID4+
-IGxhY2tpbmcgbWVhbnMgdG8gdGhvcm91Z2hseSB0ZXN0IGhvc3QxeCBwYXRjaGVzIGFjcm9zcyBh
-bGwgdGhlDQo+ID4+IHN1cHBvcnRlZCBUZWdyYSBjaGlwcy4NCj4gPj4NCj4gPj4gQ291bGQgeW91
-IGRldGFpbCB3aGF0IGtpbmQgb2YgdGVzdGluZyB0aGlzIHBhdGNoIHNlcmllcyBoYXMNCj4gPj4g
-dW5kZXJnb25lLCBhbmQgd2hpY2ggY2hpcHMvYm9hcmRzIGhhdmUgYmVlbiB0ZXN0ZWQ/DQo+ID4N
-Cj4gPiBUZXN0ZWQgdGhlIGhvc3QxeCBjaGFubmVsIHRlc3RzIGZvciBUMTMyIG9uIEE0NC4NCj4g
-PiBBbHNvIHJhbiBQYXVsJ3MgRUlNVCBzZXQgdXAgd2hpY2ggb25seSB0ZXN0cyBib290aW5nIGtl
-cm5lbCB0byBjb25zb2xlDQo+ID4gZm9yIFQyMC9UMzAvVDExNC9UMTI0IGFuZCBRRU1VDQo+IA0K
-PiBUaGllcnJ5LCB3aGF0IGRvIHlvdSB0aGluaz8NCj4gDQo+IEkga25vdyB3ZSBhcmUgbGFja2lu
-ZyBwcm9wZXIgdGVzdGluZyBpbmZyYXN0cnVjdHVyZSBmb3IgaG9zdDF4LCBidXQgdGhlc2UNCj4g
-cGF0Y2hlcyByZWFsbHkgbG9va3MgaGFybWxlc3MgdG8gbWUuDQoNCg0KVGhhbmsgeW91IEFsZXgg
-Zm9yIHRoZSByZXZpZXcuDQpJdCB3b3VsZCBiZSBnb29kIHRvIGhhdmUgY2xvc3VyZSB0byB0aGlz
-IHBhdGNoc2V0LiANCg0KVGhpZXJyeSBwaW5nPw0KDQo=
+It should be the first controller, not the second. The indexes of the
+usb resets were also wrong and have been fixed.
+
+The issue was caused by the changes in 308efde ("ARM: tegra: Add resets
+& has-utmi-pad-registers flag to all USB PHYs") being misapplied by git
+due to the patch context being insufficient.
+
+This broke USB after 6261b06 ("regulator: Defer lookup of supply to
+regulator_get"), because it changed the order in which the controllers
+were probed.
+
+The fix for this issue was suggested by Mikko Perttunen and Tuomas
+Tynkkynen.
+
+Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Cc: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>
+Cc: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Hi,
+
+hope I have gotten it right this time, but please do check :)
+
+Thanks,
+
+Tomeu
+---
+ arch/arm/boot/dts/tegra124.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+index cf01c81..13cc7ca 100644
+--- a/arch/arm/boot/dts/tegra124.dtsi
++++ b/arch/arm/boot/dts/tegra124.dtsi
+@@ -809,114 +809,114 @@
+ 		compatible = "nvidia,tegra124-ehci", "nvidia,tegra30-ehci", "usb-ehci";
+ 		reg = <0x0 0x7d000000 0x0 0x4000>;
+ 		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
+ 		phy_type = "utmi";
+ 		clocks = <&tegra_car TEGRA124_CLK_USBD>;
+ 		resets = <&tegra_car 22>;
+ 		reset-names = "usb";
+ 		nvidia,phy = <&phy1>;
+ 		status = "disabled";
+ 	};
+ 
+ 	phy1: usb-phy@0,7d000000 {
+ 		compatible = "nvidia,tegra124-usb-phy", "nvidia,tegra30-usb-phy";
+ 		reg = <0x0 0x7d000000 0x0 0x4000>,
+ 		      <0x0 0x7d000000 0x0 0x4000>;
+ 		phy_type = "utmi";
+ 		clocks = <&tegra_car TEGRA124_CLK_USBD>,
+ 			 <&tegra_car TEGRA124_CLK_PLL_U>,
+ 			 <&tegra_car TEGRA124_CLK_USBD>;
+ 		clock-names = "reg", "pll_u", "utmi-pads";
+-		resets = <&tegra_car 59>, <&tegra_car 22>;
++		resets = <&tegra_car 22>, <&tegra_car 22>;
+ 		reset-names = "usb", "utmi-pads";
+ 		nvidia,hssync-start-delay = <0>;
+ 		nvidia,idle-wait-delay = <17>;
+ 		nvidia,elastic-limit = <16>;
+ 		nvidia,term-range-adj = <6>;
+ 		nvidia,xcvr-setup = <9>;
+ 		nvidia,xcvr-lsfslew = <0>;
+ 		nvidia,xcvr-lsrslew = <3>;
+ 		nvidia,hssquelch-level = <2>;
+ 		nvidia,hsdiscon-level = <5>;
+ 		nvidia,xcvr-hsslew = <12>;
++		nvidia,has-utmi-pad-registers;
+ 		status = "disabled";
+ 	};
+ 
+ 	usb@0,7d004000 {
+ 		compatible = "nvidia,tegra124-ehci", "nvidia,tegra30-ehci", "usb-ehci";
+ 		reg = <0x0 0x7d004000 0x0 0x4000>;
+ 		interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+ 		phy_type = "utmi";
+ 		clocks = <&tegra_car TEGRA124_CLK_USB2>;
+ 		resets = <&tegra_car 58>;
+ 		reset-names = "usb";
+ 		nvidia,phy = <&phy2>;
+ 		status = "disabled";
+ 	};
+ 
+ 	phy2: usb-phy@0,7d004000 {
+ 		compatible = "nvidia,tegra124-usb-phy", "nvidia,tegra30-usb-phy";
+ 		reg = <0x0 0x7d004000 0x0 0x4000>,
+ 		      <0x0 0x7d000000 0x0 0x4000>;
+ 		phy_type = "utmi";
+ 		clocks = <&tegra_car TEGRA124_CLK_USB2>,
+ 			 <&tegra_car TEGRA124_CLK_PLL_U>,
+ 			 <&tegra_car TEGRA124_CLK_USBD>;
+ 		clock-names = "reg", "pll_u", "utmi-pads";
+-		resets = <&tegra_car 22>, <&tegra_car 22>;
++		resets = <&tegra_car 58>, <&tegra_car 22>;
+ 		reset-names = "usb", "utmi-pads";
+ 		nvidia,hssync-start-delay = <0>;
+ 		nvidia,idle-wait-delay = <17>;
+ 		nvidia,elastic-limit = <16>;
+ 		nvidia,term-range-adj = <6>;
+ 		nvidia,xcvr-setup = <9>;
+ 		nvidia,xcvr-lsfslew = <0>;
+ 		nvidia,xcvr-lsrslew = <3>;
+ 		nvidia,hssquelch-level = <2>;
+ 		nvidia,hsdiscon-level = <5>;
+ 		nvidia,xcvr-hsslew = <12>;
+-		nvidia,has-utmi-pad-registers;
+ 		status = "disabled";
+ 	};
+ 
+ 	usb@0,7d008000 {
+ 		compatible = "nvidia,tegra124-ehci", "nvidia,tegra30-ehci", "usb-ehci";
+ 		reg = <0x0 0x7d008000 0x0 0x4000>;
+ 		interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
+ 		phy_type = "utmi";
+ 		clocks = <&tegra_car TEGRA124_CLK_USB3>;
+ 		resets = <&tegra_car 59>;
+ 		reset-names = "usb";
+ 		nvidia,phy = <&phy3>;
+ 		status = "disabled";
+ 	};
+ 
+ 	phy3: usb-phy@0,7d008000 {
+ 		compatible = "nvidia,tegra124-usb-phy", "nvidia,tegra30-usb-phy";
+ 		reg = <0x0 0x7d008000 0x0 0x4000>,
+ 		      <0x0 0x7d000000 0x0 0x4000>;
+ 		phy_type = "utmi";
+ 		clocks = <&tegra_car TEGRA124_CLK_USB3>,
+ 			 <&tegra_car TEGRA124_CLK_PLL_U>,
+ 			 <&tegra_car TEGRA124_CLK_USBD>;
+ 		clock-names = "reg", "pll_u", "utmi-pads";
+-		resets = <&tegra_car 58>, <&tegra_car 22>;
++		resets = <&tegra_car 59>, <&tegra_car 22>;
+ 		reset-names = "usb", "utmi-pads";
+ 		nvidia,hssync-start-delay = <0>;
+ 		nvidia,idle-wait-delay = <17>;
+ 		nvidia,elastic-limit = <16>;
+ 		nvidia,term-range-adj = <6>;
+ 		nvidia,xcvr-setup = <9>;
+ 		nvidia,xcvr-lsfslew = <0>;
+ 		nvidia,xcvr-lsrslew = <3>;
+ 		nvidia,hssquelch-level = <2>;
+ 		nvidia,hsdiscon-level = <5>;
+ 		nvidia,xcvr-hsslew = <12>;
+ 		status = "disabled";
+ 	};
+ 
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+ 		cpu@0 {
+ 			device_type = "cpu";
+-- 
+2.3.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
