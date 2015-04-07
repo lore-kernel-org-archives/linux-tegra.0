@@ -1,27 +1,38 @@
-From: Tobias Klauser <tklauser@distanz.ch>
-Subject: Re: [PATCH V2] tty: serial: Add const to struct uart_ops declarations
-Date: Tue, 7 Apr 2015 09:49:57 +0200
-Message-ID: <20150407074957.GA25696@distanz.ch>
-References: <1428169665.2775.53.camel@perches.com>
- <a938a0e86638588e5ccff85771fa3b95@agner.ch>
- <1428258294.2775.69.camel@perches.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1428258294.2775.69.camel@perches.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Joe Perches <joe@perches.com>
-Cc: Stefan Agner <stefan@agner.ch>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, linux-ia64@vger.kernel.org, kernel@stlinux.com, Nicolas Ferre <nicolas.ferre@atmel.com>, Timur Tabi <timur@tabi.org>, linux-kernel@vger.kernel.org, Pat Gefre <pfg@sgi.com>, Laxman Dewangan <ldewangan@nvidia.com>, "Maciej W. Rozycki" <macro@linux-mips.org>, Daniel Walker <dwalker@fifo99.com>, sparclinux@vger.kernel.org, Peter Korsgaard <jacmet@sunsite.dk>, Sonic Zhang <sonic.zhang@analog.com>, Alexandre Courbot <gnurou@gmail.com>, Russell King <linux@arm.linux.org.uk>, Michal Simek <michal.simek@xilinx.com>, linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-msm@vger.kernel.org, adi-buildroot-devel@lists.sourceforge.net, Thadeu Lima de Souza Cascardo <cascardo@linux.vnet.ibm.com>, linux-tegra
+From: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: [PATCH 0/2] USB: fix lockup on disconnect
+Date: Tue,  7 Apr 2015 11:46:50 +0200
+Message-ID: <1428400012-7563-1-git-send-email-johan@kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 2015-04-05 at 20:24:54 +0200, Joe Perches <joe@perches.com> wrote:
+These patches fix an issue I ran into into where the Beaglebone Black
+would lock up on disconnect.
 
-[...]
+Turns out this was related to the transfer_buffers not being properly
+aligned, causing musb to use temporary buffers for the transfers. On
+transfer errors (e.g. during disconnect), the full buffer content was
+still being copied, something which could lead starvation of the hub
+work queue when using large-enough buffers.
 
->  drivers/tty/serial/altera_jtaguart.c        | 2 +-
->  drivers/tty/serial/altera_uart.c            | 2 +-
+Included is also a fix for the same issue for ehci-tegra that has been
+compile tested only.
 
-For these two drivers:
+Note that the octeon-hcd driver in staging, which also uses temporary
+buffers for unaligned transfers, appears to already get this right.
 
-Acked-by: Tobias Klauser <tklauser@distanz.ch>
+Johan
+
+
+Johan Hovold (2):
+  USB: musb: fix inefficient copy of unaligned buffers
+  USB: ehci-tegra: fix inefficient copy of unaligned buffers
+
+ drivers/usb/host/ehci-tegra.c | 2 +-
+ drivers/usb/musb/musb_host.c  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+-- 
+2.0.5
