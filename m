@@ -1,73 +1,69 @@
-From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: [PATCH v2 0/4]  arm: tegra: implement NVEC driver using tegrai2c.
-Date: Tue, 07 Apr 2015 13:37:01 +0200
-Message-ID: <1549160.njMIY2NVTi@fb07-iapwap2>
-References: <1427745615-5428-1-git-send-email-danindrey@mail.ru> <20150403194635.GC2016@katana>
+From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Subject: Re: [PATCH V2] tty: serial: Add const to struct uart_ops
+ declarations
+Date: Tue, 7 Apr 2015 12:46:46 +0000
+Message-ID: <C2D7FE5348E1B147BCA15975FBA2307566598FD3@IN01WEMBXB.internal.synopsys.com>
+References: <1428169665.2775.53.camel@perches.com>
+	 <a938a0e86638588e5ccff85771fa3b95@agner.ch>
+ <1428258294.2775.69.camel@perches.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2444986.Ab3eODAqzR"; micalg="pgp-sha256"; protocol="application/pgp-signature"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150403194635.GC2016@katana>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Cc: Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-ia64-owner@vger.kernel.org>
+Content-Language: en-US
+Sender: linux-ia64-owner@vger.kernel.org
+To: Joe Perches <joe@perches.com>, Stefan Agner <stefan@agner.ch>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>, "kernel@stlinux.com" <kernel@stlinux.com>, Nicolas Ferre <nicolas.ferre@atmel.com>, Timur Tabi <timur@tabi.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Pat Gefre <pfg@sgi.com>, Laxman Dewangan <ldewangan@nvidia.com>, "Maciej W. Rozycki" <macro@linux-mips.org>, Daniel Walker <dwalker@fifo99.com>, "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>, Peter Korsgaard <jacmet@sunsite.dk>, Sonic Zhang <sonic.zhang@analog.com>, Alexandre Courbot <gnurou@gmail.com>, Russell King <linux@arm.linux.org.uk>, Michal Simek <michal.simek@xilinx.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, Tobias Klauser <tklauser>
 List-Id: linux-tegra@vger.kernel.org
 
+On Sunday 05 April 2015 11:55 PM, Joe Perches wrote:
 
---nextPart2444986.Ab3eODAqzR
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="ISO-8859-1"
+These structs can be const, so make them const.
 
-Hi Wolfram,
+Miscellanea:
 
-Am Freitag, 3. April 2015, 21:46:35 schrieb Wolfram Sang:
-> On Mon, Mar 30, 2015 at 11:00:11PM +0300, Andrey Danin wrote:
-> > NVEC driver contains code to manage tegra i2c controller in slave mode.
-> > I2C slave support was implemented in linux kernel. The goal of this
-> > patch serie is to implement I2C slave mode in tegra drived and rework
-> > NVEC driver to use it.
-> 
-> Thanks. Looks pretty good already. If being I2C slave was the reason for
-> this driver being in staging, we soon need to think of a proper place
-> outside staging.
+o Add static to struct uart_ops declaration in bfin_sport_uart
 
-yes, moving the low level i2c functions out to the bus driver was our major 
-concern. But there are still some minor things left before before we can move 
-out of staging.
+Signed-off-by: Joe Perches <joe@perches.com><mailto:joe@perches.com>
+---
+On Sun, 2015-04-05 at 00:04 +0200, Stefan Agner wrote:
 
-One thing where we need your help as a I2C maintainer is how to represent an 
-i2c slave device using device-tree. You may remember our discussion in the 
-past from here [1] where you suggested to just make a slave client by its 
-compatible name. Stephen Warren from NVIDIA raised some concerns about this 
-solution because it may not be appropriate in all possible future cases (which 
-is what a proper device-tree representation should take care off). He instead 
-suggested to mark a slave client by adding some flag to the reg property, to 
-be able to handle a situation where both master client and slave client have 
-the same i2c bus address forming a loopback (e.g. for testing purpose) on the 
-same bus. More details here [2].
 
-I hope with this post I can join the different discussions somehow so we are 
-able to find a common sense which is acceptable for all.
+> On 2015-04-04 19:47, Joe Perches wrote:
 
-Marc
 
-[1] http://lkml.iu.edu/hypermail/linux/kernel/1409.1/03446.html
-[2] https://lists.launchpad.net/ac100/msg01361.html
+> > Done with:
+> > sed -r -i -e 's/\bstruct\s+uart_ops\s+(\w+)\s*=\s*/const struct
+> > uart_ops \1 = /g' drivers/tty/serial/*.c
 
---nextPart2444986.Ab3eODAqzR
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+[]
 
-iQEcBAABCAAGBQJVI8FdAAoJEKyeR39HFBtoIq0H/RBfaY93LLhU8lwAOZdrSJRo
-zwmuDZ7V1FeHM0oqm2YZeeoxsppkZ1KslSsS4kwCaZtbepPDBFPlXX6s7sat/h3h
-tWBPxigmlf+tKgZqA1MUoBuU0VWLCrqfI/sntEXzYhnkcKigZcfix4g7DEIUkT/M
-iIKmHCU6Ey8b/XreZ3VLcYu2a15pfndUTK+3N+uIbSTs7Dd8hSx2nVuyD6i7o/yO
-VRnzK4t7kyvJGn7e4DS5B0XkvSxXEfTpIaV5FY4YsuwSJSVk++VQfl92OwMIkgMX
-xN1iKZUTeKfWtZyGr6JWDIfyaHL3jVLCS7I+Gm2lVxwSxVqOaMFado41j9WFL7w=
-=Cuha
------END PGP SIGNATURE-----
 
---nextPart2444986.Ab3eODAqzR--
+> +++ b/drivers/tty/serial/fsl_lpuart.c
+> Something went wrong in this driver, const is twice...
+
+
+Apologies, thanks for noticing.
+The sed was mistakenly done twice on that file.
+
+V2:
+
+o Fix duplicate const in fsl_lpuart.c
+o Add static to drivers/tty/serial/bfin_sport_uart.c
+
+Still compiled only x86 and not cross-compiled or tested.
+
+ drivers/tty/serial/21285.c                  | 2 +-
+ drivers/tty/serial/altera_jtaguart.c        | 2 +-
+ drivers/tty/serial/altera_uart.c            | 2 +-
+ drivers/tty/serial/amba-pl010.c             | 2 +-
+ drivers/tty/serial/amba-pl011.c             | 2 +-
+ drivers/tty/serial/apbuart.c                | 2 +-
+ drivers/tty/serial/ar933x_uart.c            | 2 +-
+ drivers/tty/serial/arc_uart.c               | 2 +-
+
+Acked-by: Vineet Gupta <vgupta@synopsys.com><mailto:vgupta@synopsys.com> # for arc_uart
+
+Th,
+-Vineet
