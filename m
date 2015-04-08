@@ -1,121 +1,56 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH] ARM: tegra: cpuidle: implement
- cpuidle_state.enter_freeze()
-Date: Wed, 8 Apr 2015 12:55:46 +0100
-Message-ID: <20150408115546.GA24271@red-moon>
-References: <1428490480-10144-1-git-send-email-tomeu.vizoso@collabora.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1428490480-10144-1-git-send-email-tomeu.vizoso@collabora.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 0/8] clk: Minor cleanups
+Date: Wed, 08 Apr 2015 15:22:11 +0200
+Message-ID: <1428499339-29569-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Max Filippov <jcmvbkbc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Barry Song <baohua-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Apr 08, 2015 at 11:54:38AM +0100, Tomeu Vizoso wrote:
-> This callback is expected to do the same as enter() only that all
-> non-wakeup IRQs are expected to be disabled.
+Hi,
 
-This is not true or at least it is misworded. The enter_freeze() function
-is expected to return from the state with IRQs disabled at CPU level, or
-put it differently it must not re-enable IRQs while executing since the
-tick is frozen.
 
-> It will be called when the system goes to suspend-to-idle and will
-> reduce power usage because CPUs won't be awaken for unnecessary IRQs.
-> 
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
->  arch/arm/mach-tegra/cpuidle-tegra114.c | 31 ++++++++++++++++++++++++-------
->  1 file changed, 24 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/arm/mach-tegra/cpuidle-tegra114.c b/arch/arm/mach-tegra/cpuidle-tegra114.c
-> index f2b586d..ef06001 100644
-> --- a/arch/arm/mach-tegra/cpuidle-tegra114.c
-> +++ b/arch/arm/mach-tegra/cpuidle-tegra114.c
-> @@ -39,28 +39,44 @@ static int tegra114_idle_power_down(struct cpuidle_device *dev,
->  				    struct cpuidle_driver *drv,
->  				    int index)
->  {
-> -	local_fiq_disable();
-> -
->  	tegra_set_cpu_in_lp2();
->  	cpu_pm_enter();
->  
-> -	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_ENTER, &dev->cpu);
-> -
->  	call_firmware_op(prepare_idle);
->  
->  	/* Do suspend by ourselves if the firmware does not implement it */
->  	if (call_firmware_op(do_idle, 0) == -ENOSYS)
->  		cpu_suspend(0, tegra30_sleep_cpu_secondary_finish);
->  
-> -	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_EXIT, &dev->cpu);
-> -
->  	cpu_pm_exit();
->  	tegra_clear_cpu_in_lp2();
->  
-> +	return index;
-> +}
-> +
-> +static int tegra114_idle_enter(struct cpuidle_device *dev,
-> +			       struct cpuidle_driver *drv,
-> +			       int index)
-> +{
-> +	local_fiq_disable();
-> +
-> +	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_ENTER, &dev->cpu);
-> +
-> +	index = tegra114_idle_power_down(dev, drv, index);
-> +
-> +	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_EXIT, &dev->cpu);
-> +
->  	local_fiq_enable();
->  
->  	return index;
->  }
-> +
-> +static void tegra114_idle_enter_freeze(struct cpuidle_device *dev,
-> +				       struct cpuidle_driver *drv,
-> +				       int index)
-> +{
-> +	tegra114_idle_power_down(dev, drv, index);
+Small cleanups for different clock drivers.
 
-Cool. So if the problem is FIQs, you don't disabled them on entry
-which means you enter the "frozen" state with FIQs enabled and tick frozen,
-unless I am missing something.
+The first two patches are independent.
 
-The question here is: are we allowed to enable FIQs before returning
-from an enter_freeze() call (and to enter it with FIQs enabled) ?
+Rest of the patches (these related to constifying parent names)
+depend on the third patch: "clk: Constify pointers to parent
+names in init data".
 
-If we are not your code here certainly does not solve the issue, since
-it does _not_ disable FIQs upon enter_freeze call anyway.
 
-Lorenzo
+Tested on Arndale Octa (Exynos5420) and Trats2 (Exynos4412). Other
+drivers (and MIPS related) only compile tested plus some static
+checkers.
 
-> +}
->  #endif
->  
->  static struct cpuidle_driver tegra_idle_driver = {
-> @@ -71,7 +87,8 @@ static struct cpuidle_driver tegra_idle_driver = {
->  		[0] = ARM_CPUIDLE_WFI_STATE_PWR(600),
->  #ifdef CONFIG_PM_SLEEP
->  		[1] = {
-> -			.enter			= tegra114_idle_power_down,
-> +			.enter			= tegra114_idle_enter,
-> +			.enter_freeze		= tegra114_idle_enter_freeze,
->  			.exit_latency		= 500,
->  			.target_residency	= 1000,
->  			.power_usage		= 0,
-> -- 
-> 2.3.4
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
-> 
+Best regards,
+Krzysztof
+
+
+Krzysztof Kozlowski (8):
+  clk: rockchip: Staticize file-scope declarations
+  clk: exynos: Staticize file-scope declarations
+  clk: Constify pointers to parent names in init data
+  clk: tegra: Fix duplicate const for parent names
+  clk: cdce706: Constify parent names in clock init data
+  clk: sirf: Constify parent names in clock init data
+  clk: ls1x: Fix duplicate const for parent names
+  MIPS: Alchemy: Remove unneeded cast removing const
+
+ arch/mips/alchemy/common/clock.c     |  6 +--
+ drivers/clk/clk-cdce706.c            |  4 +-
+ drivers/clk/clk-composite.c          |  2 +-
+ drivers/clk/clk-ls1x.c               |  6 +--
+ drivers/clk/clk-mux.c                |  8 ++--
+ drivers/clk/rockchip/clk-rk3188.c    |  2 +-
+ drivers/clk/rockchip/clk-rk3288.c    |  2 +-
+ drivers/clk/samsung/clk-exynos5260.c | 74 ++++++++++++++++++------------------
+ drivers/clk/samsung/clk-exynos5420.c | 10 ++---
+ drivers/clk/sirf/clk-common.c        | 12 +++---
+ drivers/clk/tegra/clk-emc.c          |  2 +-
+ include/linux/clk-provider.h         | 12 +++---
+ 12 files changed, 70 insertions(+), 70 deletions(-)
+
+-- 
+1.9.1
