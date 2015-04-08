@@ -1,106 +1,44 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 3/8] clk: Constify pointers to parent names in init data
-Date: Wed, 08 Apr 2015 15:22:14 +0200
-Message-ID: <1428499339-29569-4-git-send-email-k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 5/8] clk: cdce706: Constify parent names in clock init data
+Date: Wed, 08 Apr 2015 15:22:16 +0200
+Message-ID: <1428499339-29569-6-git-send-email-k.kozlowski@samsung.com>
 References: <1428499339-29569-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-reply-to: <1428499339-29569-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, Barry Song <baohua@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1428499339-29569-1-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Max Filippov <jcmvbkbc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Barry Song <baohua-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The 'parent_names' member of 'clk_init_data' is not modified so it can
-be made as an array of const pointers to constant strings.
+The array of parent names can be made as array of const pointers to
+const strings.
 
-Some drivers (e.g. arch/mips/alchemy/common/clock.c) already pass such
-data.
-
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- drivers/clk/clk-composite.c  |  2 +-
- drivers/clk/clk-mux.c        |  8 ++++----
- include/linux/clk-provider.h | 12 ++++++------
- 3 files changed, 11 insertions(+), 11 deletions(-)
+ drivers/clk/clk-cdce706.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
-index 956b7e54fa1c..077f4c7148f1 100644
---- a/drivers/clk/clk-composite.c
-+++ b/drivers/clk/clk-composite.c
-@@ -188,7 +188,7 @@ static void clk_composite_disable(struct clk_hw *hw)
- }
- 
- struct clk *clk_register_composite(struct device *dev, const char *name,
--			const char **parent_names, int num_parents,
-+			const char * const *parent_names, int num_parents,
- 			struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
- 			struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
- 			struct clk_hw *gate_hw, const struct clk_ops *gate_ops,
-diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
-index 69a094c3783d..962e2a056381 100644
---- a/drivers/clk/clk-mux.c
-+++ b/drivers/clk/clk-mux.c
-@@ -114,8 +114,8 @@ const struct clk_ops clk_mux_ro_ops = {
- EXPORT_SYMBOL_GPL(clk_mux_ro_ops);
- 
- struct clk *clk_register_mux_table(struct device *dev, const char *name,
--		const char **parent_names, u8 num_parents, unsigned long flags,
--		void __iomem *reg, u8 shift, u32 mask,
-+		const char * const *parent_names, u8 num_parents,
-+		unsigned long flags, void __iomem *reg, u8 shift, u32 mask,
- 		u8 clk_mux_flags, u32 *table, spinlock_t *lock)
- {
- 	struct clk_mux *mux;
-@@ -166,8 +166,8 @@ struct clk *clk_register_mux_table(struct device *dev, const char *name,
- EXPORT_SYMBOL_GPL(clk_register_mux_table);
- 
- struct clk *clk_register_mux(struct device *dev, const char *name,
--		const char **parent_names, u8 num_parents, unsigned long flags,
--		void __iomem *reg, u8 shift, u8 width,
-+		const char * const *parent_names, u8 num_parents,
-+		unsigned long flags, void __iomem *reg, u8 shift, u8 width,
- 		u8 clk_mux_flags, spinlock_t *lock)
- {
- 	u32 mask = BIT(width) - 1;
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 28abf1badb40..0bf0308963da 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -209,7 +209,7 @@ struct clk_ops {
- struct clk_init_data {
- 	const char		*name;
- 	const struct clk_ops	*ops;
--	const char		**parent_names;
-+	const char * const	*parent_names;
- 	u8			num_parents;
- 	unsigned long		flags;
- };
-@@ -426,13 +426,13 @@ extern const struct clk_ops clk_mux_ops;
- extern const struct clk_ops clk_mux_ro_ops;
- 
- struct clk *clk_register_mux(struct device *dev, const char *name,
--		const char **parent_names, u8 num_parents, unsigned long flags,
--		void __iomem *reg, u8 shift, u8 width,
-+		const char * const *parent_names, u8 num_parents,
-+		unsigned long flags, void __iomem *reg, u8 shift, u8 width,
- 		u8 clk_mux_flags, spinlock_t *lock);
- 
- struct clk *clk_register_mux_table(struct device *dev, const char *name,
--		const char **parent_names, u8 num_parents, unsigned long flags,
--		void __iomem *reg, u8 shift, u32 mask,
-+		const char * const *parent_names, u8 num_parents,
-+		unsigned long flags, void __iomem *reg, u8 shift, u32 mask,
- 		u8 clk_mux_flags, u32 *table, spinlock_t *lock);
- 
- void clk_unregister_mux(struct clk *clk);
-@@ -518,7 +518,7 @@ struct clk_composite {
+diff --git a/drivers/clk/clk-cdce706.c b/drivers/clk/clk-cdce706.c
+index b8e4f8a822e9..8a2dfd0012f3 100644
+--- a/drivers/clk/clk-cdce706.c
++++ b/drivers/clk/clk-cdce706.c
+@@ -94,7 +94,7 @@ static const char * const cdce706_source_name[] = {
+ 	"clk_in0", "clk_in1",
  };
  
- struct clk *clk_register_composite(struct device *dev, const char *name,
--		const char **parent_names, int num_parents,
-+		const char * const *parent_names, int num_parents,
- 		struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
- 		struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
- 		struct clk_hw *gate_hw, const struct clk_ops *gate_ops,
+-static const char *cdce706_clkin_name[] = {
++static const char * const cdce706_clkin_name[] = {
+ 	"clk_in",
+ };
+ 
+@@ -102,7 +102,7 @@ static const char * const cdce706_pll_name[] = {
+ 	"pll1", "pll2", "pll3",
+ };
+ 
+-static const char *cdce706_divider_parent_name[] = {
++static const char * const cdce706_divider_parent_name[] = {
+ 	"clk_in", "pll1", "pll2", "pll2", "pll3",
+ };
+ 
 -- 
 1.9.1
