@@ -1,125 +1,97 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] drm/tegra: Remove unused .mode_set and .mode_set_base
- CRTC helpers
-Date: Thu, 9 Apr 2015 10:50:31 +0200
-Message-ID: <20150409085030.GE12103@ulmo>
-References: <1424432636-14762-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
- <1468232.zKj9Pah6Dt@avalon>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V2 1/3] gpu: host1x: Reduce host1x job allocation size
+Date: Thu, 9 Apr 2015 10:53:49 +0200
+Message-ID: <20150409085349.GF12103@ulmo>
+References: <1425606712-15986-1-git-send-email-davidu@nvidia.com>
+ <0e36c4295adc4f2daae9715cd0dde87d@HQMAIL102.nvidia.com>
+ <CAAVeFuK4NOrfCcX846rgPdViR6Ur4pSrrVihiV7KP1kRf15kdw@mail.gmail.com>
+ <2253e92cd45c4b33913a45011c4ce823@HQMAIL102.nvidia.com>
+ <CAAVeFuLZOJdOtpuSqdRzGa0rK3WZWURz-pn2tXhqTv58J0R_NA@mail.gmail.com>
+ <4ca2d661eab54c3eb861680ebc24a430@HQMAIL102.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0099259885=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1468232.zKj9Pah6Dt@avalon>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-tegra@vger.kernel.org, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, dri-devel@lists.freedesktop.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="5CUMAwwhRxlRszMD"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <4ca2d661eab54c3eb861680ebc24a430-wO81nVYWzR5xWE4FnwvcdlaTQe2KTcn/@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: David Ung <davidu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: 'Alexandre Courbot' <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "airlied-cv59FeDIM0c@public.gmane.org" <airlied-cv59FeDIM0c@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============0099259885==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="2qXFWqzzG3v1+95a"
-Content-Disposition: inline
-
-
---2qXFWqzzG3v1+95a
+--5CUMAwwhRxlRszMD
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 03, 2015 at 04:53:41PM +0300, Laurent Pinchart wrote:
-> Hi Thierry,
+On Thu, Apr 02, 2015 at 11:13:38PM +0000, David Ung wrote:
+> > -----Original Message-----
+> > From: Alexandre Courbot [mailto:gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org]
+> > Sent: Monday, March 30, 2015 11:30 PM
+> > To: David Ung; thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+> > Cc: airlied-cv59FeDIM0c@public.gmane.org; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
+> > swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org; Arto Merilainen; Terje Bergstrom
+> > Subject: Re: [PATCH V2 1/3] gpu: host1x: Reduce host1x job allocation s=
+ize
+> >=20
+> > On Tue, Mar 24, 2015 at 4:39 AM, David Ung <davidu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> > >
+> > >> -----Original Message-----
+> > >> From: Alexandre Courbot [mailto:gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org]
+> > >> Sent: Monday, March 23, 2015 12:09 AM
+> > >> To: David Ung
+> > >> Cc: airlied-cv59FeDIM0c@public.gmane.org; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
+> > >> thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org; swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org; Arto Merilainen;
+> > >> Terje Bergstrom
+> > >> Subject: Re: [PATCH V2 1/3] gpu: host1x: Reduce host1x job allocation
+> > >> size
+> > >>
+> > >> The series looks ok to me, the only problem I see is that we are
+> > >> lacking means to thoroughly test host1x patches across all the
+> > >> supported Tegra chips.
+> > >>
+> > >> Could you detail what kind of testing this patch series has
+> > >> undergone, and which chips/boards have been tested?
+> > >
+> > > Tested the host1x channel tests for T132 on A44.
+> > > Also ran Paul's EIMT set up which only tests booting kernel to console
+> > > for T20/T30/T114/T124 and QEMU
+> >=20
+> > Thierry, what do you think?
+> >=20
+> > I know we are lacking proper testing infrastructure for host1x, but the=
+se
+> > patches really looks harmless to me.
 >=20
-> Ping ?
+>=20
+> Thank you Alex for the review.
+> It would be good to have closure to this patchset.=20
 
-I thought I had already replied to the original post, but apparently I
-didn't. I had been carrying that same patch for a while already but had
-not sent it to Dave because it didn't seem material for after -rc1. The
-patch has gone in for v4.1-rc1 now.
+We'll get closure on this once the testing infrastructure appears. I
+won't apply these patches before then.
 
-Thanks,
 Thierry
 
-> On Friday 20 February 2015 13:43:56 Laurent Pinchart wrote:
-> > The two CRTC helper operations are called only for non-atomic mode
-> > setting, by either the drm_crtc_helper_set_config() helper or the
-> > drm_helper_resume_force_mode() helper. As the driver has switched to
-> > atomic mode setting and neither of those helpers is used, the operations
-> > are not used anymore. Remove them.
-> >=20
-> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.=
-com>
-> > ---
-> >  drivers/gpu/drm/tegra/dc.c | 2 --
-> >  1 file changed, 2 deletions(-)
-> >=20
-> > Hi Thierry,
-> >=20
-> > I stumbled on this while trying to understand the atomic mode setting c=
-ode
-> > paths. Could you please test the patch ?
-> >=20
-> > diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-> > index 3aaa84ae2681..4476d6a35a0f 100644
-> > --- a/drivers/gpu/drm/tegra/dc.c
-> > +++ b/drivers/gpu/drm/tegra/dc.c
-> > @@ -1327,9 +1327,7 @@ static void tegra_crtc_atomic_flush(struct drm_cr=
-tc
-> > *crtc) static const struct drm_crtc_helper_funcs tegra_crtc_helper_func=
-s =3D
-> > { .disable =3D tegra_crtc_disable,
-> >  	.mode_fixup =3D tegra_crtc_mode_fixup,
-> > -	.mode_set =3D drm_helper_crtc_mode_set,
-> >  	.mode_set_nofb =3D tegra_crtc_mode_set_nofb,
-> > -	.mode_set_base =3D drm_helper_crtc_mode_set_base,
-> >  	.prepare =3D tegra_crtc_prepare,
-> >  	.commit =3D tegra_crtc_commit,
-> >  	.atomic_check =3D tegra_crtc_atomic_check,
->=20
-> --=20
-> Regards,
->=20
-> Laurent Pinchart
->=20
-
---2qXFWqzzG3v1+95a
+--5CUMAwwhRxlRszMD
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJVJj1VAAoJEN0jrNd/PrOh0PIQAIxScMxbNLtdyEhGtih3TzUn
-ayA6NoFYj4BRPgWQ4fY+V1v32GTGPO1tpWF7G3/487xcDf2s7n2VT9FUehj6n8F+
-sseUNvOVBhYbqvp0HozeYOj7RohxBp7xfaKbibev3Q5rEnbnx5LIWXmNEP7rJEng
-mUm+dqjWSpkmP1n8i8BvByoWnm96/3YU9si+jbjUw0jv8dFsBXFCtJlDoTzjhCFI
-jbqSJf5uphKEHphCjv8WwPSuZaVqUhz1fOv73t/oXjTVbBnQOGoXATm5OIUt1Wop
-qpEpFlLHprkneAWmhMT3XxsjORFOhNcErLc+39wICoYFU8wgzTZIAZ8T2eD5w6+J
-dWvvstCs8UnhOsnbY3F3JvWgtitis1EAdIiAC2OUvzxvQPJOCK3iu3z+gK8PkP8j
-WzlvzFgblwrfbDlAtypoSfyg7WmtOxEsuxGuB+BI33BylWS2aNjt1qlZsItRGIHj
-zjgf6X2COBu+gevEe+v+GVb/3kehlMZ/2c2gia21k75gcSY3E442QSVKgK3i6a/r
-/ruCiTAU5dWBCeUyqnjtwe1umWHkKdaFSjeqs9usA2JB4HEAS9taEiH20Fp89e+X
-0fSu8JftXu31aWAiLyFhC93KAY/z6poyuG8VuX9u2YJrYxEqd14J54OrM154Okol
-c8ykuFve3z8eAiVTU+IM
-=HRZd
+iQIcBAABCAAGBQJVJj4cAAoJEN0jrNd/PrOhqIMQALfLYQT2jfwN1FzUhkvqVuwi
+bNe+9NY0eRlfN3dWpC1XFqbxyuKK75hVjep4PSM8LMFycyjr2dwK8GMux1HEIyq4
+DLpKpKgdMqzr8NobLj8S+pAW61Kli6jqUtl6jHGD4Ii46w5jj8kQYgtF4oZko15n
+d7N92AT1Z63TGi08irrl6N9jkmtNgOPNKi/oqsoiI5AUnEthGH7NQyW77De/JQlb
+vxTedzkgTDBONXfiPzJJsg61i2D2gTNxvBIx+Y0fzxo1vaohIrDTJYTBfncPS0rZ
+qbUph2flgWPqSphVaZcwICmUweAvWeMMlNF6lff0WipguHU1t75I5HnTxjpv/POt
+2PnMxsdpAveJmT7/MQojmzQA7lNh9IODFzehRO1Mj1/+uOqApOKsL05fiYqIjnEK
+2NxoVPBkcXHzRUsIv5fAfGkEGFqrLap13WooTDxBFMPr+IpMu20/2sRv0r9PPU4m
+EtgkIuqjFHDv5pWKyM47JbDo275YYdIGV9Qr7iEkulMKumuVS16jxjVcIvGoRSbf
+j3LWTULh3DVkEn6Wa0mx+2hzTbyBuHvQvD3kxUH7Z14FPMzLHd+yaWwUwd4bjCaH
+7f854ngeDy7XffF8Hszo9bP5TKsSuD6Nr5DOb99lb4fE6OGBL1+DJMH/vUo91CJS
+WKxM/PIzd4NB83x0mh5v
+=Ut8S
 -----END PGP SIGNATURE-----
 
---2qXFWqzzG3v1+95a--
-
---===============0099259885==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
-
---===============0099259885==--
+--5CUMAwwhRxlRszMD--
