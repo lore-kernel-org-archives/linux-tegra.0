@@ -1,97 +1,150 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V2 1/3] gpu: host1x: Reduce host1x job allocation size
-Date: Thu, 9 Apr 2015 10:53:49 +0200
-Message-ID: <20150409085349.GF12103@ulmo>
-References: <1425606712-15986-1-git-send-email-davidu@nvidia.com>
- <0e36c4295adc4f2daae9715cd0dde87d@HQMAIL102.nvidia.com>
- <CAAVeFuK4NOrfCcX846rgPdViR6Ur4pSrrVihiV7KP1kRf15kdw@mail.gmail.com>
- <2253e92cd45c4b33913a45011c4ce823@HQMAIL102.nvidia.com>
- <CAAVeFuLZOJdOtpuSqdRzGa0rK3WZWURz-pn2tXhqTv58J0R_NA@mail.gmail.com>
- <4ca2d661eab54c3eb861680ebc24a430@HQMAIL102.nvidia.com>
+From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: cpuidle: implement cpuidle_state.enter_freeze()
+Date: Thu, 09 Apr 2015 11:18:25 +0200
+Message-ID: <552643E1.3060200@collabora.com>
+References: <1428490480-10144-1-git-send-email-tomeu.vizoso@collabora.com> <20150408115546.GA24271@red-moon>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="5CUMAwwhRxlRszMD"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4ca2d661eab54c3eb861680ebc24a430-wO81nVYWzR5xWE4FnwvcdlaTQe2KTcn/@public.gmane.org>
+In-Reply-To: <20150408115546.GA24271@red-moon>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: David Ung <davidu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: 'Alexandre Courbot' <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "airlied-cv59FeDIM0c@public.gmane.org" <airlied-cv59FeDIM0c@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Rafael J. Wysocki" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 04/08/2015 01:55 PM, Lorenzo Pieralisi wrote:
+> On Wed, Apr 08, 2015 at 11:54:38AM +0100, Tomeu Vizoso wrote:
+>> This callback is expected to do the same as enter() only that all
+>> non-wakeup IRQs are expected to be disabled.
+> 
+> This is not true or at least it is misworded. The enter_freeze() function
+> is expected to return from the state with IRQs disabled at CPU level, or
+> put it differently it must not re-enable IRQs while executing since the
+> tick is frozen.
 
---5CUMAwwhRxlRszMD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+True, only that it mentions interrupts in general, not just IRQs (I
+don't know if the terminology used in the base code matches the one in
+ARM's documentation).
 
-On Thu, Apr 02, 2015 at 11:13:38PM +0000, David Ung wrote:
-> > -----Original Message-----
-> > From: Alexandre Courbot [mailto:gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org]
-> > Sent: Monday, March 30, 2015 11:30 PM
-> > To: David Ung; thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-> > Cc: airlied-cv59FeDIM0c@public.gmane.org; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
-> > swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org; Arto Merilainen; Terje Bergstrom
-> > Subject: Re: [PATCH V2 1/3] gpu: host1x: Reduce host1x job allocation s=
-ize
-> >=20
-> > On Tue, Mar 24, 2015 at 4:39 AM, David Ung <davidu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> > >
-> > >> -----Original Message-----
-> > >> From: Alexandre Courbot [mailto:gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org]
-> > >> Sent: Monday, March 23, 2015 12:09 AM
-> > >> To: David Ung
-> > >> Cc: airlied-cv59FeDIM0c@public.gmane.org; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
-> > >> thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org; swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org; Arto Merilainen;
-> > >> Terje Bergstrom
-> > >> Subject: Re: [PATCH V2 1/3] gpu: host1x: Reduce host1x job allocation
-> > >> size
-> > >>
-> > >> The series looks ok to me, the only problem I see is that we are
-> > >> lacking means to thoroughly test host1x patches across all the
-> > >> supported Tegra chips.
-> > >>
-> > >> Could you detail what kind of testing this patch series has
-> > >> undergone, and which chips/boards have been tested?
-> > >
-> > > Tested the host1x channel tests for T132 on A44.
-> > > Also ran Paul's EIMT set up which only tests booting kernel to console
-> > > for T20/T30/T114/T124 and QEMU
-> >=20
-> > Thierry, what do you think?
-> >=20
-> > I know we are lacking proper testing infrastructure for host1x, but the=
-se
-> > patches really looks harmless to me.
->=20
->=20
-> Thank you Alex for the review.
-> It would be good to have closure to this patchset.=20
+/*
+ * CPUs execute ->enter_freeze with the local tick or entire timekeeping
+ * suspended, so it must not re-enable interrupts at any point (even
+ * temporarily) or attempt to change states of clock event devices.
+ */
 
-We'll get closure on this once the testing infrastructure appears. I
-won't apply these patches before then.
+>> It will be called when the system goes to suspend-to-idle and will
+>> reduce power usage because CPUs won't be awaken for unnecessary IRQs.
+>>
+>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+>> Cc: Rafael J. Wysocki <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+>> ---
+>>  arch/arm/mach-tegra/cpuidle-tegra114.c | 31 ++++++++++++++++++++++++-------
+>>  1 file changed, 24 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-tegra/cpuidle-tegra114.c b/arch/arm/mach-tegra/cpuidle-tegra114.c
+>> index f2b586d..ef06001 100644
+>> --- a/arch/arm/mach-tegra/cpuidle-tegra114.c
+>> +++ b/arch/arm/mach-tegra/cpuidle-tegra114.c
+>> @@ -39,28 +39,44 @@ static int tegra114_idle_power_down(struct cpuidle_device *dev,
+>>  				    struct cpuidle_driver *drv,
+>>  				    int index)
+>>  {
+>> -	local_fiq_disable();
+>> -
+>>  	tegra_set_cpu_in_lp2();
+>>  	cpu_pm_enter();
+>>  
+>> -	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_ENTER, &dev->cpu);
+>> -
+>>  	call_firmware_op(prepare_idle);
+>>  
+>>  	/* Do suspend by ourselves if the firmware does not implement it */
+>>  	if (call_firmware_op(do_idle, 0) == -ENOSYS)
+>>  		cpu_suspend(0, tegra30_sleep_cpu_secondary_finish);
+>>  
+>> -	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_EXIT, &dev->cpu);
+>> -
+>>  	cpu_pm_exit();
+>>  	tegra_clear_cpu_in_lp2();
+>>  
+>> +	return index;
+>> +}
+>> +
+>> +static int tegra114_idle_enter(struct cpuidle_device *dev,
+>> +			       struct cpuidle_driver *drv,
+>> +			       int index)
+>> +{
+>> +	local_fiq_disable();
+>> +
+>> +	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_ENTER, &dev->cpu);
+>> +
+>> +	index = tegra114_idle_power_down(dev, drv, index);
+>> +
+>> +	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_EXIT, &dev->cpu);
+>> +
+>>  	local_fiq_enable();
+>>  
+>>  	return index;
+>>  }
+>> +
+>> +static void tegra114_idle_enter_freeze(struct cpuidle_device *dev,
+>> +				       struct cpuidle_driver *drv,
+>> +				       int index)
+>> +{
+>> +	tegra114_idle_power_down(dev, drv, index);
+> 
+> Cool. So if the problem is FIQs, you don't disabled them on entry
+> which means you enter the "frozen" state with FIQs enabled and tick frozen,
+> unless I am missing something.
 
-Thierry
+I have gone a bit deeper in the code and that's correct, AFAICS.
 
---5CUMAwwhRxlRszMD
-Content-Type: application/pgp-signature
+> The question here is: are we allowed to enable FIQs before returning
+> from an enter_freeze() call (and to enter it with FIQs enabled) ?
+> 
+> If we are not your code here certainly does not solve the issue, since
+> it does _not_ disable FIQs upon enter_freeze call anyway.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+I think doing that would go against the wording of the comment I quoted
+above, so I see two ways of fixing this:
 
-iQIcBAABCAAGBQJVJj4cAAoJEN0jrNd/PrOhqIMQALfLYQT2jfwN1FzUhkvqVuwi
-bNe+9NY0eRlfN3dWpC1XFqbxyuKK75hVjep4PSM8LMFycyjr2dwK8GMux1HEIyq4
-DLpKpKgdMqzr8NobLj8S+pAW61Kli6jqUtl6jHGD4Ii46w5jj8kQYgtF4oZko15n
-d7N92AT1Z63TGi08irrl6N9jkmtNgOPNKi/oqsoiI5AUnEthGH7NQyW77De/JQlb
-vxTedzkgTDBONXfiPzJJsg61i2D2gTNxvBIx+Y0fzxo1vaohIrDTJYTBfncPS0rZ
-qbUph2flgWPqSphVaZcwICmUweAvWeMMlNF6lff0WipguHU1t75I5HnTxjpv/POt
-2PnMxsdpAveJmT7/MQojmzQA7lNh9IODFzehRO1Mj1/+uOqApOKsL05fiYqIjnEK
-2NxoVPBkcXHzRUsIv5fAfGkEGFqrLap13WooTDxBFMPr+IpMu20/2sRv0r9PPU4m
-EtgkIuqjFHDv5pWKyM47JbDo275YYdIGV9Qr7iEkulMKumuVS16jxjVcIvGoRSbf
-j3LWTULh3DVkEn6Wa0mx+2hzTbyBuHvQvD3kxUH7Z14FPMzLHd+yaWwUwd4bjCaH
-7f854ngeDy7XffF8Hszo9bP5TKsSuD6Nr5DOb99lb4fE6OGBL1+DJMH/vUo91CJS
-WKxM/PIzd4NB83x0mh5v
-=Ut8S
------END PGP SIGNATURE-----
+* Change the wording to refer to normal IRQs and leave the task of
+enabling and disabling FIQs to the enter_freeze implementation (ugly and
+I don't see any good reason for this)
 
---5CUMAwwhRxlRszMD--
+* Have FIQs already disabled when enter_freeze gets called, probably by
+having arch_cpu_idle_enter do it on ARM (and the inverse in
+arch_cpu_idle_exit)?
+
+Rafael, what's your opinion on this?
+
+Thanks,
+
+Tomeu
+
+> Lorenzo
+> 
+>> +}
+>>  #endif
+>>  
+>>  static struct cpuidle_driver tegra_idle_driver = {
+>> @@ -71,7 +87,8 @@ static struct cpuidle_driver tegra_idle_driver = {
+>>  		[0] = ARM_CPUIDLE_WFI_STATE_PWR(600),
+>>  #ifdef CONFIG_PM_SLEEP
+>>  		[1] = {
+>> -			.enter			= tegra114_idle_power_down,
+>> +			.enter			= tegra114_idle_enter,
+>> +			.enter_freeze		= tegra114_idle_enter_freeze,
+>>  			.exit_latency		= 500,
+>>  			.target_residency	= 1000,
+>>  			.power_usage		= 0,
+>> -- 
+>> 2.3.4
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+>> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> Please read the FAQ at  http://www.tux.org/lkml/
+>>
