@@ -1,51 +1,79 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V2] tty: serial: Add const to struct uart_ops declarations
-Date: Thu, 9 Apr 2015 11:48:28 +0200
-Message-ID: <20150409094827.GI12103@ulmo>
-References: <1428169665.2775.53.camel@perches.com>
- <a938a0e86638588e5ccff85771fa3b95@agner.ch>
- <1428258294.2775.69.camel@perches.com>
+Subject: Re: [PATCH 4/8] clk: tegra: Fix duplicate const for parent names
+Date: Thu, 9 Apr 2015 12:00:37 +0200
+Message-ID: <20150409100036.GK12103@ulmo>
+References: <1428499339-29569-1-git-send-email-k.kozlowski@samsung.com>
+ <1428499339-29569-5-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="mhOzvPhkurUs4vA9"
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="wRokNccIwvMzawGl"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1428258294.2775.69.camel@perches.com>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Joe Perches <joe@perches.com>
-Cc: Stefan Agner <stefan@agner.ch>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, linux-ia64@vger.kernel.org, kernel@stlinux.com, Nicolas Ferre <nicolas.ferre@atmel.com>, Timur Tabi <timur@tabi.org>, linux-kernel@vger.kernel.org, Pat Gefre <pfg@sgi.com>, Laxman Dewangan <ldewangan@nvidia.com>, "Maciej W. Rozycki" <macro@linux-mips.org>, Daniel Walker <dwalker@fifo99.com>, sparclinux@vger.kernel.org, Peter Korsgaard <jacmet@sunsite.dk>, Sonic Zhang <sonic.zhang@analog.com>, Alexandre Courbot <gnurou@gmail.com>, Russell King <linux@arm.linux.org.uk>, Michal Simek <michal.simek@xilinx.com>, linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org, Tobias Klauser <tklauser@distanz.ch>, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-msm@vger.kernel.org, adi-buildroot-devel@lists.sourceforge.net, Thadeu Lima de Souza Cascardo <cas>
+In-Reply-To: <1428499339-29569-5-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, Barry Song <baohua@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---mhOzvPhkurUs4vA9
+--wRokNccIwvMzawGl
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Apr 05, 2015 at 11:24:54AM -0700, Joe Perches wrote:
-[...]
->  drivers/tty/serial/serial-tegra.c           | 2 +-
+On Wed, Apr 08, 2015 at 03:22:15PM +0200, Krzysztof Kozlowski wrote:
+> Replace duplicated const keyword for 'emc_parent_clk_names' with proper
+> array of const pointers to const strings.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  drivers/clk/tegra/clk-emc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+This would probably better go in via the Tegra tree since the patch that
+contains this has only made it to linux-next.
 
---mhOzvPhkurUs4vA9
+Stephen, Mike, any objections to me taking this?
+
+Thierry
+
+> diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
+> index 615da43a508d..637798c3cc59 100644
+> --- a/drivers/clk/tegra/clk-emc.c
+> +++ b/drivers/clk/tegra/clk-emc.c
+> @@ -45,7 +45,7 @@
+>  #define CLK_SOURCE_EMC_EMC_2X_CLK_SRC(x) (((x) & CLK_SOURCE_EMC_EMC_2X_C=
+LK_SRC_MASK) << \
+>  					  CLK_SOURCE_EMC_EMC_2X_CLK_SRC_SHIFT)
+> =20
+> -static const char const *emc_parent_clk_names[] =3D {
+> +static const char * const emc_parent_clk_names[] =3D {
+>  	"pll_m", "pll_c", "pll_p", "clk_m", "pll_m_ud",
+>  	"pll_c2", "pll_c3", "pll_c_ud"
+>  };
+> --=20
+> 1.9.1
+>=20
+
+--wRokNccIwvMzawGl
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJVJkrqAAoJEN0jrNd/PrOh45MP/3gSYsW+iLTl6x31M/1w3yG5
-Bbh0OsyQ9lCEtTmbpLR0fLf8G7p5BonsghFrt98B0rzRBMwnXGhE5/9p0daLOE3K
-3tyu2w1OAxcXuOatR8SDWkXex/lNLvNxDKUMPDvrvJtI5zVrfIRsG7FTp7zQkupV
-jWGCR9j59RFkLAyz1A0avgCbOGl11xVin1d+EUD2ZCrTwxl5FiuV2Ar2E7/7hh04
-NsghKA4FLAfZZiyYJ5Lc+7VHqqlk5araKzUOHee1eKi19ntmC6PYbYz2dbMEzcCt
-xpKUEe7jrIqhqZjWfOws6GWUy5GTN8zrxlqPjf1D9wWX8bVUK5/n2wQYTrf91exg
-3K668MqIYosS044FhFSu+0hXq42Q4BcsMlI9SLjJaVvjs/9uUuXdCtKO0tHN4qfj
-9SbgPQ5eKCVX23VJX5BsKD8RxhxSAes5ELi851yvtap7SUSF8QQ5IUp8BZ6Wk5iD
-1/F1ZmCggM0BHK5uOE1Omv8t2/Mvj/7vNXzU6uHxl7iPKe6lmVEJQkwrH+qzwtWL
-heunoQ0JmW+vsbkJsJdia23ybd6im3RUszQ1no1IBJqUeG8QuGFUAcNcad4H931m
-EocSXdQJqiDb82MgylCRfPrwL5s4YpAF+xaVeMm75CWwKXGP1aaywXLbkW40JVWj
-C/WJI66kI+i093rg6DmD
-=7FoG
+iQIcBAABCAAGBQJVJk3EAAoJEN0jrNd/PrOhoJIP/RiAAnEq+9OQJRsWFdpaXD5C
+l6oF0JWSRtz/0GR1GY9j9XIc3ltRL8ne7pAUxLJlTREApPvY1SIef3yKUnpu2V/G
+FD3GnEZjLEcNADA6A2iLUBWHEY4SBCyxFRkUOnS3k6tQWRI4GcBLt9OYdBzDLNnF
+NnGTjDmgwa5eHSHA4EDHgWTPoww7txwr1PHsbS5krcDzK0OPDMPDpohUICVBV6hu
+86DheNOFaNQWwsLrHrw/1ZbsGzU5VFshkI0hzHnPVSaKE9Un4Pn2MQmaTsJroeff
+7ytCTMVZFSQqyXNnpTur9ytSjE6RAa5StWxCHcff/caxa4hbPhgKJoyz7DStVw3g
+JZT7PS/HZ82hdVzOvb46MfLUoPYFpFkKGtEBMpKro1kKrGo9SKWE52nC2WisApiu
+bIdBHKHKSr7HGtZY43XSbu8kSoMoqJb1xVUdK7Wj2CPmi311hSZ9VnMOYkgAMnsz
+hAIDmUSBg9J0o2CTwPYy9dViR6D7HErdIcZcT4bKil20KIQD/OMDHcCrSp2ymZlu
+O03+im2s82R6616WySOhqjWpqJeZa3xBHTUctyBLcTe3ROaWzWCugPJXntg/vk1+
+JUuAEzXzkpOMUhXA94pjyMl1H3OqL0QOOcK7z3FeyLNTg5kZ+0BnJ0wFpyD1YPdq
+n1Z1olBcxmirYFgXGAnJ
+=qJFi
 -----END PGP SIGNATURE-----
 
---mhOzvPhkurUs4vA9--
+--wRokNccIwvMzawGl--
