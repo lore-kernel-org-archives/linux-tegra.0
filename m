@@ -1,150 +1,51 @@
-From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: cpuidle: implement cpuidle_state.enter_freeze()
-Date: Thu, 09 Apr 2015 11:18:25 +0200
-Message-ID: <552643E1.3060200@collabora.com>
-References: <1428490480-10144-1-git-send-email-tomeu.vizoso@collabora.com> <20150408115546.GA24271@red-moon>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH V2] tty: serial: Add const to struct uart_ops declarations
+Date: Thu, 9 Apr 2015 11:48:28 +0200
+Message-ID: <20150409094827.GI12103@ulmo>
+References: <1428169665.2775.53.camel@perches.com>
+ <a938a0e86638588e5ccff85771fa3b95@agner.ch>
+ <1428258294.2775.69.camel@perches.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150408115546.GA24271@red-moon>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Rafael J. Wysocki" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="mhOzvPhkurUs4vA9"
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1428258294.2775.69.camel@perches.com>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Joe Perches <joe@perches.com>
+Cc: Stefan Agner <stefan@agner.ch>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, linux-ia64@vger.kernel.org, kernel@stlinux.com, Nicolas Ferre <nicolas.ferre@atmel.com>, Timur Tabi <timur@tabi.org>, linux-kernel@vger.kernel.org, Pat Gefre <pfg@sgi.com>, Laxman Dewangan <ldewangan@nvidia.com>, "Maciej W. Rozycki" <macro@linux-mips.org>, Daniel Walker <dwalker@fifo99.com>, sparclinux@vger.kernel.org, Peter Korsgaard <jacmet@sunsite.dk>, Sonic Zhang <sonic.zhang@analog.com>, Alexandre Courbot <gnurou@gmail.com>, Russell King <linux@arm.linux.org.uk>, Michal Simek <michal.simek@xilinx.com>, linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org, Tobias Klauser <tklauser@distanz.ch>, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-msm@vger.kernel.org, adi-buildroot-devel@lists.sourceforge.net, Thadeu Lima de Souza Cascardo <cas>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/08/2015 01:55 PM, Lorenzo Pieralisi wrote:
-> On Wed, Apr 08, 2015 at 11:54:38AM +0100, Tomeu Vizoso wrote:
->> This callback is expected to do the same as enter() only that all
->> non-wakeup IRQs are expected to be disabled.
-> 
-> This is not true or at least it is misworded. The enter_freeze() function
-> is expected to return from the state with IRQs disabled at CPU level, or
-> put it differently it must not re-enable IRQs while executing since the
-> tick is frozen.
 
-True, only that it mentions interrupts in general, not just IRQs (I
-don't know if the terminology used in the base code matches the one in
-ARM's documentation).
+--mhOzvPhkurUs4vA9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-/*
- * CPUs execute ->enter_freeze with the local tick or entire timekeeping
- * suspended, so it must not re-enable interrupts at any point (even
- * temporarily) or attempt to change states of clock event devices.
- */
+On Sun, Apr 05, 2015 at 11:24:54AM -0700, Joe Perches wrote:
+[...]
+>  drivers/tty/serial/serial-tegra.c           | 2 +-
 
->> It will be called when the system goes to suspend-to-idle and will
->> reduce power usage because CPUs won't be awaken for unnecessary IRQs.
->>
->> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
->> Cc: Rafael J. Wysocki <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
->> ---
->>  arch/arm/mach-tegra/cpuidle-tegra114.c | 31 ++++++++++++++++++++++++-------
->>  1 file changed, 24 insertions(+), 7 deletions(-)
->>
->> diff --git a/arch/arm/mach-tegra/cpuidle-tegra114.c b/arch/arm/mach-tegra/cpuidle-tegra114.c
->> index f2b586d..ef06001 100644
->> --- a/arch/arm/mach-tegra/cpuidle-tegra114.c
->> +++ b/arch/arm/mach-tegra/cpuidle-tegra114.c
->> @@ -39,28 +39,44 @@ static int tegra114_idle_power_down(struct cpuidle_device *dev,
->>  				    struct cpuidle_driver *drv,
->>  				    int index)
->>  {
->> -	local_fiq_disable();
->> -
->>  	tegra_set_cpu_in_lp2();
->>  	cpu_pm_enter();
->>  
->> -	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_ENTER, &dev->cpu);
->> -
->>  	call_firmware_op(prepare_idle);
->>  
->>  	/* Do suspend by ourselves if the firmware does not implement it */
->>  	if (call_firmware_op(do_idle, 0) == -ENOSYS)
->>  		cpu_suspend(0, tegra30_sleep_cpu_secondary_finish);
->>  
->> -	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_EXIT, &dev->cpu);
->> -
->>  	cpu_pm_exit();
->>  	tegra_clear_cpu_in_lp2();
->>  
->> +	return index;
->> +}
->> +
->> +static int tegra114_idle_enter(struct cpuidle_device *dev,
->> +			       struct cpuidle_driver *drv,
->> +			       int index)
->> +{
->> +	local_fiq_disable();
->> +
->> +	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_ENTER, &dev->cpu);
->> +
->> +	index = tegra114_idle_power_down(dev, drv, index);
->> +
->> +	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_EXIT, &dev->cpu);
->> +
->>  	local_fiq_enable();
->>  
->>  	return index;
->>  }
->> +
->> +static void tegra114_idle_enter_freeze(struct cpuidle_device *dev,
->> +				       struct cpuidle_driver *drv,
->> +				       int index)
->> +{
->> +	tegra114_idle_power_down(dev, drv, index);
-> 
-> Cool. So if the problem is FIQs, you don't disabled them on entry
-> which means you enter the "frozen" state with FIQs enabled and tick frozen,
-> unless I am missing something.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-I have gone a bit deeper in the code and that's correct, AFAICS.
+--mhOzvPhkurUs4vA9
+Content-Type: application/pgp-signature
 
-> The question here is: are we allowed to enable FIQs before returning
-> from an enter_freeze() call (and to enter it with FIQs enabled) ?
-> 
-> If we are not your code here certainly does not solve the issue, since
-> it does _not_ disable FIQs upon enter_freeze call anyway.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-I think doing that would go against the wording of the comment I quoted
-above, so I see two ways of fixing this:
+iQIcBAABCAAGBQJVJkrqAAoJEN0jrNd/PrOh45MP/3gSYsW+iLTl6x31M/1w3yG5
+Bbh0OsyQ9lCEtTmbpLR0fLf8G7p5BonsghFrt98B0rzRBMwnXGhE5/9p0daLOE3K
+3tyu2w1OAxcXuOatR8SDWkXex/lNLvNxDKUMPDvrvJtI5zVrfIRsG7FTp7zQkupV
+jWGCR9j59RFkLAyz1A0avgCbOGl11xVin1d+EUD2ZCrTwxl5FiuV2Ar2E7/7hh04
+NsghKA4FLAfZZiyYJ5Lc+7VHqqlk5araKzUOHee1eKi19ntmC6PYbYz2dbMEzcCt
+xpKUEe7jrIqhqZjWfOws6GWUy5GTN8zrxlqPjf1D9wWX8bVUK5/n2wQYTrf91exg
+3K668MqIYosS044FhFSu+0hXq42Q4BcsMlI9SLjJaVvjs/9uUuXdCtKO0tHN4qfj
+9SbgPQ5eKCVX23VJX5BsKD8RxhxSAes5ELi851yvtap7SUSF8QQ5IUp8BZ6Wk5iD
+1/F1ZmCggM0BHK5uOE1Omv8t2/Mvj/7vNXzU6uHxl7iPKe6lmVEJQkwrH+qzwtWL
+heunoQ0JmW+vsbkJsJdia23ybd6im3RUszQ1no1IBJqUeG8QuGFUAcNcad4H931m
+EocSXdQJqiDb82MgylCRfPrwL5s4YpAF+xaVeMm75CWwKXGP1aaywXLbkW40JVWj
+C/WJI66kI+i093rg6DmD
+=7FoG
+-----END PGP SIGNATURE-----
 
-* Change the wording to refer to normal IRQs and leave the task of
-enabling and disabling FIQs to the enter_freeze implementation (ugly and
-I don't see any good reason for this)
-
-* Have FIQs already disabled when enter_freeze gets called, probably by
-having arch_cpu_idle_enter do it on ARM (and the inverse in
-arch_cpu_idle_exit)?
-
-Rafael, what's your opinion on this?
-
-Thanks,
-
-Tomeu
-
-> Lorenzo
-> 
->> +}
->>  #endif
->>  
->>  static struct cpuidle_driver tegra_idle_driver = {
->> @@ -71,7 +87,8 @@ static struct cpuidle_driver tegra_idle_driver = {
->>  		[0] = ARM_CPUIDLE_WFI_STATE_PWR(600),
->>  #ifdef CONFIG_PM_SLEEP
->>  		[1] = {
->> -			.enter			= tegra114_idle_power_down,
->> +			.enter			= tegra114_idle_enter,
->> +			.enter_freeze		= tegra114_idle_enter_freeze,
->>  			.exit_latency		= 500,
->>  			.target_residency	= 1000,
->>  			.power_usage		= 0,
->> -- 
->> 2.3.4
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
->> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->> Please read the FAQ at  http://www.tux.org/lkml/
->>
+--mhOzvPhkurUs4vA9--
