@@ -1,196 +1,644 @@
-From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 9/9] ARM: tegra: apalis t30: fix pin muxing and add HDA in device tree
-Date: Fri, 10 Apr 2015 23:36:04 +0200
-Message-ID: <94ae838321940e1a245c115009f6c48f0eceee76.1428700856.git.marcel.ziswiler@toradex.com>
-References: <cover.1428700856.git.marcel.ziswiler@toradex.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1428700856.git.marcel.ziswiler@toradex.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-tegra@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Mikko Perttunen <mperttunen@nvidia.com>, Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Matt Porter <mporter@linaro.org>, Paul Walmsley <paul@pwsan.com>, Eduardo Valentin <edubezval@gmail.com>, Takashi Iwai <tiwai@suse.de>, Dylan Reid <dgreid@chromium.org>, Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Russell King <linux@arm.linux.org.uk>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob
+From: Tomeu Vizoso <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: [PATCH v8 13/18] clk: tegra: Add EMC clock driver
+Date: Fri, 10 Apr 2015 14:37:31 -0700
+Message-ID: <20150410213731.14369.37737@quantum>
+References: <1426171746-26864-1-git-send-email-tomeu.vizoso@collabora.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1426171746-26864-1-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Fix pin muxing, add digital audio aka HDA pin muxing and activate HDA
-driver.
-Fix pu vs. gpio_pu pin muxing.
-While at it also update comment about supported module hardware
-versions.
-While at it also add an emmc label to the SDHCI node just like on
-Colibri T30.
-While at it set the dr_mode of the primary USB EHCI instance to OTG as
-well.
+The driver is currently only tested on Tegra124 Jetson TK1, but should
+work with other Tegra124 boards, provided that correct EMC tables are
+provided through the device tree. Older chip models have differing
+timing change sequences, so they are not currently supported.
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+
 ---
-With all that it loads and detects our Realtek codec just fine as can
-be seen below but so far I have been unable to figure out how to
-actually get it to deliver some actual acoustics (;-p). Any input on
-any of this welcome.
 
-[    8.496588] sound hdaudioC0D1: autoconfig for ALC898: line_outs=4 (0x14/0x16/
-0x15/0x17/0x0) type:line
-[    8.511715] sound hdaudioC0D1:    speaker_outs=0 (0x0/0x0/0x0/0x0/0x0)
-[    8.524117] sound hdaudioC0D1:    hp_outs=1 (0x1b/0x0/0x0/0x0/0x0)
-[    8.536163] sound hdaudioC0D1:    mono: mono_out=0x0
-[    8.546995] sound hdaudioC0D1:    dig-out=0x1e/0x0
-[    8.557650] sound hdaudioC0D1:    inputs:
-[    8.567532] sound hdaudioC0D1:      Rear Mic=0x18
-[    8.578108] sound hdaudioC0D1:      Front Mic=0x19
-[    8.588767] sound hdaudioC0D1:      Line=0x1a
-[    8.598992] sound hdaudioC0D1:      CD=0x1c
-[   13.252853] input: tegra-hda Rear Mic as /devices/soc0/70030000.hda/sound/car
-d0/input1
-[   13.268130] input: tegra-hda Front Mic as /devices/soc0/70030000.hda/sound/ca
-rd0/input2
-[   13.283471] input: tegra-hda Line as /devices/soc0/70030000.hda/sound/card0/i
-nput3
-[   13.298377] input: tegra-hda Line Out Front as /devices/soc0/70030000.hda/sou
-nd/card0/input4
-[   13.314144] input: tegra-hda Line Out Surround as /devices/soc0/70030000.hda/
-sound/card0/input5
-[   13.330208] input: tegra-hda Line Out CLFE as /devices/soc0/70030000.hda/soun
-d/card0/input6
-[   13.345893] input: tegra-hda Line Out Side as /devices/soc0/70030000.hda/soun
-d/card0/input7
-[   13.361579] input: tegra-hda Front Headphone as /devices/soc0/70030000.hda/so
-und/card0/input8
-[   13.377476] input: tegra-hda HDMI/DP,pcm=3 as /devices/soc0/70030000.hda/soun
-d/card0/input9
+v6:     * Rebase
+        * Use clk_hw_reparent as __clk_reparent isn't any more
+        * Simplify emc_round_rate a bit
 
-[   14.274781] ALSA device list:
-[   14.287090]   #0: tegra-hda at 0x70038000 irq 345
+v5:     * Get a pointer to the EMC driver at runtime, to be used when
+          calling the EMC API.
+        * Misc. style fixes
+        * Fix logic for rounding down to a high rate
 
- arch/arm/boot/dts/tegra30-apalis-eval.dts |  5 ++++
- arch/arm/boot/dts/tegra30-apalis.dtsi     | 46 +++++++++++++++++++++++--------
- 2 files changed, 40 insertions(+), 11 deletions(-)
+v4:     * Adapt to changes in the OF bindings
+        * Improve error handling
+        * Fix comment style
+        * Make static a few more functions
 
-diff --git a/arch/arm/boot/dts/tegra30-apalis-eval.dts b/arch/arm/boot/dts/tegra30-apalis-eval.dts
-index 6236bde..37437c6 100644
---- a/arch/arm/boot/dts/tegra30-apalis-eval.dts
-+++ b/arch/arm/boot/dts/tegra30-apalis-eval.dts
-@@ -126,6 +126,10 @@
- 		};
- 	};
- 
-+	hda@70030000 {
-+		status = "okay";
-+	};
+v3:     * Add some locking to protect the registers that are shared with the MC
+          clock
+
+v2:     * Make sure that the clock is properly registered
+        * Bail out early from attempts to set the same rate
+---
+ drivers/clk/tegra/Makefile       |   2 +-
+ drivers/clk/tegra/clk-emc.c      | 528 +++++++++++++++++++++++++++++++++++++++
+ drivers/clk/tegra/clk-tegra124.c |   4 +-
+ drivers/clk/tegra/clk.h          |   3 +
+ 4 files changed, 535 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/clk/tegra/clk-emc.c
+
+diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+index edb8358..18c28d1 100644
+--- a/drivers/clk/tegra/Makefile
++++ b/drivers/clk/tegra/Makefile
+@@ -14,5 +14,5 @@ obj-y                                 += clk-tegra-super-gen4.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
+ obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
+ obj-$(CONFIG_ARCH_TEGRA_114_SOC)       += clk-tegra114.o
+-obj-$(CONFIG_ARCH_TEGRA_124_SOC)       += clk-tegra124.o
++obj-$(CONFIG_ARCH_TEGRA_124_SOC)       += clk-tegra124.o clk-emc.o
+ obj-$(CONFIG_ARCH_TEGRA_132_SOC)       += clk-tegra124.o
+diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
+new file mode 100644
+index 0000000..704fff7
+--- /dev/null
++++ b/drivers/clk/tegra/clk-emc.c
+@@ -0,0 +1,528 @@
++/*
++ * drivers/clk/tegra/clk-emc.c
++ *
++ * Copyright (c) 2014, NVIDIA CORPORATION.  All rights reserved.
++ *
++ * Author:
++ *     Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ */
 +
- 	sd1: sdhci@78000000 {
- 		status = "okay";
- 		bus-width = <4>;
-@@ -149,6 +153,7 @@
- 
- 	usb-phy@7d000000 {
- 		status = "okay";
-+		dr_mode = "otg";
- 		vbus-supply = <&usbo1_vbus_reg>;
- 	};
- 
-diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index a5446cb..e6bac82 100644
---- a/arch/arm/boot/dts/tegra30-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -2,7 +2,7 @@
- 
- /*
-  * Toradex Apalis T30 Device Tree
-- * Compatible for Revisions 1GB: V1.0A; 2GB: V1.0B, V1.0C
-+ * Compatible for Revisions 1GB: V1.0A, V1.1A; 1GB IT: V1.1A; 2GB: V1.0B, V1.0C, V1.0E, V1.1A
-  */
- / {
- 	model = "Toradex Apalis T30";
-@@ -65,7 +65,7 @@
- 			/* BKL1_PWM_EN#, disable TPS65911 PMIC PWM backlight */
- 			uart3_cts_n_pa1 {
- 				nvidia,pins =	"uart3_cts_n_pa1";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "rsvd2";
- 				nvidia,pull = <TEGRA_PIN_PULL_UP>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 			};
-@@ -108,6 +108,30 @@
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
- 			};
- 
-+			/* Apalis Digital Audio */
-+			clk1_req_pee2 {
-+				nvidia,pins =	"clk1_req_pee2";
-+				nvidia,function = "hda";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+			};
-+			clk2_out_pw5 {
-+				nvidia,pins = "clk2_out_pw5";
-+				nvidia,function = "extperiph2";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			dap1_fs_pn0 {
-+				nvidia,pins =	"dap1_fs_pn0",
-+						"dap1_din_pn1",
-+						"dap1_dout_pn2",
-+						"dap1_sclk_pn3";
-+				nvidia,function = "hda";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+			};
++#include <linux/clk-provider.h>
++#include <linux/clk.h>
++#include <linux/clkdev.h>
++#include <linux/delay.h>
++#include <linux/module.h>
++#include <linux/of_address.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/sort.h>
++#include <linux/string.h>
 +
- 			/* Apalis I2C3 */
- 			cam_i2c_scl_pbb1 {
- 				nvidia,pins = "cam_i2c_scl_pbb1",
-@@ -151,32 +175,32 @@
- 			};
++#include <soc/tegra/fuse.h>
++#include <soc/tegra/emc.h>
++
++#include "clk.h"
++
++#define CLK_SOURCE_EMC 0x19c
++
++#define CLK_SOURCE_EMC_EMC_2X_CLK_DIVISOR_SHIFT 0
++#define CLK_SOURCE_EMC_EMC_2X_CLK_DIVISOR_MASK 0xff
++#define CLK_SOURCE_EMC_EMC_2X_CLK_DIVISOR(x) (((x) & CLK_SOURCE_EMC_EMC_2X_CLK_DIVISOR_MASK) << \
++                                             CLK_SOURCE_EMC_EMC_2X_CLK_DIVISOR_SHIFT)
++
++#define CLK_SOURCE_EMC_EMC_2X_CLK_SRC_SHIFT 29
++#define CLK_SOURCE_EMC_EMC_2X_CLK_SRC_MASK 0x7
++#define CLK_SOURCE_EMC_EMC_2X_CLK_SRC(x) (((x) & CLK_SOURCE_EMC_EMC_2X_CLK_SRC_MASK) << \
++                                         CLK_SOURCE_EMC_EMC_2X_CLK_SRC_SHIFT)
++
++static const char const *emc_parent_clk_names[] = {
++       "pll_m", "pll_c", "pll_p", "clk_m", "pll_m_ud",
++       "pll_c2", "pll_c3", "pll_c_ud"
++};
++
++/*
++ * List of clock sources for various parents the EMC clock can have.
++ * When we change the timing to a timing with a parent that has the same
++ * clock source as the current parent, we must first change to a backup
++ * timing that has a different clock source.
++ */
++
++#define EMC_SRC_PLL_M 0
++#define EMC_SRC_PLL_C 1
++#define EMC_SRC_PLL_P 2
++#define EMC_SRC_CLK_M 3
++#define EMC_SRC_PLL_C2 4
++#define EMC_SRC_PLL_C3 5
++
++static const char emc_parent_clk_sources[] = {
++       EMC_SRC_PLL_M, EMC_SRC_PLL_C, EMC_SRC_PLL_P, EMC_SRC_CLK_M,
++       EMC_SRC_PLL_M, EMC_SRC_PLL_C2, EMC_SRC_PLL_C3, EMC_SRC_PLL_C
++};
++
++struct emc_timing {
++       unsigned long rate, parent_rate;
++       u8 parent_index;
++       struct clk *parent;
++       u32 ram_code;
++};
++
++struct tegra_clk_emc {
++       struct clk_hw hw;
++       void __iomem *clk_regs;
++       struct clk *prev_parent;
++       bool changing_timing;
++
++       struct device_node *emc_node;
++       struct tegra_emc *emc;
++
++       int num_timings;
++       struct emc_timing *timings;
++       spinlock_t *lock;
++};
++
++/* Common clock framework callback implementations */
++
++static unsigned long emc_recalc_rate(struct clk_hw *hw,
++                                    unsigned long parent_rate)
++{
++       struct tegra_clk_emc *tegra;
++       u32 val, div;
++
++       tegra = container_of(hw, struct tegra_clk_emc, hw);
++
++       /*
++        * CCF wrongly assumes that the parent won't change during set_rate,
++        * so get the parent rate explicitly.
++        */
++       parent_rate = __clk_get_rate(__clk_get_parent(hw->clk));
++
++       val = readl(tegra->clk_regs + CLK_SOURCE_EMC);
++       div = val & CLK_SOURCE_EMC_EMC_2X_CLK_DIVISOR_MASK;
++
++       return parent_rate / (div + 2) * 2;
++}
++
++/*
++ * Rounds up unless no higher rate exists, in which case down. This way is
++ * safer since things have EMC rate floors. Also don't touch parent_rate
++ * since we don't want the CCF to play with our parent clocks.
++ */
++static long emc_round_rate(struct clk_hw *hw, unsigned long rate,
++                   unsigned long *parent_rate)
++{
++       struct tegra_clk_emc *tegra;
++       u8 ram_code = tegra_read_ram_code();
++       struct emc_timing *timing = NULL;
++       int i;
++
++       tegra = container_of(hw, struct tegra_clk_emc, hw);
++
++         for (i = 0; i < tegra->num_timings; i++) {
++                if (tegra->timings[i].ram_code != ram_code)
++                        continue;
++
++                timing = tegra->timings + i;
++
++                if (timing->rate >= rate)
++                        return timing->rate;
++        }
++
++        if (timing)
++                return timing->rate;
++
++       return __clk_get_rate(hw->clk);
++}
++
++static u8 emc_get_parent(struct clk_hw *hw)
++{
++       struct tegra_clk_emc *tegra;
++       u32 val;
++
++       tegra = container_of(hw, struct tegra_clk_emc, hw);
++
++       val = readl(tegra->clk_regs + CLK_SOURCE_EMC);
++
++       return (val >> CLK_SOURCE_EMC_EMC_2X_CLK_SRC_SHIFT)
++               & CLK_SOURCE_EMC_EMC_2X_CLK_SRC_MASK;
++}
++
++static struct tegra_emc *emc_ensure_emc_driver(struct tegra_clk_emc *tegra)
++{
++       struct platform_device *pdev;
++
++       if (tegra->emc)
++               return tegra->emc;
++
++       if (!tegra->emc_node)
++               return NULL;
++
++       pdev = of_find_device_by_node(tegra->emc_node);
++       if (!pdev) {
++               pr_err("%s: could not get external memory controller\n",
++                      __func__);
++               return NULL;
++       }
++
++       of_node_put(tegra->emc_node);
++       tegra->emc_node = NULL;
++
++       tegra->emc = platform_get_drvdata(pdev);
++       if (!tegra->emc) {
++               pr_err("%s: cannot find EMC driver\n", __func__);
++               return NULL;
++       }
++
++       return tegra->emc;
++}
++
++static int emc_set_timing(struct tegra_clk_emc *tegra,
++                         struct emc_timing *timing)
++{
++       int err;
++       u8 div;
++       u32 car_value;
++       unsigned long flags = 0;
++       struct tegra_emc *emc = emc_ensure_emc_driver(tegra);
++
++       if (!emc)
++               return -ENOENT;
++
++       pr_debug("going to rate %ld prate %ld p %s\n", timing->rate,
++                timing->parent_rate, __clk_get_name(timing->parent));
++
++       if (emc_get_parent(&tegra->hw) == timing->parent_index &&
++           clk_get_rate(timing->parent) != timing->parent_rate) {
++               BUG();
++               return -EINVAL;
++       }
++
++       tegra->changing_timing = true;
++
++       err = clk_set_rate(timing->parent, timing->parent_rate);
++       if (err) {
++               pr_err("cannot change parent %s rate to %ld: %d\n",
++                      __clk_get_name(timing->parent), timing->parent_rate,
++                      err);
++
++               return err;
++       }
++
++       err = clk_prepare_enable(timing->parent);
++       if (err) {
++               pr_err("cannot enable parent clock: %d\n", err);
++               return err;
++       }
++
++       div = timing->parent_rate / (timing->rate / 2) - 2;
++
++       err = tegra_emc_prepare_timing_change(emc, timing->rate);
++       if (err)
++               return err;
++
++       spin_lock_irqsave(tegra->lock, flags);
++
++       car_value = readl(tegra->clk_regs + CLK_SOURCE_EMC);
++
++       car_value &= ~CLK_SOURCE_EMC_EMC_2X_CLK_SRC(~0);
++       car_value |= CLK_SOURCE_EMC_EMC_2X_CLK_SRC(timing->parent_index);
++
++       car_value &= ~CLK_SOURCE_EMC_EMC_2X_CLK_DIVISOR(~0);
++       car_value |= CLK_SOURCE_EMC_EMC_2X_CLK_DIVISOR(div);
++
++       writel(car_value, tegra->clk_regs + CLK_SOURCE_EMC);
++
++       spin_unlock_irqrestore(tegra->lock, flags);
++
++       tegra_emc_complete_timing_change(emc, timing->rate);
++
++       clk_hw_reparent(&tegra->hw, __clk_get_hw(timing->parent));
+
+Does the .set_rate_and_parent callback work here in place of exposing
+clk_hw_reparent to clock providers?
+
+Regards,
+Mike
+
++       clk_disable_unprepare(tegra->prev_parent);
++
++       tegra->prev_parent = timing->parent;
++       tegra->changing_timing = false;
++
++       return 0;
++}
++
++/*
++ * Get backup timing to use as an intermediate step when a change between
++ * two timings with the same clock source has been requested. First try to
++ * find a timing with a higher clock rate to avoid a rate below any set rate
++ * floors. If that is not possible, find a lower rate.
++ */
++static struct emc_timing *get_backup_timing(struct tegra_clk_emc *tegra,
++                                           int timing_index)
++{
++       int i;
++       u32 ram_code = tegra_read_ram_code();
++       struct emc_timing *timing;
++
++       for (i = timing_index+1; i < tegra->num_timings; i++) {
++               timing = tegra->timings + i;
++               if (timing->ram_code != ram_code)
++                       continue;
++
++               if (emc_parent_clk_sources[timing->parent_index] !=
++                   emc_parent_clk_sources[
++                     tegra->timings[timing_index].parent_index])
++                       return timing;
++       }
++
++       for (i = timing_index-1; i >= 0; --i) {
++               timing = tegra->timings + i;
++               if (timing->ram_code != ram_code)
++                       continue;
++
++               if (emc_parent_clk_sources[timing->parent_index] !=
++                   emc_parent_clk_sources[
++                     tegra->timings[timing_index].parent_index])
++                       return timing;
++       }
++
++       return NULL;
++}
++
++static int emc_set_rate(struct clk_hw *hw, unsigned long rate,
++                       unsigned long parent_rate)
++{
++       struct tegra_clk_emc *tegra;
++       struct emc_timing *timing = NULL;
++       int i, err;
++       u32 ram_code = tegra_read_ram_code();
++
++       tegra = container_of(hw, struct tegra_clk_emc, hw);
++
++       if (__clk_get_rate(hw->clk) == rate)
++               return 0;
++
++       /*
++        * When emc_set_timing changes the parent rate, CCF will propagate
++        * that downward to us, so ignore any set_rate calls while a rate
++        * change is already going on.
++        */
++       if (tegra->changing_timing)
++               return 0;
++
++       for (i = 0; i < tegra->num_timings; i++) {
++               if (tegra->timings[i].rate == rate &&
++                   tegra->timings[i].ram_code == ram_code) {
++                       timing = tegra->timings + i;
++                       break;
++               }
++       }
++
++       if (!timing) {
++               pr_err("cannot switch to rate %ld without emc table\n", rate);
++               return -EINVAL;
++       }
++
++       if (emc_parent_clk_sources[emc_get_parent(hw)] ==
++           emc_parent_clk_sources[timing->parent_index] &&
++           clk_get_rate(timing->parent) != timing->parent_rate) {
++               /*
++                * Parent clock source not changed but parent rate has changed,
++                * need to temporarily switch to another parent
++                */
++
++               struct emc_timing *backup_timing;
++
++               backup_timing = get_backup_timing(tegra, i);
++               if (!backup_timing) {
++                       pr_err("cannot find backup timing\n");
++                       return -EINVAL;
++               }
++
++               pr_debug("using %ld as backup rate when going to %ld\n",
++                        backup_timing->rate, rate);
++
++               err = emc_set_timing(tegra, backup_timing);
++               if (err) {
++                       pr_err("cannot set backup timing: %d\n", err);
++                       return err;
++               }
++       }
++
++       return emc_set_timing(tegra, timing);
++}
++
++/* Initialization and deinitialization */
++
++static int load_one_timing_from_dt(struct tegra_clk_emc *tegra,
++                                  struct emc_timing *timing,
++                                  struct device_node *node)
++{
++       int err, i;
++       u32 tmp;
++
++       err = of_property_read_u32(node, "clock-frequency", &tmp);
++       if (err) {
++               pr_err("timing %s: failed to read rate\n", node->full_name);
++               return err;
++       }
++
++       timing->rate = tmp;
++
++       err = of_property_read_u32(node, "nvidia,parent-clock-frequency", &tmp);
++       if (err) {
++               pr_err("timing %s: failed to read parent rate\n",
++                      node->full_name);
++               return err;
++       }
++
++       timing->parent_rate = tmp;
++
++       timing->parent = of_clk_get_by_name(node, "emc-parent");
++       if (IS_ERR(timing->parent)) {
++               pr_err("timing %s: failed to get parent clock\n",
++                      node->full_name);
++               return PTR_ERR(timing->parent);
++       }
++
++       timing->parent_index = 0xff;
++       for (i = 0; i < ARRAY_SIZE(emc_parent_clk_names); i++) {
++               if (!strcmp(emc_parent_clk_names[i],
++                           __clk_get_name(timing->parent))) {
++                       timing->parent_index = i;
++                       break;
++               }
++       }
++       if (timing->parent_index == 0xff) {
++               pr_err("timing %s: %s is not a valid parent\n",
++                      node->full_name, __clk_get_name(timing->parent));
++               clk_put(timing->parent);
++               return -EINVAL;
++       }
++
++       return 0;
++}
++
++static int cmp_timings(const void *_a, const void *_b)
++{
++       const struct emc_timing *a = _a;
++       const struct emc_timing *b = _b;
++
++       if (a->rate < b->rate)
++               return -1;
++       else if (a->rate == b->rate)
++               return 0;
++       else
++               return 1;
++}
++
++static int load_timings_from_dt(struct tegra_clk_emc *tegra,
++                               struct device_node *node,
++                               u32 ram_code)
++{
++       struct device_node *child;
++       int child_count = of_get_child_count(node);
++       int i = 0, err;
++
++       tegra->timings = kcalloc(child_count, sizeof(struct emc_timing),
++                                GFP_KERNEL);
++       if (!tegra->timings)
++               return -ENOMEM;
++
++       tegra->num_timings = child_count;
++
++       for_each_child_of_node(node, child) {
++               struct emc_timing *timing = tegra->timings + (i++);
++
++               err = load_one_timing_from_dt(tegra, timing, child);
++               if (err)
++                       return err;
++
++               timing->ram_code = ram_code;
++       }
++
++       sort(tegra->timings, tegra->num_timings, sizeof(struct emc_timing),
++            cmp_timings, NULL);
++
++       return 0;
++}
++
++static const struct clk_ops tegra_clk_emc_ops = {
++       .recalc_rate = emc_recalc_rate,
++       .round_rate = emc_round_rate,
++       .set_rate = emc_set_rate,
++       .get_parent = emc_get_parent,
++};
++
++struct clk *tegra_emc_init(struct device_node *np, void __iomem *clk_regs,
++                          spinlock_t *lock)
++{
++       struct tegra_clk_emc *tegra;
++       struct clk *clk;
++       struct clk_init_data init;
++       struct device_node *node;
++       u32 node_ram_code;
++       int err;
++
++       tegra = kcalloc(1, sizeof(*tegra), GFP_KERNEL);
++       if (!tegra)
++               return ERR_PTR(-ENOMEM);
++
++       tegra->clk_regs = clk_regs;
++       tegra->lock = lock;
++
++       tegra->num_timings = 0;
++
++       for_each_child_of_node(np, node) {
++               err = of_property_read_u32(node, "nvidia,ram-code",
++                                          &node_ram_code);
++               if (err) {
++                       of_node_put(node);
++                       continue;
++               }
++
++               /*
++                * Store timings for all ram codes as we cannot read the
++                * fuses until the apbmisc driver is loaded.
++                */
++               err = load_timings_from_dt(tegra, node, node_ram_code);
++               if (err)
++                       return ERR_PTR(err);
++               of_node_put(node);
++               break;
++       }
++
++       if (tegra->num_timings == 0)
++               pr_warn("%s: no memory timings registered\n", __func__);
++
++       tegra->emc_node = of_parse_phandle(np,
++                       "nvidia,external-memory-controller", 0);
++       if (!tegra->emc_node)
++               pr_warn("%s: couldn't find node for EMC driver\n", __func__);
++
++       init.name = "emc";
++       init.ops = &tegra_clk_emc_ops;
++       init.flags = 0;
++       init.parent_names = emc_parent_clk_names;
++       init.num_parents = ARRAY_SIZE(emc_parent_clk_names);
++
++       tegra->hw.init = &init;
++
++       clk = clk_register(NULL, &tegra->hw);
++       if (IS_ERR(clk))
++               return clk;
++
++       tegra->prev_parent = clk_get_parent_by_index(
++               tegra->hw.clk, emc_get_parent(&tegra->hw));
++       tegra->changing_timing = false;
++
++       /* Allow debugging tools to see the EMC clock */
++       clk_register_clkdev(clk, "emc", "tegra-clk-debug");
++
++       clk_prepare_enable(clk);
++
++       return clk;
++};
+diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+index d370134..8a813c4 100644
+--- a/drivers/clk/tegra/clk-tegra124.c
++++ b/drivers/clk/tegra/clk-tegra124.c
+@@ -1383,7 +1383,6 @@ static struct tegra_clk_init_table common_init_table[] __initdata = {
+        {TEGRA124_CLK_XUSB_HOST_SRC, TEGRA124_CLK_PLL_RE_OUT, 112000000, 0},
+        {TEGRA124_CLK_SATA, TEGRA124_CLK_PLL_P, 104000000, 0},
+        {TEGRA124_CLK_SATA_OOB, TEGRA124_CLK_PLL_P, 204000000, 0},
+-       {TEGRA124_CLK_EMC, TEGRA124_CLK_CLK_MAX, 0, 1},
+        {TEGRA124_CLK_MSELECT, TEGRA124_CLK_CLK_MAX, 0, 1},
+        {TEGRA124_CLK_CSITE, TEGRA124_CLK_CLK_MAX, 0, 1},
+        {TEGRA124_CLK_TSENSOR, TEGRA124_CLK_CLK_M, 400000, 0},
+@@ -1504,6 +1503,9 @@ static void __init tegra124_132_clock_init_post(struct device_node *np)
+        tegra_super_clk_gen4_init(clk_base, pmc_base, tegra124_clks,
+                                  &pll_x_params);
+        tegra_add_of_provider(np);
++
++       clks[TEGRA124_CLK_EMC] = tegra_emc_init(np, clk_base, &emc_lock);
++
+        tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
  
- 			/* Apalis PWM1 */
--			gpio_pu6 {
--				nvidia,pins =	"gpio_pu6";
-+			pu6 {
-+				nvidia,pins =	"pu6";
- 				nvidia,function = "pwm3";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 			};
+        tegra_cpu_car_ops = &tegra124_cpu_car_ops;
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 4e458aa..097f972 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -623,6 +623,9 @@ void tegra_super_clk_gen4_init(void __iomem *clk_base,
+                        void __iomem *pmc_base, struct tegra_clk *tegra_clks,
+                        struct tegra_clk_pll_params *pll_params);
  
- 			/* Apalis PWM2 */
--			gpio_pu5 {
--				nvidia,pins =	"gpio_pu5";
-+			pu5 {
-+				nvidia,pins =	"pu5";
- 				nvidia,function = "pwm2";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 			};
- 
- 			/* Apalis PWM3 */
--			gpio_pu4 {
--				nvidia,pins =	"gpio_pu4";
-+			pu4 {
-+				nvidia,pins =	"pu4";
- 				nvidia,function = "pwm1";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 			};
- 
- 			/* Apalis PWM4 */
--			gpio_pu3 {
--				nvidia,pins =	"gpio_pu3";
-+			pu3 {
-+				nvidia,pins =	"pu3";
- 				nvidia,function = "pwm0";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-@@ -635,7 +659,7 @@
- 		nvidia,sys-clock-req-active-high;
- 	};
- 
--	sdhci@78000600 {
-+	emmc: sdhci@78000600 {
- 		status = "okay";
- 		bus-width = <8>;
- 		non-removable;
++struct clk *tegra_emc_init(struct device_node *np, void __iomem *clk_regs,
++                          spinlock_t *lock);
++
+ void tegra114_clock_tune_cpu_trimmers_high(void);
+ void tegra114_clock_tune_cpu_trimmers_low(void);
+ void tegra114_clock_tune_cpu_trimmers_init(void);
 -- 
-1.9.3
+2.1.0
