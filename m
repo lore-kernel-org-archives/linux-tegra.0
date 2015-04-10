@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH 3/9] Documentation: DT bindings: fix hda2codec_2x clock name for tegra30-hda
-Date: Fri, 10 Apr 2015 23:35:58 +0200
-Message-ID: <ee8e9952dfdfd87da52f817fca0a6ad94a137742.1428700856.git.marcel.ziswiler@toradex.com>
+Subject: [PATCH 5/9] ARM: tegra: fix hda2codec_2x clock name in Tegra124 device tree
+Date: Fri, 10 Apr 2015 23:36:00 +0200
+Message-ID: <4d791b76e1b363b2446a2b6a6bfb84869d9f94e8.1428700856.git.marcel.ziswiler@toradex.com>
 References: <cover.1428700856.git.marcel.ziswiler@toradex.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <cover.1428700856.git.marcel.ziswiler@toradex.com>
@@ -12,41 +12,28 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Fix hda2codec_2x clock name in Tegra30 HDA controller device tree node
-documentation.
-While at it also fix coma vs. semicolon issue.
-
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 ---
- Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.txt | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/tegra124.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.txt
-index 13e2ef4..5032efa 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.txt
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.txt
-@@ -8,10 +8,10 @@ Required properties:
- - interrupts : The interrupt from the HDA controller.
- - clocks : Must contain an entry for each required entry in clock-names.
-   See ../clocks/clock-bindings.txt for details.
--- clock-names : Must include the following entries: hda, hdacodec_2x, hda2hdmi
-+- clock-names : Must include the following entries: hda, hda2codec_2x, hda2hdmi
- - resets : Must contain an entry for each entry in reset-names.
-   See ../reset/reset.txt for details.
--- reset-names : Must include the following entries: hda, hdacodec_2x, hda2hdmi
-+- reset-names : Must include the following entries: hda, hda2codec_2x, hda2hdmi
+diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+index fefec80..095d326 100644
+--- a/arch/arm/boot/dts/tegra124.dtsi
++++ b/arch/arm/boot/dts/tegra124.dtsi
+@@ -620,11 +620,11 @@
+ 		clocks = <&tegra_car TEGRA124_CLK_HDA>,
+ 		         <&tegra_car TEGRA124_CLK_HDA2HDMI>,
+ 			 <&tegra_car TEGRA124_CLK_HDA2CODEC_2X>;
+-		clock-names = "hda", "hda2hdmi", "hdacodec_2x";
++		clock-names = "hda", "hda2hdmi", "hda2codec_2x";
+ 		resets = <&tegra_car 125>, /* hda */
+ 			 <&tegra_car 128>, /* hda2hdmi */
+ 			 <&tegra_car 111>; /* hda2codec_2x */
+-		reset-names = "hda", "hda2hdmi", "hdacodec_2x";
++		reset-names = "hda", "hda2hdmi", "hda2codec_2x";
+ 		status = "disabled";
+ 	};
  
- Example:
- 
-@@ -24,7 +24,7 @@ hda@0,70030000 {
- 		 <&tegra_car TEGRA124_CLK_HDA2CODEC_2X>;
- 	clock-names = "hda", "hda2hdmi", "hda2codec_2x";
- 	resets = <&tegra_car 125>, /* hda */
--		 <&tegra_car 128>; /* hda2hdmi */
--		 <&tegra_car 111>, /* hda2codec_2x */
-+		 <&tegra_car 128>, /* hda2hdmi */
-+		 <&tegra_car 111>; /* hda2codec_2x */
- 	reset-names = "hda", "hda2hdmi", "hda2codec_2x";
- };
 -- 
 1.9.3
