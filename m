@@ -1,962 +1,498 @@
-From: Deepak Goyal <dgoyal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V3] pmu/gk20a: PMU boot support.
-Date: Fri, 10 Apr 2015 18:09:12 +0530
-Message-ID: <1428669552-8971-1-git-send-email-dgoyal@nvidia.com>
+From: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
+Subject: [REGRESSION] commit 0461a41 "spi: Pump transfers inside calling
+ context for spi_sync()" breaks Apalis/Colibri T30 with MCP2515 SPI CAN
+ controller
+Date: Fri, 10 Apr 2015 15:00:53 +0200
+Message-ID: <1428670853.7008.87.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Deepak Goyal <dgoyal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-can-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Oliver Hartkopp <socketcan-fJ+pQTUTwRTk1uMJSBkQmQ@public.gmane.org>, Marc Kleine-Budde <mkl-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Wolfgang Grandegger <wg-5Yr1BZd7O62+XT7JhA+gdA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Himangi Saraogi <himangi774-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>, Stefano Babic <sbabic-ynQEQJNshbs@public.gmane.org>, Christian Pellegrin <chripell-VaTbYqLCNhc@public.gmane.org>, "DavidS.Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Marc Zyngier <maz-20xNzvSXLT6hUMvJH42dtQ@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-- Maps PMU firmware into PMU virtual memory.
-- Copy bootloader into PMU memory and start it.
-- Allow the PMU to interact with HOST via interrupts.
+Hi there
 
-PMU after successful configurations (to follow after this patch) will:
-1.Autonomously power gate graphics engine when not in use.It will save
-us a lot of power.
-2.Provide better way to scale frequencies by reporting Perf counters.
-3.Be critical for GPU functionality as future GPUs secure some register
-& mem accesses involved in context switch.
+Over Easter I had a look at our T30 hardware running latest mainline
+kernels (both 4.0.0-rc7 as well as latest tegra for-next). Unfortunately
+both just hang infinitely during boot (full logs attached below). Doing
+a git bisection on that issue led to the following:
 
-Signed-off-by: Deepak Goyal <dgoyal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drm/nouveau/nvkm/subdev/pmu/gk20a.c | 847 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 823 insertions(+), 24 deletions(-)
+0461a4149836c792d186027c8c859637a4cfb11a is the first bad commit
+commit 0461a4149836c792d186027c8c859637a4cfb11a
+Author: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Date:   Tue Dec 9 21:38:05 2014 +0000
 
-diff --git a/drm/nouveau/nvkm/subdev/pmu/gk20a.c b/drm/nouveau/nvkm/subdev/pmu/gk20a.c
-index 594f746e68f2..ee5fd19dd087 100644
---- a/drm/nouveau/nvkm/subdev/pmu/gk20a.c
-+++ b/drm/nouveau/nvkm/subdev/pmu/gk20a.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright (c) 2014, NVIDIA CORPORATION. All rights reserved.
-+ * Copyright (c) 2014-2015, NVIDIA CORPORATION. All rights reserved.
-  *
-  * Permission is hereby granted, free of charge, to any person obtaining a
-  * copy of this software and associated documentation files (the "Software"),
-@@ -20,13 +20,184 @@
-  * DEALINGS IN THE SOFTWARE.
-  */
- #include "priv.h"
--
-+#include <core/client.h>
-+#include <core/gpuobj.h>
-+#include <subdev/bar.h>
-+#include <subdev/fb.h>
-+#include <subdev/mc.h>
-+#include <subdev/timer.h>
-+#include <subdev/mmu.h>
-+#include <subdev/pmu.h>
-+#include <core/object.h>
-+#include <core/device.h>
-+#include <linux/delay.h>
-+#include <linux/firmware.h>
- #include <subdev/clk.h>
- #include <subdev/timer.h>
- #include <subdev/volt.h>
- 
-+#define APP_VERSION_GK20A  17997577
-+#define GK20A_PMU_UCODE_SIZE_MAX  (256 * 1024)
-+#define PMU_QUEUE_COUNT  5
-+
-+#define GK20A_PMU_TRACE_BUFSIZE             0x4000   /* 4K */
-+#define GK20A_PMU_DMEM_BLKSIZE2		    8
-+#define GK20A_PMU_UCODE_NB_MAX_OVERLAY	    32
-+#define GK20A_PMU_UCODE_NB_MAX_DATE_LENGTH  64
-+
-+#define PMU_UNIT_REWIND		(0x00)
-+#define PMU_UNIT_PG		(0x03)
-+#define PMU_UNIT_INIT		(0x07)
-+#define PMU_UNIT_PERFMON	(0x12)
-+#define PMU_UNIT_THERM		(0x1B)
-+#define PMU_UNIT_RC		(0x1F)
-+#define PMU_UNIT_NULL		(0x20)
-+#define PMU_UNIT_END		(0x23)
-+#define PMU_UNIT_TEST_START	(0xFE)
-+#define PMU_UNIT_END_SIM	(0xFF)
-+#define PMU_UNIT_TEST_END	(0xFF)
-+
-+#define PMU_UNIT_ID_IS_VALID(id)		\
-+		(((id) < PMU_UNIT_END) || ((id) >= PMU_UNIT_TEST_START))
-+#define PMU_DMEM_ALIGNMENT		(4)
-+
- #define BUSY_SLOT	0
- #define CLK_SLOT	7
-+#define GK20A_PMU_UCODE_IMAGE	"gpmu_ucode.bin"
-+
-+/*Choices for DMA to use*/
-+enum {
-+	GK20A_PMU_DMAIDX_UCODE		= 0,
-+	GK20A_PMU_DMAIDX_VIRT		= 1,
-+	GK20A_PMU_DMAIDX_PHYS_VID	= 2,
-+	GK20A_PMU_DMAIDX_PHYS_SYS_COH	= 3,
-+	GK20A_PMU_DMAIDX_PHYS_SYS_NCOH	= 4,
-+	GK20A_PMU_DMAIDX_RSVD		= 5,
-+	GK20A_PMU_DMAIDX_PELPG		= 6,
-+	GK20A_PMU_DMAIDX_END		= 7
-+};
-+
-+struct pmu_buf_desc {
-+	struct nvkm_gpuobj *obj;
-+	struct nvkm_vma vma;
-+	size_t size;
-+};
-+
-+struct nvkm_pmu_priv_vm {
-+	struct nvkm_gpuobj *mem;
-+	struct nvkm_gpuobj *pgd;
-+	struct nvkm_vm *vm;
-+};
-+
-+/*Choices for pmu_state*/
-+enum {
-+	PMU_STATE_OFF,             /*0  PMU is off */
-+	PMU_STATE_STARTING,        /*1  PMU is on, but not booted */
-+	PMU_STATE_INIT_RECEIVED    /*2  PMU init message received */
-+};
-+
-+struct pmu_mem_gk20a {
-+	u32 dma_base;
-+	u8  dma_offset;
-+	u8  dma_idx;
-+	u16 fb_size;
-+};
-+
-+struct pmu_cmdline_args_gk20a {
-+	u32 cpu_freq_hz;		/* Frequency of the clock driving PMU */
-+	u32 falc_trace_size;		/* falctrace buffer size (bytes) */
-+	u32 falc_trace_dma_base;	/* 256-byte block address */
-+	u32 falc_trace_dma_idx;		/* dmaIdx for DMA operations */
-+	u8 secure_mode;
-+	struct pmu_mem_gk20a gc6_ctx;		/* dmem offset of gc6 context */
-+};
-+
-+/*pmu ucode descriptor*/
-+struct pmu_ucode_desc {
-+	u32 descriptor_size;
-+	u32 image_size;
-+	u32 tools_version;
-+	u32 app_version;
-+	char date[GK20A_PMU_UCODE_NB_MAX_DATE_LENGTH];
-+	u32 bootloader_start_offset;
-+	u32 bootloader_size;
-+	u32 bootloader_imem_offset;
-+	u32 bootloader_entry_point;
-+	u32 app_start_offset;
-+	u32 app_size;
-+	u32 app_imem_offset;
-+	u32 app_imem_entry;
-+	u32 app_dmem_offset;
-+	u32 app_resident_code_offset;
-+	u32 app_resident_code_size;
-+	u32 app_resident_data_offset;
-+	u32 app_resident_data_size;
-+	u32 nb_overlays;
-+	struct {u32 start; u32 size; } load_ovl[GK20A_PMU_UCODE_NB_MAX_OVERLAY];
-+	u32 compressed;
-+};
-+
-+/*pmu msg header*/
-+struct pmu_hdr {
-+	u8 unit_id;
-+	u8 size;
-+	u8 ctrl_flags;
-+	u8 seq_id;
-+};
-+
-+#define PMU_MSG_HDR_SIZE	sizeof(struct pmu_hdr)
-+
-+enum {
-+	PMU_INIT_MSG_TYPE_PMU_INIT = 0,
-+};
-+
-+/*pmu init msg format*/
-+struct pmu_init_msg_pmu_gk20a {
-+	u8 msg_type;
-+	u8 pad;
-+	u16  os_debug_entry_point;
-+
-+	struct {
-+		u16 size;
-+		u16 offset;
-+		u8  index;
-+		u8  pad;
-+	} queue_info[PMU_QUEUE_COUNT];
-+
-+	u16 sw_managed_area_offset;
-+	u16 sw_managed_area_size;
-+};
-+
-+/*pmu init msg format*/
-+struct pmu_init_msg {
-+	union {
-+		u8 msg_type;
-+		struct pmu_init_msg_pmu_gk20a pmu_init_gk20a;
-+	};
-+};
-+
-+enum {
-+	PMU_RC_MSG_TYPE_UNHANDLED_CMD = 0,
-+};
-+
-+struct pmu_rc_msg_unhandled_cmd {
-+	u8 msg_type;
-+	u8 unit_id;
-+};
-+
-+struct pmu_rc_msg {
-+	u8 msg_type;
-+	struct pmu_rc_msg_unhandled_cmd unhandled_cmd;
-+};
-+
-+/*pmu generic msg format*/
-+struct pmu_msg {
-+	struct pmu_hdr hdr;
-+	union {
-+		struct pmu_init_msg init;
-+		struct pmu_rc_msg rc;
-+	} msg;
-+};
- 
- struct gk20a_pmu_dvfs_data {
- 	int p_load_target;
-@@ -39,8 +210,21 @@ struct gk20a_pmu_priv {
- 	struct nvkm_pmu base;
- 	struct nvkm_alarm alarm;
- 	struct gk20a_pmu_dvfs_data *data;
-+	struct pmu_ucode_desc *desc;
-+	struct pmu_buf_desc ucode;
-+	struct pmu_buf_desc trace_buf;
-+	struct mutex pmu_copy_lock;
-+	bool pmu_ready;
-+	int pmu_state;
-+	struct nvkm_pmu_priv_vm pmuvm;
-+	bool initialized;
-+	bool sw_ready;
-+	struct mutex isr_mutex;
-+	bool isr_enabled;
- };
- 
-+#define to_gk20a_priv(ptr) container_of(ptr, struct gk20a_pmu_priv, base)
-+
- struct gk20a_pmu_dvfs_dev_status {
- 	unsigned long total;
- 	unsigned long busy;
-@@ -48,6 +232,60 @@ struct gk20a_pmu_dvfs_dev_status {
- };
- 
- static int
-+gk20a_pmu_load_firmware(struct nvkm_pmu *ppmu, const struct firmware **pfw)
-+{
-+	struct nvkm_device *dev;
-+	char fw[32];
-+
-+	dev = nv_device(ppmu);
-+	snprintf(fw, sizeof(fw), "nvidia/tegra124/%s", GK20A_PMU_UCODE_IMAGE);
-+	return request_firmware(pfw, fw, nv_device_base(dev));
-+}
-+
-+static void
-+gk20a_pmu_release_firmware(struct nvkm_pmu *ppmu, const struct firmware *pfw)
-+{
-+	nv_debug(ppmu, "firmware released\n");
-+	release_firmware(pfw);
-+}
-+
-+static void
-+gk20a_pmu_dump_firmware_info(struct nvkm_pmu *ppmu,
-+		const struct firmware *fw)
-+{
-+	struct pmu_ucode_desc *desc = (struct pmu_ucode_desc *)fw->data;
-+
-+	nv_debug(ppmu, "GK20A PMU firmware information\n");
-+	nv_debug(ppmu, "descriptor size = %u\n", desc->descriptor_size);
-+	nv_debug(ppmu, "image size  = %u\n", desc->image_size);
-+	nv_debug(ppmu, "app_version = 0x%08x\n", desc->app_version);
-+	nv_debug(ppmu, "date = %s\n", desc->date);
-+	nv_debug(ppmu, "bootloader_start_offset = 0x%08x\n",
-+				desc->bootloader_start_offset);
-+	nv_debug(ppmu, "bootloader_size = 0x%08x\n", desc->bootloader_size);
-+	nv_debug(ppmu, "bootloader_imem_offset = 0x%08x\n",
-+				desc->bootloader_imem_offset);
-+	nv_debug(ppmu, "bootloader_entry_point = 0x%08x\n",
-+				desc->bootloader_entry_point);
-+	nv_debug(ppmu, "app_start_offset = 0x%08x\n", desc->app_start_offset);
-+	nv_debug(ppmu, "app_size = 0x%08x\n", desc->app_size);
-+	nv_debug(ppmu, "app_imem_offset = 0x%08x\n", desc->app_imem_offset);
-+	nv_debug(ppmu, "app_imem_entry = 0x%08x\n", desc->app_imem_entry);
-+	nv_debug(ppmu, "app_dmem_offset = 0x%08x\n", desc->app_dmem_offset);
-+	nv_debug(ppmu, "app_resident_code_offset = 0x%08x\n",
-+			desc->app_resident_code_offset);
-+	nv_debug(ppmu, "app_resident_code_size = 0x%08x\n",
-+			desc->app_resident_code_size);
-+	nv_debug(ppmu, "app_resident_data_offset = 0x%08x\n",
-+			desc->app_resident_data_offset);
-+	nv_debug(ppmu, "app_resident_data_size = 0x%08x\n",
-+			desc->app_resident_data_size);
-+	nv_debug(ppmu, "nb_overlays = %d\n", desc->nb_overlays);
-+
-+	nv_debug(ppmu, "compressed = %u\n", desc->compressed);
-+}
-+
-+static int
- gk20a_pmu_dvfs_target(struct gk20a_pmu_priv *priv, int *state)
- {
- 	struct nvkm_clk *clk = nvkm_clk(priv);
-@@ -160,40 +398,544 @@ resched:
- }
- 
- static int
--gk20a_pmu_fini(struct nvkm_object *object, bool suspend)
-+gk20a_pmu_enable_hw(struct nvkm_pmu *ppmu, struct nvkm_mc *pmc,
-+			bool enable)
- {
--	struct nvkm_pmu *pmu = (void *)object;
--	struct gk20a_pmu_priv *priv = (void *)pmu;
-+	if (enable) {
-+		nv_mask(pmc, 0x000200, 0x00002000, 0x00002000);
-+		nv_rd32(pmc, 0x00000200);
-+		if (nv_wait(ppmu, 0x0010a10c, 0x00000006, 0x00000000))
-+			return 0;
-+		nv_mask(pmc, 0x00000200, 0x2000, 0x00000000);
-+		nv_error(ppmu, "Falcon mem scrubbing timeout\n");
-+		return -ETIMEDOUT;
-+	} else {
-+		nv_mask(pmc, 0x00000200, 0x2000, 0x00000000);
-+		return 0;
-+	}
-+}
-+static void
-+gk20a_pmu_enable_irq(struct nvkm_pmu *ppmu, struct nvkm_mc *pmc, bool enable)
-+{
-+	if (enable) {
-+		nv_debug(ppmu, "enable pmu irq\n");
-+		nv_wr32(ppmu, 0x0010a010, 0xff);
-+		nv_mask(pmc, 0x00000640, 0x1000000, 0x1000000);
-+		nv_mask(pmc, 0x00000644, 0x1000000, 0x1000000);
-+	} else {
-+		nv_debug(ppmu, "disable pmu irq\n");
-+		nv_mask(pmc, 0x00000640, 0x1000000, 0x00000000);
-+		nv_mask(pmc, 0x00000644, 0x1000000, 0x00000000);
-+		nv_wr32(ppmu, 0x0010a014, 0xff);
-+	}
- 
--	nvkm_timer_alarm_cancel(priv, &priv->alarm);
-+}
- 
--	return nvkm_subdev_fini(&pmu->base, suspend);
-+static int
-+gk20a_pmu_idle(struct nvkm_pmu *ppmu)
-+{
-+	if (!nv_wait(ppmu, 0x0010a04c, 0x0000ffff, 0x00000000)) {
-+		nv_error(ppmu, "timedout waiting pmu idle\n");
-+		return -EBUSY;
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+gk20a_pmu_enable(struct nvkm_pmu *ppmu, struct nvkm_mc *pmc, bool enable)
-+{
-+	u32 pmc_enable;
-+	int err;
-+
-+	if (enable) {
-+		err = gk20a_pmu_enable_hw(ppmu, pmc, true);
-+		if (err)
-+			return err;
-+
-+		err = gk20a_pmu_idle(ppmu);
-+		if (err)
-+			return err;
-+
-+		gk20a_pmu_enable_irq(ppmu, pmc, true);
-+	} else {
-+		pmc_enable = nv_rd32(pmc, 0x200);
-+		if ((pmc_enable & 0x2000) != 0x0) {
-+			gk20a_pmu_enable_irq(ppmu, pmc, false);
-+			gk20a_pmu_enable_hw(ppmu, pmc, false);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+gk20a_pmu_reset(struct nvkm_pmu *ppmu, struct nvkm_mc *pmc)
-+{
-+	int err;
-+
-+	err = gk20a_pmu_idle(ppmu);
-+	if (err)
-+		return err;
-+
-+	err = gk20a_pmu_enable(ppmu, pmc, false);
-+	if (err)
-+		return err;
-+
-+	err = gk20a_pmu_enable(ppmu, pmc, true);
-+	if (err)
-+		return err;
-+
-+	return 0;
-+}
-+
-+static void
-+gk20a_pmu_copy_to_dmem(struct gk20a_pmu_priv *pmu,
-+		u32 dst, u8 *src, u32 size, u8 port)
-+{
-+	u32 i, words, bytes;
-+	u32 data, addr_mask;
-+	u32 *src_u32 = (u32 *)src;
-+	struct nvkm_pmu *ppmu = &pmu->base;
-+
-+	if (size == 0) {
-+		nv_error(ppmu, "size is zero\n");
-+		goto out;
-+	}
-+
-+	if (dst & 0x3) {
-+		nv_error(ppmu, "dst (0x%08x) not 4-byte aligned\n", dst);
-+		goto out;
-+	}
-+
-+	mutex_lock(&pmu->pmu_copy_lock);
-+	words = size >> 2;
-+	bytes = size & 0x3;
-+	addr_mask = 0xfffc;
-+	dst &= addr_mask;
-+
-+	nv_wr32(ppmu, (0x10a1c0 + (port * 8)), (dst | (0x1 << 24)));
-+
-+	for (i = 0; i < words; i++) {
-+		nv_wr32(ppmu, (0x10a1c4 + (port * 8)), src_u32[i]);
-+		nv_debug(ppmu, "0x%08x\n", src_u32[i]);
-+	}
-+
-+	if (bytes > 0) {
-+		data = 0;
-+		for (i = 0; i < bytes; i++)
-+			((u8 *)&data)[i] = src[(words << 2) + i];
-+		nv_wr32(ppmu, (0x10a1c4 + (port * 8)), data);
-+		nv_debug(ppmu, "0x%08x\n", data);
-+	}
-+
-+	data = nv_rd32(ppmu, (0x10a1c0 + (port * 8))) & addr_mask;
-+	size = ALIGN(size, 4);
-+	if (data != dst + size) {
-+		nv_error(ppmu, "copy failed.... bytes written %d, expected %d",
-+							      data - dst, size);
-+	}
-+	mutex_unlock(&pmu->pmu_copy_lock);
-+out:
-+	nv_debug(ppmu, "exit %s\n", __func__);
-+}
-+
-+static void
-+gk20a_copy_from_dmem(struct gk20a_pmu_priv *pmu,
-+		u32 src, u8 *dst, u32 size, u8 port)
-+{
-+	u32 i, words, bytes;
-+	u32 data, addr_mask;
-+	u32 *dst_u32 = (u32 *)dst;
-+	struct nvkm_pmu *ppmu = &pmu->base;
-+
-+	if (size == 0) {
-+		nv_error(ppmu, "size is zero\n");
-+		goto out;
-+	}
-+
-+	if (src & 0x3) {
-+		nv_error(ppmu, "src (0x%08x) not 4-byte aligned\n", src);
-+		goto out;
-+	}
-+
-+	mutex_lock(&pmu->pmu_copy_lock);
-+
-+	words = size >> 2;
-+	bytes = size & 0x3;
-+
-+	addr_mask = 0xfffc;
-+
-+	src &= addr_mask;
-+
-+	nv_wr32(ppmu, (0x10a1c0 + (port * 8)), (src | (0x1 << 25)));
-+
-+	for (i = 0; i < words; i++) {
-+		dst_u32[i] = nv_rd32(ppmu, (0x0010a1c4 + port * 8));
-+		nv_debug(ppmu, "0x%08x\n", dst_u32[i]);
-+	}
-+	if (bytes > 0) {
-+		data = nv_rd32(ppmu, (0x0010a1c4 + port * 8));
-+		nv_debug(ppmu, "0x%08x\n", data);
-+
-+		for (i = 0; i < bytes; i++)
-+			dst[(words << 2) + i] = ((u8 *)&data)[i];
-+	}
-+	mutex_unlock(&pmu->pmu_copy_lock);
-+out:
-+	nv_debug(ppmu, "exit %s\n", __func__);
-+}
-+
-+static int
-+pmu_process_init_msg(struct gk20a_pmu_priv *pmu, struct pmu_msg *msg)
-+{
-+	struct nvkm_pmu *ppmu = &pmu->base;
-+	struct pmu_init_msg_pmu_gk20a *init;
-+	u32 tail;
-+
-+	tail = nv_rd32(ppmu, 0x0010a4cc);
-+
-+	gk20a_copy_from_dmem(pmu, tail,
-+		(u8 *)&msg->hdr, PMU_MSG_HDR_SIZE, 0);
-+
-+	if (msg->hdr.unit_id != PMU_UNIT_INIT) {
-+		nv_error(ppmu, "expecting init msg\n");
-+		return -EINVAL;
-+	}
-+
-+	gk20a_copy_from_dmem(pmu, tail + PMU_MSG_HDR_SIZE,
-+		(u8 *)&msg->msg, msg->hdr.size - PMU_MSG_HDR_SIZE, 0);
-+
-+	if (msg->msg.init.msg_type != PMU_INIT_MSG_TYPE_PMU_INIT) {
-+		nv_error(ppmu, "expecting init msg\n");
-+		return -EINVAL;
-+	}
-+
-+	tail += ALIGN(msg->hdr.size, PMU_DMEM_ALIGNMENT);
-+	nv_wr32(ppmu, 0x0010a4cc, tail);
-+	init = &msg->msg.init.pmu_init_gk20a;
-+	pmu->pmu_ready = true;
-+	pmu->pmu_state = PMU_STATE_INIT_RECEIVED;
-+	nv_debug(ppmu, "init msg processed\n");
-+	return 0;
-+}
-+
-+static void
-+gk20a_pmu_process_message(struct work_struct *work)
-+{
-+	struct nvkm_pmu *ppmu = container_of(work, struct nvkm_pmu, recv.work);
-+	struct pmu_msg msg;
-+	struct gk20a_pmu_priv *pmu = to_gk20a_priv(ppmu);
-+	struct nvkm_mc *pmc = nvkm_mc(ppmu);
-+
-+	mutex_lock(&pmu->isr_mutex);
-+	if (unlikely(!pmu->pmu_ready)) {
-+		nv_debug(ppmu, "processing init msg\n");
-+		pmu_process_init_msg(pmu, &msg);
-+		mutex_unlock(&pmu->isr_mutex);
-+		gk20a_pmu_enable_irq(ppmu, pmc, true);
-+	} else
-+		mutex_unlock(&pmu->isr_mutex);
-+}
-+
-+static int
-+gk20a_pmu_init_vm(struct nvkm_pmu *ppmu, const struct firmware *fw)
-+{
-+	int ret = 0;
-+	struct gk20a_pmu_priv *pmu = to_gk20a_priv(ppmu);
-+	u32 *ucode_image;
-+	struct pmu_ucode_desc *desc = (struct pmu_ucode_desc *)fw->data;
-+	int i;
-+	struct nvkm_pmu_priv_vm *pmuvm = &pmu->pmuvm;
-+	struct nvkm_device *device = nv_device(&ppmu->base);
-+	struct nvkm_vm *vm;
-+	const u64 pmu_area_len = 300*1024;
-+	/* mem for inst blk*/
-+	ret = nvkm_gpuobj_new(nv_object(ppmu), NULL, 0x1000, 0, 0, &pmuvm->mem);
-+	if (ret)
-+		return ret;
-+
-+	/* mem for pgd*/
-+	ret = nvkm_gpuobj_new(nv_object(ppmu), NULL, 0x8000, 0, 0, &pmuvm->pgd);
-+	if (ret)
-+		return ret;
-+
-+	/*allocate virtual memory range*/
-+	ret = nvkm_vm_new(device, 0, pmu_area_len, 0, &vm);
-+	if (ret)
-+		return ret;
-+
-+	atomic_inc(&vm->engref[NVDEV_SUBDEV_PMU]);
-+	/*update VM with pgd */
-+
-+	ret = nvkm_vm_ref(vm, &pmuvm->vm, pmuvm->pgd);
-+	if (ret)
-+		return ret;
-+
-+	/*update pgd in inst blk */
-+	nv_wo32(pmuvm->mem, 0x0200, lower_32_bits(pmuvm->pgd->addr));
-+	nv_wo32(pmuvm->mem, 0x0204, upper_32_bits(pmuvm->pgd->addr));
-+	nv_wo32(pmuvm->mem, 0x0208, lower_32_bits(pmu_area_len - 1));
-+	nv_wo32(pmuvm->mem, 0x020c, upper_32_bits(pmu_area_len - 1));
-+
-+	/* allocate memory for pmu fw to be copied to*/
-+	ret = nvkm_gpuobj_new(nv_object(ppmu), NULL,
-+		   GK20A_PMU_UCODE_SIZE_MAX, 0x1000, 0, &pmu->ucode.obj);
-+	if (ret)
-+		return ret;
-+
-+	ucode_image = (u32 *)((u8 *)desc + desc->descriptor_size);
-+	for (i = 0; i < (desc->app_start_offset + desc->app_size); i += 4)
-+		nv_wo32(pmu->ucode.obj, i, ucode_image[i/4]);
-+
-+	/* map allocated memory into GMMU */
-+	ret = nvkm_gpuobj_map_vm(nv_gpuobj(pmu->ucode.obj), vm,
-+				    NV_MEM_ACCESS_RW, &pmu->ucode.vma);
-+	if (ret)
-+		return ret;
-+
-+	nv_debug(ppmu, "%s function compleletd\n", __func__);
-+	return ret;
-+}
-+
-+static int
-+gk20a_init_pmu_setup_sw(struct nvkm_pmu *ppmu)
-+{
-+	struct gk20a_pmu_priv *pmu = to_gk20a_priv(ppmu);
-+	struct nvkm_pmu_priv_vm *ppmuvm = &pmu->pmuvm;
-+	int ret = 0;
-+
-+	if (pmu->sw_ready) {
-+		nv_debug(ppmu, "skipping init\n");
-+		goto skip_init;
-+	}
-+
-+	INIT_WORK(&pmu->base.recv.work, gk20a_pmu_process_message);
-+
-+	ret = nvkm_gpuobj_new(nv_object(ppmu), NULL, GK20A_PMU_TRACE_BUFSIZE,
-+					    0, 0, &pmu->trace_buf.obj);
-+	if (ret)
-+		return ret;
-+
-+	ret = nvkm_gpuobj_map_vm(nv_gpuobj(pmu->trace_buf.obj), ppmuvm->vm,
-+					NV_MEM_ACCESS_RW, &pmu->trace_buf.vma);
-+	if (ret)
-+		return ret;
-+
-+	pmu->sw_ready = true;
-+
-+skip_init:
-+	return 0;
-+}
-+
-+static int
-+gk20a_pmu_bootstrap(struct gk20a_pmu_priv *pmu)
-+{
-+	struct nvkm_pmu *ppmu = &pmu->base;
-+	struct pmu_ucode_desc *desc = pmu->desc;
-+	u32 addr_code, addr_data, addr_load;
-+	u32 i, blocks, addr_args;
-+	struct pmu_cmdline_args_gk20a cmdline_args;
-+	struct nvkm_pmu_priv_vm *ppmuvm = &pmu->pmuvm;
-+
-+	nv_mask(ppmu, 0x0010a048, 0x01, 0x01);
-+	/*bind the address*/
-+	nv_wr32(ppmu, 0x0010a480,
-+		ppmuvm->mem->addr >> 12 |
-+		0x1 << 30 |
-+		0x20000000);
-+
-+	/* TBD: load all other surfaces */
-+	cmdline_args.falc_trace_size = GK20A_PMU_TRACE_BUFSIZE;
-+	cmdline_args.falc_trace_dma_base =
-+			    lower_32_bits(pmu->trace_buf.vma.offset >> 8);
-+	cmdline_args.falc_trace_dma_idx = GK20A_PMU_DMAIDX_VIRT;
-+	cmdline_args.cpu_freq_hz = 204;
-+	cmdline_args.secure_mode = 0;
-+
-+	addr_args = (nv_rd32(ppmu, 0x0010a108) >> 9) & 0x1ff;
-+	addr_args = addr_args << GK20A_PMU_DMEM_BLKSIZE2;
-+	addr_args -= sizeof(struct pmu_cmdline_args_gk20a);
-+	nv_debug(ppmu, "initiating copy to dmem\n");
-+	gk20a_pmu_copy_to_dmem(pmu, addr_args,
-+			(u8 *)&cmdline_args,
-+			sizeof(struct pmu_cmdline_args_gk20a), 0);
-+
-+	nv_wr32(ppmu, 0x0010a1c0, 0x1 << 24);
-+
-+	addr_code = lower_32_bits((pmu->ucode.vma.offset +
-+			desc->app_start_offset +
-+			desc->app_resident_code_offset) >> 8);
-+
-+	addr_data = lower_32_bits((pmu->ucode.vma.offset +
-+			desc->app_start_offset +
-+			desc->app_resident_data_offset) >> 8);
-+
-+	addr_load = lower_32_bits((pmu->ucode.vma.offset +
-+			desc->bootloader_start_offset) >> 8);
-+
-+	nv_wr32(ppmu, 0x0010a1c4, GK20A_PMU_DMAIDX_UCODE);
-+	nv_debug(ppmu, "0x%08x\n", GK20A_PMU_DMAIDX_UCODE);
-+	nv_wr32(ppmu, 0x0010a1c4, (addr_code));
-+	nv_debug(ppmu, "0x%08x\n", (addr_code));
-+	nv_wr32(ppmu, 0x0010a1c4, desc->app_size);
-+	nv_debug(ppmu, "0x%08x\n", desc->app_size);
-+	nv_wr32(ppmu, 0x0010a1c4, desc->app_resident_code_size);
-+	nv_debug(ppmu, "0x%08x\n", desc->app_resident_code_size);
-+	nv_wr32(ppmu, 0x0010a1c4, desc->app_imem_entry);
-+	nv_debug(ppmu, "0x%08x\n", desc->app_imem_entry);
-+	nv_wr32(ppmu, 0x0010a1c4,  (addr_data));
-+	nv_debug(ppmu, "0x%08x\n", (addr_data));
-+	nv_wr32(ppmu, 0x0010a1c4, desc->app_resident_data_size);
-+	nv_debug(ppmu, "0x%08x\n", desc->app_resident_data_size);
-+	nv_wr32(ppmu, 0x0010a1c4, (addr_code));
-+	nv_debug(ppmu, "0x%08x\n", (addr_code));
-+	nv_wr32(ppmu, 0x0010a1c4, 0x1);
-+	nv_debug(ppmu, "0x%08x\n", 1);
-+	nv_wr32(ppmu, 0x0010a1c4, addr_args);
-+	nv_debug(ppmu, "0x%08x\n", addr_args);
-+
-+	nv_wr32(ppmu, 0x0010a110,
-+		(addr_load) - (desc->bootloader_imem_offset >> 8));
-+
-+	blocks = ((desc->bootloader_size + 0xFF) & ~0xFF) >> 8;
-+
-+	for (i = 0; i < blocks; i++) {
-+		nv_wr32(ppmu, 0x0010a114,
-+			desc->bootloader_imem_offset + (i << 8));
-+		nv_wr32(ppmu, 0x0010a11c,
-+			desc->bootloader_imem_offset + (i << 8));
-+		nv_wr32(ppmu, 0x0010a118,
-+			0x01 << 4  |
-+			0x06 << 8  |
-+			((GK20A_PMU_DMAIDX_UCODE & 0x07) << 12));
-+	}
-+
-+	nv_wr32(ppmu, 0x0010a104, (desc->bootloader_entry_point));
-+	nv_wr32(ppmu, 0x0010a100, 0x1 << 1);
-+	nv_wr32(ppmu, 0x0010a080, desc->app_version);
-+
-+	return 0;
-+}
-+
-+static int
-+gk20a_init_pmu_setup_hw1(struct nvkm_pmu *ppmu, struct nvkm_mc *pmc)
-+{
-+	struct gk20a_pmu_priv *pmu = to_gk20a_priv(ppmu);
-+	int err;
-+
-+	mutex_lock(&pmu->isr_mutex);
-+	gk20a_pmu_reset(ppmu, pmc);
-+	pmu->isr_enabled = true;
-+	mutex_unlock(&pmu->isr_mutex);
-+
-+	/* setup apertures - virtual */
-+	nv_wr32(ppmu, 0x10a600 + 0 * 4, 0x0);
-+	nv_wr32(ppmu, 0x10a600 + 1 * 4, 0x0);
-+	/* setup apertures - physical */
-+	nv_wr32(ppmu, 0x10a600 + 2 * 4, 0x4 | 0x0);
-+	nv_wr32(ppmu, 0x10a600 + 3 * 4, 0x4 | 0x1);
-+	nv_wr32(ppmu, 0x10a600 + 4 * 4, 0x4 | 0x2);
-+
-+	/* TBD: load pmu ucode */
-+	err = gk20a_pmu_bootstrap(pmu);
-+	if (err)
-+		return err;
-+
-+	return 0;
-+}
-+
-+
-+static void
-+gk20a_pmu_intr(struct nvkm_subdev *subdev)
-+{
-+	struct nvkm_pmu *ppmu = nvkm_pmu(subdev);
-+	struct gk20a_pmu_priv *pmu = to_gk20a_priv(ppmu);
-+	struct nvkm_mc *pmc = nvkm_mc(ppmu);
-+	u32 intr, mask;
-+
-+	if (!pmu->isr_enabled)
-+		return;
-+
-+	mask = nv_rd32(ppmu, 0x0010a018) & nv_rd32(ppmu, 0x0010a01c);
-+
-+	intr = nv_rd32(ppmu, 0x0010a008) & mask;
-+
-+	nv_debug(ppmu, "received falcon interrupt: 0x%08x\n", intr);
-+	gk20a_pmu_enable_irq(ppmu, pmc, false);
-+
-+	if (!intr || pmu->pmu_state == PMU_STATE_OFF) {
-+		nv_wr32(ppmu, 0x0010a004, intr);
-+		nv_error(ppmu, "pmu state off\n");
-+		gk20a_pmu_enable_irq(ppmu, pmc, true);
-+	}
-+
-+	if (intr & 0x10)
-+		nv_error(ppmu, "pmu halt intr not implemented\n");
-+
-+	if (intr & 0x20) {
-+		nv_error(ppmu, "exterr interrupt  not impl..Clear interrupt\n");
-+		nv_mask(ppmu, 0x0010a16c, (0x1 << 31), 0x00000000);
-+	}
-+
-+	if (intr & 0x40) {
-+		nv_debug(ppmu, "scheduling work\n");
-+		schedule_work(&pmu->base.recv.work);
-+	}
-+
-+	nv_wr32(ppmu, 0x0010a004, intr);
-+	nv_debug(ppmu, "irq handled\n");
-+}
-+
-+static void
-+gk20a_pmu_pgob(struct nvkm_pmu *ppmu, bool enable)
-+{
- }
- 
- static int
- gk20a_pmu_init(struct nvkm_object *object)
- {
--	struct nvkm_pmu *pmu = (void *)object;
--	struct gk20a_pmu_priv *priv = (void *)pmu;
- 	int ret;
-+	struct nvkm_pmu *ppmu = (void *)object;
-+	struct gk20a_pmu_priv *pmu = to_gk20a_priv(ppmu);
- 
--	ret = nvkm_subdev_init(&pmu->base);
-+	ret = nvkm_subdev_init(&ppmu->base);
- 	if (ret)
- 		return ret;
- 
--	pmu->pgob = nvkm_pmu_pgob;
--
--	/* init pwr perf counter */
--	nv_wr32(pmu, 0x10a504 + (BUSY_SLOT * 0x10), 0x00200001);
--	nv_wr32(pmu, 0x10a50c + (BUSY_SLOT * 0x10), 0x00000002);
--	nv_wr32(pmu, 0x10a50c + (CLK_SLOT * 0x10), 0x00000003);
-+	nv_wr32(ppmu, 0x10a504 + (BUSY_SLOT * 0x10), 0x00200001);
-+	nv_wr32(ppmu, 0x10a50c + (BUSY_SLOT * 0x10), 0x00000002);
-+	nv_wr32(ppmu, 0x10a50c + (CLK_SLOT * 0x10), 0x00000003);
- 
--	nvkm_timer_alarm(pmu, 2000000000, &priv->alarm);
-+	nvkm_timer_alarm(ppmu, 2000000000, &pmu->alarm);
- 	return ret;
- }
-+static void
-+gk20a_pmu_dtor(struct nvkm_object *object)
-+{
-+	struct nvkm_pmu *ppmu = (void *)object;
-+	struct nvkm_mc *pmc = nvkm_mc(object);
-+	struct gk20a_pmu_priv *pmu = to_gk20a_priv(ppmu);
- 
-+	nvkm_gpuobj_unmap(&pmu->ucode.vma);
-+	nvkm_gpuobj_ref(NULL, &pmu->ucode.obj);
-+	nvkm_vm_ref(NULL, &pmu->pmuvm.vm, pmu->pmuvm.pgd);
-+	nvkm_gpuobj_ref(NULL, &pmu->pmuvm.pgd);
-+	nvkm_gpuobj_ref(NULL, &pmu->pmuvm.mem);
-+	nvkm_gpuobj_unmap(&pmu->trace_buf.vma);
-+	nvkm_gpuobj_ref(NULL, &pmu->trace_buf.obj);
-+/* make sure the pending operations are finished before we continue */
-+	cancel_work_sync(&pmu->base.recv.work);
-+	pmu->initialized = false;
-+	mutex_lock(&pmu->isr_mutex);
-+	gk20a_pmu_enable(ppmu, pmc, false);
-+	pmu->isr_enabled = false;
-+	mutex_unlock(&pmu->isr_mutex);
-+	pmu->pmu_state = PMU_STATE_OFF;
-+	pmu->pmu_ready = false;
-+}
- static struct gk20a_pmu_dvfs_data
--gk20a_dvfs_data= {
-+gk20a_dvfs_data = {
- 	.p_load_target = 70,
- 	.p_load_max = 90,
- 	.p_smooth = 1,
-@@ -204,18 +946,74 @@ gk20a_pmu_ctor(struct nvkm_object *parent, struct nvkm_object *engine,
- 	       struct nvkm_oclass *oclass, void *data, u32 size,
- 	       struct nvkm_object **pobject)
- {
--	struct gk20a_pmu_priv *priv;
-+	struct gk20a_pmu_priv *pmu;
-+	struct nvkm_pmu *ppmu;
-+	struct nvkm_mc *pmc;
-+	const struct firmware *pmufw = NULL;
- 	int ret;
- 
--	ret = nvkm_pmu_create(parent, engine, oclass, &priv);
--	*pobject = nv_object(priv);
-+	ret = nvkm_pmu_create(parent, engine, oclass, &pmu);
-+	*pobject = nv_object(pmu);
- 	if (ret)
- 		return ret;
- 
--	priv->data = &gk20a_dvfs_data;
-+	mutex_init(&pmu->isr_mutex);
-+	mutex_init(&pmu->pmu_copy_lock);
-+	pmu->data = &gk20a_dvfs_data;
-+	ppmu = &pmu->base;
-+	pmc = nvkm_mc(ppmu);
-+	nv_subdev(ppmu)->intr = gk20a_pmu_intr;
-+
-+	ret = gk20a_pmu_load_firmware(ppmu, &pmufw);
-+	if (ret < 0) {
-+		nv_error(ppmu, "failed to load pmu fimware\n");
-+		return ret;
-+	}
-+
-+	ret = gk20a_pmu_init_vm(ppmu, pmufw);
-+	if (ret < 0) {
-+		nv_error(ppmu, "failed to map pmu fw to va space\n");
-+		goto err;
-+	}
-+
-+	pmu->desc = (struct pmu_ucode_desc *)pmufw->data;
-+	gk20a_pmu_dump_firmware_info(ppmu, pmufw);
-+
-+	if (pmu->desc->app_version != APP_VERSION_GK20A) {
-+		nv_error(ppmu, "PMU version unsupported: %d\n",
-+							pmu->desc->app_version);
-+		ret = -EINVAL;
-+		goto err;
-+	}
-+
-+	ret = gk20a_init_pmu_setup_sw(ppmu);
-+	if (ret)
-+		goto err;
-+
-+	pmu->pmu_state = PMU_STATE_STARTING;
-+	ret = gk20a_init_pmu_setup_hw1(ppmu, pmc);
-+	if (ret)
-+		goto err;
- 
--	nvkm_alarm_init(&priv->alarm, gk20a_pmu_dvfs_work);
-+	ppmu->pgob = nvkm_pmu_pgob;
-+	pmu->initialized = true;
-+	nvkm_alarm_init(&pmu->alarm, gk20a_pmu_dvfs_work);
- 	return 0;
-+err:
-+	gk20a_pmu_release_firmware(ppmu, pmufw);
-+	return ret;
-+}
-+
-+static int
-+gk20a_pmu_fini(struct nvkm_object *object, bool suspend)
-+{
-+	struct nvkm_pmu *pmu = (void *)object;
-+	struct gk20a_pmu_priv *priv = to_gk20a_priv(pmu);
-+
-+	nv_wr32(pmu, 0x10a014, 0x00000060);
-+	nvkm_timer_alarm_cancel(priv, &priv->alarm);
-+
-+	return nvkm_subdev_fini(&pmu->base, suspend);
- }
- 
- struct nvkm_oclass *
-@@ -223,8 +1021,9 @@ gk20a_pmu_oclass = &(struct nvkm_pmu_impl) {
- 	.base.handle = NV_SUBDEV(PMU, 0xea),
- 	.base.ofuncs = &(struct nvkm_ofuncs) {
- 		.ctor = gk20a_pmu_ctor,
--		.dtor = _nvkm_pmu_dtor,
-+		.dtor = gk20a_pmu_dtor,
- 		.init = gk20a_pmu_init,
- 		.fini = gk20a_pmu_fini,
- 	},
-+	.pgob = gk20a_pmu_pgob,
- }.base;
--- 
-1.9.1
+    spi: Pump transfers inside calling context for spi_sync()
+
+Reverting above commit makes them all fly again like before.
+
+Unfortunately the commit message concerning standard SPI message pump
+and all drivers being transitioned over to that did not ring any bell.
+
+I also have not yet looked further into what exactly is happening and
+whether or not the SPI stack, the Tegra SPI controller driver or the
+MCP2515 SPI CAN driver is to blame but rather decided to ask Mr. Brown
+and the community first for any insights they might have to share.
+Anybody?
+
+Cheers
+
+Marcel
+
+[    0.000000] Booting Linux on physical CPU 0x0
+[    0.000000] Initializing cgroup subsys cpu
+[    0.000000] Initializing cgroup subsys cpuacct
+[    0.000000] Linux version 4.0.0-rc7-00042-ge5e02de
+(zim-bi+AKbBUZKY6gyzm1THtWbp2dZbC/Bob@public.gmane.org) (gcc version 4.7.2 20120910 (prerelease)
+(crosstool-NG linaro-1.13.1-2012.09-20120921 - Linaro GCC 2012.09) ) #1
+SMP PREEMPT Fri Apr 10 12:48:12 CEST 2015
+[    0.000000] CPU: ARMv7 Processor [412fc099] revision 9 (ARMv7),
+cr=10c5387d
+[    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing
+instruction cache
+[    0.000000] Machine model: Toradex Apalis T30 on Apalis Evaluation
+Board
+[    0.000000] cma: Reserved 64 MiB at 0xfb000000
+[    0.000000] Memory policy: Data cache writealloc
+[    0.000000] PERCPU: Embedded 11 pages/cpu @edfc5000 s12672 r8192
+d24192 u45056
+[    0.000000] Built 1 zonelists in Zone order, mobility grouping on.
+Total pages: 519456
+[    0.000000] Kernel command line: core_edp_mv=1300 usb_high_speed=1
+ip=off root=/dev/mmcblk0p2 rw,noatime rootfstype=ext3 rootwait
+igb_mac=00:14:2d:28:e6:ad consoleblank=0 no_console_suspend=1
+console=tty1 console=ttyS0,115200n8 debug_uartport=lsport,0 vmalloc=256M
+mem=2035M@2048M fbmem=12M@4083M video=tegrafb0:1920x1080-16@60
+fbcon=map:1
+[    0.000000] PID hash table entries: 4096 (order: 2, 16384 bytes)
+[    0.000000] Dentry cache hash table entries: 131072 (order: 7, 524288
+bytes)
+[    0.000000] Inode-cache hash table entries: 65536 (order: 6, 262144
+bytes)
+[    0.000000] Memory: 1991016K/2083840K available (6618K kernel code,
+317K rwdata, 2256K rodata, 300K init, 351K bss, 27288K reserved, 65536K
+cma-reserved, 1248256K highmem)
+[    0.000000] Virtual kernel memory layout:
+[    0.000000]     vector  : 0xffff0000 - 0xffff1000   (   4 kB)
+[    0.000000]     fixmap  : 0xffc00000 - 0xfff00000   (3072 kB)
+[    0.000000]     vmalloc : 0xef800000 - 0xff000000   ( 248 MB)
+[    0.000000]     lowmem  : 0xc0000000 - 0xef000000   ( 752 MB)
+[    0.000000]     pkmap   : 0xbfe00000 - 0xc0000000   (   2 MB)
+[    0.000000]     modules : 0xbf000000 - 0xbfe00000   (  14 MB)
+[    0.000000]       .text : 0xc0008000 - 0xc08b2cf4   (8876 kB)
+[    0.000000]       .init : 0xc08b3000 - 0xc08fe000   ( 300 kB)
+[    0.000000]       .data : 0xc08fe000 - 0xc094d7a0   ( 318 kB)
+[    0.000000]        .bss : 0xc094d7a0 - 0xc09a53f0   ( 352 kB)
+[    0.000000] Preemptible hierarchical RCU implementation.
+[    0.000000] 	Additional per-CPU info printed with stalls.
+[    0.000000] NR_IRQS:16 nr_irqs:16 16
+[    0.000000] L2C: platform modifies aux control register: 0x02080000
+-> 0x3e480001
+[    0.000000] L2C: DT/platform modifies aux control register:
+0x02080000 -> 0x3e480001
+[    0.000000] L2C-310 erratum 769419 enabled
+[    0.000000] L2C-310 enabling early BRESP for Cortex-A9
+[    0.000000] L2C-310: enabling full line of zeros but not enabled in
+Cortex-A9
+[    0.000000] L2C-310 ID prefetch enabled, offset 1 lines
+[    0.000000] L2C-310 dynamic clock gating enabled, standby mode
+enabled
+[    0.000000] L2C-310 cache controller enabled, 8 ways, 1024 kB
+[    0.000000] L2C-310: CACHE_ID 0x410000c7, AUX_CTRL 0x7e480001
+[    0.000017] sched_clock: 32 bits at 1000kHz, resolution 1000ns, wraps
+every 2147483648000ns
+[    0.000050] Switching to timer-based delay loop, resolution 1000ns
+[    0.001177] Console: colour dummy device 80x30
+[    0.002114] console [tty1] enabled
+[    0.002161] Calibrating delay loop (skipped), value calculated using
+timer frequency.. 2.00 BogoMIPS (lpj=10000)
+[    0.002218] pid_max: default: 32768 minimum: 301
+[    0.002865] Mount-cache hash table entries: 2048 (order: 1, 8192
+bytes)
+[    0.002914] Mountpoint-cache hash table entries: 2048 (order: 1, 8192
+bytes)
+[    0.005300] Initializing cgroup subsys freezer
+[    0.005371] Initializing cgroup subsys debug
+[    0.005480] CPU: Testing write buffer coherency: ok
+[    0.006018] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
+[    0.006166] Setting up static identity map for 0x806451a0 -
+0x80645238
+[    0.040436] Tegra Unknown SKU 177
+[    0.040503] Tegra Revision: A03 SKU: 177 CPU Process: 2 Core Process:
+0
+[    0.062022] CPU1: thread -1, cpu 1, socket 0, mpidr 80000001
+[    0.081983] CPU2: thread -1, cpu 2, socket 0, mpidr 80000002
+[    0.101969] CPU3: thread -1, cpu 3, socket 0, mpidr 80000003
+[    0.102077] Brought up 4 CPUs
+[    0.102192] SMP: Total of 4 processors activated (8.00 BogoMIPS).
+[    0.102221] CPU: All CPU(s) started in SVC mode.
+[    0.103633] devtmpfs: initialized
+[    0.106469] VFP support v0.3: implementor 41 architecture 3 part 30
+variant 9 rev 4
+[    0.112119] pinctrl core: initialized pinctrl subsystem
+[    0.146102] NET: Registered protocol family 16
+[    0.149142] DMA: preallocated 256 KiB pool for atomic coherent
+allocations
+[    0.179980] cpuidle: using governor ladder
+[    0.209977] cpuidle: using governor menu
+[    0.243698] No ATAGs?
+[    0.243756] hw-breakpoint: found 5 (+1 reserved) breakpoint and 1
+watchpoint registers.
+[    0.243827] hw-breakpoint: maximum watchpoint size is 4 bytes.
+[    0.315941] 5v0: Failed to create debugfs directory
+[    0.316701] usbo1_vbus: Failed to request enable GPIO157: -517
+[    0.316966] reg-fixed-voltage regulators:regulator@2: Failed to
+register regulator: -517
+[    0.317039] platform regulators:regulator@2: Driver reg-fixed-voltage
+requests probe deferral
+[    0.317746] usbh_vbus: Failed to request enable GPIO233: -517
+[    0.317998] reg-fixed-voltage regulators:regulator@3: Failed to
+register regulator: -517
+[    0.318067] platform regulators:regulator@3: Driver reg-fixed-voltage
+requests probe deferral
+[    0.321375] vgaarb: loaded
+[    0.323770] SCSI subsystem initialized
+[    0.325587] usbcore: registered new interface driver usbfs
+[    0.325931] usbcore: registered new interface driver hub
+[    0.326217] usbcore: registered new device driver usb
+[    0.339281] vrtc: supplied by 5v0
+[    0.349989] vdd_1v8_gen: supplied by 3v3
+[    0.359987] vddio_ddr_1v35: supplied by 3v3
+[    0.364536] vdd_pexa,vdd_pexb,vdd_sata: supplied by 3v3
+[    0.373034] ldo1: supplied by vdd_1v8_gen
+[    0.379978] en_3v3: supplied by vdd_1v8_gen
+[    0.383601] avdd_dsi_csi,pwrdet_mipi: supplied by 3v3
+[    0.389987] vdd_rtc: supplied by 3v3
+[    0.399983] avdd_vdac: supplied by 3v3
+[    0.403222] avdd_plle: supplied by vdd_1v8_gen
+[    0.409981] avdd_pll: supplied by vdd_1v8_gen
+[    0.419982] vdd_ddr_hs: supplied by vdd_1v8_gen
+[    0.422119] stmpe-i2c 3-0041: stmpe811 detected, chip id: 0x811
+[    0.427921] Linux video capture interface: v2.00
+[    0.428179] pps_core: LinuxPPS API ver. 1 registered
+[    0.428213] pps_core: Software ver. 5.3.6 - Copyright 2005-2007
+Rodolfo Giometti <giometti-k2GhghHVRtY@public.gmane.org>
+[    0.428383] PTP clock support registered
+[    0.429861] Advanced Linux Sound Architecture Driver Initialized.
+[    0.432283] Bluetooth: Core ver 2.20
+[    0.432462] NET: Registered protocol family 31
+[    0.432496] Bluetooth: HCI device and connection manager initialized
+[    0.432556] Bluetooth: HCI socket layer initialized
+[    0.432608] Bluetooth: L2CAP socket layer initialized
+[    0.432703] Bluetooth: SCO socket layer initialized
+[    0.434023] cfg80211: Calling CRDA to update world regulatory domain
+[    0.435601] Switched to clocksource timer_us
+[    0.475678] NET: Registered protocol family 2
+[    0.477987] TCP established hash table entries: 8192 (order: 3, 32768
+bytes)
+[    0.478157] TCP bind hash table entries: 8192 (order: 4, 65536
+bytes)
+[    0.478370] TCP: Hash tables configured (established 8192 bind 8192)
+[    0.479384] TCP: reno registered
+[    0.479434] UDP hash table entries: 512 (order: 2, 16384 bytes)
+[    0.479528] UDP-Lite hash table entries: 512 (order: 2, 16384 bytes)
+[    0.480184] NET: Registered protocol family 1
+[    0.481328] RPC: Registered named UNIX socket transport module.
+[    0.481374] RPC: Registered udp transport module.
+[    0.481402] RPC: Registered tcp transport module.
+[    0.481429] RPC: Registered tcp NFSv4.1 backchannel transport
+module.
+[    0.485392] hw perfevents: enabled with armv7_cortex_a9 PMU driver, 7
+counters available
+[    0.489804] futex hash table entries: 1024 (order: 4, 65536 bytes)
+[    0.494274] squashfs: version 4.0 (2009/01/31) Phillip Lougher
+[    0.499171] bounce: pool size: 64 pages
+[    0.499229] io scheduler noop registered (default)
+[    0.503226] tegra30-pinctrl 70000868.pinmux: invalid group
+"uart3_cts_n_pa1" for function "rsvd1"
+[    0.503766] tegra30-pinctrl 70000868.pinmux: invalid group "gpio_pu6"
+for function "pwm3"
+[    0.503848] tegra30-pinctrl 70000868.pinmux: does not have pin group
+gpio_pu6
+[    0.503889] tegra30-pinctrl 70000868.pinmux: could not map group
+config for "gpio_pu6"
+[    0.503947] tegra30-pinctrl 70000868.pinmux: invalid group "gpio_pu5"
+for function "pwm2"
+[    0.504022] tegra30-pinctrl 70000868.pinmux: does not have pin group
+gpio_pu5
+[    0.504059] tegra30-pinctrl 70000868.pinmux: could not map group
+config for "gpio_pu5"
+[    0.504115] tegra30-pinctrl 70000868.pinmux: invalid group "gpio_pu4"
+for function "pwm1"
+[    0.504186] tegra30-pinctrl 70000868.pinmux: does not have pin group
+gpio_pu4
+[    0.504223] tegra30-pinctrl 70000868.pinmux: could not map group
+config for "gpio_pu4"
+[    0.504278] tegra30-pinctrl 70000868.pinmux: invalid group "gpio_pu3"
+for function "pwm0"
+[    0.504349] tegra30-pinctrl 70000868.pinmux: does not have pin group
+gpio_pu3
+[    0.504386] tegra30-pinctrl 70000868.pinmux: could not map group
+config for "gpio_pu3"
+[    0.509853] tegra-pcie 3000.pcie-controller: 4x1, 1x2 configuration
+[    0.512235] tegra-pcie 3000.pcie-controller: probing port 0, using 4
+lanes
+[    0.917348] tegra-pcie 3000.pcie-controller: link 0 down, retrying
+[    1.323517] tegra-pcie 3000.pcie-controller: link 0 down, retrying
+[    1.729677] tegra-pcie 3000.pcie-controller: link 0 down, retrying
+[    1.731744] tegra-pcie 3000.pcie-controller: link 0 down, ignoring
+[    1.731807] tegra-pcie 3000.pcie-controller: probing port 1, using 1
+lanes
+[    2.137967] tegra-pcie 3000.pcie-controller: link 1 down, retrying
+[    2.544096] tegra-pcie 3000.pcie-controller: link 1 down, retrying
+[    2.950229] tegra-pcie 3000.pcie-controller: link 1 down, retrying
+[    2.952295] tegra-pcie 3000.pcie-controller: link 1 down, ignoring
+[    2.952349] tegra-pcie 3000.pcie-controller: probing port 2, using 1
+lanes
+[    2.977373] tegra-pcie 3000.pcie-controller: PCI host bridge to bus
+0000:00
+[    2.977427] pci_bus 0000:00: root bus resource [mem
+0x20000000-0x27ffffff]
+[    2.977467] pci_bus 0000:00: root bus resource [mem
+0x28000000-0x3fffffff pref]
+[    2.977516] pci_bus 0000:00: root bus resource [bus 00-ff]
+[    2.977551] pci_bus 0000:00: root bus resource [io  0x1000-0xffff]
+[    2.978730] PCI: bus0: Fast back to back transfers disabled
+[    2.978777] pci 0000:00:03.0: bridge configuration invalid ([bus
+00-00]), reconfiguring
+[    2.995747] PCI: bus1: Fast back to back transfers disabled
+[    2.995908] pci 0000:00:03.0: BAR 8: assigned [mem
+0x20000000-0x200fffff]
+[    2.995953] pci 0000:00:03.0: BAR 7: assigned [io  0x1000-0x1fff]
+[    2.995998] pci 0000:01:00.0: BAR 0: assigned [mem
+0x20000000-0x2001ffff]
+[    2.996041] pci 0000:01:00.0: BAR 3: assigned [mem
+0x20020000-0x20023fff]
+[    2.996081] pci 0000:01:00.0: BAR 2: assigned [io  0x1000-0x101f]
+[    2.996120] pci 0000:00:03.0: PCI bridge to [bus 01]
+[    2.996153] pci 0000:00:03.0:   bridge window [io  0x1000-0x1fff]
+[    2.996188] pci 0000:00:03.0:   bridge window [mem
+0x20000000-0x200fffff]
+[    2.996244] pci 0000:00:03.0: nv_msi_ht_cap_quirk didn't locate host
+bridge
+[    2.996450] pcieport 0000:00:03.0: enabling device (0140 -> 0143)
+[    2.997160] pcieport 0000:00:03.0: Signaling PME through PCIe PME
+interrupt
+[    2.997206] pci 0000:01:00.0: Signaling PME through PCIe PME
+interrupt
+[    2.998095] backlight supply power not found, using dummy regulator
+[    3.017130] tegra-apbdma 6000a000.dma: Tegra20 APB DMA driver
+register 32 channels
+[    3.018034] tegra-pmc 7000e400.pmc: i2c-thermtrip node not found,
+emergency thermal reset disabled.
+[    3.019296] Serial: 8250/16550 driver, 4 ports, IRQ sharing disabled
+[    3.025294] console [ttyS0] disabled
+[    3.025397] 70006000.serial: ttyS0 at MMIO 0x70006000 (irq = 331,
+base_baud = 25500000) is a Tegra
+[    5.077693] console [ttyS0] enabled
+[    5.089043] 70006040.serial: ttyTHS1 at MMIO 0x70006040 (irq = 332,
+base_baud = 0) is a TEGRA_UART
+[    5.105111] 70006200.serial: ttyTHS2 at MMIO 0x70006200 (irq = 333,
+base_baud = 0) is a TEGRA_UART
+[    5.121183] 70006300.serial: ttyTHS3 at MMIO 0x70006300 (irq = 334,
+base_baud = 0) is a TEGRA_UART
+[    5.139556] [drm] Initialized drm 1.1.0 20060810
+[    5.150772] tegra-dc 54200000.dc: failed to probe RGB output: -517
+[    5.162878] platform 54200000.dc: Driver tegra-dc requests probe
+deferral
+[    5.177016] 54280000.hdmi supply hdmi not found, using dummy
+regulator
+[    5.193122] panel supply power not found, using dummy regulator
+[    5.228089] loop: module loaded
+[    5.253390] CAN device driver interface
+[    5.263459] spi32765.1 supply vdd not found, using dummy regulator
+[    5.275675] spi32765.1 supply xceiver not found, using dummy
+regulator
+
+[    0.000000] Booting Linux on physical CPU 0x0
+[    0.000000] Initializing cgroup subsys cpu
+[    0.000000] Initializing cgroup subsys cpuacct
+[    0.000000] Linux version 4.0.0-rc7-00042-ge5e02de
+(zim-bi+AKbBUZKY6gyzm1THtWbp2dZbC/Bob@public.gmane.org) (gcc version 4.7.2 20120910 (prerelease)
+(crosstool-NG linaro-1.13.1-2012.09-20120921 - Linaro GCC 2012.09) ) #1
+SMP PREEMPT Fri Apr 10 12:48:12 CEST 2015
+[    0.000000] CPU: ARMv7 Processor [412fc099] revision 9 (ARMv7),
+cr=10c5387d
+[    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing
+instruction cache
+[    0.000000] Machine model: Toradex Colibri T30 on Colibri Evaluation
+Board
+[    0.000000] cma: Reserved 64 MiB at 0xbb400000
+[    0.000000] Memory policy: Data cache writealloc
+[    0.000000] PERCPU: Embedded 11 pages/cpu @f67cf000 s12672 r8192
+d24192 u45056
+[    0.000000] Built 1 zonelists in Zone order, mobility grouping on.
+Total pages: 257312
+[    0.000000] Kernel command line: core_edp_mv=1300 usb_high_speed=1
+ip=off root=/dev/mmcblk0p2 rw,noatime rootfstype=ext3 rootwait asix_mac=
+consoleblank=0 no_console_suspend=1 console=tty1 console=ttyS0,115200n8
+debug_uartport=lsport,0 vmalloc=128M mem=1012M@2048M fbmem=12M@3060M
+video=tegrafb0:640x480-16@60
+[    0.000000] PID hash table entries: 4096 (order: 2, 16384 bytes)
+[    0.000000] Dentry cache hash table entries: 131072 (order: 7, 524288
+bytes)
+[    0.000000] Inode-cache hash table entries: 65536 (order: 6, 262144
+bytes)
+[    0.000000] Memory: 951692K/1036288K available (6618K kernel code,
+317K rwdata, 2256K rodata, 300K init, 351K bss, 19060K reserved, 65536K
+cma-reserved, 69632K highmem)
+[    0.000000] Virtual kernel memory layout:
+[    0.000000]     vector  : 0xffff0000 - 0xffff1000   (   4 kB)
+[    0.000000]     fixmap  : 0xffc00000 - 0xfff00000   (3072 kB)
+[    0.000000]     vmalloc : 0xf7800000 - 0xff000000   ( 120 MB)
+[    0.000000]     lowmem  : 0xc0000000 - 0xf7000000   ( 880 MB)
+[    0.000000]     pkmap   : 0xbfe00000 - 0xc0000000   (   2 MB)
+[    0.000000]     modules : 0xbf000000 - 0xbfe00000   (  14 MB)
+[    0.000000]       .text : 0xc0008000 - 0xc08b2cf4   (8876 kB)
+[    0.000000]       .init : 0xc08b3000 - 0xc08fe000   ( 300 kB)
+[    0.000000]       .data : 0xc08fe000 - 0xc094d7a0   ( 318 kB)
+[    0.000000]        .bss : 0xc094d7a0 - 0xc09a53f0   ( 352 kB)
+[    0.000000] Preemptible hierarchical RCU implementation.
+[    0.000000] 	Additional per-CPU info printed with stalls.
+[    0.000000] NR_IRQS:16 nr_irqs:16 16
+[    0.000000] L2C: platform modifies aux control register: 0x02080000
+-> 0x3e480001
+[    0.000000] L2C: DT/platform modifies aux control register:
+0x02080000 -> 0x3e480001
+[    0.000000] L2C-310 erratum 769419 enabled
+[    0.000000] L2C-310 enabling early BRESP for Cortex-A9
+[    0.000000] L2C-310: enabling full line of zeros but not enabled in
+Cortex-A9
+[    0.000000] L2C-310 ID prefetch enabled, offset 1 lines
+[    0.000000] L2C-310 dynamic clock gating enabled, standby mode
+enabled
+[    0.000000] L2C-310 cache controller enabled, 8 ways, 1024 kB
+[    0.000000] L2C-310: CACHE_ID 0x410000c7, AUX_CTRL 0x7e480001
+[    0.000019] sched_clock: 32 bits at 1000kHz, resolution 1000ns, wraps
+every 2147483648000ns
+[    0.000052] Switching to timer-based delay loop, resolution 1000ns
+[    0.001128] Console: colour dummy device 80x30
+[    0.002053] console [tty1] enabled
+[    0.002099] Calibrating delay loop (skipped), value calculated using
+timer frequency.. 2.00 BogoMIPS (lpj=10000)
+[    0.002158] pid_max: default: 32768 minimum: 301
+[    0.002809] Mount-cache hash table entries: 2048 (order: 1, 8192
+bytes)
+[    0.002858] Mountpoint-cache hash table entries: 2048 (order: 1, 8192
+bytes)
+[    0.005256] Initializing cgroup subsys freezer
+[    0.005326] Initializing cgroup subsys debug
+[    0.005435] CPU: Testing write buffer coherency: ok
+[    0.005970] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
+[    0.006122] Setting up static identity map for 0x806451a0 -
+0x80645238
+[    0.040409] Tegra Unknown SKU 177
+[    0.040478] Tegra Revision: A03 SKU: 177 CPU Process: 2 Core Process:
+0
+[    0.062139] CPU1: thread -1, cpu 1, socket 0, mpidr 80000001
+[    0.082099] CPU2: thread -1, cpu 2, socket 0, mpidr 80000002
+[    0.102092] CPU3: thread -1, cpu 3, socket 0, mpidr 80000003
+[    0.102203] Brought up 4 CPUs
+[    0.102320] SMP: Total of 4 processors activated (8.00 BogoMIPS).
+[    0.102350] CPU: All CPU(s) started in SVC mode.
+[    0.103779] devtmpfs: initialized
+[    0.106609] VFP support v0.3: implementor 41 architecture 3 part 30
+variant 9 rev 4
+[    0.112539] pinctrl core: initialized pinctrl subsystem
+[    0.141415] NET: Registered protocol family 16
+[    0.145125] DMA: preallocated 256 KiB pool for atomic coherent
+allocations
+[    0.169982] cpuidle: using governor ladder
+[    0.199978] cpuidle: using governor menu
+[    0.230486] No ATAGs?
+[    0.230548] hw-breakpoint: found 5 (+1 reserved) breakpoint and 1
+watchpoint registers.
+[    0.230618] hw-breakpoint: maximum watchpoint size is 4 bytes.
+[    0.295931] 5v0: Failed to create debugfs directory
+[    0.296671] usbc_vbus: supplied by 5v0
+[    0.297558] usbh_vbus: Failed to request enable GPIO178: -517
+[    0.297826] reg-fixed-voltage regulators:regulator@3: Failed to
+register regulator: -517
+[    0.297899] platform regulators:regulator@3: Driver reg-fixed-voltage
+requests probe deferral
+[    0.301113] vgaarb: loaded
+[    0.303550] SCSI subsystem initialized
+[    0.305376] usbcore: registered new interface driver usbfs
+[    0.305685] usbcore: registered new interface driver hub
+[    0.305984] usbcore: registered new device driver usb
+[    0.317997] vrtc: supplied by 5v0
+[    0.329991] vdd_1v8_gen: supplied by 3v3
+[    0.339986] vddio_ddr_1v35: supplied by 3v3
+[    0.344173] vdd2: supplied by 3v3
+[    0.353041] ldo1: supplied by vdd_1v8_gen
+[    0.359978] en_3v3: supplied by vdd_1v8_gen
+[    0.363206] ldo3: supplied by 3v3
+[    0.369986] vdd_rtc: supplied by 3v3
+[    0.379983] avdd_vdac: supplied by 3v3
+[    0.383557] avdd_plle: supplied by vdd_1v8_gen
+[    0.389981] avdd_pll: supplied by vdd_1v8_gen
+[    0.399981] vdd_ddr_hs: supplied by vdd_1v8_gen
+[    0.404369] Linux video capture interface: v2.00
+[    0.404637] pps_core: LinuxPPS API ver. 1 registered
+[    0.404670] pps_core: Software ver. 5.3.6 - Copyright 2005-2007
+Rodolfo Giometti <giometti-k2GhghHVRtY@public.gmane.org>
+[    0.404826] PTP clock support registered
+[    0.406282] Advanced Linux Sound Architecture Driver Initialized.
+[    0.408672] Bluetooth: Core ver 2.20
+[    0.408854] NET: Registered protocol family 31
+[    0.408889] Bluetooth: HCI device and connection manager initialized
+[    0.408947] Bluetooth: HCI socket layer initialized
+[    0.408999] Bluetooth: L2CAP socket layer initialized
+[    0.409106] Bluetooth: SCO socket layer initialized
+[    0.410494] cfg80211: Calling CRDA to update world regulatory domain
+[    0.412059] Switched to clocksource timer_us
+[    0.452268] NET: Registered protocol family 2
+[    0.454608] TCP established hash table entries: 8192 (order: 3, 32768
+bytes)
+[    0.454778] TCP bind hash table entries: 8192 (order: 4, 65536
+bytes)
+[    0.454990] TCP: Hash tables configured (established 8192 bind 8192)
+[    0.456007] TCP: reno registered
+[    0.456059] UDP hash table entries: 512 (order: 2, 16384 bytes)
+[    0.456151] UDP-Lite hash table entries: 512 (order: 2, 16384 bytes)
+[    0.456825] NET: Registered protocol family 1
+[    0.457994] RPC: Registered named UNIX socket transport module.
+[    0.458041] RPC: Registered udp transport module.
+[    0.458069] RPC: Registered tcp transport module.
+[    0.458096] RPC: Registered tcp NFSv4.1 backchannel transport
+module.
+[    0.462006] hw perfevents: enabled with armv7_cortex_a9 PMU driver, 7
+counters available
+[    0.466412] futex hash table entries: 1024 (order: 4, 65536 bytes)
+[    0.471075] squashfs: version 4.0 (2009/01/31) Phillip Lougher
+[    0.476067] bounce: pool size: 64 pages
+[    0.476128] io scheduler noop registered (default)
+[    0.484468] backlight supply power not found, using dummy regulator
+[    0.503717] tegra-apbdma 6000a000.dma: Tegra20 APB DMA driver
+register 32 channels
+[    0.504544] tegra-pmc 7000e400.pmc: i2c-thermtrip node not found,
+emergency thermal reset disabled.
+[    0.505747] Serial: 8250/16550 driver, 4 ports, IRQ sharing disabled
+[    0.511615] console [ttyS0] disabled
+[    0.511727] 70006000.serial: ttyS0 at MMIO 0x70006000 (irq = 329,
+base_baud = 25500000) is a Tegra
+[    1.946567] console [ttyS0] enabled
+[    1.957859] 70006040.serial: ttyTHS1 at MMIO 0x70006040 (irq = 330,
+base_baud = 0) is a TEGRA_UART
+[    1.973928] 70006300.serial: ttyTHS2 at MMIO 0x70006300 (irq = 331,
+base_baud = 0) is a TEGRA_UART
+[    1.992198] [drm] Initialized drm 1.1.0 20060810
+[    2.003457] tegra-dc 54200000.dc: failed to probe RGB output: -517
+[    2.015567] platform 54200000.dc: Driver tegra-dc requests probe
+deferral
+[    2.029617] 54280000.hdmi supply hdmi not found, using dummy
+regulator
+[    2.045522] panel supply power not found, using dummy regulator
+[    2.080700] loop: module loaded
+[    2.099959] CAN device driver interface
+[    2.110044] spi32766.0 supply vdd not found, using dummy regulator
+[    2.122238] spi32766.0 supply xceiver not found, using dummy
+regulator
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
