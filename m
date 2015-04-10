@@ -1,41 +1,34 @@
-From: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
-Subject: [PATCH 0/9] ARM: tegra: collection of enhancements/fixes
-Date: Fri, 10 Apr 2015 23:35:55 +0200
-Message-ID: <cover.1428700856.git.marcel.ziswiler@toradex.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Matt Porter <mporter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob
+From: Marcel Ziswiler <marcel@ziswiler.com>
+Subject: [PATCH 2/9] ARM: tegra: fix hda2codec_2x clock name for Tegra30
+Date: Fri, 10 Apr 2015 23:35:57 +0200
+Message-ID: <4c052b5a83e74b1571409a0a2cee1cc2832095c2.1428700856.git.marcel.ziswiler@toradex.com>
+References: <cover.1428700856.git.marcel.ziswiler@toradex.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <cover.1428700856.git.marcel.ziswiler@toradex.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-tegra@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Mikko Perttunen <mperttunen@nvidia.com>, Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Matt Porter <mporter@linaro.org>, Paul Walmsley <paul@pwsan.com>, Eduardo Valentin <edubezval@gmail.com>, Takashi Iwai <tiwai@suse.de>, Dylan Reid <dgreid@chromium.org>, Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Russell King <linux@arm.linux.org.uk>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob
 List-Id: linux-tegra@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-This series is a set of patches accumulated over Easter ultimately
-bringing HDA audio to Tegra30 devices.
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+---
+ drivers/clk/tegra/clk-tegra30.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Marcel Ziswiler (9):
-  ARM: tegra: Cardhu device-tree comment spelling fix
-  ARM: tegra: fix hda2codec_2x clock name for Tegra30
-  Documentation: DT bindings: fix hda2codec_2x clock name for
-    tegra30-hda
-  ARM: tegra: add Tegra30 HDA support
-  ARM: tegra: fix hda2codec_2x clock name in Tegra124 device tree
-  ARM: tegra: enable watchdog in defconfig
-  ARM: tegra: enable HDA in defconfig
-  ARM: tegra: colibri t30: activate stmpe811 touch controller
-  ARM: tegra: apalis t30: fix pin muxing and add HDA in device tree
-
- .../bindings/sound/nvidia,tegra30-hda.txt          |  8 ++--
- arch/arm/boot/dts/tegra124.dtsi                    |  4 +-
- arch/arm/boot/dts/tegra30-apalis-eval.dts          |  5 +++
- arch/arm/boot/dts/tegra30-apalis.dtsi              | 46 ++++++++++++++++------
- arch/arm/boot/dts/tegra30-cardhu.dtsi              |  2 +-
- arch/arm/boot/dts/tegra30-colibri-eval-v3.dts      |  4 +-
- arch/arm/boot/dts/tegra30-colibri.dtsi             | 44 ++++++++++++++++++++-
- arch/arm/boot/dts/tegra30.dtsi                     | 15 +++++++
- arch/arm/configs/tegra_defconfig                   | 10 +++++
- drivers/clk/tegra/clk-tegra30.c                    |  2 +-
- 10 files changed, 117 insertions(+), 23 deletions(-)
-
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 4b9d8bd..3d14ea5 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -679,7 +679,7 @@ static struct tegra_devclk devclks[] __initdata = {
+ 	{ .dev_id = "tegra30-dam.1", .dt_id = TEGRA30_CLK_DAM1 },
+ 	{ .dev_id = "tegra30-dam.2", .dt_id = TEGRA30_CLK_DAM2 },
+ 	{ .con_id = "hda", .dev_id = "tegra30-hda", .dt_id = TEGRA30_CLK_HDA },
+-	{ .con_id = "hda2codec", .dev_id = "tegra30-hda", .dt_id = TEGRA30_CLK_HDA2CODEC_2X },
++	{ .con_id = "hda2codec_2x", .dev_id = "tegra30-hda", .dt_id = TEGRA30_CLK_HDA2CODEC_2X },
+ 	{ .dev_id = "spi_tegra.0", .dt_id = TEGRA30_CLK_SBC1 },
+ 	{ .dev_id = "spi_tegra.1", .dt_id = TEGRA30_CLK_SBC2 },
+ 	{ .dev_id = "spi_tegra.2", .dt_id = TEGRA30_CLK_SBC3 },
 -- 
 1.9.3
