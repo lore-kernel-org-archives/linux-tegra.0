@@ -1,49 +1,27 @@
-From: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
-Subject: [PATCH 4/9] ARM: tegra: add Tegra30 HDA support
-Date: Fri, 10 Apr 2015 23:35:59 +0200
-Message-ID: <0fd7107ec51f0a359d4c395c243bcd12f8731cd5.1428700856.git.marcel.ziswiler@toradex.com>
-References: <cover.1428700856.git.marcel.ziswiler@toradex.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <cover.1428700856.git.marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Matt Porter <mporter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob
+From: Paul Walmsley <paul@pwsan.com>
+Subject: Re: [PATCH 1/9] ARM: tegra: Cardhu device-tree comment spelling
+ fix
+Date: Fri, 10 Apr 2015 22:18:25 +0000 (UTC)
+Message-ID: <alpine.DEB.2.02.1504102217130.19540@utopia.booyaka.com>
+References: <cover.1428700856.git.marcel.ziswiler@toradex.com> <cb3321c697591c3b2ae2ad799282448cff4bef21.1428700856.git.marcel.ziswiler@toradex.com>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <cb3321c697591c3b2ae2ad799282448cff4bef21.1428700856.git.marcel.ziswiler@toradex.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marcel Ziswiler <marcel@ziswiler.com>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Mikko Perttunen <mperttunen@nvidia.com>, Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Matt Porter <mporter@linaro.org>, Eduardo Valentin <edubezval@gmail.com>, Takashi Iwai <tiwai@suse.de>, Dylan Reid <dgreid@chromium.org>, Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Russell King <linux@arm.linux.org.uk>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>Rob Herring <ro>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+On Fri, 10 Apr 2015, Marcel Ziswiler wrote:
 
-Add a device node for the HDA controller found on Tegra30.
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> 
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
----
- arch/arm/boot/dts/tegra30.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+This patch is missing a commit message; please add one.
 
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index db4810d..12a87aa 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -640,6 +640,21 @@
- 		reset-names = "fuse";
- 	};
- 
-+	hda@70030000 {
-+		compatible = "nvidia,tegra30-hda";
-+		reg = <0x70030000 0x10000>;
-+		interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA30_CLK_HDA>,
-+		         <&tegra_car TEGRA30_CLK_HDA2HDMI>,
-+			 <&tegra_car TEGRA30_CLK_HDA2CODEC_2X>;
-+		clock-names = "hda", "hda2hdmi", "hda2codec_2x";
-+		resets = <&tegra_car 125>, /* hda */
-+			 <&tegra_car 128>, /* hda2hdmi */
-+			 <&tegra_car 111>; /* hda2codec_2x */
-+		reset-names = "hda", "hda2hdmi", "hda2codec_2x";
-+		status = "disabled";
-+	};
-+
- 	ahub@70080000 {
- 		compatible = "nvidia,tegra30-ahub";
- 		reg = <0x70080000 0x200
--- 
-1.9.3
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/SubmittingPatches#n109
+
+
+- Paul
