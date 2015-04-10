@@ -1,76 +1,111 @@
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: Re: [REGRESSION] commit 0461a41 "spi: Pump transfers inside
- calling context for spi_sync()" breaks Apalis/Colibri T30 with MCP2515
- SPI CAN controller
-Date: Fri, 10 Apr 2015 17:15:11 +0200
-Message-ID: <5527E8FF.7050104@pengutronix.de>
-References: <1428670853.7008.87.camel@localhost.localdomain> <20150410132330.GH6023@sirena.org.uk>
+From: Michael Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v8 10/18] clk: tegra: Initialize PLL_X before CCLK_G to ensure it
+ has a parent
+Date: Fri, 10 Apr 2015 14:08:32 -0700
+Message-ID: <20150410210832.14369.65901@quantum>
+References: <1425213881-5262-1-git-send-email-mikko.perttunen@kapsi.fi>
+ <1425213881-5262-11-git-send-email-mikko.perttunen@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
- protocol="application/pgp-signature";
- boundary="wfG8euhQrESrjeIrSeTWvVv3P9BILVKXO"
-Return-path: <linux-can-owner@vger.kernel.org>
-In-Reply-To: <20150410132330.GH6023@sirena.org.uk>
-Sender: linux-can-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Marcel Ziswiler <marcel@ziswiler.com>
-Cc: linux-can@vger.kernel.org, linux-spi@vger.kernel.org, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Oliver Hartkopp <socketcan@hartkopp.net>, Wolfgang Grandegger <wg@grandegger.com>, Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Stefan Agner <stefan@agner.ch>, Himangi Saraogi <himangi774@gmail.com>, Julia Lawall <julia.lawall@lip6.fr>, Stefano Babic <sbabic@denx.de>, Christian Pellegrin <chripell@fsfe.org>, "DavidS.Miller" <davem@davemloft.net>, Marc Zyngier <maz@misterjones.org>, Sascha Hauer <s.hauer@pengutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1425213881-5262-11-git-send-email-mikko.perttunen@kapsi.fi>
+Sender: linux-pm-owner@vger.kernel.org
+To: swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, pdeschrijver@nvidia.com, rjw@rjwysocki.net, viresh.kumar@linaro.org
+Cc: pwalmsley@nvidia.com, vinceh@nvidia.com, pgaikwad@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tuomas.tynkkynen@iki.fi, Mikko Perttunen <mikko.perttunen@kapsi.fi>
 List-Id: linux-tegra@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---wfG8euhQrESrjeIrSeTWvVv3P9BILVKXO
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Quoting Mikko Perttunen (2015-03-01 04:44:33)
+> This patch moves the initialization of PLL_X to be slightly before
+> that of CCLK_G. This ensures that at boot, CCLK_G will immediately
+> have a parent and the common clock framework can determine its
+> clock rate correctly.
+> 
+> Without this patch, calling clk_put on CCLK_G could cause the CCF
+> to set its rate to zero, hanging the system.
 
-On 04/10/2015 03:23 PM, Mark Brown wrote:
-> On Fri, Apr 10, 2015 at 03:00:53PM +0200, Marcel Ziswiler wrote:
->> Hi there
->=20
-> Please try to use somewhat more targetted CC lists...
->=20
->> I also have not yet looked further into what exactly is happening and
->> whether or not the SPI stack, the Tegra SPI controller driver or the
->> MCP2515 SPI CAN driver is to blame but rather decided to ask Mr. Brown=
+Hi Mikko,
 
->> and the community first for any insights they might have to share.
->> Anybody?
->=20
-> I'd ask for trace logs but obviously we can't turn them on until boot
-> has finished...  Adding some trace in the relevant bits of code to try
-> to see where it's deadlocking is the obvious first step.
+Patch looks fine to me but I wanted to get more info on the behavior you
+mentioned above about clk_put. Is there some special circumstance that
+causes this for you? Why does calling clk_put adjust the rate of your
+clock?
 
-FWIW: the mcp2515 driver is accessing the SPI bus during probe(). Seems
-you have to instrument the SPI stack and/or host driver.
+Thanks,
+Mike
 
-Marc
-
---=20
-Pengutronix e.K.                  | Marc Kleine-Budde           |
-Industrial Linux Solutions        | Phone: +49-231-2826-924     |
-Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
-Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
-
-
---wfG8euhQrESrjeIrSeTWvVv3P9BILVKXO
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCgAGBQJVJ+kCAAoJECte4hHFiupUv7IP/j2LqRbj+5HeXLthNT5xQxhn
-IeSCIbXU2ohGHPRrEkXbuO0BbQYOsC9PoX3D0TB77iQzeKtBPJ+wDuPGhj/jIc1P
-ZLbry+sDe0RaYhNdfKGcLYMNMqbBf08+NcFQxf9tmTAFkDA+7n9H+CBvg4QWj1p5
-nvUjyHf/kz4zFHUx6qJnKzEL7ysqxYtOuYMUOCWj5G3EiIsVkmr3l32nj0vdREh1
-WgF6xqu9xu6h/6FSKsNlOFKZM3MS4fOX+AgPsMdvj7aqZyxMABV74XOQg0KInwlQ
-/bdEdiMozLJK9Snnhar2dYwxqopZgONKAsOMJ4WqawjRzdKuLnv6SYxTsIpI/Vmz
-tUZ5UW9W5Jouuy1LrXSxqcdjb8Spl6jDKbNvkUx2hOB+B3dYqIi8/Wab0CJpVadK
-w6WC+qNuh3aef/nHw9mw3AY3gqx1YyNEtG2FL7hcn04YcR+1yrCfdYw63U7mBJ5X
-Iyxsj0jZZPiWymk0S12QnTjeVI5ooEAx4tG1wPr8805ROeeU1VfujRON0IwkyrsU
-9uImSuRRkH7D6jJO124iuOR5Q2Sb8/LcXYWi9YLSgbNQESmlPuwtKsrbYAWVp3aw
-hZLkWb3B/ymrAQ1BMV38yG8WVNjQkiKDAg7BHcAx/TTpK0ECEA/sUSZl3t3B0tqK
-ny6epGxrOWZrLHKnt3TO
-=xDk+
------END PGP SIGNATURE-----
-
---wfG8euhQrESrjeIrSeTWvVv3P9BILVKXO--
+> 
+> Signed-off-by: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+> ---
+> v8:
+> - Added
+> 
+>  drivers/clk/tegra/clk-tegra-super-gen4.c | 46 ++++++++++++++++++--------------
+>  1 file changed, 26 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra-super-gen4.c b/drivers/clk/tegra/clk-tegra-super-gen4.c
+> index f1f4410..c5ea9ee 100644
+> --- a/drivers/clk/tegra/clk-tegra-super-gen4.c
+> +++ b/drivers/clk/tegra/clk-tegra-super-gen4.c
+> @@ -104,6 +104,32 @@ void __init tegra_super_clk_gen4_init(void __iomem *clk_base,
+>         struct clk *clk;
+>         struct clk **dt_clk;
+>  
+> +       /*
+> +        * Register PLL_X first so that CCLK_G has a parent at registration
+> +        * time. This ensures that the common clock framework knows CCLK_G's
+> +        * rate.
+> +        */
+> +
+> +#if defined(CONFIG_ARCH_TEGRA_114_SOC) || defined(CONFIG_ARCH_TEGRA_124_SOC)
+> +       /* PLLX */
+> +       dt_clk = tegra_lookup_dt_id(tegra_clk_pll_x, tegra_clks);
+> +       if (!dt_clk)
+> +               return;
+> +
+> +       clk = tegra_clk_register_pllxc("pll_x", "pll_ref", clk_base,
+> +                       pmc_base, CLK_IGNORE_UNUSED, params, NULL);
+> +       *dt_clk = clk;
+> +
+> +       /* PLLX_OUT0 */
+> +
+> +       dt_clk = tegra_lookup_dt_id(tegra_clk_pll_x_out0, tegra_clks);
+> +       if (!dt_clk)
+> +               return;
+> +       clk = clk_register_fixed_factor(NULL, "pll_x_out0", "pll_x",
+> +                                       CLK_SET_RATE_PARENT, 1, 2);
+> +       *dt_clk = clk;
+> +#endif
+> +
+>         /* CCLKG */
+>         dt_clk = tegra_lookup_dt_id(tegra_clk_cclk_g, tegra_clks);
+>         if (dt_clk) {
+> @@ -127,25 +153,5 @@ void __init tegra_super_clk_gen4_init(void __iomem *clk_base,
+>         }
+>  
+>         tegra_sclk_init(clk_base, tegra_clks);
+> -
+> -#if defined(CONFIG_ARCH_TEGRA_114_SOC) || defined(CONFIG_ARCH_TEGRA_124_SOC)
+> -       /* PLLX */
+> -       dt_clk = tegra_lookup_dt_id(tegra_clk_pll_x, tegra_clks);
+> -       if (!dt_clk)
+> -               return;
+> -
+> -       clk = tegra_clk_register_pllxc("pll_x", "pll_ref", clk_base,
+> -                       pmc_base, CLK_IGNORE_UNUSED, params, NULL);
+> -       *dt_clk = clk;
+> -
+> -       /* PLLX_OUT0 */
+> -
+> -       dt_clk = tegra_lookup_dt_id(tegra_clk_pll_x_out0, tegra_clks);
+> -       if (!dt_clk)
+> -               return;
+> -       clk = clk_register_fixed_factor(NULL, "pll_x_out0", "pll_x",
+> -                                       CLK_SET_RATE_PARENT, 1, 2);
+> -       *dt_clk = clk;
+> -#endif
+>  }
+>  
+> -- 
+> 2.3.0
+> 
