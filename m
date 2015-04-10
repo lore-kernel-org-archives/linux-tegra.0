@@ -1,188 +1,149 @@
-From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-Subject: Re: [PATCH v2 2/5] mtd: nand: add NVIDIA Tegra NAND Flash
- controller driver
-Date: Fri, 10 Apr 2015 10:46:42 +0200
-Message-ID: <99af1297029d7f1624db2f5fd9d228d1@agner.ch>
-References: <1428522370-18035-1-git-send-email-dev@lynxeye.de>
- <1428522370-18035-3-git-send-email-dev@lynxeye.de>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH] ARM: tegra: cpuidle: implement
+ cpuidle_state.enter_freeze()
+Date: Fri, 10 Apr 2015 11:08:44 +0100
+Message-ID: <20150410100844.GC23730@red-moon>
+References: <1428490480-10144-1-git-send-email-tomeu.vizoso@collabora.com>
+ <20150408115546.GA24271@red-moon>
+ <552643E1.3060200@collabora.com>
+ <285738930.THBQOWvsah@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1428522370-18035-3-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Cc: Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Boris BREZILLON <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Ezequiel Garcia <ezequiel-30ULvvUtt6G51wMPkGsGjgyUoB5FGQPZ@public.gmane.org>, Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <285738930.THBQOWvsah@vostro.rjw.lan>
+Sender: linux-pm-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Lucas,
-
-Thanks for working on that. Some minor comments below...
-
-On 2015-04-08 21:46, Lucas Stach wrote:
-> Add support for the NAND flash controller found on NVIDIA
-> Tegra 2/3 SoCs.
+On Thu, Apr 09, 2015 at 10:19:59PM +0100, Rafael J. Wysocki wrote:
+> On Thursday, April 09, 2015 11:18:25 AM Tomeu Vizoso wrote:
+> > On 04/08/2015 01:55 PM, Lorenzo Pieralisi wrote:
+> > > On Wed, Apr 08, 2015 at 11:54:38AM +0100, Tomeu Vizoso wrote:
+> > >> This callback is expected to do the same as enter() only that all
+> > >> non-wakeup IRQs are expected to be disabled.
+> > > 
+> > > This is not true or at least it is misworded. The enter_freeze() function
+> > > is expected to return from the state with IRQs disabled at CPU level, or
+> > > put it differently it must not re-enable IRQs while executing since the
+> > > tick is frozen.
+> > 
+> > True, only that it mentions interrupts in general, not just IRQs (I
+> > don't know if the terminology used in the base code matches the one in
+> > ARM's documentation).
+> > 
+> > /*
+> >  * CPUs execute ->enter_freeze with the local tick or entire timekeeping
+> >  * suspended, so it must not re-enable interrupts at any point (even
+> >  * temporarily) or attempt to change states of clock event devices.
+> >  */
 > 
-> Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-> Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-> ---
-> v2:
-> - remove Tegra 3 compatible
-> - remove useless part_probes
-> - don't store irq number
-> - use gpiod API instead of deprecated of_gpios
-> - don't store reset
-> - correct TIMING_TCS mask
-> - simplify irq handler
-> - correct timing calculations
-> - don't store buswidth
-> - drop compile test
-> - correct ECC handling
-> ---
->  MAINTAINERS                   |   6 +
->  drivers/mtd/nand/Kconfig      |   6 +
->  drivers/mtd/nand/Makefile     |   1 +
->  drivers/mtd/nand/tegra_nand.c | 786 ++++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 799 insertions(+)
->  create mode 100644 drivers/mtd/nand/tegra_nand.c
+> This means interrupts on the local CPU (ie. the thing done by local_irq_disable()).
 > 
-[...]
-> +static struct nand_ecclayout tegra_nand_oob_16 = {
-> +	.eccbytes = 4,
-> +	.eccpos = { 3, 4, 5, 6 },
-> +	.oobfree = {
-> +		{ .offset = 7, . length = 8 }
-> +	}
-> +};
-> +
-> +static struct nand_ecclayout tegra_nand_oob_64 = {
-> +	.eccbytes = 36,
-> +	.eccpos = {
-> +		 3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-> +		19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34,
-> +		35, 36, 37, 38, 39
-> +	},
+> > >> It will be called when the system goes to suspend-to-idle and will
+> > >> reduce power usage because CPUs won't be awaken for unnecessary IRQs.
+> > >>
+> > >> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> > >> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > >> ---
+> > >>  arch/arm/mach-tegra/cpuidle-tegra114.c | 31 ++++++++++++++++++++++++-------
+> > >>  1 file changed, 24 insertions(+), 7 deletions(-)
+> > >>
+> > >> diff --git a/arch/arm/mach-tegra/cpuidle-tegra114.c b/arch/arm/mach-tegra/cpuidle-tegra114.c
+> > >> index f2b586d..ef06001 100644
+> > >> --- a/arch/arm/mach-tegra/cpuidle-tegra114.c
+> > >> +++ b/arch/arm/mach-tegra/cpuidle-tegra114.c
+> > >> @@ -39,28 +39,44 @@ static int tegra114_idle_power_down(struct cpuidle_device *dev,
+> > >>  				    struct cpuidle_driver *drv,
+> > >>  				    int index)
+> > >>  {
+> > >> -	local_fiq_disable();
+> > >> -
+> > >>  	tegra_set_cpu_in_lp2();
+> > >>  	cpu_pm_enter();
+> > >>  
+> > >> -	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_ENTER, &dev->cpu);
+> > >> -
+> > >>  	call_firmware_op(prepare_idle);
+> > >>  
+> > >>  	/* Do suspend by ourselves if the firmware does not implement it */
+> > >>  	if (call_firmware_op(do_idle, 0) == -ENOSYS)
+> > >>  		cpu_suspend(0, tegra30_sleep_cpu_secondary_finish);
+> > >>  
+> > >> -	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_EXIT, &dev->cpu);
+> > >> -
+> > >>  	cpu_pm_exit();
+> > >>  	tegra_clear_cpu_in_lp2();
+> > >>  
+> > >> +	return index;
+> > >> +}
+> > >> +
+> > >> +static int tegra114_idle_enter(struct cpuidle_device *dev,
+> > >> +			       struct cpuidle_driver *drv,
+> > >> +			       int index)
+> > >> +{
+> > >> +	local_fiq_disable();
+> > >> +
+> > >> +	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_ENTER, &dev->cpu);
+> > >> +
+> > >> +	index = tegra114_idle_power_down(dev, drv, index);
+> > >> +
+> > >> +	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_EXIT, &dev->cpu);
+> > >> +
+> > >>  	local_fiq_enable();
+> > >>  
+> > >>  	return index;
+> > >>  }
+> > >> +
+> > >> +static void tegra114_idle_enter_freeze(struct cpuidle_device *dev,
+> > >> +				       struct cpuidle_driver *drv,
+> > >> +				       int index)
+> > >> +{
+> > >> +	tegra114_idle_power_down(dev, drv, index);
+> > > 
+> > > Cool. So if the problem is FIQs, you don't disabled them on entry
+> > > which means you enter the "frozen" state with FIQs enabled and tick frozen,
+> > > unless I am missing something.
+> > 
+> > I have gone a bit deeper in the code and that's correct, AFAICS.
+> > 
+> > > The question here is: are we allowed to enable FIQs before returning
+> > > from an enter_freeze() call (and to enter it with FIQs enabled) ?
+> > > 
+> > > If we are not your code here certainly does not solve the issue, since
+> > > it does _not_ disable FIQs upon enter_freeze call anyway.
+> > 
+> > I think doing that would go against the wording of the comment I quoted
+> > above, so I see two ways of fixing this:
+> > 
+> > * Change the wording to refer to normal IRQs and leave the task of
+> > enabling and disabling FIQs to the enter_freeze implementation (ugly and
+> > I don't see any good reason for this)
+> > 
+> > * Have FIQs already disabled when enter_freeze gets called, probably by
+> > having arch_cpu_idle_enter do it on ARM (and the inverse in
+> > arch_cpu_idle_exit)?
+> > 
+> > Rafael, what's your opinion on this?
+> 
+> I don't know what FIQs are. :-)
 
-The amount of eccbytes vs. length of eccpos do not match...
+In short, fast IRQs, it is a separate IRQ line handled as a separate
+exception source with some private (banked) registers that minimize registers
+saving/restoring. They are not identical to NMI on x86, since
+their behaviour (handling) may be overriden by platforms and they
+can be masked.
 
-> +	.oobfree = {
-> +		{ .offset = 40, .length = 24 }
-> +	}
-> +};
-> +
-> +static struct nand_ecclayout tegra_nand_oob_128 = {
-> +	.eccbytes = 72,
-> +	.eccpos = {
-> +		 3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-> +		19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34,
-> +		35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-> +		51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66,
-> +		67, 68, 69, 70, 71, 72, 73, 74, 75
-> +	},
+> ->enter_freeze is entered with interrupts disabled on the local CPU.  It is
+> not supposed to re-enable them.  That is, while in the ->enter_freeze callback
+> routine, the CPU must not be interrupted aby anything other than NMI.
 
-Here...
+It boils down to what FIQs handlers are allowed to do with tick frozen
+and what they are (may be) currently used for.
 
-> +	.oobfree = {
-> +		{ .offset = 76, .length = 52 }
-> +	}
-> +};
-> +
-> +static struct nand_ecclayout tegra_nand_oob_224 = {
-> +	.eccbytes = 144,
-> +	.eccpos = {
-> +		  3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,  14,
-> +		 15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  26,
-> +		 27,  28,  29,  30,  31,  32,  33,  34,  35,  36,  37,  38,
-> +		 39,  40,  41,  42,  43,  44,  45,  46,  47,  48,  49,  50,
-> +		 51,  52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  62,
-> +		 63,  64,  65,  66,  67,  68,  69,  70,  71,  72,  73,  74,
-> +		 75,  76,  77,  78,  79,  80,  81,  82,  83,  84,  85,  86,
-> +		 87,  88,  89,  90,  91,  92,  93,  94,  95,  96,  97,  98,
-> +		 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110,
-> +		111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122,
-> +		123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134,
-> +		135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
-> +		147
-> +	},
+Russell has more insights on this than I do, in particular what FIQs are
+currently used for on ARM and if we can leave them enabled safely with tick
+frozen.
 
-... and here too.
-
-[...]
-> +static int tegra_nand_probe(struct platform_device *pdev)
-> +{
-> +	struct reset_control *rst;
-> +	struct tegra_nand *nand;
-> +	struct nand_chip *chip;
-> +	struct mtd_info *mtd;
-> +	struct resource *res;
-> +	unsigned long value;
-> +	int irq, buswidth, err = 0;
-> +
-> +	nand = devm_kzalloc(&pdev->dev, sizeof(*nand), GFP_KERNEL);
-> +	if (!nand)
-> +		return -ENOMEM;
-> +
-> +	nand->dev = &pdev->dev;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	nand->regs = devm_ioremap_resource(&pdev->dev, res);
-> +	if (IS_ERR(nand->regs))
-> +		return PTR_ERR(nand->regs);
-> +
-> +	irq = platform_get_irq(pdev, 0);
-> +	err = devm_request_irq(&pdev->dev, irq, tegra_nand_irq, 0,
-> +			       dev_name(&pdev->dev), nand);
-> +	if (err)
-> +		return err;
-> +
-> +	rst = devm_reset_control_get(&pdev->dev, "nand");
-> +	if (IS_ERR(rst))
-> +		return PTR_ERR(rst);
-> +
-> +	nand->clk = devm_clk_get(&pdev->dev, "nand");
-> +	if (IS_ERR(nand->clk))
-> +		return PTR_ERR(nand->clk);
-> +
-> +	nand->wp_gpio = gpiod_get_optional(&pdev->dev, "nvidia,wp-gpios",
-> +					   GPIOD_OUT_HIGH);
-> +	if (IS_ERR(nand->wp_gpio))
-> +		return PTR_ERR(nand->wp_gpio);
-> +
-> +	buswidth = of_get_nand_bus_width(pdev->dev.of_node);
-> +	if (buswidth < 0)
-> +		return buswidth;
-> +
-> +	err = clk_prepare_enable(nand->clk);
-> +	if (err)
-> +		return err;
-> +
-> +	reset_control_assert(rst);
-> +	udelay(2);
-> +	reset_control_deassert(rst);
-> +
-> +	value = HWSTATUS_RDSTATUS_MASK(1) | HWSTATUS_RDSTATUS_VALUE(0) |
-> +		HWSTATUS_RBSY_MASK(NAND_STATUS_READY) |
-> +		HWSTATUS_RBSY_VALUE(NAND_STATUS_READY);
-> +	writel(NAND_CMD_STATUS, nand->regs + HWSTATUS_CMD);
-> +	writel(value, nand->regs + HWSTATUS_MASK);
-> +
-> +	init_completion(&nand->command_complete);
-> +	init_completion(&nand->dma_complete);
-> +
-> +	mtd = &nand->mtd;
-> +	mtd->name = dev_name(&pdev->dev);
-> +	mtd->owner = THIS_MODULE;
-> +	mtd->priv = &nand->chip;
-> +
-> +	mtd->type = MTD_NANDFLASH;
-> +	mtd->flags = MTD_CAP_NANDFLASH;
-
-This get filled by nand_scan_tail anyway, any reason to have it here
-too?
-
-Other than that, looks solid to me.
-
-Reviewed-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-
---
-Stefan
+Lorenzo
