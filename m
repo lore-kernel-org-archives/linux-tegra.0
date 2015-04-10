@@ -1,55 +1,61 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [REGRESSION] commit 0461a41 "spi: Pump transfers inside calling
- context for spi_sync()" breaks Apalis/Colibri T30 with MCP2515 SPI CAN
- controller
-Date: Fri, 10 Apr 2015 14:23:30 +0100
-Message-ID: <20150410132330.GH6023@sirena.org.uk>
-References: <1428670853.7008.87.camel@localhost.localdomain>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="qrdGlhWsTzJpGMIr"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1428670853.7008.87.camel@localhost.localdomain>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marcel Ziswiler <marcel@ziswiler.com>
-Cc: linux-can@vger.kernel.org, linux-spi@vger.kernel.org, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Oliver Hartkopp <socketcan@hartkopp.net>, Marc Kleine-Budde <mkl@pengutronix.de>, Wolfgang Grandegger <wg@grandegger.com>, Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Stefan Agner <stefan@agner.ch>, Himangi Saraogi <himangi774@gmail.com>, Julia Lawall <julia.lawall@lip6.fr>, Stefano Babic <sbabic@denx.de>, Christian Pellegrin <chripell@fsfe.org>, "DavidS.Miller" <davem@davemloft.net>, Marc Zyngier <maz@misterjones.org>, Sascha Hauer <s.hauer@pengutronix.de>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [GIT PULL] clk/tegra: Changes for v4.1-rc1
+Date: Fri, 10 Apr 2015 16:15:19 +0200
+Message-ID: <1428675319-23049-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Mike, Stephen,
 
---qrdGlhWsTzJpGMIr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The following changes since commit c517d838eb7d07bbe9507871fab3931deccff539:
 
-On Fri, Apr 10, 2015 at 03:00:53PM +0200, Marcel Ziswiler wrote:
-> Hi there
+  Linux 4.0-rc1 (2015-02-22 18:21:14 -0800)
 
-Please try to use somewhat more targetted CC lists...
+are available in the git repository at:
 
-> I also have not yet looked further into what exactly is happening and
-> whether or not the SPI stack, the Tegra SPI controller driver or the
-> MCP2515 SPI CAN driver is to blame but rather decided to ask Mr. Brown
-> and the community first for any insights they might have to share.
-> Anybody?
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/clk/for-4.1
 
-I'd ask for trace logs but obviously we can't turn them on until boot
-has finished...  Adding some trace in the relevant bits of code to try
-to see where it's deadlocking is the obvious first step.
+for you to fetch changes up to c1d676cec572544616273d5853cb7cc38fbaa62b:
 
---qrdGlhWsTzJpGMIr
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+  clk: tegra: Use the proper parent for plld_dsi (2015-04-10 16:04:22 +0200)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Thanks,
+Thierry
 
-iQEcBAEBCAAGBQJVJ87SAAoJECTWi3JdVIfQLCQH+gKqUSelufOuwzReQh4vYJls
-jWECjIWTrJ6iHlOSrP7ryYU42l6FXR7st6zdabpcmlSJUnzNSqJCAn+Fej3xL0hf
-LTcYWaqCUsWDEbb37S0j42KIJAjNUxrVXd23HrxrySrMnZaUikXmkxviPnJyoevd
-cieOW7ZeL8B1G9YtJYG/WjjcXNULa707U60GHutRZWsOT6pRD1uhD6+wxTqJBgpz
-iBJ/Ijnn6jo0XEhvGyM/p02GxWha6RttvMePG7QKc2CjPjXvj85zRBpVzs/mFk3z
-ZNdhYFnnOaiyjFGxIN+MPee4Y5arHgZopVlMtLS0Ph5+MiLOckqvBOmFmwlGzgY=
-=ClLh
------END PGP SIGNATURE-----
+----------------------------------------------------------------
+clk/tegra: Changes for v4.1-rc1
 
---qrdGlhWsTzJpGMIr--
+These are mostly cleanups that I've been carrying in my local tree for
+far too long. In addition to those, there are some preparatory patches
+for the upcoming Tegra210 support and a patch to enable clocks needed
+for HDMI audio support.
+
+----------------------------------------------------------------
+Dylan Reid (1):
+      clk: tegra: Enable HDA to HDMI clocks on Tegra124
+
+Thierry Reding (10):
+      clk: tegra: Fix typo tabel -> table
+      clk: tegra: Fix a bunch of sparse warnings
+      clk: tegra: Various whitespace cleanups
+      clk: tegra: Use consistent indentation
+      clk: tegra: Remove needless initializations
+      clk: tegra: Register the proper number of resets
+      clk: tegra: Add peripheral registers for bank Y
+      clk: tegra: Model oscillator as clock
+      clk: tegra: Use generic tegra_osc_clk_init() on Tegra114
+      clk: tegra: Use the proper parent for plld_dsi
+
+ drivers/clk/tegra/clk-pll.c                     |  7 ++---
+ drivers/clk/tegra/clk-tegra-fixed.c             | 24 +++++++++--------
+ drivers/clk/tegra/clk-tegra-periph.c            |  2 +-
+ drivers/clk/tegra/clk-tegra114.c                | 36 +++----------------------
+ drivers/clk/tegra/clk-tegra124.c                | 22 ++++++++++-----
+ drivers/clk/tegra/clk-tegra30.c                 | 23 ++++++++--------
+ drivers/clk/tegra/clk.c                         | 16 ++++++++++-
+ drivers/clk/tegra/clk.h                         | 10 +++----
+ include/dt-bindings/clock/tegra124-car-common.h |  2 +-
+ 9 files changed, 70 insertions(+), 72 deletions(-)
