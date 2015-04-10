@@ -1,52 +1,75 @@
-From: Michael Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v8 01/18] clk: tegra124: Remove old emc clock
-Date: Fri, 10 Apr 2015 14:13:33 -0700
-Message-ID: <20150410211333.14369.10202@quantum>
-References: <1426171746-26864-1-git-send-email-tomeu.vizoso@collabora.com>
- <1426171746-26864-2-git-send-email-tomeu.vizoso@collabora.com>
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [PATCH v2 0/4]  arm: tegra: implement NVEC driver using tegrai2c.
+Date: Fri, 10 Apr 2015 23:35:23 +0200
+Message-ID: <20150410213523.GA15596@katana>
+References: <1427745615-5428-1-git-send-email-danindrey@mail.ru>
+ <20150403194635.GC2016@katana>
+ <1549160.njMIY2NVTi@fb07-iapwap2>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="zhXaljGHf11kAtnf"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1426171746-26864-2-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1549160.njMIY2NVTi@fb07-iapwap2>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Cc: Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Tomeu Vizoso (2015-03-12 07:47:53)
-> From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> This clock has never been able to do anything.
-> 
-> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 
-Looks good to me.
+--zhXaljGHf11kAtnf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Regards,
-Mike
 
-> 
-> ---
-> 
-> v2:     * Don't remove emc_mux as it's being used by the MC clock now
-> ---
->  drivers/clk/tegra/clk-tegra124.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-> index 9a893f2..d370134 100644
-> --- a/drivers/clk/tegra/clk-tegra124.c
-> +++ b/drivers/clk/tegra/clk-tegra124.c
-> @@ -791,7 +791,6 @@ static struct tegra_clk tegra124_clks[tegra_clk_max] __initdata = {
->         [tegra_clk_i2c2] = { .dt_id = TEGRA124_CLK_I2C2, .present = true },
->         [tegra_clk_uartc] = { .dt_id = TEGRA124_CLK_UARTC, .present = true },
->         [tegra_clk_mipi_cal] = { .dt_id = TEGRA124_CLK_MIPI_CAL, .present = true },
-> -       [tegra_clk_emc] = { .dt_id = TEGRA124_CLK_EMC, .present = true },
->         [tegra_clk_usb2] = { .dt_id = TEGRA124_CLK_USB2, .present = true },
->         [tegra_clk_usb3] = { .dt_id = TEGRA124_CLK_USB3, .present = true },
->         [tegra_clk_vde_8] = { .dt_id = TEGRA124_CLK_VDE, .present = true },
-> -- 
-> 2.1.0
-> 
+> One thing where we need your help as a I2C maintainer is how to represent=
+ an=20
+> i2c slave device using device-tree. You may remember our discussion in th=
+e=20
+> past from here [1] where you suggested to just make a slave client by its=
+=20
+> compatible name. Stephen Warren from NVIDIA raised some concerns about th=
+is=20
+> solution because it may not be appropriate in all possible future cases (=
+which=20
+> is what a proper device-tree representation should take care off). He ins=
+tead=20
+> suggested to mark a slave client by adding some flag to the reg property,=
+ to=20
+> be able to handle a situation where both master client and slave client h=
+ave=20
+> the same i2c bus address forming a loopback (e.g. for testing purpose) on=
+ the=20
+> same bus. More details here [2].
+>=20
+> I hope with this post I can join the different discussions somehow so we =
+are=20
+> able to find a common sense which is acceptable for all.
+
+I'll have a look again for 4.2.
+
+
+--zhXaljGHf11kAtnf
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJVKEIbAAoJEBQN5MwUoCm2npcQAKhYep55sSHykI3YzN7HdWkA
+nwQNlpDHo11YFK+TXbKoU5TWqhvmbE++kqyTK+9muGFq3+9LzpGp/5mbGmkSCiWr
+UBhQBLIIhckJBjrSm6kW6fHNsrUCYxlm3dTmdjpiMklr+5lRxx7a39wem5zn4NpH
+biRh8Orh92KIV46TTfd2xQqiVHZAFJQ/CJf8oSsfyJ4oV/sLsrDG1uLG9NJA7B5+
+EBoVtZF0WZaxe5Hgkt7chAjY6j6D4GR4nde/569i8H3lJdhwZkINGN23qXeT+zXB
+81rM9UFqwwxo+/VFH4rfFLTeIuoUT0H8yTfP0LLSYJFrSqI+Nhlbh+8gwC4oL38o
+1wmJECygPBhVFNFaISn0DbfSvuRdludnivoF8iruhD4puNPfhEYSKZcOs8Bwym2K
+T6XuUJ3D87a9xnK2iYAanh/1NU1JNh/jSV6wek2gp+Jft6i/ff5I+uAv/nqhC4kJ
+wbOLDEYRpaV5UIkZtquwsi7WAHnw1BE9r70BlFwERf82Q0P/i4JII6ZmMi7kcxM5
+cuucwVVsebwYC2yhoiKVe5VJtJ1eRp08cEKifrnzKHS2MdW4wyGrLwjeEzDAGdyD
+uQLwbSZCHXlf0olo1+6zJqYn3JhvWP4ulJ1pbZJW5L0sWr25yhXzYAaMeOuFrhYK
+1JeheuoM71PxthoUCN/S
+=+6bJ
+-----END PGP SIGNATURE-----
+
+--zhXaljGHf11kAtnf--
