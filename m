@@ -1,45 +1,123 @@
-From: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
-Subject: [PATCH 7/9] ARM: tegra: enable HDA in defconfig
-Date: Fri, 10 Apr 2015 23:36:02 +0200
-Message-ID: <16307b8af5a65c8ba5a2b9cb640b4718142adbca.1428700856.git.marcel.ziswiler@toradex.com>
+From: Marcel Ziswiler <marcel@ziswiler.com>
+Subject: [PATCH 8/9] ARM: tegra: colibri t30: activate stmpe811 touch controller
+Date: Fri, 10 Apr 2015 23:36:03 +0200
+Message-ID: <d87e59343cc07b99f85fc6dcb6cc8fe941770f30.1428700856.git.marcel.ziswiler@toradex.com>
 References: <cover.1428700856.git.marcel.ziswiler@toradex.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <cover.1428700856.git.marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Matt Porter <mporter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <cover.1428700856.git.marcel.ziswiler@toradex.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-tegra@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Mikko Perttunen <mperttunen@nvidia.com>, Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Matt Porter <mporter@linaro.org>, Paul Walmsley <paul@pwsan.com>, Eduardo Valentin <edubezval@gmail.com>, Takashi Iwai <tiwai@suse.de>, Dylan Reid <dgreid@chromium.org>, Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Russell King <linux@arm.linux.org.uk>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob
 List-Id: linux-tegra@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+Activate STMPE811 touch controller as found on Colibri T30 modules.
+While at it change order of HDMI sub nodes as well to be more in line
+with Apalis T30.
+While at it also update comment about supported module hardware
+versions.
+
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+
+coli
 ---
- arch/arm/configs/tegra_defconfig | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm/boot/dts/tegra30-colibri-eval-v3.dts |  4 +--
+ arch/arm/boot/dts/tegra30-colibri.dtsi        | 44 +++++++++++++++++++++++++--
+ 2 files changed, 44 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index 18047c4..cdf9abb 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -196,6 +196,14 @@ CONFIG_SOUND=y
- CONFIG_SND=y
- # CONFIG_SND_SUPPORT_OLD_API is not set
- # CONFIG_SND_DRIVERS is not set
-+CONFIG_SND_HDA=y
-+CONFIG_SND_HDA_TEGRA=y
-+CONFIG_SND_HDA_INPUT_BEEP=y
-+CONFIG_SND_HDA_INPUT_JACK=y
-+CONFIG_SND_HDA_PATCH_LOADER=y
-+CONFIG_SND_HDA_CODEC_REALTEK=y
-+CONFIG_SND_HDA_CODEC_HDMI=y
-+CONFIG_SND_HDA_GENERIC=y
- # CONFIG_SND_ARM is not set
- # CONFIG_SND_SPI is not set
- # CONFIG_SND_USB is not set
+diff --git a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
+index 4d3ddc5..d42c400 100644
+--- a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
++++ b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
+@@ -55,7 +55,7 @@
+ 
+ 		/* M41T0M6 real time clock on carrier board */
+ 		rtc@68 {
+-			compatible = "stm,m41t00";
++			compatible = "st,m41t00";
+ 			reg = <0x68>;
+ 		};
+ 	};
+@@ -84,7 +84,7 @@
+ 		};
+ 	};
+ 
+-	sdhci@78000200 {
++	sdmmc: sdhci@78000200 {
+ 		status = "okay";
+ 		bus-width = <4>;
+ 		cd-gpios = <&gpio TEGRA_GPIO(C, 7) GPIO_ACTIVE_LOW>;
+diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
+index c4ed1be..5f7f4a0 100644
+--- a/arch/arm/boot/dts/tegra30-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
+@@ -3,7 +3,7 @@
+ 
+ /*
+  * Toradex Colibri T30 Device Tree
+- * Compatible for Revisions 1.1B/1.1C/1.1D
++ * Compatible for Revisions V1.1B, V1.1C, V1.1D, V1.1E; IT: V1.1A
+  */
+ / {
+ 	model = "Toradex Colibri T30";
+@@ -18,9 +18,9 @@
+ 			vdd-supply = <&sys_3v3_reg>;
+ 			pll-supply = <&vio_reg>;
+ 
++			nvidia,ddc-i2c-bus = <&hdmiddc>;
+ 			nvidia,hpd-gpio =
+ 				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
+-			nvidia,ddc-i2c-bus = <&hdmiddc>;
+ 		};
+ 	};
+ 
+@@ -295,6 +295,46 @@
+ 			};
+ 		};
+ 
++		/* STMPE811 touch screen controller */
++		stmpe811@41 {
++			compatible = "st,stmpe811";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x41>;
++			interrupts = <TEGRA_GPIO(V, 0) IRQ_TYPE_LEVEL_LOW>;
++			interrupt-parent = <&gpio>;
++			interrupt-controller;
++			id = <0>;
++			blocks = <0x5>;
++			irq-trigger = <0x1>;
++
++			stmpe_touchscreen {
++				compatible = "st,stmpe-ts";
++				reg = <0>;
++				/* 3.25 MHz ADC clock speed */
++				st,adc-freq = <1>;
++				/* 8 sample average control */
++				st,ave-ctrl = <3>;
++				/* 7 length fractional part in z */
++				st,fraction-z = <7>;
++				/*
++				 * 50 mA typical 80 mA max touchscreen drivers
++				 * current limit value
++				 */
++				st,i-drive = <1>;
++				/* 12-bit ADC */
++				st,mod-12b = <1>;
++				/* internal ADC reference */
++				st,ref-sel = <0>;
++				/* ADC converstion time: 80 clocks */
++				st,sample-time = <4>;
++				/* 1 ms panel driver settling time */
++				st,settling = <3>;
++				/* 5 ms touch detect interrupt delay */
++				st,touch-det-delay = <5>;
++			};
++		};
++
+ 		/*
+ 		 * LM95245 temperature sensor
+ 		 * Note: OVERT_N directly connected to PMIC PWRDN
 -- 
 1.9.3
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
