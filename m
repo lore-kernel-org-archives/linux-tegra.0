@@ -1,31 +1,75 @@
-From: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 3/9] Documentation: DT bindings: fix hda2codec_2x clock
- name for tegra30-hda
-Date: Fri, 10 Apr 2015 22:21:56 +0000 (UTC)
-Message-ID: <alpine.DEB.2.02.1504102221200.19540@utopia.booyaka.com>
-References: <cover.1428700856.git.marcel.ziswiler@toradex.com> <ee8e9952dfdfd87da52f817fca0a6ad94a137742.1428700856.git.marcel.ziswiler@toradex.com>
+From: Michael Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [GIT PULL] clk/tegra: Changes for v4.1-rc1
+Date: Fri, 10 Apr 2015 18:07:11 -0700
+Message-ID: <20150411010711.19585.5769@quantum>
+References: <1428675319-23049-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <ee8e9952dfdfd87da52f817fca0a6ad94a137742.1428700856.git.marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <1428675319-23049-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Matt Porter <mporter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>Rob Herring <ro>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, 10 Apr 2015, Marcel Ziswiler wrote:
-
-> From: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+Quoting Thierry Reding (2015-04-10 07:15:19)
+> Mike, Stephen,
 > 
-> Fix hda2codec_2x clock name in Tegra30 HDA controller device tree node
-> documentation.
-> While at it also fix coma vs. semicolon issue.
+> The following changes since commit c517d838eb7d07bbe9507871fab3931deccff539:
 > 
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+>   Linux 4.0-rc1 (2015-02-22 18:21:14 -0800)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/clk/for-4.1
 
-Reviewed-by: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+Thierry,
 
-against the Tegra K1 TRM v03p
+Pulled!
 
+Regards,
+Mike
 
-- Paul
+> 
+> for you to fetch changes up to c1d676cec572544616273d5853cb7cc38fbaa62b:
+> 
+>   clk: tegra: Use the proper parent for plld_dsi (2015-04-10 16:04:22 +0200)
+> 
+> Thanks,
+> Thierry
+> 
+> ----------------------------------------------------------------
+> clk/tegra: Changes for v4.1-rc1
+> 
+> These are mostly cleanups that I've been carrying in my local tree for
+> far too long. In addition to those, there are some preparatory patches
+> for the upcoming Tegra210 support and a patch to enable clocks needed
+> for HDMI audio support.
+> 
+> ----------------------------------------------------------------
+> Dylan Reid (1):
+>       clk: tegra: Enable HDA to HDMI clocks on Tegra124
+> 
+> Thierry Reding (10):
+>       clk: tegra: Fix typo tabel -> table
+>       clk: tegra: Fix a bunch of sparse warnings
+>       clk: tegra: Various whitespace cleanups
+>       clk: tegra: Use consistent indentation
+>       clk: tegra: Remove needless initializations
+>       clk: tegra: Register the proper number of resets
+>       clk: tegra: Add peripheral registers for bank Y
+>       clk: tegra: Model oscillator as clock
+>       clk: tegra: Use generic tegra_osc_clk_init() on Tegra114
+>       clk: tegra: Use the proper parent for plld_dsi
+> 
+>  drivers/clk/tegra/clk-pll.c                     |  7 ++---
+>  drivers/clk/tegra/clk-tegra-fixed.c             | 24 +++++++++--------
+>  drivers/clk/tegra/clk-tegra-periph.c            |  2 +-
+>  drivers/clk/tegra/clk-tegra114.c                | 36 +++----------------------
+>  drivers/clk/tegra/clk-tegra124.c                | 22 ++++++++++-----
+>  drivers/clk/tegra/clk-tegra30.c                 | 23 ++++++++--------
+>  drivers/clk/tegra/clk.c                         | 16 ++++++++++-
+>  drivers/clk/tegra/clk.h                         | 10 +++----
+>  include/dt-bindings/clock/tegra124-car-common.h |  2 +-
+>  9 files changed, 70 insertions(+), 72 deletions(-)
