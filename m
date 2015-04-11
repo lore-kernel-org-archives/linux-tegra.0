@@ -1,75 +1,94 @@
-From: Michael Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [GIT PULL] clk/tegra: Changes for v4.1-rc1
-Date: Fri, 10 Apr 2015 18:07:11 -0700
-Message-ID: <20150411010711.19585.5769@quantum>
-References: <1428675319-23049-1-git-send-email-thierry.reding@gmail.com>
+From: Michael Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v6 3/8] clk: tegra: Have EMC clock implement determine_rate()
+Date: Fri, 10 Apr 2015 18:48:50 -0700
+Message-ID: <20150411014850.19585.55239@quantum>
+References: <1426584991-11110-1-git-send-email-tomeu.vizoso@collabora.com>
+ <1426584991-11110-4-git-send-email-tomeu.vizoso@collabora.com>
+ <20150324103834.GF18115@ulmo.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1428675319-23049-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150324103834.GF18115@ulmo.nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-tegra@vger.kernel.org, Mikko Perttunen <mikko.perttunen@kapsi.fi>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Thierry Reding (2015-04-10 07:15:19)
+Quoting Thierry Reding (2015-03-24 03:38:35)
+> On Tue, Mar 17, 2015 at 10:36:13AM +0100, Tomeu Vizoso wrote:
+> > instead of round_rate, so we can take rate constraints into account when
+> > choosing the best rate.
+> > 
+> > Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> > ---
+> >  drivers/clk/tegra/clk-emc.c | 19 +++++++++++++++----
+> >  1 file changed, 15 insertions(+), 4 deletions(-)
+> 
 > Mike, Stephen,
 > 
-> The following changes since commit c517d838eb7d07bbe9507871fab3931deccff539:
-> 
->   Linux 4.0-rc1 (2015-02-22 18:21:14 -0800)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/clk/for-4.1
+> I'd like to take this into the Tegra tree because other patches depend
+> on this (albeit as far as I can tell it's only a runtime dependency).
+> This patch also depends on the EMC frequency scaling patches (that Mike
+> Acked) that I have in a separate branch. Alternatively I can provide a
+> stable branch with my current stash of patches that you can pull into
+> the clk tree.
 
-Thierry,
+Patch looks fine to me. Please add:
 
-Pulled!
+Acked-by: Michael Turquette <mturquette@linaro.org>
 
 Regards,
 Mike
 
 > 
-> for you to fetch changes up to c1d676cec572544616273d5853cb7cc38fbaa62b:
-> 
->   clk: tegra: Use the proper parent for plld_dsi (2015-04-10 16:04:22 +0200)
-> 
 > Thanks,
 > Thierry
 > 
-> ----------------------------------------------------------------
-> clk/tegra: Changes for v4.1-rc1
-> 
-> These are mostly cleanups that I've been carrying in my local tree for
-> far too long. In addition to those, there are some preparatory patches
-> for the upcoming Tegra210 support and a patch to enable clocks needed
-> for HDMI audio support.
-> 
-> ----------------------------------------------------------------
-> Dylan Reid (1):
->       clk: tegra: Enable HDA to HDMI clocks on Tegra124
-> 
-> Thierry Reding (10):
->       clk: tegra: Fix typo tabel -> table
->       clk: tegra: Fix a bunch of sparse warnings
->       clk: tegra: Various whitespace cleanups
->       clk: tegra: Use consistent indentation
->       clk: tegra: Remove needless initializations
->       clk: tegra: Register the proper number of resets
->       clk: tegra: Add peripheral registers for bank Y
->       clk: tegra: Model oscillator as clock
->       clk: tegra: Use generic tegra_osc_clk_init() on Tegra114
->       clk: tegra: Use the proper parent for plld_dsi
-> 
->  drivers/clk/tegra/clk-pll.c                     |  7 ++---
->  drivers/clk/tegra/clk-tegra-fixed.c             | 24 +++++++++--------
->  drivers/clk/tegra/clk-tegra-periph.c            |  2 +-
->  drivers/clk/tegra/clk-tegra114.c                | 36 +++----------------------
->  drivers/clk/tegra/clk-tegra124.c                | 22 ++++++++++-----
->  drivers/clk/tegra/clk-tegra30.c                 | 23 ++++++++--------
->  drivers/clk/tegra/clk.c                         | 16 ++++++++++-
->  drivers/clk/tegra/clk.h                         | 10 +++----
->  include/dt-bindings/clock/tegra124-car-common.h |  2 +-
->  9 files changed, 70 insertions(+), 72 deletions(-)
+> > diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
+> > index 704fff7..615da43 100644
+> > --- a/drivers/clk/tegra/clk-emc.c
+> > +++ b/drivers/clk/tegra/clk-emc.c
+> > @@ -117,8 +117,11 @@ static unsigned long emc_recalc_rate(struct clk_hw *hw,
+> >   * safer since things have EMC rate floors. Also don't touch parent_rate
+> >   * since we don't want the CCF to play with our parent clocks.
+> >   */
+> > -static long emc_round_rate(struct clk_hw *hw, unsigned long rate,
+> > -                 unsigned long *parent_rate)
+> > +static long emc_determine_rate(struct clk_hw *hw, unsigned long rate,
+> > +                            unsigned long min_rate,
+> > +                            unsigned long max_rate,
+> > +                            unsigned long *best_parent_rate,
+> > +                            struct clk_hw **best_parent_hw)
+> >  {
+> >       struct tegra_clk_emc *tegra;
+> >       u8 ram_code = tegra_read_ram_code();
+> > @@ -133,7 +136,15 @@ static long emc_round_rate(struct clk_hw *hw, unsigned long rate,
+> >  
+> >                  timing = tegra->timings + i;
+> >  
+> > -                if (timing->rate >= rate)
+> > +             if (timing->rate > max_rate) {
+> > +                     i = min(i, 1);
+> > +                     return tegra->timings[i - 1].rate;
+> > +             }
+> > +
+> > +             if (timing->rate < min_rate)
+> > +                     continue;
+> > +
+> > +             if (timing->rate >= rate)
+> >                          return timing->rate;
+> >          }
+> >  
+> > @@ -452,7 +463,7 @@ static int load_timings_from_dt(struct tegra_clk_emc *tegra,
+> >  
+> >  static const struct clk_ops tegra_clk_emc_ops = {
+> >       .recalc_rate = emc_recalc_rate,
+> > -     .round_rate = emc_round_rate,
+> > +     .determine_rate = emc_determine_rate,
+> >       .set_rate = emc_set_rate,
+> >       .get_parent = emc_get_parent,
+> >  };
+> > -- 
+> > 2.1.0
+> > 
