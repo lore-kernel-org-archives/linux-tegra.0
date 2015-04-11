@@ -1,94 +1,149 @@
-From: Michael Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v6 3/8] clk: tegra: Have EMC clock implement determine_rate()
-Date: Fri, 10 Apr 2015 18:48:50 -0700
-Message-ID: <20150411014850.19585.55239@quantum>
-References: <1426584991-11110-1-git-send-email-tomeu.vizoso@collabora.com>
- <1426584991-11110-4-git-send-email-tomeu.vizoso@collabora.com>
- <20150324103834.GF18115@ulmo.nvidia.com>
+From: Michael Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [GIT PULL v2 1/2] ARM: tegra: Core code changes for v4.1-rc1
+Date: Fri, 10 Apr 2015 18:52:01 -0700
+Message-ID: <20150411015201.19585.59549@quantum>
+References: <1427710333-13472-1-git-send-email-thierry.reding@gmail.com>
+ <1428675733-23523-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150324103834.GF18115@ulmo.nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-tegra@vger.kernel.org, Mikko Perttunen <mikko.perttunen@kapsi.fi>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1428675733-23523-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Thierry Reding (2015-03-24 03:38:35)
-> On Tue, Mar 17, 2015 at 10:36:13AM +0100, Tomeu Vizoso wrote:
-> > instead of round_rate, so we can take rate constraints into account when
-> > choosing the best rate.
-> > 
-> > Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-> > ---
-> >  drivers/clk/tegra/clk-emc.c | 19 +++++++++++++++----
-> >  1 file changed, 15 insertions(+), 4 deletions(-)
+Quoting Thierry Reding (2015-04-10 07:22:13)
+> Hi ARM SoC maintainers,
 > 
-> Mike, Stephen,
+> The following changes since commit c517d838eb7d07bbe9507871fab3931deccff539:
 > 
-> I'd like to take this into the Tegra tree because other patches depend
-> on this (albeit as far as I can tell it's only a runtime dependency).
-> This patch also depends on the EMC frequency scaling patches (that Mike
-> Acked) that I have in a separate branch. Alternatively I can provide a
-> stable branch with my current stash of patches that you can pull into
-> the clk tree.
+>   Linux 4.0-rc1 (2015-02-22 18:21:14 -0800)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.1-soc-20150410
+> 
+> for you to fetch changes up to 50ce434c2399586a71a868795401b59e04486824:
+> 
+>   memory: tegra: Explicitly mark defines unsigned (2015-04-03 00:01:09 +0200)
+> 
+> This is essentially the same as the earlier pull requests, except that
+> it contains fixes for the linux-next build errors reported by Mark
+> Brown.
+> 
+> Thanks,
+> Thierry
+> 
+> ----------------------------------------------------------------
+> ARM: tegra: Core code changes for v4.1-rc1
+> 
+> The biggest chunk of these changes is Mikko and Tomeu's external memory
+> controller driver. It allows the frequency of the external memory to be
+> changed and also puts the initial pieces into place to enable automatic
+> scaling of the EMC frequency.
+> 
+> There are also a couple of improvements such as the move to a restart
+> handler to make it easier for boards to override restart behaviour in a
+> board-specific way. There are also some preparatory patches to enable
+> Tegra to run in big-endian mode.
+> 
+> Finally there's a fix for a regression that was introduced in v3.17,
+> causing suspend/resume to break.
+> 
+> ----------------------------------------------------------------
+> Bob Mottram (1):
+>       gpio: tegra: Maintain endianness
+> 
+> David Riley (1):
+>       soc/tegra: pmc: move to using a restart handler
+> 
+> Dmitry Osipenko (1):
+>       ARM: tegra20: Store CPU "resettable" status in IRAM
+> 
+> Mikko Perttunen (7):
+>       soc/tegra: fuse: Add RAM code reader helper
+>       of: Add Tegra124 EMC bindings
+>       memory: tegra: Add API needed by the EMC driver
+>       memory: tegra: Add EMC (external memory controller) driver
+>       memory: tegra: Add debugfs entry for getting and setting the EMC rate
+>       clk: tegra124: Remove old emc clock
+>       clk: tegra: Add EMC clock driver
 
-Patch looks fine to me. Please add:
+I have posted a question about the above patch in its original thread
+regarding ...
 
-Acked-by: Michael Turquette <mturquette@linaro.org>
+> 
+> Nicholas Mc Guire (1):
+>       soc/tegra: Watch wait_for_completion_timeout() return type
+> 
+> Thierry Reding (3):
+>       memory: tegra: Add SWGROUP names
+>       clk: tegra: EMC clock driver depends on EMC driver
+>       memory: tegra: Explicitly mark defines unsigned
+> 
+> Tomeu Vizoso (8):
+>       of: Document long-ram-code property in nvidia,tegra20-apbmisc
+>       of: Document timings subnode of nvidia,tegra-mc
+>       memory: tegra: Disable ARBITRATION_EMEM interrupt
+>       of: document new emc-timings subnode in nvidia,tegra124-car
+>       of: document external-memory-controller property in tegra124-car
+>       clk: Expose clk_hw_reparent() to providers
+
+... this patch! I'd prefer to not do this. Let's see if
+.set_rate_and_parent solve the problem for you.
+
+>       clk: tegra: Set the EMC clock as the parent of the MC clock
+>       clk: tegra: Have EMC clock implement determine_rate()
+
+FYI I just acked the above patch in its thread.
 
 Regards,
 Mike
 
 > 
-> Thanks,
-> Thierry
+>  .../bindings/clock/nvidia,tegra124-car.txt         |   44 +-
+>  .../memory-controllers/nvidia,tegra-mc.txt         |   84 +-
+>  .../bindings/memory-controllers/tegra-emc.txt      |  374 +++++++
+>  .../bindings/misc/nvidia,tegra20-apbmisc.txt       |    2 +
+>  arch/arm/mach-tegra/cpuidle-tegra20.c              |    5 +-
+>  arch/arm/mach-tegra/reset-handler.S                |   10 +-
+>  arch/arm/mach-tegra/reset.h                        |    4 +
+>  arch/arm/mach-tegra/sleep-tegra20.S                |   37 +-
+>  arch/arm/mach-tegra/sleep.h                        |    4 +
+>  arch/arm/mach-tegra/tegra.c                        |    1 -
+>  drivers/clk/Kconfig                                |    1 +
+>  drivers/clk/clk.c                                  |    8 +
+>  drivers/clk/tegra/Kconfig                          |    3 +
+>  drivers/clk/tegra/Makefile                         |    1 +
+>  drivers/clk/tegra/clk-emc.c                        |  539 ++++++++++
+>  drivers/clk/tegra/clk-tegra124.c                   |   18 +-
+>  drivers/clk/tegra/clk.h                            |   12 +
+>  drivers/gpio/gpio-tegra.c                          |    4 +-
+>  drivers/memory/tegra/Kconfig                       |   10 +
+>  drivers/memory/tegra/Makefile                      |    2 +
+>  drivers/memory/tegra/mc.c                          |  140 ++-
+>  drivers/memory/tegra/tegra114.c                    |   32 +-
+>  drivers/memory/tegra/tegra124-emc.c                | 1137 ++++++++++++++++++++
+>  drivers/memory/tegra/tegra124.c                    |   90 +-
+>  drivers/memory/tegra/tegra30.c                     |   32 +-
+>  drivers/soc/tegra/fuse/fuse-tegra20.c              |    6 +-
+>  drivers/soc/tegra/fuse/tegra-apbmisc.c             |   21 +
+>  drivers/soc/tegra/pmc.c                            |   23 +-
+>  include/linux/clk-provider.h                       |    1 +
+>  include/soc/tegra/emc.h                            |   19 +
+>  include/soc/tegra/fuse.h                           |    1 +
+>  include/soc/tegra/mc.h                             |   15 +-
+>  include/soc/tegra/pmc.h                            |    2 -
+>  33 files changed, 2572 insertions(+), 110 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt
+>  create mode 100644 drivers/clk/tegra/Kconfig
+>  create mode 100644 drivers/clk/tegra/clk-emc.c
+>  create mode 100644 drivers/memory/tegra/tegra124-emc.c
+>  create mode 100644 include/soc/tegra/emc.h
 > 
-> > diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
-> > index 704fff7..615da43 100644
-> > --- a/drivers/clk/tegra/clk-emc.c
-> > +++ b/drivers/clk/tegra/clk-emc.c
-> > @@ -117,8 +117,11 @@ static unsigned long emc_recalc_rate(struct clk_hw *hw,
-> >   * safer since things have EMC rate floors. Also don't touch parent_rate
-> >   * since we don't want the CCF to play with our parent clocks.
-> >   */
-> > -static long emc_round_rate(struct clk_hw *hw, unsigned long rate,
-> > -                 unsigned long *parent_rate)
-> > +static long emc_determine_rate(struct clk_hw *hw, unsigned long rate,
-> > +                            unsigned long min_rate,
-> > +                            unsigned long max_rate,
-> > +                            unsigned long *best_parent_rate,
-> > +                            struct clk_hw **best_parent_hw)
-> >  {
-> >       struct tegra_clk_emc *tegra;
-> >       u8 ram_code = tegra_read_ram_code();
-> > @@ -133,7 +136,15 @@ static long emc_round_rate(struct clk_hw *hw, unsigned long rate,
-> >  
-> >                  timing = tegra->timings + i;
-> >  
-> > -                if (timing->rate >= rate)
-> > +             if (timing->rate > max_rate) {
-> > +                     i = min(i, 1);
-> > +                     return tegra->timings[i - 1].rate;
-> > +             }
-> > +
-> > +             if (timing->rate < min_rate)
-> > +                     continue;
-> > +
-> > +             if (timing->rate >= rate)
-> >                          return timing->rate;
-> >          }
-> >  
-> > @@ -452,7 +463,7 @@ static int load_timings_from_dt(struct tegra_clk_emc *tegra,
-> >  
-> >  static const struct clk_ops tegra_clk_emc_ops = {
-> >       .recalc_rate = emc_recalc_rate,
-> > -     .round_rate = emc_round_rate,
-> > +     .determine_rate = emc_determine_rate,
-> >       .set_rate = emc_set_rate,
-> >       .get_parent = emc_get_parent,
-> >  };
-> > -- 
-> > 2.1.0
-> > 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
