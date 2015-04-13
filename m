@@ -1,921 +1,463 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V3] pmu/gk20a: PMU boot support.
-Date: Mon, 13 Apr 2015 19:36:34 +0900
-Message-ID: <CAAVeFu+GiwcimajUzLcasBsb2n2R1wYHDXLZWC_eSwRc+iME=g@mail.gmail.com>
-References: <1428669552-8971-1-git-send-email-dgoyal@nvidia.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v4] pmu/gk20a: PMU boot support
+Date: Mon, 13 Apr 2015 19:38:50 +0900
+Message-ID: <1428921530-28556-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1428669552-8971-1-git-send-email-dgoyal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Deepak Goyal <dgoyal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Deepak Goyal <dgoyal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Apr 10, 2015 at 9:39 PM, Deepak Goyal <dgoyal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> - Maps PMU firmware into PMU virtual memory.
-> - Copy bootloader into PMU memory and start it.
-> - Allow the PMU to interact with HOST via interrupts.
->
-> PMU after successful configurations (to follow after this patch) will:
-> 1.Autonomously power gate graphics engine when not in use.It will save
-> us a lot of power.
-> 2.Provide better way to scale frequencies by reporting Perf counters.
-> 3.Be critical for GPU functionality as future GPUs secure some register
-> & mem accesses involved in context switch.
->
-> Signed-off-by: Deepak Goyal <dgoyal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drm/nouveau/nvkm/subdev/pmu/gk20a.c | 847 +++++++++++++++++++++++++++++++++++-
->  1 file changed, 823 insertions(+), 24 deletions(-)
->
-> diff --git a/drm/nouveau/nvkm/subdev/pmu/gk20a.c b/drm/nouveau/nvkm/subdev/pmu/gk20a.c
-> index 594f746e68f2..ee5fd19dd087 100644
-> --- a/drm/nouveau/nvkm/subdev/pmu/gk20a.c
-> +++ b/drm/nouveau/nvkm/subdev/pmu/gk20a.c
-> @@ -1,5 +1,5 @@
->  /*
-> - * Copyright (c) 2014, NVIDIA CORPORATION. All rights reserved.
-> + * Copyright (c) 2014-2015, NVIDIA CORPORATION. All rights reserved.
->   *
->   * Permission is hereby granted, free of charge, to any person obtaining a
->   * copy of this software and associated documentation files (the "Software"),
-> @@ -20,13 +20,184 @@
->   * DEALINGS IN THE SOFTWARE.
->   */
->  #include "priv.h"
-> -
-
-There is no reason to remove this line.
-
-> +#include <core/client.h>
-> +#include <core/gpuobj.h>
-> +#include <subdev/bar.h>
-> +#include <subdev/fb.h>
-> +#include <subdev/mc.h>
-> +#include <subdev/timer.h>
-> +#include <subdev/mmu.h>
-> +#include <subdev/pmu.h>
-> +#include <core/object.h>
-> +#include <core/device.h>
-> +#include <linux/delay.h>
-> +#include <linux/firmware.h>
->  #include <subdev/clk.h>
->  #include <subdev/timer.h>
->  #include <subdev/volt.h>
->
-> +#define APP_VERSION_GK20A  17997577
-> +#define GK20A_PMU_UCODE_SIZE_MAX  (256 * 1024)
-> +#define PMU_QUEUE_COUNT  5
-> +
-> +#define GK20A_PMU_TRACE_BUFSIZE             0x4000   /* 4K */
-> +#define GK20A_PMU_DMEM_BLKSIZE2                    8
-> +#define GK20A_PMU_UCODE_NB_MAX_OVERLAY     32
-> +#define GK20A_PMU_UCODE_NB_MAX_DATE_LENGTH  64
-> +
-> +#define PMU_UNIT_REWIND                (0x00)
-> +#define PMU_UNIT_PG            (0x03)
-> +#define PMU_UNIT_INIT          (0x07)
-> +#define PMU_UNIT_PERFMON       (0x12)
-> +#define PMU_UNIT_THERM         (0x1B)
-> +#define PMU_UNIT_RC            (0x1F)
-> +#define PMU_UNIT_NULL          (0x20)
-> +#define PMU_UNIT_END           (0x23)
-> +#define PMU_UNIT_TEST_START    (0xFE)
-> +#define PMU_UNIT_END_SIM       (0xFF)
-> +#define PMU_UNIT_TEST_END      (0xFF)
-> +
-> +#define PMU_UNIT_ID_IS_VALID(id)               \
-> +               (((id) < PMU_UNIT_END) || ((id) >= PMU_UNIT_TEST_START))
-> +#define PMU_DMEM_ALIGNMENT             (4)
-> +
->  #define BUSY_SLOT      0
->  #define CLK_SLOT       7
-> +#define GK20A_PMU_UCODE_IMAGE  "gpmu_ucode.bin"
-> +
-> +/*Choices for DMA to use*/
-> +enum {
-> +       GK20A_PMU_DMAIDX_UCODE          = 0,
-> +       GK20A_PMU_DMAIDX_VIRT           = 1,
-> +       GK20A_PMU_DMAIDX_PHYS_VID       = 2,
-> +       GK20A_PMU_DMAIDX_PHYS_SYS_COH   = 3,
-> +       GK20A_PMU_DMAIDX_PHYS_SYS_NCOH  = 4,
-> +       GK20A_PMU_DMAIDX_RSVD           = 5,
-> +       GK20A_PMU_DMAIDX_PELPG          = 6,
-> +       GK20A_PMU_DMAIDX_END            = 7
-> +};
-> +
-> +struct pmu_buf_desc {
-> +       struct nvkm_gpuobj *obj;
-> +       struct nvkm_vma vma;
-> +       size_t size;
-> +};
-> +
-> +struct nvkm_pmu_priv_vm {
-> +       struct nvkm_gpuobj *mem;
-> +       struct nvkm_gpuobj *pgd;
-> +       struct nvkm_vm *vm;
-> +};
-> +
-> +/*Choices for pmu_state*/
-> +enum {
-> +       PMU_STATE_OFF,             /*0  PMU is off */
-> +       PMU_STATE_STARTING,        /*1  PMU is on, but not booted */
-> +       PMU_STATE_INIT_RECEIVED    /*2  PMU init message received */
-> +};
-> +
-> +struct pmu_mem_gk20a {
-> +       u32 dma_base;
-> +       u8  dma_offset;
-> +       u8  dma_idx;
-> +       u16 fb_size;
-> +};
-> +
-> +struct pmu_cmdline_args_gk20a {
-> +       u32 cpu_freq_hz;                /* Frequency of the clock driving PMU */
-> +       u32 falc_trace_size;            /* falctrace buffer size (bytes) */
-> +       u32 falc_trace_dma_base;        /* 256-byte block address */
-> +       u32 falc_trace_dma_idx;         /* dmaIdx for DMA operations */
-> +       u8 secure_mode;
-> +       struct pmu_mem_gk20a gc6_ctx;           /* dmem offset of gc6 context */
-> +};
-> +
-> +/*pmu ucode descriptor*/
-> +struct pmu_ucode_desc {
-> +       u32 descriptor_size;
-> +       u32 image_size;
-> +       u32 tools_version;
-> +       u32 app_version;
-> +       char date[GK20A_PMU_UCODE_NB_MAX_DATE_LENGTH];
-> +       u32 bootloader_start_offset;
-> +       u32 bootloader_size;
-> +       u32 bootloader_imem_offset;
-> +       u32 bootloader_entry_point;
-> +       u32 app_start_offset;
-> +       u32 app_size;
-> +       u32 app_imem_offset;
-> +       u32 app_imem_entry;
-> +       u32 app_dmem_offset;
-> +       u32 app_resident_code_offset;
-> +       u32 app_resident_code_size;
-> +       u32 app_resident_data_offset;
-> +       u32 app_resident_data_size;
-> +       u32 nb_overlays;
-> +       struct {u32 start; u32 size; } load_ovl[GK20A_PMU_UCODE_NB_MAX_OVERLAY];
-> +       u32 compressed;
-> +};
-> +
-> +/*pmu msg header*/
-> +struct pmu_hdr {
-> +       u8 unit_id;
-> +       u8 size;
-> +       u8 ctrl_flags;
-> +       u8 seq_id;
-> +};
-> +
-> +#define PMU_MSG_HDR_SIZE       sizeof(struct pmu_hdr)
-> +
-> +enum {
-> +       PMU_INIT_MSG_TYPE_PMU_INIT = 0,
-> +};
-> +
-> +/*pmu init msg format*/
-> +struct pmu_init_msg_pmu_gk20a {
-> +       u8 msg_type;
-> +       u8 pad;
-> +       u16  os_debug_entry_point;
-> +
-> +       struct {
-> +               u16 size;
-> +               u16 offset;
-> +               u8  index;
-> +               u8  pad;
-> +       } queue_info[PMU_QUEUE_COUNT];
-> +
-> +       u16 sw_managed_area_offset;
-> +       u16 sw_managed_area_size;
-> +};
-> +
-> +/*pmu init msg format*/
-> +struct pmu_init_msg {
-> +       union {
-> +               u8 msg_type;
-> +               struct pmu_init_msg_pmu_gk20a pmu_init_gk20a;
-> +       };
-> +};
-> +
-> +enum {
-> +       PMU_RC_MSG_TYPE_UNHANDLED_CMD = 0,
-> +};
-> +
-> +struct pmu_rc_msg_unhandled_cmd {
-> +       u8 msg_type;
-> +       u8 unit_id;
-> +};
-> +
-> +struct pmu_rc_msg {
-> +       u8 msg_type;
-> +       struct pmu_rc_msg_unhandled_cmd unhandled_cmd;
-> +};
-> +
-> +/*pmu generic msg format*/
-> +struct pmu_msg {
-> +       struct pmu_hdr hdr;
-> +       union {
-> +               struct pmu_init_msg init;
-> +               struct pmu_rc_msg rc;
-> +       } msg;
-> +};
->
->  struct gk20a_pmu_dvfs_data {
->         int p_load_target;
-> @@ -39,8 +210,21 @@ struct gk20a_pmu_priv {
->         struct nvkm_pmu base;
->         struct nvkm_alarm alarm;
->         struct gk20a_pmu_dvfs_data *data;
-> +       struct pmu_ucode_desc *desc;
-> +       struct pmu_buf_desc ucode;
-> +       struct pmu_buf_desc trace_buf;
-> +       struct mutex pmu_copy_lock;
-> +       bool pmu_ready;
-> +       int pmu_state;
-> +       struct nvkm_pmu_priv_vm pmuvm;
-> +       bool initialized;
-> +       bool sw_ready;
-> +       struct mutex isr_mutex;
-> +       bool isr_enabled;
->  };
->
-> +#define to_gk20a_priv(ptr) container_of(ptr, struct gk20a_pmu_priv, base)
-> +
->  struct gk20a_pmu_dvfs_dev_status {
->         unsigned long total;
->         unsigned long busy;
-> @@ -48,6 +232,60 @@ struct gk20a_pmu_dvfs_dev_status {
->  };
->
->  static int
-> +gk20a_pmu_load_firmware(struct nvkm_pmu *ppmu, const struct firmware **pfw)
-> +{
-> +       struct nvkm_device *dev;
-> +       char fw[32];
-> +
-> +       dev = nv_device(ppmu);
-> +       snprintf(fw, sizeof(fw), "nvidia/tegra124/%s", GK20A_PMU_UCODE_IMAGE);
-> +       return request_firmware(pfw, fw, nv_device_base(dev));
-> +}
-> +
-> +static void
-> +gk20a_pmu_release_firmware(struct nvkm_pmu *ppmu, const struct firmware *pfw)
-> +{
-> +       nv_debug(ppmu, "firmware released\n");
-> +       release_firmware(pfw);
-> +}
-> +
-> +static void
-> +gk20a_pmu_dump_firmware_info(struct nvkm_pmu *ppmu,
-> +               const struct firmware *fw)
-> +{
-> +       struct pmu_ucode_desc *desc = (struct pmu_ucode_desc *)fw->data;
-> +
-> +       nv_debug(ppmu, "GK20A PMU firmware information\n");
-> +       nv_debug(ppmu, "descriptor size = %u\n", desc->descriptor_size);
-> +       nv_debug(ppmu, "image size  = %u\n", desc->image_size);
-> +       nv_debug(ppmu, "app_version = 0x%08x\n", desc->app_version);
-> +       nv_debug(ppmu, "date = %s\n", desc->date);
-> +       nv_debug(ppmu, "bootloader_start_offset = 0x%08x\n",
-> +                               desc->bootloader_start_offset);
-> +       nv_debug(ppmu, "bootloader_size = 0x%08x\n", desc->bootloader_size);
-> +       nv_debug(ppmu, "bootloader_imem_offset = 0x%08x\n",
-> +                               desc->bootloader_imem_offset);
-> +       nv_debug(ppmu, "bootloader_entry_point = 0x%08x\n",
-> +                               desc->bootloader_entry_point);
-> +       nv_debug(ppmu, "app_start_offset = 0x%08x\n", desc->app_start_offset);
-> +       nv_debug(ppmu, "app_size = 0x%08x\n", desc->app_size);
-> +       nv_debug(ppmu, "app_imem_offset = 0x%08x\n", desc->app_imem_offset);
-> +       nv_debug(ppmu, "app_imem_entry = 0x%08x\n", desc->app_imem_entry);
-> +       nv_debug(ppmu, "app_dmem_offset = 0x%08x\n", desc->app_dmem_offset);
-> +       nv_debug(ppmu, "app_resident_code_offset = 0x%08x\n",
-> +                       desc->app_resident_code_offset);
-> +       nv_debug(ppmu, "app_resident_code_size = 0x%08x\n",
-> +                       desc->app_resident_code_size);
-> +       nv_debug(ppmu, "app_resident_data_offset = 0x%08x\n",
-> +                       desc->app_resident_data_offset);
-> +       nv_debug(ppmu, "app_resident_data_size = 0x%08x\n",
-> +                       desc->app_resident_data_size);
-> +       nv_debug(ppmu, "nb_overlays = %d\n", desc->nb_overlays);
-> +
-> +       nv_debug(ppmu, "compressed = %u\n", desc->compressed);
-> +}
-> +
-> +static int
->  gk20a_pmu_dvfs_target(struct gk20a_pmu_priv *priv, int *state)
->  {
->         struct nvkm_clk *clk = nvkm_clk(priv);
-> @@ -160,40 +398,544 @@ resched:
->  }
->
->  static int
-> -gk20a_pmu_fini(struct nvkm_object *object, bool suspend)
-> +gk20a_pmu_enable_hw(struct nvkm_pmu *ppmu, struct nvkm_mc *pmc,
-> +                       bool enable)
->  {
-> -       struct nvkm_pmu *pmu = (void *)object;
-> -       struct gk20a_pmu_priv *priv = (void *)pmu;
-> +       if (enable) {
-> +               nv_mask(pmc, 0x000200, 0x00002000, 0x00002000);
-> +               nv_rd32(pmc, 0x00000200);
-> +               if (nv_wait(ppmu, 0x0010a10c, 0x00000006, 0x00000000))
-> +                       return 0;
-> +               nv_mask(pmc, 0x00000200, 0x2000, 0x00000000);
-> +               nv_error(ppmu, "Falcon mem scrubbing timeout\n");
-> +               return -ETIMEDOUT;
-> +       } else {
-> +               nv_mask(pmc, 0x00000200, 0x2000, 0x00000000);
-> +               return 0;
-> +       }
-> +}
-> +static void
-> +gk20a_pmu_enable_irq(struct nvkm_pmu *ppmu, struct nvkm_mc *pmc, bool enable)
-> +{
-> +       if (enable) {
-> +               nv_debug(ppmu, "enable pmu irq\n");
-> +               nv_wr32(ppmu, 0x0010a010, 0xff);
-> +               nv_mask(pmc, 0x00000640, 0x1000000, 0x1000000);
-> +               nv_mask(pmc, 0x00000644, 0x1000000, 0x1000000);
-> +       } else {
-> +               nv_debug(ppmu, "disable pmu irq\n");
-> +               nv_mask(pmc, 0x00000640, 0x1000000, 0x00000000);
-> +               nv_mask(pmc, 0x00000644, 0x1000000, 0x00000000);
-> +               nv_wr32(ppmu, 0x0010a014, 0xff);
-> +       }
->
-> -       nvkm_timer_alarm_cancel(priv, &priv->alarm);
-> +}
->
-> -       return nvkm_subdev_fini(&pmu->base, suspend);
-> +static int
-> +gk20a_pmu_idle(struct nvkm_pmu *ppmu)
-> +{
-> +       if (!nv_wait(ppmu, 0x0010a04c, 0x0000ffff, 0x00000000)) {
-> +               nv_error(ppmu, "timedout waiting pmu idle\n");
-> +               return -EBUSY;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static int
-> +gk20a_pmu_enable(struct nvkm_pmu *ppmu, struct nvkm_mc *pmc, bool enable)
-> +{
-> +       u32 pmc_enable;
-> +       int err;
-> +
-> +       if (enable) {
-> +               err = gk20a_pmu_enable_hw(ppmu, pmc, true);
-> +               if (err)
-> +                       return err;
-> +
-> +               err = gk20a_pmu_idle(ppmu);
-> +               if (err)
-> +                       return err;
-> +
-> +               gk20a_pmu_enable_irq(ppmu, pmc, true);
-> +       } else {
-> +               pmc_enable = nv_rd32(pmc, 0x200);
-> +               if ((pmc_enable & 0x2000) != 0x0) {
-> +                       gk20a_pmu_enable_irq(ppmu, pmc, false);
-> +                       gk20a_pmu_enable_hw(ppmu, pmc, false);
-> +               }
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static int
-> +gk20a_pmu_reset(struct nvkm_pmu *ppmu, struct nvkm_mc *pmc)
-> +{
-> +       int err;
-> +
-> +       err = gk20a_pmu_idle(ppmu);
-> +       if (err)
-> +               return err;
-> +
-> +       err = gk20a_pmu_enable(ppmu, pmc, false);
-> +       if (err)
-> +               return err;
-> +
-> +       err = gk20a_pmu_enable(ppmu, pmc, true);
-> +       if (err)
-> +               return err;
-> +
-> +       return 0;
-> +}
-> +
-> +static void
-> +gk20a_pmu_copy_to_dmem(struct gk20a_pmu_priv *pmu,
-> +               u32 dst, u8 *src, u32 size, u8 port)
-> +{
-> +       u32 i, words, bytes;
-> +       u32 data, addr_mask;
-> +       u32 *src_u32 = (u32 *)src;
-> +       struct nvkm_pmu *ppmu = &pmu->base;
-> +
-> +       if (size == 0) {
-> +               nv_error(ppmu, "size is zero\n");
-> +               goto out;
-> +       }
-> +
-> +       if (dst & 0x3) {
-> +               nv_error(ppmu, "dst (0x%08x) not 4-byte aligned\n", dst);
-> +               goto out;
-> +       }
-> +
-> +       mutex_lock(&pmu->pmu_copy_lock);
-> +       words = size >> 2;
-> +       bytes = size & 0x3;
-> +       addr_mask = 0xfffc;
-> +       dst &= addr_mask;
-> +
-> +       nv_wr32(ppmu, (0x10a1c0 + (port * 8)), (dst | (0x1 << 24)));
-> +
-> +       for (i = 0; i < words; i++) {
-> +               nv_wr32(ppmu, (0x10a1c4 + (port * 8)), src_u32[i]);
-> +               nv_debug(ppmu, "0x%08x\n", src_u32[i]);
-> +       }
-> +
-> +       if (bytes > 0) {
-> +               data = 0;
-> +               for (i = 0; i < bytes; i++)
-> +                       ((u8 *)&data)[i] = src[(words << 2) + i];
-> +               nv_wr32(ppmu, (0x10a1c4 + (port * 8)), data);
-> +               nv_debug(ppmu, "0x%08x\n", data);
-> +       }
-> +
-> +       data = nv_rd32(ppmu, (0x10a1c0 + (port * 8))) & addr_mask;
-> +       size = ALIGN(size, 4);
-> +       if (data != dst + size) {
-> +               nv_error(ppmu, "copy failed.... bytes written %d, expected %d",
-> +                                                             data - dst, size);
-> +       }
-> +       mutex_unlock(&pmu->pmu_copy_lock);
-> +out:
-> +       nv_debug(ppmu, "exit %s\n", __func__);
-> +}
-> +
-> +static void
-> +gk20a_copy_from_dmem(struct gk20a_pmu_priv *pmu,
-> +               u32 src, u8 *dst, u32 size, u8 port)
-> +{
-> +       u32 i, words, bytes;
-> +       u32 data, addr_mask;
-> +       u32 *dst_u32 = (u32 *)dst;
-> +       struct nvkm_pmu *ppmu = &pmu->base;
-> +
-> +       if (size == 0) {
-> +               nv_error(ppmu, "size is zero\n");
-> +               goto out;
-> +       }
-> +
-> +       if (src & 0x3) {
-> +               nv_error(ppmu, "src (0x%08x) not 4-byte aligned\n", src);
-> +               goto out;
-> +       }
-> +
-> +       mutex_lock(&pmu->pmu_copy_lock);
-> +
-> +       words = size >> 2;
-> +       bytes = size & 0x3;
-> +
-> +       addr_mask = 0xfffc;
-> +
-> +       src &= addr_mask;
-> +
-> +       nv_wr32(ppmu, (0x10a1c0 + (port * 8)), (src | (0x1 << 25)));
-> +
-> +       for (i = 0; i < words; i++) {
-> +               dst_u32[i] = nv_rd32(ppmu, (0x0010a1c4 + port * 8));
-> +               nv_debug(ppmu, "0x%08x\n", dst_u32[i]);
-> +       }
-> +       if (bytes > 0) {
-> +               data = nv_rd32(ppmu, (0x0010a1c4 + port * 8));
-> +               nv_debug(ppmu, "0x%08x\n", data);
-> +
-> +               for (i = 0; i < bytes; i++)
-> +                       dst[(words << 2) + i] = ((u8 *)&data)[i];
-> +       }
-> +       mutex_unlock(&pmu->pmu_copy_lock);
-> +out:
-> +       nv_debug(ppmu, "exit %s\n", __func__);
-> +}
-> +
-> +static int
-> +pmu_process_init_msg(struct gk20a_pmu_priv *pmu, struct pmu_msg *msg)
-
-gk20a_ prefix missing.
-
-> +{
-> +       struct nvkm_pmu *ppmu = &pmu->base;
-> +       struct pmu_init_msg_pmu_gk20a *init;
-> +       u32 tail;
-> +
-> +       tail = nv_rd32(ppmu, 0x0010a4cc);
-> +
-> +       gk20a_copy_from_dmem(pmu, tail,
-> +               (u8 *)&msg->hdr, PMU_MSG_HDR_SIZE, 0);
-> +
-> +       if (msg->hdr.unit_id != PMU_UNIT_INIT) {
-> +               nv_error(ppmu, "expecting init msg\n");
-> +               return -EINVAL;
-> +       }
-> +
-> +       gk20a_copy_from_dmem(pmu, tail + PMU_MSG_HDR_SIZE,
-> +               (u8 *)&msg->msg, msg->hdr.size - PMU_MSG_HDR_SIZE, 0);
-> +
-> +       if (msg->msg.init.msg_type != PMU_INIT_MSG_TYPE_PMU_INIT) {
-> +               nv_error(ppmu, "expecting init msg\n");
-> +               return -EINVAL;
-> +       }
-> +
-> +       tail += ALIGN(msg->hdr.size, PMU_DMEM_ALIGNMENT);
-> +       nv_wr32(ppmu, 0x0010a4cc, tail);
-> +       init = &msg->msg.init.pmu_init_gk20a;
-> +       pmu->pmu_ready = true;
-> +       pmu->pmu_state = PMU_STATE_INIT_RECEIVED;
-> +       nv_debug(ppmu, "init msg processed\n");
-> +       return 0;
-> +}
-> +
-> +static void
-> +gk20a_pmu_process_message(struct work_struct *work)
-> +{
-> +       struct nvkm_pmu *ppmu = container_of(work, struct nvkm_pmu, recv.work);
-> +       struct pmu_msg msg;
-> +       struct gk20a_pmu_priv *pmu = to_gk20a_priv(ppmu);
-> +       struct nvkm_mc *pmc = nvkm_mc(ppmu);
-> +
-> +       mutex_lock(&pmu->isr_mutex);
-> +       if (unlikely(!pmu->pmu_ready)) {
-> +               nv_debug(ppmu, "processing init msg\n");
-> +               pmu_process_init_msg(pmu, &msg);
-> +               mutex_unlock(&pmu->isr_mutex);
-> +               gk20a_pmu_enable_irq(ppmu, pmc, true);
-> +       } else
-> +               mutex_unlock(&pmu->isr_mutex);
-> +}
-> +
-> +static int
-> +gk20a_pmu_init_vm(struct nvkm_pmu *ppmu, const struct firmware *fw)
-> +{
-> +       int ret = 0;
-> +       struct gk20a_pmu_priv *pmu = to_gk20a_priv(ppmu);
-> +       u32 *ucode_image;
-> +       struct pmu_ucode_desc *desc = (struct pmu_ucode_desc *)fw->data;
-> +       int i;
-> +       struct nvkm_pmu_priv_vm *pmuvm = &pmu->pmuvm;
-> +       struct nvkm_device *device = nv_device(&ppmu->base);
-> +       struct nvkm_vm *vm;
-> +       const u64 pmu_area_len = 300*1024;
-> +       /* mem for inst blk*/
-> +       ret = nvkm_gpuobj_new(nv_object(ppmu), NULL, 0x1000, 0, 0, &pmuvm->mem);
-
-Blank line between your declarations and code.
-
-> +       if (ret)
-> +               return ret;
-> +
-> +       /* mem for pgd*/
-> +       ret = nvkm_gpuobj_new(nv_object(ppmu), NULL, 0x8000, 0, 0, &pmuvm->pgd);
-> +       if (ret)
-> +               return ret;
-> +
-> +       /*allocate virtual memory range*/
-> +       ret = nvkm_vm_new(device, 0, pmu_area_len, 0, &vm);
-> +       if (ret)
-> +               return ret;
-> +
-> +       atomic_inc(&vm->engref[NVDEV_SUBDEV_PMU]);
-> +       /*update VM with pgd */
-> +
-> +       ret = nvkm_vm_ref(vm, &pmuvm->vm, pmuvm->pgd);
-> +       if (ret)
-> +               return ret;
-> +
-> +       /*update pgd in inst blk */
-> +       nv_wo32(pmuvm->mem, 0x0200, lower_32_bits(pmuvm->pgd->addr));
-> +       nv_wo32(pmuvm->mem, 0x0204, upper_32_bits(pmuvm->pgd->addr));
-> +       nv_wo32(pmuvm->mem, 0x0208, lower_32_bits(pmu_area_len - 1));
-> +       nv_wo32(pmuvm->mem, 0x020c, upper_32_bits(pmu_area_len - 1));
-> +
-> +       /* allocate memory for pmu fw to be copied to*/
-> +       ret = nvkm_gpuobj_new(nv_object(ppmu), NULL,
-> +                  GK20A_PMU_UCODE_SIZE_MAX, 0x1000, 0, &pmu->ucode.obj);
-
-Instead of GK20A_PMU_UCODE_SIZE_MAX, can't you use desc->app_size to
-allocate the exact amount of memory you need?
-
-> +       if (ret)
-> +               return ret;
-> +
-> +       ucode_image = (u32 *)((u8 *)desc + desc->descriptor_size);
-> +       for (i = 0; i < (desc->app_start_offset + desc->app_size); i += 4)
-> +               nv_wo32(pmu->ucode.obj, i, ucode_image[i/4]);
-> +
-> +       /* map allocated memory into GMMU */
-> +       ret = nvkm_gpuobj_map_vm(nv_gpuobj(pmu->ucode.obj), vm,
-
-pmu->ucode.obj is already a nvkm_gpuobj *, you don't need to cast it here.
-
-> +                                   NV_MEM_ACCESS_RW, &pmu->ucode.vma);
-> +       if (ret)
-> +               return ret;
-> +
-> +       nv_debug(ppmu, "%s function compleletd\n", __func__);
-> +       return ret;
-> +}
-> +
-> +static int
-> +gk20a_init_pmu_setup_sw(struct nvkm_pmu *ppmu)
-> +{
-> +       struct gk20a_pmu_priv *pmu = to_gk20a_priv(ppmu);
-> +       struct nvkm_pmu_priv_vm *ppmuvm = &pmu->pmuvm;
-> +       int ret = 0;
-> +
-> +       if (pmu->sw_ready) {
-> +               nv_debug(ppmu, "skipping init\n");
-> +               goto skip_init;
-> +       }
-> +
-> +       INIT_WORK(&pmu->base.recv.work, gk20a_pmu_process_message);
-> +
-> +       ret = nvkm_gpuobj_new(nv_object(ppmu), NULL, GK20A_PMU_TRACE_BUFSIZE,
-> +                                           0, 0, &pmu->trace_buf.obj);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret = nvkm_gpuobj_map_vm(nv_gpuobj(pmu->trace_buf.obj), ppmuvm->vm,
-> +                                       NV_MEM_ACCESS_RW, &pmu->trace_buf.vma);
-> +       if (ret)
-> +               return ret;
-> +
-> +       pmu->sw_ready = true;
-> +
-> +skip_init:
-> +       return 0;
-> +}
-> +
-> +static int
-> +gk20a_pmu_bootstrap(struct gk20a_pmu_priv *pmu)
-> +{
-> +       struct nvkm_pmu *ppmu = &pmu->base;
-> +       struct pmu_ucode_desc *desc = pmu->desc;
-> +       u32 addr_code, addr_data, addr_load;
-> +       u32 i, blocks, addr_args;
-> +       struct pmu_cmdline_args_gk20a cmdline_args;
-> +       struct nvkm_pmu_priv_vm *ppmuvm = &pmu->pmuvm;
-> +
-> +       nv_mask(ppmu, 0x0010a048, 0x01, 0x01);
-> +       /*bind the address*/
-> +       nv_wr32(ppmu, 0x0010a480,
-> +               ppmuvm->mem->addr >> 12 |
-> +               0x1 << 30 |
-> +               0x20000000);
-> +
-> +       /* TBD: load all other surfaces */
-> +       cmdline_args.falc_trace_size = GK20A_PMU_TRACE_BUFSIZE;
-> +       cmdline_args.falc_trace_dma_base =
-> +                           lower_32_bits(pmu->trace_buf.vma.offset >> 8);
-> +       cmdline_args.falc_trace_dma_idx = GK20A_PMU_DMAIDX_VIRT;
-> +       cmdline_args.cpu_freq_hz = 204;
-> +       cmdline_args.secure_mode = 0;
-> +
-> +       addr_args = (nv_rd32(ppmu, 0x0010a108) >> 9) & 0x1ff;
-> +       addr_args = addr_args << GK20A_PMU_DMEM_BLKSIZE2;
-> +       addr_args -= sizeof(struct pmu_cmdline_args_gk20a);
-> +       nv_debug(ppmu, "initiating copy to dmem\n");
-> +       gk20a_pmu_copy_to_dmem(pmu, addr_args,
-> +                       (u8 *)&cmdline_args,
-> +                       sizeof(struct pmu_cmdline_args_gk20a), 0);
-> +
-> +       nv_wr32(ppmu, 0x0010a1c0, 0x1 << 24);
-> +
-> +       addr_code = lower_32_bits((pmu->ucode.vma.offset +
-> +                       desc->app_start_offset +
-> +                       desc->app_resident_code_offset) >> 8);
-> +
-> +       addr_data = lower_32_bits((pmu->ucode.vma.offset +
-> +                       desc->app_start_offset +
-> +                       desc->app_resident_data_offset) >> 8);
-> +
-> +       addr_load = lower_32_bits((pmu->ucode.vma.offset +
-> +                       desc->bootloader_start_offset) >> 8);
-> +
-> +       nv_wr32(ppmu, 0x0010a1c4, GK20A_PMU_DMAIDX_UCODE);
-> +       nv_debug(ppmu, "0x%08x\n", GK20A_PMU_DMAIDX_UCODE);
-> +       nv_wr32(ppmu, 0x0010a1c4, (addr_code));
-> +       nv_debug(ppmu, "0x%08x\n", (addr_code));
-> +       nv_wr32(ppmu, 0x0010a1c4, desc->app_size);
-> +       nv_debug(ppmu, "0x%08x\n", desc->app_size);
-> +       nv_wr32(ppmu, 0x0010a1c4, desc->app_resident_code_size);
-> +       nv_debug(ppmu, "0x%08x\n", desc->app_resident_code_size);
-> +       nv_wr32(ppmu, 0x0010a1c4, desc->app_imem_entry);
-> +       nv_debug(ppmu, "0x%08x\n", desc->app_imem_entry);
-> +       nv_wr32(ppmu, 0x0010a1c4,  (addr_data));
-> +       nv_debug(ppmu, "0x%08x\n", (addr_data));
-> +       nv_wr32(ppmu, 0x0010a1c4, desc->app_resident_data_size);
-> +       nv_debug(ppmu, "0x%08x\n", desc->app_resident_data_size);
-> +       nv_wr32(ppmu, 0x0010a1c4, (addr_code));
-> +       nv_debug(ppmu, "0x%08x\n", (addr_code));
-> +       nv_wr32(ppmu, 0x0010a1c4, 0x1);
-> +       nv_debug(ppmu, "0x%08x\n", 1);
-> +       nv_wr32(ppmu, 0x0010a1c4, addr_args);
-> +       nv_debug(ppmu, "0x%08x\n", addr_args);
-> +
-> +       nv_wr32(ppmu, 0x0010a110,
-> +               (addr_load) - (desc->bootloader_imem_offset >> 8));
-> +
-> +       blocks = ((desc->bootloader_size + 0xFF) & ~0xFF) >> 8;
-> +
-> +       for (i = 0; i < blocks; i++) {
-> +               nv_wr32(ppmu, 0x0010a114,
-> +                       desc->bootloader_imem_offset + (i << 8));
-> +               nv_wr32(ppmu, 0x0010a11c,
-> +                       desc->bootloader_imem_offset + (i << 8));
-> +               nv_wr32(ppmu, 0x0010a118,
-> +                       0x01 << 4  |
-> +                       0x06 << 8  |
-> +                       ((GK20A_PMU_DMAIDX_UCODE & 0x07) << 12));
-> +       }
-> +
-> +       nv_wr32(ppmu, 0x0010a104, (desc->bootloader_entry_point));
-> +       nv_wr32(ppmu, 0x0010a100, 0x1 << 1);
-> +       nv_wr32(ppmu, 0x0010a080, desc->app_version);
-> +
-> +       return 0;
-> +}
-> +
-> +static int
-> +gk20a_init_pmu_setup_hw1(struct nvkm_pmu *ppmu, struct nvkm_mc *pmc)
-> +{
-> +       struct gk20a_pmu_priv *pmu = to_gk20a_priv(ppmu);
-> +       int err;
-> +
-> +       mutex_lock(&pmu->isr_mutex);
-> +       gk20a_pmu_reset(ppmu, pmc);
-> +       pmu->isr_enabled = true;
-> +       mutex_unlock(&pmu->isr_mutex);
-> +
-> +       /* setup apertures - virtual */
-> +       nv_wr32(ppmu, 0x10a600 + 0 * 4, 0x0);
-> +       nv_wr32(ppmu, 0x10a600 + 1 * 4, 0x0);
-> +       /* setup apertures - physical */
-> +       nv_wr32(ppmu, 0x10a600 + 2 * 4, 0x4 | 0x0);
-> +       nv_wr32(ppmu, 0x10a600 + 3 * 4, 0x4 | 0x1);
-> +       nv_wr32(ppmu, 0x10a600 + 4 * 4, 0x4 | 0x2);
-> +
-> +       /* TBD: load pmu ucode */
-> +       err = gk20a_pmu_bootstrap(pmu);
-> +       if (err)
-> +               return err;
-> +
-> +       return 0;
-> +}
-> +
-> +
-> +static void
-> +gk20a_pmu_intr(struct nvkm_subdev *subdev)
-> +{
-> +       struct nvkm_pmu *ppmu = nvkm_pmu(subdev);
-> +       struct gk20a_pmu_priv *pmu = to_gk20a_priv(ppmu);
-> +       struct nvkm_mc *pmc = nvkm_mc(ppmu);
-> +       u32 intr, mask;
-> +
-> +       if (!pmu->isr_enabled)
-> +               return;
-> +
-> +       mask = nv_rd32(ppmu, 0x0010a018) & nv_rd32(ppmu, 0x0010a01c);
-> +
-> +       intr = nv_rd32(ppmu, 0x0010a008) & mask;
-> +
-> +       nv_debug(ppmu, "received falcon interrupt: 0x%08x\n", intr);
-> +       gk20a_pmu_enable_irq(ppmu, pmc, false);
-> +
-> +       if (!intr || pmu->pmu_state == PMU_STATE_OFF) {
-> +               nv_wr32(ppmu, 0x0010a004, intr);
-> +               nv_error(ppmu, "pmu state off\n");
-> +               gk20a_pmu_enable_irq(ppmu, pmc, true);
-> +       }
-> +
-> +       if (intr & 0x10)
-> +               nv_error(ppmu, "pmu halt intr not implemented\n");
-> +
-> +       if (intr & 0x20) {
-> +               nv_error(ppmu, "exterr interrupt  not impl..Clear interrupt\n");
-> +               nv_mask(ppmu, 0x0010a16c, (0x1 << 31), 0x00000000);
-> +       }
-> +
-> +       if (intr & 0x40) {
-> +               nv_debug(ppmu, "scheduling work\n");
-> +               schedule_work(&pmu->base.recv.work);
-> +       }
-> +
-> +       nv_wr32(ppmu, 0x0010a004, intr);
-> +       nv_debug(ppmu, "irq handled\n");
-> +}
-> +
-> +static void
-> +gk20a_pmu_pgob(struct nvkm_pmu *ppmu, bool enable)
-> +{
->  }
->
->  static int
->  gk20a_pmu_init(struct nvkm_object *object)
->  {
-> -       struct nvkm_pmu *pmu = (void *)object;
-> -       struct gk20a_pmu_priv *priv = (void *)pmu;
->         int ret;
-> +       struct nvkm_pmu *ppmu = (void *)object;
-> +       struct gk20a_pmu_priv *pmu = to_gk20a_priv(ppmu);
->
-> -       ret = nvkm_subdev_init(&pmu->base);
-> +       ret = nvkm_subdev_init(&ppmu->base);
->         if (ret)
->                 return ret;
->
-> -       pmu->pgob = nvkm_pmu_pgob;
-> -
-> -       /* init pwr perf counter */
-> -       nv_wr32(pmu, 0x10a504 + (BUSY_SLOT * 0x10), 0x00200001);
-> -       nv_wr32(pmu, 0x10a50c + (BUSY_SLOT * 0x10), 0x00000002);
-> -       nv_wr32(pmu, 0x10a50c + (CLK_SLOT * 0x10), 0x00000003);
-> +       nv_wr32(ppmu, 0x10a504 + (BUSY_SLOT * 0x10), 0x00200001);
-> +       nv_wr32(ppmu, 0x10a50c + (BUSY_SLOT * 0x10), 0x00000002);
-> +       nv_wr32(ppmu, 0x10a50c + (CLK_SLOT * 0x10), 0x00000003);
->
-> -       nvkm_timer_alarm(pmu, 2000000000, &priv->alarm);
-> +       nvkm_timer_alarm(ppmu, 2000000000, &pmu->alarm);
->         return ret;
->  }
-> +static void
-> +gk20a_pmu_dtor(struct nvkm_object *object)
-> +{
-> +       struct nvkm_pmu *ppmu = (void *)object;
-> +       struct nvkm_mc *pmc = nvkm_mc(object);
-> +       struct gk20a_pmu_priv *pmu = to_gk20a_priv(ppmu);
->
-> +       nvkm_gpuobj_unmap(&pmu->ucode.vma);
-> +       nvkm_gpuobj_ref(NULL, &pmu->ucode.obj);
-> +       nvkm_vm_ref(NULL, &pmu->pmuvm.vm, pmu->pmuvm.pgd);
-> +       nvkm_gpuobj_ref(NULL, &pmu->pmuvm.pgd);
-> +       nvkm_gpuobj_ref(NULL, &pmu->pmuvm.mem);
-> +       nvkm_gpuobj_unmap(&pmu->trace_buf.vma);
-> +       nvkm_gpuobj_ref(NULL, &pmu->trace_buf.obj);
-> +/* make sure the pending operations are finished before we continue */
-> +       cancel_work_sync(&pmu->base.recv.work);
-
-I don't think your worker will be happy if it is still running after
-you deleted the instance block. :/
-
-That's typically the kind of stuff you want to do in your fini()
-function, not the destructor. The difference between ctor/dtor and
-init/fini can be roughly summarized as follows:
-
-- ctor/dtor: allocate/free resources used by device
-- init/fini: start/stop the device.
-
-Between ctor/init and fini/dtor, the device is in a state where it is
-ready-to-run, but not active. So all the stuff that you are doing
-below should be moved to fini.
-
-> +       pmu->initialized = false;
-> +       mutex_lock(&pmu->isr_mutex);
-> +       gk20a_pmu_enable(ppmu, pmc, false);
-> +       pmu->isr_enabled = false;
-> +       mutex_unlock(&pmu->isr_mutex);
-> +       pmu->pmu_state = PMU_STATE_OFF;
-> +       pmu->pmu_ready = false;
-> +}
->  static struct gk20a_pmu_dvfs_data
-> -gk20a_dvfs_data= {
-> +gk20a_dvfs_data = {
->         .p_load_target = 70,
->         .p_load_max = 90,
->         .p_smooth = 1,
-> @@ -204,18 +946,74 @@ gk20a_pmu_ctor(struct nvkm_object *parent, struct nvkm_object *engine,
->                struct nvkm_oclass *oclass, void *data, u32 size,
->                struct nvkm_object **pobject)
->  {
-> -       struct gk20a_pmu_priv *priv;
-> +       struct gk20a_pmu_priv *pmu;
-
-What need do you have to rename this variable? It inflates the size of
-the patch without any benefit.
-
-There is actually some reformatting/renaming I would like to do to
-this patch. Therefore I will send the next version. Please take it as
-a basis for your future work.
-
-The version I will send also fixes the init/fini sequence, so from now
-on I'd suggest that you continue working on secure boot since this
-patch should be mostly ok (but let's see what the others have to say
-:)) minus a few integration issues.
+RnJvbTogRGVlcGFrIEdveWFsIDxkZ295YWxAbnZpZGlhLmNvbT4KCi0gTWFwcyBQTVUgZmlybXdh
+cmUgaW50byBQTVUgdmlydHVhbCBtZW1vcnkuCi0gQ29weSBib290bG9hZGVyIGludG8gUE1VIG1l
+bW9yeSBhbmQgc3RhcnQgaXQuCi0gQWxsb3cgdGhlIFBNVSB0byBpbnRlcmFjdCB3aXRoIEhPU1Qg
+dmlhIGludGVycnVwdHMuCgpQTVUgYWZ0ZXIgc3VjY2Vzc2Z1bCBjb25maWd1cmF0aW9ucyAodG8g
+Zm9sbG93IGFmdGVyIHRoaXMgcGF0Y2gpIHdpbGw6CjEuQXV0b25vbW91c2x5IHBvd2VyIGdhdGUg
+Z3JhcGhpY3MgZW5naW5lIHdoZW4gbm90IGluIHVzZS5JdCB3aWxsIHNhdmUKdXMgYSBsb3Qgb2Yg
+cG93ZXIuCjIuUHJvdmlkZSBiZXR0ZXIgd2F5IHRvIHNjYWxlIGZyZXF1ZW5jaWVzIGJ5IHJlcG9y
+dGluZyBQZXJmIGNvdW50ZXJzLgozLkJlIGNyaXRpY2FsIGZvciBHUFUgZnVuY3Rpb25hbGl0eSBh
+cyBmdXR1cmUgR1BVcyBzZWN1cmUgc29tZSByZWdpc3RlcgomIG1lbSBhY2Nlc3NlcyBpbnZvbHZl
+ZCBpbiBjb250ZXh0IHN3aXRjaC4KClNpZ25lZC1vZmYtYnk6IERlZXBhayBHb3lhbCA8ZGdveWFs
+QG52aWRpYS5jb20+ClNpZ25lZC1vZmYtYnk6IEFsZXhhbmRyZSBDb3VyYm90IDxhY291cmJvdEBu
+dmlkaWEuY29tPgotLS0KQ2hhbmdlcyBzaW5jZSB2MzoKLSBDbGVhbmVkIGZvcm1hdHRpbmcsIHJl
+bmFtZWQgdmFyaWFibGVzIGFjY29yZGluZyB0byBOb3V2ZWF1IHN0YW5kYXJkcwotIChIb3BlZnVs
+bHkpIGZpeGVkIGluaXQvZmluaSBzZXF1ZW5jZQotIFJlbW92ZWQgYSBmZXcgbW9yZSB1bm5lZWRl
+ZCB2YXJpYWJsZXMKCiBkcm0vbm91dmVhdS9udmttL3N1YmRldi9wbXUvZ2syMGEuYyB8IDgwMyAr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0KIDEgZmlsZSBjaGFuZ2VkLCA3ODUg
+aW5zZXJ0aW9ucygrKSwgMTggZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJtL25vdXZlYXUv
+bnZrbS9zdWJkZXYvcG11L2drMjBhLmMgYi9kcm0vbm91dmVhdS9udmttL3N1YmRldi9wbXUvZ2sy
+MGEuYwppbmRleCA1OTRmNzQ2ZTY4ZjIuLmMyMDZlYzVlNTU4YSAxMDA2NDQKLS0tIGEvZHJtL25v
+dXZlYXUvbnZrbS9zdWJkZXYvcG11L2drMjBhLmMKKysrIGIvZHJtL25vdXZlYXUvbnZrbS9zdWJk
+ZXYvcG11L2drMjBhLmMKQEAgLTEsNSArMSw1IEBACiAvKgotICogQ29weXJpZ2h0IChjKSAyMDE0
+LCBOVklESUEgQ09SUE9SQVRJT04uIEFsbCByaWdodHMgcmVzZXJ2ZWQuCisgKiBDb3B5cmlnaHQg
+KGMpIDIwMTQtMjAxNSwgTlZJRElBIENPUlBPUkFUSU9OLiBBbGwgcmlnaHRzIHJlc2VydmVkLgog
+ICoKICAqIFBlcm1pc3Npb24gaXMgaGVyZWJ5IGdyYW50ZWQsIGZyZWUgb2YgY2hhcmdlLCB0byBh
+bnkgcGVyc29uIG9idGFpbmluZyBhCiAgKiBjb3B5IG9mIHRoaXMgc29mdHdhcmUgYW5kIGFzc29j
+aWF0ZWQgZG9jdW1lbnRhdGlvbiBmaWxlcyAodGhlICJTb2Z0d2FyZSIpLApAQCAtMTksMTQgKzE5
+LDE4NiBAQAogICogRlJPTSwgT1VUIE9GIE9SIElOIENPTk5FQ1RJT04gV0lUSCBUSEUgU09GVFdB
+UkUgT1IgVEhFIFVTRSBPUiBPVEhFUgogICogREVBTElOR1MgSU4gVEhFIFNPRlRXQVJFLgogICov
+Ci0jaW5jbHVkZSAicHJpdi5oIgogCisjaW5jbHVkZSAicHJpdi5oIgorI2luY2x1ZGUgPGNvcmUv
+Y2xpZW50Lmg+CisjaW5jbHVkZSA8Y29yZS9ncHVvYmouaD4KKyNpbmNsdWRlIDxzdWJkZXYvYmFy
+Lmg+CisjaW5jbHVkZSA8c3ViZGV2L2ZiLmg+CisjaW5jbHVkZSA8c3ViZGV2L21jLmg+CisjaW5j
+bHVkZSA8c3ViZGV2L3RpbWVyLmg+CisjaW5jbHVkZSA8c3ViZGV2L21tdS5oPgorI2luY2x1ZGUg
+PHN1YmRldi9wbXUuaD4KKyNpbmNsdWRlIDxjb3JlL29iamVjdC5oPgorI2luY2x1ZGUgPGNvcmUv
+ZGV2aWNlLmg+CisjaW5jbHVkZSA8bGludXgvZGVsYXkuaD4KKyNpbmNsdWRlIDxsaW51eC9maXJt
+d2FyZS5oPgogI2luY2x1ZGUgPHN1YmRldi9jbGsuaD4KICNpbmNsdWRlIDxzdWJkZXYvdGltZXIu
+aD4KICNpbmNsdWRlIDxzdWJkZXYvdm9sdC5oPgogCisjZGVmaW5lIEFQUF9WRVJTSU9OX0dLMjBB
+ICAxNzk5NzU3NworI2RlZmluZSBHSzIwQV9QTVVfVUNPREVfU0laRV9NQVggICgyNTYgKiAxMDI0
+KQorI2RlZmluZSBQTVVfUVVFVUVfQ09VTlQgIDUKKworI2RlZmluZSBHSzIwQV9QTVVfVFJBQ0Vf
+QlVGU0laRSAgICAgICAgICAgICAweDQwMDAgICAvKiA0SyAqLworI2RlZmluZSBHSzIwQV9QTVVf
+RE1FTV9CTEtTSVpFMgkJICAgIDgKKyNkZWZpbmUgR0syMEFfUE1VX1VDT0RFX05CX01BWF9PVkVS
+TEFZCSAgICAzMgorI2RlZmluZSBHSzIwQV9QTVVfVUNPREVfTkJfTUFYX0RBVEVfTEVOR1RIICA2
+NAorCisjZGVmaW5lIFBNVV9VTklUX1JFV0lORAkJKDB4MDApCisjZGVmaW5lIFBNVV9VTklUX1BH
+CQkoMHgwMykKKyNkZWZpbmUgUE1VX1VOSVRfSU5JVAkJKDB4MDcpCisjZGVmaW5lIFBNVV9VTklU
+X1BFUkZNT04JKDB4MTIpCisjZGVmaW5lIFBNVV9VTklUX1RIRVJNCQkoMHgxQikKKyNkZWZpbmUg
+UE1VX1VOSVRfUkMJCSgweDFGKQorI2RlZmluZSBQTVVfVU5JVF9OVUxMCQkoMHgyMCkKKyNkZWZp
+bmUgUE1VX1VOSVRfRU5ECQkoMHgyMykKKyNkZWZpbmUgUE1VX1VOSVRfVEVTVF9TVEFSVAkoMHhG
+RSkKKyNkZWZpbmUgUE1VX1VOSVRfRU5EX1NJTQkoMHhGRikKKyNkZWZpbmUgUE1VX1VOSVRfVEVT
+VF9FTkQJKDB4RkYpCisKKyNkZWZpbmUgUE1VX1VOSVRfSURfSVNfVkFMSUQoaWQpCQlcCisJCSgo
+KGlkKSA8IFBNVV9VTklUX0VORCkgfHwgKChpZCkgPj0gUE1VX1VOSVRfVEVTVF9TVEFSVCkpCisj
+ZGVmaW5lIFBNVV9ETUVNX0FMSUdOTUVOVAkJKDQpCisKICNkZWZpbmUgQlVTWV9TTE9UCTAKICNk
+ZWZpbmUgQ0xLX1NMT1QJNworI2RlZmluZSBHSzIwQV9QTVVfVUNPREVfSU1BR0UJImdwbXVfdWNv
+ZGUuYmluIgorCisvKkNob2ljZXMgZm9yIERNQSB0byB1c2UqLworZW51bSB7CisJR0syMEFfUE1V
+X0RNQUlEWF9VQ09ERQkJPSAwLAorCUdLMjBBX1BNVV9ETUFJRFhfVklSVAkJPSAxLAorCUdLMjBB
+X1BNVV9ETUFJRFhfUEhZU19WSUQJPSAyLAorCUdLMjBBX1BNVV9ETUFJRFhfUEhZU19TWVNfQ09I
+CT0gMywKKwlHSzIwQV9QTVVfRE1BSURYX1BIWVNfU1lTX05DT0gJPSA0LAorCUdLMjBBX1BNVV9E
+TUFJRFhfUlNWRAkJPSA1LAorCUdLMjBBX1BNVV9ETUFJRFhfUEVMUEcJCT0gNiwKKwlHSzIwQV9Q
+TVVfRE1BSURYX0VORAkJPSA3Cit9OworCitzdHJ1Y3QgcG11X2J1Zl9kZXNjIHsKKwlzdHJ1Y3Qg
+bnZrbV9ncHVvYmogKm9iajsKKwlzdHJ1Y3QgbnZrbV92bWEgdm1hOworCXNpemVfdCBzaXplOwor
+fTsKKworc3RydWN0IG52a21fcG11X3ByaXZfdm0geworCXN0cnVjdCBudmttX2dwdW9iaiAqbWVt
+OworCXN0cnVjdCBudmttX2dwdW9iaiAqcGdkOworCXN0cnVjdCBudmttX3ZtICp2bTsKK307CisK
+Ky8qQ2hvaWNlcyBmb3IgcG11X3N0YXRlKi8KK2VudW0geworCVBNVV9TVEFURV9PRkYsICAgICAg
+ICAgICAgIC8qMCAgUE1VIGlzIG9mZiAqLworCVBNVV9TVEFURV9TVEFSVElORywgICAgICAgIC8q
+MSAgUE1VIGlzIG9uLCBidXQgbm90IGJvb3RlZCAqLworCVBNVV9TVEFURV9JTklUX1JFQ0VJVkVE
+ICAgIC8qMiAgUE1VIGluaXQgbWVzc2FnZSByZWNlaXZlZCAqLworfTsKKworc3RydWN0IHBtdV9t
+ZW1fZ2syMGEgeworCXUzMiBkbWFfYmFzZTsKKwl1OCAgZG1hX29mZnNldDsKKwl1OCAgZG1hX2lk
+eDsKKwl1MTYgZmJfc2l6ZTsKK307CisKK3N0cnVjdCBwbXVfY21kbGluZV9hcmdzX2drMjBhIHsK
+Kwl1MzIgY3B1X2ZyZXFfaHo7CQkvKiBGcmVxdWVuY3kgb2YgdGhlIGNsb2NrIGRyaXZpbmcgUE1V
+ICovCisJdTMyIGZhbGNfdHJhY2Vfc2l6ZTsJCS8qIGZhbGN0cmFjZSBidWZmZXIgc2l6ZSAoYnl0
+ZXMpICovCisJdTMyIGZhbGNfdHJhY2VfZG1hX2Jhc2U7CS8qIDI1Ni1ieXRlIGJsb2NrIGFkZHJl
+c3MgKi8KKwl1MzIgZmFsY190cmFjZV9kbWFfaWR4OwkJLyogZG1hSWR4IGZvciBETUEgb3BlcmF0
+aW9ucyAqLworCXU4IHNlY3VyZV9tb2RlOworCXN0cnVjdCBwbXVfbWVtX2drMjBhIGdjNl9jdHg7
+CQkvKiBkbWVtIG9mZnNldCBvZiBnYzYgY29udGV4dCAqLworfTsKKworLypwbXUgdWNvZGUgZGVz
+Y3JpcHRvciovCitzdHJ1Y3QgcG11X3Vjb2RlX2Rlc2MgeworCXUzMiBkZXNjcmlwdG9yX3NpemU7
+CisJdTMyIGltYWdlX3NpemU7CisJdTMyIHRvb2xzX3ZlcnNpb247CisJdTMyIGFwcF92ZXJzaW9u
+OworCWNoYXIgZGF0ZVtHSzIwQV9QTVVfVUNPREVfTkJfTUFYX0RBVEVfTEVOR1RIXTsKKwl1MzIg
+Ym9vdGxvYWRlcl9zdGFydF9vZmZzZXQ7CisJdTMyIGJvb3Rsb2FkZXJfc2l6ZTsKKwl1MzIgYm9v
+dGxvYWRlcl9pbWVtX29mZnNldDsKKwl1MzIgYm9vdGxvYWRlcl9lbnRyeV9wb2ludDsKKwl1MzIg
+YXBwX3N0YXJ0X29mZnNldDsKKwl1MzIgYXBwX3NpemU7CisJdTMyIGFwcF9pbWVtX29mZnNldDsK
+Kwl1MzIgYXBwX2ltZW1fZW50cnk7CisJdTMyIGFwcF9kbWVtX29mZnNldDsKKwl1MzIgYXBwX3Jl
+c2lkZW50X2NvZGVfb2Zmc2V0OworCXUzMiBhcHBfcmVzaWRlbnRfY29kZV9zaXplOworCXUzMiBh
+cHBfcmVzaWRlbnRfZGF0YV9vZmZzZXQ7CisJdTMyIGFwcF9yZXNpZGVudF9kYXRhX3NpemU7CisJ
+dTMyIG5iX292ZXJsYXlzOworCXN0cnVjdCB7dTMyIHN0YXJ0OyB1MzIgc2l6ZTsgfSBsb2FkX292
+bFtHSzIwQV9QTVVfVUNPREVfTkJfTUFYX09WRVJMQVldOworCXUzMiBjb21wcmVzc2VkOworfTsK
+KworLypwbXUgbXNnIGhlYWRlciovCitzdHJ1Y3QgcG11X2hkciB7CisJdTggdW5pdF9pZDsKKwl1
+OCBzaXplOworCXU4IGN0cmxfZmxhZ3M7CisJdTggc2VxX2lkOworfTsKKworI2RlZmluZSBQTVVf
+TVNHX0hEUl9TSVpFCXNpemVvZihzdHJ1Y3QgcG11X2hkcikKKworZW51bSB7CisJUE1VX0lOSVRf
+TVNHX1RZUEVfUE1VX0lOSVQgPSAwLAorfTsKKworLypwbXUgaW5pdCBtc2cgZm9ybWF0Ki8KK3N0
+cnVjdCBwbXVfaW5pdF9tc2dfcG11X2drMjBhIHsKKwl1OCBtc2dfdHlwZTsKKwl1OCBwYWQ7CisJ
+dTE2ICBvc19kZWJ1Z19lbnRyeV9wb2ludDsKKworCXN0cnVjdCB7CisJCXUxNiBzaXplOworCQl1
+MTYgb2Zmc2V0OworCQl1OCAgaW5kZXg7CisJCXU4ICBwYWQ7CisJfSBxdWV1ZV9pbmZvW1BNVV9R
+VUVVRV9DT1VOVF07CisKKwl1MTYgc3dfbWFuYWdlZF9hcmVhX29mZnNldDsKKwl1MTYgc3dfbWFu
+YWdlZF9hcmVhX3NpemU7Cit9OworCisvKnBtdSBpbml0IG1zZyBmb3JtYXQqLworc3RydWN0IHBt
+dV9pbml0X21zZyB7CisJdW5pb24geworCQl1OCBtc2dfdHlwZTsKKwkJc3RydWN0IHBtdV9pbml0
+X21zZ19wbXVfZ2syMGEgcG11X2luaXRfZ2syMGE7CisJfTsKK307CisKK2VudW0geworCVBNVV9S
+Q19NU0dfVFlQRV9VTkhBTkRMRURfQ01EID0gMCwKK307CisKK3N0cnVjdCBwbXVfcmNfbXNnX3Vu
+aGFuZGxlZF9jbWQgeworCXU4IG1zZ190eXBlOworCXU4IHVuaXRfaWQ7Cit9OworCitzdHJ1Y3Qg
+cG11X3JjX21zZyB7CisJdTggbXNnX3R5cGU7CisJc3RydWN0IHBtdV9yY19tc2dfdW5oYW5kbGVk
+X2NtZCB1bmhhbmRsZWRfY21kOworfTsKKworLypwbXUgZ2VuZXJpYyBtc2cgZm9ybWF0Ki8KK3N0
+cnVjdCBwbXVfbXNnIHsKKwlzdHJ1Y3QgcG11X2hkciBoZHI7CisJdW5pb24geworCQlzdHJ1Y3Qg
+cG11X2luaXRfbXNnIGluaXQ7CisJCXN0cnVjdCBwbXVfcmNfbXNnIHJjOworCX0gbXNnOworfTsK
+IAogc3RydWN0IGdrMjBhX3BtdV9kdmZzX2RhdGEgewogCWludCBwX2xvYWRfdGFyZ2V0OwpAQCAt
+MzksOCArMjExLDE5IEBAIHN0cnVjdCBnazIwYV9wbXVfcHJpdiB7CiAJc3RydWN0IG52a21fcG11
+IGJhc2U7CiAJc3RydWN0IG52a21fYWxhcm0gYWxhcm07CiAJc3RydWN0IGdrMjBhX3BtdV9kdmZz
+X2RhdGEgKmRhdGE7CisJc3RydWN0IHBtdV91Y29kZV9kZXNjICpkZXNjOworCXN0cnVjdCBwbXVf
+YnVmX2Rlc2MgdWNvZGU7CisJc3RydWN0IHBtdV9idWZfZGVzYyB0cmFjZV9idWY7CisJc3RydWN0
+IG11dGV4IHBtdV9jb3B5X2xvY2s7CisJYm9vbCBwbXVfcmVhZHk7CisJaW50IHBtdV9zdGF0ZTsK
+KwlzdHJ1Y3QgbnZrbV9wbXVfcHJpdl92bSBwbXV2bTsKKwlzdHJ1Y3QgbXV0ZXggaXNyX211dGV4
+OworCWJvb2wgaXNyX2VuYWJsZWQ7CiB9OwogCisjZGVmaW5lIHRvX2drMjBhX3ByaXYocHRyKSBj
+b250YWluZXJfb2YocHRyLCBzdHJ1Y3QgZ2syMGFfcG11X3ByaXYsIGJhc2UpCisKIHN0cnVjdCBn
+azIwYV9wbXVfZHZmc19kZXZfc3RhdHVzIHsKIAl1bnNpZ25lZCBsb25nIHRvdGFsOwogCXVuc2ln
+bmVkIGxvbmcgYnVzeTsKQEAgLTQ4LDYgKzIzMSw1OSBAQCBzdHJ1Y3QgZ2syMGFfcG11X2R2ZnNf
+ZGV2X3N0YXR1cyB7CiB9OwogCiBzdGF0aWMgaW50CitnazIwYV9wbXVfbG9hZF9maXJtd2FyZShz
+dHJ1Y3QgbnZrbV9wbXUgKnBtdSwgY29uc3Qgc3RydWN0IGZpcm13YXJlICoqcGZ3KQoreworCXN0
+cnVjdCBudmttX2RldmljZSAqZGV2OworCWNoYXIgZndbMzJdOworCisJZGV2ID0gbnZfZGV2aWNl
+KHBtdSk7CisJc25wcmludGYoZncsIHNpemVvZihmdyksICJudmlkaWEvdGVncmExMjQvJXMiLCBH
+SzIwQV9QTVVfVUNPREVfSU1BR0UpOworCXJldHVybiByZXF1ZXN0X2Zpcm13YXJlKHBmdywgZncs
+IG52X2RldmljZV9iYXNlKGRldikpOworfQorCitzdGF0aWMgdm9pZAorZ2syMGFfcG11X3JlbGVh
+c2VfZmlybXdhcmUoc3RydWN0IG52a21fcG11ICpwbXUsIGNvbnN0IHN0cnVjdCBmaXJtd2FyZSAq
+cGZ3KQoreworCW52X2RlYnVnKHBtdSwgImZpcm13YXJlIHJlbGVhc2VkXG4iKTsKKwlyZWxlYXNl
+X2Zpcm13YXJlKHBmdyk7Cit9CisKK3N0YXRpYyB2b2lkCitnazIwYV9wbXVfZHVtcF9maXJtd2Fy
+ZV9pbmZvKHN0cnVjdCBudmttX3BtdSAqcG11LCBjb25zdCBzdHJ1Y3QgZmlybXdhcmUgKmZ3KQor
+eworCXN0cnVjdCBwbXVfdWNvZGVfZGVzYyAqZGVzYyA9IChzdHJ1Y3QgcG11X3Vjb2RlX2Rlc2Mg
+Kilmdy0+ZGF0YTsKKworCW52X2RlYnVnKHBtdSwgIkdLMjBBIFBNVSBmaXJtd2FyZSBpbmZvcm1h
+dGlvblxuIik7CisJbnZfZGVidWcocG11LCAiZGVzY3JpcHRvciBzaXplID0gJXVcbiIsIGRlc2Mt
+PmRlc2NyaXB0b3Jfc2l6ZSk7CisJbnZfZGVidWcocG11LCAiaW1hZ2Ugc2l6ZSAgPSAldVxuIiwg
+ZGVzYy0+aW1hZ2Vfc2l6ZSk7CisJbnZfZGVidWcocG11LCAiYXBwX3ZlcnNpb24gPSAweCUwOHhc
+biIsIGRlc2MtPmFwcF92ZXJzaW9uKTsKKwludl9kZWJ1ZyhwbXUsICJkYXRlID0gJXNcbiIsIGRl
+c2MtPmRhdGUpOworCW52X2RlYnVnKHBtdSwgImJvb3Rsb2FkZXJfc3RhcnRfb2Zmc2V0ID0gMHgl
+MDh4XG4iLAorCQkJCWRlc2MtPmJvb3Rsb2FkZXJfc3RhcnRfb2Zmc2V0KTsKKwludl9kZWJ1Zyhw
+bXUsICJib290bG9hZGVyX3NpemUgPSAweCUwOHhcbiIsIGRlc2MtPmJvb3Rsb2FkZXJfc2l6ZSk7
+CisJbnZfZGVidWcocG11LCAiYm9vdGxvYWRlcl9pbWVtX29mZnNldCA9IDB4JTA4eFxuIiwKKwkJ
+CQlkZXNjLT5ib290bG9hZGVyX2ltZW1fb2Zmc2V0KTsKKwludl9kZWJ1ZyhwbXUsICJib290bG9h
+ZGVyX2VudHJ5X3BvaW50ID0gMHglMDh4XG4iLAorCQkJCWRlc2MtPmJvb3Rsb2FkZXJfZW50cnlf
+cG9pbnQpOworCW52X2RlYnVnKHBtdSwgImFwcF9zdGFydF9vZmZzZXQgPSAweCUwOHhcbiIsIGRl
+c2MtPmFwcF9zdGFydF9vZmZzZXQpOworCW52X2RlYnVnKHBtdSwgImFwcF9zaXplID0gMHglMDh4
+XG4iLCBkZXNjLT5hcHBfc2l6ZSk7CisJbnZfZGVidWcocG11LCAiYXBwX2ltZW1fb2Zmc2V0ID0g
+MHglMDh4XG4iLCBkZXNjLT5hcHBfaW1lbV9vZmZzZXQpOworCW52X2RlYnVnKHBtdSwgImFwcF9p
+bWVtX2VudHJ5ID0gMHglMDh4XG4iLCBkZXNjLT5hcHBfaW1lbV9lbnRyeSk7CisJbnZfZGVidWco
+cG11LCAiYXBwX2RtZW1fb2Zmc2V0ID0gMHglMDh4XG4iLCBkZXNjLT5hcHBfZG1lbV9vZmZzZXQp
+OworCW52X2RlYnVnKHBtdSwgImFwcF9yZXNpZGVudF9jb2RlX29mZnNldCA9IDB4JTA4eFxuIiwK
+KwkJCWRlc2MtPmFwcF9yZXNpZGVudF9jb2RlX29mZnNldCk7CisJbnZfZGVidWcocG11LCAiYXBw
+X3Jlc2lkZW50X2NvZGVfc2l6ZSA9IDB4JTA4eFxuIiwKKwkJCWRlc2MtPmFwcF9yZXNpZGVudF9j
+b2RlX3NpemUpOworCW52X2RlYnVnKHBtdSwgImFwcF9yZXNpZGVudF9kYXRhX29mZnNldCA9IDB4
+JTA4eFxuIiwKKwkJCWRlc2MtPmFwcF9yZXNpZGVudF9kYXRhX29mZnNldCk7CisJbnZfZGVidWco
+cG11LCAiYXBwX3Jlc2lkZW50X2RhdGFfc2l6ZSA9IDB4JTA4eFxuIiwKKwkJCWRlc2MtPmFwcF9y
+ZXNpZGVudF9kYXRhX3NpemUpOworCW52X2RlYnVnKHBtdSwgIm5iX292ZXJsYXlzID0gJWRcbiIs
+IGRlc2MtPm5iX292ZXJsYXlzKTsKKworCW52X2RlYnVnKHBtdSwgImNvbXByZXNzZWQgPSAldVxu
+IiwgZGVzYy0+Y29tcHJlc3NlZCk7Cit9CisKK3N0YXRpYyBpbnQKIGdrMjBhX3BtdV9kdmZzX3Rh
+cmdldChzdHJ1Y3QgZ2syMGFfcG11X3ByaXYgKnByaXYsIGludCAqc3RhdGUpCiB7CiAJc3RydWN0
+IG52a21fY2xrICpjbGsgPSBudmttX2Nsayhwcml2KTsKQEAgLTE2MCw0MCArMzk2LDUyOSBAQCBy
+ZXNjaGVkOgogfQogCiBzdGF0aWMgaW50Ci1nazIwYV9wbXVfZmluaShzdHJ1Y3QgbnZrbV9vYmpl
+Y3QgKm9iamVjdCwgYm9vbCBzdXNwZW5kKQorZ2syMGFfcG11X2VuYWJsZV9odyhzdHJ1Y3QgZ2sy
+MGFfcG11X3ByaXYgKnByaXYsIHN0cnVjdCBudmttX21jICpwbWMsIGJvb2wgZW5hYmxlKQogewot
+CXN0cnVjdCBudmttX3BtdSAqcG11ID0gKHZvaWQgKilvYmplY3Q7Ci0Jc3RydWN0IGdrMjBhX3Bt
+dV9wcml2ICpwcml2ID0gKHZvaWQgKilwbXU7CisJaWYgKGVuYWJsZSkgeworCQludl9tYXNrKHBt
+YywgMHgwMDAyMDAsIDB4MDAwMDIwMDAsIDB4MDAwMDIwMDApOworCQludl9yZDMyKHBtYywgMHgw
+MDAwMDIwMCk7CisJCWlmIChudl93YWl0KHByaXYsIDB4MDAxMGExMGMsIDB4MDAwMDAwMDYsIDB4
+MDAwMDAwMDApKQorCQkJcmV0dXJuIDA7CisJCW52X21hc2socG1jLCAweDAwMDAwMjAwLCAweDIw
+MDAsIDB4MDAwMDAwMDApOworCQludl9lcnJvcihwcml2LCAiRmFsY29uIG1lbSBzY3J1YmJpbmcg
+dGltZW91dFxuIik7CisJCXJldHVybiAtRVRJTUVET1VUOworCX0gZWxzZSB7CisJCW52X21hc2so
+cG1jLCAweDAwMDAwMjAwLCAweDIwMDAsIDB4MDAwMDAwMDApOworCQlyZXR1cm4gMDsKKwl9Cit9
+CitzdGF0aWMgdm9pZAorZ2syMGFfcG11X2VuYWJsZV9pcnEoc3RydWN0IGdrMjBhX3BtdV9wcml2
+ICpwcml2LCBzdHJ1Y3QgbnZrbV9tYyAqcG1jLCBib29sIGVuYWJsZSkKK3sKKwlpZiAoZW5hYmxl
+KSB7CisJCW52X2RlYnVnKHByaXYsICJlbmFibGUgcG11IGlycVxuIik7CisJCW52X3dyMzIocHJp
+diwgMHgwMDEwYTAxMCwgMHhmZik7CisJCW52X21hc2socG1jLCAweDAwMDAwNjQwLCAweDEwMDAw
+MDAsIDB4MTAwMDAwMCk7CisJCW52X21hc2socG1jLCAweDAwMDAwNjQ0LCAweDEwMDAwMDAsIDB4
+MTAwMDAwMCk7CisJfSBlbHNlIHsKKwkJbnZfZGVidWcocHJpdiwgImRpc2FibGUgcG11IGlycVxu
+Iik7CisJCW52X21hc2socG1jLCAweDAwMDAwNjQwLCAweDEwMDAwMDAsIDB4MDAwMDAwMDApOwor
+CQludl9tYXNrKHBtYywgMHgwMDAwMDY0NCwgMHgxMDAwMDAwLCAweDAwMDAwMDAwKTsKKwkJbnZf
+d3IzMihwcml2LCAweDAwMTBhMDE0LCAweGZmKTsKKwl9CiAKLQludmttX3RpbWVyX2FsYXJtX2Nh
+bmNlbChwcml2LCAmcHJpdi0+YWxhcm0pOworfQogCi0JcmV0dXJuIG52a21fc3ViZGV2X2Zpbmko
+JnBtdS0+YmFzZSwgc3VzcGVuZCk7CitzdGF0aWMgaW50CitnazIwYV9wbXVfaWRsZShzdHJ1Y3Qg
+Z2syMGFfcG11X3ByaXYgKnByaXYpCit7CisJaWYgKCFudl93YWl0KHByaXYsIDB4MDAxMGEwNGMs
+IDB4MDAwMGZmZmYsIDB4MDAwMDAwMDApKSB7CisJCW52X2Vycm9yKHByaXYsICJ0aW1lb3V0IHdh
+aXRpbmcgcG11IGlkbGVcbiIpOworCQlyZXR1cm4gLUVCVVNZOworCX0KKworCXJldHVybiAwOwor
+fQorCitzdGF0aWMgaW50CitnazIwYV9wbXVfZW5hYmxlKHN0cnVjdCBnazIwYV9wbXVfcHJpdiAq
+cHJpdiwgc3RydWN0IG52a21fbWMgKnBtYywgYm9vbCBlbmFibGUpCit7CisJdTMyIHBtY19lbmFi
+bGU7CisJaW50IGVycjsKKworCWlmIChlbmFibGUpIHsKKwkJZXJyID0gZ2syMGFfcG11X2VuYWJs
+ZV9odyhwcml2LCBwbWMsIHRydWUpOworCQlpZiAoZXJyKQorCQkJcmV0dXJuIGVycjsKKworCQll
+cnIgPSBnazIwYV9wbXVfaWRsZShwcml2KTsKKwkJaWYgKGVycikKKwkJCXJldHVybiBlcnI7CisK
+KwkJZ2syMGFfcG11X2VuYWJsZV9pcnEocHJpdiwgcG1jLCB0cnVlKTsKKwl9IGVsc2UgeworCQlw
+bWNfZW5hYmxlID0gbnZfcmQzMihwbWMsIDB4MjAwKTsKKwkJaWYgKChwbWNfZW5hYmxlICYgMHgy
+MDAwKSAhPSAweDApIHsKKwkJCWdrMjBhX3BtdV9lbmFibGVfaXJxKHByaXYsIHBtYywgZmFsc2Up
+OworCQkJZ2syMGFfcG11X2VuYWJsZV9odyhwcml2LCBwbWMsIGZhbHNlKTsKKwkJfQorCX0KKwor
+CXJldHVybiAwOworfQorCitzdGF0aWMgdm9pZAorZ2syMGFfcG11X2NvcHlfdG9fZG1lbShzdHJ1
+Y3QgZ2syMGFfcG11X3ByaXYgKnByaXYsIHUzMiBkc3QsIHU4ICpzcmMsIHUzMiBzaXplLAorCQkg
+ICAgICAgdTggcG9ydCkKK3sKKwl1MzIgaSwgd29yZHMsIGJ5dGVzOworCXUzMiBkYXRhLCBhZGRy
+X21hc2s7CisJdTMyICpzcmNfdTMyID0gKHUzMiAqKXNyYzsKKworCWlmIChzaXplID09IDApIHsK
+KwkJbnZfZXJyb3IocHJpdiwgInNpemUgaXMgemVyb1xuIik7CisJCWdvdG8gb3V0OworCX0KKwor
+CWlmIChkc3QgJiAweDMpIHsKKwkJbnZfZXJyb3IocHJpdiwgImRzdCAoMHglMDh4KSBub3QgNC1i
+eXRlIGFsaWduZWRcbiIsIGRzdCk7CisJCWdvdG8gb3V0OworCX0KKworCW11dGV4X2xvY2soJnBy
+aXYtPnBtdV9jb3B5X2xvY2spOworCXdvcmRzID0gc2l6ZSA+PiAyOworCWJ5dGVzID0gc2l6ZSAm
+IDB4MzsKKwlhZGRyX21hc2sgPSAweGZmZmM7CisJZHN0ICY9IGFkZHJfbWFzazsKKworCW52X3dy
+MzIocHJpdiwgKDB4MTBhMWMwICsgKHBvcnQgKiA4KSksIChkc3QgfCAoMHgxIDw8IDI0KSkpOwor
+CisJZm9yIChpID0gMDsgaSA8IHdvcmRzOyBpKyspIHsKKwkJbnZfd3IzMihwcml2LCAoMHgxMGEx
+YzQgKyAocG9ydCAqIDgpKSwgc3JjX3UzMltpXSk7CisJCW52X2RlYnVnKHByaXYsICIweCUwOHhc
+biIsIHNyY191MzJbaV0pOworCX0KKworCWlmIChieXRlcyA+IDApIHsKKwkJZGF0YSA9IDA7CisJ
+CWZvciAoaSA9IDA7IGkgPCBieXRlczsgaSsrKQorCQkJKCh1OCAqKSZkYXRhKVtpXSA9IHNyY1so
+d29yZHMgPDwgMikgKyBpXTsKKwkJbnZfd3IzMihwcml2LCAoMHgxMGExYzQgKyAocG9ydCAqIDgp
+KSwgZGF0YSk7CisJCW52X2RlYnVnKHByaXYsICIweCUwOHhcbiIsIGRhdGEpOworCX0KKworCWRh
+dGEgPSBudl9yZDMyKHByaXYsICgweDEwYTFjMCArIChwb3J0ICogOCkpKSAmIGFkZHJfbWFzazsK
+KwlzaXplID0gQUxJR04oc2l6ZSwgNCk7CisJaWYgKGRhdGEgIT0gZHN0ICsgc2l6ZSkgeworCQlu
+dl9lcnJvcihwcml2LCAiY29weSBmYWlsZWQuLi4uIGJ5dGVzIHdyaXR0ZW4gJWQsIGV4cGVjdGVk
+ICVkIiwKKwkJCQkJCQkgICAgICBkYXRhIC0gZHN0LCBzaXplKTsKKwl9CisJbXV0ZXhfdW5sb2Nr
+KCZwcml2LT5wbXVfY29weV9sb2NrKTsKK291dDoKKwludl9kZWJ1Zyhwcml2LCAiZXhpdCAlc1xu
+IiwgX19mdW5jX18pOworfQorCitzdGF0aWMgdm9pZAorZ2syMGFfY29weV9mcm9tX2RtZW0oc3Ry
+dWN0IGdrMjBhX3BtdV9wcml2ICpwcml2LCB1MzIgc3JjLCB1OCAqZHN0LCB1MzIgc2l6ZSwKKwkJ
+ICAgICB1OCBwb3J0KQoreworCXUzMiBpLCB3b3JkcywgYnl0ZXM7CisJdTMyIGRhdGEsIGFkZHJf
+bWFzazsKKwl1MzIgKmRzdF91MzIgPSAodTMyICopZHN0OworCisJaWYgKHNpemUgPT0gMCkgewor
+CQludl9lcnJvcihwcml2LCAic2l6ZSBpcyB6ZXJvXG4iKTsKKwkJZ290byBvdXQ7CisJfQorCisJ
+aWYgKHNyYyAmIDB4MykgeworCQludl9lcnJvcihwcml2LCAic3JjICgweCUwOHgpIG5vdCA0LWJ5
+dGUgYWxpZ25lZFxuIiwgc3JjKTsKKwkJZ290byBvdXQ7CisJfQorCisJbXV0ZXhfbG9jaygmcHJp
+di0+cG11X2NvcHlfbG9jayk7CisKKwl3b3JkcyA9IHNpemUgPj4gMjsKKwlieXRlcyA9IHNpemUg
+JiAweDM7CisKKwlhZGRyX21hc2sgPSAweGZmZmM7CisKKwlzcmMgJj0gYWRkcl9tYXNrOworCisJ
+bnZfd3IzMihwcml2LCAoMHgxMGExYzAgKyAocG9ydCAqIDgpKSwgKHNyYyB8ICgweDEgPDwgMjUp
+KSk7CisKKwlmb3IgKGkgPSAwOyBpIDwgd29yZHM7IGkrKykgeworCQlkc3RfdTMyW2ldID0gbnZf
+cmQzMihwcml2LCAoMHgwMDEwYTFjNCArIHBvcnQgKiA4KSk7CisJCW52X2RlYnVnKHByaXYsICIw
+eCUwOHhcbiIsIGRzdF91MzJbaV0pOworCX0KKwlpZiAoYnl0ZXMgPiAwKSB7CisJCWRhdGEgPSBu
+dl9yZDMyKHByaXYsICgweDAwMTBhMWM0ICsgcG9ydCAqIDgpKTsKKwkJbnZfZGVidWcocHJpdiwg
+IjB4JTA4eFxuIiwgZGF0YSk7CisKKwkJZm9yIChpID0gMDsgaSA8IGJ5dGVzOyBpKyspCisJCQlk
+c3RbKHdvcmRzIDw8IDIpICsgaV0gPSAoKHU4ICopJmRhdGEpW2ldOworCX0KKwltdXRleF91bmxv
+Y2soJnByaXYtPnBtdV9jb3B5X2xvY2spOworb3V0OgorCW52X2RlYnVnKHByaXYsICJleGl0ICVz
+XG4iLCBfX2Z1bmNfXyk7Cit9CisKK3N0YXRpYyBpbnQKK2drMjBhX3BtdV9wcm9jZXNzX2luaXRf
+bXNnKHN0cnVjdCBnazIwYV9wbXVfcHJpdiAqcHJpdiwgc3RydWN0IHBtdV9tc2cgKm1zZykKK3sK
+KwlzdHJ1Y3QgcG11X2luaXRfbXNnX3BtdV9nazIwYSAqaW5pdDsKKwl1MzIgdGFpbDsKKworCXRh
+aWwgPSBudl9yZDMyKHByaXYsIDB4MDAxMGE0Y2MpOworCisJZ2syMGFfY29weV9mcm9tX2RtZW0o
+cHJpdiwgdGFpbCwgKHU4ICopJm1zZy0+aGRyLCBQTVVfTVNHX0hEUl9TSVpFLCAwKTsKKworCWlm
+IChtc2ctPmhkci51bml0X2lkICE9IFBNVV9VTklUX0lOSVQpIHsKKwkJbnZfZXJyb3IocHJpdiwg
+ImV4cGVjdGluZyBpbml0IG1zZ1xuIik7CisJCXJldHVybiAtRUlOVkFMOworCX0KKworCWdrMjBh
+X2NvcHlfZnJvbV9kbWVtKHByaXYsIHRhaWwgKyBQTVVfTVNHX0hEUl9TSVpFLAorCQkodTggKikm
+bXNnLT5tc2csIG1zZy0+aGRyLnNpemUgLSBQTVVfTVNHX0hEUl9TSVpFLCAwKTsKKworCWlmICht
+c2ctPm1zZy5pbml0Lm1zZ190eXBlICE9IFBNVV9JTklUX01TR19UWVBFX1BNVV9JTklUKSB7CisJ
+CW52X2Vycm9yKHByaXYsICJleHBlY3RpbmcgaW5pdCBtc2dcbiIpOworCQlyZXR1cm4gLUVJTlZB
+TDsKKwl9CisKKwl0YWlsICs9IEFMSUdOKG1zZy0+aGRyLnNpemUsIFBNVV9ETUVNX0FMSUdOTUVO
+VCk7CisJbnZfd3IzMihwcml2LCAweDAwMTBhNGNjLCB0YWlsKTsKKwlpbml0ID0gJm1zZy0+bXNn
+LmluaXQucG11X2luaXRfZ2syMGE7CisJcHJpdi0+cG11X3JlYWR5ID0gdHJ1ZTsKKwlwcml2LT5w
+bXVfc3RhdGUgPSBQTVVfU1RBVEVfSU5JVF9SRUNFSVZFRDsKKwludl9kZWJ1Zyhwcml2LCAiaW5p
+dCBtc2cgcHJvY2Vzc2VkXG4iKTsKKwlyZXR1cm4gMDsKK30KKworc3RhdGljIHZvaWQKK2drMjBh
+X3BtdV9wcm9jZXNzX21lc3NhZ2Uoc3RydWN0IHdvcmtfc3RydWN0ICp3b3JrKQoreworCXN0cnVj
+dCBudmttX3BtdSAqcG11ID0gY29udGFpbmVyX29mKHdvcmssIHN0cnVjdCBudmttX3BtdSwgcmVj
+di53b3JrKTsKKwlzdHJ1Y3QgZ2syMGFfcG11X3ByaXYgKnByaXYgPSB0b19nazIwYV9wcml2KHBt
+dSk7CisJc3RydWN0IHBtdV9tc2cgbXNnOworCXN0cnVjdCBudmttX21jICpwbWMgPSBudmttX21j
+KHBtdSk7CisKKwltdXRleF9sb2NrKCZwcml2LT5pc3JfbXV0ZXgpOworCWlmICh1bmxpa2VseSgh
+cHJpdi0+cG11X3JlYWR5KSkgeworCQludl9kZWJ1ZyhwbXUsICJwcm9jZXNzaW5nIGluaXQgbXNn
+XG4iKTsKKwkJZ2syMGFfcG11X3Byb2Nlc3NfaW5pdF9tc2cocHJpdiwgJm1zZyk7CisJCW11dGV4
+X3VubG9jaygmcHJpdi0+aXNyX211dGV4KTsKKwkJZ2syMGFfcG11X2VuYWJsZV9pcnEocHJpdiwg
+cG1jLCB0cnVlKTsKKwl9IGVsc2UgeworCQltdXRleF91bmxvY2soJnByaXYtPmlzcl9tdXRleCk7
+CisJfQorfQorCitzdGF0aWMgaW50CitnazIwYV9wbXVfaW5pdF92bShzdHJ1Y3QgZ2syMGFfcG11
+X3ByaXYgKnByaXYsIGNvbnN0IHN0cnVjdCBmaXJtd2FyZSAqZncpCit7CisJaW50IHJldCA9IDA7
+CisJdTMyICp1Y29kZV9pbWFnZTsKKwlzdHJ1Y3QgcG11X3Vjb2RlX2Rlc2MgKmRlc2MgPSAoc3Ry
+dWN0IHBtdV91Y29kZV9kZXNjICopZnctPmRhdGE7CisJaW50IGk7CisJc3RydWN0IG52a21fcG11
+X3ByaXZfdm0gKnBtdXZtID0gJnByaXYtPnBtdXZtOworCXN0cnVjdCBudmttX2RldmljZSAqZGV2
+aWNlID0gbnZfZGV2aWNlKCZwcml2LT5iYXNlKTsKKwlzdHJ1Y3QgbnZrbV92bSAqdm07CisJY29u
+c3QgdTY0IHBtdV9hcmVhX2xlbiA9IDMwMCoxMDI0OworCisJLyogbWVtIGZvciBpbnN0IGJsayov
+CisJcmV0ID0gbnZrbV9ncHVvYmpfbmV3KG52X29iamVjdChwcml2KSwgTlVMTCwgMHgxMDAwLCAw
+LCAwLCAmcG11dm0tPm1lbSk7CisJaWYgKHJldCkKKwkJcmV0dXJuIHJldDsKKworCS8qIG1lbSBm
+b3IgcGdkKi8KKwlyZXQgPSBudmttX2dwdW9ial9uZXcobnZfb2JqZWN0KHByaXYpLCBOVUxMLCAw
+eDgwMDAsIDAsIDAsICZwbXV2bS0+cGdkKTsKKwlpZiAocmV0KQorCQlyZXR1cm4gcmV0OworCisJ
+LyphbGxvY2F0ZSB2aXJ0dWFsIG1lbW9yeSByYW5nZSovCisJcmV0ID0gbnZrbV92bV9uZXcoZGV2
+aWNlLCAwLCBwbXVfYXJlYV9sZW4sIDAsICZ2bSk7CisJaWYgKHJldCkKKwkJcmV0dXJuIHJldDsK
+KworCWF0b21pY19pbmMoJnZtLT5lbmdyZWZbTlZERVZfU1VCREVWX1BNVV0pOworCisJLyogdXBk
+YXRlIFZNIHdpdGggcGdkICovCisJcmV0ID0gbnZrbV92bV9yZWYodm0sICZwbXV2bS0+dm0sIHBt
+dXZtLT5wZ2QpOworCWlmIChyZXQpCisJCXJldHVybiByZXQ7CisKKwkvKnVwZGF0ZSBwZ2QgaW4g
+aW5zdCBibGsgKi8KKwludl93bzMyKHBtdXZtLT5tZW0sIDB4MDIwMCwgbG93ZXJfMzJfYml0cyhw
+bXV2bS0+cGdkLT5hZGRyKSk7CisJbnZfd28zMihwbXV2bS0+bWVtLCAweDAyMDQsIHVwcGVyXzMy
+X2JpdHMocG11dm0tPnBnZC0+YWRkcikpOworCW52X3dvMzIocG11dm0tPm1lbSwgMHgwMjA4LCBs
+b3dlcl8zMl9iaXRzKHBtdV9hcmVhX2xlbiAtIDEpKTsKKwludl93bzMyKHBtdXZtLT5tZW0sIDB4
+MDIwYywgdXBwZXJfMzJfYml0cyhwbXVfYXJlYV9sZW4gLSAxKSk7CisKKwkvKiBhbGxvY2F0ZSBt
+ZW1vcnkgZm9yIHBtdSBmdyB0byBiZSBjb3BpZWQgdG8qLworCXJldCA9IG52a21fZ3B1b2JqX25l
+dyhudl9vYmplY3QocHJpdiksIE5VTEwsIEdLMjBBX1BNVV9VQ09ERV9TSVpFX01BWCwKKwkJCSAg
+ICAgIDB4MTAwMCwgMCwgJnByaXYtPnVjb2RlLm9iaik7CisJaWYgKHJldCkKKwkJcmV0dXJuIHJl
+dDsKKworCXVjb2RlX2ltYWdlID0gKHUzMiAqKSgodTggKilkZXNjICsgZGVzYy0+ZGVzY3JpcHRv
+cl9zaXplKTsKKwlmb3IgKGkgPSAwOyBpIDwgKGRlc2MtPmFwcF9zdGFydF9vZmZzZXQgKyBkZXNj
+LT5hcHBfc2l6ZSk7IGkgKz0gNCkKKwkJbnZfd28zMihwcml2LT51Y29kZS5vYmosIGksIHVjb2Rl
+X2ltYWdlW2kvNF0pOworCisJLyogbWFwIGFsbG9jYXRlZCBtZW1vcnkgaW50byBHTU1VICovCisJ
+cmV0ID0gbnZrbV9ncHVvYmpfbWFwX3ZtKHByaXYtPnVjb2RlLm9iaiwgdm0sIE5WX01FTV9BQ0NF
+U1NfUlcsCisJCQkJICZwcml2LT51Y29kZS52bWEpOworCWlmIChyZXQpCisJCXJldHVybiByZXQ7
+CisKKwlyZXR1cm4gcmV0OworfQorCitzdGF0aWMgaW50CitnazIwYV9pbml0X3BtdV9zZXR1cF9z
+dyhzdHJ1Y3QgZ2syMGFfcG11X3ByaXYgKnByaXYpCit7CisJc3RydWN0IG52a21fcG11X3ByaXZf
+dm0gKnBtdXZtID0gJnByaXYtPnBtdXZtOworCWludCByZXQgPSAwOworCisJSU5JVF9XT1JLKCZw
+cml2LT5iYXNlLnJlY3Yud29yaywgZ2syMGFfcG11X3Byb2Nlc3NfbWVzc2FnZSk7CisKKwlyZXQg
+PSBudmttX2dwdW9ial9uZXcobnZfb2JqZWN0KHByaXYpLCBOVUxMLCBHSzIwQV9QTVVfVFJBQ0Vf
+QlVGU0laRSwKKwkJCQkJICAgIDAsIDAsICZwcml2LT50cmFjZV9idWYub2JqKTsKKwlpZiAocmV0
+KQorCQlyZXR1cm4gcmV0OworCisJcmV0ID0gbnZrbV9ncHVvYmpfbWFwX3ZtKG52X2dwdW9iaihw
+cml2LT50cmFjZV9idWYub2JqKSwgcG11dm0tPnZtLAorCQkJCQlOVl9NRU1fQUNDRVNTX1JXLCAm
+cHJpdi0+dHJhY2VfYnVmLnZtYSk7CisJaWYgKHJldCkKKwkJcmV0dXJuIHJldDsKKworCXJldHVy
+biAwOworfQorCitzdGF0aWMgaW50CitnazIwYV9wbXVfYm9vdHN0cmFwKHN0cnVjdCBnazIwYV9w
+bXVfcHJpdiAqcHJpdikKK3sKKwlzdHJ1Y3QgcG11X3Vjb2RlX2Rlc2MgKmRlc2MgPSBwcml2LT5k
+ZXNjOworCXUzMiBhZGRyX2NvZGUsIGFkZHJfZGF0YSwgYWRkcl9sb2FkOworCXUzMiBpLCBibG9j
+a3MsIGFkZHJfYXJnczsKKwlzdHJ1Y3QgcG11X2NtZGxpbmVfYXJnc19nazIwYSBjbWRsaW5lX2Fy
+Z3M7CisJc3RydWN0IG52a21fcG11X3ByaXZfdm0gKnBtdXZtID0gJnByaXYtPnBtdXZtOworCisJ
+bnZfbWFzayhwcml2LCAweDAwMTBhMDQ4LCAweDAxLCAweDAxKTsKKwkvKmJpbmQgdGhlIGFkZHJl
+c3MqLworCW52X3dyMzIocHJpdiwgMHgwMDEwYTQ4MCwKKwkJcG11dm0tPm1lbS0+YWRkciA+PiAx
+MiB8CisJCTB4MSA8PCAzMCB8CisJCTB4MjAwMDAwMDApOworCisJLyogVEJEOiBsb2FkIGFsbCBv
+dGhlciBzdXJmYWNlcyAqLworCWNtZGxpbmVfYXJncy5mYWxjX3RyYWNlX3NpemUgPSBHSzIwQV9Q
+TVVfVFJBQ0VfQlVGU0laRTsKKwljbWRsaW5lX2FyZ3MuZmFsY190cmFjZV9kbWFfYmFzZSA9CisJ
+CQkgICAgbG93ZXJfMzJfYml0cyhwcml2LT50cmFjZV9idWYudm1hLm9mZnNldCA+PiA4KTsKKwlj
+bWRsaW5lX2FyZ3MuZmFsY190cmFjZV9kbWFfaWR4ID0gR0syMEFfUE1VX0RNQUlEWF9WSVJUOwor
+CWNtZGxpbmVfYXJncy5jcHVfZnJlcV9oeiA9IDIwNDsKKwljbWRsaW5lX2FyZ3Muc2VjdXJlX21v
+ZGUgPSAwOworCisJYWRkcl9hcmdzID0gKG52X3JkMzIocHJpdiwgMHgwMDEwYTEwOCkgPj4gOSkg
+JiAweDFmZjsKKwlhZGRyX2FyZ3MgPSBhZGRyX2FyZ3MgPDwgR0syMEFfUE1VX0RNRU1fQkxLU0la
+RTI7CisJYWRkcl9hcmdzIC09IHNpemVvZihzdHJ1Y3QgcG11X2NtZGxpbmVfYXJnc19nazIwYSk7
+CisJbnZfZGVidWcocHJpdiwgImluaXRpYXRpbmcgY29weSB0byBkbWVtXG4iKTsKKwlnazIwYV9w
+bXVfY29weV90b19kbWVtKHByaXYsIGFkZHJfYXJncywKKwkJCSh1OCAqKSZjbWRsaW5lX2FyZ3Ms
+CisJCQlzaXplb2Yoc3RydWN0IHBtdV9jbWRsaW5lX2FyZ3NfZ2syMGEpLCAwKTsKKworCW52X3dy
+MzIocHJpdiwgMHgwMDEwYTFjMCwgMHgxIDw8IDI0KTsKKworCWFkZHJfY29kZSA9IGxvd2VyXzMy
+X2JpdHMoKHByaXYtPnVjb2RlLnZtYS5vZmZzZXQgKworCQkJZGVzYy0+YXBwX3N0YXJ0X29mZnNl
+dCArCisJCQlkZXNjLT5hcHBfcmVzaWRlbnRfY29kZV9vZmZzZXQpID4+IDgpOworCisJYWRkcl9k
+YXRhID0gbG93ZXJfMzJfYml0cygocHJpdi0+dWNvZGUudm1hLm9mZnNldCArCisJCQlkZXNjLT5h
+cHBfc3RhcnRfb2Zmc2V0ICsKKwkJCWRlc2MtPmFwcF9yZXNpZGVudF9kYXRhX29mZnNldCkgPj4g
+OCk7CisKKwlhZGRyX2xvYWQgPSBsb3dlcl8zMl9iaXRzKChwcml2LT51Y29kZS52bWEub2Zmc2V0
+ICsKKwkJCWRlc2MtPmJvb3Rsb2FkZXJfc3RhcnRfb2Zmc2V0KSA+PiA4KTsKKworCW52X3dyMzIo
+cHJpdiwgMHgwMDEwYTFjNCwgR0syMEFfUE1VX0RNQUlEWF9VQ09ERSk7CisJbnZfZGVidWcocHJp
+diwgIjB4JTA4eFxuIiwgR0syMEFfUE1VX0RNQUlEWF9VQ09ERSk7CisJbnZfd3IzMihwcml2LCAw
+eDAwMTBhMWM0LCAoYWRkcl9jb2RlKSk7CisJbnZfZGVidWcocHJpdiwgIjB4JTA4eFxuIiwgKGFk
+ZHJfY29kZSkpOworCW52X3dyMzIocHJpdiwgMHgwMDEwYTFjNCwgZGVzYy0+YXBwX3NpemUpOwor
+CW52X2RlYnVnKHByaXYsICIweCUwOHhcbiIsIGRlc2MtPmFwcF9zaXplKTsKKwludl93cjMyKHBy
+aXYsIDB4MDAxMGExYzQsIGRlc2MtPmFwcF9yZXNpZGVudF9jb2RlX3NpemUpOworCW52X2RlYnVn
+KHByaXYsICIweCUwOHhcbiIsIGRlc2MtPmFwcF9yZXNpZGVudF9jb2RlX3NpemUpOworCW52X3dy
+MzIocHJpdiwgMHgwMDEwYTFjNCwgZGVzYy0+YXBwX2ltZW1fZW50cnkpOworCW52X2RlYnVnKHBy
+aXYsICIweCUwOHhcbiIsIGRlc2MtPmFwcF9pbWVtX2VudHJ5KTsKKwludl93cjMyKHByaXYsIDB4
+MDAxMGExYzQsICAoYWRkcl9kYXRhKSk7CisJbnZfZGVidWcocHJpdiwgIjB4JTA4eFxuIiwgKGFk
+ZHJfZGF0YSkpOworCW52X3dyMzIocHJpdiwgMHgwMDEwYTFjNCwgZGVzYy0+YXBwX3Jlc2lkZW50
+X2RhdGFfc2l6ZSk7CisJbnZfZGVidWcocHJpdiwgIjB4JTA4eFxuIiwgZGVzYy0+YXBwX3Jlc2lk
+ZW50X2RhdGFfc2l6ZSk7CisJbnZfd3IzMihwcml2LCAweDAwMTBhMWM0LCAoYWRkcl9jb2RlKSk7
+CisJbnZfZGVidWcocHJpdiwgIjB4JTA4eFxuIiwgKGFkZHJfY29kZSkpOworCW52X3dyMzIocHJp
+diwgMHgwMDEwYTFjNCwgMHgxKTsKKwludl9kZWJ1Zyhwcml2LCAiMHglMDh4XG4iLCAxKTsKKwlu
+dl93cjMyKHByaXYsIDB4MDAxMGExYzQsIGFkZHJfYXJncyk7CisJbnZfZGVidWcocHJpdiwgIjB4
+JTA4eFxuIiwgYWRkcl9hcmdzKTsKKworCW52X3dyMzIocHJpdiwgMHgwMDEwYTExMCwKKwkJKGFk
+ZHJfbG9hZCkgLSAoZGVzYy0+Ym9vdGxvYWRlcl9pbWVtX29mZnNldCA+PiA4KSk7CisKKwlibG9j
+a3MgPSAoKGRlc2MtPmJvb3Rsb2FkZXJfc2l6ZSArIDB4RkYpICYgfjB4RkYpID4+IDg7CisKKwlm
+b3IgKGkgPSAwOyBpIDwgYmxvY2tzOyBpKyspIHsKKwkJbnZfd3IzMihwcml2LCAweDAwMTBhMTE0
+LAorCQkJZGVzYy0+Ym9vdGxvYWRlcl9pbWVtX29mZnNldCArIChpIDw8IDgpKTsKKwkJbnZfd3Iz
+Mihwcml2LCAweDAwMTBhMTFjLAorCQkJZGVzYy0+Ym9vdGxvYWRlcl9pbWVtX29mZnNldCArIChp
+IDw8IDgpKTsKKwkJbnZfd3IzMihwcml2LCAweDAwMTBhMTE4LAorCQkJMHgwMSA8PCA0ICB8CisJ
+CQkweDA2IDw8IDggIHwKKwkJCSgoR0syMEFfUE1VX0RNQUlEWF9VQ09ERSAmIDB4MDcpIDw8IDEy
+KSk7CisJfQorCisJbnZfd3IzMihwcml2LCAweDAwMTBhMTA0LCAoZGVzYy0+Ym9vdGxvYWRlcl9l
+bnRyeV9wb2ludCkpOworCW52X3dyMzIocHJpdiwgMHgwMDEwYTEwMCwgMHgxIDw8IDEpOworCW52
+X3dyMzIocHJpdiwgMHgwMDEwYTA4MCwgZGVzYy0+YXBwX3ZlcnNpb24pOworCisJcmV0dXJuIDA7
+Cit9CisKK3N0YXRpYyBpbnQKK2drMjBhX2luaXRfcG11X3NldHVwX2h3MShzdHJ1Y3QgZ2syMGFf
+cG11X3ByaXYgKnByaXYsIHN0cnVjdCBudmttX21jICpwbWMpCit7CisJaW50IGVycjsKKworCW11
+dGV4X2xvY2soJnByaXYtPmlzcl9tdXRleCk7CisJZXJyID0gZ2syMGFfcG11X2VuYWJsZShwcml2
+LCBwbWMsIHRydWUpOworCXByaXYtPmlzcl9lbmFibGVkID0gKGVyciA9PSAwKTsKKwltdXRleF91
+bmxvY2soJnByaXYtPmlzcl9tdXRleCk7CisJaWYgKGVycikKKwkJcmV0dXJuIGVycjsKKworCS8q
+IHNldHVwIGFwZXJ0dXJlcyAtIHZpcnR1YWwgKi8KKwludl93cjMyKHByaXYsIDB4MTBhNjAwICsg
+MCAqIDQsIDB4MCk7CisJbnZfd3IzMihwcml2LCAweDEwYTYwMCArIDEgKiA0LCAweDApOworCS8q
+IHNldHVwIGFwZXJ0dXJlcyAtIHBoeXNpY2FsICovCisJbnZfd3IzMihwcml2LCAweDEwYTYwMCAr
+IDIgKiA0LCAweDQgfCAweDApOworCW52X3dyMzIocHJpdiwgMHgxMGE2MDAgKyAzICogNCwgMHg0
+IHwgMHgxKTsKKwludl93cjMyKHByaXYsIDB4MTBhNjAwICsgNCAqIDQsIDB4NCB8IDB4Mik7CisK
+KwkvKiBUQkQ6IGxvYWQgcG11IHVjb2RlICovCisJZXJyID0gZ2syMGFfcG11X2Jvb3RzdHJhcChw
+cml2KTsKKwlpZiAoZXJyKQorCQlyZXR1cm4gZXJyOworCisJcmV0dXJuIDA7Cit9CisKKworc3Rh
+dGljIHZvaWQKK2drMjBhX3BtdV9pbnRyKHN0cnVjdCBudmttX3N1YmRldiAqc3ViZGV2KQorewor
+CXN0cnVjdCBnazIwYV9wbXVfcHJpdiAqcHJpdiA9IHRvX2drMjBhX3ByaXYobnZrbV9wbXUoc3Vi
+ZGV2KSk7CisJc3RydWN0IG52a21fbWMgKnBtYyA9IG52a21fbWMocHJpdik7CisJdTMyIGludHIs
+IG1hc2s7CisKKwlpZiAoIXByaXYtPmlzcl9lbmFibGVkKQorCQlyZXR1cm47CisKKwltYXNrID0g
+bnZfcmQzMihwcml2LCAweDAwMTBhMDE4KSAmIG52X3JkMzIocHJpdiwgMHgwMDEwYTAxYyk7CisK
+KwlpbnRyID0gbnZfcmQzMihwcml2LCAweDAwMTBhMDA4KSAmIG1hc2s7CisKKwludl9kZWJ1Zyhw
+cml2LCAicmVjZWl2ZWQgZmFsY29uIGludGVycnVwdDogMHglMDh4XG4iLCBpbnRyKTsKKwlnazIw
+YV9wbXVfZW5hYmxlX2lycShwcml2LCBwbWMsIGZhbHNlKTsKKworCWlmICghaW50ciB8fCBwcml2
+LT5wbXVfc3RhdGUgPT0gUE1VX1NUQVRFX09GRikgeworCQludl93cjMyKHByaXYsIDB4MDAxMGEw
+MDQsIGludHIpOworCQludl9lcnJvcihwcml2LCAicG11IHN0YXRlIG9mZlxuIik7CisJCWdrMjBh
+X3BtdV9lbmFibGVfaXJxKHByaXYsIHBtYywgdHJ1ZSk7CisJfQorCisJaWYgKGludHIgJiAweDEw
+KQorCQludl9lcnJvcihwcml2LCAicG11IGhhbHQgaW50ciBub3QgaW1wbGVtZW50ZWRcbiIpOwor
+CisJaWYgKGludHIgJiAweDIwKSB7CisJCW52X2Vycm9yKHByaXYsICJleHRlcnIgaW50ZXJydXB0
+ICBub3QgaW1wbC4uQ2xlYXIgaW50ZXJydXB0XG4iKTsKKwkJbnZfbWFzayhwcml2LCAweDAwMTBh
+MTZjLCAoMHgxIDw8IDMxKSwgMHgwMDAwMDAwMCk7CisJfQorCisJaWYgKGludHIgJiAweDQwKSB7
+CisJCW52X2RlYnVnKHByaXYsICJzY2hlZHVsaW5nIHdvcmtcbiIpOworCQlzY2hlZHVsZV93b3Jr
+KCZwcml2LT5iYXNlLnJlY3Yud29yayk7CisJfQorCisJbnZfd3IzMihwcml2LCAweDAwMTBhMDA0
+LCBpbnRyKTsKKwludl9kZWJ1Zyhwcml2LCAiaXJxIGhhbmRsZWRcbiIpOworfQorCitzdGF0aWMg
+dm9pZAorZ2syMGFfcG11X3Bnb2Ioc3RydWN0IG52a21fcG11ICpwbXUsIGJvb2wgZW5hYmxlKQor
+ewogfQogCiBzdGF0aWMgaW50CiBnazIwYV9wbXVfaW5pdChzdHJ1Y3QgbnZrbV9vYmplY3QgKm9i
+amVjdCkKIHsKLQlzdHJ1Y3QgbnZrbV9wbXUgKnBtdSA9ICh2b2lkICopb2JqZWN0OwotCXN0cnVj
+dCBnazIwYV9wbXVfcHJpdiAqcHJpdiA9ICh2b2lkICopcG11OworCXN0cnVjdCBnazIwYV9wbXVf
+cHJpdiAqcHJpdiA9ICh2b2lkICopb2JqZWN0OworCXN0cnVjdCBudmttX21jICpwbWMgPSBudmtt
+X21jKG9iamVjdCk7CiAJaW50IHJldDsKIAotCXJldCA9IG52a21fc3ViZGV2X2luaXQoJnBtdS0+
+YmFzZSk7CisJcmV0ID0gbnZrbV9zdWJkZXZfaW5pdCgmcHJpdi0+YmFzZS5iYXNlKTsKIAlpZiAo
+cmV0KQogCQlyZXR1cm4gcmV0OwogCi0JcG11LT5wZ29iID0gbnZrbV9wbXVfcGdvYjsKKwlwcml2
+LT5wbXVfc3RhdGUgPSBQTVVfU1RBVEVfU1RBUlRJTkc7CisJcmV0ID0gZ2syMGFfaW5pdF9wbXVf
+c2V0dXBfaHcxKHByaXYsIHBtYyk7CisJaWYgKHJldCkKKwkJcmV0dXJuIHJldDsKKworCW52X3dy
+MzIocHJpdiwgMHgxMGE1MDQgKyAoQlVTWV9TTE9UICogMHgxMCksIDB4MDAyMDAwMDEpOworCW52
+X3dyMzIocHJpdiwgMHgxMGE1MGMgKyAoQlVTWV9TTE9UICogMHgxMCksIDB4MDAwMDAwMDIpOwor
+CW52X3dyMzIocHJpdiwgMHgxMGE1MGMgKyAoQ0xLX1NMT1QgKiAweDEwKSwgMHgwMDAwMDAwMyk7
+CiAKLQkvKiBpbml0IHB3ciBwZXJmIGNvdW50ZXIgKi8KLQludl93cjMyKHBtdSwgMHgxMGE1MDQg
+KyAoQlVTWV9TTE9UICogMHgxMCksIDB4MDAyMDAwMDEpOwotCW52X3dyMzIocG11LCAweDEwYTUw
+YyArIChCVVNZX1NMT1QgKiAweDEwKSwgMHgwMDAwMDAwMik7Ci0JbnZfd3IzMihwbXUsIDB4MTBh
+NTBjICsgKENMS19TTE9UICogMHgxMCksIDB4MDAwMDAwMDMpOworCW52a21fdGltZXJfYWxhcm0o
+cHJpdiwgMjAwMDAwMDAwMCwgJnByaXYtPmFsYXJtKTsKIAotCW52a21fdGltZXJfYWxhcm0ocG11
+LCAyMDAwMDAwMDAwLCAmcHJpdi0+YWxhcm0pOwogCXJldHVybiByZXQ7CiB9CiAKK3N0YXRpYyBp
+bnQKK2drMjBhX3BtdV9maW5pKHN0cnVjdCBudmttX29iamVjdCAqb2JqZWN0LCBib29sIHN1c3Bl
+bmQpCit7CisJc3RydWN0IGdrMjBhX3BtdV9wcml2ICpwcml2ID0gKHZvaWQgKilvYmplY3Q7CisJ
+c3RydWN0IG52a21fbWMgKnBtYyA9IG52a21fbWMob2JqZWN0KTsKKworCW52a21fdGltZXJfYWxh
+cm1fY2FuY2VsKHByaXYsICZwcml2LT5hbGFybSk7CisKKwljYW5jZWxfd29ya19zeW5jKCZwcml2
+LT5iYXNlLnJlY3Yud29yayk7CisKKwltdXRleF9sb2NrKCZwcml2LT5pc3JfbXV0ZXgpOworCWdr
+MjBhX3BtdV9lbmFibGUocHJpdiwgcG1jLCBmYWxzZSk7CisJcHJpdi0+aXNyX2VuYWJsZWQgPSBm
+YWxzZTsKKwltdXRleF91bmxvY2soJnByaXYtPmlzcl9tdXRleCk7CisKKwlwcml2LT5wbXVfc3Rh
+dGUgPSBQTVVfU1RBVEVfT0ZGOworCXByaXYtPnBtdV9yZWFkeSA9IGZhbHNlOworCW52X3dyMzIo
+cHJpdiwgMHgxMGEwMTQsIDB4MDAwMDAwNjApOworCisJcmV0dXJuIG52a21fc3ViZGV2X2Zpbmko
+JnByaXYtPmJhc2UuYmFzZSwgc3VzcGVuZCk7Cit9CisKK3N0YXRpYyB2b2lkCitnazIwYV9wbXVf
+ZHRvcihzdHJ1Y3QgbnZrbV9vYmplY3QgKm9iamVjdCkKK3sKKwlzdHJ1Y3QgZ2syMGFfcG11X3By
+aXYgKnByaXYgPSAodm9pZCAqKW9iamVjdDsKKworCW52a21fZ3B1b2JqX3VubWFwKCZwcml2LT50
+cmFjZV9idWYudm1hKTsKKwludmttX2dwdW9ial9yZWYoTlVMTCwgJnByaXYtPnRyYWNlX2J1Zi5v
+YmopOworCisJbnZrbV9ncHVvYmpfdW5tYXAoJnByaXYtPnVjb2RlLnZtYSk7CisJbnZrbV9ncHVv
+YmpfcmVmKE5VTEwsICZwcml2LT51Y29kZS5vYmopOworCW52a21fdm1fcmVmKE5VTEwsICZwcml2
+LT5wbXV2bS52bSwgcHJpdi0+cG11dm0ucGdkKTsKKwludmttX2dwdW9ial9yZWYoTlVMTCwgJnBy
+aXYtPnBtdXZtLnBnZCk7CisJbnZrbV9ncHVvYmpfcmVmKE5VTEwsICZwcml2LT5wbXV2bS5tZW0p
+OworfQorCiBzdGF0aWMgc3RydWN0IGdrMjBhX3BtdV9kdmZzX2RhdGEKLWdrMjBhX2R2ZnNfZGF0
+YT0geworZ2syMGFfZHZmc19kYXRhID0gewogCS5wX2xvYWRfdGFyZ2V0ID0gNzAsCiAJLnBfbG9h
+ZF9tYXggPSA5MCwKIAkucF9zbW9vdGggPSAxLApAQCAtMjA1LDYgKzkzMCw5IEBAIGdrMjBhX3Bt
+dV9jdG9yKHN0cnVjdCBudmttX29iamVjdCAqcGFyZW50LCBzdHJ1Y3QgbnZrbV9vYmplY3QgKmVu
+Z2luZSwKIAkgICAgICAgc3RydWN0IG52a21fb2JqZWN0ICoqcG9iamVjdCkKIHsKIAlzdHJ1Y3Qg
+Z2syMGFfcG11X3ByaXYgKnByaXY7CisJc3RydWN0IG52a21fcG11ICpwbXU7CisJc3RydWN0IG52
+a21fbWMgKnBtYzsKKwljb25zdCBzdHJ1Y3QgZmlybXdhcmUgKnBtdWZ3ID0gTlVMTDsKIAlpbnQg
+cmV0OwogCiAJcmV0ID0gbnZrbV9wbXVfY3JlYXRlKHBhcmVudCwgZW5naW5lLCBvY2xhc3MsICZw
+cml2KTsKQEAgLTIxMiwxMCArOTQwLDQ3IEBAIGdrMjBhX3BtdV9jdG9yKHN0cnVjdCBudmttX29i
+amVjdCAqcGFyZW50LCBzdHJ1Y3QgbnZrbV9vYmplY3QgKmVuZ2luZSwKIAlpZiAocmV0KQogCQly
+ZXR1cm4gcmV0OwogCisJbXV0ZXhfaW5pdCgmcHJpdi0+aXNyX211dGV4KTsKKwltdXRleF9pbml0
+KCZwcml2LT5wbXVfY29weV9sb2NrKTsKIAlwcml2LT5kYXRhID0gJmdrMjBhX2R2ZnNfZGF0YTsK
+KwlwbXUgPSAmcHJpdi0+YmFzZTsKKwlwbWMgPSBudmttX21jKHBtdSk7CisJbnZfc3ViZGV2KHBt
+dSktPmludHIgPSBnazIwYV9wbXVfaW50cjsKIAorCXJldCA9IGdrMjBhX3BtdV9sb2FkX2Zpcm13
+YXJlKHBtdSwgJnBtdWZ3KTsKKwlpZiAocmV0IDwgMCkgeworCQludl9lcnJvcihwcml2LCAiZmFp
+bGVkIHRvIGxvYWQgcG11IGZpbXdhcmVcbiIpOworCQlyZXR1cm4gcmV0OworCX0KKworCXJldCA9
+IGdrMjBhX3BtdV9pbml0X3ZtKHByaXYsIHBtdWZ3KTsKKwlpZiAocmV0IDwgMCkgeworCQludl9l
+cnJvcihwcml2LCAiZmFpbGVkIHRvIG1hcCBwbXUgZncgdG8gdmEgc3BhY2VcbiIpOworCQlnb3Rv
+IGVycjsKKwl9CisKKwlwcml2LT5kZXNjID0gKHN0cnVjdCBwbXVfdWNvZGVfZGVzYyAqKXBtdWZ3
+LT5kYXRhOworCWdrMjBhX3BtdV9kdW1wX2Zpcm13YXJlX2luZm8ocG11LCBwbXVmdyk7CisKKwlp
+ZiAocHJpdi0+ZGVzYy0+YXBwX3ZlcnNpb24gIT0gQVBQX1ZFUlNJT05fR0syMEEpIHsKKwkJbnZf
+ZXJyb3IocHJpdiwgIlBNVSB2ZXJzaW9uIHVuc3VwcG9ydGVkOiAlZFxuIiwKKwkJCQkJCSAgICAg
+ICBwcml2LT5kZXNjLT5hcHBfdmVyc2lvbik7CisJCXJldCA9IC1FSU5WQUw7CisJCWdvdG8gZXJy
+OworCX0KKworCXJldCA9IGdrMjBhX2luaXRfcG11X3NldHVwX3N3KHByaXYpOworCWlmIChyZXQp
+CisJCWdvdG8gZXJyOworCisJcG11LT5wZ29iID0gbnZrbV9wbXVfcGdvYjsKIAludmttX2FsYXJt
+X2luaXQoJnByaXYtPmFsYXJtLCBnazIwYV9wbXVfZHZmc193b3JrKTsKKwogCXJldHVybiAwOwor
+CitlcnI6CisJZ2syMGFfcG11X3JlbGVhc2VfZmlybXdhcmUocG11LCBwbXVmdyk7CisJcmV0dXJu
+IHJldDsKIH0KIAogc3RydWN0IG52a21fb2NsYXNzICoKQEAgLTIyMyw4ICs5ODgsMTAgQEAgZ2sy
+MGFfcG11X29jbGFzcyA9ICYoc3RydWN0IG52a21fcG11X2ltcGwpIHsKIAkuYmFzZS5oYW5kbGUg
+PSBOVl9TVUJERVYoUE1VLCAweGVhKSwKIAkuYmFzZS5vZnVuY3MgPSAmKHN0cnVjdCBudmttX29m
+dW5jcykgewogCQkuY3RvciA9IGdrMjBhX3BtdV9jdG9yLAotCQkuZHRvciA9IF9udmttX3BtdV9k
+dG9yLAorCQkuZHRvciA9IGdrMjBhX3BtdV9kdG9yLAogCQkuaW5pdCA9IGdrMjBhX3BtdV9pbml0
+LAogCQkuZmluaSA9IGdrMjBhX3BtdV9maW5pLAogCX0sCisJLnBnb2IgPSBnazIwYV9wbXVfcGdv
+YiwKIH0uYmFzZTsKKwotLSAKMi4zLjUKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fCk5vdXZlYXUgbWFpbGluZyBsaXN0Ck5vdXZlYXVAbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9u
+b3V2ZWF1Cg==
