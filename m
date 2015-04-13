@@ -1,945 +1,663 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v4] pmu/gk20a: PMU boot support
-Date: Mon, 13 Apr 2015 19:42:18 +0900
-Message-ID: <552B9D8A.5050202@nvidia.com>
-References: <1428921530-28556-1-git-send-email-acourbot@nvidia.com>
+From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Subject: Re: [PATCH v8 13/18] clk: tegra: Add EMC clock driver
+Date: Mon, 13 Apr 2015 13:33:18 +0200
+Message-ID: <CAAObsKD8ez11M+zpoasGLuwSxVQF4+xkR+uDYqrnJp3xcko6zg@mail.gmail.com>
+References: <1426171746-26864-1-git-send-email-tomeu.vizoso@collabora.com> <20150410213731.14369.37737@quantum>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1428921530-28556-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20150410213731.14369.37737@quantum>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Deepak Goyal <dgoyal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+To: Tomeu Vizoso <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Ben, I guess our main remaining concern with this patch is how it should 
-integrate wrt. the existing PMU code. Since it is designed to interact 
-with the NVIDIA firmware, maybe we should use a different base code, or 
-do you think we can somehow share code and data structures?
-
-Deepak, as explained in the review, I think your time is better spent 
-making progress on (and starting submission of) the secure boot code. 
-Hopefully this patch starts to be in good shape, so I will take care of 
-it from now on. Thanks!
-
-On 04/13/2015 07:38 PM, Alexandre Courbot wrote:
-> From: Deepak Goyal <dgoyal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 10 April 2015 at 23:37, Tomeu Vizoso <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >
-> - Maps PMU firmware into PMU virtual memory.
-> - Copy bootloader into PMU memory and start it.
-> - Allow the PMU to interact with HOST via interrupts.
+> The driver is currently only tested on Tegra124 Jetson TK1, but should
+> work with other Tegra124 boards, provided that correct EMC tables are
+> provided through the device tree. Older chip models have differing
+> timing change sequences, so they are not currently supported.
 >
-> PMU after successful configurations (to follow after this patch) will:
-> 1.Autonomously power gate graphics engine when not in use.It will save
-> us a lot of power.
-> 2.Provide better way to scale frequencies by reporting Perf counters.
-> 3.Be critical for GPU functionality as future GPUs secure some register
-> & mem accesses involved in context switch.
+> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 >
-> Signed-off-by: Deepak Goyal <dgoyal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
-> Changes since v3:
-> - Cleaned formatting, renamed variables according to Nouveau standards
-> - (Hopefully) fixed init/fini sequence
-> - Removed a few more unneeded variables
 >
->   drm/nouveau/nvkm/subdev/pmu/gk20a.c | 803 +++++++++++++++++++++++++++++++++++-
->   1 file changed, 785 insertions(+), 18 deletions(-)
+> v6:     * Rebase
+>         * Use clk_hw_reparent as __clk_reparent isn't any more
+>         * Simplify emc_round_rate a bit
 >
-> diff --git a/drm/nouveau/nvkm/subdev/pmu/gk20a.c b/drm/nouveau/nvkm/subdev/pmu/gk20a.c
-> index 594f746e68f2..c206ec5e558a 100644
-> --- a/drm/nouveau/nvkm/subdev/pmu/gk20a.c
-> +++ b/drm/nouveau/nvkm/subdev/pmu/gk20a.c
-> @@ -1,5 +1,5 @@
->   /*
-> - * Copyright (c) 2014, NVIDIA CORPORATION. All rights reserved.
-> + * Copyright (c) 2014-2015, NVIDIA CORPORATION. All rights reserved.
->    *
->    * Permission is hereby granted, free of charge, to any person obtaining a
->    * copy of this software and associated documentation files (the "Software"),
-> @@ -19,14 +19,186 @@
->    * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
->    * DEALINGS IN THE SOFTWARE.
->    */
-> -#include "priv.h"
+> v5:     * Get a pointer to the EMC driver at runtime, to be used when
+>           calling the EMC API.
+>         * Misc. style fixes
+>         * Fix logic for rounding down to a high rate
 >
-> +#include "priv.h"
-> +#include <core/client.h>
-> +#include <core/gpuobj.h>
-> +#include <subdev/bar.h>
-> +#include <subdev/fb.h>
-> +#include <subdev/mc.h>
-> +#include <subdev/timer.h>
-> +#include <subdev/mmu.h>
-> +#include <subdev/pmu.h>
-> +#include <core/object.h>
-> +#include <core/device.h>
+> v4:     * Adapt to changes in the OF bindings
+>         * Improve error handling
+>         * Fix comment style
+>         * Make static a few more functions
+>
+> v3:     * Add some locking to protect the registers that are shared with the MC
+>           clock
+>
+> v2:     * Make sure that the clock is properly registered
+>         * Bail out early from attempts to set the same rate
+> ---
+>  drivers/clk/tegra/Makefile       |   2 +-
+>  drivers/clk/tegra/clk-emc.c      | 528 +++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/tegra/clk-tegra124.c |   4 +-
+>  drivers/clk/tegra/clk.h          |   3 +
+>  4 files changed, 535 insertions(+), 2 deletions(-)
+>  create mode 100644 drivers/clk/tegra/clk-emc.c
+>
+> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+> index edb8358..18c28d1 100644
+> --- a/drivers/clk/tegra/Makefile
+> +++ b/drivers/clk/tegra/Makefile
+> @@ -14,5 +14,5 @@ obj-y                                 += clk-tegra-super-gen4.o
+>  obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
+>  obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
+>  obj-$(CONFIG_ARCH_TEGRA_114_SOC)       += clk-tegra114.o
+> -obj-$(CONFIG_ARCH_TEGRA_124_SOC)       += clk-tegra124.o
+> +obj-$(CONFIG_ARCH_TEGRA_124_SOC)       += clk-tegra124.o clk-emc.o
+>  obj-$(CONFIG_ARCH_TEGRA_132_SOC)       += clk-tegra124.o
+> diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
+> new file mode 100644
+> index 0000000..704fff7
+> --- /dev/null
+> +++ b/drivers/clk/tegra/clk-emc.c
+> @@ -0,0 +1,528 @@
+> +/*
+> + * drivers/clk/tegra/clk-emc.c
+> + *
+> + * Copyright (c) 2014, NVIDIA CORPORATION.  All rights reserved.
+> + *
+> + * Author:
+> + *     Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> + *
+> + * This software is licensed under the terms of the GNU General Public
+> + * License version 2, as published by the Free Software Foundation, and
+> + * may be copied, distributed, and modified under those terms.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + *
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/clk.h>
+> +#include <linux/clkdev.h>
 > +#include <linux/delay.h>
-> +#include <linux/firmware.h>
->   #include <subdev/clk.h>
->   #include <subdev/timer.h>
->   #include <subdev/volt.h>
->
-> +#define APP_VERSION_GK20A  17997577
-> +#define GK20A_PMU_UCODE_SIZE_MAX  (256 * 1024)
-> +#define PMU_QUEUE_COUNT  5
+> +#include <linux/module.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/sort.h>
+> +#include <linux/string.h>
 > +
-> +#define GK20A_PMU_TRACE_BUFSIZE             0x4000   /* 4K */
-> +#define GK20A_PMU_DMEM_BLKSIZE2		    8
-> +#define GK20A_PMU_UCODE_NB_MAX_OVERLAY	    32
-> +#define GK20A_PMU_UCODE_NB_MAX_DATE_LENGTH  64
+> +#include <soc/tegra/fuse.h>
+> +#include <soc/tegra/emc.h>
 > +
-> +#define PMU_UNIT_REWIND		(0x00)
-> +#define PMU_UNIT_PG		(0x03)
-> +#define PMU_UNIT_INIT		(0x07)
-> +#define PMU_UNIT_PERFMON	(0x12)
-> +#define PMU_UNIT_THERM		(0x1B)
-> +#define PMU_UNIT_RC		(0x1F)
-> +#define PMU_UNIT_NULL		(0x20)
-> +#define PMU_UNIT_END		(0x23)
-> +#define PMU_UNIT_TEST_START	(0xFE)
-> +#define PMU_UNIT_END_SIM	(0xFF)
-> +#define PMU_UNIT_TEST_END	(0xFF)
+> +#include "clk.h"
 > +
-> +#define PMU_UNIT_ID_IS_VALID(id)		\
-> +		(((id) < PMU_UNIT_END) || ((id) >= PMU_UNIT_TEST_START))
-> +#define PMU_DMEM_ALIGNMENT		(4)
+> +#define CLK_SOURCE_EMC 0x19c
 > +
->   #define BUSY_SLOT	0
->   #define CLK_SLOT	7
-> +#define GK20A_PMU_UCODE_IMAGE	"gpmu_ucode.bin"
+> +#define CLK_SOURCE_EMC_EMC_2X_CLK_DIVISOR_SHIFT 0
+> +#define CLK_SOURCE_EMC_EMC_2X_CLK_DIVISOR_MASK 0xff
+> +#define CLK_SOURCE_EMC_EMC_2X_CLK_DIVISOR(x) (((x) & CLK_SOURCE_EMC_EMC_2X_CLK_DIVISOR_MASK) << \
+> +                                             CLK_SOURCE_EMC_EMC_2X_CLK_DIVISOR_SHIFT)
 > +
-> +/*Choices for DMA to use*/
-> +enum {
-> +	GK20A_PMU_DMAIDX_UCODE		= 0,
-> +	GK20A_PMU_DMAIDX_VIRT		= 1,
-> +	GK20A_PMU_DMAIDX_PHYS_VID	= 2,
-> +	GK20A_PMU_DMAIDX_PHYS_SYS_COH	= 3,
-> +	GK20A_PMU_DMAIDX_PHYS_SYS_NCOH	= 4,
-> +	GK20A_PMU_DMAIDX_RSVD		= 5,
-> +	GK20A_PMU_DMAIDX_PELPG		= 6,
-> +	GK20A_PMU_DMAIDX_END		= 7
+> +#define CLK_SOURCE_EMC_EMC_2X_CLK_SRC_SHIFT 29
+> +#define CLK_SOURCE_EMC_EMC_2X_CLK_SRC_MASK 0x7
+> +#define CLK_SOURCE_EMC_EMC_2X_CLK_SRC(x) (((x) & CLK_SOURCE_EMC_EMC_2X_CLK_SRC_MASK) << \
+> +                                         CLK_SOURCE_EMC_EMC_2X_CLK_SRC_SHIFT)
+> +
+> +static const char const *emc_parent_clk_names[] = {
+> +       "pll_m", "pll_c", "pll_p", "clk_m", "pll_m_ud",
+> +       "pll_c2", "pll_c3", "pll_c_ud"
 > +};
 > +
-> +struct pmu_buf_desc {
-> +	struct nvkm_gpuobj *obj;
-> +	struct nvkm_vma vma;
-> +	size_t size;
+> +/*
+> + * List of clock sources for various parents the EMC clock can have.
+> + * When we change the timing to a timing with a parent that has the same
+> + * clock source as the current parent, we must first change to a backup
+> + * timing that has a different clock source.
+> + */
+> +
+> +#define EMC_SRC_PLL_M 0
+> +#define EMC_SRC_PLL_C 1
+> +#define EMC_SRC_PLL_P 2
+> +#define EMC_SRC_CLK_M 3
+> +#define EMC_SRC_PLL_C2 4
+> +#define EMC_SRC_PLL_C3 5
+> +
+> +static const char emc_parent_clk_sources[] = {
+> +       EMC_SRC_PLL_M, EMC_SRC_PLL_C, EMC_SRC_PLL_P, EMC_SRC_CLK_M,
+> +       EMC_SRC_PLL_M, EMC_SRC_PLL_C2, EMC_SRC_PLL_C3, EMC_SRC_PLL_C
 > +};
 > +
-> +struct nvkm_pmu_priv_vm {
-> +	struct nvkm_gpuobj *mem;
-> +	struct nvkm_gpuobj *pgd;
-> +	struct nvkm_vm *vm;
+> +struct emc_timing {
+> +       unsigned long rate, parent_rate;
+> +       u8 parent_index;
+> +       struct clk *parent;
+> +       u32 ram_code;
 > +};
 > +
-> +/*Choices for pmu_state*/
-> +enum {
-> +	PMU_STATE_OFF,             /*0  PMU is off */
-> +	PMU_STATE_STARTING,        /*1  PMU is on, but not booted */
-> +	PMU_STATE_INIT_RECEIVED    /*2  PMU init message received */
+> +struct tegra_clk_emc {
+> +       struct clk_hw hw;
+> +       void __iomem *clk_regs;
+> +       struct clk *prev_parent;
+> +       bool changing_timing;
+> +
+> +       struct device_node *emc_node;
+> +       struct tegra_emc *emc;
+> +
+> +       int num_timings;
+> +       struct emc_timing *timings;
+> +       spinlock_t *lock;
 > +};
 > +
-> +struct pmu_mem_gk20a {
-> +	u32 dma_base;
-> +	u8  dma_offset;
-> +	u8  dma_idx;
-> +	u16 fb_size;
+> +/* Common clock framework callback implementations */
+> +
+> +static unsigned long emc_recalc_rate(struct clk_hw *hw,
+> +                                    unsigned long parent_rate)
+> +{
+> +       struct tegra_clk_emc *tegra;
+> +       u32 val, div;
+> +
+> +       tegra = container_of(hw, struct tegra_clk_emc, hw);
+> +
+> +       /*
+> +        * CCF wrongly assumes that the parent won't change during set_rate,
+> +        * so get the parent rate explicitly.
+> +        */
+> +       parent_rate = __clk_get_rate(__clk_get_parent(hw->clk));
+> +
+> +       val = readl(tegra->clk_regs + CLK_SOURCE_EMC);
+> +       div = val & CLK_SOURCE_EMC_EMC_2X_CLK_DIVISOR_MASK;
+> +
+> +       return parent_rate / (div + 2) * 2;
+> +}
+> +
+> +/*
+> + * Rounds up unless no higher rate exists, in which case down. This way is
+> + * safer since things have EMC rate floors. Also don't touch parent_rate
+> + * since we don't want the CCF to play with our parent clocks.
+> + */
+> +static long emc_round_rate(struct clk_hw *hw, unsigned long rate,
+> +                   unsigned long *parent_rate)
+> +{
+> +       struct tegra_clk_emc *tegra;
+> +       u8 ram_code = tegra_read_ram_code();
+> +       struct emc_timing *timing = NULL;
+> +       int i;
+> +
+> +       tegra = container_of(hw, struct tegra_clk_emc, hw);
+> +
+> +         for (i = 0; i < tegra->num_timings; i++) {
+> +                if (tegra->timings[i].ram_code != ram_code)
+> +                        continue;
+> +
+> +                timing = tegra->timings + i;
+> +
+> +                if (timing->rate >= rate)
+> +                        return timing->rate;
+> +        }
+> +
+> +        if (timing)
+> +                return timing->rate;
+> +
+> +       return __clk_get_rate(hw->clk);
+> +}
+> +
+> +static u8 emc_get_parent(struct clk_hw *hw)
+> +{
+> +       struct tegra_clk_emc *tegra;
+> +       u32 val;
+> +
+> +       tegra = container_of(hw, struct tegra_clk_emc, hw);
+> +
+> +       val = readl(tegra->clk_regs + CLK_SOURCE_EMC);
+> +
+> +       return (val >> CLK_SOURCE_EMC_EMC_2X_CLK_SRC_SHIFT)
+> +               & CLK_SOURCE_EMC_EMC_2X_CLK_SRC_MASK;
+> +}
+> +
+> +static struct tegra_emc *emc_ensure_emc_driver(struct tegra_clk_emc *tegra)
+> +{
+> +       struct platform_device *pdev;
+> +
+> +       if (tegra->emc)
+> +               return tegra->emc;
+> +
+> +       if (!tegra->emc_node)
+> +               return NULL;
+> +
+> +       pdev = of_find_device_by_node(tegra->emc_node);
+> +       if (!pdev) {
+> +               pr_err("%s: could not get external memory controller\n",
+> +                      __func__);
+> +               return NULL;
+> +       }
+> +
+> +       of_node_put(tegra->emc_node);
+> +       tegra->emc_node = NULL;
+> +
+> +       tegra->emc = platform_get_drvdata(pdev);
+> +       if (!tegra->emc) {
+> +               pr_err("%s: cannot find EMC driver\n", __func__);
+> +               return NULL;
+> +       }
+> +
+> +       return tegra->emc;
+> +}
+> +
+> +static int emc_set_timing(struct tegra_clk_emc *tegra,
+> +                         struct emc_timing *timing)
+> +{
+> +       int err;
+> +       u8 div;
+> +       u32 car_value;
+> +       unsigned long flags = 0;
+> +       struct tegra_emc *emc = emc_ensure_emc_driver(tegra);
+> +
+> +       if (!emc)
+> +               return -ENOENT;
+> +
+> +       pr_debug("going to rate %ld prate %ld p %s\n", timing->rate,
+> +                timing->parent_rate, __clk_get_name(timing->parent));
+> +
+> +       if (emc_get_parent(&tegra->hw) == timing->parent_index &&
+> +           clk_get_rate(timing->parent) != timing->parent_rate) {
+> +               BUG();
+> +               return -EINVAL;
+> +       }
+> +
+> +       tegra->changing_timing = true;
+> +
+> +       err = clk_set_rate(timing->parent, timing->parent_rate);
+> +       if (err) {
+> +               pr_err("cannot change parent %s rate to %ld: %d\n",
+> +                      __clk_get_name(timing->parent), timing->parent_rate,
+> +                      err);
+> +
+> +               return err;
+> +       }
+> +
+> +       err = clk_prepare_enable(timing->parent);
+> +       if (err) {
+> +               pr_err("cannot enable parent clock: %d\n", err);
+> +               return err;
+> +       }
+> +
+> +       div = timing->parent_rate / (timing->rate / 2) - 2;
+> +
+> +       err = tegra_emc_prepare_timing_change(emc, timing->rate);
+> +       if (err)
+> +               return err;
+> +
+> +       spin_lock_irqsave(tegra->lock, flags);
+> +
+> +       car_value = readl(tegra->clk_regs + CLK_SOURCE_EMC);
+> +
+> +       car_value &= ~CLK_SOURCE_EMC_EMC_2X_CLK_SRC(~0);
+> +       car_value |= CLK_SOURCE_EMC_EMC_2X_CLK_SRC(timing->parent_index);
+> +
+> +       car_value &= ~CLK_SOURCE_EMC_EMC_2X_CLK_DIVISOR(~0);
+> +       car_value |= CLK_SOURCE_EMC_EMC_2X_CLK_DIVISOR(div);
+> +
+> +       writel(car_value, tegra->clk_regs + CLK_SOURCE_EMC);
+> +
+> +       spin_unlock_irqrestore(tegra->lock, flags);
+> +
+> +       tegra_emc_complete_timing_change(emc, timing->rate);
+> +
+> +       clk_hw_reparent(&tegra->hw, __clk_get_hw(timing->parent));
+>
+> Does the .set_rate_and_parent callback work here in place of exposing
+> clk_hw_reparent to clock providers?
+
+Hi Mike,
+
+the problem is that we may need to temporarily switch to another
+timing before we can safely change the rate of the current parent
+clock.
+
+That's why set_rate calls set_timing twice, once to switch to the
+backup timing, and then to the target timing.
+
+Regards,
+
+Tomeu
+
+>
+> Regards,
+> Mike
+> +       clk_disable_unprepare(tegra->prev_parent);
+> +
+> +       tegra->prev_parent = timing->parent;
+> +       tegra->changing_timing = false;
+> +
+> +       return 0;
+> +}
+> +
+> +/*
+> + * Get backup timing to use as an intermediate step when a change between
+> + * two timings with the same clock source has been requested. First try to
+> + * find a timing with a higher clock rate to avoid a rate below any set rate
+> + * floors. If that is not possible, find a lower rate.
+> + */
+> +static struct emc_timing *get_backup_timing(struct tegra_clk_emc *tegra,
+> +                                           int timing_index)
+> +{
+> +       int i;
+> +       u32 ram_code = tegra_read_ram_code();
+> +       struct emc_timing *timing;
+> +
+> +       for (i = timing_index+1; i < tegra->num_timings; i++) {
+> +               timing = tegra->timings + i;
+> +               if (timing->ram_code != ram_code)
+> +                       continue;
+> +
+> +               if (emc_parent_clk_sources[timing->parent_index] !=
+> +                   emc_parent_clk_sources[
+> +                     tegra->timings[timing_index].parent_index])
+> +                       return timing;
+> +       }
+> +
+> +       for (i = timing_index-1; i >= 0; --i) {
+> +               timing = tegra->timings + i;
+> +               if (timing->ram_code != ram_code)
+> +                       continue;
+> +
+> +               if (emc_parent_clk_sources[timing->parent_index] !=
+> +                   emc_parent_clk_sources[
+> +                     tegra->timings[timing_index].parent_index])
+> +                       return timing;
+> +       }
+> +
+> +       return NULL;
+> +}
+> +
+> +static int emc_set_rate(struct clk_hw *hw, unsigned long rate,
+> +                       unsigned long parent_rate)
+> +{
+> +       struct tegra_clk_emc *tegra;
+> +       struct emc_timing *timing = NULL;
+> +       int i, err;
+> +       u32 ram_code = tegra_read_ram_code();
+> +
+> +       tegra = container_of(hw, struct tegra_clk_emc, hw);
+> +
+> +       if (__clk_get_rate(hw->clk) == rate)
+> +               return 0;
+> +
+> +       /*
+> +        * When emc_set_timing changes the parent rate, CCF will propagate
+> +        * that downward to us, so ignore any set_rate calls while a rate
+> +        * change is already going on.
+> +        */
+> +       if (tegra->changing_timing)
+> +               return 0;
+> +
+> +       for (i = 0; i < tegra->num_timings; i++) {
+> +               if (tegra->timings[i].rate == rate &&
+> +                   tegra->timings[i].ram_code == ram_code) {
+> +                       timing = tegra->timings + i;
+> +                       break;
+> +               }
+> +       }
+> +
+> +       if (!timing) {
+> +               pr_err("cannot switch to rate %ld without emc table\n", rate);
+> +               return -EINVAL;
+> +       }
+> +
+> +       if (emc_parent_clk_sources[emc_get_parent(hw)] ==
+> +           emc_parent_clk_sources[timing->parent_index] &&
+> +           clk_get_rate(timing->parent) != timing->parent_rate) {
+> +               /*
+> +                * Parent clock source not changed but parent rate has changed,
+> +                * need to temporarily switch to another parent
+> +                */
+> +
+> +               struct emc_timing *backup_timing;
+> +
+> +               backup_timing = get_backup_timing(tegra, i);
+> +               if (!backup_timing) {
+> +                       pr_err("cannot find backup timing\n");
+> +                       return -EINVAL;
+> +               }
+> +
+> +               pr_debug("using %ld as backup rate when going to %ld\n",
+> +                        backup_timing->rate, rate);
+> +
+> +               err = emc_set_timing(tegra, backup_timing);
+> +               if (err) {
+> +                       pr_err("cannot set backup timing: %d\n", err);
+> +                       return err;
+> +               }
+> +       }
+> +
+> +       return emc_set_timing(tegra, timing);
+> +}
+> +
+> +/* Initialization and deinitialization */
+> +
+> +static int load_one_timing_from_dt(struct tegra_clk_emc *tegra,
+> +                                  struct emc_timing *timing,
+> +                                  struct device_node *node)
+> +{
+> +       int err, i;
+> +       u32 tmp;
+> +
+> +       err = of_property_read_u32(node, "clock-frequency", &tmp);
+> +       if (err) {
+> +               pr_err("timing %s: failed to read rate\n", node->full_name);
+> +               return err;
+> +       }
+> +
+> +       timing->rate = tmp;
+> +
+> +       err = of_property_read_u32(node, "nvidia,parent-clock-frequency", &tmp);
+> +       if (err) {
+> +               pr_err("timing %s: failed to read parent rate\n",
+> +                      node->full_name);
+> +               return err;
+> +       }
+> +
+> +       timing->parent_rate = tmp;
+> +
+> +       timing->parent = of_clk_get_by_name(node, "emc-parent");
+> +       if (IS_ERR(timing->parent)) {
+> +               pr_err("timing %s: failed to get parent clock\n",
+> +                      node->full_name);
+> +               return PTR_ERR(timing->parent);
+> +       }
+> +
+> +       timing->parent_index = 0xff;
+> +       for (i = 0; i < ARRAY_SIZE(emc_parent_clk_names); i++) {
+> +               if (!strcmp(emc_parent_clk_names[i],
+> +                           __clk_get_name(timing->parent))) {
+> +                       timing->parent_index = i;
+> +                       break;
+> +               }
+> +       }
+> +       if (timing->parent_index == 0xff) {
+> +               pr_err("timing %s: %s is not a valid parent\n",
+> +                      node->full_name, __clk_get_name(timing->parent));
+> +               clk_put(timing->parent);
+> +               return -EINVAL;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int cmp_timings(const void *_a, const void *_b)
+> +{
+> +       const struct emc_timing *a = _a;
+> +       const struct emc_timing *b = _b;
+> +
+> +       if (a->rate < b->rate)
+> +               return -1;
+> +       else if (a->rate == b->rate)
+> +               return 0;
+> +       else
+> +               return 1;
+> +}
+> +
+> +static int load_timings_from_dt(struct tegra_clk_emc *tegra,
+> +                               struct device_node *node,
+> +                               u32 ram_code)
+> +{
+> +       struct device_node *child;
+> +       int child_count = of_get_child_count(node);
+> +       int i = 0, err;
+> +
+> +       tegra->timings = kcalloc(child_count, sizeof(struct emc_timing),
+> +                                GFP_KERNEL);
+> +       if (!tegra->timings)
+> +               return -ENOMEM;
+> +
+> +       tegra->num_timings = child_count;
+> +
+> +       for_each_child_of_node(node, child) {
+> +               struct emc_timing *timing = tegra->timings + (i++);
+> +
+> +               err = load_one_timing_from_dt(tegra, timing, child);
+> +               if (err)
+> +                       return err;
+> +
+> +               timing->ram_code = ram_code;
+> +       }
+> +
+> +       sort(tegra->timings, tegra->num_timings, sizeof(struct emc_timing),
+> +            cmp_timings, NULL);
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct clk_ops tegra_clk_emc_ops = {
+> +       .recalc_rate = emc_recalc_rate,
+> +       .round_rate = emc_round_rate,
+> +       .set_rate = emc_set_rate,
+> +       .get_parent = emc_get_parent,
 > +};
 > +
-> +struct pmu_cmdline_args_gk20a {
-> +	u32 cpu_freq_hz;		/* Frequency of the clock driving PMU */
-> +	u32 falc_trace_size;		/* falctrace buffer size (bytes) */
-> +	u32 falc_trace_dma_base;	/* 256-byte block address */
-> +	u32 falc_trace_dma_idx;		/* dmaIdx for DMA operations */
-> +	u8 secure_mode;
-> +	struct pmu_mem_gk20a gc6_ctx;		/* dmem offset of gc6 context */
+> +struct clk *tegra_emc_init(struct device_node *np, void __iomem *clk_regs,
+> +                          spinlock_t *lock)
+> +{
+> +       struct tegra_clk_emc *tegra;
+> +       struct clk *clk;
+> +       struct clk_init_data init;
+> +       struct device_node *node;
+> +       u32 node_ram_code;
+> +       int err;
+> +
+> +       tegra = kcalloc(1, sizeof(*tegra), GFP_KERNEL);
+> +       if (!tegra)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       tegra->clk_regs = clk_regs;
+> +       tegra->lock = lock;
+> +
+> +       tegra->num_timings = 0;
+> +
+> +       for_each_child_of_node(np, node) {
+> +               err = of_property_read_u32(node, "nvidia,ram-code",
+> +                                          &node_ram_code);
+> +               if (err) {
+> +                       of_node_put(node);
+> +                       continue;
+> +               }
+> +
+> +               /*
+> +                * Store timings for all ram codes as we cannot read the
+> +                * fuses until the apbmisc driver is loaded.
+> +                */
+> +               err = load_timings_from_dt(tegra, node, node_ram_code);
+> +               if (err)
+> +                       return ERR_PTR(err);
+> +               of_node_put(node);
+> +               break;
+> +       }
+> +
+> +       if (tegra->num_timings == 0)
+> +               pr_warn("%s: no memory timings registered\n", __func__);
+> +
+> +       tegra->emc_node = of_parse_phandle(np,
+> +                       "nvidia,external-memory-controller", 0);
+> +       if (!tegra->emc_node)
+> +               pr_warn("%s: couldn't find node for EMC driver\n", __func__);
+> +
+> +       init.name = "emc";
+> +       init.ops = &tegra_clk_emc_ops;
+> +       init.flags = 0;
+> +       init.parent_names = emc_parent_clk_names;
+> +       init.num_parents = ARRAY_SIZE(emc_parent_clk_names);
+> +
+> +       tegra->hw.init = &init;
+> +
+> +       clk = clk_register(NULL, &tegra->hw);
+> +       if (IS_ERR(clk))
+> +               return clk;
+> +
+> +       tegra->prev_parent = clk_get_parent_by_index(
+> +               tegra->hw.clk, emc_get_parent(&tegra->hw));
+> +       tegra->changing_timing = false;
+> +
+> +       /* Allow debugging tools to see the EMC clock */
+> +       clk_register_clkdev(clk, "emc", "tegra-clk-debug");
+> +
+> +       clk_prepare_enable(clk);
+> +
+> +       return clk;
 > +};
+> diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+> index d370134..8a813c4 100644
+> --- a/drivers/clk/tegra/clk-tegra124.c
+> +++ b/drivers/clk/tegra/clk-tegra124.c
+> @@ -1383,7 +1383,6 @@ static struct tegra_clk_init_table common_init_table[] __initdata = {
+>         {TEGRA124_CLK_XUSB_HOST_SRC, TEGRA124_CLK_PLL_RE_OUT, 112000000, 0},
+>         {TEGRA124_CLK_SATA, TEGRA124_CLK_PLL_P, 104000000, 0},
+>         {TEGRA124_CLK_SATA_OOB, TEGRA124_CLK_PLL_P, 204000000, 0},
+> -       {TEGRA124_CLK_EMC, TEGRA124_CLK_CLK_MAX, 0, 1},
+>         {TEGRA124_CLK_MSELECT, TEGRA124_CLK_CLK_MAX, 0, 1},
+>         {TEGRA124_CLK_CSITE, TEGRA124_CLK_CLK_MAX, 0, 1},
+>         {TEGRA124_CLK_TSENSOR, TEGRA124_CLK_CLK_M, 400000, 0},
+> @@ -1504,6 +1503,9 @@ static void __init tegra124_132_clock_init_post(struct device_node *np)
+>         tegra_super_clk_gen4_init(clk_base, pmc_base, tegra124_clks,
+>                                   &pll_x_params);
+>         tegra_add_of_provider(np);
 > +
-> +/*pmu ucode descriptor*/
-> +struct pmu_ucode_desc {
-> +	u32 descriptor_size;
-> +	u32 image_size;
-> +	u32 tools_version;
-> +	u32 app_version;
-> +	char date[GK20A_PMU_UCODE_NB_MAX_DATE_LENGTH];
-> +	u32 bootloader_start_offset;
-> +	u32 bootloader_size;
-> +	u32 bootloader_imem_offset;
-> +	u32 bootloader_entry_point;
-> +	u32 app_start_offset;
-> +	u32 app_size;
-> +	u32 app_imem_offset;
-> +	u32 app_imem_entry;
-> +	u32 app_dmem_offset;
-> +	u32 app_resident_code_offset;
-> +	u32 app_resident_code_size;
-> +	u32 app_resident_data_offset;
-> +	u32 app_resident_data_size;
-> +	u32 nb_overlays;
-> +	struct {u32 start; u32 size; } load_ovl[GK20A_PMU_UCODE_NB_MAX_OVERLAY];
-> +	u32 compressed;
-> +};
+> +       clks[TEGRA124_CLK_EMC] = tegra_emc_init(np, clk_base, &emc_lock);
 > +
-> +/*pmu msg header*/
-> +struct pmu_hdr {
-> +	u8 unit_id;
-> +	u8 size;
-> +	u8 ctrl_flags;
-> +	u8 seq_id;
-> +};
-> +
-> +#define PMU_MSG_HDR_SIZE	sizeof(struct pmu_hdr)
-> +
-> +enum {
-> +	PMU_INIT_MSG_TYPE_PMU_INIT = 0,
-> +};
-> +
-> +/*pmu init msg format*/
-> +struct pmu_init_msg_pmu_gk20a {
-> +	u8 msg_type;
-> +	u8 pad;
-> +	u16  os_debug_entry_point;
-> +
-> +	struct {
-> +		u16 size;
-> +		u16 offset;
-> +		u8  index;
-> +		u8  pad;
-> +	} queue_info[PMU_QUEUE_COUNT];
-> +
-> +	u16 sw_managed_area_offset;
-> +	u16 sw_managed_area_size;
-> +};
-> +
-> +/*pmu init msg format*/
-> +struct pmu_init_msg {
-> +	union {
-> +		u8 msg_type;
-> +		struct pmu_init_msg_pmu_gk20a pmu_init_gk20a;
-> +	};
-> +};
-> +
-> +enum {
-> +	PMU_RC_MSG_TYPE_UNHANDLED_CMD = 0,
-> +};
-> +
-> +struct pmu_rc_msg_unhandled_cmd {
-> +	u8 msg_type;
-> +	u8 unit_id;
-> +};
-> +
-> +struct pmu_rc_msg {
-> +	u8 msg_type;
-> +	struct pmu_rc_msg_unhandled_cmd unhandled_cmd;
-> +};
-> +
-> +/*pmu generic msg format*/
-> +struct pmu_msg {
-> +	struct pmu_hdr hdr;
-> +	union {
-> +		struct pmu_init_msg init;
-> +		struct pmu_rc_msg rc;
-> +	} msg;
-> +};
+>         tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
 >
->   struct gk20a_pmu_dvfs_data {
->   	int p_load_target;
-> @@ -39,8 +211,19 @@ struct gk20a_pmu_priv {
->   	struct nvkm_pmu base;
->   	struct nvkm_alarm alarm;
->   	struct gk20a_pmu_dvfs_data *data;
-> +	struct pmu_ucode_desc *desc;
-> +	struct pmu_buf_desc ucode;
-> +	struct pmu_buf_desc trace_buf;
-> +	struct mutex pmu_copy_lock;
-> +	bool pmu_ready;
-> +	int pmu_state;
-> +	struct nvkm_pmu_priv_vm pmuvm;
-> +	struct mutex isr_mutex;
-> +	bool isr_enabled;
->   };
+>         tegra_cpu_car_ops = &tegra124_cpu_car_ops;
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index 4e458aa..097f972 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -623,6 +623,9 @@ void tegra_super_clk_gen4_init(void __iomem *clk_base,
+>                         void __iomem *pmc_base, struct tegra_clk *tegra_clks,
+>                         struct tegra_clk_pll_params *pll_params);
 >
-> +#define to_gk20a_priv(ptr) container_of(ptr, struct gk20a_pmu_priv, base)
+> +struct clk *tegra_emc_init(struct device_node *np, void __iomem *clk_regs,
+> +                          spinlock_t *lock);
 > +
->   struct gk20a_pmu_dvfs_dev_status {
->   	unsigned long total;
->   	unsigned long busy;
-> @@ -48,6 +231,59 @@ struct gk20a_pmu_dvfs_dev_status {
->   };
+>  void tegra114_clock_tune_cpu_trimmers_high(void);
+>  void tegra114_clock_tune_cpu_trimmers_low(void);
+>  void tegra114_clock_tune_cpu_trimmers_init(void);
+> --
+> 2.1.0
 >
->   static int
-> +gk20a_pmu_load_firmware(struct nvkm_pmu *pmu, const struct firmware **pfw)
-> +{
-> +	struct nvkm_device *dev;
-> +	char fw[32];
-> +
-> +	dev = nv_device(pmu);
-> +	snprintf(fw, sizeof(fw), "nvidia/tegra124/%s", GK20A_PMU_UCODE_IMAGE);
-> +	return request_firmware(pfw, fw, nv_device_base(dev));
-> +}
-> +
-> +static void
-> +gk20a_pmu_release_firmware(struct nvkm_pmu *pmu, const struct firmware *pfw)
-> +{
-> +	nv_debug(pmu, "firmware released\n");
-> +	release_firmware(pfw);
-> +}
-> +
-> +static void
-> +gk20a_pmu_dump_firmware_info(struct nvkm_pmu *pmu, const struct firmware *fw)
-> +{
-> +	struct pmu_ucode_desc *desc = (struct pmu_ucode_desc *)fw->data;
-> +
-> +	nv_debug(pmu, "GK20A PMU firmware information\n");
-> +	nv_debug(pmu, "descriptor size = %u\n", desc->descriptor_size);
-> +	nv_debug(pmu, "image size  = %u\n", desc->image_size);
-> +	nv_debug(pmu, "app_version = 0x%08x\n", desc->app_version);
-> +	nv_debug(pmu, "date = %s\n", desc->date);
-> +	nv_debug(pmu, "bootloader_start_offset = 0x%08x\n",
-> +				desc->bootloader_start_offset);
-> +	nv_debug(pmu, "bootloader_size = 0x%08x\n", desc->bootloader_size);
-> +	nv_debug(pmu, "bootloader_imem_offset = 0x%08x\n",
-> +				desc->bootloader_imem_offset);
-> +	nv_debug(pmu, "bootloader_entry_point = 0x%08x\n",
-> +				desc->bootloader_entry_point);
-> +	nv_debug(pmu, "app_start_offset = 0x%08x\n", desc->app_start_offset);
-> +	nv_debug(pmu, "app_size = 0x%08x\n", desc->app_size);
-> +	nv_debug(pmu, "app_imem_offset = 0x%08x\n", desc->app_imem_offset);
-> +	nv_debug(pmu, "app_imem_entry = 0x%08x\n", desc->app_imem_entry);
-> +	nv_debug(pmu, "app_dmem_offset = 0x%08x\n", desc->app_dmem_offset);
-> +	nv_debug(pmu, "app_resident_code_offset = 0x%08x\n",
-> +			desc->app_resident_code_offset);
-> +	nv_debug(pmu, "app_resident_code_size = 0x%08x\n",
-> +			desc->app_resident_code_size);
-> +	nv_debug(pmu, "app_resident_data_offset = 0x%08x\n",
-> +			desc->app_resident_data_offset);
-> +	nv_debug(pmu, "app_resident_data_size = 0x%08x\n",
-> +			desc->app_resident_data_size);
-> +	nv_debug(pmu, "nb_overlays = %d\n", desc->nb_overlays);
-> +
-> +	nv_debug(pmu, "compressed = %u\n", desc->compressed);
-> +}
-> +
-> +static int
->   gk20a_pmu_dvfs_target(struct gk20a_pmu_priv *priv, int *state)
->   {
->   	struct nvkm_clk *clk = nvkm_clk(priv);
-> @@ -160,40 +396,529 @@ resched:
->   }
->
->   static int
-> -gk20a_pmu_fini(struct nvkm_object *object, bool suspend)
-> +gk20a_pmu_enable_hw(struct gk20a_pmu_priv *priv, struct nvkm_mc *pmc, bool enable)
->   {
-> -	struct nvkm_pmu *pmu = (void *)object;
-> -	struct gk20a_pmu_priv *priv = (void *)pmu;
-> +	if (enable) {
-> +		nv_mask(pmc, 0x000200, 0x00002000, 0x00002000);
-> +		nv_rd32(pmc, 0x00000200);
-> +		if (nv_wait(priv, 0x0010a10c, 0x00000006, 0x00000000))
-> +			return 0;
-> +		nv_mask(pmc, 0x00000200, 0x2000, 0x00000000);
-> +		nv_error(priv, "Falcon mem scrubbing timeout\n");
-> +		return -ETIMEDOUT;
-> +	} else {
-> +		nv_mask(pmc, 0x00000200, 0x2000, 0x00000000);
-> +		return 0;
-> +	}
-> +}
-> +static void
-> +gk20a_pmu_enable_irq(struct gk20a_pmu_priv *priv, struct nvkm_mc *pmc, bool enable)
-> +{
-> +	if (enable) {
-> +		nv_debug(priv, "enable pmu irq\n");
-> +		nv_wr32(priv, 0x0010a010, 0xff);
-> +		nv_mask(pmc, 0x00000640, 0x1000000, 0x1000000);
-> +		nv_mask(pmc, 0x00000644, 0x1000000, 0x1000000);
-> +	} else {
-> +		nv_debug(priv, "disable pmu irq\n");
-> +		nv_mask(pmc, 0x00000640, 0x1000000, 0x00000000);
-> +		nv_mask(pmc, 0x00000644, 0x1000000, 0x00000000);
-> +		nv_wr32(priv, 0x0010a014, 0xff);
-> +	}
->
-> -	nvkm_timer_alarm_cancel(priv, &priv->alarm);
-> +}
->
-> -	return nvkm_subdev_fini(&pmu->base, suspend);
-> +static int
-> +gk20a_pmu_idle(struct gk20a_pmu_priv *priv)
-> +{
-> +	if (!nv_wait(priv, 0x0010a04c, 0x0000ffff, 0x00000000)) {
-> +		nv_error(priv, "timeout waiting pmu idle\n");
-> +		return -EBUSY;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int
-> +gk20a_pmu_enable(struct gk20a_pmu_priv *priv, struct nvkm_mc *pmc, bool enable)
-> +{
-> +	u32 pmc_enable;
-> +	int err;
-> +
-> +	if (enable) {
-> +		err = gk20a_pmu_enable_hw(priv, pmc, true);
-> +		if (err)
-> +			return err;
-> +
-> +		err = gk20a_pmu_idle(priv);
-> +		if (err)
-> +			return err;
-> +
-> +		gk20a_pmu_enable_irq(priv, pmc, true);
-> +	} else {
-> +		pmc_enable = nv_rd32(pmc, 0x200);
-> +		if ((pmc_enable & 0x2000) != 0x0) {
-> +			gk20a_pmu_enable_irq(priv, pmc, false);
-> +			gk20a_pmu_enable_hw(priv, pmc, false);
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void
-> +gk20a_pmu_copy_to_dmem(struct gk20a_pmu_priv *priv, u32 dst, u8 *src, u32 size,
-> +		       u8 port)
-> +{
-> +	u32 i, words, bytes;
-> +	u32 data, addr_mask;
-> +	u32 *src_u32 = (u32 *)src;
-> +
-> +	if (size == 0) {
-> +		nv_error(priv, "size is zero\n");
-> +		goto out;
-> +	}
-> +
-> +	if (dst & 0x3) {
-> +		nv_error(priv, "dst (0x%08x) not 4-byte aligned\n", dst);
-> +		goto out;
-> +	}
-> +
-> +	mutex_lock(&priv->pmu_copy_lock);
-> +	words = size >> 2;
-> +	bytes = size & 0x3;
-> +	addr_mask = 0xfffc;
-> +	dst &= addr_mask;
-> +
-> +	nv_wr32(priv, (0x10a1c0 + (port * 8)), (dst | (0x1 << 24)));
-> +
-> +	for (i = 0; i < words; i++) {
-> +		nv_wr32(priv, (0x10a1c4 + (port * 8)), src_u32[i]);
-> +		nv_debug(priv, "0x%08x\n", src_u32[i]);
-> +	}
-> +
-> +	if (bytes > 0) {
-> +		data = 0;
-> +		for (i = 0; i < bytes; i++)
-> +			((u8 *)&data)[i] = src[(words << 2) + i];
-> +		nv_wr32(priv, (0x10a1c4 + (port * 8)), data);
-> +		nv_debug(priv, "0x%08x\n", data);
-> +	}
-> +
-> +	data = nv_rd32(priv, (0x10a1c0 + (port * 8))) & addr_mask;
-> +	size = ALIGN(size, 4);
-> +	if (data != dst + size) {
-> +		nv_error(priv, "copy failed.... bytes written %d, expected %d",
-> +							      data - dst, size);
-> +	}
-> +	mutex_unlock(&priv->pmu_copy_lock);
-> +out:
-> +	nv_debug(priv, "exit %s\n", __func__);
-> +}
-> +
-> +static void
-> +gk20a_copy_from_dmem(struct gk20a_pmu_priv *priv, u32 src, u8 *dst, u32 size,
-> +		     u8 port)
-> +{
-> +	u32 i, words, bytes;
-> +	u32 data, addr_mask;
-> +	u32 *dst_u32 = (u32 *)dst;
-> +
-> +	if (size == 0) {
-> +		nv_error(priv, "size is zero\n");
-> +		goto out;
-> +	}
-> +
-> +	if (src & 0x3) {
-> +		nv_error(priv, "src (0x%08x) not 4-byte aligned\n", src);
-> +		goto out;
-> +	}
-> +
-> +	mutex_lock(&priv->pmu_copy_lock);
-> +
-> +	words = size >> 2;
-> +	bytes = size & 0x3;
-> +
-> +	addr_mask = 0xfffc;
-> +
-> +	src &= addr_mask;
-> +
-> +	nv_wr32(priv, (0x10a1c0 + (port * 8)), (src | (0x1 << 25)));
-> +
-> +	for (i = 0; i < words; i++) {
-> +		dst_u32[i] = nv_rd32(priv, (0x0010a1c4 + port * 8));
-> +		nv_debug(priv, "0x%08x\n", dst_u32[i]);
-> +	}
-> +	if (bytes > 0) {
-> +		data = nv_rd32(priv, (0x0010a1c4 + port * 8));
-> +		nv_debug(priv, "0x%08x\n", data);
-> +
-> +		for (i = 0; i < bytes; i++)
-> +			dst[(words << 2) + i] = ((u8 *)&data)[i];
-> +	}
-> +	mutex_unlock(&priv->pmu_copy_lock);
-> +out:
-> +	nv_debug(priv, "exit %s\n", __func__);
-> +}
-> +
-> +static int
-> +gk20a_pmu_process_init_msg(struct gk20a_pmu_priv *priv, struct pmu_msg *msg)
-> +{
-> +	struct pmu_init_msg_pmu_gk20a *init;
-> +	u32 tail;
-> +
-> +	tail = nv_rd32(priv, 0x0010a4cc);
-> +
-> +	gk20a_copy_from_dmem(priv, tail, (u8 *)&msg->hdr, PMU_MSG_HDR_SIZE, 0);
-> +
-> +	if (msg->hdr.unit_id != PMU_UNIT_INIT) {
-> +		nv_error(priv, "expecting init msg\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	gk20a_copy_from_dmem(priv, tail + PMU_MSG_HDR_SIZE,
-> +		(u8 *)&msg->msg, msg->hdr.size - PMU_MSG_HDR_SIZE, 0);
-> +
-> +	if (msg->msg.init.msg_type != PMU_INIT_MSG_TYPE_PMU_INIT) {
-> +		nv_error(priv, "expecting init msg\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	tail += ALIGN(msg->hdr.size, PMU_DMEM_ALIGNMENT);
-> +	nv_wr32(priv, 0x0010a4cc, tail);
-> +	init = &msg->msg.init.pmu_init_gk20a;
-> +	priv->pmu_ready = true;
-> +	priv->pmu_state = PMU_STATE_INIT_RECEIVED;
-> +	nv_debug(priv, "init msg processed\n");
-> +	return 0;
-> +}
-> +
-> +static void
-> +gk20a_pmu_process_message(struct work_struct *work)
-> +{
-> +	struct nvkm_pmu *pmu = container_of(work, struct nvkm_pmu, recv.work);
-> +	struct gk20a_pmu_priv *priv = to_gk20a_priv(pmu);
-> +	struct pmu_msg msg;
-> +	struct nvkm_mc *pmc = nvkm_mc(pmu);
-> +
-> +	mutex_lock(&priv->isr_mutex);
-> +	if (unlikely(!priv->pmu_ready)) {
-> +		nv_debug(pmu, "processing init msg\n");
-> +		gk20a_pmu_process_init_msg(priv, &msg);
-> +		mutex_unlock(&priv->isr_mutex);
-> +		gk20a_pmu_enable_irq(priv, pmc, true);
-> +	} else {
-> +		mutex_unlock(&priv->isr_mutex);
-> +	}
-> +}
-> +
-> +static int
-> +gk20a_pmu_init_vm(struct gk20a_pmu_priv *priv, const struct firmware *fw)
-> +{
-> +	int ret = 0;
-> +	u32 *ucode_image;
-> +	struct pmu_ucode_desc *desc = (struct pmu_ucode_desc *)fw->data;
-> +	int i;
-> +	struct nvkm_pmu_priv_vm *pmuvm = &priv->pmuvm;
-> +	struct nvkm_device *device = nv_device(&priv->base);
-> +	struct nvkm_vm *vm;
-> +	const u64 pmu_area_len = 300*1024;
-> +
-> +	/* mem for inst blk*/
-> +	ret = nvkm_gpuobj_new(nv_object(priv), NULL, 0x1000, 0, 0, &pmuvm->mem);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* mem for pgd*/
-> +	ret = nvkm_gpuobj_new(nv_object(priv), NULL, 0x8000, 0, 0, &pmuvm->pgd);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/*allocate virtual memory range*/
-> +	ret = nvkm_vm_new(device, 0, pmu_area_len, 0, &vm);
-> +	if (ret)
-> +		return ret;
-> +
-> +	atomic_inc(&vm->engref[NVDEV_SUBDEV_PMU]);
-> +
-> +	/* update VM with pgd */
-> +	ret = nvkm_vm_ref(vm, &pmuvm->vm, pmuvm->pgd);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/*update pgd in inst blk */
-> +	nv_wo32(pmuvm->mem, 0x0200, lower_32_bits(pmuvm->pgd->addr));
-> +	nv_wo32(pmuvm->mem, 0x0204, upper_32_bits(pmuvm->pgd->addr));
-> +	nv_wo32(pmuvm->mem, 0x0208, lower_32_bits(pmu_area_len - 1));
-> +	nv_wo32(pmuvm->mem, 0x020c, upper_32_bits(pmu_area_len - 1));
-> +
-> +	/* allocate memory for pmu fw to be copied to*/
-> +	ret = nvkm_gpuobj_new(nv_object(priv), NULL, GK20A_PMU_UCODE_SIZE_MAX,
-> +			      0x1000, 0, &priv->ucode.obj);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ucode_image = (u32 *)((u8 *)desc + desc->descriptor_size);
-> +	for (i = 0; i < (desc->app_start_offset + desc->app_size); i += 4)
-> +		nv_wo32(priv->ucode.obj, i, ucode_image[i/4]);
-> +
-> +	/* map allocated memory into GMMU */
-> +	ret = nvkm_gpuobj_map_vm(priv->ucode.obj, vm, NV_MEM_ACCESS_RW,
-> +				 &priv->ucode.vma);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return ret;
-> +}
-> +
-> +static int
-> +gk20a_init_pmu_setup_sw(struct gk20a_pmu_priv *priv)
-> +{
-> +	struct nvkm_pmu_priv_vm *pmuvm = &priv->pmuvm;
-> +	int ret = 0;
-> +
-> +	INIT_WORK(&priv->base.recv.work, gk20a_pmu_process_message);
-> +
-> +	ret = nvkm_gpuobj_new(nv_object(priv), NULL, GK20A_PMU_TRACE_BUFSIZE,
-> +					    0, 0, &priv->trace_buf.obj);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = nvkm_gpuobj_map_vm(nv_gpuobj(priv->trace_buf.obj), pmuvm->vm,
-> +					NV_MEM_ACCESS_RW, &priv->trace_buf.vma);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
-> +static int
-> +gk20a_pmu_bootstrap(struct gk20a_pmu_priv *priv)
-> +{
-> +	struct pmu_ucode_desc *desc = priv->desc;
-> +	u32 addr_code, addr_data, addr_load;
-> +	u32 i, blocks, addr_args;
-> +	struct pmu_cmdline_args_gk20a cmdline_args;
-> +	struct nvkm_pmu_priv_vm *pmuvm = &priv->pmuvm;
-> +
-> +	nv_mask(priv, 0x0010a048, 0x01, 0x01);
-> +	/*bind the address*/
-> +	nv_wr32(priv, 0x0010a480,
-> +		pmuvm->mem->addr >> 12 |
-> +		0x1 << 30 |
-> +		0x20000000);
-> +
-> +	/* TBD: load all other surfaces */
-> +	cmdline_args.falc_trace_size = GK20A_PMU_TRACE_BUFSIZE;
-> +	cmdline_args.falc_trace_dma_base =
-> +			    lower_32_bits(priv->trace_buf.vma.offset >> 8);
-> +	cmdline_args.falc_trace_dma_idx = GK20A_PMU_DMAIDX_VIRT;
-> +	cmdline_args.cpu_freq_hz = 204;
-> +	cmdline_args.secure_mode = 0;
-> +
-> +	addr_args = (nv_rd32(priv, 0x0010a108) >> 9) & 0x1ff;
-> +	addr_args = addr_args << GK20A_PMU_DMEM_BLKSIZE2;
-> +	addr_args -= sizeof(struct pmu_cmdline_args_gk20a);
-> +	nv_debug(priv, "initiating copy to dmem\n");
-> +	gk20a_pmu_copy_to_dmem(priv, addr_args,
-> +			(u8 *)&cmdline_args,
-> +			sizeof(struct pmu_cmdline_args_gk20a), 0);
-> +
-> +	nv_wr32(priv, 0x0010a1c0, 0x1 << 24);
-> +
-> +	addr_code = lower_32_bits((priv->ucode.vma.offset +
-> +			desc->app_start_offset +
-> +			desc->app_resident_code_offset) >> 8);
-> +
-> +	addr_data = lower_32_bits((priv->ucode.vma.offset +
-> +			desc->app_start_offset +
-> +			desc->app_resident_data_offset) >> 8);
-> +
-> +	addr_load = lower_32_bits((priv->ucode.vma.offset +
-> +			desc->bootloader_start_offset) >> 8);
-> +
-> +	nv_wr32(priv, 0x0010a1c4, GK20A_PMU_DMAIDX_UCODE);
-> +	nv_debug(priv, "0x%08x\n", GK20A_PMU_DMAIDX_UCODE);
-> +	nv_wr32(priv, 0x0010a1c4, (addr_code));
-> +	nv_debug(priv, "0x%08x\n", (addr_code));
-> +	nv_wr32(priv, 0x0010a1c4, desc->app_size);
-> +	nv_debug(priv, "0x%08x\n", desc->app_size);
-> +	nv_wr32(priv, 0x0010a1c4, desc->app_resident_code_size);
-> +	nv_debug(priv, "0x%08x\n", desc->app_resident_code_size);
-> +	nv_wr32(priv, 0x0010a1c4, desc->app_imem_entry);
-> +	nv_debug(priv, "0x%08x\n", desc->app_imem_entry);
-> +	nv_wr32(priv, 0x0010a1c4,  (addr_data));
-> +	nv_debug(priv, "0x%08x\n", (addr_data));
-> +	nv_wr32(priv, 0x0010a1c4, desc->app_resident_data_size);
-> +	nv_debug(priv, "0x%08x\n", desc->app_resident_data_size);
-> +	nv_wr32(priv, 0x0010a1c4, (addr_code));
-> +	nv_debug(priv, "0x%08x\n", (addr_code));
-> +	nv_wr32(priv, 0x0010a1c4, 0x1);
-> +	nv_debug(priv, "0x%08x\n", 1);
-> +	nv_wr32(priv, 0x0010a1c4, addr_args);
-> +	nv_debug(priv, "0x%08x\n", addr_args);
-> +
-> +	nv_wr32(priv, 0x0010a110,
-> +		(addr_load) - (desc->bootloader_imem_offset >> 8));
-> +
-> +	blocks = ((desc->bootloader_size + 0xFF) & ~0xFF) >> 8;
-> +
-> +	for (i = 0; i < blocks; i++) {
-> +		nv_wr32(priv, 0x0010a114,
-> +			desc->bootloader_imem_offset + (i << 8));
-> +		nv_wr32(priv, 0x0010a11c,
-> +			desc->bootloader_imem_offset + (i << 8));
-> +		nv_wr32(priv, 0x0010a118,
-> +			0x01 << 4  |
-> +			0x06 << 8  |
-> +			((GK20A_PMU_DMAIDX_UCODE & 0x07) << 12));
-> +	}
-> +
-> +	nv_wr32(priv, 0x0010a104, (desc->bootloader_entry_point));
-> +	nv_wr32(priv, 0x0010a100, 0x1 << 1);
-> +	nv_wr32(priv, 0x0010a080, desc->app_version);
-> +
-> +	return 0;
-> +}
-> +
-> +static int
-> +gk20a_init_pmu_setup_hw1(struct gk20a_pmu_priv *priv, struct nvkm_mc *pmc)
-> +{
-> +	int err;
-> +
-> +	mutex_lock(&priv->isr_mutex);
-> +	err = gk20a_pmu_enable(priv, pmc, true);
-> +	priv->isr_enabled = (err == 0);
-> +	mutex_unlock(&priv->isr_mutex);
-> +	if (err)
-> +		return err;
-> +
-> +	/* setup apertures - virtual */
-> +	nv_wr32(priv, 0x10a600 + 0 * 4, 0x0);
-> +	nv_wr32(priv, 0x10a600 + 1 * 4, 0x0);
-> +	/* setup apertures - physical */
-> +	nv_wr32(priv, 0x10a600 + 2 * 4, 0x4 | 0x0);
-> +	nv_wr32(priv, 0x10a600 + 3 * 4, 0x4 | 0x1);
-> +	nv_wr32(priv, 0x10a600 + 4 * 4, 0x4 | 0x2);
-> +
-> +	/* TBD: load pmu ucode */
-> +	err = gk20a_pmu_bootstrap(priv);
-> +	if (err)
-> +		return err;
-> +
-> +	return 0;
-> +}
-> +
-> +
-> +static void
-> +gk20a_pmu_intr(struct nvkm_subdev *subdev)
-> +{
-> +	struct gk20a_pmu_priv *priv = to_gk20a_priv(nvkm_pmu(subdev));
-> +	struct nvkm_mc *pmc = nvkm_mc(priv);
-> +	u32 intr, mask;
-> +
-> +	if (!priv->isr_enabled)
-> +		return;
-> +
-> +	mask = nv_rd32(priv, 0x0010a018) & nv_rd32(priv, 0x0010a01c);
-> +
-> +	intr = nv_rd32(priv, 0x0010a008) & mask;
-> +
-> +	nv_debug(priv, "received falcon interrupt: 0x%08x\n", intr);
-> +	gk20a_pmu_enable_irq(priv, pmc, false);
-> +
-> +	if (!intr || priv->pmu_state == PMU_STATE_OFF) {
-> +		nv_wr32(priv, 0x0010a004, intr);
-> +		nv_error(priv, "pmu state off\n");
-> +		gk20a_pmu_enable_irq(priv, pmc, true);
-> +	}
-> +
-> +	if (intr & 0x10)
-> +		nv_error(priv, "pmu halt intr not implemented\n");
-> +
-> +	if (intr & 0x20) {
-> +		nv_error(priv, "exterr interrupt  not impl..Clear interrupt\n");
-> +		nv_mask(priv, 0x0010a16c, (0x1 << 31), 0x00000000);
-> +	}
-> +
-> +	if (intr & 0x40) {
-> +		nv_debug(priv, "scheduling work\n");
-> +		schedule_work(&priv->base.recv.work);
-> +	}
-> +
-> +	nv_wr32(priv, 0x0010a004, intr);
-> +	nv_debug(priv, "irq handled\n");
-> +}
-> +
-> +static void
-> +gk20a_pmu_pgob(struct nvkm_pmu *pmu, bool enable)
-> +{
->   }
->
->   static int
->   gk20a_pmu_init(struct nvkm_object *object)
->   {
-> -	struct nvkm_pmu *pmu = (void *)object;
-> -	struct gk20a_pmu_priv *priv = (void *)pmu;
-> +	struct gk20a_pmu_priv *priv = (void *)object;
-> +	struct nvkm_mc *pmc = nvkm_mc(object);
->   	int ret;
->
-> -	ret = nvkm_subdev_init(&pmu->base);
-> +	ret = nvkm_subdev_init(&priv->base.base);
->   	if (ret)
->   		return ret;
->
-> -	pmu->pgob = nvkm_pmu_pgob;
-> +	priv->pmu_state = PMU_STATE_STARTING;
-> +	ret = gk20a_init_pmu_setup_hw1(priv, pmc);
-> +	if (ret)
-> +		return ret;
-> +
-> +	nv_wr32(priv, 0x10a504 + (BUSY_SLOT * 0x10), 0x00200001);
-> +	nv_wr32(priv, 0x10a50c + (BUSY_SLOT * 0x10), 0x00000002);
-> +	nv_wr32(priv, 0x10a50c + (CLK_SLOT * 0x10), 0x00000003);
->
-> -	/* init pwr perf counter */
-> -	nv_wr32(pmu, 0x10a504 + (BUSY_SLOT * 0x10), 0x00200001);
-> -	nv_wr32(pmu, 0x10a50c + (BUSY_SLOT * 0x10), 0x00000002);
-> -	nv_wr32(pmu, 0x10a50c + (CLK_SLOT * 0x10), 0x00000003);
-> +	nvkm_timer_alarm(priv, 2000000000, &priv->alarm);
->
-> -	nvkm_timer_alarm(pmu, 2000000000, &priv->alarm);
->   	return ret;
->   }
->
-> +static int
-> +gk20a_pmu_fini(struct nvkm_object *object, bool suspend)
-> +{
-> +	struct gk20a_pmu_priv *priv = (void *)object;
-> +	struct nvkm_mc *pmc = nvkm_mc(object);
-> +
-> +	nvkm_timer_alarm_cancel(priv, &priv->alarm);
-> +
-> +	cancel_work_sync(&priv->base.recv.work);
-> +
-> +	mutex_lock(&priv->isr_mutex);
-> +	gk20a_pmu_enable(priv, pmc, false);
-> +	priv->isr_enabled = false;
-> +	mutex_unlock(&priv->isr_mutex);
-> +
-> +	priv->pmu_state = PMU_STATE_OFF;
-> +	priv->pmu_ready = false;
-> +	nv_wr32(priv, 0x10a014, 0x00000060);
-> +
-> +	return nvkm_subdev_fini(&priv->base.base, suspend);
-> +}
-> +
-> +static void
-> +gk20a_pmu_dtor(struct nvkm_object *object)
-> +{
-> +	struct gk20a_pmu_priv *priv = (void *)object;
-> +
-> +	nvkm_gpuobj_unmap(&priv->trace_buf.vma);
-> +	nvkm_gpuobj_ref(NULL, &priv->trace_buf.obj);
-> +
-> +	nvkm_gpuobj_unmap(&priv->ucode.vma);
-> +	nvkm_gpuobj_ref(NULL, &priv->ucode.obj);
-> +	nvkm_vm_ref(NULL, &priv->pmuvm.vm, priv->pmuvm.pgd);
-> +	nvkm_gpuobj_ref(NULL, &priv->pmuvm.pgd);
-> +	nvkm_gpuobj_ref(NULL, &priv->pmuvm.mem);
-> +}
-> +
->   static struct gk20a_pmu_dvfs_data
-> -gk20a_dvfs_data= {
-> +gk20a_dvfs_data = {
->   	.p_load_target = 70,
->   	.p_load_max = 90,
->   	.p_smooth = 1,
-> @@ -205,6 +930,9 @@ gk20a_pmu_ctor(struct nvkm_object *parent, struct nvkm_object *engine,
->   	       struct nvkm_object **pobject)
->   {
->   	struct gk20a_pmu_priv *priv;
-> +	struct nvkm_pmu *pmu;
-> +	struct nvkm_mc *pmc;
-> +	const struct firmware *pmufw = NULL;
->   	int ret;
->
->   	ret = nvkm_pmu_create(parent, engine, oclass, &priv);
-> @@ -212,10 +940,47 @@ gk20a_pmu_ctor(struct nvkm_object *parent, struct nvkm_object *engine,
->   	if (ret)
->   		return ret;
->
-> +	mutex_init(&priv->isr_mutex);
-> +	mutex_init(&priv->pmu_copy_lock);
->   	priv->data = &gk20a_dvfs_data;
-> +	pmu = &priv->base;
-> +	pmc = nvkm_mc(pmu);
-> +	nv_subdev(pmu)->intr = gk20a_pmu_intr;
->
-> +	ret = gk20a_pmu_load_firmware(pmu, &pmufw);
-> +	if (ret < 0) {
-> +		nv_error(priv, "failed to load pmu fimware\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = gk20a_pmu_init_vm(priv, pmufw);
-> +	if (ret < 0) {
-> +		nv_error(priv, "failed to map pmu fw to va space\n");
-> +		goto err;
-> +	}
-> +
-> +	priv->desc = (struct pmu_ucode_desc *)pmufw->data;
-> +	gk20a_pmu_dump_firmware_info(pmu, pmufw);
-> +
-> +	if (priv->desc->app_version != APP_VERSION_GK20A) {
-> +		nv_error(priv, "PMU version unsupported: %d\n",
-> +						       priv->desc->app_version);
-> +		ret = -EINVAL;
-> +		goto err;
-> +	}
-> +
-> +	ret = gk20a_init_pmu_setup_sw(priv);
-> +	if (ret)
-> +		goto err;
-> +
-> +	pmu->pgob = nvkm_pmu_pgob;
->   	nvkm_alarm_init(&priv->alarm, gk20a_pmu_dvfs_work);
-> +
->   	return 0;
-> +
-> +err:
-> +	gk20a_pmu_release_firmware(pmu, pmufw);
-> +	return ret;
->   }
->
->   struct nvkm_oclass *
-> @@ -223,8 +988,10 @@ gk20a_pmu_oclass = &(struct nvkm_pmu_impl) {
->   	.base.handle = NV_SUBDEV(PMU, 0xea),
->   	.base.ofuncs = &(struct nvkm_ofuncs) {
->   		.ctor = gk20a_pmu_ctor,
-> -		.dtor = _nvkm_pmu_dtor,
-> +		.dtor = gk20a_pmu_dtor,
->   		.init = gk20a_pmu_init,
->   		.fini = gk20a_pmu_fini,
->   	},
-> +	.pgob = gk20a_pmu_pgob,
->   }.base;
-> +
->
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
