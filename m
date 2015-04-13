@@ -1,60 +1,203 @@
-From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v4.0
-Date: Mon, 13 Apr 2015 11:12:27 -0600
-Message-ID: <552BF8FB.7080103@nvidia.com>
+From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Subject: Re: [PATCH v2 2/5] mtd: nand: add NVIDIA Tegra NAND Flash
+ controller driver
+Date: Mon, 13 Apr 2015 21:22:54 +0200
+Message-ID: <1428952974.2616.2.camel@lynxeye.de>
+References: <1428522370-18035-1-git-send-email-dev@lynxeye.de>
+	 <1428522370-18035-3-git-send-email-dev@lynxeye.de>
+	 <99af1297029d7f1624db2f5fd9d228d1@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <99af1297029d7f1624db2f5fd9d228d1-XLVq0VzYD2Y@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+To: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+Cc: Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Boris BREZILLON <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Ezequiel Garcia <ezequiel-30ULvvUtt6G51wMPkGsGjgyUoB5FGQPZ@public.gmane.org>, Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.0.
-Logs and other details at:
+Hi Stefan,
 
-     http://nvt.pwsan.com/pub/linux/testlogs/test_v4.0/20150413095455/
+thanks for the review.
 
+Am Freitag, den 10.04.2015, 10:46 +0200 schrieb Stefan Agner:
+> Hi Lucas,
+> 
+> Thanks for working on that. Some minor comments below...
+> 
+> On 2015-04-08 21:46, Lucas Stach wrote:
+> > Add support for the NAND flash controller found on NVIDIA
+> > Tegra 2/3 SoCs.
+> > 
+> > Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+> > Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+> > ---
+> > v2:
+> > - remove Tegra 3 compatible
+> > - remove useless part_probes
+> > - don't store irq number
+> > - use gpiod API instead of deprecated of_gpios
+> > - don't store reset
+> > - correct TIMING_TCS mask
+> > - simplify irq handler
+> > - correct timing calculations
+> > - don't store buswidth
+> > - drop compile test
+> > - correct ECC handling
+> > ---
+> >  MAINTAINERS                   |   6 +
+> >  drivers/mtd/nand/Kconfig      |   6 +
+> >  drivers/mtd/nand/Makefile     |   1 +
+> >  drivers/mtd/nand/tegra_nand.c | 786 ++++++++++++++++++++++++++++++++++++++++++
+> >  4 files changed, 799 insertions(+)
+> >  create mode 100644 drivers/mtd/nand/tegra_nand.c
+> > 
+> [...]
+> > +static struct nand_ecclayout tegra_nand_oob_16 = {
+> > +	.eccbytes = 4,
+> > +	.eccpos = { 3, 4, 5, 6 },
+> > +	.oobfree = {
+> > +		{ .offset = 7, . length = 8 }
+> > +	}
+> > +};
+> > +
+> > +static struct nand_ecclayout tegra_nand_oob_64 = {
+> > +	.eccbytes = 36,
+> > +	.eccpos = {
+> > +		 3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+> > +		19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34,
+> > +		35, 36, 37, 38, 39
+> > +	},
+> 
+> The amount of eccbytes vs. length of eccpos do not match...
+> 
+> > +	.oobfree = {
+> > +		{ .offset = 40, .length = 24 }
+> > +	}
+> > +};
+> > +
+> > +static struct nand_ecclayout tegra_nand_oob_128 = {
+> > +	.eccbytes = 72,
+> > +	.eccpos = {
+> > +		 3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+> > +		19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34,
+> > +		35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
+> > +		51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66,
+> > +		67, 68, 69, 70, 71, 72, 73, 74, 75
+> > +	},
+> 
+> Here...
+> 
+> > +	.oobfree = {
+> > +		{ .offset = 76, .length = 52 }
+> > +	}
+> > +};
+> > +
+> > +static struct nand_ecclayout tegra_nand_oob_224 = {
+> > +	.eccbytes = 144,
+> > +	.eccpos = {
+> > +		  3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,  14,
+> > +		 15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  26,
+> > +		 27,  28,  29,  30,  31,  32,  33,  34,  35,  36,  37,  38,
+> > +		 39,  40,  41,  42,  43,  44,  45,  46,  47,  48,  49,  50,
+> > +		 51,  52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  62,
+> > +		 63,  64,  65,  66,  67,  68,  69,  70,  71,  72,  73,  74,
+> > +		 75,  76,  77,  78,  79,  80,  81,  82,  83,  84,  85,  86,
+> > +		 87,  88,  89,  90,  91,  92,  93,  94,  95,  96,  97,  98,
+> > +		 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110,
+> > +		111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122,
+> > +		123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134,
+> > +		135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+> > +		147
+> > +	},
+> 
+> ... and here too.
+> 
 
-Test summary
-------------
+Urgh, actually they are all wrong, as the ECC starts at byte 4, not
+3. :/ Thanks for the hint.
 
-Build: zImage:
-     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+> [...]
+> > +static int tegra_nand_probe(struct platform_device *pdev)
+> > +{
+> > +	struct reset_control *rst;
+> > +	struct tegra_nand *nand;
+> > +	struct nand_chip *chip;
+> > +	struct mtd_info *mtd;
+> > +	struct resource *res;
+> > +	unsigned long value;
+> > +	int irq, buswidth, err = 0;
+> > +
+> > +	nand = devm_kzalloc(&pdev->dev, sizeof(*nand), GFP_KERNEL);
+> > +	if (!nand)
+> > +		return -ENOMEM;
+> > +
+> > +	nand->dev = &pdev->dev;
+> > +
+> > +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > +	nand->regs = devm_ioremap_resource(&pdev->dev, res);
+> > +	if (IS_ERR(nand->regs))
+> > +		return PTR_ERR(nand->regs);
+> > +
+> > +	irq = platform_get_irq(pdev, 0);
+> > +	err = devm_request_irq(&pdev->dev, irq, tegra_nand_irq, 0,
+> > +			       dev_name(&pdev->dev), nand);
+> > +	if (err)
+> > +		return err;
+> > +
+> > +	rst = devm_reset_control_get(&pdev->dev, "nand");
+> > +	if (IS_ERR(rst))
+> > +		return PTR_ERR(rst);
+> > +
+> > +	nand->clk = devm_clk_get(&pdev->dev, "nand");
+> > +	if (IS_ERR(nand->clk))
+> > +		return PTR_ERR(nand->clk);
+> > +
+> > +	nand->wp_gpio = gpiod_get_optional(&pdev->dev, "nvidia,wp-gpios",
+> > +					   GPIOD_OUT_HIGH);
+> > +	if (IS_ERR(nand->wp_gpio))
+> > +		return PTR_ERR(nand->wp_gpio);
+> > +
+> > +	buswidth = of_get_nand_bus_width(pdev->dev.of_node);
+> > +	if (buswidth < 0)
+> > +		return buswidth;
+> > +
+> > +	err = clk_prepare_enable(nand->clk);
+> > +	if (err)
+> > +		return err;
+> > +
+> > +	reset_control_assert(rst);
+> > +	udelay(2);
+> > +	reset_control_deassert(rst);
+> > +
+> > +	value = HWSTATUS_RDSTATUS_MASK(1) | HWSTATUS_RDSTATUS_VALUE(0) |
+> > +		HWSTATUS_RBSY_MASK(NAND_STATUS_READY) |
+> > +		HWSTATUS_RBSY_VALUE(NAND_STATUS_READY);
+> > +	writel(NAND_CMD_STATUS, nand->regs + HWSTATUS_CMD);
+> > +	writel(value, nand->regs + HWSTATUS_MASK);
+> > +
+> > +	init_completion(&nand->command_complete);
+> > +	init_completion(&nand->dma_complete);
+> > +
+> > +	mtd = &nand->mtd;
+> > +	mtd->name = dev_name(&pdev->dev);
+> > +	mtd->owner = THIS_MODULE;
+> > +	mtd->priv = &nand->chip;
+> > +
+> > +	mtd->type = MTD_NANDFLASH;
+> > +	mtd->flags = MTD_CAP_NANDFLASH;
+> 
+> This get filled by nand_scan_tail anyway, any reason to have it here
+> too?
+> 
+No, not really. Probably just cargo-culting. I'll remove this.
 
-Build: Image:
-     Pass: ( 1/ 1): defconfig
+> Other than that, looks solid to me.
+> 
+> Reviewed-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+> 
+I'll wait a bit more before posting a v3, to give other people a chance
+to look at this.
 
-Boot to userspace: defconfig:
-     Pass: ( 1/ 1): qemu-vexpress64
-
-Boot to userspace: multi_v7_defconfig:
-     Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra20-trimslice, tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-     Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra20-trimslice, tegra30-beaver
-
-
-vmlinux object size
-(delta in bytes from test_v4.0-rc7 (f22e6e847115abc3a0e2ad7bb18d243d42275af1)):
-    text     data      bss    total  kernel
-     -36    -1528        0    -1564  multi_v7_defconfig
-    -128        0        0     -128  tegra_defconfig
-       0        0        0        0  defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v4.0-rc7 (f22e6e847115abc3a0e2ad7bb18d243d42275af1))
-     avail    rsrvd     high    freed                board              kconfig                  dtb
-         .        .        .        .      qemu-vexpress64            defconfig           __internal
-         .        .        .      -4k tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-         .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-         .        .        .      -4k  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-         .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-         .        .        .      -4k    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
-         .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
-         .        .        .      -4k       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-         .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+Thanks,
+Lucas
