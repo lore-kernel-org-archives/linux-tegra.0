@@ -1,95 +1,97 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/4] iommu/tegra-smmu: Add debugfs support
-Date: Tue, 14 Apr 2015 13:07:26 +0200
-Message-ID: <20150414110725.GA15878@ulmo.nvidia.com>
-References: <1427450847-17719-1-git-send-email-thierry.reding@gmail.com>
-	<20150327101539.GA17976@ulmo.nvidia.com>
-	<20150331150214.GE22683@8bytes.org>
+Subject: Re: [GIT PULL v2 1/2] ARM: tegra: Core code changes for v4.1-rc1
+Date: Tue, 14 Apr 2015 13:14:26 +0200
+Message-ID: <20150414111425.GB15878@ulmo.nvidia.com>
+References: <1427710333-13472-1-git-send-email-thierry.reding@gmail.com>
+ <201504140109.56537.arnd@arndb.de>
+ <20150414070649.GA11715@ulmo>
+ <2204375.plVGQ25v9Q@wuerfel>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============7557853999973040794=="
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20150331150214.GE22683-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="/NkBOFFp2J2Af1nK"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <2204375.plVGQ25v9Q@wuerfel>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Michael Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============7557853999973040794==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="qMm9M+Fa2AknHoGS"
-Content-Disposition: inline
-
-
---qMm9M+Fa2AknHoGS
+--/NkBOFFp2J2Af1nK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 31, 2015 at 05:02:14PM +0200, Joerg Roedel wrote:
-> Hi Thierry,
+On Tue, Apr 14, 2015 at 10:30:30AM +0200, Arnd Bergmann wrote:
+> On Tuesday 14 April 2015 09:06:50 Thierry Reding wrote:
+> > On Tue, Apr 14, 2015 at 01:09:56AM +0200, Arnd Bergmann wrote:
+> > > On Saturday 11 April 2015, Michael Turquette wrote:
+> > > > > Tomeu Vizoso (8):
+> > > > >       of: Document long-ram-code property in nvidia,tegra20-apbmi=
+sc
+> > > > >       of: Document timings subnode of nvidia,tegra-mc
+> > > > >       memory: tegra: Disable ARBITRATION_EMEM interrupt
+> > > > >       of: document new emc-timings subnode in nvidia,tegra124-car
+> > > > >       of: document external-memory-controller property in tegra12=
+4-car
+> > > > >       clk: Expose clk_hw_reparent() to providers
+> > > >=20
+> > > > ... this patch! I'd prefer to not do this. Let's see if
+> > > > .set_rate_and_parent solve the problem for you.
+> > >=20
+> > > Not pulling this for 4.1 then. Even without the objections, it was ba=
+sically
+> > > too late for the amount of changes now.
+> >=20
+> > For my education, when do you expect pull requests with "this amount of
+> > changes" to be sent?
 >=20
-> On Fri, Mar 27, 2015 at 11:15:41AM +0100, Thierry Reding wrote:
-> > Another possibility would be for you to ack this patch so that I can
-> > take it into the same branch as the dependency. The remainder of this
-> > series doesn't depend on either of the two patches, so they should be
-> > fine for you to take into your tree.
+> Generally speaking, we want large patch series to come early after -rc1,
+> followed by smaller subsequent updates. We often don't get around to
+> applying stuff before -rc3, which is a problem on our side, but it helps
+> to have patches available by then.
 >=20
-> This solution sounds like the best one. You have my
->=20
-> 	Acked-by: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>
->=20
-> on the first patch.
+> Also, if you have a large series (100+ patches) early on, we'd be more
+> likely to take a 20-patch series later than if the 20-patch series comes
+> at rc6 and is the first thing we see from you: after around rc5 or rc6,
+> what we want to see are mostly patches that directly result from work
+> that we merged earlier for the same merge window, like regression fixes
+> or wrapping up a larger series that was started but incomplete at -rc2.
 
-Thanks.
+That's not generally what we've done on Tegra. We usually keep things in
+linux-next until around -rc6 to make sure whatever gets pulled into the
+arm-soc tree is stable.
 
-> I merged patches 2-4 into the arm/tegra branch. As
-> you noticed there were conflict merging the branch into next. Please
-> have a look into my solution for that when I pushed it out later today
-> and let me know if it looks good and still works.
+With what you said above I'm pretty much forced to either send you pulls
+that aren't well tested (linux-next isn't supposed to get new code until
+after -rc1) or I have to plan for an extra release cycle for anything
+that is "big", which would mean that many new features would potentially
+take 6 months to get merged.
 
-Yes, the resolution looks correct and I've been running linux-next
-without issues for a couple of days now.
+I don't like either of those choices.
 
-Thanks,
 Thierry
 
---qMm9M+Fa2AknHoGS
+--/NkBOFFp2J2Af1nK
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJVLPTqAAoJEN0jrNd/PrOhhAkQAIF+CMvxyMzcZWuHWv/SNRCu
-4+SyISQkpLvetewjzeROHWwPzhGOxw3fcTC/tXUIpZuUSVZtbKg/lWAEpOzaAcrb
-8FIbdbEhF4LL2HzkJXGK1/CX0JNX/jFIkOx1N6HpRD7MIGKUpCXiRH2/ueFZROMP
-4OL9QJ0aJqvgVshzba6CWHpbwR2vuGaIm+lfsz2buDkTJt68n56qYXlx6vqYMzsr
-ivt72x7YxfHYEENytRlT72GKDMNQ7fpN6HlDeCsvpH3FEMhnrasNSU5//LRGN9y8
-a1VmWzqZxp7z0D+ePGQXOTeafYrY7vfb3uPSGVdpMaPw+ISywQgxpkGlwByrvCRW
-veAYekVCOOq8kwIJa8CpW+YxQALho/EB097b7Zmu2weWNsjTR4W9U4MR8thCWXo+
-0Fnk4GZLZXniPuVojIkmxDWDtPjLIrLSPHYYadW4Ds+cvrOxnzK96ZCY0n+5jqWL
-0iNVMS872ouMsqDW4+r5WFM1LFkigb6b3EItKZzTchHJ0vX4PiqbnVyNS9JbqmxC
-IQ+0BhmpYoKxC5FxiARuiT5xVvajT1mnQmqeumKm898WaGiXgC203/8QXmmxEvah
-BYpFp/Wl9ZDNXTgEofMhI4K4mydNR/Iz28KoYaOPfF22wc+YGLiRAydHq0EceXf0
-9RkrYebu0jX8UzslJt7y
-=vzp7
+iQIcBAABCAAGBQJVLPaRAAoJEN0jrNd/PrOhXnwP/0o5BWXQsj1DUthPM+07EHM1
+i2aoNDYSccnRMSVvlfHlMG51v7Zw5wG46hGUGUWwmc/PD4LQhUQjwDUG2Vd7VCZC
+2mWMmOzrVpzdE1ZMBnJGzcwNRGMtOENybyE+e47V2qb6zCaFEMpFLzLyt3TMx9Mx
+9cuyWjv7JCEq/dX+bg/fjJEoYK6sKYP9TYfyxBjTmHui3+AwCZ43YFNk6eIG3bB+
+/KAYQihcnKLEUz6Ccj3HCn5sNI6kKaZGpuHwnQKBtgk1ufVPsfzyXtvbR0C6UJOx
+WhEfMdOavE8TI/ZdDc8v5gRji234jH5oZj8PzK0RjVtZ5pcoUiusHPuCmplaeOsH
+bI9Y/jSGdh3AHTIaX6vfKHJsfUW9GOcba6vC4RCaXqRR8XFNSkwpVaQLHIvrJUs7
+dQDaqpmTSx71BqOydWawP6+IHlbDqmIACw6BLHfdYENk+RCGjRMfEPRPgPBkaaSC
+tfjaa7HlEwxb5secwNnAkznTflp6sODHinhTYBVxSJFxLN8xSw6K+bKmfSNAMlRN
+Ye2nNG0ZHtpOOv/qCUKk4OUyJ+sE3Nkytgx357YpttNHDBUP+I8S/nPXA1LMARXi
+dtlSDgebdtzYlthi9zpz1HJ7m4NaFuQizc8Qnv7pJzrhFPG9r6iEBUULGKD8FKKC
+hET98xXphiBDi2qJp956
+=zAap
 -----END PGP SIGNATURE-----
 
---qMm9M+Fa2AknHoGS--
-
---===============7557853999973040794==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============7557853999973040794==--
+--/NkBOFFp2J2Af1nK--
