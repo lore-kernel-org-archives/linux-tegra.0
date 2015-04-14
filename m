@@ -1,84 +1,96 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 0/9] ARM: tegra: collection of enhancements/fixes
-Date: Tue, 14 Apr 2015 14:52:24 +0200
-Message-ID: <20150414125222.GB13446@ulmo.nvidia.com>
-References: <cover.1428700856.git.marcel.ziswiler@toradex.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v8 00/18] Tegra124 CL-DVFS / DFLL clocksource + cpufreq
+Date: Tue, 14 Apr 2015 16:43:41 +0200
+Message-ID: <20150414144339.GA30495@ulmo.nvidia.com>
+References: <1425213881-5262-1-git-send-email-mikko.perttunen@kapsi.fi>
+ <20150311100741.GK19577@ulmo.nvidia.com>
+ <20150410211157.14369.51754@quantum>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="FkmkrVfFsRoUs1wW"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="45Z9DzgjV8m4Oswq"
+Return-path: <linux-pm-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <cover.1428700856.git.marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Matt Porter <mporter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt@kerne>
+In-Reply-To: <20150410211157.14369.51754@quantum>
+Sender: linux-pm-owner@vger.kernel.org
+To: Michael Turquette <mturquette@linaro.org>
+Cc: Mikko Perttunen <mikko.perttunen@kapsi.fi>, swarren@wwwdotorg.org, gnurou@gmail.com, pdeschrijver@nvidia.com, rjw@rjwysocki.net, viresh.kumar@linaro.org, pwalmsley@nvidia.com, vinceh@nvidia.com, pgaikwad@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tuomas.tynkkynen@iki.fi
 List-Id: linux-tegra@vger.kernel.org
 
 
---FkmkrVfFsRoUs1wW
+--45Z9DzgjV8m4Oswq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 10, 2015 at 11:35:55PM +0200, Marcel Ziswiler wrote:
-> From: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+On Fri, Apr 10, 2015 at 02:11:57PM -0700, Michael Turquette wrote:
+> Quoting Thierry Reding (2015-03-11 03:07:43)
+> > Hi Mike,
+> >=20
+> > Have you had a chance to look at these changes to the Tegra clock
+> > driver? If you're fine with it, I'd like to take these patches through
+> > the Tegra tree because the rest of the series depends on them. I can
+> > provide a stable branch in case we need to base other Tegra clock
+> > changes on top of this.
 >=20
-> This series is a set of patches accumulated over Easter ultimately
-> bringing HDA audio to Tegra30 devices.
+> Hi Thierry,
 >=20
-> Marcel Ziswiler (9):
->   ARM: tegra: Cardhu device-tree comment spelling fix
->   ARM: tegra: fix hda2codec_2x clock name for Tegra30
->   Documentation: DT bindings: fix hda2codec_2x clock name for
->     tegra30-hda
->   ARM: tegra: add Tegra30 HDA support
->   ARM: tegra: fix hda2codec_2x clock name in Tegra124 device tree
->   ARM: tegra: enable watchdog in defconfig
->   ARM: tegra: enable HDA in defconfig
->   ARM: tegra: colibri t30: activate stmpe811 touch controller
->   ARM: tegra: apalis t30: fix pin muxing and add HDA in device tree
+> Clock patches (and corresponding DT binding descriptions and changes to
+> DTS) look fine to me. Please add:
 >=20
->  .../bindings/sound/nvidia,tegra30-hda.txt          |  8 ++--
->  arch/arm/boot/dts/tegra124.dtsi                    |  4 +-
->  arch/arm/boot/dts/tegra30-apalis-eval.dts          |  5 +++
->  arch/arm/boot/dts/tegra30-apalis.dtsi              | 46 ++++++++++++++++=
-------
->  arch/arm/boot/dts/tegra30-cardhu.dtsi              |  2 +-
->  arch/arm/boot/dts/tegra30-colibri-eval-v3.dts      |  4 +-
->  arch/arm/boot/dts/tegra30-colibri.dtsi             | 44 ++++++++++++++++=
-++++-
->  arch/arm/boot/dts/tegra30.dtsi                     | 15 +++++++
->  arch/arm/configs/tegra_defconfig                   | 10 +++++
->  drivers/clk/tegra/clk-tegra30.c                    |  2 +-
->  10 files changed, 117 insertions(+), 23 deletions(-)
+> Acked-by: Michael Turquette <mturquette@linaro.org>
+>=20
+> I did have a question about the beahvior of clk_put in one of Mikko's
+> patches but it should not gate this series. I'm just trying to find out
+> if we have a bug in the framework or if the Tegra driver is a special
+> case.
+>=20
+> Also I do not think a stable branch is necessary.
 
-This duplicates a lot of a series that I've been carrying locally for
-quite some time but never got around to posting publicly. Sorry about
-that. I'll rebase what I have on top of this and then take this for
-v4.2.
+Given how this didn't work at all for v4.1, why don't we try to do this
+the conventional way for v4.2? What I propose is that I collect all the
+patches that I've had in these branches into a single branch that I can
+send you shortly after v4.1-rc1. Then you can pull that into the clock
+tree when you're happy and I can pull that into the Tegra tree again if
+needed to resolve dependencies.
 
-Thanks,
+One problem that I foresee is that the EMC clock driver relies on some
+symbols exported by the EMC driver, so it will fail to build on its own
+if merged into the clock tree. Usually I'd say we can solve this by
+merging a stable branch from the Tegra tree into the clock tree, but if
+any of the ARM SoC maintainers then decides that, for whatever reason,
+the Tegra pull request isn't good enough, you'd need to either redo the
+clock tree or we slip in the changes via the clock tree anyway.
+
+Perhaps a solution would be to implement stubs for the API exposed by
+the EMC driver and merge that through the clock tree, which should give
+us a tree that can be built but be a no-op at runtime. Then we can add
+the actual code to enable EMC scaling in the Tegra tree by providing a
+real implementation. That way we only have the Tegra tree depend on the
+clock tree.
+
+How does that sound?
+
 Thierry
 
---FkmkrVfFsRoUs1wW
+--45Z9DzgjV8m4Oswq
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJVLQ2GAAoJEN0jrNd/PrOhbEsQAJ8T/lN5ad5H5cEyVJXgY72F
-y38zVsaF8KKQk5pLKn37JdGMHKD6PPRB46XVKKUjrkM2ptHoxOLD0noBvasH8HmS
-p+U8Nxuqe50aHVOzmfjnPAnnSEOWfMf0GN2qlj5qFaAHsHl4AdGInSiLHf9nl3yh
-Zn7x8U7aUN2erl28T7Em5nq6ZJ+p690V6tbnzsN2i0Iw9lwkDTO5XxBAbW/C41du
-Wd1p42yb/hO2PTBNNEPdQYa8fOXKEOstyck+YsDaLLWvllQoHVkZd/caUc6Wzu7G
-0xs/M71WfwMDY5cHILQ4T1CFNLWOAP6P37OpgEms06wS04AsJCCCuoP1f5aKZUmZ
-rSNkZehBGbt8C9TCO2IGqGa41SWP01Jl/fG5vfYAlC6/sgj3Nu4ZsZGo1RZVy9aG
-KySrFdH9mPo9kFDUwkCvCP61vGhslkacGm2Tk1G0QCXMNwRG5R9tu8m9x0dLiYY4
-4p8zRq1vS6tY7GQ9UNkQw2JkcA5Nft9CyBUvMD+jNBwaP4B6rvcc1lTTgIti5RdT
-OH33JuXGcmjm9sEs0sN851pco3g2LupRPZXcuz+3gRFDlIdnD3zNu21zomI6KVog
-M1EDqaHoQ9F24o8Wnn3kSQqGBNGMP9yqpg7xEd0Jo8dmxbo5Hi97Voeoo0b3RTAE
-z5v/RzJpBw/w4Q/gDvUF
-=mRx7
+iQIcBAABCAAGBQJVLSeXAAoJEN0jrNd/PrOhjDsP/27ccjBHE2q8PxIKRWfrKu3k
+oRLRgpPrg/0e9VHlPCShN+EiGYhOsdPggbKnLBa4q0yBKb/mImpXedfQbLSEKw01
+SIWxEw8g/ChXBdx9C81cJ6IQIP14uru3QaGB+i6DVCsmzbB9SFVym1IgmhAYFpg7
+aED105ZF0GpHoZPPSaJBcEA6tjdZS18O8yD8JPuVqZMmSpPnswBj9BmqkJDCsia8
+j01HbYdlzntEE5p7CvJAvBtF4oyO6BtCj60ZKDHNn7DGx9Azkr3FM8xgibyd/3qK
+4gIjcXGsjZ/SalUNHsJ5UaAZLEw749txmbpUsaXF303KOf+p91MEp52jmuI/fmFl
+uAp/2WlRcRyor+z2vkGf78vpOFtUcuXVDEstJd/JR5Kb/NwxlZEY1HSp0oQGdRMV
+B48ijHgFG0lcCzsOb1PdeCUlkRnkS5gEWfGhzBaX2XqASUke+KQ+UAshn7usJ8tM
+cJFchaBL7cFoGlzOE1rXZ12zA1tDcSMW9MdiBBuEzIjkkYJ78+uluiceuA2cpRbg
+Snaft/Y/Oo95AMB3d89t3TkO6dISt36j32EeaJMZdQAGOf6c/SbnAWwbLgyCoji4
+U/bFBoZyskvLmMsxA8//NOYoyzExHrztaCF+Oo9tU0nc7UUFxP+i5pKc5TAOkyIM
+5Zb1VtHwxrr3nZGNZhKw
+=Ei45
 -----END PGP SIGNATURE-----
 
---FkmkrVfFsRoUs1wW--
+--45Z9DzgjV8m4Oswq--
