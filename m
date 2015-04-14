@@ -1,97 +1,46 @@
-From: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-Subject: Re: [PATCH v8 00/18] Tegra124 CL-DVFS / DFLL clocksource + cpufreq
-Date: Tue, 14 Apr 2015 22:40:36 +0300
-Message-ID: <552D6D34.2030806@kapsi.fi>
-References: <1425213881-5262-1-git-send-email-mikko.perttunen@kapsi.fi>	<20150311100741.GK19577@ulmo.nvidia.com>	<20150410211157.14369.51754@quantum>	<552CF947.9030609@kapsi.fi> <20150414192108.6a376ce8@bbrezillon>
+From: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH 0/9] ARM: tegra: collection of enhancements/fixes
+Date: Tue, 14 Apr 2015 22:01:27 +0200
+Message-ID: <1429041687.3963.33.camel@localhost.localdomain>
+References: <cover.1428700856.git.marcel.ziswiler@toradex.com>
+	 <20150414125222.GB13446@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20150414192108.6a376ce8@bbrezillon>
-Sender: linux-pm-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Michael Turquette <mturquette@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, swarren@wwwdotorg.org, gnurou@gmail.com, pdeschrijver@nvidia.com, rjw@rjwysocki.net, viresh.kumar@linaro.org, pwalmsley@nvidia.com, vinceh@nvidia.com, pgaikwad@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tuomas.tynkkynen@iki.fi
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150414125222.GB13446-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Matt Porter <mporter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt@kerne>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/14/2015 08:21 PM, Boris Brezillon wrote:
-> Hi Mikko,
->
-> On Tue, 14 Apr 2015 14:25:59 +0300
-> Mikko Perttunen <mikko.perttunen@kapsi.fi> wrote:
->
->> On 04/11/2015 12:11 AM, Michael Turquette wrote:
->>> Quoting Thierry Reding (2015-03-11 03:07:43)
->>>> Hi Mike,
->>>>
->>>> Have you had a chance to look at these changes to the Tegra clock
->>>> driver? If you're fine with it, I'd like to take these patches through
->>>> the Tegra tree because the rest of the series depends on them. I can
->>>> provide a stable branch in case we need to base other Tegra clock
->>>> changes on top of this.
->>>
->>> Hi Thierry,
->>>
->>> Clock patches (and corresponding DT binding descriptions and changes to
->>> DTS) look fine to me. Please add:
->>>
->>> Acked-by: Michael Turquette <mturquette@linaro.org>
->>>
->>> I did have a question about the beahvior of clk_put in one of Mikko's
->>> patches but it should not gate this series. I'm just trying to find out
->>> if we have a bug in the framework or if the Tegra driver is a special
->>> case.
->>>
->>> Also I do not think a stable branch is necessary.
->>>
->>> Regards,
->>> Mike
->>>
->>
->> Looks like in the meantime, this has been partially broken by
->> 03bc10ab5b0f "clk: check ->determine/round_rate() return value in
->> clk_calc_new_rates". The highest rates supported by the DFLL clock have
->> 1 in the MSB, so those cannot be entered after the aforementioned patch,
->> as the return value of round_rate is interpreted as an error. Avenues
->> that I can see: 1) revert the above patch 2) restrict the cpu clock rate
->> to those with 0 in the MSB 3) move to 64-bit clock rates.
->
-> How about changing ->determine_rate() and ->round_rate() prototypes so
-> that they always return 0 or an error code and passing the adjusted_rate
-> as an argument ?
->
-> Something like that:
->
-> 	int (*round_rate)(struct clk_hw *hw, unsigned long *rate,
-> 			  unsigned long *parent_rate);
-> 	int (*determine_rate)(struct clk_hw *hw, unsigned long *rate,
-> 			      unsigned long min_rate,
-> 			      unsigned long max_rate,
-> 			      unsigned long *best_parent_rate,
-> 			      struct clk_hw **best_parent_hw);
->
-> I know this implies a lot of changes (in all clock drivers and in the
-> core infrastructure), but I really think we should not mix error codes
-> and clock frequencies (even if we decide to move to a 64 bits rate
-> approach).
+On Tue, 2015-04-14 at 14:52 +0200, Thierry Reding wrote:
+> This duplicates a lot of a series that I've been carrying locally for
+> quite some time but never got around to posting publicly. Sorry about
+> that. I'll rebase what I have on top of this and then take this for
+> v4.2.
 
-This sounds like a good idea, too.
+OK, thanks Thierry.
 
->
-> Anyway, IMHO the only alternative to this solution is solution #3,
-> because #1 implies re-introducing another bug where
-> ->round_rate()/->determine_rate() are silently ignored, and #2 implies
-> lying about your DFLL capabilities.
->
+Two questions:
 
-Yeah, #1 and #2 weren't really meant as realistic options to end up with :)
+A) You don't think it would make sense to get any of this applied sooner
+than v4.2?
 
-> Mike, what's your opinion ?
->
-> Best Regards,
->
-> Boris
->
+B) I would not need to post a second version of this series then?
 
-Cheers,
-Mikko.
+I just noticed that patch 8 is actually missing the pinmux entry for the
+touch interrupt which mandates a second version thereof. Or should I
+just send a fix for that as a separate patch later?
 
+BTW: I also noticed another regression with the following two patches
+causing a hard freeze on our Apalis/Colibri T30 modules upon starting X
+using a plain fbdev driver. This does not happen if I revert those two
+commits but it also does not happen if I disable X startup. Do you have
+any idea what might cause this?
+
+a9fe46
+ARM: tegra: Add memory controller support for Tegra30
+
+6d9adf
+ARM: tegra: Enable IOMMU for display controllers on Tegra30
