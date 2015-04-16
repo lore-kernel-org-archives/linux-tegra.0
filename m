@@ -1,128 +1,159 @@
-From: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-Subject: Re: [PATCH v8 00/18] Tegra124 CL-DVFS / DFLL clocksource + cpufreq
-Date: Wed, 15 Apr 2015 00:10:30 +0300
-Message-ID: <552D8246.8040207@kapsi.fi>
-References: <1425213881-5262-1-git-send-email-mikko.perttunen@kapsi.fi> <20150311100741.GK19577@ulmo.nvidia.com> <20150410211157.14369.51754@quantum> <552CF947.9030609@kapsi.fi> <20150414192108.6a376ce8@bbrezillon> <552D6D34.2030806@kapsi.fi> <20150414210652.19585.10463@quantum>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: Re: [PATCH] ARM: tegra: cpuidle: implement cpuidle_state.enter_freeze()
+Date: Thu, 16 Apr 2015 16:37:19 +0200
+Message-ID: <CAAObsKAihF1k1yzZxQEs_jpPnCdV3HQbLaYHWu1QNsNd5zqiOg@mail.gmail.com>
+References: <1428490480-10144-1-git-send-email-tomeu.vizoso@collabora.com>
+ <20150408115546.GA24271@red-moon> <552643E1.3060200@collabora.com>
+ <285738930.THBQOWvsah@vostro.rjw.lan> <20150410100844.GC23730@red-moon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150414210652.19585.10463@quantum>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Michael Turquette <mturquette@linaro.org>, Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, swarren@wwwdotorg.org, gnurou@gmail.com, pdeschrijver@nvidia.com, rjw@rjwysocki.net, viresh.kumar@linaro.org, pwalmsley@nvidia.com, vinceh@nvidia.com, pgaikwad@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tuomas.tynkkynen@iki.fi
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <20150410100844.GC23730@red-moon>
+Sender: linux-pm-owner@vger.kernel.org
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/15/2015 12:06 AM, Michael Turquette wrote:
-> Quoting Mikko Perttunen (2015-04-14 12:40:36)
->> On 04/14/2015 08:21 PM, Boris Brezillon wrote:
->>> Hi Mikko,
->>>
->>> On Tue, 14 Apr 2015 14:25:59 +0300
->>> Mikko Perttunen <mikko.perttunen@kapsi.fi> wrote:
->>>
->>>> On 04/11/2015 12:11 AM, Michael Turquette wrote:
->>>>> Quoting Thierry Reding (2015-03-11 03:07:43)
->>>>>> Hi Mike,
->>>>>>
->>>>>> Have you had a chance to look at these changes to the Tegra clock
->>>>>> driver? If you're fine with it, I'd like to take these patches through
->>>>>> the Tegra tree because the rest of the series depends on them. I can
->>>>>> provide a stable branch in case we need to base other Tegra clock
->>>>>> changes on top of this.
->>>>>
->>>>> Hi Thierry,
->>>>>
->>>>> Clock patches (and corresponding DT binding descriptions and changes to
->>>>> DTS) look fine to me. Please add:
->>>>>
->>>>> Acked-by: Michael Turquette <mturquette@linaro.org>
->>>>>
->>>>> I did have a question about the beahvior of clk_put in one of Mikko's
->>>>> patches but it should not gate this series. I'm just trying to find out
->>>>> if we have a bug in the framework or if the Tegra driver is a special
->>>>> case.
->>>>>
->>>>> Also I do not think a stable branch is necessary.
->>>>>
->>>>> Regards,
->>>>> Mike
->>>>>
->>>>
->>>> Looks like in the meantime, this has been partially broken by
->>>> 03bc10ab5b0f "clk: check ->determine/round_rate() return value in
->>>> clk_calc_new_rates". The highest rates supported by the DFLL clock have
->>>> 1 in the MSB, so those cannot be entered after the aforementioned patch,
->>>> as the return value of round_rate is interpreted as an error. Avenues
->>>> that I can see: 1) revert the above patch 2) restrict the cpu clock rate
->>>> to those with 0 in the MSB 3) move to 64-bit clock rates.
->>>
->>> How about changing ->determine_rate() and ->round_rate() prototypes so
->>> that they always return 0 or an error code and passing the adjusted_rate
->>> as an argument ?
->>>
->>> Something like that:
->>>
->>>        int (*round_rate)(struct clk_hw *hw, unsigned long *rate,
->>>                          unsigned long *parent_rate);
->>>        int (*determine_rate)(struct clk_hw *hw, unsigned long *rate,
->>>                              unsigned long min_rate,
->>>                              unsigned long max_rate,
->>>                              unsigned long *best_parent_rate,
->>>                              struct clk_hw **best_parent_hw);
->>>
->>> I know this implies a lot of changes (in all clock drivers and in the
->>> core infrastructure), but I really think we should not mix error codes
->>> and clock frequencies (even if we decide to move to a 64 bits rate
->>> approach).
+On 10 April 2015 at 12:08, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com> wrote:
+> On Thu, Apr 09, 2015 at 10:19:59PM +0100, Rafael J. Wysocki wrote:
+>> On Thursday, April 09, 2015 11:18:25 AM Tomeu Vizoso wrote:
+>> > On 04/08/2015 01:55 PM, Lorenzo Pieralisi wrote:
+>> > > On Wed, Apr 08, 2015 at 11:54:38AM +0100, Tomeu Vizoso wrote:
+>> > >> This callback is expected to do the same as enter() only that all
+>> > >> non-wakeup IRQs are expected to be disabled.
+>> > >
+>> > > This is not true or at least it is misworded. The enter_freeze() function
+>> > > is expected to return from the state with IRQs disabled at CPU level, or
+>> > > put it differently it must not re-enable IRQs while executing since the
+>> > > tick is frozen.
+>> >
+>> > True, only that it mentions interrupts in general, not just IRQs (I
+>> > don't know if the terminology used in the base code matches the one in
+>> > ARM's documentation).
+>> >
+>> > /*
+>> >  * CPUs execute ->enter_freeze with the local tick or entire timekeeping
+>> >  * suspended, so it must not re-enable interrupts at any point (even
+>> >  * temporarily) or attempt to change states of clock event devices.
+>> >  */
 >>
->> This sounds like a good idea, too.
+>> This means interrupts on the local CPU (ie. the thing done by local_irq_disable()).
+>>
+>> > >> It will be called when the system goes to suspend-to-idle and will
+>> > >> reduce power usage because CPUs won't be awaken for unnecessary IRQs.
+>> > >>
+>> > >> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+>> > >> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>> > >> ---
+>> > >>  arch/arm/mach-tegra/cpuidle-tegra114.c | 31 ++++++++++++++++++++++++-------
+>> > >>  1 file changed, 24 insertions(+), 7 deletions(-)
+>> > >>
+>> > >> diff --git a/arch/arm/mach-tegra/cpuidle-tegra114.c b/arch/arm/mach-tegra/cpuidle-tegra114.c
+>> > >> index f2b586d..ef06001 100644
+>> > >> --- a/arch/arm/mach-tegra/cpuidle-tegra114.c
+>> > >> +++ b/arch/arm/mach-tegra/cpuidle-tegra114.c
+>> > >> @@ -39,28 +39,44 @@ static int tegra114_idle_power_down(struct cpuidle_device *dev,
+>> > >>                                      struct cpuidle_driver *drv,
+>> > >>                                      int index)
+>> > >>  {
+>> > >> -        local_fiq_disable();
+>> > >> -
+>> > >>          tegra_set_cpu_in_lp2();
+>> > >>          cpu_pm_enter();
+>> > >>
+>> > >> -        clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_ENTER, &dev->cpu);
+>> > >> -
+>> > >>          call_firmware_op(prepare_idle);
+>> > >>
+>> > >>          /* Do suspend by ourselves if the firmware does not implement it */
+>> > >>          if (call_firmware_op(do_idle, 0) == -ENOSYS)
+>> > >>                  cpu_suspend(0, tegra30_sleep_cpu_secondary_finish);
+>> > >>
+>> > >> -        clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_EXIT, &dev->cpu);
+>> > >> -
+>> > >>          cpu_pm_exit();
+>> > >>          tegra_clear_cpu_in_lp2();
+>> > >>
+>> > >> +        return index;
+>> > >> +}
+>> > >> +
+>> > >> +static int tegra114_idle_enter(struct cpuidle_device *dev,
+>> > >> +                               struct cpuidle_driver *drv,
+>> > >> +                               int index)
+>> > >> +{
+>> > >> +        local_fiq_disable();
+>> > >> +
+>> > >> +        clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_ENTER, &dev->cpu);
+>> > >> +
+>> > >> +        index = tegra114_idle_power_down(dev, drv, index);
+>> > >> +
+>> > >> +        clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_EXIT, &dev->cpu);
+>> > >> +
+>> > >>          local_fiq_enable();
+>> > >>
+>> > >>          return index;
+>> > >>  }
+>> > >> +
+>> > >> +static void tegra114_idle_enter_freeze(struct cpuidle_device *dev,
+>> > >> +                                       struct cpuidle_driver *drv,
+>> > >> +                                       int index)
+>> > >> +{
+>> > >> +        tegra114_idle_power_down(dev, drv, index);
+>> > >
+>> > > Cool. So if the problem is FIQs, you don't disabled them on entry
+>> > > which means you enter the "frozen" state with FIQs enabled and tick frozen,
+>> > > unless I am missing something.
+>> >
+>> > I have gone a bit deeper in the code and that's correct, AFAICS.
+>> >
+>> > > The question here is: are we allowed to enable FIQs before returning
+>> > > from an enter_freeze() call (and to enter it with FIQs enabled) ?
+>> > >
+>> > > If we are not your code here certainly does not solve the issue, since
+>> > > it does _not_ disable FIQs upon enter_freeze call anyway.
+>> >
+>> > I think doing that would go against the wording of the comment I quoted
+>> > above, so I see two ways of fixing this:
+>> >
+>> > * Change the wording to refer to normal IRQs and leave the task of
+>> > enabling and disabling FIQs to the enter_freeze implementation (ugly and
+>> > I don't see any good reason for this)
+>> >
+>> > * Have FIQs already disabled when enter_freeze gets called, probably by
+>> > having arch_cpu_idle_enter do it on ARM (and the inverse in
+>> > arch_cpu_idle_exit)?
+>> >
+>> > Rafael, what's your opinion on this?
+>>
+>> I don't know what FIQs are. :-)
 >
-> I've had this idea as well, which is to never return rates but only
-> error codes, and rates are passed by reference like in your example
-> above. Clearly the *best_parent_rate stuff already functions this way.
-> Would be cool to use a programming language that supported complex
-> return types ;-)
+> In short, fast IRQs, it is a separate IRQ line handled as a separate
+> exception source with some private (banked) registers that minimize registers
+> saving/restoring. They are not identical to NMI on x86, since
+> their behaviour (handling) may be overriden by platforms and they
+> can be masked.
+>
+>> ->enter_freeze is entered with interrupts disabled on the local CPU.  It is
+>> not supposed to re-enable them.  That is, while in the ->enter_freeze callback
+>> routine, the CPU must not be interrupted aby anything other than NMI.
+>
+> It boils down to what FIQs handlers are allowed to do with tick frozen
+> and what they are (may be) currently used for.
+>
+> Russell has more insights on this than I do, in particular what FIQs are
+> currently used for on ARM and if we can leave them enabled safely with tick
+> frozen.
 
-Algebraic data type pipe dreams.. :)
+But even if it's currently safe to leave them enabled, is there any
+reason for not disabling them?
 
->
->>
->>>
->>> Anyway, IMHO the only alternative to this solution is solution #3,
->>> because #1 implies re-introducing another bug where
->>> ->round_rate()/->determine_rate() are silently ignored, and #2 implies
->>> lying about your DFLL capabilities.
->>>
->>
->> Yeah, #1 and #2 weren't really meant as realistic options to end up with :)
->
-> Yes, seems that we're heading towards #3. In the mean time option #1.5
-> (the one where we change the round_rate/determine_rate semantics) is
-> probably a good idea and can resolve this issue in the shorter term
-> compared to signed 64-bit rates (and will be necessary anyhow if we use
-> unsigned 64-bit rates).
->
-> I'll add this to the high priority todo list since the Tegra EMC stuff
-> won't go for 4.1 but will very likely go for 4.2.
+Regards,
 
-Wonderful :)
+Tomeu
 
-Thanks,
-Mikko
-
->
-> Regards,
-> Mike
->
->>
->>> Mike, what's your opinion ?
->>>
->>> Best Regards,
->>>
->>> Boris
->>>
->>
->> Cheers,
->> Mikko.
->>
+> Lorenzo
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
