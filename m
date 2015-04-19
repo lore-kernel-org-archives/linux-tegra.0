@@ -1,67 +1,117 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: Re: [PATCH] ARM: tegra: cpuidle: implement cpuidle_state.enter_freeze()
-Date: Fri, 17 Apr 2015 17:02:53 +0200
-Message-ID: <CAAObsKATZy9+Tn0pJcDCaNzpxLX6GqX0TO_t7w8tgirWQgJF9w@mail.gmail.com>
-References: <1428490480-10144-1-git-send-email-tomeu.vizoso@collabora.com>
- <20150408115546.GA24271@red-moon> <552643E1.3060200@collabora.com>
- <285738930.THBQOWvsah@vostro.rjw.lan> <20150410100844.GC23730@red-moon>
- <CAAObsKAihF1k1yzZxQEs_jpPnCdV3HQbLaYHWu1QNsNd5zqiOg@mail.gmail.com> <20150417140819.GB2347@red-moon>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH 1/2] clk: change clk_ops' ->round_rate() prototype
+Date: Sun, 19 Apr 2015 14:13:04 +0200
+Message-ID: <7408975.lBcgZIN9hf@diego>
+References: <1429255769-13639-1-git-send-email-boris.brezillon@free-electrons.com> <1429255769-13639-2-git-send-email-boris.brezillon@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150417140819.GB2347@red-moon>
+In-Reply-To: <1429255769-13639-2-git-send-email-boris.brezillon@free-electrons.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Mike Turquette <mturquette@linaro.org>, Mikko Perttunen <mikko.perttunen@kapsi.fi>, Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawn.guo@linaro.org>, ascha Hauer <kernel@pengutronix.de>, David Brown <davidb@codeaurora.org>, Daniel Walker <dwalker@fifo99.com>, Bryan Huntsman <bryanh@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Paul Walmsley <paul@pwsan.com>, Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Barry Song <baohua@kernel.org>, Viresh Kumar <viresh.linux@gmail.com>, Emilio =?ISO-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>, Maxime Ripard <maxime.ripard@free-electrons.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant
 List-Id: linux-tegra@vger.kernel.org
 
-On 17 April 2015 at 16:08, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com> wrote:
-> On Thu, Apr 16, 2015 at 03:37:19PM +0100, Tomeu Vizoso wrote:
->
-> [...]
->
->> >> I don't know what FIQs are. :-)
->> >
->> > In short, fast IRQs, it is a separate IRQ line handled as a separate
->> > exception source with some private (banked) registers that minimize registers
->> > saving/restoring. They are not identical to NMI on x86, since
->> > their behaviour (handling) may be overriden by platforms and they
->> > can be masked.
->> >
->> >> ->enter_freeze is entered with interrupts disabled on the local CPU.  It is
->> >> not supposed to re-enable them.  That is, while in the ->enter_freeze callback
->> >> routine, the CPU must not be interrupted aby anything other than NMI.
->> >
->> > It boils down to what FIQs handlers are allowed to do with tick frozen
->> > and what they are (may be) currently used for.
->> >
->> > Russell has more insights on this than I do, in particular what FIQs are
->> > currently used for on ARM and if we can leave them enabled safely with tick
->> > frozen.
->>
->> But even if it's currently safe to leave them enabled, is there any
->> reason for not disabling them?
->
-> Ok, the point here is: either it is safe, and you leave them enabled,
-> or it is not and we must disable them *before* enter_freeze() is entered.
->
-> Disabling them in the platform enter_freeze() hook does not make sense,
-> because this means we run with FIQs enabled with tick frozen, either
-> it is safe or it is not, it can't be both.
+Hi Boris,
 
-Sure, that's why I proposed doing it in arch_cpu_idle_enter/exit.
+Am Freitag, 17. April 2015, 09:29:28 schrieb Boris Brezillon:
+> Clock rates are stored in an unsigned long field, but ->round_rate()
+> (which returns a rounded rate from a requested one) returns a long
+> value (errors are reported using negative error codes), which can lead
+> to long overflow if the clock rate exceed 2Ghz.
+> 
+> Change ->round_rate() prototype to return 0 or an error code, and pass the
+> requested rate as a pointer so that it can be adjusted depending on
+> hardware capabilities.
+> 
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> ---
 
-> I would ask Russell opinion on this, before making any decision.
+On a rk3288-veyron-pinky with the fix described below:
+Tested-by: Heiko Stuebner <heiko@sntech.de>
 
-Sure, that would be very welcome.
 
-Regards,
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index fa5a00e..1462ddc 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1640,8 +1643,10 @@ static struct clk_core *clk_calc_new_rates(struct
+> clk_core *clk, &parent_hw);
+>  		parent = parent_hw ? parent_hw->core : NULL;
+>  	} else if (clk->ops->round_rate) {
+> -		new_rate = clk->ops->round_rate(clk->hw, rate,
+> -						&best_parent_rate);
+> +		if (clk->ops->round_rate(clk->hw, &new_rate,
+> +					 &best_parent_rate))
+> +			return NULL;
+> +
+>  		if (new_rate < min_rate || new_rate > max_rate)
+>  			return NULL;
+>  	} else if (!parent || !(clk->flags & CLK_SET_RATE_PARENT)) {
 
-Tomeu
+This is using new_rate uninitialized when calling into the round_rate
+callback. Which in turn pushed my PLLs up to 2.2GHz :-)
 
-> Lorenzo
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+I guess you'll need something like the following:
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index db4e4b2..afc7733 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1605,6 +1605,7 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *clk,
+ 						    &parent_hw);
+ 		parent = parent_hw ? parent_hw->core : NULL;
+ 	} else if (clk->ops->round_rate) {
++		new_rate = rate;
+ 		if (clk->ops->round_rate(clk->hw, &new_rate,
+ 					 &best_parent_rate))
+ 			return NULL;
+
+
+
+
+> diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+> index f8d3baf..bd408ef 100644
+> --- a/drivers/clk/rockchip/clk-pll.c
+> +++ b/drivers/clk/rockchip/clk-pll.c
+> @@ -63,8 +63,8 @@ static const struct rockchip_pll_rate_table
+> *rockchip_get_pll_settings( return NULL;
+>  }
+> 
+> -static long rockchip_pll_round_rate(struct clk_hw *hw,
+> -			    unsigned long drate, unsigned long *prate)
+> +static int rockchip_pll_round_rate(struct clk_hw *hw,
+> +			    unsigned long *drate, unsigned long *prate)
+>  {
+>  	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
+>  	const struct rockchip_pll_rate_table *rate_table = pll->rate_table;
+> @@ -72,12 +72,15 @@ static long rockchip_pll_round_rate(struct clk_hw *hw,
+> 
+>  	/* Assumming rate_table is in descending order */
+>  	for (i = 0; i < pll->rate_count; i++) {
+> -		if (drate >= rate_table[i].rate)
+> -			return rate_table[i].rate;
+> +		if (*drate >= rate_table[i].rate) {
+> +			*drate = rate_table[i].rate;
+> +			return 0;
+> +		}
+>  	}
+> 
+>  	/* return minimum supported value */
+> -	return rate_table[i - 1].rate;
+> +	*drate = rate_table[i - 1].rate;
+> +	return 0;
+>  }
+> 
+>  /*
+
+The rockchip-part:
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+
+
+And as I've stumbled onto this recently too, the clock-maintainership has
+expanded to Stephen Boyd and linux-clk@vger.kernel.org .
+
+
+Heiko
