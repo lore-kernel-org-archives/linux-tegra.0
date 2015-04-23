@@ -1,137 +1,55 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH] clk: tegra: Fix comments for structure definitions
-Date: Wed, 22 Apr 2015 12:40:16 +0300
-Message-ID: <20150422094016.GT3097@tbergstrom-lnx.Nvidia.com>
-References: <1428943097-2768-1-git-send-email-rklein@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1428943097-2768-1-git-send-email-rklein@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: [PATCH v2 0/3] USB: fix inefficient copy of unaligned buffers
+Date: Thu, 23 Apr 2015 16:06:49 +0200
+Message-ID: <1429798012-21916-1-git-send-email-johan@kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Apr 13, 2015 at 12:38:17PM -0400, Rhyland Klein wrote:
-> Some fields moved from the tegra_clk_pll struct to
-> the tegra_pll_params struct. Update the struct comments
-> to reflect where the fields really are.
-> 
+These patches (for 4.1) make sure that only the received data is copied
+from the temporary buffers used for unaligned transfers.
 
-Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
+I discovered this when debugging an issue where the Beaglebone Black
+would lock up on disconnect.
 
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
-> ---
->  drivers/clk/tegra/clk.h |   74 +++++++++++++++++++++++------------------------
->  1 file changed, 37 insertions(+), 37 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index 751a97966354..4eae99a4f32e 100644
-> --- a/drivers/clk/tegra/clk.h
-> +++ b/drivers/clk/tegra/clk.h
-> @@ -171,6 +171,30 @@ struct div_nmp {
->   * @lock_bit_idx:		Bit index for PLL lock status
->   * @lock_enable_bit_idx:	Bit index to enable PLL lock
->   * @lock_delay:			Delay in us if PLL lock is not used
-> + * @freq_table:			array of frequencies supported by PLL
-> + * @fixed_rate:			PLL rate if it is fixed
-> + * @flags:			PLL flags
-> + *
-> + * Flags:
-> + * TEGRA_PLL_USE_LOCK - This flag indicated to use lock bits for
-> + *     PLL locking. If not set it will use lock_delay value to wait.
-> + * TEGRA_PLL_HAS_CPCON - This flag indicates that CPCON value needs
-> + *     to be programmed to change output frequency of the PLL.
-> + * TEGRA_PLL_SET_LFCON - This flag indicates that LFCON value needs
-> + *     to be programmed to change output frequency of the PLL.
-> + * TEGRA_PLL_SET_DCCON - This flag indicates that DCCON value needs
-> + *     to be programmed to change output frequency of the PLL.
-> + * TEGRA_PLLU - PLLU has inverted post divider. This flags indicated
-> + *     that it is PLLU and invert post divider value.
-> + * TEGRA_PLLM - PLLM has additional override settings in PMC. This
-> + *     flag indicates that it is PLLM and use override settings.
-> + * TEGRA_PLL_FIXED - We are not supposed to change output frequency
-> + *     of some plls.
-> + * TEGRA_PLLE_CONFIGURE - Configure PLLE when enabling.
-> + * TEGRA_PLL_LOCK_MISC - Lock bit is in the misc register instead of the
-> + *     base register.
-> + * TEGRA_PLL_BYPASS - PLL has bypass bit
-> + * TEGRA_PLL_HAS_LOCK_ENABLE - PLL has bit to enable lock monitoring
->   */
->  struct tegra_clk_pll_params {
->  	unsigned long	input_min;
-> @@ -203,38 +227,26 @@ struct tegra_clk_pll_params {
->  	unsigned long	fixed_rate;
->  };
->  
-> +#define TEGRA_PLL_USE_LOCK BIT(0)
-> +#define TEGRA_PLL_HAS_CPCON BIT(1)
-> +#define TEGRA_PLL_SET_LFCON BIT(2)
-> +#define TEGRA_PLL_SET_DCCON BIT(3)
-> +#define TEGRA_PLLU BIT(4)
-> +#define TEGRA_PLLM BIT(5)
-> +#define TEGRA_PLL_FIXED BIT(6)
-> +#define TEGRA_PLLE_CONFIGURE BIT(7)
-> +#define TEGRA_PLL_LOCK_MISC BIT(8)
-> +#define TEGRA_PLL_BYPASS BIT(9)
-> +#define TEGRA_PLL_HAS_LOCK_ENABLE BIT(10)
-> +
->  /**
->   * struct tegra_clk_pll - Tegra PLL clock
->   *
->   * @hw:		handle between common and hardware-specifix interfaces
->   * @clk_base:	address of CAR controller
->   * @pmc:	address of PMC, required to read override bits
-> - * @freq_table:	array of frequencies supported by PLL
-> - * @params:	PLL parameters
-> - * @flags:	PLL flags
-> - * @fixed_rate:	PLL rate if it is fixed
->   * @lock:	register lock
-> - *
-> - * Flags:
-> - * TEGRA_PLL_USE_LOCK - This flag indicated to use lock bits for
-> - *     PLL locking. If not set it will use lock_delay value to wait.
-> - * TEGRA_PLL_HAS_CPCON - This flag indicates that CPCON value needs
-> - *     to be programmed to change output frequency of the PLL.
-> - * TEGRA_PLL_SET_LFCON - This flag indicates that LFCON value needs
-> - *     to be programmed to change output frequency of the PLL.
-> - * TEGRA_PLL_SET_DCCON - This flag indicates that DCCON value needs
-> - *     to be programmed to change output frequency of the PLL.
-> - * TEGRA_PLLU - PLLU has inverted post divider. This flags indicated
-> - *     that it is PLLU and invert post divider value.
-> - * TEGRA_PLLM - PLLM has additional override settings in PMC. This
-> - *     flag indicates that it is PLLM and use override settings.
-> - * TEGRA_PLL_FIXED - We are not supposed to change output frequency
-> - *     of some plls.
-> - * TEGRA_PLLE_CONFIGURE - Configure PLLE when enabling.
-> - * TEGRA_PLL_LOCK_MISC - Lock bit is in the misc register instead of the
-> - *     base register.
-> - * TEGRA_PLL_BYPASS - PLL has bypass bit
-> - * TEGRA_PLL_HAS_LOCK_ENABLE - PLL has bit to enable lock monitoring
-> + * @params:	PLL parameters
->   */
->  struct tegra_clk_pll {
->  	struct clk_hw	hw;
-> @@ -246,18 +258,6 @@ struct tegra_clk_pll {
->  
->  #define to_clk_pll(_hw) container_of(_hw, struct tegra_clk_pll, hw)
->  
-> -#define TEGRA_PLL_USE_LOCK BIT(0)
-> -#define TEGRA_PLL_HAS_CPCON BIT(1)
-> -#define TEGRA_PLL_SET_LFCON BIT(2)
-> -#define TEGRA_PLL_SET_DCCON BIT(3)
-> -#define TEGRA_PLLU BIT(4)
-> -#define TEGRA_PLLM BIT(5)
-> -#define TEGRA_PLL_FIXED BIT(6)
-> -#define TEGRA_PLLE_CONFIGURE BIT(7)
-> -#define TEGRA_PLL_LOCK_MISC BIT(8)
-> -#define TEGRA_PLL_BYPASS BIT(9)
-> -#define TEGRA_PLL_HAS_LOCK_ENABLE BIT(10)
-> -
->  extern const struct clk_ops tegra_clk_pll_ops;
->  extern const struct clk_ops tegra_clk_plle_ops;
->  struct clk *tegra_clk_register_pll(const char *name, const char *parent_name,
-> -- 
-> 1.7.9.5
-> 
+Turns out it was related to the transfer_buffers not being properly
+aligned, causing musb to use temporary buffers for the transfers. On
+transfer errors (e.g. during disconnect), the full buffer content was
+still being copied, something which would alter timings enough to
+prevent the disconnect from being detected and processed.
+
+The first patch in the series works around the problem in that
+particular set up, but obviously does not solve the underlying issue,
+which needs to be analysed further.
+
+I also included a corresponding patch for ehci-tegra that has been
+compile tested only.
+
+Note that the octeon-hcd driver in staging, which also uses temporary
+buffers for unaligned transfers, was broken for isochronous transfers.
+The third patch fixes that, but is also untested due to lack of
+hardware.
+
+Johan
+
+
+v2:
+ - Make sure to copy the full buffer for isochronous transfers, in which
+   case the received data is not necessarily contiguous (thanks Alan).
+ - Drop stable tags as this is really just an optimisation.
+
+
+Johan Hovold (3):
+  USB: musb: fix inefficient copy of unaligned buffers
+  USB: ehci-tegra: fix inefficient copy of unaligned buffers
+  staging: octeon-usb: fix unaligned isochronous transfers
+
+ drivers/staging/octeon-usb/octeon-hcd.c | 12 +++++++++---
+ drivers/usb/host/ehci-tegra.c           | 12 +++++++++---
+ drivers/usb/musb/musb_host.c            |  9 +++++++--
+ 3 files changed, 25 insertions(+), 8 deletions(-)
+
+-- 
+2.0.5
