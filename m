@@ -1,55 +1,50 @@
-From: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH v2 0/3] USB: fix inefficient copy of unaligned buffers
-Date: Thu, 23 Apr 2015 16:06:49 +0200
-Message-ID: <1429798012-21916-1-git-send-email-johan@kernel.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+From: Johan Hovold <johan@kernel.org>
+Subject: [PATCH v2 1/3] USB: musb: fix inefficient copy of unaligned buffers
+Date: Thu, 23 Apr 2015 16:06:50 +0200
+Message-ID: <1429798012-21916-2-git-send-email-johan@kernel.org>
+References: <1429798012-21916-1-git-send-email-johan@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1429798012-21916-1-git-send-email-johan@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@ti.com>, Alan Stern <stern@rowland.harvard.edu>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, Johan Hovold <johan@kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-These patches (for 4.1) make sure that only the received data is copied
-from the temporary buffers used for unaligned transfers.
+Make sure only to copy any actual data rather than the whole buffer,
+when releasing the temporary buffer used for unaligned non-isochronous
+transfers.
 
-I discovered this when debugging an issue where the Beaglebone Black
-would lock up on disconnect.
+Signed-off-by: Johan Hovold <johan@kernel.org>
+---
+ drivers/usb/musb/musb_host.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-Turns out it was related to the transfer_buffers not being properly
-aligned, causing musb to use temporary buffers for the transfers. On
-transfer errors (e.g. during disconnect), the full buffer content was
-still being copied, something which would alter timings enough to
-prevent the disconnect from being detected and processed.
-
-The first patch in the series works around the problem in that
-particular set up, but obviously does not solve the underlying issue,
-which needs to be analysed further.
-
-I also included a corresponding patch for ehci-tegra that has been
-compile tested only.
-
-Note that the octeon-hcd driver in staging, which also uses temporary
-buffers for unaligned transfers, was broken for isochronous transfers.
-The third patch fixes that, but is also untested due to lack of
-hardware.
-
-Johan
-
-
-v2:
- - Make sure to copy the full buffer for isochronous transfers, in which
-   case the received data is not necessarily contiguous (thanks Alan).
- - Drop stable tags as this is really just an optimisation.
-
-
-Johan Hovold (3):
-  USB: musb: fix inefficient copy of unaligned buffers
-  USB: ehci-tegra: fix inefficient copy of unaligned buffers
-  staging: octeon-usb: fix unaligned isochronous transfers
-
- drivers/staging/octeon-usb/octeon-hcd.c | 12 +++++++++---
- drivers/usb/host/ehci-tegra.c           | 12 +++++++++---
- drivers/usb/musb/musb_host.c            |  9 +++++++--
- 3 files changed, 25 insertions(+), 8 deletions(-)
-
+diff --git a/drivers/usb/musb/musb_host.c b/drivers/usb/musb/musb_host.c
+index c3d5fc9dfb5b..e1fb5d885c18 100644
+--- a/drivers/usb/musb/musb_host.c
++++ b/drivers/usb/musb/musb_host.c
+@@ -2512,6 +2512,7 @@ static void musb_free_temp_buffer(struct urb *urb)
+ {
+ 	enum dma_data_direction dir;
+ 	struct musb_temp_buffer *temp;
++	size_t length;
+ 
+ 	if (!(urb->transfer_flags & URB_ALIGNED_TEMP_BUFFER))
+ 		return;
+@@ -2522,8 +2523,12 @@ static void musb_free_temp_buffer(struct urb *urb)
+ 			    data);
+ 
+ 	if (dir == DMA_FROM_DEVICE) {
+-		memcpy(temp->old_xfer_buffer, temp->data,
+-		       urb->transfer_buffer_length);
++		if (usb_pipeisoc(urb->pipe))
++			length = urb->transfer_buffer_length;
++		else
++			length = urb->actual_length;
++
++		memcpy(temp->old_xfer_buffer, temp->data, length);
+ 	}
+ 	urb->transfer_buffer = temp->old_xfer_buffer;
+ 	kfree(temp->kmalloc_ptr);
 -- 
 2.0.5
