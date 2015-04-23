@@ -1,50 +1,60 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: [PATCH v2 1/3] USB: musb: fix inefficient copy of unaligned buffers
-Date: Thu, 23 Apr 2015 16:06:50 +0200
-Message-ID: <1429798012-21916-2-git-send-email-johan@kernel.org>
+From: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: [PATCH v2 2/3] USB: ehci-tegra: fix inefficient copy of unaligned buffers
+Date: Thu, 23 Apr 2015 16:06:51 +0200
+Message-ID: <1429798012-21916-3-git-send-email-johan@kernel.org>
 References: <1429798012-21916-1-git-send-email-johan@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1429798012-21916-1-git-send-email-johan@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@ti.com>, Alan Stern <stern@rowland.harvard.edu>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1429798012-21916-1-git-send-email-johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 Make sure only to copy any actual data rather than the whole buffer,
 when releasing the temporary buffer used for unaligned non-isochronous
 transfers.
 
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/usb/musb/musb_host.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Compile-tested only.
 
-diff --git a/drivers/usb/musb/musb_host.c b/drivers/usb/musb/musb_host.c
-index c3d5fc9dfb5b..e1fb5d885c18 100644
---- a/drivers/usb/musb/musb_host.c
-+++ b/drivers/usb/musb/musb_host.c
-@@ -2512,6 +2512,7 @@ static void musb_free_temp_buffer(struct urb *urb)
+Signed-off-by: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+---
+ drivers/usb/host/ehci-tegra.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
+index ff9af29b4e9f..4031b372008e 100644
+--- a/drivers/usb/host/ehci-tegra.c
++++ b/drivers/usb/host/ehci-tegra.c
+@@ -304,6 +304,7 @@ struct dma_aligned_buffer {
+ static void free_dma_aligned_buffer(struct urb *urb)
  {
- 	enum dma_data_direction dir;
- 	struct musb_temp_buffer *temp;
+ 	struct dma_aligned_buffer *temp;
 +	size_t length;
  
  	if (!(urb->transfer_flags & URB_ALIGNED_TEMP_BUFFER))
  		return;
-@@ -2522,8 +2523,12 @@ static void musb_free_temp_buffer(struct urb *urb)
- 			    data);
+@@ -311,9 +312,14 @@ static void free_dma_aligned_buffer(struct urb *urb)
+ 	temp = container_of(urb->transfer_buffer,
+ 		struct dma_aligned_buffer, data);
  
- 	if (dir == DMA_FROM_DEVICE) {
+-	if (usb_urb_dir_in(urb))
 -		memcpy(temp->old_xfer_buffer, temp->data,
 -		       urb->transfer_buffer_length);
++	if (usb_urb_dir_in(urb)) {
 +		if (usb_pipeisoc(urb->pipe))
 +			length = urb->transfer_buffer_length;
 +		else
 +			length = urb->actual_length;
 +
 +		memcpy(temp->old_xfer_buffer, temp->data, length);
- 	}
++	}
  	urb->transfer_buffer = temp->old_xfer_buffer;
  	kfree(temp->kmalloc_ptr);
+ 
 -- 
 2.0.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
