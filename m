@@ -1,34 +1,70 @@
-From: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 2/3] USB: ehci-tegra: fix inefficient copy of
- unaligned buffers
-Date: Fri, 24 Apr 2015 08:31:29 +0200
-Message-ID: <20150424063129.GA320@localhost>
-References: <1429798012-21916-1-git-send-email-johan@kernel.org>
- <1429798012-21916-3-git-send-email-johan@kernel.org>
- <553956DA.2090300@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] ARM: tegra: Add missing HDMI +5V regulator
+Date: Fri, 24 Apr 2015 12:05:54 +0200
+Message-ID: <1429869954-5909-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <553956DA.2090300-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Apr 23, 2015 at 02:32:26PM -0600, Stephen Warren wrote:
-> On 04/23/2015 08:06 AM, Johan Hovold wrote:
-> > Make sure only to copy any actual data rather than the whole buffer,
-> > when releasing the temporary buffer used for unaligned non-isochronous
-> > transfers.
-> >
-> > Compile-tested only.
-> 
-> Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> (Tested a USB network device attached to Jetson TK1, with a large 
-> download, and ping packets of various sizes from another host)
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Thanks for testing, Stephen!
+Commit fb50a116bbbc ("drm/tegra: hdmi - Add connector supply support")
+introduced a new supply for HDMI connectors that is used to control the
+voltage on the +5V pin. Not all boards have had the corresponding supply
+added to their device tree files, causing the following warning message
+during boot:
 
-Johan
+	[    0.859698] 54280000.hdmi supply hdmi not found, using dummy regulator
+
+Add such a regulator to the Seaboard DTS to enable the driver to control
+this voltage and get rid of the warning.
+
+Reported-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Hi Stephen,
+
+This is completely untested because I don't have a Seaboard. But this is
+based on the schematics and I think it should work, so it'd be great if
+you could test it.
+
+Thanks,
+Thierry
+
+ arch/arm/boot/dts/tegra20-seaboard.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
+index e2fed2712249..aea8994b35f2 100644
+--- a/arch/arm/boot/dts/tegra20-seaboard.dts
++++ b/arch/arm/boot/dts/tegra20-seaboard.dts
+@@ -31,6 +31,7 @@
+ 
+ 			vdd-supply = <&hdmi_vdd_reg>;
+ 			pll-supply = <&hdmi_pll_reg>;
++			hdmi-supply = <&vdd_hdmi>;
+ 
+ 			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
+ 			nvidia,hpd-gpio = <&gpio TEGRA_GPIO(N, 7)
+@@ -893,6 +894,17 @@
+ 			gpio = <&gpio TEGRA_GPIO(W, 0) GPIO_ACTIVE_HIGH>;
+ 			enable-active-high;
+ 		};
++
++		vdd_hdmi: regulator@6 {
++			compatible = "regulator-fixed";
++			reg = <6>;
++			regulator-name = "VDDIO_HDMI";
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++			gpio = <&gpio TEGRA_GPIO(V, 5) GPIO_ACTIVE_HIGH>;
++			enable-active-high;
++			vin-supply = <&vdd_5v0_reg>;
++		};
+ 	};
+ 
+ 	sound {
+-- 
+2.3.5
