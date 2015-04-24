@@ -1,70 +1,66 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] ARM: tegra: Add missing HDMI +5V regulator
-Date: Fri, 24 Apr 2015 12:05:54 +0200
-Message-ID: <1429869954-5909-1-git-send-email-thierry.reding@gmail.com>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 00/19] Tegra210 Clock Support
+Date: Fri, 24 Apr 2015 12:47:40 -0400
+Message-ID: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+This patch series updates the tegra common clock driver and adds
+support for the Tegra210 clocks. The clocks in Tegra210 changed
+significantly in some ways from earlier generations, so to support
+them, we need to extend our base framework a bit and add some new
+features.
 
-Commit fb50a116bbbc ("drm/tegra: hdmi - Add connector supply support")
-introduced a new supply for HDMI connectors that is used to control the
-voltage on the +5V pin. Not all boards have had the corresponding supply
-added to their device tree files, causing the following warning message
-during boot:
+Some patches here also address issues found while adding features
+and other cleanup type work.
 
-	[    0.859698] 54280000.hdmi supply hdmi not found, using dummy regulator
+Bill Huang (7):
+  clk: tegra: pll-params: change misc_reg count from 3 -> 6
+  clk: tegra: pll: Add logic for SS
+  clk: tegra: pll: Add code to handle if resets are supported by PLL
+  clk: tegra: pll: Adjust vco_min if SDM present
+  clk: tegra: pll: Add dyn_ramp callback
+  clk: tegra: pll: Add Set_default logic
+  clk: tegra: Add Super Gen5 Logic
 
-Add such a regulator to the Seaboard DTS to enable the driver to control
-this voltage and get rid of the warning.
+Rhyland Klein (12):
+  clk: tegra: Modify tegra_audio_clk_init to accept more plls
+  clk: tegra: periph: add new periph clks and muxes for Tegra210
+  clk: tegra: pll: add tegra_pll_wait_for_lock to clk header
+  clk: tegra: pll: simplify clk_enable_path
+  clk: tegra: pll: update warning msg
+  clk: tegra: pll: Don't unconditionally set LOCK flags
+  clk: tegra: pll: Add logic for handling SDM data
+  clk: tegra: pll: Add logic for out-of-table rates for T210
+  clk: tegra: pll: Add specialized logic for T210
+  clk: tegra: pll: Add support for PLLMB for T210
+  clk: tegra: pll: Fix _pll_ramp_calc_pll logic
+  clk: tegra210: add support for Tegra210 clocks
 
-Reported-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Hi Stephen,
+ .../bindings/clock/nvidia,tegra210-car.txt         |   56 +
+ drivers/clk/tegra/Makefile                         |    2 +
+ drivers/clk/tegra/clk-id.h                         |   61 +-
+ drivers/clk/tegra/clk-pll.c                        |  671 ++++-
+ drivers/clk/tegra/clk-tegra-audio.c                |   25 +-
+ drivers/clk/tegra/clk-tegra-periph.c               |  257 +-
+ drivers/clk/tegra/clk-tegra-super-gen5.c           |  150 ++
+ drivers/clk/tegra/clk-tegra114.c                   |   30 +-
+ drivers/clk/tegra/clk-tegra124.c                   |   31 +-
+ drivers/clk/tegra/clk-tegra20.c                    |   18 +-
+ drivers/clk/tegra/clk-tegra210.c                   | 2704 ++++++++++++++++++++
+ drivers/clk/tegra/clk-tegra30.c                    |   31 +-
+ drivers/clk/tegra/clk.h                            |  103 +-
+ include/dt-bindings/clock/tegra210-car.h           |  401 +++
+ 14 files changed, 4397 insertions(+), 143 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra210-car.txt
+ create mode 100644 drivers/clk/tegra/clk-tegra-super-gen5.c
+ create mode 100644 drivers/clk/tegra/clk-tegra210.c
+ create mode 100644 include/dt-bindings/clock/tegra210-car.h
 
-This is completely untested because I don't have a Seaboard. But this is
-based on the schematics and I think it should work, so it'd be great if
-you could test it.
-
-Thanks,
-Thierry
-
- arch/arm/boot/dts/tegra20-seaboard.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
-index e2fed2712249..aea8994b35f2 100644
---- a/arch/arm/boot/dts/tegra20-seaboard.dts
-+++ b/arch/arm/boot/dts/tegra20-seaboard.dts
-@@ -31,6 +31,7 @@
- 
- 			vdd-supply = <&hdmi_vdd_reg>;
- 			pll-supply = <&hdmi_pll_reg>;
-+			hdmi-supply = <&vdd_hdmi>;
- 
- 			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
- 			nvidia,hpd-gpio = <&gpio TEGRA_GPIO(N, 7)
-@@ -893,6 +894,17 @@
- 			gpio = <&gpio TEGRA_GPIO(W, 0) GPIO_ACTIVE_HIGH>;
- 			enable-active-high;
- 		};
-+
-+		vdd_hdmi: regulator@6 {
-+			compatible = "regulator-fixed";
-+			reg = <6>;
-+			regulator-name = "VDDIO_HDMI";
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+			gpio = <&gpio TEGRA_GPIO(V, 5) GPIO_ACTIVE_HIGH>;
-+			enable-active-high;
-+			vin-supply = <&vdd_5v0_reg>;
-+		};
- 	};
- 
- 	sound {
 -- 
-2.3.5
+1.7.9.5
