@@ -1,48 +1,48 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 15/19] clk: tegra: pll: Add dyn_ramp callback
-Date: Fri, 24 Apr 2015 12:47:55 -0400
-Message-ID: <1429894079-25052-16-git-send-email-rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH 06/19] clk: tegra: pll-params: change misc_reg count from 3 -> 6
+Date: Fri, 24 Apr 2015 12:47:46 -0400
+Message-ID: <1429894079-25052-7-git-send-email-rklein@nvidia.com>
 References: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1429894079-25052-1-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Bill Huang <bilhuang@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Bill Huang <bilhuang@nvidia.com>
 
-Add a callback to the pll_params for custom dynamic ramping
-functions which can be specified per PLL.
+New SoC's may have more then 3 MISC registers, so bump up the
+array size and use a #define to be more informative about the value.
 
-Signed-off-by: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Bill Huang <bilhuang@nvidia.com>
 ---
- drivers/clk/tegra/clk.h |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/clk/tegra/clk.h |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 27075a586e79..850521d42be6 100644
+index 4ea8b5b089cd..03babba1c3b4 100644
 --- a/drivers/clk/tegra/clk.h
 +++ b/drivers/clk/tegra/clk.h
-@@ -160,6 +160,8 @@ struct div_nmp {
+@@ -156,6 +156,8 @@ struct div_nmp {
+ 	u8		override_divp_shift;
+ };
  
- #define MAX_PLL_MISC_REG_COUNT	6
- 
-+struct tegra_clk_pll;
++#define MAX_PLL_MISC_REG_COUNT	6
 +
  /**
   * struct clk_pll_params - PLL parameters
   *
-@@ -250,6 +252,8 @@ struct tegra_clk_pll_params {
- 			unsigned long rate, unsigned long parent_rate);
- 	unsigned long	(*adjust_vco)(struct tegra_clk_pll_params *pll_params,
- 				unsigned long parent_rate);
-+	int	(*dyn_ramp)(struct tegra_clk_pll *pll,
-+			struct tegra_clk_pll_freq_table *cfg);
- };
- 
- #define TEGRA_PLL_USE_LOCK BIT(0)
+@@ -213,7 +215,7 @@ struct tegra_clk_pll_params {
+ 	u32		iddq_bit_idx;
+ 	u32		aux_reg;
+ 	u32		dyn_ramp_reg;
+-	u32		ext_misc_reg[3];
++	u32		ext_misc_reg[MAX_PLL_MISC_REG_COUNT];
+ 	u32		pmc_divnm_reg;
+ 	u32		pmc_divp_reg;
+ 	u32		flags;
 -- 
 1.7.9.5
