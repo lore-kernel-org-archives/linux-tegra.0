@@ -1,18 +1,18 @@
 From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH V7 4/9] mfd: Add binding document for NVIDIA Tegra XUSB
-Date: Mon, 27 Apr 2015 15:37:17 -0700
-Message-ID: <1430174242-29465-5-git-send-email-abrestic@chromium.org>
+Subject: [PATCH V7 6/9] mailbox: Add NVIDIA Tegra XUSB mailbox binding
+Date: Mon, 27 Apr 2015 15:37:19 -0700
+Message-ID: <1430174242-29465-7-git-send-email-abrestic@chromium.org>
 References: <1430174242-29465-1-git-send-email-abrestic@chromium.org>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1430174242-29465-1-git-send-email-abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add a binding document for the XUSB host complex on NVIDIA Tegra124
-and later SoCs.  The XUSB host complex includes a mailbox for
-communication with the XUSB micro-controller and an xHCI host-controller.
+Add device-tree bindings for the Tegra XUSB mailbox which will be used
+for communication between the Tegra xHCI controller's firmware and the
+host processor.
 
 Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
@@ -20,71 +20,56 @@ Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
 Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
 Cc: Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
 Cc: Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
-New for v7.
+Changes from v6:
+ - Removed reg/interrupts properties.
+No changes from v3/v4/v5.
+Changes from v2:
+ - Dropped channel specifier.
+ - Added pointer to mailbox documentation.
+Changes from v1:
+ - Updated to use common mailbox bindings.
 ---
- .../bindings/mfd/nvidia,tegra124-xusb.txt          | 46 ++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/nvidia,tegra124-xusb.txt
+ .../bindings/mailbox/nvidia,tegra124-xusb-mbox.txt | 30 ++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/nvidia,tegra124-xusb-mbox.txt
 
-diff --git a/Documentation/devicetree/bindings/mfd/nvidia,tegra124-xusb.txt b/Documentation/devicetree/bindings/mfd/nvidia,tegra124-xusb.txt
+diff --git a/Documentation/devicetree/bindings/mailbox/nvidia,tegra124-xusb-mbox.txt b/Documentation/devicetree/bindings/mailbox/nvidia,tegra124-xusb-mbox.txt
 new file mode 100644
-index 0000000..6a46680
+index 0000000..9d89afa
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/nvidia,tegra124-xusb.txt
-@@ -0,0 +1,46 @@
-+NVIDIA Tegra XUSB host copmlex
-+==============================
++++ b/Documentation/devicetree/bindings/mailbox/nvidia,tegra124-xusb-mbox.txt
+@@ -0,0 +1,30 @@
++NVIDIA Tegra XUSB mailbox
++=========================
 +
-+The XUSB host complex on Tegra124 and later SoCs contains an xHCI host
-+controller and a mailbox for communication with the XUSB micro-controller.
++The Tegra XUSB mailbox is used by the Tegra xHCI controller's firmware to
++communicate requests to the host and PHY drivers.
++
++Refer to ./mailbox.txt for generic information about mailbox device-tree
++bindings.
 +
 +Required properties:
 +--------------------
-+ - compatible: For Tegra124, must contain "nvidia,tegra124-xusb".
-+   Otherwise, must contain '"nvidia,<chip>-xusb", "nvidia,tegra124-xusb"'
-+   where <chip> is tegra132.
-+ - reg: Must contain register base and length for each register set listed
-+   in reg-names.
-+ - reg-names: Must include the following entries:
-+   - xhci
-+   - fpci
-+   - ipfs
-+ - interrupts: Must contain an interrupt for each entry in interrupt-names.
-+ - interrupt-names: Must include the following entries:
-+   - host
-+   - smi
-+   - pme
++ - compatible: For Tegra124, must contain "nvidia,tegra124-xusb-mbox".
++   Otherwise, must contain '"nvidia,<chip>-xusb-mbox",
++   "nvidia,tegra124-xusb-mbox"' where <chip> is tegra132.
++ - #mbox-cells: Should be 0.  There is only one physical channel.
 +
 +Example:
 +--------
-+	usb@0,70090000 {
-+		compatible = "nvidia,tegra124-xusb";
-+		reg = <0x0 0x70090000 0x0 0x8000>,
-+		      <0x0 0x70098000 0x0 0x1000>,
-+		      <0x0 0x70099000 0x0 0x1000>;
-+		reg-names = "xhci", "fpci", "ipfs";
-+		interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 40 IRQ_TYPE_LEVEL_HGIH>,
-+			     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "host", "smi", "pme";
++	mailbox {
++		compatible = "nvidia,tegra124-xusb-mbox";
 +
-+		usb-host {
-+			compatible = "nvidia,tegra124-xhci";
-+			...
-+		};
++		#mbox-cells = <0>;
++	};
 +
-+		mailbox {
-+			compatible = "nvidia,tegra124-xusb-mbox";
-+			...
-+		};
++	usb-host {
++		...
++		mboxes = <&xusb_mbox>;
++		mbox-names = "xusb";
++		...
 +	};
 -- 
 2.2.0.rc0.207.ga3a616c
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
