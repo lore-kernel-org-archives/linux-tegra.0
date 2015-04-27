@@ -1,60 +1,113 @@
-From: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
-Subject: Tegra baseline test results for v4.1-rc1
-Date: Mon, 27 Apr 2015 16:49:24 +0000 (UTC)
-Message-ID: <alpine.DEB.2.02.1504271642550.31868@utopia.booyaka.com>
-Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: [PATCH V7 0/9] Tegra xHCI support
+Date: Mon, 27 Apr 2015 15:37:13 -0700
+Message-ID: <1430174242-29465-1-git-send-email-abrestic@chromium.org>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+This series adds support for xHCI on NVIDIA Tegra SoCs.  This includes:
+ - patches 1, 2, and 3: minor cleanups for mailbox framework and xHCI,
+ - patches 4 and 5: adding an MFD driver for the XUSB cmoplex,
+ - patches 6 and 7: adding a driver for the mailbox used to communicate
+   with the xHCI controller's firmware, and
+ - patches 8 and 9: adding a xHCI host-controller driver.
 
-Here are some basic Tegra test results for Linux v4.1-rc1.
-Logs and other details at:
+The addition of USB PHY support to the XUSB padctl driver has been dropped
+from v7.  Thierry will be posting those patches later.
 
-    http://nvt.pwsan.com/pub/linux/testlogs/test_v4.1-rc1/20150426183104/
+Given the many compile and run-time dependencies in this series, it is probably
+best if the first 3 patches are picked up by the relevant maintainers in topic
+branches so that the remainder of the series can go through the Tegra tree.
 
+Tested on Jetson TK1 and Nyan-Big with a variety of USB2.0 and USB3.0 memory
+sticks and ethernet dongles.  This has also been tested, with additional
+out-of-tree patches, on a Tegra132-based board.
 
-Test summary
-------------
+Based on v4.1-rc1.  A branch with the entire series is available at:
+  https://github.com/abrestic/linux/tree/tegra-xhci-v7
 
-Build: zImage:
-    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+Changes from v6:
+ - Dropped PHY changes from series.  Will be posted later by Thierry.
+ - Added an MFD device with the mailbox and xHCI host as sub-devices.
 
-Build: Image:
-    Pass: ( 1/ 1): defconfig
+Changes from v5:
+ - Addressed review comments from Jassi and Felipe.
 
-Boot to userspace: defconfig:
-    Pass: ( 1/ 1): qemu-vexpress64
+Changes from v4:
+ - Made USB support optional in padctl driver.
+ - Made usb3-port a pinconfig property again.
+ - Cleaned up mbox_request_channel() error handling and allowed it to defer
+   probing (patch 3).
+ - Minor xHCI (patch 1) and mailbox framework (patch 2) cleanups suggested
+   by Thierry.
+ - Addressed Thierry's review comments.
 
-Boot to userspace: multi_v7_defconfig:
-    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra20-trimslice, tegra30-beaver
+Changes from v3:
+ - Fixed USB2.0 flakiness on Jetson-TK1.
+ - Switched to 32-bit DMA mask for host.
+ - Addressed Stephen's review comments.
 
-Boot to userspace: tegra_defconfig:
-    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra20-trimslice, tegra30-beaver
+Chagnes from v2:
+ - Dropped mailbox channel specifier.  The mailbox driver allocates virtual
+   channels backed by the single physical channel.
+ - Added support for HS_CURR_LEVEL adjustment pinconfig property, which
+   will be required for the Blaze board.
+ - Addressed Stephen's review comments.
 
+Changes from v1:
+ - Converted mailbox driver to use the common mailbox framework.
+ - Fixed up host driver so that it can now be built and used as a module.
+ - Addressed Stephen's review comments.
+ - Misc. cleanups.
 
-vmlinux object size
-(delta in bytes from test_v4.0 (39a8804455fb23f09157341d3ba7db6d7ae6ee76)):
-   text     data      bss    total  kernel
-+330066   +29448    +1472  +360986  multi_v7_defconfig
-+117544    +7768     +612  +125924  tegra_defconfig
-+634958  +147392    +2840  +785190  defconfig
+Andrew Bresticker (8):
+  xhci: Set shared HCD's hcd_priv in xhci_gen_setup
+  mailbox: Make struct mbox_controller's ops field const
+  mfd: Add binding document for NVIDIA Tegra XUSB
+  mfd: Add driver for NVIDIA Tegra XUSB
+  mailbox: Add NVIDIA Tegra XUSB mailbox binding
+  mailbox: Add NVIDIA Tegra XUSB mailbox driver
+  usb: Add NVIDIA Tegra xHCI controller binding
+  usb: xhci: Add NVIDIA Tegra xHCI host-controller driver
 
+Benson Leung (1):
+  mailbox: Fix up error handling in mbox_request_channel()
 
-Boot-time memory difference
-(delta in bytes from test_v4.0 (39a8804455fb23f09157341d3ba7db6d7ae6ee76))
-    avail    rsrvd     high    freed                board              kconfig                  dtb
-        .        .        .        .      qemu-vexpress64            defconfig           __internal
-    -372k     372k        .      20k tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-    -144k     144k        .      12k tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-    -408k     408k        .      20k  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-    -180k     180k        .      12k  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-    -364k     364k        .      20k    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
-    -136k     136k        .      12k    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
-    -500k     500k        .      20k       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-    -272k     272k        .      12k       tegra30-beaver      tegra_defconfig       tegra30-beaver
+ .../bindings/mailbox/nvidia,tegra124-xusb-mbox.txt |  30 +
+ .../bindings/mfd/nvidia,tegra124-xusb.txt          |  46 +
+ .../bindings/usb/nvidia,tegra124-xhci.txt          |  90 ++
+ drivers/mailbox/Kconfig                            |   8 +
+ drivers/mailbox/Makefile                           |   2 +
+ drivers/mailbox/mailbox.c                          |  11 +-
+ drivers/mailbox/omap-mailbox.c                     |   6 +-
+ drivers/mailbox/tegra-xusb-mailbox.c               | 275 ++++++
+ drivers/mfd/Kconfig                                |   7 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/tegra-xusb.c                           | 167 ++++
+ drivers/usb/host/Kconfig                           |  10 +
+ drivers/usb/host/Makefile                          |   1 +
+ drivers/usb/host/xhci-pci.c                        |   5 -
+ drivers/usb/host/xhci-plat.c                       |   5 -
+ drivers/usb/host/xhci-tegra.c                      | 946 +++++++++++++++++++++
+ drivers/usb/host/xhci.c                            |   6 +-
+ include/linux/mailbox_controller.h                 |   2 +-
+ include/soc/tegra/xusb.h                           |  49 ++
+ 19 files changed, 1647 insertions(+), 20 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/nvidia,tegra124-xusb-mbox.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/nvidia,tegra124-xusb.txt
+ create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra124-xhci.txt
+ create mode 100644 drivers/mailbox/tegra-xusb-mailbox.c
+ create mode 100644 drivers/mfd/tegra-xusb.c
+ create mode 100644 drivers/usb/host/xhci-tegra.c
+ create mode 100644 include/soc/tegra/xusb.h
+
+-- 
+2.2.0.rc0.207.ga3a616c
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
