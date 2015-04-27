@@ -1,7 +1,7 @@
 From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH 16/19] clk: tegra: pll: Add Set_default logic
-Date: Mon, 27 Apr 2015 17:19:33 +0300
-Message-ID: <20150427141932.GG3097@tbergstrom-lnx.Nvidia.com>
+Date: Mon, 27 Apr 2015 17:30:31 +0300
+Message-ID: <20150427143031.GH3097@tbergstrom-lnx.Nvidia.com>
 References: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
  <1429894079-25052-17-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
@@ -21,9 +21,6 @@ On Fri, Apr 24, 2015 at 12:47:56PM -0400, Rhyland Klein wrote:
 > to the proper default value and if not can set it. This can be
 > specified per PLL as each will have different default values.
 > 
-
-Why can't we just set the default values at init time?
-
 > Signed-off-by: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
 >  drivers/clk/tegra/clk-pll.c |   46 ++++++++++++++++++++++++++++++++-----------
@@ -156,6 +153,8 @@ Why can't we just set the default values at init time?
 > +	}								       \
 > +} while (0)
 > +
+
+Why is this a macro? I would suggest making it an inline function in clk-tegra210.c.
 >  /**
 >   * struct clk_super_mux - super clock
 >   *
