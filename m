@@ -1,29 +1,105 @@
-From: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-Subject: Re: [PATCH 1/2] clk: change clk_ops' ->round_rate() prototype
-Date: Tue, 28 Apr 2015 18:11:28 +0300
-Message-ID: <553FA320.4040006@kapsi.fi>
-References: <1429255769-13639-1-git-send-email-boris.brezillon@free-electrons.com> <1429255769-13639-2-git-send-email-boris.brezillon@free-electrons.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: Re: [PATCH V7 3/9] mailbox: Fix up error handling in mbox_request_channel()
+Date: Tue, 28 Apr 2015 11:42:35 -0500
+Message-ID: <553FB87B.8000509@ti.com>
+References: <1430174242-29465-1-git-send-email-abrestic@chromium.org> <1430174242-29465-4-git-send-email-abrestic@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1429255769-13639-2-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@free-electrons.com>, Mike Turquette <mturquette@linaro.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawn.guo@linaro.org>, ascha Hauer <kernel@pengutronix.de>, David Brown <davidb@codeaurora.org>, Daniel Walker <dwalker@fifo99.com>, Bryan Huntsman <bryanh@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Paul Walmsley <paul@pwsan.com>, Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Barry Song <baohua@kernel.org>, Viresh Kumar <viresh.linux@gmail.com>, =?UTF-8?B?RW1pbGlvIEzDs3Bleg==?= <emilio@elopez.com.ar>, Maxime Ripard <maxime.ripard@free-electrons.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarr>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1430174242-29465-4-git-send-email-abrestic@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Bresticker <abrestic@chromium.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Benson Leung <bleung@chromium.org>, Jassi Brar <jassisinghbrar@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-The series
+On 04/27/2015 05:37 PM, Andrew Bresticker wrote:
+> From: Benson Leung <bleung@chromium.org>
+> 
+> mbox_request_channel() currently returns EBUSY in the event the controller
+> is not present or if of_xlate() fails, but in neither case is EBUSY really
+> appropriate.  Return EPROBE_DEFER if the controller is not yet present
+> and change of_xlate() to return an ERR_PTR instead of NULL so that the
+> error can be propagated back to the caller of mbox_request_channel().
+> 
+> Signed-off-by: Benson Leung <bleung@chromium.org>
+> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+> Cc: Jassi Brar <jassisinghbrar@gmail.com>
+> Cc: Suman Anna <s-anna@ti.com>
+> ---
+> Changes from v6:
+>  - Update omap-mailbox's xlate() to return error codes.
+> No changes from v5.
+> New for v5.
+> ---
+>  drivers/mailbox/mailbox.c      | 11 ++++++++---
+>  drivers/mailbox/omap-mailbox.c |  6 +++---
 
-Tested-by: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+For the OMAP mailbox portion,
+Acked-by: Suman Anna <s-anna@ti.com>
 
-on Jetson-TK1.
-
-I rebased my cpufreq series on top of this and everything's working well 
-now. :)
-
-Thanks,
-Mikko.
-
-On 04/17/2015 10:29 AM, Boris Brezillon wrote:
-> ...
+>  2 files changed, 11 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
+> index 19b491d..c3c42d4 100644
+> --- a/drivers/mailbox/mailbox.c
+> +++ b/drivers/mailbox/mailbox.c
+> @@ -318,7 +318,7 @@ struct mbox_chan *mbox_request_channel(struct mbox_client *cl, int index)
+>  		return ERR_PTR(-ENODEV);
+>  	}
+>  
+> -	chan = NULL;
+> +	chan = ERR_PTR(-EPROBE_DEFER);
+>  	list_for_each_entry(mbox, &mbox_cons, node)
+>  		if (mbox->dev->of_node == spec.np) {
+>  			chan = mbox->of_xlate(mbox, &spec);
+> @@ -327,7 +327,12 @@ struct mbox_chan *mbox_request_channel(struct mbox_client *cl, int index)
+>  
+>  	of_node_put(spec.np);
+>  
+> -	if (!chan || chan->cl || !try_module_get(mbox->dev->driver->owner)) {
+> +	if (IS_ERR(chan)) {
+> +		mutex_unlock(&con_mutex);
+> +		return chan;
+> +	}
+> +
+> +	if (chan->cl || !try_module_get(mbox->dev->driver->owner)) {
+>  		dev_dbg(dev, "%s: mailbox not free\n", __func__);
+>  		mutex_unlock(&con_mutex);
+>  		return ERR_PTR(-EBUSY);
+> @@ -390,7 +395,7 @@ of_mbox_index_xlate(struct mbox_controller *mbox,
+>  	int ind = sp->args[0];
+>  
+>  	if (ind >= mbox->num_chans)
+> -		return NULL;
+> +		return ERR_PTR(-EINVAL);
+>  
+>  	return &mbox->chans[ind];
+>  }
+> diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbox.c
+> index 0f332c1..e0df27b 100644
+> --- a/drivers/mailbox/omap-mailbox.c
+> +++ b/drivers/mailbox/omap-mailbox.c
+> @@ -639,18 +639,18 @@ static struct mbox_chan *omap_mbox_of_xlate(struct mbox_controller *controller,
+>  
+>  	mdev = container_of(controller, struct omap_mbox_device, controller);
+>  	if (WARN_ON(!mdev))
+> -		return NULL;
+> +		return ERR_PTR(-EINVAL);
+>  
+>  	node = of_find_node_by_phandle(phandle);
+>  	if (!node) {
+>  		pr_err("%s: could not find node phandle 0x%x\n",
+>  		       __func__, phandle);
+> -		return NULL;
+> +		return ERR_PTR(-ENODEV);
+>  	}
+>  
+>  	mbox = omap_mbox_device_find(mdev, node->name);
+>  	of_node_put(node);
+> -	return mbox ? mbox->chan : NULL;
+> +	return mbox ? mbox->chan : ERR_PTR(-ENOENT);
+>  }
+>  
+>  static int omap_mbox_probe(struct platform_device *pdev)
+> 
