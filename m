@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2 3/8] clk: tegra: Fix inconsistent indenting
-Date: Tue, 28 Apr 2015 13:46:18 +0900
-Message-ID: <1430196383-9190-4-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH v2 7/8] clk: ls1x: Fix duplicate const for parent names
+Date: Tue, 28 Apr 2015 13:46:22 +0900
+Message-ID: <1430196383-9190-8-git-send-email-k.kozlowski@samsung.com>
 References: <1430196383-9190-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1430196383-9190-1-git-send-email-k.kozlowski@samsung.com>
@@ -10,49 +10,30 @@ To: Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>, Mike 
 Cc: Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Fix the indentation - spaces used instead of tabs and actually wrong
-number of spaces.
+Replace duplicated const keyword with proper array of const pointers to
+const strings.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- drivers/clk/tegra/clk-emc.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/clk/clk-ls1x.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
-index 615da43a508d..8757feda4a11 100644
---- a/drivers/clk/tegra/clk-emc.c
-+++ b/drivers/clk/tegra/clk-emc.c
-@@ -130,11 +130,11 @@ static long emc_determine_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	tegra = container_of(hw, struct tegra_clk_emc, hw);
- 
--         for (i = 0; i < tegra->num_timings; i++) {
--                if (tegra->timings[i].ram_code != ram_code)
--                        continue;
-+	for (i = 0; i < tegra->num_timings; i++) {
-+		if (tegra->timings[i].ram_code != ram_code)
-+			continue;
- 
--                timing = tegra->timings + i;
-+		timing = tegra->timings + i;
- 
- 		if (timing->rate > max_rate) {
- 			i = min(i, 1);
-@@ -145,11 +145,11 @@ static long emc_determine_rate(struct clk_hw *hw, unsigned long rate,
- 			continue;
- 
- 		if (timing->rate >= rate)
--                        return timing->rate;
--        }
-+			return timing->rate;
-+	}
- 
--        if (timing)
--                return timing->rate;
-+	if (timing)
-+		return timing->rate;
- 
- 	return __clk_get_rate(hw->clk);
+diff --git a/drivers/clk/clk-ls1x.c b/drivers/clk/clk-ls1x.c
+index ca80103ac188..d4c61985f448 100644
+--- a/drivers/clk/clk-ls1x.c
++++ b/drivers/clk/clk-ls1x.c
+@@ -80,9 +80,9 @@ static struct clk *__init clk_register_pll(struct device *dev,
+ 	return clk;
  }
+ 
+-static const char const *cpu_parents[] = { "cpu_clk_div", "osc_33m_clk", };
+-static const char const *ahb_parents[] = { "ahb_clk_div", "osc_33m_clk", };
+-static const char const *dc_parents[] = { "dc_clk_div", "osc_33m_clk", };
++static const char * const cpu_parents[] = { "cpu_clk_div", "osc_33m_clk", };
++static const char * const ahb_parents[] = { "ahb_clk_div", "osc_33m_clk", };
++static const char * const dc_parents[] = { "dc_clk_div", "osc_33m_clk", };
+ 
+ void __init ls1x_clk_init(void)
+ {
 -- 
 1.9.1
