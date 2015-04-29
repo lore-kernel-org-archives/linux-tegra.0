@@ -1,264 +1,134 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH V7 5/9] mfd: Add driver for NVIDIA Tegra XUSB
-Date: Wed, 29 Apr 2015 19:30:59 +0100
-Message-ID: <20150429183059.GA9169@x1>
+From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V7 4/9] mfd: Add binding document for NVIDIA Tegra XUSB
+Date: Wed, 29 Apr 2015 19:34:29 +0100
+Message-ID: <20150429183429.GB9169@x1>
 References: <1430174242-29465-1-git-send-email-abrestic@chromium.org>
- <1430174242-29465-6-git-send-email-abrestic@chromium.org>
- <20150429092348.GQ9169@x1>
- <CAL1qeaHNVVzMFg5r5ghg3zJTbaYOSf5Ms+Af_U5fhKc+vfWMHg@mail.gmail.com>
+ <1430174242-29465-5-git-send-email-abrestic@chromium.org>
+ <20150429092545.GR9169@x1>
+ <CAL1qeaFh5go_K0GnGXxU7KqjcgCm2kpUL5mVgGSYosPoXAXgpw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <CAL1qeaHNVVzMFg5r5ghg3zJTbaYOSf5Ms+Af_U5fhKc+vfWMHg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Bresticker <abrestic@chromium.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>
+In-Reply-To: <CAL1qeaFh5go_K0GnGXxU7KqjcgCm2kpUL5mVgGSYosPoXAXgpw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 On Wed, 29 Apr 2015, Andrew Bresticker wrote:
 
 > Lee,
 >=20
-> On Wed, Apr 29, 2015 at 2:23 AM, Lee Jones <lee.jones@linaro.org> wro=
+> On Wed, Apr 29, 2015 at 2:25 AM, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wro=
 te:
 > > On Mon, 27 Apr 2015, Andrew Bresticker wrote:
 > >
-> >> Add an MFD driver for the XUSB host complex found on NVIDIA Tegra1=
-24
-> >> and later SoCs.
+> >> Add a binding document for the XUSB host complex on NVIDIA Tegra12=
+4
+> >> and later SoCs.  The XUSB host complex includes a mailbox for
+> >> communication with the XUSB micro-controller and an xHCI host-cont=
+roller.
 > >>
-> >> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-> >> Cc: Samuel Ortiz <sameo@linux.intel.com>
-> >> Cc: Lee Jones <lee.jones@linaro.org>
->=20
+> >> Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> >> Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> >> Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
+> >> Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+> >> Cc: Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
+> >> Cc: Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+> >> Cc: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+> >> Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> >> ---
+> >> New for v7.
+> >> ---
+> >>  .../bindings/mfd/nvidia,tegra124-xusb.txt          | 46 +++++++++=
++++++++++++++
+> >>  1 file changed, 46 insertions(+)
+> >>  create mode 100644 Documentation/devicetree/bindings/mfd/nvidia,t=
+egra124-xusb.txt
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/mfd/nvidia,tegra124=
+-xusb.txt b/Documentation/devicetree/bindings/mfd/nvidia,tegra124-xusb.=
+txt
+> >> new file mode 100644
+> >> index 0000000..6a46680
 > >> --- /dev/null
-> >> +++ b/drivers/mfd/tegra-xusb.c
->=20
-> >> +struct tegra_xusb_soc_data {
-> >> +     struct mfd_cell *devs;
-> >> +     unsigned int num_devs;
-> >> +};
+> >> +++ b/Documentation/devicetree/bindings/mfd/nvidia,tegra124-xusb.t=
+xt
+> >> @@ -0,0 +1,46 @@
+> >> +NVIDIA Tegra XUSB host copmlex
+> >> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D
 > >> +
-> >> +static struct resource tegra_xhci_resources[] =3D {
-> >> +     {
-> >> +             .name =3D "host",
-> >> +             .flags =3D IORESOURCE_IRQ,
-> >> +     },
-> >> +     {
-> >> +             .name =3D "xhci",
-> >> +             .flags =3D IORESOURCE_MEM,
-> >> +     },
-> >> +     {
-> >> +             .name =3D "ipfs",
-> >> +             .flags =3D IORESOURCE_MEM,
-> >> +     },
-> >> +};
+> >> +The XUSB host complex on Tegra124 and later SoCs contains an xHCI=
+ host
+> >> +controller and a mailbox for communication with the XUSB micro-co=
+ntroller.
 > >> +
-> >> +static struct resource tegra_xusb_mbox_resources[] =3D {
-> >> +     {
-> >> +             .name =3D "smi",
-> >> +             .flags =3D IORESOURCE_IRQ,
-> >> +     },
-> >> +};
+> >> +Required properties:
+> >> +--------------------
+> >> + - compatible: For Tegra124, must contain "nvidia,tegra124-xusb".
+> >> +   Otherwise, must contain '"nvidia,<chip>-xusb", "nvidia,tegra12=
+4-xusb"'
+> >> +   where <chip> is tegra132.
 > >
-> > DEFINE_RES_IRQ_NAMED()
-> >
-> >> +static struct mfd_cell tegra124_xusb_devs[] =3D {
-> >> +     {
-> >> +             .name =3D "tegra-xhci",
-> >> +             .of_compatible =3D "nvidia,tegra124-xhci",
-> >> +     },
-> >> +     {
-> >> +             .name =3D "tegra-xusb-mbox",
-> >> +             .of_compatible =3D "nvidia,tegra124-xusb-mbox",
-> >> +     },
-> >> +};
-> >> +
-> >> +static const struct tegra_xusb_soc_data tegra124_xusb_data =3D {
-> >> +     .devs =3D tegra124_xusb_devs,
-> >> +     .num_devs =3D ARRAY_SIZE(tegra124_xusb_devs),
-> >> +};
-> >> +
-> >> +static const struct of_device_id tegra_xusb_of_match[] =3D {
-> >> +     { .compatible =3D "nvidia,tegra124-xusb", .data =3D &tegra12=
-4_xusb_data },
-> >
-> > Yuk!  Why are you mixing platform data and DT in this way?
-> >
-> > Why can't you just stick all of this in DT?
+> > Okay.  Why?
 >=20
-> I assume you mean the resources?  The compatible strings will at leas=
-t
-> need to be SoC-specific since they will change from SoC to SoC.
->=20
-> >> +     {},
-> >> +};
-> >> +
-> >> +MODULE_DEVICE_TABLE(of, tegra_xusb_of_match);
-> >> +static struct regmap_config tegra_fpci_regmap_config =3D {
-> >> +     .reg_bits =3D 32,
-> >> +     .val_bits =3D 32,
-> >> +     .reg_stride =3D 4,
-> >> +};
-> >> +
-> >> +static int tegra_xusb_probe(struct platform_device *pdev)
-> >> +{
-> >> +     const struct tegra_xusb_soc_data *soc;
-> >> +     const struct of_device_id *match;
-> >> +     struct tegra_xusb *xusb;
-> >> +     struct resource *res;
-> >> +     void __iomem *fpci_base;
-> >> +     int irq, ret;
-> >> +
-> >> +     xusb =3D devm_kzalloc(&pdev->dev, sizeof(*xusb), GFP_KERNEL)=
-;
-> >> +     if (!xusb)
-> >> +             return -ENOMEM;
-> >> +     platform_set_drvdata(pdev, xusb);
-> >> +
-> >> +     match =3D of_match_node(tegra_xusb_of_match, pdev->dev.of_no=
-de);
-> >> +     soc =3D match->data;
-> >> +
-> >> +     irq =3D platform_get_irq_byname(pdev, "host");
-> >> +     if (irq < 0)
-> >> +             return irq;
-> >> +     tegra_xhci_resources[0].start =3D irq;
-> >> +     tegra_xhci_resources[0].end =3D irq;
-> >> +
-> >> +     res =3D platform_get_resource_byname(pdev, IORESOURCE_MEM, "=
-xhci");
-> >> +     if (!res)
-> >> +             return -ENODEV;
-> >> +     tegra_xhci_resources[1].start =3D res->start;
-> >> +     tegra_xhci_resources[1].end =3D res->end;
-> >> +
-> >> +     res =3D platform_get_resource_byname(pdev, IORESOURCE_MEM, "=
-ipfs");
-> >> +     if (!res)
-> >> +             return -ENODEV;
-> >> +     tegra_xhci_resources[2].start =3D res->start;
-> >> +     tegra_xhci_resources[2].end =3D res->end;
-> >> +
-> >> +     soc->devs[0].resources =3D tegra_xhci_resources;
-> >> +     soc->devs[0].num_resources =3D ARRAY_SIZE(tegra_xhci_resourc=
-es);
-> >> +
-> >> +     irq =3D platform_get_irq_byname(pdev, "smi");
-> >> +     if (irq < 0)
-> >> +             return irq;
-> >> +     tegra_xusb_mbox_resources[0].start =3D irq;
-> >> +     tegra_xusb_mbox_resources[0].end =3D irq;
-> >> +
-> >> +     soc->devs[1].resources =3D tegra_xusb_mbox_resources;
-> >> +     soc->devs[1].num_resources =3D ARRAY_SIZE(tegra_xusb_mbox_re=
-sources);
-> >> +
-> >> +     res =3D platform_get_resource_byname(pdev, IORESOURCE_MEM, "=
-fpci");
-> >> +     fpci_base =3D devm_ioremap_resource(&pdev->dev, res);
-> >> +     if (IS_ERR(fpci_base))
-> >> +             return PTR_ERR(fpci_base);
-> >
-> > This stuff is not good.
-> >
-> > Either let MFD handle it with mfd_cells or stick all of this stuff =
-in
-> > DT and parse it from the child devices.
->=20
-> I'm not sure what exactly you mean by "let MFD handle it with
-> mfd_cells" here - is that not what I'm doing now?  Anyway I think tha=
-t
-> leaves two ways of representing this in DT.
->=20
-> Either have the MFD take a single IOMEM resource and divide it up
-> statically within the driver:
->=20
-> usb@0,70090000 {
->         compatible =3D "nvidia,tegra124-xusb";
->         reg =3D <0x0 0x70090000 0x0 0xa000>;
->=20
->         usb-host {
->                 compatible =3D "nvidia,tegra124-xhci";
->                 interrupts =3D <...>;
->                 ...
->         }:
->=20
->         mailbox {
->                 compatible =3D "nvidia,tegra124-xusb-mbox";
->                 interrupts =3D <...>;
->                 ...
->         };
-> };
->=20
-> ... or have the MFD take only the shared FPCI resource and have the
-> sub-devices parse the rest from DT:
->=20
-> usb@0,70098000 {
->         compatible =3D "nvidia,tegra124-xusb";
->         reg =3D <0x0 0x70098000 0x0 0x1000>;
->         ranges;
->=20
->         usb-host@0,70090000 {
->                 compatible =3D "nvidia,tegra124-xhci";
->                 reg =3D <0x0 0x70090000 0x0 0x8000>,
->                         <0x0 0x70099000 0x0 0x1000>;
->                 interrupts =3D <...>;
->                 ...
->         }:
->=20
->         mailbox {
->                 compatible =3D "nvidia,tegra124-xusb-mbox";
->                 interrupts =3D <...>;
->                 ...
->         };
-> };
->=20
-> I don't have a strong preference here, but I think the former more
-> accurately represents the resource hierarchy.  Since Thierry requeste=
-d
-> the use of an MFD, I'd like him to weigh in on this - Thierry?
+> Why what?  This is the convention used for Tegra bindings and is also
+> documented in Documentation/devicetree/bindings/submitting-patches.tx=
+t.
+> See nvidia,tegra114-spi.txt and nvidia,tegra20-i2c.txt for other
+> examples of this.
 
-The latter is what I had in mind.
+It seems strange to me that you'd mention two specific chips in one
+compatible string.  What's the purpose of that?
 
-> >> +     tegra_fpci_regmap_config.max_register =3D res->end - res->st=
-art - 3;
-> >> +     xusb->fpci_regs =3D devm_regmap_init_mmio(&pdev->dev, fpci_b=
-ase,
-> >> +                                             &tegra_fpci_regmap_c=
-onfig);
-> >> +     if (IS_ERR(xusb->fpci_regs)) {
-> >> +             ret =3D PTR_ERR(xusb->fpci_regs);
-> >> +             dev_err(&pdev->dev, "Failed to init regmap: %d\n", r=
-et);
-> >> +             return ret;
-> >> +     }
-> >> +
-> >> +     ret =3D mfd_add_devices(&pdev->dev, -1, soc->devs, soc->num_=
-devs,
-> >> +                           NULL, 0, NULL);
-> >> +     if (ret) {
-> >> +             dev_err(&pdev->dev, "Failed to add MFD devices: %d\n=
-", ret);
-> >> +             return ret;
-> >> +     }
-> >> +
-> >> +     return 0;
-> >> +}
->=20
-> >> --- /dev/null
-> >> +++ b/include/soc/tegra/xusb.h
->=20
-> >> +struct tegra_xusb {
-> >> +     struct regmap *fpci_regs;
+> >> + - reg: Must contain register base and length for each register s=
+et listed
+> >> +   in reg-names.
 > >
-> > Are you going to add to this?
+> > You've mentioned 2 of the cells, what about the remaining 2?
 >=20
-> No, I don't have any plans to add to this struct.
+> The example given was for Tegra124, where there are two address cells
+> and two size cells.
 
-Then you don't require a struct.  :)
+I don't get that.  How does that work?
+
+> >> + - reg-names: Must include the following entries:
+> >> +   - xhci
+> >> +   - fpci
+> >> +   - ipfs
+> >> + - interrupts: Must contain an interrupt for each entry in interr=
+upt-names.
+> >> + - interrupt-names: Must include the following entries:
+> >> +   - host
+> >> +   - smi
+> >> +   - pme
+> >> +
+> >> +Example:
+> >> +--------
+> >> +     usb@0,70090000 {
+> >> +             compatible =3D "nvidia,tegra124-xusb";
+> >> +             reg =3D <0x0 0x70090000 0x0 0x8000>,
+> >> +                   <0x0 0x70098000 0x0 0x1000>,
+> >> +                   <0x0 0x70099000 0x0 0x1000>;
+> >> +             reg-names =3D "xhci", "fpci", "ipfs";
+> >> +             interrupts =3D <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                          <GIC_SPI 40 IRQ_TYPE_LEVEL_HGIH>,
+> >> +                          <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
+> >> +             interrupt-names =3D "host", "smi", "pme";
+> >
+> > Are these resources used by both children?
+>=20
+> Only the FPCI register set is shared.
+>=20
+> > If not, place them into the children and ioremap() them from the
+> > associated child drivers.
+>=20
+> Ok.
+
+Great.
 
 --=20
 Lee Jones
