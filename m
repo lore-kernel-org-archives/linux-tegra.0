@@ -1,98 +1,219 @@
-From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH V7 4/9] mfd: Add binding document for NVIDIA Tegra XUSB
-Date: Wed, 29 Apr 2015 12:46:49 -0700
-Message-ID: <CAL1qeaEt9kGbcCfwqhVzwJxx9DvgOnjfU6C8MCH6t0vqwJK0WA@mail.gmail.com>
-References: <1430174242-29465-1-git-send-email-abrestic@chromium.org>
-	<1430174242-29465-5-git-send-email-abrestic@chromium.org>
-	<20150429092545.GR9169@x1>
-	<CAL1qeaFh5go_K0GnGXxU7KqjcgCm2kpUL5mVgGSYosPoXAXgpw@mail.gmail.com>
-	<20150429183429.GB9169@x1>
+From: Rhyland Klein <rklein@nvidia.com>
+Subject: Re: [PATCH v2 12/19] clk: tegra: pll: Add specialized logic for T210
+Date: Wed, 29 Apr 2015 17:42:48 -0400
+Message-ID: <55415058.1030306@nvidia.com>
+References: <1430328109-537-1-git-send-email-rklein@nvidia.com>	<1430328109-537-13-git-send-email-rklein@nvidia.com> <CAL1qeaEiKdFdhEfbWygFZcEioiGotd7=UDby9T7c_6djaDFxQA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150429183429.GB9169@x1>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAL1qeaEiKdFdhEfbWygFZcEioiGotd7=UDby9T7c_6djaDFxQA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Bresticker <abrestic@google.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Apr 29, 2015 at 11:34 AM, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> On Wed, 29 Apr 2015, Andrew Bresticker wrote:
->
->> Lee,
+On 4/29/2015 2:27 PM, Andrew Bresticker wrote:
+> Hi Rhyland,
+> 
+> On Wed, Apr 29, 2015 at 10:21 AM, Rhyland Klein <rklein@nvidia.com> wrote:
+>> On Tegra210 SoC's, the logic to enable several of the plls is different
+>> from previous generations. Therefore, add registeration functions specific
+>> to Tegra210 which will handle them appropriately.
 >>
->> On Wed, Apr 29, 2015 at 2:25 AM, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
->> > On Mon, 27 Apr 2015, Andrew Bresticker wrote:
->> >
->> >> Add a binding document for the XUSB host complex on NVIDIA Tegra124
->> >> and later SoCs.  The XUSB host complex includes a mailbox for
->> >> communication with the XUSB micro-controller and an xHCI host-controller.
->> >>
->> >> Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
->> >> Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
->> >> Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
->> >> Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
->> >> Cc: Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
->> >> Cc: Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
->> >> Cc: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
->> >> Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->> >> ---
->> >> New for v7.
->> >> ---
->> >>  .../bindings/mfd/nvidia,tegra124-xusb.txt          | 46 ++++++++++++++++++++++
->> >>  1 file changed, 46 insertions(+)
->> >>  create mode 100644 Documentation/devicetree/bindings/mfd/nvidia,tegra124-xusb.txt
->> >>
->> >> diff --git a/Documentation/devicetree/bindings/mfd/nvidia,tegra124-xusb.txt b/Documentation/devicetree/bindings/mfd/nvidia,tegra124-xusb.txt
->> >> new file mode 100644
->> >> index 0000000..6a46680
->> >> --- /dev/null
->> >> +++ b/Documentation/devicetree/bindings/mfd/nvidia,tegra124-xusb.txt
->> >> @@ -0,0 +1,46 @@
->> >> +NVIDIA Tegra XUSB host copmlex
->> >> +==============================
->> >> +
->> >> +The XUSB host complex on Tegra124 and later SoCs contains an xHCI host
->> >> +controller and a mailbox for communication with the XUSB micro-controller.
->> >> +
->> >> +Required properties:
->> >> +--------------------
->> >> + - compatible: For Tegra124, must contain "nvidia,tegra124-xusb".
->> >> +   Otherwise, must contain '"nvidia,<chip>-xusb", "nvidia,tegra124-xusb"'
->> >> +   where <chip> is tegra132.
->> >
->> > Okay.  Why?
->>
->> Why what?  This is the convention used for Tegra bindings and is also
->> documented in Documentation/devicetree/bindings/submitting-patches.txt.
->> See nvidia,tegra114-spi.txt and nvidia,tegra20-i2c.txt for other
->> examples of this.
->
-> It seems strange to me that you'd mention two specific chips in one
-> compatible string.  What's the purpose of that?
+>> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> 
+>> +#if defined(CONFIG_ARCH_TEGRA_210_SOC)
+>> +static int clk_plle_tegra210_enable(struct clk_hw *hw)
+>> +{
+>> +       struct tegra_clk_pll *pll = to_clk_pll(hw);
+>> +       struct tegra_clk_pll_freq_table sel;
+>> +       u32 val;
+>> +       int ret;
+>> +       unsigned long flags = 0;
+>> +       unsigned long input_rate = clk_get_rate(clk_get_parent(hw->clk));
+>> +
+>> +       if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
+>> +               return -EINVAL;
+>> +
+>> +       if (pll->lock)
+>> +               spin_lock_irqsave(pll->lock, flags);
+>> +
+>> +       val = pll_readl_base(pll);
+>> +       val &= ~BIT(29); /* Disable lock override */
+> 
+> The LOCK_OVERRIDE bit has also moved on Tegra210 - it's now bit 30.
 
-The Tegra maintainers can correct me if I'm wrong here, but the point
-is, I think, to future-proof the binding.  There are currently no
-differences between Tegra124 and Tegra132 that need to be accounted
-for in the driver, so the driver need only match against
-"nvidia,tegra124-xusb".  If a Tegra132-specific quirk comes about
-later all Tegra132 device-trees will also include the
-"nvidia,tegra132-*" compatible string, so we can simply update the
-driver without breaking DT backwards-compatibility.
+Yep, missed that one. Double checking all registers.
+> 
+>> +       pll_writel_base(val, pll);
+>> +
+>> +       val = pll_readl(pll->params->aux_reg, pll);
+>> +       val |= PLLE_AUX_ENABLE_SWCTL;
+>> +       val &= ~PLLE_AUX_SEQ_ENABLE;
+>> +       pll_writel(val, pll->params->aux_reg, pll);
+> 
+> I'm not sure this bit is necessary - it's not in the TRM and it's not
+> present in downstream kernels.
 
->> >> + - reg: Must contain register base and length for each register set listed
->> >> +   in reg-names.
->> >
->> > You've mentioned 2 of the cells, what about the remaining 2?
->>
->> The example given was for Tegra124, where there are two address cells
->> and two size cells.
->
-> I don't get that.  How does that work?
+It is in the version of the TRM I am looking at, and present in
+downstream kernels (at least the one I am looking at has it).
 
-Tegra124 has a physical address space of > 4GB because of LPAE, thus a
-single cell each for address and size is not sufficient.  The arm64
-Tegra SoCs will obviously also use two address and size cells.  Take a
-look at arch/arm/boot/dts/tegra124.dtsi.
+> 
+>> +       udelay(1);
+>> +
+>> +       val = pll_readl_misc(pll);
+>> +       val |= PLLE_MISC_LOCK_ENABLE;
+>> +       val |= PLLE_MISC_IDDQ_SW_CTRL;
+>> +       val &= ~PLLE_MISC_IDDQ_SW_VALUE;
+>> +       val |= PLLE_MISC_PLLE_PTS;
+>> +       val |= PLLE_MISC_VREG_BG_CTRL_MASK | PLLE_MISC_VREG_CTRL_MASK;
+>> +       pll_writel_misc(val, pll);
+>> +       udelay(5);
+>> +
+>> +       val = pll_readl(PLLE_SS_CTRL, pll);
+>> +       val |= PLLE_SS_DISABLE;
+>> +       pll_writel(val, PLLE_SS_CTRL, pll);
+>> +
+>> +       val = pll_readl_base(pll);
+>> +       val &= ~(divp_mask_shifted(pll) | divn_mask_shifted(pll) |
+>> +                divm_mask_shifted(pll));
+>> +       val &= ~(PLLE_BASE_DIVCML_MASK << PLLE_BASE_DIVCML_SHIFT);
+>> +       val |= sel.m << divm_shift(pll);
+>> +       val |= sel.n << divn_shift(pll);
+>> +       val |= sel.cpcon << PLLE_BASE_DIVCML_SHIFT;
+>> +       pll_writel_base(val, pll);
+>> +       udelay(1);
+>> +
+>> +       val = pll_readl_base(pll);
+>> +       val |= PLLE_BASE_ENABLE;
+>> +       pll_writel_base(val, pll);
+>> +
+>> +       ret = clk_pll_wait_for_lock(pll);
+>> +
+>> +       if (ret < 0)
+>> +               goto out;
+>> +
+>> +       val = pll_readl(PLLE_SS_CTRL, pll);
+>> +       val &= ~(PLLE_SS_CNTL_CENTER | PLLE_SS_CNTL_INVERT);
+>> +       val &= ~PLLE_SS_COEFFICIENTS_MASK;
+>> +       val |= PLLE_SS_COEFFICIENTS_VAL;
+>> +       pll_writel(val, PLLE_SS_CTRL, pll);
+>> +       val &= ~(PLLE_SS_CNTL_SSC_BYP | PLLE_SS_CNTL_BYPASS_SS);
+>> +       pll_writel(val, PLLE_SS_CTRL, pll);
+>> +       udelay(1);
+>> +       val &= ~PLLE_SS_CNTL_INTERP_RESET;
+>> +       pll_writel(val, PLLE_SS_CTRL, pll);
+>> +       udelay(1);
+>> +
+>> +       /* Enable hw control of xusb brick pll */
+>> +       val = pll_readl_misc(pll);
+>> +       val &= ~PLLE_MISC_IDDQ_SW_CTRL;
+>> +       pll_writel_misc(val, pll);
+>> +
+>> +       val = pll_readl(pll->params->aux_reg, pll);
+>> +       val |= (PLLE_AUX_USE_LOCKDET | PLLE_AUX_SEQ_START_STATE);
+> 
+> PLLE_AUX_SS_SEQ_INCLUDE (bit 31) should be set here instead of
+> PLLE_AUX_SEQ_START_STATE.
 
--Andrew
+Yep good catch.
+
+> 
+>> +       val &= ~(PLLE_AUX_ENABLE_SWCTL | PLLE_AUX_SS_SWCTL);
+>> +       pll_writel(val, pll->params->aux_reg, pll);
+>> +       udelay(1);
+>> +       val |= PLLE_AUX_SEQ_ENABLE;
+>> +       pll_writel(val, pll->params->aux_reg, pll);
+>> +
+>> +       val = pll_readl(XUSBIO_PLL_CFG0, pll);
+>> +       val |= (XUSBIO_PLL_CFG0_PADPLL_USE_LOCKDET |
+>> +               XUSBIO_PLL_CFG0_SEQ_START_STATE);
+>> +       val &= ~(XUSBIO_PLL_CFG0_CLK_ENABLE_SWCTL |
+>> +                XUSBIO_PLL_CFG0_PADPLL_RESET_SWCTL);
+>> +       pll_writel(val, XUSBIO_PLL_CFG0, pll);
+>> +       udelay(1);
+>> +       val |= XUSBIO_PLL_CFG0_SEQ_ENABLE;
+>> +       pll_writel(val, XUSBIO_PLL_CFG0, pll);
+>> +
+>> +       /* Enable hw control of SATA pll */
+>> +       val = pll_readl(SATA_PLL_CFG0, pll);
+>> +       val &= ~SATA_PLL_CFG0_PADPLL_RESET_SWCTL;
+>> +       val |= SATA_PLL_CFG0_PADPLL_USE_LOCKDET;
+>> +       val |= SATA_PLL_CFG0_SEQ_START_STATE;
+>> +       pll_writel(val, SATA_PLL_CFG0, pll);
+>> +
+>> +       udelay(1);
+>> +
+>> +       val = pll_readl(SATA_PLL_CFG0, pll);
+>> +       val |= SATA_PLL_CFG0_SEQ_ENABLE;
+>> +       pll_writel(val, SATA_PLL_CFG0, pll);
+> 
+> The XUSBIO and SATA PLL bits can be removed for Tegra210.  They must
+> now be done separately, as part of the UPHY enable sequence.
+
+Will do.
+
+> 
+>> +
+>> +out:
+>> +       if (pll->lock)
+>> +               spin_unlock_irqrestore(pll->lock, flags);
+>> +
+>> +       return ret;
+>> +}
+> 
+>> +struct clk *tegra_clk_register_plle_tegra210(const char *name,
+>> +                               const char *parent_name,
+>> +                               void __iomem *clk_base, unsigned long flags,
+>> +                               struct tegra_clk_pll_params *pll_params,
+>> +                               spinlock_t *lock)
+>> +{
+>> +       struct tegra_clk_pll *pll;
+>> +       struct clk *clk;
+>> +       u32 val, val_aux;
+>> +
+>> +       pll = _tegra_init_pll(clk_base, NULL, pll_params, lock);
+>> +       if (IS_ERR(pll))
+>> +               return ERR_CAST(pll);
+>> +
+>> +       /* ensure parent is set to pll_re_vco */
+> 
+> I think this is a typo - we're ensuring that the parent is set to pll_ref here.
+
+Yep.
+
+> 
+>> +       val = pll_readl_base(pll);
+>> +       val_aux = pll_readl(pll_params->aux_reg, pll);
+>> +
+>> +       if (val & PLLE_BASE_ENABLE) {
+>> +               if ((val_aux & PLLE_AUX_PLLRE_SEL) ||
+>> +                       (val_aux & PLLE_AUX_PLLP_SEL))
+>> +                       WARN(1, "pll_e enabled with unsupported parent %s\n",
+>> +                         (val_aux & PLLE_AUX_PLLP_SEL) ? "pllp_out0" :
+>> +                                       "pll_re_vco");
+>> +       } else {
+>> +               val_aux &= ~(PLLE_AUX_PLLRE_SEL | PLLE_AUX_PLLP_SEL);
+>> +               pll_writel(val_aux, pll_params->aux_reg, pll);
+>> +       }
+>> +
+>> +       clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
+>> +                                     &tegra_clk_plle_tegra210_ops);
+>> +       if (IS_ERR(clk))
+>> +               kfree(pll);
+>> +
+>> +       return clk;
+>> +}
+> 
+> -Andrew
+> 
+
+Thanks for the review. I'll double check the registers again and post v3
+tomorrow.
+
+-rhyland
+
+
+-- 
+nvpublic
