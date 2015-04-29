@@ -1,106 +1,72 @@
-From: Andrew Bresticker <abrestic@chromium.org>
-Subject: Re: [PATCH V7 4/9] mfd: Add binding document for NVIDIA Tegra XUSB
-Date: Wed, 29 Apr 2015 10:02:35 -0700
-Message-ID: <CAL1qeaFh5go_K0GnGXxU7KqjcgCm2kpUL5mVgGSYosPoXAXgpw@mail.gmail.com>
-References: <1430174242-29465-1-git-send-email-abrestic@chromium.org>
-	<1430174242-29465-5-git-send-email-abrestic@chromium.org>
-	<20150429092545.GR9169@x1>
+From: Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v2 00/19] Tegra210 Clock Support
+Date: Wed, 29 Apr 2015 13:21:30 -0400
+Message-ID: <1430328109-537-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150429092545.GR9169@x1>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Samuel Ortiz <sameo@linux.intel.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Lee,
+This patch series updates the tegra common clock driver and adds
+support for the Tegra210 clocks. The clocks in Tegra210 changed
+significantly in some ways from earlier generations, so to support
+them, we need to extend our base framework a bit and add some new
+features.
 
-On Wed, Apr 29, 2015 at 2:25 AM, Lee Jones <lee.jones@linaro.org> wrote:
-> On Mon, 27 Apr 2015, Andrew Bresticker wrote:
->
->> Add a binding document for the XUSB host complex on NVIDIA Tegra124
->> and later SoCs.  The XUSB host complex includes a mailbox for
->> communication with the XUSB micro-controller and an xHCI host-controller.
->>
->> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
->> Cc: Rob Herring <robh+dt@kernel.org>
->> Cc: Pawel Moll <pawel.moll@arm.com>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
->> Cc: Kumar Gala <galak@codeaurora.org>
->> Cc: Samuel Ortiz <sameo@linux.intel.com>
->> Cc: Lee Jones <lee.jones@linaro.org>
->> ---
->> New for v7.
->> ---
->>  .../bindings/mfd/nvidia,tegra124-xusb.txt          | 46 ++++++++++++++++++++++
->>  1 file changed, 46 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/mfd/nvidia,tegra124-xusb.txt
->>
->> diff --git a/Documentation/devicetree/bindings/mfd/nvidia,tegra124-xusb.txt b/Documentation/devicetree/bindings/mfd/nvidia,tegra124-xusb.txt
->> new file mode 100644
->> index 0000000..6a46680
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mfd/nvidia,tegra124-xusb.txt
->> @@ -0,0 +1,46 @@
->> +NVIDIA Tegra XUSB host copmlex
->> +==============================
->> +
->> +The XUSB host complex on Tegra124 and later SoCs contains an xHCI host
->> +controller and a mailbox for communication with the XUSB micro-controller.
->> +
->> +Required properties:
->> +--------------------
->> + - compatible: For Tegra124, must contain "nvidia,tegra124-xusb".
->> +   Otherwise, must contain '"nvidia,<chip>-xusb", "nvidia,tegra124-xusb"'
->> +   where <chip> is tegra132.
->
-> Okay.  Why?
+Some patches here also address issues found while adding features
+and other cleanup type work.
 
-Why what?  This is the convention used for Tegra bindings and is also
-documented in Documentation/devicetree/bindings/submitting-patches.txt.
-See nvidia,tegra114-spi.txt and nvidia,tegra20-i2c.txt for other
-examples of this.
+v2:
+  - Fixed some problems around plle, pllx dynamic ramping,
+    iddq/reset, and some incorrect register address. See
+    individual patches for more details differences.
 
->> + - reg: Must contain register base and length for each register set listed
->> +   in reg-names.
->
-> You've mentioned 2 of the cells, what about the remaining 2?
+Bill Huang (7):
+  clk: tegra: pll-params: change misc_reg count from 3 -> 6
+  clk: tegra: pll: Add logic for SS
+  clk: tegra: pll: Add code to handle if resets are supported by PLL
+  clk: tegra: pll: Adjust vco_min if SDM present
+  clk: tegra: pll: Add dyn_ramp callback
+  clk: tegra: pll: Add Set_default logic
+  clk: tegra: Add Super Gen5 Logic
 
-The example given was for Tegra124, where there are two address cells
-and two size cells.
+Rhyland Klein (12):
+  clk: tegra: Modify tegra_audio_clk_init to accept more plls
+  clk: tegra: periph: add new periph clks and muxes for Tegra210
+  clk: tegra: pll: add tegra_pll_wait_for_lock to clk header
+  clk: tegra: pll: simplify clk_enable_path
+  clk: tegra: pll: update warning msg
+  clk: tegra: pll: Don't unconditionally set LOCK flags
+  clk: tegra: pll: Add logic for handling SDM data
+  clk: tegra: pll: Add logic for out-of-table rates for T210
+  clk: tegra: pll: Add specialized logic for T210
+  clk: tegra: pll: Add support for PLLMB for T210
+  clk: tegra: pll: Fix _pll_ramp_calc_pll logic and
+    _calc_dynamic_ramp_rate
+  clk: tegra210: add support for Tegra210 clocks
 
->> + - reg-names: Must include the following entries:
->> +   - xhci
->> +   - fpci
->> +   - ipfs
->> + - interrupts: Must contain an interrupt for each entry in interrupt-names.
->> + - interrupt-names: Must include the following entries:
->> +   - host
->> +   - smi
->> +   - pme
->> +
->> +Example:
->> +--------
->> +     usb@0,70090000 {
->> +             compatible = "nvidia,tegra124-xusb";
->> +             reg = <0x0 0x70090000 0x0 0x8000>,
->> +                   <0x0 0x70098000 0x0 0x1000>,
->> +                   <0x0 0x70099000 0x0 0x1000>;
->> +             reg-names = "xhci", "fpci", "ipfs";
->> +             interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
->> +                          <GIC_SPI 40 IRQ_TYPE_LEVEL_HGIH>,
->> +                          <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
->> +             interrupt-names = "host", "smi", "pme";
->
-> Are these resources used by both children?
+ .../bindings/clock/nvidia,tegra210-car.txt         |   56 +
+ drivers/clk/tegra/Makefile                         |    2 +
+ drivers/clk/tegra/clk-id.h                         |   61 +-
+ drivers/clk/tegra/clk-pll.c                        |  685 ++++-
+ drivers/clk/tegra/clk-tegra-audio.c                |   25 +-
+ drivers/clk/tegra/clk-tegra-periph.c               |  257 +-
+ drivers/clk/tegra/clk-tegra-super-gen5.c           |  150 ++
+ drivers/clk/tegra/clk-tegra114.c                   |   30 +-
+ drivers/clk/tegra/clk-tegra124.c                   |   31 +-
+ drivers/clk/tegra/clk-tegra20.c                    |   18 +-
+ drivers/clk/tegra/clk-tegra210.c                   | 2729 ++++++++++++++++++++
+ drivers/clk/tegra/clk-tegra30.c                    |   31 +-
+ drivers/clk/tegra/clk.h                            |   90 +-
+ include/dt-bindings/clock/tegra210-car.h           |  401 +++
+ 14 files changed, 4423 insertions(+), 143 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra210-car.txt
+ create mode 100644 drivers/clk/tegra/clk-tegra-super-gen5.c
+ create mode 100644 drivers/clk/tegra/clk-tegra210.c
+ create mode 100644 include/dt-bindings/clock/tegra210-car.h
 
-Only the FPCI register set is shared.
-
-> If not, place them into the children and ioremap() them from the
-> associated child drivers.
-
-Ok.
-
--Andrew
+-- 
+1.7.9.5
