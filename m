@@ -1,238 +1,193 @@
-From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH V7 5/9] mfd: Add driver for NVIDIA Tegra XUSB
-Date: Wed, 29 Apr 2015 10:59:52 -0700
-Message-ID: <CAL1qeaHNVVzMFg5r5ghg3zJTbaYOSf5Ms+Af_U5fhKc+vfWMHg@mail.gmail.com>
-References: <1430174242-29465-1-git-send-email-abrestic@chromium.org>
-	<1430174242-29465-6-git-send-email-abrestic@chromium.org>
-	<20150429092348.GQ9169@x1>
+From: Andrew Bresticker <abrestic-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 12/19] clk: tegra: pll: Add specialized logic for T210
+Date: Wed, 29 Apr 2015 11:27:46 -0700
+Message-ID: <CAL1qeaEiKdFdhEfbWygFZcEioiGotd7=UDby9T7c_6djaDFxQA@mail.gmail.com>
+References: <1430328109-537-1-git-send-email-rklein@nvidia.com>
+	<1430328109-537-13-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150429092348.GQ9169@x1>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1430328109-537-13-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Lee,
+Hi Rhyland,
 
-On Wed, Apr 29, 2015 at 2:23 AM, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> On Mon, 27 Apr 2015, Andrew Bresticker wrote:
+On Wed, Apr 29, 2015 at 10:21 AM, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> On Tegra210 SoC's, the logic to enable several of the plls is different
+> from previous generations. Therefore, add registeration functions specific
+> to Tegra210 which will handle them appropriately.
 >
->> Add an MFD driver for the XUSB host complex found on NVIDIA Tegra124
->> and later SoCs.
->>
->> Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
->> Cc: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
->> Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
->> --- /dev/null
->> +++ b/drivers/mfd/tegra-xusb.c
+> +#if defined(CONFIG_ARCH_TEGRA_210_SOC)
+> +static int clk_plle_tegra210_enable(struct clk_hw *hw)
+> +{
+> +       struct tegra_clk_pll *pll = to_clk_pll(hw);
+> +       struct tegra_clk_pll_freq_table sel;
+> +       u32 val;
+> +       int ret;
+> +       unsigned long flags = 0;
+> +       unsigned long input_rate = clk_get_rate(clk_get_parent(hw->clk));
+> +
+> +       if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
+> +               return -EINVAL;
+> +
+> +       if (pll->lock)
+> +               spin_lock_irqsave(pll->lock, flags);
+> +
+> +       val = pll_readl_base(pll);
+> +       val &= ~BIT(29); /* Disable lock override */
 
->> +struct tegra_xusb_soc_data {
->> +     struct mfd_cell *devs;
->> +     unsigned int num_devs;
->> +};
->> +
->> +static struct resource tegra_xhci_resources[] = {
->> +     {
->> +             .name = "host",
->> +             .flags = IORESOURCE_IRQ,
->> +     },
->> +     {
->> +             .name = "xhci",
->> +             .flags = IORESOURCE_MEM,
->> +     },
->> +     {
->> +             .name = "ipfs",
->> +             .flags = IORESOURCE_MEM,
->> +     },
->> +};
->> +
->> +static struct resource tegra_xusb_mbox_resources[] = {
->> +     {
->> +             .name = "smi",
->> +             .flags = IORESOURCE_IRQ,
->> +     },
->> +};
->
-> DEFINE_RES_IRQ_NAMED()
->
->> +static struct mfd_cell tegra124_xusb_devs[] = {
->> +     {
->> +             .name = "tegra-xhci",
->> +             .of_compatible = "nvidia,tegra124-xhci",
->> +     },
->> +     {
->> +             .name = "tegra-xusb-mbox",
->> +             .of_compatible = "nvidia,tegra124-xusb-mbox",
->> +     },
->> +};
->> +
->> +static const struct tegra_xusb_soc_data tegra124_xusb_data = {
->> +     .devs = tegra124_xusb_devs,
->> +     .num_devs = ARRAY_SIZE(tegra124_xusb_devs),
->> +};
->> +
->> +static const struct of_device_id tegra_xusb_of_match[] = {
->> +     { .compatible = "nvidia,tegra124-xusb", .data = &tegra124_xusb_data },
->
-> Yuk!  Why are you mixing platform data and DT in this way?
->
-> Why can't you just stick all of this in DT?
+The LOCK_OVERRIDE bit has also moved on Tegra210 - it's now bit 30.
 
-I assume you mean the resources?  The compatible strings will at least
-need to be SoC-specific since they will change from SoC to SoC.
+> +       pll_writel_base(val, pll);
+> +
+> +       val = pll_readl(pll->params->aux_reg, pll);
+> +       val |= PLLE_AUX_ENABLE_SWCTL;
+> +       val &= ~PLLE_AUX_SEQ_ENABLE;
+> +       pll_writel(val, pll->params->aux_reg, pll);
 
->> +     {},
->> +};
->> +
->> +MODULE_DEVICE_TABLE(of, tegra_xusb_of_match);
->> +static struct regmap_config tegra_fpci_regmap_config = {
->> +     .reg_bits = 32,
->> +     .val_bits = 32,
->> +     .reg_stride = 4,
->> +};
->> +
->> +static int tegra_xusb_probe(struct platform_device *pdev)
->> +{
->> +     const struct tegra_xusb_soc_data *soc;
->> +     const struct of_device_id *match;
->> +     struct tegra_xusb *xusb;
->> +     struct resource *res;
->> +     void __iomem *fpci_base;
->> +     int irq, ret;
->> +
->> +     xusb = devm_kzalloc(&pdev->dev, sizeof(*xusb), GFP_KERNEL);
->> +     if (!xusb)
->> +             return -ENOMEM;
->> +     platform_set_drvdata(pdev, xusb);
->> +
->> +     match = of_match_node(tegra_xusb_of_match, pdev->dev.of_node);
->> +     soc = match->data;
->> +
->> +     irq = platform_get_irq_byname(pdev, "host");
->> +     if (irq < 0)
->> +             return irq;
->> +     tegra_xhci_resources[0].start = irq;
->> +     tegra_xhci_resources[0].end = irq;
->> +
->> +     res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "xhci");
->> +     if (!res)
->> +             return -ENODEV;
->> +     tegra_xhci_resources[1].start = res->start;
->> +     tegra_xhci_resources[1].end = res->end;
->> +
->> +     res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ipfs");
->> +     if (!res)
->> +             return -ENODEV;
->> +     tegra_xhci_resources[2].start = res->start;
->> +     tegra_xhci_resources[2].end = res->end;
->> +
->> +     soc->devs[0].resources = tegra_xhci_resources;
->> +     soc->devs[0].num_resources = ARRAY_SIZE(tegra_xhci_resources);
->> +
->> +     irq = platform_get_irq_byname(pdev, "smi");
->> +     if (irq < 0)
->> +             return irq;
->> +     tegra_xusb_mbox_resources[0].start = irq;
->> +     tegra_xusb_mbox_resources[0].end = irq;
->> +
->> +     soc->devs[1].resources = tegra_xusb_mbox_resources;
->> +     soc->devs[1].num_resources = ARRAY_SIZE(tegra_xusb_mbox_resources);
->> +
->> +     res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "fpci");
->> +     fpci_base = devm_ioremap_resource(&pdev->dev, res);
->> +     if (IS_ERR(fpci_base))
->> +             return PTR_ERR(fpci_base);
->
-> This stuff is not good.
->
-> Either let MFD handle it with mfd_cells or stick all of this stuff in
-> DT and parse it from the child devices.
+I'm not sure this bit is necessary - it's not in the TRM and it's not
+present in downstream kernels.
 
-I'm not sure what exactly you mean by "let MFD handle it with
-mfd_cells" here - is that not what I'm doing now?  Anyway I think that
-leaves two ways of representing this in DT.
+> +       udelay(1);
+> +
+> +       val = pll_readl_misc(pll);
+> +       val |= PLLE_MISC_LOCK_ENABLE;
+> +       val |= PLLE_MISC_IDDQ_SW_CTRL;
+> +       val &= ~PLLE_MISC_IDDQ_SW_VALUE;
+> +       val |= PLLE_MISC_PLLE_PTS;
+> +       val |= PLLE_MISC_VREG_BG_CTRL_MASK | PLLE_MISC_VREG_CTRL_MASK;
+> +       pll_writel_misc(val, pll);
+> +       udelay(5);
+> +
+> +       val = pll_readl(PLLE_SS_CTRL, pll);
+> +       val |= PLLE_SS_DISABLE;
+> +       pll_writel(val, PLLE_SS_CTRL, pll);
+> +
+> +       val = pll_readl_base(pll);
+> +       val &= ~(divp_mask_shifted(pll) | divn_mask_shifted(pll) |
+> +                divm_mask_shifted(pll));
+> +       val &= ~(PLLE_BASE_DIVCML_MASK << PLLE_BASE_DIVCML_SHIFT);
+> +       val |= sel.m << divm_shift(pll);
+> +       val |= sel.n << divn_shift(pll);
+> +       val |= sel.cpcon << PLLE_BASE_DIVCML_SHIFT;
+> +       pll_writel_base(val, pll);
+> +       udelay(1);
+> +
+> +       val = pll_readl_base(pll);
+> +       val |= PLLE_BASE_ENABLE;
+> +       pll_writel_base(val, pll);
+> +
+> +       ret = clk_pll_wait_for_lock(pll);
+> +
+> +       if (ret < 0)
+> +               goto out;
+> +
+> +       val = pll_readl(PLLE_SS_CTRL, pll);
+> +       val &= ~(PLLE_SS_CNTL_CENTER | PLLE_SS_CNTL_INVERT);
+> +       val &= ~PLLE_SS_COEFFICIENTS_MASK;
+> +       val |= PLLE_SS_COEFFICIENTS_VAL;
+> +       pll_writel(val, PLLE_SS_CTRL, pll);
+> +       val &= ~(PLLE_SS_CNTL_SSC_BYP | PLLE_SS_CNTL_BYPASS_SS);
+> +       pll_writel(val, PLLE_SS_CTRL, pll);
+> +       udelay(1);
+> +       val &= ~PLLE_SS_CNTL_INTERP_RESET;
+> +       pll_writel(val, PLLE_SS_CTRL, pll);
+> +       udelay(1);
+> +
+> +       /* Enable hw control of xusb brick pll */
+> +       val = pll_readl_misc(pll);
+> +       val &= ~PLLE_MISC_IDDQ_SW_CTRL;
+> +       pll_writel_misc(val, pll);
+> +
+> +       val = pll_readl(pll->params->aux_reg, pll);
+> +       val |= (PLLE_AUX_USE_LOCKDET | PLLE_AUX_SEQ_START_STATE);
 
-Either have the MFD take a single IOMEM resource and divide it up
-statically within the driver:
+PLLE_AUX_SS_SEQ_INCLUDE (bit 31) should be set here instead of
+PLLE_AUX_SEQ_START_STATE.
 
-usb@0,70090000 {
-        compatible = "nvidia,tegra124-xusb";
-        reg = <0x0 0x70090000 0x0 0xa000>;
+> +       val &= ~(PLLE_AUX_ENABLE_SWCTL | PLLE_AUX_SS_SWCTL);
+> +       pll_writel(val, pll->params->aux_reg, pll);
+> +       udelay(1);
+> +       val |= PLLE_AUX_SEQ_ENABLE;
+> +       pll_writel(val, pll->params->aux_reg, pll);
+> +
+> +       val = pll_readl(XUSBIO_PLL_CFG0, pll);
+> +       val |= (XUSBIO_PLL_CFG0_PADPLL_USE_LOCKDET |
+> +               XUSBIO_PLL_CFG0_SEQ_START_STATE);
+> +       val &= ~(XUSBIO_PLL_CFG0_CLK_ENABLE_SWCTL |
+> +                XUSBIO_PLL_CFG0_PADPLL_RESET_SWCTL);
+> +       pll_writel(val, XUSBIO_PLL_CFG0, pll);
+> +       udelay(1);
+> +       val |= XUSBIO_PLL_CFG0_SEQ_ENABLE;
+> +       pll_writel(val, XUSBIO_PLL_CFG0, pll);
+> +
+> +       /* Enable hw control of SATA pll */
+> +       val = pll_readl(SATA_PLL_CFG0, pll);
+> +       val &= ~SATA_PLL_CFG0_PADPLL_RESET_SWCTL;
+> +       val |= SATA_PLL_CFG0_PADPLL_USE_LOCKDET;
+> +       val |= SATA_PLL_CFG0_SEQ_START_STATE;
+> +       pll_writel(val, SATA_PLL_CFG0, pll);
+> +
+> +       udelay(1);
+> +
+> +       val = pll_readl(SATA_PLL_CFG0, pll);
+> +       val |= SATA_PLL_CFG0_SEQ_ENABLE;
+> +       pll_writel(val, SATA_PLL_CFG0, pll);
 
-        usb-host {
-                compatible = "nvidia,tegra124-xhci";
-                interrupts = <...>;
-                ...
-        }:
+The XUSBIO and SATA PLL bits can be removed for Tegra210.  They must
+now be done separately, as part of the UPHY enable sequence.
 
-        mailbox {
-                compatible = "nvidia,tegra124-xusb-mbox";
-                interrupts = <...>;
-                ...
-        };
-};
+> +
+> +out:
+> +       if (pll->lock)
+> +               spin_unlock_irqrestore(pll->lock, flags);
+> +
+> +       return ret;
+> +}
 
-... or have the MFD take only the shared FPCI resource and have the
-sub-devices parse the rest from DT:
+> +struct clk *tegra_clk_register_plle_tegra210(const char *name,
+> +                               const char *parent_name,
+> +                               void __iomem *clk_base, unsigned long flags,
+> +                               struct tegra_clk_pll_params *pll_params,
+> +                               spinlock_t *lock)
+> +{
+> +       struct tegra_clk_pll *pll;
+> +       struct clk *clk;
+> +       u32 val, val_aux;
+> +
+> +       pll = _tegra_init_pll(clk_base, NULL, pll_params, lock);
+> +       if (IS_ERR(pll))
+> +               return ERR_CAST(pll);
+> +
+> +       /* ensure parent is set to pll_re_vco */
 
-usb@0,70098000 {
-        compatible = "nvidia,tegra124-xusb";
-        reg = <0x0 0x70098000 0x0 0x1000>;
-        ranges;
+I think this is a typo - we're ensuring that the parent is set to pll_ref here.
 
-        usb-host@0,70090000 {
-                compatible = "nvidia,tegra124-xhci";
-                reg = <0x0 0x70090000 0x0 0x8000>,
-                        <0x0 0x70099000 0x0 0x1000>;
-                interrupts = <...>;
-                ...
-        }:
-
-        mailbox {
-                compatible = "nvidia,tegra124-xusb-mbox";
-                interrupts = <...>;
-                ...
-        };
-};
-
-I don't have a strong preference here, but I think the former more
-accurately represents the resource hierarchy.  Since Thierry requested
-the use of an MFD, I'd like him to weigh in on this - Thierry?
-
->> +     tegra_fpci_regmap_config.max_register = res->end - res->start - 3;
->> +     xusb->fpci_regs = devm_regmap_init_mmio(&pdev->dev, fpci_base,
->> +                                             &tegra_fpci_regmap_config);
->> +     if (IS_ERR(xusb->fpci_regs)) {
->> +             ret = PTR_ERR(xusb->fpci_regs);
->> +             dev_err(&pdev->dev, "Failed to init regmap: %d\n", ret);
->> +             return ret;
->> +     }
->> +
->> +     ret = mfd_add_devices(&pdev->dev, -1, soc->devs, soc->num_devs,
->> +                           NULL, 0, NULL);
->> +     if (ret) {
->> +             dev_err(&pdev->dev, "Failed to add MFD devices: %d\n", ret);
->> +             return ret;
->> +     }
->> +
->> +     return 0;
->> +}
-
->> --- /dev/null
->> +++ b/include/soc/tegra/xusb.h
-
->> +struct tegra_xusb {
->> +     struct regmap *fpci_regs;
->
-> Are you going to add to this?
-
-No, I don't have any plans to add to this struct.
+> +       val = pll_readl_base(pll);
+> +       val_aux = pll_readl(pll_params->aux_reg, pll);
+> +
+> +       if (val & PLLE_BASE_ENABLE) {
+> +               if ((val_aux & PLLE_AUX_PLLRE_SEL) ||
+> +                       (val_aux & PLLE_AUX_PLLP_SEL))
+> +                       WARN(1, "pll_e enabled with unsupported parent %s\n",
+> +                         (val_aux & PLLE_AUX_PLLP_SEL) ? "pllp_out0" :
+> +                                       "pll_re_vco");
+> +       } else {
+> +               val_aux &= ~(PLLE_AUX_PLLRE_SEL | PLLE_AUX_PLLP_SEL);
+> +               pll_writel(val_aux, pll_params->aux_reg, pll);
+> +       }
+> +
+> +       clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
+> +                                     &tegra_clk_plle_tegra210_ops);
+> +       if (IS_ERR(clk))
+> +               kfree(pll);
+> +
+> +       return clk;
+> +}
 
 -Andrew
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
