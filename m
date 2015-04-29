@@ -1,48 +1,238 @@
-From: Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v2 06/19] clk: tegra: pll-params: change misc_reg count from 3 -> 6
-Date: Wed, 29 Apr 2015 13:21:36 -0400
-Message-ID: <1430328109-537-7-git-send-email-rklein@nvidia.com>
-References: <1430328109-537-1-git-send-email-rklein@nvidia.com>
+From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH V7 5/9] mfd: Add driver for NVIDIA Tegra XUSB
+Date: Wed, 29 Apr 2015 10:59:52 -0700
+Message-ID: <CAL1qeaHNVVzMFg5r5ghg3zJTbaYOSf5Ms+Af_U5fhKc+vfWMHg@mail.gmail.com>
+References: <1430174242-29465-1-git-send-email-abrestic@chromium.org>
+	<1430174242-29465-6-git-send-email-abrestic@chromium.org>
+	<20150429092348.GQ9169@x1>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1430328109-537-1-git-send-email-rklein@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>, Bill Huang <bilhuang@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150429092348.GQ9169@x1>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Bill Huang <bilhuang@nvidia.com>
+Lee,
 
-New SoC's may have more then 3 MISC registers, so bump up the
-array size and use a #define to be more informative about the value.
+On Wed, Apr 29, 2015 at 2:23 AM, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> On Mon, 27 Apr 2015, Andrew Bresticker wrote:
+>
+>> Add an MFD driver for the XUSB host complex found on NVIDIA Tegra124
+>> and later SoCs.
+>>
+>> Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>> Cc: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+>> Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
-Signed-off-by: Bill Huang <bilhuang@nvidia.com>
----
- drivers/clk/tegra/clk.h |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+>> --- /dev/null
+>> +++ b/drivers/mfd/tegra-xusb.c
 
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 4ea8b5b089cd..03babba1c3b4 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -156,6 +156,8 @@ struct div_nmp {
- 	u8		override_divp_shift;
- };
- 
-+#define MAX_PLL_MISC_REG_COUNT	6
-+
- /**
-  * struct clk_pll_params - PLL parameters
-  *
-@@ -213,7 +215,7 @@ struct tegra_clk_pll_params {
- 	u32		iddq_bit_idx;
- 	u32		aux_reg;
- 	u32		dyn_ramp_reg;
--	u32		ext_misc_reg[3];
-+	u32		ext_misc_reg[MAX_PLL_MISC_REG_COUNT];
- 	u32		pmc_divnm_reg;
- 	u32		pmc_divp_reg;
- 	u32		flags;
--- 
-1.7.9.5
+>> +struct tegra_xusb_soc_data {
+>> +     struct mfd_cell *devs;
+>> +     unsigned int num_devs;
+>> +};
+>> +
+>> +static struct resource tegra_xhci_resources[] = {
+>> +     {
+>> +             .name = "host",
+>> +             .flags = IORESOURCE_IRQ,
+>> +     },
+>> +     {
+>> +             .name = "xhci",
+>> +             .flags = IORESOURCE_MEM,
+>> +     },
+>> +     {
+>> +             .name = "ipfs",
+>> +             .flags = IORESOURCE_MEM,
+>> +     },
+>> +};
+>> +
+>> +static struct resource tegra_xusb_mbox_resources[] = {
+>> +     {
+>> +             .name = "smi",
+>> +             .flags = IORESOURCE_IRQ,
+>> +     },
+>> +};
+>
+> DEFINE_RES_IRQ_NAMED()
+>
+>> +static struct mfd_cell tegra124_xusb_devs[] = {
+>> +     {
+>> +             .name = "tegra-xhci",
+>> +             .of_compatible = "nvidia,tegra124-xhci",
+>> +     },
+>> +     {
+>> +             .name = "tegra-xusb-mbox",
+>> +             .of_compatible = "nvidia,tegra124-xusb-mbox",
+>> +     },
+>> +};
+>> +
+>> +static const struct tegra_xusb_soc_data tegra124_xusb_data = {
+>> +     .devs = tegra124_xusb_devs,
+>> +     .num_devs = ARRAY_SIZE(tegra124_xusb_devs),
+>> +};
+>> +
+>> +static const struct of_device_id tegra_xusb_of_match[] = {
+>> +     { .compatible = "nvidia,tegra124-xusb", .data = &tegra124_xusb_data },
+>
+> Yuk!  Why are you mixing platform data and DT in this way?
+>
+> Why can't you just stick all of this in DT?
+
+I assume you mean the resources?  The compatible strings will at least
+need to be SoC-specific since they will change from SoC to SoC.
+
+>> +     {},
+>> +};
+>> +
+>> +MODULE_DEVICE_TABLE(of, tegra_xusb_of_match);
+>> +static struct regmap_config tegra_fpci_regmap_config = {
+>> +     .reg_bits = 32,
+>> +     .val_bits = 32,
+>> +     .reg_stride = 4,
+>> +};
+>> +
+>> +static int tegra_xusb_probe(struct platform_device *pdev)
+>> +{
+>> +     const struct tegra_xusb_soc_data *soc;
+>> +     const struct of_device_id *match;
+>> +     struct tegra_xusb *xusb;
+>> +     struct resource *res;
+>> +     void __iomem *fpci_base;
+>> +     int irq, ret;
+>> +
+>> +     xusb = devm_kzalloc(&pdev->dev, sizeof(*xusb), GFP_KERNEL);
+>> +     if (!xusb)
+>> +             return -ENOMEM;
+>> +     platform_set_drvdata(pdev, xusb);
+>> +
+>> +     match = of_match_node(tegra_xusb_of_match, pdev->dev.of_node);
+>> +     soc = match->data;
+>> +
+>> +     irq = platform_get_irq_byname(pdev, "host");
+>> +     if (irq < 0)
+>> +             return irq;
+>> +     tegra_xhci_resources[0].start = irq;
+>> +     tegra_xhci_resources[0].end = irq;
+>> +
+>> +     res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "xhci");
+>> +     if (!res)
+>> +             return -ENODEV;
+>> +     tegra_xhci_resources[1].start = res->start;
+>> +     tegra_xhci_resources[1].end = res->end;
+>> +
+>> +     res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ipfs");
+>> +     if (!res)
+>> +             return -ENODEV;
+>> +     tegra_xhci_resources[2].start = res->start;
+>> +     tegra_xhci_resources[2].end = res->end;
+>> +
+>> +     soc->devs[0].resources = tegra_xhci_resources;
+>> +     soc->devs[0].num_resources = ARRAY_SIZE(tegra_xhci_resources);
+>> +
+>> +     irq = platform_get_irq_byname(pdev, "smi");
+>> +     if (irq < 0)
+>> +             return irq;
+>> +     tegra_xusb_mbox_resources[0].start = irq;
+>> +     tegra_xusb_mbox_resources[0].end = irq;
+>> +
+>> +     soc->devs[1].resources = tegra_xusb_mbox_resources;
+>> +     soc->devs[1].num_resources = ARRAY_SIZE(tegra_xusb_mbox_resources);
+>> +
+>> +     res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "fpci");
+>> +     fpci_base = devm_ioremap_resource(&pdev->dev, res);
+>> +     if (IS_ERR(fpci_base))
+>> +             return PTR_ERR(fpci_base);
+>
+> This stuff is not good.
+>
+> Either let MFD handle it with mfd_cells or stick all of this stuff in
+> DT and parse it from the child devices.
+
+I'm not sure what exactly you mean by "let MFD handle it with
+mfd_cells" here - is that not what I'm doing now?  Anyway I think that
+leaves two ways of representing this in DT.
+
+Either have the MFD take a single IOMEM resource and divide it up
+statically within the driver:
+
+usb@0,70090000 {
+        compatible = "nvidia,tegra124-xusb";
+        reg = <0x0 0x70090000 0x0 0xa000>;
+
+        usb-host {
+                compatible = "nvidia,tegra124-xhci";
+                interrupts = <...>;
+                ...
+        }:
+
+        mailbox {
+                compatible = "nvidia,tegra124-xusb-mbox";
+                interrupts = <...>;
+                ...
+        };
+};
+
+... or have the MFD take only the shared FPCI resource and have the
+sub-devices parse the rest from DT:
+
+usb@0,70098000 {
+        compatible = "nvidia,tegra124-xusb";
+        reg = <0x0 0x70098000 0x0 0x1000>;
+        ranges;
+
+        usb-host@0,70090000 {
+                compatible = "nvidia,tegra124-xhci";
+                reg = <0x0 0x70090000 0x0 0x8000>,
+                        <0x0 0x70099000 0x0 0x1000>;
+                interrupts = <...>;
+                ...
+        }:
+
+        mailbox {
+                compatible = "nvidia,tegra124-xusb-mbox";
+                interrupts = <...>;
+                ...
+        };
+};
+
+I don't have a strong preference here, but I think the former more
+accurately represents the resource hierarchy.  Since Thierry requested
+the use of an MFD, I'd like him to weigh in on this - Thierry?
+
+>> +     tegra_fpci_regmap_config.max_register = res->end - res->start - 3;
+>> +     xusb->fpci_regs = devm_regmap_init_mmio(&pdev->dev, fpci_base,
+>> +                                             &tegra_fpci_regmap_config);
+>> +     if (IS_ERR(xusb->fpci_regs)) {
+>> +             ret = PTR_ERR(xusb->fpci_regs);
+>> +             dev_err(&pdev->dev, "Failed to init regmap: %d\n", ret);
+>> +             return ret;
+>> +     }
+>> +
+>> +     ret = mfd_add_devices(&pdev->dev, -1, soc->devs, soc->num_devs,
+>> +                           NULL, 0, NULL);
+>> +     if (ret) {
+>> +             dev_err(&pdev->dev, "Failed to add MFD devices: %d\n", ret);
+>> +             return ret;
+>> +     }
+>> +
+>> +     return 0;
+>> +}
+
+>> --- /dev/null
+>> +++ b/include/soc/tegra/xusb.h
+
+>> +struct tegra_xusb {
+>> +     struct regmap *fpci_regs;
+>
+> Are you going to add to this?
+
+No, I don't have any plans to add to this struct.
+
+-Andrew
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
