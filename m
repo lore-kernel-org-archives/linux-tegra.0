@@ -1,181 +1,115 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 16/19] clk: tegra: pll: Add Set_default logic
-Date: Thu, 30 Apr 2015 11:31:22 -0400
-Message-ID: <55424ACA.9010406@nvidia.com>
-References: <1430328109-537-1-git-send-email-rklein@nvidia.com> <1430328109-537-17-git-send-email-rklein@nvidia.com> <20150430101225.GU3097@tbergstrom-lnx.Nvidia.com>
+From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH V7 4/9] mfd: Add binding document for NVIDIA Tegra XUSB
+Date: Thu, 30 Apr 2015 09:28:42 -0700
+Message-ID: <CAL1qeaEYuWE6-ZbksGOhgjBbWkhkuo-k4c=6o4A2L67PrjYp2w@mail.gmail.com>
+References: <1430174242-29465-1-git-send-email-abrestic@chromium.org>
+	<1430174242-29465-5-git-send-email-abrestic@chromium.org>
+	<20150429092545.GR9169@x1>
+	<CAL1qeaFh5go_K0GnGXxU7KqjcgCm2kpUL5mVgGSYosPoXAXgpw@mail.gmail.com>
+	<20150429183429.GB9169@x1>
+	<CAL1qeaEt9kGbcCfwqhVzwJxx9DvgOnjfU6C8MCH6t0vqwJK0WA@mail.gmail.com>
+	<20150430100600.GC1815@x1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150430101225.GU3097-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+In-Reply-To: <20150430100600.GC1815@x1>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 4/30/2015 6:12 AM, Peter De Schrijver wrote:
-> On Wed, Apr 29, 2015 at 01:21:46PM -0400, Rhyland Klein wrote:
->> From: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Thu, Apr 30, 2015 at 3:06 AM, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> On Wed, 29 Apr 2015, Andrew Bresticker wrote:
+>
+>> On Wed, Apr 29, 2015 at 11:34 AM, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+>> > On Wed, 29 Apr 2015, Andrew Bresticker wrote:
+>> >
+>> >> Lee,
+>> >>
+>> >> On Wed, Apr 29, 2015 at 2:25 AM, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+>> >> > On Mon, 27 Apr 2015, Andrew Bresticker wrote:
+>> >> >
+>> >> >> Add a binding document for the XUSB host complex on NVIDIA Tegra124
+>> >> >> and later SoCs.  The XUSB host complex includes a mailbox for
+>> >> >> communication with the XUSB micro-controller and an xHCI host-controller.
+>> >> >>
+>> >> >> Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>> >> >> Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+>> >> >> Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
+>> >> >> Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+>> >> >> Cc: Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
+>> >> >> Cc: Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+>> >> >> Cc: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+>> >> >> Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>> >> >> ---
+>> >> >> New for v7.
+>> >> >> ---
+>> >> >>  .../bindings/mfd/nvidia,tegra124-xusb.txt          | 46 ++++++++++++++++++++++
+>> >> >>  1 file changed, 46 insertions(+)
+>> >> >>  create mode 100644 Documentation/devicetree/bindings/mfd/nvidia,tegra124-xusb.txt
+>> >> >>
+>> >> >> diff --git a/Documentation/devicetree/bindings/mfd/nvidia,tegra124-xusb.txt b/Documentation/devicetree/bindings/mfd/nvidia,tegra124-xusb.txt
+>> >> >> new file mode 100644
+>> >> >> index 0000000..6a46680
+>> >> >> --- /dev/null
+>> >> >> +++ b/Documentation/devicetree/bindings/mfd/nvidia,tegra124-xusb.txt
+>> >> >> @@ -0,0 +1,46 @@
+>> >> >> +NVIDIA Tegra XUSB host copmlex
+>> >> >> +==============================
+>> >> >> +
+>> >> >> +The XUSB host complex on Tegra124 and later SoCs contains an xHCI host
+>> >> >> +controller and a mailbox for communication with the XUSB micro-controller.
+>> >> >> +
+>> >> >> +Required properties:
+>> >> >> +--------------------
+>> >> >> + - compatible: For Tegra124, must contain "nvidia,tegra124-xusb".
+>> >> >> +   Otherwise, must contain '"nvidia,<chip>-xusb", "nvidia,tegra124-xusb"'
+>> >> >> +   where <chip> is tegra132.
+>> >> >
+>> >> > Okay.  Why?
+>> >>
+>> >> Why what?  This is the convention used for Tegra bindings and is also
+>> >> documented in Documentation/devicetree/bindings/submitting-patches.txt.
+>> >> See nvidia,tegra114-spi.txt and nvidia,tegra20-i2c.txt for other
+>> >> examples of this.
+>> >
+>> > It seems strange to me that you'd mention two specific chips in one
+>> > compatible string.  What's the purpose of that?
 >>
->> Add logic which (if specified for a pll) can verify that a PLL is set
->> to the proper default value and if not can set it. This can be
->> specified per PLL as each will have different default values.
+>> The Tegra maintainers can correct me if I'm wrong here, but the point
+>> is, I think, to future-proof the binding.  There are currently no
+>> differences between Tegra124 and Tegra132 that need to be accounted
+>> for in the driver, so the driver need only match against
+>> "nvidia,tegra124-xusb".  If a Tegra132-specific quirk comes about
+>> later all Tegra132 device-trees will also include the
+>> "nvidia,tegra132-*" compatible string, so we can simply update the
+>> driver without breaking DT backwards-compatibility.
+>
+> I still don't understand why you need to use them both at the same
+> time.  Why don't you use nvidia,tegra124-* for Tegra124 and
+> nvidia,tegra132-* for Tegra132?
+
+The XUSB block on Tegra132 is identical to the one on Tegra124, so the
+Tegra132 XUSB is 'compatible' with the Tegra124 XUSB.  Again, I'm just
+following the convention the other Tegra bindings are using...
+
+>> >> >> + - reg: Must contain register base and length for each register set listed
+>> >> >> +   in reg-names.
+>> >> >
+>> >> > You've mentioned 2 of the cells, what about the remaining 2?
+>> >>
+>> >> The example given was for Tegra124, where there are two address cells
+>> >> and two size cells.
+>> >
+>> > I don't get that.  How does that work?
 >>
-> 
-> Why can't we just set the default values at init time?
+>> Tegra124 has a physical address space of > 4GB because of LPAE, thus a
+>> single cell each for address and size is not sufficient.  The arm64
+>> Tegra SoCs will obviously also use two address and size cells.  Take a
+>> look at arch/arm/boot/dts/tegra124.dtsi.
+>
+> Okay, so these get shifted and &'ed into posstible 64bit addresses?
 
-Sorry, I did some investigation into this and wrote up a nice response
-... and forgot to hit send ...
+Yup.
 
-The reason this can't be run only once at init time is the following. In
-reality, we want to have the defined default values written as early as
-possible. Idealy, the bootloader could write these, so the kernel need
-only check, see they are right, and not touch them. However, since we
-can't rely on the bootloader to do so, the kernel needs the support to
-be able to write these default values. At init time, some pll's will be
-enabled (from bootloader) and because they are enabled (and the rest of
-the clk framework isn't done being setup yet) we can't disable them to
-write the full register values. Therefore, the set_defaults logic uses a
-2-pass system.
-
-first pass: Try to set defaults at init/registration time. If pll is
-disabled, this works fine. If it is enabled, then we update a subset of
-the register as a "best effort" setting of the defaults.
-
-second pass: Should only run the first time we go through set_rate for a
-pll. If the first pass already wrote default value, then it skips this
-step. Otherwise it will go in, once the pll is disabled in the set_rate
-path, and write the full register default.
-
-This is required because some registers need to be reset to the default
-values we have to ensure locking works correctly. Does that make sense?
-
--rhyland
-
-> 
->> Signed-off-by: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->> v2:
->>   - Remove MACRO for PLL_MISC_CHECK_DEFAULT as suggested, and instead
->>     the tegra210 driver will include an inline version of this function.
->>
->>  drivers/clk/tegra/clk-pll.c |   46 ++++++++++++++++++++++++++++++++-----------
->>  drivers/clk/tegra/clk.h     |    2 ++
->>  2 files changed, 37 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
->> index 00f0e621533a..28a2376cd8a7 100644
->> --- a/drivers/clk/tegra/clk-pll.c
->> +++ b/drivers/clk/tegra/clk-pll.c
->> @@ -658,15 +658,28 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
->>  			unsigned long rate)
->>  {
->>  	struct tegra_clk_pll *pll = to_clk_pll(hw);
->> +	struct tegra_clk_pll_freq_table old_cfg;
->>  	int state, ret = 0;
->>  
->>  	state = clk_pll_is_enabled(hw);
->>  
->> +	_get_pll_mnp(pll, &old_cfg);
->> +
->> +	if (state && pll->params->defaults_set && pll->params->dyn_ramp &&
->> +			(cfg->m == old_cfg.m) && (cfg->p == old_cfg.p)) {
->> +		ret = pll->params->dyn_ramp(pll, cfg);
->> +		if (!ret)
->> +			return 0;
->> +	}
->> +
->>  	if (state) {
->>  		pll_clk_stop_ss(pll);
->>  		_clk_pll_disable(hw);
->>  	}
->>  
->> +	if (!pll->params->defaults_set && pll->params->set_defaults)
->> +		pll->params->set_defaults(pll);
->> +
->>  	_update_pll_mnp(pll, cfg);
->>  
->>  	if (pll->params->flags & TEGRA_PLL_HAS_CPCON)
->> @@ -1526,6 +1539,9 @@ static struct clk *_tegra_clk_register_pll(struct tegra_clk_pll *pll,
->>  	if (!pll->params->calc_rate)
->>  		pll->params->calc_rate = _calc_rate;
->>  
->> +	if (pll->params->set_defaults)
->> +		pll->params->set_defaults(pll);
->> +
->>  	/* Data in .init is copied by clk_register(), so stack variable OK */
->>  	pll->hw.init = &init;
->>  
->> @@ -1644,7 +1660,6 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
->>  	struct tegra_clk_pll *pll;
->>  	struct clk *clk, *parent;
->>  	unsigned long parent_rate;
->> -	int err;
->>  	u32 val, val_iddq;
->>  
->>  	parent = __clk_lookup(parent_name);
->> @@ -1665,18 +1680,27 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
->>  		pll_params->vco_min = pll_params->adjust_vco(pll_params,
->>  							     parent_rate);
->>  
->> -	err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
->> -	if (err)
->> -		return ERR_PTR(err);
->> +	/*
->> +	 * If the pll has a set_defaults callback, it will take care of
->> +	 * configuring dynamic ramping and setting IDDQ in that path.
->> +	 */
->> +	if (!pll_params->set_defaults) {
->> +		int err;
->>  
->> -	val = readl_relaxed(clk_base + pll_params->base_reg);
->> -	val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
->> +		err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
->> +		if (err)
->> +			return ERR_PTR(err);
->>  
->> -	if (val & PLL_BASE_ENABLE)
->> -		WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
->> -	else {
->> -		val_iddq |= BIT(pll_params->iddq_bit_idx);
->> -		writel_relaxed(val_iddq, clk_base + pll_params->iddq_reg);
->> +		val = readl_relaxed(clk_base + pll_params->base_reg);
->> +		val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
->> +
->> +		if (val & PLL_BASE_ENABLE)
->> +			WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
->> +		else {
->> +			val_iddq |= BIT(pll_params->iddq_bit_idx);
->> +			writel_relaxed(val_iddq,
->> +				       clk_base + pll_params->iddq_reg);
->> +		}
->>  	}
->>  
->>  	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
->> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
->> index 850521d42be6..84c417576c18 100644
->> --- a/drivers/clk/tegra/clk.h
->> +++ b/drivers/clk/tegra/clk.h
->> @@ -239,6 +239,7 @@ struct tegra_clk_pll_params {
->>  	int		stepb_shift;
->>  	int		lock_delay;
->>  	int		max_p;
->> +	bool		defaults_set;
->>  	struct pdiv_map *pdiv_tohw;
->>  	struct div_nmp	*div_nmp;
->>  	struct tegra_clk_pll_freq_table	*freq_table;
->> @@ -254,6 +255,7 @@ struct tegra_clk_pll_params {
->>  				unsigned long parent_rate);
->>  	int	(*dyn_ramp)(struct tegra_clk_pll *pll,
->>  			struct tegra_clk_pll_freq_table *cfg);
->> +	void	(*set_defaults)(struct tegra_clk_pll *pll);
->>  };
->>  
->>  #define TEGRA_PLL_USE_LOCK BIT(0)
->> -- 
->> 1.7.9.5
->>
-
-
--- 
-nvpublic
+-Andrew
