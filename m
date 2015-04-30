@@ -1,154 +1,148 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH v2 13/19] clk: tegra: pll: Add support for PLLMB for T210
-Date: Thu, 30 Apr 2015 13:11:42 +0300
-Message-ID: <20150430101142.GT3097@tbergstrom-lnx.Nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 16/19] clk: tegra: pll: Add Set_default logic
+Date: Thu, 30 Apr 2015 13:12:25 +0300
+Message-ID: <20150430101225.GU3097@tbergstrom-lnx.Nvidia.com>
 References: <1430328109-537-1-git-send-email-rklein@nvidia.com>
- <1430328109-537-14-git-send-email-rklein@nvidia.com>
+ <1430328109-537-17-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1430328109-537-14-git-send-email-rklein@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1430328109-537-17-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Apr 29, 2015 at 01:21:43PM -0400, Rhyland Klein wrote:
-> Tegra210 SoC's have 2 PLLS for memory usage. Add plumbing to register
-> and handle PLLMB.
+On Wed, Apr 29, 2015 at 01:21:46PM -0400, Rhyland Klein wrote:
+> From: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Add logic which (if specified for a pll) can verify that a PLL is set
+> to the proper default value and if not can set it. This can be
+> specified per PLL as each will have different default values.
 > 
 
-Seems my comments to v1 never made it to the list :/ trying again:
+Why can't we just set the default values at init time?
 
-I think this would be better rephrased as:
-
-'Tegra210 SoC's have 2 PLLs for memory usage. Add plumbing to register and
-handle PLLMB.'
-
-The whole point of PLLMB is exactly that it allows switching between 2 PLLMs
-without having to use an intermediate backup PLL, because the PLL has to have
-locked before we can switch to it.
-
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> Signed-off-by: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
 > v2:
->   - Fixed commit description as suggested.
+>   - Remove MACRO for PLL_MISC_CHECK_DEFAULT as suggested, and instead
+>     the tegra210 driver will include an inline version of this function.
 > 
->  drivers/clk/tegra/clk-pll.c |   46 +++++++++++++++++++++++++++++++++++++++----
->  drivers/clk/tegra/clk.h     |    9 +++++++++
->  2 files changed, 51 insertions(+), 4 deletions(-)
+>  drivers/clk/tegra/clk-pll.c |   46 ++++++++++++++++++++++++++++++++-----------
+>  drivers/clk/tegra/clk.h     |    2 ++
+>  2 files changed, 37 insertions(+), 11 deletions(-)
 > 
 > diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-> index c938bdc9415f..edc388f02a66 100644
+> index 00f0e621533a..28a2376cd8a7 100644
 > --- a/drivers/clk/tegra/clk-pll.c
 > +++ b/drivers/clk/tegra/clk-pll.c
-> @@ -547,7 +547,7 @@ static void _update_pll_mnp(struct tegra_clk_pll *pll,
->  	struct tegra_clk_pll_params *params = pll->params;
->  	struct div_nmp *div_nmp = params->div_nmp;
+> @@ -658,15 +658,28 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+>  			unsigned long rate)
+>  {
+>  	struct tegra_clk_pll *pll = to_clk_pll(hw);
+> +	struct tegra_clk_pll_freq_table old_cfg;
+>  	int state, ret = 0;
 >  
-> -	if ((params->flags & TEGRA_PLLM) &&
-> +	if ((params->flags & (TEGRA_PLLM | TEGRA_PLLMB)) &&
->  		(pll_override_readl(PMC_PLLP_WB0_OVERRIDE, pll) &
->  			PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)) {
->  		val = pll_override_readl(params->pmc_divp_reg, pll);
-> @@ -584,7 +584,7 @@ static void _get_pll_mnp(struct tegra_clk_pll *pll,
->  	struct tegra_clk_pll_params *params = pll->params;
->  	struct div_nmp *div_nmp = params->div_nmp;
+>  	state = clk_pll_is_enabled(hw);
 >  
-> -	if ((params->flags & TEGRA_PLLM) &&
-> +	if ((params->flags & (TEGRA_PLLM | TEGRA_PLLMB)) &&
->  		(pll_override_readl(PMC_PLLP_WB0_OVERRIDE, pll) &
->  			PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)) {
->  		val = pll_override_readl(params->pmc_divp_reg, pll);
-> @@ -730,8 +730,8 @@ static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
->  	if (pll->params->flags & TEGRA_PLL_FIXED)
->  		return pll->params->fixed_rate;
->  
-> -	/* PLLM is used for memory; we do not change rate */
-> -	if (pll->params->flags & TEGRA_PLLM)
-> +	/* PLLM/MB are used for memory; we do not change rate */
-> +	if (pll->params->flags & (TEGRA_PLLM | TEGRA_PLLMB))
->  		return __clk_get_rate(hw->clk);
->  
->  	if (_get_table_rate(hw, &cfg, rate, *prate) &&
-> @@ -2310,4 +2310,42 @@ struct clk *tegra_clk_register_pllss_tegra210(const char *name,
->  
->  	return clk;
->  }
+> +	_get_pll_mnp(pll, &old_cfg);
 > +
-> +struct clk *tegra_clk_register_pllmb(const char *name, const char *parent_name,
-> +			  void __iomem *clk_base, void __iomem *pmc,
-> +			  unsigned long flags,
-> +			  struct tegra_clk_pll_params *pll_params,
-> +			  spinlock_t *lock)
-> +{
-> +	struct tegra_clk_pll *pll;
-> +	struct clk *clk, *parent;
-> +	unsigned long parent_rate;
-> +
-> +	if (!pll_params->pdiv_tohw)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	parent = __clk_lookup(parent_name);
-> +	if (!parent) {
-> +		WARN(1, "parent clk %s of %s must be registered first\n",
-> +			name, parent_name);
-> +		return ERR_PTR(-EINVAL);
+> +	if (state && pll->params->defaults_set && pll->params->dyn_ramp &&
+> +			(cfg->m == old_cfg.m) && (cfg->p == old_cfg.p)) {
+> +		ret = pll->params->dyn_ramp(pll, cfg);
+> +		if (!ret)
+> +			return 0;
 > +	}
 > +
-> +	parent_rate = __clk_get_rate(parent);
+>  	if (state) {
+>  		pll_clk_stop_ss(pll);
+>  		_clk_pll_disable(hw);
+>  	}
+>  
+> +	if (!pll->params->defaults_set && pll->params->set_defaults)
+> +		pll->params->set_defaults(pll);
 > +
-> +	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
+>  	_update_pll_mnp(pll, cfg);
+>  
+>  	if (pll->params->flags & TEGRA_PLL_HAS_CPCON)
+> @@ -1526,6 +1539,9 @@ static struct clk *_tegra_clk_register_pll(struct tegra_clk_pll *pll,
+>  	if (!pll->params->calc_rate)
+>  		pll->params->calc_rate = _calc_rate;
+>  
+> +	if (pll->params->set_defaults)
+> +		pll->params->set_defaults(pll);
 > +
-> +	pll_params->flags |= TEGRA_PLL_BYPASS;
-> +	pll_params->flags |= TEGRA_PLLMB;
-> +	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
-> +	if (IS_ERR(pll))
-> +		return ERR_CAST(pll);
+>  	/* Data in .init is copied by clk_register(), so stack variable OK */
+>  	pll->hw.init = &init;
+>  
+> @@ -1644,7 +1660,6 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
+>  	struct tegra_clk_pll *pll;
+>  	struct clk *clk, *parent;
+>  	unsigned long parent_rate;
+> -	int err;
+>  	u32 val, val_iddq;
+>  
+>  	parent = __clk_lookup(parent_name);
+> @@ -1665,18 +1680,27 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
+>  		pll_params->vco_min = pll_params->adjust_vco(pll_params,
+>  							     parent_rate);
+>  
+> -	err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
+> -	if (err)
+> -		return ERR_PTR(err);
+> +	/*
+> +	 * If the pll has a set_defaults callback, it will take care of
+> +	 * configuring dynamic ramping and setting IDDQ in that path.
+> +	 */
+> +	if (!pll_params->set_defaults) {
+> +		int err;
+>  
+> -	val = readl_relaxed(clk_base + pll_params->base_reg);
+> -	val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
+> +		err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
+> +		if (err)
+> +			return ERR_PTR(err);
+>  
+> -	if (val & PLL_BASE_ENABLE)
+> -		WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
+> -	else {
+> -		val_iddq |= BIT(pll_params->iddq_bit_idx);
+> -		writel_relaxed(val_iddq, clk_base + pll_params->iddq_reg);
+> +		val = readl_relaxed(clk_base + pll_params->base_reg);
+> +		val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
 > +
-> +	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
-> +				      &tegra_clk_pllm_ops);
-> +	if (IS_ERR(clk))
-> +		kfree(pll);
-> +
-> +	return clk;
-> +}
->  #endif
+> +		if (val & PLL_BASE_ENABLE)
+> +			WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
+> +		else {
+> +			val_iddq |= BIT(pll_params->iddq_bit_idx);
+> +			writel_relaxed(val_iddq,
+> +				       clk_base + pll_params->iddq_reg);
+> +		}
+>  	}
+>  
+>  	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
 > diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index 26e31580dc9e..9e37defb063f 100644
+> index 850521d42be6..84c417576c18 100644
 > --- a/drivers/clk/tegra/clk.h
 > +++ b/drivers/clk/tegra/clk.h
-> @@ -201,6 +201,8 @@ struct div_nmp {
->   * TEGRA_PLL_HAS_LOCK_ENABLE - PLL has bit to enable lock monitoring
->   * TEGRA_MDIV_NEW - Switch to new method for calculating fixed mdiv
->   *     it may be more accurate (especially if SDM present)
-> + * TEGRA_PLLMB - PLLMB has should be treated similar to PLLM. This
-> + *     flag indicated that it is PLLMB.
->   */
->  struct tegra_clk_pll_params {
->  	unsigned long	input_min;
-> @@ -260,6 +262,7 @@ struct tegra_clk_pll_params {
->  #define TEGRA_PLL_BYPASS BIT(9)
->  #define TEGRA_PLL_HAS_LOCK_ENABLE BIT(10)
->  #define TEGRA_MDIV_NEW BIT(11)
-> +#define TEGRA_PLLMB BIT(12)
+> @@ -239,6 +239,7 @@ struct tegra_clk_pll_params {
+>  	int		stepb_shift;
+>  	int		lock_delay;
+>  	int		max_p;
+> +	bool		defaults_set;
+>  	struct pdiv_map *pdiv_tohw;
+>  	struct div_nmp	*div_nmp;
+>  	struct tegra_clk_pll_freq_table	*freq_table;
+> @@ -254,6 +255,7 @@ struct tegra_clk_pll_params {
+>  				unsigned long parent_rate);
+>  	int	(*dyn_ramp)(struct tegra_clk_pll *pll,
+>  			struct tegra_clk_pll_freq_table *cfg);
+> +	void	(*set_defaults)(struct tegra_clk_pll *pll);
+>  };
 >  
->  /**
->   * struct tegra_clk_pll - Tegra PLL clock
-> @@ -366,6 +369,12 @@ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
->  			   struct tegra_clk_pll_params *pll_params,
->  			   spinlock_t *lock);
->  
-> +struct clk *tegra_clk_register_pllmb(const char *name, const char *parent_name,
-> +			   void __iomem *clk_base, void __iomem *pmc,
-> +			   unsigned long flags,
-> +			   struct tegra_clk_pll_params *pll_params,
-> +			   spinlock_t *lock);
-> +
->  /**
->   * struct tegra_clk_pll_out - PLL divider down clock
->   *
+>  #define TEGRA_PLL_USE_LOCK BIT(0)
 > -- 
 > 1.7.9.5
 > 
