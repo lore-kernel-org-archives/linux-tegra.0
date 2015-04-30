@@ -1,137 +1,154 @@
-From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V7 4/9] mfd: Add binding document for NVIDIA Tegra XUSB
-Date: Thu, 30 Apr 2015 11:06:00 +0100
-Message-ID: <20150430100600.GC1815@x1>
-References: <1430174242-29465-1-git-send-email-abrestic@chromium.org>
- <1430174242-29465-5-git-send-email-abrestic@chromium.org>
- <20150429092545.GR9169@x1>
- <CAL1qeaFh5go_K0GnGXxU7KqjcgCm2kpUL5mVgGSYosPoXAXgpw@mail.gmail.com>
- <20150429183429.GB9169@x1>
- <CAL1qeaEt9kGbcCfwqhVzwJxx9DvgOnjfU6C8MCH6t0vqwJK0WA@mail.gmail.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH v2 13/19] clk: tegra: pll: Add support for PLLMB for T210
+Date: Thu, 30 Apr 2015 13:11:42 +0300
+Message-ID: <20150430101142.GT3097@tbergstrom-lnx.Nvidia.com>
+References: <1430328109-537-1-git-send-email-rklein@nvidia.com>
+ <1430328109-537-14-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAL1qeaEt9kGbcCfwqhVzwJxx9DvgOnjfU6C8MCH6t0vqwJK0WA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+In-Reply-To: <1430328109-537-14-git-send-email-rklein@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 29 Apr 2015, Andrew Bresticker wrote:
+On Wed, Apr 29, 2015 at 01:21:43PM -0400, Rhyland Klein wrote:
+> Tegra210 SoC's have 2 PLLS for memory usage. Add plumbing to register
+> and handle PLLMB.
+> 
 
-> On Wed, Apr 29, 2015 at 11:34 AM, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wr=
-ote:
-> > On Wed, 29 Apr 2015, Andrew Bresticker wrote:
-> >
-> >> Lee,
-> >>
-> >> On Wed, Apr 29, 2015 at 2:25 AM, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> =
-wrote:
-> >> > On Mon, 27 Apr 2015, Andrew Bresticker wrote:
-> >> >
-> >> >> Add a binding document for the XUSB host complex on NVIDIA Tegr=
-a124
-> >> >> and later SoCs.  The XUSB host complex includes a mailbox for
-> >> >> communication with the XUSB micro-controller and an xHCI host-c=
-ontroller.
-> >> >>
-> >> >> Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-> >> >> Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> >> >> Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
-> >> >> Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-> >> >> Cc: Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
-> >> >> Cc: Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-> >> >> Cc: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-> >> >> Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> >> >> ---
-> >> >> New for v7.
-> >> >> ---
-> >> >>  .../bindings/mfd/nvidia,tegra124-xusb.txt          | 46 ++++++=
-++++++++++++++++
-> >> >>  1 file changed, 46 insertions(+)
-> >> >>  create mode 100644 Documentation/devicetree/bindings/mfd/nvidi=
-a,tegra124-xusb.txt
-> >> >>
-> >> >> diff --git a/Documentation/devicetree/bindings/mfd/nvidia,tegra=
-124-xusb.txt b/Documentation/devicetree/bindings/mfd/nvidia,tegra124-xu=
-sb.txt
-> >> >> new file mode 100644
-> >> >> index 0000000..6a46680
-> >> >> --- /dev/null
-> >> >> +++ b/Documentation/devicetree/bindings/mfd/nvidia,tegra124-xus=
-b.txt
-> >> >> @@ -0,0 +1,46 @@
-> >> >> +NVIDIA Tegra XUSB host copmlex
-> >> >> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >> >> +
-> >> >> +The XUSB host complex on Tegra124 and later SoCs contains an x=
-HCI host
-> >> >> +controller and a mailbox for communication with the XUSB micro=
--controller.
-> >> >> +
-> >> >> +Required properties:
-> >> >> +--------------------
-> >> >> + - compatible: For Tegra124, must contain "nvidia,tegra124-xus=
-b".
-> >> >> +   Otherwise, must contain '"nvidia,<chip>-xusb", "nvidia,tegr=
-a124-xusb"'
-> >> >> +   where <chip> is tegra132.
-> >> >
-> >> > Okay.  Why?
-> >>
-> >> Why what?  This is the convention used for Tegra bindings and is a=
-lso
-> >> documented in Documentation/devicetree/bindings/submitting-patches=
-=2Etxt.
-> >> See nvidia,tegra114-spi.txt and nvidia,tegra20-i2c.txt for other
-> >> examples of this.
-> >
-> > It seems strange to me that you'd mention two specific chips in one
-> > compatible string.  What's the purpose of that?
->=20
-> The Tegra maintainers can correct me if I'm wrong here, but the point
-> is, I think, to future-proof the binding.  There are currently no
-> differences between Tegra124 and Tegra132 that need to be accounted
-> for in the driver, so the driver need only match against
-> "nvidia,tegra124-xusb".  If a Tegra132-specific quirk comes about
-> later all Tegra132 device-trees will also include the
-> "nvidia,tegra132-*" compatible string, so we can simply update the
-> driver without breaking DT backwards-compatibility.
+Seems my comments to v1 never made it to the list :/ trying again:
 
-I still don't understand why you need to use them both at the same
-time.  Why don't you use nvidia,tegra124-* for Tegra124 and
-nvidia,tegra132-* for Tegra132?
+I think this would be better rephrased as:
 
-> >> >> + - reg: Must contain register base and length for each registe=
-r set listed
-> >> >> +   in reg-names.
-> >> >
-> >> > You've mentioned 2 of the cells, what about the remaining 2?
-> >>
-> >> The example given was for Tegra124, where there are two address ce=
-lls
-> >> and two size cells.
-> >
-> > I don't get that.  How does that work?
->=20
-> Tegra124 has a physical address space of > 4GB because of LPAE, thus =
-a
-> single cell each for address and size is not sufficient.  The arm64
-> Tegra SoCs will obviously also use two address and size cells.  Take =
-a
-> look at arch/arm/boot/dts/tegra124.dtsi.
+'Tegra210 SoC's have 2 PLLs for memory usage. Add plumbing to register and
+handle PLLMB.'
 
-Okay, so these get shifted and &'ed into posstible 64bit addresses?
+The whole point of PLLMB is exactly that it allows switching between 2 PLLMs
+without having to use an intermediate backup PLL, because the PLL has to have
+locked before we can switch to it.
 
-I guess I just thought ARM64 addresses would look like:
-
-  0xXXXXXXXXXXXXXXXX 0xXXXX
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> ---
+> v2:
+>   - Fixed commit description as suggested.
+> 
+>  drivers/clk/tegra/clk-pll.c |   46 +++++++++++++++++++++++++++++++++++++++----
+>  drivers/clk/tegra/clk.h     |    9 +++++++++
+>  2 files changed, 51 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+> index c938bdc9415f..edc388f02a66 100644
+> --- a/drivers/clk/tegra/clk-pll.c
+> +++ b/drivers/clk/tegra/clk-pll.c
+> @@ -547,7 +547,7 @@ static void _update_pll_mnp(struct tegra_clk_pll *pll,
+>  	struct tegra_clk_pll_params *params = pll->params;
+>  	struct div_nmp *div_nmp = params->div_nmp;
+>  
+> -	if ((params->flags & TEGRA_PLLM) &&
+> +	if ((params->flags & (TEGRA_PLLM | TEGRA_PLLMB)) &&
+>  		(pll_override_readl(PMC_PLLP_WB0_OVERRIDE, pll) &
+>  			PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)) {
+>  		val = pll_override_readl(params->pmc_divp_reg, pll);
+> @@ -584,7 +584,7 @@ static void _get_pll_mnp(struct tegra_clk_pll *pll,
+>  	struct tegra_clk_pll_params *params = pll->params;
+>  	struct div_nmp *div_nmp = params->div_nmp;
+>  
+> -	if ((params->flags & TEGRA_PLLM) &&
+> +	if ((params->flags & (TEGRA_PLLM | TEGRA_PLLMB)) &&
+>  		(pll_override_readl(PMC_PLLP_WB0_OVERRIDE, pll) &
+>  			PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)) {
+>  		val = pll_override_readl(params->pmc_divp_reg, pll);
+> @@ -730,8 +730,8 @@ static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+>  	if (pll->params->flags & TEGRA_PLL_FIXED)
+>  		return pll->params->fixed_rate;
+>  
+> -	/* PLLM is used for memory; we do not change rate */
+> -	if (pll->params->flags & TEGRA_PLLM)
+> +	/* PLLM/MB are used for memory; we do not change rate */
+> +	if (pll->params->flags & (TEGRA_PLLM | TEGRA_PLLMB))
+>  		return __clk_get_rate(hw->clk);
+>  
+>  	if (_get_table_rate(hw, &cfg, rate, *prate) &&
+> @@ -2310,4 +2310,42 @@ struct clk *tegra_clk_register_pllss_tegra210(const char *name,
+>  
+>  	return clk;
+>  }
+> +
+> +struct clk *tegra_clk_register_pllmb(const char *name, const char *parent_name,
+> +			  void __iomem *clk_base, void __iomem *pmc,
+> +			  unsigned long flags,
+> +			  struct tegra_clk_pll_params *pll_params,
+> +			  spinlock_t *lock)
+> +{
+> +	struct tegra_clk_pll *pll;
+> +	struct clk *clk, *parent;
+> +	unsigned long parent_rate;
+> +
+> +	if (!pll_params->pdiv_tohw)
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	parent = __clk_lookup(parent_name);
+> +	if (!parent) {
+> +		WARN(1, "parent clk %s of %s must be registered first\n",
+> +			name, parent_name);
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +	parent_rate = __clk_get_rate(parent);
+> +
+> +	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
+> +
+> +	pll_params->flags |= TEGRA_PLL_BYPASS;
+> +	pll_params->flags |= TEGRA_PLLMB;
+> +	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
+> +	if (IS_ERR(pll))
+> +		return ERR_CAST(pll);
+> +
+> +	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
+> +				      &tegra_clk_pllm_ops);
+> +	if (IS_ERR(clk))
+> +		kfree(pll);
+> +
+> +	return clk;
+> +}
+>  #endif
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index 26e31580dc9e..9e37defb063f 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -201,6 +201,8 @@ struct div_nmp {
+>   * TEGRA_PLL_HAS_LOCK_ENABLE - PLL has bit to enable lock monitoring
+>   * TEGRA_MDIV_NEW - Switch to new method for calculating fixed mdiv
+>   *     it may be more accurate (especially if SDM present)
+> + * TEGRA_PLLMB - PLLMB has should be treated similar to PLLM. This
+> + *     flag indicated that it is PLLMB.
+>   */
+>  struct tegra_clk_pll_params {
+>  	unsigned long	input_min;
+> @@ -260,6 +262,7 @@ struct tegra_clk_pll_params {
+>  #define TEGRA_PLL_BYPASS BIT(9)
+>  #define TEGRA_PLL_HAS_LOCK_ENABLE BIT(10)
+>  #define TEGRA_MDIV_NEW BIT(11)
+> +#define TEGRA_PLLMB BIT(12)
+>  
+>  /**
+>   * struct tegra_clk_pll - Tegra PLL clock
+> @@ -366,6 +369,12 @@ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
+>  			   struct tegra_clk_pll_params *pll_params,
+>  			   spinlock_t *lock);
+>  
+> +struct clk *tegra_clk_register_pllmb(const char *name, const char *parent_name,
+> +			   void __iomem *clk_base, void __iomem *pmc,
+> +			   unsigned long flags,
+> +			   struct tegra_clk_pll_params *pll_params,
+> +			   spinlock_t *lock);
+> +
+>  /**
+>   * struct tegra_clk_pll_out - PLL divider down clock
+>   *
+> -- 
+> 1.7.9.5
+> 
