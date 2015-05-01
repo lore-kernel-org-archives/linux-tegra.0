@@ -1,7 +1,7 @@
 From: Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v3 20/20] clk: tegra: pll: Fix issues with rates for VCO PLLs
-Date: Fri, 1 May 2015 14:54:07 -0400
-Message-ID: <1430506447-29074-21-git-send-email-rklein@nvidia.com>
+Subject: [PATCH v3 15/20] clk: tegra: pll: Add dyn_ramp callback
+Date: Fri, 1 May 2015 14:54:02 -0400
+Message-ID: <1430506447-29074-16-git-send-email-rklein@nvidia.com>
 References: <1430506447-29074-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -9,66 +9,40 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1430506447-29074-1-git-send-email-rklein@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>, Andrew Bresticker <abrestic@chromium.org>
+Cc: Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>, Bill Huang <bilhuang@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Andrew Bresticker <abrestic@chromium.org>
+From: Bill Huang <bilhuang@nvidia.com>
 
-Without this change clk_get_rate would return the final output
-rather than the VCO output as it would factor in the pdiv when
-it shouldn't. This will cause problems for all dividers in the
-subtree of the VCO PLL.
+Add a callback to the pll_params for custom dynamic ramping
+functions which can be specified per PLL.
 
-Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+Signed-off-by: Bill Huang <bilhuang@nvidia.com>
 ---
-v3:
-  - Added fix for this bug which was found during testing
+ drivers/clk/tegra/clk.h |    4 ++++
+ 1 file changed, 4 insertions(+)
 
- drivers/clk/tegra/clk-pll.c |   16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 44bdbbac361d..8953573b5bcd 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -723,6 +723,8 @@ static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 		spin_lock_irqsave(pll->lock, flags);
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 27075a586e79..850521d42be6 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -160,6 +160,8 @@ struct div_nmp {
  
- 	_get_pll_mnp(pll, &old_cfg);
-+	if (pll->params->vco_out)
-+		cfg.p = old_cfg.p;
+ #define MAX_PLL_MISC_REG_COUNT	6
  
- 	if (old_cfg.m != cfg.m || old_cfg.n != cfg.n || old_cfg.p != cfg.p ||
- 		old_cfg.sdm_data != cfg.sdm_data)
-@@ -782,11 +784,15 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
++struct tegra_clk_pll;
++
+ /**
+  * struct clk_pll_params - PLL parameters
+  *
+@@ -250,6 +252,8 @@ struct tegra_clk_pll_params {
+ 			unsigned long rate, unsigned long parent_rate);
+ 	unsigned long	(*adjust_vco)(struct tegra_clk_pll_params *pll_params,
+ 				unsigned long parent_rate);
++	int	(*dyn_ramp)(struct tegra_clk_pll *pll,
++			struct tegra_clk_pll_freq_table *cfg);
+ };
  
- 	_get_pll_mnp(pll, &cfg);
- 
--	pdiv = _hw_to_p_div(hw, cfg.p);
--	if (pdiv < 0) {
--		WARN(1, "Clock %s has invalid pdiv value : 0x%x\n",
--			__clk_get_name(hw->clk), cfg.p);
-+	if (pll->params->vco_out) {
- 		pdiv = 1;
-+	} else {
-+		pdiv = _hw_to_p_div(hw, cfg.p);
-+		if (pdiv < 0) {
-+			WARN(1, "Clock %s has invalid pdiv value : 0x%x\n",
-+				__clk_get_name(hw->clk), cfg.p);
-+			pdiv = 1;
-+		}
- 	}
- 
- 	if (pll->params->set_gain)
-@@ -1073,6 +1079,8 @@ static int clk_pllxc_set_rate(struct clk_hw *hw, unsigned long rate,
- 		spin_lock_irqsave(pll->lock, flags);
- 
- 	_get_pll_mnp(pll, &old_cfg);
-+	if (pll->params->vco_out)
-+		cfg.p = old_cfg.p;
- 
- 	if (old_cfg.m != cfg.m || old_cfg.n != cfg.n || old_cfg.p != cfg.p)
- 		ret = _program_pll(hw, &cfg, rate);
+ #define TEGRA_PLL_USE_LOCK BIT(0)
 -- 
 1.7.9.5
