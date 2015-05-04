@@ -1,28 +1,28 @@
-From: Benson Leung <bleung@chromium.org>
-Subject: Re: [PATCH v4 04/20] clk: tegra: pll: simplify clk_enable_path
-Date: Mon, 4 May 2015 13:11:18 -0700
-Message-ID: <CANLzEkuR4KPMPc=25D8mKyjdLaSvSa3xyX_ad=j3q_rVu+A-Hw@mail.gmail.com>
+From: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v4 05/20] clk: tegra: pll: update warning msg
+Date: Mon, 4 May 2015 13:20:19 -0700
+Message-ID: <CANLzEktDVtx9sNaKS_gbwZyXwSi16A-qmn3h6nAgCJ_Awt58qg@mail.gmail.com>
 References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
-	<1430757460-9478-5-git-send-email-rklein@nvidia.com>
+	<1430757460-9478-6-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1430757460-9478-5-git-send-email-rklein@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1430757460-9478-6-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, May 4, 2015 at 9:37 AM, Rhyland Klein <rklein@nvidia.com> wrote:
-> Instead of having multiple similar wrapper functions for
-> _clk_pll_[enable|disable], we can simplify it to single
-> wrappers and use checks to avoid the logic we don't want to use.
+On Mon, May 4, 2015 at 9:37 AM, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> Swap out the generic WARN_ON with a WARN which gives more
+> information about what is happening.
 >
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Reviewed-by: Benson Leung <bleung@chromium.org>
+Reviewed-by: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+
 
 -- 
 Benson Leung
 Software Engineer, Chrom* OS
-bleung@chromium.org
+bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
