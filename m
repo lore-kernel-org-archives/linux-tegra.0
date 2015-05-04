@@ -1,8 +1,10 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 0/8] soc/tegra: More unification and cleanup for 64-bit
-Date: Mon,  4 May 2015 13:46:38 +0200
-Message-ID: <1430740006-29539-1-git-send-email-thierry.reding@gmail.com>
+Subject: [PATCH 2/8] soc/tegra: pmc: Add Tegra210 support
+Date: Mon,  4 May 2015 13:46:40 +0200
+Message-ID: <1430740006-29539-3-git-send-email-thierry.reding@gmail.com>
+References: <1430740006-29539-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1430740006-29539-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
 Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
@@ -10,50 +12,92 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-This set of patches restricts the legacy code to 32-bit ARM for the PMC
-and FUSE drivers and follows up by adding Tegra210 support. Note how in
-particular the FUSE driver required quite a few changes to unify it for
-all SoC families. This makes it easier to test and extend in the future
-as new SoC support is added.
+Tegra210 uses a power management controller that is compatible with
+earlier SoC generations but adds a couple of power partitions for new
+hardware blocks.
 
-Mark, you requested the restriction of the legacy compatibility code in
-an earlier version that Paul posted. Can you take a look at this series
-and see if it matches your expectations? I've kept soc_is_tegra() to be
-consistent across all generations, but legacy code paths are guarded by
-an IS_ENABLED(CONFIG_ARM). I think that's a good compromise between the
-options that had been discussed earlier, but let me know if you want to
-see this done differently.
+Reviewed-by: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/soc/tegra/pmc.c | 48 ++++++++++++++++++++++++++++++++++++++++++++++++
+ include/soc/tegra/pmc.h |  5 +++++
+ 2 files changed, 53 insertions(+)
 
-Thierry
-
-Thierry Reding (8):
-  soc/tegra: pmc: Restrict legacy code to 32-bit ARM
-  soc/tegra: pmc: Add Tegra210 support
-  soc/tegra: Add Tegra132 support
-  soc/tegra: Add Tegra210 support
-  soc/tegra: fuse: Restrict legacy code to 32-bit ARM
-  soc/tegra: fuse: Unify Tegra20 and Tegra30 drivers
-  soc/tegra: fuse: Add Tegra210 support
-  soc/tegra: fuse: Rename core_* to soc_*
-
- arch/arm/mach-tegra/iomap.h              |   3 -
- drivers/soc/tegra/common.c               |   2 +
- drivers/soc/tegra/fuse/Makefile          |   2 +
- drivers/soc/tegra/fuse/fuse-tegra.c      | 255 ++++++++++++++++++++++++-------
- drivers/soc/tegra/fuse/fuse-tegra20.c    | 172 ++++++++-------------
- drivers/soc/tegra/fuse/fuse-tegra30.c    | 221 +++++++++------------------
- drivers/soc/tegra/fuse/fuse.h            |  95 ++++++++----
- drivers/soc/tegra/fuse/speedo-tegra114.c |  22 +--
- drivers/soc/tegra/fuse/speedo-tegra124.c |  26 ++--
- drivers/soc/tegra/fuse/speedo-tegra20.c  |  28 ++--
- drivers/soc/tegra/fuse/speedo-tegra210.c | 184 ++++++++++++++++++++++
- drivers/soc/tegra/fuse/speedo-tegra30.c  |  48 +++---
- drivers/soc/tegra/fuse/tegra-apbmisc.c   |  76 +++++++--
- drivers/soc/tegra/pmc.c                  | 104 +++++++++++--
- include/soc/tegra/fuse.h                 |   6 +-
- include/soc/tegra/pmc.h                  |   5 +
- 16 files changed, 815 insertions(+), 434 deletions(-)
- create mode 100644 drivers/soc/tegra/fuse/speedo-tegra210.c
-
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 500339985dbe..ada94e16288e 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -993,7 +993,55 @@ static const struct tegra_pmc_soc tegra124_pmc_soc = {
+ 	.has_gpu_clamps = true,
+ };
+ 
++static const char * const tegra210_powergates[] = {
++	[TEGRA_POWERGATE_CPU] = "crail",
++	[TEGRA_POWERGATE_3D] = "3d",
++	[TEGRA_POWERGATE_VENC] = "venc",
++	[TEGRA_POWERGATE_PCIE] = "pcie",
++	[TEGRA_POWERGATE_L2] = "l2",
++	[TEGRA_POWERGATE_MPE] = "mpe",
++	[TEGRA_POWERGATE_HEG] = "heg",
++	[TEGRA_POWERGATE_SATA] = "sata",
++	[TEGRA_POWERGATE_CPU1] = "cpu1",
++	[TEGRA_POWERGATE_CPU2] = "cpu2",
++	[TEGRA_POWERGATE_CPU3] = "cpu3",
++	[TEGRA_POWERGATE_CELP] = "celp",
++	[TEGRA_POWERGATE_CPU0] = "cpu0",
++	[TEGRA_POWERGATE_C0NC] = "c0nc",
++	[TEGRA_POWERGATE_C1NC] = "c1nc",
++	[TEGRA_POWERGATE_SOR] = "sor",
++	[TEGRA_POWERGATE_DIS] = "dis",
++	[TEGRA_POWERGATE_DISB] = "disb",
++	[TEGRA_POWERGATE_XUSBA] = "xusba",
++	[TEGRA_POWERGATE_XUSBB] = "xusbb",
++	[TEGRA_POWERGATE_XUSBC] = "xusbc",
++	[TEGRA_POWERGATE_VIC] = "vic",
++	[TEGRA_POWERGATE_IRAM] = "iram",
++	[TEGRA_POWERGATE_NVDEC] = "nvdec",
++	[TEGRA_POWERGATE_NVJPG] = "nvjpg",
++	[TEGRA_POWERGATE_AUD] = "aud",
++	[TEGRA_POWERGATE_DFD] = "dfd",
++	[TEGRA_POWERGATE_VE2] = "ve2",
++};
++
++static const u8 tegra210_cpu_powergates[] = {
++	TEGRA_POWERGATE_CPU0,
++	TEGRA_POWERGATE_CPU1,
++	TEGRA_POWERGATE_CPU2,
++	TEGRA_POWERGATE_CPU3,
++};
++
++static const struct tegra_pmc_soc tegra210_pmc_soc = {
++	.num_powergates = ARRAY_SIZE(tegra210_powergates),
++	.powergates = tegra210_powergates,
++	.num_cpu_powergates = ARRAY_SIZE(tegra210_cpu_powergates),
++	.cpu_powergates = tegra210_cpu_powergates,
++	.has_tsense_reset = true,
++	.has_gpu_clamps = true,
++};
++
+ static const struct of_device_id tegra_pmc_match[] = {
++	{ .compatible = "nvidia,tegra210-pmc", .data = &tegra210_pmc_soc },
+ 	{ .compatible = "nvidia,tegra132-pmc", .data = &tegra124_pmc_soc },
+ 	{ .compatible = "nvidia,tegra124-pmc", .data = &tegra124_pmc_soc },
+ 	{ .compatible = "nvidia,tegra114-pmc", .data = &tegra114_pmc_soc },
+diff --git a/include/soc/tegra/pmc.h b/include/soc/tegra/pmc.h
+index 65a93273e72f..75878006174f 100644
+--- a/include/soc/tegra/pmc.h
++++ b/include/soc/tegra/pmc.h
+@@ -69,6 +69,11 @@ int tegra_pmc_cpu_remove_clamping(int cpuid);
+ #define TEGRA_POWERGATE_XUSBC	22
+ #define TEGRA_POWERGATE_VIC	23
+ #define TEGRA_POWERGATE_IRAM	24
++#define TEGRA_POWERGATE_NVDEC	25
++#define TEGRA_POWERGATE_NVJPG	26
++#define TEGRA_POWERGATE_AUD	27
++#define TEGRA_POWERGATE_DFD	28
++#define TEGRA_POWERGATE_VE2	29
+ 
+ #define TEGRA_POWERGATE_3D0	TEGRA_POWERGATE_3D
+ 
 -- 
 2.3.5
