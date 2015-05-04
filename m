@@ -1,117 +1,105 @@
 From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH v8 0/9] Tegra xHCI support
-Date: Mon,  4 May 2015 10:36:33 -0700
-Message-ID: <1430761002-9327-1-git-send-email-abrestic@chromium.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Subject: [PATCH v8 2/9] mailbox: Make mbox_chan_ops const
+Date: Mon,  4 May 2015 10:36:35 -0700
+Message-ID: <1430761002-9327-3-git-send-email-abrestic@chromium.org>
+References: <1430761002-9327-1-git-send-email-abrestic@chromium.org>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1430761002-9327-1-git-send-email-abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Suman Anna <s-anna-l0cyMroinI0@public.gmane.org>, Ashwin Chaugule <ashwin.chaugule-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Ley Foon Tan <lftan-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This series adds support for xHCI on NVIDIA Tegra SoCs.  This includes:
- - patches 1, 2, and 3: minor cleanups for mailbox framework and xHCI,
- - patches 4 and 5: adding an MFD driver for the XUSB cmoplex,
- - patches 6 and 7: adding a driver for the mailbox used to communicate
-   with the xHCI controller's firmware, and
- - patches 8 and 9: adding a xHCI host-controller driver.
+The mailbox controller's channel ops ought to be read-only.  Update
+all the mailbox drivers to make their mbox_chan_ops const as well.
 
-The addition of USB PHY support to the XUSB padctl driver has been dropped.
-Thierry will be posting those patches later.
-
-Given the many compile and run-time dependencies in this series, it is probably
-best if the first 3 patches are picked up by the relevant maintainers in topic
-branches so that the remainder of the series can go through the Tegra tree.
-
-Tested on Jetson TK1 and Nyan-Big with a variety of USB2.0 and USB3.0 memory
-sticks and ethernet dongles.  This has also been tested, with additional
-out-of-tree patches, on Tegra132 and Tegra210 based boards.
-
-Based on v4.1-rc2.  A branch with the entire series is available at:
-  https://github.com/abrestic/linux/tree/tegra-xhci-v8
-
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
+Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Suman Anna <s-anna-l0cyMroinI0@public.gmane.org>
+Cc: Ashwin Chaugule <ashwin.chaugule-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Ley Foon Tan <lftan-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>
+---
 Changes from v7:
- - Move non-shared resources into child nodes of MFD.
- - Fixed a couple of mailbox driver bugs.
+ - Constify all drivers' mbox_chan_ops.
+No changes from v5/v6.
+New for v5.
+---
+ drivers/mailbox/arm_mhu.c          | 2 +-
+ drivers/mailbox/mailbox-altera.c   | 2 +-
+ drivers/mailbox/omap-mailbox.c     | 2 +-
+ drivers/mailbox/pcc.c              | 2 +-
+ include/linux/mailbox_controller.h | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
 
-Changes from v6:
- - Dropped PHY changes from series.  Will be posted later by Thierry.
- - Added an MFD device with the mailbox and xHCI host as sub-devices.
-
-Changes from v5:
- - Addressed review comments from Jassi and Felipe.
-
-Changes from v4:
- - Made USB support optional in padctl driver.
- - Made usb3-port a pinconfig property again.
- - Cleaned up mbox_request_channel() error handling and allowed it to defer
-   probing (patch 3).
- - Minor xHCI (patch 1) and mailbox framework (patch 2) cleanups suggested
-   by Thierry.
- - Addressed Thierry's review comments.
-
-Changes from v3:
- - Fixed USB2.0 flakiness on Jetson-TK1.
- - Switched to 32-bit DMA mask for host.
- - Addressed Stephen's review comments.
-
-Chagnes from v2:
- - Dropped mailbox channel specifier.  The mailbox driver allocates virtual
-   channels backed by the single physical channel.
- - Added support for HS_CURR_LEVEL adjustment pinconfig property, which
-   will be required for the Blaze board.
- - Addressed Stephen's review comments.
-
-Changes from v1:
- - Converted mailbox driver to use the common mailbox framework.
- - Fixed up host driver so that it can now be built and used as a module.
- - Addressed Stephen's review comments.
- - Misc. cleanups.
-
-Andrew Bresticker (8):
-  xhci: Set shared HCD's hcd_priv in xhci_gen_setup
-  mailbox: Make mbox_chan_ops const
-  mfd: Add binding document for NVIDIA Tegra XUSB
-  mfd: Add driver for NVIDIA Tegra XUSB
-  mailbox: Add NVIDIA Tegra XUSB mailbox binding
-  mailbox: Add NVIDIA Tegra XUSB mailbox driver
-  usb: Add NVIDIA Tegra xHCI controller binding
-  usb: xhci: Add NVIDIA Tegra xHCI host-controller driver
-
-Benson Leung (1):
-  mailbox: Fix up error handling in mbox_request_channel()
-
- .../bindings/mailbox/nvidia,tegra124-xusb-mbox.txt |  32 +
- .../bindings/mfd/nvidia,tegra124-xusb.txt          |  37 +
- .../bindings/usb/nvidia,tegra124-xhci.txt          |  96 +++
- drivers/mailbox/Kconfig                            |   8 +
- drivers/mailbox/Makefile                           |   2 +
- drivers/mailbox/arm_mhu.c                          |   2 +-
- drivers/mailbox/mailbox-altera.c                   |   2 +-
- drivers/mailbox/mailbox.c                          |  11 +-
- drivers/mailbox/omap-mailbox.c                     |   8 +-
- drivers/mailbox/pcc.c                              |   2 +-
- drivers/mailbox/tegra-xusb-mailbox.c               | 290 +++++++
- drivers/mfd/Kconfig                                |   7 +
- drivers/mfd/Makefile                               |   1 +
- drivers/mfd/tegra-xusb.c                           |  75 ++
- drivers/usb/host/Kconfig                           |  10 +
- drivers/usb/host/Makefile                          |   1 +
- drivers/usb/host/xhci-pci.c                        |   5 -
- drivers/usb/host/xhci-plat.c                       |   5 -
- drivers/usb/host/xhci-tegra.c                      | 947 +++++++++++++++++++++
- drivers/usb/host/xhci.c                            |   6 +-
- include/linux/mailbox_controller.h                 |   2 +-
- include/soc/tegra/xusb.h                           |  43 +
- 22 files changed, 1568 insertions(+), 24 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mailbox/nvidia,tegra124-xusb-mbox.txt
- create mode 100644 Documentation/devicetree/bindings/mfd/nvidia,tegra124-xusb.txt
- create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra124-xhci.txt
- create mode 100644 drivers/mailbox/tegra-xusb-mailbox.c
- create mode 100644 drivers/mfd/tegra-xusb.c
- create mode 100644 drivers/usb/host/xhci-tegra.c
- create mode 100644 include/soc/tegra/xusb.h
-
+diff --git a/drivers/mailbox/arm_mhu.c b/drivers/mailbox/arm_mhu.c
+index ac693c6..d9e99f9 100644
+--- a/drivers/mailbox/arm_mhu.c
++++ b/drivers/mailbox/arm_mhu.c
+@@ -110,7 +110,7 @@ static void mhu_shutdown(struct mbox_chan *chan)
+ 	free_irq(mlink->irq, chan);
+ }
+ 
+-static struct mbox_chan_ops mhu_ops = {
++static const struct mbox_chan_ops mhu_ops = {
+ 	.send_data = mhu_send_data,
+ 	.startup = mhu_startup,
+ 	.shutdown = mhu_shutdown,
+diff --git a/drivers/mailbox/mailbox-altera.c b/drivers/mailbox/mailbox-altera.c
+index a266265..bb682c9 100644
+--- a/drivers/mailbox/mailbox-altera.c
++++ b/drivers/mailbox/mailbox-altera.c
+@@ -285,7 +285,7 @@ static void altera_mbox_shutdown(struct mbox_chan *chan)
+ 	}
+ }
+ 
+-static struct mbox_chan_ops altera_mbox_ops = {
++static const struct mbox_chan_ops altera_mbox_ops = {
+ 	.send_data = altera_mbox_send_data,
+ 	.startup = altera_mbox_startup,
+ 	.shutdown = altera_mbox_shutdown,
+diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbox.c
+index 0f332c1..03f8545 100644
+--- a/drivers/mailbox/omap-mailbox.c
++++ b/drivers/mailbox/omap-mailbox.c
+@@ -604,7 +604,7 @@ static int omap_mbox_chan_send_data(struct mbox_chan *chan, void *data)
+ 	return ret;
+ }
+ 
+-static struct mbox_chan_ops omap_mbox_chan_ops = {
++static const struct mbox_chan_ops omap_mbox_chan_ops = {
+ 	.startup        = omap_mbox_chan_startup,
+ 	.send_data      = omap_mbox_chan_send_data,
+ 	.shutdown       = omap_mbox_chan_shutdown,
+diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
+index 7e91d68..26d121d 100644
+--- a/drivers/mailbox/pcc.c
++++ b/drivers/mailbox/pcc.c
+@@ -198,7 +198,7 @@ static int pcc_send_data(struct mbox_chan *chan, void *data)
+ 	return 0;
+ }
+ 
+-static struct mbox_chan_ops pcc_chan_ops = {
++static const struct mbox_chan_ops pcc_chan_ops = {
+ 	.send_data = pcc_send_data,
+ };
+ 
+diff --git a/include/linux/mailbox_controller.h b/include/linux/mailbox_controller.h
+index d4cf96f..68c4245 100644
+--- a/include/linux/mailbox_controller.h
++++ b/include/linux/mailbox_controller.h
+@@ -72,7 +72,7 @@ struct mbox_chan_ops {
+  */
+ struct mbox_controller {
+ 	struct device *dev;
+-	struct mbox_chan_ops *ops;
++	const struct mbox_chan_ops *ops;
+ 	struct mbox_chan *chans;
+ 	int num_chans;
+ 	bool txdone_irq;
 -- 
 2.2.0.rc0.207.ga3a616c
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
