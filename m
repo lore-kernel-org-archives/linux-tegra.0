@@ -1,84 +1,144 @@
-From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH v8 6/9] mailbox: Add NVIDIA Tegra XUSB mailbox binding
-Date: Mon,  4 May 2015 10:36:39 -0700
-Message-ID: <1430761002-9327-7-git-send-email-abrestic@chromium.org>
+From: Andrew Bresticker <abrestic@chromium.org>
+Subject: [PATCH v8 5/9] mfd: Add driver for NVIDIA Tegra XUSB
+Date: Mon,  4 May 2015 10:36:38 -0700
+Message-ID: <1430761002-9327-6-git-send-email-abrestic@chromium.org>
 References: <1430761002-9327-1-git-send-email-abrestic@chromium.org>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1430761002-9327-1-git-send-email-abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1430761002-9327-1-git-send-email-abrestic@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>, Jon Hunter <jonathanh@nvidia.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add device-tree bindings for the Tegra XUSB mailbox which will be used
-for communication between the Tegra xHCI controller's firmware and the
-host processor.
+Add an MFD driver for the XUSB host complex found on NVIDIA Tegra124
+and later SoCs.
 
-Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
-Cc: Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+Cc: Samuel Ortiz <sameo@linux.intel.com>
+Cc: Lee Jones <lee.jones@linaro.org>
 ---
 Changes from v7:
- - Added back interrupts property.
-Changes from v6:
- - Removed reg/interrupts properties.
-No changes from v3/v4/v5.
-Changes from v2:
- - Dropped channel specifier.
- - Added pointer to mailbox documentation.
-Changes from v1:
- - Updated to use common mailbox bindings.
+ - Have child nodes get non-shared memory and interrupts from DT.
+ - Use of_platform_populate rather than mfd_add_devices.
+ - Get rid of struct tegra_xusb.
+New for v7.
 ---
- .../bindings/mailbox/nvidia,tegra124-xusb-mbox.txt | 32 ++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mailbox/nvidia,tegra124-xusb-mbox.txt
+ drivers/mfd/Kconfig      |  7 +++++
+ drivers/mfd/Makefile     |  1 +
+ drivers/mfd/tegra-xusb.c | 75 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 83 insertions(+)
+ create mode 100644 drivers/mfd/tegra-xusb.c
 
-diff --git a/Documentation/devicetree/bindings/mailbox/nvidia,tegra124-xusb-mbox.txt b/Documentation/devicetree/bindings/mailbox/nvidia,tegra124-xusb-mbox.txt
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index d5ad04d..61872b4 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -1430,6 +1430,13 @@ config MFD_STW481X
+ 	  in various ST Microelectronics and ST-Ericsson embedded
+ 	  Nomadik series.
+ 
++config MFD_TEGRA_XUSB
++	tristate "NVIDIA Tegra XUSB"
++	depends on ARCH_TEGRA
++	select MFD_CORE
++	help
++	  Support for the XUSB complex found on NVIDIA Tegra124 and later SoCs.
++
+ menu "Multimedia Capabilities Port drivers"
+ 	depends on ARCH_SA1100
+ 
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index 0e5cfeb..7588caf 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -181,6 +181,7 @@ obj-$(CONFIG_MFD_HI6421_PMIC)	+= hi6421-pmic-core.o
+ obj-$(CONFIG_MFD_DLN2)		+= dln2.o
+ obj-$(CONFIG_MFD_RT5033)	+= rt5033.o
+ obj-$(CONFIG_MFD_SKY81452)	+= sky81452.o
++obj-$(CONFIG_MFD_TEGRA_XUSB)	+= tegra-xusb.o
+ 
+ intel-soc-pmic-objs		:= intel_soc_pmic_core.o intel_soc_pmic_crc.o
+ obj-$(CONFIG_INTEL_SOC_PMIC)	+= intel-soc-pmic.o
+diff --git a/drivers/mfd/tegra-xusb.c b/drivers/mfd/tegra-xusb.c
 new file mode 100644
-index 0000000..7eb72ce
+index 0000000..e11fa23
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/mailbox/nvidia,tegra124-xusb-mbox.txt
-@@ -0,0 +1,32 @@
-+NVIDIA Tegra XUSB mailbox
-+=========================
++++ b/drivers/mfd/tegra-xusb.c
+@@ -0,0 +1,75 @@
++/*
++ * NVIDIA Tegra XUSB MFD driver
++ *
++ * Copyright (C) 2015 Google, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ */
 +
-+The Tegra XUSB mailbox is used by the Tegra xHCI controller's firmware to
-+communicate requests to the host and PHY drivers.
++#include <linux/interrupt.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/mfd/core.h>
++#include <linux/of.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
 +
-+Refer to ./mailbox.txt for generic information about mailbox device-tree
-+bindings.
++static const struct of_device_id tegra_xusb_of_match[] = {
++	{ .compatible = "nvidia,tegra124-xusb", },
++	{},
++};
++MODULE_DEVICE_TABLE(of, tegra_xusb_of_match);
 +
-+Required properties:
-+--------------------
-+ - compatible: For Tegra124, must contain "nvidia,tegra124-xusb-mbox".
-+   Otherwise, must contain '"nvidia,<chip>-xusb-mbox",
-+   "nvidia,tegra124-xusb-mbox"' where <chip> is tegra132.
-+ - interrupts: Must contain the XUSB mailbox interrupt.
-+ - #mbox-cells: Should be 0.  There is only one physical channel.
++static struct regmap_config tegra_fpci_regmap_config = {
++	.reg_bits = 32,
++	.val_bits = 32,
++	.reg_stride = 4,
++};
 +
-+Example:
-+--------
-+	xusb_mbox: mailbox {
-+		compatible = "nvidia,tegra124-xusb-mbox";
-+		interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
++static int tegra_xusb_probe(struct platform_device *pdev)
++{
++	struct resource *res;
++	struct regmap *fpci_regs;
++	void __iomem *fpci_base;
++	int ret;
 +
-+		#mbox-cells = <0>;
-+	};
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	fpci_base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(fpci_base))
++		return PTR_ERR(fpci_base);
 +
-+	usb-host@0,70090000 {
-+		...
-+		mboxes = <&xusb_mbox>;
-+		mbox-names = "xusb";
-+		...
-+	};
++	tegra_fpci_regmap_config.max_register = res->end - res->start - 3;
++	fpci_regs = devm_regmap_init_mmio(&pdev->dev, fpci_base,
++					  &tegra_fpci_regmap_config);
++	if (IS_ERR(fpci_regs)) {
++		ret = PTR_ERR(fpci_regs);
++		dev_err(&pdev->dev, "Failed to init regmap: %d\n", ret);
++		return ret;
++	}
++	platform_set_drvdata(pdev, fpci_regs);
++
++	ret = of_platform_populate(pdev->dev.of_node, NULL, NULL, &pdev->dev);
++	if (ret) {
++		dev_err(&pdev->dev, "Failed to add sub-devices: %d\n", ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static struct platform_driver tegra_xusb_driver = {
++	.probe = tegra_xusb_probe,
++	.driver = {
++		.name = "tegra-xusb",
++		.of_match_table = tegra_xusb_of_match,
++	},
++};
++module_platform_driver(tegra_xusb_driver);
++
++MODULE_DESCRIPTION("NVIDIA Tegra XUSB MFD");
++MODULE_AUTHOR("Andrew Bresticker <abrestic@chromium.org>");
++MODULE_LICENSE("GPL v2");
 -- 
 2.2.0.rc0.207.ga3a616c
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
