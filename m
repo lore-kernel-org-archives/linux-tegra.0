@@ -1,104 +1,83 @@
 From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH v8 3/9] mailbox: Fix up error handling in mbox_request_channel()
-Date: Mon,  4 May 2015 10:36:36 -0700
-Message-ID: <1430761002-9327-4-git-send-email-abrestic@chromium.org>
+Subject: [PATCH v8 1/9] xhci: Set shared HCD's hcd_priv in xhci_gen_setup
+Date: Mon,  4 May 2015 10:36:34 -0700
+Message-ID: <1430761002-9327-2-git-send-email-abrestic@chromium.org>
 References: <1430761002-9327-1-git-send-email-abrestic@chromium.org>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1430761002-9327-1-git-send-email-abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+xhci_gen_setup() sets the hcd_priv field for the primary HCD, but not
+for the shared HCD, requiring xHCI host-controller drivers to set it
+between usb_create_shared_hcd() and usb_add_hcd().  There's no reason
+xhci_gen_setup() can't set the shared HCD's hcd_priv as well, so move
+that bit out of the host-controller drivers and into xhci_gen_setup().
 
-mbox_request_channel() currently returns EBUSY in the event the controller
-is not present or if of_xlate() fails, but in neither case is EBUSY really
-appropriate.  Return EPROBE_DEFER if the controller is not yet present
-and change of_xlate() to return an ERR_PTR instead of NULL so that the
-error can be propagated back to the caller of mbox_request_channel().
-
-Signed-off-by: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Acked-by: Suman Anna <s-anna-l0cyMroinI0@public.gmane.org>
-Cc: Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Reviewed-by: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Cc: Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
 ---
-No changes from v7.
-Changes from v6:
- - Update omap-mailbox's xlate() to return error codes.
-No changes from v5.
+No changes from v5/v6/v7.
 New for v5.
+Peviously posted here: https://lkml.org/lkml/2014/10/30/726
 ---
- drivers/mailbox/mailbox.c      | 11 ++++++++---
- drivers/mailbox/omap-mailbox.c |  6 +++---
- 2 files changed, 11 insertions(+), 6 deletions(-)
+ drivers/usb/host/xhci-pci.c  | 5 -----
+ drivers/usb/host/xhci-plat.c | 5 -----
+ drivers/usb/host/xhci.c      | 6 +++---
+ 3 files changed, 3 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
-index 19b491d..c3c42d4 100644
---- a/drivers/mailbox/mailbox.c
-+++ b/drivers/mailbox/mailbox.c
-@@ -318,7 +318,7 @@ struct mbox_chan *mbox_request_channel(struct mbox_client *cl, int index)
- 		return ERR_PTR(-ENODEV);
+diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
+index 2af32e2..f9ce741 100644
+--- a/drivers/usb/host/xhci-pci.c
++++ b/drivers/usb/host/xhci-pci.c
+@@ -247,11 +247,6 @@ static int xhci_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 		goto dealloc_usb2_hcd;
  	}
  
--	chan = NULL;
-+	chan = ERR_PTR(-EPROBE_DEFER);
- 	list_for_each_entry(mbox, &mbox_cons, node)
- 		if (mbox->dev->of_node == spec.np) {
- 			chan = mbox->of_xlate(mbox, &spec);
-@@ -327,7 +327,12 @@ struct mbox_chan *mbox_request_channel(struct mbox_client *cl, int index)
+-	/* Set the xHCI pointer before xhci_pci_setup() (aka hcd_driver.reset)
+-	 * is called by usb_add_hcd().
+-	 */
+-	*((struct xhci_hcd **) xhci->shared_hcd->hcd_priv) = xhci;
+-
+ 	retval = usb_add_hcd(xhci->shared_hcd, dev->irq,
+ 			IRQF_SHARED);
+ 	if (retval)
+diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+index 783e819..852b1e9 100644
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -147,11 +147,6 @@ static int xhci_plat_probe(struct platform_device *pdev)
+ 	if ((node && of_property_read_bool(node, "usb3-lpm-capable")) ||
+ 			(pdata && pdata->usb3_lpm_capable))
+ 		xhci->quirks |= XHCI_LPM_SUPPORT;
+-	/*
+-	 * Set the xHCI pointer before xhci_plat_setup() (aka hcd_driver.reset)
+-	 * is called by usb_add_hcd().
+-	 */
+-	*((struct xhci_hcd **) xhci->shared_hcd->hcd_priv) = xhci;
  
- 	of_node_put(spec.np);
- 
--	if (!chan || chan->cl || !try_module_get(mbox->dev->driver->owner)) {
-+	if (IS_ERR(chan)) {
-+		mutex_unlock(&con_mutex);
-+		return chan;
-+	}
+ 	if (HCC_MAX_PSA(xhci->hcc_params) >= 4)
+ 		xhci->shared_hcd->can_do_streams = 1;
+diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+index ec8ac16..2901a67 100644
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -4849,9 +4849,9 @@ int xhci_gen_setup(struct usb_hcd *hcd, xhci_get_quirks_t get_quirks)
+ 		 */
+ 		hcd->has_tt = 1;
+ 	} else {
+-		/* xHCI private pointer was set in xhci_pci_probe for the second
+-		 * registered roothub.
+-		 */
++		xhci = hcd_to_xhci(hcd->primary_hcd);
++		*((struct xhci_hcd **) hcd->hcd_priv) = xhci;
 +
-+	if (chan->cl || !try_module_get(mbox->dev->driver->owner)) {
- 		dev_dbg(dev, "%s: mailbox not free\n", __func__);
- 		mutex_unlock(&con_mutex);
- 		return ERR_PTR(-EBUSY);
-@@ -390,7 +395,7 @@ of_mbox_index_xlate(struct mbox_controller *mbox,
- 	int ind = sp->args[0];
- 
- 	if (ind >= mbox->num_chans)
--		return NULL;
-+		return ERR_PTR(-EINVAL);
- 
- 	return &mbox->chans[ind];
- }
-diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbox.c
-index 03f8545..a3dbfd9 100644
---- a/drivers/mailbox/omap-mailbox.c
-+++ b/drivers/mailbox/omap-mailbox.c
-@@ -639,18 +639,18 @@ static struct mbox_chan *omap_mbox_of_xlate(struct mbox_controller *controller,
- 
- 	mdev = container_of(controller, struct omap_mbox_device, controller);
- 	if (WARN_ON(!mdev))
--		return NULL;
-+		return ERR_PTR(-EINVAL);
- 
- 	node = of_find_node_by_phandle(phandle);
- 	if (!node) {
- 		pr_err("%s: could not find node phandle 0x%x\n",
- 		       __func__, phandle);
--		return NULL;
-+		return ERR_PTR(-ENODEV);
+ 		return 0;
  	}
  
- 	mbox = omap_mbox_device_find(mdev, node->name);
- 	of_node_put(node);
--	return mbox ? mbox->chan : NULL;
-+	return mbox ? mbox->chan : ERR_PTR(-ENOENT);
- }
- 
- static int omap_mbox_probe(struct platform_device *pdev)
 -- 
 2.2.0.rc0.207.ga3a616c
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
