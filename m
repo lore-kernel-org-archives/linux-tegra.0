@@ -1,72 +1,108 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v8 0/9] Tegra xHCI support
-Date: Tue, 5 May 2015 15:57:50 +0100
-Message-ID: <5548DA6E.5060807@nvidia.com>
-References: <1430761002-9327-1-git-send-email-abrestic@chromium.org>
- <5548D389.2080609@nvidia.com> <20150505144234.GA29813@ulmo.nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+Subject: Re: [PATCH v4 00/20] Tegra210 Clock Support
+Date: Tue, 5 May 2015 11:55:21 -0400
+Message-ID: <5548E7E9.3040802@nvidia.com>
+References: <1430757460-9478-1-git-send-email-rklein@nvidia.com> <20150505131419.GA11535@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20150505144234.GA29813@ulmo.nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150505131419.GA11535@ulmo.nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, devicetree@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry,
-
-On 05/05/15 15:42, Thierry Reding wrote:
+On 5/5/2015 9:14 AM, Thierry Reding wrote:
 > * PGP Signed by an unknown key
 > 
-> On Tue, May 05, 2015 at 03:28:25PM +0100, Jon Hunter wrote:
->> Hi Andrew,
+> On Mon, May 04, 2015 at 12:37:20PM -0400, Rhyland Klein wrote:
+>> This patch series updates the tegra common clock driver and adds
+>> support for the Tegra210 clocks. The clocks in Tegra210 changed
+>> significantly in some ways from earlier generations, so to support
+>> them, we need to extend our base framework a bit and add some new
+>> features.
 >>
->> On 04/05/15 18:36, Andrew Bresticker wrote:
->>> This series adds support for xHCI on NVIDIA Tegra SoCs.  This includes:
->>>  - patches 1, 2, and 3: minor cleanups for mailbox framework and xHCI,
->>>  - patches 4 and 5: adding an MFD driver for the XUSB cmoplex,
->>>  - patches 6 and 7: adding a driver for the mailbox used to communicate
->>>    with the xHCI controller's firmware, and
->>>  - patches 8 and 9: adding a xHCI host-controller driver.
->>>
->>> The addition of USB PHY support to the XUSB padctl driver has been dropped.
->>> Thierry will be posting those patches later.
->>>
->>> Given the many compile and run-time dependencies in this series, it is probably
->>> best if the first 3 patches are picked up by the relevant maintainers in topic
->>> branches so that the remainder of the series can go through the Tegra tree.
->>>
->>> Tested on Jetson TK1 and Nyan-Big with a variety of USB2.0 and USB3.0 memory
->>> sticks and ethernet dongles.  This has also been tested, with additional
->>> out-of-tree patches, on Tegra132 and Tegra210 based boards.
+>> Some patches here also address issues found while adding features
+>> and other cleanup type work.
 >>
->> For the series, you can add my ...
->>
->> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
->> Tested-by: Jon Hunter <jonathanh@nvidia.com>
->>
->> I have tested this on a t124 nyan-big with USB3.0 and USB2.0 devices.
+>> v4:
+>>   - Fixed minor checkpatch errors and other typos
+>>   - Rebased ontop of linux-next 20150504
 > 
-> How can this be tested without the corresponding USB PHY patches that
-> I'm supposed to be sending out?
+> Are you sure about this? It still doesn't apply cleanly to next-20150504
+> for me.
+
+It is based off c9256b89d92154cffd36697b412d0a0176a8e2d2 "Add linux-next
+specific files for 20150504"
+
+What types of problems are you running into?
+
+-rhyland
+
 > 
-> Also, can anyone point me at patches that add the device tree nodes
-> which this driver makes use of?
+> Thierry
+> 
+>>
+>> v3:
+>>   - Added a fix from Andrew Bresticker that was found while testing
+>>     this code.
+>>
+>> Andrew Bresticker (1):
+>>   clk: tegra: pll: Fix issues with rates for VCO PLLs
+>>
+>> Bill Huang (7):
+>>   clk: tegra: pll-params: change misc_reg count from 3 -> 6
+>>   clk: tegra: pll: Add logic for SS
+>>   clk: tegra: pll: Add code to handle if resets are supported by PLL
+>>   clk: tegra: pll: Adjust vco_min if SDM present
+>>   clk: tegra: pll: Add dyn_ramp callback
+>>   clk: tegra: pll: Add Set_default logic
+>>   clk: tegra: Add Super Gen5 Logic
+>>
+>> Rhyland Klein (12):
+>>   clk: tegra: Modify tegra_audio_clk_init to accept more plls
+>>   clk: tegra: periph: add new periph clks and muxes for Tegra210
+>>   clk: tegra: pll: add tegra_pll_wait_for_lock to clk header
+>>   clk: tegra: pll: simplify clk_enable_path
+>>   clk: tegra: pll: update warning msg
+>>   clk: tegra: pll: Don't unconditionally set LOCK flags
+>>   clk: tegra: pll: Add logic for handling SDM data
+>>   clk: tegra: pll: Add logic for out-of-table rates for T210
+>>   clk: tegra: pll: Add specialized logic for T210
+>>   clk: tegra: pll: Add support for PLLMB for T210
+>>   clk: tegra: pll: Fix _pll_ramp_calc_pll logic and
+>>     _calc_dynamic_ramp_rate
+>>   clk: tegra210: add support for Tegra210 clocks
+>>
+>>  .../bindings/clock/nvidia,tegra210-car.txt         |   56 +
+>>  drivers/clk/tegra/Makefile                         |    2 +
+>>  drivers/clk/tegra/clk-id.h                         |   64 +-
+>>  drivers/clk/tegra/clk-pll.c                        |  697 ++++-
+>>  drivers/clk/tegra/clk-tegra-audio.c                |   25 +-
+>>  drivers/clk/tegra/clk-tegra-periph.c               |  257 +-
+>>  drivers/clk/tegra/clk-tegra-super-gen5.c           |  150 ++
+>>  drivers/clk/tegra/clk-tegra114.c                   |   30 +-
+>>  drivers/clk/tegra/clk-tegra124.c                   |   31 +-
+>>  drivers/clk/tegra/clk-tegra20.c                    |   18 +-
+>>  drivers/clk/tegra/clk-tegra210.c                   | 2761 ++++++++++++++++++++
+>>  drivers/clk/tegra/clk-tegra30.c                    |   31 +-
+>>  drivers/clk/tegra/clk.h                            |   90 +-
+>>  include/dt-bindings/clock/tegra210-car.h           |  401 +++
+>>  14 files changed, 4468 insertions(+), 145 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra210-car.txt
+>>  create mode 100644 drivers/clk/tegra/clk-tegra-super-gen5.c
+>>  create mode 100644 drivers/clk/tegra/clk-tegra210.c
+>>  create mode 100644 include/dt-bindings/clock/tegra210-car.h
+>>
+>> -- 
+>> 1.7.9.5
+>>
+> 
+> * Unknown Key
+> * 0x7F3EB3A1
+> 
 
-Andrew has a branch here [1] for testing this series. Yes, obviously
-testing without your PHY piece (which I should have mentioned), but at
-least we can test Andrew's changes.
 
-Cheers
-Jon
-
-[1] https://github.com/abrestic/linux/tree/tegra-xhci-v8-test
+-- 
+nvpublic
