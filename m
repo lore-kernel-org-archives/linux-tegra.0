@@ -1,59 +1,64 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 4/9] ARM: tegra: add Tegra30 HDA support
-Date: Tue, 5 May 2015 14:04:40 +0200
-Message-ID: <20150505120439.GD30501@ulmo.nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 5/9] ARM: tegra: fix hda2codec_2x clock name in Tegra124
+ device tree
+Date: Tue, 5 May 2015 14:08:52 +0200
+Message-ID: <20150505120850.GE30501@ulmo.nvidia.com>
 References: <cover.1428700856.git.marcel.ziswiler@toradex.com>
- <0fd7107ec51f0a359d4c395c243bcd12f8731cd5.1428700856.git.marcel.ziswiler@toradex.com>
+ <4d791b76e1b363b2446a2b6a6bfb84869d9f94e8.1428700856.git.marcel.ziswiler@toradex.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="2iBwrppp/7QCDedR"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="lteA1dqeVaWQ9QQl"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <0fd7107ec51f0a359d4c395c243bcd12f8731cd5.1428700856.git.marcel.ziswiler@toradex.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marcel Ziswiler <marcel@ziswiler.com>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Mikko Perttunen <mperttunen@nvidia.com>, Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Matt Porter <mporter@linaro.org>, Paul Walmsley <paul@pwsan.com>, Eduardo Valentin <edubezval@gmail.com>, Takashi Iwai <tiwai@suse.de>, Dylan Reid <dgreid@chromium.org>, Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Russell King <linux@arm.linux.org.uk>, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kerne>
+In-Reply-To: <4d791b76e1b363b2446a2b6a6bfb84869d9f94e8.1428700856.git.marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Matt Porter <mporter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt@kerne>
 List-Id: linux-tegra@vger.kernel.org
 
 
---2iBwrppp/7QCDedR
+--lteA1dqeVaWQ9QQl
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 10, 2015 at 11:35:59PM +0200, Marcel Ziswiler wrote:
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+On Fri, Apr 10, 2015 at 11:36:00PM +0200, Marcel Ziswiler wrote:
+> From: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
 >=20
-> Add a device node for the HDA controller found on Tegra30.
->=20
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
 > ---
->  arch/arm/boot/dts/tegra30.dtsi | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
+>  arch/arm/boot/dts/tegra124.dtsi | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied, thanks.
+I have this exact commit locally in my tree, so I've just taken the
+commit message from that and applied this for v4.2.
 
+Thanks,
 Thierry
 
---2iBwrppp/7QCDedR
+--lteA1dqeVaWQ9QQl
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJVSLHWAAoJEN0jrNd/PrOhZ6EP+wUEA3e01/o1ZUQHE7oUo/mz
-D91OttHuwycM6eRg7oD2J3yctgFiVoUtecvVGfGyRoZ7VTzu+jzWs6vQni0FSAH7
-gze2IQMgPCt6ZUMj+CSI2YOK+3imbOxEKwTbrR7rPUJa+qxwuZKyPq4jy6sMeGOE
-aLVGHcZ6EtnGr61uRydNyJk+cPa9erie1snNwdSMDgSVKrxiE5zUwQ9GTgtJxBdN
-JLzPII4BkoqjUKBnPgLJbogEi6VHisw6++HEROoFS7BWP//7Lmgaqi92bDFT5+Y2
-6cJBP8Sh1yQa5GyQ6kuJy0pm+4EZt/YOvdstV5LHT3zKFWYcZOG///YHc+usXRgz
-QmdW3CA7Jl6cAEHcw5tGnsvgt9Hysa2Rj9jZ3BHpwGbYDW+rLkwnbTuG5GIJmw6c
-MkBSfmgcCisi5N7aV9rIQuInTJloW+kXmVpGJQWH2SIG4l7zy7DO0Bez1l0ixliq
-pT6jc1DEJu9n9o6x07Ah4fTGp8sCTilcXFGuC9qen2Y3xdqpaP/KG9XIIZ+3LGi9
-RjTyCUGRCBUGpe/YIcZyct5PMFMb73KhtiQWAMb/wOitmtbCSQOEsF2L3cozHUGp
-l6Te8liuVIWF+g63CvACw6Gdec6nHspJ2B6WoVuGTFeOKUkDQjHykb0wL1pmJFN1
-hG3EUezmE0avNT7vtEPl
-=hb8z
+iQIcBAABCAAGBQJVSLLSAAoJEN0jrNd/PrOhgZkP/1J1qhlOA/J3UsPupw18/v1T
+UjEoHKDaHSkiEBb64UfnoFK1zEMs5d0slAbFavvHi0TsO7oIDoxs2Tokev9LOKKw
+fLPHEcxc/h8D3r3zdSu0jqrW3qsEnnOP1nyTpol696QUdbm0ucJykpMF/9Meqfnb
+kPsCPDBvQDaZZ6ebOcHfyIG1C60ffCuTNOR0nHDu/Ga4fmXq6XYhTd/Hh4LMolMq
+u3OkqdWRNM8uXFmk+1XWEO9QSYsk7ERx1ataW5ddS1vonVn+PxUOnqdfaJTAOQqc
+iQDhGKCIzSX9KiBlcXASikgKuf7WffYHg1l6orN+uyf+FrNR21sF9SJWzWs5oKxf
+Hupa9ynrkQ9aIu4eeA4sThK1DE+hptPaNInJOooWwIXNAVaNH6uEmzLK4fnJPIuw
+YzlXMt/g7wUtYPTs0hO2nUh99yHUu7+quJ+NfjOSYDTHiQBeHJT35acNJyGkMCkK
+qbqlwdNyi4YO7ObgIagucmXDXeN9PuDfViGp7fdhjT1rdmhCV108fnw9Gn7Su69C
+7r1NxsVc9fP8ItzLCJoopu1QLJ0synZB27dhOjHIs727LYyOghrC02rTquZtBIpn
+Bup2u0dFxaIKtr6r2Fg/EfC1iFN/U8ayxNmXl/2F7HyRDgmGmUvJDhLTSTUHiINI
+/tv0kVRSLY+AVPIoh/xU
+=ZiKi
 -----END PGP SIGNATURE-----
 
---2iBwrppp/7QCDedR--
+--lteA1dqeVaWQ9QQl--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
