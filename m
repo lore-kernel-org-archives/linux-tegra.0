@@ -1,68 +1,102 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 9/9] ARM: tegra: apalis t30: fix pin muxing and add HDA
- in device tree
-Date: Tue, 5 May 2015 14:31:19 +0200
-Message-ID: <20150505123117.GH30501@ulmo.nvidia.com>
-References: <cover.1428700856.git.marcel.ziswiler@toradex.com>
- <94ae838321940e1a245c115009f6c48f0eceee76.1428700856.git.marcel.ziswiler@toradex.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="qM81t570OJUP5TU/"
+Subject: [PATCH] ALSA: hda/tegra - Fix oops
+Date: Tue,  5 May 2015 14:45:57 +0200
+Message-ID: <1430829957-1496-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <94ae838321940e1a245c115009f6c48f0eceee76.1428700856.git.marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Matt Porter <mporter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt@kerne>
+To: Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
---qM81t570OJUP5TU/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Commit a41d122449be ("ALSA: hda - Embed bus into controller object")
+introduced a regression in the Tegra HDA driver that causes the
+following oops during boot:
 
-On Fri, Apr 10, 2015 at 11:36:04PM +0200, Marcel Ziswiler wrote:
-> From: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
->=20
-> Fix pin muxing, add digital audio aka HDA pin muxing and activate HDA
-> driver.
-> Fix pu vs. gpio_pu pin muxing.
-> While at it also update comment about supported module hardware
-> versions.
-> While at it also add an emmc label to the SDHCI node just like on
-> Colibri T30.
-> While at it set the dr_mode of the primary USB EHCI instance to OTG as
-> well.
->=20
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+	[    2.333458] Unable to handle kernel NULL pointer dereference at virtual address 000004c4
+	[    2.341537] pgd = c0004000
+	[    2.344312] [000004c4] *pgd=00000000
+	[    2.347898] Internal error: Oops: 5 [#1] PREEMPT SMP ARM
+	[    2.353200] Modules linked in:
+	[    2.356264] CPU: 0 PID: 1 Comm: swapper/0 Tainted: G        W       4.1.0-rc2-next-20150505-00344-g8577890defbf #79
+	[    2.366682] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+	[    2.372939] task: ee0d8b40 ti: ee0da000 task.ti: ee0da000
+	[    2.378336] PC is at azx_bus_init+0x18/0xf4
+	[    2.382516] LR is at hda_tegra_probe+0x6c/0x478
+	[    2.387043] pc : [<c06156c4>]    lr : [<c061cf00>]    psr: 60000113
+	[    2.387043] sp : ee0dbe38  ip : 00000000  fp : 00000000
+	[    2.398501] r10: ed874c00  r9 : 000000fd  r8 : 00000000
+	[    2.403717] r7 : ed874c10  r6 : 00000000  r5 : 00000000  r4 : ed016810
+	[    2.410232] r3 : c08a2ad4  r2 : c08a1ea0  r1 : 00000000  r0 : ed016810
+	[    2.416750] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment kernel
+	[    2.424046] Control: 10c5387d  Table: 8000406a  DAC: 00000015
+	[    2.429783] Process swapper/0 (pid: 1, stack limit = 0xee0da210)
+	[    2.435778] Stack: (0xee0dbe38 to 0xee0dc000)
+	[    2.440129] be20:                                                       00000000 ed016810
+	[    2.448297] be40: 00000000 c061cf00 00000000 ee0dbe5c ed8735d0 c0a7bc48 ed02fd50 ed016000
+	[    2.456462] be60: c1250164 ed874c10 c0c66bf8 fffffdfb 00000000 000000fd c0b8dc98 c046664c
+	[    2.464628] be80: c0466608 c1250164 ed874c10 00000000 c0c66bf8 c0464eb4 ed874c10 c0c66bf8
+	[    2.472793] bea0: ed874c44 c0c43458 00000000 c04650d0 00000000 c0c66bf8 c046503c c04633b4
+	[    2.480959] bec0: ee11bea4 ed85f390 c0c66bf8 ed017ac0 00000000 c0464634 c0ab2b7c c0c66bf8
+	[    2.489125] bee0: c0bfde20 c0c66bf8 c0bfde20 ed01ce40 c0b7b414 c04656e8 c04665b0 c0bfde20
+	[    2.497291] bf00: c0bfde20 c0009770 ee0d8b40 c0c02488 60000113 00000000 00000000 00000003
+	[    2.505458] bf20: 00000000 c0c02488 60000113 00000000 c0b54598 c0b16a90 ef7fcc57 c0041228
+	[    2.513624] bf40: c0a9150c ef7fcc5f 00000006 00000006 00000000 c0bf1fa8 c0bf2354 00000006
+	[    2.521790] bf60: c0b8dc90 c0c7c000 c0c7c000 c0b8dc98 00000000 c0b54dd8 00000006 00000006
+	[    2.529956] bf80: c0b54598 00000000 00000000 c07ff08c 00000000 00000000 00000000 00000000
+	[    2.538122] bfa0: 00000000 c07ff094 00000000 c000f5a0 00000000 00000000 00000000 00000000
+	[    2.546286] bfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+	[    2.554451] bfe0: 00000000 00000000 00000000 00000000 00000013 00000000 fffff7ff c013f264
+	[    2.562624] [<c06156c4>] (azx_bus_init) from [<c061cf00>] (hda_tegra_probe+0x6c/0x478)
+	[    2.570535] [<c061cf00>] (hda_tegra_probe) from [<c046664c>] (platform_drv_probe+0x44/0xa4)
+	[    2.578879] [<c046664c>] (platform_drv_probe) from [<c0464eb4>] (driver_probe_device+0x174/0x2b8)
+	[    2.587739] [<c0464eb4>] (driver_probe_device) from [<c04650d0>] (__driver_attach+0x94/0x98)
+	[    2.596172] [<c04650d0>] (__driver_attach) from [<c04633b4>] (bus_for_each_dev+0x6c/0xa0)
+	[    2.604342] [<c04633b4>] (bus_for_each_dev) from [<c0464634>] (bus_add_driver+0x148/0x1f0)
+	[    2.612597] [<c0464634>] (bus_add_driver) from [<c04656e8>] (driver_register+0x78/0xf8)
+	[    2.620593] [<c04656e8>] (driver_register) from [<c0009770>] (do_one_initcall+0x8c/0x1d4)
+	[    2.628765] [<c0009770>] (do_one_initcall) from [<c0b54dd8>] (kernel_init_freeable+0x144/0x1e4)
+	[    2.637459] [<c0b54dd8>] (kernel_init_freeable) from [<c07ff094>] (kernel_init+0x8/0xe8)
+	[    2.645543] [<c07ff094>] (kernel_init) from [<c000f5a0>] (ret_from_fork+0x14/0x34)
 
-Same as for patch 8/9, please split these up into smaller patches that
-do one thing each. And again, I'm not sure adding an emmc label just for
-consistency here is worth it. If it's never used there's no need to have
-it.
+This is caused by azx_bus_init() trying to dereference chip->card, which
+for the Tegra driver doesn't get initialized until sometime later during
+the call to hda_tegra_create().
 
-Thierry
+Fix this by mimicking the behaviour of the Intel driver and defer HDA
+bus initialization until right before the call to snd_device_new().
 
---qM81t570OJUP5TU/
-Content-Type: application/pgp-signature
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ sound/pci/hda/hda_tegra.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJVSLgVAAoJEN0jrNd/PrOh6eMP+gJRrnzFNmgoCUMJndtR5GKI
-XUR3Ng5hc4+9FQvNuxHCvEjCCNxrYKWFv8q0l4aYFl5OXEBVlJCm9ohyEH/DJe23
-K7ctReVZh3H/vSNK6a360B1W0s03DT9DZ4FmWQ/bypmvgZueRKNF+ySZa+wUZcku
-ZjxUxs9Ml06BYAltltVckzpsqOH2ii7u2t6LhDPGEuBZ0Yy0CMAP562VUhk6CwGU
-FGW6LFxRSQv/LSvpg0ndM87LTCGCZBMR36hy6dvIvd7secYlGo+mzv1k0bJZAII4
-jFZ9FkO1sf+A7d2zZKuq419NeLFkDyFc3M83EADZ/2Z8CeUoJgRPJLZVbw26M+Ia
-2n5h5U0emw9o5Oi/me4+09Wr+pyBhUzS2AAq9jL8b7T4HQWFenn+QAJKUCkLDxLM
-enSV9QlwjWXNWXZf+NSHgsFjnd/dNXXAoJpQtYqdqlCe4c1EqWNgLhfYgY19lk1A
-6sTj5RoUZJTgTE4jvQG9yreff95szxUGKNoRRkLTIvKO1iDRHW0Ol5O3ITy1Xvu7
-14OBrjvjv5voP0u6SaZjOyI2gotGSShbRZ+sLydSFw+PGkCnk2nqqNcTuK4JGGmI
-PiIR8UGMybNiFJsBc5FHX1awbwTDtdntwmsFfMO+QlEEP0c87mnyvOd3ySgBQRa5
-akKkWEO314oW+kCYc98I
-=dOiM
------END PGP SIGNATURE-----
-
---qM81t570OJUP5TU/--
+diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
+index 801e9fb4a467..db0bb50fa5b9 100644
+--- a/sound/pci/hda/hda_tegra.c
++++ b/sound/pci/hda/hda_tegra.c
+@@ -439,6 +439,10 @@ static int hda_tegra_create(struct snd_card *card,
+ 	chip->single_cmd = false;
+ 	chip->snoop = true;
+ 
++	err = azx_bus_init(chip, NULL, &hda_tegra_io_ops);
++	if (err < 0)
++		return err;
++
+ 	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops);
+ 	if (err < 0) {
+ 		dev_err(card->dev, "Error creating device\n");
+@@ -475,10 +479,6 @@ static int hda_tegra_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
+-	err = azx_bus_init(chip, NULL, &hda_tegra_io_ops);
+-	if (err < 0)
+-		goto out_free;
+-
+ 	err = hda_tegra_create(card, driver_flags, hda);
+ 	if (err < 0)
+ 		goto out_free;
+-- 
+2.3.5
