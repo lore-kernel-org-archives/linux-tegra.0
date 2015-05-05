@@ -1,104 +1,59 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 3/9] Documentation: DT bindings: fix hda2codec_2x clock
- name for tegra30-hda
-Date: Tue, 5 May 2015 14:02:50 +0200
-Message-ID: <20150505120249.GC30501@ulmo.nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 4/9] ARM: tegra: add Tegra30 HDA support
+Date: Tue, 5 May 2015 14:04:40 +0200
+Message-ID: <20150505120439.GD30501@ulmo.nvidia.com>
 References: <cover.1428700856.git.marcel.ziswiler@toradex.com>
- <ee8e9952dfdfd87da52f817fca0a6ad94a137742.1428700856.git.marcel.ziswiler@toradex.com>
+ <0fd7107ec51f0a359d4c395c243bcd12f8731cd5.1428700856.git.marcel.ziswiler@toradex.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="WfZ7S8PLGjBY9Voh"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="2iBwrppp/7QCDedR"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <ee8e9952dfdfd87da52f817fca0a6ad94a137742.1428700856.git.marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Matt Porter <mporter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Marcel Ziswiler <marc>
+In-Reply-To: <0fd7107ec51f0a359d4c395c243bcd12f8731cd5.1428700856.git.marcel.ziswiler@toradex.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marcel Ziswiler <marcel@ziswiler.com>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Mikko Perttunen <mperttunen@nvidia.com>, Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Matt Porter <mporter@linaro.org>, Paul Walmsley <paul@pwsan.com>, Eduardo Valentin <edubezval@gmail.com>, Takashi Iwai <tiwai@suse.de>, Dylan Reid <dgreid@chromium.org>, Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Russell King <linux@arm.linux.org.uk>, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kerne>
 List-Id: linux-tegra@vger.kernel.org
 
 
---WfZ7S8PLGjBY9Voh
+--2iBwrppp/7QCDedR
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 10, 2015 at 11:35:58PM +0200, Marcel Ziswiler wrote:
-> From: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+On Fri, Apr 10, 2015 at 11:35:59PM +0200, Marcel Ziswiler wrote:
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 >=20
-> Fix hda2codec_2x clock name in Tegra30 HDA controller device tree node
-> documentation.
-> While at it also fix coma vs. semicolon issue.
+> Add a device node for the HDA controller found on Tegra30.
 >=20
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 > ---
->  Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.txt | 8 ++++-=
----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+>  arch/arm/boot/dts/tegra30.dtsi | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
 
-Takashi,
-
-This series contains a couple of patches to the Tegra HDA driver and I
-have a couple of outstanding patches myself. Would you be okay with me
-collecting the patches in a branch and send them to you as a pull
-request?
+Applied, thanks.
 
 Thierry
 
-> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.t=
-xt b/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.txt
-> index 13e2ef4..5032efa 100644
-> --- a/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.txt
-> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.txt
-> @@ -8,10 +8,10 @@ Required properties:
->  - interrupts : The interrupt from the HDA controller.
->  - clocks : Must contain an entry for each required entry in clock-names.
->    See ../clocks/clock-bindings.txt for details.
-> -- clock-names : Must include the following entries: hda, hdacodec_2x, hd=
-a2hdmi
-> +- clock-names : Must include the following entries: hda, hda2codec_2x, h=
-da2hdmi
->  - resets : Must contain an entry for each entry in reset-names.
->    See ../reset/reset.txt for details.
-> -- reset-names : Must include the following entries: hda, hdacodec_2x, hd=
-a2hdmi
-> +- reset-names : Must include the following entries: hda, hda2codec_2x, h=
-da2hdmi
-> =20
->  Example:
-> =20
-> @@ -24,7 +24,7 @@ hda@0,70030000 {
->  		 <&tegra_car TEGRA124_CLK_HDA2CODEC_2X>;
->  	clock-names =3D "hda", "hda2hdmi", "hda2codec_2x";
->  	resets =3D <&tegra_car 125>, /* hda */
-> -		 <&tegra_car 128>; /* hda2hdmi */
-> -		 <&tegra_car 111>, /* hda2codec_2x */
-> +		 <&tegra_car 128>, /* hda2hdmi */
-> +		 <&tegra_car 111>; /* hda2codec_2x */
->  	reset-names =3D "hda", "hda2hdmi", "hda2codec_2x";
->  };
-> --=20
-> 1.9.3
->=20
-
---WfZ7S8PLGjBY9Voh
+--2iBwrppp/7QCDedR
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJVSLFoAAoJEN0jrNd/PrOhB+UP/2t2zMfWzexznOsW8pNg++re
-Y3TsKZD41484gnLGDIJaSt9t4yePN0ouh/g2hsNPyTk2FXBKAEg5VO7Y2CENWf53
-3/yV/o9GfdZosSPFykYvAinP2Tp/ecHWiW5HjnTLTI38dwkZGJhg6vEMi7jfcGyj
-gvO0n9bl41b8itUhGmhu2/AeTNweqcJqRWceOApzGBYHjspsBv1PknoLIEtBbImo
-xoHXFtFZ5BaSl2EAjQiZ5CGd812Hyni9uaN6Di1X4TQSaqT/iUgnH9NJOND/cl5A
-cvW9t6wezTvut1cIeLUltrN3byrEwa0EPl/JXCiZG0Jd31AUawjnJgFmEwQco+WB
-8OiAL7mfLARl8QLFkrYyduSvp+GmA418HjDcFpqpHZGSORO7WUoBYQOcu7dRG63P
-6V5Qo8zG+/Xs5ju7yiaxhT8BOknorjZNiH8GAjTirwn5VR0p/nzSIjKzHDkkkbIs
-gm4CLbgoO54GGZGwpXC6FLzUtzEITuPJqiEgArrNxmQsOM52jN186J+3efZL2Qky
-7oLSjiVA9Rm6NfEzFkfrqBJHbhRZpK1ofouZISV5mfxsc6Kxc6noSQBHYRzsEJEo
-6X8nuGpcRZ4P/vwgDNRw/4WoAGeadtGTxMYi5w0nijalj7S66eg6iTj5+JlF6tea
-u2TsITPHw8nsdmOjvDLo
-=5r0g
+iQIcBAABCAAGBQJVSLHWAAoJEN0jrNd/PrOhZ6EP+wUEA3e01/o1ZUQHE7oUo/mz
+D91OttHuwycM6eRg7oD2J3yctgFiVoUtecvVGfGyRoZ7VTzu+jzWs6vQni0FSAH7
+gze2IQMgPCt6ZUMj+CSI2YOK+3imbOxEKwTbrR7rPUJa+qxwuZKyPq4jy6sMeGOE
+aLVGHcZ6EtnGr61uRydNyJk+cPa9erie1snNwdSMDgSVKrxiE5zUwQ9GTgtJxBdN
+JLzPII4BkoqjUKBnPgLJbogEi6VHisw6++HEROoFS7BWP//7Lmgaqi92bDFT5+Y2
+6cJBP8Sh1yQa5GyQ6kuJy0pm+4EZt/YOvdstV5LHT3zKFWYcZOG///YHc+usXRgz
+QmdW3CA7Jl6cAEHcw5tGnsvgt9Hysa2Rj9jZ3BHpwGbYDW+rLkwnbTuG5GIJmw6c
+MkBSfmgcCisi5N7aV9rIQuInTJloW+kXmVpGJQWH2SIG4l7zy7DO0Bez1l0ixliq
+pT6jc1DEJu9n9o6x07Ah4fTGp8sCTilcXFGuC9qen2Y3xdqpaP/KG9XIIZ+3LGi9
+RjTyCUGRCBUGpe/YIcZyct5PMFMb73KhtiQWAMb/wOitmtbCSQOEsF2L3cozHUGp
+l6Te8liuVIWF+g63CvACw6Gdec6nHspJ2B6WoVuGTFeOKUkDQjHykb0wL1pmJFN1
+hG3EUezmE0avNT7vtEPl
+=hb8z
 -----END PGP SIGNATURE-----
 
---WfZ7S8PLGjBY9Voh--
+--2iBwrppp/7QCDedR--
