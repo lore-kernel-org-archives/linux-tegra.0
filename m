@@ -1,75 +1,92 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v4 02/20] clk: tegra: periph: add new periph clks and
- muxes for Tegra210
-Date: Wed, 6 May 2015 16:15:25 +0200
-Message-ID: <20150506141524.GE22098@ulmo.nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v4 06/20] clk: tegra: pll-params: change misc_reg count
+ from 3 -> 6
+Date: Wed, 6 May 2015 16:18:17 +0200
+Message-ID: <20150506141816.GF22098@ulmo.nvidia.com>
 References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
- <1430757460-9478-3-git-send-email-rklein@nvidia.com>
- <5549F900.2050600@nvidia.com>
+ <1430757460-9478-7-git-send-email-rklein@nvidia.com>
+ <CANLzEksajPjf1VH8Zn-1oXhgL8f-b7GuCBprExTP-w18WbCC4A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Q8BnQc91gJZX4vDc"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="TU+u6i6jrDPzmlWF"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <5549F900.2050600@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jim Lin <jilin@nvidia.com>
-Cc: Rhyland Klein <rklein@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <CANLzEksajPjf1VH8Zn-1oXhgL8f-b7GuCBprExTP-w18WbCC4A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---Q8BnQc91gJZX4vDc
+--TU+u6i6jrDPzmlWF
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 06, 2015 at 07:20:32PM +0800, Jim Lin wrote:
-> On 05/05/2015 12:37 AM, Rhyland Klein wrote:
-[...]
-> >diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/cl=
-k-tegra-periph.c
-[...]
-> >@@ -333,6 +497,11 @@ static u32 mux_clkm_48M_pllp_480M_idx[] =3D {
-> >  	[0] =3D 0, [1] =3D 2, [2] =3D 4, [3] =3D 6,
+On Mon, May 04, 2015 at 01:35:09PM -0700, Benson Leung wrote:
+> On Mon, May 4, 2015 at 9:37 AM, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> > From: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >
+> > New SoC's may have more then 3 MISC registers, so bump up the
+> > array size and use a #define to be more informative about the value.
+> >
+> > Signed-off-by: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> >  drivers/clk/tegra/clk.h |    4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> > index 5759b8bfb80e..8e7361886cf9 100644
+> > --- a/drivers/clk/tegra/clk.h
+> > +++ b/drivers/clk/tegra/clk.h
+> > @@ -156,6 +156,8 @@ struct div_nmp {
+> >         u8              override_divp_shift;
 > >  };
-> >+static const char *mux_clkm_pllre_clk32_480M[] =3D {
-> >+	"clk_m", "pll_re_out", "clk_32k", "pll_u_480M"
-> >+};
-> >+#define mux_clkm_pllre_clk32_480M_idx NULL
-> Please help to replace above
+> >
+> > +#define MAX_PLL_MISC_REG_COUNT 6
+> > +
+> >  /**
+> >   * struct clk_pll_params - PLL parameters
+> >   *
+> > @@ -213,7 +215,7 @@ struct tegra_clk_pll_params {
+> >         u32             iddq_bit_idx;
+> >         u32             aux_reg;
+> >         u32             dyn_ramp_reg;
+> > -       u32             ext_misc_reg[3];
+> > +       u32             ext_misc_reg[MAX_PLL_MISC_REG_COUNT];
+> >         u32             pmc_divnm_reg;
+> >         u32             pmc_divp_reg;
+> >         u32             flags;
 >=20
-> #define mux_clkm_pllre_clk32_480M_idx NULL
 >=20
-> with
->=20
-> static u32 mux_clkm_pllre_clk32_480M_idx[] =3D {
->=20
->        [0] =3D 0, [1] =3D 1, [2] =3D 2, [3] =3D 3,
-> };
+> Missing kernel doc above for ext_misc_reg and some other surrounding memb=
+ers.
 
-Isn't that the default already if you specify NULL as index table?
+I added the missing kerneldoc in that patch I sent out earlier. The
+problem is preexisting for this field, so doing it in a separate patch
+is fine in my opinion.
 
 Thierry
 
---Q8BnQc91gJZX4vDc
+--TU+u6i6jrDPzmlWF
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJVSiH8AAoJEN0jrNd/PrOhC08P/1mdEkARvDb4hYmSnpObgZGi
-xSn83IONKAvM5GOEIXdN4N43xqtOxKEIuLlsnwCO75VdyM/0eehh2qLgXyGwEDQi
-A/vV+qKBdPwEto8uQsUUwHDFzKxFhlUXj+GQiowy9bfLdHwvGtqgdHgN92mN3gKt
-gqON4/8wPHb7VgEfSeyGO2haWcN/snspjtfCVAVNgZZ4klxmJmE6/cmuHj158E8y
-yNwjfATrQyVfyHOIguFFsp+YK1/1hM1ELsqrsNkXSHOshIR2EIaXfVMM9jTheuYo
-uSIslKebKHL0ZvsL91xhnWD+cexoVhsAT86UpKyBzYD5byL7Zfx1v+tpVL8MRGDH
-53ACrGu96u3vIx9t7/3ZRQDZJ7YiYFTW9xr9R6apmFTVtImQHXsTUJ+328ylTQBV
-8NPySm7yAhC71rcFX9pHFm/Mr85zKbrDrwzatG26utPZO+Y8l7OkNhZHwroIZYpZ
-ofLpzYjMO4RFXPLyjLTpYXCJMNdIfpSN0QDXqCtKuqorU8xHoXFCoyC57OE0O5mS
-lE6Ro8qyTV3qvRDwfcNKTpWsef0enWtZETW2bEnxjBT/R0Ud1ANNV+Tw3H/vfKX5
-WtnsOBszWPMtT9OUiZD9cbtzMSxOA6hszSPzwJppDI00t18PkGrPEgI4jShe95nR
-RD0JURq4nHxu9suKl52K
-=xh1O
+iQIcBAABCAAGBQJVSiKoAAoJEN0jrNd/PrOhYzsP/jad71JRthSpHD9ZNPEf8I7e
+a0webVBLzJZ0ASUDWjTNobIwDSEtnj+hae6Kmh/xuZZHy3RRiWEBf7DhqEgM3ECs
+5p7ryEuBEsSO8L0+pTYp5EBaveSxJCHv90GxayWwJkfCZCyt8XvbqpDQ2iLuhs6C
+e61BWFuVWPSGUmFd0CWjXvf6ZdT3KMvRt/SwE+faq+3oOkW9hFoE6iua2Ui0QH8Q
++vhyhWyEh3fUi2qPY+rbkRyf5mRG8/OzSfvagcyXdbhWGjOb3UEPWEd4J533oXsg
+Uuqr+r+TL8Z31CA3Ya9HvaWbQexjallJjUF9Ah+kxwB3snQA8h0PUCVNRIErxVAR
+/9Wmd+OcLLnzl9yUO90fqQ9IcuU6KSMjQTo7gVSOj13xhGFHlg41MQvwXoC61iUu
+7l+pNv5vEHEexfo2ssY/ZDA8+Zj9Tb4vJIAKKAhdq2xxKM0FEfoGFAtxWOsXuHuj
+dVbIQBQibs5FL0Q0qw5AWTCrMhjBpNDzZxoOqG0QqCKzrmkGYqZyLDM6gvYoK6sh
+SopAA0tgbfu61SMHq6SUUwRN2MGm+fP5JFCuUAWyHC4+OC7vx7AcPtDbPZxI7tdS
+X6BH5hNTIVTV+g2a58drxheEv1IMqkrRQOx5kppDgopKAGRixv4oHak8z3+58S4N
+vt9quRFfkOC6xBpejgiY
+=LhiZ
 -----END PGP SIGNATURE-----
 
---Q8BnQc91gJZX4vDc--
+--TU+u6i6jrDPzmlWF--
