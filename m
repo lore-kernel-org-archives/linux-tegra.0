@@ -1,92 +1,131 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v4 06/20] clk: tegra: pll-params: change misc_reg count
- from 3 -> 6
-Date: Wed, 6 May 2015 16:18:17 +0200
-Message-ID: <20150506141816.GF22098@ulmo.nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v4 19/20] clk: tegra210: add support for Tegra210 clocks
+Date: Wed, 6 May 2015 16:51:15 +0200
+Message-ID: <20150506145113.GH22098@ulmo.nvidia.com>
 References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
- <1430757460-9478-7-git-send-email-rklein@nvidia.com>
- <CANLzEksajPjf1VH8Zn-1oXhgL8f-b7GuCBprExTP-w18WbCC4A@mail.gmail.com>
+ <1430757460-9478-20-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="TU+u6i6jrDPzmlWF"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="VbfcI4OLZ4XW0yH2"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CANLzEksajPjf1VH8Zn-1oXhgL8f-b7GuCBprExTP-w18WbCC4A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1430757460-9478-20-git-send-email-rklein@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rhyland Klein <rklein@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---TU+u6i6jrDPzmlWF
+--VbfcI4OLZ4XW0yH2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 04, 2015 at 01:35:09PM -0700, Benson Leung wrote:
-> On Mon, May 4, 2015 at 9:37 AM, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> > From: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >
-> > New SoC's may have more then 3 MISC registers, so bump up the
-> > array size and use a #define to be more informative about the value.
-> >
-> > Signed-off-by: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >  drivers/clk/tegra/clk.h |    4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> > index 5759b8bfb80e..8e7361886cf9 100644
-> > --- a/drivers/clk/tegra/clk.h
-> > +++ b/drivers/clk/tegra/clk.h
-> > @@ -156,6 +156,8 @@ struct div_nmp {
-> >         u8              override_divp_shift;
-> >  };
-> >
-> > +#define MAX_PLL_MISC_REG_COUNT 6
-> > +
-> >  /**
-> >   * struct clk_pll_params - PLL parameters
-> >   *
-> > @@ -213,7 +215,7 @@ struct tegra_clk_pll_params {
-> >         u32             iddq_bit_idx;
-> >         u32             aux_reg;
-> >         u32             dyn_ramp_reg;
-> > -       u32             ext_misc_reg[3];
-> > +       u32             ext_misc_reg[MAX_PLL_MISC_REG_COUNT];
-> >         u32             pmc_divnm_reg;
-> >         u32             pmc_divp_reg;
-> >         u32             flags;
->=20
->=20
-> Missing kernel doc above for ext_misc_reg and some other surrounding memb=
-ers.
+On Mon, May 04, 2015 at 12:37:39PM -0400, Rhyland Klein wrote:
+[...]
+> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+[...]
+> +static struct div_nmp plld_nmp = {
+> +	.divm_shift = 0,
+> +	.divm_width = 8,
+> +	.divn_shift = 11,
+> +	.divn_width = 8,
+> +	.divp_shift = 20,
+> +	.divp_width = 3,
+> +};
 
-I added the missing kerneldoc in that patch I sent out earlier. The
-problem is preexisting for this field, so doing it in a separate patch
-is fine in my opinion.
+I think we need to add the SDM shift and width fields here:
+
+	.sdm_shift = 0,
+	.sdm_width = 16,
+
+Otherwise pll_d can't take advantage of the fractional divider.
+
+[...]
+> +static struct tegra_clk tegra210_clks[tegra_clk_max] __initdata = {
+[...]
+> +	[tegra_clk_clk72Mhz] = { .dt_id = TEGRA210_CLK_CLK72MHZ, .present = true },
+
+I think you want to use the _8 variant here that you specifically
+introduced for Tegra210 in an earlier patch.
+
+> +static __init void tegra210_periph_clk_init(void __iomem *clk_base,
+> +					    void __iomem *pmc_base)
+> +{
+> +	struct clk *clk;
+> +
+> +	/* xusb_ss_div2 */
+> +	clk = clk_register_fixed_factor(NULL, "xusb_ss_div2", "xusb_ss_src", 0,
+> +					1, 2);
+> +	clks[TEGRA210_CLK_XUSB_SS_DIV2] = clk;
+> +
+> +	/* plld_dsi */
+> +	clk = clk_register_gate(NULL, "pll_d_dsi", "pll_d_out0", 0,
+> +				clk_base + PLLD_MISC0, 21, 0, &pll_d_lock);
+> +	clks[TEGRA210_CLK_PLLD_DSI] = clk;
+> +
+> +	/* dsia */
+> +	clk = tegra_clk_register_periph_gate("dsia", "pll_d_dsi", 0, clk_base,
+> +					     0, 48, periph_clk_enb_refcnt);
+> +	clks[TEGRA210_CLK_DSIA] = clk;
+> +
+> +	/* dsib */
+> +	clk = tegra_clk_register_periph_gate("dsib", "pll_d_dsi", 0, clk_base,
+> +					     0, 82, periph_clk_enb_refcnt);
+> +	clks[TEGRA210_CLK_DSIB] = clk;
+
+Can we rename pll_d_dsi to pll_d_dsi_out for consistency with earlier
+SoC generations, please? Also, don't forget the /* plld_dsi */ comment.
+
+In retrospect I'm not sure we've got this clock right. The (public)
+documentation is a little sparse, but I think this bit actually enables
+the fast and slow clocks to the MIPI pad macros. If you look at the
+register documentation for Tegra30 and Tegra114 they use a similarly
+named register with a more verbose description. I've also seen a couple
+of clock diagrams that indicate where these actually are.
+
+Now what I wonder is if it makes any sense to represent this as a parent
+clock for DSI, because it really isn't. But if it isn't then we need to
+find another way of enabling this. Presumably turning this off saves
+power if pll_d is used for non-DSI/CSI purposes, so we'd want to disable
+it when we can. We could export this as a separate clock and add it to
+the DSI driver.
+
+Rhyland, can you file an internal bug to track this, so that we get the
+documentation updated. Peter, can you help find out what the real story
+is with this clock?
+
+> diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
+[...]
+> +#define TEGRA210_CLK_PLLD_DSI 307
+
+This would be TEGRA210_CLK_PLL_D_DSI_OUT after the rename suggested
+above.
+
+I have a couple of other clocks that need to be added, but I think we
+can do that in separate patches, especially since some require changes
+to the drivers for previous SoCs.
 
 Thierry
 
---TU+u6i6jrDPzmlWF
+--VbfcI4OLZ4XW0yH2
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJVSiKoAAoJEN0jrNd/PrOhYzsP/jad71JRthSpHD9ZNPEf8I7e
-a0webVBLzJZ0ASUDWjTNobIwDSEtnj+hae6Kmh/xuZZHy3RRiWEBf7DhqEgM3ECs
-5p7ryEuBEsSO8L0+pTYp5EBaveSxJCHv90GxayWwJkfCZCyt8XvbqpDQ2iLuhs6C
-e61BWFuVWPSGUmFd0CWjXvf6ZdT3KMvRt/SwE+faq+3oOkW9hFoE6iua2Ui0QH8Q
-+vhyhWyEh3fUi2qPY+rbkRyf5mRG8/OzSfvagcyXdbhWGjOb3UEPWEd4J533oXsg
-Uuqr+r+TL8Z31CA3Ya9HvaWbQexjallJjUF9Ah+kxwB3snQA8h0PUCVNRIErxVAR
-/9Wmd+OcLLnzl9yUO90fqQ9IcuU6KSMjQTo7gVSOj13xhGFHlg41MQvwXoC61iUu
-7l+pNv5vEHEexfo2ssY/ZDA8+Zj9Tb4vJIAKKAhdq2xxKM0FEfoGFAtxWOsXuHuj
-dVbIQBQibs5FL0Q0qw5AWTCrMhjBpNDzZxoOqG0QqCKzrmkGYqZyLDM6gvYoK6sh
-SopAA0tgbfu61SMHq6SUUwRN2MGm+fP5JFCuUAWyHC4+OC7vx7AcPtDbPZxI7tdS
-X6BH5hNTIVTV+g2a58drxheEv1IMqkrRQOx5kppDgopKAGRixv4oHak8z3+58S4N
-vt9quRFfkOC6xBpejgiY
-=LhiZ
+iQIcBAABCAAGBQJVSipfAAoJEN0jrNd/PrOhQzwP/08DuZebm3A7GUtiH9rT8g+d
+SW6Ey0hHECRp+67Ss03lcg6ivKXvoikoDsiqWcelo+JhTJ8EmCyk+sJETZqtgLdU
+xRI4+ZLw643UkAuCgEu9l7w0Ec2CBCwt9NvH2BHOsSHPusOulBNuhVgO3tid3wwt
+1eJjr/4lYpZccY4fPWk4WilZnK2DpjaMx53pBA49wDJgJJW7RguCZG6AkhYAfzDU
+5IiPojzPmjJ4cPKt/q7dsoGwylWXc+gY1DszUZMg0huVwM+CKvtISpyz8Ob6nfXt
+zBDAaIsu4kEAeDo6ZEGR2x4PcOZRB6O4SsM7QDPaqfS3G5nHyDZeyUaTI2LN7I/M
+NVrgH/DDnbLx/VBFDwZylK8me0OiR0TAVdSniGeWhSPhiXcf2LT40JXDcXskD4HF
+5P8Hpv9QfhGarMRefgwmNkyUimqHfE8X+b5wOO4MD6C4lS9XZgMIcoARhDWJj7F1
+FyHsFP92vyNQqfAEdtw6pPUPpsQC9cRzeaOrGhLJNKmGVXeF8/EFmF6+kU4cp7wg
+O1/K9Wskng0GsJT1csv1K8AXM+TCXYkTCOjHCZXEp/0c6CShh1giwvVJpxkDd0DI
+g+33PNN9iz+pZYxWTgLGv0qwg2sigeUzk5QUF1MoErfaY2QAOgUyZ/Z4/V7fz5Vd
+GBYdWGigfIrp7uOjz3j4
+=qlVk
 -----END PGP SIGNATURE-----
 
---TU+u6i6jrDPzmlWF--
+--VbfcI4OLZ4XW0yH2--
