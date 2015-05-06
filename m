@@ -1,60 +1,64 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] clk: tegra: Fix comments for structure definitions
-Date: Wed, 6 May 2015 15:40:02 +0200
-Message-ID: <20150506134001.GA22098@ulmo.nvidia.com>
-References: <1428943097-2768-1-git-send-email-rklein@nvidia.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="0OAP2g/MAC+5xKAE"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1428943097-2768-1-git-send-email-rklein@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] clk: tegra: Update struct tegra_clk_pll_params kerneldoc
+Date: Wed,  6 May 2015 15:43:35 +0200
+Message-ID: <1430919815-22380-1-git-send-email-thierry.reding@gmail.com>
+References: <CANLzEktaOSEFjszR6sRe4heQkp6H_eGi5aKEg8zeLCzaQMMVjQ@mail.gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CANLzEktaOSEFjszR6sRe4heQkp6H_eGi5aKEg8zeLCzaQMMVjQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
---0OAP2g/MAC+5xKAE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Benson Leung pointed out that the kerneldoc for this structure has
+become stale. Update the field descriptions to match the structure
+content.
 
-On Mon, Apr 13, 2015 at 12:38:17PM -0400, Rhyland Klein wrote:
-> Some fields moved from the tegra_clk_pll struct to
-> the tegra_pll_params struct. Update the struct comments
-> to reflect where the fields really are.
->=20
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
-> ---
->  drivers/clk/tegra/clk.h |   74 +++++++++++++++++++++++------------------=
-------
->  1 file changed, 37 insertions(+), 37 deletions(-)
+Reported-by: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/clk/tegra/clk.h | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-Applied to the for-4.2/clk branch.
-
-Thanks,
-Thierry
-
---0OAP2g/MAC+5xKAE
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJVShmxAAoJEN0jrNd/PrOhHRIQALDpS3y93UDqK/O9PTurUqT7
-i/iDh1R/ea0tmG50isnIwBRbeYav3NHEv2DliKEwUd2agQ3px/td4ua13RbznNhM
-1/zZ/J161fhGrI65FV38+VPe47QKZh8yVGlCwr74XapUBJ14CzKuuFZaHnVImZla
-dobZoWQAjoYQ0AWSx3c8v5o7hytFjOSpTmqd3ymYdLmdWEKtrREtfaGrUx2C0p3W
-YK4AO5vUZUs+QntVMUJgjaGzSaFd9bRhB3h60AcSc0iBntMqO0ptkqf8iD2Hmcyc
-OidXUJMqQPFZP3tODdTfhp8XnJJHfz7iUE41Rfr1vtZuo0i1i1+8vX9/MhV7iVwm
-HhTtdeVUEhKvoohNqINfynDm885ZIX3IuKv1puWCc3HKBA7+1Ht3sB4beWah1mRf
-SKHSXpykT3eixfsE9wAlRDX6Kzr//Vlf74VDZJoowUozwTEmGJvIJF5Z1OPIVhDL
-A9ds/ZD0rQUs4Bf0PDJ5/h8DAGzVN/7EKz1/Cqz8oq42LozWnaqXBzMKztAAQw6v
-eLPOnQRm4qCMAIoI+tXumqDsvc6V8Q+R/kKILyTOirDb+hp9QC4PdrXG9xLa8/x7
-SVMh20VoZDpcfJEjvAwVcbr8TH8m1JnvAXxJg5keLCBn+NZdyiUxUj/fXITLf199
-LNpwGFRv/slE2Sb5lh72
-=OH/4
------END PGP SIGNATURE-----
-
---0OAP2g/MAC+5xKAE--
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index f3782dedbdfb..c47e633616be 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -157,7 +157,7 @@ struct div_nmp {
+ };
+ 
+ /**
+- * struct clk_pll_params - PLL parameters
++ * struct tegra_clk_pll_params - PLL parameters
+  *
+  * @input_min:			Minimum input frequency
+  * @input_max:			Maximum input frequency
+@@ -168,12 +168,22 @@ struct div_nmp {
+  * @base_reg:			PLL base reg offset
+  * @misc_reg:			PLL misc reg offset
+  * @lock_reg:			PLL lock reg offset
+- * @lock_bit_idx:		Bit index for PLL lock status
++ * @lock_mask:			Bitmask for PLL lock status
+  * @lock_enable_bit_idx:	Bit index to enable PLL lock
++ * @iddq_reg:			PLL IDDQ register offset
++ * @iddq_bit_idx:		Bit index to enable PLL IDDQ
++ * @aux_reg:			AUX register offset
++ * @dyn_ramp_reg:		Dynamic ramp control register offset
++ * @ext_misc_reg:		Miscellaneous control register offsets
++ * @pmc_divnm_reg:		n, m divider PMC override register offset (PLLM)
++ * @pmc_divp_reg:		p divider PMC override register offset (PLLM)
++ * @flags:			PLL flags
++ * @stepa_shift:		Dynamic ramp step A field shift
++ * @stepb_shift:		Dynamic ramp step B field shift
+  * @lock_delay:			Delay in us if PLL lock is not used
++ * @div_nmp:			offsets and widths on n, m and p fields
+  * @freq_table:			array of frequencies supported by PLL
+  * @fixed_rate:			PLL rate if it is fixed
+- * @flags:			PLL flags
+  *
+  * Flags:
+  * TEGRA_PLL_USE_LOCK - This flag indicated to use lock bits for
+-- 
+2.3.5
