@@ -1,52 +1,61 @@
-From: Rhyland Klein <rklein@nvidia.com>
-Subject: Re: [PATCH v4 09/20] clk: tegra: pll: Add logic for SS
-Date: Tue, 5 May 2015 16:15:59 -0400
-Message-ID: <554924FF.5040608@nvidia.com>
-References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>	<1430757460-9478-10-git-send-email-rklein@nvidia.com> <CANLzEkvqniogx9AUzK-Vx0TYg-=qQB_JwPEU+DbHDcNRx3c4xA@mail.gmail.com>
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v4.1-rc2
+Date: Tue, 5 May 2015 18:17:04 -0600
+Message-ID: <55495D80.2020507@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CANLzEkvqniogx9AUzK-Vx0TYg-=qQB_JwPEU+DbHDcNRx3c4xA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Benson Leung <bleung@chromium.org>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bill Huang <bilhuang@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 5/4/2015 7:11 PM, Benson Leung wrote:
-> On Mon, May 4, 2015 at 9:37 AM, Rhyland Klein <rklein@nvidia.com> wrote:
->> From: Bill Huang <bilhuang@nvidia.com>
->>
->> Add some logic for Spread Spectrum control. It is used in conjuncture
->> with SDM fractional dividers. SSC has to be disabled when we configure
->> the divider settings.
->>
->> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
->> ---
->>  drivers/clk/tegra/clk-pll.c |   25 ++++++++++++++++++++++++-
->>  drivers/clk/tegra/clk.h     |    2 ++
->>  2 files changed, 26 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
->> index c64b75185d6b..2a559408cee1 100644
->> --- a/drivers/clk/tegra/clk-pll.c
->> +++ b/drivers/clk/tegra/clk-pll.c
->> @@ -621,6 +621,26 @@ static void _update_pll_cpcon(struct tegra_clk_pll *pll,
->>         pll_writel_misc(val, pll);
->>  }
->>
->> +static void pll_clk_start_ss(struct tegra_clk_pll *pll)
->> +{
->> +       if (pll->params->defaults_set && pll->params->ssc_ctrl_en_mask) {
-> 
-> defaults_set looks like it's introduced later (patch 16/20). Can you
-> remove references to that, or reorder the patches if that makes more
-> sense?
-> 
+Here are some basic Tegra test results for Linux v4.1-rc2.
+Logs and other details at:
 
-I'll reorder this after set_defaults is added.
+     http://nvt.pwsan.com/pub/linux/testlogs/test_v4.1-rc2/20150503193103/
 
--rhyland
 
--- 
-nvpublic
+Test summary
+------------
+
+Build: zImage:
+     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Build: Image:
+     Pass: ( 1/ 1): defconfig
+
+Boot to userspace: defconfig:
+     Pass: ( 1/ 1): qemu-vexpress64
+
+Boot to userspace: multi_v7_defconfig:
+     Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+     Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+
+
+vmlinux object size
+(delta in bytes from test_v4.1-rc1 (b787f68c36d49bb1d9236f403813641efa74a031)):
+    text     data      bss    total  kernel
+   -4094    +4640        0     +546  defconfig
+    -606      +64        0     -542  multi_v7_defconfig
+    -502     +128        0     -374  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v4.1-rc1 (b787f68c36d49bb1d9236f403813641efa74a031))
+     avail    rsrvd     high    freed                board              kconfig                  dtb
+         .        .        .        .      qemu-vexpress64            defconfig           __internal
+         .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+         .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+         .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+         .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+         .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+         .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+         .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+         .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
