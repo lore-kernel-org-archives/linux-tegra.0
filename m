@@ -1,74 +1,101 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra: Update struct tegra_clk_pll_params kerneldoc
-Date: Wed, 6 May 2015 12:13:45 -0400
-Message-ID: <554A3DB9.8080504@nvidia.com>
-References: <CANLzEktaOSEFjszR6sRe4heQkp6H_eGi5aKEg8zeLCzaQMMVjQ@mail.gmail.com> <1430919815-22380-1-git-send-email-thierry.reding@gmail.com>
+From: Rhyland Klein <rklein@nvidia.com>
+Subject: Re: [PATCH v4 08/20] clk: tegra: pll: Add logic for handling SDM
+ data
+Date: Wed, 6 May 2015 12:16:33 -0400
+Message-ID: <554A3E61.5040105@nvidia.com>
+References: <1430757460-9478-1-git-send-email-rklein@nvidia.com> <1430757460-9478-9-git-send-email-rklein@nvidia.com> <CANLzEksFVpYOtcG5QHHfQa6bGXJ6nMYrsP4yG=5wszxCHrWqug@mail.gmail.com> <554916F8.2060908@nvidia.com> <20150506135719.GB22098@ulmo.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1430919815-22380-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150506135719.GB22098@ulmo.nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Benson Leung <bleung@chromium.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 5/6/2015 9:43 AM, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 5/6/2015 9:57 AM, Thierry Reding wrote:
+> * PGP Signed by an unknown key
 > 
-> Benson Leung pointed out that the kerneldoc for this structure has
-> become stale. Update the field descriptions to match the structure
-> content.
+> On Tue, May 05, 2015 at 03:16:08PM -0400, Rhyland Klein wrote:
+>> On 5/4/2015 7:01 PM, Benson Leung wrote:
+>>> On Mon, May 4, 2015 at 9:37 AM, Rhyland Klein <rklein@nvidia.com> wrote:
+>>>> @@ -495,6 +505,28 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+>>>>         return 0;
+>>>>  }
+>>>>
+>>>> +static void clk_pll_set_sdm_data(struct clk_hw *hw,
+>>>> +                                struct tegra_clk_pll_freq_table *cfg)
+>>>> +{
+>>>> +       struct tegra_clk_pll *pll = to_clk_pll(hw);
+>>>> +       u32 val;
+>>>> +
+>>>> +       if (!pll->params->sdm_din_reg)
+>>>> +               return;
+>>>> +
+>>>> +       if (cfg->sdm_data) {
+>>>> +               val = pll_readl_sdm_din(pll) & (~sdm_din_mask(pll));
+>>>> +               val |= sdin_data_to_din(cfg->sdm_data) & sdm_din_mask(pll);
+>>>> +               pll_writel_sdm_din(val, pll);
+>>>> +       }
+>>>> +
+>>>> +       val = pll_readl_sdm_ctrl(pll);
+>>>> +       if (!cfg->sdm_data != !(val & pll->params->sdm_ctrl_en_mask)) {
+>>>
+>>> You can use sdm_en_mask(pll) here.
+>>>
+>>> I'm not super clear about what you're trying to accomplish here with
+>>> !cfg->sdm_data != !(val & mask).
+>>> Are you just checking if the masked value is different from sdm_data,
+>>> but accounting for the integer widths being different (u16 vs u32)?
+>>
+>> So I got clarification from the downstream author to be sure, and this
+>> is the answer to what this is checking:
+>>
+>> (<Configuration has non zero  SDM_DATA>  AND <sdm control is disabled>)
+>> OR
+>> (<Configuration has zero  SDM_DATA>  AND <sdm control is enabled>)
+>>
+>> So the check is correct, just a complicated way of expressing it.
 > 
-> Reported-by: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/clk/tegra/clk.h | 16 +++++++++++++---
->  1 file changed, 13 insertions(+), 3 deletions(-)
+> Can it be rewritten to be less complicated? I hate it when I have to
+> look at code for several seconds and still not understand what it's
+> doing. Why not something that is closer to the pseudo code you gave:
 > 
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index f3782dedbdfb..c47e633616be 100644
-> --- a/drivers/clk/tegra/clk.h
-> +++ b/drivers/clk/tegra/clk.h
-> @@ -157,7 +157,7 @@ struct div_nmp {
->  };
->  
->  /**
-> - * struct clk_pll_params - PLL parameters
-> + * struct tegra_clk_pll_params - PLL parameters
->   *
->   * @input_min:			Minimum input frequency
->   * @input_max:			Maximum input frequency
-> @@ -168,12 +168,22 @@ struct div_nmp {
->   * @base_reg:			PLL base reg offset
->   * @misc_reg:			PLL misc reg offset
->   * @lock_reg:			PLL lock reg offset
-> - * @lock_bit_idx:		Bit index for PLL lock status
-> + * @lock_mask:			Bitmask for PLL lock status
->   * @lock_enable_bit_idx:	Bit index to enable PLL lock
-> + * @iddq_reg:			PLL IDDQ register offset
-> + * @iddq_bit_idx:		Bit index to enable PLL IDDQ
-> + * @aux_reg:			AUX register offset
-> + * @dyn_ramp_reg:		Dynamic ramp control register offset
-> + * @ext_misc_reg:		Miscellaneous control register offsets
-> + * @pmc_divnm_reg:		n, m divider PMC override register offset (PLLM)
-> + * @pmc_divp_reg:		p divider PMC override register offset (PLLM)
-> + * @flags:			PLL flags
-> + * @stepa_shift:		Dynamic ramp step A field shift
-> + * @stepb_shift:		Dynamic ramp step B field shift
->   * @lock_delay:			Delay in us if PLL lock is not used
-> + * @div_nmp:			offsets and widths on n, m and p fields
->   * @freq_table:			array of frequencies supported by PLL
->   * @fixed_rate:			PLL rate if it is fixed
-> - * @flags:			PLL flags
->   *
->   * Flags:
->   * TEGRA_PLL_USE_LOCK - This flag indicated to use lock bits for
+> 	bool enabled = (val & pll->params->sdm_ctrl_en_mask) != 0;
 > 
+> 	if ((enabled && cfg->sdm_data == 0) || (!enabled && cfg->sdm_data != 0))
+> 
+> ? Also I think this could use some could comments explaining what's
+> going on. Perhaps this could be simplified even further:
+> 
+> 	if (cfg->sdm_data == 0 && enabled)
+> 		val &= ~pll->params->sdm_ctrl_en_mask;
+> 
+> 	if (cfg->sdm_data != 0 && !enabled)
+> 		val |= pll->params->sdm_ctrl_en_mask;
+> 
+> 	pll_writel_sdm_ctrl(val, pll);
+> 
+> Now that I have a /much/ easier time reading and understanding. That may
+> not even require comments because it's pretty plain what's going on. But
+> there may be some advantage in adding comments about SDM in general. The
+> comment could be something like what you have in the commit message, so
+> that people don't have to go find the commit that added the code to find
+> out what this is doing.
+> 
+> Thierry
 
-Acked-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+I agree that the original statement was confusing. I'll replace it with
+a simpler version, and comments never hurt :)
 
 -rhyland
+
+> 
+> * Unknown Key
+> * 0x7F3EB3A1
+> 
+
 
 -- 
 nvpublic
