@@ -1,80 +1,120 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: How to encode being an I2C slave in DT?
-Date: Wed, 6 May 2015 18:17:12 +0200
-Message-ID: <20150506161712.GA4003@katana>
-References: <1427745615-5428-1-git-send-email-danindrey@mail.ru>
- <20150403194635.GC2016@katana>
- <1549160.njMIY2NVTi@fb07-iapwap2>
- <20150505105513.GA1841@katana>
- <554922EF.3050906@wwwdotorg.org>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v4 19/20] clk: tegra210: add support for Tegra210 clocks
+Date: Wed, 6 May 2015 12:18:46 -0400
+Message-ID: <554A3EE6.9010805@nvidia.com>
+References: <1430757460-9478-1-git-send-email-rklein@nvidia.com> <1430757460-9478-20-git-send-email-rklein@nvidia.com> <20150506145113.GH22098@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="uAKRQypu60I7Lcqm"
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <554922EF.3050906-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20150506145113.GH22098-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 5/6/2015 10:51 AM, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Mon, May 04, 2015 at 12:37:39PM -0400, Rhyland Klein wrote:
+> [...]
+>> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> [...]
+>> +static struct div_nmp plld_nmp = {
+>> +	.divm_shift = 0,
+>> +	.divm_width = 8,
+>> +	.divn_shift = 11,
+>> +	.divn_width = 8,
+>> +	.divp_shift = 20,
+>> +	.divp_width = 3,
+>> +};
+> 
+> I think we need to add the SDM shift and width fields here:
+> 
+> 	.sdm_shift = 0,
+> 	.sdm_width = 16,
+> 
+> Otherwise pll_d can't take advantage of the fractional divider.
+> 
+> [...]
+>> +static struct tegra_clk tegra210_clks[tegra_clk_max] __initdata = {
+> [...]
+>> +	[tegra_clk_clk72Mhz] = { .dt_id = TEGRA210_CLK_CLK72MHZ, .present = true },
+> 
+> I think you want to use the _8 variant here that you specifically
+> introduced for Tegra210 in an earlier patch.
+> 
+>> +static __init void tegra210_periph_clk_init(void __iomem *clk_base,
+>> +					    void __iomem *pmc_base)
+>> +{
+>> +	struct clk *clk;
+>> +
+>> +	/* xusb_ss_div2 */
+>> +	clk = clk_register_fixed_factor(NULL, "xusb_ss_div2", "xusb_ss_src", 0,
+>> +					1, 2);
+>> +	clks[TEGRA210_CLK_XUSB_SS_DIV2] = clk;
+>> +
+>> +	/* plld_dsi */
+>> +	clk = clk_register_gate(NULL, "pll_d_dsi", "pll_d_out0", 0,
+>> +				clk_base + PLLD_MISC0, 21, 0, &pll_d_lock);
+>> +	clks[TEGRA210_CLK_PLLD_DSI] = clk;
+>> +
+>> +	/* dsia */
+>> +	clk = tegra_clk_register_periph_gate("dsia", "pll_d_dsi", 0, clk_base,
+>> +					     0, 48, periph_clk_enb_refcnt);
+>> +	clks[TEGRA210_CLK_DSIA] = clk;
+>> +
+>> +	/* dsib */
+>> +	clk = tegra_clk_register_periph_gate("dsib", "pll_d_dsi", 0, clk_base,
+>> +					     0, 82, periph_clk_enb_refcnt);
+>> +	clks[TEGRA210_CLK_DSIB] = clk;
+> 
+> Can we rename pll_d_dsi to pll_d_dsi_out for consistency with earlier
+> SoC generations, please? Also, don't forget the /* plld_dsi */ comment.
 
---uAKRQypu60I7Lcqm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+sure
+
+> 
+> In retrospect I'm not sure we've got this clock right. The (public)
+> documentation is a little sparse, but I think this bit actually enables
+> the fast and slow clocks to the MIPI pad macros. If you look at the
+> register documentation for Tegra30 and Tegra114 they use a similarly
+> named register with a more verbose description. I've also seen a couple
+> of clock diagrams that indicate where these actually are.
+> 
+> Now what I wonder is if it makes any sense to represent this as a parent
+> clock for DSI, because it really isn't. But if it isn't then we need to
+> find another way of enabling this. Presumably turning this off saves
+> power if pll_d is used for non-DSI/CSI purposes, so we'd want to disable
+> it when we can. We could export this as a separate clock and add it to
+> the DSI driver.
+> 
+> Rhyland, can you file an internal bug to track this, so that we get the
+> documentation updated. Peter, can you help find out what the real story
+> is with this clock?
+> 
+
+I'll file the bug and look into it some more.
+
+-rhyland
+
+>> diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
+> [...]
+>> +#define TEGRA210_CLK_PLLD_DSI 307
+> 
+> This would be TEGRA210_CLK_PLL_D_DSI_OUT after the rename suggested
+> above.
+> 
+> I have a couple of other clocks that need to be added, but I think we
+> can do that in separate patches, especially since some require changes
+> to the drivers for previous SoCs.
+> 
+> Thierry
+> 
+> * Unknown Key
+> * 0x7F3EB3A1
+> 
 
 
-> The container node has a #address-cells property for this very reason. It=
-'s
-> perfectly well-defined how to split up a property containing a large numb=
-er
-> of cells into separate values, by using the value of #address-cells. Plus,
-> the canonical formatting (albeit not enforced by the DT compiler) for a
-> property that contains an array of entries, each 2 cells in size, would b=
-e:
->=20
-> reg =3D <0 0x1a>, <0 0x40>, <0 0x48>;
->=20
-> rather than:
->=20
-> reg =3D <0 0x1a 0 0x40 0 0x48>;
->=20
-> ... so it's quite simple to make it very human-readable too.
-
-I give in to the flag idea. I also noticed that we'd need another flag
-anyhow to mark 10 bit addresses. I am still thinking between using two
-address-cells in that case (clean seperation between address and flags)
-or to encode the flags as MSB in the current address (all busses will
-have same address-cells and child description, less code paths and no
-overhead in dtbs).
-
-That being said, for the loopback testcase, the I2C slave framework will
-need updates as well. I think I can cook up something. Will be
-interesting to see if my hardware can do this. Has the loopback already
-been tested on Tegra?
-
-
---uAKRQypu60I7Lcqm
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJVSj6IAAoJEBQN5MwUoCm25sgP/iBag10zDEke9nN10jYKCbkc
-pe7vzAiQ8XRC0zXgPb7TYfhwWyRXdbjHRZ/ZggF8EEPyE6umCDAvr41KLskpLyHB
-LSnh+/jUcdtUQmU3jUMICCaH9WBcpEyfAyCZSHrlfUl8ubcEqk3E3dYE5VsAEJrh
-ERAy/9Ldqx8Y7rfRO6RvoqKKh2dNaJugdl7Pquh9LznqCUlhyF4cBBp3kX0Zg8bF
-TcEEGl9592WltfYpmNIvTfKMjFqhtgbMwH/WPTOlEUT2MHllD2k1/07EXLL8m9Jl
-yKX0Mqf8n5uOeUgedg0sQ3PT8G0WPhY1pUHjwYDmUQyMOjVc0MY4LTrtPjTxsLa3
-pNHvIk98eeXUxVHItVjARCuKMz9fLmN/7CTUL44s5SSoYkq834fA/57gx9VzQMrp
-NCglIBqxKk0r8hkc6Cs1DybWWMAGMReVXtpO0GWONqLkHU4llaqP/wHHX7jOAjMc
-urs8g3DXl+GxtaDsnGCOZ/0/16qsTDSybkfIPAhnxEVKucpKfsxe6SbnYs/4aRsN
-JJcu+abCHXXb1DT3TYbzx7k85lzRrmLktGre3/A7wp+YY7kEH1blE/FpCVTkgZIZ
-jMtoCdOZdPsbAXMIy/8xz/ixFw/z7jTwsDv7OilXD/gjtCVcQ1bjYec8LA5j9gI7
-6chgr+wEQuZ6ykPJtxnw
-=lGIR
------END PGP SIGNATURE-----
-
---uAKRQypu60I7Lcqm--
+-- 
+nvpublic
