@@ -1,72 +1,118 @@
-From: Benson Leung <bleung@chromium.org>
-Subject: Re: [PATCH] clk: tegra: Update struct tegra_clk_pll_params kerneldoc
-Date: Wed, 6 May 2015 10:49:16 -0700
-Message-ID: <CANLzEku9EyDh3dXMqK=ZLNb1F5tMvnnmgDRyJYQ16_6vLCDiKA@mail.gmail.com>
-References: <CANLzEktaOSEFjszR6sRe4heQkp6H_eGi5aKEg8zeLCzaQMMVjQ@mail.gmail.com>
-	<1430919815-22380-1-git-send-email-thierry.reding@gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: How to encode being an I2C slave in DT?
+Date: Wed, 06 May 2015 12:35:03 -0600
+Message-ID: <554A5ED7.8080808@wwwdotorg.org>
+References: <1427745615-5428-1-git-send-email-danindrey@mail.ru> <20150505105513.GA1841@katana> <20150506065928.GP25193@pengutronix.de> <3394114.re5da8pjTi@fb07-iapwap2> <20150506080951.GS25193@pengutronix.de> <554A39F1.9060507@wwwdotorg.org> <20150506174757.GZ25193@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1430919815-22380-1-git-send-email-thierry.reding@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Rhyland Klein <rklein@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=windows-1252;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-spec-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150506174757.GZ25193-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Sender: devicetree-spec-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?windows-1252?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-spec-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, May 6, 2015 at 6:43 AM, Thierry Reding <thierry.reding@gmail.com> wrote:
-> From: Thierry Reding <treding@nvidia.com>
+On 05/06/2015 11:47 AM, Uwe Kleine-K=F6nig wrote:
+> Hello Stephen,
 >
-> Benson Leung pointed out that the kerneldoc for this structure has
-> become stale. Update the field descriptions to match the structure
-> content.
+> On Wed, May 06, 2015 at 09:57:37AM -0600, Stephen Warren wrote:
+>> On 05/06/2015 02:09 AM, Uwe Kleine-K=F6nig wrote:
+>>> On Wed, May 06, 2015 at 09:53:55AM +0200, Marc Dietrich wrote:
+>>>> Am Mittwoch, 6. Mai 2015, 08:59:28 schrieb Uwe Kleine-K=F6nig:
+>>>>> On Tue, May 05, 2015 at 12:55:13PM +0200, Wolfram Sang wrote:
+>>>>>> So what about adding a new property "i2c-slave-reg"? This does n=
+ot only
+>>>>>> prevent the confusion above, but also makes it very clear that t=
+his node
+>>>>>> is an I2C slave without the need to encode that somehow in the
+>>>>>> compatible property (although it probably should be described th=
+ere as
+>>>>>> well, still).
+>>>>>
+>>>>> I admit I didn't follow the discussions referenced in the footnot=
+es, but
+>>>>> I wonder if the slave part should be added to the device tree at =
+all.
+>>>>> AFAICT it could (and so should) be completely userspace-defined w=
+hich
+>>>>> slave driver is used on which address. I imagine that for most
+>>>>> controllers the bus addresses to use can be chosen more or less f=
+reely.
+>>>>> So what am I missing?
+>>>>
+>>>> if you had read the footnotes you would know :-) Our usecase is co=
+nnect an
+>>>> embeedded controller via i2c to the host soc, similar to cros-ec, =
+but here the
+>>>> ec is the i2c master. The ec connects keyboard, mouse, pwrmngt, an=
+d other
+>>>> stuff, for which the drivers are best implemented in kernel code A=
+=46AIK.
+>>>
+>>> Right, the driver might sensibly be implemented in kernel space. Bu=
+t I'd
+>>> vote that you still need to do the binding of these drivers to your
+>>> slave controller from userspace. Then there is no need to specify
+>>> anything in your dtb.
+>>
+>> I think the set of I2C slave devices that are implemented by the
+>> Linux system can reasonably be considered part of the HW definition.
+>> Most DT content to date has been a definition of the HW that's
+>> available to SW, but at least in this case, this I2C slave device is
+>> something that must be implemented (admittedly in conjunction with
+>> SW) using the I2C slave HW on the main SoC, in order for the overall
+>> HW to work as intended.
+ >
+> I'm not convinced. Why must it be implemented?
+
+The other HW in the system expects the I2C slave device to exist. I=20
+believe that makes it a HW level description, and hence suitable to=20
+represent in DT.
+
+Representing this in DT saves user-space from requiring board-specific=20
+knowledge. The kernel should be abstracting HW as best it can, so that=20
+user-space can be entirely generic, supporting classes of devices, not=20
+enumeration/instantiation of devices. Assuming a system didn't store it=
+s=20
+root filesystem on a particular SD card or USB controller, we could=20
+instantiate those controllers from user-space too (or an initrd even if=
+=20
+the root fs was there). However, we choose not to do that...
+
+In the specific case of nvec (the I2C slave device that triggered this=20
+thread) and I dare say other devices too, there is more to the device=20
+than just the I2C slave device. There's also a GPIO that serves to=20
+provide synchronization between the SoC and external device.
+
+ > And is it too late if the setup is done by userspace?
+
+The primary purpose of nvec is to provide keyboard and mouse (touchpad)=
+=20
+input, so enabling this once user space was booted would probably work.=
+=20
+However, the device should likely be enabled by the initrd not the root=
+=20
+filesystem (if such a split exists in a given distro) so that the user=20
+can actually interact with any initrd shell if the boot fails. That=20
+would bloat the initrd. System power management (power off at least)=20
+goes through the same device, so deferring that might not be great, but=
+=20
+I suppose there likely wouldn't be a "turn power off" event requested=20
+until user-space was booted.
+
+> The devicetree description of a flash chip doesn't include the rootfs
+> content either, although a working rootfs is critical for most operat=
+ing
+> systems. The devicetree description of an ethernet adapter doesn't
+> include its network setup although an ethernet adapter hardly makes a=
+ny
+> sense without an IP.
 >
-> Reported-by: Benson Leung <bleung@chromium.org>
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  drivers/clk/tegra/clk.h | 16 +++++++++++++---
->  1 file changed, 13 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index f3782dedbdfb..c47e633616be 100644
-> --- a/drivers/clk/tegra/clk.h
-> +++ b/drivers/clk/tegra/clk.h
-> @@ -157,7 +157,7 @@ struct div_nmp {
->  };
->
->  /**
-> - * struct clk_pll_params - PLL parameters
-> + * struct tegra_clk_pll_params - PLL parameters
->   *
->   * @input_min:                 Minimum input frequency
->   * @input_max:                 Maximum input frequency
-> @@ -168,12 +168,22 @@ struct div_nmp {
->   * @base_reg:                  PLL base reg offset
->   * @misc_reg:                  PLL misc reg offset
->   * @lock_reg:                  PLL lock reg offset
-> - * @lock_bit_idx:              Bit index for PLL lock status
-> + * @lock_mask:                 Bitmask for PLL lock status
->   * @lock_enable_bit_idx:       Bit index to enable PLL lock
-> + * @iddq_reg:                  PLL IDDQ register offset
-> + * @iddq_bit_idx:              Bit index to enable PLL IDDQ
-> + * @aux_reg:                   AUX register offset
-> + * @dyn_ramp_reg:              Dynamic ramp control register offset
-> + * @ext_misc_reg:              Miscellaneous control register offsets
-> + * @pmc_divnm_reg:             n, m divider PMC override register offset (PLLM)
-> + * @pmc_divp_reg:              p divider PMC override register offset (PLLM)
-> + * @flags:                     PLL flags
-> + * @stepa_shift:               Dynamic ramp step A field shift
-> + * @stepb_shift:               Dynamic ramp step B field shift
->   * @lock_delay:                        Delay in us if PLL lock is not used
-
-
-Missed a couple -
-
-@max_p:
-@pdiv_tohw:
-
-Thanks!
-
--- 
-Benson Leung
-Software Engineer, Chrom* OS
-bleung@chromium.org
+>> BTW, I believe devicetree-spec-u79uwXL29TY76Z2rM5mHXA@public.gmane.org was created to
+>> address subsystem-level DT schema questions like this. It's much
+>> lower volume, so perhaps the thread would get noticed by the DT
+>> maintainers if posted there (or perhaps just CC them)?
+ >
+> I added them to Cc.
