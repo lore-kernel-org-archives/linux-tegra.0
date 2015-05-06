@@ -1,53 +1,97 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 0/8] clk: Minor cleanups
-Date: Wed, 6 May 2015 13:33:55 +0200
-Message-ID: <20150506113354.GA9421@ulmo>
-References: <1430196383-9190-1-git-send-email-k.kozlowski@samsung.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v4 00/20] Tegra210 Clock Support
+Date: Wed, 6 May 2015 15:37:54 +0200
+Message-ID: <20150506133748.GD9421@ulmo>
+References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
+ <20150505131419.GA11535@ulmo.nvidia.com>
+ <5548E7E9.3040802@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="h31gzZEtNLTqOjlF"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="OaZoDhBhXzo6bW1J"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1430196383-9190-1-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Max Filippov <jcmvbkbc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Barry Song <baohua-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <5548E7E9.3040802@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---h31gzZEtNLTqOjlF
+--OaZoDhBhXzo6bW1J
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 28, 2015 at 01:46:15PM +0900, Krzysztof Kozlowski wrote:
-[...]
->   clk: tegra: Fix inconsistent indenting
->   clk: tegra: Fix duplicate const for parent names
+On Tue, May 05, 2015 at 11:55:21AM -0400, Rhyland Klein wrote:
+> On 5/5/2015 9:14 AM, Thierry Reding wrote:
+> > * PGP Signed by an unknown key
+> >=20
+> > On Mon, May 04, 2015 at 12:37:20PM -0400, Rhyland Klein wrote:
+> >> This patch series updates the tegra common clock driver and adds
+> >> support for the Tegra210 clocks. The clocks in Tegra210 changed
+> >> significantly in some ways from earlier generations, so to support
+> >> them, we need to extend our base framework a bit and add some new
+> >> features.
+> >>
+> >> Some patches here also address issues found while adding features
+> >> and other cleanup type work.
+> >>
+> >> v4:
+> >>   - Fixed minor checkpatch errors and other typos
+> >>   - Rebased ontop of linux-next 20150504
+> >=20
+> > Are you sure about this? It still doesn't apply cleanly to next-20150504
+> > for me.
+>=20
+> It is based off c9256b89d92154cffd36697b412d0a0176a8e2d2 "Add linux-next
+> specific files for 20150504"
+>=20
+> What types of problems are you running into?
 
-I've squashed these into the patches that add the EMC driver.
+I get this when applying the first patch:
 
-Thanks,
+	Applying: clk: tegra: Modify tegra_audio_clk_init to accept more plls
+	error: patch failed: drivers/clk/tegra/clk.h:258
+	error: drivers/clk/tegra/clk.h: patch does not apply
+	Patch failed at 0001 clk: tegra: Modify tegra_audio_clk_init to accept mor=
+e plls
+	The copy of the patch that failed is found in:
+	   /home/thierry.reding/src/kernel/linux-work.git/.git/rebase-apply/patch
+	When you have resolved this problem, run "git am --continue".
+	If you prefer to skip this patch, run "git am --skip" instead.
+	To restore the original branch and stop patching, run "git am --abort".
+
+Comparing again and looking at your internal tree it seems that in
+addition to next-20150504 you also have this patch in your tree:
+
+	clk: tegra: Fix comments for structure definitions
+
+After applying that I can apply the series without problems. I've picked
+that patch up and will carry it in the Tegra clock branch. Hopefully the
+Tegra210 clock patches will be ready in time for v4.2 so that I can take
+them into the same branch.
+
 Thierry
 
---h31gzZEtNLTqOjlF
+--OaZoDhBhXzo6bW1J
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJVSfwfAAoJEN0jrNd/PrOhVSwQAJ/rA3S2D6xMynluMc5UstEk
-UZ72ZR6v0z5S9VzLenuIhtSsuk7oVJbTmDgMvf8XAbbOWtbGHJQn6ZmR3Me6GG+x
-zzIGolMjNHrBRK9MOdni1ryv3/F81BE7QZrGHvnMpeXRbDerQJz3C+PUlcZ1nsu6
-6hGfCl6+QCVT82nX3oj3qEdQScMMbiG37VTTluW63wQY3qaSZARouMLou1/MY+ln
-4GUa09KVJdiAlASQ6llRQVAPVas1WGX2OCmhNeqhk8ERQVJj1orjxl4rOyTVux14
-PvHHdfJrTA1w8WxzrLKjvUCm1aJgc5sNTQqZV9TcA0ktdjMtjkFaWAFS70J9oWrG
-/bk+CbeJtEDWhTOIvclVlbwQ0kyZtFexSZgc1uICHB3PABb2LdZ3HDHrZs3KskCD
-7FrUSakBBB5c9USKnaBDmBxuRW5ORDHQfPlrAB46Ye6SBB2GvgsW/S9JxVDRioqX
-BB83VnMMxSxPyGCqgmvAkAV06wHMy3RwVs+OMi8FqhQwb7f+QTo/ERxwTBbtk/WC
-SRJaopAR/sz6igINaL1Nx21Z/kju4xMjCZraLcII4p3CJvT6YtT9Q78xWJGGribj
-U6bHROgmnJxNnb9PTq/nYL4j4GeOfr6+sbp/If0v4WkS7BBtQAxXHXLgVbmPR1Un
-IO7lmnPDceWy7YJedk4F
-=LSUk
+iQIcBAABCAAGBQJVShkqAAoJEN0jrNd/PrOho6gQALYraZaGUWehu9wH9WLFu2ut
+no7CiTTY5QvHjQ+DGcMaDF40wOYHIW9E12x/uIbqCG1mIEs64/cjLnOokNKb39Mj
+l8wHoqmM1Sezrfsjw96X7Mwu2qBTAW+q3xGSUE1QR1pDnHGcUdSvtvYyG/xluEku
+zb2RjH0AN8pIJZali0E049bNY4ldLuCm/5af+xYTGVZKgB9c9lj1nVcl8nZEt/B3
+gUMQpBVrfLNOKZbpGvd3VMOAYzKzilObuE6YkVs0r+8Qz896ddfCLVDy/LlN1iCN
+nu69HgJYczIiZUhJ8tClZcEAP+ozGlhQcLWY3aUfk3QLgykU3gUEKUNywzBZUsKE
+fi9oO8+iDVM2YAWvZ9GwECdeGST8gX4kGcF1RZjDS/r+oVWrp3SnustaP0Rw4PuK
+w5ixOpqmm6+JdOjPDNgoCTYpguwehCnvWxpD8GaGxp+FQajdiOxg85h5LIHXcVCq
+2fUjuHjQfzRWQ1rbyd4QDSpByXnaqhfcqm62yq0YblUHvu+ycumXoGxBVCze9f1j
+xnhL/NQQU5Gvn7T8axYnqNoyKL7NZRcX2Uwv05CJsVailx51KVoJTavwvj57ME8F
+o4TgETCk3NKXXhZo9FNtCw+ooL9bRZWP5qXEhqBWgLR9FNiD+sM0853pAjcsO5/m
+l7XS+yun3bMBcxHm/M+7
+=qmk2
 -----END PGP SIGNATURE-----
 
---h31gzZEtNLTqOjlF--
+--OaZoDhBhXzo6bW1J--
