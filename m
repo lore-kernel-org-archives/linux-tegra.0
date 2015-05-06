@@ -1,62 +1,61 @@
-From: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: Re: [PATCH v2 0/8] clk: Minor cleanups
-Date: Tue, 5 May 2015 22:56:53 -0700
-Message-ID: <20150506055653.GF10871@codeaurora.org>
-References: <1430196383-9190-1-git-send-email-k.kozlowski@samsung.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: Re: How to encode being an I2C slave in DT?
+Date: Wed, 6 May 2015 08:59:28 +0200
+Message-ID: <20150506065928.GP25193@pengutronix.de>
+References: <1427745615-5428-1-git-send-email-danindrey@mail.ru>
+ <20150403194635.GC2016@katana>
+ <1549160.njMIY2NVTi@fb07-iapwap2>
+ <20150505105513.GA1841@katana>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1430196383-9190-1-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Max Filippov <jcmvbkbc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Barry Song <baohua-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <20150505105513.GA1841@katana>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/28, Krzysztof Kozlowski wrote:
-> Hi,
-> 
-> 
-> Changes since v1
-> ================
-> 1. Rebase on next-20150427 and Sascha Hauer's:
->    clk: make strings in parent name arrays const [1]
-> 2. Add patch "clk: tegra: Fix inconsistent indenting".
-> 
-> 
-> Description and dependencies
-> ============================
-> Small cleanups for different clock drivers.
-> 
-> The first three patches are independent.
-> 
-> Rest of the patches (these related to constifying parent names,
-> including the change for MIPS) depend on the "clk: make strings in
-> parent name arrays const" from Sascha Hauer [1].
-> 
-> 
-> Tested on Arndale Octa (Exynos5420) and Trats2 (Exynos4412). Other
-> drivers (and MIPS related) only compile tested plus some static
-> checkers.
-> 
-> 
-> [1] http://www.spinics.net/lists/arm-kernel/msg413763.html
-> 
-> Best regards,
-> Krzysztof
-> 
-> Krzysztof Kozlowski (8):
->   clk: rockchip: Staticize file-scope declarations
->   clk: exynos: Staticize file-scope declarations
->   clk: tegra: Fix inconsistent indenting
->   clk: tegra: Fix duplicate const for parent names
->   clk: cdce706: Constify parent names in clock init data
->   clk: sirf: Constify parent names in clock init data
->   clk: ls1x: Fix duplicate const for parent names
->   MIPS: Alchemy: Remove unneeded cast removing const
+Hello,
 
-Applied 1,2,5,6,7 to clk-next
+On Tue, May 05, 2015 at 12:55:13PM +0200, Wolfram Sang wrote:
+> So what about adding a new property "i2c-slave-reg"? This does not on=
+ly
+> prevent the confusion above, but also makes it very clear that this n=
+ode
+> is an I2C slave without the need to encode that somehow in the
+> compatible property (although it probably should be described there a=
+s
+> well, still).
+I admit I didn't follow the discussions referenced in the footnotes, bu=
+t
+I wonder if the slave part should be added to the device tree at all.
+AFAICT it could (and so should) be completely userspace-defined which
+slave driver is used on which address. I imagine that for most
+controllers the bus addresses to use can be chosen more or less freely.
+So what am I missing?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> > I hope with this post I can join the different discussions somehow =
+so we are=20
+> > able to find a common sense which is acceptable for all.
+>=20
+> Thanks for doing this! I changed the subject to maybe raise interest =
+a
+> bit more.
+that worked fine :-)
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
