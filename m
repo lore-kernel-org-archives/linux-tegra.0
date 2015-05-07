@@ -1,103 +1,92 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH v2 1/2] clk: change clk_ops' ->round_rate() prototype
-Date: Thu, 7 May 2015 09:37:02 +0200
-Message-ID: <20150507093702.0b58753d@bbrezillon>
-References: <1430407809-31147-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1430407809-31147-2-git-send-email-boris.brezillon@free-electrons.com>
-	<20150507063953.GC32399@codeaurora.org>
+From: Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] dma-buf: add ref counting for module as
+	exporter
+Date: Thu, 7 May 2015 10:10:26 +0200
+Message-ID: <20150507081026.GA19773@kroah.com>
+References: <1430983852-19267-1-git-send-email-sumit.semwal@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <20150507063953.GC32399@codeaurora.org>
-Sender: linux-doc-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@linaro.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawn.guo@linaro.org>, ascha Hauer <kernel@pengutronix.de>, David Brown <davidb@codeaurora.org>, Daniel Walker <dwalker@fifo99.com>, Bryan Huntsman <bryanh@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Paul Walmsley <paul@pwsan.com>, Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Barry Song <baohua@kernel.org>, Viresh Kumar <viresh.linux@gmail.com>, Emilio =?UTF-8?B?TMOzcGV6?= <emilio@elopez.com.ar>, Maxime Ripard <maxime.ripard@free-electrons.com>, Peter
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <1430983852-19267-1-git-send-email-sumit.semwal@linaro.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Sumit Semwal <sumit.semwal@linaro.org>
+Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, inki.dae@samsung.com, linaro-kernel@lists.linaro.org, pawel@osciak.com, mchehab@osg.samsung.com, airlied@linux.ie, intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, maarten.lankhorst@canonical.com, kgene@kernel.org, thierry.reding@gmail.com, linux-tegra@vger.kernel.org, rmk+kernel@arm.linux.org.uk, m.szyprowski@samsung.com, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Stephen,
-
-On Wed, 6 May 2015 23:39:53 -0700
-Stephen Boyd <sboyd@codeaurora.org> wrote:
-
-> On 04/30, Boris Brezillon wrote:
-> > Clock rates are stored in an unsigned long field, but ->round_rate()
-> > (which returns a rounded rate from a requested one) returns a long
-> > value (errors are reported using negative error codes), which can lead
-> > to long overflow if the clock rate exceed 2Ghz.
-> > 
-> > Change ->round_rate() prototype to return 0 or an error code, and pass the
-> > requested rate as a pointer so that it can be adjusted depending on
-> > hardware capabilities.
-> > 
-> > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> > Tested-by: Heiko Stuebner <heiko@sntech.de>
-> > Tested-by: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-> > Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> 
-> This patch is fairly invasive, and it probably doesn't even
-> matter for most of these clock providers to be able to round a
-> rate above 2GHz.
-
-Fair enough.
-
-> I've been trying to remove the .round_rate op
-> from the framework by encouraging new features via the
-> .determine_rate op.
-
-Oh, I wasn't aware of that (BTW, that's a good thing).
-Maybe this should be clearly stated (both in the struct clk_ops
-kerneldoc header and in Documentation/clk.txt).
-
-> Sadly, we still have to do a flag day and
-> change all the .determine_rate ops when we want to add things.
-
-Yes, but the number of clk drivers implementing ->determine_rate() is
-still quite limited compared to those implementing ->round_rate().
-
-> 
-> What if we changed determine_rate ops to take a struct
-> clk_determine_info (or some better named structure) instead of
-> the current list of arguments that it currently takes? Then when
-> we want to make these sorts of framework wide changes we can just
-> throw a new member into that structure and be done.
-
-I really like this idea, especially since I was wondering if we could
-pass other 'clk rate requirements' like the rounding policy (down,
-closest, up), or the maximum clk inaccuracy.
-
-> 
-> It doesn't solve the unsigned long to int return value problem
-> though. We can solve that by gradually introducing a new op and
-> handling another case in the rounding path. If we can come up
-> with some good name for that new op like .decide_rate or
-> something then it makes things nicer in the long run. I like the
-> name .determine_rate though :/
-
-Why not changing the ->determine_rate() prototype. As said above, the
-number of clk drivers implementing this function is still quite
-limited, and I guess we can have an ack for all of them.
-
-> 
-> The benefit of all this is that we don't have to worry about
-> finding the random clk providers that get added into other
-> subsystems and fixing them up. If drivers actually care about
-> this problem then they'll be fixed to use the proper op. FYI,
-> last time we updated the function signature of .determine_rate we
-> broke a couple drivers along the way.
-> 
-
-Hm, IMHO, adding a new op is not a good thing. I agree that it eases
-the transition, but ITOH you'll have to live with old/deprecated ops in
-your clk_ops structure with people introducing new drivers still using
-the old ops (see the number of clk drivers implementing ->round_rate()
-instead of ->determine_rate()).
-
-Best Regards,
-
-Boris
-
--- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+T24gVGh1LCBNYXkgMDcsIDIwMTUgYXQgMDE6MDA6NTJQTSArMDUzMCwgU3VtaXQgU2Vtd2FsIHdy
+b3RlOgo+IEFkZCByZWZlcmVuY2UgY291bnRpbmcgb24gYSBrZXJuZWwgbW9kdWxlIHRoYXQgZXhw
+b3J0cyBkbWEtYnVmIGFuZAo+IGltcGxlbWVudHMgaXRzIG9wZXJhdGlvbnMuIFRoaXMgcHJldmVu
+dHMgdGhlIG1vZHVsZSBmcm9tIGJlaW5nIHVubG9hZGVkCj4gd2hpbGUgRE1BQlVGIGZpbGUgaXMg
+aW4gdXNlLgo+IAo+IFRoZSBvcmlnaW5hbCBwYXRjaCBbMV0gd2FzIHN1Ym1pdHRlZCBieSBUb21h
+c3osIGJ1dCBoZSdzIHNpbmNlIHNoaWZ0ZWQKPiBqb2JzIGFuZCBhIHBpbmcgZGlkbid0IGVsaWNp
+dCBhbnkgcmVzcG9uc2UuCj4gCj4gICBbdG9tYXN6OiBPcmlnaW5hbCBhdXRob3JdCj4gU2lnbmVk
+LW9mZi1ieTogVG9tYXN6IFN0YW5pc2xhd3NraSA8dC5zdGFuaXNsYXdzQHNhbXN1bmcuY29tPgo+
+IEFja2VkLWJ5OiBEYW5pZWwgVmV0dGVyIDxkYW5pZWxAZmZ3bGwuY2g+Cj4gICBbc3VtaXRzOiB1
+cGRhdGVkICYgcmViYXNlZCBhcyBwZXIgcmV2aWV3IGNvbW1lbnRzXQo+IFNpZ25lZC1vZmYtYnk6
+IFN1bWl0IFNlbXdhbCA8c3VtaXQuc2Vtd2FsQGxpbmFyby5vcmc+Cj4gCj4gWzFdOiBodHRwczov
+L2xrbWwub3JnL2xrbWwvMjAxMi84LzgvMTYzCj4gLS0tCj4gIGRyaXZlcnMvZG1hLWJ1Zi9kbWEt
+YnVmLmMgICAgICAgICAgICAgICAgICAgICAgfCA5ICsrKysrKysrLQo+ICBkcml2ZXJzL2dwdS9k
+cm0vYXJtYWRhL2FybWFkYV9nZW0uYyAgICAgICAgICAgIHwgMSArCj4gIGRyaXZlcnMvZ3B1L2Ry
+bS9kcm1fcHJpbWUuYyAgICAgICAgICAgICAgICAgICAgfCAxICsKPiAgZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfZHJtX2RtYWJ1Zi5jICAgICB8IDEgKwo+ICBkcml2ZXJzL2dwdS9kcm0v
+aTkxNS9pOTE1X2dlbV9kbWFidWYuYyAgICAgICAgIHwgMSArCj4gIGRyaXZlcnMvZ3B1L2RybS9v
+bWFwZHJtL29tYXBfZ2VtX2RtYWJ1Zi5jICAgICAgfCAxICsKPiAgZHJpdmVycy9ncHUvZHJtL3Rl
+Z3JhL2dlbS5jICAgICAgICAgICAgICAgICAgICB8IDEgKwo+ICBkcml2ZXJzL2dwdS9kcm0vdWRs
+L3VkbF9kbWFidWYuYyAgICAgICAgICAgICAgIHwgMSArCj4gIGRyaXZlcnMvZ3B1L2RybS92bXdn
+Zngvdm13Z2Z4X3ByaW1lLmMgICAgICAgICAgfCAxICsKPiAgZHJpdmVycy9tZWRpYS92NGwyLWNv
+cmUvdmlkZW9idWYyLWRtYS1jb250aWcuYyB8IDEgKwo+ICBkcml2ZXJzL21lZGlhL3Y0bDItY29y
+ZS92aWRlb2J1ZjItZG1hLXNnLmMgICAgIHwgMSArCj4gIGRyaXZlcnMvbWVkaWEvdjRsMi1jb3Jl
+L3ZpZGVvYnVmMi12bWFsbG9jLmMgICAgfCAxICsKPiAgZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQv
+aW9uL2lvbi5jICAgICAgICAgICAgICB8IDEgKwo+ICBpbmNsdWRlL2xpbnV4L2RtYS1idWYuaCAg
+ICAgICAgICAgICAgICAgICAgICAgIHwgMiArKwo+ICAxNCBmaWxlcyBjaGFuZ2VkLCAyMiBpbnNl
+cnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZG1hLWJ1
+Zi9kbWEtYnVmLmMgYi9kcml2ZXJzL2RtYS1idWYvZG1hLWJ1Zi5jCj4gaW5kZXggYzVhOTEzOGE2
+YThkLi45NTgzZWFjMDIzOGYgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9kbWEtYnVmL2RtYS1idWYu
+Ywo+ICsrKyBiL2RyaXZlcnMvZG1hLWJ1Zi9kbWEtYnVmLmMKPiBAQCAtMjksNiArMjksNyBAQAo+
+ICAjaW5jbHVkZSA8bGludXgvYW5vbl9pbm9kZXMuaD4KPiAgI2luY2x1ZGUgPGxpbnV4L2V4cG9y
+dC5oPgo+ICAjaW5jbHVkZSA8bGludXgvZGVidWdmcy5oPgo+ICsjaW5jbHVkZSA8bGludXgvbW9k
+dWxlLmg+Cj4gICNpbmNsdWRlIDxsaW51eC9zZXFfZmlsZS5oPgo+ICAjaW5jbHVkZSA8bGludXgv
+cG9sbC5oPgo+ICAjaW5jbHVkZSA8bGludXgvcmVzZXJ2YXRpb24uaD4KPiBAQCAtNjQsNiArNjUs
+NyBAQCBzdGF0aWMgaW50IGRtYV9idWZfcmVsZWFzZShzdHJ1Y3QgaW5vZGUgKmlub2RlLCBzdHJ1
+Y3QgZmlsZSAqZmlsZSkKPiAgCUJVR19PTihkbWFidWYtPmNiX3NoYXJlZC5hY3RpdmUgfHwgZG1h
+YnVmLT5jYl9leGNsLmFjdGl2ZSk7Cj4gIAo+ICAJZG1hYnVmLT5vcHMtPnJlbGVhc2UoZG1hYnVm
+KTsKPiArCW1vZHVsZV9wdXQoZG1hYnVmLT5vcHMtPm93bmVyKTsKPiAgCj4gIAltdXRleF9sb2Nr
+KCZkYl9saXN0LmxvY2spOwo+ICAJbGlzdF9kZWwoJmRtYWJ1Zi0+bGlzdF9ub2RlKTsKPiBAQCAt
+MzAyLDkgKzMwNCwxNCBAQCBzdHJ1Y3QgZG1hX2J1ZiAqZG1hX2J1Zl9leHBvcnQoY29uc3Qgc3Ry
+dWN0IGRtYV9idWZfZXhwb3J0X2luZm8gKmV4cF9pbmZvKQo+ICAJCXJldHVybiBFUlJfUFRSKC1F
+SU5WQUwpOwo+ICAJfQo+ICAKPiArCWlmICghdHJ5X21vZHVsZV9nZXQoZXhwX2luZm8tPm9wcy0+
+b3duZXIpKQo+ICsJCXJldHVybiBFUlJfUFRSKC1FTk9FTlQpOwo+ICsKPiAgCWRtYWJ1ZiA9IGt6
+YWxsb2MoYWxsb2Nfc2l6ZSwgR0ZQX0tFUk5FTCk7Cj4gLQlpZiAoZG1hYnVmID09IE5VTEwpCj4g
+KwlpZiAoIWRtYWJ1Zikgewo+ICsJCW1vZHVsZV9wdXQoZXhwX2luZm8tPm9wcy0+b3duZXIpOwo+
+ICAJCXJldHVybiBFUlJfUFRSKC1FTk9NRU0pOwo+ICsJfQo+ICAKPiAgCWRtYWJ1Zi0+cHJpdiA9
+IGV4cF9pbmZvLT5wcml2Owo+ICAJZG1hYnVmLT5vcHMgPSBleHBfaW5mby0+b3BzOwo+IGRpZmYg
+LS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYXJtYWRhL2FybWFkYV9nZW0uYyBiL2RyaXZlcnMvZ3B1
+L2RybS9hcm1hZGEvYXJtYWRhX2dlbS5jCj4gaW5kZXggNTgwZTEwYWNhYTNhLi5kMmM1ZmMxMjY5
+YjcgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2FybWFkYS9hcm1hZGFfZ2VtLmMKPiAr
+KysgYi9kcml2ZXJzL2dwdS9kcm0vYXJtYWRhL2FybWFkYV9nZW0uYwo+IEBAIC01MjQsNiArNTI0
+LDcgQEAgYXJtYWRhX2dlbV9kbWFidWZfbW1hcChzdHJ1Y3QgZG1hX2J1ZiAqYnVmLCBzdHJ1Y3Qg
+dm1fYXJlYV9zdHJ1Y3QgKnZtYSkKPiAgfQo+ICAKPiAgc3RhdGljIGNvbnN0IHN0cnVjdCBkbWFf
+YnVmX29wcyBhcm1hZGFfZ2VtX3ByaW1lX2RtYWJ1Zl9vcHMgPSB7Cj4gKwkub3duZXIgPSBUSElT
+X01PRFVMRSwKPiAgCS5tYXBfZG1hX2J1Zgk9IGFybWFkYV9nZW1fcHJpbWVfbWFwX2RtYV9idWYs
+Cj4gIAkudW5tYXBfZG1hX2J1Zgk9IGFybWFkYV9nZW1fcHJpbWVfdW5tYXBfZG1hX2J1ZiwKPiAg
+CS5yZWxlYXNlCT0gZHJtX2dlbV9kbWFidWZfcmVsZWFzZSwKClRoZSAiZWFzaWVyIiB3YXkgdG8g
+ZG8gdGhpcyBpcyBjaGFuZ2UgdGhlIHJlZ2lzdHJhdGlvbiBmdW5jdGlvbiB0byBhZGQKdGhlIG1v
+ZHVsZSBvd25lciBhdXRvbWF0aWNhbGx5LCB3aGljaCBrZWVwcyB5b3UgZnJvbSBoYXZpbmcgdG8g
+bW9kaWZ5CmFsbCBvZiB0aGUgaW5kaXZpZHVhbCBkcml2ZXJzLiAgTG9vayBhdCBob3cgcGNpIGFu
+ZCB1c2IgZG8gdGhpcyBmb3IKdGhlaXIgZHJpdmVyIHJlZ2lzdHJhdGlvbiBmdW5jdGlvbnMuICBU
+aGF0IHNob3VsZCByZXN1bHQgaW4gYSBtdWNoCnNtYWxsZXIgcGF0Y2gsIHRoYXQgYWx3YXlzIHdv
+cmtzIHByb3Blcmx5IGZvciBldmVyeW9uZSAodGhlcmUncyBubyB3YXkKZm9yIGRyaXZlciB0byBn
+ZXQgaXQgd3JvbmcuKQoKdGhhbmtzLAoKZ3JlZyBrLWgKX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4IG1haWxpbmcgbGlzdApJbnRlbC1nZnhA
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1h
+bi9saXN0aW5mby9pbnRlbC1nZngK
