@@ -1,61 +1,70 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v4 19/20] clk: tegra210: add support for Tegra210 clocks
-Date: Thu, 7 May 2015 17:18:12 +0200
-Message-ID: <20150507151811.GD25866@ulmo.nvidia.com>
-References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
- <1430757460-9478-20-git-send-email-rklein@nvidia.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="iVCmgExH7+hIHJ1A"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1430757460-9478-20-git-send-email-rklein@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v2] clk: tegra: Update struct tegra_clk_pll_params kerneldoc
+Date: Thu,  7 May 2015 17:23:39 +0200
+Message-ID: <1431012219-28469-1-git-send-email-thierry.reding@gmail.com>
+References: <1430919815-22380-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1430919815-22380-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
---iVCmgExH7+hIHJ1A
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Benson Leung pointed out that the kerneldoc for this structure has
+become stale. Update the field descriptions to match the structure
+content.
 
-On Mon, May 04, 2015 at 12:37:39PM -0400, Rhyland Klein wrote:
-[...]
-> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-[...]
-> +static void __init tegra210_clock_init(struct device_node *np)
-> +{
-[...]
-> +	tegra_fixed_clk_init(tegra210_clks);
-> +	tegra210_pll_init(clk_base, pmc_base);
-> +	tegra210_periph_clk_init(clk_base, pmc_base);
-> +	tegra_audio_clk_init(clk_base, pmc_base, tegra210_clks,
-> +			     tegra210_audio_plls, 2);
+Reported-by: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Acked-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Changes in v2:
+- document max_p and pdiv_tohw fields
 
-Should use ARRAY_SIZE() here as well.
+ drivers/clk/tegra/clk.h | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
-Thierry
-
---iVCmgExH7+hIHJ1A
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJVS4IzAAoJEN0jrNd/PrOh2y4P+gMnm/dUAC4z8n3egGWdENxH
-hbDWkNsvdg/rOVY+nWdoyfWGzb399o4ev2ZSSTVtW7Ec8t8doupCqBrmZ/r7OoIE
-/03DN+bRWgc8LtVlw0I4LSadx4bw877tJjYTYqevxrqJQXCQxZvRGs4Us7Y7mxel
-PgR6fR0611qQjjyMpShWHFHL7cTkTUa7ROXHGcaazQdlAChHvERFDVPfAOAEp8r4
-9tFJOwvZCxFn5ulCgMvM8IN+RKtWlqxffFw1lgg/ZLYAmiI+huLXYyyZZcME6JGz
-6afhlI6/136NVBTVAOwru/QLLS0k0VysNUIiLoUf/vgR5kmWvhg/6tbV8DEN4RSA
-B+jxYTXmHG+xMnrN4kmsML4qGdrGe7m/7EPHU7e0maROwJb8Lrlvub8f4qBDadZe
-bGQKIZmY0SixY3SN8HHDxhhGXjMlr2SNHmAleew02/A3yJjRjjhV6tLv54JcuESt
-TOoSBjyYS6bqjNjdInoiUZEmMUV4OJC17K6iUqOgs23e6QHOTVJiPUm897BeukTG
-T7V9miB5WGzclNtH7t6a55o4//g/VuKoInPr2pNafp68TqnYqSL6fWNz430DEFFK
-CCHV9EosNm5y4nadZ5/AelZVm3I4gRkdDA9qa8ED716X5plQd+eXiCyuXVtMEMAZ
-nE7H8jQpedG7UkDc8d74
-=4USg
------END PGP SIGNATURE-----
-
---iVCmgExH7+hIHJ1A--
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index f3782dedbdfb..b76b786e15f6 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -157,7 +157,7 @@ struct div_nmp {
+ };
+ 
+ /**
+- * struct clk_pll_params - PLL parameters
++ * struct tegra_clk_pll_params - PLL parameters
+  *
+  * @input_min:			Minimum input frequency
+  * @input_max:			Maximum input frequency
+@@ -168,12 +168,24 @@ struct div_nmp {
+  * @base_reg:			PLL base reg offset
+  * @misc_reg:			PLL misc reg offset
+  * @lock_reg:			PLL lock reg offset
+- * @lock_bit_idx:		Bit index for PLL lock status
++ * @lock_mask:			Bitmask for PLL lock status
+  * @lock_enable_bit_idx:	Bit index to enable PLL lock
++ * @iddq_reg:			PLL IDDQ register offset
++ * @iddq_bit_idx:		Bit index to enable PLL IDDQ
++ * @aux_reg:			AUX register offset
++ * @dyn_ramp_reg:		Dynamic ramp control register offset
++ * @ext_misc_reg:		Miscellaneous control register offsets
++ * @pmc_divnm_reg:		n, m divider PMC override register offset (PLLM)
++ * @pmc_divp_reg:		p divider PMC override register offset (PLLM)
++ * @flags:			PLL flags
++ * @stepa_shift:		Dynamic ramp step A field shift
++ * @stepb_shift:		Dynamic ramp step B field shift
+  * @lock_delay:			Delay in us if PLL lock is not used
++ * @max_p:			maximum value for the p divider
++ * @pdiv_tohw:			mapping of p divider to register values
++ * @div_nmp:			offsets and widths on n, m and p fields
+  * @freq_table:			array of frequencies supported by PLL
+  * @fixed_rate:			PLL rate if it is fixed
+- * @flags:			PLL flags
+  *
+  * Flags:
+  * TEGRA_PLL_USE_LOCK - This flag indicated to use lock bits for
+-- 
+2.3.5
