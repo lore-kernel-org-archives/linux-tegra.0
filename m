@@ -1,92 +1,202 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] dma-buf: add ref counting for module as
-	exporter
-Date: Thu, 7 May 2015 10:10:26 +0200
-Message-ID: <20150507081026.GA19773@kroah.com>
-References: <1430983852-19267-1-git-send-email-sumit.semwal@linaro.org>
+From: Jim Lin <jilin@nvidia.com>
+Subject: Re: [PATCH v4 19/20] clk: tegra210: add support for Tegra210 clocks
+Date: Thu, 7 May 2015 18:39:19 +0800
+Message-ID: <554B40D7.3040207@nvidia.com>
+References: <1430757460-9478-1-git-send-email-rklein@nvidia.com> <1430757460-9478-20-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <1430983852-19267-1-git-send-email-sumit.semwal@linaro.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Sumit Semwal <sumit.semwal@linaro.org>
-Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, inki.dae@samsung.com, linaro-kernel@lists.linaro.org, pawel@osciak.com, mchehab@osg.samsung.com, airlied@linux.ie, intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, maarten.lankhorst@canonical.com, kgene@kernel.org, thierry.reding@gmail.com, linux-tegra@vger.kernel.org, rmk+kernel@arm.linux.org.uk, m.szyprowski@samsung.com, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1430757460-9478-20-git-send-email-rklein@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVGh1LCBNYXkgMDcsIDIwMTUgYXQgMDE6MDA6NTJQTSArMDUzMCwgU3VtaXQgU2Vtd2FsIHdy
-b3RlOgo+IEFkZCByZWZlcmVuY2UgY291bnRpbmcgb24gYSBrZXJuZWwgbW9kdWxlIHRoYXQgZXhw
-b3J0cyBkbWEtYnVmIGFuZAo+IGltcGxlbWVudHMgaXRzIG9wZXJhdGlvbnMuIFRoaXMgcHJldmVu
-dHMgdGhlIG1vZHVsZSBmcm9tIGJlaW5nIHVubG9hZGVkCj4gd2hpbGUgRE1BQlVGIGZpbGUgaXMg
-aW4gdXNlLgo+IAo+IFRoZSBvcmlnaW5hbCBwYXRjaCBbMV0gd2FzIHN1Ym1pdHRlZCBieSBUb21h
-c3osIGJ1dCBoZSdzIHNpbmNlIHNoaWZ0ZWQKPiBqb2JzIGFuZCBhIHBpbmcgZGlkbid0IGVsaWNp
-dCBhbnkgcmVzcG9uc2UuCj4gCj4gICBbdG9tYXN6OiBPcmlnaW5hbCBhdXRob3JdCj4gU2lnbmVk
-LW9mZi1ieTogVG9tYXN6IFN0YW5pc2xhd3NraSA8dC5zdGFuaXNsYXdzQHNhbXN1bmcuY29tPgo+
-IEFja2VkLWJ5OiBEYW5pZWwgVmV0dGVyIDxkYW5pZWxAZmZ3bGwuY2g+Cj4gICBbc3VtaXRzOiB1
-cGRhdGVkICYgcmViYXNlZCBhcyBwZXIgcmV2aWV3IGNvbW1lbnRzXQo+IFNpZ25lZC1vZmYtYnk6
-IFN1bWl0IFNlbXdhbCA8c3VtaXQuc2Vtd2FsQGxpbmFyby5vcmc+Cj4gCj4gWzFdOiBodHRwczov
-L2xrbWwub3JnL2xrbWwvMjAxMi84LzgvMTYzCj4gLS0tCj4gIGRyaXZlcnMvZG1hLWJ1Zi9kbWEt
-YnVmLmMgICAgICAgICAgICAgICAgICAgICAgfCA5ICsrKysrKysrLQo+ICBkcml2ZXJzL2dwdS9k
-cm0vYXJtYWRhL2FybWFkYV9nZW0uYyAgICAgICAgICAgIHwgMSArCj4gIGRyaXZlcnMvZ3B1L2Ry
-bS9kcm1fcHJpbWUuYyAgICAgICAgICAgICAgICAgICAgfCAxICsKPiAgZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3NfZHJtX2RtYWJ1Zi5jICAgICB8IDEgKwo+ICBkcml2ZXJzL2dwdS9kcm0v
-aTkxNS9pOTE1X2dlbV9kbWFidWYuYyAgICAgICAgIHwgMSArCj4gIGRyaXZlcnMvZ3B1L2RybS9v
-bWFwZHJtL29tYXBfZ2VtX2RtYWJ1Zi5jICAgICAgfCAxICsKPiAgZHJpdmVycy9ncHUvZHJtL3Rl
-Z3JhL2dlbS5jICAgICAgICAgICAgICAgICAgICB8IDEgKwo+ICBkcml2ZXJzL2dwdS9kcm0vdWRs
-L3VkbF9kbWFidWYuYyAgICAgICAgICAgICAgIHwgMSArCj4gIGRyaXZlcnMvZ3B1L2RybS92bXdn
-Zngvdm13Z2Z4X3ByaW1lLmMgICAgICAgICAgfCAxICsKPiAgZHJpdmVycy9tZWRpYS92NGwyLWNv
-cmUvdmlkZW9idWYyLWRtYS1jb250aWcuYyB8IDEgKwo+ICBkcml2ZXJzL21lZGlhL3Y0bDItY29y
-ZS92aWRlb2J1ZjItZG1hLXNnLmMgICAgIHwgMSArCj4gIGRyaXZlcnMvbWVkaWEvdjRsMi1jb3Jl
-L3ZpZGVvYnVmMi12bWFsbG9jLmMgICAgfCAxICsKPiAgZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQv
-aW9uL2lvbi5jICAgICAgICAgICAgICB8IDEgKwo+ICBpbmNsdWRlL2xpbnV4L2RtYS1idWYuaCAg
-ICAgICAgICAgICAgICAgICAgICAgIHwgMiArKwo+ICAxNCBmaWxlcyBjaGFuZ2VkLCAyMiBpbnNl
-cnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZG1hLWJ1
-Zi9kbWEtYnVmLmMgYi9kcml2ZXJzL2RtYS1idWYvZG1hLWJ1Zi5jCj4gaW5kZXggYzVhOTEzOGE2
-YThkLi45NTgzZWFjMDIzOGYgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9kbWEtYnVmL2RtYS1idWYu
-Ywo+ICsrKyBiL2RyaXZlcnMvZG1hLWJ1Zi9kbWEtYnVmLmMKPiBAQCAtMjksNiArMjksNyBAQAo+
-ICAjaW5jbHVkZSA8bGludXgvYW5vbl9pbm9kZXMuaD4KPiAgI2luY2x1ZGUgPGxpbnV4L2V4cG9y
-dC5oPgo+ICAjaW5jbHVkZSA8bGludXgvZGVidWdmcy5oPgo+ICsjaW5jbHVkZSA8bGludXgvbW9k
-dWxlLmg+Cj4gICNpbmNsdWRlIDxsaW51eC9zZXFfZmlsZS5oPgo+ICAjaW5jbHVkZSA8bGludXgv
-cG9sbC5oPgo+ICAjaW5jbHVkZSA8bGludXgvcmVzZXJ2YXRpb24uaD4KPiBAQCAtNjQsNiArNjUs
-NyBAQCBzdGF0aWMgaW50IGRtYV9idWZfcmVsZWFzZShzdHJ1Y3QgaW5vZGUgKmlub2RlLCBzdHJ1
-Y3QgZmlsZSAqZmlsZSkKPiAgCUJVR19PTihkbWFidWYtPmNiX3NoYXJlZC5hY3RpdmUgfHwgZG1h
-YnVmLT5jYl9leGNsLmFjdGl2ZSk7Cj4gIAo+ICAJZG1hYnVmLT5vcHMtPnJlbGVhc2UoZG1hYnVm
-KTsKPiArCW1vZHVsZV9wdXQoZG1hYnVmLT5vcHMtPm93bmVyKTsKPiAgCj4gIAltdXRleF9sb2Nr
-KCZkYl9saXN0LmxvY2spOwo+ICAJbGlzdF9kZWwoJmRtYWJ1Zi0+bGlzdF9ub2RlKTsKPiBAQCAt
-MzAyLDkgKzMwNCwxNCBAQCBzdHJ1Y3QgZG1hX2J1ZiAqZG1hX2J1Zl9leHBvcnQoY29uc3Qgc3Ry
-dWN0IGRtYV9idWZfZXhwb3J0X2luZm8gKmV4cF9pbmZvKQo+ICAJCXJldHVybiBFUlJfUFRSKC1F
-SU5WQUwpOwo+ICAJfQo+ICAKPiArCWlmICghdHJ5X21vZHVsZV9nZXQoZXhwX2luZm8tPm9wcy0+
-b3duZXIpKQo+ICsJCXJldHVybiBFUlJfUFRSKC1FTk9FTlQpOwo+ICsKPiAgCWRtYWJ1ZiA9IGt6
-YWxsb2MoYWxsb2Nfc2l6ZSwgR0ZQX0tFUk5FTCk7Cj4gLQlpZiAoZG1hYnVmID09IE5VTEwpCj4g
-KwlpZiAoIWRtYWJ1Zikgewo+ICsJCW1vZHVsZV9wdXQoZXhwX2luZm8tPm9wcy0+b3duZXIpOwo+
-ICAJCXJldHVybiBFUlJfUFRSKC1FTk9NRU0pOwo+ICsJfQo+ICAKPiAgCWRtYWJ1Zi0+cHJpdiA9
-IGV4cF9pbmZvLT5wcml2Owo+ICAJZG1hYnVmLT5vcHMgPSBleHBfaW5mby0+b3BzOwo+IGRpZmYg
-LS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYXJtYWRhL2FybWFkYV9nZW0uYyBiL2RyaXZlcnMvZ3B1
-L2RybS9hcm1hZGEvYXJtYWRhX2dlbS5jCj4gaW5kZXggNTgwZTEwYWNhYTNhLi5kMmM1ZmMxMjY5
-YjcgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2FybWFkYS9hcm1hZGFfZ2VtLmMKPiAr
-KysgYi9kcml2ZXJzL2dwdS9kcm0vYXJtYWRhL2FybWFkYV9nZW0uYwo+IEBAIC01MjQsNiArNTI0
-LDcgQEAgYXJtYWRhX2dlbV9kbWFidWZfbW1hcChzdHJ1Y3QgZG1hX2J1ZiAqYnVmLCBzdHJ1Y3Qg
-dm1fYXJlYV9zdHJ1Y3QgKnZtYSkKPiAgfQo+ICAKPiAgc3RhdGljIGNvbnN0IHN0cnVjdCBkbWFf
-YnVmX29wcyBhcm1hZGFfZ2VtX3ByaW1lX2RtYWJ1Zl9vcHMgPSB7Cj4gKwkub3duZXIgPSBUSElT
-X01PRFVMRSwKPiAgCS5tYXBfZG1hX2J1Zgk9IGFybWFkYV9nZW1fcHJpbWVfbWFwX2RtYV9idWYs
-Cj4gIAkudW5tYXBfZG1hX2J1Zgk9IGFybWFkYV9nZW1fcHJpbWVfdW5tYXBfZG1hX2J1ZiwKPiAg
-CS5yZWxlYXNlCT0gZHJtX2dlbV9kbWFidWZfcmVsZWFzZSwKClRoZSAiZWFzaWVyIiB3YXkgdG8g
-ZG8gdGhpcyBpcyBjaGFuZ2UgdGhlIHJlZ2lzdHJhdGlvbiBmdW5jdGlvbiB0byBhZGQKdGhlIG1v
-ZHVsZSBvd25lciBhdXRvbWF0aWNhbGx5LCB3aGljaCBrZWVwcyB5b3UgZnJvbSBoYXZpbmcgdG8g
-bW9kaWZ5CmFsbCBvZiB0aGUgaW5kaXZpZHVhbCBkcml2ZXJzLiAgTG9vayBhdCBob3cgcGNpIGFu
-ZCB1c2IgZG8gdGhpcyBmb3IKdGhlaXIgZHJpdmVyIHJlZ2lzdHJhdGlvbiBmdW5jdGlvbnMuICBU
-aGF0IHNob3VsZCByZXN1bHQgaW4gYSBtdWNoCnNtYWxsZXIgcGF0Y2gsIHRoYXQgYWx3YXlzIHdv
-cmtzIHByb3Blcmx5IGZvciBldmVyeW9uZSAodGhlcmUncyBubyB3YXkKZm9yIGRyaXZlciB0byBn
-ZXQgaXQgd3JvbmcuKQoKdGhhbmtzLAoKZ3JlZyBrLWgKX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4IG1haWxpbmcgbGlzdApJbnRlbC1nZnhA
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1h
-bi9saXN0aW5mby9pbnRlbC1nZngK
+On 05/05/2015 12:37 AM, Rhyland Klein wrote:
+> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> new file mode 100644
+> index 000000000000..07382a473e22
+> --- /dev/null
+> +++ b/drivers/clk/tegra/clk-tegra210.c
+> @@ -0,0 +1,2761 @@
+> +/*
+> + * Copyright (c) 2012-2014 NVIDIA CORPORATION.  All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+> + */
+> +
+> +#include <linux/io.h>
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/clkdev.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/delay.h>
+> +#include <linux/export.h>
+> +#include <linux/clk/tegra.h>
+> +#include <dt-bindings/clock/tegra210-car.h>
+> +
+> +#include "clk.h"
+> +#include "clk-id.h"
+> +
+> +/*
+> + * TEGRA210_CAR_BANK_COUNT: the number of peripheral clock register
+> + * banks present in the Tegra210 CAR IP block.  The banks are
+> + * identified by single letters, e.g.: L, H, U, V, W, X, Y.  See
+> + * periph_regs[] in drivers/clk/tegra/clk.c
+> + */
+> +#define TEGRA210_CAR_BANK_COUNT			7
+> +
+> +#define CLK_SOURCE_CSITE 0x1d4
+> +#define CLK_SOURCE_EMC 0x19c
+> +
+> +#define PLLC_BASE 0x80
+> +#define PLLC_OUT 0x84
+> +#define PLLC_MISC0 0x88
+> +#define PLLC_MISC1 0x8c
+> +#define PLLC_MISC2 0x5d0
+> +#define PLLC_MISC3 0x5d4
+> +
+> +#define PLLC2_BASE 0x4e8
+> +#define PLLC2_MISC0 0x4ec
+> +#define PLLC2_MISC1 0x4f0
+> +#define PLLC2_MISC2 0x4f4
+> +#define PLLC2_MISC3 0x4f8
+> +
+> +#define PLLC3_BASE 0x4fc
+> +#define PLLC3_MISC0 0x500
+> +#define PLLC3_MISC1 0x504
+> +#define PLLC3_MISC2 0x508
+> +#define PLLC3_MISC3 0x50c
+> +
+> +#define PLLM_BASE 0x90
+> +#define PLLM_MISC0 0x9c
+> +#define PLLM_MISC1 0x98
+> +#define PLLP_BASE 0xa0
+> +#define PLLP_MISC0 0xac
+> +#define PLLP_MISC1 0x680
+> +#define PLLA_BASE 0xb0
+> +#define PLLA_MISC0 0xbc
+> +#define PLLA_MISC1 0xb8
+> +#define PLLA_MISC2 0x5d8
+> +#define PLLD_BASE 0xd0
+> +#define PLLD_MISC0 0xdc
+> +#define PLLD_MISC1 0xd8
+> +#define PLLU_BASE 0xc0
+> +#define PLLU_OUTA 0xc4
+> +#define PLLU_MISC0 0xcc
+> +#define PLLU_MISC1 0xc8
+> +#define PLLX_BASE 0xe0
+> +#define PLLX_MISC0 0xe4
+> +#define PLLX_MISC1 0x510
+> +#define PLLX_MISC2 0x514
+> +#define PLLX_MISC3 0x518
+> +#define PLLX_MISC4 0x5f0
+> +#define PLLX_MISC5 0x5f4
+> +#define PLLE_BASE 0xe8
+> +#define PLLE_MISC0 0xec
+> +#define PLLD2_BASE 0x4b8
+> +#define PLLD2_MISC0 0x4bc
+> +#define PLLD2_MISC1 0x570
+> +#define PLLD2_MISC2 0x574
+> +#define PLLD2_MISC3 0x578
+> +#define PLLE_AUX 0x48c
+> +#define PLLRE_BASE 0x4c4
+> +#define PLLRE_MISC0 0x4c8
+> +#define PLLDP_BASE 0x590
+> +#define PLLDP_MISC 0x594
+> +
+> +#define PLLC4_BASE 0x5a4
+> +#define PLLC4_MISC0 0x5a8
+> +#define PLLC4_OUT 0x5e4
+> +#define PLLMB_BASE 0x5e8
+> +#define PLLMB_MISC0 0x5ec
+> +#define PLLA1_BASE 0x6a4
+> +#define PLLA1_MISC0 0x6a8
+> +#define PLLA1_MISC1 0x6ac
+> +#define PLLA1_MISC2 0x6b0
+> +#define PLLA1_MISC3 0x6b4
+> +
+> +#define PLLU_IDDQ_BIT 31
+> +#define PLLCX_IDDQ_BIT 27
+> +#define PLLRE_IDDQ_BIT 24
+> +#define PLLA_IDDQ_BIT 25
+> +#define PLLD_IDDQ_BIT 20
+> +#define PLLSS_IDDQ_BIT 18
+> +#define PLLM_IDDQ_BIT 5
+> +#define PLLMB_IDDQ_BIT 17
+> +#define PLLXP_IDDQ_BIT 3
+> +
+> +#define PLLCX_RESET_BIT 30
+> +
+> +#define PLL_BASE_LOCK BIT(27)
+> +#define PLLCX_BASE_LOCK BIT(26)
+> +#define PLLE_MISC_LOCK BIT(11)
+> +#define PLLRE_MISC_LOCK BIT(27)
+> +
+> +#define PLL_MISC_LOCK_ENABLE 18
+> +#define PLLC_MISC_LOCK_ENABLE 24
+> +#define PLLDU_MISC_LOCK_ENABLE 22
+> +#define PLLU_MISC_LOCK_ENABLE 29
+> +#define PLLE_MISC_LOCK_ENABLE 9
+> +#define PLLRE_MISC_LOCK_ENABLE 30
+> +#define PLLSS_MISC_LOCK_ENABLE 30
+> +#define PLLP_MISC_LOCK_ENABLE 18
+> +#define PLLM_MISC_LOCK_ENABLE 4
+> +#define PLLMB_MISC_LOCK_ENABLE 16
+> +#define PLLA_MISC_LOCK_ENABLE 28
+> +#define PLLU_MISC_LOCK_ENABLE 29
+> +#define PLLD_MISC_LOCK_ENABLE 18
+> +
+> +#define PLLA_SDM_DIN_MASK 0xffff
+> +#define PLLA_SDM_EN_MASK BIT(26)
+> +
+> +#define PLLD_SDM_EN_MASK BIT(16)
+> +
+> +#define PLLD2_SDM_EN_MASK BIT(31)
+> +#define PLLD2_SSC_EN_MASK BIT(30)
+> +
+> +#define PLLDP_SS_CFG	0x598
+> +#define PLLDP_SDM_EN_MASK BIT(31)
+> +#define PLLDP_SSC_EN_MASK BIT(30)
+> +#define PLLDP_SS_CTRL1	0x59c
+> +#define PLLDP_SS_CTRL2	0x5a0
+> +
+> +#define PMC_PLLM_WB0_OVERRIDE 0x1dc
+> +#define PMC_PLLM_WB0_OVERRIDE_2 0x2b0
+> +
+> +#define UTMIP_PLL_CFG2 0x488
+> +#define UTMIP_PLL_CFG2_STABLE_COUNT(x) (((x) & 0xffff) << 6)
+This line should be corrected as
+
++#define UTMIP_PLL_CFG2_STABLE_COUNT(x) (((x) & 0xfff) << 6)
+
+STABLE_COUNT has 12 bits.
+
+> +#define UTMIP_PLL_CFG2_ACTIVE_DLY_COUNT(x) (((x) & 0x3f) << 18)
+> +#define UTMIP_PLL_CFG2_FORCE_PD_SAMP_A_POWERDOWN BIT(0)
+> +#define UTMIP_PLL_CFG2_FORCE_PD_SAMP_B_POWERDOWN BIT(2)
+> +#define UTMIP_PLL_CFG2_FORCE_PD_SAMP_C_POWERDOWN BIT(4)
+> +
+> +#define UTMIP_PLL_CFG1 0x484
+> +#define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 6)
+This line should be corrected as
+
++#define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 27)
+
+ENABLE_DLY_COUNT starts from bit 27.
+
+
+
+--nvpublic
