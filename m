@@ -1,202 +1,100 @@
-From: Jim Lin <jilin@nvidia.com>
-Subject: Re: [PATCH v4 19/20] clk: tegra210: add support for Tegra210 clocks
-Date: Thu, 7 May 2015 18:39:19 +0800
-Message-ID: <554B40D7.3040207@nvidia.com>
-References: <1430757460-9478-1-git-send-email-rklein@nvidia.com> <1430757460-9478-20-git-send-email-rklein@nvidia.com>
+From: Sumit Semwal <sumit.semwal@linaro.org>
+Subject: Re: [PATCH] dma-buf: add ref counting for module as exporter
+Date: Thu, 7 May 2015 16:16:47 +0530
+Message-ID: <CAO_48GGjgRP=ab1wjGABguP3BaWPriLou_C-Su2C0kSeMS3Y4Q@mail.gmail.com>
+References: <1430983852-19267-1-git-send-email-sumit.semwal@linaro.org>
+ <20150507081026.GA19773@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1430757460-9478-20-git-send-email-rklein@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20150507081026.GA19773@kroah.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, Linaro Kernel Mailman List <linaro-kernel@lists.linaro.org>, Pawel Osciak <pawel@osciak.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, intel-gfx@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, Linaro MM SIG Mailman List <linaro-mm-sig@lists.linaro.org>, Maarten Lankhorst <maarten.lankhorst@canonical.com>, kgene@kernel.org, linux-tegra@vger.kernel.org, rmk+kernel@arm.linux.org.uk, Marek Szyprowski <m.szyprowski@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/05/2015 12:37 AM, Rhyland Klein wrote:
-> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-> new file mode 100644
-> index 000000000000..07382a473e22
-> --- /dev/null
-> +++ b/drivers/clk/tegra/clk-tegra210.c
-> @@ -0,0 +1,2761 @@
-> +/*
-> + * Copyright (c) 2012-2014 NVIDIA CORPORATION.  All rights reserved.
-> + *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> + * more details.
-> + *
-> + * You should have received a copy of the GNU General Public License
-> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-> + */
-> +
-> +#include <linux/io.h>
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/clkdev.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/delay.h>
-> +#include <linux/export.h>
-> +#include <linux/clk/tegra.h>
-> +#include <dt-bindings/clock/tegra210-car.h>
-> +
-> +#include "clk.h"
-> +#include "clk-id.h"
-> +
-> +/*
-> + * TEGRA210_CAR_BANK_COUNT: the number of peripheral clock register
-> + * banks present in the Tegra210 CAR IP block.  The banks are
-> + * identified by single letters, e.g.: L, H, U, V, W, X, Y.  See
-> + * periph_regs[] in drivers/clk/tegra/clk.c
-> + */
-> +#define TEGRA210_CAR_BANK_COUNT			7
-> +
-> +#define CLK_SOURCE_CSITE 0x1d4
-> +#define CLK_SOURCE_EMC 0x19c
-> +
-> +#define PLLC_BASE 0x80
-> +#define PLLC_OUT 0x84
-> +#define PLLC_MISC0 0x88
-> +#define PLLC_MISC1 0x8c
-> +#define PLLC_MISC2 0x5d0
-> +#define PLLC_MISC3 0x5d4
-> +
-> +#define PLLC2_BASE 0x4e8
-> +#define PLLC2_MISC0 0x4ec
-> +#define PLLC2_MISC1 0x4f0
-> +#define PLLC2_MISC2 0x4f4
-> +#define PLLC2_MISC3 0x4f8
-> +
-> +#define PLLC3_BASE 0x4fc
-> +#define PLLC3_MISC0 0x500
-> +#define PLLC3_MISC1 0x504
-> +#define PLLC3_MISC2 0x508
-> +#define PLLC3_MISC3 0x50c
-> +
-> +#define PLLM_BASE 0x90
-> +#define PLLM_MISC0 0x9c
-> +#define PLLM_MISC1 0x98
-> +#define PLLP_BASE 0xa0
-> +#define PLLP_MISC0 0xac
-> +#define PLLP_MISC1 0x680
-> +#define PLLA_BASE 0xb0
-> +#define PLLA_MISC0 0xbc
-> +#define PLLA_MISC1 0xb8
-> +#define PLLA_MISC2 0x5d8
-> +#define PLLD_BASE 0xd0
-> +#define PLLD_MISC0 0xdc
-> +#define PLLD_MISC1 0xd8
-> +#define PLLU_BASE 0xc0
-> +#define PLLU_OUTA 0xc4
-> +#define PLLU_MISC0 0xcc
-> +#define PLLU_MISC1 0xc8
-> +#define PLLX_BASE 0xe0
-> +#define PLLX_MISC0 0xe4
-> +#define PLLX_MISC1 0x510
-> +#define PLLX_MISC2 0x514
-> +#define PLLX_MISC3 0x518
-> +#define PLLX_MISC4 0x5f0
-> +#define PLLX_MISC5 0x5f4
-> +#define PLLE_BASE 0xe8
-> +#define PLLE_MISC0 0xec
-> +#define PLLD2_BASE 0x4b8
-> +#define PLLD2_MISC0 0x4bc
-> +#define PLLD2_MISC1 0x570
-> +#define PLLD2_MISC2 0x574
-> +#define PLLD2_MISC3 0x578
-> +#define PLLE_AUX 0x48c
-> +#define PLLRE_BASE 0x4c4
-> +#define PLLRE_MISC0 0x4c8
-> +#define PLLDP_BASE 0x590
-> +#define PLLDP_MISC 0x594
-> +
-> +#define PLLC4_BASE 0x5a4
-> +#define PLLC4_MISC0 0x5a8
-> +#define PLLC4_OUT 0x5e4
-> +#define PLLMB_BASE 0x5e8
-> +#define PLLMB_MISC0 0x5ec
-> +#define PLLA1_BASE 0x6a4
-> +#define PLLA1_MISC0 0x6a8
-> +#define PLLA1_MISC1 0x6ac
-> +#define PLLA1_MISC2 0x6b0
-> +#define PLLA1_MISC3 0x6b4
-> +
-> +#define PLLU_IDDQ_BIT 31
-> +#define PLLCX_IDDQ_BIT 27
-> +#define PLLRE_IDDQ_BIT 24
-> +#define PLLA_IDDQ_BIT 25
-> +#define PLLD_IDDQ_BIT 20
-> +#define PLLSS_IDDQ_BIT 18
-> +#define PLLM_IDDQ_BIT 5
-> +#define PLLMB_IDDQ_BIT 17
-> +#define PLLXP_IDDQ_BIT 3
-> +
-> +#define PLLCX_RESET_BIT 30
-> +
-> +#define PLL_BASE_LOCK BIT(27)
-> +#define PLLCX_BASE_LOCK BIT(26)
-> +#define PLLE_MISC_LOCK BIT(11)
-> +#define PLLRE_MISC_LOCK BIT(27)
-> +
-> +#define PLL_MISC_LOCK_ENABLE 18
-> +#define PLLC_MISC_LOCK_ENABLE 24
-> +#define PLLDU_MISC_LOCK_ENABLE 22
-> +#define PLLU_MISC_LOCK_ENABLE 29
-> +#define PLLE_MISC_LOCK_ENABLE 9
-> +#define PLLRE_MISC_LOCK_ENABLE 30
-> +#define PLLSS_MISC_LOCK_ENABLE 30
-> +#define PLLP_MISC_LOCK_ENABLE 18
-> +#define PLLM_MISC_LOCK_ENABLE 4
-> +#define PLLMB_MISC_LOCK_ENABLE 16
-> +#define PLLA_MISC_LOCK_ENABLE 28
-> +#define PLLU_MISC_LOCK_ENABLE 29
-> +#define PLLD_MISC_LOCK_ENABLE 18
-> +
-> +#define PLLA_SDM_DIN_MASK 0xffff
-> +#define PLLA_SDM_EN_MASK BIT(26)
-> +
-> +#define PLLD_SDM_EN_MASK BIT(16)
-> +
-> +#define PLLD2_SDM_EN_MASK BIT(31)
-> +#define PLLD2_SSC_EN_MASK BIT(30)
-> +
-> +#define PLLDP_SS_CFG	0x598
-> +#define PLLDP_SDM_EN_MASK BIT(31)
-> +#define PLLDP_SSC_EN_MASK BIT(30)
-> +#define PLLDP_SS_CTRL1	0x59c
-> +#define PLLDP_SS_CTRL2	0x5a0
-> +
-> +#define PMC_PLLM_WB0_OVERRIDE 0x1dc
-> +#define PMC_PLLM_WB0_OVERRIDE_2 0x2b0
-> +
-> +#define UTMIP_PLL_CFG2 0x488
-> +#define UTMIP_PLL_CFG2_STABLE_COUNT(x) (((x) & 0xffff) << 6)
-This line should be corrected as
-
-+#define UTMIP_PLL_CFG2_STABLE_COUNT(x) (((x) & 0xfff) << 6)
-
-STABLE_COUNT has 12 bits.
-
-> +#define UTMIP_PLL_CFG2_ACTIVE_DLY_COUNT(x) (((x) & 0x3f) << 18)
-> +#define UTMIP_PLL_CFG2_FORCE_PD_SAMP_A_POWERDOWN BIT(0)
-> +#define UTMIP_PLL_CFG2_FORCE_PD_SAMP_B_POWERDOWN BIT(2)
-> +#define UTMIP_PLL_CFG2_FORCE_PD_SAMP_C_POWERDOWN BIT(4)
-> +
-> +#define UTMIP_PLL_CFG1 0x484
-> +#define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 6)
-This line should be corrected as
-
-+#define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 27)
-
-ENABLE_DLY_COUNT starts from bit 27.
-
-
-
---nvpublic
+T24gNyBNYXkgMjAxNSBhdCAxMzo0MCwgR3JlZyBLSCA8Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5v
+cmc+IHdyb3RlOgo+IE9uIFRodSwgTWF5IDA3LCAyMDE1IGF0IDAxOjAwOjUyUE0gKzA1MzAsIFN1
+bWl0IFNlbXdhbCB3cm90ZToKPj4gQWRkIHJlZmVyZW5jZSBjb3VudGluZyBvbiBhIGtlcm5lbCBt
+b2R1bGUgdGhhdCBleHBvcnRzIGRtYS1idWYgYW5kCj4+IGltcGxlbWVudHMgaXRzIG9wZXJhdGlv
+bnMuIFRoaXMgcHJldmVudHMgdGhlIG1vZHVsZSBmcm9tIGJlaW5nIHVubG9hZGVkCj4+IHdoaWxl
+IERNQUJVRiBmaWxlIGlzIGluIHVzZS4KPj4KPj4gVGhlIG9yaWdpbmFsIHBhdGNoIFsxXSB3YXMg
+c3VibWl0dGVkIGJ5IFRvbWFzeiwgYnV0IGhlJ3Mgc2luY2Ugc2hpZnRlZAo+PiBqb2JzIGFuZCBh
+IHBpbmcgZGlkbid0IGVsaWNpdCBhbnkgcmVzcG9uc2UuCj4+Cj4+ICAgW3RvbWFzejogT3JpZ2lu
+YWwgYXV0aG9yXQo+PiBTaWduZWQtb2ZmLWJ5OiBUb21hc3ogU3RhbmlzbGF3c2tpIDx0LnN0YW5p
+c2xhd3NAc2Ftc3VuZy5jb20+Cj4+IEFja2VkLWJ5OiBEYW5pZWwgVmV0dGVyIDxkYW5pZWxAZmZ3
+bGwuY2g+Cj4+ICAgW3N1bWl0czogdXBkYXRlZCAmIHJlYmFzZWQgYXMgcGVyIHJldmlldyBjb21t
+ZW50c10KPj4gU2lnbmVkLW9mZi1ieTogU3VtaXQgU2Vtd2FsIDxzdW1pdC5zZW13YWxAbGluYXJv
+Lm9yZz4KPj4KPj4gWzFdOiBodHRwczovL2xrbWwub3JnL2xrbWwvMjAxMi84LzgvMTYzCj4+IC0t
+LQo+PiAgZHJpdmVycy9kbWEtYnVmL2RtYS1idWYuYyAgICAgICAgICAgICAgICAgICAgICB8IDkg
+KysrKysrKystCj4+ICBkcml2ZXJzL2dwdS9kcm0vYXJtYWRhL2FybWFkYV9nZW0uYyAgICAgICAg
+ICAgIHwgMSArCj4+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX3ByaW1lLmMgICAgICAgICAgICAgICAg
+ICAgIHwgMSArCj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZG1hYnVmLmMg
+ICAgIHwgMSArCj4+ICBkcml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1X2dlbV9kbWFidWYuYyAgICAg
+ICAgIHwgMSArCj4+ICBkcml2ZXJzL2dwdS9kcm0vb21hcGRybS9vbWFwX2dlbV9kbWFidWYuYyAg
+ICAgIHwgMSArCj4+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZ2VtLmMgICAgICAgICAgICAgICAg
+ICAgIHwgMSArCj4+ICBkcml2ZXJzL2dwdS9kcm0vdWRsL3VkbF9kbWFidWYuYyAgICAgICAgICAg
+ICAgIHwgMSArCj4+ICBkcml2ZXJzL2dwdS9kcm0vdm13Z2Z4L3Ztd2dmeF9wcmltZS5jICAgICAg
+ICAgIHwgMSArCj4+ICBkcml2ZXJzL21lZGlhL3Y0bDItY29yZS92aWRlb2J1ZjItZG1hLWNvbnRp
+Zy5jIHwgMSArCj4+ICBkcml2ZXJzL21lZGlhL3Y0bDItY29yZS92aWRlb2J1ZjItZG1hLXNnLmMg
+ICAgIHwgMSArCj4+ICBkcml2ZXJzL21lZGlhL3Y0bDItY29yZS92aWRlb2J1ZjItdm1hbGxvYy5j
+ICAgIHwgMSArCj4+ICBkcml2ZXJzL3N0YWdpbmcvYW5kcm9pZC9pb24vaW9uLmMgICAgICAgICAg
+ICAgIHwgMSArCj4+ICBpbmNsdWRlL2xpbnV4L2RtYS1idWYuaCAgICAgICAgICAgICAgICAgICAg
+ICAgIHwgMiArKwo+PiAgMTQgZmlsZXMgY2hhbmdlZCwgMjIgaW5zZXJ0aW9ucygrKSwgMSBkZWxl
+dGlvbigtKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9kbWEtYnVmL2RtYS1idWYuYyBiL2Ry
+aXZlcnMvZG1hLWJ1Zi9kbWEtYnVmLmMKPj4gaW5kZXggYzVhOTEzOGE2YThkLi45NTgzZWFjMDIz
+OGYgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZG1hLWJ1Zi9kbWEtYnVmLmMKPj4gKysrIGIvZHJp
+dmVycy9kbWEtYnVmL2RtYS1idWYuYwo+PiBAQCAtMjksNiArMjksNyBAQAo+PiAgI2luY2x1ZGUg
+PGxpbnV4L2Fub25faW5vZGVzLmg+Cj4+ICAjaW5jbHVkZSA8bGludXgvZXhwb3J0Lmg+Cj4+ICAj
+aW5jbHVkZSA8bGludXgvZGVidWdmcy5oPgo+PiArI2luY2x1ZGUgPGxpbnV4L21vZHVsZS5oPgo+
+PiAgI2luY2x1ZGUgPGxpbnV4L3NlcV9maWxlLmg+Cj4+ICAjaW5jbHVkZSA8bGludXgvcG9sbC5o
+Pgo+PiAgI2luY2x1ZGUgPGxpbnV4L3Jlc2VydmF0aW9uLmg+Cj4+IEBAIC02NCw2ICs2NSw3IEBA
+IHN0YXRpYyBpbnQgZG1hX2J1Zl9yZWxlYXNlKHN0cnVjdCBpbm9kZSAqaW5vZGUsIHN0cnVjdCBm
+aWxlICpmaWxlKQo+PiAgICAgICBCVUdfT04oZG1hYnVmLT5jYl9zaGFyZWQuYWN0aXZlIHx8IGRt
+YWJ1Zi0+Y2JfZXhjbC5hY3RpdmUpOwo+Pgo+PiAgICAgICBkbWFidWYtPm9wcy0+cmVsZWFzZShk
+bWFidWYpOwo+PiArICAgICBtb2R1bGVfcHV0KGRtYWJ1Zi0+b3BzLT5vd25lcik7Cj4+Cj4+ICAg
+ICAgIG11dGV4X2xvY2soJmRiX2xpc3QubG9jayk7Cj4+ICAgICAgIGxpc3RfZGVsKCZkbWFidWYt
+Pmxpc3Rfbm9kZSk7Cj4+IEBAIC0zMDIsOSArMzA0LDE0IEBAIHN0cnVjdCBkbWFfYnVmICpkbWFf
+YnVmX2V4cG9ydChjb25zdCBzdHJ1Y3QgZG1hX2J1Zl9leHBvcnRfaW5mbyAqZXhwX2luZm8pCj4+
+ICAgICAgICAgICAgICAgcmV0dXJuIEVSUl9QVFIoLUVJTlZBTCk7Cj4+ICAgICAgIH0KPj4KPj4g
+KyAgICAgaWYgKCF0cnlfbW9kdWxlX2dldChleHBfaW5mby0+b3BzLT5vd25lcikpCj4+ICsgICAg
+ICAgICAgICAgcmV0dXJuIEVSUl9QVFIoLUVOT0VOVCk7Cj4+ICsKPj4gICAgICAgZG1hYnVmID0g
+a3phbGxvYyhhbGxvY19zaXplLCBHRlBfS0VSTkVMKTsKPj4gLSAgICAgaWYgKGRtYWJ1ZiA9PSBO
+VUxMKQo+PiArICAgICBpZiAoIWRtYWJ1Zikgewo+PiArICAgICAgICAgICAgIG1vZHVsZV9wdXQo
+ZXhwX2luZm8tPm9wcy0+b3duZXIpOwo+PiAgICAgICAgICAgICAgIHJldHVybiBFUlJfUFRSKC1F
+Tk9NRU0pOwo+PiArICAgICB9Cj4+Cj4+ICAgICAgIGRtYWJ1Zi0+cHJpdiA9IGV4cF9pbmZvLT5w
+cml2Owo+PiAgICAgICBkbWFidWYtPm9wcyA9IGV4cF9pbmZvLT5vcHM7Cj4+IGRpZmYgLS1naXQg
+YS9kcml2ZXJzL2dwdS9kcm0vYXJtYWRhL2FybWFkYV9nZW0uYyBiL2RyaXZlcnMvZ3B1L2RybS9h
+cm1hZGEvYXJtYWRhX2dlbS5jCj4+IGluZGV4IDU4MGUxMGFjYWEzYS4uZDJjNWZjMTI2OWI3IDEw
+MDY0NAo+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vYXJtYWRhL2FybWFkYV9nZW0uYwo+PiArKysg
+Yi9kcml2ZXJzL2dwdS9kcm0vYXJtYWRhL2FybWFkYV9nZW0uYwo+PiBAQCAtNTI0LDYgKzUyNCw3
+IEBAIGFybWFkYV9nZW1fZG1hYnVmX21tYXAoc3RydWN0IGRtYV9idWYgKmJ1Ziwgc3RydWN0IHZt
+X2FyZWFfc3RydWN0ICp2bWEpCj4+ICB9Cj4+Cj4+ICBzdGF0aWMgY29uc3Qgc3RydWN0IGRtYV9i
+dWZfb3BzIGFybWFkYV9nZW1fcHJpbWVfZG1hYnVmX29wcyA9IHsKPj4gKyAgICAgLm93bmVyID0g
+VEhJU19NT0RVTEUsCj4+ICAgICAgIC5tYXBfZG1hX2J1ZiAgICA9IGFybWFkYV9nZW1fcHJpbWVf
+bWFwX2RtYV9idWYsCj4+ICAgICAgIC51bm1hcF9kbWFfYnVmICA9IGFybWFkYV9nZW1fcHJpbWVf
+dW5tYXBfZG1hX2J1ZiwKPj4gICAgICAgLnJlbGVhc2UgICAgICAgID0gZHJtX2dlbV9kbWFidWZf
+cmVsZWFzZSwKPgo+IFRoZSAiZWFzaWVyIiB3YXkgdG8gZG8gdGhpcyBpcyBjaGFuZ2UgdGhlIHJl
+Z2lzdHJhdGlvbiBmdW5jdGlvbiB0byBhZGQKPiB0aGUgbW9kdWxlIG93bmVyIGF1dG9tYXRpY2Fs
+bHksIHdoaWNoIGtlZXBzIHlvdSBmcm9tIGhhdmluZyB0byBtb2RpZnkKPiBhbGwgb2YgdGhlIGlu
+ZGl2aWR1YWwgZHJpdmVycy4gIExvb2sgYXQgaG93IHBjaSBhbmQgdXNiIGRvIHRoaXMgZm9yCj4g
+dGhlaXIgZHJpdmVyIHJlZ2lzdHJhdGlvbiBmdW5jdGlvbnMuICBUaGF0IHNob3VsZCByZXN1bHQg
+aW4gYSBtdWNoCj4gc21hbGxlciBwYXRjaCwgdGhhdCBhbHdheXMgd29ya3MgcHJvcGVybHkgZm9y
+IGV2ZXJ5b25lICh0aGVyZSdzIG5vIHdheQo+IGZvciBkcml2ZXIgdG8gZ2V0IGl0IHdyb25nLikK
+PgpUaGFua3MgR3JlZzsgYnV0IG9mIGNvdXJzZSwgeW91J3JlIHJpZ2h0ISBXZSBhbHJlYWR5IGhh
+dmUgYQpERUZJTkVfRE1BX0JVRl9FWFBPUlRfSU5GTyBtYWNybywgc28gdGhpcyBpcyBmYXIgZWFz
+aWVyIGluY29ycG9yYXRlZAppbnRvIHRoYXQuCgpJIHdpbGwgc3BpbiB1cCB0aGUgKG11Y2ggc2lt
+cGxlcikgcGF0Y2ggYW5kIHJlcG9zdCEKCj4gdGhhbmtzLAo+Cj4gZ3JlZyBrLWgKCgpCZXN0IHJl
+Z2FyZHMsClN1bWl0LgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
+bAo=
