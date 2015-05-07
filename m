@@ -1,100 +1,63 @@
-From: Sumit Semwal <sumit.semwal@linaro.org>
-Subject: Re: [PATCH] dma-buf: add ref counting for module as exporter
-Date: Thu, 7 May 2015 16:16:47 +0530
-Message-ID: <CAO_48GGjgRP=ab1wjGABguP3BaWPriLou_C-Su2C0kSeMS3Y4Q@mail.gmail.com>
-References: <1430983852-19267-1-git-send-email-sumit.semwal@linaro.org>
- <20150507081026.GA19773@kroah.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v4 12/20] clk: tegra: pll: Add specialized logic for T210
+Date: Thu, 7 May 2015 17:11:11 +0200
+Message-ID: <20150507151108.GA25866@ulmo.nvidia.com>
+References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
+ <1430757460-9478-13-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20150507081026.GA19773@kroah.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, Linaro Kernel Mailman List <linaro-kernel@lists.linaro.org>, Pawel Osciak <pawel@osciak.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, intel-gfx@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, Linaro MM SIG Mailman List <linaro-mm-sig@lists.linaro.org>, Maarten Lankhorst <maarten.lankhorst@canonical.com>, kgene@kernel.org, linux-tegra@vger.kernel.org, rmk+kernel@arm.linux.org.uk, Marek Szyprowski <m.szyprowski@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="VS++wcV0S1rZb1Fb"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1430757460-9478-13-git-send-email-rklein@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gNyBNYXkgMjAxNSBhdCAxMzo0MCwgR3JlZyBLSCA8Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5v
-cmc+IHdyb3RlOgo+IE9uIFRodSwgTWF5IDA3LCAyMDE1IGF0IDAxOjAwOjUyUE0gKzA1MzAsIFN1
-bWl0IFNlbXdhbCB3cm90ZToKPj4gQWRkIHJlZmVyZW5jZSBjb3VudGluZyBvbiBhIGtlcm5lbCBt
-b2R1bGUgdGhhdCBleHBvcnRzIGRtYS1idWYgYW5kCj4+IGltcGxlbWVudHMgaXRzIG9wZXJhdGlv
-bnMuIFRoaXMgcHJldmVudHMgdGhlIG1vZHVsZSBmcm9tIGJlaW5nIHVubG9hZGVkCj4+IHdoaWxl
-IERNQUJVRiBmaWxlIGlzIGluIHVzZS4KPj4KPj4gVGhlIG9yaWdpbmFsIHBhdGNoIFsxXSB3YXMg
-c3VibWl0dGVkIGJ5IFRvbWFzeiwgYnV0IGhlJ3Mgc2luY2Ugc2hpZnRlZAo+PiBqb2JzIGFuZCBh
-IHBpbmcgZGlkbid0IGVsaWNpdCBhbnkgcmVzcG9uc2UuCj4+Cj4+ICAgW3RvbWFzejogT3JpZ2lu
-YWwgYXV0aG9yXQo+PiBTaWduZWQtb2ZmLWJ5OiBUb21hc3ogU3RhbmlzbGF3c2tpIDx0LnN0YW5p
-c2xhd3NAc2Ftc3VuZy5jb20+Cj4+IEFja2VkLWJ5OiBEYW5pZWwgVmV0dGVyIDxkYW5pZWxAZmZ3
-bGwuY2g+Cj4+ICAgW3N1bWl0czogdXBkYXRlZCAmIHJlYmFzZWQgYXMgcGVyIHJldmlldyBjb21t
-ZW50c10KPj4gU2lnbmVkLW9mZi1ieTogU3VtaXQgU2Vtd2FsIDxzdW1pdC5zZW13YWxAbGluYXJv
-Lm9yZz4KPj4KPj4gWzFdOiBodHRwczovL2xrbWwub3JnL2xrbWwvMjAxMi84LzgvMTYzCj4+IC0t
-LQo+PiAgZHJpdmVycy9kbWEtYnVmL2RtYS1idWYuYyAgICAgICAgICAgICAgICAgICAgICB8IDkg
-KysrKysrKystCj4+ICBkcml2ZXJzL2dwdS9kcm0vYXJtYWRhL2FybWFkYV9nZW0uYyAgICAgICAg
-ICAgIHwgMSArCj4+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX3ByaW1lLmMgICAgICAgICAgICAgICAg
-ICAgIHwgMSArCj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZG1hYnVmLmMg
-ICAgIHwgMSArCj4+ICBkcml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1X2dlbV9kbWFidWYuYyAgICAg
-ICAgIHwgMSArCj4+ICBkcml2ZXJzL2dwdS9kcm0vb21hcGRybS9vbWFwX2dlbV9kbWFidWYuYyAg
-ICAgIHwgMSArCj4+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZ2VtLmMgICAgICAgICAgICAgICAg
-ICAgIHwgMSArCj4+ICBkcml2ZXJzL2dwdS9kcm0vdWRsL3VkbF9kbWFidWYuYyAgICAgICAgICAg
-ICAgIHwgMSArCj4+ICBkcml2ZXJzL2dwdS9kcm0vdm13Z2Z4L3Ztd2dmeF9wcmltZS5jICAgICAg
-ICAgIHwgMSArCj4+ICBkcml2ZXJzL21lZGlhL3Y0bDItY29yZS92aWRlb2J1ZjItZG1hLWNvbnRp
-Zy5jIHwgMSArCj4+ICBkcml2ZXJzL21lZGlhL3Y0bDItY29yZS92aWRlb2J1ZjItZG1hLXNnLmMg
-ICAgIHwgMSArCj4+ICBkcml2ZXJzL21lZGlhL3Y0bDItY29yZS92aWRlb2J1ZjItdm1hbGxvYy5j
-ICAgIHwgMSArCj4+ICBkcml2ZXJzL3N0YWdpbmcvYW5kcm9pZC9pb24vaW9uLmMgICAgICAgICAg
-ICAgIHwgMSArCj4+ICBpbmNsdWRlL2xpbnV4L2RtYS1idWYuaCAgICAgICAgICAgICAgICAgICAg
-ICAgIHwgMiArKwo+PiAgMTQgZmlsZXMgY2hhbmdlZCwgMjIgaW5zZXJ0aW9ucygrKSwgMSBkZWxl
-dGlvbigtKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9kbWEtYnVmL2RtYS1idWYuYyBiL2Ry
-aXZlcnMvZG1hLWJ1Zi9kbWEtYnVmLmMKPj4gaW5kZXggYzVhOTEzOGE2YThkLi45NTgzZWFjMDIz
-OGYgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZG1hLWJ1Zi9kbWEtYnVmLmMKPj4gKysrIGIvZHJp
-dmVycy9kbWEtYnVmL2RtYS1idWYuYwo+PiBAQCAtMjksNiArMjksNyBAQAo+PiAgI2luY2x1ZGUg
-PGxpbnV4L2Fub25faW5vZGVzLmg+Cj4+ICAjaW5jbHVkZSA8bGludXgvZXhwb3J0Lmg+Cj4+ICAj
-aW5jbHVkZSA8bGludXgvZGVidWdmcy5oPgo+PiArI2luY2x1ZGUgPGxpbnV4L21vZHVsZS5oPgo+
-PiAgI2luY2x1ZGUgPGxpbnV4L3NlcV9maWxlLmg+Cj4+ICAjaW5jbHVkZSA8bGludXgvcG9sbC5o
-Pgo+PiAgI2luY2x1ZGUgPGxpbnV4L3Jlc2VydmF0aW9uLmg+Cj4+IEBAIC02NCw2ICs2NSw3IEBA
-IHN0YXRpYyBpbnQgZG1hX2J1Zl9yZWxlYXNlKHN0cnVjdCBpbm9kZSAqaW5vZGUsIHN0cnVjdCBm
-aWxlICpmaWxlKQo+PiAgICAgICBCVUdfT04oZG1hYnVmLT5jYl9zaGFyZWQuYWN0aXZlIHx8IGRt
-YWJ1Zi0+Y2JfZXhjbC5hY3RpdmUpOwo+Pgo+PiAgICAgICBkbWFidWYtPm9wcy0+cmVsZWFzZShk
-bWFidWYpOwo+PiArICAgICBtb2R1bGVfcHV0KGRtYWJ1Zi0+b3BzLT5vd25lcik7Cj4+Cj4+ICAg
-ICAgIG11dGV4X2xvY2soJmRiX2xpc3QubG9jayk7Cj4+ICAgICAgIGxpc3RfZGVsKCZkbWFidWYt
-Pmxpc3Rfbm9kZSk7Cj4+IEBAIC0zMDIsOSArMzA0LDE0IEBAIHN0cnVjdCBkbWFfYnVmICpkbWFf
-YnVmX2V4cG9ydChjb25zdCBzdHJ1Y3QgZG1hX2J1Zl9leHBvcnRfaW5mbyAqZXhwX2luZm8pCj4+
-ICAgICAgICAgICAgICAgcmV0dXJuIEVSUl9QVFIoLUVJTlZBTCk7Cj4+ICAgICAgIH0KPj4KPj4g
-KyAgICAgaWYgKCF0cnlfbW9kdWxlX2dldChleHBfaW5mby0+b3BzLT5vd25lcikpCj4+ICsgICAg
-ICAgICAgICAgcmV0dXJuIEVSUl9QVFIoLUVOT0VOVCk7Cj4+ICsKPj4gICAgICAgZG1hYnVmID0g
-a3phbGxvYyhhbGxvY19zaXplLCBHRlBfS0VSTkVMKTsKPj4gLSAgICAgaWYgKGRtYWJ1ZiA9PSBO
-VUxMKQo+PiArICAgICBpZiAoIWRtYWJ1Zikgewo+PiArICAgICAgICAgICAgIG1vZHVsZV9wdXQo
-ZXhwX2luZm8tPm9wcy0+b3duZXIpOwo+PiAgICAgICAgICAgICAgIHJldHVybiBFUlJfUFRSKC1F
-Tk9NRU0pOwo+PiArICAgICB9Cj4+Cj4+ICAgICAgIGRtYWJ1Zi0+cHJpdiA9IGV4cF9pbmZvLT5w
-cml2Owo+PiAgICAgICBkbWFidWYtPm9wcyA9IGV4cF9pbmZvLT5vcHM7Cj4+IGRpZmYgLS1naXQg
-YS9kcml2ZXJzL2dwdS9kcm0vYXJtYWRhL2FybWFkYV9nZW0uYyBiL2RyaXZlcnMvZ3B1L2RybS9h
-cm1hZGEvYXJtYWRhX2dlbS5jCj4+IGluZGV4IDU4MGUxMGFjYWEzYS4uZDJjNWZjMTI2OWI3IDEw
-MDY0NAo+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vYXJtYWRhL2FybWFkYV9nZW0uYwo+PiArKysg
-Yi9kcml2ZXJzL2dwdS9kcm0vYXJtYWRhL2FybWFkYV9nZW0uYwo+PiBAQCAtNTI0LDYgKzUyNCw3
-IEBAIGFybWFkYV9nZW1fZG1hYnVmX21tYXAoc3RydWN0IGRtYV9idWYgKmJ1Ziwgc3RydWN0IHZt
-X2FyZWFfc3RydWN0ICp2bWEpCj4+ICB9Cj4+Cj4+ICBzdGF0aWMgY29uc3Qgc3RydWN0IGRtYV9i
-dWZfb3BzIGFybWFkYV9nZW1fcHJpbWVfZG1hYnVmX29wcyA9IHsKPj4gKyAgICAgLm93bmVyID0g
-VEhJU19NT0RVTEUsCj4+ICAgICAgIC5tYXBfZG1hX2J1ZiAgICA9IGFybWFkYV9nZW1fcHJpbWVf
-bWFwX2RtYV9idWYsCj4+ICAgICAgIC51bm1hcF9kbWFfYnVmICA9IGFybWFkYV9nZW1fcHJpbWVf
-dW5tYXBfZG1hX2J1ZiwKPj4gICAgICAgLnJlbGVhc2UgICAgICAgID0gZHJtX2dlbV9kbWFidWZf
-cmVsZWFzZSwKPgo+IFRoZSAiZWFzaWVyIiB3YXkgdG8gZG8gdGhpcyBpcyBjaGFuZ2UgdGhlIHJl
-Z2lzdHJhdGlvbiBmdW5jdGlvbiB0byBhZGQKPiB0aGUgbW9kdWxlIG93bmVyIGF1dG9tYXRpY2Fs
-bHksIHdoaWNoIGtlZXBzIHlvdSBmcm9tIGhhdmluZyB0byBtb2RpZnkKPiBhbGwgb2YgdGhlIGlu
-ZGl2aWR1YWwgZHJpdmVycy4gIExvb2sgYXQgaG93IHBjaSBhbmQgdXNiIGRvIHRoaXMgZm9yCj4g
-dGhlaXIgZHJpdmVyIHJlZ2lzdHJhdGlvbiBmdW5jdGlvbnMuICBUaGF0IHNob3VsZCByZXN1bHQg
-aW4gYSBtdWNoCj4gc21hbGxlciBwYXRjaCwgdGhhdCBhbHdheXMgd29ya3MgcHJvcGVybHkgZm9y
-IGV2ZXJ5b25lICh0aGVyZSdzIG5vIHdheQo+IGZvciBkcml2ZXIgdG8gZ2V0IGl0IHdyb25nLikK
-PgpUaGFua3MgR3JlZzsgYnV0IG9mIGNvdXJzZSwgeW91J3JlIHJpZ2h0ISBXZSBhbHJlYWR5IGhh
-dmUgYQpERUZJTkVfRE1BX0JVRl9FWFBPUlRfSU5GTyBtYWNybywgc28gdGhpcyBpcyBmYXIgZWFz
-aWVyIGluY29ycG9yYXRlZAppbnRvIHRoYXQuCgpJIHdpbGwgc3BpbiB1cCB0aGUgKG11Y2ggc2lt
-cGxlcikgcGF0Y2ggYW5kIHJlcG9zdCEKCj4gdGhhbmtzLAo+Cj4gZ3JlZyBrLWgKCgpCZXN0IHJl
-Z2FyZHMsClN1bWl0LgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
-cmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
-bAo=
+
+--VS++wcV0S1rZb1Fb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Mon, May 04, 2015 at 12:37:32PM -0400, Rhyland Klein wrote:
+[...]
+> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+[...]
+> +struct clk *tegra_clk_register_pllxc_tegra210(const char *name,
+> +			const char *parent_name, void __iomem *clk_base,
+> +			void __iomem *pmc, unsigned long flags,
+> +			struct tegra_clk_pll_params *pll_params,
+> +			spinlock_t *lock)
+> +{
+> +	struct tegra_clk_pll *pll;
+> +	struct clk *clk, *parent;
+> +	unsigned long parent_rate;
+> +	u32 val, val_iddq;
+
+These two variables don't seem to be used.
+
+Thierry
+
+--VS++wcV0S1rZb1Fb
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJVS4CJAAoJEN0jrNd/PrOhnm0P/ifjf9+FNMbUqXeey+S9uahJ
+p6/fXQJNxGXoABCy0N28hb0XEMCRKLMYKYXH/Uzdz5dFIgqFOt0iCgifVhZsQlpj
+yRApxkokzKK9NZ8lgQfsXBCCY3SOHELzHOzTTf7nB47UWXEKodIxjfrWzgvBdfg4
+MisnsBpxjubHVxZS43Y+EYuB963t49/5UORjux9b7PKwUkpnAnt/44aC3+Pfl6Lq
+8uKb1g5pEt6wGkMyLHfUL04JV6buGfA272VDYGnguYc9la82FsGMDFvE30V9Q52F
+CztjkeqIm2LxjhCaoHqoDnyWpGD4WVBh102+eh4XvuaPZJ9jsmOFQVf/VFgrfbhN
+rnR68ZW/3AfQcSgi+eO+hpGlpldzXS/AcdOz0/YOs764RF2HyLYI/mKQ/YMSnaFd
+Ix2KopM0eht/jtmkBm2f3DmTVMWKQDeEj7w/LrK9jF7o7J0a+nBcr9HmOGrYvuTh
+qGOy4fx1iko3r6xB035BEpL9WqXPgyiqKMc34dfQ1HPl3R/uF/9/mSy4ZvebDdI6
+0p+LERXbr82rzu+KXyTHQPvpTDR6Iy65t+eKFU9s0rB6KJeyg0pILvr5fiFRvC0y
+uHBvKkQobzCuanWK2RF0AHQaPXq9dU+h8oljV9iQb1qAu2gfSG9olzNb4kU/9o06
+1u6grImE0IGB6BN1lUf8
+=xIGI
+-----END PGP SIGNATURE-----
+
+--VS++wcV0S1rZb1Fb--
