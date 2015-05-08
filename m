@@ -1,37 +1,70 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: add "nor-jedec" flash compatible binding
-Date: Fri, 08 May 2015 10:00:12 -0600
-Message-ID: <554CDD8C.7050000@wwwdotorg.org>
-References: <1431066098-19821-1-git-send-email-zajec5@gmail.com>
+From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: Availability of psci_smp_available depends on
+ CONFIG_SMP
+Date: Fri, 8 May 2015 17:14:53 +0100
+Message-ID: <20150508161453.GI25587@arm.com>
+References: <cover.1431064527.git.jan.kiszka@siemens.com>
+ <0f0a77ddee48027efa35f36d6c809d2d3ff91ce1.1431064527.git.jan.kiszka@siemens.com>
+ <20150508112615.GE32221@ulmo.nvidia.com>
+ <20150508145620.GK2067@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1431066098-19821-1-git-send-email-zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20150508145620.GK2067-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jan Kiszka <jan.kiszka-kv7WeFo6aLtBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/08/2015 12:21 AM, Rafa=C5=82 Mi=C5=82ecki wrote:
-> Starting with commits
-> 8ff16cf ("Documentation: devicetree: m25p80: add "nor-jedec" binding"=
-)
-> 1103b85 ("mtd: m25p80: bind to "nor-jedec" ID, for auto-detection")
-> we have "nor-jedec" binding indicating support for JEDEC identificati=
-on.
+On Fri, May 08, 2015 at 03:56:20PM +0100, Russell King - ARM Linux wrote:
+> On Fri, May 08, 2015 at 01:26:17PM +0200, Thierry Reding wrote:
+> > On Fri, May 08, 2015 at 07:55:26AM +0200, Jan Kiszka wrote:
+> > > Ensure that we can use psci_smp_available without checking for
+> > > CONFIG_SMP first.
+> > > 
+> > > Signed-off-by: Jan Kiszka <jan.kiszka-kv7WeFo6aLtBDgjK7y7TUQ@public.gmane.org>
+> > > ---
+> > >  arch/arm/include/asm/psci.h | 6 +++++-
+> > >  1 file changed, 5 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/arch/arm/include/asm/psci.h b/arch/arm/include/asm/psci.h
+> > > index c25ef3e..eef6a0a 100644
+> > > --- a/arch/arm/include/asm/psci.h
+> > > +++ b/arch/arm/include/asm/psci.h
+> > > @@ -39,9 +39,13 @@ extern struct smp_operations psci_smp_ops;
+> > >  
+> > >  #ifdef CONFIG_ARM_PSCI
+> > >  int psci_init(void);
+> > > -bool psci_smp_available(void);
+> > >  #else
+> > >  static inline int psci_init(void) { return 0; }
+> > > +#endif
+> > > +
+> > > +#if defined(CONFIG_ARM_PSCI) && defined(CONFIG_SMP)
+> > > +bool psci_smp_available(void);
+> > > +#else
+> > >  static inline bool psci_smp_available(void) { return false; }
+> > >  #endif
+> > >  
+> > 
+> > Looks good to me.
+> > 
+> > Russell, would you be willing to ack this patch so that I can take it
+> > through the Tegra tree along with patch 2/2 that depends on this?
+> 
+> I'd prefer to see an ack from Will on this, as it's code which Will
+> contributed and presumably understands better than me.
 
-The documentation looks quite incomplete. "nor-jedec" sounds like it's=20
-intended to be something generic. As such, it should be documented in=20
-e.g. Documentation/devicetree/bindings/mtd/nor-jedec.txt, not buried in=
-=20
-one particular flash device's binding. If it's not intended to be=20
-generic, why isn't the existing "winbond,w25q32dw" enough?
+Sorry, I'm late to the thread so I'm a tad confused.
 
-Equally, "nor-jedec" doesn't sound like the right name. It doesn't=20
-differentiate between SPI and parallel NOR flash, which presumably need=
-=20
-different compatible values, since the programming model is quite=20
-different, and the compatible value is supposed to define/imply the=20
-SW-visible programming model.
+If I understand correctly, these two patches are trying to avoid using
+the tegra cpuidle driver if PSCI is available instead? That raises the
+question as to whether or not you're actually trying to discover whether
+you're in the secure or non-secure world.
+
+I assume PSCI only works if the kernel is running in non-secure mode,
+but does the Tegra cpuidle driver only work in secure mode?
+
+Will
