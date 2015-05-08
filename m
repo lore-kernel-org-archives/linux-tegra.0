@@ -1,71 +1,130 @@
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Subject: [PATCH 2/2] ARM: tegra: Disable cpuidle driver if PSCI is present
-Date: Fri,  8 May 2015 07:55:27 +0200
-Message-ID: <c9e7e74d02a56c339551d596705a016ba6007aa5.1431064527.git.jan.kiszka@siemens.com>
-References: <cover.1431064527.git.jan.kiszka@siemens.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] ARM: tegra: add "nor-jedec" flash compatible binding
+Date: Fri,  8 May 2015 08:21:38 +0200
+Message-ID: <1431066098-19821-1-git-send-email-zajec5@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <cover.1431064527.git.jan.kiszka@siemens.com>
-In-Reply-To: <cover.1431064527.git.jan.kiszka@siemens.com>
-References: <cover.1431064527.git.jan.kiszka@siemens.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King <linux@arm.linux.org.uk>, Thierry Reding <treding@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The firmware takes over the ownership of the flow controller when it
-provides PSCI support. To avoid clashes, disable the Tegra cpuidle
-driver if PSCI was detected.
+Starting with commits
+8ff16cf ("Documentation: devicetree: m25p80: add "nor-jedec" binding")
+1103b85 ("mtd: m25p80: bind to "nor-jedec" ID, for auto-detection")
+we have "nor-jedec" binding indicating support for JEDEC identification=
+=2E
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+Signed-off-by: Rafa=C5=82 Mi=C5=82ecki <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- arch/arm/mach-tegra/Kconfig | 1 +
- arch/arm/mach-tegra/tegra.c | 4 +++-
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/tegra114-dalmore.dts    | 2 +-
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts | 2 +-
+ arch/arm/boot/dts/tegra124-nyan.dtsi      | 2 +-
+ arch/arm/boot/dts/tegra124-venice2.dts    | 2 +-
+ arch/arm/boot/dts/tegra20-trimslice.dts   | 2 +-
+ arch/arm/boot/dts/tegra30-beaver.dts      | 2 +-
+ arch/arm/boot/dts/tegra30-cardhu.dtsi     | 2 +-
+ 7 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index 5d1a318..f93e4dc 100644
---- a/arch/arm/mach-tegra/Kconfig
-+++ b/arch/arm/mach-tegra/Kconfig
-@@ -4,6 +4,7 @@ menuconfig ARCH_TEGRA
- 	select ARCH_SUPPORTS_TRUSTED_FOUNDATIONS
- 	select ARM_AMBA
- 	select ARM_GIC
-+	select ARM_PSCI
- 	select CLKSRC_MMIO
- 	select HAVE_ARM_SCU if SMP
- 	select HAVE_ARM_TWD if SMP
-diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
-index 861d884..17e1adc 100644
---- a/arch/arm/mach-tegra/tegra.c
-+++ b/arch/arm/mach-tegra/tegra.c
-@@ -44,6 +44,7 @@
- #include <asm/mach-types.h>
- #include <asm/setup.h>
- #include <asm/trusted_foundations.h>
-+#include <asm/psci.h>
- 
- #include "board.h"
- #include "common.h"
-@@ -136,7 +137,8 @@ static void __init tegra_dt_init_late(void)
- 	int i;
- 
- 	tegra_init_suspend();
--	tegra_cpuidle_init();
-+	if (!psci_smp_available())
-+		tegra_cpuidle_init();
- 
- 	for (i = 0; i < ARRAY_SIZE(board_init_funcs); i++) {
- 		if (of_machine_is_compatible(board_init_funcs[i].machine)) {
--- 
-2.1.4
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts=
+/tegra114-dalmore.dts
+index 8b7aa0d..e30985b 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -1082,7 +1082,7 @@
+ 		status =3D "okay";
+ 		spi-max-frequency =3D <25000000>;
+ 		spi-flash@0 {
+-			compatible =3D "winbond,w25q32dw";
++			compatible =3D "winbond,w25q32dw", "nor-jedec";
+ 			reg =3D <0>;
+ 			spi-max-frequency =3D <20000000>;
+ 		};
+diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/=
+dts/tegra124-jetson-tk1.dts
+index ed8a8ac..b2da4f0 100644
+--- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
++++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+@@ -1611,7 +1611,7 @@
+ 		status =3D "okay";
+ 		spi-max-frequency =3D <25000000>;
+ 		spi-flash@0 {
+-			compatible =3D "winbond,w25q32dw";
++			compatible =3D "winbond,w25q32dw", "nor-jedec";
+ 			reg =3D <0>;
+ 			spi-max-frequency =3D <20000000>;
+ 		};
+diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi b/arch/arm/boot/dts/t=
+egra124-nyan.dtsi
+index a9aec23..2dc3377 100644
+--- a/arch/arm/boot/dts/tegra124-nyan.dtsi
++++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
+@@ -343,7 +343,7 @@
+ 		spi-max-frequency =3D <25000000>;
+=20
+ 		flash@0 {
+-			compatible =3D "winbond,w25q32dw";
++			compatible =3D "winbond,w25q32dw", "nor-jedec";
+ 			spi-max-frequency =3D <25000000>;
+ 			reg =3D <0>;
+ 		};
+diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts=
+/tegra124-venice2.dts
+index 5c3f781..73a30cd 100644
+--- a/arch/arm/boot/dts/tegra124-venice2.dts
++++ b/arch/arm/boot/dts/tegra124-venice2.dts
+@@ -866,7 +866,7 @@
+ 		status =3D "okay";
+ 		spi-max-frequency =3D <25000000>;
+ 		spi-flash@0 {
+-			compatible =3D "winbond,w25q32dw";
++			compatible =3D "winbond,w25q32dw", "nor-jedec";
+ 			reg =3D <0>;
+ 			spi-max-frequency =3D <20000000>;
+ 		};
+diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dt=
+s/tegra20-trimslice.dts
+index d99af4e..ace7028 100644
+--- a/arch/arm/boot/dts/tegra20-trimslice.dts
++++ b/arch/arm/boot/dts/tegra20-trimslice.dts
+@@ -282,7 +282,7 @@
+ 		status =3D "okay";
+ 		spi-max-frequency =3D <48000000>;
+ 		spi-flash@0 {
+-			compatible =3D "winbond,w25q80bl";
++			compatible =3D "winbond,w25q80bl", "nor-jedec";
+ 			reg =3D <0>;
+ 			spi-max-frequency =3D <48000000>;
+ 		};
+diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/t=
+egra30-beaver.dts
+index 3dede39..43ae39a 100644
+--- a/arch/arm/boot/dts/tegra30-beaver.dts
++++ b/arch/arm/boot/dts/tegra30-beaver.dts
+@@ -1884,7 +1884,7 @@
+ 		status =3D "okay";
+ 		spi-max-frequency =3D <25000000>;
+ 		spi-flash@1 {
+-			compatible =3D "winbond,w25q32";
++			compatible =3D "winbond,w25q32", "nor-jedec";
+ 			reg =3D <1>;
+ 			spi-max-frequency =3D <20000000>;
+ 		};
+diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/=
+tegra30-cardhu.dtsi
+index a1b682e..665a941 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
++++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+@@ -353,7 +353,7 @@
+ 		status =3D "okay";
+ 		spi-max-frequency =3D <25000000>;
+ 		spi-flash@1 {
+-			compatible =3D "winbond,w25q32";
++			compatible =3D "winbond,w25q32", "nor-jedec";
+ 			reg =3D <1>;
+ 			spi-max-frequency =3D <20000000>;
+ 		};
+--=20
+1.8.4.5
