@@ -1,39 +1,76 @@
-From: Lucas Stach <dev@lynxeye.de>
-Subject: [PATCH] irqchip: tegra: fix wrong data being passed as the irqdomain chip data
-Date: Sat,  9 May 2015 22:06:54 +0200
-Message-ID: <1431202014-3136-1-git-send-email-dev@lynxeye.de>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+From: Jan Kiszka <jan.kiszka-kv7WeFo6aLtBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: Availability of psci_smp_available depends on
+ CONFIG_SMP
+Date: Sun, 10 May 2015 11:48:20 +0200
+Message-ID: <554F2964.3060802@siemens.com>
+References: <cover.1431064527.git.jan.kiszka@siemens.com> <0f0a77ddee48027efa35f36d6c809d2d3ff91ce1.1431064527.git.jan.kiszka@siemens.com> <20150508112615.GE32221@ulmo.nvidia.com> <20150508145620.GK2067@n2100.arm.linux.org.uk> <20150508161453.GI25587@arm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150508161453.GI25587-5wv7dgnIgG8@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The irq chip functions use the irq chipdata directly as the base register
-address of the controller, so this should be passed in instead of a pointer
-to the array address holding the base address.
+On 2015-05-08 18:14, Will Deacon wrote:
+> On Fri, May 08, 2015 at 03:56:20PM +0100, Russell King - ARM Linux wrote:
+>> On Fri, May 08, 2015 at 01:26:17PM +0200, Thierry Reding wrote:
+>>> On Fri, May 08, 2015 at 07:55:26AM +0200, Jan Kiszka wrote:
+>>>> Ensure that we can use psci_smp_available without checking for
+>>>> CONFIG_SMP first.
+>>>>
+>>>> Signed-off-by: Jan Kiszka <jan.kiszka-kv7WeFo6aLtBDgjK7y7TUQ@public.gmane.org>
+>>>> ---
+>>>>  arch/arm/include/asm/psci.h | 6 +++++-
+>>>>  1 file changed, 5 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/arch/arm/include/asm/psci.h b/arch/arm/include/asm/psci.h
+>>>> index c25ef3e..eef6a0a 100644
+>>>> --- a/arch/arm/include/asm/psci.h
+>>>> +++ b/arch/arm/include/asm/psci.h
+>>>> @@ -39,9 +39,13 @@ extern struct smp_operations psci_smp_ops;
+>>>>  
+>>>>  #ifdef CONFIG_ARM_PSCI
+>>>>  int psci_init(void);
+>>>> -bool psci_smp_available(void);
+>>>>  #else
+>>>>  static inline int psci_init(void) { return 0; }
+>>>> +#endif
+>>>> +
+>>>> +#if defined(CONFIG_ARM_PSCI) && defined(CONFIG_SMP)
+>>>> +bool psci_smp_available(void);
+>>>> +#else
+>>>>  static inline bool psci_smp_available(void) { return false; }
+>>>>  #endif
+>>>>  
+>>>
+>>> Looks good to me.
+>>>
+>>> Russell, would you be willing to ack this patch so that I can take it
+>>> through the Tegra tree along with patch 2/2 that depends on this?
+>>
+>> I'd prefer to see an ack from Will on this, as it's code which Will
+>> contributed and presumably understands better than me.
+> 
+> Sorry, I'm late to the thread so I'm a tad confused.
+> 
+> If I understand correctly, these two patches are trying to avoid using
+> the tegra cpuidle driver if PSCI is available instead? That raises the
+> question as to whether or not you're actually trying to discover whether
+> you're in the secure or non-secure world.
+> 
+> I assume PSCI only works if the kernel is running in non-secure mode,
+> but does the Tegra cpuidle driver only work in secure mode?
 
-This fixes Tegra20 CPUidle as now the un-/masking of IRQs at the LIC level
-works again, but more importantly it fixes the resulting memory corruption.
+To my understanding of the hardware, the flow controller can be accessed
+from both worlds. So, testing the mode would neither be sufficient nor
+more logical - it's PSCI which occupies this resource, not automatically
+all secure monitors.
 
-Signed-off-by: Lucas Stach <dev@lynxeye.de>
----
-This is an important fix and should go into 4.1.
----
- drivers/irqchip/irq-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Jan
 
-diff --git a/drivers/irqchip/irq-tegra.c b/drivers/irqchip/irq-tegra.c
-index 51c485d..f67bbd8 100644
---- a/drivers/irqchip/irq-tegra.c
-+++ b/drivers/irqchip/irq-tegra.c
-@@ -264,7 +264,7 @@ static int tegra_ictlr_domain_alloc(struct irq_domain *domain,
- 
- 		irq_domain_set_hwirq_and_chip(domain, virq + i, hwirq + i,
- 					      &tegra_ictlr_chip,
--					      &info->base[ictlr]);
-+					      info->base[ictlr]);
- 	}
- 
- 	parent_args = *args;
 -- 
-2.1.0
+Siemens AG, Corporate Technology, CT RTC ITP SES-DE
+Corporate Competence Center Embedded Linux
