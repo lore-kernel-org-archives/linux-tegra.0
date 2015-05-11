@@ -1,56 +1,60 @@
-From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC PATCH 01/12] drm: Add a new mode flag:
- DRM_MODE_FLAG_PREFER_ONE_SHOT
-Date: Mon, 11 May 2015 16:34:57 +0000
-Message-ID: <1431362096439.71223@nvidia.com>
-References: <1431308311-4470-1-git-send-email-markz@nvidia.com>
- <1431308311-4470-2-git-send-email-markz@nvidia.com>,<20150511092743.GO15256@phenom.ffwll.local>
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v4.1-rc3
+Date: Mon, 11 May 2015 10:58:08 -0600
+Message-ID: <5550DFA0.4050001@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150511092743.GO15256-dv86pmgwkMBes7Z6vYuT8azUEOm+Xw19@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
-Cc: "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-I just want to make things easier. If we adding this in panel's meta data, it will be harder to make crtc gets this, since normally encoder talks with panel and crtc talks with encoder. But yes, adding this in panel's metadata makes more sense so if there is a better way to do that, I'm happy to do the changes.
+Here are some basic Tegra test results for Linux v4.1-rc3.
+Logs and other details at:
 
-Mark
-________________________________________
-From: Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org> on behalf of Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
-Sent: Monday, May 11, 2015 5:27 PM
-To: Mark Zhang
-Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Subject: Re: [RFC PATCH 01/12] drm: Add a new mode flag: DRM_MODE_FLAG_PREFER_ONE_SHOT
+     http://nvt.pwsan.com/pub/linux/testlogs/test_v4.1-rc3/20150510163102/
 
-On Mon, May 11, 2015 at 09:38:20AM +0800, Mark Zhang wrote:
-> Normally this flag is set by panel driver so that crtc can enable
-> the "one-shot" mode(not scan frames continuously).
->
-> Signed-off-by: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  include/uapi/drm/drm_mode.h | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/include/uapi/drm/drm_mode.h b/include/uapi/drm/drm_mode.h
-> index dbeba949462a..5447a338e893 100644
-> --- a/include/uapi/drm/drm_mode.h
-> +++ b/include/uapi/drm/drm_mode.h
-> @@ -72,6 +72,7 @@
->  #define  DRM_MODE_FLAG_3D_L_DEPTH_GFX_GFX_DEPTH      (6<<14)
->  #define  DRM_MODE_FLAG_3D_TOP_AND_BOTTOM     (7<<14)
->  #define  DRM_MODE_FLAG_3D_SIDE_BY_SIDE_HALF  (8<<14)
-> +#define DRM_MODE_FLAG_PREFER_ONE_SHOT                (1<<19)
 
-tbh this doesn't sound like a mode flag, but something which should be
-attached to the drm_panel. Especially since all the single-frame modes are
-highly sink/link specific. Why was this added here instead of to the
-drm_panel metadata?
--Daniel
---
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Test summary
+------------
+
+Build: zImage:
+     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Build: Image:
+     Pass: ( 1/ 1): defconfig
+
+Boot to userspace: defconfig:
+     Pass: ( 1/ 1): qemu-vexpress64
+
+Boot to userspace: multi_v7_defconfig:
+     Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+     Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v4.1-rc2 (5ebe6afaf0057ac3eaeb98defd5456894b446d22)):
+    text     data      bss    total  kernel
+     -24        0     -256     -280  defconfig
+  +27380    +2440     +960   +30780  multi_v7_defconfig
+    -200        0     -128     -328  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v4.1-rc2 (5ebe6afaf0057ac3eaeb98defd5456894b446d22))
+     avail    rsrvd     high    freed                board              kconfig                  dtb
+         .        .        .        .      qemu-vexpress64            defconfig           __internal
+      -32k      32k        .      20k tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+         .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+      -32k      32k        .      20k  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+         .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+      -32k      32k        .      20k    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+         .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+      -32k      32k        .      20k       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+         .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
