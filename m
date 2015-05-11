@@ -1,82 +1,85 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: Availability of psci_smp_available depends on
- CONFIG_SMP
-Date: Mon, 11 May 2015 15:13:42 +0300
-Message-ID: <20150511121342.GH22637@tbergstrom-lnx.Nvidia.com>
-References: <cover.1431064527.git.jan.kiszka@siemens.com>
- <0f0a77ddee48027efa35f36d6c809d2d3ff91ce1.1431064527.git.jan.kiszka@siemens.com>
- <20150508112615.GE32221@ulmo.nvidia.com>
- <20150508145620.GK2067@n2100.arm.linux.org.uk>
- <20150508161453.GI25587@arm.com>
- <554F2964.3060802@siemens.com>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 16/19] clk: tegra: pll: Add Set_default logic
+Date: Mon, 11 May 2015 11:07:30 -0400
+Message-ID: <5550C5B2.5030700@nvidia.com>
+References: <1430328109-537-1-git-send-email-rklein@nvidia.com> <1430328109-537-17-git-send-email-rklein@nvidia.com> <20150430101225.GU3097@tbergstrom-lnx.Nvidia.com> <55424ACA.9010406@nvidia.com> <20150511115036.GG22637@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <554F2964.3060802-kv7WeFo6aLtBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <20150511115036.GG22637-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jan Kiszka <jan.kiszka-kv7WeFo6aLtBDgjK7y7TUQ@public.gmane.org>
-Cc: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sun, May 10, 2015 at 11:48:20AM +0200, Jan Kiszka wrote:
-> On 2015-05-08 18:14, Will Deacon wrote:
-> > On Fri, May 08, 2015 at 03:56:20PM +0100, Russell King - ARM Linux wrote:
-> >> On Fri, May 08, 2015 at 01:26:17PM +0200, Thierry Reding wrote:
-> >>> On Fri, May 08, 2015 at 07:55:26AM +0200, Jan Kiszka wrote:
-> >>>> Ensure that we can use psci_smp_available without checking for
-> >>>> CONFIG_SMP first.
-> >>>>
-> >>>> Signed-off-by: Jan Kiszka <jan.kiszka-kv7WeFo6aLtBDgjK7y7TUQ@public.gmane.org>
-> >>>> ---
-> >>>>  arch/arm/include/asm/psci.h | 6 +++++-
-> >>>>  1 file changed, 5 insertions(+), 1 deletion(-)
-> >>>>
-> >>>> diff --git a/arch/arm/include/asm/psci.h b/arch/arm/include/asm/psci.h
-> >>>> index c25ef3e..eef6a0a 100644
-> >>>> --- a/arch/arm/include/asm/psci.h
-> >>>> +++ b/arch/arm/include/asm/psci.h
-> >>>> @@ -39,9 +39,13 @@ extern struct smp_operations psci_smp_ops;
-> >>>>  
-> >>>>  #ifdef CONFIG_ARM_PSCI
-> >>>>  int psci_init(void);
-> >>>> -bool psci_smp_available(void);
-> >>>>  #else
-> >>>>  static inline int psci_init(void) { return 0; }
-> >>>> +#endif
-> >>>> +
-> >>>> +#if defined(CONFIG_ARM_PSCI) && defined(CONFIG_SMP)
-> >>>> +bool psci_smp_available(void);
-> >>>> +#else
-> >>>>  static inline bool psci_smp_available(void) { return false; }
-> >>>>  #endif
-> >>>>  
-> >>>
-> >>> Looks good to me.
-> >>>
-> >>> Russell, would you be willing to ack this patch so that I can take it
-> >>> through the Tegra tree along with patch 2/2 that depends on this?
-> >>
-> >> I'd prefer to see an ack from Will on this, as it's code which Will
-> >> contributed and presumably understands better than me.
-> > 
-> > Sorry, I'm late to the thread so I'm a tad confused.
-> > 
-> > If I understand correctly, these two patches are trying to avoid using
-> > the tegra cpuidle driver if PSCI is available instead? That raises the
-> > question as to whether or not you're actually trying to discover whether
-> > you're in the secure or non-secure world.
-> > 
-> > I assume PSCI only works if the kernel is running in non-secure mode,
-> > but does the Tegra cpuidle driver only work in secure mode?
+On 5/11/2015 7:50 AM, Peter De Schrijver wrote:
+> On Thu, Apr 30, 2015 at 11:31:22AM -0400, Rhyland Klein wrote:
+>> On 4/30/2015 6:12 AM, Peter De Schrijver wrote:
+>>> On Wed, Apr 29, 2015 at 01:21:46PM -0400, Rhyland Klein wrote:
+>>>> From: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>>
+>>>> Add logic which (if specified for a pll) can verify that a PLL is set
+>>>> to the proper default value and if not can set it. This can be
+>>>> specified per PLL as each will have different default values.
+>>>>
+>>>
+>>> Why can't we just set the default values at init time?
+>>
+>> Sorry, I did some investigation into this and wrote up a nice response
+>> ... and forgot to hit send ...
+>>
+>> The reason this can't be run only once at init time is the following. In
+>> reality, we want to have the defined default values written as early as
+>> possible. Idealy, the bootloader could write these, so the kernel need
+>> only check, see they are right, and not touch them. However, since we
+>> can't rely on the bootloader to do so, the kernel needs the support to
+>> be able to write these default values. At init time, some pll's will be
+>> enabled (from bootloader) and because they are enabled (and the rest of
+>> the clk framework isn't done being setup yet) we can't disable them to
+>> write the full register values. Therefore, the set_defaults logic uses a
+>> 2-pass system.
+>>
+>> first pass: Try to set defaults at init/registration time. If pll is
+>> disabled, this works fine. If it is enabled, then we update a subset of
+>> the register as a "best effort" setting of the defaults.
+>>
+>> second pass: Should only run the first time we go through set_rate for a
+>> pll. If the first pass already wrote default value, then it skips this
+>> step. Otherwise it will go in, once the pll is disabled in the set_rate
+>> path, and write the full register default.
+>>
+>> This is required because some registers need to be reset to the default
+>> values we have to ensure locking works correctly. Does that make sense?
 > 
-> To my understanding of the hardware, the flow controller can be accessed
-> from both worlds. So, testing the mode would neither be sufficient nor
-> more logical - it's PSCI which occupies this resource, not automatically
-> all secure monitors.
+> Ok. I see... Should we print a warning (pr_warn()) the bootloader isn't
+> initializing the hw correctly if the second pass needs to write the default
+> values?
 
-This is correct. The flow controller doesn't check the NS bit.
+All the set default routines use the inline function
+"_pll_misc_chk_default" (used to be a MACRO). Inside, it compares
+register values vs expected defaults and warns:
 
-Cheers,
+        if (boot_val != default_val) {
+                pr_warn("boot misc%d 0x%x: expected 0x%x\n",
+                        misc_num, boot_val, default_val);
+                pr_warn(" (comparison mask = 0x%x)\n", mask);
+                params->defaults_set = false;
+        }
 
-Peter.
+so this is already done. I suppose the only other place we could add a
+warning is if the first past set-defaults can't be fully run since the
+clock is on, that might make things a little clearer, so I guess I'll go
+ahead and add that.
+
+-rhyland
+
+> 
+> Thanks,
+> 
+> Peter.
+> 
+
+
+-- 
+nvpublic
