@@ -1,85 +1,56 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 16/19] clk: tegra: pll: Add Set_default logic
-Date: Mon, 11 May 2015 11:07:30 -0400
-Message-ID: <5550C5B2.5030700@nvidia.com>
-References: <1430328109-537-1-git-send-email-rklein@nvidia.com> <1430328109-537-17-git-send-email-rklein@nvidia.com> <20150430101225.GU3097@tbergstrom-lnx.Nvidia.com> <55424ACA.9010406@nvidia.com> <20150511115036.GG22637@tbergstrom-lnx.Nvidia.com>
+From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC PATCH 01/12] drm: Add a new mode flag:
+ DRM_MODE_FLAG_PREFER_ONE_SHOT
+Date: Mon, 11 May 2015 16:34:57 +0000
+Message-ID: <1431362096439.71223@nvidia.com>
+References: <1431308311-4470-1-git-send-email-markz@nvidia.com>
+ <1431308311-4470-2-git-send-email-markz@nvidia.com>,<20150511092743.GO15256@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150511115036.GG22637-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+In-Reply-To: <20150511092743.GO15256-dv86pmgwkMBes7Z6vYuT8azUEOm+Xw19@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Cc: "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 5/11/2015 7:50 AM, Peter De Schrijver wrote:
-> On Thu, Apr 30, 2015 at 11:31:22AM -0400, Rhyland Klein wrote:
->> On 4/30/2015 6:12 AM, Peter De Schrijver wrote:
->>> On Wed, Apr 29, 2015 at 01:21:46PM -0400, Rhyland Klein wrote:
->>>> From: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>>
->>>> Add logic which (if specified for a pll) can verify that a PLL is set
->>>> to the proper default value and if not can set it. This can be
->>>> specified per PLL as each will have different default values.
->>>>
->>>
->>> Why can't we just set the default values at init time?
->>
->> Sorry, I did some investigation into this and wrote up a nice response
->> ... and forgot to hit send ...
->>
->> The reason this can't be run only once at init time is the following. In
->> reality, we want to have the defined default values written as early as
->> possible. Idealy, the bootloader could write these, so the kernel need
->> only check, see they are right, and not touch them. However, since we
->> can't rely on the bootloader to do so, the kernel needs the support to
->> be able to write these default values. At init time, some pll's will be
->> enabled (from bootloader) and because they are enabled (and the rest of
->> the clk framework isn't done being setup yet) we can't disable them to
->> write the full register values. Therefore, the set_defaults logic uses a
->> 2-pass system.
->>
->> first pass: Try to set defaults at init/registration time. If pll is
->> disabled, this works fine. If it is enabled, then we update a subset of
->> the register as a "best effort" setting of the defaults.
->>
->> second pass: Should only run the first time we go through set_rate for a
->> pll. If the first pass already wrote default value, then it skips this
->> step. Otherwise it will go in, once the pll is disabled in the set_rate
->> path, and write the full register default.
->>
->> This is required because some registers need to be reset to the default
->> values we have to ensure locking works correctly. Does that make sense?
-> 
-> Ok. I see... Should we print a warning (pr_warn()) the bootloader isn't
-> initializing the hw correctly if the second pass needs to write the default
-> values?
+I just want to make things easier. If we adding this in panel's meta data, it will be harder to make crtc gets this, since normally encoder talks with panel and crtc talks with encoder. But yes, adding this in panel's metadata makes more sense so if there is a better way to do that, I'm happy to do the changes.
 
-All the set default routines use the inline function
-"_pll_misc_chk_default" (used to be a MACRO). Inside, it compares
-register values vs expected defaults and warns:
+Mark
+________________________________________
+From: Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org> on behalf of Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Sent: Monday, May 11, 2015 5:27 PM
+To: Mark Zhang
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Subject: Re: [RFC PATCH 01/12] drm: Add a new mode flag: DRM_MODE_FLAG_PREFER_ONE_SHOT
 
-        if (boot_val != default_val) {
-                pr_warn("boot misc%d 0x%x: expected 0x%x\n",
-                        misc_num, boot_val, default_val);
-                pr_warn(" (comparison mask = 0x%x)\n", mask);
-                params->defaults_set = false;
-        }
+On Mon, May 11, 2015 at 09:38:20AM +0800, Mark Zhang wrote:
+> Normally this flag is set by panel driver so that crtc can enable
+> the "one-shot" mode(not scan frames continuously).
+>
+> Signed-off-by: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  include/uapi/drm/drm_mode.h | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/include/uapi/drm/drm_mode.h b/include/uapi/drm/drm_mode.h
+> index dbeba949462a..5447a338e893 100644
+> --- a/include/uapi/drm/drm_mode.h
+> +++ b/include/uapi/drm/drm_mode.h
+> @@ -72,6 +72,7 @@
+>  #define  DRM_MODE_FLAG_3D_L_DEPTH_GFX_GFX_DEPTH      (6<<14)
+>  #define  DRM_MODE_FLAG_3D_TOP_AND_BOTTOM     (7<<14)
+>  #define  DRM_MODE_FLAG_3D_SIDE_BY_SIDE_HALF  (8<<14)
+> +#define DRM_MODE_FLAG_PREFER_ONE_SHOT                (1<<19)
 
-so this is already done. I suppose the only other place we could add a
-warning is if the first past set-defaults can't be fully run since the
-clock is on, that might make things a little clearer, so I guess I'll go
-ahead and add that.
-
--rhyland
-
-> 
-> Thanks,
-> 
-> Peter.
-> 
-
-
--- 
-nvpublic
+tbh this doesn't sound like a mode flag, but something which should be
+attached to the drm_panel. Especially since all the single-frame modes are
+highly sink/link specific. Why was this added here instead of to the
+drm_panel metadata?
+-Daniel
+--
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
