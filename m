@@ -1,7 +1,7 @@
 From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [RFC PATCH 12/12] JUST FOR TEST: Add one-shot trigger to update display
-Date: Mon, 11 May 2015 09:38:31 +0800
-Message-ID: <1431308311-4470-13-git-send-email-markz@nvidia.com>
+Subject: [RFC PATCH 09/12] drm: dsi: Add "enter idle" & "exit idle" dcs functions
+Date: Mon, 11 May 2015 09:38:28 +0800
+Message-ID: <1431308311-4470-10-git-send-email-markz@nvidia.com>
 References: <1431308311-4470-1-git-send-email-markz@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,98 +12,71 @@ To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This HACK adds a workqueue to refresh the display periodically.
-This is used just for testing.
-
 Signed-off-by: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/dc.c  | 47 +++++++++++++++++++++++++++++++++++++++++++++
- drivers/gpu/drm/tegra/drm.h |  1 +
- 2 files changed, 48 insertions(+)
+ drivers/gpu/drm/drm_mipi_dsi.c | 36 ++++++++++++++++++++++++++++++++++++
+ include/drm/drm_mipi_dsi.h     |  2 ++
+ 2 files changed, 38 insertions(+)
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index b8231e2e3c92..48bddc795995 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -1262,6 +1262,8 @@ static void tegra_crtc_mode_set_nofb(struct drm_crtc *crtc)
- 		value &= ~DISP_CTRL_MODE_MASK;
- 		value |= DISP_CTRL_MODE_NC_DISPLAY;
- 		tegra_dc_writel(dc, value, DC_CMD_DISPLAY_COMMAND);
-+
-+		schedule_work(&dc->one_shot_trigger);
- 	} else {
- 		value = tegra_dc_readl(dc, DC_CMD_DISPLAY_COMMAND);
- 		value &= ~DISP_CTRL_MODE_MASK;
-@@ -1928,6 +1930,50 @@ static void tegra_dc_one_shot_work(struct work_struct *work)
- 	 */
+diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_dsi.c
+index 2d5ca8eec13a..9bc6ff75eb8f 100644
+--- a/drivers/gpu/drm/drm_mipi_dsi.c
++++ b/drivers/gpu/drm/drm_mipi_dsi.c
+@@ -862,6 +862,42 @@ int mipi_dsi_dcs_set_pixel_format(struct mipi_dsi_device *dsi, u8 format)
  }
+ EXPORT_SYMBOL(mipi_dsi_dcs_set_pixel_format);
  
-+static void tegra_dc_one_shot_trigger(struct work_struct *work)
++/**
++ * mipi_dsi_dcs_enter_idle_mode()
++ * @dsi: DSI peripheral device
++ *
++ * Return: 0 on success or a negative error code on failure.
++ */
++int mipi_dsi_dcs_enter_idle_mode(struct mipi_dsi_device *dsi)
 +{
-+	struct tegra_dc *dc;
-+	struct drm_connector *connector;
-+	struct drm_device *drm;
-+	unsigned long update_mask = GENERAL_ACT_REQ | NC_HOST_TRIG;
-+	static int first_trigger = 1;
-+	int err;
-+	unsigned long value;
++	ssize_t err;
 +
-+	dc = container_of(work, struct tegra_dc, one_shot_trigger);
-+	drm = dc->base.dev;
-+	msleep(5000);
-+
-+	if (first_trigger) {
-+		tegra_dc_writel(dc, update_mask, DC_CMD_STATE_CONTROL);
-+		first_trigger = 0;
-+		schedule_work(&dc->one_shot_trigger);
-+		return;
-+	}
-+
-+	dev_info(dc->dev, "one-shot: Wakeup dsi/panel.\n");
-+	err = clk_prepare_enable(dc->clk);
++	err = mipi_dsi_dcs_write(dsi, MIPI_DCS_ENTER_IDLE_MODE, NULL, 0);
 +	if (err < 0)
-+		dev_err(dc->dev, "failed to enable clock: %d\n", err);
++		return err;
 +
-+	value = tegra_dc_readl(dc, DC_CMD_DISPLAY_COMMAND);
-+	value &= ~DISP_CTRL_MODE_MASK;
-+	value |= DISP_CTRL_MODE_NC_DISPLAY;
-+	tegra_dc_writel(dc, value, DC_CMD_DISPLAY_COMMAND);
-+
-+	drm_modeset_lock_all(drm);
-+	list_for_each_entry(connector, &drm->mode_config.connector_list, head) {
-+		if (connector->funcs->dpms)
-+			connector->funcs->dpms(connector,
-+						DRM_MODE_DPMS_STANDBY);
-+	}
-+	drm_modeset_unlock_all(drm);
-+
-+	/* Trigger the one-shot */
-+	tegra_dc_writel(dc, update_mask, DC_CMD_STATE_CONTROL);
-+	schedule_work(&dc->one_shot_trigger);
++	return 0;
 +}
++EXPORT_SYMBOL(mipi_dsi_dcs_enter_idle_mode);
 +
- static int tegra_dc_probe(struct platform_device *pdev)
++/**
++ * mipi_dsi_dcs_exit_idle_mode()
++ * @dsi: DSI peripheral device
++ *
++ * Return: 0 on success or a negative error code on failure.
++ */
++int mipi_dsi_dcs_exit_idle_mode(struct mipi_dsi_device *dsi)
++{
++	ssize_t err;
++
++	err = mipi_dsi_dcs_write(dsi, MIPI_DCS_EXIT_IDLE_MODE, NULL, 0);
++	if (err < 0)
++		return err;
++
++	return 0;
++}
++EXPORT_SYMBOL(mipi_dsi_dcs_exit_idle_mode);
++
+ static int mipi_dsi_drv_probe(struct device *dev)
  {
- 	unsigned long flags = HOST1X_SYNCPT_CLIENT_MANAGED;
-@@ -1947,6 +1993,7 @@ static int tegra_dc_probe(struct platform_device *pdev)
- 	spin_lock_init(&dc->lock);
- 	INIT_LIST_HEAD(&dc->list);
- 	INIT_WORK(&dc->one_shot_work, tegra_dc_one_shot_work);
-+	INIT_WORK(&dc->one_shot_trigger, tegra_dc_one_shot_trigger);
- 	dc->dev = &pdev->dev;
- 	dc->soc = id->data;
+ 	struct mipi_dsi_driver *drv = to_mipi_dsi_driver(dev->driver);
+diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
+index f1d8d0dbb4f1..d949a8ef389f 100644
+--- a/include/drm/drm_mipi_dsi.h
++++ b/include/drm/drm_mipi_dsi.h
+@@ -214,6 +214,8 @@ int mipi_dsi_dcs_set_tear_off(struct mipi_dsi_device *dsi);
+ int mipi_dsi_dcs_set_tear_on(struct mipi_dsi_device *dsi,
+ 			     enum mipi_dsi_dcs_tear_mode mode);
+ int mipi_dsi_dcs_set_pixel_format(struct mipi_dsi_device *dsi, u8 format);
++int mipi_dsi_dcs_enter_idle_mode(struct mipi_dsi_device *dsi);
++int mipi_dsi_dcs_exit_idle_mode(struct mipi_dsi_device *dsi);
  
-diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
-index 00daf427c831..5d606cacb098 100644
---- a/drivers/gpu/drm/tegra/drm.h
-+++ b/drivers/gpu/drm/tegra/drm.h
-@@ -132,6 +132,7 @@ struct tegra_dc {
- 	struct drm_pending_vblank_event *event;
- 
- 	struct work_struct one_shot_work;
-+	struct work_struct one_shot_trigger;
- 
- 	const struct tegra_dc_soc_info *soc;
- 
+ /**
+  * struct mipi_dsi_driver - DSI driver
 -- 
 2.1.4
