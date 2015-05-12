@@ -1,70 +1,89 @@
 From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v5 01/21] FROMLIST: clk: tegra: Update struct tegra_clk_pll_params kerneldoc
-Date: Tue, 12 May 2015 13:23:44 -0400
-Message-ID: <1431451444-23155-3-git-send-email-rklein@nvidia.com>
-References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
+Subject: [PATCH v5 00/21] Tegra210 Clock Support
+Date: Tue, 12 May 2015 13:23:42 -0400
+Message-ID: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1431451444-23155-1-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jim Lin <jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jim Lin <jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+This patch series updates the tegra common clock driver and adds
+support for the Tegra210 clocks. The clocks in Tegra210 changed
+significantly in some ways from earlier generations, so to support
+them, we need to extend our base framework a bit and add some new
+features.
 
-Benson Leung pointed out that the kerneldoc for this structure has
-become stale. Update the field descriptions to match the structure
-content.
+Some patches here also address issues found while adding features
+and other cleanup type work.
 
-Reported-by: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Acked-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Reviewed-by: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
----
- drivers/clk/tegra/clk.h |   18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+Note this series does depend on
+"clk: tegra: Fix comments for structure definitions" which has been
+reviewed already.
 
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 9da799849e04..a4e6c8180968 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -157,7 +157,7 @@ struct div_nmp {
- };
- 
- /**
-- * struct clk_pll_params - PLL parameters
-+ * struct tegra_clk_pll_params - PLL parameters
-  *
-  * @input_min:			Minimum input frequency
-  * @input_max:			Maximum input frequency
-@@ -168,12 +168,24 @@ struct div_nmp {
-  * @base_reg:			PLL base reg offset
-  * @misc_reg:			PLL misc reg offset
-  * @lock_reg:			PLL lock reg offset
-- * @lock_bit_idx:		Bit index for PLL lock status
-+ * @lock_mask:			Bitmask for PLL lock status
-  * @lock_enable_bit_idx:	Bit index to enable PLL lock
-+ * @iddq_reg:			PLL IDDQ register offset
-+ * @iddq_bit_idx:		Bit index to enable PLL IDDQ
-+ * @aux_reg:			AUX register offset
-+ * @dyn_ramp_reg:		Dynamic ramp control register offset
-+ * @ext_misc_reg:		Miscellaneous control register offsets
-+ * @pmc_divnm_reg:		n, m divider PMC override register offset (PLLM)
-+ * @pmc_divp_reg:		p divider PMC override register offset (PLLM)
-+ * @flags:			PLL flags
-+ * @stepa_shift:		Dynamic ramp step A field shift
-+ * @stepb_shift:		Dynamic ramp step B field shift
-  * @lock_delay:			Delay in us if PLL lock is not used
-+ * @max_p:			maximum value for the p divider
-+ * @pdiv_tohw:			mapping of p divider to register values
-+ * @div_nmp:			offsets and widths on n, m and p fields
-  * @freq_table:			array of frequencies supported by PLL
-  * @fixed_rate:			PLL rate if it is fixed
-- * @flags:			PLL flags
-  *
-  * Flags:
-  * TEGRA_PLL_USE_LOCK - This flag indicated to use lock bits for
+v5:
+  - Reorderd some patches
+  - Added Thierry's kerneldoc update patch as dependency
+
+v4:
+  - Fixed minor checkpatch errors and other typos
+  - Rebased ontop of linux-next 20150504
+
+v3:
+  - Added a fix from Andrew Bresticker that was found while testing
+    this code.
+
+Andrew Bresticker (1):
+  clk: tegra: pll: Fix issues with rates for VCO PLLs
+
+Bill Huang (7):
+  clk: tegra: pll-params: change misc_reg count from 3 -> 6
+  clk: tegra: pll: Add code to handle if resets are supported by PLL
+  clk: tegra: pll: Adjust vco_min if SDM present
+  clk: tegra: pll: Add dyn_ramp callback
+  clk: tegra: pll: Add Set_default logic
+  clk: tegra: pll: Add logic for SS
+  clk: tegra: Add Super Gen5 Logic
+
+Rhyland Klein (12):
+  clk: tegra: Modify tegra_audio_clk_init to accept more plls
+  clk: tegra: periph: add new periph clks and muxes for Tegra210
+  clk: tegra: pll: add tegra_pll_wait_for_lock to clk header
+  clk: tegra: pll: simplify clk_enable_path
+  clk: tegra: pll: update warning msg
+  clk: tegra: pll: Don't unconditionally set LOCK flags
+  clk: tegra: pll: Add logic for handling SDM data
+  clk: tegra: pll: Add logic for out-of-table rates for T210
+  clk: tegra: pll: Add specialized logic for T210
+  clk: tegra: pll: Add support for PLLMB for T210
+  clk: tegra: pll: Fix _pll_ramp_calc_pll logic and
+    _calc_dynamic_ramp_rate
+  clk: tegra210: add support for Tegra210 clocks
+
+Thierry Reding (1):
+  clk: tegra: Update struct tegra_clk_pll_params kerneldoc
+
+ .../bindings/clock/nvidia,tegra210-car.txt         |   56 +
+ drivers/clk/tegra/Makefile                         |    2 +
+ drivers/clk/tegra/clk-id.h                         |   67 +-
+ drivers/clk/tegra/clk-pll.c                        |  709 ++++-
+ drivers/clk/tegra/clk-tegra-audio.c                |   25 +-
+ drivers/clk/tegra/clk-tegra-periph.c               |  304 ++-
+ drivers/clk/tegra/clk-tegra-super-gen5.c           |  150 ++
+ drivers/clk/tegra/clk-tegra114.c                   |   31 +-
+ drivers/clk/tegra/clk-tegra124.c                   |   32 +-
+ drivers/clk/tegra/clk-tegra20.c                    |   18 +-
+ drivers/clk/tegra/clk-tegra210.c                   | 2792 ++++++++++++++++++++
+ drivers/clk/tegra/clk-tegra30.c                    |   32 +-
+ drivers/clk/tegra/clk.h                            |  123 +-
+ include/dt-bindings/clock/tegra210-car.h           |  401 +++
+ 14 files changed, 4595 insertions(+), 147 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra210-car.txt
+ create mode 100644 drivers/clk/tegra/clk-tegra-super-gen5.c
+ create mode 100644 drivers/clk/tegra/clk-tegra210.c
+ create mode 100644 include/dt-bindings/clock/tegra210-car.h
+
 -- 
 1.7.9.5
