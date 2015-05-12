@@ -1,76 +1,62 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [RFC PATCH 01/12] drm: Add a new mode flag:
- DRM_MODE_FLAG_PREFER_ONE_SHOT
-Date: Tue, 12 May 2015 08:35:58 +0200
-Message-ID: <20150512063558.GP15256@phenom.ffwll.local>
-References: <1431308311-4470-1-git-send-email-markz@nvidia.com>
- <1431308311-4470-2-git-send-email-markz@nvidia.com>
- <20150511092743.GO15256@phenom.ffwll.local>
- <1431362096439.71223@nvidia.com>
+From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Subject: Re: "drm: Add reference counting to blob properties" breaks Tegra124
+ Jetson TK1 in linux-next
+Date: Tue, 12 May 2015 08:37:57 +0200
+Message-ID: <20150512063757.GQ15256@phenom.ffwll.local>
+References: <55517AE5.30700@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1431362096439.71223@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Mark Zhang <markz@nvidia.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+In-Reply-To: <55517AE5.30700-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, daniels-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, daniel.vetter-/w4YWyX8dFk@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, airlied-cv59FeDIM0c@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gTW9uLCBNYXkgMTEsIDIwMTUgYXQgMDQ6MzQ6NTdQTSArMDAwMCwgTWFyayBaaGFuZyB3cm90
-ZToKPiBJIGp1c3Qgd2FudCB0byBtYWtlIHRoaW5ncyBlYXNpZXIuIElmIHdlIGFkZGluZyB0aGlz
-IGluIHBhbmVsJ3MgbWV0YQo+IGRhdGEsIGl0IHdpbGwgYmUgaGFyZGVyIHRvIG1ha2UgY3J0YyBn
-ZXRzIHRoaXMsIHNpbmNlIG5vcm1hbGx5IGVuY29kZXIKPiB0YWxrcyB3aXRoIHBhbmVsIGFuZCBj
-cnRjIHRhbGtzIHdpdGggZW5jb2Rlci4gQnV0IHllcywgYWRkaW5nIHRoaXMgaW4KPiBwYW5lbCdz
-IG1ldGFkYXRhIG1ha2VzIG1vcmUgc2Vuc2Ugc28gaWYgdGhlcmUgaXMgYSBiZXR0ZXIgd2F5IHRv
-IGRvCj4gdGhhdCwgSSdtIGhhcHB5IHRvIGRvIHRoZSBjaGFuZ2VzLgoKQWRkaW5nIHNvbWV0aGlu
-ZyB0byB0aGUgdXNlcnNwYWNlIEFCSSAod2hpY2ggeW91J3ZlIGRvbmUgaGVyZSkgYmVjYXVzZSB0
-aGUKa2VybmVsLWludGVybmFscyBhcmUgZGVzaWduZWQgaW4gYW4gYXdrd2FyZCB3YXkgcmlnaHQg
-bm93IGlzIGRlZmluaXRlbHkKdGhlIHdyb25nIHRoaW5nIHRvIGRvLiBXaXRoIGF0b21pYyB5b3Ug
-Y2FuIGVhc2lseSBhZGQgYSBib29sCnByZWZlcl9vbmVzaG90IHRvIGRybV9jcnRjX3N0YXRlIHRv
-IGVuY29kZSB0aGlzLiBCdXQgSSBmZWFyIHRoYXQgd2l0aCB0aGUKcGxhaW4gY3J0YyBoZWxwZXJz
-IHRoaXMganVzdCBkb2Vzbid0IHdvcmsgcHJvcGVybHkuIFlvdSBjb3VsZCBhZGQgYQpkcml2ZXIt
-cHJpdmF0ZSBpbnRlcm5hbCBpbiBkcm1fZGlzcGxheV9tb2RlLT5wcml2YXRlX2ZsYWdzLCBidXQg
-dGhhdCBtaWdodApjbGFzaCB3aXRoIGRyaXZlcnMgZXhpc3RpbmcgdXNlIG9mIHRoaXMgZmllbGQu
-CgpJbiBhbnkgd2F5LCB0aGlzIGlzIGRlZmluaXRlbHkgbm90IHNvbWV0aGluZyB0byBhZGQgdG8g
-dWFwaSBoZWFkZXJzLiBIZW5jZQpOYWNrZWQtYnk6IG1lLgoKVGhhbmtzLCBEYW5pZWwKPiAKPiBN
-YXJrCj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+IEZyb206IERh
-bmllbCBWZXR0ZXIgPGRhbmllbC52ZXR0ZXJAZmZ3bGwuY2g+IG9uIGJlaGFsZiBvZiBEYW5pZWwg
-VmV0dGVyIDxkYW5pZWxAZmZ3bGwuY2g+Cj4gU2VudDogTW9uZGF5LCBNYXkgMTEsIDIwMTUgNToy
-NyBQTQo+IFRvOiBNYXJrIFpoYW5nCj4gQ2M6IHRoaWVycnkucmVkaW5nQGdtYWlsLmNvbTsgbGlu
-dXgtdGVncmFAdmdlci5rZXJuZWwub3JnOyBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-Cj4gU3ViamVjdDogUmU6IFtSRkMgUEFUQ0ggMDEvMTJdIGRybTogQWRkIGEgbmV3IG1vZGUgZmxh
-ZzogRFJNX01PREVfRkxBR19QUkVGRVJfT05FX1NIT1QKPiAKPiBPbiBNb24sIE1heSAxMSwgMjAx
-NSBhdCAwOTozODoyMEFNICswODAwLCBNYXJrIFpoYW5nIHdyb3RlOgo+ID4gTm9ybWFsbHkgdGhp
-cyBmbGFnIGlzIHNldCBieSBwYW5lbCBkcml2ZXIgc28gdGhhdCBjcnRjIGNhbiBlbmFibGUKPiA+
-IHRoZSAib25lLXNob3QiIG1vZGUobm90IHNjYW4gZnJhbWVzIGNvbnRpbnVvdXNseSkuCj4gPgo+
-ID4gU2lnbmVkLW9mZi1ieTogTWFyayBaaGFuZyA8bWFya3pAbnZpZGlhLmNvbT4KPiA+IC0tLQo+
-ID4gIGluY2x1ZGUvdWFwaS9kcm0vZHJtX21vZGUuaCB8IDEgKwo+ID4gIDEgZmlsZSBjaGFuZ2Vk
-LCAxIGluc2VydGlvbigrKQo+ID4KPiA+IGRpZmYgLS1naXQgYS9pbmNsdWRlL3VhcGkvZHJtL2Ry
-bV9tb2RlLmggYi9pbmNsdWRlL3VhcGkvZHJtL2RybV9tb2RlLmgKPiA+IGluZGV4IGRiZWJhOTQ5
-NDYyYS4uNTQ0N2EzMzhlODkzIDEwMDY0NAo+ID4gLS0tIGEvaW5jbHVkZS91YXBpL2RybS9kcm1f
-bW9kZS5oCj4gPiArKysgYi9pbmNsdWRlL3VhcGkvZHJtL2RybV9tb2RlLmgKPiA+IEBAIC03Miw2
-ICs3Miw3IEBACj4gPiAgI2RlZmluZSAgRFJNX01PREVfRkxBR18zRF9MX0RFUFRIX0dGWF9HRlhf
-REVQVEggICAgICAoNjw8MTQpCj4gPiAgI2RlZmluZSAgRFJNX01PREVfRkxBR18zRF9UT1BfQU5E
-X0JPVFRPTSAgICAgKDc8PDE0KQo+ID4gICNkZWZpbmUgIERSTV9NT0RFX0ZMQUdfM0RfU0lERV9C
-WV9TSURFX0hBTEYgICg4PDwxNCkKPiA+ICsjZGVmaW5lIERSTV9NT0RFX0ZMQUdfUFJFRkVSX09O
-RV9TSE9UICAgICAgICAgICAgICAgICgxPDwxOSkKPiAKPiB0YmggdGhpcyBkb2Vzbid0IHNvdW5k
-IGxpa2UgYSBtb2RlIGZsYWcsIGJ1dCBzb21ldGhpbmcgd2hpY2ggc2hvdWxkIGJlCj4gYXR0YWNo
-ZWQgdG8gdGhlIGRybV9wYW5lbC4gRXNwZWNpYWxseSBzaW5jZSBhbGwgdGhlIHNpbmdsZS1mcmFt
-ZSBtb2RlcyBhcmUKPiBoaWdobHkgc2luay9saW5rIHNwZWNpZmljLiBXaHkgd2FzIHRoaXMgYWRk
-ZWQgaGVyZSBpbnN0ZWFkIG9mIHRvIHRoZQo+IGRybV9wYW5lbCBtZXRhZGF0YT8KPiAtRGFuaWVs
-Cj4gLS0KPiBEYW5pZWwgVmV0dGVyCj4gU29mdHdhcmUgRW5naW5lZXIsIEludGVsIENvcnBvcmF0
-aW9uCj4gaHR0cDovL2Jsb2cuZmZ3bGwuY2gKCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3YXJlIEVu
-Z2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgpodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
-aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNr
-dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Mon, May 11, 2015 at 10:00:37PM -0600, Paul Walmsley wrote:
+> Hi folks
+> 
+> Tegra124 Jetson TK1 hangs during boot in next-20150508 and beyond:
+> 
+> http://nvt.pwsan.com/experimental/linux-next/testlogs/test_next-20150508/20150508101018/boot/tegra124-jetson-tk1/tegra124-jetson-tk1/tegra_defconfig_log.txt
+> 
+> http://nvt.pwsan.com/experimental/linux-next/testlogs/test_next-20150511/20150511004533/boot/tegra124-jetson-tk1/tegra124-jetson-tk1/tegra_defconfig_log.txt
+
+Any stuck task warnings or similar? Does lockdep catch something?
+-Daniel
+
+> 
+> 
+> Reverting commit 672cb1d6aec7da2799afd1b529d5136d84ed2561 ("drm: Add
+> reference counting to blob properties") gets it booting again:
+> 
+> http://nvt.pwsan.com/pub/pwalmsley-tester/testlogs/test_20150511204703_3838232431c2636ff539f2354c630c0ca3d4b7ad/20150511204703/boot/tegra124-jetson-tk1/tegra124-jetson-tk1/tegra_defconfig_log.txt
+> 
+> I'm not a DRM expert but maybe one of you knows what's going on here?
+> 
+> 
+> - Paul
+> 
+> 
+> commit 672cb1d6aec7da2799afd1b529d5136d84ed2561
+> Author: Daniel Stone <daniels-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+> Date:   Mon Apr 20 19:22:55 2015 +0100
+> 
+>     drm: Add reference counting to blob properties
+> 
+>     Reference-count drm_property_blob objects, changing the API to
+>     ref/unref.
+> 
+>     Signed-off-by: Daniel Stone <daniels-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+>     Reviewed-by: Maarten Lankhorst <maarten.lankhorst-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+>     Signed-off-by: Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>
+> 
+> 
+> --
+> nvpublic
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
