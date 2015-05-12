@@ -1,82 +1,69 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 8/8] serial: tegra: Correct error handling on DMA setup
-Date: Tue, 12 May 2015 17:39:31 +0900
-Message-ID: <CAAVeFuL=z-xbGT1e_L6+_GQ8aZ0BvNBfmoi65u_7qVHv=tpTbA@mail.gmail.com>
-References: <1430835479-6613-1-git-send-email-jonathanh@nvidia.com> <1430835479-6613-9-git-send-email-jonathanh@nvidia.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [Nouveau] [PATCH v4] pmu/gk20a: PMU boot support
+Date: Tue, 12 May 2015 18:04:30 +0900
+Message-ID: <CAAVeFuL8R=hcO2u8xCZB6GuM58Kgx6RzW2oWwKPcwrs4bj4rqQ@mail.gmail.com>
+References: <1428921530-28556-1-git-send-email-acourbot@nvidia.com>
+ <552B9D8A.5050202@nvidia.com> <CACAvsv4MC3hq5_DJ5c7NPfEYyrsG2vPMjadEhC+H4zcWzc+F=Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1430835479-6613-9-git-send-email-jonathanh@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, linux-serial@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACAvsv4MC3hq5_DJ5c7NPfEYyrsG2vPMjadEhC+H4zcWzc+F=Q@mail.gmail.com>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Deepak Goyal <dgoyal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, May 5, 2015 at 11:17 PM, Jon Hunter <jonathanh@nvidia.com> wrote:
-> Function tegra_uart_dma_channel_allocate() does not check that
-> dma_map_single() mapped the DMA buffer correctly. Add a check for this
-> and appropriate error handling.
->
-> Furthermore, if dmaengine_slave_config() (called by
-> tegra_uart_dma_channel_allocate()) fails, then memory allocated/mapped
-> is not freed/unmapped. Therefore, call tegra_uart_dma_channel_free()
-> instead of just dma_release_channel() if  dmaengine_slave_config() fails.
->
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  drivers/tty/serial/serial-tegra.c | 51 +++++++++++++++++++++------------------
->  1 file changed, 28 insertions(+), 23 deletions(-)
->
-> diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
-> index 96378da9aefc..3b63f103f0c9 100644
-> --- a/drivers/tty/serial/serial-tegra.c
-> +++ b/drivers/tty/serial/serial-tegra.c
-> @@ -949,6 +949,28 @@ static int tegra_uart_hw_init(struct tegra_uart_port *tup)
->         return 0;
->  }
->
-> +static void tegra_uart_dma_channel_free(struct tegra_uart_port *tup,
-> +               bool dma_to_memory)
-> +{
-> +       if (dma_to_memory) {
-> +               dmaengine_terminate_all(tup->rx_dma_chan);
-> +               dma_release_channel(tup->rx_dma_chan);
-> +               dma_free_coherent(tup->uport.dev, TEGRA_UART_RX_DMA_BUFFER_SIZE,
-> +                               tup->rx_dma_buf_virt, tup->rx_dma_buf_phys);
-> +               tup->rx_dma_chan = NULL;
-> +               tup->rx_dma_buf_phys = 0;
-> +               tup->rx_dma_buf_virt = NULL;
-> +       } else {
-> +               dmaengine_terminate_all(tup->tx_dma_chan);
-> +               dma_release_channel(tup->tx_dma_chan);
-> +               dma_unmap_single(tup->uport.dev, tup->tx_dma_buf_phys,
-> +                       UART_XMIT_SIZE, DMA_TO_DEVICE);
-> +               tup->tx_dma_chan = NULL;
-> +               tup->tx_dma_buf_phys = 0;
-> +               tup->tx_dma_buf_virt = NULL;
-> +       }
-> +}
-> +
->  static int tegra_uart_dma_channel_allocate(struct tegra_uart_port *tup,
->                         bool dma_to_memory)
->  {
-> @@ -981,6 +1003,11 @@ static int tegra_uart_dma_channel_allocate(struct tegra_uart_port *tup,
->                 dma_phys = dma_map_single(tup->uport.dev,
->                         tup->uport.state->xmit.buf, UART_XMIT_SIZE,
->                         DMA_TO_DEVICE);
-> +               if (dma_mapping_error(tup->uport.dev, dma_phys)) {
-> +                       dev_err(tup->uport.dev, "dma_map_single tx failed\n");
-> +                       dma_release_channel(dma_chan);
-> +                       return -ENOMEM;
+Hi Ben,
 
-Is -ENOMEM the error code we want to return here?
+On Fri, May 1, 2015 at 8:01 AM, Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On 13 April 2015 at 20:42, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> Ben, I guess our main remaining concern with this patch is how it should
+>> integrate wrt. the existing PMU code. Since it is designed to interact with
+>> the NVIDIA firmware, maybe we should use a different base code, or do you
+>> think we can somehow share code and data structures?
+> Hey Alexandre,
+>
+> Sorry for the delay in responding to this.
 
-IIUC dma_buf will be leaked if an error occurs here because it has not
-been assigned to your structure and will therefore be ignored when
-tegra_uart_dma_channel_free() is called.
+It is my turn to apologize - I was (well still am, technically :)) on
+holidays and have just started unpiling my inbox...
 
-Since we have a "scrub" label at the end of this function, I think I'd
-also prefer if this block and the one before could jump to error
-labels as well for consistency.
+>
+> My original thinking with transitioning to use NVIDIA's firmware was
+> that I'd modify our firmware interfaces to match yours, and share the
+> code.  I haven't started on any of this yet due to not having any word
+> on how you guys will be shipping the images, etc.  It would be nice to
+> have some communication on these things :)
 
-Otherwise, pretty nice series, comprehensive and easy to read.
+Indeed. For the first time with Maxwell GPUs, NVIDIA-provided firmware
+will be required for GPUs to operate properly. This raises several
+questions:
+
+- Should the firmware be released under /lib/firmware/nouveau or
+/lib/firmware/nvidia ? (this directory already exists for Tegra USB
+firmware and makes more sense to me, since the firmware is not
+Nouveau-specific)
+- For GPCCS/FECS firmware, should we release the netlist "pack" file
+or adopt the same format as Nouveau does? (1 file per firmware)
+- Should we keep the current files names (e.g. nvxx_fucxxxx[cd]), or
+try to switch to more meaningful ones?
+- What about signature files that are required for secure boot?
+- Knowing that NVIDIA's firmware ABI is a (very slowly) moving target,
+it is worth to aim at ABI compatibility, or should we assume different
+paths for Nouveau and NVIDIA firmware? If ABI incompatibilities are
+introduced in the way, how do we handle versioning?
+
+All these issues make me tend towards having a separate handling of
+NVIDIA-released firmware (location, format, and ABI). It will also
+make the firmware easier to release if conversions are not necessary
+on the way out. What are your thoughts on this?
+
+> I'm suspecting you won't be wanting to modify our falcon assembly, so
+> I guess I'll set aside some time to use this patch as a base and
+> transition our ucode to boot using it?  Then you guys can build more
+> stuff on top of that.  I'm also happy to let you modify our ucode if
+> you wish :)
+
+There may be legal issues with us touching the Nouveau firmware. But
+as I stated above, the first question is do we want to bother with
+this compatiblity at all?
