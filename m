@@ -1,106 +1,67 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 8/8] serial: tegra: Correct error handling on DMA setup
-Date: Tue, 12 May 2015 10:51:33 +0100
-Message-ID: <5551CD25.4030206@nvidia.com>
-References: <1430835479-6613-1-git-send-email-jonathanh@nvidia.com> <1430835479-6613-9-git-send-email-jonathanh@nvidia.com> <CAAVeFuL=z-xbGT1e_L6+_GQ8aZ0BvNBfmoi65u_7qVHv=tpTbA@mail.gmail.com>
+From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Subject: Re: [RFC PATCH 01/12] drm: Add a new mode flag: DRM_MODE_FLAG_PREFER_ONE_SHOT
+Date: Tue, 12 May 2015 13:31:37 +0200
+Message-ID: <CAKMK7uGdJthGg43qQ7AXMkmbMbsdhC+D6L+ohrkPreTi9cOXfA@mail.gmail.com>
+References: <1431308311-4470-1-git-send-email-markz@nvidia.com>
+	<1431308311-4470-2-git-send-email-markz@nvidia.com>
+	<20150511092743.GO15256@phenom.ffwll.local>
+	<1431362096439.71223@nvidia.com>
+	<20150512063558.GP15256@phenom.ffwll.local>
+	<20150512082300.GA2386@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAVeFuL=z-xbGT1e_L6+_GQ8aZ0BvNBfmoi65u_7qVHv=tpTbA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <20150512082300.GA2386@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jiri Slaby <jslaby-AlSwsSmVLrQ@public.gmane.org>, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 12/05/15 09:39, Alexandre Courbot wrote:
-> On Tue, May 5, 2015 at 11:17 PM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->> Function tegra_uart_dma_channel_allocate() does not check that
->> dma_map_single() mapped the DMA buffer correctly. Add a check for this
->> and appropriate error handling.
+On Tue, May 12, 2015 at 10:23 AM, Thierry Reding
+<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Tue, May 12, 2015 at 08:35:58AM +0200, Daniel Vetter wrote:
+>> On Mon, May 11, 2015 at 04:34:57PM +0000, Mark Zhang wrote:
+>> > I just want to make things easier. If we adding this in panel's meta
+>> > data, it will be harder to make crtc gets this, since normally encoder
+>> > talks with panel and crtc talks with encoder. But yes, adding this in
+>> > panel's metadata makes more sense so if there is a better way to do
+>> > that, I'm happy to do the changes.
 >>
->> Furthermore, if dmaengine_slave_config() (called by
->> tegra_uart_dma_channel_allocate()) fails, then memory allocated/mapped
->> is not freed/unmapped. Therefore, call tegra_uart_dma_channel_free()
->> instead of just dma_release_channel() if  dmaengine_slave_config() fails.
+>> Adding something to the userspace ABI (which you've done here) because the
+>> kernel-internals are designed in an awkward way right now is definitely
+>> the wrong thing to do. With atomic you can easily add a bool
+>> prefer_oneshot to drm_crtc_state to encode this. But I fear that with the
+>> plain crtc helpers this just doesn't work properly. You could add a
+>> driver-private internal in drm_display_mode->private_flags, but that might
+>> clash with drivers existing use of this field.
 >>
->> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  drivers/tty/serial/serial-tegra.c | 51 +++++++++++++++++++++------------------
->>  1 file changed, 28 insertions(+), 23 deletions(-)
->>
->> diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
->> index 96378da9aefc..3b63f103f0c9 100644
->> --- a/drivers/tty/serial/serial-tegra.c
->> +++ b/drivers/tty/serial/serial-tegra.c
->> @@ -949,6 +949,28 @@ static int tegra_uart_hw_init(struct tegra_uart_port *tup)
->>         return 0;
->>  }
->>
->> +static void tegra_uart_dma_channel_free(struct tegra_uart_port *tup,
->> +               bool dma_to_memory)
->> +{
->> +       if (dma_to_memory) {
->> +               dmaengine_terminate_all(tup->rx_dma_chan);
->> +               dma_release_channel(tup->rx_dma_chan);
->> +               dma_free_coherent(tup->uport.dev, TEGRA_UART_RX_DMA_BUFFER_SIZE,
->> +                               tup->rx_dma_buf_virt, tup->rx_dma_buf_phys);
->> +               tup->rx_dma_chan = NULL;
->> +               tup->rx_dma_buf_phys = 0;
->> +               tup->rx_dma_buf_virt = NULL;
->> +       } else {
->> +               dmaengine_terminate_all(tup->tx_dma_chan);
->> +               dma_release_channel(tup->tx_dma_chan);
->> +               dma_unmap_single(tup->uport.dev, tup->tx_dma_buf_phys,
->> +                       UART_XMIT_SIZE, DMA_TO_DEVICE);
->> +               tup->tx_dma_chan = NULL;
->> +               tup->tx_dma_buf_phys = 0;
->> +               tup->tx_dma_buf_virt = NULL;
->> +       }
->> +}
->> +
->>  static int tegra_uart_dma_channel_allocate(struct tegra_uart_port *tup,
->>                         bool dma_to_memory)
->>  {
->> @@ -981,6 +1003,11 @@ static int tegra_uart_dma_channel_allocate(struct tegra_uart_port *tup,
->>                 dma_phys = dma_map_single(tup->uport.dev,
->>                         tup->uport.state->xmit.buf, UART_XMIT_SIZE,
->>                         DMA_TO_DEVICE);
->> +               if (dma_mapping_error(tup->uport.dev, dma_phys)) {
->> +                       dev_err(tup->uport.dev, "dma_map_single tx failed\n");
->> +                       dma_release_channel(dma_chan);
->> +                       return -ENOMEM;
-> 
-> Is -ENOMEM the error code we want to return here?
+>> In any way, this is definitely not something to add to uapi headers. Hence
+>> Nacked-by: me.
+>
+> Are there use-cases where one-shot mode is worse than continuous mode?
+> I'm thinking games that run at full FPS and such. If so, exposing this
+> to userspace is perhaps not a bad idea, albeit not via a mode flag. If
+> userspace had a way to set the preference, it could do so depending on
+> use-case.
 
-I think that it is appropriate as we are unable to map the memory we are
-requesting. I did look at a few other drivers and several return -ENOMEM
-here. I saw others return -EFAULT, but given this is memory related,
-seems ok, unless you have a better suggestion.
+If you have a case with jitter when the pageflips run at not-quite
+60fps (just an example) then I think the kernel should cope with that
+by disabling oneshot mode on its own. At least that's what i915 does.
+Different story once we'll get variable refresh-rate support, but I
+think that's an entirely different beast.
 
-> IIUC dma_buf will be leaked if an error occurs here because it has not
-> been assigned to your structure and will therefore be ignored when
-> tegra_uart_dma_channel_free() is called.
+Also we don't need this as a mode flag, an atomic prop seems better
+suited. Especially since the atomic prop avoids the mode_changed logic
+of the helpers (which we want, no need to flicker when updating such a
+hint), wheres anything that changes the mode will force a full modeset
+by default.
 
-In the original code, if dmaengine_slave_config() failed, then yes there
-would be a memory leak. That should no longer be the case.
+Also if you expose this to userspace, you need userspace to use it
+before merging.
 
-> Since we have a "scrub" label at the end of this function, I think I'd
-> also prefer if this block and the one before could jump to error
-> labels as well for consistency.
-
-Yes I see. I wondered if it would be better to just get rid of the
-"scrub" label since it is only used in one place instead?
-
-By the way, I got a notification from Greg that these are now queued in
-his tty-testing branch [1]. Assuming these are ok, may be I could fix
-that up in a follow-up patch?
-
-> Otherwise, pretty nice series, comprehensive and easy to read.
-
-Thanks!
-Jon
-
-[1]
-http://git.kernel.org/cgit/linux/kernel/git/gregkh/tty.git/log/?h=tty-testing
+drm_display_mode->private_flags still looks like the most suitable place.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
