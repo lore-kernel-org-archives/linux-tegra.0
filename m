@@ -1,51 +1,70 @@
-From: Paul Walmsley <pwalmsley@nvidia.com>
-Subject: Re: "drm: Add reference counting to blob properties" breaks Tegra124
- Jetson TK1 in linux-next
-Date: Tue, 12 May 2015 09:25:48 -0600
-Message-ID: <55521B7C.3030708@nvidia.com>
-References: <55517AE5.30700@nvidia.com>
- <CAPj87rOwzD7-g+GRkGpPXi+ayafmr8E=mbTK3j7cgCAkXCFt2g@mail.gmail.com>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v5 01/21] FROMLIST: clk: tegra: Update struct tegra_clk_pll_params kerneldoc
+Date: Tue, 12 May 2015 13:23:44 -0400
+Message-ID: <1431451444-23155-3-git-send-email-rklein@nvidia.com>
+References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAPj87rOwzD7-g+GRkGpPXi+ayafmr8E=mbTK3j7cgCAkXCFt2g@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Stone <daniel@fooishbar.org>
-Cc: Daniel Stone <daniels@collabora.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Thierry Reding <treding@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1431451444-23155-1-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jim Lin <jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgRGFuaWVsLAoKT24gMDUvMTIvMjAxNSAwMzowNiBBTSwgRGFuaWVsIFN0b25lIHdyb3RlOgo+
-IEhpIFBhdWwsCj4KPiBPbiAxMiBNYXkgMjAxNSBhdCAwNTowMCwgUGF1bCBXYWxtc2xleSA8cHdh
-bG1zbGV5QG52aWRpYS5jb20+IHdyb3RlOgo+PiBUZWdyYTEyNCBKZXRzb24gVEsxIGhhbmdzIGR1
-cmluZyBib290IGluIG5leHQtMjAxNTA1MDggYW5kIGJleW9uZDoKPj4KPj4gaHR0cDovL252dC5w
-d3Nhbi5jb20vZXhwZXJpbWVudGFsL2xpbnV4LW5leHQvdGVzdGxvZ3MvdGVzdF9uZXh0LTIwMTUw
-NTA4LzIwMTUwNTA4MTAxMDE4L2Jvb3QvdGVncmExMjQtamV0c29uLXRrMS90ZWdyYTEyNC1qZXRz
-b24tdGsxL3RlZ3JhX2RlZmNvbmZpZ19sb2cudHh0Cj4+IGh0dHA6Ly9udnQucHdzYW4uY29tL2V4
-cGVyaW1lbnRhbC9saW51eC1uZXh0L3Rlc3Rsb2dzL3Rlc3RfbmV4dC0yMDE1MDUxMS8yMDE1MDUx
-MTAwNDUzMy9ib290L3RlZ3JhMTI0LWpldHNvbi10azEvdGVncmExMjQtamV0c29uLXRrMS90ZWdy
-YV9kZWZjb25maWdfbG9nLnR4dAo+Pgo+PiBSZXZlcnRpbmcgY29tbWl0IDY3MmNiMWQ2YWVjN2Rh
-Mjc5OWFmZDFiNTI5ZDUxMzZkODRlZDI1NjEgKCJkcm06IEFkZAo+PiByZWZlcmVuY2UgY291bnRp
-bmcgdG8gYmxvYiBwcm9wZXJ0aWVzIikgZ2V0cyBpdCBib290aW5nIGFnYWluOgo+Pgo+PiBodHRw
-Oi8vbnZ0LnB3c2FuLmNvbS9wdWIvcHdhbG1zbGV5LXRlc3Rlci90ZXN0bG9ncy90ZXN0XzIwMTUw
-NTExMjA0NzAzXzM4MzgyMzI0MzFjMjYzNmZmNTM5ZjIzNTRjNjMwYzBjYTNkNGI3YWQvMjAxNTA1
-MTEyMDQ3MDMvYm9vdC90ZWdyYTEyNC1qZXRzb24tdGsxL3RlZ3JhMTI0LWpldHNvbi10azEvdGVn
-cmFfZGVmY29uZmlnX2xvZy50eHQKPj4KPj4gSSdtIG5vdCBhIERSTSBleHBlcnQgYnV0IG1heWJl
-IG9uZSBvZiB5b3Uga25vd3Mgd2hhdCdzIGdvaW5nIG9uIGhlcmU/Cj4gVGhpZXJyeSBmb3VuZCBh
-bmQgZml4ZWQgdGhlIHJhdGhlciBzdHVwaWQgYnVnOiBub3QgdXNpbmcgdGhlIGNhY2hlZAo+ICdk
-ZXYnIHZhcmlhYmxlIGluIHRoZSBvbmUgcGxhY2UgaXQgd291bGQndmUgYmVlbiB1c2VmdWwhCj4K
-PiBodHRwOi8vcGFzdGUuZGViaWFuLm5ldC8xNzU1MjIvIGlzIHRoZSBmaXgsIHdoaWNoIGhhcyBi
-ZWVuIHNxdWFzaGVkIGluCj4gdG8gdGhlIGJyYW5jaCBhbmQgc2hvdWxkIGFwcGVhciBpbiAtbmV4
-dCBmcm9tIHRvZGF5Lgo+Cj4gVGhhbmtzIGZvciB0aGUgcmVwb3J0LgoKR3JlYXQhICBUaGFua3Mg
-ZXZlcnlvbmUgZm9yIHRoZSB2ZXJ5IGZhc3QgZml4LgoKCi0gUGF1bAoKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
-cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Benson Leung pointed out that the kerneldoc for this structure has
+become stale. Update the field descriptions to match the structure
+content.
+
+Reported-by: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Acked-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Reviewed-by: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+---
+ drivers/clk/tegra/clk.h |   18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 9da799849e04..a4e6c8180968 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -157,7 +157,7 @@ struct div_nmp {
+ };
+ 
+ /**
+- * struct clk_pll_params - PLL parameters
++ * struct tegra_clk_pll_params - PLL parameters
+  *
+  * @input_min:			Minimum input frequency
+  * @input_max:			Maximum input frequency
+@@ -168,12 +168,24 @@ struct div_nmp {
+  * @base_reg:			PLL base reg offset
+  * @misc_reg:			PLL misc reg offset
+  * @lock_reg:			PLL lock reg offset
+- * @lock_bit_idx:		Bit index for PLL lock status
++ * @lock_mask:			Bitmask for PLL lock status
+  * @lock_enable_bit_idx:	Bit index to enable PLL lock
++ * @iddq_reg:			PLL IDDQ register offset
++ * @iddq_bit_idx:		Bit index to enable PLL IDDQ
++ * @aux_reg:			AUX register offset
++ * @dyn_ramp_reg:		Dynamic ramp control register offset
++ * @ext_misc_reg:		Miscellaneous control register offsets
++ * @pmc_divnm_reg:		n, m divider PMC override register offset (PLLM)
++ * @pmc_divp_reg:		p divider PMC override register offset (PLLM)
++ * @flags:			PLL flags
++ * @stepa_shift:		Dynamic ramp step A field shift
++ * @stepb_shift:		Dynamic ramp step B field shift
+  * @lock_delay:			Delay in us if PLL lock is not used
++ * @max_p:			maximum value for the p divider
++ * @pdiv_tohw:			mapping of p divider to register values
++ * @div_nmp:			offsets and widths on n, m and p fields
+  * @freq_table:			array of frequencies supported by PLL
+  * @fixed_rate:			PLL rate if it is fixed
+- * @flags:			PLL flags
+  *
+  * Flags:
+  * TEGRA_PLL_USE_LOCK - This flag indicated to use lock bits for
+-- 
+1.7.9.5
