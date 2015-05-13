@@ -1,69 +1,323 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: Enable TPM on tegra124 nyan boards
-Date: Wed, 13 May 2015 08:45:16 -0600
-Message-ID: <5553637C.5010506@wwwdotorg.org>
-References: <1431526427-13340-1-git-send-email-sjg@chromium.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1431526427-13340-1-git-send-email-sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 4/6] arm64: tegra: Add NVIDIA P2530 compute module support
+Date: Wed, 13 May 2015 16:57:43 +0200
+Message-ID: <1431529065-20128-4-git-send-email-thierry.reding@gmail.com>
+References: <1431529065-20128-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1431529065-20128-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/13/2015 08:13 AM, Simon Glass wrote:
-> Regenerate the pinmux from the latest tegra-pinmux-scripts.
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-(Dropping most CCs; DT maintainers and lists generally don't get CC'd on 
-simple DT content changes but rather on schema adds/changes and perhaps 
-major DT content changes depending on context)
+The NVIDIA P2530 is a compute module used in several reference designs.
+It features a Tegra210 SoC, 4 GiB of LPDDR4 RAM, 16 GiB eMMC and various
+other essentials. It is typically connected to some base board that
+provides the connectors needed to hook it up to the outside world.
 
-> diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts b/arch/arm/boot/dts/tegra124-nyan-big.dts
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm64/boot/dts/nvidia/tegra210-p2530-e03.dtsi | 285 +++++++++++++++++++++
+ 1 file changed, 285 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra210-p2530-e03.dtsi
 
->   		pinctrl-names = "default";
->   		pinctrl-0 = <&pinmux_default>;
->
-> -		pinmux_default: common {
-> +		state_default: pinmux {
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2530-e03.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2530-e03.dtsi
+new file mode 100644
+index 000000000000..8221f6588397
+--- /dev/null
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2530-e03.dtsi
+@@ -0,0 +1,285 @@
++#include "tegra210.dtsi"
++
++/ {
++	model = "NVIDIA Tegra210 P2530 main board";
++	compatible = "nvidia,p2530-e03", "nvidia,tegra210";
++
++	aliases {
++		rtc0 = "/i2c@0,7000d000/pmic@3c";
++		rtc1 = "/rtc@0,7000e000";
++		serial0 = &uarta;
++	};
++
++	memory {
++		reg = <0x0 0x80000000 0x0 0xc0000000>;
++	};
++
++	/* debug port */
++	serial@0,70006000 {
++		status = "okay";
++	};
++
++	i2c@0,7000d000 {
++		status = "okay";
++		clock-frequency = <400000>;
++
++		pmic: pmic@3c {
++			compatible = "maxim,max77620";
++			reg = <0x3c>;
++			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
++
++			#interrupt-cells = <2>;
++			interrupt-controller;
++
++			#gpio-cells = <2>;
++			gpio-controller;
++
++			maxim,enable-clock32k-out;
++
++			maxim,system-pmic-power-off;
++
++			maxim,hot-die-threshold-temp = <110000>;
++			#thermal-sensor-cells = <0>;
++
++			pinctrl-names = "default";
++			pinctrl-0 = <&max77620_default>;
++
++			gpio-init-names = "default";
++			gpio-init-0 = <&max77620_gpio_default>;
++
++			max77620_default: pinmux@0 {
++				pin_gpio0 {
++					pins = "gpio0";
++					function = "gpio";
++				};
++
++				pin_gpio1 {
++					pins = "gpio1";
++					function = "fps-out";
++					drive-push-pull = <1>;
++					maxim,fps-source = <0>;
++					maxim,fps-power-up-period = <7>;
++					maxim,fps-power-down-period = <0>;
++				};
++
++				pin_gpio2 {
++					pins = "gpio2", "gpio3";
++					function = "fps-out";
++					drive-open-drain = <1>;
++					maxim,fps-source = <0>;
++				};
++
++				pin_gpio4 {
++					pins = "gpio4";
++					function = "32k-out1";
++				};
++
++				pin_gpio5_6_7 {
++					pins = "gpio5", "gpio6", "gpio7";
++					function = "gpio";
++					drive-push-pull = <1>;
++				};
++			};
++
++			max77620_gpio_default: gpio_default {
++				gpio-output-high = <2>;
++			};
++
++			watchdog {
++				maxim,wdt-timeout = <16>;
++				maxim,wdt-clear-time = <13>;
++				status = "disabled";
++				dt-override-status-odm-data = <0x00020000 0x00020000>;
++			};
++
++			fps {
++				#address-cells = <1>;
++				#size-cells = <0>;
++				fps@0 {
++					reg = <0>;
++					maxim,fps-time-period = <2560>;
++					maxim,fps-enable-input = <0>;
++				};
++
++				fps@1 {
++					reg = <1>;
++					maxim,fps-time-period = <2560>;
++					maxim,fps-enable-input = <1>;
++					maxim,enable-sleep;
++				};
++
++				fps@2 {
++					reg = <2>;
++					maxim,fps-enable-input = <0>;
++				};
++			};
++
++			backup-battery {
++				maxim,backup-battery-charging-current = <100>;
++				maxim,backup-battery-charging-voltage = <3000000>;
++				maxim,backup-battery-output-resister = <100>;
++			};
++
++			regulators {
++				in-ldo0-1-supply = <&max77620_sd2>;
++				in-ldo7-8-supply = <&max77620_sd2>;
++
++				max77620_sd0: sd0 {
++					regulator-name = "VDD_SOC";
++					regulator-min-microvolt = <600000>;
++					regulator-max-microvolt = <1400000>;
++					regulator-always-on;
++					regulator-boot-on;
++					maxim,fps-source = <1>;
++					regulator-init-mode = <2>;
++				};
++
++				max77620_sd1: sd1 {
++					regulator-name = "VDD_DDR_1V1_PMIC";
++					regulator-always-on;
++					regulator-boot-on;
++					regulator-init-mode = <2>;
++					maxim,fps-source = <0>;
++				};
++
++				max77620_sd2: sd2 {
++					regulator-name = "VDD_PRE_REG_1V35";
++					regulator-min-microvolt = <1350000>;
++					regulator-max-microvolt = <1350000>;
++					maxim,fps-source = <1>;
++				};
++
++				vdd_1v8: sd3 {
++					regulator-name = "VDD_1V8";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++					regulator-boot-on;
++					maxim,fps-source = <0>;
++					regulator-init-mode = <2>;
++				};
++
++				vdd_sys_1v2: ldo0 {
++					regulator-name = "AVDD_SYS_1V2";
++					regulator-min-microvolt = <1200000>;
++					regulator-max-microvolt = <1200000>;
++					regulator-always-on;
++					regulator-boot-on;
++					maxim,fps-source = <3>;
++				};
++
++				vdd_pex_1v05: ldo1 {
++					regulator-name = "VDD_PEX_1V05";
++					regulator-min-microvolt = <1050000>;
++					regulator-max-microvolt = <1050000>;
++					maxim,fps-source = <3>;
++				};
++
++				vddio_sdmmc: ldo2 {
++					regulator-name = "VDDIO_SDMMC";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <3300000>;
++					maxim,fps-source = <3>;
++				};
++
++				max77620_ldo3: ldo3 {
++					regulator-name = "VDD_CAM_HV";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++					maxim,fps-source = <3>;
++				};
++
++				max77620_ldo4: ldo4 {
++					regulator-name = "VDD_RTC";
++					regulator-min-microvolt = <1250000>;
++					regulator-max-microvolt = <1250000>;
++					regulator-always-on;
++					regulator-boot-on;
++					maxim,fps-source = <0>;
++				};
++
++				max77620_ldo5: ldo5 {
++					regulator-name = "VDD_TS_HV";
++					regulator-min-microvolt = <3300000>;
++					regulator-max-microvolt = <3300000>;
++					maxim,fps-source = <3>;
++				};
++
++				max77620_ldo6: ldo6 {
++					regulator-name = "VDD_TS_1V8";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++					regulator-boot-on;
++					maxim,fps-source = <0>;
++					maxim,fps-power-up-period = <7>;
++					maxim,fps-power-down-period = <0>;
++				};
++
++				avdd_1v05_pll: ldo7 {
++					regulator-name = "AVDD_1V05_PLL";
++					regulator-min-microvolt = <1050000>;
++					regulator-max-microvolt = <1050000>;
++					regulator-always-on;
++					regulator-boot-on;
++					maxim,fps-source = <1>;
++				};
++
++				avdd_1v05: ldo8 {
++					regulator-name = "AVDD_SATA_HDMI_DP_1V05";
++					regulator-min-microvolt = <1050000>;
++					regulator-max-microvolt = <1050000>;
++					maxim,fps-source = <3>;
++				};
++			};
++		};
++	};
++
++	pmc@0,7000e400 {
++		nvidia,invert-interrupt;
++	};
++
++	/* eMMC */
++	sdhci@0,700b0600 {
++		status = "okay";
++		bus-width = <8>;
++		non-removable;
++	};
++
++	clocks {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		clk32k_in: clock@0 {
++			compatible = "fixed-clock";
++			reg = <0>;
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++		};
++	};
++
++	cpus {
++		cpu@0 {
++			enable-method = "psci";
++		};
++
++		cpu@1 {
++			enable-method = "psci";
++		};
++
++		cpu@2 {
++			enable-method = "psci";
++		};
++
++		cpu@3 {
++			enable-method = "psci";
++		};
++	};
++
++	psci {
++		compatible = "arm,psci-0.2";
++		status = "disabled";
++		method = "smc";
++	};
++};
+-- 
+2.3.5
 
-This change will break compilation, since it changes the label name, yet 
-the old name is still referenced in pinctrl-0 above. Same applies in the 
-other file too.
-
-> diff --git a/arch/arm/boot/dts/tegra124-nyan-blaze.dts b/arch/arm/boot/dts/tegra124-nyan-blaze.dts
-
-> @@ -437,18 +437,18 @@
->   			usb_vbus_en0_pn4 {
->   				nvidia,pins = "usb_vbus_en0_pn4";
->   				nvidia,function = "usb";
-> -				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-> +				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
->   				nvidia,tristate = <TEGRA_PIN_DISABLE>;
->   				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-> -				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-> +				nvidia,open-drain = <TEGRA_PIN_ENABLE>;
->   			};
->   			usb_vbus_en1_pn5 {
->   				nvidia,pins = "usb_vbus_en1_pn5";
->   				nvidia,function = "usb";
-> -				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-> +				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
->   				nvidia,tristate = <TEGRA_PIN_DISABLE>;
->   				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-> -				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-> +				nvidia,open-drain = <TEGRA_PIN_ENABLE>;
->   			};
-
-Tomeu, can you comment on those changes? Evidently the pinmux 
-configuration that's you added to the kernel doesn't exactly match the 
-pinmux configuration that you added to tegra-pinmux-scripts. Is the 
-change above correct, or do we need to propagate this change from the 
-kernel DT into tegra-pinmux-scripts, and hence also into the U-Boot 
-pinmux setup table?
-
-My understanding of how these pins are generally used is that open-drain 
-is likely correct. I have no idea whether Tegra should supply the pullup 
-for these pins, or whether the board has a pullup resistor in which case 
-Tegra doesn't need to pull up.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
