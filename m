@@ -1,130 +1,65 @@
-From: Simon Glass <sjg@chromium.org>
-Subject: [PATCH] ARM: tegra: Enable TPM on tegra124 nyan boards
-Date: Wed, 13 May 2015 08:13:47 -0600
-Message-ID: <1431526427-13340-1-git-send-email-sjg@chromium.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Stephen Warren <swarren@nvidia.com>, Simon Glass <sjg@chromium.org>, Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, linux-tegra@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [pinmux scripts PATCH] Support TPM on nyan boards
+Date: Wed, 13 May 2015 08:30:25 -0600
+Message-ID: <55536001.6080901@wwwdotorg.org>
+References: <1431526194-11744-1-git-send-email-sjg@chromium.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1431526194-11744-1-git-send-email-sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Regenerate the pinmux from the latest tegra-pinmux-scripts.
+On 05/13/2015 08:09 AM, Simon Glass wrote:
+> There is a TPM on I2C3, so set up the pinmux for that.
 
-Signed-off-by: Simon Glass <sjg@chromium.org>
----
+[Dropping LKML; they won't have a clue what this patch is about since 
+it's not an in-kernel tool. Adding linux-tegra mailing list since that's 
+where these patches are usually sent. Hence, maintaining quote of the 
+entire patch.]
 
- arch/arm/boot/dts/tegra124-nyan-big.dts   | 22 +++++++++++-----------
- arch/arm/boot/dts/tegra124-nyan-blaze.dts | 30 +++++++++++++++---------------
- 2 files changed, 26 insertions(+), 26 deletions(-)
+This looks reasonable. I'll apply it Friday assuming no objections from 
+anyone (I know some people in Europe are on holiday Thursday and likely 
+left already today).
 
-diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts b/arch/arm/boot/dts/tegra124-nyan-big.dts
-index 2d21253..0eb2b0f 100644
---- a/arch/arm/boot/dts/tegra124-nyan-big.dts
-+++ b/arch/arm/boot/dts/tegra124-nyan-big.dts
-@@ -30,7 +30,7 @@
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&pinmux_default>;
- 
--		pinmux_default: common {
-+		state_default: pinmux {
- 			clk_32k_out_pa0 {
- 				nvidia,pins = "clk_32k_out_pa0";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-@@ -1098,19 +1098,19 @@
- 			};
- 			cam_i2c_scl_pbb1 {
- 				nvidia,pins = "cam_i2c_scl_pbb1";
--				nvidia,function = "rsvd3";
--				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
--				nvidia,tristate = <TEGRA_PIN_ENABLE>;
--				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
--				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,function = "i2c3";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_ENABLE>;
- 			};
- 			cam_i2c_sda_pbb2 {
- 				nvidia,pins = "cam_i2c_sda_pbb2";
--				nvidia,function = "rsvd3";
--				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
--				nvidia,tristate = <TEGRA_PIN_ENABLE>;
--				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
--				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,function = "i2c3";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_ENABLE>;
- 			};
- 			pbb3 {
- 				nvidia,pins = "pbb3";
-diff --git a/arch/arm/boot/dts/tegra124-nyan-blaze.dts b/arch/arm/boot/dts/tegra124-nyan-blaze.dts
-index 0d30c51..1fc0da9 100644
---- a/arch/arm/boot/dts/tegra124-nyan-blaze.dts
-+++ b/arch/arm/boot/dts/tegra124-nyan-blaze.dts
-@@ -26,7 +26,7 @@
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&pinmux_default>;
- 
--		pinmux_default: common {
-+		state_default: pinmux {
- 			clk_32k_out_pa0 {
- 				nvidia,pins = "clk_32k_out_pa0";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-@@ -437,18 +437,18 @@
- 			usb_vbus_en0_pn4 {
- 				nvidia,pins = "usb_vbus_en0_pn4";
- 				nvidia,function = "usb";
--				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
--				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_ENABLE>;
- 			};
- 			usb_vbus_en1_pn5 {
- 				nvidia,pins = "usb_vbus_en1_pn5";
- 				nvidia,function = "usb";
--				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
--				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_ENABLE>;
- 			};
- 			hdmi_int_pn7 {
- 				nvidia,pins = "hdmi_int_pn7";
-@@ -1094,19 +1094,19 @@
- 			};
- 			cam_i2c_scl_pbb1 {
- 				nvidia,pins = "cam_i2c_scl_pbb1";
--				nvidia,function = "rsvd3";
--				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
--				nvidia,tristate = <TEGRA_PIN_ENABLE>;
--				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
--				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,function = "i2c3";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_ENABLE>;
- 			};
- 			cam_i2c_sda_pbb2 {
- 				nvidia,pins = "cam_i2c_sda_pbb2";
--				nvidia,function = "rsvd3";
--				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
--				nvidia,tristate = <TEGRA_PIN_ENABLE>;
--				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
--				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,function = "i2c3";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_ENABLE>;
- 			};
- 			pbb3 {
- 				nvidia,pins = "pbb3";
--- 
-2.2.0.rc0.207.ga3a616c
+> Signed-off-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> ---
+>
+>   configs/nyan-big.board   | 4 ++--
+>   configs/nyan-blaze.board | 4 ++--
+>   2 files changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/configs/nyan-big.board b/configs/nyan-big.board
+> index 6ebe466..18c2e52 100644
+> --- a/configs/nyan-big.board
+> +++ b/configs/nyan-big.board
+> @@ -40,8 +40,8 @@ pins = (
+>       ('ulpi_dir_py1',           'spi1',        None,      'none', False, True,  False, False),
+>       ('ulpi_nxt_py2',           'spi1',        None,      'none', False, False, False, False),
+>       ('ulpi_stp_py3',           'spi1',        None,      'none', False, False, False, False),
+> -    ('cam_i2c_scl_pbb1',       'rsvd3',       None,      'down', True,  False, False, False),
+> -    ('cam_i2c_sda_pbb2',       'rsvd3',       None,      'down', True,  False, False, False),
+> +    ('cam_i2c_scl_pbb1',       'i2c3',        None,      'none', False, True,  True,  False),
+> +    ('cam_i2c_sda_pbb2',       'i2c3',        None,      'none', False, True,  True,  False),
+>       ('cam_mclk_pcc0',          'vi',          None,      'down', True,  False, False, False),
+>       ('pbb0',                   'vgp6',        None,      'down', True,  False, False, False),
+>       ('pbb3',                   'vgp3',        None,      'down', True,  False, False, False),
+> diff --git a/configs/nyan-blaze.board b/configs/nyan-blaze.board
+> index 39a2022..eee472f 100644
+> --- a/configs/nyan-blaze.board
+> +++ b/configs/nyan-blaze.board
+> @@ -40,8 +40,8 @@ pins = (
+>       ('ulpi_dir_py1',           'spi1',        None,      'none', False, True,  False, False),
+>       ('ulpi_nxt_py2',           'spi1',        None,      'none', False, False, False, False),
+>       ('ulpi_stp_py3',           'spi1',        None,      'none', False, False, False, False),
+> -    ('cam_i2c_scl_pbb1',       'rsvd3',       None,      'down', True,  False, False, False),
+> -    ('cam_i2c_sda_pbb2',       'rsvd3',       None,      'down', True,  False, False, False),
+> +    ('cam_i2c_scl_pbb1',       'i2c3',        None,      'none', False, True,  True,  False),
+> +    ('cam_i2c_sda_pbb2',       'i2c3',        None,      'none', False, True,  True,  False),
+>       ('cam_mclk_pcc0',          'vi',          None,      'down', True,  False, False, False),
+>       ('pbb0',                   'vgp6',        None,      'down', True,  False, False, False),
+>       ('pbb3',                   'vgp3',        None,      'down', True,  False, False, False),
+>
