@@ -1,1318 +1,328 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 5/6] arm64: tegra: Add NVIDIA P2595 base board support
-Date: Wed, 13 May 2015 16:57:44 +0200
-Message-ID: <1431529065-20128-5-git-send-email-thierry.reding@gmail.com>
+Subject: [PATCH 2/6] arm64: tegra: Add NVIDIA Tegra132 Norrin support
+Date: Wed, 13 May 2015 16:57:41 +0200
+Message-ID: <1431529065-20128-2-git-send-email-thierry.reding@gmail.com>
 References: <1431529065-20128-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1431529065-20128-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The NVIDIA P2595 base board is used in several reference designs and
-provides the connectors to connect the P2530 compute module to the
-outside world. It features a USB 3.0 network adapter, a USB 3.0 port,
-an HDMI port, a SATA port, an audio codec, a microSD card slot and a
-display connector, among others.
+Norrin is a Tegra132-based FFD used as reference platform within NVIDIA.
 
+Based on work by Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Cc: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra210-p2595-a02.dtsi | 1506 ++++++++++++++++++++
- 1 file changed, 1506 insertions(+)
- create mode 100644 arch/arm64/boot/dts/nvidia/tegra210-p2595-a02.dtsi
+ arch/arm64/boot/dts/nvidia/Makefile            |    2 +
+ arch/arm64/boot/dts/nvidia/tegra132-norrin.dts | 1130 ++++++++++++++++++++++++
+ 2 files changed, 1132 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2595-a02.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2595-a02.dtsi
+diff --git a/arch/arm64/boot/dts/nvidia/Makefile b/arch/arm64/boot/dts/nvidia/Makefile
+index fec69f46d65b..f36ea6b6c6d6 100644
+--- a/arch/arm64/boot/dts/nvidia/Makefile
++++ b/arch/arm64/boot/dts/nvidia/Makefile
+@@ -1,2 +1,4 @@
++dtb-$(CONFIG_ARCH_TEGRA) += tegra132-norrin.dtb
++
+ always		:= $(dtb-y)
+ clean-files	:= *.dtb
+diff --git a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts b/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
 new file mode 100644
-index 000000000000..1a3e4cf7f286
+index 000000000000..7dfe1c085966
 --- /dev/null
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2595-a02.dtsi
-@@ -0,0 +1,1506 @@
++++ b/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
+@@ -0,0 +1,1130 @@
++/dts-v1/;
++
++#include <dt-bindings/input/input.h>
++#include "tegra132.dtsi"
++
 +/ {
-+	model = "NVIDIA Tegra210 P2595 I/O board (A02)";
-+	compatible = "nvidia,p2595-a02", "nvidia,tegra210";
++	model = "NVIDIA Tegra132 Norrin";
++	compatible = "nvidia,norrin", "nvidia,tegra132", "nvidia,tegra124";
 +
 +	aliases {
-+		rtc0 = "/i2c@0,7000d000/pmic@3c";
++		rtc0 = "/i2c@0,7000d000/as3722@40";
 +		rtc1 = "/rtc@0,7000e000";
-+		serial0 = &uarta;
 +	};
 +
 +	memory {
-+		reg = <0x0 0x80000000 0x0 0xc0000000>;
-+	};
-+
-+	pcie-controller@0,01003000 {
-+		status = "disabled";
-+
-+		avdd-pll-uerefe-supply = <&avdd_1v05_pll>;
-+		hvddio-pex-supply = <&vdd_1v8>;
-+		dvddio-pex-supply = <&vdd_pex_1v05>;
-+		dvdd-pex-pll-supply = <&vdd_pex_1v05>;
-+		hvdd-pex-pll-e-supply = <&vdd_1v8>;
-+		vddio-pex-ctl-supply = <&vdd_1v8>;
-+
-+		pci@1,0 {
-+			status = "okay";
-+		};
-+
-+		pci@2,0 {
-+			status = "okay";
-+		};
++		device_type = "memory";
++		reg = <0x0 0x80000000 0x0 0x80000000>;
 +	};
 +
 +	host1x@0,50000000 {
-+		dpaux@0,54040000 {
-+			status = "okay";
-+		};
++		hdmi@0,54280000 {
++			status = "disabled";
 +
-+		sor@0,54580000 {
-+			status = "okay";
-+
-+			avdd-io-supply = <&avdd_1v05>;
-+			vdd-pll-supply = <&vdd_1v8>;
-+			hdmi-supply = <&vdd_hdmi>;
++			vdd-supply = <&vdd_3v3_hdmi>;
++			pll-supply = <&vdd_hdmi_pll>;
++			hdmi-supply = <&vdd_5v0_hdmi>;
 +
 +			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
-+			nvidia,hpd-gpio = <&gpio TEGRA_GPIO(CC, 1)
-+					   GPIO_ACTIVE_LOW>;
++			nvidia,hpd-gpio =
++				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
++		};
++
++		sor@0,54540000 {
++			status = "okay";
++
++			nvidia,dpaux = <&dpaux>;
++			nvidia,panel = <&panel>;
++		};
++
++		dpaux: dpaux@0,545c0000 {
++			vdd-supply = <&vdd_3v3_panel>;
++			status = "okay";
 +		};
 +	};
 +
-+	pinmux: pinmux@0,70000868 {
-+		pinctrl-names = "boot";
-+		pinctrl-0 = <&state_boot>;
++	gpu@0,57000000 {
++		status = "okay";
 +
-+		state_boot: pinmux {
-+			pex_l0_rst_n_pa0 {
-+				nvidia,pins = "pex_l0_rst_n_pa0";
-+				nvidia,function = "pe0";
++		vdd-supply = <&vdd_gpu>;
++	};
++
++	pinmux@0,70000868 {
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinmux_default>;
++
++		pinmux_default: pinmux@0 {
++			dap_mclk1_pw4 {
++				nvidia,pins = "dap_mclk1_pw4";
++				nvidia,function = "extperiph1";
 +				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
 +				nvidia,tristate = <TEGRA_PIN_DISABLE>;
 +				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,io-hv = <TEGRA_PIN_ENABLE>;
 +			};
-+			pex_l0_clkreq_n_pa1 {
-+				nvidia,pins = "pex_l0_clkreq_n_pa1";
-+				nvidia,function = "pe0";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,io-hv = <TEGRA_PIN_ENABLE>;
-+			};
-+			pex_wake_n_pa2 {
-+				nvidia,pins = "pex_wake_n_pa2";
-+				nvidia,function = "pe";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,io-hv = <TEGRA_PIN_ENABLE>;
-+			};
-+			pex_l1_rst_n_pa3 {
-+				nvidia,pins = "pex_l1_rst_n_pa3";
-+				nvidia,function = "pe1";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,io-hv = <TEGRA_PIN_ENABLE>;
-+			};
-+			pex_l1_clkreq_n_pa4 {
-+				nvidia,pins = "pex_l1_clkreq_n_pa4";
-+				nvidia,function = "pe1";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,io-hv = <TEGRA_PIN_ENABLE>;
-+			};
-+			sata_led_active_pa5 {
-+				nvidia,pins = "sata_led_active_pa5";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			pa6 {
-+				nvidia,pins = "pa6";
-+				nvidia,function = "rsvd1";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			dap1_fs_pb0 {
-+				nvidia,pins = "dap1_fs_pb0";
++			dap2_din_pa4 {
++				nvidia,pins = "dap2_din_pa4";
 +				nvidia,function = "i2s1";
 +				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
 +				nvidia,tristate = <TEGRA_PIN_DISABLE>;
 +				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
 +			};
-+			dap1_din_pb1 {
-+				nvidia,pins = "dap1_din_pb1";
++			dap2_dout_pa5 {
++				nvidia,pins = "dap2_dout_pa5",
++					      "dap2_fs_pa2",
++					      "dap2_sclk_pa3";
 +				nvidia,function = "i2s1";
 +				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
 +				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
 +			};
-+			dap1_dout_pb2 {
-+				nvidia,pins = "dap1_dout_pb2";
-+				nvidia,function = "i2s1";
++			dap3_dout_pp2 {
++				nvidia,pins = "dap3_dout_pp2";
++				nvidia,function = "i2s2";
++				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++			dvfs_pwm_px0 {
++				nvidia,pins = "dvfs_pwm_px0",
++					      "dvfs_clk_px2";
++				nvidia,function = "cldvfs";
 +				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
 +				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			dap1_sclk_pb3 {
-+				nvidia,pins = "dap1_sclk_pb3";
-+				nvidia,function = "i2s1";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			spi2_mosi_pb4 {
-+				nvidia,pins = "spi2_mosi_pb4";
-+				nvidia,function = "rsvd2";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
 +				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
 +			};
-+			spi2_miso_pb5 {
-+				nvidia,pins = "spi2_miso_pb5";
-+				nvidia,function = "rsvd2";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			spi2_sck_pb6 {
-+				nvidia,pins = "spi2_sck_pb6";
-+				nvidia,function = "rsvd2";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			spi2_cs0_pb7 {
-+				nvidia,pins = "spi2_cs0_pb7";
-+				nvidia,function = "rsvd2";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			spi1_mosi_pc0 {
-+				nvidia,pins = "spi1_mosi_pc0";
++			ulpi_clk_py0 {
++				nvidia,pins = "ulpi_clk_py0",
++					      "ulpi_nxt_py2",
++					      "ulpi_stp_py3";
 +				nvidia,function = "spi1";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
 +				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
 +			};
-+			spi1_miso_pc1 {
-+				nvidia,pins = "spi1_miso_pc1";
++			ulpi_dir_py1 {
++				nvidia,pins = "ulpi_dir_py1";
 +				nvidia,function = "spi1";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			spi1_sck_pc2 {
-+				nvidia,pins = "spi1_sck_pc2";
-+				nvidia,function = "spi1";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			spi1_cs0_pc3 {
-+				nvidia,pins = "spi1_cs0_pc3";
-+				nvidia,function = "spi1";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			spi1_cs1_pc4 {
-+				nvidia,pins = "spi1_cs1_pc4";
-+				nvidia,function = "spi1";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			spi4_sck_pc5 {
-+				nvidia,pins = "spi4_sck_pc5";
-+				nvidia,function = "spi4";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			spi4_cs0_pc6 {
-+				nvidia,pins = "spi4_cs0_pc6";
-+				nvidia,function = "spi4";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			spi4_mosi_pc7 {
-+				nvidia,pins = "spi4_mosi_pc7";
-+				nvidia,function = "spi4";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			spi4_miso_pd0 {
-+				nvidia,pins = "spi4_miso_pd0";
-+				nvidia,function = "spi4";
 +				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
 +				nvidia,tristate = <TEGRA_PIN_DISABLE>;
 +				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
 +			};
-+			uart3_tx_pd1 {
-+				nvidia,pins = "uart3_tx_pd1";
-+				nvidia,function = "uartc";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			uart3_rx_pd2 {
-+				nvidia,pins = "uart3_rx_pd2";
-+				nvidia,function = "uartc";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			uart3_rts_pd3 {
-+				nvidia,pins = "uart3_rts_pd3";
-+				nvidia,function = "uartc";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			uart3_cts_pd4 {
-+				nvidia,pins = "uart3_cts_pd4";
-+				nvidia,function = "uartc";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			dmic1_clk_pe0 {
-+				nvidia,pins = "dmic1_clk_pe0";
-+				nvidia,function = "dmic1";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			dmic1_dat_pe1 {
-+				nvidia,pins = "dmic1_dat_pe1";
-+				nvidia,function = "dmic1";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			dmic2_clk_pe2 {
-+				nvidia,pins = "dmic2_clk_pe2";
-+				nvidia,function = "dmic2";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			dmic2_dat_pe3 {
-+				nvidia,pins = "dmic2_dat_pe3";
-+				nvidia,function = "dmic2";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			dmic3_clk_pe4 {
-+				nvidia,pins = "dmic3_clk_pe4";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			dmic3_dat_pe5 {
-+				nvidia,pins = "dmic3_dat_pe5";
-+				nvidia,function = "rsvd2";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			pe6 {
-+				nvidia,pins = "pe6";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			pe7 {
-+				nvidia,pins = "pe7";
-+				nvidia,function = "pwm3";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			gen3_i2c_scl_pf0 {
-+				nvidia,pins = "gen3_i2c_scl_pf0";
++			cam_i2c_scl_pbb1 {
++				nvidia,pins = "cam_i2c_scl_pbb1",
++					      "cam_i2c_sda_pbb2";
 +				nvidia,function = "i2c3";
 +				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
 +				nvidia,tristate = <TEGRA_PIN_DISABLE>;
 +				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,io-hv = <TEGRA_PIN_DISABLE>;
++				nvidia,lock = <TEGRA_PIN_DISABLE>;
++				nvidia,open-drain = <TEGRA_PIN_ENABLE>;
 +			};
-+			gen3_i2c_sda_pf1 {
-+				nvidia,pins = "gen3_i2c_sda_pf1";
-+				nvidia,function = "i2c3";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,io-hv = <TEGRA_PIN_DISABLE>;
-+			};
-+			uart2_tx_pg0 {
-+				nvidia,pins = "uart2_tx_pg0";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			uart2_rx_pg1 {
-+				nvidia,pins = "uart2_rx_pg1";
-+				nvidia,function = "uartb";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			uart2_rts_pg2 {
-+				nvidia,pins = "uart2_rts_pg2";
-+				nvidia,function = "rsvd2";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			uart2_cts_pg3 {
-+				nvidia,pins = "uart2_cts_pg3";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			wifi_en_ph0 {
-+				nvidia,pins = "wifi_en_ph0";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			wifi_rst_ph1 {
-+				nvidia,pins = "wifi_rst_ph1";
-+				nvidia,function = "rsvd0";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			wifi_wake_ap_ph2 {
-+				nvidia,pins = "wifi_wake_ap_ph2";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			ap_wake_bt_ph3 {
-+				nvidia,pins = "ap_wake_bt_ph3";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			bt_rst_ph4 {
-+				nvidia,pins = "bt_rst_ph4";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			bt_wake_ap_ph5 {
-+				nvidia,pins = "bt_wake_ap_ph5";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			ph6 {
-+				nvidia,pins = "ph6";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			ap_wake_nfc_ph7 {
-+				nvidia,pins = "ap_wake_nfc_ph7";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			nfc_en_pi0 {
-+				nvidia,pins = "nfc_en_pi0";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			nfc_int_pi1 {
-+				nvidia,pins = "nfc_int_pi1";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			gps_en_pi2 {
-+				nvidia,pins = "gps_en_pi2";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			gps_rst_pi3 {
-+				nvidia,pins = "gps_rst_pi3";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			uart4_tx_pi4 {
-+				nvidia,pins = "uart4_tx_pi4";
-+				nvidia,function = "uartd";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			uart4_rx_pi5 {
-+				nvidia,pins = "uart4_rx_pi5";
-+				nvidia,function = "uartd";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			uart4_rts_pi6 {
-+				nvidia,pins = "uart4_rts_pi6";
-+				nvidia,function = "uartd";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			uart4_cts_pi7 {
-+				nvidia,pins = "uart4_cts_pi7";
-+				nvidia,function = "uartd";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			gen1_i2c_sda_pj0 {
-+				nvidia,pins = "gen1_i2c_sda_pj0";
-+				nvidia,function = "i2c1";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,io-hv = <TEGRA_PIN_DISABLE>;
-+			};
-+			gen1_i2c_scl_pj1 {
-+				nvidia,pins = "gen1_i2c_scl_pj1";
-+				nvidia,function = "i2c1";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,io-hv = <TEGRA_PIN_DISABLE>;
-+			};
-+			gen2_i2c_scl_pj2 {
-+				nvidia,pins = "gen2_i2c_scl_pj2";
++			gen2_i2c_scl_pt5 {
++				nvidia,pins = "gen2_i2c_scl_pt5",
++					      "gen2_i2c_sda_pt6";
 +				nvidia,function = "i2c2";
 +				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
 +				nvidia,tristate = <TEGRA_PIN_DISABLE>;
 +				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,io-hv = <TEGRA_PIN_ENABLE>;
++				nvidia,lock = <TEGRA_PIN_DISABLE>;
++				nvidia,open-drain = <TEGRA_PIN_ENABLE>;
 +			};
-+			gen2_i2c_sda_pj3 {
-+				nvidia,pins = "gen2_i2c_sda_pj3";
-+				nvidia,function = "i2c2";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,io-hv = <TEGRA_PIN_ENABLE>;
-+			};
-+			dap4_fs_pj4 {
-+				nvidia,pins = "dap4_fs_pj4";
-+				nvidia,function = "i2s4b";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			dap4_din_pj5 {
-+				nvidia,pins = "dap4_din_pj5";
-+				nvidia,function = "i2s4b";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			dap4_dout_pj6 {
-+				nvidia,pins = "dap4_dout_pj6";
-+				nvidia,function = "i2s4b";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			dap4_sclk_pj7 {
-+				nvidia,pins = "dap4_sclk_pj7";
-+				nvidia,function = "i2s4b";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			pk0 {
-+				nvidia,pins = "pk0";
-+				nvidia,function = "i2s5b";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			pk1 {
-+				nvidia,pins = "pk1";
-+				nvidia,function = "i2s5b";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			pk2 {
-+				nvidia,pins = "pk2";
-+				nvidia,function = "i2s5b";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			pk3 {
-+				nvidia,pins = "pk3";
-+				nvidia,function = "i2s5b";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			pk4 {
-+				nvidia,pins = "pk4";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			pk5 {
-+				nvidia,pins = "pk5";
++			pj7 {
++				nvidia,pins = "pj7";
++				nvidia,function = "uartd";
 +				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
 +				nvidia,tristate = <TEGRA_PIN_DISABLE>;
 +				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
 +			};
-+			pk6 {
-+				nvidia,pins = "pk6";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++			spdif_in_pk6 {
++				nvidia,pins = "spdif_in_pk6";
++				nvidia,function = "spdif";
++				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
 +				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
 +			};
 +			pk7 {
 +				nvidia,pins = "pk7";
++				nvidia,function = "uartd";
 +				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
 +				nvidia,tristate = <TEGRA_PIN_DISABLE>;
 +				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
 +			};
-+			pl0 {
-+				nvidia,pins = "pl0";
++			pg4 {
++				nvidia,pins = "pg4",
++					      "pg5",
++					      "pg6",
++					      "pi3";
++				nvidia,function = "spi4";
 +				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
 +				nvidia,tristate = <TEGRA_PIN_DISABLE>;
 +				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
 +			};
-+			pl1 {
-+				nvidia,pins = "pl1";
-+				nvidia,function = "soc";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			sdmmc1_clk_pm0 {
-+				nvidia,pins = "sdmmc1_clk_pm0";
-+				nvidia,function = "sdmmc1";
++			pg7 {
++				nvidia,pins = "pg7";
++				nvidia,function = "spi4";
 +				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
 +				nvidia,tristate = <TEGRA_PIN_DISABLE>;
 +				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
 +			};
-+			sdmmc1_cmd_pm1 {
-+				nvidia,pins = "sdmmc1_cmd_pm1";
-+				nvidia,function = "sdmmc1";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			sdmmc1_dat3_pm2 {
-+				nvidia,pins = "sdmmc1_dat3_pm2";
-+				nvidia,function = "sdmmc1";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			sdmmc1_dat2_pm3 {
-+				nvidia,pins = "sdmmc1_dat2_pm3";
-+				nvidia,function = "sdmmc1";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			sdmmc1_dat1_pm4 {
-+				nvidia,pins = "sdmmc1_dat1_pm4";
-+				nvidia,function = "sdmmc1";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			sdmmc1_dat0_pm5 {
-+				nvidia,pins = "sdmmc1_dat0_pm5";
-+				nvidia,function = "sdmmc1";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			sdmmc3_clk_pp0 {
-+				nvidia,pins = "sdmmc3_clk_pp0";
-+				nvidia,function = "sdmmc3";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			sdmmc3_cmd_pp1 {
-+				nvidia,pins = "sdmmc3_cmd_pp1";
-+				nvidia,function = "sdmmc3";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			sdmmc3_dat3_pp2 {
-+				nvidia,pins = "sdmmc3_dat3_pp2";
-+				nvidia,function = "sdmmc3";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			sdmmc3_dat2_pp3 {
-+				nvidia,pins = "sdmmc3_dat2_pp3";
-+				nvidia,function = "sdmmc3";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			sdmmc3_dat1_pp4 {
-+				nvidia,pins = "sdmmc3_dat1_pp4";
-+				nvidia,function = "sdmmc3";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			sdmmc3_dat0_pp5 {
-+				nvidia,pins = "sdmmc3_dat0_pp5";
-+				nvidia,function = "sdmmc3";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			cam1_mclk_ps0 {
-+				nvidia,pins = "cam1_mclk_ps0";
-+				nvidia,function = "extperiph3";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			cam2_mclk_ps1 {
-+				nvidia,pins = "cam2_mclk_ps1";
-+				nvidia,function = "extperiph3";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			cam_i2c_scl_ps2 {
-+				nvidia,pins = "cam_i2c_scl_ps2";
-+				nvidia,function = "i2cvi";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,io-hv = <TEGRA_PIN_DISABLE>;
-+			};
-+			cam_i2c_sda_ps3 {
-+				nvidia,pins = "cam_i2c_sda_ps3";
-+				nvidia,function = "i2cvi";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,io-hv = <TEGRA_PIN_DISABLE>;
-+			};
-+			cam_rst_ps4 {
-+				nvidia,pins = "cam_rst_ps4";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			cam_af_en_ps5 {
-+				nvidia,pins = "cam_af_en_ps5";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			cam_flash_en_ps6 {
-+				nvidia,pins = "cam_flash_en_ps6";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			cam1_pwdn_ps7 {
-+				nvidia,pins = "cam1_pwdn_ps7";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			cam2_pwdn_pt0 {
-+				nvidia,pins = "cam2_pwdn_pt0";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			cam1_strobe_pt1 {
-+				nvidia,pins = "cam1_strobe_pt1";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			uart1_tx_pu0 {
-+				nvidia,pins = "uart1_tx_pu0";
-+				nvidia,function = "uarta";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			uart1_rx_pu1 {
-+				nvidia,pins = "uart1_rx_pu1";
-+				nvidia,function = "uarta";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			uart1_rts_pu2 {
-+				nvidia,pins = "uart1_rts_pu2";
-+				nvidia,function = "uarta";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			uart1_cts_pu3 {
-+				nvidia,pins = "uart1_cts_pu3";
-+				nvidia,function = "uarta";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			lcd_bl_pwm_pv0 {
-+				nvidia,pins = "lcd_bl_pwm_pv0";
-+				nvidia,function = "pwm0";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			lcd_bl_en_pv1 {
-+				nvidia,pins = "lcd_bl_en_pv1";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			lcd_rst_pv2 {
-+				nvidia,pins = "lcd_rst_pv2";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			lcd_gpio1_pv3 {
-+				nvidia,pins = "lcd_gpio1_pv3";
-+				nvidia,function = "rsvd1";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			lcd_gpio2_pv4 {
-+				nvidia,pins = "lcd_gpio2_pv4";
++			ph1 {
++				nvidia,pins = "ph1";
 +				nvidia,function = "pwm1";
 +				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
 +				nvidia,tristate = <TEGRA_PIN_DISABLE>;
 +				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
 +			};
-+			ap_ready_pv5 {
-+				nvidia,pins = "ap_ready_pv5";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			touch_rst_pv6 {
-+				nvidia,pins = "touch_rst_pv6";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			touch_clk_pv7 {
-+				nvidia,pins = "touch_clk_pv7";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			modem_wake_ap_px0 {
-+				nvidia,pins = "modem_wake_ap_px0";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			touch_int_px1 {
-+				nvidia,pins = "touch_int_px1";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			motion_int_px2 {
-+				nvidia,pins = "motion_int_px2";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			als_prox_int_px3 {
-+				nvidia,pins = "als_prox_int_px3";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			temp_alert_px4 {
-+				nvidia,pins = "temp_alert_px4";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			button_power_on_px5 {
-+				nvidia,pins = "button_power_on_px5";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			button_vol_up_px6 {
-+				nvidia,pins = "button_vol_up_px6";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			button_vol_down_px7 {
-+				nvidia,pins = "button_vol_down_px7";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			button_slide_sw_py0 {
-+				nvidia,pins = "button_slide_sw_py0";
-+				nvidia,function = "rsvd0";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			button_home_py1 {
-+				nvidia,pins = "button_home_py1";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			lcd_te_py2 {
-+				nvidia,pins = "lcd_te_py2";
-+				nvidia,function = "displaya";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			pwr_i2c_scl_py3 {
-+				nvidia,pins = "pwr_i2c_scl_py3";
-+				nvidia,function = "i2cpmu";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,io-hv = <TEGRA_PIN_DISABLE>;
-+			};
-+			pwr_i2c_sda_py4 {
-+				nvidia,pins = "pwr_i2c_sda_py4";
-+				nvidia,function = "i2cpmu";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,io-hv = <TEGRA_PIN_DISABLE>;
-+			};
-+			clk_32k_out_py5 {
-+				nvidia,pins = "clk_32k_out_py5";
++			pk0 {
++				nvidia,pins = "pk0",
++					      "kb_row15_ps7",
++					      "clk_32k_out_pa0";
 +				nvidia,function = "soc";
 +				nvidia,pull = <TEGRA_PIN_PULL_UP>;
 +				nvidia,tristate = <TEGRA_PIN_DISABLE>;
 +				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
 +			};
-+			pz0 {
-+				nvidia,pins = "pz0";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
++			sdmmc1_clk_pz0 {
++				nvidia,pins = "sdmmc1_clk_pz0";
++				nvidia,function = "sdmmc1";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
 +				nvidia,tristate = <TEGRA_PIN_DISABLE>;
 +				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
 +			};
-+			pz1 {
-+				nvidia,pins = "pz1";
++			sdmmc1_cmd_pz1 {
++				nvidia,pins = "sdmmc1_cmd_pz1",
++					      "sdmmc1_dat0_py7",
++					      "sdmmc1_dat1_py6",
++					      "sdmmc1_dat2_py5",
++					      "sdmmc1_dat3_py4";
 +				nvidia,function = "sdmmc1";
 +				nvidia,pull = <TEGRA_PIN_PULL_UP>;
 +				nvidia,tristate = <TEGRA_PIN_DISABLE>;
 +				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
 +			};
-+			pz2 {
-+				nvidia,pins = "pz2";
++			sdmmc3_clk_pa6 {
++				nvidia,pins = "sdmmc3_clk_pa6";
++				nvidia,function = "sdmmc3";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++			sdmmc3_cmd_pa7 {
++				nvidia,pins = "sdmmc3_cmd_pa7",
++					      "sdmmc3_dat0_pb7",
++					      "sdmmc3_dat1_pb6",
++					      "sdmmc3_dat2_pb5",
++					      "sdmmc3_dat3_pb4",
++					      "kb_col4_pq4",
++					      "sdmmc3_clk_lb_out_pee4",
++					      "sdmmc3_clk_lb_in_pee5",
++					      "sdmmc3_cd_n_pv2";
++				nvidia,function = "sdmmc3";
++				nvidia,pull = <TEGRA_PIN_PULL_UP>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++			sdmmc4_clk_pcc4 {
++				nvidia,pins = "sdmmc4_clk_pcc4";
++				nvidia,function = "sdmmc4";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++			sdmmc4_cmd_pt7 {
++				nvidia,pins = "sdmmc4_cmd_pt7",
++					      "sdmmc4_dat0_paa0",
++					      "sdmmc4_dat1_paa1",
++					      "sdmmc4_dat2_paa2",
++					      "sdmmc4_dat3_paa3",
++					      "sdmmc4_dat4_paa4",
++					      "sdmmc4_dat5_paa5",
++					      "sdmmc4_dat6_paa6",
++					      "sdmmc4_dat7_paa7";
++				nvidia,function = "sdmmc4";
++				nvidia,pull = <TEGRA_PIN_PULL_UP>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++			mic_det_l {
++				nvidia,pins = "kb_row7_pr7";
 +				nvidia,function = "rsvd2";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			pz3 {
-+				nvidia,pins = "pz3";
-+				nvidia,function = "rsvd1";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			pz4 {
-+				nvidia,pins = "pz4";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			pz5 {
-+				nvidia,pins = "pz5";
-+				nvidia,function = "soc";
 +				nvidia,pull = <TEGRA_PIN_PULL_UP>;
 +				nvidia,tristate = <TEGRA_PIN_DISABLE>;
 +				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
 +			};
-+			dap2_fs_paa0 {
-+				nvidia,pins = "dap2_fs_paa0";
-+				nvidia,function = "i2s2";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			dap2_sclk_paa1 {
-+				nvidia,pins = "dap2_sclk_paa1";
-+				nvidia,function = "i2s2";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			dap2_din_paa2 {
-+				nvidia,pins = "dap2_din_paa2";
-+				nvidia,function = "i2s2";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			dap2_dout_paa3 {
-+				nvidia,pins = "dap2_dout_paa3";
-+				nvidia,function = "i2s2";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			aud_mclk_pbb0 {
-+				nvidia,pins = "aud_mclk_pbb0";
-+				nvidia,function = "aud";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			dvfs_pwm_pbb1 {
-+				nvidia,pins = "dvfs_pwm_pbb1";
-+				nvidia,function = "cldvfs";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			dvfs_clk_pbb2 {
-+				nvidia,pins = "dvfs_clk_pbb2";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			gpio_x1_aud_pbb3 {
-+				nvidia,pins = "gpio_x1_aud_pbb3";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			gpio_x3_aud_pbb4 {
-+				nvidia,pins = "gpio_x3_aud_pbb4";
-+				nvidia,function = "rsvd0";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			hdmi_cec_pcc0 {
-+				nvidia,pins = "hdmi_cec_pcc0";
-+				nvidia,function = "cec";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,io-hv = <TEGRA_PIN_ENABLE>;
-+			};
-+			hdmi_int_dp_hpd_pcc1 {
-+				nvidia,pins = "hdmi_int_dp_hpd_pcc1";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,io-hv = <TEGRA_PIN_DISABLE>;
-+			};
-+			spdif_out_pcc2 {
-+				nvidia,pins = "spdif_out_pcc2";
-+				nvidia,function = "rsvd1";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			spdif_in_pcc3 {
-+				nvidia,pins = "spdif_in_pcc3";
-+				nvidia,function = "rsvd1";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			usb_vbus_en0_pcc4 {
-+				nvidia,pins = "usb_vbus_en0_pcc4";
-+				nvidia,function = "usb";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,io-hv = <TEGRA_PIN_ENABLE>;
-+			};
-+			usb_vbus_en1_pcc5 {
-+				nvidia,pins = "usb_vbus_en1_pcc5";
-+				nvidia,function = "rsvd1";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,io-hv = <TEGRA_PIN_DISABLE>;
-+			};
-+			dp_hpd0_pcc6 {
-+				nvidia,pins = "dp_hpd0_pcc6";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			pcc7 {
-+				nvidia,pins = "pcc7";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,io-hv = <TEGRA_PIN_DISABLE>;
-+			};
-+			spi2_cs1_pdd0 {
-+				nvidia,pins = "spi2_cs1_pdd0";
-+				nvidia,function = "rsvd1";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			qspi_sck_pee0 {
-+				nvidia,pins = "qspi_sck_pee0";
-+				nvidia,function = "rsvd1";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			qspi_cs_n_pee1 {
-+				nvidia,pins = "qspi_cs_n_pee1";
-+				nvidia,function = "rsvd1";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			qspi_io0_pee2 {
-+				nvidia,pins = "qspi_io0_pee2";
-+				nvidia,function = "rsvd1";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			qspi_io1_pee3 {
-+				nvidia,pins = "qspi_io1_pee3";
-+				nvidia,function = "rsvd1";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			qspi_io2_pee4 {
-+				nvidia,pins = "qspi_io2_pee4";
-+				nvidia,function = "rsvd1";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			qspi_io3_pee5 {
-+				nvidia,pins = "qspi_io3_pee5";
-+				nvidia,function = "rsvd1";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			core_pwr_req {
-+				nvidia,pins = "core_pwr_req";
-+				nvidia,function = "core";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			cpu_pwr_req {
-+				nvidia,pins = "cpu_pwr_req";
-+				nvidia,function = "cpu";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+			};
-+			pwr_int_n {
-+				nvidia,pins = "pwr_int_n";
-+				nvidia,function = "pmi";
++			kb_row10_ps2 {
++				nvidia,pins = "kb_row10_ps2";
++				nvidia,function = "uarta";
 +				nvidia,pull = <TEGRA_PIN_PULL_UP>;
 +				nvidia,tristate = <TEGRA_PIN_DISABLE>;
 +				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
++			};
++			kb_row9_ps1 {
++				nvidia,pins = "kb_row9_ps1";
++				nvidia,function = "uarta";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++			pwr_i2c_scl_pz6 {
++				nvidia,pins = "pwr_i2c_scl_pz6",
++					      "pwr_i2c_sda_pz7";
++				nvidia,function = "i2cpwr";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++				nvidia,lock = <TEGRA_PIN_DISABLE>;
++				nvidia,open-drain = <TEGRA_PIN_ENABLE>;
++			};
++			jtag_rtck {
++				nvidia,pins = "jtag_rtck";
++				nvidia,function = "rtck";
++				nvidia,pull = <TEGRA_PIN_PULL_UP>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
 +			};
 +			clk_32k_in {
 +				nvidia,pins = "clk_32k_in";
@@ -1320,36 +330,244 @@ index 000000000000..1a3e4cf7f286
 +				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
 +				nvidia,tristate = <TEGRA_PIN_DISABLE>;
 +				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
 +			};
-+			jtag_rtck {
-+				nvidia,pins = "jtag_rtck";
-+				nvidia,function = "jtag";
++			core_pwr_req {
++				nvidia,pins = "core_pwr_req";
++				nvidia,function = "pwron";
 +				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
 +				nvidia,tristate = <TEGRA_PIN_DISABLE>;
 +				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
 +			};
-+			clk_req {
-+				nvidia,pins = "clk_req";
-+				nvidia,function = "sys";
++			cpu_pwr_req {
++				nvidia,pins = "cpu_pwr_req";
++				nvidia,function = "cpu";
 +				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
 +				nvidia,tristate = <TEGRA_PIN_DISABLE>;
 +				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
 +			};
-+			shutdown {
-+				nvidia,pins = "shutdown";
-+				nvidia,function = "shutdown";
++			kb_col0_ap {
++				nvidia,pins = "kb_col0_pq0";
++				nvidia,function = "rsvd4";
++				nvidia,pull = <TEGRA_PIN_PULL_UP>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++			en_vdd_sd {
++				nvidia,pins = "kb_row0_pr0";
++				nvidia,function = "rsvd4";
 +				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
 +				nvidia,tristate = <TEGRA_PIN_DISABLE>;
 +				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++			lid_open {
++				nvidia,pins = "kb_row4_pr4";
++				nvidia,function = "rsvd3";
++				nvidia,pull = <TEGRA_PIN_PULL_UP>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++			pwr_int_n {
++				nvidia,pins = "pwr_int_n";
++				nvidia,function = "pmi";
++				nvidia,pull = <TEGRA_PIN_PULL_UP>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++			reset_out_n {
++				nvidia,pins = "reset_out_n";
++				nvidia,function = "reset_out_n";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++			clk3_out_pee0 {
++				nvidia,pins = "clk3_out_pee0";
++				nvidia,function = "extperiph3";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++			gen1_i2c_scl_pc4 {
++				nvidia,pins = "gen1_i2c_scl_pc4",
++					      "gen1_i2c_sda_pc5";
++				nvidia,function = "i2c1";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++				nvidia,lock = <TEGRA_PIN_DISABLE>;
++				nvidia,open-drain = <TEGRA_PIN_ENABLE>;
++			};
++			hdmi_cec_pee3 {
++				nvidia,pins = "hdmi_cec_pee3";
++				nvidia,function = "cec";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++				nvidia,lock = <TEGRA_PIN_DISABLE>;
 +				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
++			};
++			hdmi_int_pn7 {
++				nvidia,pins = "hdmi_int_pn7";
++				nvidia,function = "rsvd1";
++				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++			ddc_scl_pv4 {
++				nvidia,pins = "ddc_scl_pv4",
++					      "ddc_sda_pv5";
++				nvidia,function = "i2c4";
++				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++				nvidia,lock = <TEGRA_PIN_DISABLE>;
++				nvidia,rcv-sel = <TEGRA_PIN_ENABLE>;
++			};
++			usb_vbus_en0_pn4 {
++				nvidia,pins = "usb_vbus_en0_pn4",
++					      "usb_vbus_en1_pn5",
++					      "usb_vbus_en2_pff1";
++				nvidia,function = "usb";
++				nvidia,pull = <TEGRA_PIN_PULL_UP>;
++				nvidia,tristate = <TEGRA_PIN_ENABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++				nvidia,lock = <TEGRA_PIN_DISABLE>;
++				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
++			};
++			drive_sdio1 {
++				nvidia,pins = "drive_sdio1";
++				nvidia,high-speed-mode = <TEGRA_PIN_ENABLE>;
++				nvidia,schmitt = <TEGRA_PIN_DISABLE>;
++				nvidia,pull-down-strength = <36>;
++				nvidia,pull-up-strength = <20>;
++				nvidia,slew-rate-rising = <TEGRA_PIN_SLEW_RATE_SLOW>;
++				nvidia,slew-rate-falling = <TEGRA_PIN_SLEW_RATE_SLOW>;
++			};
++			drive_sdio3 {
++				nvidia,pins = "drive_sdio3";
++				nvidia,high-speed-mode = <TEGRA_PIN_ENABLE>;
++				nvidia,schmitt = <TEGRA_PIN_DISABLE>;
++				nvidia,pull-down-strength = <22>;
++				nvidia,pull-up-strength = <36>;
++				nvidia,slew-rate-rising = <TEGRA_PIN_SLEW_RATE_FASTEST>;
++				nvidia,slew-rate-falling = <TEGRA_PIN_SLEW_RATE_FASTEST>;
++			};
++			drive_gma {
++				nvidia,pins = "drive_gma";
++				nvidia,high-speed-mode = <TEGRA_PIN_ENABLE>;
++				nvidia,schmitt = <TEGRA_PIN_DISABLE>;
++				nvidia,pull-down-strength = <2>;
++				nvidia,pull-up-strength = <1>;
++				nvidia,slew-rate-rising = <TEGRA_PIN_SLEW_RATE_FASTEST>;
++				nvidia,slew-rate-falling = <TEGRA_PIN_SLEW_RATE_FASTEST>;
++				nvidia,drive-type = <1>;
++			};
++			ac_ok {
++				nvidia,pins = "pj0";
++				nvidia,function = "gmi";
++				nvidia,pull = <TEGRA_PIN_PULL_UP>;
++				nvidia,tristate = <TEGRA_PIN_ENABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++			codec_irq_l {
++				nvidia,pins = "ph4";
++				nvidia,function = "gmi";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++			lcd_bl_en {
++				nvidia,pins = "ph2";
++				nvidia,function = "gmi";
++				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++			touch_irq_l {
++				nvidia,pins = "gpio_w3_aud_pw3";
++				nvidia,function = "spi6";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++			tpm_davint_l {
++				nvidia,pins = "ph6";
++				nvidia,function = "gmi";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++			ts_irq_l {
++				nvidia,pins = "pk2";
++				nvidia,function = "gmi";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++			ts_reset_l {
++				nvidia,pins = "pk4";
++				nvidia,function = "gmi";
++				nvidia,pull = <1>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++			ts_shdn_l {
++				nvidia,pins = "pk1";
++				nvidia,function = "gmi";
++				nvidia,pull = <TEGRA_PIN_PULL_UP>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++			ph7 {
++				nvidia,pins = "ph7";
++				nvidia,function = "gmi";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++			sensor_irq_l {
++				nvidia,pins = "pi6";
++				nvidia,function = "gmi";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++			wifi_en {
++				nvidia,pins = "gpio_x7_aud_px7";
++				nvidia,function = "rsvd4";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++			chromeos_write_protect {
++				nvidia,pins = "kb_row1_pr1";
++				nvidia,function = "rsvd4";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++			hp_det_l {
++				nvidia,pins = "pi7";
++				nvidia,function = "rsvd1";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++			soc_warm_reset_l {
++				nvidia,pins = "pi5";
++				nvidia,function = "gmi";
++				nvidia,pull = <TEGRA_PIN_PULL_UP>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
 +			};
 +		};
 +	};
 +
-+	pwm@0,7000a000 {
++	serial@0,70006000 {
++		status = "okay";
++	};
++
++	pwm: pwm@0,7000a000 {
 +		status = "okay";
 +	};
 +
@@ -1359,74 +577,458 @@ index 000000000000..1a3e4cf7f286
 +		clock-frequency = <100000>;
 +	};
 +
-+	hda@0,70030000 {
++	i2c@0,7000d000 {
 +		status = "okay";
-+	};
++		clock-frequency = <400000>;
 +
-+	usb@0,70090000 {
-+		status = "disabled";
-+	};
++		as3722: pmic@40 {
++			compatible = "ams,as3722";
++			reg = <0x40>;
++			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
 +
-+	padctl@0,7009f000 {
-+		status = "disabled";
++			ams,system-power-controller;
 +
-+		pinctrl-0 = <&padctl_default>;
-+		pinctrl-names = "default";
++			#interrupt-cells = <2>;
++			interrupt-controller;
 +
-+		phys {
-+			pcie-0 {
-+				status = "okay";
++			#gpio-cells = <2>;
++			gpio-controller;
++
++			pinctrl-names = "default";
++			pinctrl-0 = <&as3722_default>;
++
++			as3722_default: pinmux@0 {
++				gpio0 {
++					pins = "gpio0";
++					function = "gpio";
++					bias-pull-down;
++				};
++
++				gpio1 {
++					pins = "gpio1";
++					function = "gpio";
++					bias-pull-up;
++				};
++
++				gpio2_4_7 {
++					pins = "gpio2", "gpio4", "gpio7";
++					function = "gpio";
++					bias-pull-up;
++				};
++
++				gpio3 {
++					pins = "gpio3";
++					function = "gpio";
++					bias-high-impedance;
++				};
++
++				gpio5 {
++					pins = "gpio5";
++					function = "clk32k-out";
++					bias-pull-down;
++				};
++
++				gpio6 {
++					pins = "gpio6";
++					function = "clk32k-out";
++					bias-pull-down;
++				};
++			};
++
++			regulators {
++				vsup-sd2-supply = <&vdd_5v0_sys>;
++				vsup-sd3-supply = <&vdd_5v0_sys>;
++				vsup-sd4-supply = <&vdd_5v0_sys>;
++				vsup-sd5-supply = <&vdd_5v0_sys>;
++				vin-ldo0-supply = <&vdd_1v35_lp0>;
++				vin-ldo1-6-supply = <&vdd_3v3_sys>;
++				vin-ldo2-5-7-supply = <&vddio_1v8>;
++				vin-ldo3-4-supply = <&vdd_3v3_sys>;
++				vin-ldo9-10-supply = <&vdd_5v0_sys>;
++				vin-ldo11-supply = <&vdd_3v3_run>;
++
++				sd0 {
++					regulator-name = "+VDD_CPU_AP";
++					regulator-min-microvolt = <700000>;
++					regulator-max-microvolt = <1350000>;
++					regulator-max-microamp = <3500000>;
++					regulator-always-on;
++					regulator-boot-on;
++					ams,ext-control = <2>;
++				};
++
++				sd1 {
++					regulator-name = "+VDD_CORE";
++					regulator-min-microvolt = <700000>;
++					regulator-max-microvolt = <1350000>;
++					regulator-max-microamp = <4000000>;
++					regulator-always-on;
++					regulator-boot-on;
++					ams,ext-control = <1>;
++				};
++
++				vdd_1v35_lp0: sd2 {
++					regulator-name = "+1.35V_LP0(sd2)";
++					regulator-min-microvolt = <1350000>;
++					regulator-max-microvolt = <1350000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				sd3 {
++					regulator-name = "+1.35V_LP0(sd3)";
++					regulator-min-microvolt = <1350000>;
++					regulator-max-microvolt = <1350000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				vdd_1v05_run: sd4 {
++					regulator-name = "+1.05V_RUN";
++					regulator-min-microvolt = <1050000>;
++					regulator-max-microvolt = <1050000>;
++				};
++
++				vddio_1v8: sd5 {
++					regulator-name = "+1.8V_VDDIO";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				vdd_gpu: sd6 {
++					regulator-name = "+VDD_GPU_AP";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1200000>;
++					regulator-min-microamp = <3500000>;
++					regulator-max-microamp = <3500000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				ldo0 {
++					regulator-name = "+1.05_RUN_AVDD";
++					regulator-min-microvolt = <1050000>;
++					regulator-max-microvolt = <1050000>;
++					regulator-always-on;
++					regulator-boot-on;
++					ams,ext-control = <1>;
++				};
++
++				ldo1 {
++					regulator-name = "+1.8V_RUN_CAM";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++				};
++
++				ldo2 {
++					regulator-name = "+1.2V_GEN_AVDD";
++					regulator-min-microvolt = <1200000>;
++					regulator-max-microvolt = <1200000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				ldo3 {
++					regulator-name = "+1.00V_LP0_VDD_RTC";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++					regulator-always-on;
++					regulator-boot-on;
++					ams,enable-tracking;
++				};
++
++				vdd_run_cam: ldo4 {
++					regulator-name = "+2.8V_RUN_CAM";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++				};
++
++				ldo5 {
++					regulator-name = "+1.2V_RUN_CAM_FRONT";
++					regulator-min-microvolt = <1200000>;
++					regulator-max-microvolt = <1200000>;
++				};
++
++				vddio_sdmmc3: ldo6 {
++					regulator-name = "+VDDIO_SDMMC3";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <3300000>;
++				};
++
++				ldo7 {
++					regulator-name = "+1.05V_RUN_CAM_REAR";
++					regulator-min-microvolt = <1050000>;
++					regulator-max-microvolt = <1050000>;
++				};
++
++				ldo9 {
++					regulator-name = "+2.8V_RUN_TOUCH";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++				};
++
++				ldo10 {
++					regulator-name = "+2.8V_RUN_CAM_AF";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++				};
++
++				ldo11 {
++					regulator-name = "+1.8V_RUN_VPP_FUSE";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++				};
 +			};
 +		};
++	};
 +
-+		padctl_default: pinmux {
-+			usb3 {
-+				nvidia,lanes = "pcie-5", "pcie-6";
-+				nvidia,function = "usb3";
-+				nvidia,iddq = <0>;
++	spi@0,7000d400 {
++		status = "okay";
++
++		ec: cros-ec@0 {
++			compatible = "google,cros-ec-spi";
++			spi-max-frequency = <3000000>;
++			interrupt-parent = <&gpio>;
++			interrupts = <TEGRA_GPIO(C, 7) IRQ_TYPE_LEVEL_LOW>;
++			reg = <0>;
++
++			google,cros-ec-spi-msg-delay = <2000>;
++
++			i2c_20: i2c-tunnel {
++				compatible = "google,cros-ec-i2c-tunnel";
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				google,remote-bus = <0>;
++
++				charger: bq24735 {
++					compatible = "ti,bq24735";
++					reg = <0x9>;
++					interrupt-parent = <&gpio>;
++					interrupts = <TEGRA_GPIO(J, 0)
++							GPIO_ACTIVE_HIGH>;
++					ti,ac-detect-gpios = <&gpio
++							TEGRA_GPIO(J, 0)
++							GPIO_ACTIVE_HIGH>;
++				};
++
++				battery: smart-battery {
++					compatible = "sbs,sbs-battery";
++					reg = <0xb>;
++					battery-name = "battery";
++					sbs,i2c-retry-count = <2>;
++					sbs,poll-retry-count = <10>;
++				/*	power-supplies = <&charger>; */
++				};
 +			};
 +
-+			pcie-x1 {
-+				nvidia,lanes = "pcie-0";
-+				nvidia,function = "pciex1";
-+				nvidia,iddq = <0>;
-+			};
++			keyboard-controller {
++				compatible = "google,cros-ec-keyb";
++				keypad,num-rows = <8>;
++				keypad,num-columns = <13>;
++				google,needs-ghost-filter;
++				linux,keymap =
++					<MATRIX_KEY(0x00, 0x01, KEY_LEFTMETA)
++					 MATRIX_KEY(0x00, 0x02, KEY_F1)
++					 MATRIX_KEY(0x00, 0x03, KEY_B)
++					 MATRIX_KEY(0x00, 0x04, KEY_F10)
++					 MATRIX_KEY(0x00, 0x06, KEY_N)
++					 MATRIX_KEY(0x00, 0x08, KEY_EQUAL)
++					 MATRIX_KEY(0x00, 0x0a, KEY_RIGHTALT)
 +
-+			pcie-x4 {
-+				nvidia,lanes = "pcie-1", "pcie-2", "pcie-3",
-+					       "pcie-4";
-+				nvidia,function = "pciex4";
-+				nvidia,iddq = <0>;
-+			};
++					 MATRIX_KEY(0x01, 0x01, KEY_ESC)
++					 MATRIX_KEY(0x01, 0x02, KEY_F4)
++					 MATRIX_KEY(0x01, 0x03, KEY_G)
++					 MATRIX_KEY(0x01, 0x04, KEY_F7)
++					 MATRIX_KEY(0x01, 0x06, KEY_H)
++					 MATRIX_KEY(0x01, 0x08, KEY_APOSTROPHE)
++					 MATRIX_KEY(0x01, 0x09, KEY_F9)
++					 MATRIX_KEY(0x01, 0x0b, KEY_BACKSPACE)
 +
-+			sata {
-+				nvidia,lanes = "sata-0";
-+				nvidia,function = "sata";
-+				nvidia,iddq = <0>;
++					 MATRIX_KEY(0x02, 0x00, KEY_LEFTCTRL)
++					 MATRIX_KEY(0x02, 0x01, KEY_TAB)
++					 MATRIX_KEY(0x02, 0x02, KEY_F3)
++					 MATRIX_KEY(0x02, 0x03, KEY_T)
++					 MATRIX_KEY(0x02, 0x04, KEY_F6)
++					 MATRIX_KEY(0x02, 0x05, KEY_RIGHTBRACE)
++					 MATRIX_KEY(0x02, 0x06, KEY_Y)
++					 MATRIX_KEY(0x02, 0x07, KEY_102ND)
++					 MATRIX_KEY(0x02, 0x08, KEY_LEFTBRACE)
++					 MATRIX_KEY(0x02, 0x09, KEY_F8)
++
++					 MATRIX_KEY(0x03, 0x01, KEY_GRAVE)
++					 MATRIX_KEY(0x03, 0x02, KEY_F2)
++					 MATRIX_KEY(0x03, 0x03, KEY_5)
++					 MATRIX_KEY(0x03, 0x04, KEY_F5)
++					 MATRIX_KEY(0x03, 0x06, KEY_6)
++					 MATRIX_KEY(0x03, 0x08, KEY_MINUS)
++					 MATRIX_KEY(0x03, 0x0b, KEY_BACKSLASH)
++
++					 MATRIX_KEY(0x04, 0x00, KEY_RIGHTCTRL)
++					 MATRIX_KEY(0x04, 0x01, KEY_A)
++					 MATRIX_KEY(0x04, 0x02, KEY_D)
++					 MATRIX_KEY(0x04, 0x03, KEY_F)
++					 MATRIX_KEY(0x04, 0x04, KEY_S)
++					 MATRIX_KEY(0x04, 0x05, KEY_K)
++					 MATRIX_KEY(0x04, 0x06, KEY_J)
++					 MATRIX_KEY(0x04, 0x08, KEY_SEMICOLON)
++					 MATRIX_KEY(0x04, 0x09, KEY_L)
++					 MATRIX_KEY(0x04, 0x0a, KEY_BACKSLASH)
++					 MATRIX_KEY(0x04, 0x0b, KEY_ENTER)
++
++					 MATRIX_KEY(0x05, 0x01, KEY_Z)
++					 MATRIX_KEY(0x05, 0x02, KEY_C)
++					 MATRIX_KEY(0x05, 0x03, KEY_V)
++					 MATRIX_KEY(0x05, 0x04, KEY_X)
++					 MATRIX_KEY(0x05, 0x05, KEY_COMMA)
++					 MATRIX_KEY(0x05, 0x06, KEY_M)
++					 MATRIX_KEY(0x05, 0x07, KEY_LEFTSHIFT)
++					 MATRIX_KEY(0x05, 0x08, KEY_SLASH)
++					 MATRIX_KEY(0x05, 0x09, KEY_DOT)
++					 MATRIX_KEY(0x05, 0x0b, KEY_SPACE)
++
++					 MATRIX_KEY(0x06, 0x01, KEY_1)
++					 MATRIX_KEY(0x06, 0x02, KEY_3)
++					 MATRIX_KEY(0x06, 0x03, KEY_4)
++					 MATRIX_KEY(0x06, 0x04, KEY_2)
++					 MATRIX_KEY(0x06, 0x05, KEY_8)
++					 MATRIX_KEY(0x06, 0x06, KEY_7)
++					 MATRIX_KEY(0x06, 0x08, KEY_0)
++					 MATRIX_KEY(0x06, 0x09, KEY_9)
++					 MATRIX_KEY(0x06, 0x0a, KEY_LEFTALT)
++					 MATRIX_KEY(0x06, 0x0b, KEY_DOWN)
++					 MATRIX_KEY(0x06, 0x0c, KEY_RIGHT)
++
++					 MATRIX_KEY(0x07, 0x01, KEY_Q)
++					 MATRIX_KEY(0x07, 0x02, KEY_E)
++					 MATRIX_KEY(0x07, 0x03, KEY_R)
++					 MATRIX_KEY(0x07, 0x04, KEY_W)
++					 MATRIX_KEY(0x07, 0x05, KEY_I)
++					 MATRIX_KEY(0x07, 0x06, KEY_U)
++					 MATRIX_KEY(0x07, 0x07, KEY_RIGHTSHIFT)
++					 MATRIX_KEY(0x07, 0x08, KEY_P)
++					 MATRIX_KEY(0x07, 0x09, KEY_O)
++					 MATRIX_KEY(0x07, 0x0b, KEY_UP)
++					 MATRIX_KEY(0x07, 0x0c, KEY_LEFT)>;
 +			};
 +		};
 +	};
 +
-+	/* microSD */
++	pmc@0,7000e400 {
++		nvidia,invert-interrupt;
++		nvidia,suspend-mode = <0>;
++		#wake-cells = <3>;
++		nvidia,cpu-pwr-good-time = <500>;
++		nvidia,cpu-pwr-off-time = <300>;
++		nvidia,core-pwr-good-time = <641 3845>;
++		nvidia,core-pwr-off-time = <61036>;
++		nvidia,core-power-req-active-high;
++		nvidia,sys-clock-req-active-high;
++		nvidia,reset-gpio = <&gpio TEGRA_GPIO(I, 5) GPIO_ACTIVE_LOW>;
++	};
++
++	/* WIFI/BT module */
 +	sdhci@0,700b0000 {
++		status = "disabled";
++	};
++
++	/* external SD/MMC */
++	sdhci@0,700b0400 {
++		cd-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_LOW>;
++		power-gpios = <&gpio TEGRA_GPIO(R, 0) GPIO_ACTIVE_HIGH>;
++		wp-gpios = <&gpio TEGRA_GPIO(Q, 4) GPIO_ACTIVE_HIGH>;
 +		status = "okay";
 +		bus-width = <4>;
-+		no-1-8-v;
++		vqmmc-supply = <&vddio_sdmmc3>;
++	};
 +
-+		cd-gpios = <&gpio TEGRA_GPIO(Z, 1) GPIO_ACTIVE_LOW>;
++	/* EMMC 4.51 */
++	sdhci@0,700b0600 {
++		status = "okay";
++		bus-width = <8>;
++		non-removable;
++	};
 +
-+		vqmmc-supply = <&vddio_sdmmc>;
-+		vmmc-supply = <&vdd_3v3_sd>;
++	usb@0,7d000000 {
++		status = "okay";
++	};
++
++	usb-phy@0,7d000000 {
++		status = "okay";
++		vbus-supply = <&vdd_usb1_vbus>;
++	};
++
++	usb@0,7d004000 {
++		status = "okay";
++	};
++
++	usb-phy@0,7d004000 {
++		status = "okay";
++		vbus-supply = <&vdd_run_cam>;
++	};
++
++	usb@0,7d008000 {
++		status = "okay";
++	};
++
++	usb-phy@0,7d008000 {
++		status = "okay";
++		vbus-supply = <&vdd_usb3_vbus>;
 +	};
 +
 +	backlight: backlight {
 +		compatible = "pwm-backlight";
 +
-+		power-supply = <&vdd_3v3_bl>;
-+		pwms = <&pwm 0 40161>;
++		enable-gpios = <&gpio TEGRA_GPIO(H, 2) GPIO_ACTIVE_HIGH>;
++		power-supply = <&vdd_led>;
++		pwms = <&pwm 1 1000000>;
 +
 +		brightness-levels = <0 4 8 16 32 64 128 255>;
 +		default-brightness-level = <6>;
++
++		backlight-boot-off;
++	};
++
++	clocks {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		clk32k_in: clock@0 {
++			compatible = "fixed-clock";
++			reg=<0>;
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++		};
++	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++
++		lid {
++			label = "Lid";
++			gpios = <&gpio TEGRA_GPIO(R, 4) GPIO_ACTIVE_LOW>;
++			linux,input-type = <5>;
++			linux,code = <0>;
++			debounce-interval = <1>;
++			gpio-key,wakeup;
++		};
++
++		power {
++			label = "Power";
++			gpios = <&gpio TEGRA_GPIO(Q, 0) GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_POWER>;
++			debounce-interval = <10>;
++			gpio-key,wakeup;
++		};
++	};
++
++	panel: panel {
++		compatible = "innolux,n116bge", "simple-panel";
++		backlight = <&backlight>;
++		ddc-i2c-bus = <&dpaux>;
 +	};
 +
 +	regulators {
@@ -1434,12 +1036,12 @@ index 000000000000..1a3e4cf7f286
 +		#address-cells = <1>;
 +		#size-cells = <0>;
 +
-+		vdd_sys_mux: regulator@0 {
++		vdd_mux: regulator@0 {
 +			compatible = "regulator-fixed";
 +			reg = <0>;
-+			regulator-name = "VDD_SYS_MUX";
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
++			regulator-name = "+VDD_MUX";
++			regulator-min-microvolt = <19000000>;
++			regulator-max-microvolt = <19000000>;
 +			regulator-always-on;
 +			regulator-boot-on;
 +		};
@@ -1447,94 +1049,131 @@ index 000000000000..1a3e4cf7f286
 +		vdd_5v0_sys: regulator@1 {
 +			compatible = "regulator-fixed";
 +			reg = <1>;
-+			regulator-name = "VDD_5V0_SYS";
++			regulator-name = "+5V_SYS";
 +			regulator-min-microvolt = <5000000>;
 +			regulator-max-microvolt = <5000000>;
 +			regulator-always-on;
 +			regulator-boot-on;
-+			gpio = <&pmic 1 GPIO_ACTIVE_HIGH>;
-+			enable-active-high;
-+			vin-supply = <&vdd_sys_mux>;
++			vin-supply = <&vdd_mux>;
 +		};
 +
 +		vdd_3v3_sys: regulator@2 {
 +			compatible = "regulator-fixed";
 +			reg = <2>;
-+			regulator-name = "VDD_3V3_SYS";
++			regulator-name = "+3.3V_SYS";
 +			regulator-min-microvolt = <3300000>;
 +			regulator-max-microvolt = <3300000>;
 +			regulator-always-on;
 +			regulator-boot-on;
-+			gpio = <&pmic 3 GPIO_ACTIVE_HIGH>;
-+			enable-active-high;
-+			vin-supply = <&vdd_sys_mux>;
++			vin-supply = <&vdd_mux>;
 +		};
 +
-+		vdd_3v3_sd: regulator@3 {
++		vdd_3v3_run: regulator@3 {
 +			compatible = "regulator-fixed";
 +			reg = <3>;
-+			regulator-name = "VDD_3V3_SD";
++			regulator-name = "+3.3V_RUN";
 +			regulator-min-microvolt = <3300000>;
 +			regulator-max-microvolt = <3300000>;
-+			gpio = <&gpio TEGRA_GPIO(Z, 4) GPIO_ACTIVE_HIGH>;
++			regulator-always-on;
++			regulator-boot-on;
++			gpio = <&as3722 1 GPIO_ACTIVE_HIGH>;
 +			enable-active-high;
 +			vin-supply = <&vdd_3v3_sys>;
 +		};
 +
-+		vdd_dsi_csi: regulator@4 {
++		vdd_3v3_hdmi: regulator@4 {
 +			compatible = "regulator-fixed";
 +			reg = <4>;
-+			regulator-name = "AVDD_DSI_CSI_1V2";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+			gpio = <&pmic 7 GPIO_ACTIVE_HIGH>;
-+			enable-active-high;
-+			vin-supply = <&vdd_sys_1v2>;
++			regulator-name = "+3.3V_AVDD_HDMI_AP_GATED";
++			regulator-min-microvolt = <3300000>;
++			regulator-max-microvolt = <3300000>;
++			vin-supply = <&vdd_3v3_run>;
 +		};
 +
-+		vdd_3v3_bl: regulator@5 {
++		vdd_led: regulator@5 {
 +			compatible = "regulator-fixed";
 +			reg = <5>;
-+			regulator-name = "VDD_3V3_BL";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			gpio = <&gpio TEGRA_GPIO(V, 1) GPIO_ACTIVE_HIGH>;
++			regulator-name = "+VDD_LED";
++			regulator-min-microvolt = <3300000>;
++			regulator-max-microvolt = <3300000>;
++			gpio = <&gpio TEGRA_GPIO(P, 2) GPIO_ACTIVE_HIGH>;
 +			enable-active-high;
++			vin-supply = <&vdd_mux>;
 +		};
 +
-+		vdd_5v0_io: regulator@6 {
++		vdd_usb1_vbus: regulator@6 {
 +			compatible = "regulator-fixed";
 +			reg = <6>;
-+			regulator-name = "VDD_5V0_IO_SYS";
++			regulator-name = "+5V_USB_HS";
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++			gpio = <&gpio TEGRA_GPIO(N, 4) GPIO_ACTIVE_HIGH>;
++			enable-active-high;
++			gpio-open-drain;
++			vin-supply = <&vdd_5v0_sys>;
++		};
++
++		vdd_usb3_vbus: regulator@7 {
++			compatible = "regulator-fixed";
++			reg = <7>;
++			regulator-name = "+5V_USB_SS";
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++			gpio = <&gpio TEGRA_GPIO(N, 5) GPIO_ACTIVE_HIGH>;
++			enable-active-high;
++			gpio-open-drain;
++			vin-supply = <&vdd_5v0_sys>;
++		};
++
++		vdd_3v3_panel: regulator@8 {
++			compatible = "regulator-fixed";
++			reg = <8>;
++			regulator-name = "+3.3V_PANEL";
++			regulator-min-microvolt = <3300000>;
++			regulator-max-microvolt = <3300000>;
++			gpio = <&as3722 4 GPIO_ACTIVE_HIGH>;
++			enable-active-high;
++			vin-supply = <&vdd_3v3_sys>;
++		};
++
++		vdd_hdmi_pll: regulator@9 {
++			compatible = "regulator-fixed";
++			reg = <9>;
++			regulator-name = "+1.05V_RUN_AVDD_HDMI_PLL_AP_GATE";
++			regulator-min-microvolt = <1050000>;
++			regulator-max-microvolt = <1050000>;
++			gpio = <&gpio TEGRA_GPIO(H, 7) GPIO_ACTIVE_LOW>;
++			vin-supply = <&vdd_1v05_run>;
++		};
++
++		vdd_5v0_hdmi: regulator@10 {
++			compatible = "regulator-fixed";
++			reg = <10>;
++			regulator-name = "+5V_HDMI_CON";
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++			gpio = <&gpio TEGRA_GPIO(K, 6) GPIO_ACTIVE_HIGH>;
++			enable-active-high;
++			vin-supply = <&vdd_5v0_sys>;
++		};
++
++		vdd_5v0_ts: regulator@11 {
++			compatible = "regulator-fixed";
++			reg = <11>;
++			regulator-name = "+5V_VDD_TS";
 +			regulator-min-microvolt = <5000000>;
 +			regulator-max-microvolt = <5000000>;
 +			regulator-always-on;
 +			regulator-boot-on;
-+		};
-+
-+		vdd_3v0_disp: regulator@7 {
-+			compatible = "regulator-fixed";
-+			reg = <7>;
-+			regulator-name = "VDD_DISP_3V0_LDO";
-+			regulator-min-microvolt = <3000000>;
-+			regulator-max-microvolt = <3000000>;
-+			regulator-always-on;
-+			gpio = <&gpio TEGRA_GPIO(I, 3) GPIO_ACTIVE_HIGH>;
++			gpio = <&gpio TEGRA_GPIO(K, 1) GPIO_ACTIVE_HIGH>;
 +			enable-active-high;
-+			vin-supply = <&vdd_3v3_sys>;
-+		};
-+
-+		vdd_hdmi: regulator@8 {
-+			compatible = "regulator-fixed";
-+			reg = <8>;
-+			regulator-name = "VDD_HDMI_5V0";
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+			gpio = <&gpio TEGRA_GPIO(CC, 7) GPIO_ACTIVE_HIGH>;
-+			enable-active-high;
-+			vin-supply = <&vdd_5v0_sys>;
 +		};
 +	};
 +};
 -- 
 2.3.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
