@@ -1,28 +1,69 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] irqchip: tegra: fix wrong data being passed as the irqdomain
- chip data
-Date: Wed, 13 May 2015 16:18:12 -0600
-Message-ID: <5553CDA4.6000905@wwwdotorg.org>
-References: <1431202014-3136-1-git-send-email-dev@lynxeye.de>
+From: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v5 15/21] clk: tegra: pll: Add dyn_ramp callback
+Date: Wed, 13 May 2015 15:20:31 -0700
+Message-ID: <CANLzEks_bEnpyKuVHJEn8XZbdMDaqj9bQ+SjpgrM-uQo0W28Ug@mail.gmail.com>
+References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
+	<1431451444-23155-17-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1431202014-3136-1-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+In-Reply-To: <1431451444-23155-17-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jim Lin <jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/09/2015 02:06 PM, Lucas Stach wrote:
-> The irq chip functions use the irq chipdata directly as the base register
-> address of the controller, so this should be passed in instead of a pointer
-> to the array address holding the base address.
+On Tue, May 12, 2015 at 10:23 AM, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> From: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >
-> This fixes Tegra20 CPUidle as now the un-/masking of IRQs at the LIC level
-> works again, but more importantly it fixes the resulting memory corruption.
+> Add a callback to the pll_params for custom dynamic ramping
+> functions which can be specified per PLL.
+>
+> Signed-off-by: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Modulo kerneldoc addition,
+Reviewed-by: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 
-Tested on NVIDIA Seaboard (which is affected by the bug in the default 
-configuration/DT) with the patch applied on to of 4.1-rc3.
+> ---
+>  drivers/clk/tegra/clk.h |    4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index 330729a822cf..a61d388364b3 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -160,6 +160,8 @@ struct div_nmp {
+>
+>  #define MAX_PLL_MISC_REG_COUNT 6
+>
+> +struct tegra_clk_pll;
+> +
+>  /**
+>   * struct tegra_clk_pll_params - PLL parameters
+>   *
+> @@ -271,6 +273,8 @@ struct tegra_clk_pll_params {
+>                         unsigned long rate, unsigned long parent_rate);
+>         unsigned long   (*adjust_vco)(struct tegra_clk_pll_params *pll_params,
+>                                 unsigned long parent_rate);
+> +       int     (*dyn_ramp)(struct tegra_clk_pll *pll,
+> +                       struct tegra_clk_pll_freq_table *cfg);
+
+Please add kerneldoc for dyn_ramp member above.
+
+>  };
+>
+>  #define TEGRA_PLL_USE_LOCK BIT(0)
+> --
+> 1.7.9.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+Benson Leung
+Software Engineer, Chrom* OS
+bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
