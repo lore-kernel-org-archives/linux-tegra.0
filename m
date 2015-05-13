@@ -1,1052 +1,854 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 3/6] arm64: tegra: Add Tegra210 support
-Date: Wed, 13 May 2015 16:57:42 +0200
-Message-ID: <1431529065-20128-3-git-send-email-thierry.reding@gmail.com>
-References: <1431529065-20128-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1431529065-20128-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+Subject: [PATCH v9 03/17] clk: tegra: Add closed loop support for the DFLL
+Date: Wed, 13 May 2015 17:58:37 +0300
+Message-ID: <1431529131-16710-4-git-send-email-mikko.perttunen@kapsi.fi>
+References: <1431529131-16710-1-git-send-email-mikko.perttunen@kapsi.fi>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1431529131-16710-1-git-send-email-mikko.perttunen@kapsi.fi>
+Sender: linux-kernel-owner@vger.kernel.org
+To: swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, pdeschrijver@nvidia.com, rjw@rjwysocki.net, viresh.kumar@linaro.org
+Cc: mturquette@linaro.org, pwalmsley@nvidia.com, vinceh@nvidia.com, pgaikwad@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tuomas.tynkkynen@iki.fi, Tuomas Tynkkynen <ttynkkynen@nvidia.com>, Mikko Perttunen <mikko.perttunen@kapsi.fi>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
 
-NVIDIA Tegra210 (also known as Tegra X1) has four Cortex-A57 and four
-Cortex-A53 CPUs. Compared to Tegra124 and Tegra132 it comes with a 256-
-core Maxwell GPU. It supports processing videos of up to 4K resolutions
-at 60 fps (H.265, VP9, H.264).
+With closed loop support, the clock rate of the DFLL can be adjusted.
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+The oscillator itself in the DFLL is a free-running oscillator whose
+rate is directly determined the supply voltage. However, the DFLL
+module contains logic to compare the DFLL output rate to a fixed
+reference clock (51 MHz) and make a decision to either lower or raise
+the DFLL supply voltage. The DFLL module can then autonomously change
+the supply voltage by communicating with an off-chip PMIC via either I2C
+or PWM signals. This driver currently supports only I2C.
+
+Signed-off-by: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Signed-off-by: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Acked-by: Michael Turquette <mturquette@linaro.org>
 ---
- arch/arm64/Kconfig                       |   9 +
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 998 +++++++++++++++++++++++++++++++
- 2 files changed, 1007 insertions(+)
- create mode 100644 arch/arm64/boot/dts/nvidia/tegra210.dtsi
+ drivers/clk/tegra/clk-dfll.c | 666 ++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 663 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 7796af4b1d6f..bfdf064ada66 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -225,6 +225,15 @@ config ARCH_TEGRA_132_SOC
- 	  but contains an NVIDIA Denver CPU complex in place of
- 	  Tegra124's "4+1" Cortex-A15 CPU complex.
+diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+index fb138bf..6ec64577 100644
+--- a/drivers/clk/tegra/clk-dfll.c
++++ b/drivers/clk/tegra/clk-dfll.c
+@@ -206,12 +206,16 @@
+  */
+ #define REF_CLOCK_RATE			51000000UL
  
-+config ARCH_TEGRA_210_SOC
-+	bool "NVIDIA Tegra210 SoC"
-+	depends on ARCH_TEGRA
-+	select PINCTRL_TEGRA210
-+	select USB_ULPI if USB_PHY
-+	select USB_ULPI_VIEWPORT if USB_PHY
-+	help
-+	  Enable support for the NVIDIA Tegra210 SoC.
++#define DVCO_RATE_TO_MULT(rate, ref_rate)	((rate) / ((ref_rate) / 2))
++#define MULT_TO_DVCO_RATE(mult, ref_rate)	((mult) * ((ref_rate) / 2))
+ 
+ /**
+  * enum dfll_ctrl_mode - DFLL hardware operating mode
+  * @DFLL_UNINITIALIZED: (uninitialized state - not in hardware bitfield)
+  * @DFLL_DISABLED: DFLL not generating an output clock
+  * @DFLL_OPEN_LOOP: DVCO running, but DFLL not adjusting voltage
++ * @DFLL_CLOSED_LOOP: DVCO running, and DFLL adjusting voltage to match
++ *		      the requested rate
+  *
+  * The integer corresponding to the last two states, minus one, is
+  * written to the DFLL hardware to change operating modes.
+@@ -220,6 +224,7 @@ enum dfll_ctrl_mode {
+ 	DFLL_UNINITIALIZED = 0,
+ 	DFLL_DISABLED = 1,
+ 	DFLL_OPEN_LOOP = 2,
++	DFLL_CLOSED_LOOP = 3,
+ };
+ 
+ /**
+@@ -237,6 +242,22 @@ enum dfll_tune_range {
+ 	DFLL_TUNE_LOW = 1,
+ };
+ 
++/**
++ * struct dfll_rate_req - target DFLL rate request data
++ * @rate: target frequency, after the postscaling
++ * @dvco_target_rate: target frequency, after the postscaling
++ * @lut_index: LUT index at which voltage the dvco_target_rate will be reached
++ * @mult_bits: value to program to the MULT bits of the DFLL_FREQ_REQ register
++ * @scale_bits: value to program to the SCALE bits of the DFLL_FREQ_REQ register
++ */
++struct dfll_rate_req {
++	unsigned long rate;
++	unsigned long dvco_target_rate;
++	int lut_index;
++	u8 mult_bits;
++	u8 scale_bits;
++};
 +
- config ARCH_SPRD
- 	bool "Spreadtrum SoC platform"
- 	help
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-new file mode 100644
-index 000000000000..379a997a57fd
---- /dev/null
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -0,0 +1,998 @@
-+#include <dt-bindings/clock/tegra210-car.h>
-+#include <dt-bindings/gpio/tegra-gpio.h>
-+#include <dt-bindings/memory/tegra210-mc.h>
-+#include <dt-bindings/pinctrl/pinctrl-tegra.h>
-+#include <dt-bindings/pinctrl/pinctrl-tegra-xusb.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/power/tegra-powergate.h>
+ struct tegra_dfll {
+ 	struct device			*dev;
+ 	struct tegra_dfll_soc_data	*soc;
+@@ -261,9 +282,27 @@ struct tegra_dfll {
+ 	struct dentry			*debugfs_dir;
+ 	struct clk_hw			dfll_clk_hw;
+ 	const char			*output_clock_name;
++	struct dfll_rate_req		last_req;
++	unsigned long			last_unrounded_rate;
+ 
+ 	/* Parameters from DT */
+ 	u32				droop_ctrl;
++	u32				sample_rate;
++	u32				force_mode;
++	u32				cf;
++	u32				ci;
++	u32				cg;
++	bool				cg_scale;
 +
-+/ {
-+	compatible = "nvidia,tegra210";
-+	interrupt-parent = <&lic>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
++	/* I2C interface parameters */
++	u32				i2c_fs_rate;
++	u32				i2c_reg;
++	u32				i2c_slave_addr;
 +
-+	pcie-controller@0,01003000 {
-+		compatible = "nvidia,tegra210-pcie", "nvidia,tegra124-pcie";
-+		device_type = "pci";
-+		reg = <0x0 0x01003000 0x0 0x00000800   /* PADS registers */
-+		       0x0 0x01003800 0x0 0x00000800   /* AFI registers */
-+		       0x0 0x02000000 0x0 0x10000000>; /* configuration space */
-+		reg-names = "pads", "afi", "cs";
-+		interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>, /* controller interrupt */
-+			     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>; /* MSI interrupt */
-+		interrupt-names = "intr", "msi";
++	/* i2c_lut array entries are regulator framework selectors */
++	unsigned			i2c_lut[MAX_DFLL_VOLTAGES];
++	int				i2c_lut_size;
++	u8				lut_min, lut_max, lut_safe;
+ };
+ 
+ #define clk_hw_to_dfll(_hw) container_of(_hw, struct tegra_dfll, dfll_clk_hw)
+@@ -273,6 +312,7 @@ static const char * const mode_name[] = {
+ 	[DFLL_UNINITIALIZED] = "uninitialized",
+ 	[DFLL_DISABLED] = "disabled",
+ 	[DFLL_OPEN_LOOP] = "open_loop",
++	[DFLL_CLOSED_LOOP] = "closed_loop",
+ };
+ 
+ /*
+@@ -499,6 +539,283 @@ static void dfll_set_mode(struct tegra_dfll *td,
+ }
+ 
+ /*
++ * DFLL-to-I2C controller interface
++ */
 +
-+		#interrupt-cells = <1>;
-+		interrupt-map-mask = <0 0 0 0>;
-+		interrupt-map = <0 0 0 0 &gic GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
++/**
++ * dfll_i2c_set_output_enabled - enable/disable I2C PMIC voltage requests
++ * @td: DFLL instance
++ * @enable: whether to enable or disable the I2C voltage requests
++ *
++ * Set the master enable control for I2C control value updates. If disabled,
++ * then I2C control messages are inhibited, regardless of the DFLL mode.
++ */
++static int dfll_i2c_set_output_enabled(struct tegra_dfll *td, bool enable)
++{
++	u32 val;
 +
-+		bus-range = <0x00 0xff>;
-+		#address-cells = <3>;
-+		#size-cells = <2>;
++	val = dfll_i2c_readl(td, DFLL_OUTPUT_CFG);
 +
-+		ranges = <0x82000000 0 0x01000000 0x0 0x01000000 0 0x00001000   /* port 0 configuration space */
-+			  0x82000000 0 0x01001000 0x0 0x01001000 0 0x00001000   /* port 1 configuration space */
-+			  0x81000000 0 0x0        0x0 0x12000000 0 0x00010000   /* downstream I/O (64 KiB) */
-+			  0x82000000 0 0x13000000 0x0 0x13000000 0 0x0d000000   /* non-prefetchable memory (208 MiB) */
-+			  0xc2000000 0 0x20000000 0x0 0x20000000 0 0x20000000>; /* prefetchable memory (512 MiB) */
++	if (enable)
++		val |= DFLL_OUTPUT_CFG_I2C_ENABLE;
++	else
++		val &= ~DFLL_OUTPUT_CFG_I2C_ENABLE;
 +
-+		clocks = <&tegra_car TEGRA210_CLK_PCIE>,
-+			 <&tegra_car TEGRA210_CLK_AFI>,
-+			 <&tegra_car TEGRA210_CLK_PLL_E>,
-+			 <&tegra_car TEGRA210_CLK_CML0>;
-+		clock-names = "pex", "afi", "pll_e", "cml";
-+		resets = <&tegra_car 70>,
-+			 <&tegra_car 72>,
-+			 <&tegra_car 74>;
-+		reset-names = "pex", "afi", "pcie_x";
-+		power-domains = <&pmc TEGRA_POWERGATE_PCIE>;
-+		status = "disabled";
++	dfll_i2c_writel(td, val, DFLL_OUTPUT_CFG);
++	dfll_i2c_wmb(td);
 +
-+		phys = <&padctl TEGRA_XUSB_PADCTL_PCIE>;
-+		phy-names = "pcie";
++	return 0;
++}
 +
-+		pci@1,0 {
-+			device_type = "pci";
-+			assigned-addresses = <0x82000800 0 0x01000000 0 0x1000>;
-+			reg = <0x000800 0 0 0 0>;
-+			status = "disabled";
++/**
++ * dfll_load_lut - load the voltage lookup table
++ * @td: struct tegra_dfll *
++ *
++ * Load the voltage-to-PMIC register value lookup table into the DFLL
++ * IP block memory. Look-up tables can be loaded at any time.
++ */
++static void dfll_load_i2c_lut(struct tegra_dfll *td)
++{
++	int i, lut_index;
++	u32 val;
 +
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			ranges;
++	for (i = 0; i < MAX_DFLL_VOLTAGES; i++) {
++		if (i < td->lut_min)
++			lut_index = td->lut_min;
++		else if (i > td->lut_max)
++			lut_index = td->lut_max;
++		else
++			lut_index = i;
 +
-+			nvidia,num-lanes = <4>;
-+		};
++		  val = regulator_list_hardware_vsel(td->vdd_reg,
++						     td->i2c_lut[lut_index]);
++		__raw_writel(val, td->lut_base + i * 4);
++	}
 +
-+		pci@2,0 {
-+			device_type = "pci";
-+			assigned-addresses = <0x82001000 0 0x01001000 0 0x1000>;
-+			reg = <0x001000 0 0 0 0>;
-+			status = "disabled";
++	dfll_i2c_wmb(td);
++}
 +
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			ranges;
++/**
++ * dfll_init_i2c_if - set up the DFLL's DFLL-I2C interface
++ * @td: DFLL instance
++ *
++ * During DFLL driver initialization, program the DFLL-I2C interface
++ * with the PMU slave address, vdd register offset, and transfer mode.
++ * This data is used by the DFLL to automatically construct I2C
++ * voltage-set commands, which are then passed to the DFLL's internal
++ * I2C controller.
++ */
++static void dfll_init_i2c_if(struct tegra_dfll *td)
++{
++	u32 val;
 +
-+			nvidia,num-lanes = <1>;
-+		};
-+	};
++	if (td->i2c_slave_addr > 0x7f) {
++		val = td->i2c_slave_addr << DFLL_I2C_CFG_SLAVE_ADDR_SHIFT_10BIT;
++		val |= DFLL_I2C_CFG_SLAVE_ADDR_10;
++	} else {
++		val = td->i2c_slave_addr << DFLL_I2C_CFG_SLAVE_ADDR_SHIFT_7BIT;
++	}
++	val |= DFLL_I2C_CFG_SIZE_MASK;
++	val |= DFLL_I2C_CFG_ARB_ENABLE;
++	dfll_i2c_writel(td, val, DFLL_I2C_CFG);
 +
-+	host1x@0,50000000 {
-+		compatible = "nvidia,tegra210-host1x", "simple-bus";
-+		reg = <0x0 0x50000000 0x0 0x00034000>;
-+		interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>, /* syncpt */
-+			     <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>; /* general */
-+		clocks = <&tegra_car TEGRA210_CLK_HOST1X>;
-+		clock-names = "host1x";
-+		resets = <&tegra_car 28>;
-+		reset-names = "host1x";
++	dfll_i2c_writel(td, td->i2c_reg, DFLL_I2C_VDD_REG_ADDR);
 +
-+		#address-cells = <2>;
-+		#size-cells = <2>;
++	val = DIV_ROUND_UP(td->i2c_clk_rate, td->i2c_fs_rate * 8);
++	BUG_ON(!val || (val > DFLL_I2C_CLK_DIVISOR_MASK));
++	val = (val - 1) << DFLL_I2C_CLK_DIVISOR_FS_SHIFT;
 +
-+		ranges = <0x0 0x54000000 0x0 0x54000000 0x0 0x01000000>;
++	/* default hs divisor just in case */
++	val |= 1 << DFLL_I2C_CLK_DIVISOR_HS_SHIFT;
++	__raw_writel(val, td->i2c_controller_base + DFLL_I2C_CLK_DIVISOR);
++	dfll_i2c_wmb(td);
++}
 +
-+		dpaux@0,54040000 {
-+			compatible = "nvidia,tegra210-dpaux";
-+			reg = <0x0 0x54040000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA210_CLK_DPAUX1>,
-+				 <&tegra_car TEGRA210_CLK_PLL_DP>;
-+			clock-names = "dpaux", "parent";
-+			resets = <&tegra_car 207>;
-+			reset-names = "dpaux";
-+			status = "disabled";
-+		};
++/**
++ * dfll_init_out_if - prepare DFLL-to-PMIC interface
++ * @td: DFLL instance
++ *
++ * During DFLL driver initialization or resume from context loss,
++ * disable the I2C command output to the PMIC, set safe voltage and
++ * output limits, and disable and clear limit interrupts.
++ */
++static void dfll_init_out_if(struct tegra_dfll *td)
++{
++	u32 val;
 +
-+		vi@0,54080000 {
-+			compatible = "nvidia,tegra210-vi";
-+			reg = <0x0 0x54080000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+		};
++	td->lut_min = 0;
++	td->lut_max = td->i2c_lut_size - 1;
++	td->lut_safe = td->lut_min + 1;
 +
-+		tsec@0,54100000 {
-+			compatible = "nvidia,tegra210-tsec";
-+			reg = <0x0 0x54100000 0x0 0x00040000>;
-+		};
++	dfll_i2c_writel(td, 0, DFLL_OUTPUT_CFG);
++	val = (td->lut_safe << DFLL_OUTPUT_CFG_SAFE_SHIFT) |
++		(td->lut_max << DFLL_OUTPUT_CFG_MAX_SHIFT) |
++		(td->lut_min << DFLL_OUTPUT_CFG_MIN_SHIFT);
++	dfll_i2c_writel(td, val, DFLL_OUTPUT_CFG);
++	dfll_i2c_wmb(td);
 +
-+		dc@0,54200000 {
-+			compatible = "nvidia,tegra210-dc";
-+			reg = <0x0 0x54200000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-+			power-domains = <&pmc TEGRA_POWERGATE_DIS>;
-+			clocks = <&tegra_car TEGRA210_CLK_DISP1>,
-+				 <&tegra_car TEGRA210_CLK_PLL_P>;
-+			clock-names = "dc", "parent";
-+			resets = <&tegra_car 27>;
-+			reset-names = "dc";
++	dfll_writel(td, 0, DFLL_OUTPUT_FORCE);
++	dfll_i2c_writel(td, 0, DFLL_INTR_EN);
++	dfll_i2c_writel(td, DFLL_INTR_MAX_MASK | DFLL_INTR_MIN_MASK,
++			DFLL_INTR_STS);
 +
-+			iommus = <&mc TEGRA_SWGROUP_DC>;
++	dfll_load_i2c_lut(td);
++	dfll_init_i2c_if(td);
++}
 +
-+			nvidia,head = <0>;
-+		};
++/*
++ * Set/get the DFLL's targeted output clock rate
++ */
 +
-+		dc@0,54240000 {
-+			compatible = "nvidia,tegra210-dc";
-+			reg = <0x0 0x54240000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
-+			power-domains = <&pmc TEGRA_POWERGATE_DISB>;
-+			clocks = <&tegra_car TEGRA210_CLK_DISP2>,
-+				 <&tegra_car TEGRA210_CLK_PLL_P>;
-+			clock-names = "dc", "parent";
-+			resets = <&tegra_car 26>;
-+			reset-names = "dc";
++/**
++ * find_lut_index_for_rate - determine I2C LUT index for given DFLL rate
++ * @td: DFLL instance
++ * @rate: clock rate
++ *
++ * Determines the index of a I2C LUT entry for a voltage that approximately
++ * produces the given DFLL clock rate. This is used when forcing a value
++ * to the integrator during rate changes. Returns -ENOENT if a suitable
++ * LUT index is not found.
++ */
++static int find_lut_index_for_rate(struct tegra_dfll *td, unsigned long rate)
++{
++	struct dev_pm_opp *opp;
++	int i, uv;
 +
-+			iommus = <&mc TEGRA_SWGROUP_DCB>;
++	opp = dev_pm_opp_find_freq_ceil(td->soc->opp_dev, &rate);
++	if (IS_ERR(opp))
++		return PTR_ERR(opp);
++	uv = dev_pm_opp_get_voltage(opp);
 +
-+			nvidia,head = <1>;
-+		};
++	for (i = 0; i < td->i2c_lut_size; i++) {
++		if (regulator_list_voltage(td->vdd_reg, td->i2c_lut[i]) == uv)
++			return i;
++	}
 +
-+		dsi@0,54300000 {
-+			compatible = "nvidia,tegra210-dsi";
-+			reg = <0x0 0x54300000 0x0 0x00040000>;
-+			clocks = <&tegra_car TEGRA210_CLK_DSIA>,
-+				 <&tegra_car TEGRA210_CLK_DSIALP>,
-+				 <&tegra_car TEGRA210_CLK_PLL_D_OUT0>;
-+			clock-names = "dsi", "lp", "parent";
-+			resets = <&tegra_car 48>;
-+			reset-names = "dsi";
-+			nvidia,mipi-calibrate = <&mipi 0x0c0>; /* DSIA & DSIB pads */
++	return -ENOENT;
++}
 +
-+			status = "disabled";
-+
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
-+		vic@0,54340000 {
-+			compatible = "nvidia,tegra210-vic";
-+			reg = <0x0 0x54340000 0x0 0x00040000>;
-+			status = "disabled";
-+		};
-+
-+		nvjpg@0,54380000 {
-+			compatible = "nvidia,tegra210-nvjpg";
-+			reg = <0x0 0x54380000 0x0 0x00040000>;
-+			status = "disabled";
-+		};
-+
-+		dsi@0,54400000 {
-+			compatible = "nvidia,tegra210-dsi";
-+			reg = <0x0 0x54400000 0x0 0x00040000>;
-+			clocks = <&tegra_car TEGRA210_CLK_DSIB>,
-+				 <&tegra_car TEGRA210_CLK_DSIBLP>,
-+				 <&tegra_car TEGRA210_CLK_PLL_D_OUT0>;
-+			clock-names = "dsi", "lp", "parent";
-+			resets = <&tegra_car 82>;
-+			reset-names = "dsi";
-+			nvidia,mipi-calibrate = <&mipi 0x300>; /* DSIC & DSID pads */
-+
-+			status = "disabled";
-+
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
-+		nvdec@0,54480000 {
-+			compatible = "nvidia,tegra210-nvdec";
-+			reg = <0x0 0x54480000 0x0 0x00040000>;
-+			status = "disabled";
-+		};
-+
-+		nvenc@0,544c0000 {
-+			compatible = "nvidia,tegra210-nvenc";
-+			reg = <0x0 0x544c0000 0x0 0x00040000>;
-+			status = "disabled";
-+		};
-+
-+		tsec@0,54500000 {
-+			compatible = "nvidia,tegra210-tsec";
-+			reg = <0x0 0x54500000 0x0 0x00040000>;
-+			status = "disabled";
-+		};
-+
-+		sor@0,54540000 {
-+			compatible = "nvidia,tegra210-sor";
-+			reg = <0x0 0x54540000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA210_CLK_SOR0>,
-+				 <&tegra_car TEGRA210_CLK_PLL_D_OUT0>,
-+				 <&tegra_car TEGRA210_CLK_PLL_DP>,
-+				 <&tegra_car TEGRA210_CLK_SOR_SAFE>;
-+			clock-names = "sor", "parent", "dp", "safe";
-+			resets = <&tegra_car 182>;
-+			reset-names = "sor";
-+			power-domains = <&pmc TEGRA_POWERGATE_SOR>;
-+			status = "disabled";
-+		};
-+
-+		sor@0,54580000 {
-+			compatible = "nvidia,tegra210-sor1";
-+			reg = <0x0 0x54580000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA210_CLK_SOR1>,
-+				 <&tegra_car TEGRA210_CLK_PLL_D2_OUT0>,
-+				 <&tegra_car TEGRA210_CLK_PLL_DP>,
-+				 <&tegra_car TEGRA210_CLK_SOR_SAFE>;
-+			clock-names = "sor", "parent", "dp", "safe";
-+			resets = <&tegra_car 183>;
-+			reset-names = "sor";
-+			power-domains = <&pmc TEGRA_POWERGATE_SOR>;
-+			status = "disabled";
-+		};
-+
-+		dpaux: dpaux@0,545c0000 {
-+			compatible = "nvidia,tegra124-dpaux";
-+			reg = <0x0 0x545c0000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA210_CLK_DPAUX>,
-+				 <&tegra_car TEGRA210_CLK_PLL_DP>;
-+			clock-names = "dpaux", "parent";
-+			resets = <&tegra_car 181>;
-+			reset-names = "dpaux";
-+			status = "disabled";
-+		};
-+
-+		isp@0,54600000 {
-+			compatible = "nvidia,tegra210-isp";
-+			reg = <0x0 0x54600000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+		};
-+
-+		isp@0,54680000 {
-+			compatible = "nvidia,tegra210-isp";
-+			reg = <0x0 0x54680000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+		};
-+
-+		i2c@0,546c0000 {
-+			compatible = "nvidia,tegra210-i2c-vi";
-+			reg = <0x0 0x546c0000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+		};
-+	};
-+
-+	gic: interrupt-controller@0,50041000 {
-+		compatible = "arm,gic-400";
-+		#interrupt-cells = <3>;
-+		interrupt-controller;
-+		reg = <0x0 0x50041000 0x0 0x1000>,
-+		      <0x0 0x50042000 0x0 0x2000>,
-+		      <0x0 0x50044000 0x0 0x2000>,
-+		      <0x0 0x50046000 0x0 0x2000>;
-+		interrupts = <GIC_PPI 9
-+			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-+		interrupt-parent = <&gic>;
-+	};
-+
-+	gpu@0,57000000 {
-+		compatible = "nvidia,gm20b";
-+		reg = <0x0 0x57000000 0x0 0x01000000>,
-+		      <0x0 0x58000000 0x0 0x01000000>;
-+		interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "stall", "nonstall";
-+		clocks = <&tegra_car TEGRA210_CLK_GPU>,
-+			 <&tegra_car TEGRA210_CLK_PLL_P_OUT5>;
-+		clock-names = "gpu", "pwr";
-+		resets = <&tegra_car 184>;
-+		reset-names = "gpu";
-+		status = "disabled";
-+	};
-+
-+	lic: interrupt-controller@0,60004000 {
-+		compatible = "nvidia,tegra210-ictlr";
-+		reg = <0x0 0x60004000 0x0 0x40>, /* primary controller */
-+		      <0x0 0x60004100 0x0 0x40>, /* secondary controller */
-+		      <0x0 0x60004200 0x0 0x40>, /* tertiary controller */
-+		      <0x0 0x60004300 0x0 0x40>, /* quaternary controller */
-+		      <0x0 0x60004400 0x0 0x40>, /* quinary controller */
-+		      <0x0 0x60004500 0x0 0x40>; /* senary controller */
-+		interrupt-controller;
-+		#interrupt-cells = <3>;
-+		interrupt-parent = <&gic>;
-+	};
-+
-+	timer@0,60005000 {
-+		compatible = "nvidia,tegra210-timer", "nvidia,tegra20-timer";
-+		reg = <0x0 0x60005000 0x0 0x400>;
-+		interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA210_CLK_TIMER>;
-+		clock-names = "timer";
-+	};
-+
-+	tegra_car: clock@0,60006000 {
-+		compatible = "nvidia,tegra210-car";
-+		reg = <0x0 0x60006000 0x0 0x1000>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+	};
-+
-+	flow-controller@0,60007000 {
-+		compatible = "nvidia,tegra210-flowctrl";
-+		reg = <0x0 0x60007000 0x0 0x1000>;
-+	};
-+
-+	gpio: gpio@0,6000d000 {
-+		compatible = "nvidia,tegra210-gpio", "nvidia,tegra124-gpio", "nvidia,tegra30-gpio";
-+		reg = <0x0 0x6000d000 0x0 0x1000>;
-+		interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>;
-+		#gpio-cells = <2>;
-+		gpio-controller;
-+		#interrupt-cells = <2>;
-+		interrupt-controller;
-+	};
-+
-+	apbdma: dma@0,60020000 {
-+		compatible = "nvidia,tegra210-apbdma", "nvidia,tegra148-apbdma";
-+		reg = <0x0 0x60020000 0x0 0x1400>;
-+		interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 134 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 135 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 139 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA210_CLK_APBDMA>;
-+		clock-names = "dma";
-+		resets = <&tegra_car 34>;
-+		reset-names = "dma";
-+		#dma-cells = <1>;
-+	};
-+
-+	apbmisc@0,70000800 {
-+		compatible = "nvidia,tegra210-apbmisc", "nvidia,tegra20-apbmisc";
-+		reg = <0x0 0x70000800 0x0 0x64>,   /* Chip revision */
-+		      <0x0 0x7000E864 0x0 0x04>;   /* Strapping options */
-+	};
-+
-+	pinmux: pinmux@0,70000868 {
-+		compatible = "nvidia,tegra210-pinmux";
-+		reg = <0x0 0x70000868 0x0 0x164>, /* Pad control registers */
-+		      <0x0 0x70003000 0x0 0x434>, /* Mux registers */
-+		      <0x0 0x70000820 0x0 0x008>; /* MIPI pad control */
-+	};
++/**
++ * dfll_calculate_rate_request - calculate DFLL parameters for a given rate
++ * @td: DFLL instance
++ * @req: DFLL-rate-request structure
++ * @rate: the desired DFLL rate
++ *
++ * Populate the DFLL-rate-request record @req fields with the scale_bits
++ * and mult_bits fields, based on the target input rate. Returns 0 upon
++ * success, or -EINVAL if the requested rate in req->rate is too high
++ * or low for the DFLL to generate.
++ */
++static int dfll_calculate_rate_request(struct tegra_dfll *td,
++				       struct dfll_rate_req *req,
++				       unsigned long rate)
++{
++	u32 val;
 +
 +	/*
-+	 * There are two serial driver i.e. 8250 based simple serial
-+	 * driver and APB DMA based serial driver for higher baudrate
-+	 * and performace. To enable the 8250 based driver, the compatible
-+	 * is "nvidia,tegra124-uart", "nvidia,tegra20-uart" and to enable
-+	 * the APB DMA based serial driver, the comptible is
-+	 * "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart".
++	 * If requested rate is below the minimum DVCO rate, active the scaler.
++	 * In the future the DVCO minimum voltage should be selected based on
++	 * chip temperature and the actual minimum rate should be calibrated
++	 * at runtime.
 +	 */
-+	uarta: serial@0,70006000 {
-+		compatible = "nvidia,tegra210-uart", "nvidia,tegra20-uart";
-+		reg = <0x0 0x70006000 0x0 0x40>;
-+		reg-shift = <2>;
-+		interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA210_CLK_UARTA>;
-+		clock-names = "serial";
-+		resets = <&tegra_car 6>;
-+		reset-names = "serial";
-+		dmas = <&apbdma 8>, <&apbdma 8>;
-+		dma-names = "rx", "tx";
-+		status = "disabled";
-+	};
++	req->scale_bits = DFLL_FREQ_REQ_SCALE_MAX - 1;
++	if (rate < td->dvco_rate_min) {
++		int scale;
 +
-+	uartb: serial@0,70006040 {
-+		compatible = "nvidia,tegra210-uart", "nvidia,tegra20-uart";
-+		reg = <0x0 0x70006040 0x0 0x40>;
-+		reg-shift = <2>;
-+		interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA210_CLK_UARTB>;
-+		clock-names = "serial";
-+		resets = <&tegra_car 7>;
-+		reset-names = "serial";
-+		dmas = <&apbdma 9>, <&apbdma 9>;
-+		dma-names = "rx", "tx";
-+		status = "disabled";
-+	};
++		scale = DIV_ROUND_CLOSEST(rate / 1000 * DFLL_FREQ_REQ_SCALE_MAX,
++					  td->dvco_rate_min / 1000);
++		if (!scale) {
++			dev_err(td->dev, "%s: Rate %lu is too low\n",
++				__func__, rate);
++			return -EINVAL;
++		}
++		req->scale_bits = scale - 1;
++		rate = td->dvco_rate_min;
++	}
 +
-+	uartc: serial@0,70006200 {
-+		compatible = "nvidia,tegra210-uart", "nvidia,tegra20-uart";
-+		reg = <0x0 0x70006200 0x0 0x40>;
-+		reg-shift = <2>;
-+		interrupts = <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA210_CLK_UARTC>;
-+		clock-names = "serial";
-+		resets = <&tegra_car 55>;
-+		reset-names = "serial";
-+		dmas = <&apbdma 10>, <&apbdma 10>;
-+		dma-names = "rx", "tx";
-+		status = "disabled";
-+	};
++	/* Convert requested rate into frequency request and scale settings */
++	val = DVCO_RATE_TO_MULT(rate, td->ref_rate);
++	if (val > FREQ_MAX) {
++		dev_err(td->dev, "%s: Rate %lu is above dfll range\n",
++			__func__, rate);
++		return -EINVAL;
++	}
++	req->mult_bits = val;
++	req->dvco_target_rate = MULT_TO_DVCO_RATE(req->mult_bits, td->ref_rate);
++	req->rate = dfll_scale_dvco_rate(req->scale_bits,
++					 req->dvco_target_rate);
++	req->lut_index = find_lut_index_for_rate(td, req->dvco_target_rate);
++	if (req->lut_index < 0)
++		return req->lut_index;
 +
-+	uartd: serial@0,70006300 {
-+		compatible = "nvidia,tegra210-uart", "nvidia,tegra20-uart";
-+		reg = <0x0 0x70006300 0x0 0x40>;
-+		reg-shift = <2>;
-+		interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA210_CLK_UARTD>;
-+		clock-names = "serial";
-+		resets = <&tegra_car 65>;
-+		reset-names = "serial";
-+		dmas = <&apbdma 19>, <&apbdma 19>;
-+		dma-names = "rx", "tx";
-+		status = "disabled";
-+	};
++	return 0;
++}
 +
-+	pwm: pwm@0,7000a000 {
-+		compatible = "nvidia,tegra210-pwm", "nvidia,tegra20-pwm";
-+		reg = <0x0 0x7000a000 0x0 0x100>;
-+		#pwm-cells = <2>;
-+		clocks = <&tegra_car TEGRA210_CLK_PWM>;
-+		clock-names = "pwm";
-+		resets = <&tegra_car 17>;
-+		reset-names = "pwm";
-+		status = "disabled";
-+	};
++/**
++ * dfll_set_frequency_request - start the frequency change operation
++ * @td: DFLL instance
++ * @req: rate request structure
++ *
++ * Tell the DFLL to try to change its output frequency to the
++ * frequency represented by @req. DFLL must be in closed-loop mode.
++ */
++static void dfll_set_frequency_request(struct tegra_dfll *td,
++				       struct dfll_rate_req *req)
++{
++	u32 val = 0;
++	int force_val;
++	int coef = 128; /* FIXME: td->cg_scale? */;
 +
-+	i2c@0,7000c000 {
-+		compatible = "nvidia,tegra210-i2c", "nvidia,tegra114-i2c";
-+		reg = <0x0 0x7000c000 0x0 0x100>;
-+		interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&tegra_car TEGRA210_CLK_I2C1>;
-+		clock-names = "div-clk";
-+		resets = <&tegra_car 12>;
-+		reset-names = "i2c";
-+		dmas = <&apbdma 21>, <&apbdma 21>;
-+		dma-names = "rx", "tx";
-+		status = "disabled";
-+	};
++	force_val = (req->lut_index - td->lut_safe) * coef / td->cg;
++	force_val = clamp(force_val, FORCE_MIN, FORCE_MAX);
 +
-+	i2c@0,7000c400 {
-+		compatible = "nvidia,tegra210-i2c", "nvidia,tegra114-i2c";
-+		reg = <0x0 0x7000c400 0x0 0x100>;
-+		interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&tegra_car TEGRA210_CLK_I2C2>;
-+		clock-names = "div-clk";
-+		resets = <&tegra_car 54>;
-+		reset-names = "i2c";
-+		dmas = <&apbdma 22>, <&apbdma 22>;
-+		dma-names = "rx", "tx";
-+		status = "disabled";
-+	};
++	val |= req->mult_bits << DFLL_FREQ_REQ_MULT_SHIFT;
++	val |= req->scale_bits << DFLL_FREQ_REQ_SCALE_SHIFT;
++	val |= ((u32)force_val << DFLL_FREQ_REQ_FORCE_SHIFT) &
++		DFLL_FREQ_REQ_FORCE_MASK;
++	val |= DFLL_FREQ_REQ_FREQ_VALID | DFLL_FREQ_REQ_FORCE_ENABLE;
 +
-+	i2c@0,7000c500 {
-+		compatible = "nvidia,tegra210-i2c", "nvidia,tegra114-i2c";
-+		reg = <0x0 0x7000c500 0x0 0x100>;
-+		interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&tegra_car TEGRA210_CLK_I2C3>;
-+		clock-names = "div-clk";
-+		resets = <&tegra_car 67>;
-+		reset-names = "i2c";
-+		dmas = <&apbdma 23>, <&apbdma 23>;
-+		dma-names = "rx", "tx";
-+		status = "disabled";
-+	};
++	dfll_writel(td, val, DFLL_FREQ_REQ);
++	dfll_wmb(td);
++}
 +
-+	i2c@0,7000c700 {
-+		compatible = "nvidia,tegra210-i2c", "nvidia,tegra114-i2c";
-+		reg = <0x0 0x7000c700 0x0 0x100>;
-+		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&tegra_car TEGRA210_CLK_I2C4>;
-+		clock-names = "div-clk";
-+		resets = <&tegra_car 103>;
-+		reset-names = "i2c";
-+		dmas = <&apbdma 26>, <&apbdma 26>;
-+		dma-names = "rx", "tx";
-+		status = "disabled";
-+	};
++/**
++ * tegra_dfll_request_rate - set the next rate for the DFLL to tune to
++ * @td: DFLL instance
++ * @rate: clock rate to target
++ *
++ * Convert the requested clock rate @rate into the DFLL control logic
++ * settings. In closed-loop mode, update new settings immediately to
++ * adjust DFLL output rate accordingly. Otherwise, just save them
++ * until the next switch to closed loop. Returns 0 upon success,
++ * -EPERM if the DFLL driver has not yet been initialized, or -EINVAL
++ * if @rate is outside the DFLL's tunable range.
++ */
++static int dfll_request_rate(struct tegra_dfll *td, unsigned long rate)
++{
++	int ret;
++	struct dfll_rate_req req;
 +
-+	i2c@0,7000d000 {
-+		compatible = "nvidia,tegra210-i2c", "nvidia,tegra114-i2c";
-+		reg = <0x0 0x7000d000 0x0 0x100>;
-+		interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&tegra_car TEGRA210_CLK_I2C5>;
-+		clock-names = "div-clk";
-+		resets = <&tegra_car 47>;
-+		reset-names = "i2c";
-+		dmas = <&apbdma 24>, <&apbdma 24>;
-+		dma-names = "rx", "tx";
-+		status = "disabled";
-+	};
++	if (td->mode == DFLL_UNINITIALIZED) {
++		dev_err(td->dev, "%s: Cannot set DFLL rate in %s mode\n",
++			__func__, mode_name[td->mode]);
++		return -EPERM;
++	}
 +
-+	i2c@0,7000d100 {
-+		compatible = "nvidia,tegra210-i2c", "nvidia,tegra114-i2c";
-+		reg = <0x0 0x7000d100 0x0 0x100>;
-+		interrupts = <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&tegra_car TEGRA210_CLK_I2C6>;
-+		clock-names = "div-clk";
-+		resets = <&tegra_car 166>;
-+		reset-names = "i2c";
-+		dmas = <&apbdma 30>, <&apbdma 30>;
-+		dma-names = "rx", "tx";
-+		status = "disabled";
-+	};
++	ret = dfll_calculate_rate_request(td, &req, rate);
++	if (ret)
++		return ret;
 +
-+	spi@0,7000d400 {
-+		compatible = "nvidia,tegra210-spi", "nvidia,tegra114-spi";
-+		reg = <0x0 0x7000d400 0x0 0x200>;
-+		interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&tegra_car TEGRA210_CLK_SBC1>;
-+		clock-names = "spi";
-+		resets = <&tegra_car 41>;
-+		reset-names = "spi";
-+		dmas = <&apbdma 15>, <&apbdma 15>;
-+		dma-names = "rx", "tx";
-+		status = "disabled";
-+	};
++	td->last_unrounded_rate = rate;
++	td->last_req = req;
 +
-+	spi@0,7000d600 {
-+		compatible = "nvidia,tegra210-spi", "nvidia,tegra114-spi";
-+		reg = <0x0 0x7000d600 0x0 0x200>;
-+		interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&tegra_car TEGRA210_CLK_SBC2>;
-+		clock-names = "spi";
-+		resets = <&tegra_car 44>;
-+		reset-names = "spi";
-+		dmas = <&apbdma 16>, <&apbdma 16>;
-+		dma-names = "rx", "tx";
-+		status = "disabled";
-+	};
++	if (td->mode == DFLL_CLOSED_LOOP)
++		dfll_set_frequency_request(td, &td->last_req);
 +
-+	spi@0,7000d800 {
-+		compatible = "nvidia,tegra210-spi", "nvidia,tegra114-spi";
-+		reg = <0x0 0x7000d800 0x0 0x200>;
-+		interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&tegra_car TEGRA210_CLK_SBC3>;
-+		clock-names = "spi";
-+		resets = <&tegra_car 46>;
-+		reset-names = "spi";
-+		dmas = <&apbdma 17>, <&apbdma 17>;
-+		dma-names = "rx", "tx";
-+		status = "disabled";
-+	};
++	return 0;
++}
 +
-+	spi@0,7000da00 {
-+		compatible = "nvidia,tegra210-spi", "nvidia,tegra114-spi";
-+		reg = <0x0 0x7000da00 0x0 0x200>;
-+		interrupts = <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&tegra_car TEGRA210_CLK_SBC4>;
-+		clock-names = "spi";
-+		resets = <&tegra_car 68>;
-+		reset-names = "spi";
-+		dmas = <&apbdma 18>, <&apbdma 18>;
-+		dma-names = "rx", "tx";
-+		status = "disabled";
-+	};
++/*
+  * DFLL enable/disable & open-loop <-> closed-loop transitions
+  */
+ 
+@@ -570,8 +887,76 @@ static void dfll_set_open_loop_config(struct tegra_dfll *td)
+ 	dfll_wmb(td);
+ }
+ 
++/**
++ * tegra_dfll_lock - switch from open-loop to closed-loop mode
++ * @td: DFLL instance
++ *
++ * Switch from OPEN_LOOP state to CLOSED_LOOP state. Returns 0 upon success,
++ * -EINVAL if the DFLL's target rate hasn't been set yet, or -EPERM if the
++ * DFLL is not currently in open-loop mode.
++ */
++static int dfll_lock(struct tegra_dfll *td)
++{
++	struct dfll_rate_req *req = &td->last_req;
 +
-+	rtc@0,7000e000 {
-+		compatible = "nvidia,tegra210-rtc", "nvidia,tegra20-rtc";
-+		reg = <0x0 0x7000e000 0x0 0x100>;
-+		interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA210_CLK_RTC>;
-+		clock-names = "rtc";
-+	};
++	switch (td->mode) {
++	case DFLL_CLOSED_LOOP:
++		return 0;
 +
-+	pmc: pmc@0,7000e400 {
-+		compatible = "nvidia,tegra210-pmc";
-+		reg = <0x0 0x7000e400 0x0 0x400>;
-+		clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
-+		clock-names = "pclk", "clk32k_in";
++	case DFLL_OPEN_LOOP:
++		if (req->rate == 0) {
++			dev_err(td->dev, "%s: Cannot lock DFLL at rate 0\n",
++				__func__);
++			return -EINVAL;
++		}
 +
-+		#power-domain-cells = <1>;
-+	};
++		dfll_i2c_set_output_enabled(td, true);
++		dfll_set_mode(td, DFLL_CLOSED_LOOP);
++		dfll_set_frequency_request(td, req);
++		return 0;
 +
-+	fuse@0,7000f800 {
-+		compatible = "nvidia,tegra210-efuse";
-+		reg = <0x0 0x7000f800 0x0 0x400>;
-+		clocks = <&tegra_car TEGRA210_CLK_FUSE>;
-+		clock-names = "fuse";
-+		resets = <&tegra_car 39>;
-+		reset-names = "fuse";
-+	};
++	default:
++		BUG_ON(td->mode > DFLL_CLOSED_LOOP);
++		dev_err(td->dev, "%s: Cannot lock DFLL in %s mode\n",
++			__func__, mode_name[td->mode]);
++		return -EPERM;
++	}
++}
 +
-+	mc: memory-controller@0,70019000 {
-+		compatible = "nvidia,tegra210-mc";
-+		reg = <0x0 0x70019000 0x0 0x1000>;
-+		clocks = <&tegra_car TEGRA210_CLK_MC>;
-+		clock-names = "mc";
++/**
++ * tegra_dfll_unlock - switch from closed-loop to open-loop mode
++ * @td: DFLL instance
++ *
++ * Switch from CLOSED_LOOP state to OPEN_LOOP state. Returns 0 upon success,
++ * or -EPERM if the DFLL is not currently in open-loop mode.
++ */
++static int dfll_unlock(struct tegra_dfll *td)
++{
++	switch (td->mode) {
++	case DFLL_CLOSED_LOOP:
++		dfll_set_open_loop_config(td);
++		dfll_set_mode(td, DFLL_OPEN_LOOP);
++		dfll_i2c_set_output_enabled(td, false);
++		return 0;
 +
-+		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
++	case DFLL_OPEN_LOOP:
++		return 0;
 +
-+		#iommu-cells = <1>;
-+	};
++	default:
++		BUG_ON(td->mode > DFLL_CLOSED_LOOP);
++		dev_err(td->dev, "%s: Cannot unlock DFLL in %s mode\n",
++			__func__, mode_name[td->mode]);
++		return -EPERM;
++	}
++}
 +
-+	sata@0,70020000 {
-+		compatible = "nvidia,tegra210-ahci";
+ /*
+  * Clock framework integration
++ *
++ * When the DFLL is being controlled by the CCF, always enter closed loop
++ * mode when the clk is enabled. This requires that a DFLL rate request
++ * has been set beforehand, which implies that a clk_set_rate() call is
++ * always required before a clk_enable().
+  */
+ 
+ static int dfll_clk_is_enabled(struct clk_hw *hw)
+@@ -584,21 +969,72 @@ static int dfll_clk_is_enabled(struct clk_hw *hw)
+ static int dfll_clk_enable(struct clk_hw *hw)
+ {
+ 	struct tegra_dfll *td = clk_hw_to_dfll(hw);
++	int ret;
 +
-+		reg = <0x0 0x70027000 0x0 0x2000>, /* AHCI */
-+		      <0x0 0x70020000 0x0 0x7000>; /* SATA */
++	ret = dfll_enable(td);
++	if (ret)
++		return ret;
 +
-+		interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
++	ret = dfll_lock(td);
++	if (ret)
++		dfll_disable(td);
+ 
+-	return dfll_enable(td);
++	return ret;
+ }
+ 
+ static void dfll_clk_disable(struct clk_hw *hw)
+ {
+ 	struct tegra_dfll *td = clk_hw_to_dfll(hw);
++	int ret;
 +
-+		clocks = <&tegra_car TEGRA210_CLK_SATA>,
-+			<&tegra_car TEGRA210_CLK_SATA_OOB>,
-+			<&tegra_car TEGRA210_CLK_CML1>,
-+			<&tegra_car TEGRA210_CLK_PLL_E>;
-+		clock-names = "sata", "sata-oob", "cml1", "pll_e";
++	ret = dfll_unlock(td);
++	if (!ret)
++		dfll_disable(td);
++}
 +
-+		resets = <&tegra_car 124>,
-+			 <&tegra_car 123>,
-+			 <&tegra_car 129>;
-+		reset-names = "sata", "sata-oob", "sata-cold";
++static unsigned long dfll_clk_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	struct tegra_dfll *td = clk_hw_to_dfll(hw);
+ 
+-	dfll_disable(td);
++	return td->last_unrounded_rate;
++}
 +
-+		power-domains = <&pmc TEGRA_POWERGATE_SATA>;
++static long dfll_clk_round_rate(struct clk_hw *hw,
++				unsigned long rate,
++				unsigned long *parent_rate)
++{
++	struct tegra_dfll *td = clk_hw_to_dfll(hw);
++	struct dfll_rate_req req;
++	int ret;
 +
-+		phys = <&padctl TEGRA_XUSB_PADCTL_SATA>;
-+		phy-names = "sata-phy";
++	ret = dfll_calculate_rate_request(td, &req, rate);
++	if (ret)
++		return ret;
 +
-+		status = "disabled";
-+	};
++	/*
++	 * Don't return the rounded rate, since it doesn't really matter as
++	 * the output rate will be voltage controlled anyway, and cpufreq
++	 * freaks out if any rounding happens.
++	 */
++	return rate;
++}
 +
-+	hda@0,70030000 {
-+		compatible = "nvidia,tegra210-hda", "nvidia,tegra30-hda";
-+		reg = <0x0 0x70030000 0x0 0x10000>;
-+		interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA210_CLK_HDA>,
-+		         <&tegra_car TEGRA210_CLK_HDA2HDMI>,
-+			 <&tegra_car TEGRA210_CLK_HDA2CODEC_2X>;
-+		clock-names = "hda", "hda2hdmi", "hda2codec_2x";
-+		resets = <&tegra_car 125>, /* hda */
-+			 <&tegra_car 128>, /* hda2hdmi */
-+			 <&tegra_car 111>; /* hda2codec_2x */
-+		reset-names = "hda", "hda2hdmi", "hda2codec_2x";
-+		status = "disabled";
-+	};
++static int dfll_clk_set_rate(struct clk_hw *hw, unsigned long rate,
++			     unsigned long parent_rate)
++{
++	struct tegra_dfll *td = clk_hw_to_dfll(hw);
 +
-+	usb@0,70090000 {
-+		compatible = "nvidia,tegra210-xhci";
-+		reg = <0x0 0x70090000 0x0 0x8000>,
-+		      <0x0 0x70098000 0x0 0x1000>,
-+		      <0x0 0x70099000 0x0 0x1000>;
-+		interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA210_CLK_XUSB_HOST>,
-+			 <&tegra_car TEGRA210_CLK_XUSB_HOST_SRC>,
-+			 <&tegra_car TEGRA210_CLK_XUSB_DEV>,
-+			 <&tegra_car TEGRA210_CLK_XUSB_DEV_SRC>,
-+			 <&tegra_car TEGRA210_CLK_XUSB_FALCON_SRC>,
-+			 <&tegra_car TEGRA210_CLK_XUSB_SS>,
-+			 <&tegra_car TEGRA210_CLK_XUSB_SS_DIV2>,
-+			 <&tegra_car TEGRA210_CLK_XUSB_SS_SRC>,
-+			 <&tegra_car TEGRA210_CLK_XUSB_HS_SRC>,
-+			 <&tegra_car TEGRA210_CLK_XUSB_FS_SRC>,
-+			 <&tegra_car TEGRA210_CLK_PLL_U_480M>,
-+			 <&tegra_car TEGRA210_CLK_CLK_M>,
-+			 <&tegra_car TEGRA210_CLK_PLL_E>;
-+		clock-names = "xusb_host", "xusb_host_src", "xusb_dev",
-+			      "xusb_dev_src", "xusb_falcon_src", "xusb_ss",
-+			      "xusb_ss_div2", "xusb_ss_src", "xusb_hs_src",
-+			      "xusb_fs_src", "pll_u_480m", "clk_m", "pll_e";
-+		resets = <&tegra_car 89>, <&tegra_car 95>, <&tegra_car 156>,
-+			 <&tegra_car 143>;
-+		reset-names = "xusb_host", "xusb_dev", "xusb_ss", "xusb";
-+		mboxes = <&xusb_mbox>;
-+		mbox-names = "xusb";
-+		status = "disabled";
-+	};
++	return dfll_request_rate(td, rate);
+ }
+ 
+ static const struct clk_ops dfll_clk_ops = {
+ 	.is_enabled	= dfll_clk_is_enabled,
+ 	.enable		= dfll_clk_enable,
+ 	.disable	= dfll_clk_disable,
++	.recalc_rate	= dfll_clk_recalc_rate,
++	.round_rate	= dfll_clk_round_rate,
++	.set_rate	= dfll_clk_set_rate,
+ };
+ 
+ static struct clk_init_data dfll_clk_init_data = {
+@@ -677,6 +1113,23 @@ static int attr_enable_set(void *data, u64 val)
+ DEFINE_SIMPLE_ATTRIBUTE(enable_fops, attr_enable_get, attr_enable_set,
+ 			"%llu\n");
+ 
++static int attr_lock_get(void *data, u64 *val)
++{
++	struct tegra_dfll *td = data;
 +
-+	xusb_mbox: mailbox@0,70098000 {
-+		compatible = "nvidia,tegra210-xusb-mbox";
-+		reg = <0x0 0x70098000 0x0 0x1000>;
-+		interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
++	*val = (td->mode == DFLL_CLOSED_LOOP);
 +
-+		#mbox-cells = <0>;
-+	};
++	return 0;
++}
++static int attr_lock_set(void *data, u64 val)
++{
++	struct tegra_dfll *td = data;
 +
-+	padctl: padctl@0,7009f000 {
-+		compatible = "nvidia,tegra210-xusb-padctl";
-+		reg = <0x0 0x7009f000 0x0 0x1000>;
-+		resets = <&tegra_car 142>;
-+		reset-names = "padctl";
-+		mboxes = <&xusb_mbox>;
-+		mbox-names = "xusb";
++	return val ? dfll_lock(td) :  dfll_unlock(td);
++}
++DEFINE_SIMPLE_ATTRIBUTE(lock_fops, attr_lock_get, attr_lock_set,
++			"%llu\n");
 +
-+		#phy-cells = <1>;
+ static int attr_rate_get(void *data, u64 *val)
+ {
+ 	struct tegra_dfll *td = data;
+@@ -685,7 +1138,14 @@ static int attr_rate_get(void *data, u64 *val)
+ 
+ 	return 0;
+ }
+-DEFINE_SIMPLE_ATTRIBUTE(rate_fops, attr_rate_get, NULL, "%llu\n");
 +
-+		phys {
-+			pcie-0 {
-+				status = "disabled";
++static int attr_rate_set(void *data, u64 val)
++{
++	struct tegra_dfll *td = data;
 +
-+				resets = <&tegra_car 205>;
-+				reset-names = "pcie-phy";
-+			};
++	return dfll_request_rate(td, val);
++}
++DEFINE_SIMPLE_ATTRIBUTE(rate_fops, attr_rate_get, attr_rate_set, "%llu\n");
+ 
+ static int attr_registers_show(struct seq_file *s, void *data)
+ {
+@@ -751,6 +1211,10 @@ static int dfll_debug_init(struct tegra_dfll *td)
+ 				 td->debugfs_dir, td, &enable_fops))
+ 		goto err_out;
+ 
++	if (!debugfs_create_file("lock", S_IRUGO,
++				 td->debugfs_dir, td, &lock_fops))
++		goto err_out;
 +
-+			sata-0 {
-+				status = "disabled";
+ 	if (!debugfs_create_file("rate", S_IRUGO,
+ 				 td->debugfs_dir, td, &rate_fops))
+ 		goto err_out;
+@@ -782,6 +1246,19 @@ err_out:
+  */
+ static void dfll_set_default_params(struct tegra_dfll *td)
+ {
++	u32 val;
 +
-+				resets = <&tegra_car 204>;
-+				reset-names = "sata-phy";
-+			};
++	val = DIV_ROUND_UP(td->ref_rate, td->sample_rate * 32);
++	BUG_ON(val > DFLL_CONFIG_DIV_MASK);
++	dfll_writel(td, val, DFLL_CONFIG);
 +
-+			usb3-0 {
-+				status = "disabled";
-+			};
++	val = (td->force_mode << DFLL_PARAMS_FORCE_MODE_SHIFT) |
++		(td->cf << DFLL_PARAMS_CF_PARAM_SHIFT) |
++		(td->ci << DFLL_PARAMS_CI_PARAM_SHIFT) |
++		(td->cg << DFLL_PARAMS_CG_PARAM_SHIFT) |
++		(td->cg_scale ? DFLL_PARAMS_CG_SCALE : 0);
++	dfll_writel(td, val, DFLL_PARAMS);
 +
-+			usb3-1 {
-+				status = "disabled";
-+			};
+ 	dfll_tune_low(td);
+ 	dfll_writel(td, td->droop_ctrl, DFLL_DROOP_CTRL);
+ 	dfll_writel(td, DFLL_MONITOR_CTRL_FREQ, DFLL_MONITOR_CTRL);
+@@ -859,6 +1336,8 @@ static int dfll_init(struct tegra_dfll *td)
+ 		goto di_err2;
+ 	}
+ 
++	td->last_unrounded_rate = 0;
 +
-+			utmi-0 {
-+				status = "disabled";
-+			};
+ 	pm_runtime_enable(td->dev);
+ 	pm_runtime_get_sync(td->dev);
+ 
+@@ -870,6 +1349,8 @@ static int dfll_init(struct tegra_dfll *td)
+ 
+ 	dfll_set_open_loop_config(td);
+ 
++	dfll_init_out_if(td);
 +
-+			utmi-1 {
-+				status = "disabled";
-+			};
+ 	pm_runtime_put_sync(td->dev);
+ 
+ 	return 0;
+@@ -888,6 +1369,130 @@ di_err1:
+  * DT data fetch
+  */
+ 
++/*
++ * Find a PMIC voltage register-to-voltage mapping for the given voltage.
++ * An exact voltage match is required.
++ */
++static int find_vdd_map_entry_exact(struct tegra_dfll *td, int uV)
++{
++	int i, n_voltages, reg_uV;
 +
-+			utmi-2 {
-+				status = "disabled";
-+			};
-+		};
-+	};
++	n_voltages = regulator_count_voltages(td->vdd_reg);
++	for (i = 0; i < n_voltages; i++) {
++		reg_uV = regulator_list_voltage(td->vdd_reg, i);
++		if (reg_uV < 0)
++			break;
 +
-+	sdhci@0,700b0000 {
-+		compatible = "nvidia,tegra210-sdhci", "nvidia,tegra124-sdhci";
-+		reg = <0x0 0x700b0000 0x0 0x200>;
-+		interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA210_CLK_SDMMC1>;
-+		clock-names = "sdhci";
-+		resets = <&tegra_car 14>;
-+		reset-names = "sdhci";
-+		status = "disabled";
-+	};
++		if (uV == reg_uV)
++			return i;
++	}
 +
-+	sdhci@0,700b0200 {
-+		compatible = "nvidia,tegra210-sdhci", "nvidia,tegra124-sdhci";
-+		reg = <0x0 0x700b0200 0x0 0x200>;
-+		interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA210_CLK_SDMMC2>;
-+		clock-names = "sdhci";
-+		resets = <&tegra_car 9>;
-+		reset-names = "sdhci";
-+		status = "disabled";
-+	};
++	dev_err(td->dev, "no voltage map entry for %d uV\n", uV);
++	return -EINVAL;
++}
 +
-+	sdhci@0,700b0400 {
-+		compatible = "nvidia,tegra210-sdhci", "nvidia,tegra124-sdhci";
-+		reg = <0x0 0x700b0400 0x0 0x200>;
-+		interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA210_CLK_SDMMC3>;
-+		clock-names = "sdhci";
-+		resets = <&tegra_car 69>;
-+		reset-names = "sdhci";
-+		status = "disabled";
-+	};
++/*
++ * Find a PMIC voltage register-to-voltage mapping for the given voltage,
++ * rounding up to the closest supported voltage.
++ * */
++static int find_vdd_map_entry_min(struct tegra_dfll *td, int uV)
++{
++	int i, n_voltages, reg_uV;
 +
-+	sdhci@0,700b0600 {
-+		compatible = "nvidia,tegra210-sdhci", "nvidia,tegra124-sdhci";
-+		reg = <0x0 0x700b0600 0x0 0x200>;
-+		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA210_CLK_SDMMC4>;
-+		clock-names = "sdhci";
-+		resets = <&tegra_car 15>;
-+		reset-names = "sdhci";
-+		status = "disabled";
-+	};
++	n_voltages = regulator_count_voltages(td->vdd_reg);
++	for (i = 0; i < n_voltages; i++) {
++		reg_uV = regulator_list_voltage(td->vdd_reg, i);
++		if (reg_uV < 0)
++			break;
 +
-+	soctherm: thermal-sensor@0,700e2000 {
-+		compatible = "nvidia,tegra210-soctherm";
-+		reg = <0x0 0x700e2000 0x0 0x1000>;
-+		interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA210_CLK_TSENSOR>,
-+			 <&tegra_car TEGRA210_CLK_SOC_THERM>;
-+		clock-names = "tsensor", "soctherm";
-+		resets = <&tegra_car 78>;
-+		reset-names = "soctherm";
-+		#thermal-sensor-cells = <1>;
-+	};
++		if (uV <= reg_uV)
++			return i;
++	}
 +
-+	mipi: mipi@0,700e3000 {
-+		compatible = "nvidia,tegra210-mipi";
-+		reg = <0x0 0x700e3000 0x0 0x100>;
-+		clocks = <&tegra_car TEGRA210_CLK_MIPI_CAL>;
-+		clock-names = "mipi-cal";
-+		#nvidia,mipi-calibrate-cells = <1>;
-+	};
++	dev_err(td->dev, "no voltage map entry rounding to %d uV\n", uV);
++	return -EINVAL;
++}
 +
-+	spi@0,70410000 {
-+		compatible = "nvidia,tegra210-qspi";
-+		reg = <0x0 0x70410000 0x0 0x1000>;
-+		interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		status = "disabled";
-+	};
++/**
++ * dfll_build_i2c_lut - build the I2C voltage register lookup table
++ * @td: DFLL instance
++ *
++ * The DFLL hardware has 33 bytes of look-up table RAM that must be filled with
++ * PMIC voltage register values that span the entire DFLL operating range.
++ * This function builds the look-up table based on the OPP table provided by
++ * the soc-specific platform driver (td->soc->opp_dev) and the PMIC
++ * register-to-voltage mapping queried from the regulator framework.
++ *
++ * On success, fills in td->i2c_lut and returns 0, or -err on failure.
++ */
++static int dfll_build_i2c_lut(struct tegra_dfll *td)
++{
++	int ret = -EINVAL;
++	int j, v, v_max, v_opp;
++	int selector;
++	unsigned long rate;
++	struct dev_pm_opp *opp;
 +
-+	usb@0,7d000000 {
-+		compatible = "nvidia,tegra210-ehci", "nvidia,tegra30-ehci", "usb-ehci";
-+		reg = <0x0 0x7d000000 0x0 0x4000>;
-+		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
-+		phy_type = "utmi";
-+		clocks = <&tegra_car TEGRA210_CLK_USBD>;
-+		clock-names = "usb";
-+		resets = <&tegra_car 22>;
-+		reset-names = "usb";
-+		nvidia,phy = <&phy1>;
-+		status = "disabled";
-+	};
++	rcu_read_lock();
 +
-+	phy1: usb-phy@0,7d000000 {
-+		compatible = "nvidia,tegra210-usb-phy", "nvidia,tegra30-usb-phy";
-+		reg = <0x0 0x7d000000 0x0 0x4000>,
-+		      <0x0 0x7d000000 0x0 0x4000>;
-+		phy_type = "utmi";
-+		clocks = <&tegra_car TEGRA210_CLK_USBD>,
-+			 <&tegra_car TEGRA210_CLK_PLL_U>,
-+			 <&tegra_car TEGRA210_CLK_USBD>;
-+		clock-names = "reg", "pll_u", "utmi-pads";
-+		resets = <&tegra_car 22>, <&tegra_car 22>;
-+		reset-names = "usb", "utmi-pads";
-+		nvidia,hssync-start-delay = <0>;
-+		nvidia,idle-wait-delay = <17>;
-+		nvidia,elastic-limit = <16>;
-+		nvidia,term-range-adj = <6>;
-+		nvidia,xcvr-setup = <9>;
-+		nvidia,xcvr-lsfslew = <0>;
-+		nvidia,xcvr-lsrslew = <3>;
-+		nvidia,hssquelch-level = <2>;
-+		nvidia,hsdiscon-level = <5>;
-+		nvidia,xcvr-hsslew = <12>;
-+		nvidia,has-utmi-pad-registers;
-+		status = "disabled";
-+	};
++	rate = ULONG_MAX;
++	opp = dev_pm_opp_find_freq_floor(td->soc->opp_dev, &rate);
++	if (IS_ERR(opp)) {
++		dev_err(td->dev, "couldn't get vmax opp, empty opp table?\n");
++		goto out;
++	}
++	v_max = dev_pm_opp_get_voltage(opp);
 +
-+	usb@0,7d004000 {
-+		compatible = "nvidia,tegra210-ehci", "nvidia,tegra30-ehci", "usb-ehci";
-+		reg = <0x0 0x7d004000 0x0 0x4000>;
-+		interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
-+		phy_type = "utmi";
-+		clocks = <&tegra_car TEGRA210_CLK_USB2>;
-+		clock-names = "usb";
-+		resets = <&tegra_car 58>;
-+		reset-names = "usb";
-+		nvidia,phy = <&phy2>;
-+		status = "disabled";
-+	};
++	v = td->soc->min_millivolts * 1000;
++	td->i2c_lut[0] = find_vdd_map_entry_exact(td, v);
++	if (td->i2c_lut[0] < 0)
++		goto out;
 +
-+	phy2: usb-phy@0,7d004000 {
-+		compatible = "nvidia,tegra210-usb-phy", "nvidia,tegra30-usb-phy";
-+		reg = <0x0 0x7d004000 0x0 0x4000>,
-+		      <0x0 0x7d000000 0x0 0x4000>;
-+		phy_type = "utmi";
-+		clocks = <&tegra_car TEGRA210_CLK_USB2>,
-+			 <&tegra_car TEGRA210_CLK_PLL_U>,
-+			 <&tegra_car TEGRA210_CLK_USBD>;
-+		clock-names = "reg", "pll_u", "utmi-pads";
-+		resets = <&tegra_car 58>, <&tegra_car 22>;
-+		reset-names = "usb", "utmi-pads";
-+		nvidia,hssync-start-delay = <0>;
-+		nvidia,idle-wait-delay = <17>;
-+		nvidia,elastic-limit = <16>;
-+		nvidia,term-range-adj = <6>;
-+		nvidia,xcvr-setup = <9>;
-+		nvidia,xcvr-lsfslew = <0>;
-+		nvidia,xcvr-lsrslew = <3>;
-+		nvidia,hssquelch-level = <2>;
-+		nvidia,hsdiscon-level = <5>;
-+		nvidia,xcvr-hsslew = <12>;
-+		status = "disabled";
-+	};
++	for (j = 1, rate = 0; ; rate++) {
++		opp = dev_pm_opp_find_freq_ceil(td->soc->opp_dev, &rate);
++		if (IS_ERR(opp))
++			break;
++		v_opp = dev_pm_opp_get_voltage(opp);
 +
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
++		if (v_opp <= td->soc->min_millivolts * 1000)
++			td->dvco_rate_min = dev_pm_opp_get_freq(opp);
 +
-+		cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a57";
-+			reg = <0>;
-+		};
++		for (;;) {
++			v += max(1, (v_max - v) / (MAX_DFLL_VOLTAGES - j));
++			if (v >= v_opp)
++				break;
 +
-+		cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a57";
-+			reg = <1>;
-+		};
++			selector = find_vdd_map_entry_min(td, v);
++			if (selector < 0)
++				goto out;
++			if (selector != td->i2c_lut[j - 1])
++				td->i2c_lut[j++] = selector;
++		}
 +
-+		cpu@2 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a57";
-+			reg = <2>;
-+		};
++		v = (j == MAX_DFLL_VOLTAGES - 1) ? v_max : v_opp;
++		selector = find_vdd_map_entry_exact(td, v);
++		if (selector < 0)
++			goto out;
++		if (selector != td->i2c_lut[j - 1])
++			td->i2c_lut[j++] = selector;
 +
-+		cpu@3 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a57";
-+			reg = <3>;
-+		};
-+	};
++		if (v >= v_max)
++			break;
++	}
++	td->i2c_lut_size = j;
 +
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 13
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 14
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 11
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 10
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-+		interrupt-parent = <&gic>;
-+	};
-+};
++	if (!td->dvco_rate_min)
++		dev_err(td->dev, "no opp above DFLL minimum voltage %d mV\n",
++			td->soc->min_millivolts);
++	else
++		ret = 0;
++
++out:
++	rcu_read_unlock();
++
++	return ret;
++}
++
+ /**
+  * read_dt_param - helper function for reading required parameters from the DT
+  * @td: DFLL instance
+@@ -912,6 +1517,50 @@ static bool read_dt_param(struct tegra_dfll *td, const char *param, u32 *dest)
+ }
+ 
+ /**
++ * dfll_fetch_i2c_params - query PMIC I2C params from DT & regulator subsystem
++ * @td: DFLL instance
++ *
++ * Read all the parameters required for operation in I2C mode. The parameters
++ * can originate from the device tree or the regulator subsystem.
++ * Returns 0 on success or -err on failure.
++ */
++static int dfll_fetch_i2c_params(struct tegra_dfll *td)
++{
++	struct regmap *regmap;
++	struct device *i2c_dev;
++	struct i2c_client *i2c_client;
++	int vsel_reg, vsel_mask;
++	int ret;
++
++	if (!read_dt_param(td, "nvidia,i2c-fs-rate", &td->i2c_fs_rate))
++		return -EINVAL;
++
++	regmap = regulator_get_regmap(td->vdd_reg);
++	i2c_dev = regmap_get_device(regmap);
++	i2c_client = to_i2c_client(i2c_dev);
++
++	td->i2c_slave_addr = i2c_client->addr;
++
++	ret = regulator_get_hardware_vsel_register(td->vdd_reg,
++						   &vsel_reg,
++						   &vsel_mask);
++	if (ret < 0) {
++		dev_err(td->dev,
++			"regulator unsuitable for DFLL I2C operation\n");
++		return -EINVAL;
++	}
++	td->i2c_reg = vsel_reg;
++
++	ret = dfll_build_i2c_lut(td);
++	if (ret) {
++		dev_err(td->dev, "couldn't build I2C LUT\n");
++		return ret;
++	}
++
++	return 0;
++}
++
++/**
+  * dfll_fetch_common_params - read DFLL parameters from the device tree
+  * @td: DFLL instance
+  *
+@@ -923,6 +1572,13 @@ static int dfll_fetch_common_params(struct tegra_dfll *td)
+ 	bool ok = true;
+ 
+ 	ok &= read_dt_param(td, "nvidia,droop-ctrl", &td->droop_ctrl);
++	ok &= read_dt_param(td, "nvidia,sample-rate", &td->sample_rate);
++	ok &= read_dt_param(td, "nvidia,force-mode", &td->force_mode);
++	ok &= read_dt_param(td, "nvidia,cf", &td->cf);
++	ok &= read_dt_param(td, "nvidia,ci", &td->ci);
++	ok &= read_dt_param(td, "nvidia,cg", &td->cg);
++	td->cg_scale = of_property_read_bool(td->dev->of_node,
++					     "nvidia,cg-scale");
+ 
+ 	if (of_property_read_string(td->dev->of_node, "clock-output-names",
+ 				    &td->output_clock_name)) {
+@@ -984,6 +1640,10 @@ int tegra_dfll_register(struct platform_device *pdev,
+ 		return ret;
+ 	}
+ 
++	ret = dfll_fetch_i2c_params(td);
++	if (ret)
++		return ret;
++
+ 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!mem) {
+ 		dev_err(td->dev, "no control register resource\n");
 -- 
-2.3.5
+2.3.0
