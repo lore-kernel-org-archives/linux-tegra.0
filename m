@@ -1,77 +1,38 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] irqchip: tegra: fix wrong data being passed as the
- irqdomain chip data
-Date: Wed, 13 May 2015 11:35:12 +0200
-Message-ID: <20150513093510.GA31316@ulmo.nvidia.com>
-References: <1431202014-3136-1-git-send-email-dev@lynxeye.de>
+From: Valentin Rothberg <valentinrothberg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: mailbox: tegra xusb: undefined MFD_TEGRA_XUSB
+Date: Wed, 13 May 2015 15:22:12 +0200
+Message-ID: <CAD3Xx4JfF_HCkhk7k+05KD+F+5cXGcOLZ1eBu0nyCB_JBk1fYw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="sdtB3X0nJg68CQEu"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1431202014-3136-1-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
+Cc: jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>, hengelein Stefan <stefan.hengelein-d40JDW7QUjc@public.gmane.org>, Andreas Ruprecht <andreas.ruprecht-d40JDW7QUjc@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Andrew,
 
---sdtB3X0nJg68CQEu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+your commit b1f10002b00a ("mailbox: Add NVIDIA Tegra XUSB mailbox
+driver") is in today's linux-next tree (i.e., next-20150513) and it
+adds the following lines:
 
-On Sat, May 09, 2015 at 10:06:54PM +0200, Lucas Stach wrote:
-> The irq chip functions use the irq chipdata directly as the base register
-> address of the controller, so this should be passed in instead of a point=
-er
-> to the array address holding the base address.
->=20
-> This fixes Tegra20 CPUidle as now the un-/masking of IRQs at the LIC level
-> works again, but more importantly it fixes the resulting memory corruptio=
-n.
->=20
-> Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-> ---
-> This is an important fix and should go into 4.1.
-> ---
->  drivers/irqchip/irq-tegra.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
++config TEGRA_XUSB_MBOX
++       tristate "NVIDIA Tegra XUSB Mailbox"
++       depends on MFD_TEGRA_XUSB
 
-This does indeed fix a boot regression on Tegra20. Unfortunately this is
-not exposed on any platform that uses PCIe because PCIe needs to disable
-the CPUidle LP2 state as a workaround for a hardware bug. However, I was
-able to reproduce the regression on TrimSlice by disabling PCIe, hence
-keeping CPUidle LP2 activated. I reproduced with v4.1-rc3 and applying
-this patch on top restores functionality.
+At the current state, the dependency is always false since the option
+MFD_TEGRA_XUSB is not defined in Kconfig, and the added driver cannot
+be compiled.
 
-Thanks for tracking this down Lucas.
+Is there a patch queued somewhere to add this missing option?
 
-I just noticed that Thomas already applied this while I was testing it,
-but here goes anyway:
+I detected the issue with undertaker-checkpatch [1, 2] running on a
+bot in Erlangen [3] to make daily checks of commits in linux-next for
+#ifdef related bugs.
 
-Tested-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Kind regards,
+ Valentin
 
---sdtB3X0nJg68CQEu
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJVUxrLAAoJEN0jrNd/PrOhubMP/jlIidBct5nWq6KXvHw1QcH9
-WUDuOMlFn/BJiq/R5uL2n9p8Q2B9mWJwBhisDvGCe9xmwl1xUmu5ukekcaHyfrQ0
-yEr6elQL05WZc4+3+OIyMOef8fpSLwCbc88IaEXQHoql56go7F7OJtpTPVXQX/bw
-Lxi5EPjaD91cLzE9tj2mgdp3euLBTX3u4j0yBcOLw1gOKTKe51haFN+i3Uii8yhW
-uyEJela/4gkdLOEYdoK+nyp+Dg6QmRPuuG5EDF/3kSi7zxu/0D2e9dNrlAqnXDEQ
-EXlrbXIXA2B1j0XsTn9JTVviXGF5M+K8z4RhZby5hjlyrR3EWavP9GquChRNLciw
-N6wYoFFNx4bxjTnbCmBYi3D6/9lO7z/4BzzFI3duJ6CR2Y6bKxnjKZWmClPpB2sx
-oKgmb2FmYmLC7f9CPmjNGVtC1kIilBeRT1gqFpX5E9upgs4S6c6zPZuySU7df158
-B32uU/v50vBB+Jb5b1I1EKYsHAMO+Rx6Ukt11QLjEKMb+NWdfsUrntJHqurS/jyo
-ciCFkD1GIYvJXjiwLNVyPIi73eap0aVAiB1DICnDW1tnEt4NJSC3UkQO6uuCYTuo
-z/nHVie47SMtQVsIORFVz7IWhZ7mrVfm6yR3eioe6775ftLMevVxuVNgumRpsfXF
-58T4ObzHjEW4FWtYeuC1
-=8ZHo
------END PGP SIGNATURE-----
-
---sdtB3X0nJg68CQEu--
+[1] https://vamos.informatik.uni-erlangen.de/trac/undertaker
+[2] http://www.linuxplumbersconf.org/2014/ocw/proposals/1863
+[3] https://www4.cs.fau.de/Research/CADOS/
