@@ -1,38 +1,23 @@
-From: Valentin Rothberg <valentinrothberg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: mailbox: tegra xusb: undefined MFD_TEGRA_XUSB
-Date: Wed, 13 May 2015 15:22:12 +0200
-Message-ID: <CAD3Xx4JfF_HCkhk7k+05KD+F+5cXGcOLZ1eBu0nyCB_JBk1fYw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [GIT PULL 0/8] ARM: tegra: Changes for v4.2-rc1
+Date: Wed, 13 May 2015 15:49:32 +0200
+Message-ID: <1431524980-13599-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
-Cc: jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>, hengelein Stefan <stefan.hengelein-d40JDW7QUjc@public.gmane.org>, Andreas Ruprecht <andreas.ruprecht-d40JDW7QUjc@public.gmane.org>
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Andrew,
+Hi ARM SoC maintainers, Mike, Stephen,
 
-your commit b1f10002b00a ("mailbox: Add NVIDIA Tegra XUSB mailbox
-driver") is in today's linux-next tree (i.e., next-20150513) and it
-adds the following lines:
+Here's a set of first pull requests with changes for v4.2-rc1. This is
+mostly the same as I sent out during the last cycle but which ended up
+getting rejected. To avoid this I'm sending them out earlier this time
+around. I've also split the changes into smaller chunks to make them
+easier to digest.
 
-+config TEGRA_XUSB_MBOX
-+       tristate "NVIDIA Tegra XUSB Mailbox"
-+       depends on MFD_TEGRA_XUSB
+Note that the work on Tegra210 is coming along pretty nicely, so I may
+send some more changes later on, maybe a week or two from now.
 
-At the current state, the dependency is always false since the option
-MFD_TEGRA_XUSB is not defined in Kconfig, and the added driver cannot
-be compiled.
-
-Is there a patch queued somewhere to add this missing option?
-
-I detected the issue with undertaker-checkpatch [1, 2] running on a
-bot in Erlangen [3] to make daily checks of commits in linux-next for
-#ifdef related bugs.
-
-Kind regards,
- Valentin
-
-[1] https://vamos.informatik.uni-erlangen.de/trac/undertaker
-[2] http://www.linuxplumbersconf.org/2014/ocw/proposals/1863
-[3] https://www4.cs.fau.de/Research/CADOS/
+Thanks,
+Thierry
