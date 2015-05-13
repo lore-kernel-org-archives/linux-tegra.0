@@ -1,30 +1,47 @@
-From: Benson Leung <bleung@chromium.org>
-Subject: Re: [PATCH v5 04/21] clk: tegra: pll: add tegra_pll_wait_for_lock to
- clk header
-Date: Tue, 12 May 2015 14:52:07 -0700
-Message-ID: <CANLzEkvec7WKSEseBf=S43vMaxUjVqaOuuxGOS7qYz4KPsAXyg@mail.gmail.com>
+From: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v5 10/21] clk: tegra: pll: Add logic for out-of-table
+ rates for T210
+Date: Tue, 12 May 2015 17:01:38 -0700
+Message-ID: <CANLzEksWoyJ9o6EcaktfqU8X-z7Pdg_weYaovjyb_SsGRGRC9g@mail.gmail.com>
 References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
-	<1431451444-23155-6-git-send-email-rklein@nvidia.com>
+	<1431451444-23155-12-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1431451444-23155-6-git-send-email-rklein@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Bill Huang <bilhuang@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>, Jim Lin <jilin@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1431451444-23155-12-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jim Lin <jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, May 12, 2015 at 10:23 AM, Rhyland Klein <rklein@nvidia.com> wrote:
-> Create a wrapper interface to make use of the existing
-> clk_pll_wait_for_lock. This will be useful for implementations
-> of callbacks in Tegra SoC specific clock drivers.
+On Tue, May 12, 2015 at 10:23 AM, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> For Tegra210, the logic to calculate out-of-table rates is different
+> from previous generations. Add callbacks that can be overridden to
+> allow for different ways of calculating rates. Default to
+> _cal_rate when not specified.
 >
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> This patch also includes a new flag which is used to set which method
+> of fixed_mdiv calculation is used. The new method for calculating the
+> fixed divider value for M can be more accurate especially when
+> fractional dividers are in play. This allows for older chipsets to use
+> the existing logic and new generations to use a newer version which
+> may work better for them.
+>
+> Based on original work by Aleksandr Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Reviewed-by: Benson Leung <bleung@chromium.org>
+Reviewed-by: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+
+> ---
+> v5:
+>   - Updated description to include mentioning the NEW_MDIV flag
+>   - Added kerneldoc info for new members
+
+
 
 
 -- 
 Benson Leung
 Software Engineer, Chrom* OS
-bleung@chromium.org
+bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
