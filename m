@@ -1,40 +1,32 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v9 00/17] Tegra124 CL-DVFS / DFLL clocksource + cpufreq
-Date: Thu, 14 May 2015 22:15:40 +0200
-Message-ID: <3099473.H5qjMpDQKF@vostro.rjw.lan>
-References: <1431529131-16710-1-git-send-email-mikko.perttunen@kapsi.fi> <2216026.DiZ8MPKfdF@vostro.rjw.lan> <55543D6F.2040704@kapsi.fi>
+From: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v5 21/21] clk: tegra: pll: Fix issues with rates for VCO PLLs
+Date: Thu, 14 May 2015 13:02:56 -0700
+Message-ID: <CANLzEkuDOZQKK4OGBP_z1eHArXC-du0hHLh9Tnojvmd-SzsZwg@mail.gmail.com>
+References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
+	<1431451444-23155-23-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <55543D6F.2040704@kapsi.fi>
-Sender: linux-pm-owner@vger.kernel.org
-To: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-Cc: swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, pdeschrijver@nvidia.com, viresh.kumar@linaro.org, mturquette@linaro.org, pwalmsley@nvidia.com, vinceh@nvidia.com, pgaikwad@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tuomas.tynkkynen@iki.fi
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1431451444-23155-23-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jim Lin <jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday, May 14, 2015 09:15:11 AM Mikko Perttunen wrote:
-> On 05/14/2015 01:47 AM, Rafael J. Wysocki wrote:
->  > ...
-> >
-> > If I'm supposed to apply this, I need ACKs from the appropriate people on
-> > all the patches where they are still missing.  Thanks!
-> >
-> >
-> 
-> I believe Thierry Reding will apply the series; your ACK as cpufreq 
-> maintainer for patch 13, and maybe also 12, would be welcome, though :)
-> 
-> Patch 13 just renames the old tegra-cpufreq driver that only applies to 
-> Tegra20 chips to tegra20-cpufreq.
-> 
-> Patch 12 adds device tree bindings. Maybe these can also be acked by 
-> Thierry? I'm not completely sure what's the convention.
+On Tue, May 12, 2015 at 10:24 AM, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>
+> Without this change clk_get_rate would return the final output
+> rather than the VCO output as it would factor in the pdiv when
+> it shouldn't. This will cause problems for all dividers in the
+> subtree of the VCO PLL.
+>
+> Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-You need ACKs from Viresh for those two, then.  He's officially responsible
-for ARM cpufreq drivers.
-
+Reviewed-by: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 
 -- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+Benson Leung
+Software Engineer, Chrom* OS
+bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
