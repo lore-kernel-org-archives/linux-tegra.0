@@ -1,100 +1,159 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v9 00/17] Tegra124 CL-DVFS / DFLL clocksource + cpufreq
-Date: Thu, 14 May 2015 00:47:46 +0200
-Message-ID: <2216026.DiZ8MPKfdF@vostro.rjw.lan>
-References: <1431529131-16710-1-git-send-email-mikko.perttunen@kapsi.fi>
+From: Benson Leung <bleung@chromium.org>
+Subject: Re: [PATCH v5 16/21] clk: tegra: pll: Add Set_default logic
+Date: Wed, 13 May 2015 17:04:25 -0700
+Message-ID: <CANLzEkv2rO63083RxEFWU0a_qm+7QOx0mCD8ya8hDmp5QMmkgQ@mail.gmail.com>
+References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
+	<1431451444-23155-18-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1431529131-16710-1-git-send-email-mikko.perttunen@kapsi.fi>
-Sender: linux-pm-owner@vger.kernel.org
-To: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-Cc: swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, pdeschrijver@nvidia.com, viresh.kumar@linaro.org, mturquette@linaro.org, pwalmsley@nvidia.com, vinceh@nvidia.com, pgaikwad@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tuomas.tynkkynen@iki.fi
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1431451444-23155-18-git-send-email-rklein@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Bill Huang <bilhuang@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>, Jim Lin <jilin@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday, May 13, 2015 05:58:34 PM Mikko Perttunen wrote:
-> v9 of the Tegra124 cpufreq series. Changes:
-> 
-> - Dropped PLLX reordering patch since it is no longer needed
-> - Removed a couple of unused lines from the DFLL clocksource platform driver
-> - Made the cpufreq driver tristate and removed .owned = THIS_MODULE (as it's not needed for
->   platform devices)
-> - Made the OPP generation code in the CVB parser ignore OPPs where the frequency has the most
->   significant bit set. This can be dropped once Boris Brezillon's patch finds its
->   way into the tree.
-> - Added Acks.
-> 
-> The only patches without Acks are the following:
->   ARM: tegra: enable Tegra124 cpufreq driver by default
->   ARM: tegra: Add CPU regulator to the Jetson TK1 device tree
->   ARM: tegra: Add entries for cpufreq on Tegra124
->   cpufreq: tegra: Rename tegra-cpufreq to tegra20-cpufreq
->   cpufreq: tegra124: Add device tree bindings
-> 
-> These are very minor (4/5 of them are DT patches and the fifth just renames a driver),
-> so hopefully we can get this merged.
-> 
-> Mikko Perttunen (2):
->   clk: tegra: Introduce ability for SoC-specific reset control callbacks
->   ARM: tegra: Add CPU regulator to the Jetson TK1 device tree
-> 
-> Paul Walmsley (1):
->   clk: tegra: Add DFLL DVCO reset control for Tegra124
-> 
-> Tuomas Tynkkynen (14):
->   clk: tegra: Add binding for the Tegra124 DFLL clocksource
->   clk: tegra: Add library for the DFLL clock source (open-loop mode)
->   clk: tegra: Add closed loop support for the DFLL
->   clk: tegra: Add functions for parsing CVB tables
->   clk: tegra: Add Tegra124 DFLL clocksource platform driver
->   clk: tegra: Save/restore CCLKG_BURST_POLICY on suspend
->   clk: tegra: Add the DFLL as a possible parent of the cclk_g clock
->   ARM: tegra: Add the DFLL to Tegra124 device tree
->   ARM: tegra: Enable the DFLL on the Jetson TK1
->   cpufreq: tegra124: Add device tree bindings
->   cpufreq: tegra: Rename tegra-cpufreq to tegra20-cpufreq
->   cpufreq: Add cpufreq driver for Tegra124
->   ARM: tegra: Add entries for cpufreq on Tegra124
->   ARM: tegra: enable Tegra124 cpufreq driver by default
-> 
->  .../bindings/clock/nvidia,tegra124-dfll.txt        |   79 +
->  .../bindings/cpufreq/tegra124-cpufreq.txt          |   44 +
->  arch/arm/boot/dts/tegra124-jetson-tk1.dts          |   15 +-
->  arch/arm/boot/dts/tegra124.dtsi                    |   34 +
->  arch/arm/configs/tegra_defconfig                   |    1 +
->  arch/arm/mach-tegra/Kconfig                        |    1 +
->  drivers/clk/tegra/Makefile                         |    3 +
->  drivers/clk/tegra/clk-dfll.c                       | 1755 ++++++++++++++++++++
->  drivers/clk/tegra/clk-dfll.h                       |   54 +
->  drivers/clk/tegra/clk-tegra-super-gen4.c           |    4 +-
->  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c         |  161 ++
->  drivers/clk/tegra/clk-tegra124.c                   |   82 +
->  drivers/clk/tegra/clk.c                            |   36 +-
->  drivers/clk/tegra/clk.h                            |    3 +
->  drivers/clk/tegra/cvb.c                            |  140 ++
->  drivers/clk/tegra/cvb.h                            |   67 +
->  drivers/cpufreq/Kconfig.arm                        |   13 +-
->  drivers/cpufreq/Makefile                           |    3 +-
->  drivers/cpufreq/tegra124-cpufreq.c                 |  214 +++
->  .../cpufreq/{tegra-cpufreq.c => tegra20-cpufreq.c} |    0
->  include/dt-bindings/reset/tegra124-car.h           |   11 +
->  21 files changed, 2706 insertions(+), 14 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
->  create mode 100644 Documentation/devicetree/bindings/cpufreq/tegra124-cpufreq.txt
->  create mode 100644 drivers/clk/tegra/clk-dfll.c
->  create mode 100644 drivers/clk/tegra/clk-dfll.h
->  create mode 100644 drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
->  create mode 100644 drivers/clk/tegra/cvb.c
->  create mode 100644 drivers/clk/tegra/cvb.h
->  create mode 100644 drivers/cpufreq/tegra124-cpufreq.c
->  rename drivers/cpufreq/{tegra-cpufreq.c => tegra20-cpufreq.c} (100%)
->  create mode 100644 include/dt-bindings/reset/tegra124-car.h
+On Tue, May 12, 2015 at 10:23 AM, Rhyland Klein <rklein@nvidia.com> wrote:
+> From: Bill Huang <bilhuang@nvidia.com>
+>
+> Add logic which (if specified for a pll) can verify that a PLL is set
+> to the proper default value and if not can set it. This can be
+> specified per PLL as each will have different default values.
+>
+> Based on original work by Aleksandr Frid <afrid@nvidia.com>
+>
+> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+> ---
+> v2:
+>   - Remove MACRO for PLL_MISC_CHECK_DEFAULT as suggested, and instead
+>     the tegra210 driver will include an inline version of this function.
+>
+>  drivers/clk/tegra/clk-pll.c |   46 ++++++++++++++++++++++++++++++++-----------
+>  drivers/clk/tegra/clk.h     |    2 ++
+>  2 files changed, 37 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+> index 626466665dde..36aa2a95fac0 100644
+> --- a/drivers/clk/tegra/clk-pll.c
+> +++ b/drivers/clk/tegra/clk-pll.c
+> @@ -652,13 +652,26 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+>                         unsigned long rate)
+>  {
+>         struct tegra_clk_pll *pll = to_clk_pll(hw);
+> +       struct tegra_clk_pll_freq_table old_cfg;
+>         int state, ret = 0;
+>
+>         state = clk_pll_is_enabled(hw);
+>
+> +       _get_pll_mnp(pll, &old_cfg);
+> +
+> +       if (state && pll->params->defaults_set && pll->params->dyn_ramp &&
+> +                       (cfg->m == old_cfg.m) && (cfg->p == old_cfg.p)) {
+> +               ret = pll->params->dyn_ramp(pll, cfg);
+> +               if (!ret)
+> +                       return 0;
+> +       }
+> +
 
-If I'm supposed to apply this, I need ACKs from the appropriate people on
-all the patches where they are still missing.  Thanks!
+This block above depends on defaults_set, but seems to be some
+additional dyn_ramp logic that is different from what the commit
+message describes of this patch, namely, setting defaults if
+defaults_set is not true.
+
+Could you perhaps reverse the order of this patch [16/21] and the
+preceding one [15/21] clk: tegra: pll: Add dyn_ramp callback, and move
+this chunk of code into the dyn_ramp patch?
+
+>         if (state)
+>                 _clk_pll_disable(hw);
+>
+> +       if (!pll->params->defaults_set && pll->params->set_defaults)
+> +               pll->params->set_defaults(pll);
+> +
+>         _update_pll_mnp(pll, cfg);
+>
+>         if (pll->params->flags & TEGRA_PLL_HAS_CPCON)
+> @@ -1517,6 +1530,9 @@ static struct clk *_tegra_clk_register_pll(struct tegra_clk_pll *pll,
+>         if (!pll->params->calc_rate)
+>                 pll->params->calc_rate = _calc_rate;
+>
+> +       if (pll->params->set_defaults)
+> +               pll->params->set_defaults(pll);
+> +
+>         /* Data in .init is copied by clk_register(), so stack variable OK */
+>         pll->hw.init = &init;
+>
+> @@ -1636,7 +1652,6 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
+>         struct tegra_clk_pll *pll;
+>         struct clk *clk, *parent;
+>         unsigned long parent_rate;
+> -       int err;
+>         u32 val, val_iddq;
+>
+>         parent = __clk_lookup(parent_name);
+> @@ -1657,18 +1672,27 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
+>                 pll_params->vco_min = pll_params->adjust_vco(pll_params,
+>                                                              parent_rate);
+>
+> -       err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
+> -       if (err)
+> -               return ERR_PTR(err);
+> +       /*
+> +        * If the pll has a set_defaults callback, it will take care of
+> +        * configuring dynamic ramping and setting IDDQ in that path.
+> +        */
+> +       if (!pll_params->set_defaults) {
+> +               int err;
+>
+> -       val = readl_relaxed(clk_base + pll_params->base_reg);
+> -       val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
+> +               err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
+> +               if (err)
+> +                       return ERR_PTR(err);
+>
+> -       if (val & PLL_BASE_ENABLE)
+> -               WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
+> -       else {
+> -               val_iddq |= BIT(pll_params->iddq_bit_idx);
+> -               writel_relaxed(val_iddq, clk_base + pll_params->iddq_reg);
+> +               val = readl_relaxed(clk_base + pll_params->base_reg);
+> +               val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
+> +
+> +               if (val & PLL_BASE_ENABLE)
+> +                       WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
+> +               else {
+> +                       val_iddq |= BIT(pll_params->iddq_bit_idx);
+> +                       writel_relaxed(val_iddq,
+> +                                      clk_base + pll_params->iddq_reg);
+> +               }
+>         }
+>
+>         pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index a61d388364b3..38b4c95cfb2f 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -261,6 +261,7 @@ struct tegra_clk_pll_params {
+>         int             stepb_shift;
+>         int             lock_delay;
+>         int             max_p;
+> +       bool            defaults_set;
+>         struct pdiv_map *pdiv_tohw;
+>         struct div_nmp  *div_nmp;
+>         struct tegra_clk_pll_freq_table *freq_table;
+> @@ -275,6 +276,7 @@ struct tegra_clk_pll_params {
+>                                 unsigned long parent_rate);
+>         int     (*dyn_ramp)(struct tegra_clk_pll *pll,
+>                         struct tegra_clk_pll_freq_table *cfg);
+> +       void    (*set_defaults)(struct tegra_clk_pll *pll);
+
+Kerneldoc for the two members, please. This is especially useful since
+the two members have such similar names, but they mean different
+things.
+
 
 
 -- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+Benson Leung
+Software Engineer, Chrom* OS
+bleung@chromium.org
