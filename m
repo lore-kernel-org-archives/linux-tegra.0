@@ -1,36 +1,138 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [pinmux scripts PATCH] board-to-kernel-dt: don't generate outer
- state node
-Date: Thu, 14 May 2015 09:57:05 -0600
-Message-ID: <5554C5D1.3040302@wwwdotorg.org>
-References: <1431613216-19745-1-git-send-email-swarren@wwwdotorg.org> <CAPnjgZ0H+LwDSoMTCMNnKe+4LjwRF8kT7EE5O+GDkCr7eWDHTA@mail.gmail.com>
+From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: Enable TPM on tegra124 nyan boards
+Date: Thu, 14 May 2015 10:30:44 -0600
+Message-ID: <CAPnjgZ1o-DvWjJqkEjwbxKxx_0L7p1k8Mc58boqjHQEGh=yj3A@mail.gmail.com>
+References: <1431526427-13340-1-git-send-email-sjg@chromium.org>
+	<5553637C.5010506@wwwdotorg.org>
+	<CAAObsKCxFJA=6kyHM5rtpJMVRZRDbBO3KSn+QdNoOQz1rXCWTQ@mail.gmail.com>
+	<5554AD0B.1060106@wwwdotorg.org>
+	<CAPnjgZ2QrTu=D_AapTded+_NR1waZTbNoN8rCtHnTdd0OdnwLA@mail.gmail.com>
+	<5554C399.4060807@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAPnjgZ0H+LwDSoMTCMNnKe+4LjwRF8kT7EE5O+GDkCr7eWDHTA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <5554C399.4060807-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/14/2015 08:29 AM, Simon Glass wrote:
-> On 14 May 2015 at 08:20, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> The important thing for board-to-kernel-dt to generate is the content of
->> the pinmux "state" node in DT. The name and label of the node that
->> contains this information is essentially irrelevant. Since this
->> irrelevant name and label varies between boards in existing DTs, update
->> board-to-kernel-dt so it doesn't generate it. This makes it obvious that
->> the name and label shouldn't be modified when importing new versions of
->> board-to-kernel-dt's output.
->>
->> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>   board-to-kernel-dt.py | 4 ----
->>   1 file changed, 4 deletions(-)
->
-> Reviewed-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Hi Stephen,
 
-I've applied this.
+On 14 May 2015 at 09:47, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>
+> On 05/14/2015 08:28 AM, Simon Glass wrote:
+>>
+>> Hi Stephen,
+>>
+>> On 14 May 2015 at 08:11, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>>>
+>>> On 05/14/2015 07:09 AM, Tomeu Vizoso wrote:
+>>>>
+>>>>
+>>>> On 13 May 2015 at 16:45, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>>>>>
+>>>>>
+>>>>> On 05/13/2015 08:13 AM, Simon Glass wrote:
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> Regenerate the pinmux from the latest tegra-pinmux-scripts.
+>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>> (Dropping most CCs; DT maintainers and lists generally don't get CC'd on
+>>>>> simple DT content changes but rather on schema adds/changes and perhaps
+>>>>> major DT content changes depending on context)
+>>>>>
+>>>>>> diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts
+>>>>>> b/arch/arm/boot/dts/tegra124-nyan-big.dts
+>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>>>                   pinctrl-names = "default";
+>>>>>>                   pinctrl-0 = <&pinmux_default>;
+>>>>>>
+>>>>>> -               pinmux_default: common {
+>>>>>> +               state_default: pinmux {
+>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>> This change will break compilation, since it changes the label name, yet
+>>>>> the
+>>>>> old name is still referenced in pinctrl-0 above. Same applies in the
+>>>>> other
+>>>>> file too.
+>>>>>
+>>>>>> diff --git a/arch/arm/boot/dts/tegra124-nyan-blaze.dts
+>>>>>> b/arch/arm/boot/dts/tegra124-nyan-blaze.dts
+>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>>> @@ -437,18 +437,18 @@
+>>>>>>                           usb_vbus_en0_pn4 {
+>>>>>>                                   nvidia,pins = "usb_vbus_en0_pn4";
+>>>>>>                                   nvidia,function = "usb";
+>>>>>> -                               nvidia,pull = <TEGRA_PIN_PULL_UP>;
+>>>>>> +                               nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+>>>>>>                                   nvidia,tristate = <TEGRA_PIN_DISABLE>;
+>>>>>>                                   nvidia,enable-input =
+>>>>>> <TEGRA_PIN_ENABLE>;
+>>>>>> -                               nvidia,open-drain = <TEGRA_PIN_DISABLE>;
+>>>>>> +                               nvidia,open-drain = <TEGRA_PIN_ENABLE>;
+>>>>>>                           };
+>>>>>>                           usb_vbus_en1_pn5 {
+>>>>>>                                   nvidia,pins = "usb_vbus_en1_pn5";
+>>>>>>                                   nvidia,function = "usb";
+>>>>>> -                               nvidia,pull = <TEGRA_PIN_PULL_UP>;
+>>>>>> +                               nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+>>>>>>                                   nvidia,tristate = <TEGRA_PIN_DISABLE>;
+>>>>>>                                   nvidia,enable-input =
+>>>>>> <TEGRA_PIN_ENABLE>;
+>>>>>> -                               nvidia,open-drain = <TEGRA_PIN_DISABLE>;
+>>>>>> +                               nvidia,open-drain = <TEGRA_PIN_ENABLE>;
+>>>>>>                           };
+>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>> Tomeu, can you comment on those changes? Evidently the pinmux
+>>>>> configuration
+>>>>> that's you added to the kernel doesn't exactly match the pinmux
+>>>>> configuration that you added to tegra-pinmux-scripts.
+>>>>
+>>>>
+>>>>
+>>>> Are you sure? Just checked and what tegra-pinmux-scripts currently
+>>>> generates matches what is currently in the kernel, for both nyans.
+>>>
+>>>
+>>>
+>>> My apologies; you're correct.
+>>>
+>>> This patch to the kernel DTs includes changes that aren't generated by
+>>> either current tegra-pinmux-scripts, nor by tegra-pinmux-scripts with
+>>> Simon's "[pinmux scripts PATCH] Support TPM on nyan boards" applied. Simon,
+>>> can you double-check you didn't have any local patches to
+>>> tegra-pinmux-scripts applied when you generated the DT content for this
+>>> patch?
+>>
+>>
+>> Yes. Apart from my patch the top commit is 39af.
+>
+>
+> OK, did you paste the same DT content into both DTs then, instead of generating each DT separately?
+>
+
+Not intentionally, but I wonder if I failed to change the board parameter?
+
+> When I re-generate the DT using commit 39af, I don't get any changes to usb_vbus_en*.
+
+I can't explain that. I'll try it again when I get a chance.
+
+Regards,
+Simon
