@@ -1,8 +1,8 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Subject: Re: [pinmux scripts PATCH] board-to-kernel-dt: don't generate outer
  state node
-Date: Thu, 14 May 2015 09:52:14 -0600
-Message-ID: <5554C4AE.1090704@wwwdotorg.org>
+Date: Thu, 14 May 2015 09:57:05 -0600
+Message-ID: <5554C5D1.3040302@wwwdotorg.org>
 References: <1431613216-19745-1-git-send-email-swarren@wwwdotorg.org> <CAPnjgZ0H+LwDSoMTCMNnKe+4LjwRF8kT7EE5O+GDkCr7eWDHTA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
@@ -32,7 +32,5 @@ On 05/14/2015 08:29 AM, Simon Glass wrote:
 >>   1 file changed, 4 deletions(-)
 >
 > Reviewed-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
->
-> I don't suppose this stuff can go in a separate .dtsi include?
 
-That might make sense. I guess send a patch and see if Thierry takes it:-)
+I've applied this.
