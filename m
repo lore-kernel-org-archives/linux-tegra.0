@@ -1,44 +1,40 @@
-From: Benson Leung <bleung@chromium.org>
-Subject: Re: [PATCH v5 19/21] clk: tegra: Add Super Gen5 Logic
-Date: Thu, 14 May 2015 12:37:24 -0700
-Message-ID: <CANLzEkvUAhXCCvtdHEfmJGONkzNu_dBHj1UUm6Et93kXV1Mz0g@mail.gmail.com>
-References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
-	<1431451444-23155-21-git-send-email-rklein@nvidia.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v9 00/17] Tegra124 CL-DVFS / DFLL clocksource + cpufreq
+Date: Thu, 14 May 2015 22:15:40 +0200
+Message-ID: <3099473.H5qjMpDQKF@vostro.rjw.lan>
+References: <1431529131-16710-1-git-send-email-mikko.perttunen@kapsi.fi> <2216026.DiZ8MPKfdF@vostro.rjw.lan> <55543D6F.2040704@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1431451444-23155-21-git-send-email-rklein@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Bill Huang <bilhuang@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>, Jim Lin <jilin@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <55543D6F.2040704@kapsi.fi>
+Sender: linux-pm-owner@vger.kernel.org
+To: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+Cc: swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, pdeschrijver@nvidia.com, viresh.kumar@linaro.org, mturquette@linaro.org, pwalmsley@nvidia.com, vinceh@nvidia.com, pgaikwad@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tuomas.tynkkynen@iki.fi
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, May 12, 2015 at 10:24 AM, Rhyland Klein <rklein@nvidia.com> wrote:
-> From: Bill Huang <bilhuang@nvidia.com>
->
-> Super clock divider control and clock source mux of Tegra210 has changed
-> a little against prior SoCs, this patch adds Gen5 logic to address those
-> differences.
->
-> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
-> ---
-> v2:
->   - Fixed sclk divider address (0x370 -> 0x2c)
->
->  drivers/clk/tegra/Makefile               |    1 +
->  drivers/clk/tegra/clk-tegra-super-gen5.c |  150 ++++++++++++++++++++++++++++++
->  drivers/clk/tegra/clk.h                  |    3 +
->  3 files changed, 154 insertions(+)
->  create mode 100644 drivers/clk/tegra/clk-tegra-super-gen5.c
+On Thursday, May 14, 2015 09:15:11 AM Mikko Perttunen wrote:
+> On 05/14/2015 01:47 AM, Rafael J. Wysocki wrote:
+>  > ...
+> >
+> > If I'm supposed to apply this, I need ACKs from the appropriate people on
+> > all the patches where they are still missing.  Thanks!
+> >
+> >
+> 
+> I believe Thierry Reding will apply the series; your ACK as cpufreq 
+> maintainer for patch 13, and maybe also 12, would be welcome, though :)
+> 
+> Patch 13 just renames the old tegra-cpufreq driver that only applies to 
+> Tegra20 chips to tegra20-cpufreq.
+> 
+> Patch 12 adds device tree bindings. Maybe these can also be acked by 
+> Thierry? I'm not completely sure what's the convention.
 
-I've diffed clk-tegra-super-gen5.c and the existing
-clk-tegra-super-gen4.c, and there's a lot of code duplication here.
-They're the same pair of functions, with several small changes. Since
-the idea behind pulling out the super clock initialization into a
-common file was to reuse the same init, could we extend the super-gen4
-file (rename if you have to) to support both gens instead?
+You need ACKs from Viresh for those two, then.  He's officially responsible
+for ARM cpufreq drivers.
+
 
 -- 
-Benson Leung
-Software Engineer, Chrom* OS
-bleung@chromium.org
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
