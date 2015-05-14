@@ -1,47 +1,54 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [pinmux scripts PATCH] board-to-kernel-dt: don't generate outer state node
-Date: Thu, 14 May 2015 08:20:16 -0600
-Message-ID: <1431613216-19745-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH] ARM: tegra: Enable TPM on tegra124 nyan boards
+Date: Thu, 14 May 2015 08:21:57 -0600
+Message-ID: <5554AF85.4050307@wwwdotorg.org>
+References: <1431526427-13340-1-git-send-email-sjg@chromium.org>	<5553637C.5010506@wwwdotorg.org> <CAPnjgZ0ga6==w7YWQoeUtXRxUhCjQ+BHMJuCL7vbqN9WTLM2kQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAPnjgZ0ga6==w7YWQoeUtXRxUhCjQ+BHMJuCL7vbqN9WTLM2kQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, lak <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 05/13/2015 09:22 AM, Simon Glass wrote:
+> Hi Stephen,
+>
+> On 13 May 2015 at 08:45, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>> On 05/13/2015 08:13 AM, Simon Glass wrote:
+>>>
+>>> Regenerate the pinmux from the latest tegra-pinmux-scripts.
+>>
+>>
+>> (Dropping most CCs; DT maintainers and lists generally don't get CC'd on
+>> simple DT content changes but rather on schema adds/changes and perhaps
+>> major DT content changes depending on context)
+>
+> OK, I'll try to remember to use patman -m.
+>
+>>
+>>> diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts
+>>> b/arch/arm/boot/dts/tegra124-nyan-big.dts
+>>
+>>
+>>>                  pinctrl-names = "default";
+>>>                  pinctrl-0 = <&pinmux_default>;
+>>>
+>>> -               pinmux_default: common {
+>>> +               state_default: pinmux {
+>>
+>>
+>> This change will break compilation, since it changes the label name, yet the
+>> old name is still referenced in pinctrl-0 above. Same applies in the other
+>> file too.
+>
+> Yes I saw that, but assumed that the tool was doing the right thing.
+> Is the tool wrong?
 
-The important thing for board-to-kernel-dt to generate is the content of
-the pinmux "state" node in DT. The name and label of the node that
-contains this information is essentially irrelevant. Since this
-irrelevant name and label varies between boards in existing DTs, update
-board-to-kernel-dt so it doesn't generate it. This makes it obvious that
-the name and label shouldn't be modified when importing new versions of
-board-to-kernel-dt's output.
-
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- board-to-kernel-dt.py | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/board-to-kernel-dt.py b/board-to-kernel-dt.py
-index 273f74125fa6..55e556cea98b 100755
---- a/board-to-kernel-dt.py
-+++ b/board-to-kernel-dt.py
-@@ -44,8 +44,6 @@ def mapper_pull(val):
- def mapper_bool(val):
-     return 'TEGRA_PIN_' + {False: 'DISABLE', True: 'ENABLE'}[val]
- 
--print('		state_default: pinmux {')
--
- for pincfg in board.pincfgs_by_num():
-     print('			' + pincfg.fullname + ' {')
-     print('				nvidia,pins = "' + pincfg.fullname + '";')
-@@ -70,6 +68,4 @@ for cfg in board.mipipadctrlcfgs_by_num():
-     print('				nvidia,function = "' + cfg.mux + '";')
-     print('			};')
- 
--print('		};')
--
- board.warn_about_unconfigured_pins()
--- 
-1.9.1
+Well, it includes the outer node to make it obvious where to put the 
+generated data, but since this one line doesn't exactly match what's in 
+some of the kernel DTs, it's probably just confusing. I've sent a patch 
+to remove that one line from the generated output of the tool; find it 
+on the linux-tegra mailing list.
