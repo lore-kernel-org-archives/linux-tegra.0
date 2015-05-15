@@ -1,48 +1,53 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [GIT PULL 7/8] ARM: tegra: Devicetree changes for v4.2-rc1
-Date: Fri, 15 May 2015 13:06:51 +0200
-Message-ID: <5336613.jVykP4epFt@wuerfel>
-References: <1431524980-13599-1-git-send-email-thierry.reding@gmail.com> <3095273.etWfHSyyvC@wuerfel> <20150515104332.GB20474@ulmo.nvidia.com>
+From: Maarten Lankhorst <maarten-FcfepWsj2zOByvU0x3ry2g@public.gmane.org>
+Subject: Re: [PATCH] nouveau: add coherent BO attribute
+Date: Fri, 15 May 2015 13:39:34 +0200
+Message-ID: <5555DAF6.4030309@mblankhorst.nl>
+References: <1426228051-20298-1-git-send-email-acourbot@nvidia.com>
+ <55033B99.4040300@canonical.com> <550545A4.6060106@nvidia.com>
+ <CAAVeFuKoryrWPcDkcFuk+OwJjaUn6C-he+xxphkZ7iMBa=Qdkg@mail.gmail.com>
+ <CAAVeFu+kRcWT2zxbduA6MU9v1cTVb8HU3GEDdaviUAkYa6SbSQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150515104332.GB20474-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <CAAVeFu+kRcWT2zxbduA6MU9v1cTVb8HU3GEDdaviUAkYa6SbSQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 15 May 2015 12:43:34 Thierry Reding wrote:
-> On Wed, May 13, 2015 at 06:09:20PM +0200, Arnd Bergmann wrote:
-> > On Wednesday 13 May 2015 15:49:39 Thierry Reding wrote:
-> > > ARM: tegra: Devicetree changes for v4.2-rc1
-> > > 
-> > > Contains a couple of fixes and additions to device tree files. The most
-> > > notable change is a fix for a misapplied patch that was only exposed by
-> > > a recent change in the regulator subsystem that caused USB to break on
-> > > Tegra124 recently.
-> > 
-> > It sounds like I should merge commit a4b6916cb35 ("ARM: tegra: Correct
-> > which USB controller has the UTMI pad registers") into the 4.1 fixes
-> > branch as well. Please confirm.
-> 
-> I think you already did. I sent out a pull request for that not very
-> long ago and I must have forgotten to drop this patch from the Tegra
-> tree after it got applied to arm-soc. The merge commit for this in
-> the fixes branch is here:
-> 
->         https://git.kernel.org/cgit/linux/kernel/git/arm/arm-soc.git/commit/?h=fixes&id=155171274d1dd9d9e5a012bd912c592402aa31d2
-> 
-> Hopefully git will be able to merge these together without conflicts.
-> Sorry about the dupe.
-> 
-
-Everything is fine. Since both branches have the same commit ID,
-git can figure out how to do the merges. It would only be annoying
-to get the same patch with two different commit IDs.
-
-Ideally, your pull request would mention this kind of situation, so
-I don't need to ask or research myself about it.
-
-	Arnd
+T3AgMTUtMDUtMTUgb20gMDk6MTEgc2NocmVlZiBBbGV4YW5kcmUgQ291cmJvdDoKPiBSZS1waW5n
+aW5nIE1hcnRlZW4gb24gYW4gZW1haWwgYWRkcmVzcyB0aGF0IHN0aWxsIGV4aXN0cyA6UAo+Cj4g
+T24gV2VkLCBBcHIgMjIsIDIwMTUgYXQgNjowOCBQTSwgQWxleGFuZHJlIENvdXJib3QgPGdudXJv
+dUBnbWFpbC5jb20+IHdyb3RlOgo+PiBPbiBTdW4sIE1hciAxNSwgMjAxNSBhdCA1OjQxIFBNLCBB
+bGV4YW5kcmUgQ291cmJvdCA8YWNvdXJib3RAbnZpZGlhLmNvbT4gd3JvdGU6Cj4+PiBPbiAwMy8x
+NC8yMDE1IDA0OjMzIEFNLCBNYWFydGVuIExhbmtob3JzdCB3cm90ZToKPj4+PiBIZXksCj4+Pj4K
+Pj4+PiBPcCAxMy0wMy0xNSBvbSAwNzoyNyBzY2hyZWVmIEFsZXhhbmRyZSBDb3VyYm90Ogo+Pj4+
+PiBBZGQgYSBmbGFnIGFsbG93aW5nIE5vdXZlYXUgdG8gc3BlY2lmeSB0aGF0IGFuIG9iamVjdCBz
+aG91bGQgYmUgY29oZXJlbnQKPj4+Pj4gYXQgYWxsb2NhdGlvbiB0aW1lLiBUaGlzIGlzIHJlcXVp
+cmVkIGZvciBzb21lIGNsYXNzIG9mIG9iamVjdHMgbGlrZQo+Pj4+PiBmZW5jZXMgd2hpY2ggYXJl
+IHJhbmRvbWx5LWFjY2Vzc2VkIGJ5IGJvdGggdGhlIENQVSBhbmQgR1BVLiBUaGlzIGZsYWcKPj4+
+Pj4gaW5zdHJ1Y3RzIHRoZSBrZXJuZWwgZHJpdmVyIHRvIG1ha2Ugc3VyZSB0aGUgb2JqZWN0IHJl
+bWFpbnMgY29oZXJlbnQKPj4+Pj4gZXZlbiBvbiBhcmNoaXRlY3R1cmVzIGZvciB3aGljaCBjb2hl
+cmVuY3kgaXMgbm90IGd1YXJhbnRlZWQgYnkgdGhlIGJ1cy4KPj4+Pj4KPj4+Pj4gU2lnbmVkLW9m
+Zi1ieTogQWxleGFuZHJlIENvdXJib3QgPGFjb3VyYm90QG52aWRpYS5jb20+Cj4+Pj4gSSBkb24n
+dCBzZWUgYSBwcm9ibGVtIHdpdGggdGhpcyBwYXRjaCwgYnV0IHNpbWlsYXIgcGF0Y2hlcyB0byBp
+bnRlbCB0bwo+Pj4+IGxpYmRybSBoYXZlIGJlZW4gc2hvdCBkb3duIHdoZW4gdGhlIGNoYW5nZXMg
+d2VyZW4ndCBpbiBhbiBvZmZpY2lhbCBrZXJuZWwKPj4+PiB5ZXQsIHNvIEkgdGhpbmsgdGhpcyBz
+aG91bGQgd2FpdCB1bnRpbCB0aGUgY2hhbmdlIGlzIGF0IGxlYXN0IGluIGRybS1uZXh0Lgo+Pj4+
+IDstKQo+Pj4KPj4+IFNvdW5kcyBnb29kLiBJIHdpbGwgcGluZyB5b3UgYWdhaW4gb25jZSB0aGUg
+a2VybmVsIGNoYW5nZSByZWFjaGVzIC1uZXh0Lgo+PiBIaSBNYXJ0ZWVuLAo+Pgo+PiBUaGUga2Vy
+bmVsIGNoYW5nZSByZXF1aXJlZCBmb3IgdGhpcyBwYXRjaCBpcyBub3cgaW4gLW5leHQuIERvIHlv
+dQo+PiB0aGluayB3ZSBjYW4gbWVyZ2UgaXQgbm93PwpJIHRoaW5rIGl0IHdvdWxkIGJlIG9rIHRv
+IG1lcmdlIG5vdy4KCn5NYWFydGVuCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCk5vdXZlYXUgbWFpbGluZyBsaXN0Ck5vdXZlYXVAbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9ub3V2
+ZWF1Cg==
