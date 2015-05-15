@@ -1,77 +1,99 @@
-From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: cpuidle: implement cpuidle_state.enter_freeze()
-Date: Fri, 15 May 2015 11:03:35 +0200
-Message-ID: <CAAObsKBLHqf1+KUE89Orr7ZwzY3-WEW1CHokSOxSD9pEOmTkhg@mail.gmail.com>
-References: <1428490480-10144-1-git-send-email-tomeu.vizoso@collabora.com>
- <20150408115546.GA24271@red-moon> <552643E1.3060200@collabora.com>
- <285738930.THBQOWvsah@vostro.rjw.lan> <20150410100844.GC23730@red-moon>
- <CAAObsKAihF1k1yzZxQEs_jpPnCdV3HQbLaYHWu1QNsNd5zqiOg@mail.gmail.com> <20150417140819.GB2347@red-moon>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 3/6] arm64: tegra: Add Tegra210 support
+Date: Fri, 15 May 2015 12:19:16 +0200
+Message-ID: <20150515101913.GA20474@ulmo.nvidia.com>
+References: <1431529065-20128-1-git-send-email-thierry.reding@gmail.com>
+ <1431529065-20128-3-git-send-email-thierry.reding@gmail.com>
+ <20150513171114.GA18655@e104818-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="RnlQjJ0d97Da+TV1"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150417140819.GB2347@red-moon>
+Content-Disposition: inline
+In-Reply-To: <20150513171114.GA18655-M2fw3Uu6cmfZROr8t4l/smS4ubULX0JqMm0uRHvK7Nw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Cc: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Rafael J. Wysocki" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 17 April 2015 at 16:08, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org> wrote:
-> On Thu, Apr 16, 2015 at 03:37:19PM +0100, Tomeu Vizoso wrote:
->
-> [...]
->
->> >> I don't know what FIQs are. :-)
->> >
->> > In short, fast IRQs, it is a separate IRQ line handled as a separate
->> > exception source with some private (banked) registers that minimize registers
->> > saving/restoring. They are not identical to NMI on x86, since
->> > their behaviour (handling) may be overriden by platforms and they
->> > can be masked.
->> >
->> >> ->enter_freeze is entered with interrupts disabled on the local CPU.  It is
->> >> not supposed to re-enable them.  That is, while in the ->enter_freeze callback
->> >> routine, the CPU must not be interrupted aby anything other than NMI.
->> >
->> > It boils down to what FIQs handlers are allowed to do with tick frozen
->> > and what they are (may be) currently used for.
->> >
->> > Russell has more insights on this than I do, in particular what FIQs are
->> > currently used for on ARM and if we can leave them enabled safely with tick
->> > frozen.
->>
->> But even if it's currently safe to leave them enabled, is there any
->> reason for not disabling them?
->
-> Ok, the point here is: either it is safe, and you leave them enabled,
-> or it is not and we must disable them *before* enter_freeze() is entered.
->
-> Disabling them in the platform enter_freeze() hook does not make sense,
-> because this means we run with FIQs enabled with tick frozen, either
-> it is safe or it is not, it can't be both.
 
-I have been looking and asking around, and seems like we should
-actually leave FIQs enabled when the tick is frozen and only disable
-them within enter_freeze.
+--RnlQjJ0d97Da+TV1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-My understanding is that FIQ handlers are extremely limited in what
-they can do, with the main use being NMI-like functionality. There are
-a handful of other FIQ handlers in mainline, but they don't call into
-any other kernel code and limit themselves to doing some basic I/O.
+On Wed, May 13, 2015 at 06:11:15PM +0100, Catalin Marinas wrote:
+> On Wed, May 13, 2015 at 04:57:42PM +0200, Thierry Reding wrote:
+> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >=20
+> > NVIDIA Tegra210 (also known as Tegra X1) has four Cortex-A57 and four
+> > Cortex-A53 CPUs. Compared to Tegra124 and Tegra132 it comes with a 256-
+> > core Maxwell GPU. It supports processing videos of up to 4K resolutions
+> > at 60 fps (H.265, VP9, H.264).
+> >=20
+> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> >  arch/arm64/Kconfig                       |   9 +
+> >  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 998 +++++++++++++++++++++++=
+++++++++
+> >  2 files changed, 1007 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> >=20
+> > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> > index 7796af4b1d6f..bfdf064ada66 100644
+> > --- a/arch/arm64/Kconfig
+> > +++ b/arch/arm64/Kconfig
+> > @@ -225,6 +225,15 @@ config ARCH_TEGRA_132_SOC
+> >  	  but contains an NVIDIA Denver CPU complex in place of
+> >  	  Tegra124's "4+1" Cortex-A15 CPU complex.
+> > =20
+> > +config ARCH_TEGRA_210_SOC
+> > +	bool "NVIDIA Tegra210 SoC"
+> > +	depends on ARCH_TEGRA
+> > +	select PINCTRL_TEGRA210
+> > +	select USB_ULPI if USB_PHY
+> > +	select USB_ULPI_VIEWPORT if USB_PHY
+> > +	help
+> > +	  Enable support for the NVIDIA Tegra210 SoC.
+> > +
+>=20
+> The previous ARCH_TEGRA_132_SOC escaped me. Do we need all these
+> ARCH_TEGRA_*_SOC entries? Can we not have per-driver Kconfig options?
+> For example, ARCH_TEGRA_132_SOC seems to be only used in
+> drivers/clk/tegra, a specific Kconfig entry in there would suffice.
 
-The only reason why they should be disabled in enter_freeze is that
-the context of the CPU that is going to a lower power state could
-become corrupted if a FIQ gets fired during a save or restore
-operation.
+There are actually a couple of other places where this will be used in
+subsequent patches (e.g. memory controller driver). The idea behind
+having these is that each one of them is used to enable the essentials
+out of the box, so that people don't have to go and enable a bunch of
+driver-specific Kconfig options just to get a kernel configuration that
+can actually boot.
 
-Regards,
+This is also useful for integrators since they can simply omit all SoC
+generations that they're not interested in. Having a per-SoC option
+provides an easy way of doing so.
 
-Tomeu
+Thierry
 
-> I would ask Russell opinion on this, before making any decision.
->
-> Lorenzo
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+--RnlQjJ0d97Da+TV1
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJVVcgfAAoJEN0jrNd/PrOhHjsQAJp8xrR33HZozhoA3F2nyWOt
+gqXpQ215Wy1tA/NXHmrKF1ix/RYDtMwY4JCoqg/h0+h28JTWMU6kGCcqIIAQP1Cd
+X40cqmDxYxau4PNbWc1ifDlZLBEPFaERfIuZrZM2Ku43FDtN2LaJ4W1NUhvnA8Jw
+KNYJ9+cMwylXinPuEmLm0uPZ+rb7TDbsLIE7dr1itqB+56GOZxJxN4MQfHMJNbE9
+ZyzDPW4dw1eZJ455mIh0pfWxhyQEQLd2K7i4+hfncq4nYQKviMaPs6lyHN1llq0g
+9nMlR23w9U1+18//hlcSW1AqMW07ajxqFLzmS/5SfUB5aQV6k4kWiVCJ2hfMVG3w
+w0hU+X1SVcmijDX+z22hDfZ3/D8JdcxZuTXN9pNZpCUrXlok4JH92kxBSlY6u+jH
+K9CQy42BzhVJ2gV5u7Ex3IgK6mkQGZEo+R9GPs4NlAdGD+RB6aOBouuO2LDtonMm
+PY5VkzZAaY3XtHjZehYDwVzyqKemkgUi0chJvc8w+Fw5DmEyPLYs5RZ8IcOv6i9k
+bzjkMmWE1iwMPOC/Zp8Av7a9rMWz+WFgXXnCBvQgIuxlXTldOAZuE1MAx7tkw6Lr
+4UGuOimGnpjLDc2B8hrT3Cq/waEb6uGSl84E/0w3w01VOdke/jDzbi/K0NJtetks
+5hkNeUngdwxBAzczeqV1
+=PpHI
+-----END PGP SIGNATURE-----
+
+--RnlQjJ0d97Da+TV1--
