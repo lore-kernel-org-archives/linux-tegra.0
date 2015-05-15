@@ -1,60 +1,46 @@
-From: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH 1/1] clk: tegra: fix WARN_ON in PLL_RE registration
-Date: Fri, 15 May 2015 10:12:56 -0700
-Message-ID: <CANLzEktZXkggY_6UbBBsU_9SB2eqsGRoBV138cDgBqo95BaWyw@mail.gmail.com>
-References: <1431691653-17615-1-git-send-email-bilhuang@nvidia.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH] ARM: tegra: cpuidle: implement
+ cpuidle_state.enter_freeze()
+Date: Sat, 16 May 2015 00:30:41 +0100
+Message-ID: <20150515233041.GN2067@n2100.arm.linux.org.uk>
+References: <1428490480-10144-1-git-send-email-tomeu.vizoso@collabora.com>
+ <20150408115546.GA24271@red-moon>
+ <552643E1.3060200@collabora.com>
+ <285738930.THBQOWvsah@vostro.rjw.lan>
+ <20150410100844.GC23730@red-moon>
+ <CAAObsKAihF1k1yzZxQEs_jpPnCdV3HQbLaYHWu1QNsNd5zqiOg@mail.gmail.com>
+ <20150417140819.GB2347@red-moon>
+ <CAAObsKBLHqf1+KUE89Orr7ZwzY3-WEW1CHokSOxSD9pEOmTkhg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1431691653-17615-1-git-send-email-bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAAObsKBLHqf1+KUE89Orr7ZwzY3-WEW1CHokSOxSD9pEOmTkhg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, May 15, 2015 at 5:07 AM, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> This fixes two things.
->
-> - Read the correct IDDQ register
-> - Check the correct IDDQ bit position
->
-> Signed-off-by: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Fri, May 15, 2015 at 11:03:35AM +0200, Tomeu Vizoso wrote:
+> I have been looking and asking around, and seems like we should
+> actually leave FIQs enabled when the tick is frozen and only disable
+> them within enter_freeze.
+> 
+> My understanding is that FIQ handlers are extremely limited in what
+> they can do, with the main use being NMI-like functionality. There are
+> a handful of other FIQ handlers in mainline, but they don't call into
+> any other kernel code and limit themselves to doing some basic I/O.
+> 
+> The only reason why they should be disabled in enter_freeze is that
+> the context of the CPU that is going to a lower power state could
+> become corrupted if a FIQ gets fired during a save or restore
+> operation.
 
-Reviewed-by: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Right, that makes total sense.
 
-By the way, does it also make sense to do the same thing for
-tegra_clk_register_pllss, which also reads the base register instead
-of the specific iddq_reg from params?
-
-> ---
->  drivers/clk/tegra/clk-pll.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-> index 05c6d08..734340e 100644
-> --- a/drivers/clk/tegra/clk-pll.c
-> +++ b/drivers/clk/tegra/clk-pll.c
-> @@ -1630,7 +1630,8 @@ struct clk *tegra_clk_register_pllre(const char *name, const char *parent_name,
->
->         val = pll_readl_base(pll);
->         if (val & PLL_BASE_ENABLE)
-> -               WARN_ON(val & pll_params->iddq_bit_idx);
-> +               WARN_ON(readl_relaxed(clk_base + pll_params->iddq_reg) &
-> +                               BIT(pll_params->iddq_bit_idx));
->         else {
->                 int m;
->
-> --
-> 1.9.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
+(And yes, FIQ handlers are very limited in what they're allowed to do,
+since they can't take any locks without the potential for deadlock.)
 
 -- 
-Benson Leung
-Software Engineer, Chrom* OS
-bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
+FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
+according to speedtest.net.
