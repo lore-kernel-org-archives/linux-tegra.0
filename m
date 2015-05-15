@@ -1,69 +1,77 @@
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: soc/tegra: fuse: undefined option ARCH_TEGRA_210_SOC
-Date: Fri, 15 May 2015 10:57:01 +0200
-Message-ID: <20150515085700.GE4984@ulmo.nvidia.com>
-References: <CAD3Xx4+6r1w+oKgjUAuLXzszy9-uRWvXyyfv3q_1YGC6shXHFQ@mail.gmail.com>
+From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: cpuidle: implement cpuidle_state.enter_freeze()
+Date: Fri, 15 May 2015 11:03:35 +0200
+Message-ID: <CAAObsKBLHqf1+KUE89Orr7ZwzY3-WEW1CHokSOxSD9pEOmTkhg@mail.gmail.com>
+References: <1428490480-10144-1-git-send-email-tomeu.vizoso@collabora.com>
+ <20150408115546.GA24271@red-moon> <552643E1.3060200@collabora.com>
+ <285738930.THBQOWvsah@vostro.rjw.lan> <20150410100844.GC23730@red-moon>
+ <CAAObsKAihF1k1yzZxQEs_jpPnCdV3HQbLaYHWu1QNsNd5zqiOg@mail.gmail.com> <20150417140819.GB2347@red-moon>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Rgf3q3z9SdmXC6oT"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAD3Xx4+6r1w+oKgjUAuLXzszy9-uRWvXyyfv3q_1YGC6shXHFQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Disposition: inline
+In-Reply-To: <20150417140819.GB2347@red-moon>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Valentin Rothberg <valentinrothberg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>, Andreas Ruprecht <andreas.ruprecht-d40JDW7QUjc@public.gmane.org>, hengelein Stefan <stefan.hengelein-d40JDW7QUjc@public.gmane.org>
+To: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+Cc: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Rafael J. Wysocki" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
---Rgf3q3z9SdmXC6oT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 17 April 2015 at 16:08, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org> wrote:
+> On Thu, Apr 16, 2015 at 03:37:19PM +0100, Tomeu Vizoso wrote:
+>
+> [...]
+>
+>> >> I don't know what FIQs are. :-)
+>> >
+>> > In short, fast IRQs, it is a separate IRQ line handled as a separate
+>> > exception source with some private (banked) registers that minimize registers
+>> > saving/restoring. They are not identical to NMI on x86, since
+>> > their behaviour (handling) may be overriden by platforms and they
+>> > can be masked.
+>> >
+>> >> ->enter_freeze is entered with interrupts disabled on the local CPU.  It is
+>> >> not supposed to re-enable them.  That is, while in the ->enter_freeze callback
+>> >> routine, the CPU must not be interrupted aby anything other than NMI.
+>> >
+>> > It boils down to what FIQs handlers are allowed to do with tick frozen
+>> > and what they are (may be) currently used for.
+>> >
+>> > Russell has more insights on this than I do, in particular what FIQs are
+>> > currently used for on ARM and if we can leave them enabled safely with tick
+>> > frozen.
+>>
+>> But even if it's currently safe to leave them enabled, is there any
+>> reason for not disabling them?
+>
+> Ok, the point here is: either it is safe, and you leave them enabled,
+> or it is not and we must disable them *before* enter_freeze() is entered.
+>
+> Disabling them in the platform enter_freeze() hook does not make sense,
+> because this means we run with FIQs enabled with tick frozen, either
+> it is safe or it is not, it can't be both.
 
-On Thu, May 14, 2015 at 01:50:08PM +0200, Valentin Rothberg wrote:
-> Hi Thierry,
->=20
-> your commit e3cf5bf687df ("soc/tegra: fuse: Add Tegra210 support") is
-> in today's linux-next tree (i.e., next-20150514).  The following lines
-> in the commit reference a Kconfig option that is not defined, so that
-> the driver and the affected #ifdef blocks cannot be compiled:
->=20
-> drivers/soc/tegra/fuse/Makefile:10:obj-$(CONFIG_ARCH_TEGRA_210_SOC)
->  +=3D speedo-tegra210.o
-> drivers/soc/tegra/fuse/fuse-tegra.c:104:#ifdef CONFIG_ARCH_TEGRA_210_SOC
-> drivers/soc/tegra/fuse/fuse-tegra30.c:49:    defined(CONFIG_ARCH_TEGRA_21=
-0_SOC)
-> drivers/soc/tegra/fuse/fuse-tegra30.c:148:#if defined(CONFIG_ARCH_TEGRA_2=
-10_SOC)
-> drivers/soc/tegra/fuse/fuse.h:84:#ifdef CONFIG_ARCH_TEGRA_210_SOC
-> drivers/soc/tegra/fuse/fuse.h:104:#ifdef CONFIG_ARCH_TEGRA_210_SOC
->=20
-> Is there a patch queued somewhere to add this option?
+I have been looking and asking around, and seems like we should
+actually leave FIQs enabled when the tick is frozen and only disable
+them within enter_freeze.
 
-Yes, these patches are all in the process of being merged for v4.2, so
-I'd expect this particular Kconfig option to show up sometime soon now.
+My understanding is that FIQ handlers are extremely limited in what
+they can do, with the main use being NMI-like functionality. There are
+a handful of other FIQ handlers in mainline, but they don't call into
+any other kernel code and limit themselves to doing some basic I/O.
 
-Thanks,
-Thierry
+The only reason why they should be disabled in enter_freeze is that
+the context of the CPU that is going to a lower power state could
+become corrupted if a FIQ gets fired during a save or restore
+operation.
 
---Rgf3q3z9SdmXC6oT
-Content-Type: application/pgp-signature
+Regards,
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Tomeu
 
-iQIcBAABCAAGBQJVVbTcAAoJEN0jrNd/PrOhb2kP/36wKIjQJfsuTNd3CS4Qfs7j
-sJ8DCItzFnMOm0nC5RzSo3RvbcQ5yd6GbmRLM5UhGesLmBnxyRxJ3e4vhhqeSaDa
-98IIeZZFcjE7SNFbk5Ax8r1WHfuyrDL2UBmSzR4PN9apAH7cMwiCFzhbVoCcgJPx
-eUBEERbDK+IGkRPvD6AagwBdLJLog4DwCgn4juXsFXA83pLDK0YsiMSeiTG3hWSG
-Eoq8uPUCmMX94BCgdirHZ1LzEONrMr58iRWVJk8SlLSWjKrDWnmvLDxjWNguESoo
-0hadQgYKWwjIChj2nmhnYlTXezzEHFCMqi08IgvQdAN7crSu1+L1vR5KHFkj2SKB
-HLOElKu6grxdIEyZd9ss5sRN3abJy/tKZm871LB0pfOsGUquuRv7OmYWCWuqXQme
-3DM/mw2fMx0cEv5dxqzeaqj9+kE6xYVA8tq350njKnKImDdk1ONHlQt94ErvBCIY
-itcKs1keQ7+qdOkfOtxEO+F9Qt/6rXtaWXK6fthArcmgRJZuxHsCEKqc63hc3Tk2
-WqqWEE8WZAnCwGbsXcTDgQ8++KS2T7JXDJLsBe5pXXARYcnqPsmFnomVVu5yu184
-5jaZ28cj0r7v1zDw0dOFx61fm+eVcX8Lp7PkeXdNFJD1Tu1FWRwAOfURqBtPaIZr
-LR9D/fUnB5hD0UjfqKAm
-=QG7F
------END PGP SIGNATURE-----
-
---Rgf3q3z9SdmXC6oT--
+> I would ask Russell opinion on this, before making any decision.
+>
+> Lorenzo
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
