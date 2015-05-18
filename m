@@ -1,92 +1,56 @@
-From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: [PATCH v2] ARM: tegra: cpuidle: implement cpuidle_state.enter_freeze()
-Date: Mon, 18 May 2015 11:38:51 +0200
-Message-ID: <1431941933-18574-1-git-send-email-tomeu.vizoso@collabora.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, "Rafael J. Wysocki" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Bill Huang <bilhuang@nvidia.com>
+Subject: [PATCH 1/1] clk: tegra: read correct iddq register in PLL_SS registration
+Date: Mon, 18 May 2015 19:03:03 +0800
+Message-ID: <1431946983-29554-1-git-send-email-bilhuang@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: pdeschrijver@nvidia.com
+Cc: mturquette@linaro.org, swarren@wwwdotorg.org, thierry.reding@gmail.com, pwalmsley@nvidia.com, rklein@nvidia.com, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Bill Huang <bilhuang@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-This callback is expected to do the same as enter() only that won't
-re-enable interrupts on exit.
+This fixes bug in tegra_clk_register_pllss() which mistakenly assume the
+iddq register is the PLL base address.
 
-It will be called when the system goes to suspend-to-idle and will
-reduce power usage because CPUs won't be awaken for unnecessary IRQs.
-
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Cc: Rafael J. Wysocki <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-
+Signed-off-by: Bill Huang <bilhuang@nvidia.com>
 ---
+ drivers/clk/tegra/clk-pll.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-v2:	* Disable FIQs also when suspending-to-idle
----
- arch/arm/mach-tegra/cpuidle-tegra114.c | 27 +++++++++++++++++++--------
- 1 file changed, 19 insertions(+), 8 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/cpuidle-tegra114.c b/arch/arm/mach-tegra/cpuidle-tegra114.c
-index 155807f..e7c4359 100644
---- a/arch/arm/mach-tegra/cpuidle-tegra114.c
-+++ b/arch/arm/mach-tegra/cpuidle-tegra114.c
-@@ -35,32 +35,42 @@
- #endif
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 05c6d08..f225325 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -1826,7 +1826,7 @@ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
+ 	struct clk *clk, *parent;
+ 	struct tegra_clk_pll_freq_table cfg;
+ 	unsigned long parent_rate;
+-	u32 val;
++	u32 val, val_iddq;
+ 	int i;
  
- #ifdef CONFIG_PM_SLEEP
--static int tegra114_idle_power_down(struct cpuidle_device *dev,
--				    struct cpuidle_driver *drv,
--				    int index)
-+static void tegra114_idle_power_down(void)
- {
- 	local_fiq_disable();
+ 	if (!pll_params->div_nmp)
+@@ -1874,14 +1874,17 @@ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
+ 	pll_writel(PLLSS_CTRL1_DEFAULT, pll_params->ext_misc_reg[2], pll);
  
- 	tegra_set_cpu_in_lp2();
- 	cpu_pm_enter();
+ 	val = pll_readl_base(pll);
++	val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
+ 	if (val & PLL_BASE_ENABLE) {
+-		if (val & BIT(pll_params->iddq_bit_idx)) {
++		if (val_iddq & BIT(pll_params->iddq_bit_idx)) {
+ 			WARN(1, "%s is on but IDDQ set\n", name);
+ 			kfree(pll);
+ 			return ERR_PTR(-EINVAL);
+ 		}
+-	} else
+-		val |= BIT(pll_params->iddq_bit_idx);
++	} else {
++		val_iddq |= BIT(pll_params->iddq_bit_idx);
++		writel_relaxed(val_iddq, clk_base + pll_params->iddq_reg);
++	}
  
--	tick_broadcast_enter();
--
- 	call_firmware_op(prepare_idle);
- 
- 	/* Do suspend by ourselves if the firmware does not implement it */
- 	if (call_firmware_op(do_idle, 0) == -ENOSYS)
- 		cpu_suspend(0, tegra30_sleep_cpu_secondary_finish);
- 
--	tick_broadcast_exit();
--
- 	cpu_pm_exit();
- 	tegra_clear_cpu_in_lp2();
- 
- 	local_fiq_enable();
-+}
-+
-+static int tegra114_idle_enter(struct cpuidle_device *dev,
-+			       struct cpuidle_driver *drv,
-+			       int index)
-+{
-+	tick_broadcast_enter();
-+	tegra114_idle_power_down();
-+	tick_broadcast_exit();
- 
- 	return index;
- }
-+
-+static void tegra114_idle_enter_freeze(struct cpuidle_device *dev,
-+				       struct cpuidle_driver *drv,
-+				       int index)
-+{
-+	tegra114_idle_power_down();
-+}
- #endif
- 
- static struct cpuidle_driver tegra_idle_driver = {
-@@ -71,7 +81,8 @@ static struct cpuidle_driver tegra_idle_driver = {
- 		[0] = ARM_CPUIDLE_WFI_STATE_PWR(600),
- #ifdef CONFIG_PM_SLEEP
- 		[1] = {
--			.enter			= tegra114_idle_power_down,
-+			.enter			= tegra114_idle_enter,
-+			.enter_freeze		= tegra114_idle_enter_freeze,
- 			.exit_latency		= 500,
- 			.target_residency	= 1000,
- 			.power_usage		= 0,
+ 	val &= ~PLLSS_LOCK_OVERRIDE;
+ 	pll_writel_base(val, pll);
 -- 
-2.4.0
+1.9.1
