@@ -1,138 +1,60 @@
-From: Colin Cronin <colinpatrickcronin@gmail.com>
-Subject: [PATCH] Drivers: gpio: gpio-lynxpoint, gpio-pca953x, gpio-tegra, gpio-zynq, gpiolib-of, gpiolib: Fixed spelling errors
-Date: Mon, 18 May 2015 11:41:43 -0700
-Message-ID: <1431974503-14181-1-git-send-email-colinpatrickcronin@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, colinpatrickcronin@gmail.com
+From: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+Subject: Tegra baseline test results for v4.1-rc4
+Date: Mon, 18 May 2015 20:43:27 +0000 (UTC)
+Message-ID: <alpine.DEB.2.02.1505182041480.32204@utopia.booyaka.com>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Fixed several spelling errors
 
-Signed-off-by: Colin Cronin <colinpatrickcronin@gmail.com>
----
- drivers/gpio/gpio-lynxpoint.c |  2 +-
- drivers/gpio/gpio-pca953x.c   |  2 +-
- drivers/gpio/gpio-tegra.c     |  2 +-
- drivers/gpio/gpio-zynq.c      |  2 +-
- drivers/gpio/gpiolib-of.c     |  2 +-
- drivers/gpio/gpiolib.c        | 10 +++++-----
- 6 files changed, 10 insertions(+), 10 deletions(-)
+Here are some basic Tegra test results for Linux v4.1-rc4.
+Logs and other details at:
 
-diff --git a/drivers/gpio/gpio-lynxpoint.c b/drivers/gpio/gpio-lynxpoint.c
-index 127c755..153af46 100644
---- a/drivers/gpio/gpio-lynxpoint.c
-+++ b/drivers/gpio/gpio-lynxpoint.c
-@@ -72,7 +72,7 @@ struct lp_gpio {
-  *
-  * per gpio specific registers consist of two 32bit registers per gpio
-  * (LP_CONFIG1 and LP_CONFIG2), with 94 gpios there's a total of
-- * 188 config registes.
-+ * 188 config registers.
-  *
-  * A simplified view of the register layout look like this:
-  *
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index e2da64a..eed4203 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -630,7 +630,7 @@ static int device_pca957x_init(struct pca953x_chip *chip, u32 invert)
- 		memset(val, 0, NBANK(chip));
- 	pca953x_write_regs(chip, PCA957X_INVRT, val);
- 
--	/* To enable register 6, 7 to controll pull up and pull down */
-+	/* To enable register 6, 7 to control pull up and pull down */
- 	memset(val, 0x02, NBANK(chip));
- 	pca953x_write_regs(chip, PCA957X_BKEN, val);
- 
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index 1741981..a19f81a 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -288,7 +288,7 @@ static void tegra_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
- 			tegra_gpio_writel(1 << pin, GPIO_INT_CLR(gpio));
- 
- 			/* if gpio is edge triggered, clear condition
--			 * before executing the hander so that we don't
-+			 * before executing the handler so that we don't
- 			 * miss edges
- 			 */
- 			if (lvl & (0x100 << pin)) {
-diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
-index 184c4b1..0d9663f 100644
---- a/drivers/gpio/gpio-zynq.c
-+++ b/drivers/gpio/gpio-zynq.c
-@@ -335,7 +335,7 @@ static void zynq_gpio_irq_ack(struct irq_data *irq_data)
-  * @irq_data:	irq data containing irq number of gpio pin for the interrupt
-  *		to enable
-  *
-- * Clears the INTSTS bit and unmasks the given interrrupt.
-+ * Clears the INTSTS bit and unmasks the given interrupt.
-  */
- static void zynq_gpio_irq_enable(struct irq_data *irq_data)
- {
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index a6c67c6..9a0ec48 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -242,7 +242,7 @@ int of_gpio_simple_xlate(struct gpio_chip *gc,
- {
- 	/*
- 	 * We're discouraging gpio_cells < 2, since that way you'll have to
--	 * write your own xlate function (that will have to retrive the GPIO
-+	 * write your own xlate function (that will have to retrieve the GPIO
- 	 * number and the flags from a single gpio cell -- this is possible,
- 	 * but not recommended).
- 	 */
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 59eaa23..3175c60 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -606,7 +606,7 @@ int gpiochip_irqchip_add(struct gpio_chip *gpiochip,
- 	of_node = gpiochip->dev->of_node;
- #ifdef CONFIG_OF_GPIO
- 	/*
--	 * If the gpiochip has an assigned OF node this takes precendence
-+	 * If the gpiochip has an assigned OF node this takes precedence
- 	 * FIXME: get rid of this and use gpiochip->dev->of_node everywhere
- 	 */
- 	if (gpiochip->of_node)
-@@ -1209,7 +1209,7 @@ EXPORT_SYMBOL_GPL(gpiod_get_value);
- /*
-  *  _gpio_set_open_drain_value() - Set the open drain gpio's value.
-  * @desc: gpio descriptor whose state need to be set.
-- * @value: Non-zero for setting it HIGH otherise it will set to LOW.
-+ * @value: Non-zero for setting it HIGH otherwise it will set to LOW.
-  */
- static void _gpio_set_open_drain_value(struct gpio_desc *desc, bool value)
- {
-@@ -1236,7 +1236,7 @@ static void _gpio_set_open_drain_value(struct gpio_desc *desc, bool value)
- /*
-  *  _gpio_set_open_source_value() - Set the open source gpio's value.
-  * @desc: gpio descriptor whose state need to be set.
-- * @value: Non-zero for setting it HIGH otherise it will set to LOW.
-+ * @value: Non-zero for setting it HIGH otherwise it will set to LOW.
-  */
- static void _gpio_set_open_source_value(struct gpio_desc *desc, bool value)
- {
-@@ -1878,7 +1878,7 @@ EXPORT_SYMBOL_GPL(gpiod_count);
-  *
-  * Return the GPIO descriptor corresponding to the function con_id of device
-  * dev, -ENOENT if no GPIO has been assigned to the requested function, or
-- * another IS_ERR() code if an error occured while trying to acquire the GPIO.
-+ * another IS_ERR() code if an error occurred while trying to acquire the GPIO.
-  */
- struct gpio_desc *__must_check __gpiod_get(struct device *dev, const char *con_id,
- 					 enum gpiod_flags flags)
-@@ -1958,7 +1958,7 @@ static int gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
-  *
-  * Return a valid GPIO descriptor, -ENOENT if no GPIO has been assigned to the
-  * requested function and/or index, or another IS_ERR() code if an error
-- * occured while trying to acquire the GPIO.
-+ * occurred while trying to acquire the GPIO.
-  */
- struct gpio_desc *__must_check __gpiod_get_index(struct device *dev,
- 					       const char *con_id,
--- 
-1.9.1
+    http://nvt.pwsan.com/pub/linux/testlogs/test_v4.1-rc4/20150518103104/
+
+
+Test summary
+------------
+
+Build: zImage:
+    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Build: Image:
+    Pass: ( 1/ 1): defconfig
+
+Boot to userspace: defconfig:
+    Pass: ( 1/ 1): qemu-vexpress64
+
+Boot to userspace: multi_v7_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v4.1-rc3 (030bbdbf4c833bc69f502eae58498bc5572db736)):
+   text     data      bss    total  kernel
+  +4075    -3584        0     +491  defconfig
+  +1671     +704        0    +2375  multi_v7_defconfig
+  +1559     +256        0    +1815  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v4.1-rc3 (030bbdbf4c833bc69f502eae58498bc5572db736))
+    avail    rsrvd     high    freed                board              kconfig                  dtb
+        .        .        .        .      qemu-vexpress64            defconfig           __internal
+        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+      -4k       4k        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+      -4k       4k        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+      -4k       4k        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+      -4k       4k        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
