@@ -1,89 +1,27 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] memory: tegra: Expose supported rates via debugfs
-Date: Mon, 18 May 2015 17:35:30 +0200
-Message-ID: <1431963330-25708-1-git-send-email-thierry.reding@gmail.com>
+From: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH 1/1] clk: tegra: read correct iddq register in PLL_SS registration
+Date: Mon, 18 May 2015 09:53:14 -0700
+Message-ID: <CANLzEkto_rDBvyM0ra4ymaT-L9q1DxBqKgzxy2GEYKEE9KDuuQ@mail.gmail.com>
+References: <1431946983-29554-1-git-send-email-bilhuang@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1431946983-29554-1-git-send-email-bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Mon, May 18, 2015 at 4:03 AM, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> This fixes bug in tegra_clk_register_pllss() which mistakenly assume the
+> iddq register is the PLL base address.
+>
+> Signed-off-by: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-In order to ease testing, expose the list of supported EMC frequencies
-via debugfs.
+Thanks for the quick fix.
+Reviewed-by: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/memory/tegra/tegra124-emc.c | 42 +++++++++++++++++++++++++++++++++++--
- 1 file changed, 40 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
-index 8620355776fe..3dac7be39654 100644
---- a/drivers/memory/tegra/tegra124-emc.c
-+++ b/drivers/memory/tegra/tegra124-emc.c
-@@ -1027,7 +1027,40 @@ static int emc_debug_rate_set(void *data, u64 rate)
- DEFINE_SIMPLE_ATTRIBUTE(emc_debug_rate_fops, emc_debug_rate_get,
- 			emc_debug_rate_set, "%lld\n");
- 
--static void emc_debugfs_init(struct device *dev)
-+static int emc_debug_supported_rates_show(struct seq_file *s, void *data)
-+{
-+	struct tegra_emc *emc = s->private;
-+	const char *prefix = "";
-+	unsigned int i;
-+
-+	for (i = 0; i < emc->num_timings; i++) {
-+		struct emc_timing *timing = &emc->timings[i];
-+
-+		seq_printf(s, "%s%lu", prefix, timing->rate);
-+
-+		prefix = " ";
-+	}
-+
-+	seq_puts(s, "\n");
-+
-+	return 0;
-+}
-+
-+static int emc_debug_supported_rates_open(struct inode *inode,
-+					  struct file *file)
-+{
-+	return single_open(file, emc_debug_supported_rates_show,
-+			   inode->i_private);
-+}
-+
-+static const struct file_operations emc_debug_supported_rates_fops = {
-+	.open = emc_debug_supported_rates_open,
-+	.read = seq_read,
-+	.llseek = seq_lseek,
-+	.release = single_release,
-+};
-+
-+static void emc_debugfs_init(struct device *dev, struct tegra_emc *emc)
- {
- 	struct dentry *root, *file;
- 	struct clk *clk;
-@@ -1048,6 +1081,11 @@ static void emc_debugfs_init(struct device *dev)
- 				   &emc_debug_rate_fops);
- 	if (!file)
- 		dev_err(dev, "failed to create debugfs entry\n");
-+
-+	file = debugfs_create_file("supported_rates", S_IRUGO, root, emc,
-+				   &emc_debug_supported_rates_fops);
-+	if (!file)
-+		dev_err(dev, "failed to create debugfs entry\n");
- }
- 
- static int tegra_emc_probe(struct platform_device *pdev)
-@@ -1119,7 +1157,7 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, emc);
- 
- 	if (IS_ENABLED(CONFIG_DEBUG_FS))
--		emc_debugfs_init(&pdev->dev);
-+		emc_debugfs_init(&pdev->dev, emc);
- 
- 	return 0;
- };
 -- 
-2.3.5
+Benson Leung
+Software Engineer, Chrom* OS
+bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
