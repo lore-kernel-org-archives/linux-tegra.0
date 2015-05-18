@@ -1,111 +1,138 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] drm/tegra: rgb: Use atomic DPMS helpers
-Date: Mon, 18 May 2015 20:06:41 +0300
-Message-ID: <1431968804-17182-1-git-send-email-digetx@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Colin Cronin <colinpatrickcronin@gmail.com>
+Subject: [PATCH] Drivers: gpio: gpio-lynxpoint, gpio-pca953x, gpio-tegra, gpio-zynq, gpiolib-of, gpiolib: Fixed spelling errors
+Date: Mon, 18 May 2015 11:41:43 -0700
+Message-ID: <1431974503-14181-1-git-send-email-colinpatrickcronin@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, colinpatrickcronin@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-Panel DPMS got broken after adding support for atomic modesetting.
-Fix it by making RGB output use of generic atomic DPMS helpers.
+Fixed several spelling errors
 
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Signed-off-by: Colin Cronin <colinpatrickcronin@gmail.com>
 ---
- drivers/gpu/drm/tegra/rgb.c | 49 ++++++++++++++++-----------------------------
- 1 file changed, 17 insertions(+), 32 deletions(-)
+ drivers/gpio/gpio-lynxpoint.c |  2 +-
+ drivers/gpio/gpio-pca953x.c   |  2 +-
+ drivers/gpio/gpio-tegra.c     |  2 +-
+ drivers/gpio/gpio-zynq.c      |  2 +-
+ drivers/gpio/gpiolib-of.c     |  2 +-
+ drivers/gpio/gpiolib.c        | 10 +++++-----
+ 6 files changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/rgb.c b/drivers/gpu/drm/tegra/rgb.c
-index 7cd833f..46cbaf2 100644
---- a/drivers/gpu/drm/tegra/rgb.c
-+++ b/drivers/gpu/drm/tegra/rgb.c
-@@ -88,13 +88,8 @@ static void tegra_dc_write_regs(struct tegra_dc *dc,
- 		tegra_dc_writel(dc, table[i].value, table[i].offset);
- }
+diff --git a/drivers/gpio/gpio-lynxpoint.c b/drivers/gpio/gpio-lynxpoint.c
+index 127c755..153af46 100644
+--- a/drivers/gpio/gpio-lynxpoint.c
++++ b/drivers/gpio/gpio-lynxpoint.c
+@@ -72,7 +72,7 @@ struct lp_gpio {
+  *
+  * per gpio specific registers consist of two 32bit registers per gpio
+  * (LP_CONFIG1 and LP_CONFIG2), with 94 gpios there's a total of
+- * 188 config registes.
++ * 188 config registers.
+  *
+  * A simplified view of the register layout look like this:
+  *
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index e2da64a..eed4203 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -630,7 +630,7 @@ static int device_pca957x_init(struct pca953x_chip *chip, u32 invert)
+ 		memset(val, 0, NBANK(chip));
+ 	pca953x_write_regs(chip, PCA957X_INVRT, val);
  
--static void tegra_rgb_connector_dpms(struct drm_connector *connector,
--				     int mode)
--{
--}
--
- static const struct drm_connector_funcs tegra_rgb_connector_funcs = {
--	.dpms = tegra_rgb_connector_dpms,
-+	.dpms = drm_atomic_helper_connector_dpms,
- 	.reset = drm_atomic_helper_connector_reset,
- 	.detect = tegra_output_connector_detect,
- 	.fill_modes = drm_helper_probe_single_connector_modes,
-@@ -125,21 +120,28 @@ static const struct drm_encoder_funcs tegra_rgb_encoder_funcs = {
- 	.destroy = tegra_output_encoder_destroy,
- };
+-	/* To enable register 6, 7 to controll pull up and pull down */
++	/* To enable register 6, 7 to control pull up and pull down */
+ 	memset(val, 0x02, NBANK(chip));
+ 	pca953x_write_regs(chip, PCA957X_BKEN, val);
  
--static void tegra_rgb_encoder_dpms(struct drm_encoder *encoder, int mode)
-+static void tegra_rgb_encoder_mode_set(struct drm_encoder *encoder,
-+				       struct drm_display_mode *mode,
-+				       struct drm_display_mode *adjusted)
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 1741981..a19f81a 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -288,7 +288,7 @@ static void tegra_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
+ 			tegra_gpio_writel(1 << pin, GPIO_INT_CLR(gpio));
+ 
+ 			/* if gpio is edge triggered, clear condition
+-			 * before executing the hander so that we don't
++			 * before executing the handler so that we don't
+ 			 * miss edges
+ 			 */
+ 			if (lvl & (0x100 << pin)) {
+diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
+index 184c4b1..0d9663f 100644
+--- a/drivers/gpio/gpio-zynq.c
++++ b/drivers/gpio/gpio-zynq.c
+@@ -335,7 +335,7 @@ static void zynq_gpio_irq_ack(struct irq_data *irq_data)
+  * @irq_data:	irq data containing irq number of gpio pin for the interrupt
+  *		to enable
+  *
+- * Clears the INTSTS bit and unmasks the given interrrupt.
++ * Clears the INTSTS bit and unmasks the given interrupt.
+  */
+ static void zynq_gpio_irq_enable(struct irq_data *irq_data)
  {
- }
- 
--static void tegra_rgb_encoder_prepare(struct drm_encoder *encoder)
-+static void tegra_rgb_encoder_disable(struct drm_encoder *encoder)
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index a6c67c6..9a0ec48 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -242,7 +242,7 @@ int of_gpio_simple_xlate(struct gpio_chip *gc,
  {
--}
-+	struct tegra_output *output = encoder_to_output(encoder);
-+	struct tegra_rgb *rgb = to_rgb(output);
- 
--static void tegra_rgb_encoder_commit(struct drm_encoder *encoder)
--{
-+	if (output->panel)
-+		drm_panel_disable(output->panel);
-+
-+	tegra_dc_write_regs(rgb->dc, rgb_disable, ARRAY_SIZE(rgb_disable));
-+	tegra_dc_commit(rgb->dc);
-+
-+	if (output->panel)
-+		drm_panel_unprepare(output->panel);
- }
- 
--static void tegra_rgb_encoder_mode_set(struct drm_encoder *encoder,
--				       struct drm_display_mode *mode,
--				       struct drm_display_mode *adjusted)
-+static void tegra_rgb_encoder_enable(struct drm_encoder *encoder)
+ 	/*
+ 	 * We're discouraging gpio_cells < 2, since that way you'll have to
+-	 * write your own xlate function (that will have to retrive the GPIO
++	 * write your own xlate function (that will have to retrieve the GPIO
+ 	 * number and the flags from a single gpio cell -- this is possible,
+ 	 * but not recommended).
+ 	 */
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 59eaa23..3175c60 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -606,7 +606,7 @@ int gpiochip_irqchip_add(struct gpio_chip *gpiochip,
+ 	of_node = gpiochip->dev->of_node;
+ #ifdef CONFIG_OF_GPIO
+ 	/*
+-	 * If the gpiochip has an assigned OF node this takes precendence
++	 * If the gpiochip has an assigned OF node this takes precedence
+ 	 * FIXME: get rid of this and use gpiochip->dev->of_node everywhere
+ 	 */
+ 	if (gpiochip->of_node)
+@@ -1209,7 +1209,7 @@ EXPORT_SYMBOL_GPL(gpiod_get_value);
+ /*
+  *  _gpio_set_open_drain_value() - Set the open drain gpio's value.
+  * @desc: gpio descriptor whose state need to be set.
+- * @value: Non-zero for setting it HIGH otherise it will set to LOW.
++ * @value: Non-zero for setting it HIGH otherwise it will set to LOW.
+  */
+ static void _gpio_set_open_drain_value(struct gpio_desc *desc, bool value)
  {
- 	struct tegra_output *output = encoder_to_output(encoder);
- 	struct tegra_rgb *rgb = to_rgb(output);
-@@ -174,21 +176,6 @@ static void tegra_rgb_encoder_mode_set(struct drm_encoder *encoder,
- 		drm_panel_enable(output->panel);
- }
- 
--static void tegra_rgb_encoder_disable(struct drm_encoder *encoder)
--{
--	struct tegra_output *output = encoder_to_output(encoder);
--	struct tegra_rgb *rgb = to_rgb(output);
--
--	if (output->panel)
--		drm_panel_disable(output->panel);
--
--	tegra_dc_write_regs(rgb->dc, rgb_disable, ARRAY_SIZE(rgb_disable));
--	tegra_dc_commit(rgb->dc);
--
--	if (output->panel)
--		drm_panel_unprepare(output->panel);
--}
--
- static int
- tegra_rgb_encoder_atomic_check(struct drm_encoder *encoder,
- 			       struct drm_crtc_state *crtc_state,
-@@ -231,11 +218,9 @@ tegra_rgb_encoder_atomic_check(struct drm_encoder *encoder,
- }
- 
- static const struct drm_encoder_helper_funcs tegra_rgb_encoder_helper_funcs = {
--	.dpms = tegra_rgb_encoder_dpms,
--	.prepare = tegra_rgb_encoder_prepare,
--	.commit = tegra_rgb_encoder_commit,
- 	.mode_set = tegra_rgb_encoder_mode_set,
- 	.disable = tegra_rgb_encoder_disable,
-+	.enable = tegra_rgb_encoder_enable,
- 	.atomic_check = tegra_rgb_encoder_atomic_check,
- };
- 
+@@ -1236,7 +1236,7 @@ static void _gpio_set_open_drain_value(struct gpio_desc *desc, bool value)
+ /*
+  *  _gpio_set_open_source_value() - Set the open source gpio's value.
+  * @desc: gpio descriptor whose state need to be set.
+- * @value: Non-zero for setting it HIGH otherise it will set to LOW.
++ * @value: Non-zero for setting it HIGH otherwise it will set to LOW.
+  */
+ static void _gpio_set_open_source_value(struct gpio_desc *desc, bool value)
+ {
+@@ -1878,7 +1878,7 @@ EXPORT_SYMBOL_GPL(gpiod_count);
+  *
+  * Return the GPIO descriptor corresponding to the function con_id of device
+  * dev, -ENOENT if no GPIO has been assigned to the requested function, or
+- * another IS_ERR() code if an error occured while trying to acquire the GPIO.
++ * another IS_ERR() code if an error occurred while trying to acquire the GPIO.
+  */
+ struct gpio_desc *__must_check __gpiod_get(struct device *dev, const char *con_id,
+ 					 enum gpiod_flags flags)
+@@ -1958,7 +1958,7 @@ static int gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
+  *
+  * Return a valid GPIO descriptor, -ENOENT if no GPIO has been assigned to the
+  * requested function and/or index, or another IS_ERR() code if an error
+- * occured while trying to acquire the GPIO.
++ * occurred while trying to acquire the GPIO.
+  */
+ struct gpio_desc *__must_check __gpiod_get_index(struct device *dev,
+ 					       const char *con_id,
 -- 
-2.4.0
+1.9.1
