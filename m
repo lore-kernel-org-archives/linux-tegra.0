@@ -1,56 +1,61 @@
-From: Bill Huang <bilhuang@nvidia.com>
-Subject: [PATCH 1/1] clk: tegra: read correct iddq register in PLL_SS registration
-Date: Mon, 18 May 2015 19:03:03 +0800
-Message-ID: <1431946983-29554-1-git-send-email-bilhuang@nvidia.com>
+From: bilhuang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/1] clk: tegra: fix WARN_ON in PLL_RE registration
+Date: Mon, 18 May 2015 19:06:37 +0800
+Message-ID: <5559C7BD.7040105@nvidia.com>
+References: <1431691653-17615-1-git-send-email-bilhuang@nvidia.com> <CANLzEktZXkggY_6UbBBsU_9SB2eqsGRoBV138cDgBqo95BaWyw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: pdeschrijver@nvidia.com
-Cc: mturquette@linaro.org, swarren@wwwdotorg.org, thierry.reding@gmail.com, pwalmsley@nvidia.com, rklein@nvidia.com, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Bill Huang <bilhuang@nvidia.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CANLzEktZXkggY_6UbBBsU_9SB2eqsGRoBV138cDgBqo95BaWyw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This fixes bug in tegra_clk_register_pllss() which mistakenly assume the
-iddq register is the PLL base address.
+On 05/16/2015 01:12 AM, Benson Leung wrote:
+> On Fri, May 15, 2015 at 5:07 AM, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> This fixes two things.
+>>
+>> - Read the correct IDDQ register
+>> - Check the correct IDDQ bit position
+>>
+>> Signed-off-by: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> Reviewed-by: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>
+> By the way, does it also make sense to do the same thing for
+> tegra_clk_register_pllss, which also reads the base register instead
+> of the specific iddq_reg from params?
+>
+Yes thanks for catching this, I've sent another fix in 
+https://patchwork.ozlabs.org/patch/473329/
 
-Signed-off-by: Bill Huang <bilhuang@nvidia.com>
----
- drivers/clk/tegra/clk-pll.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 05c6d08..f225325 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -1826,7 +1826,7 @@ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
- 	struct clk *clk, *parent;
- 	struct tegra_clk_pll_freq_table cfg;
- 	unsigned long parent_rate;
--	u32 val;
-+	u32 val, val_iddq;
- 	int i;
- 
- 	if (!pll_params->div_nmp)
-@@ -1874,14 +1874,17 @@ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
- 	pll_writel(PLLSS_CTRL1_DEFAULT, pll_params->ext_misc_reg[2], pll);
- 
- 	val = pll_readl_base(pll);
-+	val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
- 	if (val & PLL_BASE_ENABLE) {
--		if (val & BIT(pll_params->iddq_bit_idx)) {
-+		if (val_iddq & BIT(pll_params->iddq_bit_idx)) {
- 			WARN(1, "%s is on but IDDQ set\n", name);
- 			kfree(pll);
- 			return ERR_PTR(-EINVAL);
- 		}
--	} else
--		val |= BIT(pll_params->iddq_bit_idx);
-+	} else {
-+		val_iddq |= BIT(pll_params->iddq_bit_idx);
-+		writel_relaxed(val_iddq, clk_base + pll_params->iddq_reg);
-+	}
- 
- 	val &= ~PLLSS_LOCK_OVERRIDE;
- 	pll_writel_base(val, pll);
--- 
-1.9.1
+>> ---
+>>   drivers/clk/tegra/clk-pll.c | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+>> index 05c6d08..734340e 100644
+>> --- a/drivers/clk/tegra/clk-pll.c
+>> +++ b/drivers/clk/tegra/clk-pll.c
+>> @@ -1630,7 +1630,8 @@ struct clk *tegra_clk_register_pllre(const char *name, const char *parent_name,
+>>
+>>          val = pll_readl_base(pll);
+>>          if (val & PLL_BASE_ENABLE)
+>> -               WARN_ON(val & pll_params->iddq_bit_idx);
+>> +               WARN_ON(readl_relaxed(clk_base + pll_params->iddq_reg) &
+>> +                               BIT(pll_params->iddq_bit_idx));
+>>          else {
+>>                  int m;
+>>
+>> --
+>> 1.9.1
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+>> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
+>
