@@ -1,81 +1,67 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 2/3] pinctrl: tegra-xusb: Fix allocation of pins
-Date: Tue, 19 May 2015 16:33:42 +0200
-Message-ID: <20150519143340.GE26748@ulmo.nvidia.com>
-References: <1432044863-2035-1-git-send-email-jonathanh@nvidia.com>
- <1432044863-2035-3-git-send-email-jonathanh@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] memory: tegra: Expose supported rates via debugfs
+Date: Tue, 19 May 2015 16:36:39 +0200
+Message-ID: <20150519143637.GF26748@ulmo.nvidia.com>
+References: <1431963330-25708-1-git-send-email-thierry.reding@gmail.com>
+ <CAAObsKCo7x4qMdPvBb-dNoN=j7Od-eMCxw9BNoSvDR5mUZXGtA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="//IivP0gvsAy3Can"
-Return-path: <linux-gpio-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="CXFpZVxO6m2Ol4tQ"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1432044863-2035-3-git-send-email-jonathanh@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org
+In-Reply-To: <CAAObsKCo7x4qMdPvBb-dNoN=j7Od-eMCxw9BNoSvDR5mUZXGtA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---//IivP0gvsAy3Can
+--CXFpZVxO6m2Ol4tQ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 19, 2015 at 03:14:22PM +0100, Jon Hunter wrote:
-[...]
+On Tue, May 19, 2015 at 02:21:01PM +0200, Tomeu Vizoso wrote:
+> On 18 May 2015 at 17:35, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >
+> > In order to ease testing, expose the list of supported EMC frequencies
+> > via debugfs.
+>=20
+> Looks good to me, but if this is for automated testing, why not just
+> read the timings from the DT? We would be covering more code that way.
+>=20
+> Reviewed-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 
-One more thing:
+The idea is that by putting this into debugfs we have a single source of
+information to use in tests.
 
-[...]
-> diff --git a/drivers/pinctrl/pinctrl-tegra-xusb.c b/drivers/pinctrl/pinct=
-rl-tegra-xusb.c
-> index 3e8e4a914fb4..c61594066e26 100644
-> --- a/drivers/pinctrl/pinctrl-tegra-xusb.c
-> +++ b/drivers/pinctrl/pinctrl-tegra-xusb.c
-> @@ -125,6 +125,23 @@ static const char *tegra_xusb_padctl_get_group_name(=
-struct pinctrl_dev *pinctrl,
->  	return padctl->soc->pins[group].name;
->  }
-> =20
-> +static int tegra_xusb_padctl_get_group_pins(struct pinctrl_dev *pinctrl,
-> +					    unsigned group,
-> +					    const unsigned **pins,
-> +					    unsigned *num_pins)
-> +{
-> +	struct tegra_xusb_padctl *padctl =3D pinctrl_dev_get_drvdata(pinctrl);
-> +
-> +	/*
-> +	 * For the tegra-xusb pad controller groups are synonomous
-> +	 * with lanes/pins and there is always one lane/pin per group.
-> +	 */
-> +	*pins =3D &padctl->soc->pins[group].number;
-
-Shouldn't this be the same as pinctrl->desc->pins? In that case, maybe a
-better solution would be to make .get_group_pins() mandatory again and
-turn this into a pinctrl helper function that can be used by all group-
-only pinctrl drivers?
+Now if in addition to merely testing the frequencies you want to make
+sure the driver has a consistent representation of what's in device tree
+we could always write another test that reads the device tree nodes and
+compares them to the list of supported rates from debugfs.
 
 Thierry
 
---//IivP0gvsAy3Can
+--CXFpZVxO6m2Ol4tQ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJVW0nEAAoJEN0jrNd/PrOhuc4P/0PWIqTxXYpXU5vrzanUzQEj
-qPW1GlusDkZwB6CbiLEo0d2J9tljtRoz9jWg7/0b5U8P1IPNzUdn+eOjXvKe6sZg
-cXAYt16Hpd04CjoQvJsSNelZpQD6lzQWLAr6hWY5PIsBPgG9eS2QP5qavEjgB1QX
-D7oFw9lE4P38PxcXKqO6VR9CfJLcAXgWzF/GMML8hxSrvWMVVUadw3FCQbmUWxrL
-Efnq2SlfW96Kl22Fd3uyOqgHC1aDrd0v5JUiqu5y4JAQsoNmtcQ8oNQp1zTz0w9M
-ZK2KJueiWvxiWwuZKvxWmNHb/cnGcS+6INKAffnRA1jd2LIjY23pDEaF+Ap+tkZ7
-UJVCbhuMz+QybO2aB19k4PXC8kF0v6WqWXZ3l1PxMoXsh2dYCmUiAhNvcS82bIj8
-UdY48xo1DFUEegIKvPUSYjT6mwWjNMpQv8BBSbQdlphqITOAHibYfovB9NInE9Z7
-+LXskdEZaV3S8blGRjfR6xncR4C02NvjwGgPtTKwHR4A0H2t9UWJNmEDc8WIobar
-dg1cWMg+tkEjGNuSg2ae/l38vQ4LFLIx3T+7PKX9c/JeCDwlMeISNevaIt654od9
-d4qo7yV6bcHZyha4Dv1FcAk1ZMv560V9Qh0ndYwQUdHjJ3xnAAxAi71GSOOxjqDk
-6rD/Yg7MKOnVZwq6kPHO
-=gO7a
+iQIcBAABCAAGBQJVW0p1AAoJEN0jrNd/PrOhWGIP/2d1UoVsqB9wCmc+KCYEZ5gv
+zFxDFeKWlA+aFoaKoCMy42gzL/BRw8lvXwbyYOpDR6+vgG7QoDEdOkcUlTkJXlEZ
+Wf9BnSBQ+VemqFJMDPEDAn+t4sdGVTqtpPeC7rfXiLbzxZrjR1IqLSJUe0iXOst4
+jf/ldQHNxfHwbYjuvICy1vrnzjHr5HpuOC7b7R7ERYM+c1fTjRJlJ51ew+x9TR3k
+5Fw45QaC6vgH3t6x2beBdCWMMhzVPYgRW/2CCertck1GYcQD3ABUp7tPPpBk4zCt
+Ku7AsH6GmRoHfH2aQAAdi4sn5UTeIIq9cluf1JZreJWje3NhyYqN7PJjkEKx9wvI
+nPkyRJuOpMrdESZfjJYzSqGYKgm8vXyZbEyFVabuRMfqH1vQ1IMz4O9A2mLxWE+Y
+otgJeIRLJGqykKCw+do6vTbOe5vnkMAOKLL0aGxEsl/kHRk4ll11GQVA4rFyyxut
+Wd7oO+UpNpkUHt6LSWTp+AVW7Sl+zVLqU1tgkqmfZ/b36mcalDGQ/dBlYJaoq41Y
+A5VnltwPsvlb6CV/dVGQeHM4NvurjOmNYnMsp6lF+IGjXi9D1snpRNNiBzDQng2p
+bIXT2d2P/IPesUHqWJWuBwJl8+J8q0NMWL8N/Sr0pp4grHQ9pBV2pidq5awQbOIU
+RQjKHDROEqpjZjOMrjyU
+=kJ4L
 -----END PGP SIGNATURE-----
 
---//IivP0gvsAy3Can--
+--CXFpZVxO6m2Ol4tQ--
