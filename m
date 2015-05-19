@@ -1,588 +1,161 @@
-From: Russell King <rmk+kernel@arm.linux.org.uk>
-Subject: [PATCH] ARM: v7 setup function should invalidate L1 cache
-Date: Tue, 19 May 2015 17:12:56 +0100
-Message-ID: <E1Yuk8W-0001tC-IK@rmk-PC.arm.linux.org.uk>
+From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v8 4/9] mfd: Add binding document for NVIDIA Tegra XUSB
+Date: Tue, 19 May 2015 11:36:05 -0700
+Message-ID: <CAL1qeaHy0h7bXhuLHh4AG2Zfu48JYeawgVo4dp_k4oX8YFw6tA@mail.gmail.com>
+References: <1430761002-9327-1-git-send-email-abrestic@chromium.org>
+	<1430761002-9327-5-git-send-email-abrestic@chromium.org>
+	<20150513143954.GA3394@x1>
+	<55544CC5.9050001@nvidia.com>
+	<20150514074058.GA22418@x1>
+	<CAL1qeaEqNejuGkN-ke11mtWnaaRo+XieCBkQ6+NQ-Afym6uxVA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, Michal Simek <michal.simek@xilinx.com>, Wei Xu <xuwei5@hisilicon.com>, bcm-kernel-feedback-list@broadcom.com, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Stephen Warren <swarren@wwwdotorg.org>, Marc Carino <marc.ceeeee@gmail.com>, Simon Horman <horms@verge.net.au>, Gregory Fong <gregory.0xf0@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, Barry Song <baohua@kernel.org>, Brian Norris <computersforpeace@gmail.com>, Christian Daudt <bcm@fixthebug.org>, Sasc ha Hauer <kernel@pengutronix.de>, Dinh Nguyen <dinguyen@opensource.altera.com>, Shawn Guo <shawn.g>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAL1qeaEqNejuGkN-ke11mtWnaaRo+XieCBkQ6+NQ-Afym6uxVA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-All ARMv5 and older CPUs invalidate their caches in the early assembly
-setup function, prior to enabling the MMU.  This is because the L1
-cache should not contain any data relevant to the execution of the
-kernel at this point; all data should have been flushed out to memory.
+Lee,
 
-This requirement should also be true for ARMv6 and ARMv7 CPUs - indeed,
-these typically do not search their caches when caching is disabled (as
-it needs to be when the MMU is disabled) so this change should be safe.
+On Thu, May 14, 2015 at 10:38 AM, Andrew Bresticker
+<abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+> On Thu, May 14, 2015 at 12:40 AM, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+>> On Thu, 14 May 2015, Jon Hunter wrote:
+>>
+>>> Hi Lee,
+>>>
+>>> On 13/05/15 15:39, Lee Jones wrote:
+>>> > On Mon, 04 May 2015, Andrew Bresticker wrote:
+>>> >
+>>> >> Add a binding document for the XUSB host complex on NVIDIA Tegra124
+>>> >> and later SoCs.  The XUSB host complex includes a mailbox for
+>>> >> communication with the XUSB micro-controller and an xHCI host-controller.
+>>> >>
+>>> >> Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>>> >> Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+>>> >> Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
+>>> >> Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+>>> >> Cc: Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
+>>> >> Cc: Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+>>> >> Cc: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+>>> >> Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>>> >> ---
+>>> >> Changes from v7:
+>>> >>  - Move non-shared resources into child nodes.
+>>> >> New for v7.
+>>> >> ---
+>>> >>  .../bindings/mfd/nvidia,tegra124-xusb.txt          | 37 ++++++++++++++++++++++
+>>> >>  1 file changed, 37 insertions(+)
+>>> >>  create mode 100644 Documentation/devicetree/bindings/mfd/nvidia,tegra124-xusb.txt
+>>> >>
+>>> >> diff --git a/Documentation/devicetree/bindings/mfd/nvidia,tegra124-xusb.txt b/Documentation/devicetree/bindings/mfd/nvidia,tegra124-xusb.txt
+>>> >> new file mode 100644
+>>> >> index 0000000..bc50110
+>>> >> --- /dev/null
+>>> >> +++ b/Documentation/devicetree/bindings/mfd/nvidia,tegra124-xusb.txt
+>>> >> @@ -0,0 +1,37 @@
+>>> >> +NVIDIA Tegra XUSB host copmlex
+>>> >> +==============================
+>>> >> +
+>>> >> +The XUSB host complex on Tegra124 and later SoCs contains an xHCI host
+>>> >> +controller and a mailbox for communication with the XUSB micro-controller.
+>>> >> +
+>>> >> +Required properties:
+>>> >> +--------------------
+>>> >> + - compatible: For Tegra124, must contain "nvidia,tegra124-xusb".
+>>> >> +   Otherwise, must contain '"nvidia,<chip>-xusb", "nvidia,tegra124-xusb"'
+>>> >> +   where <chip> is tegra132.
+>>> >> + - reg: Must contain the base and length of the XUSB FPCI registers.
+>>> >> + - ranges: Bus address mapping for the XUSB block.  Can be empty since the
+>>> >> +   mapping is 1:1.
+>>> >> + - #address-cells: Must be 2.
+>>> >> + - #size-cells: Must be 2.
+>>> >> +
+>>> >> +Example:
+>>> >> +--------
+>>> >> +  usb@0,70098000 {
+>>> >> +          compatible = "nvidia,tegra124-xusb";
+>>> >> +          reg = <0x0 0x70098000 0x0 0x1000>;
+>>> >> +          ranges;
+>>> >> +
+>>> >> +          #address-cells = <2>;
+>>> >> +          #size-cells = <2>;
+>>> >> +
+>>> >> +          usb-host@0,70090000 {
+>>> >> +                  compatible = "nvidia,tegra124-xhci";
+>>> >> +                  ...
+>>> >> +          };
+>>> >> +
+>>> >> +          mailbox {
+>>> >> +                  compatible = "nvidia,tegra124-xusb-mbox";
+>>> >> +                  ...
+>>> >> +          };
+>>> >
+>>> > This doesn't appear to be a proper MFD.  I would have the USB and
+>>> > Mailbox devices probe seperately and use a phandle to point the USB
+>>> > device to its Mailbox.
+>>> >
+>>> > usb@xyz {
+>>> >     mboxes = <&xusb-mailbox, [chan]>;
+>>> > };
+>>> >
+>>>
+>>> I am assuming that Andrew had laid it out like this to reflect the hw
+>>> structure. The mailbox and xhci controller are part of the xusb
+>>> sub-system and hence appear as child nodes. My understanding is that for
+>>> device-tree we want the device-tree structure to reflect the actual hw.
+>>> Is this not the case?
+>>
+>> Yes, the DT files should reflect h/w.  I have requested to see what
+>> the memory map looks like, so I might provide a more appropriate
+>> solution to accepting a pretty pointless MFD.
+>
+> FWIW, the address map for XUSB looks like this:
+>
+> XUSB_HOST: 0x70090000 - 0x7009a000
+>     xHCI registers: 0x70090000 - 0x70098000
+>     FPCI configuration registers: 0x70098000 - 0x70099000
+>     IPFS configuration registers: 0x70099000 - 0x7009a000
+>
+>> Two solutions spring to mind.  You can either call
+>> of_platform_populate() from the USB driver, as some already do:
+>>
+>>   drivers/usb/dwc3/dwc3-exynos.c:
+>>     ret = of_platform_populate(node, NULL, NULL, dev);
+>>   drivers/usb/dwc3/dwc3-keystone.c:
+>>     error = of_platform_populate(node, NULL, NULL, dev);
+>>   drivers/usb/dwc3/dwc3-omap.c:
+>>     ret = of_platform_populate(node, NULL, NULL, dev);
+>>   drivers/usb/dwc3/dwc3-qcom.c:
+>>     ret = of_platform_populate(node, NULL, NULL, qdwc->dev);
+>>   drivers/usb/dwc3/dwc3-st.c:
+>>     ret = of_platform_populate(node, NULL, NULL, dev);
+>>   drivers/usb/musb/musb_am335x.c:
+>>     ret = of_platform_populate(pdev->dev.of_node, NULL, NULL, &pdev->dev);
+>
+> This still requires a small, separate driver to setup the regmap and
+> do of_platform_populate().  The only difference is it lives in
+> drivers/usb/ instead of drivers/mfd/.
+>
+>> Or use the "simple-mfd", which is currently in -next:
+>>
+>>   git show next/master:Documentation/devicetree/bindings/mfd/mfd.txt
+>
+> I'm not too opposed to this, but Thierry was when I brought this up
+> before.  The issue here is that if we ever have to do something
+> besides setting up a regmap in the MFD, we'd have to change the
+> binding and break DT backwards-compatibility.
 
-ARMv7 allows there to be CPUs which search their caches while caching is
-disabled, and it's permitted that the cache is uninitialised at boot;
-for these, the architecture reference manual requires that an
-implementation specific code sequence is used immediately after reset
-to ensure that the cache is placed into a sane state.  Such
-functionality is definitely outside the remit of the Linux kernel, and
-must be done by the SoC's firmware before _any_ CPU gets to the Linux
-kernel.
+Any thoughts on this?  A minimal MFD seems to be the best way to
+future-proof this binding/driver should it need to be extended in the
+future.  If this is a firm NAK from you however, I'll need to let
+Jassi now so that he can un-queue the mailbox patches for 4.2....
 
-Changing the data cache clean+invalidate to a mere invalidate allows us
-to get rid of a lot of platform specific hacks around this issue for
-their secondary CPU bringup paths - some of which were buggy.
-
-Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
----
- arch/arm/mach-bcm/Makefile            |  2 +-
- arch/arm/mach-bcm/brcmstb.h           | 19 -------------------
- arch/arm/mach-bcm/headsmp-brcmstb.S   | 33 ---------------------------------
- arch/arm/mach-bcm/platsmp-brcmstb.c   |  4 +---
- arch/arm/mach-berlin/headsmp.S        |  6 ------
- arch/arm/mach-berlin/platsmp.c        |  3 +--
- arch/arm/mach-hisi/Makefile           |  2 +-
- arch/arm/mach-hisi/core.h             |  1 -
- arch/arm/mach-hisi/headsmp.S          | 16 ----------------
- arch/arm/mach-hisi/platsmp.c          |  4 ++--
- arch/arm/mach-imx/headsmp.S           |  1 -
- arch/arm/mach-mvebu/headsmp-a9.S      |  1 -
- arch/arm/mach-prima2/headsmp.S        |  1 -
- arch/arm/mach-rockchip/core.h         |  1 -
- arch/arm/mach-rockchip/headsmp.S      |  8 --------
- arch/arm/mach-rockchip/platsmp.c      |  5 ++---
- arch/arm/mach-shmobile/common.h       |  1 -
- arch/arm/mach-shmobile/headsmp-scu.S  |  4 ++--
- arch/arm/mach-shmobile/headsmp.S      |  7 -------
- arch/arm/mach-shmobile/platsmp-apmu.c |  2 +-
- arch/arm/mach-socfpga/core.h          |  1 -
- arch/arm/mach-socfpga/headsmp.S       |  5 -----
- arch/arm/mach-socfpga/platsmp.c       |  2 +-
- arch/arm/mach-tegra/Makefile          |  2 +-
- arch/arm/mach-tegra/headsmp.S         | 12 ------------
- arch/arm/mach-tegra/reset.c           |  2 +-
- arch/arm/mach-tegra/reset.h           |  1 -
- arch/arm/mach-zynq/common.h           |  2 --
- arch/arm/mach-zynq/headsmp.S          |  5 -----
- arch/arm/mach-zynq/platsmp.c          |  5 ++---
- arch/arm/mm/proc-v7.S                 |  2 +-
- 31 files changed, 17 insertions(+), 143 deletions(-)
- delete mode 100644 arch/arm/mach-bcm/brcmstb.h
- delete mode 100644 arch/arm/mach-bcm/headsmp-brcmstb.S
- delete mode 100644 arch/arm/mach-hisi/headsmp.S
- delete mode 100644 arch/arm/mach-tegra/headsmp.S
-
-diff --git a/arch/arm/mach-bcm/Makefile b/arch/arm/mach-bcm/Makefile
-index 4c38674c73ec..54d274da7ccb 100644
---- a/arch/arm/mach-bcm/Makefile
-+++ b/arch/arm/mach-bcm/Makefile
-@@ -43,5 +43,5 @@ obj-$(CONFIG_ARCH_BCM_63XX)	:= bcm63xx.o
- ifeq ($(CONFIG_ARCH_BRCMSTB),y)
- CFLAGS_platsmp-brcmstb.o	+= -march=armv7-a
- obj-y				+= brcmstb.o
--obj-$(CONFIG_SMP)		+= headsmp-brcmstb.o platsmp-brcmstb.o
-+obj-$(CONFIG_SMP)		+= platsmp-brcmstb.o
- endif
-diff --git a/arch/arm/mach-bcm/brcmstb.h b/arch/arm/mach-bcm/brcmstb.h
-deleted file mode 100644
-index ec0c3d112b36..000000000000
---- a/arch/arm/mach-bcm/brcmstb.h
-+++ /dev/null
-@@ -1,19 +0,0 @@
--/*
-- * Copyright (C) 2013-2014 Broadcom Corporation
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License as
-- * published by the Free Software Foundation version 2.
-- *
-- * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-- * kind, whether express or implied; without even the implied warranty
-- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- */
--
--#ifndef __BRCMSTB_H__
--#define __BRCMSTB_H__
--
--void brcmstb_secondary_startup(void);
--
--#endif /* __BRCMSTB_H__ */
-diff --git a/arch/arm/mach-bcm/headsmp-brcmstb.S b/arch/arm/mach-bcm/headsmp-brcmstb.S
-deleted file mode 100644
-index 199c1ea58248..000000000000
---- a/arch/arm/mach-bcm/headsmp-brcmstb.S
-+++ /dev/null
-@@ -1,33 +0,0 @@
--/*
-- * SMP boot code for secondary CPUs
-- * Based on arch/arm/mach-tegra/headsmp.S
-- *
-- * Copyright (C) 2010 NVIDIA, Inc.
-- * Copyright (C) 2013-2014 Broadcom Corporation
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License as
-- * published by the Free Software Foundation version 2.
-- *
-- * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-- * kind, whether express or implied; without even the implied warranty
-- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- */
--
--#include <asm/assembler.h>
--#include <linux/linkage.h>
--#include <linux/init.h>
--
--        .section ".text.head", "ax"
--
--ENTRY(brcmstb_secondary_startup)
--        /*
--         * Ensure CPU is in a sane state by disabling all IRQs and switching
--         * into SVC mode.
--         */
--        setmode	PSR_I_BIT | PSR_F_BIT | SVC_MODE, r0
--
--        bl      v7_invalidate_l1
--        b       secondary_startup
--ENDPROC(brcmstb_secondary_startup)
-diff --git a/arch/arm/mach-bcm/platsmp-brcmstb.c b/arch/arm/mach-bcm/platsmp-brcmstb.c
-index e209e6fc7caf..44d6bddf7a4e 100644
---- a/arch/arm/mach-bcm/platsmp-brcmstb.c
-+++ b/arch/arm/mach-bcm/platsmp-brcmstb.c
-@@ -30,8 +30,6 @@
- #include <asm/mach-types.h>
- #include <asm/smp_plat.h>
- 
--#include "brcmstb.h"
--
- enum {
- 	ZONE_MAN_CLKEN_MASK		= BIT(0),
- 	ZONE_MAN_RESET_CNTL_MASK	= BIT(1),
-@@ -153,7 +151,7 @@ static void brcmstb_cpu_boot(u32 cpu)
- 	 * Set the reset vector to point to the secondary_startup
- 	 * routine
- 	 */
--	cpu_set_boot_addr(cpu, virt_to_phys(brcmstb_secondary_startup));
-+	cpu_set_boot_addr(cpu, virt_to_phys(secondary_startup));
- 
- 	/* Unhalt the cpu */
- 	cpu_rst_cfg_set(cpu, 0);
-diff --git a/arch/arm/mach-berlin/headsmp.S b/arch/arm/mach-berlin/headsmp.S
-index 4a4c56a58ad3..dc82a3486b05 100644
---- a/arch/arm/mach-berlin/headsmp.S
-+++ b/arch/arm/mach-berlin/headsmp.S
-@@ -12,12 +12,6 @@
- #include <linux/init.h>
- #include <asm/assembler.h>
- 
--ENTRY(berlin_secondary_startup)
-- ARM_BE8(setend be)
--	bl	v7_invalidate_l1
--	b       secondary_startup
--ENDPROC(berlin_secondary_startup)
--
- /*
-  * If the following instruction is set in the reset exception vector, CPUs
-  * will fetch the value of the software reset address vector when being
-diff --git a/arch/arm/mach-berlin/platsmp.c b/arch/arm/mach-berlin/platsmp.c
-index 702e7982015a..34a3753e7356 100644
---- a/arch/arm/mach-berlin/platsmp.c
-+++ b/arch/arm/mach-berlin/platsmp.c
-@@ -22,7 +22,6 @@
- #define RESET_VECT		0x00
- #define SW_RESET_ADDR		0x94
- 
--extern void berlin_secondary_startup(void);
- extern u32 boot_inst;
- 
- static void __iomem *cpu_ctrl;
-@@ -85,7 +84,7 @@ static void __init berlin_smp_prepare_cpus(unsigned int max_cpus)
- 	 * Write the secondary startup address into the SW reset address
- 	 * vector. This is used by boot_inst.
- 	 */
--	writel(virt_to_phys(berlin_secondary_startup), vectors_base + SW_RESET_ADDR);
-+	writel(virt_to_phys(secondary_startup), vectors_base + SW_RESET_ADDR);
- 
- 	iounmap(vectors_base);
- unmap_scu:
-diff --git a/arch/arm/mach-hisi/Makefile b/arch/arm/mach-hisi/Makefile
-index 6b7b3033de0b..659db1933ed3 100644
---- a/arch/arm/mach-hisi/Makefile
-+++ b/arch/arm/mach-hisi/Makefile
-@@ -6,4 +6,4 @@ CFLAGS_platmcpm.o	:= -march=armv7-a
- 
- obj-y	+= hisilicon.o
- obj-$(CONFIG_MCPM)		+= platmcpm.o
--obj-$(CONFIG_SMP)		+= platsmp.o hotplug.o headsmp.o
-+obj-$(CONFIG_SMP)		+= platsmp.o hotplug.o
-diff --git a/arch/arm/mach-hisi/core.h b/arch/arm/mach-hisi/core.h
-index 92a682d8e939..c7648ef1825c 100644
---- a/arch/arm/mach-hisi/core.h
-+++ b/arch/arm/mach-hisi/core.h
-@@ -12,7 +12,6 @@ extern void hi3xxx_cpu_die(unsigned int cpu);
- extern int hi3xxx_cpu_kill(unsigned int cpu);
- extern void hi3xxx_set_cpu(int cpu, bool enable);
- 
--extern void hisi_secondary_startup(void);
- extern struct smp_operations hix5hd2_smp_ops;
- extern void hix5hd2_set_cpu(int cpu, bool enable);
- extern void hix5hd2_cpu_die(unsigned int cpu);
-diff --git a/arch/arm/mach-hisi/headsmp.S b/arch/arm/mach-hisi/headsmp.S
-deleted file mode 100644
-index 81e35b159e75..000000000000
---- a/arch/arm/mach-hisi/headsmp.S
-+++ /dev/null
-@@ -1,16 +0,0 @@
--/*
-- *  Copyright (c) 2014 Hisilicon Limited.
-- *  Copyright (c) 2014 Linaro Ltd.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- */
--#include <linux/linkage.h>
--#include <linux/init.h>
--
--	__CPUINIT
--
--ENTRY(hisi_secondary_startup)
--	bl	v7_invalidate_l1
--	b	secondary_startup
-diff --git a/arch/arm/mach-hisi/platsmp.c b/arch/arm/mach-hisi/platsmp.c
-index 8880c8e8b296..51744127db66 100644
---- a/arch/arm/mach-hisi/platsmp.c
-+++ b/arch/arm/mach-hisi/platsmp.c
-@@ -118,7 +118,7 @@ static int hix5hd2_boot_secondary(unsigned int cpu, struct task_struct *idle)
- {
- 	phys_addr_t jumpaddr;
- 
--	jumpaddr = virt_to_phys(hisi_secondary_startup);
-+	jumpaddr = virt_to_phys(secondary_startup);
- 	hix5hd2_set_scu_boot_addr(HIX5HD2_BOOT_ADDRESS, jumpaddr);
- 	hix5hd2_set_cpu(cpu, true);
- 	arch_send_wakeup_ipi_mask(cpumask_of(cpu));
-@@ -156,7 +156,7 @@ static int hip01_boot_secondary(unsigned int cpu, struct task_struct *idle)
- 	struct device_node *node;
- 
- 
--	jumpaddr = virt_to_phys(hisi_secondary_startup);
-+	jumpaddr = virt_to_phys(secondary_startup);
- 	hip01_set_boot_addr(HIP01_BOOT_ADDRESS, jumpaddr);
- 
- 	node = of_find_compatible_node(NULL, NULL, "hisilicon,hip01-sysctrl");
-diff --git a/arch/arm/mach-imx/headsmp.S b/arch/arm/mach-imx/headsmp.S
-index de5047c8a6c8..b5e976816b63 100644
---- a/arch/arm/mach-imx/headsmp.S
-+++ b/arch/arm/mach-imx/headsmp.S
-@@ -25,7 +25,6 @@ diag_reg_offset:
- 	.endm
- 
- ENTRY(v7_secondary_startup)
--	bl	v7_invalidate_l1
- 	set_diag_reg
- 	b	secondary_startup
- ENDPROC(v7_secondary_startup)
-diff --git a/arch/arm/mach-mvebu/headsmp-a9.S b/arch/arm/mach-mvebu/headsmp-a9.S
-index 08d5ed46b996..48e4c4b3cd1c 100644
---- a/arch/arm/mach-mvebu/headsmp-a9.S
-+++ b/arch/arm/mach-mvebu/headsmp-a9.S
-@@ -21,7 +21,6 @@
- 
- ENTRY(mvebu_cortex_a9_secondary_startup)
- ARM_BE8(setend	be)
--	bl      v7_invalidate_l1
- 	bl	armada_38x_scu_power_up
- 	b	secondary_startup
- ENDPROC(mvebu_cortex_a9_secondary_startup)
-diff --git a/arch/arm/mach-prima2/headsmp.S b/arch/arm/mach-prima2/headsmp.S
-index d86fe33c5f53..209d9fc5c16c 100644
---- a/arch/arm/mach-prima2/headsmp.S
-+++ b/arch/arm/mach-prima2/headsmp.S
-@@ -15,7 +15,6 @@
-  * ready for them to initialise.
-  */
- ENTRY(sirfsoc_secondary_startup)
--	bl v7_invalidate_l1
-         mrc     p15, 0, r0, c0, c0, 5
-         and     r0, r0, #15
-         adr     r4, 1f
-diff --git a/arch/arm/mach-rockchip/core.h b/arch/arm/mach-rockchip/core.h
-index 39bca96b555a..492c048813da 100644
---- a/arch/arm/mach-rockchip/core.h
-+++ b/arch/arm/mach-rockchip/core.h
-@@ -17,4 +17,3 @@ extern char rockchip_secondary_trampoline;
- extern char rockchip_secondary_trampoline_end;
- 
- extern unsigned long rockchip_boot_fn;
--extern void rockchip_secondary_startup(void);
-diff --git a/arch/arm/mach-rockchip/headsmp.S b/arch/arm/mach-rockchip/headsmp.S
-index 46c22dedf632..d69708b07282 100644
---- a/arch/arm/mach-rockchip/headsmp.S
-+++ b/arch/arm/mach-rockchip/headsmp.S
-@@ -15,14 +15,6 @@
- #include <linux/linkage.h>
- #include <linux/init.h>
- 
--ENTRY(rockchip_secondary_startup)
--	mrc	p15, 0, r0, c0, c0, 0	@ read main ID register
--	ldr	r1, =0x00000c09		@ Cortex-A9 primary part number
--	teq	r0, r1
--	beq	v7_invalidate_l1
--	b	secondary_startup
--ENDPROC(rockchip_secondary_startup)
--
- ENTRY(rockchip_secondary_trampoline)
- 	ldr	pc, 1f
- ENDPROC(rockchip_secondary_trampoline)
-diff --git a/arch/arm/mach-rockchip/platsmp.c b/arch/arm/mach-rockchip/platsmp.c
-index 5b4ca3c3c879..2e6ab67e2284 100644
---- a/arch/arm/mach-rockchip/platsmp.c
-+++ b/arch/arm/mach-rockchip/platsmp.c
-@@ -149,8 +149,7 @@ static int __cpuinit rockchip_boot_secondary(unsigned int cpu,
- 		 * sram_base_addr + 8: start address for pc
- 		 * */
- 		udelay(10);
--		writel(virt_to_phys(rockchip_secondary_startup),
--			sram_base_addr + 8);
-+		writel(virt_to_phys(secondary_startup), sram_base_addr + 8);
- 		writel(0xDEADBEAF, sram_base_addr + 4);
- 		dsb_sev();
- 	}
-@@ -189,7 +188,7 @@ static int __init rockchip_smp_prepare_sram(struct device_node *node)
- 	}
- 
- 	/* set the boot function for the sram code */
--	rockchip_boot_fn = virt_to_phys(rockchip_secondary_startup);
-+	rockchip_boot_fn = virt_to_phys(secondary_startup);
- 
- 	/* copy the trampoline to sram, that runs during startup of the core */
- 	memcpy(sram_base_addr, &rockchip_secondary_trampoline, trampoline_sz);
-diff --git a/arch/arm/mach-shmobile/common.h b/arch/arm/mach-shmobile/common.h
-index afc60bad6fd6..476092b86c6e 100644
---- a/arch/arm/mach-shmobile/common.h
-+++ b/arch/arm/mach-shmobile/common.h
-@@ -14,7 +14,6 @@ extern void shmobile_smp_sleep(void);
- extern void shmobile_smp_hook(unsigned int cpu, unsigned long fn,
- 			      unsigned long arg);
- extern int shmobile_smp_cpu_disable(unsigned int cpu);
--extern void shmobile_invalidate_start(void);
- extern void shmobile_boot_scu(void);
- extern void shmobile_smp_scu_prepare_cpus(unsigned int max_cpus);
- extern void shmobile_smp_scu_cpu_die(unsigned int cpu);
-diff --git a/arch/arm/mach-shmobile/headsmp-scu.S b/arch/arm/mach-shmobile/headsmp-scu.S
-index 69df8bfac167..fa5248c52399 100644
---- a/arch/arm/mach-shmobile/headsmp-scu.S
-+++ b/arch/arm/mach-shmobile/headsmp-scu.S
-@@ -22,7 +22,7 @@
-  * Boot code for secondary CPUs.
-  *
-  * First we turn on L1 cache coherency for our CPU. Then we jump to
-- * shmobile_invalidate_start that invalidates the cache and hands over control
-+ * secondary_startup that invalidates the cache and hands over control
-  * to the common ARM startup code.
-  */
- ENTRY(shmobile_boot_scu)
-@@ -36,7 +36,7 @@ ENTRY(shmobile_boot_scu)
- 	bic	r2, r2, r3		@ Clear bits of our CPU (Run Mode)
- 	str	r2, [r0, #8]		@ write back
- 
--	b	shmobile_invalidate_start
-+	b	secondary_startup
- ENDPROC(shmobile_boot_scu)
- 
- 	.text
-diff --git a/arch/arm/mach-shmobile/headsmp.S b/arch/arm/mach-shmobile/headsmp.S
-index 50c491567e11..330c1fc63197 100644
---- a/arch/arm/mach-shmobile/headsmp.S
-+++ b/arch/arm/mach-shmobile/headsmp.S
-@@ -16,13 +16,6 @@
- #include <asm/assembler.h>
- #include <asm/memory.h>
- 
--#ifdef CONFIG_SMP
--ENTRY(shmobile_invalidate_start)
--	bl	v7_invalidate_l1
--	b	secondary_startup
--ENDPROC(shmobile_invalidate_start)
--#endif
--
- /*
-  * Reset vector for secondary CPUs.
-  * This will be mapped at address 0 by SBAR register.
-diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
-index f483b560b066..b0790fc32282 100644
---- a/arch/arm/mach-shmobile/platsmp-apmu.c
-+++ b/arch/arm/mach-shmobile/platsmp-apmu.c
-@@ -133,7 +133,7 @@ void __init shmobile_smp_apmu_prepare_cpus(unsigned int max_cpus,
- int shmobile_smp_apmu_boot_secondary(unsigned int cpu, struct task_struct *idle)
- {
- 	/* For this particular CPU register boot vector */
--	shmobile_smp_hook(cpu, virt_to_phys(shmobile_invalidate_start), 0);
-+	shmobile_smp_hook(cpu, virt_to_phys(secondary_startup), 0);
- 
- 	return apmu_wrap(cpu, apmu_power_on);
- }
-diff --git a/arch/arm/mach-socfpga/core.h b/arch/arm/mach-socfpga/core.h
-index a0f3b1cd497c..767c09e954a0 100644
---- a/arch/arm/mach-socfpga/core.h
-+++ b/arch/arm/mach-socfpga/core.h
-@@ -31,7 +31,6 @@
- 
- #define RSTMGR_MPUMODRST_CPU1		0x2     /* CPU1 Reset */
- 
--extern void socfpga_secondary_startup(void);
- extern void __iomem *socfpga_scu_base_addr;
- 
- extern void socfpga_init_clocks(void);
-diff --git a/arch/arm/mach-socfpga/headsmp.S b/arch/arm/mach-socfpga/headsmp.S
-index f65ea0af4af3..5bb016427107 100644
---- a/arch/arm/mach-socfpga/headsmp.S
-+++ b/arch/arm/mach-socfpga/headsmp.S
-@@ -30,8 +30,3 @@ ENTRY(secondary_trampoline)
- 1:	.long	.
- 	.long	socfpga_cpu1start_addr
- ENTRY(secondary_trampoline_end)
--
--ENTRY(socfpga_secondary_startup)
--       bl      v7_invalidate_l1
--       b       secondary_startup
--ENDPROC(socfpga_secondary_startup)
-diff --git a/arch/arm/mach-socfpga/platsmp.c b/arch/arm/mach-socfpga/platsmp.c
-index c64d89b7c0ca..79c5336c569f 100644
---- a/arch/arm/mach-socfpga/platsmp.c
-+++ b/arch/arm/mach-socfpga/platsmp.c
-@@ -40,7 +40,7 @@ static int socfpga_boot_secondary(unsigned int cpu, struct task_struct *idle)
- 
- 		memcpy(phys_to_virt(0), &secondary_trampoline, trampoline_size);
- 
--		writel(virt_to_phys(socfpga_secondary_startup),
-+		writel(virt_to_phys(secondary_startup),
- 		       sys_manager_base_addr + (socfpga_cpu1start_addr & 0x000000ff));
- 
- 		flush_cache_all();
-diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
-index e48a74458c25..fffad2426ee4 100644
---- a/arch/arm/mach-tegra/Makefile
-+++ b/arch/arm/mach-tegra/Makefile
-@@ -19,7 +19,7 @@ obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= pm-tegra30.o
- ifeq ($(CONFIG_CPU_IDLE),y)
- obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= cpuidle-tegra30.o
- endif
--obj-$(CONFIG_SMP)			+= platsmp.o headsmp.o
-+obj-$(CONFIG_SMP)			+= platsmp.o
- obj-$(CONFIG_HOTPLUG_CPU)               += hotplug.o
- 
- obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= sleep-tegra30.o
-diff --git a/arch/arm/mach-tegra/headsmp.S b/arch/arm/mach-tegra/headsmp.S
-deleted file mode 100644
-index 2072e7322c39..000000000000
---- a/arch/arm/mach-tegra/headsmp.S
-+++ /dev/null
-@@ -1,12 +0,0 @@
--#include <linux/linkage.h>
--#include <linux/init.h>
--
--#include "sleep.h"
--
--        .section ".text.head", "ax"
--
--ENTRY(tegra_secondary_startup)
--        check_cpu_part_num 0xc09, r8, r9
--        bleq    v7_invalidate_l1
--        b       secondary_startup
--ENDPROC(tegra_secondary_startup)
-diff --git a/arch/arm/mach-tegra/reset.c b/arch/arm/mach-tegra/reset.c
-index 894c5c472184..6fd9db54887e 100644
---- a/arch/arm/mach-tegra/reset.c
-+++ b/arch/arm/mach-tegra/reset.c
-@@ -94,7 +94,7 @@ void __init tegra_cpu_reset_handler_init(void)
- 	__tegra_cpu_reset_handler_data[TEGRA_RESET_MASK_PRESENT] =
- 		*((u32 *)cpu_possible_mask);
- 	__tegra_cpu_reset_handler_data[TEGRA_RESET_STARTUP_SECONDARY] =
--		virt_to_phys((void *)tegra_secondary_startup);
-+		virt_to_phys((void *)secondary_startup);
- #endif
- 
- #ifdef CONFIG_PM_SLEEP
-diff --git a/arch/arm/mach-tegra/reset.h b/arch/arm/mach-tegra/reset.h
-index 76a93434c6ee..0aee0129f8d7 100644
---- a/arch/arm/mach-tegra/reset.h
-+++ b/arch/arm/mach-tegra/reset.h
-@@ -36,7 +36,6 @@ extern unsigned long __tegra_cpu_reset_handler_data[TEGRA_RESET_DATA_SIZE];
- void __tegra_cpu_reset_handler_start(void);
- void __tegra_cpu_reset_handler(void);
- void __tegra_cpu_reset_handler_end(void);
--void tegra_secondary_startup(void);
- 
- #ifdef CONFIG_PM_SLEEP
- #define tegra_cpu_lp1_mask \
-diff --git a/arch/arm/mach-zynq/common.h b/arch/arm/mach-zynq/common.h
-index 382c60e9aa16..7038cae95ddc 100644
---- a/arch/arm/mach-zynq/common.h
-+++ b/arch/arm/mach-zynq/common.h
-@@ -17,8 +17,6 @@
- #ifndef __MACH_ZYNQ_COMMON_H__
- #define __MACH_ZYNQ_COMMON_H__
- 
--void zynq_secondary_startup(void);
--
- extern int zynq_slcr_init(void);
- extern int zynq_early_slcr_init(void);
- extern void zynq_slcr_system_reset(void);
-diff --git a/arch/arm/mach-zynq/headsmp.S b/arch/arm/mach-zynq/headsmp.S
-index dd8c071941e7..045c72720a4d 100644
---- a/arch/arm/mach-zynq/headsmp.S
-+++ b/arch/arm/mach-zynq/headsmp.S
-@@ -22,8 +22,3 @@ zynq_secondary_trampoline_jump:
- .globl zynq_secondary_trampoline_end
- zynq_secondary_trampoline_end:
- ENDPROC(zynq_secondary_trampoline)
--
--ENTRY(zynq_secondary_startup)
--	bl	v7_invalidate_l1
--	b	secondary_startup
--ENDPROC(zynq_secondary_startup)
-diff --git a/arch/arm/mach-zynq/platsmp.c b/arch/arm/mach-zynq/platsmp.c
-index 52d768ff7857..f66816c49186 100644
---- a/arch/arm/mach-zynq/platsmp.c
-+++ b/arch/arm/mach-zynq/platsmp.c
-@@ -87,10 +87,9 @@ int zynq_cpun_start(u32 address, int cpu)
- }
- EXPORT_SYMBOL(zynq_cpun_start);
- 
--static int zynq_boot_secondary(unsigned int cpu,
--						struct task_struct *idle)
-+static int zynq_boot_secondary(unsigned int cpu, struct task_struct *idle)
- {
--	return zynq_cpun_start(virt_to_phys(zynq_secondary_startup), cpu);
-+	return zynq_cpun_start(virt_to_phys(secondary_startup), cpu);
- }
- 
- /*
-diff --git a/arch/arm/mm/proc-v7.S b/arch/arm/mm/proc-v7.S
-index 003190ae9cd8..0716bbe19872 100644
---- a/arch/arm/mm/proc-v7.S
-+++ b/arch/arm/mm/proc-v7.S
-@@ -414,7 +414,7 @@ __v7_pj4b_setup:
- __v7_setup:
- 	adr	r12, __v7_setup_stack		@ the local stack
- 	stmia	r12, {r0-r5, r7, r9, r11, lr}
--	bl      v7_flush_dcache_louis
-+	bl      v7_invalidate_l1
- 	ldmia	r12, {r0-r5, r7, r9, r11, lr}
- 
- 	and	r0, r9, #0xff000000		@ ARM?
--- 
-2.1.0
+Thanks,
+Andrew
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
