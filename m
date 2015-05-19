@@ -1,40 +1,61 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/3] pinctrl: tegra-xusb: Remove unused structure
-Date: Tue, 19 May 2015 15:14:21 +0100
-Message-ID: <1432044863-2035-2-git-send-email-jonathanh@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 3/3] pinctrl: tegra-xusb: Check that of_match_node
+ returns a valid pointer
+Date: Tue, 19 May 2015 16:18:37 +0200
+Message-ID: <20150519141836.GB26748@ulmo.nvidia.com>
 References: <1432044863-2035-1-git-send-email-jonathanh@nvidia.com>
+ <1432044863-2035-4-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1432044863-2035-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="4SFOXa2GPu3tIq4H"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1432044863-2035-4-git-send-email-jonathanh@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The structure tegra_xusb_padctl_group is defined but never used and so
-remove this.
 
-Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/pinctrl/pinctrl-tegra-xusb.c | 5 -----
- 1 file changed, 5 deletions(-)
+--4SFOXa2GPu3tIq4H
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/pinctrl/pinctrl-tegra-xusb.c b/drivers/pinctrl/pinctrl-tegra-xusb.c
-index 753d747d4261..3e8e4a914fb4 100644
---- a/drivers/pinctrl/pinctrl-tegra-xusb.c
-+++ b/drivers/pinctrl/pinctrl-tegra-xusb.c
-@@ -59,11 +59,6 @@ struct tegra_xusb_padctl_function {
- 	unsigned int num_groups;
- };
- 
--struct tegra_xusb_padctl_group {
--	const unsigned int *funcs;
--	unsigned int num_funcs;
--};
--
- struct tegra_xusb_padctl_soc {
- 	const struct pinctrl_pin_desc *pins;
- 	unsigned int num_pins;
--- 
-1.9.1
+On Tue, May 19, 2015 at 03:14:23PM +0100, Jon Hunter wrote:
+> of_match_node() will return NULL if no match is found and so check for
+> this before dereferencing the pointer.
+>=20
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  drivers/pinctrl/pinctrl-tegra-xusb.c | 3 +++
+>  1 file changed, 3 insertions(+)
+
+This isn't necessary. The driver is probed from DT only and therefore
+=2Eprobe() will only be called if there's a matching entry in the OF
+device ID table. match can never be NULL.
+
+Thierry
+
+--4SFOXa2GPu3tIq4H
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJVW0Y8AAoJEN0jrNd/PrOh46QP/2GrbxPujpPWZdG6L3Kb5v8K
+luCNsTatHlIo1qFVZYvIMASMahJEAT8eLODziFCWpKtGeknenPpLuX9Bhm/IzIy3
+3Zwl+8whgyEvEGxxhjYB9QyVOHHT4kP7Ao+XhfIHxFQke4bYXvPoCdDbRfBPJ418
+V73MIznhDqdMjTdtctXdlOnGwg7X1+Lkas97jxsbPJU/mUqUXJExEaIg9iFjtk5x
+3dzsExzpLtX2f4K5n19k999Twc+H/JwSppgn5VIQ+TU1sOyN98ORxuaeBEbNTius
+kWPA+PXTSnW9Gvg/K/9/fmfXUVxzrdUA5AwjtZ5FvBkbGrDtA7gttTrOcjLFjHoC
+CZMlvTyL5WzfGsIjB4jUHM0qj+PT6VMviZ/bwLXstjKi7tq8SwbGzKtEKRhVxpib
+uU8DkaFRCXapajrLKxeqpA9QGNynRFwyS09qzdkQnAv6tU2CfeCCguQ8hlSO1eFO
+AuSPgBt+p5BMKfvXhinBND+lLa9Vf8oWPY/yDshKLlzLqokeqQcnhQT34q7d6v3Z
+belOkvbxJROb5BQnq0McpL0Uxs09QtwaG5YpmGR2V5ENqAyGV4biTZuOYtH5MjhA
+U25kyFoP3S4IqJXyXsuUb6Vs3J7WjA5Gyr/9cJPqd5i2RRC14xNRLJ8FxJjlFdhs
+7eBeNHXaRHs6jtubn0/S
+=qva3
+-----END PGP SIGNATURE-----
+
+--4SFOXa2GPu3tIq4H--
