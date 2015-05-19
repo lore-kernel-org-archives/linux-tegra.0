@@ -1,61 +1,56 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 3/3] pinctrl: tegra-xusb: Check that of_match_node
- returns a valid pointer
-Date: Tue, 19 May 2015 16:18:37 +0200
-Message-ID: <20150519141836.GB26748@ulmo.nvidia.com>
+Subject: Re: [PATCH 1/3] pinctrl: tegra-xusb: Remove unused structure
+Date: Tue, 19 May 2015 16:20:43 +0200
+Message-ID: <20150519142042.GC26748@ulmo.nvidia.com>
 References: <1432044863-2035-1-git-send-email-jonathanh@nvidia.com>
- <1432044863-2035-4-git-send-email-jonathanh@nvidia.com>
+ <1432044863-2035-2-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="4SFOXa2GPu3tIq4H"
+	protocol="application/pgp-signature"; boundary="wxDdMuZNg1r63Hyj"
 Return-path: <linux-gpio-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1432044863-2035-4-git-send-email-jonathanh@nvidia.com>
+In-Reply-To: <1432044863-2035-2-git-send-email-jonathanh@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 To: Jon Hunter <jonathanh@nvidia.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---4SFOXa2GPu3tIq4H
+--wxDdMuZNg1r63Hyj
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 19, 2015 at 03:14:23PM +0100, Jon Hunter wrote:
-> of_match_node() will return NULL if no match is found and so check for
-> this before dereferencing the pointer.
+On Tue, May 19, 2015 at 03:14:21PM +0100, Jon Hunter wrote:
+> The structure tegra_xusb_padctl_group is defined but never used and so
+> remove this.
 >=20
 > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 > ---
->  drivers/pinctrl/pinctrl-tegra-xusb.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  drivers/pinctrl/pinctrl-tegra-xusb.c | 5 -----
+>  1 file changed, 5 deletions(-)
 
-This isn't necessary. The driver is probed from DT only and therefore
-=2Eprobe() will only be called if there's a matching entry in the OF
-device ID table. match can never be NULL.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Thierry
-
---4SFOXa2GPu3tIq4H
+--wxDdMuZNg1r63Hyj
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJVW0Y8AAoJEN0jrNd/PrOh46QP/2GrbxPujpPWZdG6L3Kb5v8K
-luCNsTatHlIo1qFVZYvIMASMahJEAT8eLODziFCWpKtGeknenPpLuX9Bhm/IzIy3
-3Zwl+8whgyEvEGxxhjYB9QyVOHHT4kP7Ao+XhfIHxFQke4bYXvPoCdDbRfBPJ418
-V73MIznhDqdMjTdtctXdlOnGwg7X1+Lkas97jxsbPJU/mUqUXJExEaIg9iFjtk5x
-3dzsExzpLtX2f4K5n19k999Twc+H/JwSppgn5VIQ+TU1sOyN98ORxuaeBEbNTius
-kWPA+PXTSnW9Gvg/K/9/fmfXUVxzrdUA5AwjtZ5FvBkbGrDtA7gttTrOcjLFjHoC
-CZMlvTyL5WzfGsIjB4jUHM0qj+PT6VMviZ/bwLXstjKi7tq8SwbGzKtEKRhVxpib
-uU8DkaFRCXapajrLKxeqpA9QGNynRFwyS09qzdkQnAv6tU2CfeCCguQ8hlSO1eFO
-AuSPgBt+p5BMKfvXhinBND+lLa9Vf8oWPY/yDshKLlzLqokeqQcnhQT34q7d6v3Z
-belOkvbxJROb5BQnq0McpL0Uxs09QtwaG5YpmGR2V5ENqAyGV4biTZuOYtH5MjhA
-U25kyFoP3S4IqJXyXsuUb6Vs3J7WjA5Gyr/9cJPqd5i2RRC14xNRLJ8FxJjlFdhs
-7eBeNHXaRHs6jtubn0/S
-=qva3
+iQIcBAABCAAGBQJVW0a5AAoJEN0jrNd/PrOhfBYQAIIvwVr6OKYII5LA/OPQDjw7
+NhKCFA3iDNMYwdc89pGWWqhdK7xXZPTvZP6tpY2PVamW77kVfL9AitVI5qosi6dI
+3t4OsrrMm2vmrJN8lhwshMIpcCi4PrAr2oWy/+3T34wl53HOEj1n3LgN7DoeGadn
+ipOquqqfCT+PQyOriAJZ20SD2K0G8Y2hF1Clx1LSZdm0OrjtVyPvRfl3oqYWsaDH
+aMz/Z3YXQ7RqXELZP5DqadAN88k3My7WRS3D369NBscPKxFnrz0FQuUr4mE0mKYU
+4aVv5AQE2hHOnNSKNVzRHfcn+g+9BxfFku9Zgza7QABWKRULglx1BjIWJ0ll7uQ6
+KZkmgC6cl/qOMmC+c3SrPPXGCAhWfkY0CtHvNWfhUnPZzJ+cv7j5vjwB4xII6TMH
+HryixKmr+fxLQCOk1lgN5LShVF2WRWlBiMMiQxpo3GqWDeGjKs8qzvobSwlz8XVd
+hh8ac9jFLQ2l6Hdsi9cUJHSGG/ESekMrF4m52wZ1EyQATMnYl3WIHt34nv4A+oeu
+gZH6zMJy0c6REU8rM76krLN3OHlk4Zazm4j6P5HKotfngCLKRSscpJFgV8n7eZ/P
+QrpBWazMhGgjqjlZY4ZJoF+Ag3+WgBFURRmb8+INoThSHNK5/GBJ/uJvOTv3/Bna
+WTi7pjxSyhZrzHEABJv8
+=TCho
 -----END PGP SIGNATURE-----
 
---4SFOXa2GPu3tIq4H--
+--wxDdMuZNg1r63Hyj--
