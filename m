@@ -1,30 +1,39 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 0/3] pinctrl: tegra-xusb: Clean-up and fixes
-Date: Tue, 19 May 2015 15:14:20 +0100
-Message-ID: <1432044863-2035-1-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH 3/3] pinctrl: tegra-xusb: Check that of_match_node returns a valid pointer
+Date: Tue, 19 May 2015 15:14:23 +0100
+Message-ID: <1432044863-2035-4-git-send-email-jonathanh@nvidia.com>
+References: <1432044863-2035-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1432044863-2035-1-git-send-email-jonathanh@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Some clean-up and fixes for tegra-xusb driver.
+of_match_node() will return NULL if no match is found and so check for
+this before dereferencing the pointer.
 
-This had been boot tested on tegra20-trimslice, tegra30-beaver,
-tegra114-dalmore-a04 and tegra124-jetson-tk1 and no issues seen.
-Complete test information can be found below.
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ drivers/pinctrl/pinctrl-tegra-xusb.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-http://nvt.pwsan.com/pub/jonathanh-tester/testlogs/test_20150519061107_8d5ae2aeafa78eca9fd0d92d4069960782deb761/20150519061107/
-
-Jon Hunter (3):
-  pinctrl: tegra-xusb: Remove unused structure
-  pinctrl: tegra-xusb: Fix allocation of pins
-  pinctrl: tegra-xusb: Check that of_match_node returns a valid pointer
-
- drivers/pinctrl/pinctrl-tegra-xusb.c | 28 +++++++++++++++++++++++-----
- 1 file changed, 23 insertions(+), 5 deletions(-)
-
+diff --git a/drivers/pinctrl/pinctrl-tegra-xusb.c b/drivers/pinctrl/pinctrl-tegra-xusb.c
+index c61594066e26..0030cfb9c0a8 100644
+--- a/drivers/pinctrl/pinctrl-tegra-xusb.c
++++ b/drivers/pinctrl/pinctrl-tegra-xusb.c
+@@ -899,6 +899,9 @@ static int tegra_xusb_padctl_probe(struct platform_device *pdev)
+ 	padctl->dev = &pdev->dev;
+ 
+ 	match = of_match_node(tegra_xusb_padctl_of_match, pdev->dev.of_node);
++	if (!match)
++		return -EINVAL;
++
+ 	padctl->soc = match->data;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 -- 
 1.9.1
+
