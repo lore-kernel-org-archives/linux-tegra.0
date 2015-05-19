@@ -1,82 +1,27 @@
-From: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH 3/6] arm64: tegra: Add Tegra210 support
-Date: Tue, 19 May 2015 15:52:11 +0100
-Message-ID: <20150519145211.GX21251@e104818-lin.cambridge.arm.com>
-References: <1431529065-20128-1-git-send-email-thierry.reding@gmail.com>
- <1431529065-20128-3-git-send-email-thierry.reding@gmail.com>
- <20150513171114.GA18655@e104818-lin.cambridge.arm.com>
- <20150515101913.GA20474@ulmo.nvidia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] Drivers: gpio: gpio-lynxpoint, gpio-pca953x, gpio-tegra,
+ gpio-zynq, gpiolib-of, gpiolib: Fixed spelling errors
+Date: Tue, 19 May 2015 16:53:48 +0200
+Message-ID: <CACRpkdaRO6-g7TJ2xWy5cQqEi-TAHGBO3uJOu1XASb71t0gFsg@mail.gmail.com>
+References: <1431974503-14181-1-git-send-email-colinpatrickcronin@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20150515101913.GA20474-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1431974503-14181-1-git-send-email-colinpatrickcronin@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Colin Cronin <colinpatrickcronin@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, May 15, 2015 at 12:19:16PM +0200, Thierry Reding wrote:
-> On Wed, May 13, 2015 at 06:11:15PM +0100, Catalin Marinas wrote:
-> > On Wed, May 13, 2015 at 04:57:42PM +0200, Thierry Reding wrote:
-> > > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > 
-> > > NVIDIA Tegra210 (also known as Tegra X1) has four Cortex-A57 and four
-> > > Cortex-A53 CPUs. Compared to Tegra124 and Tegra132 it comes with a 256-
-> > > core Maxwell GPU. It supports processing videos of up to 4K resolutions
-> > > at 60 fps (H.265, VP9, H.264).
-> > > 
-> > > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > ---
-> > >  arch/arm64/Kconfig                       |   9 +
-> > >  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 998 +++++++++++++++++++++++++++++++
-> > >  2 files changed, 1007 insertions(+)
-> > >  create mode 100644 arch/arm64/boot/dts/nvidia/tegra210.dtsi
-> > > 
-> > > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> > > index 7796af4b1d6f..bfdf064ada66 100644
-> > > --- a/arch/arm64/Kconfig
-> > > +++ b/arch/arm64/Kconfig
-> > > @@ -225,6 +225,15 @@ config ARCH_TEGRA_132_SOC
-> > >  	  but contains an NVIDIA Denver CPU complex in place of
-> > >  	  Tegra124's "4+1" Cortex-A15 CPU complex.
-> > >  
-> > > +config ARCH_TEGRA_210_SOC
-> > > +	bool "NVIDIA Tegra210 SoC"
-> > > +	depends on ARCH_TEGRA
-> > > +	select PINCTRL_TEGRA210
-> > > +	select USB_ULPI if USB_PHY
-> > > +	select USB_ULPI_VIEWPORT if USB_PHY
-> > > +	help
-> > > +	  Enable support for the NVIDIA Tegra210 SoC.
-> > > +
-> > 
-> > The previous ARCH_TEGRA_132_SOC escaped me. Do we need all these
-> > ARCH_TEGRA_*_SOC entries? Can we not have per-driver Kconfig options?
-> > For example, ARCH_TEGRA_132_SOC seems to be only used in
-> > drivers/clk/tegra, a specific Kconfig entry in there would suffice.
-> 
-> There are actually a couple of other places where this will be used in
-> subsequent patches (e.g. memory controller driver). The idea behind
-> having these is that each one of them is used to enable the essentials
-> out of the box, so that people don't have to go and enable a bunch of
-> driver-specific Kconfig options just to get a kernel configuration that
-> can actually boot.
+On Mon, May 18, 2015 at 8:41 PM, Colin Cronin
+<colinpatrickcronin@gmail.com> wrote:
 
-We debated whether to have ARCH_* options at all on arm64 and we settled
-for the middle ground - only add them for SoC families, not individual
-SoCs. As for the kernel configuration that actually boots, we want the
-arm64 defconfig to include all the supported SoCs and drivers (though
-longer term I'd like to see more drivers built as modules by default).
+> Fixed several spelling errors
+>
+> Signed-off-by: Colin Cronin <colinpatrickcronin@gmail.com>
 
-> This is also useful for integrators since they can simply omit all SoC
-> generations that they're not interested in. Having a per-SoC option
-> provides an easy way of doing so.
+Patch applied after moving way too long subject line to
+the commit message.
 
-The integrators could just select a SoC family and trim down unwanted
-options, I don't think they rely on the kernel defconfig for a final
-product. If this becomes an issue, I would rather have per-SoC
-defconfigs than lots of Kconfig entries.
-
--- 
-Catalin
+Yours,
+Linus Walleij
