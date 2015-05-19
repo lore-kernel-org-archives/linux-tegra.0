@@ -1,67 +1,128 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: How to encode being an I2C slave in DT?
-Date: Tue, 19 May 2015 08:16:19 +0200
-Message-ID: <20150519061619.GA4448@schokonusskuchen.bad>
-References: <1427745615-5428-1-git-send-email-danindrey@mail.ru>
- <20150403194635.GC2016@katana>
- <1549160.njMIY2NVTi@fb07-iapwap2>
- <20150505105513.GA1841@katana>
- <554922EF.3050906@wwwdotorg.org>
- <20150506161712.GA4003@katana>
- <CAL_Jsq+iyeK-bV3ggcJv8Cw3EU71fkBo1wqYZnhCoh2-b_tO-Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="HcAYCG3uE/tztfnV"
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAL_Jsq+iyeK-bV3ggcJv8Cw3EU71fkBo1wqYZnhCoh2-b_tO-Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+From: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+Subject: [PATCH v10 05/17] clk: tegra: Introduce ability for SoC-specific reset control callbacks
+Date: Tue, 19 May 2015 14:39:27 +0300
+Message-ID: <1432035567-19008-1-git-send-email-mikko.perttunen@kapsi.fi>
+References: <1431529131-16710-6-git-send-email-mikko.perttunen@kapsi.fi>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1431529131-16710-6-git-send-email-mikko.perttunen@kapsi.fi>
+Sender: linux-pm-owner@vger.kernel.org
+To: swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, pdeschrijver@nvidia.com
+Cc: mturquette@linaro.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, pwalmsley@nvidia.com, vinceh@nvidia.com, pgaikwad@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tuomas.tynkkynen@iki.fi, Mikko Perttunen <mikko.perttunen@kapsi.fi>
 List-Id: linux-tegra@vger.kernel.org
 
+This patch allows SoC-specific CAR initialization routines to register
+their own reset_assert and reset_deassert callbacks with the common Tegra
+CAR code. If defined, the common code will call these callbacks when a
+reset control with number >= num_periph_banks * 32 is attempted to be asserted 
+or deasserted respectively. Numbers greater than or equal to num_periph_banks * 32
+are used to avoid clashes with low numbers that are automatically mapped to
+standard CAR reset lines.
 
---HcAYCG3uE/tztfnV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Each SoC with these special resets should specify the defined reset control
+numbers in a device tree header file.
 
+Signed-off-by: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+Acked-by: Michael Turquette <mturquette@linaro.org>
+---
+ drivers/clk/tegra/clk.c | 39 +++++++++++++++++++++++++++++++--------
+ drivers/clk/tegra/clk.h |  3 +++
+ 2 files changed, 34 insertions(+), 8 deletions(-)
 
-> > I give in to the flag idea. I also noticed that we'd need another flag
-> > anyhow to mark 10 bit addresses. I am still thinking between using two
-> > address-cells in that case (clean seperation between address and flags)
-> > or to encode the flags as MSB in the current address (all busses will
-> > have same address-cells and child description, less code paths and no
-> > overhead in dtbs).
->=20
-> Reading thru the thread, this seems good to me. I would go with adding
-> flags in the MSB of the reg cell rather than adding a cell.
+diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
+index 41cd87c..c093ed9 100644
+--- a/drivers/clk/tegra/clk.c
++++ b/drivers/clk/tegra/clk.c
+@@ -49,7 +49,6 @@
+ #define RST_DEVICES_L			0x004
+ #define RST_DEVICES_H			0x008
+ #define RST_DEVICES_U			0x00C
+-#define RST_DFLL_DVCO			0x2F4
+ #define RST_DEVICES_V			0x358
+ #define RST_DEVICES_W			0x35C
+ #define RST_DEVICES_X			0x28C
+@@ -79,6 +78,11 @@ static struct clk **clks;
+ static int clk_num;
+ static struct clk_onecell_data clk_data;
+ 
++/* Handlers for SoC-specific reset lines */
++static int (*special_reset_assert)(unsigned long);
++static int (*special_reset_deassert)(unsigned long);
++static int special_reset_num;
++
+ static struct tegra_clk_periph_regs periph_regs[] = {
+ 	[0] = {
+ 		.enb_reg = CLK_OUT_ENB_L,
+@@ -152,19 +156,29 @@ static int tegra_clk_rst_assert(struct reset_controller_dev *rcdev,
+ 	 */
+ 	tegra_read_chipid();
+ 
+-	writel_relaxed(BIT(id % 32),
+-			clk_base + periph_regs[id / 32].rst_set_reg);
++	if (id < periph_banks * 32) {
++		writel_relaxed(BIT(id % 32),
++			       clk_base + periph_regs[id / 32].rst_set_reg);
++		return 0;
++	} else if (id < periph_banks * 32 + special_reset_num) {
++		return special_reset_assert(id);
++	}
+ 
+-	return 0;
++	return -EINVAL;
+ }
+ 
+ static int tegra_clk_rst_deassert(struct reset_controller_dev *rcdev,
+ 		unsigned long id)
+ {
+-	writel_relaxed(BIT(id % 32),
+-			clk_base + periph_regs[id / 32].rst_clr_reg);
++	if (id < periph_banks * 32) {
++		writel_relaxed(BIT(id % 32),
++			       clk_base + periph_regs[id / 32].rst_clr_reg);
++		return 0;
++	} else if (id < periph_banks * 32 + special_reset_num) {
++		return special_reset_deassert(id);
++	}
+ 
+-	return 0;
++	return -EINVAL;
+ }
+ 
+ struct tegra_clk_periph_regs *get_reg_bank(int clkid)
+@@ -286,10 +300,19 @@ void __init tegra_add_of_provider(struct device_node *np)
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+ 
+ 	rst_ctlr.of_node = np;
+-	rst_ctlr.nr_resets = periph_banks * 32;
++	rst_ctlr.nr_resets = periph_banks * 32 + special_reset_num;
+ 	reset_controller_register(&rst_ctlr);
+ }
+ 
++void __init tegra_init_special_resets(int num,
++				      int (*assert)(unsigned long),
++				      int (*deassert)(unsigned long))
++{
++	special_reset_num = num;
++	special_reset_assert = assert;
++	special_reset_deassert = deassert;
++}
++
+ void __init tegra_register_devclks(struct tegra_devclk *dev_clks, int num)
+ {
+ 	int i;
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 75ddc8ff..f42cbbe 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -591,6 +591,9 @@ struct tegra_devclk {
+ 	char		*con_id;
+ };
+ 
++void tegra_init_special_resets(int num, int (*assert)(unsigned long),
++			       int (*deassert)(unsigned long));
++
+ void tegra_init_from_table(struct tegra_clk_init_table *tbl,
+ 		struct clk *clks[], int clk_max);
+ 
+-- 
+2.3.0
 
-Thanks. I was leaning to the MSB idea, too, and am currently checking
-how the code would look like. Feels much better to do knowing that it is
-basically upstream compatible ;)
-
-
---HcAYCG3uE/tztfnV
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJVWtUzAAoJEBQN5MwUoCm2jfIP/1z8aPjx6iGrhaZmL40jEc/s
-GolR8z8P7oNlfxDyqUz9NDQSRqlCy1SgJ4I7qCSOKWjhXkYU4c/m7fLaEnhJl6Ei
-iD7RGa+MYO0G6E31d+Qv/bFBv0ZZM2xr/SZKM5XM/JMHo8MdhwdyRCQkjw8fs5zz
-wf7VUskkRV4hWZM78+LrwwF0JTjEmYUg40IrC8IkOR2Hbi30gmPr1jW5oKZaRbrU
-/wZzNboHC83ROtOp8kCBYSsI5qaJWlE7kPoxSh+ulMnDQMnkRj2kcFqCCkaS2to0
-CCoPIzCuHduBXNkl2X8vyHXg+19bC24jlSdi54Mlg5HkzCyakkMdx08OtgckVL9B
-bcV3Zw6TrEQZrdps+DHF4Hr8fLyd3zaH+MX8dpEOgyLz3liHiMq2tp0AfaLD3H/k
-/Mmxky59z3iuWMjAZZDBB7fyOPDDELT4FHdEua0jWq/K7PDO49vD+f/34d/iTQX0
-fP2apvxOpIKf2PaqSrBYQeRo4pwu2G8MQMVrD6bXjxgGv2lRxGiYUfZaBjfewHkm
-B5NqtiDA3Kx9Z61JZF93BDPsdNVx2wsxSEsLGPuSc+F4s2n1ttsEy1yvIY1YKBf7
-VwS4syUqtOjfy9a5CncESXD5+IhpriG1H2ZVgr0h4B0nZ6t+xebHq1EKwVzovIhK
-UEA+sUPlgWOT+6uD+ZFH
-=BsOm
------END PGP SIGNATURE-----
-
---HcAYCG3uE/tztfnV--
