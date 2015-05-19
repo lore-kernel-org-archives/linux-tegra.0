@@ -1,139 +1,60 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v10 05/17] clk: tegra: Introduce ability for SoC-specific
- reset control callbacks
-Date: Tue, 19 May 2015 17:22:10 +0200
-Message-ID: <20150519152208.GB28161@ulmo.nvidia.com>
-References: <1431529131-16710-6-git-send-email-mikko.perttunen@kapsi.fi>
- <1432035567-19008-1-git-send-email-mikko.perttunen@kapsi.fi>
- <20150519145922.GA28018@ulmo>
- <555B517F.4080506@kapsi.fi>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/3] pinctrl: tegra-xusb: Fix allocation of pins
+Date: Tue, 19 May 2015 16:23:15 +0100
+Message-ID: <555B5563.5060604@nvidia.com>
+References: <1432044863-2035-1-git-send-email-jonathanh@nvidia.com> <1432044863-2035-3-git-send-email-jonathanh@nvidia.com> <20150519143340.GE26748@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="KFztAG8eRSV9hGtP"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <555B517F.4080506@kapsi.fi>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-Cc: swarren@wwwdotorg.org, gnurou@gmail.com, pdeschrijver@nvidia.com, mturquette@linaro.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, pwalmsley@nvidia.com, vinceh@nvidia.com, pgaikwad@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tuomas.tynkkynen@iki.fi
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150519143340.GE26748-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---KFztAG8eRSV9hGtP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 19/05/15 15:33, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Tue, May 19, 2015 at 03:14:22PM +0100, Jon Hunter wrote:
+> [...]
+> 
+> One more thing:
+> 
+> [...]
+>> diff --git a/drivers/pinctrl/pinctrl-tegra-xusb.c b/drivers/pinctrl/pinctrl-tegra-xusb.c
+>> index 3e8e4a914fb4..c61594066e26 100644
+>> --- a/drivers/pinctrl/pinctrl-tegra-xusb.c
+>> +++ b/drivers/pinctrl/pinctrl-tegra-xusb.c
+>> @@ -125,6 +125,23 @@ static const char *tegra_xusb_padctl_get_group_name(struct pinctrl_dev *pinctrl,
+>>  	return padctl->soc->pins[group].name;
+>>  }
+>>  
+>> +static int tegra_xusb_padctl_get_group_pins(struct pinctrl_dev *pinctrl,
+>> +					    unsigned group,
+>> +					    const unsigned **pins,
+>> +					    unsigned *num_pins)
+>> +{
+>> +	struct tegra_xusb_padctl *padctl = pinctrl_dev_get_drvdata(pinctrl);
+>> +
+>> +	/*
+>> +	 * For the tegra-xusb pad controller groups are synonomous
+>> +	 * with lanes/pins and there is always one lane/pin per group.
+>> +	 */
+>> +	*pins = &padctl->soc->pins[group].number;
+> 
+> Shouldn't this be the same as pinctrl->desc->pins? In that case, maybe a
+> better solution would be to make .get_group_pins() mandatory again and
+> turn this into a pinctrl helper function that can be used by all group-
+> only pinctrl drivers?
 
-On Tue, May 19, 2015 at 06:06:39PM +0300, Mikko Perttunen wrote:
-> On 05/19/2015 05:59 PM, Thierry Reding wrote:
-> >On Tue, May 19, 2015 at 02:39:27PM +0300, Mikko Perttunen wrote:
-> >>This patch allows SoC-specific CAR initialization routines to register
-> >>their own reset_assert and reset_deassert callbacks with the common Teg=
-ra
-> >>CAR code. If defined, the common code will call these callbacks when a
-> >>reset control with number >=3D num_periph_banks * 32 is attempted to be=
- asserted
-> >>or deasserted respectively. Numbers greater than or equal to num_periph=
-_banks * 32
-> >>are used to avoid clashes with low numbers that are automatically mappe=
-d to
-> >>standard CAR reset lines.
-> >>
-> >>Each SoC with these special resets should specify the defined reset con=
-trol
-> >>numbers in a device tree header file.
-> >
-> >This is looking pretty good, but I think we can simplify a wee bit
-> >more...
-> >
-> >>Signed-off-by: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-> >>Acked-by: Michael Turquette <mturquette@linaro.org>
-> >>---
-> >>  drivers/clk/tegra/clk.c | 39 +++++++++++++++++++++++++++++++--------
-> >>  drivers/clk/tegra/clk.h |  3 +++
-> >>  2 files changed, 34 insertions(+), 8 deletions(-)
-> >>
-> >>diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
-> >>index 41cd87c..c093ed9 100644
-> >>--- a/drivers/clk/tegra/clk.c
-> >>+++ b/drivers/clk/tegra/clk.c
-> >>@@ -49,7 +49,6 @@
-> >>  #define RST_DEVICES_L			0x004
-> >>  #define RST_DEVICES_H			0x008
-> >>  #define RST_DEVICES_U			0x00C
-> >>-#define RST_DFLL_DVCO			0x2F4
-> >>  #define RST_DEVICES_V			0x358
-> >>  #define RST_DEVICES_W			0x35C
-> >>  #define RST_DEVICES_X			0x28C
-> >>@@ -79,6 +78,11 @@ static struct clk **clks;
-> >>  static int clk_num;
-> >>  static struct clk_onecell_data clk_data;
-> >>
-> >>+/* Handlers for SoC-specific reset lines */
-> >>+static int (*special_reset_assert)(unsigned long);
-> >>+static int (*special_reset_deassert)(unsigned long);
-> >>+static int special_reset_num;
-> >
-> >I think we can get rid of this if we...
-> >
-> >>+
-> >>  static struct tegra_clk_periph_regs periph_regs[] =3D {
-> >>  	[0] =3D {
-> >>  		.enb_reg =3D CLK_OUT_ENB_L,
-> >>@@ -152,19 +156,29 @@ static int tegra_clk_rst_assert(struct reset_cont=
-roller_dev *rcdev,
-> >>  	 */
-> >>  	tegra_read_chipid();
-> >>
-> >>-	writel_relaxed(BIT(id % 32),
-> >>-			clk_base + periph_regs[id / 32].rst_set_reg);
-> >>+	if (id < periph_banks * 32) {
-> >>+		writel_relaxed(BIT(id % 32),
-> >>+			       clk_base + periph_regs[id / 32].rst_set_reg);
-> >>+		return 0;
-> >>+	} else if (id < periph_banks * 32 + special_reset_num) {
-> >>+		return special_reset_assert(id);
-> >>+	}
-> >
-> >... pass id - periph_banks * 32 into special_reset_assert(). Oh, but
-> >then...
->=20
-> The reason I don't subtract periph_banks * 32 is because this way the code
-> in the SoC-specific callback can just include the dt-bindings header and =
-use
-> the same defines used in the device tree.
+Yes I believe that you are right. However, I don't think a helper
+function would work here, because this function returns a pointer to an
+array of pin numbers. In the case of xusb this is simplified a bit
+because we are only returning a single number here for the group.
+However, if you look at other pinctrl devices (such as pinctrl-tegra.c)
+there could be more than one number in the array.
 
-Indeed, you're right. Now if
-
-	static int special_reset_num;
-
-could be turned into
-
-	static unsigned int num_special_reset;
-
-I'd be happy to take this into the Tegra clock tree.
-
-Thierry
-
---KFztAG8eRSV9hGtP
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJVW1UgAAoJEN0jrNd/PrOhRiYQAJ5U7P2LdmXYDWf5bklITLT5
-B1UuYQo4UUljiagLsRZ0asTEdd2QpIL29MT8RdxmHXSLiE6tiC4q8b+fJvjOfGMt
-2fLbDXVfeHIoTa9Wyq2YOcmqn68qd8Ox7LKMOIshkXPI4VGURFEY9o44hpGPACuV
-lU+MX+GcxQabec7DtcD4rRf1jjW8cMRqHidFesT/wRLn5JnXUBUD1nuZSV1Xrd3m
-EEaNRYdsB+EQ6K+tNoCDEOQ8zw6QjuOBTPquFg355qwg7ejkZaUao26rI11wH+C1
-8XkZnM9Hyc44omM+978tv+PPEY6PRE3AIR7n1Nz9xaMmY1i7/2BXRdzWQnOkWh+J
-T4c4FxlmkQjhXnhZxhcPwm7YUnL0nRECICvJ0dfplbh/KQjMyjPJaDhBi3bUgkWu
-jE0yenjvJ0D8bt5fvMq/ilwZApA4KT7woC2ISm54A5nKkLdOSgW2Sq0fN+n1R41U
-v0UV7BObvG+k0gTZv+JZBH+cIGJH6J31V0tGln7QYBH8yh3fAUH4ZziLcXyV6038
-Rd/MCTWyz1emD8xPJiGGPyTTMv69jEuPGKL/MtdR0kTML6+w+Fp3RYC6MdmjtxoP
-3R3cm+zkFD3UDW2t5YUPLBxyVKNp4oqoJ4Z+4Ox0TLnArwNi5DLRIUWrZV0ctT+S
-ABKYPYQN3v++1DM7j3ql
-=NA7o
------END PGP SIGNATURE-----
-
---KFztAG8eRSV9hGtP--
+Cheers
+Jon
