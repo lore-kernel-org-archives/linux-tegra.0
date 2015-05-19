@@ -1,42 +1,47 @@
-From: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v5 09/21] clk: tegra: pll: Add logic for handling SDM data
-Date: Mon, 18 May 2015 15:35:14 -0700
-Message-ID: <CANLzEkuPGQTDrqe4R2_s3ZedLCT-deQudOFo6y1_sYZpgpNhcQ@mail.gmail.com>
-References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
-	<1431451444-23155-11-git-send-email-rklein@nvidia.com>
+From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: How to encode being an I2C slave in DT?
+Date: Mon, 18 May 2015 19:37:59 -0500
+Message-ID: <CAL_Jsq+iyeK-bV3ggcJv8Cw3EU71fkBo1wqYZnhCoh2-b_tO-Q@mail.gmail.com>
+References: <1427745615-5428-1-git-send-email-danindrey@mail.ru>
+ <20150403194635.GC2016@katana> <1549160.njMIY2NVTi@fb07-iapwap2>
+ <20150505105513.GA1841@katana> <554922EF.3050906@wwwdotorg.org> <20150506161712.GA4003@katana>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1431451444-23155-11-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jim Lin <jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150506161712.GA4003@katana>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, May 12, 2015 at 10:23 AM, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> This adds logic for taking SDM_DIN (Sigma Delta Modulator) setting into
-> the equation to calculate the effective N value for PLL which supports
-> fractional divider.
+On Wed, May 6, 2015 at 11:17 AM, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org> wrote:
 >
-> The effective N = NDIV + 1/2 + SDM_DIN/2^13, where NDIV is the integer
-> feedback divider.
+>> The container node has a #address-cells property for this very reason. It's
+>> perfectly well-defined how to split up a property containing a large number
+>> of cells into separate values, by using the value of #address-cells. Plus,
+>> the canonical formatting (albeit not enforced by the DT compiler) for a
+>> property that contains an array of entries, each 2 cells in size, would be:
+>>
+>> reg = <0 0x1a>, <0 0x40>, <0 0x48>;
+>>
+>> rather than:
+>>
+>> reg = <0 0x1a 0 0x40 0 0x48>;
+>>
+>> ... so it's quite simple to make it very human-readable too.
 >
-> Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> I give in to the flag idea. I also noticed that we'd need another flag
+> anyhow to mark 10 bit addresses. I am still thinking between using two
+> address-cells in that case (clean seperation between address and flags)
+> or to encode the flags as MSB in the current address (all busses will
+> have same address-cells and child description, less code paths and no
+> overhead in dtbs).
 
-Reviewed-by: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Reading thru the thread, this seems good to me. I would go with adding
+flags in the MSB of the reg cell rather than adding a cell.
 
-Thanks for making the suggested changes.
-> ---
-> v5:
->   - made use of sdm_en_mask when possible to clean up logic
->   - added kerneldoc info for new struct params
->   - Added info about SDM near sdm_set_data
->   - rewrote check in sdm_set_data to make it clearer
-
-
-
-
--- 
-Benson Leung
-Software Engineer, Chrom* OS
-bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
+Rob
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
