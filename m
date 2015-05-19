@@ -1,100 +1,80 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC] tegra: dpaux: pinctrl proposal
-Date: Tue, 19 May 2015 16:46:55 +0200
-Message-ID: <20150519144654.GG26748@ulmo.nvidia.com>
-References: <1431963229-12867-1-git-send-email-jonathanh@nvidia.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Cgrdyab2wu3Akvjd"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1431963229-12867-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: [PATCH v3] ARM: tegra: cpuidle: implement cpuidle_state.enter_freeze()
+Date: Tue, 19 May 2015 16:49:12 +0200
+Message-ID: <1432046953-12945-1-git-send-email-tomeu.vizoso@collabora.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-pm@vger.kernel.org
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Ingo Molnar <mingo@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+This callback is expected to do the same as enter() but it has to
+guarantee that interrupts aren't enabled at any point in its execution,
+as the tick is frozen.
 
---Cgrdyab2wu3Akvjd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It will be called when the system goes to suspend-to-idle and will
+reduce power usage because CPUs won't be awaken for unnecessary IRQs.
 
-On Mon, May 18, 2015 at 04:33:49PM +0100, Jon Hunter wrote:
-> Background:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> On tegra124 and tegra132 devices the pads used by the Display Port Auxili=
-ary
-> (DPAUX) channel are multiplexed such that they can also be used by one of=
- the
-> internal i2c controllers. Note that this is different from i2c-over-AUX
-> supported by the DPAUX controller. The register that configures these pad=
-s is
-> part of the DPAUX controllers register set and so requires the clock for =
-the
-> DPAUX controller to be enabled to access the register as well as keeping =
-the
-> SOR (serial output resource) power domain enabled.
->=20
-> Currently, there is no pinctrl device for these pads and so cannot be eas=
-ily
-> mapped to function as an i2c interface. Furthermore, when using the pads =
-for
-> the DPAUX channel, the DPAUX driver (drivers/gpu/drm/tegra/dpaux.c) direc=
-tly
-> writes the to appropriate register to setup the pads.
->=20
-> There are some products based upon the tegra132 that use these pads for an
-> internal i2c controller and hence we want to support this configuration i=
-n the
-> kernel.
+By setting the CPUIDLE_FLAG_TIMER_STOP flag, we can reuse the same code
+for both the enter() and enter_freeze() callbacks.
 
-Good timing, I was going to (reluctantly) add this to my long TODO list.
-I generally like the proposal.
+Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-> Proposal:
-> =3D=3D=3D=3D=3D=3D=3D=3D
-> Add a DPAUX MFD device that consists of a DPAUX controller, for the Displ=
-ay
-> Port Auxiliary related functionality and a DPAUX pad controller, for hand=
-ling
-> the pinctrl for the DPAUX pads. Both the DPAUX controller and DPAUX pad
-> controller need to access the DPAUX register set and therefore, by making=
- the
-> MFD compatible with "simple-mfd" and "syscon", a regmap for the DPAUX reg=
-isters
-> will be created to synchronise register accesses made by the drivers.
+---
 
-Can we not do without an MFD here? Not only would it break DT ABI, but
-it's also way more complicated than it needs to be in my opinion, we're
-only sharing a single register (or perhaps even two) after all. Keeping
-everything in a single DT node would also make the binding less awkward
-because the power domain doesn't apply to the pad controller part of
-DPAUX.
+v3:	* Set CPUIDLE_FLAG_TIMER_STOP to simplify things as suggested by
+	Lorenzo Pieralisi
+v2:	* Disable FIQs also when suspending-to-idle
+---
+ arch/arm/mach-tegra/cpuidle-tegra114.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-Can't the dpaux driver simply register the pinmux controller itself?
-
-Thierry
-
---Cgrdyab2wu3Akvjd
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJVW0zbAAoJEN0jrNd/PrOh9nsP/iOfL7JooK/ps13dXbMI65Ts
-TiQ8zNDMQCtK4qXI+CImlWavSnVQQjYvJnXjgJLk3qmk6+iikJb8JliJdfgzt7DE
-obnP6zbnehA347NWkvhsk6QBEUDlAQ6AjuAU+pBxOTpW7YnBE2MqjnnTzENaAGfz
-pKYMR79vB/V6iEisooZd1gobzjbwdAAYbvY7vKrlnOow4Uc95cOEWwSBC/tsmZFy
-EC5gwS9z2R3qDLi7wzaj18WtXg7qBwJV5ArOc9+jUohWhT5JuFVexNyNFh4Pout6
-vDpSPrHRM9XKnVxE+5HLcGOSTzrime+lni0IUtgMidFNqd1AfiJYeVRxEvOJpodU
-nOhLi64/g/fv0/T3eaU6rxVI902BsrTz2cNNEeLHSZZppHFZ9x7IY408Cp4GR74p
-lhY7hJzHd3npG9siKG7Unok5uc4EYjzHLbO5ljDhILMGvzYA/oOzpSYR6P/6zGiA
-Jbfu5z3YdWxPP+x0Xfsoku8dE1yIZknKWlbRCj4qB6Jyr/WPV5ZRXn0WcbpePgoS
-YHbfmp/smQpYyiBcHDhCIERTpK11zR2l7KYFRWQD46U0GEMZzavlD6dqJlkgWuAq
-+J14JxXXSwEa8xcNT0y/iTDU2u54Ffx1nBz2yn6zga/r6b8uJ6HtHLPEEp4IY9vH
-MRCRO/O4r0CA93WL2eF0
-=hrwi
------END PGP SIGNATURE-----
-
---Cgrdyab2wu3Akvjd--
+diff --git a/arch/arm/mach-tegra/cpuidle-tegra114.c b/arch/arm/mach-tegra/cpuidle-tegra114.c
+index 155807f..7e59ac0 100644
+--- a/arch/arm/mach-tegra/cpuidle-tegra114.c
++++ b/arch/arm/mach-tegra/cpuidle-tegra114.c
+@@ -44,16 +44,12 @@ static int tegra114_idle_power_down(struct cpuidle_device *dev,
+ 	tegra_set_cpu_in_lp2();
+ 	cpu_pm_enter();
+ 
+-	tick_broadcast_enter();
+-
+ 	call_firmware_op(prepare_idle);
+ 
+ 	/* Do suspend by ourselves if the firmware does not implement it */
+ 	if (call_firmware_op(do_idle, 0) == -ENOSYS)
+ 		cpu_suspend(0, tegra30_sleep_cpu_secondary_finish);
+ 
+-	tick_broadcast_exit();
+-
+ 	cpu_pm_exit();
+ 	tegra_clear_cpu_in_lp2();
+ 
+@@ -61,6 +57,13 @@ static int tegra114_idle_power_down(struct cpuidle_device *dev,
+ 
+ 	return index;
+ }
++
++static void tegra114_idle_enter_freeze(struct cpuidle_device *dev,
++				       struct cpuidle_driver *drv,
++				       int index)
++{
++       tegra114_idle_power_down(dev, drv, index);
++}
+ #endif
+ 
+ static struct cpuidle_driver tegra_idle_driver = {
+@@ -72,8 +75,10 @@ static struct cpuidle_driver tegra_idle_driver = {
+ #ifdef CONFIG_PM_SLEEP
+ 		[1] = {
+ 			.enter			= tegra114_idle_power_down,
++			.enter_freeze		= tegra114_idle_enter_freeze,
+ 			.exit_latency		= 500,
+ 			.target_residency	= 1000,
++			.flags			= CPUIDLE_FLAG_TIMER_STOP,
+ 			.power_usage		= 0,
+ 			.name			= "powered-down",
+ 			.desc			= "CPU power gated",
+-- 
+2.4.1
