@@ -1,127 +1,56 @@
-From: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>
-Subject: Re: [PATCH v10 05/17] clk: tegra: Introduce ability for SoC-specific
- reset control callbacks
-Date: Tue, 19 May 2015 18:06:39 +0300
-Message-ID: <555B517F.4080506@kapsi.fi>
-References: <1431529131-16710-6-git-send-email-mikko.perttunen@kapsi.fi> <1432035567-19008-1-git-send-email-mikko.perttunen@kapsi.fi> <20150519145922.GA28018@ulmo>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/3] pinctrl: tegra-xusb: Fix allocation of pins
+Date: Tue, 19 May 2015 16:09:26 +0100
+Message-ID: <555B5226.3090500@nvidia.com>
+References: <1432044863-2035-1-git-send-email-jonathanh@nvidia.com> <1432044863-2035-3-git-send-email-jonathanh@nvidia.com> <20150519143041.GD26748@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150519145922.GA28018@ulmo>
+In-Reply-To: <20150519143041.GD26748-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, tuomas.tynkkynen-X3B1VOXEql0@public.gmane.org
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/19/2015 05:59 PM, Thierry Reding wrote:
-> On Tue, May 19, 2015 at 02:39:27PM +0300, Mikko Perttunen wrote:
->> This patch allows SoC-specific CAR initialization routines to register
->> their own reset_assert and reset_deassert callbacks with the common Tegra
->> CAR code. If defined, the common code will call these callbacks when a
->> reset control with number >= num_periph_banks * 32 is attempted to be asserted
->> or deasserted respectively. Numbers greater than or equal to num_periph_banks * 32
->> are used to avoid clashes with low numbers that are automatically mapped to
->> standard CAR reset lines.
->>
->> Each SoC with these special resets should specify the defined reset control
->> numbers in a device tree header file.
->
-> This is looking pretty good, but I think we can simplify a wee bit
-> more...
->
->> Signed-off-by: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>
->> Acked-by: Michael Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->> ---
->>   drivers/clk/tegra/clk.c | 39 +++++++++++++++++++++++++++++++--------
->>   drivers/clk/tegra/clk.h |  3 +++
->>   2 files changed, 34 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
->> index 41cd87c..c093ed9 100644
->> --- a/drivers/clk/tegra/clk.c
->> +++ b/drivers/clk/tegra/clk.c
->> @@ -49,7 +49,6 @@
->>   #define RST_DEVICES_L			0x004
->>   #define RST_DEVICES_H			0x008
->>   #define RST_DEVICES_U			0x00C
->> -#define RST_DFLL_DVCO			0x2F4
->>   #define RST_DEVICES_V			0x358
->>   #define RST_DEVICES_W			0x35C
->>   #define RST_DEVICES_X			0x28C
->> @@ -79,6 +78,11 @@ static struct clk **clks;
->>   static int clk_num;
->>   static struct clk_onecell_data clk_data;
->>
->> +/* Handlers for SoC-specific reset lines */
->> +static int (*special_reset_assert)(unsigned long);
->> +static int (*special_reset_deassert)(unsigned long);
->> +static int special_reset_num;
->
-> I think we can get rid of this if we...
->
->> +
->>   static struct tegra_clk_periph_regs periph_regs[] = {
->>   	[0] = {
->>   		.enb_reg = CLK_OUT_ENB_L,
->> @@ -152,19 +156,29 @@ static int tegra_clk_rst_assert(struct reset_controller_dev *rcdev,
->>   	 */
->>   	tegra_read_chipid();
->>
->> -	writel_relaxed(BIT(id % 32),
->> -			clk_base + periph_regs[id / 32].rst_set_reg);
->> +	if (id < periph_banks * 32) {
->> +		writel_relaxed(BIT(id % 32),
->> +			       clk_base + periph_regs[id / 32].rst_set_reg);
->> +		return 0;
->> +	} else if (id < periph_banks * 32 + special_reset_num) {
->> +		return special_reset_assert(id);
->> +	}
->
-> ... pass id - periph_banks * 32 into special_reset_assert(). Oh, but
-> then...
 
-The reason I don't subtract periph_banks * 32 is because this way the 
-code in the SoC-specific callback can just include the dt-bindings 
-header and use the same defines used in the device tree.
+On 19/05/15 15:30, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Tue, May 19, 2015 at 03:14:22PM +0100, Jon Hunter wrote:
+>> Commit e5b3b2d9ed20 ("pinctrl: allows not to define the get_group_pins
+>> operation") allows pin controllers not to register the get_group_pins()
+>> function. However, a side-effect of not registering this function is
+>> that pins are not allocated and potentially multiple devices could
+>> attempt to configure the same pins [1]. Although this problem exists in
+>> the pinctrl core, because only a few devices are impacted by this, fix
+>> this for tegra-xusb by adding the get_group_pins() function.
+> 
+> If I understand correctly this effectively makes get_group_pins()
+> mandatory, doesn't it? In that case, shouldn't commit e5b3b2d9ed20 be
+> reverted?
 
->
->> @@ -286,10 +300,19 @@ void __init tegra_add_of_provider(struct device_node *np)
->>   	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
->>
->>   	rst_ctlr.of_node = np;
->> -	rst_ctlr.nr_resets = periph_banks * 32;
->> +	rst_ctlr.nr_resets = periph_banks * 32 + special_reset_num;
->
-> ... this is no longer going to work. We could keep special_reset_num,
-> though obviously it should be an unsigned int and renamed to
-> num_special_reset, yet still pass the relative ID into the SoC-specific
-> callbacks, after all that's what they care about and each implementation
-> would have to subtract periph_banks * 32 anyway.
+Yes may be it should. I will defer to Linus here.
 
-Mostly agreed, but see above :)
+>> Please note that in addition to adding the get_group_pins() functions
+>> the pins/lanes for the tegra-xusb also need to be registered when
+>> calling pinctrl_register(). This also allows the current pinmux state
+>> to be viewed by the debugfs node "pinmux-pins" for the tegra-xusb pad
+>> controller.
+> 
+> This sounds like a logically separate change and hence could warrant a
+> separate patch. I'll defer to Linus on this, though, so:
 
->
->>   	reset_controller_register(&rst_ctlr);
->>   }
->>
->> +void __init tegra_init_special_resets(int num,
->> +				      int (*assert)(unsigned long),
->> +				      int (*deassert)(unsigned long))
->> +{
->> +	special_reset_num = num;
->> +	special_reset_assert = assert;
->> +	special_reset_deassert = deassert;
->> +}
->> +
->
-> I think we could possibly improve this interface somewhat by turning it
-> upside-down, that is, make SoC-specific drivers call this in a helper
-> fashion. But this is good enough for now, I can always take a stab at
-> refactoring if I get bored.
->
-> Thierry
->
+It needs to be registered as part of this patch otherwise the pins will
+not be registered and pin_request() will fail. Today pin_request() does
+not even get called for these pins. So I believe that this is needed as
+part of this patch.
 
-Thanks,
-Mikko
+May be I was not clear above, but the debugfs "pinmux-pins" entry shows
+nothing today for these pins. A by-product of this fix is that now we
+can view the pinmux state of the pins via the debugfs.
+
+> Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Cheers
+Jon
