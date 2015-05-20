@@ -1,61 +1,50 @@
-From: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: Re: [GIT PULL 4/8] clk: tegra: Changes for v4.2-rc1
-Date: Wed, 20 May 2015 12:54:59 -0700
-Message-ID: <20150520195459.GU31753@codeaurora.org>
-References: <1431524980-13599-1-git-send-email-thierry.reding@gmail.com>
- <1431524980-13599-5-git-send-email-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1431524980-13599-5-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH] ARM: v7 setup function should invalidate L1 cache
+Date: Thu, 21 May 2015 00:48:25 +0200
+Message-ID: <555D0F39.5020900@gmail.com>
+References: <E1Yuk8W-0001tC-IK@rmk-PC.arm.linux.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <E1Yuk8W-0001tC-IK@rmk-PC.arm.linux.org.uk>
+Sender: linux-sh-owner@vger.kernel.org
+To: Russell King <rmk+kernel@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: Christian Daudt <bcm@fixthebug.org>, Florian Fainelli <f.fainelli@gmail.com>, Marc Carino <marc.ceeeee@gmail.com>, Brian Norris <computersforpeace@gmail.com>, Gregory Fong <gregory.0xf0@gmail.com>, Wei Xu <xuwei5@hisilicon.com>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Barry Song <baohua@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Dinh Nguyen <dinguyen@opensource.altera.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?B?U8O2cmVuIEJyaW5rbWFubg==?= <soren.brinkmann@xilinx.com>, bcm-kernel-feedback-list@broadcom.com
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/13, Thierry Reding wrote:
-> Hi Mike, Stephen,
-> 
-> The following changes since commit b787f68c36d49bb1d9236f403813641efa74a031:
-> 
->   Linux 4.1-rc1 (2015-04-26 17:59:10 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.2-clk
-> 
-> for you to fetch changes up to 36b7be6d3ea8f434f1e0723f3fb0e85c3e00ebc2:
-> 
->   clk: tegra: Fix hda2codec_2x clock name for Tegra30 (2015-05-13 15:17:14 +0200)
-> 
-> I've based this pull request on top of the tegra-for-4.2-ramcode pull
-> request, so pulling only this one should be sufficient to resolve the
-> dependency.
-> 
-> Thanks,
-> Thierry
-> 
-> ----------------------------------------------------------------
-> clk: tegra: Changes for v4.2-rc1
-> 
-> This contains the EMC clock driver that's been exhaustively reviewed and
-> tested. It also includes a change to the clock core that allows a clock
-> provider to perform low-level reparenting of clocks. This is required by
-> the EMC clock driver because the reparenting needs to be done at a very
-> specific point in time during the EMC frequency switch.
+On 19.05.2015 18:12, Russell King wrote:
+> All ARMv5 and older CPUs invalidate their caches in the early assembly
+> setup function, prior to enabling the MMU.  This is because the L1
+> cache should not contain any data relevant to the execution of the
+> kernel at this point; all data should have been flushed out to memory.
+>
+> This requirement should also be true for ARMv6 and ARMv7 CPUs - indeed,
+> these typically do not search their caches when caching is disabled (as
+> it needs to be when the MMU is disabled) so this change should be safe.
+>
+> ARMv7 allows there to be CPUs which search their caches while caching is
+> disabled, and it's permitted that the cache is uninitialised at boot;
+> for these, the architecture reference manual requires that an
+> implementation specific code sequence is used immediately after reset
+> to ensure that the cache is placed into a sane state.  Such
+> functionality is definitely outside the remit of the Linux kernel, and
+> must be done by the SoC's firmware before _any_ CPU gets to the Linux
+> kernel.
+>
+> Changing the data cache clean+invalidate to a mere invalidate allows us
+> to get rid of a lot of platform specific hacks around this issue for
+> their secondary CPU bringup paths - some of which were buggy.
+>
+> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> ---
+[...]
+>   arch/arm/mach-berlin/headsmp.S        |  6 ------
+>   arch/arm/mach-berlin/platsmp.c        |  3 +--
 
-Can someone please describe why we need to do software
-reparenting at a specific point in time during a frequency
-switch? I must have missed out on the conversation somewhere and
-looking at the commit that introduces the function, the argument
-for why the API is exposed:
+For berlin,
 
-      To be used by clock implementations for switching to a new
-      parent during rate change.
+Acked-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Tested-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
-is lacking in any details about *why* we need it.
+Thanks!
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
