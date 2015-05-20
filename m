@@ -1,117 +1,128 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/2] drm/nouveau: Set tile mode
-Date: Wed, 20 May 2015 14:56:19 +0900
-Message-ID: <1432101379-9515-3-git-send-email-acourbot@nvidia.com>
-References: <1432101379-9515-1-git-send-email-acourbot@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <1432101379-9515-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ari Hirvonen <ahirvonen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+From: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+Subject: [PATCH v11 05/17] clk: tegra: Introduce ability for SoC-specific reset control callbacks
+Date: Wed, 20 May 2015 09:27:05 +0300
+Message-ID: <1432103225-2731-1-git-send-email-mikko.perttunen@kapsi.fi>
+References: <20150519152208.GB28161@ulmo.nvidia.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <20150519152208.GB28161@ulmo.nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, pdeschrijver@nvidia.com
+Cc: mturquette@linaro.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, pwalmsley@nvidia.com, vinceh@nvidia.com, pgaikwad@nvidia.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tuomas.tynkkynen@iki.fi, Mikko Perttunen <mikko.perttunen@kapsi.fi>
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogQXJpIEhpcnZvbmVuIDxhaGlydm9uZW5AbnZpZGlhLmNvbT4KCkFkZCBuZXcgTk9VVkVB
-VV9HRU1fU0VUX1RJTElORyBpb2N0bCB0byBzZXQgY29ycmVjdCB0aWxpbmcKbW9kZSBmb3IgaW1w
-b3J0ZWQgZG1hLWJ1ZnMuIFRoaXMgaW9jdGwgaXMgc3RhZ2luZyBmb3Igbm93LgoKU2lnbmVkLW9m
-Zi1ieTogQXJpIEhpcnZvbmVuIDxhaGlydm9uZW5AbnZpZGlhLmNvbT4KW2Fjb3VyYm90QG52aWRp
-YS5jb206IGNhcnJ5IHVwc3RyZWFtLCBmaXggc3R5bGVdClNpZ25lZC1vZmYtYnk6IEFsZXhhbmRy
-ZSBDb3VyYm90IDxhY291cmJvdEBudmlkaWEuY29tPgotLS0KIGRybS9ub3V2ZWF1L25vdXZlYXVf
-ZHJtLmMgICAgICAgICAgfCAgMSArCiBkcm0vbm91dmVhdS9ub3V2ZWF1X2dlbS5jICAgICAgICAg
-IHwgNTUgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysKIGRybS9ub3V2ZWF1
-L25vdXZlYXVfZ2VtLmggICAgICAgICAgfCAgMiArKwogZHJtL25vdXZlYXUvdWFwaS9kcm0vbm91
-dmVhdV9kcm0uaCB8ICA4ICsrKysrKwogNCBmaWxlcyBjaGFuZ2VkLCA2NiBpbnNlcnRpb25zKCsp
-CgpkaWZmIC0tZ2l0IGEvZHJtL25vdXZlYXUvbm91dmVhdV9kcm0uYyBiL2RybS9ub3V2ZWF1L25v
-dXZlYXVfZHJtLmMKaW5kZXggZTRiZDZlZDUxZTczLi4xYzc4OThlYzEwMGMgMTAwNjQ0Ci0tLSBh
-L2RybS9ub3V2ZWF1L25vdXZlYXVfZHJtLmMKKysrIGIvZHJtL25vdXZlYXUvbm91dmVhdV9kcm0u
-YwpAQCAtOTAwLDYgKzkwMCw3IEBAIG5vdXZlYXVfaW9jdGxzW10gPSB7CiAJRFJNX0lPQ1RMX0RF
-Rl9EUlYoTk9VVkVBVV9HRU1fQ1BVX0ZJTkksIG5vdXZlYXVfZ2VtX2lvY3RsX2NwdV9maW5pLCBE
-Uk1fVU5MT0NLRUR8RFJNX0FVVEh8RFJNX1JFTkRFUl9BTExPVyksCiAJRFJNX0lPQ1RMX0RFRl9E
-UlYoTk9VVkVBVV9HRU1fSU5GTywgbm91dmVhdV9nZW1faW9jdGxfaW5mbywgRFJNX1VOTE9DS0VE
-fERSTV9BVVRIfERSTV9SRU5ERVJfQUxMT1cpLAogCS8qIFN0YWdpbmcgaW9jdGxzICovCisJRFJN
-X0lPQ1RMX0RFRl9EUlYoTk9VVkVBVV9HRU1fU0VUX1RJTElORywgbm91dmVhdV9nZW1faW9jdGxf
-c2V0X3RpbGluZywgRFJNX1VOTE9DS0VEfERSTV9BVVRIfERSTV9SRU5ERVJfQUxMT1cpLAogfTsK
-IAogbG9uZwpkaWZmIC0tZ2l0IGEvZHJtL25vdXZlYXUvbm91dmVhdV9nZW0uYyBiL2RybS9ub3V2
-ZWF1L25vdXZlYXVfZ2VtLmMKaW5kZXggMGU2OTBiZjE5ZmM5Li40NmZhNGRmMGIzOTAgMTAwNjQ0
-Ci0tLSBhL2RybS9ub3V2ZWF1L25vdXZlYXVfZ2VtLmMKKysrIGIvZHJtL25vdXZlYXUvbm91dmVh
-dV9nZW0uYwpAQCAtMTczLDYgKzE3Myw2MSBAQCBub3V2ZWF1X2dlbV9vYmplY3RfY2xvc2Uoc3Ry
-dWN0IGRybV9nZW1fb2JqZWN0ICpnZW0sIHN0cnVjdCBkcm1fZmlsZSAqZmlsZV9wcml2KQogfQog
-CiBpbnQKK25vdXZlYXVfZ2VtX2lvY3RsX3NldF90aWxpbmcoc3RydWN0IGRybV9kZXZpY2UgKmRl
-diwgdm9pZCAqZGF0YSwKKwkJCSAgICAgc3RydWN0IGRybV9maWxlICpmaWxlX3ByaXYpCit7CisJ
-c3RydWN0IG5vdXZlYXVfZHJtICpkcm0gPSBub3V2ZWF1X2RybShkZXYpOworCXN0cnVjdCBub3V2
-ZWF1X2NsaSAqY2xpID0gbm91dmVhdV9jbGkoZmlsZV9wcml2KTsKKwlzdHJ1Y3QgbnZrbV9mYiAq
-cGZiID0gbnZ4eF9mYigmZHJtLT5kZXZpY2UpOworCXN0cnVjdCBkcm1fbm91dmVhdV9nZW1fc2V0
-X3RpbGluZyAqcmVxID0gZGF0YTsKKwlzdHJ1Y3QgZHJtX2dlbV9vYmplY3QgKmdlbTsKKwlzdHJ1
-Y3Qgbm91dmVhdV9ibyAqbnZibzsKKwlzdHJ1Y3QgbnZrbV9tZW0gKm1lbTsKKwlzdHJ1Y3QgbnZr
-bV92bWEgKnZtYTsKKwlpbnQgcmV0ID0gMDsKKworCWlmICghcGZiLT5tZW10eXBlX3ZhbGlkKHBm
-YiwgcmVxLT50aWxlX2ZsYWdzKSkgeworCQlOVl9QUklOVEsoZXJyb3IsIGNsaSwgImJhZCBtZW10
-eXBlOiAweCUwOHhcbiIsIHJlcS0+dGlsZV9mbGFncyk7CisJCXJldHVybiAtRUlOVkFMOworCX0K
-KworCWdlbSA9IGRybV9nZW1fb2JqZWN0X2xvb2t1cChkZXYsIGZpbGVfcHJpdiwgcmVxLT5oYW5k
-bGUpOworCWlmICghZ2VtKQorCQlyZXR1cm4gLUVOT0VOVDsKKworCW52Ym8gPSBub3V2ZWF1X2dl
-bV9vYmplY3QoZ2VtKTsKKworCWlmIChudmJvLT50aWxlX21vZGUgIT0gcmVxLT50aWxlX21vZGUg
-fHwKKwkgICAgbnZiby0+dGlsZV9mbGFncyAhPSByZXEtPnRpbGVfZmxhZ3MpIHsKKworCQlyZXQg
-PSB0dG1fYm9fcmVzZXJ2ZSgmbnZiby0+Ym8sIGZhbHNlLCBmYWxzZSwgZmFsc2UsIE5VTEwpOwor
-CQlpZiAocmV0KQorCQkJZ290byBvdXQ7CisKKwkJdm1hID0gbm91dmVhdV9ib192bWFfZmluZChu
-dmJvLCBjbGktPnZtKTsKKwkJaWYgKCF2bWEpIHsKKwkJCXJldCA9IC1FTk9FTlQ7CisJCQlnb3Rv
-IHVucmVzZXJ2ZTsKKwkJfQorCisJCW1lbSA9IG52Ym8tPmJvLm1lbS5tbV9ub2RlOworCQludmJv
-LT50aWxlX21vZGUgPSByZXEtPnRpbGVfbW9kZTsKKwkJbnZiby0+dGlsZV9mbGFncyA9IHJlcS0+
-dGlsZV9mbGFnczsKKworCQkvKiBOZWVkIHRvIHJld3JpdGUgcGFnZSB0YWJsZXMgKi8KKwkJbWVt
-LT5tZW10eXBlID0gKG52Ym8tPnRpbGVfZmxhZ3MgPj4gOCkgJiAweGZmOworCQludmttX3ZtX21h
-cCh2bWEsIG52Ym8tPmJvLm1lbS5tbV9ub2RlKTsKKwordW5yZXNlcnZlOgorCQl0dG1fYm9fdW5y
-ZXNlcnZlKCZudmJvLT5ibyk7CisJfQorCitvdXQ6CisJZHJtX2dlbV9vYmplY3RfdW5yZWZlcmVu
-Y2VfdW5sb2NrZWQoZ2VtKTsKKwlyZXR1cm4gcmV0OworfQorCitpbnQKIG5vdXZlYXVfZ2VtX25l
-dyhzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBpbnQgc2l6ZSwgaW50IGFsaWduLCB1aW50MzJfdCBk
-b21haW4sCiAJCXVpbnQzMl90IHRpbGVfbW9kZSwgdWludDMyX3QgdGlsZV9mbGFncywKIAkJc3Ry
-dWN0IG5vdXZlYXVfYm8gKipwbnZibykKZGlmZiAtLWdpdCBhL2RybS9ub3V2ZWF1L25vdXZlYXVf
-Z2VtLmggYi9kcm0vbm91dmVhdS9ub3V2ZWF1X2dlbS5oCmluZGV4IGU0MDQ5ZmFjYTc4MC4uNTZl
-NzQxZDk4YmNkIDEwMDY0NAotLS0gYS9kcm0vbm91dmVhdS9ub3V2ZWF1X2dlbS5oCisrKyBiL2Ry
-bS9ub3V2ZWF1L25vdXZlYXVfZ2VtLmgKQEAgLTIzLDYgKzIzLDggQEAgZXh0ZXJuIHZvaWQgbm91
-dmVhdV9nZW1fb2JqZWN0X2RlbChzdHJ1Y3QgZHJtX2dlbV9vYmplY3QgKik7CiBleHRlcm4gaW50
-IG5vdXZlYXVfZ2VtX29iamVjdF9vcGVuKHN0cnVjdCBkcm1fZ2VtX29iamVjdCAqLCBzdHJ1Y3Qg
-ZHJtX2ZpbGUgKik7CiBleHRlcm4gdm9pZCBub3V2ZWF1X2dlbV9vYmplY3RfY2xvc2Uoc3RydWN0
-IGRybV9nZW1fb2JqZWN0ICosCiAJCQkJICAgICBzdHJ1Y3QgZHJtX2ZpbGUgKik7CitleHRlcm4g
-aW50IG5vdXZlYXVfZ2VtX2lvY3RsX3NldF90aWxpbmcoc3RydWN0IGRybV9kZXZpY2UgKiwgdm9p
-ZCAqLAorCQkJCQlzdHJ1Y3QgZHJtX2ZpbGUgKik7CiBleHRlcm4gaW50IG5vdXZlYXVfZ2VtX2lv
-Y3RsX25ldyhzdHJ1Y3QgZHJtX2RldmljZSAqLCB2b2lkICosCiAJCQkJIHN0cnVjdCBkcm1fZmls
-ZSAqKTsKIGV4dGVybiBpbnQgbm91dmVhdV9nZW1faW9jdGxfcHVzaGJ1ZihzdHJ1Y3QgZHJtX2Rl
-dmljZSAqLCB2b2lkICosCmRpZmYgLS1naXQgYS9kcm0vbm91dmVhdS91YXBpL2RybS9ub3V2ZWF1
-X2RybS5oIGIvZHJtL25vdXZlYXUvdWFwaS9kcm0vbm91dmVhdV9kcm0uaAppbmRleCA0ZTdlMjFm
-NDFiNWMuLjhmMTBiMTZiMTQ3MyAxMDA2NDQKLS0tIGEvZHJtL25vdXZlYXUvdWFwaS9kcm0vbm91
-dmVhdV9kcm0uaAorKysgYi9kcm0vbm91dmVhdS91YXBpL2RybS9ub3V2ZWF1X2RybS5oCkBAIC02
-NCw2ICs2NCwxMiBAQCBzdHJ1Y3QgZHJtX25vdXZlYXVfZ2VtX25ldyB7CiAJdWludDMyX3QgYWxp
-Z247CiB9OwogCitzdHJ1Y3QgZHJtX25vdXZlYXVfZ2VtX3NldF90aWxpbmcgeworCXVpbnQzMl90
-IGhhbmRsZTsKKwl1aW50MzJfdCB0aWxlX21vZGU7CisJdWludDMyX3QgdGlsZV9mbGFnczsKK307
-CisKICNkZWZpbmUgTk9VVkVBVV9HRU1fTUFYX0JVRkZFUlMgMTAyNAogc3RydWN0IGRybV9ub3V2
-ZWF1X2dlbV9wdXNoYnVmX2JvX3ByZXN1bWVkIHsKIAl1aW50MzJfdCB2YWxpZDsKQEAgLTE0Miw2
-ICsxNDgsNyBAQCBzdHJ1Y3QgZHJtX25vdXZlYXVfZ2VtX2NwdV9maW5pIHsKICNkZWZpbmUgRFJN
-X05PVVZFQVVfR0VNX0lORk8gICAgICAgICAgIDB4NDQKIC8qIHJhbmdlIDB4OTguLkRSTV9DT01N
-QU5EX0VORCAoOCBlbnRyaWVzKSBpcyByZXNlcnZlZCBmb3Igc3RhZ2luZywgdW5zdGFibGUgaW9j
-dGxzICovCiAjZGVmaW5lIERSTV9OT1VWRUFVX1NUQUdJTkdfSU9DVEwgICAgICAweDU4CisjZGVm
-aW5lIERSTV9OT1VWRUFVX0dFTV9TRVRfVElMSU5HICAgICAoRFJNX05PVVZFQVVfU1RBR0lOR19J
-T0NUTCArIDB4MCkKIAogI2RlZmluZSBEUk1fSU9DVExfTk9VVkVBVV9HRU1fTkVXICAgICAgICAg
-ICAgRFJNX0lPV1IoRFJNX0NPTU1BTkRfQkFTRSArIERSTV9OT1VWRUFVX0dFTV9ORVcsIHN0cnVj
-dCBkcm1fbm91dmVhdV9nZW1fbmV3KQogI2RlZmluZSBEUk1fSU9DVExfTk9VVkVBVV9HRU1fUFVT
-SEJVRiAgICAgICAgRFJNX0lPV1IoRFJNX0NPTU1BTkRfQkFTRSArIERSTV9OT1VWRUFVX0dFTV9Q
-VVNIQlVGLCBzdHJ1Y3QgZHJtX25vdXZlYXVfZ2VtX3B1c2hidWYpCkBAIC0xNDksNSArMTU2LDYg
-QEAgc3RydWN0IGRybV9ub3V2ZWF1X2dlbV9jcHVfZmluaSB7CiAjZGVmaW5lIERSTV9JT0NUTF9O
-T1VWRUFVX0dFTV9DUFVfRklOSSAgICAgICBEUk1fSU9XIChEUk1fQ09NTUFORF9CQVNFICsgRFJN
-X05PVVZFQVVfR0VNX0NQVV9GSU5JLCBzdHJ1Y3QgZHJtX25vdXZlYXVfZ2VtX2NwdV9maW5pKQog
-I2RlZmluZSBEUk1fSU9DVExfTk9VVkVBVV9HRU1fSU5GTyAgICAgICAgICAgRFJNX0lPV1IoRFJN
-X0NPTU1BTkRfQkFTRSArIERSTV9OT1VWRUFVX0dFTV9JTkZPLCBzdHJ1Y3QgZHJtX25vdXZlYXVf
-Z2VtX2luZm8pCiAvKiBzdGFnaW5nIGlvY3RscyAqLworI2RlZmluZSBEUk1fSU9DVExfTk9VVkVB
-VV9HRU1fU0VUX1RJTElORyAgICAgRFJNX0lPV1IoRFJNX0NPTU1BTkRfQkFTRSArIERSTV9OT1VW
-RUFVX0dFTV9TRVRfVElMSU5HLCBzdHJ1Y3QgZHJtX25vdXZlYXVfZ2VtX3NldF90aWxpbmcpCiAK
-ICNlbmRpZiAvKiBfX05PVVZFQVVfRFJNX0hfXyAqLwotLSAKMi40LjAKCl9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCk5vdXZlYXUgbWFpbGluZyBsaXN0Ck5v
-dXZlYXVAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
-bWFpbG1hbi9saXN0aW5mby9ub3V2ZWF1Cg==
+This patch allows SoC-specific CAR initialization routines to register
+their own reset_assert and reset_deassert callbacks with the common Tegra
+CAR code. If defined, the common code will call these callbacks when a
+reset control with number >= num_periph_banks * 32 is attempted to be asserted
+or deasserted respectively. Numbers greater than or equal to num_periph_banks * 32
+are used to avoid clashes with low numbers that are automatically mapped to
+standard CAR reset lines.
+
+Each SoC with these special resets should specify the defined reset control
+numbers in a device tree header file.
+
+Signed-off-by: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+Acked-by: Michael Turquette <mturquette@linaro.org>
+---
+ drivers/clk/tegra/clk.c | 39 +++++++++++++++++++++++++++++++--------
+ drivers/clk/tegra/clk.h |  3 +++
+ 2 files changed, 34 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
+index 41cd87c..3290fd6 100644
+--- a/drivers/clk/tegra/clk.c
++++ b/drivers/clk/tegra/clk.c
+@@ -49,7 +49,6 @@
+ #define RST_DEVICES_L			0x004
+ #define RST_DEVICES_H			0x008
+ #define RST_DEVICES_U			0x00C
+-#define RST_DFLL_DVCO			0x2F4
+ #define RST_DEVICES_V			0x358
+ #define RST_DEVICES_W			0x35C
+ #define RST_DEVICES_X			0x28C
+@@ -79,6 +78,11 @@ static struct clk **clks;
+ static int clk_num;
+ static struct clk_onecell_data clk_data;
+ 
++/* Handlers for SoC-specific reset lines */
++static int (*special_reset_assert)(unsigned long);
++static int (*special_reset_deassert)(unsigned long);
++static unsigned int num_special_reset;
++
+ static struct tegra_clk_periph_regs periph_regs[] = {
+ 	[0] = {
+ 		.enb_reg = CLK_OUT_ENB_L,
+@@ -152,19 +156,29 @@ static int tegra_clk_rst_assert(struct reset_controller_dev *rcdev,
+ 	 */
+ 	tegra_read_chipid();
+ 
+-	writel_relaxed(BIT(id % 32),
+-			clk_base + periph_regs[id / 32].rst_set_reg);
++	if (id < periph_banks * 32) {
++		writel_relaxed(BIT(id % 32),
++			       clk_base + periph_regs[id / 32].rst_set_reg);
++		return 0;
++	} else if (id < periph_banks * 32 + num_special_reset) {
++		return special_reset_assert(id);
++	}
+ 
+-	return 0;
++	return -EINVAL;
+ }
+ 
+ static int tegra_clk_rst_deassert(struct reset_controller_dev *rcdev,
+ 		unsigned long id)
+ {
+-	writel_relaxed(BIT(id % 32),
+-			clk_base + periph_regs[id / 32].rst_clr_reg);
++	if (id < periph_banks * 32) {
++		writel_relaxed(BIT(id % 32),
++			       clk_base + periph_regs[id / 32].rst_clr_reg);
++		return 0;
++	} else if (id < periph_banks * 32 + num_special_reset) {
++		return special_reset_deassert(id);
++	}
+ 
+-	return 0;
++	return -EINVAL;
+ }
+ 
+ struct tegra_clk_periph_regs *get_reg_bank(int clkid)
+@@ -286,10 +300,19 @@ void __init tegra_add_of_provider(struct device_node *np)
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+ 
+ 	rst_ctlr.of_node = np;
+-	rst_ctlr.nr_resets = periph_banks * 32;
++	rst_ctlr.nr_resets = periph_banks * 32 + num_special_reset;
+ 	reset_controller_register(&rst_ctlr);
+ }
+ 
++void __init tegra_init_special_resets(unsigned int num,
++				      int (*assert)(unsigned long),
++				      int (*deassert)(unsigned long))
++{
++	num_special_reset = num;
++	special_reset_assert = assert;
++	special_reset_deassert = deassert;
++}
++
+ void __init tegra_register_devclks(struct tegra_devclk *dev_clks, int num)
+ {
+ 	int i;
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 75ddc8ff..0621887 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -591,6 +591,9 @@ struct tegra_devclk {
+ 	char		*con_id;
+ };
+ 
++void tegra_init_special_resets(unsigned int num, int (*assert)(unsigned long),
++			       int (*deassert)(unsigned long));
++
+ void tegra_init_from_table(struct tegra_clk_init_table *tbl,
+ 		struct clk *clks[], int clk_max);
+ 
+-- 
+2.3.0
+
