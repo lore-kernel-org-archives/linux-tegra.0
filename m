@@ -1,60 +1,95 @@
-From: Martin Peres <martin.peres-GANU6spQydw@public.gmane.org>
-Subject: Re: [PATCH] nouveau: add coherent BO attribute
-Date: Wed, 20 May 2015 09:53:52 +0300
-Message-ID: <555C2F80.9080805@free.fr>
-References: <1426228051-20298-1-git-send-email-acourbot@nvidia.com>
- <55033B99.4040300@canonical.com> <550545A4.6060106@nvidia.com>
- <CAAVeFuKoryrWPcDkcFuk+OwJjaUn6C-he+xxphkZ7iMBa=Qdkg@mail.gmail.com>
- <CAAVeFu+kRcWT2zxbduA6MU9v1cTVb8HU3GEDdaviUAkYa6SbSQ@mail.gmail.com>
- <5555DAF6.4030309@mblankhorst.nl>
- <CAAVeFuLKeEsf=at_gahCw9qzRWhrxtCVZ==H26y2xUx8-K75eA@mail.gmail.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v3] ARM: tegra: cpuidle: implement
+ cpuidle_state.enter_freeze()
+Date: Wed, 20 May 2015 09:44:41 +0100
+Message-ID: <20150520084441.GA29274@red-moon>
+References: <1432046953-12945-1-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <CAAVeFuLKeEsf=at_gahCw9qzRWhrxtCVZ==H26y2xUx8-K75eA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Maarten Lankhorst <maarten-FcfepWsj2zOByvU0x3ry2g@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1432046953-12945-1-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Cc: "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Rafael J. Wysocki" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ingo Molnar <mingo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMjAvMDUvMTUgMDg6MTEsIEFsZXhhbmRyZSBDb3VyYm90IHdyb3RlOgo+IE9uIEZyaSwgTWF5
-IDE1LCAyMDE1IGF0IDg6MzkgUE0sIE1hYXJ0ZW4gTGFua2hvcnN0Cj4gPG1hYXJ0ZW5AbWJsYW5r
-aG9yc3Qubmw+IHdyb3RlOgo+PiBPcCAxNS0wNS0xNSBvbSAwOToxMSBzY2hyZWVmIEFsZXhhbmRy
-ZSBDb3VyYm90Ogo+Pj4gUmUtcGluZ2luZyBNYXJ0ZWVuIG9uIGFuIGVtYWlsIGFkZHJlc3MgdGhh
-dCBzdGlsbCBleGlzdHMgOlAKPj4+Cj4+PiBPbiBXZWQsIEFwciAyMiwgMjAxNSBhdCA2OjA4IFBN
-LCBBbGV4YW5kcmUgQ291cmJvdCA8Z251cm91QGdtYWlsLmNvbT4gd3JvdGU6Cj4+Pj4gT24gU3Vu
-LCBNYXIgMTUsIDIwMTUgYXQgNTo0MSBQTSwgQWxleGFuZHJlIENvdXJib3QgPGFjb3VyYm90QG52
-aWRpYS5jb20+IHdyb3RlOgo+Pj4+PiBPbiAwMy8xNC8yMDE1IDA0OjMzIEFNLCBNYWFydGVuIExh
-bmtob3JzdCB3cm90ZToKPj4+Pj4+IEhleSwKPj4+Pj4+Cj4+Pj4+PiBPcCAxMy0wMy0xNSBvbSAw
-NzoyNyBzY2hyZWVmIEFsZXhhbmRyZSBDb3VyYm90Ogo+Pj4+Pj4+IEFkZCBhIGZsYWcgYWxsb3dp
-bmcgTm91dmVhdSB0byBzcGVjaWZ5IHRoYXQgYW4gb2JqZWN0IHNob3VsZCBiZSBjb2hlcmVudAo+
-Pj4+Pj4+IGF0IGFsbG9jYXRpb24gdGltZS4gVGhpcyBpcyByZXF1aXJlZCBmb3Igc29tZSBjbGFz
-cyBvZiBvYmplY3RzIGxpa2UKPj4+Pj4+PiBmZW5jZXMgd2hpY2ggYXJlIHJhbmRvbWx5LWFjY2Vz
-c2VkIGJ5IGJvdGggdGhlIENQVSBhbmQgR1BVLiBUaGlzIGZsYWcKPj4+Pj4+PiBpbnN0cnVjdHMg
-dGhlIGtlcm5lbCBkcml2ZXIgdG8gbWFrZSBzdXJlIHRoZSBvYmplY3QgcmVtYWlucyBjb2hlcmVu
-dAo+Pj4+Pj4+IGV2ZW4gb24gYXJjaGl0ZWN0dXJlcyBmb3Igd2hpY2ggY29oZXJlbmN5IGlzIG5v
-dCBndWFyYW50ZWVkIGJ5IHRoZSBidXMuCj4+Pj4+Pj4KPj4+Pj4+PiBTaWduZWQtb2ZmLWJ5OiBB
-bGV4YW5kcmUgQ291cmJvdCA8YWNvdXJib3RAbnZpZGlhLmNvbT4KPj4+Pj4+IEkgZG9uJ3Qgc2Vl
-IGEgcHJvYmxlbSB3aXRoIHRoaXMgcGF0Y2gsIGJ1dCBzaW1pbGFyIHBhdGNoZXMgdG8gaW50ZWwg
-dG8KPj4+Pj4+IGxpYmRybSBoYXZlIGJlZW4gc2hvdCBkb3duIHdoZW4gdGhlIGNoYW5nZXMgd2Vy
-ZW4ndCBpbiBhbiBvZmZpY2lhbCBrZXJuZWwKPj4+Pj4+IHlldCwgc28gSSB0aGluayB0aGlzIHNo
-b3VsZCB3YWl0IHVudGlsIHRoZSBjaGFuZ2UgaXMgYXQgbGVhc3QgaW4gZHJtLW5leHQuCj4+Pj4+
-PiA7LSkKPj4+Pj4gU291bmRzIGdvb2QuIEkgd2lsbCBwaW5nIHlvdSBhZ2FpbiBvbmNlIHRoZSBr
-ZXJuZWwgY2hhbmdlIHJlYWNoZXMgLW5leHQuCj4+Pj4gSGkgTWFydGVlbiwKPj4+Pgo+Pj4+IFRo
-ZSBrZXJuZWwgY2hhbmdlIHJlcXVpcmVkIGZvciB0aGlzIHBhdGNoIGlzIG5vdyBpbiAtbmV4dC4g
-RG8geW91Cj4+Pj4gdGhpbmsgd2UgY2FuIG1lcmdlIGl0IG5vdz8KPj4gSSB0aGluayBpdCB3b3Vs
-ZCBiZSBvayB0byBtZXJnZSBub3cuCj4gR3JlYXQgLSB3aG8gY291bGQgZG8gdGhpcz8gOlAKCkkg
-Y291bGQgZG8gaXQuIFBsZWFzZSBwcm92aWRlIG1lIHdpdGggdGhlIHBhdGNoIHdpdGggdGhlIG5l
-Y2Vzc2FyeSBSLWIgCmFuZCBJIGNhbiBwdXNoIGl0IHRvIG91ciBsaWJkcm0gKGFuZC9vciBtZXNh
-KS4KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVh
-dSBtYWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3Rz
-LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL25vdXZlYXUK
+On Tue, May 19, 2015 at 03:49:12PM +0100, Tomeu Vizoso wrote:
+> This callback is expected to do the same as enter() but it has to
+> guarantee that interrupts aren't enabled at any point in its execution,
+> as the tick is frozen.
+> 
+> It will be called when the system goes to suspend-to-idle and will
+> reduce power usage because CPUs won't be awaken for unnecessary IRQs.
+> 
+> By setting the CPUIDLE_FLAG_TIMER_STOP flag, we can reuse the same code
+> for both the enter() and enter_freeze() callbacks.
+> 
+> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+> Cc: Rafael J. Wysocki <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+> 
+> ---
+> 
+> v3:	* Set CPUIDLE_FLAG_TIMER_STOP to simplify things as suggested by
+> 	Lorenzo Pieralisi
+> v2:	* Disable FIQs also when suspending-to-idle
+> ---
+>  arch/arm/mach-tegra/cpuidle-tegra114.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm/mach-tegra/cpuidle-tegra114.c b/arch/arm/mach-tegra/cpuidle-tegra114.c
+> index 155807f..7e59ac0 100644
+> --- a/arch/arm/mach-tegra/cpuidle-tegra114.c
+> +++ b/arch/arm/mach-tegra/cpuidle-tegra114.c
+> @@ -44,16 +44,12 @@ static int tegra114_idle_power_down(struct cpuidle_device *dev,
+>  	tegra_set_cpu_in_lp2();
+>  	cpu_pm_enter();
+>  
+> -	tick_broadcast_enter();
+> -
+>  	call_firmware_op(prepare_idle);
+>  
+>  	/* Do suspend by ourselves if the firmware does not implement it */
+>  	if (call_firmware_op(do_idle, 0) == -ENOSYS)
+>  		cpu_suspend(0, tegra30_sleep_cpu_secondary_finish);
+>  
+> -	tick_broadcast_exit();
+> -
+>  	cpu_pm_exit();
+>  	tegra_clear_cpu_in_lp2();
+>  
+> @@ -61,6 +57,13 @@ static int tegra114_idle_power_down(struct cpuidle_device *dev,
+>  
+>  	return index;
+>  }
+> +
+> +static void tegra114_idle_enter_freeze(struct cpuidle_device *dev,
+> +				       struct cpuidle_driver *drv,
+> +				       int index)
+> +{
+> +       tegra114_idle_power_down(dev, drv, index);
+> +}
+
+You do not need this function, remove it and update the enter_freeze
+pointer below with tegra114_idle_power_down please.
+
+Thanks,
+Lorenzo
+
+>  #endif
+>  
+>  static struct cpuidle_driver tegra_idle_driver = {
+> @@ -72,8 +75,10 @@ static struct cpuidle_driver tegra_idle_driver = {
+>  #ifdef CONFIG_PM_SLEEP
+>  		[1] = {
+>  			.enter			= tegra114_idle_power_down,
+> +			.enter_freeze		= tegra114_idle_enter_freeze,
+>  			.exit_latency		= 500,
+>  			.target_residency	= 1000,
+> +			.flags			= CPUIDLE_FLAG_TIMER_STOP,
+>  			.power_usage		= 0,
+>  			.name			= "powered-down",
+>  			.desc			= "CPU power gated",
+> -- 
+> 2.4.1
+> 
