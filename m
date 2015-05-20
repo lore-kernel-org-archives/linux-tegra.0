@@ -1,84 +1,78 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH v3] ARM: tegra: cpuidle: implement
- cpuidle_state.enter_freeze()
-Date: Wed, 20 May 2015 10:04:55 +0100
-Message-ID: <20150520090455.GC29274@red-moon>
-References: <1432046953-12945-1-git-send-email-tomeu.vizoso@collabora.com>
- <20150520084441.GA29274@red-moon>
- <555C4C0D.4040605@collabora.com>
+From: Jim Lin <jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v5 20/21] clk: tegra210: add support for Tegra210 clocks
+Date: Wed, 20 May 2015 17:47:22 +0800
+Message-ID: <555C582A.7050508@nvidia.com>
+References: <1431451444-23155-1-git-send-email-rklein@nvidia.com> <1431451444-23155-22-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <555C4C0D.4040605@collabora.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Ingo Molnar <mingo@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1431451444-23155-22-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, May 20, 2015 at 09:55:41AM +0100, Tomeu Vizoso wrote:
-> On 05/20/2015 10:44 AM, Lorenzo Pieralisi wrote:
-> > On Tue, May 19, 2015 at 03:49:12PM +0100, Tomeu Vizoso wrote:
-> >> This callback is expected to do the same as enter() but it has to
-> >> guarantee that interrupts aren't enabled at any point in its execution,
-> >> as the tick is frozen.
-> >>
-> >> It will be called when the system goes to suspend-to-idle and will
-> >> reduce power usage because CPUs won't be awaken for unnecessary IRQs.
-> >>
-> >> By setting the CPUIDLE_FLAG_TIMER_STOP flag, we can reuse the same code
-> >> for both the enter() and enter_freeze() callbacks.
-> >>
-> >> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-> >> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >>
-> >> ---
-> >>
-> >> v3:	* Set CPUIDLE_FLAG_TIMER_STOP to simplify things as suggested by
-> >> 	Lorenzo Pieralisi
-> >> v2:	* Disable FIQs also when suspending-to-idle
-> >> ---
-> >>  arch/arm/mach-tegra/cpuidle-tegra114.c | 13 +++++++++----
-> >>  1 file changed, 9 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/arch/arm/mach-tegra/cpuidle-tegra114.c b/arch/arm/mach-tegra/cpuidle-tegra114.c
-> >> index 155807f..7e59ac0 100644
-> >> --- a/arch/arm/mach-tegra/cpuidle-tegra114.c
-> >> +++ b/arch/arm/mach-tegra/cpuidle-tegra114.c
-> >> @@ -44,16 +44,12 @@ static int tegra114_idle_power_down(struct cpuidle_device *dev,
-> >>  	tegra_set_cpu_in_lp2();
-> >>  	cpu_pm_enter();
-> >>  
-> >> -	tick_broadcast_enter();
-> >> -
-> >>  	call_firmware_op(prepare_idle);
-> >>  
-> >>  	/* Do suspend by ourselves if the firmware does not implement it */
-> >>  	if (call_firmware_op(do_idle, 0) == -ENOSYS)
-> >>  		cpu_suspend(0, tegra30_sleep_cpu_secondary_finish);
-> >>  
-> >> -	tick_broadcast_exit();
-> >> -
-> >>  	cpu_pm_exit();
-> >>  	tegra_clear_cpu_in_lp2();
-> >>  
-> >> @@ -61,6 +57,13 @@ static int tegra114_idle_power_down(struct cpuidle_device *dev,
-> >>  
-> >>  	return index;
-> >>  }
-> >> +
-> >> +static void tegra114_idle_enter_freeze(struct cpuidle_device *dev,
-> >> +				       struct cpuidle_driver *drv,
-> >> +				       int index)
-> >> +{
-> >> +       tegra114_idle_power_down(dev, drv, index);
-> >> +}
-> > 
-> > You do not need this function, remove it and update the enter_freeze
-> > pointer below with tegra114_idle_power_down please.
-> 
-> How so? The callbacks have different signatures.
+On 05/13/2015 01:24 AM, Rhyland Klein wrote:
+> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> new file mode 100644
+> index 000000000000..7f25e60e4d48
+> --- /dev/null
+> +++ b/drivers/clk/tegra/clk-tegra210.c
+>
+> +
+> +static struct tegra_clk_init_table common_init_table[] __initdata = {
+> +	{TEGRA210_CLK_UARTA, TEGRA210_CLK_PLL_P, 408000000, 0},
+> +	{TEGRA210_CLK_UARTB, TEGRA210_CLK_PLL_P, 408000000, 0},
+> +	{TEGRA210_CLK_UARTC, TEGRA210_CLK_PLL_P, 408000000, 0},
+> +	{TEGRA210_CLK_UARTD, TEGRA210_CLK_PLL_P, 408000000, 0},
+> +	{TEGRA210_CLK_PLL_A, TEGRA210_CLK_CLK_MAX, 564480000, 1},
+> +	{TEGRA210_CLK_PLL_A_OUT0, TEGRA210_CLK_CLK_MAX, 11289600, 1},
+> +	{TEGRA210_CLK_EXTERN1, TEGRA210_CLK_PLL_A_OUT0, 0, 1},
+> +	{TEGRA210_CLK_CLK_OUT_1_MUX, TEGRA210_CLK_EXTERN1, 0, 1},
+> +	{TEGRA210_CLK_CLK_OUT_1, TEGRA210_CLK_CLK_MAX, 0, 1},
+> +	{TEGRA210_CLK_I2S0, TEGRA210_CLK_PLL_A_OUT0, 11289600, 0},
+> +	{TEGRA210_CLK_I2S1, TEGRA210_CLK_PLL_A_OUT0, 11289600, 0},
+> +	{TEGRA210_CLK_I2S2, TEGRA210_CLK_PLL_A_OUT0, 11289600, 0},
+> +	{TEGRA210_CLK_I2S3, TEGRA210_CLK_PLL_A_OUT0, 11289600, 0},
+> +	{TEGRA210_CLK_I2S4, TEGRA210_CLK_PLL_A_OUT0, 11289600, 0},
+> +	{TEGRA210_CLK_HOST1X, TEGRA210_CLK_PLL_P, 136000000, 1},
+> +	{TEGRA210_CLK_SCLK_MUX, TEGRA210_CLK_PLL_P, 0, 1},
+> +	{TEGRA210_CLK_SCLK, TEGRA210_CLK_CLK_MAX, 102000000, 1},
+> +	{TEGRA210_CLK_DFLL_SOC, TEGRA210_CLK_PLL_P, 51000000, 1},
+> +	{TEGRA210_CLK_DFLL_REF, TEGRA210_CLK_PLL_P, 51000000, 1},
+> +	{TEGRA210_CLK_SBC4, TEGRA210_CLK_PLL_P, 12000000, 1},
+> +	{TEGRA210_CLK_PLL_RE_VCO, TEGRA210_CLK_CLK_MAX, 624000000, 0},
+> +	{TEGRA210_CLK_PLL_U_OUT1, TEGRA210_CLK_CLK_MAX, 48000000, 0},
+> +	{TEGRA210_CLK_PLL_U_OUT2, TEGRA210_CLK_CLK_MAX, 60000000, 0},
+Could you help to modify this as the following?
+Clocks have to be enabled only once.
 
-Sorry, glossed over it, never mind.
++	{TEGRA210_CLK_PLL_RE_VCO, TEGRA210_CLK_CLK_MAX, 624000000, 1},
++	{TEGRA210_CLK_PLL_U_OUT1, TEGRA210_CLK_CLK_MAX, 48000000, 1},
++	{TEGRA210_CLK_PLL_U_OUT2, TEGRA210_CLK_CLK_MAX, 60000000, 1},
 
-Lorenzo
+
+> +	{TEGRA210_CLK_XUSB_SS_SRC, TEGRA210_CLK_PLL_U_480M, 120000000, 0},
+> +	{TEGRA210_CLK_XUSB_FS_SRC, TEGRA210_CLK_PLL_U_48M, 48000000, 0},
+> +	{TEGRA210_CLK_XUSB_HS_SRC, TEGRA210_CLK_PLL_U_60M, 60000000, 0},
+> +	{TEGRA210_CLK_XUSB_FALCON_SRC, TEGRA210_CLK_PLL_RE_OUT, 224000000, 0},
+> +	{TEGRA210_CLK_XUSB_HOST_SRC, TEGRA210_CLK_PLL_RE_OUT, 112000000, 0},
+> +	{TEGRA210_CLK_SATA, TEGRA210_CLK_PLL_P, 104000000, 0},
+> +	{TEGRA210_CLK_SATA_OOB, TEGRA210_CLK_PLL_P, 204000000, 0},
+> +	{TEGRA210_CLK_EMC, TEGRA210_CLK_CLK_MAX, 0, 1},
+> +	{TEGRA210_CLK_MSELECT, TEGRA210_CLK_CLK_MAX, 0, 1},
+> +	{TEGRA210_CLK_CSITE, TEGRA210_CLK_CLK_MAX, 0, 1},
+> +	{TEGRA210_CLK_TSENSOR, TEGRA210_CLK_CLK_M, 400000, 0},
+> +	{TEGRA210_CLK_I2C1, TEGRA210_CLK_PLL_P, 0, 0},
+> +	{TEGRA210_CLK_I2C2, TEGRA210_CLK_PLL_P, 0, 0},
+> +	{TEGRA210_CLK_I2C3, TEGRA210_CLK_PLL_P, 0, 0},
+> +	{TEGRA210_CLK_I2C4, TEGRA210_CLK_PLL_P, 0, 0},
+> +	{TEGRA210_CLK_I2C5, TEGRA210_CLK_PLL_P, 0, 0},
+> +	{TEGRA210_CLK_I2C6, TEGRA210_CLK_PLL_P, 0, 0},
+> +	{TEGRA210_CLK_PLL_DP, TEGRA210_CLK_CLK_MAX, 270000000, 0},
+> +	/* This MUST be the last entry. */
+> +	{TEGRA210_CLK_CLK_MAX, TEGRA210_CLK_CLK_MAX, 0, 0},
+> +};
+> +
+--nvpublic
